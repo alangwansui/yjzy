@@ -82,15 +82,13 @@ class PRTMailMessage(models.Model):
     color = fields.Integer('颜色')
     star = fields.Boolean('标星')
 
-    body_text = fields.Text('正文文本呢', compute='compute_body_text', store=True)
-
+    body_text = fields.Text('正文文本呢', compute='compute_body_text', store=False)
 
     @api.depends('body')
     def compute_body_text(self):
         for one in self:
             body_text = html2text.html2text(one.body)
             one.body_text = body_text
-
 
     def edit_again(self):
         compose = self.compose_id
