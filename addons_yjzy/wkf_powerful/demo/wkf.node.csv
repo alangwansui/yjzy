@@ -1,0 +1,8 @@
+"id","event_need","event_users/id","sequence","no_reset","code","is_stop","join_mode","action","arg","name","show_state","wkf_id/id","is_start"
+"wkf_powerful.wkf_node_14","False","","1","True","","False","OR","","","草稿","True","wkf_powerful.wkf_base_1","True"
+"wkf_powerful.wkf_node_16","False","","2","True","","False","OR","","","自动选择节点","False","wkf_powerful.wkf_base_1","False"
+"wkf_powerful.wkf_node_17","False","","3","True","","False","OR","","","待采购员(超1000)","True","wkf_powerful.wkf_base_1","False"
+"wkf_powerful.wkf_node_20","False","","4","True","","False","OR","","","待采购员(1000内)","True","wkf_powerful.wkf_base_1","False"
+"wkf_powerful.wkf_node_18","False","","5","True","","False","OR","","","等待采购经理","True","wkf_powerful.wkf_base_1","False"
+"wkf_powerful.wkf_node_19","False","","6","True","","False","OR","button_confirm","","完成","True","wkf_powerful.wkf_base_1","False"
+"wkf_powerful.wkf_node_15","False","","7","True","","True","AND","button_confirm","","会签测试","True","wkf_powerful.wkf_base_1","False"

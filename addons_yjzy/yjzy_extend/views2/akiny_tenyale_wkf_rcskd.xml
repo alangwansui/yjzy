@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="akiny_tenyale_product_form" model="ir.ui.view">
+        <field name="name"></field>
+        <field name="model"></field>
+        <field name="inherit_id" ref="product.product_normal_form_view"/>
+        <field name="arch" type="xml">
+          <xpath expr="//form/*" position="before">
+            <div class="o_form_statusbar o_from_wkf_contain">
+              <div class="o_statusbar_buttons">
+                  <button name="wkf_button_action" string="&#25552;&#20132;" context="{'trans_id':'90'}" attrs="{'invisible':[('x_wkf_state','!=', '81')]}" type="object" class="oe_highlight" user_ids="21,9,35,10,33,8,20,23"/>
+                  <button name="wkf_button_action" string="&#39044;&#20184;&#36130;&#21153;&#25298;&#32477;" context="{'trans_id':'190'}" attrs="{'invisible':[('x_wkf_state','!=', '128')]}" type="object" class="oe_highlight" user_ids="9"/>
+                  <button name="wkf_button_action" string="&#37325;&#26032;&#32534;&#36753;" context="{'trans_id':'196'}" attrs="{'invisible':[('x_wkf_state','!=', '150')]}" type="object" class="oe_highlight"/>
+                  <button name="wkf_button_action" string="&#39044;&#25910;&#36130;&#21153;&#25298;&#32477;" context="{'trans_id':'189'}" attrs="{'invisible':[('x_wkf_state','!=', '131')]}" type="object" class="oe_highlight" user_ids="9"/>
+                  <button name="wkf_button_action" string="&#20184;&#27454;&#20986;&#32435;&#25298;&#32477;" context="{'trans_id':'192'}" attrs="{'invisible':[('x_wkf_state','!=', '132')]}" type="object" class="oe_highlight" user_ids="10"/>
+                  <button name="wkf_button_action" string="&#20986;&#32435;&#25910;&#27454;&#35748;&#39046;&#30830;&#35748;" context="{'trans_id':'211'}" attrs="{'invisible':[('x_wkf_state','!=', '159')]}" type="object" class="oe_highlight" user_ids="10"/>
+                  <button name="wkf_button_action" string="&#37325;&#26032;&#25552;&#20132;" context="{'trans_id':'213'}" attrs="{'invisible':[('x_wkf_state','!=', '165')]}" type="object" class="oe_highlight"/>
+                  <button name="wkf_button_action" string="&#25910;&#27454;&#25552;&#20132;" context="{'trans_id':'205'}" attrs="{'invisible':[('x_wkf_state','!=', '83')]}" type="object" class="oe_highlight"/>
+                  <button name="wkf_button_action" string="&#39044;&#20184;&#25552;&#20132;" context="{'trans_id':'166'}" attrs="{'invisible':[('x_wkf_state','!=', '83')]}" type="object" class="oe_highlight"/>
+                  <button name="wkf_button_action" string="&#20184;&#27454;&#20986;&#32435;&#30830;&#35748;" context="{'trans_id':'172'}" attrs="{'invisible':[('x_wkf_state','!=', '132')]}" type="object" class="oe_highlight" user_ids="10"/>
+                  <button name="wkf_button_action" string="&#39044;&#25910;&#36130;&#21153;&#30830;&#35748;" context="{'trans_id':'170'}" attrs="{'invisible':[('x_wkf_state','!=', '131')]}" type="object" class="oe_highlight" user_ids="9"/>
+                  <button name="wkf_button_action" string="&#39044;&#25910;&#25552;&#20132;" context="{'trans_id':'214'}" attrs="{'invisible':[('x_wkf_state','!=', '83')]}" type="object" class="oe_highlight"/>
+                  <button name="wkf_button_action" string="&#36130;&#21153;&#23457;&#25209;" context="{'trans_id':'167'}" attrs="{'invisible':[('x_wkf_state','!=', '128')]}" type="object" class="oe_highlight" user_ids="9"/>
+                  <button name="wkf_button_action" string="&#39044;&#20184;&#24635;&#32463;&#29702;&#25298;&#32477;" context="{'trans_id':'191'}" attrs="{'invisible':[('x_wkf_state','!=', '129')]}" type="object" class="oe_highlight" user_ids="7"/>
+                  <button name="wkf_button_action" string="&#25910;&#27454;&#25298;&#32477;" context="{'trans_id':'212'}" attrs="{'invisible':[('x_wkf_state','!=', '158')]}" type="object" class="oe_highlight"/>
+                  <button name="wkf_button_action" string="&#20184;&#27454;&#25552;&#20132;" context="{'trans_id':'171'}" attrs="{'invisible':[('x_wkf_state','!=', '83')]}" type="object" class="oe_highlight" user_ids="9"/>
+                  <button name="wkf_button_action" string="&#37325;&#26032;&#25552;&#20132;" context="{'trans_id':'200'}" attrs="{'invisible':[('x_wkf_state','!=', '153')]}" type="object" class="oe_highlight"/>
+                  <button name="wkf_button_action" string="&#37325;&#26032;&#32534;&#36753;" context="{'trans_id':'195'}" attrs="{'invisible':[('x_wkf_state','!=', '151')]}" type="object" class="oe_highlight"/>
+                  <button name="wkf_button_action" string="&#37325;&#26032;&#32534;&#36753;" context="{'trans_id':'197'}" attrs="{'invisible':[('x_wkf_state','!=', '149')]}" type="object" class="oe_highlight"/>
+                  <button name="wkf_button_action" string="&#37325;&#26032;&#32534;&#36753;" context="{'trans_id':'199'}" attrs="{'invisible':[('x_wkf_state','!=', '148')]}" type="object" class="oe_highlight"/>
+                  <button name="wkf_button_action" string="&#24635;&#32463;&#29702;&#23457;&#25209;" context="{'trans_id':'168'}" attrs="{'invisible':[('x_wkf_state','!=', '129')]}" type="object" class="oe_highlight" user_ids="7"/>
+                  <button name="wkf_button_action" string="&#25910;&#27454;&#30830;&#35748;&#23436;&#25104;" context="{'trans_id':'206'}" attrs="{'invisible':[('x_wkf_state','!=', '158')]}" type="object" class="oe_highlight" user_ids="10"/>
+                  <button name="wkf_button_show_log" string="&#26174;&#31034;&#26085;&#24535;" type="object" groups="base.group_user"/>
+                  <button name="wkf_button_reset" string="&#37325;&#32622;&#24037;&#20316;&#27969;" type="object" groups="base.group_system" context="{'wkf_id': 13}" attrs="{'invisible':[('x_wkf_state','in', ['83','81','158','165','134','135','153','163','159','131','151','150','149','148','136','152','130','129','128','132'])]}"/>
+              </div>
+                <field name="x_wkf_state" widget="statusbar" readonly="1" statusbar_visible="83,81,158,165,134,135,153,163,159,131,136,130,129,128,132"/>
+            </div>
+          </xpath>
+        </field>
+    </record>
+
+
+
+
+</odoo>

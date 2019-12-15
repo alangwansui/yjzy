@@ -1,0 +1,181 @@
+<?xml version="1.0"?>
+<odoo>
+
+
+
+    <record id="prt_mail_message_out_tree" model="ir.ui.view">
+        <field name="name">prt.mail.message.tree</field>
+        <field name="model">mail.message</field>
+        <field name="arch" type="xml">
+            <tree string="Messages" decoration-bf="needaction==True" decoration-danger="is_error==True" default_order="date desc, id desc" create='false'>
+                <field name="author_display" groups="base.group_system"/>
+                <field name="author_allowed_id" groups="base.group_system"/>
+                <field name="email_to" groups="base.group_system"/>
+                <button name="dummy" type="object" class="oe_stat_button" icon="fa-star" attrs="{'invisible': [('starred', '=', False)]}"/>
+                <button readonly="1" name="dummy" type="object" class="oe_inline oe_stat_button" icon="fa-paperclip"
+                        attrs="{'invisible':[('attachment_count', '=', 0)]}"/>
+                <field name="subject_display" groups="base.group_system"/>
+                <field name="subject"/>
+
+                <field name="partner_cc_ids" widget="many2many_tags" groups="base.group_system"/>
+                <field name="needaction" groups="base.group_system"/>
+                <field name="attachment_count" groups="base.group_system"/>
+                <field name="starred" groups="base.group_system"/>
+                <field name="is_error" groups="base.group_system"/>
+                <field name="compose_id" groups="base.group_system"/>
+                <field name="date"/>
+                <field name="process_type" groups="base.group_system"/>
+            </tree>
+        </field>
+    </record>
+    <record id="prt_mail_message_out_form" model="ir.ui.view">
+        <field name="name">prt.mail.message.form</field>
+        <field name="model">mail.message</field>
+        <field name="arch" type="xml">
+            <form string="Message" create='false' edit='false'>
+                <div attrs="{'invisible':[('is_error', '!=', True)]}" name="pro" colspan="2" class="oe_form_box_info oe_text_center" style="color:red;">
+                    <p>Error while sending message. Please check error log under "Email Messages" tab</p>
+                </div>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="reply" type="object" class="oe_stat_button" icon="fa-copy" string="转发"
+                                context="{'wizard_mode': 'forward','default_force_notify_email': 1}"
+                                help="Copy message to other record. Original message text will be qouted and kept. Followers of the other record will be notified!"/>
+
+                        <button name="move" type="object" class="oe_stat_button" icon="fa-arrow-right" string="Move"
+                                help="Move message from current to other record" invisible="0" groups="base.group_system"/>
+                        <button string="标记已读" type="object" name="set_message_done"
+                                class="oe_stat_button"
+                                icon="fa-file" attrs="{'invisible': [('needaction', '=', False)]}" groups="base.group_system"/>
+                        <button string="标记未读" type="object" name="mark_as_unread"
+                                class="oe_stat_button"
+                                icon="fa-check" attrs="{'invisible': [('needaction', '=', True)]}" groups="base.group_system"/>
+                        <button name="edit_again" type="object" class="oe_stat_button" context="{'default_force_notify_email': 1}"
+                                icon="fa-arrow-right" string="再次编辑"/>
+                        <button name="toggle_message_starred" type="object" class="oe_stat_button"
+                                icon="fa-check" attrs="{'invisible': [('starred', '=', True)]}"
+                                string="标星"/>
+                        <button name="toggle_message_starred" type="object" class="oe_stat_button"
+                                icon="fa-star" attrs="{'invisible': [('starred', '=', False)]}"
+                                string="取消标星"/>
+                        <button name="thread_messages" type="object" class="oe_stat_button"
+                                icon="fa-envelope" attrs="{'invisible': [('thread_messages_count', '&lt;', 2)]}" groups="base.group_system">
+                            <field name="thread_messages_count" widget="statinfo" string="In thread"/>
+                        </button>
+
+
+                        <button name="toggle_active" type="object"  class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button"
+                                options='{"terminology": "archive"}'/>
+                        </button>
+
+
+                    </div>
+                    <field name="author_avatar" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="subject"/>
+                        </h1>
+
+                    </div>
+                    <group name="base">
+                           <field name="author_display" string="作者"  />
+                            <field name="email_from" groups="base.group_system"/>
+                            <field name="author_id" string="发件人" groups="base.group_system"/>
+                            <field name="email_to" />
+                            <label for="email_to" string="收件人" groups="base.group_system"/>
+                           <div name="email_to" class="o_row" string="收件人" groups="base.group_system">
+                            <field name="partner_ids" widget="many2many_tags_email" context="{'show_email': 1}"/>
+                            <field name="manual_to"/>
+                           </div>
+                            <field name="email_cc" />
+                        <label for="email_cc" string="抄送人" groups="base.group_system"/>
+                         <div name="email_cc" class="o_row" string="收件人" groups="base.group_system">
+                            <field name="partner_cc_ids" widget="many2many_tags_email" context="{'show_email': 1}"/>
+                            <field name="manual_cc"/>
+                         </div>
+                            <field name="partner_bcc_ids" widget="many2many_tags_email" context="{'show_email': 1}" groups="base.group_system"/>
+                            <field name="date"/>
+                    </group>
+
+
+                    <notebook>
+                        <page name="body" string="内容">
+                            <div style="margin-left:10px">
+                                <br/>
+                                <field name="body" nolabel="1"/>
+                            </div>
+                        </page>
+                        <page string="其他信息" groups="base.group_no_one">
+                            <group>
+                                <field name="needaction"/>
+                                <field name="starred"/>
+                                <field name="author_allowed_id" attrs="{'invisible':[('author_allowed_id', '=', False)]}"/>
+                                <field name="ref_partner_ids" widget="many2many_tags" attrs="{'invisible':[('ref_partner_count', '=', 0)]}"/>
+                                <field name="ref_partner_count" invisible="1"/>
+                                <field name="partner_count" invisible="1"/>
+                                <field name="partner_allowed_ids" attrs="{'invisible':[('partner_count', '=', 0)]}" widget="many2many_tags"/>
+
+                            </group>
+                            <group name="technical">
+                                <field name="alias_id"/>
+                                <field name="alias_user_id"/>
+                                <field name="message_id"/>
+                                <field name="record_ref"/>
+                                <field name="parent_id"/>
+                                <field name="message_type"/>
+                                <field name="subtype_id"/>
+                                <field name="compose_id"/>
+                                <field name="fetchmail_server_id"/>
+                                <field name="force_notify_email"/>
+                                <field name="channel_ids" widget="many2many_tags"/>
+                                <field name="process_type"/>
+                            </group>
+
+                        </page>
+                        <page name="attachments" string="Attachments" attrs="{'invisible':[('attachment_count', '=', 0)]}">
+                            <sheet>
+                                <field name="attachment_count" invisible="1"/>
+                                <field name="attachment_allowed_ids" widget="many2many_binary"/>
+                            </sheet>
+                        </page>
+                        <page name="emails" string="Email Messages" attrs="{'invisible':[('is_error', '!=', True)]}">
+                            <sheet>
+                                <field name="is_error" invisible="1"/>
+                                <field name="mail_mail_ids">
+                                    <tree name="email_tree" create="false" edit="false">
+                                        <field name="state"/>
+                                        <field name="mail_server_id"/>
+
+                                        <field name="failure_reason"/>
+                                    </tree>
+                                </field>
+                            </sheet>
+                        </page>
+
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+
+
+
+    <record id="action_mail_messages_out" model="ir.actions.act_window">
+        <field name="name">已发送</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">mail.message</field>
+        <field name="domain">[('message_type', '=', 'email'),('author_id.user_ids','=', [uid]),('process_type','=',False)]</field>
+        <!--field name="context">{'check_messages_access': True}</field-->
+        <field name="context">{}</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+          (0, 0, {'view_mode': 'tree', 'view_id': ref('prt_mail_message_out_tree')}),
+          (0, 0, {'view_mode': 'form', 'view_id': ref('prt_mail_message_out_form')})]"/>
+    </record>
+    <menuitem id="menu_mail_messages_out" name="已发送" parent="prt_messages_root" action="action_mail_messages_out"/>
+
+</odoo>
+

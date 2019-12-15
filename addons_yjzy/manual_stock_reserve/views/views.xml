@@ -1,0 +1,18 @@
+<odoo>
+    <data>
+        <record id="inherit_view_picking_form" model="ir.ui.view">
+            <field name="name">stock.picking.form</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+
+                <!--field name="state" position="before">
+                    <button name="open_wizard_manual_stock_reserve" string="手动预留" type="object" class="oe_highlight"/>
+                </field -->
+                <xpath expr="//field[@name='move_lines']//tree" position="inside">
+                    <button name="open_manual_reserve" string="手动预留" icon="fa-anchor" states="waiting,assigned,confirmed,partially_available" type="object"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

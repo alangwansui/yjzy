@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+
+<template id="report_sale_contract_document">
+    <t t-call="web.external_layout">
+
+        <t t-set="doc" t-value="doc.with_context({'lang':doc.partner_id.lang})"/>
+
+
+               <style>
+	  body{
+		    font-size:10px;
+		  font-family:Arial,Helvetica,sans-serif,simsun;
+		  margin-top: 0px;
+	  }
+	.title{
+	    text-align: center;}
+	.main{
+		width: 100%;
+	    font-size: 11px ; }
+	.main td{
+		height:20px}
+	.main1{
+		width: 100%;
+	    font-size: 11px ; }
+	.main1 td{
+		height: 20px;
+		}
+	.tablelist{
+		text-align: center;
+		border: 0.5px solid ;
+		font-size: 10px;
+		width: 100%;
+		padding: 2px;
+	}
+	.tablelist th{
+		font-size: 10px;
+		text-align: center;
+		border: 0.5px solid ;
+		height: 20px;
+		line-height: 15px;
+		padding: 2px;
+	}
+	.tablelist td{
+		border: 0.5px solid;
+		height: 20px;
+		line-height: 15px;
+		padding: 2px;
+	}
+	.term{
+		margin-top: 20px;
+		border-top: 1px solid;
+	}
+	.term th{
+		padding-top: 3px;
+		padding-left: 5px;
+        font-size: 16px;
+		font-weight: bolder;
+	}
+
+    .term td{
+
+	    padding-left: 5px;
+		vertical-align: middle;
+		border-collapse: collapse;
+
+	}
+	.bottom_bank{
+
+		font-size: 12px;
+	}
+    .bottom_bank1{
+		border-bottom:0.8px solid #8A8888;
+		padding: 5px;
+
+		vertical-align: middle;
+		border-collapse: collapse;
+		height: 15px;
+
+	}
+
+</style>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom: 20px">
+  <tbody>
+    <tr>
+      <td rowspan="6" style="padding-top: 0px">
+		  <table width="100%" border="0" cellspacing="0" cellpadding="0">
+        <tbody>
+          <tr>
+            <td colspan="2">
+
+                    <img t-if="doc.company_id.logo" t-att-src="'data:image/png;base64,%s' % to_text(doc.company_id.logo)" style="max-height: 35px;"/>
+
+			</td>
+            </tr>
+          <tr>
+            <td colspan="2" style="height: 10px">
+			  </td>
+            </tr>
+
+          <tr>
+            <td colspan="2" style="font-size: 15px; font-weight: bolder; color: #1b3758 ; height: 20px"> 温州天宇国际贸易有限公司</td>
+            </tr>
+          <tr>
+            <td colspan="2" style="height: 5px"></td>
+            </tr>
+          <tr>
+            <td colspan="2">地址:温州市瓯海区高翔工业区高风路2号</td>
+            </tr>
+          <tr>
+            <td width="45%">电话: 0577-88759888</td>
+            <td width="55%">传真: 0577-88999800</td>
+          </tr>
+        </tbody>
+      </table>
+	</td>
+      <td colspan="2" style="padding-left: 15px; font-size: 15px; color: #1b3758; font-weight: bolder; height: 30px;border-top: 0.5px solid #000000;border-left: 0.5px solid #000000;padding-top: 5px">采购合同</td>
+      <td colspan="2"  style="padding-left: 15px; font-size: 15px; color: #1b3758; font-weight: bolder; height: 30px;border-top: 0.5px solid #000000;border-left: 0.5px solid #000000; padding-top: 5px">供应商信息</td>
+      <td colspan="2"  style="padding-left: 15px; font-size: 15px; color: #1b3758; font-weight: bolder; height: 30px;border-top: 0.5px solid;border-left: 0.5px solid #000000; border-right: 0.5px solid;padding-top: 5px">变更信息</td>
+    </tr>
+    <tr>
+      <td width="6%" style="border-left: 0.5px solid #000000; padding-left: 5px; height: 15px">收购合同号:</td>
+      <td width="19%"><span t-esc="doc.contract_code"/></td>
+      <td width="6%"  style="border-left: 0.5px solid #000000; padding-left: 5px; height: 15px">名称:</td>
+      <td width="20%" ><span t-esc="doc.partner_id.full_name"/></td>
+      <td width="7%"  style="border-left: 0.5px solid #000000; padding-left: 5px; height: 15px">变更次数:</td>
+      <td width="17%"  style="border-right: 0.5px solid"><span t-esc="doc.x_tenyale_change_times"/></td>
+    </tr>
+    <tr>
+      <td  style="border-left: 0.5px solid #000000; padding-left: 5px; height: 15px">客户订单号:</td>
+      <td><span t-esc="doc.source_so_id.x_studio_field_VlET0"/></td>
+      <td  style="border-left: 0.5px solid #000000; padding-left: 5px; height: 15px">联系人:</td>
+      <td><span t-esc="doc.contact_id.name"/><span t-esc="doc.contact_id.mobile"/></td>
+      <td  style="border-left: 0.5px solid #000000; padding-left: 5px; height: 15px">变更日期:</td>
+      <td style="border-right: 0.5px solid"> <span t-esc="doc.x_tenyale_change_date"/></td>
+    </tr>
+    <tr>
+      <td  style="border-left: 0.5px solid #000000; padding-left: 5px; height: 15px">下单日期:</td>
+      <td><span t-esc="doc.date_order[:10]"/></td>
+      <td  style="border-left: 0.5px solid #000000; padding-left: 5px; height: 15px">联系电话:</td>
+      <td><span t-esc="doc.partner_id.phone"/></td>
+      <td  style="border-left: 0.5px solid #000000; padding-left: 5px; height: 15px">变更原因:</td>
+      <td style="border-right: 0.5px solid"> </td>
+    </tr>
+    <tr>
+      <td  style="border-left: 0.5px solid #000000; padding-left: 5px; height: 15px">交货期:</td>
+      <td><span t-esc="doc.date_planned[:10]"/></td>
+      <td  style="border-left: 0.5px solid #000000; padding-left: 5px; height: 15px">传真:</td>
+      <td><span t-esc="doc.partner_id.fax"/></td>
+      <td colspan="2" rowspan="2" style="border-left: 0.5px solid #000000; padding-left: 5px; height: 15px;border-right: 0.5px solid;border-bottom: 0.5px solid" ><span t-field="doc.x_tenyale_change_reason"/></td>
+    </tr>
+    <tr>
+      <td style="border-bottom: 0.5px solid;border-left: 0.5px solid #000000; padding-left: 5px; height: 15px"> </td>
+      <td style="border-bottom: 0.5px solid"> </td>
+      <td  style="border-left: 0.5px solid #000000; padding-left: 5px; height: 15px;border-bottom: 0.5px solid">地址:</td>
+      <td style="border-bottom: 0.5px solid"><span t-esc="doc.partner_id.state_id.name"/><span t-esc="doc.partner_id.city"/><span t-esc="doc.partner_id.street"/></td>
+    </tr>
+  </tbody>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablelist table-condensed" >
+  <tbody>
+
+  <thead style="padding-bottom: 50px">
+
+    <tr>
+      <th  width="2%" rowspan="2" >编号</th>
+      <th colspan="4">型号信息</th>
+
+      <th colspan="5">产品信息</th>
+      <th colspan="4">包装细节</th>
+      <th colspan="4">价格及数量</th>
+    </tr>
+    <tr>
+      <th width="8%">图片</th>
+      <th width="6%">天宇型号</th>
+      <th width="6%">工厂型号</th>
+      <th width="6%">客户型号</th>
+
+      <th width="8%">产品描述</th>
+      <th width="8%">产品英文描述</th>
+      <th width="4%">商标</th>
+      <th width="5%">表面处理</th>
+      <th width="5%">材料</th>
+      <th width="5%">包装</th>
+      <th width="5%">把/箱</th>
+      <th width="5%">箱号</th>
+      <th width="5%">箱数</th>
+      <th width="5%">数量</th>
+      <th width="4%">单位</th>
+      <th width="5%">单价</th>
+      <th width="8%">总价</th>
+    </tr>
+  </thead>
+	   <t t-foreach="doc.order_line" t-as="line">
+		   <t t-if="line.product_qty != 0">
+    <tr>
+      <td ><t t-esc="line_index+1"/></td>
+      <td><img t-if="line.product_id.image_variant" t-att-src="'data:image/png;base64,%s' % to_text(line.product_id.image_variant)" width="50px" height="50px"/></td>
+      <td><span t-esc="line.product_id.default_code"/></td>
+      <td><span t-esc="line.supplierinfo_id.product_name"/></td>
+      <td><span t-esc="line.product_id.customer_ref"/></td>
+
+      <td><span t-esc="line.product_id.customer_description"/></td>
+      <td><span t-esc="line.with_context({'lang':'en-us'}).product_id.customer_description"/></td>
+      <td><span t-esc="line.product_id.trademark"/></td>
+      <td><span t-esc="get_attribute8line(line, '中文表面处理')"/></td>
+      <td><span t-esc="get_attribute8line(line, '中文主要材料')"/></td>
+      <td><span t-esc="line.min_package_name"/></td>
+      <td style="padding-right: 2px; text-align: right;"><span t-esc="line.max_package_qty" t-options='{"widget": "float", "precision": 0}'/></td>
+      <td><span t-esc="line.box_start"/>-<span t-esc="line.box_end"/></td>
+      <td style="padding-right: 2px; text-align: right;"><span t-esc="line.qty_max_package" t-options='{"widget": "float", "precision": 0}'/></td>
+      <td style="padding-right: 2px; text-align: right;"><span t-esc="line.product_qty" t-options='{"widget": "float", "precision": 0}'/></td>
+      <td ><span t-esc="line.product_id.p_uom_id.name"/></td>
+      <td style="padding-right: 2px; text-align: right;"><span t-esc="line.price_unit" t-options='{"widget": "float", "precision": 2}'/></td>
+      <td style="padding-right: 2px; text-align: right;"><span t-esc="line.price_subtotal" t-options='{"widget": "float", "precision": 2}'/></td>
+    </tr>
+    <tr>
+      <td colspan="18" style="font-size: 11px">
+		  <t t-set="qq" t-value="0"/>
+					  <t t-set="a" t-value="0"/>
+			  <t t-foreach="line.product_id.attribute_value_ids" t-as="att">
+
+			<t t-if="qq != att.attribute_group_id.name and att.name != '/'"><span style="font-size: 13px" >[<t t-esc="att.attribute_group_id.name"></t>]</span> <t t-set="qq" t-value="att.attribute_group_id.name"/></t><t t-if="att.name != '/'"><t t-if="att.attribute_id.name not in ('中文报关品名','英文报关品名','中文主要材料','英文主要材料','中文表面处理','英文表面处理')"><span t-esc="att.attribute_id.name" style="font-weight: bolder" />:<span t-esc="att.name"/>;</t></t>
+
+
+
+					 </t>
+
+		  </td>
+    </tr>
+		   </t>
+    </t>
+    <tr>
+      <td></td>
+      <td></td>
+      <td colspan="12" style="text-align: right">合计：</td>
+      <td><t t-esc="sum([x.product_qty for x in doc.order_line])" t-options='{"widget": "float", "precision": 0}'/></td>
+      <td></td>
+      <td></td>
+      <td><t t-esc="doc.amount_total" t-options='{"widget": "float", "precision": 2}'/></td>
+    </tr>
+  </tbody>
+</table>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0"  class="term">
+  <tbody>
+    <tr>
+      <th colspan="4" >合同后条款：</th>
+    </tr>
+    <tr>
+      <td colspan="4" style="text-align: left"><span t-field="doc.term_purchase"/></td>
+    </tr>
+    <tr>
+      <td width="11%" style="text-align: left; font-size: 14px"></td>
+      <td colspan="2" style="text-align: left; font-size: 14px"></td>
+      <td width="43%" style="text-align: left;font-size: 14px"></td>
+    </tr>
+    <tr>
+      <td style="text-align: left; font-size: 14px">买家签字：</td>
+      <td width="16%" style="text-align: left; font-size: 14px"><div style="position:relative; width:180px; height:180px;"><div><img t-if="doc.source_so_id.x_wkf_state=='56'" t-att-src="'data:image/png;base64,%s' % to_text(doc.company_id.x_tenyale_purchase_image)" width="180px" height="180px"/></div>
+
+<t t-if="doc.source_so_id.x_wkf_state=='56'"><div style="position:absolute; left:30px; top:50px; z-index:100; display: inline"><img  t-att-src="'data:image/png;base64,%s' % to_text(doc.x_studio_field_xeXo8.x_tenyale_sign_image)" width="180px" height="80px"/></div></t>
+
+
+</div></td>
+      <td width="30%" style="text-align: left; font-size: 14px"><t t-foreach="doc.x_studio_field_dl6ZU" t-as="sign"><img  t-att-src="'data:image/png;base64,%s' % to_text(sign.x_tenyale_sign_image)" width="180px" height="80px"/></t></td>
+      <td style="text-align: left;font-size: 14px">卖家签字：</td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+    </t>
+
+</template>
+
+<template id="report_sale_contract">
+    <t t-call="web.html_container">
+        <t t-foreach="docs" t-as="doc">
+            <t t-call="yjzy_extend.report_sale_contract_document" t-lang="doc.partner_id.lang"/>
+        </t>
+    </t>
+</template>
+
+
+</odoo>

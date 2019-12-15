@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="product_category_code.config_parameter_product_category_code_width" model="ir.config_parameter">
+            <field name="key">product_category_level_width</field>
+            <field name="value">{0:3}</field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_sale_period_validity_sale_period_validity,sale_period_validity.sale_period_validity,model_sale_period_validity_sale_period_validity,,1,0,0,0

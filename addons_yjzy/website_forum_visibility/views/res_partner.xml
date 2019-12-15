@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<odoo>
+
+    <record id="view_partner_form" model="ir.ui.view">
+        <field name="name">res.partner.form</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <notebook position="inside">
+                <page string="Forums">
+                    <group>
+                        <div colspan="4">
+                            <p><br/>This partner will be able to see the following Forums.</p>
+                            <field name="allowed_forum_ids" nolabel="1">
+                                <tree default_order="display_name ASC">
+                                    <field name="display_name"/>
+                                </tree>
+                            </field>
+                            <div attrs="{'invisible': [('hcategory_id', '=', False)]}">
+                                <span>Visibility of Forums are managed on <button name="open_partner_category" type="object" string="the Partner's Category" class="oe_link"/></span>
+                            </div>
+                        </div>
+                    </group>
+                </page>
+            </notebook>
+        </field>
+    </record>
+
+</odoo>

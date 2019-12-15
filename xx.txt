@@ -1,0 +1,21 @@
+{'tracking_value_ids': [
+            [0, 0, {'field': 'amount_untaxed', 'field_desc': '未税金额', 'field_type': 'monetary', 'old_value_monetary': False, 'new_value_monetary': False}],
+            [0, 0, {'field': 'type', 'field_desc': '类型', 'field_type': 'selection', 'old_value_char': '', 'new_value_char': '供应商账单'}],
+             [0, 0, {'field': 'state', 'field_desc': '状态', 'field_type': 'selection', 'old_value_char': '', 'new_value_char': '草稿'}],
+             [0, 0, {'field': 'partner_id', 'field_desc': '合作伙伴', 'field_type': 'many2one', 'old_value_integer': 0, 'new_value_integer': 74, 'old_value_char': '', 'new_value_char': '陈万智'}],
+             [0, 0, {'field': 'currency_id', 'field_desc': '币种', 'field_type': 'many2one', 'old_value_integer': 0, 'new_value_integer': 8, 'old_value_char': '', 'new_value_char': 'CNY'}],
+             [0, 0, {'field': 'user_id', 'field_desc': '销售员', 'field_type': 'many2one', 'old_value_integer': 0, 'new_value_integer': 1, 'old_value_char': '', 'new_value_char': 'administrator'}]],
+
+         'author_id': 3,
+          'model': 'account.invoice',
+          'res_id': 438,
+          'body': '',
+          'subject': False,
+           'message_type': 'notification',
+            'parent_id': False,
+            'subtype_id': 2,
+            'partner_ids': [],
+            'email_to': None,
+            'email_cc': None,
+            'partner_cc_ids': False,
+             'attachment_ids': []}

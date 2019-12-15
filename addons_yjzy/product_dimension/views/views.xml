@@ -1,0 +1,63 @@
+<odoo>
+  <data>
+
+        <!-- view common to both template and product -->
+        <record id="inherit_product_normal_form_view" model="ir.ui.view">
+            <field name="name">product.template.stock.property.form.inherit</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_normal_form_view"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//div[@name='volume']//span" position="replace">
+                    <span>cm³</span>
+                </xpath>
+
+              <label for="weight" position="before">
+                    <label for="length"/>
+                    <div class="o_row">
+                        <field name="length"/>
+                        <span>cm</span>
+                    </div>
+                    <label for="width"/>
+                    <div class="o_row">
+                        <field name="width"/>
+                        <span>cm</span>
+                    </div>
+                    <label for="height"/>
+                    <div class="o_row">
+                        <field name="height"/>
+                        <span>cm</span>
+                    </div>
+              </label>
+            </field>
+        </record>
+
+        <!--record model="ir.ui.view" id="inherit_product_variant_easy_edit_view">
+            <field name="name">product.product.form</field>
+            <field name="model">product.product</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="product.product_variant_easy_edit_view"/>
+            <field name="arch" type="xml">
+              <label for="volume" position="before">
+                    <label for="length"/>
+                    <div class="o_row">
+                        <field name="length"/>
+                        <span>cm</span>
+                    </div>
+                    <label for="width"/>
+                    <div class="o_row">
+                        <field name="width"/>
+                        <span>cm</span>
+                    </div>
+                    <label for="height"/>
+                    <div class="o_row">
+                        <field name="height"/>
+                        <span>cm</span>
+                    </div>
+              </label>
+            </field>
+        </record-->
+
+
+  </data>
+</odoo>

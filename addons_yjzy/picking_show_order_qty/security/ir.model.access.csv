@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_picking_show_order_qty_picking_show_order_qty,picking_show_order_qty.picking_show_order_qty,model_picking_show_order_qty_picking_show_order_qty,,1,0,0,0

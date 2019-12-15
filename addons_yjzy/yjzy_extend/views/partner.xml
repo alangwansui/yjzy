@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- partner -->
+        <record model="ir.ui.view" id="exchange_inherit_view_partner_form">
+            <field name="name">res.partner.form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+
+                <sheet position="before">
+                    <header>
+                        <button name="generate_code"  type="object"  string="生成编码"/>
+                    </header>
+                </sheet>
+
+
+                <field name="parent_id" position="before">
+                    <field name="code"/>
+                </field>
+
+
+                <field name="lang" position="after">
+                    <field name="fax"/>
+                    <field name="wechat"/>
+                    <field name="skype"/>
+                    <field name="qq"/>
+                    <field name="state"/>
+                    <field name="is_inter_partner"/>
+                    <field name="jituan_name"/>
+                </field>
+
+                <field name="vat" position="before">
+                    <field name="level"/>
+                    <field name="full_name"/>
+                </field>
+
+                <field name="property_payment_term_id" position="attributes">
+                    <attribute name="domain">[('type','=','sale')]</attribute>
+                </field>
+                <field name="property_supplier_payment_term_id" position="attributes">
+                    <attribute name="domain">[('type','=','purchase')]</attribute>
+                </field>
+
+                <field name="property_supplier_payment_term_id" position="after">
+                    <field name="auto_yfsqd"/>
+                </field>
+
+
+                <notebook position="inside">
+                    <page string="交单要求" name="demand">
+                        <group>
+                            <field name="invoice_title"/>
+                            <field name="wharf_src_id"/>
+                            <field name="wharf_dest_id"/>
+                            <field name="notice_man"/>
+                            <field name="delivery_man"/>
+                        </group>
+                        <group>
+                            <field name="exchange_type_ids"/>
+                            <!-- field name="mark_ids" widget="many2many_tags"/-->
+                            <field name="mark_comb_ids"/>
+                            <field name="demand_info"/>
+                        </group>
+                    </page>
+                    <page string="销售条款">
+                        <field name="term_description"/>
+                    </page>
+                    <page string="采购条款">
+                        <field name="term_purchase"/>
+                    </page>
+                </notebook>
+                <field name="user_id" position="after">
+                    <field name="devloper_id"/>
+                    <field name="assistant_id"/>
+                    <field name="product_manager_id"/>
+                </field>
+
+                <xpath expr="//field[@name='child_ids']/kanban/templates//field[@name='name']" position="before">
+                    <span>优先级<field name="sequence"/></span>
+                    <span>
+                        <field name="type"/>:
+                    </span>
+                </xpath>
+                <xpath expr="//field[@name='child_ids']//form//field[@name='comment']" position="after">
+                    <field name="sequence"/>
+                </xpath>
+
+
+
+                <xpath expr="//group[@name='purchase']" position="inside">
+                    <field name="advance_currency_id" invisible="1"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="amount_purchase_advance_org"/>
+                    <field name="amount_purchase_advance"/>
+
+                </xpath>
+
+
+                <group name="purchase" position="inside">
+                    <field name="need_purchase_fandian"/>
+                    <field name="purchase_fandian_ratio" attrs="{'invisible': [('need_purchase_fandian','!=',True)]}"/>
+                    <field name="purchase_fandian_partner_id" attrs="{'invisible': [('need_purchase_fandian','!=',True)]}"/>
+                </group>
+
+
+
+
+            </field>
+        </record>
+        
+        
+
+
+
+    </data>
+</odoo>

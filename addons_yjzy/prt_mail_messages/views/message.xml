@@ -1,0 +1,286 @@
+<?xml version="1.0"?>
+<odoo>
+
+
+    <!-- old message from -->
+    <record id="inherit_view_message_form" model="ir.ui.view">
+        <field name="name">inherit.mail.message.form</field>
+        <field name="model">mail.message</field>
+        <field name="inherit_id" ref="mail.view_message_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[3]/group/group[1]/field[@name='partner_ids']" position="after">
+                <field name="partner_cc_ids" widget="many2many_tags"/>
+                <field name="partner_bcc_ids" widget="many2many_tags"/>
+            </xpath>
+        </field>
+    </record>
+
+
+    <!--################
+        # Mail.Message #
+        ################-->
+    <!--## Search ##-->
+    <record id="prt_mail_message_search" model="ir.ui.view">
+        <field name="name">prt.mail.message.search</field>
+        <field name="model">mail.message</field>
+        <field name="inherit_id" ref="mail.view_message_search"/>
+        <field name="arch" type="xml">
+            <filter name="filter_has_mentions" position="before">
+                <filter string="Emails"
+                        name="filter_type_email"
+                        domain="[('message_type', '=', 'email')]"/>
+                <filter string="Comments"
+                        name="filter_type_comment"
+                        domain="[('message_type', '=', 'comment')]"/>
+                <separator/>
+                <filter string="Sent by Me"
+                        name="filter_sent_by_me"
+                        domain="[('author_id.user_ids', 'in', [uid])]"/>
+                <group string="Group By">
+                    <filter string="Author" domain="[]" context="{'group_by':'author_id'}"/>
+                    <separator/>
+                    <filter string="Day" domain="[]" context="{'group_by':'date:day'}"/>
+                    <filter string="Week" domain="[]" context="{'group_by':'date:week'}"/>
+                    <filter string="Month" domain="[]" context="{'group_by':'date'}"/>
+                </group>
+            </filter>
+            <filter name="message_needaction" position="after">
+                <filter string="Starred"
+                        name="filter_starred"
+                        domain="[('starred', '=', True)]"/>
+            </filter>
+            <filter name="message_needaction" position="attributes">
+                <attribute name="string">Unread</attribute>
+            </filter>
+            <filter name="filter_has_mentions" position="attributes">
+                <attribute name="string">Directly to Me</attribute>
+            </filter>
+        </field>
+    </record>
+
+    <!--## Tree ##-->
+    <record id="prt_mail_message_tree" model="ir.ui.view">
+        <field name="name">prt.mail.message.tree</field>
+        <field name="model">mail.message</field>
+        <field name="arch" type="xml">
+            <tree string="Messages" decoration-bf="needaction==True" decoration-danger="is_error==True" default_order="date desc, id desc" create='false' edit='false'>
+                <field name="date"/>
+                <button name="dummy" type="object" class="oe_stat_button" icon="fa-star" attrs="{'invisible': [('starred', '=', False)]}"/>
+                <button readonly="1" name="dummy" type="object" class="oe_inline oe_stat_button" icon="fa-paperclip"
+                        attrs="{'invisible':[('attachment_count', '=', 0)]}"/>
+                <field name="subject_display" string="主题"/>
+                <field name="author_display" string="作者"/>
+                <field name="author_allowed_id" invisible="1"/>
+                <field name="partner_cc_ids" widget="many2many_tags"/>
+                <field name="needaction" invisible="1"/>
+                <field name="attachment_count" invisible="1"/>
+                <field name="starred" invisible="1"/>
+                <field name="is_error" invisible="1"/>
+                <field name="compose_id"/>
+                <field name="force_notify_email"/>
+                <field name="process_type"/>
+                <field name="had_replied"/>
+            </tree>
+        </field>
+    </record>
+
+    <!--## Form ##-->
+    <record id="prt_mail_message_form" model="ir.ui.view">
+        <field name="name">prt.mail.message.form</field>
+        <field name="model">mail.message</field>
+        <field name="arch" type="xml">
+            <form string="Message" create='false' edit='false'>
+                <div attrs="{'invisible':[('is_error', '!=', True)]}" name="pro" colspan="2" class="oe_form_box_info oe_text_center" style="color:red;">
+                    <p>Error while sending message. Please check error log under "Email Messages" tab</p>
+                </div>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="reply" type="object" class="oe_stat_button" icon="fa-reply" string="回复"
+                                context="{'wizard_mode': False,'default_force_notify_email': 1}"
+                                help="Post new message to record. Record followers will be notified!"/>
+
+                        <button name="reply" type="object" class="oe_stat_button" icon="fa-quote-left" string="回复全部"
+                                context="{'wizard_mode': 'quote','default_force_notify_email': 1}"
+                                help="Post new message to record. Original message text will be qouted. Record followers will be notified!"/>
+
+                        <button name="reply" type="object" class="oe_stat_button" icon="fa-copy" string="转发"
+                                context="{'wizard_mode': 'forward','default_force_notify_email': 1}"
+                                help="Copy message to other record. Original message text will be qouted and kept. Followers of the other record will be notified!"/>
+
+                        <button name="move" type="object" class="oe_stat_button" icon="fa-arrow-right" string="邮件转移"
+                                help="Move message from current to other record" invisible="0"/>
+
+                        <button name="thread_messages" type="object" class="oe_stat_button"
+                                icon="fa-envelope" attrs="{'invisible': [('thread_messages_count', '&lt;', 2)]}">
+                            <field name="thread_messages_count" widget="statinfo" string="In thread"/>
+                        </button>
+                        <button string="标记已读" type="object" name="set_message_done"
+                                class="oe_stat_button"
+                                icon="fa-file" attrs="{'invisible': [('needaction', '=', False)]}"/>
+                        <button string="标记未读" type="object" name="mark_as_unread"
+                                class="oe_stat_button"
+                                icon="fa-check" attrs="{'invisible': [('needaction', '=', True)]}"/>
+                        <button name="toggle_message_starred" type="object" class="oe_stat_button"
+                                icon="fa-check" attrs="{'invisible': [('starred', '=', True)]}"
+                                string="标星"/>
+                        <button name="toggle_message_starred" type="object" class="oe_stat_button"
+                                icon="fa-star" attrs="{'invisible': [('starred', '=', False)]}"
+                                string="取消标星"/>
+                        <button name="toggle_active" type="object"  class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button"
+                                options='{"terminology": "archive"}'/>
+                        </button>
+
+                    </div>
+                    <field name="author_avatar" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <h3>
+                            <field name="subject"/>
+                        </h3>
+                    </div>
+                    <group name="base">
+                        <group>
+                            <field name="email_from"/>
+                            <field name="email_to"/>
+                            <field name="manual_to"/>
+
+                            <field name="email_cc"/>
+                            <field name="manual_cc"/>
+                            <field name="date"/>
+                        </group>
+                        <group>
+                            <field name="author_id" string="发件人"/>
+                            <field name="partner_ids" widget="many2many_tags_email" context="{'show_email': 1}"/>
+                            <field name="partner_cc_ids" widget="many2many_tags_email" context="{'show_email': 1}"/>
+                            <field name="partner_bcc_ids" widget="many2many_tags_email" context="{'show_email': 1}"/>
+                        </group>
+                    </group>
+
+
+                    <notebook>
+                        <page name="body" string="内容">
+                            <div style="margin-left:10px">
+                                <br/>
+                                <field name="body" nolabel="1"/>
+                            </div>
+                        </page>
+                        <page string="其他信息" groups="base.group_no_one">
+
+                            <group>
+                                <field name="needaction"/>
+                                <field name="starred"/>
+                                <field name="author_allowed_id" attrs="{'invisible':[('author_allowed_id', '=', False)]}"/>
+                                <field name="email_from" attrs="{'invisible':[('author_allowed_id', '!=', False)]}"/>
+                                <field name="ref_partner_ids" widget="many2many_tags" attrs="{'invisible':[('ref_partner_count', '=', 0)]}"/>
+                                <field name="ref_partner_count" invisible="1"/>
+                                <field name="partner_count" invisible="1"/>
+                                <field name="partner_allowed_ids" attrs="{'invisible':[('partner_count', '=', 0)]}" widget="many2many_tags"/>
+
+                            </group>
+                            <group name="technical">
+                                <field name="alias_id"/>
+                                <field name="alias_user_id"/>
+                                <field name="message_id"/>
+                                <field name="record_ref"/>
+                                <field name="parent_id"/>
+                                <field name="message_type"/>
+                                <field name="subtype_id"/>
+                                <field name="compose_id"/>
+                                <field name="fetchmail_server_id"/>
+                                <field name="force_notify_email"/>
+                                <field name="channel_ids" widget="many2many_tags"/>
+                                <field name="process_type"/>
+                            </group>
+
+                        </page>
+                        <page name="attachments" string="Attachments" attrs="{'invisible':[('attachment_count', '=', 0)]}">
+                            <sheet>
+                                <field name="attachment_count" invisible="1"/>
+                                <field name="attachment_allowed_ids" widget="many2many_binary"/>
+                            </sheet>
+                        </page>
+                        <page name="emails" string="Email Messages" attrs="{'invisible':[('is_error', '!=', True)]}">
+                            <sheet>
+                                <field name="is_error" invisible="1"/>
+                                <field name="mail_mail_ids">
+                                    <tree name="email_tree" create="false" edit="false">
+                                        <field name="state"/>
+                                        <field name="mail_server_id"/>
+                                        <field name="failure_reason"/>
+                                    </tree>
+                                </field>
+                            </sheet>
+                        </page>
+
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!--## Action ##-->
+    <record id="action_prt_mail_messages" model="ir.actions.act_window">
+        <field name="name">消息</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">mail.message</field>
+        <field name="domain">[('message_type', '!=', 'notification')]</field>
+        <field name="context">{}</field>
+        <!--field name="context">{'check_messages_access': True}</field-->
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+          (0, 0, {'view_mode': 'tree', 'view_id': ref('prt_mail_message_tree')}),
+          (0, 0, {'view_mode': 'form', 'view_id': ref('prt_mail_message_form')})]"/>
+    </record>
+
+
+    <!--#######################
+        # Message Move Wizard #
+        #######################-->
+
+    <!-- ## Form view ## -->
+    <record model="ir.ui.view" id="prt_message_move_form">
+        <field name="name">prt.message.move.form</field>
+        <field name="model">prt.message.move.wiz</field>
+        <field name="arch" type="xml">
+            <form create='false' edit='false' string="Move messages">
+                <div name="pro" colspan="2" class="oe_form_box_info oe_text_center">
+                    <p>
+                        Please purchase <a target="_blank" href="https://apps.odoo.com/apps/modules/11.0/prt_mail_messages_pro">Pro Version</a> to use
+                        this feature
+                    </p>
+                </div>
+                <group>
+                    <field name="model_to"/>
+                    <field name="notify"/>
+                    <field name="lead_delete"/>
+                    <field name="opp_delete" attrs="{'invisible':[('lead_delete', '=', False)]}"/>
+                </group>
+                <footer>
+                    <button name="message_move" string="Move" special="cancel" class="oe_link" invisible="1"/>
+                    <button name="cancel" string="Cancel" special="cancel" class="oe_link"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- "More" menu -->
+    <act_window id="prt_contact_export"
+                name="Move message"
+                src_model="mail.message"
+                res_model="prt.message.move.wiz"
+                view_mode="form"
+                target="new"
+                key2="client_action_multi"/>
+
+    <menuitem id="prt_messages_messages"
+              name="消息"
+              action="action_prt_mail_messages"
+              parent="prt_messages_root"
+              groups="base.group_system"
+              sequence="99"/>
+
+
+
+
+</odoo>

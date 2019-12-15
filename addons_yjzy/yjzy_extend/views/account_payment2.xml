@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+    <record model="ir.ui.view" id="view_account_payment_yjzy_tree">
+        <field name="name">account.payment.tree</field>
+        <field name="model">yjzy.account.payment</field>
+        <field name="priority" eval="999"/>
+        <field name="arch" type="xml">
+            <tree string="新收付款视图">
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_account_payment_yjzy_form" model="ir.ui.view">
+        <field name="name">account.payment.form</field>
+        <field name="model">yjzy.account.payment</field>
+        <field name="priority" eval="999"/>
+        <field name="arch" type="xml">
+            <form string="新收付款视图">
+                <header>
+                    <button name="create_lines_by_sheets" class="oe_highlight" string="根据报告创建明细行" type="object"/>
+                    <button name="act_confirm" class="oe_highlight" states="draft" string="Confirm" type="object"/>
+                    <button name="action_draft" class="oe_highlight" states="cancelled" string="Set To Draft" type="object"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <field name="id" invisible="1"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group col="4">
+                        <group>
+                            <field name="sfk_type"/>
+                            <field name="payment_type"/>
+                            <field name="partner_id"/>
+                            <label for="amount"/>
+                            <div name="amount_div" class="o_row">
+                                <field name="amount" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                <field name="currency_id" options="{'no_create': True, 'no_open': True}" groups="base.group_multi_currency"
+                                       attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            </div>
+                            <field name="journal_id" widget="selection" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="destination_journal_id" widget="selection"
+                                   attrs="{'required': [('payment_type', '=', 'transfer')], 'invisible': [('payment_type', '!=', 'transfer')], 'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="hide_payment_method" invisible="1"/>
+                            <field name="payment_method_id" string=" " widget="radio"
+                                   attrs="{'invisible': [('hide_payment_method', '=', True)], 'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="payment_method_code" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="am_id"/>
+                            <field name="payment_date" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="communication"
+                                   attrs="{'invisible': [('state', '!=', 'draft'), ('communication', '=', False)], 'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="expense_sheet_ids" widget="many2many_tags" domain="[('state', '=', 'approve')]"/>
+                        </group>
+                        <group>
+                            <field name="be_renling"/>
+                            <field name="is_renling"/>
+                            <field name="need_split"/>
+                            <field name="yjzy_payment_id" domain="[('sfk_type','=','rcskd')]"/>
+                            <field name="yjzy_payment_currency_id"/>
+                            <field name="yjzy_payment_balance"/>
+                        </group>
+                        <group>
+                            <field name="header_account_id"/>
+                            <field name="polar"/>
+                            <field name="currency_id"/>
+                            <field name="balance"/>
+                        </group>
+                    </group>
+                    <notebook>
+
+                        <page string="明细内容">
+                            <field name="payment_lines" context="{'default_currency_id': currency_id, 'payment_type': payment_type}">
+                                <tree editable="top">
+                                    <field name="payment_type"/>
+                                    <field name="product_id"/>
+                                    <field name="amount" sum="Total"/>
+                                    <field name="account_id"/>
+                                    <field name="polar"/>
+                                    <field name="currency_id"/>
+                                    <field name="sheet_id"/>
+                                    <field name="expense_id"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="相关分录">
+                            <field name="am_id"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+
+    <record model="ir.actions.act_window" id="action_account_payment_yjzy_rcfksqd">
+        <field name="name">日常认领单</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">yjzy.account.payment</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('payment_type', '=', 'outbound'),('be_renling','=',True),('sfk_type','=','rcfksqd')]</field>
+        <field name="context">{'default_sfk_type': 'rcfksqd', 'default_payment_type': 'outbound', 'default_be_renling': 1}</field>
+    </record>
+
+    <record id="action_account_payment_yjzy_rcfksqd_tree" model="ir.actions.act_window.view">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="view_account_payment_yjzy_tree"/>
+        <field name="act_window_id" ref="action_account_payment_yjzy_rcfksqd"/>
+    </record>
+
+    <record id="action_account_payment_yjzy_rcfksqd_form" model="ir.actions.act_window.view">
+        <field name="sequence" eval="2"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_account_payment_yjzy_form"/>
+        <field name="act_window_id" ref="action_account_payment_yjzy_rcfksqd"/>
+    </record>
+
+    <menuitem id="menu_account_payment_yjzy_ycrld" name="日常认领单" parent="menu_yjzy_payment_root" action="action_account_payment_yjzy_rcfksqd"/>
+
+
+    <record model="ir.actions.act_window" id="action_account_payment_yjzy_skd">
+        <field name="name">收款单</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">yjzy.account.payment</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('payment_type','=','inbound'),('be_renling','=',False), ('sfk_type','=','skd')]</field>
+        <field name="context">{'default_sfk_type': 'skd', 'default_payment_type': 'inbound', 'default_be_renling': 0}</field>
+    </record>
+    <menuitem id="menu_account_payment_yjzy_skd" name="收款单" parent="menu_yjzy_payment_root" action="action_account_payment_yjzy_skd"/>
+
+    <record model="ir.actions.act_window" id="action_account_payment_yjzy_rcsfrld">
+        <field name="name">普通收款认领单</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">yjzy.account.payment</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('payment_type','=','inbound'),('be_renling','=',True), ('sfk_type','=','rcsfrld')]</field>
+        <field name="context">{'default_sfk_type': 'rcsfrld', 'default_payment_type': 'inbound', 'default_be_renling': 1}</field>
+    </record>
+    <menuitem id="menu_account_payment_yjzy_rcsfrld" name="普通收款认领单" parent="menu_yjzy_payment_root" action="action_account_payment_yjzy_rcsfrld"/>
+
+
+    <record model="ir.actions.act_window" id="action_account_payment_yjzy_nbzz">
+        <field name="name">内部转账</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">yjzy.account.payment</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('payment_type','=','transfer'),('be_renling','=',False),('sfk_type','=','nbzz')]</field>
+        <field name="context">{'default_sfk_type': 'nbzz', 'default_payment_type': 'transfer', 'default_be_renling': 0}</field>
+    </record>
+    <menuitem id="menu_account_payment_yjzy_nbzz" name="内部转账" parent="menu_yjzy_payment_root" action="action_account_payment_yjzy_nbzz"/>
+
+</odoo>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_transport_bill_vendor_tree" model="ir.ui.view">
+            <field name="name">transport.bill.vendor.tree</field>
+            <field name="model">transport.bill.vendor</field>
+            <field name="arch" type="xml">
+                <tree string="供应商发运单">
+                    <field name="tb_id"/>
+                    <field name="partner_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_transport_bill_vendor_form" model="ir.ui.view">
+            <field name="name">transport.bill.vendor.form</field>
+            <field name="model">transport.bill.vendor</field>
+            <field name="arch" type="xml">
+                <form string="供应商发运单">
+                    <group>
+                        <field name="tb_id"/>
+                        <field name="partner_id"/>
+                        <field name="contact_id" domain="[('parent_id','=', partner_id)]"/>
+                        <field name="delivery_type"/>
+                        <field name="delivery_note"/>
+                        <field name="delivery_type_c_info"/>
+                    </group>
+                    <notebook>
+                        <page string="明细">
+                            <field name="line_ids">
+                                <tree>
+                                    <field name="product_id"/>
+                                    <field name="supplier_code"/>
+                                    <field name="default_code"/>
+                                    <field name="po_contract_code"/>
+                                    <field name="qty"/>
+                                    <field name="max_qty"/>
+                                    <field name="gross_weight"/>
+                                    <field name="net_weight"/>
+                                    <field name="volume"/>
+                                    <field name="po_amount"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="act_open_transport_bill_vendor_view">
+            <field name="name">供应商发运单</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">transport.bill.vendor</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+        </record>
+
+
+        <menuitem id="menu_transport_bill_vendor" name="供应商发运单"
+                   parent="sale.sale_order_menu"
+                  sequence="21"
+                  action="act_open_transport_bill_vendor_view"/>
+
+
+    </data>
+</odoo>

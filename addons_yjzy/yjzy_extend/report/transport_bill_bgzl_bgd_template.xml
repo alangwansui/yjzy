@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<template id="report_transport_bill_bgzl_bgd_document">
+     <t t-call="yjzy_extend.no_header_external_layout">
+        <t t-set="doc" t-value="doc.with_context({'lang':doc.partner_id.lang})" />
+<style>
+		  body{
+		  	font-family:Arial,Helvetica,sans-serif,simsun;
+		    font-size: 12px;
+	  }
+	.table1{
+		font-size: 12px;
+		border-collapse: collapse;
+		border-top:solid 1px;
+		border-left:solid 1px;
+		border-right:solid 1px;
+		
+		
+	}
+	.table1 td{
+		border-left: solid 1px;
+		border-collapse: collapse;
+		height: 20px;
+		padding: 2px;
+		
+	}
+	.table2{
+		font-size: 12px;
+		border-collapse: collapse;
+        border-top:solid 1px;
+		border-left:solid 1px;
+		border-right:solid 1px;
+	}
+		.table2 th{
+		border-bottom: solid 1px;
+		padding: 2px;
+		border-collapse: collapse;
+		height: 20px;
+	}
+	.table2 td{
+	
+		padding: 2px;
+		border-collapse: collapse;
+		height: 20px;
+	}
+	.table3{
+		font-size: 12px;
+		border-collapse: collapse;
+		border-bottom:solid 1px;
+		border-left:solid 1px;
+		border-right:solid 1px;		
+	}
+	.table3 td{
+		padding: 2px;
+		border-left: solid 1px;
+		border-collapse: collapse;
+		height: 20px;
+	}
+</style>
+
+
+<t t-foreach="doc.mark_ids" t-as="mark">
+		  <span t-esc="mark.name"/>
+</t>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" >
+  <tbody>
+    <tr>
+      <td style="text-align: center;font-size: 16px; font-weight: bold">中华人民共和国海关出口货物报关单</td>
+    </tr>
+  </tbody>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" style="font-size: 12px">
+  <tbody>
+    <tr>
+      <td width="20%" style="text-align: right">预录入编号： </td>
+      <td style="width: 50%"></td>
+      <td style="width: 10%">海关编号：</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table1">
+  <tbody>
+    <tr>
+      <td width="35%" >境内发货人</td>
+      <td width="15%" >出境关别</td>
+      <td width="20%" >出口日期</td>
+      <td width="15%" >申报日期</td>
+	  <td width="15%" >备案号</td>
+    </tr>
+    <tr>
+      <td style="border-top: 0px "> <span t-esc="doc.with_context({'lang':'zh_CN'}).company_id.full_name"/> <span t-esc="doc.company_id.vat"/></td>
+      <td style="border-top: 0px "> <span t-esc="doc.wharf_src_id.name"/></td>
+      <td style="border-top: 0px "></td>
+      <td style="border-top: 0px "></td>
+	  <td></td>
+    </tr>
+  </tbody>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table1">
+  <tbody>
+    <tr>
+      <td width="35%">境外收货人</td>
+      <td width="10%">运输方式</td>
+      <td width="22%">运输工具名称及航次号</td>
+      <td width="38%">提运单号</td>
+	  
+    </tr>
+    <tr>
+      <td><span t-esc="doc.partner_id.name"/></td>
+      <td><span t-esc="doc.trans_type"/></td>
+      <td></td>
+	 <td></td>
+      
+    </tr>
+  </tbody>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table1">
+  <tbody>
+    <tr>
+      <td width="35%">生产销售单位</td>
+      <td width="15%">监管方式</td>
+      <td width="20%">征免性质</td>
+      <td width="30%">许可证号</td>
+	  
+    </tr>
+    <tr>
+      <td> <span t-esc="doc.with_context({'lang':'zh_CN'}).company_id.full_name"/> <span t-esc="doc.company_id.vat"/></td>
+      <td> G.T. </td>
+      <td></td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table1">
+  <tbody>
+    <tr>
+      <td width="27%">合同协议号</td>
+      <td width="13%">贸易国（地区）</td>
+      <td width="30%">运抵国（地区）</td>
+      <td width="30%">目的港</td>
+    </tr>
+    <tr>
+      <td> <span t-esc="doc.ref"/></td>
+      <td> <span t-esc="doc.partner_id.country_id.name"/></td>
+      <td> <span t-esc="doc.partner_shipping_id.country_id.name"/></td>
+      <td> <span t-esc="doc.wharf_dest_id.name"/>-<span t-esc="doc.wharf_dest_id.country_id.name"/></td>
+    </tr>
+  </tbody>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table1">
+  <tbody>
+    <tr>
+      <td width="27%">包装种类</td>
+      <td width="5%">件数</td>
+      <td width="8%">毛重（公斤）</td>
+      <td width="10%">净重（公斤）</td>
+      <td width="20%">成交方式</td>
+      <td width="12%">运费</td>
+      <td width="12%">保费</td>
+      <td width="6%">杂费</td>
+    </tr>
+    <tr>
+      <td> <span t-esc="doc.pallet_type"/></td>
+      <td><t t-esc="sum(x.pack_qty for x in doc.pack_line_ids)"/></td>
+      <td><t t-esc="sum(x.gross_weight for x in doc.pack_line_ids)"/></td>
+      <td><t t-esc="sum(x.net_weight for x in doc.pack_line_ids)"/></td>
+      <td><span t-esc="doc.incoterm.code"/> </td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table1">
+  <tbody>
+    <tr>
+      <td>随附单证及编号</td>
+    </tr>
+    <tr>
+      <td style="height: 50px"><t t-foreach="doc.mark_ids" t-as="mark">
+		  <span t-esc="mark.name"/>
+		  </t>
+		  </td>
+    </tr>
+  </tbody>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table2">
+  <tbody>
+    <tr>
+      <th>项号</th>
+      <th >商品编号</th>
+      <th >商品名称、规格型号</th>
+      <th colspan="2">数量及单位</th>
+	  <th >最终目的国（地区）</th>
+      <th >原产国（地区）</th>
+      <th >境内货源地</th>
+      <th >单价</th>
+      <th >总价</th>
+      <th >币制</th>
+      <th >杂费</th>
+    </tr>
+	  <t t-foreach="doc.pack_line_ids" t-as="line">
+    <tr>
+      <td  width="5%"><t t-esc="line_index+1"/></td>
+      <td width="10%"><span t-esc="line.hs_code"/></td>
+      <td width="15%"><span t-esc="line.hs_name"/></td>
+      <td width="5%"><span t-esc="line.qty"/></td>
+      <td width="5%">PCS/副</td>
+      <td width="11%"><span t-esc="doc.partner_shipping_id.country_id.name"/></td>
+      <td width="10%"><span t-esc="line.source_country_id.name"/></td>
+      <td width="8%"><span t-esc="line.source_area"/></td>
+      <td width="8%"><span t-esc="line.ciq_amount / line.qty" t-options='{"widget": "float", "precision": 2}'/></td>
+      <td width="8%"><span t-esc="line.ciq_amount"/></td>
+      <td width="7%">USD</td>
+	  <td width="8%"></td>
+    </tr>
+    <tr>
+      <td colspan="12" style="border-bottom: 1px solid"><span t-esc="line.keyword"/></td>
+    </tr>
+		  </t>
+  </tbody>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table3">
+  <tbody>
+    <tr>
+      <td width="30%">特殊关系确认：否</td>
+      <td width="20%">价格影响确认：否</td>
+      <td width="20%">支付特许权使用费确认：否</td>
+      <td width="30%">自报自缴：</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table3">
+  <tbody>
+    <tr>
+      <td width="5%">申报人员</td>
+      <td width="10%">申报人员证号</td>
+      <td width="10%">电话</td>
+      <td width="25%">兹声明以上内容承担如实申报、依法纳税之法律责任</td>
+      <td width="30%">海关批注及签章</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>申报单位</td>
+      <td></td>
+      <td></td>
+      <td> 申报单位（签章）</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+    </t>
+</template>
+<template id="report_transport_bill_bgzl_bgd">
+    <t t-call="web.html_container">
+        <t t-foreach="docs" t-as="doc">
+            <t t-call="yjzy_extend.report_transport_bill_bgzl_bgd_document" t-lang="doc.partner_id.lang"/>
+        </t>
+    </t>
+</template>
+</odoo>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record model="ir.ui.view" id="inherit_view_users_form">
+        <field name="name">res.users.form</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+            <field name="partner_id" position="after">
+                <field name="salesman_code"/>
+                <field name="assistant_id"/>
+                <field name="product_manager_id"/>
+                <field name="leader_user_id"/>
+            </field>
+            <notebook position="inside">
+                <page string="其他">
+                    <group>
+                        <field name="sign_image"/>
+
+                    </group>
+                </page>
+            </notebook>
+        </field>
+    </record>
+
+
+</odoo>

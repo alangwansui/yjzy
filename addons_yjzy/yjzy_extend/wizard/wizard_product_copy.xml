@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="wizard_product_copy_form" model="ir.ui.view">
+            <field name="name">wizard.product.copy.from</field>
+            <field name="model">wizard.product.copy</field>
+            <field name="arch" type="xml">
+                <form string="产品复制向导">
+                    <group>
+                        <field name="product_id" readonly="1"/>
+                    </group>
+                    <group>
+                    </group>
+                    <field name="line_ids">
+                        <tree editable="top">
+                            <field name="attribute_group_id" readonly="1"/>
+                            <field name="attribute_id"/>
+                            <field name="value_id" domain="[('attribute_id', '=', attribute_id)]"
+                                    context="{'default_attribute_id': attribute_id}"/>
+                        </tree>
+                    </field>
+
+                    <footer>
+                        <button name="apply" class="oe_highlight" type='object' string="确认"/>
+                        <button special="cancel" class="oe_highlight" string="取消"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+
+
+
+    </data>
+</odoo>

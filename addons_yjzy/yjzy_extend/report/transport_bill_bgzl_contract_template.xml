@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<template id="report_transport_bill_bgzl_contract_document">
+        <t t-call="yjzy_extend.no_header_external_layout">
+            <t t-set="doc" t-value="doc.with_context({'lang':doc.partner_id.lang})"/>
+<style>
+	 body{
+		  	font-family:Arial,Helvetica,sans-serif,simsun;
+		    font-size: 12px;
+	  }
+	.title{
+		text-align: center
+	}
+	.main{
+	     
+	    font-size: 12px;
+	}
+	.main td{
+		height:20px;
+		padding: 3px;
+	}
+	.tablelist{
+		text-align:center;
+		font-size:12px;
+		width:100%;	
+		border-collapse: collapse;
+	}
+	.tablelist th{
+		padding: 3px;
+		text-align:center;
+		font-size: 14px;
+	    font-weight: bold;
+		border:solid 1px ;
+		height: 25px;		
+	}
+	.tablelist td{
+		padding: 3px;
+		height: 20px;
+	}
+	.buttom{
+		
+	}
+	.buttom td{height: 20px
+		
+	}
+</style>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" style="text-align: center" >
+  <tbody>
+    <tr>
+      <td style="height: 30px"><span style="font-size: 18px"><span t-esc="doc.company_id.full_name"/></span></td>
+    </tr>
+    <tr>
+	  <td style="height: 50px"><span style="font-size: 20px;font-weight: bolder">SALES CONTRACT</span></td>
+    </tr>
+  </tbody>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="main">
+  <tbody>
+    <tr>
+      <td width="60%">ADD: <span t-esc="doc.company_id.full_name"/></td>
+      <td width="10%" style="text-align: right">NO:</td>
+      <td width="30%" ><span t-esc="doc.ref"/></td>
+    </tr>
+    <tr>
+      <td rowspan="2"><div style="width:70%"><span t-esc="doc.company_id.street"/> <span t-esc="doc.company_id.street2"/> <span t-esc="doc.company_id.city"/> <span t-esc="doc.company_id.state_id.name"/> <span t-esc="doc.company_id.country_id.name"/></div></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td style="text-align: right">DATE:</td>
+      <td><span t-esc="doc.date"/></td>
+    </tr>
+    <tr>
+      <td>Fax: <span t-esc="doc.company_id.fax"/></td>
+      <td></td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+<table width="60%" border="0" cellspacing="0" cellpadding="0" class="main">
+  <tbody>
+    <tr>
+      <td width="20%">To Messer. </td>
+      <td width="80%"><span t-esc="doc.partner_id.name"/></td>
+    </tr>
+    <tr>
+      <td ></td>
+      <td><span t-esc="doc.partner_shipping_id.street"/> <span t-esc="doc.partner_shipping_id.street2"/> <span t-esc="doc.partner_shipping_id.city"/> <span t-esc="doc.partner_shipping_id.state_id.name"/> <span t-esc="doc.partner_shipping_id.country_id.name"/></td>
+    </tr>
+  </tbody>
+</table>
+<div>We hereby confirm having sold to you the following</div>
+<div>goods on terms and conditions as specified below:</div>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablelist">
+  <tbody>
+    <tr>
+      <th>Article No.</th>
+      <th>Descriptions of goods</th>
+      <th colspan="2">Quantity</th>
+      <th>Unit Price</th>
+      <th colspan="2">Amount</th>
+    </tr>
+    <tr>
+      <td style="border-right: solid 1px;border-left: solid 1px;"></td>
+      <td style="border-right: solid 1px"></td>
+      <td></td>
+      <td style="border-right: solid 1px"></td>
+      <td style="border-right: solid 1px"></td>
+      <td colspan="2" style="border-right: solid 1px"><span t-esc="doc.incoterm.code"/> <span t-esc="doc.wharf_src_id.name"/></td>
+    </tr>
+
+      <h1>XXXXXXXXX</h1>
+  <table>
+    <t t-set="res" t-value="doc.tongji_tbl_hsname()"/>
+    <t t-foreach="res" t-as="hs">
+        <tr>
+            <td style="width: 20%;border-right: solid 0.5px;border-left: solid 0.5px;">
+                <t t-esc="hs_index+1"/>
+            </td>
+            <td style="width: 35%;border-right: solid 0.5px;text-align: left">
+                <t t-esc="hs.name"/>
+            </td>
+            <td style="width: 10%; text-align: right;">
+                <t t-esc="res[hs]"/>
+            </td>
+            <td style="width: 5%; border-right: solid 0.5px">PCS</td>
+            <td style="width: 15%;border-right: solid 0.5px; text-align: right"></td>
+            <td style="width: 5%">USD</td>
+            <td style="width: 10%;border-right: solid 0.5px;text-align: left"></td>
+        </tr>
+    </t>
+
+    </table>
+      <h1>XXXXXXXXX2</h1>
+
+	 <t t-foreach="doc.pack_line_ids" t-as="line">
+    <tr>
+      <td style="width: 20%;border-right: solid 1px;border-left: solid 1px;"> <t t-esc="line_index+1"/></td>
+      <td style="width: 35%;border-right: solid 1px;text-align: left"><span t-esc="line.hs_name"/></td>
+      <td style="width: 10%; text-align: right;"><span t-esc="line.qty"/></td>
+      <td style="width: 5%; border-right: solid 1px">PCS</td>
+      <td style="width: 15%;border-right: solid 1px; text-align: right"><span t-esc="line.ciq_amount / line.qty" t-options='{"widget": "float", "precision": 2}'/></td>
+      <td style="width: 5%">USD</td>
+      <td style="width: 10%;border-right: solid 1px;text-align: left"><span t-esc="line.ciq_amount"/></td>
+    </tr>
+	  </t>
+    <tr>
+      <td style="border-right: solid 1px;border-left: solid 1px;"></td>
+      <td style="border-right: solid 1px"></td>
+      <td style="border-bottom: 1px dashed;"></td>
+      <td style="border-bottom: 1px dashed;border-right: solid 1px"></td>
+      <td style="border-bottom: 1px dashed;border-right: solid 1px"></td>
+      <td style="border-bottom: 1px dashed"></td>
+      <td style="border-bottom: 1px dashed;border-right: solid 1px"></td>
+    </tr>
+	    <tr>
+      <td style="border-right: solid 1px;border-left: solid 1px;"></td>
+      <td style="border-right: solid 1px"></td>
+      <td style="text-align: right"><t t-esc="sum(x.qty for x in doc.pack_line_ids)"/></td>
+      <td style="border-right: solid 1px">PCS</td>
+      <td style="border-right: solid 1px"></td>
+      <td>USD</td>
+      <td style="border-right: solid 1px;text-align: left"><t t-esc="sum(x.ciq_amount for x in doc.pack_line_ids)"/></td>
+    </tr>
+  </tbody>
+</table>
+<table>
+<tr>
+	<td>
+	</td>
+</tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" style="width: 100%">
+<tr>
+	<td style="text-align: center"> The above goods may be allowed with 5% more or less in quantity and amount at the Seller's option	</td>
+</tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" style="width: 100%" class="buttom">
+<tr>
+	<td>	<td style="padding: 5px" >
+		<span t-field="doc.description_baoguan"/></td></td>
+
+</tr>
+</table>
+
+    </t>
+</template>
+<template id="report_transport_bill_bgzl_contract">
+    <t t-call="web.html_container">
+        <t t-foreach="docs" t-as="doc">
+            <t t-call="yjzy_extend.report_transport_bill_bgzl_contract_document" t-lang="doc.partner_id.lang"/>
+        </t>
+    </t>
+</template>
+</odoo>

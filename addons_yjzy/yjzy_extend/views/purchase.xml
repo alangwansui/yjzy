@@ -1,0 +1,154 @@
+<odoo>
+    <data>
+
+        <record id="inherit_view_purchase_order_filter" model="ir.ui.view">
+            <field name="name">purchase.order.search</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.view_purchase_order_filter"/>
+            <field name="arch" type="xml">
+                <field name="partner_id" position="before">
+                    <field name="supplierinfo_ids"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="inherit_purchase_order_tree" model="ir.ui.view">
+            <field name="name">purchase.order.tree</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_tree"/>
+            <field name="arch" type="xml">
+                <tree position="inside">
+                    <field name="include_tax"/>
+                    <field name="supplierinfo_ids" widget="many2many_tags"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="inherit_purchase_order_form" model="ir.ui.view">
+            <field name="name">purchase.order.form</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_form"/>
+            <field name="arch" type="xml">
+                <field name="partner_id" position="attributes">
+                    <attribute name="domain">[('supplier','=',True),('parent_id', '=', False)]</attribute>
+                    <attribute name="context">{'search_default_supplier':1, 'show_address': 0, 'default_supplier':1,}</attribute>
+                </field>
+                <field name="state" position="before">
+                    <button name="test_pre_advance" string="预付款测试按钮" type="object" class="oe_highlight" groups="base.group_no_one"/>
+                    <button name="make_yfsqd" string="测试生成预付申请单" type="object" class="oe_highlight" groups="base.group_no_one"/>
+                    <button name="clear_yfsqd" string="清除预付申请单" type="object" class="oe_highlight"/>
+
+                    <button name="set_tax_zero" string="设置含税" type="object" class="oe_highlight"/>
+                    <button name="open_wizard_po_box" string="生成箱号" type="object" class="oe_highlight"/>
+                    <button name="clear_po_box" string="清除箱号" type="object" class="oe_highlight"/>
+                    <button name="compute_package_info" string="计算包装信息" type="object" class="oe_highlight"/>
+
+                    <field name="is_editable"  widget="boolean_toggle"/>
+                </field>
+
+                <field name="company_id" position="after">
+                    <field name="yjzy_currency_id"/>
+                    <field name="balance"/>
+                    <field name="pre_advance"/>
+                    <field name="can_confirm_by_so" readonly="0"/>
+                    <field name="user_ids" widget="many2many_tags"/>
+                </field>
+
+                <field name="currency_id" position="after">
+                    <field name="need_purchase_fandian"/>
+                    <field name="purchase_fandian_ratio" attrs="{'invisible': [('need_purchase_fandian','!=',True)]}"/>
+                    <field name="purchase_fandian_partner_id" attrs="{'invisible': [('need_purchase_fandian','!=',True)]}"/>
+                </field>
+                <field name="partner_id" position="before">
+                    <field name="contract_code"/>
+                    <field name="include_tax"/>
+                    <field name="main_sign_uid"/>
+                </field>
+                <field name="partner_id" position="after">
+                    <field name="contact_id" domain="[('parent_id','=', partner_id),('type', '=', 'contact')]"/>
+                </field>
+                <!--field name="date_order" position="after">
+                    <field name="is_fapiao"/>
+                </field-->
+                <xpath expr="//field[@name='order_line']/tree/field[@name='product_qty']" position="attributes">
+                    <attribute name="sum">Total</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='order_line']/tree/field[@name='name']" position="after">
+                    <field name="back_tax"/>
+                    <field name="last_purchase_price"/>
+                    <field name="supplierinfo_id"/>
+                    <field name="box_start"/>
+                    <field name="box_end"/>
+                    <field name="min_package_name"/>
+                    <field name="max_package_qty"/>
+                    <field name="qty_max_package"/>
+                    <field name="max_qty"/>
+                    <field name="max_qty2"/>
+                    <field name="max_qty_ng"/>
+                    <field name="price_section_base"/>
+                    <field name="s_uom_id"/>
+                    <field name="p_uom_id"/>
+                    <field name="need_print"/>
+
+                </xpath>
+
+                <xpath expr="//field[@name='order_line']/form//field[@name='name']" position="after">
+                    <field name="back_tax"/>
+                    <field name="last_purchase_price"/>
+                    <field name="supplierinfo_id"/>
+                    <field name="box_start"/>
+                    <field name="box_end"/>
+                    <field name="min_package_name"/>
+                    <field name="max_package_qty"/>
+                    <field name="qty_max_package"/>
+                    <field name="max_qty"/>
+                    <field name="max_qty2"/>
+                    <field name="max_qty_ng"/>
+                    <field name="price_section_base"/>
+                </xpath>
+
+                <xpath expr="//field[@name='order_line']/tree" position="attributes">
+                    <attribute name="decoration-danger">max_qty_ng==True</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='order_line']/tree" position="inside">
+                    <button icon="fas fa-eye" type="object" name="show_product_attrs"/>
+                </xpath>
+
+                <field name="payment_term_id" position="attributes">
+                    <attribute name="domain">[('type','in', ['purchase', 'comm'])]</attribute>
+                </field>
+                <notebook position="inside">
+                    <page string="采购条款">
+                        <group>
+                            <field name="term_purchase"/>
+                        </group>
+                    </page>
+                    <page string="预付款单">
+                        <group>
+                            <field name="yjzy_payment_ids" widget="many2many"
+                                   domain="[('sfk_type','=','yfsqd')]"
+                                   context="{'tree_view_ref':'yjzy_extend.view_yfsqd_tree',  'form_view_ref':'yjzy_extend.view_yfsqd_form',  'default_sfk_type': 'yfsqd', 'default_payment_type': 'outbound', 'default_partner_type': 'supplier'}">
+                            </field>
+                        </group>
+                    </page>
+
+                    <page string="采购变更信息">
+                        <group>
+                            <!--field name="revise_content"/-->
+                            <field name="revise_count"/>
+                            <field name="revise_date"/>
+                            <field name="revise_reason"/>
+                        </group>
+                    </page>
+
+
+                </notebook>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>

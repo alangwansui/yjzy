@@ -1,0 +1,186 @@
+<odoo>
+    <data>
+
+
+        <record id="inherit_view_sales_order_filter" model="ir.ui.view">
+            <field name="name">sale.order.search</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_sales_order_filter"/>
+            <field name="arch" type="xml">
+                <field name="name" position="after">
+                    <field name="pdt_value_id"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="inherit_view_order_tree" model="ir.ui.view">
+            <field name="name">sale.order.tree</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_tree"/>
+            <field name="arch" type="xml">
+                <tree position="inside">
+                    <field name="advance_po_residual"/>
+                </tree>
+
+            </field>
+        </record>
+
+        <record id="inherit_view_order_form" model="ir.ui.view">
+            <field name="name">sale.order.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+
+                <div name="button_box" position="inside">
+                    <button name="open_view_transport_bill" type="object" class="oe_stat_button" icon="fa-pencil-square-o">
+                        <field name="tb_count" widget="statinfo" string="出运单"/>
+                    </button>
+
+                    <field name="is_editable"  widget="boolean_toggle"/>
+                </div>
+
+                <field name="partner_id" position="attributes">
+                    <attribute name="domain">[('customer','=',True),('parent_id', '=', False)]</attribute>
+                    <attribute name="context">{'search_default_customer':1, 'show_address': 0}</attribute>
+                </field>
+                <field name="partner_shipping_id" position="attributes">
+                    <attribute name="context">{'default_type':'delivery', 'show_address': 1}</attribute>
+                </field>
+
+                <field name="state" position="before">
+                    <button name="open_wizard_bom_sale" class="oe_highlight" type='object' string="套件销售"/>
+                    <button name="open_sale_cost" class="oe_highlight" type='object' string="成本单"/>
+                    <button name="open_advance_residual_lines" class="oe_highlight" type='object' string="预收分录明细"/>
+                    <button name="check_po_allow" class="oe_highlight" type='object' string="检查采购已审批"/>
+                    <button name="compute_po_residual" type="object" string="计算采购预付款"/>
+
+                </field>
+
+                <field name="payment_term_id" position="attributes">
+                    <attribute name="domain">[('type','in', ['sale', 'comm'])]</attribute>
+                </field>
+
+
+                <field name="partner_shipping_id" position="after">
+                    <field name="link_man_id" domain="[('parent_id','=',partner_id),('type', '=', 'contract')]"/>
+                    <field name="exchange_rate"/>
+                    <field name="appoint_rate"/>
+                    <field name="customer_pi"/>
+                    <field name="no_sent_amount"/>
+
+                    <!-- button name="get_appoint_rate" type="object" string="使用当前汇率" class="oe_highlight"/-->
+                </field>
+
+                <field name="currency_id" position="before">
+                    <field name="include_tax"/>
+                    <field name="contract_code"/>
+                    <field name="contract_date"/>
+                </field>
+
+                <field name="validity_date" position="before">
+                    <field name="yjzy_payment_id"/>
+                    <field name="yjzy_currency_id"/>
+                    <field name="balance"/>
+                    <field name="advance_po_residual"/>
+                    <field name="cip_type"/>
+                    <field name="pre_advance"/>
+                </field>
+                <field name="user_id" position="after">
+                    <field name="sale_assistant_id"/>
+                    <field name="product_manager_id"/>
+                </field>
+
+                <xpath expr="//field[@name='order_line']//tree//field[@name='product_uom_qty']" position="attributes">
+                    <attribute name="sum">Total</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='order_line']//tree//field[@name='price_unit']" position="after">
+                    <field name="last_sale_price"/>
+                    <field name="back_tax"/>
+                    <field name="bom_id"/>
+                    <field name="bom_qty"/>
+                    <field name="need_split_bom"/>
+                    <field name="need_print"/>
+                    <field name="s_uom_id"/>
+                    <field name="p_uom_id"/>
+                </xpath>
+
+                <xpath expr="//field[@name='order_line']//tree" position="inside">
+                    <button icon="fas fa-eye" type="object" name="show_product_attrs"/>
+                </xpath>
+
+
+                <xpath expr="//field[@name='order_line']//tree//field[@name='product_id']" position="before">
+                    <button type="object" name="get_in_stock_quant" icon="fa-archive"/>
+                </xpath>
+                <xpath expr="//field[@name='order_line']//form//field[@name='tax_id']" position="after">
+                    <field name="s_uom_id"/>
+                    <field name="p_uom_id"/>
+                    <field name="back_tax"/>
+                    <field name="bom_id"/>
+                    <field name="bom_qty"/>
+                    <field name="need_split_bom"/>
+
+                    <button string="查看库存批次" type="object" name="get_in_stock_quant"/>
+                </xpath>
+
+                <notebook position="inside">
+                    <page string="其他费用列表">
+                        <group>
+                            <group>
+                                <field name="company_currency_id" invisible="1"/>
+                                <field name="fee_inner"/>
+                                <field name="fee_rmb1"/>
+                                <field name="fee_rmb2"/>
+                            </group>
+                        </group>
+                        <div>
+                            <label string="国外运保费" for="fee_outer" class=""/>
+                            <field name="fee_outer" nolabel="1" class="oe_inline"/>
+                            <field name="outer_currency_id" nolabel="1" class="oe_inline"/>
+                        </div>
+                        <div>
+                            <label string="出口保险费" for="fee_export_insurance"/>
+                            <field name="fee_export_insurance" nolabel="1" class="oe_inline"/>
+                            <field name="export_insurance_currency_id" nolabel="1" class="oe_inline"/>
+                        </div>
+                        <div>
+                            <label string="其他外币费用" for="fee_other"/>
+                            <field name="fee_other" nolabel="1" class="oe_inline"/>
+                            <field name="other_currency_id" nolabel="1" class="oe_inline"/>
+                        </div>
+
+                    </page>
+                    <page string="港口信息">
+                        <group>
+                            <field name="from_wharf_id"/>
+                            <field name="to_wharf_id"/>
+                        </group>
+                    </page>
+
+                    <page string="销售条款">
+                        <field name="term_description"/>
+                    </page>
+
+                    <page string="预收认领单">
+                        <field name="yjzy_payment_ids" widget="many2many"
+                               domain="[('sfk_type','=','ysrld')]"
+                               context="{'tree_view_ref':'yjzy_extend.view_ysrld_tree',  'form_view_ref':'yjzy_extend.view_ysrld_form', 'default_so_id': id, 'default_sfk_type': 'ysrld', 'default_payment_type': 'inbound', 'default_partner_type': 'customer'}">
+                        </field>
+                    </page>
+                    <page string="出运单列表">
+                        <field name="tb_ids"/>
+                    </page>
+                    <page string="分录名明细">
+                        <button name="compute_balance" type="object" string="计算余额"/>
+                        <field name="aml_ids"/>
+                    </page>
+                </notebook>
+
+
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

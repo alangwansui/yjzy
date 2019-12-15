@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<template id="report_purchase_contract_document">
+    <t t-call="web.external_layout">
+        <t t-set="doc" t-value="doc.with_context({'lang':doc.partner_id.lang})"/>
+    <style>
+	  body{
+		    font-size:12px;
+		  font-family:Arial,Helvetica,sans-serif,simsun;
+	  }
+	.title{
+
+	    text-align: center;}
+	.main{
+		width: 100%;
+	    font-size: 11px ; }
+	.main td{
+		height:20px}
+	.main1{
+		width: 100%;
+	    font-size: 11px ; }
+	.main1 td{
+		
+		height: 20px;
+		}
+	.tablelist{
+		text-align: center;
+		border: 1px solid ;
+		c
+		font-size: 11px;
+		width: 100%
+	}
+	.tablelist th{
+		font-size: 13px;
+		text-align: center;
+		border: 1px solid ;
+		height: 20px;
+		line-height: 20px;
+	}
+	.tablelist td{
+		border: 1px solid;
+		height: 20px;
+		line-height: 20px;
+	}
+
+</style>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="main1">
+  <tbody>
+    <tr>
+      <td colspan="6" style="text-align: center; font-size: 16px; height: 30px; font-weight: bold">收购合同</td>
+    </tr>
+    <tr>
+      <td width="5%">卖方：</td>
+      <td width="30%"><span t-esc="doc.partner_id.name"/></td>
+      <td width="5%">变更次数：</td>
+      <td width="20%"><span t-esc="doc.revision"/></td>
+      <td width="15%" style="text-align: right">收购合同号：</td>
+      <td width="25%"><span t-esc="doc.contract_code"/></td>
+    </tr>
+    <tr>
+      <td>联系人：</td>
+      <td><span t-esc="doc.contact_id.name"/><span t-esc="doc.contact_id.mobile"/></td>
+      <td>变更日期：</td>
+      <td></td>
+      <td  style="text-align: right">客户订单号：</td>
+      <td><span t-esc="doc.source_so_id.contract_code"/></td>
+    </tr>
+    <tr>
+      <td colspan="2">电话：<span t-esc="doc.partner_id.phone"/>  传真：<span t-esc="doc.partner_id.fax"/>  </td>
+      <td>变更原因：</td>
+      <td></td>
+      <td  style="text-align: right">下单日期：</td>
+      <td><span t-esc="doc.date_order"/></td>
+    </tr>
+    <tr>
+      <td>地址：</td>
+      <td colspan="3"><span t-esc="doc.partner_id.state_id.name"/><span t-esc="doc.partner_id.city"/><span t-esc="doc.partner_id.street"/></td>
+      <td  style="text-align: right">交货期：</td>
+      <td><span t-esc="doc.date_planned"/></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td colspan="3"></td>
+      <td  style="text-align: right"></td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablelist">
+  <tbody>
+    <tr>
+      <td  width="2%" rowspan="2">编号</td>
+      <td colspan="4">型号信息</td>
+      <td></td>
+      <td colspan="5">产品信息</td>
+      <td colspan="4">包装细节</td>
+      <td colspan="4">价格及数量</td>
+    </tr>
+    <tr>
+      <td width="8%">图片</td>
+      <td width="6%">天宇国际型号</td>
+      <td width="6%">工厂编号</td>
+      <td width="6%">客户型号</td>
+      <td width="6%">条形码</td>
+      <td width="7%">产品描述</td>
+      <td width="8%">产品英文描述</td>
+      <td width="4%">商标</td>
+      <td width="5%">表面处理</td>
+      <td width="5%">材料</td>
+      <td width="5%">包装</td>
+      <td width="5%">把/箱</td>
+      <td width="5%">箱号</td>
+      <td width="5%">箱数</td>
+      <td width="5%">数量</td>
+      <td width="2%"></td>
+      <td width="5%">单价</td>
+      <td width="5%">总价</td>
+    </tr>
+	   <t t-foreach="doc.order_line" t-as="line">
+    <tr>
+      <td rowspan="2"><t t-esc="line_index+1"/></td>
+      <td><img t-if="line.product_id.image" t-att-src="'data:image/png;base64,%s' % to_text(line.product_id.image)" width="50px" height="50px"/></td>
+      <td><span t-esc="line.product_id.default_code"/></td>
+      <td><span t-esc="line.supplierinfo_id.product_code"/></td>
+      <td><span t-esc="line.product_id.customer_ref"/></td>
+      <td><span t-esc="line.product_id.barcode"/></td>
+      <td><span t-esc="line.product_id.customer_description"/></td>
+      <td><span t-esc="line.with_context({'lang':'en-us'}).product_id.customer_description"/></td>
+      <td><span t-esc="line.product_id.trademark"/></td>
+      <td><span t-esc="get_attribute8line(line, '中文表面处理')"/></td>
+      <td><span t-esc="get_attribute8line(line, '中文主要材料')"/></td>
+      <td><span t-esc="line.min_package_name"/></td>
+      <td><span t-esc="line.max_package_qty"/></td>
+      <td><span t-esc="line.box_start"/>-<span t-esc="line.box_end"/></td>
+      <td><span t-esc="line.qty_max_package"/></td>
+      <td rowspan="2"><span t-esc="line.product_qty"/></td>
+      <td rowspan="2"><span t-esc="line.product_uom.name"/></td>
+      <td rowspan="2"><span t-esc="line.price_unit"/></td>
+      <td rowspan="2"><span t-esc="line.price_subtotal"/></td>
+    </tr>
+    <tr>
+      <td colspan="14" ><span t-esc="get_attribute_info(line, ['英文表面处理','英文主要材料'])"/></td>
+    </tr>
+    </t>
+    <tr>
+      <td></td>
+      <td></td>
+      <td colspan="13" style="text-align: right">合计：</td>
+      <td><t t-esc="sum([x.product_qty for x in doc.order_line])"/></td>
+      <td></td>
+      <td></td>
+      <td><t t-esc="doc.amount_total"/></td>
+    </tr>
+  </tbody>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tbody>
+    <tr>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tbody>
+    <tr>
+      <td><span t-field="doc.term_purchase"/></td>
+    </tr>
+  </tbody>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tbody>
+    <tr>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tbody>
+    <tr>
+      <td style="height: 50px">买家签字：</td>
+      <td>卖家签字</td>
+    </tr>
+  </tbody>
+</table>
+
+
+    </t>
+</template>
+
+
+
+<template id="report_purchase_contract">
+    <t t-call="web.html_container">
+        <t t-foreach="docs" t-as="doc">
+            <t t-call="yjzy_extend.report_purchase_contract_document" t-lang="doc.partner_id.lang"/>
+        </t>
+    </t>
+</template>
+
+
+</odoo>

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<template id="report_transport_bill_bgzl_packing_document">
+     <t t-call="yjzy_extend.no_header_external_layout">
+        <t t-set="doc" t-value="doc.with_context({'lang':doc.partner_id.lang})" />
+<style>
+	body{
+		    font-size: 12px;
+		font-family:Arial,Helvetica,sans-serif,simsun;
+	  }
+	.title{
+		text-align: center;
+			vertical-align:middle;
+	}
+	.main{
+	
+	    font-size: 12px;
+	}
+	.main td{
+		height:30px;
+		padding: 3px;
+		vertical-align:middle;
+	}
+	.tablelist{
+		text-align:center;
+		width:100%;	
+		border-collapse: collapse;
+		border:solid 1px ;
+		vertical-align:middle;
+	}
+	.tablelist th{
+		text-align:center;
+		font-size: 14px;
+	    font-weight: bold;
+		border:solid 1px ;
+		height: 30px;	
+		vertical-align:middle;
+		
+	}
+	.tablelist td{
+		height: 20px;
+		border:solid 1px ;
+		font-size: 12px;
+		vertical-align:middle;
+		padding: 3px;
+	}
+</style>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" style="text-align: center">
+  <tbody>
+    <tr>
+      <td style="height: 30px"><span style="font-size: 14px"><span t-esc="doc.company_id.full_name"/></span></td>
+    </tr>
+    <tr>
+	  <td style="height: 50px"><span style="font-size: 20px;font-weight: bolder">PACKING LIST</span></td>
+    </tr>
+  </tbody>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="main">
+  <tbody>
+    <tr>
+      <td style="width: 50%;">SHIPPING MARKS: </td>
+      <td style="width: 20%; text-align: right">Invoice NO.:</td>
+      <td style="width: 30%"> <span t-esc="doc.ref"/></td>
+    </tr>
+    <tr>
+      <td><t t-foreach="doc.mark_ids" t-as="mark">		
+		  <span t-esc="mark.name"/>
+		  </t></td>
+      <td style="text-align: right">DATE: </td>
+      <td> <span t-esc="doc.date"/></td>
+    </tr>
+  </tbody>
+</table>
+<div style="height: 20px" >Name of Commodity:  AS FOLLOWS.</div>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablelist">
+  <tbody>
+    <tr>
+      <th width="3%">编号</th>
+      <th>规格</th>
+      <th colspan="2">件数</th>
+      <th colspan="2">数量</th>
+      <th colspan="2">毛重</th>
+      <th colspan="2">净重</th>
+      <th colspan="2">尺码</th>
+    </tr>
+    <tr>
+      <th></th>
+      <th>Specification</th>
+      <th colspan="2">Package</th>
+      <th colspan="2">Quantity</th>
+      <th colspan="2">Gr. Wt.</th>
+      <th colspan="2">Net. Wt. </th>
+      <th colspan="2">Measurement</th>
+    </tr>
+	  <t t-foreach="doc.pack_line_ids" t-as="line">
+    <tr>
+      <td width="5%"> <t t-esc="line_index+1"/></td>
+      <td width="20%;" style="text-align: left"><span t-esc="line.hs_name"/></td>
+      <td width="10%" style="text-align: right"><span t-esc="line.pack_qty"/></td>
+	  <td width="5%">CTNS</td>
+      <td width="10%" style="text-align: right"><span t-esc="line.qty"/></td>
+	  <td width="5%">PCS</td> 
+      <td width="10%" style="text-align: right"><span t-esc="line.gross_weight"/></td>
+	  <td width="5%">KGS</td>
+      <td width="10%" style="text-align: right"><span t-esc="line.net_weight"/></td>
+	  <td width="5%">KGS</td>
+      <td width="10%" style="text-align: right"><span t-esc="line.volume"/></td>
+	  <td width="5%">CBM</td>
+    </tr>
+	  </t>
+    <tr>
+      <td style="height: 30PX"></td>
+      <td>total</td>
+      <td style="text-align: right"><t t-esc="sum(x.pack_qty for x in doc.pack_line_ids)"/></td>
+      <td>CTNS</td>
+      <td style="text-align: right"><t t-esc="sum(x.qty for x in doc.pack_line_ids)"/></td>
+      <td>PCS</td>
+      <td style="text-align: right"><t t-esc="sum(x.gross_weight for x in doc.pack_line_ids)"/></td>
+      <td>KGS</td>
+      <td style="text-align: right"><t t-esc="sum(x.net_weight for x in doc.pack_line_ids)"/></td>
+      <td>KGS</td>
+      <td style="text-align: right"><t t-esc="sum(x.volume for x in doc.pack_line_ids)"/></td>
+      <td>CSM</td>
+    </tr>
+  </tbody>
+</table>
+
+    </t>
+</template>
+<template id="report_transport_bill_bgzl_packing">
+    <t t-call="web.html_container">
+        <t t-foreach="docs" t-as="doc">
+            <t t-call="yjzy_extend.report_transport_bill_bgzl_packing_document" t-lang="doc.partner_id.lang"/>
+        </t>
+    </t>
+</template>
+</odoo>
+

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_hs_hs_tree" model="ir.ui.view">
+            <field name="name">hs.hs.tree</field>
+            <field name="model">hs.hs</field>
+            <field name="arch" type="xml">
+                <tree string="HS编码">
+                    <field name="name"/>
+                    <field name="en_name"/>
+                    <field name="code"/>
+                    <field name="back_tax"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_hs_hs_form" model="ir.ui.view">
+            <field name="name">hs.hs.form</field>
+            <field name="model">hs.hs</field>
+            <field name="arch" type="xml">
+                <form string="HS编码">
+                    <header>
+                    </header>
+                    <sheet>
+                        <group>
+                            <field name="display_name"/>
+                            <field name="name"/>
+                            <field name="en_name"/>
+                            <field name="code"/>
+                            <field name="back_tax"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="act_open_hs_hs_view">
+            <field name="name">HS编码</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hs.hs</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+        </record>
+
+
+        <menuitem id="menu_hs_hs" name="HS编码"
+                  parent="sale.sale_order_menu"
+                  sequence="99"
+                  action="act_open_hs_hs_view"/>
+
+
+    </data>
+</odoo>

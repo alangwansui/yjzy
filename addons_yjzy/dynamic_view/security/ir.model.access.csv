@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+dynamic_view,dynamic_view,model_dynamic_view,base.group_user,1,1,1,0
+dynamic_view_line,dynamic_view_line,model_dynamic_view_line,base.group_user,1,1,1,0
+dynamic_view_button,dynamic_view_button,model_dynamic_view_button,base.group_user,1,1,1,0

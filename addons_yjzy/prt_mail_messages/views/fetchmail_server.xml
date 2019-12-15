@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<odoo>
+    
+    <record model="ir.ui.view" id="inherit_view_email_server_form">
+    	<field name="name">fetchmail.server.form</field>
+    	<field name="model">fetchmail.server</field>
+    	<field name="inherit_id" ref="fetchmail.view_email_server_form"/>
+    	<field name="arch" type="xml">
+            <field name="active" position="before">
+                <field name="partner_id"/>
+            </field>
+
+    	</field>
+    </record>
+    
+    
+</odoo>

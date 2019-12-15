@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record model="ir.ui.view" id="inherit_view_account_tree">
+        <field name="name">account.account.tree</field>
+        <field name="model">account.account</field>
+        <field name="inherit_id" ref="account.view_account_list"/>
+        <field name="arch" type="xml">
+            <tree position="inside">
+                <field name="polarity"/>
+            </tree>
+        </field>
+    </record>
+
+
+    <record model="ir.ui.view" id="inherit_view_account_form">
+        <field name="name">account.account.form</field>
+        <field name="model">account.account</field>
+        <field name="inherit_id" ref="account.view_account_form"/>
+        <field name="arch" type="xml">
+            <sheet position="before">
+                <header>
+                    <button name="button_test_balnace" string="余额查询" type='object' icon=""/>
+                </header>
+            </sheet>
+            <field name="code" position="after">
+                <field name="polarity"/>
+            </field>
+        </field>
+    </record>
+
+
+</odoo>

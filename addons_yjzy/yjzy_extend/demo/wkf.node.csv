@@ -1,0 +1,46 @@
+"id","event_need","event_users/id","sequence","no_reset","code","is_stop","join_mode","action","arg","name","show_state","wkf_id/id","is_start"
+"wkf.node_expense_draft", "False","","1","True","","False","OR","","","草稿","True","wkf.wkf_expense","True"
+"wkf.node_expense_wait_leader", "False","","1","True","","False","OR","","","待上级审批","True","wkf.wkf_expense","False"
+"wkf.node_expense_wait_account", "False","","1","True","","False","OR","","","待财务","True","wkf.wkf_expense","False"
+"wkf.node_expense_wait_top_manager", "False","","1","True","","False","OR","","","待总经理","True","wkf.wkf_expense","False"
+"wkf.node_expense_done", "False","","1","True","","False","OR","submit_expenses","","审批完成","True","wkf.wkf_expense","False"
+"wkf.node_expense_cancel", "False","","1","True","","False","OR","submit_expenses","","取消","True","wkf.wkf_expense","False"
+
+
+"wkf.node_so_draft", "False","","1","True","","False","OR","","","草稿","True","wkf.wkf_so","True"
+"wkf.node_so_wait_customer_manager", "False","","1","True","","False","OR","","","待客户经理","True","wkf.wkf_so","False"
+"wkf.node_so_wait_sales_director", "False","","1","True","","False","OR","","","待销售总监","True","wkf.wkf_so","False"
+"wkf.node_so_wait_cost_check", "False","","1","True","","False","OR","","","成本审批","True","wkf.wkf_so","False"
+"wkf.node_so_wait_top_manager", "False","","1","True","","False","OR","","","待总经理审批","True","wkf.wkf_so","False"
+"wkf.node_so_done", "False","","1","True","","False","OR","","","审批完成","True","wkf.wkf_so","False"
+
+
+"wkf.node_po_draft", "False","","1","True","","False","OR","","","草稿","True","wkf.wkf_po","True"
+"wkf.node_po_wait_po_user", "False","","1","True","","False","OR","","","待采购员","True","wkf.wkf_po","False"
+"wkf.node_po_auto_select","False","","2","True","","False","OR","","","自动选择节点","False","wkf.wkf_po","False"
+"wkf.node_po_wait_purchase_director", "False","","1","True","","False","OR","","","待采购总监","True","wkf.wkf_po","False"
+"wkf.node_po_wait_sale_and_purchase", "False","","1","True","","False","OR","","","待销售采购会签","True","wkf.wkf_po","False"
+"wkf.node_po_both_finish", "False","","1","True","","False","OR","","","会签完成","True","wkf.wkf_po","False"
+"wkf.node_po_done", "False","","1","True","","False","OR","","","审批完成","True","wkf.wkf_po","False"
+
+
+
+
+
+
+
+"wkf.node_tb_draft", "False","","1","True","","False","OR","","","草稿","True","wkf.wkf_tb","True"
+"wkf.node_tb_wait_sale_manager", "False","","1","True","","False","OR","","","待销售经理","True","wkf.wkf_tb","False"
+"wkf.node_tb_wait_cost_check", "False","","1","True","","False","OR","","","合规审批","True","wkf.wkf_tb","False"
+"wkf.node_tb_done", "False","","1","True","","False","OR","","","完成","True","wkf.wkf_tb","False"
+
+
+
+
+
+
+
+
+
+
+

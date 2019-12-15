@@ -1,0 +1,60 @@
+<odoo>
+    <data>
+
+
+        <record id="wizard_manual_stock_reserve_form" model="ir.ui.view">
+            <field name="name">wizard.manual.stock.reserve.from</field>
+            <field name="model">wizard.manual.stock.reserve</field>
+            <field name="arch" type="xml">
+                <form string="手动预留">
+                    <group>
+                        <field name="picking_id" readonly="1"/>
+                    </group>
+                    <field name="line_ids">
+                        <tree create="false" editable="top">
+                            <field name="move_id" create="false"/>
+                            <field name="product_uom_qty"/>
+                            <field name="reserved_availability"/>
+                            <field name="lot_id"/>
+                            <field name="qty"/>
+                        </tree>
+                    </field>
+
+                    <footer>
+                        <button name="apply" class="oe_highlight" type='object' string="确认"/>
+                        <button special="cancel" class="oe_highlight" string="取消"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="wizard_manual_stock_reserve_line_form" model="ir.ui.view">
+            <field name="name">wizard.manual.stock.reserve.line.from</field>
+            <field name="model">wizard.manual.stock.reserve.line</field>
+            <field name="arch" type="xml">
+                <form string="手动预留">
+                    <group>
+                        <field name="move_id" readonly="1"/>
+                    </group>
+                    <field name="item_ids">
+                        <tree  editable="buttom">
+                            <field name="move_id" readonly="1"/>
+                            <field name="product_id" readonly="1"/>
+                            <field name="move_line_id" readonly="1"/>
+                            <field name="old_qty" readonly="1"/>
+                            <field name="new_lot_id" attrs="{'readonly': [('move_line_id','!=', False)]}"/>
+                            <field name="new_qty"/>
+                        </tree>
+                    </field>
+
+                    <footer>
+                        <button name="apply" class="oe_highlight" type='object' string="确认"/>
+                        <button special="cancel" class="oe_highlight" string="取消"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>
+

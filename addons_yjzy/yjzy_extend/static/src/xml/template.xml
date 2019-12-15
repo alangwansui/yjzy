@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<templates id="template" inherit_id="web_enterprise.template">
+    <t t-extend="Menu">
+        <t t-jquery=".o_menu_systray" t-operation="inner">
+            <li class="o_menu_cn_banck_currency_ratio">
+                <a href="http://srh.bankofchina.com/search/whpj/search.jsp" target="_blank">银行汇率</a>
+            </li>
+        </t>
+    </t>
+</templates>
+

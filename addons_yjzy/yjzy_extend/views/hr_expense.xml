@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="inherit_view_hr_expense_sheet_form">
+        	<field name="name">hr.expense.sheet.form</field>
+        	<field name="model">hr.expense.sheet</field>
+        	<field name="inherit_id" ref="hr_expense.view_hr_expense_sheet_form"/>
+        	<field name="arch" type="xml">
+                <field name="expense_line_ids" position="attributes">
+                    <attribute name="context">{'expense_adding_line': True, 'tracking_disable': True}</attribute>
+                    <attribute name="options">{'not_delete': True, 'reload_on_button': True, 'no_create': False}</attribute>
+                </field>
+
+                <field name="bank_journal_id" position="attributes">
+                    <attribute name="context">{'default_bank_journal_code':'yfdrl'}</attribute>
+                </field>
+
+                <field name="journal_id" position="after">
+                    <field name="include_tax"/>
+                    <field name="todo_cron"/>
+                    <field name="payment_id" domain="[('sfk_type','=', 'rcfkd')]" context="{'form_view_ref':'yjzy_extend.view_rcfkd_form'}"/>
+                    <field name="yjzy_payment_currency_id"/>
+                    <field name="balance"/>
+                    <field name="partner_id" context="{'default_supplier':True, 'default_customer':True}"/>
+                    <field name="fk_journal_id" domain="[('type','in',['bank', 'cash'])]"/>
+                    <field name="employee_user_id"/>
+                    <field name="bank_id"/>
+
+                    <field name="back_tax_product_id"/>
+                    <field name="back_tax_amount"/>
+                    <field name="back_tax_invoice_id"/>
+
+                </field>
+
+                <field name="state" position="before">
+                    <button name="create_customer_invoice"  attrs="{'invisible': [('back_tax_invoice_id','!=',False)]}"   string="生成退税发票" type='object' icon=""/>
+                    <button name="create_rcfkd"  attrs="{'invisible': [('payment_id','!=',False)]}"  context="{}"  string="生成日常付款单" type='object' icon=""/>
+                    <button name="post_message_lines" context="{}"  string="明细消息发送" type='object' icon=""/>
+                    <button name="add_line_message_followers" context="{}"  string="添加明细关注者" type='object' icon=""/>
+                </field>
+
+                <xpath expr="//field[@name='expense_line_ids']//tree" position="inside">
+                    <field name="tb_id"/>
+                    <field name="hx_expense_id"/>
+                    <field name="hx_code"/>
+                    <field name="hx_balance"/>
+                    <field name="diff_balance"/>
+                    <field name="diff_product_id"/>
+                    <field name="diff_expense"/>
+                </xpath>
+
+                <xpath expr="//field[@name='expense_line_ids']" position="attributes">
+                    <attribute name="context">{'expense_adding_line': True, 'default_currency_id': currency_id}</attribute>
+                </xpath>
+
+
+        	</field>
+        </record>
+
+        <record id="inherit_hr_expense_form_view" model="ir.ui.view">
+            <field name="name">hr.expense.form</field>
+            <field name="model">hr.expense</field>
+            <field name="inherit_id" ref="hr_expense.hr_expense_form_view"/>
+            <field name="arch" type="xml">
+                <header position="inside">
+                    <button name="make_diff_mvoe" type="object" string="创建差额分录"/>
+                </header>
+                <field name="state" position="attributes">
+                    <attribute name="statusbar_visible">draft,confirmed,reported,done</attribute>
+                </field>
+                <field name="employee_id" position="after">
+                    <field name="partner_id"/>
+                    <field name="user_id" invisible="1"/>
+                    <field name="include_tax"/>
+                    <field name="tb_id" context="{'show_ref': 1}"/>
+                    <field name="hx_expense_id"/>
+                    <field name="hx_code"/>
+                    <field name="hx_balance"/>
+                    <field name="diff_balance"/>
+                    <field name="diff_product_id"/>
+                    <field name="diff_expense"/>
+                </field>
+
+
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

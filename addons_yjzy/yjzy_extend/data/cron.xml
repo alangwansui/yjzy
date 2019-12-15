@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+        <record forcecreate="True" id="ir_cron_ir_translation_rush_comb_value" model="ir.cron">
+            <field name="name">更新双语翻译</field>
+            <field name="model_id" ref="base.model_ir_translation"/>
+            <field name="state">code</field>
+            <field name="code">model.rush_comb_value()</field>
+            <field name="user_id" ref="base.user_root" />
+            <field name="interval_number">1</field>
+            <field name="interval_type">months</field>
+            <field name="numbercall">1</field>
+            <field eval="False" name="doall" />
+        </record>
+
+</odoo>

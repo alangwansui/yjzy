@@ -1,0 +1,19 @@
+<odoo>
+    <data>
+
+        <record id="inherit_view_stock_move_operations" model="ir.ui.view">
+            <field name="name">stock.move.form</field>
+            <field name="model">stock.move</field>
+            <field name="inherit_id" ref="stock.view_stock_move_operations"/>
+            <field name="arch" type="xml">
+                <button special="save" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </button>
+                <button special="save" position="after">
+                    <button string="应用" name="sale_check" type='object' class="oe_highlight"/>
+                </button>
+            </field>
+        </record>
+
+    </data>
+</odoo>

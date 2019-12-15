@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <report
+            id="action_report_sale_contract"
+            string="销售合同"
+            model="sale.order"
+            report_type="qweb-pdf"
+            file="yjzy_extend.report_sale_contract"
+            name="yjzy_extend.report_sale_contract"
+            print_report_name="'PI_'+(object.contract_code)"
+        />
+
+        <report
+            id="action_report_sale_contract2"
+            string="销售合同2"
+            model="sale.order"
+            report_type="qweb-pdf"
+            file="yjzy_extend.report_sale_contract2"
+            name="yjzy_extend.report_sale_contract2"
+            print_report_name="'PI_'+(object.contract_code)"
+        />
+
+
+        <report
+            id="action_report_transport_bill_invoice"
+            string="清关资料-INVOICE"
+            model="transport.bill"
+            report_type="qweb-pdf"
+            file="yjzy_extend.report_transport_bill_invoice"
+            name="yjzy_extend.report_transport_bill_invoice"
+            print_report_name="'CC_Invoice_'+(object.ref)"
+        />
+        <report
+            id="action_report_transport_bill_packing"
+            string="清关资料-PACKING"
+            model="transport.bill"
+            report_type="qweb-pdf"
+            file="yjzy_extend.report_transport_bill_packing"
+            name="yjzy_extend.report_transport_bill_packing"
+            print_report_name="'CC_Packing_list_'+(object.ref)"
+        />
+
+        <!--report
+            id="action_report_transport_bill_fytzd"
+            string="发货通知单"
+            model="transport.bill"
+            report_type="qweb-html"
+            file="yjzy_extend.report_transport_bill_fytzd"
+            name="yjzy_extend.report_transport_bill_fytzd"
+            print_report_name="(object.name)"
+        /-->
+
+        <report
+            id="action_report_transport_bill_bgzl_contract"
+            string="报关资料-CONTRACT"
+            model="transport.bill"
+            report_type="qweb-pdf"
+            file="yjzy_extend.report_transport_bill_bgzl_contract"
+            name="yjzy_extend.report_transport_bill_bgzl_contract"
+            print_report_name="'D_Contract_'+(object.ref)"
+        />
+
+        <report
+            id="action_report_transport_bill_bgzl_invoice"
+            string="报关资料-INVOICE"
+            model="transport.bill"
+            report_type="qweb-pdf"
+            file="yjzy_extend.report_transport_bill_bgzl_invoice"
+            name="yjzy_extend.report_transport_bill_bgzl_invoice"
+            print_report_name="'D_Invoice_'+(object.ref)"
+        />
+             <report
+            id="action_report_transport_bill_bgzl_purchase"
+            string="采购统计"
+            model="transport.bill"
+            report_type="qweb-pdf"
+            file="yjzy_extend.report_transport_bill_bgzl_purchase"
+            name="yjzy_extend.report_transport_bill_bgzl_purchase"
+            print_report_name="'D_Invoice_'+(object.ref)"
+        />
+        <report
+            id="action_report_transport_bill_bgzl_packing"
+            string="报关资料-PACKING LIST"
+            model="transport.bill"
+            report_type="qweb-pdf"
+            file="yjzy_extend.report_transport_bill_bgzl_packing"
+            name="yjzy_extend.report_transport_bill_bgzl_packing"
+            print_report_name="'D_Packing_list_'+(object.ref)"
+        />
+
+        <report
+            id="action_report_transport_bill_bgzl_bgd"
+            string="报关资料-报关单"
+            model="transport.bill"
+            report_type="qweb-pdf"
+            file="yjzy_extend.report_transport_bill_bgzl_bgd"
+            name="yjzy_extend.report_transport_bill_bgzl_bgd"
+            print_report_name="'D_Declaration_'+(object.ref)"
+        />
+
+
+        <report
+            id="action_report_transport_bill_vendor"
+            string="供应商发货通知"
+            model="transport.bill.vendor"
+            report_type="qweb-html"
+            file="yjzy_extend.report_transport_bill_vendor"
+            name="yjzy_extend.report_transport_bill_vendor"
+            print_report_name="(object.name)"
+        />
+
+
+        <report
+            id="action_report_purchase_contract"
+            string="采购合同"
+            model="purchase.order"
+            report_type="qweb-pdf"
+            file="yjzy_extend.report_purchase_contract"
+            name="yjzy_extend.report_purchase_contract"
+            print_report_name="'PO_'+(object.contract_code)"
+        />
+
+        <report
+            id="action_report_purchase_contract2"
+            string="采购合同2"
+            model="purchase.order"
+            report_type="qweb-html"
+            file="yjzy_extend.report_purchase_contract2"
+            name="yjzy_extend.report_purchase_contract2"
+            print_report_name="'PO_'+(object.contract_code)"
+        />
+
+        <report
+            id="action_report_sale_order_cost"
+            string="成本单"
+            model="transport.bill"
+            report_type="qweb-pdf"
+            file="yjzy_extend.report_sale_order_cost"
+            name="yjzy_extend.report_sale_order_cost"
+            print_report_name="'CS_'+(object.ref)"
+        />
+
+        <report
+            id="action_report_account_payment_ysrld_liushui"
+            string="预收认领流水单"
+            model="account.payment"
+            report_type="qweb-pdf"
+            file="yjzy_extend.report_account_payment_ysrld_liushui"
+            name="yjzy_extend.report_account_payment_ysrld_liushui"
+            print_report_name="(object.name)"
+        />
+
+        <report
+            id="action_report_account_payment_yfrld_liushui"
+            string="预付认领流水单"
+            model="account.payment"
+            report_type="qweb-pdf"
+            file="yjzy_extend.report_account_payment_yfrld_liushui"
+            name="yjzy_extend.report_account_payment_yfrld_liushui"
+            print_report_name="(object.name)"
+        />
+
+
+
+
+
+
+
+    </data>
+</odoo>
+

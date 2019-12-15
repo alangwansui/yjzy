@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="attribute_group_tree_view">
+            <field name="name">attribute.group.tree</field>
+            <field name="model">attribute.group</field>
+            <field name="arch" type="xml">
+                <tree string="属性组">
+                    <field name="sequence" widget="handle"/>
+                    <field name="sequence2"/>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="attribute_group_tree_form">
+            <field name="name">attribute.group.form</field>
+            <field name="model">attribute.group</field>
+            <field name="arch" type="xml">
+                <form string="属性组" editable="top">
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="sequence"/>
+                        </group>
+                    </group>
+                    <field name="attribute_ids">
+                        <tree editable="top">
+                            <field name="seq"/>
+                            <field name="sequence"/>
+                            <field name="name"/>
+                        </tree>
+                    </field>
+                </form>
+            </field>
+        </record>
+
+
+        <record model="ir.actions.act_window" id="action_attribute_group_tree_view">
+            <field name="name">属性组</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">attribute.group</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem id="menu_attribute_group" name="属性组" parent="sale.prod_config_main"
+                  action="action_attribute_group_tree_view"/>
+
+
+
+        <record id="inherit_attribute_tree_view" model="ir.ui.view">
+            <field name="name">product.attribute.tree</field>
+            <field name="model">product.attribute</field>
+            <field name="inherit_id" ref="product.attribute_tree_view"/>
+            <field name="arch" type="xml">
+                <tree position="attributes">
+                    <attribute name="colors">color_field:attribute_group_id</attribute>
+                </tree>
+                <tree position="inside">
+                    <field name="attribute_group_id"/>
+                    <field name="sequence2"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- product_attribute_rel  -->
+
+        <record id="view_product_attribute_rel_tree" model="ir.ui.view">
+            <field name="name">.tree</field>
+            <field name="model">product.value.rel</field>
+            <field name="arch" type="xml">
+                <tree string="产品属性明细">
+                    <field name="product_product_id"/>
+                    <field name="attribute_id"/>
+                    <field name="product_attribute_value_id"/>
+                    <field name="is_key"/>
+
+                </tree>
+            </field>
+        </record>
+
+
+        <record model="ir.actions.act_window" id="act_open_product_attribute_rel_view">
+            <field name="name">产品属性明细</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">product.value.rel</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+        </record>
+
+        <menuitem id="menu_product_attribute_rel" name="产品属性明细"
+                  parent="sale.prod_config_main"
+                  sequence="20"
+                  action="act_open_product_attribute_rel_view"/>
+
+        <record model="ir.ui.view" id="inherit_variants_tree_view">
+        	<field name="name">product.attribute.value.tree</field>
+        	<field name="model">product.attribute.value</field>
+        	<field name="inherit_id" ref="product.variants_tree_view"/>
+        	<field name="arch" type="xml">
+        		<field name="attribute_id" position="before">
+        			<field name="attribute_group_id"/>
+        		</field>
+        	</field>
+        </record>
+
+
+
+
+    </data>
+</odoo>

@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record model="ir.ui.view" id="account_yfhxd_tree_view">
+        <field name="name">account.reconcile.order.tree</field>
+        <field name="model">account.reconcile.order</field>
+        <field name="arch" type="xml">
+            <tree string="应付核销单" decoration-info="state == 'draft'" decoration-muted="state =='cancelled'" edit="false">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="date"/>
+                <field name="amount_total_org" string="应付合计"/>
+                <field name="other_feiyong_amount" string="实际申请金额"/>
+                <field name="amount_total"/>
+                <field name="currency_id" attrs="{}" invisible="1"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="account_yfhxd_form_view">
+        <field name="name">account.reconcile.order.form</field>
+        <field name="model">account.reconcile.order</field>
+        <field name="arch" type="xml">
+            <form string="应付核销单">
+                <header>
+                    <button name="create_rcfkd" string="生成日常付款单" type='object' icon="" groups="account.group_account_manager"/>
+
+                    <button name="create_fygb" string="生成费用报告" type='object' icon="" attrs="{'invisible': [('state','in', ['posted'])]}"
+                            groups="base.group_system"/>
+                    <button name="create_customer_invoice" string="生成客户发票" type='object' icon="" attrs="{'invisible': [('state','in', ['posted'])]}"
+                            groups="base.group_system"/>
+
+                    <button name="action_approve" string="批准" type='object' icon="" groups="base.group_system"/>
+
+
+                    <button name="action_posted" class="oe_highlight" states="draft" string="确认" type="object" groups="base.group_system"/>
+                    <button name="action_cancel" class="oe_highlight" states="draft" string="取消" type="object"/>
+                    <button name="action_draft" class="oe_highlight" states="cancelled" string="重置草稿" type="object"/>
+                    <button name="make_lines" class="oe_highlight" string="生成明细" type="object" groups="account.group_account_manager"/>
+                    <button name="clear_moves" class="oe_highlight" string="测试用:清除分录" type="object" groups="base.group_system"/>
+                    <button name="check_amount" class="oe_highlight" string="检查金额填写" type="object" groups="base.group_system"/>
+
+                    <button name="make_account_move" class="oe_highlight" string="生成分录" type="object" groups="base.group_system"/>
+                    <button name="invoice_assign_outstanding_credit" class="oe_highlight" string="核销发票" type="object"
+                            groups="base.group_system"/>
+
+                    <button name="make_done" class="oe_highlight" string="确认核销" type="object"
+                            attrs="{'invisible': [('state','in', ['done'])]}" groups="base.group_system"/>
+
+                    <button name="open_reconcile_account_move_line" class="oe_highlight" string="打开核销分录" type="object" groups="base.group_system"/>
+
+                    <field name="state" widget="statusbar"/>
+                    <field name="is_editable" widget="boolean_toggle"/>
+                </header>
+                <sheet>
+                    <group col="2">
+                        <group>
+                            <field name="name"/>
+
+                            <field name="payment_type"/>
+                            <field name="partner_type"/>
+                            <field name="partner_id" required="1"
+                                   context="{'default_is_company': True, 'default_supplier': payment_type == 'outbound', 'default_customer': payment_type == 'inbound'}"/>
+                            <field name="bank_id" string="收款方账号" domain="[('partner_id','=',partner_id)]" options="{'no_create_edit': True}"/>
+                            <field name="journal_id" domain="[('type','=','renling')]"/>
+                            <field name="payment_account_id" string="认领科目"/>
+                            <field name="payment_currency_id" string="申请付款货币"/>
+                            <field name="bank_account_id"/>
+                            <field name="diff_account_id" string="采购费用科目"/>
+                            <field name="exchange_account_id"/>
+
+
+                            <field name="fk_journal_id" string="付款银行"/>
+                            <field name="feiyong_product_id" attrs="{'invisible': [('state','in', ['posted'])]}"/>
+                            <field name="feiyong_amount"/>
+                            <field name="fygb_id"/>
+                            <field name="back_tax_product_id"/>
+                            <field name="back_tax_amount"/>
+                            <field name="back_tax_invoice_id"/>
+
+                            <field name="yjzy_payment_id" string="日常付款单" domain="[('sfk_type', '=', 'rcfkd')]"
+                                   context="{'form_view_ref': 'yjzy_extend.view_rcfkd_form'}"/>
+                            <field name="yjzy_payment_currency_id" string="付款货币"/>
+                            <field name="yjzy_payment_balance" string="付款单待认领余额"/>
+                            <field name="sale_uid"/>
+                            <field name="assistant_uid"/>
+                        </group>
+                        <group>
+                            <field name="date"/>
+                            <field name="sfk_type"/>
+                            <field name="be_renling"/>
+                            <field name="invoice_currency_id"/>
+                            <field name="amount_invoice_residual_org"/>
+                            <field name="amount_payment_org" string="发票申请付款金额"/>
+                            <field name="amount_advance_residual_org" string="待认领预付"/>
+                            <field name="amount_advance_org" string="预付认领金额"/>
+                            <field name="amount_total_org" string="应付申请合计金额"/>
+                            <field name="amount_diff_org"/>
+                            <field name="other_feiyong_amount" string="实际支付总金额"/>
+                            <field name="final_coat" string="实际总成本"/>
+                            <field name="company_id"/>
+                            <field name="no_sopo"/>
+                        </group>
+                        <group groups="base.group_system">
+                            <field name="currency_id"/>
+                            <field name="amount_invoice"/>
+                            <field name="amount_total" string="付款合计：本币"/>
+                            <field name="amount_advance_residual" string="待核销预付"/>
+                            <field name="amount_advance" string="预付认领金额"/>
+                            <field name="amount_payment" string="付款金额"/>
+                            <field name="amount_diff"/>
+                            <field name="amount_exchange"/>
+                        </group>
+
+                    </group>
+                    <notebook>
+                        <page string="应付账款">
+                            <field name="invoice_ids" domain="[('partner_id','=', partner_id),('state', '=', 'open')]"
+                                   options='{"no_create": True}'
+                                   widget="many2many" context="{'tree_view_ref':'account.invoice_tree'}"/>
+                        </page>
+                        <page string="本次认领明细">
+                            <field name="line_ids" context="{'invisible_so': partner_type == 'supplier'}">
+                                <tree editable="top">
+                                    <field name="payment_type"/>
+                                    <field name="partner_type"/>
+                                    <field name="so_id" readonly="1" invisible="not context.get('show_so')"/>
+                                    <field name="po_id" readonly="1" invisible="not context.get('show_po')"/>
+                                    <field name="invoice_id" readonly="1"/>
+                                    <field name="advance_residual2" string="未认领预付余额" readonly="0"/>
+                                    <field name="residual" readonly="0" string="原始应付余额"/>
+                                    <field name="invoice_currency_id"/>
+                                    <field name="payment_currency_id"/>
+                                    <field name="currency_id"/>
+                                    <field name="amount_invoice_so" readonly="1"/>
+
+                                    <field name="amount_advance_org" string="预付认领金额"/>
+
+                                    <field name="amount_payment_org" string="申请付款金额"/>
+
+                                    <!--field name="amount_bank_org"/-->
+                                    <!--field name="amount_bank"/-->
+                                    <field name="amount_diff_org" string="费用"/>
+
+                                    <field name="amount_total_org" string="应付认领合计"/>
+
+
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="分录">
+                            <group>
+                                <field name="move_ids"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="action_yfhxd">
+        <field name="name">应付核销单</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.reconcile.order</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('sfk_type','=','yfhxd')]</field>
+        <field name="context">{'default_sfk_type': 'yfhxd', 'default_payment_type': 'outbound', 'default_be_renling': 1, 'default_partner_type':
+            'supplier', 'show_po': 1}
+        </field>
+    </record>
+    <record model="ir.actions.act_window.view" id="act_open_yfhxd_view_tree">
+        <field name="act_window_id" ref="action_yfhxd"/>
+        <field name="sequence" eval="10"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="account_yfhxd_tree_view"/>
+    </record>
+    <record model="ir.actions.act_window.view" id="act_yfhxd_view_form">
+        <field name="act_window_id" ref="action_yfhxd"/>
+        <field name="sequence" eval="20"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="account_yfhxd_form_view"/>
+    </record>
+
+    <menuitem id="menu_yfhxd" name="应付核销单"
+              parent="menu_skf_root"
+              action="action_yfhxd"/>
+
+</odoo>

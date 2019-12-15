@@ -1,0 +1,11 @@
+<templates>
+
+    <t t-extend="ImportView.import_button">
+        <t t-jquery="button.o_button_import" t-operation="after">
+            <button t-if='widget and widget.importEnabled' type="button" class="btn btn-sm btn-default o_button_mass_add_product">
+                批量添加
+            </button>
+        </t>
+    </t>
+
+</templates>

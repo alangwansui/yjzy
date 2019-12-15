@@ -1,0 +1,608 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* wkf_powerful
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 11.0+e-20181118\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-03-07 12:48+0000\n"
+"PO-Revision-Date: 2019-03-07 12:48+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,help:wkf_powerful.field_wkf_node_name
+msgid "A node is basic unit of Workflow"
+msgstr "节点是工作部的基础组成"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,help:wkf_powerful.field_wkf_trans_name
+msgid "A transfer is from a node to other node"
+msgstr "迁移是从一个节点到另一个节点的转变"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_node_arg
+msgid "Action Args"
+msgstr "参数"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_log_wkf_trans_active
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_base_active
+msgid "Active"
+msgstr "有效"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_base_view_id
+msgid "Add View"
+msgstr "添加视图"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_base_allow_reset
+msgid "Allow to reset the Workflow"
+msgstr "允许重置工作流"
+
+#. module: wkf_powerful
+#: selection:wkf.node,join_mode:0
+#: selection:wkf.node,split_mode:0
+msgid "And"
+msgstr "和"
+
+#. module: wkf_powerful
+#: model:ir.ui.view,arch_db:wkf_powerful.wizard_wkf_message_form
+msgid "Apply"
+msgstr "应用"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_trans_auto
+msgid "Auto"
+msgstr "自动完成"
+
+#. module: wkf_powerful
+#: model:ir.ui.view,arch_db:wkf_powerful.wizard_wkf_message_form
+msgid "Cancel"
+msgstr "取消"
+
+#. module: wkf_powerful
+#: model:ir.ui.view,arch_db:wkf_powerful.wkf_base_form_view
+msgid "Cancel WorkFollow Setting"
+msgstr "取消工作流设置"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_node_code
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_trans_code
+msgid "Code"
+msgstr "代码"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_trans_condition
+msgid "Condition"
+msgstr "条件"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_node_event_need
+msgid "Create event"
+msgstr "创建消息"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_log_wkf_trans_create_uid
+#: model:ir.model.fields,field_description:wkf_powerful.field_wizard_wkf_message_create_uid
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_base_create_uid
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_node_create_uid
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_trans_create_uid
+msgid "Created by"
+msgstr "创建人"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_log_wkf_trans_create_date
+#: model:ir.model.fields,field_description:wkf_powerful.field_wizard_wkf_message_create_date
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_base_create_date
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_node_create_date
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_trans_create_date
+msgid "Created on"
+msgstr "创建时间"
+
+#. module: wkf_powerful
+#: model:ir.actions.act_window,name:wkf_powerful.action_wkf_base_view
+#: model:ir.ui.menu,name:wkf_powerful.menu_workflow_root
+#: model:ir.ui.menu,name:wkf_powerful.wkf_base_menu
+#: model:ir.ui.view,arch_db:wkf_powerful.view_wkf_base_diagram
+#: model:ir.ui.view,arch_db:wkf_powerful.wkf_base_form_view
+#: model:ir.ui.view,arch_db:wkf_powerful.wkf_base_tree_view
+msgid "Custom WorkFollow"
+msgstr "自定义工作流"
+
+#. module: wkf_powerful
+#: model:ir.actions.act_window,name:wkf_powerful.action_wkf_node_view
+#: model:ir.ui.view,arch_db:wkf_powerful.wkf_node_form_view
+#: model:ir.ui.view,arch_db:wkf_powerful.wkf_node_tree_view
+msgid "Custom WorkFollow Node"
+msgstr "工作流节点"
+
+#. module: wkf_powerful
+#: model:ir.ui.view,arch_db:wkf_powerful.wkf_trans_form_view
+msgid "Custom WorkFollow Trans"
+msgstr "工作流迁移\n"
+""
+
+#. module: wkf_powerful
+#: model:ir.ui.view,arch_db:wkf_powerful.wkf_trans_tree_view
+msgid "Custom WorkFollow Transfer"
+msgstr "工作流迁移\n"
+""
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_base_show_states
+msgid "Default  States to display"
+msgstr "默认显示状态"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_base_default_state
+msgid "Default Workflow State value"
+msgstr "开始的工作流状态"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_log_wkf_trans_display_name
+#: model:ir.model.fields,field_description:wkf_powerful.field_wizard_wkf_message_display_name
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_base_display_name
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_node_display_name
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_trans_display_name
+msgid "Display Name"
+msgstr "显示名称"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_node_event_users
+msgid "Event Users"
+msgstr "消息用户"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_base_field_id
+msgid "Field Workflow-State"
+msgstr "字段：工作流状态"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_trans_need_note
+msgid "Force note"
+msgstr "必须备注"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_trans_node_from
+msgid "From Node"
+msgstr "从节点"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_base_reset_group
+msgid "Group Reset"
+msgstr "重置工作流"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_trans_group_ids
+msgid "Groups"
+msgstr "群组"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_log_wkf_trans_id
+#: model:ir.model.fields,field_description:wkf_powerful.field_wizard_wkf_message_id
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_base_id
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_node_id
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_trans_id
+msgid "ID"
+msgstr "ID"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,help:wkf_powerful.field_wkf_base_allow_reset
+msgid "If True, This Workflow allow to reset draft"
+msgstr "允许重置为草稿"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,help:wkf_powerful.field_wkf_node_show_state
+msgid "If True, This node will show in Workflow states"
+msgstr "此节点将显示在工作流状态中。"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,help:wkf_powerful.field_wkf_node_no_reset
+msgid "If True, this Node not display the Reset button, default is True"
+msgstr "节点显示在工作流中"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,help:wkf_powerful.field_wkf_node_event_need
+msgid "If true, When Workflow arrived this node, will create a calendar event relation users"
+msgstr "工作流到达次节点，经创建日历提醒给相关的用户"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,help:wkf_powerful.field_wkf_trans_need_note
+msgid "If true, the Workflow note can not be empty, usually when transfer is Reverse,you need it"
+msgstr "如果是真的，工作流注释不能是空的，通常当传输颠倒时，您需要它。"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,help:wkf_powerful.field_wkf_trans_auto
+msgid "If true, when condition is True,transfer will auto finish, not need button, default false"
+msgstr "If true, when condition is True,transfer will auto finish, not need button, default false"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,help:wkf_powerful.field_log_wkf_trans_note
+msgid "If you want record something for this transfer, write here"
+msgstr "如果你想为这个转移记录东西，写在这里"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_node_in_trans
+msgid "Incoming Transfer"
+msgstr "迁入"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_node_no_reset
+msgid "Invisible Reset"
+msgstr "不可重置"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_trans_is_backward
+msgid "Is Reverse"
+msgstr "反向"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,help:wkf_powerful.field_wkf_trans_is_backward
+msgid "Is a Reverse transfer"
+msgstr "反向迁移"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_node_join_mode
+msgid "Join Mode"
+msgstr "迁入模式"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_log_wkf_trans___last_update
+#: model:ir.model.fields,field_description:wkf_powerful.field_wizard_wkf_message___last_update
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_base___last_update
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_node___last_update
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_trans___last_update
+msgid "Last Modified on"
+msgstr "最后修改时间"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_log_wkf_trans_write_uid
+#: model:ir.model.fields,field_description:wkf_powerful.field_wizard_wkf_message_write_uid
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_base_write_uid
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_node_write_uid
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_trans_write_uid
+msgid "Last Updated by"
+msgstr "最后更新者"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_log_wkf_trans_write_date
+#: model:ir.model.fields,field_description:wkf_powerful.field_wizard_wkf_message_write_date
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_base_write_date
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_node_write_date
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_trans_write_date
+msgid "Last Updated on"
+msgstr "最后更新时间"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_log_wkf_trans_model
+msgid "Model"
+msgstr "模型"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_base_model_view_id
+msgid "Model  View"
+msgstr "模型视图"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_base_model
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_trans_model
+msgid "Model Name"
+msgstr "模型名称"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_base_model_id
+msgid "Module ID"
+msgstr "模块ID"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_log_wkf_trans_name
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_base_name
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_node_name
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_trans_name
+msgid "Name"
+msgstr "名称"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_base_no_reset_states
+msgid "No Reset States"
+msgstr "不可重置"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_base_node_ids
+#: model:ir.ui.view,arch_db:wkf_powerful.wkf_base_form_view
+msgid "Node"
+msgstr "节点"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,help:wkf_powerful.field_wkf_base_node_ids
+msgid "Nodes"
+msgstr "节点"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_log_wkf_trans_note
+#: model:ir.model.fields,field_description:wkf_powerful.field_wizard_wkf_message_name
+#: model:ir.ui.view,arch_db:wkf_powerful.wizard_wkf_message_form
+msgid "Note"
+msgstr "备注"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,help:wkf_powerful.field_wkf_node_join_mode
+msgid "OR:anyone input Transfers approved, will arrived this node.  AND:must all input Transfers approved, will arrived this node"
+msgstr "OR:anyone input Transfers approved, will arrived this node.  AND:must all input Transfers approved, will arrived this node"
+
+#. module: wkf_powerful
+#: selection:wkf.node,join_mode:0
+#: selection:wkf.node,split_mode:0
+msgid "Or"
+msgstr "或"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_node_out_trans
+msgid "Out Transfer"
+msgstr "迁出"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_node_action
+msgid "Python Action"
+msgstr "动作"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_log_wkf_trans_res_id
+msgid "Resource ID"
+msgstr "资源ID"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,help:wkf_powerful.field_wkf_base_model_id
+msgid "Select a model that you want to create the Workflow"
+msgstr "选择需要绑定工作流的模型"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_node_sequence
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_trans_sequence
+msgid "Sequence"
+msgstr "序列"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_node_show_state
+msgid "Show In Workflow"
+msgstr "状态栏显示"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_node_split_mode
+msgid "Split Mode"
+msgstr "分割模式"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_trans_node_to
+msgid "TO Node"
+msgstr "至节点"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,help:wkf_powerful.field_wkf_trans_user_ids
+msgid "The Users who can process this transfer"
+msgstr "可以处理这个迁移的用户"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,help:wkf_powerful.field_wkf_base_field_id
+msgid "The Workflow State field"
+msgstr "工作流状态字段"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,help:wkf_powerful.field_wkf_base_view_id
+msgid "The auto created Workflow extend view, show Workflow button, state, logs.."
+msgstr "The auto created Workflow extend view, show Workflow button, state, logs.."
+
+#. module: wkf_powerful
+#: model:ir.model.fields,help:wkf_powerful.field_wkf_node_event_users
+msgid "The calendar event users"
+msgstr "日历用户"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,help:wkf_powerful.field_wkf_trans_condition
+msgid "The check condition of this transfer, default is True"
+msgstr "迁移通过的检查条件，默认为真"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,help:wkf_powerful.field_wkf_base_default_state
+msgid "The default Workflow state, It is come from the star node"
+msgstr "The default Workflow state, It is come from the star node"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,help:wkf_powerful.field_wkf_base_model_view_id
+msgid "The form view of the model that want to extend Workflow button on it"
+msgstr "The form view of the model that want to extend Workflow button on it"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,help:wkf_powerful.field_wkf_trans_group_ids
+msgid "The groups who can process this transfer"
+msgstr "The groups who can process this transfer"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,help:wkf_powerful.field_wkf_node_in_trans
+msgid "The input transfer of this node"
+msgstr "The input transfer of this node"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,help:wkf_powerful.field_wkf_node_out_trans
+msgid "The out transfer of this node"
+msgstr "The out transfer of this node"
+
+#. module: wkf_powerful
+#: code:addons/wkf_powerful/models/base.py:97
+#, python-format
+msgid "The transfer had finish"
+msgstr "迁移已经完成"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,help:wkf_powerful.field_wkf_node_is_stop
+msgid "This node is the end of the Workflow"
+msgstr "This node is the end of the Workflow"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,help:wkf_powerful.field_wkf_node_is_start
+msgid "This node is the start of the Workflow"
+msgstr "This node is the start of the Workflow"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_log_wkf_trans_trans_id
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_base_trans_ids
+#: model:ir.ui.view,arch_db:wkf_powerful.wkf_base_form_view
+msgid "Transfer"
+msgstr "迁移"
+
+#. module: wkf_powerful
+#: model:ir.ui.menu,name:wkf_powerful.log_wkf_trans_menu
+msgid "Transfer Log"
+msgstr "迁移日志"
+
+#. module: wkf_powerful
+#: model:ir.actions.act_window,name:wkf_powerful.action_log_wkf_trans_view
+#: model:ir.ui.view,arch_db:wkf_powerful.log_wkf_trans_tree_view
+msgid "Transfer log"
+msgstr "迁移日志"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,help:wkf_powerful.field_wkf_base_trans_ids
+msgid "Transfers,"
+msgstr "Transfers,"
+
+#. module: wkf_powerful
+#: model:ir.ui.view,arch_db:wkf_powerful.wkf_base_form_view
+msgid "Update WorkFollow Setting"
+msgstr "更新工作流设置"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_trans_user_ids
+msgid "Users"
+msgstr "用户"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,help:wkf_powerful.field_wkf_node_action
+#: model:ir.model.fields,help:wkf_powerful.field_wkf_node_action2
+#: model:ir.model.fields,help:wkf_powerful.field_wkf_node_action3
+msgid "When arrived this node, you can set to trigger a object function to do something, example confirm the order"
+msgstr "When arrived this node, you can set to trigger a object function to do something, example confirm the order"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,help:wkf_powerful.field_wkf_base_no_reset_states
+msgid "Which state u can to reset the Workflow"
+msgstr "Which state u can to reset the Workflow"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,help:wkf_powerful.field_wkf_base_show_states
+msgid "Which status can show the state widget, It is set by node"
+msgstr "Which status can show the state widget, It is set by node"
+
+#. module: wkf_powerful
+#: code:addons/wkf_powerful/models/base.py:149
+#, python-format
+msgid "WorkFollow Logs"
+msgstr "工作流日志"
+
+#. module: wkf_powerful
+#: model:ir.ui.menu,name:wkf_powerful.wkf_node_menu
+msgid "WorkFollow Node"
+msgstr "工作流节点"
+
+#. module: wkf_powerful
+#: model:ir.actions.act_window,name:wkf_powerful.action_wkf_trans_view
+#: model:ir.ui.menu,name:wkf_powerful.wkf_trans_menu
+msgid "WorkFollow Transfer"
+msgstr "工作流迁移"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_node_wkf_id
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_trans_wkf_id
+msgid "Workflow"
+msgstr "工作流"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,help:wkf_powerful.field_wkf_base_reset_group
+msgid "Workflow Reset Button Groups, default Admin"
+msgstr "Workflow Reset Button Groups, default Admin"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_node_is_start
+msgid "Workflow Start"
+msgstr "开始"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_node_is_stop
+msgid "Workflow Stop"
+msgstr "停止"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_trans_xml_groups
+msgid "XML Groups"
+msgstr "XML组的字符"
+
+#. module: wkf_powerful
+#: model:ir.model,name:wkf_powerful.model_log_wkf_trans
+msgid "log.wkf.trans"
+msgstr "log.wkf.trans"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,help:wkf_powerful.field_wkf_node_arg
+#: model:ir.model.fields,help:wkf_powerful.field_wkf_node_arg2
+#: model:ir.model.fields,help:wkf_powerful.field_wkf_node_arg3
+msgid "the object function args"
+msgstr "the object function args"
+
+#. module: wkf_powerful
+#: model:ir.model,name:wkf_powerful.model_wizard_wkf_message
+msgid "wizard.wkf.message"
+msgstr "wizard.wkf.message"
+
+#. module: wkf_powerful
+#: model:ir.actions.act_window,name:wkf_powerful.wizard_wkf_message_action
+msgid "wk.wizard.message"
+msgstr "wk.wizard.message"
+
+#. module: wkf_powerful
+#: model:ir.model,name:wkf_powerful.model_wkf_base
+msgid "wkf.base"
+msgstr "工作流"
+
+#. module: wkf_powerful
+#: model:ir.model,name:wkf_powerful.model_wkf_node
+msgid "wkf.node"
+msgstr "节点"
+
+#. module: wkf_powerful
+#: model:ir.model,name:wkf_powerful.model_wkf_trans
+msgid "wkf.trans"
+msgstr "迁移"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_node_action2
+msgid "动作2"
+msgstr "动作2"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_node_action3
+msgid "动作3"
+msgstr "动作3"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_node_arg2
+msgid "参数2"
+msgstr "参数2"
+
+#. module: wkf_powerful
+#: model:ir.model.fields,field_description:wkf_powerful.field_wkf_node_arg3
+msgid "参数3"
+msgstr "参数3"
+
+#. module: wkf_powerful
+#: code:addons/wkf_powerful/models/base.py:62
+#, python-format
+msgid "工作流审批"
+msgstr "工作流审批"
+

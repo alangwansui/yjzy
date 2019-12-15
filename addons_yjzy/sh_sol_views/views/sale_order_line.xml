@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+	<data>	
+
+<!-- Quotation Lines -->
+
+ 		<record id="sh_sol_sale_quotation_line_form_view_inherit" model="ir.ui.view">
+			<field name="name">Quotation Line Form</field>
+			<field name="model">sale.order.line</field>
+			<field name="arch" type="xml">			
+				<form>
+					<sheet>					
+						<group>
+							<group>
+								<field name="order_id" string="Order"/>
+								<field name="product_id"/>
+								<field name="product_uom"/>
+								<field name="product_uom_qty" string="Ordered Qty"/>								
+								<field name="tax_id" widget="many2many_tags"/>
+								<field name="price_subtotal"/>							
+							</group>
+							<group>
+								<field name="order_partner_id"/>
+								<field name="name"/>
+								<field name="price_unit"/>
+								<field name="discount"/>							
+							</group>
+						</group>						
+					</sheet>
+				</form>				
+			</field>
+		</record>
+		
+ 		<record id="sh_sol_sale_quotation_line_tree_view_inherit" model="ir.ui.view">
+			<field name="name">Quotation Line Tree</field>
+			<field name="model">sale.order.line</field>
+			<field name="arch" type="xml">			
+				<tree>
+					<field name="order_id" string="Order"/>
+					<field name="order_partner_id"/>
+					<field name="product_id"/>
+					<field name="name"/>
+					<field name="product_uom"/>
+					<field name="product_uom_qty" string="Ordered Qty"/>
+					<field name="price_unit"/>
+					<field name="tax_id" widget="many2many_tags"/>
+					<field name="discount"/>
+					<field name="price_subtotal"/>
+				</tree>				
+			</field>
+		</record>
+		
+        <record id="sh_sol_sale_quotation_line_kanban_view_inherit" model="ir.ui.view">
+            <field name="name">Quotation Line Kanban</field>
+            <field name="model">sale.order.line</field>
+            <field name="arch" type="xml">
+                <kanban default_group_by="order_partner_id">
+                    <field name="product_id"/>
+                    <field name="product_uom_qty" string="Qty"/>
+                    <field name="order_id" string="Order"/>
+                    <field name="order_partner_id"/>
+                	<templates>	                	
+	                    <t t-name="kanban-box">
+	                        <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+    	                        <div class="o_kanban_details">
+			                		<strong>Order : <field name="order_id"/> </strong>
+			                		<br/>
+			   	        			Customer : <field name="order_partner_id" string="product_id :"/>
+			  	        			<br/>
+			   	        			Product : <field name="product_id"/>
+			  	        			<br/>
+			   	        			Qty : <field name="product_uom_qty"/>
+		   	        			</div>
+		                	</div>
+	                    </t>
+                    </templates>
+				</kanban>            
+            </field>
+		</record>            
+		
+        <record id="sh_sol_sale_quotation_line_search_view_inherit" model="ir.ui.view">
+            <field name="name">Quotation Line Search</field>
+            <field name="model">sale.order.line</field>
+            <field name="arch" type="xml">
+                <search string="Search Quotation Order Line">
+                    <field name="order_partner_id" filter_domain="['|','|',('order_partner_id','ilike',self),('order_id','ilike',self),('product_id','ilike',self)]"/>
+                    <field name="order_id" string="Order"/>
+                    <field name="product_id"/>
+                    <field name="so_order_date"/>
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter string="Customer" context="{'group_by':'order_partner_id'}"/>
+                        <filter string="Order" context="{'group_by':'order_id'}"/>
+                        <filter string="Product" context="{'group_by':'product_id'}"/>
+
+						<filter string="Today" name="today" 
+							domain="[('so_order_date', '&gt;=', datetime.datetime.now().strftime('%m/%d/%Y 00:00:00')),('so_order_date', '&lt;=', datetime.datetime.now().strftime('%m/%d/%Y 23:23:59'))]"/>
+			
+					    <filter string="Yesterday" name="yesterday"  
+                         	domain="[('so_order_date','&gt;=', ((context_today()+datetime.timedelta(days=-1)).strftime('%Y-%m-%d'))), ('so_order_date','&lt;=', ((context_today()+datetime.timedelta(days=-1)).strftime('%Y-%m-%d')))]"/>				
+					
+						<filter string="Current Week" name="this_week"
+						    domain="[('so_order_date', '&gt;=', ((context_today()+ relativedelta(weeks=-1,weekday=0)).strftime('%Y-%m-%d'))), ('so_order_date', '&lt;=', ((context_today()+ relativedelta(weeks=-1,days=5,weekday=6)).strftime('%Y-%m-%d')))]"  /> 				
+
+					   <filter string="Previous Week" name="prev_week"
+					   		domain="[('so_order_date', '&gt;=', ((context_today()+relativedelta(weeks=-2, weekday=0)).strftime('%Y-%m-%d'))),('so_order_date', '&lt;=', ((context_today()+relativedelta(weeks=-1,weekday=6)).strftime('%Y-%m-%d')))]"/>
+	
+					   <filter string="Current Month" name="this_month" 
+							domain="[('so_order_date','&lt;',(context_today()+relativedelta(months=1)).strftime('%%Y-%%m-01')), ('so_order_date','&gt;=',time.strftime('%%Y-%%m-01'))]"/>				
+	
+					  <filter string="Previous Month" name="prev_month" 
+					  		domain="[('so_order_date','&gt;=',(context_today()-relativedelta(months=1)).strftime('%%Y-%%m-01')),('so_order_date','&lt;',time.strftime('%%Y-%%m-01'))]"/>
+
+			    	  <filter string="Current Year" name="this_year" 
+			    	  		domain="[('so_order_date','&lt;=', time.strftime('%%Y-12-31')),('so_order_date','&gt;=',time.strftime('%%Y-01-01'))]"/>
+
+					  <filter string="Previous Year" name="prev_year"
+                			domain="[('so_order_date', '&gt;=' ,(context_today()-relativedelta(years=1)).strftime('%Y-01-01')),('so_order_date','&lt;=',time.strftime('%Y-01-01'))]"/>
+
+                    </group>
+                </search>
+            </field>
+        </record>
+		
+		<record id="sh_action_sale_quotation_lines" model="ir.actions.act_window">
+			<field name="name">Quotation Line</field>
+			<field name="res_model">sale.order.line</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form,kanban</field> 
+            <field name="domain">[('state','=','draft')]</field>
+            <field name="view_id" ref="sh_sol_sale_quotation_line_tree_view_inherit"/>
+		</record>
+
+<!-- Sale Order Lines -->
+
+ 		<record id="sh_sol_sale_order_line_form_view_inherit" model="ir.ui.view">
+			<field name="name">Sale Order Line Form</field>
+			<field name="model">sale.order.line</field>
+			<field name="arch" type="xml">							
+				<form>
+					<sheet>					
+						<group>
+							<group>
+								<field name="order_id" string="Order"/>
+								<field name="product_id"/>
+								<field name="product_uom"/>
+								<field name="product_uom_qty" string="Ordered Qty"/>								
+								<field name="qty_delivered"/>
+								<field name="tax_id" widget="many2many_tags"/>
+								<field name="price_subtotal"/>							
+							</group>
+							<group>
+								<field name="order_partner_id"/>
+								<field name="name"/>
+								<field name="qty_invoiced"/>
+								<field name="price_unit"/>
+								<field name="discount"/>							
+							</group>
+						</group>						
+					</sheet>
+				</form>				
+			</field>
+		</record>
+		
+ 		<record id="sh_sol_sale_order_line_tree_view_inherit" model="ir.ui.view">
+			<field name="name">Sale Order Line Tree</field>
+			<field name="model">sale.order.line</field>
+			<field name="arch" type="xml">			
+				<tree>
+					<field name="order_id" string="Order"/>
+					<field name="order_partner_id"/>
+					<field name="product_id"/>
+					<field name="name"/>
+					<field name="product_uom"/>
+					<field name="product_uom_qty" string="Ordered Qty"/>
+					<field name="qty_delivered"/>
+					<field name="qty_invoiced"/>
+					<field name="price_unit"/>
+					<field name="tax_id" widget="many2many_tags"/>
+					<field name="discount"/>
+					<field name="price_subtotal"/>							
+				</tree>				
+			</field>
+		</record>
+
+        <record id="sh_sol_sale_order_line_kanban_view_inherit" model="ir.ui.view">
+            <field name="name">Sale Order Line Kanban</field>
+            <field name="model">sale.order.line</field>
+            <field name="arch" type="xml">
+                <kanban default_group_by="order_partner_id">
+                    <field name="product_id"/>
+                    <field name="product_uom_qty" string="Qty"/>
+                    <field name="order_id" string="Order"/>
+                    <field name="order_partner_id"/>
+                    <field name="so_order_date"/>
+                	<templates>	                	
+	                    <t t-name="kanban-box">
+		                	<div class="o_kanban_details">
+		                		<strong>Order : <field name="order_id"/> </strong>
+		                		<br/>
+		   	        			Customer : <field name="order_partner_id" string="product_id :"/>
+		  	        			<br/>
+		   	        			Product : <field name="product_id"/>
+		  	        			<br/>
+		   	        			Qty : <field name="product_uom_qty"/>
+		                	</div>
+	                    </t>
+                    </templates>
+				</kanban>            
+            </field>
+		</record>            
+
+        <record id="sh_sol_sale_order_line_search_view_inherit" model="ir.ui.view">
+            <field name="name">Sale Order Line Search</field>
+            <field name="model">sale.order.line</field>
+            <field name="arch" type="xml">
+                <search string="Search Sales Order Line">
+                    <field name="order_partner_id" filter_domain="['|','|',('order_partner_id','ilike',self),('order_id','ilike',self),('product_id','ilike',self)]"/>
+                    <field name="order_id" string="Order"/>
+                    <field name="product_id"/>
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter string="Customer" context="{'group_by':'order_partner_id'}"/>
+                        <filter string="Sales Order" context="{'group_by':'order_id'}"/>
+                        <filter string="Product" context="{'group_by':'product_id'}"/>
+						
+						<filter string="Today" name="today" 
+							domain="[('so_order_date', '&gt;=', datetime.datetime.now().strftime('%m/%d/%Y 00:00:00')),('so_order_date', '&lt;=', datetime.datetime.now().strftime('%m/%d/%Y 23:23:59'))]"/>
+			
+					    <filter string="Yesterday" name="yesterday"  
+                         	domain="[('so_order_date','&gt;=', ((context_today()+datetime.timedelta(days=-1)).strftime('%Y-%m-%d'))), ('so_order_date','&lt;=', ((context_today()+datetime.timedelta(days=-1)).strftime('%Y-%m-%d')))]"/>				
+					
+						<filter string="Current Week" name="this_week"
+						    domain="[('so_order_date', '&gt;=', ((context_today()+ relativedelta(weeks=-1,weekday=0)).strftime('%Y-%m-%d'))), ('so_order_date', '&lt;=', ((context_today()+ relativedelta(weeks=-1,days=5,weekday=6)).strftime('%Y-%m-%d')))]"  /> 				
+
+					   <filter string="Previous Week" name="prev_week"
+					   		domain="[('so_order_date', '&gt;=', ((context_today()+relativedelta(weeks=-2, weekday=0)).strftime('%Y-%m-%d'))),('so_order_date', '&lt;=', ((context_today()+relativedelta(weeks=-1,weekday=6)).strftime('%Y-%m-%d')))]"/>
+	
+					   <filter string="Current Month" name="this_month" 
+							domain="[('so_order_date','&lt;',(context_today()+relativedelta(months=1)).strftime('%%Y-%%m-01')), ('so_order_date','&gt;=',time.strftime('%%Y-%%m-01'))]"/>				
+	
+					  <filter string="Previous Month" name="prev_month" 
+					  		domain="[('so_order_date','&gt;=',(context_today()-relativedelta(months=1)).strftime('%%Y-%%m-01')),('so_order_date','&lt;',time.strftime('%%Y-%%m-01'))]"/>
+
+			    	  <filter string="Current Year" name="this_year" 
+			    	  		domain="[('so_order_date','&lt;=', time.strftime('%%Y-12-31')),('so_order_date','&gt;=',time.strftime('%%Y-01-01'))]"/>
+
+					  <filter string="Previous Year" name="prev_year"
+                			domain="[('so_order_date', '&gt;=' ,(context_today()-relativedelta(years=1)).strftime('%Y-01-01')),('so_order_date','&lt;=',time.strftime('%Y-01-01'))]"/>
+
+                        
+                    </group>
+                </search>
+            </field>
+        </record>
+
+		<record id="sh_action_sale_order_lines" model="ir.actions.act_window">
+			<field name="name">Sale Order Line</field>
+			<field name="res_model">sale.order.line</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form,kanban</field>
+            <field name="domain">[('state','in',('sale','done'))]</field>
+            <field name="view_id" ref="sh_sol_sale_order_line_tree_view_inherit"/>
+		</record>
+				
+	</data>
+	
+ 	<menuitem id="sh_sol_quotation_line" name="Quotation Lines" action="sh_action_sale_quotation_lines" 
+		groups="sales_team.group_sale_manager" parent="sale.sale_order_menu"/>
+
+ 	<menuitem id="sh_sol_order_line" name="Order Lines" action="sh_action_sale_order_lines" 
+		groups="sales_team.group_sale_manager" parent="sale.sale_order_menu"/>
+			 
+</odoo>

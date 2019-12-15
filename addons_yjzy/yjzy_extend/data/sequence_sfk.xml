@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+    <record id="seq_sfk_type_rcskd" model="ir.sequence">
+        <field name="name">sfk.type.rcskd</field>
+        <field name="code">sfk.type.rcskd</field>
+        <field name="prefix">R</field>
+        <field name="padding">8</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="seq_sfk_type_rcfkd" model="ir.sequence">
+        <field name="name">sfk.type.rcfkd</field>
+        <field name="code">sfk.type.rcfkd</field>
+        <field name="prefix">F</field>
+        <field name="padding">8</field>
+        <field name="company_id" eval="False"/>
+    </record>
+    <record id="seq_sfk_type_rcfksqd" model="ir.sequence">
+        <field name="name">sfk.type.rcfksqd</field>
+        <field name="code">sfk.type.rcfksqd</field>
+        <field name="prefix">DP</field>
+        <field name="padding">8</field>
+        <field name="company_d" eval="False"/>
+    </record>
+    <record id="seq_sfk_type_rcskrld" model="ir.sequence">
+        <field name="name">sfk.type.rcskrld</field>
+        <field name="code">sfk.type.rcskrld</field>
+        <field name="prefix">DR</field>
+        <field name="padding">8</field>
+        <field name="company_id" eval="False"/>
+    </record>
+    <record id="seq_sfk_type_nbzz" model="ir.sequence">
+        <field name="name">sfk.type.nbzz</field>
+        <field name="code">sfk.type.nbzz</field>
+        <field name="prefix">NB</field>
+        <field name="padding">8</field>
+        <field name="company_id" eval="False"/>
+    </record>
+    <record id="seq_sfk_type_yshxd" model="ir.sequence">
+        <field name="name">sfk.type.yshxd</field>
+        <field name="code">sfk.type.yshxd</field>
+        <field name="prefix">AR</field>
+        <field name="padding">8</field>
+        <field name="company_id" eval="False"/>
+    </record>
+    <record id="seq_sfk_type_yfhxd" model="ir.sequence">
+        <field name="name">sfk.type.yfhxd</field>
+        <field name="code">sfk.type.yfhxd</field>
+        <field name="prefix">AP</field>
+        <field name="padding">8</field>
+        <field name="company_id" eval="False"/>
+    </record>
+    <record id="seq_sfk_type_ysrld" model="ir.sequence">
+        <field name="name">sfk.type.ysrld</field>
+        <field name="code">sfk.type.ysrld</field>
+        <field name="prefix">PR</field>
+        <field name="padding">8</field>
+        <field name="company_id" eval="False"/>
+    </record>
+    <record id="seq_sfk_type_yfsqd" model="ir.sequence">
+        <field name="name">sfk.type.yfsqd</field>
+        <field name="code">sfk.type.yfsqd</field>
+        <field name="prefix">PP</field>
+        <field name="padding">8</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+
+    <record id="seq_account_payment_jiehui" model="ir.sequence">
+        <field name="name">account.payment.jiehui</field>
+        <field name="code">account.payment.jiehui</field>
+        <field name="prefix">EX</field>
+        <field name="padding">8</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+
+    <record id="seq_account_payment_hexiao" model="ir.sequence">
+        <field name="name">hx.code</field>
+        <field name="code">hx.code</field>
+        <field name="prefix">HX</field>
+        <field name="padding">8</field>
+        <field name="company_id" eval="False"/>
+    </record>
+</odoo>
+

@@ -1,0 +1,98 @@
+<?xml version="1.0"?>
+<odoo>
+
+
+    <!--########################
+       # Mail.Compose.Message #
+       ########################-->
+
+    <record model="ir.ui.view" id="prt_mail_compose_messae_view_tree">
+        <field name="name">mail.compose.message.tree</field>
+        <field name="model">mail.compose.message</field>
+        <field name="arch" type="xml">
+            <tree string="撰稿">
+                <field name="subject"/>
+                <field name="message_count"/>
+                <field name="mail_count"/>
+                <field name="is_sent"/>
+            </tree>
+        </field>
+    </record>
+
+
+    <!--## Form ## -->
+    <record id="prt_mail_compose_messae_view_form" model="ir.ui.view">
+        <field name="name">prt.mail.compose.message.form</field>
+        <field name="model">mail.compose.message</field>
+        <field name="inherit_id" ref="mail.email_compose_message_wizard_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[1]" position="before">
+                <header>
+                    <!--button string="重新计算邮件地址" name="recompute_mail_address" type="object" class="btn-primary"/-->
+                    <button string="检查邮件地址" name="mail_address_check" type="object" class="btn-primary"/>
+                </header>
+            </xpath>
+
+            <button special="cancel" position="before">
+                <button string="发送邮件" name="send_mail_button" type="object" class="btn-primary" confirm="确定要发送邮件"/>
+                <button string="保存" name="save_action" type="object" class="btn-primary"/>
+            </button>
+
+            <button name="send_mail_action" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </button>
+
+            <field name="subject" position="before">
+
+                <field name="manual_to"/>
+                <field name="partner_cc_ids" placeholder="Add CC contacts to notify..." widget="many2many_tags_email"
+                       context="{'force_email':True, 'show_email':True}"/>
+                <field name="manual_cc"/>
+
+
+                <field name="partner_bcc_ids" placeholder="Add BCC contacts to notify..." widget="many2many_tags_email"
+                       context="{'force_email':True, 'show_email':True}"/>
+
+
+                <field name="wizard_mode" invisible="1"/>
+                <field name="forward_ref" attrs="{'invisible':[('wizard_mode', 'not in', ['forward', 'compose'])],
+                    'required':[('wizard_mode', 'in', ['forward','compose'])]}"/>
+
+
+                <field name="email_from"/>
+                <field name="email_to"/>
+                <field name="email_cc"/>
+
+
+
+            </field>
+
+            <field name="body" position="after" >
+                <group groups="base.group_system">
+                    <field name="message_count"/>
+                    <field name="message_ids"/>
+                    <field name="mail_count"/>
+                    <field name="mail_ids"/>
+                    <field name="force_notify_email"/>
+                    <field name="is_sent"/>
+
+                </group>
+            </field>
+
+
+        </field>
+    </record>
+    <record model="ir.actions.act_window" id="action_mail_compose_message_tree_view">
+        <field name="name">撰稿</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">mail.compose.message</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('message_type', '=', 'email'),('author_id.user_ids','=', uid),('is_sent','=', False)]</field>
+        <field name="context">{'use_channel_name': 'out_mail', 'show_send_button': 1, 'default_force_notify_email': 1}</field>
+    </record>
+    <menuitem id="menu_mail_compose_message" name="撰稿" parent="prt_mail_messages.prt_messages_root"
+              action="action_mail_compose_message_tree_view"/>
+
+
+</odoo>

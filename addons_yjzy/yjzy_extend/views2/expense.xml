@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record model="ir.ui.view" id="other_income_view_tree">
+        <field name="name">其他收入明细</field>
+        <field name="model">hr.expense</field>
+        <field name="priority" eval="999"/>
+        <field name="arch" type="xml">
+            <tree string="其他收入明细">
+                <field name="name" string="收费说明"/>
+                <field name="date" string="日期"/>
+                <field name="negative_total_amount" string="收款金额"/>
+                <field name="state" string="状态"/>
+                <field name="yjzy_payment_id" string="收款单"/>
+                <field name="hx_code"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="other_income_view_form" model="ir.ui.view">
+        <field name="name">hr.expense.form</field>
+        <field name="model">hr.expense</field>
+        <field eval="25" name="priority"/>
+        <field name="arch" type="xml">
+            <form string="其他收入明细" class="o_expense_form">
+                <header invisible="context.get('expense_adding_line')">
+                    <button name="submit_expenses" states="draft" string="Submit to Manager" type="object" class="oe_highlight o_expense_submit"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,reported,done"/>
+                    <button name="view_sheet" type="object" string="View Report" class="oe_highlight" attrs="{'invisible': [('state', '=','draft')]}"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" invisible="context.get('expense_adding_line')">
+                        <button name="action_get_attachment_view"
+                                class="oe_stat_button"
+                                icon="fa-book"
+                                type="object">
+                            <field name="attachment_number" widget="statinfo" string="Documents"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name" string="收入说明" />
+                        <h1>
+                            <field name="name" placeholder="e.g. Lunch with Customer"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="product_id" string="收入名称"  options='{"no_create": True}'
+                                   context="{'default_can_be_expensed': 1, 'tree_view_ref': 'hr_expense.product_product_expense_tree_view'}"/>
+                            <field name="unit_amount" string="金额" required="1" widget="monetary" options="{'currency_field': 'currency_id'}" groups="base.group_system"/>
+                            <field name="negative_unit_amount" widget="monetary" options="{'currency_field': 'currency_id'}" string="收入金额"/>
+                            <label for="quantity" groups="base.group_system"/>
+                            <div groups="base.group_system">
+                                <field name="quantity" readonly="1" class="oe_inline"/>
+                                <field name="product_uom_id" widget="selection" class="oe_inline" groups="product.group_uom"/>
+                            </div>
+                            <field name="tax_ids" domain="[('type_tax_use', '=', 'purchase')]" widget="many2many_tags"
+                                   groups="base.group_system" />
+                        </group>
+                        <group>
+                            <field name="reference"/>
+                            <field name="date" string="收入日期"/>
+                            <field name="account_id" domain="[('internal_type', '=', 'other')]" groups="account.group_account_user"  options='{"no_create": True}'/>
+                            <field name="employee_id" groups="hr_expense.group_hr_expense_user"  options='{"no_create": True}'/>
+                            <field name="sheet_id" invisible="1"/>
+                            <field name="currency_id" groups="base.group_multi_currency"/>
+                            <field name="analytic_account_id" groups="analytic.group_analytic_accounting"/>
+                            <field name="company_id" groups="base.group_multi_company" readonly="1"/>
+
+                            <field name="hx_expense_id"/>
+                            <field name="hx_code"/>
+                            <field name="hx_balance"/>
+                            <button name="make_hx_code"  string="生成内部核对标记" type='object' icon="" attrs="{'invisible':[('hx_code','!=',False)]}"/>
+                        </group>
+                        <group>
+                            <field name="total_amount" widget='monetary' options="{'currency_field': 'currency_id'}" groups="base.group_system"/>
+                            <field name="negative_total_amount" widget='monetary' options="{'currency_field': 'currency_id'}" groups="base.group_system"/>
+                            <label for="payment_mode" groups="base.group_system"/>
+                            <div>
+                                <field name="payment_mode" widget="radio"/>
+                            </div>
+                            <field name="yjzy_payment_id" string="收款单" domain="[('sfk_type', '=', 'rcskd')]"  options='{"no_create": True}' groups="base.group_system"/>
+                            <field name="yjzy_payment_currency_id"  options='{"no_create": True}' groups="base.group_system"/>
+                            <field name="balance" groups="base.group_system" />
+                        </group>
+
+                    </group>
+                    <div>
+                        <field name="description" placeholder="Notes..."/>
+                    </div>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+
+    <record model="ir.actions.act_window" id="action_other_income">
+        <field name="name">其他收入明细</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">hr.expense</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('unit_amount','&lt;', 0)]</field>
+        <field name="context">{}</field>
+
+    </record>
+
+    <record id="action_other_income_tree" model="ir.actions.act_window.view">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="other_income_view_tree"/>
+        <field name="act_window_id" ref="action_other_income"/>
+    </record>
+
+    <record id="action_other_income_form" model="ir.actions.act_window.view">
+        <field name="sequence" eval="2"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="other_income_view_form"/>
+        <field name="act_window_id" ref="action_other_income"/>
+    </record>
+
+
+    <menuitem id="menu_other_income" sequence="0" name="其他收入明细" parent="menu_skf_root" action="action_other_income"/>
+
+
+</odoo>

@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <!--###############
+        # Res.Partner #
+        ###############-->
+    <!--## Form ##-->
+    <record id="prt_res_partner_view_form" model="ir.ui.view">
+        <field name="name">prt.res.partner.form</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <button name="toggle_active" position="before">
+                <button type="object" name="open_messsage" class="oe_stat_button" icon="fa-envelope" string="查看消息" groups="sales_team.group_manager"/>
+
+                <button name="partner_messages" type="object" class="oe_stat_button"
+                        icon="fa-envelope" attrs="{'invisible': [('messages_from_count', '=', 0)]}"
+                        context="{'open_mode': 'from'}">
+                    <field name="messages_from_count" widget="statinfo" string="Author"/>
+                </button>
+                <button name="partner_messages" type="object" class="oe_stat_button"
+                        icon="fa-envelope" attrs="{'invisible': [('messages_to_count', '=', 0)]}"
+                        context="{'open_mode': 'to'}">
+                    <field name="messages_to_count" widget="statinfo" string="Recipient"/>
+                </button>
+
+
+            </button>
+            <xpath expr="//field[@name='email']" position="replace">
+                <label for="email"/>
+                <div class="o_row">
+                    <span style="display:contents!important"><field name="email"/></span>
+                    <button type="object" name="send_email" class="btn-xs btn-link mb4 fa fa-envelope-o"
+                            attrs="{'invisible':[('email', '=', False)]}" context="{'field_name': 'email'}"/>
+
+
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+
+    <!-- Contacts action -->
+    <record id="action_prt_mail_messages_contacts" model="ir.actions.act_window">
+        <field name="name">Contacts</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="search_view_id" ref="base.view_res_partner_filter"/>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Click to add a contact in your address book.
+            </p><p>
+            Odoo helps you easily track all activities related to
+            a customer: discussions, history of business opportunities,
+            documents, etc.
+        </p>
+        </field>
+    </record>
+
+
+
+    <menuitem id="prt_messages_contacts"
+              name="Contacts"
+              action="action_prt_mail_messages_contacts"
+              parent="prt_messages_root"
+              groups="base.group_user,base.group_partner_manager"
+              sequence="10"/>
+
+
+</odoo>

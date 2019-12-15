@@ -1,0 +1,130 @@
+<odoo>
+    <data>
+
+        <record id="view_transport_bill_account_tree" model="ir.ui.view">
+            <field name="name">transport.bill.account.tree</field>
+            <field name="model">transport.bill.account</field>
+            <field name="arch" type="xml">
+                <tree string="出运结算">
+                    <field name="name"/>
+                    <field name="date"/>
+                    <field name="sale_amount"/>
+                    <field name="ciq_amount"/>
+                    <field name="no_ciq_amount"/>
+                    <field name="state"/>
+                    <field name="currency_id" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_transport_bill_account_form" model="ir.ui.view">
+            <field name="name">transport.bill.account.form</field>
+            <field name="model">transport.bill.account</field>
+            <field name="type">form</field>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+                <form string="出运结算">
+                    <header>
+                        <button string="获取金额" type="object" name="get_payment_info" class="oe_highlight"/>
+                        <button string="内部转账" type="object" name="open_account_payments_transfer" class="oe_highlight"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <group col="4">
+                            <group>
+                                <field name="name"/>
+                                <field name="date" required="1"/>
+                                <field name="currency_id"/>
+                                <field name="sale_amount"/>
+                                <field name="ciq_amount"/>
+                                <field name="no_ciq_amount"/>
+                            </group>
+                            <group>
+                                <field name="amount_public1"/>
+                                <field name="amount_public2"/>
+                                <field name="amount_private1"/>
+                                <field name="amount_private2"/>
+                                <field name="amount_rmb3"/>
+                                <field name="amount_diff"/>
+                            </group>
+                            <group>
+                                <field name="amount_received"/>
+                                <field name="amount_real_payment"/>
+                                <field name="amount_real_payment_beginning"/>
+                                <field name="amount_account_payment"/>
+                                <field name="amount_account_adjust"/>
+                            </group>
+                            <group>
+                                <field name="amount_settlement1"/>
+                                <field name="amount_settlement2"/>
+
+                                <field name="last_amount"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="明细">
+                                <field name="line_ids">
+                                    <tree readonly="1">
+                                        <field name="name"/>
+                                        <field name="sale_currency_id"/>
+                                        <field name="sale_invoice_id"/>
+                                        <field name="sale_amount" sum="小计"/>
+                                        <field name="ciq_amount" sum="小计"/>
+                                        <field name="no_ciq_amount" sum="小计"/>
+                                        <field name="amount_public1" sum="小计"/>
+                                        <field name="amount_public2" sum="小计"/>
+                                        <field name="amount_private1" sum="小计"/>
+                                        <field name="amount_private2" sum="小计"/>
+                                        <field name="amount_rmb3" sum="小计"/>
+                                        <field name="amount_diff" sum="小计"/>
+                                        <field name="amount_received" sum="小计"/>
+                                        <field name="amount_real_payment" sum="小计"/>
+                                        <field name="amount_account_payment" sum="小计"/>
+                                        <field name="amount_account_adjust" sum="小计"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="内部转账">
+                                <group>
+                                    <field name="inner_payment_ids"/>
+                                </group>
+                            </page>
+                            <page string="相关分录明细">
+                                <group>
+                                    <field name="move_line_ids"/>
+                                </group>
+                            </page>
+                        </notebook>
+
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="activity_ids" widget="mail_activity"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="act_open_transport_bill_account_view">
+            <field name="name">出运结算</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">transport.bill.account</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+        </record>
+
+
+        <menuitem id="menu_transport_bill_account" name="出运结算"
+                  parent="sale.sale_order_menu"
+                  sequence="44"
+                  action="act_open_transport_bill_account_view"/>
+
+
+    </data>
+</odoo>
+
+
+    

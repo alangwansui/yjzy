@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!---->
+        <record model="ir.ui.view" id="multi_select_product_tree">
+            <field name="name">product.product.tree</field>
+            <field name="model">product.product</field>
+            <field name="priority" eval="999"/>
+            <field name="arch" type="xml">
+                <tree string="Add Line to" create="false" editable="top">
+                    <!--button name="add_line_to_main_order" string="Add One Line" type="object"/-->
+                    <field name="add_qty"/>
+                    <field name="display_name" readonly="1"/>
+                    <field name="default_code" readonly="1"/>
+                    <field name="qty_available" readonly="1"/>
+                    <field name="virtual_available" readonly="1"/>
+                </tree>
+            </field>
+        </record>
+
+
+
+
+    </data>
+</odoo>
+
+

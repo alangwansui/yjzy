@@ -1,0 +1,32 @@
+<odoo>
+  <data>
+    <record id="view_cron_test_tree" model="ir.ui.view">
+      <field name="name">cron.test.tree</field>
+      <field name="model">cron.test</field>
+      <field name="arch" type="xml">
+        <tree string="计划任务测试">
+          <field name="time"/>
+        </tree>
+      </field>
+    </record>
+
+
+
+    <record model="ir.actions.act_window" id="act_open_cron_test_view">
+      <field name="name">计划任务测试</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="res_model">cron.test</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+      <field name="domain">[]</field>
+      <field name="context">{}</field>
+    </record>
+
+
+    <menuitem id="menu_cron_test" name="计划任务测试"
+              parent="base.menu_automation"
+              sequence="20"
+              action="act_open_cron_test_view"/>
+
+  </data>
+</odoo>

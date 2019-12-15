@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="so_quotation_content" inherit_id="website_quote.so_quotation_content" name="Quotation Content">
+        <xpath expr="//small[@t-field='quotation.state']" position="after">
+            <small t-field="quotation.state2" t-if="quotation.state2  !=  'draft'"/>
+        </xpath>
+    </template>
+
+    <template id="so_quotation" inherit_id="website_quote.so_quotation" name="Quatation State2">
+        <xpath expr="//div[@id='modaldecline']" position="after">
+            <div class="modal fade" id="modalsigned" role="dialog" aria-hidden="true">
+                <div class="modal-dialog">
+                    <form id="signed" method="POST" t-att-data-order-id="quotation.id" t-att-data-token="quotation.access_token"
+                          class="js_accept_json modal-content js_website_submit_form">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <div class="modal-header">
+                            <h4 class="modal-title">客户签字</h4>
+                        </div>
+                        <div class="modal-body" id="sign-dialog">
+                            <p>客户签字代表着您已经收到该订单的货物</p>
+                            <t t-call="portal.portal_signature">
+                                <t t-set="object" t-value="quotation"/>
+                                <t t-set="partner_name" t-value="quotation.partner_id.name"/>
+                                <t t-set="callUrl" t-value="'/my/quotes/signed'"/>
+                                <t t-set="accessToken" t-value="quotation.access_token"/>
+                            </t>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </xpath>
+
+        <xpath expr="//div[@id='quotation_toolbar']" position="after">
+            <div class="text-center hidden-print mt16 mb16" id="quotation_toolbar_2" t-if="quotation.state2 in ('draft','delivery_done')">
+                <a class="btn btn-success" data-toggle="modal" data-target="#modalsigned" t-if="quotation.state2 == 'delivery_done'">
+                    <i class="fa fa-check"></i>
+                    签字
+                </a>
+            </div>
+
+
+        </xpath>
+    </template>
+
+</odoo>

@@ -1,0 +1,44 @@
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="inherit_product_pricelist_view_tree">
+            <field name="name">product.pricelist.tree</field>
+            <field name="model">product.pricelist</field>
+            <field name="inherit_id" ref="product.product_pricelist_view_tree"/>
+            <field name="arch" type="xml">
+                <field name="currency_id" position="after">
+                    <field name="type"/>
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="inherit_product_pricelist_view">
+            <field name="name">product.pricelist.form</field>
+            <field name="model">product.pricelist</field>
+            <field name="inherit_id" ref="product.product_pricelist_view"/>
+            <field name="arch" type="xml">
+                <field name="currency_id" position="after">
+                    <field name="type"/>
+                </field>
+            </field>
+        </record>
+
+        <!-- sale order line   # replace by sale_order_product_name_last_price
+        <record id="inherit_view_order_form" model="ir.ui.view">
+            <field name="name">sale.order.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='order_line']//tree/field[@name='product_id']" position="attributes">
+                    <attribute name="context">{'display_last_sale':1  ,'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}</attribute>
+                </xpath>
+
+            </field>
+        </record>
+
+         -->
+
+
+
+    </data>
+</odoo>

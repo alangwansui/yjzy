@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<template id="rreport_transport_bill_vendor_document">
+    <t t-call="web.external_layout">
+
+        <t t-set="doc" t-value="doc.with_context({'lang':doc.partner_id.lang})" />
+<style>
+	body{
+		    font-family:Arial,Helvetica,sans-serif,simsun;
+		    font-size: 12px;
+	}
+	.title{
+		text-align: center
+	}
+	.main{
+	
+	    font-size: 12px;
+		width: 80%
+	}
+	.main td{
+		height:30px;
+		text-align: center;
+		padding: 3px;
+	}
+	.tablelist
+	{
+		vertical-align:middle;
+	 text-align: center;
+	 font-size: 12px;
+		border-collapse: collapse;
+	}
+	.tablelist th
+	{
+		text-align: center;
+		vertical-align:middle;
+		font-size: 12px;
+		height:30px;
+		border: solid 1px;
+		border-collapse: collapse;
+		
+	}
+	.tablelist td
+	{
+		vertical-align:middle;
+		text-align:center;
+		border: solid 1px;
+		border-collapse: collapse;
+		height: 25px;
+		padding: 3px;
+	}
+	
+</style>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" style="text-align: center">
+  <tbody>
+    <tr>
+      <td style="height: 10px"></td>
+    </tr>
+    <tr>
+	  <td style="height: 50px"><span style="font-size: 20px;font-weight: bolder">发货通知单</span></td>
+    </tr>
+  </tbody>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class= "main">
+  <tbody >
+	<tr>
+		<td style="width: 10%">出运合同号</td>
+		<td colspan="4" style="border-bottom: solid 1px"><span t-esc="doc.tb_id.ref"/></td>
+	</tr>
+	<tr>
+		<td>发货供应商及联系人：</td>
+        <td colspan="4" style="border-bottom: solid 1px"><span t-esc="doc.partner_id.name"/><span t-esc="doc.contact_id.name"/></td>
+    </tr>	
+    <tr>
+		<td width="25%">发货方式：</td>
+		<td width="13%">□ 码头仓库</td>
+		<td width="13%">□ 我司仓库</td>
+		<td width="14%">□ 装柜/柜型</td>
+		<td width="35%" style="border-bottom: solid 1px"><span t-esc="doc.delivery_type_c_info"/></td>
+    </tr>
+  </tbody>
+</table>
+<table>
+	<tr>
+	<td height="10x"></td>
+	</tr>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablelist">
+  <tbody>
+    <tr>
+      <th colspan="7">发货明细</th>
+      <th colspan="4">供应商发货回执</th>
+    </tr>
+    <tr>
+      <th width="10%">采购合同号</th>
+      <th width="15%">产品型号</th>
+      <th width="9%">箱数</th>
+      <th width="9%">数量</th>
+      <th width="9%">毛重</th>
+      <th width="9%">净重</th>
+      <th width="9%">体积</th>
+      <th width="5%">是否发完</th>
+      <th width="10%">实际发货箱数</th>
+      <th width="5%">是否含税</th>
+      <th width="10%">发货金额</th>
+    </tr>
+<t t-foreach="doc.line_ids" t-as="line">
+    <tr>
+      <td></td>
+      <td><span t-esc="line.default_code"/></td>
+      <td><span t-esc="line.max_qty"/></td>
+      <td><span t-esc="line.qty"/></td>
+      <td><span t-esc="format_float(line.gross_weight, {'precision': 2})"/></td>
+      <td><span t-esc="format_float(line.net_weight, {'precision': 2})"/></td>
+      <td><span t-esc="format_float(line.volume, {'precision': 2})"/></td>
+      <td>□</td>
+      <td></td>
+      <td>□</td>
+      <td></td>
+    </tr>
+  </t>
+    <tr>
+      <td colspan="2">合计：</td>
+      <td><t t-esc="sum(x.max_qty for x in doc.line_ids)"/></td>
+      <td><t t-esc="sum(x.qty for x in doc.line_ids)"/></td>
+      <td><t t-esc="format_float(sum(x.gross_weight for x in doc.line_ids), {'precision': 2})"/></td>
+      <td><t t-esc="format_float(sum(x.net_weight for x in doc.line_ids), {'precision': 2})"/></td>
+      <td><t t-esc="format_float(sum(x.volume for x in doc.line_ids), {'precision': 2})"/></td>
+      <td>□</td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+ </tbody>
+</table>
+<table width="100%" border="0" cellpadding="0" cellspacing="0" >
+<tbody>
+    <tr>
+        <td width="10%" style="border: solid 1px;border-collapse: collapse;height: 50px;padding-left: 5px" >备注:</td>
+		<td witdh="90%" style="border: solid 1px;border-collapse: collapse;padding-left: 5px"><span t-esc="doc.delivery_note"/></td>
+    </tr>
+  </tbody>
+</table>
+<table width="100%" border="0" cellpadding="0" cellspacing="0" >
+<tbody>
+    <tr>
+      <td width="10%" height="60px" style="border: solid 1px;border-collapse: collapse;padding-left: 5px">通知人确认：</td>
+      <td width="40%" style="border: solid 1px;border-collapse: collapse;"></td>
+      <td width="10%" style="border: solid 1px;border-collapse: collapse;padding-left: 5px">工厂回执确认：</td>
+      <td width="40%" style="border: solid 1px;border-collapse: collapse;"></td>
+    </tr>
+  </tbody>
+</table>
+<table width="100%" border="0" cellpadding="0" cellspacing="0" >
+<tbody>
+    <tr>
+      <td height="20px"></td>
+    </tr>
+  </tbody>
+</table>
+    </t>
+
+</template>
+
+
+
+<template id="report_transport_bill_vendor">
+    <t t-call="web.html_container">
+        <t t-foreach="docs" t-as="doc">
+            <t t-call="yjzy_extend.rreport_transport_bill_vendor_document" t-lang="doc.partner_id.lang"/>
+        </t>
+    </t>
+</template>
+
+
+</odoo>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+
+        <record id="view_data_cleaner_tree" model="ir.ui.view">
+            <field name="name">data.cleaner.tree</field>
+            <field name="model">data.cleaner</field>
+            <field name="arch" type="xml">
+                <tree string="数据清空器">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_data_cleaner_form" model="ir.ui.view">
+            <field name="name">data.cleaner.form</field>
+            <field name="model">data.cleaner</field>
+            <field name="arch" type="xml">
+                <form string="数据清空器">
+                    <header>
+                        <button name="clean_test_data" type="object" string="清空所有明细数据" class="oe_highlight" confirm="清空后业务数据不可恢复，请谨慎操作"/>
+                        <button name="create_business_lines" type="object" string="加载默认业务清除设置" class="oe_highlight"/>
+                        <button name="create_base_lines" type="object" string="加载默的基础资料清除设置" class="oe_highlight" invisible="1"/>
+                    </header>
+                    <sheet>
+                        <field name="name"/>
+                        <group string="清理的明细">
+                            <field name="line_ids" nolabel="1">
+                                <tree editable="top">
+                                    <button name="clean_one" type="object" icon="fas fa-eraser" class="oe_highlight"/>
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="modle_id"/>
+                                    <field name="save_xml" invisible="1"/>
+                                    <field name="note"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_data_cleaner" model="ir.actions.act_window">
+            <field name="name">数据清空器</field>
+            <field name="res_model">data.cleaner</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_data_cleaner_tree"/>
+        </record>
+
+        <menuitem id="menu_data_cleaner" parent="base.next_id_9" sequence="99999" name="数据清空器"
+                  action="action_data_cleaner" groups="base.group_no_one"/>
+
+    </data>
+</openerp>

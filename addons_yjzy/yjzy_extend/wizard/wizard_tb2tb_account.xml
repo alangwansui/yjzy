@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+
+        <record id="wizard_tb2tb_account_form" model="ir.ui.view">
+            <field name="name">wizard.tb2tb.account.from</field>
+            <field name="model">wizard.tb2tb.account</field>
+            <field name="arch" type="xml">
+                <form string="出运报关金额">
+                    <group>
+                        <div>为选中的记录创建 出运报关金额</div>
+                    </group>
+                    <group>
+                    </group>
+                    <footer>
+                        <button name="apply" class="oe_highlight" type='object' string="确认"/>
+                        <button special="cancel" class="oe_highlight" string="取消"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+        <act_window id="act_wizard_tb2tb_account"
+                    name="出运报关金额"
+                    view_mode="form"
+                    res_model="wizard.tb2tb.account"
+                    src_model="transport.bill"
+                    multi="True"
+                    target="new"
+                    key2="client_action_multi"
+        />
+
+
+
+
+    </data>
+</odoo>
+
+
+
+
+
+

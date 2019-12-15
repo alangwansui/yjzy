@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+    <record model="ir.ui.view" id="inherit_view_company_form">
+        <field name="name">res.company.form</field>
+        <field name="model">res.company</field>
+        <field name="inherit_id" ref="base.view_company_form"/>
+        <field name="arch" type="xml">
+            <field name="partner_id" position="before">
+                <field name="full_name"/>
+            </field>
+            <field name="email" position="before">
+                <field name="fax"/>
+            </field>
+            <notebook position="inside">
+                <page string="其他">
+                    <group>
+                        <field name="purchase_image"/>
+                        <field name="sale_image"/>
+                    </group>
+                </page>
+            </notebook>
+        </field>
+    </record>
+
+
+</odoo>

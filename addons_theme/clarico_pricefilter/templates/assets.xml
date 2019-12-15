@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<template id="layout_assets_frontend" inherit_id="web.assets_frontend">
+		<xpath expr="." position="inside">
+			<link rel="stylesheet" href="/clarico_pricefilter/static/src/less/normalize.css"></link>
+			<link rel="stylesheet" href="/clarico_pricefilter/static/src/less/ion.rangeSlider.skinHTML5.css"></link>
+			<link rel="stylesheet" href="/clarico_pricefilter/static/src/less/ion.rangeSlider.css"></link>
+			<link rel="stylesheet" href="/clarico_pricefilter/static/src/less/price_filter_style.less"></link>
+			<script type="text/javascript" src="/clarico_pricefilter/static/src/js/ion.rangeSlider.js"></script>
+			<script type="text/javascript" src="/clarico_pricefilter/static/src/js/price_filter_slider.js"></script>
+		</xpath>
+	</template>
+</odoo>

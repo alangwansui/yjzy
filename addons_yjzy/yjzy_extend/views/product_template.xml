@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- 影藏自带的hs_code-->
+        <record model="ir.ui.view" id="inherit_product_template_hs_code">
+            <field name="name">product.template.form</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="delivery.product_template_hs_code"/>
+            <field name="arch" type="xml">
+                <field name="hs_code" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+            </field>
+        </record>
+
+
+        <!-- template -->
+        <record id="inherit_product_template_form_view" model="ir.ui.view">
+            <field name="name">product.template.form</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_form_view"/>
+            <field name="arch" type="xml">
+                <field name="uom_po_id" position="after">
+                    <field name="create_uid"/>
+                    <field name="create_date"/>
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="inherit_product_template_only_form_view">
+            <field name="name">product.template.form</field>
+            <field name="model">product.template</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view"/>
+            <field name="arch" type="xml">
+                <div name="options" position="before">
+                    <label for="en_name" string="英文名称"/>
+                    <h1>
+                        <field name="en_name" placeholder="English Name"/>
+                    </h1>
+                </div>
+                <field name="barcode" position="after">
+                    <field name="hs_id" attrs="{'invisible': [('product_variant_count', '&gt;', 1)]}"/>
+                    <field name="hs_en_name" attrs="{'invisible': [('product_variant_count', '&gt;', 1)]}"/>
+                    <field name="back_tax" attrs="{'invisible': [('product_variant_count', '&gt;', 1)]}"/>
+                    <field name="tmpl_code"/>
+                    <field name="need_print"/>
+                    <field name="need_split_bom"/>
+                </field>
+            </field>
+        </record>
+
+        <!-- 产品搜索 -->
+        <record id="inherit_product_template_search_view" model="ir.ui.view">
+            <field name="name">product.template.search.form</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_search_view"/>
+            <field name="arch" type="xml">
+                <field name="name" position="attributes">
+                    <attribute name="filter_domain">
+                        ['|','|','|',('default_code','ilike',self),('name','ilike',self),('barcode','ilike',self),('customer_ref','ilike',self)]
+                    </attribute>
+                </field>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

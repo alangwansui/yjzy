@@ -1,0 +1,26 @@
+<odoo>
+    <data>
+
+
+        <record id="view_transport_lot_plan_tree" model="ir.ui.view">
+            <field name="name">transport.lot.plan.tree</field>
+            <field name="model">transport.lot.plan</field>
+            <field name="arch" type="xml">
+                <tree string="出运计划" editable="top">
+                    <field name="tbline_id"/>
+                    <field name="lot_id"/>
+                    <field name="qty"/>
+                    <field name="stage_1"/>
+                    <field name="stage_1"/>
+                    <!-- button icon="fa-trash-alt"  type="object" name="test" /-->
+                </tree>
+            </field>
+        </record>
+
+
+
+    </data>
+</odoo>
+
+
+

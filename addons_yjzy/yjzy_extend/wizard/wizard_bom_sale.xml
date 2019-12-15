@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="wizard_bom_sale_form" model="ir.ui.view">
+            <field name="name">wizard.bom.sale.form</field>
+            <field name="model">wizard.bom.sale</field>
+            <field name="arch" type="xml">
+                <form string="套件销售">
+                    <group>
+                        <field name="bom_id"/>
+                        <field name="product_id"/>
+                        <field name="qty"/>
+                    </group>
+                    <group>
+                    </group>
+                    <footer>
+                        <button name="apply" class="oe_highlight" type='object' string="确认"/>
+                        <button special="cancel" class="oe_highlight" string="取消"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

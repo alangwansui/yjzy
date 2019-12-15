@@ -1,0 +1,846 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+
+        <record id="mail_wechat_emoji_100" model="mail.shortcode">
+            <field name="source">/::)</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/100.gif"/&gt;</field>
+            <field name="description">微笑"</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_101" model="mail.shortcode">
+            <field name="source">/::~</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/101.gif"/&gt;</field>
+            <field name="description">伤心</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_102" model="mail.shortcode">
+            <field name="source">/::B</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/102.gif"/&gt;</field>
+            <field name="description">美女</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_103" model="mail.shortcode">
+            <field name="source">/::|</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/103.gif"/&gt;</field>
+            <field name="description">发呆</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_104" model="mail.shortcode">
+            <field name="source">/:8-)</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/104.gif"/&gt;</field>
+            <field name="description">墨镜</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_105" model="mail.shortcode">
+            <field name="source">/::&amp;lt;</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/105.gif"/&gt;</field>
+            <field name="description">哭</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_106" model="mail.shortcode">
+            <field name="source">/::$</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/106.gif"/&gt;</field>
+            <field name="description">羞</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_107" model="mail.shortcode">
+            <field name="source">/::X</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/107.gif"/&gt;</field>
+            <field name="description">哑</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_108" model="mail.shortcode">
+            <field name="source">/::Z</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/108.gif"/&gt;</field>
+            <field name="description">睡</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_109" model="mail.shortcode">
+            <field name="source">/::'(</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/109.gif"/&gt;</field>
+            <field name="description">哭</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_110" model="mail.shortcode">
+            <field name="source">/::-|</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/110.gif"/&gt;</field>
+            <field name="description">囧</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_111" model="mail.shortcode">
+            <field name="source">/::@</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/111.gif"/&gt;</field>
+            <field name="description">怒</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_112" model="mail.shortcode">
+            <field name="source">/::P</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/112.gif"/&gt;</field>
+            <field name="description">调皮</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_113" model="mail.shortcode">
+            <field name="source">/::D</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/113.gif"/&gt;</field>
+            <field name="description">笑</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_114" model="mail.shortcode">
+            <field name="source">/::O</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/114.gif"/&gt;</field>
+            <field name="description">惊讶</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_115" model="mail.shortcode">
+            <field name="source">/::(</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/115.gif"/&gt;</field>
+            <field name="description">难过</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_116" model="mail.shortcode">
+            <field name="source">/::+</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/116.gif"/&gt;</field>
+            <field name="description">酷</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_117" model="mail.shortcode">
+            <field name="source">/:--b</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/117.gif"/&gt;</field>
+            <field name="description">汗</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_118" model="mail.shortcode">
+            <field name="source">/::Q</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/118.gif"/&gt;</field>
+            <field name="description">抓狂</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_119" model="mail.shortcode">
+            <field name="source">/::T</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/119.gif"/&gt;</field>
+            <field name="description">吐</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_120" model="mail.shortcode">
+            <field name="source">/:,@P</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/120.gif"/&gt;</field>
+            <field name="description">笑</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_121" model="mail.shortcode">
+            <field name="source">/:,@-D</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/121.gif"/&gt;</field>
+            <field name="description">快乐</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_122" model="mail.shortcode">
+            <field name="source">/::d</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/122.gif"/&gt;</field>
+            <field name="description">奇</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_123" model="mail.shortcode">
+            <field name="source">/:,@o</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/123.gif"/&gt;</field>
+            <field name="description">傲</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_124" model="mail.shortcode">
+            <field name="source">/::g</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/124.gif"/&gt;</field>
+            <field name="description">饿</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_125" model="mail.shortcode">
+            <field name="source">/:|-)</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/125.gif"/&gt;</field>
+            <field name="description">累</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_126" model="mail.shortcode">
+            <field name="source">/::!</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/126.gif"/&gt;</field>
+            <field name="description">吓</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_127" model="mail.shortcode">
+            <field name="source">/::L</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/127.gif"/&gt;</field>
+            <field name="description">汗</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_128" model="mail.shortcode">
+            <field name="source">/::&amp;gt;</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/128.gif"/&gt;</field>
+            <field name="description">高兴</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_129" model="mail.shortcode">
+            <field name="source">/::,@</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/129.gif"/&gt;</field>
+            <field name="description">闲</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_130" model="mail.shortcode">
+            <field name="source">/:,@f</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/130.gif"/&gt;</field>
+            <field name="description">努力</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_131" model="mail.shortcode">
+            <field name="source">/::-S</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/131.gif"/&gt;</field>
+            <field name="description">骂</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_132" model="mail.shortcode">
+            <field name="source">/:?</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/132.gif"/&gt;</field>
+            <field name="description">疑问</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_133" model="mail.shortcode">
+            <field name="source">/:,@x</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/133.gif"/&gt;</field>
+            <field name="description">秘密</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_134" model="mail.shortcode">
+            <field name="source">/:,@@</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/134.gif"/&gt;</field>
+            <field name="description">乱</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_135" model="mail.shortcode">
+            <field name="source">/::8</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/135.gif"/&gt;</field>
+            <field name="description">疯</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_136" model="mail.shortcode">
+            <field name="source">/:,@!</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/136.gif"/&gt;</field>
+            <field name="description">哀</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_137" model="mail.shortcode">
+            <field name="source">/:!!!</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/137.gif"/&gt;</field>
+            <field name="description">鬼</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_138" model="mail.shortcode">
+            <field name="source">/:xx</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/138.gif"/&gt;</field>
+            <field name="description">打击</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_139" model="mail.shortcode">
+            <field name="source">/:bye</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/139.gif"/&gt;</field>
+            <field name="description">bye</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_140" model="mail.shortcode">
+            <field name="source">/:wipe</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/140.gif"/&gt;</field>
+            <field name="description">汗</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_141" model="mail.shortcode">
+            <field name="source">/:dig</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/141.gif"/&gt;</field>
+            <field name="description">抠</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_142" model="mail.shortcode">
+            <field name="source">/:handclap</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/142.gif"/&gt;</field>
+            <field name="description">鼓掌</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_143" model="mail.shortcode">
+            <field name="source">/:&amp;-(</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/143.gif"/&gt;</field>
+            <field name="description">糟糕</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_144" model="mail.shortcode">
+            <field name="source">/:B-)</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/144.gif"/&gt;</field>
+            <field name="description">恶搞</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_145" model="mail.shortcode">
+            <field name="source">/:&amp;lt;@</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/145.gif"/&gt;</field>
+            <field name="description">什么</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_146" model="mail.shortcode">
+            <field name="source">/:@&amp;gt;</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/146.gif"/&gt;</field>
+            <field name="description">什么</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_147" model="mail.shortcode">
+            <field name="source">/::-O</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/147.gif"/&gt;</field>
+            <field name="description">累</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_148" model="mail.shortcode">
+            <field name="source">/:&amp;gt;-|</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/148.gif"/&gt;</field>
+            <field name="description">看</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_149" model="mail.shortcode">
+            <field name="source">/:P-(</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/149.gif"/&gt;</field>
+            <field name="description">难过</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_150" model="mail.shortcode">
+            <field name="source">/::'|</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/150.gif"/&gt;</field>
+            <field name="description">难过</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_151" model="mail.shortcode">
+            <field name="source">/:X-)</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/151.gif"/&gt;</field>
+            <field name="description">坏</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_152" model="mail.shortcode">
+            <field name="source">/::*</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/152.gif"/&gt;</field>
+            <field name="description">亲</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_153" model="mail.shortcode">
+            <field name="source">/:@x</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/153.gif"/&gt;</field>
+            <field name="description">吓</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_154" model="mail.shortcode">
+            <field name="source">/:8*</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/154.gif"/&gt;</field>
+            <field name="description">可怜</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_155" model="mail.shortcode">
+            <field name="source">/:pd</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/155.gif"/&gt;</field>
+            <field name="description">刀</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_156" model="mail.shortcode">
+            <field name="source">/:&amp;lt;W&amp;gt;</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/156.gif"/&gt;</field>
+            <field name="description">水果</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_157" model="mail.shortcode">
+            <field name="source">/:beer</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/157.gif"/&gt;</field>
+            <field name="description">酒</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_158" model="mail.shortcode">
+            <field name="source">/:basketb</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/158.gif"/&gt;</field>
+            <field name="description">篮球</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_159" model="mail.shortcode">
+            <field name="source">/:oo</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/159.gif"/&gt;</field>
+            <field name="description">乒乓</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_160" model="mail.shortcode">
+            <field name="source">/:coffee</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/160.gif"/&gt;</field>
+            <field name="description">咖啡</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_161" model="mail.shortcode">
+            <field name="source">/:eat</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/161.gif"/&gt;</field>
+            <field name="description">美食</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_162" model="mail.shortcode">
+            <field name="source">/:pig</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/162.gif"/&gt;</field>
+            <field name="description">动物</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_163" model="mail.shortcode">
+            <field name="source">/:rose</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/163.gif"/&gt;</field>
+            <field name="description">鲜花</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_164" model="mail.shortcode">
+            <field name="source">/:fade</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/164.gif"/&gt;</field>
+            <field name="description">枯</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_165" model="mail.shortcode">
+            <field name="source">/:showlove</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/165.gif"/&gt;</field>
+            <field name="description">唇</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_166" model="mail.shortcode">
+            <field name="source">/:heart</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/166.gif"/&gt;</field>
+            <field name="description">爱</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_167" model="mail.shortcode">
+            <field name="source">/:break</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/167.gif"/&gt;</field>
+            <field name="description">分手</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_168" model="mail.shortcode">
+            <field name="source">/:cake</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/168.gif"/&gt;</field>
+            <field name="description">生日</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_169" model="mail.shortcode">
+            <field name="source">/:li</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/169.gif"/&gt;</field>
+            <field name="description">电</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_170" model="mail.shortcode">
+            <field name="source">/:bome</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/170.gif"/&gt;</field>
+            <field name="description">炸弹</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_171" model="mail.shortcode">
+            <field name="source">/:kn</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/171.gif"/&gt;</field>
+            <field name="description">刀子</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_172" model="mail.shortcode">
+            <field name="source">/:footb</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/172.gif"/&gt;</field>
+            <field name="description">足球</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_173" model="mail.shortcode">
+            <field name="source">/:ladybug</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/173.gif"/&gt;</field>
+            <field name="description">瓢虫</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_174" model="mail.shortcode">
+            <field name="source">/:shit</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/174.gif"/&gt;</field>
+            <field name="description">翔</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_175" model="mail.shortcode">
+            <field name="source">/:moon</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/175.gif"/&gt;</field>
+            <field name="description">月亮</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_176" model="mail.shortcode">
+            <field name="source">/:sun</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/176.gif"/&gt;</field>
+            <field name="description">太阳</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_177" model="mail.shortcode">
+            <field name="source">/:gift</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/177.gif"/&gt;</field>
+            <field name="description">礼物</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_178" model="mail.shortcode">
+            <field name="source">/:hug</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/178.gif"/&gt;</field>
+            <field name="description">抱抱</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_179" model="mail.shortcode">
+            <field name="source">/:strong</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/179.gif"/&gt;</field>
+            <field name="description">拇指</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_180" model="mail.shortcode">
+            <field name="source">/:weak</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/180.gif"/&gt;</field>
+            <field name="description">贬低</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_181" model="mail.shortcode">
+            <field name="source">/:share</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/181.gif"/&gt;</field>
+            <field name="description">握手</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_182" model="mail.shortcode">
+            <field name="source">/:v</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/182.gif"/&gt;</field>
+            <field name="description">剪刀手</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_183" model="mail.shortcode">
+            <field name="source">/:@)</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/183.gif"/&gt;</field>
+            <field name="description">抱拳</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_184" model="mail.shortcode">
+            <field name="source">/:jj</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/184.gif"/&gt;</field>
+            <field name="description">勾引</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_185" model="mail.shortcode">
+            <field name="source">/:@@</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/185.gif"/&gt;</field>
+            <field name="description">拳头</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_186" model="mail.shortcode">
+            <field name="source">/:bad</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/186.gif"/&gt;</field>
+            <field name="description">小拇指</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_187" model="mail.shortcode">
+            <field name="source">/:lvu</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/187.gif"/&gt;</field>
+            <field name="description">拇指八</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_188" model="mail.shortcode">
+            <field name="source">/:no</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/188.gif"/&gt;</field>
+            <field name="description">食指</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_189" model="mail.shortcode">
+            <field name="source">/:ok</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/189.gif"/&gt;</field>
+            <field name="description">ok</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_190" model="mail.shortcode">
+            <field name="source">/:love</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/190.gif"/&gt;</field>
+            <field name="description">情侣</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_191" model="mail.shortcode">
+            <field name="source">/:&amp;lt;L&amp;gt;</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/191.gif"/&gt;</field>
+            <field name="description">爱心</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_192" model="mail.shortcode">
+            <field name="source">/:jump</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/192.gif"/&gt;</field>
+            <field name="description">蹦哒</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_193" model="mail.shortcode">
+            <field name="source">/:shake</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/193.gif"/&gt;</field>
+            <field name="description">颤抖</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_194" model="mail.shortcode">
+            <field name="source">/:&amp;lt;O&amp;gt;</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/194.gif"/&gt;</field>
+            <field name="description">怄气</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_195" model="mail.shortcode">
+            <field name="source">/:circle</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/195.gif"/&gt;</field>
+            <field name="description">跳舞</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_196" model="mail.shortcode">
+            <field name="source">/:kotow</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/196.gif"/&gt;</field>
+            <field name="description">发呆</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_197" model="mail.shortcode">
+            <field name="source">/:turn</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/197.gif"/&gt;</field>
+            <field name="description">背着</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_198" model="mail.shortcode">
+            <field name="source">/:skip</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/198.gif"/&gt;</field>
+            <field name="description">伸手</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_199" model="mail.shortcode">
+            <field name="source">/:oY</field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/199.gif"/&gt;</field>
+            <field name="description">耍帅</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_200" model="mail.shortcode">
+            <field name="source"></field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/200.png"/&gt;</field>
+            <field name="description">微笑"</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_201" model="mail.shortcode">
+            <field name="source"></field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/201.png"/&gt;</field>
+            <field name="description">生病"</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_202" model="mail.shortcode">
+            <field name="source"></field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/202.png"/&gt;</field>
+            <field name="description">哭泣"</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_203" model="mail.shortcode">
+            <field name="source"></field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/203.png"/&gt;</field>
+            <field name="description">吐舌"</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_204" model="mail.shortcode">
+            <field name="source"></field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/204.png"/&gt;</field>
+            <field name="description">迷糊"</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_205" model="mail.shortcode">
+            <field name="source"></field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/205.png"/&gt;</field>
+            <field name="description">瞪眼"</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_206" model="mail.shortcode">
+            <field name="source"></field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/206.png"/&gt;</field>
+            <field name="description">恐怖"</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_207" model="mail.shortcode">
+            <field name="source"></field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/207.png"/&gt;</field>
+            <field name="description">忧愁"</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_208" model="mail.shortcode">
+            <field name="source"></field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/208.png"/&gt;</field>
+            <field name="description">眨眉"</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_209" model="mail.shortcode">
+            <field name="source"></field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/209.png"/&gt;</field>
+            <field name="description">闭眼"</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_210" model="mail.shortcode">
+            <field name="source"></field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/210.png"/&gt;</field>
+            <field name="description">鄙视"</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_211" model="mail.shortcode">
+            <field name="source"></field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/211.png"/&gt;</field>
+            <field name="description">阴暗"</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_212" model="mail.shortcode">
+            <field name="source"></field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/212.png"/&gt;</field>
+            <field name="description">小鬼"</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_213" model="mail.shortcode">
+            <field name="source"></field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/213.png"/&gt;</field>
+            <field name="description">礼物"</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_214" model="mail.shortcode">
+            <field name="source"></field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/214.png"/&gt;</field>
+            <field name="description">拜佛"</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_215" model="mail.shortcode">
+            <field name="source"></field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/215.png"/&gt;</field>
+            <field name="description">力量"</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_216" model="mail.shortcode">
+            <field name="source"></field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/216.png"/&gt;</field>
+            <field name="description">金钱"</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_217" model="mail.shortcode">
+            <field name="source"></field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/217.png"/&gt;</field>
+            <field name="description">蛋糕"</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_218" model="mail.shortcode">
+            <field name="source"></field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/218.png"/&gt;</field>
+            <field name="description">彩带"</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+        <record id="mail_wechat_emoji_219" model="mail.shortcode">
+            <field name="source"></field>
+            <field name="substitution">&lt;img src="/oejia_wx_ent/static/src/img/wechat/219.png"/&gt;</field>
+            <field name="description">礼物"</field>
+            <field name="shortcode_type">image</field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,33 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* sale_order_product_name_last_price
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 10.0-20171007\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-11-12 07:59+0000\n"
+"PO-Revision-Date: 2017-11-12 07:59+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: sale_order_product_name_last_price
+#: code:addons/sale_order_product_name_last_price/models/product.py:52
+#, python-format
+msgid "LS"
+msgstr "已售"
+
+#. module: sale_order_product_name_last_price
+#: model:ir.model.fields,field_description:sale_order_product_name_last_price.field_product_product_last_sale_price
+msgid "Last Sale Price"
+msgstr "最后销售价格"
+
+#. module: sale_order_product_name_last_price
+#: model:ir.model,name:sale_order_product_name_last_price.model_product_product
+msgid "Product"
+msgstr "产品"
+

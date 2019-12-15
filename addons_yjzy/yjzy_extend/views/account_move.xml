@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+
+    <record id="inherit_view_account_move_line_filter" model="ir.ui.view">
+       <field name="name">account.move.line.search</field>
+       <field name="model">account.move.line</field>
+        <field name="inherit_id" ref="account.view_account_move_line_filter"/>
+        <field name="arch" type="xml">
+            <field name="account_id" position="after">
+                <field name="hx_code"/>
+            </field>
+       </field>
+    </record>
+
+
+    <record id="inherit_view_move_tree" model="ir.ui.view">
+        <field name="name">account.move.tree</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_tree"/>
+        <field name="arch" type="xml">
+            <tree position="inside">
+                <field name="invoice_id"/>
+                <field name="include_tax"/>
+                <field name="tb_contract_code"/>
+                <field name="purchase_contract_code"/>
+            </tree>
+        </field>
+    </record>
+
+
+    <!-- account move  -->
+    <record id="inherit_view_move_form" model="ir.ui.view">
+        <field name="name">account.move.form</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='line_ids']//tree" position="inside">
+                <field name="reconciled" readonly="0"/>
+                <field name="so_id" readonly="1"/>
+                <field name="po_id"/>
+                <field name="yjzy_payment_id" readonly="1"/>
+                <field name="invoice_id" readonly="1"/>
+                <field name="plan_invoice_id" readonly="1"/>
+                <field name="sheet_id" readonly="1"/>
+                <field name="expense_id" readonly="1"/>
+                <field name="new_payment_id" readonly="1"/>
+                <field name="hx_code"/>
+            </xpath>
+            <field name="ref" position="after">
+                <field name="invoice_id"/>
+                <field name="include_tax"/>
+                <field name="tb_contract_code"/>
+                <field name="purchase_contract_code"/>
+            </field>
+
+        </field>
+    </record>
+
+    <record id="inherit_view_move_line_tree" model="ir.ui.view">
+        <field name="name">account.move.line.tree</field>
+        <field name="model">account.move.line</field>
+        <field name="inherit_id" ref="account.view_move_line_tree"/>
+        <field name="arch" type="xml">
+            <tree position="inside">
+                <field name="reconciled" readonly="1"/>
+                <field name="so_id"/>
+                <field name="po_id"/>
+                <field name="yjzy_payment_id" readonly="1"/>
+                <field name="invoice_id" readonly="1"/>
+                <field name="plan_invoice_id" readonly="1"/>
+                <field name="sheet_id" readonly="1"/>
+                <field name="expense_id" readonly="1"/>
+                <field name="new_payment_id" readonly="1"/>
+                <field name="hx_code"/>
+            </tree>
+        </field>
+    </record>
+    <record id="inherit_view_move_line_form" model="ir.ui.view">
+        <field name="name">account.move.line.tree</field>
+        <field name="model">account.move.line</field>
+        <field name="inherit_id" ref="account.view_move_line_form"/>
+        <field name="arch" type="xml">
+            <field name="invoice_id" position="after">
+                <field name="so_id"/>
+                <field name="po_id"/>
+                <field name="yjzy_payment_id" readonly="1"/>
+                <field name="sheet_id" readonly="1"/>
+                <field name="expense_id" readonly="1"/>
+                <field name="new_payment_id" readonly="1"/>
+                <field name="hx_code"/>
+            </field>
+        </field>
+    </record>
+
+</odoo>

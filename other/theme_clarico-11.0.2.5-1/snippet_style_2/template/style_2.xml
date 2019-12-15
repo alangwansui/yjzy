@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<template id="snippet_style_two" inherit_id="clarico_snippets.clarico_offer_snippets"
+		name="Style 2" priority="2">
+		<xpath
+			expr="//div[@id='clarico_offer_structure']/div[hasclass('o_panel_body')]"
+			position="inside">
+			<t t-snippet="snippet_style_2.snippet_style_2_body" t-thumbnail="/snippet_style_2/static/src/img/Style2.jpg" />
+		</xpath>
+	</template>
+	<template id="snippet_style_2_body" name="Timer">
+		<section class="snippet_design">
+				<div class="js_timer" data-date="nan" contentEditable="false"
+					data-isemipro='true' />
+		</section>
+	</template>
+
+	<template id="snippet_style_2_snippet_options" inherit_id="website.snippet_options">
+		<xpath expr="." position="inside">
+			<div data-js='js_timer' data-selector=".js_timer">
+				<li data-date_configure="" data-no-preview="true">
+					<a class="js_products_slider">Modify Time</a>
+				</li>
+			</div>
+		</xpath>
+	</template>
+
+	<template id="snippet_style_2_template" name="Style 2">
+		<section class="left_container_parent">
+			
+			<section class="snippet_left_container">
+				<section class="snippet_left_content">
+					<h3 class="chs_heading">Furniture Interior</h3>
+					<p class="desc_para">We have lots of styles and types, from sun loungers to
+						armchairs, and you can even create your own combination with our
+						sofa sections.
+					</p>
+					<a class="shop_now_button" href="#">Shop now</a>
+				</section>
+				<section class="snippet_right_timer_div">
+					<p id="date_timer" >
+						<div class="timer_common">
+							<div id="days"></div>
+							<p id="d_lbl"></p>
+						</div>
+						<p class="colon">:</p>
+						<div class="timer_common">
+							<div id="hours"></div>
+							<p id="h_lbl"></p>
+						</div>
+						<p class="colon">:</p>
+						<div class="timer_common">
+							<div id="minutes"></div>
+							<p id="m_lbl"></p>
+						</div>
+						<p class="colon">:</p>
+						<div class="timer_common">
+							<div id="seconds"></div>
+							<p id="s_lbl"></p>
+						</div>
+					</p>
+				</section>
+			</section>
+		</section>
+		<section>
+			<section class="right_container_parent"
+				style="background-image:url('/snippet_style_2/static/src/img/grey_chair_Bg.jpeg')">
+				<section class="snippet_sale_icon">
+				15%
+				<span>off</span>
+			</section>
+			</section>
+		</section>
+
+
+	</template>
+
+
+</odoo>

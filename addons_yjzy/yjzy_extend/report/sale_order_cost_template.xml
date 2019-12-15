@@ -1,0 +1,507 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_sale_order_cost_document">
+        <t t-call="yjzy_extend.no_header_external_layout">
+            <t t-set="doc" t-value="doc.with_context({'lang':doc.partner_id.lang})"/>
+
+
+
+            <style>
+                body{
+                font-family:Arial,Helvetica,sans-serif,simsun;
+                font-size: 10px;
+				}
+
+				.text-right{
+					text-align: right;
+					padding-right: 2px;
+
+				}
+                .title{
+                height: 30px;
+                text-align: center;
+				font-size: 24px}
+                .main{
+                width: 100%;
+                font-size: 10px ; }
+                .main td{height:20px}
+                .tablelist{
+                text-align: left;
+
+                border: 0.5px solid ;
+                border-collapse: collapse;
+                font-size: 10px;
+                width: 100%;
+                vertical-align: middle
+                }
+                .tablelist th{
+                font-size: 10px;
+                text-align: center;
+                border: 0.5px solid ;
+                height: 20px;
+                line-height: 20px;
+                background-color:#E3ECF4;
+                vertical-align: middle;
+                font-weight: 200
+                }
+                .tablelist td{
+                border: 0.5px solid;
+                height: 20px;
+                line-height: 20px;
+                vertical-align: middle;
+                padding-left: 8px;
+                }
+                .tablelist2{
+                text-align: left;
+
+                border: 0.5px solid ;
+                border-collapse: collapse;
+                font-size: 10px;
+                width: 100%;
+                vertical-align: middle
+                }
+                .tablelist2 th{
+                font-size: 10px;
+                text-align: center;
+                border: 0.5px solid ;
+                height: 20px;
+                line-height: 20px;
+                background-color:#E3ECF4;
+                vertical-align: middle;
+                font-weight: 200
+                }
+                .tablelist2 td{
+                border: 0.5px solid;
+                height: 40px;
+                line-height: 20px;
+                vertical-align: middle;
+                padding-left: 8px;
+                }
+                .table1{
+                font-size: 10px;
+                border-collapse: collapse;
+                border-top:solid 0.5px;
+                border-left:solid 0.5px;
+                border-right:solid 0.5px;
+
+
+                }
+                .table1 td{
+                border-left: solid 0.5px;
+                border-bottom: solid 0.5px;
+                border-collapse: collapse;
+                height: 20px;
+                padding: 2px;
+
+                }
+                .table2{
+                font-size: 12px;
+                border-collapse: collapse;
+                border-top:solid 1px;
+                border-left:solid 1px;
+                border-right:solid 1px;
+                }
+                .table2 th{
+                border-bottom: solid 1px;
+                padding: 2px;
+                border-collapse: collapse;
+                height: 20px;
+                }
+                .table2 td{
+
+                padding: 2px;
+                border-collapse: collapse;
+                height: 20px;
+                }
+                .table3{
+                font-size: 12px;
+                border-collapse: collapse;
+                border-bottom:solid 1px;
+                border-left:solid 1px;
+                border-right:solid 1px;
+                }
+                .table3 td{
+                padding: 2px;
+                border-left: solid 1px;
+                border-collapse: collapse;
+                height: 20px;
+                }
+            </style>
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="title">
+              <tbody>
+                <tr>
+                  <td>财务成本单-外币业务</td>
+                </tr>
+              </tbody>
+            </table>
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table1">
+                <tbody>
+                    <tr>
+                        <td>公司主体：</td>
+                        <td>
+                            <span t-esc="doc.company_id.name"/>
+                        </td>
+                        <td>业务类型：</td>
+                        <td>
+                            <span t-esc="doc.sale_type"/>
+                        </td>
+                        <td>工厂交期：</td>
+                        <td/>
+                        <td>合同号：</td>
+                        <td colspan="3">
+                            <span t-esc="doc.ref"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>客户简称：</td>
+                        <td>
+                            <span t-esc="doc.partner_id.name"/>
+                        </td>
+                        <td>国别：</td>
+                        <td>
+                            <span t-esc="doc.partner_id.country_id.name"/>
+                        </td>
+                        <td>客户交期：</td>
+                        <td/>
+                        <td>付款条款：</td>
+                        <td colspan="3">
+                            <span t-esc="doc.payment_term_id.name"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="8%">合计金额：</td>
+                        <td width="20%">
+                            <span t-esc="doc.org_sale_amount" t-options='{"widget": "float", "precision": 2}'/>
+                        </td>
+                        <td width="8%">币种：</td>
+                        <td width="5%">
+                            <span t-esc="doc.sale_currency_id.name"/>
+                        </td>
+                        <td width="8%">汇率：</td>
+                        <td width="10%">
+                            <span t-esc="1/doc.sale_currency_id.rate" t-options='{"widget": "float", "precision": 2}'/>
+                        </td>
+                        <td width="8%">价格条款：</td>
+                        <td width="8%">
+                            <span t-esc="doc.incoterm.name"/>
+                        </td>
+                        <td width="8%">制单日期：</td>
+                        <td width="17%">
+                            <span t-esc="doc.create_date[:10]"/>
+                        </td>
+                    </tr>
+              </tbody>
+            </table>
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table1">
+                <tbody>
+                    <tr>
+                        <td width="10%">运杂费：</td>
+                        <td width="10%">
+                            <span t-esc="doc.fee_inner" t-options='{"widget": "float", "precision": 2}'/>
+                        </td>
+                        <td width="15%">美元运保费：</td>
+                        <td width="10%">
+                            <span t-esc="doc.fee_outer" t-options='{"widget": "float", "precision": 2}'/>
+                        </td>
+                        <td width="55%" rowspan="3"/>
+                    </tr>
+                    <tr>
+                        <td>本币费用2：</td>
+                        <td>
+                            <span t-esc="doc.fee_rmb1" t-options='{"widget": "float", "precision": 2}'/>
+                        </td>
+                        <td>美元信用保险：</td>
+                        <td>
+                            <span t-esc="doc.fee_export_insurance" t-options='{"widget": "float", "precision": 2}'/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>本币费用3：</td>
+                        <td>
+                            <span t-esc="doc.fee_rmb2"/>
+                        </td>
+                        <td>美元费用3：</td>
+                        <td>
+                            <span t-esc="doc.fee_other" t-options='{"widget": "float", "precision": 2}'/>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table1">
+                <tbody>
+                    <tr>
+                        <td colspan="2">收款记录:</td>
+                        <td rowspan="2"/>
+                    </tr>
+                    <tr>
+                        <td width="5%">货款
+                            收齐
+                        </td>
+                        <td width="5%"/>
+                    </tr>
+                </tbody>
+            </table>
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablelist">
+                <tbody>
+                    <tr>
+                        <td colspan="15"/>
+                    </tr>
+                    <tr>
+                        <td width="3%">No</td>
+                        <td width="15%">HS编码</td>
+                        <td width="9%">报关品名</td>
+                        <td width="8%">数量</td>
+                        <td width="7%">退税率</td>
+                        <td width="9%">采购金额</td>
+                        <td width="9%">销售金额</td>
+                        <td width="13%">供应商</td>
+                        <td width="9%">采购合同</td>
+                        <td width="9%">报关金额</td>
+                        <td width="9%">退税金额</td>
+
+
+                    </tr>
+                    <t t-foreach="doc.btls_hs_ids" t-as="line">
+                        <tr>
+                            <td>
+                                <t t-esc="line_index+1"/>
+                            </td>
+                            <td>
+                                <span t-esc="line.sale_hs_id.hs_id2.code"/>
+                            </td>
+                            <td>
+                                <span t-esc="line.sale_hs_id.hs_id2.name"/>
+                            </td>
+                            <td style="text-align: right ;padding-right: 2px">
+                                <span t-esc="line.qty "/>
+                            </td>
+                            <td><span t-esc="line.back_tax*100"/>%
+                            </td>
+                            <td style="text-align: right; padding-right: 2px">
+                                <span t-esc="line.amount" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td style="text-align: right; padding-right: 2px">
+                                <span t-esc="line.qty * line.sale_hs_id.price" t-options="{&quot;widget&quot;: &quot;float&quot;, &quot;precision&quot;: 2}"/>
+                            </td>
+                            <td>
+                                <span t-esc="line.supplier_id.name"/>
+                            </td>
+                            <td>
+                                <span t-esc="line.po_id.contract_code"/>
+                            </td>
+                            <td style="text-align: right; padding-right: 2px">
+                                <span t-esc="line.qty * line.sale_hs_id.price2 " t-options="{&quot;widget&quot;: &quot;float&quot;, &quot;precision&quot;: 3}"/>
+                            </td>
+                            <td style="text-align: right; padding-right:  2px">
+                                <span t-esc="line.back_tax_amount " t-options="{&quot;widget&quot;: &quot;float&quot;, &quot;precision&quot;: 3}"/>
+                            </td>
+                        </tr>
+                    </t>
+                    <tr>
+                        <td/>
+                        <td/>
+                        <td/>
+						<td class="text-right"><t t-esc="sum(x.qty for x in doc.btls_hs_ids)" t-options='{"widget": "float", "precision": 1}'/></td>
+                        <td/>
+						<td class="text-right"><t t-esc="sum(x.amount for x in doc.btls_hs_ids)" t-options='{"widget": "float", "precision": 2}'/></td>
+						<td class="text-right"><span t-esc="doc.org_sale_amount" t-options="{&quot;widget&quot;: &quot;float&quot;, &quot;precision&quot;: 2}"/></td>
+                        <td/>
+                        <td/>
+						<td class="text-right"><t t-esc="sum(x.amount2 for x in doc.hsname_ids)" t-options='{"widget": "float", "precision": 2}'/></td>
+						<td class="text-right"><t t-esc="sum(x.back_tax_amount2 for x in doc.btls_hs_ids)" t-options='{"widget": "float", "precision": 2}'/></td>
+
+
+                    </tr>
+
+                </tbody>
+            </table>
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablelist2">
+                <tbody>
+                    <tr>
+                        <td colspan="7">供应商开票汇总</td>
+                        <td rowspan="2">货款付清</td>
+                    </tr>
+                    <tr>
+                        <td>No.</td>
+                        <td>供应商</td>
+                        <td>品名</td>
+                        <td>数量</td>
+                        <td>金额</td>
+                        <td>开票</td>
+                        <td>付款记录</td>
+                    </tr>
+                <t t-set="res" t-value="doc.get_group_partner_lines()"/>
+                    <t t-foreach="res" t-as="hs">
+                        <tr>
+							<td width="5%"></td>
+                            <td width="10%">
+                                <span t-esc="res[hs][0].supplier_id.name"/>
+                            </td>
+                            <td width="15" >
+                                <span t-esc="res[hs][0].hs_id2.name"/>
+                            </td>
+                            <td width="10%" class="text-right">
+                                <span t-esc="sum([x.qty for x in res[hs]])" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td width="10%" class="text-right">
+                                <span t-esc="sum([x.amount for x in res[hs]])" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td width="5%"/>
+                            <td width="40%"/>
+                            <td width="5%"/>
+                        </tr>
+                    </t>
+                    <tr>
+                        <td/>
+                        <td/>
+                        <td/>
+                        <td/>
+                        <td/>
+                        <td/>
+                        <td/>
+                        <td/>
+                    </tr>
+                </tbody>
+            </table>
+
+            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                <tbody>
+                    <tr>
+                        <td width="50%">
+                          <table width="60%" border="0" cellspacing="0" cellpadding="0" class="tablelist">
+                                <tbody>
+                                    <tr>
+                                        <td colspan="6"/>
+                                    </tr>
+                                    <tr>
+										<td width="5%">No.</td>
+                                        <td width="25">报关品名</td>
+                                        <td width="15%">数量</td>
+                                        <td width="18">报关金额</td>
+                                        <td width="17%">退税金额</td>
+                                        <td width="20%">退税收入确认</td>
+                                    </tr>
+                                        <t t-set="res2" t-value="doc.get_group_hs_lines()"/>
+                                    <t t-foreach="res2" t-as="k">
+                                        <t t-set="lines_list" t-value="res2[k]"/>
+                                        <tr>
+                                            <td>
+                                          </td>
+                                            <td>
+												 <span t-esc="lines_list[0].hs_id2.name"/>
+
+                                          </td>
+                                            <td class="text-right">
+												 <span t-esc="sum([x.qty for x in lines_list])" t-options='{"widget": "float", "precision": 2}'/>
+
+                                          </td>
+                                            <td class="text-right">
+											  <span t-esc="lines_list[0].sale_hs_id.amount2" t-options='{"widget": "float", "precision": 2}'/>
+
+                                          </td>
+										  <td class="text-right">
+											<span t-esc="sum([x.back_tax_amount for x in lines_list])" t-options='{"widget": "float", "precision": 2}'/>
+                                          </td>
+                                            <td/>
+                                        </tr>
+                                    </t>
+                                    <tr>
+                                        <td/>
+                                        <td/>
+										<td class="text-right"><t t-esc="sum(x.qty for x in doc.btls_hs_ids)" t-options='{"widget": "float", "precision": 1}'/></td>
+										<td class="text-right"><t t-esc="sum(x.amount2 for x in doc.hsname_ids)" t-options='{"widget": "float", "precision": 2}'/></td>
+                                        <td class="text-right"><t t-esc="sum(x.back_tax_amount2 for x in doc.btls_hs_ids)" t-options='{"widget": "float", "precision": 0}'/></td>
+
+										<td/>
+                                    </tr>
+                                </tbody>
+                          </table>
+                        </td>
+                        <td valign="top"><table width="50%" border="0" cellspacing="0" cellpadding="0" class="tablelist">
+                            <tbody>
+                                    <tr>
+                                        <td colspan="5"/>
+                                    </tr>
+                                    <tr>
+										<td>本币费用合计：</td>
+									  <td class="text-right">￥<span t-esc="doc.fee_inner+doc.fee_rmb1+doc.fee_rmb2"  t-options='{"widget": "float", "precision": 2}'/></td>
+										<td class="text-right"><span t-esc="((doc.fee_inner + doc.fee_rmb1 + doc.fee_rmb2)/doc.org_sale_amount)*100"  t-options='{"widget": "float", "precision": 2}'/>%</td>
+										<td>毛利润：</td>
+                                      <td class="text-right"><t t-if="doc.third_currency_id.id == 8">￥<span t-esc="doc.sale_amount - doc.purchase_cost -doc.stock_cost"  t-options='{"widget": "float", "precision": 2}'/></t>
+										<t t-if="doc.third_currency_id.id == 3">$<span t-esc="doc.sale_amount - doc.purchase_cost -doc.stock_cost"  t-options='{"widget": "float", "precision": 2}'/></t></td>
+                                    </tr>
+                                    <tr>
+										<td>美元费用合计：</td>
+									  <td class="text-right"><t t-if="doc.fee_outer_need == true">$<span t-esc="doc.fee_export_insurance+doc.fee_other"  t-options='{"widget": "float", "precision": 2}'/>
+										  </t>
+										<t t-if="doc.fee_outer_need == fales">$<span t-esc="doc.fee_outer+doc.fee_export_insurance+doc.fee_other"  t-options='{"widget": "float", "precision": 2}'/>
+										  </t>
+										</td>
+										<td class="text-right"><t t-if="doc.fee_outer_need == true"><span t-esc="(((doc.fee_export_insurance+doc.fee_other)/doc.other_currency_id.rate)/doc.org_sale_amount)*100"  t-options='{"widget": "float", "precision": 2}'/>
+											</t>
+										<t t-if="doc.fee_outer_need == fales"><span t-esc="(((doc.fee_outer+doc.fee_export_insurance+doc.fee_other)/doc.other_currency_id.rate)/doc.org_sale_amount)*100"  t-options='{"widget": "float", "precision": 2}'/>
+											</t>%</td>
+                                        <td>毛利润率:</td>
+										<td class="text-right"><span t-esc="((doc.sale_amount - doc.purchase_cost)/doc.sale_amount)*100"  t-options='{"widget": "float", "precision": 2}'/>% </td>
+                                    </tr>
+                                    <tr>
+										<td>运营费用总计：</td>
+									  <td class="text-right"><t t-if="doc.third_currency_id.id == 8">￥<span t-esc="doc.sale_commission_amount"  t-options='{"widget": "float", "precision": 2}'/></t><t t-if="doc.third_currency_id.id == 3">$<span t-esc="doc.sale_commission_amount/doc.other_currency_id.rate"  t-options='{"widget": "float", "precision": 2}'/></t></td>
+                                        <td class="text-right"><span t-esc="(doc.sale_commission_amount/doc.org_sale_amount)*100"  t-options='{"widget": "float", "precision": 2}'/>%</td>
+										<td>净利润：</td>
+										<td class="text-right"><t t-if="doc.third_currency_id.id == 8">￥</t><t t-if="doc.third_currency_id.id == 3">$</t><span t-esc="doc.profit_amount"  t-options='{"widget": "float", "precision": 2}'/></td>
+                                    </tr>
+                                    <tr>
+										<td>总费用合计:</td>
+										<td class="text-right"><t t-if="doc.third_currency_id.id == 8">￥<span t-esc="doc.other_cost+doc.sale_commission_amount"  t-options='{"widget": "float", "precision": 2}'/></t><t t-if="doc.third_currency_id.id == 3">$<span t-esc="(doc.other_cost+doc.sale_commission_amount)/doc.other_currency_id.rate"  t-options='{"widget": "float", "precision": 2}'/></t></td>
+										<td class="text-right"> <span t-esc="(doc.other_cost+doc.sale_commission_amount)/doc.sale_amount*100"  t-options='{"widget": "float", "precision": 2}'/>%</td>
+                                      <td>净利润率:</td>
+										<td class="text-right"><span t-esc="doc.profit_ratio*100"  t-options='{"widget": "float", "precision": 2}'/>%</td>
+                              </tr>
+                          </tbody>
+                            </table>
+                      </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablelist2">
+              <tbody>
+                <tr>
+                  <td width="8%">制单员</td>
+                  <td width="12%"></td>
+                  <td width="8%">客户经理</td>
+                  <td width="12%"></td>
+                  <td width="8%">产品经理</td>
+                  <td width="12%"></td>
+                  <td width="8%">销售总监</td>
+                  <td width="12%"></td>
+                  <td width="8%">合规主管</td>
+                  <td width="12%"></td>
+                </tr>
+                <tr>
+                  <td>备注</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td>结算</td>
+                  <td></td>
+                </tr>
+              </tbody>
+            </table>
+
+
+
+        </t>
+    </template>
+    <template id="report_sale_order_cost">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="yjzy_extend.report_sale_order_cost_document" t-lang="doc.partner_id.lang"/>
+            </t>
+        </t>
+    </template>
+</odoo>

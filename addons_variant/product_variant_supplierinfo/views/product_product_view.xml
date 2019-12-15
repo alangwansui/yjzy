@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 2015 Serv. Tecnol. Avanzados - Pedro M. Baeza
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html). -->
+
+<odoo>
+
+    <record id="product_normal_form_view_sellers" model="ir.ui.view">
+        <field name="name">product.product.form.sellers</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_variant_easy_edit_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='pricing']/parent::group"
+               position="after">
+                <separator string="Vendors"/>
+                <group name="variant_suppliers" string="Variant Vendors">
+                    <field name="variant_seller_ids" nolabel="1"
+                           context="{'hide_product_id': True}"/>
+                </group>
+                <group name="template_uppliers" string="Template Vendors">
+                    <field name="tmpl_seller_ids" nolabel="1"
+                           domain="[('product_id', '=', False)]"
+                           context="{'hide_product_id': True}"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

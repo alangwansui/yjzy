@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--Product -->
+
+        <record id="inherit_product_search_form_view" model="ir.ui.view">
+            <field name="name">product.product.search</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_search_form_view"/>
+            <field name="arch" type="xml">
+                <field name="attribute_value_ids" position="after">
+                    <field name="variant_seller_ids"/>
+                    <field name="customer_ref"/>
+                    <field name="customer_ref2"/>
+                    <field name="customer_id"/>
+                    <field name="source_area"/>
+                </field>
+
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="inherit_product_product_tree_view">
+            <field name="name">product.product.tree</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_product_tree_view"/>
+            <field name="arch" type="xml">
+                <field name="name" position="after">
+                    <field name="customer_id" options="{'no_create': True}"/>
+                    <field name="customer_ref"/>
+                    <field name="customer_description"/>
+                    <field name="key_value_line_ids" widget="many2many_tags"/>
+                    <field name="variant_seller_ids" widget="many2many_tags"/>
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="inherit_product_normal_form_view">
+            <field name="name">product.product.form</field>
+            <field name="model">product.product</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="product.product_normal_form_view"/>
+            <field name="arch" type="xml">
+
+                <field name="image_medium" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="image_medium" position="after">
+                    <field name="image_variant" widget="image" class="oe_avatar"/>
+                </field>
+
+                <field name="categ_id" position="after">
+                    <field name="hs_id" />
+                    <field name="hs_en_name"/>
+                    <field name="back_tax"/>
+                    <field name="s_uom_id"/>
+                    <field name="p_uom_id"/>
+
+                    <field name="customer_barcode"/>
+                    <field name="pi_function"/>
+                    <field name="pi_material"/>
+                    <field name="pi_package"/>
+                    <field name="pi_surface"/>
+
+                    <field name="pi_description"/>
+                    <field name="pi_specification"/>
+
+                    <field name="state"/>
+
+
+                </field>
+
+                <field name="create_date" position="after">
+                    <field name="seq"/>
+                    <field name="customer_id" options="{'no_create': True}"/>
+                    <field name="trademark"/>
+                    <field name="customer_ref"/>
+                    <field name="customer_ref2"/>
+                    <field name="customer_description"/>
+                    <field name="other_description"/>
+                    <field name="source_area"/>
+                    <field name="source_country_id"/>
+
+                    <field name="packag_method"/>
+                    <field name="surface_treatment"/>
+                </field>
+                <div name="options" position="before">
+                    <label for="en_name" string="英文名称"/>
+                    <h3>
+                        <field name="en_name" placeholder="English Name"/>
+                    </h3>
+                </div>
+
+                <header position="inside">
+                    <button name="open_wizard_attribute_configurator" string="属性设置" type="object"/>
+                    <button name="open_wizard_product_copy" string="复制产品" type="object"/>
+                </header>
+
+                <field name="lst_price" position="attributes">
+                    <attribute name="attrs">{}</attribute>
+                </field>
+
+                <notebook position="inside">
+                    <page string="BOM">
+                        <button string="创建BOM" type="object" name="open_bom_template"/>
+                        <group>
+                            <field name="bom_ids" context="{'default_product_id': id,  'default_product_tmpl_id': product_tmpl_id}"/>
+                        </group>
+                    </page>
+                    <page string="唛头" groups="base.group_system">
+                        <group>
+                            <field name="mark_ids"/>
+                        </group>
+                    </page>
+                    <page string="属性">
+                        <field name="key_value_string"/>
+                        <button name="update_attribute_by_value" type="object" string="刷新属性"/>
+                        <field name="value_line_ids">
+                            <tree editable="top">
+                                <field name="attribute_group_id" invisible="1"/>
+                                <field name="attribute_id" invisible="1"/>
+                                <field name="product_attribute_value_id" domain="[('attribute_id','=', attribute_id)]"/>
+                                <field name="is_key"/>
+                            </tree>
+                        </field>
+                    </page>
+                    <page string="关键属性" invisible="1">
+                        <field name="key_value_line_ids">
+                            <tree>
+                                <field name="attribute_group_id" invisible="1"/>
+                                <field name="product_attribute_value_id" invisible="1"/>
+                                <field name="is_key"/>
+                                <field name="attribute_id" invisible="1"/>
+                            </tree>
+                        </field>
+
+                    </page>
+                    <page string="产品规格图片">
+                        <field name="pdt_image_ids" mode="kanban" context="{'default_name': name, 'default_product_id': active_id}">
+                            <kanban string="图片">
+                                <field name="name"/>
+                                <field name="image"/>
+                                <templates>
+                                    <t t-name="kanban-box">
+                                        <div class="oe_kanban_global_click">
+                                            <a t-if="!read_only_mode" type="delete" class="fa fa-times pull-right"/>
+                                            <div class="o_kanban_image">
+                                                <img t-if="record.image.raw_value"
+                                                     t-att-src="'data:image/png;base64,'+record.image.raw_value"/>
+                                            </div>
+                                            <div class="oe_kanban_details">
+                                                <field name="name"/>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </templates>
+                            </kanban>
+                        </field>
+                    </page>
+                    <page string="价格区间">
+                        <field name="price_section_ids">
+                            <tree editable="top">
+                                <field name="product_id" invisible="1"/>
+                                <field name="name"/>
+                                <field name="start"/>
+                                <field name="end"/>
+                                <field name="price"/>
+                            </tree>
+                        </field>
+                    </page>
+
+
+                </notebook>
+
+
+            </field>
+        </record>
+
+
+        <!-- 产品多选视图-->
+        <record id="inherit_multi_select_product_tree" model="ir.ui.view">
+            <field name="name">product.product.tree</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="multi_select_product_base.multi_select_product_tree"/>
+            <field name="arch" type="xml">
+                <tree position="inside">
+                    <field name="last_purchase_price"/>
+                    <field name="last_sale_price"/>
+                </tree>
+            </field>
+        </record>
+
+    </data>
+</odoo>

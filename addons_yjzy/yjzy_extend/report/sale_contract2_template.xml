@@ -1,0 +1,676 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+
+<template id="report_sale_contract_document2">
+    <t t-call="web.external_layout">
+
+        <t t-set="doc" t-value="doc.with_context({'lang':doc.partner_id.lang})"/>
+
+
+           <style>
+	  body{
+		    font-size:10px;
+		  font-family:"Arial";
+	  }
+	.title{
+		height: 30px;
+	    text-align: center;}
+	.main{
+		width: 100%;
+	    font-size: 10px ; }
+		.main td{height:20px}
+	.tablelist{
+		text-align: left;
+        border-bottom: 0.8px solid;
+
+		border-collapse: collapse;
+		font-size: 10px;
+		width: 100%;
+		vertical-align: middle
+	}
+	.tablelist th{
+		font-size: 10px;
+		text-align: center;
+	border-top: 0.8px solid;
+		border-bottom: 0.8px solid;
+		height: 20px;
+		line-height: 20px;
+		border-collapse: collapse;
+		vertical-align: middle;
+		font-weight: 200;
+		padding: 2px;
+	}
+	.tablelist td{
+		border-bottom: 0.8px solid;
+		height: 20px;
+		line-height: 20px;
+		vertical-align: middle;
+		padding-left: 2px;
+		padding-right: 5px;
+		border-collapse: collapse;
+	}
+	.buttom{
+		margin-top: 5px;
+		border-top: 1px solid;
+
+	}
+	.buttom th{
+		padding-top: 10px;
+        font-size: 16px;
+		font-weight: bolder;
+
+	}
+    .buttom td{
+
+		padding: 5px;
+		font-size: 12px;
+		vertical-align: middle;
+		border-collapse: collapse;
+
+	}
+	.buttom_bank{
+		font-size: 12px;
+	}
+	.buttom_bank2{
+		padding: 5px;
+		font-size: 12px;
+			vertical-align: middle;
+		border-collapse: collapse;
+	}
+
+    .buttom_bank1{
+		border-bottom:0.8px solid #8A8888;
+		padding: 5px;
+
+		vertical-align: middle;
+		border-collapse: collapse;
+		height: 15px;
+
+	}
+</style>
+
+<table width="100%" border="0" cellpadding="0" cellspacing="0"  class="title">
+  <tbody>
+
+    <tr>
+      <td width="20%" style="text-align: center; height: 30px;"></td>
+      <td style="text-align: center; height: 50px; vertical-align:top; padding-top: 10px" ><span style="font-size: 20px;font: bolder">PROFORMA INVOICE</span></td>
+      <td width="20%" ></td>
+    </tr>
+  </tbody>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom: 10px">
+  <tbody>
+    <tr>
+      <td width="8%">TO:</td>
+      <td width="57%"><span t-esc="doc.partner_id.name"/></td>
+		 <td width="8%">PI No.</td>
+      <td width="27%"><span t-esc="doc.contract_code"/></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td><div style="width: 80%"><span t-esc="doc.partner_id.street"/><did> <span t-esc="doc.partner_id.street2"/> <span t-esc="doc.partner_id.city"/> <span t-esc="doc.partner_id.state_id.name"/> <span t-esc="doc.partner_id.country_id.name"/></did></div><div><span t-esc="doc.partner_id.phone"/></div></td>
+		 <td colspan="2">
+			 <table width="100%" border="0" cellspacing="0" cellpadding="0">
+		   <tbody>
+		     <tr>
+		       <td width="23%">Date:</td>
+		       <td width="77%"><span t-esc="doc.contract_date"/></td>
+	         </tr>
+		     <tr>
+		       <td></td>
+		       <td></td>
+	         </tr>
+	       </tbody>
+		   </table></td>
+    </tr>
+
+    <tr>
+      <td style="height: 15px"></td>
+      <td></td>
+      <td ></td>
+      <td ></td>
+    </tr>
+    <tr>
+      <td>PO No.:</td>
+      <td ><span t-esc="doc.x_studio_field_VlET0"/></td>
+		 <td ></td>
+      <td ></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+<t t-if="doc.partner_id.x_contract_print == 'A'">
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-condensed" style="margin-top: 15px" >
+
+	  <thead>
+    <tr>
+      <th width="3%" style="border-top: 1px solid  #dddddd">No.</th>
+      <th width="12%" style="border-top: 1px solid #dddddd">Tenyale Item No.</th>
+
+
+      <th width="10%" style="border-top: 1px solid #dddddd">Customer Item No.</th>
+
+      <th width="28%" style="border-top: 1px solid #dddddd">Specification</th>
+      <th width="17%" style="border-top: 1px solid #dddddd">Packaging</th>
+      <th  colspan="2" style="border-top: 1px solid #dddddd">Quantity</th>
+      <th width="7%" style="border-top: 1px solid #dddddd">Unit Price </th>
+      <th width="10%" style="border-top: 1px solid #dddddd"> Amount</th>
+    </tr>
+		  <tr>
+      <td colspan="4" style="text-align: center; padding-left: 0px"></td>
+		<td></td>
+			<td></td>
+		<td></td>
+      <td colspan="2"><span t-esc="doc.incoterm.code"/> <span t-esc="doc.x_studio_field_vL3VZ.name"/>  </td>
+    </tr>
+	  </thead>
+	<tbody  class="sale_tbody">
+
+
+            <t t-set="res" t-value="doc.collect_hs_lines(doc.order_line)"/>
+				<t t-set="qq" t-value="0"/>
+            <t t-foreach="res" t-as="hs">
+
+                <t t-set="hs_lines" t-value="res[hs]"/>
+				<t t-if="hs.code != '99001'">
+                  	<tr>
+
+                <td colspan="9">
+                    <t t-esc="hs.en_name"/> / <t t-esc="hs.code"/>
+                </td>
+
+				</tr>
+				    </t>
+
+                <t t-foreach="hs_lines" t-as="line">
+					<t t-if="line.price_unit != 0">
+					 <t t-set="qq" t-value="qq+1"/>
+     	<tr>
+      <td style="text-align: center; padding-left: 0px"><t t-esc="qq"/></td>
+      <td style="padding-left: 3px"><span t-esc="line.product_id.default_code"/></td>
+      <td style="padding-left: 3px"><span t-esc="line.product_id.customer_ref"/></td>
+
+      <td><span t-esc="line.product_id.customer_description"/></td>
+		<td style="padding-left: 5px"><t t-foreach="line.product_id.packaging_ids" t-as="line_P"><t t-if="line_P.size == 3"><span t-esc="line_P.type_id.name"/></t></t></td>
+      <td style="text-align: right;" width="7%"><span t-esc="line.product_uom_qty" t-options='{"widget": "float", "precision": 0}'/></td>
+      <td style="text-align: left; padding-left: 0px" width="6%"><span t-esc="line.s_uom_id.name"/></td>
+      <td style="padding-right: 15px; text-align: right;"><span t-esc="doc.pricelist_id.currency_id.symbol" /><span t-esc="line.price_unit" t-options='{"widget": "float", "precision": 2}'/></td>
+      <td style="padding-right: 8px; text-align: right;"><span t-esc="doc.pricelist_id.currency_id.symbol" /><span t-esc="line.price_total" t-options='{"widget": "float", "precision": 2}'/></td>
+    </tr>
+                </t>
+           </t>
+                </t>
+
+    <tr >
+      <td>TOTAL</td>
+      <td></td>
+
+
+      <td></td>
+
+      <td></td>
+      <td></td>
+      <td colspan="2" style="text-align: center; padding-left: 0px"><t t-esc="sum(x.product_uom_qty for x in doc.order_line)" t-options='{"widget": "float", "precision": 0}'/></td>
+      <td style="text-align: center"><span t-esc="doc.pricelist_id.currency_id.currency_unit_label" /></td>
+      <td style="padding-right: 8px; text-align: right;"><t t-esc="doc.amount_total"  t-options='{"widget": "float", "precision": 2}'/></td>
+    </tr>
+
+                                <tr class="text-right">
+                                    <td colspan="9">
+                                       <t t-if="doc.pricelist_id.currency_id.id==3">SAY TOTAL IN US.DOLLARS  <span t-esc="num2words(doc.amount_total)" /> ONLY</t>
+                                    </td>
+                                </tr>
+
+
+  </tbody>
+</table>
+
+
+</t>
+<t t-if="doc.partner_id.x_contract_print == 'B'">
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-condensed" >
+
+	  <thead>
+    <tr>
+      <th width="3%" style="border-top: 1px solid  #dddddd">No.</th>
+      <th width="10%" style="border-top: 1px solid #dddddd">Tenyale Item No.</th>
+
+
+      <th width="10%" style="border-top: 1px solid #dddddd">Customer Item No.</th>
+	  <th width="10%" style="border-top: 1px solid #dddddd">Customer REF.</th>
+      <th width="23%" style="border-top: 1px solid #dddddd">Specification</th>
+      <th width="14%" style="border-top: 1px solid #dddddd">Packaging</th>
+      <th  colspan="2" style="border-top: 1px solid #dddddd">Quantity</th>
+      <th width="7%" style="border-top: 1px solid #dddddd">Unit Price </th>
+      <th width="10%" style="border-top: 1px solid #dddddd"> Amount</th>
+    </tr>
+		  <tr>
+      <td colspan="5" style="text-align: center; padding-left: 0px"></td>
+		<td></td>
+			<td></td>
+		<td></td>
+      <td colspan="2"><span t-esc="doc.incoterm.code"/> <span t-esc="doc.x_studio_field_vL3VZ.name"/>  </td>
+    </tr>
+	  </thead>
+	<tbody  class="sale_tbody">
+
+       <t t-foreach="doc.order_line" t-as="line">
+		   <t t-if="line.product_uom_qty != 0">
+
+
+     	<tr>
+      <td style="text-align: center; padding-left: 0px"><t t-esc="line_index+1"/></td>
+      <td style="padding-left: 3px"><span t-esc="line.product_id.default_code"/></td>
+      <td style="padding-left: 3px"><span t-esc="line.product_id.customer_ref"/></td>
+      <td style="padding-left: 3px"><span t-esc="line.product_id.customer_ref2"/></td>
+      <td><span t-esc="line.product_id.customer_description"/></td>
+		<td style="padding-left: 5px"><t t-foreach="line.product_id.packaging_ids" t-as="line_P"><t t-if="line_P.size == 3"><span t-esc="line_P.type_id.name"/></t></t></td>
+      <td style="text-align: right;" width="7%"><span t-esc="line.product_uom_qty" t-options='{"widget": "float", "precision": 0}'/></td>
+      <td style="text-align: left; padding-left: 0px" width="6%"><span t-esc="line.s_uom_id.name"/></td>
+      <td style="padding-right: 15px; text-align: right;"><span t-esc="doc.pricelist_id.currency_id.symbol" /><span t-esc="line.price_unit" t-options='{"widget": "float", "precision": 2}'/></td>
+      <td style="padding-right: 8px; text-align: right;"><span t-esc="doc.pricelist_id.currency_id.symbol" /><span t-esc="line.price_total" t-options='{"widget": "float", "precision": 2}'/></td>
+    </tr>
+			      </t>
+                </t>
+
+
+
+    <tr >
+      <td>TOTAL</td>
+      <td></td>
+
+
+      <td></td>
+   <td></td>
+      <td></td>
+      <td></td>
+      <td colspan="2" style="text-align: center; padding-left: 0px"><t t-esc="sum(x.product_uom_qty for x in doc.order_line)" t-options='{"widget": "float", "precision": 0}'/></td>
+      <td style="text-align: center"><span t-esc="doc.pricelist_id.currency_id.currency_unit_label" /></td>
+      <td style="padding-right: 8px; text-align: right;"><t t-esc="doc.amount_total"  t-options='{"widget": "float", "precision": 2}'/></td>
+    </tr>
+
+                                <tr class="text-right">
+                                    <td colspan="10">
+                                           <t t-if="doc.pricelist_id.currency_id.id==3">SAY TOTAL IN US.DOLLARS  <span t-esc="num2words(doc.amount_total)" /> ONLY</t>
+                                    </td>
+                                </tr>
+
+
+  </tbody>
+</table>
+
+
+</t>
+<t t-if="doc.partner_id.x_contract_print == 'C'">
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-condensed" >
+
+	  <thead>
+    <tr>
+      <th width="3%" style="border-top: 1px solid  #dddddd">No.</th>
+      <th width="10%" style="border-top: 1px solid #dddddd">Tenyale Item No.</th>
+
+
+      <th width="10%" style="border-top: 1px solid #dddddd">Customer Item No.</th>
+	  <th width="18%" style="border-top: 1px solid #dddddd">Function</th>
+      <th width="20%" style="border-top: 1px solid #dddddd">Specification</th>
+      <th width="6%" style="border-top: 1px solid #dddddd">Meterial</th>
+      <th width="12%" style="border-top: 1px solid #dddddd">Packaging</th>
+      <th  colspan="2" style="border-top: 1px solid #dddddd">Quantity</th>
+      <th width="7%" style="border-top: 1px solid #dddddd">Unit Price </th>
+      <th width="10%" style="border-top: 1px solid #dddddd"> Amount</th>
+    </tr>
+		  <tr>
+      <td colspan="5" style="text-align: center; padding-left: 0px"></td>
+      <td></td>
+		<td></td>
+			<td></td>
+		<td></td>
+      <td colspan="2"><span t-esc="doc.incoterm.code"/> <span t-esc="doc.x_studio_field_vL3VZ.name"/>  </td>
+    </tr>
+	  </thead>
+	<tbody  class="sale_tbody">
+
+
+            <t t-set="res" t-value="doc.collect_hs_lines(doc.order_line)"/>
+				<t t-set="qq" t-value="0"/>
+            <t t-foreach="res" t-as="hs">
+
+                <t t-set="hs_lines" t-value="res[hs]"/>
+                  	<tr>
+
+                <td colspan="11">
+                    <t t-esc="hs.en_name"/> / <t t-esc="hs.code"/>
+                </td>
+
+				</tr>
+                <t t-foreach="hs_lines" t-as="line">
+					 <t t-set="qq" t-value="qq+1"/>
+     	<tr>
+      <td style="text-align: center; padding-left: 0px"><t t-esc="qq"/></td>
+      <td style="padding-left: 3px"><span t-esc="line.product_id.default_code"/></td>
+      <td style="padding-left: 3px"><span t-esc="line.product_id.customer_ref"/></td>
+      <td style="padding-left: 3px"> <t t-foreach="line.product_id.value_line_ids" t-as="v_line"><t t-if="v_line.product_attribute_value_id.attribute_id.name == '功能描述'"><span t-esc="v_line.product_attribute_value_id.name"/></t></t></td>
+      <td><span t-esc="line.product_id.customer_description"/></td>
+        <td style="padding-left: 3px"> <t t-foreach="line.product_id.value_line_ids" t-as="v_line"><t t-if="v_line.product_attribute_value_id.attribute_id.name == '英文主要材料'"><span t-esc="v_line.product_attribute_value_id.name"/></t></t></td>
+		<td style="padding-left: 5px"><t t-foreach="line.product_id.packaging_ids" t-as="line_P"><t t-if="line_P.size == 3"><span t-esc="line_P.type_id.name"/></t></t></td>
+      <td style="text-align: right;" width="7%"><span t-esc="line.product_uom_qty" t-options='{"widget": "float", "precision": 0}'/></td>
+      <td style="text-align: left; padding-left: 0px" width="6%"><span t-esc="line.s_uom_id.name"/></td>
+      <td style="padding-right: 15px; text-align: right;"><span t-esc="doc.pricelist_id.currency_id.symbol" /><span t-esc="line.price_unit" t-options='{"widget": "float", "precision": 2}'/></td>
+      <td style="padding-right: 8px; text-align: right;"><span t-esc="doc.pricelist_id.currency_id.symbol" /><span t-esc="line.price_total" t-options='{"widget": "float", "precision": 2}'/></td>
+    </tr>
+                </t>
+
+                </t>
+
+    <tr >
+      <td>TOTAL</td>
+      <td></td>
+
+
+      <td></td>
+   <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td colspan="2" style="text-align: center; padding-left: 0px"><t t-esc="sum(x.product_uom_qty for x in doc.order_line)" t-options='{"widget": "float", "precision": 0}'/></td>
+      <td style="text-align: center"><span t-esc="doc.pricelist_id.currency_id.currency_unit_label" /></td>
+      <td style="padding-right: 8px; text-align: right;"><t t-esc="doc.amount_total"  t-options='{"widget": "float", "precision": 2}'/></td>
+    </tr>
+
+                                <tr class="text-right">
+                                    <td colspan="11">
+                                         <t t-if="doc.pricelist_id.currency_id.id==3">SAY TOTAL IN US.DOLLARS  <span t-esc="num2words(doc.amount_total)" /> ONLY</t>
+                                    </td>
+                                </tr>
+
+
+  </tbody>
+</table>
+
+
+</t>
+<t t-if="doc.partner_id.x_contract_print == 'D'">
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-condensed" >
+
+	  <thead>
+    <tr>
+      <th width="3%" style="border-top: 1px solid  #dddddd">No.</th>
+      <th width="10%" style="border-top: 1px solid #dddddd">Tenyale Item No.</th>
+
+
+      <th width="10%" style="border-top: 1px solid #dddddd">Customer Item No.</th>
+	  <th width="20%" style="border-top: 1px solid #dddddd">Description</th>
+      <th width="27%" style="border-top: 1px solid #dddddd">Specification</th>
+
+      <th  colspan="2" style="border-top: 1px solid #dddddd">Quantity</th>
+      <th width="7%" style="border-top: 1px solid #dddddd">Unit Price </th>
+      <th width="10%" style="border-top: 1px solid #dddddd"> Amount</th>
+    </tr>
+		  <tr>
+      <td colspan="4" style="text-align: center; padding-left: 0px"></td>
+		<td></td>
+			<td></td>
+		<td></td>
+      <td colspan="2"><span t-esc="doc.incoterm.code"/> <span t-esc="doc.x_studio_field_vL3VZ.name"/>  </td>
+    </tr>
+	  </thead>
+	<tbody  class="sale_tbody">
+
+
+            <t t-set="res" t-value="doc.collect_hs_lines(doc.order_line)"/>
+				<t t-set="qq" t-value="0"/>
+            <t t-foreach="res" t-as="hs">
+
+                <t t-set="hs_lines" t-value="res[hs]"/>
+                  	<tr>
+
+                <td colspan="9">
+                    <t t-esc="hs.en_name"/> / <t t-esc="hs.code"/>
+                </td>
+
+				</tr>
+                <t t-foreach="hs_lines" t-as="line">
+					 <t t-set="qq" t-value="qq+1"/>
+     	<tr>
+      <td style="text-align: center; padding-left: 0px"><t t-esc="qq"/></td>
+      <td style="padding-left: 3px"><span t-esc="line.product_id.default_code"/></td>
+      <td style="padding-left: 3px"><span t-esc="line.product_id.customer_ref"/></td>
+      <td style="padding-left: 3px"><span t-esc="line.product_id.other_description"/></td>
+      <td><span t-esc="line.product_id.customer_description"/></td>
+
+      <td style="text-align: right;" width="7%"><span t-esc="line.product_uom_qty" t-options='{"widget": "float", "precision": 0}'/></td>
+      <td style="text-align: left; padding-left: 0px" width="6%"><span t-esc="line.s_uom_id.name"/></td>
+      <td style="padding-right: 15px; text-align: right;"><span t-esc="doc.pricelist_id.currency_id.symbol" /><span t-esc="line.price_unit" t-options='{"widget": "float", "precision": 2}'/></td>
+      <td style="padding-right: 8px; text-align: right;"><span t-esc="doc.pricelist_id.currency_id.symbol" /><span t-esc="line.price_total" t-options='{"widget": "float", "precision": 2}'/></td>
+    </tr>
+                </t>
+
+                </t>
+
+    <tr >
+      <td>TOTAL</td>
+      <td></td>
+
+
+      <td></td>
+   <td></td>
+
+      <td></td>
+      <td colspan="2" style="text-align: center; padding-left: 0px"><t t-esc="sum(x.product_uom_qty for x in doc.order_line)" t-options='{"widget": "float", "precision": 0}'/></td>
+      <td style="text-align: center"><span t-esc="doc.pricelist_id.currency_id.currency_unit_label" /></td>
+      <td style="padding-right: 8px; text-align: right;"><t t-esc="doc.amount_total"  t-options='{"widget": "float", "precision": 2}'/></td>
+    </tr>
+
+                                <tr class="text-right">
+                                    <td colspan="9">
+                                           <t t-if="doc.pricelist_id.currency_id.id==3">SAY TOTAL IN US.DOLLARS  <span t-esc="num2words(doc.amount_total)" /> ONLY</t>
+                                    </td>
+                                </tr>
+
+
+  </tbody>
+</table>
+
+
+</t>
+<t t-if="doc.partner_id.x_contract_print == 'E'">
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-condensed" >
+
+	  <thead>
+    <tr>
+      <th width="3%" style="border-top: 1px solid  #dddddd">No.</th>
+      <th width="10%" style="border-top: 1px solid #dddddd">product picture</th>
+      <th width="10%" style="border-top: 1px solid #dddddd">Tenyale Item No.</th>
+
+
+      <th width="10%" style="border-top: 1px solid #dddddd">Customer Item No.</th>
+	  <th width="13%" style="border-top: 1px solid #dddddd">Description</th>
+      <th width="16%" style="border-top: 1px solid #dddddd">Specification</th>
+
+      <th width="8%" style="border-top: 1px solid #dddddd">Barcode</th>
+      <th  colspan="2" style="border-top: 1px solid #dddddd">Quantity</th>
+      <th width="7%" style="border-top: 1px solid #dddddd">Unit Price </th>
+      <th width="10%" style="border-top: 1px solid #dddddd"> Amount</th>
+    </tr>
+		  <tr>
+      <td colspan="7" style="text-align: center; padding-left: 0px"></td>
+
+			<td></td>
+		<td></td>
+      <td colspan="2"><span t-esc="doc.incoterm.code"/> <span t-esc="doc.x_studio_field_vL3VZ.name"/>  </td>
+    </tr>
+	  </thead>
+	<tbody  class="sale_tbody">
+
+
+            <t t-set="res" t-value="doc.collect_hs_lines(doc.order_line)"/>
+				<t t-set="qq" t-value="0"/>
+            <t t-foreach="res" t-as="hs">
+
+                <t t-set="hs_lines" t-value="res[hs]"/>
+                  	<tr>
+
+
+                <td colspan="11">
+                    <t t-esc="hs.en_name"/> / <t t-esc="hs.code"/>
+                </td>
+
+				</tr>
+                <t t-foreach="hs_lines" t-as="line">
+					 <t t-set="qq" t-value="qq+1"/>
+     	<tr>
+      <td style="text-align: center; padding-left: 0px"><t t-esc="qq"/></td>
+      <td style="text-align: center"><img t-if="line.product_id.image" t-att-src="'data:image/png;base64,%s' % to_text(line.product_id.image)" width="50px" height="50px"/></td>
+      <td style="padding-left: 3px"><span t-esc="line.product_id.default_code"/></td>
+      <td style="padding-left: 3px"><span t-esc="line.product_id.customer_ref"/></td>
+      <td style="padding-left: 3px"><span t-esc="line.product_id.customer_description"/></td>
+      <td><span t-esc="line.product_id.other_description"/></td>
+      <td style="text-align: right;" ><span t-esc="line.product_id.x_barcode"/></td>
+
+      <td style="text-align: right;" width="7%"><span t-esc="line.product_uom_qty" t-options='{"widget": "float", "precision": 0}'/></td>
+      <td style="text-align: left; padding-left: 0px" width="6%"><span t-esc="line.s_uom_id.name"/></td>
+      <td style="padding-right: 15px; text-align: right;"><span t-esc="doc.pricelist_id.currency_id.symbol" /><span t-esc="line.price_unit" t-options='{"widget": "float", "precision": 2}'/></td>
+      <td style="padding-right: 8px; text-align: right;"><span t-esc="doc.pricelist_id.currency_id.symbol" /><span t-esc="line.price_total" t-options='{"widget": "float", "precision": 2}'/></td>
+    </tr>
+                </t>
+
+                </t>
+
+    <tr >
+      <td>TOTAL</td>
+      <td></td>
+      <td></td>
+
+
+      <td></td>
+   <td></td>
+
+      <td></td>
+		<td></td>
+      <td colspan="2" style="text-align: center; padding-left: 0px"><t t-esc="sum(x.product_uom_qty for x in doc.order_line)" t-options='{"widget": "float", "precision": 0}'/></td>
+      <td style="text-align: center"><span t-esc="doc.pricelist_id.currency_id.currency_unit_label" /></td>
+      <td style="padding-right: 8px; text-align: right;"><t t-esc="doc.amount_total"  t-options='{"widget": "float", "precision": 2}'/></td>
+    </tr>
+
+                                <tr class="text-right">
+                                    <td colspan="11">
+                                          <t t-if="doc.pricelist_id.currency_id.id==3">SAY TOTAL IN US.DOLLARS  <span t-esc="num2words(doc.amount_total)" /> ONLY</t>
+                                    </td>
+                                </tr>
+
+
+  </tbody>
+</table>
+
+
+</t>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tbody>
+
+    <tr>
+      <td>
+
+
+		  <t t-foreach="doc.x_mark_comb_id.line_ids" t-as="mark">
+		  <li style="list-style-type:none;"><span t-esc="mark.name"/></li>
+		  </t></td>
+    </tr>
+  </tbody>
+</table>
+
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="buttom">
+<tr>
+	<th style="text-align: left">TERMS AND CONDITIONS:</th>
+  </tr>
+  <tr>
+		<td style="text-align: left; font-size: 10px"><span t-field="doc.term_description"/> </td>
+  </tr>
+</table>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="buttom_bank" style="margin-top: 30px;" >
+<tr colspan="2">
+	<td colspan="2" style="  font-size: 14px; font: bold; height: 50px;padding-top: 15px;border-top:1px solid">Bank Information</td>
+	</tr>
+	<t t-foreach="doc.partner_id.x_studio_field_w1DIN" t-as="l_bank">
+<tr>
+	<td  width="15%" class="buttom_bank2" >Bank Name:</td>
+	<td  class="buttom_bank1"><span t-esc="l_bank.x_bank_name"/>
+</td>
+</tr>
+<tr>
+  <td style="height: 20px" class="buttom_bank2">Beneficiary:</td>
+  <td class="buttom_bank1"><span t-esc="l_bank.x_beneficiary"/>
+</td>
+
+</tr>
+<tr>
+  <td style="height: 20px" class="buttom_bank2" >A/C No:</td>
+  <td class="buttom_bank1"><span t-esc="l_bank.x_ac_no"/></td>
+</tr>
+<tr>
+  <td  style="height: 20px" class="buttom_bank2">Swift:</td>
+  <td class="buttom_bank1" ><span t-esc="l_bank.x_swift"/></td>
+</tr>
+<tr>
+  <td  style="height: 20px" class="buttom_bank2">Address:</td>
+  <td class="buttom_bank1"><span t-esc="l_bank.x_address"/></td>
+</tr>
+<tr>
+  <td colspan="2"  style="height: 30px; border-bottom: 1px solid" > </td>
+  </tr>
+	</t>
+</table>
+
+<br></br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-top: 20px">
+  <tbody>
+    <tr>
+      <td width="75%"></td>
+      <td width="16%" style="height: 118px"><img t-if="doc.x_wkf_state=='56'" t-att-src="'data:image/png;base64,%s' % to_text(doc.company_id.x_tenyale_sale_image)" width="200px" height="118px"/></td>
+      <td width="9%"></td>
+    </tr>
+  </tbody>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-top: 10px">
+  <tbody>
+    <tr>
+      <td width="30%"></td>
+      <td width="40%"></td>
+      <td width="30%"></td>
+    </tr>
+    <tr>
+      <td style="border-top:1px dashed; height:30px; text-align: center;font-size: 14px; padding-top: 5px" >On Behalf of Buyer </td>
+      <td></td>
+      <td  style="border-top:1px dashed; height:30px; text-align: center;font-size: 14px;padding-top: 5px">On Behalf of Supplier</td>
+    </tr>
+  </tbody>
+</table>
+
+
+    </t>
+
+</template>
+
+<template id="report_sale_contract2">
+    <t t-call="web.html_container">
+        <t t-foreach="docs" t-as="doc">
+            <t t-call="yjzy_extend.report_sale_contract_document2" t-lang="doc.partner_id.lang"/>
+        </t>
+    </t>
+</template>
+
+
+</odoo>

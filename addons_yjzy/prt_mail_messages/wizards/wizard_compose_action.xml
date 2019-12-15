@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<odoo>
+
+
+        <record id="wizard_compose_action_form" model="ir.ui.view">
+            <field name="name">wizard.compose.action.form</field>
+            <field name="model">wizard.compose.action</field>
+            <field name="arch" type="xml">
+                <form string="邮件发送完成">
+                    <footer>
+                        <button name="open_message_out" type="object" string="去发件箱" class="btn-primary"/>
+                        <button string="关闭" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+    
+</odoo>

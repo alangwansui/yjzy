@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<odoo>
+
+
+    <!--## Menu ##-->
+    <menuitem id="prt_messages_root"
+              name="Messages"
+              groups="base.group_user,base.group_partner_manager"
+              web_icon="prt_mail_messages,static/description/icon_menu.png"
+              sequence="1"/>
+
+
+
+
+
+
+
+
+</odoo>

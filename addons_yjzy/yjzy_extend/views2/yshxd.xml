@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record model="ir.ui.view" id="account_yshxd_tree_view">
+        <field name="name">account.reconcile.order.tree</field>
+        <field name="model">account.reconcile.order</field>
+        <field name="arch" type="xml">
+            <tree string="应收核销单" decoration-info="state == 'draft'" decoration-muted="state == 'cancelled'" edit="false">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="date"/>
+
+                <field name="amount_payment_org" string="实际认领金额"/>
+                <field name="currency_id"/>
+                <field name="invoice_currency_id"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="account_yshxd_form_view">
+        <field name="name">account.reconcile.order.form</field>
+        <field name="model">account.reconcile.order</field>
+        <field name="arch" type="xml">
+            <form string="应收核销单">
+                <header>
+                    <button name="action_posted" class="oe_highlight" states="draft" string="确认" type="object"  groups="base.group_system"/>
+                    <button name="action_cancel" class="oe_highlight" states="draft" string="取消" type="object"/>
+                    <button name="action_draft" class="oe_highlight" states="cancelled" string="重置草稿" type="object"/>
+
+                    <button name="make_lines" class="oe_highlight" string="生成明细" type="object" groups="account.group_account_manager"/>
+                    <button name="clear_moves" class="oe_highlight" string="测试用:清除分录" type="object" groups="base.group_system"/>
+                    <button name="check_amount" class="oe_highlight" string="检查金额填写" type="object" groups="base.group_system"/>
+
+                    <button name="make_account_move" class="oe_highlight" string="生成分录" type="object"
+                            groups="base.group_system"/>
+                    <button name="invoice_assign_outstanding_credit" class="oe_highlight" string="核销发票" type="object"
+                            groups="base.group_system"/>
+
+                    <button name="make_done" class="oe_highlight" string="确认核销" type="object"
+                            attrs="{'invisible': [('state','in', ['done'])]}" groups="base.group_system"/>
+                    <button name="open_reconcile_account_move_line" class="oe_highlight" string="打开核销分录" type="object" groups="base.group_system"/>
+
+                    <field name="state" widget="statusbar"/>
+                    <field name="is_editable"  widget="boolean_toggle"/>
+                </header>
+                <sheet>
+                    <group col="3">
+                        <group>
+                            <field name="name"/>
+
+                            <field name="payment_type"  />
+                            <field name="partner_type"  />
+                            <field name="partner_id"
+                                   context="{'default_is_company': True, 'default_supplier': payment_type == 'outbound', 'default_customer': payment_type == 'inbound'}"/>
+                            <field name="journal_id"  domain="[('type','=','renling')]"/>
+                            <field name="payment_account_id"/>
+                            <field name="payment_currency_id"/>
+                            <field name="bank_account_id"/>
+                            <field name="diff_account_id"/>
+                            <field name="company_id" />
+                            <field name="include_tax"/>
+
+                        </group>
+                        <group>
+                             <field name="date"/>
+                            <field name="sfk_type"/>
+                            <field name="be_renling"/>
+                            <field name="invoice_currency_id"/>
+                            <field name="amount_invoice_residual_org"/>
+                            <field name="amount_total_org"/>
+                            <field name="amount_advance_residual_org"/>
+                            <field name="amount_advance_org"/>
+                            <field name="amount_payment_org"/>
+                            <field name="amount_bank_org"/>
+                            <field name="amount_diff_org"/>
+                            <field name="yjzy_payment_id" string="选择收款单"
+                                   domain="['|','&amp;','&amp;','&amp;',('state','=','posted'),('sfk_type','=','rcskd'),('partner_id','=',partner_id),
+                                   ('balance','!=',0),'&amp;','&amp;','&amp;',('state','=','posted'),
+                                   ('sfk_type','=','rcskd'),('partner_id.name','=','未定义'),('balance','!=',0)]" context="{'form_view_ref': 'yjzy_extend.view_rcskd_form'}"/>
+                            <field name="yjzy_payment_currency_id" string="货币"/>
+                            <field name="manual_payment_currency_id"/>
+                            <field name="yjzy_payment_balance" string="收款单余额"/>
+
+                        </group>
+                        <group>
+                            <field name="currency_id"/>
+                            <field name="amount_invoice"/>
+                            <field name="amount_total"/>
+                            <field name="amount_advance_residual"/>
+                            <field name="amount_advance"/>
+                            <field name="amount_payment"/>
+                            <field name="amount_bank"/>
+                            <field name="amount_diff"/>
+                            <field name="amount_exchange"/>
+                            <field name="no_sopo"/>
+                        </group>
+
+                    </group>
+                    <notebook>
+                        <page string="收款发票" >
+                            <field name="invoice_ids" domain="[('partner_id','=', partner_id),('state', '=', 'open')]"
+                                   options='{"no_create": True}'
+                                   widget="many2many" context="{'tree_view_ref':'account.invoice_tree'}"/>
+                        </page>
+                        <page string="明细">
+                            <field name="line_ids" context="{'invisible_so': partner_type == 'supplier'}">
+                                <tree editable="top">
+                                    <field name="payment_type" invisible="1"/>
+                                    <field name="partner_type" invisible="1"/>
+                                    <field name="so_id" readonly="1" invisible="not context.get('show_so')"/>
+                                    <field name="so_contract_code"/>
+
+                                    <field name="po_id" readonly="1" invisible="not context.get('show_po')"/>
+                                    <field name="invoice_id" readonly="1"/>
+                                    <field name="tb_contract_code"/>
+
+                                    <field name="residual" readonly="1"/>
+                                    <field name="invoice_currency_id" invisible="1"/>
+                                    <field name="payment_currency_id" invisible="1"/>
+                                    <!--field name="bank_currency_id"/-->
+                                    <!--field name="diff_currency_id"/-->
+                                    <field name="currency_id" invisible="1"/>
+
+                                    <field name="amount_invoice_so" />
+                                    <field name="advance_residual"/>
+                                    <field name="advance_residual2"/>
+
+                                    <field name="yjzy_payment_id"/>
+                                    <field name="yjzy_currency_id"/>
+                                    <field name="amount_advance_org"/>
+                                    <field name="amount_payment_org"/>
+
+                                    <field name="amount_bank_org" invisible="not context.get('show_so')"/>
+                                    <field name="amount_diff_org"/>
+                                    <field name="amount_total_org"/>
+
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="分录">
+                            <group>
+                                <field name="move_ids"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="action_yshxd">
+        <field name="name">应收核销单</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.reconcile.order</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('sfk_type','=','yshxd')]</field>
+        <field name="context">{'default_sfk_type': 'yshxd', 'default_payment_type': 'inbound', 'default_be_renling': 1, 'default_partner_type': 'customer', 'show_so': 1}
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window.view" id="act_open_yshxd_view_tree">
+        <field name="act_window_id" ref="action_yshxd"/>
+        <field name="sequence" eval="10"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="account_yshxd_tree_view"/>
+    </record>
+    <record model="ir.actions.act_window.view" id="act_open_yshxd_view_form">
+        <field name="act_window_id" ref="action_yshxd"/>
+        <field name="sequence" eval="20"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="account_yshxd_form_view"/>
+    </record>
+
+
+    <menuitem id="menu_yshxd" name="应收核销单"
+              parent="menu_skf_root" action="action_yshxd"/>
+
+
+</odoo>

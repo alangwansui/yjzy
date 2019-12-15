@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<template id="report_transport_bill_bgzl_invoice_document">
+     <t t-call="yjzy_extend.no_header_external_layout">
+        <t t-set="doc" t-value="doc.with_context({'lang':doc.partner_id.lang})" />
+<style>
+	body{
+	    font-size: 12px;
+		font-family:Arial,Helvetica,sans-serif,simsun;
+	  }
+	.title{
+		text-align: center
+	}
+	.main{
+	   
+	    font-size: 12px;
+	}
+	.main td{
+		height:30px;
+		padding: 3px;
+	}
+	.tablelist{
+		text-align:center;
+		font-size:12px;		
+		border-collapse: collapse;
+	}
+	.tablelist th{
+		text-align: center;
+		font-size: 14px;
+	    font-weight: bold;
+		border:solid 1px ;
+		height: 25px;
+		border-collapse: collapse;
+		padding: 3px;
+	}
+	.tablelist td{
+		height: 20px;
+		border-collapse: collapse;
+		padding: 3px;
+	}
+</style>
+
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" style="text-align: center">
+  <tbody>
+    <tr>
+      <td style="height: 30px"><span style="font-size: 20px"> <span t-esc="doc.with_context({'lang':'zh_CN'}).company_id.full_name"/></span></td>
+    </tr>
+    <tr>
+      <td style="height: 30px"><span style="font-size: 14px"><span t-esc="doc.company_id.full_name"/></span></td>
+    </tr>
+    <tr>
+	  <td style="height: 50px"><span style="font-size: 20px;font-weight: bolder">INVOICE</span></td>
+    </tr>
+  </tbody>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="main">
+  <tbody>
+    <tr>
+      <td style="width: 50%"> <span t-esc="doc.partner_id.name"/></td>
+      <td style="width: 15%; text-align: right">Invoice NO.:</td>
+      <td style="width: 35%"> <span t-esc="doc.ref"/></td>
+    </tr>
+    <tr>
+      <td><span t-esc="doc.partner_shipping_id.street"/> <span t-esc="doc.partner_shipping_id.street2"/> <span t-esc="doc.partner_shipping_id.city"/> <span t-esc="doc.partner_shipping_id.state_id.name"/> <span t-esc="doc.partner_shipping_id.country_id.name"/></td>
+      <td style="text-align: right">DATE: </td>
+      <td><span t-esc="doc.date"/></td>
+    </tr>
+  </tbody>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tbody>
+    <tr>
+      <td style="border-left: solid 1px;"><table width="25%" border="0" cellspacing="0" cellpadding="0" class="tablelist" style="width:25%; float: left; text-align: center">
+  <tbody>
+    <tr>
+      <th style="border-right: 0px; text-align: center;border-left: 0px">Mark</th>
+    </tr>
+    <tr>
+      <td style="width: 25%;height: 100px"><t t-foreach="doc.mark_ids" t-as="mark">
+		  <div>
+		  <span t-esc="mark.name"/></div>
+		  </t></td>
+    </tr>
+  </tbody>
+</table>
+<table width="75%" border="0" cellspacing="0" cellpadding="0" class="tablelist">
+  <tbody>
+    <tr>      
+      <th colspan="3">Quantites and Descriptions </th>
+      <th>Unit Price</th>
+      <th colspan="2">Amount</th>
+    </tr>
+    <tr>      
+      <td style="border-left: solid 1px"></td>
+      <td></td>
+      <td style="border-right: solid 1px"></td>
+      <td style="border-right: solid 1px"></td>
+      <td colspan="2" style="border-right: solid 1px"><span t-esc="doc.incoterm.code"/> <span t-esc="doc.wharf_src_id.name"/></td>
+    </tr>
+	  <t t-foreach="doc.pack_line_ids" t-as="line">
+    <tr>      
+      <td style="width: 30%; border-left: solid 1px;text-align: left"><span t-esc="line.hs_name"/></td>
+      <td style="width: 10%; text-align: right"><span t-esc="line.qty"/></td>
+      <td style="width: 5%; border-right: solid 1px">PCS</td>
+      <td style="width: 15%;border-right: solid 1px;text-align: right"><span t-esc="line.ciq_amount / line.qty" t-options='{"widget": "float", "precision": 2}'/></td>
+      <td style="width: 5%">USD</td>
+      <td style="width: 10%;border-right: solid 1px"><span t-esc="line.ciq_amount"/></td>
+    </tr>
+	 </t>
+    <tr>     
+      <td style="border-left: 1px solid"></td>
+      <td style="border-bottom: 1px dashed;"></td>
+      <td style="border-bottom: 1px dashed;border-right: solid 1px"></td>
+      <td style="border-bottom: 1px dashed;border-right: solid 1px"></td>
+      <td style="border-bottom: 1px dashed"></td>
+      <td style="border-bottom: 1px dashed;border-right: solid 1px"></td>
+    </tr>
+	    <tr>     
+      <td style="border-left: solid 1px"></td>
+      <td style="text-align: right"><t t-esc="sum(x.qty for x in doc.pack_line_ids)"/></td>
+      <td style="border-right: solid 1px">PCS</td>
+      <td style="border-right: solid 1px"></td>
+      <td>USD</td>
+      <td style="border-right: solid 1px;text-align: left"><t t-esc="sum(x.ciq_amount for x in doc.pack_line_ids)"/></td>
+    </tr>
+  </tbody>
+
+</table></td>
+    </tr>
+  </tbody>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tbody>
+    <tr>
+      <td style="text-align: center;height: 20px">The above goods may be allowed with 5% more or less in quantity and amount at the Seller's option</td>
+    </tr>
+  </tbody>
+</table>
+    </t>
+</template>
+<template id="report_transport_bill_bgzl_invoice">
+    <t t-call="web.html_container">
+        <t t-foreach="docs" t-as="doc">
+            <t t-call="yjzy_extend.report_transport_bill_bgzl_invoice_document" t-lang="doc.partner_id.lang"/>
+        </t>
+    </t>
+</template>
+</odoo>

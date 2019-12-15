@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.account</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="account.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@id='fiscalyear']/../../div" position="after">
+                <h2>凭证审核</h2>
+                <div class="row mt16 o_settings_container">
+                    <div class="col-xs-12 col-md-6 o_setting_box">
+                        <div class="o_setting_left_pane">
+                            <field name="group_post_after_approval"/>
+                        </div>
+                        <div class="o_setting_right_pane">
+                            <label for="group_post_after_approval"/>
+                            <div class="text-muted">
+                                凭证审核后才能记账
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-md-6 o_setting_box">
+                        <div class="o_setting_left_pane">
+                            <field name="group_same_user_approval"/>
+                        </div>
+                        <div class="o_setting_right_pane">
+                            <label for="group_same_user_approval"/>
+                            <div class="text-muted">
+                                制单人和审核人可为同一人
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-md-6 o_setting_box">
+                        <div class="o_setting_left_pane">
+                            <field name="group_disable_auto_no"/>
+                        </div>
+                        <div class="o_setting_right_pane">
+                            <label for="group_disable_auto_no"/>
+                            <div class="text-muted">
+                                自动凭证不分配凭证编号
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <h2>中国财务会计</h2>
+                <div class="row mt16 o_settings_container">
+                    <div class="col-xs-12 col-md-6 o_setting_box">
+                        <div class="o_setting_left_pane">
+                            <field name="module_l10n_cn_reports"/>
+                        </div>
+                        <div class="o_setting_right_pane">
+                            <label for="module_l10n_cn_reports"/>
+                            <div class="text-muted">
+                                UFO报表
+                            </div>
+                            <a href="http://www.odoomk.com/china-account-module" target="_blank"> 详细信息</a>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-md-6 o_setting_box">
+                        <div class="o_setting_left_pane">
+                            <field name="module_l10n_cn_dashboard"/>
+                        </div>
+                        <div class="o_setting_right_pane">
+                            <label for="module_l10n_cn_dashboard"/>
+                            <div class="text-muted">
+                                总账流程图
+                            </div>
+                            <a href="http://www.odoomk.com/china-account-module" target="_blank"> 详细信息</a>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-md-6 o_setting_box">
+                        <div class="o_setting_left_pane">
+                            <field name="module_l10n_cn_voucher_auxiliary"/>
+                        </div>
+                        <div class="o_setting_right_pane">
+                            <label for="module_l10n_cn_voucher_auxiliary"/>
+                            <div class="text-muted">
+                                凭证辅助核算
+                            </div>
+                            <a href="http://www.odoomk.com/china-account-module" target="_blank"> 详细信息</a>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-md-6 o_setting_box">
+                        <div class="o_setting_left_pane">
+                            <field name="module_l10n_cn_voucher_arrange"/>
+                        </div>
+                        <div class="o_setting_right_pane">
+                            <label for="module_l10n_cn_voucher_arrange"/>
+                            <div class="text-muted">
+                                凭证整理
+                            </div>
+                            <a href="http://www.odoomk.com/china-account-module" target="_blank"> 详细信息</a>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-md-6 o_setting_box">
+                        <div class="o_setting_left_pane">
+                            <field name="module_l10n_cn_cashflow"/>
+                        </div>
+                        <div class="o_setting_right_pane">
+                            <label for="module_l10n_cn_cashflow"/>
+                            <div class="text-muted">
+                                现金流量
+                            </div>
+                            <a href="http://www.odoomk.com/china-account-module" target="_blank"> 详细信息</a>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-md-6 o_setting_box">
+                        <div class="o_setting_left_pane">
+                            <field name="module_l10n_cn_carryover"/>
+                        </div>
+                        <div class="o_setting_right_pane">
+                            <label for="module_l10n_cn_carryover"/>
+                            <div class="text-muted">
+                                期末结转
+                            </div>
+                            <a href="http://www.odoomk.com/china-account-module" target="_blank"> 详细信息</a>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</data>
+</openerp>

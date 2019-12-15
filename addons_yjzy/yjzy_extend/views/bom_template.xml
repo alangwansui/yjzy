@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_bom_template_tree" model="ir.ui.view">
+            <field name="name">bom.template.tree</field>
+            <field name="model">bom.template</field>
+            <field name="arch" type="xml">
+                <tree string="BOM模板">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_bom_template_form" model="ir.ui.view">
+            <field name="name">bom.template.form</field>
+            <field name="model">bom.template</field>
+            <field name="arch" type="xml">
+                <form string="BOM模板">
+                    <group>
+                        <field name="name"/>
+                    </group>
+                    <field name="line_ids">
+                        <tree editable="top">
+                            <field name="product_tmpl_id"/>
+                            <field name="product_id"/>
+                            <field name="qty"/>
+                        </tree>
+                    </field>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="act_open_bom_template_view">
+            <field name="name">BOM模板</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">bom.template</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+        </record>
+
+
+        <menuitem id="menu_bom_template" name="BOM模板"
+                  parent="sale.prod_config_main"
+                  sequence="20"
+                  action="act_open_bom_template_view"/>
+    </data>
+</odoo>

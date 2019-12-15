@@ -1,0 +1,12 @@
+"id","name","active","model_id/id","model_view_id/id"
+"wkf.wkf_expense","HR Expense","True","hr_expense.model_hr_expense","hr_expense.hr_expense_form_view"
+"wkf.wkf_so","Sale Order","True","sale.model_sale_order","sale.view_order_form"
+"wkf.wkf_po","Purchase Order","True","purchase.model_purchase_order","purchase.purchase_order_form"
+"wkf.wkf_tb","发运单","True","yjzy_extend.model_transport_bill","yjzy_extend.view_transport_bill_form"
+
+
+
+
+
+
+

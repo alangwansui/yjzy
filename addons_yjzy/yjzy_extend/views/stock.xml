@@ -1,0 +1,59 @@
+<odoo>
+    <data>
+
+        <record id="inherit_view_picking_form" model="ir.ui.view">
+            <field name="name">stock.picking.form</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                <notebook position="inside">
+                    <page string="交单时间">
+                        <group>
+                            <field name="date_done"/>
+                            <field name="date_finish"/>
+                            <field name="date_ship"/>
+                        </group>
+                    </page>
+                </notebook>
+
+
+                <xpath expr="//field[@name='move_lines']//tree" position="inside">
+                    <field name="s_uom_id"/>
+                    <field name="p_uom_id"/>
+                </xpath>
+
+            </field>
+        </record>
+        
+
+        <!-- -->
+        <record model="ir.ui.view" id="extend_view_picking_type_tree">
+        	<field name="name">stock.picking.type.tree</field>
+        	<field name="model">stock.picking.type</field>
+        	<field name="inherit_id" ref="stock.view_picking_type_tree"/>
+        	<field name="arch" type="xml">
+        		<tree position="inside">
+        			<field name="ref" required="1"/>
+                    <field name="company_id"/>
+        		</tree>
+        	</field>
+        </record>
+
+        <record model="ir.ui.view" id="extend_view_picking_type_form">
+        	<field name="name">stock.picking.type.tree</field>
+        	<field name="model">stock.picking.type</field>
+        	<field name="inherit_id" ref="stock.view_picking_type_form"/>
+        	<field name="arch" type="xml">
+                <field name="warehouse_id" position="after">
+                    <field name="ref" required="1"/>
+                    <field name="company_id"/>
+
+
+                </field>
+        	</field>
+        </record>
+
+
+
+    </data>
+</odoo>

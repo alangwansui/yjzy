@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+
+        <record id="wizard_wizard_so2po_form" model="ir.ui.view">
+            <field name="name">wizard.so2po.from</field>
+            <field name="model">wizard.so2po</field>
+            <field name="arch" type="xml">
+                <form string="创建采购单">
+                    <group>
+                        <field name="line_ids" nolabel="1">
+                            <tree editable="bottom" create="false">
+                                <field name="sol_id" readonly="1"/>
+                                <field name="product_id" readonly="1"/>
+                                <field name="sale_qty" readonly="1"/>
+                                <field name="smline_qty" readonly="1"/>
+                                <field name="qty_available"/>
+                                <field name="virtual_available"/>
+                                <field name="supplier_id" domain="[('supplier','=',True)]"/>
+                                <field name="qty"/>
+                            </tree>
+                        </field>
+                    </group>
+                    <footer>
+                        <button name="make_purchase_orders" class="oe_highlight" type='object' string="创建采购单"/>
+                        <button special="cancel" class="oe_highlight" string="取消"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>
+

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- ............... HERENCIA VISTA EN FORM ..............
+    <record model="ir.ui.view" id="stock_picking_delivery_form">
+        <field name="name">stock.picking.delivery.form</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="model">stock.picking</field>
+        <field name="arch" type="xml">
+            <field name="origin" position="after">
+                <field name="delivery_status"/>
+            </field>
+        </field>
+    </record>
+    .-->
+    
+    <!-- ............... HERENCIA VISTA EN TREE ..............
+    <record model="ir.ui.view" id="sii_vpicktree">
+        <field name="name">sii.vpicktree</field>
+        <field name="inherit_id" ref="stock.vpicktree"/>
+        <field name="model">stock.picking</field>
+        <field name="arch" type="xml">
+            <field name="state" position="after">
+                <field name="delivery_status"/>
+            </field>
+        </field>
+    </record>
+    .-->
+    
+
+
+</odoo>

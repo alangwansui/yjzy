@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+
+        <record id="wizard_supplier_invoice_date_form" model="ir.ui.view">
+            <field name="name">wizard.supplier.invoice_date.from</field>
+            <field name="model">wizard.supplier.invoice_date</field>
+            <field name="arch" type="xml">
+                <form string="更新供应商发票日期">
+
+                    <field name="line_ids">
+                        <tree create="false" editable="top">
+                            <field name="partner_id" readonly="1"/>
+                            <field name="invoice_id" readonly="1"/>
+                            <field name="date"/>
+                        </tree>
+                    </field>
+
+                    <footer>
+                        <button name="apply" class="oe_highlight" type='object' string="确认"/>
+                        <button special="cancel" class="oe_highlight" string="取消"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

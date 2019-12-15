@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <record model="ir.ui.view" id="inherit_view_partner_bank_tree">
+        	<field name="name">res.partner.bank.tree</field>
+        	<field name="model">res.partner.bank</field>
+        	<field name="inherit_id" ref="base.view_partner_bank_tree"/>
+        	<field name="arch" type="xml">
+        		<tree position="inside">
+        			<field name="huming" />
+        		</tree>
+        	</field>
+        </record>
+        
+
+        <record model="ir.ui.view" id="inherit_view_partner_bank_form">
+        	<field name="name">res.partner.bank.form</field>
+        	<field name="model">res.partner.bank</field>
+        	<field name="inherit_id" ref="base.view_partner_bank_form"/>
+        	<field name="arch" type="xml">
+        		<field name="acc_number" position="after">
+        			<field name="huming" />
+        		</field>
+        	</field>
+        </record>
+
+
+
+
+    </data>
+</odoo>

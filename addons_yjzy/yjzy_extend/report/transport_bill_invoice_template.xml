@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_transport_bill_invoice_document">
+
+        <t t-call="yjzy_extend.no_header_external_layout">
+            <t t-set="doc" t-value="doc.with_context({'lang':doc.partner_id.lang})"/>
+   <style>
+	  body{
+		   font-size: 12px;
+	   font-family:Arial,Helvetica,sans-serif,simsun;
+	  }
+	.title{			
+	    text-align: center}	
+	.title th{			
+	    height: 20px}	
+	.main{
+		
+		width: 100%;
+	    font-size: 11px  }
+	.tablelist{
+	
+		text-align: center;
+		border: 1px solid ;
+		border-collapse: collapse;
+		font-size: 11px;
+		width: 100%
+	}
+	.tablelist th{
+		
+		font-size: 13px;
+		text-align: center;
+		border: 1px solid ;
+		height: 20px;
+		line-height: 20px;
+	}
+	.tablelist td{
+		border: 1px solid;
+		height: 20px;
+		line-height: 20px;
+		
+	}
+
+</style>
+
+<table width="100%" border="0" cellpadding="0" cellspacing="0"  class="title">
+  <tbody>
+    <tr>
+      <td ><span style="font-size: 18px; "><span t-esc="doc.company_id.full_name"/></span> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center;"> <span style="font-size: 10px"><span t-esc="doc.company_id.street"/> <span t-esc="doc.company_id.street2"/> <span t-esc="doc.company_id.city"/> <span t-esc="doc.company_id.state_id.name"/> <span t-esc="doc.company_id.country_id.name"/></span>
+      </td>
+    </tr>
+    <tr>
+      <td style="text-align: center;"> <span style="font-size: 10px">TAX ID: <span t-esc="doc.company_id.vat"/> TEL: <span t-esc="doc.company_id.phone"/>  FAX:  <span t-esc="doc.company_id.fax"/></span></td>
+    </tr>
+    <tr>
+      <td style="text-align: center; height: 30px;"><span style="font-size: 20px;font: bolder">INVOICE</span></td>
+    </tr>
+  </tbody>
+</table>
+	<table border="0" cellpadding="0" cellspacing="0" class="main">
+  <tbody>
+    <tr>
+      <td width="10%">BUYER: </td>
+      <td width="50%"> <span t-esc="doc.partner_id.name"/></td>
+      <td width="20%" style="text-align: right"> COMMERCIAL INVOICE NO.:  </td>
+      <td width="20%"><span t-esc="doc.ref"/></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td> <span t-esc="doc.partner_shipping_id.street"/> <span t-esc="doc.partner_shipping_id.street2"/> <span t-esc="doc.partner_shipping_id.city"/> <span t-esc="doc.partner_shipping_id.state_id.name"/> <span t-esc="doc.partner_shipping_id.country_id.name"/></td>
+      <td style="text-align: right">DATE:  </td>
+      <td> <span t-esc="doc.date"/></td>
+    </tr>
+  </tbody>
+</table>
+ <table border="0" cellpadding="0" cellspacing="0" class="main">
+          <tbody>
+            <tr>
+              <td width="47%"> Shipment From: <span t-esc="doc.wharf_src_id.name"/></td>
+              <td width="53%">to: <span t-esc="doc.wharf_dest_id.name"/></td>
+            </tr>
+          </tbody>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" class="main">
+   <tbody>
+     <tr>
+       <td>PAYMENT TERM:  <span t-esc="doc.payment_term_id.name"/></td>
+     </tr>
+   </tbody>
+ </table>
+ <table cellspacing="0" class="tablelist">
+	 <tbody>
+   <tr>
+     <th colspan="4">Commodities    &amp; Descriptions</th>
+     <th colspan="2">Quantity</th>
+     <th colspan="2">Unit price</th>
+     <th colspan="2">Amount</th>
+   </tr>
+   <tr>
+     <td>PO NUMBER:
+       </td>
+     <td>TRUPER NUMBER
+       </td>
+     <td>TRUPER CODE
+      </td>
+     <td>SPANISH DESCRIPTION
+      </td>
+     <td colspan="6"> INCOTERM - <span t-esc="doc.incoterm.code"/> <span t-esc="doc.wharf_src_id.name"/></td>
+   </tr>
+		 <t t-foreach="doc.line_ids" t-as="line">
+   <tr>
+     <td  style="width: 13%"><span t-esc="line.product_id.default_code"/></td>
+     <td  style="width: 13%"><span t-esc="line.product_id.customer_ref"/></td>
+     <td  style="width: 13%"><span t-esc="line.product_id.customer_ref2"/></td>
+     <td  style="width: 31%"><span t-esc="line.product_id.customer_description"/></td>
+     <td style="width: 7%;border-right: 0px"> <span t-esc="line.qty2stage"/></td>
+     <td style="width: 3%; border-left: 0px">PCS</td>
+     <td style="width: 3%;border-right: 0px">USD</td>
+     <td style="width: 7%; border-left: 0px"><span t-esc="line.sol_id.price_unit"/></td>
+     <td style="width: 3%;border-right: 0px">USD</td>
+     <td style="width: 7%; border-left: 0px"><span t-esc="line.sol_id.price_total"/></td>
+   </tr>
+		 </t>
+		 <tr>
+     <td colspan="4"  style="width: 13%">US.DOLLARS <span t-esc="doc.get_amount_word()"/></td>
+     <td colspan="6" style="width: 7%;border-right: 0px"></td>
+     </tr>
+		    <tr>
+     <td colspan="4"  style="width: 13%">TOTALS</td>
+     <td style="width: 7%;border-right: 0px"><span t-esc="doc.get_product_total()"/></td>
+     <td style="width: 3%; border-left: 0px"> PCS</td>
+     <td style="width: 3%;border-right: 0px"> </td>
+     <td style="width: 7%; border-left: 0px"> </td>
+     <td style="width: 3%;border-right: 0px"> USD</td>
+     <td style="width: 7%; border-left: 0px"><span t-esc="doc.org_sale_amount"/></td>
+   </tr>
+	</tbody>
+ </table>
+<table style="width: 100%;border-bottom: solid 1px ;border-left: solid 1px; border-right:solid 1px;border-collapse: collapse;height: 150px; font-size: 12px;">
+	<tbody>
+		<tr>
+		<td style="padding: 5px" >
+		<span t-field="doc.qingguan_description"/></td>
+		</tr>
+	
+	</tbody>
+</table>
+
+
+        </t>
+    </template>
+
+
+    <template id="report_transport_bill_invoice">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="yjzy_extend.report_transport_bill_invoice_document" t-lang="doc.partner_id.lang"/>
+            </t>
+        </t>
+    </template>
+
+
+</odoo>

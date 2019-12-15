@@ -1,0 +1,28 @@
+<odoo>
+    <data>
+
+        <record id="inherit_purchase_order_form" model="ir.ui.view">
+            <field name="name">purchase.order.form</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_form"/>
+            <field name="arch" type="xml">
+                <field name="state" position="before">
+                    <button string="创建批次号" states="" type="object" name="create_lots"/>
+                    <button string="虚拟入库" states="" type="object" name="make_dump_income_picking"/>
+                </field>
+
+                <field name="date_order" position="after">
+                    <field name="source_so_id"/>
+                </field>
+
+                <xpath expr="//field[@name='order_line']/tree/field[@name='name']" position="after">
+                    <field name="dlr_str"/>
+                    <field name="dlr_qty"/>
+                    <field name="dlr_no_qty"/>
+                </xpath>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>

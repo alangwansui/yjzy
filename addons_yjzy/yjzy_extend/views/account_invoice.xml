@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- 内部付款菜单 -->
+    <record id="action_account_payments_transfer" model="ir.actions.act_window">
+        <field name="name">内部转账</field>
+        <field name="res_model">account.payment</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,kanban,form,graph</field>
+        <field name="context">{'default_payment_type': 'transfer'}</field>
+        <field name="domain">[('payment_type', '=', 'transfer')]</field>
+    </record>
+    <menuitem action="action_account_payments_transfer" id="menu_account_payments_transfer"
+              parent="account.menu_finance_receivables_documents" sequence="21"/>
+
+
+    <!-- -->
+
+    <record model="ir.ui.view" id="inherit_invoice_tree">
+        <field name="name">account.invoice.tree</field>
+        <field name="model">account.invoice</field>
+        <field name="inherit_id" ref="account.invoice_tree"/>
+        <field name="arch" type="xml">
+            <tree position="inside">
+                <field name="bill_id"/>
+                <field name="yjzy_type"/>
+                <field name="include_tax"/>
+                <field name="date_deadline"/>
+                <field name="tb_contract_code"/>
+                <field name="po_id"/>
+                <field name="purchase_contract_code"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="inherit_invoice_form" model="ir.ui.view">
+        <field name="name">account.invoice.form</field>
+        <field name="model">account.invoice</field>
+        <field name="inherit_id" ref="account.invoice_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='invoice_line_ids']//tree/field[@name='name']" position="after">
+                <field name="so_id"/>
+            </xpath>
+
+            <field name="state" position="before">
+                <button string="HS品名统计" type="object" name="make_hs_name_items"/>
+            </field>
+
+            <xpath expr="//sheet/group" position="attributes">
+                <attribute name="col">3</attribute>
+            </xpath>
+
+            <xpath expr="//sheet/group" position="inside">
+                <group>
+                    <field name="date_ship"/>
+                    <field name="date_finish"/>
+                    <field name="date_deadline"/>
+                    <field name="bill_id"/>
+                    <field name="yjzy_type"/>
+                    <field name="include_tax"/>
+                    <field name="tb_contract_code"/>
+                    <field name="po_id"/>
+                    <field name="purchase_contract_code"/>
+                    <field name="sale_assistant_id"/>
+                </group>
+            </xpath>
+
+
+            <notebook position="inside">
+                <page string="相关分录">
+                    <group>
+                        <field name="move_ids" readonly="1"/>
+                        <field name="move_line_ids" readonly="1"/>
+                    </group>
+                </page>
+                <page string="HS品名汇总">
+                    <field name="item_ids">
+                        <tree>
+                            <field name="name"/>
+                            <field name="product_id"/>
+                            <field name="qty"/>
+                            <field name="price"/>
+                            <field name="amount"/>
+                        </tree>
+                    </field>
+                </page>
+            </notebook>
+        </field>
+    </record>
+
+    <record id="inherit_invoice_supplier_form" model="ir.ui.view">
+        <field name="name">account.invoice.form</field>
+        <field name="model">account.invoice</field>
+        <field name="inherit_id" ref="account.invoice_supplier_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='invoice_line_ids']//tree/field[@name='name']" position="after">
+                <field name="purchase_id"/>
+            </xpath>
+
+            <field name="state" position="before">
+                <button string="HS品名统计" type="object" name="make_hs_name_items"/>
+            </field>
+            <field name="currency_id" position="before">
+                <field name="date_ship"/>
+                <field name="date_finish"/>
+                <field name="bill_id"/>
+                <field name="yjzy_type"/>
+                <field name="include_tax"/>
+                <field name="tb_contract_code"/>
+                <field name="po_id"/>
+                <field name="purchase_contract_code"/>
+            </field>
+            <notebook position="inside">
+                <page string="相关分录">
+                    <group>
+                        <field name="move_ids" readonly="1"/>
+                        <field name="move_line_ids" readonly="1"/>
+                    </group>
+                </page>
+                <page string="HS品名汇总">
+                    <field name="item_ids">
+                        <tree>
+                            <field name="name"/>
+                            <field name="product_id"/>
+                            <field name="qty"/>
+                            <field name="price"/>
+                            <field name="amount"/>
+                        </tree>
+                    </field>
+                </page>
+            </notebook>
+
+
+        </field>
+    </record>
+
+
+</odoo>

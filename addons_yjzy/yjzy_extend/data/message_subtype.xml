@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- 审批子类型=通用 -->
+        <record id="messsage_subtype_wkf" model="mail.message.subtype">
+            <field name="name">审批子类型</field>
+            <field name="default" eval="True"/>
+            <field name="description">工作流审批提醒</field>
+        </record>
+
+        <!--transport bill-->
+        <record id="mt_tb_draft" model="mail.message.subtype">
+            <field name="name">草稿</field>
+            <field name="res_model">transport.bill</field>
+            <field name="default" eval="True"/>
+            <field name="description">草稿</field>
+        </record>
+        <record id="mt_tb_w_sale_manager" model="mail.message.subtype">
+            <field name="name">待销售经理</field>
+            <field name="res_model">transport.bill</field>
+            <field name="default" eval="True"/>
+            <field name="description">待销售经理</field>
+        </record>
+        <record id="mt_tb_w_sale_director" model="mail.message.subtype">
+            <field name="name">待销售总监</field>
+            <field name="res_model">transport.bill</field>
+            <field name="default" eval="True"/>
+            <field name="description">待销售总监</field>
+        </record>
+        <record id="mt_tb_confirmed" model="mail.message.subtype">
+            <field name="name">合规审批</field>
+            <field name="res_model">transport.bill</field>
+            <field name="default" eval="True"/>
+            <field name="description">合规审批</field>
+        </record>
+        <record id="mt_tb_locked" model="mail.message.subtype">
+            <field name="name">单证审核</field>
+            <field name="res_model">transport.bill</field>
+            <field name="default" eval="True"/>
+            <field name="description">单证审核</field>
+        </record>
+        <record id="mt_tb_done" model="mail.message.subtype">
+            <field name="name">完成</field>
+            <field name="res_model">transport.bill</field>
+            <field name="default" eval="True"/>
+            <field name="description">完成</field>
+        </record>
+        
+    </data>
+</odoo>
+
+

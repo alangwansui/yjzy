@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="wizard_wizard_transport4so_form" model="ir.ui.view">
+            <field name="name">wizard.transport4so.from</field>
+            <field name="model">wizard.transport4so</field>
+            <field name="arch" type="xml">
+                <form string="创建发运单">
+                    <group>
+                        <div>为选中的销售订单创建发运单</div>
+                        <field name="partner_id" groups="base.group_system"/>
+                    </group>
+                    <group>
+                        <field name="so_ids" nolabel="1" option="{'no_create': True}"
+                               domain="[('partner_id','=', partner_id),('delivery_status', '!=', 'received'),('state', '=','sale')]"/>
+                    </group>
+                    <footer>
+                        <button name="apply" class="oe_highlight" type='object' string="确认"/>
+                        <button special="cancel" class="oe_highlight" string="取消"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <!--
+              <act_window id="act_wizard_transport4so"
+                          name="创建发运单"
+                          res_model="wizard.transport4so"
+                          view_mode="form"
+                          src_model="sale.order"
+                          target="new"
+                          key2="client_action_multi"
+              />
+              -->
+
+
+    </data>
+</odoo>
+

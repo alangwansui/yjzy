@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_multi_select_product_purchase_multi_select_product_purchase,multi_select_product_purchase.multi_select_product_purchase,model_multi_select_product_purchase_multi_select_product_purchase,,1,0,0,0

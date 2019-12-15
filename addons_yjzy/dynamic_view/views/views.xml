@@ -1,0 +1,107 @@
+<odoo>
+    <data>
+
+        <record id="view_dynamic_view_tree" model="ir.ui.view">
+            <field name="name">dynamic.view.tree</field>
+            <field name="model">dynamic.view</field>
+            <field name="arch" type="xml">
+                <tree string="自定义视图">
+                    <field name="name"/>
+                    <field name="type"/>
+                    <field name="user_id"/>
+                    <field name="model_id"/>
+                    <field name="is_global"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_dynamic_view_form" model="ir.ui.view">
+            <field name="name">dynamic.view.form</field>
+            <field name="model">dynamic.view</field>
+            <field name="arch" type="xml">
+                <form string="自定义视图">
+                    <header>
+
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="model_id"/>
+                            </group>
+                            <group>
+                                <field name="type"/>
+                                <field name="active"/>
+                                <field name="user_id" invisible="1"/>
+                                <field name="is_global" invisible="1"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="修改字段" attrs="{'invisible': [('type','=', 'search')]}">
+                                <field name="line_ids">
+                                    <tree editable="top">
+                                        <field name="field_id" domain="[('model_id','=', parent.model_id)]" required="1"/>
+                                        <field name="invisible"/>
+                                        <field name="required"/>
+                                        <field name="readonly"/>
+                                        <field name="no_create"/>
+                                        <field name="no_open"/>
+                                        <!--field name="group_ids" widget="many2many_tags"/-->
+
+                                    </tree>
+                                </field>
+
+                            </page>
+                            <page string="添加字段" attrs="{'invisible': [('type','!=', 'tree')]}">
+                                <field name="line_ids2">
+                                    <tree editable="top">
+                                        <field name="field_id" domain="[('model_id','=', parent.model_id)]" required="1"/>
+                                        <field name="position" required="1"/>
+                                        <field name="position_field" domain="[('model_id','=', parent.model_id)]" attrs="{'required': [('position','in', ['before','after'] )]}"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="搜索分组" attrs="{'invisible': [('type','!=', 'search')]}">
+                                <field name="line_ids3">
+                                    <tree editable="top">
+                                        <field name="field_id" domain="[('model_id','=', parent.model_id)]" required="1"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="修改按钮" attrs="{'invisible': [('type','!=', 'form')]}">
+                                <field name="button_ids">
+                                    <tree editable="top">
+                                        <field name="name"/>
+                                        <field name="string"/>
+                                        <field name="invisible"/>
+                                        <field name="hlight"/>
+                                        <field name="confirm_text"/>
+                                        <field name="group_ids" widget="many2many_tags"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="act_open_dynamic_view_view">
+            <field name="name">自定义视图</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">dynamic.view</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+        </record>
+
+        <menuitem id="menu_dynamic_view"
+                  name="自定义视图字段"
+                  groups="base.group_no_one"
+                  parent="base.next_id_2"
+                  sequence="20"
+                  action="act_open_dynamic_view_view"/>
+    </data>
+</odoo>
+

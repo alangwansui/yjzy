@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<template id="report_transport_bill_fytzd_document">
+        <t t-call="yjzy_extend.no_header_external_layout">
+            <t t-set="doc" t-value="doc.with_context({'lang':doc.partner_id.lang})"/>
+<style>
+	body{
+		  	font-family: Constantia, 'Lucida Bright', 'DejaVu Serif', Georgia, 'serif';
+		    font-size: 12px;
+	}
+	.title{
+		text-align: center
+	}
+	.main{
+	
+	    font-size: 12px;
+		width: 80%
+	}
+	.main td{
+		height:30px;
+		text-align: center;
+		padding: 3px;
+	}
+	.tablelist
+	{
+		vertical-align:middle;
+	 text-align: center;
+	 font-size: 12px;
+		border-collapse: collapse;
+	}
+	.tablelist th
+	{
+		text-align: center;
+		vertical-align:middle;
+		font-size: 12px;
+		height:30px;
+		border: solid 1px;
+		border-collapse: collapse;
+		
+	}
+	.tablelist td
+	{
+		vertical-align:middle;
+		text-align:center;
+		border: solid 1px;
+		border-collapse: collapse;
+		height: 25px;
+		padding: 3px;
+	}
+	
+</style>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" style="text-align: center">
+  <tbody>
+    <tr>
+      <td style="height: 30px"><span style="font-size: 14px"><span t-esc="doc.company_id.full_name"/></span></td>
+    </tr>
+	  <tr>
+	  <td><span style="font-size: 12px">(中文地址)</span></td>
+	  </tr>
+    <tr>
+	  <td style="height: 50px"><span style="font-size: 20px;font-weight: bolder">发货通知单</span></td>
+    </tr>
+  </tbody>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class= "main">
+  <tbody >
+	<tr>
+		<td style="width: 10%">出运合同号</td>
+		<td colspan="4" style="border-bottom: solid 1px"></td>
+	</tr>
+	<tr>
+		<td>发货供应商及联系人：</td>
+        <td colspan="4" style="border-bottom: solid 1px"></td>
+    </tr>
+	<tr>
+		<td>送货地址：</td>
+        <td colspan="4" style="border-bottom: solid 1px"></td>
+    </tr>
+	<tr>
+		<td>送货日期:</td>
+        <td colspan="4" style="border-bottom: solid 1px"></td>
+    </tr>
+	<tr>
+		<td>发货要求：</td>
+		<td colspan="4" style="border-bottom: solid 1px"></td>
+    </tr>	
+    <tr>
+		<td width="25%">发货方式：</td>
+		<td width="13%">□ 码头仓库</td>
+		<td width="13%">□ 我司仓库</td>
+		<td width="14%">□ 装柜/柜型</td>
+		<td width="35%" style="border-bottom: solid 1px"></td>
+    </tr>
+  </tbody>
+</table>
+<p></p>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablelist">
+  <tbody>
+    <tr>
+      <th colspan="7">发货明细</th>
+      <th colspan="4">供应商发货回执</th>
+    </tr>
+    <tr>
+      <th width="10%">采购合同号</th>
+      <th width="15%">产品型号</th>
+      <th width="9%">箱数</th>
+      <th width="9%">数量</th>
+      <th width="9%">毛重</th>
+      <th width="9%">净重</th>
+      <th width="9%">体积</th>
+      <th width="5%">是否发完</th>
+      <th width="10%">实际发货箱数</th>
+      <th width="5%">是否含税</th>
+      <th width="10%">发货金额</th>
+    </tr>
+<t t-foreach="doc.qingguan_line_ids" t-as="line">
+    <tr>
+      <td>（采购合同号）</td>
+      <td>（供应商型号）</td>
+      <td><span t-esc="line.qty_package"/></td>
+      <td><span t-esc="line.package_qty"/></td>
+      <td>（毛重）</td>
+      <td>（净重）</td>
+      <td>（体积）</td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+	</t>
+    <tr>
+      <td colspan="2">合计：</td>
+      <td>（箱数合计）</td>
+      <td>（数量合计）</td>
+      <td>（毛重合计）</td>
+      <td>（净重合计）</td>
+      <td>（体积合计）</td>
+      <td>□</td>
+      <td></td>
+      <td>□</td>
+      <td></td>
+    </tr>
+    <tr style="height: 40px">
+      <td>通知人确认：</td>
+      <td colspan="3"></td>
+      <td colspan="2">工厂回执确认：</td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+    </t>
+</template>
+<template id="report_transport_bill_fytzd">
+    <t t-call="web.html_container">
+        <t t-foreach="docs" t-as="doc">
+            <t t-call="yjzy_extend.report_transport_bill_fytzd_document" t-lang="doc.partner_id.lang"/>
+        </t>
+    </t>
+</template>
+</odoo>

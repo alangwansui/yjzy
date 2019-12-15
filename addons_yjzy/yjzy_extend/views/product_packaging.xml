@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+
+        <record model="ir.ui.view" id="packaging_type_tree_view">
+            <field name="name">packaging.type.tree</field>
+            <field name="model">packaging.type</field>
+            <field name="arch" type="xml">
+                <tree string="包装类型">
+                    <field name="name"/>
+                    <field name="size"/>
+                    <field name="height"/>
+                    <field name="width"/>
+                    <field name="length"/>
+                    <field name="volume"/>
+                    <field name="weight"/>
+                    <field name="thick"/>
+                    <field name="min_default"/>
+                    <field name="max_default"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="packaging_type_form_view">
+            <field name="name">packaging.type.form</field>
+            <field name="model">packaging.type</field>
+            <field name="arch" type="xml">
+                <form string="包装类型">
+                    <header>
+                        <button name="test" string="查看相关产品" type="object"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="size"/>
+                                <field name="weight"/>
+                                <field name="thick"/>
+                            </group>
+                            <group>
+                                <field name="height"/>
+                                <field name="width"/>
+                                <field name="length"/>
+                                <field name="volume"/>
+                                <field name="min_default"/>
+                                <field name="max_default"/>
+                            </group>
+                        </group>
+                    </sheet>
+
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_packaging_type">
+            <field name="name">包装类型</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">packaging.type</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="packaging_type_tree_view"/>
+        </record>
+
+        <menuitem id="menu_packaging_type" name="包装类型" parent="stock.menu_warehouse_config"
+                  action="action_packaging_type"/>
+
+
+
+
+
+        <!--record model="ir.ui.view" id="packaging_inherit_product_normal_form_view">
+            <field name="name">product.product.form</field>
+            <field name="model">product.product</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="product.product_normal_form_view"/>
+            <field name="arch" type="xml">
+                <field name="packaging_ids" position="replace">
+                    <field name="packaging_ids" context="{'default_product_id':id}" nolabel="1">
+                        <tree editable="top">
+                            <field name="name" string="名称"/>
+                            <field name="product_id" invisible="1"/>
+                            <field name="type_id"/>
+                            <field name="height"/>
+                            <field name="width"/>
+                            <field name="length"/>
+                            <field name="volume"/>
+                            <field name="packaging_weight"/>
+                        </tree>
+                    </field>
+                </field>
+            </field>
+        </record-->
+
+        <record id="inherit_product_packaging_tree_view" model="ir.ui.view">
+            <field name="name">product.packaging.tree.view</field>
+            <field name="model">product.packaging</field>
+            <field name="inherit_id" ref="product.product_packaging_tree_view"/>
+            <field name="arch" type="xml">
+                <field name="name" position="attributes">
+                    <attribute name="string">名称</attribute>
+                </field>
+                <tree position="inside">
+                    <field name="type_id"/>
+                    <field name="size"/>
+                    <field name="length2" string="长:cm"/>
+                    <field name="width" string="宽:cm"/>
+                    <field name="height" string="高:cm"/>
+                    <field name="volume" string="体积:cm³"/>
+                    <field name="packaging_weight"/>
+                    <field name="weight4product"/>
+                    <field name="net_weight"/>
+                    <field name="thick"/>
+                </tree>
+            </field>
+        </record>
+        <record id="inherit_product_packaging_form_view" model="ir.ui.view">
+            <field name="name">product.packaging.form.view</field>
+            <field name="model">product.packaging</field>
+            <field name="inherit_id" ref="product.product_packaging_form_view"/>
+            <field name="arch" type="xml">
+                <field name="product_id" position="after">
+                    <field name="type_id"/>
+                    <field name="size"/>
+                    <field name="length2" string="长:cm"/>
+                    <field name="width"  string="宽:cm"/>
+                    <field name="height" string="高:cm"/>
+                    <field name="volume"  string="体积:cm³" readonly="0"/>
+                    <field name="packaging_weight"/>
+                    <field name="weight4product"/>
+                    <field name="net_weight"/>
+                    <field name="thick"/>
+                </field>
+            </field>
+        </record>
+
+
+
+
+    </data>
+</odoo>
