@@ -87,7 +87,7 @@
                                 </span>
                                 </t>
                                     <span style="color:grey">
-                                        <field name="body" widget="html"/>
+
 
                                         <field name="body_text"/>
 
