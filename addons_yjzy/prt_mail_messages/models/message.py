@@ -91,12 +91,23 @@ class PRTMailMessage(models.Model):
             one.body_text = body_text
 
     def edit_again(self):
+        ctx = self.env.context
         compose = self.compose_id
+        #收件的回复是会把发件人加到收件人名单里，而发件的回复，不需要把发件人加入
+        if not ctx.get('is_out'):
+            default_partner_ids = compose.partner_ids and [x.id for x in compose.partner_ids] or None
+            default_partner_cc_ids = compose.partner_cc_ids and [x.id for x in compose.partner_cc_ids] or None
+        else:
+            default_partner_ids = compose.partner_ids and [x.id for x in compose.partner_ids] or None
+            default_partner_cc_ids = compose.partner_cc_ids and [x.id for x in compose.partner_cc_ids] or None
+
+
+
         ctx = {
             'default_model': compose.model,
             'default_res_id': compose.res_id,
-            'default_partner_ids': compose.partner_ids and [x.id for x in compose.partner_ids] or None,
-            'default_partner_cc_ids': compose.partner_cc_ids and [x.id for x in compose.partner_cc_ids] or None,
+            'default_partner_ids': default_partner_ids,
+            'default_partner_cc_ids': default_partner_cc_ids,
             'default_manual_cc': compose.manual_cc,
             'default_manual_to': compose.manual_to,
             'default_email_from': compose.email_from,
