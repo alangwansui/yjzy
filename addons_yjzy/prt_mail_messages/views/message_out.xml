@@ -50,7 +50,7 @@
                         <button string="标记未读" type="object" name="mark_as_unread"
                                 class="oe_stat_button"
                                 icon="fa-check" attrs="{'invisible': [('needaction', '=', True)]}" groups="base.group_system"/>
-                        <button name="edit_again" type="object" class="oe_stat_button" context="{'default_force_notify_email': 1}"
+                        <button name="edit_again" type="object" class="oe_stat_button" context="{'wizard_mode': 'again',  'default_force_notify_email': 1}"
                                 icon="fa-arrow-right" string="再次编辑"/>
                         <button name="toggle_message_starred" type="object" class="oe_stat_button"
                                 icon="fa-check" attrs="{'invisible': [('starred', '=', True)]}"
