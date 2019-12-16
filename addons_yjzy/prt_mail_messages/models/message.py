@@ -94,14 +94,9 @@ class PRTMailMessage(models.Model):
         ctx = self.env.context
         compose = self.compose_id
         #收件的回复是会把发件人加到收件人名单里，而发件的回复，不需要把发件人加入
-        if not ctx.get('is_out'):
-            default_partner_ids = compose.partner_ids and [x.id for x in compose.partner_ids] or None
-            default_partner_cc_ids = compose.partner_cc_ids and [x.id for x in compose.partner_cc_ids] or None
-        else:
-            default_partner_ids = compose.partner_ids and [x.id for x in compose.partner_ids] or None
-            default_partner_cc_ids = compose.partner_cc_ids and [x.id for x in compose.partner_cc_ids] or None
 
-
+        default_partner_ids = compose.partner_ids and [x.id for x in compose.partner_ids] or None
+        default_partner_cc_ids = compose.partner_cc_ids and [x.id for x in compose.partner_cc_ids] or None
 
         ctx = {
             'default_model': compose.model,
@@ -813,7 +808,6 @@ class PRTMailMessage(models.Model):
         if wizard_mode == 'quote':
             def get_email_to_exclude_fetch_server(msg, fetch_server_mail):
                 res = msg.email_from
-
                 for s in msg.email_to.split(','):
                     n, e = parseaddr(s)
                     if e != fetch_server_mail:
@@ -843,6 +837,8 @@ class PRTMailMessage(models.Model):
                         list_manual_cc.append(i)
             if list_manual_cc:
                 manual_cc = ','.join(list_manual_cc)
+
+            #如果是
                 
 
         elif wizard_mode == 'forward':
