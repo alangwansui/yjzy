@@ -53,7 +53,7 @@ class PRTMailComposer(models.Model):
                     'res_id': channel.id,
                 })
 
-        if not 'wizard_mode' in ctx:
+        if (not 'wizard_mode' in ctx) and (not ctx.get('default_body')):
             res.update({
                 'body': self.env.user.signature,
             })

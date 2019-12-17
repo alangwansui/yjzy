@@ -91,13 +91,10 @@ class PRTMailMessage(models.Model):
             one.body_text = body_text
 
     def edit_again(self):
-        ctx = self.env.context
         compose = self.compose_id
         #收件的回复是会把发件人加到收件人名单里，而发件的回复，不需要把发件人加入
-
         default_partner_ids = compose.partner_ids and [x.id for x in compose.partner_ids] or None
         default_partner_cc_ids = compose.partner_cc_ids and [x.id for x in compose.partner_cc_ids] or None
-
         ctx = {
             'default_model': compose.model,
             'default_res_id': compose.res_id,
@@ -113,6 +110,16 @@ class PRTMailMessage(models.Model):
             'default_attachment_ids': compose.attachment_ids and [(6, 0, [x.id for x in compose.attachment_ids])] or False,
         }
 
+        # 再次编辑：         直接复制底稿，什么都不改动
+        # 回复全部   ：  复制底稿，底稿body前面 + 签名
+        again_type = self.env.context.get('again_type', '')
+        if again_type == 'out_again':
+            pass
+        if again_type == 'out_all':
+            body = (_(
+                "  <div font-style=normal;><br/><br/><br/>%s<br/><br/><br/></div><blockquote style=font-size:13px;>----- Original Mail----- <br/> Date: %s <br/> From: %s <br/> Subject: %s <br/><br/>%s</blockquote>") %
+                    (self.env.user.signature or '', str(self.date), self.author_display, self.subject_display, self.body))
+            ctx.update({'default_body' :body})
 
         return {
             'name': _("New message"),
