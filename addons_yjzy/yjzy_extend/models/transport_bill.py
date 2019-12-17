@@ -381,10 +381,11 @@ class transport_bill(models.Model):
 
     @api.onchange('incoterm')
     def onchange_incoterm(self):
-        if self.incoterm.code == 'CIF':
-            self.fee_outer_need = True
-        else:
-            self.fee_outer_need = False
+        self.fee_outer_need = False
+        # if self.incoterm.code == 'CIF':
+        #     self.fee_outer_need = True
+        # else:
+        #     self.fee_outer_need = False
 
 
     def split_tuopan_weight(self):
