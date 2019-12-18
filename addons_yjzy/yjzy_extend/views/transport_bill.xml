@@ -560,12 +560,12 @@
                                     <form>
                                         <group>
                                             <group>
-                                        <field name="name" readonly="1"/>
-                                        <field name="dump_product_id" readonly="1"/>
-                                        <field name="hs_id" readonly="1"/>
-                                        <field name="hs_en_name" readonly="1"/>
+                                        <field name="name" readonly="0"/>
+                                        <field name="dump_product_id" readonly="0"/>
+                                        <field name="hs_id" readonly="0"/>
+                                        <field name="hs_en_name" readonly="0"/>
                                         <field name="back_tax" readonly="1"/>
-                                        <field name="out_qty" readonly="1"/>
+                                        <field name="out_qty" readonly="0"/>
                                         <field name="price" />
                                         <field name="amount"/>
                                         <field name="hs_id2"/>
@@ -642,8 +642,8 @@
                                         <field name="sale_hs_id" domain="[('tb_id','=', parent.id)]" string="销售统计"/>
                                         <field name="supplier_id"/>
                                         <field name="name"/>
-                                        <field name="po_id" groups="base.group_system"/>
-                                        <field name="po_code"/>
+                                        <field name="po_id" />
+                                        <field name="po_code" groups="base.group_system"/>
                                         <field name="hs_id"/>
                                         <field name="product_id" groups="base.group_system"/>
                                         <field name="qty" groups="base.group_system"/>
