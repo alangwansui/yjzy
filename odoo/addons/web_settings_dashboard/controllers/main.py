@@ -66,7 +66,9 @@ class WebSettingsDashboard(http.Controller):
                 'server_version': release.version,
                 'expiration_date': expiration_date,
                 'debug': request.debug,
+                #'user_id': request.env.user.id,
             },
+
             'company': {
                 'company_id': request.env.user.company_id.id,
                 'company_name': request.env.user.company_id.name

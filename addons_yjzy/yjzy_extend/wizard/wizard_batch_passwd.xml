@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+
+        <!-- Inherit Form View to Modify it -->
+        <record id="inherit_change_password_wizard_view" model="ir.ui.view">
+            <field name="name">change.password.wizard.from</field>
+            <field name="model">change.password.wizard</field>
+            <field name="inherit_id" ref="base.change_password_wizard_view"/>
+            <field name="arch" type="xml">
+                <field name="user_ids" position="before">
+                    <group invisible="1">
+                        <group>
+                            <field name="minlen"/>
+                            <field name="minuchars"/>
+                            <field name="minnumbers"/>
+
+                        </group>
+                        <group>
+                            <field name="maxlen"/>
+                            <field name="minlchars"/>
+                            <field name="minschars"/>
+                        </group>
+                    </group>
+                </field>
+
+            </field>
+        </record>
+
+        <act_window id="action_change_password_wizard"
+                    name="更新密码"
+                    res_model="change.password.wizard"
+                    src_model="res.users"
+                    view_mode="form"
+                    target="new"
+                    key2="client_action_multi"
+                    context="{'auto_new_pwd': 1}"
+        />
+
+
+    </data>
+</odoo>

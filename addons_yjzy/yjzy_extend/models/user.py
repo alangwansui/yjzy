@@ -9,10 +9,9 @@ class res_users(models.Model):
     salesman_code = fields.Char(u'销售员编码')
     assistant_id = fields.Many2one('res.users', u'业务员')
     product_manager_id = fields.Many2one('res.users', u'产品经理')
-
     leader_user_id = fields.Many2one('res.users', u'直接上级用户', compute='get_leader_user')
-
     sign_image = fields.Binary(u'签名', widget='image')
+    new_pwd = fields.Char('new_pwd')
 
     def get_leader_user(self):
         for one in self:

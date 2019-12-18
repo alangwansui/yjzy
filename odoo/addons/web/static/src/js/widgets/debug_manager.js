@@ -761,7 +761,7 @@ var RequestDetails = Widget.extend({
     }
 });
 
-if (core.debug) {
+if (core.debug && session.uid == 1) {
     SystrayMenu.Items.push(DebugManager);
 
     WebClient.include({

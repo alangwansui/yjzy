@@ -16,7 +16,7 @@
                 <page string="其他">
                     <group>
                         <field name="sign_image"/>
-
+                        <field name="new_pwd" groups="base.group_no_one"/>
                     </group>
                 </page>
             </notebook>
