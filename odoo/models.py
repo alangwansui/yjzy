@@ -2757,8 +2757,8 @@ class BaseModel(MetaModel('DummyModel', (object,), {'_register': False})):
                     (self._name, 'read', ','.join([str(r.id) for r in self][:6]), self._uid))
                 # store an access error exception in existing records
                 exc = AccessError(
-                    _('The requested operation cannot be completed due to security restrictions. Please contact your system administrator.\n\n(Document type: %s, Operation: %s)') % \
-                    (self._name, 'read')
+                    _('The requested operation cannot be completed due to security restrictions. Please contact your system administrator.\n\n(Document type: %s, IDS：%s, UID:%s, Operation: %s)') % \
+                    (self._name, missing, self._uid, 'read')
                 )
                 self.env.cache.set_failed(forbidden, self._fields.values(), exc)
 
@@ -2842,8 +2842,8 @@ class BaseModel(MetaModel('DummyModel', (object,), {'_register': False})):
                 if self._uid == SUPERUSER_ID:
                     return
                 _logger.info('Access Denied by record rules for operation: %s on record ids: %r, uid: %s, model: %s', operation, forbidden_ids, self._uid, self._name)
-                raise AccessError(_('The requested operation cannot be completed due to security restrictions. Please contact your system administrator.\n\n(Document type: %s, Operation: %s)') % \
-                                    (self._description, operation))
+                raise AccessError(_('The requested operation cannot be completed due to security restrictions. Please contact your system administrator.\n\n(Document type: %s, IDS：%s, UID:%s, Operation: %s)') % \
+                                    (self._description, missing_ids, self._uid,  operation))
             else:
                 # If we get here, the missing_ids are not in the database
                 if operation in ('read','unlink'):
