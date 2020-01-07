@@ -23,7 +23,7 @@ class sale_order(models.Model):
 
     def make_dump_reserve(self):
         self.ensure_one()
-        dump_picking =  self.dump_picking_id
+        dump_picking = self.dump_picking_id
         if not dump_picking:
             move_obj = self.env['stock.move']
             picking_type = self.env['stock.picking.type'].search([('ref', '=', 'sale_reserve'), ('company_id', '=', self.env.user.company_id.id)], limit=1)
