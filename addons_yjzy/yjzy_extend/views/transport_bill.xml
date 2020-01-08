@@ -529,7 +529,7 @@
                                     <tree>
                                         <field name="id"/>
                                         <field name="name" />
-                                        <field name="dump_product_id" groups="base.group_system"    />
+                                        <field name="dump_product_id" groups="base.group_system"/>
                                         <field name="hs_id" groups="base.group_system"/>
                                         <field name="hs_en_name" groups="base.group_system"/>
                                         <field name="back_tax"/>
