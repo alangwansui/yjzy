@@ -1,0 +1,49 @@
+//body * {
+//    font-family: "Roboto", "Microsoft YaHei",SimSun,'\5b8b\4f53',sans-serif;
+//}
+
+.ztree li a.curSelectedNode {
+  height: 18px !important;
+}
+.ji_toggle_follows {
+  margin-left: 3px;
+  padding: 5px 2px;
+  border-radius: 2px;
+}
+
+.ji_flex_display_row {
+    .o-flex-display();
+    .o-flex-flow(row, nowrap);
+}
+
+.ji_flex_display_column {
+    .o-flex-display();
+    .o-flex-flow(column, nowrap);
+}
+
+.ji_flex_auto {
+    .o-flex(1, 1, auto);
+}
+
+.ji_category {
+    .o-flex-display();
+    .o-flex-flow(column, nowrap);
+  min-width: 300px;
+  border-left: solid 1px #c6c6c6;
+  .ji_category_title {
+      .o-flex-display();
+      .o-flex-flow(row-reverse, nowrap);
+    min-height: 34px;
+    border-bottom: 2px solid #ddd;
+    background-color: #eee;
+    .ji_category_title_button {
+      padding: 4px 10px 0px 10px;
+      margin: 2px
+    }
+  }
+
+  .ji_category_tree {
+      .o-flex(1, 1, auto);
+    height: 100%;
+  }
+}
