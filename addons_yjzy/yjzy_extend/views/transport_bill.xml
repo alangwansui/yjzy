@@ -640,6 +640,7 @@
                                 <field name="btls_hs_ids">
                                     <tree editable="bottom">
                                         <field name="sale_hs_id" domain="[('tb_id','=', parent.id)]" string="销售统计"/>
+                                        <field name="sale_hs_db_id"/>
                                         <field name="supplier_id"/>
                                         <field name="name"/>
                                         <field name="po_id" />

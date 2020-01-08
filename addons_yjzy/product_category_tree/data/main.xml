@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="assets_backend" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+                <link rel="stylesheet" type="text/less" href="/product_category_tree/static/src/css/zTreeStyle/zTreeStyle.css"/>
+                <script type="text/javascript" src="/product_category_tree/static/src/js/jquery.ztree.all.min.js"/>
+                <link rel="stylesheet" type="text/css" href="/product_category_tree/static/src/css/main.css"/>
+                <link rel="stylesheet" href="/product_category_tree/static/src/less/main.less"/>
+                <script type="text/javascript" src="/product_category_tree/static/src/js/main.js"/>
+            </xpath>
+        </template>
+    </data>
+</odoo>
