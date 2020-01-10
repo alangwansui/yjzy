@@ -10,16 +10,7 @@ odoo.define('web_tree_image_tooltip.web_tree_image_tooltip',
         _onHoverRecord_img: function (event) {
             // var img_src =
             //     $(event.currentTarget).children('.img-fluid').attr('src')
-
-            console.info('>>>>', event.currentTarget, event);
-
-
-            console.info('>>>>3s', this.columns);
-
-            console.info('>>>>4', this);
-
             var rowIndex = event.fromElement.parentNode.rowIndex;
-
             if(rowIndex){
                 var line_data = this.state.data[rowIndex];
                 if (line_data){
