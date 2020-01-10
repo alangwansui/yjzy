@@ -81,13 +81,14 @@ var core = require('web.core');
             if (treeNode == -1) {
                 mydomain = mydomain.concat([[[self.field, "=", 0]]]);
             } else {
-                mydomain = mydomain.concat([[[self.field, 'child_of', [treeNode.id]]]]);
+                mydomain = mydomain.concat([[[self.field, 'in', [treeNode.id]]]]);
             }
             return {contexts: self.initialState.context, domains: mydomain, groupbys: self.initialState.groupedBy}
         },
 
         on_click_treeitem: function(event, treeId, treeNode, clickFlag) {
             var domain = this.make_domain(treeNode);
+            console.info('=====on_click_treeitem==========', domain);
             this.trigger_up('search', domain);
         },
 
