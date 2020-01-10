@@ -10,15 +10,29 @@ odoo.define('web_tree_image_tooltip.web_tree_image_tooltip',
         _onHoverRecord_img: function (event) {
             // var img_src =
             //     $(event.currentTarget).children('.img-fluid').attr('src')
+            var rowIndex = event.fromElement.parentNode.rowIndex;
+            if(rowIndex){
+                var line_data = this.state.data[rowIndex];
+                if (line_data){
 
-            console.info('>>>>', event.currentTarget, event);
+                    var body_text = line_data.data.body_text;
+                    $(event.currentTarget).tooltip({
+                        title: body_text,
+                        delay: 1,
+                    }).tooltip('show');
 
-            //如何查询消息下简单信息
+                }
 
-            $(event.currentTarget).tooltip({
-                title: "<h1>xxxx</h1>",
-                delay: 3,
-            }).tooltip('show');
+
+            }
+
+
+
+
+
+
+
+
         }
     });
 })
