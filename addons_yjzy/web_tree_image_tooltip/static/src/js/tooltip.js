@@ -13,12 +13,35 @@ odoo.define('web_tree_image_tooltip.web_tree_image_tooltip',
 
             console.info('>>>>', event.currentTarget, event);
 
-            //如何查询消息下简单信息
 
-            $(event.currentTarget).tooltip({
-                title: "<h1>xxxx</h1>",
-                delay: 3,
-            }).tooltip('show');
+            console.info('>>>>3s', this.columns);
+
+            console.info('>>>>4', this);
+
+            var rowIndex = event.fromElement.parentNode.rowIndex;
+
+            if(rowIndex){
+                var line_data = this.state.data[rowIndex];
+                if (line_data){
+
+                    var body_text = line_data.data.body_text;
+                    $(event.currentTarget).tooltip({
+                        title: body_text,
+                        delay: 1,
+                    }).tooltip('show');
+
+                }
+
+
+            }
+
+
+
+
+
+
+
+
         }
     });
 })

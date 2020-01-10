@@ -34,13 +34,12 @@ class Product(models.Model):
                 }
 
 
-
 class mail_message(models.Model):
     _inherit = "mail.message"
 
     @api.model
     def get_categories(self):
-        dbdata = self.env['res.partner'].search([])
+        dbdata = self.env['res.partner'].search([('customer', '=', True), ('parent_id', '=', False)])
         data = [{'id': d.id, 'pid': d.parent_id.id, 'name': d.name} for d in dbdata]
         return {'do_flag': True,
                 'field': 'partner_ids',
