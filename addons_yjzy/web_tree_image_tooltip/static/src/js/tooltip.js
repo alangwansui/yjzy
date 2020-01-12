@@ -16,9 +16,13 @@ odoo.define('web_tree_image_tooltip.web_tree_image_tooltip',
                 if (line_data){
 
                     var body_text = line_data.data.body_text;
+
+                    console.info('===');
+
                     $(event.currentTarget).tooltip({
                         title: body_text,
                         delay: 1,
+                        template: '<div class="tooltip"  role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
                     }).tooltip('show');
 
                 }

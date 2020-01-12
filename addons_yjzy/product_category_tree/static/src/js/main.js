@@ -1,6 +1,6 @@
 odoo.define('product_category_tree.Main', function (require) {
-"use strict";
-var core = require('web.core');
+    "use strict";
+    var core = require('web.core');
     var FieldMany2Many = require('web.relational_fields').FieldMany2Many;
     var FieldOne2Many = require('web.relational_fields').FieldOne2Many;
     var dialogs = require('web.view_dialogs');
@@ -36,7 +36,7 @@ var core = require('web.core');
 
                 var $expand = $('<span>', {class: 'fa fa-arrows-alt btn btn-icon ji_category_title_button'});
                 $expand.tooltip({
-                    delay: { show: 1000, hide: 0 },
+                    delay: {show: 1000, hide: 0},
                     title: function () {
                         return _t("Expand all categories");
                     }
@@ -63,11 +63,12 @@ var core = require('web.core');
                             idKey: "id",
                             pIdKey: "pid",
                             rootPId: 0
+
                         }
                     }
                 };
-                self.$ztree = $.fn.zTree.init(self.$tree, setting,  data);
-                self.$ztree.expandAll(true);
+                self.$ztree = $.fn.zTree.init(self.$tree, setting, data);
+                //self.$ztree.expandAll(true);
 
             });
 
@@ -78,18 +79,32 @@ var core = require('web.core');
             var self = this;
             var mydomain = [self.initialState.domain];
 
-            if (treeNode == -1) {
-                mydomain = mydomain.concat([[[self.field, "=", 0]]]);
-            } else {
-                mydomain = mydomain.concat([[[self.field, 'in', [treeNode.id]]]]);
+            console.info('===make_domain==', mydomain, treeNode.special_domain)
+
+            if (treeNode.special_domain){
+
+                mydomain = mydomain.concat([treeNode.special_domain]);
+
+
+            }else{
+                if (treeNode == -1) {
+                    mydomain = mydomain.concat([[[self.field, "=", 0]]]);
+                } else {
+                    mydomain = mydomain.concat([[[self.field, 'in', [treeNode.id]]]]);
+                }
             }
             return {contexts: self.initialState.context, domains: mydomain, groupbys: self.initialState.groupedBy}
         },
 
-        on_click_treeitem: function(event, treeId, treeNode, clickFlag) {
-            var domain = this.make_domain(treeNode);
-            console.info('=====on_click_treeitem==========', domain);
-            this.trigger_up('search', domain);
+        on_click_treeitem: function (event, treeId, treeNode, clickFlag) {
+            console.info('=====on_click_treeitem==', event, treeId, treeNode, clickFlag);
+            if (!treeNode.no_action) {
+                var domain = this.make_domain(treeNode);
+                console.info('=====domain==', domain);
+                this.trigger_up('search', domain);
+            }
+
+
         },
 
         on_category_expand: function () {
