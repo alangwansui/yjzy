@@ -76,6 +76,7 @@ class PRTMailComposer(models.Model):
 
     force_notify_email = fields.Boolean(u'强制使用邮件发送')
     last_send_time = fields.Datetime('最后发送时间')
+    personal_partner_ids = fields.Many2many('personal.partner', 'ref_personal_compose', 'cid', 'pid',  u'通讯录')
 
 
 

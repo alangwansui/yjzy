@@ -69,9 +69,11 @@
                         </p>
                     </div>
                     <!-- visible wizard -->
-                    <field name="email_from"
-                           attrs="{'invisible':[('composition_mode', '!=', 'mass_mail')]}"/>
-                    <label for="partner_ids" string="Recipients" attrs="{'invisible': [('is_log', '=', True)]}" groups="base.group_system"/>
+                    <field name="email_from"  attrs="{'invisible':[('composition_mode', '!=', 'mass_mail')]}"/>
+
+
+
+
                     <div groups="base.group_system" attrs="{'invisible': [('is_log', '=', True)]}">
                         <span attrs="{'invisible': [('composition_mode', '!=', 'mass_mail')]}" >
                             <strong>Email mass mailing</strong>
@@ -80,9 +82,15 @@
                             <span attrs="{'invisible': [('use_active_domain', '=', False)]}">the current search filter</span>.
                         </span>
                         <span attrs="{'invisible':['|', ('model', '=', False), ('composition_mode', '=', 'mass_mail')]}" >Followers of the document and</span>
-                         <field name="partner_ids" widget="many2many_tags_email" placeholder="Add contacts to notify..."
+
+                        <label for="partner_ids" string="Recipients" attrs="{'invisible': [('is_log', '=', True)]}" groups="base.group_system"/>
+                        <field name="partner_ids" widget="many2many_tags_email" placeholder="Add contacts to notify..."
                                context="{'force_email':True, 'show_email':True}"
                                attrs="{'invisible': [('composition_mode', '!=', 'comment')]}"/>
+
+                        <label for="personal_partner_ids" string="通讯录"/>
+                        <field name="personal_partner_ids" widget="many2many_tags" options="{'can_create':1,  'quick_create':1, 'create_name_field': 'email'}"/>
+
                     </div>
 </group>
                     <group>
