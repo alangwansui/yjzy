@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+
+        <record id="personal_partner_search" model="ir.ui.view">
+            <field name="name">personal_partner.search</field>
+            <field name="model">personal.partner</field>
+            <field name="arch" type="xml">
+                <search string="通讯录">
+                    <field name="display_name"/>
+                    <field name="name"/>
+                    <field name="email"/>
+                    <field name="address"/>
+                    <field name="function"/>
+                    <field name="phone"/>
+                    <field name="mobile"/>
+                    <field name="partner_id"/>
+                    <field name="user_id"/>
+                </search>
+            </field>
+        </record>
+        <record id="personal_partner_tree" model="ir.ui.view">
+            <field name="name">personal_partner.tree</field>
+            <field name="model">personal.partner</field>
+            <field name="arch" type="xml">
+                <tree string="通讯录">
+                    <field name="display_name"/>
+                    <field name="name"/>
+                    <field name="email"/>
+                    <field name="address"/>
+                    <field name="function"/>
+                    <field name="phone"/>
+                    <field name="mobile"/>
+                    <field name="partner_id"/>
+                    <field name="user_id"/>
+                </tree>
+            </field>
+        </record>
+        <record id="personal_partner_form" model="ir.ui.view">
+            <field name="name">personal_partner.form</field>
+            <field name="model">personal.partner</field>
+            <field name="arch" type="xml">
+                <form string="通讯录">
+                    <header>
+
+                    </header>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="email"/>
+                            <field name="address"/>
+                            <field name="user_id"/>
+                        </group>
+                        <group>
+                            <field name="function"/>
+                            <field name="phone"/>
+                            <field name="mobile"/>
+                            <field name="partner_id"/>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="personal_partner_action" model="ir.actions.act_window">
+            <field name="name">通讯录</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">personal.partner</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem id="personal_partner_menu" name="通讯录" parent="prt_messages_root" action="personal_partner_action" sequence=""/>
+
+
+    </data>
+</odoo>
+
