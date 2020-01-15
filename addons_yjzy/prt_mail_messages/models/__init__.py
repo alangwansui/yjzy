@@ -8,6 +8,7 @@ from . import partner
 from . import mail_mail
 from . import fetchmail_server
 from . import mail_channel
+from . import personal_partner
 
 
 

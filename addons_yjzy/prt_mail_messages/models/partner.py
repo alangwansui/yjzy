@@ -16,6 +16,12 @@ class PRTPartner(models.Model):
     messages_from_count = fields.Integer(string="Messages From", compute='_messages_from_count')
     messages_to_count = fields.Integer(string="Messages To", compute='_messages_to_count')
 
+
+    def make_personal_partner(self):
+        for one in self:
+            pass
+
+
     @api.model
     def _notify_send(self, body, subject, recipients, **mail_values):
         #<jon email create function>

@@ -1,2 +1,6 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_compose,access_compose,yjzy_extend.model_mail_compose_message,base.group_user,1,1,1,1
+
+access_personal_partner,access_personal_partner,prt_mail_messages.model_personal_partner,base.group_user,1,1,1,1
+
+

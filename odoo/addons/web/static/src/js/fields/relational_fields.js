@@ -295,6 +295,9 @@ var FieldMany2One = AbstractField.extend({
             dialog.on('closed', self, def.resolve.bind(def));
         };
         if (this.nodeOptions.quick_create) {
+
+            console.info('==_quickCreate==', name);
+
             this.trigger_up('mutexify', {
                 action: function () {
                     return self._rpc({
