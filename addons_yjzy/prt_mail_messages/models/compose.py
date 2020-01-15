@@ -76,8 +76,21 @@ class PRTMailComposer(models.Model):
 
     force_notify_email = fields.Boolean(u'强制使用邮件发送')
     last_send_time = fields.Datetime('最后发送时间')
-    personal_partner_ids = fields.Many2many('personal.partner', 'ref_personal_compose', 'cid', 'pid',  u'通讯录')
 
+
+    personal_partner_ids = fields.Many2many('personal.partner', 'ref_personal_compose', 'cid', 'pid',  u'收件人:通讯录')
+    personal_partner_cc_ids = fields.Many2many('personal.partner', 'refcc_personal_compose', 'cid', 'pid',  u'抄送:通讯录')
+    personal_author_id = fields.Many2one('personal.partner', u'作者:通讯录')
+
+    @api.onchange('personal_partner_ids')
+    def onchange_personal_partner(self):
+        print(self.personal_partner_ids.mapped('partner_id'))
+        self.partner_ids = self.personal_partner_ids.mapped('partner_id')
+
+    @api.onchange('personal_partner_cc_ids')
+    def onchange_personal_partner(self):
+        print(self.personal_partner_cc_ids.mapped('partner_id'))
+        self.partner_cc_ids = self.personal_partner_cc_ids.mapped('partner_id')
 
 
     @api.onchange('partner_cc_ids', 'manual_cc')

@@ -181,6 +181,10 @@
                         </h3>
                     </div>
                     <group name="base">
+                        <field name="personal_partner_ids" widget="many2many_tags" options="{'can_create':1,  'quick_create':1, 'create_name_field': 'email'}"/>
+                        <field name="personal_partner_cc_ids" widget="many2many_tags" options="{'can_create':1,  'quick_create':1, 'create_name_field': 'email'}"/>
+                        <field name="personal_author_id"/>
+
                         <field name="author_display" string="作者"/>
                         <field name="email_from" groups="base.group_system"/>
                         <field name="author_id" string="发件人" groups="base.group_system"/>
