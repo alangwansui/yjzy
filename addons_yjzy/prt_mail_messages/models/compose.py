@@ -88,7 +88,7 @@ class PRTMailComposer(models.Model):
         self.partner_ids = self.personal_partner_ids.mapped('partner_id')
 
     @api.onchange('personal_partner_cc_ids')
-    def onchange_personal_partner(self):
+    def onchange_personal_partner_cc(self):
         print(self.personal_partner_cc_ids.mapped('partner_id'))
         self.partner_cc_ids = self.personal_partner_cc_ids.mapped('partner_id')
 
@@ -240,6 +240,9 @@ class PRTMailComposer(models.Model):
                 'mail_server_id': self.mail_server_id.id,
                 'mail_activity_type_id': self.mail_activity_type_id.id,
                 'force_notify_email': self.force_notify_email,
+                'personal_partner_ids': [x.id for x in self.personal_partner_ids],
+                'personal_partner_cc_ids': [x.id for x in self.personal_partner_cc_ids],
+
             }
 
             #print('=1212====',mail_values['email_to'],  [partner_cc.id for partner_cc in self.partner_cc_ids], mail_values)
@@ -279,7 +282,7 @@ class PRTMailComposer(models.Model):
 
             results[res_id] = mail_values
 
-        #print('---get_mail_vale------', results)
+        print('---get_mail_vale------', results)
         return results
 
     def save_action(self):

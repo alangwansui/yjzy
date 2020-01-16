@@ -89,7 +89,6 @@ class PRTMailMessage(models.Model):
     personal_author_id = fields.Many2one('personal.partner', u'作者:通讯录')
 
 
-
     @api.depends('body')
     def compute_body_text(self):
         for one in self:

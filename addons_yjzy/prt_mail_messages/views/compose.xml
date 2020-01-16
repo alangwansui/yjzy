@@ -10,7 +10,7 @@
         <field name="name">mail.compose.message.tree</field>
         <field name="model">mail.compose.message</field>
         <field name="arch" type="xml">
-            <tree string="撰稿" create="false">
+            <tree string="撰稿" create="true">
                 <field name="email_to"/>
                 <field name="subject"/>
                 <field name="message_count" groups="base.group_system"/>

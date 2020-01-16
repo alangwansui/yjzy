@@ -30,30 +30,12 @@ class MailThread(models.AbstractModel):
 
     @api.multi
     @api.returns('self', lambda value: value.id)
-    def message_post(self, body='', subject=None, message_type='notification',
-                     subtype=None, parent_id=False, attachments=None,
-                     content_subtype='html', **kwargs):
-        """ Post a new message in an existing thread, returning the new
-            mail.message ID.
-            :param int thread_id: thread ID to post into, or list with one ID;
-                if False/0, mail.message model will also be set as False
-            :param str body: body of the message, usually raw HTML that will
-                be sanitized
-            :param str type: see mail_message.message_type field
-            :param str content_subtype:: if plaintext: convert body into html
-            :param int parent_id: handle reply to a previous message by adding the
-                parent partners to the message in case of private discussion
-            :param tuple(str,str) attachments or list id: list of attachment tuples in the form
-                ``(name,content)``, where content is NOT base64 encoded
-            Extra keyword arguments will be used as default column values for the
-            new mail.message record. Special cases:
-                - attachment_ids: supposed not attached to any document; attach them
-                    to the related document. Should only be set by Chatter.
-            :return int: ID of newly created mail.message
+    def message_post(self, body='', subject=None, message_type='notification', subtype=None, parent_id=False, attachments=None,content_subtype='html', **kwargs):
+        """
+        1：发送消息的数据创建过程
         """
 
         print('====MailThread post=====1', kwargs);
-
         if attachments is None:
             attachments = {}
         if self.ids and not self.ensure_one():
@@ -140,8 +122,7 @@ class MailThread(models.AbstractModel):
 
         print('====MailThread post=====1.2', [(4, pid) for pid in partner_ids], values.get('partner_cc_ids'))
 
-
-
+        personal_author = self.env['personal.partner'].search([('partner_id', '=', author_id)], limit=1)
         values.update({
             'author_id': author_id,
             'model': model,
@@ -152,13 +133,16 @@ class MailThread(models.AbstractModel):
             'parent_id': parent_id,
             'subtype_id': subtype_id,
             'partner_ids': [(4, pid) for pid in partner_ids],
-            'email_to': values.get('email_to') or values.get('to'),   #<jon>发送邮件email_to, 收取邮件 to
-            'email_cc': values.get('email_cc') or values.get('cc'),   #发送邮件email_cc, 收取邮件 cc
+            'email_to': values.get('email_to') or values.get('to'),
+            'email_cc': values.get('email_cc') or values.get('cc'),
             'partner_cc_ids': values.get('partner_cc_ids') or False,
+            'personal_partner_ids': values.get('personal_partner_ids') and [(4, pid) for pid in values.get('personal_partner_ids')] or False,
+            'personal_partner_cc_ids': values.get('personal_partner_cc_ids') and [(4, pid) for pid in values.get('personal_partner_cc_ids')] or False,
+            'personal_author_id': personal_author.id,
 
         })
 
-        print('==', self.env.context, kwargs)
+        print('====MailThread post=====1.2.1', values)
 
         #raise Exception('xxx')
 

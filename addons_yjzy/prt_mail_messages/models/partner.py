@@ -17,10 +17,9 @@ class PRTPartner(models.Model):
     messages_to_count = fields.Integer(string="Messages To", compute='_messages_to_count')
 
 
-    def make_personal_partner(self):
-        for one in self:
-            pass
-
+    def get_personal(self):
+        self.ensure_one()
+        return self.env['personal.partner'].search([('partner_id', '=', self.id)], limit=1)
 
     @api.model
     def _notify_send(self, body, subject, recipients, **mail_values):
