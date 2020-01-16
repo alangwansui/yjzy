@@ -217,6 +217,7 @@
                         </page>
                         <page string="其他信息" groups="base.group_no_one">
                             <group>
+                                <field name="inner_partner_ids" widget="many2many_tags"/>
                                 <field name="needaction"/>
                                 <field name="starred"/>
                                 <field name="author_allowed_id" attrs="{'invisible':[('author_allowed_id', '=', False)]}"/>

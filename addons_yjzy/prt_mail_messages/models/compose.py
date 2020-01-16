@@ -82,6 +82,8 @@ class PRTMailComposer(models.Model):
     personal_partner_cc_ids = fields.Many2many('personal.partner', 'refcc_personal_compose', 'cid', 'pid',  u'抄送:通讯录')
     personal_author_id = fields.Many2one('personal.partner', u'作者:通讯录')
 
+
+
     @api.onchange('personal_partner_ids')
     def onchange_personal_partner(self):
         email_to = ', '.join(['%s' % p.display_name for p in self.personal_partner_ids])

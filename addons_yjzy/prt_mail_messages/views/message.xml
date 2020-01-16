@@ -63,7 +63,8 @@
         <field name="name">prt.mail.message.tree</field>
         <field name="model">mail.message</field>
         <field name="arch" type="xml">
-            <tree string="Messages" decoration-bf="needaction==True" decoration-danger="is_error==True" default_order="date desc, id desc" create='false' edit='false'>
+            <tree string="Messages" decoration-bf="needaction==True" decoration-danger="is_error==True" default_order="date desc, id desc" create='false'
+                  edit='false'>
                 <field name="body_text" string="文本" invisible="1"/>
                 <button name="tip_button" type="object" class="tip_button" icon="fa-th-large"/>
                 <field name="date"/>
@@ -128,9 +129,9 @@
                         <button name="toggle_message_starred" type="object" class="oe_stat_button"
                                 icon="fa-star" attrs="{'invisible': [('starred', '=', False)]}"
                                 string="取消标星"/>
-                        <button name="toggle_active" type="object"  class="oe_stat_button" icon="fa-archive">
+                        <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
                             <field name="active" widget="boolean_button"
-                                options='{"terminology": "archive"}'/>
+                                   options='{"terminology": "archive"}'/>
                         </button>
 
                     </div>
@@ -142,6 +143,12 @@
                     </div>
                     <group name="base">
                         <group>
+                            <field name="personal_partner_ids" widget="many2many_tags"
+                                   options="{'can_create':1,  'quick_create':1, 'create_name_field': 'email'}"/>
+                            <field name="personal_partner_cc_ids" widget="many2many_tags"
+                                   options="{'can_create':1,  'quick_create':1, 'create_name_field': 'email'}"/>
+                            <field name="personal_author_id"/>
+
                             <field name="email_from"/>
                             <field name="email_to"/>
                             <field name="manual_to"/>
@@ -169,6 +176,7 @@
                         <page string="其他信息" groups="base.group_no_one">
 
                             <group>
+                                <field name="inner_partner_ids" widget="many2many_tags"/>
                                 <field name="needaction"/>
                                 <field name="starred"/>
                                 <field name="author_allowed_id" attrs="{'invisible':[('author_allowed_id', '=', False)]}"/>
@@ -281,8 +289,6 @@
               parent="prt_messages_root"
               groups="base.group_system"
               sequence="99"/>
-
-
 
 
 </odoo>
