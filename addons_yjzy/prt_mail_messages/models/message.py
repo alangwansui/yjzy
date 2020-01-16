@@ -84,6 +84,12 @@ class PRTMailMessage(models.Model):
 
     body_text = fields.Text('正文文本呢', compute='compute_body_text', store=False)
 
+    personal_partner_ids = fields.Many2many('personal.partner', 'ref_personal_message', 'cid', 'mid',  u'收件人:通讯录')
+    personal_partner_cc_ids = fields.Many2many('personal.partner', 'refcc_personal_message', 'cid', 'mid',  u'抄送:通讯录')
+    personal_author_id = fields.Many2one('personal.partner', u'作者:通讯录')
+
+
+
     @api.depends('body')
     def compute_body_text(self):
         for one in self:

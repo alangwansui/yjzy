@@ -2,7 +2,6 @@
 <odoo>
 
 
-
     <record id="prt_mail_message_out_tree" model="ir.ui.view">
         <field name="name">prt.mail.message.tree</field>
         <field name="model">mail.message</field>
@@ -14,7 +13,6 @@
                 <field name="author_display" groups="base.group_system"/>
                 <field name="author_allowed_id" groups="base.group_system"/>
                 <field name="email_to" groups="base.group_system"/>
-
 
 
                 <button name="dummy" type="object" class="oe_stat_button" icon="fa-star" attrs="{'invisible': [('starred', '=', False)]}"/>
@@ -74,9 +72,9 @@
                         </button>
 
 
-                        <button name="toggle_active" type="object"  class="oe_stat_button" icon="fa-archive">
+                        <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
                             <field name="active" widget="boolean_button"
-                                options='{"terminology": "archive"}'/>
+                                   options='{"terminology": "archive"}'/>
                         </button>
 
 
@@ -89,23 +87,29 @@
 
                     </div>
                     <group name="base">
-                           <field name="author_display" string="作者"  />
-                            <field name="email_from" groups="base.group_system"/>
-                            <field name="author_id" string="发件人" groups="base.group_system"/>
-                            <field name="email_to" />
-                            <label for="email_to" string="收件人" groups="base.group_system"/>
-                           <div name="email_to" class="o_row" string="收件人" groups="base.group_system">
+
+                        <field name="personal_partner_ids" widget="many2many_tags" options="{'can_create':1,  'quick_create':1, 'create_name_field': 'email'}"/>
+                        <field name="personal_partner_cc_ids" widget="many2many_tags" options="{'can_create':1,  'quick_create':1, 'create_name_field': 'email'}"/>
+                        <field name="personal_author_id"/>
+
+
+                        <field name="author_display" string="作者"/>
+                        <field name="email_from" groups="base.group_system"/>
+                        <field name="author_id" string="发件人" groups="base.group_system"/>
+                        <field name="email_to"/>
+                        <label for="email_to" string="收件人" groups="base.group_system"/>
+                        <div name="email_to" class="o_row" string="收件人" groups="base.group_system">
                             <field name="partner_ids" widget="many2many_tags_email" context="{'show_email': 1}"/>
                             <field name="manual_to"/>
-                           </div>
-                            <field name="email_cc" />
+                        </div>
+                        <field name="email_cc"/>
                         <label for="email_cc" string="抄送人" groups="base.group_system"/>
-                         <div name="email_cc" class="o_row" string="收件人" groups="base.group_system">
+                        <div name="email_cc" class="o_row" string="收件人" groups="base.group_system">
                             <field name="partner_cc_ids" widget="many2many_tags_email" context="{'show_email': 1}"/>
                             <field name="manual_cc"/>
-                         </div>
-                            <field name="partner_bcc_ids" widget="many2many_tags_email" context="{'show_email': 1}" groups="base.group_system"/>
-                            <field name="date"/>
+                        </div>
+                        <field name="partner_bcc_ids" widget="many2many_tags_email" context="{'show_email': 1}" groups="base.group_system"/>
+                        <field name="date"/>
                     </group>
 
 
@@ -168,8 +172,6 @@
             </form>
         </field>
     </record>
-
-
 
 
     <record id="action_mail_messages_out" model="ir.actions.act_window">

@@ -41,7 +41,7 @@
                     <field name="active_domain" invisible="1"/>
 
                     <!-- Various warnings -->
-                    <div  class="oe_form_box_info oe_text_center"
+                    <div class="oe_form_box_info oe_text_center"
                          attrs="{'invisible': [('active_domain', '=', False)]}">
                         <p attrs="{'invisible': [('use_active_domain', '=', False)]}">
                             <strong>
@@ -69,83 +69,82 @@
                         </p>
                     </div>
                     <!-- visible wizard -->
-                    <field name="email_from"  attrs="{'invisible':[('composition_mode', '!=', 'mass_mail')]}"/>
-
-
+                    <field name="email_from" attrs="{'invisible':[('composition_mode', '!=', 'mass_mail')]}"/>
 
 
                     <div groups="base.group_system" attrs="{'invisible': [('is_log', '=', True)]}">
-                        <span attrs="{'invisible': [('composition_mode', '!=', 'mass_mail')]}" >
+                        <span attrs="{'invisible': [('composition_mode', '!=', 'mass_mail')]}">
                             <strong>Email mass mailing</strong>
                             on
                             <span attrs="{'invisible': [('use_active_domain', '=', True)]}">the selected records</span>
                             <span attrs="{'invisible': [('use_active_domain', '=', False)]}">the current search filter</span>.
                         </span>
-                        <span attrs="{'invisible':['|', ('model', '=', False), ('composition_mode', '=', 'mass_mail')]}" >Followers of the document and</span>
+                        <span attrs="{'invisible':['|', ('model', '=', False), ('composition_mode', '=', 'mass_mail')]}">Followers of the document and</span>
 
-                        <label for="partner_ids" string="Recipients" attrs="{'invisible': [('is_log', '=', True)]}" groups="base.group_system"/>
-                        <field name="partner_ids" widget="many2many_tags_email" placeholder="Add contacts to notify..."
-                               context="{'force_email':True, 'show_email':True}"
-                               attrs="{'invisible': [('composition_mode', '!=', 'comment')]}"/>
 
-                        <label for="personal_partner_ids" string="通讯录"/>
-                        <field name="personal_partner_ids" widget="many2many_tags" options="{'can_create':1,  'quick_create':1, 'create_name_field': 'email'}"/>
+
+
 
                     </div>
-</group>
-                    <group>
-                         <field name="partner_ids" string="收件人" widget="many2many_tags_email" placeholder="Add contacts to notify..."
-                               context="{'force_email':True, 'show_email':True}"
-                               attrs="{'invisible': [('composition_mode', '!=', 'comment')]}"/>
-                        <field name="manual_to" string="系统外收件人"/>
-                        <field name="partner_cc_ids" placeholder="Add CC contacts to notify..." string="抄送人"  widget="many2many_tags_email"
-                               context="{'force_email':True, 'show_email':True}"/>
-                        <field name="manual_cc" string="系统外抄送人"/>
+                </group>
+                <group>
+                    <field name="personal_partner_ids" widget="many2many_tags" options="{'can_create':1,  'quick_create':1, 'create_name_field': 'email'}"/>
+                    <field name="partner_ids" string="收件人" widget="many2many_tags_email" placeholder="Add contacts to notify..."
+                           context="{'force_email':True, 'show_email':True}"
+                           attrs="{'invisible': [('composition_mode', '!=', 'comment')]}"/>
+                    <field name="manual_to" string="系统外收件人"/>
 
 
-                        <field name="partner_bcc_ids" groups="base.group_system" placeholder="Add BCC contacts to notify..." widget="many2many_tags_email"
-                               context="{'force_email':True, 'show_email':True}"/>
+                    <field name="personal_partner_cc_ids" widget="many2many_tags" options="{'can_create':1,  'quick_create':1, 'create_name_field': 'email'}"/>
+                    <field name="partner_cc_ids" placeholder="Add CC contacts to notify..." string="抄送人" widget="many2many_tags_email"
+                           context="{'force_email':True, 'show_email':True}"/>
+                    <field name="manual_cc" string="系统外抄送人"/>
 
 
-                        <field name="wizard_mode" invisible="1"/>
-                        <field name="forward_ref" attrs="{'invisible':[('wizard_mode', 'not in', ['forward', 'compose'])],
+                    <field name="partner_bcc_ids" groups="base.group_system" placeholder="Add BCC contacts to notify..." widget="many2many_tags_email"
+                           context="{'force_email':True, 'show_email':True}"/>
+
+
+                    <field name="wizard_mode" invisible="1"/>
+                    <field name="forward_ref" attrs="{'invisible':[('wizard_mode', 'not in', ['forward', 'compose'])],
                     'required':[('wizard_mode', 'in', ['compose'])]}"/>
 
 
-                        <field name="email_from" groups="base.group_system" />
-                        <field name="email_to" groups="base.group_system" />
-                        <field name="email_cc" groups="base.group_system" />
-                        <field name="subject" placeholder="Subject..." required="False"/>
-                    </group>
-                 <group col="4">
-                    <field name="attachment_ids"  widget="many2many_binary" string="添加附件" nolabel="1" colspan="2"/>
+                    <field name="email_from" groups="base.group_system"/>
+                    <field name="email_to" groups="base.group_system"/>
+                    <field name="email_cc" groups="base.group_system"/>
+                    <field name="subject" placeholder="Subject..." required="False"/>
+                </group>
+                <group col="4">
+                    <field name="attachment_ids" widget="many2many_binary" string="添加附件" nolabel="1" colspan="2"/>
                     <field name="template_id" options="{'no_create': True}" groups="base.group_system"
                            context="{'default_model': model, 'default_body_html': body, 'default_subject': subject}"/>
                 </group>
-                    <group groups="base.group_system">
-                        <field name="message_count"/>
-                        <field name="message_ids"/>
-                        <field name="mail_count"/>
-                        <field name="mail_ids"/>
-                        <field name="force_notify_email"/>
-                        <field name="is_sent"/>
-                        <field name="last_send_time"/>
-                    </group>
+                <group groups="base.group_system">
+                    <field name="message_count"/>
+                    <field name="message_ids"/>
+                    <field name="mail_count"/>
+                    <field name="mail_ids"/>
+                    <field name="force_notify_email"/>
+                    <field name="is_sent"/>
+                    <field name="last_send_time"/>
+                </group>
 
 
-                    <!-- mass post -->
-                    <field name="notify"
-                           attrs="{'invisible':['|', ('composition_mode', '!=', 'mass_post')]}"/>
-                    <!-- mass mailing -->
-                    <field name="no_auto_thread" attrs="{'invisible':[('composition_mode', '!=', 'mass_mail')]}"/>
-                    <field name="reply_to" placeholder="Email address to redirect replies..."
-                           attrs="{'invisible':['|', ('no_auto_thread', '=', False), ('composition_mode', '!=', 'mass_mail')],
+                <!-- mass post -->
+                <field name="notify"
+                       attrs="{'invisible':['|', ('composition_mode', '!=', 'mass_post')]}"/>
+                <!-- mass mailing -->
+                <field name="no_auto_thread" attrs="{'invisible':[('composition_mode', '!=', 'mass_mail')]}"/>
+                <field name="reply_to" placeholder="Email address to redirect replies..."
+                       attrs="{'invisible':['|', ('no_auto_thread', '=', False), ('composition_mode', '!=', 'mass_mail')],
                                     'required':[('no_auto_thread', '=', True), ('composition_mode', '=', 'mass_mail')]}"/>
 
                 <field name="body"/>
 
                 <footer>
-                    <button string="发送" name="send_mail_button" attrs="{'invisible':[('is_sent','=',True)]}"  type="object" class="btn-primary" confirm="确定要发送邮件"/>
+                    <button string="发送" name="send_mail_button" attrs="{'invisible':[('is_sent','=',True)]}" type="object" class="btn-primary"
+                            confirm="确定要发送邮件"/>
                     <button string="保存" name="save_action" type="object" class="btn-primary"/>
                     <button string="取消" class="btn-default" special="cancel"/>
                 </footer>
