@@ -164,7 +164,7 @@ class PRTMailMessage(models.Model):
         #print('-------------123----------------------------------------', values['email_to'], self.env.context)
         msg = super(PRTMailMessage, self).create(values)
 
-
+        #<jon> 收件服务器创建消息
         if msg.fetchmail_server_id:
             msg.manual_to = mail_txt_subtraction_partner(msg.email_to, msg.partner_ids)
             msg.manual_cc = mail_txt_subtraction_partner(msg.email_cc, msg.partner_cc_ids)
@@ -172,7 +172,7 @@ class PRTMailMessage(models.Model):
             msg.personal_partner_ids = self._get_personal(msg.email_to)
             msg.personal_partner_cc_ids = self._get_personal(msg.email_cc)
 
-            print('-------------123--1--------------------------------------', msg.manual_to, msg.email_to)
+            #print('-------------123--1--------------------------------------',  values, msg.alias_id,  msg.alias_user_id)
 
         return msg
 
