@@ -149,15 +149,30 @@ class PRTMailMessage(models.Model):
 
 
     @api.model
+    def _get_personal(self, mails_str):
+        personal_obj = self.env['personal.partner']
+        personal_recores = personal_obj.browse([])
+        for i in mails_str.split(','):
+            name, mail = parseaddr(i)
+            personal = personal_obj.search([('email', '=', mail)])  #TODO, domain by user
+            personal_recores |= personal
+            print('===============================_message_find_personal=====================================================', personal_recores)
+        return personal_recores
+
+    @api.model
     def create(self, values):
         #print('-------------123----------------------------------------', values['email_to'], self.env.context)
         msg = super(PRTMailMessage, self).create(values)
+
 
         if msg.fetchmail_server_id:
             msg.manual_to = mail_txt_subtraction_partner(msg.email_to, msg.partner_ids)
             msg.manual_cc = mail_txt_subtraction_partner(msg.email_cc, msg.partner_cc_ids)
 
-        #print('-------------123--1--------------------------------------', msg.manual_to, msg.email_to)
+            msg.personal_partner_ids = self._get_personal(msg.email_to)
+            msg.personal_partner_cc_ids = self._get_personal(msg.email_cc)
+
+            print('-------------123--1--------------------------------------', msg.manual_to, msg.email_to)
 
         return msg
 
