@@ -84,41 +84,41 @@ class PRTMailComposer(models.Model):
 
     @api.onchange('personal_partner_ids')
     def onchange_personal_partner(self):
-        print(self.personal_partner_ids.mapped('partner_id'))
-        self.partner_ids = self.personal_partner_ids.mapped('partner_id')
+        email_to = ', '.join(['%s' % p.display_name for p in self.personal_partner_ids])
+        self.email_to = email_to
 
     @api.onchange('personal_partner_cc_ids')
     def onchange_personal_partner_cc(self):
-        print(self.personal_partner_cc_ids.mapped('partner_id'))
-        self.partner_cc_ids = self.personal_partner_cc_ids.mapped('partner_id')
+        email_cc = ', '.join(['%s' % p.display_name for p in self.personal_partner_cc_ids])
+        self.email_cc = email_cc
 
 
-    @api.onchange('partner_cc_ids', 'manual_cc')
-    def onchange_cc(self):
-        email_cc = ', '.join(['%s<%s>' % (p.display_name, p.email) for p in self.partner_cc_ids])
-        res = []
-        if email_cc:
-            res.append(email_cc)
+    # @api.onchange('partner_cc_ids', 'manual_cc')
+    # def onchange_cc(self):
+    #     email_cc = ', '.join(['%s<%s>' % (p.display_name, p.email) for p in self.partner_cc_ids])
+    #     res = []
+    #     if email_cc:
+    #         res.append(email_cc)
+    #
+    #     if self.manual_cc:
+    #         for mc in self.manual_cc.split(','):
+    #             res.append(mc)
+    #
+    #     res_cc = ', '.join(res)
+    #     self.email_cc = res_cc
 
-        if self.manual_cc:
-            for mc in self.manual_cc.split(','):
-                res.append(mc)
-
-        res_cc = ', '.join(res)
-        self.email_cc = res_cc
-
-    @api.onchange('manual_to','partner_ids')
-    def onchange_to(self):
-        email_to = ', '.join(['%s<%s>' % (p.display_name, p.email) for p in self.partner_ids])
-        res = []
-        if email_to:
-            res.append(email_to)
-        if self.manual_to:
-            for mt in self.manual_to.split(','):
-                res.append(mt)
-
-        res_to = ', '.join(res)
-        self.email_to = res_to
+    # @api.onchange('manual_to','partner_ids')
+    # def onchange_to(self):
+    #     email_to = ', '.join(['%s<%s>' % (p.display_name, p.email) for p in self.partner_ids])
+    #     res = []
+    #     if email_to:
+    #         res.append(email_to)
+    #     if self.manual_to:
+    #         for mt in self.manual_to.split(','):
+    #             res.append(mt)
+    #
+    #     res_to = ', '.join(res)
+    #     self.email_to = res_to
 
 
     def mail_address_check(self):

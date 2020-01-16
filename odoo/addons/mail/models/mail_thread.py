@@ -1308,21 +1308,6 @@ class MailThread(models.AbstractModel):
             else:
                 new_msg.write({'alias_id': new_msg.parent_id.alias_id.id})
 
-            # #<jon> 不管回复普通收件，所有的 记录绑定，都采用别名上的频道设置
-            # print('===========route_index=============', route_index, model, thread_id, alias)
-            # if alias.alias_model_id and alias.alias_force_thread_id:
-            #     record_ref = self.env[alias.alias_model_id.model].browse(alias.alias_force_thread_id)
-            #     new_msg.record_ref = record_ref
-            # else:
-            #     print('=====没有争取匹配别名哦===')
-
-
-
-
-
-
-
-
 
             if original_partner_ids:
                 # postponed after message_post, because this is an external message and we don't want to create
@@ -1331,15 +1316,6 @@ class MailThread(models.AbstractModel):
                                'manual_to': mail_txt_subtraction_partner(new_msg.email_to,  self.env['res.partner'].browse([x[1] for x in original_partner_ids]))})
 
 
-
-
-
-
-
-
-            #<jon> if have partner_cc_ids , record it
-            # if message_dict.get('partner_cc_ids'):
-            #     new_msg.write({'partner_cc_ids': message_dict.get('partner_cc_ids')})
 
 
         return thread_id
