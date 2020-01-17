@@ -28,6 +28,11 @@ GHOSTS_CHECKED = False
 class PRTMailMessage(models.Model):
     _inherit = "mail.message"
 
+    def compute_inner_partner(self):
+        for one in self:
+            personal_records = one.personal_partner_ids | one.personal_partner_cc_ids | one.personal_author_id
+            one.inner_partner_ids = personal_records.mapped('partner_id')
+
     process_type = fields.Selection([('in', u'收件'), ('out', u'发件')], u'类型')
 
     author_display = fields.Char(string="Author", compute="_author_display")
@@ -87,13 +92,9 @@ class PRTMailMessage(models.Model):
     personal_partner_ids = fields.Many2many('personal.partner', 'ref_personal_message', 'cid', 'mid',  u'收件人:通讯录')
     personal_partner_cc_ids = fields.Many2many('personal.partner', 'refcc_personal_message', 'cid', 'mid',  u'抄送:通讯录')
     personal_author_id = fields.Many2one('personal.partner', u'作者:通讯录')
-    inner_partner_ids = fields.Many2many('res.partner', 'ref_inner_partner_personal', 'cid', 'pid', '内部联系人', compute='compute_inner_partner_ids', store=True)
+    inner_partner_ids = fields.Many2many('res.partner', 'ref_inner_partner_personal', 'cid', 'pid',  u'内部联系人', compute=compute_inner_partner, store=True)
 
-    @api.depends('personal_partner_ids', 'personal_partner_cc_ids')
-    def compute_inner_partner_ids(self):
-        for one in self:
-            personal_records = one.personal_partner_ids | one.personal_partner_cc_ids | one.personal_author_id
-            one.inner_partner_ids = personal_records.mapped('partner_id')
+
 
 
     @api.depends('body')
