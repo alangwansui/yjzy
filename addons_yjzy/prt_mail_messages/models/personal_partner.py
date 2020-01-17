@@ -5,6 +5,13 @@ import logging
 _logger = logging.getLogger(__name__)
 
 
+class personal_tag(models.Model):
+    _name = 'personal.tag'
+    _description = u'通讯录分组'
+
+    name = fields.Char(u'名称')
+
+
 class personal_partner(models.Model):
     _name = 'personal.partner'
     _rec_name = 'email'
@@ -15,15 +22,16 @@ class personal_partner(models.Model):
         for one in self:
             one.display_name = '%s <%s>' % (one.name, one.email)
 
-    display_name = fields.Char(compute='_compute_display_name', store=True, string='邮箱')
-    name = fields.Char('名称', required=False)
-    email = fields.Char('电子邮件', required=True)
-    address = fields.Char('地址')
-    function = fields.Char('工作岗位')
-    phone = fields.Char('电话')
-    mobile = fields.Char('手机')
-    partner_id = fields.Many2one('res.partner', '内部联系人')
-    user_id = fields.Many2one('res.users', '用户', default=lambda self: self._uid)
+    display_name = fields.Char(compute='_compute_display_name', store=True, string=u'邮箱')
+    name = fields.Char(u'名称', required=False)
+    email = fields.Char(u'电子邮件', required=True)
+    address = fields.Char(u'地址')
+    function = fields.Char(u'工作岗位')
+    phone = fields.Char(u'电话')
+    mobile = fields.Char(u'手机')
+    partner_id = fields.Many2one('res.partner', u'内部联系人')
+    tag_id = fields.Many2one('personal.tag', u'通讯录分组')
+    user_id = fields.Many2one('res.users', u'用户', default=lambda self: self._uid)
 
     @api.model
     def name_create(self, name):

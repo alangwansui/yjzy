@@ -172,6 +172,7 @@ class PRTMailMessage(models.Model):
 
             msg.personal_partner_ids = self._get_personal(msg.email_to)
             msg.personal_partner_cc_ids = self._get_personal(msg.email_cc)
+            msg.personal_author_id = self._get_personal(msg.email_from)
 
             #print('-------------123--1--------------------------------------',  values, msg.alias_id,  msg.alias_user_id)
 
