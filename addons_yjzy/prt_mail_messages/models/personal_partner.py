@@ -9,7 +9,7 @@ class personal_tag(models.Model):
     _name = 'personal.tag'
     _description = u'通讯录分组'
 
-    name = fields.Char(u'名称')
+    name = fields.Char(u'名称', required=True)
 
 
 class personal_partner(models.Model):
