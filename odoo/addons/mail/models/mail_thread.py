@@ -1304,7 +1304,7 @@ class MailThread(models.AbstractModel):
 
             new_msg = thread.message_post(subtype=subtype, partner_ids=partner_ids, **message_dict)
 
-            print('>>>>111>>>>>', alias, new_msg.fetchmail_server_id, new_msg.email_to, new_msg.email_to)
+            print('>>>>111>>>>>', alias, alias.alias_user_id)
 
 
             #收取邮件处理 通讯录

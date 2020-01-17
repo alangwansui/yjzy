@@ -121,6 +121,9 @@ class PRTMailMessage(models.Model):
             'default_body': compose.body,
             'default_force_notify_email': compose.force_notify_email,
             'default_attachment_ids': compose.attachment_ids and [(6, 0, [x.id for x in compose.attachment_ids])] or False,
+            'default_personal_partner_ids': compose.personal_partner_cc_ids and [(6, 0, [x.id for x in compose.personal_partner_ids])] or False,
+            'default_personal_partner_cc_ids': compose.personal_partner_cc_ids and [(6, 0, [x.id for x in compose.personal_partner_cc_ids])] or False,
+
         }
 
         # 再次编辑：         直接复制底稿，什么都不改动
