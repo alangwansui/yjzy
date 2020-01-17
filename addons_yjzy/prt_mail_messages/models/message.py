@@ -832,6 +832,7 @@ class PRTMailMessage(models.Model):
         self.ensure_one()
 
         ctx = self.env.context
+        personal_obj = self.env['personal.partner']
         partner_obj = self.env['res.partner']
         wizard_mode = self._context.get('wizard_mode', '')
 
@@ -852,7 +853,7 @@ class PRTMailMessage(models.Model):
 
         personal_partner = self.personal_author_id
         personal_partner_cc = False
-
+        personal_me = personal_obj.search([('email','=', self.env.user.partner_id.email)])
 
 
         #回复全部
@@ -870,7 +871,7 @@ class PRTMailMessage(models.Model):
             default_partners |= self.partner_ids - self.fetchmail_server_id.partner_id
             cc_partners = self.partner_cc_ids
 
-            personal_partner |= self.personal_partner_ids
+            personal_partner |= self.personal_partner_ids - personal_me
             personal_partner_cc = self.personal_partner_cc_ids
 
             #回复全部，manual_to = email_to - default_partners
@@ -900,6 +901,8 @@ class PRTMailMessage(models.Model):
             email_to = ''
             email_cc = ''
             default_partners -= default_partners
+            personal_partner = False
+            personal_partner_cc = False
         else:
             pass
 
