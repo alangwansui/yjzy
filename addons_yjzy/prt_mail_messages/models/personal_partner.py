@@ -10,6 +10,7 @@ class personal_tag(models.Model):
     _description = u'通讯录分组'
 
     name = fields.Char(u'名称', required=True)
+    is_default = fields.Boolean('默认分组',)
 
 
 class personal_partner(models.Model):

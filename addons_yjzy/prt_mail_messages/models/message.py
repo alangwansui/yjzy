@@ -163,6 +163,8 @@ class PRTMailMessage(models.Model):
     def _get_personal(self, mails_str, user):
         self.ensure_one()
 
+        default_tag = self.env['personal.tag'].search([('is_default','=',True)], limit=1)
+
         personal_obj = self.env['personal.partner']
         personal_recores = personal_obj.browse([])
         for i in mails_str.split(','):
@@ -173,6 +175,7 @@ class PRTMailMessage(models.Model):
                     'name': name,
                     'email': mail,
                     'user_id': user.id,
+                    'tag_id': default_tag.id,
                 })
             personal_recores |= personal
             print('===============================_message_find_personal=====================================================', personal_recores)
