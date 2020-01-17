@@ -1300,11 +1300,22 @@ class MailThread(models.AbstractModel):
             else:
                 subtype = 'mail.mt_comment'
 
+
+
             new_msg = thread.message_post(subtype=subtype, partner_ids=partner_ids, **message_dict)
+
+            print('>>>>111>>>>>', alias, new_msg.fetchmail_server_id, new_msg.email_to, new_msg.email_to)
+
+
+            #收取邮件处理 通讯录
+            if new_msg.fetchmail_server_id:
+                new_msg.process_income_personal(alias)
 
             #<jon>
             if alias:
                 new_msg.write({'alias_id': alias.id})
+
+
             else:
                 new_msg.write({'alias_id': new_msg.parent_id.alias_id.id})
 
@@ -1319,6 +1330,9 @@ class MailThread(models.AbstractModel):
 
 
         return thread_id
+
+
+
 
     @api.model
     def message_process(self, model, message, custom_values=None,

@@ -148,20 +148,28 @@ class PRTMailMessage(models.Model):
         self.ensure_one()
         self.have_read = not self.have_read
 
+    def process_income_personal(self, alias):
+        #收取邮件处理 通讯录
+        self.ensure_one()
+        user = alias.alias_user_id
+        self.personal_partner_ids = self._get_personal(self.email_to, user)
+        self.personal_partner_cc_ids = self._get_personal(self.email_cc, user)
+        self.personal_author_id = self._get_personal(self.email_from, user)
 
 
-    def _get_personal(self, mails_str):
+    def _get_personal(self, mails_str, user):
         self.ensure_one()
 
         personal_obj = self.env['personal.partner']
         personal_recores = personal_obj.browse([])
         for i in mails_str.split(','):
             name, mail = parseaddr(i)
-            personal = personal_obj.search([('email', '=', mail)])  #TODO, domain by user
+            personal = personal_obj.search([('email', '=', mail),('user_id', '=', user.id)])  #TODO, domain by user
             if not personal:
                 personal = personal_obj.create({
                     'name': name,
                     'email': mail,
+                    'user_id': user.id,
                 })
             personal_recores |= personal
             print('===============================_message_find_personal=====================================================', personal_recores)
@@ -176,13 +184,6 @@ class PRTMailMessage(models.Model):
         if msg.fetchmail_server_id:
             msg.manual_to = mail_txt_subtraction_partner(msg.email_to, msg.partner_ids)
             msg.manual_cc = mail_txt_subtraction_partner(msg.email_cc, msg.partner_cc_ids)
-
-            msg.personal_partner_ids = msg._get_personal(msg.email_to)
-            msg.personal_partner_cc_ids = msg._get_personal(msg.email_cc)
-            msg.personal_author_id = msg._get_personal(msg.email_from)
-
-            #print('-------------123--1--------------------------------------',  values, msg.alias_id,  msg.alias_user_id)
-
         return msg
 
 
@@ -838,7 +839,6 @@ class PRTMailMessage(models.Model):
                 (self.env.user.signature or '', str(self.date), self.author_display, self.subject_display, self.body))
 
 
-
         email_from = ''
         email_to = self.email_from
         email_cc = ''
@@ -847,7 +847,12 @@ class PRTMailMessage(models.Model):
         manual_to = ''
         manual_cc = ''
 
+        personal_partner = self.personal_author_id
+        personal_partner_cc = False
 
+
+
+        #回复全部
         if wizard_mode == 'quote':
             def get_email_to_exclude_fetch_server(msg, fetch_server_mail):
                 res = msg.email_from
@@ -861,6 +866,9 @@ class PRTMailMessage(models.Model):
             email_cc = self.email_cc
             default_partners |= self.partner_ids - self.fetchmail_server_id.partner_id
             cc_partners = self.partner_cc_ids
+
+            personal_partner |= self.personal_partner_ids
+            personal_partner_cc = self.personal_partner_cc_ids
 
             #回复全部，manual_to = email_to - default_partners
             for ss in email_to.split(','):
@@ -883,7 +891,7 @@ class PRTMailMessage(models.Model):
 
             #如果是
                 
-
+        #转发
         elif wizard_mode == 'forward':
             email_from = ''
             email_to = ''
@@ -937,9 +945,13 @@ class PRTMailMessage(models.Model):
             'default_manual_to': manual_to,
             'is_reply': True,
             'mail_notify_user_signature': False,
+
+            'default_personal_partner_ids': personal_partner and [x.id for x in personal_partner] or False,
+            'default_personal_partner_cc_ids': personal_partner_cc and [x.id for x in personal_partner_cc] or False,
+
         }
 
-        #print('==11==', ctx)
+        print('==11111==', ctx)
 
         return ctx
 
@@ -947,7 +959,6 @@ class PRTMailMessage(models.Model):
     @api.multi
     def reply(self):
         self.ensure_one()
-
         return {
             'name': _("New message"),
             "views": [[False, "form"]],
