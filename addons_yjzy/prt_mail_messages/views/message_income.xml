@@ -185,23 +185,23 @@
                         <field name="personal_partner_cc_ids" widget="many2many_tags" options="{'can_create':1,  'quick_create':1, 'create_name_field': 'email'}"/>
                         <field name="personal_author_id"/>
 
-                        <field name="author_display" string="作者"/>
+                       <!-- <field name="author_display" string="作者"/>
                         <field name="email_from" groups="base.group_system"/>
-                        <field name="author_id" string="发件人" groups="base.group_system"/>
+                        <field name="author_id" string="发件人" groups="base.group_system"/>-->
                         <field name="email_to" groups="base.group_system"/>
-                        <label for="email_to" string="收件人"/>
-                        <div name="email_to" class="o_row" string="收件人">
+                      <!--  <label for="email_to" string="收件人"/>
+                         <div name="email_to" class="o_row" string="收件人">
                             <field name="partner_ids" widget="many2many_tags_email" context="{'show_email': 1}"/>
                             <field name="manual_to"/>
-                        </div>
+                        </div>-->
 
                         <field name="email_cc" groups="base.group_system"/>
-                        <label for="email_cc" string="抄送人"/>
+                       <!--  <label for="email_cc" string="抄送人"/>
                         <div name="email_cc" class="o_row" string="收件人">
                             <field name="partner_cc_ids" widget="many2many_tags_email" context="{'show_email': 1}"/>
                             <field name="manual_cc"/>
                         </div>
-                        <field name="partner_bcc_ids" widget="many2many_tags_email" context="{'show_email': 1}" groups="base.group_system"/>
+                        <field name="partner_bcc_ids" widget="many2many_tags_email" context="{'show_email': 1}" groups="base.group_system"/>-->
                         <field name="date"/>
                         <field name="have_read" widget="boolean_toggle"/>
 
