@@ -14,12 +14,10 @@ odoo.define('web_tree_image_tooltip.web_tree_image_tooltip',
             if(rowIndex){
                 var line_data = this.state.data[rowIndex];
                 if (line_data){
-
-                    var body_text = line_data.data.body_text;
-
-                    console.info('===');
-
+                    var body_text = line_data.data.body;
+                    //console.info('===', body_text, line_data);
                     $(event.currentTarget).tooltip({
+                        html: true,
                         title: body_text,
                         delay: 1,
                         template: '<div class="tooltip"  role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'

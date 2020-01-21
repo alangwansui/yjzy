@@ -8,6 +8,7 @@
         <field name="arch" type="xml">
             <tree string="Messages" decoration-bf="needaction==True" decoration-danger="is_error==True" default_order="date desc, id desc" create='false'>
                 <field name="body_text" string="文本" invisible="1"/>
+                <field name="body" string="内容" invisible="1"/>
                 <button name="tip_button" type="object" class="tip_button" icon="fa-th-large"/>
 
                 <field name="author_display" groups="base.group_system"/>

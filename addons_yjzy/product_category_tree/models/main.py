@@ -40,6 +40,7 @@ class mail_message(models.Model):
     @api.model
     def get_categories(self):
         data = [
+            {'id': 'newmail', 'pid': None, 'name': '写邮件', 'no_action': True},
             {'id': 'customer', 'pid': None, 'name': '客户', 'no_action': True},
             {'id': 'supplier', 'pid': None, 'name': '供应商', 'no_action': True},
             {'id': 'personal', 'pid': None, 'name': '个人通讯录', 'no_action': True},

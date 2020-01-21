@@ -97,6 +97,18 @@ odoo.define('product_category_tree.Main', function (require) {
         },
 
         on_click_treeitem: function (event, treeId, treeNode, clickFlag) {
+            if (treeNode.id == 'newmail') {
+                return this.do_action({
+                    type: 'ir.actions.act_window',
+                    view_type: 'form',
+                    view_mode: 'form',
+                    views: [[false, 'form']],
+                    target: 'new',
+                    res_model: 'mail.compose.message',
+                });
+            };
+
+
             console.info('=====on_click_treeitem==', event, treeId, treeNode, clickFlag);
             if (!treeNode.no_action) {
                 var domain = this.make_domain(treeNode);
