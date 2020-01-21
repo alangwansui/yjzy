@@ -1300,28 +1300,24 @@ class MailThread(models.AbstractModel):
             else:
                 subtype = 'mail.mt_comment'
 
+
+
             new_msg = thread.message_post(subtype=subtype, partner_ids=partner_ids, **message_dict)
+
+            print('>>>>111>>>>>', alias, alias.alias_user_id)
+
+
+            #收取邮件处理 通讯录
+            if new_msg.fetchmail_server_id:
+                new_msg.process_income_personal(alias)
 
             #<jon>
             if alias:
                 new_msg.write({'alias_id': alias.id})
+
+
             else:
                 new_msg.write({'alias_id': new_msg.parent_id.alias_id.id})
-
-            # #<jon> 不管回复普通收件，所有的 记录绑定，都采用别名上的频道设置
-            # print('===========route_index=============', route_index, model, thread_id, alias)
-            # if alias.alias_model_id and alias.alias_force_thread_id:
-            #     record_ref = self.env[alias.alias_model_id.model].browse(alias.alias_force_thread_id)
-            #     new_msg.record_ref = record_ref
-            # else:
-            #     print('=====没有争取匹配别名哦===')
-
-
-
-
-
-
-
 
 
             if original_partner_ids:
@@ -1333,16 +1329,10 @@ class MailThread(models.AbstractModel):
 
 
 
-
-
-
-
-            #<jon> if have partner_cc_ids , record it
-            # if message_dict.get('partner_cc_ids'):
-            #     new_msg.write({'partner_cc_ids': message_dict.get('partner_cc_ids')})
-
-
         return thread_id
+
+
+
 
     @api.model
     def message_process(self, model, message, custom_values=None,

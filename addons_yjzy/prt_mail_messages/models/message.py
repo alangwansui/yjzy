@@ -28,6 +28,11 @@ GHOSTS_CHECKED = False
 class PRTMailMessage(models.Model):
     _inherit = "mail.message"
 
+    def compute_inner_partner(self):
+        for one in self:
+            personal_records = one.personal_partner_ids | one.personal_partner_cc_ids | one.personal_author_id
+            one.inner_partner_ids = personal_records.mapped('partner_id')
+
     process_type = fields.Selection([('in', u'收件'), ('out', u'发件')], u'类型')
 
     author_display = fields.Char(string="Author", compute="_author_display")
@@ -87,6 +92,9 @@ class PRTMailMessage(models.Model):
     personal_partner_ids = fields.Many2many('personal.partner', 'ref_personal_message', 'cid', 'mid',  u'收件人:通讯录')
     personal_partner_cc_ids = fields.Many2many('personal.partner', 'refcc_personal_message', 'cid', 'mid',  u'抄送:通讯录')
     personal_author_id = fields.Many2one('personal.partner', u'作者:通讯录')
+    inner_partner_ids = fields.Many2many('res.partner', 'ref_inner_partner_personal', 'cid', 'pid',  u'内部联系人', compute=compute_inner_partner, store=True)
+
+
 
 
     @api.depends('body')
@@ -113,6 +121,9 @@ class PRTMailMessage(models.Model):
             'default_body': compose.body,
             'default_force_notify_email': compose.force_notify_email,
             'default_attachment_ids': compose.attachment_ids and [(6, 0, [x.id for x in compose.attachment_ids])] or False,
+            'default_personal_partner_ids': compose.personal_partner_cc_ids and [(6, 0, [x.id for x in compose.personal_partner_ids])] or False,
+            'default_personal_partner_cc_ids': compose.personal_partner_cc_ids and [(6, 0, [x.id for x in compose.personal_partner_cc_ids])] or False,
+
         }
 
         # 再次编辑：         直接复制底稿，什么都不改动
@@ -140,18 +151,45 @@ class PRTMailMessage(models.Model):
         self.ensure_one()
         self.have_read = not self.have_read
 
+    def process_income_personal(self, alias):
+        #收取邮件处理 通讯录
+        self.ensure_one()
+        user = alias.alias_user_id
+        self.personal_partner_ids = self._get_personal(self.email_to, user)
+        self.personal_partner_cc_ids = self._get_personal(self.email_cc, user)
+        self.personal_author_id = self._get_personal(self.email_from, user)
+
+
+    def _get_personal(self, mails_str, user):
+        self.ensure_one()
+
+        default_tag = self.env['personal.tag'].search([('is_default','=',True)], limit=1)
+
+        personal_obj = self.env['personal.partner']
+        personal_recores = personal_obj.browse([])
+        for i in mails_str.split(','):
+            name, mail = parseaddr(i)
+            personal = personal_obj.search([('email', '=', mail),('user_id', '=', user.id)])  #TODO, domain by user
+            if not personal:
+                personal = personal_obj.create({
+                    'name': name,
+                    'email': mail,
+                    'user_id': user.id,
+                    'tag_id': default_tag.id,
+                })
+            personal_recores |= personal
+            print('===============================_message_find_personal=====================================================', personal_recores)
+        return personal_recores
 
     @api.model
     def create(self, values):
         #print('-------------123----------------------------------------', values['email_to'], self.env.context)
         msg = super(PRTMailMessage, self).create(values)
 
+        #<jon> 收件服务器创建消息
         if msg.fetchmail_server_id:
             msg.manual_to = mail_txt_subtraction_partner(msg.email_to, msg.partner_ids)
             msg.manual_cc = mail_txt_subtraction_partner(msg.email_cc, msg.partner_cc_ids)
-
-        #print('-------------123--1--------------------------------------', msg.manual_to, msg.email_to)
-
         return msg
 
 
@@ -797,6 +835,7 @@ class PRTMailMessage(models.Model):
         self.ensure_one()
 
         ctx = self.env.context
+        personal_obj = self.env['personal.partner']
         partner_obj = self.env['res.partner']
         wizard_mode = self._context.get('wizard_mode', '')
 
@@ -807,7 +846,6 @@ class PRTMailMessage(models.Model):
                 (self.env.user.signature or '', str(self.date), self.author_display, self.subject_display, self.body))
 
 
-
         email_from = ''
         email_to = self.email_from
         email_cc = ''
@@ -816,7 +854,12 @@ class PRTMailMessage(models.Model):
         manual_to = ''
         manual_cc = ''
 
+        personal_partner = self.personal_author_id
+        personal_partner_cc = False
+        personal_me = personal_obj.search([('email','=', self.env.user.partner_id.email)])
 
+
+        #回复全部
         if wizard_mode == 'quote':
             def get_email_to_exclude_fetch_server(msg, fetch_server_mail):
                 res = msg.email_from
@@ -830,6 +873,9 @@ class PRTMailMessage(models.Model):
             email_cc = self.email_cc
             default_partners |= self.partner_ids - self.fetchmail_server_id.partner_id
             cc_partners = self.partner_cc_ids
+
+            personal_partner |= self.personal_partner_ids - personal_me
+            personal_partner_cc = self.personal_partner_cc_ids
 
             #回复全部，manual_to = email_to - default_partners
             for ss in email_to.split(','):
@@ -852,12 +898,14 @@ class PRTMailMessage(models.Model):
 
             #如果是
                 
-
+        #转发
         elif wizard_mode == 'forward':
             email_from = ''
             email_to = ''
             email_cc = ''
             default_partners -= default_partners
+            personal_partner = False
+            personal_partner_cc = False
         else:
             pass
 
@@ -906,9 +954,13 @@ class PRTMailMessage(models.Model):
             'default_manual_to': manual_to,
             'is_reply': True,
             'mail_notify_user_signature': False,
+
+            'default_personal_partner_ids': personal_partner and [x.id for x in personal_partner] or False,
+            'default_personal_partner_cc_ids': personal_partner_cc and [x.id for x in personal_partner_cc] or False,
+
         }
 
-        #print('==11==', ctx)
+        print('==11111==', ctx)
 
         return ctx
 
@@ -916,7 +968,6 @@ class PRTMailMessage(models.Model):
     @api.multi
     def reply(self):
         self.ensure_one()
-
         return {
             'name': _("New message"),
             "views": [[False, "form"]],
