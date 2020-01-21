@@ -169,15 +169,16 @@ class PRTMailMessage(models.Model):
         personal_recores = personal_obj.browse([])
         for i in mails_str.split(','):
             name, mail = parseaddr(i)
-            personal = personal_obj.search([('email', '=', mail),('user_id', '=', user.id)])  #TODO, domain by user
-            if not personal:
-                personal = personal_obj.create({
-                    'name': name,
-                    'email': mail,
-                    'user_id': user.id,
-                    'tag_id': default_tag.id,
-                })
-            personal_recores |= personal
+            if isinstance(mail, str) and '@' in mail:
+                personal = personal_obj.search([('email', '=', mail),('user_id', '=', user.id)])  #TODO, domain by user
+                if not personal:
+                    personal = personal_obj.create({
+                        'name': name,
+                        'email': mail,
+                        'user_id': user.id,
+                        'tag_id': default_tag.id,
+                    })
+                personal_recores |= personal
             print('===============================_message_find_personal=====================================================', personal_recores)
         return personal_recores
 
