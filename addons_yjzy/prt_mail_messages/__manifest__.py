@@ -24,6 +24,10 @@ Mail Messages
         'views/message.xml',
         'views/message_income.xml',
         'views/message_out.xml',
+
+        'views/message_deleted.xml',
+        'views/message_draft.xml',
+
         'views/personal_partner.xml',
 
         'views/partner.xml',

@@ -10,6 +10,10 @@
                 <field name="expense_line_ids" position="attributes">
                     <attribute name="context">{'expense_adding_line': True, 'tracking_disable': True}</attribute>
                     <attribute name="options">{'not_delete': True, 'reload_on_button': True, 'no_create': False}</attribute>
+                    <attribute name="widget">one2many</attribute>
+
+
+
                 </field>
 
                 <field name="bank_journal_id" position="attributes">
@@ -64,10 +68,11 @@
             <field name="inherit_id" ref="hr_expense.hr_expense_form_view"/>
             <field name="arch" type="xml">
                 <header position="inside">
+                    <button name="action_employee_confirm" type="object" string="责任人确认"/>
                     <button name="make_diff_mvoe" type="object" string="创建差额分录"/>
                 </header>
                 <field name="state" position="attributes">
-                    <attribute name="statusbar_visible">draft,confirmed,reported,done</attribute>
+                    <attribute name="statusbar_visible">draft,confirmed,reported,employee_confirm,done</attribute>
                 </field>
                 <field name="employee_id" position="after">
                     <field name="partner_id"/>
