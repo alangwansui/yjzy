@@ -13,26 +13,26 @@
                 <field name="body" string="内容" invisible="1"/>
                 <button name="tip_button" type="object" class="tip_button" icon="fa-th-large"/>
                 <field name="author_display" string="作者"/>
-                <field name="author_allowed_id" groups="base.group_system"/>
+                <field name="author_allowed_id" groups="base.group_system" invisible="1"/>
                 <button name="dummy" type="object" class="oe_stat_button" icon="fa-star" attrs="{'invisible': [('starred', '=', False)]}"/>
                 <button readonly="1" name="dummy" type="object" class="oe_inline oe_stat_button" icon="fa-paperclip"
                         attrs="{'invisible':[('attachment_count', '=', 0)]}"/>
-                <field name="subject_display" groups="base.group_system"/>
+                <field name="subject_display" groups="base.group_system" invisible="1"/>
                 <field name="subject"/>
-                <field name="email_from" groups="base.group_system"/>
-                <field name="email_to" groups="base.group_system"/>
-                <field name="email_cc" groups="base.group_system"/>
-                <field name="partner_cc_ids" widget="many2many_tags" groups="base.group_system"/>
-                <field name="needaction" groups="base.group_system"/>
-                <field name="attachment_count" groups="base.group_system"/>
-                <field name="starred" groups="base.group_system"/>
-                <field name="is_error" groups="base.group_system"/>
-                <field name="compose_id" groups="base.group_system"/>
+                <field name="email_from" groups="base.group_system" invisible="1"/>
+                <field name="email_to" groups="base.group_system" invisible="1"/>
+                <field name="email_cc" groups="base.group_system" invisible="1"/>
+                <field name="partner_cc_ids" widget="many2many_tags" groups="base.group_system" invisible="1"/>
+                <field name="needaction" groups="base.group_system" invisible="1"/>
+                <field name="attachment_count" groups="base.group_system" invisible="1"/>
+                <field name="starred" groups="base.group_system" invisible="1"/>
+                <field name="is_error" groups="base.group_system" invisible="1"/>
+                <field name="compose_id" groups="base.group_system" invisible="1"/>
                 <field name="date"/>
-                <field name="alias_id" groups="base.group_system"/>
-                <field name="have_read" groups="base.group_system"/>
+                <field name="alias_id" groups="base.group_system" invisible="1"/>
+                <field name="have_read" groups="base.group_system" invisible="1"/>
                 <field name="had_replied"/>
-                <field name="process_type" groups="base.group_system"/>
+                <field name="process_type" groups="base.group_system" invisible="1"/>
             </tree>
         </field>
     </record>
@@ -189,14 +189,14 @@
                        <!-- <field name="author_display" string="作者"/>
                         <field name="email_from" groups="base.group_system"/>
                         <field name="author_id" string="发件人" groups="base.group_system"/>-->
-                        <field name="email_to" groups="base.group_system"/>
+                        <field name="email_to" groups="base.group_system" invisible="1"/>
                       <!--  <label for="email_to" string="收件人"/>
                          <div name="email_to" class="o_row" string="收件人">
                             <field name="partner_ids" widget="many2many_tags_email" context="{'show_email': 1}"/>
                             <field name="manual_to"/>
                         </div>-->
 
-                        <field name="email_cc" groups="base.group_system"/>
+                        <field name="email_cc" groups="base.group_system" invisible="1"/>
                        <!--  <label for="email_cc" string="抄送人"/>
                         <div name="email_cc" class="o_row" string="收件人">
                             <field name="partner_cc_ids" widget="many2many_tags_email" context="{'show_email': 1}"/>
@@ -204,7 +204,7 @@
                         </div>
                         <field name="partner_bcc_ids" widget="many2many_tags_email" context="{'show_email': 1}" groups="base.group_system"/>-->
                         <field name="date"/>
-                        <field name="have_read" widget="boolean_toggle"/>
+                        <field name="have_read" widget="boolean_toggle" invisible="1"/>
 
                     </group>
 
@@ -276,7 +276,7 @@
         <field name="name">收件箱</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">mail.message</field>
-        <field name="domain">[('message_type', '=', 'email'),('process_type', '=', 'in'),('alias_user_id','=',uid)]</field>
+        <field name="domain">[('message_type', '=', 'email'),('alias_user_id','=',uid)]</field><!--('process_type', '=', 'in'),-->
         <!--field name="context">{'check_messages_access': True}</field-->
         <field name="context">{}</field>
         <field name="view_mode">tree,kanban,form</field>

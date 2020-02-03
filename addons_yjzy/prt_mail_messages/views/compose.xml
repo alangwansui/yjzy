@@ -89,14 +89,14 @@
                 </group>
                 <group>
                     <field name="personal_partner_ids" widget="many2many_tags" options="{'can_create':1,  'quick_create':1, 'create_name_field': 'email'}"/>
-                    <field name="partner_ids" string="收件人" widget="many2many_tags_email" placeholder="Add contacts to notify..."
+                    <!--<field name="partner_ids" string="收件人" widget="many2many_tags_email" placeholder="Add contacts to notify..."
                            context="{'force_email':True, 'show_email':True}"
                            attrs="{'invisible': [('composition_mode', '!=', 'comment')]}"/>
-                    <field name="manual_to" string="系统外收件人"/>
+                    <field name="manual_to" string="系统外收件人"/>-->
 
 
                     <field name="personal_partner_cc_ids" widget="many2many_tags" options="{'can_create':1,  'quick_create':1, 'create_name_field': 'email'}"/>
-                    <field name="partner_cc_ids" placeholder="Add CC contacts to notify..." string="抄送人" widget="many2many_tags_email"
+                   <!-- <field name="partner_cc_ids" placeholder="Add CC contacts to notify..." string="抄送人" widget="many2many_tags_email"
                            context="{'force_email':True, 'show_email':True}"/>
                     <field name="manual_cc" string="系统外抄送人"/>
 
@@ -108,7 +108,7 @@
                     <field name="wizard_mode" invisible="1"/>
                     <field name="forward_ref" attrs="{'invisible':[('wizard_mode', 'not in', ['forward', 'compose'])],
                     'required':[('wizard_mode', 'in', ['compose'])]}"/>
-
+-->
 
                     <field name="email_from" groups="base.group_system"/>
                     <field name="email_to" groups="base.group_system"/>
