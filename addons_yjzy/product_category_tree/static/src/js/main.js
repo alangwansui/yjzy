@@ -93,7 +93,11 @@ odoo.define('product_category_tree.Main', function (require) {
                 if (treeNode == -1) {
                     mydomain = mydomain.concat([[[self.field, "=", 0]]]);
                 } else {
-                    mydomain = mydomain.concat([[[self.field, 'in', [treeNode.id]]]]);
+                    mydomain = mydomain.concat([['|',
+                    [self.field, 'in', [treeNode.id]],
+                    [self.field, 'child_of', [treeNode.id]],
+                    ]]);
+
                 }
             }
             return {contexts: self.initialState.context, domains: mydomain, groupbys: self.initialState.groupedBy}
