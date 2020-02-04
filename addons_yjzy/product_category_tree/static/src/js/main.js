@@ -51,7 +51,10 @@ odoo.define('product_category_tree.Main', function (require) {
                 $titlebar.appendTo($div);
                 self.$tree = $('<div>', {class: 'ji_category_tree ztree'});
                 self.$tree.appendTo($div);
-                $div.appendTo(self.$el);
+
+                $div.insertBefore( $list );
+
+//append，appendTo，after，before，insertAfter，insertBefore，appendChild
 
                 var setting = {
                     callback: {
