@@ -51,7 +51,10 @@ odoo.define('product_category_tree.Main', function (require) {
                 $titlebar.appendTo($div);
                 self.$tree = $('<div>', {class: 'ji_category_tree ztree'});
                 self.$tree.appendTo($div);
-                $div.appendTo(self.$el);
+
+                $div.insertBefore( $list );
+
+//append，appendTo，after，before，insertAfter，insertBefore，appendChild
 
                 var setting = {
                     callback: {
@@ -90,7 +93,11 @@ odoo.define('product_category_tree.Main', function (require) {
                 if (treeNode == -1) {
                     mydomain = mydomain.concat([[[self.field, "=", 0]]]);
                 } else {
-                    mydomain = mydomain.concat([[[self.field, 'in', [treeNode.id]]]]);
+                    mydomain = mydomain.concat([['|',
+                    [self.field, 'in', [treeNode.id]],
+                    [self.field, 'child_of', [treeNode.id]],
+                    ]]);
+
                 }
             }
             return {contexts: self.initialState.context, domains: mydomain, groupbys: self.initialState.groupedBy}
@@ -104,6 +111,7 @@ odoo.define('product_category_tree.Main', function (require) {
                     view_mode: 'form',
                     views: [[false, 'form']],
                     target: 'new',
+                    context: {'default_force_notify_email':1 },
                     res_model: 'mail.compose.message',
                 });
             };

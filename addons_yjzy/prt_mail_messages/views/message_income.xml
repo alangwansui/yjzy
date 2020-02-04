@@ -182,6 +182,12 @@
                         </h3>
                     </div>
                     <group name="base">
+
+
+
+                        <field name="all_partner_ids" widget="many2many_tags"/>
+
+
                         <field name="personal_partner_ids" widget="many2many_tags" options="{'can_create':1,  'quick_create':1, 'create_name_field': 'email'}"/>
                         <field name="personal_partner_cc_ids" widget="many2many_tags" options="{'can_create':1,  'quick_create':1, 'create_name_field': 'email'}"/>
                         <field name="personal_author_id"/>

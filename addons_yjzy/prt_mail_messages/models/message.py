@@ -33,6 +33,13 @@ class PRTMailMessage(models.Model):
             personal_records = one.personal_partner_ids | one.personal_partner_cc_ids | one.personal_author_id
             one.inner_partner_ids = personal_records.mapped('partner_id')
 
+
+    def compute_all_partner(self):
+        for one in self:
+            all_partners = one.author_id | one.partner_ids | one.partner_cc_ids
+            one.all_partner_ids = all_partners
+
+
     process_type = fields.Selection([('in', u'收件'), ('out', u'发件')], u'类型')
 
     author_display = fields.Char(string="Author", compute="_author_display")
@@ -94,6 +101,8 @@ class PRTMailMessage(models.Model):
     personal_author_id = fields.Many2one('personal.partner', u'作者:通讯录')
     inner_partner_ids = fields.Many2many('res.partner', 'ref_inner_partner_personal', 'cid', 'pid',  u'内部联系人', compute=compute_inner_partner, store=True)
 
+
+    all_partner_ids = fields.Many2many('res.partner', 'ref_all_partner', 'pid', 'mid',  u'所有伙伴', compute=compute_all_partner, store=True)
 
 
 

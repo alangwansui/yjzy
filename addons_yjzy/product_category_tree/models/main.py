@@ -66,7 +66,7 @@ class mail_message(models.Model):
 
         return {
             'do_flag': True,
-            'field': 'partner_ids',
+            'field': 'all_partner_ids',
             'title': '通讯录',
             'data': data
         }
