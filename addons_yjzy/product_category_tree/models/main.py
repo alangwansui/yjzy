@@ -58,11 +58,11 @@ class mail_message(models.Model):
 
         customers = self.env['res.partner'].search([('customer', '=', True)])
         suppliers = self.env['res.partner'].search([('supplier', '=', True)])
-        personals = self.env['res.partner'].search([('supplier', '=', False), ('customer', '=', False)])
+        personals = self.env['personal.partner'].search([])
 
-        data += [{'id': d.id, 'pid': d.parent_id.id or 'customer', 'name': d.name} for d in customers]
-        data += [{'id': d.id, 'pid': d.parent_id.id or 'supplier', 'name': d.name} for d in suppliers]
-        data += [{'id': d.id, 'pid': d.parent_id.id or 'personal', 'name': d.name} for d in personals]
+        data += [{'id': d.id, 'pid': d.parent_id.id or 'customer', 'name': d.name, 'model': 'res.partner'} for d in customers]
+        data += [{'id': d.id, 'pid': d.parent_id.id or 'supplier', 'name': d.name, 'model': 'res.partner'} for d in suppliers]
+        data += [{'id': d.id, 'pid':'personal', 'name': d.name, 'model': 'personal.partner', 'domain_fd': 'all_personal_ids'} for d in personals]
 
         return {
             'do_flag': True,

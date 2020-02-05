@@ -185,7 +185,7 @@
 
 
 
-                        <field name="all_partner_ids" widget="many2many_tags" invisible="0"/>
+                        <field name="all_partner_ids" widget="many2many_tags"/>
 
 
                         <field name="personal_partner_ids" widget="many2many_tags" options="{'can_create':1,  'quick_create':1, 'create_name_field': 'email'}"/>
