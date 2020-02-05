@@ -35,10 +35,12 @@ class PRTMailMessage(models.Model):
         for one in self:
             all_personal = one.personal_partner_ids | one.personal_partner_cc_ids | one.personal_author_id
             all_partners = one.author_id | one.partner_ids | one.partner_cc_ids
+            all_users = one.alias_user_id | one.author_id.user_ids
 
             one.all_partner_ids = all_partners
             one.all_personal_ids = all_personal
             one.inner_partner_ids = all_personal.mapped('partner_id')
+            one.all_user_ids = all_users
 
 
     process_type = fields.Selection([('in', u'收件'), ('out', u'发件')], u'类型')
@@ -105,6 +107,7 @@ class PRTMailMessage(models.Model):
 
     all_partner_ids = fields.Many2many('res.partner', 'ref_all_partner', 'pid', 'mid',  u'所有伙伴', compute=compute_all_partner, store=True)
     all_personal_ids = fields.Many2many('personal.partner', 'ref_all_personal', 'personal_id', 'partner_id',  u'所有通讯录', compute=compute_all_partner, store=True)
+    all_user_ids = fields.Many2many('res.users', 'ref_all_users', 'iud', 'mid',  u'所有用户', compute=compute_all_partner, store=True)
 
 
     @api.depends('body')

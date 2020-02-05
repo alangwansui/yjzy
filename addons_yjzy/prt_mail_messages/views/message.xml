@@ -63,7 +63,8 @@
         <field name="name">prt.mail.message.tree</field>
         <field name="model">mail.message</field>
         <field name="arch" type="xml">
-            <tree string="Messages" decoration-bf="needaction==True" decoration-danger="is_error==True" default_order="date desc, id desc" create='false'
+            <tree string="Messages" decoration-bf="needaction==True" decoration-danger="is_error==True" default_order="date desc, id desc"
+                  create='false'
                   edit='false'>
                 <field name="body_text" string="文本" invisible="1"/>
                 <field name="body" string="内容" invisible="1"/>
@@ -144,8 +145,10 @@
                     </div>
                     <group name="base">
                         <group>
-                        <field name="all_partner_ids" widget="many2many_tags"/>
-                        <field name="all_personal_ids" widget="many2many_tags"/>
+                            <field name="all_partner_ids" widget="many2many_tags"/>
+                            <field name="all_personal_ids" widget="many2many_tags"/>
+                            <field name="all_user_ids" widget="many2many_tags"/>
+
 
                             <field name="personal_partner_ids" widget="many2many_tags"
                                    options="{'can_create':1,  'quick_create':1, 'create_name_field': 'email'}"/>
