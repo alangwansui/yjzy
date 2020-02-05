@@ -85,20 +85,25 @@ odoo.define('product_category_tree.Main', function (require) {
             console.info('===make_domain==', mydomain, treeNode.special_domain)
 
             if (treeNode.special_domain){
-
                 mydomain = mydomain.concat([treeNode.special_domain]);
-
-
             }else{
-                if (treeNode == -1) {
-                    mydomain = mydomain.concat([[[self.field, "=", 0]]]);
-                } else {
-                    mydomain = mydomain.concat([['|',
-                    [self.field, 'in', [treeNode.id]],
-                    [self.field, 'child_of', [treeNode.id]],
-                    ]]);
+
+                console.info('===make_domain==2', treeNode.model,  treeNode.domain_fd)
+                if (treeNode.model == 'res.parter'){
+                    if (treeNode == -1) {
+                        mydomain = mydomain.concat([[[self.field, "=", 0]]]);
+                    } else {
+                        mydomain = mydomain.concat([['|',
+                        [self.field, 'in', [treeNode.id]],
+                        [self.field, 'child_of', [treeNode.id]],
+                        ]]);
+                    }
+                }else if(treeNode.model == 'personal.partner'){
+                        mydomain = mydomain.concat([[[treeNode.domain_fd, "in", [treeNode.id]]]]);
 
                 }
+
+
             }
             return {contexts: self.initialState.context, domains: mydomain, groupbys: self.initialState.groupedBy}
         },
