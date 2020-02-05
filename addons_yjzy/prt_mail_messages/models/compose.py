@@ -174,7 +174,12 @@ class PRTMailComposer(models.Model):
             self.last_send_time = fields.datetime.now()
             self.send_mail()
 
-
+        #发送后，通讯录放入正式组
+        personals = self.personal_partner_ids | self.personal_partner_cc_ids
+        out_tmp_personals = personals.filtered(lambda x: x.tag_id.code == 'out_tmp')
+        if out_tmp_personals:
+            normal_tag = self.env.ref('prt_mail_messages.personal_tag_normal')
+            out_tmp_personals.write({'tag_id': normal_tag.id})
 
         #<jon> 标记为已经回复
         ctx = self.env.context

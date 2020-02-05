@@ -48,8 +48,9 @@ class mail_message(models.Model):
             {'id': 'customer', 'pid': None, 'name': '客户', 'no_action': True},
             {'id': 'supplier', 'pid': None, 'name': '供应商', 'no_action': True},
             {'id': 'personal', 'pid': None, 'name': '个人通讯录', 'no_action': True},
-           # {'id': 'mail_list', 'pid': None, 'name': '邮件列表', 'no_action': True},
+            {'id': 'user', 'pid': None, 'name': '用户', 'no_action': True},
 
+           # {'id': 'mail_list', 'pid': None, 'name': '邮件列表', 'no_action': True},
 
             ]
 
@@ -59,10 +60,13 @@ class mail_message(models.Model):
         customers = self.env['res.partner'].search([('customer', '=', True)])
         suppliers = self.env['res.partner'].search([('supplier', '=', True)])
         personals = self.env['personal.partner'].search([])
+        users = self.env['res.users'].search([])
 
         data += [{'id': d.id, 'pid': d.parent_id.id or 'customer', 'name': d.name, 'model': 'res.partner'} for d in customers]
         data += [{'id': d.id, 'pid': d.parent_id.id or 'supplier', 'name': d.name, 'model': 'res.partner'} for d in suppliers]
         data += [{'id': d.id, 'pid':'personal', 'name': d.name, 'model': 'personal.partner', 'domain_fd': 'all_personal_ids'} for d in personals]
+        data += [{'id': d.id, 'pid': 'user', 'name': d.name, 'model': 'res.users', 'domain_fd': 'all_user_ids'} for d in users]
+
 
         return {
             'do_flag': True,

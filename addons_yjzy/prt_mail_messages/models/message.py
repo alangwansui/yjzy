@@ -175,9 +175,7 @@ class PRTMailMessage(models.Model):
 
     def _get_personal(self, mails_str, user):
         self.ensure_one()
-
-        default_tag = self.env['personal.tag'].search([('is_default','=',True)], limit=1)
-
+        default_tag = self.env.ref('prt_mail_messages.personal_tag_income_tmp')
         personal_obj = self.env['personal.partner']
         personal_recores = personal_obj.browse([])
         for i in mails_str.split(','):

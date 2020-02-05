@@ -20,6 +20,8 @@ Mail Messages
         'security/groups.xml',
         'security/ir.model.access.csv',
 
+        'data/data.xml',
+
         'views/menu.xml',
         'views/message.xml',
         'views/message_income.xml',
@@ -37,6 +39,11 @@ Mail Messages
         'views/mail_channel.xml',
         'template/assets.xml',
         'wizards/wizard_compose_action.xml',
+
+
+
+
+
     ],
     'installable': True,
     'application': True,

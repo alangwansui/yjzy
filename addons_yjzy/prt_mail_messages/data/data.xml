@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+
+    <record id="personal_tag_income_tmp" model="personal.tag">
+        <field name="name">收件临时组</field>
+        <field name="code">income_tmp</field>
+    </record>
+    <record id="personal_tag_tmp" model="personal.tag">
+        <field name="name">发送临时组</field>
+        <field name="code">out_tmp</field>
+    </record>
+    <record id="personal_tag_normal" model="personal.tag">
+        <field name="name">正式组</field>
+        <field name="code">normal</field>
+    </record>
+
+    </data>
+
+
+
+
+</odoo>
+
+

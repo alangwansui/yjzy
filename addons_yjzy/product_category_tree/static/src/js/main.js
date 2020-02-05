@@ -100,7 +100,8 @@ odoo.define('product_category_tree.Main', function (require) {
                     }
                 }else if(treeNode.model == 'personal.partner'){
                         mydomain = mydomain.concat([[[treeNode.domain_fd, "in", [treeNode.id]]]]);
-
+                }else if(treeNode.model == 'res.users'){
+                        mydomain = mydomain.concat([[[treeNode.domain_fd, "in", [treeNode.id]]]]);
                 }
 
 
