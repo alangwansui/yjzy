@@ -97,10 +97,10 @@
                         <field name="personal_author_id"/>
 
 
-                       <!-- <field name="author_display" string="作者"/>
+                       <field name="author_display" string="作者"/>
                         <field name="email_from" groups="base.group_system"/>
-                        <field name="author_id" string="发件人" groups="base.group_system"/>-->
-                        <!--<field name="email_to"/>
+                        <field name="author_id" string="发件人" groups="base.group_system"/>
+                        <field name="email_to"/>
                         <label for="email_to" string="收件人" groups="base.group_system"/>
                         <div name="email_to" class="o_row" string="收件人" groups="base.group_system">
                             <field name="partner_ids" widget="many2many_tags_email" context="{'show_email': 1}"/>
@@ -111,8 +111,8 @@
                         <div name="email_cc" class="o_row" string="收件人" groups="base.group_system">
                             <field name="partner_cc_ids" widget="many2many_tags_email" context="{'show_email': 1}"/>
                             <field name="manual_cc"/>
-                        </div>-->
-                       <!-- <field name="partner_bcc_ids" widget="many2many_tags_email" context="{'show_email': 1}" groups="base.group_system"/>-->
+                        </div>
+                       <field name="partner_bcc_ids" widget="many2many_tags_email" context="{'show_email': 1}" groups="base.group_system"/>
                         <field name="date"/>
                     </group>
 
