@@ -20,7 +20,7 @@ class personal_partner(models.Model):
 
     _description = '通讯录'
 
-    @api.onchange('name', 'email')
+    @api.depends('name', 'email')
     def _compute_display(self):
         for one in self:
             print('===========', one.name, one.email)
