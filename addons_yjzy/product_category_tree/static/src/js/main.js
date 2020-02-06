@@ -120,6 +120,17 @@ odoo.define('product_category_tree.Main', function (require) {
                     context: {'default_force_notify_email':1 },
                     res_model: 'mail.compose.message',
                 });
+            }else if(treeNode.id == 'mail_list_draft') {
+                return this.do_action({
+                    name: '草稿箱',
+                    type: 'ir.actions.act_window',
+                    view_type: 'tree,form',
+                    view_mode: 'form',
+                    views: [[false, 'list'], [false, 'form']],
+                    //target: 'new',
+                    context: {'default_force_notify_email':1 },
+                    res_model: 'mail.compose.message',
+                });
             };
 
 
