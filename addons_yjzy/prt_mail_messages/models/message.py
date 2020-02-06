@@ -30,7 +30,8 @@ class PRTMailMessage(models.Model):
 
 
 
-
+    @api.depends('personal_partner_ids', 'personal_partner_cc_ids', 'personal_author_id',
+                 'author_id', 'partner_ids', 'partner_cc_ids', 'alias_user_id', 'user_ids')
     def compute_all_partner(self):
         for one in self:
             all_personal = one.personal_partner_ids | one.personal_partner_cc_ids | one.personal_author_id
