@@ -41,7 +41,7 @@ class mail_message(models.Model):
     def get_categories(self):
         data = [
             {'id': 'newmail', 'pid': None, 'name': '写邮件', 'no_action': True},
-            {'id': 'mail_list_income', 'pid': None, 'name': '收件箱', 'no_action': False,'special_domain': [('message_type', '=', 'email'), ('process_type', '=', 'in')]},
+            {'id': 'mail_list_income', 'pid': None, 'name': '收件箱', 'no_action': False,'special_domain': [('alias_user_id','=', self._uid ),('message_type', '=', 'email'), ('process_type', '=', 'in')]},
             {'id': 'mail_list_out', 'pid': None, 'name': '发件箱', 'no_action': False,'special_domain': [('message_type', '=', 'email'), ('process_type', '=', False)]},
             {'id': 'mail_list_deleted', 'pid': None, 'name': '已删除', 'no_action': False,'special_domain': [('message_type', '=', 'email'), ('active', '=', False)]},
             {'id': 'mail_list_draft', 'pid': None, 'name': '草稿箱', 'no_action': False,'special_domain': [('message_type', '=', 'email')]},
