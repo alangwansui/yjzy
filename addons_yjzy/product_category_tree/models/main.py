@@ -54,9 +54,6 @@ class mail_message(models.Model):
 
             ]
 
-
-
-
         customers = self.env['res.partner'].search([('customer', '=', True)])
         suppliers = self.env['res.partner'].search([('supplier', '=', True)])
         personals = self.env['personal.partner'].search([])
