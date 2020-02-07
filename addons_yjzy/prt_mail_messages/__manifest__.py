@@ -29,8 +29,8 @@ Mail Messages
 
         'views/message_deleted.xml',
         'views/message_draft.xml',
-
         'views/personal_partner.xml',
+        'views/users.xml',
 
         'views/partner.xml',
         'views/compose.xml',

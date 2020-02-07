@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+
+
+        <record model="ir.ui.view" id="inherit_view_users_form">
+        	<field name="name">res.users.form</field>
+        	<field name="model">res.users</field>
+        	<field name="inherit_id" ref="base.view_users_form"/>
+        	<field name="arch" type="xml">
+                <notebook position="inside">
+                    <page string="邮件用户管理">
+                        <group>
+                        <field name="sup_message_uids" widget="many2many_tags"/>
+                        <field name="sub_message_uids" widget="many2many_tags"/>
+                        </group>
+                    </page>
+                </notebook>
+
+        	</field>
+        </record>
+
+
+
+
+
+
+
+    </data>
+</odoo>
