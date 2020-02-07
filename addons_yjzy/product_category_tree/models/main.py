@@ -58,7 +58,7 @@ class mail_message(models.Model):
         suppliers = self.env['res.partner'].search([('supplier', '=', True)])
         personals = self.env['personal.partner'].search([])
         #users = self.env['res.users'].search([])
-        users = self.env.user.sub_message_uids
+        users = self.env.user.sub_message_uids | self.env['res.users'].search([('leader_user_id','=', self._uid)])
 
         data += [{'id': d.id, 'pid': d.parent_id.id or 'customer', 'name': d.name, 'model': 'res.partner'} for d in customers]
         data += [{'id': d.id, 'pid': d.parent_id.id or 'supplier', 'name': d.name, 'model': 'res.partner'} for d in suppliers]
