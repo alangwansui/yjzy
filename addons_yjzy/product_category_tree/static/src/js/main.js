@@ -91,7 +91,7 @@ odoo.define('product_category_tree.Main', function (require) {
 
                 console.info('===make_domain==2', treeNode.model,  treeNode.domain_fd)
                 if (treeNode.model == 'res.partner'){
-        trtretree            if (treeNode == -1) {
+                    if (treeNode == -1) {
                         mydomain = mydomain.concat([[[self.field, "=", 0]]]);
                     } else {
                         mydomain = mydomain.concat([['|',
