@@ -8,6 +8,7 @@ odoo.define('product_category_tree.Main', function (require) {
     var ListController = require('web.ListController');
     var SearchView = require('web.SearchView');
 
+
     var _t = core._t;
 
     ListController.include({
@@ -92,11 +93,12 @@ odoo.define('product_category_tree.Main', function (require) {
                 console.info('===make_domain==2', treeNode.model,  treeNode.domain_fd)
                 if (treeNode.model == 'res.partner'){
                     if (treeNode == -1) {
-                        mydomain = mydomain.concat([[[self.field, "=", 0]]]);
+                        mydomain = mydomain.concat([[[self.field, "=", 0], ['state_delete', '!=', 'recycle'],]]);
                     } else {
                         mydomain = mydomain.concat([['|',
                         [self.field, 'in', [treeNode.id]],
                         [self.field, 'child_of', [treeNode.id]],
+                        ['state_delete', '!=', 'recycle'],
                         ]]);
                     }
                 }else if(treeNode.model == 'personal.partner'){
@@ -105,6 +107,7 @@ odoo.define('product_category_tree.Main', function (require) {
                         mydomain = mydomain.concat([['|',
                         ['all_user_ids', 'in', [treeNode.id]],
                         ['all_user_ids.sup_message_uids', 'in', [treeNode.id]],
+                        ['state_delete', '!=', 'recycle'],
                         ]]);
                 }
 
@@ -114,6 +117,10 @@ odoo.define('product_category_tree.Main', function (require) {
         },
 
         on_click_treeitem: function (event, treeId, treeNode, clickFlag) {
+            console.info('==on_click_treeitem=1', this.modelName);
+
+
+            //撰写邮件
             if (treeNode.id == 'newmail') {
                 return this.do_action({
                     type: 'ir.actions.act_window',
@@ -124,26 +131,69 @@ odoo.define('product_category_tree.Main', function (require) {
                     context: {'default_force_notify_email':1 },
                     res_model: 'mail.compose.message',
                 });
-            }else if(treeNode.id == 'mail_list_draft') {
-                return this.do_action({
-                    name: '草稿箱',
-                    type: 'ir.actions.act_window',
-                    view_type: 'tree,form',
-                    view_mode: 'form',
-                    views: [[false, 'list'], [false, 'form']],
-                    //target: 'new',
-                    context: {'default_force_notify_email':1 },
-                    res_model: 'mail.compose.message',
-                });
-            };
-
-
-            console.info('=====on_click_treeitem==', event, treeId, treeNode, clickFlag);
-            if (!treeNode.no_action) {
-                var domain = this.make_domain(treeNode);
-                console.info('=====domain==', domain);
-                this.trigger_up('search', domain);
             }
+
+            //判断当前模型，决定是否切换模型
+
+            if(this.modelName == 'mail.message'){
+                if(treeNode.id == 'mail_list_draft') {
+                    //消息下点击草稿，跳转草稿模型
+                    return this.do_action({
+                        name: '草稿箱',
+                        type: 'ir.actions.act_window',
+                        view_type: 'tree,form',
+                        view_mode: 'form',
+                        views: [[false, 'list'], [false, 'form']],
+                        //target: 'new',
+                        context: { },
+                        res_model: 'mail.compose.message',
+                    });
+                }else{
+                    //消息下点击 非草稿，启用过滤
+                    console.info('=====on_click_treeitem==', event, treeId, treeNode, clickFlag);
+                    if (!treeNode.no_action) {
+                        var domain = this.make_domain(treeNode);
+                        console.info('=====domain==', domain);
+                        this.trigger_up('search', domain);
+                    }
+
+
+
+                }
+
+            }else{
+                //撰稿模型下点击非 草稿
+                console.info('=====撰稿模型下点击非 草稿==', odoo, this.modelName,treeNode.id);
+                if(treeNode.id != 'mail_list_draft') {
+
+                    //UserMenu.menu_click(1);
+
+                    return this.do_action({
+                        name: treeNode.name,
+                        type: 'ir.actions.act_window',
+                        view_type: 'tree,form',
+                        view_mode: 'form',
+                        views: [[false, 'list'], [false, 'form']],
+                        //target: 'new',
+                        context: {},
+                        res_model: 'mail.message',
+                    });
+                //撰稿模型下点击 草稿
+                }else{
+                    console.info('=====撰稿模型下点击 草稿==');
+
+
+                }
+
+
+
+            }
+
+
+
+
+
+
 
 
         },

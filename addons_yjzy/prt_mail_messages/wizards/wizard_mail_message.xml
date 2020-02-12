@@ -1,10 +1,45 @@
 <?xml version="1.0"?>
 <odoo>
 
+    <record id="wizard_mail_message_form_view" model="ir.ui.view">
+        <field name="name">wizard.mail.message.form</field>
+        <field name="model">wizard.mail.message</field>
+        <field name="arch" type="xml">
+            <form string="邮件操作">
+                <group invisible="context.get('to_state_delete') != 'recycle'">
+                    <h2>将选中的邮件 放入回收站</h2>
+                </group>
+                <group invisible="context.get('to_state_delete') != 'normal'">
+                    <h2>将选中的邮件 撤销回收</h2>
+                </group>
+                <footer>
+                    <button name="apply" string="确定" colspan="1" type="object" class="btn-primary"/>
+                    <button string="取消" class="btn-default" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
 
+    <act_window
+            id="action_wizard_mail_message_recycle"
+            res_model="wizard.mail.message"
+            src_model="mail.message"
+            target="new"
+            multi="True"
+            key2="client_action_multi"
+            view_mode="form"
+            context="{'to_state_delete': 'recycle'}"
+            name="回收站"/>
 
-
-
-
+    <act_window
+            id="action_wizard_mail_message_normal"
+            res_model="wizard.mail.message"
+            src_model="mail.message"
+            target="new"
+            multi="True"
+            key2="client_action_multi"
+            view_mode="form"
+            context="{'to_state_delete': 'normal'}"
+            name="撤销回收"/>
 
 </odoo>

@@ -38,7 +38,10 @@ Mail Messages
         'views/fetchmail_server.xml',
         'views/mail_channel.xml',
         'template/assets.xml',
+
+
         'wizards/wizard_compose_action.xml',
+        'wizards/wizard_mail_message.xml',
 
 
 

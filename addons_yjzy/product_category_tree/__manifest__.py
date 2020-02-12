@@ -9,7 +9,7 @@
     'website': "http://www.yourcompany.com",
     'category': 'Uncategorized',
     'version': '0.1',
-    'depends': ['product'],
+    'depends': ['product', 'web'],
     'data': [
         "data/main.xml",
     ],

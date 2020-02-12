@@ -209,6 +209,10 @@ class PRTMailMessage(models.Model):
         if msg.fetchmail_server_id:
             msg.manual_to = mail_txt_subtraction_partner(msg.email_to, msg.partner_ids)
             msg.manual_cc = mail_txt_subtraction_partner(msg.email_cc, msg.partner_cc_ids)
+        #<jon> 发邮件
+        else:
+            msg.process_type = 'out'
+
         return msg
 
 
