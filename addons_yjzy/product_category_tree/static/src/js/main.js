@@ -53,7 +53,7 @@ odoo.define('product_category_tree.Main', function (require) {
                 self.$tree.appendTo($div);
 
                 //$div.insertBefore( $list );
-                $div.appendTo(self.$el)
+                $div.appendTo(self.$el);
 
 //append，appendTo，after，before，insertAfter，insertBefore，appendChild
 
