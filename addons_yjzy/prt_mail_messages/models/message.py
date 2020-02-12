@@ -48,7 +48,7 @@ class PRTMailMessage(models.Model):
             one.all_user_ids = all_users
 
 
-    state_delete = fields.Selection([('normal', '正常'),('recycle', '回收站')], '删除状态', defualt='normal')
+    state_delete = fields.Selection([('normal', '正常'),('recycle', '回收站')], '删除状态', default='normal')
 
     process_type = fields.Selection([('in', u'收件'), ('out', u'发件')], u'类型')
 
