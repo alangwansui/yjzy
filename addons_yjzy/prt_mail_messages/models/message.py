@@ -29,6 +29,10 @@ class PRTMailMessage(models.Model):
     _inherit = "mail.message"
 
 
+    def tip_button(self):
+        pass
+
+
 
     @api.depends('personal_partner_ids', 'personal_partner_cc_ids', 'personal_author_id',
                  'author_id', 'partner_ids', 'partner_cc_ids', 'alias_user_id')
