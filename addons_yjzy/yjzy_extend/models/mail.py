@@ -24,11 +24,15 @@ class IrMailServer(models.Model):
     def _get_default_bounce_address(self):
 
         currenct_uid = self.env.context.get('uid') or self.env.user.id
+
+        print('====_get_default_bounce_address==currenct_uid=', currenct_uid)
+
         mail_server = self.search([('user_id','=', currenct_uid)])
         if mail_server:
             return mail_server.smtp_user
         else:
-            raise Warning('没有匹配的发送邮箱')
+            raise Warning('没有匹配的发送邮箱 UID %' % currenct_uid)
+
 
 
 
