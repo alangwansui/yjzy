@@ -30,7 +30,15 @@ class PRTMailMessage(models.Model):
 
 
     def tip_button(self):
-        pass
+        return {
+            'name': u'邮件',
+            'res_model': self._inherit,
+            'res_id': self.id,
+            'view_type': 'form',
+            "view_mode": 'form',
+            'type': 'ir.actions.act_window',
+            #'target': 'new'
+        }
 
 
 
