@@ -37,7 +37,7 @@ odoo.define('web_tree_image_tooltip.web_tree_image_tooltip',
                         html: true,
                         title: body,
                         delay: 20,
-                        template: '<div class="tooltip" style="border:2px solid #F00 !important; width: 200px !important;height: 200px !important;display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 7; overflow: hidden;"  role="tooltip"><div class="tooltip-arrow"></div><div    class="tooltip-inner"></div></div>'
+                        template: '<div class="tooltip" style="background:#CCC;border:4px solid #FFF !important; width: 200px !important;height: 200px !important;display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 7; overflow: hidden;"  role="tooltip"><div class="tooltip-arrow"></div><div    class="tooltip-inner"></div></div>'
                     }).tooltip('show');
                     console.info('==tooltip ok=');
                 }
