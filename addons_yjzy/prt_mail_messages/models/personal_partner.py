@@ -1,3 +1,5 @@
+
+import re
 from odoo import models, fields, api, _, tools, SUPERUSER_ID, registry
 from odoo.exceptions import Warning
 import logging
@@ -48,18 +50,28 @@ class personal_partner(models.Model):
 
 
 
+    @api.constrains('email')
+    def check_email(self):
+        for one in self:
+            if not re.match(r'^[0-9a-zA-Z_]{0,19}@[0-9a-zA-A-Z]{1,13}\.[a-zA-Z]{1,4}$', one.email):
+                raise Warning('不是合格的邮件格式')
+
+
+    def write(self, values):
+        if 'email' in values:
+            values.update({
+                'email': values['email'].lower()
+            })
+        return super(personal_partner, self).write(values)
+
+
+
     @api.model
     def name_create(self, name):
-        print('==========name_create======', name)
         vals = {
-            'email': name,
+            'email': name.lower(),
         }
-        s = self.create(vals).name_get()[0]
-        print('==========name_create2======', s)
-        return s
-
-
-
+        return self.create(vals).name_get()[0]
 
 
     @api.constrains('user_id', 'email')

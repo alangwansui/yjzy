@@ -30,6 +30,7 @@ class PRTMailMessage(models.Model):
 
 
     def tip_button(self):
+        self.have_read = True
         return {
             'name': u'邮件',
             'res_model': self._inherit,
@@ -224,6 +225,7 @@ class PRTMailMessage(models.Model):
         for i in mails_str.split(','):
             name, mail = parseaddr(i)
             if isinstance(mail, str) and '@' in mail:
+                mail = mail.lower()
                 personal = personal_obj.search([('email', '=', mail),('user_id', '=', user.id)])  #TODO, domain by user
                 if not personal:
                     personal = personal_obj.create({
