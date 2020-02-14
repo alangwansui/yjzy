@@ -190,8 +190,8 @@ class PRTMailMessage(models.Model):
     @api.model
     def cron_create_personal(self, domain=None):
         domain = domain or []
+        domain += [('message_type', '=', 'email')]
         for one in self.search(domain):
-
             user = one.alias_user_id
             if not user:
                 continue
