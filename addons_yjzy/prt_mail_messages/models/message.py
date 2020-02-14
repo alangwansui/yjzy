@@ -187,6 +187,31 @@ class PRTMailMessage(models.Model):
         self.have_read = not self.have_read
 
 
+    def make_one_personal(self):
+        one = self
+        user = one.alias_user_id
+        if not user:
+            raise Warning('消息没有别名用户')
+
+        if one.email_to:
+            p = one._get_personal(one.email_to, user)
+            if p:
+                one.personal_partner_ids |= p
+
+        if one.email_cc:
+            p = one._get_personal(one.email_cc, user)
+            if p:
+                one.personal_partner_cc_ids = p
+
+        if one.email_from:
+            p = one._get_personal(one.email_from, user)
+            if p:
+                one.personal_author_id = p
+
+        return True
+
+
+
     @api.model
     def cron_create_personal(self, domain=None):
         domain = domain or []

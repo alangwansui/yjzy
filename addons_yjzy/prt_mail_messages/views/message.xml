@@ -136,7 +136,6 @@
                             <field name="active" widget="boolean_button"
                                    options='{"terminology": "archive"}'/>
                         </button>
-
                     </div>
                     <field name="author_avatar" widget="image" class="oe_avatar"/>
                     <div class="oe_title">
@@ -194,6 +193,9 @@
                                 <field name="partner_count" invisible="1"/>
                                 <field name="partner_allowed_ids" attrs="{'invisible':[('partner_count', '=', 0)]}" widget="many2many_tags"/>
                                 <field name="state_delete"/>
+
+
+                                <button name="make_one_personal"  string="创建通讯录" type='object' icon=""/>
 
                             </group>
                             <group name="technical">
