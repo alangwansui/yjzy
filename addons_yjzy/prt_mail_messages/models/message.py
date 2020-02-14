@@ -38,9 +38,8 @@ class PRTMailMessage(models.Model):
             "view_mode": 'form',
             'type': 'ir.actions.act_window',
             'target': 'new',
-
-            'flags': {'initial_mode': 'readony'},
-            #'flags': "{'mode': 'readddonly'}",
+            'auto_search':False,
+            'flags': {'initial_mode': 'readonly'},
         }
 
 
