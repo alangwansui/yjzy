@@ -183,6 +183,26 @@ class PRTMailMessage(models.Model):
         self.ensure_one()
         self.have_read = not self.have_read
 
+
+    @api.model
+    def cron_create_personal(self, domain=None):
+        domain = domain or []
+        for one in self.search(domain):
+
+            user = one.alias_user_id
+            if not user:
+                continue
+
+            if one.email_to and (not one.personal_partner_ids):
+                one.personal_partner_ids = one._get_personal(one.email_to, user)
+
+            if one.email_cc and (not one.personal_partner_cc_ids):
+                one.personal_partner_cc_ids = one._get_personal(one.email_cc, user)
+
+            if one.email_from and (not one.personal_author_id):
+                one.personal_author_id = one._get_personal(one.email_from, user)
+
+
     def process_income_personal(self, alias):
         #收取邮件处理 通讯录
         self.ensure_one()
@@ -193,6 +213,8 @@ class PRTMailMessage(models.Model):
 
 
     def _get_personal(self, mails_str, user):
+        if not mails_str:
+            return None
         self.ensure_one()
         default_tag = self.env.ref('prt_mail_messages.personal_tag_income_tmp')
         personal_obj = self.env['personal.partner']
@@ -1008,7 +1030,7 @@ class PRTMailMessage(models.Model):
             "views": [[False, "form"]],
             'res_model': 'mail.compose.message',
             'type': 'ir.actions.act_window',
-            'target': 'self',
+            'target': 'new',
             'context': self.reply_prep_context()
         }
 

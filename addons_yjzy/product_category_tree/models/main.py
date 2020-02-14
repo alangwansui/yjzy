@@ -62,10 +62,11 @@ class mail_message(models.Model):
             #users = self.env['res.users'].search([])
             users = self.env.user.sub_message_uids ###| self.env['res.users'].search([('leader_user_id','=', self._uid)])
 
-            data += [{'id': d.id, 'pid': d.parent_id.id or 'customer', 'name': d.name, 'model': 'res.partner'} for d in customers]
-            data += [{'id': d.id, 'pid': d.parent_id.id or 'supplier', 'name': d.name, 'model': 'res.partner'} for d in suppliers]
-            data += [{'id': d.id, 'pid':'personal', 'name': d.name, 'model': 'personal.partner', 'domain_fd': 'all_personal_ids'} for d in personals]
-            data += [{'id': d.id, 'pid': 'user', 'name': d.name, 'model': 'res.users', 'domain_fd': 'all_user_ids'} for d in users]
+            data += [{'dbid': d.id, 'id': 'c_%s' % d.id, 'pid': d.parent_id and 'c_%s' % d.parent_id.id or 'customer', 'name': d.name, 'model': 'res.partner'} for d in customers]
+            data += [{'dbid': d.id, 'id': 's_%s' % d.id, 'pid': d.parent_id and 's_%s' % d.parent_id.id or 'supplier', 'name': d.name, 'model': 'res.partner'} for d in suppliers]
+
+            data += [{'dbid': d.id, 'id': 'p_%s' % d.id, 'pid':'personal', 'name': d.name, 'model': 'personal.partner', 'domain_fd': 'all_personal_ids'} for d in personals]
+            data += [{'dbid': d.id, 'id': 'u_%s' % d.id, 'pid': 'user', 'name': d.name, 'model': 'res.users', 'domain_fd': 'all_user_ids'} for d in users]
 
 
             return {
