@@ -200,6 +200,7 @@ class PRTMailMessage(models.Model):
         default_tag = self.env.ref('prt_mail_messages.personal_tag_income_tmp')
         records = self.env['personal.partner']
         for name, addr in AddrlistClass(addrss).getaddrlist():
+            if not ('@' in  addr): continue
             print('==parse_address_make_personal==', name, addr, user.id)
             addr = addr.lower()
             personal = personal_obj.search([('email', '=', addr),('user_id', '=', user.id)])
@@ -231,6 +232,10 @@ class PRTMailMessage(models.Model):
         if self.email_cc:
             self.personal_partner_cc_ids |= self.parse_address_make_personal(self.email_cc, user)
         if self.email_from:
+            personal_author = self.parse_address_make_personal(self.email_from, user)
+            for i in personal_author:
+                print('>>', i.name, i.email)
+
             self.personal_author_id = self.parse_address_make_personal(self.email_from, user)
 
 
