@@ -1309,7 +1309,7 @@ class MailThread(models.AbstractModel):
 
             #收取邮件处理 通讯录
             if new_msg.fetchmail_server_id:
-                new_msg.process_income_personal(alias)
+                new_msg.make_one_personal_in(alias.alias_user_id)
 
             #<jon>
             if alias:

@@ -3,6 +3,7 @@ from odoo import _, api, exceptions, fields, models, tools, SUPERUSER_ID
 import logging
 from odoo.tools import pycompat, ustr
 from email.utils import parseaddr
+from email._parseaddr import AddrlistClass
 from odoo.exceptions import MissingError, AccessError
 from .mail_tools import mail_txt_subtraction_partner
 
@@ -187,81 +188,91 @@ class PRTMailMessage(models.Model):
         self.have_read = not self.have_read
 
 
-    def make_one_personal(self):
-        one = self
-        user = one.alias_user_id
-        if not user:
-            raise Warning('消息没有别名用户')
-
-        if one.email_to:
-            p = one._get_personal(one.email_to, user)
-            if p:
-                one.personal_partner_ids |= p
-
-        if one.email_cc:
-            p = one._get_personal(one.email_cc, user)
-            if p:
-                one.personal_partner_cc_ids = p
-
-        if one.email_from:
-            p = one._get_personal(one.email_from, user)
-            if p:
-                one.personal_author_id = p
-
-        return True
-
-
-
     @api.model
     def cron_create_personal(self, domain=None):
         domain = domain or []
         domain += [('message_type', '=', 'email')]
         for one in self.search(domain):
-            user = one.alias_user_id
-            if not user:
-                continue
+            one.make_one_personal()
 
-            if one.email_to and (not one.personal_partner_ids):
-                one.personal_partner_ids = one._get_personal(one.email_to, user)
-
-            if one.email_cc and (not one.personal_partner_cc_ids):
-                one.personal_partner_cc_ids = one._get_personal(one.email_cc, user)
-
-            if one.email_from and (not one.personal_author_id):
-                one.personal_author_id = one._get_personal(one.email_from, user)
-
-
-    def process_income_personal(self, alias):
-        #收取邮件处理 通讯录
-        self.ensure_one()
-        user = alias.alias_user_id
-        self.personal_partner_ids = self._get_personal(self.email_to, user)
-        self.personal_partner_cc_ids = self._get_personal(self.email_cc, user)
-        self.personal_author_id = self._get_personal(self.email_from, user)
-
-
-    def _get_personal(self, mails_str, user):
-        if not mails_str:
-            return None
-        self.ensure_one()
-        default_tag = self.env.ref('prt_mail_messages.personal_tag_income_tmp')
+    def parse_address_make_personal(self, addrss, user):
         personal_obj = self.env['personal.partner']
-        personal_recores = personal_obj.browse([])
-        for i in mails_str.split(','):
-            name, mail = parseaddr(i)
-            if isinstance(mail, str) and '@' in mail:
-                mail = mail.lower()
-                personal = personal_obj.search([('email', '=', mail),('user_id', '=', user.id)])  #TODO, domain by user
-                if not personal:
-                    personal = personal_obj.create({
-                        'name': name,
-                        'email': mail,
-                        'user_id': user.id,
-                        'tag_id': default_tag.id,
-                    })
-                personal_recores |= personal
-            print('===============================_message_find_personal=====================================================', personal_recores)
-        return personal_recores
+        default_tag = self.env.ref('prt_mail_messages.personal_tag_income_tmp')
+        records = self.env['personal.partner']
+        for name, addr in AddrlistClass(addrss).getaddrlist():
+            print('==parse_address_make_personal==', name, addr, user.id)
+            addr = addr.lower()
+            personal = personal_obj.search([('email', '=', addr),('user_id', '=', user.id)])
+            if not personal:
+                personal = personal_obj.create({
+                    'name': name,
+                    'email': addr,
+                    'user_id': user.id,
+                    'tag_id': default_tag.id,
+                })
+            records |= personal
+        return records
+
+    def make_one_personal(self):
+        print('========make_one_personal==========', self.process_type)
+        if self.process_type == 'in':
+            self.make_one_personal_in()
+        if self.process_type == 'out':
+            self.make_one_personal_out()
+
+
+    def make_one_personal_out(self):
+        user = self.author_id
+        if not user:
+            raise Warning('没找到对应的别名用户')
+
+        if self.manual_to:
+            self.personal_partner_ids |= self.parse_address_make_personal(self.email_to, user)
+        if self.email_cc:
+            self.personal_partner_cc_ids |= self.parse_address_make_personal(self.email_cc, user)
+        if self.email_from:
+            self.personal_author_id |= self.parse_address_make_personal(self.email_from, user)
+
+
+    def make_one_personal_in(self, user=False):
+        user = self.alias_user_id
+        if not user:
+            raise Warning('没找到对应的别名用户')
+        if self.email_to:
+            self.personal_partner_ids |= self.parse_address_make_personal(self.email_to, user)
+        if self.email_cc:
+            self.personal_partner_cc_ids |= self.parse_address_make_personal(self.email_cc, user)
+        if self.email_from:
+            self.personal_author_id |= self.parse_address_make_personal(self.email_from, user)
+
+
+
+
+
+
+    # def _get_personal(self, mails_str, user):
+    #     if not mails_str:
+    #         return None
+    #     self.ensure_one()
+    #     default_tag = self.env.ref('prt_mail_messages.personal_tag_income_tmp')
+    #     personal_obj = self.env['personal.partner']
+    #     personal_recores = personal_obj.browse([])
+    #
+    #
+    #     for name, mail in AddrlistClass(mails_str).getaddrlist():
+    #         print('==**=', name, mail)
+    #         mail = mail.lower()
+    #         personal = personal_obj.search([('email', '=', mail),('user_id', '=', user.id)])  #TODO, domain by user
+    #         if not personal:
+    #             personal = personal_obj.create({
+    #                 'name': name,
+    #                 'email': mail,
+    #                 'user_id': user.id,
+    #                 'tag_id': default_tag.id,
+    #             })
+    #         personal_recores |= personal
+    #         print('===============================_message_find_personal=====================================================', personal_recores)
+    #     return personal_recores
 
     @api.model
     def create(self, values):
