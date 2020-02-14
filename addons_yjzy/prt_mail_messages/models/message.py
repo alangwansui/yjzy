@@ -37,7 +37,7 @@ class PRTMailMessage(models.Model):
             'view_type': 'form',
             "view_mode": 'form',
             'type': 'ir.actions.act_window',
-            #'target': 'new'
+            'target': 'new'
         }
 
 
