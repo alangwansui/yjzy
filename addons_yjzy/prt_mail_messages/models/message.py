@@ -231,7 +231,7 @@ class PRTMailMessage(models.Model):
         if self.email_cc:
             self.personal_partner_cc_ids |= self.parse_address_make_personal(self.email_cc, user)
         if self.email_from:
-            self.personal_author_id |= self.parse_address_make_personal(self.email_from, user)
+            self.personal_author_id = self.parse_address_make_personal(self.email_from, user)
 
 
     def make_one_personal_in(self, user=False):
@@ -243,7 +243,7 @@ class PRTMailMessage(models.Model):
         if self.email_cc:
             self.personal_partner_cc_ids |= self.parse_address_make_personal(self.email_cc, user)
         if self.email_from:
-            self.personal_author_id |= self.parse_address_make_personal(self.email_from, user)
+            self.personal_author_id = self.parse_address_make_personal(self.email_from, user)
 
 
 
