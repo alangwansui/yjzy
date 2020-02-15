@@ -17,10 +17,18 @@ odoo.define('product_category_tree.Main', function (require) {
             var self = this;
             self.bExpand = true;
 
+
+            var ctx = self.getContext();
+            _.extend(ctx, this.initialState.context);
+
+            console.info('=ctx==', ctx, this.initialState.context);
+
             var rpc = this._rpc({
                 model: self.modelName,
                 method: 'get_categories',
-                args: [[], self.context],
+                args: [],
+                context: ctx
+
             }).then(function (result) {
                 if (!result.do_flag) return;
                 var data = result.data;
@@ -60,7 +68,7 @@ odoo.define('product_category_tree.Main', function (require) {
 
                 var setting = {
                     check: {
-                        enable: true,
+                        enable: false,
                         nocheckInherit: true,
 
                     },
@@ -80,8 +88,8 @@ odoo.define('product_category_tree.Main', function (require) {
                         }
                     }
                 };
-                self.$ztree = $.fn.zTree.init(self.$tree, setting, data);
 
+                self.$ztree = $.fn.zTree.init(self.$tree, setting, data);
 
                 //self.$ztree.expandAll(true);
 

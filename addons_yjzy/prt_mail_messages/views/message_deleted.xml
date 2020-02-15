@@ -187,7 +187,7 @@
         <field name="res_model">mail.message</field>
         <field name="domain">[('message_type', '=', 'email'),('state_delete','=','recycle')]</field>
         <!--field name="context">{'check_messages_access': True}</field-->
-        <field name="context">{'is_out': 1}</field>
+        <field name="context">{'is_out': 1, 'no_show_tree_keys': ['mail_list_income', 'mail_list_out', 'user']}</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="view_ids" eval="[(5, 0, 0),
