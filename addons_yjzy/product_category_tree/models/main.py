@@ -41,16 +41,16 @@ class mail_message(models.Model):
     def get_categories(self):
         if self._name == 'mail.message':
             data = [
-                {'id': 'newmail', 'pid': None, 'name': '写邮件', 'no_action': True},
-                {'id': 'mail_list_income', 'pid': None, 'name': '收件箱', 'no_action': False,'special_domain': [('state_delete', '!=', 'recycle'),('alias_user_id','=', self._uid ),('message_type', '=', 'email'), ('process_type', '=', 'in')]},
-                {'id': 'mail_list_out', 'pid': None, 'name': '发件箱', 'no_action': False,'special_domain': [('state_delete', '!=', 'recycle'),('author_id.user_ids','=', self._uid),('message_type', '=', 'email'), ('process_type', '=', False)]},
-                {'id': 'mail_list_recycle', 'pid': None, 'name': '回收站', 'no_action': False, 'special_domain': [('message_type', '=', 'email'), ('state_delete', '=', 'recycle')]},
+                {'id': 'newmail', 'pid': None, 'name': '写邮件', 'no_action': True, 'nocheck': True},
+                {'id': 'mail_list_income', 'pid': None, 'name': '收件箱', 'checked': True,  'no_action': False,'special_domain': [('state_delete', '!=', 'recycle'),('alias_user_id','=', self._uid ),('message_type', '=', 'email'), ('process_type', '=', 'in')]},
+                {'id': 'mail_list_out', 'pid': None, 'name': '发件箱', 'checked': True, 'no_action': False,'special_domain': [('state_delete', '!=', 'recycle'),('author_id.user_ids','=', self._uid),('message_type', '=', 'email'), ('process_type', '=', False)]},
+                {'id': 'mail_list_recycle', 'pid': None, 'name': '回收站', 'no_action': False, 'nocheck': True, 'special_domain': [('message_type', '=', 'email'), ('state_delete', '=', 'recycle')]},
                 #{'id': 'mail_list_deleted', 'pid': None, 'name': '已删除', 'no_action': False,'special_domain': [('message_type', '=', 'email'), ('active', '=', False)]},
-                #{'id': 'mail_list_draft', 'pid': None, 'name': '草稿箱', 'no_action': False,'special_domain': [('message_type', '=', 'email')]},
-                {'id': 'customer', 'pid': None, 'name': '客户', 'no_action': True},
-                {'id': 'supplier', 'pid': None, 'name': '供应商', 'no_action': True},
-                {'id': 'personal', 'pid': None, 'name': '个人通讯录', 'no_action': True},
-                {'id': 'user', 'pid': None, 'name': '用户', 'no_action': True},
+                {'id': 'mail_list_draft', 'pid': None, 'name': '草稿箱', 'no_action': False,'special_domain': [('message_type', '=', 'email')]},
+                {'id': 'customer', 'pid': None, 'name': '客户', 'no_action': True, 'nocheck': True},
+                {'id': 'supplier', 'pid': None, 'name': '供应商', 'no_action': True, 'nocheck': True},
+                {'id': 'personal', 'pid': None, 'name': '个人通讯录', 'no_action': True, 'nocheck': True},
+                {'id': 'user', 'pid': None, 'name': '用户', 'no_action': True, 'nocheck': True},
 
                # {'id': 'mail_list', 'pid': None, 'name': '邮件列表', 'no_action': True},
 

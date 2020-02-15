@@ -59,8 +59,16 @@ odoo.define('product_category_tree.Main', function (require) {
 //append，appendTo，after，before，insertAfter，insertBefore，appendChild
 
                 var setting = {
+                    check: {
+                        enable: true,
+                        nocheckInherit: true,
+
+                    },
+
                     callback: {
-                        onClick: _.bind(self.on_click_treeitem, self)
+                        onClick: _.bind(self.on_click_treeitem, self),
+                        onCheck: _.bind(self.on_check_treeitem, self),
+
                     },
                     data: {
                         simpleData: {
@@ -73,7 +81,11 @@ odoo.define('product_category_tree.Main', function (require) {
                     }
                 };
                 self.$ztree = $.fn.zTree.init(self.$tree, setting, data);
+
+
                 //self.$ztree.expandAll(true);
+
+
 
             });
 
@@ -82,9 +94,16 @@ odoo.define('product_category_tree.Main', function (require) {
 
         make_domain: function (treeNode) {
             var self = this;
-            var mydomain = [self.initialState.domain];
+            //var mydomain = [self.initialState.domain];
 
-            console.info('===make_domain==', mydomain, treeNode.special_domain)
+
+            var mydomain = this.getParent().searchview.build_search_data().domains;
+
+            console.info('===initdomain==', mydomain);
+
+            //console.info('===getActiveDomain==', this.getActiveDomain() );
+
+
 
             if (treeNode.special_domain){
                 mydomain = mydomain.concat([treeNode.special_domain]);
@@ -116,8 +135,19 @@ odoo.define('product_category_tree.Main', function (require) {
             return {contexts: self.initialState.context, domains: mydomain, groupbys: self.initialState.groupedBy}
         },
 
+        on_category_expand: function () {
+            if (this.$ztree) {
+                this.bExpand = !this.bExpand;
+                this.$ztree.expandAll(this.bExpand);
+            }
+        },
+
         on_click_treeitem: function (event, treeId, treeNode, clickFlag) {
-            console.info('==on_click_treeitem=1', this.modelName);
+            console.info('=on_click_treeitem=:', this.modelName);
+
+
+            console.info('=on_click_treeitem=2:',this.initialState);
+
 
 
             //撰写邮件
@@ -147,10 +177,11 @@ odoo.define('product_category_tree.Main', function (require) {
                         //target: 'new',
                         context: { },
                         res_model: 'mail.compose.message',
+                        clear_breadcrumbs: true,
                     });
                 }else{
                     //消息下点击 非草稿，启用过滤
-                    console.info('=====on_click_treeitem==', event, treeId, treeNode, clickFlag);
+                    //console.info('=====on_click_treeitem==', event, treeId, treeNode, clickFlag);
                     if (!treeNode.no_action) {
                         var domain = this.make_domain(treeNode);
                         console.info('=====domain==', domain);
@@ -163,7 +194,7 @@ odoo.define('product_category_tree.Main', function (require) {
 
             }else{
                 //撰稿模型下点击非 草稿
-                console.info('=====撰稿模型下点击非 草稿==', odoo, this.modelName,treeNode.id);
+                //console.info('=====撰稿模型下点击非 草稿==', odoo, this.modelName,treeNode.id);
                 if(treeNode.id != 'mail_list_draft') {
 
                     //UserMenu.menu_click(1);
@@ -177,10 +208,11 @@ odoo.define('product_category_tree.Main', function (require) {
                         //target: 'new',
                         context: {},
                         res_model: 'mail.message',
+                        clear_breadcrumbs: true,
                     });
                 //撰稿模型下点击 草稿
                 }else{
-                    console.info('=====撰稿模型下点击 草稿==');
+                    //console.info('=====撰稿模型下点击 草稿==');
 
 
                 }
@@ -198,11 +230,42 @@ odoo.define('product_category_tree.Main', function (require) {
 
         },
 
-        on_category_expand: function () {
-            if (this.$ztree) {
-                this.bExpand = !this.bExpand;
-                this.$ztree.expandAll(this.bExpand);
+        on_check_treeitem: function(event, treeId, treeNode){
+            //console.info(treeNode.checked);
+            var mydomain = this.get_check_domain();
+
+            var search_param = {contexts: this.initialState.context, domains: mydomain, groupbys: this.initialState.groupedBy};
+
+            this.trigger_up('search', search_param);
+        },
+
+        get_check_domain: function(){
+            //console.info('>>get_check_domain>>');
+
+            var dm = [this.initialState.domain];
+
+            var checked_nodes = this.$ztree.getCheckedNodes();
+
+            for(var i in checked_nodes){
+                var nd = checked_nodes[i];
+                //console.info('===', checked_nodes[i], checked_nodes[i].special_domain);
+
+                dm.concat(  nd.special_domain );
             }
+
+            //console.info('>>get_check_domain>>', dm);
+
+            return dm
+
+
+        },
+
+        filter_check_node: function(){
+
         }
+
+
+
+
     });
 });
