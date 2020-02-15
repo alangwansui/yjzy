@@ -182,10 +182,10 @@
 
 
     <record id="action_mail_message_deleted" model="ir.actions.act_window">
-        <field name="name">已删除</field>
+        <field name="name">回收站</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">mail.message</field>
-        <field name="domain">[('message_type', '=', 'email'),('有效','=',False)]</field>
+        <field name="domain">[('message_type', '=', 'email'),('state_delete','=','recycle')]</field>
         <!--field name="context">{'check_messages_access': True}</field-->
         <field name="context">{'is_out': 1}</field>
         <field name="view_type">form</field>
@@ -194,7 +194,7 @@
           (0, 0, {'view_mode': 'tree', 'view_id': ref('prt_mail_message_deleted_tree')}),
           (0, 0, {'view_mode': 'form', 'view_id': ref('prt_mail_message_deleted_form')})]"/>
     </record>
-    <menuitem id="menu_mail_message_deleted" name="已删除" parent="prt_messages_root" action="action_mail_message_deleted"/>
+    <menuitem id="menu_mail_message_deleted" name="回收站" parent="prt_messages_root" action="action_mail_message_deleted"/>
 
 </odoo>
 

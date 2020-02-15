@@ -2,7 +2,7 @@
 <odoo>
 
 
-    <record id="prt_mail_message_income_tree" model="ir.ui.view">
+    <record id="prt_mail_message_personal_tree" model="ir.ui.view">
         <field name="name">prt.mail.message.tree</field>
         <field name="model">mail.message</field>
         <field name="arch" type="xml">
@@ -37,11 +37,11 @@
             </tree>
         </field>
     </record>
-    <record id="view_message_income_kanban" model="ir.ui.view">
+    <record id="view_message_personal_kanban" model="ir.ui.view">
         <field name="name">mail.message.kanban</field>
         <field name="model">mail.message</field>
         <field name="arch" type="xml">
-        <kanban class="o_kanban_mobile o_kanban_dashboard o_income_kanban" default_order="date desc, id desc" decoration-bf="have_read==False" decoration-danger="is_error==True">
+        <kanban class="o_kanban_mobile o_kanban_dashboard o_personal_kanban" default_order="date desc, id desc" decoration-bf="have_read==False" decoration-danger="is_error==True">
                 <field name="have_read"/>
                 <field name="is_error"/>
                 <field name="author_display"/>
@@ -127,7 +127,7 @@
 
         </field>
     </record>
-    <record id="prt_mail_message_income_form" model="ir.ui.view">
+    <record id="prt_mail_message_personal_form" model="ir.ui.view">
         <field name="name">prt.mail.message.form</field>
         <field name="model">mail.message</field>
         <field name="arch" type="xml">
@@ -282,21 +282,23 @@
     </record>
 
 
-    <record id="action_mail_messages_income" model="ir.actions.act_window">
-        <field name="name">收件箱</field>
+    <record id="action_mail_messages_personal" model="ir.actions.act_window">
+        <field name="name">所有邮件</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">mail.message</field>
-        <field name="domain">[('alias_user_id','=',uid),('process_type', '=', 'in'),('message_type', '=', 'email')]</field>
+        <field name="domain">[('message_type', '=', 'email'),'|',('all_partner_ids.user_id', '=' , [uid]),'|',('all_partner_ids.parent_id.user_id', '=' , [uid]),
+            '|',('all_user_ids','in',[uid]),'|',('all_user_ids.sup_message_uids','in',[uid]),'|',('all_personal_ids.user_id','in',[uid]),'|',('alias_user_id','=',uid),
+            '|',('author_id.user_ids','=', [uid]),'|',('all_partner_ids.parent_id.assistant_id', '=' , [uid]),('all_partner_ids.assistant_id', '=' , [uid])] </field>
         <!--field name="context">{'check_messages_access': True}</field-->
         <field name="context">{}</field>
         <field name="view_mode">tree,kanban,form</field>
         <field name="view_type">form</field>
         <field name="view_ids" eval="[(5, 0, 0),
-          (0, 0, {'view_mode': 'tree', 'view_id': ref('prt_mail_message_income_tree')}),
-          (0, 0, {'view_mode': 'form', 'view_id': ref('prt_mail_message_income_form')})]"/>
+          (0, 0, {'view_mode': 'tree', 'view_id': ref('prt_mail_message_personal_tree')}),
+          (0, 0, {'view_mode': 'form', 'view_id': ref('prt_mail_message_personal_form')})]"/>
 
     </record>
-    <menuitem id="menu_mail_messages_income" name="收件箱" parent="prt_messages_root" action="action_mail_messages_income"/>
+    <menuitem id="menu_mail_messages_personal" name="所有邮件" parent="prt_messages_root" action="action_mail_messages_personal"/>
 
 
 </odoo>

@@ -2,199 +2,168 @@
 <odoo>
 
 
-    <record id="prt_mail_message_draft_tree" model="ir.ui.view">
-        <field name="name">prt.mail.message.tree</field>
-        <field name="model">mail.message</field>
+    <!--########################
+       # Mail.Compose.Message #
+       ########################-->
+
+    <record model="ir.ui.view" id="prt_mail_compose_message_view_draft_tree">
+        <field name="name">mail.compose.message.tree</field>
+        <field name="model">mail.compose.message</field>
         <field name="arch" type="xml">
-            <tree string="草稿箱" decoration-bf="needaction==True" decoration-danger="is_error==True" default_order="date desc, id desc" create='false'>
-                <field name="body_text" string="文本" invisible="1"/>
-                <field name="body" string="内容" invisible="1"/>
-                <button name="tip_button" type="object" class="tip_button" icon="fa-th-large"/>
-
-                <field name="author_display" groups="base.group_system"/>
-                <field name="author_allowed_id" groups="base.group_system"/>
-                <field name="email_to" groups="base.group_system"/>
-
-
-                <button name="dummy" type="object" class="oe_stat_button" icon="fa-star" attrs="{'invisible': [('starred', '=', False)]}"/>
-                <button readonly="1" name="dummy" type="object" class="oe_inline oe_stat_button" icon="fa-paperclip"
-                        attrs="{'invisible':[('attachment_count', '=', 0)]}"/>
-                <field name="subject_display" groups="base.group_system"/>
+            <tree string="撰稿" create="true">
+                <field name="email_to"/>
                 <field name="subject"/>
-
-                <field name="partner_cc_ids" widget="many2many_tags" groups="base.group_system"/>
-                <field name="needaction" groups="base.group_system"/>
-                <field name="attachment_count" groups="base.group_system"/>
-                <field name="starred" groups="base.group_system"/>
-                <field name="is_error" groups="base.group_system"/>
-                <field name="compose_id" groups="base.group_system"/>
+                <field name="message_count" groups="base.group_system"/>
+                <field name="mail_count" groups="base.group_system"/>
+                <field name="is_sent"/>
                 <field name="date"/>
-                <field name="process_type" groups="base.group_system"/>
-                <field name="state_delete"/>
             </tree>
         </field>
     </record>
-    <record id="prt_mail_message_draft_form" model="ir.ui.view">
-        <field name="name">prt.mail.message.form</field>
-        <field name="model">mail.message</field>
+
+    <record model="ir.ui.view" id="new_mail_compose_message_draft_view_form">
+        <field name="name">mail.compose.message.form</field>
+        <field name="model">mail.compose.message</field>
+        <field name="priority">1</field>
         <field name="arch" type="xml">
-            <form string="草稿箱" create='false' edit='false'>
-                <div attrs="{'invisible':[('is_error', '!=', True)]}" name="pro" colspan="2" class="oe_form_box_info oe_text_center" style="color:red;">
-                    <p>Error while sending message. Please check error log under "Email Messages" tab</p>
-                </div>
-                <sheet>
-                    <div class="oe_button_box" name="button_box">
-                        <button name="reply" type="object" class="oe_stat_button" icon="fa-copy" string="转发"
-                                context="{'wizard_mode': 'forward','default_force_notify_email': 1}"
-                                help="Copy message to other record. Original message text will be qouted and kept. Followers of the other record will be notified!"/>
+            <form string="撰稿">
+                <header>
+                    <button string="检查邮件地址" name="mail_address_check" type="object" class="btn-primary" groups="base.group_system"/>
+                </header>
+                <group>
+                    <!-- truly invisible fields for control and options -->
+                    <field name="composition_mode" invisible="1"/>
+                    <field name="model" invisible="1"/>
+                    <field name="res_id" invisible="1"/>
+                    <field name="is_log" invisible="1"/>
+                    <field name="parent_id" invisible="1"/>
+                    <field name="mail_server_id" invisible="1"/>
+                    <field name="active_domain" invisible="1"/>
 
-                        <button name="move" type="object" class="oe_stat_button" icon="fa-arrow-right" string="Move"
-                                help="Move message from current to other record" invisible="0" groups="base.group_system"/>
-                        <button string="标记已读" type="object" name="set_message_done"
-                                class="oe_stat_button"
-                                icon="fa-file" attrs="{'invisible': [('needaction', '=', False)]}" groups="base.group_system"/>
-                        <button string="标记未读" type="object" name="mark_as_unread"
-                                class="oe_stat_button"
-                                icon="fa-check" attrs="{'invisible': [('needaction', '=', True)]}" groups="base.group_system"/>
+                    <!-- Various warnings -->
+                    <div class="oe_form_box_info oe_text_center"
+                         attrs="{'invisible': [('active_domain', '=', False)]}">
+                        <p attrs="{'invisible': [('use_active_domain', '=', False)]}">
+                            <strong>
+                                All records matching your current search filter will be mailed,
+                                not only the ids selected in the list view.
+                            </strong>
+                            <br/>
+                            The email will be sent for all the records selected in the list.
+                            <br/>
+                            Confirming this wizard will probably take a few minutes blocking your browser.
+                        </p>
+                        <p attrs="{'invisible': [('use_active_domain', '=', True)]}">
+                            <strong>Only records checked in list view will be used.</strong>
+                            <br/>
+                            The email will be sent for all the records selected in the list.
+                        </p>
+                        <p class="mt8">
+                            <span attrs="{'invisible': [('use_active_domain', '=', True)]}">
+                                If you want to send it for all the records matching your search criterion, check this box :
+                            </span>
+                            <span attrs="{'invisible': [('use_active_domain', '=', False)]}">
+                                If you want to use only selected records please uncheck this selection box :
+                            </span>
+                            <field class="oe_inline" name="use_active_domain"/>
+                        </p>
+                    </div>
+                    <!-- visible wizard -->
+                    <field name="email_from" attrs="{'invisible':[('composition_mode', '!=', 'mass_mail')]}"/>
 
-                        <button name="edit_again" type="object" class="oe_stat_button" context="{'again_type': 'out_again',  'default_force_notify_email': 1}"
-                                icon="fa-arrow-right" string="再次编辑"/>
-                        <button name="edit_again" type="object" class="oe_stat_button" context="{'again_type': 'out_all',  'default_force_notify_email': 1}"
-                                icon="fa-arrow-right" string="回复全部"/>
 
-                        <button name="toggle_message_starred" type="object" class="oe_stat_button"
-                                icon="fa-check" attrs="{'invisible': [('starred', '=', True)]}"
-                                string="标星"/>
-                        <button name="toggle_message_starred" type="object" class="oe_stat_button"
-                                icon="fa-star" attrs="{'invisible': [('starred', '=', False)]}"
-                                string="取消标星"/>
-                        <button name="thread_messages" type="object" class="oe_stat_button"
-                                icon="fa-envelope" attrs="{'invisible': [('thread_messages_count', '&lt;', 2)]}" groups="base.group_system">
-                            <field name="thread_messages_count" widget="statinfo" string="In thread"/>
-                        </button>
-
-
-                        <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
-                            <field name="active" widget="boolean_button"
-                                   options='{"terminology": "archive"}'/>
-                        </button>
+                    <div groups="base.group_system" attrs="{'invisible': [('is_log', '=', True)]}">
+                        <span attrs="{'invisible': [('composition_mode', '!=', 'mass_mail')]}">
+                            <strong>Email mass mailing</strong>
+                            on
+                            <span attrs="{'invisible': [('use_active_domain', '=', True)]}">the selected records</span>
+                            <span attrs="{'invisible': [('use_active_domain', '=', False)]}">the current search filter</span>.
+                        </span>
+                        <span attrs="{'invisible':['|', ('model', '=', False), ('composition_mode', '=', 'mass_mail')]}">Followers of the document and</span>
 
 
                     </div>
-                    <field name="author_avatar" widget="image" class="oe_avatar"/>
-                    <div class="oe_title">
-                        <h1>
-                            <field name="subject"/>
-                        </h1>
-
-                    </div>
-                    <group name="base">
-                        <field name="all_partner_ids" widget="many2many_tags"/>
-                        <field name="all_personal_ids" widget="many2many_tags"/>
-                        <field name="all_user_ids" widget="many2many_tags"/>
-
-                        <field name="personal_partner_ids" widget="many2many_tags" options="{'can_create':1,  'quick_create':1, 'create_name_field': 'email'}"/>
-                        <field name="personal_partner_cc_ids" widget="many2many_tags" options="{'can_create':1,  'quick_create':1, 'create_name_field': 'email'}"/>
-                        <field name="personal_author_id"/>
+                </group>
+                <group>
+                    <field name="personal_partner_ids" widget="many2many_tags"  context="{'tag_code': 'out_tmp'}"
+                           domain="[('tag_id.code','in',['normal','income_tmp'])]"
+                           options="{'can_create':1,  'quick_create':1, 'create_name_field': 'email'}"/>
+                    <field name="partner_ids" string="收件人" widget="many2many_tags_email" placeholder="Add contacts to notify..."
+                           context="{'force_email':True, 'show_email':True}"
+                           attrs="{'invisible': [('composition_mode', '!=', 'comment')]}"/>
+                    <field name="manual_to" string="系统外收件人"/>
 
 
-                       <!-- <field name="author_display" string="作者"/>
-                        <field name="email_from" groups="base.group_system"/>
-                        <field name="author_id" string="发件人" groups="base.group_system"/>-->
-                        <!--<field name="email_to"/>
-                        <label for="email_to" string="收件人" groups="base.group_system"/>
-                        <div name="email_to" class="o_row" string="收件人" groups="base.group_system">
-                            <field name="partner_ids" widget="many2many_tags_email" context="{'show_email': 1}"/>
-                            <field name="manual_to"/>
-                        </div>
-                        <field name="email_cc"/>
-                        <label for="email_cc" string="抄送人" groups="base.group_system"/>
-                        <div name="email_cc" class="o_row" string="收件人" groups="base.group_system">
-                            <field name="partner_cc_ids" widget="many2many_tags_email" context="{'show_email': 1}"/>
-                            <field name="manual_cc"/>
-                        </div>-->
-                       <!-- <field name="partner_bcc_ids" widget="many2many_tags_email" context="{'show_email': 1}" groups="base.group_system"/>-->
-                        <field name="date"/>
-                    </group>
+                    <field name="personal_partner_cc_ids" widget="many2many_tags" context="{'tag_code': 'out_tmp'}"
+                           domain="[('tag_id.code','in',['normal','income_tmp'])]"
+                           options="{'can_create':1,  'quick_create':1, 'create_name_field': 'email'}"/>
+                    <field name="partner_cc_ids" placeholder="Add CC contacts to notify..." string="抄送人" widget="many2many_tags_email"
+                           context="{'force_email':True, 'show_email':True}"/>
+                    <field name="manual_cc" string="系统外抄送人"/>
 
 
-                    <notebook>
-                        <page name="body" string="内容">
-                            <div style="margin-left:10px">
-                                <br/>
-                                <field name="body" nolabel="1"/>
-                            </div>
-                        </page>
-                        <page string="其他信息" groups="base.group_no_one">
-                            <group>
-                                <field name="inner_partner_ids" widget="many2many_tags"/>
-                                <field name="needaction"/>
-                                <field name="starred"/>
-                                <field name="author_allowed_id" attrs="{'invisible':[('author_allowed_id', '=', False)]}"/>
-                                <field name="ref_partner_ids" widget="many2many_tags" attrs="{'invisible':[('ref_partner_count', '=', 0)]}"/>
-                                <field name="ref_partner_count" invisible="1"/>
-                                <field name="partner_count" invisible="1"/>
-                                <field name="partner_allowed_ids" attrs="{'invisible':[('partner_count', '=', 0)]}" widget="many2many_tags"/>
-                                <field name="state_delete"/>
+                    <field name="partner_bcc_ids" groups="base.group_system" placeholder="Add BCC contacts to notify..." widget="many2many_tags_email"
+                           context="{'force_email':True, 'show_email':True}"/>
 
-                            </group>
-                            <group name="technical">
-                                <field name="alias_id"/>
-                                <field name="alias_user_id"/>
-                                <field name="message_id"/>
-                                <field name="record_ref"/>
-                                <field name="parent_id"/>
-                                <field name="message_type"/>
-                                <field name="subtype_id"/>
-                                <field name="compose_id"/>
-                                <field name="fetchmail_server_id"/>
-                                <field name="force_notify_email"/>
-                                <field name="channel_ids" widget="many2many_tags"/>
-                                <field name="process_type"/>
-                            </group>
 
-                        </page>
-                        <page name="attachments" string="Attachments" attrs="{'invisible':[('attachment_count', '=', 0)]}">
-                            <sheet>
-                                <field name="attachment_count" invisible="1"/>
-                                <field name="attachment_allowed_ids" widget="many2many_binary"/>
-                            </sheet>
-                        </page>
-                        <page name="emails" string="Email Messages" attrs="{'invisible':[('is_error', '!=', True)]}">
-                            <sheet>
-                                <field name="is_error" invisible="1"/>
-                                <field name="mail_mail_ids">
-                                    <tree name="email_tree" create="false" edit="false">
-                                        <field name="state"/>
-                                        <field name="mail_server_id"/>
+                    <field name="wizard_mode" invisible="1"/>
+                    <field name="forward_ref" attrs="{'invisible':[('wizard_mode', 'not in', ['forward', 'compose'])],
+                    'required':[('wizard_mode', 'in', ['compose'])]}"/>
 
-                                        <field name="failure_reason"/>
-                                    </tree>
-                                </field>
-                            </sheet>
-                        </page>
 
-                    </notebook>
-                </sheet>
+                    <field name="email_from" groups="base.group_system" invisible="1"/>
+                    <field name="email_to" groups="base.group_system" invisible="1"/>
+                    <field name="email_cc" groups="base.group_system" invisible="1"/>
+                    <field name="subject" placeholder="Subject..." required="False"/>
+                </group>
+                <group col="4">
+                    <field name="attachment_ids" widget="many2many_binary" string="添加附件" nolabel="1" colspan="2"/>
+                    <field name="template_id" options="{'no_create': True}" groups="base.group_system"
+                           context="{'default_model': model, 'default_body_html': body, 'default_subject': subject}"/>
+                </group>
+                <group groups="base.group_system">
+                    <field name="message_count"/>
+                    <field name="message_ids"/>
+                    <field name="mail_count"/>
+                    <field name="mail_ids"/>
+                    <field name="force_notify_email"/>
+                    <field name="is_sent"/>
+                    <field name="last_send_time"/>
+                </group>
+
+
+                <!-- mass post -->
+                <field name="notify"
+                       attrs="{'invisible':['|', ('composition_mode', '!=', 'mass_post')]}"/>
+                <!-- mass mailing -->
+                <field name="no_auto_thread" attrs="{'invisible':[('composition_mode', '!=', 'mass_mail')]}"/>
+                <field name="reply_to" placeholder="Email address to redirect replies..."
+                       attrs="{'invisible':['|', ('no_auto_thread', '=', False), ('composition_mode', '!=', 'mass_mail')],
+                                    'required':[('no_auto_thread', '=', True), ('composition_mode', '=', 'mass_mail')]}"/>
+
+                <field name="body"/>
+
+                <footer>
+                    <button string="发送" name="send_mail_button" attrs="{'invisible':[('is_sent','=',True)]}" type="object" class="btn-primary"
+                            confirm="确定要发送邮件"/>
+                    <button string="保存" name="save_action" type="object" class="btn-primary"/>
+                    <button string="取消" class="btn-default" special="cancel"/>
+                </footer>
             </form>
         </field>
     </record>
 
-
-    <record id="action_mail_message_draft" model="ir.actions.act_window">
+    <record model="ir.actions.act_window" id="action_mail_compose_message_draft_tree_view">
         <field name="name">草稿箱</field>
         <field name="type">ir.actions.act_window</field>
-        <field name="res_model">mail.message</field>
-        <field name="domain">[('message_type', '=', 'email'),('author_id.user_ids','=', uid),('is_sent','=', False)]</field>
-        <!--field name="context">{'check_messages_access': True}</field-->
-        <field name="context">{'is_out': 1, 'use_channel_name': 'out_mail', 'show_send_button': 1, 'default_force_notify_email': 1}</field>
+        <field name="res_model">mail.compose.message</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
-        <field name="view_ids" eval="[(5, 0, 0),
-          (0, 0, {'view_mode': 'tree', 'view_id': ref('prt_mail_message_draft_tree')}),
-          (0, 0, {'view_mode': 'form', 'view_id': ref('prt_mail_message_draft_form')})]"/>
+        <field name="domain">[('message_type', '=', 'email'),('author_id.user_ids','=', uid),('is_sent','=', False)]</field>
+        <field name="context">{'use_channel_name': 'out_mail', 'show_send_button': 1, 'default_force_notify_email': 1}</field>
     </record>
-    <menuitem id="menu_mail_message_draft" name="草稿箱" parent="prt_messages_root" action="action_mail_message_draft"/>
+    <menuitem id="menu_mail_compose_message_draft" name="草稿箱" parent="prt_messages_root"
+              action="action_mail_compose_message_draft_tree_view"/>
+
 
 </odoo>
-
