@@ -68,7 +68,7 @@ odoo.define('product_category_tree.Main', function (require) {
 
                 var setting = {
                     check: {
-                        enable: false,
+                        enable: true,
                         nocheckInherit: true,
 
                     },
