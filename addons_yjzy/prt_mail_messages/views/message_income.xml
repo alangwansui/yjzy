@@ -237,6 +237,7 @@
                                 <field name="partner_count" invisible="1"/>
                                 <field name="partner_allowed_ids" attrs="{'invisible':[('partner_count', '=', 0)]}" widget="many2many_tags"/>
                                 <field name="state_delete"/>
+                                <field name="process_type"/>
                             </group>
                             <group name="technical" groups="base.group_system">
                                 <field name="alias_id"/>

@@ -46,8 +46,8 @@ class mail_message(models.Model):
         if self._name == 'mail.message':
             data_tmp = [
                 {'id': 'newmail', 'pid': None, 'name': '写邮件', 'no_action': True, 'nocheck': True},
-                {'id': 'mail_list_income', 'pid': None, 'name': '收件箱', 'checked': True,  'no_action': False,'special_domain': [('process_type', '=', 'in')]},
-                {'id': 'mail_list_out', 'pid': None, 'name': '发件箱', 'checked': True, 'no_action': False,'special_domain': [('process_type', '!=', 'in')]},
+                # {'id': 'mail_list_income', 'pid': None, 'name': '收取的', 'nocheck': True,  'no_action': False,'special_domain': [('process_type', '=', 'in')]},
+                # {'id': 'mail_list_out', 'pid': None, 'name': '发送的', 'nocheck': True, 'no_action': False,'special_domain': [('process_type', '!=', 'in')]},
                 #{'id': 'mail_list_recycle', 'pid': None, 'name': '回收站', 'no_action': False, 'nocheck': True, 'special_domain': [('message_type', '=', 'email'), ('state_delete', '=', 'recycle')]},
                 #{'id': 'mail_list_deleted', 'pid': None, 'name': '已删除', 'no_action': False,'special_domain': [('message_type', '=', 'email'), ('active', '=', False)]},
                 #{'id': 'mail_list_draft', 'pid': None, 'name': '草稿箱', 'no_action': False,'special_domain': [('message_type', '=', 'email')]},
