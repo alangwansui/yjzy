@@ -186,7 +186,7 @@ odoo.define('product_category_tree.Main', function (require) {
                     view_mode: 'form',
                     views: [[false, 'form']],
                     target: 'new',
-                    context: {'default_force_notify_email':1 },
+                    context: {default_force_notify_email:1 , default_subject: ' '},
                     res_model: 'mail.compose.message',
                 });
             }
