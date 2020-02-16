@@ -32,9 +32,9 @@
                 <field name="alias_id" groups="base.group_system" invisible="1"/>
                 <field name="have_read" groups="base.group_system" invisible="1"/>
                 <field name="had_replied"/>
-                <field name="process_type" groups="base.group_system" invisible="0"/>
-                <field name="state_delete"/>
-                <field name="is_repeated"/>
+                <field name="process_type" />
+                <field name="state_delete" groups="base.group_system"/>
+                <field name="is_repeated" groups="base.group_system" />
             </tree>
         </field>
     </record>
@@ -137,7 +137,7 @@
                     <p>Error while sending message. Please check error log under "Email Messages" tab</p>
                 </div>
                 <sheet>
-                    <div class="oe_button_box" name="button_box">
+                    <div class="oe_button_box" name="button_box" groups="base.group_system">
                         <button name="reply" type="object" class="oe_stat_button" icon="fa-reply" string="回复"
                                 context="{'wizard_mode': False,'default_force_notify_email': 1}"
                                 help="Post new message to record. Record followers will be notified!"/>
@@ -187,34 +187,34 @@
                         </h3>
                     </div>
                     <group name="base">
-                        <field name="all_partner_ids" widget="many2many_tags"/>
-                        <field name="all_personal_ids" widget="many2many_tags"/>
-                        <field name="all_user_ids" widget="many2many_tags"/>
+                        <field name="all_partner_ids" widget="many2many_tags" groups="base.group_system"/>
+                        <field name="all_personal_ids" widget="many2many_tags" groups="base.group_system"/>
+                        <field name="all_user_ids" widget="many2many_tags" groups="base.group_system"/>
 
 
-                        <field name="personal_partner_ids" widget="many2many_tags" options="{'can_create':1,  'quick_create':1, 'create_name_field': 'email'}"/>
-                        <field name="personal_partner_cc_ids" widget="many2many_tags" options="{'can_create':1,  'quick_create':1, 'create_name_field': 'email'}"/>
-                        <field name="personal_author_id"/>
+                        <field name="personal_partner_ids" string="收件人" widget="many2many_tags" options="{'can_create':1,  'quick_create':1, 'create_name_field': 'email'}"/>
+                        <field name="personal_partner_cc_ids" string="抄送人" widget="many2many_tags" options="{'can_create':1,  'quick_create':1, 'create_name_field': 'email'}"/>
+                        <field name="personal_author_id" string="发件人"/>
 
-                        <field name="author_display" string="作者"/>
+                        <field name="author_display" string="作者" groups="base.group_system"/>
                         <field name="email_from" groups="base.group_system"/>
                         <field name="author_id" string="发件人" groups="base.group_system"/>
                         <field name="email_to" groups="base.group_system" invisible="1"/>
-                       <label for="email_to" string="收件人"/>
-                         <div name="email_to" class="o_row" string="收件人">
+                       <label for="email_to" string="收件人" groups="base.group_system"/>
+                         <div name="email_to" class="o_row" string="收件人" groups="base.group_system">
                             <field name="partner_ids" widget="many2many_tags_email" context="{'show_email': 1}"/>
                             <field name="manual_to"/>
                         </div>
 
                         <field name="email_cc" groups="base.group_system" invisible="1"/>
-                         <label for="email_cc" string="抄送人"/>
-                        <div name="email_cc" class="o_row" string="收件人">
+                         <label for="email_cc" string="抄送人" groups="base.group_system"/>
+                        <div name="email_cc" class="o_row" string="收件人" groups="base.group_system">
                             <field name="partner_cc_ids" widget="many2many_tags_email" context="{'show_email': 1}"/>
                             <field name="manual_cc"/>
                         </div>
                         <field name="partner_bcc_ids" widget="many2many_tags_email" context="{'show_email': 1}" groups="base.group_system"/>
                         <field name="date"/>
-                        <field name="is_repeated"/>
+                        <field name="is_repeated" groups="base.group_system"/>
                         <field name="have_read" widget="boolean_toggle" invisible="1"/>
 
                     </group>
@@ -288,7 +288,7 @@
         <field name="name">所有邮件</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">mail.message</field>
-        <field name="domain">[('message_type', '=', 'email'),('state_delete', '!=', 'recycle'),('is_repeated', '=', False),'|',('all_partner_ids.user_id', '=' , [uid]),'|',('all_partner_ids.parent_id.user_id', '=' , [uid]),
+        <field name="domain">[('message_type', '=', 'email'),('state_delete', '!=', 'recycle'),'|',('all_partner_ids.user_id', '=' , [uid]),'|',('all_partner_ids.parent_id.user_id', '=' , [uid]),
             '|',('all_user_ids','in',[uid]),'|',('all_user_ids.sup_message_uids','in',[uid]),'|',('all_personal_ids.user_id','in',[uid]),'|',('alias_user_id','=',uid),
             '|',('author_id.user_ids','=', [uid]),'|',('all_partner_ids.parent_id.assistant_id', '=' , [uid]),('all_partner_ids.assistant_id', '=' , [uid])] </field>
         <!--field name="context">{'check_messages_access': True}</field-->
