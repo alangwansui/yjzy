@@ -136,14 +136,24 @@ class PRTMailMessage(models.Model):
     is_repeated = fields.Boolean('重复标记')
 
 
-
+    @api.model
     def cron_histroy_out(self):
-        records = self.search([('message_type','=','email'), ('process_type', '=', False)])
+        records = self.search([('message_type','=','email'), ('fetchmail_server_id', '!=', False) ('process_type', '!=', 'ouy')])
         records.write({'process_type': 'out'})
 
-
+    @api.model
     def cron_histroy_is_repeated(self):
         self.search([('message_type', '=', 'email'), ('process_type', '=', False)])
+        sql_str = "select  message_id  from mail_message where message_type = 'email' and is_repeated = 'f' group by message_id having count(message_id)>1;"
+        self._cr.execute(sql_str)
+        for info in self._cr.dictfetchall():
+            recoreds = self.search([('is_repeated','!=',True),('process_type','=','in'),('message_id', '=', info['message_id'])]).filtered(lambda x: x._name == 'mail.message')
+            recoreds.write({'is_repeated': True })
+
+
+
+
+
 
 
 
