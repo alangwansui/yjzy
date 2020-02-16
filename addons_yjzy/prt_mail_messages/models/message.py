@@ -297,8 +297,15 @@ class PRTMailMessage(models.Model):
             msg.process_type = 'out'
 
         #判定重复标记
-        if self.with_context(active_test=False).search([ ('message_id', '=', msg.get('message_id'))]):
-            msg.is_repeated = True
+        if self._name == 'mail.message':
+            repeated_msg = self.with_context(active_test=False).search([('message_id', '=', msg.message_id)]).filtered(lambda x: x._name == 'mail.message')
+            print('==repeated_msg===', self,  repeated_msg, repeated_msg._name )
+
+            if len(repeated_msg) > 1:
+                msg.is_repeated = True
+
+
+
 
         return msg
 
