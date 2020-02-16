@@ -123,6 +123,7 @@ odoo.define('product_category_tree.Main', function (require) {
                         [self.field, 'in', [treeNode.dbid]],
                         [self.field, 'child_of', [treeNode.dbid]],
                         ['state_delete', '!=', 'recycle'],
+                        ['is_repeated', '=', false],
                         ]]);
                     }
                 }else if(treeNode.model == 'personal.partner'){
