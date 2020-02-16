@@ -29,7 +29,7 @@
                 <field name="is_error" groups="base.group_system"/>
                 <field name="compose_id" groups="base.group_system"/>
                 <field name="date"/>
-                <field name="process_type" groups="base.group_system"/>
+                <field name="process_type"/>
                 <field name="state_delete"/>
             </tree>
         </field>
@@ -89,13 +89,13 @@
 
                     </div>
                     <group name="base">
-                        <field name="all_partner_ids" widget="many2many_tags"/>
-                        <field name="all_personal_ids" widget="many2many_tags"/>
-                        <field name="all_user_ids" widget="many2many_tags"/>
+                        <field name="all_partner_ids" widget="many2many_tags" groups="base.group_system"/>
+                        <field name="all_personal_ids" widget="many2many_tags" groups="base.group_system"/>
+                        <field name="all_user_ids" widget="many2many_tags" groups="base.group_system"/>
 
-                        <field name="personal_partner_ids" widget="many2many_tags" options="{'can_create':1,  'quick_create':1, 'create_name_field': 'email'}"/>
-                        <field name="personal_partner_cc_ids" widget="many2many_tags" options="{'can_create':1,  'quick_create':1, 'create_name_field': 'email'}"/>
-                        <field name="personal_author_id"/>
+                        <field name="personal_partner_ids" string="收件人" widget="many2many_tags" options="{'can_create':1,  'quick_create':1, 'create_name_field': 'email'}"/>
+                        <field name="personal_partner_cc_ids" string="抄送人" widget="many2many_tags" options="{'can_create':1,  'quick_create':1, 'create_name_field': 'email'}"/>
+                        <field name="personal_author_id" string="发件人"/>
 
 
                        <!-- <field name="author_display" string="作者"/>
