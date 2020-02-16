@@ -132,6 +132,8 @@ class PRTMailMessage(models.Model):
     all_personal_ids = fields.Many2many('personal.partner', 'ref_all_personal', 'personal_id', 'partner_id',  u'所有通讯录', compute=compute_all_partner, store=True)
     all_user_ids = fields.Many2many('res.users', 'ref_all_users', 'iud', 'mid',  u'所有用户', compute=compute_all_partner, store=True)
 
+    is_repeated = fields.Boolean('重复标记')
+
 
     @api.depends('body')
     def compute_body_text(self):
@@ -293,6 +295,10 @@ class PRTMailMessage(models.Model):
         #<jon> 发邮件
         else:
             msg.process_type = 'out'
+
+        #判定重复标记
+        if self.with_context(active_test=False).search([ ('message_id', '=', msg.get('message_id'))]):
+            msg.is_repeated = True
 
         return msg
 
