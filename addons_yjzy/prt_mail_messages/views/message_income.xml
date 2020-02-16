@@ -32,8 +32,8 @@
                 <field name="alias_id" groups="base.group_system" invisible="1"/>
                 <field name="have_read" groups="base.group_system" invisible="1"/>
                 <field name="had_replied"/>
-                <field name="process_type" groups="base.group_system" invisible="0"/>
-                <field name="state_delete"/>
+                <field name="process_type" groups="base.group_system" invisible="1"/>
+                <field name="state_delete" invisible="1"/>
             </tree>
         </field>
     </record>
@@ -186,34 +186,34 @@
                         </h3>
                     </div>
                     <group name="base">
-                        <field name="all_partner_ids" widget="many2many_tags"/>
-                        <field name="all_personal_ids" widget="many2many_tags"/>
-                        <field name="all_user_ids" widget="many2many_tags"/>
+                        <field name="all_partner_ids" widget="many2many_tags" groups="base.group_system" />
+                        <field name="all_personal_ids" widget="many2many_tags" groups="base.group_system" />
+                        <field name="all_user_ids" widget="many2many_tags" groups="base.group_system" />
 
 
-                        <field name="personal_partner_ids" widget="many2many_tags" options="{'can_create':1,  'quick_create':1, 'create_name_field': 'email'}"/>
-                        <field name="personal_partner_cc_ids" widget="many2many_tags" options="{'can_create':1,  'quick_create':1, 'create_name_field': 'email'}"/>
-                        <field name="personal_author_id"/>
+                        <field name="personal_partner_ids" string="收件人" widget="many2many_tags" options="{'can_create':1,  'quick_create':1, 'create_name_field': 'email'}"/>
+                        <field name="personal_partner_cc_ids" string="抄送人" widget="many2many_tags" options="{'can_create':1,  'quick_create':1, 'create_name_field': 'email'}"/>
+                        <field name="personal_author_id" string="发件人" />
 
-                        <field name="author_display" string="作者"/>
+                        <field name="author_display" string="作者" groups="base.group_system"/>
                         <field name="email_from" groups="base.group_system"/>
                         <field name="author_id" string="发件人" groups="base.group_system"/>
                         <field name="email_to" groups="base.group_system" invisible="1"/>
-                       <label for="email_to" string="收件人"/>
-                         <div name="email_to" class="o_row" string="收件人">
+                       <label for="email_to" string="收件人" groups="base.group_system"/>
+                         <div name="email_to" class="o_row" string="收件人" groups="base.group_system">
                             <field name="partner_ids" widget="many2many_tags_email" context="{'show_email': 1}"/>
                             <field name="manual_to"/>
                         </div>
 
                         <field name="email_cc" groups="base.group_system" invisible="1"/>
-                         <label for="email_cc" string="抄送人"/>
-                        <div name="email_cc" class="o_row" string="收件人">
+                         <label for="email_cc" string="抄送人" groups="base.group_system"/>
+                        <div name="email_cc" class="o_row" string="收件人" groups="base.group_system">
                             <field name="partner_cc_ids" widget="many2many_tags_email" context="{'show_email': 1}"/>
                             <field name="manual_cc"/>
                         </div>
                         <field name="partner_bcc_ids" widget="many2many_tags_email" context="{'show_email': 1}" groups="base.group_system"/>
                         <field name="date"/>
-                        <field name="have_read" widget="boolean_toggle" invisible="1"/>
+                        <field name="have_read" widget="boolean_toggle" invisible="1" />
 
                     </group>
 
@@ -286,7 +286,7 @@
         <field name="name">收件箱</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">mail.message</field>
-        <field name="domain">[('alias_user_id','=',uid),('process_type', '=', 'in'),('message_type', '=', 'email')]</field>
+        <field name="domain">[('alias_user_id','=',uid),('process_type', '=', 'in'),('state_delete','!=','recycle'),('message_type', '=', 'email')]</field>
         <!--field name="context">{'check_messages_access': True}</field-->
         <field name="context">{'no_show_tree_keys': ['mail_list_income', 'mail_list_out', 'user']}</field>
         <field name="view_mode">tree,kanban,form</field>

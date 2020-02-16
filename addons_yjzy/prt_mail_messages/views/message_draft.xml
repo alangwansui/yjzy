@@ -29,6 +29,10 @@
             <form string="撰稿">
                 <header>
                     <button string="检查邮件地址" name="mail_address_check" type="object" class="btn-primary" groups="base.group_system"/>
+                     <button string="发送" name="send_mail_button" attrs="{'invisible':[('is_sent','=',True)]}" type="object" class="btn-primary"
+                            confirm="确定要发送邮件"/>
+                    <button string="保存" name="save_action" type="object" class="btn-primary"/>
+                    <button string="取消" class="btn-default" special="cancel"/>
                 </header>
                 <group>
                     <!-- truly invisible fields for control and options -->
@@ -131,7 +135,7 @@
                     <field name="last_send_time"/>
                 </group>
 
-
+  <notebook><page name="body" string="内容">
                 <!-- mass post -->
                 <field name="notify"
                        attrs="{'invisible':['|', ('composition_mode', '!=', 'mass_post')]}"/>
@@ -141,8 +145,12 @@
                        attrs="{'invisible':['|', ('no_auto_thread', '=', False), ('composition_mode', '!=', 'mass_mail')],
                                     'required':[('no_auto_thread', '=', True), ('composition_mode', '=', 'mass_mail')]}"/>
 
-                <field name="body"/>
-
+                       <div style="margin-left:10px">
+                                <br/>
+                                <field name="body" nolabel="1"/>
+                            </div>
+      </page>
+  </notebook>
                 <footer>
                     <button string="发送" name="send_mail_button" attrs="{'invisible':[('is_sent','=',True)]}" type="object" class="btn-primary"
                             confirm="确定要发送邮件"/>
@@ -161,6 +169,11 @@
         <field name="view_mode">tree,form</field>
         <field name="domain">[('message_type', '=', 'email'),('author_id.user_ids','=', uid),('is_sent','=', False)]</field>
         <field name="context">{'use_channel_name': 'out_mail', 'show_send_button': 1, 'default_force_notify_email': 1}</field>
+        <field name="view_mode">tree,kanban,form</field>
+        <field name="view_type">form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+          (0, 0, {'view_mode': 'tree', 'view_id': ref('prt_mail_compose_message_view_draft_tree')}),
+          (0, 0, {'view_mode': 'form', 'view_id': ref('new_mail_compose_message_draft_view_form')})]"/>
     </record>
     <menuitem id="menu_mail_compose_message_draft" name="草稿箱" parent="prt_messages_root"
               action="action_mail_compose_message_draft_tree_view"/>
