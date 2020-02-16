@@ -146,14 +146,10 @@ class PRTMailMessage(models.Model):
         sql_str = "select  message_id  from mail_message where message_type = 'email' and (is_repeated is null or is_repeated = 'f' ) group by message_id having count(message_id)>1;"
         self._cr.execute(sql_str)
         for info in self._cr.dictfetchall():
-            recoreds = self.search([('is_repeated','!=',True),('process_type','=','in'),('message_id', '=', info['message_id'])]).filtered(lambda x: x._name == 'mail.message')
-            recoreds.write({'is_repeated': True })
+            recoreds = self.search([('is_repeated','!=',True),('message_id', '=', info['message_id'])]).filtered(lambda x: x._name == 'mail.message')
 
-
-
-
-
-
+            if len(recoreds) > 1:
+                recoreds[:-1].write({'is_repeated': True })
 
 
     @api.depends('body')
