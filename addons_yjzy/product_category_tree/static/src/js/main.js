@@ -75,7 +75,7 @@ odoo.define('product_category_tree.Main', function (require) {
 
                     callback: {
                         onClick: _.bind(self.on_click_treeitem, self),
-                        onCheck: _.bind(self.on_check_treeitem, self),
+
 
                     },
                     data: {
@@ -100,23 +100,20 @@ odoo.define('product_category_tree.Main', function (require) {
             return $.when(ret, rpc);
         },
 
-        make_domain: function (treeNode) {
+
+        on_category_expand: function () {
+            if (this.$ztree) {
+                this.bExpand = !this.bExpand;
+                this.$ztree.expandAll(this.bExpand);
+            }
+        },
+
+        make_domain_message: function (treeNode) {
             var self = this;
-            //var mydomain = [self.initialState.domain];
-
-
             var mydomain = this.getParent().searchview.build_search_data().domains;
-
-            console.info('===initdomain==', mydomain);
-
-            //console.info('===getActiveDomain==', this.getActiveDomain() );
-
-
-
             if (treeNode.special_domain){
                 mydomain = mydomain.concat([treeNode.special_domain]);
             }else{
-
                 console.info('===make_domain==2', treeNode.model,  treeNode.domain_fd)
                 if (treeNode.model == 'res.partner'){
                     if (treeNode == -1) {
@@ -143,12 +140,34 @@ odoo.define('product_category_tree.Main', function (require) {
             return {contexts: self.initialState.context, domains: mydomain, groupbys: self.initialState.groupedBy}
         },
 
-        on_category_expand: function () {
-            if (this.$ztree) {
-                this.bExpand = !this.bExpand;
-                this.$ztree.expandAll(this.bExpand);
+        make_domain_compose: function (treeNode) {
+            var self = this;
+            var mydomain = this.getParent().searchview.build_search_data().domains;
+            if (treeNode.special_domain){
+                mydomain = mydomain.concat([treeNode.special_domain]);
+            }else{
+                console.info('===make_domain==2', treeNode.model,  treeNode.domain_fd)
+                if (treeNode.model == 'res.partner'){
+                    if (treeNode == -1) {
+                        mydomain = mydomain.concat([[[self.field, "=", 0], ['state_delete', '!=', 'recycle'],]]);
+                    } else {
+                        mydomain = mydomain.concat([[['all_partner_ids', 'in', [treeNode.dbid]]]]);
+                    }
+                }else if(treeNode.model == 'personal.partner'){
+                        mydomain = mydomain.concat([[['all_personal_ids', "in", [treeNode.dbid]]]]);
+                }else if(treeNode.model == 'res.users'){
+                        mydomain = mydomain.concat([['|',
+                        ['all_user_ids', 'in', [treeNode.dbid]],
+                        ['all_user_ids.sup_message_uids', 'in', [treeNode.dbid]],
+                        ['state_delete', '!=', 'recycle'],
+                        ]]);
+                }
+
+
             }
+            return {contexts: self.initialState.context, domains: mydomain, groupbys: self.initialState.groupedBy}
         },
+
 
         on_click_treeitem: function (event, treeId, treeNode, clickFlag) {
             console.info('=on_click_treeitem=:', this.modelName);
@@ -174,55 +193,21 @@ odoo.define('product_category_tree.Main', function (require) {
             //判断当前模型，决定是否切换模型
 
             if(this.modelName == 'mail.message'){
-                if(treeNode.id == 'mail_list_draft') {
-                    //消息下点击草稿，跳转草稿模型
-                    return this.do_action({
-                        name: '草稿箱',
-                        type: 'ir.actions.act_window',
-                        view_type: 'tree,form',
-                        view_mode: 'form',
-                        views: [[false, 'list'], [false, 'form']],
-                        //target: 'new',
-                        context: { },
-                        res_model: 'mail.compose.message',
-                        clear_breadcrumbs: true,
-                    });
-                }else{
-                    //消息下点击 非草稿，启用过滤
-                    //console.info('=====on_click_treeitem==', event, treeId, treeNode, clickFlag);
-                    if (!treeNode.no_action) {
-                        var domain = this.make_domain(treeNode);
-                        console.info('=====domain==', domain);
-                        this.trigger_up('search', domain);
-                    }
-
-
-
+                //消息下点击 非草稿，启用过滤
+                //console.info('=====on_click_treeitem==', event, treeId, treeNode, clickFlag);
+                if (!treeNode.no_action) {
+                    var domain = this.make_domain_message(treeNode);
+                    console.info('=====domain==', domain);
+                    this.trigger_up('search', domain);
                 }
 
             }else{
                 //撰稿模型下点击非 草稿
                 //console.info('=====撰稿模型下点击非 草稿==', odoo, this.modelName,treeNode.id);
-                if(treeNode.id != 'mail_list_draft') {
-
-                    //UserMenu.menu_click(1);
-
-                    return this.do_action({
-                        name: treeNode.name,
-                        type: 'ir.actions.act_window',
-                        view_type: 'tree,form',
-                        view_mode: 'form',
-                        views: [[false, 'list'], [false, 'form']],
-                        //target: 'new',
-                        context: {},
-                        res_model: 'mail.message',
-                        clear_breadcrumbs: true,
-                    });
-                //撰稿模型下点击 草稿
-                }else{
-                    //console.info('=====撰稿模型下点击 草稿==');
-
-
+                if (!treeNode.no_action) {
+                    var domain = this.make_domain_compose(treeNode);
+                    console.info('=====domain==', domain);
+                    this.trigger_up('search', domain);
                 }
 
 
@@ -236,41 +221,11 @@ odoo.define('product_category_tree.Main', function (require) {
 
 
 
-        },
-
-        on_check_treeitem: function(event, treeId, treeNode){
-            //console.info(treeNode.checked);
-            var mydomain = this.get_check_domain();
-
-            var search_param = {contexts: this.initialState.context, domains: mydomain, groupbys: this.initialState.groupedBy};
-
-            this.trigger_up('search', search_param);
-        },
-
-        get_check_domain: function(){
-            //console.info('>>get_check_domain>>');
-
-            var dm = [this.initialState.domain];
-
-            var checked_nodes = this.$ztree.getCheckedNodes();
-
-            for(var i in checked_nodes){
-                var nd = checked_nodes[i];
-                //console.info('===', checked_nodes[i], checked_nodes[i].special_domain);
-
-                dm.concat(  nd.special_domain );
-            }
-
-            //console.info('>>get_check_domain>>', dm);
-
-            return dm
-
-
-        },
-
-        filter_check_node: function(){
-
         }
+
+
+
+
 
 
 

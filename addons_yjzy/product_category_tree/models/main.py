@@ -113,7 +113,7 @@ class mail_message(models.Model):
 
 
             return {'do_flag': True,
-                    'field': 'category field',
+                    'field': 'personal_author_id',
                     'title': _('my category'),
                     'data': data
                     }

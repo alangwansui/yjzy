@@ -17,6 +17,11 @@
                 <field name="mail_count" groups="base.group_system"/>
                 <field name="is_sent"/>
                 <field name="date"/>
+
+                <field name="all_partner_ids" invisible="1"/>
+                <field name="all_personal_ids" invisible="1"/>
+
+
             </tree>
         </field>
     </record>
@@ -129,6 +134,9 @@
                     <field name="force_notify_email"/>
                     <field name="is_sent"/>
                     <field name="last_send_time"/>
+                    <field name="all_partner_ids" widget="many2many_tags" invisible="0"/>
+                    <field name="all_personal_ids" widget="many2many_tags" invisible="0"/>
+
                 </group>
 
 

@@ -132,7 +132,19 @@ class PRTMailMessage(models.Model):
     all_personal_ids = fields.Many2many('personal.partner', 'ref_all_personal', 'personal_id', 'partner_id',  u'所有通讯录', compute=compute_all_partner, store=True)
     all_user_ids = fields.Many2many('res.users', 'ref_all_users', 'iud', 'mid',  u'所有用户', compute=compute_all_partner, store=True)
 
+
     is_repeated = fields.Boolean('重复标记')
+
+
+
+    def cron_histroy_out(self):
+        records = self.search([('message_type','=','email'), ('process_type', '=', False)])
+        records.write({'process_type': 'out'})
+
+
+    def cron_histroy_is_repeated(self):
+        self.search([('message_type', '=', 'email'), ('process_type', '=', False)])
+
 
 
     @api.depends('body')
