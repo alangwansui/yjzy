@@ -60,6 +60,20 @@ class PRTMailComposer(models.Model):
 
         return res
 
+
+    @api.depends('personal_partner_ids', 'personal_partner_cc_ids', 'personal_author_id', 'partner_ids', 'partner_cc_ids')
+    def compute_compose_all_partner(self):
+        for one in self:
+            if self._name != 'mail.compose.message':
+                continue
+
+            all_partners = one.partner_cc_ids | one.partner_ids
+            all_personal = one.personal_author_id | one.personal_partner_ids | one.personal_partner_cc_ids
+
+            one.all_partner_ids = all_partners
+            one.all_personal_ids = all_personal
+
+
     wizard_mode = fields.Char(string="Wizard mode")
     forward_ref = fields.Reference(string="Attach to record", selection='_referenceable_models_fwd', readonly=False)
     message_ids = fields.One2many('mail.message', 'compose_id', u'发送的消息')
@@ -81,6 +95,9 @@ class PRTMailComposer(models.Model):
     personal_partner_ids = fields.Many2many('personal.partner', 'ref_personal_compose', 'cid', 'pid',  u'收件人:通讯录')
     personal_partner_cc_ids = fields.Many2many('personal.partner', 'refcc_personal_compose', 'cid', 'pid',  u'抄送:通讯录')
     personal_author_id = fields.Many2one('personal.partner', u'作者:通讯录')
+
+    all_partner_ids = fields.Many2many('res.partner', 'ref_compose_all_partner', 'pid', 'mid',  u'所有伙伴', compute=compute_compose_all_partner, store=True)
+    all_personal_ids = fields.Many2many('personal.partner', 'ref_compose_all_personal', 'personal_id', 'partner_id',  u'所有通讯录', compute=compute_compose_all_partner, store=True)
 
 
 

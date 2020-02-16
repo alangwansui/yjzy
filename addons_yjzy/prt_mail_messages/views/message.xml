@@ -86,6 +86,7 @@
                 <field name="process_type"/>
                 <field name="had_replied"/>
                 <field name="state_delete"/>
+                <field name="is_repeated"/>
             </tree>
         </field>
     </record>

@@ -133,6 +133,30 @@ class PRTMailMessage(models.Model):
     all_user_ids = fields.Many2many('res.users', 'ref_all_users', 'iud', 'mid',  u'所有用户', compute=compute_all_partner, store=True)
 
 
+    is_repeated = fields.Boolean('重复标记')
+
+
+    @api.model
+    def cron_histroy_out(self):
+        records = self.search([('message_type','=','email'), ('fetchmail_server_id', '!=', False) ('process_type', '!=', 'ouy')])
+        records.write({'process_type': 'out'})
+
+    @api.model
+    def cron_histroy_is_repeated(self):
+        self.search([('message_type', '=', 'email'), ('process_type', '=', False)])
+        sql_str = "select  message_id  from mail_message where message_type = 'email' and is_repeated = 'f' group by message_id having count(message_id)>1;"
+        self._cr.execute(sql_str)
+        for info in self._cr.dictfetchall():
+            recoreds = self.search([('is_repeated','!=',True),('process_type','=','in'),('message_id', '=', info['message_id'])]).filtered(lambda x: x._name == 'mail.message')
+            recoreds.write({'is_repeated': True })
+
+
+
+
+
+
+
+
     @api.depends('body')
     def compute_body_text(self):
         for one in self:
@@ -293,6 +317,17 @@ class PRTMailMessage(models.Model):
         #<jon> 发邮件
         else:
             msg.process_type = 'out'
+
+        #判定重复标记
+        if self._name == 'mail.message':
+            repeated_msg = self.with_context(active_test=False).search([('message_id', '=', msg.message_id)]).filtered(lambda x: x._name == 'mail.message')
+            print('==repeated_msg===', self,  repeated_msg, repeated_msg._name )
+
+            if len(repeated_msg) > 1:
+                msg.is_repeated = True
+
+
+
 
         return msg
 
