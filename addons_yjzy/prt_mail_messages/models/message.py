@@ -138,8 +138,8 @@ class PRTMailMessage(models.Model):
 
     @api.model
     def cron_histroy_out(self):
-        records = self.search([('message_type','=','email'), ('fetchmail_server_id', '!=', False), ('process_type', '=', 'out')])
-        records.write({'process_type': 'in'})
+        records = self.search([('message_type','=','email'), ('fetchmail_server_id', '=', False), ('process_type', '=', False)])
+        records.write({'process_type': 'out'})
 
     @api.model
     def cron_histroy_is_repeated(self):
