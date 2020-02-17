@@ -245,6 +245,7 @@ class PRTMailMessage(models.Model):
 
 
     def make_one_personal_out(self):
+        print('========make_one_personal out==========', self.process_type, self.author_id)
         user = self.author_id
         if not user:
             return False
