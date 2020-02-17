@@ -246,10 +246,12 @@ class PRTMailMessage(models.Model):
 
     def make_one_personal_out(self):
         print('========make_one_personal out==========', self, self.process_type, self.author_id)
-        user = self.author_id
-        if not user:
+        users = self.author_id.user_ids
+        if not users:
             return False
             #raise Warning('没找到对应的作者 %s' % self.id)
+
+        user = users[0]
 
         if self.manual_to:
             self.personal_partner_ids |= self.parse_address_make_personal(self.email_to, user)
