@@ -37,7 +37,7 @@ class personal_partner(models.Model):
         tag = self.env['personal.tag'].search([('code','=',tag_code)])
         return tag.id
 
-    display_name = fields.Char(compute=_compute_display, store=False, string=u'邮箱', readonly=False)
+    display_name = fields.Char(compute=_compute_display, store=True, string=u'邮箱', readonly=False)
     name = fields.Char(u'名称', required=False)
     email = fields.Char(u'电子邮件', required=True)
     address = fields.Char(u'地址')
