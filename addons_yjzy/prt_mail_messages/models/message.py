@@ -246,7 +246,7 @@ class PRTMailMessage(models.Model):
     def make_one_personal_out(self):
         user = self.author_id
         if not user:
-            raise Warning('没找到对应的别名用户')
+            raise Warning('没找到对应的作者 %s' % self.id)
 
         if self.manual_to:
             self.personal_partner_ids |= self.parse_address_make_personal(self.email_to, user)
@@ -263,7 +263,7 @@ class PRTMailMessage(models.Model):
     def make_one_personal_in(self, user=False):
         user = self.alias_user_id
         if not user:
-            raise Warning('没找到对应的别名用户')
+            raise Warning('没找到对应的别名用户id:%s' % self.id)
         if self.email_to:
             self.personal_partner_ids |= self.parse_address_make_personal(self.email_to, user)
         if self.email_cc:
