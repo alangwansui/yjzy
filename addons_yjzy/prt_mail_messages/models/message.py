@@ -263,7 +263,8 @@ class PRTMailMessage(models.Model):
     def make_one_personal_in(self, user=False):
         user = self.alias_user_id
         if not user:
-            raise Warning('没找到对应的别名用户id:%s' % self.id)
+            return False
+            #raise Warning('没找到对应的别名用户id:%s' % self.id)
         if self.email_to:
             self.personal_partner_ids |= self.parse_address_make_personal(self.email_to, user)
         if self.email_cc:
