@@ -7,14 +7,13 @@
         	<field name="model">hr.expense.sheet</field>
         	<field name="inherit_id" ref="hr_expense.view_hr_expense_sheet_form"/>
         	<field name="arch" type="xml">
-                <field name="expense_line_ids" position="attributes">
-                    <attribute name="context">{'expense_adding_line': True, 'tracking_disable': True}</attribute>
+                <!--field name="expense_line_ids" position="attributes">
+                    <attribute name="context">{'expense_adding_line': True, 'tracking_disable': True, 'default_currency_id': currency_id, 'default_state': 'draft'}</attribute>
                     <attribute name="options">{'not_delete': True, 'reload_on_button': True, 'no_create': False}</attribute>
                     <attribute name="widget">one2many</attribute>
+                </field-->
 
 
-
-                </field>
 
                 <field name="bank_journal_id" position="attributes">
                     <attribute name="context">{'default_bank_journal_code':'yfdrl'}</attribute>
@@ -54,9 +53,7 @@
                     <field name="diff_expense"/>
                 </xpath>
 
-                <xpath expr="//field[@name='expense_line_ids']" position="attributes">
-                    <attribute name="context">{'expense_adding_line': True, 'default_currency_id': currency_id}</attribute>
-                </xpath>
+
 
 
         	</field>
