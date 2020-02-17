@@ -266,7 +266,7 @@ class PRTMailMessage(models.Model):
 
 
     def make_one_personal_in(self, user=False):
-        user = self.alias_user_id
+        user = user or self.alias_user_id
         if not user:
             return False
             #raise Warning('没找到对应的别名用户id:%s' % self.id)
