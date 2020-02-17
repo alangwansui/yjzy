@@ -215,6 +215,7 @@ class PRTMailMessage(models.Model):
             one.make_one_personal()
 
     def parse_address_make_personal(self, addrss, user):
+        print('==parse_address_make_personal==', addrss, user)
         personal_obj = self.env['personal.partner']
         default_tag = self.env.ref('prt_mail_messages.personal_tag_income_tmp')
         records = self.env['personal.partner']
