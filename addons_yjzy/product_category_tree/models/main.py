@@ -114,6 +114,6 @@ class mail_message(models.Model):
 
             return {'do_flag': True,
                     'field': 'personal_author_id',
-                    'title': _('my category'),
+                    'title': _('通讯录'),
                     'data': data
                     }
