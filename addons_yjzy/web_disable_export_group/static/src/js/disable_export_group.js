@@ -11,10 +11,22 @@ odoo.define("web_disable_export_group", function(require) {
 
     Sidebar.include({
         _addItems: function (sectionCode, items) {
+            console.info('===', sectionCode, items);
             var _items = items;
             if (!session.is_superuser && sectionCode === 'other' && items.length && !session.group_export_data) {
                 _items = _.reject(_items, {label:_t("Export")});
             }
+
+            //消息取消归档动作
+            var menu_action_id = this.env.context.params.action;  //当前菜单的action_id
+
+            var huishouzhan_action_id = 724; //数字为需要显示的actionid, 可以通过‘菜单’ 查询得到
+            if(menu_action_id != huishouzhan_action_id){
+                _items = _.reject(_items, {label: "回收站"});
+            };
+
+
+
             this._super(sectionCode, _items);
         },
     });

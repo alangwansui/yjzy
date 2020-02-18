@@ -128,12 +128,16 @@ var ListController = BasicController.extend({
      * @param {jQuery Node} $node
      */
     renderSidebar: function ($node) {
+
+        console.info('==renderSidebar===', self);
+
         if (this.hasSidebar && !this.sidebar) {
             var other = [{
                 label: _t("Export"),
                 callback: this._onExportData.bind(this)
             }];
-            if (this.archiveEnabled) {
+            //<jon> 取消消息的归档动作
+            if (this.archiveEnabled && this.modelName != "mail.message") {
                 other.push({
                     label: _t("Archive"),
                     callback: this._onToggleArchiveState.bind(this, true)
@@ -143,7 +147,7 @@ var ListController = BasicController.extend({
                     callback: this._onToggleArchiveState.bind(this, false)
                 });
             }
-            if (this.is_action_enabled('delete')) {
+            if (this.is_action_enabled('delete') && this.modelName != "mail.message") {
                 other.push({
                     label: _t('Delete'),
                     callback: this._onDeleteSelectedRecords.bind(this)
