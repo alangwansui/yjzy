@@ -17,9 +17,10 @@ odoo.define("web_disable_export_group", function(require) {
                 _items = _.reject(_items, {label:_t("Export")});
             }
 
-            //消息取消归档动作
+            //<jon>
             var menu_action_id = this.env.context.params.action;  //当前菜单的action_id
 
+            // 取消回收站
             var huishouzhan_action_id = 724; //数字为需要显示的actionid, 可以通过‘菜单’ 查询得到
             if(menu_action_id != huishouzhan_action_id){
                 _items = _.reject(_items, {label: "回收站"});
