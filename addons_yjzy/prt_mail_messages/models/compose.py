@@ -117,7 +117,7 @@ class PRTMailComposer(models.Model):
         default_tag = self.env.ref('prt_mail_messages.personal_tag_income_tmp')
         records = self.env['personal.partner']
 
-        before_name = ''
+
         for name, addr in AddrlistClass(addrss).getaddrlist():
             if not ('@' in addr):
                 continue
