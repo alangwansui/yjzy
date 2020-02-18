@@ -716,7 +716,7 @@ class PRTMailMessage(models.Model):
 
         #<jon> 打开数据，自动标记为已读
         action_ids = [
-            self.env.ref('prt_mail_messages.action_prt_mail_messages').id,
+            #self.env.ref('prt_mail_messages.action_prt_mail_messages').id,
             self.env.ref('prt_mail_messages.action_mail_messages_income').id,
             self.env.ref('prt_mail_messages.action_mail_messages_out').id,
         ]

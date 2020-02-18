@@ -485,6 +485,7 @@ class HrExpenseSheet(models.Model):
     @api.model
     def create(self, vals):
         self._create_set_followers(vals)
+        print(vals)
         sheet = super(HrExpenseSheet, self).create(vals)
         sheet.check_consistency()
         return sheet

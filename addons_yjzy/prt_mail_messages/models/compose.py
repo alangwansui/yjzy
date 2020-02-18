@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
 import base64
+from email._parseaddr import AddrlistClass
 from datetime import  datetime, timedelta
 from email.utils import formataddr, parseaddr
 from email.header import Header
@@ -100,6 +101,39 @@ class PRTMailComposer(models.Model):
     all_personal_ids = fields.Many2many('personal.partner', 'ref_compose_all_personal', 'personal_id', 'partner_id',  u'所有通讯录', compute=compute_compose_all_partner, store=True)
 
 
+    @api.model
+    def cron_create_personal(self, domain=None):
+        for one in self.search([]).filtered(lambda x: x._name == 'mail.compose.message'):
+            if one.email_to:
+                one.personal_partner_ids |= one.parse_address_make_personal(one.email_to)
+            if one.email_cc:
+                one.personal_partner_cc_ids |= one.parse_address_make_personal(one.email_cc)
+
+
+    def parse_address_make_personal(self, addrss):
+        print('==parse_address_make_personal==', addrss)
+        user = self.create_uid
+        personal_obj = self.env['personal.partner']
+        default_tag = self.env.ref('prt_mail_messages.personal_tag_income_tmp')
+        records = self.env['personal.partner']
+
+
+        for name, addr in AddrlistClass(addrss).getaddrlist():
+            if not ('@' in addr):
+                continue
+            print('==parse_address_make_personal==', name, addr, user.id)
+            addr = addr.lower()
+            personal = personal_obj.search([('email', '=', addr),('user_id', '=', user.id)])
+            if not personal:
+                personal = personal_obj.create({
+                    'name': name,
+                    'email': addr,
+                    'user_id': user.id,
+                    'tag_id': default_tag.id,
+                })
+            records |= personal
+        return records
+
 
     @api.onchange('personal_partner_ids')
     def onchange_personal_partner(self):
@@ -110,34 +144,6 @@ class PRTMailComposer(models.Model):
     def onchange_personal_partner_cc(self):
         email_cc = ', '.join(['%s' % p.display_name for p in self.personal_partner_cc_ids])
         self.email_cc = email_cc
-
-
-    # @api.onchange('partner_cc_ids', 'manual_cc')
-    # def onchange_cc(self):
-    #     email_cc = ', '.join(['%s<%s>' % (p.display_name, p.email) for p in self.partner_cc_ids])
-    #     res = []
-    #     if email_cc:
-    #         res.append(email_cc)
-    #
-    #     if self.manual_cc:
-    #         for mc in self.manual_cc.split(','):
-    #             res.append(mc)
-    #
-    #     res_cc = ', '.join(res)
-    #     self.email_cc = res_cc
-
-    # @api.onchange('manual_to','partner_ids')
-    # def onchange_to(self):
-    #     email_to = ', '.join(['%s<%s>' % (p.display_name, p.email) for p in self.partner_ids])
-    #     res = []
-    #     if email_to:
-    #         res.append(email_to)
-    #     if self.manual_to:
-    #         for mt in self.manual_to.split(','):
-    #             res.append(mt)
-    #
-    #     res_to = ', '.join(res)
-    #     self.email_to = res_to
 
 
     def mail_address_check(self):
