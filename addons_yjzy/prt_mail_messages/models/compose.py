@@ -105,14 +105,14 @@ class PRTMailComposer(models.Model):
     def cron_create_personal(self, domain=None):
         for one in self.search([]).filtered(lambda x: x._name == 'mail.compose.message'):
             if one.email_to:
-                one.personal_partner_ids |= one.parse_address_make_personal(self.email_to)
+                one.personal_partner_ids |= one.parse_address_make_personal(one.email_to)
             if one.email_cc:
-                one.personal_partner_cc_ids |= one.parse_address_make_personal(self.email_cc)
+                one.personal_partner_cc_ids |= one.parse_address_make_personal(one.email_cc)
 
 
-    def parse_address_make_personal(self, addrss, user):
-        print('==parse_address_make_personal==', addrss, user)
-        user = self._create_uid
+    def parse_address_make_personal(self, addrss):
+        print('==parse_address_make_personal==', addrss)
+        user = self.create_uid
         personal_obj = self.env['personal.partner']
         default_tag = self.env.ref('prt_mail_messages.personal_tag_income_tmp')
         records = self.env['personal.partner']
