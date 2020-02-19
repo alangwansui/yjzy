@@ -487,9 +487,9 @@ class Message(models.Model):
         """
         print('====check_access_rule===', self.env.context)
         if self.env.context.get('yjzy_search'):
-            return
+            return super(Message, self)._search(args, offset=offset, limit=limit, order=order, count=False, access_rights_uid=access_rights_uid)
 
-        
+
         # Rules do not apply to administrator
         if self._uid == SUPERUSER_ID:
             return super(Message, self)._search(
