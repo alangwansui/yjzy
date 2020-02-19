@@ -21,17 +21,17 @@ odoo.define("web_disable_export_group", function(require) {
             var menu_action_id = this.env.context.params.action;  //当前菜单的action_id
 
             // 取消回收站
-            var huishouzhan_action_id = 757; //数字为需要显示的actionid, 可以通过‘菜单’ 查询得到
+            var huishouzhan_action_id = 758; //数字为需要显示的actionid, 可以通过‘菜单’ 查询得到
             if(menu_action_id == huishouzhan_action_id){
                 _items = _.reject(_items, {label: "回收站"});
 
             };
-             var huishouzhan1_action_id = 764; //数字为需要显示的actionid, 可以通过‘菜单’ 查询得到
+             var huishouzhan1_action_id = 757; //数字为需要显示的actionid, 可以通过‘菜单’ 查询得到
             if(menu_action_id == huishouzhan1_action_id){
                 _items = _.reject(_items, {label: "回收站"});
 
             };
-            var chexiaohuishou_action_id = 757; //数字为需要显示的actionid, 可以通过‘菜单’ 查询得到
+            var chexiaohuishou_action_id = 758; //数字为需要显示的actionid, 可以通过‘菜单’ 查询得到
             if(menu_action_id != chexiaohuishou_action_id){
                 _items = _.reject(_items, {label: "撤销回收"});
 
