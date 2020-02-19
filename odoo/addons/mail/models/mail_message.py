@@ -485,6 +485,11 @@ class Message(models.Model):
         - uid have read access to the related document is model, res_id
         - otherwise: remove the id
         """
+        print('====check_access_rule===', self.env.context)
+        if self.env.context.get('yjzy_search'):
+            return
+
+        
         # Rules do not apply to administrator
         if self._uid == SUPERUSER_ID:
             return super(Message, self)._search(
@@ -574,9 +579,7 @@ class Message(models.Model):
         Specific case: non employee users see only messages with subtype (aka do
         not see internal logs).
         """
-        print('====check_access_rule===', self.env.context)
-        if self.env.context.get('yjzy_search'):
-            return
+
 
 
         def _generate_model_record_ids(msg_val, msg_ids):
