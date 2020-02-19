@@ -135,7 +135,8 @@
                     <field name="last_send_time"/>
                 </group>
 
-  <notebook><page name="body" string="内容">
+  <notebook>
+      <page name="body" string="内容">
                 <!-- mass post -->
                 <field name="notify"
                        attrs="{'invisible':['|', ('composition_mode', '!=', 'mass_post')]}"/>
@@ -167,7 +168,7 @@
         <field name="res_model">mail.compose.message</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
-        <field name="domain">[('message_type', '=', 'email'),('author_id.user_ids','=', uid),('is_sent','=', False)]</field>
+        <field name="domain">[('message_type', '=', 'email'),('author_id.user_ids','=', uid),('is_sent','=', False),('create_uid','=',uid)]</field>
         <field name="context">{'use_channel_name': 'out_mail', 'show_send_button': 1, 'default_force_notify_email': 1}</field>
         <field name="view_mode">tree,kanban,form</field>
         <field name="view_type">form</field>
