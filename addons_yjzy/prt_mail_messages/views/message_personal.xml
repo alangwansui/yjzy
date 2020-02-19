@@ -290,10 +290,7 @@
         <field name="name">所有邮件</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">mail.message</field>
-        <field name="domain">[('message_type', '=', 'email'),('state_delete', '!=', 'recycle'),'|',('all_partner_ids.user_id', '=' , uid),
-            '|',('all_partner_ids.parent_id.user_id', '=' , uid),'|',('all_partner_ids.parent_id.assistant_id', '=' , uid),
-            '|',('all_partner_ids.assistant_id', '=' , uid),'|',('all_user_ids','in',[uid]),'|',('all_user_ids.sup_message_uids','in',[uid]),
-            '|',('all_personal_ids.user_id','in',[uid]),'|',('alias_user_id','=',uid),('author_id.user_ids','=', uid)] </field>
+        <field name="domain">[('message_type', '=', 'email'),('state_delete', '!=', 'recycle'),'|',('all_user_ids','in',[uid]),('all_user_ids.sup_message_uids','in',[uid])] </field>
         <!--field name="context">{'check_messages_access': True}</field-->
         <field name="context">{}</field>
         <field name="view_mode">tree,kanban,form</field>
