@@ -295,7 +295,7 @@
             '|',('all_partner_ids.assistant_id', '=' , uid),'|',('all_user_ids','in',[uid]),'|',('all_user_ids.sup_message_uids','in',[uid]),
             '|',('all_personal_ids.user_id','in',[uid]),'|',('alias_user_id','=',uid),('author_id.user_ids','=', uid)] </field>
         <!--field name="context">{'check_messages_access': True}</field-->
-        <field name="context">{}</field>
+        <field name="context">{'yjzy_search': 1}</field>
         <field name="view_mode">tree,kanban,form</field>
         <field name="view_type">form</field>
         <field name="view_ids" eval="[(5, 0, 0),
