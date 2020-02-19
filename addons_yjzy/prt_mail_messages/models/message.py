@@ -1015,7 +1015,7 @@ class PRTMailMessage(models.Model):
             cc_partners = self.partner_cc_ids
 
             personal_partner |= self.personal_partner_ids - personal_me
-            personal_partner_cc = self.personal_partner_cc_ids
+            personal_partner_cc = self.personal_partner_cc_ids - personal_me
 
             #回复全部，manual_to = email_to - default_partners
             for ss in email_to.split(','):
