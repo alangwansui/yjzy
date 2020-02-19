@@ -89,21 +89,21 @@
                     </div>
                 </group>
                 <group>
-                    <field name="personal_partner_ids" widget="many2many_tags"  context="{'tag_code': 'out_tmp'}"
+                    <field name="personal_partner_ids" string="收件人" widget="many2many_tags"  context="{'tag_code': 'out_tmp'}"
                            domain="[('tag_id.code','in',['normal','income_tmp'])]"
                            options="{'can_create':1,  'quick_create':1, 'create_name_field': 'email'}"/>
-                    <field name="partner_ids" string="收件人" widget="many2many_tags_email" placeholder="Add contacts to notify..."
+                    <field name="partner_ids" string="收件人" groups="base.group_system" widget="many2many_tags_email" placeholder="Add contacts to notify..."
                            context="{'force_email':True, 'show_email':True}"
                            attrs="{'invisible': [('composition_mode', '!=', 'comment')]}"/>
-                    <field name="manual_to" string="系统外收件人"/>
+                    <field name="manual_to" string="系统外收件人"  groups="base.group_system"/>
 
 
-                    <field name="personal_partner_cc_ids" widget="many2many_tags" context="{'tag_code': 'out_tmp'}"
+                    <field name="personal_partner_cc_ids" string="抄送人" widget="many2many_tags" context="{'tag_code': 'out_tmp'}"
                            domain="[('tag_id.code','in',['normal','income_tmp'])]"
                            options="{'can_create':1,  'quick_create':1, 'create_name_field': 'email'}"/>
-                    <field name="partner_cc_ids" placeholder="Add CC contacts to notify..." string="抄送人" widget="many2many_tags_email"
+                    <field name="partner_cc_ids" groups="base.group_system" placeholder="Add CC contacts to notify..." string="抄送人" widget="many2many_tags_email"
                            context="{'force_email':True, 'show_email':True}"/>
-                    <field name="manual_cc" string="系统外抄送人"/>
+                    <field name="manual_cc" string="系统外抄送人" groups="base.group_system"/>
 
 
                     <field name="partner_bcc_ids" groups="base.group_system" placeholder="Add BCC contacts to notify..." widget="many2many_tags_email"
