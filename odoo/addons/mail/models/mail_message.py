@@ -574,6 +574,11 @@ class Message(models.Model):
         Specific case: non employee users see only messages with subtype (aka do
         not see internal logs).
         """
+        print('====check_access_rule===', self.env.context)
+        if self.env.context.get('yjzy_search'):
+            return
+
+
         def _generate_model_record_ids(msg_val, msg_ids):
             """ :param model_record_ids: {'model': {'res_id': (msg_id, msg_id)}, ... }
                 :param message_values: {'msg_id': {'model': .., 'res_id': .., 'author_id': ..}}

@@ -292,7 +292,7 @@
         <field name="res_model">mail.message</field>
         <field name="domain">[('message_type', '=', 'email'),('state_delete', '!=', 'recycle'),'|',('all_user_ids','in',[uid]),('all_user_ids.sup_message_uids','in',[uid])] </field>
         <!--field name="context">{'check_messages_access': True}</field-->
-        <field name="context">{}</field>
+        <field name="context">{'yjzy_search': 1}</field>
         <field name="view_mode">tree,kanban,form</field>
         <field name="view_type">form</field>
         <field name="view_ids" eval="[(5, 0, 0),
