@@ -32,12 +32,19 @@ class PRTMailMessage(models.Model):
 
     def tip_button(self):
         self.have_read = True
+
+
+        action_id = self.env.context['params'].get('action')
+        action = self.env['ir.actions.act_window'].browse(action_id)
+        form = action.view_ids.filtered(lambda x: x.view_mode == 'form').view_id
+
         return {
             'name': u'邮件',
             'res_model': self._inherit,
             'res_id': self.id,
-            'view_type': 'form',
+            'view_type': 'tree,form',
             "view_mode": 'form',
+            "view_id": form.id,
             'type': 'ir.actions.act_window',
             'target': 'new',
             'auto_search':False,
