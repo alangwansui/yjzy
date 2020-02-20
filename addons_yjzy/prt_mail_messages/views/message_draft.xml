@@ -17,6 +17,7 @@
                 <field name="mail_count" groups="base.group_system"/>
                 <field name="is_sent"/>
                 <field name="date"/>
+                <field name="owner_user_id"/>
             </tree>
         </field>
     </record>

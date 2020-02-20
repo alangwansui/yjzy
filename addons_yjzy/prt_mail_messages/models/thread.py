@@ -142,7 +142,7 @@ class MailThread(models.AbstractModel):
 
         })
 
-        print('====MailThread post=====1.2.1', values)
+        #print('====MailThread post=====1.2.1', values)
 
         #raise Exception('xxx')
 

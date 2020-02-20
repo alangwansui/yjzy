@@ -36,6 +36,7 @@
                 <field name="process_type" />
                 <field name="state_delete" groups="base.group_system"/>
                 <field name="is_repeated" />
+                <field name="owner_user_id"/>
             </tree>
         </field>
     </record>
