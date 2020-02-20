@@ -147,7 +147,8 @@ var ListController = BasicController.extend({
                     callback: this._onToggleArchiveState.bind(this, false)
                 });
             }
-            if (this.is_action_enabled('delete') && this.modelName != "mail.message") {
+            //&& this.modelName != "mail.message"
+            if (this.is_action_enabled('delete')) {
                 other.push({
                     label: _t('Delete'),
                     callback: this._onDeleteSelectedRecords.bind(this)
