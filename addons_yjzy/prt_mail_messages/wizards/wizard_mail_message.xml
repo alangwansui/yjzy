@@ -29,7 +29,7 @@
             key2="client_action_multi"
             view_mode="form"
             context="{'to_state_delete': 'recycle'}"
-            name="回收站"/>
+            name="放入回收站"/>
 
     <act_window
             id="action_wizard_mail_message_normal"
