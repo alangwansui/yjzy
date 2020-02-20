@@ -1055,6 +1055,8 @@ class MailThread(models.AbstractModel):
         local_hostname = socket.gethostname()
         message_id = message.get('Message-Id')
 
+        _logger.info('==message_route==1 %s', message_id)
+
         # compute references to find if message is a reply to an existing thread
         references = tools.decode_message_header(message, 'References')
         in_reply_to = tools.decode_message_header(message, 'In-Reply-To').strip()
@@ -1082,13 +1084,12 @@ class MailThread(models.AbstractModel):
         ])
         rcpt_tos_localparts = [e.split('@')[0].lower() for e in tools.email_split(rcpt_tos)]
 
-        print('==message_route==1.6',rcpt_tos_localparts, email_from, email_to)
-
+        _logger.info('==message_route==2 %s', rcpt_tos_localparts)
         # 0. Verify whether this is a bounced email and use it to collect bounce data and update notifications for customers
-        print('==message_route==2', bounce_alias, email_to_localpart)
         if bounce_alias and bounce_alias in email_to_localpart:
             # Bounce regex: typical form of bounce is bounce_alias+128-crm.lead-34@domain
             # group(1) = the mail ID; group(2) = the model (if any); group(3) = the record ID
+            _logger.info('==message_route==3 %s : %s ', bounce_alias, email_to_localpart)
             bounce_re = re.compile("%s\+(\d+)-?([\w.]+)?-?(\d+)?" % re.escape(bounce_alias), re.UNICODE)
             bounce_match = bounce_re.search(email_to)
 

@@ -71,6 +71,13 @@ class PRTMailMessage(models.Model):
             one.all_user_ids = all_users
 
 
+            if one.process_type == 'in':
+                one.owner_user_id = one.alias_user_id
+            elif one.process_type == 'out':
+                one.owner_user_id = one.author_id.user_ids and one.author_id.user_ids[0] or one.create_uid
+
+
+
     state_delete = fields.Selection([('normal', '正常'),('recycle', '回收站')], '删除状态', default='normal')
 
     process_type = fields.Selection([('in', u'收件'), ('out', u'发件')], u'类型')
@@ -141,6 +148,13 @@ class PRTMailMessage(models.Model):
 
 
     is_repeated = fields.Boolean('重复标记')
+
+    owner_user_id = fields.Many2one('res.users', '属于用户', compute='compute_all_partner', store=True)
+
+
+
+
+
 
 
     @api.model
@@ -252,7 +266,7 @@ class PRTMailMessage(models.Model):
 
 
     def make_one_personal_out(self):
-        print('========make_one_personal out==========', self, self.process_type, self.author_id)
+        print('========make_one_personal out==========', self, self.process_type, self.author_id, self.author_id.user_ids)
         users = self.author_id.user_ids
         if not users:
             return False
