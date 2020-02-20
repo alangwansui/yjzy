@@ -71,10 +71,18 @@ class PRTMailMessage(models.Model):
             one.all_user_ids = all_users
 
 
+
+
+    @api.depends('alias_user_id', 'author_id')
+    def compute_owner_user(self):
+        for one in self:
+            if self._name != 'mail.message':
+                continue
             if one.process_type == 'in':
                 one.owner_user_id = one.alias_user_id
             elif one.process_type == 'out':
                 one.owner_user_id = one.author_id.user_ids and one.author_id.user_ids[0] or one.create_uid
+
 
 
 
@@ -149,7 +157,7 @@ class PRTMailMessage(models.Model):
 
     is_repeated = fields.Boolean('重复标记')
 
-    owner_user_id = fields.Many2one('res.users', '属于用户', compute='compute_all_partner', store=True)
+    owner_user_id = fields.Many2one('res.users', '属于用户', compute='compute_owner_user', store=True)
 
 
 
