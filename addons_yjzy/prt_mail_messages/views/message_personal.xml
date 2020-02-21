@@ -295,7 +295,7 @@
             '|',('alias_user_id','=',uid),'|',('alias_user_id.sup_message_uids','in',[uid]),
             '&amp;',('process_type','=','out'),'|',('author_id.user_ids','=', uid),('author_id.user_ids.sup_message_uids','in', [uid])]</field>
         <!--field name="context">{'check_messages_access': True}</field-->
-        <field name="context">{'yjzy_search': 1,'group_by': 'owner_user_id'}
+        <field name="context">{'yjzy_search': 1}
 </field>
         <field name="view_mode">tree,kanban,form</field>
         <field name="view_type">form</field>
