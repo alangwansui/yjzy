@@ -118,6 +118,8 @@ return core.Class.extend({
             }, this._invalidate.bind(this, this._cache.views, key));
         }
 
+        console.info('----------------', options);
+
         return this._cache.views[key];
     },
 

@@ -1224,6 +1224,7 @@ class Action(http.Controller):
             action = request.env[action_type].browse([action_id]).read()
             if action:
                 value = clean_action(action[0])
+        print('===', value)
         return value
 
     @http.route('/web/action/run', type='json', auth="user")

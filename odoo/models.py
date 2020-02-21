@@ -1299,7 +1299,7 @@ class BaseModel(MetaModel('DummyModel', (object,), {'_register': False})):
         if options.get('load_filters'):
             result['filters'] = self.env['ir.filters'].get_filters(self._name, options.get('action_id'))
 
-
+        print('==', result)
         return result
 
     @api.model
