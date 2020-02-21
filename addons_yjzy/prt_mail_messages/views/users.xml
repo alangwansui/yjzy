@@ -92,7 +92,7 @@
             <field name="name">消息用户</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">res.users</field>
-            <!-- <field name="domain">[('field_name','condition',criteria)]</field>-->
+            <!-- <field name="domain">[]</field>-->
             <field name="view_type">form</field>
             <field name="view_mode">kanban,tree,form</field>
             <field name="view_ids" eval="[(5, 0, 0),
