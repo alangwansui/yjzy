@@ -65,7 +65,7 @@
               name="Contacts"
               action="action_prt_mail_messages_contacts"
               parent="prt_messages_root"
-              groups="base.group_user,base.group_partner_manager"
+              groups="base.group_system"
               sequence="10"/>
 
 

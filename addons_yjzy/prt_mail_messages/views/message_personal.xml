@@ -36,7 +36,7 @@
                 <field name="process_type" />
                 <field name="state_delete" groups="base.group_system"/>
                 <field name="is_repeated" />
-                <field name="owner_user_id"/>
+                <field name="owner_user_id" groups="base.group_system"/>
             </tree>
         </field>
     </record>
@@ -295,7 +295,8 @@
             '|',('alias_user_id','=',uid),'|',('alias_user_id.sup_message_uids','in',[uid]),
             '&amp;',('process_type','=','out'),'|',('author_id.user_ids','=', uid),('author_id.user_ids.sup_message_uids','in', [uid])]</field>
         <!--field name="context">{'check_messages_access': True}</field-->
-        <field name="context">{'yjzy_search': 1}</field>
+        <field name="context">{'yjzy_search': 1}
+</field>
         <field name="view_mode">tree,kanban,form</field>
         <field name="view_type">form</field>
         <field name="view_ids" eval="[(5, 0, 0),
