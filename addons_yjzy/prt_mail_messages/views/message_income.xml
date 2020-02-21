@@ -50,7 +50,7 @@
                 <field name="date"/>
                  <field name="had_replied"/>
                 <button name="button_read"/>
-                 <field name="color"/>
+
                 <templates>
                     <t t-name="kanban-box">
                        <div t-attf-class="oe_kanban_global_click ">
