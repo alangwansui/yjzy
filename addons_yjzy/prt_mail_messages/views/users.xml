@@ -4,26 +4,105 @@
 
 
         <record model="ir.ui.view" id="inherit_view_users_form">
-        	<field name="name">res.users.form</field>
-        	<field name="model">res.users</field>
-        	<field name="inherit_id" ref="base.view_users_form"/>
-        	<field name="arch" type="xml">
+            <field name="name">res.users.form</field>
+            <field name="model">res.users</field>
+            <field name="inherit_id" ref="base.view_users_form"/>
+            <field name="arch" type="xml">
                 <notebook position="inside">
-                    <page string="邮件用户管理">
+                    <page string="消息用户">
                         <group>
-                        <field name="sup_message_uids" widget="many2many_tags"/>
-                        <field name="sub_message_uids" widget="many2many_tags"/>
+                            <field name="sup_message_uids" widget="many2many_tags"/>
+                            <field name="sub_message_uids" widget="many2many_tags"/>
                         </group>
                     </page>
                 </notebook>
-
-        	</field>
+            </field>
         </record>
 
 
+        <!-- 消息用户 -->
+
+        <record model="ir.ui.view" id="res_users_message_tree_view">
+            <field name="name">res.users.tree</field>
+            <field name="model">res.users</field>
+            <field name="arch" type="xml">
+                <tree string="消息用户">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="res_users_message_form_view">
+            <field name="name">res.users.form</field>
+            <field name="model">res.users</field>
+            <field name="arch" type="xml">
+                <form string="消息用户">
+                    <field name="name"/>
+                </form>
+            </field>
+        </record>
 
 
+        <record model="ir.ui.view" id="res_users_message_kanban_view">
+            <field name="name">res.users.kanban</field>
+            <field name="model">res.users</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_mobile">
+                    <field name="id"/>
+                    <field name="name"/>
+                    <field name="login"/>
+                    <field name="lang"/>
+                    <field name="active"/>
+                    <field name="login_date"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_global_click">
+                                <div class="o_kanban_image">
+                                    <img t-att-src="kanban_image('res.users', 'image_medium', record.id.raw_value)"/>
+                                </div>
+                                <div class="oe_kanban_details">
+                                    <ul>
+                                        <li class="text-success pull-right mb4" t-if="record.active.raw_value">
+                                            <i class="fa fa-circle" aria-hidden="true"></i>
+                                        </li>
+                                        <li class="text-danger pull-right mb4" t-if="!record.active.raw_value">
+                                            <i class="fa fa-circle"></i>
+                                        </li>
+                                        <li class="mb4">
+                                            <strong>
+                                                <field name="name"/>
+                                            </strong>
+                                        </li>
+                                        <li class="badge pull-right mb4" t-if="record.lang.raw_value">
+                                            <field name="lang"/>
+                                        </li>
+                                        <li class="mb4" t-if="record.login.raw_value">
+                                            <i class="fa fa-envelope"/>
+                                            <field name="login"/>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
 
+        <record model="ir.actions.act_window" id="action_res_users_message">
+            <field name="name">消息用户</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.users</field>
+            <!-- <field name="domain">[]</field>-->
+            <field name="view_type">form</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'kanban', 'view_id': ref('res_users_message_kanban_view')}),
+               (0, 0, {'view_mode': 'tree', 'view_id': ref('res_users_message_tree_view')}),
+               (0, 0, {'view_mode': 'form', 'view_id': ref('res_users_message_form_view')})]"/>
+        </record>
+
+
+        <menuitem id="menu_res_users_message" name="消息用户" parent="prt_messages_root" action="action_res_users_message"/>
 
 
     </data>

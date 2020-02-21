@@ -68,7 +68,7 @@ class mail_message(models.Model):
             customers = self.env['res.partner'].search([('customer', '=', True)])
             suppliers = self.env['res.partner'].search([('supplier', '=', True)])
             personals = self.env['personal.partner'].search([('tag_id.code','=','normal')])
-            users = self.env.user.sub_message_uids ###| self.env['res.users'].search([('leader_user_id','=', self._uid)])
+            users = self.env.user.sub_message_uids | self.env.user ###| self.env['res.users'].search([('leader_user_id','=', self._uid)])
 
 
             data += [{'dbid': d.id, 'id': 'c_%s' % d.id, 'pid': d.parent_id and 'c_%s' % d.parent_id.id or 'customer', 'name': d.name, 'model': 'res.partner'} for d in customers]

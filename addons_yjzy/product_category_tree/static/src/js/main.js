@@ -130,9 +130,9 @@ odoo.define('product_category_tree.Main', function (require) {
                         mydomain = mydomain.concat([[[treeNode.domain_fd, "in", [treeNode.dbid]]]]);
                 }else if(treeNode.model == 'res.users'){
                         mydomain = mydomain.concat([['|',
-                        ['all_user_ids', 'in', [treeNode.dbid]],
-                        ['all_user_ids.sup_message_uids', 'in', [treeNode.dbid]],
-                        ['state_delete', '!=', 'recycle'],
+                        ['alias_user_id', '=', [treeNode.dbid]],'&',
+                        ['author_id.user_ids', '=', [treeNode.dbid]],
+                        ['process_type', '=', 'out'],
                         ]]);
                 }
 

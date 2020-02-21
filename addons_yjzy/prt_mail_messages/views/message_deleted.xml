@@ -31,6 +31,7 @@
                 <field name="date"/>
                 <field name="process_type"/>
                 <field name="state_delete"/>
+                <field name="owner_user_id" groups="base.group_system" />
             </tree>
         </field>
     </record>
@@ -185,7 +186,8 @@
         <field name="name">回收站</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">mail.message</field>
-        <field name="domain">[('message_type', '=', 'email'),('state_delete','=','recycle')]</field>
+        <field name="domain">[('message_type', '=', 'email'),('state_delete', '=', 'recycle'),'|',('alias_user_id','=',uid),
+            '&amp;',('process_type','=','out'),('author_id.user_ids','=', uid)]</field>
         <!--field name="context">{'check_messages_access': True}</field-->
         <field name="context">{'is_out': 1, 'no_show_tree_keys': ['mail_list_income', 'mail_list_out', 'user']}</field>
         <field name="view_type">form</field>

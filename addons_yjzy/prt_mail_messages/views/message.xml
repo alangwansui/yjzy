@@ -87,6 +87,7 @@
                 <field name="had_replied"/>
                 <field name="state_delete"/>
                 <field name="is_repeated"/>
+                <field name="owner_user_id"/>
             </tree>
         </field>
     </record>

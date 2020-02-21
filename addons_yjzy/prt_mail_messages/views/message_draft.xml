@@ -17,6 +17,7 @@
                 <field name="mail_count" groups="base.group_system"/>
                 <field name="is_sent"/>
                 <field name="date"/>
+                <field name="owner_user_id" groups="base.group_system" />
             </tree>
         </field>
     </record>
@@ -89,21 +90,21 @@
                     </div>
                 </group>
                 <group>
-                    <field name="personal_partner_ids" widget="many2many_tags"  context="{'tag_code': 'out_tmp'}"
+                    <field name="personal_partner_ids" string="收件人" widget="many2many_tags"  context="{'tag_code': 'out_tmp'}"
                            domain="[('tag_id.code','in',['normal','income_tmp'])]"
                            options="{'can_create':1,  'quick_create':1, 'create_name_field': 'email'}"/>
-                    <field name="partner_ids" string="收件人" widget="many2many_tags_email" placeholder="Add contacts to notify..."
+                    <field name="partner_ids" string="收件人" groups="base.group_system" widget="many2many_tags_email" placeholder="Add contacts to notify..."
                            context="{'force_email':True, 'show_email':True}"
                            attrs="{'invisible': [('composition_mode', '!=', 'comment')]}"/>
-                    <field name="manual_to" string="系统外收件人"/>
+                    <field name="manual_to" string="系统外收件人"  groups="base.group_system"/>
 
 
-                    <field name="personal_partner_cc_ids" widget="many2many_tags" context="{'tag_code': 'out_tmp'}"
+                    <field name="personal_partner_cc_ids" string="抄送人" widget="many2many_tags" context="{'tag_code': 'out_tmp'}"
                            domain="[('tag_id.code','in',['normal','income_tmp'])]"
                            options="{'can_create':1,  'quick_create':1, 'create_name_field': 'email'}"/>
-                    <field name="partner_cc_ids" placeholder="Add CC contacts to notify..." string="抄送人" widget="many2many_tags_email"
+                    <field name="partner_cc_ids" groups="base.group_system" placeholder="Add CC contacts to notify..." string="抄送人" widget="many2many_tags_email"
                            context="{'force_email':True, 'show_email':True}"/>
-                    <field name="manual_cc" string="系统外抄送人"/>
+                    <field name="manual_cc" string="系统外抄送人" groups="base.group_system"/>
 
 
                     <field name="partner_bcc_ids" groups="base.group_system" placeholder="Add BCC contacts to notify..." widget="many2many_tags_email"
@@ -135,7 +136,8 @@
                     <field name="last_send_time"/>
                 </group>
 
-  <notebook><page name="body" string="内容">
+  <notebook>
+      <page name="body" string="内容">
                 <!-- mass post -->
                 <field name="notify"
                        attrs="{'invisible':['|', ('composition_mode', '!=', 'mass_post')]}"/>
@@ -167,7 +169,7 @@
         <field name="res_model">mail.compose.message</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
-        <field name="domain">[('message_type', '=', 'email'),('author_id.user_ids','=', uid),('is_sent','=', False)]</field>
+        <field name="domain">[('message_type', '=', 'email'),('author_id.user_ids','=', uid),('is_sent','=', False),('create_uid','=',uid)]</field>
         <field name="context">{'use_channel_name': 'out_mail', 'show_send_button': 1, 'default_force_notify_email': 1}</field>
         <field name="view_mode">tree,kanban,form</field>
         <field name="view_type">form</field>
