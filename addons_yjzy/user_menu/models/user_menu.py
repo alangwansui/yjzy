@@ -2,9 +2,9 @@
 from odoo.tools.safe_eval import safe_eval
 from odoo import models, fields, api
 from jinja2 import Template
+import logging
 
-
-
+_logger = logging.getLogger(__name__)
 
 
 class user_menu(models.Model):
@@ -35,11 +35,15 @@ class user_menu(models.Model):
     def compute_dynamic_html(self):
         for one in self:
             if one.dynamic_template and one.dynamic_code:
-                template = Template(one.dynamic_template)
-                globals_dict = {'self': one, 'uid': one._uid}
-                ctx = safe_eval(one.dynamic_code, globals_dict)
-                html = template.render(**ctx)
-                one.dynamic_html = html
+                try:
+                    template = Template(one.dynamic_template)
+                    globals_dict = {'self': one, 'uid': one._uid}
+                    ctx = safe_eval(one.dynamic_code, globals_dict)
+                    html = template.render(**ctx)
+                    one.dynamic_html = html
+                except Exception as e:
+                    _logger.info('compute_dynamic_html: %s' % e)
+
 
 
 
