@@ -19,7 +19,7 @@
                 <sheet>
                     <group>
                         <group name="main_details">
-                            <field name="user_id"/>
+                            <field name="user_ids" widget="many2many_tags"/>
                             <field name="name"/>
                             <field name="res_model" string="模型"/>
                         </group>
@@ -49,7 +49,7 @@
                                     <form string="Views">
                                         <group>
                                             <field colspan="4" name="sequence"/>
-                                            <field name="view_mode"  string="视图类型"/>
+                                            <field name="view_mode" string="视图类型"/>
                                             <field domain="[('type', '=', view_mode)]" name="view_id" string="视图类型"/>
                                         </group>
                                     </form>
@@ -59,6 +59,14 @@
                                         <field name="view_id"/>
                                     </tree>
                                 </field>
+                            </group>
+                        </page>
+                        <page string="动态内容">
+                            <button name="compute_dynamic_html" type="object" string="计算"/>
+                            <group>
+                                <field name="dynamic_template"/>
+                                <field name="dynamic_code"/>
+                                <field name="dynamic_html"/>
                             </group>
                         </page>
                     </notebook>
@@ -73,9 +81,10 @@
         <field name="model">user.menu</field>
         <field name="arch" type="xml">
             <kanban string="工作看板">
-                <field name="user_id"/>
                 <field name="name"/>
+                <field name="user_id"/>
                 <field name="len_records"/>
+                <field name="dynamic_html"/>
                 <templates>
                     <t t-name="kanban-box">
                         <div class="container o_kanban_card_content">
@@ -89,8 +98,10 @@
                                     </button>
                                 </div>
                             </div>
+                            <div name="dynamic_html">
+                                <field name="dynamic_html" widget="html"/>
+                            </div>
                         </div>
-
                     </t>
                 </templates>
             </kanban>

@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 from odoo.tools.safe_eval import safe_eval
-from odoo import models, fields
+from odoo import models, fields, api
+from jinja2 import Template
+
+
 
 
 
@@ -11,7 +14,13 @@ class user_menu(models.Model):
 
     name = fields.Char(u'名称', required=True)
     user_id = fields.Many2one('res.users', u'用户')
-    len_records = fields.Integer('数量', compute='compute_len_records')
+    user_ids = fields.Many2many('res.users', 'ref_menu_user_menu', 'mid', 'umid',  u'用户')
+    len_records = fields.Integer(u'数量', compute='compute_len_records')
+
+    dynamic_template = fields.Text('模板', default='Hello {{ name }}')
+    dynamic_code = fields.Text('动态数据代码', default="{'name': self.user.name}")
+    dynamic_html = fields.Text('动态内容')
+
 
     def compute_len_records(self):
         gb_var = {'uid': self._uid}
@@ -22,6 +31,15 @@ class user_menu(models.Model):
     def open_action(self):
         action = self.read()[0]
         return action
+
+
+    @api.depends('dynamic_template', 'dynamic_code')
+    def compute_dynamic_html(self):
+        template = Template(self.dynamic_template)
+        globals_dict = {'self': self, 'uid': self._uid}
+        ctx = safe_eval(self.dynamic_code, globals_dict)
+        html = template.render(**ctx)
+        self.dynamic_html = html
 
 
 
