@@ -18,7 +18,7 @@ class user_menu(models.Model):
     len_records = fields.Integer(u'数量', compute='compute_len_records')
 
     dynamic_template = fields.Text('模板', default='Hello {{ name }}')
-    dynamic_code = fields.Text('动态数据代码', default="{'name': self.user.name}")
+    dynamic_code = fields.Text('动态数据代码', default="{'name': self.name}")
     dynamic_html = fields.Text('动态内容', compute='compute_dynamic_html')
 
 
