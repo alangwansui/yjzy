@@ -16,8 +16,8 @@ class res_users(models.Model):
 
     def open_message(self):
         self.ensure_one()
-        
-        dm = [('alias_user_id', '=', self.id), '&', ('author_id.user_ids', '=', self.id), ('process_type', '=', 'out')]
+
+        dm = [('process_type', '=', 'out'), '|', ('alias_user_id', '=', self.id), ('author_id.user_ids', '=', self.id), ]
         action = self.env.ref('prt_mail_messages.action_mail_messages_personal').read()[0]
         action['domain'] = dm
 
