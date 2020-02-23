@@ -4,9 +4,10 @@
         <field name="name">user_menu.tree</field>
         <field name="model">user.menu</field>
         <field name="arch" type="xml">
-            <tree string="用户看板菜单定义">
+            <tree string="工作看板">
                 <field name="user_id"/>
-                <field name="menu_id"/>
+                <field name="name"/>
+                <field name="res_model" string="模型"/>
             </tree>
         </field>
     </record>
@@ -14,42 +15,82 @@
         <field name="name">user_menu.form</field>
         <field name="model">user.menu</field>
         <field name="arch" type="xml">
-            <form string="用户看板菜单定义">
-                <field name="user_id"/>
-                <field name="menu_id"/>
+            <form string="工作看板">
+                <sheet>
+                    <group>
+                        <group name="main_details">
+                            <field name="user_id"/>
+                            <field name="name"/>
+                            <field name="res_model" string="模型"/>
+                        </group>
+                        <group name="action_details">
+                            <field name="usage" invisible="1"/>
+                            <field name="type" readonly="1"/>
+                            <field name="target"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="general_settings" string="一般设置">
+                            <group>
+                                <group name="views" string="视图">
+                                    <field name="view_mode"/>
+                                    <field name="view_id"/>
+                                    <field name="search_view_id"/>
+                                </group>
+                                <group name="filters" string="过滤">
+                                    <field name="domain"/>
+                                    <field name="context"/>
+                                    <field name="limit"/>
+                                    <field name="filter"/>
+                                </group>
+                            </group>
+                            <group name="views_tree" string="Views">
+                                <field colspan="2" name="view_ids" nolabel="1">
+                                    <form string="Views">
+                                        <group>
+                                            <field colspan="4" name="sequence"/>
+                                            <field name="view_mode"  string="视图类型"/>
+                                            <field domain="[('type', '=', view_mode)]" name="view_id" string="视图类型"/>
+                                        </group>
+                                    </form>
+                                    <tree string="Views">
+                                        <field name="sequence" widget="handle"/>
+                                        <field name="view_mode"/>
+                                        <field name="view_id"/>
+                                    </tree>
+                                </field>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
             </form>
+
         </field>
     </record>
+
     <record id="user_menu_kanban" model="ir.ui.view">
         <field name="name">user_menu.kanban</field>
         <field name="model">user.menu</field>
         <field name="arch" type="xml">
-            <kanban> string="用户看板菜单定义">
+            <kanban string="工作看板">
                 <field name="user_id"/>
-                <field name="menu_id"/>
                 <field name="name"/>
                 <field name="len_records"/>
                 <templates>
                     <t t-name="kanban-box">
-                                    <div class="container o_kanban_card_content">
-                                        <div class="row">
-                                            <div class="col-xs-6 o_kanban_primary_left">
-                                                <button class="btn btn-primary" name="open_menu" type="object">
-                                                    <t t-esc="record.menu_id.value"/>
-                                                    <span><t t-esc="record.len_records.value"/></span>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
+                        <div class="container o_kanban_card_content">
+                            <div class="row">
+                                <div class="col-xs-6 o_kanban_primary_left">
+                                    <button class="btn btn-primary" name="open_action" type="object">
+                                        <t t-esc="record.name.value"/>
+                                        <span>
+                                            <t t-esc="record.len_records.value"/>
+                                        </span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
 
-                        <button name="open_menu" type="object" class="btn btn-primary">
-                            <span>
-                                <strong>
-                                <t t-esc="record.menu_id.name.value"/>
-                                <field name="name"/>
-                                </strong>
-                            </span>
-                        </button>
                     </t>
                 </templates>
             </kanban>
@@ -57,13 +98,13 @@
     </record>
 
     <record id="action_user_menu" model="ir.actions.act_window">
-        <field name="name">用户看板菜单定义</field>
+        <field name="name">工作看板</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">user.menu</field>
         <field name="view_mode">kanban,tree,form</field>
     </record>
 
-    <menuitem id="menu_user_menu" name="用户看板菜单定义"  action="action_user_menu" sequence="0"/>
+    <menuitem id="menu_user_menu" name="工作看板" action="action_user_menu" sequence="0"/>
 
 
 </odoo>

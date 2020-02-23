@@ -81,6 +81,9 @@
                                         </li>
                                     </ul>
                                 </div>
+                                    <button class="btn btn-primary" name="open_message" type="object">
+                                        <span>查看用户邮件</span>
+                                    </button>
                             </div>
                         </t>
                     </templates>

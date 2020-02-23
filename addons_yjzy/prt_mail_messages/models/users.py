@@ -14,3 +14,13 @@ class res_users(models.Model):
     sub_message_uids = fields.Many2many('res.users', 'ref_message_user', 'sub_uid', 'sup_uid', '消息下级用户')
 
 
+    def open_message(self):
+        self.ensure_one()
+        #打开消息的过滤定义
+        dm = ['|', ('alias_user_id', '=', self.id), ('author_id.user_ids', '=', self.id)]
+
+        action = self.env.ref('prt_mail_messages.action_mail_messages_personal').read()[0]
+        action['domain'] = dm
+
+        return action
+
