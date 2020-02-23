@@ -53,6 +53,7 @@
                     <field name="lang"/>
                     <field name="active"/>
                     <field name="login_date"/>
+                    <field name="color"/>
                     <templates>
                         <t t-name="kanban-box">
                             <div t-attf-class="oe_kanban_global_click">
@@ -80,6 +81,44 @@
                                             <field name="login"/>
                                         </li>
                                     </ul>
+                                      <div class="container o_kanban_card_manage_pane">
+                                        <div class="row">
+                                            <div class="col-xs-6 o_kanban_card_manage_section o_kanban_manage_view">
+                                                <div class="o_kanban_card_manage_title">
+                                                    <span>View</span>
+                                                </div>
+                                                <div>
+                                                    <a name="get_stock_picking_action_picking_type" type="object">All</a>
+                                                </div>
+                                                <div>
+                                                    <a name="301" type="action">Ready</a>
+                                                </div>
+                                                <div>
+                                                    <a name="get_action_picking_tree_waiting" type="object">Waiting</a>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-6 o_kanban_card_manage_section o_kanban_manage_new">
+                                                <div class="o_kanban_card_manage_title">
+                                                    <span>New</span>
+                                                </div>
+                                                <div>
+                                                    <a name="307" type="action">Immediate Transfer</a>
+                                                </div>
+                                                <div>
+                                                    <a name="307" type="action" context="{'planned_picking': True}">Planned Transfer</a>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div t-if="widget.editable" class="o_kanban_card_manage_settings row">
+                                            <div class="col-xs-8">
+                                                <ul class="oe_kanban_colorpicker" data-field="color"/>
+                                            </div>
+                                            <div class="col-xs-4 text-right">
+                                                <a type="edit">Settings</a>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </t>

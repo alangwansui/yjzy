@@ -25,6 +25,7 @@ Mail Messages
         'views/menu.xml',
         'views/message.xml',
         'views/message_personal.xml',
+        'views/message_personal_user.xml',
         'views/message_income.xml',
         'views/message_out.xml',
 
