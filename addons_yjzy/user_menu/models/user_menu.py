@@ -19,7 +19,7 @@ class user_menu(models.Model):
 
     dynamic_template = fields.Text('模板', default='Hello {{ name }}')
     dynamic_code = fields.Text('动态数据代码', default="{'name': self.user.name}")
-    dynamic_html = fields.Text('动态内容')
+    dynamic_html = fields.Text('动态内容', compute='compute_dynamic_html')
 
 
     def compute_len_records(self):
@@ -32,14 +32,14 @@ class user_menu(models.Model):
         action = self.read()[0]
         return action
 
-
-    @api.depends('dynamic_template', 'dynamic_code')
     def compute_dynamic_html(self):
-        template = Template(self.dynamic_template)
-        globals_dict = {'self': self, 'uid': self._uid}
-        ctx = safe_eval(self.dynamic_code, globals_dict)
-        html = template.render(**ctx)
-        self.dynamic_html = html
+        for one in self:
+            if one.dynamic_template and one.dynamic_code:
+                template = Template(one.dynamic_template)
+                globals_dict = {'self': one, 'uid': one._uid}
+                ctx = safe_eval(one.dynamic_code, globals_dict)
+                html = template.render(**ctx)
+                one.dynamic_html = html
 
 
 
