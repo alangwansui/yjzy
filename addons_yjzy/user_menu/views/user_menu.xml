@@ -80,31 +80,114 @@
         <field name="name">user_menu.kanban</field>
         <field name="model">user.menu</field>
         <field name="arch" type="xml">
-            <kanban string="工作看板">
+        <kanban class="oe_background_grey o_kanban_dashboard o_emphasize_colors o_stock_kanban" string="工作看板">
                 <field name="name"/>
                 <field name="user_id"/>
                 <field name="len_records"/>
                 <field name="dynamic_html"/>
+
                 <templates>
                     <t t-name="kanban-box">
-                        <div class="container o_kanban_card_content">
-                            <div class="row">
-                                <div class="col-xs-6 o_kanban_primary_left">
-                                    <button class="btn btn-primary" name="open_action" type="object" context="{'xx': 'yyy'}">
-                                        <t t-esc="record.name.value"/>
+                       <div >
+                                    <div t-attf-class="o_kanban_card_header">
+                                        <div class="o_kanban_card_header_title">
+                                            <div class="o_primary">
+                                                <a type="object" name="get_stock_picking_action_picking_type">
+                                                    <field name="name"/>
+                                                </a>
+                                            </div>
+                                            <div class="o_secondary"></div>
+                                        </div>
+                                        <div class="o_kanban_manage_button_section">
+                                            <a class="o_kanban_manage_toggle_button" href="#"><i class="fa fa-ellipsis-v"/></a>
+                                        </div>
+                                    </div>
+
+                              <div class="container o_kanban_card_content">
+                                <div class="row">
+                                  <div class="col-xs-5 o_kanban_primary_left">
+                                   <button class="btn btn-primary" name="open_action" type="object">
+                                        所有邮件
                                         <span>
                                             <t t-esc="record.len_records.value"/>
                                         </span>
                                     </button>
-                                </div>
-                            </div>
-                            <div class="dynamic_html">
+                                            </div>
+                                            <div class="col-xs-6 o_kanban_primary_right">
+                                                <div class="row">
+                                                </div>
 
-                            </div>
-                        </div>
+                                                <div class="row">
+                                                    <div class="col-xs-9">
+                                                        <a class="oe_kanban_stock_picking_type_list" name="get_action_picking_tree_late" type="object">
+                                                            今天的新邮件
+                                                        </a>
+                                                    </div>
+                                                    <div class="col-xs-3">
+                                                        30
+                                                    </div>
+                                                </div>
+
+                                                <div  class="row">
+                                                    <div class="col-xs-9">
+                                                        <a class="oe_kanban_stock_picking_type_list" name="get_action_picking_tree_backorder" type="object">
+                                                            未回复邮件
+                                                        </a>
+                                                    </div>
+                                                    <div class="col-xs-3">
+                                                  234
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                               <div class="container o_kanban_card_manage_pane">
+                                        <div class="row">
+                                            <div class="col-xs-6 o_kanban_card_manage_section o_kanban_manage_view">
+                                                <div class="o_kanban_card_manage_title">
+                                                    <span>View</span>
+                                                </div>
+                                                <div name="dynamic_html">
+                                                      <field name="dynamic_html" widget="html"/>
+                                                 </div>
+
+                                            </div>
+                                            <div class="col-xs-6 o_kanban_card_manage_section o_kanban_manage_new">
+                                                <div class="o_kanban_card_manage_title">
+                                                    <span>New</span>
+                                                </div>
+                                                <div>
+                                                    <a name="307" type="action">Immediate Transfer</a>
+                                                </div>
+                                                <div>
+                                                    <a name="307" type="action" context="{'planned_picking': True}">Planned Transfer</a>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div t-if="widget.editable" class="o_kanban_card_manage_settings row">
+                                            <div class="col-xs-8">
+                                                <ul class="oe_kanban_colorpicker" data-field="color"/>
+                                            </div>
+                                            <div class="col-xs-4 text-right">
+                                                <a type="edit">Settings</a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                       </div>
                     </t>
+
+
+
+
+
+
+
                 </templates>
             </kanban>
+
         </field>
     </record>
 
