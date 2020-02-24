@@ -65,7 +65,7 @@
                             <button name="compute_dynamic_html" type="object" string="计算"/>
                             <group>
                                 <field name="dynamic_template"/>
-                                <field name="dynamic_code"/>
+                                <field name="dynamic_code" widget="ace"/>
                                 <field name="dynamic_html"/>
                             </group>
                         </page>
