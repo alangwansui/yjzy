@@ -300,7 +300,7 @@ var KanbanRecord = Widget.extend({
         //<jon> render dynamic_html
         if (this.recordData.dynamic_html){
             this.$el.append($(this.recordData.dynamic_html));
-        }
+        };
 
     },
     /**
