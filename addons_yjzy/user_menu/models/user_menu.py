@@ -43,10 +43,12 @@ class user_menu(models.Model):
                     template = Template(one.dynamic_template)
                     globals_dict = {'self': one, 'uid': one._uid, 'datetime': datetime, 'len': len, 'today': fields.date.today().strftime(DF), 'fields': fields}
                     dic_var = safe_eval(one.dynamic_code, globals_dict)
+
+                    print('-------', dic_var)
                     html = template.render(**dic_var)
                     one.dynamic_html = html
                 except Exception as e:
-                    pass
+                    _logger.warn(e)
                     #raise Warning(e)
 
 

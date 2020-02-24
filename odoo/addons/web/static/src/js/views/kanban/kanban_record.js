@@ -298,9 +298,9 @@ var KanbanRecord = Widget.extend({
         this.$('span.o_tag').tooltip({delay: {'show': 50}});
 
         //<jon> render dynamic_html
-        if (this.recordData.dynamic_html){
-            this.$el.append($(this.recordData.dynamic_html));
-        };
+        // if (this.recordData.dynamic_html){
+        //     this.$el.append($(this.recordData.dynamic_html));
+        // };
 
     },
     /**
@@ -507,12 +507,13 @@ var KanbanRecord = Widget.extend({
 
                 //jon 动态变量的action，插入context 值， 传入 act_id, act_dm, act_uid 变量
                 var action_data = $action.data();
-                var ctx_str = event.currentTarget.getAttribute('context');
-                if (ctx_str){
-                    console.info('===ctx_str==', ctx_str);
-                    var ctx = $.parseJSON(ctx_str);
-                    action_data.context = ctx;
-                }
+
+                // var ctx_str = event.currentTarget.getAttribute('context');
+                // if (ctx_str){
+                //     console.info('===ctx_str==', ctx_str);
+                //     var ctx = $.parseJSON(ctx_str);
+                //     action_data.context = ctx;
+                // }
 
 
                 this.trigger_up('button_clicked', {
