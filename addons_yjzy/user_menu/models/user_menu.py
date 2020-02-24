@@ -45,17 +45,31 @@ class user_menu(models.Model):
     def compute_dynamic_html(self):
         for one in self:
 
+            globals_dict = {'self': one, 'uid': one._uid, 'datetime': datetime, 'len': len, 'today': fields.date.today().strftime(DF), 'fields': fields}
+
             if one.dynamic_template and one.dynamic_code:
                 try:
-                    globals_dict = {'self': one, 'uid': one._uid, 'datetime': datetime, 'len': len, 'today': fields.date.today().strftime(DF), 'fields': fields}
 
                     dic_a = safe_eval(one.dynamic_code, globals_dict)
                     html_a = Template(one.dynamic_template).render(**dic_a)
                     one.dynamic_html = html_a
 
+                except Exception as e:
+                    _logger.warn(e)
+                    #raise Warning(e)
+
+            if one.dynamic_template_b and one.dynamic_code_b:
+                try:
                     dic_b = safe_eval(one.dynamic_code_b, globals_dict)
                     html_b = Template(one.dynamic_template_b).render(**dic_b)
                     one.dynamic_html = html_b
+
+                except Exception as e:
+                    _logger.warn(e)
+                    # raise Warning(e)
+
+            if one.dynamic_template_c and one.dynamic_code_c:
+                try:
 
                     dic_c = safe_eval(one.dynamic_code_c, globals_dict)
                     html_c = Template(one.dynamic_template_c).render(**dic_c)
@@ -63,8 +77,7 @@ class user_menu(models.Model):
 
                 except Exception as e:
                     _logger.warn(e)
-                    #raise Warning(e)
-
+                    # raise Warning(e)
 
     def do_acton(self):
         ctx = self.env.context

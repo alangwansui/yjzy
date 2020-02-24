@@ -112,7 +112,7 @@
                                 </div>
                             </div>
                             <div class="dynamic_html">
-
+                                <field name="dynamic_html" widget="html"/>
                             </div>
                         </div>
                     </t>
