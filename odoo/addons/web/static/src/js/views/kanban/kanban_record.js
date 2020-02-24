@@ -296,6 +296,12 @@ var KanbanRecord = Widget.extend({
 
         // We use boostrap tooltips for better and faster display
         this.$('span.o_tag').tooltip({delay: {'show': 50}});
+
+        //<jon> render dynamic_html
+        if (this.recordData.dynamic_html){
+            this.$el.append($(this.recordData.dynamic_html));
+        }
+
     },
     /**
      * Sets particular classnames on a field $el according to the
@@ -484,6 +490,8 @@ var KanbanRecord = Widget.extend({
         var $action = $(event.currentTarget);
         var type = $action.data('type') || 'button';
 
+        console.info('==============',$action.data,  $action, type)
+
         switch (type) {
             case 'edit':
                 this.trigger_up('open_record', {id: this.db_id, mode: 'edit'});
@@ -496,8 +504,19 @@ var KanbanRecord = Widget.extend({
                 break;
             case 'action':
             case 'object':
+
+                //jon 动态变量的action，插入context 值， 传入 act_id, act_dm, act_uid 变量
+                var action_data = $action.data();
+                var ctx_str = event.currentTarget.getAttribute('context');
+                if (ctx_str){
+                    console.info('===ctx_str==', ctx_str);
+                    var ctx = $.parseJSON(ctx_str);
+                    action_data.context = ctx;
+                }
+
+
                 this.trigger_up('button_clicked', {
-                    attrs: $action.data(),
+                    attrs: action_data,
                     record: this.state,
                 });
                 break;

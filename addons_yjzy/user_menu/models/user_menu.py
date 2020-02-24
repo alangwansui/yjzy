@@ -45,5 +45,25 @@ class user_menu(models.Model):
                     _logger.info('compute_dynamic_html: %s' % e)
 
 
+    def do_acton(self):
+        ctx = self.env.context
+        act_id, act_dm, act_uid = ctx.get('act_id'), ctx.get('act_dm'), ctx.get('act_uid')
+        action = self.env.ref(act_id).read()[0]
+
+
+        print( action['domain'], act_dm, type(action['domain']), type(act_dm))
+        if act_dm:
+            action['domain'] = str(act_dm + safe_eval(action['domain'], {'uid': self._uid}))
+
+        print('====do_acton====', action)
+        return action
+
+
+
+
+
+
+
+
 
 
