@@ -90,7 +90,7 @@
                         <div class="container o_kanban_card_content">
                             <div class="row">
                                 <div class="col-xs-6 o_kanban_primary_left">
-                                    <button class="btn btn-primary" name="open_action" type="object">
+                                    <button class="btn btn-primary" name="open_action" type="object" context="{'xx': 'yyy'}">
                                         <t t-esc="record.name.value"/>
                                         <span>
                                             <t t-esc="record.len_records.value"/>
@@ -98,8 +98,8 @@
                                     </button>
                                 </div>
                             </div>
-                            <div name="dynamic_html">
-                                <field name="dynamic_html" widget="html"/>
+                            <div class="dynamic_html">
+
                             </div>
                         </div>
                     </t>
