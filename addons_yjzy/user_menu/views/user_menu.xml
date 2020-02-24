@@ -62,11 +62,24 @@
                             </group>
                         </page>
                         <page string="动态内容">
-                            <button name="compute_dynamic_html" type="object" string="计算"/>
                             <group>
                                 <field name="dynamic_template"/>
                                 <field name="dynamic_code" widget="ace"/>
                                 <field name="dynamic_html"/>
+                            </group>
+                        </page>
+                        <page string="动态内容B">
+                            <group>
+                                <field name="dynamic_template_b"/>
+                                <field name="dynamic_code_b" widget="ace"/>
+                                <field name="dynamic_html_b"/>
+                            </group>
+                        </page>
+                        <page string="动态内容C">
+                            <group>
+                                <field name="dynamic_template_c"/>
+                                <field name="dynamic_code_c" widget="ace"/>
+                                <field name="dynamic_html_c"/>
                             </group>
                         </page>
                     </notebook>

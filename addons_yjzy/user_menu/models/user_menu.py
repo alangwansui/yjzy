@@ -20,10 +20,17 @@ class user_menu(models.Model):
     user_ids = fields.Many2many('res.users', 'ref_menu_user_menu', 'mid', 'umid',  u'用户')
     len_records = fields.Integer(u'数量', compute='compute_len_records')
 
-    dynamic_template = fields.Text('模板')
-    dynamic_code = fields.Text('动态数据代码')
-    dynamic_html = fields.Text('动态内容', compute='compute_dynamic_html')
+    dynamic_template = fields.Text('模板a')
+    dynamic_code = fields.Text('动态数据代码a')
+    dynamic_html = fields.Text('动态内容a', compute='compute_dynamic_html')
 
+    dynamic_template_b = fields.Text('模板b')
+    dynamic_code_b = fields.Text('动态数据代码b')
+    dynamic_html_b = fields.Text('动态内容b', compute='compute_dynamic_html')
+
+    dynamic_template_c = fields.Text('模板c')
+    dynamic_code_c = fields.Text('动态数据代码d')
+    dynamic_html_c = fields.Text('动态内容d', compute='compute_dynamic_html')
 
     def compute_len_records(self):
         gb_var = {'uid': self._uid}
@@ -40,13 +47,20 @@ class user_menu(models.Model):
 
             if one.dynamic_template and one.dynamic_code:
                 try:
-                    template = Template(one.dynamic_template)
                     globals_dict = {'self': one, 'uid': one._uid, 'datetime': datetime, 'len': len, 'today': fields.date.today().strftime(DF), 'fields': fields}
-                    dic_var = safe_eval(one.dynamic_code, globals_dict)
 
-                    print('-------', dic_var)
-                    html = template.render(**dic_var)
-                    one.dynamic_html = html
+                    dic_a = safe_eval(one.dynamic_code, globals_dict)
+                    html_a = Template(one.dynamic_template).render(**dic_a)
+                    one.dynamic_html = html_a
+
+                    dic_b = safe_eval(one.dynamic_code_b, globals_dict)
+                    html_b = Template(one.dynamic_template_b).render(**dic_b)
+                    one.dynamic_html = html_b
+
+                    dic_c = safe_eval(one.dynamic_code_c, globals_dict)
+                    html_c = Template(one.dynamic_template_c).render(**dic_c)
+                    one.dynamic_html_c = html_c
+
                 except Exception as e:
                     _logger.warn(e)
                     #raise Warning(e)
