@@ -9,6 +9,10 @@ import logging
 
 _logger = logging.getLogger(__name__)
 
+class IrActionsActWindowView(models.Model):
+    _inherit = 'ir.actions.act_window.view'
+    user_menu_id = fields.Many2one('user.menu', 'UserMenu')
+
 
 class user_menu(models.Model):
     _name = 'user.menu'
@@ -31,6 +35,8 @@ class user_menu(models.Model):
     dynamic_template_c = fields.Text('模板c')
     dynamic_code_c = fields.Text('动态数据代码d')
     dynamic_html_c = fields.Text('动态内容d', compute='compute_dynamic_html')
+
+    view_ids = fields.One2many('ir.actions.act_window.view', 'user_menu_id', string='Views')
 
     def compute_len_records(self):
         gb_var = {'uid': self._uid}
@@ -55,7 +61,7 @@ class user_menu(models.Model):
 
                     dic_b = safe_eval(one.dynamic_code_b, globals_dict)
                     html_b = Template(one.dynamic_template_b).render(**dic_b)
-                    one.dynamic_html = html_b
+                    one.dynamic_html_b = html_b
 
                     dic_c = safe_eval(one.dynamic_code_c, globals_dict)
                     html_c = Template(one.dynamic_template_c).render(**dic_c)
