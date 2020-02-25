@@ -73,7 +73,7 @@ class PRTMailMessage(models.Model):
 
 
 
-    @api.depends('alias_user_id', 'author_id')
+    @api.depends('alias_user_id', 'author_id', 'process_type')
     def compute_owner_user(self):
         for one in self:
             if self._name != 'mail.message':
