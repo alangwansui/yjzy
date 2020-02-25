@@ -356,9 +356,6 @@ class PRTMailMessage(models.Model):
             if len(repeated_msg) > 1:
                 msg.is_repeated = True
 
-
-
-
         return msg
 
 

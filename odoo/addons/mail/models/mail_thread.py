@@ -1301,25 +1301,13 @@ class MailThread(models.AbstractModel):
             else:
                 subtype = 'mail.mt_comment'
 
-
-
             new_msg = thread.message_post(subtype=subtype, partner_ids=partner_ids, **message_dict)
-
-            print('>>>>111>>>>>', alias, alias.alias_user_id)
-
-
-            #收取邮件处理 通讯录
-            if new_msg.fetchmail_server_id:
-                new_msg.make_one_personal_in(alias.alias_user_id)
 
             #<jon>
             if alias:
                 new_msg.write({'alias_id': alias.id})
-
-
             else:
                 new_msg.write({'alias_id': new_msg.parent_id.alias_id.id})
-
 
             if original_partner_ids:
                 # postponed after message_post, because this is an external message and we don't want to create
@@ -1327,8 +1315,9 @@ class MailThread(models.AbstractModel):
                 new_msg.write({'partner_ids': original_partner_ids,
                                'manual_to': mail_txt_subtraction_partner(new_msg.email_to,  self.env['res.partner'].browse([x[1] for x in original_partner_ids]))})
 
-
-
+            #收取邮件处理 通讯录
+            if new_msg.fetchmail_server_id:
+                new_msg.make_one_personal_in(alias.alias_user_id)
 
         return thread_id
 
