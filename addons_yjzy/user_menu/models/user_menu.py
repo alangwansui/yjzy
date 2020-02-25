@@ -17,6 +17,7 @@ class IrActionsActWindowView(models.Model):
 class user_menu(models.Model):
     _name = 'user.menu'
     _inherit = 'ir.actions.act_window'
+    _order = 'sequence'
     _description = '工作看板'
 
     name = fields.Char(u'名称', required=True)
@@ -37,6 +38,9 @@ class user_menu(models.Model):
     dynamic_html_c = fields.Text('动态内容d', compute='compute_dynamic_html')
 
     view_ids = fields.One2many('ir.actions.act_window.view', 'user_menu_id', string='Views')
+
+    sequence = fields.Integer('排序')
+    color = fields.Integer('颜色')
 
     def compute_len_records(self):
         gb_var = {'uid': self._uid}

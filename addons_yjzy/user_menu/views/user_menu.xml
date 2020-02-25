@@ -5,8 +5,10 @@
         <field name="model">user.menu</field>
         <field name="arch" type="xml">
             <tree string="工作看板">
-                <field name="user_id"/>
+                <field name="sequence" widget="handel"/>
                 <field name="name"/>
+                <field name="user_id"/>
+                <field name="color"/>
                 <field name="res_model" string="模型"/>
             </tree>
         </field>
@@ -22,6 +24,8 @@
                             <field name="user_ids" widget="many2many_tags"/>
                             <field name="name"/>
                             <field name="res_model" string="模型"/>
+                            <field name="color"/>
+                            <field name="sequence" widget="handel"/>
                         </group>
                         <group name="action_details">
                             <field name="usage" invisible="1"/>
