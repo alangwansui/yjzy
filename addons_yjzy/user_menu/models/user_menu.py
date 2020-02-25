@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime
+from datetime import datetime, timedelta
 from odoo.exceptions import Warning
 from odoo.tools.safe_eval import safe_eval
 from odoo import models, fields, api
@@ -57,7 +57,12 @@ class user_menu(models.Model):
 
             if one.dynamic_template and one.dynamic_code:
                 try:
-                    globals_dict = {'self': one, 'uid': one._uid, 'datetime': datetime, 'len': len, 'today': fields.date.today().strftime(DF), 'fields': fields}
+                    globals_dict = {
+                        'self': one, 'uid': one._uid, 'datetime': datetime, 'len': len,
+                        'today': fields.date.today().strftime(DF), 'fields': fields,
+                        'context_today': fields.date.today,
+                        'relativedelta': timedelta,
+                    }
 
                     dic_a = safe_eval(one.dynamic_code, globals_dict)
                     html_a = Template(one.dynamic_template).render(**dic_a)
