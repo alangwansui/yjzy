@@ -53,34 +53,71 @@
                  <field name="had_replied"/>
                 <button name="button_read"/>
                  <field name="color"/>
+                 <field name="process_type"/>
+
                 <templates>
                     <t t-name="kanban-box">
                         <div t-attf-class="oe_kanban_global_click #{kanban_color(record.color.raw_value)} o_has_icon">
-                            <div class="row mb4">
-                                <div class="col-xs-2" style="margin-left:10px; text-overflow: -o-ellipsis-lastline;   overflow: hidden;   text-overflow: ellipsis;   display: -webkit-box;   -webkit-line-clamp: 1;   line-clamp: 1;   -webkit-box-orient: vertical;">
+
+                           <div t-attf-class=" o_kanban_card_header">
+                                        <div class="o_kanban_card_header_title">
+                                            <div class="o_primary" style="font-size:14px; text-overflow: -o-ellipsis-lastline;   overflow: hidden;   text-overflow: ellipsis;   display: -webkit-box;   -webkit-line-clamp: 1;   line-clamp: 1;   -webkit-box-orient: vertical;">
+                                                          <t t-if="record.have_read.raw_value == 0">
+                                                           <span style="color:#076397; font-size:16px">●</span>
+                                                         </t>
+                                                <span >
+                                                   <field name="subject"/>
+                                                 </span>
+                                             </div>
+
+                                            </div>
+                                        <div class="o_kanban_manage_button_section">
+                                            <a class="o_kanban_manage_toggle_button" href="#"><i class="fa fa-ellipsis-v"/></a>
+                                        </div>
+                                    </div>
+
+
+                           <div class="row">
+                            <t t-if="record.process_type.raw_value == 'out'">
+
+                                    <div class="col-xs-9" style=" text-overflow: -o-ellipsis-lastline;   overflow: hidden;   text-overflow: ellipsis;   display: -webkit-box;   -webkit-line-clamp: 1;   line-clamp: 1;   -webkit-box-orient: vertical;">
                                     <stong>
-                                        <span t-attf-class="tenyale_kanban_text_{{
-                                        record.have_read.raw_value == 0
-                                        ? 'bold':'black'}}">
-                                            <field name="author_display"  />
+                                        <span t-attf-class="tenyale_kanban_text_{{record.have_read.raw_value == 0? 'bold':'black'}}">
+                                            <field name="email_to"/>
                                         </span>
                                     </stong>
                                 </div>
-                                   <div class="col-xs-6 " style=" text-overflow: -o-ellipsis-lastline;   overflow: hidden;   text-overflow: ellipsis;   display: -webkit-box;   -webkit-line-clamp: 1;   line-clamp: 1;   -webkit-box-orient: vertical;">
-                                    <span t-attf-class="tenyale_kanban_text_{{
-                                        record.have_read.raw_value == 0
-                                        ? 'bold':'black'}}">
-                                        <field name="subject" />
-                                    </span>
+                                 <div class="col-xs-3">
+                                    <span style="background-color:#00a09d;color:white">发送
+                                </span>
                                 </div>
-                                 <div class="col-xs-3 text-right " style=" text-overflow: -o-ellipsis-lastline;   overflow: hidden;   text-overflow: ellipsis;   display: -webkit-box;   -webkit-line-clamp: 1;   line-clamp: 1;   -webkit-box-orient: vertical;">
+                            </t>
+                             <t t-if="record.process_type.raw_value == 'in'">
 
-                              <span>
+                                    <div class="col-xs-9" style=" text-overflow: -o-ellipsis-lastline;   overflow: hidden;   text-overflow: ellipsis;   display: -webkit-box;   -webkit-line-clamp: 1;   line-clamp: 1;   -webkit-box-orient: vertical;">
+                                    <stong>
+                                        <span t-attf-class="tenyale_kanban_text_{{         record.have_read.raw_value == 0                                         ? 'bold':'black'}}">
+                                            <field name="author_display"/>
+                                        </span>
+                                    </stong>
+                                </div>
+                                <div class="col-xs-3">
+                                <span style="background-color:#47528b;color:white">收件
+                                </span>
+                                </div>
+                            </t>
+
+
+                          </div>
+                            <div class="row">
+                                     <div class="col-xs-12 text-left " >
+
+                              <span style="color:grey;font-weight:300">
                                     <field name="date"/>
                                 </span>
 
                              </div>
-                            </div>
+                             </div>
                     <div class="row">
 
 
@@ -93,7 +130,7 @@
                                     <span style="background-color:#47528b;color:white">已回复
                                 </span>
                                 </t>
-                                    <span style="color:grey">
+                                    <span style="color:grey;font-weight:300">
 
 
                                         <field name="body_text"/>
@@ -107,8 +144,8 @@
                                             <ul class="oe_kanban_colorpicker" data-field="color"/>
                                         </div>
                                     </div>
-                                     <a class="o_kanban_manage_toggle_button o_left" href="#" ><i class="fa fa-ellipsis-v"/></a>
-                                    <span class="o_right"><field name="star" widget="boolean_favorite" nolabel="1" force_save="1"/></span>
+
+
 
                            <!--<div class="col-xs-12 o_kanban_primary_left">
                                 <button class="btn btn-primary" name="button_read" type="object">
@@ -304,7 +341,7 @@
           (0, 0, {'view_mode': 'form', 'view_id': ref('prt_mail_message_personal_form')})]"/>
 
     </record>
-    <menuitem id="menu_mail_messages_personal" name="所有邮件" parent="prt_messages_root" action="action_mail_messages_personal"/>
+    <menuitem id="menu_mail_messages_personal" name="所有邮件"  parent="prt_messages_root" action="action_mail_messages_personal"/>
 
 
 </odoo>

@@ -100,8 +100,8 @@
                 <field name="dynamic_html"/>
 
                 <templates>
-                    <t t-name="kanban-box">
-                       <div >
+                <t t-name="kanban-box">
+                       <div>
                                     <div t-attf-class="o_kanban_card_header">
                                         <div class="o_kanban_card_header_title">
                                             <div class="o_primary">
@@ -109,7 +109,7 @@
                                                     <field name="name"/>
                                                 </a>
                                             </div>
-                                            <div class="o_secondary"></div>
+                                            <div class="o_secondary"/>
                                         </div>
                                         <div class="o_kanban_manage_button_section">
                                             <a class="o_kanban_manage_toggle_button" href="#"><i class="fa fa-ellipsis-v"/></a>
@@ -120,37 +120,20 @@
                                 <div class="row">
                                   <div class="col-xs-5 o_kanban_primary_left">
                                    <button class="btn btn-primary" name="open_action" type="object">
-                                        所有邮件
+                                        <field name="name"/>
                                         <span>
                                             <t t-esc="record.len_records.value"/>
                                         </span>
-                                    </button>
-                                            </div>
-                                            <div class="col-xs-6 o_kanban_primary_right">
+                                       </button>
+                                   </div>
+                                            <div class="col-xs-7 o_kanban_primary_right">
                                                 <div class="row">
+
+                                                      <field name="dynamic_html" widget="html"/>
+
                                                 </div>
 
-                                                <div class="row">
-                                                    <div class="col-xs-9">
-                                                        <a class="oe_kanban_stock_picking_type_list" name="get_action_picking_tree_late" type="object">
-                                                            今天的新邮件
-                                                        </a>
-                                                    </div>
-                                                    <div class="col-xs-3">
-                                                        30
-                                                    </div>
-                                                </div>
 
-                                                <div  class="row">
-                                                    <div class="col-xs-9">
-                                                        <a class="oe_kanban_stock_picking_type_list" name="get_action_picking_tree_backorder" type="object">
-                                                            未回复邮件
-                                                        </a>
-                                                    </div>
-                                                    <div class="col-xs-3">
-                                                  234
-                                                    </div>
-                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -161,9 +144,6 @@
                                                 <div class="o_kanban_card_manage_title">
                                                     <span>View</span>
                                                 </div>
-                                                <div name="dynamic_html">
-                                                      <field name="dynamic_html" widget="html"/>
-                                                 </div>
 
                                             </div>
                                             <div class="col-xs-6 o_kanban_card_manage_section o_kanban_manage_new">

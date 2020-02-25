@@ -46,44 +46,71 @@
             <field name="name">res.users.kanban</field>
             <field name="model">res.users</field>
             <field name="arch" type="xml">
-                <kanban class="o_kanban_mobile">
+               <kanban class="oe_background_grey o_kanban_dashboard o_emphasize_colors o_stock_kanban">
                     <field name="id"/>
                     <field name="name"/>
-                    <field name="login"/>
+
                     <field name="lang"/>
                     <field name="active"/>
                     <field name="login_date"/>
                     <templates>
                         <t t-name="kanban-box">
-                            <div t-attf-class="oe_kanban_global_click">
-                                <div class="o_kanban_image">
-                                    <img t-att-src="kanban_image('res.users', 'image_medium', record.id.raw_value)"/>
+                          <div>
+                          <div t-attf-class="o_kanban_card_header">
+                                        <div class="o_kanban_card_header_title">
+                                            <div class="o_primary">
+
+                                                    <field name="name"/>
+
+                                            </div>
+                                            <div class="o_secondary"/>
+                                        </div>
+                                        <div class="o_kanban_manage_button_section">
+                                            <a class="o_kanban_manage_toggle_button" href="#"><i class="fa fa-ellipsis-v"/></a>
+                                        </div>
+                             </div>
+
+
+                              <div class="container o_kanban_card_content">
+                                <div class="row">
+                                  <div class="col-xs-5 o_kanban_primary_left">
+                                   <button class="btn btn-primary" name="open_message" type="object">
+                                         <span>查看用户邮件</span>
+
+                                     </button>
+                                   </div>
+                                  </div>
                                 </div>
-                                <div class="oe_kanban_details">
-                                    <ul>
-                                        <li class="text-success pull-right mb4" t-if="record.active.raw_value">
-                                            <i class="fa fa-circle" aria-hidden="true"></i>
-                                        </li>
-                                        <li class="text-danger pull-right mb4" t-if="!record.active.raw_value">
-                                            <i class="fa fa-circle"></i>
-                                        </li>
-                                        <li class="mb4">
-                                            <strong>
-                                                <field name="name"/>
-                                            </strong>
-                                        </li>
-                                        <li class="badge pull-right mb4" t-if="record.lang.raw_value">
-                                            <field name="lang"/>
-                                        </li>
-                                        <li class="mb4" t-if="record.login.raw_value">
-                                            <i class="fa fa-envelope"/>
-                                            <field name="login"/>
-                                        </li>
-                                    </ul>
-                                </div>
-                                    <button class="btn btn-primary" name="open_message" type="object">
-                                        <span>查看用户邮件</span>
-                                    </button>
+                          <div class="container o_kanban_card_manage_pane">
+                                        <div class="row">
+                                            <div class="col-xs-6 o_kanban_card_manage_section o_kanban_manage_view">
+                                                <div class="o_kanban_card_manage_title">
+                                                    <span>View</span>
+                                                </div>
+
+                                            </div>
+                                            <div class="col-xs-6 o_kanban_card_manage_section o_kanban_manage_new">
+                                                <div class="o_kanban_card_manage_title">
+                                                    <span>New</span>
+                                                </div>
+                                                <div>
+                                                    <a name="307" type="action">Immediate Transfer</a>
+                                                </div>
+                                                <div>
+                                                    <a name="307" type="action" context="{'planned_picking': True}">Planned Transfer</a>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div t-if="widget.editable" class="o_kanban_card_manage_settings row">
+                                            <div class="col-xs-8">
+                                                <ul class="oe_kanban_colorpicker" data-field="color"/>
+                                            </div>
+                                            <div class="col-xs-4 text-right">
+                                                <a type="edit">Settings</a>
+                                            </div>
+                                        </div>
+                                    </div>
                             </div>
                         </t>
                     </templates>
@@ -95,7 +122,7 @@
             <field name="name">消息用户</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">res.users</field>
-            <!-- <field name="domain">[]</field>-->
+            <field name="domain">['|',('id', '=', uid),('sup_message_uids','in',[uid])]</field>
             <field name="view_type">form</field>
             <field name="view_mode">kanban,tree,form</field>
             <field name="view_ids" eval="[(5, 0, 0),
