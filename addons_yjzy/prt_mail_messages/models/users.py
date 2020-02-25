@@ -17,10 +17,15 @@ class res_users(models.Model):
     def open_message(self):
         self.ensure_one()
         #打开消息的过滤定义
-        dm = ['|', ('alias_user_id', '=', self.id), ('author_id.user_ids', '=', self.id)]
+        dm = [('owner_user_id', '=', self.id), ('message_type', '=', 'email'),('state_delete', '!=', 'recycle')]
 
         action = self.env.ref('prt_mail_messages.action_mail_messages_personal').read()[0]
         action['domain'] = dm
 
         return action
 
+    ##[['|',
+                  ##      ['all_user_ids', 'in', [treeNode.dbid]],
+                  ##      ['all_user_ids.sup_message_uids', 'in', [treeNode.dbid]],
+                   ##     ['state_delete', '!=', 'recycle'],
+                    ##    ]]

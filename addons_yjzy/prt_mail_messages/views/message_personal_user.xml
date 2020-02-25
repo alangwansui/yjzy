@@ -2,92 +2,98 @@
 <odoo>
 
 
-    <record id="prt_mail_message_out_tree" model="ir.ui.view">
+    <record id="prt_mail_message_personal_user_tree" model="ir.ui.view">
         <field name="name">prt.mail.message.tree</field>
         <field name="model">mail.message</field>
         <field name="arch" type="xml">
-            <tree string="Messages" decoration-bf="needaction==True" decoration-danger="is_error==True" default_order="date desc, id desc" create='false'>
+            <tree string="Messages" decoration-bf="have_read==False" decoration-danger="is_error==True" default_order="date desc, id desc"
+                  create='false' >
+                <!--button name="button_read" states="" string="打开" type='object' class="oe_highlight"/-->
                 <field name="body_text" string="文本" invisible="1"/>
                 <field name="body" string="内容" invisible="1"/>
                 <button name="tip_button" type="object" class="tip_button" icon="fa-th-large"/>
-
-                <field name="author_display" groups="base.group_system"/>
-                <field name="author_allowed_id" groups="base.group_system"/>
-                <field name="email_to" groups="base.group_system"/>
-
-
+                <field name="author_display" string="发件人"/>
+                <field name="alias_id" string="收件邮箱"/>
+                <field name="author_allowed_id" groups="base.group_system" invisible="1"/>
                 <button name="dummy" type="object" class="oe_stat_button" icon="fa-star" attrs="{'invisible': [('starred', '=', False)]}"/>
                 <button readonly="1" name="dummy" type="object" class="oe_inline oe_stat_button" icon="fa-paperclip"
                         attrs="{'invisible':[('attachment_count', '=', 0)]}"/>
-                <field name="subject_display" groups="base.group_system"/>
+                <field name="subject_display" groups="base.group_system" invisible="1"/>
                 <field name="subject"/>
-
-                <field name="partner_cc_ids" widget="many2many_tags" groups="base.group_system"/>
-                <field name="needaction" groups="base.group_system"/>
-                <field name="attachment_count" groups="base.group_system"/>
-                <field name="starred" groups="base.group_system"/>
-                <field name="is_error" groups="base.group_system"/>
-                <field name="compose_id" groups="base.group_system"/>
+                <field name="email_from" groups="base.group_system" invisible="1"/>
+                <field name="email_to" groups="base.group_system" invisible="1"/>
+                <field name="email_cc" groups="base.group_system" invisible="1"/>
+                <field name="partner_cc_ids" widget="many2many_tags" groups="base.group_system" invisible="1"/>
+                <field name="needaction" groups="base.group_system" invisible="1"/>
+                <field name="attachment_count" groups="base.group_system" invisible="1"/>
+                <field name="starred" groups="base.group_system" invisible="1"/>
+                <field name="is_error" groups="base.group_system" invisible="1"/>
+                <field name="compose_id" groups="base.group_system" invisible="1"/>
                 <field name="date"/>
-                <field name="process_type" groups="base.group_system"/>
+
+                <field name="have_read" groups="base.group_system" invisible="1"/>
+                <field name="had_replied"/>
+                <field name="process_type" />
                 <field name="state_delete" groups="base.group_system"/>
-                <field name="owner_user_id" groups="base.group_system" />
+                <field name="is_repeated" />
+                <field name="owner_user_id" groups="base.group_system"/>
             </tree>
         </field>
     </record>
-    <record id="view_message_out_kanban" model="ir.ui.view">
+    <record id="view_message_personal_user_kanban" model="ir.ui.view">
         <field name="name">mail.message.kanban</field>
         <field name="model">mail.message</field>
         <field name="arch" type="xml">
-        <kanban class="o_kanban_mobile " default_order="date desc, id desc" decoration-bf="have_read==False" decoration-danger="is_error==True">
+        <kanban class="o_kanban_mobile o_kanban_dashboard o_personal_kanban" default_order="date desc, id desc" decoration-bf="have_read==False" decoration-danger="is_error==True">
                 <field name="have_read"/>
                 <field name="is_error"/>
                 <field name="author_display"/>
                 <field name="subject"/>
                 <field name="date"/>
-                 <field name="email_to"/>
                  <field name="had_replied"/>
                 <button name="button_read"/>
-
+                 <field name="color"/>
                 <templates>
                     <t t-name="kanban-box">
-                       <div t-attf-class="oe_kanban_global_click ">
+                        <div t-attf-class="oe_kanban_global_click #{kanban_color(record.color.raw_value)} o_has_icon">
                             <div class="row mb4">
-                                <div class="col-xs-8" style=" text-overflow: -o-ellipsis-lastline;   overflow: hidden;   text-overflow: ellipsis;   display: -webkit-box;   -webkit-line-clamp: 1;   line-clamp: 1;   -webkit-box-orient: vertical;">
+                                <div class="col-xs-2" style="margin-left:10px; text-overflow: -o-ellipsis-lastline;   overflow: hidden;   text-overflow: ellipsis;   display: -webkit-box;   -webkit-line-clamp: 1;   line-clamp: 1;   -webkit-box-orient: vertical;">
                                     <stong>
-
-                                        <t t-if="record.have_read.raw_value == 0">
-                                           <span style="color:#076397; font-size:16px">●</span>
-                                        </t>
-
-                                        <span style="font-size:14px;font-weight:bolder; text-overflow: -o-ellipsis-lastline;   overflow: hidden;   text-overflow: ellipsis;   display: -webkit-box;   -webkit-line-clamp: 1;   line-clamp: 1;   -webkit-box-orient: vertical;" >
-                                            <field name="email_to"/>
+                                        <span t-attf-class="tenyale_kanban_text_{{
+                                        record.have_read.raw_value == 0
+                                        ? 'bold':'black'}}">
+                                            <field name="author_display"  />
                                         </span>
                                     </stong>
                                 </div>
-
-                                 <div class="col-xs-4 text-right " style=" text-overflow: -o-ellipsis-lastline;   overflow: hidden;   text-overflow: ellipsis;   display: -webkit-box;   -webkit-line-clamp: 1;   line-clamp: 1;   -webkit-box-orient: vertical;">
+                                   <div class="col-xs-6 " style=" text-overflow: -o-ellipsis-lastline;   overflow: hidden;   text-overflow: ellipsis;   display: -webkit-box;   -webkit-line-clamp: 1;   line-clamp: 1;   -webkit-box-orient: vertical;">
+                                    <span t-attf-class="tenyale_kanban_text_{{
+                                        record.have_read.raw_value == 0
+                                        ? 'bold':'black'}}">
+                                        <field name="subject" />
+                                    </span>
+                                </div>
+                                 <div class="col-xs-3 text-right " style=" text-overflow: -o-ellipsis-lastline;   overflow: hidden;   text-overflow: ellipsis;   display: -webkit-box;   -webkit-line-clamp: 1;   line-clamp: 1;   -webkit-box-orient: vertical;">
 
                               <span>
-                                    <field name="date" widget="date"/>
+                                    <field name="date"/>
                                 </span>
 
                              </div>
                             </div>
                     <div class="row">
 
-                                   <div class="col-xs-12 " style=" text-overflow: -o-ellipsis-lastline;   overflow: hidden;   text-overflow: ellipsis;   display: -webkit-box;   -webkit-line-clamp: 1;   line-clamp: 1;   -webkit-box-orient: vertical;">
-                                    <span t-attf-class="tenyale_kanban_text_{{                                         record.have_read.raw_value == 0                                         ? 'bold':'black'}}">
-                                        <field name="subject"/>
-                                    </span>
-                                </div>
+
 
                             </div>
                             <div class="row">
 
-                                <div class="col-xs-12" style=" text-overflow: -o-ellipsis-lastline;   overflow: hidden;   text-overflow: ellipsis;   display: -webkit-box;   -webkit-line-clamp: 2;   line-clamp: 2;   -webkit-box-orient: vertical;">
-
-                                    <span style="color:grey;font-weight:300">
+                                <div class="col-xs-12 br_test" style=" text-overflow: -o-ellipsis-lastline;   overflow: hidden;   text-overflow: ellipsis;   display: -webkit-box;   -webkit-line-clamp: 1;   line-clamp: 1;   -webkit-box-orient: vertical;">
+                                    <t t-if="record.had_replied.raw_value == 1">
+                                    <span style="background-color:#47528b;color:white">已回复
+                                </span>
+                                </t>
+                                    <span style="color:grey">
 
 
                                         <field name="body_text"/>
@@ -96,13 +102,13 @@
                                     </span>
                                 </div>
                             </div>
-                             <div class="row">
-                               <div class="col-xs-10" >
+                                       <div class="o_kanban_card_manage_pane">
+                                        <div class="o_project_kanban_colorpicker">
+                                            <ul class="oe_kanban_colorpicker" data-field="color"/>
+                                        </div>
+                                    </div>
+                                     <a class="o_kanban_manage_toggle_button o_left" href="#" ><i class="fa fa-ellipsis-v"/></a>
                                     <span class="o_right"><field name="star" widget="boolean_favorite" nolabel="1" force_save="1"/></span>
-
-
-                                </div>
-                                </div>
 
                            <!--<div class="col-xs-12 o_kanban_primary_left">
                                 <button class="btn btn-primary" name="button_read" type="object">
@@ -114,7 +120,7 @@
                                            options='{"terminology": "archive"}'/>
                                 </button>
                             </div>-->
-                       </div>
+                        </div>
                     </t>
 
 
@@ -124,35 +130,37 @@
 
         </field>
     </record>
-
-
-    <record id="prt_mail_message_out_form" model="ir.ui.view">
+    <record id="prt_mail_message_personal_user_form" model="ir.ui.view">
         <field name="name">prt.mail.message.form</field>
         <field name="model">mail.message</field>
         <field name="arch" type="xml">
             <form string="Message" create='false' edit='false'>
-                <div attrs="{'invisible':[('is_error', '!=', True)]}" name="pro" colspan="2" class="oe_form_box_info oe_text_center" style="color:red;">
+                <div attrs="{'invisible':[('is_error', '!=', True)]}" name="pro" class="oe_form_box_info oe_text_center" style="color:red;">
                     <p>Error while sending message. Please check error log under "Email Messages" tab</p>
                 </div>
                 <sheet>
-                    <div class="oe_button_box" name="button_box">
+                    <div class="oe_button_box" name="button_box" groups="base.group_system">
+                        <button name="reply" type="object" class="oe_stat_button" icon="fa-reply" string="回复"
+                                context="{'wizard_mode': False,'default_force_notify_email': 1}"
+                                help="Post new message to record. Record followers will be notified!"/>
+
+                        <button name="reply" type="object" class="oe_stat_button" icon="fa-quote-left" string="回复全部"
+                                context="{'wizard_mode': 'quote','default_force_notify_email': 1}"
+                                help="Post new message to record. Original message text will be qouted. Record followers will be notified!"/>
+
                         <button name="reply" type="object" class="oe_stat_button" icon="fa-copy" string="转发"
                                 context="{'wizard_mode': 'forward','default_force_notify_email': 1}"
                                 help="Copy message to other record. Original message text will be qouted and kept. Followers of the other record will be notified!"/>
 
-                        <button name="move" type="object" class="oe_stat_button" icon="fa-arrow-right" string="Move"
-                                help="Move message from current to other record" invisible="0" groups="base.group_system"/>
-                        <button string="标记已读" type="object" name="set_message_done"
-                                class="oe_stat_button"
-                                icon="fa-file" attrs="{'invisible': [('needaction', '=', False)]}" groups="base.group_system"/>
-                        <button string="标记未读" type="object" name="mark_as_unread"
-                                class="oe_stat_button"
-                                icon="fa-check" attrs="{'invisible': [('needaction', '=', True)]}" groups="base.group_system"/>
+                        <button name="move" type="object" class="oe_stat_button" icon="fa-arrow-right" string="邮件转移" groups="base.group_system"
+                                help="Move message from current to other record" invisible="0"/>
 
-                        <button name="edit_again" type="object" class="oe_stat_button" context="{'again_type': 'out_again',  'default_force_notify_email': 1}"
-                                icon="fa-arrow-right" string="再次编辑"/>
-                        <button name="edit_again" type="object" class="oe_stat_button" context="{'again_type': 'out_all',  'default_force_notify_email': 1}"
-                                icon="fa-arrow-right" string="回复全部"/>
+                        <button string="标记已读" type="object" name="toggle_have_read"
+                                class="oe_stat_button"
+                                icon="fa-file" attrs="{'invisible': [('have_read', '=', True)]}" groups="base.group_system"/>
+                        <button string="标记未读" type="object" name="toggle_have_read"
+                                class="oe_stat_button"
+                                icon="fa-check" attrs="{'invisible': [('have_read', '=', False)]}" groups="base.group_system"/>
 
                         <button name="toggle_message_starred" type="object" class="oe_stat_button"
                                 icon="fa-check" attrs="{'invisible': [('starred', '=', True)]}"
@@ -164,49 +172,54 @@
                                 icon="fa-envelope" attrs="{'invisible': [('thread_messages_count', '&lt;', 2)]}" groups="base.group_system">
                             <field name="thread_messages_count" widget="statinfo" string="In thread"/>
                         </button>
-
-
                         <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
                             <field name="active" widget="boolean_button"
                                    options='{"terminology": "archive"}'/>
+                        </button>
+
+                        <button string="创建通讯录" name="make_one_personal" type="object" class="oe_stat_button" icon="fa-archive">
                         </button>
 
 
                     </div>
                     <field name="author_avatar" widget="image" class="oe_avatar"/>
                     <div class="oe_title">
-                        <h1>
+                        <h3>
                             <field name="subject"/>
-                        </h1>
-
+                        </h3>
                     </div>
                     <group name="base">
                         <field name="all_partner_ids" widget="many2many_tags" groups="base.group_system"/>
                         <field name="all_personal_ids" widget="many2many_tags" groups="base.group_system"/>
                         <field name="all_user_ids" widget="many2many_tags" groups="base.group_system"/>
 
-                        <field name="personal_partner_ids" string="收件人" widget="many2many_tags" options="{'can_create':1,  'quick_create':1, 'create_name_field': 'email'}"/>
-                        <field name="personal_partner_cc_ids" string="抄送人" widget="many2many_tags" options="{'can_create':1,  'quick_create':1, 'create_name_field': 'email'}"/>
-                        <field name="personal_author_id" string="发件人"/>
 
-
-                       <field name="author_display" string="作者" groups="base.group_system"/>
-                        <field name="email_from" groups="base.group_system"/>
+                        <field name="personal_partner_ids" string="收件人" groups="base.group_system" widget="many2many_tags" options="{'can_create':1,  'quick_create':1, 'create_name_field': 'email'}"/>
+                        <field name="personal_partner_cc_ids" string="抄送人" groups="base.group_system"  widget="many2many_tags" options="{'can_create':1,  'quick_create':1, 'create_name_field': 'email'}"/>
+                        <field name="personal_author_id" string="发件人" groups="base.group_system" />
+                        <field name="alias_id"/>
+                        <field name="author_display" string="作者" groups="base.group_system"/>
+                        <field name="email_from" />
                         <field name="author_id" string="发件人" groups="base.group_system"/>
-                        <field name="email_to" groups="base.group_system"/>
-                        <label for="email_to" string="收件人" groups="base.group_system"/>
-                        <div name="email_to" class="o_row" string="收件人" groups="base.group_system">
+                        <field name="email_to" />
+                       <label for="email_to" string="收件人" groups="base.group_system"/>
+                         <div name="email_to" class="o_row" string="收件人" groups="base.group_system">
                             <field name="partner_ids" widget="many2many_tags_email" context="{'show_email': 1}"/>
                             <field name="manual_to"/>
                         </div>
-                        <field name="email_cc" groups="base.group_system"/>
-                        <label for="email_cc" string="抄送人" groups="base.group_system"/>
+
+                        <field name="email_cc" />
+                         <label for="email_cc" string="抄送人" groups="base.group_system"/>
                         <div name="email_cc" class="o_row" string="收件人" groups="base.group_system">
                             <field name="partner_cc_ids" widget="many2many_tags_email" context="{'show_email': 1}"/>
                             <field name="manual_cc"/>
                         </div>
-                       <field name="partner_bcc_ids" widget="many2many_tags_email" context="{'show_email': 1}" groups="base.group_system"/>
+                        <field name="partner_bcc_ids" widget="many2many_tags_email" context="{'show_email': 1}" groups="base.group_system"/>
                         <field name="date"/>
+                        <field name="is_repeated" groups="base.group_system"/>
+                        <field name="have_read" widget="boolean_toggle" invisible="1"/>
+                        <field name="had_replied"/>
+                        <field name="process_type"/>
                     </group>
 
 
@@ -219,19 +232,18 @@
                         </page>
                         <page string="其他信息" groups="base.group_no_one">
                             <group>
-
                                 <field name="inner_partner_ids" widget="many2many_tags"/>
                                 <field name="needaction"/>
                                 <field name="starred"/>
                                 <field name="author_allowed_id" attrs="{'invisible':[('author_allowed_id', '=', False)]}"/>
+                                <field name="email_from" attrs="{'invisible':[('author_allowed_id', '!=', False)]}"/>
                                 <field name="ref_partner_ids" widget="many2many_tags" attrs="{'invisible':[('ref_partner_count', '=', 0)]}"/>
                                 <field name="ref_partner_count" invisible="1"/>
                                 <field name="partner_count" invisible="1"/>
                                 <field name="partner_allowed_ids" attrs="{'invisible':[('partner_count', '=', 0)]}" widget="many2many_tags"/>
                                 <field name="state_delete"/>
-
                             </group>
-                            <group name="technical">
+                            <group name="technical" groups="base.group_system">
                                 <field name="alias_id"/>
                                 <field name="alias_user_id"/>
                                 <field name="message_id"/>
@@ -241,13 +253,12 @@
                                 <field name="subtype_id"/>
                                 <field name="compose_id"/>
                                 <field name="fetchmail_server_id"/>
-                                <field name="force_notify_email"/>
                                 <field name="channel_ids" widget="many2many_tags"/>
-                                <field name="process_type"/>
+
                             </group>
 
                         </page>
-                        <page name="attachments" string="Attachments" attrs="{'invisible':[('attachment_count', '=', 0)]}">
+                        <page name="attachments" string="附件" attrs="{'invisible':[('attachment_count', '=', 0)]}">
                             <sheet>
                                 <field name="attachment_count" invisible="1"/>
                                 <field name="attachment_allowed_ids" widget="many2many_binary"/>
@@ -260,11 +271,13 @@
                                     <tree name="email_tree" create="false" edit="false">
                                         <field name="state"/>
                                         <field name="mail_server_id"/>
-
                                         <field name="failure_reason"/>
                                     </tree>
                                 </field>
                             </sheet>
+                        </page>
+                        <page string="正文文本">
+                            <field name="body_text"/>
                         </page>
 
                     </notebook>
@@ -274,20 +287,25 @@
     </record>
 
 
-    <record id="action_mail_messages_out" model="ir.actions.act_window">
-        <field name="name">已发送</field>
+    <record id="action_mail_messages_personal_user" model="ir.actions.act_window">
+        <field name="name">所有邮件</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">mail.message</field>
-        <field name="domain">[('message_type', '=', 'email'),('author_id.user_ids','=', [uid]),('process_type','=','out')]</field>
+        <field name="domain">[('message_type', '=', 'email'),('state_delete', '!=', 'recycle'),
+            '|',('alias_user_id','=',uid),'|',('alias_user_id.sup_message_uids','in',[uid]),
+            '&amp;',('process_type','=','out'),'|',('author_id.user_ids','=', uid),('author_id.user_ids.sup_message_uids','in', [uid])]</field>
         <!--field name="context">{'check_messages_access': True}</field-->
-        <field name="context">{'is_out': 1, 'no_show_tree_keys': ['mail_list_income', 'mail_list_out', 'user']}</field>
-        <field name="view_type">form</field>
+        <field name="context">{'yjzy_search': 1}
+</field>
         <field name="view_mode">tree,kanban,form</field>
+        <field name="view_type">form</field>
         <field name="view_ids" eval="[(5, 0, 0),
-          (0, 0, {'view_mode': 'tree', 'view_id': ref('prt_mail_message_out_tree')}),
-          (0, 0, {'view_mode': 'form', 'view_id': ref('prt_mail_message_out_form')})]"/>
+          (0, 0, {'view_mode': 'tree', 'view_id': ref('prt_mail_message_personal_user_tree')}),
+          (0, 0, {'view_mode': 'form', 'view_id': ref('prt_mail_message_personal_user_form')})]"/>
+
     </record>
-    <menuitem id="menu_mail_messages_out" name="已发送" parent="prt_messages_root" action="action_mail_messages_out"/>
+    <menuitem id="menu_mail_messages_personal_user" name="所有邮件" parent="prt_messages_root" action="action_mail_messages_personal_user"/>
+
 
 </odoo>
 
