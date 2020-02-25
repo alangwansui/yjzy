@@ -100,7 +100,7 @@
                 <field name="dynamic_html"/>
 
                 <templates>
-                <t t-name="kanban-box">
+               <t t-name="kanban-box">
                        <div>
                                     <div t-attf-class="o_kanban_card_header">
                                         <div class="o_kanban_card_header_title">
@@ -144,7 +144,7 @@
                                                 <div class="o_kanban_card_manage_title">
                                                     <span>View</span>
                                                 </div>
-
+                                    <field name="dynamic_html_b" widget="html"/>
                                             </div>
                                             <div class="col-xs-6 o_kanban_card_manage_section o_kanban_manage_new">
                                                 <div class="o_kanban_card_manage_title">
