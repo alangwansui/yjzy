@@ -29,7 +29,9 @@
             <xpath expr="//field[@name='email']" position="replace">
                 <label for="email"/>
                 <div class="o_row">
-                    <span style="display:contents!important"><field name="email"/></span>
+                    <span style="display:contents!important">
+                        <field name="email"/>
+                    </span>
                     <button type="object" name="send_email" class="btn-xs btn-link mb4 fa fa-envelope-o"
                             attrs="{'invisible':[('email', '=', False)]}" context="{'field_name': 'email'}"/>
 
@@ -51,14 +53,14 @@
         <field name="help" type="html">
             <p class="oe_view_nocontent_create">
                 Click to add a contact in your address book.
-            </p><p>
-            Odoo helps you easily track all activities related to
-            a customer: discussions, history of business opportunities,
-            documents, etc.
-        </p>
+            </p>
+            <p>
+                Odoo helps you easily track all activities related to
+                a customer: discussions, history of business opportunities,
+                documents, etc.
+            </p>
         </field>
     </record>
-
 
 
     <menuitem id="prt_messages_contacts"
@@ -67,6 +69,51 @@
               parent="prt_messages_root"
               groups="base.group_system"
               sequence="10"/>
+
+
+    <!-- 客户看板菜单 -->
+    <record model="ir.ui.view" id="yjzy_partner_kanban_view">
+        <field name="name">res.partner.kanban</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <kanban class="oe_background_grey o_kanban_dashboard o_emphasize_colors o_stock_kanban">
+                <field name="id"/>
+                <field name="name"/>
+                <field name="phone"/>
+                <field name="email"/>
+                <field name="lang"/>
+                <field name="active"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="container o_kanban_card_content">
+                            <span>名称：<field name="name"/></span>
+                            <span>电话：<field name="phone"/></span>
+                            <span>邮箱：<field name="email"/></span>
+
+                           <button class="btn btn-primary" name="open_messsage" type="object" context="{'act_id': 'prt_mail_messages.action_mail_messages_personal', 'act_dm': [('user_id','=',    )]}">
+                                查看客户消息
+                           </button>
+
+
+                        </div>
+
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="yjzy_partner_kanban_action" model="ir.actions.act_window">
+        <field name="name">客户消息</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+          (0, 0, {'view_mode': 'kanban', 'view_id': ref('yjzy_partner_kanban_view')})]"/>
+    </record>
+
+    <!-- This Menu Item must have a parent and an action -->
+    <menuitem id="menu_yjzy_partner_kanban" name="客户消息" parent="prt_messages_root" action="yjzy_partner_kanban_action" sequence=""/>
 
 
 </odoo>

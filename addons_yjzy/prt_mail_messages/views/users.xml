@@ -74,7 +74,7 @@
                               <div class="container o_kanban_card_content">
                                 <div class="row">
                                   <div class="col-xs-5 o_kanban_primary_left">
-                                   <button class="btn btn-primary" name="open_message" type="object">
+                                   <button class="btn btn-primary" name="do_acton" type="object">
                                          <span>查看用户邮件</span>
 
                                      </button>

@@ -126,6 +126,8 @@ var FieldMany2One = AbstractField.extend({
             //<jon> on_open 改为 can_open
             no_open: false,
         });
+        this.quick_create = this.nodeOptions.quick_create;
+
         this.m2o_value = this._formatValue(this.value);
         // 'recordParams' is a dict of params used when calling functions
         // 'getDomain' and 'getContext' on this.record
@@ -580,7 +582,9 @@ var FieldMany2One = AbstractField.extend({
      * @private
      */
     _onInputFocusout: function () {
-        if (this.can_create && this.floating) {
+        console.info('=====>' ,   this.quick_create,  this.can_create, (this.quick_create ||  this.can_create) && this.floating);
+
+        if ( (this.quick_create ||  this.can_create) && this.floating) {
             new M2ODialog(this, this.string, this.$input.val()).open();
         }
     },

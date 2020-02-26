@@ -258,6 +258,31 @@ class BaseModel(MetaModel('DummyModel', (object,), {'_register': False})):
 
     CONCURRENCY_CHECK_FIELD = '__last_update'
 
+
+    def do_acton(self):
+
+        ctx = self.env.context
+
+        print('=========', ctx)
+
+        act_id, act_dm, act_uid, act_ctx = ctx.get('act_id'), ctx.get('act_dm'), ctx.get('act_uid'), ctx.get('act_ctx')
+
+        if not act_id:
+            raise Warning('必须提供动作ID')
+
+        action = self.env.ref(act_id).read()[0]
+        globals_dict = {'uid': self._uid}
+        if act_dm:
+            action['domain'] = str(act_dm + safe_eval(action['domain'], globals_dict))
+
+        if act_ctx:
+            context = safe_eval(action['context'], globals_dict)
+            context.update(act_ctx)
+            action['context'] = str(context)
+
+        return action
+
+
     @api.model
     def view_init(self, fields_list):
         """ Override this method to do specific things when a form view is

@@ -157,33 +157,14 @@ class PRTPartner(models.Model):
     def open_messsage(self):
         self.ensure_one()
 
-        partner_ids = [self.id] + [x.id for x in self.child_ids]
-        partner_emails = [self.email] + [x.email for x in self.child_ids]
-
-        msg_obj = self.env['mail.message']
-
-
-
-
-        msg_ids = []
-        msg_ids += [x['id'] for x in msg_obj.search_read([('partner_ids', 'in', partner_ids)], ['id'])]
-        for em in partner_emails:
-            msg_ids += [x['id'] for x in msg_obj.search_read(['|', ('email_to', 'ilike', em), ('manual_to', 'ilike', em)], ['id'])]
-
-
-
-        print(msg_ids)
-
-
-
         return {
-                    "name": u"消息",
-                    "type": "ir.actions.act_window",
-                    "view_mode": "tree,form",
-                    "res_model": "mail.message",
-                    "view_id": "",
-                    "domain": [('id', 'in', msg_ids)],
-                    "context": {},
+            "name": u"消息",
+            "type": "ir.actions.act_window",
+            "view_mode": "tree,form",
+            "res_model": "mail.message",
+            "view_id": "",
+            "domain": [('all_partner_ids', 'in', self.id)],
+            "context": {},
         }
 
 
