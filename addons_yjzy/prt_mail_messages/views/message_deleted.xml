@@ -35,6 +35,134 @@
             </tree>
         </field>
     </record>
+    <record id="prt_mail_message_deleted_kanban" model="ir.ui.view">
+        <field name="name">mail.message.kanban</field>
+        <field name="model">mail.message</field>
+        <field name="arch" type="xml">
+        <kanban class="o_kanban_mobile o_kanban_dashboard o_personal_kanban" default_order="date desc, id desc" decoration-bf="have_read==False"
+                decoration-danger="is_error==True"  create="false" edit="false" >
+                <field name="have_read"/>
+                <field name="is_error"/>
+                <field name="author_display"/>
+                <field name="subject"/>
+                <field name="date"/>
+                 <field name="had_replied"/>
+                <button name="button_read"/>
+                 <field name="color"/>
+                 <field name="process_type"/>
+
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_global_click #{kanban_color(record.color.raw_value)} o_has_icon">
+
+                           <div t-attf-class=" o_kanban_card_header">
+                                        <div class="o_kanban_card_header_title">
+                                            <div class="o_primary" style="font-size:14px; text-overflow: -o-ellipsis-lastline;   overflow: hidden;   text-overflow: ellipsis;   display: -webkit-box;   -webkit-line-clamp: 1;   line-clamp: 1;   -webkit-box-orient: vertical;">
+                                                          <t t-if="record.have_read.raw_value == 0">
+                                                           <span style="color:#076397; font-size:16px">●</span>
+                                                         </t>
+                                                <span >
+                                                   <field name="subject"/>
+                                                 </span>
+                                             </div>
+
+                                            </div>
+                                        <div class="o_kanban_manage_button_section">
+                                            <a class="o_kanban_manage_toggle_button" href="#"><i class="fa fa-ellipsis-v"/></a>
+                                        </div>
+                                    </div>
+
+
+                           <div class="row">
+                            <t t-if="record.process_type.raw_value == 'out'">
+
+                                    <div class="col-xs-9" style=" text-overflow: -o-ellipsis-lastline;   overflow: hidden;   text-overflow: ellipsis;   display: -webkit-box;   -webkit-line-clamp: 1;   line-clamp: 1;   -webkit-box-orient: vertical;">
+                                    <stong>
+                                        <span t-attf-class="tenyale_kanban_text_{{record.have_read.raw_value == 0? 'bold':'black'}}">
+                                            <field name="email_to"/>
+                                        </span>
+                                    </stong>
+                                </div>
+                                 <div class="col-xs-3">
+                                    <span style="background-color:#00a09d;color:white">发送
+                                </span>
+                                </div>
+                            </t>
+                             <t t-if="record.process_type.raw_value == 'in'">
+
+                                    <div class="col-xs-9" style=" text-overflow: -o-ellipsis-lastline;   overflow: hidden;   text-overflow: ellipsis;   display: -webkit-box;   -webkit-line-clamp: 1;   line-clamp: 1;   -webkit-box-orient: vertical;">
+                                    <stong>
+                                        <span t-attf-class="tenyale_kanban_text_{{  record.have_read.raw_value == 0                                         ? 'bold':'black'}}">
+                                            <field name="author_display"/>
+                                        </span>
+                                    </stong>
+                                </div>
+                                <div class="col-xs-3">
+                                <span style="background-color:#47528b;color:white">收件
+                                </span>
+                                </div>
+                            </t>
+
+
+                          </div>
+                            <div class="row">
+                                     <div class="col-xs-12 text-left " >
+
+                              <span style="color:grey;font-weight:300">
+                                    <field name="date"/>
+                                </span>
+
+                             </div>
+                             </div>
+                    <div class="row">
+
+
+
+                            </div>
+                            <div class="row">
+
+                                <div class="col-xs-12 br_test" style=" text-overflow: -o-ellipsis-lastline;   overflow: hidden;   text-overflow: ellipsis;   display: -webkit-box;   -webkit-line-clamp: 1;   line-clamp: 1;   -webkit-box-orient: vertical;">
+                                    <t t-if="record.had_replied.raw_value == 1">
+                                    <span style="background-color:#47528b;color:white">已回复
+                                </span>
+                                </t>
+                                    <span style="color:grey;font-weight:300">
+
+
+                                        <field name="body_text"/>
+
+
+                                    </span>
+                                </div>
+                            </div>
+                                       <div class="o_kanban_card_manage_pane">
+                                        <div class="o_project_kanban_colorpicker">
+                                            <ul class="oe_kanban_colorpicker" data-field="color"/>
+                                        </div>
+                                    </div>
+
+
+
+                           <!--<div class="col-xs-12 o_kanban_primary_left">
+                                <button class="btn btn-primary" name="button_read" type="object">
+                                    <span>查看邮件</span>
+                                </button>
+
+                                <button name="toggle_active" type="object" class="oe_stat_button">
+                                    <field name="active" widget="boolean_button"
+                                           options='{"terminology": "archive"}'/>
+                                </button>
+                            </div>-->
+                        </div>
+                    </t>
+
+
+                </templates>
+            </kanban>
+
+
+        </field>
+    </record>
     <record id="prt_mail_message_deleted_form" model="ir.ui.view">
         <field name="name">prt.mail.message.form</field>
         <field name="model">mail.message</field>
@@ -186,14 +314,15 @@
         <field name="name">回收站</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">mail.message</field>
-        <field name="domain">[('message_type', '=', 'email'),('state_delete', '=', 'recycle'),'|',('alias_user_id','=',uid),
-            '&amp;',('process_type','=','out'),('author_id.user_ids','=', uid)]</field>
+        <field name="domain">[('message_type', '=', 'email'),('state_delete', '=', 'recycle'),('owner_user_id','=',uid)]</field><!--'|',('alias_user_id','=',uid),
+            '&amp;',('process_type','=','out'),('author_id.user_ids','=', uid)-->
         <!--field name="context">{'check_messages_access': True}</field-->
         <field name="context">{'is_out': 1, 'no_show_tree_keys': ['mail_list_income', 'mail_list_out', 'user']}</field>
         <field name="view_type">form</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">tree,kanban,form</field>
         <field name="view_ids" eval="[(5, 0, 0),
           (0, 0, {'view_mode': 'tree', 'view_id': ref('prt_mail_message_deleted_tree')}),
+          (0, 0, {'view_mode': 'kanban', 'view_id': ref('prt_mail_message_deleted_kanban')}),
           (0, 0, {'view_mode': 'form', 'view_id': ref('prt_mail_message_deleted_form')})]"/>
     </record>
     <menuitem id="menu_mail_message_deleted" name="回收站" parent="prt_messages_root" action="action_mail_message_deleted"/>

@@ -7,7 +7,7 @@
         <field name="model">mail.message</field>
         <field name="arch" type="xml">
             <tree string="Messages" decoration-bf="have_read==False" decoration-danger="is_error==True" default_order="date desc, id desc"
-                  create='false' >
+                  create="false" edit="false" >
                 <!--button name="button_read" states="" string="打开" type='object' class="oe_highlight"/-->
                 <field name="body_text" string="文本" invisible="1"/>
                 <field name="body" string="内容" invisible="1"/>
@@ -42,7 +42,7 @@
         <field name="name">mail.message.kanban</field>
         <field name="model">mail.message</field>
         <field name="arch" type="xml">
-        <kanban class="o_kanban_mobile " default_order="date desc, id desc" decoration-bf="have_read==False" decoration-danger="is_error==True">
+        <kanban class="o_kanban_mobile " default_order="date desc, id desc" decoration-bf="have_read==False" decoration-danger="is_error==True" create="false" edit="false">
                 <field name="have_read"/>
                 <field name="is_error"/>
                 <field name="author_display"/>
@@ -295,6 +295,7 @@
         <field name="view_type">form</field>
         <field name="view_ids" eval="[(5, 0, 0),
           (0, 0, {'view_mode': 'tree', 'view_id': ref('prt_mail_message_income_tree')}),
+          (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_message_income_kanban')}),
           (0, 0, {'view_mode': 'form', 'view_id': ref('prt_mail_message_income_form')})]"/>
 
     </record>

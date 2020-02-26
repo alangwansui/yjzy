@@ -44,7 +44,7 @@
         <field name="name">mail.message.kanban</field>
         <field name="model">mail.message</field>
         <field name="arch" type="xml">
-        <kanban class="o_kanban_mobile o_kanban_dashboard o_personal_kanban" default_order="date desc, id desc" decoration-bf="have_read==False" decoration-danger="is_error==True">
+        <kanban class="o_kanban_mobile o_kanban_dashboard o_personal_kanban" default_order="date desc, id desc" decoration-bf="have_read==False" decoration-danger="is_error==True"  create="false" edit="false" >
                 <field name="have_read"/>
                 <field name="is_error"/>
                 <field name="author_display"/>
@@ -338,6 +338,7 @@
         <field name="view_type">form</field>
         <field name="view_ids" eval="[(5, 0, 0),
           (0, 0, {'view_mode': 'tree', 'view_id': ref('prt_mail_message_personal_tree')}),
+          (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_message_personal_kanban')}),
           (0, 0, {'view_mode': 'form', 'view_id': ref('prt_mail_message_personal_form')})]"/>
 
     </record>

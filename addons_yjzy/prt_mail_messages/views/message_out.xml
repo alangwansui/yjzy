@@ -35,11 +35,11 @@
             </tree>
         </field>
     </record>
-    <record id="view_message_out_kanban" model="ir.ui.view">
+    <!--<record id="view_message_out_kanban" model="ir.ui.view">
         <field name="name">mail.message.kanban</field>
         <field name="model">mail.message</field>
         <field name="arch" type="xml">
-        <kanban class="o_kanban_mobile " default_order="date desc, id desc" decoration-bf="have_read==False" decoration-danger="is_error==True">
+        <kanban class="o_kanban_mobile " default_order="date desc, id desc"  create="false" edit="false">
                 <field name="have_read"/>
                 <field name="is_error"/>
                 <field name="author_display"/>
@@ -56,9 +56,6 @@
                                 <div class="col-xs-8" style=" text-overflow: -o-ellipsis-lastline;   overflow: hidden;   text-overflow: ellipsis;   display: -webkit-box;   -webkit-line-clamp: 1;   line-clamp: 1;   -webkit-box-orient: vertical;">
                                     <stong>
 
-                                        <t t-if="record.have_read.raw_value == 0">
-                                           <span style="color:#076397; font-size:16px">●</span>
-                                        </t>
 
                                         <span style="font-size:14px;font-weight:bolder; text-overflow: -o-ellipsis-lastline;   overflow: hidden;   text-overflow: ellipsis;   display: -webkit-box;   -webkit-line-clamp: 1;   line-clamp: 1;   -webkit-box-orient: vertical;" >
                                             <field name="email_to"/>
@@ -103,7 +100,7 @@
 
                                 </div>
                                 </div>
-
+-->
                            <!--<div class="col-xs-12 o_kanban_primary_left">
                                 <button class="btn btn-primary" name="button_read" type="object">
                                     <span>查看邮件</span>
@@ -114,7 +111,7 @@
                                            options='{"terminology": "archive"}'/>
                                 </button>
                             </div>-->
-                       </div>
+                   <!--    </div>
                     </t>
 
 
@@ -123,7 +120,7 @@
 
 
         </field>
-    </record>
+    </record>-->
 
 
     <record id="prt_mail_message_out_form" model="ir.ui.view">
@@ -275,16 +272,17 @@
 
 
     <record id="action_mail_messages_out" model="ir.actions.act_window">
-        <field name="name">已发送</field>
+        <field name="name">发件箱</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">mail.message</field>
-        <field name="domain">[('message_type', '=', 'email'),('author_id.user_ids','=', [uid]),('process_type','=','out')]</field>
+        <field name="domain">[('message_type', '=', 'email'),('state_delete','!=','recycle')，('author_id.user_ids','=', [uid]),('process_type','=','out')]</field>
         <!--field name="context">{'check_messages_access': True}</field-->
         <field name="context">{'is_out': 1, 'no_show_tree_keys': ['mail_list_income', 'mail_list_out', 'user']}</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,kanban,form</field>
         <field name="view_ids" eval="[(5, 0, 0),
           (0, 0, {'view_mode': 'tree', 'view_id': ref('prt_mail_message_out_tree')}),
+
           (0, 0, {'view_mode': 'form', 'view_id': ref('prt_mail_message_out_form')})]"/>
     </record>
     <menuitem id="menu_mail_messages_out" name="已发送" parent="prt_messages_root" action="action_mail_messages_out"/>
