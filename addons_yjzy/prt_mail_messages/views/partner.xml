@@ -94,6 +94,9 @@
                                 查看客户消息
                            </button>
 
+                           <button class="btn btn-primary" name="do_acton" type="object"  t-attf-context="  {}    #{record.id}">
+                                测试
+                           </button>
 
                         </div>
 
