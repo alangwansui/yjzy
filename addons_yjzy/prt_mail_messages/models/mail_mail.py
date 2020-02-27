@@ -18,6 +18,8 @@ class mail_mail(models.Model):
     compose_id = fields.Many2one('mail.compose.message', u'底稿', related='mail_message_id.compose_id', store=True)
     recipient_cc_ids = fields.Many2many('res.partner', 'mail_mail_cc_res_partner_rel', 'mail_mail_id', 'partner_id', u'抄送')
     recipient_bcc_ids = fields.Many2many('res.partner', 'mail_mail_bcc_res_partner_rel', 'mail_mail_id', 'partner_id', u'密送')
+    readed = fields.Boolean('客户已打开')
+
 
     @api.multi
     def _send(self, auto_commit=False, raise_exception=False, smtp_session=None):
@@ -115,12 +117,14 @@ class mail_mail(models.Model):
                 res = None
                 print('==========wwww======',email_list)
                 for email in email_list:
-                    print('==ready to email build==cc', tools.email_split(mail.email_cc))
+                    base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+                    readed_tag = '<img src="%s/mail_mail/have_read/%s"/>' % (base_url, self.id)
+
                     msg = IrMailServer.build_email(
                         email_from=mail.email_from,
                         email_to=email.get('email_to'),
                         subject=mail.subject,
-                        body=email.get('body'),
+                        body=email.get('body') + readed_tag,
                         body_alternative=email.get('body_alternative'),
                         #email_cc=tools.email_split_and_format(email_cc_string),
                         #<jon> 邮件确保cc 来自文本，所有partner_cc 都会预选转为email_cc 传入
