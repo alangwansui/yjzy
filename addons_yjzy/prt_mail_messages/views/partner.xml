@@ -90,9 +90,10 @@
                             <span>电话：<field name="phone"/></span>
                             <span>邮箱：<field name="email"/></span>
 
-                           <button class="btn btn-primary" name="open_messsage" type="object" context="{'act_id': 'prt_mail_messages.action_mail_messages_personal', 'act_dm': [('user_id','=',    )]}">
+                           <button class="btn btn-primary" name="open_messsage" type="object">
                                 查看客户消息
                            </button>
+
 
 
                         </div>
