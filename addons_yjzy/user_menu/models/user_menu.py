@@ -1,13 +1,46 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime, timedelta
+import pytz
+from datetime import datetime, timedelta, date
 from odoo.exceptions import Warning
 from odoo.tools.safe_eval import safe_eval
 from odoo import models, fields, api
 from jinja2 import Template
 from odoo.tools import DEFAULT_SERVER_DATE_FORMAT as DF
+from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT as DTF
 import logging
 
+
+
+
 _logger = logging.getLogger(__name__)
+
+
+def Date_Time_Compute(day_str='today', days=0, hours=0, flag=1, fmt=DTF, tz='UTC'):
+    """
+    tz = 'Asia/Shanghai'  'UTC'
+    """
+
+    utc = pytz.timezone(tz)
+
+    if day_str == 'today':
+        t = datetime.strptime(datetime.now(utc).strftime(DF + ' 00:00:00'), DTF)
+
+    if day_str == 'today_end':
+        t = datetime.strptime(datetime.now(utc).strftime(DF + ' 23:59:59'), DTF)
+
+    if day_str == 'now':
+        t = datetime.now()
+
+    if (days or hours) and flag:
+        if flag > 0:
+            t += timedelta(days=days) + timedelta(hours=hours)
+        else:
+            t -= timedelta(days=days) + timedelta(hours=hours)
+
+    return t.strftime(DTF)
+
+
+
 
 class IrActionsActWindowView(models.Model):
     _inherit = 'ir.actions.act_window.view'
@@ -62,6 +95,7 @@ class user_menu(models.Model):
                         'today': fields.date.today().strftime(DF), 'fields': fields,
                         'context_today': fields.date.today,
                         'relativedelta': timedelta,
+                        'dt': Date_Time_Compute,
                     }
 
                     dic_a = safe_eval(one.dynamic_code, globals_dict)
