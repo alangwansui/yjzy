@@ -125,6 +125,8 @@ var FieldMany2One = AbstractField.extend({
             quick_create: false,
             //<jon> on_open 改为 can_open
             no_open: false,
+            //鼠标离开聚焦立即创建
+            create_easy: false
         });
         this.quick_create = this.nodeOptions.quick_create;
 
@@ -584,7 +586,16 @@ var FieldMany2One = AbstractField.extend({
     _onInputFocusout: function () {
         console.info('=====>' ,   this.quick_create,  this.can_create, (this.quick_create ||  this.can_create) && this.floating);
 
-        if ( (this.quick_create ||  this.can_create) && this.floating) {
+        console.info('==_onInputFocusout==', this.$input.val(), this.nodeOptions);
+
+        //不弹出提醒，直接创建
+        if ( this.quick_create  && this.floating  && this.nodeOptions.create_easy) {
+            console.info('==_onInputFocusout==1')
+            var create_name = this.$input.val();
+            this._quickCreate(create_name);
+
+        }else if ( (this.quick_create ||  this.can_create) && this.floating) {
+            console.info('==_onInputFocusout==2')
             new M2ODialog(this, this.string, this.$input.val()).open();
         }
     },
@@ -1798,6 +1809,9 @@ var FieldMany2ManyTags = AbstractField.extend({
      * @param {OdooEvent} event
      */
     _onQuickCreate: function (event) {
+
+        console.info('== _onQuickCreate =',event);
+
         this._quickCreate(event.data.value);
     },
 });
