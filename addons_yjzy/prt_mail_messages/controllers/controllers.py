@@ -4,16 +4,18 @@ from odoo import http
 from odoo.http import request
 
 class ProductDimension(http.Controller):
-    @http.route('/mail_mail/have_read/<int:mail_id>/xx.png', type='http', auth='none', methods=['GET'], csrf=False)
+    @http.route('/mail_mail/have_read/<int:mail_id>', type='http', auth='none', methods=['GET'], csrf=False)
     def mail_mail_eceive(self, mail_id, **kw):
         try:
-            print(request.httprequest.environ['REMOTE_ADDR'])
+            print('======mail_mail/have_read=======', request.httprequest.environ['REMOTE_ADDR'])
             ip_address = request.httprequest.environ['REMOTE_ADDR']
             if ip_address:
-                log = self.env['mail.read.log'].sudo().create({
+                log = request.env['mail.read.log'].sudo().create({
                     'ip_address': ip_address,
-                    'mial_id': mail_id,
+                    'mail_id': mail_id,
                 })
+
+                print('======mail_mail/have_read=======',log)
 
             mail = request.env["mail.mail"].sudo().browse(mail_id)
             mail.readed = True

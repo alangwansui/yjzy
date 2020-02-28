@@ -29,16 +29,16 @@
                 <field name="recipient_cc_ids" widget="many2many_tags"/>
                 <field name="recipient_bcc_ids" widget="many2many_tags"/>
             </field>
-            <noteboook position="after">
+            <notebook position="inside">
                 <page string="客户打开记录">
-                    <field name="">
+                    <field name="read_log_ids">
                         <tree>
-                            <field name=""/>
-
+                            <field name="ip_address"/>
+                            <field name="create_date"/>
                         </tree>
                     </field>
                 </page>
-            </noteboook>
+            </notebook>
 
         </field>
     </record>

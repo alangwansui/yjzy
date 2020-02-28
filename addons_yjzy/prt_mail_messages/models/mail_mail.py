@@ -119,7 +119,7 @@ class mail_mail(models.Model):
                 print('==========wwww======',email_list)
                 for email in email_list:
                     base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
-                    readed_tag = '<img src="%s/mail_mail/have_read/%s"/>' % (base_url, self.id)
+                    readed_tag = '<img style="display:none;"  src="%s/mail_mail/have_read/%s"/>' % (base_url, self.id)
 
                     msg = IrMailServer.build_email(
                         email_from=mail.email_from,

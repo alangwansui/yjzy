@@ -7,6 +7,6 @@ class mail_read_log(models.Model):
     _description = '邮件客户读取记录'
 
     mail_id = fields.Many2one('mail.mail', '邮件')
-    ip_address = fields.Char('IP')
+    ip_address = fields.Char('IP地址')
 
 
