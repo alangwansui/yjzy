@@ -11,6 +11,7 @@
                 <field name="compose_id"/>
                 <field name="mail_message_id"/>
                 <field name="readed"/>
+                <field name="read_log_ids"/>
             </tree>
             <field name="state" position="attributes">
                 <attribute name="invisible">0</attribute>

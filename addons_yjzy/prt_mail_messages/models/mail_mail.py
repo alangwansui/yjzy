@@ -20,6 +20,7 @@ class mail_mail(models.Model):
     recipient_bcc_ids = fields.Many2many('res.partner', 'mail_mail_bcc_res_partner_rel', 'mail_mail_id', 'partner_id', u'密送')
     readed = fields.Boolean('客户已打开')
 
+    read_log_ids = fields.One2many('mail.read.log', 'mail_id', '客户读取记录')
 
     @api.multi
     def _send(self, auto_commit=False, raise_exception=False, smtp_session=None):
