@@ -92,7 +92,7 @@
                 <group>
                     <field name="personal_partner_ids" string="收件人"  required="1" widget="many2many_tags"  context="{'tag_code': 'out_tmp'}"
                            domain="[('tag_id.code','in',['normal','income_tmp'])]"
-                           options="{'quick_create':1, 'create_name_field': 'email'}"/>
+                           options="{'create_easy':1, 'quick_create':1, 'create_name_field': 'email'}"/>
                     <field name="partner_ids" string="收件人" widget="many2many_tags_email" placeholder="Add contacts to notify..."
                            context="{'force_email':True, 'show_email':True}"
                            attrs="{'invisible': [('composition_mode', '!=', 'comment')]}" invisible="1"/>
@@ -101,7 +101,7 @@
 
                     <field name="personal_partner_cc_ids" string="抄送人" widget="many2many_tags" context="{'tag_code': 'out_tmp'}"
                            domain="[('tag_id.code','in',['normal','income_tmp'])]"
-                           options="{'can_create':1,  'quick_create':1, 'create_name_field': 'email'}"/>
+                           options="{'create_easy':1, 'can_create':1,  'quick_create':1, 'create_name_field': 'email'}"/>
                     <field name="partner_cc_ids" placeholder="Add CC contacts to notify..." string="抄送人" widget="many2many_tags_email"
                            context="{'force_email':True, 'show_email':True}" invisible="1"/>
                     <field name="manual_cc" string="系统外抄送人" invisible="1"/>
