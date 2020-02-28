@@ -10,6 +10,8 @@ from . import fetchmail_server
 from . import mail_channel
 from . import personal_partner
 from . import users
+from . import mail_read_log
+
 
 
 
