@@ -10,6 +10,7 @@
                 <field name="email_cc"/>
                 <field name="compose_id"/>
                 <field name="mail_message_id"/>
+                <field name="readed"/>
             </tree>
             <field name="state" position="attributes">
                 <attribute name="invisible">0</attribute>

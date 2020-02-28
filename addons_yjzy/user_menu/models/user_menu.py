@@ -15,12 +15,19 @@ import logging
 _logger = logging.getLogger(__name__)
 
 
-def Date_Time_Compute(day_str='today', days=0, hours=0, flag=1, fmt=DTF, tz='UTC'):
+def Date_Time_Compute(day_str='now', days=0, hours=0, flag=1, fmt=DTF, tz='UTC'):
     """
     tz = 'Asia/Shanghai'  'UTC'
     """
 
     utc = pytz.timezone(tz)
+
+    t = datetime.now()
+    if (days or hours) and flag:
+        if flag > 0:
+            t += timedelta(days=days) + timedelta(hours=hours)
+        else:
+            t -= timedelta(days=days) + timedelta(hours=hours)
 
     if day_str == 'today':
         t = datetime.strptime(datetime.now(utc).strftime(DF + ' 00:00:00'), DTF)
@@ -31,11 +38,7 @@ def Date_Time_Compute(day_str='today', days=0, hours=0, flag=1, fmt=DTF, tz='UTC
     if day_str == 'now':
         t = datetime.now()
 
-    if (days or hours) and flag:
-        if flag > 0:
-            t += timedelta(days=days) + timedelta(hours=hours)
-        else:
-            t -= timedelta(days=days) + timedelta(hours=hours)
+
 
     return t.strftime(DTF)
 
