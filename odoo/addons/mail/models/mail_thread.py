@@ -1072,7 +1072,9 @@ class MailThread(models.AbstractModel):
         # Delivered-To is a safe bet in most modern MTAs, but we have to fallback on To + Cc values
         # for all the odd MTAs out there, as there is no standard header for the envelope's `rcpt_to` value.
 
-        #print('==message_route==1.5', tools.decode_message_header(message, 'Received'), message)
+        #解析邮箱地址，匹配不同的alias，
+        alias_domain = self.env["ir.config_parameter"].get_param("mail.catchall.domain", default='tenyale.com')
+
         rcpt_tos = ','.join([
             tools.decode_message_header(message, 'Delivered-To'),
             tools.decode_message_header(message, 'To'),
@@ -1082,9 +1084,16 @@ class MailThread(models.AbstractModel):
             #tools.decode_message_header(message, 'Resent-To'),
             #tools.decode_message_header(message, 'Resent-Cc')
         ])
-        rcpt_tos_localparts = [e.split('@')[0].lower() for e in tools.email_split(rcpt_tos)]
 
-        _logger.info('==message_route==2 %s', rcpt_tos_localparts)
+        #排除不是我司域名的的邮箱地址
+        rcpt_tos_localparts = []
+        for e in tools.email_split(rcpt_tos):
+            if alias_domain in e:
+                rcpt_tos_localparts.append(e.split('@')[0].lower())
+
+        #rcpt_tos_localparts = [e.split('@')[0].lower() for e in tools.email_split(rcpt_tos)]
+
+        _logger.info('==message_route==2 %s', email_from_localpart, rcpt_tos_localparts)
         # 0. Verify whether this is a bounced email and use it to collect bounce data and update notifications for customers
         if bounce_alias and bounce_alias in email_to_localpart:
             # Bounce regex: typical form of bounce is bounce_alias+128-crm.lead-34@domain
@@ -1184,9 +1193,8 @@ class MailThread(models.AbstractModel):
             # no route found for a matching reference (or reply), so parent is invalid
             message_dict.pop('parent_id', None)
 
-            alias_domain = self.env["ir.config_parameter"].get_param("mail.catchall.domain", default='tenyale.com')
 
-            dest_aliases = Alias.search([('alias_name', 'in', rcpt_tos_localparts), ('alias_domain', 'like', alias_domain)])
+            dest_aliases = Alias.search([('alias_name', 'in', rcpt_tos_localparts)])
             print('==message_route==5.1', dest_aliases)
             if dest_aliases:
                 routes = []
@@ -1210,7 +1218,7 @@ class MailThread(models.AbstractModel):
                             email_from, email_to, message_id, route)
                         routes.append(route)
 
-                print('==message_route==5.1', routes)
+                print('==message_route==5.1.2', email_to_localpart,  routes)
                 return routes
 
         # 5. Fallback to the provided parameters, if they work
@@ -1396,7 +1404,7 @@ class MailThread(models.AbstractModel):
         # find possible routes for the message
         routes = self.message_route(msg_txt, msg, model, thread_id, custom_values)
 
-        print('====route coutn==', len(routes))
+        print('====route coutn==', routes)
 
         thread_id = self.message_route_process(msg_txt, msg, routes)
         return thread_id
