@@ -22,16 +22,16 @@ def Date_Time_Compute(day_str='now', days=0, hours=0, flag=1, fmt=DTF, tz='UTC')
     utc = pytz.timezone(tz)
     t = datetime.now() + timedelta(days=days, hours=hours)
 
-    if day_str == 'today':
-        t = datetime.strptime(datetime.now(utc).strftime(DF + ' 00:00:00'), DTF)
-
-    if day_str == 'today_end':
-        t = datetime.strptime(datetime.now(utc).strftime(DF + ' 23:59:59'), DTF)
-
     if day_str == 'now':
-        t = datetime.now()
+        return t.strftime(DTF)
 
-    return t.strftime(DTF)
+    if day_str == 'star':
+        return t.strftime(DF + ' 00:00:00')
+
+    if day_str == 'end':
+        return t.strftime(DF + ' 23:59:59')
+
+
 
 
 
