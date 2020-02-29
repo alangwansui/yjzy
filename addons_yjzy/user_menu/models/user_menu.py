@@ -31,8 +31,6 @@ def Date_Time_Compute(day_str='now', days=0, hours=0, flag=1, fmt=DTF, tz='UTC')
     if day_str == 'now':
         t = datetime.now()
 
-
-
     return t.strftime(DTF)
 
 
