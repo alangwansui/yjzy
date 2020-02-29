@@ -25,7 +25,7 @@ def Date_Time_Compute(day_str='now', days=0, hours=0, flag=1, fmt=DTF, tz='UTC')
     if day_str == 'now':
         return t.strftime(DTF)
 
-    if day_str == 'star':
+    if day_str == 'start':
         return t.strftime(DF + ' 00:00:00')
 
     if day_str == 'end':
