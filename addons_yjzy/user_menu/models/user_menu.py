@@ -19,17 +19,19 @@ def Date_Time_Compute(day_str='now', days=0, hours=0, flag=1, fmt=DTF, tz='UTC')
     """
     tz = 'Asia/Shanghai'  'UTC'
     """
-    utc = pytz.timezone(tz)
-    t = datetime.now() + timedelta(days=days, hours=hours)
 
+    t = datetime.now(pytz.timezone(tz))
     if day_str == 'now':
-        return t.strftime(DTF)
-
+        pass
     if day_str == 'start':
-        return t.strftime(DF + ' 00:00:00')
-
+        t = datetime.strptime(t.strftime(DF + ' 00:00:00'), DTF)
     if day_str == 'end':
-        return t.strftime(DF + ' 23:59:59')
+        t = datetime.strptime(t.strftime(DF + ' 23:59:59'), DTF)
+
+    return (t + timedelta(days=days, hours=hours)).strftime(DTF)
+
+
+
 
 
 
