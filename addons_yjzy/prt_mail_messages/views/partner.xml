@@ -11,7 +11,7 @@
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
             <button name="toggle_active" position="before">
-                <button type="object" name="open_messsage" class="oe_stat_button" icon="fa-envelope" string="查看消息" groups="sales_team.group_manager"/>
+                <button type="object" name="open_messsage" class="oe_stat_button" icon="fa-envelope" string="查看消息" groups="base.group_system" invisible="1"/>
 
                 <button name="partner_messages" type="object" class="oe_stat_button"
                         icon="fa-envelope" attrs="{'invisible': [('messages_from_count', '=', 0)]}"

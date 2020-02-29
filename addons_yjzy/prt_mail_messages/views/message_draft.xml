@@ -115,7 +115,7 @@
         <field name="model">mail.compose.message</field>
         <field name="priority">1</field>
         <field name="arch" type="xml">
-            <form string="写邮件">
+            <form string="写邮件" create="false">
                 <header>
                     <button string="检查邮件地址" name="mail_address_check" type="object" class="btn-primary" groups="base.group_system"/>
                      <button string="发送" name="send_mail_button" attrs="{'invisible':[('is_sent','=',True)]}" type="object" class="btn-primary"
@@ -180,7 +180,7 @@
                 <group>
                     <field name="personal_partner_ids" string="收件人" widget="many2many_tags"  context="{'tag_code': 'out_tmp'}"
                            domain="[('tag_id.code','in',['normal','income_tmp'])]"
-                           options="{'can_create':1,  'quick_create':1, 'create_name_field': 'email'}"/>
+                           options="{'create_easy':1, 'quick_create':1,  'create_name_field': 'email'}"/>
                     <field name="partner_ids" string="收件人" groups="base.group_system" widget="many2many_tags_email" placeholder="Add contacts to notify..."
                            context="{'force_email':True, 'show_email':True}"
                            attrs="{'invisible': [('composition_mode', '!=', 'comment')]}"/>
@@ -189,7 +189,7 @@
 
                     <field name="personal_partner_cc_ids" string="抄送人" widget="many2many_tags" context="{'tag_code': 'out_tmp'}"
                            domain="[('tag_id.code','in',['normal','income_tmp'])]"
-                           options="{'can_create':1,  'quick_create':1, 'create_name_field': 'email'}"/>
+                           options="{'create_easy':1, 'quick_create':1, 'create_name_field': 'email'}"/>
                     <field name="partner_cc_ids" groups="base.group_system" placeholder="Add CC contacts to notify..." string="抄送人" widget="many2many_tags_email"
                            context="{'force_email':True, 'show_email':True}"/>
                     <field name="manual_cc" string="系统外抄送人" groups="base.group_system"/>

@@ -155,10 +155,10 @@
                                                     <span>New</span>
                                                 </div>
                                                 <div>
-                                                    <a name="307" type="action">Immediate Transfer</a>
+                                                    <a>test</a>
                                                 </div>
                                                 <div>
-                                                    <a name="307" type="action" context="{'planned_picking': True}">Planned Transfer</a>
+                                                    <a>test</a>
                                                 </div>
                                             </div>
                                         </div>
