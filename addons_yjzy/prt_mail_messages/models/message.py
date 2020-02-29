@@ -61,14 +61,19 @@ class PRTMailMessage(models.Model):
             if self._name != 'mail.message':
                 continue
 
-            all_personal = one.personal_partner_ids | one.personal_partner_cc_ids | one.personal_author_id
-            all_partners = one.author_id | one.partner_ids | one.partner_cc_ids
-            all_users = one.alias_user_id | one.author_id.user_ids
+            try:
 
-            one.all_partner_ids = all_partners
-            one.all_personal_ids = all_personal
-            one.inner_partner_ids = all_personal.mapped('partner_id')
-            one.all_user_ids = all_users
+                all_personal = one.personal_partner_ids | one.personal_partner_cc_ids | one.personal_author_id
+                all_partners = one.author_id | one.partner_ids | one.partner_cc_ids
+                all_users = one.alias_user_id | one.author_id.user_ids
+
+                one.all_partner_ids = all_partners
+                one.all_personal_ids = all_personal
+                one.inner_partner_ids = all_personal.mapped('partner_id')
+                one.all_user_ids = all_users
+
+            except Exception as e:
+                pass
 
 
 
