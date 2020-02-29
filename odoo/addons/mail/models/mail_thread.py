@@ -1325,7 +1325,10 @@ class MailThread(models.AbstractModel):
 
             #收取邮件处理 通讯录
             if new_msg.fetchmail_server_id:
-                new_msg.make_one_personal_in(alias.alias_user_id)
+                try:
+                    new_msg.make_one_personal_in(alias.alias_user_id)
+                except Exception as e:
+                    _logger.info(u'收取邮件处理 通讯录错误 %s' % e)
 
         return thread_id
 
