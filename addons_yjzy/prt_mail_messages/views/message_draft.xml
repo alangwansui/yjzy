@@ -178,6 +178,13 @@
                     </div>
                 </group>
                 <group>
+                       <div class="oe_form_box_info oe_text_center">
+                        <span>
+                            说明：输入收件人或者抄送人之后，请按回车，联系人颜色变成灰底白字！
+                        </span>
+                    </div>
+                       </group>
+                <group>
                     <field name="personal_partner_ids" string="收件人" widget="many2many_tags"  context="{'tag_code': 'out_tmp'}"
                            domain="[('tag_id.code','in',['normal','income_tmp'])]"
                            options="{'create_easy':1, 'quick_create':1,  'create_name_field': 'email'}"/>

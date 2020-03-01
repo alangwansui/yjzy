@@ -9,6 +9,7 @@
             <tree string="Messages" decoration-bf="have_read==False" decoration-danger="is_error==True" delete="false" default_order="date desc, id desc"
                   create='false' >
                 <!--button name="button_read" states="" string="打开" type='object' class="oe_highlight"/-->
+                <field name="process_type" />
                 <field name="body_text" string="文本" invisible="1"/>
                 <field name="body" string="内容" invisible="1"/>
                 <button name="tip_button" type="object" class="tip_button" icon="fa-th-large"/>
@@ -33,7 +34,7 @@
 
                 <field name="have_read" groups="base.group_system" invisible="1"/>
                 <field name="had_replied"/>
-                <field name="process_type" />
+
                 <field name="state_delete" groups="base.group_system"/>
                 <field name="is_repeated" />
                 <field name="owner_user_id" groups="base.group_system"/>
