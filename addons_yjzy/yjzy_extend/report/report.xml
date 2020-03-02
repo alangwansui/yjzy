@@ -41,15 +41,15 @@
             print_report_name="'CC_Packing_list_'+(object.ref)"
         />
 
-        <!--report
-            id="action_report_transport_bill_fytzd"
-            string="发货通知单"
+        <report
+            id="action_report_transport_bill_test"
+            string="发运单测试打印"
             model="transport.bill"
-            report_type="qweb-html"
-            file="yjzy_extend.report_transport_bill_fytzd"
-            name="yjzy_extend.report_transport_bill_fytzd"
-            print_report_name="(object.name)"
-        /-->
+            report_type="qweb-pdf"
+            file="yjzy_extend.report_transport_bill_test"
+            name="yjzy_extend.report_transport_bill_test"
+            print_report_name="'test'+(object.ref)"
+        />
 
         <report
             id="action_report_transport_bill_bgzl_contract"

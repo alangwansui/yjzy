@@ -1,3 +1,8 @@
 
 
-create sequence  btls_hs_id_seq    increment by 1 minvalue 1 no maxvalue start with 9999;
+create sequence  tbl_hsname_id_seq    increment by 1 minvalue 1 no maxvalue start with 9999;
+
+
+
+
+tbl_hsname_id_seq

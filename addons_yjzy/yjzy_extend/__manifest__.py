@@ -128,6 +128,8 @@
 
         'report/account_payment_ysrld_liushui_template.xml',
         'report/account_payment_yfrld_liushui_template.xml',
+        'report/report_transport_bill_test_template.xml',
+
 
 
     ],
