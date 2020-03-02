@@ -13,6 +13,21 @@ class transport_bill(models.Model):
 
     sale_collect_state = fields.Selection([('draft', u'未统计'), ('done', u'已统计')], string=u'销售统计', default='draft')
 
+    def test_get_package_tag(self):
+        res = self.get_package_tag()
+        raise Warning('%s' % res)
+
+    def get_package_tag(self):
+        self.ensure_one()
+        dic_info = {}
+        for line in self.hsname_ids:
+            if line.package_tag in dic_info:
+                dic_info[line.package_tag]['lines'] |= line
+                dic_info[line.package_tag]['qty'] += 1
+            else:
+                dic_info[line.package_tag] = {'lines': line, 'qty': 1}
+
+        return dic_info
 
     def get_sale_hs(self, key_name):
         return self.hsname_ids.filtered(lambda x: x.name==key_name)
@@ -249,6 +264,8 @@ class tbl_hsname(models.Model):
 
     shiji_weight = fields.Float(u'实际毛重', compute=compute_shiji, digits=dp.get_precision('Weight'))
     shiji_volume = fields.Float(u'实际体积', compute=compute_shiji, digits=dp.get_precision('Volume'))
+
+    package_tag = fields.Char('包裹标记')
 
 
     @api.model

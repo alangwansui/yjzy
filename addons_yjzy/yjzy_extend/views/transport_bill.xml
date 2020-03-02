@@ -140,9 +140,12 @@
                         <!--button string="付款" type="object" name="open_account_payment" class="oe_highlight"/-->
                         <button string="打印供应商发货单" type="object" name="action_transport_bill_vendor_report" class="oe_highlight"/>
 
-                        <button string="更新退税率" type="object" name="update_back_tax" class="oe_highlight" groups="base.group_systm"/>
+                        <button string="更新退税率" type="object" name="update_back_tax" class="oe_highlight" groups="base.group_system"/>
 
                         <button name="split_tuopan_weight" type="object" string="分配托盘重量" attrs="{'invisible': [('is_done_tuopan','=',True)]}"  class="oe_highlight"/>
+
+                        <button name="test_get_package_tag" type="object" string="测试包裹分组数据"  class="oe_highlight"  groups="base.group_system"/>
+
 
 
                         <field name="state" widget="statusbar" groups="base.group_system"/>
@@ -528,6 +531,7 @@
                                 <field name="hsname_ids">
                                     <tree>
                                         <field name="id"/>
+                                        <field name="package_tag"/>
                                         <field name="name" />
                                         <field name="dump_product_id" groups="base.group_system"/>
                                         <field name="hs_id" groups="base.group_system"/>
@@ -560,6 +564,7 @@
                                     <form>
                                         <group>
                                             <group>
+                                        <field name="package_tag"/>
                                         <field name="name" readonly="0"/>
                                         <field name="dump_product_id" readonly="0"/>
                                         <field name="hs_id" readonly="0"/>
