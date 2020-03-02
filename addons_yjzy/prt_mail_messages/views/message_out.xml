@@ -9,7 +9,7 @@
             <tree string="Messages" decoration-bf="needaction==True" decoration-danger="is_error==True" delete="false" default_order="date desc, id desc" create='false'>
                 <field name="body_text" string="文本" invisible="1"/>
                 <field name="body" string="内容" invisible="1"/>
-                <button name="tip_button" type="object" class="tip_button" icon="fa-th-large"/>
+                <button name="tip_button" type="object" class="tip_button" icon="fa-th-large" context="{'form_xml_id': 'prt_mail_messages.prt_mail_message_out_form'}"/>
 
                 <field name="author_display" groups="base.group_system"/>
                 <field name="author_allowed_id" groups="base.group_system"/>
