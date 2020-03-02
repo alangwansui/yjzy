@@ -34,9 +34,12 @@ class PRTMailMessage(models.Model):
         self.have_read = True
 
 
-        action_id = self.env.context['params'].get('action')
-        action = self.env['ir.actions.act_window'].browse(action_id)
-        form = action.view_ids.filtered(lambda x: x.view_mode == 'form').view_id
+        # action_id = self.env.context['params'].get('action')
+        # action = self.env['ir.actions.act_window'].browse(action_id)
+        # form = action.view_ids.filtered(lambda x: x.view_mode == 'form').view_id
+
+        xml_id = self.env.context.get('form_xml_id')
+        form =  self.env.ref(xml_id)
 
         return {
             'name': u'邮件',
