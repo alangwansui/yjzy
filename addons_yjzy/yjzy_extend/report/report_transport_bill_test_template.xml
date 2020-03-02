@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_transport_bill_test_document">
+        <t t-call="yjzy_extend.no_header_external_layout">
+            <t t-set="doc" t-value="doc.with_context({'lang':doc.partner_id.lang})"/>
+
+            <t t-set="res" t-value="doc.get_package_tag()"/>
+
+
+            <t t-foreach="res" t-as="tag">
+                <span>
+                    <t t-esc="tag"/>
+                </span>
+                <t t-set="data" t-value="res[tag]"/>
+                    <t t-set="lines" t-value="data['lines']"/>
+                    <t t-set="qty" t-value="data['qty']"/>
+
+                    <t t-esc="qty"/>
+
+                    <t t-foreach="lines" t-as="line">
+                        <t t-esc="line.id"/>
+                    </t>
+
+
+
+
+
+            </t>
+
+
+        </t>
+
+    </template>
+    <template id="report_transport_bill_test">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="yjzy_extend.report_transport_bill_test_document" t-lang="doc.partner_id.lang"/>
+            </t>
+        </t>
+    </template>
+</odoo>
