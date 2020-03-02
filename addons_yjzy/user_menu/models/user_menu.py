@@ -114,11 +114,15 @@ class user_menu(models.Model):
     def do_acton(self):
         ctx = self.env.context
         act_id, act_dm, act_uid, act_ctx = ctx.get('act_id'), ctx.get('act_dm'), ctx.get('act_uid'), ctx.get('act_ctx')
+        act_vm, act_vids = ctx.get('act_vm'), ctx.get('act_vids')
 
         if not act_id:
             raise Warning('必须提供动作ID')
 
         action = self.env.ref(act_id).read()[0]
+
+        print('=====', act_vm, act_vids, action)
+
         globals_dict = {'uid': self._uid}
         if act_dm:
             action['domain'] = str(act_dm + safe_eval(action['domain'], globals_dict))
@@ -127,6 +131,16 @@ class user_menu(models.Model):
             context = safe_eval(action['context'], globals_dict)
             context.update(act_ctx)
             action['context'] = str(context)
+
+        if act_vm:
+            action['view_mode'] = act_vm
+
+        if act_vids:
+            views = []
+            for xml_id in act_vids.split(','):
+                v = self.env.ref(xml_id)
+                views.append((v.id, v.type))
+            action['views'] = views
 
         return action
 
