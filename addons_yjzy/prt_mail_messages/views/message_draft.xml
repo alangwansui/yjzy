@@ -186,8 +186,8 @@
                     </div>
                        </group>
                 <group>
-                    <field name="personal_partner_ids" string="收件人" widget="many2many_tags"  context="{'tag_code': 'out_tmp'}"
-                           domain="[('tag_id.code','in',['normal','income_tmp'])]" required="1"
+                    <field name="personal_partner_ids" string="收件人" required="1" widget="many2many_tags"  context="{'tag_code': 'out_tmp'}"
+                           domain="[('tag_id.code','in',['normal','income_tmp'])]"
                            options="{'create_easy':1, 'quick_create':1,  'create_name_field': 'email'}"/>
                     <field name="partner_ids" string="收件人" groups="base.group_system" widget="many2many_tags_email" placeholder="Add contacts to notify..."
                            context="{'force_email':True, 'show_email':True}"
