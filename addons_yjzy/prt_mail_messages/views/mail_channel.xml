@@ -2,25 +2,34 @@
 <odoo>
 
 
-<record model="ir.ui.view" id="inherit_mail_channel_view_form">
-	<field name="name">mail.channel.form</field>
-	<field name="model">mail.channel</field>
-	<field name="inherit_id" ref="mail.mail_channel_view_form" />
-	<field name="arch" type="xml">
+    <record model="ir.ui.view" id="inherit_mail_channel_view_tree">
+        <field name="name">mail.channel.form</field>
+        <field name="model">mail.channel</field>
+        <field name="inherit_id" ref="mail.mail_channel_view_tree"/>
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field name="sent_uid"/>
+                <field name="chat_uid"/>
+                <field name="channel_type"/>
+            </field>
 
-        <field name="email_send" position="after">
-            <field name="sent_uid"/>
-			<field name="chat_uid"/>
         </field>
+    </record>
 
-	</field>
-</record>
+    <record model="ir.ui.view" id="inherit_mail_channel_view_form">
+        <field name="name">mail.channel.form</field>
+        <field name="model">mail.channel</field>
+        <field name="inherit_id" ref="mail.mail_channel_view_form"/>
+        <field name="arch" type="xml">
 
+            <field name="email_send" position="after">
+                <field name="sent_uid"/>
+                <field name="chat_uid"/>
+                <field name="channel_type"/>
+            </field>
 
-
-
-
-
+        </field>
+    </record>
 
 
 </odoo>
