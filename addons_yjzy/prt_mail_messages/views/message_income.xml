@@ -1,6 +1,51 @@
 <?xml version="1.0"?>
 <odoo>
 
+    <!--## Search ##-->
+    <record id="prt_mail_message_income_search" model="ir.ui.view">
+        <field name="name">prt.mail.message.search</field>
+        <field name="model">mail.message</field>
+        <field name="arch" type="xml">
+
+      <search string="Messages Search">
+                     <field name="email_from"/>
+                    <field name="body" string="Content" filter_domain="['|', ('subject', 'ilike', self), ('body', 'ilike', self)]"/>
+                    <field name="subject"/>
+
+                    <field name="message_type"/>
+                    <field name="author_id"/>
+                    <field name="partner_ids"/>
+                    <field name="model"/>
+                    <field name="res_id"/>
+                    <field name="parent_id"/>
+                    <filter string="Has Mentions" name="filter_has_mentions" domain="[('partner_ids.user_ids', 'in', [uid])]"/>
+                    <separator/>
+                    <filter string="Need Action" name="message_needaction" help="Unread messages" domain="[('needaction', '=', True)]"/>
+                    <separator/>
+                    <filter string="Has attachments" name="attachments" domain="[('attachment_ids', '!=', False)]"/>
+
+                      <filter string="Emails"
+                        name="filter_type_email"
+                        domain="[('message_type', '=', 'email')]"/>
+                      <filter string="Comments"
+                        name="filter_type_comment"
+                        domain="[('message_type', '=', 'comment')]"/>
+                     <separator/>
+                      <filter string="Sent by Me"
+                        name="filter_sent_by_me"
+                        domain="[('author_id.user_ids', 'in', [uid])]"/>
+
+                    <filter string="Author" domain="[]" context="{'group_by':'author_id'}"/>
+                    <separator/>
+                    <filter string="Day" domain="[]" context="{'group_by':'date:day'}"/>
+                    <filter string="Week" domain="[]" context="{'group_by':'date:week'}"/>
+                    <filter string="Month" domain="[]" context="{'group_by':'date'}"/>
+
+                </search>
+
+
+        </field>
+    </record>
 
     <record id="prt_mail_message_income_tree" model="ir.ui.view">
         <field name="name">prt.mail.message.tree</field>
@@ -12,7 +57,8 @@
                 <field name="body_text" string="文本" invisible="1"/>
                 <field name="body" string="内容" invisible="1"/>
                 <button name="tip_button" type="object" class="tip_button" icon="fa-th-large" context="{'form_xml_id': 'prt_mail_messages.prt_mail_message_income_form'}"/>
-                <field name="author_display" string="作者"/>
+               <field name="personal_author_id" string="发件人"/>
+                <field name="author_display" string="作者" invisible="1"/>
                 <field name="author_allowed_id" groups="base.group_system" invisible="1"/>
                 <button name="dummy" type="object" class="oe_stat_button" icon="fa-star" attrs="{'invisible': [('starred', '=', False)]}"/>
                 <button readonly="1" name="dummy" type="object" class="oe_inline oe_stat_button" icon="fa-paperclip"
