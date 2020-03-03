@@ -318,13 +318,13 @@ class PRTMailMessage(models.Model):
 
 
     def make_privace_comment(self):
-        channel = self.env['mail.channel'].search([('channel_type','=','chat'), ('chat_uid','!=',False), ('chat_uid','=', self.alias_id.alias_user_id.id)], limit=1)
-        print('==make_privace_comment===', channel, self.alias_id.alias_user_id)
+        channel = self.env['mail.channel'].sudo().search([('channel_type','=','chat'), ('chat_uid','!=',False), ('chat_uid','=', self.alias_id.alias_user_id.id)], limit=1)
+        print('==make_privace_comment===', self.alias_id.alias_user_id, self.env.user, self.env.context, channel)
         if self.alias_id.alias_user_id and channel:
             channel.message_post(
                 body=u'新邮件 %s 来自:%s' % (self.subject, self.email_from),
                 content_subtype="html",
-                message_type= "comment",
+                message_type="comment",
                 subtype="mail.mt_comment",
             )
 
