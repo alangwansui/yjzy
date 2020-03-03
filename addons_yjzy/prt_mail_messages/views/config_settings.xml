@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Inherit Form View to Modify it -->
+        <record id="inherit_res_config_settings_view_form" model="ir.ui.view">
+            <field name="name">res.config.settings.from</field>
+            <field name="model">res.config.settings</field>
+            <field name="inherit_id" ref="base_setup.res_config_settings_view_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//div[@data-key='general_settings']" position="inside">
+                     <div id="baidu_app_key">
+                         <group>
+                             <field name="baidu_app_key"/>
+                         </group>
+                     </div>
+                </xpath>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>

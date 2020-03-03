@@ -35,6 +35,7 @@
                         <tree>
                             <field name="ip_address"/>
                             <field name="create_date"/>
+                            <field name="ip_info_id"/>
                         </tree>
                     </field>
                 </page>

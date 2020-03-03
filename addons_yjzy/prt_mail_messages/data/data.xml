@@ -2,22 +2,39 @@
 <odoo>
     <data>
 
-    <record id="personal_tag_income_tmp" model="personal.tag">
-        <field name="name">收件临时组</field>
-        <field name="code">income_tmp</field>
-    </record>
-    <record id="personal_tag_tmp" model="personal.tag">
-        <field name="name">发送临时组</field>
-        <field name="code">out_tmp</field>
-    </record>
-    <record id="personal_tag_normal" model="personal.tag">
-        <field name="name">正式组</field>
-        <field name="code">normal</field>
-    </record>
+        <record id="personal_tag_income_tmp" model="personal.tag">
+            <field name="name">收件临时组</field>
+            <field name="code">income_tmp</field>
+        </record>
+        <record id="personal_tag_tmp" model="personal.tag">
+            <field name="name">发送临时组</field>
+            <field name="code">out_tmp</field>
+        </record>
+        <record id="personal_tag_normal" model="personal.tag">
+            <field name="name">正式组</field>
+            <field name="code">normal</field>
+        </record>
+
+
 
     </data>
 
+    <data noupdate="1">
 
+        <record forcecreate="True" id="ir_cron_ip_info" model="ir.cron">
+            <field name="name">百度IP地址查询</field>
+            <field name="model_id" ref="prt_mail_messages.model_ip_info"/>
+            <field name="state">code</field>
+            <field name="code">model.get_bidu_all()</field>
+            <field eval="False" name="active"/>
+            <field name="user_id" ref="base.user_root" />
+            <field name="interval_number">2</field>
+            <field name="interval_type">hours</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+        </record>
+
+    </data>
 
 
 </odoo>

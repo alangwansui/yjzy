@@ -22,6 +22,8 @@ Mail Messages
 
         'data/data.xml',
 
+        'views/config_settings.xml',
+
         'views/menu.xml',
         'views/message.xml',
         'views/message_personal.xml',
@@ -39,6 +41,10 @@ Mail Messages
         'views/mail_mail.xml',
         'views/fetchmail_server.xml',
         'views/mail_channel.xml',
+
+        'views/mail_read_log.xml',
+
+
         'template/assets.xml',
 
 

@@ -1,10 +1,31 @@
-from odoo import _, api, exceptions, fields, models, tools, SUPERUSER_ID
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="ip_info_tree" model="ir.ui.view">
+            <field name="name">ip.info.tree</field>
+            <field name="model">ip.info</field>
+            <field name="arch" type="xml">
+                <tree string="IP地址信息" editable="top">
+                    <field name="ip"/>
+                    <field name="content"/>
+                    <field name="no_done"/>
+                    <button name="get_bidu" type="object" string="百度IP查询"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_ip_info" model="ir.actions.act_window">
+            <field name="name">IP地址信息</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ip.info</field>
+            <field name="view_mode">tree</field>
+        </record>
+
+        <!-- This Menu Item must have a parent and an action -->
+        <menuitem id="menu_ip_info" name="IP地址信息" parent="prt_mail_messages.prt_messages_root"  action="action_ip_info" sequence="99999"/>
 
 
-class mail_read_log(models.Model):
-    _name = "mail.read.log"
 
-    mail_id = fields.Many2one('mail.mail', '邮件')
-    ip_address = fields.Char('IP')
-
-
+    </data>
+</odoo>
