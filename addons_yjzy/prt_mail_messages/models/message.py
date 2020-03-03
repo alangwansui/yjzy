@@ -317,32 +317,16 @@ class PRTMailMessage(models.Model):
 
 
 
-
-
-
-    # def _get_personal(self, mails_str, user):
-    #     if not mails_str:
-    #         return None
-    #     self.ensure_one()
-    #     default_tag = self.env.ref('prt_mail_messages.personal_tag_income_tmp')
-    #     personal_obj = self.env['personal.partner']
-    #     personal_recores = personal_obj.browse([])
-    #
-    #
-    #     for name, mail in AddrlistClass(mails_str).getaddrlist():
-    #         print('==**=', name, mail)
-    #         mail = mail.lower()
-    #         personal = personal_obj.search([('email', '=', mail),('user_id', '=', user.id)])  #TODO, domain by user
-    #         if not personal:
-    #             personal = personal_obj.create({
-    #                 'name': name,
-    #                 'email': mail,
-    #                 'user_id': user.id,
-    #                 'tag_id': default_tag.id,
-    #             })
-    #         personal_recores |= personal
-    #         print('===============================_message_find_personal=====================================================', personal_recores)
-    #     return personal_recores
+    def make_privace_comment(self):
+        channel = self.env['mail.channel'].search([('channel_type','=','chat'), ('chat_uid','!=',False), ('chat_uid','=', self.alias_id.alias_user_id.id)], limit=1)
+        print('==make_privace_comment===', channel, self.alias_id.alias_user_id)
+        if self.alias_id.alias_user_id and channel:
+            channel.message_post(
+                body=u'新邮件 %s 来自:%s' % (self.subject, self.email_from),
+                content_subtype="html",
+                message_type= "comment",
+                subtype="mail.mt_comment",
+            )
 
     @api.model
     def create(self, values):
@@ -353,6 +337,7 @@ class PRTMailMessage(models.Model):
         if msg.fetchmail_server_id:
             msg.manual_to = mail_txt_subtraction_partner(msg.email_to, msg.partner_ids)
             msg.manual_cc = mail_txt_subtraction_partner(msg.email_cc, msg.partner_cc_ids)
+
         #<jon> 发邮件
         else:
             msg.process_type = 'out'

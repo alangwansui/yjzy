@@ -1314,6 +1314,8 @@ class MailThread(models.AbstractModel):
             #<jon>
             if alias:
                 new_msg.write({'alias_id': alias.id})
+                new_msg.make_privace_comment()
+
             else:
                 new_msg.write({'alias_id': new_msg.parent_id.alias_id.id})
 
