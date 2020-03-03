@@ -223,6 +223,9 @@
                         <button string="创建通讯录" name="make_one_personal" type="object" class="oe_stat_button" icon="fa-archive">
                         </button>
 
+                        <button string="测试邮件通知" name="make_privace_comment" type="object" class="oe_stat_button" groups="base.group_system">
+                        </button>
+
 
                     </div>
                     <field name="author_avatar" widget="image" class="oe_avatar"/>

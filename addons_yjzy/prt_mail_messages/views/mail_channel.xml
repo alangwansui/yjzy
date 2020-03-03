@@ -10,6 +10,7 @@
 
         <field name="email_send" position="after">
             <field name="sent_uid"/>
+			<field name="chat_uid"/>
         </field>
 
 	</field>
