@@ -60,6 +60,14 @@ class hr_expense_sheet(models.Model):
     back_tax_amount = fields.Monetary(u'退税金额')
     back_tax_invoice_id = fields.Many2one('account.invoice', u'退税发票')
 
+    all_line_is_confirmed = fields.Boolean('责任人已全部确认', compute='compute_all_line_is_confirmed')
+
+    @api.depends('expense_line_ids', 'expense_line_ids.is_confirmed')
+    def compute_all_line_is_confirmed(self):
+        for one in self:
+            one.all_line_is_confirmed = one.expense_line_ids and all([x.is_confirmed for x in one.expense_line_ids]) or False
+
+
     def create_customer_invoice(self):
         self.ensure_one()
         if self.back_tax_invoice_id:
@@ -157,6 +165,13 @@ class hr_expense_sheet(models.Model):
             expense.message_subscribe(partner_ids=[expense.user_id.partner_id.id])
 
 
+    def btn_user_confirm(self):
+        self.expense_line_ids.btn_user_confirm()
+
+    def btn_undo_confirm(self):
+        self.expense_line_ids.btn_undo_confirm()
+
+
 class hr_expense(models.Model):
     _inherit = 'hr.expense'
 
@@ -212,6 +227,26 @@ class hr_expense(models.Model):
 
     diff_expense = fields.Monetary('差额费用', currency_field='currency_id')
     diff_product_id = fields.Many2one('product.product', u'差额产品')
+
+    is_confirmed = fields.Boolean('责任人已确认', readonly=True)
+
+    def btn_user_confirm(self):
+        for one in self:
+            if one.user_id == self.env.user:
+                one.is_confirmed = True
+
+    def btn_undo_confirm(self):
+        force = self.env.context.get('force')
+        for one in self:
+            if force:
+                one.is_confirmed = False
+            else:
+                if one.user_id == self.env.user:
+                    one.is_confirmed = False
+
+
+
+
 
     def action_employee_confirm(self):
         self.ensure_one()
