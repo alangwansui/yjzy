@@ -14,13 +14,22 @@
 <!--                    <attribute name="widget">one2many</attribute>-->
 <!--                </field>-->
 
+                <header position="inside">
+                    <button name="btn_user_confirm" type="object" string="责任人确认"/>
+                    <button name="btn_undo_confirm" type="object" string="取消责任人确认"/>
+                    <button name="btn_undo_confirm" type="object" string="强制取消责任人确认" context="{'force': 1}"/>
+                </header>
 
+                <field name="employee_id" position="after">
+                    <field name="all_line_is_confirmed"/>
+                </field>
 
                 <field name="bank_journal_id" position="attributes">
                     <attribute name="context">{'default_bank_journal_code':'yfdrl'}</attribute>
                 </field>
 
                 <field name="journal_id" position="after">
+
                     <field name="include_tax"/>
                     <field name="todo_cron"/>
                     <field name="payment_id" domain="[('sfk_type','=', 'rcfkd')]" context="{'form_view_ref':'yjzy_extend.view_rcfkd_form'}"/>
@@ -52,6 +61,7 @@
                     <field name="diff_balance"/>
                     <field name="diff_product_id"/>
                     <field name="diff_expense"/>
+                    <field name="is_confirmed"/>
                 </xpath>
 
 
@@ -68,6 +78,10 @@
                 <header position="inside">
                     <button name="action_employee_confirm" type="object" string="责任人确认"/>
                     <button name="make_diff_mvoe" type="object" string="创建差额分录"/>
+
+                    <button name="btn_user_confirm" type="object" string="责任人确认"/>
+                    <button name="btn_undo_confirm" type="object" string="取消责任人确认"/>
+
                 </header>
                 <field name="state" position="attributes">
                     <attribute name="statusbar_visible">draft,confirmed,reported,employee_confirm,done</attribute>
@@ -83,6 +97,7 @@
                     <field name="diff_balance"/>
                     <field name="diff_product_id"/>
                     <field name="diff_expense"/>
+                    <field name="is_confirmed"/>
                 </field>
 
 
