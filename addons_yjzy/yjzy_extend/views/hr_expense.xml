@@ -87,7 +87,13 @@
                     <attribute name="statusbar_visible">draft,confirmed,reported,employee_confirm,done</attribute>
                 </field>
                 <field name="employee_id" position="after">
-                    <field name="partner_id"/>
+
+                </field>
+<xpath expr="//form[1]/sheet[1]/div[3]" position="after">
+    <notebook name="studio_notebook_m8OhD">
+      <page string="New Page" name="studio_page_m8OhD">
+        <group name="studio_group_m8OhD">
+            <field name="partner_id"/>
                     <field name="user_id" invisible="1"/>
                     <field name="include_tax"/>
                     <field name="tb_id" context="{'show_ref': 1}"/>
@@ -98,8 +104,11 @@
                     <field name="diff_product_id"/>
                     <field name="diff_expense"/>
                     <field name="is_confirmed"/>
-                </field>
 
+        </group>
+      </page>
+    </notebook>
+  </xpath>
 
             </field>
         </record>
