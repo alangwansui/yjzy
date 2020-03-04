@@ -231,9 +231,13 @@ class hr_expense(models.Model):
     is_confirmed = fields.Boolean('责任人已确认', readonly=True)
 
     def btn_user_confirm(self):
+        force = self.env.context.get('force')
         for one in self:
-            if one.user_id == self.env.user:
+            if force:
                 one.is_confirmed = True
+            else:
+                if one.user_id == self.env.user:
+                    one.is_confirmed = True
 
     def btn_undo_confirm(self):
         force = self.env.context.get('force')
