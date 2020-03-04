@@ -8,34 +8,35 @@
         <field name="arch" type="xml">
 
       <search string="Messages Search">
-                     <field name="email_from"/>
-                    <field name="body" string="Content" filter_domain="['|', ('subject', 'ilike', self), ('body', 'ilike', self)]"/>
+                    <field name="email_from" invisible="1"/>
+                    <field name="personal_author_id" string="发件人"/>
+                    <field name="body" string="内容" filter_domain="['|', ('subject', 'ilike', self), ('body', 'ilike', self)]"/>
                     <field name="subject"/>
 
-                    <field name="message_type"/>
-                    <field name="author_id"/>
-                    <field name="partner_ids"/>
-                    <field name="model"/>
-                    <field name="res_id"/>
-                    <field name="parent_id"/>
-                    <filter string="Has Mentions" name="filter_has_mentions" domain="[('partner_ids.user_ids', 'in', [uid])]"/>
+                    <field name="message_type" invisible="1"/>
+                    <field name="author_id" invisible="1"/>
+                    <field name="partner_ids" invisible="1"/>
+                    <field name="model" invisible="1"/>
+                    <field name="res_id" invisible="1"/>
+                    <field name="parent_id" invisible="1"/>
+                    <filter string="Has Mentions" name="filter_has_mentions" invisible="1" domain="[('partner_ids.user_ids', 'in', [uid])]"/>
                     <separator/>
-                    <filter string="Need Action" name="message_needaction" help="Unread messages" domain="[('needaction', '=', True)]"/>
+                    <filter string="Need Action" name="message_needaction"  invisible="1" help="Unread messages" domain="[('needaction', '=', True)]"/>
                     <separator/>
-                    <filter string="Has attachments" name="attachments" domain="[('attachment_ids', '!=', False)]"/>
+                    <filter string="Has attachments"   invisible="1" name="attachments" domain="[('attachment_ids', '!=', False)]"/>
 
-                      <filter string="Emails"
+                      <filter string="Emails"  invisible="1"
                         name="filter_type_email"
                         domain="[('message_type', '=', 'email')]"/>
-                      <filter string="Comments"
+                      <filter string="Comments"  invisible="1"
                         name="filter_type_comment"
                         domain="[('message_type', '=', 'comment')]"/>
                      <separator/>
-                      <filter string="Sent by Me"
+                      <filter string="Sent by Me"  invisible="1"
                         name="filter_sent_by_me"
                         domain="[('author_id.user_ids', 'in', [uid])]"/>
 
-                    <filter string="Author" domain="[]" context="{'group_by':'author_id'}"/>
+                    <filter string="Author"   invisible="1" domain="[]" context="{'group_by':'author_id'}"/>
                     <separator/>
                     <filter string="Day" domain="[]" context="{'group_by':'date:day'}"/>
                     <filter string="Week" domain="[]" context="{'group_by':'date:week'}"/>
