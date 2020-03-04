@@ -8,17 +8,20 @@
         	<field name="inherit_id" ref="hr_expense.view_hr_expense_sheet_form"/>
         	<field name="arch" type="xml">
 
-<!--                <field name="expense_line_ids" position="attributes">-->
-<!--                    <attribute name="context">{'expense_adding_line': True, 'tracking_disable': True, 'default_currency_id': currency_id, 'default_state': 'draft'}</attribute>-->
-<!--                    <attribute name="options">{'not_delete': True, 'reload_on_button': True, 'no_create': False}</attribute>-->
-<!--                    <attribute name="widget">one2many</attribute>-->
-<!--                </field>-->
-
                 <header position="inside">
                     <button name="btn_user_confirm" type="object" string="责任人确认"/>
+                    <button name="btn_user_confirm" type="object" string="强制责任人确认" context="{'force': 1}"/>
+
                     <button name="btn_undo_confirm" type="object" string="取消责任人确认"/>
                     <button name="btn_undo_confirm" type="object" string="强制取消责任人确认" context="{'force': 1}"/>
                 </header>
+
+                <field name="expense_line_ids" position="attributes">
+                    <attribute name="context">{'expense_adding_line': True, 'tracking_disable': True, 'default_currency_id': currency_id, 'default_state': 'draft'}</attribute>
+                    <attribute name="options">{'not_delete': True, 'reload_on_button': True, 'no_create': False}</attribute>
+                    <attribute name="widget">one2many</attribute>
+                </field>
+
 
                 <field name="employee_id" position="after">
                     <field name="all_line_is_confirmed"/>
@@ -62,6 +65,7 @@
                     <field name="diff_product_id"/>
                     <field name="diff_expense"/>
                     <field name="is_confirmed"/>
+                    <field name="ask_uid"/>
                 </xpath>
 
 
@@ -78,11 +82,21 @@
                 <header position="inside">
                     <button name="action_employee_confirm" type="object" string="责任人确认"/>
                     <button name="make_diff_mvoe" type="object" string="创建差额分录"/>
-
                     <button name="btn_user_confirm" type="object" string="责任人确认"/>
                     <button name="btn_undo_confirm" type="object" string="取消责任人确认"/>
-
                 </header>
+
+
+                <field name="product_id" position="before">
+                    <field name="categ_id" domain="[('parent_id.name','=','费用')]"/>
+                    <field name="second_categ_id" domain="[('parent_id','=', categ_id)]"/>
+                </field>
+
+                <field name="product_id" position="attributes">
+                     <attribute name="domain">[('can_be_expensed','=',True),('categ_id','=',second_categ_id)]</attribute>
+                </field>
+
+
                 <field name="state" position="attributes">
                     <attribute name="statusbar_visible">draft,confirmed,reported,employee_confirm,done</attribute>
                 </field>
@@ -104,6 +118,12 @@
                     <field name="diff_product_id"/>
                     <field name="diff_expense"/>
                     <field name="is_confirmed"/>
+                    <field name="ask_uid"/>
+                    <field name="sheet_employee_id"/>
+                    <field name="sheet_wkf_state"/>
+
+                </field>
+
 
         </group>
       </page>

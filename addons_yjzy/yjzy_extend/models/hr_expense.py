@@ -230,10 +230,29 @@ class hr_expense(models.Model):
 
     is_confirmed = fields.Boolean('责任人已确认', readonly=True)
 
+
+    ask_uid = fields.Many2one('res.users', u'费用申请人')
+    sheet_employee_id = fields.Many2one('hr.employee', u'报告申请人', related='sheet_id.employee_id', readonly=True)
+
+    categ_id = fields.Many2one('product.category', '分类')
+    second_categ_id = fields.Many2one('product.category', '分类2')
+
+    sheet_wkf_state = fields.Selection(string='报告工作流状态', related='sheet_id.x_wkf_state', readonly=True)
+
+
+    @api.onchange('categ_id', 'second_categ_id')
+    def onchange_categ(self):
+        pass
+
+
     def btn_user_confirm(self):
+        force = self.env.context.get('force')
         for one in self:
-            if one.user_id == self.env.user:
+            if force:
                 one.is_confirmed = True
+            else:
+                if one.user_id == self.env.user:
+                    one.is_confirmed = True
 
     def btn_undo_confirm(self):
         force = self.env.context.get('force')
@@ -243,9 +262,6 @@ class hr_expense(models.Model):
             else:
                 if one.user_id == self.env.user:
                     one.is_confirmed = False
-
-
-
 
 
     def action_employee_confirm(self):
