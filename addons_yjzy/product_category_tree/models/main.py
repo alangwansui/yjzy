@@ -20,18 +20,18 @@ def get_categories(self):
 models.BaseModel.get_categories = get_categories
 
 
-class Product(models.Model):
-    _inherit = "product.template"
-
-    @api.model
-    def get_categories(self):
-        dbdata = self.env['product.category'].search([])
-        data = [{'id': d.id, 'pid': d.parent_id.id, 'name': d.name} for d in dbdata]
-        return {'do_flag': True,
-                'field': 'categ_id',
-                'title': '产品类别',
-                'data': data
-                }
+# class Product(models.Model):
+#     _inherit = "product.template"
+#
+#     @api.model
+#     def get_categories(self):
+#         dbdata = self.env['product.category'].search([])
+#         data = [{'id': d.id, 'pid': d.parent_id.id, 'name': d.name} for d in dbdata]
+#         return {'do_flag': True,
+#                 'field': 'categ_id',
+#                 'title': '产品类别',
+#                 'data': data
+#                 }
 
 
 class mail_message(models.Model):
