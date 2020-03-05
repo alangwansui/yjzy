@@ -79,54 +79,30 @@
             <field name="model">hr.expense</field>
             <field name="inherit_id" ref="hr_expense.hr_expense_form_view"/>
             <field name="arch" type="xml">
-               <xpath expr="//form[1]" position="replace">
-  <form string="Expenses" class="o_expense_form">
-                <header invisible="context.get('expense_adding_line')">
-                    <button name="submit_expenses" states="draft" string="Submit to Manager" type="object" class="oe_highlight o_expense_submit"/>
-                    <field name="state" widget="statusbar" statusbar_visible="draft,reported,done"/>
-                    <button name="view_sheet" type="object" string="View Report" class="oe_highlight" attrs="{'invisible': [('state', '=','draft')]}"/>
-                 <button name="action_employee_confirm" type="object" string="责任人确认"/>
+                <header position="inside">
+                    <button name="action_employee_confirm" type="object" string="责任人确认"/>
                     <button name="make_diff_mvoe" type="object" string="创建差额分录"/>
                     <button name="btn_user_confirm" type="object" string="责任人确认"/>
                     <button name="btn_undo_confirm" type="object" string="取消责任人确认"/>
                 </header>
-                <sheet>
-                    <div class="oe_button_box" invisible="context.get('expense_adding_line')">
-                        <button name="action_get_attachment_view" class="oe_stat_button" icon="fa-book" type="object">
-                            <field name="attachment_number" widget="statinfo" string="Documents"/>
-                        </button>
-                    </div>
-                    <div class="oe_title">
-                        <label for="name"/>
-                        <h1>
-                            <field name="name" placeholder="e.g. Lunch with Customer"/>
-                        </h1>
-                    </div>
-                    <group>
-                        <group>
-                          <field name="categ_id" domain="[('parent_id.name','=','费用')]"/>
-                        <field name="second_categ_id" domain="[('parent_id.id','=',categ_id)]"/>
-                            <field name="product_id" domain="[('can_be_expensed','=',True),('categ_id','=',second_categ_id)]"
 
-                                   context="{'default_can_be_expensed': 1, 'tree_view_ref': 'hr_expense.product_product_expense_tree_view','only_name': 1}"/>
-                           <field name="unit_amount" required="1" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                            <label for="quantity"/>
-                            <div>
-                                <field name="quantity" class="oe_inline"/>
-                                <field name="product_uom_id" widget="selection" class="oe_inline" groups="product.group_uom"/>
-                            </div>
-                            <field name="tax_ids" domain="[('type_tax_use', '=', 'purchase')]" widget="many2many_tags" groups="account.group_account_user"/>
-                        </group><group>
-                            <field name="reference"/>
-                            <field name="date"/>
-                            <field name="account_id" domain="[('internal_type', '=', 'other')]" groups="account.group_account_user"/>
-                            <field name="employee_id" />
-                             <field name="create_uid"/>
-                            <field name="sheet_id" invisible="1"/>
-                            <field name="currency_id" groups="base.group_multi_currency" readonly="0"/>
-                            <field name="analytic_account_id" groups="analytic.group_analytic_accounting"/>
-                            <field name="company_id" groups="base.group_multi_company"/>
-                         <field name="partner_id"/>
+
+                <field name="product_id" position="before">
+                    <field name="categ_id" domain="[('parent_id.name','=','费用')]"/>
+                    <field name="second_categ_id" domain="[('parent_id','=', categ_id)]"/>
+                </field>
+
+           
+
+
+                <field name="employee_id" position="after">
+
+                </field>
+<xpath expr="//form[1]/sheet[1]/div[3]" position="after">
+    <notebook name="studio_notebook_m8OhD">
+      <page string="New Page" name="studio_page_m8OhD">
+        <group name="studio_group_m8OhD">
+                     <field name="partner_id"/>
                     <field name="user_id" invisible="1"/>
                     <field name="include_tax"/>
                     <field name="tb_id" context="{'show_ref': 1}"/>
@@ -140,33 +116,12 @@
                     <field name="ask_uid"/>
                     <field name="sheet_employee_id"/>
                     <field name="sheet_wkf_state"/>
-                        </group><group>
-                            <field name="total_amount" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                            <label for="payment_mode"/>
-                            <div>
-                                <field name="payment_mode" widget="radio"/>
-                            </div>
-                        </group>
 
-                    </group>
-                    <div>
-                        <field name="description" placeholder="Notes..."/>
-                    </div>
 
-                </sheet>
-                <div class="oe_chatter">
-                    <field name="message_follower_ids" widget="mail_followers"/>
-                    <field name="message_ids" widget="mail_thread"/>
-                </div>
-
-                </form>
+        </group>
+      </page>
+    </notebook>
   </xpath>
-
-
-
-                <field name="state" position="attributes">
-                    <attribute name="statusbar_visible">draft,confirmed,reported,employee_confirm,done</attribute>
-                </field>
 
             </field>
         </record>

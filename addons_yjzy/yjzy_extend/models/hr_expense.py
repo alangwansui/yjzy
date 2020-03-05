@@ -208,7 +208,7 @@ class hr_expense(models.Model):
     include_tax = fields.Boolean(u'含税')
     line_ids = fields.One2many('hr.expense.line', 'expense_id', u'分配明细')
     user_ids = fields.Many2many('res.users', compute=compute_line_user, string='用户s', store=True)
-    state = fields.Selection(selection_add=[('confirmed', u'已经确认'),('employee_confirm', '责任人确认状态')])
+    #state = fields.Selection(selection_add=[('confirmed', u'已经确认'),('employee_confirm', '责任人确认状态')])
     user_id = fields.Many2one('res.users', related='employee_id.user_id', readonly=False, string=u'用户', track_visibility='onchange')
     tb_ids = fields.Many2many('transport.bill', 'ref_bill_expense', 'eid', 'bid', u'出运单')
     tb_id = fields.Many2one('transport.bill', u'出运合同')

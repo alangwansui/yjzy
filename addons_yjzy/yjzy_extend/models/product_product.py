@@ -107,8 +107,12 @@ class Product_Product(models.Model):
     def name_get(self):
         #多选：显示名称=（如果有客户编号显示客户编码，否则显示内部编码）+商品名称+关键属性，关键属性，供应商型号
         result = []
+        only_name = self.env.context.get('only_name')
         def _get_name(one):
-            name = '[%s]%s{%s}' %   (one.default_code, one.name, one.key_value_string)
+            if not only_name:
+                name = '[%s]%s{%s}' %   (one.default_code, one.name, one.key_value_string)
+            else:
+                name = one.name
             ref = one.customer_ref or one.customer_ref2
             if ref:
                 name = '(%s)%s' % (ref, name)
