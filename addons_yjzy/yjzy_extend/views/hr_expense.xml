@@ -92,14 +92,12 @@
                     <field name="second_categ_id" domain="[('parent_id','=', categ_id)]"/>
                 </field>
 
-                <field name="product_id" position="attributes">
-                     <attribute name="domain">[('can_be_expensed','=',True),('categ_id','=',second_categ_id)]</attribute>
-                </field>
 
 
-                <field name="state" position="attributes">
-                    <attribute name="statusbar_visible">draft,confirmed,reported,employee_confirm,done</attribute>
-                </field>
+  <xpath expr="//form[1]/sheet[1]/div[2]/h1[1]/field[@name='name']" position="attributes">
+    <attribute name="attrs">{"readonly": [["state","not in",["draft","refused","employee_confirm"]]]}</attribute>
+    <attribute name="required">1</attribute>
+  </xpath>
                 <field name="employee_id" position="after">
 
                 </field>
@@ -107,7 +105,7 @@
     <notebook name="studio_notebook_m8OhD">
       <page string="New Page" name="studio_page_m8OhD">
         <group name="studio_group_m8OhD">
-            <field name="partner_id"/>
+                     <field name="partner_id"/>
                     <field name="user_id" invisible="1"/>
                     <field name="include_tax"/>
                     <field name="tb_id" context="{'show_ref': 1}"/>
@@ -121,8 +119,6 @@
                     <field name="ask_uid"/>
                     <field name="sheet_employee_id"/>
                     <field name="sheet_wkf_state"/>
-
-                </field>
 
 
         </group>

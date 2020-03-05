@@ -62,6 +62,8 @@ class hr_expense_sheet(models.Model):
 
     all_line_is_confirmed = fields.Boolean('责任人已全部确认', compute='compute_all_line_is_confirmed')
 
+    document_number = fields.Integer(u'单据数量')
+
     @api.depends('expense_line_ids', 'expense_line_ids.is_confirmed')
     def compute_all_line_is_confirmed(self):
         for one in self:
@@ -239,6 +241,7 @@ class hr_expense(models.Model):
 
     sheet_wkf_state = fields.Selection(string='报告工作流状态', related='sheet_id.x_wkf_state', readonly=True)
 
+    document_number_1 = fields.Integer(u'单据数量')
 
     @api.onchange('categ_id', 'second_categ_id')
     def onchange_categ(self):
