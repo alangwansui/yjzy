@@ -104,10 +104,10 @@
             id="action_report_transport_bill_vendor"
             string="供应商发货通知"
             model="transport.bill.vendor"
-            report_type="qweb-html"
+            report_type="qweb-pdf"
             file="yjzy_extend.report_transport_bill_vendor"
             name="yjzy_extend.report_transport_bill_vendor"
-            print_report_name="(object.name)"
+            print_report_name="(object.tb_id.name or object.id)"
         />
 
 
