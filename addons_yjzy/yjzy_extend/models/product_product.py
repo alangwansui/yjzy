@@ -110,7 +110,7 @@ class Product_Product(models.Model):
         only_name = self.env.context.get('only_name')
         def _get_name(one):
             if not only_name:
-                name = '[%s]%s{%s}' %   (one.default_code, one.name, one.key_value_string)
+                name = '[%s]%s{%s}' % (one.default_code, one.name, one.key_value_string)
             else:
                 name = one.name
             ref = one.customer_ref or one.customer_ref2
