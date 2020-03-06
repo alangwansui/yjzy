@@ -26,7 +26,7 @@ class personal_partner(models.Model):
     def _compute_display(self):
         for one in self:
             print('===========', one.name, one.email)
-            one.display_name = '%s <%s>' % (one.name, one.email)
+            one.display_name = '<%s> %s' % (one.email, one.name)
 
             print('===========', one.display_name)
 
