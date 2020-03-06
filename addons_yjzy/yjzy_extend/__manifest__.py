@@ -69,6 +69,7 @@
         'views/product_packaging.xml',
         'views/config_setting.xml',
         'views/hr_expense.xml',
+        'views/hr_expense_new.xml',
         'views/bom.xml',
         'views/bank.xml',
         'views/ir_translation.xml',
