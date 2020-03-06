@@ -103,7 +103,7 @@ class purchase_order(models.Model):
     @api.constrains('contract_code')
     def check_contract_code(self):
         for one in self:
-            if self.search_count([('contract_code','=',self.contract_code)]) > 1:
+            if self.search_count([('contract_code', '=', one.contract_code)]) > 1:
                 raise Warning('合同编码重复')
 
 
