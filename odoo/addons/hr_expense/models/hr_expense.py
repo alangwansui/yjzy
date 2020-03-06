@@ -51,13 +51,17 @@ class HrExpense(models.Model):
 
     @api.depends('sheet_id', 'sheet_id.account_move_id', 'sheet_id.state')
     def _compute_state(self):
+
         for expense in self:
             if not expense.sheet_id:
                 expense.state = "draft"
             elif expense.sheet_id.state == "cancel":
                 expense.state = "refused"
             elif not expense.sheet_id.account_move_id:
-                expense.state = "reported"
+                if expense.sheet_id.state == 'draft':
+                    expense.state = "draft"
+                else:
+                    expense.state = "reported"
             else:
                 expense.state = "done"
 
@@ -446,12 +450,13 @@ class HrExpenseSheet(models.Model):
 
     name = fields.Char(string='Expense Report Summary', required=True)
     expense_line_ids = fields.One2many('hr.expense', 'sheet_id', string='Expense Lines', states={'approve': [('readonly', True)], 'done': [('readonly', True)], 'post': [('readonly', True)]}, copy=False)
-    state = fields.Selection([('submit', 'Submitted'),
+    state = fields.Selection([ ('draft', u'草稿'),
+                              ('submit', 'Submitted'),
                               ('approve', 'Approved'),
                               ('post', 'Posted'),
                               ('done', 'Paid'),
                               ('cancel', 'Refused')
-                              ], string='Status', index=True, readonly=True, track_visibility='onchange', copy=False, default='submit', required=True,
+                              ], string='Status', index=True, readonly=True, track_visibility='onchange', copy=False, default='draft', required=True,
     help='Expense Report State')
     employee_id = fields.Many2one('hr.employee', string="Employee", required=True, readonly=True, states={'submit': [('readonly', False)]}, default=lambda self: self.env['hr.employee'].search([('user_id', '=', self.env.uid)], limit=1))
     address_id = fields.Many2one('res.partner', string="Employee Home Address")
@@ -487,11 +492,14 @@ class HrExpenseSheet(models.Model):
         self._create_set_followers(vals)
         print(vals)
         sheet = super(HrExpenseSheet, self).create(vals)
+
+        print('===', sheet)
         sheet.check_consistency()
         return sheet
 
     @api.multi
     def write(self, vals):
+        print('====', self, vals)
         res = super(HrExpenseSheet, self).write(vals)
         self.check_consistency()
         if vals.get('employee_id'):
