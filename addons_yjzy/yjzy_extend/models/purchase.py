@@ -99,6 +99,23 @@ class purchase_order(models.Model):
 
     is_editable = fields.Boolean(u'可编辑')
 
+
+    @api.constrains('contract_code')
+    def check_contract_code(self):
+        for one in self:
+            if self.search_count([('contract_code','=',self.contract_code)]) > 1:
+                raise Warning('合同编码重复')
+
+
+    @api.multi
+    def copy(self, default=None):
+        self.ensure_one()
+        default = dict(default or {})
+        if 'contract_code' not in default:
+            default['contract_code'] = "%s(copy)" % self.contract_code
+        return super(purchase_order, self).copy(default)
+
+
     def unlink(self):
         for one in self:
             if one.state != 'cancel':
