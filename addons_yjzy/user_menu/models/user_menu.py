@@ -73,6 +73,8 @@ class user_menu(models.Model):
 
     nemu_id = fields.Many2one('ir.ui.menu', u'菜单')
 
+    active = fields.Boolean('有效', default=True)
+
     def compute_len_records(self):
         try:
             gb_var = {'uid': self._uid}

@@ -33,6 +33,7 @@
                             <field name="usage" invisible="1"/>
                             <field name="type" readonly="1"/>
                             <field name="target"/>
+                            <field name="active"/>
                         </group>
                     </group>
                     <notebook>
