@@ -71,6 +71,8 @@ class user_menu(models.Model):
     sequence = fields.Integer('排序')
     color = fields.Integer('颜色')
 
+    nemu_id = fields.Many2one('ir.ui.menu', u'菜单')
+
     def compute_len_records(self):
         gb_var = {'uid': self._uid}
         for one in self:

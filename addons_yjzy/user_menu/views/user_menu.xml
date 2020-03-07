@@ -10,6 +10,7 @@
                 <field name="user_id"/>
                 <field name="color"/>
                 <field name="res_model" string="模型"/>
+                <field name="nemu_id"/>
             </tree>
         </field>
     </record>
@@ -26,6 +27,7 @@
                             <field name="res_model" string="模型"/>
                             <field name="color"/>
                             <field name="sequence" widget="handel"/>
+                            <field name="nemu_id" domain="[('parent_id','=',False)]"/>
                         </group>
                         <group name="action_details">
                             <field name="usage" invisible="1"/>
