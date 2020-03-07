@@ -91,6 +91,7 @@
                                         <field name="sheet_wkf_state"/>
                                         <field name="create_uid"/>
                                         <field name="sheet_id" invisible="1"/>
+                                        <field name="sheet_state"/>
                                     </group>
                                 </group>
                             </page>
@@ -198,7 +199,7 @@
                                         <field name="diff_product_id" groups="base.group_system"/>
                                         <field name="diff_expense" groups="base.group_system"/>
                                         <field name="is_confirmed"/>
-                                        <field name="sheet_state"/>
+                                        <field name="sheet_state" groups="base.group_system"/>
 
 
                                     </tree>
