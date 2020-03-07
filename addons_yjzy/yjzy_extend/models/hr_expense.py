@@ -246,9 +246,11 @@ class hr_expense(models.Model):
 
     document_number_1 = fields.Integer(u'单据数量')
 
-    account_confirm_uid = fields.Many2one('res.user',u'财务审批')
+    account_confirm_uid = fields.Many2one('res.user', u'财务审批')
 
-    manager_confirm_uid = fields.Many2one('res.user',u'总经理审批')
+    manager_confirm_uid = fields.Many2one('res.user', u'总经理审批')
+
+    sheet_state = fields.Selection(string='报告状态', related='sheet_id.state', readonly=True)
 
     @api.onchange('categ_id', 'second_categ_id')
     def onchange_categ(self):
