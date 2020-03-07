@@ -33,7 +33,7 @@
                             <group>
                                 <field name="categ_id" string="大类" domain="[('parent_id.name','=','费用')]" required="1"/>
                                 <field name="second_categ_id" string="中类" domain="[('parent_id','=', categ_id)]" required="1"/>
-                                <field name="product_id" required="1" string="小类" options="{''no_create':True}"
+                                <field name="product_id" required="1" string="小类" options="{'no_create':True}"
                                        domain="[('can_be_expensed','=',True),('categ_id','=',second_categ_id)]"
                                        context="{'default_can_be_expensed': 1, 'tree_view_ref': 'hr_expense.product_product_expense_tree_view','only_name':1}"/>
                                 <field name="unit_amount" string="费用金额" required="1" widget="monetary" options="{'currency_field': 'currency_id'}"/>

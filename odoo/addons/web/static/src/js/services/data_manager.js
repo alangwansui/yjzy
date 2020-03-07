@@ -269,8 +269,6 @@ return core.Class.extend({
      */
     _processField: function (viewType, field, attrs) {
         var self = this;
-        console.info('>>>', field, attrs)  ;
-
         attrs.Widget = this._getFieldWidgetClass(viewType, field, attrs);
 
         if (!_.isObject(attrs.options)) { // parent arch could have already been processed (TODO this should not happen)
