@@ -74,10 +74,14 @@ class user_menu(models.Model):
     nemu_id = fields.Many2one('ir.ui.menu', u'菜单')
 
     def compute_len_records(self):
-        gb_var = {'uid': self._uid}
-        for one in self:
-            domain = safe_eval(one.domain or '[]', gb_var)
-            one.len_records = one.env[one.res_model].search_count(domain)
+        try:
+            gb_var = {'uid': self._uid}
+            for one in self:
+                domain = safe_eval(one.domain or '[]', gb_var)
+                one.len_records = one.env[one.res_model].search_count(domain)
+
+        except Exception as e:
+            print(e)
 
     def open_action(self):
         action = self.read()[0]
