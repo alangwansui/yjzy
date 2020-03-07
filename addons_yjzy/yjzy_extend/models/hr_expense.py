@@ -243,6 +243,8 @@ class hr_expense(models.Model):
 
     document_number_1 = fields.Integer(u'单据数量')
 
+    account_confirm_uid = fields.
+
     @api.onchange('categ_id', 'second_categ_id')
     def onchange_categ(self):
         pass

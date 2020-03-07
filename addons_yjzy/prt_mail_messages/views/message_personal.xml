@@ -236,7 +236,7 @@
                         <field name="personal_partner_ids" string="收件人" groups="base.group_system" widget="many2many_tags" options="{'can_create':1,  'quick_create':1, 'create_name_field': 'email'}"/>
                         <field name="personal_partner_cc_ids" string="抄送人" groups="base.group_system"  widget="many2many_tags" options="{'can_create':1,  'quick_create':1, 'create_name_field': 'email'}"/>
                         <field name="personal_author_id" string="发件人" groups="base.group_system" />
-                        <field name="alias_id"/>
+                        <field name="alias_id" string="收件邮箱"/>
                         <field name="author_display" string="作者" groups="base.group_system"/>
                         <field name="email_from" />
                         <field name="author_id" string="发件人" groups="base.group_system"/>
