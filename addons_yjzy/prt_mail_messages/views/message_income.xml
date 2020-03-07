@@ -52,7 +52,7 @@
         <field name="name">prt.mail.message.tree</field>
         <field name="model">mail.message</field>
         <field name="arch" type="xml">
-            <tree string="Messages" decoration-info="have_read==False" decoration-danger="is_error==True" default_order="date desc, id desc"
+            <tree string="Messages" decoration-bf="have_read==False" decoration-danger="is_error==True" default_order="date desc, id desc"
                   create="false" edit="false" delete="false">
                 <!--button name="button_read" states="" string="打开" type='object' class="oe_highlight"/-->
                 <field name="body_text" string="文本" invisible="1"/>
