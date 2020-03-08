@@ -278,9 +278,10 @@ class hr_expense(models.Model):
 
     def action_employee_confirm(self):
         self.ensure_one()
-        if self.user_id == self.env.user:
-            self.state = 'employee_confirm'
-        else:
+        if self.user_id != self.env.user:
+       # if self.user_id == self.env.user:
+       #     self.state = 'employee_confirm'
+       # else:
             raise Warning('必须是责任人自己')
 
     def make_diff_mvoe(self):
