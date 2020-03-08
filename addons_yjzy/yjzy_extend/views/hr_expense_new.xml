@@ -95,6 +95,22 @@
                                     </group>
                                 </group>
                             </page>
+                            <page string="申请单信息" >
+                                <group>
+                                    <group name="account_left">
+                                        <field name="sheet_employee_id"/>
+                                        <field name="sheet_wkf_state"/>
+                                        <field name="sheet_state" groups="base.group_system"/>
+                                    </group>
+
+                                    <group name="account_right">
+
+                                        <field name="create_uid"/>
+                                        <field name="sheet_id" invisible="1"/>
+
+                                    </group>
+                                </group>
+                            </page>
                         </notebook>
                     </sheet>
 
