@@ -22,6 +22,23 @@ class Product_Catgory(models.Model):
             else:
                 category.complete_name2 = category.name
 
+    @api.multi
+    def name_get(self):
+        # 多选：only_name akiny
+        result = []
+        only_name = self.env.context.get('only_name')
+
+        def _get_name(one):
+            if not only_name:
+                name = one.complete_name2
+            else:
+                name = one.name
+
+            return name
+
+        for one in self:
+            result.append((one.id, _get_name(one)))
+        return result
 
     # def get_hs_code(self):
     #     self.ensure_one()
