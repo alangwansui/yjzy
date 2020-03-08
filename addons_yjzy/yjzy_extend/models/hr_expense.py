@@ -242,7 +242,7 @@ class hr_expense(models.Model):
     categ_id = fields.Many2one('product.category', '分类')
     second_categ_id = fields.Many2one('product.category', '分类2')
 
-    sheet_wkf_state = fields.Selection(string='报告工作流状态', related='sheet_id.x_wkf_state', readonly=True)
+    sheet_wkf_state = fields.Selection(string='报告工作流状态', related='sheet_id.x_wkf_state', readonly=True,store=True)
 
     document_number_1 = fields.Integer(u'单据数量')
 
