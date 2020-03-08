@@ -250,7 +250,7 @@ class hr_expense(models.Model):
 
     manager_confirm_uid = fields.Many2one('res.user', u'总经理审批')
 
-    sheet_state = fields.Selection(string='报告状态', related='sheet_id.state', readonly=True)
+    sheet_state = fields.Selection(string='报告状态', related='sheet_id.state', readonly=True, store=True)
 
     @api.onchange('categ_id', 'second_categ_id')
     def onchange_categ(self):
