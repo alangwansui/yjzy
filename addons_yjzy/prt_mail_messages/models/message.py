@@ -31,8 +31,6 @@ class PRTMailMessage(models.Model):
 
 
     def tip_button(self):
-        self.have_read = True
-
         # action_id = self.env.context['params'].get('action')
         # action = self.env['ir.actions.act_window'].browse(action_id)
         # form = action.view_ids.filtered(lambda x: x.view_mode == 'form').view_id
@@ -732,8 +730,7 @@ class PRTMailMessage(models.Model):
 
     @api.multi
     def read(self, fields=None, load='_classic_read'):
-
-
+        print('===read====', self.env.context)
 
         #<jon> 打开数据，自动标记为已读
         action_ids = [
@@ -742,6 +739,9 @@ class PRTMailMessage(models.Model):
             self.env.ref('prt_mail_messages.action_mail_messages_out').id,
         ]
         #对应的3个动作中读取单据的记录，视为打开记录
+
+        print('>>>>>>>>>', (len(self) ==1 and self.env.context.get('params',{}).get('action', 0) in action_ids) and not self.env.context.get('no_mark_have_read'))
+
         if (len(self) ==1 and self.env.context.get('params',{}).get('action', 0) in action_ids) and not self.env.context.get('no_mark_have_read'):
             #sql更新数据，读取方法中，不能待用orm的写入方法，死循环
             self._cr.execute('UPDATE %s SET have_read=%s WHERE id=%s' % (self._table, True,  self.id))
