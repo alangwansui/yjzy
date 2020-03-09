@@ -160,7 +160,7 @@
                   <field name="create_uid" string="创建人"/>
                    <field name="name" string="费用说明"/>
                    <field name="my_total_amount" string="总金额"/>
-
+               <field name="x_wkf_state"/>
                 </tree>
 
         </field>
@@ -174,8 +174,9 @@
                   <field name="create_uid" string="创建人"/>
                   <field name="name" string="费用说明"/>
                    <field name="fk_journal_id"/>
-               <field name="my_total_amount" string="总金额"/>
 
+               <field name="my_total_amount" string="总金额"/>
+<field name="x_wkf_state"/>
 
                 </tree>
 
