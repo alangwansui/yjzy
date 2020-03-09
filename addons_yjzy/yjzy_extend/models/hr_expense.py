@@ -254,6 +254,9 @@ class hr_expense(models.Model):
     user_id = fields.Many2one('res.users', related='employee_id.user_id', readonly=False, string=u'用户', track_visibility='onchange')
     tb_ids = fields.Many2many('transport.bill', 'ref_bill_expense', 'eid', 'bid', u'出运单')
     tb_id = fields.Many2one('transport.bill', u'出运合同')
+    tb_budget = fields.Monetary('出运单预算', related='tb_id.budget_amount', currency_field='currency_id')
+    tb_budget_rest = fields.Monetary('出运单预算剩余', related='tb_id.budget_reset_amount', currency_field='currency_id')
+
 
     yjzy_payment_id = fields.Many2one('account.payment', u'新付款单', related='sheet_id.payment_id', store=True)
     yjzy_payment_currency_id = fields.Many2one('res.currency', u'新付款单币种', related='yjzy_payment_id.currency_id')
@@ -291,8 +294,7 @@ class hr_expense(models.Model):
 
     sheet_state = fields.Selection(string='报告状态', related='sheet_id.state', readonly=True, store=True)
 
-    tb_budget = fields.Float('出运单预算')
-    tb_budget_rest = fields.Float('出运单预算剩余')
+
 
     @api.onchange('categ_id', 'second_categ_id')
     def onchange_categ(self):
