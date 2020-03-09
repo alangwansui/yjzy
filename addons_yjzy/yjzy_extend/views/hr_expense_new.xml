@@ -176,7 +176,7 @@
                    <field name="fk_journal_id"/>
 
                <field name="my_total_amount" string="总金额"/>
-<field name="x_wkf_state"/>
+                <field name="x_wkf_state" string="审批流程"/>
 
                 </tree>
 
