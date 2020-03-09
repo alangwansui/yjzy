@@ -91,6 +91,9 @@ class Product_Product(models.Model):
 
     @api.model
     def name_search(self, name='', args=None, operator='ilike', limit=100):
+
+        print('==name_search==',  self.env.context)
+
         res = super(Product_Product, self).name_search(name=name, args=args, operator=operator, limit=limit)
         #print('===', res)
         res_ids = [x[0] for x in res]
@@ -108,6 +111,9 @@ class Product_Product(models.Model):
         #多选：显示名称=（如果有客户编号显示客户编码，否则显示内部编码）+商品名称+关键属性，关键属性，供应商型号
         result = []
         only_name = self.env.context.get('only_name')
+
+        print('==name_get==', only_name, self.env.context)
+
         def _get_name(one):
             if not only_name:
                 name = '[%s]%s{%s}' % (one.default_code, one.name, one.key_value_string)

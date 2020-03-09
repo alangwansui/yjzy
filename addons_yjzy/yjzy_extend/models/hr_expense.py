@@ -4,6 +4,7 @@ from odoo import models, fields, api
 from odoo.exceptions import Warning
 from odoo.tools import float_is_zero, float_compare
 
+from odoo.addons import decimal_precision as dp
 
 class hr_expense_sheet(models.Model):
     _inherit = 'hr.expense.sheet'
@@ -63,9 +64,24 @@ class hr_expense_sheet(models.Model):
     all_line_is_confirmed = fields.Boolean('责任人已全部确认', compute='compute_all_line_is_confirmed')
 
     document_number = fields.Integer(u'单据数量')
-    account_confirm_uid = fields.Many2one('res.users',u'财务审批')
+    account_confirm_uid = fields.Many2one('res.users', u'财务审批')
 
-    manager_confirm_uid = fields.Many2one('res.users',u'总经理审批')
+    manager_confirm_uid = fields.Many2one('res.users', u'总经理审批')
+
+    my_total_amount = fields.Float(string='权限金额',  compute='compute_my_total_amount', digits=dp.get_precision('Account'))
+
+
+    def compute_my_total_amount(self):
+        user = self.env.user
+        for one in self:
+            my_total_amount = 0.0
+            for expense in one.expense_line_ids.filtered(lambda x: x.employee_id.user_id == user or x.create_uid == user or x.x_tenyale_user_id == user):
+                my_total_amount += expense.currency_id.with_context(
+                    date=expense.date,
+                    company_id=expense.company_id.id
+                ).compute(expense.total_amount, self.currency_id)
+            self.my_total_amount = my_total_amount
+
 
     @api.depends('expense_line_ids', 'expense_line_ids.is_confirmed')
     def compute_all_line_is_confirmed(self):
@@ -246,9 +262,9 @@ class hr_expense(models.Model):
 
     document_number_1 = fields.Integer(u'单据数量')
 
-    account_confirm_uid = fields.Many2one('res.user', u'财务审批')
+    account_confirm_uid = fields.Many2one('res.users', u'财务审批')
 
-    manager_confirm_uid = fields.Many2one('res.user', u'总经理审批')
+    manager_confirm_uid = fields.Many2one('res.users', u'总经理审批')
 
     sheet_state = fields.Selection(string='报告状态', related='sheet_id.state', readonly=True, store=True)
 
