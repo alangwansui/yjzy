@@ -150,6 +150,8 @@
 
         </field>
         </record>
+
+
         <record model="ir.ui.view" id="view_hr_expense_sheet_new_form">
             <field name="name">hr.expense.sheet.form</field>
             <field name="model">hr.expense.sheet</field>
@@ -195,8 +197,8 @@
 
                                 <field name="payment_mode"/>
                                 <field name="responsible_id" invisible="1"/>
-                                <field name="total_amount"/>
-                                <field name="my_total_amount"/>
+                                <field name="total_amount" invisible="1"/>
+                                <field name="my_total_amount" string="总金额"/>
                                 <field name="bank_id" string="对方收款账号" options="{'can_create':True}"/>
                                 <field name="address_id" invisible="1"/>
                                 <field name="department_id" invisible="1"/>
