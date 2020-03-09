@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-extend="Sidebar">
+        <t t-jquery=".dropdown-menu" t-operation="append">
+            <li t-if="section.name == 'files' and widget.items['files'].length > 1" class="o_sidebar_download_attachment">
+                <a t-attf-href="/web/binary/download_attachment?model=#{widget.env.model}&amp;id=#{widget.env.activeIds[0]}" data-section="files" data-index="0">
+                    Download multiple
+                    <span class="fa fa-file-archive-o o_sidebar_download_icon"/>
+                </a>
+            </li>
+        </t>
+    </t>
+</templates>
