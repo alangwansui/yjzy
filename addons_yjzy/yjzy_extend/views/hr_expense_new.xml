@@ -132,7 +132,7 @@
                   <field name="employee_id" string="责任人"/>
                    <field name="categ_id" string="大类"/>
                   <field name="second_categ_id" string="中类"/>
-                   <field name="product_id"  string="小类" invisible="1"/>
+                   <field name="product_id"  string="小类" />
                    <field name="sheet_id" string="费用说明"/>
                    <field name="unit_amount" string="金额" invisible="1"/>
                    <field name="total_amount" sum="Total Amount" widget="monetary" options="{'currency_field': 'currency_id'}"/>
@@ -150,6 +150,8 @@
 
         </field>
         </record>
+
+
         <record model="ir.ui.view" id="view_hr_expense_sheet_new_form">
             <field name="name">hr.expense.sheet.form</field>
             <field name="model">hr.expense.sheet</field>
@@ -195,8 +197,8 @@
 
                                 <field name="payment_mode"/>
                                 <field name="responsible_id" invisible="1"/>
-                                <field name="total_amount"/>
-                                <field name="my_total_amount"/>
+                                <field name="total_amount" invisible="1"/>
+                                <field name="my_total_amount" string="总金额"/>
                                 <field name="bank_id" string="对方收款账号" options="{'can_create':True}"/>
                                 <field name="address_id" invisible="1"/>
                                 <field name="department_id" invisible="1"/>
