@@ -132,7 +132,7 @@
                   <field name="employee_id" string="责任人"/>
                    <field name="categ_id" string="大类"/>
                   <field name="second_categ_id" string="中类"/>
-                   <field name="product_id"  string="小类" invisible="1"/>
+                   <field name="product_id"  string="小类" />
                    <field name="sheet_id" string="费用说明"/>
                    <field name="unit_amount" string="金额" invisible="1"/>
                    <field name="total_amount" sum="Total Amount" widget="monetary" options="{'currency_field': 'currency_id'}"/>
