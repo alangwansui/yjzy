@@ -11,7 +11,7 @@
                 <!--button name="button_read" states="" string="打开" type='object' class="oe_highlight"/-->
                 <field name="body_text" string="文本" invisible="1"/>
                 <field name="body" string="内容" invisible="1"/>
-                <button name="tip_button" type="object" class="tip_button" icon="fa-th-large" context="{'form_xml_id': 'prt_mail_messages.prt_mail_message_personal_user_form'}"/>
+                <button name="tip_button" type="object" class="tip_button" icon="fa-th-large" context="{'form_xml_id': 'prt_mail_messages.prt_mail_message_personal_user_form','no_mark_have_read':1 }"/>
                 <field name="author_display" string="发件人"/>
                 <field name="alias_id" string="收件邮箱"/>
                 <field name="author_allowed_id" groups="base.group_system" invisible="1"/>
