@@ -75,6 +75,9 @@ class transport_bill(models.Model):
             one.shoukuan_amount = one.sale_invoice_id.amount_total - one.sale_invoice_id.residual_signed
             one.fukuan_amount = sum([i.amount_total - i.residual_signed for i in one.purchase_invoice_ids.filtered(lambda x: x.yjzy_type == 'purchase')]) #（采购发票line.合计金额 - 到期金额）
 
+            budget_amount = one.fee_inner + one.fee_rmb1 + one.fee_rmb2
+            budget_reset_amount = budget_amount - sum([x.total_amount for x in one.expense_ids])
+
             one.org_sale_amount = org_sale_amount
             one.org_real_sale_amount = org_real_sale_amount
             one.sale_amount = sale_amount
@@ -86,6 +89,8 @@ class transport_bill(models.Model):
             one.back_tax_amount = back_tax_amount
             one.profit_amount = profit_amount
             one.fandian_amount = fandian_amount
+            one.budget_amount = budget_amount
+            one.budget_reset_amount = budget_reset_amount
 
 
             ###profit_ratio_base = (one.sale_amount - one.get_outer())
@@ -242,6 +247,9 @@ class transport_bill(models.Model):
     shoukuan_amount = fields.Monetary(u'收款金额', digits=(2, 4), compute=compute_info)
     fukuan_amount = fields.Monetary(u'付款金额', digits=(2, 4), compute=compute_info)
 
+    budget_amount = fields.Monetary('预算', compute=compute_info, currency_field='company_currency_id')
+    budget_reset_amount = fields.Monetary('预算剩余',  compute=compute_info, currency_field='company_currency_id')
+    expense_ids = fields.One2many('hr.expense', 'tb_id', u'费用')
 
     sale_invoice_total = fields.Monetary(u'销售发票金额', compute=compute_invoice_amount)
     purhcase_invoice_total = fields.Monetary(u'采购发票金额', compute=compute_invoice_amount)
@@ -268,6 +276,8 @@ class transport_bill(models.Model):
     export_insurance_currency_id = fields.Many2one('res.currency', '出口保险费货币')
     fee_other = fields.Monetary('其他外币费用', currency_field='other_currency_id')
     other_currency_id = fields.Many2one('res.currency', '其他外币费用货币')
+
+
 
 
 
@@ -342,6 +352,8 @@ class transport_bill(models.Model):
 
     sale_assistant_id = fields.Many2one('res.users', u'业务助理')
     is_editable = fields.Boolean(u'可编辑')
+
+
 
 
     @api.constrains('ref')

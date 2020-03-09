@@ -177,7 +177,7 @@
                                 <field name="ref" readonly="0"/>
                             </h1>
                         </div>
-                        <group col="2">
+                        <group col="3">
                             <group name="general_information">
                                 <field name="id" invisible="1"/>
                                 <field name="name" attrs="{'readonly': [('locked','=',True)]}"/>
@@ -216,6 +216,9 @@
 
                                 <field name="shoukuan_amount"/>
                                 <field name="fukuan_amount"/>
+
+                                <field name="budget_amount"/>
+                                <field name="budget_reset_amount"/>
                             </group>
                             <group name="self_currency" groups="base.group_system">
                                 <field name="third_currency_id" no_create="True"/>
@@ -361,6 +364,7 @@
                                         <field name="credit_info"/>
                                         <field name="insurance_info"/>
                                         <field name="description"/>
+
                                     </group>
                                 </group>
                             </page>
@@ -657,7 +661,6 @@
                                         <field name="amount" groups="base.group_system"/>
                                         <field name="back_tax" groups="base.group_system"/>
                                         <field name="back_tax_amount" groups="base.group_system"/>
-
                                         <field name="hs_id2" />
                                         <field name="product_id2" groups="base.group_system"/>
                                         <field name="qty2" groups="base.group_system"/>
@@ -677,6 +680,10 @@
                                         <field name="purchase_amout"/>
                                         <field name="fandian_amount"/>
                                     </tree>
+                                </field>
+                            </page>
+                            <page string="费用明细">
+                                <field name="expense_ids">
                                 </field>
                             </page>
                         </notebook>

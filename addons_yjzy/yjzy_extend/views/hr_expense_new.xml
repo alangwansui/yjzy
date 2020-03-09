@@ -251,6 +251,9 @@
                                         <field name="is_confirmed"/>
                                         <field name="sheet_state" groups="base.group_system"/>
 
+                                        <field name="tb_budget"/>
+                                        <field name="tb_budget_rest"/>
+
 
                                     </tree>
                                 </field>

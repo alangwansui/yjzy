@@ -33,13 +33,13 @@ class PRTMailMessage(models.Model):
     def tip_button(self):
         self.have_read = True
 
-
         # action_id = self.env.context['params'].get('action')
         # action = self.env['ir.actions.act_window'].browse(action_id)
         # form = action.view_ids.filtered(lambda x: x.view_mode == 'form').view_id
 
         xml_id = self.env.context.get('form_xml_id')
-        form =  self.env.ref(xml_id)
+        form = self.env.ref(xml_id)
+        ctx = self.env.context.copy()
 
         return {
             'name': u'邮件',
@@ -52,6 +52,7 @@ class PRTMailMessage(models.Model):
             'target': 'new',
             'auto_search':False,
             'flags': {'initial_mode': 'readonly'},
+            'context': ctx,
         }
 
 
@@ -741,7 +742,7 @@ class PRTMailMessage(models.Model):
             self.env.ref('prt_mail_messages.action_mail_messages_out').id,
         ]
         #对应的3个动作中读取单据的记录，视为打开记录
-        if len(self) ==1 and self.env.context.get('params',{}).get('action', 0) in action_ids:
+        if (len(self) ==1 and self.env.context.get('params',{}).get('action', 0) in action_ids) and not self.env.context.get('no_mark_have_read'):
             #sql更新数据，读取方法中，不能待用orm的写入方法，死循环
             self._cr.execute('UPDATE %s SET have_read=%s WHERE id=%s' % (self._table, True,  self.id))
         # <jon> 打开数据，自动标记为已读

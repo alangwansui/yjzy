@@ -291,6 +291,9 @@ class hr_expense(models.Model):
 
     sheet_state = fields.Selection(string='报告状态', related='sheet_id.state', readonly=True, store=True)
 
+    tb_budget = fields.Float('出运单预算')
+    tb_budget_rest = fields.Float('出运单预算剩余')
+
     @api.onchange('categ_id', 'second_categ_id')
     def onchange_categ(self):
         pass
