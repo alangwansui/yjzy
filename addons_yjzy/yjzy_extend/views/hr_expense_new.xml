@@ -234,6 +234,9 @@
 
                             </group>
                             <group>
+                                <field name="total_this_moth"/>
+                                <field name="total_this_year"/>
+
                                 <field name="employee_id"/>
                                 <field name="currency_id"/>
                                 <field name="all_line_is_confirmed"/>

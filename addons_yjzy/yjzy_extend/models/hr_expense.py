@@ -70,6 +70,29 @@ class hr_expense_sheet(models.Model):
 
     my_total_amount = fields.Float(string='权限金额',  compute='compute_my_total_amount', digits=dp.get_precision('Account'))
 
+    total_this_moth = fields.Float(u'本月费用', compute='compute_total_this_year', digits=dp.get_precision('Account'))
+    total_this_year = fields.Float(u'今年费用', compute='compute_total_this_year', digits=dp.get_precision('Account'))
+
+    @api.one
+    def compute_total_this_year(self):
+        now = fields.datetime.now()
+        month = now.strftime('%Y-%m-01 00:00:00')
+        year = now.strftime('%Y-01-01 00:00:00')
+
+        sql = """select sum(total_amount) from hr_expense_sheet where state in ('approve','post','done') and create_date > '%s'  """
+
+        moth_sql = sql % month
+        year_sql = sql % year
+
+        print('==', moth_sql)
+        print('==', year_sql)
+
+        self._cr.execute(moth_sql)
+        self.total_this_moth = self._cr.fetchall()[0][0]
+
+        self._cr.execute(year_sql)
+        self.total_this_year = self._cr.fetchall()[0][0]
+
 
     def compute_my_total_amount(self):
         user = self.env.user
@@ -79,8 +102,8 @@ class hr_expense_sheet(models.Model):
                 my_total_amount += expense.currency_id.with_context(
                     date=expense.date,
                     company_id=expense.company_id.id
-                ).compute(expense.total_amount, self.currency_id)
-            self.my_total_amount = my_total_amount
+                ).compute(expense.total_amount, one.currency_id)
+            one.my_total_amount = my_total_amount
 
 
     @api.depends('expense_line_ids', 'expense_line_ids.is_confirmed')
