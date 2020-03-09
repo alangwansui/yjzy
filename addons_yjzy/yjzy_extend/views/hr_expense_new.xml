@@ -196,6 +196,7 @@
                                 <field name="payment_mode"/>
                                 <field name="responsible_id" invisible="1"/>
                                 <field name="total_amount"/>
+                                <field name="my_total_amount"/>
                                 <field name="bank_id" string="对方收款账号" options="{'can_create':True}"/>
                                 <field name="address_id" invisible="1"/>
                                 <field name="department_id" invisible="1"/>
