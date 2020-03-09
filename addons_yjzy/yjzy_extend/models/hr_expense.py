@@ -94,13 +94,6 @@ class hr_expense_sheet(models.Model):
         self.total_this_year = self._cr.fetchall()[0][0]
 
 
-
-
-
-
-
-
-
     def compute_my_total_amount(self):
         user = self.env.user
         for one in self:
