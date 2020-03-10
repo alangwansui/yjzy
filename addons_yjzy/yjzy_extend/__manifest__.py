@@ -26,8 +26,9 @@
                 ],
 
     'data': [
-
+        'data/res_groups.xml',
         'views/menu.xml',
+
 
         'template/no_header_external_layout.xml',
         'security/ir.model.access.csv',
