@@ -59,9 +59,15 @@ class purchase_order(models.Model):
         self.ensure_one()
         lot_obj = self.env['stock.production.lot']
         for line in self.order_line:
-            if not lot_obj.search([('pol_id','=',line.id)]):
+            if not lot_obj.search([('pol_id', '=', line.id)]):
+
+                lot_name = self.name
+                if line.lot_sub_name:
+                    lot_name += line.lot_sub_name
+
+
                 lot = lot_obj.create({
-                    'name': self.name,
+                    'name': lot_name,
                     'product_id': line.product_id.id,
                     'pol_id': line.id,
                     'dummy_qty': line.product_qty,
@@ -75,7 +81,10 @@ class purchase_order(models.Model):
             if po.source_so_id:
                 so = po.source_so_id
                 for sol in so.order_line:
-                    lot = lot_obj.search([('product_id', '=', sol.product_id.id), ('po_id', '=', po.id)])
+                    if sol.lot_sub_name:
+                        lot = lot_obj.search([('product_id', '=', sol.product_id.id), ('name', '=', po.name + sol.lot_sub_name)])
+                    else:
+                        lot = lot_obj.search([('product_id', '=', sol.product_id.id), ('po_id', '=', po.id)])
                     if lot:
                         print('===', min(lot.dummy_qty, sol.product_uom_qty), lot.dummy_qty, sol.product_uom_qty)
                         drl_obj.create({
@@ -105,3 +114,5 @@ class purchase_order_line(models.Model):
     dlr_str = fields.Char(compute=compute_dlr, string=u'销售预留')
     dlr_qty = fields.Float(compute=compute_dlr, string=u'被预留')
     dlr_no_qty = fields.Float(compute=compute_dlr, string=u'待预留')
+
+    lot_sub_name = fields.Char('批次区分码')

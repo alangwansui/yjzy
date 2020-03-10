@@ -15,4 +15,9 @@ class fetchmail_server(models.Model):
 
     partner_id = fields.Many2one('res.partner', u'相关的伙伴', compute=compute_partner)
 
+    last_alias_id = fields.Many2one('mail.alias', '无匹配的别名')
+
+
+    
+
 

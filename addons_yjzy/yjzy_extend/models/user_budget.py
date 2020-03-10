@@ -3,6 +3,19 @@
 from odoo import models, fields, api
 
 
+# class company_budget(models.Model):
+#     _name = 'company.budget'
+#     _description = '公司年度预算'
+#
+#     def _get_default_currency_id(self):
+#         return self.env.user.company_id.currency_id.id
+#
+#     year = fields.Char('年', required=True)
+#     amount = fields.Monetary('预算金额', currency_field='currency_id')
+#     expense_ids = fields.One2many('hr.expense', 'company_budget_id', '费用明细')
+#     currency_id = fields.Many2one('res.currency', u'币种', default=_get_default_currency_id, required=True)
+
+
 class user_budget(models.Model):
     _name = 'user.budget'
     _description = '人员年度预算'

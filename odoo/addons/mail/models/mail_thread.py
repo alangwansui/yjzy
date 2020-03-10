@@ -1237,6 +1237,10 @@ class MailThread(models.AbstractModel):
                 return [route]
 
         # ValueError if no routes found and if no bounce occured
+
+        #<jon> 不能匹配任何别名的,这里发一个邮件
+
+
         raise ValueError(
             'No possible route found for incoming message from %s to %s (Message-Id %s:). '
             'Create an appropriate mail.alias or force the destination model.' %
@@ -1245,7 +1249,7 @@ class MailThread(models.AbstractModel):
 
     @api.model
     def message_route_process(self, message, message_dict, routes):
-        self = self.with_context(attachments_mime_plainxml=True) # import XML attachments as text
+        self = self.with_context(attachments_mime_plainxml=True) #import XML attachments as text
         # postpone setting message_dict.partner_ids after message_post, to avoid double notifications
         original_partner_ids = message_dict.pop('partner_ids', [])
         thread_id = False

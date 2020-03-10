@@ -160,6 +160,8 @@ class sale_order_line(models.Model):
 
     qty_pre_all = fields.Float(compute=compute_info, string=u'预留总数')
 
+    lot_sub_name = fields.Char('批次区分码')
+
 
     def open_wizard_sol_reserver(self):
         self.ensure_one()

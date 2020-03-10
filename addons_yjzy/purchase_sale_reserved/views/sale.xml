@@ -30,19 +30,19 @@
                     <field name="smline_qty"/>
                     <field name="dlr_str"/>
                     <field name="dlr_qty"/>
-                    <!--field name="supplier_ids" widget="many2many_tags"/-->
                     <button icon="fa-list" type="object" name="open_wizard_sol_reserver"/>
                     <field name="dlr_done_qty"/>
                     <field name="dlr_todo_qty"/>
                     <field name="qty_pre_all"/>
-                    <!--button  icon='fa-truck' type="object" name="test_test"/-->
+                    <field name="lot_sub_name"/>
+                </xpath>
+                <xpath expr="//field[@name='order_line']//form//field[@name='price_unit']" position="after">
+                    <field name="lot_sub_name"/>
                 </xpath>
 
-                <xpath expr="//field[@name='order_line']//tree" position="inside">
 
-                </xpath>
 
-                <!--xpath expr="//field[@name='order_line']//form//field[@name='state']" position="after">
+                <!--xpath expr="//field[@name='order_line']//form//field[@name='price_unit']" position="after">
                     <group name="dlr_ids">
                         <field name="dlr_ids" context="{'default_sol_id': id}">
                             <tree editable="top">

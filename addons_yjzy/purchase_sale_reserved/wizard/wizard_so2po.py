@@ -47,6 +47,7 @@ class wizard_so2po(models.TransientModel):
                     'date_planned': self.so_id.requested_date,
                     'price_unit': seller.price,
                     'sol_id': line.sol_id.id,
+                    'lot_sub_name': line.sol_id.lot_sub_name,
                 })
             po.date_planned = self.so_id.requested_date
             po.onchange_partner_id()

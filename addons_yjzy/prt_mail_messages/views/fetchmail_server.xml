@@ -8,6 +8,7 @@
     	<field name="arch" type="xml">
             <field name="active" position="before">
                 <field name="partner_id"/>
+                <field name="last_alias_id"/>
             </field>
 
     	</field>

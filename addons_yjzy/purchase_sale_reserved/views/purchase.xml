@@ -19,6 +19,7 @@
                     <field name="dlr_str"/>
                     <field name="dlr_qty"/>
                     <field name="dlr_no_qty"/>
+                    <field name="lot_sub_name"/>
                 </xpath>
 
             </field>
