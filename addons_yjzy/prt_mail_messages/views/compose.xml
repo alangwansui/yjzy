@@ -31,10 +31,15 @@
         <field name="model">mail.compose.message</field>
         <field name="priority">1</field>
         <field name="arch" type="xml">
-            <form string="撰稿">
+            <form string="写邮件" create="false">
                 <header>
                     <button string="检查邮件地址" name="mail_address_check" type="object" class="btn-primary" groups="base.group_system"/>
+                     <button string="发送" name="send_mail_button" attrs="{'invisible':[('is_sent','=',True)]}" type="object" class="btn-primary"
+                            confirm="确定要发送邮件"/>
+                    <button string="保存" name="save_action" type="object" class="btn-primary"/>
+                    <button string="取消" class="btn-default" special="cancel"/>
                 </header>
+     <div style="margin:-50px">
                 <group>
                     <!-- truly invisible fields for control and options -->
                     <field name="composition_mode" invisible="1"/>
@@ -89,7 +94,7 @@
 
                     </div>
                 </group>
-                           <group>
+                <group>
                        <div class="oe_form_box_info oe_text_center">
                         <span>
                             说明：输入收件人或者抄送人之后，请按回车，联系人颜色变成灰底白字！
@@ -97,23 +102,21 @@
                     </div>
                        </group>
                 <group>
-                    <field name="personal_partner_ids" string="收件人"  required="1" widget="many2many_tags"  context="{'tag_code': 'out_tmp'}"
+                    <field name="personal_partner_ids" string="收件人" required="1" widget="many2many_tags"  context="{'tag_code': 'out_tmp'}"
                            domain="[('tag_id.code','in',['normal','income_tmp'])]"
-                           options="{'create_easy':1, 'quick_create':1, 'create_name_field': 'email'}"/>
-                    <field name="partner_ids" string="收件人" widget="many2many_tags_email" placeholder="Add contacts to notify..."
+                           options="{'create_easy':1, 'quick_create':1,  'create_name_field': 'email'}"/>
+                    <field name="partner_ids" string="收件人" groups="base.group_system" widget="many2many_tags_email" placeholder="Add contacts to notify..."
                            context="{'force_email':True, 'show_email':True}"
-                           attrs="{'invisible': [('composition_mode', '!=', 'comment')]}" invisible="1"/>
-                    <field name="manual_to" string="系统外收件人" invisible="1"/>
+                           attrs="{'invisible': [('composition_mode', '!=', 'comment')]}"/>
+                    <field name="manual_to" string="系统外收件人"  groups="base.group_system"/>
 
 
                     <field name="personal_partner_cc_ids" string="抄送人" widget="many2many_tags" context="{'tag_code': 'out_tmp'}"
                            domain="[('tag_id.code','in',['normal','income_tmp'])]"
-
                            options="{'create_easy':1, 'quick_create':1, 'create_name_field': 'email'}"/>
-
-                    <field name="partner_cc_ids" placeholder="Add CC contacts to notify..." string="抄送人" widget="many2many_tags_email"
-                           context="{'force_email':True, 'show_email':True}" invisible="1"/>
-                    <field name="manual_cc" string="系统外抄送人" invisible="1"/>
+                    <field name="partner_cc_ids" groups="base.group_system" placeholder="Add CC contacts to notify..." string="抄送人" widget="many2many_tags_email"
+                           context="{'force_email':True, 'show_email':True}"/>
+                    <field name="manual_cc" string="系统外抄送人" groups="base.group_system"/>
 
 
                     <field name="partner_bcc_ids" groups="base.group_system" placeholder="Add BCC contacts to notify..." widget="many2many_tags_email"
@@ -143,12 +146,10 @@
                     <field name="force_notify_email"/>
                     <field name="is_sent"/>
                     <field name="last_send_time"/>
-                    <field name="all_partner_ids" widget="many2many_tags" invisible="0"/>
-                    <field name="all_personal_ids" widget="many2many_tags" invisible="0"/>
-
                 </group>
 
-
+  <notebook>
+      <page name="body" string="内容">
                 <!-- mass post -->
                 <field name="notify"
                        attrs="{'invisible':['|', ('composition_mode', '!=', 'mass_post')]}"/>
@@ -158,9 +159,13 @@
                        attrs="{'invisible':['|', ('no_auto_thread', '=', False), ('composition_mode', '!=', 'mass_mail')],
                                     'required':[('no_auto_thread', '=', True), ('composition_mode', '=', 'mass_mail')]}"/>
 
-                <field name="body"/>
-
-                <footer>
+                       <div style="margin-left:10px">
+                                <br/>
+                                <field name="body" nolabel="1"/>
+                            </div>
+      </page>
+  </notebook>
+           </div>     <footer>
                     <button string="发送" name="send_mail_button" attrs="{'invisible':[('is_sent','=',True)]}" type="object" class="btn-primary"
                             confirm="确定要发送邮件"/>
                     <button string="保存" name="save_action" type="object" class="btn-primary"/>
