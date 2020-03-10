@@ -71,7 +71,7 @@
                         <div>
                             <field name="description" placeholder="Notes..."/>
                         </div>
-                        <notebook>
+                        <notebook groups="base.group_system">
                             <page string="财务信息" groups="base.group_system">
                                 <group>
                                     <group name="account_left">
@@ -95,7 +95,7 @@
                                     </group>
                                 </group>
                             </page>
-                            <page string="申请单信息" >
+                            <page string="申请单信息" groups="base.group_system">
                                 <group>
                                     <group name="account_left">
                                         <field name="sheet_id" />
