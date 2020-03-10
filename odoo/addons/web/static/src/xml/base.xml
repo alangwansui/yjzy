@@ -358,7 +358,7 @@
                         <span t-if="section.name == 'files' and widget.options.editable and !item.callback" class="fa fa-trash-o o_sidebar_delete_attachment" t-att-data-id="item.id" title="Delete this attachment"/>
                     </a>
                 </li>
-                <li t-if="section.name == 'files' and widget.options.editable" class="o_sidebar_add_attachment">
+                <li t-if="section.name == 'files'" class="o_sidebar_add_attachment">
                     <t t-call="HiddenInputFile">
                         <t t-set="fileupload_id" t-value="widget.fileuploadId"/>
                         <t t-set="fileupload_action" t-translation="off">/web/binary/upload_attachment</t>

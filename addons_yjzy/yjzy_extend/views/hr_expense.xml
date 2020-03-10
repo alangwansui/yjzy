@@ -106,6 +106,8 @@
                     <field name="user_id" invisible="1"/>
                     <field name="include_tax"/>
                     <field name="tb_id" context="{'show_ref': 1}"/>
+                    <field name="user_budget_id" context="{'show_ref': 1}"/>
+
                     <field name="hx_expense_id"/>
                     <field name="hx_code"/>
                     <field name="hx_balance"/>
