@@ -43,6 +43,8 @@ from . import account_reconcile_orde
 from . import hr_expense
 from . import bom
 from . import res_country
+from . import user_budget
+
 
 from . import tools
 from . import Base

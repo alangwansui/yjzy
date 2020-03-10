@@ -294,6 +294,9 @@ class hr_expense(models.Model):
 
     sheet_state = fields.Selection(string='报告状态', related='sheet_id.state', readonly=True, store=True)
 
+    user_budget_id = fields.Many2one('user.budget', '人员年度预算')
+    user_budget_amount = fields.Monetary('人员年度预算金额', related='user_budget_id.amount', currency_field='currency_id')
+    user_budget_amount_reset = fields.Monetary('人员年度预算剩余', related='user_budget_id.amount_reset', currency_field='currency_id')
 
 
     @api.onchange('categ_id', 'second_categ_id')

@@ -74,6 +74,8 @@
         'views/bank.xml',
         'views/ir_translation.xml',
         'views/mail.xml',
+        'views/user_budget.xml',
+
 
 
         'views2/menu.xml',
