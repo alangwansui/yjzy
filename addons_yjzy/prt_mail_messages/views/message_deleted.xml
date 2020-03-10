@@ -6,7 +6,7 @@
         <field name="name">prt.mail.message.tree</field>
         <field name="model">mail.message</field>
         <field name="arch" type="xml">
-            <tree string="已删除" decoration-bf="needaction==True" decoration-danger="is_error==True" default_order="date desc, id desc" create='false'>
+            <tree string="已删除" decoration-bf="needaction==True"  decoration-it="have_read==True"  decoration-danger="is_error==True" default_order="date desc, id desc" create='false'>
                 <field name="body_text" string="文本" invisible="1"/>
                 <field name="body" string="内容" invisible="1"/>
                 <button name="tip_button" type="object" class="tip_button" icon="fa-th-large"  context="{'form_xml_id': 'prt_mail_messages.prt_mail_message_deleted_form'}"/>
