@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+    <t t-name="GlobalSearchLi">
+        <li class="o_sys_item" title='Global Search'>
+            <a href="#" class="o_search_icon" accesskey="q">
+                <i class="fa fa-search"/>
+            </a>
+        </li>
+    </t>
+    <t t-name="GlobalSearch">
+        <div id="o-global-search">
+            <span class="o_search_close">
+                <i class="fa fa-minus"/>
+            </span>
+            <div class="o_global_search">
+                <ul class="mt32">
+                    <li title='Global Search' class="dropdown user-dropdown pull-left input-group mb0">
+                        <input class="o_search_input" placeholder="Search" type="text"/>
+                        <div class="cu_close" title="Clear Search">
+                            <i class="fa fa-times"/>
+                        </div>
+                        <div class="cu_search" title="Global Search">
+                            <i class="fa fa-search"/>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </t>
+    <div t-name="GlobalSearch.AutoComplete" class="oe-global-autocomplete oe-autocomplete pull-left">
+        <ul style="height:calc(100vh - 90px)">
+        </ul>
+    </div>
+</templates>
