@@ -1004,7 +1004,7 @@ class MailThread(models.AbstractModel):
         return (model, thread_id, route[2], route[3], None if drop_alias else route[4])
 
     @api.model
-    def message_route(self, message, message_dict, model=None, thread_id=None, custom_values=None):
+    def message_route(self, message, message_dict, model=None, thread_id=None, custom_values=None, fetch_server=None):
         """ Attempt to figure out the correct target model, thread_id,
         custom_values and user_id to use for an incoming message.
         Multiple values may be returned, if a message had multiple
@@ -1238,8 +1238,14 @@ class MailThread(models.AbstractModel):
 
         # ValueError if no routes found and if no bounce occured
 
-        #<jon> 不能匹配任何别名的,这里发一个邮件
 
+        #<jon> 不能匹配任何别名的,这里就使收件服务器的last_alias_id 来匹配
+        print('------------------------------------------------------------------------------->', fetch_server, fetch_server.last_alias_id)
+        if fetch_server and fetch_server.last_alias_id:
+            last_alias = fetch_server.last_alias_id
+            user_id = last_alias.alias_user_id.id or self._uid
+            route = (last_alias.alias_model_id.model, last_alias.alias_force_thread_id, safe_eval(last_alias.alias_defaults), user_id, last_alias)
+            return [route]
 
         raise ValueError(
             'No possible route found for incoming message from %s to %s (Message-Id %s:). '
@@ -1344,7 +1350,7 @@ class MailThread(models.AbstractModel):
     @api.model
     def message_process(self, model, message, custom_values=None,
                         save_original=False, strip_attachments=False,
-                        thread_id=None):
+                        thread_id=None, fetch_server=None):
         """ Process an incoming RFC2822 email message, relying on
             ``mail.message.parse()`` for the parsing operation,
             and ``message_route()`` to figure out the target model.
@@ -1411,7 +1417,7 @@ class MailThread(models.AbstractModel):
                 return False
 
         # find possible routes for the message
-        routes = self.message_route(msg_txt, msg, model, thread_id, custom_values)
+        routes = self.message_route(msg_txt, msg, model, thread_id, custom_values, fetch_server=fetch_server)
 
         print('====route coutn==', routes)
 

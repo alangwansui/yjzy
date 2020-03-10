@@ -176,7 +176,7 @@ class FetchmailServer(models.Model):
                         result, data = imap_server.fetch(num, '(RFC822)')
                         imap_server.store(num, '-FLAGS', '\\Seen')
                         try:
-                            res_id = MailThread.with_context(**additionnal_context).message_process(server.object_id.model, data[0][1], save_original=server.original, strip_attachments=(not server.attach))
+                            res_id = MailThread.with_context(**additionnal_context).message_process(server.object_id.model, data[0][1], save_original=server.original, strip_attachments=(not server.attach), fetch_server=server)
                         except Exception:
                             _logger.info('Failed to process mail from %s server %s.', server.type, server.name, exc_info=True)
                             failed += 1
