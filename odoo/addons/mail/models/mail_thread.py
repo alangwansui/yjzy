@@ -1093,7 +1093,6 @@ class MailThread(models.AbstractModel):
 
         #rcpt_tos_localparts = [e.split('@')[0].lower() for e in tools.email_split(rcpt_tos)]
 
-        _logger.info('==message_route==2 %s', email_from_localpart, rcpt_tos_localparts)
         # 0. Verify whether this is a bounced email and use it to collect bounce data and update notifications for customers
         if bounce_alias and bounce_alias in email_to_localpart:
             # Bounce regex: typical form of bounce is bounce_alias+128-crm.lead-34@domain
