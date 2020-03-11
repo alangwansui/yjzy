@@ -187,18 +187,22 @@ class PRTMailComposer(models.Model):
     def send_mail_button(self):
         self.ensure_one()
 
+        send_result = {}
+
         if self.last_send_time:
             print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>', (datetime.now() - datetime.strptime(self.last_send_time, DTF)).seconds)
             if (datetime.now() - datetime.strptime(self.last_send_time, DTF)).seconds < 5:
                 raise Warning(u'请勿重复发送')
             else:
                 self.last_send_time = fields.datetime.now()
-                self.send_mail()
+                send_result =self.send_mail()
 
 
         else:
             self.last_send_time = fields.datetime.now()
-            self.send_mail()
+            send_result = self.send_mail()
+
+        new_msg = send_result.get('context', {}).get('new_msg')
 
         #发送后，通讯录放入正式组
         personals = self.personal_partner_ids | self.personal_partner_cc_ids
@@ -222,16 +226,21 @@ class PRTMailComposer(models.Model):
         })
 
         #返回发件箱
+        print('---------------send_result---------------', send_result)
+
         tree_view = self.env.ref('prt_mail_messages.prt_mail_message_out_tree')
         form_view = self.env.ref('prt_mail_messages.prt_mail_message_out_form')
         return {
             'name': '发件箱',
-            'view_type': 'form',
-            'view_mode': 'tree,form',
+            'view_type': 'tree',
+            'view_mode': 'form',
             'res_model': 'mail.message',
+            'res_id': new_msg.id,
             'type': 'ir.actions.act_window',
-            'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
-            'domain': [('message_type', '=', 'email')],
+            'views': [(form_view.id, 'form')],
+            'target': 'new',
+            'flags': {'initial_mode': 'readony'},
+
         }
 
         # return {

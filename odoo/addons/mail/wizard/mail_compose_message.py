@@ -280,7 +280,7 @@ class MailComposer(models.Model):
                 if wizard.composition_mode == 'mass_mail':
                     batch_mails.send(auto_commit=auto_commit)
 
-        return {'type': 'ir.actions.act_window_close'}
+        return {'type': 'ir.actions.act_window_close', 'context': {'new_msg': new_message}}
 
     @api.multi
     def get_mail_values(self, res_ids):
