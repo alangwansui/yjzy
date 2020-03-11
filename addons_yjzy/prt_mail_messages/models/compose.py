@@ -239,7 +239,8 @@ class PRTMailComposer(models.Model):
             'type': 'ir.actions.act_window',
             'views': [(tree_view.id, 'tree'), (form_view.id, 'from')],
             'target': 'new',
-            'domain': [('id','=',new_msg.id)]
+            'domain': [('id','=',new_msg.id)],
+            'context': {'no_show_ztree': 1},
             #'flags': {'initial_mode': 'readony'},
 
         }

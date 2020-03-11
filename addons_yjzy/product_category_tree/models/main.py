@@ -41,7 +41,14 @@ class mail_message(models.Model):
     def get_categories(self):
         no_show_tree_keys = self.env.context.get('no_show_tree_keys', [])
 
-        print('===========', no_show_tree_keys )
+        no_show_ztree = self.env.context.get('no_show_ztree')
+        if no_show_ztree:
+            return {'do_flag': False,
+                    'field': 'category field',
+                    'title': _('my category'),
+                    'data': []
+                    }
+
 
         if self._name == 'mail.message':
             data_tmp = [
