@@ -208,6 +208,7 @@
 
 
                     <field name="wizard_mode" invisible="1"/>
+                    <field name="replay_meesage_id" groups="base.group_system"/>
                     <field name="forward_ref" attrs="{'invisible':[('wizard_mode', 'not in', ['forward', 'compose'])],
                     'required':[('wizard_mode', 'in', ['compose'])]}"/>
 

@@ -124,6 +124,7 @@
 
 
                     <field name="wizard_mode" invisible="1"/>
+                    <field name="replay_meesage_id" groups="base.group_system"/>
                     <field name="forward_ref" attrs="{'invisible':[('wizard_mode', 'not in', ['forward', 'compose'])],
                     'required':[('wizard_mode', 'in', ['compose'])]}"/>
 
@@ -132,6 +133,7 @@
                     <field name="email_to" groups="base.group_system" invisible="1"/>
                     <field name="email_cc" groups="base.group_system" invisible="1"/>
                     <field name="subject" placeholder="Subject..." required="False"/>
+
                 </group>
                 <group col="4">
                     <field name="attachment_ids" widget="many2many_binary" string="添加附件" nolabel="1" colspan="2"/>

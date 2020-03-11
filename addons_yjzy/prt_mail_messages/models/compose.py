@@ -100,6 +100,8 @@ class PRTMailComposer(models.Model):
     all_partner_ids = fields.Many2many('res.partner', 'ref_compose_all_partner', 'pid', 'mid',  u'所有伙伴', compute=compute_compose_all_partner, store=True)
     all_personal_ids = fields.Many2many('personal.partner', 'ref_compose_all_personal', 'personal_id', 'partner_id',  u'所有通讯录', compute=compute_compose_all_partner, store=True)
 
+    replay_meesage_id = fields.Many2one('mail.message', '回复的消息')
+
 
     @api.model
     def cron_create_personal(self, domain=None):
@@ -193,6 +195,7 @@ class PRTMailComposer(models.Model):
                 self.last_send_time = fields.datetime.now()
                 self.send_mail()
 
+
         else:
             self.last_send_time = fields.datetime.now()
             self.send_mail()
@@ -210,19 +213,36 @@ class PRTMailComposer(models.Model):
             org_msg = self.env['mail.message'].browse(ctx.get('active_id'))
             org_msg.had_replied = True
 
+        if self.replay_meesage_id:
+            org_msg = self.replay_meesage_id
+            org_msg.had_replied = True
+
         wizard = self.env['wizard.compose.action'].create({
             'compose_id': self.id,
         })
 
+        #返回发件箱
+        tree_view = self.env.ref('prt_mail_messages.prt_mail_message_out_tree')
+        form_view = self.env.ref('prt_mail_messages.prt_mail_message_out_form')
         return {
-            'name': '邮件发送完成',
+            'name': '发件箱',
             'view_type': 'form',
-            'view_mode': 'form',
-            'res_model': 'wizard.compose.action',
-            'res_id': wizard.id,
+            'view_mode': 'tree,form',
+            'res_model': 'mail.message',
             'type': 'ir.actions.act_window',
-            'target': 'new',
+            'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
+            'domain': [('message_type', '=', 'email')],
         }
+
+        # return {
+        #     'name': '邮件发送完成',
+        #     'view_type': 'form',
+        #     'view_mode': 'form',
+        #     'res_model': 'wizard.compose.action',
+        #     'res_id': wizard.id,
+        #     'type': 'ir.actions.act_window',
+        #     'target': 'new',
+        # }
 
 
 

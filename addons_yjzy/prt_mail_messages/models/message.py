@@ -1118,10 +1118,12 @@ class PRTMailMessage(models.Model):
 
             'default_personal_partner_ids': personal_partner and [x.id for x in personal_partner] or False,
             'default_personal_partner_cc_ids': personal_partner_cc and [x.id for x in personal_partner_cc] or False,
-
         }
 
-        print('==11111==', ctx)
+        if (not wizard_mode) or (wizard_mode == 'quote'):
+            ctx.update({
+                'default_replay_meesage_id': self.id,
+            })
 
         return ctx
 
