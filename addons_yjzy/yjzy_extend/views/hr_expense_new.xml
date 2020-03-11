@@ -7,7 +7,7 @@
             <field name="model">hr.expense</field>
             <field name="arch" type="xml">
                 <form string="Expenses" class="o_expense_form">
-                    <header invisible="context.get('expense_adding_line')">
+                    <header > <!--invisible="context.get('expense_adding_line')"-->
                         <button name="submit_expenses" states="draft" groups="base.group_system" string="Submit to Manager" type="object" class="oe_highlight o_expense_submit"/>
                         <field name="state" widget="statusbar"  statusbar_visible="draft,reported,done"/>
                         <button name="view_sheet" type="object" string="View Report" class="oe_highlight" attrs="{'invisible': [('state', '=','draft')]}"
