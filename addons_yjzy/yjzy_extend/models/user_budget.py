@@ -3,17 +3,22 @@
 from odoo import models, fields, api
 
 
-# class company_budget(models.Model):
-#     _name = 'company.budget'
-#     _description = '公司年度预算'
-#
-#     def _get_default_currency_id(self):
-#         return self.env.user.company_id.currency_id.id
-#
-#     year = fields.Char('年', required=True)
-#     amount = fields.Monetary('预算金额', currency_field='currency_id')
-#     expense_ids = fields.One2many('hr.expense', 'company_budget_id', '费用明细')
-#     currency_id = fields.Many2one('res.currency', u'币种', default=_get_default_currency_id, required=True)
+class company_budget(models.Model):
+    _name = 'company.budget'
+    _description = '公司年度预算'
+
+    def _get_default_currency_id(self):
+        return self.env.user.company_id.currency_id.id
+
+    currency_id = fields.Many2one('res.currency', u'币种', default=_get_default_currency_id, required=True)
+    year = fields.Char('年', required=True)
+    amount = fields.Monetary('预算金额', currency_field='currency_id')
+    expense_ids = fields.One2many('hr.expense', 'company_budget_id', '费用明细')
+    amount_reset = fields.Monetary('剩余金额', compute='compute_amount_reset', currency_field='currency_id')
+
+    def compute_amount_reset(self):
+        for one in self:
+            one.amount_reset = one.amount - sum(one.expense_ids.mapped('total_amount'))
 
 
 class user_budget(models.Model):

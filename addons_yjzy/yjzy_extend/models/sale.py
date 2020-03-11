@@ -213,6 +213,8 @@ class sale_order(models.Model):
 
     aml_ids = fields.One2many('account.move.line', 'so_id', u'分录明细', readonly=True)
 
+    second_partner_id = fields.Many2one('res.partner', u'第二客户')
+
 
     @api.constrains('contract_code')
     def check_contract_code(self):
@@ -488,6 +490,19 @@ class sale_order_line(models.Model):
     p_uom_id = fields.Many2one('product.uom', u'采购打印单位',)
     tbl_ids = fields.One2many('transport.bill.line', 'sol_id', u'出运明细')
 
+    second_unit_price = fields.Float('第二价格')
+    second_price_total = fields.Monetary(compute='_compute_second', string='第二小计', readonly=True, store=True)
+
+    @api.depends('second_unit_price', 'discount', 'price_unit', 'tax_id')
+    def _compute_second(self):
+        """
+        """
+        for line in self:
+            price = line.second_unit_price    #* (1 - (line.discount or 0.0) / 100.0)
+            taxes = line.tax_id.compute_all(price, line.order_id.currency_id, line.product_uom_qty, product=line.product_id, partner=line.order_id.partner_shipping_id)
+            line.update({
+                'second_price_total': taxes['total_excluded'],
+            })
 
 
     @api.multi

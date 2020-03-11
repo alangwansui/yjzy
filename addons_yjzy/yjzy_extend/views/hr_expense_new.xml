@@ -63,7 +63,9 @@
                                 <field name="user_budget_id"/>
                                 <field name="user_budget_amount"/>
                                 <field name="user_budget_amount_reset"/>
-
+                                <field name="company_budget_id"/>
+                                <field name="company_budget_amount"/>
+                                <field name="company_budget_amount_reset"/>
                             </group>
                             <group invisible="1">
                                 <field name="total_amount" widget="monetary" options="{'currency_field': 'currency_id'}"/>
@@ -289,6 +291,11 @@
                                         <field name="user_budget_id" invisible="1"/>
                                         <field name="user_budget_amount"/>
                                         <field name="user_budget_amount_reset"/>
+
+                                        <field name="company_budget_id" invisible="1"/>
+                                        <field name="company_budget_amount"/>
+                                        <field name="company_budget_amount_reset"/>
+
 
 
                                     </tree>
