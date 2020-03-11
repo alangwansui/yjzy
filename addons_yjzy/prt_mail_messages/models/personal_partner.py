@@ -25,10 +25,11 @@ class personal_partner(models.Model):
     @api.depends('name', 'email')
     def _compute_display(self):
         for one in self:
-            print('===========', one.name, one.email)
-            one.display_name = '<%s> %s' % (one.email, one.name)
+            if one.name:
+                one.display_name = '<%s> %s' % (one.email, one.name)
+            else:
+                one.display_name = '<%s>' % one.email
 
-            print('===========', one.display_name)
 
     @api.model
     def get_default_tag(self):
@@ -44,17 +45,16 @@ class personal_partner(models.Model):
     function = fields.Char(u'工作岗位')
     phone = fields.Char(u'电话')
     mobile = fields.Char(u'手机')
+    qq = fields.Char('QQ')
     partner_id = fields.Many2one('res.partner', u'内部联系人')
     tag_id = fields.Many2one('personal.tag', u'通讯录分组', default=get_default_tag)
     user_id = fields.Many2one('res.users', u'用户', default=lambda self: self._uid)
 
-
-
-    # @api.constrains('email')
-    # def check_email(self):
-    #     for one in self:
-    #         if not re.match(r'^[0-9a-zA-Z_]{0,19}@[0-9a-zA-A-Z]{1,13}\.[a-zA-Z]{1,4}$', one.email):
-    #             raise Warning('不是合格的邮件格式')
+    @api.constrains('email')
+    def check_email(self):
+        for one in self:
+            if not re.match(r'^[0-9a-zA-Z_]{0,19}@[0-9a-zA-A-Z]{1,13}\.[a-zA-Z]{1,4}$', one.email):
+                raise Warning('不是合格的邮件格式')
 
 
     def write(self, values):

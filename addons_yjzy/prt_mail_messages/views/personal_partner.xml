@@ -36,6 +36,7 @@
                     <field name="function"/>
                     <field name="phone"/>
                     <field name="mobile"/>
+                    <field name="qq"/>
                     <field name="partner_id"/>
                     <field name="user_id"/>
                 </search>
@@ -53,6 +54,7 @@
                     <field name="function"/>
                     <field name="phone"/>
                     <field name="mobile"/>
+                     <field name="qq"/>
                     <field name="partner_id"/>
                     <field name="user_id"/>
                     <field name="tag_id"/>
@@ -78,6 +80,7 @@
                             <field name="function"/>
                             <field name="phone"/>
                             <field name="mobile"/>
+                             <field name="qq"/>
                             <field name="partner_id"/>
                             <field name="tag_id"/>
                         </group>

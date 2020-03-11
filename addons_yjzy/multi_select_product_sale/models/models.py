@@ -29,13 +29,14 @@ class product_product(models.Model):
         res = super(product_product, self).onchange_add_qty()
         ctx = self.env.context
         add_qty = self.add_qty
+        add_price = self.add_price
 
         if ctx.get('active_model') == 'sale.order' and add_qty:
             so = self.env['sale.order'].browse(ctx.get('active_id'))
-            self.onchange_add_qty4sol(so, add_qty)
+            self.onchange_add_qty4sol(so, add_qty, add_price)
         return res
 
-    def onchange_add_qty4sol(self, so, add_qty):
+    def onchange_add_qty4sol(self, so, add_qty, add_price):
         sol_obj = self.env['sale.order.line']
         product = self._origin
         print ('=========', product, product.add_qty, product.name)
@@ -44,7 +45,7 @@ class product_product(models.Model):
             'name': product.name,
             'product_id': product.id,
             'product_uom': product.uom_id.id,
-            'price_unit': 1,
+            'price_unit': add_price,
             'product_uom_qty': add_qty,
             'date_planned': datetime.today().strftime(DTF),
             'back_tax': product.back_tax,
