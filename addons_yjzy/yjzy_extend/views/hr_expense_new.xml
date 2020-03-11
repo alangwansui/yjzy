@@ -7,15 +7,15 @@
             <field name="model">hr.expense</field>
             <field name="arch" type="xml">
                 <form string="Expenses" class="o_expense_form">
-                    <header invisible="context.get('expense_adding_line')">
-                        <button name="submit_expenses" states="draft" string="Submit to Manager" type="object" class="oe_highlight o_expense_submit"/>
-                        <field name="state" widget="statusbar" groups="base.group_system" statusbar_visible="draft,reported,done"/>
+                    <header > <!--invisible="context.get('expense_adding_line')"-->
+                        <button name="submit_expenses" states="draft" groups="base.group_system" string="Submit to Manager" type="object" class="oe_highlight o_expense_submit"/>
+                        <field name="state" widget="statusbar"  statusbar_visible="draft,reported,done"/>
                         <button name="view_sheet" type="object" string="View Report" class="oe_highlight" attrs="{'invisible': [('state', '=','draft')]}"
                                 invisible="1"/>
-                        <button name="action_employee_confirm" type="object" string="责任人确认" invisible="1"/>
+                        <button name="action_employee_confirm" type="object" string="责任人确认" attrs="{'invisible': [('state', 'not in',['draft','reported'])]}"/>
                         <button name="make_diff_mvoe" type="object" string="创建差额分录" groups="account.group_account_manager"/>
-                        <button name="btn_user_confirm" type="object" string="所有责任人确认" invisible="1"/>
-                        <button name="btn_undo_confirm" type="object" string="取消责任人确认" invisible="1"/>
+                        <button name="btn_user_confirm" type="object" string="所有责任人确认" groups="base.group_system"/>
+                        <button name="btn_undo_confirm" type="object" string="取消责任人确认" attrs="{'invisible': [('state', 'not in','employee_confirm')]}"/>
                     </header>
                     <sheet>
                         <div class="oe_button_box" invisible="context.get('expense_adding_line')">
@@ -60,12 +60,12 @@
                                 <field name="user_id" invisible="1"/>
                                 <field name="ask_uid" invisible="1"/>
 
-                                <field name="user_budget_id"/>
-                                <field name="user_budget_amount"/>
-                                <field name="user_budget_amount_reset"/>
-                                <field name="company_budget_id"/>
-                                <field name="company_budget_amount"/>
-                                <field name="company_budget_amount_reset"/>
+                                <field name="user_budget_id" groups="base.group_system"/>
+                                <field name="user_budget_amount" groups="base.group_system"/>
+                                <field name="user_budget_amount_reset" groups="base.group_system"/>
+                                <field name="company_budget_id" groups="base.group_system"/>
+                                <field name="company_budget_amount" groups="base.group_system"/>
+                                <field name="company_budget_amount_reset" groups="base.group_system"/>
                                 <field name="user_budget_id"  groups="base.group_system"/>
                                 <field name="user_budget_amount"  groups="base.group_system"/>
                                 <field name="user_budget_amount_reset"  groups="base.group_system"/>
@@ -116,7 +116,8 @@
                                     <group name="account_right">
                                         <field name="create_uid"/>
                                         <field name="sheet_id"/>
-
+                                        <field name="employee_confirm_date" />
+                                        <field name="employee_confirm_name" />
                                     </group>
                                 </group>
                             </page>
@@ -182,7 +183,7 @@
                     <field name="analytic_account_id" groups="analytic.group_analytic_accounting"/>
                     <field name="hx_code" invisible="1"/>
                     <field name="hx_balance" invisible="1"/>
-                    <field name="state" invisible="1"/>
+                    <field name="state" />
                     <field name="message_unread" invisible="1"/>
                     <button name="action_get_attachment_view" string="View Attached Documents" type="object" icon="fa-paperclip"
                             attrs="{'invisible': [('attachment_number', '=', 0)]}"/>
@@ -329,8 +330,8 @@
                                         <field name="description" string="备注"/>
 
                                         <field name="company_budget_id" invisible="1"/>
-                                        <field name="company_budget_amount"/>
-                                        <field name="company_budget_amount_reset"/>
+                                        <field name="company_budget_amount" groups="base.group_system"/>
+                                        <field name="company_budget_amount_reset" groups="base.group_system"/>
 
 
 

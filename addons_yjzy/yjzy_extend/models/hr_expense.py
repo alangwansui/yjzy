@@ -312,9 +312,14 @@ class hr_expense(models.Model):
     user_budget_amount = fields.Monetary('人员年度预算金额', related='user_budget_id.amount', currency_field='currency_id')
     user_budget_amount_reset = fields.Monetary('人员年度预算剩余', related='user_budget_id.amount_reset', currency_field='currency_id')
 
+
+    employee_confirm_date = fields.Date(u'责任人确认日期')
+    employee_confirm_name = fields.Char(u'责任人确认')
+
     company_budget_id = fields.Many2one('user.budget', '公司年度预算')
     company_budget_amount = fields.Monetary('公司年度预算金额', related='company_budget_id.amount', currency_field='currency_id')
     company_budget_amount_reset = fields.Monetary('公司年度预算剩余', related='company_budget_id.amount_reset', currency_field='currency_id')
+
 
 
 
@@ -329,10 +334,14 @@ class hr_expense(models.Model):
             if force:
                 one.is_confirmed = True
                 one.state = 'employee_confirm'
+                one.employee_confirm_date = fields.datetime.now()
+                one.employee_confirm_name = self.env.user.name
             else:
-                if one.user_id == self.env.user:
+                if one.user_id == self.env.user :
                     one.is_confirmed = True
                     one.state = 'employee_confirm'
+                    one.employee_confirm_date = fields.datetime.now()
+                    one.employee_confirm_name = self.env.user.name
 
     def btn_undo_confirm(self):
         force = self.env.context.get('force')
@@ -340,18 +349,22 @@ class hr_expense(models.Model):
             if force:
                 one.is_confirmed = False
                 # akiny
-                one.state = 'reported'
+                one.state = 'draft'
+                one.employee_confirm_date = False
+                one.employee_confirm_name = False
             else:
                 if one.user_id == self.env.user:
                     one.is_confirmed = False
-                    one.state = 'reported'
-
-
+                    one.state = 'draft'
+                    one.employee_confirm_date = False
+                    one.employee_confirm_name = False
     def action_employee_confirm(self):
         self.ensure_one()
         ##if self.user_id != self.env.user:
         if self.user_id == self.env.user:
             self.state = 'employee_confirm'
+            self.employee_confirm_date = fields.datetime.now()
+            self.employee_confirm_name = self.env.user.name
         else:
             raise Warning('必须是责任人自己')
 
