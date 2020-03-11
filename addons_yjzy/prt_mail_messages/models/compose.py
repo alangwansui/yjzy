@@ -239,7 +239,7 @@ class PRTMailComposer(models.Model):
             'type': 'ir.actions.act_window',
             'views': [(form_view.id, 'form')],
             'target': 'new',
-            'flags': {'initial_mode': 'readony'},
+            #'flags': {'initial_mode': 'readony'},
 
         }
 
