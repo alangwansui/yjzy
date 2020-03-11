@@ -59,13 +59,18 @@
                                 <field name="sale_order_id" context="{'sale_show_partner_name': True}" invisible="1"/>
                                 <field name="user_id" invisible="1"/>
                                 <field name="ask_uid" invisible="1"/>
-
+                                
                                 <field name="user_budget_id"/>
                                 <field name="user_budget_amount"/>
                                 <field name="user_budget_amount_reset"/>
                                 <field name="company_budget_id"/>
                                 <field name="company_budget_amount"/>
                                 <field name="company_budget_amount_reset"/>
+                                <field name="user_budget_id"  groups="base.group_system"/>
+                                <field name="user_budget_amount"  groups="base.group_system"/>
+                                <field name="user_budget_amount_reset"  groups="base.group_system"/>
+
+
                             </group>
                             <group invisible="1">
                                 <field name="total_amount" widget="monetary" options="{'currency_field': 'currency_id'}"/>
@@ -130,7 +135,37 @@
             <field name="name">hr.expense.tree</field>
             <field name="model">hr.expense</field>
             <field name="arch" type="xml">
-                <tree string="费用明细" class="o_expense_tree">
+                <tree string="费用明细" class="o_expense_tree" create="false" edit="false" delete="false">
+                    <field name="date" string="创建日期"/>
+                    <field name="create_uid" string="创建人"/>
+                    <field name="employee_id" string="责任人"/>
+                    <field name="categ_id" string="大类"/>
+                    <field name="second_categ_id" string="中类"/>
+                    <field name="product_id" string="小类"/>
+                    <field name="sheet_id" string="费用说明"/>
+                    <field name="unit_amount" string="金额" invisible="1"/>
+                    <field name="total_amount" sum="Total Amount" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                    <field name="currency_id" invisible="True"/>
+                    <field name="attachment_number" invisible="True"/>
+                    <field name="name" invisible="1"/>
+                    <field name="sheet_id" invisible="not context.get('show_report', False)"/>
+                    <field name="analytic_account_id" groups="analytic.group_analytic_accounting"/>
+                    <field name="hx_code" invisible="1"/>
+                    <field name="hx_balance" invisible="1"/>
+                    <field name="state" invisible="1"/>
+                    <field name="message_unread" invisible="1"/>
+                    <button name="action_get_attachment_view" string="View Attached Documents" type="object" icon="fa-paperclip"
+                            attrs="{'invisible': [('attachment_number', '=', 0)]}"/>
+                </tree>
+
+            </field>
+        </record>
+
+        <record id="hr_expense_user_chaxun_tree" model="ir.ui.view">
+            <field name="name">hr.expense.tree</field>
+            <field name="model">hr.expense</field>
+            <field name="arch" type="xml">
+                <tree string="费用明细" class="o_expense_tree" create="false" edit="false" delete="false">
                     <field name="date" string="创建日期"/>
                     <field name="create_uid" string="创建人"/>
                     <field name="employee_id" string="责任人"/>
@@ -175,11 +210,11 @@
             <field name="name">hr.expense.sheet.tree</field>
             <field name="model">hr.expense.sheet</field>
             <field name="arch" type="xml">
-                <tree string="费用申请" class="o_expense_tree">
+                <tree string="费用申请" class="o_expense_tree" create="false" edit="false" delete="false">
                     <field name="create_date" string="创建日期"/>
                     <field name="create_uid" string="创建人"/>
                     <field name="name" string="费用说明"/>
-                    <field name="fk_journal_id"/>
+                    <field name="fk_journal_id" string="付款账户" groups="account.group_account_invoice"/>
                     <field name="my_total_amount" string="总金额"/>
                     <field name="x_wkf_state" string="审批流程"/>
                 </tree>
@@ -285,12 +320,13 @@
                                         <field name="is_confirmed"/>
                                         <field name="sheet_state" groups="base.group_system"/>
 
-                                        <field name="tb_budget"/>
-                                        <field name="tb_budget_rest"/>
+                                        <field name="tb_budget"  groups="base.group_system"/>
+                                        <field name="tb_budget_rest"  groups="base.group_system"/>
 
-                                        <field name="user_budget_id" invisible="1"/>
-                                        <field name="user_budget_amount"/>
-                                        <field name="user_budget_amount_reset"/>
+                                        <field name="user_budget_id"  groups="base.group_system"/>
+                                        <field name="user_budget_amount"  groups="base.group_system"/>
+                                        <field name="user_budget_amount_reset"  groups="base.group_system"/>
+                                        <field name="description" string="备注"/>
 
                                         <field name="company_budget_id" invisible="1"/>
                                         <field name="company_budget_amount"/>
