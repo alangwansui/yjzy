@@ -59,7 +59,7 @@
                                 <field name="sale_order_id" context="{'sale_show_partner_name': True}" invisible="1"/>
                                 <field name="user_id" invisible="1"/>
                                 <field name="ask_uid" invisible="1"/>
-                                
+
                                 <field name="user_budget_id"/>
                                 <field name="user_budget_amount"/>
                                 <field name="user_budget_amount_reset"/>

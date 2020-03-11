@@ -1189,10 +1189,10 @@ class OpenERPSession(werkzeug.contrib.sessions.Session):
 
 
 def session_gc(session_store):
-    if random.random() < 0.001:
+    if random.random() < 0.0005:
         # we keep session one week
         #last_week = time.time() - 60*60*24*7
-        last_week = time.time() - 60 * 180  #<jon> session 设置为30分钟
+        last_week = time.time() - 60 * 60 * 3  #<jon> session 设置为3H
 
         for fname in os.listdir(session_store.path):
             path = os.path.join(session_store.path, fname)
