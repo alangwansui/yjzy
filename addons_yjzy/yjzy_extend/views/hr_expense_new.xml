@@ -154,7 +154,7 @@
             </field>
         </record>
 
-        <record id="hr_expense_user_tree" model="ir.ui.view">
+        <record id="hr_expense_user_chaxun_tree" model="ir.ui.view">
             <field name="name">hr.expense.tree</field>
             <field name="model">hr.expense</field>
             <field name="arch" type="xml">
