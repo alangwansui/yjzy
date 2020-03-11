@@ -232,13 +232,14 @@ class PRTMailComposer(models.Model):
         form_view = self.env.ref('prt_mail_messages.prt_mail_message_out_form')
         return {
             'name': '发件箱',
-            'view_type': 'tree',
-            'view_mode': 'form',
+            'view_type': 'form',
+            'view_mode': 'tree,form',
             'res_model': 'mail.message',
-            'res_id': new_msg.id,
+            #'res_id': new_msg.id,
             'type': 'ir.actions.act_window',
-            'views': [(form_view.id, 'form')],
+            'views': [(tree_view.id, 'tree'), (form_view.id, 'from')],
             'target': 'new',
+            'domain': [('id','=',new_msg.id)]
             #'flags': {'initial_mode': 'readony'},
 
         }
