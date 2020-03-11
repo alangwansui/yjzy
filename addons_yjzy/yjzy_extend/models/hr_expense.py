@@ -349,14 +349,15 @@ class hr_expense(models.Model):
             if force:
                 one.is_confirmed = False
                 # akiny
-                one.state = 'reported'
+                one.state = 'draft'
                 one.employee_confirm_date = False
+                one.employee_confirm_name = False
             else:
                 if one.user_id == self.env.user:
                     one.is_confirmed = False
-                    one.state = 'reported'
+                    one.state = 'draft'
                     one.employee_confirm_date = False
-
+                    one.employee_confirm_name = False
     def action_employee_confirm(self):
         self.ensure_one()
         ##if self.user_id != self.env.user:
