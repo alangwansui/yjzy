@@ -60,9 +60,16 @@
                                 <field name="user_id" invisible="1"/>
                                 <field name="ask_uid" invisible="1"/>
 
+                                <field name="user_budget_id"/>
+                                <field name="user_budget_amount"/>
+                                <field name="user_budget_amount_reset"/>
+                                <field name="company_budget_id"/>
+                                <field name="company_budget_amount"/>
+                                <field name="company_budget_amount_reset"/>
                                 <field name="user_budget_id"  groups="base.group_system"/>
                                 <field name="user_budget_amount"  groups="base.group_system"/>
                                 <field name="user_budget_amount_reset"  groups="base.group_system"/>
+
 
                             </group>
                             <group invisible="1">
@@ -320,6 +327,11 @@
                                         <field name="user_budget_amount"  groups="base.group_system"/>
                                         <field name="user_budget_amount_reset"  groups="base.group_system"/>
                                         <field name="description" string="备注"/>
+
+                                        <field name="company_budget_id" invisible="1"/>
+                                        <field name="company_budget_amount"/>
+                                        <field name="company_budget_amount_reset"/>
+
 
 
                                     </tree>
