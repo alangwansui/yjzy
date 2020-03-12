@@ -42,7 +42,7 @@
       <search string="Messages Search">
                     <field name="email_from" invisible="1"/>
                     <field name="personal_author_id" string="发件人" invisible="1"/>
-                    <field name="personal_partner_id" string="收件人"/>
+                    <field name="personal_partner_ids" string="收件人"/>
                     <field name="body" string="内容" filter_domain="['|', ('subject', 'ilike', self), ('body', 'ilike', self)]"/>
                     <field name="subject"/>
 
