@@ -69,6 +69,7 @@ class hr_expense_sheet(models.Model):
     manager_confirm_uid = fields.Many2one('res.users', u'总经理审批')
 
     my_total_amount = fields.Float(string='权限金额',  compute='compute_my_total_amount', digits=dp.get_precision('Account'))
+    my_expense_line_ids = fields.One2many('hr.expense', compute='compute_my_total_amount', string='权限明细')
 
     total_this_moth = fields.Float(u'本月费用', compute='compute_total_this_year', digits=dp.get_precision('Account'))
     total_this_year = fields.Float(u'今年费用', compute='compute_total_this_year', digits=dp.get_precision('Account'))
@@ -106,18 +107,20 @@ class hr_expense_sheet(models.Model):
                         company_id=expense.company_id.id
                     ).compute(expense.total_amount, one.currency_id)
                 one.my_total_amount = my_total_amount
+                one.my_expense_line_ids = one.expense_line_ids
+
         else:
             for one in self:
                 my_total_amount = 0.0
-                for expense in one.expense_line_ids.filtered(lambda x: x.employee_id.user_id == user or x.create_uid == user or x.x_tenyale_user_id == user):
-
+                my_expense_line = one.expense_line_ids.filtered(lambda x: x.employee_id.user_id == user or x.create_uid == user or x.x_tenyale_user_id == user)
+                for expense in my_expense_line:
                     my_total_amount += expense.currency_id.with_context(
                         date=expense.date,
                         company_id=expense.company_id.id
                     ).compute(expense.total_amount, one.currency_id)
 
-
                 one.my_total_amount = my_total_amount
+                one.my_expense_line_ids = my_expense_line
 
 
     @api.depends('expense_line_ids', 'expense_line_ids.is_confirmed')

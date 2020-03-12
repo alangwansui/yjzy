@@ -338,6 +338,14 @@
                                     </tree>
                                 </field>
                             </page>
+
+                            <page string="权限明细">
+                                <field name="my_expense_line_ids">
+
+                                </field>
+                            </page>
+
+
                             <page string="Other Info">
                                 <group>
                                     <group>
