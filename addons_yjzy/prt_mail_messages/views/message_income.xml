@@ -80,10 +80,10 @@
                 <field name="date"/>
                 <field name="alias_id" groups="base.group_system" invisible="1"/>
                 <field name="have_read" groups="base.group_system" invisible="1"/>
-                <field name="read_img" widget="image" options="{'preview_image': 'image_medium', 'size': [150,150]}"/>
+                <field name="read_img" widget="image" options="{'preview_image': 'image_medium', 'size': [150,150]}" groups="base.group_system" />
 
                 <field name="had_replied"/>
-                <field name="read_img" widget="image" options="{'preview_image': 'image_medium', 'size': [150,150]}"/>
+                <field name="read_img" widget="image" options="{'preview_image': 'image_medium', 'size': [150,150]}" groups="base.group_system" />
 
                 <field name="process_type" groups="base.group_system" invisible="1"/>
                 <field name="state_delete" invisible="1"/>
