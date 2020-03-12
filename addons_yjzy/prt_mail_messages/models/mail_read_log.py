@@ -27,10 +27,14 @@ class ip_info(models.Model):
     _rec_name = 'content'
     _description = 'IP地址信息'
     _baidu_url = 'http://api.map.baidu.com/location/ip'
+    _ipapi_url = 'http://ip-api.com/line/'
+
 
     ip = fields.Char('IP地址', required=False)
     content = fields.Text('信息内容')
     no_done = fields.Boolean('未抓取', default=True)
+    is_ok = fields.Boolean('成功抓取')
+    error = fields.Text('错误信息')
 
     def get_bidu(self):
         """
@@ -44,6 +48,34 @@ class ip_info(models.Model):
                 one.no_done = False
         except Exception as e:
             print('==get_bidu==', e)
+
+    def get_ipapi_url(self):
+        """
+        success
+        Canada
+        CA
+        QC
+        Quebec
+        Montreal
+        H1S
+        45.5808
+        -73.5825
+        America/Toronto
+        Le Groupe Videotron Ltee
+        Videotron Ltee
+        AS5769 Videotron Telecom Ltee
+        24.48.0.1
+        """
+
+        try:
+            for one in self:
+                response = get(self._ipapi_url + one.ip)
+                print('==get_ipapi_url==', response, response.content)
+                one.content = response.content
+                one.no_done = False
+        except Exception as e:
+            print('==get_ipapi_url==', e)
+
 
     @api.model
     def get_bidu_all(self):

@@ -10,7 +10,10 @@
                     <field name="ip"/>
                     <field name="content"/>
                     <field name="no_done"/>
+                    <field name="is_ok"/>
+                    <field name="error"/>
                     <button name="get_bidu" type="object" string="百度IP查询"/>
+                    <button name="get_ipapi_url" type="object" string="IP-API查询"/>
                 </tree>
             </field>
         </record>
