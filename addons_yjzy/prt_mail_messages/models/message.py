@@ -187,7 +187,7 @@ class PRTMailMessage(models.Model):
             if one.have_read:
                 one.read_img = img_have_read
                 if one.had_replied:
-                    one.replay_img = img_have_replay
+                    one.read_img = img_have_replay
             else:
                 one.read_img = img_no_read
 
