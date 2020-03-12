@@ -45,7 +45,7 @@
                 </field>
 
                 <field name="partner_id" position="after">
-                     <field name="second_partner_id"/>
+                     <field name="second_partner_id" groups="base.group_system"/>
                 </field>
 
                 <field name="partner_shipping_id" position="attributes">
