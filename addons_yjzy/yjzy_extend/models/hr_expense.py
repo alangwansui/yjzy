@@ -362,7 +362,8 @@ class hr_expense(models.Model):
     def action_employee_confirm(self):
         self.ensure_one()
         ##if self.user_id != self.env.user:
-        if self.user_id == self.env.user:
+        if  self.user_id == self.env.user:
+            self.is_confirmed = True
             self.state = 'employee_confirm'
             self.employee_confirm_date = fields.datetime.now()
             self.employee_confirm_name = self.env.user.name

@@ -35,6 +35,54 @@
             </tree>
         </field>
     </record>
+     <record id="prt_mail_message_out_search" model="ir.ui.view">
+        <field name="name">prt.mail.message.search</field>
+        <field name="model">mail.message</field>
+        <field name="arch" type="xml">
+      <search string="Messages Search">
+                    <field name="email_from" invisible="1"/>
+                    <field name="personal_author_id" string="发件人" invisible="1"/>
+                    <field name="personal_partner_ids" string="收件人"/>
+                    <field name="body" string="内容" filter_domain="['|', ('subject', 'ilike', self), ('body', 'ilike', self)]"/>
+                    <field name="subject"/>
+
+                    <field name="message_type" invisible="1"/>
+                    <field name="author_id" invisible="1"/>
+                    <field name="partner_ids" invisible="1"/>
+                    <field name="model" invisible="1"/>
+                    <field name="res_id" invisible="1"/>
+                    <field name="parent_id" invisible="1"/>
+                    <filter string="Has Mentions" name="filter_has_mentions" invisible="1" domain="[('partner_ids.user_ids', 'in', [uid])]"/>
+                    <separator/>
+                    <filter string="Need Action" name="message_needaction"  invisible="1" help="Unread messages" domain="[('needaction', '=', True)]"/>
+                    <separator/>
+                    <filter string="Has attachments"   invisible="1" name="attachments" domain="[('attachment_ids', '!=', False)]"/>
+
+                      <filter string="Emails"  invisible="1"
+                        name="filter_type_email"
+                        domain="[('message_type', '=', 'email')]"/>
+                      <filter string="Comments"  invisible="1"
+                        name="filter_type_comment"
+                        domain="[('message_type', '=', 'comment')]"/>
+                     <separator/>
+                      <filter string="Sent by Me"  invisible="1"
+                        name="filter_sent_by_me"
+                        domain="[('author_id.user_ids', 'in', [uid])]"/>
+
+                    <filter string="Author"   invisible="1" domain="[]" context="{'group_by':'author_id'}"/>
+                    <separator/>
+                    <filter string="Day" domain="[]" context="{'group_by':'date:day'}"/>
+                    <filter string="Week" domain="[]" context="{'group_by':'date:week'}"/>
+                    <filter string="Month" domain="[]" context="{'group_by':'date'}"/>
+
+                </search>
+
+
+        </field>
+    </record>
+
+
+
     <record id="view_message_out_kanban" model="ir.ui.view">
         <field name="name">mail.message.kanban</field>
         <field name="model">mail.message</field>
