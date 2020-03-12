@@ -316,7 +316,7 @@ class hr_expense(models.Model):
     employee_confirm_date = fields.Date(u'责任人确认日期')
     employee_confirm_name = fields.Char(u'责任人确认')
 
-    company_budget_id = fields.Many2one('user.budget', '公司年度预算')
+    company_budget_id = fields.Many2one('company.budget', '公司年度预算')
     company_budget_amount = fields.Monetary('公司年度预算金额', related='company_budget_id.amount', currency_field='currency_id')
     company_budget_amount_reset = fields.Monetary('公司年度预算剩余', related='company_budget_id.amount_reset', currency_field='currency_id')
 

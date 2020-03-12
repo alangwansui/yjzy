@@ -167,8 +167,31 @@ class PRTMailMessage(models.Model):
     owner_user_id = fields.Many2one('res.users', '属于用户', compute='compute_owner_user', store=True)
 
 
+    read_img = fields.Binary('已读图片', compute='compute_read_img')
+    replay_img = fields.Binary('已回图片', compute='compute_read_img')
+
+    @api.depends('have_read')
+    def compute_read_img(self):
+        img_have_read = self.env['ir.attachment'].search([('name', '=', 'message_have_read')], limit=1)
+        img_no_read = self.env['ir.attachment'].search([('name', '=', 'message_no_read')], limit=1)
+        img_have_replay = self.env['ir.attachment'].search([('name', '=', 'message_have_replay')], limit=1)
+        img_no_replay = self.env['ir.attachment'].search([('name', '=', 'message_no_replay')], limit=1)
 
 
+        img_have_read = tools.image_resize_image(img_have_read.datas, (30, None))
+        img_no_read = tools.image_resize_image(img_no_read.datas, (30, None))
+        img_have_replay = tools.image_resize_image(img_have_replay.datas, (30, None))
+        img_no_replay = tools.image_resize_image(img_no_replay.datas, (30, None))
+
+        for one in self:
+            if one.have_read:
+                one.read_img = img_have_read
+            else:
+                one.read_img = img_no_read
+            if one.had_replied:
+                one.replay_img = img_have_replay
+            else:
+                one.replay_img = img_no_replay
 
 
 
