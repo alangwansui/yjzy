@@ -231,7 +231,7 @@
                     <field name="create_uid" string="创建人"/>
                     <field name="name" string="费用说明"/>
                     <field name="fk_journal_id" string="付款账户" groups="account.group_account_invoice"/>
-                    <field name="my_total_amount" string="总金额"/>
+                    <field name="total_amount" string="总金额"/>
                     <field name="x_wkf_state" string="审批流程"/>
                 </tree>
             </field>

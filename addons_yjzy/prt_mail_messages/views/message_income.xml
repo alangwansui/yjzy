@@ -58,7 +58,7 @@
                 <!--button name="button_read" states="" string="打开" type='object' class="oe_highlight"/-->
                 <field name="body_text" string="文本" invisible="1"/>
                 <field name="body" string="内容" invisible="1"/>
-                <field name="read_img" widget="image" options="{'preview_image': 'image_medium', 'size': [50,50]}" groups="base.group_system" />
+                <field name="read_img" string=" " widget="image" options="{'preview_image': 'image_medium', 'size': [50,50]}" groups="base.group_system" />
                 <button name="tip_button" type="object" class="tip_button" icon="fa-th-large"
                         context="{'form_xml_id': 'prt_mail_messages.prt_mail_message_income_form'}"/>
                 <field name="personal_author_id" string="发件人"/>
@@ -83,7 +83,7 @@
                 <field name="have_read" groups="base.group_system" invisible="1"/>
 
 
-                <field name="had_replied"/>
+                <field name="had_replied" invisible="1"/>
 
 
                 <field name="process_type" groups="base.group_system" invisible="1"/>
