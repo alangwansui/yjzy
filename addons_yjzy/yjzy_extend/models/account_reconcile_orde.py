@@ -191,7 +191,7 @@ class account_reconcile_order(models.Model):
     def _default_feiyong_product(self):
         try:
             #return self.env.ref('yjzy_extend.product_shuifei').id
-            p = self.env['product.product'].search([('default_code','=', 'xxxx')], limit=1)
+            p = self.env['product.product'].search([('default_code','=', 'C1102280A')], limit=1)
             print('===_default_feiyong_product===', p)
             return p.id
 
