@@ -9,21 +9,23 @@ class ProductDimension(http.Controller):
         try:
             print('======mail_mail/have_read=======', request.httprequest.environ['REMOTE_ADDR'])
             ip_address = request.httprequest.environ['REMOTE_ADDR']
+
+            mail = request.env["mail.mail"].sudo().browse(mail_id)
+
             if ip_address:
+
                 log = request.env['mail.read.log'].sudo().create({
                     'ip_address': ip_address,
                     'mail_id': mail_id,
+                    'message_id': mail.mail_message_id.id,
                 })
-
                 print('======mail_mail/have_read=======',log)
 
-            mail = request.env["mail.mail"].sudo().browse(mail_id)
             mail.readed = True
 
         except Exception as e:
             print('======', e)
 
-        #return '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mP4//8/AAX+Av4zEpUUAAAAAElFTkSuQmCC"/>'
 
         response = werkzeug.wrappers.Response('<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mP4//8/AAX+Av4zEpUUAAAAAElFTkSuQmCC"/>', mimetype='application/png')
         response.headers.add('Content-Disposition', http.content_disposition('xx.png'))

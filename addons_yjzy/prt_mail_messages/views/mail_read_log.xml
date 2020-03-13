@@ -8,6 +8,11 @@
             <field name="arch" type="xml">
                 <tree string="IP地址信息" editable="top">
                     <field name="ip"/>
+                    <field name="country"/>
+                    <field name="region"/>
+                    <field name="city"/>
+                    <field name="street"/>
+                    <field name="zip"/>
                     <field name="content"/>
                     <field name="no_done"/>
                     <field name="is_ok"/>

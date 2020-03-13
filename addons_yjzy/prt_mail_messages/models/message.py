@@ -161,14 +161,17 @@ class PRTMailMessage(models.Model):
     all_personal_ids = fields.Many2many('personal.partner', 'ref_all_personal', 'personal_id', 'partner_id',  u'所有通讯录', compute=compute_all_partner, store=True)
     all_user_ids = fields.Many2many('res.users', 'ref_all_users', 'iud', 'mid',  u'所有用户', compute=compute_all_partner, store=True)
 
-
     is_repeated = fields.Boolean('重复标记')
 
     owner_user_id = fields.Many2one('res.users', '属于用户', compute='compute_owner_user', store=True)
-
-
     read_img = fields.Binary('已读图片', compute='compute_read_img')
     replay_img = fields.Binary('已回图片', compute='compute_read_img')
+
+    mail_read_log_ids = fields.One2many('mail.read.log', 'message_id', '邮件读取记录')
+
+    #message端，记录：ip地址，country， regionName，City， zip，第一次打开的时间, 再统计一下次数。
+
+
 
     @api.depends('have_read')
     def compute_read_img(self):
