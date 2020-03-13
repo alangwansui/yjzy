@@ -242,10 +242,10 @@ class Channel(models.Model):
     @api.returns('self', lambda value: value.id)
     def message_post(self, body='', subject=None, message_type='notification', subtype=None, parent_id=False, attachments=None, content_subtype='html', **kwargs):
         # auto pin 'direct_message' channel partner
-        print('>>>>>Channel message post>>>>>', subject)
+        #print('>>>>>Channel message post>>>>>', subject)
         self.filtered(lambda channel: channel.channel_type == 'chat').mapped('channel_last_seen_partner_ids').write({'is_pinned': True})
         message = super(Channel, self.with_context(mail_create_nosubscribe=True)).message_post(body=body, subject=subject, message_type=message_type, subtype=subtype, parent_id=parent_id, attachments=attachments, content_subtype=content_subtype, **kwargs)
-        print('>>>>>Channel message post2>>>>>', message, message.partner_ids)
+        #print('>>>>>Channel message post2>>>>>', message, message.partner_ids)
         return message
 
     def _alias_check_contact(self, message, message_dict, alias):

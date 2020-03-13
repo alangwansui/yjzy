@@ -31,7 +31,7 @@ from odoo.tools.safe_eval import safe_eval
 
 _logger = logging.getLogger(__name__)
 def mail_txt_subtraction_partner(txt, partners):
-    print('=====mail_txt_subtraction_partner===', txt, partners)
+    #print('=====mail_txt_subtraction_partner===', txt, partners)
     if not partners:
         return txt
     res = []
@@ -42,17 +42,12 @@ def mail_txt_subtraction_partner(txt, partners):
 
     for i in txt.split(','):
         n, e = parseaddr(i)
-        print('=i=', i, n, e, partner_email_list, e in partner_email_list)
-        print(n,e, partner_email_list)
+        #print('=i=', i, n, e, partner_email_list, e in partner_email_list)
+        #print(n,e, partner_email_list)
         if not (e in partner_email_list):
             res.append(i)
 
-    print('===999=', res)
-
     x = ','.join(res)
-
-    print('===9991=', x)
-
     return x
 
 class MailThread(models.AbstractModel):
@@ -1042,7 +1037,7 @@ class MailThread(models.AbstractModel):
 
         :raises: ValueError, TypeError
         """
-        print('==message_route==1',  model, thread_id, custom_values)
+        #print('==message_route==1',  model, thread_id, custom_values)
 
         if not isinstance(message, Message):
             raise TypeError('message must be an email.message.Message at this point')
@@ -1142,7 +1137,7 @@ class MailThread(models.AbstractModel):
         #    See http://datatracker.ietf.org/doc/rfc3462/?include_text=1
         #    As all MTA does not respect this RFC (googlemail is one of them),
         #    we also need to verify if the message come from "mailer-daemon"
-        print('==message_route==3', message.get_content_type(), email_from_localpart)
+        #print('==message_route==3', message.get_content_type(), email_from_localpart)
 
         #<jon>  退回的信也要收取
         # if message.get_content_type() == 'multipart/report' or email_from_localpart == 'mailer-daemon':
@@ -1187,14 +1182,14 @@ class MailThread(models.AbstractModel):
         #         return []
 
         # 2. Look for a matching mail.alias entry
-        print('==message_route==5', rcpt_tos_localparts)
+        #print('==message_route==5', rcpt_tos_localparts)
         if rcpt_tos_localparts:
             # no route found for a matching reference (or reply), so parent is invalid
             message_dict.pop('parent_id', None)
 
 
             dest_aliases = Alias.search([('alias_name', 'in', rcpt_tos_localparts)])
-            print('==message_route==5.1', dest_aliases)
+            #print('==message_route==5.1', dest_aliases)
             if dest_aliases:
                 routes = []
                 for alias in dest_aliases:
@@ -1217,7 +1212,7 @@ class MailThread(models.AbstractModel):
                             email_from, email_to, message_id, route)
                         routes.append(route)
 
-                print('==message_route==5.1.2', email_to_localpart,  routes)
+                #print('==message_route==5.1.2', email_to_localpart,  routes)
                 return routes
 
         # 5. Fallback to the provided parameters, if they work
@@ -1260,15 +1255,16 @@ class MailThread(models.AbstractModel):
         thread_id = False
 
 
+
         #<jon>ruotes 是收件的发件箱地址匹配alias的后生成的一个数组列表，一个mail可能匹配多个alias，就可以生成多个消息
 
-        print('====message_route_process===', len(routes), [x[4] for x in routes])
+        #print('====message_route_process===', len(routes), [x[4] for x in routes])
 
 
         route_index = 0
         for model, thread_id, custom_values, user_id, alias in routes or ():
             route_index += 1
-            print('>>ttt>>', model, thread_id, custom_values, user_id, alias)
+            #print('>>ttt>>', model, thread_id, custom_values, user_id, alias)
             if model:
                 Model = self.env[model]
                 if not (thread_id and hasattr(Model, 'message_update') or hasattr(Model, 'message_new')):
@@ -1287,14 +1283,14 @@ class MailThread(models.AbstractModel):
                 if alias:
                     custom_values.update({'alias_id': alias.id})
 
-                print('=======message_route_process======1', MessageModel, thread_id and hasattr(MessageModel, 'message_update'))
+                #print('=======message_route_process======1', MessageModel, thread_id and hasattr(MessageModel, 'message_update'))
                 if thread_id and hasattr(MessageModel, 'message_update'):
                     thread = MessageModel.browse(thread_id)
                     #update_vals = {'alias_id': alias and alias.id}
-                    print('=======message_route_process======2', thread)
+                    #print('=======message_route_process======2', thread)
                     thread.message_update(message_dict, )
                 else:
-                    print('=======message_route_process======3')
+                    #print('=======message_route_process======3')
                     # if a new thread is created, parent is irrelevant
                     message_dict.pop('parent_id', None)
                     custom_values.update({'alias_id': alias.id})
@@ -1317,6 +1313,8 @@ class MailThread(models.AbstractModel):
                     partner_ids = [(4, parent_message.author_id.id)]
             else:
                 subtype = 'mail.mt_comment'
+
+            #message_dict['body'] = re.sub(r'data-filename=".*?"', '', message_dict['body'])
 
             new_msg = thread.message_post(subtype=subtype, partner_ids=partner_ids, **message_dict)
 
@@ -1418,7 +1416,7 @@ class MailThread(models.AbstractModel):
         # find possible routes for the message
         routes = self.message_route(msg_txt, msg, model, thread_id, custom_values, fetch_server=fetch_server)
 
-        print('====route coutn==', routes)
+        #print('====route coutn==', routes)
 
         thread_id = self.message_route_process(msg_txt, msg, routes)
         return thread_id
@@ -1472,7 +1470,7 @@ class MailThread(models.AbstractModel):
                               given their ids; if the dict is None or is
                               void, no write operation is performed.
         """
-        print('====message_update====', update_vals)
+        #print('====message_update====', update_vals)
         if update_vals:
             self.write(update_vals)
         return True
@@ -1509,8 +1507,6 @@ class MailThread(models.AbstractModel):
             # with encoding declaration are not supported'.
             root = lxml.html.fromstring(body.encode('utf-8'))
 
-            print('=bd=', body)
-
         postprocessed = False
         to_remove = []
         for node in root.iter():
@@ -1518,7 +1514,10 @@ class MailThread(models.AbstractModel):
                 postprocessed = True
                 if node.getparent() is not None:
                     to_remove.append(node)
-            if node.tag == 'img' and node.get('src', '').startswith('cid:'):
+
+
+            #<jon 取消标签插入 > if node.tag == 'img' and node.get('src', '').startswith('cid:'):
+            if False:
                 cid = node.get('src').split(':', 1)[1]
                 related_attachment = [attach for attach in attachments if attach[2] and attach[2].get('cid') == cid]
                 if related_attachment:
@@ -1545,6 +1544,7 @@ class MailThread(models.AbstractModel):
         # Content-Type: multipart/related;
         #   boundary="_004_3f1e4da175f349248b8d43cdeb9866f1AMSPR06MB343eurprd06pro_";
         #   type="text/html"
+
         if message.get_content_maintype() == 'text':
             encoding = message.get_content_charset()
             body = message.get_payload(decode=True)
@@ -1638,14 +1638,14 @@ class MailThread(models.AbstractModel):
             'message_type': 'email',
         }
 
-        print('=message_parse==1')
+        #print('=message_parse==1')
 
         if not isinstance(message, Message):
             # message_from_string works on a native str
             message = pycompat.to_native(message)
             message = email.message_from_string(message)
 
-        print('=message_parse==2',  dir(message))
+        #print('=message_parse==2',  dir(message))
 
         message_id = message['message-id']
         if not message_id:
@@ -1706,7 +1706,7 @@ class MailThread(models.AbstractModel):
 
         msg_dict['body'], msg_dict['attachments'] = self._message_extract_payload(message, save_original=save_original)
 
-        print('==msg_dict===', parseaddr(message.get('Received'))[1])
+        #print('==msg_dict===', parseaddr(message.get('Received'))[1])
 
         #<jon> bcc parse
         if message.get('Received'):
@@ -2045,6 +2045,10 @@ class MailThread(models.AbstractModel):
             'subtype_id': subtype_id,
             'partner_ids': [(4, pid) for pid in partner_ids],
         })
+
+        print('=============', body)
+
+        raise Exception('=================%s' % body)
 
 
         # 3. Attachments

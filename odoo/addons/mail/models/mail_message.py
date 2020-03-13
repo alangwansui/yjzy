@@ -485,7 +485,7 @@ class Message(models.Model):
         - uid have read access to the related document is model, res_id
         - otherwise: remove the id
         """
-        print('====check_access_rule===', self.env.context)
+        #print('====check_access_rule===', self.env.context)
         if self.env.context.get('yjzy_search'):
             return super(Message, self)._search(args, offset=offset, limit=limit, order=order, count=False, access_rights_uid=access_rights_uid)
 
@@ -877,7 +877,7 @@ class Message(models.Model):
         if message_values:
             self.write(message_values)
 
-        print('*******5.1', self,  self.env['mail.mail'].search([('mail_message_id', '=', self.id)], ))
+        #print('*******5.1', self,  self.env['mail.mail'].search([('mail_message_id', '=', self.id)], ))
 
         # notify partners and channels
         # those methods are called as SUPERUSER because portal users posting messages
@@ -887,13 +887,13 @@ class Message(models.Model):
 
         notif_partners = partners_sudo.filtered(lambda partner: 'inbox' in partner.mapped('user_ids.notification_type'))
 
-        print('*******5.11', partners_sudo, notif_partners, email_channels,  )
+        #print('*******5.11', partners_sudo, notif_partners, email_channels,  )
 
 
 
 
         #<jon> 强制使用email
-        print('>>>>force_notify_email>>', self.compose_id, self.compose_id.force_notify_email)
+        #print('>>>>force_notify_email>>', self.compose_id, self.compose_id.force_notify_email)
         if self.force_notify_email:
             todo_partners = partners_sudo.search([
                 '|',

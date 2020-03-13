@@ -35,7 +35,7 @@ class MailThread(models.AbstractModel):
         1：发送消息的数据创建过程
         """
 
-        print('====MailThread post=====1', kwargs);
+        #print('====MailThread post=====1', kwargs);
         if attachments is None:
             attachments = {}
         if self.ids and not self.ensure_one():
@@ -120,7 +120,7 @@ class MailThread(models.AbstractModel):
 
         values = kwargs
 
-        print('====MailThread post=====1.2', [(4, pid) for pid in partner_ids], values.get('partner_cc_ids'))
+        #print('====MailThread post=====1.2', [(4, pid) for pid in partner_ids], values.get('partner_cc_ids'))
 
         personal_author = self.env['personal.partner'].search([('partner_id', '=', author_id)], limit=1)
         values.update({
@@ -156,16 +156,16 @@ class MailThread(models.AbstractModel):
             values.pop(x, None)
 
         # Post the message
-        print('====MailThread post=====2', self._context,  values.get('partner_cc_ids'), values.get('partner_ids'))
+        #print('====MailThread post=====2', self._context,  values.get('partner_cc_ids'), values.get('partner_ids'))
 
         if self._context.get('fetchmail_server_id'):
             values.update({'fetchmail_server_id': self._context.get('fetchmail_server_id')})
 
 
-        print('====message ready to 0 create=====', self.env.context, values)
+        #print('====message ready to 0 create=====', self.env.context, values)
         new_message = MailMessage.create(values)
-        print('====MailThread post=====3',   new_message, new_message.subject)
-        print(self.env['mail.mail'].search([('mail_message_id', '=', new_message.id)], ))
+        #print('====MailThread post=====3',   new_message, new_message.subject)
+        #print(self.env['mail.mail'].search([('mail_message_id', '=', new_message.id)], ))
 
 
         # Post-process: subscribe author, update message_last_post
@@ -182,5 +182,5 @@ class MailThread(models.AbstractModel):
 
         self._message_post_after_hook(new_message)
 
-        print('====MailThread post=====4 end ',  new_message.partner_ids)
+        #print('====MailThread post=====4 end ',  new_message.partner_ids)
         return new_message

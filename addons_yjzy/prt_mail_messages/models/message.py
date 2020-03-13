@@ -58,7 +58,7 @@ class PRTMailMessage(models.Model):
     @api.depends('personal_partner_ids', 'personal_partner_cc_ids', 'personal_author_id',
                  'author_id', 'partner_ids', 'partner_cc_ids', 'alias_user_id')
     def compute_all_partner(self):
-        print('==compute_all_partner==', self)
+        #print('==compute_all_partner==', self)
         for one in self:
             if self._name != 'mail.message':
                 continue
@@ -241,7 +241,7 @@ class PRTMailMessage(models.Model):
             'default_personal_partner_cc_ids': compose.personal_partner_cc_ids and [(6, 0, [x.id for x in compose.personal_partner_cc_ids])] or False,
         }
 
-        print('=====ctx', compose.id, compose.personal_partner_cc_ids)
+        #print('=====ctx', compose.id, compose.personal_partner_cc_ids)
 
         # 再次编辑：         直接复制底稿，什么都不改动
         # 回复全部   ：  复制底稿，底稿body前面 + 签名
@@ -277,7 +277,7 @@ class PRTMailMessage(models.Model):
             one.make_one_personal()
 
     def parse_address_make_personal(self, addrss, user):
-        print('==parse_address_make_personal==', addrss, user)
+        #print('==parse_address_make_personal==', addrss, user)
         personal_obj = self.env['personal.partner']
         default_tag = self.env.ref('prt_mail_messages.personal_tag_income_tmp')
         records = self.env['personal.partner']
@@ -285,7 +285,7 @@ class PRTMailMessage(models.Model):
         before_name = ''
         for name, addr in AddrlistClass(addrss).getaddrlist():
             if not ('@' in  addr): continue
-            print('==parse_address_make_personal==', name, addr, user.id)
+            #print('==parse_address_make_personal==', name, addr, user.id)
             addr = addr.lower()
             personal = personal_obj.search([('email', '=', addr),('user_id', '=', user.id)])
             if not personal:
@@ -299,7 +299,7 @@ class PRTMailMessage(models.Model):
         return records
 
     def make_one_personal(self):
-        print('========make_one_personal==========', self.process_type)
+        #print('========make_one_personal==========', self.process_type)
         if self.process_type == 'in':
             self.make_one_personal_in()
         if self.process_type == 'out':
@@ -307,7 +307,7 @@ class PRTMailMessage(models.Model):
 
 
     def make_one_personal_out(self):
-        print('========make_one_personal out==========', self, self.process_type, self.author_id, self.author_id.user_ids)
+        #print('========make_one_personal out==========', self, self.process_type, self.author_id, self.author_id.user_ids)
         users = self.author_id.user_ids
         if not users:
             return False
@@ -343,7 +343,7 @@ class PRTMailMessage(models.Model):
 
     def make_privace_comment(self):
         channel = self.env['mail.channel'].sudo().search([('channel_type','=','chat'), ('chat_uid','!=',False), ('chat_uid','=', self.alias_id.alias_user_id.id)], limit=1)
-        print('==make_privace_comment===', self.alias_id.alias_user_id, self.env.user, self.env.context, channel)
+        #print('==make_privace_comment===', self.alias_id.alias_user_id, self.env.user, self.env.context, channel)
         if self.alias_id.alias_user_id and channel:
             channel.message_post(
                 body=u'新邮件 %s 来自:%s' % (self.subject, self.email_from),
@@ -370,7 +370,7 @@ class PRTMailMessage(models.Model):
         #判定重复标记
         if self._name == 'mail.message':
             repeated_msg = self.with_context(active_test=False).search([('message_id', '=', msg.message_id)]).filtered(lambda x: x._name == 'mail.message')
-            print('==repeated_msg===', self,  repeated_msg, repeated_msg._name )
+            #print('==repeated_msg===', self,  repeated_msg, repeated_msg._name )
 
             if len(repeated_msg) > 1:
                 msg.is_repeated = True
@@ -756,8 +756,7 @@ class PRTMailMessage(models.Model):
 
     @api.multi
     def read(self, fields=None, load='_classic_read'):
-        print('===read====', self.env.context)
-
+        #print('===read====', self.env.context)
         #<jon> 打开数据，自动标记为已读
         action_ids = [
             #self.env.ref('prt_mail_messages.action_prt_mail_messages').id,
@@ -766,7 +765,7 @@ class PRTMailMessage(models.Model):
         ]
         #对应的3个动作中读取单据的记录，视为打开记录
 
-        print('>>>>>>>>>', (len(self) ==1 and self.env.context.get('params',{}).get('action', 0) in action_ids) and not self.env.context.get('no_mark_have_read'))
+        #print('>>>>>>>>>', (len(self) ==1 and self.env.context.get('params',{}).get('action', 0) in action_ids) and not self.env.context.get('no_mark_have_read'))
 
         if (len(self) ==1 and self.env.context.get('params',{}).get('action', 0) in action_ids) and not self.env.context.get('no_mark_have_read'):
             #sql更新数据，读取方法中，不能待用orm的写入方法，死循环
