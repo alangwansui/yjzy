@@ -537,7 +537,7 @@
                                                attrs="{'invisible': [('state', 'not in', ['post', 'done'])]}" readonly="1"/>
                                         <field name="account_confirm_uid"/>
                                         <field name="manager_confirm_uid"/>
-                                        <field name="employee_wkf"/>
+                                        <field name="employee_wkf" readonly="1"/>
                                     </group>
                                 </group>
                             </page>
