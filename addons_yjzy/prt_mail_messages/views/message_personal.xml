@@ -382,7 +382,8 @@
                     <page string="客户读取记录">
                             <field name="mail_read_log_ids">
                                 <tree>
-                                    <field name="ip_address"/>
+                                     <field name="ip_address"/>
+                                    <field name="country"/>
                                     <field name="region"/>
                                     <field name="city"/>
                                     <field name="street"/>
