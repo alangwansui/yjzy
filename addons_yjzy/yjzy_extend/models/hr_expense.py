@@ -73,7 +73,7 @@ class hr_expense_sheet(models.Model):
 
     total_this_moth = fields.Float(u'本月费用', compute='compute_total_this_year', digits=dp.get_precision('Account'))
     total_this_year = fields.Float(u'今年费用', compute='compute_total_this_year', digits=dp.get_precision('Account'))
-    employee_wkf = fields.Boolean('非责任人阶段')
+    employee_wkf = fields.Boolean('责任人阶段')
     @api.one
     def compute_total_this_year(self):
         now = fields.datetime.now()
