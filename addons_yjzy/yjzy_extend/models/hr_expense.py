@@ -73,7 +73,7 @@ class hr_expense_sheet(models.Model):
 
     total_this_moth = fields.Float(u'本月费用', compute='compute_total_this_year', digits=dp.get_precision('Account'))
     total_this_year = fields.Float(u'今年费用', compute='compute_total_this_year', digits=dp.get_precision('Account'))
-
+    employee_wkf = fields.Boolean('非责任人阶段')
     @api.one
     def compute_total_this_year(self):
         now = fields.datetime.now()
@@ -101,14 +101,25 @@ class hr_expense_sheet(models.Model):
         if user.has_group('yjzy_extend.group_expense_my_total'):
             for one in self:
                 my_total_amount = 0.0
-                for expense in one.expense_line_ids:
-                    my_total_amount += expense.currency_id.with_context(
-                        date=expense.date,
-                        company_id=expense.company_id.id
-                    ).compute(expense.total_amount, one.currency_id)
-                one.my_total_amount = my_total_amount
-                one.my_expense_line_ids = one.expense_line_ids
-
+                employee_wkf_one = one.employee_wkf
+                my_expense_line = one.expense_line_ids.filtered(
+                    lambda x: x.employee_id.user_id == user or x.create_uid == user or x.x_tenyale_user_id == user)
+                if employee_wkf_one == True:
+                    for expense in one.expense_line_ids:
+                         my_total_amount += expense.currency_id.with_context(
+                           date=expense.date,
+                           company_id=expense.company_id.id
+                          ).compute(expense.total_amount, one.currency_id)
+                         one.my_total_amount = my_total_amount
+                         one.my_expense_line_ids = one.expense_line_ids
+                else:
+                    for expense in my_expense_line:
+                         my_total_amount += expense.currency_id.with_context(
+                           date=expense.date,
+                           company_id=expense.company_id.id
+                          ).compute(expense.total_amount, one.currency_id)
+                         one.my_total_amount = my_total_amount
+                         one.my_expense_line_ids = one.expense_line_ids
         else:
             for one in self:
                 my_total_amount = 0.0
@@ -119,8 +130,8 @@ class hr_expense_sheet(models.Model):
                         company_id=expense.company_id.id
                     ).compute(expense.total_amount, one.currency_id)
 
-                one.my_total_amount = my_total_amount
-                one.my_expense_line_ids = my_expense_line
+                    one.my_total_amount = my_total_amount
+                    one.my_expense_line_ids = my_expense_line
 
 
     @api.depends('expense_line_ids', 'expense_line_ids.is_confirmed')
