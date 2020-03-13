@@ -104,7 +104,7 @@ class hr_expense_sheet(models.Model):
                 employee_wkf_one = one.employee_wkf
                 my_expense_line = one.expense_line_ids.filtered(
                     lambda x: x.employee_id.user_id == user or x.create_uid == user or x.x_tenyale_user_id == user)
-                if employee_wkf_one == True:
+                if employee_wkf_one == False:
                     for expense in one.expense_line_ids:
                          my_total_amount += expense.currency_id.with_context(
                            date=expense.date,
