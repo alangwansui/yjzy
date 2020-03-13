@@ -196,7 +196,7 @@
             <field name="name">hr.expense.sheet.tree</field>
             <field name="model">hr.expense.sheet</field>
             <field name="arch" type="xml">
-                <tree string="费用申请" class="o_expense_tree">
+                <tree string="费用申请" class="o_expense_tree"  create='false'  >
                     <field name="create_date" string="创建日期"/>
                     <field name="create_uid" string="创建人"/>
                     <field name="name" string="费用说明"/>
@@ -226,7 +226,7 @@
             <field name="name">hr.expense.sheet.tree</field>
             <field name="model">hr.expense.sheet</field>
             <field name="arch" type="xml">
-                <tree string="费用申请" class="o_expense_tree" create="false" edit="false" delete="false">
+                <tree string="费用申请" class="o_expense_   tree" create="false" edit="false" delete="false">
                     <field name="create_date" string="创建日期"/>
                     <field name="create_uid" string="创建人"/>
                     <field name="name" string="费用说明"/>

@@ -379,7 +379,18 @@
                         <page string="正文文本">
                             <field name="body_text"/>
                         </page>
-
+                    <page string="客户读取记录">
+                            <field name="mail_read_log_ids">
+                                <tree>
+                                    <field name="ip_address"/>
+                                    <field name="region"/>
+                                    <field name="city"/>
+                                    <field name="street"/>
+                                    <field name="zip"/>
+                                    <field name="create_date"/>
+                                </tree>
+                            </field>
+                        </page>
                     </notebook>
                 </sheet>
             </form>
