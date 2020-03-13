@@ -53,7 +53,7 @@ class personal_partner(models.Model):
     @api.constrains('email')
     def check_email(self):
         for one in self:
-            if not re.match(r'^[0-9a-zA-Z_]{0,19}@[0-9a-zA-A-Z]{1,13}\.[a-zA-Z]{1,4}$', one.email):
+            if not re.match(r'^[0-9a-zA-Z_]{0,19}@[0-9a-zA-A-Z]{1,13}\.[a-zA-Z]{1,4}.*$', one.email):
                 raise Warning('%s 不是合格的电子邮件格式,一个正确的邮箱格式比如这样 demo@qq.com' % one.email)
 
 
