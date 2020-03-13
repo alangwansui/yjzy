@@ -2046,6 +2046,8 @@ class MailThread(models.AbstractModel):
             'partner_ids': [(4, pid) for pid in partner_ids],
         })
 
+        raise Exception('%s' % body)
+
         # 3. Attachments
         #   - HACK TDE FIXME: Chatter: attachments linked to the document (not done JS-side), load the message
         attachment_ids = self._message_post_process_attachments(attachments, kwargs.pop('attachment_ids', []), values)
