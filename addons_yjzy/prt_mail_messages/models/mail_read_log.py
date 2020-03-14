@@ -104,8 +104,9 @@ class ip_info(models.Model):
 
     @api.model
     def get_bidu_all(self):
-        todo = self.search([('no_done', '=', True)])
+        todo = self.search([('is_ok', '=', False)])
         todo.get_bidu()
+
 
 
 
