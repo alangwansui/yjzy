@@ -346,7 +346,7 @@
                                         <field name="user_budget_amount_reset"  groups="base.group_system"/>
                                         <field name="description" string="备注"/>
                                         <button name="action_employee_confirm" string="责任人确认"  class="oe_highlight"
-                                                type="object" attrs="{'invisible':[('state','in',['draft','done','refused','confirmed','employee_confirm'])]}"/>
+                                                type="object" attrs="{'invisible':['|',('state','in',['draft','done','refused','confirmed','employee_confirm']),('sheet_state','=','cancel')]}"/>
                                         <button name="btn_undo_confirm" type="object" string="取消责任人确认"
                                                 attrs="{'invisible': ['|',('state', 'in',['draft','done','refused','confirmed','reported']),('sheet_all_line_is_confirmed','=',True)]}"/>
                                         <field name="is_confirmed" string="责任人确认"  attrs="{'invisible': [('is_confirmed','=',False)]}"/>
@@ -360,7 +360,7 @@
                                 </field>
                             </page>
 
-                               <page string="财务信息">
+                               <page string="财务信息" groups="account.group_account_invoice">
                                 <group>
                                     <group>
 
@@ -394,7 +394,7 @@
                                     </group>
                                 </group>
                             </page>
-                            <page string="审批信息">
+                            <page string="审批信息" groups="base.group_system">
                                 <group>
                                     <group>
                                         <field name="employee_confirm"/>
@@ -526,7 +526,7 @@
                                         <field name="user_budget_amount_reset"  groups="base.group_system"/>
                                         <field name="description" string="备注"/>
                                         <button name="action_employee_confirm" string="责任人确认"  class="oe_highlight"
-                                                type="object" attrs="{'invisible':[('state','in',['draft','done','refused','confirmed','employee_confirm'])]}"/>
+                                                type="object" attrs="{'invisible':['|',('state','in',['draft','done','refused','confirmed','employee_confirm']),('sheet_state','=','cancel')]}"/>
                                         <button name="btn_undo_confirm" type="object" string="取消责任人确认"
                                                 attrs="{'invisible': ['|',('state', 'in',['draft','done','refused','confirmed','reported']),('sheet_all_line_is_confirmed','=',True)]}"/>
                                         <field name="is_confirmed" string="责任人确认"  attrs="{'invisible': [('is_confirmed','=',False)]}"/>
@@ -536,7 +536,7 @@
                                     </tree>
                                 </field>
                             </page>
-                               <page string="财务信息">
+                               <page string="财务信息" groups="account.group_account_invoice">
                                 <group>
                                     <group>
 
@@ -570,7 +570,7 @@
                                     </group>
                                 </group>
                             </page>
-                            <page string="审批信息">
+                            <page string="审批信息" groups="base.group_system">
                                 <group>
                                     <group>
                                         <field name="employee_confirm"/>
