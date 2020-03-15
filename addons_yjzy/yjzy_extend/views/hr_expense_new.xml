@@ -9,7 +9,7 @@
                 <form string="Expenses" class="o_expense_form">
                     <header > <!--invisible="context.get('expense_adding_line')"-->
                         <button name="submit_expenses" states="draft" groups="base.group_system" string="Submit to Manager" type="object" class="oe_highlight o_expense_submit"/>
-                        <field name="state" widget="statusbar"  invisible="1" statusbar_visible="draft,reported,done"/>
+                        <field name="state" widget="statusbar"   statusbar_visible="draft,reported,employee_confirm"/>
                         <button name="view_sheet" type="object" string="View Report" class="oe_highlight" attrs="{'invisible': [('state', '=','draft')]}"
                                 invisible="1"/>
                         <button name="action_employee_confirm" type="object" string="责任人确认" attrs="{'invisible':[('state','in',['draft','done','refused','confirmed','employee_confirm'])]}"/>
@@ -315,7 +315,7 @@
                                         <field name="sale_order_id" context="{'sale_show_partner_name': True}" invisible="1"/>
                                         <field name="state" invisible="1"/>
                                         <field name="currency_id" invisible="1"/>
-                                        <field name="ask_uid"/>
+                                        <field name="ask_uid" invisible="1"/>
                                         <field name="analytic_account_id" groups="analytic.group_analytic_accounting"/>
                                         <field name="message_unread" invisible="1"/>
                                         <field name="attachment_number" invisible="1"/>
@@ -326,10 +326,7 @@
                                         <field name="hx_code" groups="base.group_system"/>
                                         <field name="hx_balance" groups="base.group_system"/>
                                         <field name="sheet_all_line_is_confirmed" invisible="1"/>
-                                        <button name="action_employee_confirm" string="责任人确认"  class="oe_highlight"
-                                                type="object" attrs="{'invisible':[('state','in',['draft','done','refused','confirmed','employee_confirm'])]}"/>
-                                        <button name="btn_undo_confirm" type="object" string="取消责任人确认"
-                                                attrs="{'invisible': ['|',('state', 'in',['draft','done','refused','confirmed','reported']),('sheet_all_line_is_confirmed','=',True)]}"/>
+
 
                                         <button name="make_hx_code" string="生成内部核对标记" groups="base.group_system" type="object" icon=""
                                                 attrs="{'invisible':[('hx_code','!=',False)]}"/>
@@ -340,7 +337,7 @@
                                         <field name="diff_balance" groups="base.group_system"/>
                                         <field name="diff_product_id" groups="base.group_system"/>
                                         <field name="diff_expense" groups="base.group_system"/>
-                                        <field name="is_confirmed"/>
+
                                         <field name="sheet_state" groups="base.group_system"/>
 
                                         <field name="tb_budget"  groups="base.group_system"/>
@@ -350,7 +347,11 @@
                                         <field name="user_budget_amount"  groups="base.group_system"/>
                                         <field name="user_budget_amount_reset"  groups="base.group_system"/>
                                         <field name="description" string="备注"/>
-
+                                        <button name="action_employee_confirm" string="责任人确认"  class="oe_highlight"
+                                                type="object" attrs="{'invisible':[('state','in',['draft','done','refused','confirmed','employee_confirm'])]}"/>
+                                        <button name="btn_undo_confirm" type="object" string="取消责任人确认"
+                                                attrs="{'invisible': ['|',('state', 'in',['draft','done','refused','confirmed','reported']),('sheet_all_line_is_confirmed','=',True)]}"/>
+                                        <field name="is_confirmed" string="责任人确认"  attrs="{'invisible': [('is_confirmed','=',False)]}"/>
                                         <field name="company_budget_id" invisible="1"/>
                                         <field name="company_budget_amount" groups="base.group_system"/>
                                         <field name="company_budget_amount_reset" groups="base.group_system"/>
@@ -519,7 +520,7 @@
                                         <field name="diff_balance" groups="base.group_system"/>
                                         <field name="diff_product_id" groups="base.group_system"/>
                                         <field name="diff_expense" groups="base.group_system"/>
-                                        <field name="is_confirmed"/>
+
                                         <field name="sheet_state" groups="base.group_system"/>
 
                                         <field name="tb_budget"  groups="base.group_system"/>
@@ -529,7 +530,11 @@
                                         <field name="user_budget_amount"  groups="base.group_system"/>
                                         <field name="user_budget_amount_reset"  groups="base.group_system"/>
                                         <field name="description" string="备注"/>
-
+                                        <button name="action_employee_confirm" string="责任人确认"  class="oe_highlight"
+                                                type="object" attrs="{'invisible':[('state','in',['draft','done','refused','confirmed','employee_confirm'])]}"/>
+                                        <button name="btn_undo_confirm" type="object" string="取消责任人确认"
+                                                attrs="{'invisible': ['|',('state', 'in',['draft','done','refused','confirmed','reported']),('sheet_all_line_is_confirmed','=',True)]}"/>
+                                        <field name="is_confirmed" string="责任人确认"  attrs="{'invisible': [('is_confirmed','=',False)]}"/>
                                         <field name="company_budget_id" invisible="1"/>
                                         <field name="company_budget_amount" groups="base.group_system"/>
                                         <field name="company_budget_amount_reset" groups="base.group_system"/>
