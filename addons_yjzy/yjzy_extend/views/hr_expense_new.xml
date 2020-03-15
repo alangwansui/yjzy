@@ -307,7 +307,7 @@
                                        context="{'expense_adding_line': True, 'default_company_id':company_id,'tracking_disable': True,
                                'default_currency_id': currency_id, 'default_state': 'draft'}">
 
-                                    <tree decoration-danger="is_refused">
+                                    <tree decoration-danger="is_refused" >
                                         <field name="date" string="明细日期"/>
                                         <field name="product_id" string="小类"/>
                                         <field name="name" invisible="1"/>
