@@ -12,7 +12,7 @@
                         <field name="state" widget="statusbar"   statusbar_visible="draft,reported,employee_confirm"/>
                         <button name="view_sheet" type="object" string="View Report" class="oe_highlight" attrs="{'invisible': [('state', '=','draft')]}"
                                 invisible="1"/>
-                        <button name="action_employee_confirm" type="object" string="责任人确认" attrs="{'invisible':[('state','in',['draft','done','refused','confirmed','employee_confirm'])]}"/>
+                        <button name="action_employee_confirm" type="object" string="责任人确认" attrs="{'invisible':['|',('state','in',['draft','done','refused','confirmed','employee_confirm']),('sheet_state','=','cancel')]}"/>
                         <button name="make_diff_mvoe" type="object" string="创建差额分录" groups="account.group_account_manager"/>
                         <button name="btn_user_confirm" type="object" string="所有责任人确认" groups="base.group_system"/>
                         <button name="btn_undo_confirm" type="object" string="取消责任人确认" attrs="{'invisible':['|',('state','in',['draft','done','refused','confirmed','reported']),('sheet_all_line_is_confirmed','=',True)]}"/>
@@ -121,6 +121,14 @@
                                         <field name="employee_confirm_date" />
                                         <field name="employee_confirm_name" />
                                         <field name="employee_confirm_user" />
+
+                                        <field name="sheet_employee_confirm_date"/>
+                                        <field name="sheet_employee_confirm"/>
+                                        <field name="sheet_account_confirm_date"/>
+                                        <field name="sheet_account_confirm"/>
+                                        <field name="sheet_manager_confirm"/>
+                                        <field name="sheet_manager_confirm_date"/>
+
                                     </group>
                                 </group>
                             </page>
