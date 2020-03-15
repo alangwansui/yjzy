@@ -326,8 +326,6 @@
                                         <field name="hx_code" groups="base.group_system"/>
                                         <field name="hx_balance" groups="base.group_system"/>
                                         <field name="sheet_all_line_is_confirmed" invisible="1"/>
-
-
                                         <button name="make_hx_code" string="生成内部核对标记" groups="base.group_system" type="object" icon=""
                                                 attrs="{'invisible':[('hx_code','!=',False)]}"/>
                                         <button name="468" states="reported, refused" string="Refuse" context="{'hr_expense_refuse_model':'hr.expense'}"
@@ -392,6 +390,7 @@
                                         <field name="employee_user_id"/>
                                         <field name="account_confirm_uid"/>
                                         <field name="manager_confirm_uid"/>
+                                        <field name="employee_wkf" readonly="1"/>
                                     </group>
                                 </group>
                             </page>
@@ -496,7 +495,7 @@
                                         <field name="sale_order_id" context="{'sale_show_partner_name': True}" invisible="1"/>
                                         <field name="state" invisible="1"/>
                                         <field name="currency_id" invisible="1"/>
-                                        <field name="ask_uid"/>
+                                        <field name="ask_uid" invisible="1"/>
                                         <field name="analytic_account_id" groups="analytic.group_analytic_accounting"/>
                                         <field name="message_unread" invisible="1"/>
                                         <field name="attachment_number" invisible="1"/>
@@ -507,10 +506,6 @@
                                         <field name="hx_code" groups="base.group_system"/>
                                         <field name="hx_balance" groups="base.group_system"/>
                                         <field name="sheet_all_line_is_confirmed" invisible="1"/>
-                                        <button name="action_employee_confirm" string="责任人确认"  class="oe_highlight"
-                                                type="object" attrs="{'invisible':[('state','in',['draft','done','refused','confirmed','employee_confirm'])]}"/>
-                                        <button name="btn_undo_confirm" type="object" string="取消责任人确认"
-                                                attrs="{'invisible': ['|',('state', 'in',['draft','done','refused','confirmed','reported']),('sheet_all_line_is_confirmed','=',True)]}"/>
                                         <button name="make_hx_code" string="生成内部核对标记" groups="base.group_system" type="object" icon=""
                                                 attrs="{'invisible':[('hx_code','!=',False)]}"/>
                                         <button name="468" invisible="1" states="reported, refused" string="Refuse" context="{'hr_expense_refuse_model':'hr.expense'}"
@@ -538,24 +533,13 @@
                                         <field name="company_budget_id" invisible="1"/>
                                         <field name="company_budget_amount" groups="base.group_system"/>
                                         <field name="company_budget_amount_reset" groups="base.group_system"/>
-
-
-
                                     </tree>
                                 </field>
                             </page>
-
-
-                            <page string="Other Info">
+                               <page string="财务信息">
                                 <group>
                                     <group>
-                                        <field name="journal_id" domain="[('type', '=', 'purchase')]" options="{'no_open': True, 'no_create': True}"
-                                               attrs="{'invisible': [('payment_mode', '!=', 'own_account')]}"/>
-                                        <field name="todo_cron"/>
-                                        <field name="payment_id" readonly="1" domain="[('sfk_type','=', 'rcfkd')]"
-                                               context="{'form_view_ref':'yjzy_extend.view_rcfkd_form'}"/>
-                                        <field name="yjzy_payment_currency_id" readonly="1"/>
-                                        <field name="balance"/>
+
                                         <field name="partner_id" context="{'default_supplier':True, 'default_customer':True}"/>
                                         <field name="fk_journal_id" domain="[('type','in',['bank', 'cash'])]"/>
 
@@ -565,16 +549,39 @@
                                         <field name="bank_journal_id" groups="account.group_account_user" options="{'no_open': True, 'no_create': True}"
                                                attrs="{'invisible': [('payment_mode', '!=', 'company_account')]}" domain="[('type', 'in', ['cash', 'bank'])]"
                                                context="{'default_bank_journal_code':'yfdrl'}"/>
-                                        <field name="employee_user_id"/>
                                         <field name="accounting_date" groups="account.group_account_user"
                                                attrs="{'invisible': [('state', 'not in', ['approve', 'post', 'done'])]}"/>
+                                                                                <field name="journal_id" domain="[('type', '=', 'purchase')]" options="{'no_open': True, 'no_create': True}"
+                                               attrs="{'invisible': [('payment_mode', '!=', 'own_account')]}"/>
+                                        <field name="todo_cron"/>
+                                        <field name="payment_id" readonly="1" domain="[('sfk_type','=', 'rcfkd')]"
+                                               context="{'form_view_ref':'yjzy_extend.view_rcfkd_form'}"/>
+                                        <field name="yjzy_payment_currency_id" readonly="1"/>
+                                        <field name="balance"/>
+
                                     </group>
                                     <group>
                                         <field name="account_move_id" groups="account.group_account_user"
                                                attrs="{'invisible': [('state', 'not in', ['post', 'done'])]}" readonly="1"/>
+                                        <field name="employee_user_id"/>
                                         <field name="account_confirm_uid"/>
                                         <field name="manager_confirm_uid"/>
                                         <field name="employee_wkf" readonly="1"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="审批信息">
+                                <group>
+                                    <group>
+                                        <field name="employee_confirm"/>
+                                        <field name="employee_confirm_date"/>
+                                        <field name="account_confirm"/>
+                                        <field name="account_confirm_date"/>
+                                        <field name="manager_confirm"/>
+                                        <field name="manager_confirm_date"/>
+                                    </group>
+                                    <group>
+
                                     </group>
                                 </group>
                             </page>
