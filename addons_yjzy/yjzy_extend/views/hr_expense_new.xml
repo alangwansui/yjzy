@@ -6,7 +6,7 @@
             <field name="name">hr.expense.form</field>
             <field name="model">hr.expense</field>
             <field name="arch" type="xml">
-                <form string="Expenses" class="o_expense_form">
+                <form string="Expenses" class="o_expense_form" delete="false">
                     <header > <!--invisible="context.get('expense_adding_line')"-->
                         <button name="submit_expenses" states="draft" groups="base.group_system" string="Submit to Manager" type="object" class="oe_highlight o_expense_submit"/>
                         <field name="state" widget="statusbar"   statusbar_visible="draft,reported,employee_confirm"/>
@@ -159,6 +159,11 @@
                     <field name="total_amount" sum="Total Amount" widget="monetary" options="{'currency_field': 'currency_id'}"/>
                     <field name="currency_id" invisible="True"/>
                     <field name="attachment_number" invisible="True"/>
+                    <field name="sheet_wkf_state"/>
+                    <field name="sheet_employee_confirm_date"/>
+                    <field name="employee_confirm_date"/>
+                    <field name="sheet_account_confirm_date"/>
+                    <field name="sheet_manager_confirm_date"/>
                     <field name="name" invisible="1"/>
                     <field name="sheet_id" invisible="not context.get('show_report', False)"/>
                     <field name="analytic_account_id" groups="analytic.group_analytic_accounting"/>
