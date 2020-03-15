@@ -1192,7 +1192,7 @@ def session_gc(session_store):
     if random.random() < 0.0005:
         # we keep session one week
         #last_week = time.time() - 60*60*24*7
-        last_week = time.time() - 60 * 60 * 3  #<jon> session 设置为3H
+        last_week = time.time() - 60 * 60 * 2  #<jon> session 设置为3H
 
         for fname in os.listdir(session_store.path):
             path = os.path.join(session_store.path, fname)
@@ -1439,7 +1439,7 @@ class Root(object):
         # - It could allow session fixation attacks.
         if not explicit_session and hasattr(response, 'set_cookie'):
             response.set_cookie(
-                'session_id', httprequest.session.sid, max_age=3 * 60 * 60, httponly=True)
+                'session_id', httprequest.session.sid, max_age=3 * 60 * 60, httponly=True) ##akiny
 
         return response
 

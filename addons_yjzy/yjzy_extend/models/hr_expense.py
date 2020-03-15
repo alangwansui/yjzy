@@ -74,6 +74,17 @@ class hr_expense_sheet(models.Model):
     total_this_moth = fields.Float(u'本月费用', compute='compute_total_this_year', digits=dp.get_precision('Account'))
     total_this_year = fields.Float(u'今年费用', compute='compute_total_this_year', digits=dp.get_precision('Account'))
     employee_wkf = fields.Boolean('责任人阶段')
+# akiny 审批确认信息记录
+    employee_confirm_date = fields.Date('申请人确认日期')
+    employee_confirm = fields.Many2one('res.users',u'责任人确认')
+
+    account_confirm_date = fields.Date('财务审批日期')
+    account_confirm = fields.Many2one('res.users',u'财务审批')
+
+    manager_confirm = fields.Many2one('res.users',u'总经理审批')
+    manager_confirm_date = fields.Date('总经理审批日期')
+
+
     @api.one
     def compute_total_this_year(self):
         now = fields.datetime.now()
@@ -219,6 +230,13 @@ class hr_expense_sheet(models.Model):
         lines.unlink()
         return super(hr_expense_sheet, self).unlink()
 
+    def unlink(self):
+        for one in self:
+            if one.state not in ('cancel','draft'):
+                raise Warning(u'只有草稿或者拒绝状态允许删除')
+
+        return super(hr_expense_sheet, self).unlink()
+
     @api.model
     def _cron_approve(self, domain_str='[]', trans_id=None):
         domain = eval(domain_str)
@@ -329,11 +347,15 @@ class hr_expense(models.Model):
 
     employee_confirm_date = fields.Date(u'责任人确认日期')
     employee_confirm_name = fields.Char(u'责任人确认')
+    employee_confirm_user = fields.Many2one('res.users',u'责任人确认')
 
     company_budget_id = fields.Many2one('company.budget', '公司年度预算')
     company_budget_amount = fields.Monetary('公司年度预算金额', related='company_budget_id.amount', currency_field='currency_id')
     company_budget_amount_reset = fields.Monetary('公司年度预算剩余', related='company_budget_id.amount_reset', currency_field='currency_id')
 
+    sheet_all_line_is_confirmed = fields.Boolean('责任人全部确认', related='sheet_id.all_line_is_confirmed')
+
+    payment_date = fields.Datetime(u'付款日期', related='sheet_id.payment_id.payment_date_confirm')
 
 
 
@@ -350,12 +372,14 @@ class hr_expense(models.Model):
                 one.state = 'employee_confirm'
                 one.employee_confirm_date = fields.datetime.now()
                 one.employee_confirm_name = self.env.user.name
+                one.employee_confirm_user = self.env.user.id
             else:
                 if one.user_id == self.env.user:
                     one.is_confirmed = True
                     one.state = 'employee_confirm'
                     one.employee_confirm_date = fields.datetime.now()
                     one.employee_confirm_name = self.env.user.name
+                    one.employee_confirm_user = self.env.user.id
 
     def btn_undo_confirm(self):
         force = self.env.context.get('force')
@@ -363,15 +387,17 @@ class hr_expense(models.Model):
             if force:
                 one.is_confirmed = False
                 # akiny
-                one.state = 'draft'
+                one.state = 'reported'
                 one.employee_confirm_date = False
                 one.employee_confirm_name = False
+                one.employee_confirm_user = False
             else:
                 if one.user_id == self.env.user:
                     one.is_confirmed = False
-                    one.state = 'draft'
+                    one.state = 'reported'
                     one.employee_confirm_date = False
                     one.employee_confirm_name = False
+                    one.employee_confirm_user = False
 
     def action_employee_confirm(self):
         self.ensure_one()
@@ -381,6 +407,7 @@ class hr_expense(models.Model):
             self.state = 'employee_confirm'
             self.employee_confirm_date = fields.datetime.now()
             self.employee_confirm_name = self.env.user.name
+            self.employee_confirm_user = self.env.user.id
         else:
             raise Warning('必须是责任人自己')
 

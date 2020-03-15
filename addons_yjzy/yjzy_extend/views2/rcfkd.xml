@@ -106,6 +106,7 @@
                             <field name="payment_date" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                             <field name="communication"
                                    attrs="{'invisible': [('state', '!=', 'draft'), ('communication', '=', False)], 'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="payment_date_confirm"/>
                         </group>
                     </group>
                     <notebook>

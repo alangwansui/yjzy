@@ -180,7 +180,7 @@ class account_payment(models.Model):
     jiehui_rate = fields.Float(u'结汇平均汇率', default=1)
     jiehui_in_amount = fields.Float('结汇转入余额')
 
-
+    payment_date_confirm = fields.Datetime('付款确认时间') ##akiny 付款确认时间
     @api.onchange('journal_id')
     def _onchange_journal(self):
         res = super(account_payment, self)._onchange_journal()
@@ -224,6 +224,7 @@ class account_payment(models.Model):
         res = super(account_payment, self).post()
         for one in self:
             if one.sfk_type == 'rcfkd':
+                one.payment_date_confirm = fields.datetime.now() ##akiny 增加付款时间
                 if one.yshx_ids:
                     ac_orders = one.yshx_ids
                     ac_orders.make_done()
