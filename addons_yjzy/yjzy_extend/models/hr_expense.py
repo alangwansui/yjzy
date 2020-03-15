@@ -360,7 +360,7 @@ class hr_expense(models.Model):
     sheet_employee_confirm_date = fields.Date(u'申请人确认日期', related='sheet_id.employee_confirm_date', readonly=True)
     sheet_employee_confirm = fields.Many2one('res.users', u'申请人确认', related='sheet_id.employee_confirm', readonly=True)
 
-    sheet_account_confirm_date = fields.Date('财务审批日期', related='sheet_id.account_confirm_date')
+    sheet_account_confirm_date = fields.Date('财务审批日期', related='sheet_id.account_confirm_date', readonly=True)
     sheet_account_confirm = fields.Many2one('res.users', u'财务审批', related='sheet_id.account_confirm', readonly=True)
 
     sheet_manager_confirm = fields.Many2one('res.users', u'总经理审批', related='sheet_id.manager_confirm', readonly=True)
