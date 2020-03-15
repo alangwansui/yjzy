@@ -159,11 +159,11 @@
                     <field name="total_amount" sum="Total Amount" widget="monetary" options="{'currency_field': 'currency_id'}"/>
                     <field name="currency_id" invisible="True"/>
                     <field name="attachment_number" invisible="True"/>
-                    <field name="sheet_wkf_state"/>
-                    <field name="sheet_employee_confirm_date"/>
-                    <field name="employee_confirm_date"/>
-                    <field name="sheet_account_confirm_date"/>
-                    <field name="sheet_manager_confirm_date"/>
+                    <field name="sheet_wkf_state" string="审批流"/>
+                    <field name="sheet_employee_confirm_date" string="申请人"/>
+                    <field name="employee_confirm_date" string="责任人"/>
+                    <field name="sheet_account_confirm_date" string="财务"/>
+                    <field name="sheet_manager_confirm_date" string="总经理"/>
                     <field name="name" invisible="1"/>
                     <field name="sheet_id" invisible="not context.get('show_report', False)"/>
                     <field name="analytic_account_id" groups="analytic.group_analytic_accounting"/>
