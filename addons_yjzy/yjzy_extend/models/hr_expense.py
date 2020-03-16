@@ -367,6 +367,7 @@ class hr_expense(models.Model):
     sheet_manager_confirm_date = fields.Date('总经理审批日期', related='sheet_id.manager_confirm_date', readonly=True)
 
     lead_id = fields.Many2one('crm.lead', '项目编号')
+    sys_outer_hetong = fields.Char('系统外合同')
 
 
 
