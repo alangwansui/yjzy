@@ -366,12 +366,18 @@ class hr_expense(models.Model):
     sheet_manager_confirm = fields.Many2one('res.users', u'总经理审批', related='sheet_id.manager_confirm', readonly=True)
     sheet_manager_confirm_date = fields.Date('总经理审批日期', related='sheet_id.manager_confirm_date', readonly=True)
 
+    lead_id = fields.Many2one('crm.lead', '项目编号')
 
 
-    @api.onchange('categ_id', 'second_categ_id')
+
+    @api.onchange('categ_id')
     def onchange_categ(self):
-        pass
+        self.second_categ_id = None
+        self.product_id = None
 
+    @api.onchange('second_categ_id')
+    def onchange_second_categ(self):
+        self.product_id = None
 
     def btn_user_confirm(self):
         force = self.env.context.get('force')
