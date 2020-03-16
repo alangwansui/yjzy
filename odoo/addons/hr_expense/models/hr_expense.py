@@ -60,6 +60,8 @@ class HrExpense(models.Model):
             elif not expense.sheet_id.account_move_id:
                 if expense.sheet_id.state == 'draft':
                     expense.state = "draft"
+                elif expense.sheet_id.state == 'approve': ##akiny 审批后
+                    expense.state = "confirmed"
                 else:
                     expense.state = "reported"
             else:
