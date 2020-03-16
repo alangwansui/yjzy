@@ -8,11 +8,23 @@ class Product_Catgory(models.Model):
 
     code = fields.Char(u'类别编码', size=2)
     complete_name2 = fields.Char(u'全称', compute='_compute_complete_name2')
+    sequence = fields.Integer('排序')
     #hs_id = fields.Many2one('hs.hs', u'品名')
     #hs_code = fields.Char(u"HS编码")
     #back_tax = fields.Float(u'退税率')
     #hs_name = fields.Char(u'报关品名', translate=True)
     #bom_template_id = fields.Many2one('bom.template', 'BOM模板')
+
+
+    @api.model
+    def name_search(self, name, args=None, operator='ilike', limit=100):
+        ctx = self.env.context
+        if ctx.get('search_order'):
+            recs = self.search([('name', operator, name)] + (args or []), limit=limit, order=ctx.get('search_order'))
+            return recs.name_get()
+        return super(Product_Catgory, self).name_search(name, args=args, operator=operator, limit=limit)
+
+
 
     @api.depends('name', 'parent_id.complete_name2')
     def _compute_complete_name2(self):
