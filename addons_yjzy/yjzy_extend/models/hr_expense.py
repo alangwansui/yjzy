@@ -83,7 +83,7 @@ class hr_expense_sheet(models.Model):
 
     manager_confirm = fields.Many2one('res.users',u'总经理审批')
     manager_confirm_date = fields.Date('总经理审批日期')
-    state = fields.Selection(selection_add=[('Approval', u'审批中')])
+    state = fields.Selection(selection_add=[('approved', u'批准'),('approval', u'审批中'),])
 
     @api.one
     def compute_total_this_year(self):

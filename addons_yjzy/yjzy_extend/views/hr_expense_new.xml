@@ -351,8 +351,8 @@
 
                                         <field name="sheet_state" groups="base.group_system"/>
 
-                                        <field name="tb_budget"  groups="base.group_system"/>
-                                        <field name="tb_budget_rest"  groups="base.group_system"/>
+                                        <field name="tb_budget"  groups="sales_team.group_manager"/>
+                                        <field name="tb_budget_rest"  groups="sales_team.group_manager"/>
 
                                         <field name="user_budget_id"  groups="base.group_system"/>
                                         <field name="user_budget_amount"  groups="base.group_system"/>
@@ -531,8 +531,8 @@
 
                                         <field name="sheet_state" groups="base.group_system"/>
 
-                                        <field name="tb_budget"  groups="base.group_system"/>
-                                        <field name="tb_budget_rest"  groups="base.group_system"/>
+                                        <field name="tb_budget"  groups="sales_team.group_manager"/>
+                                        <field name="tb_budget_rest"  groups="sales_team.group_manager"/>
 
                                         <field name="user_budget_id"  groups="base.group_system"/>
                                         <field name="user_budget_amount"  groups="base.group_system"/>
