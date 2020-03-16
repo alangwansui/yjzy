@@ -31,8 +31,8 @@
                         </div>
                         <group>
                             <group>
-                                <field name="lead_id" options="{'can_create': 1}"/>
-                                <field name="sys_outer_hetong"/>
+
+
                                 <field name="categ_id" string="大类" domain="[('parent_id.name','=','费用')]" context="{'search_order': 'sequence'}" required="1"/>
                                 <field name="second_categ_id" string="中类" domain="[('parent_id','=', categ_id)]" context="{'search_order': 'sequence'}" required="1"/>
 
@@ -46,23 +46,23 @@
                                     <field name="product_uom_id" widget="selection" class="oe_inline" groups="product.group_uom"/>
                                 </div>
                                 <field name="include_tax"/>
-                                <field name="tb_id" context="{'show_ref': 1}"/>
+                                <field name="sys_outer_hetong" string="系统外合同" />
+                                <field name="tb_id" string="系统内合同" context="{'show_ref': 1}"/>
+                                <field name="lead_id" options="{'can_create': 1}"/>
+                                <field name="employee_id" string="责任人"/>
+                                <field name="date" string="费用发生日期"/>
                                 <field name="tax_ids" domain="[('type_tax_use', '=', 'purchase')]" widget="many2many_tags" invisible="1"
                                        groups="account.group_account_user"/>
                             </group>
                             <group>
-
                                 <field name="reference" invisible="1"/>
-                                <field name="date"/>
                                 <field name="account_id" attrs="{'readonly': [('state','in',['post','done'])]}" domain="[('internal_type', '=', 'other')]"
                                        groups="account.group_account_user"/>
-                                <field name="employee_id" string="责任人"/>
                                 <field name="currency_id" groups="base.group_multi_currency" readonly="1"/>
-                                <field name="company_id" string="付款主体" groups="base.group_multi_company"/>
+                                <field name="company_id" string="付款主体" readonly="1" groups="base.group_multi_company"/>
                                 <field name="sale_order_id" context="{'sale_show_partner_name': True}" invisible="1"/>
                                 <field name="user_id" invisible="1"/>
                                 <field name="ask_uid" invisible="1"/>
-
                                 <field name="user_budget_id" groups="base.group_system"/>
                                 <field name="user_budget_amount" groups="base.group_system"/>
                                 <field name="user_budget_amount_reset" groups="base.group_system"/>
@@ -84,7 +84,7 @@
                             </group>
                         </group>
                         <div>
-                            <field name="description" placeholder="Notes..."/>
+                            <field name="description" placeholder="备注..."/>
                         </div>
                         <notebook groups="base.group_system">
                             <page string="财务信息" groups="base.group_system">
