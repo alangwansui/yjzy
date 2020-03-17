@@ -251,7 +251,7 @@
       </page>
   </notebook>
            </div>     <footer>
-                    <button string="发送" name="send_mail_button" attrs="{'invisible':[('is_sent','=',True)]}" type="object" class="btn-primary"
+                    <button string="发送" name="send_mail_button"  context="{'target': context.get('target')}"  attrs="{'invisible':[('is_sent','=',True)]}" type="object" class="btn-primary"
                             confirm="确定要发送邮件"/>
                     <button string="保存" name="save_action" type="object" class="btn-primary"/>
                     <button string="取消" class="btn-default" special="cancel"/>
@@ -267,7 +267,7 @@
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="domain">[('message_type', '=', 'email'),('author_id.user_ids','=', uid),('is_sent','=', False),('create_uid','=',uid)]</field>
-        <field name="context">{'use_channel_name': 'out_mail', 'show_send_button': 1, 'default_force_notify_email': 1}</field>
+        <field name="context">{'target': 'current', 'use_channel_name': 'out_mail', 'show_send_button': 1, 'default_force_notify_email': 1}</field>
         <field name="view_mode">tree,kanban,form</field>
         <field name="view_type">form</field>
         <field name="view_ids" eval="[(5, 0, 0),

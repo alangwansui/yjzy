@@ -226,7 +226,13 @@ class PRTMailComposer(models.Model):
         })
 
         #返回发件箱
-        print('---------------send_result---------------', send_result)
+        print('---------------send_result---------------', ctx)
+
+        target = 'new'
+        if ctx.get('target'):
+            target = ctx.get('target')
+
+        #target = 'current'
 
         tree_view = self.env.ref('prt_mail_messages.prt_mail_message_out_tree')
         form_view = self.env.ref('prt_mail_messages.prt_mail_message_out_form')
@@ -238,8 +244,8 @@ class PRTMailComposer(models.Model):
             #'res_id': new_msg.id,
             'type': 'ir.actions.act_window',
             'views': [(tree_view.id, 'tree'), (form_view.id, 'from')],
-            'target': 'new',
-            'domain': [('id','=',new_msg.id)],
+            'target': target,
+            'domain': [('id', '=', new_msg.id)],
             'context': {'no_show_ztree': 1},
             #'flags': {'initial_mode': 'readony'},
 
