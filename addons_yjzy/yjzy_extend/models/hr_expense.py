@@ -398,10 +398,10 @@ class hr_expense(models.Model):
                     one.user_budget_id = budget
 
 
-    @api.onchange('categ_id')
-    def onchange_categ(self):
-        self.second_categ_id = None
-        self.product_id = None
+    # @api.onchange('categ_id')
+    # def onchange_categ(self):
+    #     self.second_categ_id = None
+    #     self.product_id = None
 
     @api.onchange('second_categ_id')
     def onchange_second_categ(self):
