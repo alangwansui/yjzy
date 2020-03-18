@@ -266,11 +266,11 @@ class hr_expense_sheet(models.Model):
         self.expense_line_ids.btn_undo_confirm()
 
 
-    def btn_company_budget(self, date):
-        self.my_expense_line_ids.btn_company_budget(date)
+    def btn_company_budget(self):
+        self.my_expense_line_ids.btn_company_budget()
 
-    def btn_user_budget(self, date):
-        self.my_expense_line_ids.btn_user_budget(date)
+    def btn_user_budget(self):
+        self.my_expense_line_ids.btn_user_budget()
 
 
 
@@ -378,28 +378,30 @@ class hr_expense(models.Model):
     lead_id = fields.Many2one('crm.lead', '项目编号')
     sys_outer_hetong = fields.Char('系统外合同')
 
-    def btn_company_budget(self, date):
+    def btn_company_budget(self):
         budget_obj = self.env['company.budget']
+        date = fields.date.today()
         for one in self:
             if one.categ_id.is_company_budget:
                 budget = budget_obj.search([('type', '=', 'month'), ('date_start', '<', date), ('date_end', '>=', date)], limit=1)
                 if budget:
                     one.user_budget_id = budget
 
-
-    def btn_user_budget(self, date):
+    def btn_user_budget(self):
         budget_obj = self.env['user.budget']
+        date = fields.date.today()
         for one in self:
+            print('==', one.categ_id.is_user_budget, one.employee_id.name, date)
             if one.categ_id.is_user_budget:
                 budget = budget_obj.search([('employee_id', '=', one.employee_id.id), ('date_start', '<', date), ('date_end', '>=', date)], limit=1)
                 if budget:
                     one.user_budget_id = budget
 
 
-    @api.onchange('categ_id')
-    def onchange_categ(self):
-        self.second_categ_id = None
-        self.product_id = None
+    # @api.onchange('categ_id')
+    # def onchange_categ(self):
+    #     self.second_categ_id = None
+    #     self.product_id = None
 
     @api.onchange('second_categ_id')
     def onchange_second_categ(self):

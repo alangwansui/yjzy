@@ -14,6 +14,11 @@
 
                     <button name="btn_undo_confirm" type="object" string="取消责任人确认"/>
                     <button name="btn_undo_confirm" type="object" string="强制取消责任人确认" context="{'force': 1}"/>
+
+                    <button name="btn_company_budget" type="object" string="个人预算"/>
+                    <button name="btn_user_budget" type="object" string="公司预算"/>
+
+
                 </header>
 
                 <field name="expense_line_ids" position="attributes">
