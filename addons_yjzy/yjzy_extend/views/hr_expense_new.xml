@@ -145,6 +145,52 @@
                 </form>
             </field>
         </record>
+ <!--## Search ##-->
+    <record id="hr_expense_manager_search" model="ir.ui.view">
+        <field name="name">hr.expense.search</field>
+        <field name="model">hr.expense</field>
+        <field name="arch" type="xml">
+
+          <search string="Expense">
+                    <field name="name" string="Expenses" filter_domain="['|',('employee_id','ilike',self),('name','ilike',self)]"/>
+                    <field name="date"/>
+                    <field name="employee_id" string="责任人"/>
+                    <field name="categ_id" string="大类"/>
+                    <field name="second_categ_id" string="中类"/>
+                    <field name="product_id" string="小类"/>
+                    <field name="analytic_account_id" groups="analytic.group_analytic_accounting"/>
+                    <separator/>
+                    <filter string="订单费用" domain="[('categ_id.id','=',113)]"/>
+                    <filter string="项目费用" domain="[('categ_id.id','=',140)]"/>
+                    <filter string="人员费用" domain="[('categ_id.id','=',110)]"/>
+                    <filter string="公司费用" domain="[('categ_id.id','=',114)]"/>
+                    <filter invisible="1" domain="[('state', '=', 'draft')]" string="To Submit" name="to_report" help="New Expense"/>
+                    <filter invisible="1" domain="[('state', '=', 'reported')]" string="Reported" name="submitted" help="Confirmed Expenses"/>
+                    <filter invisible="1" domain="[('state', '=', 'Confirmed')]" string="Confirmed" name="Confirmed" help="Confirmed"/>
+                    <filter invisible="1" domain="[('state', '=', 'refused')]" string="Refused" name="refused" help="Refused Expenses"/>
+                    <filter invisible="1" domain="[('state', '!=', 'refused')]" string="Not Refused" name="uncancelled" help="Actual expense sheets, not the refused ones"/>
+                    <separator/>
+                    <filter string="My Team Expenses" invisible="1" domain="[('employee_id.parent_id.user_id', '=', uid)]" groups="hr_expense.group_hr_expense_manager" help="Expenses of Your Team Member"/>
+                    <filter string="My Expenses"  domain="[('employee_id.user_id', '=', uid)]" invisible="1"/>
+                    <separator/>
+                    <filter string="New Mail" name="message_unread" domain="[('message_unread', '=', True)]" invisible="1"/>
+                    <group expand="0" string="Group By">
+                        <filter string="审批流" domain="[]" context="{'group_by': 'x_sheet_wkf_state'}"/>
+                        <filter string="申请单" domain="[]" context="{'group_by': 'sheet_id'}"/>
+                        <filter string="责任人" domain="[]" context="{'group_by': 'employee_id'}"/>
+                        <filter string="Company" domain="[]" context="{'group_by': 'company_id'}" invisible='1' groups="base.group_multi_company"/>
+                        <filter string="Product" domain="[]" context="{'group_by': 'product_id'}" />
+                        <filter string="Analytic Account" domain="[]" context="{'group_by': 'analytic_account_id'}" groups="analytic.group_analytic_accounting"/>
+                        <filter string="Expenses Month" domain="[]" context="{'group_by': 'date'}" help="Expenses by Month"/>
+                        <filter string="Status" domain="[]" context="{'group_by': 'state'}"/>
+                    </group>
+                    <separator/>
+                    <filter domain="[('employee_id.active', '=', False)]" string="Former Employees" name="inactive" groups="hr_expense.group_hr_expense_user,hr_expense.group_hr_expense_manager"/>
+                </search>
+
+
+        </field>
+    </record>
 
         <record id="hr_expense_manager_tree" model="ir.ui.view">
             <field name="name">hr.expense.tree</field>
