@@ -1234,7 +1234,7 @@ class MailThread(models.AbstractModel):
 
 
         #<jon> 不能匹配任何别名的,这里就使收件服务器的last_alias_id 来匹配
-        print('------------------------------------------------------------------------------->', fetch_server, fetch_server.last_alias_id)
+        #print('------------------------------------------------------------------------------->', fetch_server, fetch_server.last_alias_id)
         if fetch_server and fetch_server.last_alias_id:
             last_alias = fetch_server.last_alias_id
             user_id = last_alias.alias_user_id.id or self._uid

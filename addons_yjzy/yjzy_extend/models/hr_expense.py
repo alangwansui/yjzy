@@ -6,6 +6,7 @@ from odoo.tools import float_is_zero, float_compare
 
 from odoo.addons import decimal_precision as dp
 
+
 class hr_expense_sheet(models.Model):
     _inherit = 'hr.expense.sheet'
 
@@ -68,22 +69,29 @@ class hr_expense_sheet(models.Model):
 
     manager_confirm_uid = fields.Many2one('res.users', u'总经理审批')
 
-    my_total_amount = fields.Float(string='权限金额',  compute='compute_my_total_amount', digits=dp.get_precision('Account'))
+    my_total_amount = fields.Float(string='权限金额', compute='compute_my_total_amount', digits=dp.get_precision('Account'))
     my_expense_line_ids = fields.One2many('hr.expense', compute='compute_my_total_amount', string='权限明细')
 
     total_this_moth = fields.Float(u'本月费用', compute='compute_total_this_year', digits=dp.get_precision('Account'))
     total_this_year = fields.Float(u'今年费用', compute='compute_total_this_year', digits=dp.get_precision('Account'))
     employee_wkf = fields.Boolean('责任人阶段')
-# akiny 审批确认信息记录
+    # akiny 审批确认信息记录
     employee_confirm_date = fields.Date('申请人确认日期')
-    employee_confirm = fields.Many2one('res.users',u'申请人确认')
+    employee_confirm = fields.Many2one('res.users', u'申请人确认')
 
     account_confirm_date = fields.Date('财务审批日期')
-    account_confirm = fields.Many2one('res.users',u'财务审批')
+    account_confirm = fields.Many2one('res.users', u'财务审批')
 
-    manager_confirm = fields.Many2one('res.users',u'总经理审批')
+    manager_confirm = fields.Many2one('res.users', u'总经理审批')
     manager_confirm_date = fields.Date('总经理审批日期')
-    state = fields.Selection(selection_add=[('approved', u'批准'),('approval', u'审批中'),('Approval', u'审批历史消息')])
+    state = fields.Selection(selection_add=[('approved', u'批准'), ('approval', u'审批中'), ('Approval', u'审批历史消息')])
+
+    categ_id = fields.Many2one('product.category', '大类')
+    second_categ_id = fields.Many2one('product.category', '中类')
+
+    @api.onchange('categ_id')
+    def onchange_categ(self):
+        self.second_categ_id = None
 
     @api.one
     def compute_total_this_year(self):
@@ -105,7 +113,6 @@ class hr_expense_sheet(models.Model):
         self._cr.execute(year_sql)
         self.total_this_year = self._cr.fetchall()[0][0]
 
-
     def compute_my_total_amount(self):
         user = self.env.user
 
@@ -117,20 +124,20 @@ class hr_expense_sheet(models.Model):
                     lambda x: x.employee_id.user_id == user or x.create_uid == user or x.x_tenyale_user_id == user)
                 if employee_wkf_one == False:
                     for expense in one.expense_line_ids:
-                         my_total_amount += expense.currency_id.with_context(
-                           date=expense.date,
-                           company_id=expense.company_id.id
-                          ).compute(expense.total_amount, one.currency_id)
-                         one.my_total_amount = my_total_amount
-                         one.my_expense_line_ids = one.expense_line_ids
+                        my_total_amount += expense.currency_id.with_context(
+                            date=expense.date,
+                            company_id=expense.company_id.id
+                        ).compute(expense.total_amount, one.currency_id)
+                        one.my_total_amount = my_total_amount
+                        one.my_expense_line_ids = one.expense_line_ids
                 else:
                     for expense in my_expense_line:
-                         my_total_amount += expense.currency_id.with_context(
-                           date=expense.date,
-                           company_id=expense.company_id.id
-                          ).compute(expense.total_amount, one.currency_id)
-                         one.my_total_amount = my_total_amount
-                         one.my_expense_line_ids = one.expense_line_ids
+                        my_total_amount += expense.currency_id.with_context(
+                            date=expense.date,
+                            company_id=expense.company_id.id
+                        ).compute(expense.total_amount, one.currency_id)
+                        one.my_total_amount = my_total_amount
+                        one.my_expense_line_ids = one.expense_line_ids
         else:
             for one in self:
                 my_total_amount = 0.0
@@ -144,12 +151,10 @@ class hr_expense_sheet(models.Model):
                     one.my_total_amount = my_total_amount
                     one.my_expense_line_ids = my_expense_line
 
-
     @api.depends('expense_line_ids', 'expense_line_ids.is_confirmed')
     def compute_all_line_is_confirmed(self):
         for one in self:
             one.all_line_is_confirmed = one.expense_line_ids and all([x.is_confirmed for x in one.expense_line_ids]) or False
-
 
     def create_customer_invoice(self):
         self.ensure_one()
@@ -232,7 +237,7 @@ class hr_expense_sheet(models.Model):
 
     def unlink(self):
         for one in self:
-            if one.state not in ('cancel','draft'):
+            if one.state not in ('cancel', 'draft'):
                 raise Warning(u'只有草稿或者拒绝状态允许删除')
 
         return super(hr_expense_sheet, self).unlink()
@@ -253,7 +258,6 @@ class hr_expense_sheet(models.Model):
     def add_line_message_followers(self):
         for expense in self.expense_line_ids:
             expense.message_subscribe(partner_ids=[expense.user_id.partner_id.id])
-
 
     def btn_user_confirm(self):
         self.expense_line_ids.btn_user_confirm()
@@ -295,14 +299,13 @@ class hr_expense(models.Model):
 
     include_tax = fields.Boolean(u'含税')
     line_ids = fields.One2many('hr.expense.line', 'expense_id', u'分配明细')
-    #user_ids = fields.Many2many('res.users', compute=compute_line_user, string='用户s', store=True)
-    state = fields.Selection(selection_add=[('confirmed', u'已经确认'),('employee_confirm', '责任人确认')])
+    # user_ids = fields.Many2many('res.users', compute=compute_line_user, string='用户s', store=True)
+    state = fields.Selection(selection_add=[('confirmed', u'已经确认'), ('employee_confirm', '责任人确认')])
     user_id = fields.Many2one('res.users', related='employee_id.user_id', readonly=False, string=u'用户', track_visibility='onchange')
     tb_ids = fields.Many2many('transport.bill', 'ref_bill_expense', 'eid', 'bid', u'出运单')
     tb_id = fields.Many2one('transport.bill', u'出运合同')
     tb_budget = fields.Monetary('出运单预算', related='tb_id.budget_amount', currency_field='currency_id')
     tb_budget_rest = fields.Monetary('出运单预算剩余', related='tb_id.budget_reset_amount', currency_field='currency_id')
-
 
     yjzy_payment_id = fields.Many2one('account.payment', u'新付款单', related='sheet_id.payment_id', store=True)
     yjzy_payment_currency_id = fields.Many2one('res.currency', u'新付款单币种', related='yjzy_payment_id.currency_id')
@@ -323,12 +326,11 @@ class hr_expense(models.Model):
 
     is_confirmed = fields.Boolean('责任人已确认', readonly=True)
 
-
     ask_uid = fields.Many2one('res.users', u'费用申请人')
     sheet_employee_id = fields.Many2one('hr.employee', u'报告申请人', related='sheet_id.employee_id', readonly=True)
 
-    categ_id = fields.Many2one('product.category', '分类')
-    second_categ_id = fields.Many2one('product.category', '分类2')
+    categ_id = fields.Many2one('product.category', '大类')
+    second_categ_id = fields.Many2one('product.category', '中类')
 
     sheet_wkf_state = fields.Selection(string='报告工作流状态', related='sheet_id.x_wkf_state', readonly=True)
 
@@ -344,10 +346,9 @@ class hr_expense(models.Model):
     user_budget_amount = fields.Monetary('人员年度预算金额', related='user_budget_id.amount', currency_field='currency_id')
     user_budget_amount_reset = fields.Monetary('人员年度预算剩余', related='user_budget_id.amount_reset', currency_field='currency_id')
 
-
     employee_confirm_date = fields.Date(u'责任人确认日期')
     employee_confirm_name = fields.Char(u'责任人确认')
-    employee_confirm_user = fields.Many2one('res.users',u'责任人确认')
+    employee_confirm_user = fields.Many2one('res.users', u'责任人确认')
 
     company_budget_id = fields.Many2one('company.budget', '公司年度预算')
     company_budget_amount = fields.Monetary('公司年度预算金额', related='company_budget_id.amount', currency_field='currency_id')
@@ -369,6 +370,22 @@ class hr_expense(models.Model):
     lead_id = fields.Many2one('crm.lead', '项目编号')
     sys_outer_hetong = fields.Char('系统外合同')
 
+    def btn_company_budget(self, date):
+        budget_obj = self.env['company.budget']
+        for one in self:
+            if one.categ_id.is_company_budget:
+                budget = budget_obj.search([('type', '=', 'month'), ('date_start', '<', date), ('date_end', '>=', date)], limit=1)
+                if budget:
+                    one.user_budget_id = budget
+
+
+    def btn_user_budget(self, date):
+        budget_obj = self.env['user.budget']
+        for one in self:
+            if one.categ_id.is_user_budget:
+                budget = budget_obj.search([('employee_id', '=', one.employee_id.id), ('date_start', '<', date), ('date_end', '>=', date)], limit=1)
+                if budget:
+                    one.user_budget_id = budget
 
 
     @api.onchange('categ_id')
@@ -418,7 +435,7 @@ class hr_expense(models.Model):
     def action_employee_confirm(self):
         self.ensure_one()
         ##if self.user_id != self.env.user:
-        if  self.user_id == self.env.user:
+        if self.user_id == self.env.user:
             self.is_confirmed = True
             self.state = 'employee_confirm'
             self.employee_confirm_date = fields.datetime.now()
@@ -438,7 +455,7 @@ class hr_expense(models.Model):
         if not polarity:
             raise Warning(u'科目没有设置借贷方向')
 
-        journal = self.env['account.journal'].search([('code', '=', '杂项'), ('company_id','=', self.env.user.company_id.id)], limit=1)
+        journal = self.env['account.journal'].search([('code', '=', '杂项'), ('company_id', '=', self.env.user.company_id.id)], limit=1)
         if not journal:
             raise Warning(u'没有找到对应的日记账')
 

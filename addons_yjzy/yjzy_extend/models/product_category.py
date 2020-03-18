@@ -15,6 +15,9 @@ class Product_Catgory(models.Model):
     #hs_name = fields.Char(u'报关品名', translate=True)
     #bom_template_id = fields.Many2one('bom.template', 'BOM模板')
 
+    is_user_budget = fields.Boolean(u'作用人员预算')
+    is_company_budget = fields.Boolean(u'公司预算')
+
 
     @api.model
     def name_search(self, name, args=None, operator='ilike', limit=100):
