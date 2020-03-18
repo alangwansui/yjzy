@@ -361,7 +361,7 @@ class GeventServer(CommonServer):
             # suicide !!
             os.kill(self.pid, signal.SIGTERM)
 
-    def watchdog(self, beat=4):
+    def watchdog(self, beat=12):
         import gevent
         self.ppid = os.getppid()
         while True:
@@ -418,7 +418,7 @@ class PreforkServer(CommonServer):
         if self.cron_timeout == -1:
             self.cron_timeout = self.timeout
         # working vars
-        self.beat = 4
+        self.beat = 12
         self.app = app
         self.pid = os.getpid()
         self.socket = None

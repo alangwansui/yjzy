@@ -9,6 +9,8 @@
             <field name="arch" type="xml">
                 <field name="parent_id" position="after">
                     <field name="sequence"/>
+                    <field name="is_user_budget"/>
+                    <field name="is_company_budget"/>
                 </field>
             </field>
         </record>

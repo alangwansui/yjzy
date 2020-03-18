@@ -9,6 +9,9 @@
                 <field name="year"/>
                 <field name="amount"/>
                 <field name="currency_id"/>
+                <field name="type"/>
+                <field name="date_start"/>
+                <field name="date_end"/>
             </tree>
         </field>
     </record>
@@ -27,10 +30,18 @@
                                 <field name="amount"/>
                                 <field name="currency_id"/>
                             </group>
+                            <group>
+                                <field name="type"/>
+                                <field name="date_start"/>
+                                <field name="date_end"/>
+                            </group>
                         </group>
                         <notebook>
                             <page string="费用明细">
                                 <field name="expense_ids"/>
+                            </page>
+                            <page string="下级预算">
+                                <field name="child_ids"/>
                             </page>
                         </notebook>
                     </sheet>
@@ -60,6 +71,8 @@
                 <field name="employee_id"/>
                 <field name="user_id"/>
                 <field name="year"/>
+                <field name="date_start"/>
+                <field name="date_end"/>
                 <field name="currency_id"/>
                 <field name="expense_ids"/>
                 <field name="amount" sum="小计"/>
@@ -88,6 +101,8 @@
                             </group>
                             <group>
                                 <field name="year"/>
+                                <field name="date_start"/>
+                                <field name="date_end"/>
                                 <field name="amount" sum="小计"/>
                                 <field name="amount_reset" sum="小计"/>
                             </group>
