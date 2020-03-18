@@ -282,8 +282,8 @@
                         <button name="btn_undo_confirm" type="object" string="取消责任人确认" groups="base.group_system"/>
                         <button name="btn_undo_confirm" type="object" string="强制取消责任人确认" groups="base.group_system" context="{'force': 1}"/>
 
-                        <button name="btn_company_budget" type="object" string="个人预算"/>
-                        <button name="btn_user_budget" type="object" string="公司预算"/>
+                        <button name="btn_company_budget" type="object" string="公司预算"/>
+                        <button name="btn_user_budget" type="object" string="个人预算"/>
                     </header>
                     <sheet>
                         <div class="oe_button_box" invisible="1" ><!--"context.get('expense_adding_line')"-->

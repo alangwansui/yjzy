@@ -391,6 +391,7 @@ class hr_expense(models.Model):
         budget_obj = self.env['user.budget']
         date = fields.date.today()
         for one in self:
+            print('==', one.categ_id.is_user_budget, one.employee_id.name, date)
             if one.categ_id.is_user_budget:
                 budget = budget_obj.search([('employee_id', '=', one.employee_id.id), ('date_start', '<', date), ('date_end', '>=', date)], limit=1)
                 if budget:
