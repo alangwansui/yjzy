@@ -387,7 +387,6 @@ class hr_expense(models.Model):
                 if budget:
                     one.user_budget_id = budget
 
-
     def btn_user_budget(self):
         budget_obj = self.env['user.budget']
         date = fields.date.today()
