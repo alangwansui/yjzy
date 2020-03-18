@@ -16,6 +16,9 @@ class company_budget(models.Model):
     expense_ids = fields.One2many('hr.expense', 'company_budget_id', '费用明细')
     amount_reset = fields.Monetary('剩余金额', compute='compute_amount_reset', currency_field='currency_id')
 
+    date_start = fields.Date('开始')
+    date_end = fields.Date('结束')
+
     def compute_amount_reset(self):
         for one in self:
             one.amount_reset = one.amount - sum(one.expense_ids.mapped('total_amount'))
@@ -41,6 +44,9 @@ class user_budget(models.Model):
     amount = fields.Monetary('预算金额', currency_field='currency_id')
     expense_ids = fields.One2many('hr.expense', 'user_budget_id', '费用明细')
     amount_reset = fields.Monetary('剩余金额', compute='compute_amount_reset', currency_field='currency_id')
+    date_start = fields.Date('开始')
+    date_end = fields.Date('结束')
+
 
     def compute_amount_reset(self):
         for one in self:

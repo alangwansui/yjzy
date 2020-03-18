@@ -85,6 +85,13 @@ class hr_expense_sheet(models.Model):
     manager_confirm_date = fields.Date('总经理审批日期')
     state = fields.Selection(selection_add=[('approved', u'批准'),('approval', u'审批中'),('Approval', u'审批历史消息')])
 
+    categ_id = fields.Many2one('product.category', '大类')
+    second_categ_id = fields.Many2one('product.category', '中类')
+
+    @api.onchange('categ_id')
+    def onchange_categ(self):
+        self.second_categ_id = None
+
     @api.one
     def compute_total_this_year(self):
         now = fields.datetime.now()
@@ -327,8 +334,8 @@ class hr_expense(models.Model):
     ask_uid = fields.Many2one('res.users', u'费用申请人')
     sheet_employee_id = fields.Many2one('hr.employee', u'报告申请人', related='sheet_id.employee_id', readonly=True)
 
-    categ_id = fields.Many2one('product.category', '分类')
-    second_categ_id = fields.Many2one('product.category', '分类2')
+    categ_id = fields.Many2one('product.category', '大类')
+    second_categ_id = fields.Many2one('product.category', '中类')
 
     sheet_wkf_state = fields.Selection(string='报告工作流状态', related='sheet_id.x_wkf_state', readonly=True)
 
