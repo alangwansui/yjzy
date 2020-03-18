@@ -266,6 +266,14 @@ class hr_expense_sheet(models.Model):
         self.expense_line_ids.btn_undo_confirm()
 
 
+    def btn_company_budget(self, date):
+        self.my_expense_line_ids.btn_company_budget(date)
+
+    def btn_user_budget(self, date):
+        self.my_expense_line_ids.btn_user_budget(date)
+
+
+
 class hr_expense(models.Model):
     _inherit = 'hr.expense'
 
