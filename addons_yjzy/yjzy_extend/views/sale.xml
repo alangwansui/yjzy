@@ -178,10 +178,10 @@
                                context="{'tree_view_ref':'yjzy_extend.view_ysrld_tree',  'form_view_ref':'yjzy_extend.view_ysrld_form', 'default_so_id': id, 'default_sfk_type': 'ysrld', 'default_payment_type': 'inbound', 'default_partner_type': 'customer'}">
                         </field>
                     </page>
-                    <page string="出运单列表" groups="base.group_system">
+                    <page string="出运单列表">
                         <field name="tb_ids"/>
                     </page>
-                    <page string="分录名明细" groups="base.group_system">
+                    <page string="分录名明细">
                         <button name="compute_balance" type="object" string="计算余额"/>
                         <field name="aml_ids"/>
                     </page>

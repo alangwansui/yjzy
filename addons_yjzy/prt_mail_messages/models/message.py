@@ -169,6 +169,9 @@ class PRTMailMessage(models.Model):
 
     mail_read_log_ids = fields.One2many('mail.read.log', 'message_id', '邮件读取记录')
 
+    personal_partner_name = fields.Char('personal.partner', related='personal_author_id.name', store=False)
+    personal_partner_email = fields.Char('personal.partner', related='personal_author_id.email', store=False)
+
     #message端，记录：ip地址，country， regionName，City， zip，第一次打开的时间, 再统计一下次数。
 
 

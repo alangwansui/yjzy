@@ -187,7 +187,15 @@ class Product_Product(models.Model):
         pdt.auto_rush_value_line()
         return pdt
 
-
+    #def open_product(self):
+    #   self.ensure_one()
+    #    return {
+    #        'name': u'成本单',
+    #        'view_type': 'form',
+    #       "view_mode": 'tree,form',
+    #      'res_model': 'product.product',
+    #      'type': 'ir.actions.act_window',
+    #   }
 
     def auto_rush_value_line(self):
         self.ensure_one()
