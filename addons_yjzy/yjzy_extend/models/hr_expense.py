@@ -274,7 +274,6 @@ class hr_expense_sheet(models.Model):
     #     self.my_expense_line_ids.btn_user_budget()
 
 
-
 class hr_expense(models.Model):
     _inherit = 'hr.expense'
 
@@ -383,26 +382,27 @@ class hr_expense(models.Model):
     budget_amount = fields.Monetary('预算金额', related='budget_id.amount', currency_field='currency_id', readonly=True)
     budget_amount_reset = fields.Monetary('预算剩余', related='budget_id.amount_reset', currency_field='currency_id', readonly=True)
 
-
     def get_budget_type(self):
         return self.second_categ_id.budget_type or self.categ_id.budget_type or None
+
 
     def match_budget(self):
         budget_obj = self.env['budget.budget']
         date = fields.date.today()
         for one in self:
-            budget_type = one.get_budget_type()
-            if not budget_type:
-                raise Warning('没有匹配到费用类型，请检查中类和大类的设置')
-
-            dm = [('type', '=', budget_type), ('date_start', '<', date), ('date_end', '>=', date)]
+            categ = one.second_categ_id or one.categ_id
+            dm = [('categ_id', '=', categ.id), ('date_start', '<', date), ('date_end', '>=', date)]
+            if categ.budget_type:
+                if categ.budget_type == 'employee':
+                    dm += [('employee_id', '=', one.employee_id.id)]
+                else:
+                    pass
 
             budget = budget_obj.search(dm)
             if len(budget) > 1:
                 raise Warning('匹配到多个预算记录，请联系管理员')
             if budget:
                 one.budget_id = budget
-
 
     # def btn_company_budget(self):
     #     budget_obj = self.env['company.budget']
@@ -422,7 +422,6 @@ class hr_expense(models.Model):
     #             budget = budget_obj.search([('employee_id', '=', one.employee_id.id), ('date_start', '<', date), ('date_end', '>=', date)], limit=1)
     #             if budget:
     #                 one.user_budget_id = budget
-
 
     # @api.onchange('categ_id')
     # def onchange_categ(self):

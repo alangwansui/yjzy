@@ -34,7 +34,11 @@ class budget_budget(models.Model):
     currency_id = fields.Many2one('res.currency', u'币种', default=_get_default_currency_id, required=True)
 
     amount_input = fields.Monetary('预算金额', currency_field='currency_id')
+
     type = fields.Selection(Budget_Type_Selection, u'预算类型', required=True)
+    categ_id = fields.Many2one('product.category', '预算分类')
+
+
     date_start = fields.Date('开始')
     date_end = fields.Date('结束')
 
@@ -47,6 +51,11 @@ class budget_budget(models.Model):
 
     amount = fields.Monetary('预算金额', compute='compute_amount', currency_field='currency_id')
     amount_reset = fields.Monetary('剩余金额', compute='compute_amount', currency_field='currency_id')
+
+    @api.onchange('categ_id')
+    def onchange_categ(self):
+        self.type = self.categ_id.budget_type
+
 
     def compute_amount(self):
         for one in self:
