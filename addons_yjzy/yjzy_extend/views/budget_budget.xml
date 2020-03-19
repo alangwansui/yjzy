@@ -26,6 +26,8 @@
             <form string="预算">
                 <sheet>
                     <header>
+                        <!--button name="button_method_name" type="object" string="ObjectButton"/-->
+                        <field name="state" widget="statusbar"/>
                     </header>
                     <sheet>
                         <group>
@@ -39,21 +41,23 @@
 
                             </group>
                             <group>
-                                <field name="create_uid" string="创建"/>
-                                <field name="create_date" string="创建于"/>
                                 <field name="date_start"/>
                                 <field name="date_end"/>
                                 <field name="amount"/>
                                 <field name="amount_reset"/>
                                 <field name="currency_id"/>
+                                <field name="active"/>
                             </group>
                         </group>
                         <notebook>
                             <page string="费用明细">
                                 <field name="expense_ids"/>
                             </page>
+                            <page string="其他">
 
+                            </page>
                         </notebook>
+
                     </sheet>
                 </sheet>
             </form>
