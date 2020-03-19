@@ -63,15 +63,13 @@
                                 <field name="sale_order_id" context="{'sale_show_partner_name': True}" invisible="1"/>
                                 <field name="user_id" invisible="1"/>
                                 <field name="ask_uid" invisible="1"/>
-                                <field name="user_budget_id" groups="base.group_system"/>
-                                <field name="user_budget_amount" groups="base.group_system"/>
-                                <field name="user_budget_amount_reset" groups="base.group_system"/>
-                                <field name="company_budget_id" groups="base.group_system"/>
-                                <field name="company_budget_amount" groups="base.group_system"/>
-                                <field name="company_budget_amount_reset" groups="base.group_system"/>
-                                <field name="user_budget_id"  groups="base.group_system"/>
-                                <field name="user_budget_amount"  groups="base.group_system"/>
-                                <field name="user_budget_amount_reset"  groups="base.group_system"/>
+
+                                <field name="budget_id" groups="base.group_system"/>
+                                <field name="budget_amount" groups="base.group_system"/>
+                                <field name="budget_amount_reset" groups="base.group_system"/>
+
+
+
 
 
                             </group>
@@ -174,6 +172,10 @@
                     <field name="hx_balance" invisible="1"/>
                     <field name="state" invisible="1"/>
                     <field name="message_unread" invisible="1"/>
+                    <field name="budget_id" groups="base.group_system"/>
+                    <field name="budget_amount" groups="base.group_system"/>
+                    <field name="budget_amount_reset" groups="base.group_system"/>
+
                     <button name="action_get_attachment_view" string="View Attached Documents" type="object" icon="fa-paperclip"
                             attrs="{'invisible': [('attachment_number', '=', 0)]}"/>
                 </tree>
@@ -204,6 +206,10 @@
                     <field name="hx_balance" invisible="1"/>
                     <field name="state" />
                     <field name="message_unread" invisible="1"/>
+                    <field name="budget_id" groups="base.group_system"/>
+                    <field name="budget_amount" groups="base.group_system"/>
+                    <field name="budget_amount_reset" groups="base.group_system"/>
+
                     <button name="action_get_attachment_view" string="View Attached Documents" type="object" icon="fa-paperclip"
                             attrs="{'invisible': [('attachment_number', '=', 0)]}"/>
                 </tree>
@@ -282,8 +288,8 @@
                         <button name="btn_undo_confirm" type="object" string="取消责任人确认" groups="base.group_system"/>
                         <button name="btn_undo_confirm" type="object" string="强制取消责任人确认" groups="base.group_system" context="{'force': 1}"/>
 
-                        <button name="btn_company_budget" type="object" string="公司预算"/>
-                        <button name="btn_user_budget" type="object" string="个人预算"/>
+
+                        <button name="btn_match_budget" type="object" string="预算自动匹配"/>
                     </header>
                     <sheet>
                         <div class="oe_button_box" invisible="1" ><!--"context.get('expense_adding_line')"-->
@@ -360,21 +366,19 @@
 
                                         <field name="sheet_state" groups="base.group_system"/>
 
-                                        <field name="tb_budget"  groups="sales_team.group_manager"/>
-                                        <field name="tb_budget_rest"  groups="sales_team.group_manager"/>
 
-                                        <field name="user_budget_id"  groups="base.group_system"/>
-                                        <field name="user_budget_amount"  groups="base.group_system"/>
-                                        <field name="user_budget_amount_reset"  groups="base.group_system"/>
+                                        <field name="budget_id" groups="base.group_system"/>
+                                        <field name="budget_amount" groups="base.group_system"/>
+                                        <field name="budget_amount_reset" groups="base.group_system"/>
+
+
                                         <field name="description" string="备注"/>
                                         <button name="action_employee_confirm" string="责任人确认"  class="oe_highlight"
                                                 type="object" attrs="{'invisible':['|',('state','in',['draft','done','refused','confirmed','employee_confirm']),('sheet_state','=','cancel')]}"/>
                                         <button name="btn_undo_confirm" type="object" string="取消责任人确认"
                                                 attrs="{'invisible': ['|',('state', 'in',['draft','done','refused','confirmed','reported']),('sheet_all_line_is_confirmed','=',True)]}"/>
                                         <field name="is_confirmed" string="责任人确认"  attrs="{'invisible': [('is_confirmed','=',False)]}"/>
-                                        <field name="company_budget_id" invisible="1"/>
-                                        <field name="company_budget_amount" groups="base.group_system"/>
-                                        <field name="company_budget_amount_reset" groups="base.group_system"/>
+
 
 
 

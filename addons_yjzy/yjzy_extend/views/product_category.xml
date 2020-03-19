@@ -9,8 +9,7 @@
             <field name="arch" type="xml">
                 <field name="parent_id" position="after">
                     <field name="sequence"/>
-                    <field name="is_user_budget"/>
-                    <field name="is_company_budget"/>
+                    <field name="budget_type"/>
                 </field>
             </field>
         </record>
@@ -26,6 +25,7 @@
 
                 <field name="display_name" position="after">
                     <field name="complete_name2"/>
+                    <field name="budget_type"/>
                 </field>
 
                 <field name="display_name" position="before">

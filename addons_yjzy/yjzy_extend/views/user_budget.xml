@@ -1,133 +1,133 @@
-<?xml version="1.0" encoding="utf-8"?>
-<odoo>
+<!--<?xml version="1.0" encoding="utf-8"?>-->
+<!--<odoo>-->
 
-    <record id="company_budget_tree" model="ir.ui.view">
-        <field name="name">company.budget.tree</field>
-        <field name="model">company.budget</field>
-        <field name="arch" type="xml">
-            <tree string="公司年度预算">
-                <field name="year"/>
-                <field name="amount"/>
-                <field name="currency_id"/>
-                <field name="type"/>
-                <field name="date_start"/>
-                <field name="date_end"/>
-            </tree>
-        </field>
-    </record>
-    <record id="company_budget_form" model="ir.ui.view">
-        <field name="name">company.budget.form</field>
-        <field name="model">company.budget</field>
-        <field name="arch" type="xml">
-            <form string="公司年度预算">
-                <sheet>
-                    <header>
-                    </header>
-                    <sheet>
-                        <group>
-                            <group>
-                                <field name="year"/>
-                                <field name="amount"/>
-                                <field name="currency_id"/>
-                            </group>
-                            <group>
-                                <field name="type"/>
-                                <field name="date_start"/>
-                                <field name="date_end"/>
-                            </group>
-                        </group>
-                        <notebook>
-                            <page string="费用明细">
-                                <field name="expense_ids"/>
-                            </page>
-                            <page string="下级预算">
-                                <field name="child_ids"/>
-                            </page>
-                        </notebook>
-                    </sheet>
-                </sheet>
-            </form>
-        </field>
-    </record>
-    <record id="company_budget_action" model="ir.actions.act_window">
-        <field name="name">公司年度预算</field>
-        <field name="type">ir.actions.act_window</field>
-        <field name="res_model">company.budget</field>
-        <field name="view_mode">tree,form</field>
-    </record>
-
-
-    <menuitem id="menu_company_budget" name="公司年度预算" parent="hr_expense.menu_hr_expense_configuration" action="company_budget_action" sequence=""/>
+<!--    <record id="company_budget_tree" model="ir.ui.view">-->
+<!--        <field name="name">company.budget.tree</field>-->
+<!--        <field name="model">company.budget</field>-->
+<!--        <field name="arch" type="xml">-->
+<!--            <tree string="公司年度预算">-->
+<!--                <field name="year"/>-->
+<!--                <field name="amount"/>-->
+<!--                <field name="currency_id"/>-->
+<!--                <field name="type"/>-->
+<!--                <field name="date_start"/>-->
+<!--                <field name="date_end"/>-->
+<!--            </tree>-->
+<!--        </field>-->
+<!--    </record>-->
+<!--    <record id="company_budget_form" model="ir.ui.view">-->
+<!--        <field name="name">company.budget.form</field>-->
+<!--        <field name="model">company.budget</field>-->
+<!--        <field name="arch" type="xml">-->
+<!--            <form string="公司年度预算">-->
+<!--                <sheet>-->
+<!--                    <header>-->
+<!--                    </header>-->
+<!--                    <sheet>-->
+<!--                        <group>-->
+<!--                            <group>-->
+<!--                                <field name="year"/>-->
+<!--                                <field name="amount"/>-->
+<!--                                <field name="currency_id"/>-->
+<!--                            </group>-->
+<!--                            <group>-->
+<!--                                <field name="type"/>-->
+<!--                                <field name="date_start"/>-->
+<!--                                <field name="date_end"/>-->
+<!--                            </group>-->
+<!--                        </group>-->
+<!--                        <notebook>-->
+<!--                            <page string="费用明细">-->
+<!--                                <field name="expense_ids"/>-->
+<!--                            </page>-->
+<!--                            <page string="下级预算">-->
+<!--                                <field name="child_ids"/>-->
+<!--                            </page>-->
+<!--                        </notebook>-->
+<!--                    </sheet>-->
+<!--                </sheet>-->
+<!--            </form>-->
+<!--        </field>-->
+<!--    </record>-->
+<!--    <record id="company_budget_action" model="ir.actions.act_window">-->
+<!--        <field name="name">公司年度预算</field>-->
+<!--        <field name="type">ir.actions.act_window</field>-->
+<!--        <field name="res_model">company.budget</field>-->
+<!--        <field name="view_mode">tree,form</field>-->
+<!--    </record>-->
 
 
+<!--    <menuitem id="menu_company_budget" name="公司年度预算" parent="hr_expense.menu_hr_expense_configuration" action="company_budget_action" sequence=""/>-->
 
 
-    <record id="user_budget_tree" model="ir.ui.view">
-        <field name="name">user.budget.tree</field>
-        <field name="model">user.budget</field>
-        <field name="arch" type="xml">
-            <tree string="人员年度预算">
-                <field name="name"/>
-                <field name="employee_id"/>
-                <field name="user_id"/>
-                <field name="year"/>
-                <field name="date_start"/>
-                <field name="date_end"/>
-                <field name="currency_id"/>
-                <field name="expense_ids"/>
-                <field name="amount" sum="小计"/>
-                <field name="amount_reset" sum="小计"/>
 
 
-            </tree>
-        </field>
-    </record>
-    <record id="user_budget_from" model="ir.ui.view">
-        <field name="name">user.budget.form</field>
-        <field name="model">user.budget</field>
-        <field name="arch" type="xml">
-            <form string="人员年度预算">
-                <sheet>
-                    <header>
-
-                    </header>
-                    <sheet>
-                        <group>
-                            <group>
-                                <field name="name"/>
-                                <field name="employee_id"/>
-                                <field name="user_id"/>
-                                <field name="currency_id"/>
-                            </group>
-                            <group>
-                                <field name="year"/>
-                                <field name="date_start"/>
-                                <field name="date_end"/>
-                                <field name="amount" sum="小计"/>
-                                <field name="amount_reset" sum="小计"/>
-                            </group>
-                        </group>
-                        <notebook>
-                            <page string="费用明细">
-                                <field name="expense_ids"/>
-                            </page>
-                        </notebook>
-                    </sheet>
-
-                </sheet>
-            </form>
-        </field>
-    </record>
-
-    <record id="user_budget_action" model="ir.actions.act_window">
-        <field name="name">人员年度预算</field>
-        <field name="type">ir.actions.act_window</field>
-        <field name="res_model">user.budget</field>
-        <field name="view_mode">tree,form</field>
-    </record>
+<!--    <record id="user_budget_tree" model="ir.ui.view">-->
+<!--        <field name="name">user.budget.tree</field>-->
+<!--        <field name="model">user.budget</field>-->
+<!--        <field name="arch" type="xml">-->
+<!--            <tree string="人员年度预算">-->
+<!--                <field name="name"/>-->
+<!--                <field name="employee_id"/>-->
+<!--                <field name="user_id"/>-->
+<!--                <field name="year"/>-->
+<!--                <field name="date_start"/>-->
+<!--                <field name="date_end"/>-->
+<!--                <field name="currency_id"/>-->
+<!--                <field name="expense_ids"/>-->
+<!--                <field name="amount" sum="小计"/>-->
+<!--                <field name="amount_reset" sum="小计"/>-->
 
 
-    <menuitem id="menu_user_budget" name="人员年度预算" parent="hr_expense.menu_hr_expense_configuration" action="user_budget_action" sequence=""/>
+<!--            </tree>-->
+<!--        </field>-->
+<!--    </record>-->
+<!--    <record id="user_budget_from" model="ir.ui.view">-->
+<!--        <field name="name">user.budget.form</field>-->
+<!--        <field name="model">user.budget</field>-->
+<!--        <field name="arch" type="xml">-->
+<!--            <form string="人员年度预算">-->
+<!--                <sheet>-->
+<!--                    <header>-->
+
+<!--                    </header>-->
+<!--                    <sheet>-->
+<!--                        <group>-->
+<!--                            <group>-->
+<!--                                <field name="name"/>-->
+<!--                                <field name="employee_id"/>-->
+<!--                                <field name="user_id"/>-->
+<!--                                <field name="currency_id"/>-->
+<!--                            </group>-->
+<!--                            <group>-->
+<!--                                <field name="year"/>-->
+<!--                                <field name="date_start"/>-->
+<!--                                <field name="date_end"/>-->
+<!--                                <field name="amount" sum="小计"/>-->
+<!--                                <field name="amount_reset" sum="小计"/>-->
+<!--                            </group>-->
+<!--                        </group>-->
+<!--                        <notebook>-->
+<!--                            <page string="费用明细">-->
+<!--                                <field name="expense_ids"/>-->
+<!--                            </page>-->
+<!--                        </notebook>-->
+<!--                    </sheet>-->
+
+<!--                </sheet>-->
+<!--            </form>-->
+<!--        </field>-->
+<!--    </record>-->
+
+<!--    <record id="user_budget_action" model="ir.actions.act_window">-->
+<!--        <field name="name">人员年度预算</field>-->
+<!--        <field name="type">ir.actions.act_window</field>-->
+<!--        <field name="res_model">user.budget</field>-->
+<!--        <field name="view_mode">tree,form</field>-->
+<!--    </record>-->
 
 
-</odoo>
+<!--    <menuitem id="menu_user_budget" name="人员年度预算" parent="hr_expense.menu_hr_expense_configuration" action="user_budget_action" sequence=""/>-->
+
+
+<!--</odoo>-->
