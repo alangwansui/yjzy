@@ -95,15 +95,15 @@ class hr_expense_sheet(models.Model):
         for line in self.expense_line_ids:
             line.categ_id = self.categ_id
             line.second_categ_id = None
-            line.product_id = None
+            line.product_id = False
+
 
     @api.onchange('second_categ_id')
     def onchange_second_categ(self):
         for line in self.my_expense_line_ids:
             line.categ_id = self.categ_id
             line.second_categ_id = self.second_categ_id
-            line.product_id = None
-
+            line.product_id = False
 
     @api.one
     def compute_total_this_year(self):

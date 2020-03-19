@@ -393,6 +393,8 @@
 
                                     <tree decoration-danger="is_refused" >
                                         <field name="date" string="明细日期"/>
+                                        <field name="categ_id"/>
+                                        <field name="second_categ_id"/>
                                         <field name="product_id" string="小类"/>
                                         <field name="name" invisible="1"/>
                                         <field name="tb_id" context="{'show_ref': 1}"/>
