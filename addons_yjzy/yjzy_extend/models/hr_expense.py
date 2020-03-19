@@ -385,7 +385,7 @@ class hr_expense(models.Model):
             if one.categ_id.is_company_budget:
                 budget = budget_obj.search([('type', '=', 'month'), ('date_start', '<', date), ('date_end', '>=', date)], limit=1)
                 if budget:
-                    one.user_budget_id = budget
+                    one.company_budget_id = budget
 
     def btn_user_budget(self):
         budget_obj = self.env['user.budget']
