@@ -92,6 +92,18 @@ class hr_expense_sheet(models.Model):
     @api.onchange('categ_id')
     def onchange_categ(self):
         self.second_categ_id = None
+        for line in self.expense_line_ids:
+            line.categ_id = self.categ_id
+            line.second_categ_id = None
+            line.product_id = None
+
+    @api.onchange('second_categ_id')
+    def onchange_second_categ(self):
+        for line in self.my_expense_line_ids:
+            line.categ_id = self.categ_id
+            line.second_categ_id = self.second_categ_id
+            line.product_id = None
+
 
     @api.one
     def compute_total_this_year(self):
@@ -390,7 +402,7 @@ class hr_expense(models.Model):
         budget_obj = self.env['budget.budget']
         date = fields.date.today()
         for one in self:
-            categ = one.second_categ_id or one.categ_id
+            categ = one.second_categ_id.budget_type and one.second_categ_id or one.categ_id
             dm = [('categ_id', '=', categ.id), ('date_start', '<', date), ('date_end', '>=', date)]
             if categ.budget_type:
                 if categ.budget_type == 'employee':
