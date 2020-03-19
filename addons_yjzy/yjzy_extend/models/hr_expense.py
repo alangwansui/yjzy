@@ -265,13 +265,13 @@ class hr_expense_sheet(models.Model):
     def btn_undo_confirm(self):
         self.expense_line_ids.btn_undo_confirm()
 
-
-    def btn_company_budget(self):
-        self.my_expense_line_ids.btn_company_budget()
-
-    def btn_user_budget(self):
-        self.my_expense_line_ids.btn_user_budget()
-
+    def btn_match_budget(self):
+        self.expense_line_ids.match_budget()
+    # def btn_company_budget(self):
+    #     self.my_expense_line_ids.btn_company_budget()
+    #
+    # def btn_user_budget(self):
+    #     self.my_expense_line_ids.btn_user_budget()
 
 
 class hr_expense(models.Model):
@@ -378,25 +378,50 @@ class hr_expense(models.Model):
     lead_id = fields.Many2one('crm.lead', '项目编号')
     sys_outer_hetong = fields.Char('系统外合同')
 
-    def btn_company_budget(self):
-        budget_obj = self.env['company.budget']
+    budget_id = fields.Many2one('budget.budget', '预算')
+    budget_amount = fields.Monetary('预算金额', related='budget_id.amount', currency_field='currency_id', readonly=True)
+    budget_amount_reset = fields.Monetary('预算剩余', related='budget_id.amount_reset', currency_field='currency_id', readonly=True)
+
+    def get_budget_type(self):
+        return self.second_categ_id.budget_type or self.categ_id.budget_type or None
+
+
+    def match_budget(self):
+        budget_obj = self.env['budget.budget']
         date = fields.date.today()
         for one in self:
-            if one.categ_id.is_company_budget:
-                budget = budget_obj.search([('type', '=', 'month'), ('date_start', '<', date), ('date_end', '>=', date)], limit=1)
-                if budget:
-                    one.company_budget_id = budget
+            categ = one.second_categ_id or one.categ_id
+            dm = [('categ_id', '=', categ.id), ('date_start', '<', date), ('date_end', '>=', date)]
+            if categ.budget_type:
+                if categ.budget_type == 'employee':
+                    dm += [('employee_id', '=', one.employee_id.id)]
+                else:
+                    pass
 
-    def btn_user_budget(self):
-        budget_obj = self.env['user.budget']
-        date = fields.date.today()
-        for one in self:
-            print('==', one.categ_id.is_user_budget, one.employee_id.name, date)
-            if one.categ_id.is_user_budget:
-                budget = budget_obj.search([('employee_id', '=', one.employee_id.id), ('date_start', '<', date), ('date_end', '>=', date)], limit=1)
-                if budget:
-                    one.user_budget_id = budget
+            budget = budget_obj.search(dm)
+            if len(budget) > 1:
+                raise Warning('匹配到多个预算记录，请联系管理员')
+            if budget:
+                one.budget_id = budget
 
+    # def btn_company_budget(self):
+    #     budget_obj = self.env['company.budget']
+    #     date = fields.date.today()
+    #     for one in self:
+    #         if one.categ_id.is_company_budget:
+    #             budget = budget_obj.search([('type', '=', 'month'), ('date_start', '<', date), ('date_end', '>=', date)], limit=1)
+    #             if budget:
+    #                 one.company_budget_id = budget
+    #
+    # def btn_user_budget(self):
+    #     budget_obj = self.env['user.budget']
+    #     date = fields.date.today()
+    #     for one in self:
+    #         print('==', one.categ_id.is_user_budget, one.employee_id.name, date)
+    #         if one.categ_id.is_user_budget:
+    #             budget = budget_obj.search([('employee_id', '=', one.employee_id.id), ('date_start', '<', date), ('date_end', '>=', date)], limit=1)
+    #             if budget:
+    #                 one.user_budget_id = budget
 
     # @api.onchange('categ_id')
     # def onchange_categ(self):

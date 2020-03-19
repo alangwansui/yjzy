@@ -2,6 +2,7 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import api, fields, models
+from .budget_budget import Budget_Type_Selection
 
 class Product_Catgory(models.Model):
     _inherit = 'product.category'
@@ -17,6 +18,8 @@ class Product_Catgory(models.Model):
 
     is_user_budget = fields.Boolean(u'作用人员预算')
     is_company_budget = fields.Boolean(u'公司预算')
+
+    budget_type = fields.Selection(Budget_Type_Selection, '预算类型')
 
 
     @api.model
