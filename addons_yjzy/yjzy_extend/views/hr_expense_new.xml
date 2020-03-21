@@ -322,7 +322,7 @@
         </record>
         <!-- 员工创建编辑需要的视图-->
         <record model="ir.ui.view" id="view_hr_expense_sheet_new_form">
-            <field name="name">hr.expense.sheet.form</field>
+            <field name="name">hr.expense.sheet.new.form</field>
             <field name="model">hr.expense.sheet</field>
             <field name="arch" type="xml">
                 <form string="Expense Reports" class="o_expense_sheet">
@@ -391,15 +391,16 @@
                             </group>
                         </group>
                         <notebook>
-                            <page string="Expense Lines">
-                                <field name="expense_line_ids" nolabel="1" widget="one2many" domain="[('state', '=', 'draft')]"
+                            <page string="Expense Lines2">
+                                <field name="expense_line_ids_b" nolabel="1" widget="one2many" domain="[('state', '=', 'draft')]"
                                        options="{'not_delete': True, 'reload_on_button': True, 'no_create': False}"
                                        context="{'expense_adding_line': True, 'default_company_id':company_id,'tracking_disable': True,
                                        'default_categ_id': categ_id, 'default_second_categ_id': second_categ_id,
+                                       'no_show_mark': context.get('no_show_mark'),
                                'default_currency_id': currency_id, 'default_state': 'draft'}">
 
                                     <tree decoration-danger="is_refused">
-                                        <field name="date" string="明细日期" attrs="{'invisible':[('parent.categ_id', '!=', False)]}"/>
+                                        <field name="date" string="明细日期" invisible="context.get('no_show_mark')"/>
                                         <field name="product_id" string="小类"/>
                                         <field name="name" invisible="1"/>
                                         <field name="sys_outer_hetong"/>
@@ -451,7 +452,67 @@
                                     </tree>
                                 </field>
                             </page>
+                            <page string="Expense Lines">
+                                <field name="expense_line_ids" nolabel="1" widget="one2many" domain="[('state', '=', 'draft')]"
+                                       options="{'not_delete': True, 'reload_on_button': True, 'no_create': False}"
+                                       context="{'expense_adding_line': True, 'default_company_id':company_id,'tracking_disable': True,
+                                       'default_categ_id': categ_id, 'default_second_categ_id': second_categ_id,
+                                       'no_show_mark': context.get('no_show_mark'),
+                               'default_currency_id': currency_id, 'default_state': 'draft'}">
 
+                                    <tree decoration-danger="is_refused">
+                                        <field name="date" string="明细日期" invisible="context.get('no_show_mark')"/>
+                                        <field name="product_id" string="小类"/>
+                                        <field name="name" invisible="1"/>
+                                        <field name="sys_outer_hetong"/>
+                                        <field name="tb_id" context="{'show_ref': 1}"/>
+                                        <field name="sale_order_id" context="{'sale_show_partner_name': True}" invisible="1"/>
+                                        <field name="employee_id" string="责任人"/>
+                                        <field name="state" invisible="1"/>
+                                        <field name="currency_id" invisible="1"/>
+                                        <field name="ask_uid" invisible="1"/>
+                                        <field name="analytic_account_id" groups="analytic.group_analytic_accounting"/>
+                                        <field name="message_unread" invisible="1"/>
+                                        <field name="attachment_number" invisible="1"/>
+                                        <button name="action_get_attachment_view" invisible="1" string="View Attachments" type="object" icon="fa-paperclip"/>
+                                        <field name="total_amount" widget="monetary" options="{'currency_field': 'currency_id'}" sum="小计"/>
+                                        <field name="is_refused" invisible="True"/>
+                                        <field name="hx_expense_id" groups="base.group_system"/>
+                                        <field name="hx_code" groups="base.group_system"/>
+                                        <field name="hx_balance" groups="base.group_system"/>
+                                        <field name="sheet_all_line_is_confirmed" invisible="1"/>
+                                        <button name="make_hx_code" string="生成内部核对标记" groups="base.group_system" type="object" icon=""
+                                                attrs="{'invisible':[('hx_code','!=',False)]}"/>
+                                        <button name="468" states="reported, refused" invisible="1" string="Refuse"
+                                                context="{'hr_expense_refuse_model':'hr.expense'}"
+                                                type="action" groups="hr_expense.group_hr_expense_user, account.group_account_user" icon="fa-times"/>
+
+                                        <field name="diff_balance" groups="base.group_system"/>
+                                        <field name="diff_product_id" groups="base.group_system"/>
+                                        <field name="diff_expense" groups="base.group_system"/>
+
+                                        <field name="sheet_state" groups="base.group_system"/>
+                                        <field name="description" string="备注"/>
+                                        <field name="tb_budget"/>
+                                        <field name="tb_budget_rest"/>
+
+                                        <field name="user_budget_id" groups="base.group_system"/>
+                                        <field name="user_budget_amount" groups="base.group_system"/>
+                                        <field name="user_budget_amount_reset" groups="base.group_system"/>
+                                        <field name="company_budget_id" invisible="1"/>
+                                        <field name="company_budget_amount" groups="base.group_system"/>
+                                        <field name="company_budget_amount_reset" groups="base.group_system"/>
+
+                                        <button name="action_employee_confirm" string="责任人确认" class="oe_highlight"
+                                                type="object"
+                                                attrs="{'invisible':['|',('state','in',['draft','done','refused','confirmed','employee_confirm']),('sheet_state','=','cancel')]}"/>
+                                        <button name="btn_undo_confirm" type="object" string="取消责任人确认"
+                                                attrs="{'invisible': ['|',('state', 'in',['draft','done','refused','confirmed','reported']),('sheet_all_line_is_confirmed','=',True)]}"/>
+                                        <field name="is_confirmed" string="责任人确认" attrs="{'invisible': [('is_confirmed','=',False)]}"/>
+
+                                    </tree>
+                                </field>
+                            </page>
                             <page string="财务信息" groups="account.group_account_invoice">
                                 <group>
                                     <group>
@@ -516,8 +577,9 @@
         </record>
         <!-- 总经理等查看需要的视图，expense_line用my_expense_line-->
         <record model="ir.ui.view" id="view_hr_expense_sheet_new_todo_form">
-            <field name="name">hr.expense.sheet.form</field>
+            <field name="name">hr.expense.sheet.todoform</field>
             <field name="model">hr.expense.sheet</field>
+            <field name="priority">999</field>
             <field name="arch" type="xml">
                 <form string="费用申请" class="o_expense_sheet">
                     <header groups="base.group_system">

@@ -89,6 +89,8 @@ class hr_expense_sheet(models.Model):
     categ_id = fields.Many2one('product.category', '大类')
     second_categ_id = fields.Many2one('product.category', '中类')
 
+    expense_line_ids_b = fields.One2many('hr.expense', related='expense_line_ids')
+
     @api.onchange('categ_id')
     def onchange_categ(self):
         self.second_categ_id = None
