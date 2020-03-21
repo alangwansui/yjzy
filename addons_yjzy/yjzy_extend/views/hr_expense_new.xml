@@ -440,9 +440,41 @@
                                         <field name="is_confirmed" string="责任人确认"  attrs="{'invisible': [('is_confirmed','=',False)]}"/>
 
                                     </tree>
+
+
+                                    <kanban class="o_kanban_mobile">
+                                    <field name="product_id"/>
+
+                                    <templates>
+                                        <t t-name="kanban-box">
+                                            <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                                <div class="row">
+                                                    <div class="col-xs-8">
+                                                        <strong><span><t t-esc="record.product_id.value"/></span></strong>
+                                                    </div>
+                                                    <div class="col-xs-4">
+                                                        <strong><span class="pull-right text-right">
+                                                        test</span></strong>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-xs-12 text-muted">
+                                                        <span>数量： test test</span>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-xs-12 text-muted">
+                                                        <span>单价: test</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <hr/>
+                                        </t>
+                                    </templates>
+                                </kanban>
                                 </field>
                             </page>
-                            <page string="Expense Lines" >
+                            <!--page string="Expense Lines" >
                                 <field name="expense_line_ids" nolabel="1" widget="one2many" domain="[('state', '=', 'draft')]"
                                        options="{'not_delete': True, 'reload_on_button': True, 'no_create': False}"
                                        context="{'expense_adding_line': True, 'default_company_id':company_id,'tracking_disable': True,
@@ -616,7 +648,7 @@
 
                                     </tree>
                                 </field>
-                            </page>
+                            </page-->
                                <page string="财务信息" groups="account.group_account_invoice">
                                 <group>
                                     <group>
