@@ -108,6 +108,7 @@ class hr_expense_sheet(models.Model):
             line.categ_id = self.categ_id
             line.second_categ_id = None
             line.product_id = False
+            line.product_id = None
 
 
     @api.onchange('second_categ_id')
@@ -116,6 +117,7 @@ class hr_expense_sheet(models.Model):
             line.categ_id = self.categ_id
             line.second_categ_id = self.second_categ_id
             line.product_id = False
+            line.product_id = None
 
     @api.one
     def compute_total_this_year(self):
@@ -334,6 +336,8 @@ class hr_expense(models.Model):
     @api.model
     def default_hx_code(self):
         return self.env['ir.sequence'].next_by_code('hx.code')
+
+    sheet_id = fields.Many2one('hr.expense.sheet', string="费用报告", readonly=True, copy=False, ondelete="cascade")
 
     include_tax = fields.Boolean(u'含税')
     line_ids = fields.One2many('hr.expense.line', 'expense_id', u'分配明细')
