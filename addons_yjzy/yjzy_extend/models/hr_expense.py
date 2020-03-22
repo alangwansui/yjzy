@@ -71,6 +71,9 @@ class hr_expense_sheet(models.Model):
 
     my_total_amount = fields.Float(string='权限金额', compute='compute_my_total_amount', digits=dp.get_precision('Account'))
     my_expense_line_ids = fields.One2many('hr.expense', compute='compute_my_total_amount', string='权限明细')
+    my_expense_line_ids_b = fields.One2many('hr.expense', compute='compute_my_total_amount', string='权限明细')
+    my_expense_line_ids_employee = fields.One2many('hr.expense', compute='compute_my_total_amount', string='权限明细')
+    my_expense_line_ids_company = fields.One2many('hr.expense', compute='compute_my_total_amount', string='权限明细')
 
     total_this_moth = fields.Float(u'本月费用', compute='compute_total_this_year', digits=dp.get_precision('Account'))
     total_this_year = fields.Float(u'今年费用', compute='compute_total_this_year', digits=dp.get_precision('Account'))
@@ -89,8 +92,15 @@ class hr_expense_sheet(models.Model):
     categ_id = fields.Many2one('product.category', '大类')
     second_categ_id = fields.Many2one('product.category', '中类')
 
-    expense_line_ids_b = fields.One2many('hr.expense', related='expense_line_ids')
 
+    budget_type = fields.Selection("预算类型", related="categ_id.budget_type")
+
+
+    expense_line_ids_b = fields.One2many('hr.expense', related='expense_line_ids')
+    expense_line_ids_employee = fields.One2many('hr.expense', related='expense_line_ids')
+    expense_line_ids_company = fields.One2many('hr.expense', related='expense_line_ids')
+
+<<<<<<< HEAD
     @api.onchange('categ_id')
     def onchange_categ(self):
         self.second_categ_id = None
@@ -98,14 +108,33 @@ class hr_expense_sheet(models.Model):
             line.categ_id = self.categ_id
             line.second_categ_id = None
             line.product_id = None
+=======
+>>>>>>> 67df9501dac5d9bf8e5e8963aa748a11d41321f7
 
+   # @api.onchange('categ_id')
+   # def onchange_categ(self):
+   #     self.second_categ_id = None
+   #     for line in self.expense_line_ids:
+   #         line.categ_id = self.categ_id
+   #         line.second_categ_id = None
+   #         line.product_id = False
 
+<<<<<<< HEAD
     @api.onchange('second_categ_id')
     def onchange_second_categ(self):
         for line in self.my_expense_line_ids:
             line.categ_id = self.categ_id
             line.second_categ_id = self.second_categ_id
             line.product_id = None
+=======
+
+   # @api.onchange('second_categ_id')
+  #  def onchange_second_categ(self):
+    #    for line in self.my_expense_line_ids:
+    #        line.categ_id = self.categ_id
+    #        line.second_categ_id = self.second_categ_id
+   #         line.product_id = False
+>>>>>>> 67df9501dac5d9bf8e5e8963aa748a11d41321f7
 
     @api.one
     def compute_total_this_year(self):
@@ -144,6 +173,9 @@ class hr_expense_sheet(models.Model):
                         ).compute(expense.total_amount, one.currency_id)
                         one.my_total_amount = my_total_amount
                         one.my_expense_line_ids = one.expense_line_ids
+                        one.my_expense_line_ids_b = one.expense_line_ids
+                        one.my_expense_line_ids_employee = one.expense_line_ids
+                        one.my_expense_line_ids_company = one.expense_line_ids
                 else:
                     for expense in my_expense_line:
                         my_total_amount += expense.currency_id.with_context(
@@ -152,6 +184,9 @@ class hr_expense_sheet(models.Model):
                         ).compute(expense.total_amount, one.currency_id)
                         one.my_total_amount = my_total_amount
                         one.my_expense_line_ids = one.expense_line_ids
+                        one.my_expense_line_ids_b = one.expense_line_ids
+                        one.my_expense_line_ids_employee = one.expense_line_ids
+                        one.my_expense_line_ids_company = one.expense_line_ids
         else:
             for one in self:
                 my_total_amount = 0.0
