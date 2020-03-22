@@ -154,6 +154,9 @@ class hr_expense_sheet(models.Model):
                         ).compute(expense.total_amount, one.currency_id)
                         one.my_total_amount = my_total_amount
                         one.my_expense_line_ids = one.expense_line_ids
+                        one.my_expense_line_ids_b = one.expense_line_ids
+                        one.my_expense_line_ids_employee = one.expense_line_ids
+                        one.my_expense_line_ids_company = one.expense_line_ids
                 else:
                     for expense in my_expense_line:
                         my_total_amount += expense.currency_id.with_context(
@@ -162,6 +165,9 @@ class hr_expense_sheet(models.Model):
                         ).compute(expense.total_amount, one.currency_id)
                         one.my_total_amount = my_total_amount
                         one.my_expense_line_ids = one.expense_line_ids
+                        one.my_expense_line_ids_b = one.expense_line_ids
+                        one.my_expense_line_ids_employee = one.expense_line_ids
+                        one.my_expense_line_ids_company = one.expense_line_ids
         else:
             for one in self:
                 my_total_amount = 0.0
