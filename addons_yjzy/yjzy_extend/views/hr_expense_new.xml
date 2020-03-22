@@ -737,7 +737,7 @@
                                 <field name="bank_id" string="对方收款账号*" options="{'can_create':True}" required="1"/>
                                 <field name="address_id" invisible="1"/>
                                 <field name="department_id" invisible="1"/>
-                                 <field name="budget_type"/>
+                                 <field name="budget_type" invisible="1"/>
 
                             </group>
                             <group>
@@ -1097,7 +1097,7 @@
                                 <field name="bank_id" string="对方收款账号*" options="{'can_create':True}" required="1"/>
                                 <field name="address_id" invisible="1"/>
                                 <field name="department_id" invisible="1"/>
-                                 <field name="budget_type"/>
+                                 <field name="budget_type" invisible="1"/>
 
                             </group>
                             <group>
