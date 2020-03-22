@@ -752,7 +752,7 @@
                         </group>
                         <notebook>
                             <page string="Expense Lines">
-                                <field name="my_expense_line_ids" attrs="{'invisible':['|',('budget_type','!=','transport'),('budget_type','!=',False)]}" context="{'form_view_ref':'yjzy_extend.view_hr_expense_new_from_sheet_form'}">
+                                <field name="my_expense_line_ids" attrs="{'invisible':[('budget_type','in',['lead','employee','company'])]}" context="{'form_view_ref':'yjzy_extend.view_hr_expense_new_from_sheet_form'}">
                                     <tree decoration-danger="is_refused" >
                                         <field name="date" string="明细日期"/>
                                         <field name="categ_id" string="大类"/>

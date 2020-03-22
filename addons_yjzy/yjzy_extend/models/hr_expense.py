@@ -71,7 +71,7 @@ class hr_expense_sheet(models.Model):
 
     my_total_amount = fields.Float(string='权限金额', compute='compute_my_total_amount', digits=dp.get_precision('Account'))
     my_expense_line_ids = fields.One2many('hr.expense', compute='compute_my_total_amount', string='权限明细')
-    my_expense_line_ids_b = fields.One2many('hr.expense', compute='compute_my_total_amount', string='权限明细')
+    my_expense_line_ids_b = fields.One2many('hr.expense', compute='compute_my_total_amount_b', string='权限明细')
     my_expense_line_ids_employee = fields.One2many('hr.expense', compute='compute_my_total_amount', string='权限明细')
     my_expense_line_ids_company = fields.One2many('hr.expense', compute='compute_my_total_amount', string='权限明细')
 
@@ -138,6 +138,44 @@ class hr_expense_sheet(models.Model):
         self.total_this_year = self._cr.fetchall()[0][0]
 
     def compute_my_total_amount(self):
+        user = self.env.user
+
+        if user.has_group('yjzy_extend.group_expense_my_total'):
+            for one in self:
+                my_total_amount = 0.0
+                employee_wkf_one = one.employee_wkf
+                my_expense_line = one.expense_line_ids.filtered(
+                    lambda x: x.employee_id.user_id == user or x.create_uid == user or x.x_tenyale_user_id == user)
+                if employee_wkf_one == False:
+                    for expense in one.expense_line_ids:
+                        my_total_amount += expense.currency_id.with_context(
+                            date=expense.date,
+                            company_id=expense.company_id.id
+                        ).compute(expense.total_amount, one.currency_id)
+                        one.my_total_amount = my_total_amount
+                        one.my_expense_line_ids = one.expense_line_ids
+                else:
+                    for expense in my_expense_line:
+                        my_total_amount += expense.currency_id.with_context(
+                            date=expense.date,
+                            company_id=expense.company_id.id
+                        ).compute(expense.total_amount, one.currency_id)
+                        one.my_total_amount = my_total_amount
+                        one.my_expense_line_ids = one.expense_line_ids
+        else:
+            for one in self:
+                my_total_amount = 0.0
+                my_expense_line = one.expense_line_ids.filtered(lambda x: x.employee_id.user_id == user or x.create_uid == user or x.x_tenyale_user_id == user)
+                for expense in my_expense_line:
+                    my_total_amount += expense.currency_id.with_context(
+                        date=expense.date,
+                        company_id=expense.company_id.id
+                    ).compute(expense.total_amount, one.currency_id)
+
+                    one.my_total_amount = my_total_amount
+                    one.my_expense_line_ids = my_expense_line
+
+    def compute_my_total_amount_b(self):
         user = self.env.user
 
         if user.has_group('yjzy_extend.group_expense_my_total'):
