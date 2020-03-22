@@ -187,8 +187,8 @@
                         </div>
                         <group>
                             <group>
-                                <field name="categ_id" string="大类" domain="[('parent_id.name','=','费用')]" context="{'search_order': 'sequence'}" required="1"/>
-                                <field name="second_categ_id" string="中类" domain="[('parent_id','=', categ_id)]" context="{'search_order': 'sequence'}"
+                                <field name="categ_id" invisible="1" string="大类" domain="[('parent_id.name','=','费用')]" context="{'search_order': 'sequence'}" required="1"/>
+                                <field name="second_categ_id" invisible="1" string="中类" domain="[('parent_id','=', categ_id)]" context="{'search_order': 'sequence'}"
                                        required="1"/>
                                 <field name="product_id" required="1" string="小类" options="{'no_create':True}"
                                        domain="[('can_be_expensed','=',True),('categ_id','=',second_categ_id)]"
