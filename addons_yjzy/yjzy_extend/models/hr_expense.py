@@ -100,7 +100,7 @@ class hr_expense_sheet(models.Model):
     expense_line_ids_employee = fields.One2many('hr.expense', related='expense_line_ids')
     expense_line_ids_company = fields.One2many('hr.expense', related='expense_line_ids')
 
-<<<<<<< HEAD
+
     @api.onchange('categ_id')
     def onchange_categ(self):
         self.second_categ_id = None
@@ -108,33 +108,15 @@ class hr_expense_sheet(models.Model):
             line.categ_id = self.categ_id
             line.second_categ_id = None
             line.product_id = None
-=======
->>>>>>> 67df9501dac5d9bf8e5e8963aa748a11d41321f7
 
-   # @api.onchange('categ_id')
-   # def onchange_categ(self):
-   #     self.second_categ_id = None
-   #     for line in self.expense_line_ids:
-   #         line.categ_id = self.categ_id
-   #         line.second_categ_id = None
-   #         line.product_id = False
 
-<<<<<<< HEAD
     @api.onchange('second_categ_id')
     def onchange_second_categ(self):
         for line in self.my_expense_line_ids:
             line.categ_id = self.categ_id
             line.second_categ_id = self.second_categ_id
             line.product_id = None
-=======
 
-   # @api.onchange('second_categ_id')
-  #  def onchange_second_categ(self):
-    #    for line in self.my_expense_line_ids:
-    #        line.categ_id = self.categ_id
-    #        line.second_categ_id = self.second_categ_id
-   #         line.product_id = False
->>>>>>> 67df9501dac5d9bf8e5e8963aa748a11d41321f7
 
     @api.one
     def compute_total_this_year(self):
