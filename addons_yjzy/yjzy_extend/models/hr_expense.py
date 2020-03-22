@@ -71,6 +71,9 @@ class hr_expense_sheet(models.Model):
 
     my_total_amount = fields.Float(string='权限金额', compute='compute_my_total_amount', digits=dp.get_precision('Account'))
     my_expense_line_ids = fields.One2many('hr.expense', compute='compute_my_total_amount', string='权限明细')
+    my_expense_line_ids_b = fields.One2many('hr.expense', compute='compute_my_total_amount', string='权限明细')
+    my_expense_line_ids_employee = fields.One2many('hr.expense', compute='compute_my_total_amount', string='权限明细')
+    my_expense_line_ids_company = fields.One2many('hr.expense', compute='compute_my_total_amount', string='权限明细')
 
     total_this_moth = fields.Float(u'本月费用', compute='compute_total_this_year', digits=dp.get_precision('Account'))
     total_this_year = fields.Float(u'今年费用', compute='compute_total_this_year', digits=dp.get_precision('Account'))
@@ -89,7 +92,13 @@ class hr_expense_sheet(models.Model):
     categ_id = fields.Many2one('product.category', '大类')
     second_categ_id = fields.Many2one('product.category', '中类')
 
+
     budget_type = fields.Selection("预算类型", related="categ_id.budget_type")
+
+
+    expense_line_ids_b = fields.One2many('hr.expense', related='expense_line_ids')
+    expense_line_ids_employee = fields.One2many('hr.expense', related='expense_line_ids')
+    expense_line_ids_company = fields.One2many('hr.expense', related='expense_line_ids')
 
 
     @api.onchange('categ_id')
