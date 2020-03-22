@@ -368,7 +368,7 @@
             <field name="name">hr.expense.tree</field>
             <field name="model">hr.expense</field>
             <field name="arch" type="xml">
-                <tree string="费用明细" class="o_expense_tree" create="false" edit="false" delete="false">
+                <tree string="费用明细" class="o_expense_tree" create="false" edit="false" delete="false" decoration-warning="state=='draft'" decoration-danger="state=='cancel'">
                     <field name="date" string="创建日期"/>
                     <field name="create_uid" string="创建人"/>
                     <field name="employee_id" string="责任人"/>
@@ -441,7 +441,7 @@
             <field name="name">hr.expense.sheet.tree</field>
             <field name="model">hr.expense.sheet</field>
             <field name="arch" type="xml">
-                <tree string="费用申请" class="o_expense_tree" create='false'>
+                <tree string="费用申请" class="o_expense_tree" create='false' decoration-warning="state=='draft'" decoration-bf="message_unread == True" decoration-danger="state=='cancel'">
                     <field name="create_date" string="创建日期"/>
                     <field name="create_uid" string="创建人"/>
                     <field name="name" string="费用说明"/>
@@ -450,11 +450,11 @@
             </field>
         </record>
         <!--我的费用申请-->
-        <record id="hr_expense_sheet_user_chaxun_tree" model="ir.ui.view">
+        <record id="hr_expense_sheet_user_chaxun_tree" model="ir.ui.view" >
             <field name="name">hr.expense.sheet.tree</field>
             <field name="model">hr.expense.sheet</field>
             <field name="arch" type="xml">
-                <tree string="费用申请" class="o_expense_tree" create="false" edit="false" delete="false">
+                <tree string="费用申请" class="o_expense_tree" create="false" edit="false" delete="false" decoration-warning="state=='draft'" decoration-bf="message_unread == True" decoration-danger="state=='cancel'">
                     <field name="create_date" string="创建日期"/>
                     <field name="create_uid" string="创建人"/>
                     <field name="name" string="费用说明"/>
@@ -469,7 +469,7 @@
             <field name="name">hr.expense.sheet.tree</field>
             <field name="model">hr.expense.sheet</field>
             <field name="arch" type="xml">
-                <tree string="费用申请" class="o_expense_tree" create="false" edit="false" delete="false">
+                <tree string="费用申请" class="o_expense_tree" create="false" edit="false" delete="false" decoration-warning="state=='draft'" decoration-bf="message_unread == True" decoration-danger="state=='cancel'">
                     <field name="create_date" string="创建日期"/>
                     <field name="create_uid" string="创建人"/>
                     <field name="name" string="费用说明"/>
@@ -1000,6 +1000,7 @@
                                                context="{'form_view_ref':'yjzy_extend.view_rcfkd_form'}"/>
                                         <field name="yjzy_payment_currency_id" readonly="1"/>
                                         <field name="balance"/>
+
 
                                     </group>
                                     <group>
