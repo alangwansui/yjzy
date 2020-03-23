@@ -77,6 +77,7 @@ class purchase_order(models.Model):
                 if sol and not sol.lot_id:
                     sol.lot_id = lot
 
+
     def action_sale_reserve(self):
         drl_obj = self.env['dummy.lot.reserve']
         lot_obj = self.env['stock.production.lot']
@@ -119,3 +120,22 @@ class purchase_order_line(models.Model):
     dlr_no_qty = fields.Float(compute=compute_dlr, string=u'待预留')
 
     lot_sub_name = fields.Char('批次区分码')
+
+    def create_lot(self):
+        self.ensure_one()
+        lot_obj = self.env['stock.production.lot']
+        for line in self:
+            if not lot_obj.search([('pol_id', '=', line.id)]):
+                lot_name = line.order_id.name
+                if line.lot_sub_name:
+                    lot_name += line.lot_sub_name
+
+                lot = lot_obj.create({
+                    'name': lot_name,
+                    'product_id': line.product_id.id,
+                    'pol_id': line.id,
+                    'dummy_qty': line.product_qty,
+                })
+                #update sol lot
+                sol = line.sol_id
+                sol.lot_id = lot

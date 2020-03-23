@@ -235,6 +235,7 @@ class sale_order_line(models.Model):
                         'price_unit': sol.purchase_price,
                         'product_id': sol.product_id.id,
                     })
+                    sol.update_reserve()
         return res
 
 
@@ -247,36 +248,51 @@ class sale_order_line(models.Model):
         super(sale_order_line, self).unlink()
 
 
+
+    def update_reserve(self):
+        drl_obj = self.env['dummy.lot.reserve']
+        lot_obj = self.env['stock.production.lot']
+
+        print('========update_reserve============', )
+
+        for sol in self:
+            if sol.lot_id:
+                if sol.dlr_ids:
+                    sol.dlr_ids.unlink()
+
+                drl_obj.create({
+                    'sol_id': sol.id,
+                    'lot_id': sol.lot_id.id,
+                    'qty': sol.product_uom_qty,
+                })
+
+
+
+
     @api.model
     def create(self, vals):
-
-        print('================here==', vals.get('order_id'))
-
         sol = super(sale_order_line, self).create(vals)
-
-        print('================here==', sol, vals.get('order_id'), sol.supplier_id, sol.pol_id)
-
-
         if ('order_id' in vals) and sol.supplier_id and (not sol.pol_id):
-            print('================here==2')
 
             so = self.env['sale.order'].browse(vals['order_id'])
             p_orders = so.po_ids.filtered(lambda x: x.partner_id.id == sol.supplier_id.id and x.state == 'draft')
             if p_orders:
                 po = p_orders[0]
-                self.env['purchase.order.line'].create({
+                pol = self.env['purchase.order.line'].create({
                     'name': sol.product_id.name,
                     'order_id': po.id,
                     'product_id': sol.product_id.id,
                     'product_uom': sol.product_id.uom_id.id,
                     'product_qty': sol.product_uom_qty,
                     'price_unit': sol.purchase_price,
-                    'product_id': sol.product_id.id,
                     'sol_id': sol.id,
                     'lot_sub_name': sol.lot_sub_name,
                     'date_planned': so.requested_date,
                 })
-                po.create_lots()
+                pol.create_lot()
+                sol.pol_id = pol
+                print('>>', sol.lot_id)
+                sol.update_reserve()
 
         return sol
 
