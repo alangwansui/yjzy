@@ -123,23 +123,16 @@ class sale_order(models.Model):
         self.ensure_one()
         wizard = self.env['wizard.so2po'].create({'so_id': self.id})
         view = self.env.ref('purchase_sale_reserved.wizard_wizard_so2po_form')
-
         line_obj = self.env['wizard.so2po.line']
-        info_obj = self.env["product.supplierinfo"]
 
         for sol in self.order_line.filtered(lambda x: not x.lot_id):
             if not sol.supplier_id:
                 raise Warning('没有批次号的销售明细必须指定一个供应商')
 
-            supplierinfos = info_obj.search([('product_id', '=', sol.product_id.id), ('name', '=', sol.supplier_id.id)], limit=1)
-
-            if not supplierinfos:
-                raise Warning('没有找到产品%s 供应商%s 的价格信息' % (sol.product_id.default_code, sol.supplier_id.name))
-
             line_obj.create({
                 'wizard_id': wizard.id,
                 'sol_id': sol.id,
-                'supplier_id': supplierinfos and supplierinfos[0].name.id or False,
+                'supplier_id': sol.supplier_id.id,
                 'qty': sol.product_qty,
             })
 
