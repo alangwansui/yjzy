@@ -15,23 +15,6 @@ class sale_order(models.Model):
     po_count = fields.Integer(u'采购单数量', compute=compute_purchase_order)
     dump_picking_id = fields.Many2one('stock.picking', u'虚拟预留', copy=False)
 
-    # @api.multi
-    # def write(self, values):
-    #
-    #
-    #     res = super(sale_order, self).write(values)
-    #     print('====', values)
-    #
-    #     sol_obj = self.env['sale.order.line']
-    #     if values.get('order_line') and len(self) ==1:
-    #         for line_data in values['order_line']:
-    #             print('===line_data===', line_data)
-    #             if line_data[0] == 1:
-    #                 pass
-    #             elif:
-    #                 pass
-    #
-    #     return res
 
     def action_confirm(self):
         self.undo_dump_reserve()
@@ -243,16 +226,60 @@ class sale_order_line(models.Model):
         print('==sol write==', self, values)
 
         res = super(sale_order_line, self).write(values)
-        if ('product_uom_qty' in values) or ('product_uom_qty' in values) or ('purchase_price' in values):
+        if ('product_uom_qty' in values) or ('product_uom_qty' in values) or ('purchase_price' in values) or ('product_id' in values):
             for sol in self:
                 pol = sol.pol_id
                 if pol.state == 'draft':
                     pol.write({
                         'product_qty': sol.product_uom_qty,
                         'price_unit': sol.purchase_price,
+                        'product_id': sol.product_id.id,
                     })
-
         return res
+
+
+    @api.multi
+    def unlink(self):
+        for sol in self:
+            pol = sol.pol_id
+            if pol.state == 'draft':
+                pol.unlink()
+        super(sale_order_line, self).unlink()
+
+
+    @api.model
+    def create(self, vals):
+
+        print('================here==', vals.get('order_id'))
+
+        sol = super(sale_order_line, self).create(vals)
+
+        print('================here==', sol, vals.get('order_id'), sol.supplier_id, sol.pol_id)
+
+
+        if ('order_id' in vals) and sol.supplier_id and (not sol.pol_id):
+            print('================here==2')
+
+            so = self.env['sale.order'].browse(vals['order_id'])
+            p_orders = so.po_ids.filtered(lambda x: x.partner_id.id == sol.supplier_id.id and x.state == 'draft')
+            if p_orders:
+                po = p_orders[0]
+                self.env['purchase.order.line'].create({
+                    'name': sol.product_id.name,
+                    'order_id': po.id,
+                    'product_id': sol.product_id.id,
+                    'product_uom': sol.product_id.uom_id.id,
+                    'product_qty': sol.product_uom_qty,
+                    'price_unit': sol.purchase_price,
+                    'product_id': sol.product_id.id,
+                    'sol_id': sol.id,
+                    'lot_sub_name': sol.lot_sub_name,
+                    'date_planned': so.requested_date,
+                })
+                po.create_lots()
+
+        return sol
+
 
 
     @api.onchange('quant_id')
