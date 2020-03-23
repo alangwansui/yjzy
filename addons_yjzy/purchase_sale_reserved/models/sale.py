@@ -60,6 +60,43 @@ class sale_order(models.Model):
             one.po_ids.button_cancel()
         return super(sale_order, self).action_cancel()
 
+    def new_open_wizard_so2po(self):
+        self.ensure_one()
+        wizard = self.env['wizard.so2po'].create({'so_id': self.id})
+        view = self.env.ref('purchase_sale_reserved.wizard_wizard_so2po_form')
+
+        line_obj = self.env['wizard.so2po.line']
+        info_obj = self.env["product.supplierinfo"]
+
+        for sol in self.order_line.filtered(lambda x: not x.lot_id):
+            if not sol.supplier_id:
+                raise Warning('没有批次号的销售明细必须指定一个供应商')
+
+            supplierinfos = info_obj.search([('product_id', '=', sol.product_id.id), ('name', '=', sol.supplier_id.id)], limit=1)
+
+            if not supplierinfos:
+                raise Warning('没有找到产品%s 供应商%s 的价格信息' % (sol.product_id.default_code, sol.supplier_id.name))
+
+            line_obj.create({
+                'wizard_id': wizard.id,
+                'sol_id': sol.id,
+                'supplier_id': supplierinfos and supplierinfos[0].name.id or False,
+                'qty': sol.product_qty,
+            })
+
+        return {
+            'name': _(u'创建采购单'),
+            'view_type': 'tree,form',
+            "view_mode": 'form',
+            'res_model': 'wizard.so2po',
+            'type': 'ir.actions.act_window',
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wizard.id,
+            # 'context': { },
+        }
+
+
     def open_wizard_so2po(self):
         self.ensure_one()
         wizard = self.env['wizard.so2po'].create({'so_id': self.id})
@@ -128,23 +165,8 @@ class sale_order_line(models.Model):
             one.qty_pre_all = qty_pre_all
 
 
-    # def compute_moveline(self):
-    #     for one in self:
-    #         smlines = one.move_ids.mapped('move_line_ids') + one.order_id.dump_picking_id.move_line_ids.filtered(lambda x:x.product_id == one.product_id)
-    #         smline_str = '\n'.join(['%s:%s' % (x.lot_id.name, x.product_uom_qty) for x in smlines])
-    #         one.smline_ids = smlines
-    #         one.smline_str = smline_str
-    #         one.smline_qty = sum([x.product_uom_qty for x in smlines])
-    #
-    # @api.depends('dlr_ids')
-    # def compute_dlr(self):
-    #     for one in self:
-    #         one.dlr_str = '\n'.join([x.name or '' for x in one.dlr_ids])
-    #         one.dlr_qty = sum([x.qty for x in one.dlr_ids])
-    #         one.dlr_done_qty = sum([x.done_qty for x in one.dlr_ids])
-    #         one.dlr_todo_qty = sum([x.todo_qty for x in one.dlr_ids])
-    #         one.supplier_ids = one.dlr_ids.mapped('lot_id').mapped('supplier_id')
-
+    lot_id = fields.Many2one('stock.production.lot', '销售批次', domain="[('product_id', '=', product_id)]",)
+    supplier_id = fields.Many2one('res.partner', '供应商', domain=[('supplier', '=', True)])
 
 
     smline_ids = fields.One2many('stock.move.line', compute=compute_info, string=u'库存预留')
