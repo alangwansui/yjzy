@@ -85,6 +85,20 @@ class stock_picking(models.Model):
 
 class stock_quant(models.Model):
     _inherit = 'stock.quant'
+    _rec_name = 'name'
+
+
+    def compute_name(self):
+        for one in self:
+            one.name = '%s %s %s 可用%s' % (one.product_id.name, one.location_id.name, one.lot_id.name,  one.available_quantity)
+
+    def compute_available_quantity(self):
+        for one in self:
+            one.available_quantity = one.quantity - one.reserved_quantity
+
+
+    name = fields.Char('name', compute='compute_name')
+    available_quantity = fields.Float('可用数量', compute='compute_available_quantity')
 
     def _gather(self, product_id, location_id, lot_id=None, package_id=None, owner_id=None, strict=False):
         quants = super(stock_quant, self)._gather(product_id, location_id, lot_id=lot_id, package_id=package_id, owner_id=owner_id,

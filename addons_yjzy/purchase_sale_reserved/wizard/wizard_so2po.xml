@@ -18,6 +18,7 @@
                                 <field name="qty_available"/>
                                 <field name="virtual_available"/>
                                 <field name="supplier_id" domain="[('supplier','=',True)]"/>
+                                <field name="purchase_price"/>
                                 <field name="qty"/>
                             </tree>
                         </field>

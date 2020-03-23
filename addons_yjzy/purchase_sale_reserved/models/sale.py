@@ -15,11 +15,70 @@ class sale_order(models.Model):
     po_count = fields.Integer(u'采购单数量', compute=compute_purchase_order)
     dump_picking_id = fields.Many2one('stock.picking', u'虚拟预留', copy=False)
 
+    # @api.multi
+    # def write(self, values):
+    #
+    #
+    #     res = super(sale_order, self).write(values)
+    #     print('====', values)
+    #
+    #     sol_obj = self.env['sale.order.line']
+    #     if values.get('order_line') and len(self) ==1:
+    #         for line_data in values['order_line']:
+    #             print('===line_data===', line_data)
+    #             if line_data[0] == 1:
+    #                 pass
+    #             elif:
+    #                 pass
+    #
+    #     return res
+
     def action_confirm(self):
         self.undo_dump_reserve()
         res = super(sale_order,self).action_confirm()
         #TODO 保证确认预留内容和 虚拟预留的批次，数量一致
         return res
+
+    def new_make_dump_reserve(self):
+        self.ensure_one()
+        dump_picking = self.dump_picking_id
+        if not dump_picking:
+            move_obj = self.env['stock.move']
+            move_line_obj = self.env['stock.move.line']
+            picking_type = self.env['stock.picking.type'].search([('ref', '=', 'sale_reserve'), ('company_id', '=', self.env.user.company_id.id)], limit=1)
+            if not picking_type:
+                raise Warning(u'没有定义销售预留的调拨类型，请联系管理员')
+            dump_picking = self.env['stock.picking'].create({
+                'name': picking_type.sequence_id.next_by_id(),
+                'partner_id': self.partner_id.id,
+                'picking_type_id': picking_type.id,
+                'location_id': picking_type.default_location_src_id.id,
+                'location_dest_id': picking_type.default_location_dest_id.id,
+            })
+            for sol in self.order_line.filtered(lambda x: x.quant_id):
+                move = move_obj.create({
+                    'name': sol.name,
+                    'picking_id': dump_picking.id,
+                    'product_id': sol.product_id.id,
+                    'product_uom': sol.product_id.uom_id.id,
+                    'product_uom_qty': sol.product_uom_qty,
+                    'location_id': picking_type.default_location_src_id.id,
+                    'location_dest_id': picking_type.default_location_dest_id.id,
+                })
+
+                #销售明细的数据事根据库存数量预先拆分好的
+                move_line_obj.create({
+                    'move_id': move.id,
+                    'product_id': sol.product_id.id,
+                    'product_uom_id': sol.product_id.uom_id.id,
+                    'location_id': picking_type.default_location_src_id.id,
+                })
+
+            self.dump_picking_id = dump_picking
+
+        #dump_picking.action_assign()
+
+
 
     def make_dump_reserve(self):
         self.ensure_one()
@@ -143,7 +202,7 @@ class sale_order(models.Model):
 class sale_order_line(models.Model):
     _inherit = 'sale.order.line'
 
-    @api.depends('move_ids','dlr_ids')
+    @api.depends('move_ids', 'dlr_ids')
     def compute_info(self):
         for one in self:
             smlines = one.move_ids.mapped('move_line_ids') + one.order_id.dump_picking_id.move_line_ids.filtered(lambda x:x.product_id == one.product_id)
@@ -164,10 +223,11 @@ class sale_order_line(models.Model):
             qty_pre_all = one.smline_qty + one.dlr_qty
             one.qty_pre_all = qty_pre_all
 
-
+    quant_id = fields.Many2one('stock.quant', '库存份', copy=False)
     lot_id = fields.Many2one('stock.production.lot', '销售批次', domain="[('product_id', '=', product_id)]", copy=False)
     supplier_id = fields.Many2one('res.partner', '供应商', domain=[('supplier', '=', True)], copy=False)
-
+    purchase_price = fields.Float('采购价格', copy=False)
+    pol_id = fields.Many2one('purchase.order.line', '采购明细', copy=False)
 
     smline_ids = fields.One2many('stock.move.line', compute=compute_info, string=u'库存预留')
     smline_str = fields.Char(compute=compute_info, string=u'锁定内容')
@@ -185,13 +245,48 @@ class sale_order_line(models.Model):
     lot_sub_name = fields.Char('批次区分码')
 
 
+    @api.multi
+    def write(self, values):
+        print('==sol write==', self, values)
+
+        res = super(sale_order_line, self).write(values)
+        if ('product_uom_qty' in values) or ('product_uom_qty' in values) or ('purchase_price' in values):
+            for sol in self:
+                pol = sol.pol_id
+                if pol.state == 'draft':
+                    pol.write({
+                        'product_qty': sol.product_uom_qty,
+                        'price_unit': sol.purchase_price,
+                    })
+
+        return res
+
+
+    @api.onchange('quant_id')
+    def onchange_quantd(self):
+        self.lot_id = self.quant_id.lot_id
+
+    @api.onchange('supplier_id', 'product_id')
+    def onchange_supplier(self):
+        if self.supplier_id and self.product_id:
+            supplierinfo = self.env["product.supplierinfo"].search([('product_id', '=', self.product_id.id), ('name', '=', self.supplier_id.id)], limit=1)
+            print('==========', supplierinfo, supplierinfo.price, type(supplierinfo.price))
+            if supplierinfo:
+                self.purchase_price = supplierinfo.price
+            else:
+                self.purchase_price = 0
+        else:
+            self.purchase_price = 0
+
+
+
     def open_wizard_sol_reserver(self):
         self.ensure_one()
 
         item_obj = self.env['wizard.sol.reserver.item']
         wizard = self.env['wizard.sol.reserver'].create({'sol_id': self.id})
 
-        for dlr in  self.env['dummy.lot.reserve'].search([('sol_id','=',self.id)]):
+        for dlr in self.env['dummy.lot.reserve'].search([('sol_id','=',self.id)]):
             item = item_obj.create({
                 'wizard_id': wizard.id,
                 'dlr_id': dlr.id,

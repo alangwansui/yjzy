@@ -16,6 +16,10 @@
                 <field name="state" position="before">
                     <button name="make_dump_reserve" class="oe_highlight" type='object'  string="虚拟预留"
                             attrs="{'invisible': ['|',('dump_picking_id','!=', False), ('state', 'not in', ['draft','sent'])]}"/>
+
+                    <button name="new_make_dump_reserve" class="oe_highlight" type='object'  string="虚拟预留:新"
+                            attrs="{'invisible': ['|',('dump_picking_id','!=', False), ('state', 'not in', ['draft','sent'])]}"/>
+
                     <button name="undo_dump_reserve" class="oe_highlight" type='object' string="取消虚拟预留"
                             attrs="{'invisible': ['|',('dump_picking_id','=', False), ('state', 'not in', ['draft','sent'])]}"/>/>
                     <button name="open_wizard_so2po" states="draft,send,sale" class="oe_highlight" type='object' string="创建采购单"/>
@@ -27,10 +31,11 @@
                 </field>
 
                 <xpath expr="//field[@name='order_line']//tree//field[@name='product_uom_qty']" position="after">
-
+                    <field name="quant_id"  domain="[('product_id','=', product_id)]"/>
                     <field name="lot_id"/>
                     <field name="supplier_id"/>
-
+                    <field name="purchase_price"/>
+                    <field name="pol_id"/>
                     <field name="smline_str"/>
                     <field name="smline_qty"/>
                     <field name="dlr_str"/>
@@ -43,8 +48,11 @@
                 </xpath>
                 <xpath expr="//field[@name='order_line']//form//field[@name='price_unit']" position="after">
                     <field name="lot_sub_name"/>
+                    <field name="quant_id"  domain="[('product_id','=', product_id),('location_id.usage', '=', 'internal')]"/>
                     <field name="lot_id"/>
                     <field name="supplier_id"/>
+                    <field name="purchase_price"/>
+                    <field name="pol_id"/>
                 </xpath>
 
 

@@ -114,7 +114,7 @@ class Product_Product(models.Model):
         only_name = self.env.context.get('only_name')
         only_code = self.env.context.get('only_code')
 
-        print('==name_get==', only_name, self.env.context)
+        #print('==name_get==', only_name, self.env.context)
 
         def _get_name(one):
             if only_name:

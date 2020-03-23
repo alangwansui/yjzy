@@ -47,6 +47,8 @@ class wizard_so2po(models.TransientModel):
                     'sol_id': line.sol_id.id,
                     'lot_sub_name': line.sol_id.lot_sub_name,
                 })
+                line.sol_id.pol_id = pol
+
             po.date_planned = self.so_id.requested_date
             po.onchange_partner_id()
             po.create_lots()
@@ -90,6 +92,7 @@ class wizard_so2po_line(models.TransientModel):
     qty_available= fields.Float(related='product_id.qty_available', string=u'在手数')
     virtual_available = fields.Float(related='product_id.virtual_available', string=u'预测数')
     supplier_id = fields.Many2one('res.partner', u'供应商', domain=[('supplier','=',True)])
+    purchase_price = fields.Float('采购价格', related='sol_id.purchase_price')
     qty = fields.Float(u'采购数量')
 
     @api.constrains('qty', 'supplier_id')

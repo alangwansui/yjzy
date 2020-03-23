@@ -110,8 +110,8 @@ class purchase_order_line(models.Model):
             one.dlr_qty = dlr_qty
             one.dlr_no_qty = one.product_qty - dlr_qty
 
-            if one.dlr_no_qty < 0:
-                raise Warning(u'锁定数量不能大于采购数量')
+            # if one.dlr_no_qty < 0:
+            #     raise Warning(u'锁定数量不能大于采购数量')
 
     dlr_ids = fields.One2many('dummy.lot.reserve', 'pol_id', string=u'销售预留')
     dlr_str = fields.Char(compute=compute_dlr, string=u'销售预留')
