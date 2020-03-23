@@ -29,8 +29,6 @@ class wizard_so2po(models.TransientModel):
         dic_partner_lines = self._prepare_po_datas()
         purchase_orders = po_obj.browse()
         for partner, lines in dic_partner_lines.items():
-
-            print ('==', self.so_id.requested_date)
             po = po_obj.create({
                 'partner_id': partner.id,
                 'source_so_id': self.so_id.id,
@@ -68,7 +66,7 @@ class wizard_so2po(models.TransientModel):
 
 
     def _prepare_po_datas(self):
-        dic_partner_lines = {}
+        dic_partner_lines = {}  #{partner:  wizard_line}
         for line in self.line_ids:
             supplier = line.supplier_id
             if supplier in dic_partner_lines:

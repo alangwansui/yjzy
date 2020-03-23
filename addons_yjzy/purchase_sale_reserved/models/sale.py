@@ -165,8 +165,8 @@ class sale_order_line(models.Model):
             one.qty_pre_all = qty_pre_all
 
 
-    lot_id = fields.Many2one('stock.production.lot', '销售批次', domain="[('product_id', '=', product_id)]",)
-    supplier_id = fields.Many2one('res.partner', '供应商', domain=[('supplier', '=', True)])
+    lot_id = fields.Many2one('stock.production.lot', '销售批次', domain="[('product_id', '=', product_id)]", copy=False)
+    supplier_id = fields.Many2one('res.partner', '供应商', domain=[('supplier', '=', True)], copy=False)
 
 
     smline_ids = fields.One2many('stock.move.line', compute=compute_info, string=u'库存预留')

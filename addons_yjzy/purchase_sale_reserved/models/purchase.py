@@ -65,14 +65,17 @@ class purchase_order(models.Model):
                 if line.lot_sub_name:
                     lot_name += line.lot_sub_name
 
-
                 lot = lot_obj.create({
                     'name': lot_name,
                     'product_id': line.product_id.id,
                     'pol_id': line.id,
                     'dummy_qty': line.product_qty,
                 })
-                print ('>>>>>>>>>>>>>>>>>', lot)
+
+                #update sol lot
+                sol = line.sol_id
+                if sol and not sol.lot_id:
+                    sol.lot_id = lot
 
     def action_sale_reserve(self):
         drl_obj = self.env['dummy.lot.reserve']
