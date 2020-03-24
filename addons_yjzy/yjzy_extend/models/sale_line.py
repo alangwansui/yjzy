@@ -104,6 +104,8 @@ class sale_order_line(models.Model):
     second_unit_price = fields.Float('第二价格')
     second_price_total = fields.Monetary(compute='_compute_second', string='第二小计', readonly=True, store=True)
     is_gold_sample = fields.Boolean('是否有金样', related='product_id.is_gold_sample', readonly=True)
+    hs_id = fields.Many2one('hs.hs','报关品名', related='product_id.hs_id')
+
 
     @api.depends('second_unit_price', 'discount', 'price_unit', 'tax_id')
     def _compute_second(self):

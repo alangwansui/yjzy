@@ -211,6 +211,7 @@ class sale_order(models.Model):
 
     country_id = fields.Many2one('res.country', related='partner_id.country_id', readonly=True, string=u'国家')
 
+<<<<<<< HEAD
     current_date_rate = fields.Float('当日汇率')
     is_inner_trade = fields.Boolean('内部交易')
     second_company_id = fields.Many2one('res.company', '内部交易公司')
@@ -218,6 +219,11 @@ class sale_order(models.Model):
     @api.depends('second_company_id')
     def onchange_second_company(self):
         self.second_partner_id = self.second_company_id.partner_id
+=======
+    approve_date = fields.Date('审批完成日期')
+    hx_date = fields.Date('核销时间')
+
+>>>>>>> f0fb5668657a4f9fae2b6c4ab3afc40bd8e109f5
 
     @api.constrains('contract_code')
     def check_contract_code(self):
