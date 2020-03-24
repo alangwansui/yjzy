@@ -15,6 +15,7 @@ class sale_order(models.Model):
     po_count = fields.Integer(u'采购单数量', compute=compute_purchase_order)
     dump_picking_id = fields.Many2one('stock.picking', u'虚拟预留', copy=False)
 
+    lot_sub_mark = fields.Integer('批次区分标记', default=1)
 
     def action_confirm(self):
         self.undo_dump_reserve()
@@ -271,10 +272,16 @@ class sale_order_line(models.Model):
 
     @api.model
     def create(self, vals):
-        sol = super(sale_order_line, self).create(vals)
-        if ('order_id' in vals) and sol.supplier_id and (not sol.pol_id):
+        so = self.env['sale.order'].browse(vals['order_id'])
 
-            so = self.env['sale.order'].browse(vals['order_id'])
+        if ('order_id' in vals):
+            vals.update({'lot_sub_name': so.lot_sub_mark})
+            so.lot_sub_mark += 1
+
+        sol = super(sale_order_line, self).create(vals)
+
+        #创建采购批次和预留
+        if ('order_id' in vals) and sol.supplier_id and (not sol.pol_id):
             p_orders = so.po_ids.filtered(lambda x: x.partner_id.id == sol.supplier_id.id and x.state == 'draft')
             if p_orders:
                 po = p_orders[0]
