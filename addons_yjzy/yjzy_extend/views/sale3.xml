@@ -137,18 +137,21 @@
                                         <field name="fee_rmb1"/>
                                         <field name="fee_rmb2"/>
                                     </group>
-                                 <div>
+
                                     <label string="国外运保费" for="fee_outer" class=""/>
+                                <div>
                                     <field name="fee_outer" nolabel="1" class="oe_inline"/>
                                     <field name="outer_currency_id" nolabel="1" class="oe_inline"/>
                                 </div>
-                                <div>
+
                                     <label string="出口保险费" for="fee_export_insurance"/>
+                                <div>
                                     <field name="fee_export_insurance" nolabel="1" class="oe_inline"/>
                                     <field name="export_insurance_currency_id" nolabel="1" class="oe_inline"/>
                                 </div>
-                                <div>
+
                                     <label string="其他外币费用" for="fee_other"/>
+                                  <div>
                                     <field name="fee_other" nolabel="1" class="oe_inline"/>
                                     <field name="other_currency_id" nolabel="1" class="oe_inline"/>
                                 </div>
@@ -174,6 +177,7 @@
                                 <field name="pricelist_id" groups="product.group_sale_pricelist"/>
                                 <field name="payment_term_id" options="{'no_create': True}" domain="[('type','in', ['sale', 'comm'])]"/>
                                 <field name="id" invisible="1"/>
+                                <field name="lot_sub_mark"  groups="base.group_system"/>
                                 <label for="carrier_id"/>
                                 <div name="carrier_selection">
                                     <div>
@@ -196,28 +200,9 @@
                                         <field name="delivery_message" force_save="1"/>
                                     </div>
                                 </div>
-                            </group>
-                            <group>
-                                <field name="create_uid"/>
-                                <field name="user_id"/>
-                                <field name="sale_assistant_id"/>
-                                <field name="product_manager_id" invisible="1"/>
-                                <field name="exchange_rate"/>
-                                <field name="appoint_rate"/>
-                                <field name="no_sent_amount"/>
-                                <field name="yjzy_payment_id" invisible="1"/>
-                                <field name="yjzy_currency_id" invisible="1"/>
-                                <field name="balance" invisible="1"/>
-                                <field name="advance_po_residual" invisible="1" string="相关预付余额"/>
-                                <field name="cip_type"/>
-                                <field name="pre_advance"/>
-                                <field name="gold_sample_state"/>
-                                <field name="approve_date" />
-
-                                <field name="lot_sub_mark"  groups="base.group_system"/>
-
 
                             </group>
+
 
                         </group>
                         <notebook>
