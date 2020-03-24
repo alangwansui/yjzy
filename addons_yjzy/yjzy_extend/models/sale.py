@@ -219,15 +219,16 @@ class sale_order(models.Model):
     is_inner_trade = fields.Boolean('内部交易')
     second_company_id = fields.Many2one('res.company', '内部交易公司')
 
-    @api.depends('contract_type')
+    @api.onchange('contract_type')
     def onchange_contract_type(self):
+        print('????', self.contract_type)
         if self.contract_type == 'b':
             self.is_inner_trade = True
         else:
             self.is_inner_trade = False
 
 
-    @api.depends('second_company_id')
+    @api.onchange('second_company_id')
     def onchange_second_company(self):
         self.second_partner_id = self.second_company_id.partner_id
 
