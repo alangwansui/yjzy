@@ -275,7 +275,7 @@ class sale_order_line(models.Model):
         so = self.env['sale.order'].browse(vals['order_id'])
 
         if ('order_id' in vals):
-            vals.udpate({'lot_sub_name': so.lot_sub_mark})
+            vals.update({'lot_sub_name': so.lot_sub_mark})
             so.lot_sub_mark += 1
 
         sol = super(sale_order_line, self).create(vals)
