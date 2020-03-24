@@ -255,16 +255,24 @@
                                         <field name="product_id" attrs="{'readonly': [('product_updatable', '=', False)]}"
                                                orce_save="1" context="{'show_last_sale':1,'partner_id':parent.partner_id, 'quantity':product_uom_qty,
                                            'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"/>
-                                        <field name="is_gold_sample"/>
+                                         <field name="product_uom_qty" string="数量"
+                                               context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"/>
+                                        <field name="is_gold_sample" string="金样状态"/>
                                         <field name="layout_category_id" groups="sale.group_sale_layout"/>
                                         <field name="name" invisible="1"/>
                                         <field name="hs_id"/>
-                                        <field name="product_uom_qty" string="数量"
-                                               context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"/>
-                                        <field name="quant_id" domain="[('product_id','=', product_id)]"/>
-                                        <field name="lot_id"/>
-                                        <field name="supplier_id"/>
+                                        <field name="price_unit" attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"/>
+                                        <field name="back_tax"/>
+                                        <field name="price_total" widget="monetary" groups="sale.group_show_price_total"/>
+                                        <field name="back_tax_amount"/>
+                                        <field name="second_unit_price" groups="base.group_system"/>
+                                        <field name="second_price_total" groups="base.group_system"/>
                                         <field name="purchase_price"/>
+                                        <field name="purchase_cost"/>
+                                        <field name="supplier_id"/>
+
+
+                                        <field name="quant_id" domain="[('product_id','=', product_id)]" groups="base.group_system"/>
                                         <field name="pol_id"/>
                                         <field name="smline_str" column_invisible="1" invisible="1" readonly="1"/>
                                         <field name="smline_qty" invisible="1" readonly="1"/>
@@ -275,7 +283,7 @@
                                         <field name="dlr_todo_qty" groups="base.group_system"/>
                                         <field name="qty_pre_all" groups="base.group_system" invisible="1" readonly="1"/>
                                         <field name="lot_sub_name"/>
-                                        <field name="back_tax_amount"/>
+
                                         <field name="product_qty" invisible="1"/>
                                         <field name="qty_available" readonly="1" invisible="1"/>
                                         <field name="virtual_available" readonly="1" invisible="1"/>
@@ -288,42 +296,34 @@
                                         <field name="analytic_tag_ids" groups="analytic.group_analytic_accounting" widget="many2many_tags"
                                                options="{'color_field': 'color'}"/>
                                         <field name="last_sale_price" invisible="1" readonly="1"/>
-                                        <field name="back_tax"/>
-                                        <field name="bom_id"/>
-                                        <field name="bom_qty"/>
-                                        <field name="need_split_bom" string="展开bom"/>
-                                        <field name="need_print"/>
+
+                                        <field name="bom_id" groups="base.group_system"/>
+                                        <field name="bom_qty" groups="base.group_system"/>
+                                        <field name="need_split_bom" string="展开bom" groups="base.group_system"/>
+                                        <field name="need_print" groups="base.group_system"/>
                                         <field name="s_uom_id" string="打印单位"/>
-                                        <field name="p_uom_id"/>
-                                        <field name="second_unit_price" groups="base.group_system"/>
-                                        <field name="second_price_total" groups="base.group_system"/>
+                                        <field name="p_uom_id" />
+
                                         <field name="route_id" groups="sale_stock.group_route_so_lines" options="{'no_create': True}"/>
-                                        <field name="price_unit" attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"/>
+
                                         <field name="tax_id" widget="many2many_tags" options="{'no_create': True}"
                                                domain="[('type_tax_use','=','sale'),('company_id','=',parent.company_id)]"
-                                               attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"/>
-                                        <field name="second_unit_price"/>
+                                               attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}" invisible="1"/>
 
-                                        <field name="s_uom_id"/>
-                                        <field name="p_uom_id"/>
                                         <field name="back_tax"/>
-                                        <field name="bom_id"/>
-                                        <field name="bom_qty"/>
-                                        <field name="need_split_bom"/>
 
-                                        <button string="查看库存批次" type="object" name="get_in_stock_quant"/>
+
+                                        <button string="查看库存批次" type="object" name="get_in_stock_quant" invisible="1"/>
                                         <field name="discount" groups="sale.group_discount_per_so_line"/>
                                         <field name="price_subtotal" widget="monetary" groups="sale.group_show_price_subtotal"/>
-                                        <field name="price_total" widget="monetary" groups="sale.group_show_price_total"/>
-                                        <field name="dlr_str"/>
-                                         <field name="back_tax"/>
+
                                         <field name="qty_delivered_updateable" invisible="1"/>
                                         <field name="state" invisible="1"/>
                                         <field name="invoice_status" invisible="1"/>
                                         <field name="customer_lead" invisible="1"/>
                                         <field name="currency_id" invisible="1"/>
                                         <button icon="fas fa-eye" type="object" name="show_product_attrs"/>
-
+                                        <field name="lot_id"/>
 
                                     </tree>
                                     <kanban class="o_kanban_mobile">
