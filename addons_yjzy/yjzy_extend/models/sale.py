@@ -222,9 +222,9 @@ class sale_order(models.Model):
     @api.depends('contract_type')
     def onchange_contract_type(self):
         if self.contract_type == 'b':
-            self.is_inner_trade == True
+            self.is_inner_trade = True
         else:
-            self.is_inner_trade == False
+            self.is_inner_trade = False
 
 
     @api.depends('second_company_id')
