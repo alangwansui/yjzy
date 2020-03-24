@@ -22,6 +22,7 @@ from . import product_category
 from . import product_image
 from . import product_supplierinfo
 from . import sale
+from . import sale_line
 from . import purchase
 
 from . import transport_lot_plan

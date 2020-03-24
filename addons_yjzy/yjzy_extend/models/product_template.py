@@ -38,6 +38,8 @@ class Product_Template(models.Model):
     need_print = fields.Boolean('是否打印', defualt=True)
     need_split_bom = fields.Boolean(u'需要展开BOM')
 
+    is_gold_sample = fields.Boolean('是否有金样')
+
 
     tracking = fields.Selection([
         ('serial', 'By Unique Serial Number'),

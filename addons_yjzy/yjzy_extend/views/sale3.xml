@@ -17,397 +17,463 @@
             <field name="name">sale.order.form</field>
             <field name="model">sale.order</field>
             <field name="arch" type="xml">
-               <form string="销售订单" class="o_sale_order">
-                <header>
-                    <button name="260" string="Create Invoice" type="action" class="btn-primary" attrs="{'invisible': [('invoice_status', '!=', 'to invoice')]}"/>
-                    <button name="260" string="Create Invoice" type="action" context="{'default_advance_payment_method': 'percentage'}" attrs="{'invisible': ['|',('invoice_status', '!=', 'no'), ('state', '!=', 'sale')]}"/>
-                    <button name="action_quotation_send" string="通过电子邮件发送" type="object" states="draft" class="btn-primary" attrs="{'invisible': ['|','&amp;',('is_abandoned_cart', '=', True), ('cart_recovery_email_sent', '=', False)]}"/>
-                    <button name="action_quotation_send" type="object" string="发送形式发票"
-                            groups="sale.group_proforma_sales" class="btn-primary"
-                            attrs="{'invisible': ['|', ('state', '!=', 'draft'), ('invoice_count','&gt;=',1)]}" context="{'proforma': True}"/>
-                    <button name="action_recovery_email_send" string="Send a Recovery Email" type="object" class="btn-primary" attrs="{'invisible': ['|', ('is_abandoned_cart', '=', False), ('cart_recovery_email_sent', '=', True)]}"/>
-                    <button name="print_quotation" string="打印" type="object" states="draft" class="btn-primary o_sale_print"/>
-                    <button name="action_confirm" id="action_confirm" string="确认销售" class="btn-primary" type="object" attrs="{'invisible': [('state', 'not in', ['sent'])]}"/>
-                    <button name="action_confirm" string="确认销售" type="object" attrs="{'invisible': [('state', 'not in', ['draft'])]}"/>
-                    <button name="action_quotation_send" type="object" string="发送形式发票" groups="sale.group_proforma_sales" attrs="{'invisible': ['|', ('state', '=', 'draft'), ('invoice_count','&gt;=',1)]}" context="{'proforma': True}"/>
-                    <button name="print_quotation" string="打印" type="object" states="sent,sale" class="o_sale_print"/>
-                    <button name="action_quotation_send" string="通过电子邮件发送" type="object" states="sent,sale"/>
-                    <button name="action_cancel" states="draft,sent,sale" type="object" string="取消"/>
-                    <button name="action_draft" states="cancel" type="object" string="设为报价单"/>
-                    <button name="action_done" type="object" string="锁定" states="sale" groups="sales_team.group_sale_manager" help="如果销售被锁定，您不能再修改它。 但是，您仍然可以开发票或交付。"/>
-                    <button name="action_unlock" type="object" string="解锁" states="done" groups="sales_team.group_sale_manager"/>
-                    <button name="update_back_tax" string="更新退税率" type="object" />
-                    <button name="make_dump_reserve" class="oe_highlight" type="object" string="虚拟预留" attrs="{'invisible': ['|',('dump_picking_id','!=', False), ('state', 'not in', ['draft','sent'])]}"/>
+                <form string="销售订单" class="o_sale_order">
+                    <header>
+                        <button name="260" string="Create Invoice" type="action" class="btn-primary"
+                                attrs="{'invisible': [('invoice_status', '!=', 'to invoice')]}"/>
+                        <button name="260" string="Create Invoice" type="action" context="{'default_advance_payment_method': 'percentage'}"
+                                attrs="{'invisible': ['|',('invoice_status', '!=', 'no'), ('state', '!=', 'sale')]}"/>
+                        <button name="action_quotation_send" string="通过电子邮件发送" type="object" states="draft" class="btn-primary"
+                                attrs="{'invisible': ['|','&amp;',('is_abandoned_cart', '=', True), ('cart_recovery_email_sent', '=', False)]}"/>
+                        <button name="action_quotation_send" type="object" string="发送形式发票"
+                                groups="sale.group_proforma_sales" class="btn-primary"
+                                attrs="{'invisible': ['|', ('state', '!=', 'draft'), ('invoice_count','&gt;=',1)]}" context="{'proforma': True}"/>
+                        <button name="action_recovery_email_send" string="Send a Recovery Email" type="object" class="btn-primary"
+                                attrs="{'invisible': ['|', ('is_abandoned_cart', '=', False), ('cart_recovery_email_sent', '=', True)]}"/>
+                        <button name="print_quotation" string="打印" type="object" states="draft" class="btn-primary o_sale_print"/>
+                        <button name="action_confirm" id="action_confirm" string="确认销售" class="btn-primary" type="object"
+                                attrs="{'invisible': [('state', 'not in', ['sent'])]}"/>
+                        <button name="action_confirm" string="确认销售" type="object" attrs="{'invisible': [('state', 'not in', ['draft'])]}"/>
+                        <button name="action_quotation_send" type="object" string="发送形式发票" groups="sale.group_proforma_sales"
+                                attrs="{'invisible': ['|', ('state', '=', 'draft'), ('invoice_count','&gt;=',1)]}" context="{'proforma': True}"/>
+                        <button name="print_quotation" string="打印" type="object" states="sent,sale" class="o_sale_print"/>
+                        <button name="action_quotation_send" string="通过电子邮件发送" type="object" states="sent,sale"/>
+                        <button name="action_cancel" states="draft,sent,sale" type="object" string="取消"/>
+                        <button name="action_draft" states="cancel" type="object" string="设为报价单"/>
+                        <button name="action_done" type="object" string="锁定" states="sale" groups="sales_team.group_sale_manager"
+                                help="如果销售被锁定，您不能再修改它。 但是，您仍然可以开发票或交付。"/>
+                        <button name="action_unlock" type="object" string="解锁" states="done" groups="sales_team.group_sale_manager"/>
+                        <button name="update_back_tax" string="更新退税率" type="object"/>
+                        <button name="make_dump_reserve" class="oe_highlight" type="object" string="虚拟预留"
+                                attrs="{'invisible': ['|',('dump_picking_id','!=', False), ('state', 'not in', ['draft','sent'])]}"/>
 
-                    <button name="new_make_dump_reserve" class="oe_highlight" type="object" string="虚拟预留:新" attrs="{'invisible': ['|',('dump_picking_id','!=', False), ('state', 'not in', ['draft','sent'])]}"/>
+                        <button name="new_make_dump_reserve" class="oe_highlight" type="object" string="虚拟预留:新"
+                                attrs="{'invisible': ['|',('dump_picking_id','!=', False), ('state', 'not in', ['draft','sent'])]}"/>
 
-                    <button name="undo_dump_reserve" class="oe_highlight" type="object" string="取消虚拟预留" attrs="{'invisible': ['|',('dump_picking_id','=', False), ('state', 'not in', ['draft','sent'])]}"/>/&gt;
-                    <button name="open_wizard_so2po" states="draft,send,sale" class="oe_highlight" type="object" string="创建采购单"/>
-                    <button name="new_open_wizard_so2po" states="draft,send,sale" class="oe_highlight" type="object" context="{'new': 1}" string="创建采购单:新"/>
-                    <field name="state" widget="statusbar" invisible="1" statusbar_visible="draft,sent,sale"/>
+                        <button name="undo_dump_reserve" class="oe_highlight" type="object" string="取消虚拟预留"
+                                attrs="{'invisible': ['|',('dump_picking_id','=', False), ('state', 'not in', ['draft','sent'])]}"/>/&gt;
+                        <button name="open_wizard_so2po" states="draft,send,sale" class="oe_highlight" type="object" string="创建采购单"/>
+                        <button name="new_open_wizard_so2po" states="draft,send,sale" class="oe_highlight" type="object" context="{'new': 1}" string="创建采购单:新"/>
+                        <field name="state" widget="statusbar" invisible="1" statusbar_visible="draft,sent,sale"/>
 
-                    <button name="open_wizard_bom_sale" class="oe_highlight" type='object' string="套件销售"/>
-                    <button name="open_sale_cost" class="oe_highlight" type='object' string="成本单"/>
-                    <button name="open_advance_residual_lines" class="oe_highlight" type='object' string="预收分录明细"/>
-                    <button name="check_po_allow" class="oe_highlight" type='object' string="检查采购已审批"/>
-                    <button name="compute_po_residual" type="object" string="计算采购预付款"/>
-                </header>
-                <sheet>
-                    <div class="oe_button_box" name="button_box">
-                          <field name="picking_ids" invisible="1"/>
-                            <button type="object" name="action_view_delivery" class="oe_stat_button" icon="fa-truck" attrs="{'invisible': [('delivery_count', '=', 0)]}" groups="base.group_user">
-                          <field name="delivery_count" widget="statinfo" string="Delivery"/>
-                        </button>
-                        <button name="action_view_invoice" type="object" class="oe_stat_button" icon="fa-pencil-square-o" attrs="{'invisible': [('invoice_count', '=', 0)]}">
-                            <field name="invoice_count" widget="statinfo" string="发票"/>
-                        </button>
-                        <button name="open_view_transport_bill" type="object" class="oe_stat_button" icon="fa-pencil-square-o">
-                         <field name="tb_count" widget="statinfo" string="出运单"/>
-                        </button>
-                         <field name="is_editable"  widget="boolean_toggle"/>
-                        <button name="action_view_transaction" type="object" class="oe_stat_button" icon="fa-money" attrs="{'invisible': [('payment_transaction_count', '=', 0)]}">
-                           <field name="payment_transaction_count" widget="statinfo" string="Transactions"/>
-                          </button>
-                         <button name="open_purchase_order" type="object" class="oe_stat_button" icon="fa-pencil-square-o" attrs="{'invisible': [('po_count', '=', 0)]}">
-                            <field name="po_count" widget="statinfo" string="采购单"/>
-                        </button>
-                    </div>
-                    <group invisible="1">
+                        <button name="open_wizard_bom_sale" class="oe_highlight" type='object' string="套件销售"/>
+                        <button name="open_sale_cost" class="oe_highlight" type='object' string="成本单"/>
+                        <button name="open_advance_residual_lines" class="oe_highlight" type='object' string="预收分录明细"/>
+                        <button name="check_po_allow" class="oe_highlight" type='object' string="检查采购已审批"/>
+                        <button name="compute_po_residual" type="object" string="计算采购预付款"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <field name="picking_ids" invisible="1"/>
+                            <button type="object" name="action_view_delivery" class="oe_stat_button" icon="fa-truck"
+                                    attrs="{'invisible': [('delivery_count', '=', 0)]}" groups="base.group_user">
+                                <field name="delivery_count" widget="statinfo" string="Delivery"/>
+                            </button>
+                            <button name="action_view_invoice" type="object" class="oe_stat_button" icon="fa-pencil-square-o"
+                                    attrs="{'invisible': [('invoice_count', '=', 0)]}">
+                                <field name="invoice_count" widget="statinfo" string="发票"/>
+                            </button>
+                            <button name="open_view_transport_bill" type="object" class="oe_stat_button" icon="fa-pencil-square-o">
+                                <field name="tb_count" widget="statinfo" string="出运单"/>
+                            </button>
+                            <field name="is_editable" widget="boolean_toggle"/>
+                            <button name="action_view_transaction" type="object" class="oe_stat_button" icon="fa-money"
+                                    attrs="{'invisible': [('payment_transaction_count', '=', 0)]}">
+                                <field name="payment_transaction_count" widget="statinfo" string="Transactions"/>
+                            </button>
+                            <button name="open_purchase_order" type="object" class="oe_stat_button" icon="fa-pencil-square-o"
+                                    attrs="{'invisible': [('po_count', '=', 0)]}">
+                                <field name="po_count" widget="statinfo" string="采购单"/>
+                            </button>
+                        </div>
+                        <group invisible="1">
 
-                    <div class="oe_title" >
-                        <h1>
-                            <field name="name" readonly="1"/>
-                        </h1>
-                    </div>
-                    </group>
-                    <group col="3">
-                        <group>
-                            <field name="contract_code"/>
-                            <field name="partner_id" domain="[('customer','=',True),('parent_id', '=', False)]"  context="{'search_default_customer':1, 'show_address': 0}" options="{&quot;always_reload&quot;: True}"/>
-                            <field name="can_directly_mark_as_paid" invisible="1"/>
-                            <field name="link_man_id" domain="[('parent_id','=',partner_id),('type', '=', 'contract')]"/>
-                            <field name="customer_pi"/>
-                            <field name="incoterm"/>
-                            <field name="requested_date"/>
-                            <field name="payment_term_id"/>
-                            <!--field name="contract_date"/-->
-                            <field name="include_tax"/>
-
-                            <field name="partner_invoice_id" invisible="1" groups="sale.group_delivery_invoice_address" context="{'default_type':'invoice'}" options="{&quot;always_reload&quot;: True}"/>
-                            <field name="partner_shipping_id" invisible="1" groups="sale.group_delivery_invoice_address" context="{'default_type':'delivery','show_address': 1}" options="{&quot;always_reload&quot;: True}"/>
-<field name="dump_picking_id" readonly="1"/>
-                            <field name="currency_id" invisible="0"/>
-                            <field name="second_partner_id" groups="base.group_system"/>
-
+                            <div class="oe_title">
+                                <h1>
+                                    <field name="name" readonly="1"/>
+                                </h1>
+                            </div>
                         </group>
-                        <group>
-                            <field name="validity_date" attrs="{'invisible': [('state', 'in', ['sale', 'done'])]}"/>
-                            <field name="confirmation_date" attrs="{'invisible': [('state', 'in', ['draft', 'sent', 'cancel'])]}"/>
-                            <field name="pricelist_id" groups="product.group_sale_pricelist"/>
-                            <field name="payment_term_id" options="{'no_create': True}" domain="[('type','in', ['sale', 'comm'])]"/>
-                             <field name="id" invisible="1"/>
-                      <label for="carrier_id"/>
-                      <div name="carrier_selection">
-                          <div>
-                            <field name="carrier_id" context="{'order_id': id}" class="oe_inline" options="{'no_create': True, 'no_open': True}" attrs="{'readonly':[('state','not in',('draft','sent'))]}"/> <i class="fa fa-check text-success" aria-hidden="true" attrs="{'invisible':['|','|',('carrier_id','=',False),('state','not in',('draft','sent')),('delivery_rating_success','=',False)]}"/>
-                          </div>
-                          <div>
-                            <field name="delivery_price" widget="monetary" class="oe_inline" options="{'currency_field': 'currency_id'}" nolabel="1" attrs="{'invisible': [('carrier_id','=', False)]}" force_save="1"/>
-                            <button name="get_delivery_price" string="Check price" type="object" class="oe_inline fa fa-arrow-right oe_link" attrs="{'invisible':['|',('carrier_id','=',False),('state','not in',('draft','sent'))]}"/>
-                            <button name="set_delivery_line" string="Set price" type="object" class="oe_inline fa fa-arrow-right oe_link" attrs="{'invisible':['|','|',('carrier_id','=',False),('state','not in',('draft','sent')),('delivery_rating_success','=',False)]}"/>
-                            <field name="delivery_rating_success" invisible="1" force_save="1"/>
-                          </div>
-                          <div class="alert alert-info" role="alert" attrs="{'invisible': ['|',('carrier_id','=', False),('delivery_message','=',False)]}">
-                            <field name="delivery_message" force_save="1"/>
-                          </div>
-                      </div>
-                        </group>
-                        <group>
-                            <field name="create_uid"/>
-                            <field name="user_id"/>
-                            <field name="sale_assistant_id"/>
-                            <field name="product_manager_id"/>
-                            <field name="exchange_rate"/>
-                            <field name="appoint_rate"/>
-                            <field name="no_sent_amount"/>
-                            <field name="yjzy_payment_id"/>
-                            <field name="yjzy_currency_id"/>
-                            <field name="balance"/>
-                            <field name="advance_po_residual"/>
-                            <field name="cip_type"/>
-                            <field name="pre_advance"/>
-                        </group>
-                    </group>
-                    <notebook>
-                        <page string="订单行">
-                            <field name="order_line" mode="tree,kanban" >
-                                <form string="销售订单明细">
-                                    <group>
-                                        <group>
-                                            <field name="product_updatable" invisible="1"/>
-                                            <field name="product_id" domain="[('state','=','done')]"
-                                                   context="{'show_last_sale':1,'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}" attrs="{'readonly': [('product_updatable', '=', False)]}" force_save="1"/>
-                                            <field name="layout_category_id" groups="sale.group_sale_layout"/>
-                                            <field name="invoice_status" invisible="1"/>
-                                            <field name="qty_to_invoice" invisible="1"/>
-                                            <field name="qty_delivered_updateable" invisible="1"/>
-                                            <field name="price_subtotal" invisible="1"/>
-                                            <label for="product_uom_qty" string="订购数量"/>
-                                            <div>
-                                                <field context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'uom_qty_change':True, 'company_id': parent.company_id}" name="product_uom_qty" class="oe_inline"/>
-                                                <field name="product_uom" groups="product.group_uom" class="oe_inline oe_no_button" attrs="{'readonly': [('state', 'in', ('sale','done', 'cancel'))]}"/>
-                                            </div>
-                                            <label for="qty_delivered" string="已交货数量" attrs="{'invisible': [('parent.state', 'not in', ['sale', 'done'])]}"/>
-                                            <div attrs="{'invisible': [('parent.state', 'not in', ['sale', 'done'])]}">
-                                                <field name="qty_delivered" attrs="{'readonly': [('qty_delivered_updateable', '=', False)]}"/>
-                                            </div>
-                                            <label for="qty_invoiced" string="已开发票数量" attrs="{'invisible': [('parent.state', 'not in', ['sale', 'done'])]}"/>
-                                            <div attrs="{'invisible': [('parent.state', 'not in', ['sale', 'done'])]}">
-                                                <field name="qty_invoiced" attrs="{'invisible': [('parent.state', 'not in', ['sale', 'done'])]}"/>
-                                            </div>
-                                             <field name="route_id" groups="sale_stock.group_route_so_lines" options="{'no_create': True}"/>
-                                            <field name="price_unit"/>
-                                            <field name="lot_sub_name"/>
-                    <field name="quant_id" domain="[('product_id','=', product_id),('location_id.usage', '=', 'internal')]"/>
-                    <field name="lot_id"/>
-                    <field name="supplier_id"/>
-                    <field name="purchase_price"/>
-                    <field name="pol_id"/>
-                                            <label for="discount" groups="sale.group_discount_per_so_line"/>
-                                            <div name="discount" groups="sale.group_discount_per_so_line">
-                                                <field name="discount" class="oe_inline"/> %
-                                            </div>
-                                        </group>
-                                        <group>
-                                             <field name="product_packaging" attrs="{'invisible': [('product_id', '=', False)]}" context="{'default_product_id': product_id, 'tree_view_ref':'product.product_packaging_tree_view', 'form_view_ref':'product.product_packaging_form_view'}" domain="[('product_id','=',product_id)]" groups="product.group_stock_packaging"/>
-                                            <field name="tax_id" widget="many2many_tags" options="{'no_create': True}" domain="[('type_tax_use','=','sale'),('company_id','=',parent.company_id)]" attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"/>
-                                            <label for="customer_lead"/>
-                                            <div>
-                                                <field name="customer_lead" class="oe_inline"/> 天
-                                            </div>
-                                            <label for="analytic_tag_ids" groups="analytic.group_analytic_accounting"/>
-                                            <div>
-                                                <field name="analytic_tag_ids" widget="many2many_tags" groups="analytic.group_analytic_accounting" options="{'color_field': 'color'}"/>
-                                            </div>
-                                        </group>
-                                    </group>
-                                    <label for="name"/>
-                                    <field name="name"/>
-                                    <div groups="base.group_no_one">
-                                        <label for="invoice_lines"/>
-                                        <field name="invoice_lines"/>
+                        <group col="3">
+                            <group>
+                                <field name="contract_code"/>
+                                <field name="partner_id" domain="[('customer','=',True),('parent_id', '=', False)]"
+                                       context="{'search_default_customer':1, 'show_address': 0}" options="{&quot;always_reload&quot;: True}"/>
+                                <field name="country_id"/>
+
+
+                                <field name="can_directly_mark_as_paid" invisible="1"/>
+                                <field name="link_man_id" domain="[('parent_id','=',partner_id),('type', '=', 'contract')]"/>
+                                <field name="customer_pi"/>
+                                <field name="incoterm"/>
+                                <field name="requested_date"/>
+                                <field name="payment_term_id"/>
+                                <!--field name="contract_date"/-->
+                                <field name="include_tax"/>
+
+                                <field name="partner_invoice_id" invisible="1" groups="sale.group_delivery_invoice_address" context="{'default_type':'invoice'}"
+                                       options="{&quot;always_reload&quot;: True}"/>
+                                <field name="partner_shipping_id" invisible="1" groups="sale.group_delivery_invoice_address"
+                                       context="{'default_type':'delivery','show_address': 1}" options="{&quot;always_reload&quot;: True}"/>
+                                <field name="dump_picking_id" readonly="1"/>
+                                <field name="currency_id" invisible="0"/>
+                                <field name="second_partner_id" groups="base.group_system"/>
+
+                            </group>
+                            <group>
+                                <field name="validity_date" attrs="{'invisible': [('state', 'in', ['sale', 'done'])]}"/>
+                                <field name="confirmation_date" attrs="{'invisible': [('state', 'in', ['draft', 'sent', 'cancel'])]}"/>
+                                <field name="pricelist_id" groups="product.group_sale_pricelist"/>
+                                <field name="payment_term_id" options="{'no_create': True}" domain="[('type','in', ['sale', 'comm'])]"/>
+                                <field name="id" invisible="1"/>
+                                <label for="carrier_id"/>
+                                <div name="carrier_selection">
+                                    <div>
+                                        <field name="carrier_id" context="{'order_id': id}" class="oe_inline" options="{'no_create': True, 'no_open': True}"
+                                               attrs="{'readonly':[('state','not in',('draft','sent'))]}"/>
+                                        <i class="fa fa-check text-success" aria-hidden="true"
+                                           attrs="{'invisible':['|','|',('carrier_id','=',False),('state','not in',('draft','sent')),('delivery_rating_success','=',False)]}"/>
                                     </div>
-                                    <field name="state" invisible="1"/>
-                                </form>
-                                <button name="open_multi_select_product" string="Multi select product" type="object" class="oe_highlight"/>
-                                <tree string="销售订单明细" decoration-info="invoice_status=='to invoice'" limit="10"><!--editable="bottom" -->
-                                    <field name="sequence" widget="handle"/>
-                                    <field name="product_updatable" invisible="1"/>
-                                    <button type="object" name="get_in_stock_quant" icon="fa-archive"/>
-                                    <field name="product_id" attrs="{'readonly': [('product_updatable', '=', False)]}"
-                                           orce_save="1" context="{'show_last_sale':1,'partner_id':parent.partner_id, 'quantity':product_uom_qty,
-                                           'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"/>
-                                    <field name="layout_category_id" groups="sale.group_sale_layout"/>
-                                    <field name="name"/>
-                                    <field name="product_uom_qty" string="订购数量" context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"/>
-                                     <field name="quant_id" domain="[('product_id','=', product_id)]"/>
-                    <field name="lot_id"/>
-                    <field name="supplier_id"/>
-                    <field name="purchase_price"/>
-                    <field name="pol_id"/>
-                    <field name="smline_str"/>
-                    <field name="smline_qty"/>
-                    <field name="dlr_str"/>
-                    <field name="dlr_qty"/>
-                    <button icon="fa-list" type="object" name="open_wizard_sol_reserver"/>
-                    <field name="dlr_done_qty"/>
-                    <field name="dlr_todo_qty"/>
-                    <field name="qty_pre_all"/>
-                    <field name="lot_sub_name"/>
-                                    <field name="product_qty" invisible="1"/>
-                                    <field name="qty_available" readonly="1" invisible="0"/>
-                                    <field name="virtual_available" readonly="1" invisible="0"/>
-                                    <field name="qty_delivered" attrs="{'column_invisible': [('parent.state', 'not in', ['sale', 'done'])], 'readonly': [('qty_delivered_updateable', '=', False)]}"/>
-                                    <field name="qty_invoiced" attrs="{'column_invisible': [('parent.state', 'not in', ['sale', 'done'])]}"/>
-                                    <field name="qty_to_invoice" invisible="1"/>
-                                    <field name="product_uom" attrs="{'readonly': [('state', 'in', ('sale','done', 'cancel'))]}" context="{'company_id': parent.company_id}" groups="product.group_uom" options="{&quot;no_open&quot;: True}"/>
-                                    <field name="analytic_tag_ids" groups="analytic.group_analytic_accounting" widget="many2many_tags" options="{'color_field': 'color'}"/>
-                                     <field name="last_sale_price"/>
-                                    <field name="back_tax"/>
-                                    <field name="bom_id"/>
-                                    <field name="bom_qty"/>
-                                    <field name="need_split_bom"/>
-                                    <field name="need_print"/>
-                                    <field name="s_uom_id"/>
-                                    <field name="p_uom_id"/>
-                                    <field name="second_unit_price" groups="base.group_system"/>
-                                    <field name="second_price_total" groups="base.group_system"/>
-                                   <field name="route_id" groups="sale_stock.group_route_so_lines" options="{'no_create': True}"/>
-                                    <field name="price_unit" attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"/>
-                                    <field name="tax_id" widget="many2many_tags" options="{'no_create': True}" domain="[('type_tax_use','=','sale'),('company_id','=',parent.company_id)]" attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"/>
-                                    <field name="second_unit_price"/>
-
-                                  <field name="s_uom_id"/>
-                                  <field name="p_uom_id"/>
-                               <field name="back_tax"/>
-                                <field name="bom_id"/>
-                                 <field name="bom_qty"/>
-                                <field name="need_split_bom"/>
-
-                              <button string="查看库存批次" type="object" name="get_in_stock_quant"/>
-                                <field name="discount" groups="sale.group_discount_per_so_line"/>
-                                    <field name="price_subtotal" widget="monetary" groups="sale.group_show_price_subtotal"/>
-                                    <field name="price_total" widget="monetary" groups="sale.group_show_price_total"/>
-                                    <field name="qty_delivered_updateable" invisible="1"/>
-                                    <field name="state" invisible="1"/>
-                                    <field name="invoice_status" invisible="1"/>
-                                    <field name="customer_lead" invisible="1"/>
-                                    <field name="currency_id" invisible="1"/>
-                                <button icon="fas fa-eye" type="object" name="show_product_attrs"/>
-
-
-                                </tree>
-                                <kanban class="o_kanban_mobile">
-                                    <field name="product_id"/>
-                                    <field name="product_uom_qty"/>
-                                    <field name="product_uom" groups="product.group_uom"/>
-                                    <field name="price_subtotal"/>
-                                    <field name="price_unit"/>
-                                    <templates>
-                                        <t t-name="kanban-box">
-                                            <div t-attf-class="oe_kanban_card oe_kanban_global_click">
-                                                <div class="row">
-                                                    <div class="col-xs-8">
-                                                        <strong><span><t t-esc="record.product_id.value"/></span></strong>
-                                                    </div>
-                                                    <div class="col-xs-4">
-                                                        <strong><span class="pull-right text-right">
-                                                        <t t-esc="record.price_subtotal.value"/></span></strong>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-xs-12 text-muted">
-                                                        <span>数量： <t t-esc="record.product_uom_qty.value"/> <t t-esc="record.product_uom.value"/></span>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-xs-12 text-muted">
-                                                        <span>单价: <t t-esc="record.price_unit.value"/></span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <hr/>
-                                        </t>
-                                    </templates>
-                                </kanban>
-                            </field>
-                            <group class="oe_subtotal_footer oe_right" colspan="2" name="sale_total">
-                                <field name="amount_untaxed" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                                <field name="amount_tax" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                                <div class="oe_subtotal_footer_separator oe_inline o_td_label">
-                                    <label for="amount_total"/>
+                                    <div>
+                                        <field name="delivery_price" widget="monetary" class="oe_inline" options="{'currency_field': 'currency_id'}" nolabel="1"
+                                               attrs="{'invisible': [('carrier_id','=', False)]}" force_save="1"/>
+                                        <button name="get_delivery_price" string="Check price" type="object" class="oe_inline fa fa-arrow-right oe_link"
+                                                attrs="{'invisible':['|',('carrier_id','=',False),('state','not in',('draft','sent'))]}"/>
+                                        <button name="set_delivery_line" string="Set price" type="object" class="oe_inline fa fa-arrow-right oe_link"
+                                                attrs="{'invisible':['|','|',('carrier_id','=',False),('state','not in',('draft','sent')),('delivery_rating_success','=',False)]}"/>
+                                        <field name="delivery_rating_success" invisible="1" force_save="1"/>
+                                    </div>
+                                    <div class="alert alert-info" role="alert"
+                                         attrs="{'invisible': ['|',('carrier_id','=', False),('delivery_message','=',False)]}">
+                                        <field name="delivery_message" force_save="1"/>
+                                    </div>
                                 </div>
-                                <field name="amount_total" nolabel="1" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}"/>
                             </group>
-                            <field name="note" class="oe_inline" placeholder="在销售设置中设置默认条款和条件…"/>
-                            <div class="oe_clear"/>
-                        </page>
-                        <page string="其他信息">
                             <group>
-                                 <group string="Shipping Information" name="sale_shipping">
-                                   <field name="warehouse_id" options="{'no_create': True}" groups="stock.group_stock_multi_locations"/>
-                                   <field name="incoterm" widget="selection" groups="sale_stock.group_display_incoterm"/>
-                                   <field name="picking_policy" required="True"/>
-                                 </group>
-                                <group string="销售信息" name="sales_person">
-                                    <field name="tag_ids" widget="many2many_tags"/>
-                                    <field name="user_id"/>
-                                    <field name="team_id" options="{'no_create': True}"/>
-
-                                    <field name="is_abandoned_cart" invisible="1"/>
-                                    <field name="cart_recovery_email_sent" invisible="1"/>
-                                    <field name="client_order_ref"/>
-                                    <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
-                                    <field name="analytic_account_id" context="{'default_partner_id':partner_invoice_id, 'default_name':name}" attrs="{'readonly': ['|',('analytic_account_id','!=',False),('invoice_count','!=',0),('state','=','sale')]}" groups="analytic.group_analytic_accounting" force_save="1"/>
-                                </group>
-                                <group name="sale_pay" string="开票">
-                                    <field name="date_order" attrs="{'invisible': [('state', 'in', ['sale', 'done', 'cancel'])]}"/>
-                                    <field name="fiscal_position_id" options="{'no_create': True}"/>
-                                    <field name="invoice_status" states="sale,done" invisible="0"/>
-                                </group>
-                                <group string="报表" name="technical" groups="base.group_no_one">
-                                    <field groups="base.group_no_one" name="origin"/>
-                                     <field name="campaign_id" groups="base.group_no_one"/>
-                                      <field name="medium_id" groups="base.group_no_one"/>
-                                   <field name="source_id" groups="base.group_no_one"/>
-                                   <field name="opportunity_id" help="Log in the chatter from which opportunity the order originates" groups="base.group_no_one"/>
-                                </group>
-                            </group>
-                        </page>
-                         <page string="其他费用列表">
-                        <group>
-                            <group>
-                                <field name="company_currency_id" invisible="1"/>
-                                <field name="fee_inner"/>
-                                <field name="fee_rmb1"/>
-                                <field name="fee_rmb2"/>
+                                <field name="create_uid"/>
+                                <field name="user_id"/>
+                                <field name="sale_assistant_id"/>
+                                <field name="product_manager_id"/>
+                                <field name="exchange_rate"/>
+                                <field name="appoint_rate"/>
+                                <field name="no_sent_amount"/>
+                                <field name="yjzy_payment_id"/>
+                                <field name="yjzy_currency_id"/>
+                                <field name="balance"/>
+                                <field name="advance_po_residual"/>
+                                <field name="cip_type"/>
+                                <field name="pre_advance"/>
+                                <field name="gold_sample_state"/>
                             </group>
                         </group>
-                        <div>
-                            <label string="国外运保费" for="fee_outer" class=""/>
-                            <field name="fee_outer" nolabel="1" class="oe_inline"/>
-                            <field name="outer_currency_id" nolabel="1" class="oe_inline"/>
-                        </div>
-                        <div>
-                            <label string="出口保险费" for="fee_export_insurance"/>
-                            <field name="fee_export_insurance" nolabel="1" class="oe_inline"/>
-                            <field name="export_insurance_currency_id" nolabel="1" class="oe_inline"/>
-                        </div>
-                        <div>
-                            <label string="其他外币费用" for="fee_other"/>
-                            <field name="fee_other" nolabel="1" class="oe_inline"/>
-                            <field name="other_currency_id" nolabel="1" class="oe_inline"/>
-                        </div>
+                        <notebook>
+                            <page string="订单行">
+                                <field name="order_line" mode="tree,kanban">
+                                    <form string="销售订单明细">
+                                        <group>
+                                            <group>
+                                                <field name="product_updatable" invisible="1"/>
+                                                <field name="product_id" domain="[('state','=','done')]"
+                                                       context="{'show_last_sale':1,'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"
+                                                       attrs="{'readonly': [('product_updatable', '=', False)]}" force_save="1"/>
+                                                <field name="layout_category_id" groups="sale.group_sale_layout"/>
+                                                <field name="invoice_status" invisible="1"/>
+                                                <field name="qty_to_invoice" invisible="1"/>
+                                                <field name="qty_delivered_updateable" invisible="1"/>
+                                                <field name="price_subtotal" invisible="1"/>
+                                                <label for="product_uom_qty" string="订购数量"/>
+                                                <div>
+                                                    <field context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'uom_qty_change':True, 'company_id': parent.company_id}"
+                                                           name="product_uom_qty" class="oe_inline"/>
+                                                    <field name="product_uom" groups="product.group_uom" class="oe_inline oe_no_button"
+                                                           attrs="{'readonly': [('state', 'in', ('sale','done', 'cancel'))]}"/>
+                                                </div>
+                                                <label for="qty_delivered" string="已交货数量"
+                                                       attrs="{'invisible': [('parent.state', 'not in', ['sale', 'done'])]}"/>
+                                                <div attrs="{'invisible': [('parent.state', 'not in', ['sale', 'done'])]}">
+                                                    <field name="qty_delivered" attrs="{'readonly': [('qty_delivered_updateable', '=', False)]}"/>
+                                                </div>
+                                                <label for="qty_invoiced" string="已开发票数量"
+                                                       attrs="{'invisible': [('parent.state', 'not in', ['sale', 'done'])]}"/>
+                                                <div attrs="{'invisible': [('parent.state', 'not in', ['sale', 'done'])]}">
+                                                    <field name="qty_invoiced" attrs="{'invisible': [('parent.state', 'not in', ['sale', 'done'])]}"/>
+                                                </div>
+                                                <field name="route_id" groups="sale_stock.group_route_so_lines" options="{'no_create': True}"/>
+                                                <field name="price_unit"/>
+                                                <field name="lot_sub_name"/>
+                                                <field name="quant_id" domain="[('product_id','=', product_id),('location_id.usage', '=', 'internal')]"/>
+                                                <field name="lot_id"/>
+                                                <field name="supplier_id"/>
+                                                <field name="purchase_price"/>
+                                                <field name="pol_id"/>
+                                                <field name="is_gold_sample"/>
+                                                <field name="include_tax"/>
 
-                    </page>
-                    <page string="港口信息">
-                        <group>
-                            <field name="from_wharf_id"/>
-                            <field name="to_wharf_id"/>
-                        </group>
-                    </page>
- <page string="采购订单">
-                        <group>
-                            <field name="po_ids"/>
-                        </group>
-                    </page>
-                    <page string="销售条款">
-                        <field name="term_description"/>
-                    </page>
 
-                    <page string="预收认领单">
-                        <field name="yjzy_payment_ids" widget="many2many"
-                               domain="[('sfk_type','=','ysrld')]"
-                               context="{'tree_view_ref':'yjzy_extend.view_ysrld_tree',  'form_view_ref':'yjzy_extend.view_ysrld_form', 'default_so_id': id, 'default_sfk_type': 'ysrld', 'default_payment_type': 'inbound', 'default_partner_type': 'customer'}">
-                        </field>
-                    </page>
-                    <page string="出运单列表">
-                        <field name="tb_ids"/>
-                    </page>
-                    <page string="分录名明细">
-                        <button name="compute_balance" type="object" string="计算余额"/>
-                        <field name="aml_ids"/>
-                    </page>
-                    </notebook>
-                </sheet>
-                   <div class="oe_chatter">
-                    <field name="message_follower_ids" widget="mail_followers"/>
-                    <field name="activity_ids" widget="mail_activity"/>
-                    <field name="message_ids" widget="mail_thread"/>
-                </div>
-                <sheet>
+                                                <label for="discount" groups="sale.group_discount_per_so_line"/>
+                                                <div name="discount" groups="sale.group_discount_per_so_line">
+                                                    <field name="discount" class="oe_inline"/>
+                                                    %
+                                                </div>
+                                            </group>
+                                            <group>
+                                                <field name="product_packaging" attrs="{'invisible': [('product_id', '=', False)]}"
+                                                       context="{'default_product_id': product_id, 'tree_view_ref':'product.product_packaging_tree_view', 'form_view_ref':'product.product_packaging_form_view'}"
+                                                       domain="[('product_id','=',product_id)]" groups="product.group_stock_packaging"/>
+                                                <field name="tax_id" widget="many2many_tags" options="{'no_create': True}"
+                                                       domain="[('type_tax_use','=','sale'),('company_id','=',parent.company_id)]"
+                                                       attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"/>
+                                                <label for="customer_lead"/>
+                                                <div>
+                                                    <field name="customer_lead" class="oe_inline"/>
+                                                    天
+                                                </div>
+                                                <label for="analytic_tag_ids" groups="analytic.group_analytic_accounting"/>
+                                                <div>
+                                                    <field name="analytic_tag_ids" widget="many2many_tags" groups="analytic.group_analytic_accounting"
+                                                           options="{'color_field': 'color'}"/>
+                                                </div>
+                                            </group>
+                                        </group>
+                                        <label for="name"/>
+                                        <field name="name"/>
+                                        <div groups="base.group_no_one">
+                                            <label for="invoice_lines"/>
+                                            <field name="invoice_lines"/>
+                                        </div>
+                                        <field name="state" invisible="1"/>
+                                    </form>
+                                    <button name="open_multi_select_product" string="Multi select product" type="object" class="oe_highlight"/>
+                                    <tree string="销售订单明细" decoration-info="invoice_status=='to invoice'" limit="10"><!--editable="bottom" -->
+                                        <field name="sequence" widget="handle"/>
+                                        <field name="product_updatable" invisible="1"/>
+                                        <button type="object" name="get_in_stock_quant" icon="fa-archive"/>
+                                        <field name="product_id" attrs="{'readonly': [('product_updatable', '=', False)]}"
+                                               orce_save="1" context="{'show_last_sale':1,'partner_id':parent.partner_id, 'quantity':product_uom_qty,
+                                           'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"/>
+                                        <field name="layout_category_id" groups="sale.group_sale_layout"/>
+                                        <field name="name"/>
+                                        <field name="product_uom_qty" string="订购数量"
+                                               context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"/>
+                                        <field name="quant_id" domain="[('product_id','=', product_id)]"/>
+                                        <field name="lot_id"/>
+                                        <field name="supplier_id"/>
+                                        <field name="purchase_price"/>
+                                        <field name="pol_id"/>
+                                        <field name="smline_str"/>
+                                        <field name="smline_qty"/>
+                                        <field name="dlr_str"/>
+                                        <field name="dlr_qty"/>
+                                        <button icon="fa-list" type="object" name="open_wizard_sol_reserver"/>
+                                        <field name="dlr_done_qty"/>
+                                        <field name="dlr_todo_qty"/>
+                                        <field name="qty_pre_all"/>
+                                        <field name="lot_sub_name"/>
+                                        <field name="product_qty" invisible="1"/>
+                                        <field name="qty_available" readonly="1" invisible="0"/>
+                                        <field name="virtual_available" readonly="1" invisible="0"/>
+                                        <field name="qty_delivered"
+                                               attrs="{'column_invisible': [('parent.state', 'not in', ['sale', 'done'])], 'readonly': [('qty_delivered_updateable', '=', False)]}"/>
+                                        <field name="qty_invoiced" attrs="{'column_invisible': [('parent.state', 'not in', ['sale', 'done'])]}"/>
+                                        <field name="qty_to_invoice" invisible="1"/>
+                                        <field name="product_uom" attrs="{'readonly': [('state', 'in', ('sale','done', 'cancel'))]}"
+                                               context="{'company_id': parent.company_id}" groups="product.group_uom" options="{&quot;no_open&quot;: True}"/>
+                                        <field name="analytic_tag_ids" groups="analytic.group_analytic_accounting" widget="many2many_tags"
+                                               options="{'color_field': 'color'}"/>
+                                        <field name="last_sale_price"/>
+                                        <field name="back_tax"/>
+                                        <field name="bom_id"/>
+                                        <field name="bom_qty"/>
+                                        <field name="need_split_bom"/>
+                                        <field name="need_print"/>
+                                        <field name="s_uom_id"/>
+                                        <field name="p_uom_id"/>
+                                        <field name="second_unit_price" groups="base.group_system"/>
+                                        <field name="second_price_total" groups="base.group_system"/>
+                                        <field name="route_id" groups="sale_stock.group_route_so_lines" options="{'no_create': True}"/>
+                                        <field name="price_unit" attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"/>
+                                        <field name="tax_id" widget="many2many_tags" options="{'no_create': True}"
+                                               domain="[('type_tax_use','=','sale'),('company_id','=',parent.company_id)]"
+                                               attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"/>
+                                        <field name="second_unit_price"/>
 
-                </sheet>
+                                        <field name="s_uom_id"/>
+                                        <field name="p_uom_id"/>
+                                        <field name="back_tax"/>
+                                        <field name="bom_id"/>
+                                        <field name="bom_qty"/>
+                                        <field name="need_split_bom"/>
+
+                                        <button string="查看库存批次" type="object" name="get_in_stock_quant"/>
+                                        <field name="discount" groups="sale.group_discount_per_so_line"/>
+                                        <field name="price_subtotal" widget="monetary" groups="sale.group_show_price_subtotal"/>
+                                        <field name="price_total" widget="monetary" groups="sale.group_show_price_total"/>
+                                        <field name="qty_delivered_updateable" invisible="1"/>
+                                        <field name="state" invisible="1"/>
+                                        <field name="invoice_status" invisible="1"/>
+                                        <field name="customer_lead" invisible="1"/>
+                                        <field name="currency_id" invisible="1"/>
+                                        <button icon="fas fa-eye" type="object" name="show_product_attrs"/>
+
+
+                                    </tree>
+                                    <kanban class="o_kanban_mobile">
+                                        <field name="product_id"/>
+                                        <field name="product_uom_qty"/>
+                                        <field name="product_uom" groups="product.group_uom"/>
+                                        <field name="price_subtotal"/>
+                                        <field name="price_unit"/>
+                                        <templates>
+                                            <t t-name="kanban-box">
+                                                <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                                    <div class="row">
+                                                        <div class="col-xs-8">
+                                                            <strong>
+                                                                <span>
+                                                                    <t t-esc="record.product_id.value"/>
+                                                                </span>
+                                                            </strong>
+                                                        </div>
+                                                        <div class="col-xs-4">
+                                                            <strong>
+                                                                <span class="pull-right text-right">
+                                                                    <t t-esc="record.price_subtotal.value"/>
+                                                                </span>
+                                                            </strong>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-xs-12 text-muted">
+                                                            <span>数量：
+                                                                <t t-esc="record.product_uom_qty.value"/>
+                                                                <t t-esc="record.product_uom.value"/>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-xs-12 text-muted">
+                                                            <span>单价:
+                                                                <t t-esc="record.price_unit.value"/>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <hr/>
+                                            </t>
+                                        </templates>
+                                    </kanban>
+                                </field>
+                                <group class="oe_subtotal_footer oe_right" colspan="2" name="sale_total">
+                                    <field name="amount_untaxed" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                    <field name="amount_tax" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                    <div class="oe_subtotal_footer_separator oe_inline o_td_label">
+                                        <label for="amount_total"/>
+                                    </div>
+                                    <field name="amount_total" nolabel="1" class="oe_subtotal_footer_separator" widget="monetary"
+                                           options="{'currency_field': 'currency_id'}"/>
+                                </group>
+                                <field name="note" class="oe_inline" placeholder="在销售设置中设置默认条款和条件…"/>
+                                <div class="oe_clear"/>
+                            </page>
+                            <page string="其他信息">
+                                <group>
+                                    <group string="Shipping Information" name="sale_shipping">
+                                        <field name="warehouse_id" options="{'no_create': True}" groups="stock.group_stock_multi_locations"/>
+                                        <field name="incoterm" widget="selection" groups="sale_stock.group_display_incoterm"/>
+                                        <field name="picking_policy" required="True"/>
+                                    </group>
+                                    <group string="销售信息" name="sales_person">
+                                        <field name="tag_ids" widget="many2many_tags"/>
+                                        <field name="user_id"/>
+                                        <field name="team_id" options="{'no_create': True}"/>
+
+                                        <field name="is_abandoned_cart" invisible="1"/>
+                                        <field name="cart_recovery_email_sent" invisible="1"/>
+                                        <field name="client_order_ref"/>
+                                        <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
+                                        <field name="analytic_account_id" context="{'default_partner_id':partner_invoice_id, 'default_name':name}"
+                                               attrs="{'readonly': ['|',('analytic_account_id','!=',False),('invoice_count','!=',0),('state','=','sale')]}"
+                                               groups="analytic.group_analytic_accounting" force_save="1"/>
+                                    </group>
+                                    <group name="sale_pay" string="开票">
+                                        <field name="date_order" attrs="{'invisible': [('state', 'in', ['sale', 'done', 'cancel'])]}"/>
+                                        <field name="fiscal_position_id" options="{'no_create': True}"/>
+                                        <field name="invoice_status" states="sale,done" invisible="0"/>
+                                    </group>
+                                    <group string="报表" name="technical" groups="base.group_no_one">
+                                        <field groups="base.group_no_one" name="origin"/>
+                                        <field name="campaign_id" groups="base.group_no_one"/>
+                                        <field name="medium_id" groups="base.group_no_one"/>
+                                        <field name="source_id" groups="base.group_no_one"/>
+                                        <field name="opportunity_id" help="Log in the chatter from which opportunity the order originates"
+                                               groups="base.group_no_one"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="其他费用列表">
+                                <group>
+                                    <group>
+                                        <field name="company_currency_id" invisible="1"/>
+                                        <field name="fee_inner"/>
+                                        <field name="fee_rmb1"/>
+                                        <field name="fee_rmb2"/>
+                                    </group>
+                                </group>
+                                <div>
+                                    <label string="国外运保费" for="fee_outer" class=""/>
+                                    <field name="fee_outer" nolabel="1" class="oe_inline"/>
+                                    <field name="outer_currency_id" nolabel="1" class="oe_inline"/>
+                                </div>
+                                <div>
+                                    <label string="出口保险费" for="fee_export_insurance"/>
+                                    <field name="fee_export_insurance" nolabel="1" class="oe_inline"/>
+                                    <field name="export_insurance_currency_id" nolabel="1" class="oe_inline"/>
+                                </div>
+                                <div>
+                                    <label string="其他外币费用" for="fee_other"/>
+                                    <field name="fee_other" nolabel="1" class="oe_inline"/>
+                                    <field name="other_currency_id" nolabel="1" class="oe_inline"/>
+                                </div>
+
+                            </page>
+                            <page string="港口信息">
+                                <group>
+                                    <field name="from_wharf_id"/>
+                                    <field name="to_wharf_id"/>
+                                </group>
+                            </page>
+                            <page string="采购订单">
+                                <group>
+                                    <field name="po_ids"/>
+                                </group>
+                            </page>
+                            <page string="销售条款">
+                                <field name="term_description"/>
+                            </page>
+
+                            <page string="预收认领单">
+                                <field name="yjzy_payment_ids" widget="many2many"
+                                       domain="[('sfk_type','=','ysrld')]"
+                                       context="{'tree_view_ref':'yjzy_extend.view_ysrld_tree',  'form_view_ref':'yjzy_extend.view_ysrld_form', 'default_so_id': id, 'default_sfk_type': 'ysrld', 'default_payment_type': 'inbound', 'default_partner_type': 'customer'}">
+                                </field>
+                            </page>
+                            <page string="出运单列表">
+                                <field name="tb_ids"/>
+                            </page>
+                            <page string="分录名明细">
+                                <button name="compute_balance" type="object" string="计算余额"/>
+                                <field name="aml_ids"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="activity_ids" widget="mail_activity"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                    <sheet>
+
+                    </sheet>
                 </form>
             </field>
         </record>
