@@ -211,6 +211,9 @@ class sale_order(models.Model):
 
     country_id = fields.Many2one('res.country', related='partner_id.country_id', readonly=True, string=u'国家')
 
+    approve_date = fields.Date('审批完成日期')
+    hx_date = fields.Date('核销时间')
+
 
     @api.constrains('contract_code')
     def check_contract_code(self):
