@@ -100,6 +100,8 @@
                                 <field name="partner_id" domain="[('customer','=',True),('parent_id', '=', False)]"
                                        context="{'search_default_customer':1, 'show_address': 0}" options="{&quot;always_reload&quot;: True}"/>
                                 <field name="country_id"/>
+                                <field name="current_date_rate"/>
+
 
 
                                 <field name="can_directly_mark_as_paid" invisible="1"/>
@@ -117,7 +119,11 @@
                                        context="{'default_type':'delivery','show_address': 1}" options="{&quot;always_reload&quot;: True}"/>
                                 <field name="dump_picking_id" readonly="1"/>
                                 <field name="currency_id" invisible="0"/>
-                                <field name="second_partner_id" groups="base.group_system"/>
+
+
+                                <field name="is_inner_trade"/>
+                                <field name="second_company_id" attrs="{'invisible': [('is_inner_trade', '!=', True)]}"/>
+                                <field name="second_partner_id" groups="base.group_system" attrs="{'invisible': [('is_inner_trade', '!=', True)]}"/>
 
                             </group>
                             <group>
@@ -173,7 +179,7 @@
                                         <group>
                                             <group>
                                                 <field name="product_updatable" invisible="1"/>
-                                                <field name="product_id" domain="[('state','=','done')]"
+                                                <field name="product_id" domain="[('state','=','done')]" options="{'can_create': 1}"
                                                        context="{'show_last_sale':1,'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"
                                                        attrs="{'readonly': [('product_updatable', '=', False)]}" force_save="1"/>
                                                 <field name="layout_category_id" groups="sale.group_sale_layout"/>
