@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="new_sale_order_tree" model="ir.ui.view">
+            <field name="name">sale.order.tree</field>
+            <field name="model">sale.order</field>
+            <field name="arch" type="xml">
+                <tree string="销售订单">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="new_sale_order_from" model="ir.ui.view">
+            <field name="name">sale.order.form</field>
+            <field name="model">sale.order</field>
+            <field name="arch" type="xml">
+                <form string="销售订单">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="new_sale_order_action" model="ir.actions.act_window">
+            <field name="name">销售订单</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('new_sale_order_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_from')})]"/>
+        </record>
+
+
+        <menuitem id="new_sale_order_menu" name="新销售订单" parent="sale.sale_order_menu" action="new_sale_order_action" sequence=""/>
+
+
+    </data>
+</odoo>
