@@ -8,6 +8,7 @@
             <field name="arch" type="xml">
                 <tree string="销售订单">
                     <field name="name"/>
+                    <field name="state"/>
                 </tree>
             </field>
         </record>
@@ -20,6 +21,7 @@
                     <sheet>
                         <group>
                             <field name="name"/>
+                            <field name="state"/>
                         </group>
                     </sheet>
                 </form>
