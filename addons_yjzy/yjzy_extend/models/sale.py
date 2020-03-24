@@ -221,7 +221,6 @@ class sale_order(models.Model):
 
     @api.onchange('contract_type')
     def onchange_contract_type(self):
-        print('????', self.contract_type)
         if self.contract_type == 'b':
             self.is_inner_trade = True
         else:
