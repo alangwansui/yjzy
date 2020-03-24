@@ -46,8 +46,7 @@ from . import bom
 from . import res_country
 from . import user_budget
 from . import budget_budget
-
-
+from . import crm
 
 from . import tools
 from . import Base
@@ -55,6 +54,7 @@ from . import Base
 from . import transport_bill_fandian
 from . import ir_translation
 from . import mail
+
 
 
 

@@ -214,8 +214,18 @@ class sale_order(models.Model):
     hx_date = fields.Date('核销时间')
 
     current_date_rate = fields.Float('当日汇率')
+
+    contract_type = fields.Selection([('a', '模式1'), ('b', '模式2'), ('c', '模式3')], '合同类型', default='a')
     is_inner_trade = fields.Boolean('内部交易')
     second_company_id = fields.Many2one('res.company', '内部交易公司')
+
+    @api.depends('contract_type')
+    def onchange_contract_type(self):
+        if self.contract_type == 'b':
+            self.is_inner_trade == True
+        else:
+            self.is_inner_trade == False
+
 
     @api.depends('second_company_id')
     def onchange_second_company(self):
@@ -231,7 +241,6 @@ class sale_order(models.Model):
 
     @api.multi
     def copy(self, default=None):
-        self.ensure_one()
         default = dict(default or {})
         if 'contract_code' not in default:
             default['contract_code'] = "%s(copy)" % self.contract_code

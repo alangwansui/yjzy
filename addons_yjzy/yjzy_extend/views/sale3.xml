@@ -120,10 +120,10 @@
                                 <field name="dump_picking_id" readonly="1" groups="base.group_system"/>
                                 <field name="currency_id" invisible="0"/>
 
-
-                                <field name="is_inner_trade"/>
-                                <field name="second_company_id" attrs="{'invisible': [('is_inner_trade', '!=', True)]}"/>
-                                <field name="second_partner_id" groups="base.group_system" attrs="{'invisible': [('is_inner_trade', '!=', True)]}"/>
+                                <field name="contract_type"/>
+                                <field name="is_inner_trade"  groups="base.group_system"/>
+                                <field name="second_company_id" attrs="{'invisible': [('contract_type', '!=', 'b')]}"/>
+                                <field name="second_partner_id" groups="base.group_system" attrs="{'invisible': [('contract_type', '!=', 'b')]}"/>
 
                             </group>
                             <group>
@@ -171,6 +171,10 @@
                                 <field name="pre_advance"/>
                                 <field name="gold_sample_state"/>
                                 <field name="approve_date" />
+
+                                <field name="lot_sub_mark"  groups="base.group_system"/>
+
+
                             </group>
                         </group>
                         <notebook>

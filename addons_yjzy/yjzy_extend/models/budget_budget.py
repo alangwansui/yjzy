@@ -20,9 +20,9 @@ class budget_budget(models.Model):
             elif ttype == 'company':
                 name = '%s %s~%s' % (Dic_Budget[ttype], one.date_start, one.date_end)
             elif ttype == 'transport':
-                name = '%s %s %s' % (Dic_Budget[ttype], one.tb_id.name)
+                name = '%s %s' % (Dic_Budget[ttype], one.tb_id.name)
             elif ttype == 'lead':
-                name = '%s %s %s' % (Dic_Budget[ttype], one.lead_id.name)
+                name = '%s %s' % (Dic_Budget[ttype], one.lead_id.name)
             one.name = name
 
     def _get_default_currency_id(self):
@@ -42,9 +42,9 @@ class budget_budget(models.Model):
     date_start = fields.Date('开始')
     date_end = fields.Date('结束')
 
-    employee_id = fields.Many2one('hr.employee', '员工', required=False)
-    tb_id = fields.Many2one('transport.bill', u'出运合同')
-    lead_id = fields.Many2one('crm.lead', '项目')
+    employee_id = fields.Many2one('hr.employee', '员工', required=False, ondelete="restrict")
+    tb_id = fields.Many2one('transport.bill', u'出运合同', ondelete="restrict")
+    lead_id = fields.Many2one('crm.lead', '项目', ondelete="restrict")
 
     user_id = fields.Many2one('res.users', '用户', required=False)
     expense_ids = fields.One2many('hr.expense', 'budget_id', '费用明细')

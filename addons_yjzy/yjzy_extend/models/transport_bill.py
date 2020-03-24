@@ -354,7 +354,14 @@ class transport_bill(models.Model):
     is_editable = fields.Boolean(u'可编辑')
 
 
-
+    @api.model
+    def create(self, vals):
+        one = super(transport_bill, self).create(vals)
+        budget = self.env['budget.budget'].create({
+            'type': 'transport',
+            'tb_id': one.id,
+        })
+        return one
 
     @api.constrains('ref')
     def check_contract_code(self):
