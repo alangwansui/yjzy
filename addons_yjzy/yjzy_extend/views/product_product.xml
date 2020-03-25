@@ -14,6 +14,8 @@
                     <field name="customer_ref2"/>
                     <field name="customer_id"/>
                     <field name="source_area"/>
+                    <field name="is_gold_sample"/>
+
                 </field>
 
             </field>
@@ -31,6 +33,7 @@
                     <field name="customer_description"/>
                     <field name="key_value_line_ids" widget="many2many_tags"/>
                     <field name="variant_seller_ids" widget="many2many_tags"/>
+                    <field name="is_gold_sample"/>
                 </field>
             </field>
         </record>
@@ -55,6 +58,7 @@
                     <field name="back_tax"/>
                     <field name="s_uom_id"/>
                     <field name="p_uom_id"/>
+                    <field name="is_gold_sample"/>
 
                     <field name="customer_barcode"/>
                     <field name="pi_function"/>
