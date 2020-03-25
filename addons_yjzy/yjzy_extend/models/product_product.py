@@ -82,6 +82,8 @@ class Product_Product(models.Model):
 
     state = fields.Selection([('draft', u'草稿'),('first', u'一级审批'),('done', u'完成')], u'状态', default='draft')
 
+    is_gold_sample = fields.Boolean('是否有金样')
+
 
 
     @api.depends('seq', 'categ_id')

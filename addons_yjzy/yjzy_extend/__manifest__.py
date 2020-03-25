@@ -77,6 +77,8 @@
         'views/ir_translation.xml',
         'views/mail.xml',
         'views/budget_budget.xml',
+        'views/gongsi.xml',
+
 
 
 

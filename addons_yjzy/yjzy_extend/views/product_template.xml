@@ -47,7 +47,7 @@
                     <field name="tmpl_code"/>
                     <field name="need_print"/>
                     <field name="need_split_bom"/>
-                    <field name="is_gold_sample"/>
+<!--                    <field name="is_gold_sample"/>-->
                 </field>
             </field>
         </record>
