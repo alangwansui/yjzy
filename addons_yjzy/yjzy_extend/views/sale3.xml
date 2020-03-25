@@ -105,7 +105,7 @@
 
 
                                 <field name="can_directly_mark_as_paid" invisible="1"/>
-                                <field name="link_man_id" domain="[('parent_id','=',partner_id),('type', '=', 'contract')]"/>
+                                <field name="link_man_id" domain="[('parent_id','=',partner_id),('type', '=', 'contract')]" groups="base.group_system"/>
                                 <field name="customer_pi" string="客户合同号" help="审批之后不允许修改"/>
                                 <field name="incoterm"/>
                                 <field name="requested_date" string="客户交期"/>
@@ -220,7 +220,6 @@
                                                 <field name="qty_to_invoice" invisible="1"/>
                                                 <field name="qty_delivered_updateable" invisible="1"/>
                                                 <field name="price_subtotal" invisible="1"/>
-                                                <field name="hs_id"/>
                                                 <label for="product_uom_qty" string="订购数量"/>
                                                 <div>
                                                     <field context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'uom_qty_change':True, 'company_id': parent.company_id}"
@@ -228,6 +227,17 @@
                                                     <field name="product_uom" groups="product.group_uom" class="oe_inline oe_no_button"
                                                            attrs="{'readonly': [('state', 'in', ('sale','done', 'cancel'))]}"/>
                                                 </div>
+                                                  <field name="price_unit"/>
+                                                  <field name="is_gold_sample" string="金样状态"/>
+                                                <field name="hs_id"/>
+                                                <field name="back_tax"/>
+                                                <field name="price_total" widget="monetary" groups="sale.group_show_price_total"/>
+                                                <field name="back_tax_amount"/>
+
+
+
+
+
                                                 <label for="qty_delivered" string="已交货数量"
                                                        attrs="{'invisible': [('parent.state', 'not in', ['sale', 'done'])]}"/>
                                                 <div attrs="{'invisible': [('parent.state', 'not in', ['sale', 'done'])]}">
@@ -239,15 +249,11 @@
                                                     <field name="qty_invoiced" attrs="{'invisible': [('parent.state', 'not in', ['sale', 'done'])]}"/>
                                                 </div>
                                                 <field name="route_id" groups="sale_stock.group_route_so_lines" options="{'no_create': True}"/>
-                                                <field name="price_unit"/>
+
                                                 <field name="lot_sub_name"/>
                                                 <field name="quant_id" domain="[('product_id','=', product_id),('location_id.usage', '=', 'internal')]"/>
                                                 <field name="lot_id"/>
-                                                <field name="supplier_id"/>
-                                                <field name="purchase_price"/>
-                                                <field name="pol_id"/>
-                                                <field name="is_gold_sample"/>
-                                                <field name="include_tax"/>
+
 
 
                                                 <label for="discount" groups="sale.group_discount_per_so_line"/>
@@ -257,6 +263,13 @@
                                                 </div>
                                             </group>
                                             <group>
+                                                 <field name="purchase_price"/>
+                                                 <field name="purchase_cost"/>
+                                                <field name="supplier_id"/>
+                                                <field name="pol_id"/>
+                                                <field name="include_tax"/>
+
+
                                                 <field name="need_print"/>
                                                 <field name="product_packaging" attrs="{'invisible': [('product_id', '=', False)]}"
                                                        context="{'default_product_id': product_id, 'tree_view_ref':'product.product_packaging_tree_view', 'form_view_ref':'product.product_packaging_form_view'}"
