@@ -181,6 +181,10 @@ class account_payment(models.Model):
     jiehui_in_amount = fields.Float('结汇转入余额')
 
     payment_date_confirm = fields.Datetime('付款确认时间') ##akiny 付款确认时间
+    gongsi_id = fields.Many2one('gongsi', '内部公司')
+
+
+
     @api.onchange('journal_id')
     def _onchange_journal(self):
         res = super(account_payment, self)._onchange_journal()

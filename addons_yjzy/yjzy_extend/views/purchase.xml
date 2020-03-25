@@ -19,6 +19,7 @@
             <field name="arch" type="xml">
                 <tree position="inside">
                     <field name="include_tax"/>
+                    <field name="gongsi_id"/>
                     <field name="supplierinfo_ids" widget="many2many_tags"/>
                 </tree>
             </field>
@@ -53,6 +54,7 @@
                     <field name="pre_advance"/>
                     <field name="can_confirm_by_so" readonly="0"/>
                     <field name="user_ids" widget="many2many_tags"/>
+                    <field name="gongsi_id"/>
                 </field>
 
                 <field name="currency_id" position="after">

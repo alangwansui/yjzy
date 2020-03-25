@@ -752,6 +752,7 @@ class transport_bill(models.Model):
                     'date_invoice': self.date_out_in,
                     'include_tax': self.include_tax,
                     'yjzy_type': 'purchase',
+                    'gongsi_id': self.gongsi_id.id,
 
                 })
                 invoice.clear_zero_line()
@@ -818,6 +819,7 @@ class transport_bill(models.Model):
                 'date_ship': self.date_ship,
                 'bill_id': self.id,
                 'yjzy_type': 'sale',
+                'gongsi_id': self.gongsi_id.id,
             })
 
             #发票明细添加运保费
@@ -991,7 +993,10 @@ class transport_bill(models.Model):
     def open_wizard_transport4so(self):
         self.ensure_one()
         ctx = self.env.context.copy()
-        ctx.update({'default_partner_id': self.partner_id.id})
+        ctx.update({
+            'default_partner_id': self.partner_id.id,
+            'default_gongsi_id': self.gongsi_id,
+        })
         return {
             'name': '添加销售订单',
             'view_type': 'form',

@@ -9,6 +9,7 @@
                 <tree string="销售订单">
                     <field name="name"/>
                     <field name="state"/>
+                    <field name="gongsi_id"/>
                 </tree>
             </field>
         </record>

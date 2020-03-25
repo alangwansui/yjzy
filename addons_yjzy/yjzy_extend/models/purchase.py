@@ -98,6 +98,7 @@ class purchase_order(models.Model):
     user_ids = fields.Many2many('res.users', 'ref_user_po', 'pid', 'uid', u'用户')
 
     is_editable = fields.Boolean(u'可编辑')
+    gongsi_id = fields.Many2one('gongsi', '内部公司')
 
 
     @api.constrains('contract_code')

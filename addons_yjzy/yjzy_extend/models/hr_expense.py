@@ -99,7 +99,7 @@ class hr_expense_sheet(models.Model):
     expense_line_ids_b = fields.One2many('hr.expense', related='expense_line_ids')
     expense_line_ids_employee = fields.One2many('hr.expense', related='expense_line_ids')
     expense_line_ids_company = fields.One2many('hr.expense', related='expense_line_ids')
-
+    gongsi_id = fields.Many2one('gongsi', '内部公司')
 
     @api.onchange('categ_id')
     def onchange_categ(self):
@@ -415,6 +415,7 @@ class hr_expense(models.Model):
     budget_id = fields.Many2one('budget.budget', '预算')
     budget_amount = fields.Monetary('预算金额', related='budget_id.amount', currency_field='currency_id', readonly=True)
     budget_amount_reset = fields.Monetary('预算剩余', related='budget_id.amount_reset', currency_field='currency_id', readonly=True)
+    gongsi_id = fields.Many2one('gongsi', '内部公司')
 
     def get_budget_type(self):
         return self.second_categ_id.budget_type or self.categ_id.budget_type or None
