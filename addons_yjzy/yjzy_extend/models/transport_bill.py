@@ -353,6 +353,8 @@ class transport_bill(models.Model):
     sale_assistant_id = fields.Many2one('res.users', u'业务助理')
     is_editable = fields.Boolean(u'可编辑')
 
+    gongsi_id = fields.Many2one('gongsi', '内部公司')
+
 
     @api.model
     def create(self, vals):
