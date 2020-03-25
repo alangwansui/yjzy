@@ -10,6 +10,7 @@
         <field name="arch" type="xml">
             <field name="account_id" position="after">
                 <field name="hx_code"/>
+                <field name="gongsi_id"/>
             </field>
        </field>
     </record>
@@ -25,6 +26,7 @@
                 <field name="include_tax"/>
                 <field name="tb_contract_code"/>
                 <field name="purchase_contract_code"/>
+                <field name="gongsi_id"/>
             </tree>
         </field>
     </record>
@@ -47,6 +49,7 @@
                 <field name="expense_id" readonly="1"/>
                 <field name="new_payment_id" readonly="1"/>
                 <field name="hx_code"/>
+                <field name="gongsi_id"/>
             </xpath>
             <field name="ref" position="after">
                 <field name="invoice_id"/>
@@ -74,6 +77,7 @@
                 <field name="expense_id" readonly="1"/>
                 <field name="new_payment_id" readonly="1"/>
                 <field name="hx_code"/>
+                <field name="gongsi_id"/>
             </tree>
         </field>
     </record>
@@ -90,6 +94,7 @@
                 <field name="expense_id" readonly="1"/>
                 <field name="new_payment_id" readonly="1"/>
                 <field name="hx_code"/>
+                <field name="gongsi_id"/>
             </field>
         </field>
     </record>

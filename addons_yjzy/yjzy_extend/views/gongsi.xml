@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+<record id="gongsi_tree_view" model="ir.ui.view">
+    <field name="name">gongsi.tree</field>
+    <field name="model">gongsi</field>
+    <field name="arch" type="xml">
+        <tree string="内部公司">
+            <field name="name"/>
+            <field name="partner_id"/>
+        </tree>
+    </field>
+</record>
+
+<record id="gongsi_tree_form" model="ir.ui.view">
+    <field name="name">gongsi.form</field>
+    <field name="model">gongsi</field>
+    <field name="arch" type="xml">
+        <form string="内部公司">
+            <group>
+                <group>
+                    <field name="name"/>
+                    <field name="partner_id"/>
+                </group>
+            </group>
+        </form>
+    </field>
+</record>
+
+    <record id="action_gongsi" model="ir.actions.act_window">
+        <field name="name">内部公司</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">gongsi</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+
+    <menuitem id="menu_gongsi" name="内部公司" parent="base.menu_users" action="action_gongsi" sequence=""/>
+
+
+
+</odoo>

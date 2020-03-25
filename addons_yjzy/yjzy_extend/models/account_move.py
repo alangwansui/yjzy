@@ -15,6 +15,8 @@ class account_move(models.Model):
 
     purchase_contract_code = fields.Char(u'采购合同号')
 
+    gongsi_id = fields.Many2one('gongsi', '内部公司')
+
 
     @api.multi
     def post(self):
@@ -39,6 +41,8 @@ class account_move_line(models.Model):
     hx_code = fields.Char(u'内部核对标记', related='expense_id.hx_code', store=True, index=True)
 
     new_payment_id = fields.Many2one('account.payment', u'收付款ID')
+
+    gongsi_id = fields.Many2one('gongsi', '内部公司')
 
 
 
