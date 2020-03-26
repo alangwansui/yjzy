@@ -20,8 +20,6 @@ class account_move(models.Model):
 
     @api.multi
     def post(self):
-        pass
-
         res = super(account_move, self).post()
         return res
 
@@ -43,6 +41,11 @@ class account_move_line(models.Model):
     new_payment_id = fields.Many2one('account.payment', u'收付款ID')
 
     gongsi_id = fields.Many2one('gongsi', '内部公司')
+
+
+    # @api.model
+    # def create(self, vals):
+    #     raise Exception('xxx')
 
 
 

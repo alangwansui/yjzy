@@ -570,7 +570,7 @@
                                        options="{'not_delete': True, 'reload_on_button': True, 'no_create': False}"
                                        context="{'expense_adding_line': True, 'default_company_id':company_id,'tracking_disable': True,
                                        'default_categ_id': categ_id, 'default_second_categ_id': second_categ_id,
-                                       'no_show_mark': context.get('no_show_mark'),
+                                       'no_show_mark': context.get('no_show_mark'),  'default_gongsi_id': gongsi_id,
                                        'default_currency_id': currency_id, 'default_state': 'draft','form_view_ref':'yjzy_extend.view_hr_expense_new_from_sheet_form'}" >
 
                                     <tree decoration-danger="is_refused">

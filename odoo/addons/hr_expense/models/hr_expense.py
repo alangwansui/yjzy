@@ -153,6 +153,7 @@ class HrExpense(models.Model):
             'payment_id': line.get('payment_id'),
             'expense_id': line.get('expense_id'),
             'new_payment_id': line.get('new_payment_id'),
+            'gongsi_id': self.gongsi_id.id,
         }
 
     @api.multi
@@ -202,6 +203,7 @@ class HrExpense(models.Model):
                     # force the name to the default value, to avoid an eventual 'default_name' in the context
                     # to set it to '' which cause no number to be given to the account.move when posted.
                     'name': '/',
+                    'gongsi_id': expense.gongsi_id.id or self.gongsi_id.id,
                 })
                 move_group_by_sheet[expense.sheet_id.id] = move
             else:
@@ -210,10 +212,6 @@ class HrExpense(models.Model):
             diff_currency_p = expense.currency_id != company_currency
             #one account.move.line per expense (+taxes..)
             move_lines = expense._move_line_get()
-
-            print('**********', move_lines)
-
-
 
             #create one more move line, a counterline for the total on payable account
             payment_id = False
@@ -242,6 +240,7 @@ class HrExpense(models.Model):
                     'sfk_type': total < 0 and 'rcfksqd' or 'rcskrld',
                     'expense_id': expense.id,
                     'yjzy_payment_id': expense.yjzy_payment_id.id,
+                    'gongsi_id': expense.gongsi_id.id or self.gongsi_id.id,
                 })
                 payment_id = payment.id
             else:
@@ -265,6 +264,7 @@ class HrExpense(models.Model):
                     'expense_id': expense.id,
                     'new_payment_id': expense.yjzy_payment_id.id,
                     'partner_id':   expense.partner_id.id or expense.employee_id.address_home_id.commercial_partner_id.id,
+                    'gongsi_id': expense.gongsi_id.id or self.gongsi_id.id,
                     })
 
 
@@ -278,9 +278,7 @@ class HrExpense(models.Model):
             #convert eml into an osv-valid format
             lines = [(0, 0, expense._prepare_move_line(x)) for x in move_lines]
 
-            print('---->2,', len(lines), lines)
-            for l in lines:
-                print(l)
+
             move.with_context(dont_create_taxes=True).write({'line_ids': lines})
             expense.sheet_id.write({'account_move_id': move.id})
             if expense.payment_mode == 'company_account':
@@ -319,6 +317,7 @@ class HrExpense(models.Model):
             'analytic_account_id': self.analytic_account_id.id,
             'expense_id': self.id,
             'partner_id': self.partner_id.id,
+            'gongsi_id': self.gongsi_id.id,
         }
         return move_line
 

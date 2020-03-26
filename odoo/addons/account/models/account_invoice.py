@@ -1204,6 +1204,7 @@ class AccountInvoice(models.Model):
             'tax_ids': line.get('tax_ids', False),
             'tax_line_id': line.get('tax_line_id', False),
             'analytic_tag_ids': line.get('analytic_tag_ids', False),
+            'gongsi_id': self.gongsi_id.id,
         }
 
     @api.multi
