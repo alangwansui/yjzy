@@ -1,4 +1,5 @@
 
+from odoo.osv import expression
 import re
 from odoo import models, fields, api, _, tools, SUPERUSER_ID, registry
 from odoo.exceptions import Warning
@@ -49,6 +50,13 @@ class personal_partner(models.Model):
     partner_id = fields.Many2one('res.partner', u'内部联系人')
     tag_id = fields.Many2one('personal.tag', u'通讯录分组', default=get_default_tag)
     user_id = fields.Many2one('res.users', u'用户', default=lambda self: self._uid)
+
+
+    def name_search(self, name='', args=None, operator='ilike', limit=100):
+        if operator in ('ilike', 'like', '=', '=like', '=ilike'):
+            args = expression.OR([args or [], [('email', operator, name)]])
+        return super(personal_partner, self).name_search(name, args, operator, limit)
+
 
     @api.constrains('email')
     def check_email(self):
