@@ -221,7 +221,8 @@ class hr_expense_sheet(models.Model):
             'name': u'草稿发票',
             'partner_id': partner.id,
             'account_id': invoice_account.id,
-            'invoice_line_ids': [(0, 0, invoice_line_data)]
+            'invoice_line_ids': [(0, 0, invoice_line_data)],
+            'gongsi_id': self.gongsi_id.id,
         })
         self.back_tax_invoice_id = invoice_id
 
