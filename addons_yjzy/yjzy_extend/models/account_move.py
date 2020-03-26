@@ -45,6 +45,11 @@ class account_move_line(models.Model):
     gongsi_id = fields.Many2one('gongsi', '内部公司')
 
 
+    # @api.model
+    # def create(self, vals):
+    #     raise Exception('xxx')
+
+
 
 
 
