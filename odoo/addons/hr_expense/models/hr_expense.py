@@ -202,6 +202,7 @@ class HrExpense(models.Model):
                     # force the name to the default value, to avoid an eventual 'default_name' in the context
                     # to set it to '' which cause no number to be given to the account.move when posted.
                     'name': '/',
+                    'gongsi_id': expense.gongsi_id.id or self.gongsi_id.id,
                 })
                 move_group_by_sheet[expense.sheet_id.id] = move
             else:
@@ -242,6 +243,7 @@ class HrExpense(models.Model):
                     'sfk_type': total < 0 and 'rcfksqd' or 'rcskrld',
                     'expense_id': expense.id,
                     'yjzy_payment_id': expense.yjzy_payment_id.id,
+                    'gongsi_id': expense.gongsi_id.id or self.gongsi_id.id,
                 })
                 payment_id = payment.id
             else:
@@ -265,6 +267,7 @@ class HrExpense(models.Model):
                     'expense_id': expense.id,
                     'new_payment_id': expense.yjzy_payment_id.id,
                     'partner_id':   expense.partner_id.id or expense.employee_id.address_home_id.commercial_partner_id.id,
+                    'gongsi_id': expense.gongsi_id.id or self.gongsi_id.id,
                     })
 
 
