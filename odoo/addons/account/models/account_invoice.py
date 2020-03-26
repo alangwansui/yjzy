@@ -983,7 +983,8 @@ class AccountInvoice(models.Model):
                 'account_analytic_id': line.account_analytic_id.id,
                 'tax_ids': tax_ids,
                 'invoice_id': self.id,
-                'analytic_tag_ids': analytic_tag_ids
+                'analytic_tag_ids': analytic_tag_ids,
+                'gongsi_id': self.gongsi_id.id,
             }
             if line['account_analytic_id']:
                 move_line_dict['analytic_line_ids'] = [(0, 0, line._get_analytic_line())]
@@ -1013,7 +1014,8 @@ class AccountInvoice(models.Model):
                     'account_id': tax_line.account_id.id,
                     'account_analytic_id': tax_line.account_analytic_id.id,
                     'invoice_id': self.id,
-                    'tax_ids': [(6, 0, list(done_taxes))] if tax_line.tax_id.include_base_amount else []
+                    'tax_ids': [(6, 0, list(done_taxes))] if tax_line.tax_id.include_base_amount else [],
+                    'gongsi_id': self.gongsi_id.id,
                 })
                 done_taxes.append(tax.id)
         return res
@@ -1108,7 +1110,8 @@ class AccountInvoice(models.Model):
                         'date_maturity': t[0],
                         'amount_currency': diff_currency and amount_currency,
                         'currency_id': diff_currency and inv.currency_id.id,
-                        'invoice_id': inv.id
+                        'invoice_id': inv.id,
+                        'gongsi_id': self.gongsi_id.id,
                     })
             else:
                 iml.append({
@@ -1119,7 +1122,8 @@ class AccountInvoice(models.Model):
                     'date_maturity': inv.date_due,
                     'amount_currency': diff_currency and total_currency,
                     'currency_id': diff_currency and inv.currency_id.id,
-                    'invoice_id': inv.id
+                    'invoice_id': inv.id,
+                    'gongsi_id': self.gongsi_id.id,
                 })
             part = self.env['res.partner']._find_accounting_partner(inv.partner_id)
             line = [(0, 0, self.line_get_convert(l, part.id)) for l in iml]
@@ -1135,6 +1139,7 @@ class AccountInvoice(models.Model):
                 'journal_id': journal.id,
                 'date': date,
                 'narration': inv.comment,
+                'gongsi_id': self.gongsi_id.id,
             }
             ctx['company_id'] = inv.company_id.id
             ctx['invoice'] = inv
