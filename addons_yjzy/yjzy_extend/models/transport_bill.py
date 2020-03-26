@@ -995,7 +995,7 @@ class transport_bill(models.Model):
         ctx = self.env.context.copy()
         ctx.update({
             'default_partner_id': self.partner_id.id,
-            'default_gongsi_id': self.gongsi_id,
+            'default_gongsi_id': self.gongsi_id.id,
         })
         return {
             'name': '添加销售订单',
