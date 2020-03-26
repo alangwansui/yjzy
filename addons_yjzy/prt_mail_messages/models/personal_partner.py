@@ -54,7 +54,10 @@ class personal_partner(models.Model):
 
     def name_search(self, name='', args=None, operator='ilike', limit=100):
         if operator in ('ilike', 'like', '=', '=like', '=ilike'):
-            args = expression.OR([args or [], [('email', operator, name)]])
+            args = expression.AND([args or [], ['|', ('name', operator, name), ('email', operator, name)]])
+
+
+
         return super(personal_partner, self).name_search(name, args, operator, limit)
 
 
