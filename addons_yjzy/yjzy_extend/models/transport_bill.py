@@ -354,7 +354,7 @@ class transport_bill(models.Model):
     is_editable = fields.Boolean(u'可编辑')
 
     gongsi_id = fields.Many2one('gongsi', '内部公司')
-
+    purchase_gongsi_id = fields.Many2one('gongsi', '内部采购公司')
 
     @api.model
     def create(self, vals):
@@ -752,7 +752,7 @@ class transport_bill(models.Model):
                     'date_invoice': self.date_out_in,
                     'include_tax': self.include_tax,
                     'yjzy_type': 'purchase',
-                    'gongsi_id': self.gongsi_id.id,
+                    'gongsi_id': self.purchase_gongsi_id.id,
 
                 })
                 invoice.clear_zero_line()
@@ -865,7 +865,7 @@ class transport_bill(models.Model):
             if not account:
                 raise Warning(u'没有找到退税科目,请先在退税产品的收入科目上设置')
 
-            back_tax_invoice =  self.env['account.invoice'].create({
+            back_tax_invoice = self.env['account.invoice'].create({
                 'partner_id': partner.id,
                 'type': 'out_invoice',
                 'journal_type': 'sale',
@@ -873,7 +873,7 @@ class transport_bill(models.Model):
                 'date_finish': self.date,
                 'bill_id': self.id,
                 'yjzy_type': 'back_tax',
-
+                'gongsi_id': self.purchase_gongsi_id.id,
 
                 'include_tax': self.include_tax,
                 'invoice_line_ids': [(0, 0, {
