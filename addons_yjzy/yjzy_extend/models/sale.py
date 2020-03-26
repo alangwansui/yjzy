@@ -222,7 +222,7 @@ class sale_order(models.Model):
     gongsi_id = fields.Many2one('gongsi', '内部公司')
     purchase_gongsi_id = fields.Many2one('gongsi', '内部采购公司')
 
-
+    order_line_b = fields.One2many('sale.order.line', related='order_line')
 
 
     @api.onchange('contract_type')
