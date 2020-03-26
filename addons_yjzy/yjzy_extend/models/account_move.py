@@ -20,8 +20,6 @@ class account_move(models.Model):
 
     @api.multi
     def post(self):
-        pass
-
         res = super(account_move, self).post()
         return res
 

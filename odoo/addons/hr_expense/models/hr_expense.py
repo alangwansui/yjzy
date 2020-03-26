@@ -153,6 +153,7 @@ class HrExpense(models.Model):
             'payment_id': line.get('payment_id'),
             'expense_id': line.get('expense_id'),
             'new_payment_id': line.get('new_payment_id'),
+            'gongsi_id': self.gongsi_id.id,
         }
 
     @api.multi
@@ -277,9 +278,7 @@ class HrExpense(models.Model):
             #convert eml into an osv-valid format
             lines = [(0, 0, expense._prepare_move_line(x)) for x in move_lines]
 
-            print('---->2,', len(lines), lines)
-            for l in lines:
-                print(l)
+
             move.with_context(dont_create_taxes=True).write({'line_ids': lines})
             expense.sheet_id.write({'account_move_id': move.id})
             if expense.payment_mode == 'company_account':
