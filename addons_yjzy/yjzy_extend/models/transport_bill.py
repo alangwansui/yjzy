@@ -996,6 +996,7 @@ class transport_bill(models.Model):
         ctx.update({
             'default_partner_id': self.partner_id.id,
             'default_gongsi_id': self.gongsi_id.id,
+            'default_purchase_gongsi_id': self.purchase_gongsi_id.id,
         })
         return {
             'name': '添加销售订单',
