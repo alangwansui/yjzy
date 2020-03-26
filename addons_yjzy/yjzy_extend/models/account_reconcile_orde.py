@@ -498,6 +498,7 @@ class account_reconcile_order(models.Model):
             'ref': self.name,
             'company_id': self.company_id.id,
             'journal_id': self.journal_id.id,
+            'gongsi_id': self.gongsi_id.id,
         }
 
     def _prepare_move_line_account(self, model=''):
