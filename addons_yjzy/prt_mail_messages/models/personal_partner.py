@@ -51,14 +51,19 @@ class personal_partner(models.Model):
     tag_id = fields.Many2one('personal.tag', u'通讯录分组', default=get_default_tag)
     user_id = fields.Many2one('res.users', u'用户', default=lambda self: self._uid)
 
-
+    @api.model
     def name_search(self, name='', args=None, operator='ilike', limit=100):
+
+        print ('=====', name, args, operator)
+
         if operator in ('ilike', 'like', '=', '=like', '=ilike'):
             args = expression.AND([args or [], ['|', ('name', operator, name), ('email', operator, name)]])
 
+            print('=====', name, args, operator)
 
 
-        return super(personal_partner, self).name_search(name, args, operator, limit)
+
+        return super(personal_partner, self).name_search(name=name, args=args, operator=operator, limit=limit)
 
 
     @api.constrains('email')
