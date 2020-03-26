@@ -676,6 +676,7 @@ class account_payment(models.Model):
             'ref': self.communication or '',
             'company_id': self.company_id.id,
             'journal_id': journal.id,
+            'gongsi_id': self.gongsi_id.id,
         }
 
     def _get_shared_move_line_vals(self, debit, credit, amount_currency, move_id, invoice_id=False):
@@ -689,6 +690,7 @@ class account_payment(models.Model):
             'credit': credit,
             'amount_currency': amount_currency or False,
             'payment_id': self.id,
+            'gongsi_id': self.gongsi_id.id,
         }
 
     def _get_counterpart_move_line_vals(self, invoice=False):

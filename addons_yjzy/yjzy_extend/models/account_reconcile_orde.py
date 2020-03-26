@@ -299,6 +299,8 @@ class account_reconcile_order(models.Model):
     final_coat = fields.Monetary('最终成本', compute=compute_info)
 
     is_editable = fields.Boolean(u'可编辑')
+    gongsi_id = fields.Many2one('gongsi', '内部公司')
+
 
     def unlink(self):
         for one in self:

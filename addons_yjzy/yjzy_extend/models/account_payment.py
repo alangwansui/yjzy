@@ -114,10 +114,19 @@ class account_payment(models.Model):
         ctx = self.env.context
         res = super(account_payment, self).default_get(fields)
 
+
+        print('==========dg======', ctx)
+
         if ctx.get('default_sfk_type','') == 'jiehui':
             res.update({
                 'partner_id': self.env['res.partner'].search([('name','=','未定义')], limit=1).id
             })
+
+        if ctx.get('active_model', '') == 'account.invoice':
+            invoice = self.env['account.invoice'].browse(ctx.get('active_id'))
+            if invoice.gongsi_id:
+                res.update({'gongsi_id': invoice.gongsi_id.id})
+
         return res
 
 
@@ -181,6 +190,12 @@ class account_payment(models.Model):
     jiehui_in_amount = fields.Float('结汇转入余额')
 
     payment_date_confirm = fields.Datetime('付款确认时间') ##akiny 付款确认时间
+    gongsi_id = fields.Many2one('gongsi', '内部公司')
+
+
+
+
+
     @api.onchange('journal_id')
     def _onchange_journal(self):
         res = super(account_payment, self)._onchange_journal()

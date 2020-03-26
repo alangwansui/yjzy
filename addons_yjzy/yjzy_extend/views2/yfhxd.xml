@@ -84,6 +84,7 @@
                             <field name="yjzy_payment_balance" string="付款单待认领余额"/>
                             <field name="sale_uid"/>
                             <field name="assistant_uid"/>
+                            <field name="gongsi_id"/>
                         </group>
                         <group>
                             <field name="date"/>

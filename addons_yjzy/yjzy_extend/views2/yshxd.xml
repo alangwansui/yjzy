@@ -59,6 +59,7 @@
                             <field name="diff_account_id"/>
                             <field name="company_id" />
                             <field name="include_tax"/>
+                            <field name="gongsi_id"/>
 
                         </group>
                         <group>

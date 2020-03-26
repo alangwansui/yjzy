@@ -38,6 +38,7 @@ class account_invoice(models.Model):
     purchase_contract_code = fields.Char(u'合同编码', related='po_id.contract_code', readonly=True)
 
     sale_assistant_id = fields.Many2one('res.users', u'业务助理')
+    gongsi_id = fields.Many2one('gongsi', '内部公司')
 
     def clear_zero_line(self):
         for one in self:

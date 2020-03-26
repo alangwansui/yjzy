@@ -29,6 +29,7 @@
                 <field name="tb_contract_code"/>
                 <field name="po_id"/>
                 <field name="purchase_contract_code"/>
+                <field name="gongsi_id"/>
             </tree>
         </field>
     </record>
@@ -63,6 +64,7 @@
                     <field name="po_id"/>
                     <field name="purchase_contract_code"/>
                     <field name="sale_assistant_id"/>
+                    <field name="gongsi_id"/>
                 </group>
             </xpath>
 
@@ -110,6 +112,7 @@
                 <field name="tb_contract_code"/>
                 <field name="po_id"/>
                 <field name="purchase_contract_code"/>
+                <field name="gongsi_id"/>
             </field>
             <notebook position="inside">
                 <page string="相关分录">

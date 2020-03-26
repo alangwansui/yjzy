@@ -92,9 +92,18 @@
         </record>
 
 
+        <record id="yjzy_view_account_payment_invoice_form" model="ir.ui.view">
+            <field name="name">wizard.account.payment.from</field>
+            <field name="model">account.payment</field>
+            <field name="inherit_id" ref="account.view_account_payment_invoice_form"/>
+            <field name="arch" type="xml">
 
+                <xpath expr="//field[@name='communication']" position="after">
+                    <field name="gongsi_id"/>
+                </xpath>
 
-
+            </field>
+        </record>
         <record id="action_wizard_payment2payment" model="ir.actions.act_window">
             <field name="name">付款向导</field>
             <field name="res_model">account.payment</field>
