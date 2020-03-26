@@ -258,6 +258,7 @@ class hr_expense_sheet(models.Model):
             'advance_account_id': advance_account.id,
             'bank_id': self.bank_id.id,
             'include_tax': self.include_tax,
+            'gongsi_id': self.gongsi_id.id,
         })
         self.payment_id = payment
 
