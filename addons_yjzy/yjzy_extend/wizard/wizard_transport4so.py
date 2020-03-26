@@ -9,6 +9,7 @@ class wizard_transport4so(models.TransientModel):
 
     partner_id = fields.Many2one('res.partner', u'客户', domain=[('customer', '=', True)])
     gongsi_id = fields.Many2one('gongsi', '内部公司')
+    purchase_gongsi_id = fields.Many2one('gongsi', '内部采购公司')
     so_ids = fields.Many2many('sale.order', 'ref_so_tb', 'so_id', 'tb_id', u'销售订单')
 
     def apply(self):

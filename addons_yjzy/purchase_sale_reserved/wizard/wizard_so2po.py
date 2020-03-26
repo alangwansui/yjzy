@@ -1,21 +1,22 @@
 # -*- coding: utf-8 -*-
 
-from odoo import  fields, models, api, _
+from odoo import fields, models, api, _
 from odoo.exceptions import Warning
+
 
 class wizard_so2po(models.TransientModel):
     _name = 'wizard.so2po'
 
     so_id = fields.Many2one('sale.order', u'Sale Order')
-    line_ids = fields.One2many( 'wizard.so2po.line', 'wizard_id', u'明细')
+    line_ids = fields.One2many('wizard.so2po.line', 'wizard_id', u'明细')
 
     def check(self):
         self.ensure_one()
         for line in self.line_ids:
-            #采购数 + 总预留数 <= 销售数
+            # 采购数 + 总预留数 <= 销售数
             if line.qty + line.sol_id.qty_pre_all > line.sol_id.product_uom_qty:
                 raise Warning('产品%s 采购数%s + 总预留数%s  超过了 销售数%s' %
-                              (line.product_id.default_code, line.qty, line.sol_id.qty_pre_all  ,line.sol_id.product_uom_qty))
+                              (line.product_id.default_code, line.qty, line.sol_id.qty_pre_all, line.sol_id.product_uom_qty))
             if not line.supplier_id:
                 raise Warning(u'供应商必填')
 
@@ -33,6 +34,7 @@ class wizard_so2po(models.TransientModel):
                 'partner_id': partner.id,
                 'source_so_id': self.so_id.id,
                 'date_planned': self.so_id.requested_date,
+                'gongsi_id': self.so_id.purchase_gongsi_id.id,
             })
             for line in lines:
                 seller = line.product_id._select_seller(partner_id=partner)
@@ -61,14 +63,13 @@ class wizard_so2po(models.TransientModel):
             'view_mode': 'tree,form',
             'res_model': 'purchase.order',
             'type': 'ir.actions.act_window',
-            #'target': 'new',
-            'domain': [('id','=', purchase_orders.mapped('id') )],
+            # 'target': 'new',
+            'domain': [('id', '=', purchase_orders.mapped('id'))],
             # 'context': { },
         }
 
-
     def _prepare_po_datas(self):
-        dic_partner_lines = {}  #{partner:  wizard_line}
+        dic_partner_lines = {}  # {partner:  wizard_line}
         for line in self.line_ids:
             supplier = line.supplier_id
             if supplier in dic_partner_lines:
@@ -76,8 +77,6 @@ class wizard_so2po(models.TransientModel):
             else:
                 dic_partner_lines.update({supplier: [line]})
         return dic_partner_lines
-
-
 
 
 class wizard_so2po_line(models.TransientModel):
@@ -89,9 +88,9 @@ class wizard_so2po_line(models.TransientModel):
     sale_qty = fields.Float(related='sol_id.product_uom_qty', string=u'销售数')
     smline_qty = fields.Float(related='sol_id.smline_qty', string=u'已锁定数')
 
-    qty_available= fields.Float(related='product_id.qty_available', string=u'在手数')
+    qty_available = fields.Float(related='product_id.qty_available', string=u'在手数')
     virtual_available = fields.Float(related='product_id.virtual_available', string=u'预测数')
-    supplier_id = fields.Many2one('res.partner', u'供应商', domain=[('supplier','=',True)])
+    supplier_id = fields.Many2one('res.partner', u'供应商', domain=[('supplier', '=', True)])
     purchase_price = fields.Float('采购价格', related='sol_id.purchase_price')
     qty = fields.Float(u'采购数量')
 
@@ -99,12 +98,3 @@ class wizard_so2po_line(models.TransientModel):
     def check(self):
         if self.qty < 0:
             raise Warning(u'采购数量不能小于0')
-
-
-
-
-
-
-
-
-
