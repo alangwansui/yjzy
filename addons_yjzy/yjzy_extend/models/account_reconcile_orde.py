@@ -571,6 +571,7 @@ class account_reconcile_order(models.Model):
             'journal_id': self.journal_id.id,
             'invoice_id': line.invoice_id.id,
             'new_payment_id': self.yjzy_payment_id.id,
+            'gongsi_id': self.gongsi_id.id,
         }
         if account.code in ['2203']:
             data.update({'so_id': line.so_id.id})
