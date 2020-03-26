@@ -212,10 +212,6 @@ class HrExpense(models.Model):
             #one account.move.line per expense (+taxes..)
             move_lines = expense._move_line_get()
 
-            print('**********', move_lines)
-
-
-
             #create one more move line, a counterline for the total on payable account
             payment_id = False
             total, total_currency, move_lines = expense._compute_expense_totals(company_currency, move_lines, acc_date)
@@ -322,6 +318,7 @@ class HrExpense(models.Model):
             'analytic_account_id': self.analytic_account_id.id,
             'expense_id': self.id,
             'partner_id': self.partner_id.id,
+            'gongsi_id': self.gongsi_id.id,
         }
         return move_line
 
