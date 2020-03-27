@@ -223,7 +223,7 @@ class sale_order(models.Model):
     purchase_gongsi_id = fields.Many2one('gongsi', '内部采购公司')
 
     order_line_b = fields.One2many('sale.order.line', related='order_line')
-
+    approvaled_date = fields.Datetime('审批完成时间')
 
     @api.onchange('contract_type')
     def onchange_contract_type(self):
