@@ -68,20 +68,10 @@
                                 <field name="ask_uid" invisible="1"/>
 
                                 <field name="create_uid"/>
-                                <field name="user_budget_id" groups="base.group_system"/>
-                                <field name="user_budget_amount" groups="base.group_system"/>
-                                <field name="user_budget_amount_reset" groups="base.group_system"/>
-                                <field name="company_budget_id" groups="base.group_system"/>
-                                <field name="company_budget_amount" groups="base.group_system"/>
-                                <field name="company_budget_amount_reset" groups="base.group_system"/>
-                                <field name="user_budget_id" groups="base.group_system"/>
-                                <field name="user_budget_amount" groups="base.group_system"/>
-                                <field name="user_budget_amount_reset" groups="base.group_system"/>
-
 
                                 <field name="budget_id" groups="base.group_system"/>
-                                <field name="budget_amount" groups="base.group_system"/>
-                                <field name="budget_amount_reset" groups="base.group_system"/>
+                                <field name="budget_amount"/>
+                                <field name="budget_amount_reset"/>
 
 
                             </group>
@@ -522,7 +512,8 @@
                         <button name="btn_undo_confirm" type="object" string="强制取消责任人确认" groups="base.group_system" context="{'force': 1}"/>
 
 
-                        <button name="btn_match_budget" type="object" string="预算自动匹配"/>
+                        <button name="btn_match_budget" type="object" string="预算匹配"/>
+                        <button name="btn_release_budget" type="object" string="预算解除"/>
                     </header>
                     <sheet>
                         <div class="oe_button_box" invisible="1"><!--"context.get('expense_adding_line')"-->
@@ -607,16 +598,12 @@
 
                                         <field name="sheet_state" groups="base.group_system"/>
                                         <field name="description" string="备注"/>
-                                        <field name="tb_budget" invisible="1"/>
-                                        <field name="tb_budget_rest" invisible="1"/>
 
 
-                                        <field name="user_budget_id"  groups="base.group_system"/>
-                                        <field name="user_budget_amount"  groups="base.group_system"/>
-                                        <field name="user_budget_amount_reset"  groups="base.group_system"/>
-                                         <field name="company_budget_id" invisible="1"/>
-                                        <field name="company_budget_amount" groups="base.group_system"/>
-                                        <field name="company_budget_amount_reset" groups="base.group_system"/>
+                                        <field name="budget_id"  groups="base.group_system"/>
+                                        <field name="budget_amount"  groups="base.group_system"/>
+                                        <field name="budget_amount_reset"  groups="base.group_system"/>
+
 
                                         <button name="action_employee_confirm" string="责任人确认"  class="oe_highlight"
                                                 type="object" attrs="{'invisible':['|',('state','in',['draft','done','refused','confirmed','employee_confirm']),('sheet_state','=','cancel')]}"/>
@@ -803,15 +790,12 @@
 
                                         <field name="sheet_state" groups="base.group_system"/>
                                         <field name="description" string="备注"/>
-                                        <field name="tb_budget"/>
-                                        <field name="tb_budget_rest"/>
 
-                                        <field name="user_budget_id" groups="base.group_system"/>
-                                        <field name="user_budget_amount" groups="base.group_system"/>
-                                        <field name="user_budget_amount_reset" groups="base.group_system"/>
-                                        <field name="company_budget_id" invisible="1"/>
-                                        <field name="company_budget_amount" groups="base.group_system"/>
-                                        <field name="company_budget_amount_reset" groups="base.group_system"/>
+
+                                        <field name="budget_id" groups="base.group_system"/>
+                                        <field name="budget_amount" groups="base.group_system"/>
+                                        <field name="budget_amount_reset" groups="base.group_system"/>
+
 
                                         <button name="action_employee_confirm" string="责任人确认" class="oe_highlight"
                                                 type="object"
@@ -859,15 +843,11 @@
 
                                         <field name="sheet_state" groups="base.group_system"/>
                                         <field name="description" string="备注"/>
-                                        <field name="tb_budget" invisible="1"/>
-                                        <field name="tb_budget_rest" invisible="1"/>
 
-                                        <field name="user_budget_id" groups="base.group_system"/>
-                                        <field name="user_budget_amount" groups="base.group_system"/>
-                                        <field name="user_budget_amount_reset" groups="base.group_system"/>
-                                        <field name="company_budget_id" invisible="1"/>
-                                        <field name="company_budget_amount" groups="base.group_system"/>
-                                        <field name="company_budget_amount_reset" groups="base.group_system"/>
+
+                                        <field name="budget_id" groups="base.group_system"/>
+                                        <field name="budget_amount" groups="base.group_system"/>
+                                        <field name="budget_amount_reset" groups="base.group_system"/>
 
                                         <button name="action_employee_confirm" string="责任人确认" class="oe_highlight"
                                                 type="object"
@@ -915,15 +895,12 @@
 
                                         <field name="sheet_state" groups="base.group_system"/>
                                         <field name="description" string="备注"/>
-                                        <field name="tb_budget"/>
-                                        <field name="tb_budget_rest"/>
 
-                                        <field name="user_budget_id" groups="base.group_system"/>
-                                        <field name="user_budget_amount"/>
-                                        <field name="user_budget_amount_reset"/>
-                                        <field name="company_budget_id" invisible="1"/>
-                                        <field name="company_budget_amount" groups="base.group_system"/>
-                                        <field name="company_budget_amount_reset" groups="base.group_system"/>
+
+                                        <field name="budget_id" groups="base.group_system"/>
+                                        <field name="budget_amount"/>
+                                        <field name="budget_amount_reset"/>
+
 
                                         <button name="action_employee_confirm" string="责任人确认" class="oe_highlight"
                                                 type="object"
@@ -971,15 +948,10 @@
 
                                         <field name="sheet_state" groups="base.group_system"/>
                                         <field name="description" string="备注"/>
-                                        <field name="tb_budget"/>
-                                        <field name="tb_budget_rest"/>
 
-                                        <field name="user_budget_id" groups="base.group_system"/>
-                                        <field name="user_budget_amount" groups="base.group_system"/>
-                                        <field name="user_budget_amount_reset" groups="base.group_system"/>
-                                        <field name="company_budget_id" invisible="1"/>
-                                        <field name="company_budget_amount"/>
-                                        <field name="company_budget_amount_reset"/>
+                                        <field name="budget_id" groups="base.group_system"/>
+                                        <field name="budget_amount"/>
+                                        <field name="budget_amount_reset"/>
 
                                         <button name="action_employee_confirm" string="责任人确认" class="oe_highlight"
                                                 type="object"
@@ -1165,15 +1137,12 @@
 
                                         <field name="sheet_state" groups="base.group_system"/>
                                         <field name="description" string="备注"/>
-                                        <field name="tb_budget"/>
-                                        <field name="tb_budget_rest"/>
 
-                                        <field name="user_budget_id" groups="base.group_system"/>
-                                        <field name="user_budget_amount" groups="base.group_system"/>
-                                        <field name="user_budget_amount_reset" groups="base.group_system"/>
-                                        <field name="company_budget_id" invisible="1"/>
-                                        <field name="company_budget_amount" invisible="1"/>
-                                        <field name="company_budget_amount_reset" invisible="1"/>
+
+                                        <field name="budget_id" groups="base.group_system"/>
+                                        <field name="budget_amount"/>
+                                        <field name="budget_amount_reset"/>
+
 
                                         <button name="action_employee_confirm" string="责任人确认" class="oe_highlight"
                                                 type="object"
