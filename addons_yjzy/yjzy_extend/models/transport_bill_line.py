@@ -216,6 +216,9 @@ class transport_bill_line(models.Model):
                         ml.qty_done = lot_dic[lot]
                         line.move_ids |= m
 
+    def _new_prepare_2_picking(self):
+        pass
+
     def _prepare_2_picking(self):
         #todo_moves = self.env['stock.move']
         ##pick_type = self.env.ref('stock.picking_type_out')
@@ -232,7 +235,8 @@ class transport_bill_line(models.Model):
                 lambda m: m.picking_type_id == pick_type
                           and m.product_id == line.product_id
                           and m.state not in ['cancel', 'done', 'draft'])
-            #print('====moves==', moves)
+
+            print('====moves==', moves, pick_type)
             for move in moves:
                 wizard = wizard_msrl.create({'move_id': move.id})
                 for lot in lot_dic:

@@ -18,9 +18,13 @@ _logger = logging.getLogger(__name__)
 class Binary(http.Controller):
 
     @http.route('/web/binary/download_attachment', type='http', auth='user')
-    def download_attachment(self, model, id):
-        attachment_model = request.env['ir.attachment']
-        attachment_ids = attachment_model.search([('res_model', '=', model), ('res_id', '=', id)])
+    def download_attachment(self, model, id, **kwargs):
+        if kwargs.get('special', '') == 'message':
+            attachment_ids = request.env[model].browse(int(id)).attachment_allowed_ids
+        else:
+            attachment_model = request.env['ir.attachment']
+            attachment_ids = attachment_model.search([('res_model', '=', model), ('res_id', '=', id)])
+
         file_dict = {}
         for attachment_id in attachment_ids:
             file_store = attachment_id.store_fname

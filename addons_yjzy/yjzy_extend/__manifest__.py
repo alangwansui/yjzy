@@ -61,6 +61,7 @@
         'views/sale2.xml',
         'views/sale3.xml',
         'views/purchase.xml',
+        'views/purchase2.xml',
         # 'views/sale_cost.xml',
         'views/stock.xml',
         'views/transport_bill.xml',
