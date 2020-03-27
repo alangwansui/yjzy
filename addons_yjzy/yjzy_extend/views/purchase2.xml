@@ -6,8 +6,30 @@
             <field name="name">purchase.order.tree</field>
             <field name="model">purchase.order</field>
             <field name="arch" type="xml">
-                <tree string="采购单">
-                    <field name="name"/>
+         <tree decoration-bf="message_unread==True" decoration-muted="state=='cancel'" decoration-info="state in ('wait','confirmed')" string="采购合同">
+                    <field name="message_unread" invisible="1"/>
+                    <field name="name" string="流水码"/>
+                    <field name="contract_code" string="合同编号"/>
+                    <field name="partner_id"/>
+                    <field name="date_order" string="下单日期" widget="date"/>
+
+
+                    <field name="date_planned" invisible="context.get('quotation_only', False)" widget="date"/>
+                    <field name="origin" invisible="1"/>
+                    <field name="amount_untaxed" sum="Total Untaxed amount" string="Untaxed" widget="monetary" invisible="1"/>
+                    <field name="amount_total" sum="Total amount" widget="monetary"/>
+
+                     <field name="create_date"/>
+                    <field name="balance" string="预付余额"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="state" invisible="1"/>
+                    <field name="delivery_status" invisible="1"/>
+                    <field name="include_tax"/>
+                    <field name="payment_term_id" attrs="{}" invisible="1"/>
+                    <field name="gongsi_id" string="采购主体"/>
+                    <field name="supplierinfo_ids" widget="many2many_tags" invisible="1"/>
+                    <field name="invoice_status" invisible="1" /><!--invisible="not context.get('show_purchase', True)"-->
+                    <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"/>
                 </tree>
             </field>
         </record>

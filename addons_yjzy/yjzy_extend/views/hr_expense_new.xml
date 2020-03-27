@@ -579,8 +579,8 @@
                                         <field name="second_categ_id" string="中类"/>
                                         <field name="product_id" string="小类"/>
                                         <field name="name" invisible="1"/>
-                                        <field name="sys_outer_hetong"/>
-                                        <field name="tb_id" context="{'show_ref': 1}"/>
+                                        <field name="sys_outer_hetong" attrs="{'column_invisible':[('parent.budget_type','!=','transport')]}"/>
+                                        <field name="tb_id" context="{'show_ref': 1}" attrs="{'column_invisible':[('parent.budget_type','!=','transport')]}"/>
                                         <field name="sale_order_id" context="{'sale_show_partner_name': True}" invisible="1"/>
                                         <field name="employee_id" string="责任人"/>
                                         <field name="state" invisible="1"/>
@@ -607,14 +607,14 @@
 
                                         <field name="sheet_state" groups="base.group_system"/>
                                         <field name="description" string="备注"/>
-                                        <field name="tb_budget" invisible="1"/>
-                                        <field name="tb_budget_rest" invisible="1"/>
+                                        <field name="tb_budget" attrs="{'column_invisible':[('parent.budget_type','!=','transport')]}"/>
+                                        <field name="tb_budget_rest" attrs="{'column_invisible':[('parent.budget_type','!=','transport')]}"/>
 
 
-                                        <field name="user_budget_id"  groups="base.group_system"/>
-                                        <field name="user_budget_amount"  groups="base.group_system"/>
-                                        <field name="user_budget_amount_reset"  groups="base.group_system"/>
-                                         <field name="company_budget_id" invisible="1"/>
+                                        <field name="user_budget_id" groups="base.group_system"/>
+                                        <field name="user_budget_amount"  attrs="{'column_invisible':[('parent.budget_type','!=','employee')]}"/>
+                                        <field name="user_budget_amount_reset"  attrs="{'column_invisible':[('parent.budget_type','!=','employee')]}"/>
+                                        <field name="company_budget_id" invisible="1"/>
                                         <field name="company_budget_amount" groups="base.group_system"/>
                                         <field name="company_budget_amount_reset" groups="base.group_system"/>
 
