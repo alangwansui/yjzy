@@ -34,8 +34,8 @@
             <field name="res_model">purchase.order</field>
             <field name="view_mode">tree,form</field>
             <field name="view_ids" eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'tree', 'view_id': ref('new_sale_order_tree')}),
-                          (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_from')})]"/>
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('new_purhcase_order_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('new_purhcase_order_from')})]"/>
         </record>
 
         <!-- This Menu Item must have a parent and an action -->
