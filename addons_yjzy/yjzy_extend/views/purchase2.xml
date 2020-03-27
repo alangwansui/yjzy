@@ -1,0 +1,46 @@
+<odoo>
+    <data>
+
+
+        <record id="new_purhcase_order_tree" model="ir.ui.view">
+            <field name="name">purchase.order.tree</field>
+            <field name="model">purchase.order</field>
+            <field name="arch" type="xml">
+                <tree string="采购单">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="new_purhcase_order_from" model="ir.ui.view">
+            <field name="name">purchase.order.form</field>
+            <field name="model">purchase.order</field>
+            <field name="arch" type="xml">
+                <form string="采购单">
+                    <header>
+                    </header>
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="new_purhcase_order_action" model="ir.actions.act_window">
+            <field name="name">采购单</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">purchase.order</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('new_sale_order_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_from')})]"/>
+        </record>
+
+        <!-- This Menu Item must have a parent and an action -->
+        <menuitem id="new_purhcase_order_menu" name="采购单:新" parent="sale.sale_order_menu" action="new_purhcase_order_action" sequence=""/>
+
+
+    </data>
+</odoo>
