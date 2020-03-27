@@ -174,7 +174,12 @@ class PRTMailMessage(models.Model):
 
     #message端，记录：ip地址，country， regionName，City， zip，第一次打开的时间, 再统计一下次数。
 
-
+    def btn_multi_download(self):
+        return {
+            'type': 'ir.actions.act_url',
+            'target': 'new',
+            'url': '/web/binary/download_attachment?model=%s&id=%s&special=message' % (self._name, self.id,)
+        }
 
     @api.depends('have_read')
     def compute_read_img(self):
@@ -377,6 +382,7 @@ class PRTMailMessage(models.Model):
 
             if len(repeated_msg) > 1:
                 msg.is_repeated = True
+
 
         return msg
 

@@ -328,6 +328,7 @@
                         </page>
                         <page name="attachments" string="附件" attrs="{'invisible':[('attachment_count', '=', 0)]}">
                             <sheet>
+                                <button name="btn_multi_download" type="object" string="下载全部附件"/>
                                 <field name="attachment_count" invisible="1"/>
                                 <field name="attachment_allowed_ids" widget="many2many_binary"/>
                             </sheet>
