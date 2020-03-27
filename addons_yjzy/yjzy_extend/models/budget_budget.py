@@ -64,7 +64,7 @@ class budget_budget(models.Model):
             elif one.type in ['transport']:
                 amount = one.tb_id.budget_amount
             elif one.type in ['lead']:
-                pass
+                amount = one.amount_input
 
             one.amount = amount
             one.amount_reset = amount - sum(one.expense_ids.mapped('total_amount'))
