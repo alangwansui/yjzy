@@ -949,6 +949,13 @@ class transport_bill(models.Model):
         self.stage2state = 'confirmed'
         return True
 
+    def new_prepare_2_picking(self):
+        self.ensure_one()
+        self.line_ids._new_prepare_2_picking()
+        self.stage2state = 'confirmed'
+        return True
+
+
     # def prepare_3_picking(self):
     #     self.ensure_one()
     #     self.line_ids._prepare_3_picking()
