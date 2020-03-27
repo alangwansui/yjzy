@@ -51,6 +51,8 @@ Mail Messages
         'wizards/wizard_compose_action.xml',
         'wizards/wizard_mail_message.xml',
 
+        'reports/report.xml',
+        'reports/report_mail_message.xml',
 
 
 

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <report
+            id="action_report_mail_message"
+            string="邮件打印"
+            model="mail.message"
+            report_type="qweb-pdf"
+            file="prt_mail_messages.report_mail_message"
+            name="prt_mail_messages.report_mail_message"
+            print_report_name="123"
+        />
+
+    </data>
+</odoo>
+
