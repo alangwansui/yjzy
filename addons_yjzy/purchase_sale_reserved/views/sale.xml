@@ -23,7 +23,7 @@
                     <button name="undo_dump_reserve" class="oe_highlight" type='object' string="取消虚拟预留"
                             attrs="{'invisible': ['|',('dump_picking_id','=', False), ('state', 'not in', ['draft','sent'])]}"/>/>
                     <button name="open_wizard_so2po" states="draft,send,sale" class="oe_highlight" type='object' string="创建采购单"/>
-                    <button name="new_open_wizard_so2po" states="draft,send,sale" class="oe_highlight" type='object' context="{'new': 1}" string="创建采购单:新"/>
+                    <!--button name="new_open_wizard_so2po" states="draft,send,sale" class="oe_highlight" type='object' context="{'new': 1}" string="创建采购单:新"/-->
                 </field>
 
                 <field name="partner_shipping_id" position="after">
