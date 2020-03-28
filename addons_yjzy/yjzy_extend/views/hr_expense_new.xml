@@ -755,15 +755,15 @@
                         </group>
                         <notebook>
                             <page string="Expense Lines">
-                                <field name="my_expense_line_ids" attrs="{'invisible':[('budget_type','in',['lead','employee','company'])]}" context="{'form_view_ref':'yjzy_extend.view_hr_expense_new_from_sheet_form'}">
+                                <field name="my_expense_line_ids"  context="{'form_view_ref':'yjzy_extend.view_hr_expense_new_from_sheet_form'}">
                                     <tree decoration-danger="is_refused" >
                                         <field name="date" string="明细日期"/>
                                         <field name="categ_id" string="大类"/>
                                         <field name="second_categ_id" string="中类"/>
                                         <field name="product_id" string="小类"/>
                                         <field name="name" invisible="1"/>
-                                        <field name="sys_outer_hetong"/>
-                                        <field name="tb_id" context="{'show_ref': 1}"/>
+                                        <field name="sys_outer_hetong" attrs="{'column_invisible':[('parent.budget_type','!=','transport')]}"/>
+                                        <field name="tb_id" context="{'show_ref': 1}" attrs="{'column_invisible':[('parent.budget_type','!=','transport')]}"/>
                                         <field name="sale_order_id" context="{'sale_show_partner_name': True}" invisible="1"/>
                                         <field name="employee_id" string="责任人"/>
                                         <field name="state" invisible="1"/>
@@ -793,9 +793,9 @@
                                         <field name="description" string="备注"/>
 
 
-                                        <field name="budget_id" groups="base.group_system"/>
-                                        <field name="budget_amount" groups="base.group_system"/>
-                                        <field name="budget_amount_reset" groups="base.group_system"/>
+                                        <field name="budget_id" groups="sales_team.group_manager"/>
+                                        <field name="budget_amount" groups="sales_team.group_manager"/>
+                                        <field name="budget_amount_reset" groups="sales_team.group_manager"/>
 
 
                                         <button name="action_employee_confirm" string="责任人确认" class="oe_highlight"
@@ -807,7 +807,7 @@
 
                                     </tree>
                                 </field>
-                                <field name="my_expense_line_ids_b" attrs="{'invisible':[('budget_type','!=','lead')]}" context="{'form_view_ref':'yjzy_extend.view_hr_expense_new_from_sheet_form'}">
+                                <!--field name="my_expense_line_ids_b" attrs="{'invisible':[('budget_type','!=','lead')]}" context="{'form_view_ref':'yjzy_extend.view_hr_expense_new_from_sheet_form'}">
                                     <tree decoration-danger="is_refused">
                                         <field name="date" string="明细日期"/>
                                         <field name="categ_id" string="大类"/>
@@ -962,7 +962,7 @@
                                         <field name="is_confirmed" string="责任人确认" attrs="{'invisible': [('is_confirmed','=',False)]}"/>
 
                                     </tree>
-                                </field>
+                                </field-->
 
                             </page>
                             <page string="财务信息" groups="account.group_account_invoice">
