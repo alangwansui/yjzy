@@ -41,8 +41,8 @@
         <field name="arch" type="xml">
       <search string="Messages Search">
                     <field name="email_from" invisible="1"/>
-                     <field name="personal_author_id" string="模糊查询" filter_domain="['|','|', ('subject', 'ilike', self), ('body', 'ilike', self)],
-                    ('personal_partner_ids', 'ilike', self)"/>
+                     <field name="personal_author_id" string="模糊查询" filter_domain="['|','|', ('subject', 'ilike', self), ('body', 'ilike', self),
+                    ('personal_partner_ids', 'ilike', self)]"/>
                     <field name="personal_partner_ids" string="收件人"/>
                     <field name="body" string="内容" filter_domain="['|', ('subject', 'ilike', self), ('body', 'ilike', self)]"/>
                     <field name="subject"/>
