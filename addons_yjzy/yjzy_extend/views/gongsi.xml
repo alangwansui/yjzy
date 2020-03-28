@@ -17,14 +17,56 @@
     <field name="name">gongsi.form</field>
     <field name="model">gongsi</field>
     <field name="arch" type="xml">
-        <form string="内部公司">
-            <group>
-                <group>
-                    <field name="name"/>
-                    <field name="partner_id"/>
-                </group>
-            </group>
-        </form>
+       <form string="公司主体">
+                  <sheet>
+
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only"/>
+                        <h1>
+                            <field name="name"/>
+
+                        </h1>
+                    </div>
+                    <notebook colspan="4">
+                        <page string="General Information">
+                            <group>
+                                <group>
+                                    <field name="full_name"/>
+                                    <field name="partner_id" />
+                                    <label for="street" string="Address"/>
+                                    <div class="o_address_format">
+                                        <field name="street" placeholder="Street..." class="o_address_street"/>
+                                        <field name="street2" placeholder="Street 2..." class="o_address_street"/>
+                                        <field name="city" placeholder="City" class="o_address_city"/>
+                                        <field name="state_id" class="o_address_state" placeholder="State" options='{"no_open": True}'/>
+                                        <field name="zip" placeholder="ZIP" class="o_address_zip"/>
+                                        <field name="country_id" placeholder="Country" class="o_address_country" options='{"no_open": True}'/>
+                                    </div>
+
+                                </group>
+                                <group>
+                                    <field name="website" widget="url" placeholder="e.g. www.odoo.com"/>
+                                    <field name="phone"/>
+                                    <field name="email"/>
+                                    <field name="vat"/>
+                                    <field name="company_registry"/>
+                                    <field name="fax"/>
+
+                                    <field name="sequence" invisible="1"/>
+
+                                </group>
+
+                            </group>
+                        </page>
+                         <page string="其他">
+                              <group>
+                                  <field name="purchase_image" widget="image"/>
+                                  <field name="sale_image" widget="image"/>
+                              </group>
+                         </page>
+                    </notebook>
+                    </sheet>
+                </form>
     </field>
 </record>
 
