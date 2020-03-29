@@ -229,8 +229,12 @@ class sale_order(models.Model):
 
     @api.onchange('contract_type')
     def onchange_contract_type(self):
+        gongsi_obj = self.env['gongsi']
         if self.contract_type == 'b':
             self.is_inner_trade = True
+            self.gongsi_id = gongsi_obj.search([('name','=','BERTZ')], limit=1)
+            self.purchase_gongsi_id = gongsi_obj.search([('name', '=', '天宇进出口')], limit=1)
+
         else:
             self.is_inner_trade = False
 
