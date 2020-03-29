@@ -108,6 +108,21 @@ class sale_order_line(models.Model):
     purchase_contract_code = fields.Char('采购合同',related='pol_id.order_id.contract_code')
 
 
+    def open_soline_form(self):
+        view = self.env.ref('yjzy_extend.new_sale_order_line_from')
+        return {
+            'type': 'ir.actions.act_window',
+            'name': u'销售明细',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'views': [ (view.id, 'form')],
+            'res_model': self._name,
+            'res_id': self.id,
+            'target': 'new',
+        }
+
+
+
     @api.depends('second_unit_price', 'discount', 'price_unit', 'tax_id')
     def _compute_second(self):
         """
