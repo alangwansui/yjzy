@@ -225,6 +225,8 @@ class sale_order(models.Model):
     order_line_b = fields.One2many('sale.order.line', related='order_line')
     approvaled_date = fields.Datetime('审批完成时间')
 
+    state = fields.Selection(selection_add=[('refuse', u'拒绝'), ('approval', u'审批中'), ('approve', u'审批完成'), ('verification', u'核销完成')],readonly=False)
+
     @api.onchange('contract_type')
     def onchange_contract_type(self):
         if self.contract_type == 'b':

@@ -115,7 +115,7 @@
                                 attrs="{'invisible': ['|',('dump_picking_id','=', False), ('state', 'not in', ['draft','sent'])]}"/>/&gt;
                         <button name="open_wizard_so2po" invisible="1" states="draft,send,sale" class="oe_highlight" type="object" string="创建采购单" groups="sales_team.group_sale_assistant"/>
                         <button name="new_open_wizard_so2po"  states="draft,send,sale" class="oe_highlight" type="object" context="{'new': 1}" string="创建采购单:新" groups="sales_team.group_sale_assistant"/>
-                        <field name="state" widget="statusbar" invisible="1" statusbar_visible="draft,sent,sale" groups="base.group_system"/>
+                        <field name="state" widget="statusbar"  statusbar_visible="draft,sent,sale" groups="base.group_system"/>
 
                         <button name="open_wizard_bom_sale"  class="oe_highlight" type='object' string="套件销售" groups="base.group_system"/>
                         <button name="open_sale_cost" class="oe_highlight" type='object' string="成本单"/>
@@ -854,19 +854,78 @@
             </field>
         </record>
 
-        <record id="new_sale_order_action" model="ir.actions.act_window">
+
+        <menuitem id="new_sale_order_menu" name="新销售订单" parent="sale.sale_order_menu" action="new_sale_order_all_action" sequence=""/>
+
+          <record id="new_sale_order_all_action" model="ir.actions.act_window">
             <field name="name">销售订单</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">sale.order</field>
             <field name="view_mode">tree,form,kanban</field>
+
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('new_sale_order_tree')}),
+                          (0, 0, {'view_mode': 'kanban', 'view_id': ref('new_sale_order_kanban')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_from')})]"/>
+        </record>
+    <menuitem id="new_sale_order_menu" name="新销售合同" parent="sale.sale_menu_root" action="new_sale_order_all_action" sequence="99"
+    groups= "base.group_system"/>
+
+        <record id="new_sale_order_draft_action" model="ir.actions.act_window">
+            <field name="name">报价单</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_mode">tree,form,kanban</field>
+            <field name="domain">[('state','=','draft')]</field>
+            <field name="context">{}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('new_sale_order_tree')}),
+                          (0, 0, {'view_mode': 'kanban', 'view_id': ref('new_sale_order_kanban')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_from')})]"/>
+        </record>
+        <menuitem id="new_sale_order_draft_menu" name="报价单" parent="new_sale_order_menu" action="new_sale_order_draft_action" sequence="1"/>
+
+        <record id="new_sale_order_approval_action" model="ir.actions.act_window">
+            <field name="name">审批中</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_mode">tree,form,kanban</field>
+            <field name="domain">[('state','in','approval','sent','refuse')]</field>
+            <field name="context">{}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('new_sale_order_tree')}),
+                          (0, 0, {'view_mode': 'kanban', 'view_id': ref('new_sale_order_kanban')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_from')})]"/>
+        </record>
+        <menuitem id="new_sale_order_approval_menu" name="审批中合同" parent="new_sale_order_menu" action="new_sale_order_approval_action" sequence="2"/>
+        <record id="new_sale_order_approve_action" model="ir.actions.act_window">
+            <field name="name">审批完成</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_mode">tree,form,kanban</field>
+            <field name="domain">[('state','=','approve')]</field>
+            <field name="context">{}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('new_sale_order_tree')}),
+                          (0, 0, {'view_mode': 'kanban', 'view_id': ref('new_sale_order_kanban')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_from')})]"/>
+        </record>
+        <menuitem id="new_sale_order_approve_menu" name="审批中合同" parent="new_sale_order_menu" action="new_sale_order_approve_action" sequence="3"/>
+        <record id="new_sale_order_verification_action" model="ir.actions.act_window">
+            <field name="name">待核销合同</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_mode">tree,form,kanban</field>
+            <field name="domain">['|',('delivery_status','=','received'),'&amp;',('requested_date','&lt;',(context_today() - relativedelta(days=185)).strftime('%Y-%m-%d')),('delivery_status','!=','received')]</field>
+            <field name="context">{}</field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('new_sale_order_tree')}),
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('new_sale_order_kanban')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_from')})]"/>
         </record>
 
+        <menuitem id="new_sale_order_verification_menu" name="待核销合同" parent="new_sale_order_menu" action="new_sale_order_verification_action" sequence="3"/>
 
-        <menuitem id="new_sale_order_menu" name="新销售订单" parent="sale.sale_order_menu" action="new_sale_order_action" sequence=""/>
 
 
     </data>
