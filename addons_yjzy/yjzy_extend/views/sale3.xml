@@ -335,8 +335,6 @@
                                 </div>
                             </group>
                             <group>
-
-
                                 <field name="create_uid"/>
                                 <field name="user_id"/>
                                 <field name="sale_assistant_id"/>
@@ -356,12 +354,9 @@
                                 <field name="validity_date" attrs="{'invisible': [('state', 'in', ['sale', 'done'])]}"/>
                                 <field name="confirmation_date" attrs="{'invisible': [('state', 'in', ['draft', 'sent', 'cancel'])]}"/>
                                 <field name="pricelist_id" groups="product.group_sale_pricelist"/>
-
                                 <field name="id" invisible="1"/>
                                 <field name="lot_sub_mark" groups="base.group_system"/>
                                 <label for="carrier_id"/>
-
-
                             </group>
 
 
@@ -902,7 +897,6 @@
                                 <group>
                                     <field name="from_wharf_id"/>
                                     <field name="to_wharf_id"/>
-
                                 </group>
                             </page>
                             <page string="采购合同" invisible="1">
