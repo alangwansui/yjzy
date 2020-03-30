@@ -45,6 +45,8 @@ class purchase_order(models.Model):
     def compute_info(self):
         aml_obj = self.env['account.move.line']
         for one in self:
+            polines = one.order_line
+
             sml_lines = aml_obj.search([('po_id', '=', one.id)]).filtered(lambda x: x.account_id.code == '1123')
 
             if one.yjzy_payment_ids and one.yjzy_payment_ids[0].currency_id.name == 'CNY':
@@ -52,7 +54,9 @@ class purchase_order(models.Model):
             else:
                 balance = sum([1 * x.amount_currency for x in sml_lines])
 
+            no_deliver_amount = sum([x.price_unit * (x.product_qty - x.qty_received) for x in polines])
             one.balance = balance
+            one.no_deliver_amount = no_deliver_amount
 
 
 
@@ -100,6 +104,7 @@ class purchase_order(models.Model):
     is_editable = fields.Boolean(u'可编辑')
     gongsi_id = fields.Many2one('gongsi', '内部公司')
 
+
     submit_date = fields.Date('提交审批时间')
     submit_uid = fields.Many2one('res.users', u'提交审批')
 
@@ -107,6 +112,9 @@ class purchase_order(models.Model):
     purchaser_uid = fields.Many2one('res.users', u'采购审批')
 
     second_sign_uid = fields.Many2one('res.users', u'次签字人')
+
+    no_deliver_amount = fields.Float('未发货金额', compute=compute_info)
+
 
 
     @api.constrains('contract_code')

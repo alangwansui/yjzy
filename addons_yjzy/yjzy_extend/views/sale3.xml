@@ -334,6 +334,8 @@
                                 </div>
                             </group>
                             <group>
+
+                                <field name="purchase_no_deliver_amount"/>
                                 <field name="create_uid"/>
                                 <field name="user_id"/>
                                 <field name="sale_assistant_id"/>

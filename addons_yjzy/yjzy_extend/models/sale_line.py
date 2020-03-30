@@ -105,7 +105,7 @@ class sale_order_line(models.Model):
     second_price_total = fields.Monetary(compute='_compute_second', string='第二小计', readonly=True, store=True)
     is_gold_sample = fields.Boolean('是否有金样', related='product_id.is_gold_sample', readonly=False)
     hs_id = fields.Many2one('hs.hs','报关品名', related='product_id.hs_id')
-    purchase_contract_code = fields.Char('采购合同',related='pol_id.order_id.contract_code')
+    purchase_contract_code = fields.Char('采购合同', related='pol_id.order_id.contract_code')
 
 
     def open_soline_form(self):
