@@ -165,7 +165,8 @@
 
                     <field name="amount_total" sum="Total Tax Included" widget="monetary"/>
                     <field name="currency_id" invisible="1"/>
-                    <field name="no_sent_amount" sum="合计"/>
+                    <field name="no_sent_amount" sum="未发货销售"/>
+                    <field name="purchase_no_deliver_amount" string="未发货采购"/>
                     <field name="balance"/>
                     <field name="invoice_status" invisible="1"/>
                     <field name="state" invisible="1"/>
@@ -335,7 +336,7 @@
                             </group>
                             <group>
 
-                                <field name="purchase_no_deliver_amount"/>
+
                                 <field name="create_uid"/>
                                 <field name="user_id"/>
                                 <field name="sale_assistant_id"/>
@@ -343,6 +344,7 @@
                                 <field name="exchange_rate"/>
                                 <field name="appoint_rate"/>
                                 <field name="no_sent_amount"/>
+                                <field name="purchase_no_deliver_amount" string="未发货采购"/>
                                 <field name="yjzy_payment_id" invisible="1"/>
                                 <field name="yjzy_currency_id" invisible="1"/>
                                 <field name="balance" invisible="1"/>
@@ -925,6 +927,17 @@
                                 <button name="compute_balance" type="object" string="计算余额"/>
                                 <field name="aml_ids"/>
                             </page>
+                            <page string="审批记录">
+                              <group>
+
+                                <field name="submit_date"/>
+                                <field name="submit_uid"/>
+                                <field name="sales_confirm_date"/>
+                                <field name="sales_confirm_uid"/>
+                                <field name="approve_date"/>
+                                <field name="approve_uid"/>
+                              </group>
+                    </page>
                             <page string="管理员页" groups="base.group_system">
                                 <div name="carrier_selection">
                                     <div>

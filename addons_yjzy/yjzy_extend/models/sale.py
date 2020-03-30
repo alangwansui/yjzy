@@ -239,7 +239,6 @@ class sale_order(models.Model):
     sales_confirm_date = fields.Date('责任人审批时间')
     sales_confirm_uid = fields.Many2one('res.users', u'责任人审批')
 
-
     purchase_no_deliver_amount = fields.Float('未发货的采购金额', compute=compute_info)
 
 

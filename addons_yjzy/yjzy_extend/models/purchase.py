@@ -245,6 +245,7 @@ class purchase_order(models.Model):
         zero_tax = self.env['account.tax'].search([('code', '=', 'purchase_zero')])
         if not zero_tax:
             raise Warning(u'没找到0税编码，请检查税率设置')
+            raise Warning(u'没找到0税编码，请检查税率设置')
         for line in self.order_line:
             line.taxes_id = zero_tax
 
