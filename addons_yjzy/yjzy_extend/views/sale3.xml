@@ -905,7 +905,7 @@
 
                                 </group>
                             </page>
-                            <page string="采购合同" invisible="1">
+                            <page string="采购合同" invisible="0">
                                 <group>
                                     <field name="po_ids"/>
                                 </group>
