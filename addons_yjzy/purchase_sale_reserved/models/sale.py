@@ -8,7 +8,7 @@ class sale_order(models.Model):
 
     def compute_purchase_order(self):
         for one in self:
-            one.po_ids = one.order_line.mapped('dlr_ids').mapped('po_id')
+            one.po_ids = one.order_line.mapped('dlr_ids').mapped('po_id') + one.order_line.mapped('pol_id').mapped('order_id')
             one.po_count = one.po_ids and len(one.po_ids) or 0
 
     po_ids = fields.Many2many('purchase.order', string=u'采购订单', compute=compute_purchase_order)

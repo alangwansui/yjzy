@@ -94,7 +94,9 @@ class sale_order(models.Model):
                 vat_diff_amount = (one.amount_total2 - one.purchase_cost - one.stock_cost) / 1.13 * 0.13
 
             profit_amount = (amount_total2 - purchase_cost - stock_cost - fandian_amoun - vat_diff_amount - other_cost - commission_amount + back_tax_amount) / 5
-            gross_profit =  (amount_total2 - purchase_cost - stock_cost - fandian_amoun + back_tax_amount) / 5
+            gross_profit = (amount_total2 - purchase_cost - stock_cost - fandian_amoun + back_tax_amount) / 5
+
+            purchase_no_deliver_amount = sum(one.po_ids.mapped('no_deliver_amount'))
 
             one.amount_total2 = amount_total2
             one.commission_amount = commission_amount
@@ -116,6 +118,7 @@ class sale_order(models.Model):
             one.gross_profit = gross_profit
             one.gorss_profit_ratio = amount_total2 and (gross_profit / amount_total2  * 100)
             one.gold_sample_state = gold_sample_state
+            one.purchase_no_deliver_amount = purchase_no_deliver_amount
 
 
 
@@ -226,6 +229,10 @@ class sale_order(models.Model):
     approvaled_date = fields.Datetime('审批完成时间')
 
     state = fields.Selection(selection_add=[('refuse', u'拒绝'), ('approval', u'审批中'), ('approve', u'审批完成'), ('verification', u'核销完成')],readonly=False)
+
+    purchase_no_deliver_amount = fields.Float('未发货的采购金额', compute=compute_info)
+
+
 
     @api.onchange('contract_type')
     def onchange_contract_type(self):
