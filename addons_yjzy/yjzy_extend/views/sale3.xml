@@ -1014,7 +1014,7 @@
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('new_sale_order_kanban')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_from')})]"/>
         </record>
-        <menuitem id="new_sale_order_approve_menu" name="审批中合同" parent="new_sale_order_menu" action="new_sale_order_approve_action" sequence="3"/>
+        <menuitem id="new_sale_order_approve_menu" name="审批完成合同" parent="new_sale_order_menu" action="new_sale_order_approve_action" sequence="3"/>
         <record id="new_sale_order_verification_action" model="ir.actions.act_window">
             <field name="name">待核销合同</field>
             <field name="type">ir.actions.act_window</field>

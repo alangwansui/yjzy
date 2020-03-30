@@ -100,6 +100,14 @@ class purchase_order(models.Model):
     is_editable = fields.Boolean(u'可编辑')
     gongsi_id = fields.Many2one('gongsi', '内部公司')
 
+    submit_date = fields.Date('提交审批时间')
+    submit_uid = fields.Many2one('res.users', u'提交审批')
+
+    purchaser_date = fields.Date('采购审批时间')
+    purchaser_uid = fields.Many2one('res.users', u'采购审批')
+
+    second_sign_uid = fields.Many2one('res.users', u'次签字人')
+
 
     @api.constrains('contract_code')
     def check_contract_code(self):
