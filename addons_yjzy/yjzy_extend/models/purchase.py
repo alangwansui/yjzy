@@ -90,8 +90,8 @@ class purchase_order(models.Model):
     purchase_fandian_ratio = fields.Float(u'返点比例：%')
     purchase_fandian_partner_id = fields.Many2one('res.partner', u'返点对象')
 
-    sale_uid = fields.Many2one('res.users', u'业务员')
-    sale_assistant_id = fields.Many2one('res.users', u'业务助理')
+    sale_uid = fields.Many2one('res.users', u'业务员',default=lambda self: self.env.user.assistant_id.id)
+    sale_assistant_id = fields.Many2one('res.users', u'业务助理',default=lambda self: self.env.user.id)
 
     revise_content = fields.Text(u'合同变更')
     revise_count = fields.Integer(u'变更次数')

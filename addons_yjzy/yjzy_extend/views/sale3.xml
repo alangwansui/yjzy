@@ -339,9 +339,9 @@
                                 <field name="user_id"/>
                                 <field name="sale_assistant_id"/>
                                 <field name="product_manager_id" invisible="1"/>
-                                <field name="exchange_rate"/>
+                                <field name="exchange_rate" invisible="1"/>
                                 <field name="appoint_rate"/>
-                                <field name="no_sent_amount"/>
+                                <field name="no_sent_amount" string="未发货销售"/>
                                 <field name="purchase_no_deliver_amount" string="未发货采购"/>
                                 <field name="yjzy_payment_id" invisible="1"/>
                                 <field name="yjzy_currency_id" invisible="1"/>
@@ -457,6 +457,7 @@
                                     <button name="open_multi_select_product" string="Multi select product" type="object" class="oe_highlight"/>
                                     <tree string="销售订单明细" decoration-info="invoice_status=='to invoice'" editable="bottom" limit="80"
                                           decoration-danger="product_uom_qty != dlr_qty">
+                                        <button icon="fa-pencil-square-o" type="object" name="open_soline_form"/>
                                         <field name="sequence" widget="handle"/>
                                         <field name="product_updatable" invisible="1"/>
 
@@ -532,7 +533,7 @@
                                         <field name="currency_id" invisible="1"/>
                                         <button icon="fas fa-eye" type="object" name="show_product_attrs"/>
 
-                                        <button icon="fa-pencil-square-o" type="object" name="open_soline_form"/>
+
                                         <field name="lot_id" string="批次号" groups="base.group_system"/>
 
 
