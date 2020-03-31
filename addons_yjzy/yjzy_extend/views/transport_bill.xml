@@ -91,6 +91,9 @@
                     <header groups="sales_team.group_sale_assistant,transport.bills_all">
                         <button string="添加销售合同" states="draft" type="object" name="open_wizard_transport4so"
                                 class="oe_highlight"/>
+                        <button string="添加销售明细" states="draft" type="object" name="open_wizard_transport4sol"
+                                class="oe_highlight"/>
+
                         <button string="准备默认出运计划" type="object" name="make_default_lot_plan" attrs="{'invisible': [('is_done_plan','=',True)]}"  class="oe_highlight"/>
                         <button string="销售统计" name="make_sale_collect" attrs="{'invisible': [('sale_collect_state','!=','draft')]}" class="oe_highlight"
                                 type="object"/>

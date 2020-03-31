@@ -997,6 +997,28 @@ class transport_bill(models.Model):
         if len(self.line_ids.mapped('so_id').mapped('partner_id')) > 1:
             raise Warning('发运单只允许关联一个客户的销售订单')
 
+
+    def open_wizard_transport4sol(self):
+        self.ensure_one()
+        ctx = self.env.context.copy()
+        ctx.update({
+            'default_partner_id': self.partner_id.id,
+            'default_gongsi_id': self.gongsi_id.id,
+            'default_purchase_gongsi_id': self.purchase_gongsi_id.id,
+            'add_sol': True,
+        })
+        return {
+            'name': '添加销售明细',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'wizard.transport4so',
+            #'res_id': bill.id,
+            'target': 'new',
+            'type': 'ir.actions.act_window',
+            'context': ctx,
+        }
+
+
     def open_wizard_transport4so(self):
         self.ensure_one()
         ctx = self.env.context.copy()
@@ -1004,6 +1026,7 @@ class transport_bill(models.Model):
             'default_partner_id': self.partner_id.id,
             'default_gongsi_id': self.gongsi_id.id,
             'default_purchase_gongsi_id': self.purchase_gongsi_id.id,
+            'add_so': True,
         })
         return {
             'name': '添加销售订单',
