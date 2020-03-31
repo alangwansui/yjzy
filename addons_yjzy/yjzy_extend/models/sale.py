@@ -123,17 +123,19 @@ class sale_order(models.Model):
             one.fee_rmb_all = one.fee_inner + one.fee_rmb1 + one.fee_rmb2
             one.fee_outer_all = one.fee_outer + one.fee_export_insurance + one.fee_other
 
-            one.fee_rmb_ratio = one.amount_total  and  one.company_currency_id.compute(one.fee_rmb_all + fandian_amoun + vat_diff_amount, one.currency_id) / one.amount_total
-            one.fee_outer_ratio = one.amount_total and  one.other_currency_id.compute(one.fee_outer_all, one.currency_id) / one.amount_total
+            one.fee_rmb_ratio = one.amount_total and one.company_currency_id.compute(one.fee_rmb_all + fandian_amoun + vat_diff_amount, one.currency_id) / one.amount_total
+            one.fee_outer_ratio = one.amount_total and one.other_currency_id.compute(one.fee_outer_all, one.currency_id) / one.amount_total
 
-            one.profit_ratio = amount_total2 and profit_amount / amount_total2  * 100
+            one.profit_ratio = amount_total2 and profit_amount / amount_total2 * 100
 
             one.gross_profit = gross_profit
-            one.gorss_profit_ratio = amount_total2 and (gross_profit / amount_total2  * 100)
+            one.gorss_profit_ratio = amount_total2 and (gross_profit / amount_total2 * 100)
             one.gold_sample_state = gold_sample_state
             one.purchase_no_deliver_amount = purchase_no_deliver_amount
             one.purchase_approve_date = purchase_approve_date
-
+            one.second_cost = sum(one.order_line.mapped('second_price_total'))
+            one.second_porfit = one.amount_total2 - one.second_cost
+            one.second_tenyale_profit = one.company_currency_id.compute(one.second_cost, one.third_currency_id) - one.purchase_cost - one.stock_cost
 
 
 
@@ -256,8 +258,13 @@ class sale_order(models.Model):
     purchase_no_deliver_amount = fields.Float('未发货的采购金额', compute=compute_info)
     purchase_approve_date = fields.Datetime('采购审批时间', compute=compute_info)
 
+    second_cost = fields.Float('销售主体成本', compute=compute_info)   #second_amoun
+    second_porfit = fields.Float('销售主体利润', compute=compute_info) #amount_total2-刚刚计算出来的 second_const
+    second_tenyale_profit = fields.Float('采购主体利润', compute=compute_info)#(采购主体利润)：
 
-
+    # : 公式的cost改成second_cost
+    # second_tenyale_profit：原公式的销售额改成second_cost
+    # second_unit_price: = 订单
 
 
     @api.onchange('contract_type')
