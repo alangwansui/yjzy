@@ -26,7 +26,7 @@
         </field>
     </record>
 
-    <record model="ir.ui.view" id="new_mail_compose_messae_view_form">
+     <record model="ir.ui.view" id="new_mail_compose_message_draft_view_form">
         <field name="name">mail.compose.message.form</field>
         <field name="model">mail.compose.message</field>
         <field name="priority">1</field>
@@ -102,7 +102,6 @@
                     </div>
                        </group>
                 <group>
-                    <field name="need_return_notification"/>
                     <field name="personal_partner_ids" string="收件人" required="1" widget="many2many_tags"  context="{'tag_code': 'out_tmp'}"
                            domain="[('tag_id.code','in',['normal','income_tmp'])]"
                            options="{'create_easy':1, 'quick_create':1,  'create_name_field': 'email'}"/>
@@ -130,11 +129,10 @@
                     'required':[('wizard_mode', 'in', ['compose'])]}"/>
 
 
-                    <field name="email_from" groups="base.group_system" invisible="1"/>
-                    <field name="email_to" groups="base.group_system" invisible="1"/>
-                    <field name="email_cc" groups="base.group_system" invisible="1"/>
+                    <field name="email_from" groups="base.group_system" />
+                    <field name="email_to" groups="base.group_system" />
+                    <field name="email_cc" groups="base.group_system" />
                     <field name="subject" placeholder="Subject..." required="False"/>
-
                 </group>
                 <group col="4">
                     <field name="attachment_ids" widget="many2many_binary" string="添加附件" nolabel="1" colspan="2"/>
@@ -169,7 +167,7 @@
       </page>
   </notebook>
            </div>     <footer>
-                    <button string="发送" name="send_mail_button" attrs="{'invisible':[('is_sent','=',True)]}" type="object" class="btn-primary"
+                    <button string="发送" name="send_mail_button"  context="{'target': context.get('target')}"  attrs="{'invisible':[('is_sent','=',True)]}" type="object" class="btn-primary"
                             confirm="确定要发送邮件"/>
                     <button string="保存" name="save_action" type="object" class="btn-primary"/>
                     <button string="取消" class="btn-default" special="cancel"/>

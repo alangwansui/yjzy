@@ -213,9 +213,9 @@
                     'required':[('wizard_mode', 'in', ['compose'])]}"/>
 
 
-                    <field name="email_from" groups="base.group_system" invisible="1"/>
-                    <field name="email_to" groups="base.group_system" invisible="1"/>
-                    <field name="email_cc" groups="base.group_system" invisible="1"/>
+                    <field name="email_from" groups="base.group_system" />
+                    <field name="email_to" groups="base.group_system" />
+                    <field name="email_cc" groups="base.group_system" />
                     <field name="subject" placeholder="Subject..." required="False"/>
                 </group>
                 <group col="4">
