@@ -80,6 +80,11 @@ class mail_mail(models.Model):
                 ICP = self.env['ir.config_parameter'].sudo()
                 bounce_alias = ICP.get_param("mail.bounce.alias")
                 catchall_domain = ICP.get_param("mail.catchall.domain")
+
+                headers['Disposition-Notification-To'] = mail.email_from
+
+                print('======', headers)
+
                 if bounce_alias and catchall_domain:
                     if mail.model and mail.res_id:
                         headers['Return-Path'] = '%s+%d-%s-%d@%s' % (bounce_alias, mail.id, mail.model, mail.res_id, catchall_domain)
