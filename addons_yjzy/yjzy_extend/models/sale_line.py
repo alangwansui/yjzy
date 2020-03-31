@@ -70,6 +70,7 @@ class sale_order_line(models.Model):
             one.stock_cost = stock_cost
             one.profit_amount = price_total2 - purchase_cost - stock_cost - fandian_amoun
             one.back_tax_amount = back_tax_amount
+            one.rest_tb_qty = one.product_qty - sum(one.tbl_ids.mapped('qty2stage'))
 
     #currency_id ==销售货币
     sale_currency_id = fields.Many2one('res.currency', related='currency_id', string=u'交易货币', readonly=True)
@@ -100,6 +101,7 @@ class sale_order_line(models.Model):
     s_uom_id = fields.Many2one('product.uom', u'销售打印单位',)
     p_uom_id = fields.Many2one('product.uom', u'采购打印单位',)
     tbl_ids = fields.One2many('transport.bill.line', 'sol_id', u'出运明细')
+    rest_tb_qty = fields.Float('出运剩余数', compute=compute_info)
 
     second_unit_price = fields.Float('第二价格')
     second_price_total = fields.Monetary(compute='_compute_second', string='第二小计', readonly=True, store=True)
