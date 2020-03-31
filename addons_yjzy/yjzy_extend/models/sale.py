@@ -100,9 +100,9 @@ class sale_order(models.Model):
 
             purchase_approve_date = False
             for po in one.po_ids:
-                if one.purchaser_date:
+                if po.purchaser_date:
                     if not purchase_approve_date:
-                        purchase_approve_date = one.purchaser_date
+                        purchase_approve_date = po.purchaser_date
                     else:
                         pass
                 else:
