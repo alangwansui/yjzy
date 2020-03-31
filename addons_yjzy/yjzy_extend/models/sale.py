@@ -98,6 +98,19 @@ class sale_order(models.Model):
 
             purchase_no_deliver_amount = sum(one.po_ids.mapped('no_deliver_amount'))
 
+            purchase_approve_date = False
+            for po in one.po_ids:
+                if one.purchaser_date:
+                    if not purchase_approve_date:
+                        purchase_approve_date = one.purchaser_date
+                    else:
+                        pass
+                else:
+                    pass
+
+
+
+
             one.amount_total2 = amount_total2
             one.commission_amount = commission_amount
             one.stock_cost = stock_cost
@@ -119,6 +132,7 @@ class sale_order(models.Model):
             one.gorss_profit_ratio = amount_total2 and (gross_profit / amount_total2  * 100)
             one.gold_sample_state = gold_sample_state
             one.purchase_no_deliver_amount = purchase_no_deliver_amount
+            one.purchase_approve_date = purchase_approve_date
 
 
 
@@ -240,6 +254,8 @@ class sale_order(models.Model):
     sales_confirm_uid = fields.Many2one('res.users', u'责任人审批')
 
     purchase_no_deliver_amount = fields.Float('未发货的采购金额', compute=compute_info)
+    purchase_approve_date = fields.Datetime('采购审批时间', compute=compute_info)
+
 
 
 

@@ -428,15 +428,23 @@ class hr_expense(models.Model):
         budget_obj = self.env['budget.budget']
         date = fields.date.today()
         for one in self:
+            no_match = False
             categ = one.second_categ_id.budget_type and one.second_categ_id or one.categ_id
             dm = [('categ_id', '=', categ.id), ('date_start', '<', date), ('date_end', '>=', date)]
             if categ.budget_type:
                 if categ.budget_type == 'employee':
                     dm += [('employee_id', '=', one.employee_id.id)]
                 elif categ.budget_type == 'transport':
-                    dm = [('tb_id', '=', one.tb_id.id)]
+                    if one.tb_id:
+                        dm = [('tb_id', '=', one.tb_id.id)]
+                    else:
+                        continue
+
                 elif categ.budget_type == 'lead':
-                    dm = [('lead_id', '=', one.lead_id.id)]
+                    if one.lead_id:
+                        dm = [('lead_id', '=', one.lead_id.id)]
+                    else:
+                        continue
 
             budget = budget_obj.search(dm)
             if len(budget) > 1:

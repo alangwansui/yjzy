@@ -167,6 +167,7 @@
                     <field name="currency_id" invisible="1"/>
                     <field name="no_sent_amount" sum="未发货销售"/>
                     <field name="purchase_no_deliver_amount" string="未发货采购"/>
+                    <field name="purchase_approve_date"/>
                     <field name="balance"/>
                     <field name="invoice_status" invisible="1"/>
                     <field name="state" invisible="1"/>
@@ -343,6 +344,7 @@
                                 <field name="appoint_rate"/>
                                 <field name="no_sent_amount" string="未发货销售"/>
                                 <field name="purchase_no_deliver_amount" string="未发货采购"/>
+                                <field name="purchase_approve_date"/>
                                 <field name="yjzy_payment_id" invisible="1"/>
                                 <field name="yjzy_currency_id" invisible="1"/>
                                 <field name="balance" invisible="1"/>
