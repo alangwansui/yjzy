@@ -21,14 +21,12 @@ class wizard_transport4so(models.TransientModel):
         tb = self.env['transport.bill'].browse(bill_id)
         sale_lines = self.sol_ids
 
-        if len(sale_lines.mapped('partner_id')) > 1:
+        if len(sale_lines.mapped('order_id').mapped('partner_id')) > 1:
             raise Warning(u'必须是同一个客户的订单')
 
         bill_line_obj = self.env['transport.bill.line']
         for sol in sale_lines:
             if sol.qty_undelivered > 0:
-                so = sol.order_id
-                #so.tb_ids |= tb
                 bill_line_obj.create({
                     'bill_id': bill_id,
                     'sol_id': sol.id,
