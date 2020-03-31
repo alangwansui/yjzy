@@ -19,8 +19,8 @@ class mail_mail(models.Model):
     recipient_cc_ids = fields.Many2many('res.partner', 'mail_mail_cc_res_partner_rel', 'mail_mail_id', 'partner_id', u'抄送')
     recipient_bcc_ids = fields.Many2many('res.partner', 'mail_mail_bcc_res_partner_rel', 'mail_mail_id', 'partner_id', u'密送')
     readed = fields.Boolean('客户已打开')
-
     read_log_ids = fields.One2many('mail.read.log', 'mail_id', '客户读取记录')
+    need_return_notification = fields.Boolean('需要回执')
 
     @api.multi
     def _send(self, auto_commit=False, raise_exception=False, smtp_session=None):
@@ -81,9 +81,9 @@ class mail_mail(models.Model):
                 bounce_alias = ICP.get_param("mail.bounce.alias")
                 catchall_domain = ICP.get_param("mail.catchall.domain")
 
-                headers['Disposition-Notification-To'] = mail.email_from
-
-                print('======', headers)
+                #需要回执
+                if mail.need_return_notification:
+                    headers['Disposition-Notification-To'] = mail.email_from
 
                 if bounce_alias and catchall_domain:
                     if mail.model and mail.res_id:
@@ -121,7 +121,7 @@ class mail_mail(models.Model):
 
                 # build an RFC2822 email.message.Message object and send it without queuing
                 res = None
-                print('==========wwww======',email_list)
+                #print('==========wwww======',email_list)
                 for email in email_list:
                     base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
                     readed_tag = '<img style="display:none;"  src="%s/mail_mail/have_read/%s"/>' % (base_url, self.id)

@@ -102,6 +102,8 @@ class PRTMailComposer(models.Model):
 
     replay_meesage_id = fields.Many2one('mail.message', '回复的消息')
 
+    need_return_notification = fields.Boolean('需要回执')
+
 
     @api.model
     def cron_create_personal(self, domain=None):
@@ -266,8 +268,7 @@ class PRTMailComposer(models.Model):
 
     @api.multi
     def get_mail_values(self, res_ids):
-        """Generate the values that will be used by send_mail to create mail_messages
-        or mail_mails. """
+        """撰稿生成消息的emai的 数据准备 """
         self.ensure_one()
         results = dict.fromkeys(res_ids, False)
         rendered_values = {}
@@ -309,7 +310,7 @@ class PRTMailComposer(models.Model):
                 'force_notify_email': self.force_notify_email,
                 'personal_partner_ids': [x.id for x in self.personal_partner_ids],
                 'personal_partner_cc_ids': [x.id for x in self.personal_partner_cc_ids],
-
+                'need_return_notification': self.need_return_notification,
             }
 
             #print('=1212====',mail_values['email_to'],  [partner_cc.id for partner_cc in self.partner_cc_ids], mail_values)

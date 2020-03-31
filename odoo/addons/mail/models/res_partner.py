@@ -101,11 +101,16 @@ class Partner(models.Model):
         if message.res_id and message.model in self.env and hasattr(self.env[message.model], 'message_get_email_values'):
             custom_values = self.env[message.model].browse(message.res_id).message_get_email_values(message)
 
+
+        print('XXXXXXXXXXXXX', message.need_return_notification)
+
         mail_values = {
             'mail_message_id': message.id,
             'mail_server_id': message.mail_server_id.id,
             'auto_delete': self._context.get('mail_auto_delete', True),
             'references': references,
+            'need_return_notification': message.need_return_notification,
+
         }
         mail_values.update(custom_values)
         return mail_values

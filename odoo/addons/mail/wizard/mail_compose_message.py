@@ -226,14 +226,14 @@ class MailComposer(models.Model):
 
             Mail = self.env['mail.mail']
             ActiveModel = self.env[wizard.model if wizard.model else 'mail.thread']
-            print('===wizard.template_id==', wizard.template_id)
+
             if wizard.template_id:
                 # template user_signature is added when generating body_html
                 # mass mailing: use template auto_delete value -> note, for emails mass mailing only
                 Mail = Mail.with_context(mail_notify_user_signature=False)
                 ActiveModel = ActiveModel.with_context(mail_notify_user_signature=False, mail_auto_delete=wizard.template_id.auto_delete)
 
-            print('===ActiveModel.message_post==', wizard.composition_mode, ActiveModel, hasattr(ActiveModel, 'message_post'), wizard.model)
+
             if not hasattr(ActiveModel, 'message_post'):
                 ActiveModel = self.env['mail.thread'].with_context(thread_model=wizard.model)
             if wizard.composition_mode == 'mass_post':
@@ -241,7 +241,7 @@ class MailComposer(models.Model):
                 # add context key to avoid subscribing the author
                 ActiveModel = ActiveModel.with_context(mail_notify_force_send=False, mail_create_nosubscribe=True)
             # wizard works in batch mode: [res_id] or active_ids or active_domain
-            print('===mass_mode===', mass_mode)
+
             if mass_mode and wizard.use_active_domain and wizard.model:
                 res_ids = self.env[wizard.model].search(safe_eval(wizard.active_domain)).ids
             elif mass_mode and wizard.model and self._context.get('active_ids'):
@@ -259,7 +259,6 @@ class MailComposer(models.Model):
             else:
                 subtype_id = self.sudo().env.ref('mail.mt_comment', raise_if_not_found=False).id
 
-            print('===subtype_id===', subtype_id, self.env['mail.message.subtype'].browse(subtype_id).name)
             for res_ids in sliced_res_ids:
                 batch_mails = Mail
                 all_mail_values = wizard.get_mail_values(res_ids)
@@ -267,14 +266,13 @@ class MailComposer(models.Model):
                     if wizard.composition_mode == 'mass_mail':
                         batch_mails |= Mail.create(mail_values)
                     else:
-                        #<jon>
-                        print('==ActiveModel message_post=====', ActiveModel, mail_values)
+                        #<jon> 撰稿发送成消息
+                        print('==ActiveModel message_post=====', mail_values['need_return_notification'],  mail_values, ActiveModel,)
                         new_message = ActiveModel.browse(res_id).message_post(
                             message_type=wizard.message_type,
                             subtype_id=subtype_id,
                             **mail_values)
-                        print('==-new_message===',  new_message,  new_message.partner_cc_ids)
-                        print('==-new_message mial===', self.env['mail.mail'].search([('mail_message_id','=', new_message.id)], ))
+
                         new_message.write({'compose_id': wizard.id})
 
                 if wizard.composition_mode == 'mass_mail':
@@ -314,6 +312,7 @@ class MailComposer(models.Model):
                 'no_auto_thread': self.no_auto_thread,
                 'mail_server_id': self.mail_server_id.id,
                 'mail_activity_type_id': self.mail_activity_type_id.id,
+                'need_return_notification': self.need_return_notification,
             }
 
             # mass mailing: rendering override wizard static values

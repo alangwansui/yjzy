@@ -24,7 +24,7 @@ class PRTPartner(models.Model):
     @api.model
     def _notify_send(self, body, subject, recipients, **mail_values):
         #<jon email create function>
-        print('================_notify_send========================', mail_values.get('email_to'),  mail_values)
+        #print('================_notify_send========================', mail_values.get('email_to'),  mail_values)
         emails = self.env['mail.mail']
         recipients_nbr = len(recipients)
         for email_chunk in split_every(50, recipients.ids):
@@ -36,12 +36,12 @@ class PRTPartner(models.Model):
             #print('=============_notify_send======2==', message)
 
             if message and message.model and message.res_id and message.model in self.env and hasattr(self.env[message.model], 'message_get_recipient_values'):
-                print('=============_notify_send======2.1==')
+                #print('=============_notify_send======2.1==')
                 tig = self.env[message.model].browse(message.res_id)
-                print('=============_notify_send======2.1.1==', tig)
+                #print('=============_notify_send======2.1.1==', tig)
                 recipient_values = tig.message_get_recipient_values(notif_message=message, recipient_ids=email_chunk)
             else:
-                print('=============_notify_send======2.2==')
+                #print('=============_notify_send======2.2==')
                 recipient_values = self.env['mail.thread'].message_get_recipient_values(notif_message=None, recipient_ids=email_chunk)
 
             #print('=============_notify_send======3==', recipient_values)
@@ -70,7 +70,7 @@ class PRTPartner(models.Model):
             if (not create_values.get('email_to')) and recipient_values.get('email_to'):
                 create_values.update(recipient_values)
 
-            #print('======mail.mail create at here ========', recipient_values['email_to'], create_values['email_to'])
+            print('======mail.mail create at here ========', mail_values.get('need_return_notification'),  create_values.get('need_return_notification'), create_values)
 
             emails |= self.env['mail.mail'].create(create_values)
         return emails, recipients_nbr

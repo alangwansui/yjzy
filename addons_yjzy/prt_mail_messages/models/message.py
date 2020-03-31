@@ -172,6 +172,9 @@ class PRTMailMessage(models.Model):
     personal_partner_name = fields.Char('personal.partner', related='personal_author_id.name', store=False)
     personal_partner_email = fields.Char('personal.partner', related='personal_author_id.email', store=False)
 
+    need_return_notification = fields.Boolean('需要回执')
+
+
     #message端，记录：ip地址，country， regionName，City， zip，第一次打开的时间, 再统计一下次数。
 
     def btn_multi_download(self):
