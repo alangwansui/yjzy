@@ -66,6 +66,7 @@
         'views/stock.xml',
         'views/transport_bill.xml',
         'views/transport_bill_account.xml',
+        'views/transport_bill_new.xml',
         'views/transport_lot_plan.xml',
         'views/transport_bill_vendor.xml',
 
