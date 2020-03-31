@@ -26,7 +26,8 @@
                     <field name="include_tax"/>
                     <field name="payment_term_id" attrs="{}" invisible="1"/>
                     <field name="sale_uid" />
-                    <field name="sale_assistant_id" />
+                    <field name="sale_assistant_id"  invisible="1"/>
+                    <field name="purchaser_date"/>
                     <field name="gongsi_id" string="采购主体"/>
                     <field name="supplierinfo_ids" widget="many2many_tags" invisible="1"/>
                     <field name="invoice_status" invisible="1" /><!--invisible="not context.get('show_purchase', True)"-->
@@ -107,10 +108,7 @@
 
                             <field name="no_deliver_amount"/>
                             <field name="date_order"/>
-                            <div>
-                              <field name="date_planned" required="1" attrs="{'readonly': [('state', 'not in', ('draft', 'sent'))]}"/>
-                               <button name="action_set_date_planned" type="object" states="draft,sent" string="Set date to all order lines" help="This changes the scheduled date of all order lines to the given date" class="fa fa-calendar o_icon_button oe_edit_only"/>
-                             </div>
+
                             <field name="source_so_id"/>
                             <field name="origin" attrs="{'invisible': [('origin','=',False)]}"/>
                             <field name="company_id" groups="base.group_system" options="{'no_create': True}" />
@@ -135,16 +133,19 @@
                                     <field name="sequence" widget="handle"/>
                                     <field name="product_id" attrs="{'readonly': [('state', 'in', ('purchase', 'to approve','done', 'cancel'))]}" context="{'partner_id':parent.partner_id, 'quantity':product_qty,'uom':product_uom, 'company_id': parent.company_id}" force_save="1"/>
                                     <field name="name" invisible="1"/>
-                                     <field name="back_tax"/>
-                                     <field name="last_purchase_price" invisible="1" readonly="1"/>
-                                     <field name="supplierinfo_id" invisible="1"/>
-                                     <field name="box_start" />
-                                     <field name="box_end"/>
-                                      <field name="min_package_name" invisible="1"/>
-                                       <field name="max_package_qty" invisible="1"/>
-                                     <field name="qty_max_package"/>
-                                      <field name="max_qty"/>
-                                        <field name="max_qty2" invisible="1"/>
+                                      <field name="product_qty" sum="total"/>
+                                     <field name="price_unit"/>
+                                      <field name="price_subtotal" widget="monetary"/>
+                                    <field name="back_tax"/>
+                                    <field name="last_purchase_price" invisible="1" readonly="1"/>
+                                    <field name="supplierinfo_id" invisible="1"/>
+                                    <field name="box_start" />
+                                    <field name="box_end"/>
+                                    <field name="min_package_name" invisible="1"/>
+                                    <field name="max_package_qty" invisible="1"/>
+                                    <field name="qty_max_package"/>
+                                     <field name="max_qty"/>
+                                     <field name="max_qty2" invisible="1"/>
                                      <field name="max_qty_ng" invisible="1"/>
                                     <field name="price_section_base" invisible="1"/>
                                     <field name="s_uom_id" invisible="1"/>
@@ -159,15 +160,15 @@
                                     <field name="company_id" groups="base.group_multi_company" invisible="1" options="{'no_create': True}"/>
                                     <field name="account_analytic_id" context="{'default_partner_id':parent.partner_id}" groups="purchase.group_analytic_accounting"/>
                                     <field name="analytic_tag_ids" groups="purchase.group_analytic_accounting" widget="many2many_tags" options="{'color_field': 'color'}"/>
-                                    <field name="product_qty" sum="total"/>
+
                                     <field name="qty_available" readonly="1" invisible="1"/>
                                     <field name="virtual_available" readonly="1" invisible="1"/>
                                     <field name="qty_received" invisible="0"/><!--invisible="not context.get('show_purchase', True)"-->
                                     <field name="qty_invoiced"  invisible="0"/>
                                     <field name="product_uom" invisible="1" groups="product.group_uom" attrs="{'readonly': [('state', 'in', ('purchase', 'done', 'cancel'))]}" force_save="1"/>
-                                    <field name="price_unit"/>
+
                                     <field name="taxes_id" invisible="1" widget="many2many_tags" domain="[('type_tax_use','=','purchase')]" context="{'default_type_tax_use': 'purchase'}" options="{'no_create': True}"/>
-                                    <field name="price_subtotal" widget="monetary"/>
+
                                 </tree>
                                 <form string="Purchase Order Line">
                                     <sheet>
@@ -229,7 +230,11 @@
                         <page string="Deliveries &amp; Invoices" invisible="1">
                             <group>
                                 <group>
-                                    <label for="date_planned"/>
+                             <label for="date_planned"/>
+                                    <div>
+                                       <field name="date_planned" required="1" attrs="{'readonly': [('state', 'not in', ('draft', 'sent'))]}"/>
+                                       <button name="action_set_date_planned" type="object" states="draft,sent" string="Set date to all order lines" help="This changes the scheduled date of all order lines to the given date" class="fa fa-calendar o_icon_button oe_edit_only"/>
+                                  </div>
 
                                     <field name="picking_type_id" domain="[('code','=','incoming')]" options="{'no_create': True}" groups="stock.group_stock_multi_locations"/>
                                     <field name="dest_address_id" groups="stock.group_stock_multi_locations" attrs="{'invisible': [('default_location_dest_id_usage', '!=', 'customer')], 'required': [('default_location_dest_id_usage', '=', 'customer')]}"/>
@@ -257,7 +262,6 @@
                     </page>
                    <page string="审批记录">
                         <group>
-
                             <field name="submit_date"/>
                             <field name="submit_uid"/>
                             <field name="purchaser_date"/>
