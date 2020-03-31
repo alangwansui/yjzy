@@ -154,7 +154,7 @@
                 <tree string="Sales Orders" decoration-bf="message_needaction==True" decoration-muted="state=='cancel'">
                     <field name="message_needaction" invisible="1"/>
                     <field name="id" groups="base.group_system"/>
-                    <field name="name" string="订单流水"/>
+                    <field name="name" string="订单流水" groups="base.group_system"/>
                     <field name="contract_code"/>
                     <field name="partner_id"/>
                     <field name="requested_date" widget="date" string="交单日期"/>
@@ -163,22 +163,23 @@
                     <field name="contract_date" attrs="{}" invisible="1" required="1"/>
 
 
-                    <field name="amount_total" sum="Total Tax Included" widget="monetary"/>
+                    <field name="amount_total" sum="Total Tax Included" widget="monetary" string="销售金额"/>
+                    <field name="purchase_cost" string="采购金额"/>
                     <field name="currency_id" invisible="1"/>
-                    <field name="no_sent_amount" sum="未发货销售"/>
+                    <field name="no_sent_amount" string="未发货销售"/>
                     <field name="purchase_no_deliver_amount" string="未发货采购"/>
-                    <field name="purchase_approve_date"/>
+
                     <field name="balance"/>
                     <field name="invoice_status" invisible="1"/>
                     <field name="state" invisible="1"/>
 
 
-                    <field name="user_id" groups="sale.hegui_all"/>
+                    <field name="user_id" groups="sale.hegui_all" string="责任人"/>
                     <field name="commitment_date" invisible="1"/>
 
                     <field name="advance_po_residual" invisible="1"/>
-
-                    <field name="approvaled_date" widget="date"/>
+                     <field name="purchase_approve_date" widget="date" string="采购审批时间"/>
+                    <field name="approvaled_date" widget="date" string="销售审批时间"/>
                     <field name="gongsi_id" string="销售主体"/>
 
                     <field name="company_id"/>
@@ -283,7 +284,7 @@
                                 <field name="link_man_id" domain="[('parent_id','=',partner_id),('type', '=', 'contract')]" groups="base.group_system"/>
                                 <field name="customer_pi" string="客户合同号" help="审批之后不允许修改"/>
                                 <field name="incoterm"/>
-                                <field name="requested_date" string="客户交期"/>
+                                <field name="requested_date" string="客户交期" widget="date"/>
                                 <field name="payment_term_id" options="{'no_create': True}" domain="[('type','in', ['sale', 'comm'])]"/>
                                 <field name="current_date_rate" string="当日汇率"/>
                                 <field name="currency_id" invisible="0"/>
@@ -344,7 +345,7 @@
                                 <field name="appoint_rate"/>
                                 <field name="no_sent_amount" string="未发货销售"/>
                                 <field name="purchase_no_deliver_amount" string="未发货采购"/>
-                                <field name="purchase_approve_date"/>
+
                                 <field name="yjzy_payment_id" invisible="1"/>
                                 <field name="yjzy_currency_id" invisible="1"/>
                                 <field name="balance" invisible="1"/>
@@ -352,6 +353,7 @@
                                 <field name="cip_type"/>
                                 <field name="pre_advance"/>
                                 <field name="gold_sample_state"/>
+                                <field name="purchase_approve_date"/>
                                 <field name="approve_date"/>
                                 <field name="validity_date" attrs="{'invisible': [('state', 'in', ['sale', 'done'])]}"/>
                                 <field name="confirmation_date" attrs="{'invisible': [('state', 'in', ['draft', 'sent', 'cancel'])]}"/>
@@ -457,6 +459,7 @@
                                         <field name="state" invisible="1"/>
                                     </form>
                                     <button name="open_multi_select_product" string="Multi select product" type="object" class="oe_highlight"/>
+                                     <button name="818" type="action" string="Select Products" context="{'default_flag_order': 'so'}" attrs="{'invisible': [('state', '!=', 'draft')]}" class="oe_highlight"/>
                                     <tree string="销售订单明细" decoration-info="invoice_status=='to invoice'" editable="bottom" limit="80"
                                           decoration-danger="product_uom_qty != dlr_qty">
                                         <button icon="fa-pencil-square-o" type="object" name="open_soline_form"/>
@@ -974,7 +977,7 @@
 
 
         <record id="new_sale_order_all_action" model="ir.actions.act_window">
-            <field name="name">销售订单</field>
+            <field name="name">销售合同</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">sale.order</field>
             <field name="view_mode">tree,form,kanban</field>
@@ -983,10 +986,10 @@
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('new_sale_order_kanban')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_from')})]"/>
         </record>
-        <menuitem id="new_sale_order_menu" name="新销售订单" parent="sale.sale_order_menu" action="new_sale_order_all_action" sequence=""/>
+
         <menuitem id="new_sale_order_menu" name="新销售合同" parent="sale.sale_menu_root" action="new_sale_order_all_action" sequence="99"
                   groups="base.group_system"/>
-
+        <menuitem id="new_sale_order_all_menu" name="销售合同查询" parent="new_sale_order_menu" action="new_sale_order_all_action" sequence="1"/>
         <record id="new_sale_order_draft_action" model="ir.actions.act_window">
             <field name="name">报价单</field>
             <field name="type">ir.actions.act_window</field>

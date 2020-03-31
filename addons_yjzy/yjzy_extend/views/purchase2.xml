@@ -298,7 +298,7 @@
         </record>
 
         <!-- This Menu Item must have a parent and an action -->
-        <menuitem id="new_purhcase_order_menu" name="采购单:新" parent="purchase.menu_procurement_management" action="new_purhcase_order_action" sequence=""/>
+        <menuitem id="new_purhcase_order_menu" name="采购单:新" parent="purchase.menu_purchase_root" action="new_purhcase_order_action" sequence=""/>
 
 
     </data>

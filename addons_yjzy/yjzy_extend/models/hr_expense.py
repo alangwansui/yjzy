@@ -417,6 +417,8 @@ class hr_expense(models.Model):
     budget_amount_reset = fields.Monetary('预算剩余', related='budget_id.amount_reset', currency_field='currency_id', readonly=True)
     gongsi_id = fields.Many2one('gongsi', '内部公司')
 
+    budget_expense_list_ids = fields.One2many('hr.expense','预算明细', related='budget_id.expense_ids',readonly=True)
+
     def get_budget_type(self):
         return self.second_categ_id.budget_type or self.categ_id.budget_type or None
 

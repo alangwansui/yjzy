@@ -220,7 +220,7 @@
                                 <field name="user_budget_amount_reset" groups="base.group_system"/>
 
 
-                                <field name="budget_id" groups="base.group_system"/>
+                                <field name="budget_id"/>
                                 <field name="budget_amount" groups="base.group_system"/>
                                 <field name="budget_amount_reset" groups="base.group_system"/>
 
@@ -1214,5 +1214,20 @@
                 </form>
             </field>
         </record>
+
+         <!--record id="hr_expense_product_new_action" model="ir.actions.act_window">
+            <field name="name">费用产品</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">product.product</field>
+            <field name="view_mode">tree,form</field>
+             <field name="domain">[('can_be_expensed', '=', True)]</field>
+              <field name="context">{'default_can_be_expensed': 1, 'default_type': 'service'}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('new_purhcase_order_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('new_purhcase_order_from')})]"/>
+        </record>
+        <menuitem id="hr_expense_product_new_menu" name="费用小类" parent="hr_expense.menu_hr_expense_configuration" action="new_purhcase_order_action" sequence=""/-->
+
+
     </data>
 </odoo>
