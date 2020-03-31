@@ -190,7 +190,7 @@
                                 <field name="include_tax" invisible="1"/>
                                 <field name="sys_outer_hetong" string="系统外合同" attrs="{'invisible':[('parent.budget_type','!=','transport')]}"/>
                                 <field name="tb_id" string="系统内合同" context="{'show_ref': 1}" attrs="{'invisible':[('parent.budget_type','!=','transport')]}"/>
-                                <field name="lead_id" string="项目编号" options="{'can_create': 1}" attrs="{'invisible':[('parent.budget_type','!=','lead')]}"/>
+                                <field name="lead_id" string="项目编号" options="{'quick_create': 1}" attrs="{'invisible':[('parent.budget_type','!=','lead')]}"/>
                                 <field name="employee_id" string="责任人" />
                                 <field name="date" string="费用发生日期"/>
                                 <field name="tax_ids" domain="[('type_tax_use', '=', 'purchase')]" widget="many2many_tags" invisible="1"
