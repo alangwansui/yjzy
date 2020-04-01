@@ -56,7 +56,7 @@
                                        groups="account.group_account_user"/>
                             </group>
                             <group>
-                                <field name="gongsi_id"/>
+                                <field name="gongsi_id" groups="base.group_system"/>
                                 <field name="reference" invisible="1"/>
                                 <field name="account_id" invisible="1" attrs="{'readonly': [('state','in',['post','done'])]}"
                                        domain="[('internal_type', '=', 'other')]"
@@ -195,7 +195,7 @@
                                 <field name="date" string="费用发生日期"/>
                                 <field name="tax_ids" domain="[('type_tax_use', '=', 'purchase')]" widget="many2many_tags" invisible="1"
                                        groups="account.group_account_user"/>
-                                <field name="gongsi_id"/>
+                                <field name="gongsi_id" groups="base.group_system"/>
                             </group>
                             <group>
                                 <field name="reference" invisible="1"/>
@@ -220,7 +220,7 @@
                                 <field name="user_budget_amount_reset" groups="base.group_system"/>
 
 
-                                <field name="budget_id"/>
+                                <field name="budget_id" invisible="1"/>
                                 <field name="budget_amount" groups="base.group_system"/>
                                 <field name="budget_amount_reset" groups="base.group_system"/>
 
@@ -387,7 +387,7 @@
                     <field name="budget_id" groups="base.group_system"/>
                     <field name="budget_amount" groups="base.group_system"/>
                     <field name="budget_amount_reset" groups="base.group_system"/>
-                    <field name="gongsi_id"/>
+                    <field name="gongsi_id" groups="base.group_system"/>
 
                     <button name="action_get_attachment_view" string="View Attached Documents" type="object" icon="fa-paperclip"
                             attrs="{'invisible': [('attachment_number', '=', 0)]}"/>
@@ -422,7 +422,7 @@
                     <field name="budget_id" groups="base.group_system"/>
                     <field name="budget_amount" groups="base.group_system"/>
                     <field name="budget_amount_reset" groups="base.group_system"/>
-                    <field name="gongsi_id"/>
+                    <field name="gongsi_id" groups="base.group_system"/>
 
                     <button name="action_get_attachment_view" string="View Attached Documents" type="object" icon="fa-paperclip"
                             attrs="{'invisible': [('attachment_number', '=', 0)]}"/>
@@ -442,7 +442,7 @@
                     <field name="my_total_amount" string="总金额"/>
                     <field name="state" string="状态" invisible="1"/>
                     <field name="message_unread" invisible="1"/>
-                    <field name="gongsi_id"/>
+                    <field name="gongsi_id" groups="base.group_system"/>
                 </tree>
             </field>
         </record>
@@ -460,7 +460,7 @@
                     <field name="x_wkf_state" string="审批流程"/>
                     <field name="state" string="状态" invisible="1"/>
                     <field name="message_unread" invisible="1"/>
-                    <field name="gongsi_id"/>
+                    <field name="gongsi_id" groups="base.group_system"/>
                 </tree>
             </field>
         </record>
@@ -478,7 +478,7 @@
                     <field name="x_wkf_state" string="审批流程"/>
                     <field name="state" string="状态" invisible="1"/>
                     <field name="message_unread" invisible="1"/>
-                    <field name="gongsi_id"/>
+                    <field name="gongsi_id" groups="base.group_system"/>
                 </tree>
             </field>
         </record>
@@ -512,8 +512,8 @@
                         <button name="btn_undo_confirm" type="object" string="强制取消责任人确认" groups="base.group_system" context="{'force': 1}"/>
 
 
-                        <button name="btn_match_budget" type="object" string="预算匹配"/>
-                        <button name="btn_release_budget" type="object" string="预算解除"/>
+                        <button name="btn_match_budget" type="object" string="预算匹配" groups="base.group_system"/>
+                        <button name="btn_release_budget" type="object" string="预算解除" groups="base.group_system"/>
                     </header>
                     <sheet>
                         <div class="oe_button_box" invisible="1"><!--"context.get('expense_adding_line')"-->
@@ -543,7 +543,7 @@
                                 <field name="address_id" invisible="1"/>
                                 <field name="department_id" invisible="1"/>
                                 <field name="budget_type" invisible="1"/>
-                                <field name="gongsi_id"/>
+                                <field name="gongsi_id" groups="base.group_system"/>
                             </group>
                             <group>
                                 <field name="total_amount" string="总金额" readonly="1" invisible="1"/>
@@ -709,8 +709,8 @@
                         <button name="btn_undo_confirm" type="object" string="取消责任人确认" groups="base.group_system"/>
                         <button name="btn_undo_confirm" type="object" string="强制取消责任人确认" groups="base.group_system" context="{'force': 1}"/>
 
-                        <button name="btn_company_budget" type="object" string="公司预算"/>
-                        <button name="btn_user_budget" type="object" string="个人预算"/>
+                        <button name="btn_company_budget" type="object" string="公司预算" groups="base.group_system"/>
+                        <button name="btn_user_budget" type="object" string="个人预算" groups="base.group_system"/>
                     </header>
                     <sheet>
                         <div class="oe_button_box" invisible="1"><!--"context.get('expense_adding_line')"-->
@@ -740,7 +740,7 @@
                                 <field name="address_id" invisible="1"/>
                                 <field name="department_id" invisible="1"/>
                                  <field name="budget_type" invisible="1"/>
-                                <field name="gongsi_id"/>
+                                <field name="gongsi_id" groups="base.group_system"/>
 
                             </group>
                             <group>
@@ -1114,8 +1114,8 @@
                         <button name="btn_undo_confirm" type="object" string="取消责任人确认" groups="base.group_system"/>
                         <button name="btn_undo_confirm" type="object" string="强制取消责任人确认" groups="base.group_system" context="{'force': 1}"/>
 
-                        <button name="btn_company_budget" type="object" string="公司预算" />
-                        <button name="btn_user_budget" type="object" string="个人预算"/>
+                        <button name="btn_company_budget" type="object" string="公司预算" groups="base.group_system"/>
+                        <button name="btn_user_budget" type="object" string="个人预算" groups="base.group_system"/>
                     </header>
                     <sheet>
                         <div class="oe_button_box" invisible="1"><!--"context.get('expense_adding_line')"-->
@@ -1145,7 +1145,7 @@
                                 <field name="address_id" invisible="1"/>
                                 <field name="department_id" invisible="1"/>
                                  <field name="budget_type" invisible="1"/>
-                                <field name="gongsi_id"/>
+                                <field name="gongsi_id" groups="base.group_system"/>
 
                             </group>
                             <group>
