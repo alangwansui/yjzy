@@ -504,7 +504,7 @@
                         <button name="create_rcfkd" attrs="{'invisible': [('payment_id','!=',False)]}" context="{}" string="生成日常付款单" type="object" icon=""/>
                         <button name="post_message_lines" context="{}" string="明细消息发送" type="object" icon=""/>
                         <button name="add_line_message_followers" context="{}" string="添加明细关注者" type="object" icon=""/>
-                        <field name="state" widget="statusbar" invisible="1" statusbar_visible="draft,submit,approve,post,done"/>
+                        <field name="state" widget="statusbar" groups="base.group_system" statusbar_visible="draft,submit,approve,post,done"/>
                         <button name="btn_user_confirm" type="object" string="责任人确认" groups="base.group_system"/>
                         <button name="btn_user_confirm" type="object" string="强制责任人确认" groups="base.group_system" context="{'force': 1}"/>
 
@@ -702,7 +702,7 @@
                         <button name="create_rcfkd" attrs="{'invisible': [('payment_id','!=',False)]}" context="{}" string="生成日常付款单" type="object" icon=""/>
                         <button name="post_message_lines" context="{}" string="明细消息发送" type="object" icon=""/>
                         <button name="add_line_message_followers" context="{}" string="添加明细关注者" type="object" icon=""/>
-                        <field name="state" widget="statusbar" invisible="1" statusbar_visible="draft,submit,approve,post,done"/>
+                        <field name="state" widget="statusbar" groups="base.group_system" statusbar_visible="draft,submit,approve,post,done"/>
                         <button name="btn_user_confirm" type="object" string="责任人确认" groups="base.group_system"/>
                         <button name="btn_user_confirm" type="object" string="强制责任人确认" groups="base.group_system" context="{'force': 1}"/>
 
@@ -755,6 +755,64 @@
                         </group>
                         <notebook>
                             <page string="Expense Lines">
+                                <field name="expense_line_ids" nolabel="1" widget="one2many" attrs="{'invisible':[('state','not in','draft')]}" domain="[('state', '=', 'draft')]"
+                                       options="{'not_delete': True, 'reload_on_button': True, 'no_create': False}"
+                                       context="{'expense_adding_line': True, 'default_company_id':company_id,'tracking_disable': True,
+                                       'default_categ_id': categ_id, 'default_second_categ_id': second_categ_id,
+                                       'no_show_mark': context.get('no_show_mark'),  'default_gongsi_id': gongsi_id,
+                                       'default_currency_id': currency_id, 'default_state': 'draft','form_view_ref':'yjzy_extend.view_hr_expense_new_from_sheet_form'}" >
+
+                                    <tree decoration-danger="is_refused">
+                                        <field name="date" string="明细日期" invisible="context.get('no_show_mark')"/>
+                                        <field name="categ_id" string="大类"/>
+                                        <field name="second_categ_id" string="中类"/>
+                                        <field name="product_id" string="小类"/>
+                                        <field name="name" invisible="1"/>
+                                        <field name="sys_outer_hetong" attrs="{'column_invisible':[('parent.budget_type','!=','transport')]}"/>
+                                        <field name="tb_id" context="{'show_ref': 1}" attrs="{'column_invisible':[('parent.budget_type','!=','transport')]}"/>
+                                        <field name="sale_order_id" context="{'sale_show_partner_name': True}" invisible="1"/>
+                                        <field name="employee_id" string="责任人"/>
+                                        <field name="state" invisible="1"/>
+                                        <field name="currency_id" invisible="1"/>
+                                        <field name="ask_uid" invisible="1"/>
+                                        <field name="analytic_account_id" invisible="1"/>
+                                        <field name="message_unread" invisible="1"/>
+                                        <field name="attachment_number" invisible="1"/>
+                                        <button name="action_get_attachment_view" invisible="1" string="View Attachments" type="object" icon="fa-paperclip"/>
+                                        <field name="total_amount" widget="monetary" options="{'currency_field': 'currency_id'}" sum="小计"/>
+                                        <field name="is_refused" invisible="True"/>
+                                        <field name="hx_expense_id" groups="base.group_system"/>
+                                        <field name="hx_code" groups="base.group_system"/>
+                                        <field name="hx_balance" groups="base.group_system"/>
+                                        <field name="sheet_all_line_is_confirmed" invisible="1"/>
+                                        <button name="make_hx_code" string="生成内部核对标记" groups="base.group_system" type="object" icon=""
+                                                attrs="{'invisible':[('hx_code','!=',False)]}"/>
+                                        <button name="468" states="reported, refused" invisible="1" string="Refuse"
+                                                context="{'hr_expense_refuse_model':'hr.expense'}"
+                                                type="action" groups="hr_expense.group_hr_expense_user, account.group_account_user" icon="fa-times"/>
+                                        <field name="diff_balance" groups="base.group_system"/>
+                                        <field name="diff_product_id" groups="base.group_system"/>
+                                        <field name="diff_expense" groups="base.group_system"/>
+
+                                        <field name="sheet_state" groups="base.group_system"/>
+                                        <field name="description" string="备注"/>
+
+
+                                        <field name="budget_id"  groups="base.group_system"/>
+                                        <field name="budget_amount"  groups="base.group_system"/>
+                                        <field name="budget_amount_reset"  groups="base.group_system"/>
+
+
+
+                                        <button name="action_employee_confirm" string="责任人确认"  class="oe_highlight"
+                                                type="object" attrs="{'invisible':['|',('state','in',['draft','done','refused','confirmed','employee_confirm']),('sheet_state','=','cancel')]}"/>
+                                        <button name="btn_undo_confirm" type="object" string="取消责任人确认"
+                                                attrs="{'invisible': ['|',('state', 'in',['draft','done','refused','confirmed','reported']),('sheet_all_line_is_confirmed','=',True)]}"/>
+                                        <field name="is_confirmed" string="责任人确认"  attrs="{'invisible': [('is_confirmed','=',False)]}"/>
+
+                                    </tree>
+                                </field>
+
                                 <field name="my_expense_line_ids"  context="{'form_view_ref':'yjzy_extend.view_hr_expense_new_from_sheet_form'}">
                                     <tree decoration-danger="is_refused" >
                                         <field name="date" string="明细日期"/>
@@ -1101,8 +1159,67 @@
                             </group>
                         </group>
                         <notebook>
+
+
                             <page string="Expense Lines">
-                                <field name="my_expense_line_ids" context="{'form_view_ref':'yjzy_extend.view_hr_expense_new_from_sheet_form'}">
+                               <field name="expense_line_ids" nolabel="1" widget="one2many" attrs="{'invisible':[('state','not in','draft')]}" domain="[('state', '=', 'draft')]"
+                                       options="{'not_delete': True, 'reload_on_button': True, 'no_create': False}"
+                                       context="{'expense_adding_line': True, 'default_company_id':company_id,'tracking_disable': True,
+                                       'default_categ_id': categ_id, 'default_second_categ_id': second_categ_id,
+                                       'no_show_mark': context.get('no_show_mark'),  'default_gongsi_id': gongsi_id,
+                                       'default_currency_id': currency_id, 'default_state': 'draft','form_view_ref':'yjzy_extend.view_hr_expense_new_from_sheet_form'}" >
+
+                                    <tree decoration-danger="is_refused">
+                                        <field name="date" string="明细日期" invisible="context.get('no_show_mark')"/>
+                                        <field name="categ_id" string="大类"/>
+                                        <field name="second_categ_id" string="中类"/>
+                                        <field name="product_id" string="小类"/>
+                                        <field name="name" invisible="1"/>
+                                        <field name="sys_outer_hetong" attrs="{'column_invisible':[('parent.budget_type','!=','transport')]}"/>
+                                        <field name="tb_id" context="{'show_ref': 1}" attrs="{'column_invisible':[('parent.budget_type','!=','transport')]}"/>
+                                        <field name="sale_order_id" context="{'sale_show_partner_name': True}" invisible="1"/>
+                                        <field name="employee_id" string="责任人"/>
+                                        <field name="state" invisible="1"/>
+                                        <field name="currency_id" invisible="1"/>
+                                        <field name="ask_uid" invisible="1"/>
+                                        <field name="analytic_account_id" invisible="1"/>
+                                        <field name="message_unread" invisible="1"/>
+                                        <field name="attachment_number" invisible="1"/>
+                                        <button name="action_get_attachment_view" invisible="1" string="View Attachments" type="object" icon="fa-paperclip"/>
+                                        <field name="total_amount" widget="monetary" options="{'currency_field': 'currency_id'}" sum="小计"/>
+                                        <field name="is_refused" invisible="True"/>
+                                        <field name="hx_expense_id" groups="base.group_system"/>
+                                        <field name="hx_code" groups="base.group_system"/>
+                                        <field name="hx_balance" groups="base.group_system"/>
+                                        <field name="sheet_all_line_is_confirmed" invisible="1"/>
+                                        <button name="make_hx_code" string="生成内部核对标记" groups="base.group_system" type="object" icon=""
+                                                attrs="{'invisible':[('hx_code','!=',False)]}"/>
+                                        <button name="468" states="reported, refused" invisible="1" string="Refuse"
+                                                context="{'hr_expense_refuse_model':'hr.expense'}"
+                                                type="action" groups="hr_expense.group_hr_expense_user, account.group_account_user" icon="fa-times"/>
+                                        <field name="diff_balance" groups="base.group_system"/>
+                                        <field name="diff_product_id" groups="base.group_system"/>
+                                        <field name="diff_expense" groups="base.group_system"/>
+
+                                        <field name="sheet_state" groups="base.group_system"/>
+                                        <field name="description" string="备注"/>
+
+
+                                        <field name="budget_id"  groups="base.group_system"/>
+                                        <field name="budget_amount"  groups="base.group_system"/>
+                                        <field name="budget_amount_reset"  groups="base.group_system"/>
+
+
+
+                                        <button name="action_employee_confirm" string="责任人确认"  class="oe_highlight"
+                                                type="object" attrs="{'invisible':['|',('state','in',['draft','done','refused','confirmed','employee_confirm']),('sheet_state','=','cancel')]}"/>
+                                        <button name="btn_undo_confirm" type="object" string="取消责任人确认"
+                                                attrs="{'invisible': ['|',('state', 'in',['draft','done','refused','confirmed','reported']),('sheet_all_line_is_confirmed','=',True)]}"/>
+                                        <field name="is_confirmed" string="责任人确认"  attrs="{'invisible': [('is_confirmed','=',False)]}"/>
+
+                                    </tree>
+                                </field>
+                                <field name="my_expense_line_ids" attrs="{'invisible':[('state','in','draft')]}" context="{'form_view_ref':'yjzy_extend.view_hr_expense_new_from_sheet_form'}">
                                     <tree decoration-danger="is_refused">
                                         <field name="date" string="明细日期"/>
                                         <field name="categ_id" string="大类"/>
