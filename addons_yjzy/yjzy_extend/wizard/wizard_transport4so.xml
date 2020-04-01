@@ -20,7 +20,7 @@
                     <group invisible="not context.get('add_sol')">
                         <field name="sol_ids" nolabel="1" option="{'no_create': True}" widget="many2many"
                             domain="[('order_id.partner_id','=', partner_id),('order_id.delivery_status', '!=', 'received'),('order_id.state', '=','sale'),
-                                        ('order_id.purchase_gongsi_id', '=', purchase_gongsi_id),('order_id.gongsi_id', '=', gongsi_id)]">
+                                        ('order_id.purchase_gongsi_id', '=', purchase_gongsi_id),('order_id.gongsi_id', '=', gongsi_id),('rest_tb_qty', '>', 0)]">
                             <tree>
                                 <field name="order_id"/>
                                 <field name="product_id"/>
