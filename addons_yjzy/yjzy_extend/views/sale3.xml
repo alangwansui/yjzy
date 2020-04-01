@@ -2,6 +2,25 @@
 <odoo>
     <data>
 
+         <record id="new_order_line_transport_tree" model="ir.ui.view">
+            <field name="name">sale.order.line.tree</field>
+            <field name="model">sale.order.line</field>
+            <field name="arch" type="xml">
+                <tree string="Sales Order Lines">
+                    <field name="product_id" invisible="1"/>
+                    <field name="order_id"/>
+                    <field name="order_partner_id"/>
+                    <field name="rest_tb_qty"/>
+                    <field name="name" invisible="1"/>
+                    <field name="salesman_id" invisible="1"/>
+                    <field name="product_uom_qty" string="Qty"/>
+                    <field name="qty_delivered"/>
+                    <field name="qty_invoiced"/>
+                    <field name="qty_to_invoice"/>
+                    <field name="price_subtotal" sum="Total" widget="monetary" invisible="1"/>
+                </tree>
+            </field>
+        </record>
 
         <record id="new_sale_order_line_from" model="ir.ui.view">
             <field name="name">sale.order.form</field>
