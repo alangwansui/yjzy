@@ -15,7 +15,7 @@
                         <field name="line_ids" nolabel="1" >
                             <tree string="出运计划" editable="top" delete="false">
                                 <field name="plan_id" readonly="1"/>
-                                <field name="lot_id" domain="[('product_id','=', parent.product_id)]"/>
+                                <field name="lot_id" domain="[('product_id','=', parent.product_id)]" context="{'show_po_code': 1}"/>
                                 <field name="qty"/>
                                 <field name="stage_1"/>
                                 <field name="stage_2"/>

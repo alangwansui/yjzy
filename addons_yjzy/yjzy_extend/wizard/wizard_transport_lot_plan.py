@@ -41,8 +41,8 @@ class wizard_transport_lot_plan_line(models.TransientModel):
     plan_id = fields.Many2one('transport.lot.plan')
     lot_id = fields.Many2one('stock.production.lot', u'批次')
     qty = fields.Float('数量')
-    stage_1 = fields.Boolean('应用第1步', defualt=True)
-    stage_2 = fields.Boolean('应用第2步', defualt=True)
+    stage_1 = fields.Boolean('应用第1步', default=True)
+    stage_2 = fields.Boolean('应用第2步', default=True)
 
     def unlink_plan(self):
         self.ensure_one()
