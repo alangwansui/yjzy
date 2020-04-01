@@ -475,6 +475,10 @@ class hr_expense(models.Model):
                     one.employee_confirm_name = self.env.user.name
                     one.employee_confirm_user = self.env.user.id
 
+
+    def btn_undo_confirm_force(self):
+        return self.with_context(force=True).btn_undo_confirm()
+
     def btn_undo_confirm(self):
         force = self.env.context.get('force')
         for one in self:
