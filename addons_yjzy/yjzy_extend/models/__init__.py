@@ -56,6 +56,8 @@ from . import ir_translation
 from . import mail
 
 from . import gongsi
+from . import employee
+
 
 
 
