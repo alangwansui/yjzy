@@ -299,6 +299,9 @@ class hr_expense_sheet(models.Model):
     def btn_undo_confirm(self):
         self.expense_line_ids.btn_undo_confirm()
 
+    def btn_undo_confirm_force(self):
+        self.expense_line_ids.btn_undo_confirm_force()
+
     def btn_match_budget(self):
         self.expense_line_ids.match_budget()
 
