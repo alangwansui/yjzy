@@ -238,6 +238,9 @@
                                         <field name="sale_qty"/>
                                         <field name="qty_undelivered"/>
 
+                                        <field name="plan_lot"/>
+                                        <field name="plan_qty"/>
+
                                         <field name="smline_str" groups="base.group_system"/>
                                         <field name="smline_qty" groups="base.group_system"/>
                                         <field name="dlr_str"/>
