@@ -13,3 +13,14 @@ class stock_production_lot(models.Model):
     po_id = fields.Many2one('purchase.order', related='pol_id.order_id', string=u'采购单号', readonly=True)
     supplier_id = fields.Many2one('res.partner',  related='po_id.partner_id', stirng=u'供应商', readonly=True)
     dummy_qty = fields.Float(u'u采购数量')
+
+    @api.multi
+    def name_get(self):
+        ctx = self.env.context
+        res = []
+        for one in self:
+            name = one.name
+            if ctx.get('show_po_code', False):
+                name += '%s' % one.po_id.contract_code
+            res.append((one.id, name))
+        return res

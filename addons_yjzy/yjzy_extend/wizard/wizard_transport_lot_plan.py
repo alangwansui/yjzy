@@ -20,8 +20,6 @@ class wizard_transport_lot_plan(models.TransientModel):
             data = {'lot_id': line.lot_id.id, 'qty': line.qty, 'stage_1': line.stage_1, 'stage_2': line.stage_2}
             plan = line.plan_id
 
-
-
             if plan:
                 plan.write(data)
             else:
@@ -30,7 +28,7 @@ class wizard_transport_lot_plan(models.TransientModel):
 
             #明细的计划永远未第一条计划
             if i == 1:
-                line.tbline_id.lot_plan_id = plan
+                self.tbline_id.lot_plan_id = plan
             i += 1
 
         return True
