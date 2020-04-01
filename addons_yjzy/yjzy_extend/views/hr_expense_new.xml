@@ -755,7 +755,7 @@
                         </group>
                         <notebook>
                             <page string="Expense Lines">
-                                <field name="expense_line_ids" nolabel="1" widget="one2many" attrs="{'invisible':[('state','not in','draft')]}" domain="[('state', '=', 'draft')]"
+                                <field name="expense_line_ids" nolabel="1" widget="one2many" attrs="{'invisible':[('state','not in',['draft','cancel'])]}" domain="[('state', '=', 'draft')]"
                                        options="{'not_delete': True, 'reload_on_button': True, 'no_create': False}"
                                        context="{'expense_adding_line': True, 'default_company_id':company_id,'tracking_disable': True,
                                        'default_categ_id': categ_id, 'default_second_categ_id': second_categ_id,
@@ -813,7 +813,7 @@
                                     </tree>
                                 </field>
 
-                                <field name="my_expense_line_ids"  context="{'form_view_ref':'yjzy_extend.view_hr_expense_new_from_sheet_form'}">
+                                <field name="my_expense_line_ids"  attrs="{'invisible':[('state','in',['draft','cancel'])]}" context="{'form_view_ref':'yjzy_extend.view_hr_expense_new_from_sheet_form'}">
                                     <tree decoration-danger="is_refused" >
                                         <field name="date" string="明细日期"/>
                                         <field name="categ_id" string="大类"/>
@@ -1162,7 +1162,7 @@
 
 
                             <page string="Expense Lines">
-                               <field name="expense_line_ids" nolabel="1" widget="one2many" attrs="{'invisible':[('state','not in','draft')]}" domain="[('state', '=', 'draft')]"
+                               <field name="expense_line_ids" nolabel="1" widget="one2many" attrs="{'invisible':[('state','not in',['draft','cancel'])]}" domain="[('state', '=', 'draft')]"
                                        options="{'not_delete': True, 'reload_on_button': True, 'no_create': False}"
                                        context="{'expense_adding_line': True, 'default_company_id':company_id,'tracking_disable': True,
                                        'default_categ_id': categ_id, 'default_second_categ_id': second_categ_id,
@@ -1219,7 +1219,7 @@
 
                                     </tree>
                                 </field>
-                                <field name="my_expense_line_ids" attrs="{'invisible':[('state','in','draft')]}" context="{'form_view_ref':'yjzy_extend.view_hr_expense_new_from_sheet_form'}">
+                                <field name="my_expense_line_ids" attrs="{'invisible':[('state','in',['draft','cancel'])]}" context="{'form_view_ref':'yjzy_extend.view_hr_expense_new_from_sheet_form'}">
                                     <tree decoration-danger="is_refused">
                                         <field name="date" string="明细日期"/>
                                         <field name="categ_id" string="大类"/>
