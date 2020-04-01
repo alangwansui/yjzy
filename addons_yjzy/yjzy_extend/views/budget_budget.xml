@@ -53,7 +53,7 @@
                         </group>
                         <notebook>
                             <page string="费用明细">
-                                <field name="expense_ids"/>
+                                <field name="expense_ids" widget="many2many"/>
                             </page>
                             <page string="其他">
 
