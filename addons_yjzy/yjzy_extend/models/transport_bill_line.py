@@ -85,6 +85,11 @@ class transport_bill_line(models.Model):
     dlr_qty = fields.Float(related='sol_id.dlr_qty', string=u'采购预留数')
     lot_plan_ids = fields.One2many('transport.lot.plan', 'tbline_id', u'调拨计划', copy=False)
 
+    lot_plan_id = fields.Many2one('transport.lot.plan',  u'调拨计划:新')
+    plan_lot = fields.Many2one('stock.production.lot',  '计划批次')
+    plan_qty = fields.Float('计划数量',)
+
+
     pol_ids = fields.One2many('purchase.order.line', related='sol_id.pol_ids', readonly=True)
     move_ids = fields.Many2many('stock.move', 'ref_move_tbl', 'lid', 'mid', u'库存移动详情')
     stage1move_ids = fields.Many2many('stock.move', 'ref_move_tbl', 'lid', 'mid', u'入库',
@@ -165,6 +170,9 @@ class transport_bill_line(models.Model):
     def _make_default_lot_plan(self):
         plan_obj = self.env['transport.lot.plan']
         for line in self:
+            line.plan_lot = line.sol_id.lot_id
+            line.plan_qty = line.sol_id.rest_tb_qty
+
             line.lot_plan_ids = False
             for x in line.dlr_ids.filtered(lambda x: x.todo_qty > 0):
                 plan_obj.create({
