@@ -356,6 +356,12 @@ class transport_bill(models.Model):
     gongsi_id = fields.Many2one('gongsi', '内部公司')
     purchase_gongsi_id = fields.Many2one('gongsi', '内部采购公司')
 
+    @api.constrains
+    def check_lines(self):
+        for one in self:
+            if len(one.line_ids) != len(one.line_ids.mapped('sol_id')):
+                raise Warning('不能创建相同 销售明细 的出运明细行')
+
     @api.model
     def create(self, vals):
         one = super(transport_bill, self).create(vals)
