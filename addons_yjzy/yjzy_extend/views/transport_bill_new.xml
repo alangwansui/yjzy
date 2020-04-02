@@ -444,10 +444,12 @@
                                 </group>
                                 <field name="hsname_ids">
                                     <tree>
+                                        <field name="purchase_hs_id" invisible="1"/>
                                         <button name="make_suppliser_hs" type="object" icon="fa-th-large"/>
                                         <field name="id"/>
                                         <field name="package_tag" invisible="1"/>
                                         <field name="name" />
+
                                         <field name="dump_product_id" groups="base.group_system" invisible="1"/>
                                         <field name="hs_id" groups="base.group_system" invisible="1"/>
                                         <field name="hs_en_name" groups="base.group_system" invisible="1"/>
