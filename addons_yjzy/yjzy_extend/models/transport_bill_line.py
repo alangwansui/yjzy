@@ -73,6 +73,7 @@ class transport_bill_line(models.Model):
     include_tax = fields.Boolean(related='bill_id.include_tax')
     state = fields.Selection(related='bill_id.state')
     sol_id = fields.Many2one('sale.order.line', u'销售明细')
+    rest_tb_qty = fields.Float(related='sol_id.rest_tb_qty')
 
 
 

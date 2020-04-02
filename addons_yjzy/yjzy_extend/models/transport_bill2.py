@@ -268,6 +268,9 @@ class tbl_hsname(models.Model):
     package_tag = fields.Char('包裹标记')
 
 
+    suppliser_hs_amount = fields.Float('采购HS统计金额')
+
+
     @api.model
     def create(self, vals):
         one = super(tbl_hsname, self).create(vals)
@@ -277,6 +280,17 @@ class tbl_hsname(models.Model):
         one.price2 = one.price
         one.amount2 = one.amount
         return one
+
+    def make_suppliser_hs(self):
+
+        suppliser_hs_obj = self.env['btls.hs']
+        if not suppliser_hs_obj.search([('sale_hs_id','=',self.id)]):
+            suppliser_hs_obj.create({
+                'sale_hs_id': self.id,
+
+            })
+
+
 
 
 

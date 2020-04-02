@@ -231,6 +231,7 @@
 
                                         <field name="name" invisible="1"/>
                                         <field name="sol_id" invisible="1"/>
+                                        <field name="rest_tb_qty">
                                         <field name="so_id" groups="base.group_system"/>
                                         <field name="product_id"/>
                                         <field name="hs_id" invisible="1"/>
