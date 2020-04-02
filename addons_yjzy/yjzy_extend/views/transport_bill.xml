@@ -548,6 +548,9 @@
                                 </group>
                                 <field name="hsname_ids">
                                     <tree>
+
+                                        <field name="purchase_hs_id"/>
+                                        <button name="make_suppliser_hs" type="object" icon="fa-th-large"/>
                                         <field name="id"/>
                                         <field name="package_tag"/>
                                         <field name="name" />

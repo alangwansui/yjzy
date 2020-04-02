@@ -30,7 +30,7 @@ class transport_bill(models.Model):
         return dic_info
 
     def get_sale_hs(self, key_name):
-        return self.hsname_ids.filtered(lambda x: x.name==key_name)
+        return self.hsname_ids.filtered(lambda x: x.name == key_name)
 
     def tongji_tbl_hsname(self):
         self.ensure_one()
@@ -41,9 +41,8 @@ class transport_bill(models.Model):
             else:
                 res[i.hs_id] = i
 
-        print('=======',res)
+        print('=======', res)
         return res
-
 
     def make_sale_collect(self):
         self.hsname_ids.unlink()
@@ -68,7 +67,7 @@ class transport_bill(models.Model):
             for plan in plans:
                 po_id = plan.lot_id.po_id.id
 
-                #需要合并的
+                # 需要合并的
                 if sol.bom_id:
                     plan_percent = plan.qty / sol.bom_qty
                     bom = sol.bom_id
@@ -79,14 +78,14 @@ class transport_bill(models.Model):
                     else:
                         bom_dic[bom] = {'tblines': line, 'bom_qty': sol.bom_qty * plan_percent, 'po_id': po_id, 'so_id': so.id}
 
-                #需要拆分的
+                # 需要拆分的
                 elif sol.need_split_bom:
                     bom = bom_obj._bom_find(product=product)
                     if not bom:
                         raise Warning(u'产品%s没有找到相关的bom信息' % product.defualt_code)
                     lines_done = bom.explode(product, plan.qty)[1]
                     for i in lines_done:
-                        #print ('=======需要拆分的=========', i)
+                        # print ('=======需要拆分的=========', i)
                         if not product.lst_price:
                             raise Warning(u'产品%s 没有设置销售价格' % product.default_code)
                         price = i[0].product_id.lst_price * (sol.price_unit / product.lst_price)
@@ -98,13 +97,14 @@ class transport_bill(models.Model):
                             'tbl_id': line.id,
                             'product_id': i[0].product_id.id,
                             'out_qty': i[1]['qty'],
-                            'price': amount / i[1]['qty'],  #price,
-                            'amount': amount, #i[1]['qty'] * price,
+                            'price': amount / i[1]['qty'],  # price,
+                            'amount': amount,  # i[1]['qty'] * price,
                             'po_id': po_id,
                             'so_id': so.id,
-                            'note': '销售金额%s  bom百分比%s  计划数量%s  销售数量%s   = 最终金额 %s ' % (line.org_currency_sale_amount, i[0].price_percent,  plan.qty, line.qty2stage, amount)
+                            'note': '销售金额%s  bom百分比%s  计划数量%s  销售数量%s   = 最终金额 %s ' % (
+                                line.org_currency_sale_amount, i[0].price_percent, plan.qty, line.qty2stage, amount)
                         })
-                #正常的
+                # 正常的
                 else:
                     price_a = line.org_currency_sale_amount / line.qty2stage
                     comb_obj.create({
@@ -119,11 +119,11 @@ class transport_bill(models.Model):
                     })
 
         # 创建bom产品
-        #print('>>>>>>>>>>', bom_dic)
+        # print('>>>>>>>>>>', bom_dic)
         for bom, info in bom_dic.items():
             tblines = info['tblines']
             amount = sum(tblines.mapped('org_currency_sale_amount'))
-            #print('>>>>>>>>>>2', bom.product_id)
+            # print('>>>>>>>>>>2', bom.product_id)
             comb_obj.create({
                 'tb_id': self.id,
                 'product_id': bom.product_id.id or bom.product_tmpl_id.product_variant_ids[0].id,
@@ -140,7 +140,7 @@ class transport_bill(models.Model):
         for one in self.comb_ids:
             hs = one.hs_id
             key_name = '%s:%s' % (hs.id, one.po_id.id)
-            #print('====make_tbl_hsname====', hs)
+            # print('====make_tbl_hsname====', hs)
             if key_name not in hs_dic:
                 hs_dic[key_name] = {'dump_product': one.product_id, 'comb_lines': one, 'out_qty': one.out_qty, 'hs_id': hs.id, 'po_id': one.po_id.id}
             else:
@@ -148,7 +148,7 @@ class transport_bill(models.Model):
                 hs_dic[key_name]['out_qty'] += one.out_qty
 
         for key_name, info in hs_dic.items():
-            #print('>>>info', info)
+            # print('>>>info', info)
             comb_lines = info['comb_lines']
             amount = sum(comb_lines.mapped('amount'))
             out_qty = sum(comb_lines.mapped('out_qty'))
@@ -205,14 +205,13 @@ class tbl_hsname(models.Model):
                 x['net_weight'] += i['net_weight']
                 x['volume'] += i['volume']
 
-            #x = pdt.get_package_info(one.out_qty)
+            # x = pdt.get_package_info(one.out_qty)
             one.qty_max = x['max_qty']
             one.qty_mid = x['mid_qty']
             one.qty_min = x['min_qty']
             one.gross_weight = x['gross_weight']
             one.net_weight = x['net_weight']
             one.volume = x['volume']
-
 
     @api.depends('amount2', 'out_qty2')
     def compute_price2(self):
@@ -243,7 +242,7 @@ class tbl_hsname(models.Model):
     hs_id2 = fields.Many2one('hs.hs', u'报关品名')
     dump_product_id2 = fields.Many2one('product.product', u'报关产品')
     out_qty2 = fields.Float('报关数量')
-    price2 = fields.Float('报关价格',  compute=compute_price2)
+    price2 = fields.Float('报关价格', compute=compute_price2)
     amount2 = fields.Float('报关金额', digits=dp.get_precision('Money'))
 
     source_area = fields.Char(u'原产地')
@@ -258,7 +257,6 @@ class tbl_hsname(models.Model):
     type = fields.Selection([('auto', u'自动'), ('manual', '手动')], u'创建方式', default='auto')
     note = fields.Char(u'其他')
 
-
     tuopan_weight = fields.Float(u'托盘分配重量', digits=dp.get_precision('Weight'))
     tuopan_volume = fields.Float(u'托盘分配体积', digits=dp.get_precision('Volume'))
 
@@ -267,9 +265,33 @@ class tbl_hsname(models.Model):
 
     package_tag = fields.Char('包裹标记')
 
-
     suppliser_hs_amount = fields.Float('采购HS统计金额')
 
+    # 销售hs统计同步采购hs统计
+    purchase_hs_id = fields.Many2one('btls.hs', '采购HS统计')
+    purchase_amount = fields.Float('采购金额', related="purchase_hs_id.amount")
+    purchase_amount2 = fields.Float('采购金额', related="purchase_hs_id.amount2")
+
+    @api.multi
+    def write(self, vals):
+        res = super(tbl_hsname, self).write(vals)
+        need = set(['hs_id', 'hs_id2', 'out_qty', 'out_qty2', 'amount', 'amount2']) & set(vals.keys())
+        if need:
+            for one in self:
+                purchase_hs = one.purchase_hs_id
+                if purchase_hs:
+                    purchase_hs.hs_id = one.hs_id
+                    purchase_hs.hs_id2 = one.hs_id2
+                    purchase_hs.qty = one.out_qty
+                    purchase_hs.qty2 = one.out_qty2
+        return res
+
+
+
+
+    @api.onchange('hs_id')
+    def onchange_hs(self):
+        self.hs_id2 = self.hs_id
 
     @api.model
     def create(self, vals):
@@ -282,15 +304,16 @@ class tbl_hsname(models.Model):
         return one
 
     def make_suppliser_hs(self):
-
         suppliser_hs_obj = self.env['btls.hs']
-        if not suppliser_hs_obj.search([('sale_hs_id','=',self.id)]):
-            suppliser_hs_obj.create({
+        suppliser_hs_record = self.purchase_hs_id or suppliser_hs_obj.search([('sale_hs_id', '=', self.id)])
+
+        if not suppliser_hs_record:
+            suppliser_hs_record = suppliser_hs_obj.create({
                 'sale_hs_id': self.id,
-
+                'amount': self.suppliser_hs_amount,
+                'tb_id': self.tb_id.id,
+                'qty': self.out_qty,
+                'price': 1,
+                'hs_id': self.hs_id.id,
             })
-
-
-
-
-
+            self.purchase_hs_id = suppliser_hs_record

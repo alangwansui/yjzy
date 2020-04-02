@@ -331,10 +331,13 @@ class btls_hs(models.Model):
     back_tax_amount2 = fields.Float(u'报关退税金额', compute=compute_price2, digits=dp.get_precision('Money'))
     tongji_type = fields.Selection([('purchase', u'采购'), ('stock', u'库存')], u'统计类型')
 
+    @api.onchange('po_id')
+    def onchange_po(self):
+        self.supplier_id = self.po_id.partner_id
+
     @api.model
     def create(self, vals):
         one = super(btls_hs, self).create(vals)
-
         if one.tb_id.cip_type != 'normal':
             back_tax_amount = 0
         else:
@@ -348,5 +351,10 @@ class btls_hs(models.Model):
         one.amount2 = one.amount
         one.back_tax2 = one.back_tax
         one.back_tax_amount2 = back_tax_amount
-
         return one
+
+
+
+
+
+
