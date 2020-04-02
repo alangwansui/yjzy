@@ -240,7 +240,7 @@ class HrExpense(models.Model):
                     'sfk_type': total < 0 and 'rcfksqd' or 'rcskrld',
                     'expense_id': expense.id,
                     'yjzy_payment_id': expense.yjzy_payment_id.id,
-                    'gongsi_id': expense.gongsi_id.id or self.gongsi_id.id,
+                    'gongsi_id': expense.gongsi_id.id or expense.sheet_id.gongsi_id.id,
                 })
                 payment_id = payment.id
             else:
