@@ -229,12 +229,12 @@
                                         <field name="qty_undelivered" invisible="1"/>
                                         <field name="plan_qty"/>
                                         <field name="lot_plan_id" invisible="1"/>
-                                        <field name="plan_lot" readonly="1"/>
+                                        <field name="plan_lot" readonly="1" context="{'show_po_code': 1}"/>
 
 
                                         <field name="smline_str" groups="base.group_system" invisible="1"/>
                                         <field name="smline_qty" groups="base.group_system" invisible="1"/>
-                                        <field name="dlr_str" string="采购数"/>
+                                        <field name="dlr_str" string="采购数" invisible="1"/>
                                         <field name="back_tax"/>
                                         <field name="dlr_qty" groups="base.group_system" invisible="1"/>
                                         <field name="qty1stage" groups="base.group_system" invisible="1"/>
@@ -296,57 +296,7 @@
                                 <field name="description_baoguan"/>
 
                             </page>
-                            <page string="统计" >
 
-                               <group col="3">
-                                 <group name="sale_currency">
-                                 <field name="is_done_plan"/>
-                                 <field name="is_done_tuopan"/>
-                                 <field name="is_done_tb_vendor"/>
-                                 <field name="stage1state" invisible="1" groups="base.group_system" attrs="{'readonly': [('locked','=',True)]}"/>
-                                 <field name="stage2state" invisible="1" groups="base.group_system" attrs="{'readonly': [('locked','=',True)]}"/>
-                                 <field name="sale_collect_state"/>
-                                 <field name="purchase_collect_state"/>
-                                 <field name="qingguan_state"/>
-                               </group>
-                            <group name="self_currency" >
-                                 <field name="sale_currency_id" readonly="1" />
-                                 <field name="company_id" readonly="1" invisible="1"/>
-                                 <field name="company_currency_id" readonly="1" invisible="1"/>
-
-
-                                 <field name="org_sale_amount" attrs="{'readonly': [('locked','=',True)]}"/>
-                                 <field name="org_real_sale_amount" attrs="{'readonly': [('locked','=',True)]}"/>
-
-                                 <field name="sale_commission_ratio" attrs="{'readonly': [('locked','=',True)]}"/>
-                                 <field name="ciq_amount" attrs="{'readonly': [('locked','=',True)]}"/>
-                                 <field name="no_ciq_amount" attrs="{'readonly': [('locked','=',True)]}"/>
-
-                                 <field name="shoukuan_amount"/>
-                                 <field name="fukuan_amount"/>
-
-                                 <field name="budget_amount" invisible="1"/>
-                                 <field name="budget_reset_amount" invisible="1"/>
-                            </group>
-                                   <group groups="base.group_system" >
-                                <field name="third_currency_id" no_create="True"/>
-                                <field name="sale_amount"/>
-                                <field name="real_sale_amount"/>
-                                <field name="sale_commission_amount"/>
-                                <field name="purchase_cost"/>
-                                <field name="fandian_amount"/>
-                                <field name="stock_cost"/>
-                                <field name="other_cost"/>
-                                <field name="back_tax_amount"/>
-                                <field name="vat_diff_amount"/>
-                                <field name="profit_amount"/>
-                                <field name="profit_ratio"/>
-
-
-
-                                   </group>
-                            </group>
-                            </page>
                             <page string="明细批次" attrs="{'readonly': [('locked','=',True)]}" name="pcmx" invisible="1" groups="base.group_system">
                                 <field name="tbl_lot_ids">
                                     <tree string="明细批次">
@@ -455,9 +405,7 @@
                             <page string="采购订单" groups="base.group_system" invisible="1">
                                 <field name="po_ids"/>
                             </page>
-                            <page string="供应商发货通知">
-                                <field name="tb_vendor_ids"/>
-                            </page>
+
                             <page string="销售分解组合" groups="base.group_system" invisible="1">
                                 <field name="comb_ids">
                                     <tree editable="bottom">
@@ -639,9 +587,63 @@
                                     </tree>
                                 </field>
                             </page-->
-                            <page string="费用明细">
+                            <page string="供应商发货通知">
+                                <field name="tb_vendor_ids"/>
+                            </page>
+                            <page string="费用明细" invisible="1">
                                 <field name="expense_ids">
                                 </field>
+                            </page>
+                            <page string="统计" >
+
+                               <group col="3">
+                                 <group name="sale_currency">
+                                 <field name="is_done_plan"/>
+                                 <field name="is_done_tuopan"/>
+                                 <field name="is_done_tb_vendor"/>
+                                 <field name="stage1state" invisible="1" groups="base.group_system" attrs="{'readonly': [('locked','=',True)]}"/>
+                                 <field name="stage2state" invisible="1" groups="base.group_system" attrs="{'readonly': [('locked','=',True)]}"/>
+                                 <field name="sale_collect_state"/>
+                                 <field name="purchase_collect_state"/>
+                                 <field name="qingguan_state"/>
+                               </group>
+                            <group name="self_currency" >
+                                 <field name="sale_currency_id" readonly="1" />
+                                 <field name="company_id" readonly="1" invisible="1"/>
+                                 <field name="company_currency_id" readonly="1" invisible="1"/>
+
+
+                                 <field name="org_sale_amount" attrs="{'readonly': [('locked','=',True)]}"/>
+                                 <field name="org_real_sale_amount" attrs="{'readonly': [('locked','=',True)]}"/>
+
+                                 <field name="sale_commission_ratio" attrs="{'readonly': [('locked','=',True)]}"/>
+                                 <field name="ciq_amount" attrs="{'readonly': [('locked','=',True)]}"/>
+                                 <field name="no_ciq_amount" attrs="{'readonly': [('locked','=',True)]}"/>
+
+                                 <field name="shoukuan_amount"/>
+                                 <field name="fukuan_amount"/>
+
+                                 <field name="budget_amount" invisible="1"/>
+                                 <field name="budget_reset_amount" invisible="1"/>
+                            </group>
+                                   <group groups="base.group_system" >
+                                <field name="third_currency_id" no_create="True"/>
+                                <field name="sale_amount"/>
+                                <field name="real_sale_amount"/>
+                                <field name="sale_commission_amount"/>
+                                <field name="purchase_cost"/>
+                                <field name="fandian_amount"/>
+                                <field name="stock_cost"/>
+                                <field name="other_cost"/>
+                                <field name="back_tax_amount"/>
+                                <field name="vat_diff_amount"/>
+                                <field name="profit_amount"/>
+                                <field name="profit_ratio"/>
+
+
+
+                                   </group>
+                            </group>
                             </page>
                         </notebook>
                     </sheet>
