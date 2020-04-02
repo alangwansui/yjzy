@@ -168,7 +168,7 @@ class transport_bill_line(models.Model):
 
 
     @api.multi
-    def _make_default_lot_plan(self):
+    def make_default_lot_plan(self):
         plan_obj = self.env['transport.lot.plan']
         for line in self:
             #line.plan_lot = line.sol_id.lot_id

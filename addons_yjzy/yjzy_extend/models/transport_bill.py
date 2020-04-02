@@ -1047,7 +1047,7 @@ class transport_bill(models.Model):
 
     def make_default_lot_plan(self):
         self.ensure_one()
-        self.line_ids._make_default_lot_plan()
+        self.line_ids.make_default_lot_plan()
         self.is_done_plan = True
 
 

@@ -286,7 +286,7 @@
                                         <field name="p_uom_id" groups="base.group_system"/>
                                         <field name="need_print"/>
 
-
+                                        <button icon="fa-paper-plane" type="object" name="make_default_lot_plan"/>
                                         <button icon="fa-list" type="object" name="open_wizard_transport_lot_plan"
                                                 attrs="{'invisible': [('state','!=', 'draft')]}"/>
                                     </tree>
