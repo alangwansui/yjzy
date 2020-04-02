@@ -203,7 +203,7 @@ class HrExpense(models.Model):
                     # force the name to the default value, to avoid an eventual 'default_name' in the context
                     # to set it to '' which cause no number to be given to the account.move when posted.
                     'name': '/',
-                    'gongsi_id': expense.gongsi_id.id or self.gongsi_id.id,
+                    'gongsi_id': expense.gongsi_id.id or expense.sheet_id.gongsi_id.id,
                 })
                 move_group_by_sheet[expense.sheet_id.id] = move
             else:
