@@ -444,7 +444,7 @@
                                 </group>
                                 <field name="hsname_ids">
                                     <tree>
-                                        <field name="purchase_hs_id" invisible="1"/>
+                                        <field name="purchase_hs_id"/>
                                         <button name="make_suppliser_hs" type="object" icon="fa-th-large"/>
                                         <field name="id"/>
                                         <field name="package_tag" invisible="1"/>
@@ -454,14 +454,17 @@
                                         <field name="hs_id" groups="base.group_system" invisible="1"/>
                                         <field name="hs_en_name" groups="base.group_system" invisible="1"/>
                                         <field name="back_tax"/>
+                                        <field name="po_id"/>
                                         <field name="out_qty" sun="小计"/>
                                         <field name="price"/>
                                         <field name="amount" sum="小计"/>
+                                        <field name="purchase_amount"/>
                                         <field name="hs_id2"/>
                                         <field name="dump_product_id2" groups="base.group_system" invisible="1"/>
                                         <field name="out_qty2" sum="小计"/>
                                         <field name="price2"/>
                                         <field name="amount2" sum="小计"/>
+                                        <field name="purchase_amount2"/>
                                         <field name="source_area"/>
                                         <field name="source_country_id"/>
                                         <field name="qty_max" sum="小计" string="件数"/>
@@ -486,6 +489,7 @@
                                         <field name="dump_product_id" readonly="0"/>
                                         <field name="hs_id" readonly="0"/>
                                         <field name="hs_en_name" readonly="0"/>
+                                          <field name="po_id"/>
                                         <field name="back_tax" readonly="1"/>
                                         <field name="out_qty" readonly="0"/>
                                         <field name="price" />
