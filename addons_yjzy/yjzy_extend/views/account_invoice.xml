@@ -61,10 +61,10 @@
                     <field name="yjzy_type"/>
                     <field name="include_tax"/>
                     <field name="tb_contract_code"/>
-                    <field name="po_id"/>
-                    <field name="purchase_contract_code"/>
+                    <field name="po_id" arrts="{'invisible':[('type','in',['out_invoice','out_refund'])]}"/>
+                    <field name="purchase_contract_code" arrts="{'invisible':[('type','in',['out_invoice','out_refund'])]}"/>
                     <field name="sale_assistant_id"/>
-                    <field name="gongsi_id"/>
+                    <field name="gongsi_id" string="销售主体"/>
                 </group>
             </xpath>
 
