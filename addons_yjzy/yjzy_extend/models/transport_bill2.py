@@ -269,8 +269,8 @@ class tbl_hsname(models.Model):
 
     # 销售hs统计同步采购hs统计
     purchase_hs_id = fields.Many2one('btls.hs', '采购HS统计')
-    purchase_amount = fields.Float('采购金额', related="purchase_hs_id.amount")
-    purchase_amount2 = fields.Float('采购金额', related="purchase_hs_id.amount2")
+    # purchase_amount = fields.Float('采购金额', related="purchase_hs_id.amount")
+    # purchase_amount2 = fields.Float('采购金额', related="purchase_hs_id.amount2")
 
     @api.multi
     def write(self, vals):
@@ -284,6 +284,9 @@ class tbl_hsname(models.Model):
                     purchase_hs.hs_id2 = one.hs_id2
                     purchase_hs.qty = one.out_qty
                     purchase_hs.qty2 = one.out_qty2
+                    purchase_hs.po_id = one.po_id
+                    purchase_hs.amount = one.amount
+                    purchase_hs.amount2 = one.amount2
         return res
 
 
