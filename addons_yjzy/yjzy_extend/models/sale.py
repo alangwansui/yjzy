@@ -247,7 +247,8 @@ class sale_order(models.Model):
     order_line_b = fields.One2many('sale.order.line', related='order_line')
     approvaled_date = fields.Datetime('审批完成时间')
 
-    state = fields.Selection(selection_add=[('refuse', u'拒绝'), ('approval', u'审批中'), ('approve', u'审批完成'), ('verification', u'核销完成')],readonly=False)
+    state = fields.Selection(selection_add=[('refuse', u'拒绝'), ('approval', u'已提交'),('sales_approve', u'责任人已审批'),
+                                            ('approve', u'审批完成'),('verifite', u'核销中'), ('verification', u'核销完成')],readonly=False)
 
 
     submit_date = fields.Date('提交审批时间')

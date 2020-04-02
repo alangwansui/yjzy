@@ -231,7 +231,7 @@
                                         <field name="sale_qty"/>
                                         <field name="qty_undelivered" invisible="1"/>
                                         <field name="rest_tb_qty"/>
-                                        <field name="plan_qty"/>
+                                        <field name="plan_qty" string="本次计划"/>
                                         <field name="lot_plan_id" invisible="1"/>
                                         <field name="plan_lot" readonly="1" context="{'show_po_code': 1}"/>
 
@@ -239,12 +239,13 @@
                                         <field name="smline_str" groups="base.group_system" invisible="1"/>
                                         <field name="smline_qty" groups="base.group_system" invisible="1"/>
                                         <field name="dlr_str" string="采购数" invisible="1"/>
-                                        <field name="back_tax"/>
+
                                         <field name="dlr_qty" groups="base.group_system" invisible="1"/>
                                         <field name="qty1stage" groups="base.group_system" invisible="1"/>
                                         <field name="qty2stage" sum="发货" invisible="1"/>
                                         <field name="org_currency_sale_amount" sum="销售" string="销售金额"/>
                                         <field name="sale_amount" sum="销售" groups="base.group_system" invisible="1"/>
+                                        <field name="back_tax"/>
                                         <field name="purchase_cost" sum="采购"/>
                                         <field name="stock_cost" sum="库存" groups="base.group_system" invisible="1"/>
 
