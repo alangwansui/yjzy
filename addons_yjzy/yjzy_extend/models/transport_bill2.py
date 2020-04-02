@@ -269,28 +269,30 @@ class tbl_hsname(models.Model):
 
     # 销售hs统计同步采购hs统计
     purchase_hs_id = fields.Many2one('btls.hs', '采购HS统计')
-    # purchase_amount = fields.Float('采购金额', related="purchase_hs_id.amount")
-    # purchase_amount2 = fields.Float('采购金额', related="purchase_hs_id.amount2")
+    purchase_amount = fields.Float('采购金额', related="purchase_hs_id.amount")
+    purchase_amount2 = fields.Float('采购金额', related="purchase_hs_id.amount2")
 
     @api.multi
     def write(self, vals):
         res = super(tbl_hsname, self).write(vals)
         need = set(['hs_id', 'hs_id2', 'out_qty', 'out_qty2', 'amount', 'amount2']) & set(vals.keys())
         if need:
-            for one in self:
-                purchase_hs = one.purchase_hs_id
-                if purchase_hs:
-                    purchase_hs.hs_id = one.hs_id
-                    purchase_hs.hs_id2 = one.hs_id2
-                    purchase_hs.qty = one.out_qty
-                    purchase_hs.qty2 = one.out_qty2
-                    purchase_hs.po_id = one.po_id
-                    purchase_hs.amount = one.amount
-                    purchase_hs.amount2 = one.amount2
+            self.sync_purhcse_hs()
+
         return res
 
 
-
+    def sync_purhcse_hs(self):
+        for one in self:
+            purchase_hs = one.purchase_hs_id
+            if purchase_hs:
+                purchase_hs.hs_id = one.hs_id
+                purchase_hs.hs_id2 = one.hs_id2
+                purchase_hs.qty = one.out_qty
+                purchase_hs.qty2 = one.out_qty2
+                purchase_hs.po_id = one.po_id
+                purchase_hs.amount = one.amount
+                purchase_hs.amount2 = one.amount2
 
     @api.onchange('hs_id')
     def onchange_hs(self):
@@ -320,3 +322,8 @@ class tbl_hsname(models.Model):
                 'hs_id': self.hs_id.id,
             })
             self.purchase_hs_id = suppliser_hs_record
+            self.sync_purhcse_hs()
+
+
+
+
