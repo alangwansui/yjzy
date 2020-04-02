@@ -282,12 +282,17 @@ class tbl_hsname(models.Model):
         return one
 
     def make_suppliser_hs(self):
-
         suppliser_hs_obj = self.env['btls.hs']
-        if not suppliser_hs_obj.search([('sale_hs_id','=',self.id)]):
+        suppliser_hs_record = suppliser_hs_obj.search([('sale_hs_id', '=', self.id)])
+
+        if not suppliser_hs_record:
             suppliser_hs_obj.create({
                 'sale_hs_id': self.id,
-
+                'amount': self.suppliser_hs_amount,
+                'tb_id': self.tb_id.id,
+                'qty': self.out_qty,
+                'price': 1,
+                'hs_id': self.hs_id.id,
             })
 
 
