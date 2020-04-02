@@ -264,7 +264,7 @@ class HrExpense(models.Model):
                     'expense_id': expense.id,
                     'new_payment_id': expense.yjzy_payment_id.id,
                     'partner_id':   expense.partner_id.id or expense.employee_id.address_home_id.commercial_partner_id.id,
-                    'gongsi_id': expense.gongsi_id.id or self.gongsi_id.id,
+                    'gongsi_id': expense.gongsi_id.id or expense.sheet_id.gongsi_id.id,
                     })
 
 
