@@ -274,11 +274,7 @@ class tbl_hsname(models.Model):
 
     @api.multi
     def write(self, vals):
-
-        print('=start=', self.out_qty,  self.id, vals)
-
         res = super(tbl_hsname, self).write(vals)
-
         need = set(['hs_id', 'hs_id2', 'out_qty', 'out_qty2', 'amount', 'amount2']) & set(vals.keys())
         if need:
             for one in self:
@@ -288,7 +284,6 @@ class tbl_hsname(models.Model):
                     purchase_hs.hs_id2 = one.hs_id2
                     purchase_hs.qty = one.out_qty
                     purchase_hs.qty2 = one.out_qty2
-
         return res
 
 
