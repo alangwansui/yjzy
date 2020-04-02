@@ -179,8 +179,9 @@ class transport_bill(models.Model):
                 hs_dic[key_name] = {'product': comb.product_id, 'hs': comb.hs_id, 'qty': comb.qty, 'combs': comb, 'amount': comb.amount,
                                     'supplier': comb.supplier_id, 'po': comb.po_id, 'tongji_type': comb.tongji_type, 'sale_hs_id': sale_hs_id}
 
+        sale_hs_obj = self.env['tbl.hsname']
         for key_name, v in hs_dic.items():
-            hs_obj.create({
+            purchase_hs = hs_obj.create({
                 'name': key_name,
                 'tb_id': self.id,
                 'product_id': v['product'].id,
@@ -202,6 +203,9 @@ class transport_bill(models.Model):
                 # 'back_tax_amount2': 0,
 
             })
+            sale_hs_obj.browse(v['sale_hs_id']).purchase_hs_id = purchase_hs
+
+
 
     def relation_hs_purchase_sale(self):
         for po_line in self.btls_hs_ids:
