@@ -275,26 +275,23 @@ class tbl_hsname(models.Model):
     @api.multi
     def write(self, vals):
 
-        print('=start=', self.id, vals)
+        print('=start=', self.out_qty,  self.id, vals)
+
+        res = super(tbl_hsname, self).write(vals)
 
         need = set(['hs_id', 'hs_id2', 'out_qty', 'out_qty2', 'amount', 'amount2']) & set(vals.keys())
+        if need:
+            for one in self:
+                purchase_hs = one.purchase_hs_id
+                if purchase_hs:
+                    purchase_hs.hs_id = one.hs_id
+                    purchase_hs.hs_id2 = one.hs_id2
+                    purchase_hs.qty = one.out_qty
+                    purchase_hs.qty2 = one.out_qty2
 
-        for one in self:
-            if need and one.purchase_hs_id:
-                query = """UPDATE btls_hs
-                              SET hs_id = %(hs_id)s, hs_id2 = %(hs_id2)s, qty = %(out_qty)s, qty2 = %(out_qty2)s
-                            WHERE id = %(btls_hs_id)s
-                        """ % {'hs_id': vals.get('hs_id') or one.hs_id.id or 'null',
-                               'hs_id2': vals.get('hs_id2') or one.hs_id2.id or 'null',
-                               'out_qty': vals.get('out_qty') or one.out_qty or 0,
-                               'out_qty2': vals.get('out_qty2') or one.out_qty2 or 0,
-                               'btls_hs_id': one.purchase_hs_id.id}
+        return res
 
-                print('=sale hs query==', query)
-                self._cr.execute(query)
-                self._cr.commit()
 
-        return super(tbl_hsname, self).write(vals)
 
 
     @api.onchange('hs_id')
