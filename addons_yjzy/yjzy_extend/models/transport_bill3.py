@@ -307,7 +307,7 @@ class btls_hs(models.Model):
     name = fields.Char('HS:PO')
     tb_id = fields.Many2one('transport.bill', u'发运', ondelete='cascade')
     hs_en_name = fields.Char(related='hs_id.en_name',)
-    sale_hs_id = fields.Many2one('tbl.hsname', u'销售HS统计')
+    sale_hs_id = fields.Many2one('tbl.hsname', u'销售HS统计', ondelete="cascade")
     sale_hs_db_id = fields.Integer(related='sale_hs_id.id', readonly=True, string=u'销售HS统计ID')
     supplier_id = fields.Many2one('res.partner', u'供应商')
     po_id = fields.Many2one('purchase.order', u'采购单')

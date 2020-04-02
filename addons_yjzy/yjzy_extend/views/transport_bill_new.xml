@@ -221,12 +221,16 @@
 
                                         <field name="name" invisible="1"/>
                                         <field name="sol_id" invisible="1"/>
+
                                         <field name="so_id" groups="base.group_system" invisible="1"/>
+
+
                                         <field name="product_id"/>
                                         <field name="hs_id" invisible="1"/>
 
                                         <field name="sale_qty"/>
                                         <field name="qty_undelivered" invisible="1"/>
+                                        <field name="rest_tb_qty"/>
                                         <field name="plan_qty"/>
                                         <field name="lot_plan_id" invisible="1"/>
                                         <field name="plan_lot" readonly="1" context="{'show_po_code': 1}"/>
@@ -255,7 +259,7 @@
 
                                         <button icon="fa-list" type="object" name="make_default_lot_plan"/>
                                         <button icon="fa-list" type="object" name="open_wizard_transport_lot_plan"
-                                                attrs="{'invisible': [('state','!=', 'draft')]}"/>
+                                                attrs="{'invisible': [('state','!=', 'draft')]}" invisible="1"/>
                                     </tree>
                                     <form>
                                         <group>
