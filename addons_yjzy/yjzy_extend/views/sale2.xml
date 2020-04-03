@@ -67,7 +67,9 @@
                                 <field name="fee_other"/>
                                 <field name="fee_outer_all"/>
                                 <field name="vat_diff_amount"/>
-
+                                <field name="second_cost"/>
+                                 <field name="second_porfit"/>
+                                    <field name="second_tenyale_profit"/>
                             </group>
                             <group>
                                 <field name="third_currency_id" domain="['|',('id','=', company_currency_id),('id','=', sale_currency_id)]"/>

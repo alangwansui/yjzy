@@ -191,7 +191,8 @@
                     <field name="balance"/>
                     <field name="invoice_status" invisible="1"/>
                     <field name="state" invisible="1"/>
-
+                    <field name="advance_residual"/>
+                    <field name="pre_advance"/>
 
                     <field name="user_id" groups="sale.hegui_all" string="责任人"/>
                     <field name="commitment_date" invisible="1"/>
@@ -208,7 +209,7 @@
             </field>
         </record>
 
-        <record id="new_sale_order_from" model="ir.ui.view">
+        <record id="new_sale_order_form" model="ir.ui.view">
             <field name="name">sale.order.form</field>
             <field name="model">sale.order</field>
             <field name="arch" type="xml">
@@ -251,7 +252,7 @@
                                 groups="sales_team.group_sale_assistant"/>
                         <button name="new_open_wizard_so2po" states="draft,send,sale" class="oe_highlight" type="object" context="{'new': 1}" string="创建采购单:新"
                                 groups="sales_team.group_sale_assistant"/>
-                        <field name="state" widget="statusbar" statusbar_visible="draft,sent,sale" groups="base.group_system"/>
+                        <field name="state" widget="statusbar"  groups="base.group_system"/><!--statusbar_visible="draft,sent,sale"-->
 
                         <button name="open_wizard_bom_sale" class="oe_highlight" type='object' string="套件销售" groups="base.group_system"/>
                         <button name="open_sale_cost" class="oe_highlight" type='object' string="成本单"/>
@@ -300,7 +301,7 @@
                                        context="{'search_default_customer':1, 'show_address': 0}" options="{&quot;always_reload&quot;: True}"/>
                                 <field name="country_id" invisible="1"/>
                                 <field name="can_directly_mark_as_paid" invisible="1"/>
-                                <field name="link_man_id" domain="[('parent_id','=',partner_id),('type', '=', 'contract')]" groups="base.group_system"/>
+                                <field name="link_man_id" invisible="1" domain="[('parent_id','=',partner_id),('type', '=', 'contract')]" groups="base.group_system"/>
                                 <field name="customer_pi" string="客户合同号" help="审批之后不允许修改"/>
                                 <field name="incoterm"/>
                                 <field name="requested_date" string="客户交期" widget="date"/>
@@ -316,13 +317,13 @@
                                        options="{&quot;always_reload&quot;: True}"/>
                                 <field name="partner_shipping_id" invisible="1" groups="sale.group_delivery_invoice_address"
                                        context="{'default_type':'delivery','show_address': 1}" options="{&quot;always_reload&quot;: True}"/>
-                                <field name="dump_picking_id" readonly="1" groups="base.group_system"/>
+                                <field name="dump_picking_id" readonly="1" invisible="1" groups="base.group_system"/>
 
 
                                 <field name="second_company_id" invisible="1"/>
                                 <field name="second_partner_id" invisible="1"/>
                                 <field name="contract_type"/>
-                                <field name="is_inner_trade" groups="base.group_system"/>
+                                <field name="is_inner_trade" groups="base.group_system" invisible="1"/>
                                 <field name="gongsi_id" string="销售主体"/>
                                 <field name="purchase_gongsi_id" string="采购主体"/>
                             </group>
@@ -333,48 +334,45 @@
                                     <field name="fee_rmb1"/>
                                     <field name="fee_rmb2"/>
 
-                                    <field name="second_cost"/>
-                                    <field name="second_porfit"/>
-                                    <field name="second_tenyale_profit"/>
-
                                 </group>
                                 <newline/>
                                 <div>
                                     <label string="国外运保费" for="fee_outer" class="oe_inline"/>
 
                                     <field name="fee_outer" nolabel="1" class="oe_inline"/>
-                                    <field name="outer_currency_id" nolabel="1" class="oe_inline"/>
+                                    <field name="outer_currency_id" nolabel="1" invisible="1" class="oe_inline"/>
                                 </div>
                                 <newline/>
                                 <div>
                                     <label string="出口保险费" for="fee_export_insurance" class="oe_inline"/>
 
                                     <field name="fee_export_insurance" nolabel="1" class="oe_inline"/>
-                                    <field name="export_insurance_currency_id" nolabel="1" class="oe_inline"/>
+                                    <field name="export_insurance_currency_id" nolabel="1" invisible="1" class="oe_inline"/>
                                 </div>
                                 <newline/>
                                 <div>
                                     <label string="其他外币费用" for="fee_other" class="oe_inline"/>
 
                                     <field name="fee_other" nolabel="1" class="oe_inline"/>
-                                    <field name="other_currency_id" nolabel="1" class="oe_inline"/>
+                                    <field name="other_currency_id" nolabel="1" invisible="1" class="oe_inline"/>
                                 </div>
                             </group>
                             <group>
-                                <field name="create_uid"/>
-                                <field name="user_id"/>
-                                <field name="sale_assistant_id"/>
+                                <field name="create_uid" readonly="1"/>
+                                <field name="user_id" readonly="1"/>
+                                <field name="sale_assistant_id" readonly="1"/>
                                 <field name="product_manager_id" invisible="1"/>
                                 <field name="exchange_rate" invisible="1"/>
                                 <field name="appoint_rate"/>
-                                <field name="no_sent_amount" string="未发货销售"/>
-                                <field name="purchase_no_deliver_amount" string="未发货采购"/>
+                                <field name="no_sent_amount" string="未发货销售" invisible="1"/>
+                                <field name="purchase_no_deliver_amount" string="未发货采购" invisible="1"/>
 
                                 <field name="yjzy_payment_id" invisible="1"/>
                                 <field name="yjzy_currency_id" invisible="1"/>
                                 <field name="balance" invisible="1"/>
                                 <field name="advance_po_residual" invisible="1" string="相关预付余额"/>
-                                <field name="cip_type"/>
+                                <field name="cip_type" invisible="1"/>
+                                <field name="advance_residual"/>
                                 <field name="pre_advance"/>
                                 <field name="gold_sample_state"/>
                                 <field name="purchase_approve_date"/>
@@ -1011,27 +1009,93 @@
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('new_sale_order_tree')}),
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('new_sale_order_kanban')}),
-                          (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_from')})]"/>
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_form')})]"/>
         </record>
 
         <menuitem id="new_sale_order_menu" name="新销售合同" parent="sale.sale_menu_root" action="new_sale_order_all_action" sequence="99"
                   groups="base.group_system"/>
+
+
+
+
         <menuitem id="new_sale_order_all_menu" name="销售合同查询" parent="new_sale_order_menu" action="new_sale_order_all_action" sequence="1"/>
-        <record id="new_sale_order_draft_action" model="ir.actions.act_window">
-            <field name="name">报价单</field>
+
+<!--销售部待处理合同：草稿和提交状态-->
+        <record id="new_sale_order_sales_action" model="ir.actions.act_window">
+            <field name="name">销售合同</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">sale.order</field>
             <field name="view_mode">tree,form,kanban</field>
-            <field name="domain">[('state','=','draft')]</field>
+            <field name="domain">[('state','in',['draft','submit'])]</field>
             <field name="context">{}</field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('new_sale_order_tree')}),
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('new_sale_order_kanban')}),
-                          (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_from')})]"/>
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_form')})]"/>
         </record>
-        <menuitem id="new_sale_order_draft_menu" name="报价单" parent="new_sale_order_menu" action="new_sale_order_draft_action" sequence="1"/>
+        <menuitem id="new_sale_order_sales_menu" name="待处理合同" parent="new_sale_order_menu" action="new_sale_order_sales_action" sequence="1"/>
+<!--合规待处理合同：合规审批、审批完成、出运中、核销中-->
+        <record id="new_sale_order_hegui_action" model="ir.actions.act_window">
+            <field name="name">销售合同</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_mode">tree,form,kanban</field>
+            <field name="domain">[('state','in',['sales_approve','submit','transporting','verifying'])]</field>
+            <field name="context">{}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('new_sale_order_tree')}),
+                          (0, 0, {'view_mode': 'kanban', 'view_id': ref('new_sale_order_kanban')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_form')})]"/>
+        </record>
+        <menuitem id="new_sale_order_sales_menu" name="待处理合同" parent="new_sale_order_menu" action="new_sale_order_sales_action" sequence="1"/>
+<!--总经理待处理合同：总经理审批中-->
+        <record id="new_sale_order_manager_action" model="ir.actions.act_window">
+            <field name="name">销售合同</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_mode">tree,form,kanban</field>
+            <field name="domain">[('state','in',['manager_approval'])]</field>
+            <field name="context">{}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('new_sale_order_tree')}),
+                          (0, 0, {'view_mode': 'kanban', 'view_id': ref('new_sale_order_kanban')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_form')})]"/>
+        </record>
+        <menuitem id="new_sale_order_manager_menu" name="待处理合同" parent="new_sale_order_menu" action="new_sale_order_manager_action" sequence="1"/>
 
-        <record id="new_sale_order_approval_action" model="ir.actions.act_window">
+
+      <!--我的销售合同：权限内的合同-->
+
+        <record id="new_sale_order_user_action" model="ir.actions.act_window">
+            <field name="name">销售合同</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sale.order</field>
+
+            <field name="view_mode">tree,form,kanban</field>
+            <field name="domain">[]</field>
+            <field name="context">{'group_by':'state'}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('new_sale_order_tree')}),
+                          (0, 0, {'view_mode': 'kanban', 'view_id': ref('new_sale_order_kanban')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_form')})]"/>
+        </record>
+        <menuitem id="new_sale_order_user_menu" name="我的销售合同" parent="new_sale_order_menu" action="new_sale_order_user_action" sequence="1"/>
+
+          <record id="new_sale_order_create_action" model="ir.actions.act_window">
+            <field name="name">创建销售合同</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_mode">form</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_form')})]"/>
+        </record>
+        <menuitem id="new_sale_order_create_menu" name="创建合同" parent="new_sale_order_menu" action="new_sale_order_create_action" sequence="1"/>
+
+
+
+        <!--record id="new_sale_order_approval_action" model="ir.actions.act_window">
             <field name="name">审批中</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">sale.order</field>
@@ -1041,7 +1105,7 @@
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('new_sale_order_tree')}),
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('new_sale_order_kanban')}),
-                          (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_from')})]"/>
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_form')})]"/>
         </record>
         <menuitem id="new_sale_order_approval_menu" name="审批中合同" parent="new_sale_order_menu" action="new_sale_order_approval_action" sequence="2"/>
         <record id="new_sale_order_approve_action" model="ir.actions.act_window">
@@ -1054,7 +1118,7 @@
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('new_sale_order_tree')}),
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('new_sale_order_kanban')}),
-                          (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_from')})]"/>
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_form')})]"/>
         </record>
         <menuitem id="new_sale_order_approve_menu" name="审批完成合同" parent="new_sale_order_menu" action="new_sale_order_approve_action" sequence="3"/>
         <record id="new_sale_order_verification_action" model="ir.actions.act_window">
@@ -1069,10 +1133,10 @@
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('new_sale_order_tree')}),
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('new_sale_order_kanban')}),
-                          (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_from')})]"/>
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_form')})]"/>
         </record>
 
-        <menuitem id="new_sale_order_verification_menu" name="待核销合同" parent="new_sale_order_menu" action="new_sale_order_verification_action" sequence="3"/>
+        <menuitem id="new_sale_order_verification_menu" name="待核销合同" parent="new_sale_order_menu" action="new_sale_order_verification_action" sequence="3"/-->
 
 
     </data>
