@@ -203,7 +203,7 @@
                                         <field name="credit_info" invisible="1"/>
                                         <field name="insurance_info" invisible="1"/>
                                         <field name="user_id" attrs="{'readonly': [('locked','=',True)]}" no_create="True" string="责任人"/>
-                                        <field name="sale_assistant_id" invisible="1"/>
+                                        <field name="sale_assistant_id" invisible="0"/>
                                         <field name="description" string="出运说明"/>
 
                                     </group>

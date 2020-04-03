@@ -371,7 +371,7 @@
                                 <field name="yjzy_payment_id" invisible="1"/>
                                 <field name="yjzy_currency_id" invisible="1"/>
 
-                                <field name="advance_po_residual" invisible="1" string="相关预付余额"/>
+                                <field name="advance_po_residual" string="实际预付余额"/>
                                 <field name="cip_type" invisible="1"/>
                                 <field name="pre_advance" string="建议预收金额"/>
                                 <field name="balance" string="实际预收余额"/>

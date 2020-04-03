@@ -46,22 +46,22 @@
                     <button name="action_rfq_send" states="sent" invisible="1" string="Re-Send RFQ by Email" type="object" context="{'send_rfq':True}"/>
                     <button name="print_quotation" invisible="1" string="Print RFQ" type="object" states="draft" class="oe_highlight" groups="base.group_user"/>
                     <button name="print_quotation" invisible="1" string="Print RFQ" type="object" states="sent" groups="base.group_user"/>
-                    <button name="button_confirm" groups="base.group_system" type="object" states="draft" string="Confirm Order" id="draft_confirm"/>
-                    <button name="button_confirm" groups="base.group_system" type="object" states="sent" string="Confirm Order" class="oe_highlight" id="bid_confirm"/>
-                    <button name="button_approve"  type="object" states="to approve" string="Approve Order" class="oe_highlight" groups="base.group_system"/>
-                    <button name="action_rfq_send" groups="base.group_system" states="purchase" string="Send PO by Email" type="object" context="{'send_rfq':False}"/>
-                    <button name="action_view_picking"  string="Receive Products" class="oe_highlight" type="object" attrs="{'invisible': ['|', '|' , ('is_shipped', '=', True), ('state','not in', ('purchase','done')), ('picking_count', '=', 0)]}"/>
-                    <button name="button_draft" states="cancel" string="Set to Draft" type="object"/>
-                    <button name="button_cancel" states="draft,to approve,sent,purchase"  string="Cancel" type="object"/>
-                    <button name="button_done" groups="base.group_system" type="object" string="Lock" states="purchase"/>
-                    <button name="button_unlock" groups="base.group_system" type="object" string="Unlock" states="done" />
-                    <button string="创建批次号" states="" type="object" name="create_lots"/>
-                    <button string="虚拟入库" states="" type="object" name="make_dump_income_picking"/>
+                    <button name="button_confirm" groups="base.group_system" invisible="1" type="object" states="draft" string="Confirm Order" id="draft_confirm"/>
+                    <button name="button_confirm" groups="base.group_system" invisible="1" type="object" states="sent" string="Confirm Order" class="oe_highlight" id="bid_confirm"/>
+                    <button name="button_approve" invisible="1"  type="object" states="to approve" string="Approve Order" class="oe_highlight" groups="base.group_system"/>
+                    <button name="action_rfq_send" invisible="1"  groups="base.group_system" states="purchase" string="Send PO by Email" type="object" context="{'send_rfq':False}"/>
+                    <button name="action_view_picking"  string="Receive Products" invisible="1" class="oe_highlight" type="object" attrs="{'invisible': ['|', '|' , ('is_shipped', '=', True), ('state','not in', ('purchase','done')), ('picking_count', '=', 0)]}"/>
+                    <button name="button_draft" states="cancel" string="Set to Draft" type="object" invisible="1" groups="base.group_system"/>
+                    <button name="button_cancel" invisible="1" groups="base.group_system" states="draft,to approve,sent,purchase"  string="Cancel" type="object"/>
+                    <button name="button_done" invisible="1" groups="base.group_system" type="object" string="Lock" states="purchase"/>
+                    <button name="button_unlock" invisible="1" groups="base.group_system" type="object" string="Unlock" states="done" />
+                    <button string="创建批次号" invisible="1" states="" type="object" name="create_lots"/>
+                    <button string="虚拟入库" invisible="1" states="" type="object" name="make_dump_income_picking"/>
                                         <button name="test_pre_advance" string="预付款测试按钮" type="object" class="oe_highlight" groups="base.group_no_one"/>
-                    <button name="make_yfsqd" string="测试生成预付申请单" type="object" class="oe_highlight" groups="base.group_no_one"/>
-                    <button name="clear_yfsqd" string="清除预付申请单" type="object" class="oe_highlight"/>
+                    <button name="make_yfsqd" string="测试生成预付申请单"  type="object" class="oe_highlight"  invisible="1" groups="base.group_no_one"/>
+                    <button name="clear_yfsqd" string="清除预付申请单" invisible="1" type="object" class="oe_highlight"/>
 
-                    <button name="set_tax_zero" string="设置含税" type="object" class="oe_highlight"/>
+                    <button name="set_tax_zero" string="设置含税" invisible="1" type="object" class="oe_highlight"/>
                     <button name="open_wizard_po_box" string="生成箱号" type="object" class="oe_highlight"/>
                     <button name="clear_po_box" string="清除箱号" type="object" class="oe_highlight"/>
                     <button name="compute_package_info" string="计算包装信息" type="object" class="oe_highlight"/>
@@ -80,7 +80,7 @@
                             <field name="invoice_ids" invisible="1"/>
                         </button>
                     </div>
-                    <div class="oe_title" groups="base.group_system">
+                    <div class="oe_title" groups="base.group_system" invisible="1">
                         <label string="Request for Quotation " attrs="{'invisible': [('state','not in',('draft','sent'))]}"/>
                         <label string="Purchase Order " attrs="{'invisible': [('state','in',('draft','sent'))]}"/>
                         <h1>
@@ -95,31 +95,33 @@
                             <field name="partner_id" context="{'search_default_supplier':1, 'show_address': 0, 'default_supplier':1,}" domain="[('supplier','=',True),('parent_id', '=', False)]"/>
                             <field name="contact_id" domain="[('parent_id','=', partner_id),('type', '=', 'contact')]"/>
                             <field name="partner_ref" invisible="1"/>
-                            <field name="currency_id" groups="base.group_multi_currency"/>
+                            <field name="currency_id" groups="base.group_multi_currency" />
                             <field name="need_purchase_fandian" invisible="1"/>
                             <field name="purchase_fandian_ratio" attrs="{'invisible': [('need_purchase_fandian','!=',True)]}" invisible="1"/>
                             <field name="purchase_fandian_partner_id" attrs="{'invisible': [('need_purchase_fandian','!=',True)]}" invisible="1"/>
                             <field name="payment_term_id" options="{'no_open': True, 'no_create': True}" domain="[('type','in', ['purchase', 'comm'])]" attrs="{'readonly': ['|', ('invoice_status','=', 'invoiced'), ('state', '=', 'done')]}"/>
-                            <field name="delivery_status"/>
+
                             <field name="is_shipped" invisible="1"/>
                             <field name="gongsi_id" string="采购主体"/>
                         </group>
                         <group>
 
                             <field name="no_deliver_amount"/>
-                            <field name="date_order"/>
+                            <field name="create_date" readonly="1" invisible="1"/>
+                            <field name="date_order" string="合同日期" readonly="1" invisible="1"/>
 
-                            <field name="source_so_id"/>
-                            <field name="origin" attrs="{'invisible': [('origin','=',False)]}"/>
-                            <field name="company_id" groups="base.group_system" options="{'no_create': True}" />
+                            <field name="source_so_id" readonly="1"/>
+                            <field name="origin" attrs="{'invisible': [('origin','=',False)]}" />
+                            <field name="company_id" groups="base.group_system" options="{'no_create': True}" invisible="1"/>
                             <field name="yjzy_currency_id" invisible="1"/>
-                            <field name="balance"/>
-                            <field name="pre_advance" invisible="1"/>
+                            <field name="pre_advance" invisible="1" string="建议预付金额"/>
+                            <field name="balance" string="实际预付余额"/>
                             <field name="can_confirm_by_so" readonly="0" invisible="1"/>
                             <field name="user_ids" widget="many2many_tags" invisible="1"/>
                             <field name="sale_uid" attrs="{'readonly': [('is_editable','=',False)]}" required="1"/>
                             <field name="sale_assistant_id" />
-                            <field name="main_sign_uid" groups="sale.hegui_all"/>
+                            <field name="delivery_status"/>
+                            <field name="main_sign_uid" groups="sale.hegui_all" invisible="1"/>
                         </group>
                     </group>
                     <notebook>
@@ -163,8 +165,8 @@
 
                                     <field name="qty_available" readonly="1" invisible="1"/>
                                     <field name="virtual_available" readonly="1" invisible="1"/>
-                                    <field name="qty_received" invisible="0"/><!--invisible="not context.get('show_purchase', True)"-->
-                                    <field name="qty_invoiced"  invisible="0"/>
+                                    <field name="qty_received" invisible="1"/><!--invisible="not context.get('show_purchase', True)"-->
+                                    <field name="qty_invoiced"  invisible="1"/>
                                     <field name="product_uom" invisible="1" groups="product.group_uom" attrs="{'readonly': [('state', 'in', ('purchase', 'done', 'cancel'))]}" force_save="1"/>
 
                                     <field name="taxes_id" invisible="1" widget="many2many_tags" domain="[('type_tax_use','=','purchase')]" context="{'default_type_tax_use': 'purchase'}" options="{'no_create': True}"/>

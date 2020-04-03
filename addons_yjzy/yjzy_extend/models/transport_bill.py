@@ -191,7 +191,7 @@ class transport_bill(models.Model):
     tba_id = fields.Many2one('transport.bill.account', '转账调节单')
 
     partner_id = fields.Many2one('res.partner', '客户', required=True, domain=[('customer', '=', True)])
-    user_id = fields.Many2one('res.users', u'业务员')
+    user_id = fields.Many2one('res.users', u'业务员', default=lambda self: self.env.user.assistant_id.id)
     partner_invoice_id = fields.Many2one('res.partner', string='发票地址', readonly=False, required=True)
     partner_shipping_id = fields.Many2one('res.partner', string='送货地址',  required=False)
     notice_man = fields.Char(u'通知人')
@@ -350,7 +350,7 @@ class transport_bill(models.Model):
     is_done_tuopan = fields.Boolean(u'托盘分配完成')
     is_done_tb_vendor = fields.Boolean(u'供应商发运完成')
 
-    sale_assistant_id = fields.Many2one('res.users', u'业务助理')
+    sale_assistant_id = fields.Many2one('res.users', u'业务助理',default=lambda self: self.env.user.id)
     is_editable = fields.Boolean(u'可编辑')
 
     gongsi_id = fields.Many2one('gongsi', '内部公司')
@@ -536,9 +536,11 @@ class transport_bill(models.Model):
         self.wharf_dest_id = self.partner_id.wharf_dest_id
         self.payment_term_id = self.partner_id.property_payment_term_id
         self.partner_country_id = self.partner_id.country_id
-        self.user_id = self.partner_id.user_id
+        #akiny
+       # self.user_id = self.partner_id.user_id
         self.sale_currency_id = self.partner_id.property_product_pricelist.currency_id
-        ##self.outer_currency_id = self.sale_currency_id  akiny
+       # akiny
+        ##self.outer_currency_id = self.sale_currency_id
         self.notice_man = self.partner_id.notice_man
         self.delivery_man = self.partner_id.delivery_man
         self.demand_info  = self.partner_id.demand_info
