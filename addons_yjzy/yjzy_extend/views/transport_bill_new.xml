@@ -231,7 +231,7 @@
                                         <field name="sale_qty"/>
                                         <field name="qty_undelivered" invisible="1"/>
                                         <field name="rest_tb_qty"/>
-                                        <field name="plan_qty"/>
+                                        <field name="plan_qty" string="本次计划"/>
                                         <field name="lot_plan_id" invisible="1"/>
                                         <field name="plan_lot" readonly="1" context="{'show_po_code': 1}"/>
 
@@ -239,12 +239,13 @@
                                         <field name="smline_str" groups="base.group_system" invisible="1"/>
                                         <field name="smline_qty" groups="base.group_system" invisible="1"/>
                                         <field name="dlr_str" string="采购数" invisible="1"/>
-                                        <field name="back_tax"/>
+
                                         <field name="dlr_qty" groups="base.group_system" invisible="1"/>
                                         <field name="qty1stage" groups="base.group_system" invisible="1"/>
                                         <field name="qty2stage" sum="发货" invisible="1"/>
                                         <field name="org_currency_sale_amount" sum="销售" string="销售金额"/>
                                         <field name="sale_amount" sum="销售" groups="base.group_system" invisible="1"/>
+                                        <field name="back_tax"/>
                                         <field name="purchase_cost" sum="采购"/>
                                         <field name="stock_cost" sum="库存" groups="base.group_system" invisible="1"/>
 
@@ -443,22 +444,27 @@
                                 </group>
                                 <field name="hsname_ids">
                                     <tree>
+                                        <field name="purchase_hs_id"/>
                                         <button name="make_suppliser_hs" type="object" icon="fa-th-large"/>
                                         <field name="id"/>
                                         <field name="package_tag" invisible="1"/>
                                         <field name="name" />
+
                                         <field name="dump_product_id" groups="base.group_system" invisible="1"/>
                                         <field name="hs_id" groups="base.group_system" invisible="1"/>
                                         <field name="hs_en_name" groups="base.group_system" invisible="1"/>
                                         <field name="back_tax"/>
+                                        <field name="po_id"/>
                                         <field name="out_qty" sun="小计"/>
                                         <field name="price"/>
                                         <field name="amount" sum="小计"/>
+                                        <field name="purchase_amount"/>
                                         <field name="hs_id2"/>
                                         <field name="dump_product_id2" groups="base.group_system" invisible="1"/>
                                         <field name="out_qty2" sum="小计"/>
                                         <field name="price2"/>
                                         <field name="amount2" sum="小计"/>
+                                        <field name="purchase_amount2"/>
                                         <field name="source_area"/>
                                         <field name="source_country_id"/>
                                         <field name="qty_max" sum="小计" string="件数"/>
@@ -483,9 +489,12 @@
                                         <field name="dump_product_id" readonly="0"/>
                                         <field name="hs_id" readonly="0"/>
                                         <field name="hs_en_name" readonly="0"/>
+                                          <field name="po_id"/>
                                         <field name="back_tax" readonly="1"/>
                                         <field name="out_qty" readonly="0"/>
                                         <field name="price" />
+                                       <field name="purchase_amount"/>
+                                        <field name="purchase_amount2"/>
                                         <field name="amount"/>
                                         <field name="hs_id2"/>
                                         <field name="dump_product_id2"/>

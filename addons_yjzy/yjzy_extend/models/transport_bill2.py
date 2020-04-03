@@ -275,16 +275,24 @@ class tbl_hsname(models.Model):
     @api.multi
     def write(self, vals):
         res = super(tbl_hsname, self).write(vals)
-        need = set(['hs_id', 'hs_id2', 'out_qty', 'out_qty2', 'amount', 'amount2']) & set(vals.keys())
+        need = set(['hs_id', 'hs_id2', 'out_qty', 'out_qty2', 'po_id']) & set(vals.keys())
         if need:
-            for one in self:
-                purchase_hs = one.purchase_hs_id
-                if purchase_hs:
-                    purchase_hs.hs_id = one.hs_id
-                    purchase_hs.hs_id2 = one.hs_id2
-                    purchase_hs.qty = one.out_qty
-                    purchase_hs.qty2 = one.out_qty2
+            self.sync_purhcse_hs()
         return res
+
+
+    def sync_purhcse_hs(self):
+        for one in self:
+            purchase_hs = one.purchase_hs_id
+            if purchase_hs:
+                purchase_hs.hs_id = one.hs_id
+                purchase_hs.hs_id2 = one.hs_id2
+                purchase_hs.qty = one.out_qty
+                purchase_hs.qty2 = one.out_qty2
+                purchase_hs.po_id = one.po_id
+                purchase_hs.supplier_id = one.po_id.partner_id.id,
+               # purchase_hs.amount = one.amount
+               #  purchase_hs.amount2 = one.amount2
 
 
     @api.onchange('hs_id')
@@ -313,5 +321,12 @@ class tbl_hsname(models.Model):
                 'qty': self.out_qty,
                 'price': 1,
                 'hs_id': self.hs_id.id,
+                'po_id': self.po_id.id,
+                'supplier_id': self.po_id.partner_id.id,
             })
             self.purchase_hs_id = suppliser_hs_record
+            self.sync_purhcse_hs()
+
+
+
+
