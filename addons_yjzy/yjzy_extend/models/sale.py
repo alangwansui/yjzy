@@ -61,7 +61,9 @@ class sale_order(models.Model):
 
             #统计预收余额
             if one.payment_term_id:
-                one.pre_advance = one.payment_term_id.get_advance(one.amount_total )
+                one.pre_advance = one.payment_term_id.get_advance(one.amount_total)
+
+                print('====', one, one.pre_advance)
 
             ##金额统计
             lines = one.order_line
@@ -174,7 +176,7 @@ class sale_order(models.Model):
     fee_outer_all = fields.Monetary(u'外币费用合计', currency_field='other_currency_id',  compute=compute_info)
     fee_outer_ratio = fields.Float(u'外币费用占销售额比', digits=(2, 4), compute=compute_info)
 
-    pre_advance = fields.Monetary(u'预收金额', currency_field='currency_id', compute=compute_info, store=True)
+    pre_advance = fields.Monetary(u'预收金额', currency_field='currency_id', compute=compute_info, store=False)
 
 
 
@@ -315,26 +317,26 @@ class sale_order(models.Model):
                 raise Warning(u'只有取消状态允许删除')
         return super(sale_order, self).unlink()
 
-    @api.multi
-    def name_get(self):
-        ctx = self.env.context
-        res = []
-        for one in self:
-            name = '%s:%s' % (one.contract_code, one.pre_advance)
-            res.append((one.id, name))
-        return res
+    # @api.multi
+    # def name_get(self):
+    #     ctx = self.env.context
+    #     res = []
+    #     for one in self:
+    #         name = '%s:%s' % (one.contract_code, one.pre_advance)
+    #         res.append((one.id, name))
+    #     return res
 
 
 
-    @api.model
-    def search(self, args, offset=0, limit=None, order=None, count=False):
-        res = super(sale_order, self).search(args, offset=offset, limit=limit, order=order, count=count)
-        arg_dic = args and dict([(x[0], x[2]) for x in args if isinstance(x, list)]) or {}
-        pdt_value = arg_dic.get('pdt_value_id')
-        if pdt_value:
-            sol_records = self.env['sale.order.line'].search([('product_id.attribute_value_ids', 'like', pdt_value)])
-            res |= sol_records.mapped('order_id')
-        return res
+    # @api.model
+    # def search(self, args, offset=0, limit=None, order=None, count=False):
+    #     res = super(sale_order, self).search(args, offset=offset, limit=limit, order=order, count=count)
+    #     arg_dic = args and dict([(x[0], x[2]) for x in args if isinstance(x, list)]) or {}
+    #     pdt_value = arg_dic.get('pdt_value_id')
+    #     if pdt_value:
+    #         sol_records = self.env['sale.order.line'].search([('product_id.attribute_value_ids', 'like', pdt_value)])
+    #         res |= sol_records.mapped('order_id')
+    #     return res
 
 
     @api.multi
