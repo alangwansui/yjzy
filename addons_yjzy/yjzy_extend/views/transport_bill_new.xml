@@ -493,6 +493,8 @@
                                         <field name="back_tax" readonly="1"/>
                                         <field name="out_qty" readonly="0"/>
                                         <field name="price" />
+                                       <field name="purchase_amount"/>
+                                        <field name="purchase_amount2"/>
                                         <field name="amount"/>
                                         <field name="hs_id2"/>
                                         <field name="dump_product_id2"/>
