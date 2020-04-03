@@ -1011,6 +1011,7 @@
             <field name="name">新销售合同</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">sale.order</field>
+            <field name="limit">30</field>
             <field name="view_mode">tree,form,kanban</field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('new_sale_order_tree')}),
@@ -1032,6 +1033,7 @@
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">sale.order</field>
             <field name="view_mode">tree,form,kanban</field>
+            <field name="limit">20</field>
             <field name="domain">[('state','in',['draft','submit'])]</field>
             <field name="context">{}</field>
             <field name="view_ids" eval="[(5, 0, 0),
@@ -1046,6 +1048,7 @@
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">sale.order</field>
             <field name="view_mode">tree,form,kanban</field>
+            <field name="limit">20</field>
             <field name="domain">[('state','in',['sales_approve','submit','transporting','verifying'])]</field>
             <field name="context">{}</field>
             <field name="view_ids" eval="[(5, 0, 0),
@@ -1060,6 +1063,7 @@
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">sale.order</field>
             <field name="view_mode">tree,form,kanban</field>
+            <field name="limit">20</field>
             <field name="domain">[('state','in',['manager_approval'])]</field>
             <field name="context">{}</field>
             <field name="view_ids" eval="[(5, 0, 0),
@@ -1076,7 +1080,7 @@
             <field name="name">我的销售合同</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">sale.order</field>
-
+            <field name="limit">20</field>
             <field name="view_mode">tree,form,kanban</field>
             <field name="domain">[]</field>
             <field name="context">{'group_by':'state'}</field>

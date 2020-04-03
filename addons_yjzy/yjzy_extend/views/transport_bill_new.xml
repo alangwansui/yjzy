@@ -93,41 +93,41 @@
                                 class="oe_highlight"/>
                          <button string="添加销售明细" states="draft" type="object" name="open_wizard_transport4sol" groups="base.group_system"
                                 class="oe_highlight"/>
-                        <button string="准备默认出运计划" type="object" name="make_default_lot_plan" attrs="{'invisible': [('is_done_plan','=',True)]}"  class="oe_highlight"/>
-                        <button string="销售统计" name="make_sale_collect" attrs="{'invisible': [('sale_collect_state','!=','draft')]}" class="oe_highlight"
+                        <button string="准备默认出运计划" invisible="1" type="object" name="make_default_lot_plan" attrs="{'invisible': [('is_done_plan','=',True)]}"  class="oe_highlight"/>
+                        <button string="销售统计"  name="make_sale_collect" attrs="{'invisible': [('sale_collect_state','!=','draft')]}" class="oe_highlight"
                                 type="object"/>
                         <button string="采购统计" name="make_purchase_collect" attrs="{'invisible': [('purchase_collect_state','!=','draft')]}"
                                 class="oe_highlight" type="object"/>
                         <!--button string="计算装箱数据" type="object" name="compute_pack_data" class="oe_highlight"/-->
                         <button string="计算清关数据" type="object" name="create_qingguan_lines" attrs="{'invisible': [('qingguan_state','!=','draft')]}"
                                 class="oe_highlight"/>
-                        <button string="返点统计" name="make_fandian_collect" attrs="{'invisible': [('purchase_collect_state','=','draft')]}"
+                        <button string="返点统计" invisible="1"  name="make_fandian_collect" attrs="{'invisible': [('purchase_collect_state','=','draft')]}"
                                 class="oe_highlight" type="object"/>
                          <button string="生成供应商发货单" type="object" name="make_tb_vendor" attrs="{'invisible': [('is_done_tb_vendor','=',True)]}" class="oe_highlight"/>
-                        <button string="确认" states="draft" type="object" name="action2w_sale_manager" class="oe_highlight"/>
-                        <button string="销售经理审批" states="w_sale_manager" type="object" name="action2w_sale_director" class="oe_highlight"/>
-                        <button string="销售总监审批" states="w_sale_director" type="object" name="action2confirm" class="oe_highlight"/>
-                        <button string="单证审批" states="confirmed" type="object" name="confirmed2locked" class="oe_highlight"/>
-                        <button string="完成" states="2locked" type="object" name="action_done" class="oe_highlight"/>
+                        <button string="确认" invisible="1"  states="draft" type="object" name="action2w_sale_manager" class="oe_highlight"/>
+                        <button string="销售经理审批" invisible="1"  states="w_sale_manager" type="object" name="action2w_sale_director" class="oe_highlight"/>
+                        <button string="销售总监审批" invisible="1"  states="w_sale_director" type="object" name="action2confirm" class="oe_highlight"/>
+                        <button string="单证审批" invisible="1"  states="confirmed" type="object" name="confirmed2locked" class="oe_highlight"/>
+                        <button string="完成" invisible="1"  states="2locked" type="object" name="action_done" class="oe_highlight"/>
 
-                        <button string="重置草稿" type="object" name="action_draft" states="cancel" class="oe_highlight"/>
-                        <button string="取消" type="object" name="action_cancel" states="draft"  class="oe_highlight"/>
-                        <button string="出入库一次完成" states="confirmed" type="object" name="onece_all_stage"
+                        <button string="重置草稿" groups="base.group_system" invisible="1" type="object" name="action_draft" states="cancel" class="oe_highlight"/>
+                        <button string="取消" groups="base.group_system" invisible="1" type="object" name="action_cancel" states="draft"  class="oe_highlight"/>
+                        <button string="出入库一次完成" invisible="1"  states="confirmed" type="object" name="onece_all_stage"
                                 class="oe_highlight"/>
                         <!--button string="计算利润" states="confirmed" type="object" name="compute_amount"
                                 class="oe_highlight"/-->
-                        <button string="销售发票" type="object" name="make_sale_invoice" class="oe_highlight"
+                        <button string="销售发票" invisible="1"  type="object" name="make_sale_invoice" class="oe_highlight"
                                 attrs="{'invisible': [('sale_invoice_count','>', 0)]}"/>
-                        <button string="采购发票" type="object" name="make_purchase_invoice" class="oe_highlight"
+                        <button string="采购发票" invisible="1"  type="object" name="make_purchase_invoice" class="oe_highlight"
                                 attrs="{'invisible': [('purchase_invoice_count','>', 0)]}"/>
-                        <button string="退税发票" type="object" name="make_back_tax_invoice" class="oe_highlight"
+                        <button string="退税发票" invisible="1"  type="object" name="make_back_tax_invoice" class="oe_highlight"
                                 attrs="{'invisible': [('back_tax_invoice_count','>', 0)]}"/>
 
 
                         <!--button string="计算明细批次" type="object" name="make_tbl_lot" class="oe_highlight"/-->
 
                         <!--button string="付款" type="object" name="open_account_payment" class="oe_highlight"/-->
-                        <button string="打印供应商发货单" type="object" name="action_transport_bill_vendor_report" class="oe_highlight"/>
+                        <button string="打印供应商发货单" invisible="1"  type="object" name="action_transport_bill_vendor_report" class="oe_highlight"/>
 
                         <button string="更新退税率" type="object" name="update_back_tax" class="oe_highlight" groups="base.group_system"/>
 
@@ -410,7 +410,6 @@
                             <page string="采购订单" groups="base.group_system" invisible="1">
                                 <field name="po_ids"/>
                             </page>
-
                             <page string="销售分解组合" groups="base.group_system" invisible="1">
                                 <field name="comb_ids">
                                     <tree editable="bottom">
@@ -669,7 +668,38 @@
                 </form>
             </field>
         </record>
+        <!--日期填制视图-->
+        <record id="view_transport_bill_new_date_tree" model="ir.ui.view">
+            <field name="name">transport.bill.tree</field>
+            <field name="model">transport.bill</field>
+            <field name="arch" type="xml">
+                <tree string="出运单" editable="bottom">
+                    <field name="name" invisible="1"/>
+                    <field name="ref"/>
+                    <field name="partner_id" required="1" readonly="1"/>
+                    <button name="update_supplier_invoice_date" string="供应商日期更新" class="oe_highlight" type="object"/>
+                    <field name="date_out_in" modifiers="{}"/>
+                    <field name="date_in" modifiers="{}" invisible="1"/>
+                    <field name="date_ship" modifiers="{}" invisible="1"/>
+                    <field name="date_customer_finish" modifiers="{}" invisible="1"/>
+                    <field name="date_supplier_finish" modifiers="{}" invisible="1"/>
 
+                    <field name="date_out_in_related" modifiers="{}" invisible="1"/>
+                    <field name="date_in_related" modifiers="{}"/>
+                    <field name="date_ship_related" modifiers="{}"/>
+                    <field name="date_customer_finish_related" modifiers="{}"/>
+                    <field name="date_supplier_finish_related" modifiers="{}"/>
+
+                    <field name="state" invisible="1"/>
+                    <field name="create_date" widget="date"/>
+                    <field name="gongsi_id" string="销售主体" invisible="1"/>
+                    <field name="purchase_gongsi_id" string="采购主体" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+
+
+<!--单证视图-->
         <record id="view_transport_bill_new_document_tree" model="ir.ui.view">
             <field name="name">transport.bill.tree</field>
             <field name="model">transport.bill</field>
@@ -930,14 +960,62 @@
                 </form>
             </field>
         </record>
-
-        <record model="ir.actions.act_window" id="act_open_transport_bill_new_sales_view">
-            <field name="name">出运单</field>
+<!--日期填制-->
+        <record model="ir.actions.act_window" id="act_open_transport_bill_new_date_view">
+            <field name="name">出运单日期填制</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">transport.bill</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form,kanban</field>
+            <field name="view_mode">tree,form</field>
+            <field name="limit">20</field>
             <field name="domain">[]</field>
+            <field name="context">{'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_transport_bill_new_date_tree')}),]"
+                          />
+
+        </record>
+
+         <menuitem id="menu_transport_new_date_bill" name="出运单日期填制"
+                  parent="yjzy_extend.menu_transport_new_bill_root"
+                  sequence="22"
+                  action="act_open_transport_bill_new_date_view"
+                  groups="base.group_system"/>
+
+        <menuitem id="menu_transport_new_bill_root"
+                  name="出运"
+                  sequence="22"
+                  groups="base.group_system"/>
+
+             <record model="ir.actions.act_window" id="act_open_transport_bill_new_create_view">
+            <field name="name">创建新出运单</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">transport.bill</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="domain">[]</field>
+            <field name="context">{'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_transport_bill_new_sales_form')})]"/>
+
+        </record>
+
+         <menuitem id="menu_transport_new_create_bill" name="新出运单业务"
+                  parent="yjzy_extend.menu_transport_new_bill_root"
+                  sequence="22"
+                  action="act_open_transport_bill_new_sales_view"
+                  groups="base.group_system"/>
+
+
+        <record model="ir.actions.act_window" id="act_open_transport_bill_new_sales_view">
+            <field name="name">新出运单业务</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">transport.bill</field>
+            <field name="view_type">form</field>
+            <field name="limit">20</field>
+            <field name="view_mode">tree,form,kanban</field>
+            <field name="domain">[('state','in',['cancel','draft','submit'])]</field>
             <field name="context">{'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3}</field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_transport_bill_new_sales_tree')}),
@@ -946,19 +1024,43 @@
 
         </record>
 
-        <menuitem id="menu_transport_new_sales_bill" name="新出运单"
-                  parent="sale.sale_order_menu"
+        <menuitem id="menu_transport_new_sales_bill" name="新出运单业务"
+                  parent="yjzy_extend.menu_transport_new_bill_root"
                   sequence="22"
                   action="act_open_transport_bill_new_sales_view"
                   groups="base.group_system"/>
 
+  <record model="ir.actions.act_window" id="act_open_transport_bill_new_hegui_view">
+            <field name="name">新出运单合规</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">transport.bill</field>
+            <field name="view_type">form</field>
+            <field name="limit">20</field>
+            <field name="view_mode">tree,form,kanban</field>
+            <field name="domain">[('state','in',['sales_approve','confirmed','delivered','invoiced'])]</field>
+            <field name="context">{'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_transport_bill_new_sales_tree')}),
+                          (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_transport_bill_new_sales_kanban')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_transport_bill_new_sales_form')})]"/>
+
+        </record>
+
+        <menuitem id="menu_transport_new_sales_bill" name="新出运单合规"
+                  parent="yjzy_extend.menu_transport_new_bill_root"
+                  sequence="22"
+                  action="act_open_transport_bill_new_sales_view"
+                  groups="base.group_system"/>
+
+
           <record model="ir.actions.act_window" id="act_open_transport_bill_new_document_view">
-            <field name="name">出运单</field>
+            <field name="name">新出运单单证</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">transport.bill</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form,kanban</field>
             <field name="domain">[]</field>
+            <field name="limit">20</field>
             <field name="context">{'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3}</field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_transport_bill_new_sales_tree')}),
@@ -968,7 +1070,7 @@
         </record>
 
         <menuitem id="menu_transport_new_document_bill" name="新出运单单证"
-                  parent="sale.sale_order_menu"
+                  parent="yjzy_extend.menu_transport_new_bill_root"
                   sequence="22"
                   action="act_open_transport_bill_new_document_view"
                   groups="base.group_system"/>
