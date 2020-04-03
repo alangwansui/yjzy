@@ -287,8 +287,6 @@ class tbl_hsname(models.Model):
         return res
 
 
-
-
     @api.onchange('hs_id')
     def onchange_hs(self):
         self.hs_id2 = self.hs_id
