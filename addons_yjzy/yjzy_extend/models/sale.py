@@ -327,14 +327,14 @@ class sale_order(models.Model):
 
 
     @api.model
-    def search(self, args, offset=0, limit=None, order=None, count=False):
-        res = super(sale_order, self).search(args, offset=offset, limit=limit, order=order, count=count)
-        arg_dic = args and dict([(x[0], x[2]) for x in args if isinstance(x, list)]) or {}
-        pdt_value = arg_dic.get('pdt_value_id')
-        if pdt_value:
-            sol_records = self.env['sale.order.line'].search([('product_id.attribute_value_ids', 'like', pdt_value)])
-            res |= sol_records.mapped('order_id')
-        return res
+    #def search(self, args, offset=0, limit=None, order=None, count=False):
+    #    res = super(sale_order, self).search(args, offset=offset, limit=limit, order=order, count=count)
+    #    arg_dic = args and dict([(x[0], x[2]) for x in args if isinstance(x, list)]) or {}
+    #    pdt_value = arg_dic.get('pdt_value_id')
+    #    if pdt_value:
+    #        sol_records = self.env['sale.order.line'].search([('product_id.attribute_value_ids', 'like', pdt_value)])
+    #        res |= sol_records.mapped('order_id')
+     #   return res
 
 
     @api.multi
