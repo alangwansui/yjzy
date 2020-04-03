@@ -205,6 +205,8 @@ class sale_order_line(models.Model):
     supplier_id = fields.Many2one('res.partner', '供应商', domain=[('supplier', '=', True)], copy=False)
     purchase_price = fields.Float('采购价格', copy=False)
     pol_id = fields.Many2one('purchase.order.line', '采购明细', copy=False)
+    po_id = fields.Many2one('purchase.order', '采购单',  related='pol_id.order_id',  copy=False)
+
 
     smline_ids = fields.One2many('stock.move.line', compute=compute_info, string=u'库存预留')
     smline_str = fields.Char(compute=compute_info, string=u'锁定内容')
