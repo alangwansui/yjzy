@@ -234,6 +234,8 @@
                                         <field name="incoterm" string="价格条款"/>
                                         <field name="payment_term_id"/>
                                         <field name="sale_type" invisible="1"/>
+                                        <field name="gold_sample_state"/>
+
                                         <field name="account_type"/>
                                         <field name="trans_type"/>
                                         <field name="cip_type" attrs="{'readonly': [('locked','=',True)]}" invisible="1"/>
@@ -293,6 +295,7 @@
                                         <field name="s_uom_id" groups="base.group_system" invisible="1"/>
                                         <field name="p_uom_id" groups="base.group_system" invisible="1"/>
                                         <field name="need_print"/>
+                                        <field name="is_gold_sample"/>
 
 
                                         <button icon="fa-list" type="object" name="make_default_lot_plan"/>

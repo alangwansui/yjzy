@@ -349,6 +349,9 @@ class sale_order(models.Model):
         self.user_id = self.partner_id.user_id
         self.sale_assistant_id = self.partner_id.assistant_id
         self.product_manager_id =  self.partner_id.product_manager_id
+        self.contract_type = self.partner_id.contract_type
+        self.gongsi_id = self.partner_id.gongsi_id
+        self.purchase_gongsi_id = self.partner_id.purchase_gongsi_id
         self.link_man_id = self.partner_id.child_ids and self.partner_id.child_ids[0]
 
         return super(sale_order, self).onchange_partner_id()

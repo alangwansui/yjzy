@@ -29,6 +29,9 @@
                     <field name="state"/>
                     <field name="is_inter_partner"/>
                     <field name="jituan_name"/>
+                    <field name="contract_type"/>
+                    <field name="gongsi_id"/>
+                    <field name="purchase_gongsi_id"/>
                 </field>
 
                 <field name="vat" position="before">

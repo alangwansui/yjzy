@@ -58,6 +58,18 @@ class transport_bill(models.Model):
             stock_cost = one.company_currency_id.compute(sum(x.stock_cost for x in lines), one.third_currency_id)
             #back_tax_amount = one.company_currency_id.compute(sum(x.back_tax_amount for x in lines), one.third_currency_id)
 
+            # 样金计算 akiny
+
+            gold_sample_state = 'none'
+            line_count = len(one.line_ids)
+            line_count_gold = len(one.line_ids.filtered(lambda x: x.is_gold_sample))
+
+            if line_count_gold > 0:
+                if line_count_gold == line_count:
+                    gold_sample_state = 'all'
+                else:
+                    gold_sample_state = 'part'
+
             if one.cip_type != 'normal':
                 back_tax_amount = 0
             else:
@@ -91,7 +103,7 @@ class transport_bill(models.Model):
             one.fandian_amount = fandian_amount
             one.budget_amount = budget_amount
             one.budget_reset_amount = budget_reset_amount
-
+            one.gold_sample_state = gold_sample_state
 
             ###profit_ratio_base = (one.sale_amount - one.get_outer())
             one.profit_ratio = one.sale_amount != 0.0 and one.profit_amount / one.sale_amount or 0
@@ -376,7 +388,8 @@ class transport_bill(models.Model):
     paid_date = fields.Date('收款日期')
     paid_uid = fields.Many2one('res.users', u'出运完成')
 
-
+    gold_sample_state = fields.Selection([('all', '全部有'), ('part', '部分有'), ('none', '无样金')], '样金管理',
+                                         compute=compute_info)
 
 
     @api.constrains

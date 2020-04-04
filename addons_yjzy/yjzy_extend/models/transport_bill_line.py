@@ -139,6 +139,8 @@ class transport_bill_line(models.Model):
     s_uom_id = fields.Many2one('product.uom', u'销售打印单位', related='product_id.s_uom_id')
     p_uom_id = fields.Many2one('product.uom', u'采购打印单位', related='product_id.p_uom_id')
     need_print = fields.Boolean('是否打印', defualt=True)
+    #是否金样  akiny
+    is_gold_sample = fields.Boolean('是否有金样', related='product_id.is_gold_sample', readonly=False)
 
 
     @api.onchange('sol_id')
