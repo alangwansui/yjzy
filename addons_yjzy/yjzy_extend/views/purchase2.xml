@@ -1,12 +1,37 @@
 <odoo>
     <data>
 
+         <record id="view_purchase_order_new_filter" model="ir.ui.view">
+            <field name="name">purchase.order.list.new.select</field>
+            <field name="model">purchase.order</field>
+            <field name="arch" type="xml">
+                <search string="Search Purchase Order">
+                    <field name="contract_code" filter_domain="['|','|',('contract_code','ilike',self),('name','ilike',self),('partner_id','child_of',self)]"/>
+                    <field name="sale_uid"/>
+                    <field name="product_id"/>
+                    <field name="create_uid"/>
+                    <field name="supplierinfo_ids"/>
+                    <filter name="draft" string="合同草稿" domain="[('state','in',['draft'])]"/>
+                    <filter name="approval" string="审批中" domain="[('state','in',('submit','to_approve'))]"/>
+                    <filter name="approve" string="审批完成" domain="[('state', '=', 'approve')]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="供应商" domain="[]" context="{'group_by':'partner_id'}"/>
+                        <filter string="下单日期" domain="[]" context="{'group_by':'date_order'}"/>
+                        <filter string="交单日期" domain="[]" context="{'group_by':'date_planned'}"/>
+                    </group>
+               </search>
+            </field>
+        </record>
+
+
+
+
 
         <record id="new_purhcase_order_tree" model="ir.ui.view">
             <field name="name">purchase.order.tree</field>
             <field name="model">purchase.order</field>
             <field name="arch" type="xml">
-         <tree decoration-bf="message_unread==True" decoration-muted="state=='cancel'" decoration-info="state in ('wait','confirmed')" string="采购合同">
+         <tree decoration-bf="message_unread==True" decoration-muted="state=='cancel'"  decoration-info="state in ('wait','confirmed')" string="采购合同">
                     <field name="message_unread" invisible="1"/>
                     <field name="name" string="流水码" groups="base.group_system"/>
                     <field name="contract_code" string="合同编号"/>
@@ -17,8 +42,6 @@
                     <field name="origin" invisible="1"/>
                     <field name="amount_untaxed" sum="Total Untaxed amount" string="Untaxed" widget="monetary" invisible="1"/>
                     <field name="amount_total" sum="Total amount" widget="monetary"/>
-
-
                     <field name="balance" string="预付余额"/>
                     <field name="currency_id" invisible="1"/>
                     <field name="state" invisible="1"/>
@@ -57,14 +80,15 @@
                     <button name="button_unlock" invisible="1" groups="base.group_system" type="object" string="Unlock" states="done" />
                     <button string="创建批次号" invisible="1" states="" type="object" name="create_lots"/>
                     <button string="虚拟入库" invisible="1" states="" type="object" name="make_dump_income_picking"/>
-                                        <button name="test_pre_advance" string="预付款测试按钮" type="object" class="oe_highlight" groups="base.group_no_one"/>
+                                        <button name="test_pre_advance" string="预付款测试按钮" type="object" class="oe_highlight" invisible="1" groups="base.group_no_one"/>
                     <button name="make_yfsqd" string="测试生成预付申请单"  type="object" class="oe_highlight"  invisible="1" groups="base.group_no_one"/>
                     <button name="clear_yfsqd" string="清除预付申请单" invisible="1" type="object" class="oe_highlight"/>
 
                     <button name="set_tax_zero" string="设置含税" invisible="1" type="object" class="oe_highlight"/>
+                    <button name="compute_package_info" string="计算包装信息" type="object" class="oe_highlight"/>
                     <button name="open_wizard_po_box" string="生成箱号" type="object" class="oe_highlight"/>
                     <button name="clear_po_box" string="清除箱号" type="object" class="oe_highlight"/>
-                    <button name="compute_package_info" string="计算包装信息" type="object" class="oe_highlight"/>
+
 
                     <field name="state" widget="statusbar" statusbar_visible="draft,sent,purchase" readonly="1"/>
                      <field name="is_editable" widget="boolean_toggle"/>
@@ -125,7 +149,7 @@
                         </group>
                     </group>
                     <notebook>
-                        <page string="Products">
+                        <page string="明细行">
                             <button name="open_multi_select_product" string="Multi select product" type="object" class="oe_highlight"/>
                             <field name="order_line" attrs="{'readonly': [('state', 'in', ('done', 'cancel'))]}">
                                  <tree string="Purchase Order Lines" editable="bottom" decoration-danger="max_qty_ng==True">

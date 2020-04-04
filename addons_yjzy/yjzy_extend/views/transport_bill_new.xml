@@ -1,6 +1,43 @@
 <odoo>
     <data>
 
+        <record id="view_transport_bill_new_filter" model="ir.ui.view">
+            <field name="name">transport.bill.new.select</field>
+            <field name="model">transport.bill</field>
+            <field name="arch" type="xml">
+                <search string="Transport Bill">
+
+                    <field name="ref" string="合同号" filter_domain="['|','|',('ref','ilike',self),('name','ilike',self),('partner_id','child_of',self)]"/>
+                    <field name="user_id"/>
+
+                    <separator/>
+                    <filter string="合同草稿" name="draft" domain="[('state','=','draft')]"/>
+                    <filter string="审批中" name="approval" domain="[('state','in',['submit','refused','sale_approve','locked','done'])]"/>
+                    <filter string="合规审批完成" name="approve" domain="[('state','in',['approve'])]"/>
+                    <filter string="单证审批完成" name="confirmed" domain="[('state','in',['confirmed'])]"/>
+                    <separator/>
+                    <filter string="出运完成" name="delivered" domain="[('state','in',['delivered'])]"/>
+                    <filter string="应收付完成" name="invoiced" domain="[('state','in',['invoiced'])]"/>
+                    <filter string="待货款收齐" name="done" domain="[('state','in',['done'])]"/>
+                    <filter string="已收款" name="paid" domain="[('state','in',['paid'])]"/>
+                    <separator/>
+
+                    <group expand="0" string="Group By" >
+                        <filter string="状态" domain="[]" context="{'group_by':'state'}"/>
+                        <filter string="责任人" domain="[]" context="{'group_by':'user_id'}"/>
+                        <filter name="customer" string="客户" domain="[]" context="{'group_by':'partner_id'}"/>
+                        <separator/>
+                        <filter string="审批完成月份" domain="[]" context="{'group_by':'approve_date'}"/>
+                        <filter string="下单月份" domain="[]" context="{'group_by':'date_order'}"/>
+                    </group>
+               </search>
+            </field>
+        </record>
+
+
+
+
+
         <record id="view_transport_bill_new_sales_tree" model="ir.ui.view">
             <field name="name">transport.bill.tree</field>
             <field name="model">transport.bill</field>

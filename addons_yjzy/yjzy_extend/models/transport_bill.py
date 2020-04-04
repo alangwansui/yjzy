@@ -173,9 +173,9 @@ class transport_bill(models.Model):
 
 
     # 货币设置
-    state = fields.Selection([('cancel', u'取消'),('draft', '草稿'), ('submit', u'已提交'), ('sales_approve', u'责任人已审批'),
+    state = fields.Selection([('cancel', u'取消'),('draft', '草稿'), ('submit', u'已提交'), ('sales_approve', u'责任人已审批'),('refused', u'已拒绝'),
                               ('approve', '合规已审批'), ('confirmed', '单证已审批'),('delivered', '发货完成'), ('invoiced', '已开票'),('locked', '锁定'),
-                              ('done', '完结'), ('edit', u'可修改')], '状态', default='draft', track_visibility='onchange',)
+                              ('done', '完结'),('paid', '已收款'), ('edit', u'可修改')], '状态', default='draft', track_visibility='onchange',)
     locked = fields.Boolean(u'锁定不允许修改')
     include_tax = fields.Boolean(u'含税')
     currency_id = fields.Many2one('res.currency', related='company_id.currency_id', readonly=True, string='公司货币')
@@ -362,6 +362,20 @@ class transport_bill(models.Model):
 
     gongsi_id = fields.Many2one('gongsi', '内部公司')
     purchase_gongsi_id = fields.Many2one('gongsi', '内部采购公司')
+  #审批记录 akiny
+    submit_date = fields.Date('提交审批时间')
+    submit_uid = fields.Many2one('res.users', u'提交审批')
+    sales_confirm_date = fields.Date('责任人审批时间')
+    sales_confirm_uid = fields.Many2one('res.users', u'责任人审批')
+    approve_date = fields.Date('审批完成日期')
+    approve_uid = fields.Many2one('res.users', u'合规审批')
+    delivered_date = fields.Date('出运完成日期')
+    delivered_uid = fields.Many2one('res.users', u'出运完成')
+    invoiced_date = fields.Date('开票日期')
+    invoiced_uid = fields.Many2one('res.users', u'开票完成')
+    paid_date = fields.Date('收款日期')
+    paid_uid = fields.Many2one('res.users', u'出运完成')
+
 
 
 

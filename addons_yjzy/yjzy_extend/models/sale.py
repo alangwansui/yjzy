@@ -231,9 +231,8 @@ class sale_order(models.Model):
     gold_sample_state = fields.Selection([('all', '全部有'), ('part', '部分有'), ('none', '无样金')], '样金管理', compute=compute_info)
 
     country_id = fields.Many2one('res.country', related='partner_id.country_id', readonly=True, string=u'国家')
-    approve_date = fields.Date('审批完成日期')
-    approve_uid = fields.Many2one('res.users', u'合规审批')
-    hx_date = fields.Date('核销时间')
+
+
 
 
 
@@ -250,7 +249,7 @@ class sale_order(models.Model):
     approvaled_date = fields.Datetime('审批完成时间')
     # akiny 增加state
     state = fields.Selection(selection_add=[('refuse', u'拒绝'), ('submit', u'已提交'),('sales_approve', u'责任人已审批'),
-                                            ('approve', u'审批完成'), ('manager_approval', u'待总经理审批'),('transporting', u'出运中'),
+                                            ('approve', u'审批完成'), ('manager_approval', u'待总经理审批'),
                                             ('verifying', u'核销中'), ('verification', u'核销完成')],readonly=False)
 
 
@@ -258,9 +257,13 @@ class sale_order(models.Model):
     submit_uid = fields.Many2one('res.users', u'提交审批')
     sales_confirm_date = fields.Date('责任人审批时间')
     sales_confirm_uid = fields.Many2one('res.users', u'责任人审批')
+    approve_date = fields.Date('审批完成日期')
+    approve_uid = fields.Many2one('res.users', u'合规审批')
+    hx_date = fields.Date('核销时间')
+    purchase_approve_date = fields.Datetime('采购审批时间', compute=compute_info)
 
     purchase_no_deliver_amount = fields.Float('未发货的采购金额', compute=compute_info)
-    purchase_approve_date = fields.Datetime('采购审批时间', compute=compute_info)
+
 
     second_cost = fields.Float('销售主体成本', compute=compute_info)   #second_amoun
     second_porfit = fields.Float('销售主体利润', compute=compute_info) #amount_total2-刚刚计算出来的 second_const
