@@ -461,7 +461,7 @@
                                     </tree>
                                 </field>
                             </page>
-                            <page string="销售报关统计" >
+                            <page string="报关销售统计" >
                                  <button name="split_tuopan_weight" type="object" string="分配托盘重量" attrs="{'invisible': [('is_done_tuopan','=',True)]}"  class="oe_highlight"/>
 
                                 <group col="4">
@@ -478,29 +478,35 @@
                                     <field name="tuopan_volume"/>
                                   </group>
                                 </group>
-                                <field name="hsname_ids">
-                                    <tree>
-                                        <field name="purchase_hs_id"/>
+                                <field name="hsname_ids" >
+                                    <tree editable="bottom" decoration-danger="purchase_hs_id==False">
+                                        <field name="purchase_hs_id" string="采购对应" invisible="1"/>
                                         <button name="make_suppliser_hs" type="object" icon="fa-th-large"/>
-                                        <field name="id"/>
+                                        <field name="id" invisible="1"/>
                                         <field name="package_tag" invisible="1"/>
-                                        <field name="name" />
+                                        <field name="name" invisible="1"/>
 
                                         <field name="dump_product_id" groups="base.group_system" invisible="1"/>
-                                        <field name="hs_id" groups="base.group_system" invisible="1"/>
+                                        <field name="hs_id" attrs="{'required':[('purchase_hs_id','=',False)]}"/>
                                         <field name="hs_en_name" groups="base.group_system" invisible="1"/>
-                                        <field name="back_tax"/>
-                                        <field name="po_id"/>
-                                        <field name="out_qty" sun="小计"/>
-                                        <field name="price"/>
-                                        <field name="amount" sum="小计"/>
-                                        <field name="purchase_amount"/>
-                                        <field name="hs_id2"/>
+
+                                        <field name="po_id" string="采购合同" attrs="{'required':[('purchase_hs_id','=',False)]}"/>
+                                        <field name="amount" sum="小计" string="销售额" attrs="{'readonly':[('purchase_hs_id','=',False)]}"/>
+                                        <field name="out_qty2" sum="小计" string="报关数量" attrs="{'readonly':[('purchase_hs_id','=',False)]}"/>
+                                        <field name="price2" string="单价" readonly="1"/>
+                                        <field name="amount2" sum="小计" string="金额" attrs="{'readonly':[('purchase_hs_id','=',False)]}"/>
+                                        <field name="purchase_amount2" string="采购额" attrs="{'readonly':[('purchase_hs_id','=',False)]}"/>
+                                        <field name="back_tax" readonly="1"/>
+                                        <field name="purchase_back_tax_amount2" string="退税额" readonly="1"/>
+                                        <field name="out_qty" sum="小计" invisible="1"/>
+                                        <field name="price" string="单价" invisible="1"/>
+
+
+
+
+                                        <field name="purchase_amount" invisible="1"/>
+                                        <field name="hs_id2" invisible="1"/>
                                         <field name="dump_product_id2" groups="base.group_system" invisible="1"/>
-                                        <field name="out_qty2" sum="小计"/>
-                                        <field name="price2"/>
-                                        <field name="amount2" sum="小计"/>
-                                        <field name="purchase_amount2"/>
                                         <field name="source_area"/>
                                         <field name="source_country_id"/>
                                         <field name="qty_max" sum="小计" string="件数"/>
@@ -525,11 +531,11 @@
                                         <field name="dump_product_id" readonly="0"/>
                                         <field name="hs_id" readonly="0"/>
                                         <field name="hs_en_name" readonly="0"/>
-                                          <field name="po_id"/>
+                                        <field name="po_id"/>
                                         <field name="back_tax" readonly="1"/>
                                         <field name="out_qty" readonly="0"/>
                                         <field name="price" />
-                                       <field name="purchase_amount"/>
+                                        <field name="purchase_amount"/>
                                         <field name="purchase_amount2"/>
                                         <field name="amount"/>
                                         <field name="hs_id2"/>
@@ -537,8 +543,8 @@
                                         <field name="out_qty2"/>
                                         <field name="price2"/>
                                         <field name="amount2"/>
-                                            </group>
-                                            <group>
+                                       </group>
+                                       <group>
                                         <field name="source_area"/>
                                         <field name="source_country_id"/>
                                         <field name="qty_max"/>
@@ -553,13 +559,11 @@
                                         <field name="shiji_volume"/>
                                         <field name="type"/>
                                         <field name="note"/>
-                                            </group>
+                                       </group>
                                         </group>
                                         <group>
                                         <field name="keyword"/>
                                         </group>
-
-
                                     </form>
 
 
@@ -600,7 +604,7 @@
                                     </tree>
                                 </field>
                             </page>
-                            <page string="采购HS统计">
+                            <page string="报关采购统计">
                                 <field name="btls_hs_ids">
                                     <tree editable="bottom">
                                         <field name="sale_hs_id" domain="[('tb_id','=', parent.id)]" string="销售统计"/>
@@ -614,7 +618,7 @@
                                         <field name="qty" groups="base.group_system" invisible="1"/>
                                         <field name="price" groups="base.group_system" invisible="1"/>
                                         <field name="amount" groups="base.group_system" invisible="1"/>
-                                        <field name="back_tax" groups="base.group_system" invisible="1"/>
+                                        <field name="back_tax" groups="base.group_system" />
                                         <field name="back_tax_amount" groups="base.group_system" invisible="1"/>
                                         <field name="hs_id2" />
                                         <field name="product_id2" groups="base.group_system" invisible="1"/>

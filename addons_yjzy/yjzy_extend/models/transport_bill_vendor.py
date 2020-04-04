@@ -57,7 +57,7 @@ class transport_bill_vendor(models.Model):
     partner_id = fields.Many2one('res.partner', u'供应商', related='tbv_id.partner_id')
     product_id = fields.Many2one('product.product', u'产品')
     po_contract_code = fields.Char(u'合同号')
-    supplier_code = fields.Char('应商产品代码')
+    supplier_code = fields.Char('供应商产品代码')
     default_code = fields.Char('产品内部编号', related='product_id.default_code')
     qty = fields.Float(u'数量')
     max_qty = fields.Float(u'包数')

@@ -271,7 +271,7 @@ class tbl_hsname(models.Model):
     purchase_hs_id = fields.Many2one('btls.hs', '采购HS统计')
     purchase_amount = fields.Float('采购金额', related="purchase_hs_id.amount")
     purchase_amount2 = fields.Float('采购金额', related="purchase_hs_id.amount2")
-
+    purchase_back_tax_amount2 = fields.Float(u'报关退税金额',related="purchase_hs_id.back_tax_amount2")
     @api.multi
     def write(self, vals):
         res = super(tbl_hsname, self).write(vals)

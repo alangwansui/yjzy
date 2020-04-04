@@ -678,7 +678,7 @@
                                 <field name="note" class="oe_inline" placeholder="在销售设置中设置默认条款和条件…"/>
                                 <div class="oe_clear"/>
                             </page>
-                            <page string="订单详情">
+                            <page string="合同详情">
                                 <field name="order_line_b" mode="tree,kanban">
                                     <form string="销售订单明细">
                                         <group>
