@@ -674,7 +674,7 @@
                                     <field name="amount_total" nolabel="1" class="oe_subtotal_footer_separator" widget="monetary"
                                            options="{'currency_field': 'currency_id'}"/>
                                 </group>
-                                <field name="note" class="oe_inline" placeholder="在销售设置中设置默认条款和条件…"/>
+                                <field name="note" class="oe_inline" placeholder="在销售设置中设置默认条款和条件…" invisible="1"/>
                                 <div class="oe_clear"/>
                             </page>
                             <page string="合同详情">
@@ -1080,9 +1080,7 @@
                         <field name="activity_ids" widget="mail_activity"/>
                         <field name="message_ids" widget="mail_thread"/>
                     </div>
-                    <sheet>
 
-                    </sheet>
                 </form>
             </field>
         </record>
@@ -1100,14 +1098,9 @@
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('new_sale_order_kanban')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_form')})]"/>
         </record>
-
-        <menuitem id="new_sale_order_menu" name="新销售合同" parent="sale.sale_menu_root" action="new_sale_order_all_action" sequence="99"
+        <menuitem id="new_sale_order_root" name="新销售合同"  sequence="1"
                   groups="base.group_system"/>
-
-
-
-
-        <menuitem id="new_sale_order_all_menu" name="新销售合同" parent="new_sale_order_menu" action="new_sale_order_all_action" sequence="1"/>
+         <menuitem id="new_sale_order_all_menu" name="新销售合同" parent="new_sale_order_root" action="new_sale_order_all_action" sequence="2"/>
 
 <!--销售部待处理合同：草稿和提交状态-->
         <record id="new_sale_order_sales_action" model="ir.actions.act_window">
@@ -1123,7 +1116,7 @@
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('new_sale_order_kanban')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_form')})]"/>
         </record>
-        <menuitem id="new_sale_order_sales_menu" name="待处理合同" parent="new_sale_order_menu" action="new_sale_order_sales_action" sequence="1"/>
+        <menuitem id="new_sale_order_sales_menu" name="待处理合同" parent="new_sale_order_root" action="new_sale_order_sales_action" sequence="1"/>
 <!--合规待处理合同：合规审批、审批完成、出运中、核销中-->
         <record id="new_sale_order_hegui_action" model="ir.actions.act_window">
             <field name="name">待处理合同</field>
@@ -1138,7 +1131,8 @@
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('new_sale_order_kanban')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_form')})]"/>
         </record>
-        <menuitem id="new_sale_order_sales_menu" name="待处理合同" parent="new_sale_order_menu" action="new_sale_order_sales_action" sequence="1"/>
+        <menuitem id="new_sale_order_sales_menu" name="待处理合同" parent="new_sale_order_root"
+                 action="new_sale_order_sales_action" sequence="1"/>
 <!--总经理待处理合同：总经理审批中-->
         <record id="new_sale_order_manager_action" model="ir.actions.act_window">
             <field name="name">待处理合同</field>
@@ -1153,7 +1147,10 @@
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('new_sale_order_kanban')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_form')})]"/>
         </record>
-        <menuitem id="new_sale_order_manager_menu" name="待处理合同" parent="new_sale_order_menu" action="new_sale_order_manager_action" sequence="1"/>
+        <menuitem id="new_sale_order_manager_menu"
+                  name="待处理合同" parent="new_sale_order_root"
+                  action="new_sale_order_manager_action"
+                  sequence="1"/>
 
 
       <!--我的销售合同：权限内的合同-->
@@ -1171,7 +1168,7 @@
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('new_sale_order_kanban')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_form')})]"/>
         </record>
-        <menuitem id="new_sale_order_user_menu" name="我的销售合同" parent="new_sale_order_menu" action="new_sale_order_user_action" sequence="1"/>
+        <menuitem id="new_sale_order_user_menu" name="我的销售合同" parent="new_sale_order_root" action="new_sale_order_user_action" sequence="3"/>
 
           <record id="new_sale_order_create_action" model="ir.actions.act_window">
             <field name="name">创建销售合同</field>
@@ -1183,7 +1180,11 @@
             <field name="view_ids" eval="[(5, 0, 0),
                               (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_form')})]"/>
         </record>
-        <menuitem id="new_sale_order_create_menu" name="创建合同" parent="new_sale_order_menu" action="new_sale_order_create_action" sequence="1"/>
+        <menuitem id="new_sale_order_create_menu"
+                  name="创建合同"
+                  parent="new_sale_order_root"
+                  action="new_sale_order_create_action"
+                  groups="base.group_system" sequence="9"/>
 
 
 

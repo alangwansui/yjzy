@@ -1020,7 +1020,7 @@
         </record>
 
         <menuitem id="menu_transport_new_bill_root"
-                  name="出运"
+                  name="新出运"
                   sequence="22"
                   groups="base.group_system"/>
          <menuitem id="menu_transport_new_date_bill" name="出运单日期填制"

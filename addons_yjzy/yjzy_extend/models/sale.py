@@ -238,7 +238,7 @@ class sale_order(models.Model):
 
     current_date_rate = fields.Float('当日汇率')
 
-    contract_type = fields.Selection([('a', '模式1'), ('b', '模式2'), ('c', '模式3')], '合同类型', default='a')
+    contract_type = fields.Selection([('a', '模式1'), ('b', '模式2'), ('c', '模式3')], '合同类型', default='c')
     is_inner_trade = fields.Boolean('内部交易')
     second_company_id = fields.Many2one('res.company', '内部交易公司')
 
