@@ -1104,12 +1104,12 @@
 
 <!--销售部待处理合同：草稿和提交状态-->
         <record id="new_sale_order_sales_action" model="ir.actions.act_window">
-            <field name="name">待处理合同</field>
+            <field name="name">待处理合同.</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">sale.order</field>
             <field name="view_mode">tree,form,kanban</field>
             <field name="limit">20</field>
-            <field name="domain">[('state','in',['draft','submit'])]</field>
+            <field name="domain">[('state','in',['draft','submit','approve'])]</field>
             <field name="context">{}</field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('new_sale_order_tree')}),
@@ -1119,7 +1119,7 @@
         <menuitem id="new_sale_order_sales_menu" name="待处理合同" parent="new_sale_order_root" action="new_sale_order_sales_action" sequence="1"/>
 <!--合规待处理合同：合规审批、审批完成、出运中、核销中-->
         <record id="new_sale_order_hegui_action" model="ir.actions.act_window">
-            <field name="name">待处理合同</field>
+            <field name="name">.待处理合同</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">sale.order</field>
             <field name="view_mode">tree,form,kanban</field>
@@ -1131,8 +1131,8 @@
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('new_sale_order_kanban')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_form')})]"/>
         </record>
-        <menuitem id="new_sale_order_sales_menu" name="待处理合同" parent="new_sale_order_root"
-                 action="new_sale_order_sales_action" sequence="1"/>
+        <menuitem id="new_sale_order_hegui_menu" name="待处理合同" parent="new_sale_order_root"
+                 action="new_sale_order_hegui_action" sequence="1"/>
 <!--总经理待处理合同：总经理审批中-->
         <record id="new_sale_order_manager_action" model="ir.actions.act_window">
             <field name="name">待处理合同</field>
