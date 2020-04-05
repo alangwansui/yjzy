@@ -54,7 +54,7 @@
                     <field name="gongsi_id" string="采购主体"/>
                     <field name="supplierinfo_ids" widget="many2many_tags" invisible="1"/>
                     <field name="invoice_status" invisible="1" /><!--invisible="not context.get('show_purchase', True)"-->
-                    <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"/>
+                    <field name="company_id" groups="base.group_multi_company" invisible="1" options="{'no_create': True}"/>
                 </tree>
             </field>
         </record>
@@ -113,20 +113,21 @@
                     </div>
                     <group>
                         <group>
-                   <field name="contract_code"/>
-                    <field name="include_tax"/>
+                            <field name="contract_code" attrs="{'readonly':[('state','not in',['draft','refused'])]}" />
+                            <field name="include_tax" attrs="{'readonly':[('state','not in',['draft','refused'])]}" />
 
-                            <field name="partner_id" context="{'search_default_supplier':1, 'show_address': 0, 'default_supplier':1,}" domain="[('supplier','=',True),('parent_id', '=', False)]"/>
-                            <field name="contact_id" domain="[('parent_id','=', partner_id),('type', '=', 'contact')]"/>
+                            <field name="partner_id" attrs="{'readonly':[('state','not in',['draft','refused'])]}" context="{'search_default_supplier':1, 'show_address': 0, 'default_supplier':1,}" domain="[('supplier','=',True),('parent_id', '=', False)]"/>
+                            <field name="contact_id" attrs="{'readonly':[('state','not in',['draft','refused'])]}" domain="[('parent_id','=', partner_id),('type', '=', 'contact')]"/>
                             <field name="partner_ref" invisible="1"/>
-                            <field name="currency_id" groups="base.group_multi_currency" />
+                            <field name="currency_id" groups="base.group_multi_currency" attrs="{'readonly':1}" />
                             <field name="need_purchase_fandian" invisible="1"/>
                             <field name="purchase_fandian_ratio" attrs="{'invisible': [('need_purchase_fandian','!=',True)]}" invisible="1"/>
                             <field name="purchase_fandian_partner_id" attrs="{'invisible': [('need_purchase_fandian','!=',True)]}" invisible="1"/>
-                            <field name="payment_term_id" options="{'no_open': True, 'no_create': True}" domain="[('type','in', ['purchase', 'comm'])]" attrs="{'readonly': ['|', ('invoice_status','=', 'invoiced'), ('state', '=', 'done')]}"/>
+                            <field name="payment_term_id"  options="{'no_open': True, 'no_create': True}" domain="[('type','in', ['purchase', 'comm'])]"
+                                   attrs="{'readonly': ['|', ('invoice_status','=', 'invoiced'), ('state', 'not in', ['draft','refused'])]}"/>
 
                             <field name="is_shipped" invisible="1"/>
-                            <field name="gongsi_id" string="采购主体"/>
+                            <field name="gongsi_id" string="采购主体" attrs="{'readonly':[('state','not in',['draft','refused'])]}" />
                         </group>
                         <group>
 
@@ -134,7 +135,7 @@
                             <field name="create_date" readonly="1" invisible="1"/>
                             <field name="date_order" string="合同日期" readonly="1" invisible="1"/>
 
-                            <field name="source_so_id" readonly="1"/>
+                            <field name="source_so_id" readonly="1" context="{'form_view_ref':'yjzy_extend.new_sale_order_form'}"/>
                             <field name="origin" attrs="{'invisible': [('origin','=',False)]}" />
                             <field name="company_id" groups="base.group_system" options="{'no_create': True}" invisible="1"/>
                             <field name="yjzy_currency_id" invisible="1"/>
@@ -151,7 +152,7 @@
                     <notebook>
                         <page string="明细行">
                             <button name="open_multi_select_product" string="Multi select product" type="object" class="oe_highlight"/>
-                            <field name="order_line" attrs="{'readonly': [('state', 'in', ('done', 'cancel'))]}">
+                            <field name="order_line" attrs="{'readonly':[('state','not in',['draft','refused'])]}">
                                  <tree string="Purchase Order Lines" editable="bottom" decoration-danger="max_qty_ng==True">
                                      <button icon="fas fa-eye" type="object" name="show_product_attrs"/>
                                     <field name="currency_id" invisible="1"/>

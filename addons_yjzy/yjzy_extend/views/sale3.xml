@@ -349,19 +349,19 @@
                         <group col="3">
                             <group>
 
-                                <field name="contract_code"/>
+                                <field name="contract_code" attrs="{'readonly':[('state','not in',['draft','refused'])]}"/>
                                 <field name="partner_id" domain="[('customer','=',True),('parent_id', '=', False)]"
-                                       context="{'search_default_customer':1, 'show_address': 0}" options="{&quot;always_reload&quot;: True}"/>
+                                       attrs="{'readonly':[('state','not in',['draft','refused'])]}" context="{'search_default_customer':1, 'show_address': 0}" options="{&quot;always_reload&quot;: True}"/>
                                 <field name="country_id" invisible="1"/>
                                 <field name="can_directly_mark_as_paid" invisible="1"/>
                                 <field name="link_man_id" invisible="1" domain="[('parent_id','=',partner_id),('type', '=', 'contract')]" groups="base.group_system"/>
-                                <field name="customer_pi" string="客户合同号" help="审批之后不允许修改"/>
-                                <field name="incoterm"/>
-                                <field name="requested_date" string="客户交期" widget="date"/>
-                                <field name="payment_term_id" options="{'no_create': True}" domain="[('type','in', ['sale', 'comm'])]"/>
-                                <field name="current_date_rate" string="当日汇率"/>
-                                <field name="currency_id" invisible="0"/>
-                                <field name="include_tax"/>
+                                <field name="customer_pi" attrs="{'readonly':[('state','not in',['draft','refused'])]}" string="客户合同号" help="审批之后不允许修改"/>
+                                <field name="incoterm" attrs="{'readonly':[('state','not in',['draft','refused'])]}"/>
+                                <field name="requested_date" string="客户交期" widget="date" attrs="{'readonly':[('state','not in',['draft','refused'])]}"/>
+                                <field name="payment_term_id" options="{'no_create': True,'no_open':True}" attrs="{'readonly':[('state','not in',['draft','refused'])]}" domain="[('type','in', ['sale', 'comm'])]"/>
+                                <field name="current_date_rate" string="当日汇率" attrs="{'readonly':[('state','not in',['draft','refused'])]}" options="{'no_open':True}"/>
+                                <field name="currency_id" invisible="0" attrs="{'readonly':1}"/>
+                                <field name="include_tax" attrs="{'readonly':[('state','not in',['draft','refused'])]}"/>
 
                                 <field name="contract_date" string="签订日期" invisible="1"/>
 
@@ -373,41 +373,40 @@
                                 <field name="dump_picking_id" readonly="1" invisible="1" groups="base.group_system"/>
 
 
-                                <field name="second_company_id" invisible="1"/>
-                                <field name="second_partner_id" invisible="1"/>
-                                <field name="contract_type"/>
+
+                                <field name="contract_type" attrs="{'readonly':1}"/>
                                 <field name="is_inner_trade" groups="base.group_system" invisible="1"/>
-                                <field name="gongsi_id" string="销售主体"/>
-                                <field name="purchase_gongsi_id" string="采购主体"/>
+                                <field name="gongsi_id" string="销售主体" attrs="{'readonly':1}"/>
+                                <field name="purchase_gongsi_id" string="采购主体" attrs="{'readonly':1}"/>
                             </group>
                             <group>
                                 <group>
                                     <field name="company_currency_id" invisible="1"/>
-                                    <field name="fee_inner"/>
-                                    <field name="fee_rmb1"/>
-                                    <field name="fee_rmb2"/>
+                                    <field name="fee_inner" attrs="{'readonly':[('state','not in',['draft','refused'])]}"/>
+                                    <field name="fee_rmb1" attrs="{'readonly':[('state','not in',['draft','refused'])]}"/>
+                                    <field name="fee_rmb2" attrs="{'readonly':[('state','not in',['draft','refused'])]}"/>
 
                                 </group>
                                 <newline/>
                                 <div>
-                                    <label string="国外运保费" for="fee_outer" class="oe_inline"/>
+                                    <label string="国外运保费" for="fee_outer" class="oe_inline" attrs="{'readonly':[('state','not in',['draft','refused'])]}"/>
 
-                                    <field name="fee_outer" nolabel="1" class="oe_inline"/>
-                                    <field name="outer_currency_id" nolabel="1" invisible="1" class="oe_inline"/>
+                                    <field name="fee_outer" nolabel="1" class="oe_inline" attrs="{'readonly':[('state','not in',['draft','refused'])]}"/>
+                                    <field name="outer_currency_id" nolabel="1" invisible="1" required="1" class="oe_inline"/>
                                 </div>
                                 <newline/>
                                 <div>
                                     <label string="出口保险费" for="fee_export_insurance" class="oe_inline"/>
 
-                                    <field name="fee_export_insurance" nolabel="1" class="oe_inline"/>
-                                    <field name="export_insurance_currency_id" nolabel="1" invisible="1" class="oe_inline"/>
+                                    <field name="fee_export_insurance" nolabel="1" class="oe_inline" attrs="{'readonly':[('state','not in',['draft','refused'])]}"/>
+                                    <field name="export_insurance_currency_id" nolabel="1" invisible="1" required="1" class="oe_inline"/>
                                 </div>
                                 <newline/>
                                 <div>
                                     <label string="其他外币费用" for="fee_other" class="oe_inline"/>
 
-                                    <field name="fee_other" nolabel="1" class="oe_inline"/>
-                                    <field name="other_currency_id" nolabel="1" invisible="1" class="oe_inline"/>
+                                    <field name="fee_other" nolabel="1" class="oe_inline" attrs="{'readonly':[('state','not in',['draft','refused'])]}"/>
+                                    <field name="other_currency_id" nolabel="1" required="1" invisible="1" class="oe_inline"/>
                                 </div>
                             </group>
                             <group>
@@ -441,7 +440,7 @@
                         </group>
                         <notebook>
                             <page string="订单行">
-                                <field name="order_line" mode="tree,kanban">
+                                <field name="order_line" mode="tree,kanban" attrs="{'readonly':[('state','not in',['draft','refused'])]}">
                                     <form string="销售订单明细">
                                         <group>
                                             <group>
