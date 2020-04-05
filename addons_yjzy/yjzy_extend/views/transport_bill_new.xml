@@ -1015,21 +1015,20 @@
             <field name="domain">[]</field>
             <field name="context">{'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3}</field>
             <field name="view_ids" eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_transport_bill_new_date_tree')}),]"
-                          />
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_transport_bill_new_date_tree')})]"/>
 
         </record>
 
+        <menuitem id="menu_transport_new_bill_root"
+                  name="出运"
+                  sequence="22"
+                  groups="base.group_system"/>
          <menuitem id="menu_transport_new_date_bill" name="出运单日期填制"
                   parent="yjzy_extend.menu_transport_new_bill_root"
                   sequence="22"
                   action="act_open_transport_bill_new_date_view"
                   groups="base.group_system"/>
 
-        <menuitem id="menu_transport_new_bill_root"
-                  name="出运"
-                  sequence="22"
-                  groups="base.group_system"/>
 
              <record model="ir.actions.act_window" id="act_open_transport_bill_new_create_view">
             <field name="name">创建新出运单</field>
