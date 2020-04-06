@@ -1090,10 +1090,10 @@
 
         </record>
 
-        <menuitem id="menu_transport_new_sales_bill" name="新出运单合规"
+        <menuitem id="menu_transport_new_hegui_bill" name="新出运单合规"
                   parent="yjzy_extend.menu_transport_new_bill_root"
                   sequence="22"
-                  action="act_open_transport_bill_new_sales_view"
+                  action="act_open_transport_bill_new_hegui_view"
                   groups="base.group_system"/>
 
 
@@ -1108,7 +1108,7 @@
             <field name="context">{'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3}</field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_transport_bill_new_document_tree')}),
-                          (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_transport_bill_new_sales_kanban')}),
+                          (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_transport_bill_new_document_kanban')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_transport_bill_new_document_form')})]"/>
 
         </record>
