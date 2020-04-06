@@ -726,14 +726,14 @@
                     <field name="date_in" modifiers="{}"/>
                     <field name="date_ship" modifiers="{}"/>
                     <field name="date_customer_finish" modifiers="{}"/>
-                    <field name="date_supplier_finish" modifiers="{}" attrs="{'invisible':1}" />
+                    <field name="date_supplier_finish" modifiers="{}"  />
                     <button name="update_supplier_invoice_date" string="供应商交单日期" class="oe_highlight" type="object"/>
 
-                    <field name="date_out_in_related" modifiers="{}" attrs="{'invisible':True}"/>
-                    <field name="date_in_related" modifiers="{}" attrs="{'invisible':1}" />
-                    <field name="date_ship_related" modifiers="{}" attrs="{'invisible':1}" />
-                    <field name="date_customer_finish_related" modifiers="{}" attrs="{'invisible':1}" />
-                    <field name="date_supplier_finish_related" modifiers="{}" attrs="{'invisible':1}" />
+                    <field name="date_out_in_related" modifiers="{}" invisible="1"/>
+                    <field name="date_in_related" modifiers="{}" invisible="1" />
+                    <field name="date_ship_related" modifiers="{}" invisible="1"/>
+                    <field name="date_customer_finish_related" modifiers="{}" invisible="1" />
+                    <field name="date_supplier_finish_related" modifiers="{}" invisible="1" />
 
                     <field name="state" invisible="1"/>
                     <field name="create_date" widget="date"/>
