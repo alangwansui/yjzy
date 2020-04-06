@@ -238,7 +238,7 @@
                     <field name="contract_code"/>
                     <field name="partner_id"/>
                     <field name="requested_date" widget="date" string="交单日"/>
-                    <field name="delivery_status"/>
+                    <field name="delivery_status" invisible="1"/>
                     <field name="confirmation_date" string="Order Date" invisible="1"/>
                     <field name="contract_date" attrs="{}" invisible="1" required="1"/>
                     <field name="amount_total" sum="Total Tax Included" widget="monetary" string="销售金额"/>
@@ -1046,6 +1046,7 @@
                                        <group>
                                 <field name="approve_date"/>
                                 <field name="approve_uid"/>
+                                <field name="hx_date"/>
                                 <field name="purchase_approve_date"/>
                               </group>
                                 </group>

@@ -64,7 +64,7 @@
             <field name="model">purchase.order</field>
             <field name="arch" type="xml">
                 <form string="采购合同">
-                <header>
+                <header groups="base.group_system">
                     <button name="action_rfq_send" states="draft" invisible="1" string="Send RFQ by Email" type="object" context="{'send_rfq':True}" class="oe_highlight"/>
                     <button name="action_rfq_send" states="sent" invisible="1" string="Re-Send RFQ by Email" type="object" context="{'send_rfq':True}"/>
                     <button name="print_quotation" invisible="1" string="Print RFQ" type="object" states="draft" class="oe_highlight" groups="base.group_user"/>

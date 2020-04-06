@@ -125,7 +125,7 @@
             <field name="model">transport.bill</field>
             <field name="arch" type="xml">
                 <form string="出运单">
-                    <header groups="sales_team.group_sale_assistant,transport.bills_all">
+                    <header groups="base.group_system" invisible="1">
                         <button string="添加销售合同" states="draft" type="object" name="open_wizard_transport4so"
                                 class="oe_highlight"/>
                          <button string="添加销售明细" states="draft" type="object" name="open_wizard_transport4sol" groups="base.group_system"

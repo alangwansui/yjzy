@@ -69,8 +69,8 @@ class res_partner(models.Model):
     jituan_name = fields.Char(u'集团名称')
 
     contract_type = fields.Selection([('a', '模式1'), ('b', '模式2'), ('c', '模式3')], '合同类型', default='c')
-    gongsi_id = fields.Many2one('gongsi', '内部公司')
-    purchase_gongsi_id = fields.Many2one('gongsi', '内部采购公司')
+    gongsi_id = fields.Many2one('gongsi', '销售主体')
+    purchase_gongsi_id = fields.Many2one('gongsi', '采购主体')
 
 
     def generate_code(self):

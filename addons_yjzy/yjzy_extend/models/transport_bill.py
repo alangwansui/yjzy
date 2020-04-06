@@ -382,12 +382,14 @@ class transport_bill(models.Model):
     sales_confirm_uid = fields.Many2one('res.users', u'责任人审批')
     approve_date = fields.Date('审批完成日期')
     approve_uid = fields.Many2one('res.users', u'合规审批')
+    confirmed_date = fields.Date('单证审批日期')
+    confirmed_uid = fields.Date('单证审批')
     delivered_date = fields.Date('出运完成日期')
     delivered_uid = fields.Many2one('res.users', u'出运完成')
     invoiced_date = fields.Date('开票日期')
     invoiced_uid = fields.Many2one('res.users', u'开票完成')
     paid_date = fields.Date('收款日期')
-    paid_uid = fields.Many2one('res.users', u'出运完成')
+    paid_uid = fields.Many2one('res.users', u'收款完成')
 
     gold_sample_state = fields.Selection([('all', '全部有'), ('part', '部分有'), ('none', '无样金')], '样金管理',
                                          compute=compute_info)
