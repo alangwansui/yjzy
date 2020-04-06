@@ -43,34 +43,33 @@
             <field name="model">transport.bill</field>
             <field name="arch" type="xml">
                 <tree string="出运单">
-                    <field name="name"/>
+                    <field name="name" invisible="1" groups="base.group_system"/>
                     <field name="partner_id" required="1"/>
                     <field name="ref"/>
                     <field name="org_sale_amount"/>
-                    <field name="sale_amount"/>
-                    <field name="ciq_amount"/>
-                    <field name="no_ciq_amount"/>
-                    <field name="stage1state"/>
-                    <field name="stage2state"/>
-                    <field name="state" invisible="1"/>
+                    <field name="sale_amount" groups="base.group_system" invisible="1"/>
+                    <field name="ciq_amount" groups="base.group_system" invisible="1"/>
+                    <field name="no_ciq_amount" groups="base.group_system" invisible="1"/>
 
-                    <field name="company_currency_id" groups="base.group_system"/>
+                    <field name="state" invisible="1" groups="base.group_system"/>
+
+                    <field name="company_currency_id" invisible="1" groups="base.group_system"/>
                     <field name="sale_currency_id" invisible="1"/>
-                    <field name="third_currency_id" groups="base.group_system"/>
+                    <field name="third_currency_id" invisible="1" groups="base.group_system"/>
                     <field name="include_tax" />
                     <field name="create_date"/>
 
-                    <field name="sale_invoice_total"/>
-                    <field name="purhcase_invoice_total"/>
-                    <field name="back_tax_invoice_total"/>
-                    <field name="sale_invoice_paid"/>
-                    <field name="purhcase_invoice_paid"/>
-                    <field name="back_tax_invoice_paid"/>
-                    <field name="sale_invoice_balance"/>
-                    <field name="purhcase_invoice_balance"/>
-                    <field name="back_tax_invoice_balance"/>
+                    <field name="sale_invoice_total" string="应收金额"/>
+                    <field name="purhcase_invoice_total" string="应付金额"/>
+                    <field name="back_tax_invoice_total" string="退税金额"/>
+                    <field name="sale_invoice_paid" string="已收金额"/>
+                    <field name="purhcase_invoice_paid" string="已付金额"/>
+                    <field name="back_tax_invoice_paid" string="已收退税"/>
+                    <field name="sale_invoice_balance" string="未收金额"/>
+                    <field name="purhcase_invoice_balance" string="未付金额"/>
+                    <field name="back_tax_invoice_balance" string="未收退税"/>
 
-                    <field name="gongsi_id"/>
+                    <field name="gongsi_id" string="主体"/>
 
 
 
@@ -1044,10 +1043,10 @@
 
         </record>
 
-         <menuitem id="menu_transport_new_create_bill" name="新出运单业务"
+         <menuitem id="menu_transport_new_create_bill" name="创建新出运单"
                   parent="yjzy_extend.menu_transport_new_bill_root"
                   sequence="22"
-                  action="act_open_transport_bill_new_sales_view"
+                  action="act_open_transport_bill_new_create_view"
                   groups="base.group_system"/>
 
 
