@@ -1119,7 +1119,7 @@
                   action="act_open_transport_bill_new_document_view"
                   groups="base.group_system"/>
 
-        <record model="ir.actions.act_window" id="act_open_transport_bill_new_sales_view">
+        <record model="ir.actions.act_window" id="act_open_transport_bill_new_all_view">
             <field name="name">新出运单所有</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">transport.bill</field>
@@ -1129,16 +1129,16 @@
             <field name="limit">20</field>
             <field name="context">{'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3}</field>
             <field name="view_ids" eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_transport_bill_new_salestree')}),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_transport_bill_new_sales_tree')}),
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_transport_bill_new_sales_kanban')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_transport_bill_new_sales_form')})]"/>
 
         </record>
 
-        <menuitem id="menu_transport_new_document_bill" name="新出运单单证"
+        <menuitem id="menu_transport_new_all_bill" name="新出运单所有"
                   parent="yjzy_extend.menu_transport_new_bill_root"
                   sequence="22"
-                  action="act_open_transport_bill_new_document_view"
+                  action="act_open_transport_bill_new_all_view"
                   groups="base.group_system"/>
 
 
