@@ -965,6 +965,11 @@ class transport_bill(models.Model):
             'res_id': back_tax_invoice.id
         }
 
+    def make_all_invoice(self):
+        self.make_sale_invoice()
+        self.make_purchase_invoice()
+        self.make_back_tax_invoice()
+
     def unlink(self):
         for one in self:
             if one.state != 'draft':
