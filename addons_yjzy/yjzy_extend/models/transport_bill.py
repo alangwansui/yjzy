@@ -185,9 +185,10 @@ class transport_bill(models.Model):
 
 
     # 货币设置
-    state = fields.Selection([('cancel', u'取消'),('draft', '草稿'), ('submit', u'已提交'), ('sales_approve', u'责任人已审批'),('refused', u'已拒绝'),
+    state = fields.Selection([('cancel', u'取消'),('draft', '草稿'), ('w_sale_manager', u'待批准'), ('w_sale_director', u'待销售总监'),('submit', u'已提交'), ('sales_approve', u'责任人已审批'),('refused', u'已拒绝'),
                               ('approve', '合规已审批'), ('confirmed', '单证已审批'),('delivered', '发货完成'), ('invoiced', '已开票'),('locked', '锁定'),
                               ('done', '完结'),('paid', '已收款'), ('edit', u'可修改')], '状态', default='draft', track_visibility='onchange',)
+
     locked = fields.Boolean(u'锁定不允许修改')
     include_tax = fields.Boolean(u'含税')
     currency_id = fields.Many2one('res.currency', related='company_id.currency_id', readonly=True, string='公司货币')
