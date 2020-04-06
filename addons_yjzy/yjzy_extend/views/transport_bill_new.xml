@@ -721,18 +721,19 @@
                     <field name="name" invisible="1"/>
                     <field name="ref"/>
                     <field name="partner_id" required="1" readonly="1"/>
-                    <button name="update_supplier_invoice_date" string="供应商日期更新" class="oe_highlight" type="object"/>
-                    <field name="date_out_in" modifiers="{}"/>
-                    <field name="date_in" modifiers="{}" invisible="1"/>
-                    <field name="date_ship" modifiers="{}" invisible="1"/>
-                    <field name="date_customer_finish" modifiers="{}" invisible="1"/>
-                    <field name="date_supplier_finish" modifiers="{}" invisible="1"/>
 
-                    <field name="date_out_in_related" modifiers="{}" invisible="1"/>
-                    <field name="date_in_related" modifiers="{}"/>
-                    <field name="date_ship_related" modifiers="{}"/>
-                    <field name="date_customer_finish_related" modifiers="{}"/>
-                    <field name="date_supplier_finish_related" modifiers="{}"/>
+                    <field name="date_out_in" modifiers="{}"/>
+                    <field name="date_in" modifiers="{}"/>
+                    <field name="date_ship" modifiers="{}"/>
+                    <field name="date_customer_finish" modifiers="{}"/>
+                    <field name="date_supplier_finish" modifiers="{}" attrs="{'invisible':1}" />
+                    <button name="update_supplier_invoice_date" string="供应商交单日期" class="oe_highlight" type="object"/>
+
+                    <field name="date_out_in_related" modifiers="{}" attrs="{'invisible':1}" />
+                    <field name="date_in_related" modifiers="{}" attrs="{'invisible':1}" />
+                    <field name="date_ship_related" modifiers="{}" attrs="{'invisible':1}" />
+                    <field name="date_customer_finish_related" modifiers="{}" attrs="{'invisible':1}" />
+                    <field name="date_supplier_finish_related" modifiers="{}" attrs="{'invisible':1}" />
 
                     <field name="state" invisible="1"/>
                     <field name="create_date" widget="date"/>
