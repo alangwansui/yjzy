@@ -896,6 +896,30 @@ class transport_bill(models.Model):
             'domain': [('id', 'in', sale_invoice_ids)]
         }
 
+    @api.multi
+    def write(self, vals):
+        res = super(transport_bill, self).write(vals)
+        need = set(['date_ship', 'date_supplier_finish', 'date_out_in', 'date_customer_finish']) & set(vals.keys())
+        print('===write need==', need)
+        if need:
+            self.sync_data2invoice()
+        return res
+
+    def sync_data2invoice(self):
+        for one in self:
+            #同步采购发票日期
+            for purchase_invoice in self.purchase_invoice_ids.filtered(lambda x: x.yjzy_type == 'purchase'):
+                purchase_invoice.date_ship = one.date_ship
+                purchase_invoice.date_finish = one.date_supplier_finish
+                purchase_invoice.date_invoice = one.date_out_in
+            #同步销售发票
+            sale_invoice = one.sale_invoice_id
+            if sale_invoice:
+                sale_invoice.date_invoice = one.date_out_in
+                sale_invoice.date_finish = one.date_customer_finish
+                sale_invoice.date_ship = one.date_ship
+        return True
+
     def make_back_tax_invoice(self):
         self.ensure_one()
         if not self.date_out_in:
