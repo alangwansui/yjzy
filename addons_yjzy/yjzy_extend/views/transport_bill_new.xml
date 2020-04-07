@@ -1000,7 +1000,7 @@
                                         <field name="submit_date"/>
                                         <field name="submit_uid"/>
                                         <field name="sales_confirm_date"/>
-                                        <field name="sales_confirm_uid "/>
+                                        <field name="sales_confirm_uid"/>
                                         <field name="approve_date"/>
                                         <field name="approve_uid"/>
                                     </group>
