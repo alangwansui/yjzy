@@ -7,7 +7,7 @@
         <field name="arch" type="xml">
             <form>
                 <group>
-                    <field name="customer_id"/>
+                    <field name="partner_id"/>
 
                 </group>
 

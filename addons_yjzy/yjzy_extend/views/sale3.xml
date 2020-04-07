@@ -439,7 +439,7 @@
 
                         </group>
                         <notebook>
-                            <page string="订单行">
+                            <page string="订单行" name="sale_order_line_new">
                                 <field name="order_line" mode="tree,kanban" attrs="{'readonly':[('state','not in',['draft','refused'])]}">
                                     <form string="销售订单明细">
                                         <group>
