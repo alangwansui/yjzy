@@ -719,7 +719,7 @@
             <field name="arch" type="xml">
                 <tree string="出运单" editable="bottom">
                     <field name="name" invisible="1"/>
-                    <field name="ref" readonly="1"/>
+
                     <field name="partner_id" required="1" readonly="1"/>
 
                     <field name="date_out_in" modifiers="{}"/>
@@ -727,6 +727,7 @@
                     <field name="date_ship" modifiers="{}"/>
                     <field name="date_customer_finish" modifiers="{}"/>
                     <field name="date_supplier_finish" modifiers="{}"  invisible="1"/>
+                    <field name="purchase_invoice_ids" widget="many2many_tags"/>
                     <button name="update_supplier_invoice_date" string="供应商交单日期" class="oe_highlight" type="object"/>
 
                     <field name="date_out_in_related" modifiers="{}" invisible="1"/>
