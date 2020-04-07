@@ -320,13 +320,6 @@ class sale_order(models.Model):
                 raise Warning(u'只有取消状态允许删除')
         return super(sale_order, self).unlink()
 
-    @api.multi
-    def name_get(self):
-        res = []
-        for order in self:
-            name = '%s[%s]' % (order.name, order.contract_code)
-            res.append((order.id, name))
-        return res
 
     # @api.multi
     # def name_get(self):
