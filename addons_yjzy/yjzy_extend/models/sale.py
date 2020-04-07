@@ -398,12 +398,15 @@ class sale_order(models.Model):
 
     def open_view_transport_bill(self):
         self.ensure_one()
+        tree_view = self.env.ref('yjzy_extend.view_transport_bill_new_sales_tree')
+        form_view = self.env.ref('yjzy_extend.view_transport_bill_new_sales_form')
         return {
             'name': _(u'成本单'),
             'view_type': 'form',
             "view_mode": 'tree,form',
             'res_model': 'transport.bill',
             'type': 'ir.actions.act_window',
+            'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
             'domain': [('id', 'in', [x.id for x in self.tb_ids])]
         }
 
