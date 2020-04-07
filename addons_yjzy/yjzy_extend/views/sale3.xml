@@ -237,7 +237,7 @@
                     <field name="name" string="订单流水" groups="base.group_system" invisible="1"/>
                     <field name="contract_code"/>
                     <field name="partner_id"/>
-                    <field name="requested_date" widget="date" string="交单日"/>
+                    <field name="requested_date" widget="date" string="交货日"/>
                     <field name="delivery_status" invisible="1"/>
                     <field name="confirmation_date" string="Order Date" invisible="1"/>
                     <field name="contract_date" attrs="{}" invisible="1" required="1"/>
@@ -253,8 +253,8 @@
                     <field name="user_id" groups="sale.hegui_all" string="责任人"/>
                     <field name="commitment_date" invisible="1"/>
                     <field name="advance_po_residual" invisible="1"/>
+                    <field name="approve_date" widget="date" string="合规审批日"/>
                     <field name="purchase_approve_date" widget="date" string="采购审批日"/>
-                    <field name="approve_date" widget="date" string="销售审批日"/>
                     <field name="gongsi_id" string="销售主体"/>
                     <field name="company_id" groups="base.group_system" invisible="1"/>
                 </tree>
@@ -334,7 +334,7 @@
                             </button>
                             <button name="open_purchase_order" type="object" class="oe_stat_button" icon="fa-pencil-square-o"
                                     attrs="{'invisible': [('po_count', '=', 0)]}">
-                                <field name="po_count" widget="statinfo" string="采购单"/>
+                                <field name="po_count" widget="statinfo" string="采购单" />
                             </button>
                             <field name="is_editable" widget="boolean_toggle" groups="sales_team.group_manager"/>
                         </div>
@@ -678,7 +678,7 @@
                                 <div class="oe_clear"/>
                             </page>
                             <page string="合同详情">
-                                <field name="order_line_b" mode="tree,kanban">
+                                <field name="order_line_b" mode="tree,kanban" readonly="1">
                                     <form string="销售订单明细">
                                         <group>
                                             <group>
@@ -1022,7 +1022,7 @@
                             </page>
 
                             <page string="预收认领单">
-                                <field name="yjzy_payment_ids" widget="many2many"
+                                <field name="yjzy_payment_ids" widget="many2many" readonly="1"
                                        domain="[('sfk_type','=','ysrld')]"
                                        context="{'tree_view_ref':'yjzy_extend.view_ysrld_tree',  'form_view_ref':'yjzy_extend.view_ysrld_form', 'default_so_id': id, 'default_sfk_type': 'ysrld', 'default_payment_type': 'inbound', 'default_partner_type': 'customer'}">
                                 </field>
@@ -1037,17 +1037,17 @@
                             <page string="审批记录">
                                 <group col="2">
                               <group>
-                                <field name="submit_date"/>
-                                <field name="submit_uid"/>
-                                <field name="sales_confirm_date"/>
-                                <field name="sales_confirm_uid"/>
+                                <field name="submit_date" readonly="1"/>
+                                <field name="submit_uid" readonly="1"/>
+                                <field name="sales_confirm_date" readonly="1"/>
+                                <field name="sales_confirm_uid" readonly="1"/>
 
                               </group>
                                        <group>
-                                <field name="approve_date"/>
-                                <field name="approve_uid"/>
-                                <field name="hx_date"/>
-                                <field name="purchase_approve_date"/>
+                                <field name="approve_date" readonly="1"/>
+                                <field name="approve_uid" readonly="1"/>
+                                <field name="hx_date" readonly="1"/>
+                                <field name="purchase_approve_date" readonly="1"/>
                               </group>
                                 </group>
                            </page>

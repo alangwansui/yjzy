@@ -24,5 +24,5 @@ class purchase_order(models.Model):
         if cant_my == 0:
             self.delivery_status = "undelivered"
 
-        if cant_my == total:
+        if cant_my == total and cant_my !=0 :
             self.delivery_status = "received"

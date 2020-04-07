@@ -3,6 +3,25 @@
     <data>
         <!--Product -->
 
+
+         <record id="new_product_product_search_from_tree" model="ir.ui.view">
+            <field name="name">product.product.from.tree</field>
+            <field name="model">product.product</field>
+            <field name="arch" type="xml">
+                <tree string="product_product">
+                   <field name="default_code"/>
+                   <field name="name"/>
+                   <field name="hs_id"/>
+                   <field name="customer_id"/>
+                   <field name="customer_ref"/>
+                   <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+
+
+
         <record id="inherit_product_search_form_view" model="ir.ui.view">
             <field name="name">product.product.search</field>
             <field name="model">product.product</field>

@@ -113,7 +113,7 @@
                     </div>
                     <group>
                         <group>
-                            <field name="contract_code" attrs="{'readonly':[('state','not in',['draft','refused'])]}" />
+                            <field name="contract_code" string="采购合同号" attrs="{'readonly':[('state','not in',['draft','refused'])]}" />
                             <field name="include_tax" attrs="{'readonly':[('state','not in',['draft','refused'])]}" />
 
                             <field name="partner_id" attrs="{'readonly':[('state','not in',['draft','refused'])]}" context="{'search_default_supplier':1, 'show_address': 0, 'default_supplier':1,}" domain="[('supplier','=',True),('parent_id', '=', False)]"/>

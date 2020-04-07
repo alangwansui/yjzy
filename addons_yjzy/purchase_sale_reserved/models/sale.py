@@ -167,12 +167,15 @@ class sale_order(models.Model):
 
     def open_purchase_order(self):
         self.ensure_one()
+        tree_view = self.env.ref('yjzy_extend.new_purhcase_order_tree')
+        form_view = self.env.ref('yjzy_extend.new_purhcase_order_from')
         return {
             'name': _(u'采购订单'),
             'view_type': 'form',
             "view_mode": 'tree,form',
             'res_model': 'purchase.order',
             'type': 'ir.actions.act_window',
+            'views':[(tree_view.id,'tree'),(form_view.id,'form')],
             'domain': [('id', '=', [x.id for x in self.po_ids])],
         }
 
