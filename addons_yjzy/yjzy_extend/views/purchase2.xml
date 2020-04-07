@@ -313,6 +313,7 @@
                 </form>
             </field>
         </record>
+        <menuitem id="new_purhcase_order_root" name="采购单:新" sequence=""/>
 
         <record id="new_purhcase_order_action" model="ir.actions.act_window">
             <field name="name">采购单</field>
@@ -325,7 +326,7 @@
         </record>
 
         <!-- This Menu Item must have a parent and an action -->
-        <menuitem id="new_purhcase_order_menu" name="采购单:新" parent="purchase.menu_purchase_root" action="new_purhcase_order_action" sequence=""/>
+        <menuitem id="new_purhcase_order_menu" name="采购单:新" parent="yjzy_extend.new_purhcase_order_root" action="new_purhcase_order_action" sequence=""/>
 
 
     </data>
