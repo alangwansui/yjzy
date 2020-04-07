@@ -1048,7 +1048,7 @@
                   parent="yjzy_extend.menu_transport_new_bill_root"
                   sequence="22"
                   action="act_open_transport_bill_new_date_view"
-                  groups="base.group_system"/>
+                  />
 
 
              <record model="ir.actions.act_window" id="act_open_transport_bill_new_create_view">
@@ -1069,7 +1069,7 @@
                   parent="yjzy_extend.menu_transport_new_bill_root"
                   sequence="22"
                   action="act_open_transport_bill_new_create_view"
-                  groups="base.group_system"/>
+                  />
 
 
         <record model="ir.actions.act_window" id="act_open_transport_bill_new_sales_view">
@@ -1092,7 +1092,7 @@
                   parent="yjzy_extend.menu_transport_new_bill_root"
                   sequence="22"
                   action="act_open_transport_bill_new_sales_view"
-                  groups="base.group_system"/>
+                  />
 
   <record model="ir.actions.act_window" id="act_open_transport_bill_new_hegui_view">
             <field name="name">新出运单合规</field>
@@ -1114,7 +1114,7 @@
                   parent="yjzy_extend.menu_transport_new_bill_root"
                   sequence="22"
                   action="act_open_transport_bill_new_hegui_view"
-                  groups="base.group_system"/>
+                 />
 
 
           <record model="ir.actions.act_window" id="act_open_transport_bill_new_document_view">
@@ -1137,7 +1137,7 @@
                   parent="yjzy_extend.menu_transport_new_bill_root"
                   sequence="22"
                   action="act_open_transport_bill_new_document_view"
-                  groups="base.group_system"/>
+                  />
 
         <record model="ir.actions.act_window" id="act_open_transport_bill_new_all_view">
             <field name="name">新出运单所有</field>
@@ -1159,7 +1159,7 @@
                   parent="yjzy_extend.menu_transport_new_bill_root"
                   sequence="22"
                   action="act_open_transport_bill_new_all_view"
-                  groups="base.group_system"/>
+                 />
 
 
     </data>
