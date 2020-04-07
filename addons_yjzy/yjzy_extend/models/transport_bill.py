@@ -729,6 +729,7 @@ class transport_bill(models.Model):
             line_obj.create({
                 'invoice_id': invoice.id,
                 'wizard_id': wizard.id,
+                'date': invoice.date_finish,
             })
 
         return {
