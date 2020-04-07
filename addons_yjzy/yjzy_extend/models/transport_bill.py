@@ -383,7 +383,7 @@ class transport_bill(models.Model):
     approve_date = fields.Date('审批完成日期')
     approve_uid = fields.Many2one('res.users', u'合规审批')
     confirmed_date = fields.Date('单证审批日期')
-    confirmed_uid = fields.Date('单证审批')
+    confirmed_uid = fields.Many2one('res.users','单证审批')
     delivered_date = fields.Date('出运完成日期')
     delivered_uid = fields.Many2one('res.users', u'出运完成')
     invoiced_date = fields.Date('开票日期')

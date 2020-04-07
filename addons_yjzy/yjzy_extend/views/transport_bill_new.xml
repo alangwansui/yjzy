@@ -1052,7 +1052,7 @@
                   />
 
 
-             <record model="ir.actions.act_window" id="act_open_transport_bill_new_create_view">
+            <record model="ir.actions.act_window" id="act_open_transport_bill_new_create_view">
             <field name="name">创建新出运单</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">transport.bill</field>
