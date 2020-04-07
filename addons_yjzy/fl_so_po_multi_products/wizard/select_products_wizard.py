@@ -10,6 +10,8 @@ class SelectProducts(models.TransientModel):
     product_ids = fields.Many2many('product.product', string='Products')
     flag_order = fields.Char('Flag Order')
 
+    partner_id = fields.Many2one('res.partner', u'客户', domain=[('customer', '=', True)])
+
     @api.multi
     def select_products(self):
         if self.flag_order == 'so':

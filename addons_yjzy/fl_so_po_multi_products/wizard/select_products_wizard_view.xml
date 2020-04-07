@@ -5,6 +5,13 @@
         <field name="model">select.products</field>
         <field name="type">form</field>
         <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="customer_id"/>
+
+                </group>
+
+            </form>
             <form string="Select Products">
                 <group string="Products">
                     <field name="product_ids" nolabel="1" />
