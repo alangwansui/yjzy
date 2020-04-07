@@ -315,11 +315,11 @@ class transport_bill(models.Model):
     date_customer_finish = fields.Date('客户交单日期')
     date_supplier_finish = fields.Date('供应商交单确认日期')
 
-    date_out_in_related = fields.Date('进仓日期', related='date_out_in')
-    date_in_related = fields.Date('入库日期', related='date_in')
-    date_ship_related = fields.Date('出运船日期', related='date_ship')
-    date_customer_finish_related = fields.Date('客户交单日期', related='date_customer_finish')
-    date_supplier_finish_related = fields.Date('供应商交单确认日期', related='date_supplier_finish')
+    date_out_in_related = fields.Date('进仓日期')
+    date_in_related = fields.Date('入库日期')
+    date_ship_related = fields.Date('出运船日期')
+    date_customer_finish_related = fields.Date('客户交单日期')
+    date_supplier_finish_related = fields.Date('供应商交单确认日期')
 
 
     sale_invoice_id = fields.Many2one('account.invoice', '销售发票')
@@ -394,6 +394,25 @@ class transport_bill(models.Model):
     gold_sample_state = fields.Selection([('all', '全部有'), ('part', '部分有'), ('none', '无样金')], '样金管理',
                                          compute=compute_info)
 
+    @api.onchange('date_out_in')
+    def onchange_date_out_in(self):
+        self.date_out_in_related = self.date_out_in
+
+    @api.onchange('date_in')
+    def onchange_date_in(self):
+        self.date_in_related = self.date_in
+
+    @api.onchange('date_ship')
+    def onchange_date_ship(self):
+        self.date_ship_related = self.date_ship
+
+    @api.onchange('date_customer_finish')
+    def onchange_date_customer_finish(self):
+        self.date_customer_finish_related = self.date_customer_finish
+
+    @api.onchange('date_supplier_finish')
+    def onchange_date_supplier_finish(self):
+        self.date_supplier_finish_related = self.date_supplier_finish
 
     @api.constrains
     def check_lines(self):
