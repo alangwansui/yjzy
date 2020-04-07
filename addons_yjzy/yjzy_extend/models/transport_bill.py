@@ -988,6 +988,7 @@ class transport_bill(models.Model):
         self.make_sale_invoice()
         self.make_purchase_invoice()
         self.make_back_tax_invoice()
+        self.state = 'invoiced'
 
     def unlink(self):
         for one in self:

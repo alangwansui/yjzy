@@ -719,16 +719,16 @@
             <field name="arch" type="xml">
                 <tree string="出运单" editable="bottom">
                     <field name="name" invisible="1"/>
-
+                    <field name="ref" />
                     <field name="partner_id" required="1" readonly="1"/>
-
+                    <button name="make_all_invoice" string="创建应收付" attrs="{'invisible':[('state','!=','delivered')]}"  class="oe_highlight" type="object"/>
                     <field name="date_out_in" modifiers="{}"/>
                     <field name="date_in" modifiers="{}"/>
                     <field name="date_ship" modifiers="{}"/>
                     <field name="date_customer_finish" modifiers="{}"/>
                     <field name="date_supplier_finish" modifiers="{}"  invisible="1"/>
                     <field name="purchase_invoice_ids" widget="many2many_tags"/>
-                    <button name="update_supplier_invoice_date" string="供应商交单日期" class="oe_highlight" type="object"/>
+                    <button name="update_supplier_invoice_date" string="供应商交单日期" attrs="{'invisible':[('state','!=','invoiced')]}" class="oe_highlight" type="object"/>
 
                     <field name="date_out_in_related" modifiers="{}" invisible="1"/>
                     <field name="date_in_related" modifiers="{}" invisible="1" />
@@ -736,7 +736,7 @@
                     <field name="date_customer_finish_related" modifiers="{}" invisible="1" />
                     <field name="date_supplier_finish_related" modifiers="{}" invisible="1" />
 
-                    <field name="state" invisible="1"/>
+                    <field name="state" invisible="0"/>
                     <field name="create_date" widget="date"/>
                     <field name="gongsi_id" string="销售主体" invisible="1"/>
                     <field name="purchase_gongsi_id" string="采购主体" invisible="1"/>
