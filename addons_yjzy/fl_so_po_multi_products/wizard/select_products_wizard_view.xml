@@ -1,20 +1,32 @@
 <?xml version="1.0"?>
 <odoo>
+    <record id="new_product_product_search_from_tree" model="ir.ui.view">
+            <field name="name">product.product.from.tree</field>
+            <field name="model">product.product</field>
+            <field name="arch" type="xml">
+                <tree string="product_product">
+                   <field name="default_code"/>
+                   <field name="name"/>
+                   <field name="hs_id"/>
+                   <field name="customer_id"/>
+                   <field name="customer_ref"/>
+                   <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+
     <record id="view_select_products_form" model="ir.ui.view">
         <field name="name">select.products.form</field>
         <field name="model">select.products</field>
         <field name="type">form</field>
         <field name="arch" type="xml">
-            <form>
-                <group>
-                    <field name="partner_id"/>
 
-                </group>
-
-            </form>
             <form string="Select Products">
+                   <field name="partner_id"/>
                 <group string="Products">
-                    <field name="product_ids" nolabel="1" />
+                    <field name="product_ids" nolabel="1" cnotext="{'tree_view_id':'yjzy_extend.new_product_product_search_from_tree'}"/>
+
                 </group>
                 <footer>
                     <button name="select_products" string="Add" type="object" class="oe_highlight" />
