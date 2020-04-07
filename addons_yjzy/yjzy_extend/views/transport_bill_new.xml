@@ -729,6 +729,9 @@
                     <field name="date_supplier_finish" modifiers="{}"  invisible="1"/>
                     <field name="all_purchase_invoice_fill"/>
                     <field name="purchase_invoice_ids" widget="many2many_tags" context="{'show_date_finish': 1}"/>
+
+                    <field name="purchase_invoice_ids2" widget="many2many_tags"/>
+
                     <button name="update_supplier_invoice_date" string="供应商交单日期" attrs="{'invisible':[('state','!=','invoiced')]}" class="oe_highlight" type="object"/>
 
                     <field name="date_out_in_related" modifiers="{}" invisible="1"/>

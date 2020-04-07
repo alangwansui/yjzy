@@ -107,6 +107,7 @@ class transport_bill(models.Model):
 
             ###profit_ratio_base = (one.sale_amount - one.get_outer())
             one.profit_ratio = one.sale_amount != 0.0 and one.profit_amount / one.sale_amount or 0
+            one.purchase_invoice_ids2 = one.purchase_invoice_ids.filtered(lambda x: x.yjzy_type == 'purchase')
 
 
     def sum_other(self):
@@ -325,6 +326,8 @@ class transport_bill(models.Model):
 
     sale_invoice_id = fields.Many2one('account.invoice', '销售发票')
     purchase_invoice_ids = fields.One2many('account.invoice', 'bill_id', '采购发票')
+    purchase_invoice_ids2 = fields.One2many('account.invoice', string='采购发票2',  compute=compute_info)
+
     back_tax_invoice_id = fields.Many2one('account.invoice', '退税发票')
     sale_invoice_count = fields.Integer(u'销售发票数', compute=compute_info)
     purchase_invoice_count = fields.Integer(u'采购发票数', compute=compute_info)
