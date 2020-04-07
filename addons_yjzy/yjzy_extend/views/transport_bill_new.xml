@@ -994,6 +994,26 @@
                                     </tree>
                                 </field>
                             </page>
+                            <page>
+                                <group>
+                                    <group>
+                                        <field name="submit_date"/>
+                                        <field name="submit_uid"/>
+                                        <field name="sales_confirm_date"/>
+                                        <field name="sales_confirm_uid "/>
+                                        <field name="approve_date"/>
+                                        <field name="approve_uid"/>
+                                    </group>
+                                    <group>
+                                        <field name="confirmed_date"/>
+                                        <field name="confirmed_uid"/>
+                                        <field name="delivered_date"/>
+                                        <field name="delivered_uid"/>
+                                        <field name="invoiced_date"/>
+                                        <field name="invoiced_uid"/>
+                                    </group>
+                                </group>
+                            </page>
 
                         </notebook>
                     </sheet>

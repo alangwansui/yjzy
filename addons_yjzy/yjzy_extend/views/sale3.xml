@@ -360,7 +360,7 @@
                                 <field name="requested_date" string="客户交期" widget="date" attrs="{'readonly':[('state','not in',['draft','refused'])]}"/>
                                 <field name="payment_term_id" options="{'no_create': True,'no_open':True}" attrs="{'readonly':[('state','not in',['draft','refused'])]}" domain="[('type','in', ['sale', 'comm'])]"/>
                                 <field name="current_date_rate" string="当日汇率" attrs="{'readonly':[('state','not in',['draft','refused'])]}" options="{'no_open':True}"/>
-                                <field name="currency_id" invisible="0" attrs="{'readonly':1}"/>
+                                <field name="currency_id" invisible="0" attrs="{'readonly':1}" options="{'no_open':1}"/>
                                 <field name="include_tax" attrs="{'readonly':[('state','not in',['draft','refused'])]}"/>
 
                                 <field name="contract_date" string="签订日期" invisible="1"/>
