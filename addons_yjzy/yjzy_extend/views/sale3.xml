@@ -1101,11 +1101,11 @@
         </record>
         <menuitem id="new_sale_order_root" name="新销售合同"  sequence="1"
                   groups="base.group_system"/>
-         <menuitem id="new_sale_order_all_menu" name="新销售合同" parent="new_sale_order_root" action="new_sale_order_all_action" sequence="2"/>
+         <menuitem id="new_sale_order_all_menu" name="新销售合同" parent="new_sale_order_root" action="new_sale_order_all_action" sequence="99"/>
 
 <!--销售部待处理合同：草稿和提交状态-->
         <record id="new_sale_order_sales_action" model="ir.actions.act_window">
-            <field name="name">待处理合同.</field>
+            <field name="name">业务待处理</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">sale.order</field>
             <field name="view_mode">tree,form,kanban</field>
@@ -1117,10 +1117,10 @@
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('new_sale_order_kanban')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_form')})]"/>
         </record>
-        <menuitem id="new_sale_order_sales_menu" name="待处理合同" parent="new_sale_order_root" action="new_sale_order_sales_action" sequence="1"/>
+        <menuitem id="new_sale_order_sales_menu" name="业务待处理" parent="new_sale_order_root" action="new_sale_order_sales_action" sequence="1"/>
 <!--合规待处理合同：合规审批、审批完成、出运中、核销中-->
         <record id="new_sale_order_hegui_action" model="ir.actions.act_window">
-            <field name="name">.待处理合同</field>
+            <field name="name">合规待处理</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">sale.order</field>
             <field name="view_mode">tree,form,kanban</field>
@@ -1132,11 +1132,11 @@
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('new_sale_order_kanban')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_form')})]"/>
         </record>
-        <menuitem id="new_sale_order_hegui_menu" name="待处理合同" parent="new_sale_order_root"
-                 action="new_sale_order_hegui_action" sequence="1"/>
+        <menuitem id="new_sale_order_hegui_menu" name="合规待处理" parent="new_sale_order_root"
+                 action="new_sale_order_hegui_action" sequence="2"/>
 <!--总经理待处理合同：总经理审批中-->
         <record id="new_sale_order_manager_action" model="ir.actions.act_window">
-            <field name="name">待处理合同</field>
+            <field name="name">总经理待处理</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">sale.order</field>
             <field name="view_mode">tree,form,kanban</field>
@@ -1149,9 +1149,9 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_form')})]"/>
         </record>
         <menuitem id="new_sale_order_manager_menu"
-                  name="待处理合同" parent="new_sale_order_root"
+                  name="总经理待处理" parent="new_sale_order_root"
                   action="new_sale_order_manager_action"
-                  sequence="1"/>
+                  sequence="3"/>
 
 
       <!--我的销售合同：权限内的合同-->
@@ -1169,7 +1169,7 @@
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('new_sale_order_kanban')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_form')})]"/>
         </record>
-        <menuitem id="new_sale_order_user_menu" name="我的销售合同" parent="new_sale_order_root" action="new_sale_order_user_action" sequence="3"/>
+        <menuitem id="new_sale_order_user_menu" name="我的销售合同" parent="new_sale_order_root" action="new_sale_order_user_action" sequence="4"/>
 
           <record id="new_sale_order_create_action" model="ir.actions.act_window">
             <field name="name">创建销售合同</field>
@@ -1185,7 +1185,7 @@
                   name="创建合同"
                   parent="new_sale_order_root"
                   action="new_sale_order_create_action"
-                  groups="base.group_system" sequence="9"/>
+                  groups="base.group_system" sequence="5"/>
 
 
 

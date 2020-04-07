@@ -1046,7 +1046,7 @@
                   groups="base.group_system"/>
          <menuitem id="menu_transport_new_date_bill" name="出运单日期填制"
                   parent="yjzy_extend.menu_transport_new_bill_root"
-                  sequence="22"
+                  sequence="5"
                   action="act_open_transport_bill_new_date_view"
                   />
 
@@ -1073,7 +1073,7 @@
 
 
         <record model="ir.actions.act_window" id="act_open_transport_bill_new_sales_view">
-            <field name="name">新出运单业务</field>
+            <field name="name">业务待处理</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">transport.bill</field>
             <field name="view_type">form</field>
@@ -1088,14 +1088,14 @@
 
         </record>
 
-        <menuitem id="menu_transport_new_sales_bill" name="新出运单业务"
+        <menuitem id="menu_transport_new_sales_bill" name="业务待处理"
                   parent="yjzy_extend.menu_transport_new_bill_root"
-                  sequence="22"
+                  sequence="1"
                   action="act_open_transport_bill_new_sales_view"
                   />
 
   <record model="ir.actions.act_window" id="act_open_transport_bill_new_hegui_view">
-            <field name="name">新出运单合规</field>
+            <field name="name">合规待处理</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">transport.bill</field>
             <field name="view_type">form</field>
@@ -1110,15 +1110,15 @@
 
         </record>
 
-        <menuitem id="menu_transport_new_hegui_bill" name="新出运单合规"
+        <menuitem id="menu_transport_new_hegui_bill" name="合规待处理"
                   parent="yjzy_extend.menu_transport_new_bill_root"
-                  sequence="22"
+                  sequence="2"
                   action="act_open_transport_bill_new_hegui_view"
                  />
 
 
           <record model="ir.actions.act_window" id="act_open_transport_bill_new_document_view">
-            <field name="name">新出运单单证</field>
+            <field name="name">单证待处理</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">transport.bill</field>
             <field name="view_type">form</field>
@@ -1133,9 +1133,9 @@
 
         </record>
 
-        <menuitem id="menu_transport_new_document_bill" name="新出运单单证"
+        <menuitem id="menu_transport_new_document_bill" name="单证待处理"
                   parent="yjzy_extend.menu_transport_new_bill_root"
-                  sequence="22"
+                  sequence="3"
                   action="act_open_transport_bill_new_document_view"
                   />
 
@@ -1157,7 +1157,7 @@
 
         <menuitem id="menu_transport_new_all_bill" name="新出运单所有"
                   parent="yjzy_extend.menu_transport_new_bill_root"
-                  sequence="22"
+                  sequence="6"
                   action="act_open_transport_bill_new_all_view"
                  />
 
