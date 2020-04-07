@@ -47,7 +47,7 @@ class account_invoice(models.Model):
         res = []
         for one in self:
             if ctx.get('params', {}).get('model', '') == 'transport.bill':
-                name = '%s:%s' % (one.number, one.date_finish)
+                name = '%s %s' % (one.number or '-',  one.date_finish or '')
             else:
                 name = one.number
             res.append((one.id, name))
