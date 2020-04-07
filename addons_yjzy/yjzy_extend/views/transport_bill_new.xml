@@ -66,9 +66,9 @@
                     <field name="sale_invoice_paid" string="已收金额"/>
                     <field name="purhcase_invoice_paid" string="已付金额"/>
                     <field name="back_tax_invoice_paid" string="已收退税"/>
-                    <field name="sale_invoice_balance" string="未收金额"/>
-                    <field name="purhcase_invoice_balance" string="未付金额"/>
-                    <field name="back_tax_invoice_balance" string="未收退税"/>
+                    <field name="sale_invoice_balance" string="未收金额" invisible="1"/>
+                    <field name="purhcase_invoice_balance" string="未付金额" invisible="1"/>
+                    <field name="back_tax_invoice_balance" string="未收退税" invisible="1"/>
                     <field name="create_date"/>
                     <field name="gongsi_id" string="主体"/>
 
