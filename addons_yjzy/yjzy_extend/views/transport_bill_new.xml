@@ -719,7 +719,7 @@
             <field name="arch" type="xml">
                 <tree string="出运单" editable="bottom">
                     <field name="name" invisible="1"/>
-                    <field name="ref"/>
+                    <field name="ref" readonly="1"/>
                     <field name="partner_id" required="1" readonly="1"/>
 
                     <field name="date_out_in" modifiers="{}"/>
