@@ -182,6 +182,7 @@ class transport_bill(models.Model):
             one.sale_invoice_balance = sale_invoice.amount_total - sale_invoice.residual_signed
             one.purhcase_invoice_balance = sum([x.residual_signed for x in purchase_invoices])
             one.back_tax_invoice_balance = back_tax_invoice.amount_total - sale_invoice.residual_signed
+            one.all_purchase_invoice_fill = all([x.date_finish for x in purchase_invoices])
 
 
     # 货币设置
@@ -393,6 +394,11 @@ class transport_bill(models.Model):
 
     gold_sample_state = fields.Selection([('all', '全部有'), ('part', '部分有'), ('none', '无样金')], '样金管理',
                                          compute=compute_info)
+
+
+    all_purchase_invoice_fill = fields.Boolean('所有采购发票都已填写', compute=compute_invoice_amount)
+
+
 
     @api.onchange('date_out_in')
     def onchange_date_out_in(self):

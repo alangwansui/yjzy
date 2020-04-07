@@ -661,6 +661,10 @@ class Field(MetaField('DummyField', (object,), {})):
                 _logger.warning("Field %s depends on itself; please fix its decorator @api.depends().", self)
             model, path = model0, dotnames.split('.')
             for i, fname in enumerate(path):
+
+                if not model._fields.get(fname):
+                    print('==', model)
+
                 field = model._fields[fname]
                 result.append((model, field, path[:i]))
                 model = model0.env.get(field.comodel_name)

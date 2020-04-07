@@ -40,6 +40,19 @@ class account_invoice(models.Model):
     sale_assistant_id = fields.Many2one('res.users', u'业务助理')
     gongsi_id = fields.Many2one('gongsi', '内部公司')
 
+
+    def name_get(self):
+        ctx = self.env.context
+        print('=111====', ctx)
+        res = []
+        for one in self:
+            if ctx.get('params', {}).get('model', '') == 'transport.bill':
+                name = '%s:%s' % (one.number, one.date_finish)
+            else:
+                name = one.number
+            res.append((one.id, name))
+        return res
+
     def clear_zero_line(self):
         for one in self:
             for line in one.invoice_line_ids:
