@@ -13,18 +13,4 @@
         </field>
     </record>
 
-        <record model="ir.ui.view" id="new_purchase_order_view_inherit">
-        <field name="name">new.purchase.order.view.inherit</field>
-        <field name="model">purchase.order</field>
-        <field name="inherit_id" ref="yjzy_extend.new_purhcase_order_from"/>
-        <field name="arch" type="xml">
-            <field name="order_line" position="before">
-                <button name="%(act_open_select_products_view)d" type="action" string="Select Products"
-                        context="{'default_flag_order': 'so'}" attrs="{'invisible': [('state', '!=', 'draft')]}"
-                        class="oe_highlight" />
-            </field>
-        </field>
-    </record>
-
-
 </odoo>
