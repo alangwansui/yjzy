@@ -38,7 +38,6 @@
                 <button name="%(action_select_multi_product_wizard)d" type="action" class="btn-primary"
                         attrs="{'invisible': [('state', '!=', 'draft')]}" string="产品多选"/>
             </field>
-
         </field>
     </record>
 </odoo>
