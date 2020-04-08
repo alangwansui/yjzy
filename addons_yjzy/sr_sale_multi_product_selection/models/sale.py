@@ -26,6 +26,7 @@ class SrMultiProduct(models.TransientModel):
     _name = 'sr.multi.product'
 
     product_ids = fields.Many2many('product.product', string="Product")
+    partner_id = fields.Many2one('res.partner', '客户')
 
     @api.multi
     def add_product(self):
@@ -35,3 +36,15 @@ class SrMultiProduct(models.TransientModel):
                 'order_id': self._context.get('active_id')
             })
         return
+
+class sale_order(models.Model):
+    _inherit = 'sale.order'
+
+    def open_elect_multi_product_wizard(self):
+        return {
+
+
+        }
+
+
+

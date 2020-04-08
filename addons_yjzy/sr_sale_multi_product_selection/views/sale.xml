@@ -42,6 +42,12 @@
             <header position="inside">
                 <button name="%(action_select_multi_product_wizard)d" type="action" class="btn-primary"
                         attrs="{'invisible': [('state', '!=', 'draft')]}" string="Select Product"/>
+
+
+                <button name="open_elect_multi_product_wizard" type="object" class="btn-primary"
+                        attrs="{'invisible': [('state', '!=', 'draft')]}" string="多选产品"/>
+
+
             </header>
 
         </field>
