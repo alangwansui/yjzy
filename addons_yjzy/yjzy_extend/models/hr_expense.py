@@ -89,8 +89,8 @@ class hr_expense_sheet(models.Model):
     manager_confirm_date = fields.Date('总经理审批日期')
     state = fields.Selection(selection_add=[('approved', u'批准'), ('approval', u'审批中'), ('Approval', u'审批历史消息')])
 
-    categ_id = fields.Many2one('product.category', '大类')
-    second_categ_id = fields.Many2one('product.category', '中类')
+    categ_id = fields.Many2one('product.category', '大类', compute='_compute_categ')
+    second_categ_id = fields.Many2one('product.category', '中类', compute='_compute_second_categ')
 
 
     budget_type = fields.Selection("预算类型", related="categ_id.budget_type")
@@ -100,24 +100,39 @@ class hr_expense_sheet(models.Model):
     expense_line_ids_employee = fields.One2many('hr.expense', related='expense_line_ids')
     expense_line_ids_company = fields.One2many('hr.expense', related='expense_line_ids')
     gongsi_id = fields.Many2one('gongsi', '内部公司')
+#akiny
+    @api.depends('expense_line_ids', 'expense_line_ids.categ_id')
+    def _compute_categ(self):
+        categ_id = None
 
-    @api.onchange('categ_id')
-    def onchange_categ(self):
-        self.second_categ_id = None
-        for line in self.expense_line_ids:
-            line.categ_id = self.categ_id
-            line.second_categ_id = None
-            line.product_id = False
-            line.product_id = None
+        for expense in self.expense_line_ids:
+            categ_id = expense.categ_id
+        self.categ_id = categ_id
+
+    @api.depends('expense_line_ids', 'expense_line_ids.second_categ_id')
+    def _compute_second_categ(self):
+        second_categ_id = None
+        for expense in self.expense_line_ids:
+            second_categ_id = expense.second_categ_id
+        self.second_categ_id = second_categ_id
+
+    #@api.onchange('categ_id')
+   # def onchange_categ(self):
+   #     self.second_categ_id = None
+    #    for line in self.expense_line_ids:
+   #         line.categ_id = self.categ_id
+   #         line.second_categ_id = None
+  #          line.product_id = False
+   #         line.product_id = None
 
 
-    @api.onchange('second_categ_id')
-    def onchange_second_categ(self):
-        for line in self.my_expense_line_ids:
-            line.categ_id = self.categ_id
-            line.second_categ_id = self.second_categ_id
-            line.product_id = False
-            line.product_id = None
+ #   @api.onchange('second_categ_id')
+   # def onchange_second_categ(self):
+  #      for line in self.my_expense_line_ids:
+   #         line.categ_id = self.categ_id
+   #         line.second_categ_id = self.second_categ_id
+   #         line.product_id = False
+    #        line.product_id = None
 
     @api.one
     def compute_total_this_year(self):
@@ -148,7 +163,7 @@ class hr_expense_sheet(models.Model):
                 employee_wkf_one = one.employee_wkf
                 my_expense_line = one.expense_line_ids.filtered(
                     lambda x: x.employee_id.user_id == user or x.create_uid == user or x.x_tenyale_user_id == user)
-                if employee_wkf_one == False:
+                if employee_wkf_one == False: #不等于责任人审批阶段
                     for expense in one.expense_line_ids:
                         my_total_amount += expense.currency_id.with_context(
                             date=expense.date,
@@ -160,16 +175,16 @@ class hr_expense_sheet(models.Model):
                         one.my_expense_line_ids_employee = one.expense_line_ids
                         one.my_expense_line_ids_company = one.expense_line_ids
                 else:
-                    for expense in my_expense_line:
+                    for expense in my_expense_line: #如果进入责任人审批阶段
                         my_total_amount += expense.currency_id.with_context(
                             date=expense.date,
                             company_id=expense.company_id.id
                         ).compute(expense.total_amount, one.currency_id)
                         one.my_total_amount = my_total_amount
-                        one.my_expense_line_ids = one.expense_line_ids
-                        one.my_expense_line_ids_b = one.expense_line_ids
-                        one.my_expense_line_ids_employee = one.expense_line_ids
-                        one.my_expense_line_ids_company = one.expense_line_ids
+                        one.my_expense_line_ids =  my_expense_line
+                        one.my_expense_line_ids_b =  my_expense_line
+                        one.my_expense_line_ids_employee =  my_expense_line
+                        one.my_expense_line_ids_company =  my_expense_line
         else:
             for one in self:
                 my_total_amount = 0.0
@@ -422,6 +437,10 @@ class hr_expense(models.Model):
 
     budget_expense_list_ids = fields.One2many('hr.expense','预算明细', related='budget_id.expense_ids',readonly=True)
 
+    employee_sales_uid = fields.Many2one('hr.employee','费用对象', default=lambda self: self.env['hr.employee'].search([('user_id', '=', self.env.uid)], limit=1))
+    budget_type = fields.Selection("预算类型", related="categ_id.budget_type")
+
+
     def get_budget_type(self):
         return self.second_categ_id.budget_type or self.categ_id.budget_type or None
 
@@ -460,6 +479,10 @@ class hr_expense(models.Model):
     @api.onchange('second_categ_id')
     def onchange_second_categ(self):
         self.product_id = None
+
+    @api.onchange('employee_id')
+    def onchange_employee_id(self):
+        self.employee_sales_uid = self.employee_id
 
     def btn_user_confirm(self):
         force = self.env.context.get('force')
