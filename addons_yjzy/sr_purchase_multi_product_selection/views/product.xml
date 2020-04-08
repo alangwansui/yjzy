@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <!-- Created new Form View for wizard-->
+    <record id="sr_form_view_create_rfq_wizard" model="ir.ui.view">
+        <field name="name">sr.form.view.create.rfq.wizard</field>
+        <field name="model">sr.create.request.for.quotation</field>
+        <field name="arch" type="xml">
+            <form string="Create Purchase Quotations">
+                <group>
+                    <field name="partner_id"/>
+                </group>
+                <footer>
+                    <button class="btn-primary" name="create_request_for_quotation" type="object" string="Create Purchase Quotation"/>
+                    Or
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
+    <act_window id="sr_action_create_rfq"
+                multi="True"
+                key2="client_action_multi" name="Create Purchase Request Quotations"
+                res_model="sr.create.request.for.quotation" src_model="product.product"
+                view_mode="form" target="new" view_type="form"/>
+
+
+</odoo>
