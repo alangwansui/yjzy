@@ -228,7 +228,7 @@ class sale_order(models.Model):
     aml_ids = fields.One2many('account.move.line', 'so_id', u'分录明细', readonly=True)
     second_partner_id = fields.Many2one('res.partner', u'第二客户')
 
-    gold_sample_state = fields.Selection([('all', '全部有'), ('part', '部分有'), ('none', '无样金')], '样金管理', compute=compute_info)
+    gold_sample_state = fields.Selection([('all', '全部有'), ('part', '部分有'), ('none', '无金样')], '样金管理', compute=compute_info)
 
     country_id = fields.Many2one('res.country', related='partner_id.country_id', readonly=True, string=u'国家')
 
