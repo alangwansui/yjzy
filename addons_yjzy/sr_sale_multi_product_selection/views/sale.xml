@@ -9,7 +9,16 @@
         <field name="arch" type="xml">
             <form string="Select Multiple product">
                 <group>
+
+                    <field name="partner_id"/>
+<!--                    <field name="product_ids" nolabel="1">-->
+<!--                        <tree>-->
+<!--                            <field name="name"/>-->
+<!--                        </tree>-->
+<!--                    </field>-->
+
                     <field name="product_ids" nolabel="1" context="{'tree_view_ref':'yjzy_extend.new_product_product_search_from_tree'}"/>
+
                 </group>
                 <footer>
                     <button class="btn-primary" name="add_product" type="object" string="确定"/>

@@ -7,9 +7,7 @@
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
             <header position="inside">
-                <button name="%(act_open_select_products_view)d" type="action" string="Select Products"
-                        context="{'default_flag_order': 'so'}" attrs="{'invisible': [('state', '!=', 'draft')]}"
-                        class="oe_highlight" />
+
             </header>
         </field>
     </record>
