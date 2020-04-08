@@ -37,7 +37,12 @@
             <field name="order_line" position="before">
                 <button name="%(action_select_multi_product_wizard)d" type="action" class="btn-primary"
                         attrs="{'invisible': [('state', '!=', 'draft')]}" string="产品多选"/>
+                <button name="open_elect_multi_product_wizard" type="object" class="btn-primary"
+                        attrs="{'invisible': [('state', '!=', 'draft')]}" string="多选产品"/>
             </field>
+
+
+
         </field>
     </record>
 </odoo>
