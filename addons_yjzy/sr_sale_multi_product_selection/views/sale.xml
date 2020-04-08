@@ -9,16 +9,11 @@
         <field name="arch" type="xml">
             <form string="Select Multiple product">
                 <group>
-                    <field name="product_ids" nolabel="1">
-                        <tree>
-                            <field name="name"/>
-                        </tree>
-                    </field>
+                    <field name="product_ids" nolabel="1" context="{'tree_view_ref':'yjzy_extend.new_product_product_search_from_tree'}"/>
                 </group>
                 <footer>
-                    <button class="btn-primary" name="add_product" type="object" string="Apply"/>
-                    Or
-                    <button string="Cancel" class="oe_link" special="cancel"/>
+                    <button class="btn-primary" name="add_product" type="object" string="确定"/>
+                    <button string="取消" class="oe_link" special="cancel"/>
                 </footer>
             </form>
         </field>
@@ -39,10 +34,10 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
-            <header position="inside">
+            <field name="order_line" position="before">
                 <button name="%(action_select_multi_product_wizard)d" type="action" class="btn-primary"
-                        attrs="{'invisible': [('state', '!=', 'draft')]}" string="Select Product"/>
-            </header>
+                        attrs="{'invisible': [('state', '!=', 'draft')]}" string="产品多选"/>
+            </field>
 
         </field>
     </record>
