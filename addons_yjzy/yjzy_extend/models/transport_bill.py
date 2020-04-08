@@ -395,7 +395,7 @@ class transport_bill(models.Model):
     paid_date = fields.Date('收款日期')
     paid_uid = fields.Many2one('res.users', u'收款完成')
 
-    gold_sample_state = fields.Selection([('all', '全部有'), ('part', '部分有'), ('none', '无样金')], '样金管理',
+    gold_sample_state = fields.Selection([('all', '全部有'), ('part', '部分有'), ('none', '无金样')], '样金管理',
                                          compute=compute_info)
 
 
