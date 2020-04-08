@@ -42,8 +42,13 @@ class sale_order(models.Model):
 
     def open_elect_multi_product_wizard(self):
         return {
-
-
+            'name': u'产品多选',
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'target': 'new',
+            'res_model': 'sr.multi.product',
+            'context': {'default_partner_id': self.partner_id.id}
         }
 
 
