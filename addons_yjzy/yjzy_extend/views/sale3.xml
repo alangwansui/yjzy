@@ -440,6 +440,8 @@
                         </group>
                         <notebook>
                             <page string="订单行" name="sale_order_line_new">
+                                <button name="open_elect_multi_product_wizard" type="object" class="btn-primary"
+                        attrs="{'invisible': [('state', '!=', 'draft')]}" string="多选产品"/>
                                 <field name="order_line" mode="tree,kanban" attrs="{'readonly':[('state','not in',['draft','refused'])]}">
                                     <form string="销售订单明细">
                                         <group>
