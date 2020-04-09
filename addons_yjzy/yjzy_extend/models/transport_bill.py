@@ -177,12 +177,13 @@ class transport_bill(models.Model):
             one.sale_invoice_total = sale_invoice.amount_total
             one.purhcase_invoice_total = sum([x.amount_total for x in purchase_invoices])
             one.back_tax_invoice_total = back_tax_invoice.amount_total
-            one.sale_invoice_paid = sale_invoice.residual_signed
-            one.purhcase_invoice_paid = sum([x.residual_signed for x in purchase_invoices])
-            one.back_tax_invoice_paid = back_tax_invoice.residual_signed
-            one.sale_invoice_balance = sale_invoice.amount_total - sale_invoice.residual_signed
+            one.sale_invoice_paid = sale_invoice.amount_total-sale_invoice.residual_signed #akiny
+            one.purhcase_invoice_paid = sum([x.amount_total for x in purchase_invoices])-sum([x.residual_signed for x in purchase_invoices])
+            one.back_tax_invoice_paid = back_tax_invoice.amount_total-back_tax_invoice.residual_signed
+            one.sale_invoice_balance = sale_invoice.residual_signed
             one.purhcase_invoice_balance = sum([x.residual_signed for x in purchase_invoices])
-            one.back_tax_invoice_balance = back_tax_invoice.amount_total - sale_invoice.residual_signed
+            one.back_tax_invoice_balance = back_tax_invoice.residual_signed
+
             one.all_purchase_invoice_fill = all([x.date_finish for x in purchase_invoices])
 
 
@@ -377,8 +378,9 @@ class transport_bill(models.Model):
     sale_assistant_id = fields.Many2one('res.users', u'业务助理',default=lambda self: self.env.user.id)
     is_editable = fields.Boolean(u'可编辑')
 
-    gongsi_id = fields.Many2one('gongsi', '内部公司')
-    purchase_gongsi_id = fields.Many2one('gongsi', '内部采购公司')
+    contract_type = fields.Selection([('a', '模式1'), ('b', '模式2'), ('c', '模式3')], '合同类型', default='c')
+    gongsi_id = fields.Many2one('gongsi', '销售主体')
+    purchase_gongsi_id = fields.Many2one('gongsi', '采购主体')
   #审批记录 akiny
     submit_date = fields.Date('提交审批时间')
     submit_uid = fields.Many2one('res.users', u'提交审批')
@@ -400,6 +402,13 @@ class transport_bill(models.Model):
 
 
     all_purchase_invoice_fill = fields.Boolean('所有采购发票都已填写', compute=compute_invoice_amount)
+
+    @api.onchange('contract_type')
+    def onchange_contract_type(self):
+        gongsi_obj = self.env['gongsi']
+        if self.contract_type == 'b':
+            self.gongsi_id = gongsi_obj.search([('name', '=', 'BERTZ')], limit=1)
+            self.purchase_gongsi_id = gongsi_obj.search([('name', '=', '天宇进出口')], limit=1)
 
 
 
@@ -611,6 +620,9 @@ class transport_bill(models.Model):
         self.notice_man = self.partner_id.notice_man
         self.delivery_man = self.partner_id.delivery_man
         self.demand_info  = self.partner_id.demand_info
+        self.contract_type = self.partner_id.contract_type
+        self.gongsi_id = self.partner_id.gongsi_id
+        self.purchase_gongsi_id = self.partner_id.purchase_gongsi_id
 
 
     def make_tb_vendor(self):

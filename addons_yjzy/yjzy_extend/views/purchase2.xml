@@ -113,21 +113,21 @@
                     </div>
                     <group>
                         <group>
-                            <field name="contract_code" string="采购合同号" attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}" />
-                            <field name="include_tax" attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}" />
+                            <field name="contract_code" string="采购合同号" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}" />
+                            <field name="include_tax" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}" />
 
-                            <field name="partner_id" attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}" context="{'search_default_supplier':1, 'show_address': 0, 'default_supplier':1,}" domain="[('supplier','=',True),('parent_id', '=', False)]"/>
-                            <field name="contact_id" attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}" domain="[('parent_id','=', partner_id),('type', '=', 'contact')]"/>
+                            <field name="partner_id" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}" context="{'search_default_supplier':1, 'show_address': 0, 'default_supplier':1,}" domain="[('supplier','=',True),('parent_id', '=', False)]"/>
+                            <field name="contact_id" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}" domain="[('parent_id','=', partner_id),('type', '=', 'contact')]"/>
                             <field name="partner_ref" invisible="1"/>
                             <field name="currency_id" groups="base.group_multi_currency" attrs="{'readonly':1}" options="{'no_open':1}" />
                             <field name="need_purchase_fandian" invisible="1"/>
                             <field name="purchase_fandian_ratio" attrs="{'invisible': [('need_purchase_fandian','!=',True)]}" invisible="1"/>
                             <field name="purchase_fandian_partner_id" attrs="{'invisible': [('need_purchase_fandian','!=',True)]}" invisible="1"/>
                             <field name="payment_term_id"  options="{'no_open': True, 'no_create': True}" domain="[('type','in', ['purchase', 'comm'])]"
-                                   attrs="{'readonly': ['|', ('invoice_status','=', 'invoiced'), ('state', 'not in', ['draft','refused'])]}"/>
+                                   attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
 
                             <field name="is_shipped" invisible="1"/>
-                            <field name="gongsi_id" string="采购主体" attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}" />
+                            <field name="gongsi_id" string="采购主体" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}" />
                         </group>
                         <group>
 
@@ -143,16 +143,16 @@
                             <field name="balance" string="实际预付余额"/>
                             <field name="can_confirm_by_so" readonly="0" invisible="1"/>
                             <field name="user_ids" widget="many2many_tags" invisible="1"/>
-                            <field name="sale_uid" attrs="{'readonly': [('is_editable','=',False)]}" required="1"/>
-                            <field name="sale_assistant_id" />
+                            <field name="sale_uid" attrs="{'readonly': 1}" required="1"/><!--已经在字段上默认-->
+                            <field name="sale_assistant_id" attrs="{'readonly': 1}" />
                             <field name="delivery_status"/>
                             <field name="main_sign_uid" groups="sale.hegui_all" invisible="1"/>
                         </group>
                     </group>
                     <notebook>
                         <page string="明细行">
-                            <button name="open_multi_select_product" string="Multi select product" type="object" class="oe_highlight" groups="base.group_system"/>
-                            <field name="order_line" attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}">
+                            <button name="open_multi_select_product" attrs="{'invisible':[('state','not in',['draft']),('is_editable','=',False)]}" string="Multi select product" type="object" class="oe_highlight" groups="base.group_system"/>
+                            <field name="order_line" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}">
                                  <tree string="Purchase Order Lines" editable="bottom" decoration-danger="max_qty_ng==True">
                                      <button icon="fas fa-eye" type="object" name="show_product_attrs"/>
                                     <field name="currency_id" invisible="1"/>
@@ -257,7 +257,7 @@
                         <page string="Deliveries &amp; Invoices" invisible="1">
                             <group>
                                 <group>
-                             <label for="date_planned"/>
+                             <label for="date_planned" />
                                     <div>
                                        <field name="date_planned" required="1" attrs="{'readonly': [('state', 'not in', ('draft', 'sent'))]}"/>
                                        <button name="action_set_date_planned" type="object" states="draft,sent" string="Set date to all order lines" help="This changes the scheduled date of all order lines to the given date" class="fa fa-calendar o_icon_button oe_edit_only"/>
@@ -278,7 +278,7 @@
                         </page>
                         <page string="采购条款">
                         <group>
-                            <field name="term_purchase"/>
+                            <field name="term_purchase" />
                         </group>
                     </page>
                     <page string="预付款单">
