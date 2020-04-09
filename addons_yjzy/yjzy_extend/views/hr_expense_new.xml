@@ -34,17 +34,19 @@
                         </div>
                         <group>
                             <group>
-                                <field name="categ_id" string="大类" widget="selection" domain="[('parent_id.name','=','费用')]" context="{'search_order': 'sequence'}" required="1"/>
-                                <field name="second_categ_id" widget="selection" string="中类" domain="[('parent_id','=', categ_id)]" context="{'search_order': 'sequence'}"
+                                <field name="categ_id" string="大类" options="{'no_open':1}" domain="[('parent_id.name','=','费用')]"
+                                       context="{'search_order': 'sequence','only_name':1}" required="1"/>
+                                <field name="second_categ_id"  string="中类" options="{'no_open':1}"  domain="[('parent_id','=', categ_id)]"
+                                       context="{'search_order': 'sequence','only_name':1}"
                                        required="1"/>
-                                <field name="product_id" required="1" widget="selection" string="小类" options="{'no_create':True}"
+                                <field name="product_id" required="1"  string="小类" options="{'no_create':True,'no_open':1}"
                                        domain="[('can_be_expensed','=',True),('categ_id','=',second_categ_id)]"
                                        context="{'default_can_be_expensed': 1, 'tree_view_ref': 'hr_expense.product_product_expense_tree_view','only_name':1}"/>
                                 <field name="unit_amount" string="费用金额" required="1" widget="monetary" options="{'currency_field': 'currency_id'}"/>
                                 <label for="quantity" invisible="1"/>
                                 <div invisible="1">
                                     <field name="quantity" class="oe_inline"/>
-                                    <field name="product_uom_id" widget="selection" class="oe_inline" groups="product.group_uom"/>
+                                    <field name="product_uom_id" class="oe_inline" groups="product.group_uom"/>
                                 </div>
                                 <field name="include_tax" invisible="1"/>
                                 <field name="sys_outer_hetong" string="系统外合同"/>
@@ -179,17 +181,19 @@
                         </div>
                         <group>
                             <group>
-                                <field name="categ_id" string="大类" widget="selection" domain="[('parent_id.name','=','费用')]" context="{'search_order': 'sequence', 'only_name':1}" required="1"/>
-                                 <field name="second_categ_id" string="中类" widget="selection" domain="[('parent_id','=', categ_id)]" context="{'search_order': 'sequence','only_name':1}"
+                                <field name="categ_id" string="大类" options="{'no_create':True,'no_open':1}" domain="[('parent_id.name','=','费用')]"
+                                       context="{'search_order': 'sequence', 'only_name':1}" required="1"/>
+                                 <field name="second_categ_id" string="中类" options="{'no_create':True,'no_open':1}" domain="[('parent_id','=', categ_id)]"
+                                        context="{'search_order': 'sequence','only_name':1}"
                                        required="1"/>
-                                <field name="product_id" required="1" string="小类" widget="selection" options="{'no_create':True}"
+                                <field name="product_id"  required="1" string="小类" options="{'no_create':True,'no_open':1}"
                                        domain="[('can_be_expensed','=',True),('categ_id','=',second_categ_id)]"
                                        context="{'default_can_be_expensed': 1, 'tree_view_ref': 'hr_expense.product_product_expense_tree_view','only_name':1}"/>
                                 <field name="unit_amount" string="费用金额" required="1" widget="monetary" options="{'currency_field': 'currency_id'}"/>
                                 <label for="quantity" invisible="1"/>
                                 <div invisible="1">
                                     <field name="quantity" class="oe_inline"/>
-                                    <field name="product_uom_id" widget="selection" class="oe_inline" groups="product.group_uom"/>
+                                    <field name="product_uom_id"  class="oe_inline" groups="product.group_uom"/>
                                 </div>
                                 <field name="include_tax" invisible="1"/>
                                 <field name="sys_outer_hetong" string="系统外合同" attrs="{'invisible':[('parent.budget_type','!=','transport')]}"/>
@@ -534,9 +538,11 @@
                         <group>
                             <group>
 
-                                <field name="categ_id" string="大类*" invisible="0" widget="selection" domain="[('parent_id.name','=','费用')]" context="{'search_order': 'sequence'}" required="1" attrs="{'readonly':[('')]}"/>
-                                <field name="second_categ_id" string="中类*" widget="selection" invisible="0" domain="[('parent_id','=', categ_id)]" context="{'search_order': 'sequence'}"
-                                       required="1"/>
+                                <field name="categ_id" string="大类*" invisible="1" domain="[('parent_id.name','=','费用')]"
+                                       context="{'search_order': 'sequence','only_name':1}"  />
+                                <field name="second_categ_id" string="中类*" invisible="1"  domain="[('parent_id','=', categ_id)]"
+                                       context="{'search_order': 'sequence','only_name':1}"
+                                       />
 
                                 <field name="document_number"/>
                                 <field name="include_tax" attrs="{'readonly':[('state','not in',['submit','draft'])]}"/>
@@ -564,19 +570,20 @@
                                 <field name="expense_line_ids" nolabel="1" widget="one2many" domain="[('state', '=', 'draft')]"
                                        options="{'not_delete': True, 'reload_on_button': True, 'no_create': False}"
                                        context="{'expense_adding_line': True, 'default_company_id':company_id,'tracking_disable': True,
-
-
                                        'no_show_mark': context.get('no_show_mark'),  'default_gongsi_id': gongsi_id,
                                        'default_currency_id': currency_id, 'default_state': 'draft','form_view_ref':'yjzy_extend.view_hr_expense_new_from_sheet_form'}" >
 
                                     <tree decoration-danger="is_refused" editable="bottom">
-
-                                        <field name="categ_id" string="大类*"   required="1"/>
-
-                                        <field name="second_categ_id" string="中类*" required="1" domain="[('parent_id','=',categ_id)]"/>
-
-                                        <field name="product_id" required="1" string="小类*"  domain="[('categ_id','=',second_categ_id)]"/>
-
+                                        <field name="categ_id" string="大类*" options="{'no_create':True,'no_open':1}"
+                                               domain="[('parent_id.name','=','费用')]"
+                                               context="{'search_order': 'sequence','only_name':1}" required="1"/>
+                                        <field name="second_categ_id" string="中类*" options="{'no_create':True,'no_open':1}"
+                                               domain="[('parent_id','=', categ_id)]"
+                                               context="{'search_order': 'sequence','only_name':1}"
+                                           required="1"/>
+                                        <field name="product_id" required="1" string="小类*" options="{'no_create':True,'no_open':1}"
+                                          domain="[('can_be_expensed','=',True),('categ_id','=',second_categ_id)]"
+                                          context="{'default_can_be_expensed': 1, 'tree_view_ref': 'hr_expense.product_product_expense_tree_view','only_name':1}"/>
 
 
                                         <field name="unit_amount" string="费用金额" required="1" sum="小计" widget="monetary" options="{'currency_field': 'currency_id'}"/>
@@ -588,7 +595,7 @@
                                         <field name="tb_id" context="{'show_ref': 1}" attrs="{'readonly':[('budget_type','!=','transport')]}"/>
                                         <field name="lead_id" string="项目编号" options="{'quick_create': 1}" attrs="{'readonly':[('budget_type','!=','lead')]}"/>
                                         <field name="sale_order_id" context="{'sale_show_partner_name': True}" invisible="1"/>
-
+                                        <field name="quantity" invisible="1"/>
                                         <field name="state" invisible="1"/>
                                         <field name="currency_id" invisible="1"/>
                                         <field name="ask_uid" invisible="1"/>
@@ -637,12 +644,14 @@
                             <!--page string="费用明细预算详情">
                                 <field name="my_expense_line_ids"  context="{'form_view_ref':'yjzy_extend.view_hr_expense_new_from_sheet_form'}">
                                     <tree decoration-danger="is_refused">
-                                        <field name="categ_id" string="大类*" widget="selection" domain="[('parent_id.name','=','费用')]"
+                                        <field name="categ_id" string="大类*" options="{'no_create':True,'no_open':1}"
+                                               domain="[('parent_id.name','=','费用')]"
                                                context="{'search_order': 'sequence','only_name':1}" required="1"/>
-                                        <field name="second_categ_id" widget="selection"  string="中类*" domain="[('parent_id','=', categ_id)]"
+                                        <field name="second_categ_id"  string="中类*" options="{'no_create':True,'no_open':1}"
+                                               domain="[('parent_id','=', categ_id)]"
                                                context="{'search_order': 'sequence','only_name':1}"
                                            required="1"/>
-                                        <field name="product_id" widget="selection"  required="1" string="小类*" options="{'no_create':True}"
+                                        <field name="product_id" required="1" string="小类*" options="{'no_create':True,'no_open':1}"
                                           domain="[('can_be_expensed','=',True),('categ_id','=',second_categ_id)]"
                                           context="{'default_can_be_expensed': 1, 'tree_view_ref': 'hr_expense.product_product_expense_tree_view','only_name':1}"/>
                                         <field name="unit_amount" string="费用金额" required="1" sum="小计" widget="monetary" options="{'currency_field': 'currency_id'}"/>
@@ -652,7 +661,7 @@
                                         <field name="name" invisible="1"/>
                                         <field name="sys_outer_hetong"/>
                                         <field name="tb_id" context="{'show_ref': 1}"/>
-                                        <field name="lead_id" string="项目编号" options="{'quick_create': 1}"/>
+                                        <field name="lead_id" string="项目编号"/>
                                         <field name="sale_order_id" context="{'sale_show_partner_name': True}" invisible="1"/>
 
                                         <field name="state" invisible="1"/>
@@ -802,8 +811,10 @@
                         <group>
                             <group>
 
-                                <field name="categ_id" string="大类*" widget="selection" domain="[('parent_id.name','=','费用')]" context="{'search_order': 'sequence'}" required="1"/>
-                                <field name="second_categ_id" widget="selection" string="中类*" domain="[('parent_id','=', categ_id)]" context="{'search_order': 'sequence'}"
+                                <field name="categ_id" string="大类*" invisible="1" domain="[('parent_id.name','=','费用')]"
+                                       context="{'search_order': 'sequence', 'only_name':1}" required="1"/>
+                                <field name="second_categ_id" invisible="1" string="中类*" domain="[('parent_id','=', categ_id)]"
+                                       context="{'search_order': 'sequence','only_name':1}"
                                        required="1"/>
                                 <field name="document_number"/>
                                 <field name="include_tax" attrs="{'readonly':[('state','not in',['submit','draft'])]}"/>
@@ -837,12 +848,14 @@
                                        'default_currency_id': currency_id, 'default_state': 'draft','form_view_ref':'yjzy_extend.view_hr_expense_new_from_sheet_form'}" >
 
                                      <tree decoration-danger="is_refused" editable="bottom">
-                                        <field name="categ_id" string="大类*" widget="selection" domain="[('parent_id.name','=','费用')]"
+                                        <field name="categ_id" string="大类*" options="{'no_create':True,'no_open':1}"
+                                               domain="[('parent_id.name','=','费用')]"
                                                context="{'search_order': 'sequence','only_name':1}" required="1"/>
-                                        <field name="second_categ_id"  widget="selection" string="中类*" domain="[('parent_id','=', categ_id)]"
+                                        <field name="second_categ_id" string="中类*" options="{'no_create':True,'no_open':1}"
+                                               domain="[('parent_id','=', categ_id)]"
                                                context="{'search_order': 'sequence','only_name':1}"
                                            required="1"/>
-                                        <field name="product_id" required="1" widget="selection" string="小类*" options="{'no_create':True}"
+                                        <field name="product_id" required="1" string="小类*" options="{'no_create':True,'no_open':1}"
                                           domain="[('can_be_expensed','=',True),('categ_id','=',second_categ_id)]"
                                           context="{'default_can_be_expensed': 1, 'tree_view_ref': 'hr_expense.product_product_expense_tree_view','only_name':1}"/>
                                         <field name="unit_amount" string="费用金额" required="1" sum="小计" widget="monetary"
@@ -901,12 +914,14 @@
 
                                 <field name="my_expense_line_ids"  attrs="{'invisible':[('state','in',['draft','cancel'])]}" context="{'form_view_ref':'yjzy_extend.view_hr_expense_new_from_sheet_form'}">
                                     <tree decoration-danger="is_refused">
-                                        <field name="categ_id" string="大类*" widget="selection" domain="[('parent_id.name','=','费用')]"
+                                        <field name="categ_id" string="大类*" options="{'no_create':True,'no_open':1}"
+                                               domain="[('parent_id.name','=','费用')]"
                                                context="{'search_order': 'sequence','only_name':1}" required="1"/>
-                                        <field name="second_categ_id" widget="selection" string="中类*" domain="[('parent_id','=', categ_id)]"
+                                        <field name="second_categ_id" string="中类*" options="{'no_create':True,'no_open':1}"
+                                               domain="[('parent_id','=', categ_id)]"
                                                context="{'search_order': 'sequence','only_name':1}"
                                            required="1"/>
-                                        <field name="product_id" required="1" widget="selection" string="小类*" options="{'no_create':True}"
+                                        <field name="product_id" required="1"  string="小类*" options="{'no_create':True,'no_open':1}"
                                           domain="[('can_be_expensed','=',True),('categ_id','=',second_categ_id)]"
                                           context="{'default_can_be_expensed': 1, 'tree_view_ref': 'hr_expense.product_product_expense_tree_view','only_name':1}"/>
                                         <field name="unit_amount" string="费用金额" required="1" sum="小计" widget="monetary" options="{'currency_field': 'currency_id'}"/>
@@ -1073,8 +1088,10 @@
                         <group>
                             <group>
 
-                                <field name="categ_id" string="大类*" widget="selection" domain="[('parent_id.name','=','费用')]" context="{'search_order': 'sequence'}" required="1"/>
-                                <field name="second_categ_id" string="中类*" widget="selection" domain="[('parent_id','=', categ_id)]" context="{'search_order': 'sequence'}"
+                                <field name="categ_id" string="大类*" invisible="1" domain="[('parent_id.name','=','费用')]"
+                                       context="{'search_order': 'sequence','only_name':1}" required="1"/>
+                                <field name="second_categ_id" string="中类*" invisible="1" domain="[('parent_id','=', categ_id)]"
+                                       context="{'search_order': 'sequence','only_name':1}"
                                        required="1"/>
                                 <field name="document_number"/>
                                 <field name="include_tax" attrs="{'readonly':[('state','not in',['submit','draft'])]}"/>
@@ -1084,7 +1101,7 @@
                                 <field name="bank_id" string="对方收款账号*" options="{'can_create':True}" required="1"/>
                                 <field name="address_id" invisible="1"/>
                                 <field name="department_id" invisible="1"/>
-                                 <field name="budget_type" invisible="1"/>
+                                <field name="budget_type" invisible="1"/>
                                 <field name="gongsi_id" groups="base.group_system"/>
 
                             </group>
@@ -1110,12 +1127,14 @@
                                        'default_currency_id': currency_id, 'default_state': 'draft','form_view_ref':'yjzy_extend.view_hr_expense_new_from_sheet_form'}" >
 
                                      <tree decoration-danger="is_refused" editable="bottom">
-                                        <field name="categ_id" string="大类*" widget="selection" domain="[('parent_id.name','=','费用')]"
+                                        <field name="categ_id" string="大类*" options="{'no_create':True,'no_open':1}"
+                                               domain="[('parent_id.name','=','费用')]"
                                                context="{'search_order': 'sequence','only_name':1}" required="1"/>
-                                        <field name="second_categ_id"  widget="selection" string="中类*" domain="[('parent_id','=', categ_id)]"
+                                        <field name="second_categ_id"  string="中类*" options="{'no_create':True,'no_open':1}"
+                                               domain="[('parent_id','=', categ_id)]"
                                                context="{'search_order': 'sequence','only_name':1}"
                                            required="1"/>
-                                        <field name="product_id" required="1" widget="selection" string="小类*" options="{'no_create':True}"
+                                        <field name="product_id" required="1" string="小类*" options="{'no_create':True,'no_open':1}"
                                           domain="[('can_be_expensed','=',True),('categ_id','=',second_categ_id)]"
                                           context="{'default_can_be_expensed': 1, 'tree_view_ref': 'hr_expense.product_product_expense_tree_view','only_name':1}"/>
                                         <field name="unit_amount" string="费用金额" required="1" sum="小计" widget="monetary"
@@ -1174,17 +1193,17 @@
 
                                 <field name="my_expense_line_ids"  attrs="{'invisible':[('state','in',['draft','cancel'])]}" context="{'form_view_ref':'yjzy_extend.view_hr_expense_new_from_sheet_form'}">
                                     <tree decoration-danger="is_refused">
-                                        <field name="categ_id" string="大类*" widget="selection" domain="[('parent_id.name','=','费用')]"
+                                        <field name="categ_id" string="大类*"  domain="[('parent_id.name','=','费用')]"
                                                context="{'search_order': 'sequence','only_name':1}" required="1"/>
-                                        <field name="second_categ_id" widget="selection" string="中类*" domain="[('parent_id','=', categ_id)]"
+                                        <field name="second_categ_id"  string="中类*" domain="[('parent_id','=', categ_id)]"
                                                context="{'search_order': 'sequence','only_name':1}"
                                            required="1"/>
-                                        <field name="product_id" required="1" widget="selection" string="小类*" options="{'no_create':True}"
+                                        <field name="product_id" required="1"  string="小类*" options="{'no_create':True}"
                                           domain="[('can_be_expensed','=',True),('categ_id','=',second_categ_id)]"
                                           context="{'default_can_be_expensed': 1, 'tree_view_ref': 'hr_expense.product_product_expense_tree_view','only_name':1}"/>
                                         <field name="unit_amount" string="费用金额" required="1" sum="小计" widget="monetary" options="{'currency_field': 'currency_id'}"/>
                                         <field name="employee_id" string="责任人*" options="{'no_open':True}"/>
-                                        <field name="employee_sales_uid" string="费用对象*" domain="['|',('job_id.name','=','客户经理'),('job_id.name','=','公司')]"/>
+                                        <field name="employee_sales_uid" string="费用对象*" options="{'no_open':True}"  domain="['|',('job_id.name','=','客户经理'),('job_id.name','=','公司')]"/>
                                         <field name="date" required="1" string="费用发生日期*"/>
                                         <field name="name" invisible="1"/>
                                         <field name="sys_outer_hetong"/>

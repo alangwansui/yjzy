@@ -7,6 +7,7 @@ from odoo.tools import float_is_zero, float_compare
 from odoo.addons import decimal_precision as dp
 
 
+
 class hr_expense(models.Model):
     _inherit = 'hr.expense'
 
@@ -182,7 +183,7 @@ class hr_expense(models.Model):
     def onchange_employee_id(self):
         job_id_name = self.employee_id.job_id.name
 
-        if job_id_name == '客户经理':
+        if job_id_name == u'客户经理':
            self.employee_sales_uid = self.employee_id
         else:
             self.employee_sales_uid = None
