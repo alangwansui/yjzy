@@ -437,7 +437,7 @@ class hr_expense(models.Model):
 
     budget_expense_list_ids = fields.One2many('hr.expense','预算明细', related='budget_id.expense_ids',readonly=True)
 
-    employee_sales_uid = fields.Many2one('hr.employee','费用对象', default=lambda self: self.env['hr.employee'].search([('user_id', '=', self.env.uid)], limit=1))
+    employee_sales_uid = fields.Many2one('hr.employee','费用对象')#, default=lambda self: self.env['hr.employee'].search([('user_id', '=', self.env.uid)], limit=1)
     budget_type = fields.Selection("预算类型", related="categ_id.budget_type")
 
 
@@ -481,8 +481,14 @@ class hr_expense(models.Model):
         self.product_id = None
 
     @api.onchange('employee_id')
+
     def onchange_employee_id(self):
-        self.employee_sales_uid = self.employee_id
+        job_id_name = self.employee_id.job_id.name
+
+        if job_id_name == '客户经理':
+           self.employee_sales_uid = self.employee_id
+        else:
+            self.employee_sales_uid = None
 
     def btn_user_confirm(self):
         force = self.env.context.get('force')

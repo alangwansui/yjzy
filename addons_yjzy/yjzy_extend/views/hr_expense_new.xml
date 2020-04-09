@@ -630,7 +630,7 @@
                                 </field>
 
                             </page>
-                            <page string="详细费用明细">
+                            <page string="费用明细预算详情">
                                 <field name="my_expense_line_ids"  context="{'form_view_ref':'yjzy_extend.view_hr_expense_new_from_sheet_form'}">
                                     <tree decoration-danger="is_refused">
                                         <field name="categ_id" string="大类*" domain="[('parent_id.name','=','费用')]"
