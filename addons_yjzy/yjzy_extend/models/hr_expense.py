@@ -186,7 +186,10 @@ class hr_expense(models.Model):
         if job_id_name == u'客户经理':
            self.employee_sales_uid = self.employee_id
         else:
-            self.employee_sales_uid = None
+            if job_id_name == u'业务助理':
+                self.employee_sales_uid = self.user_id.assistant_id.employee_id
+            else:
+                self.employee_sales_uid = None
 
     def btn_user_confirm(self):
         force = self.env.context.get('force')

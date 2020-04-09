@@ -573,7 +573,7 @@
                                        'no_show_mark': context.get('no_show_mark'),  'default_gongsi_id': gongsi_id,
                                        'default_currency_id': currency_id, 'default_state': 'draft','form_view_ref':'yjzy_extend.view_hr_expense_new_from_sheet_form'}" >
 
-                                    <tree decoration-danger="is_refused" editable="bottom">
+                                    <tree decoration-danger="is_refused" editable="bottom" >
                                         <field name="categ_id" string="大类*" options="{'no_create':True,'no_open':1}"
                                                domain="[('parent_id.name','=','费用')]"
                                                context="{'search_order': 'sequence','only_name':1}" required="1"/>
@@ -588,7 +588,8 @@
 
                                         <field name="unit_amount" string="费用金额" required="1" sum="小计" widget="monetary" options="{'currency_field': 'currency_id'}"/>
                                         <field name="employee_id" string="责任人*" options="{'no_open':True}"/>
-                                        <field name="employee_sales_uid" string="费用对象*" options="{'no_open':True}" domain="['|',('job_id.name','=','客户经理'),('job_id.name','=','公司')]"/>
+                                        <field name="employee_sales_uid" string="费用对象*" options="{'no_open':True}"
+                                               domain="['|',('job_id.name','=','客户经理'),('job_id.name','=','公司')]"/>
                                         <field name="date" string="费用发生日期*"/>
                                         <field name="name" invisible="1"/>
                                         <field name="sys_outer_hetong" attrs="{'readonly':[('budget_type','!=','transport')]}"/>
@@ -812,10 +813,10 @@
                             <group>
 
                                 <field name="categ_id" string="大类*" invisible="1" domain="[('parent_id.name','=','费用')]"
-                                       context="{'search_order': 'sequence', 'only_name':1}" required="1"/>
+                                       context="{'search_order': 'sequence', 'only_name':1}" />
                                 <field name="second_categ_id" invisible="1" string="中类*" domain="[('parent_id','=', categ_id)]"
                                        context="{'search_order': 'sequence','only_name':1}"
-                                       required="1"/>
+                                       />
                                 <field name="document_number"/>
                                 <field name="include_tax" attrs="{'readonly':[('state','not in',['submit','draft'])]}"/>
                                 <field name="payment_mode" invisible="1" readonly="1"/>
@@ -1089,10 +1090,10 @@
                             <group>
 
                                 <field name="categ_id" string="大类*" invisible="1" domain="[('parent_id.name','=','费用')]"
-                                       context="{'search_order': 'sequence','only_name':1}" required="1"/>
+                                       context="{'search_order': 'sequence','only_name':1}" />
                                 <field name="second_categ_id" string="中类*" invisible="1" domain="[('parent_id','=', categ_id)]"
                                        context="{'search_order': 'sequence','only_name':1}"
-                                       required="1"/>
+                                       />
                                 <field name="document_number"/>
                                 <field name="include_tax" attrs="{'readonly':[('state','not in',['submit','draft'])]}"/>
                                 <field name="payment_mode" invisible="1" readonly="1"/>
