@@ -89,8 +89,8 @@ class hr_expense_sheet(models.Model):
     manager_confirm_date = fields.Date('总经理审批日期')
     state = fields.Selection(selection_add=[('approved', u'批准'), ('approval', u'审批中'), ('Approval', u'审批历史消息')])
 
-    categ_id = fields.Many2one('product.category', '大类', compute='_compute_categ')
-    second_categ_id = fields.Many2one('product.category', '中类', compute='_compute_second_categ')
+    categ_id = fields.Many2one('product.category', '大类')
+    second_categ_id = fields.Many2one('product.category', '中类')
 
 
     budget_type = fields.Selection("预算类型", related="categ_id.budget_type")
@@ -101,20 +101,20 @@ class hr_expense_sheet(models.Model):
     expense_line_ids_company = fields.One2many('hr.expense', related='expense_line_ids')
     gongsi_id = fields.Many2one('gongsi', '内部公司')
 #akiny
-    @api.depends('expense_line_ids', 'expense_line_ids.categ_id')
-    def _compute_categ(self):
-        categ_id = None
+   # @api.depends('expense_line_ids', 'expense_line_ids.categ_id')
+  #  def _compute_categ(self):
+  #      categ_id = None
 
-        for expense in self.expense_line_ids:
-            categ_id = expense.categ_id
-        self.categ_id = categ_id
+   #     for expense in self.expense_line_ids:
+    #        categ_id = expense.categ_id
+    #    self.categ_id = categ_id
 
-    @api.depends('expense_line_ids', 'expense_line_ids.second_categ_id')
-    def _compute_second_categ(self):
-        second_categ_id = None
-        for expense in self.expense_line_ids:
-            second_categ_id = expense.second_categ_id
-        self.second_categ_id = second_categ_id
+  #  @api.depends('expense_line_ids', 'expense_line_ids.second_categ_id')
+   # def _compute_second_categ(self):
+    #    second_categ_id = None
+   #     for expense in self.expense_line_ids:
+    #        second_categ_id = expense.second_categ_id
+    #    self.second_categ_id = second_categ_id
 
     #@api.onchange('categ_id')
    # def onchange_categ(self):
@@ -485,7 +485,7 @@ class hr_expense(models.Model):
     def onchange_employee_id(self):
         job_id_name = self.employee_id.job_id.name
 
-        if job_id_name == '客户经理':
+        if job_id_name == u'客户经理':
            self.employee_sales_uid = self.employee_id
         else:
             self.employee_sales_uid = None
