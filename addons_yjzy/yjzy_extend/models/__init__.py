@@ -42,6 +42,7 @@ from . import product_packaging
 from . import config_setting
 from . import account_reconcile_orde
 from . import hr_expense
+from . import hr_expense_sheet
 from . import bom
 from . import res_country
 from . import user_budget

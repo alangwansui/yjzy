@@ -534,9 +534,10 @@
                         <group>
                             <group>
 
-                                <field name="categ_id" string="大类*" invisible="1" widget="selection" domain="[('parent_id.name','=','费用')]" context="{'search_order': 'sequence'}" required="1" attrs="{'readonly':[('')]}"/>
-                                <field name="second_categ_id" string="中类*" widget="selection" invisible="1" domain="[('parent_id','=', categ_id)]" context="{'search_order': 'sequence'}"
+                                <field name="categ_id" string="大类*" invisible="0" widget="selection" domain="[('parent_id.name','=','费用')]" context="{'search_order': 'sequence'}" required="1" attrs="{'readonly':[('')]}"/>
+                                <field name="second_categ_id" string="中类*" widget="selection" invisible="0" domain="[('parent_id','=', categ_id)]" context="{'search_order': 'sequence'}"
                                        required="1"/>
+
                                 <field name="document_number"/>
                                 <field name="include_tax" attrs="{'readonly':[('state','not in',['submit','draft'])]}"/>
                                 <field name="payment_mode" invisible="1" readonly="1"/>
@@ -563,19 +564,21 @@
                                 <field name="expense_line_ids" nolabel="1" widget="one2many" domain="[('state', '=', 'draft')]"
                                        options="{'not_delete': True, 'reload_on_button': True, 'no_create': False}"
                                        context="{'expense_adding_line': True, 'default_company_id':company_id,'tracking_disable': True,
-                                       'default_categ_id': categ_id, 'default_second_categ_id': second_categ_id,
+
+
                                        'no_show_mark': context.get('no_show_mark'),  'default_gongsi_id': gongsi_id,
                                        'default_currency_id': currency_id, 'default_state': 'draft','form_view_ref':'yjzy_extend.view_hr_expense_new_from_sheet_form'}" >
 
                                     <tree decoration-danger="is_refused" editable="bottom">
-                                        <field name="categ_id" string="大类*" widget="selection" domain="[('parent_id.name','=','费用')]"
-                                               context="{'search_order': 'sequence','only_name':1}" required="1"/>
-                                        <field name="second_categ_id" string="中类*" widget="selection" domain="[('parent_id','=', categ_id)]"
-                                               context="{'search_order': 'sequence','only_name':1}"
-                                           required="1"/>
-                                        <field name="product_id" required="1" string="小类*" widget="selection" options="{'no_create':True}"
-                                          domain="[('can_be_expensed','=',True),('categ_id','=',second_categ_id)]"
-                                          context="{'default_can_be_expensed': 1, 'tree_view_ref': 'hr_expense.product_product_expense_tree_view','only_name':1}"/>
+
+                                        <field name="categ_id" string="大类*"   required="1"/>
+
+                                        <field name="second_categ_id" string="中类*" required="1" domain="[('parent_id','=',categ_id)]"/>
+
+                                        <field name="product_id" required="1" string="小类*"  domain="[('categ_id','=',second_categ_id)]"/>
+
+
+
                                         <field name="unit_amount" string="费用金额" required="1" sum="小计" widget="monetary" options="{'currency_field': 'currency_id'}"/>
                                         <field name="employee_id" string="责任人*" options="{'no_open':True}"/>
                                         <field name="employee_sales_uid" string="费用对象*" options="{'no_open':True}" domain="['|',('job_id.name','=','客户经理'),('job_id.name','=','公司')]"/>
@@ -630,7 +633,8 @@
                                 </field>
 
                             </page>
-                            <page string="费用明细预算详情">
+
+                            <!--page string="费用明细预算详情">
                                 <field name="my_expense_line_ids"  context="{'form_view_ref':'yjzy_extend.view_hr_expense_new_from_sheet_form'}">
                                     <tree decoration-danger="is_refused">
                                         <field name="categ_id" string="大类*" widget="selection" domain="[('parent_id.name','=','费用')]"
@@ -681,10 +685,10 @@
                                         <field name="budget_amount_reset"/>
                                         <field name="is_confirmed" string="责任人确认" invisible="1" attrs="{'invisible': [('is_confirmed','=',True)]}"/>
                                         <button name="is_confirmed_icon" icon="fa_check" attrs="{'invisible': [('is_confirmed','!=',True)]}"/>
-                                        <field name="date" string="明细日期" invisible="1" /> <!--invisible="context.get('no_show_mark')" -->
+                                        <field name="date" string="明细日期" invisible="1" />
                                     </tree>
                                 </field>
-                            </page>
+                            </page-->
 
                             <page string="财务信息" groups="account.group_account_invoice">
 
