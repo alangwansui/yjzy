@@ -481,7 +481,7 @@ class hr_expense(models.Model):
         self.product_id = None
 
     @api.onchange('employee_id')
-
+#akiny只有是客户经理的时候才跟着责任人变化
     def onchange_employee_id(self):
         job_id_name = self.employee_id.job_id.name
 
