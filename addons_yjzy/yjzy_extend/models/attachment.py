@@ -14,7 +14,17 @@ class IrAttachment(models.Model):
                 if record._name == 'sale.order':
                     if record.state in ['sale', 'done']:
                         raise Warning('确认的销售订单禁止删除附件')
-                elif record._name == 'purchase.order':
+
+
+                elif record._name == 'xxx.orxxxder':
+                    if record.state in ['xxx', 'xxx']:
+                        raise Warning('确认的销售订单禁止删除附件')
+
+
+
+
+
+                else:
                     pass
 
         return super(IrAttachment, self).unlink()
