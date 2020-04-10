@@ -254,7 +254,7 @@
                             <page string="明细" name="cymx" groups="sales_team.group_sale_assistant">
                                 <field name="line_ids" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}">
                                     <tree create="false" editable="bottom">
-                                        <button icon="fa-paper-plane" type="object"  attrs="{'invisible':[('state','not in',['draft']),('is_editable','=',False)]}" name="make_default_lot_plan"/>
+                                        <button icon="fa-paper-plane" type="object"  attrs="{'invisible':[('parent.state','not in',['draft']),('parent.is_editable','=',False)]}" name="make_default_lot_plan"/>
                                         <field name="sale_contract_code"/>
                                         <field name="company_currency_id" invisible="1"/>
                                         <field name="sale_currency_id" invisible="1"/>
