@@ -389,29 +389,16 @@
                                     <field name="fee_inner" attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}"/>
 
                                     <field name="fee_rmb1" attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}"/>
-                                    <field name="fee_rmb1_note" nolabel="1"/>
+                                    <field name="fee_rmb1_note" attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)],'invisible':[('fee_rmb1','=',0)]}"/>
                                     <field name="fee_rmb2" attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}"/>
-                                    <field name="fee_rmb2_note" />
-
-
-
-
+                                    <field name="fee_rmb2_note" attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)],'invisible':[('fee_rmb2','=',0)]}"/>
                                     <field name="fee_outer" string="国外运保费" attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}"/>
                                     <field name="outer_currency_id"  invisible="1" required="1" />
-
-
-
-
                                     <field name="fee_export_insurance" string="出口保险费" attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}"/>
                                     <field name="export_insurance_currency_id" invisible="1" required="1" />
-
-
-
-
-
                                     <field name="fee_other" string="其他外币费用"  attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}"/>
                                     <field name="other_currency_id"  required="1" invisible="1" />
-                                    <field name="fee_other_note" />
+                                    <field name="fee_other_note" attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)],'invisible':[('fee_other','=',0)]}"/>
                             </group>
                             <group>
                                 <field name="create_uid" readonly="1"/>
@@ -430,7 +417,7 @@
                                 <field name="cip_type" invisible="1"/>
                                 <field name="pre_advance" string="建议预收金额"/>
                                 <field name="balance" string="实际预收余额"/>
-                                <field name="gold_sample_state"/>
+                                <field name="gold_sample_state" string="金样管理"/>
 
                                 <field name="validity_date" attrs="{'invisible': [('state', 'in', ['sale', 'done']),('is_editable','=',False)]}"/>
                                 <field name="confirmation_date" attrs="{'invisible': [('state', 'in', ['draft', 'sent', 'cancel']),('is_editable','=',False)]}"/>
