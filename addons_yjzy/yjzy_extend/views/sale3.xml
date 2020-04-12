@@ -378,10 +378,10 @@
 
 
 
-                                <field name="contract_type" attrs="{'readonly':1}"/>
+                                <field name="contract_type" attrs="{'readonly':1}" groups="base.group_system" />
                                 <field name="is_inner_trade" groups="base.group_system" invisible="1"/>
-                                <field name="gongsi_id" string="销售主体" attrs="{'readonly':1}"/>
-                                <field name="purchase_gongsi_id" string="采购主体" attrs="{'readonly':1}"/>
+                                <field name="gongsi_id" string="销售主体" attrs="{'readonly':1}" groups="base.group_system" />
+                                <field name="purchase_gongsi_id" string="采购主体" attrs="{'readonly':1}" groups="base.group_system" />
                             </group>
                             <group>
 
