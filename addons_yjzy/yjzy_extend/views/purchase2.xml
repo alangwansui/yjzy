@@ -342,7 +342,7 @@
         </record>
 
         <!-- This Menu Item must have a parent and an action -->
-        <menuitem id="new_purchase_order_menu" name="业务待处理采购" parent="yjzy_extend.new_purchase_order_root" action="new_purchase_order_sales_action" sequence="1"/>
+        <menuitem id="new_purchase_order_sales_menu" name="业务待处理采购" parent="yjzy_extend.new_purchase_order_root" action="new_purchase_order_sales_action" sequence="1"/>
         <record id="new_purchase_order_purchaser_action" model="ir.actions.act_window">
             <field name="name">采购员待处理</field>
             <field name="type">ir.actions.act_window</field>
@@ -355,7 +355,7 @@
         </record>
 
         <!-- This Menu Item must have a parent and an action -->
-        <menuitem id="new_purchase_order_menu" name="采购员待处理" parent="yjzy_extend.new_purchase_order_root" action="new_purchase_order_purchaser_action" sequence="2"/>
+        <menuitem id="new_purchase_purchaser_order_menu" name="采购员待处理" parent="yjzy_extend.new_purchase_order_root" action="new_purchase_order_purchaser_action" sequence="2"/>
 
         <record id="new_purchase_order_hegui_action" model="ir.actions.act_window">
             <field name="name">合规待处理</field>
