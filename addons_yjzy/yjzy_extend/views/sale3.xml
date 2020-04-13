@@ -531,7 +531,7 @@
 
                                     <tree string="销售订单明细" decoration-info="invoice_status=='to invoice'" editable="bottom" limit="80"
                                           decoration-danger="product_uom_qty != dlr_qty">
-                                        <button icon="fa-pencil-square-o" type="object" name="open_soline_form"/>
+                                        <button icon="fa-pencil-square-o" type="object" name="open_soline_form" attrs="{'invisible':[('parent.state','not in',['draft','refused']),('parent.is_editable','=',False)]}"/>
                                         <field name="sequence" widget="handle"/>
                                         <field name="product_updatable" invisible="1"/>
 
@@ -540,7 +540,7 @@
                                            'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"/>
                                         <field name="product_uom_qty" string="数量"
                                                context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"/>
-                                        <button type="object" name="get_in_stock_quant" icon="fa-archive"/>
+                                        <button type="object" name="get_in_stock_quant" icon="fa-archive" groups="base.group_system"/>
                                         <field name="s_uom_id" string="单位"/>
                                         <field name="is_gold_sample" string="金样状态" attrs="{'column_invisible':[('parent.display_detail','=',False)]}"/>
                                         <field name="layout_category_id" invisible="1" groups="sale.group_sale_layout"/>

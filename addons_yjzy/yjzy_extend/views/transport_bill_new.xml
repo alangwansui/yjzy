@@ -139,6 +139,8 @@
                         <!--button string="计算装箱数据" type="object" name="compute_pack_data" class="oe_highlight"/-->
                         <button string="计算清关数据" type="object" name="create_qingguan_lines" attrs="{'invisible': [('qingguan_state','!=','draft')]}"
                                 class="oe_highlight"/>
+                         <button name="split_tuopan_weight" type="object" string="分配托盘重量"
+                                         attrs="{'invisible': [('is_done_tuopan','=',True)]}"  class="oe_highlight"/>
                         <button string="返点统计" invisible="1"  name="make_fandian_collect" attrs="{'invisible': [('purchase_collect_state','=','draft')]}"
                                 class="oe_highlight" type="object"/>
                          <button string="生成供应商发货单" type="object" name="make_tb_vendor" attrs="{'invisible': [('is_done_tb_vendor','=',True)]}" class="oe_highlight"/>
@@ -247,7 +249,7 @@
                                         <field name="user_id" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}" no_create="True" string="责任人"/>
                                         <field name="sale_assistant_id" invisible="0"/>
                                         <field name="description" string="出运说明" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
-
+                                        <field name="hs_fill" groups="base.group_system"/>
                                     </group>
 
 
@@ -470,10 +472,12 @@
                                     </tree>
                                 </field>
                             </page>
-                            <page string="报关销售统计" >
-                                 <button name="split_tuopan_weight" type="object" string="分配托盘重量"
-                                         attrs="{'invisible': [('is_done_tuopan','=',True)]}"  class="oe_highlight"/>
-
+                            <page string="报关资料" >
+                                <header>
+                                 <button name="action_sale_purchase" type="object" string="报关Invoice资料"/>
+                                 <button name="action_packaging" type="object" string="装箱Packing list资料" />
+                                 <button name="action_others" type="object" string="其他信息" />
+                                </header>
                                 <group col="4">
                                     <group>
                                     <field name="pallet_type" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
@@ -491,23 +495,23 @@
                                 <field name="hsname_ids" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}">
                                     <tree editable="bottom" decoration-danger="purchase_hs_id==False">
                                         <field name="purchase_hs_id" string="采购对应" invisible="1"/>
-                                        <button name="make_suppliser_hs" type="object" icon="fa-th-large"/>
+                                        <button name="make_suppliser_hs" type="object" string="确认采购" class="oe_highlight" attrs="{'invisible':[('purchase_hs_id','!=',False)]}"/>
                                         <field name="id" invisible="1"/>
                                         <field name="package_tag" invisible="1"/>
                                         <field name="name" invisible="1"/>
 
                                         <field name="dump_product_id" groups="base.group_system" invisible="1"/>
-                                        <field name="hs_id" attrs="{'required':[('purchase_hs_id','=',False)]}"/>
+                                        <field name="hs_id" attrs="{'required':[('purchase_hs_id','=',False)],'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}" />
                                         <field name="hs_en_name" groups="base.group_system" invisible="1"/>
 
-                                        <field name="po_id" string="采购合同" attrs="{'required':[('purchase_hs_id','=',False)]}"/>
-                                        <field name="amount" sum="小计" string="销售额" attrs="{'readonly':[('purchase_hs_id','=',False)]}"/>
-                                        <field name="out_qty2" sum="小计" string="报关数量" attrs="{'readonly':[('purchase_hs_id','=',False)]}"/>
-                                        <field name="price2" string="单价" readonly="1"/>
-                                        <field name="amount2" sum="小计" string="金额" attrs="{'readonly':[('purchase_hs_id','=',False)]}"/>
-                                        <field name="purchase_amount2" string="采购额" attrs="{'readonly':[('purchase_hs_id','=',False)]}"/>
-                                        <field name="back_tax" readonly="1"/>
-                                        <field name="purchase_back_tax_amount2" string="退税额" readonly="1"/>
+                                        <field name="po_id" string="采购合同" attrs="{'required':[('purchase_hs_id','=',False)],'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
+                                        <field name="amount" sum="小计" string="销售额" attrs="{'readonly':[('purchase_hs_id','=',False)],'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
+                                        <field name="out_qty2" sum="小计" string="报关数量" attrs="{'readonly':[('purchase_hs_id','=',False)],'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
+                                        <field name="price2" string="单价" readonly="1" attrs="{'column_invisible': ['parent.hs_fill','!=','sale_purchase']}"/>
+                                        <field name="amount2" sum="小计" string="金额" attrs="{'readonly':[('purchase_hs_id','=',False)],'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
+                                        <field name="purchase_amount2" string="采购额" attrs="{'readonly':[('purchase_hs_id','=',False)],'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
+                                        <field name="back_tax" readonly="1" attrs="{'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
+                                        <field name="purchase_back_tax_amount2" string="退税额" readonly="1" attrs="{'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
                                         <field name="out_qty" sum="小计" invisible="1"/>
                                         <field name="price" string="单价" invisible="1"/>
 
@@ -517,19 +521,21 @@
                                         <field name="purchase_amount" invisible="1"/>
                                         <field name="hs_id2" invisible="1"/>
                                         <field name="dump_product_id2" groups="base.group_system" invisible="1"/>
-                                        <field name="source_area"/>
-                                        <field name="source_country_id"/>
-                                        <field name="qty_max" sum="小计" string="件数"/>
+
+
+                                        <field name="source_area" attrs="{'column_invisible': [('parent.hs_fill','!=','packaging')]}"/>
+                                        <field name="source_country_id" attrs="{'column_invisible': [('parent.hs_fill','!=','packaging')]}"/>
+                                        <field name="qty_max" sum="小计" string="件数" attrs="{'column_invisible': [('parent.hs_fill','!=','packaging')]}"/>
                                         <field name="qty_mid" groups="base.group_system" invisible="1"/>
                                         <field name="qty_min" groups="base.group_system" invisible="1"/>
-                                        <field name="net_weight" sum="小计"/>
-                                        <field name="gross_weight" sum="小计"/>
-                                        <field name="tuopan_weight" string="托重"/>
-                                        <field name="shiji_weight" sum="小计"/>
-                                        <field name="volume" string="体积"/>
-                                        <field name="tuopan_volume" string="托体积"/>
-                                        <field name="shiji_volume"/>
-                                        <field name="keyword" invisible="1"/>
+                                        <field name="net_weight" sum="小计" attrs="{'column_invisible': [('parent.hs_fill','!=','packaging')]}"/>
+                                        <field name="gross_weight" sum="小计" attrs="{'column_invisible': [('parent.hs_fill','!=','packaging')]}"/>
+                                        <field name="tuopan_weight" string="托重" attrs="{'column_invisible': [('parent.hs_fill','!=','packaging')]}"/>
+                                        <field name="shiji_weight" sum="小计" attrs="{'column_invisible': [('parent.hs_fill','!=','packaging')]}"/>
+                                        <field name="volume" string="体积" attrs="{'column_invisible': [('parent.hs_fill','!=','packaging')]}"/>
+                                        <field name="tuopan_volume" string="托体积" attrs="{'column_invisible': [('parent.hs_fill','!=','packaging')]}"/>
+                                        <field name="shiji_volume" attrs="{'column_invisible': [('parent.hs_fill','!=','packaging')]}"/>
+                                        <field name="keyword" attrs="{'column_invisible': [('parent.hs_fill','!=','packaging')]}"/>
                                         <field name="type" invisible="1"/>
                                         <field name="note" invisible="1"/>
                                         <button name="open_form_view" type="object" icon="fa-arrows-v"/>
