@@ -272,6 +272,20 @@ class tbl_hsname(models.Model):
     purchase_amount = fields.Float('采购金额', related="purchase_hs_id.amount")
     purchase_amount2 = fields.Float('采购金额', related="purchase_hs_id.amount2")
     purchase_back_tax_amount2 = fields.Float(u'报关退税金额',related="purchase_hs_id.back_tax_amount2")
+
+
+    def open_form_view(self):
+        return {
+            'name': '发运HS统计',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': self._name,
+            'res_id': self.id,
+            'type': 'ir.actions.act_window',
+            'target': 'new',
+        }
+
+
     @api.multi
     def write(self, vals):
         res = super(tbl_hsname, self).write(vals)

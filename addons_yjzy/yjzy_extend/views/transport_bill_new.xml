@@ -532,6 +532,7 @@
                                         <field name="keyword" invisible="1"/>
                                         <field name="type" invisible="1"/>
                                         <field name="note" invisible="1"/>
+                                        <button name="open_form_view" type="object" icon="fa-arrows-v"/>
                                     </tree>
                                     <form>
                                         <group>
