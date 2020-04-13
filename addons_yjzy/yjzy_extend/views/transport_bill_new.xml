@@ -509,9 +509,9 @@
                                         <field name="out_qty2" sum="小计" string="报关数量" attrs="{'readonly':[('purchase_hs_id','=',False)],'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
                                         <field name="price2" string="单价" readonly="1" attrs="{'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
                                         <field name="amount2" sum="小计" string="金额" attrs="{'readonly':[('purchase_hs_id','=',False)],'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
-                                        <field name="purchase_amount2" string="采购额" attrs="{'readonly':[('purchase_hs_id','=',False)],'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
+                                        <field name="purchase_amount2" sum="小计" string="采购额" attrs="{'readonly':[('purchase_hs_id','=',False)],'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
                                         <field name="back_tax" readonly="1" attrs="{'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
-                                        <field name="purchase_back_tax_amount2" string="退税额" readonly="1" attrs="{'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
+                                        <field name="purchase_back_tax_amount2" sum="小计" string="退税额" readonly="1" attrs="{'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
                                         <field name="out_qty" sum="小计" invisible="1"/>
                                         <field name="price" string="单价" invisible="1"/>
 
@@ -532,9 +532,9 @@
                                         <field name="gross_weight" sum="小计" attrs="{'column_invisible': [('parent.hs_fill','!=','packaging')]}"/>
                                         <field name="tuopan_weight" string="托重" attrs="{'column_invisible': [('parent.hs_fill','!=','packaging')]}"/>
                                         <field name="shiji_weight" sum="小计" attrs="{'column_invisible': [('parent.hs_fill','!=','packaging')]}"/>
-                                        <field name="volume" string="体积" attrs="{'column_invisible': [('parent.hs_fill','!=','packaging')]}"/>
-                                        <field name="tuopan_volume" string="托体积" attrs="{'column_invisible': [('parent.hs_fill','!=','packaging')]}"/>
-                                        <field name="shiji_volume" attrs="{'column_invisible': [('parent.hs_fill','!=','packaging')]}"/>
+                                        <field name="volume" string="体积" sum="小计" attrs="{'column_invisible': [('parent.hs_fill','!=','packaging')]}"/>
+                                        <field name="tuopan_volume" string="托体积" sum="小计" attrs="{'column_invisible': [('parent.hs_fill','!=','packaging')]}"/>
+                                        <field name="shiji_volume" sum="小计" attrs="{'column_invisible': [('parent.hs_fill','!=','packaging')]}"/>
                                         <field name="keyword" attrs="{'column_invisible': [('parent.hs_fill','!=','packaging')]}"/>
                                         <field name="type" invisible="1"/>
                                         <field name="note" invisible="1"/>
