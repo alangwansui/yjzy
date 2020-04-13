@@ -523,8 +523,8 @@
                                         <field name="dump_product_id2" groups="base.group_system" invisible="1"/>
 
 
-                                        <field name="source_area" attrs="{'column_invisible': [('parent.hs_fill','!=','packaging')]}"/>
-                                        <field name="source_country_id" attrs="{'column_invisible': [('parent.hs_fill','!=','packaging')]}"/>
+                                        <field name="source_area" attrs="{'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
+                                        <field name="source_country_id" attrs="{'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
                                         <field name="qty_max" sum="小计" string="件数" attrs="{'column_invisible': [('parent.hs_fill','!=','packaging')]}"/>
                                         <field name="qty_mid" groups="base.group_system" invisible="1"/>
                                         <field name="qty_min" groups="base.group_system" invisible="1"/>
