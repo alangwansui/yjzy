@@ -494,8 +494,8 @@
                                 </group>
                                 <field name="hsname_ids" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}">
                                     <tree editable="bottom" decoration-danger="purchase_hs_id==False">
-                                        <field name="purchase_hs_id" string="采购对应" invisible="1"/>
-                                        <button name="make_suppliser_hs" type="object" string="确认采购" class="oe_highlight" attrs="{'invisible':[('purchase_hs_id','!=',False)]}"/>
+                                        <field name="purchase_hs_id" string="采购对应" groups="base.group_system"/>
+                                        <button name="make_suppliser_hs" type="object" icon="fa-plus-circle"  attrs="{'invisible':[('purchase_hs_id','!=',False)]}"/>
                                         <field name="id" invisible="1"/>
                                         <field name="package_tag" invisible="1"/>
                                         <field name="name" invisible="1"/>

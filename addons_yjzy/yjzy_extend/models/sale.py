@@ -422,6 +422,7 @@ class sale_order(models.Model):
     def action_confirm(self):
         '''so auto po confirm'''
         res = super(sale_order, self).action_confirm()
+        #akiny to approve的时候触发button_approve
        # todo_po = self.po_ids.filtered(lambda x: x.can_confirm_by_so and x.state not in ['purchase', 'done', 'cancel', 'edit'])
         todo_po1 = self.po_ids.filtered(lambda x: x.can_confirm_by_so and x.state in ['to approve'])
       #  if todo_po:
