@@ -422,9 +422,12 @@ class sale_order(models.Model):
     def action_confirm(self):
         '''so auto po confirm'''
         res = super(sale_order, self).action_confirm()
-        todo_po = self.po_ids.filtered(lambda x: x.can_confirm_by_so and x.state not in ['purchase', 'done', 'cancel', 'edit'])
-        if todo_po:
-            todo_po.button_confirm()
+       # todo_po = self.po_ids.filtered(lambda x: x.can_confirm_by_so and x.state not in ['purchase', 'done', 'cancel', 'edit'])
+        todo_po1 = self.po_ids.filtered(lambda x: x.can_confirm_by_so and x.state in ['to approve'])
+      #  if todo_po:
+      #      todo_po.button_confirm()
+        if todo_po1:
+            todo_po1.button_approve()
         return res
 
     def action_confirm2(self):

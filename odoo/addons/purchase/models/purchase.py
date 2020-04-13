@@ -122,7 +122,7 @@ class PurchaseOrder(models.Model):
     state = fields.Selection([
         ('draft', 'RFQ'),
         ('sent', 'RFQ Sent'),
-        ('to approve', 'To Approve'),
+        ('to approve', 'To Approve'),#akiny 翻译成等待出运
         ('purchase', 'Purchase Order'),
         ('done', 'Locked'),
         ('cancel', 'Cancelled')
@@ -342,7 +342,7 @@ class PurchaseOrder(models.Model):
     @api.multi
     def button_confirm(self):
         for order in self:
-            if order.state not in ['draft', 'sent','approve']:
+            if order.state not in ['draft', 'sent']:
                 continue
             order._add_supplier_to_product()
             # Deal with double validation process
