@@ -220,6 +220,7 @@
                                 <field name="purchase_gongsi_id" groups="base.group_system" string="采购主体" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
                             </group>
                                 <group>
+                                        <field name="sale_currency_id" />
                                         <field name="fee_inner" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
                                         <field name="fee_rmb1" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
                                         <field name="fee_rmb2" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
@@ -671,7 +672,7 @@
                                  <field name="qingguan_state"/>
                                </group>
                             <group name="self_currency" >
-                                 <field name="sale_currency_id" readonly="1" />
+
                                  <field name="company_id" readonly="1" invisible="1"/>
                                  <field name="company_currency_id" readonly="1" invisible="1"/>
 
@@ -690,6 +691,7 @@
                                  <field name="budget_reset_amount" invisible="1"/>
                             </group>
                                    <group groups="base.group_system" >
+                                       <field name="sale_currency_id" invisible="1"/>
                                 <field name="third_currency_id" no_create="True"/>
                                 <field name="sale_amount"/>
                                 <field name="real_sale_amount"/>
