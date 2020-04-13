@@ -476,7 +476,7 @@
                                 <header>
                                  <button name="action_sale_purchase" type="object" string="报关Invoice资料"/>
                                  <button name="action_packaging" type="object" string="装箱Packing list资料" />
-                                 <button name="action_others" type="object" string="其他信息" />
+                                 <!--button name="action_others" type="object" string="其他信息" /-->
                                 </header>
                                 <group col="4">
                                     <group>

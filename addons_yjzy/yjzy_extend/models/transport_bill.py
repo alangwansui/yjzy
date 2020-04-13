@@ -405,9 +405,9 @@ class transport_bill(models.Model):
 
     hs_fill = fields.Selection([('all', u'全部'),('sale_purchase', u'销售采购'),('packaging', u'包装资料'),('others', u'其他信息')])
 
-    hs_fill_sale_purchase = fields.Boolean('报关invoice信息')
-    hs_fill_sale_packaging = fields.Boolean('报关packing信息')
-    hs_fill_sale_others = fields.Boolean('报关packing信息')
+    #hs_fill_sale_purchase = fields.Boolean('报关invoice信息')
+    #hs_fill_sale_packaging = fields.Boolean('报关packing信息')
+    #hs_fill_sale_others = fields.Boolean('报关packing信息')
 
 
     @api.onchange('contract_type')
