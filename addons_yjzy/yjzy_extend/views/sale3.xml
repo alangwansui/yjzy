@@ -943,7 +943,7 @@
                             </page>
                              <page string="采购合同" invisible="0">
                                 <group>
-                                    <field name="po_ids" context="{'form_view_ref':'yjzy_extend.new_purhcase_order_from'}" >
+                                    <field name="po_ids" context="{'form_view_ref':'yjzy_extend.new_purchase_order_from'}" >
                   <tree decoration-bf="message_unread==True" decoration-muted="state=='cancel'"  decoration-info="state in ('wait','confirmed')" string="采购合同">
                     <field name="message_unread" invisible="1"/>
                     <field name="name" string="流水码" groups="base.group_system"/>
