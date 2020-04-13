@@ -7,7 +7,8 @@
             <field name="arch" type="xml">
                 <search string="Transport Bill">
 
-                    <field name="ref" string="合同号" filter_domain="['|','|',('ref','ilike',self),('name','ilike',self),('partner_id','child_of',self)]"/>
+                    <field name="ref" string="模糊搜索" filter_domain="['|','|',('ref','ilike',self),('name','ilike',self),('partner_id','child_of',self)]"/>
+                    <field name="ref" string="合同号" filter_domain="['|',('ref','ilike',self),('name','ilike',self)"/>
                     <field name="user_id"/>
 
                     <separator/>
@@ -66,9 +67,9 @@
                     <field name="sale_invoice_paid" string="已收金额"/>
                     <field name="purhcase_invoice_paid" string="已付金额"/>
                     <field name="back_tax_invoice_paid" string="已收退税"/>
-                    <field name="sale_invoice_balance" string="未收金额" invisible="1"/>
-                    <field name="purhcase_invoice_balance" string="未付金额" invisible="1"/>
-                    <field name="back_tax_invoice_balance" string="未收退税" invisible="1"/>
+                    <field name="sale_invoice_balance" string="未收金额"/>
+                    <field name="purhcase_invoice_balance" string="未付金额"/>
+                    <field name="back_tax_invoice_balance" string="未收退税"/>
                     <field name="create_date"/>
                     <field name="gongsi_id" string="主体"/>
 
@@ -175,7 +176,7 @@
 
 
                         <field name="state" widget="statusbar" groups="base.group_system"/>
-                        <field name="is_editable"  widget="boolean_toggle"/>
+                        <field name="is_editable"  widget="boolean_toggle" groups="	sales_team.group_manager"/>
                     </header>
 
 

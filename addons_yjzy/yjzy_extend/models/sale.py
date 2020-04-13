@@ -117,6 +117,7 @@ class sale_order(models.Model):
             one.commission_amount = commission_amount
             one.stock_cost = stock_cost
             one.purchase_cost = purchase_cost
+            one.purchase_stock_cost = purchase_cost + stock_cost
             one.fandian_amoun = fandian_amoun
             one.vat_diff_amount = vat_diff_amount
             one.other_cost = other_cost
@@ -125,8 +126,8 @@ class sale_order(models.Model):
             one.fee_rmb_all = one.fee_inner + one.fee_rmb1 + one.fee_rmb2
             one.fee_outer_all = one.fee_outer + one.fee_export_insurance + one.fee_other
 
-            one.fee_rmb_ratio = one.amount_total and one.company_currency_id.compute(one.fee_rmb_all + fandian_amoun + vat_diff_amount, one.currency_id) / one.amount_total
-            one.fee_outer_ratio = one.amount_total and one.other_currency_id.compute(one.fee_outer_all, one.currency_id) / one.amount_total
+            one.fee_rmb_ratio = one.amount_total and one.company_currency_id.compute(one.fee_rmb_all + fandian_amoun + vat_diff_amount, one.currency_id) / one.amount_total * 100
+            one.fee_outer_ratio = one.amount_total and one.other_currency_id.compute(one.fee_outer_all, one.currency_id) / one.amount_total *100
 
             one.profit_ratio = amount_total2 and profit_amount / amount_total2 * 100
 
@@ -164,7 +165,9 @@ class sale_order(models.Model):
 
     fee_inner = fields.Monetary(u'国内运杂费', currency_field='company_currency_id')
     fee_rmb1 = fields.Monetary(u'人民币费用1', currency_field='company_currency_id')
+    fee_rmb1_note = fields.Text(u'人名币备注1')
     fee_rmb2 = fields.Monetary(u'人民币费用2', currency_field='company_currency_id')
+    fee_rmb2_note = fields.Text(u'人名币备注2')
     fee_rmb_all = fields.Monetary(u'人民币费用合计', currency_field='company_currency_id',  compute=compute_info)
     fee_rmb_ratio = fields.Float(u'人名币费用占销售额比', digits=(2, 4), compute=compute_info)
 
@@ -173,6 +176,7 @@ class sale_order(models.Model):
     fee_export_insurance = fields.Monetary(u'出口保险费', currency_field='other_currency_id')
     export_insurance_currency_id = fields.Many2one('res.currency', u'出口保险费货币')
     fee_other = fields.Monetary(u'其他外币费用', currency_field='other_currency_id')
+    fee_other_note = fields.Text(u'外币备注1')
     fee_outer_all = fields.Monetary(u'外币费用合计', currency_field='other_currency_id',  compute=compute_info)
     fee_outer_ratio = fields.Float(u'外币费用占销售额比', digits=(2, 4), compute=compute_info)
 
@@ -194,12 +198,14 @@ class sale_order(models.Model):
 
     exchange_rate = fields.Float(u'目前汇率', compute=compute_exchange_rate, digits=(2,6))
     appoint_rate = fields.Float(u'使用汇率', digits=(2,6))
+    #currency_tate = fields.Many2one('res.currency.rate',u'系统汇率')
     country_id = fields.Many2one('res.country', related='partner_id.country_id', string=u'国别', readonly=True)
     term_description = fields.Html(u'销售条款')
     commission_ratio = fields.Float(u'经营计提比', digits=(2, 4), default=lambda self: self.default_commission_ratio())
     state2 = fields.Selection([('draft', u'草稿'),('to_approve', u'待批准'), ('edit', u'可修改'), ('confirmed', u'待审批'), ('done', u'审批完成')], u'状态', default='draft')
     amount_total2 = fields.Monetary(u'销售金额', currency_field='third_currency_id', compute=compute_info)
     purchase_cost = fields.Monetary(u'采购成本', currency_field='third_currency_id', compute=compute_info)
+    purchase_stock_cost = fields.Monetary(u'采购库存成本合计',  currency_field='third_currency_id', compute=compute_info)
     fandian_amoun = fields.Monetary(u'返点金额', currency_field='third_currency_id', compute=compute_info)
     stock_cost = fields.Monetary(u'库存成本', currency_field='third_currency_id', compute=compute_info)
     commission_amount = fields.Monetary(u'经营计提金额', currency_field='third_currency_id', compute=compute_info)

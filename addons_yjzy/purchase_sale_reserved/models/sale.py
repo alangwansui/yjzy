@@ -167,8 +167,8 @@ class sale_order(models.Model):
 
     def open_purchase_order(self):
         self.ensure_one()
-        tree_view = self.env.ref('yjzy_extend.new_purhcase_order_tree')
-        form_view = self.env.ref('yjzy_extend.new_purhcase_order_from')
+        tree_view = self.env.ref('yjzy_extend.new_purchase_order_tree')
+        form_view = self.env.ref('yjzy_extend.new_purchase_order_from')
         return {
             'name': _(u'采购订单'),
             'view_type': 'form',

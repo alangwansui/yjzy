@@ -163,7 +163,7 @@
                         <button name="action_employee_confirm" type="object" string="责任人确认"
                                 attrs="{'invisible':['|',('state','in',['draft','done','refused','confirmed','employee_confirm']),('sheet_state','=','cancel')]}"/>
                         <button name="make_diff_mvoe" type="object" string="创建差额分录" groups="base.group_system"/>
-                        <button name="btn_user_confirm" type="object" string="所有责任人确认" groups="base.group_system"/>
+                        <button name="btn_user_confirm" type="object" string="强制责任人确认" groups="base.group_system" context="{'force': 1}"/>
                         <button name="btn_undo_confirm" type="object" string="取消责任人确认"
                                 attrs="{'invisible':['|',('state','in',['draft','done','refused','confirmed','reported']),('sheet_all_line_is_confirmed','=',True)]}"/>
                     </header>

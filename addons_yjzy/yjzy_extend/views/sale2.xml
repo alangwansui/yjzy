@@ -38,59 +38,72 @@
                     <sheet>
                         <group col="3">
                             <group>
-                                <field name="sale_currency_id" readonly="1"/>
+                                <field name="sale_currency_id" readonly="1" groups="base.group_system"/>
                                 <field name="contract_code" readonly="1"/>
                                 <field name="name" readonly="1" invisible="1"/>
                                 <field name="partner_id" readonly="1"/>
                                 <field name="country_id"/>
-                                <field name="contract_date" readonly="1"/>
+                                <field name="contract_date" readonly="1" invisible=""/>
                                 <field name="cip_type" readonly="1"/>
                                 <field name="incoterm_code" readonly="1" string="价格条款"/>
-                                <field name="mark_comb_id" string="唛头"/>
-                                <field name="commission_ratio" readonly="0"/>
-                                <field name="user_id" readonly="1"/>
-                                <field name="sale_assistant_id" readonly="1"/>
+                                <field name="mark_comb_id" string="唛头" readonly="1"/>
+                                <field name="commission_ratio" readonly="1"/>
                                 <field name="product_manager_id" readonly="1" invisible="1"/>
-                                <field name="include_tax"/>
+                                <field name="include_tax" readonly="1"/>
                                 <field name="exchange_rate" string="计算汇率"/>
                                 <field name="company_id" invisible="1" readonly="1"/>
+                                <field name="user_id" readonly="1"/>
+                                <field name="sale_assistant_id" readonly="1"/>
                             </group>
                             <group>
-                                <field name="company_currency_id" invisible="0" readonly="1"/>
-                                <field name="fee_inner"/>
-                                <field name="fee_rmb1"/>
-                                <field name="fee_rmb2"/>
-                                <field name="fee_rmb_all" string="人名币合计"/>
-                                <field name="other_currency_id" string="外币币种"/>
-                                <field name="fee_outer"/>
-                                <field name="fee_export_insurance"/>
-                                <field name="fee_other"/>
-                                <field name="fee_outer_all"/>
-                                <field name="vat_diff_amount"/>
-                                <field name="second_cost"/>
-                                 <field name="second_porfit"/>
-                                    <field name="second_tenyale_profit"/>
+                                <field name="company_currency_id" invisible="0" readonly="1" groups="base.group_system"/>
+                                <field name="fee_inner" readonly="1"/>
+                                <field name="fee_rmb1" readonly="1"/>
+                                <field name="fee_rmb1_note" readonly="1"/>
+                                <field name="fee_rmb2" readonly="1"/>
+                                <field name="fee_rmb2_note" readonly="1"/>
+                                <field name="fee_rmb_all" string="人名币费用合计" readonly="1"/>
+                                <field name="other_currency_id" string="外币币种" invisible="1"/>
+                                <field name="fee_outer" readonly="1"/>
+                                <field name="fee_export_insurance" readonly="1"/>
+                                <field name="fee_other" readonly="1"/>
+                                <field name="fee_other_note" readonly="1"/>
+                                <field name="fee_outer_all" readonly="1"/>
+                                <field name="vat_diff_amount" readonly="1"/>
+                                <field name="second_cost" invisible="1"/>
+                                <field name="second_porfit" invisible="1"/>
+                                <field name="second_tenyale_profit" invisible="1"/>
                             </group>
                             <group>
-                                <field name="third_currency_id" domain="['|',('id','=', company_currency_id),('id','=', sale_currency_id)]"/>
-                                <field name="advance_residual"/>
+                                <field name="third_currency_id" domain="['|',('id','=', company_currency_id),('id','=', sale_currency_id)]" groups="base.group_system"/>
+                                <field name="currency_id" invisible="1"/>
+                                <field name="amount_total" widget="monetary" string="销售外币金额" options="{'currency_field': 'currency_id'}"/>
+                                <field name="amount_total2" string="销售本币金额"/>
                                 <field name="advance_account_id" invisible="1"/>
-                                <field name="amount_total2"/>
-                                <field name="commission_amount"/>
-                                <field name="purchase_cost"/>
-                                <field name="fandian_amoun"/>
-                                <field name="stock_cost"/>
+                                <field name="advance_residual" string="预收剩余"/>
+                                <field name="purchase_stock_cost" string="采购成本"/>
+
+                                <field name="purchase_cost" invisible="1"/>
                                 <field name="other_cost"/>
-                                <field name="back_tax_amount"/>
-                                <field name="fee_rmb_ratio"/>
-                                <field name="fee_outer_ratio"/>
-                                <field name="profit_amount" string="净利润"/>
+                                <field name="back_tax_amount" />
+                                <field name="commission_amount"/>
 
 
+                                <field name="fandian_amoun" invisible="1"/>
+                                <field name="stock_cost" invisible="1"/>
+
+
+
+                                <label for="fee_rmb_ratio" string="人民币费用占比"/>
+                                <div><field name="fee_rmb_ratio" class="oe_inline"/>%</div>
+                                <label for="fee_outer_ratio" string="外币费用占比"/>
+                                <div><field name="fee_outer_ratio" class="oe_inline"/>%</div>
+
+
+                                <field name="profit_amount" string="净利润" options="{'fg_color': 'red:profit_amount &lt; True'}"/>
                                 <label for="profit_ratio" string="净利润率%"/>
                                 <div><field name="profit_ratio" class="oe_inline"/>%
                                 </div>
-
                                 <field name="gross_profit" string="毛利润"/>
                                 <label for="gorss_profit_ratio" string="毛利润率%"/>
                                 <div><field name="gorss_profit_ratio" class="oe_inline"/>%
