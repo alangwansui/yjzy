@@ -37,7 +37,6 @@ class wizard_so2po(models.TransientModel):
                 'gongsi_id': self.so_id.purchase_gongsi_id.id,
             })
             for line in lines:
-                seller = line.product_id._select_seller(partner_id=partner)
                 pol = pol_obj.create({
                     'order_id': po.id,
                     'name': line.product_id.name,
@@ -45,7 +44,7 @@ class wizard_so2po(models.TransientModel):
                     'product_qty': line.qty,
                     'product_uom': line.product_id.uom_id.id,
                     'date_planned': self.so_id.requested_date,
-                    'price_unit': seller.price,
+                    'price_unit': line.sol_id.purchase_price,
                     'sol_id': line.sol_id.id,
                     'lot_sub_name': line.sol_id.lot_sub_name,
                 })
