@@ -433,6 +433,8 @@
                             <page string="订单行" name="sale_order_line_new">
                                 <button name="open_elect_multi_product_wizard" type="object" class="btn-primary"
                         attrs="{'invisible': [('state', '!=', 'draft')]}" string="多选产品"/>
+                                <label string="显示更多字段"/>
+                                <field name="display_detail" widget="boolean_toggle"/>
                                 <field name="order_line" mode="tree,kanban" attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}">
                                     <form string="销售订单明细">
                                         <group>
@@ -526,6 +528,7 @@
                                     </form>
                                     <button name="open_multi_select_product" string="Multi select product" type="object" class="oe_highlight"/>
                                     <button name="818" type="action" string="Select Products" context="{'default_flag_order': 'so'}" attrs="{'invisible': [('state', '!=', 'draft')]}" class="oe_highlight"/>
+
                                     <tree string="销售订单明细" decoration-info="invoice_status=='to invoice'" editable="bottom" limit="80"
                                           decoration-danger="product_uom_qty != dlr_qty">
                                         <button icon="fa-pencil-square-o" type="object" name="open_soline_form"/>
@@ -539,18 +542,20 @@
                                                context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"/>
                                         <button type="object" name="get_in_stock_quant" icon="fa-archive"/>
                                         <field name="s_uom_id" string="单位"/>
-                                        <field name="is_gold_sample" string="金样状态" invisible="1"/>
+                                        <field name="is_gold_sample" string="金样状态" attrs="{'column_invisible':[('parent.display_detail','=',False)]}"/>
                                         <field name="layout_category_id" invisible="1" groups="sale.group_sale_layout"/>
                                         <field name="name" invisible="1"/>
-                                        <field name="hs_id" invisible="1"/>
+                                        <field name="hs_id" attrs="{'column_invisible':[('parent.display_detail','=',False)]}"/>
                                         <field name="price_unit" attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"/>
-                                        <field name="back_tax" invisible="1"/>
+
                                         <field name="price_total" widget="monetary" groups="sale.group_show_price_total"/>
-                                        <field name="back_tax_amount" invisible="1"/>
+
                                         <field name="supplier_id"/>
                                         <field name="purchase_price"/>
                                         <field name="p_uom_id" string="单位"/>
                                         <field name="purchase_cost"/>
+                                        <field name="back_tax" attrs="{'column_invisible':[('parent.display_detail','=',False)]}"/>
+                                        <field name="back_tax_amount" attrs="{'column_invisible':[('parent.display_detail','=',False)]}"/>
                                         <field name="purchase_contract_code"/>
                                         <field name="second_unit_price" attrs="{'column_invisible': [('parent.contract_type', '!=', 'b')]}"/>
                                         <field name="second_price_total" attrs="{'column_invisible': [('parent.contract_type', '!=', 'b')]}"/>
@@ -670,7 +675,7 @@
                                 <field name="note" class="oe_inline" placeholder="在销售设置中设置默认条款和条件…" invisible="1"/>
                                 <div class="oe_clear"/>
                             </page>
-                            <page string="合同详情">
+                            <!--page string="合同详情">
                                 <field name="order_line_b" mode="tree,kanban" readonly="1">
                                     <form string="销售订单明细">
                                         <group>
@@ -765,7 +770,7 @@
                                     </form>
                                     <button name="open_multi_select_product" string="Multi select product" type="object" class="oe_highlight"/>
                                     <tree string="销售订单明细" decoration-info="invoice_status=='to invoice'" limit="10" readonly="1"
-                                          decoration-danger="product_uom_qty != dlr_qty"><!--editable="bottom" -->
+                                          decoration-danger="product_uom_qty != dlr_qty">
                                         <field name="sequence" widget="handle"/>
                                         <field name="product_updatable" invisible="1"/>
                                         <button type="object" name="get_in_stock_quant" icon="fa-archive"/>
@@ -902,7 +907,7 @@
                                 </group>
                                 <field name="note" class="oe_inline" placeholder="在销售设置中设置默认条款和条件…"/>
                                 <div class="oe_clear"/>
-                            </page>
+                            </page-->
                             <page string="其他信息">
                                 <group>
                                     <group name="sale_shipping">

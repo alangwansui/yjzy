@@ -231,6 +231,7 @@ class sale_order(models.Model):
     mark_comb_id = fields.Many2one('mark.comb', u'唛头组')
     no_sent_amount = fields.Monetary(u'未发货的金额', compute=compute_info)
     is_editable = fields.Boolean(u'可编辑')
+    display_detail = fields.Boolean(u'显示详情')
     aml_ids = fields.One2many('account.move.line', 'so_id', u'分录明细', readonly=True)
     second_partner_id = fields.Many2one('res.partner', u'第二客户')
 
@@ -274,6 +275,8 @@ class sale_order(models.Model):
     second_cost = fields.Float('销售主体成本', compute=compute_info)   #second_amoun
     second_porfit = fields.Float('销售主体利润', compute=compute_info) #amount_total2-刚刚计算出来的 second_const
     second_tenyale_profit = fields.Float('采购主体利润', compute=compute_info)#(采购主体利润)：
+
+
 
     # : 公式的cost改成second_cost
     # second_tenyale_profit：原公式的销售额改成second_cost

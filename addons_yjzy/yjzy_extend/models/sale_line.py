@@ -111,6 +111,9 @@ class sale_order_line(models.Model):
     purchase_contract_code = fields.Char('采购合同', related='po_id.contract_code')
 
 
+
+
+
     def open_soline_form(self):
         view = self.env.ref('yjzy_extend.new_sale_order_line_from')
         return {
