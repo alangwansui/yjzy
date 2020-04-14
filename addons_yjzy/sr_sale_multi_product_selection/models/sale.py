@@ -31,6 +31,7 @@ class SrMultiProduct(models.TransientModel):
     @api.multi
     def add_product(self):
         for line in self.product_ids:
+            print('==', line.variant_seller_ids and line.variant_seller_ids[0].name)
             self.env['sale.order.line'].create({
                 'product_id': line.id,
                 'order_id': self._context.get('active_id'),
