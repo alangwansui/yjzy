@@ -70,7 +70,7 @@ class sale_order_line(models.Model):
             one.stock_cost = stock_cost
             one.profit_amount = price_total2 - purchase_cost - stock_cost - fandian_amoun
             one.back_tax_amount = back_tax_amount
-            #one.rest_tb_qty = one.product_qty - sum(one.tbl_ids.mapped('qty2stage'))
+            one.rest_tb_qty = one.product_qty - sum(one.tbl_ids.mapped('qty2stage'))
 
     #currency_id ==销售货币
     sale_currency_id = fields.Many2one('res.currency', related='currency_id', string=u'交易货币', readonly=True)
