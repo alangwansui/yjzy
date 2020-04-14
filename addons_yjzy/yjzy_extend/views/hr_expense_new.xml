@@ -53,7 +53,7 @@
                                 <field name="tb_id" string="系统内合同" context="{'show_ref': 1}"/>
                                 <field name="lead_id" string="项目编号" options="{'quick_create': 1}"/>
                                 <field name="employee_id" string="责任人" options="{'no_open':True}"/>
-                                <field name="employee_sales_uid" string="费用对象" domain="['|',('job_id.name','=','客户经理'),('job_id.name','=','公司')]"/>
+                                <field name="employee_sales_uid" required="1" string="费用对象" domain="['|',('job_id.name','=','客户经理'),('job_id.name','=','公司')]"/>
                                 <field name="date" string="费用发生日期"/>
                                 <field name="tax_ids" domain="[('type_tax_use', '=', 'purchase')]" widget="many2many_tags" invisible="1"
                                        groups="account.group_account_user"/>
@@ -200,7 +200,8 @@
                                 <field name="tb_id" string="系统内合同" context="{'show_ref': 1}" attrs="{'invisible':[('parent.budget_type','!=','transport')]}"/>
                                 <field name="lead_id" string="项目编号" options="{'quick_create': 1}" attrs="{'invisible':[('parent.budget_type','!=','lead')]}"/>
                                 <field name="employee_id" string="责任人" options="{'no_open':True}"/>
-                                <field name="employee_sales_uid" string="费用对象" options="{'no_open':True}" domain="['|',('job_id.name','=','客户经理'),('job_id.name','=','公司')]"/>
+                                <field name="employee_sales_uid" string="费用对象" options="{'no_open':True}"
+                                       domain="['|',('job_id.name','=','客户经理'),('job_id.name','=','公司')]" required="1"/>
                                 <field name="date" string="费用发生日期"/>
                                 <field name="tax_ids" domain="[('type_tax_use', '=', 'purchase')]" widget="many2many_tags" invisible="1"
                                        groups="account.group_account_user"/>
@@ -589,7 +590,7 @@
                                         <field name="unit_amount" string="费用金额" required="1" sum="小计" widget="monetary" options="{'currency_field': 'currency_id'}"/>
                                         <field name="employee_id" string="责任人*" options="{'no_open':True}"/>
                                         <field name="employee_sales_uid" string="费用对象*" options="{'no_open':True}"
-                                               domain="['|',('job_id.name','=','客户经理'),('job_id.name','=','公司')]"/>
+                                               domain="['|',('job_id.name','=','客户经理'),('job_id.name','=','公司')]" required="1"/>
                                         <field name="date" string="费用发生日期*"/>
                                         <field name="name" invisible="1"/>
                                         <field name="sys_outer_hetong" attrs="{'readonly':[('budget_type','!=','transport')]}"/>
@@ -862,7 +863,8 @@
                                         <field name="unit_amount" string="费用金额" required="1" sum="小计" widget="monetary"
                                                options="{'currency_field': 'currency_id'}"/>
                                         <field name="employee_id" string="责任人*" options="{'no_open':True}"/>
-                                        <field name="employee_sales_uid" string="费用对象*" options="{'no_open':True}" domain="['|',('job_id.name','=','客户经理'),('job_id.name','=','公司')]"/>
+                                        <field name="employee_sales_uid" string="费用对象*" options="{'no_open':True}"
+                                               domain="['|',('job_id.name','=','客户经理'),('job_id.name','=','公司')]" required="1"/>
                                         <field name="date" string="费用发生日期*"/>
                                         <field name="name" invisible="1"/>
                                         <field name="sys_outer_hetong" attrs="{'readonly':[('budget_type','!=','transport')]}"/>
@@ -1141,7 +1143,7 @@
                                         <field name="unit_amount" string="费用金额" required="1" sum="小计" widget="monetary"
                                                options="{'currency_field': 'currency_id'}"/>
                                         <field name="employee_id" string="责任人*" options="{'no_open':True}"/>
-                                        <field name="employee_sales_uid" string="费用对象*" options="{'no_open':True}" domain="['|',('job_id.name','=','客户经理'),('job_id.name','=','公司')]"/>
+                                        <field name="employee_sales_uid" required="1" string="费用对象*" options="{'no_open':True}" domain="['|',('job_id.name','=','客户经理'),('job_id.name','=','公司')]"/>
                                         <field name="date" string="费用发生日期*"/>
                                         <field name="name" invisible="1"/>
                                         <field name="sys_outer_hetong" attrs="{'readonly':[('budget_type','!=','transport')]}"/>
@@ -1204,7 +1206,8 @@
                                           context="{'default_can_be_expensed': 1, 'tree_view_ref': 'hr_expense.product_product_expense_tree_view','only_name':1}"/>
                                         <field name="unit_amount" string="费用金额" required="1" sum="小计" widget="monetary" options="{'currency_field': 'currency_id'}"/>
                                         <field name="employee_id" string="责任人*" options="{'no_open':True}"/>
-                                        <field name="employee_sales_uid" string="费用对象*" options="{'no_open':True}"  domain="['|',('job_id.name','=','客户经理'),('job_id.name','=','公司')]"/>
+                                        <field name="employee_sales_uid" string="费用对象*" options="{'no_open':True}"
+                                               domain="['|',('job_id.name','=','客户经理'),('job_id.name','=','公司')]"/>
                                         <field name="date" required="1" string="费用发生日期*"/>
                                         <field name="name" invisible="1"/>
                                         <field name="sys_outer_hetong"/>
