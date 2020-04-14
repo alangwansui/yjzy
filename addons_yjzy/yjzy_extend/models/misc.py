@@ -18,6 +18,7 @@ class mark_comb(models.Model):
 
     name = fields.Char(u'名称', required=True)
     line_ids = fields.Many2many('transport.mark', 'ref_mark_comb', 'bid', 'mid', string=u'唛头')
+    customer_id = fields.Many2one('res.partner','客户', domain=[('customer', '=', True),('parent_id', '=', False)])
 
 
 class exchange_type(models.Model):
