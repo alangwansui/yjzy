@@ -275,6 +275,8 @@
                                         <field name="dlr_qty" groups="base.group_system"/>
                                         <field name="qty1stage" groups="base.group_system"/>
                                         <field name="qty2stage" sum="发货"/>
+                                        <field name="qty2stage_new" sum="发货：新"/>
+
                                         <field name="org_currency_sale_amount" sum="销售"/>
                                         <field name="sale_amount" sum="销售" groups="base.group_system"/>
                                         <field name="purchase_cost" sum="采购"/>

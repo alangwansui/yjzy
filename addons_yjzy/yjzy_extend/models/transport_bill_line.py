@@ -119,6 +119,9 @@ class transport_bill_line(models.Model):
     qty1stage = fields.Float(u'入库数', compute=compute_info)
     qty2stage = fields.Float(u'发货数', compute=compute_info)
 
+    qty2stage_new = fields.Float(u'发货数:新', compute='compute_qty2stage_new')
+
+
     org_currency_sale_amount = fields.Monetary(u'销售货币金额', currency_field='sale_currency_id', compute=compute_info, store=False, digits=dp.get_precision('Money'))
     sale_amount = fields.Monetary(u'销售金额', currency_field='company_currency_id', compute=compute_info, store=False, digits=dp.get_precision('Money'))
     purchase_cost = fields.Monetary(u'采购成本', currency_field='company_currency_id', compute=compute_info, digits=dp.get_precision('Money'))
@@ -141,6 +144,12 @@ class transport_bill_line(models.Model):
     need_print = fields.Boolean('是否打印', defualt=True)
     #是否金样  akiny
     is_gold_sample = fields.Boolean('是否有金样', related='product_id.is_gold_sample', readonly=False)
+
+    @api.depends('lot_plan_ids', 'lot_plan_ids.stage_2', 'lot_plan_ids.qty')
+    def compute_qty2stage_new(self):
+        for one in self:
+            plan_lots = one.lot_plan_ids
+            one.qty2stage_new = sum([x.qty for x in plan_lots.filtered(lambda x: x.stage_2 == True)])
 
 
     @api.onchange('sol_id')
