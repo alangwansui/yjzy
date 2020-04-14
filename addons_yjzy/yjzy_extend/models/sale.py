@@ -264,7 +264,7 @@ class sale_order(models.Model):
         ('submit', u'待责任人审核'),
         ('sales_approve', u'待业务合规审核'),
         ('manager_approval', u'待总经理特批'),
-        ('approve', u'审批完成'),
+        ('approve', u'审批完成待出运'),
         ('sale', 'Sales Order'),
         ('done', 'Locked'),
         ('cancel', 'Cancelled'),
