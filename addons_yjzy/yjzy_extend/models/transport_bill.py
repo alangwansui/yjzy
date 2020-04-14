@@ -439,7 +439,7 @@ class transport_bill(models.Model):
     def onchange_date_supplier_finish(self):
         self.date_supplier_finish_related = self.date_supplier_finish
 
-    @api.constrains
+    @api.constrains('line_ids')
     def check_lines(self):
         for one in self:
             if len(one.line_ids) != len(one.line_ids.mapped('sol_id')):
