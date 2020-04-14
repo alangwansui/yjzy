@@ -403,7 +403,7 @@ class transport_bill(models.Model):
 
     all_purchase_invoice_fill = fields.Boolean('所有采购发票都已填写', compute=compute_invoice_amount)
 
-    hs_fill = fields.Selection([('all', u'全部'),('sale_purchase', u'销售采购'),('packaging', u'包装资料'),('others', u'其他信息')])
+    hs_fill = fields.Selection([('all', u'全部'),('sale_purchase', u'销售采购'),('packaging', u'包装资料'),('others', u'其他信息')],'报关显示', default='sale_purchase')
 
     #hs_fill_sale_purchase = fields.Boolean('报关invoice信息')
     #hs_fill_sale_packaging = fields.Boolean('报关packing信息')

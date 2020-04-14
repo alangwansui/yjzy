@@ -126,7 +126,7 @@
             <field name="model">transport.bill</field>
             <field name="arch" type="xml">
                 <form string="出运单">
-                    <header groups="base.group_system" invisible="1">
+                    <header groups="base.group_system" >
                         <button string="添加销售合同" states="draft" type="object" name="open_wizard_transport4so"
                                 class="oe_highlight"/>
                          <button string="添加销售明细" states="draft" type="object" name="open_wizard_transport4sol" groups="base.group_system"
@@ -345,7 +345,7 @@
 
                                     </form>
                                 </field>
-                                <field name="description_baoguan"/>
+
 
                             </page>
 
@@ -585,6 +585,7 @@
 
 
                                 </field>
+                                <field name="description_baoguan"/>
                             </page>
 
                             <page string="采购明细"  groups="base.group_system" invisible="1">
@@ -622,7 +623,7 @@
                                 </field>
                             </page>
                             <page string="报关采购统计">
-                                <field name="btls_hs_ids">
+                                <field name="btls_hs_ids" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}">
                                     <tree editable="bottom">
                                         <field name="sale_hs_id" domain="[('tb_id','=', parent.id)]" string="销售统计"/>
                                         <field name="sale_hs_db_id"/>
