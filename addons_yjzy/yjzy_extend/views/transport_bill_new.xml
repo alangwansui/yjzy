@@ -126,12 +126,12 @@
             <field name="model">transport.bill</field>
             <field name="arch" type="xml">
                 <form string="出运单">
-                    <header groups="base.group_system" invisible="1">
+                    <header groups="base.group_system" >
                         <button string="添加销售合同" states="draft" type="object" name="open_wizard_transport4so"
                                 class="oe_highlight"/>
                          <button string="添加销售明细" states="draft" type="object" name="open_wizard_transport4sol" groups="base.group_system"
                                 class="oe_highlight"/>
-                        <button string="准备默认出运计划" invisible="1" type="object" name="make_default_lot_plan" attrs="{'invisible': [('is_done_plan','=',True)]}"  class="oe_highlight"/>
+                        <button string="准备默认出运计划" invisible="0" type="object" name="make_default_lot_plan" attrs="{'invisible': [('is_done_plan','=',True)]}"  class="oe_highlight"/>
                         <button string="销售统计"  name="make_sale_collect" attrs="{'invisible': [('sale_collect_state','!=','draft')]}" class="oe_highlight"
                                 type="object"/>
                         <button string="采购统计" name="make_purchase_collect" attrs="{'invisible': [('purchase_collect_state','!=','draft')]}"
@@ -222,7 +222,7 @@
                                 <field name="purchase_gongsi_id" groups="base.group_system" string="采购主体" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
                             </group>
                                 <group>
-                                        <field name="sale_currency_id" />
+                                        <field name="sale_currency_id" invisible="1"/>
                                         <field name="fee_inner" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
                                         <field name="fee_rmb1" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
                                         <field name="fee_rmb2" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
@@ -246,8 +246,8 @@
                                         <field name="cip_type" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}" invisible="1"/>
                                         <field name="credit_info" invisible="1"/>
                                         <field name="insurance_info" invisible="1"/>
-                                        <field name="user_id" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}" no_create="True" string="责任人"/>
-                                        <field name="sale_assistant_id" invisible="0"/>
+                                        <field name="user_id" readonly="1" no_create="True" string="责任人"/>
+                                        <field name="sale_assistant_id" readonly="1" invisible="0"/>
                                         <field name="description" string="出运说明" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
                                         <field name="hs_fill" groups="base.group_system"/>
                                     </group>
@@ -345,7 +345,7 @@
 
                                     </form>
                                 </field>
-                                <field name="description_baoguan"/>
+
 
                             </page>
 
@@ -585,6 +585,7 @@
 
 
                                 </field>
+                                <field name="description_baoguan"/>
                             </page>
 
                             <page string="采购明细"  groups="base.group_system" invisible="1">
@@ -622,7 +623,7 @@
                                 </field>
                             </page>
                             <page string="报关采购统计">
-                                <field name="btls_hs_ids">
+                                <field name="btls_hs_ids" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}">
                                     <tree editable="bottom">
                                         <field name="sale_hs_id" domain="[('tb_id','=', parent.id)]" string="销售统计"/>
                                         <field name="sale_hs_db_id"/>
