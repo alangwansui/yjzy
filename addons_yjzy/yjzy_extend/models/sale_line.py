@@ -153,8 +153,8 @@ class sale_order_line(models.Model):
         self.back_tax = self.product_id.back_tax
         #self.s_uom_id = self.product_id.uom_id
         #self.p_uom_id = self.product_id.uom_po_id
-         self.s_uom_id = self.product_id.s_uom_id
-         self.p_uom_id = self.product_id.p_uom_id
+        self.s_uom_id = self.product_id.s_uom_id
+        self.p_uom_id = self.product_id.p_uom_id
         self.need_split_bom = self.product_id.need_split_bom
         self.need_print = self.product_id.need_print
         return res
