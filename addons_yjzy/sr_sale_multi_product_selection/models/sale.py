@@ -33,7 +33,9 @@ class SrMultiProduct(models.TransientModel):
         for line in self.product_ids:
             self.env['sale.order.line'].create({
                 'product_id': line.id,
-                'order_id': self._context.get('active_id')
+                'order_id': self._context.get('active_id'),
+                'supplier_id': line.variant_seller_ids and line.variant_seller_ids[0].name.id,
+                'purchase_price': line.variant_seller_ids and line.variant_seller_ids[0].price,
             })
         return
 
