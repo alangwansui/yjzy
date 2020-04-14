@@ -439,11 +439,11 @@ class transport_bill(models.Model):
     def onchange_date_supplier_finish(self):
         self.date_supplier_finish_related = self.date_supplier_finish
 
-    @api.constrains('line_ids')
-    def check_lines(self):
-        for one in self:
-            if len(one.line_ids) != len(one.line_ids.mapped('sol_id')):
-                raise Warning('不能创建相同 销售明细 的出运明细行')
+    # @api.constrains('line_ids')
+    # def check_lines(self):
+    #     for one in self:
+    #         if len(one.line_ids) != len(one.line_ids.mapped('sol_id')):
+    #             raise Warning('不能创建相同 销售明细 的出运明细行')
 
     @api.model
     def create(self, vals):
@@ -1126,8 +1126,13 @@ class transport_bill(models.Model):
 
     @api.constrains('line_ids')
     def check_lines(self):
+        print('----------check_lines---------')
+
         if len(self.line_ids.mapped('so_id').mapped('partner_id')) > 1:
             raise Warning('发运单只允许关联一个客户的销售订单')
+
+        if len(self.line_ids) != len(self.line_ids.mapped('sol_id')):
+            raise Warning('出运明细有重复的销售明细行')
 
 
     def open_wizard_transport4sol(self):
