@@ -262,6 +262,41 @@
             </field>
         </record>
 
+        <record id="new_sale_order_approve_tree" model="ir.ui.view">
+            <field name="name">sale.order.tree</field>
+            <field name="model">sale.order</field>
+            <field name="arch" type="xml">
+                <tree string="Sales Orders" decoration-bf="message_needaction==True" default_order="approve_date desc"  decoration-muted="state=='cancel'">
+                    <field name="message_needaction" invisible="1"/>
+                    <field name="id" groups="base.group_system" invisible="1"/>
+                    <field name="name" string="订单流水" groups="base.group_system" invisible="1"/>
+                    <field name="contract_code"/>
+                    <field name="partner_id"/>
+                    <field name="requested_date" widget="date" string="交货日"/>
+                    <field name="delivery_status" invisible="1"/>
+                    <field name="confirmation_date" string="Order Date" invisible="1"/>
+                    <field name="contract_date" attrs="{}" string="签订日期" required="1"/>
+                    <field name="amount_total" sum="Total Tax Included" widget="monetary" string="销售金额"/>
+                    <field name="purchase_cost"  string="采购金额"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="no_sent_amount" string="未发货销售"/>
+                    <field name="purchase_no_deliver_amount" string="未发货采购"/>
+                    <field name="pre_advance" string="建议预收" invisible="1"/>
+                    <field name="balance" string="实际预收余额" invisible="1"/>
+                    <field name="invoice_status" invisible="1"/>
+                    <field name="state" invisible="1"/>
+                    <field name="user_id" groups="sale.hegui_all" string="责任人"/>
+                    <field name="commitment_date" invisible="1"/>
+                    <field name="advance_po_residual" invisible="1"/>
+                    <field name="approve_date" widget="date" string="合规审批日"/>
+                    <field name="purchase_approve_date" widget="date" string="采购审批日"/>
+                    <field name="gongsi_id" string="销售主体"/>
+                    <field name="company_id" groups="base.group_system" invisible="1"/>
+                </tree>
+
+            </field>
+        </record>
+
         <record id="new_sale_order_form" model="ir.ui.view">
             <field name="name">sale.order.form</field>
             <field name="model">sale.order</field>
@@ -1103,19 +1138,19 @@
 
 <!--销售部待处理合同：草稿和提交状态-->
         <record id="new_sale_order_sales_action" model="ir.actions.act_window">
-            <field name="name">业务待处理</field>
+            <field name="name">未生效合同列表</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">sale.order</field>
             <field name="view_mode">tree,form,kanban</field>
             <field name="limit">20</field>
-            <field name="domain">[('state','in',['draft','submit','approve'])]</field>
-            <field name="context">{}</field>
+            <field name="domain">[('state','in',['draft','submit','sales_approve','manager_approval','approve'])]</field>
+            <field name="context">{'group_by':'state'}</field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('new_sale_order_tree')}),
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('new_sale_order_kanban')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_form')})]"/>
         </record>
-        <menuitem id="new_sale_order_sales_menu" name="业务待处理" parent="new_sale_order_root" action="new_sale_order_sales_action" sequence="1"/>
+        <menuitem id="new_sale_order_sales_menu" name="未生效合同列表" parent="new_sale_order_root" action="new_sale_order_sales_action" sequence="2"/>
 <!--合规待处理合同：合规审批、审批完成、出运中、核销中-->
         <record id="new_sale_order_hegui_action" model="ir.actions.act_window">
             <field name="name">合规待处理</field>
@@ -1154,20 +1189,20 @@
 
       <!--我的销售合同：权限内的合同-->
 
-        <record id="new_sale_order_user_action" model="ir.actions.act_window">
-            <field name="name">我的销售合同</field>
+        <record id="new_sale_order_user_approve_action" model="ir.actions.act_window">
+            <field name="name">执行中合同列表</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">sale.order</field>
             <field name="limit">20</field>
             <field name="view_mode">tree,form,kanban</field>
-            <field name="domain">[]</field>
-            <field name="context">{'group_by':'state'}</field>
+            <field name="domain">[('state','in',['sale'])]</field>
+            <field name="context">{}</field>
             <field name="view_ids" eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'tree', 'view_id': ref('new_sale_order_tree')}),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('new_sale_order_approve_tree')}),
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('new_sale_order_kanban')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_form')})]"/>
         </record>
-        <menuitem id="new_sale_order_user_menu" name="我的销售合同" parent="new_sale_order_root" action="new_sale_order_user_action" sequence="4"/>
+        <menuitem id="new_sale_order_user_approve_menu" name="执行中合同列表" parent="new_sale_order_root" action="new_sale_order_user_approve_action" sequence="1"/>
 
           <record id="new_sale_order_create_action" model="ir.actions.act_window">
             <field name="name">创建销售合同</field>
@@ -1180,10 +1215,10 @@
                               (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_form')})]"/>
         </record>
         <menuitem id="new_sale_order_create_menu"
-                  name="创建合同"
+                  name="创建销售合同"
                   parent="new_sale_order_root"
                   action="new_sale_order_create_action"
-                  groups="base.group_system" sequence="5"/>
+                  sequence="5"/>
 
 
 

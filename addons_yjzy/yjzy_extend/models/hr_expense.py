@@ -180,16 +180,20 @@ class hr_expense(models.Model):
 
     @api.onchange('employee_id')
 #akiny只有是客户经理的时候才跟着责任人变化
-    def onchange_employee_id(self):
-        job_id_name = self.employee_id.job_id.name
 
-        if job_id_name == u'客户经理':
-           self.employee_sales_uid = self.employee_id
-        else:
-            if job_id_name == u'业务助理':
-                self.employee_sales_uid = self.user_id.assistant_id.employee_id
-            else:
-                self.employee_sales_uid = None
+
+    def onchange_employee_id(self):
+        self.employee_sales_uid = self.employee_id.employee_sales_uid
+
+       # job_id_name = self.employee_id.job_id.name
+
+       # if job_id_name == u'客户经理':
+       #    self.employee_sales_uid = self.employee_id
+       # else:
+       #     if job_id_name == u'业务助理':
+        #        self.employee_sales_uid = self.user_id.assistant_id.employee_id
+       #     else:
+       #         self.employee_sales_uid = None
 
     def btn_user_confirm(self):
         force = self.env.context.get('force')
