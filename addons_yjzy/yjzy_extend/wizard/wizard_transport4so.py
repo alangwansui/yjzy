@@ -34,6 +34,9 @@ class wizard_transport4so(models.TransientModel):
                     'qty1stage': sol.qty_unreceived,
                     'back_tax': sol.product_id.back_tax,
                 })
+
+        tb.check_lines()
+
         return True
 
     def apply(self):
