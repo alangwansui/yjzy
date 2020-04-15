@@ -186,17 +186,17 @@
                         <div class="oe_button_box" name="button_box">
                             <button name="open_sale_invoice" type="object" class="oe_stat_button"
                                     icon="fa-pencil-square-o"
-                                    string="销售发票">
+                                    string="应收账单">
                                 <field name="sale_invoice_count"/>
                             </button>
                             <button name="open_purchase_invoice" type="object" class="oe_stat_button"
                                     icon="fa-pencil-square-o"
-                                    string="采购发票">
+                                    string="应付账单">
                                 <field name="purchase_invoice_count"/>
                             </button>
                             <button name="open_back_tax_invoice" type="object" class="oe_stat_button"
                                     icon="fa-pencil-square-o"
-                                    string="退税发票">
+                                    string="退税应收">
                                 <field name="back_tax_invoice_count"/>
                             </button>
                         </div>
@@ -206,49 +206,50 @@
                                 <field name="ref" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
                                 <field name="name" readonly="1" groups="base.group_system" invisible="1"/>
 
-                                <field name="partner_id" required="1" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"
+                                <field name="partner_id" required="1" options="{'no_open':1}" attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"
                                        domain="[('customer','=',True),('parent_id', '=', False),'|','|','|','|','|',('assistant_id','=',uid),('user_id','=',uid),('parent_id.assistant_id','=',uid),('parent_id.user_id','=',uid),('supplier','=',1),('x_studio_field_3ErQR','=',1)]" no_create="True"/>
 
-                                <field name="partner_shipping_id" domain="[('parent_id','child_of', partner_id)]"
-                                       attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"  no_create="True"/>
-                                <field name="date" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}" invisible="1"/>
+                                <field name="partner_shipping_id" string="出运地址" options="{'no_open':1}" domain="[('parent_id','child_of', partner_id)]"
+                                       attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"  no_create="True"/>
+                                <field name="date" attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}" invisible="1"/>
                                 <field name="partner_invoice_id" domain="[('parent_id','child_of', partner_id)]" invisible="1"
                                        attrs="{'readonly': [('locked','=',True)]}" groups="base.group_system"/>
-                                <field name="create_date" string="创建日期" attrs="{'readonly': 1}" widget="date"/>
-                                <field name="include_tax" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
+                                <field name="create_date" string="创建日期" attrs="{'readonly': 1}" options="{'no_open':1}" widget="date"/>
+                                <field name="include_tax" attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <field name="locked" groups="base.group_system" invisible="1"/>
-                                <field name="contract_type" groups="base.group_system" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
-                                <field name="gongsi_id" groups="base.group_system" string="销售主体" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
-                                <field name="purchase_gongsi_id" groups="base.group_system" string="采购主体" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
+                                <field name="contract_type" groups="base.group_system" attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
+                                <field name="gongsi_id" options="{'no_open':1}" groups="base.group_system" string="销售主体" attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
+                                <field name="purchase_gongsi_id" options="{'no_open':1}" groups="base.group_system" string="采购主体"
+                                       attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                             </group>
                                 <group>
                                         <field name="sale_currency_id" invisible="1"/>
-                                        <field name="fee_inner" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
-                                        <field name="fee_rmb1" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
-                                        <field name="fee_rmb2" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
+                                        <field name="fee_inner" attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
+                                        <field name="fee_rmb1" attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
+                                        <field name="fee_rmb2" attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
 
-                                        <field name="fee_outer" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
+                                        <field name="fee_outer" attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                         <field name="outer_currency_id" invisible="1" readonly="1"/>
-                                        <field name="fee_export_insurance" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
+                                        <field name="fee_export_insurance" attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                         <field name="export_insurance_currency_id" invisible="1" readonly="1"/>
-                                        <field name="fee_other" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
+                                        <field name="fee_other" attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                         <field name="other_currency_id" readonly="1" invisible="1"/>
                                         <field name="fee_outer_need" string="运保费计入应收" readonly="1"/>
                                     </group>
                                     <group>
-                                        <field name="incoterm" string="价格条款" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
-                                        <field name="payment_term_id" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
+                                        <field name="incoterm" string="价格条款" attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)],'required':[('state','=','check')]}"/>
+                                        <field name="payment_term_id" options="{'no_open':1}" attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)],'required':[('state','=','check')]}"/>
                                         <field name="sale_type" invisible="1"/>
                                         <field name="gold_sample_state" readonly="1"/>
 
-                                        <field name="account_type" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
-                                        <field name="trans_type" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
-                                        <field name="cip_type" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}" invisible="1"/>
+                                        <field name="account_type" attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
+                                        <field name="trans_type" attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
+                                        <field name="cip_type" attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}" invisible="1"/>
                                         <field name="credit_info" invisible="1"/>
                                         <field name="insurance_info" invisible="1"/>
-                                        <field name="user_id" readonly="1" no_create="True" string="责任人"/>
-                                        <field name="sale_assistant_id" readonly="1" invisible="0"/>
-                                        <field name="description" string="出运说明" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
+                                        <field name="user_id" readonly="1" no_create="True" string="责任人" options="{'no_open':1}"/>
+                                        <field name="sale_assistant_id" readonly="1" invisible="0" options="{'no_open':1}"/>
+                                        <field name="description" string="出运说明" attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                         <field name="hs_fill" groups="base.group_system"/>
                                     </group>
 
@@ -256,7 +257,7 @@
                         </group>
                         <notebook>
                             <page string="明细" name="cymx" groups="sales_team.group_sale_assistant">
-                                <field name="line_ids" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}">
+                                <field name="line_ids" attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}">
                                     <tree create="false" editable="bottom">
                                         <button icon="fa-paper-plane" type="object"  attrs="{'invisible':[('parent.state','not in',['draft']),('parent.is_editable','=',False)]}" name="make_default_lot_plan"/>
                                         <field name="sale_contract_code"/>
@@ -270,7 +271,7 @@
                                         <field name="so_id" groups="base.group_system" invisible="1"/>
 
 
-                                        <field name="product_id"/>
+                                        <field name="product_id" options="{'no_open':1}"/>
                                         <field name="hs_id" invisible="1"/>
 
                                         <field name="sale_qty" sum="小计"/>
@@ -278,7 +279,7 @@
                                         <field name="rest_tb_qty"/>
                                         <field name="plan_qty" string="本次计划" sum="小计"/>
                                         <field name="lot_plan_id" invisible="1"/>
-                                        <field name="plan_lot" readonly="1" context="{'show_po_code': 1}"/>
+                                        <field name="plan_lot" readonly="1" context="{'show_po_code': 1}" options="{'no_open':1}"/>
 
 
                                         <field name="smline_str" groups="base.group_system" invisible="1"/>
@@ -409,8 +410,9 @@
                                                attrs="{'readonly':[('state','not in',['draft','submit','sales_approve','approve']),('is_editable','=',False)]}" string="唛头"/>
                                         <field name="notice_man" attrs="{'readonly':[('state','not in',['draft','submit','sales_approve','approve']),('is_editable','=',False)]}"/>
                                         <field name="delivery_man" attrs="{'readonly':[('state','not in',['draft','submit','sales_approve','approve']),('is_editable','=',False)]}"/>
-                                        <field name="wharf_src_id" attrs="{'readonly':[('state','not in',['draft','submit','sales_approve','approve']),('is_editable','=',False)]}"/>
-                                        <field name="wharf_dest_id" attrs="{'readonly':[('state','not in',['draft','submit','sales_approve','approve']),('is_editable','=',False)]}"/>
+                                        <field name="wharf_src_id"  options="{'no_open':1}"
+                                               attrs="{'readonly':[('state','not in',['draft','submit','sales_approve','approve']),('is_editable','=',False)]}"/>
+                                        <field name="wharf_dest_id" options="{'no_open':1}" attrs="{'readonly':[('state','not in',['draft','submit','sales_approve','approve']),('is_editable','=',False)]}"/>
                                         <field name="forwarder_name" attrs="{'readonly':[('state','not in',['draft','submit','sales_approve','approve']),('is_editable','=',False)]}"/>
                                         <field name="settlement" attrs="{'readonly':[('state','not in',['draft','submit','sales_approve','approve']),('is_editable','=',False)]}"/>
                                         <field name="notice" attrs="{'readonly':[('state','not in',['draft','submit','sales_approve','approve']),('is_editable','=',False)]}"/>
@@ -422,7 +424,7 @@
 
                             <page string="清关资料" name="qgzl" >
 
-                                <field name="qingguan_line_ids" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}">
+                                <field name="qingguan_line_ids" attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}">
                                     <tree editable="bottom">
                                         <field name="company_currency_id" invisible="1"/>
                                         <field name="sale_currency_id" invisible="1"/>
@@ -766,7 +768,7 @@
             <field name="name">transport.bill.tree</field>
             <field name="model">transport.bill</field>
             <field name="arch" type="xml">
-                <tree string="出运单" create="False">
+                <tree string="出运单" create="false">
                     <field name="name"/>
                     <field name="partner_id" required="1"/>
                     <field name="ref"/>

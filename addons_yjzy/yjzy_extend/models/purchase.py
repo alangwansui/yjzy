@@ -72,7 +72,19 @@ class purchase_order(models.Model):
     # is_cip = fields.Boolean(u'报关', default=False)
     # is_fapiao = fields.Boolean(u'含税')
     #akiny 修改state
-    state = fields.Selection(selection_add=[('edit', u'可修改'),('approve_sales',u'责任人审批完成'),('submit',u'已提交'),('refused',u'已拒绝')])
+    #state = fields.Selection(selection_add=[('edit', u'可修改'),('approve_sales',u'责任人审批完成'),('submit',u'已提交'),('refused',u'已拒绝')])
+
+    state = fields.Selection([
+        ('draft', 'RFQ'),
+        ('check', '检查'),
+        ('sent', 'RFQ Sent'),
+        ('approve_sales',u'责任人审批完成'),
+        ('submit',u'已提交'),
+        ('to approve', 'To Approve'),  # akiny 翻译成等待出运
+        ('purchase', 'Purchase Order'),
+        ('done', 'Locked'),
+        ('cancel', 'Cancelled'),('refused',u'已拒绝')
+    ], string='Status', readonly=True, index=True, copy=False, default='draft', track_visibility='onchange')
     contract_code = fields.Char(u'合同编码')
     term_purchase = fields.Html(u'采购条款')
     so_ids = fields.Many2many('sale.order', compute=compute_so, stirng=u'销售订单', copy=False)

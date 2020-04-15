@@ -47,6 +47,7 @@ class wizard_so2po(models.TransientModel):
                     'price_unit': line.sol_id.purchase_price,
                     'sol_id': line.sol_id.id,
                     'lot_sub_name': line.sol_id.lot_sub_name,
+                    'back_tax': line.sol_id.back_tax,
                 })
                 line.sol_id.pol_id = pol
 

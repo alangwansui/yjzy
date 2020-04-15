@@ -188,9 +188,13 @@ class transport_bill(models.Model):
 
 
     # 货币设置
-    state = fields.Selection([('cancel', u'取消'),('draft', '草稿'), ('w_sale_manager', u'待批准'), ('w_sale_director', u'待销售总监'),('submit', u'已提交'), ('sales_approve', u'责任人已审批'),('refused', u'已拒绝'),
-                              ('approve', '合规已审批'), ('confirmed', '单证已审批'),('delivered', '发货完成'), ('invoiced', '已开票'),('locked', '锁定'),
-                              ('done', '完结'),('paid', '已收款'), ('edit', u'可修改')], '状态', default='draft', track_visibility='onchange',)
+    state = fields.Selection([('cancel', u'取消'),
+                              ('refused', u'已拒绝'),
+                              ('draft', u'草稿'), ('check', u'检查'),
+                              ('w_sale_manager', u'待批准'),
+                              ('w_sale_director', u'待销售总监'),('submit', u'待责任人审批'), ('sales_approve', u'待合规审批'),
+                              ('approve', u'合规已审批'), ('confirmed', u'单证已审批'),('delivered', u'发货完成'), ('invoiced', u'已开票'),('locked', u'锁定'),
+                              ('done', u'完结'),('paid', '已收款'), ('edit', u'可修改')], '状态', default='draft', track_visibility='onchange',)
 
     locked = fields.Boolean(u'锁定不允许修改')
     include_tax = fields.Boolean(u'含税')
