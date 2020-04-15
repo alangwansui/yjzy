@@ -273,10 +273,10 @@
                                         <field name="product_id"/>
                                         <field name="hs_id" invisible="1"/>
 
-                                        <field name="sale_qty"/>
+                                        <field name="sale_qty" sum="小计"/>
                                         <field name="qty_undelivered" invisible="1"/>
                                         <field name="rest_tb_qty"/>
-                                        <field name="plan_qty" string="本次计划"/>
+                                        <field name="plan_qty" string="本次计划" sum="小计"/>
                                         <field name="lot_plan_id" invisible="1"/>
                                         <field name="plan_lot" readonly="1" context="{'show_po_code': 1}"/>
 
@@ -1113,7 +1113,7 @@
             <field name="view_type">form</field>
             <field name="limit">20</field>
             <field name="view_mode">tree,form,kanban</field>
-            <field name="domain">[('state','in',['cancel','draft','submit']),'|','|',('partner_id.x_studio_field_U7OvH','in',uid),('partner_id.user_id','=',uid),('partner_id.assistant_id','=',uid)]</field>
+            <field name="domain">[('state','in',['cancel','draft','submit'])]</field>
             <field name="context">{'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3}</field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_transport_bill_new_sales_tree')}),
@@ -1127,6 +1127,29 @@
                   sequence="1"
                   action="act_open_transport_bill_new_sales_view"
                   />
+<!--伟伟-->
+        <record model="ir.actions.act_window" id="act_open_transport_bill_new_weiwei_view">
+            <field name="name">业务待处理</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">transport.bill</field>
+            <field name="view_type">form</field>
+            <field name="limit">20</field>
+            <field name="view_mode">tree,form,kanban</field>
+            <field name="domain">[('state','in',['cancel','draft','submit']),'|','|',('partner_id.x_studio_field_U7OvH','in',uid),('partner_id.user_id','=',uid),('partner_id.assistant_id','=',uid)]</field>
+            <field name="context">{'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_transport_bill_new_sales_tree')}),
+                          (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_transport_bill_new_sales_kanban')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_transport_bill_new_sales_form')})]"/>
+
+        </record>
+
+        <menuitem id="menu_transport_new_weiwei_bill" name="业务待处理"
+                  parent="yjzy_extend.menu_transport_new_bill_root"
+                  sequence="1"
+                  action="act_open_transport_bill_new_weiwei_view"
+                  />
+
 
   <record model="ir.actions.act_window" id="act_open_transport_bill_new_hegui_view">
             <field name="name">合规待处理</field>
