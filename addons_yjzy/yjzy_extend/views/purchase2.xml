@@ -115,6 +115,7 @@
                     </div>
                     <group>
                         <group>
+                            <field name="is_different_payment_term" invisible="1"/>
                             <field name="contract_code" string="采购合同号*" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)],
                             'required':[('state','=','check')]}" />
                             <field name="include_tax" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}" />
@@ -126,8 +127,22 @@
                             <field name="need_purchase_fandian" invisible="1"/>
                             <field name="purchase_fandian_ratio" attrs="{'invisible': [('need_purchase_fandian','!=',True)]}" invisible="1"/>
                             <field name="purchase_fandian_partner_id" attrs="{'invisible': [('need_purchase_fandian','!=',True)]}" invisible="1"/>
-                            <field name="payment_term_id" readonly="1" options="{'no_open': True, 'no_create': True}" domain="[('type','in', ['purchase', 'comm'])]"
-                                   attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
+
+                            <!--field name="payment_term_id"  options="{'no_open': True, 'no_create': True}" domain="[('type','in', ['purchase', 'comm'])]"
+                                   attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/-->
+
+                             <label for="payment_term_id" string="付款条款" attrs="{'invisible':[('is_different_payment_term','=',False)]}"/>
+                                <div attrs="{'invisible':[('is_different_payment_term','=',False)]}" class="o_row" style="color:red">
+                                <field name="payment_term_id" options="{'no_create': True,'no_open':True}" class="oe_inline"
+                                attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}" domain="[('type','in', ['purchase', 'comm'])]"/></div>
+                                <label for="payment_term_id" string="付款条款" attrs="{'invisible':[('is_different_payment_term','!=',False)]}"/>
+                                <div attrs="{'invisible':[('is_different_payment_term','!=',False)]}" class="o_row" style="color:grey">
+                                <field name="payment_term_id" options="{'no_create': True,'no_open':True}" class="oe_inline"
+                                attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}" domain="[('type','in', ['purchase', 'comm'])]"/></div>
+                                <field name="partner_payment_term_id" string="预设付款条款" readonly="1" options="{'no_open':1}"
+                                       attrs="{'invisible':[('is_different_payment_term','=',False)]}"/>
+
+
                             <field name="is_shipped" invisible="1"/>
                             <field name="gongsi_id" string="采购主体" groups="base.group_system" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}" />
                         </group>

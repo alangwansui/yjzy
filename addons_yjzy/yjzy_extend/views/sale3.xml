@@ -338,10 +338,7 @@
             <field name="model">sale.order</field>
             <field name="arch" type="xml">
                 <form string="销售订单" class="o_sale_order">
-                     <div attrs="{'invisible':[('is_different_payment_term','=',False)]}" name="pro" class="oe_form_box_info oe_text_center" style="color:red;">
-                        <p>注意：付款条款和预设的条件不同</p>
-                     </div>
-                    <header groups="base.group_system">
+                       <header groups="base.group_system">
                          <field name="state" widget="statusbar" statusbar_invisible="draft"  groups="base.group_system"/>
                     </header>
                     <header invisible="1">
@@ -425,7 +422,7 @@
                         </group>
                         <group col="3">
                             <group>
-                                <field name="is_different_payment_term" />
+                                <field name="is_different_payment_term"  invisible="1"/>
                                 <field name="contract_code" string="合同号*" required="1" attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}"/>
                                 <field name="partner_id" string="客户*" required="1" domain="[('customer','=',True),('parent_id', '=', False),'|','|','|','|','|',('assistant_id','=',uid),('user_id','=',uid),('parent_id.assistant_id','=',uid),('parent_id.user_id','=',uid),('supplier','=',1),('x_studio_field_3ErQR','=',1)]"
                                        attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}" context="{'search_default_customer':1, 'show_address': 0}" options="{&quot;always_reload&quot;: True}"/>
@@ -437,10 +434,16 @@
                                 <field name="incoterm" attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}"/>
                                 <field name="contract_date" string="客户确认日期*" attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)],'required':[('state','=','check')]}"/>
                                 <field name="requested_date" string="客户交期*" widget="date" attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)],'required':[('state','=','check')]}"/>
-                                <field name="payment_term_id" string="付款条款*" options="{'no_create': True,'no_open':True, 'color':'red','fd':'is_different_payment_term','op':'=','v':True}"
-                                       attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}"
-                                       domain="[('type','in', ['sale', 'comm'])]" />
-                                <field name="partner_payment_term_id" string="预设付款条款" readonly="1" options="{'no_open':1}" attrs="{'invisible':[('is_different_payment_term','=',False)]}"/>
+                                <label for="payment_term_id" string="付款条款" attrs="{'invisible':[('is_different_payment_term','=',False)]}"/>
+                                <div attrs="{'invisible':[('is_different_payment_term','=',False)]}" class="o_row" style="color:red">
+                                <field name="payment_term_id" options="{'no_create': True,'no_open':True}" class="oe_inline"
+                                attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}" domain="[('type','in', ['sale', 'comm'])]"/></div>
+                                <label for="payment_term_id" string="付款条款" attrs="{'invisible':[('is_different_payment_term','!=',False)]}"/>
+                                <div attrs="{'invisible':[('is_different_payment_term','!=',False)]}" class="o_row" style="color:grey">
+                                <field name="payment_term_id" options="{'no_create': True,'no_open':True}" class="oe_inline"
+                                attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}" domain="[('type','in', ['sale', 'comm'])]"/></div>
+                                <field name="partner_payment_term_id" string="预设付款条款" readonly="1" options="{'no_open':1}"
+                                       attrs="{'invisible':[('is_different_payment_term','=',False)]}"/>
                                 <field name="current_date_rate" string="当日汇率*" attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}" options="{'no_open':True}"/>
                                 <field name="currency_id" invisible="0" attrs="{'readonly':1}" options="{'no_open':1}"/>
                                 <field name="include_tax" attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}"/>
