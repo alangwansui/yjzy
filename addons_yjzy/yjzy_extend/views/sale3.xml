@@ -1195,7 +1195,7 @@
             <field name="res_model">sale.order</field>
             <field name="view_mode">tree,form,kanban</field>
             <field name="limit">20</field>
-            <field name="domain">[('state','in',['draft','submit','sales_approve','manager_approval','approve','cancel']),
+            <field name="domain">[('state','in',['draft','submit','sales_approve','manager_approval','approve','cancel','refused']),
                 '|',('partner_id.x_studio_field_U7OvH','in',uid),('partner_id.assistant_id','=',uid)]</field>
             <field name="context">{'group_by':'state'}</field>
             <field name="view_ids" eval="[(5, 0, 0),
