@@ -127,7 +127,7 @@
                                    attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
 
                             <field name="is_shipped" invisible="1"/>
-                            <field name="gongsi_id" string="采购主体" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}" />
+                            <field name="gongsi_id" string="采购主体" groups="base.group_system" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}" />
                         </group>
                         <group>
 
