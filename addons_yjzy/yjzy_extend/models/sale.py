@@ -241,7 +241,7 @@ class sale_order(models.Model):
 
 
 
-
+    partner_payment_term_id = fields.Many2one('account.payment.term',u'客户付款条款', related='partner_id.property_payment_term_id')
 
     current_date_rate = fields.Float('当日汇率')
 
@@ -290,12 +290,20 @@ class sale_order(models.Model):
     second_porfit = fields.Float('销售主体利润', compute=compute_info) #amount_total2-刚刚计算出来的 second_const
     second_tenyale_profit = fields.Float('采购主体利润', compute=compute_info)#(采购主体利润)：
 
+    is_different_payment_term = fields.Boolean('付款条款是否不同')
 
 
     # : 公式的cost改成second_cost
     # second_tenyale_profit：原公式的销售额改成second_cost
     # second_unit_price: = 订单
 
+    @api.onchange('payment_term_id')
+    def onchange_payment_term_id(self):
+
+        if self.payment_term_id != self.partner_payment_term_id:
+            self.is_different_payment_term = True
+        else:
+            self.is_different_payment_term = False
 
     @api.onchange('contract_type')
     def onchange_contract_type(self):
