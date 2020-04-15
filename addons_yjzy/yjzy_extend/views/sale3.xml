@@ -1179,7 +1179,7 @@
             <field name="res_model">sale.order</field>
             <field name="view_mode">tree,form,kanban</field>
             <field name="limit">20</field>
-            <field name="domain">[('state','in',['draft','submit','sales_approve','manager_approval','cancel','refused'])]</field>
+            <field name="domain">[('state','in',['draft','submit','sales_approve','manager_approval','cancel','refuse'])]</field>
             <field name="context">{'group_by':'state'}</field>
             <field name="search_view_id" ref="view_sales_order_new_approval_filter"/>
             <field name="view_ids" eval="[(5, 0, 0),
@@ -1195,7 +1195,7 @@
             <field name="res_model">sale.order</field>
             <field name="view_mode">tree,form,kanban</field>
             <field name="limit">20</field>
-            <field name="domain">[('state','in',['draft','submit','sales_approve','manager_approval','approve','cancel','refused']),
+            <field name="domain">[('state','in',['draft','submit','sales_approve','manager_approval','approve','cancel','refuse']),
                 '|',('partner_id.x_studio_field_U7OvH','in',uid),('partner_id.assistant_id','=',uid)]</field>
             <field name="context">{'group_by':'state'}</field>
             <field name="view_ids" eval="[(5, 0, 0),
