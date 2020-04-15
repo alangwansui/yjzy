@@ -149,6 +149,8 @@ class sale_order_line(models.Model):
     @api.multi
     @api.onchange('product_id')
     def product_id_change(self):
+       # supplierinfo = self.env["product.supplierinfo"].search(
+      #      [('product_id', '=', self.product_id.id), ('name', '=', self.supplier_id.id)], limit=1)
         res = super(sale_order_line, self).product_id_change()
         self.back_tax = self.product_id.back_tax
         #self.s_uom_id = self.product_id.uom_id
@@ -157,6 +159,7 @@ class sale_order_line(models.Model):
         self.p_uom_id = self.product_id.p_uom_id
         self.need_split_bom = self.product_id.need_split_bom
         self.need_print = self.product_id.need_print
+        self.supplier_id = self.product_id.variant_seller_ids and self.product_id.variant_seller_ids[0].name.id or None,
         return res
 
     def _prepare_invoice_line(self, qty):
