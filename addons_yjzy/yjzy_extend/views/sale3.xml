@@ -437,7 +437,7 @@
                                 <field name="incoterm" attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}"/>
                                 <field name="contract_date" string="客户确认日期*" attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)],'required':[('state','=','check')]}"/>
                                 <field name="requested_date" string="客户交期*" widget="date" attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)],'required':[('state','=','check')]}"/>
-                                <field name="payment_term_id" string="付款条款*" options="{'no_create': True,'no_open':True,'color':'red','fd':'is_different_payment_term','op':'=','v':True}"
+                                <field name="payment_term_id" string="付款条款*" options="{'no_create': True,'no_open':True, 'color':'red','fd':'is_different_payment_term','op':'=','v':True}"
                                        attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}"
                                        domain="[('type','in', ['sale', 'comm'])]" />
                                 <field name="partner_payment_term_id" string="预设付款条款" readonly="1" options="{'no_open':1}" attrs="{'invisible':[('is_different_payment_term','=',False)]}"/>

@@ -9,6 +9,8 @@ odoo.define('web_widget_colored_field', function (require) {
     var FieldFloat = basic_fields.FieldFloat;
     var FieldInteger = basic_fields.FieldInteger;
     var FieldSelection = relational_fields.FieldSelection;
+    var FieldMany2One = relational_fields.FieldMany2One;
+
 
     AbstractField.include({
         _getColorNode: function (record, options) {
@@ -132,5 +134,22 @@ odoo.define('web_widget_colored_field', function (require) {
             }
         }
     });
+
+    FieldMany2One.include({
+        _renderReadonly: function () {
+            var options = this.nodeOptions;
+            if (this.value && 'color' in options) {
+                var $colorNode = this._getColorNode(this.record, options);
+                if ($colorNode) {
+                    this.$el.html($colorNode)
+                } else {
+                    this._super()
+                }
+            } else {
+                this._super()
+            }
+        }
+    });
+
 
 });
