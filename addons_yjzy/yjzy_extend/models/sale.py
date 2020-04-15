@@ -150,7 +150,7 @@ class sale_order(models.Model):
     other_currency_id = fields.Many2one('res.currency', u'其他国外费用货币', default=lambda self: self.env.ref('base.USD').id)
 
     contract_code = fields.Char(u'合同编码')
-    contract_date = fields.Date(u'签订日期', required=True, default=lambda self: fields.date.today())
+    contract_date = fields.Date(u'签订日期')
     link_man_id = fields.Many2one('res.partner', u'联系人')
     sale_assistant_id = fields.Many2one('res.users', u'业务助理')
     product_manager_id = fields.Many2one('res.users', u'产品经理')
@@ -261,6 +261,7 @@ class sale_order(models.Model):
     state = fields.Selection([
         ('draft', 'Quotation'),
         ('sent', 'Quotation Sent'),
+        ('check',u'检查'),
         ('submit', u'待责任人审核'),
         ('sales_approve', u'待业务合规审核'),
         ('manager_approval', u'待总经理特批'),

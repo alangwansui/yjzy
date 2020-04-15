@@ -207,7 +207,7 @@
                                 <field name="name" readonly="1" groups="base.group_system" invisible="1"/>
 
                                 <field name="partner_id" required="1" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"
-                                       domain="[('customer','=',True),('parent_id', '=', False)]" no_create="True"/>
+                                       domain="[('customer','=',True),('parent_id', '=', False),'|','|','|','|','|',('assistant_id','=',uid),('user_id','=',uid),('parent_id.assistant_id','=',uid),('parent_id.user_id','=',uid),('supplier','=',1),('x_studio_field_3ErQR','=',1)]" no_create="True"/>
 
                                 <field name="partner_shipping_id" domain="[('parent_id','child_of', partner_id)]"
                                        attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"  no_create="True"/>
@@ -766,7 +766,7 @@
             <field name="name">transport.bill.tree</field>
             <field name="model">transport.bill</field>
             <field name="arch" type="xml">
-                <tree string="出运单">
+                <tree string="出运单" create="False">
                     <field name="name"/>
                     <field name="partner_id" required="1"/>
                     <field name="ref"/>

@@ -424,17 +424,17 @@
                             <group>
 
                                 <field name="contract_code" attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}"/>
-                                <field name="partner_id" domain="[('customer','=',True),('parent_id', '=', False)]"
+                                <field name="partner_id" string="客户*" domain="[('customer','=',True),('parent_id', '=', False),'|','|','|','|','|',('assistant_id','=',uid),('user_id','=',uid),('parent_id.assistant_id','=',uid),('parent_id.user_id','=',uid),('supplier','=',1),('x_studio_field_3ErQR','=',1)]"
                                        attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}" context="{'search_default_customer':1, 'show_address': 0}" options="{&quot;always_reload&quot;: True}"/>
                                 <field name="country_id" invisible="1"/>
                                 <field name="can_directly_mark_as_paid" invisible="1"/>
                                 <field name="link_man_id" invisible="1" domain="[('parent_id','=',partner_id),('type', '=', 'contract')]" groups="base.group_system"/>
-                                <field name="customer_pi" attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}" string="客户合同号" help="审批之后不允许修改"/>
+                                <field name="customer_pi"  attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)],'required':[('state','=','check')]}" string="客户合同号*" help="审批之后不允许修改"/>
                                 <field name="incoterm" attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}"/>
-                                <field name="contract_date" string="签订日期" />
-                                <field name="requested_date" string="客户交期" widget="date" attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}"/>
-                                <field name="payment_term_id" options="{'no_create': True,'no_open':True}" attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}" domain="[('type','in', ['sale', 'comm'])]"/>
-                                <field name="current_date_rate" string="当日汇率" attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}" options="{'no_open':True}"/>
+                                <field name="contract_date" string="签订日期*" attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)],'required':[('state','=','check')]}"/>
+                                <field name="requested_date" string="客户交期*" widget="date" attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)],'required':[('state','=','check')]}"/>
+                                <field name="payment_term_id" string="付款条款*" options="{'no_create': True,'no_open':True}" attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}" domain="[('type','in', ['sale', 'comm'])]"/>
+                                <field name="current_date_rate" string="当日汇率*" required="1" attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}" options="{'no_open':True}"/>
                                 <field name="currency_id" invisible="0" attrs="{'readonly':1}" options="{'no_open':1}"/>
                                 <field name="include_tax" attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}"/>
                                 <!--field name="currency_tate"/-->
@@ -511,7 +511,7 @@
                                         <group>
                                             <group>
                                                 <field name="product_updatable" invisible="1"/>
-                                                <field name="product_id" domain="[('state','=','done')]" options="{'can_create': 1}"
+                                                <field name="product_id" domain="[('state','in',['done','first']),('customer_id','=',parent.partner_id)]" options="{'can_create': 1}"
                                                        context="{'show_last_sale':1,'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"
                                                        attrs="{'readonly': [('product_updatable', '=', False)]}" force_save="1"/>
                                                 <field name="layout_category_id" invisible="1" groups="sale.group_sale_layout"/>
@@ -606,7 +606,7 @@
                                         <field name="sequence" widget="handle"/>
                                         <field name="product_updatable" invisible="1"/>
 
-                                        <field name="product_id" attrs="{'readonly': [('product_updatable', '=', False)]}"
+                                        <field name="product_id" domain="[('state','in',['done','first']),('customer_id','=',parent.partner_id)]"  attrs="{'readonly': [('product_updatable', '=', False)]}"
                                                orce_save="1" context="{'show_last_sale':1,'partner_id':parent.partner_id, 'quantity':product_uom_qty,
                                            'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"/>
                                         <field name="product_uom_qty" string="数量"
@@ -1249,8 +1249,7 @@
             <field name="res_model">sale.order</field>
             <field name="limit">20</field>
             <field name="view_mode">tree,form,kanban</field>
-            <field name="domain">[('state','in',['sale','approve']),'|','|',('partner_id.x_studio_field_U7OvH','in',uid),
-                ('partner_id.user_id','=',uid),('partner_id.assistant_id','=',uid)]</field>
+            <field name="domain">[('state','in',['sale','approve'])]</field>
             <field name="search_view_id" ref="view_sales_order_new_approve_filter"/>
             <field name="context">{'group_by':'state'}</field>
             <field name="view_ids" eval="[(5, 0, 0),

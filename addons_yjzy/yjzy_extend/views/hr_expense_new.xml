@@ -550,7 +550,7 @@
                                 <field name="payment_mode" invisible="1" readonly="1"/>
                                 <field name="currency_id" attrs="{'readonly':[('state','not in',['submit','draft'])]}"/>
                                 <field name="responsible_id" invisible="1"/>
-                                <field name="bank_id" string="对方收款账号*" options="{'can_create':True}" required="1"/>
+                                <field name="bank_id" string="对方收款账号*" attrs="{'readonly':[('state','not in',['submit','draft'])]}" options="{'can_create':True}" required="1"/>
                                 <field name="address_id" invisible="1"/>
                                 <field name="department_id" invisible="1"/>
                                 <field name="budget_type" invisible="1"/>
@@ -568,7 +568,7 @@
                         </group>
                         <notebook>
                             <page string="费用明细">
-                                <field name="expense_line_ids" nolabel="1" widget="one2many" domain="[('state', '=', 'draft')]"
+                                <field name="expense_line_ids" attrs="{'readonly':[('state','not in',['submit','draft',])]}" nolabel="1" widget="one2many" domain="[('state', '=', 'draft')]"
                                        options="{'not_delete': True, 'reload_on_button': True, 'no_create': False}"
                                        context="{'expense_adding_line': True, 'default_company_id':company_id,'tracking_disable': True,
                                        'no_show_mark': context.get('no_show_mark'),  'default_gongsi_id': gongsi_id,
