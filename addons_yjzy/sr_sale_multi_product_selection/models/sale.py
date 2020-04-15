@@ -37,6 +37,11 @@ class SrMultiProduct(models.TransientModel):
                 'order_id': self._context.get('active_id'),
                 'supplier_id': line.variant_seller_ids and line.variant_seller_ids[0].name.id or None,
                 'purchase_price': line.variant_seller_ids and line.variant_seller_ids[0].price or 0,
+                's_uom_id': line.s_uom_id.id,
+                'p_uom_id': line.p_uom_id.id,
+                'need_split_bom':line.need_split_bom,
+                'need_print':line.need_print,
+                'back_tax':line.back_tax,
             })
         return
 

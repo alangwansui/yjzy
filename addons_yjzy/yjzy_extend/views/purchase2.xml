@@ -160,8 +160,8 @@
                                     <field name="sequence" widget="handle"/>
                                     <field name="product_id" attrs="{'readonly': [('state', 'in', ('purchase', 'to approve','done', 'cancel'))]}" context="{'partner_id':parent.partner_id, 'quantity':product_qty,'uom':product_uom, 'company_id': parent.company_id}" force_save="1"/>
                                     <field name="name" invisible="1"/>
-                                      <field name="product_qty" sum="total"/>
-                                     <field name="price_unit"/>
+                                      <field name="product_qty" sum="total" attrs="{'readonly':[('parent.source_so_id','=',True)]}"/>
+                                     <field name="price_unit" attrs="{'readonly':[('parent.source_so_id','=',True)]}"/>
                                       <field name="price_subtotal" widget="monetary"/>
                                     <field name="back_tax"/>
                                     <field name="last_purchase_price" invisible="1" readonly="1"/>
@@ -176,7 +176,7 @@
                                      <field name="max_qty_ng" invisible="1"/>
                                     <field name="price_section_base" invisible="1"/>
                                     <field name="s_uom_id" invisible="1"/>
-                                    <field name="p_uom_id" string="单位"/>
+                                    <field name="p_uom_id" string="单位" />
                                     <field name="need_print" invisible="1"/>
                                     <field name="dlr_str"/>
                                     <field name="dlr_qty" invisible="1"/>
@@ -334,8 +334,7 @@
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">purchase.order</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[('state','in',['draft','refused','submit','to approve']),'|','|',('source_so_id.partner_id.x_studio_field_U7OvH','in',uid),
-                ('source_so_id.partner_id.user_id','=',uid),('source_so_id.partner_id.assistant_id','=',uid)]</field>
+            <field name="domain">[('state','in',['draft','refused','submit','to approve']),'|','|',('source_so_id.partner_id.x_studio_field_U7OvH','in',uid),('source_so_id.partner_id.user_id','=',uid),('source_so_id.partner_id.assistant_id','=',uid)]</field>
             <field name="context">{'group_by':'state'}</field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('new_purchase_order_tree')}),

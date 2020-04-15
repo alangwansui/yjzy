@@ -15,8 +15,8 @@
 
             </field>
         </record-->
-
-         <record id="view_sales_order_new_filter" model="ir.ui.view">
+ <!-- 未生效合同筛选-->
+         <record id="view_sales_order_new_approval_filter" model="ir.ui.view">
             <field name="name">sale.order.list.new.select</field>
             <field name="model">sale.order</field>
             <field name="arch" type="xml">
@@ -33,12 +33,42 @@
                     <filter string="My Orders" domain="[('user_id','=',uid)]" name="my_sale_orders_filter" invisible="1"/>
                     <separator/>
                     <filter string="合同草稿" name="draft" domain="[('state','=','draft')]"/>
-                    <filter string="审批中" name="approval" domain="[('state','in',['submit','sale_approve','manager_approval'])]"/>
+                    <filter string="审批中" name="approval" domain="[('state','in',['submit','sales_approve','manager_approval'])]"/>
                     <filter string="审批完成" name="approve" domain="[('state','in',['approve'])]"/>
+                    <separator/>
+                    <group expand="0" string="Group By" >
+                        <filter string="状态" domain="[]" context="{'group_by':'state'}"/>
+                        <filter string="责任人" domain="[]" context="{'group_by':'user_id'}"/>
+                        <filter name="customer" string="客户" domain="[]" context="{'group_by':'partner_id'}"/>
+                        <separator/>
+                        <filter string="审批完成月份" domain="[]" context="{'group_by':'approve_date'}"/>
+                        <filter string="下单月份" domain="[]" context="{'group_by':'date_order'}"/>
+                    </group>
+               </search>
+            </field>
+        </record>
+
+
+
+        <record id="view_sales_order_new_approve_filter" model="ir.ui.view">
+            <field name="name">sale.order.list.new.select</field>
+            <field name="model">sale.order</field>
+            <field name="arch" type="xml">
+                <search string="Search Sales Order">
+
+                    <field name="name" string="模糊搜索" filter_domain="['|','|','|',('contract_code','ilike',self),('name','ilike',self),('client_order_ref','ilike',self),('partner_id','child_of',self)]"/>
+                    <field name="user_id"/>
+                    <field name="pdt_value_id"/>
+
+
+                    <field name="team_id" string="Sales Channel" invisible="1"/>
+                    <field name="analytic_account_id" invisible="1"/>
+                    <field name="product_id" invisible="1"/>
+                    <filter string="My Orders" domain="[('user_id','=',uid)]" name="my_sale_orders_filter" invisible="1"/>
                     <separator/>
                     <filter string="出运中" name="transporting" domain="[('state','in',['sale'])]"/>
                     <separator/>
-                    <filter string="发货完成" name="received" domain="[('state','=','received')]"/>
+                    <filter string="发货完成" name="received" domain="[('delivery_status','=','received')]"/>
                     <filter string="发货未完成超时" name="received" domain="[('requested_date','&lt;',(context_today() - relativedelta(days=185)).strftime('%Y-%m-%d')),
                     ('delivery_status','!=','received')]"/>
                     <filter string="待核销" name="transporting" domain="['|',('delivery_status','=','received'),'&amp;',
@@ -235,14 +265,20 @@
                     <field name="message_needaction" invisible="1"/>
                     <field name="id" groups="base.group_system" invisible="1"/>
                     <field name="name" string="订单流水" groups="base.group_system" invisible="1"/>
-                    <field name="contract_code"/>
+                    <field name="approve_date" widget="date" string="合规审批日"/>
+                    <field name="contract_code" string="合同号"/>
                     <field name="partner_id"/>
-                    <field name="requested_date" widget="date" string="交货日"/>
-                    <field name="delivery_status" invisible="1"/>
-                    <field name="confirmation_date" string="Order Date" invisible="1"/>
-                    <field name="contract_date" attrs="{}" string="签订日期" required="1"/>
+
                     <field name="amount_total" sum="Total Tax Included" widget="monetary" string="销售金额"/>
                     <field name="purchase_cost"  string="采购金额"/>
+
+                    <field name="delivery_status" invisible="1"/>
+                    <field name="confirmation_date" string="Order Date" invisible="1"/>
+                    <field name="create_date" string="创建日"/>
+                    <field name="contract_date" attrs="{}" string="客户确认日" required="1"/>
+                    <field name="sales_confirm_date" string="责任人审批日"/>
+                    <field name="purchase_approve_date" widget="date" string="采购审批日"/>
+                    <field name="requested_date" widget="date" string="客户交期"/>
                     <field name="currency_id" invisible="1"/>
                     <field name="no_sent_amount" string="未发货销售"/>
                     <field name="purchase_no_deliver_amount" string="未发货采购"/>
@@ -253,9 +289,9 @@
                     <field name="user_id" groups="sale.hegui_all" string="责任人"/>
                     <field name="commitment_date" invisible="1"/>
                     <field name="advance_po_residual" invisible="1"/>
-                    <field name="approve_date" widget="date" string="合规审批日"/>
-                    <field name="purchase_approve_date" widget="date" string="采购审批日"/>
-                    <field name="gongsi_id" string="销售主体"/>
+
+
+                    <field name="gongsi_id" string="销售主体" invisible="1"/>
                     <field name="company_id" groups="base.group_system" invisible="1"/>
                 </tree>
 
@@ -266,7 +302,7 @@
             <field name="name">sale.order.tree</field>
             <field name="model">sale.order</field>
             <field name="arch" type="xml">
-                <tree string="Sales Orders" decoration-bf="message_needaction==True" default_order="approve_date"  decoration-muted="state=='cancel'">
+                <tree string="Sales Orders" decoration-bf="message_needaction==True"  decoration-muted="state=='cancel'"><!--default_order="approve_date"-->
                     <field name="message_needaction" invisible="1"/>
                     <field name="id" groups="base.group_system" invisible="1"/>
                     <field name="name" string="订单流水" groups="base.group_system" invisible="1"/>
@@ -1126,7 +1162,7 @@
             <field name="res_model">sale.order</field>
             <field name="limit">30</field>
             <field name="view_mode">tree,form,kanban</field>
-            <field name="search_view_id" ref="view_sales_order_new_filter"/>
+            <field name="search_view_id" ref="view_sales_order_new_approve_filter"/>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('new_sale_order_tree')}),
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('new_sale_order_kanban')}),
@@ -1143,9 +1179,10 @@
             <field name="res_model">sale.order</field>
             <field name="view_mode">tree,form,kanban</field>
             <field name="limit">20</field>
-            <field name="domain">[('state','in',['draft','submit','sales_approve','manager_approval','approve','cancel']),
+            <field name="domain">[('state','in',['draft','submit','sales_approve','manager_approval','cancel']),
                 '|','|',('partner_id.x_studio_field_U7OvH','in',uid),('partner_id.user_id','=',uid),('partner_id.assistant_id','=',uid)]</field>
             <field name="context">{'group_by':'state'}</field>
+            <field name="search_view_id" ref="view_sales_order_new_approval_filter"/>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('new_sale_order_tree')}),
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('new_sale_order_kanban')}),
@@ -1213,9 +1250,9 @@
             <field name="res_model">sale.order</field>
             <field name="limit">20</field>
             <field name="view_mode">tree,form,kanban</field>
-            <field name="domain">[('state','in',['sale']),
-                '|','|',('partner_id.x_studio_field_U7OvH','in',uid),('partner_id.user_id','=',uid),('partner_id.assistant_id','=',uid)]]</field>
-            <field name="context">{}</field>
+            <field name="domain">[('state','in',['sale','approve']),'|','|',('partner_id.x_studio_field_U7OvH','in',uid),('partner_id.user_id','=',uid),('partner_id.assistant_id','=',uid)]</field>
+            <field name="search_view_id" ref="view_sales_order_new_approve_filter"/>
+            <field name="context">{'group_by':'state'}</field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('new_sale_order_approve_tree')}),
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('new_sale_order_kanban')}),
