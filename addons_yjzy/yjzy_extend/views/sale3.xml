@@ -1143,14 +1143,32 @@
             <field name="res_model">sale.order</field>
             <field name="view_mode">tree,form,kanban</field>
             <field name="limit">20</field>
-            <field name="domain">[('state','in',['draft','submit','sales_approve','manager_approval','approve','cancel'])]</field>
+            <field name="domain">[('state','in',['draft','submit','sales_approve','manager_approval','approve','cancel']),
+                '|','|',('partner_id.x_studio_field_U7OvH','in',uid),('partner_id.user_id','=',uid),('partner_id.assistant_id','=',uid)]</field>
             <field name="context">{'group_by':'state'}</field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('new_sale_order_tree')}),
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('new_sale_order_kanban')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_form')})]"/>
         </record>
-        <menuitem id="new_sale_order_sales_menu" name="未生效合同列表" parent="new_sale_order_root" action="new_sale_order_sales_action" sequence="2"/>
+        <menuitem id="new_sale_order_sales_menu" name="未生效合同列表." parent="new_sale_order_root" action="new_sale_order_sales_action" sequence="2"/>
+        <!--助理待处理合同：草稿和提交状态>
+        <record id="new_sale_order_assistant_action" model="ir.actions.act_window">
+            <field name="name">未生效合同列表</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_mode">tree,form,kanban</field>
+            <field name="limit">20</field>
+            <field name="domain">[('state','in',['draft','submit','sales_approve','manager_approval','approve','cancel']),
+                '|',('partner_id.x_studio_field_U7OvH','in',uid),('partner_id.assistant_id','=',uid)]</field>
+            <field name="context">{'group_by':'state'}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('new_sale_order_tree')}),
+                          (0, 0, {'view_mode': 'kanban', 'view_id': ref('new_sale_order_kanban')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_form')})]"/>
+        </record>
+        <menuitem id="new_sale_order_assistant_menu" name="未生效合同列表" parent="new_sale_order_root" action="new_sale_order_assistant_action" sequence="2"/-->
+
 <!--合规待处理合同：合规审批、审批完成、出运中、核销中-->
         <record id="new_sale_order_hegui_action" model="ir.actions.act_window">
             <field name="name">合规待处理</field>
@@ -1187,7 +1205,7 @@
                   sequence="3"/>
 
 
-      <!--我的销售合同：权限内的合同-->
+      <!--业务员执行中合同：权限内的合同-->
 
         <record id="new_sale_order_user_approve_action" model="ir.actions.act_window">
             <field name="name">执行中合同列表</field>
@@ -1195,16 +1213,32 @@
             <field name="res_model">sale.order</field>
             <field name="limit">20</field>
             <field name="view_mode">tree,form,kanban</field>
-            <field name="domain">[('state','in',['sale'])]</field>
+            <field name="domain">[('state','in',['sale']),
+                '|','|',('partner_id.x_studio_field_U7OvH','in',uid),('partner_id.user_id','=',uid),('partner_id.assistant_id','=',uid)]]</field>
             <field name="context">{}</field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('new_sale_order_approve_tree')}),
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('new_sale_order_kanban')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_form')})]"/>
         </record>
-        <menuitem id="new_sale_order_user_approve_menu" name="执行中合同列表" parent="new_sale_order_root" action="new_sale_order_user_approve_action" sequence="1"/>
+        <menuitem id="new_sale_order_user_approve_menu" name="执行中合同列表." parent="new_sale_order_root" action="new_sale_order_user_approve_action" sequence="1"/>
+       <!--助理执行中合同：权限内的合同>
+        <record id="new_sale_order_assistant_approve_action" model="ir.actions.act_window">
+            <field name="name">执行中合同列表</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sale.order</field>
+            <field name="limit">20</field>
+            <field name="view_mode">tree,form,kanban</field>
+            <field name="domain">[('state','in',['sale']),'|',('partner_id.x_studio_field_U7OvH','in',uid),('partner_id.assistant_id','=',uid)]</field>
+            <field name="context">{}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('new_sale_order_approve_tree')}),
+                          (0, 0, {'view_mode': 'kanban', 'view_id': ref('new_sale_order_kanban')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_form')})]"/>
+        </record>
+        <menuitem id="new_sale_order_assistant_approve_menu" name="执行中合同列表" parent="new_sale_order_root" action="new_sale_order_assistant_approve_action" sequence="1"/-->
 
-          <record id="new_sale_order_create_action" model="ir.actions.act_window">
+        <record id="new_sale_order_create_action" model="ir.actions.act_window">
             <field name="name">创建销售合同</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">sale.order</field>

@@ -334,7 +334,8 @@
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">purchase.order</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[('state','in',['draft','refused','submit','to approve'])]</field>
+            <field name="domain">[('state','in',['draft','refused','submit','to approve']),'|','|',('source_so_id.partner_id.x_studio_field_U7OvH','in',uid),
+                ('source_so_id.partner_id.user_id','=',uid),('source_so_id.partner_id.assistant_id','=',uid)]</field>
             <field name="context">{'group_by':'state'}</field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('new_purchase_order_tree')}),
