@@ -297,6 +297,22 @@ class sale_order(models.Model):
     # second_tenyale_profit：原公式的销售额改成second_cost
     # second_unit_price: = 订单
 
+    @api.constrains('current_date_rate','fee_inner')
+    def check_fields(self):
+        if self.current_date_rate <= 0:
+            raise Warning(u'汇率必须大于0')
+
+
+  #  @api.constrains('height', 'width', 'length')
+  #  def check_size(self):
+  #      if self.height < 0:
+   #         raise Warning(u'高必须大于0')
+  #      if self.width < 0:
+   #         raise Warning(u'宽必须大于0')
+   #     if self.length < 0:
+   #         raise Warning(u'长必须大于0')
+
+
     @api.onchange('payment_term_id')
     def onchange_payment_term_id(self):
 
