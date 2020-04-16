@@ -394,7 +394,7 @@
                                         <field name="state" invisible="1"/>
                                     </form>
                                     <button name="open_multi_select_product" string="Multi select product" type="object" class="oe_highlight"/>
-                                    <tree string="销售订单明细" decoration-info="invoice_status=='to invoice'" limit="10" readonly="1" decoration-danger="product_uom_qty != dlr_qty"><!--editable="bottom" -->
+                                    <tree string="销售订单明细" decoration-info="invoice_status=='to invoice'" class="o_list_scroll" limit="20" readonly="1" decoration-danger="product_uom_qty != dlr_qty"><!--editable="bottom" -->
                                         <field name="sequence" widget="handle"/>
                                         <field name="product_updatable" invisible="1"/>
                                         <button type="object" name="get_in_stock_quant" icon="fa-archive"/>
