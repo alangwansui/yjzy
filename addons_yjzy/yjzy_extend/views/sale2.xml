@@ -36,35 +36,35 @@
 
                     </header>
                     <sheet>
-                     <group col="4">
+                      <group col="4">
 
                                 <group class="o_inner_group1" style="width:25%; font-size:10px">
                                  <label for="contract_type" string="业务模式" style="font-size:10px"/>
-                                 <div class="o_row" >
+                                 <div class="o_row">
                                      <field name="contract_type" class="oe_inline"/>
                                  </div>
 
 
                                 <label for="contract_code" string="销售合同号" style="font-size:10px"/>
-                                <div style="font-size:10px"  class="o_row" >
+                                <div style="font-size:10px" class="o_row">
                                 <field name="contract_code" class="oe_inline" readonly="1"/>
                                 </div>
 
                                 <field name="name" readonly="1" invisible="1"/>
                                  <label for="partner_id" style="font-size:10px"/>
-                                <div class="o_row">
-                                <field name="partner_id" options="{'no_open':1}"  class="oe_inline"/>
+                                <div  style="width:110%">
+                                <field name="partner_id" options="{'no_open':1}" class="oe_inline"/>
                                 </div>
 
 
                                  <label for="country_id" style="font-size:10px"/>
                                 <div class="o_row">
-                                <field name="contract_date" options="{'no_open':1}"  class="oe_inline"/>
+                                <field name="contract_date" options="{'no_open':1}" class="oe_inline"/>
                                 </div>
 
                                 <label for="cip_type" style="font-size:10px" invisible="1"/>
                                 <div class="o_row" invisible="1">
-                                <field name="cip_type" options="{'no_open':1}"  class="oe_inline"/>
+                                <field name="cip_type" options="{'no_open':1}" class="oe_inline"/>
                                 </div>
 
                                 <label for="incoterm_code" string="价格条款" style="font-size:10px"/>
@@ -79,22 +79,22 @@
 
                                 <label for="exchange_rate" string="汇率" style="font-size:10px"/>
                                 <div class="o_row">
-                                <field name="exchange_rate"  options="{'no_open':1}" readonly="1" class="oe_inline"/>
+                                <field name="exchange_rate" options="{'no_open':1}" readonly="1" class="oe_inline"/>
                                 </div>
 
-                                <label for="include_tax"  string="是否含税" style="font-size:10px"/>
+                                <label for="include_tax" string="是否含税" style="font-size:10px"/>
                                 <div>
-                                <field name="include_tax"  readonly="1" class="oe_inline"/>
+                                <field name="include_tax" readonly="1" class="oe_inline"/>
                                 </div>
 
                                 <label for="requested_date" string="客户交期" style="font-size:10px"/>
                                 <div class="o_row">
-                                <field name="requested_date"  options="{'no_open':1}" readonly="1" class="oe_inline"/>
+                                <field name="requested_date" options="{'no_open':1}" readonly="1" class="oe_inline"/>
                                 </div>
 
                                 <label for="user_id" string="业务责任人" style="font-size:10px"/>
                                 <div class="o_row">
-                                <field name="user_id"  options="{'no_open':1}" readonly="1" class="oe_inline"/>
+                                <field name="user_id" options="{'no_open':1}" readonly="1" class="oe_inline"/>
                                 </div>
 
 
@@ -102,35 +102,35 @@
 
                                 </group>
 
-                                <group  class="o_inner_group1"  style="width:20%;font-size:10px">
+                                <group class="o_inner_group1" style="width:20%;font-size:10px">
                                 <label for="gold_sample_state" string="金样状况" style="font-size:10px"/>
                                 <div class="o_row">
-                                <field name="gold_sample_state"  options="{'no_open':1}" readonly="1" class="oe_inline"/>
+                                <field name="gold_sample_state" options="{'no_open':1}" readonly="1" class="oe_inline"/>
                                 </div>
 
                                 <label for="gongsi_id" string="销售主体" style="font-size:10px"/>
                                 <div class="o_row">
-                                <field name="gongsi_id"  options="{'no_open':1}" readonly="1" class="oe_inline"/>
+                                <field name="gongsi_id" options="{'no_open':1}" readonly="1" class="oe_inline"/>
                                 </div>
 
                                 <label for="purchase_gongsi_id" string="采购主体" style="font-size:10px"/>
                                 <div class="o_row">
-                                <field name="purchase_gongsi_id"  options="{'no_open':1}" readonly="1" class="oe_inline"/>
+                                <field name="purchase_gongsi_id" options="{'no_open':1}" readonly="1" class="oe_inline"/>
                                 </div>
 
                                 <label for="payment_term_id" string="收款条款" style="font-size:10px"/>
-                                <div class="o_row">
-                                <field name="payment_term_id"  options="{'no_open':1}" readonly="1" class="oe_inline"/>
+                                <div  style="width:120%">
+                                <field name="payment_term_id" options="{'no_open':1}" readonly="1" class="oe_inline"/>
                                 </div>
 
                                 <label for="pre_advance" string="预收款应收额" style="font-size:10px"/>
                                 <div class="o_row">
-                                <field name="pre_advance"  options="{'no_open':1}" readonly="1" class="oe_inline" style="text-align:right"/>
+                                <field name="pre_advance" options="{'no_open':1}" readonly="1" class="oe_inline" style="text-align:right"/>
                                 </div>
 
                                 <label for="balance" string="预收款实收额" style="font-size:10px"/>
                                 <div class="o_row">
-                                <field name="balance"  options="{'no_open':1}" readonly="1" class="oe_inline" style="text-align:right"/>
+                                <field name="balance" options="{'no_open':1}" readonly="1" class="oe_inline" style="text-align:right"/>
                                 </div>
 
 
@@ -145,35 +145,35 @@
                                 <field name="sale_assistant_id" readonly="1" invisible="1"/>
                                     </group>
 
-                            <group  class="o_inner_group1" style="width:55%;font-size:10px">
-                                <field name="company_currency_id" invisible="1" readonly="1"   groups="base.group_system"/>
+                            <group class="o_inner_group1" style="width:35%;font-size:10px">
+                                <field name="company_currency_id" invisible="1" readonly="1" groups="base.group_system"/>
                                 <label for="fee_inner" string="国内运杂费" style="font-size:10px"/>
                                 <div class="o_row">
-                                <field name="fee_inner" style="text-align:right"  options="{'no_open':1}" readonly="1" class="oe_inline"/>
+                                <field name="fee_inner" style="text-align:right" options="{'no_open':1}" readonly="1" class="oe_inline"/>
                                 </div>
 
 
                                 <label for="fee_rmb1" string="人民币1" style="font-size:10px"/>
-                                <div >
-                                <field name="fee_rmb1" style="text-align:right;vertical-align:top"   options="{'no_open':1}" readonly="1" class="oe_inline"/>
-                                <field name="fee_rmb1_note"  style="margin-left:15px" readonly="1" class="oe_inline"/>
+                                <div  style="width:200%">
+                                <field name="fee_rmb1" style="text-align:right;vertical-align:top" options="{'no_open':1}" readonly="1" class="oe_inline"/>
+                                <field name="fee_rmb1_note" style="margin-left:15px" readonly="1" class="oe_inline"/>
                                 </div>
 
                                 <label for="fee_rmb2" string="人名币2" style="font-size:10px"/>
-                                <div >
-                                <field name="fee_rmb2" style="text-align:right;vertical-align:top"  options="{'no_open':1}" readonly="1" class="oe_inline"/>
+                                <div style="width:200%">
+                                <field name="fee_rmb2" style="text-align:right;vertical-align:top" options="{'no_open':1}" readonly="1" class="oe_inline"/>
                                 <field name="fee_rmb2_note" style="margin-left:15px" readonly="1" class="oe_inline"/>
                                 </div>
 
                                 <label for="fee_rmb_all" string="人名币费用合计" style="font-size:10px"/>
                                 <div class="o_row">
-                                <field name="fee_rmb_all" style="text-align:right;"  options="{'no_open':1}" readonly="1" class="oe_inline"/>
-                                <field name="fee_rmb_ratio" readonly="1" style="margin-left:15px"  class="oe_inline"/>%
+                                <field name="fee_rmb_all" style="text-align:right;" options="{'no_open':1}" readonly="1" class="oe_inline"/>
+                                <field name="fee_rmb_ratio" readonly="1" class="oe_inline"/>%
                                 </div>
 
                                 <label for="fee_outer" string="美元运保费" style="font-size:10px"/>
                                 <div>
-                                <field name="fee_outer"  style="text-align:right" options="{'no_open':1}" readonly="1" class="oe_inline"/>
+                                <field name="fee_outer" style="text-align:right" options="{'no_open':1}" readonly="1" class="oe_inline"/>
                                 </div>
 
                                 <label for="fee_export_insurance" string="美元信保费" style="font-size:10px"/>
@@ -182,25 +182,25 @@
                                 </div>
 
                                 <label for="fee_other" string="其他美元费用" style="font-size:10px"/>
-                                <div>
-                                <field name="fee_other" style="vertical-align:top"  options="{'no_open':1}" readonly="1" class="oe_inline"/>
+                                <div  style="width:200%">
+                                <field name="fee_other" style="vertical-align:top" options="{'no_open':1}" readonly="1" class="oe_inline"/>
                                 <field name="fee_other_note" style="margin-left:15px" readonly="1" class="oe_inline"/>
                                 </div>
 
                                 <label for="fee_outer_all" string="美元费用合计" style="font-size:10px"/>
                                 <div class="o_row">
-                                <field name="fee_outer_all"   options="{'no_open':1}" readonly="1" class="oe_inline"/>
-                                <field name="fee_outer_ratio" readonly="1" style="margin-left:15px"  class="oe_inline"/>%
+                                <field name="fee_outer_all" options="{'no_open':1}" readonly="1" class="oe_inline"/>
+                                <field name="fee_outer_ratio" readonly="1" class="oe_inline"/>%
                                 </div>
 
                                 <label for="commission_ratio" string="运营费用率" style="font-size:10px"/>
                                 <div class="o_row">
-                                <field name="commission_ratio"  options="{'no_open':1}" readonly="1" class="oe_inline"/>
+                                <field name="commission_ratio" options="{'no_open':1}" readonly="1" class="oe_inline"/>
                                 </div>
 
                                 <label for="commission_amount" string="运营费用额" style="font-size:10px"/>
                                 <div class="o_row">
-                                <field name="commission_amount"  options="{'no_open':1}" readonly="1" class="oe_inline"/>
+                                <field name="commission_amount" options="{'no_open':1}" readonly="1" class="oe_inline"/>
                                 </div>
 
 
@@ -222,58 +222,58 @@
                                 <field name="second_tenyale_profit" invisible="1"/>
                             </group>
 
-                            <group class="o_inner_group1" style="width:10%;font-size:10px;margin-left:-200px">
+                            <group class="o_inner_group1" style="width:20%;font-size:10px;">
                                 <field name="third_currency_id" domain="['|',('id','=', company_currency_id),('id','=', sale_currency_id)]" groups="base.group_system"/>
                                 <field name="currency_id" invisible="1"/>
 
                                 <label for="amount_total" string="销售额汇总" style="font-size:10px"/>
                                 <div class="o_row">
-                                <field name="amount_total"  options="{'no_open':1,'currency_field': 'currency_id'}" readonly="1" class="oe_inline"/>
+                                <field name="amount_total" options="{'no_open':1,'currency_field': 'currency_id'}" readonly="1" class="oe_inline"/>
                                 </div>
 
                                 <label for="amount_total2" string="销售额折算本币" style="font-size:10px"/>
                                 <div class="o_row">
-                                <field name="amount_total2"  readonly="1" class="oe_inline"/>
+                                <field name="amount_total2" readonly="1" class="oe_inline"/>
                                 </div>
 
                                 <label for="purchase_cost" string="采购额汇总" style="font-size:10px"/>
                                 <div class="o_row">
-                                <field name="purchase_cost"  readonly="1" class="oe_inline"/>
+                                <field name="purchase_cost" readonly="1" class="oe_inline"/>
                                 </div>
 
                                 <label for="back_tax_amount" string="退税额汇总" style="font-size:10px"/>
                                 <div class="o_row">
-                                <field name="back_tax_amount"  readonly="1" class="oe_inline"/>
+                                <field name="back_tax_amount" readonly="1" class="oe_inline"/>
                                 </div>
 
                                 <label for="gross_profit" string="毛利润" style="font-size:10px"/>
                                 <div class="o_row">
-                                <field name="gross_profit"  readonly="1" class="oe_inline"/>
+                                <field name="gross_profit" readonly="1" class="oe_inline"/>
                                 </div>
 
 
-                                <label for="gorss_profit_ratio"  style="font-size:10px" string="毛利润率"/>
+                                <label for="gorss_profit_ratio" style="font-size:10px" string="毛利润"/>
                                 <div class="o_row"><field name="gorss_profit_ratio" class="oe_inline"/>%
                                 </div>
 
                                 <label for="other_cost" string="费用总合计" style="font-size:10px"/>
                                 <div class="o_row">
-                                <field name="other_cost"  readonly="1" class="oe_inline"/>
+                                <field name="other_cost" readonly="1" class="oe_inline"/>
                                 </div>
 
                                 <label for="fee_all_ratio" string="费用总占比" style="font-size:10px"/>
                                 <div class="o_row">
-                                <field name="fee_all_ratio"  readonly="1" class="oe_inline"/>%
+                                <field name="fee_all_ratio" readonly="1" class="oe_inline"/>
                                 </div>
 
-                                <label for="profit_amount" string="净利润" style="font-size:10px" />
+                                <label for="profit_amount" string="净利润" style="font-size:10px"/>
                                 <div class="o_row">
-                                <field name="profit_amount"  options="{'fg_color': 'red:profit_amount &lt; True'}" readonly="1" class="oe_inline"/>
+                                <field name="profit_amount" options="{'fg_color': 'red:profit_amount &lt; True'}" readonly="1" class="oe_inline"/>
                                 </div>
 
-                                <label for="profit_ratio" string="净利润率" style="font-size:10px" />
+                                <label for="profit_ratio" string="净利润率" style="font-size:10px"/>
                                 <div class="o_row">
-                                <field name="profit_ratio"  options="{'fg_color': 'red:profit_amount &lt; True'}" readonly="1" class="oe_inline"/>%
+                                <field name="profit_ratio" options="{'fg_color': 'red:profit_amount &lt; True'}" readonly="1" class="oe_inline"/>%
                                 </div>
 
 
