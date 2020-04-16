@@ -52,7 +52,7 @@
 
                                 <field name="name" readonly="1" invisible="1"/>
                                  <label for="partner_id" style="font-size:10px"/>
-                                <div  style="width:110%">
+                                <div style="width:120%">
                                 <field name="partner_id" options="{'no_open':1}" class="oe_inline"/>
                                 </div>
 
@@ -119,7 +119,7 @@
                                 </div>
 
                                 <label for="payment_term_id" string="收款条款" style="font-size:10px"/>
-                                <div  style="width:120%">
+                                <div style="width:130%">
                                 <field name="payment_term_id" options="{'no_open':1}" readonly="1" class="oe_inline"/>
                                 </div>
 
