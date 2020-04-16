@@ -303,16 +303,6 @@ class sale_order(models.Model):
             raise Warning(u'汇率必须大于0')
 
 
-  #  @api.constrains('height', 'width', 'length')
-  #  def check_size(self):
-  #      if self.height < 0:
-   #         raise Warning(u'高必须大于0')
-  #      if self.width < 0:
-   #         raise Warning(u'宽必须大于0')
-   #     if self.length < 0:
-   #         raise Warning(u'长必须大于0')
-
-
     @api.onchange('payment_term_id')
     def onchange_payment_term_id(self):
 
