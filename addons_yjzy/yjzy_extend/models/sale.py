@@ -129,6 +129,8 @@ class sale_order(models.Model):
             one.fee_rmb_ratio = one.amount_total and one.company_currency_id.compute(one.fee_rmb_all + fandian_amoun + vat_diff_amount, one.currency_id) / one.amount_total * 100
             one.fee_outer_ratio = one.amount_total and one.other_currency_id.compute(one.fee_outer_all, one.currency_id) / one.amount_total *100
 
+            one.fee_all_ratio = one.fee_rmb_ratio + one.fee_outer_ratio
+
             one.profit_ratio = amount_total2 and profit_amount / amount_total2 * 100
 
             one.gross_profit = gross_profit
@@ -179,6 +181,8 @@ class sale_order(models.Model):
     fee_other_note = fields.Text(u'外币备注1')
     fee_outer_all = fields.Monetary(u'外币费用合计', currency_field='other_currency_id',  compute=compute_info)
     fee_outer_ratio = fields.Float(u'外币费用占销售额比', digits=(2, 4), compute=compute_info)
+
+    fee_all_ratio = fields.Float(u'总费用占比', digits=(2, 4), compute=compute_info)
 
     pre_advance = fields.Monetary(u'预收金额', currency_field='currency_id', compute=compute_info, store=False)
 

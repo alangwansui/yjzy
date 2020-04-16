@@ -142,7 +142,7 @@
                                 <field name="partner_payment_term_id" string="预设付款条款" readonly="1" options="{'no_open':1}"
                                        attrs="{'invisible':[('is_different_payment_term','=',False)]}"/>
                               <field name="date_order" string="下单日期" widget="date" />
-                              <label for="date_planned" string="交单日期"/>
+                              <label for="date_planned" string="供应商交期"/>
                                     <div>
                                        <field name="date_planned" widget="date" required="1" attrs="{'readonly': [('state', 'not in', ('draft', 'sent'))]}"/>
                                        <button name="action_set_date_planned" type="object" states="draft,sent" string="修改交单日期请点击这里" help="This changes the scheduled date of all order lines to the given date" class="fa fa-calendar o_icon_button oe_edit_only"/>

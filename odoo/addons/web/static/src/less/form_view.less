@@ -24,6 +24,10 @@
             &.o_inner_group {
                 width: 1px!important;
             }
+            /*akiny*/
+            &.o_inner_group1 {
+                width: 1px!important;
+            }
         }
     }
     .oe_left {
@@ -345,6 +349,25 @@
                 }
             }
         }
+/*akiny form表单group label和字段的间距*/
+        &.o_inner_group1 {
+            display: inline-table;
+
+            > tbody > tr > td {
+                &.o_td_label {
+                    width: 0%;
+                    padding: 0 4px 0 0;
+                    min-width: 80px;
+                }
+                vertical-align: top;
+
+                span, .o_field_boolean, .oe_avatar, .o_form_uri {
+                    &.o_field_widget {
+                        width: auto;
+                    }
+                }
+            }
+        }
 
         .o_form_label {
             font-weight: normal;
@@ -458,6 +481,47 @@
 
             .o_form_label {
                 padding-right: 20px;
+
+                min-width: 0;
+                white-space: nowrap;
+                &:after {
+                    content: ":";
+                }
+            }
+
+            .o_field_widget {
+                text-align: right;
+                .o-justify-content(flex-end);
+                width: 100%;
+            }
+        }
+
+        > tbody > tr:first-child > td {
+            padding-top: 4px;
+        }
+
+        .oe_subtotal_footer_separator {
+            width: 100%;
+            text-align: right;
+            border-top: 1px solid @gray-lighter-dark;
+            font-weight: bold;
+            font-size: 1.3em;
+        }
+    }
+
+    /*akiny*/
+    .o_group.o_inner_group1.oe_subtotal_footer {
+        .oe_right;
+
+        > tbody > tr > td {
+            padding: 0;
+
+            &.o_td_label {
+                text-align: right;
+            }
+
+            .o_form_label {
+                padding-right: 5px;
 
                 min-width: 0;
                 white-space: nowrap;
