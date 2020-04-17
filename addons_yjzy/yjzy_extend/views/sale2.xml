@@ -77,10 +77,16 @@
                                 <field name="sale_currency_id" options="{'no_open':1}" readonly="1" class="oe_inline"/>
                                 </div>
 
-                                <label for="exchange_rate" string="汇率" style="font-size:10px"/>
-                                <div class="o_row">
+                                <label for="exchange_rate" string="汇率" style="font-size:10px" invisible="1"/>
+                                <div class="o_row" invisible="1">
                                 <field name="exchange_rate" options="{'no_open':1}" readonly="1" class="oe_inline"/>
                                 </div>
+
+                                <label for="current_date_rate" string="汇率" style="font-size:10px"/>
+                                <div class="o_row">
+                                <field name="current_date_rate" options="{'no_open':1}" readonly="1" class="oe_inline"/>
+                                </div>
+
 
                                 <label for="include_tax" string="是否含税" style="font-size:10px"/>
                                 <div>
@@ -198,7 +204,8 @@
                                         <tr><td style="width:65px;text-align:right;vertical-align:top;">
                                 <field name="fee_rmb_all" style="text-decoration:underline;font-weight:bolder;font-color:black" options="{'no_open':1}" readonly="1" class="oe_inline"/>
                                 </td><td>
-                                <field name="fee_rmb_ratio" readonly="1" widget="Percent" style="margin-left:15px;text-decoration:underline;font-weight:bolder;font-color:black"  class="oe_inline"/>
+                                <field name="fee_rmb_ratio" readonly="1" widget="Percent"
+                                       style="margin-left:15px;text-decoration:underline;font-weight:bolder;font-color:black"  class="oe_inline"/>%
                                  </td>
                                         </tr>
                                     </table>
@@ -236,7 +243,8 @@
                                         <tr><td style="width:65px;text-align:right;vertical-align:top;">
                                 <field name="fee_outer_all" options="{'no_open':1}" style="text-decoration:underline;font-weight:bolder;font-color:black" readonly="1" class="oe_inline"/>
                                 </td><td>
-                                <field name="fee_outer_ratio"  widget="Percent"  readonly="1" style="margin-left:15px;text-decoration:underline;font-weight:bolder;font-color:black"  class="oe_inline"/>
+                                <field name="fee_outer_ratio"  widget="Percent"  readonly="1"
+                                       style="margin-left:15px;text-decoration:underline;font-weight:bolder;font-color:black"  class="oe_inline"/>%
                                         </td></tr></table>
                                 </div>
 
@@ -309,7 +317,7 @@
                                  <div class="o_row">
                                 <table style="width:100%">
                                         <tr><td style="width:65px;text-align:right;vertical-align:top;">
-                                <field name="gorss_profit_ratio"  widget="Percent"  style="text-decoration:underline;font-weight:bolder;font-color:black" class="oe_inline"/>
+                                <field name="gorss_profit_ratio"  widget="Percent"  style="text-decoration:underline;font-weight:bolder;font-color:black" class="oe_inline"/>%
                                         </td></tr></table>
                                 </div>
 
@@ -333,7 +341,8 @@
                                 <div class="o_row">
                                  <table style="width:100%">
                                         <tr><td style="width:65px;text-align:right;vertical-align:top;">
-                                <field name="profit_amount" style="text-decoration:underline;font-weight:bolder;font-color:black" options="{'fg_color': 'red:profit_amount &lt; True'}" readonly="1" class="oe_inline"/>
+                                <field name="profit_amount" style="text-decoration:underline;font-weight:bolder;font-color:black"
+                                       options="{'fg_color': 'red:profit_amount &lt; True'}" readonly="1" class="oe_inline"/>
                                         </td></tr></table>
                                 </div>
 
@@ -341,7 +350,8 @@
                                 <div class="o_row">
                                  <table style="width:100%">
                                         <tr><td style="width:65px;text-align:right;vertical-align:top;">
-                                <field name="profit_ratio"    style="text-decoration:underline;font-weight:bolder;font-color:black" options="{'fg_color': 'red:profit_amount &lt; True'}" readonly="1" class="oe_inline"/>
+                                <field name="profit_ratio"    style="text-decoration:underline;font-weight:bolder;font-color:black"
+                                       options="{'fg_color': 'red:profit_amount &lt; True'}" readonly="1" class="oe_inline"/>%
                                         </td></tr></table>
                                 </div>
 
