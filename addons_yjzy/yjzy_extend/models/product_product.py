@@ -116,6 +116,7 @@ class Product_Product(models.Model):
         only_name = self.env.context.get('only_name')
         only_code = self.env.context.get('only_code')
 
+        #cat_name = self.env.context.get('cat_name')
         #print('==name_get==', only_name, self.env.context)
 
         def _get_name(one):
@@ -123,6 +124,8 @@ class Product_Product(models.Model):
                 name = one.name
             elif only_code:
                 name = one.default_code
+           # elif cat_name:
+            #    name = '%s-%s-%s' % (one.categ_id.parent_id.name, one.categ_id.name, one.name)
             else:
                 name = '[%s]%s{%s}' % (one.default_code, one.name, one.key_value_string)
 

@@ -10,6 +10,8 @@ from . comm import BACK_TAX_RATIO
 
 class sale_order_line(models.Model):
     _inherit = 'sale.order.line'
+   # _rec_name = 'percent'
+
 
     @api.multi
     def _analytic_compute_delivered_quantity(self):
@@ -55,7 +57,8 @@ class sale_order_line(models.Model):
             #计算金额
             price_total2 = one.currency_id.compute(one.price_total, one.company_currency_id)
             purchase_cost, fandian_amoun = one.get_purchase_cost()
-
+            gross_profit_ratio_line = round((price_total2 - purchase_cost) / price_total2 * 100,2)
+            print('====sdfdf===', gross_profit_ratio_line)
             stock_cost = one.get_stock_cost()
             #back_tax = one.order_id.cip_type != 'none' and one.product_id.back_tax or 0
 
@@ -72,6 +75,8 @@ class sale_order_line(models.Model):
             one.back_tax_amount = back_tax_amount
             one.rest_tb_qty = one.product_qty - sum(one.tbl_ids.mapped('qty2stage'))
 
+            one.gross_profit_ratio_line = round(gross_profit_ratio_line,2)
+            one.gross_profit_line = price_total2-purchase_cost
     #currency_id ==销售货币
     sale_currency_id = fields.Many2one('res.currency', related='currency_id', string=u'交易货币', readonly=True)
     company_currency_id = fields.Many2one('res.currency', related='order_id.company_currency_id', readonly=True)
@@ -82,6 +87,7 @@ class sale_order_line(models.Model):
     pol_ids = fields.One2many('purchase.order.line', 'sol_id', u'采购明细', copy=False)
     po_ids = fields.Many2many('purchase.order', string=u'采购订单', compute=compute_info, store=False)
     purchase_qty = fields.Float(u'采购数', compute=compute_info, store=False)
+    purchase_qty_new = fields.Float(u'采购数',  related='pol_id.product_qty')#akiny 直接取对应的采购合同的数量而不是预留的数量
     qty_unreceived = fields.Float(u'未收数', compute=compute_info, store=False)
     qty_undelivered = fields.Float(string=u'未发货', readonly=True, store=False, compute=compute_info)
     back_tax = fields.Float(u'退税率', digits=dp.get_precision('Back Tax'))
@@ -112,7 +118,9 @@ class sale_order_line(models.Model):
 
     purchase_contract_code = fields.Char('采购合同', related='po_id.contract_code')
 
-
+    gross_profit_ratio_line = fields.Float(u'毛利润率', digits=(2, 2), compute=compute_info)
+    gross_profit_line = fields.Float(u'毛利润', digits=(2, 2), compute=compute_info)
+    #gross_profit_ratio_line_p = fields.Percent(u'毛利润率', digits=(2, 2), compute=compute_info)
     @api.depends('tbl_ids', 'tbl_ids.qty2stage_new')
     def compute_rest_tb_qty(self):
         for one in self:

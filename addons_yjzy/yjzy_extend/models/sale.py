@@ -171,7 +171,7 @@ class sale_order(models.Model):
     fee_rmb2 = fields.Monetary(u'人民币费用2', currency_field='company_currency_id')
     fee_rmb2_note = fields.Text(u'人名币备注2')
     fee_rmb_all = fields.Monetary(u'人民币费用合计', currency_field='company_currency_id',  compute=compute_info)
-    fee_rmb_ratio = fields.Float(u'人名币费用占销售额比', digits=(2, 4), compute=compute_info)
+    fee_rmb_ratio = fields.Float(u'人名币费用占销售额比', digits=(2, 2), compute=compute_info) #akiny 4改成了2
 
     fee_outer = fields.Monetary(u'国外运保费', currency_field='other_currency_id')
     outer_currency_id = fields.Many2one('res.currency', u'国外运保费货币', )
@@ -180,9 +180,9 @@ class sale_order(models.Model):
     fee_other = fields.Monetary(u'其他外币费用', currency_field='other_currency_id')
     fee_other_note = fields.Text(u'外币备注1')
     fee_outer_all = fields.Monetary(u'外币费用合计', currency_field='other_currency_id',  compute=compute_info)
-    fee_outer_ratio = fields.Float(u'外币费用占销售额比', digits=(2, 4), compute=compute_info)
+    fee_outer_ratio = fields.Float(u'外币费用占销售额比', digits=(2, 2), compute=compute_info) #akiny 4改成了2
 
-    fee_all_ratio = fields.Float(u'总费用占比', digits=(2, 4), compute=compute_info)
+    fee_all_ratio = fields.Float(u'总费用占比', digits=(2, 2), compute=compute_info)#akiny 4改成了2
 
     pre_advance = fields.Monetary(u'预收金额', currency_field='currency_id', compute=compute_info, store=False)
 
@@ -200,7 +200,7 @@ class sale_order(models.Model):
     yjzy_currency_id = fields.Many2one('res.currency', u'预收币种', related='yjzy_payment_ids.currency_id')
     balance = fields.Monetary(u'预收余额', compute=compute_balance, currency_field='yjzy_currency_id', store=True)
 
-    exchange_rate = fields.Float(u'目前汇率', compute=compute_exchange_rate, digits=(2,6))
+    exchange_rate = fields.Float(u'目前汇率', compute=compute_exchange_rate, digits=(2,2)) #akiny 4改成了2
     appoint_rate = fields.Float(u'使用汇率', digits=(2,6))
     #currency_tate = fields.Many2one('res.currency.rate',u'系统汇率')
     country_id = fields.Many2one('res.country', related='partner_id.country_id', string=u'国别', readonly=True)
@@ -258,6 +258,7 @@ class sale_order(models.Model):
 
     order_line_b = fields.One2many('sale.order.line', related='order_line')
     approvaled_date = fields.Datetime('审批完成时间')
+
     # akiny 增加state
     #state = fields.Selection(selection_add=[('refuse', u'拒绝'), ('submit', u'已提交'),('sales_approve', u'责任人已审批'),
                                        #     ('approve', u'审批完成'), ('manager_approval', u'待总经理审批'),

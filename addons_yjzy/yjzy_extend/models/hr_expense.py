@@ -132,6 +132,10 @@ class hr_expense(models.Model):
     budget_type = fields.Selection("预算类型", related="categ_id.budget_type")
 
 
+
+
+
+
     def get_budget_type(self):
         return self.second_categ_id.budget_type or self.categ_id.budget_type or None
 
