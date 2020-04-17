@@ -57,8 +57,11 @@ class sale_order_line(models.Model):
             #计算金额
             price_total2 = one.currency_id.compute(one.price_total, one.company_currency_id)
             purchase_cost, fandian_amoun = one.get_purchase_cost()
-            gross_profit_ratio_line = round((price_total2 - purchase_cost) / price_total2 * 100,2)
-            print('====sdfdf===', gross_profit_ratio_line)
+            if price_total2 !=0:
+              gross_profit_ratio_line = round((price_total2 - purchase_cost) / price_total2 * 100,2)
+            else:
+              gross_profit_ratio_line = 0
+        #    print('====sdfdf===', gross_profit_ratio_line)
             stock_cost = one.get_stock_cost()
             #back_tax = one.order_id.cip_type != 'none' and one.product_id.back_tax or 0
 
