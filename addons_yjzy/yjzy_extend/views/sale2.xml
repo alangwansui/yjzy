@@ -275,7 +275,7 @@
                                 <div class="o_row">
 
                                     <table style="width:100%">
-                                        <tr><td style="width:65px;text-align:right;vertical-align:top;">
+                                        <tr><td style="width:70px;text-align:right;vertical-align:top;">
                                 <field name="amount_total" options="{'no_open':1,'currency_field': 'currency_id'}" readonly="1" class="oe_inline"/>
                                         </td></tr></table>
                                 </div>
@@ -283,7 +283,7 @@
                                 <label for="amount_total2" string="销售额折算本币" style="font-size:10px"/>
                                 <div class="o_row">
                                     <table style="width:100%">
-                                        <tr><td style="width:65px;text-align:right;vertical-align:top;">
+                                        <tr><td style="width:70px;text-align:right;vertical-align:top;">
                                 <field name="amount_total2" readonly="1" class="oe_inline"/>
                                         </td></tr></table>
                                 </div>
@@ -291,7 +291,7 @@
                                 <label for="purchase_cost" string="采购额汇总" style="font-size:10px"/>
                                 <div class="o_row">
                                     <table style="width:100%">
-                                        <tr><td style="width:65px;text-align:right;vertical-align:top;">
+                                        <tr><td style="width:70px;text-align:right;vertical-align:top;">
                                 <field name="purchase_cost" readonly="1" class="oe_inline"/>
                                         </td></tr></table>
                                 </div>
@@ -299,7 +299,7 @@
                                 <label for="back_tax_amount" string="退税额汇总" style="font-size:10px"/>
                                 <div class="o_row">
                                     <table style="width:100%">
-                                        <tr><td style="width:65px;text-align:right;vertical-align:top;">
+                                        <tr><td style="width:70px;text-align:right;vertical-align:top;">
                                 <field name="back_tax_amount" readonly="1" class="oe_inline"/>
                                         </td></tr></table>
                                 </div>
@@ -307,7 +307,7 @@
                                 <label for="gross_profit" string="毛利润" style="font-size:10px"/>
                                 <div class="o_row">
                                     <table style="width:100%">
-                                        <tr><td style="width:65px;text-align:right;vertical-align:top;">
+                                        <tr><td style="width:70px;text-align:right;vertical-align:top;">
                                 <field name="gross_profit" style="text-decoration:underline;font-weight:bolder;font-color:black" readonly="1" class="oe_inline"/>
                                         </td></tr></table>
                                 </div>
@@ -316,7 +316,7 @@
                                 <label for="gorss_profit_ratio" style="font-size:10px" string="毛利润率"/>
                                  <div class="o_row">
                                 <table style="width:100%">
-                                        <tr><td style="width:65px;text-align:right;vertical-align:top;">
+                                        <tr><td style="width:70px;text-align:right;vertical-align:top;">
                                 <field name="gorss_profit_ratio"  style="text-decoration:underline;font-weight:bolder;font-color:black" class="oe_inline"/>%
                                         </td></tr></table>
                                 </div>
@@ -324,7 +324,7 @@
                                 <label for="other_cost" string="费用总合计" style="font-size:10px"/>
                                 <div class="o_row">
                                     <table style="width:100%">
-                                        <tr><td style="width:65px;text-align:right;vertical-align:top;">
+                                        <tr><td style="width:70px;text-align:right;vertical-align:top;">
                                 <field name="other_cost" readonly="1" style="text-decoration:underline;font-weight:bolder;font-color:black" class="oe_inline"/>
                                         </td></tr></table>
                                 </div>
@@ -332,7 +332,7 @@
                                 <label for="fee_all_ratio" string="费用总占比" style="font-size:10px"/>
                                 <div class="o_row">
                                      <table style="width:100%">
-                                        <tr><td style="width:65px;text-align:right;vertical-align:top;">
+                                        <tr><td style="width:70px;text-align:right;vertical-align:top;">
                                 <field name="fee_all_ratio" style="text-decoration:underline;font-weight:bolder;font-color:black" readonly="1" class="oe_inline"/>%
                                         </td></tr></table>
                                 </div>
@@ -340,7 +340,7 @@
                                 <label for="profit_amount" string="净利润" style="font-size:10px"/>
                                 <div class="o_row">
                                  <table style="width:100%">
-                                        <tr><td style="width:65px;text-align:right;vertical-align:top;">
+                                        <tr><td style="width:70px;text-align:right;vertical-align:top;">
                                 <field name="profit_amount" style="text-decoration:underline;font-weight:bolder;font-color:black"
                                        options="{'fg_color': 'red:profit_amount &lt; True'}" readonly="1" class="oe_inline"/>
                                         </td></tr></table>
@@ -349,7 +349,7 @@
                                 <label for="profit_ratio" string="净利润率" style="font-size:10px"/>
                                 <div class="o_row">
                                  <table style="width:100%">
-                                        <tr><td style="width:65px;text-align:right;vertical-align:top;">
+                                        <tr><td style="width:70px;text-align:right;vertical-align:top;">
                                 <field name="profit_ratio"    style="text-decoration:underline;font-weight:bolder;font-color:black"
                                        options="{'fg_color': 'red:profit_amount &lt; True'}" readonly="1" class="oe_inline"/>%
                                         </td></tr></table>
