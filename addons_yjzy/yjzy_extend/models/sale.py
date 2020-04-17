@@ -89,7 +89,10 @@ class sale_order(models.Model):
                 back_tax_amount = one.company_currency_id.compute(sum(x.back_tax_amount for x in lines), one.third_currency_id)
 
             amount_total2 = one._get_sale_amount()
+          #  amount_total3 = one._get_amount_total3()
             commission_amount = one.commission_ratio * amount_total2
+
+          #  commission_amount2 = one.commission_ratio * amount_total3
 
             other_cost = one._get_other_cost()
 
@@ -218,6 +221,9 @@ class sale_order(models.Model):
     commission_ratio_percent = fields.Float(u'经营计提比%',compute=compute_info)
     state2 = fields.Selection([('draft', u'草稿'),('to_approve', u'待批准'), ('edit', u'可修改'), ('confirmed', u'待审批'), ('done', u'审批完成')], u'状态', default='draft')
     amount_total2 = fields.Monetary(u'销售金额', currency_field='third_currency_id', compute=compute_info)
+    #akiny 手动汇率
+   # amount_total3 = fields.Monetary(u'销售金额', currency_field='third_currency_id', compute=compute_info)
+
     purchase_cost = fields.Monetary(u'采购成本', currency_field='third_currency_id', compute=compute_info)
     purchase_stock_cost = fields.Monetary(u'采购库存成本合计',  currency_field='third_currency_id', compute=compute_info)
     fandian_amoun = fields.Monetary(u'返点金额', currency_field='third_currency_id', compute=compute_info)
@@ -429,15 +435,35 @@ class sale_order(models.Model):
             'domain': [('id', '=', [x.id for x in lines])],
             'target': 'new',
         }
-
+#akiny 加入对是否使用今日手填汇率的判断
     def _get_sale_amount(self):
-        amount_total2 = self.currency_id.compute(self.amount_total, self.third_currency_id)
-        if self.incoterm_code == 'FOB':
-            amount_total2 += self.outer_currency_id.compute(self.fee_outer, self.third_currency_id)
+        if self.company_id.is_current_date_rate:
+            amount_total2 = self.amount_total * self.current_date_rate
+            if self.incoterm_code == 'FOB':
+                amount_total2 += self.outer_currency_id.compute(self.fee_outer, self.third_currency_id)
+        else:
+            amount_total2 = self.currency_id.compute(self.amount_total, self.third_currency_id)
+            if self.incoterm_code == 'FOB':
+                amount_total2 += self.outer_currency_id.compute(self.fee_outer, self.third_currency_id)
+
+
         return amount_total2
 
+   # def _get_amount_total3(self):
+   #     current_date_rate = self.current_date_rate
+   #     amount_total3 = self.amount_total * current_date_rate
+   #     if self.incoterm_code == 'FOB':
+   #         amount_total3 += sself.fee_outer * self.current_date_rate
+   #     return amount_total3
+
+    # akiny 加入对是否使用今日手填汇率的判断
     def _get_other_cost(self):
-        return sum([ self.company_currency_id.compute(self.fee_inner, self.third_currency_id),
+        if self.company_id.is_current_date_rate:
+            other_cost = (self.fee_outer + self.fee_export_insurance + self.fee_other) * self.current_date_rate + self.fee_inner + self.fee_rmb1 +self.fee_rmb2
+            return other_cost
+
+        else:
+           return sum([ self.company_currency_id.compute(self.fee_inner, self.third_currency_id),
                      self.company_currency_id.compute(self.fee_rmb1, self.third_currency_id),
                      self.company_currency_id.compute(self.fee_rmb2, self.third_currency_id),
                     self.outer_currency_id.compute(self.fee_outer, self.third_currency_id),
@@ -445,8 +471,13 @@ class sale_order(models.Model):
                     self.other_currency_id.compute(self.fee_other, self.third_currency_id),
                     ])
 
+    # akiny 加入对是否使用今日手填汇率的判断
     def _get_other_cost_no_rmb(self):
-        return sum([ self.outer_currency_id.compute(self.fee_outer, self.third_currency_id),
+        if self.company_id.is_current_date_rate:
+            other_cost_no_rmb = (self.fee_outer + self.fee_export_insurance + self.fee_other)*self.current_date_rate
+            return other_cost_no_rmb
+        else:
+            return sum([ self.outer_currency_id.compute(self.fee_outer, self.third_currency_id),
                     self.export_insurance_currency_id.compute(self.fee_export_insurance, self.third_currency_id),
                     self.other_currency_id.compute(self.fee_other, self.third_currency_id),
                     ])
