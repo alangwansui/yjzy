@@ -25,6 +25,8 @@ class wizard_supplier_invoice_date_line(models.TransientModel):
     invoice_id = fields.Many2one('account.invoice', u'发票')
     partner_id = fields.Many2one('res.partner', u'供应商', related='invoice_id.partner_id')
     date = fields.Date(u'日期')
+    purchase_amount_total = fields.Monetary(u'采购应付金额', related='invoice_id.amount_total')
+    currency_id = fields.Many2one('res.currency',u'币种',related='invoice_id.currency_id')
 
 
 

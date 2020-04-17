@@ -14,6 +14,8 @@
                             <field name="partner_id" readonly="1"/>
                             <field name="invoice_id" readonly="1"/>
                             <field name="date"/>
+                            <field name="purchase_amount_total"/>
+                            <field name="currency_id"/>
                         </tree>
                     </field>
 
