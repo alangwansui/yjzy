@@ -163,7 +163,8 @@
                                     <table style="width:100%">
                                         <tr><td style="width:65px;text-align:right;vertical-align:top;">
                                 <field name="fee_inner" style="text-align:right" options="{'no_open':1}" readonly="1" class="oe_inline"/>
-                                        </td></tr></table>
+                                        </td><td></td></tr>
+                                    </table>
                                 </div>
 
 
@@ -173,7 +174,6 @@
                                         <tr><td style="width:65px;text-align:right;vertical-align:top;">
                                 <field name="fee_rmb1" style="text-align:right;" options="{'no_open':1}" readonly="1" class="oe_inline"/>
                                 </td><td>
-
                                             <field name="fee_rmb1_note" style="margin-left:15px" readonly="1" class="oe_inline"/>
                                           </td>
                                         </tr>
@@ -182,7 +182,6 @@
 
                                 <label for="fee_rmb2" string="人名币2" style="font-size:10px"/>
                                 <div style="width:200%">
-
                                     <table style="width:100%">
                                         <tr><td style="width:65px;text-align:right;vertical-align:top;">
                                 <field name="fee_rmb2" style="text-align:right;vertical-align:top" options="{'no_open':1}" readonly="1" class="oe_inline"/>
@@ -210,7 +209,7 @@
                                     <table style="width:100%">
                                         <tr><td style="width:65px;text-align:right;vertical-align:top;">
                                 <field name="fee_outer" style="text-align:right" options="{'no_open':1}" readonly="1" class="oe_inline"/>
-                                        </td></tr></table>
+                                        </td><td></td></tr></table>
                                 </div>
 
                                 <label for="fee_export_insurance" string="美元信保费" style="font-size:10px"/>
@@ -218,7 +217,7 @@
                                     <table style="width:100%">
                                         <tr><td style="width:65px;text-align:right;vertical-align:top;">
                                 <field name="fee_export_insurance" style="text-align:right" options="{'no_open':1}" readonly="1" class="oe_inline"/>
-                                        </td></tr></table>
+                                        </td><td></td></tr></table>
                                 </div>
 
                                 <label for="fee_other" string="其他美元费用" style="font-size:10px"/>
