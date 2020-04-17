@@ -141,7 +141,7 @@ class sale_order(models.Model):
             one.second_cost = sum(one.order_line.mapped('second_price_total'))
             one.second_porfit = one.amount_total2 - one.second_cost
             one.second_tenyale_profit = one.company_currency_id.compute(one.second_cost, one.third_currency_id) - one.purchase_cost - one.stock_cost
-
+            one.commission_ratio_percent = one.commission_ratio * 100
 
 
 
@@ -206,6 +206,7 @@ class sale_order(models.Model):
     country_id = fields.Many2one('res.country', related='partner_id.country_id', string=u'国别', readonly=True)
     term_description = fields.Html(u'销售条款')
     commission_ratio = fields.Float(u'经营计提比', digits=(2, 4), default=lambda self: self.default_commission_ratio())
+    commission_ratio_percent = fields.Float(u'经营计提比%',compute=compute_info)
     state2 = fields.Selection([('draft', u'草稿'),('to_approve', u'待批准'), ('edit', u'可修改'), ('confirmed', u'待审批'), ('done', u'审批完成')], u'状态', default='draft')
     amount_total2 = fields.Monetary(u'销售金额', currency_field='third_currency_id', compute=compute_info)
     purchase_cost = fields.Monetary(u'采购成本', currency_field='third_currency_id', compute=compute_info)

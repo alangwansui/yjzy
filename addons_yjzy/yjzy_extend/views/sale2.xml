@@ -204,7 +204,7 @@
                                         <tr><td style="width:65px;text-align:right;vertical-align:top;">
                                 <field name="fee_rmb_all" style="text-decoration:underline;font-weight:bolder;font-color:black" options="{'no_open':1}" readonly="1" class="oe_inline"/>
                                 </td><td>
-                                <field name="fee_rmb_ratio" readonly="1" widget="Percent"
+                                <field name="fee_rmb_ratio" readonly="1"
                                        style="margin-left:15px;text-decoration:underline;font-weight:bolder;font-color:black"  class="oe_inline"/>%
                                  </td>
                                         </tr>
@@ -243,7 +243,7 @@
                                         <tr><td style="width:65px;text-align:right;vertical-align:top;">
                                 <field name="fee_outer_all" options="{'no_open':1}" style="text-decoration:underline;font-weight:bolder;font-color:black" readonly="1" class="oe_inline"/>
                                 </td><td>
-                                <field name="fee_outer_ratio"  widget="Percent"  readonly="1"
+                                <field name="fee_outer_ratio"   readonly="1"
                                        style="margin-left:15px;text-decoration:underline;font-weight:bolder;font-color:black"  class="oe_inline"/>%
                                         </td></tr></table>
                                 </div>
@@ -256,7 +256,7 @@
                                         <tr><td style="width:65px;text-align:right;vertical-align:top;">
                                 <field name="commission_amount" options="{'no_open':1}" readonly="1" class="oe_inline"/>
                                 </td><td>
-                                <field name="commission_ratio" options="{'no_open':1}" style="margin-left:15px"  readonly="1" class="oe_inline"/>
+                                <field name="commission_ratio_percent" options="{'no_open':1}" style="margin-left:15px"  readonly="1" class="oe_inline"/>%
                                         </td></tr></table>
                                 </div>
 
@@ -317,7 +317,7 @@
                                  <div class="o_row">
                                 <table style="width:100%">
                                         <tr><td style="width:65px;text-align:right;vertical-align:top;">
-                                <field name="gorss_profit_ratio"  widget="Percent"  style="text-decoration:underline;font-weight:bolder;font-color:black" class="oe_inline"/>%
+                                <field name="gorss_profit_ratio"  style="text-decoration:underline;font-weight:bolder;font-color:black" class="oe_inline"/>%
                                         </td></tr></table>
                                 </div>
 
