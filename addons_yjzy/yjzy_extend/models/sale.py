@@ -440,7 +440,7 @@ class sale_order(models.Model):
         if self.company_id.is_current_date_rate:
             amount_total2 = self.amount_total * self.current_date_rate
             if self.incoterm_code == 'FOB':
-                amount_total2 += self.outer_currency_id.compute(self.fee_outer, self.third_currency_id)
+                amount_total2 += self.fee_outer * self.current_date_rate
         else:
             amount_total2 = self.currency_id.compute(self.amount_total, self.third_currency_id)
             if self.incoterm_code == 'FOB':
