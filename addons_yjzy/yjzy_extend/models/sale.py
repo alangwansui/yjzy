@@ -138,7 +138,7 @@ class sale_order(models.Model):
 
 
 
-            one.fee_all_ratio =expense_cost_total / one.amount_total2 *100
+            one.fee_all_ratio = amount_total2 and expense_cost_total / one.amount_total2 *100
 
             one.profit_ratio = amount_total2 and profit_amount / amount_total2 * 100
 

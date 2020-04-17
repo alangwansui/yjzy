@@ -81,6 +81,7 @@
                                 <div class="o_row" >
                                 <field name="exchange_rate" options="{'no_open':1}" readonly="1" class="oe_inline"/>
                                 </div>
+                                <field name="appoint_rate" options="{'no_open':1}" readonly="1" class="oe_inline"/>
 
                                 <label for="current_date_rate" string="汇率" style="font-size:10px" invisible="1"/>
                                 <div class="o_row" invisible="1">
