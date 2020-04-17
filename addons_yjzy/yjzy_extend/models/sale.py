@@ -88,15 +88,22 @@ class sale_order(models.Model):
             else:
                 back_tax_amount = one.company_currency_id.compute(sum(x.back_tax_amount for x in lines), one.third_currency_id)
 
-            other_cost = one._get_other_cost()
             amount_total2 = one._get_sale_amount()
             commission_amount = one.commission_ratio * amount_total2
+
+            other_cost = one._get_other_cost()
+
+
             vat_diff_amount = 0
             if one.include_tax and one.company_currency_id.name == 'CNY':
                 vat_diff_amount = (one.amount_total2 - one.purchase_cost - one.stock_cost) / 1.13 * 0.13
 
+            expense_cost_total = other_cost + commission_amount + vat_diff_amount
+
             profit_amount = (amount_total2 - purchase_cost - stock_cost - fandian_amoun - vat_diff_amount - other_cost - commission_amount + back_tax_amount) / 5
             gross_profit = (amount_total2 - purchase_cost - stock_cost - fandian_amoun + back_tax_amount) / 5
+
+
 
             purchase_no_deliver_amount = sum(one.po_ids.mapped('no_deliver_amount'))
 
@@ -129,7 +136,9 @@ class sale_order(models.Model):
             one.fee_rmb_ratio = one.amount_total and one.company_currency_id.compute(one.fee_rmb_all + fandian_amoun + vat_diff_amount, one.currency_id) / one.amount_total * 100
             one.fee_outer_ratio = one.amount_total and one.other_currency_id.compute(one.fee_outer_all, one.currency_id) / one.amount_total *100
 
-            one.fee_all_ratio = one.fee_rmb_ratio + one.fee_outer_ratio
+
+
+            one.fee_all_ratio =expense_cost_total / one.amount_total2 *100
 
             one.profit_ratio = amount_total2 and profit_amount / amount_total2 * 100
 
@@ -142,7 +151,7 @@ class sale_order(models.Model):
             one.second_porfit = one.amount_total2 - one.second_cost
             one.second_tenyale_profit = one.company_currency_id.compute(one.second_cost, one.third_currency_id) - one.purchase_cost - one.stock_cost
             one.commission_ratio_percent = one.commission_ratio * 100
-
+            one.expense_cost_total = expense_cost_total
 
 
     #货币设置
@@ -216,6 +225,9 @@ class sale_order(models.Model):
     commission_amount = fields.Monetary(u'经营计提金额', currency_field='third_currency_id', compute=compute_info)
     lines_profit_amount = fields.Monetary(u'明细利润计总', currency_field='third_currency_id')
     other_cost = fields.Monetary(u'其他费用总计', currency_field='third_currency_id', compute=compute_info)
+
+    expense_cost_total = fields.Monetary(u'所有费用总和',currency_field='third_currency_id',compute=compute_info)
+
     back_tax_amount = fields.Monetary(u'退税金额', currency_field='third_currency_id', compute=compute_info)
     profit_amount = fields.Monetary(u'净利润', currency_field='third_currency_id', compute=compute_info)
     profit_ratio = fields.Float(u'净利润率%', compute=compute_info)

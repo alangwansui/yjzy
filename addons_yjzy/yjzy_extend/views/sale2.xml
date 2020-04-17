@@ -77,13 +77,13 @@
                                 <field name="sale_currency_id" options="{'no_open':1}" readonly="1" class="oe_inline"/>
                                 </div>
 
-                                <label for="exchange_rate" string="汇率" style="font-size:10px" invisible="1"/>
-                                <div class="o_row" invisible="1">
+                                <label for="exchange_rate" string="汇率" style="font-size:10px" />
+                                <div class="o_row" >
                                 <field name="exchange_rate" options="{'no_open':1}" readonly="1" class="oe_inline"/>
                                 </div>
 
-                                <label for="current_date_rate" string="汇率" style="font-size:10px"/>
-                                <div class="o_row">
+                                <label for="current_date_rate" string="汇率" style="font-size:10px" invisible="1"/>
+                                <div class="o_row" invisible="1">
                                 <field name="current_date_rate" options="{'no_open':1}" readonly="1" class="oe_inline"/>
                                 </div>
 
@@ -321,11 +321,11 @@
                                         </td></tr></table>
                                 </div>
 
-                                <label for="other_cost" string="费用总合计" style="font-size:10px"/>
+                                <label for="expense_cost_total" string="费用总合计" style="font-size:10px"/>
                                 <div class="o_row">
                                     <table style="width:100%">
                                         <tr><td style="width:70px;text-align:right;vertical-align:top;">
-                                <field name="other_cost" readonly="1" style="text-decoration:underline;font-weight:bolder;font-color:black" class="oe_inline"/>
+                                <field name="expense_cost_total" readonly="1" style="text-decoration:underline;font-weight:bolder;font-color:black" class="oe_inline"/>
                                         </td></tr></table>
                                 </div>
 
@@ -484,10 +484,15 @@
                                         <field name="second_unit_price" groups="base.group_system"/>
                                         <field name="second_price_total" groups="base.group_system"/>
 
+                                        <field name="purchase_payment_term" string="采购付款条款"/>
+
+
                                         <field name="p_uom_id"  string="单位"/>
                                         <field name="gross_profit_line" invisible="1"/>
                                         <field name="gross_profit_ratio_line" string="毛利润率%"/>
                                         <button attrs="{'invisible':['product_uom_qty','=','purchase_qty_new']}" invisible="1" name="数量测试" string="数量检测" icon="fa-times-circle" style="color:red"/>
+
+
 
                                         <field name="quant_id" domain="[('product_id','=', product_id)]" invisible="1" groups="base.group_system"/>
                                         <field name="pol_id" groups="base.group_system" invisible="1"/>

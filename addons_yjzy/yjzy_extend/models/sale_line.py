@@ -107,6 +107,8 @@ class sale_order_line(models.Model):
     need_split_bom = fields.Boolean(u'需要展开BOM')
     need_print = fields.Boolean('是否打印', defualt=True)
 
+    purchase_payment_term = fields.Many2one('account.payment.term',u'供应商付款条款', related='pol_id.order_id.payment_term_id')
+
     s_uom_id = fields.Many2one('product.uom', u'销售打印单位',)
     p_uom_id = fields.Many2one('product.uom', u'采购打印单位',)
     tbl_ids = fields.One2many('transport.bill.line', 'sol_id', u'出运明细')
