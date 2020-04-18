@@ -38,7 +38,7 @@
                     <sheet>
                       <group col="4">
 
-                                <group class="o_inner_group1" style="width:25%; font-size:10px">
+                                <group class="o_inner_group1" style="width:25%; font-size:10px" >
                                  <label for="contract_type" string="业务模式" style="font-size:10px"/>
                                  <div class="o_row">
                                      <field name="contract_type" class="oe_inline"/>
@@ -111,30 +111,37 @@
 
                                 </group>
 
-                                <group class="o_inner_group1" style="width:20%;font-size:10px">
+                               <group col="1" class="o_inner_group1" style="width:20%;font-size:10px">
+                               <group class="o_inner_group1">
                                 <label for="gold_sample_state" string="金样状况" style="font-size:10px"/>
-                                <div class="o_row">
+                                <div style="width:200%;" >
                                 <field name="gold_sample_state" options="{'no_open':1}" readonly="1" class="oe_inline"/>
                                 </div>
 
                                 <label for="gongsi_id" string="销售主体" style="font-size:10px"/>
-                                <div class="o_row">
+                                <div style="width:200%;">
                                 <field name="gongsi_id" options="{'no_open':1}" readonly="1" class="oe_inline"/>
                                 </div>
 
                                 <label for="purchase_gongsi_id" string="采购主体" style="font-size:10px"/>
-                                <div class="o_row">
+                                <div style="width:200%; " >
                                 <field name="purchase_gongsi_id" options="{'no_open':1}" readonly="1" class="oe_inline"/>
                                 </div>
 
                                 <label for="payment_term_id" string="收款条款" style="font-size:10px"/>
-                                <div style="width:130%">
+                                <div style="width:150%;" >
                                 <field name="payment_term_id" options="{'no_open':1}" readonly="1" class="oe_inline"/>
                                 </div>
+                               <!--label for="po_ids" style="font-size:10px"/-->
+
+
+
+
+
 
                                 <label for="pre_advance" string="预收款应收额" style="font-size:10px"/>
                                 <div class="o_row">
-                                 <table style="width:100%">
+                                 <table style="width:100%; " >
                                         <tr><td style="width:65px;text-align:right;vertical-align:top;">
                                 <field name="pre_advance" options="{'no_open':1}" readonly="1" class="oe_inline" style="text-align:right"/>
                                 </td>
@@ -144,7 +151,7 @@
 
                                 <label for="balance" string="预收款实收额" style="font-size:10px"/>
                                 <div class="o_row">
-                                     <table style="width:100%">
+                                     <table style="width:100%; ">
                                         <tr><td style="width:65px;text-align:right;vertical-align:top;">
                                 <field name="balance" options="{'no_open':1}" readonly="1" class="oe_inline" style="text-align:right"/>
                                     </td>
@@ -162,7 +169,62 @@
                                 <field name="company_id" invisible="1" readonly="1"/>
 
                                 <field name="sale_assistant_id" readonly="1" invisible="1"/>
-                                    </group>
+                                  </group>
+                                 <group class="o_inner_group1" style="padding-left:0">
+    <div style="float:left;position:absolute; width:100%;border:0px;margin-left:-15px;margin-top:-15px">
+                                    <field name="po_ids" mode="kanban" options="{'no_open':1}">
+                                     <!--tree>
+                                        <field name="contract_code" string=""/>
+                                        <field name="payment_term_id" string=""/>
+                                     </tree-->
+                                     <kanban class="o_kanban_mobile o_kanban_dashboard_akiny o_saleakiny_kanban" style="border:0px">
+                                        <field name="partner_id"/>
+                                        <field name="payment_term_id"/>
+
+                                         <field name="is_different_payment_term"/>
+                                         <field name="partner_payment_term_id"/>
+
+                                         <templates>
+                                            <t t-name="kanban-box">
+                                                <div t-attf-class="oe_kanban_card oe_kanban_global_click" style="border:0px" >
+                                                    <div class="row">
+                                                        <div class="col-xs-12">
+
+                                                                <span>
+                                                                    <t t-esc="record.partner_id.value"/>
+                                                                </span>
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-xs-12">
+
+                                                                <div t-if="record.payment_term_id.value == record.partner_payment_term_id.value"  >
+                                                                    <t t-esc="record.payment_term_id.value"/>
+                                                                </div>
+
+                                                                <div t-if="record.payment_term_id.value != record.partner_payment_term_id.value" style="color:red">
+                                                                    <t t-esc="record.payment_term_id.value"/>
+                                                                </div>
+
+                                                                <div t-if="record.payment_term_id.value != record.partner_payment_term_id.value">
+                                                                    <t t-esc="record.partner_payment_term_id.value"/>
+                                                                </div>
+
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+                                            </t>
+                                        </templates>
+                                    </kanban>
+
+                                    </field>
+                         </div>
+ </group>
+
+ </group>
 
                             <group class="o_inner_group1" style="width:35%;font-size:10px">
                                 <field name="company_currency_id" invisible="1" readonly="1" groups="base.group_system"/>
@@ -487,7 +549,7 @@
                                         <field name="second_unit_price" groups="base.group_system"/>
                                         <field name="second_price_total" groups="base.group_system"/>
 
-                                        <field name="purchase_payment_term" string="采购付款条款"/>
+                                        <field name="purchase_payment_term" string="采购付款条款" invisible="1"/>
 
 
                                         <field name="p_uom_id"  string="单位"/>

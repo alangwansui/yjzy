@@ -132,9 +132,10 @@ class purchase_order(models.Model):
                                               related='partner_id.property_supplier_payment_term_id')
     is_different_payment_term = fields.Boolean('付款条款是否不同')
 
+  #  partner_payment_term_id_value = fields.Many2one('account.payment.term', u'客户付款条款值')
     @api.onchange('payment_term_id')
     def onchange_payment_term_id(self):
-
+        #self.partner_payment_term_id_value = self.payment_term_id
         if self.payment_term_id != self.partner_payment_term_id:
             self.is_different_payment_term = True
         else:

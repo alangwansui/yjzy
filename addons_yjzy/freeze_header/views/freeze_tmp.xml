@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<template id="freeze_assets" inherit_id="web.assets_backend" name="Freeze Assets">
+  <xpath expr="." position="inside">
+  	<link type="text/css" rel="stylesheet"  href="/freeze_header/static/src/css/freeze.css"/>
+	  	<script type="text/javascript" src="/freeze_header/static/src/js/jquery.stickytableheaders.js"/>
+	    <script type="text/javascript" src="/freeze_header/static/src/js/freeze.js"/>
+  </xpath>
+</template>
+
+</odoo>

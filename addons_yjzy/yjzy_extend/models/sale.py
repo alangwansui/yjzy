@@ -317,6 +317,7 @@ class sale_order(models.Model):
     is_different_payment_term = fields.Boolean('付款条款是否不同')
 
 
+
     # : 公式的cost改成second_cost
     # second_tenyale_profit：原公式的销售额改成second_cost
     # second_unit_price: = 订单
