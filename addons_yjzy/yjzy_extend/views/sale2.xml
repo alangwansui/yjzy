@@ -171,13 +171,14 @@
                                 <field name="sale_assistant_id" readonly="1" invisible="1"/>
                                   </group>
                                  <group class="o_inner_group1" style="padding-left:0">
-    <div style="float:left;position:absolute; width:100%;border:0px;margin-left:-15px;margin-top:-15px">
+      <div style="float:left; width:100%;border:0px;margin-left:-15px;margin-top:-15px">
                                     <field name="po_ids" mode="kanban" options="{'no_open':1}">
                                      <!--tree>
                                         <field name="contract_code" string=""/>
                                         <field name="payment_term_id" string=""/>
                                      </tree-->
-                                     <kanban class="o_kanban_mobile o_kanban_dashboard_akiny o_saleakiny_kanban" style="border:0px">
+                                     <kanban class="o_kanban_mobile o_kanban_dashboard_akiny o_saleakiny_kanban" style="border:0px;width:100%">
+
                                         <field name="partner_id"/>
                                         <field name="payment_term_id"/>
 
@@ -186,33 +187,26 @@
 
                                          <templates>
                                             <t t-name="kanban-box">
-                                                <div t-attf-class="oe_kanban_card oe_kanban_global_click" style="border:0px" >
-                                                    <div class="row">
-                                                        <div class="col-xs-12">
-
+                                                <div  style="border:0px;margin-top:-12px;width:120%">
+                                                    <!--控制按钮的t-attf-class="oe_kanban_card oe_kanban_global_click" -->
+                                                        <div style="border:0px;width:120%;">
                                                                 <span>
                                                                     <t t-esc="record.partner_id.value"/>
                                                                 </span>
-
                                                         </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-xs-12">
-
-                                                                <div t-if="record.payment_term_id.value == record.partner_payment_term_id.value"  >
+                                                        <div style="border:0px;width:120%">
+                                                                <div t-if="record.payment_term_id.value == record.partner_payment_term_id.value">
                                                                     <t t-esc="record.payment_term_id.value"/>
                                                                 </div>
-
                                                                 <div t-if="record.payment_term_id.value != record.partner_payment_term_id.value" style="color:red">
                                                                     <t t-esc="record.payment_term_id.value"/>
                                                                 </div>
-
                                                                 <div t-if="record.payment_term_id.value != record.partner_payment_term_id.value">
                                                                     <t t-esc="record.partner_payment_term_id.value"/>
                                                                 </div>
 
                                                         </div>
-                                                    </div>
+
 
                                                 </div>
 
