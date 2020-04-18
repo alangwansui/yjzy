@@ -278,6 +278,7 @@ class sale_order(models.Model):
     order_line_b = fields.One2many('sale.order.line', related='order_line')
     approvaled_date = fields.Datetime('审批完成时间')
 
+    po_ids_term = fields.Many2many('purchase.order','采购合同条款',related='po_ids')
     # akiny 增加state
     #state = fields.Selection(selection_add=[('refuse', u'拒绝'), ('submit', u'已提交'),('sales_approve', u'责任人已审批'),
                                        #     ('approve', u'审批完成'), ('manager_approval', u'待总经理审批'),
