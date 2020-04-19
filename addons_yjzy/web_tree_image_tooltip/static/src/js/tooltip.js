@@ -20,7 +20,7 @@ odoo.define('web_tree_image_tooltip.web_tree_image_tooltip',
             //console.info('===xxyy==', event.screenX, screenX, event.screenY, screenY);
 
             if (event.screenX != screenX || event.screenY != screenY){
-            var rowIndex = event.fromElement.parentNode.rowIndex - 1;
+            var rowIndex = event.fromElement.parentNode.rowIndex - 2;
             //console.info('===tooltipp==', rowIndex, event);
             if(typeof rowIndex === 'number' && !isNaN(rowIndex)){
                 var line_data = this.state.data[rowIndex];
