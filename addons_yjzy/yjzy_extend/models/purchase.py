@@ -336,6 +336,15 @@ class purchase_order(models.Model):
             'domain': [('id','in', yfsqd_ids)],
         }
 
+    @api.model
+    def cron_update_purchase_gongsi_id(self):
+
+
+
+            for one in self:
+                print('===', one)
+                one.gongsi_id = one.source_so_id.purchase_gongsi_id
+
 
 
 
@@ -419,5 +428,8 @@ class purchase_order_line(models.Model):
             'domain': [('id', 'in', [x.id for x in values])],
             'target': 'new',
         }
+
+
+
 
 ###############################
