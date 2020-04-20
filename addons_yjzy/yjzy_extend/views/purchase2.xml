@@ -51,7 +51,7 @@
                     <field name="sale_uid" />
                     <field name="sale_assistant_id"  invisible="1"/>
                     <field name="purchaser_date"/>
-                    <field name="gongsi_id" string="采购主体" groups="base.group_system"/>
+                    <field name="gongsi_id" string="采购主体"/>
                     <field name="supplierinfo_ids" widget="many2many_tags" invisible="1"/>
                     <field name="invoice_status" invisible="1" /><!--invisible="not context.get('show_purchase', True)"-->
                     <field name="company_id" groups="base.group_multi_company" invisible="1" options="{'no_create': True}"/>
@@ -148,7 +148,7 @@
                                        <button name="action_set_date_planned" type="object" states="draft,sent" string="修改交单日期请点击这里" help="This changes the scheduled date of all order lines to the given date" class="fa fa-calendar o_icon_button oe_edit_only"/>
                                   </div>
                             <field name="is_shipped" invisible="1"/>
-                            <field name="gongsi_id" string="采购主体" groups="base.group_system" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}" />
+                            <field name="gongsi_id" string="采购主体"  attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}" />
                         </group>
                         <group>
 

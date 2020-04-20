@@ -327,6 +327,7 @@
                     <field name="approve_date" widget="date" string="合规审批日"/>
                     <field name="purchase_approve_date" widget="date" string="采购审批日"/>
                     <field name="gongsi_id" string="销售主体"/>
+                    <field name="purchase_gongsi_id" string="采购主体"/>
                     <field name="company_id" groups="base.group_system" invisible="1"/>
                 </tree>
 
@@ -459,10 +460,10 @@
 
 
 
-                                <field name="contract_type" attrs="{'readonly':1}" groups="base.group_system" />
+                                <field name="contract_type" attrs="{'readonly':1}" string="模式"/>
                                 <field name="is_inner_trade" groups="base.group_system" invisible="1"/>
-                                <field name="gongsi_id" string="销售主体" attrs="{'readonly':1}" groups="base.group_system" />
-                                <field name="purchase_gongsi_id" string="采购主体" attrs="{'readonly':1}" groups="base.group_system" />
+                                <field name="gongsi_id" string="销售主体" attrs="{'readonly':1}" />
+                                <field name="purchase_gongsi_id" string="采购主体" attrs="{'readonly':1}" />
                             </group>
                             <group>
 
