@@ -575,16 +575,14 @@ class sale_order(models.Model):
 
     @api.model
     def cron_update_rate(self):
+        print('=cron_update_rate==')
         currency = self.env['res.currency'].search([('name', '=', 'USD')], limit=1)
-        for one in self.search([('current_date_rate', '=', 0)]):
+        for one in self.search(['|', ('current_date_rate', '=', 0),('current_date_rate', '=', False)]):
+            print('===', one)
             if one.contract_date:
                 rate = currency.with_context(date=one.contract_date).rate
                 if rate != 0:
                     one.current_date_rate = 1 / rate
-
-
-
-
 
 
 
