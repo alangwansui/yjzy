@@ -136,10 +136,11 @@ class sale_order(models.Model):
             one.fee_rmb_all = one.fee_inner + one.fee_rmb1 + one.fee_rmb2
             one.fee_outer_all = one.fee_outer + one.fee_export_insurance + one.fee_other
 
-            one.fee_rmb_ratio = one.amount_total and (one.fee_rmb_all + fandian_amoun + vat_diff_amount) / one.amount_total2 * 100
+            #one.fee_rmb_ratio = one.amount_total and one.company_currency_id.compute(one.fee_rmb_all + fandian_amoun + vat_diff_amount, one.currency_id) / one.amount_total * 100
+            #akiny 用新的汇率计算
+            one.fee_rmb_ratio = one.amount_total and (
+                        one.fee_rmb_all + fandian_amoun + vat_diff_amount) / one.amount_total2 * 100
             one.fee_outer_ratio = one.amount_total and one.other_currency_id.compute(one.fee_outer_all, one.currency_id) / one.amount_total *100
-
-
 
 
 

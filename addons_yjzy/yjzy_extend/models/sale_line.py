@@ -55,15 +55,14 @@ class sale_order_line(models.Model):
             one.qty_unreceived = sum([x.product_qty - x.qty_received for x in one.pol_ids])
             one.qty_undelivered = one.product_uom_qty - one.qty_delivered
             #计算金额
-            price_total2 = one.currency_id.compute(one.price_total, one.company_currency_id)
-            purchase_cost, fandian_amoun = one.get_purchase_cost()
-            price_total_current_date_rate= one.price_total * one.order_id.current_date_rate
-            back_tax_amount_line = one.back_tax_amount
             if one.order_id.company_id.is_current_date_rate:
-                gross_profit_ratio_line = price_total_current_date_rate != 0 and (
-                            price_total_current_date_rate + back_tax_amount_line - purchase_cost) / price_total_current_date_rate * 100 / 5
+                price_total2 = one.price_total * one.order_id.current_date_rate
             else:
-                gross_profit_ratio_line = price_total2 != 0 and (price_total2 + back_tax_amount_line - purchase_cost) / price_total2 * 100 /5
+                price_total2 = one.currency_id.compute(one.price_total, one.company_currency_id)
+            purchase_cost, fandian_amoun = one.get_purchase_cost()
+           # price_total_current_date_rate= one.price_total * one.order_id.current_date_rate
+            back_tax_amount_line = one.back_tax_amount
+            gross_profit_ratio_line = price_total2 != 0 and (price_total2 + back_tax_amount_line - purchase_cost) / price_total2 * 100 /5
 
 
         #    print('====sdfdf===', gross_profit_ratio_line)
