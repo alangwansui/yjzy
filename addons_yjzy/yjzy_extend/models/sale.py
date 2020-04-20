@@ -587,5 +587,17 @@ class sale_order(models.Model):
                 if rate != 0:
                     one.current_date_rate = 1 / rate
 
+    @api.model
+    def cron_update_contract_type(self):
+        print('=cron_update_rate==')
+
+        for one in self:
+            print('===', one)
+            one.contract_type = one.partner_id.contract_type
+            one.gongsi_id = one.partner_id.gongsi_id
+            one.purchase_gongsi_id = one.partner_id.purchase_gongsi_id
+
+
+
 
 
