@@ -107,7 +107,7 @@ class sale_order_line(models.Model):
     back_tax = fields.Float(u'退税率', digits=dp.get_precision('Back Tax'))
 
     price_total2 = fields.Monetary(u'销售金额', currency_field='company_currency_id', compute=compute_info)  # 'sale_amount': sol.price_total,
-    purchase_price_original = fields.Float(u'采购单价', related='pol_id.price_unit')
+    purchase_price_original = fields.Float(u'采购单价', related='pol_id.price_unit',digits=(2, 2))
     purchase_cost = fields.Monetary(u'采购成本', currency_field='company_currency_id', compute=compute_info)
     fandian_amoun = fields.Monetary(u'返点金额', currency_field='company_currency_id', compute=compute_info)
     stock_cost = fields.Monetary(u'库存成本', currency_field='company_currency_id', compute=compute_info)
