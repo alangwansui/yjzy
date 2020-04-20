@@ -59,10 +59,12 @@ class sale_order_line(models.Model):
                 price_total2 = one.price_total * one.order_id.current_date_rate
             else:
                 price_total2 = one.currency_id.compute(one.price_total, one.company_currency_id)
+
             purchase_cost, fandian_amoun = one.get_purchase_cost()
            # price_total_current_date_rate= one.price_total * one.order_id.current_date_rate
-            back_tax_amount_line = one.back_tax_amount
-            gross_profit_ratio_line = price_total2 != 0 and (price_total2 + back_tax_amount_line - purchase_cost) / price_total2 * 100 /5
+
+
+
 
 
         #    print('====sdfdf===', gross_profit_ratio_line)
@@ -73,6 +75,11 @@ class sale_order_line(models.Model):
                 back_tax_amount = 0
             else:
                 back_tax_amount = (purchase_cost + stock_cost) / BACK_TAX_RATIO * one.back_tax  #固定0.16的税，退回0.05
+
+
+            gross_profit_ratio_line = price_total2 != 0 and (
+                        price_total2 + back_tax_amount - purchase_cost) / price_total2 * 100 / 5
+
 
             one.price_total2 = price_total2
             one.purchase_cost = purchase_cost
