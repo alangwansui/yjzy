@@ -61,9 +61,9 @@ class sale_order_line(models.Model):
 
             if one.order_id.company_id.is_current_date_rate:
                 gross_profit_ratio_line = price_total_current_date_rate != 0 and (
-                            price_total_current_date_rate - purchase_cost) / price_total_current_date_rate * 100
+                            price_total_current_date_rate - purchase_cost) / price_total_current_date_rate * 100 / 5
             else:
-                gross_profit_ratio_line = price_total2 != 0 and (price_total2 - purchase_cost) / price_total2 * 100
+                gross_profit_ratio_line = price_total2 != 0 and (price_total2 - purchase_cost) / price_total2 * 100 /5
 
 
         #    print('====sdfdf===', gross_profit_ratio_line)
