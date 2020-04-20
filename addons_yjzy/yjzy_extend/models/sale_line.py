@@ -80,6 +80,17 @@ class sale_order_line(models.Model):
 
             one.gross_profit_ratio_line = round(gross_profit_ratio_line,2)
             one.gross_profit_line = price_total2-purchase_cost
+
+    def compute_info_pol_id(self):
+        for one in self:
+            #统计未发货
+
+            #统计采购
+
+            one.pol_id = one.pol_ids and one.pol_ids[0] or False
+            one.supplier_id = one.pol_ids and one.pol_ids[0].partner_id or False
+          #  one.purchase_price = one.pol_id and one.pol_id.price_unit or False
+
     #currency_id ==销售货币
     sale_currency_id = fields.Many2one('res.currency', related='currency_id', string=u'交易货币', readonly=True)
     company_currency_id = fields.Many2one('res.currency', related='order_id.company_currency_id', readonly=True)
@@ -96,6 +107,7 @@ class sale_order_line(models.Model):
     back_tax = fields.Float(u'退税率', digits=dp.get_precision('Back Tax'))
 
     price_total2 = fields.Monetary(u'销售金额', currency_field='company_currency_id', compute=compute_info)  # 'sale_amount': sol.price_total,
+    purchase_price_original = fields.Float(u'采购单价', related='pol_id.price_unit')
     purchase_cost = fields.Monetary(u'采购成本', currency_field='company_currency_id', compute=compute_info)
     fandian_amoun = fields.Monetary(u'返点金额', currency_field='company_currency_id', compute=compute_info)
     stock_cost = fields.Monetary(u'库存成本', currency_field='company_currency_id', compute=compute_info)
@@ -120,8 +132,8 @@ class sale_order_line(models.Model):
     second_price_total = fields.Monetary(compute='_compute_second', string='第二小计', readonly=True, store=True)
     is_gold_sample = fields.Boolean('是否有金样', related='product_id.is_gold_sample', readonly=False)
     hs_id = fields.Many2one('hs.hs', '报关品名', related='product_id.hs_id')
-
-    purchase_contract_code = fields.Char('采购合同', related='po_id.contract_code')
+    hs_name = fields.Char('中文品名', related='product_id.hs_id.name')
+    purchase_contract_code = fields.Char('采购合同', related='pol_id.order_id.contract_code')
 
     gross_profit_ratio_line = fields.Float(u'毛利润率', digits=(2, 2), compute=compute_info)
     gross_profit_line = fields.Float(u'毛利润', digits=(2, 2), compute=compute_info)

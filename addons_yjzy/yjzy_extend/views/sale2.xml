@@ -517,12 +517,15 @@
                                         <field name="state" invisible="1"/>
                                     </form>
                                     <button name="open_multi_select_product" string="Multi select product" type="object" class="oe_highlight"/>
-                                    <tree string="销售订单明细" decoration-info="invoice_status=='to invoice'" class="o_list_scroll" limit="20" readonly="1" decoration-danger="product_uom_qty != dlr_qty"><!--editable="bottom" -->
+                                        <tree string="销售订单明细" decoration-info="invoice_status=='to invoice'" class="o_list_scroll" limit="20" readonly="1" decoration-danger="product_uom_qty != purchase_qty_new"><!--editable="bottom" -->
                                         <field name="sequence" widget="handle"/>
                                         <field name="product_updatable" invisible="1"/>
                                         <button type="object" name="get_in_stock_quant" icon="fa-archive" invisible="1"/>
                                         <field name="product_id"/>
-                                        <field name="hs_id"/>
+                                        <field name="hs_id" invisible="1"/>
+                                        <field name="hs_name" string="品名"/>
+
+
                                         <field name="is_gold_sample" string="金样"/>
                                         <field name="product_uom_qty" string="销售数量"/>
                                         <field name="s_uom_id" string="单位" invisible="1"/>
@@ -534,7 +537,8 @@
                                         <field name="price_total" widget="monetary" groups="sale.group_show_price_total" string="总价"/>
 
                                         <field name="purchase_qty_new" string="采购数量"/>
-                                        <field name="purchase_price" string="采购单价"/>
+                                        <field name="purchase_price" string="采购单价" invisible="1"/>
+                                        <field name="purchase_price_original" string="采购单价"/>
                                         <field name="purchase_cost" string="采购金额"/>
                                         <field name="supplier_id" string="供应商"/>
                                         <field name="purchase_contract_code" string="采购合同号"/>
@@ -546,7 +550,7 @@
                                         <field name="purchase_payment_term" string="采购付款条款" invisible="1"/>
 
 
-                                        <field name="p_uom_id"  string="单位"/>
+                                        <field name="p_uom_id"  string="单位" invisible="1"/>
                                         <field name="gross_profit_line" invisible="1"/>
                                         <field name="gross_profit_ratio_line" string="毛利润率%"/>
                                         <button attrs="{'invisible':['product_uom_qty','=','purchase_qty_new']}" invisible="1" name="数量测试" string="数量检测" icon="fa-times-circle" style="color:red"/>
@@ -668,7 +672,6 @@
                                 <div class="oe_clear"/>
                             </page>
                             <page string="采购合同" invisible="0">
-                                <group>
 
                                     <field nolabel="1" name="po_ids" context="{'form_view_ref':'yjzy_extend.new_purchase_order_from'}" >
                   <tree decoration-bf="message_unread==True" decoration-muted="state=='cancel'"  decoration-info="state in ('wait','confirmed')" string="采购合同">
@@ -696,7 +699,6 @@
                     <field name="invoice_status" invisible="1" /><!--invisible="not context.get('show_purchase', True)"-->
                     <field name="company_id" groups="base.group_multi_company" invisible="1" options="{'no_create': True}"/>
                      </tree>
-
                         </field>
 
                                 <group class="oe_subtotal_footer oe_right" colspan="2" name="sale_total">
@@ -711,7 +713,7 @@
                                 <field name="note" class="oe_inline"
                                        placeholder="Setup default terms and conditions in your sales settings ..."/>
                                 <div class="oe_clear"/>
-                           </group>
+
                             </page>
 
                         </notebook>
