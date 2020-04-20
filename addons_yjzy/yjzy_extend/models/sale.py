@@ -138,7 +138,7 @@ class sale_order(models.Model):
 
             #one.fee_rmb_ratio = one.amount_total and one.company_currency_id.compute(one.fee_rmb_all + fandian_amoun + vat_diff_amount, one.currency_id) / one.amount_total * 100
             #akiny 用新的汇率计算
-            one.fee_rmb_ratio = one.amount_total and (
+            one.fee_rmb_ratio = one.amount_total2 and (
                         one.fee_rmb_all + fandian_amoun + vat_diff_amount) / one.amount_total2 * 100
             one.fee_outer_ratio = one.amount_total and one.other_currency_id.compute(one.fee_outer_all, one.currency_id) / one.amount_total *100
 
@@ -596,6 +596,15 @@ class sale_order(models.Model):
             one.contract_type = one.partner_id.contract_type
             one.gongsi_id = one.partner_id.gongsi_id
             one.purchase_gongsi_id = one.partner_id.purchase_gongsi_id
+
+
+    def cron_update_gongsi_id(self):
+        print('=cron_update_rate==')
+
+        for one in self:
+            print('===', one)
+            one.gongsi_id = one.company_id.gongsi_id
+            one.purchase_gongsi_id = one.company_id.gongsi_id
 
 
 

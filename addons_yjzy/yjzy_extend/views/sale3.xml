@@ -1321,7 +1321,7 @@
             <field name="search_view_id" ref="view_sales_order_new_approve_filter"/>
             <field name="context">{'group_by':'state'}</field>
             <field name="view_ids" eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'tree', 'view_id': ref('new_sale_order_approve_tree')}),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('new_sale_order_tree')}),
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('new_sale_order_kanban')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_form')})]"/>
         </record>
@@ -1336,7 +1336,7 @@
             <field name="domain">[('state','in',['sale','approve']),'|',('partner_id.x_studio_field_U7OvH','in',uid),('partner_id.assistant_id','=',uid)]</field>
             <field name="context">{}</field>
             <field name="view_ids" eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'tree', 'view_id': ref('new_sale_order_approve_tree')}),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('new_sale_order_tree')}),
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('new_sale_order_kanban')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_form')})]"/>
         </record>

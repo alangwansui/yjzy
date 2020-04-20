@@ -15,5 +15,7 @@ class res_company(models.Model):
 
     is_current_date_rate = fields.Boolean(u'是否采用当天汇率')
 
+    gongsi_id = fields.Many2one('gongsi','主体')
+
 
 

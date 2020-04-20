@@ -19,6 +19,8 @@
                         <field name="purchase_image"/>
                         <field name="sale_image"/>
                         <field name="is_current_date_rate" groups="base.group_system"/>
+                        <field name="gongsi_id" groups="base.group_system"/>
+
                     </group>
                 </page>
             </notebook>
