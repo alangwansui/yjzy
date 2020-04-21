@@ -552,7 +552,7 @@
 
                                         <field name="p_uom_id"  string="单位" invisible="1"/>
                                         <field name="gross_profit_line" invisible="1"/>
-                                        <field name="gross_profit_ratio_line"  string="毛利润率%"/>
+                                        <field name="gross_profit_ratio_line" widget="Percent"  string="毛利润率%"/>
                                         <button attrs="{'invisible':['product_uom_qty','=','purchase_qty_new']}" invisible="1" name="数量测试" string="数量检测" icon="fa-times-circle" style="color:red"/>
 
 
