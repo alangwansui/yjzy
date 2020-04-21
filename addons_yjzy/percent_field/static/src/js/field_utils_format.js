@@ -4,13 +4,20 @@ odoo.define('percent_field.field_utils_format', function (require) {
     var ks_basic_controller = require('web.BasicController');
     var _t = require('web.core')._t;
     var ks_error_val;
-    function formatPercent(value) {
-    if(value){
-        return value + "%";
+
+    function formatPercent(value, field, options) {
+
+        console.info('>>>>>>>>>>>>>', options, field, value + "%")
+
+        if (value) {
+            if(field.digits){
+                return value.toFixed(field.digits[1]) + "%";
+            }else {
+                return value + "%";
+            }
+        } else {
+            return 0.0 + "%";
         }
-     else{
-        return 0.0 + "%";
-     }
     }
 
     /**
@@ -23,36 +30,33 @@ odoo.define('percent_field.field_utils_format', function (require) {
      * @throws {Error} if no float is found respecting the language configuration
      */
     function parsePercent(value) {
-        var ks_lastChar = value[value.length -1];
+        var ks_lastChar = value[value.length - 1];
         var ks_parsed = value.slice(0, -1);
-        if(value){
-        if(isNaN(ks_parsed)){
+        if (value) {
+            if (isNaN(ks_parsed)) {
                 throw new Error(_.str.sprintf(core._t("'%s' is not a correct float"), value));
-           }
-        else{
-            if(ks_lastChar != "%"){
-                if(isNaN(ks_lastChar)){
-                    throw new Error(_.str.sprintf(core._t("'%s' is not a correct float"), value));
-                }
-                else{
-                    if( value > 100 ||  value < 0 ){
+            } else {
+                if (ks_lastChar != "%") {
+                    if (isNaN(ks_lastChar)) {
                         throw new Error(_.str.sprintf(core._t("'%s' is not a correct float"), value));
+                    } else {
+                        if (value > 100 || value < 0) {
+                            throw new Error(_.str.sprintf(core._t("'%s' is not a correct float"), value));
+                        } else {
+                            return value;
+                        }
                     }
-                    else{
-                        return value;
+                } else {
+                    if (value.slice(0, -1) > 100 || value.slice(0, -1) < 0) {
+                        throw new Error(_.str.sprintf(core._t("'%s' is not a correct float"), value));
+                    } else {
+                        return ks_parsed;
                     }
+
                 }
             }
-            else{
-            if( value.slice(0, -1) > 100 ||  value.slice(0, -1) < 0 ){
-                throw new Error(_.str.sprintf(core._t("'%s' is not a correct float"), value));
-            }
-            else{ return ks_parsed;}
-
-            }
         }
-        }
-       }
+    }
 
     ks_field_utils['format']['Percent'] = formatPercent;
     ks_field_utils['parse']['Percent'] = parsePercent;
@@ -75,16 +79,14 @@ odoo.define('percent_field.field_utils_format', function (require) {
             var if_percent = true;
             var errors = invalidFields.map(function (fieldName) {
                 var fieldtype = fields[fieldName].type;
-                if(fieldtype==="Percent" )
-                {
+                if (fieldtype === "Percent") {
                     if_percent = false;
                     self.do_warn(_t("Percent field value must be 0 to 100 only"));
                 }
-                if(call_once && if_percent)
-                 {
-                   call_once = false;
-                   self._super(invalidFields);
-                 }
+                if (call_once && if_percent) {
+                    call_once = false;
+                    self._super(invalidFields);
+                }
             });
         }
     })
