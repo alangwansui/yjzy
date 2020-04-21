@@ -869,6 +869,9 @@ class transport_bill(models.Model):
                     invoice.purchase_order_change()
                     invoice.po_id = o
 
+                #确认发票
+                invoice.action_invoice_open()
+
                 invoice_ids.append(invoice.id)
         else:
             invoice_ids = [x.id for x in self.purchase_invoice_ids]
