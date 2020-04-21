@@ -118,7 +118,7 @@ class transport_bill_line(models.Model):
     qty = fields.Float(u'发运数量')
     qty1stage = fields.Float(u'入库数', compute=compute_info)
     qty2stage = fields.Float(u'发货数', compute=compute_info)
-    qty2stage_new = fields.Float(u'发货数:新', compute='compute_qty2stage_new')
+    qty2stage_new = fields.Float(u'发货数:新', compute='compute_qty2stage_new', store=True)
 
 
     org_currency_sale_amount = fields.Monetary(u'销售货币金额', currency_field='sale_currency_id', compute=compute_info, store=False, digits=dp.get_precision('Money'))
