@@ -279,9 +279,9 @@ class transport_bill(models.Model):
     purhcase_invoice_paid = fields.Monetary(u'采购发票已付', compute=compute_invoice_amount)
     back_tax_invoice_paid = fields.Monetary(u'退税发票已付', compute=compute_invoice_amount)
 
-    sale_invoice_balance = fields.Monetary(u'销售发票余额', compute=compute_invoice_amount, store=True)
-    purhcase_invoice_balance = fields.Monetary(u'采购发票余额', compute=compute_invoice_amount, store=True)
-    back_tax_invoice_balance = fields.Monetary(u'退税发票余额', compute=compute_invoice_amount, store=True)
+    sale_invoice_balance = fields.Monetary(u'销售发票余额', compute=compute_invoice_amount)
+    purhcase_invoice_balance = fields.Monetary(u'采购发票余额', compute=compute_invoice_amount)
+    back_tax_invoice_balance = fields.Monetary(u'退税发票余额', compute=compute_invoice_amount)
 
 
     # 其他费用 fee_inner,fee_rmb1,fee_rmb2,fee_outer,fee_export_insurance,fee_other

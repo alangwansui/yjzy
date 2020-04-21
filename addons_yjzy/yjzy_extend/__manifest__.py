@@ -49,7 +49,7 @@
         'views/bom_template.xml',
         'views/misc.xml',
         'views/partner.xml',
-
+        'views/partner_new.xml',
         'views/product_template.xml',
         'views/product_product.xml',
 
@@ -80,6 +80,7 @@
         'views/mail.xml',
         'views/budget_budget.xml',
         'views/gongsi.xml',
+
 
 
 

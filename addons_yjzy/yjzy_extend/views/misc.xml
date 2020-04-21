@@ -213,5 +213,9 @@
                   sequence="20"
                   action="act_open_stock_wharf_view"/>
 
+
+
+
+
     </data>
 </odoo>
