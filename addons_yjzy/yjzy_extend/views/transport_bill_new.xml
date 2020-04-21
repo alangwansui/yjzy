@@ -475,11 +475,7 @@
                                 </field>
                             </page>
                             <page string="报关资料" >
-                                <header>
-                                 <!--button name="action_sale_purchase" type="object" string="报关Invoice资料"/>
-                                 <button name="action_packaging" type="object" string="装箱Packing list资料" /-->
-                                 <!--button name="action_others" type="object" string="其他信息" /-->
-                                </header>
+
                                 <group col="4">
                                     <group>
                                     <field name="pallet_type" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
@@ -494,8 +490,13 @@
                                     <field name="tuopan_volume" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
                                   </group>
                                 </group>
+                                 <header>
+                                 <button name="action_sale_purchase" type="object" class="oe_highlight" string="报关Invoice资料"/>
+                                 <button name="action_packaging" type="object"  class="oe_highlight" string="装箱Packing list资料" />
+                                 <!--button name="action_others" type="object" string="其他信息" /-->
+                                </header>
                                 <field name="hsname_ids" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}">
-                                    <tree editable="bottom" decoration-danger="purchase_hs_id==False" class="o_list_scroll">
+                                    <!--tree editable="bottom" decoration-danger="purchase_hs_id==False" class="o_list_scroll">
                                         <field name="purchase_hs_id" string="采购对应" groups="base.group_system"/>
                                         <button name="make_suppliser_hs" help="手动生成采购数据" type="object" icon="fa-plus-circle"  attrs="{'invisible':[('purchase_hs_id','!=',False)]}"/>
                                         <field name="id" invisible="1"/>
@@ -541,11 +542,11 @@
                                         <field name="type" invisible="1"/>
                                         <field name="note" invisible="1"/>
                                         <button name="open_form_view" type="object" icon="fa-arrows-v"/>
-                                    </tree>
+                                    </tree-->
 
 
 
-                                    <!--tree editable="bottom" decoration-danger="purchase_hs_id==False">
+                                    <tree editable="bottom" decoration-danger="purchase_hs_id==False">
                                         <field name="purchase_hs_id" string="采购对应" groups="base.group_system"/>
                                         <button name="make_suppliser_hs" type="object" icon="fa-plus-circle"  attrs="{'invisible':[('purchase_hs_id','!=',False)]}"/>
                                         <field name="id" invisible="1"/>
@@ -555,10 +556,11 @@
                                         <field name="dump_product_id" groups="base.group_system" invisible="1"/>
                                         <field name="hs_id" attrs="{'required':[('purchase_hs_id','=',False)]}" />
                                         <field name="hs_en_name" groups="base.group_system" invisible="1"/>
-
+                                        <field name="out_qty2" sum="小计" string="报关数量" attrs="{'readonly':[('purchase_hs_id','=',False)]}"/>
                                         <field name="po_id" string="采购合同" attrs="{'required':[('purchase_hs_id','=',False)],'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
+
                                         <field name="amount" sum="小计" string="销售额" attrs="{'readonly':[('purchase_hs_id','=',False)],'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
-                                        <field name="out_qty2" sum="小计" string="报关数量" attrs="{'readonly':[('purchase_hs_id','=',False)],'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
+
                                         <field name="price2" string="单价" readonly="1" attrs="{'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
                                         <field name="amount2" sum="小计" string="金额" attrs="{'readonly':[('purchase_hs_id','=',False)],'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
                                         <field name="purchase_amount2" sum="小计" string="采购额" attrs="{'readonly':[('purchase_hs_id','=',False)],'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
@@ -591,7 +593,7 @@
                                         <field name="type" invisible="1"/>
                                         <field name="note" invisible="1"/>
                                         <button name="open_form_view" type="object" icon="fa-arrows-v"/>
-                                    </tree-->
+                                    </tree>
                                     <form>
                                         <group>
                                             <group>
