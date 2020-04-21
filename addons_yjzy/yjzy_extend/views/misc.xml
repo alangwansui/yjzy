@@ -35,9 +35,10 @@
             <field name="name">mark.comb.tree</field>
             <field name="model">mark.comb</field>
             <field name="arch" type="xml">
-                <tree string="唛头组" editable="top">
+                <tree string="唛头组" >
                     <field name="name"/>
-                    <field name="line_ids" widget="many2many_tags"/>
+                    <field name="line_ids" widget="many2many_tags" invisible="1"/>
+                    <field name="description_mark"/>
                     <field name="customer_id"/>
                 </tree>
             </field>
@@ -49,7 +50,9 @@
             <field name="arch" type="xml">
                 <form string="唛头组">
                     <field name="name"/>
-                    <field name="line_ids" widget="many2many_tags"/>
+                    <field name="description_mark"/>
+                    <field name="customer_id"/>
+                    <field name="line_ids" widget="many2many_tags" invisible="1"/>
                 </form>
             </field>
         </record>

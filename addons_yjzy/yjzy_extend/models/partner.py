@@ -28,6 +28,15 @@ class res_partner(models.Model):
     product_manager_id = fields.Many2one('res.users', related='user_id.product_manager_id', store=True)
 
     type = fields.Selection(selection_add=[('notice', u'发货代理')])
+    type1 = fields.Selection(
+         [('contact', u'联系人'),
+         ('delivery', u'收货地址'),
+         ], string='Address Type',
+        default='contact',
+        help="Used to select automatically the right address according to the context in sales and purchases documents.")
+
+    comment_contract = fields.Text(u'对接内容描述')
+
     devloper_id = fields.Many2one('res.users', u'开发人员')
     full_name = fields.Char('公司全称')
     invoice_title = fields.Char(u'发票抬头')
@@ -72,6 +81,21 @@ class res_partner(models.Model):
     gongsi_id = fields.Many2one('gongsi', '销售主体')
     purchase_gongsi_id = fields.Many2one('gongsi', '采购主体')
 
+    sale_currency_id = fields.Many2one('res.currency','销售币种',related='property_product_pricelist.currency_id')
+    customer_product_ids = fields.One2many('product.product','customer_id','客户采购产品')
+
+    customer_info_from = fields.Char(u'客户来源')
+    customer_info_from_uid = fields.Many2one('res.users',u'客户获取人')
+
+
+    customer_purchase_in_china = fields.Float(u'客户在中国采购规模',currency_field='customer_purchase_in_china_currency_id')
+    customer_purchase_in_china_currency_id = fields.Many2one('res.currency', '客户在中国采购规模')
+
+    customer_sale_total = fields.Float(u'客户销售额',currency_field='customer_sale_total_currency_id')
+    customer_sale_total_currency_id = fields.Many2one('res.currency', '客户销售额')
+
+    child_delivery_ids = fields.One2many('res.partner', compute='compute_child_delivery_ids', string='收货地址')
+    child_contact_ids = fields.One2many('res.partner', compute='compute_child_contact_ids', string='联系人')
 
     def generate_code(self):
         seq_obj = self.env['ir.sequence']
@@ -91,6 +115,23 @@ class res_partner(models.Model):
                 one.code = seq_obj.next_by_code(seq_code)
 
         return True
+
+    @api.onchange('type1')
+    def _onchange_type1(self):
+        self.type = self.type1
+
+    @api.one
+    def compute_child_delivery_ids(self):
+        for one in self:
+            child_delivery_ids = one.child_ids.filtered(
+                lambda x: x.type == 'delivery')
+            one.child_delivery_ids =  child_delivery_ids
+
+    def compute_child_contact_ids(self):
+        for one in self:
+            child_contact_ids = one.child_ids.filtered(
+                lambda x: x.type == 'contact')
+            one.child_contact_ids =  child_contact_ids
 
 
 
