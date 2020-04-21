@@ -277,6 +277,8 @@
                                         <field name="sale_qty" sum="小计"/>
                                         <field name="qty_undelivered" invisible="1"/>
                                         <field name="rest_tb_qty"/>
+
+
                                         <field name="plan_qty" string="本次计划" sum="小计"/>
                                         <field name="lot_plan_id" invisible="1"/>
                                         <field name="plan_lot" readonly="1" context="{'show_po_code': 1}" options="{'no_open':1}"/>
