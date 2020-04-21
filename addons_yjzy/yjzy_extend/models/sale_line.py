@@ -137,7 +137,7 @@ class sale_order_line(models.Model):
     tbl_ids = fields.One2many('transport.bill.line', 'sol_id', u'出运明细')
 
     rest_tb_qty = fields.Float('出运剩余数', compute=compute_info)
-    #rest_tb_qty = fields.Float('出运剩余数', compute='compute_rest_tb_qty', store=True)
+    new_rest_tb_qty = fields.Float('新:出运剩余数', compute='compute_rest_tb_qty', store=True)
 
     second_unit_price = fields.Float('第二价格')
     second_price_total = fields.Monetary(compute='_compute_second', string='第二小计', readonly=True, store=True)
@@ -149,10 +149,12 @@ class sale_order_line(models.Model):
     gross_profit_ratio_line = fields.Float(u'毛利润率', digits=(2, 2), compute=compute_info)
     gross_profit_line = fields.Float(u'毛利润', digits=(2, 2), compute=compute_info)
     #gross_profit_ratio_line_p = fields.Percent(u'毛利润率', digits=(2, 2), compute=compute_info)
+
+
     @api.depends('tbl_ids', 'tbl_ids.qty2stage_new')
     def compute_rest_tb_qty(self):
         for one in self:
-            one.rest_tb_qty = one.product_qty - sum(one.tbl_ids.mapped('qty2stage_new'))
+            one.new_rest_tb_qty = one.product_qty - sum(one.tbl_ids.mapped('qty2stage_new'))
 
 
     def open_soline_form(self):

@@ -869,6 +869,9 @@ class transport_bill(models.Model):
                     invoice.purchase_order_change()
                     invoice.po_id = o
 
+                #确认发票
+                invoice.action_invoice_open()
+
                 invoice_ids.append(invoice.id)
         else:
             invoice_ids = [x.id for x in self.purchase_invoice_ids]
@@ -1039,6 +1042,10 @@ class transport_bill(models.Model):
     def onece_all_stage(self):
         self.prepare_1_picking()
         self.process_1_picking()
+
+        #自动创建发票
+        self.make_purchase_invoice()
+
         self.prepare_2_picking()
         self.process_2_picking()
 
