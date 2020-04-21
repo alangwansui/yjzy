@@ -1042,6 +1042,10 @@ class transport_bill(models.Model):
     def onece_all_stage(self):
         self.prepare_1_picking()
         self.process_1_picking()
+
+        #自动创建发票
+        self.make_purchase_invoice()
+
         self.prepare_2_picking()
         self.process_2_picking()
 
