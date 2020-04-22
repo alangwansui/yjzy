@@ -94,7 +94,7 @@ class res_partner(models.Model):
     customer_sale_total = fields.Float(u'客户销售额',currency_field='customer_sale_total_currency_id')
     customer_sale_total_currency_id = fields.Many2one('res.currency', '客户销售额')
 
-    child_delivery_ids = fields.One2many('res.partner', compute='compute_child_delivery_ids', string='收货地址')
+    child_delivery_ids = fields.One2many('res.partner', 'parent_id', domain=[('type', '=', 'delivery')], string='收货地址')
     child_contact_ids = fields.One2many('res.partner', compute='compute_child_contact_ids', string='联系人')
 
     def open_form_view(self):
