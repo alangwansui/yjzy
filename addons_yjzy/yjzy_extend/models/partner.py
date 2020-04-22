@@ -112,7 +112,7 @@ class res_partner(models.Model):
             pricelist = p_obj.create({
                 'name': one.name,
                 'customer_id': one.id,
-                'currency_id': self.env.user.company_id.currency_id.id,
+                'currency_id':  self.sale_currency_id.id or self.env.user.company_id.currency_id.id,
                 'type': 'special',
             })
             one.property_product_pricelist = pricelist
