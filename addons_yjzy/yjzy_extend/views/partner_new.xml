@@ -280,7 +280,7 @@
                 <form string="Partners">
 
                 <sheet>
-                    <div class="oe_button_box" name="button_box">
+                    <div class="oe_button_box" name="button_box" groups="base.group_system">
                           <button type="object" class="oe_stat_button" icon="fa-pencil-square-o" name="action_view_partner_invoices" attrs="{'invisible': [('customer', '=', False)]}">
                         <div class="o_form_field o_stat_info">
                             <span class="o_stat_value">
@@ -349,10 +349,20 @@
                         <field name="is_company" invisible="1"/>
                         <field name="commercial_partner_id" invisible="1"/>
                         <field name="company_type" widget="radio"
-                            class="oe_edit_only"
+                            class="oe_edit_only" invisible="1"
                             options="{'horizontal': true}"/>
+                        <div attrs="{'invisible':[('is_company','=',False)]}">
+                            公司简称：
+                        </div>
+                        <div attrs="{'invisible':['|',('is_company','=',True),('type','!=','contact')]}">
+                            联系人姓名：
+                        </div>
+                        <div attrs="{'invisible':['|',('is_company','=',True),('type','!=','delivery')]}">
+                            编号：
+                        </div>
+
                         <h1>
-                            <field name="name" default_focus="1" widget="field_clearbit" placeholder="简称" attrs="{'required' : [('type', '=', 'contact')]}"/>
+                            <field name="name" default_focus="1" widget="field_clearbit" placeholder="公司简称" attrs="{'required' : [('type', '=', 'contact')]}"/>
                         </h1>
                         <div class="o_row">
                             <field name="code"/> <button name="generate_code" type="object" string="生成编码"/>

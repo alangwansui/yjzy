@@ -68,11 +68,17 @@ class res_partner(models.Model):
     level = fields.Selection([(x, x.upper()) for x in 'abcde'], u'客户等级')
     sequence = fields.Integer(u'排序', default=10, index=True)
 
+    street = fields.Char(translate=False)
+    street2 = fields.Char(translate=False)
 
     need_purchase_fandian = fields.Boolean(u'采购返点')
     purchase_fandian_ratio = fields.Float(u'返点比例：%')
     purchase_fandian_partner_id = fields.Many2one('res.partner', u'返点对象')
-    state = fields.Selection([('draft', u'草稿'), ('done', u'完成')], u'状态', default='draft')
+    state = fields.Selection([('draft', u'草稿'),
+                              ('done', u'完成'),
+                              ('submit',u'已提交'),
+                              ('to approve',u'责任人已审批'),
+                              ('approve',u'审批完成')], u'状态', default='draft')
     auto_yfsqd = fields.Boolean(u'自动生成预付')
     is_inter_partner = fields.Boolean(u'是否内部')
     jituan_name = fields.Char(u'集团名称')
@@ -81,7 +87,7 @@ class res_partner(models.Model):
     gongsi_id = fields.Many2one('gongsi', '销售主体')
     purchase_gongsi_id = fields.Many2one('gongsi', '采购主体')
 
-    sale_currency_id = fields.Many2one('res.currency','销售币种',related='property_product_pricelist.currency_id')
+    sale_currency_id = fields.Many2one('res.currency','销售币种')
     customer_product_ids = fields.One2many('product.product','customer_id','客户采购产品')
 
     customer_info_from = fields.Char(u'客户来源')
