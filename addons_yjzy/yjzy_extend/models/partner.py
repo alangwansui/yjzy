@@ -108,6 +108,7 @@ class res_partner(models.Model):
         one = super(res_partner, self).create(vals)
         if one.customer and one.company_type == 'company':
             one.create_my_pricelist()
+            one.generate_code()
         return one
 
 
@@ -117,10 +118,23 @@ class res_partner(models.Model):
             pricelist = p_obj.create({
                 'name': one.name,
                 'customer_id': one.id,
-                'currency_id': self.env.user.company_id.currency_id.id,
+                'currency_id':  self.sale_currency_id.id or self.env.user.company_id.currency_id.id,
                 'type': 'special',
             })
+
             one.property_product_pricelist = pricelist
+
+            property_record = self.env['ir.property'].search([
+                ('name', '=', 'property_product_pricelist'),
+                ('res_id', '=', 'res.partner,%s' % one.id),
+                ('fields_id.name', '=', 'property_product_pricelist'),
+                ('value_reference', '=', 'product.pricelist,%s' % pricelist.id)])
+
+            print('====', property_record)
+
+            property_record.company_id = False
+
+
 
 
     def open_form_view(self):
