@@ -8,3 +8,14 @@ create sequence  tbl_hsname_id_seq    increment by 1 minvalue 1 no maxvalue star
 
 
 tbl_hsname_id_seq
+
+
+用友接口测试数据
+
+Appkey:   7668c4b8-1cfa-4eee-9be3-d494c07a24e8
+Appsecret:    qononw
+
+http://47.100.213.2:8080/tplus/api/v2/
+
+用户名           密码             账套
+13706881200   yj4008870117    000001
