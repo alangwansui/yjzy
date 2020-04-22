@@ -102,6 +102,7 @@ class res_partner(models.Model):
         one = super(res_partner, self).create(vals)
         if one.customer and one.company_type == 'company':
             one.create_my_pricelist()
+            one.generate_code()
         return one
 
 
