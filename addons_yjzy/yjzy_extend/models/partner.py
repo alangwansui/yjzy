@@ -35,8 +35,8 @@ class res_partner(models.Model):
         default='contact',
         help="Used to select automatically the right address according to the context in sales and purchases documents.")
 
+    jituan_id = fields.Many2one('ji.tuan', '集团')
     comment_contract = fields.Text(u'对接内容描述')
-
     devloper_id = fields.Many2one('res.users', u'开发人员')
     full_name = fields.Char('公司全称')
     invoice_title = fields.Char(u'发票抬头')

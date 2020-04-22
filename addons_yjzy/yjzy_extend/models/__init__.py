@@ -59,6 +59,7 @@ from . import mail
 from . import gongsi
 from . import employee
 from . import attachment
+from . import jituan
 
 
 
