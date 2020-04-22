@@ -90,15 +90,15 @@ class res_partner(models.Model):
     sale_currency_id = fields.Many2one('res.currency','销售币种')
     customer_product_ids = fields.One2many('product.product','customer_id','客户采购产品')
 
-    customer_info_from = fields.Char(u'客户来源')
+    campaign_id = fields.Many2one('utm.campaign',u'客户来源')
     customer_info_from_uid = fields.Many2one('res.users',u'客户获取人')
 
 
-    customer_purchase_in_china = fields.Float(u'客户在中国采购规模',currency_field='customer_purchase_in_china_currency_id')
-    customer_purchase_in_china_currency_id = fields.Many2one('res.currency', '客户在中国采购规模')
+    customer_purchase_in_china = fields.Monetary(u'客户在中国采购规模(CNY)',currency_field='customer_purchase_in_china_currency_id')
+    customer_purchase_in_china_currency_id = fields.Many2one('res.currency', '客户在中国采购规模',default=lambda self: self.env.user.company_id.currency_id.id)
 
-    customer_sale_total = fields.Float(u'客户销售额',currency_field='customer_sale_total_currency_id')
-    customer_sale_total_currency_id = fields.Many2one('res.currency', '客户销售额')
+    customer_sale_total = fields.Monetary(u'客户销售额',currency_field='customer_sale_total_currency_id')
+    customer_sale_total_currency_id = fields.Many2one('res.currency', '客户销售额',default=lambda self: self.env.user.company_id.currency_id.id)
 
     child_delivery_ids = fields.One2many('res.partner', 'parent_id', domain=[('type', '=', 'delivery')], string='收货地址')
     child_contact_ids = fields.One2many('res.partner', 'parent_id', domain=[('type', '=', 'contact')], string='联系人')

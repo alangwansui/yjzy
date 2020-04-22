@@ -1145,7 +1145,7 @@
         <field name="view_type">form</field>
         <field name="view_mode">form</field>
         <field name="domain">[]</field>
-        <field name="context">{'default_company_type': 'company', 'default_contract_type': 'c'}</field>
+        <field name="context">{'default_company_type': 'company','default_customer': True, 'default_contract_type': 'c'}</field>
         <field name="view_ids" eval="[(5, 0, 0),
                                  (0, 0, {'view_mode': 'form', 'view_id': ref('view_new_partner_form')})]"/>    </record>
        <menuitem id="new_partner_create_menu" name="创建客户" groups="base.group_system"  parent="crm.res_partner_menu_crm"  action="action_partner_create" sequence="1"/>
