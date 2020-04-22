@@ -964,8 +964,9 @@ class transport_bill(models.Model):
     def write(self, vals):
         res = super(transport_bill, self).write(vals)
         need = set(['date_ship', 'date_supplier_finish', 'date_out_in', 'date_customer_finish']) & set(vals.keys())
+        date_out_in = self.date_out_in
         print('===write need==', need)
-        if need:
+        if need and date_out_in:
             self.sync_data2invoice()
         return res
 
