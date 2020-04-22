@@ -8,7 +8,7 @@
                 <search string="Transport Bill">
 
                     <field name="ref" string="模糊搜索" filter_domain="['|','|',('ref','ilike',self),('name','ilike',self),('partner_id','child_of',self)]"/>
-                    <field name="ref" string="合同号" filter_domain="['|',('ref','ilike',self),('name','ilike',self)"/>
+                    <field name="ref" string="合同号" filter_domain="['|',('ref','ilike',self),('name','ilike',self)]"/>
                     <field name="user_id"/>
 
                     <separator/>
