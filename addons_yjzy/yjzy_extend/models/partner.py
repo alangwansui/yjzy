@@ -97,6 +97,32 @@ class res_partner(models.Model):
     child_delivery_ids = fields.One2many('res.partner', compute='compute_child_delivery_ids', string='收货地址')
     child_contact_ids = fields.One2many('res.partner', compute='compute_child_contact_ids', string='联系人')
 
+    @api.multi
+    def select_products(self):
+        if self.flag_order == 'so':
+            order_id = self.env['sale.order'].browse(self._context.get('active_id', False))
+            for product in self.product_ids:
+                self.env['sale.order.line'].create({
+                    'product_id': product.id,
+                    'product_uom': product.uom_id.id,
+                    'price_unit': product.lst_price,
+                    'order_id': order_id.id
+                })
+        elif self.flag_order == 'po':
+            order_id = self.env['purchase.order'].browse(self._context.get('active_id', False))
+            for product in self.product_ids:
+                self.env['purchase.order.line'].create({
+                    'product_id': product.id,
+                    'name': product.name,
+                    'date_planned': order_id.date_planned,
+                    'product_uom': product.uom_id.id,
+                    'price_unit': product.lst_price,
+                    'product_qty': 1.0,
+                    'order_id': order_id.id
+                })
+
+
+
     def generate_code(self):
         seq_obj = self.env['ir.sequence']
         for one in self:
