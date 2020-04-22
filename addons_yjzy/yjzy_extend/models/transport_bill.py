@@ -838,8 +838,8 @@ class transport_bill(models.Model):
 
     def make_purchase_invoice(self):
         self.ensure_one()
-        if not self.date_out_in:
-            raise Warning(u'请先设置进仓日期')
+   #     if not self.date_out_in:
+  #          raise Warning(u'请先设置进仓日期')
         invoice_ids = []
 
         if not self.purchase_invoice_ids.filtered(lambda x: x.yjzy_type == 'purchase'):
@@ -870,7 +870,7 @@ class transport_bill(models.Model):
                     invoice.po_id = o
 
                 #确认发票
-                invoice.action_invoice_open()
+             #   invoice.action_invoice_open()
 
                 invoice_ids.append(invoice.id)
         else:
@@ -900,8 +900,8 @@ class transport_bill(models.Model):
     def make_sale_invoice(self):
         self.ensure_one()
         #print('===make_sale_invoice===1', self.so_ids)
-        if not self.date_out_in:
-            raise Warning(u'请先设置进仓日期')
+      #  if not self.date_out_in:
+      #      raise Warning(u'请先设置进仓日期')
 
         invoice_obj = self.env['account.invoice']
         sale_invoice_ids = []
@@ -976,18 +976,20 @@ class transport_bill(models.Model):
                 purchase_invoice.date_ship = one.date_ship
                 purchase_invoice.date_finish = one.date_supplier_finish
                 purchase_invoice.date_invoice = one.date_out_in
+                purchase_invoice.action_invoice_open()
             #同步销售发票
             sale_invoice = one.sale_invoice_id
             if sale_invoice:
                 sale_invoice.date_invoice = one.date_out_in
                 sale_invoice.date_finish = one.date_customer_finish
                 sale_invoice.date_ship = one.date_ship
+                sale_invoice.action_invoice_open()
         return True
 
     def make_back_tax_invoice(self):
         self.ensure_one()
-        if not self.date_out_in:
-            raise Warning(u'请先设置进仓日期')
+        #if not self.date_out_in:
+       #     raise Warning(u'请先设置进仓日期')
         back_tax_invoice = self.back_tax_invoice_id
         if not back_tax_invoice:
             partner =  self.env.ref('yjzy_extend.partner_back_tax')
@@ -1043,11 +1045,13 @@ class transport_bill(models.Model):
         self.prepare_1_picking()
         self.process_1_picking()
 
-        #自动创建发票
-        self.make_purchase_invoice()
+
 
         self.prepare_2_picking()
         self.process_2_picking()
+
+        # 自动创建发票
+        self.make_purchase_invoice()
 
     @api.model
     def process_move_operation(self, move, lot, qty):

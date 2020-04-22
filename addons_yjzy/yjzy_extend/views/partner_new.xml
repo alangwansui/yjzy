@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-
+ <record model="ir.actions.act_window" id="action_new_partner_contact_create">
+        <field name="name">创建联系人</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+        <field name="target">new</field>
+          <field name="view_ids" eval="[(5, 0, 0),
+                                 (0, 0, {'view_mode': 'form', 'view_id': ref('view_new_partner_contact_form')})]"/>    </record>
         <!-- Partner Titles -->
         <record id="new_view_partner_title_tree" model="ir.ui.view">
             <field name="name">res.partner.title.tree.new</field>
@@ -249,7 +259,9 @@
             <field name="arch" type="xml">
                 <form string="Partners">
                        <header>
-             <button name="%(action_partner_create)d" type="action" string="创建联系人"
+             <button name="%(action_new_partner_contact_create)d" context="{'default_parent_id': active_id, 'default_street': street, 'default_street2': street2,
+            'default_city': city, 'default_state_id': state_id, 'default_zip': zip, 'default_country_id': country_id,
+            'default_supplier': supplier, 'default_customer': customer, 'default_lang': lang}" type="action" string="创建联系人"
                             class="oe_highlight" />
                     </header>
                 <sheet>
@@ -1090,20 +1102,7 @@
        <menuitem id="new_partner_create_menu" name="创建客户" groups="base.group_system"  parent="crm.res_partner_menu_crm"  action="action_partner_create" sequence="1"/>
 
 
-      <record model="ir.actions.act_window" id="action_new_partner_contact_form">
-        <field name="name">创建联系人</field>
-        <field name="type">ir.actions.act_window</field>
-        <field name="res_model">res.partner</field>
-        <field name="view_type">form</field>
-        <field name="view_mode">form</field>
-        <field name="domain">[]</field>
-        <field name="context">{'default_parent_id': active_id, 'default_street': street, 'default_street2': street2,
-            'default_city': city, 'default_state_id': state_id, 'default_zip': zip, 'default_country_id': country_id,
-            'default_supplier': supplier, 'default_customer': customer, 'default_lang': lang}</field>
 
-
-          <field name="view_ids" eval="[(5, 0, 0),
-                                 (0, 0, {'view_mode': 'form', 'view_id': ref('view_new_partner_contact_form')})]"/>    </record>
 
 
 
