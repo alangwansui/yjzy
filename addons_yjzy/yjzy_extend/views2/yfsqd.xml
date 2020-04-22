@@ -105,7 +105,7 @@
                             <field name="advance_account_id" label="预收科目" />
 
 
-                            <field name="po_id" domain="[('partner_id','=', partner_id),'|',('state','in',['approve','done','purchase']),('x_wkf_state','=',185)]" context="{'show_contract_code': 1}"/>
+                            <field name="po_id" domain="[('partner_id','=', partner_id),'|',('state','in',['approve','done','purchase','to approve']),('x_wkf_state','=',185)]" context="{'show_contract_code': 1}"/>
                             <field name="sale_uid"/>
                             <field name="assistant_uid"/>
 

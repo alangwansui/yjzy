@@ -97,6 +97,18 @@ class res_partner(models.Model):
     child_delivery_ids = fields.One2many('res.partner', compute='compute_child_delivery_ids', string='收货地址')
     child_contact_ids = fields.One2many('res.partner', compute='compute_child_contact_ids', string='联系人')
 
+    def open_form_view(self):
+        return {
+            'name': '联系人',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': self._name,
+            'res_id': self.id,
+            'type': 'ir.actions.act_window',
+            'target': 'new',
+        }
+
+
     @api.multi
     def select_products(self):
         if self.flag_order == 'so':
