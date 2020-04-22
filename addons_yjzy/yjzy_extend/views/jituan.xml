@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="ji_tuan_tree" model="ir.ui.view">
+            <field name="name">ji_tuan.tree</field>
+            <field name="model">ji.tuan</field>
+            <field name="arch" type="xml">
+                <tree string="集团">
+                    <field name="name"/>
+                    <field name="description"/>
+                    <field name="user_id"/>
+                    <field name="assistant_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="ji_tuan_form" model="ir.ui.view">
+            <field name="name">ji_tuan.form</field>
+            <field name="model">ji.tuan</field>
+            <field name="arch" type="xml">
+                <form string="集团">
+                    <header>
+
+                    </header>
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="description"/>
+                            <field name="user_id"/>
+                            <field name="assistant_id"/>
+                        </group>
+                        <notebook>
+                            <page string="客户">
+                                <field name="partner_ids" widget="many2many"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+
+                </form>
+            </field>
+        </record>
+
+
+        <record id="ji_tuan_action" model="ir.actions.act_window">
+            <field name="name">集团</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ji.tuan</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="ji_tuan_menu" name="集团" parent="sale.menu_sale_config" action="ji_tuan_action" sequence=""/>
+
+    </data>
+</odoo>

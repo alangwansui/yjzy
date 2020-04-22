@@ -35,8 +35,8 @@ class res_partner(models.Model):
         default='contact',
         help="Used to select automatically the right address according to the context in sales and purchases documents.")
 
+    jituan_id = fields.Many2one('ji.tuan', '集团')
     comment_contract = fields.Text(u'对接内容描述')
-
     devloper_id = fields.Many2one('res.users', u'开发人员')
     full_name = fields.Char('公司全称')
     invoice_title = fields.Char(u'发票抬头')
@@ -102,6 +102,26 @@ class res_partner(models.Model):
 
     child_delivery_ids = fields.One2many('res.partner', 'parent_id', domain=[('type', '=', 'delivery')], string='收货地址')
     child_contact_ids = fields.One2many('res.partner', 'parent_id', domain=[('type', '=', 'contact')], string='联系人')
+
+    @api.model
+    def create(self, vals):
+        one = super(res_partner, self).create(vals)
+        if one.customer and one.company_type == 'company':
+            one.create_my_pricelist()
+        return one
+
+
+    def create_my_pricelist(self):
+        p_obj = self.env['product.pricelist']
+        for one in self:
+            pricelist = p_obj.create({
+                'name': one.name,
+                'customer_id': one.id,
+                'currency_id': self.env.user.company_id.currency_id.id,
+                'type': 'special',
+            })
+            one.property_product_pricelist = pricelist
+
 
     def open_form_view(self):
         return {

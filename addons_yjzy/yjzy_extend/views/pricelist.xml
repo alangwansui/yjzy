@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="inherit_product_pricelist" model="ir.ui.view">
+            <field name="name">product.pricelist.tree</field>
+            <field name="model">product.pricelist</field>
+            <field name="inherit_id" ref="product.product_pricelist_view_tree"/>
+            <field name="arch" type="xml">
+                <tree position="inside">
+                    <field name="customer_id"/>
+                </tree>
+            </field>
+        </record>
+
+
+
+    </data>
+</odoo>
