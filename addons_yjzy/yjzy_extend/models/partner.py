@@ -115,7 +115,20 @@ class res_partner(models.Model):
                 'currency_id':  self.sale_currency_id.id or self.env.user.company_id.currency_id.id,
                 'type': 'special',
             })
+
             one.property_product_pricelist = pricelist
+
+            property_record = self.env['ir.property'].search([
+                ('name', '=', 'property_product_pricelist'),
+                ('res_id', '=', 'res.partner,%s' % one.id),
+                ('fields_id.name', '=', 'property_product_pricelist'),
+                ('value_reference', '=', 'product.pricelist,%s' % pricelist.id)])
+
+            print('====', property_record)
+
+            property_record.company_id = False
+
+
 
 
     def open_form_view(self):
