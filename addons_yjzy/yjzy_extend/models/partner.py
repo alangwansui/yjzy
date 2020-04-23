@@ -133,13 +133,13 @@ class res_partner(models.Model):
 
 
             pricelist_cny = p_obj.create({
-                'name': one.name + 'CNY',
+                'name': one.name,
                 'customer_id': one.id,
                 'currency_id':  currency_cny.id,
                 'type': 'special',
             })
             pricelist_usd = p_obj.create({
-                'name': one.name + 'USD',
+                'name': one.name,
                 'customer_id': one.id,
                 'currency_id':  currency_usd.id,
                 'type': 'special',
