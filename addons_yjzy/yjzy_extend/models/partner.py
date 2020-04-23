@@ -109,24 +109,65 @@ class res_partner(models.Model):
     def create_my_pricelist(self):
         p_obj = self.env['product.pricelist']
         for one in self:
-            pricelist = p_obj.create({
-                'name': one.name,
+            # pricelist = p_obj.create({
+            #     'name': one.name,
+            #     'customer_id': one.id,
+            #     'currency_id':  self.sale_currency_id.id or self.env.user.company_id.currency_id.id,
+            #     'type': 'special',
+            # })
+
+            currency_cny = self.env['res.currency'].search([('name', '=', 'CNY')], limit=1)
+            currency_usd = self.env['res.currency'].search([('name', '=', 'USD')], limit=1)
+
+
+            pricelist_cny = p_obj.create({
+                'name': one.name + 'CNY',
                 'customer_id': one.id,
-                'currency_id':  self.sale_currency_id.id or self.env.user.company_id.currency_id.id,
+                'currency_id':  currency_cny.id,
+                'type': 'special',
+            })
+            pricelist_usd = p_obj.create({
+                'name': one.name + 'USD',
+                'customer_id': one.id,
+                'currency_id':  currency_usd.id,
                 'type': 'special',
             })
 
-            one.property_product_pricelist = pricelist
 
-            property_record = self.env['ir.property'].search([
+            one.property_product_pricelist = pricelist_cny
+
+            property_record_cny = self.env['ir.property'].search([
                 ('name', '=', 'property_product_pricelist'),
                 ('res_id', '=', 'res.partner,%s' % one.id),
                 ('fields_id.name', '=', 'property_product_pricelist'),
-                ('value_reference', '=', 'product.pricelist,%s' % pricelist.id)])
+                ('value_reference', '=', 'product.pricelist,%s' % pricelist_cny.id)])
 
-            print('====', property_record)
+            print('====', property_record_cny)
+            property_record_cny.company_id = False
 
-            property_record.company_id = False
+
+            one.property_product_pricelist = pricelist_usd
+
+            property_record_usd = self.env['ir.property'].search([
+                ('name', '=', 'property_product_pricelist'),
+                ('res_id', '=', 'res.partner,%s' % one.id),
+                ('fields_id.name', '=', 'property_product_pricelist'),
+                ('value_reference', '=', 'product.pricelist,%s' % pricelist_usd.id)])
+
+            print('====', property_record_usd)
+
+            property_record_usd.company_id = False
+
+            if one.sale_currency_id.name == 'USD':
+                one.property_product_pricelist = pricelist_usd
+            else:
+                one.property_product_pricelist = pricelist_cny
+
+
+
+
+
+
 
 
 
