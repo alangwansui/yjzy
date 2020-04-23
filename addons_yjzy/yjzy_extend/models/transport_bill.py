@@ -634,7 +634,7 @@ class transport_bill(models.Model):
         self.partner_country_id = self.partner_id.country_id
         #akiny
        # self.user_id = self.partner_id.user_id
-        self.sale_currency_id = self.partner_id.property_product_pricelist.currency_id
+        #self.sale_currency_id = self.partner_id.property_product_pricelist.currency_id
 
         self.mark_html = self.partner_shipping_id.mark_html.currency_id
        # akiny
