@@ -109,6 +109,18 @@ class res_partner(models.Model):
 
     mark_html = fields.Html('唛头')
 
+    @api.onchange('sale_currency_id')
+    def onchange_sale_currency(self):
+        if self.sale_currency_id:
+            pricelist = self.env['product.pricelist'].search([('customer_id', '=', self._origin.id), ('currency_id', '=', self.sale_currency_id.id)], limit=1)
+
+
+            print('====', pricelist, [('customer_id', '=', self.id), ('currency_id', '=', self.sale_currency_id.id)])
+
+            if pricelist:
+                self.property_product_pricelist = pricelist
+
+
     @api.model
     def create(self, vals):
         one = super(res_partner, self).create(vals)
