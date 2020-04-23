@@ -239,7 +239,7 @@
                                     <group>
                                         <field name="incoterm" string="价格条款" attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)],'required':[('state','=','check')]}"/>
                                         <field name="payment_term_id" options="{'no_open':1}" attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)],'required':[('state','=','check')]}"/>
-                                        <field name="sale_type" invisible="1"/>
+                                        <field name="sale_type" invisible="0"/>
                                         <field name="gold_sample_state" readonly="1"/>
 
                                         <field name="account_type" attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
@@ -408,6 +408,7 @@
                                         <field name="invoice_title"/>
                                         <!--field name="mark_ids" widget="many2many_tags"/-->
                                         <field name="partner_mark_comb_ids" invisible="1"/>
+                                        <field name="mark_html"/>
                                         <field name="mark_comb_id" domain="[('id', 'in', partner_mark_comb_ids)]"
                                                attrs="{'readonly':[('state','not in',['draft','submit','sales_approve','approve']),('is_editable','=',False)]}" string="唛头"/>
                                         <field name="notice_man" attrs="{'readonly':[('state','not in',['draft','submit','sales_approve','approve']),('is_editable','=',False)]}"/>

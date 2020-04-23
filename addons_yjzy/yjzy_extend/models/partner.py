@@ -36,12 +36,15 @@ class res_partner(models.Model):
         help="Used to select automatically the right address according to the context in sales and purchases documents.")
 
     jituan_id = fields.Many2one('ji.tuan', '集团')
-    comment_contract = fields.Text(u'对接内容描述')
+    comment_contact = fields.Text(u'对接内容描述')
     devloper_id = fields.Many2one('res.users', u'开发人员')
     full_name = fields.Char('公司全称')
     invoice_title = fields.Char(u'发票抬头')
     mark_ids = fields.Many2many('transport.mark', 'ref_mark_patner', 'pid', 'mid', u'唛头')
     mark_comb_ids = fields.Many2many('mark.comb', 'ref_comb_partner', 'pid', 'cid', u'唛头组')
+
+    #mark_comb_id = fields.Many2one('mark.comb',u'唛头')
+
     exchange_type_ids = fields.Many2many('exchange.type', 'ref_exchange_partner', 'pid', 'eid', u'交货方式')
     exchange_demand_ids = fields.One2many('exchange.demand', 'partner_id', u'交单要求')
 
@@ -68,8 +71,6 @@ class res_partner(models.Model):
     level = fields.Selection([(x, x.upper()) for x in 'abcde'], u'客户等级')
     sequence = fields.Integer(u'排序', default=10, index=True)
 
-    street = fields.Char(translate=False)
-    street2 = fields.Char(translate=False)
 
     need_purchase_fandian = fields.Boolean(u'采购返点')
     purchase_fandian_ratio = fields.Float(u'返点比例：%')
@@ -95,13 +96,18 @@ class res_partner(models.Model):
 
 
     customer_purchase_in_china = fields.Monetary(u'客户在中国采购规模(CNY)',currency_field='customer_purchase_in_china_currency_id')
-    customer_purchase_in_china_currency_id = fields.Many2one('res.currency', '客户在中国采购规模',default=lambda self: self.env.user.company_id.currency_id.id)
-
-    customer_sale_total = fields.Monetary(u'客户销售额',currency_field='customer_sale_total_currency_id')
-    customer_sale_total_currency_id = fields.Many2one('res.currency', '客户销售额',default=lambda self: self.env.user.company_id.currency_id.id)
-
+    customer_purchase_in_china_currency_id = fields.Many2one('res.currency', '客户在中国采购规模币种',default=lambda self: self.env.user.company_id.currency_id.id)
+    customer_purchase_in_china_note = fields.Text(u'备注')
+    customer_sale_total = fields.Monetary(u'客户销售额(CNY)',currency_field='customer_sale_total_currency_id')
+    customer_sale_total_currency_id = fields.Many2one('res.currency', '客户销售额币种',default=lambda self: self.env.user.company_id.currency_id.id)
+    customer_sale_total_note = fields.Text(u'备注')
     child_delivery_ids = fields.One2many('res.partner', 'parent_id', domain=[('type', '=', 'delivery')], string='收货地址')
     child_contact_ids = fields.One2many('res.partner', 'parent_id', domain=[('type', '=', 'contact')], string='联系人')
+
+    #akiny
+    customer_product_origin_ids = fields.One2many('partner.product.origin','partner_id', u'客户产品')
+
+    mark_html = fields.Html('唛头')
 
     @api.model
     def create(self, vals):
@@ -197,6 +203,14 @@ class res_partner(models.Model):
     @api.onchange('type1')
     def _onchange_type1(self):
         self.type = self.type1
+
+
+    @api.onchange('country_id')
+    def _onchange_country_id(self):
+        if self.country_id.code == 'CN':
+           self.lang = 'zh_CN'
+        else:
+           self.lang = 'en_US'
 
     @api.one
     def compute_child_delivery_ids(self):

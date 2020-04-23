@@ -357,6 +357,8 @@ class transport_bill(models.Model):
     settlement = fields.Char('结算方式')
     notice = fields.Text('注意事项')
     demand_info = fields.Text(u'交单要求')
+    #akiny
+    mark_html = fields.Html(u'唛头')
 
     #金额计算
     ciq_amount = fields.Monetary('报关金额', compute=compute_ciq_amount, currency_field='sale_currency_id', digits=dp.get_precision('Money'))
@@ -633,6 +635,8 @@ class transport_bill(models.Model):
         #akiny
        # self.user_id = self.partner_id.user_id
         self.sale_currency_id = self.partner_id.property_product_pricelist.currency_id
+
+        self.mark_html = self.partner_shipping_id.mark_html.currency_id
        # akiny
         ##self.outer_currency_id = self.sale_currency_id
         self.notice_man = self.partner_id.notice_man
@@ -1038,8 +1042,8 @@ class transport_bill(models.Model):
 
     def unlink(self):
         for one in self:
-            if one.state != 'draft':
-                raise Warning('不能删除非草稿发运单')
+            if one.state != 'cancel':
+                raise Warning('不能删除非取消状态发运单')
         return super(transport_bill, self).unlink()
 
     def onece_all_stage(self):
