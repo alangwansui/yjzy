@@ -30,7 +30,7 @@
                                                 <field name="skype" attrs="{'invisible': [('type', '=', 'delivery')]}"/>
                                                 <field name="qq" attrs="{'invisible': [('type', '=', 'delivery')]}"/>
                                                 <field name="sequence" />
-                                                <field name="comment_contract" placeholder="note..." attrs="{'invisible': [('type', '=', 'delivery')]}"/>
+                                                <field name="comment_contact" placeholder="note..." attrs="{'invisible': [('type', '=', 'delivery')]}"/>
 
                                                   <field name="invoice_title" attrs="{'invisible': [('type', '!=', 'delivery')]}"/>
                                                  <field name="wharf_src_id" attrs="{'invisible': [('type', '!=', 'delivery')]}"/>
@@ -280,9 +280,11 @@
             <field name="priority" eval="1"/>
             <field name="arch" type="xml">
                 <form string="Partners">
-
+                <header>
+                    <field name="state" statusbar_invisible="draft"  widget="statusbar"/>
+                </header>
                 <sheet>
-                    <div class="oe_button_box" name="button_box">
+                    <div class="oe_button_box" name="button_box" groups="base.group_system">
                           <button type="object" class="oe_stat_button" icon="fa-pencil-square-o" name="action_view_partner_invoices" attrs="{'invisible': [('customer', '=', False)]}">
                         <div class="o_form_field o_stat_info">
                             <span class="o_stat_value">
@@ -351,13 +353,23 @@
                         <field name="is_company" invisible="1"/>
                         <field name="commercial_partner_id" invisible="1"/>
                         <field name="company_type" widget="radio"
-                            class="oe_edit_only"
+                            class="oe_edit_only" invisible="1"
                             options="{'horizontal': true}"/>
+                        <div attrs="{'invisible':[('is_company','=',False)]}">
+                            公司简称：
+                        </div>
+                        <div attrs="{'invisible':['|',('is_company','=',True),('type','!=','contact')]}">
+                            联系人姓名：
+                        </div>
+                        <div attrs="{'invisible':['|',('is_company','=',True),('type','!=','delivery')]}">
+                            编号：
+                        </div>
+
                         <h1>
-                            <field name="name" default_focus="1" widget="field_clearbit" placeholder="简称" attrs="{'required' : [('type', '=', 'contact')]}"/>
+                            <field name="name" default_focus="1" widget="field_clearbit" placeholder="公司简称" attrs="{'required' : [('type', '=', 'contact')]}"/>
                         </h1>
                         <div class="o_row">
-                            <field name="code"/> <button name="generate_code" type="object" string="生成编码"/>
+                            <field name="code" readonly="1"/><button name="generate_code" type="object" string="生成编码" groups="base.group_system"/>
                             <field name="parent_id"
                                 placeholder="Company"
                                 domain="[('is_company', '=', True)]" context="{'default_is_company': True, 'default_supplier': supplier, 'default_customer': customer}"
@@ -369,20 +381,21 @@
 
                     <group col="3">
                         <group>
-                            <field name="type" attrs="{'invisible': [('parent_id','=', False)]}" groups="base.group_no_one,sale.group_delivery_invoice_address"/>
-                             <field name="full_name"/>
-                            <field name="country_id" placeholder="Country" string="公司所在国" class="o_address_country" options='{"no_open": True, "no_create": True}'
+                            <field name="type" invisible="1" attrs="{'invisible': [('parent_id','=', False)]}" groups="base.group_no_one,sale.group_delivery_invoice_address"/>
+                            <field name="full_name" attrs="{'required' : [('is_company', '=', True)],'invisible':[('is_company','=',False)]}"/>
+                            <field name="country_id" required="1" placeholder="Country" string="所在国" class="o_address_country"
+                                   options='{"no_open": True, "no_create": True}'
                                     attrs="{'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)]}"/>
-                            <field name="jituan_name"/>
-                            <field name="sale_currency_id"/>
-                            <field name="property_payment_term_id" domain="[('type','=','sale')]" widget="selection"/>
+                            <field name="jituan_id" domain="['|',('user_id','=',uid),('assistant_id','=',uid),('user_id','=',False),('assistant_id','=',False)]"
+                                   options='{"no_open": True, "no_create": True}' attrs="{'required' : [('is_company', '=', True)],'invisible':[('is_company','=',False)]}"/>
+                            <field name="sale_currency_id" attrs="{'required' : [('is_company', '=', True)],'invisible':[('is_company','=',False)]}"/>
+                            <field name="property_payment_term_id" domain="[('type','=','sale')]" attrs="{'required' : [('is_company', '=', True)],'invisible':[('is_company','=',False)]}" widget="selection"/>
 
+                            <separator string="" colspan="2"/>
+                        <!--separator string="联系方式" style="border-bottom:1px #000000 solid" colspan="2"/-->
 
-
-
-
-                        <label for="street" string="详细地址"/>
-                            <div class="o_address_format">
+                           <label for="street" string="详细地址"/>
+                              <div class="o_address_format">
                                 <div class="oe_edit_only">
                                     <button name="open_parent" type="object" string="(edit)" class="oe_link"
                                         attrs="{'invisible': ['|', ('parent_id', '=', False), ('type', '!=', 'contact')]}"/>
@@ -398,26 +411,32 @@
                                 <field name="zip" placeholder="ZIP" class="o_address_zip"
                                     attrs="{'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)]}" invisible="1"/>
                                 </div>
-                                <label for="phone"/>
-                                <div class="o_row">
-                                <field name="phone" widget="phone"/>
-                                <button type="action" name="126" class="btn-xs btn-link mb4 fa fa-envelope-o" attrs="{'invisible':[('phone', '=', False)]}" context="{'field_name': 'phone'}"/>
+                                <label for="phone" attrs="{'invisible':[('type','=','delivery')]}"/>
+                                <div class="o_row" attrs="{'invisible':[('type','=','delivery')]}">
+                                <field name="phone" widget="phone" />
+                                <!--button type="action" name="126" class="btn-xs btn-link mb4 fa fa-envelope-o" attrs="{'invisible':[('phone', '=', False)]}" context="{'field_name': 'phone'}"/-->
                                 </div>
-                                <label for="mobile"/>
-                                 <div class="o_row">
+                                <label for="mobile" attrs="{'invisible':['|',('type','=','delivery'),('is_company','=',True)]}"/>
+                                 <div class="o_row" attrs="{'invisible':['|',('type','=','delivery'),('is_company','=',True)]}">
                                   <field name="mobile" widget="phone"/>
-                                  <button type="action" name="126" class="btn-xs btn-link mb4 fa fa-envelope-o" attrs="{'invisible':[('mobile', '=', False)]}" context="{'field_name': 'mobile'}"/>
+                                  <!--button type="action" name="126" class="btn-xs btn-link mb4 fa fa-envelope-o" attrs="{'invisible':[('mobile', '=', False)]}" context="{'field_name': 'mobile'}"/-->
                                 </div>
-                             <field name="fax"/>
-                            <field name="website" widget="url" placeholder="e.g. www.tenyale.com"/>
+                             <field name="fax" attrs="{'invisible':[('type','=','delivery')]}"/>
+                            <field name="website" widget="url" placeholder="e.g. www.tenyale.com" attrs="{'invisible':['|',('type','=','delivery'),('is_company','!=',True)]}"/>
+
+                                                 <field name="invoice_title" attrs="{'invisible': [('type', '!=', 'delivery')]}"/>
+                                                 <field name="wharf_src_id" attrs="{'invisible': [('type', '!=', 'delivery')]}"/>
+                                                 <field name="wharf_dest_id" attrs="{'invisible': [('type', '!=', 'delivery')]}"/>
+                                                <field name="notice_man" attrs="{'invisible': [('type', '!=', 'delivery')]}"/>
+                                                 <field name="delivery_man" attrs="{'invisible': [('type', '!=', 'delivery')]}" string="收货人"/>
                         </group>
                         <group>
-                            <field name="level"/>
+                            <field name="level" attrs="{'invisible':['|',('type','=','delivery'),('is_company','=',True)]}"/>
                             <field name="function" placeholder="e.g. Sales Director"
-                                attrs="{'invisible': [('is_company','=', True)]}"/>
+                                attrs="{'invisible':['|',('type','=','delivery'),('is_company','=',True)]}"/>
 
                             <field name="user_ids" invisible="1"/>
-                            <field name="email" invisible="1" widget="email" context="{'gravatar_image': True}" attrs="{'required': [('user_ids','!=', [])]}"/>
+                            <field name="email" attrs="{'required': [('user_ids','!=', [])],'invisible':['|',('type','=','delivery'),('is_company','=',True)]}" widget="email" context="{'gravatar_image': True}" />
 
                             <!--label for="email"  用来替换email，增加直接发送邮件的按钮/>
                                <div class="o_row">
@@ -427,45 +446,80 @@
                                 <button type="object" name="send_email" class="btn-xs btn-link mb4 fa fa-envelope-o" attrs="{'invisible':[('email', '=', False)]}" context="{'field_name': 'email'}"/>
                                </div-->
                             <field name="title" options='{"no_open": True}'
-                                attrs="{'invisible': [('is_company', '=', True)]}"/>
-                            <field name="wechat" attrs="{'invisible': [('is_company', '=', True)]}" />
-                            <field name="skype" attrs="{'invisible': [('is_company', '=', True)]}"/>
-                            <field name="qq" attrs="{'invisible': [('is_company', '=', True)]}"/>
+                                attrs="{'invisible':['|',('type','=','delivery'),('is_company','=',True)]}"/>
+                            <field name="wechat" attrs="{'invisible':['|',('type','=','delivery'),('is_company','=',True)]}" />
+                            <field name="skype" attrs="{'invisible':['|',('type','=','delivery'),('is_company','=',True)]}"/>
+                            <field name="qq" attrs="{'invisible':['|',('type','=','delivery'),('is_company','=',True)]}"/>
                             <field name="state" invisible="1"/>
                             <field name="is_inter_partner" groups="base.group_system"/>
-                            <field name="contract_type"/>
-                            <field name="gongsi_id"/>
-                            <field name="purchase_gongsi_id"/>
-                            <field name="customer_info_from" string="客户来源"/>
-                            <field name="customer_info_from_uid"/>
+                            <field name="contract_type" attrs="{'invisible':[('is_company','!=',True)]}"/>
+                            <field name="gongsi_id" attrs="{'invisible':[('is_company','!=',True)]}"/>
+                            <field name="purchase_gongsi_id" attrs="{'invisible':[('is_company','!=',True)]}"/>
+                            <field name="campaign_id" string="客户来源" attrs="{'invisible':[('is_company','!=',True)]}"/>
+                            <field name="customer_info_from_uid" attrs="{'invisible':[('is_company','!=',True)]}"/>
 
-                            <field name="devloper_id" string="客户开发人"/>
-                            <field name="user_id"  string="目前客户负责人"/>
-                            <field name="assistant_id" />
+                            <field name="devloper_id" string="客户开发人" attrs="{'invisible':[('is_company','!=',True)]}"/>
+                            <field name="user_id"  string="目前客户负责人" attrs="{'invisible':[('is_company','!=',True)]}"/>
+                            <field name="assistant_id" attrs="{'invisible':[('is_company','!=',True)]}"/>
                             <field name="product_manager_id" invisible="1"/>
+
+                            <field name="exchange_type_ids" widget="many2many_tags" attrs="{'invisible': [('type', '!=', 'delivery')]}"/>
+                                               <!-- field name="mark_ids" widget="many2many_tags"/-->
+
+                            <field name="mark_html"/>
+
+                            <!--label for="mark_comb_ids"/>
+                            <div colspan="2">
+                                   <field name="mark_comb_ids"  attrs="{'invisible': [('type', '!=', 'delivery')]}">
+                                       <tree>
+                                        <field name="name"/>
+                                        <field name="description_mark"/>
+                                      </tree>
+
+
+                                    </field>
+                            </div-->
+                                                  <field name="demand_info" attrs="{'invisible': [('type', '!=', 'delivery')]}"/>
 
 
                         </group>
                         <group>
 
-                                <field name="vat" placeholder="e.g. BE0477472701" attrs="{'readonly': [('parent_id','!=',False)]}"/>
-                                <field name="category_id" invisible="1" widget="many2many_tags" options="{'color_field': 'color', 'no_create_edit': True}" placeholder="Tags..."/>
-                               <field name="lang"/>
-                               <field name="customer_purchase_in_china"/>
-                             <field name="customer_purchase_in_china_currency_id"/>
+                            <field name="vat" invisible="1" placeholder="e.g. BE0477472701" attrs="{'readonly': [('parent_id','!=',False)]}"/>
+                            <field name="category_id" invisible="1" widget="many2many_tags" options="{'color_field': 'color', 'no_create_edit': True}" placeholder="Tags..."/>
+                            <field name="lang" invisible="1"/>
+                            <label for="customer_purchase_in_china" colspan="2"/>
+                            <div colspan="2">
+                                 <field name="customer_purchase_in_china" class="oe_inline"/>
+                                 <field name="customer_purchase_in_china_currency_id" invisible="1" style="margin-left:3px" options="{'no_open':1}" class="oe_inline"/>
+                                 <span style="margin-left:3px" attrs="{'invisible':[('customer_purchase_in_china','=',0)]}">
+                                     <field name="customer_purchase_in_china_note" placeholder="填写备注..."/></span>
+                            </div>
 
-                               <field name="customer_sale_total"/>
-                            <field name="customer_sale_total_currency_id"/>
+                            <label for="customer_sale_total" colspan="2"/>
+                            <div colspan="2">
+                                <field name="customer_sale_total" class="oe_inline"/>
+                                <field name="customer_sale_total_currency_id" invisible="1" style="margin-left:3px"  options="{'no_open':1}" class="oe_inline"/>
+                                <span style="margin-left:3px" attrs="{'invisible':[('customer_sale_total','=',0)]}">
+                                    <field name="customer_sale_total_note" placeholder="填写备注..."/></span>
+                            </div>
 
-                                <field name="comment" placeholder="Internal note..."/>
+                            <label for="comment" colspan="2"/>
+                            <div colspan="2">
+                            <field name="comment" placeholder="内部备注..."/>
+                             </div>
+
 
                         </group>
                     </group>
 
                     <notebook colspan="4">
-                        <page string="Contacts &amp; Addresses" autofocus="autofocus" >
+                        <page string="Contacts &amp; Addresses" autofocus="autofocus" groups="base.group_system">
                             <field name="child_ids" mode="tree,kanban" domain="[('type','=','contact')]"
-                                   context="{'default_parent_id': active_id, 'default_street': street, 'default_street2': street2, 'default_city': city, 'default_state_id': state_id, 'default_zip': zip, 'default_country_id': country_id, 'default_supplier': supplier, 'default_customer': customer, 'default_lang': lang,}">
+                                   context="{'default_parent_id': active_id, 'default_street': street,
+                                    'default_street2': street2, 'default_city': city, 'default_state_id': state_id,
+                                    'default_zip': zip, 'default_country_id': country_id, 'default_supplier': supplier,
+                                    'default_customer': customer, 'default_lang': lang,}">
                                 <tree group_by="name">
                                      <field name="name" string="Contact Name" attrs="{'required' : [('type', '=', 'contact')]}"/>
                                      <field name="type" groups="sale.group_delivery_invoice_address"/>
@@ -562,7 +616,7 @@
                                                 <field name="skype" attrs="{'invisible': [('type', '=', 'delivery')]}"/>
                                                 <field name="qq" attrs="{'invisible': [('type', '=', 'delivery')]}"/>
                                                 <field name="sequence"/>
-                                                <field name="comment_contract" placeholder="note..." attrs="{'invisible': [('type', '=', 'delivery')]}"/>
+                                                <field name="comment_contact" placeholder="note..." attrs="{'invisible': [('type', '=', 'delivery')]}"/>
                                             </group>
                                              <group>  <!--attrs="{'invisible': [('type','=', 'contact')]}"-->
                                                 <label for="street" string="地址"/>
@@ -588,30 +642,158 @@
                         </page>
 
                         <page string="联系人">
-                            <header>
+                            <!--header>
                               <button name="%(action_new_partner_contact_create)d" context="{'default_parent_id': active_id, 'default_street': street, 'default_street2': street2,
             'default_city': city, 'default_state_id': state_id, 'default_zip': zip, 'default_country_id': country_id,
             'default_supplier': supplier, 'default_customer': customer, 'default_lang': lang}" type="action" string="创建联系人"
                             class="oe_highlight" />
-                            </header>
-                            <field name="child_contact_ids">
-                               <tree>
+                            </header-->
+                            <field name="child_contact_ids" mode="tree,kanban"
+                                   context="{'default_parent_id': active_id, 'default_street': street, 'default_street2': street2,
+                                             'default_zip': zip, 'default_country_id': country_id,
+                                            'default_supplier': supplier, 'default_customer': customer, 'default_lang': lang ,'form_view_ref':'view_new_partner_contact_form'}">
+                               <tree class="o_list_scroll">
                                    <field name="name"/>
+                                   <field name="country_id"/>
                                    <field name="function"/>
                                    <field name="phone"/>
+                                   <field name="mobile"/>
                                    <field name="email"/>
+                                   <field name="wechat"/>
+                                   <field name="skype"/>
+                                   <field name="qq"/>
+                                   <field name="comment_contact"/>
+                                   <field name="street"/>
+                                   <field name="street2"/>
                                </tree>
+
+                                 <kanban>
+                                    <field name="color"/>
+                                    <field name="name"/>
+                                    <field name="title"/>
+                                    <field name="type" groups="sale.group_delivery_invoice_address"/>
+                                    <field name="email"/>
+                                    <field name="parent_id"/>
+                                    <field name="is_company"/>
+                                    <field name="function"/>
+                                    <field name="phone"/>
+                                    <field name="street"/>
+                                    <field name="street2"/>
+                                    <field name="zip"/>
+                                    <field name="city"/>
+                                    <field name="country_id"/>
+                                    <field name="mobile"/>
+                                    <field name="state_id"/>
+                                    <field name="image_small"/>
+                                    <field name="lang"/>
+                                    <!-- fields in form x2many view to diminish requests -->
+                                    <field name="comment"/>
+                                    <field name="customer"/>
+                                    <field name="display_name"/>
+                                    <field name="supplier"/>
+                                    <templates>
+                                        <t t-name="kanban-box">
+                                            <t t-set="color" t-value="kanban_color(record.color.raw_value)"/>
+                                            <div t-att-class="color + (record.title.raw_value == 1 ? ' oe_kanban_color_alert' : '') + ' oe_kanban_global_click'">
+                                                <a t-if="!read_only_mode" type="delete" class="fa fa-times pull-right"/>
+                                                <div class="o_kanban_image">
+                                                    <img t-if="record.image_small.raw_value" t-att-src="'data:image/png;base64,'+record.image_small.raw_value"/>
+                                                    <t t-if="!record.image_small.raw_value">
+                                                        <img t-if="record.type.raw_value === 'delivery'" t-att-src='_s + "/base/static/src/img/truck.png"'/>
+                                                        <img t-if="record.type.raw_value === 'invoice'" t-att-src='_s + "/base/static/src/img/money.png"'/>
+                                                        <t t-if="record.type.raw_value !== 'invoice' &amp;&amp; record.type.raw_value !== 'delivery'">
+                                                            <img t-if="record.is_company.raw_value === true" t-att-src='_s + "/base/static/src/img/company_image.png"'/>
+                                                            <img t-if="record.is_company.raw_value === false" t-att-src='_s + "/base/static/src/img/avatar.png"'/>
+                                                        </t>
+                                                    </t>
+                                                </div>
+                                                <div class="oe_kanban_details">
+                                                       <span>优先级<field name="sequence"/></span>
+                                                      <span>
+                                                         <field name="type"/>:
+                                                      </span>
+                                                    <field name="name"/>
+                                                    <div t-if="record.function.raw_value"><field name="function"/></div>
+                                                    <div t-if="record.email.raw_value"><field name="email" widget="email"/></div>
+                                                    <div t-if="record.type.raw_value != 'contact'">
+                                                        <div>
+                                                            <field name="zip"/>
+                                                            <field name="city"/>
+                                                        </div>
+                                                        <field t-if="record.state_id.raw_value" name="state_id"/>
+                                                        <field name="country_id"/>
+                                                    </div>
+                                                    <div t-if="record.phone.raw_value">Phone: <field name="phone"/></div>
+                                                    <div t-if="record.mobile.raw_value">Mobile: <field name="mobile"/></div>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </templates>
+                                </kanban>
+                                <form string="联系人">
+                                    <sheet>
+                                        <!-- parent_id and type fields needed in attrs in base_address_city module which overwrites
+                                        _fields_view_get() of partner. It would be better to put those fields there but the web client
+                                        dosen't support when a field is displayed several times in the same view.-->
+                                        <field name="type"  invisible="1" required="1" domain="['']" groups="sale.group_delivery_invoice_address" widget="radio" options="{'horizontal': true}"/>
+                                        <field name="type1" invisible="1" required="1" domain="['']" groups="sale.group_delivery_invoice_address" widget="radio" options="{'horizontal': true}"/>
+                                        <field name="parent_id" invisible="1"/>
+                                        <hr/>
+                                        <group>
+                                            <group>
+                                                <field name="is_company" invisible="1"/>
+                                                <field name="name" string="姓名" attrs="{'required' : [('type', '=', 'contact')]}"/>
+                                                <field name="title" placeholder="e.g. Mr." invisible="1"
+                                                    attrs="{'invisible': [('type','!=', 'contact')]}"/>
+                                                <field name="function" placeholder="e.g. Sales Director"
+                                                    attrs="{'invisible': [('type','!=', 'contact')]}"/>
+                                                <field name="phone" widget="phone"/>
+                                                <field name="mobile" widget="phone"/>
+                                                <field name="email"/>
+                                                <field name="wechat" attrs="{'invisible': [('type', '=', 'delivery')]}" />
+                                                <field name="skype" attrs="{'invisible': [('type', '=', 'delivery')]}"/>
+                                                <field name="qq" attrs="{'invisible': [('type', '=', 'delivery')]}"/>
+
+                                                <field name="comment_contact" placeholder="note..." attrs="{'invisible': [('type', '=', 'delivery')]}"/>
+                                            </group>
+                                             <group>  <!--attrs="{'invisible': [('type','=', 'contact')]}"-->
+                                                <label for="street" string="地址"/>
+                                                <div>
+                                                    <div class="o_address_format" name="div_address">
+                                                        <field name="street" placeholder="Street..." class="o_address_street"/>
+                                                        <field name="street2" placeholder="Street 2..." class="o_address_street"/>
+                                                        <field name="city" placeholder="City"  class="o_address_city" invisible="1"/>
+                                                        <field name="state_id" class="o_address_state" invisible="1" placeholder="State" options='{"no_open": True}' context="{'country_id': country_id, 'zip': zip}"/>
+                                                        <field name="zip" placeholder="ZIP"  invisible="1" class="o_address_zip"/>
+                                                        <field name="country_id" placeholder="Country" class="o_address_country" options='{"no_open": True, "no_create": True}'/>
+                                                    </div>
+                                                </div>
+                                                 <field name="sequence" groups="base.group_system"/>
+                                            </group>
+                                        </group>
+                                        <field name="supplier" invisible="True"/>
+                                        <field name="customer" invisible="True"/>
+                                        <field name="lang" invisible="True"/>
+                                        <field name="image" invisible="True"/>
+                                    </sheet>
+                                </form>
+
                             </field>
                         </page>
                          <page string="客户交货信息">
-                             <header>
-                             <button name="%(action_new_partner_contact_create)d" context="{'default_parent_id': active_id, 'default_street': street, 'default_street2': street2,
-            'default_city': city, 'default_state_id': state_id, 'default_zip': zip, 'default_country_id': country_id,
-            'default_supplier': supplier, 'default_customer': customer, 'default_lang': lang,'default_type1':'delivery'}" type="action" string="收货信息"
+                             <!--header>
+                             <button name="%(action_new_partner_contact_create)d"
+                                     context="{'default_parent_id': active_id, 'default_street': street, 'default_street2': street2,'default_sequence':1;
+                                               'default_city': city, 'default_state_id': state_id, 'default_zip': zip, 'default_country_id': country_id,
+                                               'default_supplier': supplier, 'default_customer': customer, 'default_lang': lang,'default_type1':'delivery'}"
+                                     type="action" string="收货信息"
                             class="oe_highlight" />
-                           </header>
-                            <field name="child_delivery_ids">
-                               <tree>
+                           </header-->
+                            <field name="child_delivery_ids" mode="tree,kanban" context="{'default_parent_id': active_id, 'default_street': street, 'default_street2': street2,
+                                               'default_city': city, 'default_state_id': state_id, 'default_zip': zip, 'default_country_id': country_id,
+                                               'default_supplier': supplier, 'default_customer': customer, 'default_lang': lang,'default_type1':'delivery',
+                                               'form_view_ref':'view_new_partner_contact_form'}">
+                               <tree >
                                    <field name="name"/>
                                    <field name="country_id"/>
                                    <field name="type" invisible="1"/>
@@ -619,8 +801,123 @@
                                    <field name="wharf_src_id" attrs="{'invisible': [('type', '!=', 'delivery')]}"/>
                                    <field name="wharf_dest_id" attrs="{'invisible': [('type', '!=', 'delivery')]}"/>
                                </tree>
+                                 <kanban>
+                                    <field name="color"/>
+                                    <field name="name"/>
+                                    <field name="title"/>
+                                    <field name="type" groups="sale.group_delivery_invoice_address"/>
+                                    <field name="email"/>
+                                    <field name="parent_id"/>
+                                    <field name="is_company"/>
+                                    <field name="function"/>
+                                    <field name="phone"/>
+                                    <field name="street"/>
+                                    <field name="street2"/>
+                                    <field name="zip"/>
+                                    <field name="city"/>
+                                    <field name="country_id"/>
+                                    <field name="mobile"/>
+                                    <field name="state_id"/>
+                                    <field name="image_small"/>
+                                    <field name="lang"/>
+                                    <!-- fields in form x2many view to diminish requests -->
+                                    <field name="comment"/>
+                                    <field name="customer"/>
+                                    <field name="display_name"/>
+                                    <field name="supplier"/>
+                                    <templates>
+                                        <t t-name="kanban-box">
+                                            <t t-set="color" t-value="kanban_color(record.color.raw_value)"/>
+                                            <div t-att-class="color + (record.title.raw_value == 1 ? ' oe_kanban_color_alert' : '') + ' oe_kanban_global_click'">
+                                                <a t-if="!read_only_mode" type="delete" class="fa fa-times pull-right"/>
+                                                <div class="o_kanban_image">
+                                                    <img t-if="record.image_small.raw_value" t-att-src="'data:image/png;base64,'+record.image_small.raw_value"/>
+                                                    <t t-if="!record.image_small.raw_value">
+                                                        <img t-if="record.type.raw_value === 'delivery'" t-att-src='_s + "/base/static/src/img/truck.png"'/>
+                                                        <img t-if="record.type.raw_value === 'invoice'" t-att-src='_s + "/base/static/src/img/money.png"'/>
+                                                        <t t-if="record.type.raw_value !== 'invoice' &amp;&amp; record.type.raw_value !== 'delivery'">
+                                                            <img t-if="record.is_company.raw_value === true" t-att-src='_s + "/base/static/src/img/company_image.png"'/>
+                                                            <img t-if="record.is_company.raw_value === false" t-att-src='_s + "/base/static/src/img/avatar.png"'/>
+                                                        </t>
+                                                    </t>
+                                                </div>
+                                                <div class="oe_kanban_details">
+                                                       <span>优先级<field name="sequence"/></span>
+                                                      <span>
+                                                         <field name="type"/>:
+                                                      </span>
+                                                    <field name="name"/>
+                                                    <div t-if="record.function.raw_value"><field name="function"/></div>
+                                                    <div t-if="record.email.raw_value"><field name="email" widget="email"/></div>
+                                                    <div t-if="record.type.raw_value != 'contact'">
+                                                        <div>
+                                                            <field name="zip"/>
+                                                            <field name="city"/>
+                                                        </div>
+                                                        <field t-if="record.state_id.raw_value" name="state_id"/>
+                                                        <field name="country_id"/>
+                                                    </div>
+                                                    <div t-if="record.phone.raw_value">Phone: <field name="phone"/></div>
+                                                    <div t-if="record.mobile.raw_value">Mobile: <field name="mobile"/></div>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </templates>
+                                </kanban>
+                                <form string="联系人">
+                                    <sheet>
+                                        <!-- parent_id and type fields needed in attrs in base_address_city module which overwrites
+                                        _fields_view_get() of partner. It would be better to put those fields there but the web client
+                                        dosen't support when a field is displayed several times in the same view.-->
+                                        <field name="type"  invisible="1" required="1" domain="['']" groups="sale.group_delivery_invoice_address" widget="radio" options="{'horizontal': true}"/>
+                                        <field name="type1" invisible="1" required="1" domain="['']" groups="sale.group_delivery_invoice_address" widget="radio" options="{'horizontal': true}"/>
+                                        <field name="parent_id" invisible="1"/>
+                                        <hr/>
+                                        <group>
+                                            <group>
+                                                <field name="is_company" invisible="1"/>
+                                                <field name="name" string="姓名" attrs="{'required' : [('type', '=', 'contact')]}"/>
+                                                <field name="title" placeholder="e.g. Mr." invisible="1"
+                                                    attrs="{'invisible': [('type','!=', 'contact')]}"/>
+                                                <field name="function" placeholder="e.g. Sales Director"
+                                                    attrs="{'invisible': [('type','!=', 'contact')]}"/>
+                                                <field name="phone" widget="phone"/>
+                                                <field name="mobile" widget="phone"/>
+                                                <field name="email"/>
+                                                <field name="wechat" attrs="{'invisible': [('type', '=', 'delivery')]}" />
+                                                <field name="skype" attrs="{'invisible': [('type', '=', 'delivery')]}"/>
+                                                <field name="qq" attrs="{'invisible': [('type', '=', 'delivery')]}"/>
+
+                                                <field name="comment_contact" placeholder="note..." attrs="{'invisible': [('type', '=', 'delivery')]}"/>
+                                            </group>
+                                             <group>  <!--attrs="{'invisible': [('type','=', 'contact')]}"-->
+                                                <label for="street" string="地址"/>
+                                                <div>
+                                                    <div class="o_address_format" name="div_address">
+                                                        <field name="street" placeholder="Street..." class="o_address_street"/>
+                                                        <field name="street2" placeholder="Street 2..." class="o_address_street"/>
+                                                        <field name="city" placeholder="City"  class="o_address_city" invisible="1"/>
+                                                        <field name="state_id" class="o_address_state" invisible="1" placeholder="State" options='{"no_open": True}' context="{'country_id': country_id, 'zip': zip}"/>
+                                                        <field name="zip" placeholder="ZIP"  invisible="1" class="o_address_zip"/>
+                                                        <field name="country_id" placeholder="Country" class="o_address_country" options='{"no_open": True, "no_create": True}'/>
+                                                    </div>
+                                                </div>
+                                                 <field name="sequence" groups="base.group_system"/>
+                                            </group>
+                                        </group>
+                                        <field name="supplier" invisible="True"/>
+                                        <field name="customer" invisible="True"/>
+                                        <field name="lang" invisible="True"/>
+                                        <field name="image" invisible="True"/>
+                                    </sheet>
+                                </form>
+
                             </field>
                         </page>
+                       <page string="客户经营产品">
+                            <field name="customer_product_origin_ids" nolabel="1" string="客户经营产品"/>
+                        </page>
+
 
                         <page string="客户采购产品">
                             <field name="customer_product_ids"/>
@@ -640,24 +937,24 @@
                             <field name="demand_info"/>
                         </group>
                     </page-->
-                    <page string="销售条款">
-                        <field name="term_description"/>
+                    <page string="销售合同后置条款">
+                        <field name="term_description" attrs="{'invisible':[('customer','=',False)]}"/>
                     </page>
-                    <page string="采购条款">
+                    <page string="采购合同后置条款" attrs="{'invisible':[('supplier','=',False)]}">
                         <field name="term_purchase"/>
                     </page>
                         <page name='internal_notes' string="Internal Notes">
-                             <group colspan="2" col="2" groups="purchase.group_warning_purchase">
+                        <group colspan="2" col="2" groups="purchase.group_warning_purchase">
                         <separator string="Warning on the Purchase Order" colspan="4"/>
                         <field name="purchase_warn" nolabel="1"/>
                         <field name="purchase_warn_msg" colspan="3" nolabel="1" attrs="{'required':[('purchase_warn','!=','no-message')],'readonly':[('purchase_warn','=','no-message')]}"/>
                     </group>
                       <group colspan="2" col="2" groups="sale.group_warning_sale">
-                        <separator string="Warning on the Sales Order" colspan="4"/>
+                      <separator string="Warning on the Sales Order" colspan="4"/>
                             <field name="sale_warn" nolabel="1"/>
                             <field name="sale_warn_msg" colspan="3" nolabel="1" attrs="{'required':[('sale_warn','!=','no-message')],'readonly':[('sale_warn','=','no-message')]}"/>
-                    </group>
-                            <group colspan="2" col="2" groups="account.group_warning_account">
+                      </group>
+                        <group colspan="2" col="2" groups="account.group_warning_account">
                         <separator string="Warning on the Invoice" colspan="4"/>
                         <field name="invoice_warn" nolabel="1"/>
                         <field name="invoice_warn_msg" colspan="3" nolabel="1" attrs="{'required':[('invoice_warn','!=','no-message')],'readonly':[('invoice_warn','=','no-message')]}"/>
@@ -1135,7 +1432,7 @@
         <field name="view_type">form</field>
         <field name="view_mode">form</field>
         <field name="domain">[]</field>
-        <field name="context">{'default_company_type': 'company', 'default_contract_type': 'c'}</field>
+        <field name="context">{'default_company_type': 'company','default_customer': True, 'default_contract_type': 'c'}</field>
         <field name="view_ids" eval="[(5, 0, 0),
                                  (0, 0, {'view_mode': 'form', 'view_id': ref('view_new_partner_form')})]"/>    </record>
        <menuitem id="new_partner_create_menu" name="创建客户" groups="base.group_system"  parent="crm.res_partner_menu_crm"  action="action_partner_create" sequence="1"/>

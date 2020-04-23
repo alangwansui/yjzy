@@ -80,8 +80,9 @@
         'views/mail.xml',
         'views/budget_budget.xml',
         'views/gongsi.xml',
-        'views./jituan.xml',
+        'views/jituan.xml',
         'views/pricelist.xml',
+        'views/product_partner_origin.xml',
 
 
 

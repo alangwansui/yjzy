@@ -36,12 +36,15 @@ class res_partner(models.Model):
         help="Used to select automatically the right address according to the context in sales and purchases documents.")
 
     jituan_id = fields.Many2one('ji.tuan', '集团')
-    comment_contract = fields.Text(u'对接内容描述')
+    comment_contact = fields.Text(u'对接内容描述')
     devloper_id = fields.Many2one('res.users', u'开发人员')
     full_name = fields.Char('公司全称')
     invoice_title = fields.Char(u'发票抬头')
     mark_ids = fields.Many2many('transport.mark', 'ref_mark_patner', 'pid', 'mid', u'唛头')
     mark_comb_ids = fields.Many2many('mark.comb', 'ref_comb_partner', 'pid', 'cid', u'唛头组')
+
+    #mark_comb_id = fields.Many2one('mark.comb',u'唛头')
+
     exchange_type_ids = fields.Many2many('exchange.type', 'ref_exchange_partner', 'pid', 'eid', u'交货方式')
     exchange_demand_ids = fields.One2many('exchange.demand', 'partner_id', u'交单要求')
 
@@ -72,7 +75,11 @@ class res_partner(models.Model):
     need_purchase_fandian = fields.Boolean(u'采购返点')
     purchase_fandian_ratio = fields.Float(u'返点比例：%')
     purchase_fandian_partner_id = fields.Many2one('res.partner', u'返点对象')
-    state = fields.Selection([('draft', u'草稿'), ('done', u'完成')], u'状态', default='draft')
+    state = fields.Selection([('draft', u'草稿'),
+                              ('done', u'完成'),
+                              ('submit',u'已提交'),
+                              ('to approve',u'责任人已审批'),
+                              ('approve',u'审批完成')], u'状态', default='draft')
     auto_yfsqd = fields.Boolean(u'自动生成预付')
     is_inter_partner = fields.Boolean(u'是否内部')
     jituan_name = fields.Char(u'集团名称')
@@ -81,21 +88,26 @@ class res_partner(models.Model):
     gongsi_id = fields.Many2one('gongsi', '销售主体')
     purchase_gongsi_id = fields.Many2one('gongsi', '采购主体')
 
-    sale_currency_id = fields.Many2one('res.currency','销售币种',related='property_product_pricelist.currency_id')
+    sale_currency_id = fields.Many2one('res.currency','销售币种')
     customer_product_ids = fields.One2many('product.product','customer_id','客户采购产品')
 
-    customer_info_from = fields.Char(u'客户来源')
+    campaign_id = fields.Many2one('utm.campaign',u'客户来源')
     customer_info_from_uid = fields.Many2one('res.users',u'客户获取人')
 
 
-    customer_purchase_in_china = fields.Float(u'客户在中国采购规模',currency_field='customer_purchase_in_china_currency_id')
-    customer_purchase_in_china_currency_id = fields.Many2one('res.currency', '客户在中国采购规模')
-
-    customer_sale_total = fields.Float(u'客户销售额',currency_field='customer_sale_total_currency_id')
-    customer_sale_total_currency_id = fields.Many2one('res.currency', '客户销售额')
-
+    customer_purchase_in_china = fields.Monetary(u'客户在中国采购规模(CNY)',currency_field='customer_purchase_in_china_currency_id')
+    customer_purchase_in_china_currency_id = fields.Many2one('res.currency', '客户在中国采购规模币种',default=lambda self: self.env.user.company_id.currency_id.id)
+    customer_purchase_in_china_note = fields.Text(u'备注')
+    customer_sale_total = fields.Monetary(u'客户销售额(CNY)',currency_field='customer_sale_total_currency_id')
+    customer_sale_total_currency_id = fields.Many2one('res.currency', '客户销售额币种',default=lambda self: self.env.user.company_id.currency_id.id)
+    customer_sale_total_note = fields.Text(u'备注')
     child_delivery_ids = fields.One2many('res.partner', 'parent_id', domain=[('type', '=', 'delivery')], string='收货地址')
     child_contact_ids = fields.One2many('res.partner', 'parent_id', domain=[('type', '=', 'contact')], string='联系人')
+
+    #akiny
+    customer_product_origin_ids = fields.One2many('partner.product.origin','partner_id', u'客户产品')
+
+    mark_html = fields.Html('唛头')
 
     @api.model
     def create(self, vals):
@@ -232,6 +244,14 @@ class res_partner(models.Model):
     @api.onchange('type1')
     def _onchange_type1(self):
         self.type = self.type1
+
+
+    @api.onchange('country_id')
+    def _onchange_country_id(self):
+        if self.country_id.code == 'CN':
+           self.lang = 'zh_CN'
+        else:
+           self.lang = 'en_US'
 
     @api.one
     def compute_child_delivery_ids(self):

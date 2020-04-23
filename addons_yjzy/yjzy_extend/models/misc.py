@@ -21,6 +21,8 @@ class mark_comb(models.Model):
     customer_id = fields.Many2one('res.partner','客户', domain=[('customer', '=', True),('parent_id', '=', False)])
     description_mark = fields.Html(u'唛头描述')
 
+    #customer_ids = fields.One2many('res.partner','mark_comb_id','客户')
+
 class exchange_type(models.Model):
     _name = 'exchange.type'
     name = fields.Char(u'交单方式', required=True)

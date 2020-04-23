@@ -61,6 +61,7 @@ from . import employee
 from . import attachment
 from . import jituan
 from . import pricelist
+from . import partner_product_origin
 
 
 
