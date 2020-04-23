@@ -45,12 +45,12 @@ class res_partner(models.Model):
 
     #mark_comb_id = fields.Many2one('mark.comb',u'唛头')
 
-    exchange_type_ids = fields.Many2many('exchange.type', 'ref_exchange_partner', 'pid', 'eid', u'交货方式')
+    exchange_type_ids = fields.Many2many('exchange.type', 'ref_exchange_partner', 'pid', 'eid', u'交单方式')
     exchange_demand_ids = fields.One2many('exchange.demand', 'partner_id', u'交单要求')
 
     demand_info = fields.Text(u'交单要求')
-    notice_man = fields.Char(u'通知人')
-    delivery_man = fields.Char(u'发货人')
+    notice_man = fields.Text(u'通知人')
+    delivery_man = fields.Text(u'收货人')
 
     wharf_src_id = fields.Many2one('stock.wharf', u'装船港')
     wharf_dest_id = fields.Many2one('stock.wharf', u'目的港')
@@ -108,6 +108,7 @@ class res_partner(models.Model):
     customer_product_origin_ids = fields.One2many('partner.product.origin','partner_id', u'客户产品')
 
     mark_html = fields.Html('唛头')
+    mark_text = fields.Text(u'唛头')
 
     @api.model
     def create(self, vals):

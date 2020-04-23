@@ -214,8 +214,8 @@ class transport_bill(models.Model):
     user_id = fields.Many2one('res.users', u'业务员', default=lambda self: self.env.user.assistant_id.id)
     partner_invoice_id = fields.Many2one('res.partner', string='发票地址', readonly=False, required=True)
     partner_shipping_id = fields.Many2one('res.partner', string='送货地址',  required=False)
-    notice_man = fields.Char(u'通知人')
-    delivery_man = fields.Char(u'发货人')
+    notice_man = fields.Text(u'通知人')
+    delivery_man = fields.Text(u'发货人')
     production_sale_unit = fields.Char('生产销售单位')
     company_id = fields.Many2one('res.company', '公司', required=True, readonly=True,
                                  default=lambda self: self.env.user.company_id.id)
@@ -359,7 +359,7 @@ class transport_bill(models.Model):
     demand_info = fields.Text(u'交单要求')
     #akiny
     mark_html = fields.Html(u'唛头')
-
+    mark_text = fields.Text(u'唛头')
     #金额计算
     ciq_amount = fields.Monetary('报关金额', compute=compute_ciq_amount, currency_field='sale_currency_id', digits=dp.get_precision('Money'))
     no_ciq_amount = fields.Monetary('不报关金额', compute=compute_ciq_amount,  currency_field='company_currency_id')
