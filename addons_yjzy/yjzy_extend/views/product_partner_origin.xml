@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-
+    <data>
 <record id="partner_product_origin_tree_view" model="ir.ui.view">
     <field name="name">partner.product.origin.tree</field>
     <field name="model">partner.product.origin</field>
     <field name="arch" type="xml">
-        <tree string="客户产品">
+        <tree string="客户产品" create="false" editable="bottom">
             <field name="name"/>
             <field name="description"/>
             <field name="partner_id"/>
@@ -20,8 +20,11 @@
     <field name="arch" type="xml">
        <form string="客户产品">
                   <sheet>
-                            <field name="name"/>
-                            <field name="description"/>
+                      <group>
+                            <field name="name" required="1"/>
+                            <field name="description" required="1"/>
+                            <field name="partner_id" string="客户" groups="base.group_system" required="1"/>
+                      </group>
                     </sheet>
                 </form>
     </field>
@@ -37,6 +40,6 @@
 
     <menuitem id="menu_partner_product_origin" name="客户产品" parent="yjzy_extend.new_customer_root" action="action_partner_product_origin" sequence=""/>
 
-
+    </data>
 
 </odoo>

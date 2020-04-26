@@ -13,4 +13,7 @@ class jituan(models.Model):
     user_id = fields.Many2one('res.users', '用户')
     assistant_id = fields.Many2one('res.users', '助理')
     partner_ids = fields.One2many('res.partner', 'jituan_id', '客户')
+    customer = fields.Boolean('客户')
+    supplier = fields.Boolean('供应商')
+
 

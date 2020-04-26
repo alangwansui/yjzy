@@ -244,7 +244,7 @@
 
                                         <field name="account_type" attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                         <field name="trans_type" attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
-                                        <field name="cip_type" attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}" invisible="1"/>
+                                        <field name="cip_type" attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}" invisible="0"/>
                                         <field name="credit_info" invisible="1"/>
                                         <field name="insurance_info" invisible="1"/>
                                         <field name="user_id" readonly="1" no_create="True" string="责任人" options="{'no_open':1}"/>

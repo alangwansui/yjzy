@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="widget_x2m_assets_backend" name="widget_x2m assets" inherit_id="web.assets_backend">
+        <xpath expr="." position="inside">
+            <link rel="stylesheet" type="text/less" href="/web_x2m_multi_delete/static/src/less/x2m_multi_delete.less"/>
+            <script type="text/javascript" src="/web_x2m_multi_delete/static/src/js/x2m_multi_delete.js"/>
+        </xpath>
+    </template>
+</odoo>

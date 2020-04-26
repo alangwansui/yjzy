@@ -30,6 +30,7 @@ class res_partner(models.Model):
     type = fields.Selection(selection_add=[('notice', u'发货代理')])
     type1 = fields.Selection(
          [('contact', u'联系人'),
+         ('invoice', u'发票主体'),
          ('delivery', u'收货地址'),
          ], string='Address Type',
         default='contact',
@@ -76,10 +77,10 @@ class res_partner(models.Model):
     purchase_fandian_ratio = fields.Float(u'返点比例：%')
     purchase_fandian_partner_id = fields.Many2one('res.partner', u'返点对象')
     state = fields.Selection([('draft', u'草稿'),
-                              ('done', u'完成'),
+                              ('check',u'提交前必填项检查'),
                               ('submit',u'已提交'),
                               ('to approve',u'责任人已审批'),
-                              ('approve',u'审批完成')], u'状态', default='draft')
+                              ('approve',u'合规审批完成'),('done', u'完成'),('jufuse', u'拒绝'),], string=u'状态', track_visibility='onchange', default='draft')
     auto_yfsqd = fields.Boolean(u'自动生成预付')
     is_inter_partner = fields.Boolean(u'是否内部')
     jituan_name = fields.Char(u'集团名称')
@@ -98,17 +99,49 @@ class res_partner(models.Model):
     customer_purchase_in_china = fields.Monetary(u'客户在中国采购规模(CNY)',currency_field='customer_purchase_in_china_currency_id')
     customer_purchase_in_china_currency_id = fields.Many2one('res.currency', '客户在中国采购规模币种',default=lambda self: self.env.user.company_id.currency_id.id)
     customer_purchase_in_china_note = fields.Text(u'备注')
-    customer_sale_total = fields.Monetary(u'客户销售额(CNY)',currency_field='customer_sale_total_currency_id')
-    customer_sale_total_currency_id = fields.Many2one('res.currency', '客户销售额币种',default=lambda self: self.env.user.company_id.currency_id.id)
+
+    customer_sale_total = fields.Monetary(u'客户销售额(CNY)', currency_field='customer_sale_total_currency_id')
+    customer_sale_total_currency_id = fields.Many2one('res.currency', '客户销售额币种',
+                                                      default=lambda self: self.env.user.company_id.currency_id.id)
     customer_sale_total_note = fields.Text(u'备注')
+
+
+    supplier_sale_total = fields.Monetary(u'供应商销售额(CNY)',
+                                                 currency_field='supplier_sale_total_currency_id')
+    supplier_sale_total_currency_id = fields.Many2one('res.currency', '供应商销售额币种', default=lambda
+        self: self.env.user.company_id.currency_id.id)
+    supplier_sale_total_note = fields.Text(u'备注')
+
+    supplier_export_total = fields.Monetary(u'供应商出口额(CNY)',
+                                           currency_field='supplier_export_total_currency_id')
+    supplier_export_total_currency_id = fields.Many2one('res.currency', '供应商出口额币种', default=lambda
+        self: self.env.user.company_id.currency_id.id)
+    supplier_export_total_note = fields.Text(u'备注')
+
+
+
     child_delivery_ids = fields.One2many('res.partner', 'parent_id', domain=[('type', '=', 'delivery')], string='收货地址')
     child_contact_ids = fields.One2many('res.partner', 'parent_id', domain=[('type', '=', 'contact')], string='联系人')
-
+    child_invoice_ids = fields.One2many('res.partner', 'parent_id', domain=[('type', '=', 'invoice')], string='发票主体')
     #akiny
     customer_product_origin_ids = fields.One2many('partner.product.origin','partner_id', u'客户产品')
-
+    address_text = fields.Text(u'地址')
     mark_html = fields.Html('唛头')
     mark_text = fields.Text(u'唛头')
+    city_product_origin = fields.Char('产地')
+
+    payee1 = fields.Char('收款人')
+    payee1_address = fields.Text('收款人地址')
+    account1 = fields.Char('账户')
+    swift1 = fields.Char('SWIFT(非中国大陆供应商)')
+    bank1 = fields.Char('银行')
+    bank1_address = fields.Char('银行地址')
+    supplier_info_from_uid = fields.Many2one('res.users',u'客户获取人')
+    attachment_business_license = fields.Many2many('ir.attachment',string='营业执照附件')
+    actual_controlling_person = fields.Char(u'实际控股人')
+    other_attachment = fields.Many2many('ir.attachment',string='其他补充资料附件')
+
+    partner_hs = fields.Many2many('hs.hs',string='产品品名')
 
     @api.onchange('sale_currency_id')
     def onchange_sale_currency(self):
@@ -189,14 +222,6 @@ class res_partner(models.Model):
                 one.property_product_pricelist = pricelist_cny
 
 
-
-
-
-
-
-
-
-
     def open_form_view(self):
         return {
             'name': '联系人',
@@ -210,6 +235,42 @@ class res_partner(models.Model):
 
 
     @api.multi
+
+    def action_submit(self):
+        if self.create_uid == self.env.user:
+           self.state = 'submit'
+        else:
+           raise Warning('必须是创建人才能提交')
+    def action_to_approve(self):
+        if self.user_id == self.env.user:
+           return self.write({'state': 'to_approve'})
+        else:
+           raise Warning('必须是责任人才能审批')
+    def action_approve(self):
+        return self.write({'state': 'approve'})
+    def action_done(self):
+        return self.write({'state': 'done'})
+    def action_cancel(self):
+        if self.create_uid == self.env.user:
+           return self.write({'state': 'cancel'})
+        else:
+           raise Warning('必须是创建人才能取消')
+    def action_draft(self):
+        partner = self.filtered(lambda s: s.state in ['cancel'])
+        if self.create_uid == self.env.user:
+           return partner.write({
+            'state': 'draft',})
+        else:
+           raise Warning('必须是创建人才能提交')
+    #def unlink(self):
+    #    for one in self:
+    #        if one.state != 'cancel':
+     #           raise Warning('不能删除非取消状态发运单')
+    #    return super(res_partner, self).unlink()
+
+
+
+
     def select_products(self):
         if self.flag_order == 'so':
             order_id = self.env['sale.order'].browse(self._context.get('active_id', False))
@@ -278,6 +339,9 @@ class res_partner(models.Model):
             child_contact_ids = one.child_ids.filtered(
                 lambda x: x.type == 'contact')
             one.child_contact_ids =  child_contact_ids
+
+
+
 
 
 
