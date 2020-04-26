@@ -381,6 +381,8 @@ class IrAttachment(models.Model):
             # rules do not apply for the superuser
             return len(ids) if count else ids
 
+        return len(ids) if count else ids
+
         if not ids:
             return 0 if count else []
 
