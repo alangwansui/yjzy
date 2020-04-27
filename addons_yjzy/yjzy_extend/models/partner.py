@@ -137,8 +137,9 @@ class res_partner(models.Model):
     bank1 = fields.Char('银行')
     bank1_address = fields.Char('银行地址')
     supplier_info_from_uid = fields.Many2one('res.users',u'客户获取人')
-    attachment_business_license = fields.Many2many('ir.attachment',string='营业执照附件')
+    attachment_business_license = fields.Many2many('ir.attachment',string='营业执照以及其他资料附件')
     actual_controlling_person = fields.Char(u'实际控股人')
+
     other_attachment = fields.Many2many('ir.attachment',string='其他补充资料附件')
 
     partner_hs = fields.Many2many('hs.hs',string='产品品名')

@@ -286,11 +286,11 @@
                     <header>
 
                         <button name="action_done" string="确认" type="object" class="btn-primary"
-                                states="approve" />
+                                states="approve"/>
                         <button name="action_cancel" string="取消" type="object" class="btn-primary"
-                                states="draft" />
-                         <button name="action_draft" string="存为草稿" type="object" class="btn-primary"
-                                states="draft" />
+                                states="draft"/>
+                        <button name="action_draft" string="存为草稿" type="object" class="btn-primary"
+                                states="draft"/>
 
                         <field name="state" statusbar_invisible="draft" widget="statusbar"/>
                     </header>
@@ -471,18 +471,27 @@
                                 <!--separator string="联系方式" style="border-bottom:1px #000000 solid" colspan="2"/-->
 
                                 <div colspan="2">
-                                <div style="min-width: 110px;float:left;font-weight:bolder">
-                                    <span attrs="{'invisible': ['|',('supplier','=',False),('is_company','=',False)]}">供应商地址</span>
-                                <span attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)]}">客户地址</span>
-                                    <span attrs="{'invisible': ['|',('type','=','delivery'),('is_company','=',True)]}">联系人地址</span></div>
-                                <div style="float:left;word-wrap: break-word; width: 55%">
-                                  <field name="address_text" style="float:left;width:100%;"/>
-                                </div>
+                                    <div style="min-width: 110px;float:left;font-weight:bolder">
+                                        <span attrs="{'invisible': ['|',('supplier','=',False),('is_company','=',False)]}">
+                                            供应商地址
+                                        </span>
+                                        <span attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)]}">
+                                            客户地址
+                                        </span>
+                                        <span attrs="{'invisible': ['|',('type','=','delivery'),('is_company','=',True)]}">
+                                            联系人地址
+                                        </span>
+                                    </div>
+                                    <div style="float:left;word-wrap: break-word; width: 55%">
+                                        <field name="address_text" style="float:left;width:100%;"/>
+                                    </div>
                                 </div>
 
 
-                                <label for="street" string="详细地址" groups="base.group_system" attrs="{'invisible':[('type','=','delivery')]}"/>
-                                <div class="o_address_format" groups="base.group_system" attrs="{'invisible':[('type','=','delivery')]}">
+                                <label for="street" string="详细地址" groups="base.group_system"
+                                       attrs="{'invisible':[('type','=','delivery')]}"/>
+                                <div class="o_address_format" groups="base.group_system"
+                                     attrs="{'invisible':[('type','=','delivery')]}">
                                     <div class="oe_edit_only">
                                         <button name="open_parent" type="object" string="(edit)" class="oe_link"
                                                 attrs="{'invisible': ['|', ('parent_id', '=', False), ('type', '!=', 'contact')]}"/>
@@ -490,9 +499,11 @@
 
                                     <field name="address_text" class="o_address_street"
                                            attrs="{'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)]}"/>
-                                    <field name="street" placeholder="Street..." class="o_address_street" groups="base.group_system"
+                                    <field name="street" placeholder="Street..." class="o_address_street"
+                                           groups="base.group_system"
                                            attrs="{'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)]}"/>
-                                    <field name="street2" placeholder="Street 2..." class="o_address_street" groups="base.group_system"
+                                    <field name="street2" placeholder="Street 2..." class="o_address_street"
+                                           groups="base.group_system"
                                            attrs="{'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)]}"/>
                                     <field name="city" placeholder="City" class="o_address_city"
                                            attrs="{'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)]}"
@@ -620,7 +631,7 @@
                                        placeholder="Tags..."/>
                                 <field name="lang" invisible="1"/>
 
-                                <field name="vat"   invisible="1"
+                                <field name="vat" invisible="1"
                                        attrs="{'readonly': [('parent_id','!=',False)]}"/>
                                 <field name="category_id" invisible="1" widget="many2many_tags"
                                        options="{'color_field': 'color', 'no_create_edit': True}"
@@ -653,8 +664,6 @@
                                 </div>
 
 
-
-
                                 <label for="supplier_sale_total" colspan="2"/>
                                 <div colspan="2">
                                     <field name="supplier_sale_total" class="oe_inline"/>
@@ -669,9 +678,11 @@
                                 <label for="supplier_export_total" colspan="2"/>
                                 <div colspan="2">
                                     <field name="supplier_export_total" class="oe_inline"/>
-                                    <field name="supplier_export_total_currency_id" invisible="1" style="margin-left:3px"
+                                    <field name="supplier_export_total_currency_id" invisible="1"
+                                           style="margin-left:3px"
                                            options="{'no_open':1}" class="oe_inline"/>
-                                    <span style="margin-left:3px" attrs="{'invisible':[('supplier_export_total','=',0)]}">
+                                    <span style="margin-left:3px"
+                                          attrs="{'invisible':[('supplier_export_total','=',0)]}">
                                         <field name="supplier_export_total_note" placeholder="填写备注..."/>
                                     </span>
                                 </div>
@@ -1369,20 +1380,20 @@
             </field>
         </record>
 
-<!--akiny客户form-->
-         <record id="view_new_customer_form" model="ir.ui.view">
+        <!--akiny客户form-->
+        <record id="view_new_customer_form" model="ir.ui.view">
             <field name="name">res.partner.customer.form.new</field>
             <field name="model">res.partner</field>
             <field name="priority" eval="1"/>
             <field name="arch" type="xml">
                 <form string="客户">
                     <header>
-                         <button name="action_done" string="确认" type="object" class="btn-primary"
-                                states="approve" />
+                        <button name="action_done" string="确认" type="object" class="btn-primary"
+                                states="approve"/>
                         <button name="action_cancel" string="取消" type="object" class="btn-primary"
-                                states="draft" />
-                         <button name="action_draft" string="存为草稿" type="object" class="btn-primary"
-                                states="draft" />
+                                states="draft"/>
+                        <button name="action_draft" string="存为草稿" type="object" class="btn-primary"
+                                states="draft"/>
                         <field name="state" statusbar_invisible="draft" widget="statusbar"/>
                     </header>
                     <sheet>
@@ -1513,7 +1524,7 @@
                             <group>
                                 <field name="type" invisible="1" attrs="{'invisible': [('parent_id','=', False)]}"
                                        groups="base.group_no_one,sale.group_delivery_invoice_address"/>
-                                <field name="full_name"  string="客户公司全称"
+                                <field name="full_name" string="客户公司全称"
                                        attrs="{'required' : [('is_company', '=', True)],'invisible':[('is_company','=',False)]}"/>
 
                                 <!--label for="country_id" string="业务国" attrs="{'invisible':[('type','!=','delivery')]}"/>
@@ -1549,20 +1560,24 @@
                                 </div-->
 
 
-                                    <field name="address_text" class="o_address_street"
-                                           attrs="{'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)]}"/>
+                                <field name="address_text" class="o_address_street"
+                                       attrs="{'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)]}"/>
 
 
-                                <label for="street" string="详细地址" groups="base.group_system" attrs="{'invisible':[('type','=','delivery')]}"/>
-                                <div class="o_address_format" groups="base.group_system" attrs="{'invisible':[('type','=','delivery')]}">
+                                <label for="street" string="详细地址" groups="base.group_system"
+                                       attrs="{'invisible':[('type','=','delivery')]}"/>
+                                <div class="o_address_format" groups="base.group_system"
+                                     attrs="{'invisible':[('type','=','delivery')]}">
                                     <div class="oe_edit_only">
                                         <button name="open_parent" type="object" string="(edit)" class="oe_link"
                                                 attrs="{'invisible': ['|', ('parent_id', '=', False), ('type', '!=', 'contact')]}"/>
                                     </div>
 
-                                    <field name="street" placeholder="Street..." class="o_address_street" groups="base.group_system"
+                                    <field name="street" placeholder="Street..." class="o_address_street"
+                                           groups="base.group_system"
                                            attrs="{'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)]}"/>
-                                    <field name="street2" placeholder="Street 2..." class="o_address_street" groups="base.group_system"
+                                    <field name="street2" placeholder="Street 2..." class="o_address_street"
+                                           groups="base.group_system"
                                            attrs="{'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)]}"/>
                                     <field name="city" placeholder="City" class="o_address_city"
                                            attrs="{'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)]}"
@@ -1582,7 +1597,8 @@
                                 </div>
                                 <field name="fax" attrs="{'invisible':[('type','=','delivery')]}"/>
                                 <field name="website" widget="url" placeholder="e.g. www.tenyale.com"
-                                       attrs="{'invisible':['|',('type','=','delivery'),('is_company','!=',True)]}"/></group>
+                                       attrs="{'invisible':['|',('type','=','delivery'),('is_company','!=',True)]}"/>
+                            </group>
                             <group>
                                 <field name="level" string="客户等级"
                                        attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)]}"/>
@@ -1625,7 +1641,7 @@
 
 
                             </group>
-                            <group >
+                            <group>
 
                                 <field name="vat" invisible="1" placeholder="e.g. BE0477472701"
                                        attrs="{'readonly': [('parent_id','!=',False)]}"/>
@@ -1825,7 +1841,7 @@
                                         <field name="wechat"/>
                                         <field name="skype"/>
                                         <field name="qq"/>
-                                         <field name="comment_contact" placeholder="例:该联系人是价格最后决策人"/>
+                                        <field name="comment_contact" placeholder="例:该联系人是价格最后决策人"/>
                                         <field name="address_text"/>
                                         <field name="street" invisible="1"/>
                                         <field name="street2" invisible="1"/>
@@ -1919,7 +1935,7 @@
                                                    groups="base.group_system" widget="radio"
                                                    options="{'horizontal': true}"/>
                                             <field name="type1" required="1" domain="['']"
-                                                    groups="base.group_system"
+                                                   groups="base.group_system"
                                                    widget="radio" options="{'horizontal': true}"/>
                                             <field name="parent_id" invisible="1"/>
                                             <hr/>
@@ -1998,7 +2014,7 @@
                                                'default_supplier': supplier, 'default_customer': customer, 'default_lang': lang,'default_type1':'delivery'}">
 
                                     <tree class="o_list_scroll" editable="bottom">
-                                        <field name="name" string="编号(001开始)" />
+                                        <field name="name" string="编号(001开始)"/>
                                         <field name="country_id" string="抵运国"/>
                                         <field name="type" invisible="1"/>
                                         <field name="type1" invisible="1"/>
@@ -2007,23 +2023,22 @@
                                         <field name="wharf_src_id" attrs="{'invisible': [('type', '!=', 'delivery')]}"/>
                                         <field name="wharf_dest_id"
                                                attrs="{'invisible': [('type', '!=', 'delivery')]}"/>
-                                         <field name="notice_man"
-                                                           attrs="{'invisible': [('type', '!=', 'delivery')]}"/>
-                                                    <field name="delivery_man"
-                                                           attrs="{'invisible': [('type', '!=', 'delivery')]}"
-                                                           string="收货人"/>
+                                        <field name="notice_man"
+                                               attrs="{'invisible': [('type', '!=', 'delivery')]}"/>
+                                        <field name="delivery_man"
+                                               attrs="{'invisible': [('type', '!=', 'delivery')]}"
+                                               string="收货人"/>
                                         <field name="exchange_type_ids" widget="many2many_tags"
-                                                           string="交单方式"
-                                                          />
+                                               string="交单方式"
+                                        />
 
 
+                                        <field name="mark_text"/>
 
-                                                    <field name="mark_text"/>
 
+                                        <field name="demand_info"/>
 
-                                                    <field name="demand_info"/>
-
-                                                    <field name="is_inter_partner" groups="base.group_system"/>
+                                        <field name="is_inter_partner" groups="base.group_system"/>
 
                                     </tree>
                                     <kanban>
@@ -2365,12 +2380,12 @@
             <field name="arch" type="xml">
                 <form string="供应商">
                     <header>
-                       <button name="action_done" string="确认" type="object" class="btn-primary"
-                                states="approve" />
+                        <button name="action_done" string="确认" type="object" class="btn-primary"
+                                states="approve"/>
                         <button name="action_cancel" string="取消" type="object" class="btn-primary"
-                                states="draft" />
-                         <button name="action_draft" string="存为草稿" type="object" class="btn-primary"
-                                states="draft" />
+                                states="draft"/>
+                        <button name="action_draft" string="存为草稿" type="object" class="btn-primary"
+                                states="draft"/>
                         <field name="state" statusbar_invisible="draft" widget="statusbar"/>
                     </header>
                     <sheet>
@@ -2474,7 +2489,7 @@
                                    class="oe_edit_only" invisible="1"
                                    options="{'horizontal': true}"/>
 
-                            <div >
+                            <div>
                                 供应商简称：
                             </div>
                             <h1>
@@ -2527,15 +2542,19 @@
                                 <separator string="" colspan="2"/>
                                 <!--separator string="联系方式" style="border-bottom:1px #000000 solid" colspan="2"/-->
                                 <field name="address_text" style="float:left;width:100%;"/>
-                                <label for="street" string="详细地址" groups="base.group_system" attrs="{'invisible':[('type','=','delivery')]}"/>
-                                <div class="o_address_format" groups="base.group_system" attrs="{'invisible':[('type','=','delivery')]}">
+                                <label for="street" string="详细地址" groups="base.group_system"
+                                       attrs="{'invisible':[('type','=','delivery')]}"/>
+                                <div class="o_address_format" groups="base.group_system"
+                                     attrs="{'invisible':[('type','=','delivery')]}">
                                     <div class="oe_edit_only">
                                         <button name="open_parent" type="object" string="(edit)" class="oe_link"
                                                 attrs="{'invisible': ['|', ('parent_id', '=', False), ('type', '!=', 'contact')]}"/>
                                     </div>
-                                    <field name="street" placeholder="Street..." class="o_address_street" groups="base.group_system"
+                                    <field name="street" placeholder="Street..." class="o_address_street"
+                                           groups="base.group_system"
                                            attrs="{'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)]}"/>
-                                    <field name="street2" placeholder="Street 2..." class="o_address_street" groups="base.group_system"
+                                    <field name="street2" placeholder="Street 2..." class="o_address_street"
+                                           groups="base.group_system"
                                            attrs="{'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)]}"/>
                                     <field name="city" placeholder="City" class="o_address_city"
                                            attrs="{'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)]}"
@@ -2560,33 +2579,16 @@
 
                             </group>
                             <group>
-                                <!--供应商银行信息-->
+                                <!--供应商银行信息>
                                 <field name="payee1" string="收款人"/>
                                 <field name="payee1_address"/>
                                 <field name="account1"/>
                                 <field name="swift1" string="SWIFT(若有)"/>
                                 <field name="bank1"/>
-                                <field name="bank1_address"/>
-
-                                <separator colspan="2"/>
-                                <field name="level" string="供应商等级"/>
-                                <field name="user_ids" invisible="1"/>
-                                <field name="is_inter_partner" groups="base.group_system"/>
-                                <field name="campaign_id" string="供应商来源"/>
-                                <field name="supplier_info_from_uid" string="供应商获取人"/>
-                                <field name="create_uid" options="{'no_open':1}"/>
-                                <field name="create_date" widget="date"/>
-                                <!--供应商信息-->
+                                <field name="bank1_address"/-->
 
 
-
-
-                            </group>
-                            <group>
-
-
-
-                             <field name="advance_currency_id" invisible="1"/>
+                                <field name="advance_currency_id" invisible="1"/>
                                 <field name="currency_id" invisible="1"/>
                                 <field name="amount_purchase_advance_org"
                                        attrs="{'invisible': ['|',('supplier','=',False),('is_company','=',False)]}"/>
@@ -2600,7 +2602,22 @@
                                        attrs="{'invisible': [('need_purchase_fandian','!=',True)]}"/>
 
 
-                                <field name="vat"   invisible="1"
+                                <separator colspan="2"/>
+                                <field name="level" string="供应商等级"/>
+                                <field name="user_ids" invisible="1"/>
+                                <field name="is_inter_partner" groups="base.group_system"/>
+                                <field name="campaign_id" string="供应商来源"/>
+                                <field name="supplier_info_from_uid" string="供应商获取人"/>
+                                <field name="create_uid" options="{'no_open':1}"/>
+                                <field name="create_date" widget="date"/>
+                                <!--供应商信息-->
+
+
+                            </group>
+                            <group>
+
+
+                                <field name="vat" invisible="1"
                                        attrs="{'readonly': [('parent_id','!=',False)]}"/>
                                 <field name="category_id" invisible="1" widget="many2many_tags"
                                        options="{'color_field': 'color', 'no_create_edit': True}"
@@ -2621,9 +2638,11 @@
                                 <label for="supplier_export_total" colspan="2"/>
                                 <div colspan="2">
                                     <field name="supplier_export_total" class="oe_inline"/>
-                                    <field name="supplier_export_total_currency_id" invisible="1" style="margin-left:3px"
+                                    <field name="supplier_export_total_currency_id" invisible="1"
+                                           style="margin-left:3px"
                                            options="{'no_open':1}" class="oe_inline"/>
-                                    <span style="margin-left:3px" attrs="{'invisible':[('supplier_export_total','=',0)]}">
+                                    <span style="margin-left:3px"
+                                          attrs="{'invisible':[('supplier_export_total','=',0)]}">
                                         <field name="supplier_export_total_note" placeholder="填写备注..."/>
                                     </span>
                                 </div>
@@ -2632,14 +2651,6 @@
                                 <div colspan="2">
                                     <field name="comment" placeholder="内部备注..."/>
                                 </div>
-
-
-                                <label for="comment" colspan="2"/>
-                                <div colspan="2">
-                                    <field name="comment" placeholder="内部备注..."/>
-                                </div>
-
-
                             </group>
                         </group>
 
@@ -2807,8 +2818,9 @@
                                         <field name="skype"/>
                                         <field name="qq"/>
                                         <field name="comment_contact"/>
-                                        <field name="street"/>
-                                        <field name="street2"/>
+                                        <field name="address_text"/>
+                                        <field name="street" invisible="1"/>
+                                        <field name="street2" invisible="1"/>
                                     </tree>
 
                                     <!--kanban>
@@ -2967,15 +2979,41 @@
 
                                 </field>
                             </page>
-                            <page string="供应商资质信息">
-                                <group>
-                                 <label for="actual_controlling_person"  colspan="2"/>
-                                 <field name="actual_controlling_person" nolabel="1"/>
-                                <label for="attachment_business_license"  colspan="2"/>
-                                <field name="attachment_business_license" nolabel="1" widget="many2many_binary" class="oe_inline"/>
-                                <label for="other_attachment"  colspan="2"/>
-                                <field name="other_attachment" nolabel="1" widget="many2many_binary" colspan="2" class="oe_inline"/>
-                              </group>
+                            <page string="供应商资质信息以及银行">
+                                <group col="2" string="资质信息">
+                                    <group>
+                                        <label for="actual_controlling_person" colspan="2"/>
+                                        <field name="actual_controlling_person" nolabel="1"/>
+                                    </group>
+                                    <group>
+                                        <label for="attachment_business_license" colspan="2"/>
+                                        <field name="attachment_business_license" nolabel="1" widget="many2many_binary"
+                                               class="oe_inline"/>
+
+                                    </group>
+                                </group>
+                                <group string="银行账户信息">
+                                <field name="bank_ids" nolabel="1" context="{'default_bank_type':'company_supplier'}">
+                                    <tree>
+                                        <field name="bank_type"/>
+                                        <field name="huming" string="收款人"/>
+                                        <field name="huming_address" string="收款人地址"/>
+                                        <field name="acc_number" string="账户"/>
+                                        <field name="swift" string="SWIFT(如有)"/>
+                                        <field name="kaihuhang" string="银行"/>
+                                        <field name="kaihuhang_address" string="银行地址"/>
+                                    </tree>
+                                    <form>
+                                        <field name="bank_type" groups="base.group_system"/>
+                                        <field name="huming" string="收款人"/>
+                                        <field name="huming_address" string="收款人地址"/>
+                                        <field name="acc_number" string="账户"/>
+                                        <field name="swift" string="SWIFT(如有)"/>
+                                        <field name="kaihuhang" string="银行"/>
+                                        <field name="kaihuhang_address" string="银行地址"/>
+                                    </form>
+                                </field>
+                                </group>
                             </page>
                             <page string="供应商发票主体信息"
                                   attrs="{'invisible':['|',('supplier','=',False),('is_company','=',False)]}">
@@ -3096,12 +3134,12 @@
                                             <hr/>
 
 
-                                                <group>
-                                                    <field name="is_company" invisible="1"/>
-                                                    <field name="name" string="发票主体名称"
-                                                           attrs="{'required' : ['|',('type', '=', 'contact'),('type', '=', 'delivery')]}"/>
-                                                     <field name="partner_hs" nolabel="many2many_tags"/>
-                                                </group>
+                                            <group>
+                                                <field name="is_company" invisible="1"/>
+                                                <field name="name" string="发票主体名称"
+                                                       attrs="{'required' : ['|',('type', '=', 'contact'),('type', '=', 'delivery')]}"/>
+                                                <field name="partner_hs" nolabel="many2many_tags"/>
+                                            </group>
 
                                             <field name="supplier" invisible="True"/>
                                             <field name="customer" invisible="True"/>
@@ -3120,8 +3158,6 @@
                                     </tree>
                                 </field>
                             </page>
-
-
 
 
                             <page string="采购合同后置条款"
@@ -3242,7 +3278,6 @@
                 </form>
             </field>
         </record>
-
 
 
         <!-- Special restricted view for private address, with limited "named" info that

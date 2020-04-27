@@ -2,20 +2,20 @@
 <odoo>
 
     <data>
-<record id="partner_product_origin_tree_view" model="ir.ui.view">
-    <field name="name">partner.product.origin.tree</field>
+<record id="view_customer_product_origin_tree" model="ir.ui.view">
+    <field name="name">customer.product.origin.tree</field>
     <field name="model">partner.product.origin</field>
     <field name="arch" type="xml">
         <tree string="客户产品" create="false" editable="bottom">
             <field name="name"/>
             <field name="description"/>
-            <field name="partner_id"/>
+            <field name="partner_id" string="客户" />
         </tree>
     </field>
 </record>
 
-<record id="partner_product_origin_form" model="ir.ui.view">
-    <field name="name">partner.product.origin.form</field>
+<record id="view_customer_product_origin_form" model="ir.ui.view">
+    <field name="name">customer.product.origin.form</field>
     <field name="model">partner.product.origin</field>
     <field name="arch" type="xml">
        <form string="客户产品">
@@ -23,22 +23,70 @@
                       <group>
                             <field name="name" required="1"/>
                             <field name="description" required="1"/>
-                            <field name="partner_id" string="客户" groups="base.group_system" required="1"/>
+                            <field name="partner_id" string="客户" required="1"/>
                       </group>
                     </sheet>
                 </form>
     </field>
 </record>
 
-    <record id="action_partner_product_origin" model="ir.actions.act_window">
+
+        <record id="view_supplier_product_origin_tree" model="ir.ui.view">
+    <field name="name">supplier.product.origin.tree</field>
+    <field name="model">partner.product.origin</field>
+    <field name="arch" type="xml">
+        <tree string="供应商产品" create="false" editable="bottom">
+            <field name="name"/>
+            <field name="description"/>
+            <field name="partner_id" string="供应商" />
+        </tree>
+    </field>
+</record>
+
+<record id="view_supplier_product_origin_form" model="ir.ui.view">
+    <field name="name">supplier.product.origin.form</field>
+    <field name="model">partner.product.origin</field>
+    <field name="arch" type="xml">
+       <form string="供应商产品">
+                  <sheet>
+                      <group>
+                            <field name="name" required="1"/>
+                            <field name="description" required="1"/>
+                            <field name="partner_id" string="供应商"  required="1"/>
+                      </group>
+                    </sheet>
+                </form>
+    </field>
+</record>
+
+    <record id="action_customer_product_origin" model="ir.actions.act_window">
         <field name="name">客户产品</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">partner.product.origin</field>
         <field name="view_mode">tree,form</field>
+        <field name="domain">[('partner_id.customer','=',True)]</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_customer_product_origin_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_customer_product_origin_form')})]"/>
     </record>
 
 
-    <menuitem id="menu_partner_product_origin" name="客户产品" parent="yjzy_extend.new_customer_root" action="action_partner_product_origin" sequence=""/>
+    <menuitem id="menu_customer_product_origin" name="客户产品" parent="yjzy_extend.new_customer_root" action="action_customer_product_origin" sequence="99"/>
+
+
+    <record id="action_supplier_product_origin" model="ir.actions.act_window">
+        <field name="name">供应商产品</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">partner.product.origin</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('partner_id.supplier','=',True)]</field>
+         <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_supplier_product_origin_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_supplier_product_origin_form')})]"/>
+    </record>
+
+
+    <menuitem id="menu_supplier_product_origin" name="供应商产品" parent="yjzy_extend.new_supplier_root" action="action_supplier_product_origin" sequence="99"/>
 
     </data>
 
