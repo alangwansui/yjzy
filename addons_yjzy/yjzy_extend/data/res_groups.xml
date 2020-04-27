@@ -7,6 +7,25 @@
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
         </record>
 
+        <record id="yjzy_extend.hr_expense_sheet_user" model="res.groups">
+            <field name="name">费用:员工视图</field>
+
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+        <record id="yjzy_extend.hr_expense_sheet_account" model="res.groups">
+            <field name="name">费用:财务视图</field>
+
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+        <record id="yjzy_extend.hr_expense_sheet_manager" model="res.groups">
+            <field name="name">费用:总经理视图</field>
+
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+
+
+
     </data>
 </odoo>
 

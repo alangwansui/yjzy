@@ -87,7 +87,12 @@ class hr_expense_sheet(models.Model):
 
     manager_confirm = fields.Many2one('res.users', u'总经理审批')
     manager_confirm_date = fields.Date('总经理审批日期')
-    state = fields.Selection(selection_add=[('approved', u'批准'), ('approval', u'审批中'), ('Approval', u'审批历史消息')])
+    state = fields.Selection(selection_add=[('approved', u'批准'),
+                                            ('approval', u'审批中'),
+                                            ('employee_approval', u'待责任人审批'),
+                                            ('account_approval', u'待财务审批'),
+                                            ('manager_approval', u'待总经理审批'),
+                                            ('Approval', u'审批历史消息')])
 
     categ_id = fields.Many2one('product.category', '大类', )
     second_categ_id = fields.Many2one('product.category', '中类', )
@@ -103,6 +108,8 @@ class hr_expense_sheet(models.Model):
 
     #akiny
     is_budget = fields.Boolean(u'是否已预算')
+    line_edit = fields.Boolean(u'明细是否可编辑')
+
 
 # #akiny
 #     @api.depends('expense_line_ids', 'expense_line_ids.categ_id')
@@ -323,6 +330,7 @@ class hr_expense_sheet(models.Model):
 
     def btn_match_budget(self):
         self.expense_line_ids.match_budget()
+
         self.is_budget = True
 
     def btn_release_budget(self):
