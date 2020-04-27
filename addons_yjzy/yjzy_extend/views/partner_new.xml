@@ -3682,8 +3682,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">kanban,tree,form</field>
             <field name="domain">[('customer','=',True),('is_company','=',True)]</field>
-            <field name="context">{'search_default_customer':1,}
-            </field>
+            <field name="context">{'default_is_company': True,'default_customer': True, 'default_contract_type':'c'}</field>
             <field name="filter" eval="True"/>
             <field name="search_view_id" ref="view_new_res_partner_filter"/>
             <field name="view_ids" eval="[(5, 0, 0),
@@ -3693,40 +3692,38 @@
         </record>
 
 
-        <menuitem id="new_customer_menu" parent="new_customer_root" name="客户:新" sequence="99"
+        <menuitem id="new_customer_menu" parent="new_customer_root" name="客户:新" sequence="10"
                   action="action_new_customer_form"
                   groups="base.group_system"/>
 
 
-        <record model="ir.actions.act_window" id="action_partner_create">
+        <record model="ir.actions.act_window" id="action_customer_create">
             <field name="name">创建新客户</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">res.partner</field>
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
             <field name="domain">[]</field>
-            <field name="context">{'default_company_type': 'company','default_customer': True, 'default_contract_type':
-                'c'}
+            <field name="context">{'default_is_company': True,'default_customer': True, 'default_contract_type':'c'}
             </field>
             <field name="view_ids" eval="[(5, 0, 0),
-                                 (0, 0, {'view_mode': 'form', 'view_id': ref('view_new_partner_form')})]"/>
+                                 (0, 0, {'view_mode': 'form', 'view_id': ref('view_new_customer_form')})]"/>
         </record>
-        <menuitem id="new_partner_create_menu" name="创建客户" groups="base.group_system" parent="crm.res_partner_menu_crm"
-                  action="action_partner_create" sequence="1"/>
+        <menuitem id="new_customer_create_menu" name="创建客户" groups="base.group_system" parent="new_customer_root"
+                  action="action_customer_create" sequence="99"/>
 
 
         <menuitem id="new_supplier_root" name="供应商:新" sequence="99"
                   groups="base.group_system"/>
 
         <record id="action_new_partner_supplier" model="ir.actions.act_window">
-            <field name="name">Supplier</field>
+            <field name="name">供应商</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">res.partner</field>
             <field name="view_type">form</field>
             <field name="view_mode">kanban,tree,form</field>
             <field name="domain">[('supplier','=',True),('is_company','=',True)]</field>
-            <field name="context">{'search_default_supplier':1}
-            </field>
+            <field name="context">{'default_is_company': True,'default_supplier': True, 'default_contract_type':'c'}</field>
             <field name="filter" eval="True"/>
             <field name="search_view_id" ref="view_new_res_partner_filter"/>
             <field name="view_ids" eval="[(5, 0, 0),
@@ -3736,10 +3733,24 @@
         </record>
 
 
-        <menuitem id="new_supplier_menu" parent="new_supplier_root" name="供应商:新" sequence="99"
+        <menuitem id="new_supplier_menu" parent="new_supplier_root" name="供应商:新" sequence="98"
                   action="action_new_partner_supplier"
                   groups="base.group_system"/>
 
+        <record model="ir.actions.act_window" id="action_supplier_create">
+            <field name="name">创建新供应商</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="domain">[]</field>
+            <field name="context">{'default_is_company': True,'default_supplier': True,'default_contract_type':'c'}
+            </field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                                 (0, 0, {'view_mode': 'form', 'view_id': ref('view_new_supplier_form')})]"/>
+        </record>
+        <menuitem id="new_supplier_create_menu" name="创建供应商" groups="base.group_system" parent="new_supplier_root"
+                  action="action_supplier_create" sequence="99"/>
 
     </data>
 </odoo>

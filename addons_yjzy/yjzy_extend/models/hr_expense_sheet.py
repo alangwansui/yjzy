@@ -101,6 +101,9 @@ class hr_expense_sheet(models.Model):
     expense_line_ids_company = fields.One2many('hr.expense', related='expense_line_ids')
     gongsi_id = fields.Many2one('gongsi', '内部公司')
 
+    #akiny
+    is_budget = fields.Boolean(u'是否已预算')
+
 # #akiny
 #     @api.depends('expense_line_ids', 'expense_line_ids.categ_id')
 #     def _compute_categ(self):
@@ -320,9 +323,11 @@ class hr_expense_sheet(models.Model):
 
     def btn_match_budget(self):
         self.expense_line_ids.match_budget()
+        self.is_budget = True
 
     def btn_release_budget(self):
         self.expense_line_ids.release_budget()
+        self.is_budget = False
 
 
 
