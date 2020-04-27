@@ -3676,7 +3676,7 @@
         <menuitem id="new_customer_root" name="客户:新" sequence="99"
                   groups="base.group_system"/>
         <record id="action_new_customer_form" model="ir.actions.act_window">
-            <field name="name">Customers</field>
+            <field name="name">客户</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">res.partner</field>
             <field name="view_type">form</field>
