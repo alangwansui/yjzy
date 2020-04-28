@@ -1558,12 +1558,6 @@
                                   <field name="address_text" style="float:left;width:100%;"/>
                                 </div>
                                 </div-->
-
-
-                                <field name="address_text" class="o_address_street"
-                                       attrs="{'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)]}"/>
-
-
                                 <label for="street" string="详细地址" groups="base.group_system"
                                        attrs="{'invisible':[('type','=','delivery')]}"/>
                                 <div class="o_address_format" groups="base.group_system"
@@ -1598,6 +1592,8 @@
                                 <field name="fax" attrs="{'invisible':[('type','=','delivery')]}"/>
                                 <field name="website" widget="url" placeholder="e.g. www.tenyale.com"
                                        attrs="{'invisible':['|',('type','=','delivery'),('is_company','!=',True)]}"/>
+                                <field name="address_text" class="o_address_street"
+                                       attrs="{'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)]}"/>
                             </group>
                             <group>
                                 <field name="level" string="客户等级"

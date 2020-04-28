@@ -109,7 +109,7 @@ class hr_expense_sheet(models.Model):
     #akiny
     is_budget = fields.Boolean(u'是否已预算')
     line_edit = fields.Boolean(u'明细是否可编辑')
-
+    is_editable = fields.Boolean(u'可编辑')
 
 # #akiny
 #     @api.depends('expense_line_ids', 'expense_line_ids.categ_id')

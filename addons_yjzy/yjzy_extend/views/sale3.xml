@@ -638,13 +638,13 @@
 
                                         <field name="price_total" widget="monetary" groups="sale.group_show_price_total"/>
 
-                                        <field name="supplier_id" options="{'no_open':True}"/>
+                                        <field name="supplier_id" options="{'no_open':True}" domain="[('parent_id','=',False)]" attrs="{'readonly':[('pol_id','!=',False)]}"/>
                                         <field name="purchase_price"/>
                                         <field name="p_uom_id" string="单位" options="{'no_open':True}"/>
                                         <field name="purchase_cost"/>
                                         <field name="back_tax" attrs="{'column_invisible':[('parent.display_detail','=',False)]}"/>
                                         <field name="back_tax_amount" attrs="{'column_invisible':[('parent.display_detail','=',False)]}"/>
-                                        <field name="purchase_contract_code"/>
+                                        <field name="purchase_contract_code" attrs="{'readonly':[('pol_id','=',False)]}"/>
                                         <field name="second_unit_price" attrs="{'column_invisible': [('parent.contract_type', '!=', 'b')]}"/>
                                         <field name="second_price_total" attrs="{'column_invisible': [('parent.contract_type', '!=', 'b')]}"/>
 
@@ -654,7 +654,7 @@
                                         <field name="smline_qty" invisible="1" readonly="1"/>
                                         <field name="dlr_str" invisible="1" groups="base.group_system"/>
                                         <field name="dlr_qty" invisible="1" readonly="1"/>
-                                        <button icon="fa-list" type="object" name="open_wizard_sol_reserver"/>
+                                        <button icon="fa-list" type="object" name="open_wizard_sol_reserver" groups="base.group_system"/>
                                         <field name="dlr_done_qty" groups="base.group_system" invisible="1" readonly="1"/>
                                         <field name="dlr_todo_qty" invisible="1" groups="base.group_system"/>
                                         <field name="qty_pre_all" groups="base.group_system" invisible="1" readonly="1"/>

@@ -1439,7 +1439,7 @@ class Root(object):
         # - It could allow session fixation attacks.
         if not explicit_session and hasattr(response, 'set_cookie'):
             response.set_cookie(
-                'session_id', httprequest.session.sid, max_age=3 * 60 * 60, httponly=True) ##akiny
+                'session_id', httprequest.session.sid, max_age=8 * 60 * 60, httponly=True) ##akiny
 
         return response
 
