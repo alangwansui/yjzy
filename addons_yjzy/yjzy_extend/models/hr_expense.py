@@ -191,11 +191,10 @@ class hr_expense(models.Model):
 
     @api.onchange('categ_id')
     def onchange_categ(self):
-       self.second_categ_id = False
-       if self.categ_id:
-          self._cache_categ.update({self._uid: self.categ_id.id})
-          self.is_onchange_false = True
-
+        self.second_categ_id = False
+        if self.categ_id:
+            self._cache_categ.update({self._uid: self.categ_id.id})
+            self.is_onchange_false = True
 
 
     @api.onchange('second_categ_id')
