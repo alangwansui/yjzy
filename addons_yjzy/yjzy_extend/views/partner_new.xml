@@ -1834,9 +1834,11 @@
                                         <field name="phone"/>
                                         <field name="mobile"/>
                                         <field name="email"/>
-                                        <field name="wechat"/>
-                                        <field name="skype"/>
-                                        <field name="qq"/>
+                                        <field name="other_social_accounts"/>
+
+                                        <field name="wechat" invisible="1"/>
+                                        <field name="skype" invisible="1"/>
+                                        <field name="qq" invisible="1"/>
                                         <field name="comment_contact" placeholder="例:该联系人是价格最后决策人"/>
                                         <field name="address_text"/>
                                         <field name="street" invisible="1"/>
@@ -2537,7 +2539,7 @@
 
                                 <separator string="" colspan="2"/>
                                 <!--separator string="联系方式" style="border-bottom:1px #000000 solid" colspan="2"/-->
-                                <field name="address_text" style="float:left;width:100%;"/>
+
                                 <label for="street" string="详细地址" groups="base.group_system"
                                        attrs="{'invisible':[('type','=','delivery')]}"/>
                                 <div class="o_address_format" groups="base.group_system"
@@ -2571,6 +2573,7 @@
                                 <field name="fax" attrs="{'invisible':[('type','=','delivery')]}"/>
                                 <field name="website" widget="url" placeholder="e.g. www.tenyale.com"
                                        attrs="{'invisible':['|',('type','=','delivery'),('is_company','!=',True)]}"/>
+                                <field name="address_text" />
 
 
                             </group>
@@ -2584,9 +2587,22 @@
                                 <field name="bank1_address"/-->
 
 
+
+
+
+                                 <!--供应商信息-->
+                                <field name="level" string="供应商等级"/>
+                                <field name="user_ids" invisible="1"/>
+                                <field name="is_inter_partner" groups="base.group_system"/>
+                                <field name="campaign_id" string="供应商来源"/>
+                                <field name="supplier_info_from_uid" string="供应商获取人"/>
+                                <field name="create_uid" options="{'no_open':1}"/>
+                                <field name="create_date" widget="date"/>
+
+                                <separator colspan="2"/>
                                 <field name="advance_currency_id" invisible="1"/>
                                 <field name="currency_id" invisible="1"/>
-                                <field name="amount_purchase_advance_org"
+                                <field name="amount_purchase_advance_org" string="预付款余额"
                                        attrs="{'invisible': ['|',('supplier','=',False),('is_company','=',False)]}"/>
                                 <field name="amount_purchase_advance" groups="base.group_system"
                                        attrs="{'invisible': ['|',('supplier','=',False),('is_company','=',False)]}"/>
@@ -2596,18 +2612,6 @@
                                        attrs="{'invisible': [('need_purchase_fandian','!=',True)]}"/>
                                 <field name="purchase_fandian_partner_id"
                                        attrs="{'invisible': [('need_purchase_fandian','!=',True)]}"/>
-
-
-                                <separator colspan="2"/>
-                                <field name="level" string="供应商等级"/>
-                                <field name="user_ids" invisible="1"/>
-                                <field name="is_inter_partner" groups="base.group_system"/>
-                                <field name="campaign_id" string="供应商来源"/>
-                                <field name="supplier_info_from_uid" string="供应商获取人"/>
-                                <field name="create_uid" options="{'no_open':1}"/>
-                                <field name="create_date" widget="date"/>
-                                <!--供应商信息-->
-
 
                             </group>
                             <group>
@@ -2803,17 +2807,18 @@
                                        context="{'default_parent_id': active_id, 'default_street': street, 'default_street2': street2,
                                                  'default_zip': zip, 'default_country_id': country_id,
                                                  'default_supplier': supplier, 'default_customer': customer, 'default_lang': lang}">
-                                    <tree class="o_list_scroll">
+                                    <tree class="o_list_scroll" editable="bottom">
                                         <field name="name"/>
                                         <field name="country_id"/>
                                         <field name="function"/>
                                         <field name="phone"/>
                                         <field name="mobile"/>
                                         <field name="email"/>
-                                        <field name="wechat"/>
-                                        <field name="skype"/>
-                                        <field name="qq"/>
-                                        <field name="comment_contact"/>
+                                        <field name="other_social_accounts" placeholder="如：微信，QQ，WHATSAPP等"/>
+                                        <field name="wechat" invisible="1"/>
+                                        <field name="skype" invisible="1"/>
+                                        <field name="qq" invisible="1"/>
+                                        <field name="comment_contact" placeholder="例：联系人未供应商实际负责人"/>
                                         <field name="address_text"/>
                                         <field name="street" invisible="1"/>
                                         <field name="street2" invisible="1"/>
@@ -3000,6 +3005,7 @@
                                         <field name="kaihuhang_address" string="银行地址"/>
                                     </tree>
                                     <form>
+                                        <group>
                                         <field name="bank_type" groups="base.group_system"/>
                                         <field name="huming" string="收款人"/>
                                         <field name="huming_address" string="收款人地址"/>
@@ -3007,6 +3013,7 @@
                                         <field name="swift" string="SWIFT(如有)"/>
                                         <field name="kaihuhang" string="银行"/>
                                         <field name="kaihuhang_address" string="银行地址"/>
+                                        </group>
                                     </form>
                                 </field>
                                 </group>

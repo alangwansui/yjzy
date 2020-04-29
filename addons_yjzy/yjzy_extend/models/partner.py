@@ -144,6 +144,8 @@ class res_partner(models.Model):
 
     partner_hs = fields.Many2many('hs.hs',string='产品品名')
 
+    other_social_accounts = fields.Char(u'社交帐号')
+
     @api.onchange('sale_currency_id')
     def onchange_sale_currency(self):
         if self.sale_currency_id:
