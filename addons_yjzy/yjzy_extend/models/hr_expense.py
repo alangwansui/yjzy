@@ -131,14 +131,15 @@ class hr_expense(models.Model):
     employee_sales_uid = fields.Many2one('hr.employee','费用对象')#, default=lambda self: self.env['hr.employee'].search([('user_id', '=', self.env.uid)], limit=1)
     budget_type = fields.Selection("预算类型", related="categ_id.budget_type")
    #akiny
-   # is_onchange_false = fields.Boolean('是否onchange')
+    is_onchange_false = fields.Boolean('是否onchange')
+    is_onchange_false1 = fields.Boolean('是否onchange')
 
 
     def open_expense_form(self):
         view = self.env.ref('yjzy_extend.view_hr_expense_line_form')
         return {
             'type': 'ir.actions.act_window',
-            'name': u'销售明细',
+            'name': u'费用明细',
             'view_type': 'form',
             'view_mode': 'form',
             'views': [(view.id, 'form')],
@@ -191,17 +192,22 @@ class hr_expense(models.Model):
 
     @api.onchange('categ_id')
     def onchange_categ(self):
-        self.second_categ_id = False
-        self._cache_second_categ.update({self._uid: False})
-        if self.categ_id:
-            self._cache_categ.update({self._uid: self.categ_id.id})
-            self.is_onchange_false = True
+        if self.is_onchange_false:
+           self.second_categ_id = False
+        else:
+            if self.categ_id:
+               self._cache_categ.update({self._uid: self.categ_id.id})
+               self.is_onchange_false = True
 
 
     @api.onchange('second_categ_id')
     def onchange_second_categ(self):
-        if self.second_categ_id:
-            self._cache_second_categ.update({self._uid: self.second_categ_id.id})
+        if self.is_onchange_false1:
+           self.product_id = False
+        else:
+            if self.second_categ_id:
+               self._cache_second_categ.update({self._uid: self.second_categ_id.id})
+               self.is_onchange_false1 = True
 
 
 
