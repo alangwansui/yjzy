@@ -828,7 +828,7 @@
                                         <field name="tb_id"/>
                                         <field name="lead_id" string="项目编号" options="{'no_open':True}"/>
                                         <button icon="fa-pencil-square-o" type="object" name="open_expense_form"
-                                                attrs="{'invisible':[('parent.employee_wkf','=',False)]}" options="{'fg_color':red}"/>
+                                                attrs="{'invisible':[('parent.employee_wkf','=',False)]}" style="color:red"/>
                                         <field name="sale_order_id" context="{'sale_show_partner_name': True}"
                                                invisible="1"/>
                                         <field name="state" invisible="1"/>
