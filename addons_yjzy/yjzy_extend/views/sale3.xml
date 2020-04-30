@@ -263,7 +263,7 @@
             <field name="name">sale.order.tree</field>
             <field name="model">sale.order</field>
             <field name="arch" type="xml">
-                <tree string="Sales Orders" decoration-bf="message_needaction==True"  decoration-muted="state=='cancel'">
+                <tree string="Sales Orders" decoration-bf="message_needaction==True"  decoration-muted="state=='cancel'" create="false" edit="false">
                     <field name="message_needaction" invisible="1"/>
                     <field name="id" groups="base.group_system" invisible="1"/>
                     <field name="name" string="订单流水" groups="base.group_system" invisible="1"/>
@@ -304,7 +304,7 @@
             <field name="name">sale.order.tree</field>
             <field name="model">sale.order</field>
             <field name="arch" type="xml">
-                <tree string="Sales Orders" decoration-bf="message_needaction==True"  decoration-muted="state=='cancel'"><!--default_order="approve_date"-->
+                <tree string="Sales Orders" decoration-bf="message_needaction==True" create="false" edit="false"  decoration-muted="state=='cancel'"><!--default_order="approve_date"-->
                     <field name="message_needaction" invisible="1"/>
                     <field name="id" groups="base.group_system" invisible="1"/>
                     <field name="name" string="订单流水" groups="base.group_system" invisible="1"/>
@@ -340,7 +340,7 @@
             <field name="name">sale.order.form</field>
             <field name="model">sale.order</field>
             <field name="arch" type="xml">
-                <form string="销售订单" class="o_sale_order">
+                <form string="销售订单" class="o_sale_order" create="false" edit="false">
                        <header groups="base.group_system">
                          <field name="state" widget="statusbar" statusbar_invisible="draft"  groups="base.group_system"/>
                     </header>

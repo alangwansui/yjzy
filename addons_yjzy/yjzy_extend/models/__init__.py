@@ -62,6 +62,7 @@ from . import attachment
 from . import jituan
 from . import pricelist
 from . import partner_product_origin
+from . import print_record
 
 from . import print_record
 

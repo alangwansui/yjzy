@@ -7,7 +7,7 @@
             <field name="model">sale.order</field>
             <field name="priority" eval="999"/>
             <field name="arch" type="xml">
-                <tree string="成本单" create="false">
+                <tree string="成本单" create="false" edit="false">
                     <field name="name"/>
                     <field name="partner_id"/>
                     <field name="contract_code"/>
@@ -24,7 +24,7 @@
             <field name="model">sale.order</field>
             <field name="priority" eval="999"/>
             <field name="arch" type="xml">
-                <form string="成本单" class="o_sale_order">
+                <form string="成本单" class="o_sale_order" create="false" edit="false">
                     <header>
                         <!--button name="compute_cost" string="计算成本" type="object"  class="oe_highlight"/-->
                         <button name="action_confirm2" string="确认" type="object" class="oe_highlight"

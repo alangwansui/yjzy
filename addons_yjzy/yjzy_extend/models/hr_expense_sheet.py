@@ -110,7 +110,7 @@ class hr_expense_sheet(models.Model):
     is_budget = fields.Boolean(u'是否已预算')
     line_edit = fields.Boolean(u'明细是否可编辑')
     is_editable = fields.Boolean(u'可编辑')
-    payment_date_store = fields.Datetime(u'付款日期', related='payment_id.payment_date_confirm', store=True)
+    #payment_date_store = fields.Datetime(u'付款日期', related='payment_id.payment_date_confirm', store=True)
 # #akiny
 #     @api.depends('expense_line_ids', 'expense_line_ids.categ_id')
 #     def _compute_categ(self):
@@ -154,11 +154,6 @@ class hr_expense_sheet(models.Model):
 
 
 
-    def update_x_wkf_store(self):
-        for one in self:
-            print('===', one)
-            if not one.x_wkf_state :
-               one.x_wkf_state = '33'
 
     @api.one
     def compute_total_this_year(self):

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <data>
+<record id="view_partner_level_customer_tree" model="ir.ui.view">
+    <field name="name">partner.level.customer.tree</field>
+    <field name="model">partner.level</field>
+    <field name="arch" type="xml">
+        <tree string="客户等级"  editable="bottom">
+            <field name="name"/>
+            <field name="description"/>
+            <field name="type"/>
+        </tree>
+    </field>
+</record>
+
+<record id="view_partner_level_customer_form" model="ir.ui.view">
+    <field name="name">partner.level.customer.form</field>
+    <field name="model">partner.level</field>
+    <field name="arch" type="xml">
+       <form string="客户等级">
+                  <sheet>
+                      <group>
+                            <field name="name" required="1"/>
+                            <field name="description"/>
+                          <field name="type"/>
+                      </group>
+                    </sheet>
+                </form>
+    </field>
+</record>
+
+        <record id="view_partner_level_supplier_tree" model="ir.ui.view">
+    <field name="name">partner.level.supplier.tree</field>
+    <field name="model">partner.level</field>
+    <field name="arch" type="xml">
+        <tree string="供应商等级"  editable="bottom">
+            <field name="name"/>
+            <field name="description"/>
+            <field name="type"/>
+        </tree>
+    </field>
+</record>
+
+<record id="view_partner_level_supplier_form" model="ir.ui.view">
+    <field name="name">partner.level.supplier.form</field>
+    <field name="model">partner.level</field>
+    <field name="arch" type="xml">
+       <form string="供应商等级">
+                  <sheet>
+                      <group>
+                            <field name="name" required="1"/>
+                            <field name="description"/>
+                            <field name="type"/>
+                      </group>
+                    </sheet>
+                </form>
+    </field>
+</record>
+
+    <record id="action_partner_level_customer" model="ir.actions.act_window">
+        <field name="name">客户等级</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">partner.level</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('type','=','customer')]</field>
+        <field name="context">{'default_type': 'customer'}</field>
+         <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_partner_level_customer_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_partner_level_customer_form')})]"/>
+    </record>
+
+
+    <menuitem id="menu_partner_level_customer" name="客户等级" parent="yjzy_extend.new_customer_root" action="action_partner_level_customer" sequence="99"/>
+
+
+    <record id="action_partner_level_supplier" model="ir.actions.act_window">
+        <field name="name">供应商等级</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">partner.level</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('type','=','supplier')]</field>
+        <field name="context">{'default_type': 'supplier'}</field>
+         <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_partner_level_supplier_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_partner_level_supplier_form')})]"/>
+    </record>
+
+
+    <menuitem id="menu_partner_level_supplier" name="供应商等级" parent="yjzy_extend.new_supplier_root" action="action_partner_level_supplier" sequence="99"/>
+
+    </data>
+
+</odoo>

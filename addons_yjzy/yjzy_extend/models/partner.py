@@ -70,6 +70,7 @@ class res_partner(models.Model):
     qq = fields.Char(u'QQ')
     skype = fields.Char('Skype')
     level = fields.Selection([(x, x.upper()) for x in 'abcde'], u'客户等级')
+
     sequence = fields.Integer(u'排序', default=10, index=True)
 
 
@@ -145,6 +146,13 @@ class res_partner(models.Model):
     partner_hs = fields.Many2many('hs.hs',string='产品品名')
 
     other_social_accounts = fields.Char(u'社交帐号')
+
+
+    partner_level = fields.Many2one('partner.level','等级')
+    @api.onchange('country_id')
+    def onchange_country_id(self):
+        if self.type == 'delivery':
+            self.name = self.country_id.name
 
     @api.onchange('sale_currency_id')
     def onchange_sale_currency(self):
@@ -344,6 +352,19 @@ class res_partner(models.Model):
             one.child_contact_ids =  child_contact_ids
 
 
+
+
+
+#akiny 客户等级
+class partner_product_origin(models.Model):
+    _name = 'partner.level'
+    _description = '联系人等级'
+
+
+
+    name = fields.Char(u'等级名称')
+    type = fields.Selection([('customer','客户'),('supplier','供应商')])
+    description = fields.Text('描述')
 
 
 

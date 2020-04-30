@@ -117,7 +117,7 @@ class hr_expense(models.Model):
 
     sheet_all_line_is_confirmed = fields.Boolean('责任人全部确认', related='sheet_id.all_line_is_confirmed')
 
-    payment_date = fields.Datetime(u'付款日期', related='sheet_id.payment_id.payment_date_confirm', store=True)
+    payment_date = fields.Date(u'付款日期', related='sheet_id.accounting_date', store=True)
 
     sheet_employee_confirm_date = fields.Date(u'申请人确认日期', related='sheet_id.employee_confirm_date', readonly=True)
     sheet_employee_confirm = fields.Many2one('res.users', u'申请人确认', related='sheet_id.employee_confirm', readonly=True)
@@ -145,7 +145,7 @@ class hr_expense(models.Model):
     is_onchange_false1 = fields.Boolean('是否onchange')
 
 
-    payment_date_store = fields.Datetime(u'付款日期')
+    #payment_date_store = fields.Datetime(u'付款日期')
 
 
 
@@ -153,8 +153,7 @@ class hr_expense(models.Model):
     def update_payment_date_store(self):
         for one in self:
             print('===', one)
-            if one.yjzy_payment_id:
-               one.payment_date_store = one.yjzy_payment_id.payment_date_confirm
+            one.payment_date = one.sheet_id.accounting_date
 
     #def update_feiyongduixiang(self):
      #   for one in self:
