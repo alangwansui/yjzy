@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="print_record_tree" model="ir.ui.view">
+            <field name="name">print.record.tree</field>
+            <field name="model">print.record</field>
+            <field name="arch" type="xml">
+                <tree string="打印记录">
+                    <field name="name"/>
+                    <field name="res_model"/>
+                    <field name="res_id"/>
+                    <field name="report_id"/>
+                    <field name="name"/>
+                    <field name="attachment_ids"/>
+                </tree>
+            </field>
+        </record>
+        <record id="print_record_form" model="ir.ui.view">
+            <field name="name">print.record.form</field>
+            <field name="model">print.record</field>
+            <field name="arch" type="xml">
+                <form string="打印记录">
+                    <group>
+                        <field name="name"/>
+                        <field name="res_model"/>
+                        <field name="res_id"/>
+                        <field name="report_id"/>
+                        <field name="name"/>
+                    </group>
+                    <field name="attachment_ids"/>
+                </form>
+            </field>
+        </record>
+
+        <record id="print_record_action" model="ir.actions.act_window">
+            <field name="name">打印记录</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">print.record</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="print_record_menu" name="打印记录"  action="print_record_action" sequence=""/>
+
+
+
+
+    </data>
+</odoo>

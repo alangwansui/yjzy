@@ -20,6 +20,7 @@ access_hs_hs,access_access_hs_hs,model_hs_hs,base.group_user,1,1,1,0
 access_btls_hs,access_btls_hs,model_btls_hs,base.group_user,1,1,1,0
 access_btls_comb,access_btls_comb,model_btls_comb,base.group_user,1,1,1,0
 
+access_print_record,access_print_record,model_print_record,base.group_user,1,1,1,0
 
 
 

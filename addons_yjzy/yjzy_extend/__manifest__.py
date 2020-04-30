@@ -83,7 +83,7 @@
         'views/jituan.xml',
         'views/pricelist.xml',
         'views/product_partner_origin.xml',
-
+        'views/print_record.xml',
 
 
 

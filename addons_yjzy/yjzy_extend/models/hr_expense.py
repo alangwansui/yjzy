@@ -144,6 +144,7 @@ class hr_expense(models.Model):
     is_onchange_false = fields.Boolean('是否onchange')
     is_onchange_false1 = fields.Boolean('是否onchange')
 
+
     payment_date_store = fields.Datetime(u'付款日期')
 
 
@@ -160,6 +161,8 @@ class hr_expense(models.Model):
      #       print('===', one)
       #      if one.employee_id.employee_sales_uid:
        #        one.employee_sales_uid = one.employee_id.employee_sales_uid
+
+
 
 
     def open_expense_form(self):
