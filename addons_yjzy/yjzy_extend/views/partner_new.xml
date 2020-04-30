@@ -2995,7 +2995,7 @@
                                 </group>
                                 <group string="银行账户信息">
                                 <field name="bank_ids" nolabel="1" context="{'default_bank_type':'company_supplier'}">
-                                    <tree>
+                                    <tree editable="bottom">
                                         <field name="bank_type"/>
                                         <field name="huming" string="收款人"/>
                                         <field name="huming_address" string="收款人地址"/>

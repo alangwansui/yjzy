@@ -211,7 +211,7 @@
 
                                 <field name="partner_shipping_id" string="出运地址" options="{'no_open':1}" domain="[('parent_id','child_of', partner_id)]"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"  no_create="True"/>
-                                <field name="date" attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}" invisible="1"/>
+                                <field name="date" attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}" invisible="0"/>
                                 <field name="partner_invoice_id" domain="[('parent_id','child_of', partner_id)]" invisible="1"
                                        attrs="{'readonly': [('locked','=',True)]}" groups="base.group_system"/>
                                 <field name="create_date" string="创建日期" attrs="{'readonly': 1}" options="{'no_open':1}" widget="date"/>

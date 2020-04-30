@@ -51,7 +51,17 @@ class hr_expense(models.Model):
     include_tax = fields.Boolean(u'含税')
     line_ids = fields.One2many('hr.expense.line', 'expense_id', u'分配明细')
     # user_ids = fields.Many2many('res.users', compute=compute_line_user, string='用户s', store=True)
-    state = fields.Selection(selection_add=[('confirmed', u'已经确认'), ('employee_confirm', '责任人确认')])
+
+
+    state = fields.Selection([
+        ('done', 'Posted'),
+        ('draft', 'To Submit'),
+        ('reported', 'Reported'),
+        ('employee_confirm', '责任人确认'),
+        ('confirmed', u'已经确认'),
+        ('refused', 'Refused'),
+    ], compute='_compute_state', string='Status', copy=False, index=True, readonly=True, store=True,
+        help="Status of the expense.")
     user_id = fields.Many2one('res.users', related='employee_id.user_id', readonly=True, string=u'用户', track_visibility='onchange')
     tb_ids = fields.Many2many('transport.bill', 'ref_bill_expense', 'eid', 'bid', u'出运单')
     tb_id = fields.Many2one('transport.bill', u'出运合同')
@@ -107,7 +117,7 @@ class hr_expense(models.Model):
 
     sheet_all_line_is_confirmed = fields.Boolean('责任人全部确认', related='sheet_id.all_line_is_confirmed')
 
-    payment_date = fields.Datetime(u'付款日期', related='sheet_id.payment_id.payment_date_confirm')
+    payment_date = fields.Datetime(u'付款日期', related='sheet_id.payment_id.payment_date_confirm', store=True)
 
     sheet_employee_confirm_date = fields.Date(u'申请人确认日期', related='sheet_id.employee_confirm_date', readonly=True)
     sheet_employee_confirm = fields.Many2one('res.users', u'申请人确认', related='sheet_id.employee_confirm', readonly=True)
@@ -133,6 +143,23 @@ class hr_expense(models.Model):
    #akiny
     is_onchange_false = fields.Boolean('是否onchange')
     is_onchange_false1 = fields.Boolean('是否onchange')
+
+    payment_date_store = fields.Datetime(u'付款日期')
+
+
+
+    @api.model
+    def update_payment_date_store(self):
+        for one in self:
+            print('===', one)
+            if one.yjzy_payment_id:
+               one.payment_date_store = one.yjzy_payment_id.payment_date_confirm
+
+    #def update_feiyongduixiang(self):
+     #   for one in self:
+     #       print('===', one)
+      #      if one.employee_id.employee_sales_uid:
+       #        one.employee_sales_uid = one.employee_id.employee_sales_uid
 
 
     def open_expense_form(self):

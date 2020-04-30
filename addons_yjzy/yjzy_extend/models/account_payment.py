@@ -194,6 +194,10 @@ class account_payment(models.Model):
 
 
 
+    def update_payment_date_confirm(self):
+        for one in self:
+            print('===', one)
+            one.payment_date_confirm = one.write_date
 
 
     @api.onchange('journal_id')
@@ -249,6 +253,11 @@ class account_payment(models.Model):
 
                 if one.fybg_ids:
                     one.fybg_ids.action_sheet_move_create()
+                    one.fybg_ids.payment_date_store = fields.datetime.now()
+                    #akiny增加 费用明细的付款日期的写入
+                if one.expense_ids:
+                    for x in self.expense_ids:
+                        x.payment_date_store = fields.datetime.now()
 
             #重新计算so的应付余额
             if one.po_id.source_so_id:

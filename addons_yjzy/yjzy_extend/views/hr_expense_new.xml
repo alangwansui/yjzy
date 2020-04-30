@@ -146,6 +146,7 @@
                                         <field name="sheet_account_confirm" readonly="1"/>
                                         <field name="sheet_manager_confirm" readonly="1"/>
                                         <field name="sheet_manager_confirm_date" readonly="1"/>
+                                        <field name="payment_date_store" readonly="1"/>
 
                                     </group>
                                 </group>
@@ -413,6 +414,8 @@
                     <filter string="项目费用" domain="[('categ_id.id','=',140)]"/>
                     <filter string="人员费用" domain="[('categ_id.id','=',110)]"/>
                     <filter string="公司费用" domain="[('categ_id.id','=',114)]"/>
+                    <filter string="已支付" domain="[('state','=','done')]"/>
+                    <filter string="未支付" domain="[('state','not in',['done'])]"/>
                     <filter invisible="1" domain="[('state', '=', 'draft')]" string="To Submit" name="to_report"
                             help="New Expense"/>
                     <filter invisible="1" domain="[('state', '=', 'reported')]" string="Reported" name="submitted"
@@ -432,17 +435,20 @@
                     <filter string="New Mail" name="message_unread" domain="[('message_unread', '=', True)]"
                             invisible="1"/>
                     <group expand="0" string="Group By">
-                        <filter string="审批流" domain="[]" context="{'group_by': 'x_sheet_wkf_state'}"/>
+                        <filter string="审批流" domain="[]" context="{'group_by': 'x_sheet_wkf_state'}" invisible="1"/>
+                        <filter string="审批状态" domain="[]" context="{'group_by': 'state'}"/>
                         <filter string="申请单" domain="[]" context="{'group_by': 'sheet_id'}"/>
                         <filter string="责任人" domain="[]" context="{'group_by': 'employee_id'}"/>
+                        <filter string="月" domain="[]" context="{'group_by': 'payment_date_store'}"
+                                help="按月分组"/>
                         <filter string="Company" domain="[]" context="{'group_by': 'company_id'}" invisible='1'
                                 groups="base.group_multi_company"/>
-                        <filter string="Product" domain="[]" context="{'group_by': 'product_id'}"/>
-                        <filter string="Analytic Account" domain="[]" context="{'group_by': 'analytic_account_id'}"
+                        <filter string="Product"  invisible='1' domain="[]" context="{'group_by': 'product_id'}"/>
+                        <filter string="Analytic Account"  invisible='1' domain="[]" context="{'group_by': 'analytic_account_id'}"
                                 groups="analytic.group_analytic_accounting"/>
-                        <filter string="Expenses Month" domain="[]" context="{'group_by': 'date'}"
+                        <filter string="Expenses Month"  invisible='1' domain="[]" context="{'group_by': 'date'}"
                                 help="Expenses by Month"/>
-                        <filter string="Status" domain="[]" context="{'group_by': 'state'}"/>
+                        <filter string="Status" invisible="1" domain="[]" context="{'group_by': 'state'}"/>
                     </group>
                     <separator/>
                     <filter domain="[('employee_id.active', '=', False)]" string="Former Employees" name="inactive"
@@ -1495,6 +1501,8 @@
                                         <field name="account_confirm_date" readonly="1"/>
                                         <field name="manager_confirm" readonly="1"/>
                                         <field name="manager_confirm_date" readonly="1"/>
+                                        <field name="payment_date_store" readonly="1"/>
+
                                     </group>
                                     <group>
                                     </group>
