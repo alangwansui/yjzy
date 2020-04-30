@@ -134,6 +134,8 @@ class hr_expense(models.Model):
     is_onchange_false = fields.Boolean('是否onchange')
     is_onchange_false1 = fields.Boolean('是否onchange')
 
+    payment_date_store = fields.Datetime('付款确认时间', related='yjzy_payment_id.payment_date_confirm')
+
 
     def open_expense_form(self):
         view = self.env.ref('yjzy_extend.view_hr_expense_line_form')
