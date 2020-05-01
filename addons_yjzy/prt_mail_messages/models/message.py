@@ -228,7 +228,9 @@ class PRTMailMessage(models.Model):
     def compute_body_text(self):
         for one in self:
             body_text = html2text.html2text(one.body)
-            one.body_text = body_text
+
+            body_text1 = "    \n%s" % (body_text)
+            one.body_text = body_text1
 
     def edit_again(self):
         compose = self.compose_id
