@@ -17,6 +17,8 @@ odoo.define('crnd_web_list_popover_widget.DynamicPopoverMixin', function (requir
             this.placement = this.nodeOptions.placement || "auto";
             this.animation = this.nodeOptions.animation || false;
             this.allow_html = false;
+            //akiny 如果不鼠标经过预览，那么就用false
+            this.mode_mouse = this.nodeOptions.mode_mouse;
             // IE do not supports webkit, and we detected IE <=10, 11, 12
             this.isIE = navigator.userAgent.search(/(MSIE|Trident|Edge)/) > -1;
         },
@@ -44,10 +46,11 @@ odoo.define('crnd_web_list_popover_widget.DynamicPopoverMixin', function (requir
         },
 
         get_popover_options: function () {
+
             return {
                 template: this.get_popover_template(),
                 content: this.get_popover_content(),
-                trigger: 'hover',
+                trigger: this.mode_mouse,
                 placement: this.placement,
                 container: 'body',
                 html: this.allow_html,
