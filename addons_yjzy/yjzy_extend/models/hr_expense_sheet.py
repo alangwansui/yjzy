@@ -165,7 +165,7 @@ class hr_expense_sheet(models.Model):
         month = now.strftime('%Y-%m-01 00:00:00')
         year = now.strftime('%Y-01-01 00:00:00')
 
-        sql = """select sum(total_amount) from hr_expense_sheet where state in ('done') and total_amount > 0 and accounting > '%s' """
+        sql = """select sum(total_amount) from hr_expense_sheet where state in ('done') and total_amount > 0 and accounting_date > '%s' """
         sql_approve = """select sum(total_amount) from hr_expense_sheet where state in ('approve') and total_amount > 0 """
         sql_submit = """select sum(total_amount) from hr_expense_sheet where state in ('submit','approval','employee_approval','account_approval','manager_approval') and total_amount > 0 """
 
