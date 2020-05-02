@@ -77,6 +77,10 @@ class hr_expense_sheet(models.Model):
 
     total_this_moth = fields.Float(u'本月费用', compute='compute_total_this_year', digits=dp.get_precision('Account'))
     total_this_year = fields.Float(u'今年费用', compute='compute_total_this_year', digits=dp.get_precision('Account'))
+    #akiny
+    total_approve = fields.Float(u'已完成审批未支付费用', compute='compute_total_this_year', digits=dp.get_precision('Account'))
+    total_submit = fields.Float(u'已提交未完成审批费用', compute='compute_total_this_year', digits=dp.get_precision('Account'))
+
     employee_wkf = fields.Boolean('责任人阶段')
     # akiny 审批确认信息记录
     employee_confirm_date = fields.Date('申请人确认日期')
@@ -87,7 +91,7 @@ class hr_expense_sheet(models.Model):
 
     manager_confirm = fields.Many2one('res.users', u'总经理审批')
     manager_confirm_date = fields.Date('总经理审批日期')
-    state = fields.Selection(selection_add=[('approved', u'批准'),
+    state = fields.Selection(selection_add=[
                                             ('approval', u'审批中'),
                                             ('employee_approval', u'待责任人审批'),
                                             ('account_approval', u'待财务审批'),
@@ -161,19 +165,37 @@ class hr_expense_sheet(models.Model):
         month = now.strftime('%Y-%m-01 00:00:00')
         year = now.strftime('%Y-01-01 00:00:00')
 
-        sql = """select sum(total_amount) from hr_expense_sheet where state in ('approve','post','done') and create_date > '%s'  """
+        sql = """select sum(total_amount) from hr_expense_sheet where state in ('done') and total_amount > 0 and create_date > '%s' """
+        sql_approve = """select sum(total_amount) from hr_expense_sheet where state in ('approve') and total_amount > 0 """
+        sql_submit = """select sum(total_amount) from hr_expense_sheet where state in ('submit','approval','employee_approval','account_approval','manager_approval') and total_amount > 0 """
 
         moth_sql = sql % month
         year_sql = sql % year
 
+        this_sql_approve = sql_approve
+        this_sql_submit = sql_submit
+
         print('==', moth_sql)
         print('==', year_sql)
+        print('==', this_sql_approve)
+        print('==', this_sql_submit)
+
 
         self._cr.execute(moth_sql)
         self.total_this_moth = self._cr.fetchall()[0][0]
 
         self._cr.execute(year_sql)
         self.total_this_year = self._cr.fetchall()[0][0]
+
+        self._cr.execute(this_sql_approve)
+        self.total_approve = self._cr.fetchall()[0][0]
+
+        self._cr.execute(this_sql_submit)
+        self.total_submit = self._cr.fetchall()[0][0]
+
+
+
+
 
     def compute_my_total_amount(self):
         user = self.env.user

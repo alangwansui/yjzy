@@ -1241,6 +1241,8 @@
                                 <field name="my_total_amount" string="总金额"/>
                                 <field name="total_this_moth" groups="base.group_system"/>
                                 <field name="total_this_year" groups="base.group_system"/>
+                                <field name="total_approve" groups="base.group_system"/>
+                                <field name="total_submit" groups="base.group_system"/>
                                 <field name="employee_id" string="申请人*" options="{'no_create':true,'no_open':1}"
                                        readonly="1"
                                        required="1"/>
