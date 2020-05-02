@@ -1215,7 +1215,7 @@
                                        attrs="{'readonly':[('state','not in',['submit','draft'])]}"/>
                             </h1>
                         </div>
-                        <group>
+                        <group col="3">
                              <group>
 
                                 <field name="categ_id" string="大类*" invisible="1" domain="[('parent_id.name','=','费用')]"
