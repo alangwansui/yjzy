@@ -70,12 +70,12 @@
                   create='false'>
                 <!--button name="button_read" states="" string="打开" type='object' class="oe_highlight"/-->
                 <field name="read_img" string=" " widget="image"
-                       options="{'preview_image': 'image_sm', 'size': [30,30]}"/>
+                       options="{'preview_image': 'image_sm', 'size': [12,12]}"/>
                 <field name="process_type"/>
                 <field name="body" string="内容" invisible="1"/>
                 <button name="tip_button" type="object" class="tip_button" icon="fa-th-large"
                         context="{'form_xml_id': 'prt_mail_messages.prt_mail_message_personal_form','no_mark_have_read':1 }"/>
-                 <field name="body_text" string="预览" invisible="0" widget="dynamic_popover_text"
+                <field name="body_text" string="预览" invisible="0" widget="dynamic_popover_text"
                         options="{'max_width': '20px', 'line_clamp': '1', 'mode_mouse':'hover','popover_max_width':'500px','placement':'right'}"/>
                 <field name="email_from" string="发件人"/>
                 <field name="author_display" string="发件人" invisible="1"/>

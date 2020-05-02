@@ -9,9 +9,11 @@
 
             <search string="Messages Search">
                 <field name="email_from" invisible="1"/>
-                <field name="personal_author_id" string="模糊查询" filter_domain="['|', '|', ('subject', 'ilike', self), ('body', 'ilike', self), ('personal_author_id', 'ilike', self)]"/>
+                <field name="personal_author_id" string="模糊查询"
+                       filter_domain="['|', '|', ('subject', 'ilike', self), ('body', 'ilike', self), ('personal_author_id', 'ilike', self)]"/>
                 <field name="personal_author_id" string="发件人"/>
-                <field name="body" string="内容" filter_domain="['|', ('subject', 'ilike', self), ('body', 'ilike', self)]"/>
+                <field name="body" string="内容"
+                       filter_domain="['|', ('subject', 'ilike', self), ('body', 'ilike', self)]"/>
 
                 <field name="message_type" invisible="1"/>
                 <field name="author_id" invisible="1"/>
@@ -19,11 +21,14 @@
                 <field name="model" invisible="1"/>
                 <field name="res_id" invisible="1"/>
                 <field name="parent_id" invisible="1"/>
-                <filter string="Has Mentions" name="filter_has_mentions" invisible="1" domain="[('partner_ids.user_ids', 'in', [uid])]"/>
+                <filter string="Has Mentions" name="filter_has_mentions" invisible="1"
+                        domain="[('partner_ids.user_ids', 'in', [uid])]"/>
                 <separator/>
-                <filter string="Need Action" name="message_needaction" invisible="1" help="Unread messages" domain="[('needaction', '=', True)]"/>
+                <filter string="Need Action" name="message_needaction" invisible="1" help="Unread messages"
+                        domain="[('needaction', '=', True)]"/>
                 <separator/>
-                <filter string="Has attachments" invisible="1" name="attachments" domain="[('attachment_ids', '!=', False)]"/>
+                <filter string="Has attachments" invisible="1" name="attachments"
+                        domain="[('attachment_ids', '!=', False)]"/>
 
                 <filter string="Emails" invisible="1"
                         name="filter_type_email"
@@ -52,27 +57,32 @@
         <field name="name">prt.mail.message.tree</field>
         <field name="model">mail.message</field>
         <field name="arch" type="xml">
-            <tree string="Messages" decoration-bf="have_read==False" decoration-it="have_read==True" decoration-danger="is_error==True"
+            <tree string="Messages" decoration-bf="have_read==False" decoration-it="have_read==True"
+                  decoration-danger="is_error==True"
                   default_order="date desc, id desc"
                   create="false" edit="false" delete="false">
                 <!--button name="button_read" states="" string="打开" type='object' class="oe_highlight"/-->
                 <field name="body_text" string="文本" invisible="1"/>
                 <field name="body" string="内容" invisible="1"/>
-                <field name="read_img" string=" " widget="image" options="{'preview_image': 'image_medium', 'size': [50,50]}" groups="base.group_system" />
+                <field name="read_img" string=" " widget="image"
+                       options="{'preview_image': 'image_medium', 'size': [12,12]}"/>
                 <button name="tip_button" type="object" class="tip_button" icon="fa-th-large"
                         context="{'form_xml_id': 'prt_mail_messages.prt_mail_message_income_form'}"/>
+                <field name="body_text" string="预览" invisible="0" widget="dynamic_popover_text"
+                       options="{'max_width': '20px', 'line_clamp': '1', 'mode_mouse':'hover','popover_max_width':'500px','placement':'right'}"/>
                 <field name="personal_author_id" string="发件人" invisible="1"/>
-
 
                 <field name="personal_partner_name" string="发件人"/>
                 <field name="personal_partner_email" string="邮箱"/>
                 <field name="author_display" string="作者" invisible="1"/>
                 <field name="author_allowed_id" groups="base.group_system" invisible="1"/>
-                <button name="dummy" type="object" class="oe_stat_button" icon="fa-star" attrs="{'invisible': [('starred', '=', False)]}"/>
+                <button name="dummy" type="object" class="oe_stat_button" icon="fa-star"
+                        attrs="{'invisible': [('starred', '=', False)]}"/>
                 <button readonly="1" name="dummy" type="object" class="oe_inline oe_stat_button" icon="fa-paperclip"
                         attrs="{'invisible':[('attachment_count', '=', 0)]}"/>
                 <field name="subject_display" groups="base.group_system" invisible="1"/>
-                <field name="subject"/>
+                <field name="subject" widget="dynamic_popover_char"
+                       options="{'max_width': '300px', 'line_clamp': '1', 'mode_mouse':'false','popover_max_width':'500px','placement':'right'}"/>
                 <field name="email_from" groups="base.group_system" invisible="1"/>
                 <field name="email_to" groups="base.group_system" invisible="1"/>
                 <field name="email_cc" groups="base.group_system" invisible="1"/>
@@ -100,7 +110,8 @@
         <field name="name">mail.message.kanban</field>
         <field name="model">mail.message</field>
         <field name="arch" type="xml">
-            <kanban class="o_kanban_mobile " default_order="date desc, id desc" decoration-bf="have_read==False" decoration-danger="is_error==True"
+            <kanban class="o_kanban_mobile " default_order="date desc, id desc" decoration-bf="have_read==False"
+                    decoration-danger="is_error==True"
                     create="false" edit="false">
                 <field name="have_read"/>
                 <field name="is_error"/>
@@ -199,7 +210,8 @@
         <field name="model">mail.message</field>
         <field name="arch" type="xml">
             <form string="Message" create='false' edit='false' delete="false">
-                <div attrs="{'invisible':[('is_error', '!=', True)]}" name="pro" class="oe_form_box_info oe_text_center" style="color:red;">
+                <div attrs="{'invisible':[('is_error', '!=', True)]}" name="pro" class="oe_form_box_info oe_text_center"
+                     style="color:red;">
                     <p>Error while sending message. Please check error log under "Email Messages" tab</p>
                 </div>
                 <sheet>
@@ -216,15 +228,18 @@
                                 context="{'wizard_mode': 'forward','default_force_notify_email': 1}"
                                 help="Copy message to other record. Original message text will be qouted and kept. Followers of the other record will be notified!"/>
 
-                        <button name="move" type="object" class="oe_stat_button" icon="fa-arrow-right" string="邮件转移" groups="base.group_system"
+                        <button name="move" type="object" class="oe_stat_button" icon="fa-arrow-right" string="邮件转移"
+                                groups="base.group_system"
                                 help="Move message from current to other record" invisible="0"/>
 
                         <button string="标记已读" type="object" name="toggle_have_read"
                                 class="oe_stat_button"
-                                icon="fa-file" attrs="{'invisible': [('have_read', '=', True)]}" groups="base.group_system"/>
+                                icon="fa-file" attrs="{'invisible': [('have_read', '=', True)]}"
+                                groups="base.group_system"/>
                         <button string="标记未读" type="object" name="toggle_have_read"
                                 class="oe_stat_button"
-                                icon="fa-check" attrs="{'invisible': [('have_read', '=', False)]}" groups="base.group_system"/>
+                                icon="fa-check" attrs="{'invisible': [('have_read', '=', False)]}"
+                                groups="base.group_system"/>
 
                         <button name="toggle_message_starred" type="object" class="oe_stat_button"
                                 icon="fa-check" attrs="{'invisible': [('starred', '=', True)]}"
@@ -233,7 +248,8 @@
                                 icon="fa-star" attrs="{'invisible': [('starred', '=', False)]}"
                                 string="取消标星"/>
                         <button name="thread_messages" type="object" class="oe_stat_button"
-                                icon="fa-envelope" attrs="{'invisible': [('thread_messages_count', '&lt;', 2)]}" groups="base.group_system">
+                                icon="fa-envelope" attrs="{'invisible': [('thread_messages_count', '&lt;', 2)]}"
+                                groups="base.group_system">
                             <field name="thread_messages_count" widget="statinfo" string="In thread"/>
                         </button>
                         <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
@@ -241,10 +257,12 @@
                                    options='{"terminology": "archive"}'/>
                         </button>
 
-                        <button string="创建通讯录" name="make_one_personal" type="object" class="oe_stat_button" icon="fa-archive">
+                        <button string="创建通讯录" name="make_one_personal" type="object" class="oe_stat_button"
+                                icon="fa-archive">
                         </button>
 
-                        <button string="测试邮件通知" name="make_privace_comment" type="object" class="oe_stat_button" groups="base.group_system">
+                        <button string="测试邮件通知" name="make_privace_comment" type="object" class="oe_stat_button"
+                                groups="base.group_system">
                         </button>
 
 
@@ -283,7 +301,8 @@
                             <field name="partner_cc_ids" widget="many2many_tags_email" context="{'show_email': 1}"/>
                             <field name="manual_cc"/>
                         </div>
-                        <field name="partner_bcc_ids" widget="many2many_tags_email" context="{'show_email': 1}" groups="base.group_system"/>
+                        <field name="partner_bcc_ids" widget="many2many_tags_email" context="{'show_email': 1}"
+                               groups="base.group_system"/>
                         <field name="date"/>
                         <field name="have_read" widget="boolean_toggle" invisible="1"/>
 
@@ -302,12 +321,15 @@
                                 <field name="inner_partner_ids" widget="many2many_tags"/>
                                 <field name="needaction"/>
                                 <field name="starred"/>
-                                <field name="author_allowed_id" attrs="{'invisible':[('author_allowed_id', '=', False)]}"/>
+                                <field name="author_allowed_id"
+                                       attrs="{'invisible':[('author_allowed_id', '=', False)]}"/>
                                 <field name="email_from" attrs="{'invisible':[('author_allowed_id', '!=', False)]}"/>
-                                <field name="ref_partner_ids" widget="many2many_tags" attrs="{'invisible':[('ref_partner_count', '=', 0)]}"/>
+                                <field name="ref_partner_ids" widget="many2many_tags"
+                                       attrs="{'invisible':[('ref_partner_count', '=', 0)]}"/>
                                 <field name="ref_partner_count" invisible="1"/>
                                 <field name="partner_count" invisible="1"/>
-                                <field name="partner_allowed_ids" attrs="{'invisible':[('partner_count', '=', 0)]}" widget="many2many_tags"/>
+                                <field name="partner_allowed_ids" attrs="{'invisible':[('partner_count', '=', 0)]}"
+                                       widget="many2many_tags"/>
                                 <field name="state_delete"/>
                                 <field name="process_type"/>
                             </group>
@@ -360,7 +382,9 @@
         <field name="name">收件箱</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">mail.message</field>
-        <field name="domain">[('alias_user_id','=',uid),('process_type', '=', 'in'),('state_delete','!=','recycle'),('message_type', '=', 'email')]</field>
+        <field name="domain">[('alias_user_id','=',uid),('process_type', '=',
+            'in'),('state_delete','!=','recycle'),('message_type', '=', 'email')]
+        </field>
         <!--field name="context">{'check_messages_access': True}</field-->
         <field name="context">{'no_show_tree_keys': ['mail_list_income', 'mail_list_out', 'user']}</field>
         <field name="view_mode">tree,kanban,form</field>
@@ -371,7 +395,8 @@
           (0, 0, {'view_mode': 'form', 'view_id': ref('prt_mail_message_income_form')})]"/>
 
     </record>
-    <menuitem id="menu_mail_messages_income" name="收件箱" parent="prt_messages_root" action="action_mail_messages_income"/>
+    <menuitem id="menu_mail_messages_income" name="收件箱" parent="prt_messages_root"
+              action="action_mail_messages_income"/>
 
 
 </odoo>
