@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <template>
     <t t-name="web_switch_context_warning.warningWidget">
-        <div class="container-fluid bg-warning" style="text-align: center; display:none;">
+        <!--div class="container-fluid bg-warning" style="text-align: center; display:none;">
             <h3>You switched to a different user, company or database with another tab or window</h3>
             <p><button onclick="location.reload(true);" class="btn">Reload</button> to refresh your session</p>
-        </div>
+        </div-->
+        <di class="container-fluid bg-warning" style="text-align: center; display:none;">
+            <h3>您已经在其他窗口登陆了另外一个公司或者数据库，请点击</h3>
+            <p><button onclick="location.reload(true);" class="btn">刷新</button> 重新加载</p>
+        </di>
     </t>
 </template>
