@@ -84,7 +84,7 @@
                 <button name="dummy" type="object" class="oe_stat_button" icon="fa-star" attrs="{'invisible': [('starred', '=', False)]}"/>
                 <button readonly="1" name="dummy" type="object" class="oe_inline oe_stat_button" icon="fa-paperclip" attrs="{'invisible':[('attachment_count', '=', 0)]}"/>
                 <field name="subject_display" groups="base.group_system" invisible="1"/>
-                <field name="subject" options="{'max_width': '300px', 'line_clamp': '1', 'mode_mouse':'false','popover_max_width':'500px','placement':'right'}"/>
+                <field name="subject" widget="dynamic_popover_char" options="{'max_width': '300px', 'line_clamp': '1', 'mode_mouse':'false','popover_max_width':'500px','placement':'right'}"/>
 
                 <field name="email_from" groups="base.group_system" invisible="1"/>
                 <field name="email_to" groups="base.group_system" invisible="1"/>

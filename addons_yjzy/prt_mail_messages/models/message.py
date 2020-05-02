@@ -192,10 +192,10 @@ class PRTMailMessage(models.Model):
         img_no_replay = self.env['ir.attachment'].search([('name', '=', 'message_no_replay')], limit=1)
 
 
-        img_have_read = tools.image_resize_image(img_have_read.datas, (50, None))
-        img_no_read = tools.image_resize_image(img_no_read.datas, (50, None))
-        img_have_replay = tools.image_resize_image(img_have_replay.datas, (50, None))
-        img_no_replay = tools.image_resize_image(img_no_replay.datas, (50, None))
+        img_have_read = tools.image_resize_image(img_have_read.datas, (30, None))
+        img_no_read = tools.image_resize_image(img_no_read.datas, (30, None))
+        img_have_replay = tools.image_resize_image(img_have_replay.datas, (30, None))
+        img_no_replay = tools.image_resize_image(img_no_replay.datas, (30, None))
 
         for one in self:
             if one.have_read:
