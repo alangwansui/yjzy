@@ -71,7 +71,9 @@
                     <field name="purhcase_invoice_balance" string="未付金额"/>
                     <field name="back_tax_invoice_balance" string="未收退税"/>
                     <field name="create_date"/>
-                    <field name="gongsi_id" string="主体"/>
+                    <field name="gongsi_id" string="销售主体"/>
+                    <field name="purchase_gongsi_id" string="采购主体"/>
+
 
 
 
@@ -221,8 +223,8 @@
                                 <field name="include_tax" attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <field name="locked" groups="base.group_system" invisible="1"/>
                                 <field name="contract_type" groups="base.group_system" attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
-                                <field name="gongsi_id" options="{'no_open':1}" groups="base.group_system" string="销售主体" attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
-                                <field name="purchase_gongsi_id" options="{'no_open':1}" groups="base.group_system" string="采购主体"
+                                <field name="gongsi_id" options="{'no_open':1}" string="销售主体" attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
+                                <field name="purchase_gongsi_id" options="{'no_open':1}" string="采购主体"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                             </group>
                                 <group>
@@ -815,8 +817,8 @@
                     <field name="date_supplier_finish_related" modifiers="{}" invisible="1" />
                     <field name="state" invisible="0"/>
                     <field name="create_date" widget="date"/>
-                    <field name="gongsi_id" string="销售主体" invisible="1"/>
-                    <field name="purchase_gongsi_id" string="采购主体" invisible="1"/>
+                    <field name="gongsi_id" string="销售主体" />
+                    <field name="purchase_gongsi_id" string="采购主体" />
                 </tree>
             </field>
         </record>
