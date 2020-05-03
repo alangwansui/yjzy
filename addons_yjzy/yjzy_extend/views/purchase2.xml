@@ -55,7 +55,7 @@
                     <field name="gongsi_id" string="采购主体"/>
                     <field name="supplierinfo_ids" widget="many2many_tags" invisible="1"/>
                     <field name="invoice_status" invisible="1" /><!--invisible="not context.get('show_purchase', True)"-->
-                    <field name="company_id" groups="base.group_multi_company" invisible="1" options="{'no_create': True}"/>
+                    <field name="company_id" groups="base.group_system" invisible="0" options="{'no_create': True}"/>
                 </tree>
             </field>
         </record>

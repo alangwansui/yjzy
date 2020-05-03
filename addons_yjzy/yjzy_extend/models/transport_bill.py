@@ -1303,6 +1303,23 @@ class transport_bill(models.Model):
     def action_transport_bill_vendor_report(self):
         return self.env.ref('yjzy_extend.action_report_transport_bill_vendor').report_action(self.tb_vendor_ids)
 
+    @api.model
+    def cron_update_contract_type(self):
+        print('=cron_update_rate==')
+
+        for one in self:
+            print('===', one)
+            one.contract_type = one.partner_id.contract_type
+
+
+    def cron_update_gongsi_id(self):
+        print('=cron_update_rate==')
+
+        for one in self:
+            print('===', one)
+            one.gongsi_id = one.company_id.gongsi_id
+            one.purchase_gongsi_id = one.company_id.gongsi_id
+
 
 
 
