@@ -307,7 +307,12 @@ class sale_order(models.Model):
     sales_confirm_date = fields.Date('责任人审批时间')
     sales_confirm_uid = fields.Many2one('res.users', u'责任人审批')
     approve_date = fields.Date('审批完成日期')
-    approve_uid = fields.Many2one('res.users', u'合规审批')
+    approve_uid = fields.Many2one('res.users', u'完成审批人')
+
+    hegui_date = fields.Date('合规审批日期')
+    hegui_uid = fields.Many2one('res.users', u'合规审批')
+
+
     hx_date = fields.Date('核销时间')
     purchase_approve_date = fields.Datetime('采购审批时间', compute=compute_info)
 

@@ -1185,6 +1185,9 @@
 
                               </group>
                                        <group>
+                                <field name="hegui_date" readonly="1"/>
+                                <field name="hegui_uid" readonly="1"/>
+
                                 <field name="approve_date" readonly="1"/>
                                 <field name="approve_uid" readonly="1"/>
                                 <field name="hx_date" readonly="1"/>
