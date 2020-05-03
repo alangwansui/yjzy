@@ -294,7 +294,7 @@
 
 
                     <field name="gongsi_id" string="销售主体" />
-                    <field name="purchase_gongsi_id" string="销售主体" />
+                    <field name="purchase_gongsi_id" string="采购主体" />
                     <field name="company_id" groups="base.group_system" />
                 </tree>
 
