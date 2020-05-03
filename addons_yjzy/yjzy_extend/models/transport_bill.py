@@ -170,9 +170,9 @@ class transport_bill(models.Model):
     @api.depends('sale_invoice_id', 'purchase_invoice_ids', 'back_tax_invoice_id')
     def compute_invoice_amount(self):
         for one in self:
-            sale_invoice = one.sale_invoice_id
-            purchase_invoices = one.purchase_invoice_ids.filtered(lambda x: x.yjzy_type == 'purchase')
-            back_tax_invoice = one.back_tax_invoice_id
+            sale_invoice = one.sale_invoice_id.filtered(lambda x: x.state not in ['draft','cancel'])
+            purchase_invoices = one.purchase_invoice_ids.filtered(lambda x: x.yjzy_type == 'purchase' and x.state not in ['draft','cancel'])
+            back_tax_invoice = one.back_tax_invoice_id.filtered(lambda x: x.state not in ['draft','cancel'])
 
             one.sale_invoice_total = sale_invoice.amount_total
             one.purhcase_invoice_total = sum([x.amount_total for x in purchase_invoices])
@@ -973,8 +973,10 @@ class transport_bill(models.Model):
         if need and date_out_in:
             self.sync_data2invoice()
         return res
-
+#akiny 发货的时候生成所有发票，填入进仓日期后，点生成应收应付按钮，完成确认。
     def sync_data2invoice(self):
+        if not self.date_out_in:
+             raise Warning(u'请先设置进仓日期')
         for one in self:
             #同步采购发票日期
             for purchase_invoice in self.purchase_invoice_ids.filtered(lambda x: x.yjzy_type == 'purchase'):
@@ -989,7 +991,11 @@ class transport_bill(models.Model):
                 sale_invoice.date_finish = one.date_customer_finish
                 sale_invoice.date_ship = one.date_ship
                 sale_invoice.action_invoice_open()
+            back_tax_invoice = one.back_tax_invoice_id
+            if back_tax_invoice:
+                back_tax_invoice.action_invoice_open()
         return True
+
 
     def make_back_tax_invoice(self):
         self.ensure_one()
@@ -1034,11 +1040,12 @@ class transport_bill(models.Model):
             'res_id': back_tax_invoice.id
         }
 
+    # akiny 发货的时候生成所有发票，填入进仓日期后，点生成应收应付按钮，完成确认。
     def make_all_invoice(self):
         self.make_sale_invoice()
         self.make_purchase_invoice()
         self.make_back_tax_invoice()
-        self.state = 'invoiced'
+      #  self.state = 'invoiced'
 
     def unlink(self):
         for one in self:
@@ -1056,7 +1063,8 @@ class transport_bill(models.Model):
         self.process_2_picking()
 
         # 自动创建发票
-        self.make_purchase_invoice()
+      #  self.make_purchase_invoice()
+        self.make_all_invoice()
 
     @api.model
     def process_move_operation(self, move, lot, qty):

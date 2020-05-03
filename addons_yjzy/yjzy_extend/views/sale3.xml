@@ -340,7 +340,7 @@
             <field name="name">sale.order.form</field>
             <field name="model">sale.order</field>
             <field name="arch" type="xml">
-                <form string="销售订单" class="o_sale_order" create="false" edit="false">
+                <form string="销售订单" class="o_sale_order" create="false">
                        <header groups="base.group_system">
                          <field name="state" widget="statusbar" statusbar_invisible="draft"  groups="base.group_system"/>
                     </header>
@@ -462,10 +462,10 @@
 
 
 
-                                <field name="contract_type" attrs="{'readonly':1}" string="模式"/>
+                                <field name="contract_type" attrs="{'readonly':0}" string="模式"/>
                                 <field name="is_inner_trade" groups="base.group_system" invisible="1"/>
-                                <field name="gongsi_id" string="销售主体" attrs="{'readonly':1}" />
-                                <field name="purchase_gongsi_id" string="采购主体" attrs="{'readonly':1}" />
+                                <field name="gongsi_id" string="销售主体" attrs="{'readonly':0}" />
+                                <field name="purchase_gongsi_id" string="采购主体" attrs="{'readonly':0}" />
                             </group>
                             <group>
 

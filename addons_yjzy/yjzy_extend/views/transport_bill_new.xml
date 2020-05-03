@@ -162,6 +162,9 @@
                                 attrs="{'invisible': [('purchase_invoice_count','>', 0)]}"/>
                         <button string="退税发票" invisible="1"  type="object" name="make_back_tax_invoice" class="oe_highlight"
                                 attrs="{'invisible': [('back_tax_invoice_count','>', 0)]}"/>
+                        <!--在出入库一次完成的时候，发票全部自动生成草稿状态，之后点发票过账，判断进仓日期，完成过账-->
+                        <button string="发票过账" invisible="0"  type="object" name="sync_data2invoice" class="oe_highlight"
+                                />
 
 
                         <!--button string="计算明细批次" type="object" name="make_tbl_lot" class="oe_highlight"/-->
@@ -795,7 +798,7 @@
                     <field name="name" invisible="1"/>
                     <field name="ref" />
                     <field name="partner_id" required="1" readonly="1"/>
-                    <button name="make_all_invoice" string="创建应收付" attrs="{'invisible':[('state','!=','delivered')]}"  class="oe_highlight" type="object"/>
+                    <!--button name="sync_data2invoice" string="创建应收付" attrs="{'invisible':[('state','!=','delivered')]}"  class="oe_highlight" type="object"/-->
                     <field name="date_out_in"/>
                     <field name="date_in" />
                     <field name="date_ship" />
