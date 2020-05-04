@@ -442,8 +442,12 @@
                         <filter string="审批状态" domain="[]" context="{'group_by': 'state'}"/>
                         <filter string="申请单" domain="[]" context="{'group_by': 'sheet_id'}"/>
                         <filter string="责任人" domain="[]" context="{'group_by': 'employee_id'}"/>
-                        <filter string="月" domain="[]" context="{'group_by': 'payment_date'}"
+                        <filter string="付款时间" domain="[]" context="{'group_by': 'payment_date'}"
                                 help="按月分组"/>
+                        <filter string="大类" domain="[]" context="{'group_by': 'categ_id'}"
+                                help="大类分组"/>
+                        <filter string="费用对象" domain="[]" context="{'group_by': 'employee_sales_uid'}"
+                                help="对象分组"/>
                         <filter string="Company" domain="[]" context="{'group_by': 'company_id'}" invisible='1'
                                 groups="base.group_multi_company"/>
                         <filter string="Product"  invisible='1' domain="[]" context="{'group_by': 'product_id'}"/>
