@@ -508,7 +508,6 @@
                     <field name="budget_amount" groups="base.group_system"/>
                     <field name="budget_amount_reset" groups="base.group_system"/>
                     <field name="gongsi_id" groups="base.group_system"/>
-                    <field name="company_currency_total_amount" groups="base.group_system"/>
 
                     <button name="action_get_attachment_view" string="View Attached Documents" type="object"
                             icon="fa-paperclip"

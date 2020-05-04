@@ -42,11 +42,6 @@ class hr_expense(models.Model):
                 else:
                     pass
 
-    def compute_total_amount_currency(self):
-        self.ensure_one()
-        total_currency_amount = self.currency_id.compute(self.total_amount, self.company_currency_id)
-        self.company_currency_total_amount = total_currency_amount
-
     @api.model
     def default_hx_code(self):
         return self.env['ir.sequence'].next_by_code('hx.code')
@@ -148,8 +143,6 @@ class hr_expense(models.Model):
    #akiny
     is_onchange_false = fields.Boolean('是否onchange')
     is_onchange_false1 = fields.Boolean('是否onchange')
-    company_currency_id = fields.Many2one('res.currency', u'公司货币',  default=lambda self: self.env.user.company_id.currency_id.id)
-    company_currency_total_amount = fields.Monetary(u'本币合计', currency_field='company_currency_id', compute=compute_total_amount_currency)
 
 
     #payment_date_store = fields.Datetime(u'付款日期')
@@ -161,7 +154,6 @@ class hr_expense(models.Model):
         for one in self:
             print('===', one)
             one.payment_date = one.sheet_id.accounting_date
-
 
     #def update_feiyongduixiang(self):
      #   for one in self:
