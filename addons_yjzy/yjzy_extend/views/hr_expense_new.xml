@@ -402,8 +402,10 @@
 
                 <search string="Expense">
                     <field name="name" string="Expenses"
-                           filter_domain="['|',('employee_id','ilike',self),('name','ilike',self)]"/>
-                    <field name="date"/>
+                           filter_domain="['|','|','|','|',('employee_id','ilike',self),
+                                         ('name','ilike',self),('categ_id','ilike',self),('second_categ_id','ilike',self),('product_id','ilike',self)]"/>
+                    <field name="create_date" string="创建日期"/>
+                    <field name="payment_date" string="付款日期"/>
                     <field name="employee_id" string="责任人"/>
                     <field name="categ_id" string="大类" widget="selection"/>
                     <field name="second_categ_id" string="中类" widget="selection"/>
@@ -415,7 +417,8 @@
                     <filter string="人员费用" domain="[('categ_id.id','=',110)]"/>
                     <filter string="公司费用" domain="[('categ_id.id','=',114)]"/>
                     <filter string="已支付" domain="[('state','=','done')]"/>
-                    <filter string="未支付" domain="[('state','not in',['done'])]"/>
+                    <filter string="已完成审批未支付" domain="[('sheet_id.state','in',['approve'])]"/>
+                    <filter string="已提交未完成审批" domain="[('sheet_id.state','in',['submit','approval','employee_approval','account_approval','manager_approval'])]"/>
                     <filter invisible="1" domain="[('state', '=', 'draft')]" string="To Submit" name="to_report"
                             help="New Expense"/>
                     <filter invisible="1" domain="[('state', '=', 'reported')]" string="Reported" name="submitted"
