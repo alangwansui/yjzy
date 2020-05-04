@@ -416,6 +416,7 @@
                     <filter string="项目费用" domain="[('categ_id.id','=',140)]"/>
                     <filter string="人员费用" domain="[('categ_id.id','=',110)]"/>
                     <filter string="公司费用" domain="[('categ_id.id','=',114)]"/>
+                    <filter string="其他费用" domain="[('categ_id.id','=',193)]"/>
                     <filter string="已支付" domain="[('state','=','done')]"/>
                     <filter string="已完成审批未支付" domain="[('sheet_id.state','in',['approve'])]"/>
                     <filter string="已提交未完成审批" domain="[('sheet_id.state','in',['submit','approval','employee_approval','account_approval','manager_approval'])]"/>
