@@ -218,9 +218,28 @@
                   sequence="20"
                   action="act_open_stock_wharf_view"/>
 
+    <!--客户基础信息-->
+
+        <!--menuitem id="customer_config" name="配置"
+                  parent="yjzy_extend.new_customer_root"
+                  sequence="99"
+                  />
+
+        <record model="ir.actions.act_window" id="action_">
+            <field name="name">港口</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">stock.wharf</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+        </record>
 
 
-
+        <menuitem id="menu_stock_wharf" name="港口"
+                  parent="sale.menu_sale_config"
+                  sequence="20"
+                  action="act_open_stock_wharf_view"/-->
 
     </data>
 </odoo>
