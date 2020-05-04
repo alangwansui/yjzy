@@ -419,6 +419,9 @@
                     <filter string="已支付" domain="[('state','=','done')]"/>
                     <filter string="已完成审批未支付" domain="[('sheet_id.state','in',['approve'])]"/>
                     <filter string="已提交未完成审批" domain="[('sheet_id.state','in',['submit','approval','employee_approval','account_approval','manager_approval'])]"/>
+                    <filter string="今年付款"  domain="[('payment_date', '&gt;', context_today().strftime('%Y-01-01 00:00:00'))]"/>
+                    <filter string="今年以前付款"  domain="[('payment_date','&lt;', context_today().strftime('%Y-01-01 00:00:00'))]"/>
+
                     <filter invisible="1" domain="[('state', '=', 'draft')]" string="To Submit" name="to_report"
                             help="New Expense"/>
                     <filter invisible="1" domain="[('state', '=', 'reported')]" string="Reported" name="submitted"
