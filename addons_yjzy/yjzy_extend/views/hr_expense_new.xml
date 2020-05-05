@@ -490,7 +490,7 @@
                     <field name="unit_amount" string="金额" invisible="1"/>
                     <field name="total_amount" sum="Total Amount" widget="monetary"
                            options="{'currency_field': 'currency_id'}"/>
-                    <field name="company_currency_total_amount" string="本币" options="{'currency_field': 'company_currency_id'}"/>
+                    <field name="company_currency_total_amount" string="本币" sum="小计" options="{'currency_field': 'company_currency_id'}"/>
                     <field name="currency_id" invisible="True"/>
                     <field name="attachment_number" invisible="True"/>
                     <field name="sheet_wkf_state" string="审批流"/>
