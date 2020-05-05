@@ -1251,7 +1251,7 @@
                                 <field name="budget_type" invisible="1"/>
                                 <field name="gongsi_id" string="费用主体" options="{'no_create':true,'no_open':1}"/>
                                 <field name="is_budget" invisible="1"/>
-                                <!--field name="company_currency_total_amount" groups="base.group_system"/-->
+                                <field name="company_currency_total_amount" groups="base.group_system"/>
                             </group>
                             <group>
 

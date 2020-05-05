@@ -41,6 +41,7 @@ class hr_expense(models.Model):
                     one.diff_balance = one.hx_balance + one.unit_amount
                 else:
                     pass
+
     @api.depends('currency_id')
     def compute_total_amount_currency(self):
        # self.ensure_one() 只需要计算一条记录
