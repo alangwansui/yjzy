@@ -36,11 +36,14 @@ class hr_expense_sheet(models.Model):
         except Exception as e:
             return None
 
-    @api.depends('currency_id','total_amount')
+
+    @api.depends('currency_id', 'total_amount', 'company_currency_id')
     def compute_total_amount_currency(self):
         # self.ensure_one() 只需要计算一条记录
-        total_currency_amount = self.currency_id.compute(self.total_amount, self.company_currency_id)
-        self.company_currency_total_amount = total_currency_amount
+        for one in self:
+            total_currency_amount = one.currency_id.compute(one.total_amount, one.company_currency_id)
+            one.company_currency_total_amount = total_currency_amount
+
 
     todo_cron = fields.Boolean(u'可以执行')
     include_tax = fields.Boolean(u'含税')
@@ -122,7 +125,7 @@ class hr_expense_sheet(models.Model):
     is_editable = fields.Boolean(u'可编辑')
     company_currency_id = fields.Many2one('res.currency', u'公司货币',
                                           default=lambda self: self.env.user.company_id.currency_id.id)
-    company_currency_total_amount = fields.Monetary(u'本币合计', currency_field='company_currency_id', compute=compute_total_amount_currency)
+    company_currency_total_amount = fields.Monetary(u'本币合计', currency_field='company_currency_id', compute=compute_total_amount_currency, store=True)
     #payment_date_store = fields.Datetime(u'付款日期', related='payment_id.payment_date_confirm', store=True)
 # #akiny
 #     @api.depends('expense_line_ids', 'expense_line_ids.categ_id')
@@ -173,9 +176,9 @@ class hr_expense_sheet(models.Model):
 
 
 
-        sql = """select sum(total_amount) from hr_expense_sheet where state in ('done') and total_amount > 0 and second_categ_id !=193 and accounting_date > '%s' """
-        sql_approve = """select sum(total_amount) from hr_expense_sheet where state in ('approve') and second_categ_id !=193 and total_amount > 0 """
-        sql_submit = """select sum(total_amount) from hr_expense_sheet where state in ('submit','approval','employee_approval','account_approval','manager_approval') and second_categ_id !=193 and total_amount > 0 """
+        sql = """select sum(company_currency_total_amount) from hr_expense_sheet where state in ('done') and total_amount > 0 and second_categ_id !=193 and accounting_date > '%s' """
+        sql_approve = """select sum(company_currency_total_amount) from hr_expense_sheet where state in ('approve') and second_categ_id !=193 and total_amount > 0 """
+        sql_submit = """select sum(company_currency_total_amount) from hr_expense_sheet where state in ('submit','approval','employee_approval','account_approval','manager_approval') and second_categ_id !=193 and total_amount > 0 """
 
         moth_sql = sql % month
         year_sql = sql % year

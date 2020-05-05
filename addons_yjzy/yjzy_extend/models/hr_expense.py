@@ -42,11 +42,13 @@ class hr_expense(models.Model):
                 else:
                     pass
 
-    @api.depends('currency_id','total_amount')
+
+    @api.depends('currency_id', 'total_amount', 'company_currency_id')
     def compute_total_amount_currency(self):
        # self.ensure_one() 只需要计算一条记录
-        total_currency_amount = self.currency_id.compute(self.total_amount, self.company_currency_id)
-        self.company_currency_total_amount = total_currency_amount
+       for one in self:
+            total_currency_amount = one.currency_id.compute(one.total_amount, one.company_currency_id)
+            one.company_currency_total_amount = total_currency_amount
 
     @api.model
     def default_hx_code(self):
