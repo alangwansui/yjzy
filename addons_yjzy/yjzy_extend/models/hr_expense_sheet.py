@@ -89,6 +89,8 @@ class hr_expense_sheet(models.Model):
     #akiny
     total_approve = fields.Float(u'已完成审批未支付费用', compute='compute_total_this_year', digits=dp.get_precision('Account'))
     total_submit = fields.Float(u'已提交未完成审批费用', compute='compute_total_this_year', digits=dp.get_precision('Account'))
+    total_un_submit = fields.Float(u'未提交的费用', compute='compute_total_this_year', digits=dp.get_precision('Account'))
+
 
     employee_wkf = fields.Boolean('责任人阶段')
     # akiny 审批确认信息记录
@@ -178,8 +180,8 @@ class hr_expense_sheet(models.Model):
 
         sql = """select sum(company_currency_total_amount) from hr_expense where state in ('done') and total_amount > 0 and (categ_id != 193 or categ_id is null) and payment_date > '%s' """
         sql_approve = """select sum(company_currency_total_amount) from hr_expense where state in ('confirmed') and (categ_id != 193 or categ_id is null ) and total_amount > 0 """
-        sql_submit = """select sum(company_currency_total_amount) from hr_expense where state in ('reported','employee_confirm') and (categ_id != 193 or categ_id is null) and total_amount > 0 """
-
+        sql_submit = """select sum(company_currency_total_amount) from hr_expense where sheet_state in ('submit','approval','employee_approval','account_approval','manager_approval') and (categ_id != 193 or categ_id is null) and total_amount > 0 """
+        sql_un_submit = """select sum(company_currency_total_amount) from hr_expense where sheet_state in ('draft') and (categ_id != 193 or categ_id is null) and total_amount > 0 """
 
         moth_sql = sql % month
         year_sql = sql % year
@@ -188,6 +190,7 @@ class hr_expense_sheet(models.Model):
 
         this_sql_approve = sql_approve
         this_sql_submit = sql_submit
+        this_sql_un_submit  = sql_un_submit
 
         print('==', moth_sql)
         print('==', year_sql)
@@ -206,6 +209,9 @@ class hr_expense_sheet(models.Model):
 
         self._cr.execute(this_sql_submit)
         self.total_submit = self._cr.fetchall()[0][0]
+
+        self._cr.execute(this_sql_un_submit)
+        self.total_un_submit = self._cr.fetchall()[0][0]
 
 
 

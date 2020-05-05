@@ -1265,10 +1265,11 @@
                                 <field name="all_line_is_confirmed"/>
                             </group>
                             <group>
-                                 <field name="total_this_moth"  groups="base.group_system"/>
+                                <field name="total_this_moth"  groups="base.group_system"/>
                                 <field name="total_this_year" groups="base.group_system"/>
                                 <field name="total_approve" groups="base.group_system"/>
                                 <field name="total_submit" groups="base.group_system"/>
+                                <field name="total_un_submit" groups="base.group_system"/>
                             </group>
                         </group>
                         <notebook>
