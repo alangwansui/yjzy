@@ -81,7 +81,7 @@ class res_partner(models.Model):
                               ('check',u'提交前必填项检查'),
                               ('submit',u'已提交'),
                               ('to approve',u'责任人已审批'),
-                              ('approve',u'合规审批完成'),('done', u'完成'),('jufuse', u'拒绝'),], string=u'状态', track_visibility='onchange', default='draft')
+                              ('approve',u'合规审批完成'),('done', u'完成'),('refuse', u'拒绝'),('cancel', u'取消')], string=u'状态', track_visibility='onchange', default='draft')
     auto_yfsqd = fields.Boolean(u'自动生成预付')
     is_inter_partner = fields.Boolean(u'是否内部')
     jituan_name = fields.Char(u'集团名称')
@@ -247,11 +247,18 @@ class res_partner(models.Model):
 
     @api.multi
 
+
+    def action_check(self):
+        if self.create_uid == self.env.user:
+           self.state = 'check'
+        else:
+           raise Warning('必须是创建人才能提交')
     def action_submit(self):
         if self.create_uid == self.env.user:
            self.state = 'submit'
         else:
            raise Warning('必须是创建人才能提交')
+
     def action_to_approve(self):
         if self.user_id == self.env.user:
            return self.write({'state': 'to_approve'})
@@ -261,6 +268,9 @@ class res_partner(models.Model):
         return self.write({'state': 'approve'})
     def action_done(self):
         return self.write({'state': 'done'})
+    def action_refuse(self):
+        return self.write({'state': 'refuse'})
+
     def action_cancel(self):
         if self.create_uid == self.env.user:
            return self.write({'state': 'cancel'})

@@ -15,5 +15,6 @@ class jituan(models.Model):
     partner_ids = fields.One2many('res.partner', 'jituan_id', '客户')
     customer = fields.Boolean('客户')
     supplier = fields.Boolean('供应商')
+    partner_type = fields.Selection([('customer',u'客户'),('supplier',u'供应商')])
 
 

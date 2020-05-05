@@ -1137,7 +1137,7 @@
                                                     <field name="is_company" invisible="1"/>
                                                     <field name="name" string="编号(001开始)"
                                                            attrs="{'required' : ['|',('type', '=', 'contact'),('type', '=', 'delivery')]}"/>
-                                                    <field name="country_id" placeholder="Country" string="抵运国"
+                                                    <field name="country_id" placeholder="Country" string="目的国"
                                                            class="o_address_country"
                                                            attrs="{'required':[('customer','=',True),('is_inter_partner','=',False)],}"
                                                            options='{"no_open": True, "no_create": True}'/>
@@ -2017,7 +2017,7 @@
 
                                     <tree class="o_list_scroll" editable="bottom">
                                         <field name="name" string="名称" invisible="1"/>
-                                        <field name="country_id" string="抵运国"/>
+                                        <field name="country_id" string="目的国"/>
                                         <field name="type" invisible="1"/>
                                         <field name="type1" invisible="1"/>
                                         <field name="invoice_title"
@@ -2141,7 +2141,7 @@
                                                     <field name="is_company" invisible="1"/>
                                                     <field name="name" string="编号(001开始)"
                                                            attrs="{'required' : ['|',('type', '=', 'contact'),('type', '=', 'delivery')]}"/>
-                                                    <field name="country_id" placeholder="Country" string="抵运国"
+                                                    <field name="country_id" placeholder="Country" string="目的国"
                                                            class="o_address_country"
 
                                                            options='{"no_open": True, "no_create": True}'/>

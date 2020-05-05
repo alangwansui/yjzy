@@ -11,6 +11,7 @@
                     <field name="description"/>
                     <field name="user_id"/>
                     <field name="assistant_id"/>
+                    <field name="partner_type"/>
                 </tree>
             </field>
         </record>
@@ -29,6 +30,7 @@
                             <field name="description"/>
                             <field name="user_id"/>
                             <field name="assistant_id"/>
+                            <field name="partner_type"/>
                         </group>
                         <notebook>
                             <page string="客户">
@@ -40,16 +42,35 @@
                 </form>
             </field>
         </record>
-
-
         <record id="ji_tuan_action" model="ir.actions.act_window">
             <field name="name">集团</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">ji.tuan</field>
             <field name="view_mode">tree,form</field>
+            <field name="context">{}</field>
         </record>
+         <menuitem id="ji_tuan_menu" name="集团" parent="sale.menu_sale_config" action="ji_tuan_action" sequence=""/>
 
-        <menuitem id="ji_tuan_menu" name="集团" parent="sale.menu_sale_config" action="ji_tuan_action" sequence=""/>
+        <record id="ji_tuan_customer_action" model="ir.actions.act_window">
+            <field name="name">客户集团</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ji.tuan</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('partner_type','=','customer')]</field>
+            <field name="context">{'default_partner_type':'customer'}</field>
+        </record>
+        <menuitem id="ji_tuan_customer_menu" name="客户集团" parent="customer_config" action="ji_tuan_customer_action" sequence="99"/>
+
+        <record id="ji_tuan_supplier_action" model="ir.actions.act_window">
+            <field name="name">供应商集团</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ji.tuan</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('partner_type','=','supplier')]</field>
+            <field name="context">{'default_partner_type':'supplier'}</field>
+        </record>
+ <menuitem id="ji_tuan_supplier_menu" name="供应商集团" parent="supplier_config" action="ji_tuan_supplier_action" sequence="99"/>
+
 
     </data>
 </odoo>

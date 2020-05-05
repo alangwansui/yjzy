@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
+
+
+         <menuitem id="customer_config" name="配置"
+                  parent="yjzy_extend.new_customer_root"
+                  sequence="99"
+                  />
+         <menuitem id="supplier_config" name="配置"
+                  parent="yjzy_extend.new_supplier_root"
+                  sequence="99"
+                  />
         <record model="ir.ui.view" id="transport_mark_tree_view">
             <field name="name">transport.mark.tree</field>
             <field name="model">transport.mark</field>
@@ -97,6 +107,8 @@
             <field name="view_mode">tree,form</field>
         </record>
         <menuitem id="menu_exchange_type" name="交单方式" parent="sale.menu_sale_config"
+                  action="action_exchange_type_tree_view"/>
+        <menuitem id="menu_exchange_type_new" name="交单方式" parent="customer_config"
                   action="action_exchange_type_tree_view"/>
 
         <!-- 交单要求项-->
@@ -218,28 +230,17 @@
                   sequence="20"
                   action="act_open_stock_wharf_view"/>
 
+        <menuitem id="menu_stock_wharf_new" name="港口"
+                  parent="customer_config"
+                  sequence="20"
+                  action="act_open_stock_wharf_view"/>
+
     <!--客户基础信息-->
 
-        <!--menuitem id="customer_config" name="配置"
-                  parent="yjzy_extend.new_customer_root"
-                  sequence="99"
-                  />
-
-        <record model="ir.actions.act_window" id="action_">
-            <field name="name">港口</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="res_model">stock.wharf</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
-            <field name="domain">[]</field>
-            <field name="context">{}</field>
-        </record>
 
 
-        <menuitem id="menu_stock_wharf" name="港口"
-                  parent="sale.menu_sale_config"
-                  sequence="20"
-                  action="act_open_stock_wharf_view"/-->
+
+
 
     </data>
 </odoo>
