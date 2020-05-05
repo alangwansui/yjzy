@@ -176,9 +176,9 @@ class hr_expense_sheet(models.Model):
 
 
 
-        sql = """select sum(company_currency_total_amount) from hr_expense where state in ('done') and total_amount > 0 and second_categ_id !=193 and payment_date > '%s' """
-        sql_approve = """select sum(company_currency_total_amount) from hr_expense where state in ('approve') and second_categ_id !=193 and total_amount > 0 """
-        sql_submit = """select sum(company_currency_total_amount) from hr_expense where state in ('submit','approval','employee_approval','account_approval','manager_approval') and second_categ_id !=193 and total_amount > 0 """
+        sql = """select sum(company_currency_total_amount) from hr_expense where state in ('done') and total_amount > 0 and categ_id != 193 and payment_date > '%s' """
+        sql_approve = """select sum(company_currency_total_amount) from hr_expense where state in ('approve') and categ_id != 193 and total_amount > 0 """
+        sql_submit = """select sum(company_currency_total_amount) from hr_expense where state in ('submit','approval','employee_approval','account_approval','manager_approval') and categ_id != 193 and total_amount > 0 """
 
         moth_sql = sql % month
         year_sql = sql % year
