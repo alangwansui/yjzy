@@ -142,13 +142,11 @@ class res_partner(models.Model):
     actual_controlling_person = fields.Char(u'实际控股人')
 
     other_attachment = fields.Many2many('ir.attachment',string='其他补充资料附件')
-
     partner_hs = fields.Many2many('hs.hs',string='产品品名')
-
     other_social_accounts = fields.Char(u'社交帐号')
-
-
     partner_level = fields.Many2one('partner.level','等级')
+    is_editable = fields.Boolean(u'是否允许编辑')
+
     @api.onchange('country_id')
     def onchange_country_id(self):
         if self.type == 'delivery':
