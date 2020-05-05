@@ -36,7 +36,7 @@ class hr_expense_sheet(models.Model):
         except Exception as e:
             return None
 
-    @api.depends('currency_id')
+    @api.depends('currency_id','total_amount')
     def compute_total_amount_currency(self):
         # self.ensure_one() 只需要计算一条记录
         total_currency_amount = self.currency_id.compute(self.total_amount, self.company_currency_id)
@@ -122,7 +122,7 @@ class hr_expense_sheet(models.Model):
     is_editable = fields.Boolean(u'可编辑')
     company_currency_id = fields.Many2one('res.currency', u'公司货币',
                                           default=lambda self: self.env.user.company_id.currency_id.id)
-    company_currency_total_amount = fields.Monetary(u'本币合计', currency_field='company_currency_id', compute=compute_total_amount_currency, store=True)
+    company_currency_total_amount = fields.Monetary(u'本币合计', currency_field='company_currency_id', compute=compute_total_amount_currency)
     #payment_date_store = fields.Datetime(u'付款日期', related='payment_id.payment_date_confirm', store=True)
 # #akiny
 #     @api.depends('expense_line_ids', 'expense_line_ids.categ_id')
@@ -140,14 +140,11 @@ class hr_expense_sheet(models.Model):
 #             second_categ_id = expense.second_categ_id
 #         self.second_categ_id = second_categ_id
 
-    #@api.onchange('categ_id')
-   # def onchange_categ(self):
-   #     self.second_categ_id = None
-    #    for line in self.expense_line_ids:
-   #         line.categ_id = self.categ_id
-   #         line.second_categ_id = None
-  #          line.product_id = False
-   #         line.product_id = None
+    @api.onchange('currency_id')
+    def onchange_currency_id(self):
+        for line in self.expense_line_ids:
+            line.currency_id = self.currency_id
+
 
 
  #   @api.onchange('second_categ_id')

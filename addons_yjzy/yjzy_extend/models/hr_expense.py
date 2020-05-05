@@ -42,7 +42,7 @@ class hr_expense(models.Model):
                 else:
                     pass
 
-    @api.depends('currency_id')
+    @api.depends('currency_id','total_amount')
     def compute_total_amount_currency(self):
        # self.ensure_one() 只需要计算一条记录
         total_currency_amount = self.currency_id.compute(self.total_amount, self.company_currency_id)
@@ -454,6 +454,8 @@ class hr_expense_line(models.Model):
     user_id = fields.Many2one('res.users', u'用户', required=True)
     amount = fields.Float(u'金额')
     state = fields.Selection([('draft', u'待确认'), ('confirmed', u'已确认')], u'状态', default='draft')
+
+
 
     def user_confirm(self):
         self.ensure_one()
