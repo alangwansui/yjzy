@@ -484,12 +484,18 @@ class transport_bill(models.Model):
         self.hs_fill = 'others'
 
     def unlink(self):
+        sale_orders = self.mapped('so_ids')
+
         for one in self:
             if one.state != 'cancel':
                 raise Warning(u'只有取消状态允许删除')
 
+        res = super(transport_bill, self).unlink()
 
-        return super(transport_bill, self).unlink()
+        sale_lines = sale_orders.mapped('order_line')
+        sale_lines.compute_rest_tb_qty()
+
+        return res
 
     def action_cancel(self):
         self.state = 'cancel'
