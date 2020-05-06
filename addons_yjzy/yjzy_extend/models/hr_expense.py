@@ -154,6 +154,7 @@ class hr_expense(models.Model):
     company_currency_id = fields.Many2one('res.currency', u'公司货币',  default=lambda self: self.env.user.company_id.currency_id.id)
     company_currency_total_amount = fields.Monetary(u'本币合计', currency_field='company_currency_id', compute=compute_total_amount_currency, store=True)
 
+    user_menu_id = fields.Many2one('user.menu', u'看板记录')
 
     #payment_date_store = fields.Datetime(u'付款日期')
 

@@ -75,6 +75,8 @@ class user_menu(models.Model):
 
     active = fields.Boolean('有效', default=True)
 
+    hr_expense_ids = fields.One2many('hr.expense', 'user_menu_id','费用明细')
+
     def compute_len_records(self):
         try:
             gb_var = {'uid': self._uid}
