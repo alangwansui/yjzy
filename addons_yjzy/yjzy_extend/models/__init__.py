@@ -65,7 +65,7 @@ from . import partner_product_origin
 from . import print_record
 
 from . import print_record
-
+from . import user_menu
 
 
 

@@ -19,3 +19,31 @@ class res_company(models.Model):
 
 
 
+
+
+    # def test_test(self):
+    #     """
+    #     设置所有公司字段为1
+    #     :return:
+    #     """
+    #
+    #     for f in self.env['ir.model.fields'].search([('ttype','=','many2one'),('relation','=','res.company'),('store','=',True)]):
+    #         #print(f.name, f.model_id.model.replace('.', '_'),  f.model_id.name)
+    #
+    #         table_name  = f.model_id.model.replace('.', '_')
+    #         fd_name = f.name
+    #
+    #         sql = 'update %s set %s = 1' % (table_name, f.name)
+    #
+    #         try:
+    #
+    #
+    #             self._cr.execute(sql)
+    #             self._cr.commit()
+    #         except Exception as e:
+    #             print('eee', sql, e)
+
+
+
+
+
