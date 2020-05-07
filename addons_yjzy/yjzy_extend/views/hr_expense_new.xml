@@ -1542,6 +1542,20 @@
         </record>
 
 
+         <record id="hr_expense_un_payment_view_pivot" model="ir.ui.view">
+            <field name="name">hr.expense.un.payment.pivot</field>
+            <field name="model">hr.expense</field>
+            <field name="arch" type="xml">
+                <pivot string="Expenses Analysis">
+                    <field name="categ_id" type="row"/>
+                    <field name="employee_id" interval="month" type="col"/>
+                    <field name="total_amount" type="measure"/>
+                    <field name="company_currency_total_amount" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+
          <record id="user_menu_hr_expense_action" model="ir.actions.act_window">
             <field name="name">费用查询</field>
             <field name="type">ir.actions.act_window</field>
