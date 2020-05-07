@@ -19,6 +19,7 @@
 
     'data': [
         'views/user_menu.xml',
+        'template/assets.xml',
     ],
 
     'qweb': [

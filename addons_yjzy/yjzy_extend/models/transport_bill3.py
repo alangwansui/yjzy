@@ -48,7 +48,7 @@ class transport_bill(models.Model):
         for line in self.btls_hs_ids:
             hs = line.hs_id
             partner = line.supplier_id
-            k = '%s:%s:%s' % (hs.code, partner.id, line.tongji_type)
+            k = '%s:%s:%s' % (hs.id, partner.id, line.tongji_type)
             if k in res:
                 res[k] |= line
             else:

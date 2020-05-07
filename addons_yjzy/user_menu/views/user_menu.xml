@@ -100,89 +100,86 @@
         <field name="name">user_menu.kanban</field>
         <field name="model">user.menu</field>
         <field name="arch" type="xml">
-        <kanban class="oe_background_grey o_kanban_dashboard o_emphasize_colors o_stock_kanban" string="工作看板">
+            <kanban class="oe_background_grey o_kanban_dashboard o_emphasize_colors o_stock_kanban" string="工作看板">
                 <field name="name"/>
                 <field name="user_id"/>
                 <field name="len_records"/>
                 <field name="dynamic_html"/>
 
                 <templates>
-               <t t-name="kanban-box">
-                       <div>
-                                    <div t-attf-class="o_kanban_card_header">
-                                        <div class="o_kanban_card_header_title">
-                                            <div class="o_primary">
-                                                <a type="object" name="get_stock_picking_action_picking_type">
-                                                    <field name="name"/>
-                                                </a>
-                                            </div>
-                                            <div class="o_secondary"/>
-                                        </div>
-                                        <div class="o_kanban_manage_button_section">
-                                            <a class="o_kanban_manage_toggle_button" href="#"><i class="fa fa-ellipsis-v"/></a>
-                                        </div>
+                    <t t-name="kanban-box">
+                        <div>
+                            <div t-attf-class="o_kanban_card_header">
+                                <div class="o_kanban_card_header_title">
+                                    <div class="o_primary">
+                                        <a type="object" name="get_stock_picking_action_picking_type">
+                                            <field name="name"/>
+                                        </a>
                                     </div>
+                                    <div class="o_secondary"/>
+                                </div>
+                                <div class="o_kanban_manage_button_section">
+                                    <a class="o_kanban_manage_toggle_button" href="#">
+                                        <i class="fa fa-ellipsis-v"/>
+                                    </a>
+                                </div>
+                            </div>
 
-                              <div class="container o_kanban_card_content">
+                            <div class="container o_kanban_card_content">
                                 <div class="row">
-                                  <div class="col-xs-5 o_kanban_primary_left">
-                                   <button class="btn btn-primary" name="open_action" type="object">
-                                        <field name="name"/>
-                                        <span>
-                                            <t t-esc="record.len_records.value"/>
-                                        </span>
-                                       </button>
-                                   </div>
-                                            <div class="col-xs-7 o_kanban_primary_right">
-                                                <div class="row">
-
-                                                      <field name="dynamic_html" widget="html"/>
-
-                                                </div>
-
-
-                                            </div>
-                                        </div>
+                                    <div class="col-xs-5 o_kanban_primary_left">
+                                        <button class="btn btn-primary" name="open_action" type="object">
+                                            <field name="name"/>
+                                            <span>
+                                                <t t-esc="record.len_records.value"/>
+                                            </span>
+                                        </button>
                                     </div>
-
-                               <div class="container o_kanban_card_manage_pane">
+                                    <div class="col-xs-7 o_kanban_primary_right">
                                         <div class="row">
-                                            <div class="col-xs-6 o_kanban_card_manage_section o_kanban_manage_view">
-                                                <div class="o_kanban_card_manage_title">
-                                                    <span>View</span>
-                                                </div>
-                                    <field name="dynamic_html_b" widget="html"/>
-                                            </div>
-                                            <div class="col-xs-6 o_kanban_card_manage_section o_kanban_manage_new">
-                                                <div class="o_kanban_card_manage_title">
-                                                    <span>New</span>
-                                                </div>
-                                                <div>
-                                                    <a>test</a>
-                                                </div>
-                                                <div>
-                                                    <a>test</a>
-                                                </div>
-                                            </div>
+
+                                            <field name="dynamic_html" widget="html"/>
+
                                         </div>
 
-                                        <div t-if="widget.editable" class="o_kanban_card_manage_settings row">
-                                            <div class="col-xs-8">
-                                                <ul class="oe_kanban_colorpicker" data-field="color"/>
-                                            </div>
-                                            <div class="col-xs-4 text-right">
-                                                <a type="edit">Settings</a>
-                                            </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="container o_kanban_card_manage_pane">
+                                <div class="row">
+                                    <div class="col-xs-6 o_kanban_card_manage_section o_kanban_manage_view">
+                                        <div class="o_kanban_card_manage_title">
+                                            <span>View</span>
+                                        </div>
+                                        <field name="dynamic_html_b" widget="html"/>
+                                    </div>
+                                    <div class="col-xs-6 o_kanban_card_manage_section o_kanban_manage_new">
+                                        <div class="o_kanban_card_manage_title">
+                                            <span>New</span>
+                                        </div>
+                                        <div>
+                                            <a>test</a>
+                                        </div>
+                                        <div>
+                                            <a>test</a>
                                         </div>
                                     </div>
+                                </div>
 
-                       </div>
+                                <div t-if="widget.editable" class="o_kanban_card_manage_settings row">
+                                    <div class="col-xs-8">
+                                        <ul class="oe_kanban_colorpicker" data-field="color"/>
+                                    </div>
+                                    <div class="col-xs-4 text-right">
+                                        <a type="edit">Settings</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
                     </t>
-
-
-
-
-
 
 
                 </templates>
@@ -190,6 +187,7 @@
 
         </field>
     </record>
+
 
     <record id="action_user_menu" model="ir.actions.act_window">
         <field name="name">工作看板</field>
@@ -201,44 +199,38 @@
     <menuitem id="menu_user_menu" name="工作看板" action="action_user_menu" sequence="0"/>
 
 
-     <record id="user_menu_expense_kanban" model="ir.ui.view">
+    <record id="user_menu_expense_kanban" model="ir.ui.view">
         <field name="name">user.menu.kanban</field>
         <field name="model">user.menu</field>
         <field name="arch" type="xml">
-        <kanban class="oe_background_grey o_kanban_dashboard o_account_kanban" string="工作看板">
+           <kanban class="oe_background_grey o_kanban_dashboard o_user_menu_kanban" style="width:100%" string="&#x5DE5;&#x4F5C;&#x770B;&#x677F;">
                 <field name="name"/>
                 <field name="user_id"/>
                 <field name="len_records"/>
                 <field name="dynamic_html"/>
                 <field name="res_model"/>
                  <field name="color"/>
-
+               <field name="sequence" widget="handel"/>
                 <templates>
                <t t-name="kanban-box">
                        <div t-attf-class="#{kanban_color(record.color.raw_value)}">
                             <!--t t-value="JSON.parse(record.kanban_dashboard.raw_value)" t-set="dashboard"/-->
-                            <t t-value="record.res_model.raw_value" t-set="journal_type"/>
-                            <t t-call="JournalTop"/>
+                            <t t-value="record.res_model.raw_value" t-set="user_menu_type"/>
+                            <t t-call="UserMenuTop"/>
 
                         <div class="container o_kanban_card_content">
                                 <div class="row">
-                                    <t t-if="(journal_type == 'hr.expense' )" t-call="JournalBodyBankCash"/>
-
-
-
+                                    <t t-if="(user_menu_type == 'hr.expense' )" t-call="Body_expense"/>
                                 </div>
-
                             </div>
-<div class="container o_kanban_card_manage_pane">
-                                <t t-call="JournalManage"/>
+                           <div class="container o_kanban_card_manage_pane">
+                                <t t-call="ExpenseManage"/>
                             </div>
 
 
-  </div>
+                      </div>
                     </t>
-
-
-                      <t t-name="JournalTop">
+                      <t t-name="UserMenuTop">
                         <div t-attf-class="o_kanban_card_header">
                             <div class="o_kanban_card_header_title">
                                 <div class="o_primary">
@@ -251,7 +243,7 @@
                                 </div-->
                             </div>
                             <div class="o_kanban_manage_button_section">
-                                <a class="o_kanban_manage_toggle_button" href="#"><i class="fa fa-ellipsis-v" /></a>
+                                <a class="o_kanban_manage_toggle_button" href="#"><i class="fa fa-ellipsis-v"/></a>
                             </div>
                         </div>
                     </t>
@@ -259,33 +251,30 @@
 
 
 <!--弹窗里的内容-->
-                           <t t-name="JournalBodyBankCash" >
+                           <t t-name="Body_expense">
                         <!-- On the left, display :
                             - A button corresponding to the bank_statements_source, if it wasn't configured, a button for each of them
                             - If there are statements to reconcile, a link to reconcile them -->
-                        <div class="col-xs-6 o_kanban_primary_left">
-
-                                <button type="object" name="action_open_reconcile" class="btn btn-primary btn-sm"> Reconcile Items</button>
-
-                            <t t-if="journal_type == 'bank'">
-                                <div name="bank_journal_default_cta">
-                                    <button >New Statement</button>
-                                    <a >New Statement</a>
+                        <!--div class="col-xs-6 o_kanban_primary_left">
+                                <div class="row">
+                                <div class="col-xs-6">
+                                    <span title="Balance in Odoo">今年已支付</span>
                                 </div>
-                                <div name="bank_journal_cta" >
-                                    <button  type="object" name="create_bank_statement" class="btn btn-primary btn-sm">New Statement</button>
-                                    <a  type="object" name="create_bank_statement" class="oe_inline">New Statement</a>
+                                <div class="col-xs-6 text-right">
+                                    <span></span>
                                 </div>
-                            </t>
-                            <t >
-                                <a  type="object" name="create_cash_statement" class="oe_inline">New Transactions</a>
-                            </t>
-                            <t >
-                                <button type="object" name="create_cash_statement" class="btn btn-primary btn-sm">New Transactions</button>
-                            </t>
-                        </div>
+                            </div>
+                            <div class="row" name="latest_statement" >
+                                <div class="col-xs-6">
+                                    <span title="Latest Statement">Latest Statement</span>
+                                </div>
+                                <div class="col-xs-6 text-right">
+                                    <span>test</span>
+                                </div>
+                            </div>
+                        </div-->
                         <!-- On the right, show other common informations/actions -->
-                        <div class="col-xs-6 o_kanban_primary_right">
+                        <!--div class="col-xs-6 o_kanban_primary_right">
                             <div class="row">
                                 <div class="col-xs-6">
                                     <span title="Balance in Odoo">Balance in GL</span>
@@ -303,12 +292,14 @@
                                 </div>
                             </div>
 
-                        </div>
+                        </div-->
+
+                                <field name="dynamic_html" widget="html"/>
                     </t>
 
 
 
-                           <t t-name="JournalManage">
+                           <t t-name="ExpenseManage">
 
                                <div class="container o_kanban_card_manage_pane">
                                         <div class="row">
@@ -349,7 +340,32 @@
 
         </field>
     </record>
-      <record id="action_user_expense_menu" model="ir.actions.act_window">
+
+    <!--record id="user_menu_expense_form" model="ir.ui.view">
+        <field name="name">user_menu.form</field>
+        <field name="model">user.menu</field>
+        <field name="arch" type="xml">
+            <form string="工作看板">
+                <sheet>
+                    <group col="2">
+                        <group>
+                        <field name="hr_expense_payment_ids">
+                            <tree >
+                                <field name="categ_id"/>
+                            </tree>
+                        </field>
+                        </group>
+                          <group>
+                        <field name="hr_expense_ids"/>
+                        </group>
+                    </group>
+
+                </sheet>
+            </form>
+
+        </field>
+    </record-->
+    <record id="action_user_expense_menu" model="ir.actions.act_window">
         <field name="name">费用工作看板</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">user.menu</field>
@@ -357,9 +373,10 @@
         <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('user_menu_tree')}),
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('user_menu_expense_kanban')}),
-                          (0, 0, {'view_mode': 'form', 'view_id': ref('user_menu_form')})]"/>
+                         ]"/>
     </record>
 
-    <menuitem id="menu_user_expense_menu" name="费用工作看板" action="action_user_expense_menu" groups="base.group_system" sequence="0"/>
+    <menuitem id="menu_user_expense_menu" name="费用工作看板" action="action_user_expense_menu" groups="base.group_system"
+              sequence="0"/>
 
 </odoo>

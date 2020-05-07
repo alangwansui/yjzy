@@ -127,7 +127,7 @@ class hr_expense_sheet(models.Model):
     is_editable = fields.Boolean(u'可编辑')
     company_currency_id = fields.Many2one('res.currency', u'公司货币',
                                           default=lambda self: self.env.user.company_id.currency_id.id)
-    company_currency_total_amount = fields.Monetary(u'本币合计', currency_field='company_currency_id', compute=compute_total_amount_currency, store=True)
+    company_currency_total_amount = fields.Monetary(u'本币合计', currency_field='company_currency_id', digits=(2, 4),compute=compute_total_amount_currency, store=True)
     #payment_date_store = fields.Datetime(u'付款日期', related='payment_id.payment_date_confirm', store=True)
 # #akiny
 #     @api.depends('expense_line_ids', 'expense_line_ids.categ_id')

@@ -1542,6 +1542,22 @@
         </record>
 
 
+         <record id="user_menu_hr_expense_action" model="ir.actions.act_window">
+            <field name="name">费用查询</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.expense</field>
+            <field name="view_mode">tree,form,graph,pivot</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <!--field name="target">new</field-->
+            <field name="view_ids" eval="[(5, 0, 0),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('hr_expense_manager_tree')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('view_hr_expense_new_form')}),
+                              ]"/>
+        </record>
+
+
+
         <!--record id="hr_expense_product_new_action" model="ir.actions.act_window">
            <field name="name">费用产品</field>
            <field name="type">ir.actions.act_window</field>
