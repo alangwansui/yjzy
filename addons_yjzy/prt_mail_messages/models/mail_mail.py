@@ -21,6 +21,7 @@ class mail_mail(models.Model):
     readed = fields.Boolean('客户已打开')
     read_log_ids = fields.One2many('mail.read.log', 'mail_id', '客户读取记录')
     need_return_notification = fields.Boolean('需要回执')
+    need_have_read_img = fields.Boolean('发送打开统计标记', default=True)
 
     @api.multi
     def _send(self, auto_commit=False, raise_exception=False, smtp_session=None):
@@ -123,14 +124,29 @@ class mail_mail(models.Model):
                 res = None
                 #print('==========wwww======',email_list)
                 for email in email_list:
-                    base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
-                    readed_tag = '<img style="display:none;"  src="%s/mail_mail/have_read/%s"/>' % (base_url, self.id)
+
+
+
+
+
+
+
+
+
+                    body = email.get('body')
+                    if mail.need_have_read_img:
+                        base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+                        readed_tag = '<img style="display:none;"  src="%s/mail_mail/have_read/%s"/>' % (base_url, self.id)
+                        body += readed_tag
+
+
 
                     msg = IrMailServer.build_email(
                         email_from=mail.email_from,
                         email_to=email.get('email_to'),
                         subject=mail.subject,
-                        body=email.get('body') + readed_tag,
+                        #body=  email.get('body') + readed_tag,
+                        body=body,
                         body_alternative=email.get('body_alternative'),
                         #email_cc=tools.email_split_and_format(email_cc_string),
                         #<jon> 邮件确保cc 来自文本，所有partner_cc 都会预选转为email_cc 传入

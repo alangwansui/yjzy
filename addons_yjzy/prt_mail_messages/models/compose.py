@@ -103,6 +103,9 @@ class PRTMailComposer(models.Model):
     replay_meesage_id = fields.Many2one('mail.message', '回复的消息')
 
     need_return_notification = fields.Boolean('需要回执')
+    need_have_read_img = fields.Boolean('发送打开统计标记', default=True)
+
+
 
 
     @api.model
@@ -311,6 +314,7 @@ class PRTMailComposer(models.Model):
                 'personal_partner_ids': [x.id for x in self.personal_partner_ids],
                 'personal_partner_cc_ids': [x.id for x in self.personal_partner_cc_ids],
                 'need_return_notification': self.need_return_notification,
+                'need_have_read_img': self.need_have_read_img,
             }
 
             #print('=1212====',mail_values['email_to'],  [partner_cc.id for partner_cc in self.partner_cc_ids], mail_values)

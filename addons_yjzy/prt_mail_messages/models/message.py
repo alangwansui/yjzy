@@ -173,7 +173,7 @@ class PRTMailMessage(models.Model):
     personal_partner_email = fields.Char('personal.partner', related='personal_author_id.email', store=False)
 
     need_return_notification = fields.Boolean('需要回执')
-
+    need_have_read_img = fields.Boolean('发送打开统计标记')
 
     #message端，记录：ip地址，country， regionName，City， zip，第一次打开的时间, 再统计一下次数。
 

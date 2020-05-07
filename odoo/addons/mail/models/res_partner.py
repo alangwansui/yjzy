@@ -110,6 +110,7 @@ class Partner(models.Model):
             'auto_delete': self._context.get('mail_auto_delete', True),
             'references': references,
             'need_return_notification': message.need_return_notification,
+            'need_have_read_img': message.need_have_read_img,
 
         }
         mail_values.update(custom_values)

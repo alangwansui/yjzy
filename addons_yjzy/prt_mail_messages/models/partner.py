@@ -70,8 +70,6 @@ class PRTPartner(models.Model):
             if (not create_values.get('email_to')) and recipient_values.get('email_to'):
                 create_values.update(recipient_values)
 
-            print('======mail.mail create at here ========', mail_values.get('need_return_notification'),  create_values.get('need_return_notification'), create_values)
-
             emails |= self.env['mail.mail'].create(create_values)
         return emails, recipients_nbr
 
