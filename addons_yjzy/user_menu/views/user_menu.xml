@@ -375,7 +375,7 @@
                          ]"/>
     </record>
 
-    <menuitem id="menu_user_expense_menu" name="费用工作看板" action="action_user_expense_menu" parent="hr_expense.menu_hr_expense_root"
+    <menuitem id="menu_user_expense_menu" name="费用工作看板" action="action_user_expense_menu" parent="hr_expense.menu_hr_expense_root" groups="base.group_system"
               sequence="1"/>
 
 </odoo>
