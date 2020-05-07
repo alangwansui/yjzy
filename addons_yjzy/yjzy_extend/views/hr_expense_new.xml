@@ -1548,7 +1548,7 @@
             <field name="arch" type="xml">
                 <pivot string="Expenses Analysis">
                     <field name="categ_id" type="row"/>
-                    <field name="employee_id" interval="month" type="col"/>
+                    <field name="employee_id"  type="col"/>
                     <field name="total_amount" type="measure"/>
                     <field name="company_currency_total_amount" type="measure"/>
                 </pivot>
