@@ -369,14 +369,13 @@
         <field name="name">费用工作看板</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">user.menu</field>
-        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_mode">kanban</field>
         <field name="view_ids" eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'tree', 'view_id': ref('user_menu_tree')}),
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('user_menu_expense_kanban')}),
                          ]"/>
     </record>
 
-    <menuitem id="menu_user_expense_menu" name="费用工作看板" action="action_user_expense_menu" groups="base.group_system"
-              sequence="0"/>
+    <menuitem id="menu_user_expense_menu" name="费用工作看板" action="action_user_expense_menu" parent="hr_expense.menu_hr_expense_root"
+              sequence="1"/>
 
 </odoo>
