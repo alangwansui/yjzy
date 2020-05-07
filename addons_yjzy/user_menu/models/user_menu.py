@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import pytz
 from datetime import datetime, timedelta, date
+from dateutil.relativedelta import relativedelta
 from odoo.exceptions import Warning
 from odoo.tools.safe_eval import safe_eval
 from odoo import models, fields, api
@@ -100,7 +101,8 @@ class user_menu(models.Model):
                         'self': one, 'uid': one._uid, 'datetime': datetime, 'len': len,
                         'today': fields.date.today().strftime(DF), 'fields': fields,
                         'context_today': fields.date.today,
-                        'relativedelta': timedelta,
+                        'timedelta': timedelta,
+                        'relativedelta': relativedelta,
                         'dt': Date_Time_Compute,
                     }
 
