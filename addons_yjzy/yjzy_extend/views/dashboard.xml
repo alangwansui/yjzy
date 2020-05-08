@@ -74,6 +74,14 @@
         </record>
         <menuitem id="dashboard_dashboard_menu_1" name="自定义仪表板1"  parent="dashboard_dashboard_root"  action="dashboard_dashboard_action_1" sequence=""/>
 
+        <record id="dashboard_dashboard_action_2" model="ir.actions.act_window">
+            <field name="name">自定义仪表板</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">dashboard.dashboard</field>
+            <field name="view_mode">form</field>
+            <field name="context">{'dashboard_id': 2}</field>
+        </record>
+        <menuitem id="dashboard_dashboard_menu_2" name="自定义仪表板2"  parent="dashboard_dashboard_root"  action="dashboard_dashboard_action_2" sequence=""/>
 
     </data>
 </odoo>
