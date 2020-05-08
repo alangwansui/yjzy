@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+
+        <record id="dashboard_dashboard_tree" model="ir.ui.view">
+            <field name="name">dashboard.dashboard.tree</field>
+            <field name="model">dashboard.dashboard</field>
+            <field name="arch" type="xml">
+                <tree string="自定义仪表板">
+                    <field name="id"/>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="dashboard_dashboard_form" model="ir.ui.view">
+            <field name="name">dashboard.dashboard.form</field>
+            <field name="model">dashboard.dashboard</field>
+            <field name="arch" type="xml">
+                <form string="自定义仪表板">
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="view_ids">
+                                <tree>
+                                    <field name="arch"/>
+                                </tree>
+                                <form>
+                                    <field name="arch"/>
+                                </form>
+                            </field>
+                        </group>
+
+                    </group>
+
+                </form>
+            </field>
+        </record>
+
+
+
+        <record id="dashboard_dashboard_action" model="ir.actions.act_window">
+            <field name="name">自定义仪表板</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">dashboard.dashboard</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+        <!-- This Menu Item must have a parent and an action -->
+        <menuitem id="dashboard_dashboard_root" name="自定义仪表板"/>
+
+
+
+        <record id="dashboard_dashboard_action_manager" model="ir.actions.act_window">
+            <field name="name">自定义仪表板</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">dashboard.dashboard</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem id="dashboard_dashboard_menu" name="自定义仪表板:管理模式"  parent="dashboard_dashboard_root"  action="dashboard_dashboard_action_manager" sequence=""/>
+
+
+
+
+        <!-- 需要多个 复制这个仪表板 修改即可 -->
+        <record id="dashboard_dashboard_action_1" model="ir.actions.act_window">
+            <field name="name">自定义仪表板</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">dashboard.dashboard</field>
+            <field name="view_mode">form</field>
+            <field name="context">{'dashboard_id': 1}</field>
+        </record>
+        <menuitem id="dashboard_dashboard_menu_1" name="自定义仪表板1"  parent="dashboard_dashboard_root"  action="dashboard_dashboard_action_1" sequence=""/>
+
+
+    </data>
+</odoo>
+
+
+

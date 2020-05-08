@@ -67,6 +67,7 @@ from . import print_record
 from . import print_record
 from . import user_menu
 
+from . import dashboard
 
 
 
