@@ -11,7 +11,7 @@ class res_partner_bank(models.Model):
 
     huming = fields.Char(u'收款人')
     kaihuhang = fields.Char(u'开户行')
-    bank_type = fields.Selection([('company_supplier', '供应商'), ('personal', '部分有')], '内部类型')
+    bank_type = fields.Selection([('company_supplier', '供应商'), ('personal', '用户个人')], '内部类型')
     huming_address = fields.Char(u'收款人地址')
     swift = fields.Char('SWIFT(非中国大陆供应商)')
     kaihuhang_address = fields.Char('银行地址')

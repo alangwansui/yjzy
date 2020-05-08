@@ -97,23 +97,23 @@ class res_partner(models.Model):
     customer_info_from_uid = fields.Many2one('res.users',u'客户获取人')
 
 
-    customer_purchase_in_china = fields.Monetary(u'客户在中国采购规模(CNY)',currency_field='customer_purchase_in_china_currency_id')
+    customer_purchase_in_china = fields.Char(u'客户在中国采购规模(CNY)')
     customer_purchase_in_china_currency_id = fields.Many2one('res.currency', '客户在中国采购规模币种',default=lambda self: self.env.user.company_id.currency_id.id)
     customer_purchase_in_china_note = fields.Text(u'备注')
 
-    customer_sale_total = fields.Monetary(u'客户销售额(CNY)', currency_field='customer_sale_total_currency_id')
+    customer_sale_total = fields.Char(u'客户销售额(CNY)')
     customer_sale_total_currency_id = fields.Many2one('res.currency', '客户销售额币种',
                                                       default=lambda self: self.env.user.company_id.currency_id.id)
     customer_sale_total_note = fields.Text(u'备注')
 
 
-    supplier_sale_total = fields.Monetary(u'供应商销售额(CNY)',
+    supplier_sale_total = fields.Char(u'供应商销售额(CNY)',
                                                  currency_field='supplier_sale_total_currency_id')
     supplier_sale_total_currency_id = fields.Many2one('res.currency', '供应商销售额币种', default=lambda
         self: self.env.user.company_id.currency_id.id)
     supplier_sale_total_note = fields.Text(u'备注')
 
-    supplier_export_total = fields.Monetary(u'供应商出口额(CNY)',
+    supplier_export_total = fields.Char(u'供应商出口额(CNY)',
                                            currency_field='supplier_export_total_currency_id')
     supplier_export_total_currency_id = fields.Many2one('res.currency', '供应商出口额币种', default=lambda
         self: self.env.user.company_id.currency_id.id)
@@ -147,10 +147,10 @@ class res_partner(models.Model):
     partner_level = fields.Many2one('partner.level','等级')
     is_editable = fields.Boolean(u'是否允许编辑')
 
-    @api.onchange('country_id')
-    def onchange_country_id(self):
+    @api.onchange('invoice_title')
+    def onchange_invoice_title(self):
         if self.type == 'delivery':
-            self.name = self.country_id.name
+            self.name = self.invoice_title
 
     @api.onchange('sale_currency_id')
     def onchange_sale_currency(self):

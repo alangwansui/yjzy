@@ -71,7 +71,7 @@
     </record>
 
 
-    <menuitem id="menu_partner_level_customer" name="客户等级" parent="yjzy_extend.new_customer_root" action="action_partner_level_customer" sequence="99"/>
+    <menuitem id="menu_partner_level_customer" name="客户等级" parent="yjzy_extend.supplier_config" action="action_partner_level_customer" sequence="99"/>
 
 
     <record id="action_partner_level_supplier" model="ir.actions.act_window">
@@ -87,7 +87,7 @@
     </record>
 
 
-    <menuitem id="menu_partner_level_supplier" name="供应商等级" parent="yjzy_extend.new_supplier_root" action="action_partner_level_supplier" sequence="99"/>
+    <menuitem id="menu_partner_level_supplier" name="供应商等级" parent="yjzy_extend.supplier_config" action="action_partner_level_supplier" sequence="99"/>
 
     </data>
 

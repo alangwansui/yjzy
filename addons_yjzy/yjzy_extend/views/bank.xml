@@ -1,55 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        
+
         <record model="ir.ui.view" id="inherit_view_partner_bank_tree">
-        	<field name="name">res.partner.bank.tree</field>
-        	<field name="model">res.partner.bank</field>
-        	<field name="inherit_id" ref="base.view_partner_bank_tree"/>
-        	<field name="arch" type="xml">
-        		<tree position="inside">
-        			<field name="huming" />
-        		</tree>
-        	</field>
+            <field name="name">res.partner.bank.tree</field>
+            <field name="model">res.partner.bank</field>
+            <field name="inherit_id" ref="base.view_partner_bank_tree"/>
+            <field name="arch" type="xml">
+                <tree position="inside">
+                    <field name="huming"/>
+                </tree>
+            </field>
         </record>
-        
+
 
         <record model="ir.ui.view" id="inherit_view_partner_bank_form">
-        	<field name="name">res.partner.bank.form</field>
-        	<field name="model">res.partner.bank</field>
-        	<field name="inherit_id" ref="base.view_partner_bank_form"/>
-        	<field name="arch" type="xml">
-        		<field name="acc_number" position="after">
-        			<field name="huming" />
-
-
-        		</field>
-        	</field>
+            <field name="name">res.partner.bank.form</field>
+            <field name="model">res.partner.bank</field>
+            <field name="inherit_id" ref="base.view_partner_bank_form"/>
+            <field name="arch" type="xml">
+                <field name="acc_number" position="after">
+                    <field name="huming"/>
+                </field>
+            </field>
         </record>
 
-  <record id="view_new_bank_form" model="ir.ui.view">
+
+        <record model="ir.ui.view" id="view_new_bank_tree">
+            <field name="name">res.partner.bank.new.tree</field>
+            <field name="model">res.partner.bank</field>
+            <field name="arch" type="xml">
+                <tree string="银行账户">
+
+                    <field name="bank_type" invisible="1"/>
+                    <field name="huming"/>
+                    <field name="huming_address"/>
+                    <field name="acc_number"/>
+                    <field name="swift"/>
+                    <field name="kaihuhang"/>
+                    <field name="kaihuhang_address"/>
+                    <field name="bank_id"/>
+					<field name="partner_id" string="供应商" options="{'no_create': True, 'no_open':1}"/>
+                    <field name="currency_id" groups="base.group_multi_currency" options="{'no_create': True, 'no_open':1}"/>
+                    <field name="company_id" groups="base.group_multi_company" options="{'no_create': True, 'no_open':1}"/>
+
+
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_new_bank_form" model="ir.ui.view">
             <field name="name">res.bank.form.new</field>
             <field name="model">res.partner.bank</field>
             <field name="arch" type="xml">
                 <form string="Contact">
-					<group>
-					<field name="bank_type"/>
-						<field name="huming" />
-						<field name="huming_address"/>
-                    <field name="acc_number"/>
-						<field name="swift"/>
-						<field name="kaihuhang"/>
-						<field name="kaihuhang_address"/>
-					<field name="bank_id"/>
-					<field name="currency_id" groups="base.group_multi_currency" options="{'no_create': True}"/>
-					<field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"/>
+                    <group>
+                        <field name="bank_type" invisible="1"/>
+                        <field name="huming"/>
+                        <field name="huming_address"/>
+                        <field name="acc_number"/>
+                        <field name="swift"/>
+                        <field name="kaihuhang"/>
+                        <field name="kaihuhang_address"/>
+                        <field name="bank_id"/>
+						<field name="partner_id" string="供应商" options="{'no_create': True, 'no_open':1}"/>
+                        <field name="currency_id" groups="base.group_multi_currency" options="{'no_create': True, 'no_open':1}"/>
+                        <field name="company_id" groups="base.group_multi_company" options="{'no_create': True, 'no_open':1}"/>
 
-					</group>
+
+                    </group>
                 </form>
             </field>
         </record>
 
 
+        <record id="action_new_bank_supplier" model="ir.actions.act_window">
+            <field name="name">供应商账户信息</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.partner.bank</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('bank_type','=','supplier')]</field>
+            <field name="context">{'default_bank_type':'supplier'}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_new_bank_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_new_bank_form')})]"/>
+        </record>
+
+     <menuitem id="menu_partner_bank_supplier" name="供应商账户信息" parent="yjzy_extend.supplier_config" action="action_new_bank_supplier" sequence="99"/>
+
+		<record id="action_new_bank_personal" model="ir.actions.act_window">
+            <field name="name">我登记的账户信息</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.partner.bank</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('bank_type','=','personal')]</field>
+            <field name="context">{'default_bank_type':'personal'}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('base.view_partner_bank_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('base.view_partner_bank_form')})]"/>
+        </record>
+
+     <menuitem id="menu_partner_bank_personal" name="我登记的账户信息" parent="yjzy_extend.supplier_config" groups="base.group_system" action="action_new_bank_personal" sequence="99"/>
 
 
     </data>
