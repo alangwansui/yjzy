@@ -301,8 +301,8 @@ class account_payment(models.Model):
         amount = self.amount
         account_code = '112301'
         ctx = {'default_sfk_type': 'rcfkd'}
-        advance_account = self.env['account.account'].search([('code', '=', account_code)], limit=1)
-
+        advance_account = self.env['account.account'].search([('code', '=', account_code),('company_id', '=', self.company_id.id)],limit=1)
+        print('============', advance_account)
         if not self.fk_journal_id.currency_id:
             raise Warning(u'没有取到付款日记账的货币，请检查设置')
         if not advance_account:

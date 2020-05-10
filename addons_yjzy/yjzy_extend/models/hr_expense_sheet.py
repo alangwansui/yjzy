@@ -316,7 +316,7 @@ class hr_expense_sheet(models.Model):
         account_code = amount > 0 and '112301' or '220301'
         sfk_type = amount > 0 and 'rcfkd' or 'rcskd'
         ctx = {'default_sfk_type': sfk_type}
-        advance_account = self.env['account.account'].search([('code', '=', account_code)], limit=1)
+        advance_account = self.env['account.account'].search([('code', '=', account_code),('company_id', '=', self.company_id.id)], limit=1)
 
         if not self.fk_journal_id.currency_id:
             raise Warning(u'没有取到付款日记账的货币，请检查设置')
