@@ -23,6 +23,8 @@ access_btls_comb,access_btls_comb,model_btls_comb,base.group_user,1,1,1,0
 access_print_record,access_print_record,model_print_record,base.group_user,1,1,1,0
 
 
+access_dashboard_dashboard,access_dashboard_dashboard,model_dashboard_dashboard,base.group_user,1,1,1,1
+
 
 
 
