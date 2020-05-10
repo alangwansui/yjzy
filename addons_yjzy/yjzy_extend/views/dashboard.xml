@@ -39,7 +39,6 @@
         </record>
 
 
-
         <record id="dashboard_dashboard_action" model="ir.actions.act_window">
             <field name="name">自定义仪表板</field>
             <field name="type">ir.actions.act_window</field>
@@ -49,8 +48,7 @@
 
 
         <!-- This Menu Item must have a parent and an action -->
-        <menuitem id="dashboard_dashboard_root" name="自定义仪表板"/>
-
+        <menuitem id="dashboard_dashboard_root" name="自定义仪表板" groups="base.group_system"/>
 
 
         <record id="dashboard_dashboard_action_manager" model="ir.actions.act_window">
@@ -59,9 +57,9 @@
             <field name="res_model">dashboard.dashboard</field>
             <field name="view_mode">tree,form</field>
         </record>
-        <menuitem id="dashboard_dashboard_menu" name="自定义仪表板:管理模式"  parent="dashboard_dashboard_root"  action="dashboard_dashboard_action_manager" sequence=""/>
-
-
+        <menuitem id="dashboard_dashboard_menu" name="自定义仪表板:管理模式"
+                  parent="dashboard_dashboard_root" groups="base.group_system"
+                  action="dashboard_dashboard_action_manager" sequence=""/>
 
 
         <!-- 需要多个 复制这个仪表板 修改即可 -->
@@ -72,7 +70,9 @@
             <field name="view_mode">form</field>
             <field name="context">{'dashboard_id': 1}</field>
         </record>
-        <menuitem id="dashboard_dashboard_menu_1" name="自定义仪表板1"  parent="dashboard_dashboard_root"  action="dashboard_dashboard_action_1" sequence=""/>
+        <menuitem id="dashboard_dashboard_menu_1" name="自定义仪表板1"
+                  parent="dashboard_dashboard_root" groups="base.group_system" action="dashboard_dashboard_action_1"
+                  sequence=""/>
 
         <record id="dashboard_dashboard_action_2" model="ir.actions.act_window">
             <field name="name">自定义仪表板</field>
@@ -81,7 +81,9 @@
             <field name="view_mode">form</field>
             <field name="context">{'dashboard_id': 2}</field>
         </record>
-        <menuitem id="dashboard_dashboard_menu_2" name="自定义仪表板2"  parent="dashboard_dashboard_root"  action="dashboard_dashboard_action_2" sequence=""/>
+        <menuitem id="dashboard_dashboard_menu_2" name="自定义仪表板2"
+                  groups="base.group_system" parent="dashboard_dashboard_root" action="dashboard_dashboard_action_2"
+                  sequence=""/>
 
     </data>
 </odoo>
