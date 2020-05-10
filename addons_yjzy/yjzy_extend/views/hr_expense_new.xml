@@ -67,9 +67,10 @@
                                 <field name="tax_ids" domain="[('type_tax_use', '=', 'purchase')]"
                                        widget="many2many_tags" invisible="1"
                                        groups="account.group_account_user"/>
+                                <field name="gongsi_id" string="费用公司主体" options="{'no_create':true,'no_open':1}"/>
+
                             </group>
                             <group>
-                                <field name="gongsi_id" groups="base.group_system"/>
                                 <field name="reference" invisible="1"/>
                                 <field name="account_id" invisible="1"
                                        attrs="{'readonly': [('state','in',['post','done'])]}"
@@ -284,7 +285,7 @@
                                 <field name="tax_ids" domain="[('type_tax_use', '=', 'purchase')]"
                                        widget="many2many_tags" invisible="1"
                                        groups="account.group_account_user"/>
-                                <field name="gongsi_id" groups="base.group_system"/>
+                                <field name="gongsi_id"  string="费用公司主体" options="{'no_create':true,'no_open':1}"/>
                             </group>
                             <group>
                                 <field name="reference" invisible="1"/>
@@ -410,7 +411,8 @@
                     <field name="categ_id" string="大类" widget="selection"/>
                     <field name="second_categ_id" string="中类" widget="selection"/>
                     <field name="product_id" string="小类"/>
-                    <field name="analytic_account_id" groups="analytic.group_analytic_accounting"/>
+                    <field name="gongsi_id" string="公司主体" options="{'no_create':true,'no_open':1}"/>
+                    <field name="analytic_account_id" invisible="1" groups="analytic.group_analytic_accounting"/>
                     <separator/>
                     <filter string="已支付" domain="[('state','=','done')]"/>
                     <filter string="已完成审批未支付" domain="[('sheet_id.state','in',['approve'])]"/>
@@ -427,7 +429,6 @@
                     <filter string="人员费用" domain="[('categ_id.id','=',110)]"/>
                     <filter string="公司费用" domain="[('categ_id.id','=',114)]"/>
                     <filter string="其他费用" domain="[('categ_id.id','=',193)]"/>
-
 
                     <filter invisible="1" domain="[('state', '=', 'draft')]" string="To Submit" name="to_report"
                             help="New Expense"/>
@@ -483,6 +484,7 @@
             <field name="arch" type="xml">
                 <tree string="费用明细" class="o_expense_tree" create="false" edit="false" delete="false"
                       decoration-warning="state=='draft'" decoration-danger="state=='cancel'">
+                    <field name="gongsi_id" string="公司主体" options="{'no_create':true,'no_open':1}"/>
                     <field name="create_date" string="创建日期"/>
                     <field name="date" string="发生日期"/>
                     <field name="create_uid" string="创建人"/>
@@ -513,7 +515,7 @@
                     <field name="budget_id" groups="base.group_system"/>
                     <field name="budget_amount" groups="base.group_system"/>
                     <field name="budget_amount_reset" groups="base.group_system"/>
-                    <field name="gongsi_id" groups="base.group_system"/>
+
 
 
                     <button name="action_get_attachment_view" string="View Attached Documents" type="object"
@@ -529,6 +531,7 @@
             <field name="model">hr.expense</field>
             <field name="arch" type="xml">
                 <tree string="费用明细" class="o_expense_tree" create="false" edit="false" delete="false">
+                    <field name="gongsi_id" string="公司主体" options="{'no_create':true,'no_open':1}"/>
                     <field name="create_date" string="创建日期"/>
                     <field name="date" string="发生日期"/>
                     <field name="create_uid" string="创建人"/>
@@ -552,7 +555,7 @@
                     <field name="budget_id" groups="base.group_system"/>
                     <field name="budget_amount" groups="base.group_system"/>
                     <field name="budget_amount_reset" groups="base.group_system"/>
-                    <field name="gongsi_id" groups="base.group_system"/>
+
 
                     <button name="action_get_attachment_view" string="View Attached Documents" type="object"
                             icon="fa-paperclip"
@@ -574,7 +577,7 @@
                     <field name="my_total_amount" string="总金额"/>
                     <field name="state" string="状态" invisible="1"/>
                     <field name="message_unread" invisible="1"/>
-                    <field name="gongsi_id" groups="base.group_system"/>
+                    <field name="gongsi_id" string="公司主体" options="{'no_create':true,'no_open':1}"/>
                 </tree>
             </field>
         </record>
@@ -594,7 +597,7 @@
                     <field name="x_wkf_state" string="审批流程"/>
                     <field name="state" string="状态" invisible="1"/>
                     <field name="message_unread" invisible="1"/>
-                    <field name="gongsi_id" groups="base.group_system"/>
+                    <field name="gongsi_id" string="公司主体" options="{'no_create':true,'no_open':1}"/>
                 </tree>
             </field>
         </record>
@@ -614,7 +617,7 @@
                     <field name="x_wkf_state" string="审批流程"/>
                     <field name="state" string="状态" invisible="1"/>
                     <field name="message_unread" invisible="1"/>
-                    <field name="gongsi_id" groups="base.group_system"/>
+                    <field name="gongsi_id" string="公司主体" options="{'no_create':true,'no_open':1}"/>
                 </tree>
             </field>
         </record>
@@ -698,7 +701,7 @@
                                 <field name="address_id" invisible="1"/>
                                 <field name="department_id" invisible="1"/>
                                 <field name="budget_type" invisible="1"/>
-                                <field name="gongsi_id" groups="base.group_system"/>
+                                <field name="gongsi_id" string="公司主体" options="{'no_create':true,'no_open':1}"/>
                                 <field name="is_budget" invisible="1"/>
 
                             </group>
@@ -807,6 +810,7 @@
                                                 attrs="{'invisible': [('is_confirmed','!=',True)]}"/>
                                         <field name="date" string="明细日期"
                                                invisible="1"/> <!--invisible="context.get('no_show_mark')" -->
+                                        <field name="gongsi_id" invisible="1" options="{'no_create':true,'no_open':1}"/>
                                     </tree>
                                 </field>
 
@@ -886,6 +890,7 @@
                                         <button name="is_confirmed_icon" icon="fa_check"
                                                 attrs="{'invisible': [('is_confirmed','!=',True)]}"/>
                                         <field name="date" string="明细日期" invisible="1"/>
+                                        <field name="gongsi_id" invisible="1" options="{'no_create':true,'no_open':1}"/>
                                     </tree>
                                 </field>
 
@@ -1038,7 +1043,7 @@
                                 <field name="address_id" invisible="1"/>
                                 <field name="department_id" invisible="1"/>
                                 <field name="budget_type" invisible="1"/>
-                                <field name="gongsi_id" groups="base.group_system"/>
+                                <field name="gongsi_id" string="公司主体" options="{'no_create':true,'no_open':1}"/>
                                 <field name="is_budget" invisible="1"/>
 
                             </group>
@@ -1149,6 +1154,7 @@
                                                 attrs="{'invisible': [('is_confirmed','!=',True)]}"/>
                                         <field name="date" string="明细日期"
                                                invisible="1"/> <!--invisible="context.get('no_show_mark')" -->
+                                        <field name="gongsi_id" string="公司主体" invisible="1" options="{'no_create':true,'no_open':1}"/>
                                     </tree>
                                 </field>
 
@@ -1224,6 +1230,7 @@
                                         <button name="is_confirmed_icon" icon="fa_check"
                                                 attrs="{'invisible': [('is_confirmed','!=',True)]}"/>
                                         <field name="date" string="明细日期" invisible="1"/>
+                                        <field name="gongsi_id" string="公司主体" invisible="1" options="{'no_create':true,'no_open':1}"/>
                                     </tree>
                                 </field>
 
@@ -1377,7 +1384,7 @@
                                 <field name="address_id" invisible="1"/>
                                 <field name="department_id" invisible="1"/>
                                 <field name="budget_type" invisible="1"/>
-                                <field name="gongsi_id" string="费用主体" options="{'no_create':true,'no_open':1}"/>
+                                <field name="gongsi_id" string="公司主体" options="{'no_create':true,'no_open':1}"/>
                                 <field name="is_budget" invisible="1"/>
                                 <field name="company_currency_total_amount" groups="base.group_system"/>
                             </group>
@@ -1508,6 +1515,7 @@
                                                 attrs="{'invisible': [('is_confirmed','!=',True)]}"/>
                                         <field name="date" string="明细日期"
                                                invisible="1"/> <!--invisible="context.get('no_show_mark')" -->
+                                         <field name="gongsi_id" string="公司主体" options="{'no_create':true,'no_open':1}" invisible="1"/>
                                     </tree>
                                 </field>
 
@@ -1594,6 +1602,7 @@
                                         <button name="is_confirmed_icon" icon="fa_check"
                                                 attrs="{'invisible': [('is_confirmed','!=',True)]}"/>
                                         <field name="date" string="明细日期" invisible="1"/>
+                                         <field name="gongsi_id" string="公司主体" options="{'no_create':true,'no_open':1}" invisible="1"/>
                                     </tree>
                                 </field>
 
