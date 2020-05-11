@@ -301,9 +301,7 @@ class account_reconcile_order(models.Model):
     is_editable = fields.Boolean(u'可编辑')
     gongsi_id = fields.Many2one('gongsi', '内部公司')
 
-    @api.onchange('gongsi_id')
-    def gongsi(self):
-        self.company_id = self.gongsi_id.company_id
+
 
 
     def unlink(self):

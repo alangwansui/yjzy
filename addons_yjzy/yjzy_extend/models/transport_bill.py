@@ -415,9 +415,7 @@ class transport_bill(models.Model):
     hs_fill_sale_packaging = fields.Boolean('报关packing信息')
     hs_fill_sale_others = fields.Boolean('报关其他信息')
 
-    @api.onchange('gongsi_id')
-    def gongsi(self):
-        self.company_id = self.gongsi_id.company_id
+
 
     @api.onchange('contract_type')
     def onchange_contract_type(self):

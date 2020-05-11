@@ -903,7 +903,7 @@
                                         <field name="partner_id" string="付款对象"
                                                context="{'default_supplier':True, 'default_customer':True}"/>
                                         <field name="fk_journal_id" string="付款账户"
-                                               domain="[('type','in',['bank', 'cash'])]"/>
+                                               domain="[('type','in',['bank', 'cash']),('company_id','=',company_id)]"/>
 
                                         <field name="back_tax_product_id"
                                                attrs="{'readonly': [('state','=','approve')]}"/>

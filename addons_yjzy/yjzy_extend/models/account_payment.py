@@ -199,9 +199,7 @@ class account_payment(models.Model):
             print('===', one)
             one.payment_date_confirm = one.write_date
 
-    @api.onchange('gongsi_id')
-    def gongsi(self):
-        self.company_id = self.gongsi_id.company_id
+
 
     @api.onchange('journal_id')
     def _onchange_journal(self):

@@ -145,9 +145,7 @@ class hr_expense_sheet(models.Model):
 #             second_categ_id = expense.second_categ_id
 #         self.second_categ_id = second_categ_id
 
-    @api.onchange('gongsi_id')
-    def gongsi(self):
-        self.company_id = self.gongsi_id.company_id
+
 
     @api.onchange('currency_id')
     def onchange_currency_id(self):
