@@ -158,7 +158,9 @@ class hr_expense(models.Model):
 
     #payment_date_store = fields.Datetime(u'付款日期')
 
-
+    @api.onchange('gongsi_id')
+    def gongsi(self):
+        self.company_id = self.gongsi_id.company_id
 
     @api.model
     def update_payment_date_store(self):

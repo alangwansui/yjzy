@@ -325,6 +325,10 @@ class sale_order(models.Model):
 
     is_different_payment_term = fields.Boolean('付款条款是否不同')
 
+    @api.onchange('gongsi_id')
+    def gongsi(self):
+        self.company_id = self.gongsi_id.company_id
+
 
 
     # : 公式的cost改成second_cost

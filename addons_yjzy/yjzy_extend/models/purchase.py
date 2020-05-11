@@ -135,6 +135,10 @@ class purchase_order(models.Model):
     #akiny
     so_id_state = fields.Selection('源销售合同状态',related='source_so_id.state')
 
+    @api.onchange('gongsi_id')
+    def gongsi(self):
+        self.company_id = self.gongsi_id.company_id
+
   #  partner_payment_term_id_value = fields.Many2one('account.payment.term', u'客户付款条款值')
     @api.onchange('payment_term_id')
     def onchange_payment_term_id(self):

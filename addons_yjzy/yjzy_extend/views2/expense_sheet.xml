@@ -78,7 +78,7 @@
                             <field name="balance"/>
                             <field name="partner_id" groups="base.group_system"/>
                             <field name="fk_journal_id" domain="[('type','in',['bank', 'cash'])]" groups="base.group_system"/>
-                            <field name="gongsi_id" invisible="1"/>
+                            <field name="gongsi_id" options="{'no_create':1,'no_open':1}"/>
 
 
                         </group>

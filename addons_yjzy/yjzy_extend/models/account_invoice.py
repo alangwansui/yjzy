@@ -40,6 +40,9 @@ class account_invoice(models.Model):
     sale_assistant_id = fields.Many2one('res.users', u'业务助理')
     gongsi_id = fields.Many2one('gongsi', '内部公司')
 
+    @api.onchange('gongsi_id')
+    def gongsi(self):
+        self.company_id = self.gongsi_id.company_id
 
     def name_get(self):
         ctx = self.env.context

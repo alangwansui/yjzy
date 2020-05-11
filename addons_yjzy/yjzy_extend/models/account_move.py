@@ -17,6 +17,9 @@ class account_move(models.Model):
 
     gongsi_id = fields.Many2one('gongsi', '内部公司')
 
+    @api.onchange('gongsi_id')
+    def gongsi(self):
+        self.company_id = self.gongsi_id.company_id
 
     @api.multi
     def post(self):
@@ -42,6 +45,9 @@ class account_move_line(models.Model):
 
     gongsi_id = fields.Many2one('gongsi', '内部公司')
 
+    @api.onchange('gongsi_id')
+    def gongsi(self):
+        self.company_id = self.gongsi_id.company_id
 
     # @api.model
     # def create(self, vals):

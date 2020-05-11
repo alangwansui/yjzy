@@ -47,6 +47,8 @@ class gongsi(models.Model):
     purchase_image = fields.Binary(u'采购合同章', widget='image')
     sale_image = fields.Binary(u'销售合同章', widget='image')
 
+    company_id = fields.Many2one('res.company',u'公司')
+
 
 
     def _compute_address(self):
