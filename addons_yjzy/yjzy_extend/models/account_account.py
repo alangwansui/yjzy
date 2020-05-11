@@ -8,6 +8,7 @@ class account_account(models.Model):
     _inherit = 'account.account'
 
     polarity = fields.Selection([(0, u'无'), (1, u'借方'), (-1, u'贷方')], u'借/贷', defualt=0)
+    gongsi_id = fields.Many2one('gongsi',u'公司主体')
 
     def get_balance(self):
         self.ensure_one()

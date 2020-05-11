@@ -302,8 +302,6 @@ class account_reconcile_order(models.Model):
     gongsi_id = fields.Many2one('gongsi', '内部公司')
 
 
-
-
     def unlink(self):
         for one in self:
             if one.state != 'cancelled':
@@ -510,34 +508,34 @@ class account_reconcile_order(models.Model):
         if model == 'payment':
             if payment_type == 'inbound':
                 debit_account = self.payment_account_id
-                credit_account = account_obj.search([('code', '=', '1122'), ('company_id', '=', self.company_id.id)], limit=1)
+                credit_account = account_obj.search([('code', '=', '1122'), ('company_id', '=', self.env.user.company_id.id)], limit=1)
                 debit_sign, credit_sign = 1, -1
             else:
-                debit_account = account_obj.search([('code', '=', '2202'), ('company_id', '=', self.company_id.id)], limit=1)
+                debit_account = account_obj.search([('code', '=', '2202'), ('company_id', '=', self.env.user.company_id.id)], limit=1)
                 credit_account = self.payment_account_id
                 debit_sign, credit_sign = 1, -1
         elif model == 'advance':
             if payment_type == 'inbound':
-                debit_account = account_obj.search([('code', '=', '2203'), ('company_id', '=', self.company_id.id)], limit=1)
-                credit_account = account_obj.search([('code', '=', '1122'), ('company_id', '=', self.company_id.id)], limit=1)
+                debit_account = account_obj.search([('code', '=', '2203'), ('company_id', '=', self.env.user.company_id.id)], limit=1)
+                credit_account = account_obj.search([('code', '=', '1122'), ('company_id', '=', self.env.user.company_id.id)], limit=1)
                 debit_sign, credit_sign = 1, -1
             else:
-                debit_account = account_obj.search([('code', '=', '1123'), ('company_id', '=', self.company_id.id)], limit=1)
-                credit_account = account_obj.search([('code', '=', '2202'), ('company_id', '=', self.company_id.id)], limit=1)
+                debit_account = account_obj.search([('code', '=', '1123'), ('company_id', '=', self.env.user.company_id.id)], limit=1)
+                credit_account = account_obj.search([('code', '=', '2202'), ('company_id', '=', self.env.user.company_id.id)], limit=1)
                 debit_sign, credit_sign = -1, 1
         elif model == 'diff':
             if payment_type == 'inbound':
                 debit_account = self.diff_account_id
-                credit_account = account_obj.search([('code', '=', '1122'), ('company_id', '=', self.company_id.id)], limit=1)
+                credit_account = account_obj.search([('code', '=', '1122'), ('company_id', '=', self.env.user.company_id.id)], limit=1)
                 debit_sign, credit_sign = 1, -1
             else:
-                debit_account = account_obj.search([('code', '=', '2202'), ('company_id', '=', self.company_id.id)], limit=1)
+                debit_account = account_obj.search([('code', '=', '2202'), ('company_id', '=', self.env.user.company_id.id)], limit=1)
                 credit_account = self.diff_account_id
                 debit_sign, credit_sign = 1, -1
         elif model == 'bank':
             if payment_type == 'inbound':
                 debit_account = self.bank_account_id
-                credit_account = account_obj.search([('code', '=', '1122'), ('company_id', '=', self.company_id.id)], limit=1)
+                credit_account = account_obj.search([('code', '=', '1122'), ('company_id', '=', self.env.user.company_id.id)], limit=1)
                 debit_sign, credit_sign = 1, -1
             else:
                 raise Warning(u'采购付款不需要银行扣款')

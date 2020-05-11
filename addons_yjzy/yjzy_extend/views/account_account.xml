@@ -8,6 +8,7 @@
         <field name="arch" type="xml">
             <tree position="inside">
                 <field name="polarity"/>
+                <field name="gongsi_id"/>
             </tree>
         </field>
     </record>
@@ -25,6 +26,7 @@
             </sheet>
             <field name="code" position="after">
                 <field name="polarity"/>
+                <field name="gongsi_id"/>
             </field>
         </field>
     </record>
