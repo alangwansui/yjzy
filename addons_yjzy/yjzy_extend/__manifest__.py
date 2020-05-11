@@ -42,6 +42,7 @@
         #'views/account_payment2.xml',
         #'views/account_payment3.xml',
 
+        'views/account_journal.xml',
         'views/account_move.xml',
         'views/account_invoice.xml',
         'views/account_reconcile_orde.xml',

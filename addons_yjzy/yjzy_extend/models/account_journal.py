@@ -8,6 +8,7 @@ class account_journal(models.Model):
     _inherit = 'account.journal'
 
     type = fields.Selection(selection_add=[('renling', u'认领')])
+    gongsi_id = fields.Many2one('gongsi',u'公司主体')
 
     def name_get(self):
         res = []

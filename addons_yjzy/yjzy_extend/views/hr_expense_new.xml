@@ -1380,6 +1380,7 @@
                                 <field name="responsible_id" invisible="1"/>
                                 <field name="bank_id" string="对方收款账号*" options="{'can_create':True}"
                                        domain="['|',('create_uid','=',uid),('partner_id.supplier','=',True)]"
+                                       context="{'form_view_ref':'base.view_partner_bank_form','default_bank_type':'personal'}"
                                        required="1"/>
                                 <field name="address_id" invisible="1"/>
                                 <field name="department_id" invisible="1"/>
