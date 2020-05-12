@@ -48,6 +48,7 @@ class gongsi(models.Model):
     sale_image = fields.Binary(u'销售合同章', widget='image')
 
     company_id = fields.Many2one('res.company',u'公司')
+    active = fields.Boolean(u'归档', default=True)
 
 
 
