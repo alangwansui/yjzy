@@ -25,20 +25,20 @@ class gongsi(models.Model):
 
 
     account_no = fields.Char(string='Account No.')
-    street = fields.Char(compute='_compute_address', translate=True,  inverse='_inverse_street')
-    street2 = fields.Char(compute='_compute_address', translate=True, inverse='_inverse_street2')
-    zip = fields.Char(compute='_compute_address', inverse='_inverse_zip')
-    city = fields.Char(compute='_compute_address', translate=True,  inverse='_inverse_city')
-    state_id = fields.Many2one('res.country.state', compute='_compute_address', inverse='_inverse_state',
-                               string="Fed. State")
+    street = fields.Char(translate=True)#compute='_compute_address', inverse='_inverse_street'
+    street2 = fields.Char( translate=True)#inverse='_inverse_street2'
+    zip = fields.Char()#compute='_compute_address', inverse='_inverse_zip'
+    city = fields.Char()#compute='_compute_address', translate=True,  inverse='_inverse_city'
+    state_id = fields.Many2one('res.country.state',
+                               string="Fed. State")#compute='_compute_address', inverse='_inverse_state',
     bank_ids = fields.One2many('res.partner.bank', 'company_id', string='Bank Accounts',
                                help='Bank accounts related to this company')
-    country_id = fields.Many2one('res.country', compute='_compute_address', inverse='_inverse_country',
-                                 string="Country")
-    email = fields.Char(related='partner_id.email', store=True)
-    phone = fields.Char(related='partner_id.phone', store=True)
-    website = fields.Char(related='partner_id.website')
-    vat = fields.Char(related='partner_id.vat', string="TIN")
+    country_id = fields.Many2one('res.country',
+                                 string="Country")#compute='_compute_address', inverse='_inverse_country',
+    email = fields.Char( store=True)#related='partner_id.email',
+    phone = fields.Char(store=True)#related='partner_id.phone',
+    website = fields.Char()#related='partner_id.website'
+    vat = fields.Char( string="TIN")#related='partner_id.vat',
     company_registry = fields.Char()
 
     full_name = fields.Char(u'公司全称', translate=True)
