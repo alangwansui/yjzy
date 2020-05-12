@@ -1391,7 +1391,7 @@
             <field name="priority" eval="1"/>
             <field name="arch" type="xml">
                 <form string="客户">
-                    <header>
+                    <header  groups="base.group_system">
                         <button name="action_done" string="确认" type="object" class="btn-primary"
                                 states="approve"/>
                         <button name="action_cancel" string="取消" type="object" class="btn-primary"
@@ -1507,7 +1507,7 @@
 
                             <h1>
                                 <field name="name" default_focus="1" widget="field_clearbit" placeholder="客户简称"
-                                       attrs="{'required' : [('type', '=', 'contact')],'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
+                                       attrs="{'required' : [('type', '=', 'contact')],'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                             </h1>
 
                             <div class="o_row">
@@ -1531,7 +1531,7 @@
                                 <field name="type" invisible="1" attrs="{'invisible': [('parent_id','=', False)]}"
                                        groups="base.group_no_one,sale.group_delivery_invoice_address"/>
                                 <field name="full_name" string="客户公司全称"
-                                       attrs="{'required' : [('is_company', '=', True),('state','in',['check'])],'invisible':[('is_company','=',False)],'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
+                                       attrs="{'required' : [('is_company', '=', True),('state','in',['check'])],'invisible':[('is_company','=',False)],'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
 
                                 <!--label for="country_id" string="业务国" attrs="{'invisible':[('type','!=','delivery')]}"/>
                                 <label for="country_id" string="所在国" attrs="{'invisible':[('type','=','delivery')]}"/>
@@ -1539,17 +1539,17 @@
                                 <field name="country_id" placeholder="Country" string="公司所在国"
                                        class="o_address_country"
                                        options='{"no_open": True, "no_create": True}'
-                                       attrs="{'required':[('customer','=',True),('is_inter_partner','=',False),('state','in',['check'])],'readonly': [('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
+                                       attrs="{'required':[('customer','=',True),('is_inter_partner','=',False),('state','in',['check'])],'readonly': [('state','not in',['draft','check']),('is_editable','=',False)]}"/>
 
                                 <!--/div-->
                                 <field name="jituan_id" string="所属集团" help="如果没有请填写无"
                                        domain="[('partner_type','=','customer'),'|','|','|',('user_id','=',uid),('assistant_id','=',uid),('user_id','=',False),('assistant_id','=',False)]"
                                        options='{"no_open": True, "no_create": True}'
-                                       attrs="{'required' : [('is_company', '=', True),('customer','=',True),('state','in',['check'])],'invisible':['|',('customer','=',False),('is_company','=',False)],'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
+                                       attrs="{'required' : [('is_company', '=', True),('customer','=',True),('state','in',['check'])],'invisible':['|',('customer','=',False),('is_company','=',False)],'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <field name="sale_currency_id" options="{'no_open':1}"
-                                       attrs="{'required' : [('is_company', '=', True),('customer','=',True),('state','in',['check'])],'invisible':['|',('customer','=',False),('is_company','=',False)],'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
+                                       attrs="{'required' : [('is_company', '=', True),('customer','=',True),('state','in',['check'])],'invisible':['|',('customer','=',False),('is_company','=',False)],'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <field name="property_payment_term_id" domain="[('type','=','sale')]"
-                                       attrs="{'required' : [('is_company', '=', True),('customer','=',True),('state','in',['check'])],'invisible':['|',('customer','=',False),('is_company','=',False)],'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"
+                                       attrs="{'required' : [('is_company', '=', True),('customer','=',True),('state','in',['check'])],'invisible':['|',('customer','=',False),('is_company','=',False)],'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"
                                        widget="selection"/>
 
                                 <separator string="" colspan="2"/>
@@ -1592,28 +1592,28 @@
                                 </div>
                                 <label for="phone" attrs="{'invisible':[('type','=','delivery')]}" />
                                 <div class="o_row" attrs="{'invisible':[('type','=','delivery')]}">
-                                    <field name="phone" placeholder="不知道填写：不详，没有填写：无" widget="phone" attrs="{'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)],'required':[('state','in',['check'])]}"/>
+                                    <field name="phone" placeholder="不知道填写：不详，没有填写：无" widget="phone" attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)],'required':[('state','in',['check'])]}"/>
                                     <!--button type="action" name="126" class="btn-xs btn-link mb4 fa fa-envelope-o" attrs="{'invisible':[('phone', '=', False)]}" context="{'field_name': 'phone'}"/-->
                                 </div>
-                                <field name="fax" placeholder="不知道填写：不详，没有填写：无" attrs="{'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)],'invisible':[('type','=','delivery')],'required':[('state','in',['check'])]}"/>
+                                <field name="fax" placeholder="不知道填写：不详，没有填写：无" attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)],'invisible':[('type','=','delivery')],'required':[('state','in',['check'])]}"/>
                                 <field name="website" widget="url" placeholder="不知道填写：不详，没有填写：无"
-                                       attrs="{'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)],'invisible':['|',('type','=','delivery'),('is_company','!=',True)],'required':[('state','in',['check'])]}"/>
+                                       attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)],'invisible':['|',('type','=','delivery'),('is_company','!=',True)],'required':[('state','in',['check'])]}"/>
                                 <field name="address_text" class="o_address_street"
-                                       attrs="{'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)],'required':[('state','in',['check'])]}"/>
+                                       attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)],'required':[('state','in',['check'])]}"/>
                             </group>
                             <group>
                                 <field name="level" string="客户等级" invisible="1"
-                                       attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
+                                       attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <field name="partner_level" widget="selection" domain="[('type','=','customer')]"
                                        attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],'required':[('state','in',['check'])],
-                                       'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
+                                       'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <field name="function" placeholder="e.g. Sales Director"
-                                       attrs="{'invisible':['|',('type','=','delivery'),('is_company','=',True)],'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
+                                       attrs="{'invisible':['|',('type','=','delivery'),('is_company','=',True)],'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
 
                                 <field name="user_ids" invisible="1"/>
                                 <field name="email" invisible="1"
                                        attrs="{'required': [('user_ids','!=', [])],'invisible':['|',('type','=','delivery'),('is_company','=',True)],
-                                       'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"
+                                       'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"
                                        widget="email" context="{'gravatar_image': True}"/>
 
                                 <!--label for="email"  用来替换email，增加直接发送邮件的按钮/>
@@ -1628,30 +1628,30 @@
                                 <field name="is_inter_partner" groups="base.group_system"/>
                                 <field name="contract_type"
                                        attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],'required' : [('state', '=', 'check')],
-                                       'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
+                                       'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <field name="gongsi_id" options='{"no_open": True, "no_create": True}'
                                        attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],
                                        'required' : [('state', '=', 'check')],
-                                       'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
+                                       'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <field name="purchase_gongsi_id" options='{"no_open": True, "no_create": True}'
                                        attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],'required' : [('state', '=', 'check')],
-                                       'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
+                                       'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <field name="campaign_id" string="客户来源" options='{"no_open": True, "no_create": True}'
                                        attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],'required' : [('state', '=', 'check')],
-                                       'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
+                                       'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <field name="customer_info_from_uid" options='{"no_open": True, "no_create": True}'
                                        attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],'required' : [('state', '=', 'check')],
-                                       'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
+                                       'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
 
                                 <field name="devloper_id" string="客户开发人" options='{"no_open": True, "no_create": True}'
                                        attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],'required' : [('state', '=', 'check')],
-                                       'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
+                                       'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <field name="user_id" string="目前客户负责人" options='{"no_open": True, "no_create": True}'
                                        attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],'required' : [('state', '=', 'check')],
-                                       'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
+                                       'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <field name="assistant_id" string="销售助理" options='{"no_open": True, "no_create": True}'
                                        attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],'required' : [('state', '=', 'check')],
-                                       'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
+                                       'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <field name="product_manager_id" invisible="1"/>
 
 
@@ -1669,7 +1669,7 @@
                                 <div colspan="2">
                                     <field name="customer_purchase_in_china" class="oe_inline" placeholder="不知道填写：不详，没有填写：无"
                                            attrs="{'required' : [('state', '=', 'check')],
-                                       'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
+                                       'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                     <field name="customer_purchase_in_china_currency_id" invisible="1"
                                            style="margin-left:3px" options="{'no_open':1}" class="oe_inline"/>
                                     <span style="margin-left:3px"
@@ -1681,7 +1681,7 @@
                                 <label for="customer_sale_total" colspan="2"/>
                                 <div colspan="2">
                                     <field name="customer_sale_total" class="oe_inline" placeholder="不知道填写：不详，没有填写：无" attrs="{'required' : [('state', '=', 'check')],
-                                       'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
+                                       'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                     <field name="customer_sale_total_currency_id" invisible="1" style="margin-left:3px"
                                            options="{'no_open':1}" class="oe_inline"/>
                                     <span style="margin-left:3px" attrs="{'invisible':1}">
@@ -1692,7 +1692,7 @@
                                 <label for="comment" colspan="2"/>
                                 <div colspan="2">
                                     <field name="comment" placeholder="内部备注..." attrs="{'required' : [('state', '=', 'check')],
-                                       'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
+                                       'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 </div>
                             </group>
                         </group>
@@ -1847,7 +1847,7 @@
                                   attrs="{'invisible':['|',('type','=','delivery'),('is_company','!=',True)]}">
 
                                 <field name="child_contact_ids" mode="tree,kanban" attrs="{'required' : [('state', '=', 'check')],
-                                       'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"
+                                       'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"
                                        context="{'default_parent_id': active_id, 'default_street': street, 'default_street2': street2,
                                                  'default_zip': zip, 'default_country_id': country_id,
                                                  'default_supplier': supplier, 'default_customer': customer, 'default_lang': lang}">
@@ -2026,7 +2026,7 @@
                             <page string="客户交货信息"
                                   attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],}">
 
-                                <field name="child_delivery_ids" mode="tree,kanban" attrs="{'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}" context="{'default_parent_id': active_id, 'default_street': street, 'default_street2': street2,
+                                <field name="child_delivery_ids" mode="tree,kanban" attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}" context="{'default_parent_id': active_id, 'default_street': street, 'default_street2': street2,
                                                'default_city': city, 'default_state_id': state_id, 'default_zip': zip,
                                                'default_supplier': supplier, 'default_customer': customer, 'default_lang': lang,'default_type1':'delivery'}">
 
@@ -2244,7 +2244,7 @@
                             <page string="客户经营产品"
                                   attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],}">
                                 <field name="customer_product_origin_ids" nolabel="1" string="客户经营产品" attrs="{'required' : [('state', '=', 'check')],
-                                       'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}">
+                                       'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}">
                                     <tree editable="bottom">
                                         <field name="name" required="1"/>
                                         <field name="description" required="1"/>
@@ -2260,7 +2260,7 @@
                             <page string="销售合同后置条款"
                                   attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)]}">
                                 <field name="term_description" attrs="{'invisible':[('customer','=',False)],
-                                       'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
+                                       'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                             </page>
 
                             <page name='internal_notes' groups="base.group_system" string="Internal Notes"
@@ -2386,7 +2386,7 @@
             <field name="priority" eval="1"/>
             <field name="arch" type="xml">
                 <form string="供应商">
-                    <header>
+                    <header groups="base.group_system">
                         <button name="action_done" groups="base.group_system" string="确认" type="object" class="btn-primary"
                                 states="approve"/>
                         <button name="action_cancel" groups="base.group_system" string="取消" type="object" class="btn-primary"
@@ -2503,7 +2503,7 @@
                             <h1>
                                 <field name="name" default_focus="1" widget="field_clearbit" placeholder="供应商简称"
                                        attrs="{'required' : [('type', '=', 'contact')],
-                                       'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
+                                       'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                             </h1>
                             <div class="o_row">
                                 <field name="code" readonly="1"/>
@@ -2527,7 +2527,7 @@
                                        groups="base.group_no_one,sale.group_delivery_invoice_address"/>
                                 <field name="full_name" string="供应商全称"
                                        attrs="{'required' : [('is_company', '=', True),('state', '=', 'check')],
-                                       'invisible':[('is_company','=',False)],'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
+                                       'invisible':[('is_company','=',False)],'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
 
                                 <!--label for="country_id" string="业务国" attrs="{'invisible':[('type','!=','delivery')]}"/>
                                 <label for="country_id" string="所在国" attrs="{'invisible':[('type','=','delivery')]}"/>
@@ -2536,22 +2536,22 @@
                                        class="o_address_country "
                                        options='{"no_open": True, "no_create": True}'
                                        attrs="{'required':[('customer','=',True),('is_inter_partner','=',False),('state', '=', 'check')],
-                                       'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
+                                       'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <field name="city_product_origin" string="产地(国家/城市)" attrs="{'required' : [('state', '=', 'check')],
-                                       'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
+                                       'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <!--/div-->
                                 <field name="jituan_id" string="所属集团"
                                        domain="[('partner_type','=','supplier'),'|','|','|',('user_id','=',uid),('assistant_id','=',uid),('user_id','=',False),('assistant_id','=',False)]"
                                        options='{"no_open": True, "no_create": True}'
                                        attrs="{'required' : [('is_company', '=', True),('state', '=', 'check')],'invisible':[('is_company','=',False)],
-                                       'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
+                                       'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <field name="property_purchase_currency_id" string="币种"
                                        options="{'no_create': True, 'no_open': True}"
                                        attrs="{'invisible': ['|',('supplier','=',False),('is_company','=',False)],'required' : [('state', '=', 'check')],
-                                       'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
+                                       'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <field name="property_supplier_payment_term_id"
                                        attrs="{'required' : [('is_company', '=', True),('supplier','=',True)],'invisible':['|',('supplier','=',False),('is_company','=',False)],
-                                       'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"
+                                       'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"
                                        domain="[('type','=','purchase')]" widget="selection"/>
 
                                 <separator string="" colspan="2"/>
@@ -2585,16 +2585,16 @@
                                 <label for="phone"  attrs="{'invisible':[('type','=','delivery')],'required' : [('state', '=', 'check')],}"/>
                                 <div class="o_row" attrs="{'invisible':[('type','=','delivery')]}">
                                     <field name="phone" placeholder="不知道填写：不详，没有填写：无" widget="phone" attrs="{'required' : [('state', '=', 'check')],
-                                       'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
+                                       'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                     <!--button type="action" name="126" class="btn-xs btn-link mb4 fa fa-envelope-o" attrs="{'invisible':[('phone', '=', False)]}" context="{'field_name': 'phone'}"/-->
                                 </div>
                                 <field name="fax" placeholder="不知道填写：不详，没有填写：无" attrs="{'invisible':[('type','=','delivery')],'required' : [('state', '=', 'check')],
-                                       'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
+                                       'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <field name="website" placeholder="不知道填写：不详，没有填写：无" widget="url"
                                        attrs="{'invisible':['|',('type','=','delivery'),('is_company','!=',True)],'required' : [('state', '=', 'check')],
-                                       'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
+                                       'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <field name="address_text" attrs="{'required' : [('state', '=', 'check')],
-                                       'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
+                                       'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
 
 
                             </group>
@@ -2615,13 +2615,13 @@
                                 <field name="level" string="供应商等级" invisible="1"/>
                                 <field name="partner_level" string="供应商等级" widget="selection" domain="[('type','=','supplier')]"
                                        attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],'required' : [('state', '=', 'check')],
-                                       'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
+                                       'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <field name="user_ids" invisible="1"/>
                                 <field name="is_inter_partner" groups="base.group_system"/>
                                 <field name="campaign_id" string="供应商来源" attrs="{'required' : [('state', '=', 'check')],
-                                       'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
+                                       'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <field name="supplier_info_from_uid" string="供应商获取人" attrs="{'required' : [('state', '=', 'check')],
-                                       'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
+                                       'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <field name="create_uid" options="{'no_open':1}"/>
                                 <field name="create_date" widget="date"/>
 
@@ -2653,7 +2653,7 @@
                                 <label for="supplier_sale_total" colspan="2"/>
                                 <div colspan="2">
                                     <field name="supplier_sale_total" placeholder="不知道填写：不详，没有填写：无"  attrs="{'required' : [('state', '=', 'check')],
-                                       'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
+                                       'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
 
                                     <span style="margin-left:3px"
                                           attrs="{'invisible':1}">
@@ -2664,7 +2664,7 @@
                                 <label for="supplier_export_total" colspan="2"/>
                                 <div colspan="2">
                                     <field name="supplier_export_total" placeholder="不知道填写：不详，没有填写：无"  attrs="{'required' : [('state', '=', 'check')],
-                                       'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
+                                       'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
 
                                     <span style="margin-left:3px"
                                           attrs="{'invisible':1}">
@@ -2829,7 +2829,7 @@
                                   attrs="{'invisible':['|',('type','=','delivery'),('is_company','!=',True)]}">
 
                                 <field name="child_contact_ids" mode="tree,kanban" attrs="{'required' : [('state', '=', 'check')],
-                                       'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"
+                                       'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"
                                        context="{'default_parent_id': active_id, 'default_street': street, 'default_street2': street2,
                                                  'default_zip': zip, 'default_country_id': country_id,'default_city_product_origin': city_product_origin,
                                                  'default_supplier': supplier, 'default_customer': customer, 'default_lang': lang}">
@@ -3009,19 +3009,19 @@
                                     <group>
                                         <label for="actual_controlling_person" colspan="2"/>
                                         <field name="actual_controlling_person" nolabel="1" attrs="{
-                                       'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
+                                       'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                     </group>
                                     <group>
                                         <label for="attachment_business_license" colspan="2"/>
                                         <field name="attachment_business_license" nolabel="1" widget="many2many_binary" attrs="{
-                                       'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"
+                                       'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"
                                                class="oe_inline"/>
 
                                     </group>
                                 </group>
                                 <group string="银行账户信息">
                                 <field name="bank_ids" nolabel="1" context="{'default_bank_type':'company_supplier'}" attrs="{
-                                       'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}">
+                                       'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}">
                                     <tree editable="bottom">
                                         <field name="bank_type"/>
                                         <field name="huming" string="收款人"/>
@@ -3051,7 +3051,7 @@
                                   attrs="{'invisible':['|',('supplier','=',False),('is_company','=',False)]}">
 
                                 <field name="child_invoice_ids" mode="tree,kanban" attrs="{
-                                       'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"
+                                       'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"
                                        context="{'default_parent_id': active_id, 'default_street': street, 'default_street2': street2,
                                                'default_city': city, 'default_state_id': state_id, 'default_zip': zip, 'default_country_id': country_id,
                                                'default_supplier': supplier, 'default_customer': customer, 'default_lang': lang,'default_type1':'invoice'}">
@@ -3107,7 +3107,7 @@
                             </page>
                             <page string="供应商制造产品">
                                 <field name="customer_product_origin_ids" nolabel="1" attrs="{'required' : [('state', '=', 'check')],
-                                       'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}" string="供应商制造产品">
+                                       'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}" string="供应商制造产品">
                                     <tree editable="bottom">
                                         <field name="name" required="1"/>
                                         <field name="description" required="1"/>
@@ -3119,7 +3119,7 @@
                             <page string="采购合同后置条款"
                                   attrs="{'invisible': ['|',('supplier','=',False),('is_company','=',False)]}">
                                 <field name="term_purchase" attrs="{
-                                       'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
+                                       'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                             </page>
                             <page name='internal_notes' groups="base.group_system" string="Internal Notes"
                                   attrs="{'invisible':['|',('type','=','delivery'),('is_company','!=',True)]}">
@@ -3682,7 +3682,7 @@
             <field name="res_model">res.partner</field>
             <field name="view_type">form</field>
             <field name="view_mode">kanban,tree,form</field>
-            <field name="domain">[('supplier','=',True),('is_company','=',True)]</field>
+            <field name="domain">[('supplier','=',True),('is_company','=',True),('name','!=','未定义')]</field>
             <field name="context">{'default_is_company': True,'default_supplier': True, 'default_contract_type':'c'}</field>
             <field name="filter" eval="True"/>
             <field name="search_view_id" ref="view_new_res_partner_filter"/>
