@@ -1531,7 +1531,7 @@
                                 <field name="type" invisible="1" attrs="{'invisible': [('parent_id','=', False)]}"
                                        groups="base.group_no_one,sale.group_delivery_invoice_address"/>
                                 <field name="full_name" string="客户公司全称"
-                                       attrs="{'required' : [('is_company', '=', True)],'invisible':[('is_company','=',False)],'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
+                                       attrs="{'required' : [('is_company', '=', True),('state','in',['check'])],'invisible':[('is_company','=',False)],'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
 
                                 <!--label for="country_id" string="业务国" attrs="{'invisible':[('type','!=','delivery')]}"/>
                                 <label for="country_id" string="所在国" attrs="{'invisible':[('type','=','delivery')]}"/>
@@ -1539,17 +1539,17 @@
                                 <field name="country_id" placeholder="Country" string="公司所在国"
                                        class="o_address_country"
                                        options='{"no_open": True, "no_create": True}'
-                                       attrs="{'required':[('customer','=',True),('is_inter_partner','=',False)],'readonly': [('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
+                                       attrs="{'required':[('customer','=',True),('is_inter_partner','=',False),('state','in',['check'])],'readonly': [('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
 
                                 <!--/div-->
-                                <field name="jituan_id" string="所属集团"
-                                       domain="['|','|','|',('user_id','=',uid),('assistant_id','=',uid),('user_id','=',False),('assistant_id','=',False)]"
+                                <field name="jituan_id" string="所属集团" help="如果没有请填写无"
+                                       domain="[('partner_type','=','customer'),'|','|','|',('user_id','=',uid),('assistant_id','=',uid),('user_id','=',False),('assistant_id','=',False)]"
                                        options='{"no_open": True, "no_create": True}'
-                                       attrs="{'required' : [('is_company', '=', True),('customer','=',True)],'invisible':['|',('customer','=',False),('is_company','=',False)],'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
+                                       attrs="{'required' : [('is_company', '=', True),('customer','=',True),('state','in',['check'])],'invisible':['|',('customer','=',False),('is_company','=',False)],'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
                                 <field name="sale_currency_id" options="{'no_open':1}"
-                                       attrs="{'required' : [('is_company', '=', True),('customer','=',True)],'invisible':['|',('customer','=',False),('is_company','=',False)],'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
+                                       attrs="{'required' : [('is_company', '=', True),('customer','=',True),('state','in',['check'])],'invisible':['|',('customer','=',False),('is_company','=',False)],'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
                                 <field name="property_payment_term_id" domain="[('type','=','sale')]"
-                                       attrs="{'required' : [('is_company', '=', True),('customer','=',True)],'invisible':['|',('customer','=',False),('is_company','=',False)],'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"
+                                       attrs="{'required' : [('is_company', '=', True),('customer','=',True),('state','in',['check'])],'invisible':['|',('customer','=',False),('is_company','=',False)],'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"
                                        widget="selection"/>
 
                                 <separator string="" colspan="2"/>
@@ -1590,13 +1590,13 @@
                                            attrs="{'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)]}"
                                            invisible="1"/>
                                 </div>
-                                <label for="phone" attrs="{'invisible':[('type','=','delivery')]}"/>
+                                <label for="phone" attrs="{'invisible':[('type','=','delivery')]}" />
                                 <div class="o_row" attrs="{'invisible':[('type','=','delivery')]}">
-                                    <field name="phone" widget="phone" attrs="{'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)],'required':[('state','in',['check'])]}"/>
+                                    <field name="phone" placeholder="不知道填写：不详，没有填写：无" widget="phone" attrs="{'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)],'required':[('state','in',['check'])]}"/>
                                     <!--button type="action" name="126" class="btn-xs btn-link mb4 fa fa-envelope-o" attrs="{'invisible':[('phone', '=', False)]}" context="{'field_name': 'phone'}"/-->
                                 </div>
-                                <field name="fax" attrs="{'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)],'invisible':[('type','=','delivery')],'required':[('state','in',['check'])]}"/>
-                                <field name="website" widget="url" placeholder="e.g. www.tenyale.com"
+                                <field name="fax" placeholder="不知道填写：不详，没有填写：无" attrs="{'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)],'invisible':[('type','=','delivery')],'required':[('state','in',['check'])]}"/>
+                                <field name="website" widget="url" placeholder="不知道填写：不详，没有填写：无"
                                        attrs="{'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)],'invisible':['|',('type','=','delivery'),('is_company','!=',True)],'required':[('state','in',['check'])]}"/>
                                 <field name="address_text" class="o_address_street"
                                        attrs="{'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)],'required':[('state','in',['check'])]}"/>
@@ -1605,7 +1605,7 @@
                                 <field name="level" string="客户等级" invisible="1"
                                        attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
                                 <field name="partner_level" widget="selection" domain="[('type','=','customer')]"
-                                       attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],
+                                       attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],'required':[('state','in',['check'])],
                                        'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
                                 <field name="function" placeholder="e.g. Sales Director"
                                        attrs="{'invisible':['|',('type','=','delivery'),('is_company','=',True)],'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
@@ -1667,7 +1667,8 @@
 
                                 <label for="customer_purchase_in_china" colspan="2"/>
                                 <div colspan="2">
-                                    <field name="customer_purchase_in_china" class="oe_inline" attrs="{'required' : [('state', '=', 'check')],
+                                    <field name="customer_purchase_in_china" class="oe_inline" placeholder="不知道填写：不详，没有填写：无"
+                                           attrs="{'required' : [('state', '=', 'check')],
                                        'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
                                     <field name="customer_purchase_in_china_currency_id" invisible="1"
                                            style="margin-left:3px" options="{'no_open':1}" class="oe_inline"/>
@@ -1679,7 +1680,7 @@
 
                                 <label for="customer_sale_total" colspan="2"/>
                                 <div colspan="2">
-                                    <field name="customer_sale_total" class="oe_inline" attrs="{'required' : [('state', '=', 'check')],
+                                    <field name="customer_sale_total" class="oe_inline" placeholder="不知道填写：不详，没有填写：无" attrs="{'required' : [('state', '=', 'check')],
                                        'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
                                     <field name="customer_sale_total_currency_id" invisible="1" style="margin-left:3px"
                                            options="{'no_open':1}" class="oe_inline"/>
@@ -1851,14 +1852,14 @@
                                                  'default_zip': zip, 'default_country_id': country_id,
                                                  'default_supplier': supplier, 'default_customer': customer, 'default_lang': lang}">
                                     <tree class="o_list_scroll" editable="bottom">
-                                        <field name="name" string="姓名"/>
+                                        <field name="name" string="姓名" attrs="{'required' : [('type', '=', 'contact')]}"/>
                                         <field name="country_id"/>
                                         <field name="function"/>
                                         <field name="phone"/>
                                         <field name="mobile"/>
                                         <field name="email"/>
-                                        <field name="other_social_accounts"/>
-
+                                        <field name="other_social_accounts" placeholder="微信、tweet，facebook等社交账号"/>
+                                        <field name="type" invisible="1"/>
                                         <field name="wechat" invisible="1"/>
                                         <field name="skype" invisible="1"/>
                                         <field name="qq" invisible="1"/>
@@ -1976,12 +1977,7 @@
                                                            attrs="{'invisible': [('type', '=', 'delivery')]}"/>
                                                     <field name="email"
                                                            attrs="{'invisible': [('type', '=', 'delivery')]}"/>
-                                                    <field name="wechat"
-                                                           attrs="{'invisible': [('type', '=', 'delivery')]}"/>
-                                                    <field name="skype"
-                                                           attrs="{'invisible': [('type', '=', 'delivery')]}"/>
-                                                    <field name="qq"
-                                                           attrs="{'invisible': [('type', '=', 'delivery')]}"/>
+                                                    <field name="other_social_accounts" placeholder="微信、tweet，facebook等社交账号"/>
                                                     <field name="sequence" groups="base.group_system"/>
                                                     <field name="comment_contact" placeholder="note..."
                                                            attrs="{'invisible': [('type', '=', 'delivery')]}"/>
@@ -2036,6 +2032,8 @@
 
                                     <tree class="o_list_scroll" editable="bottom">
                                         <field name="name" string="收货人抬头" groups="base.group_system"/>
+                                        <field name="invoice_title" string="境外收货人"
+                                               attrs="{'invisible': [('type', '!=', 'delivery')],'required' :1}"/>
                                         <field name="country_id" string="目的国" required="1"/>
                                         <field name="type" invisible="1"/>
                                         <field name="type1" invisible="1"/>
@@ -2062,7 +2060,7 @@
                                         <field name="is_inter_partner" groups="base.group_system"/>
 
                                     </tree>
-                                    <kanban>
+                                    <!--kanban>
                                         <field name="color"/>
                                         <field name="name"/>
                                         <field name="title"/>
@@ -2080,9 +2078,9 @@
                                         <field name="mobile"/>
                                         <field name="state_id"/>
                                         <field name="image_small"/>
-                                        <field name="lang"/>
+                                        <field name="lang"/-->
                                         <!-- fields in form x2many view to diminish requests -->
-                                        <field name="comment"/>
+                                        <!--field name="comment"/>
                                         <field name="customer"/>
                                         <field name="display_name"/>
                                         <field name="supplier"/>
@@ -2140,7 +2138,7 @@
                                                 </div>
                                             </t>
                                         </templates>
-                                    </kanban>
+                                    </kanban-->
                                     <form string="客户交货地址">
                                         <sheet>
                                             <!-- parent_id and type fields needed in attrs in base_address_city module which overwrites
@@ -2158,28 +2156,15 @@
 
                                                 <group>
                                                     <field name="is_company" invisible="1"/>
-                                                    <field name="name" string="编号(001开始)"
+                                                    <field name="invoice_title" string="境外收货人"
+                                               attrs="{'invisible': [('type', '!=', 'delivery')],'required' :1}"/>
+                                                    <field name="name" string="编号(001开始)" invisible="1"
                                                            attrs="{'required' : ['|',('type', '=', 'contact'),('type', '=', 'delivery')]}"/>
                                                     <field name="country_id" placeholder="Country" string="目的国"
                                                            class="o_address_country"
 
                                                            options='{"no_open": True, "no_create": True}'/>
-                                                    <field name="title" placeholder="e.g. Mr." invisible="1"
-                                                           attrs="{'invisible': [('type','!=', 'contact')]}"/>
-                                                    <field name="function" placeholder="e.g. Sales Director"
-                                                           attrs="{'invisible': [('type','!=', 'contact')]}"/>
-                                                    <field name="phone" widget="phone"
-                                                           attrs="{'invisible': [('type', '=', 'delivery')]}"/>
-                                                    <field name="mobile" widget="phone"
-                                                           attrs="{'invisible': [('type', '=', 'delivery')]}"/>
-                                                    <field name="email"
-                                                           attrs="{'invisible': [('type', '=', 'delivery')]}"/>
-                                                    <field name="wechat"
-                                                           attrs="{'invisible': [('type', '=', 'delivery')]}"/>
-                                                    <field name="skype"
-                                                           attrs="{'invisible': [('type', '=', 'delivery')]}"/>
-                                                    <field name="qq"
-                                                           attrs="{'invisible': [('type', '=', 'delivery')]}"/>
+
                                                     <field name="sequence"/>
                                                     <field name="comment_contact" placeholder="note..."
                                                            attrs="{'invisible': [('type', '=', 'delivery')]}"/>
@@ -2266,7 +2251,6 @@
                                     </tree>
                                 </field>
                             </page>
-
 
                             <page string="客户采购产品"
                                   attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)]}">
@@ -2542,7 +2526,7 @@
                                 <field name="type" invisible="1" attrs="{'invisible': [('parent_id','=', False)]}"
                                        groups="base.group_no_one,sale.group_delivery_invoice_address"/>
                                 <field name="full_name" string="供应商全称"
-                                       attrs="{'required' : [('is_company', '=', True)],
+                                       attrs="{'required' : [('is_company', '=', True),('state', '=', 'check')],
                                        'invisible':[('is_company','=',False)],'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
 
                                 <!--label for="country_id" string="业务国" attrs="{'invisible':[('type','!=','delivery')]}"/>
@@ -2551,19 +2535,19 @@
                                 <field name="country_id" placeholder="Country" string="供应商所在国"
                                        class="o_address_country "
                                        options='{"no_open": True, "no_create": True}'
-                                       attrs="{'required':[('customer','=',True),('is_inter_partner','=',False)],
+                                       attrs="{'required':[('customer','=',True),('is_inter_partner','=',False),('state', '=', 'check')],
                                        'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
                                 <field name="city_product_origin" string="产地(国家/城市)" attrs="{'required' : [('state', '=', 'check')],
                                        'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
                                 <!--/div-->
                                 <field name="jituan_id" string="所属集团"
-                                       domain="['|','|','|',('user_id','=',uid),('assistant_id','=',uid),('user_id','=',False),('assistant_id','=',False)]"
+                                       domain="[('partner_type','=','supplier'),'|','|','|',('user_id','=',uid),('assistant_id','=',uid),('user_id','=',False),('assistant_id','=',False)]"
                                        options='{"no_open": True, "no_create": True}'
-                                       attrs="{'required' : [('is_company', '=', True)],'invisible':[('is_company','=',False)],
+                                       attrs="{'required' : [('is_company', '=', True),('state', '=', 'check')],'invisible':[('is_company','=',False)],
                                        'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
                                 <field name="property_purchase_currency_id" string="币种"
                                        options="{'no_create': True, 'no_open': True}"
-                                       attrs="{'invisible': ['|',('supplier','=',False),('is_company','=',False)],
+                                       attrs="{'invisible': ['|',('supplier','=',False),('is_company','=',False)],'required' : [('state', '=', 'check')],
                                        'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
                                 <field name="property_supplier_payment_term_id"
                                        attrs="{'required' : [('is_company', '=', True),('supplier','=',True)],'invisible':['|',('supplier','=',False),('is_company','=',False)],
@@ -2598,15 +2582,15 @@
                                            attrs="{'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)]}"
                                            invisible="1"/>
                                 </div>
-                                <label for="phone" attrs="{'invisible':[('type','=','delivery')],}"/>
+                                <label for="phone"  attrs="{'invisible':[('type','=','delivery')],'required' : [('state', '=', 'check')],}"/>
                                 <div class="o_row" attrs="{'invisible':[('type','=','delivery')]}">
-                                    <field name="phone" widget="phone" attrs="{'required' : [('state', '=', 'check')],
+                                    <field name="phone" placeholder="不知道填写：不详，没有填写：无" widget="phone" attrs="{'required' : [('state', '=', 'check')],
                                        'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
                                     <!--button type="action" name="126" class="btn-xs btn-link mb4 fa fa-envelope-o" attrs="{'invisible':[('phone', '=', False)]}" context="{'field_name': 'phone'}"/-->
                                 </div>
-                                <field name="fax" attrs="{'invisible':[('type','=','delivery')],'required' : [('state', '=', 'check')],
+                                <field name="fax" placeholder="不知道填写：不详，没有填写：无" attrs="{'invisible':[('type','=','delivery')],'required' : [('state', '=', 'check')],
                                        'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
-                                <field name="website" widget="url" placeholder="e.g. www.tenyale.com"
+                                <field name="website" placeholder="不知道填写：不详，没有填写：无" widget="url"
                                        attrs="{'invisible':['|',('type','=','delivery'),('is_company','!=',True)],'required' : [('state', '=', 'check')],
                                        'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
                                 <field name="address_text" attrs="{'required' : [('state', '=', 'check')],
@@ -2629,7 +2613,7 @@
 
                                  <!--供应商信息-->
                                 <field name="level" string="供应商等级" invisible="1"/>
-                                <field name="partner_level" string="供应商登记" widget="selection" domain="[('type','=','supplier')]"
+                                <field name="partner_level" string="供应商等级" widget="selection" domain="[('type','=','supplier')]"
                                        attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],'required' : [('state', '=', 'check')],
                                        'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
                                 <field name="user_ids" invisible="1"/>
@@ -2668,10 +2652,9 @@
 
                                 <label for="supplier_sale_total" colspan="2"/>
                                 <div colspan="2">
-                                    <field name="supplier_sale_total" class="oe_inline" attrs="{'required' : [('state', '=', 'check')],
+                                    <field name="supplier_sale_total" placeholder="不知道填写：不详，没有填写：无"  attrs="{'required' : [('state', '=', 'check')],
                                        'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
-                                    <field name="supplier_sale_total_currency_id" invisible="1"
-                                           style="margin-left:3px" options="{'no_open':1}" class="oe_inline"/>
+
                                     <span style="margin-left:3px"
                                           attrs="{'invisible':1}">
                                         <field name="supplier_sale_total_note" placeholder="填写备注..."/>
@@ -2680,11 +2663,9 @@
 
                                 <label for="supplier_export_total" colspan="2"/>
                                 <div colspan="2">
-                                    <field name="supplier_export_total" class="oe_inline" attrs="{'required' : [('state', '=', 'check')],
+                                    <field name="supplier_export_total" placeholder="不知道填写：不详，没有填写：无"  attrs="{'required' : [('state', '=', 'check')],
                                        'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"/>
-                                    <field name="supplier_export_total_currency_id" invisible="1"
-                                           style="margin-left:3px"
-                                           options="{'no_open':1}" class="oe_inline"/>
+
                                     <span style="margin-left:3px"
                                           attrs="{'invisible':1}">
                                         <field name="supplier_export_total_note" placeholder="填写备注..."/>
@@ -2850,12 +2831,13 @@
                                 <field name="child_contact_ids" mode="tree,kanban" attrs="{'required' : [('state', '=', 'check')],
                                        'readonly':[('state','not in',['draft','refuse']),('is_editable','=',False)]}"
                                        context="{'default_parent_id': active_id, 'default_street': street, 'default_street2': street2,
-                                                 'default_zip': zip, 'default_country_id': country_id,
+                                                 'default_zip': zip, 'default_country_id': country_id,'default_city_product_origin': city_product_origin,
                                                  'default_supplier': supplier, 'default_customer': customer, 'default_lang': lang}">
                                     <tree class="o_list_scroll" editable="bottom">
-                                        <field name="name"/>
-                                        <field name="country_id"/>
-                                        <field name="function"/>
+                                        <field name="name" string="姓名" attrs="{'required':1}"/>
+                                        <field name="country_id" string="国家" invisible="1"/>
+                                        <field name="city_product_origin" string="产地(国家/城市)" invisible="1"/>
+                                        <field name="function" />
                                         <field name="phone"/>
                                         <field name="mobile"/>
                                         <field name="email"/>
@@ -2863,7 +2845,7 @@
                                         <field name="wechat" invisible="1"/>
                                         <field name="skype" invisible="1"/>
                                         <field name="qq" invisible="1"/>
-                                        <field name="comment_contact" placeholder="例：联系人未供应商实际负责人"/>
+                                        <field name="comment_contact" placeholder="例：联系人为供应商实际负责人"/>
                                         <field name="address_text"/>
                                         <field name="street" invisible="1"/>
                                         <field name="street2" invisible="1"/>
@@ -2967,6 +2949,8 @@
                                                     <field name="is_company" invisible="1"/>
                                                     <field name="name" string="姓名"
                                                            attrs="{'required' : [('type', '=', 'contact')]}"/>
+                                                     <field name="country_id" string="国家" invisible="1"/>
+                                                    <field name="city_product_origin" string="产地(国家/城市)" invisible="1"/>
                                                     <field name="title" placeholder="e.g. Mr." invisible="1"
                                                            attrs="{'invisible': [('type','!=', 'contact')]}"/>
                                                     <field name="function" placeholder="e.g. Sales Director"
@@ -2977,12 +2961,7 @@
                                                            attrs="{'invisible': [('type', '=', 'delivery')]}"/>
                                                     <field name="email"
                                                            attrs="{'invisible': [('type', '=', 'delivery')]}"/>
-                                                    <field name="wechat"
-                                                           attrs="{'invisible': [('type', '=', 'delivery')]}"/>
-                                                    <field name="skype"
-                                                           attrs="{'invisible': [('type', '=', 'delivery')]}"/>
-                                                    <field name="qq"
-                                                           attrs="{'invisible': [('type', '=', 'delivery')]}"/>
+                                                    <field name="other_social_accounts" placeholder="如：微信，QQ，WHATSAPP等"/>
                                                     <field name="sequence" groups="base.group_system"/>
                                                     <field name="comment_contact" placeholder="note..."
                                                            attrs="{'invisible': [('type', '=', 'delivery')]}"/>
@@ -3094,85 +3073,7 @@
                                         <field name="partner_hs" widget="many2many_tags"/>
 
                                     </tree>
-                                    <kanban>
-                                        <field name="color"/>
-                                        <field name="name"/>
-                                        <field name="title"/>
-                                        <field name="type" groups="sale.group_delivery_invoice_address"/>
-                                        <field name="email"/>
-                                        <field name="parent_id"/>
-                                        <field name="is_company"/>
-                                        <field name="function"/>
-                                        <field name="phone"/>
-                                        <field name="street"/>
-                                        <field name="street2"/>
-                                        <field name="zip"/>
-                                        <field name="city"/>
-                                        <field name="country_id"/>
-                                        <field name="mobile"/>
-                                        <field name="state_id"/>
-                                        <field name="image_small"/>
-                                        <field name="lang"/>
-                                        <!-- fields in form x2many view to diminish requests -->
-                                        <field name="comment"/>
-                                        <field name="customer"/>
-                                        <field name="display_name"/>
-                                        <field name="supplier"/>
-                                        <templates>
-                                            <t t-name="kanban-box">
-                                                <t t-set="color" t-value="kanban_color(record.color.raw_value)"/>
-                                                <div t-att-class="color + (record.title.raw_value == 1 ? ' oe_kanban_color_alert' : '') + ' oe_kanban_global_click'">
-                                                    <a t-if="!read_only_mode" type="delete"
-                                                       class="fa fa-times pull-right"/>
-                                                    <div class="o_kanban_image">
-                                                        <img t-if="record.image_small.raw_value"
-                                                             t-att-src="'data:image/png;base64,'+record.image_small.raw_value"/>
-                                                        <t t-if="!record.image_small.raw_value">
-                                                            <img t-if="record.type.raw_value === 'delivery'"
-                                                                 t-att-src='_s + "/base/static/src/img/truck.png"'/>
-                                                            <img t-if="record.type.raw_value === 'invoice'"
-                                                                 t-att-src='_s + "/base/static/src/img/money.png"'/>
-                                                            <t t-if="record.type.raw_value !== 'invoice' &amp;&amp; record.type.raw_value !== 'delivery'">
-                                                                <img t-if="record.is_company.raw_value === true"
-                                                                     t-att-src='_s + "/base/static/src/img/company_image.png"'/>
-                                                                <img t-if="record.is_company.raw_value === false"
-                                                                     t-att-src='_s + "/base/static/src/img/avatar.png"'/>
-                                                            </t>
-                                                        </t>
-                                                    </div>
-                                                    <div class="oe_kanban_details">
-                                                        <span>优先级
-                                                            <field name="sequence"/>
-                                                        </span>
-                                                        <span>
-                                                            <field name="type"/>:
-                                                        </span>
-                                                        <field name="name"/>
-                                                        <div t-if="record.function.raw_value">
-                                                            <field name="function"/>
-                                                        </div>
-                                                        <div t-if="record.email.raw_value">
-                                                            <field name="email" widget="email"/>
-                                                        </div>
-                                                        <div t-if="record.type.raw_value != 'contact'">
-                                                            <div>
-                                                                <field name="zip"/>
-                                                                <field name="city"/>
-                                                            </div>
-                                                            <field t-if="record.state_id.raw_value" name="state_id"/>
-                                                            <field name="country_id"/>
-                                                        </div>
-                                                        <div t-if="record.phone.raw_value">Phone:
-                                                            <field name="phone"/>
-                                                        </div>
-                                                        <div t-if="record.mobile.raw_value">Mobile:
-                                                            <field name="mobile"/>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </t>
-                                        </templates>
-                                    </kanban>
+
                                     <form string="供应商发票信息">
                                         <sheet>
                                             <!-- parent_id and type fields needed in attrs in base_address_city module which overwrites
@@ -3389,7 +3290,7 @@
             <field name="arch" type="xml">
                 <search string="Search Partner">
                     <field name="name" string="模糊查询"
-                           filter_domain="['|','|','|','|','|',('display_name','ilike',self),('ref','=',self),
+                           filter_domain="['|','|','|','|',('display_name','ilike',self),('ref','=',self),
                            ('email','ilike',self),('code','ilike',self),('child_contact_ids.name','ilike',self)]"/>
                     <filter name="filter_my_partners" help="My Partners" invisible="1"
                             domain="[('user_id','=',uid)]"/>
