@@ -250,7 +250,7 @@ class res_partner(models.Model):
 
     def action_to_approve(self):
         if self.user_id == self.env.user:
-            return self.write({'state': 'to_approve'})
+            return self.write({'state': 'to approve'})
         else:
             raise Warning(u'必须是责任人才能审批')
 
