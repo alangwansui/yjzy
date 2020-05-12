@@ -244,9 +244,9 @@ class res_partner(models.Model):
             self.state = 'submit'
         else:
            if not self.customer_product_origin_ids:
-              raise Warning(u'至少需要一条联系人信息')
-           if not self.child_contact_ids:
               raise Warning(u'至少需要一条经营产品信息')
+           if not self.child_contact_ids:
+              raise Warning(u'至少需要一条联系人信息')
 
     def action_to_approve(self):
         if self.user_id == self.env.user:
