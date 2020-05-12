@@ -240,10 +240,13 @@ class res_partner(models.Model):
             raise Warning(u'必须是创建人才能提交')
 
     def action_submit(self):
-        if self.create_uid == self.env.user:
+        if self.child_contact_ids and self.costomer_product_origin_ids:
             self.state = 'submit'
         else:
-            raise Warning(u'必须是创建人才能提交')
+           if not self.costomer_product_origin_ids:
+              raise Warning(u'至少需要一条联系人信息')
+           if not self.child_contact_ids:
+              raise Warning(u'至少需要一条经营产品信息')
 
     def action_to_approve(self):
         if self.user_id == self.env.user:

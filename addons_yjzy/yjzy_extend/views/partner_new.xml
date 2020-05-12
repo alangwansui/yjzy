@@ -1670,8 +1670,8 @@
                                     <field name="customer_purchase_in_china" class="oe_inline" placeholder="不知道填写：不详，没有填写：无"
                                            attrs="{'required' : [('state', '=', 'check')],
                                        'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
-                                    <field name="customer_purchase_in_china_currency_id" invisible="1"
-                                           style="margin-left:3px" options="{'no_open':1}" class="oe_inline"/>
+                                    <!--field name="customer_purchase_in_china_currency_id" invisible="1"
+                                           style="margin-left:3px" options="{'no_open':1}" class="oe_inline"/-->
                                     <span style="margin-left:3px"
                                           attrs="{'invisible':1}">
                                         <field name="customer_purchase_in_china_note" placeholder="填写备注..."/>
@@ -1682,8 +1682,8 @@
                                 <div colspan="2">
                                     <field name="customer_sale_total" class="oe_inline" placeholder="不知道填写：不详，没有填写：无" attrs="{'required' : [('state', '=', 'check')],
                                        'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
-                                    <field name="customer_sale_total_currency_id" invisible="1" style="margin-left:3px"
-                                           options="{'no_open':1}" class="oe_inline"/>
+                                    <!--field name="customer_sale_total_currency_id" invisible="1" style="margin-left:3px"
+                                           options="{'no_open':1}" class="oe_inline"/-->
                                     <span style="margin-left:3px" attrs="{'invisible':1}">
                                         <field name="customer_sale_total_note" placeholder="填写备注..."/>
                                     </span>
