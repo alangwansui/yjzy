@@ -3641,7 +3641,7 @@
             <field name="res_model">res.partner</field>
             <field name="view_type">form</field>
             <field name="view_mode">kanban,tree,form</field>
-            <field name="domain">[('customer','=',True),('is_company','=',True)]</field>
+            <field name="domain">[('customer','=',True),('is_company','=',True),('name','!=','未定义')]</field>
             <field name="context">{'default_is_company': True,'default_customer': True, 'default_contract_type':'c'}</field>
             <field name="filter" eval="True"/>
             <field name="search_view_id" ref="view_new_res_partner_filter"/>
