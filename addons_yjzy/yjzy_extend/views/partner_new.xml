@@ -174,7 +174,7 @@
                                 <field name="country_id" placeholder="Country" class="o_address_country"
                                        options='{"no_open": True, "no_create": True}'/>
                             </div>
-                            <field name="website" widget="url" placeholder="e.g. www.odoo.com"/>
+                            <field name="website" placeholder="e.g. www.odoo.com"/>
                         </group>
                         <group>
                         </group>
@@ -531,7 +531,7 @@
                                     <!--button type="action" name="126" class="btn-xs btn-link mb4 fa fa-envelope-o" attrs="{'invisible':[('mobile', '=', False)]}" context="{'field_name': 'mobile'}"/-->
                                 </div>
                                 <field name="fax" attrs="{'invisible':[('type','=','delivery')]}"/>
-                                <field name="website" widget="url" placeholder="e.g. www.tenyale.com"
+                                <field name="website"  placeholder="e.g. www.tenyale.com"
                                        attrs="{'invisible':['|',('type','=','delivery'),('is_company','!=',True)]}"/>
 
 
@@ -1596,7 +1596,7 @@
                                     <!--button type="action" name="126" class="btn-xs btn-link mb4 fa fa-envelope-o" attrs="{'invisible':[('phone', '=', False)]}" context="{'field_name': 'phone'}"/-->
                                 </div>
                                 <field name="fax" placeholder="不知道填写：不详，没有填写：无" attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)],'invisible':[('type','=','delivery')],'required':[('state','in',['check'])]}"/>
-                                <field name="website" widget="url" placeholder="不知道填写：不详，没有填写：无"
+                                <field name="website" placeholder="不知道填写：不详，没有填写：无"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)],'invisible':['|',('type','=','delivery'),('is_company','!=',True)],'required':[('state','in',['check'])]}"/>
                                 <field name="address_text" class="o_address_street"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)],'required':[('state','in',['check'])]}"/>
@@ -2590,7 +2590,7 @@
                                 </div>
                                 <field name="fax" placeholder="不知道填写：不详，没有填写：无" attrs="{'invisible':[('type','=','delivery')],'required' : [('state', '=', 'check')],
                                        'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
-                                <field name="website" placeholder="不知道填写：不详，没有填写：无" widget="url"
+                                <field name="website" placeholder="不知道填写：不详，没有填写：无"
                                        attrs="{'invisible':['|',('type','=','delivery'),('is_company','!=',True)],'required' : [('state', '=', 'check')],
                                        'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <field name="address_text" attrs="{'required' : [('state', '=', 'check')],
