@@ -128,6 +128,14 @@ var AbstractField = Widget.extend({
         // xml 'field' tag.  These options are saved (and evaled) in nodeOptions
         this.nodeOptions = this.attrs.options || {};
 
+        //<jon> 定义专门的颜色选项
+        this.color_options = {};
+        if(this.attrs.color_options){
+            this.color_options =  eval("(" + this.attrs.color_options + ")");
+        };
+
+
+
         // dataPointID is the id corresponding to the current record in the model.
         // Its intended use is to be able to tag any messages going upstream,
         // so the view knows which records was changed for example.

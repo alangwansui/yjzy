@@ -662,13 +662,13 @@ var FormRenderer = BasicRenderer.extend({
         }
 
         //<jon> 设置标题颜色
-        if (node.attrs.options &&   node.attrs.options.includes('color')){
+        if (node.attrs.color_options &&   node.attrs.color_options.includes('color')){
 
-            var options =  eval("(" + node.attrs.options + ")");
-            var fd = options.fd;
-            var op = options.op;
-            var v = options.v;
-            var color = options.color;
+            var color_options =  eval("(" + node.attrs.color_options + ")");
+            var fd = color_options.fd;
+            var op = color_options.op;
+            var v = color_options.v;
+            var color = color_options.color;
 
             var eval_str = "self.state.data['" + fd +  "']" + op    + "'"  +  v + "'" ;
             var res  = eval(eval_str);
