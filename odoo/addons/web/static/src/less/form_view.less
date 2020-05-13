@@ -91,7 +91,8 @@
 
         color: @odoo-main-text-color;
         &:first-line {
-            color: @link-color;
+            //颜色被超链接样式覆盖了.取消超链接样式的颜色
+            // color: @link-color;
         }
         &:hover {
             color: darken(@odoo-main-text-color, 1%); // hack required on chrome

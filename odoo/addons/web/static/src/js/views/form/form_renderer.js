@@ -660,6 +660,24 @@ var FormRenderer = BasicRenderer.extend({
         if (node.tag === 'label') {
             this._handleAttributes($result, node);
         }
+
+        //<jon> 设置标题颜色
+        if (node.attrs.options &&   node.attrs.options.includes('color')){
+
+            var options =  eval("(" + node.attrs.options + ")");
+            var fd = options.fd;
+            var op = options.op;
+            var v = options.v;
+            var color = options.color;
+
+            var eval_str = "self.state.data['" + fd +  "']" + op    + "'"  +  v + "'" ;
+            var res  = eval(eval_str);
+            if (res===true){
+                $result.css("color", color);
+            };
+
+        };
+
         var modifiersOptions;
         if (fieldName) {
             modifiersOptions = {
