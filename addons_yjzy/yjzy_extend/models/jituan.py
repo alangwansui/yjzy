@@ -10,8 +10,8 @@ class jituan(models.Model):
 
     name = fields.Char('名称')
     description = fields.Text('描述')
-    user_id = fields.Many2one('res.users', '用户')
-    assistant_id = fields.Many2one('res.users', '助理')
+    user_id = fields.Many2one('res.users', '责任人', default=lambda self: self.env.user.assistant_id)
+    assistant_id = fields.Many2one('res.users', '助理', default=lambda self: self.env.user.id)
     partner_ids = fields.One2many('res.partner', 'jituan_id', '客户')
     customer = fields.Boolean('客户')
     supplier = fields.Boolean('供应商')

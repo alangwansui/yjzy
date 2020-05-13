@@ -6,8 +6,8 @@
     <field name="name">customer.product.origin.tree</field>
     <field name="model">partner.product.origin</field>
     <field name="arch" type="xml">
-        <tree string="客户产品" create="false" editable="bottom">
-            <field name="name"/>
+        <tree string="客户产品" create="false" edit="false" editable="bottom">
+            <field name="name" />
             <field name="description"/>
             <field name="partner_id" string="客户" />
         </tree>
@@ -18,11 +18,11 @@
     <field name="name">customer.product.origin.form</field>
     <field name="model">partner.product.origin</field>
     <field name="arch" type="xml">
-       <form string="客户产品" create="false">
+       <form string="客户产品" create="false" edit="false">
                   <sheet>
                       <group>
                             <field name="name" required="1"/>
-                            <field name="description" required="1"/>
+                            <field name="description" />
                             <field name="partner_id" string="客户" required="1"/>
                       </group>
                     </sheet>

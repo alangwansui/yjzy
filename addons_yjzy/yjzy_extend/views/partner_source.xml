@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <data>
+<record id="view_partner_source_customer_tree" model="ir.ui.view">
+    <field name="name">partner.customer.source.tree</field>
+    <field name="model">partner.source</field>
+    <field name="arch" type="xml">
+        <tree string="客户来源"  editable="bottom">
+            <field name="name" required="1"/>
+            <field name="description"/>
+            <field name="type" invisible="1"/>
+        </tree>
+    </field>
+</record>
+
+<record id="view_partner_source_customer_form" model="ir.ui.view">
+    <field name="name">partner.customer.source.form</field>
+    <field name="model">partner.source</field>
+    <field name="arch" type="xml">
+       <form string="客户来源">
+                  <sheet>
+                      <group>
+                            <field name="name" required="1"/>
+                            <field name="description"/>
+                          <field name="type" invisible="1"/>
+                      </group>
+                    </sheet>
+                </form>
+    </field>
+</record>
+
+        <record id="view_partner_supplier_source_tree" model="ir.ui.view">
+    <field name="name">partner.supplier.source.tree</field>
+    <field name="model">partner.source</field>
+    <field name="arch" type="xml">
+        <tree string="供应商来源"  editable="bottom">
+            <field name="name" required="1"/>
+            <field name="description"/>
+            <field name="type" invisible="1"/>
+        </tree>
+    </field>
+</record>
+
+<record id="view_partner_supplier_source_form" model="ir.ui.view">
+    <field name="name">partner.supplier.source.form</field>
+    <field name="model">partner.source</field>
+    <field name="arch" type="xml">
+       <form string="供应商来源">
+                  <sheet>
+                      <group>
+                            <field name="name" required="1"/>
+                            <field name="description"/>
+                            <field name="type" invisible="1"/>
+                      </group>
+                    </sheet>
+                </form>
+    </field>
+</record>
+
+    <record id="action_partner_source_customer" model="ir.actions.act_window">
+        <field name="name">客户来源</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">partner.source</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('type','=','customer')]</field>
+        <field name="context">{'default_type': 'customer'}</field>
+         <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_partner_source_customer_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_partner_source_customer_form')})]"/>
+    </record>
+
+
+    <menuitem id="menu_partner_source_customer" name="客户来源" parent="yjzy_extend.customer_config" action="action_partner_source_customer" sequence="99"/>
+
+
+    <record id="action_partner_source_supplier" model="ir.actions.act_window">
+        <field name="name">供应商等级</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">partner.source</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('type','=','supplier')]</field>
+        <field name="context">{'default_type': 'supplier'}</field>
+         <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_partner_supplier_source_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_partner_supplier_source_form')})]"/>
+    </record>
+
+
+    <menuitem id="menu_partner_source_supplier" name="供应商来源" parent="yjzy_extend.supplier_config" action="action_partner_source_supplier" sequence="99"/>
+
+    </data>
+
+</odoo>

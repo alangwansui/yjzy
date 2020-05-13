@@ -93,7 +93,8 @@ class res_partner(models.Model):
     customer_product_ids = fields.One2many('product.product', 'customer_id', '客户采购产品')
 
     campaign_id = fields.Many2one('utm.campaign', u'客户来源')
-    customer_info_from_uid = fields.Many2one('res.users', u'客户获取人', domain=[('is_inter_partner','=',True)])
+    partner_source_id = fields.Many2one('partner.source',u'来源')
+    customer_info_from_uid = fields.Many2one('res.partner', u'客户获取人', domain=[('is_inter_partner','=',True)])
 
     customer_purchase_in_china = fields.Char(u'客户在中国采购规模(CNY)')
     customer_purchase_in_china_currency_id = fields.Many2one('res.currency', '客户在中国采购规模币种', default=lambda
@@ -142,6 +143,16 @@ class res_partner(models.Model):
     other_social_accounts = fields.Char(u'社交帐号')
     partner_level = fields.Many2one('partner.level', '等级')
     is_editable = fields.Boolean(u'是否允许编辑')
+    is_required = fields.Boolean(u'检查必填', default=False)
+
+    @api.onchange('name','address_text')
+    def onchange_required(self):
+        self.is_required = True
+        self.is_inter_partner = True
+        self.state = 'draft'
+
+
+
 
     @api.onchange('invoice_title')
     def onchange_invoice_title(self):
@@ -158,6 +169,15 @@ class res_partner(models.Model):
 
             if pricelist:
                 self.property_product_pricelist = pricelist
+
+    # @api.multi
+    # def write(self,values):
+    #     if values.get('state','') == 'check':
+    #        values['is_inter_partner'] = True
+    #        return super(res_partner, self).write(values)
+
+
+
 
     @api.model
     def create(self, vals):
@@ -236,6 +256,7 @@ class res_partner(models.Model):
     def action_check(self):
         if self.create_uid == self.env.user:
             self.state = 'check'
+          #  self.is_inter_partner = False
         else:
             raise Warning(u'必须是创建人才能提交')
 
@@ -350,10 +371,18 @@ class res_partner(models.Model):
 
 
 # akiny 客户等级
-class partner_product_origin(models.Model):
+class partner_level(models.Model):
     _name = 'partner.level'
     _description = '联系人等级'
 
     name = fields.Char(u'等级名称')
+    type = fields.Selection([('customer', '客户'), ('supplier', '供应商')])
+    description = fields.Text('描述')
+#来源
+class partner_source(models.Model):
+    _name = 'partner.source'
+    _description = '客户供应商来源'
+
+    name = fields.Char(u'名称')
     type = fields.Selection([('customer', '客户'), ('supplier', '供应商')])
     description = fields.Text('描述')
