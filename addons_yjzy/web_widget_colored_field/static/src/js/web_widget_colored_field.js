@@ -13,23 +13,27 @@ odoo.define('web_widget_colored_field', function (require) {
 
 
     AbstractField.include({
-        _getColorNode: function (record, options) {
-            var fieldColor = options.color;
+        _getColorNode: function (record, options, color_options) {
+
+            console.info('>>>>33333333>>>>', typeof(color_options),  color_options);
+
+
+
             var fieldTitle = options.title;
-            var fieldExpr = options.expr;
-
-             var fd = options.fd;
-             var op = options.op;
-             var v = options.v;
-
+            var fieldColor = color_options.color;
+            var fd = color_options.fd;
+            var op = color_options.op;
+            var v = color_options.v;
 
             //var expr = py.parse(py.tokenize(fieldExpr));
-            console.info('>>>>_getColorNode>>>>',record, this, options);
+
             //console.info('>>2>>',  py.evaluate(fieldExpr));
 
             //var res = true; //py.PY_isTrue(py.evaluate(expr, record.evalContext));
 
             var eval_str = "record.data['" + fd +  "']" + op    + "'"  +  v + "'" ;
+
+            console.info('>>>>_getColorNode>>>>',  eval_str, options, color_options);
             var res  = eval(eval_str);
 
 
@@ -61,8 +65,9 @@ odoo.define('web_widget_colored_field', function (require) {
     FieldChar.include({
         _renderReadonly: function () {
             var options = this.nodeOptions;
-            if (this.value && 'color' in options) {
-                var $colorNode = this._getColorNode(this.record, options);
+            var color_options = this.color_options;
+            if (color_options.color) {
+                var $colorNode = this._getColorNode(this.record, options, color_options);
                 console.info('>>>>>FieldChar>>> $colorNode>>>', $colorNode);
                 if ($colorNode) {
                     this.$el.html($colorNode)
@@ -78,8 +83,9 @@ odoo.define('web_widget_colored_field', function (require) {
     FieldFloat.include({
         _renderReadonly: function () {
             var options = this.nodeOptions;
-            if (this.value && 'color' in options) {
-                var $colorNode = this._getColorNode(this.record, options);
+            var color_options = this.color_options;
+            if (color_options.color) {
+                var $colorNode = this._getColorNode(this.record, options, color_options);
                 if ($colorNode) {
                     this.$el.html($colorNode)
                 } else {
@@ -94,8 +100,9 @@ odoo.define('web_widget_colored_field', function (require) {
     FieldInteger.include({
         _renderReadonly: function () {
             var options = this.nodeOptions;
-            if (this.value && 'color' in options) {
-                var $colorNode = this._getColorNode(this.record, options);
+            var color_options = this.color_options;
+            if (color_options.color) {
+                var $colorNode = this._getColorNode(this.record, options, color_options);
                 if ($colorNode) {
                     this.$el.html($colorNode)
                 } else {
@@ -110,8 +117,9 @@ odoo.define('web_widget_colored_field', function (require) {
     FieldSelection.include({
         _renderReadonly: function () {
             var options = this.nodeOptions;
-            if (this.value && 'color' in options) {
-                var $colorNode = this._getColorNode(this.record, options);
+            var color_options = this.color_options;
+            if (color_options.color) {
+                var $colorNode = this._getColorNode(this.record, options, color_options);
                 if ($colorNode) {
                     this.$el.html($colorNode)
                 } else {
@@ -126,11 +134,9 @@ odoo.define('web_widget_colored_field', function (require) {
     FieldMany2One.include({
         _renderReadonly: function () {
             var options = this.nodeOptions;
-            if (this.value && 'color' in options) {
-                var $colorNode = this._getColorNode(this.record, options);
-
-                console.info('>>>>>FieldMany2One>>> $colorNode>>>', $colorNode);
-
+            var color_options = this.color_options;
+            if (color_options.color) {
+                var $colorNode = this._getColorNode(this.record, options, color_options);
                 if ($colorNode) {
                     this.$el.html($colorNode)
                 } else {
