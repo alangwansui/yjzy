@@ -37,7 +37,7 @@ class res_partner(models.Model):
 
     jituan_id = fields.Many2one('ji.tuan', '集团')
     comment_contact = fields.Text(u'对接内容描述')
-    devloper_id = fields.Many2one('res.users', u'开发人员')
+    devloper_id = fields.Many2one('res.partner', u'开发人员',domain=[('is_inter_partner','=',True)])
     full_name = fields.Char('公司全称')
     invoice_title = fields.Char(u'发票抬头')
     mark_ids = fields.Many2many('transport.mark', 'ref_mark_patner', 'pid', 'mid', u'唛头')
@@ -93,7 +93,7 @@ class res_partner(models.Model):
     customer_product_ids = fields.One2many('product.product', 'customer_id', '客户采购产品')
 
     campaign_id = fields.Many2one('utm.campaign', u'客户来源')
-    customer_info_from_uid = fields.Many2one('res.users', u'客户获取人')
+    customer_info_from_uid = fields.Many2one('res.users', u'客户获取人', domain=[('is_inter_partner','=',True)])
 
     customer_purchase_in_china = fields.Char(u'客户在中国采购规模(CNY)')
     customer_purchase_in_china_currency_id = fields.Many2one('res.currency', '客户在中国采购规模币种', default=lambda
@@ -133,7 +133,7 @@ class res_partner(models.Model):
     swift1 = fields.Char('SWIFT(非中国大陆供应商)')
     bank1 = fields.Char('银行')
     bank1_address = fields.Char('银行地址')
-    supplier_info_from_uid = fields.Many2one('res.users', u'客户获取人')
+    supplier_info_from_uid = fields.Many2one('res.partner', u'供应商获取人',domain=[('is_inter_partner','=',True)])
     attachment_business_license = fields.Many2many('ir.attachment', string='营业执照以及其他资料附件')
     actual_controlling_person = fields.Char(u'实际控股人')
 

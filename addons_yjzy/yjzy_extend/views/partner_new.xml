@@ -1543,7 +1543,7 @@
 
                                 <!--/div-->
                                 <field name="jituan_id" string="所属集团" help="如果没有请填写无"
-                                       domain="[('partner_type','=','customer'),'|','|','|',('user_id','=',uid),('assistant_id','=',uid),('user_id','=',False),('assistant_id','=',False)]"
+                                       domain="['|',('partner_type','=','customer'),('partner_type','=',False)]"
                                        options='{"no_open": True, "no_create": True}'
                                        attrs="{'required' : [('is_company', '=', True),('customer','=',True),('state','in',['check'])],'invisible':['|',('customer','=',False),('is_company','=',False)],'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <field name="sale_currency_id" options="{'no_open':1}"
@@ -2541,7 +2541,7 @@
                                        'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <!--/div-->
                                 <field name="jituan_id" string="所属集团"
-                                       domain="[('partner_type','=','supplier'),'|','|','|',('user_id','=',uid),('assistant_id','=',uid),('user_id','=',False),('assistant_id','=',False)]"
+                                        domain="['|',('partner_type','=','supplier'),('partner_type','=',False)]"
                                        options='{"no_open": True, "no_create": True}'
                                        attrs="{'required' : [('is_company', '=', True),('state', '=', 'check')],'invisible':[('is_company','=',False)],
                                        'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
