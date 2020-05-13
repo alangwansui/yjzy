@@ -37,7 +37,7 @@ class res_partner(models.Model):
 
     jituan_id = fields.Many2one('ji.tuan', '集团')
     comment_contact = fields.Text(u'对接内容描述')
-    devloper_id = fields.Many2one('res.partner', u'开发人员',domain=[('is_inter_partner','=',True)])
+    devloper_id = fields.Many2one('res.partner', u'开发人员',domain=[('is_inter_partner','=',True),('company_type','=','personal')])
     full_name = fields.Char('公司全称')
     invoice_title = fields.Char(u'发票抬头')
     mark_ids = fields.Many2many('transport.mark', 'ref_mark_patner', 'pid', 'mid', u'唛头')
@@ -94,7 +94,7 @@ class res_partner(models.Model):
 
     campaign_id = fields.Many2one('utm.campaign', u'客户来源')
     partner_source_id = fields.Many2one('partner.source',u'来源')
-    customer_info_from_uid = fields.Many2one('res.partner', u'客户获取人', domain=[('is_inter_partner','=',True)])
+    customer_info_from_uid = fields.Many2one('res.partner', u'客户获取人', domain=[('is_inter_partner','=',True),('company_type','=','personal')])
 
     customer_purchase_in_china = fields.Char(u'客户在中国采购规模(CNY)')
     customer_purchase_in_china_currency_id = fields.Many2one('res.currency', '客户在中国采购规模币种', default=lambda
@@ -134,7 +134,7 @@ class res_partner(models.Model):
     swift1 = fields.Char('SWIFT(非中国大陆供应商)')
     bank1 = fields.Char('银行')
     bank1_address = fields.Char('银行地址')
-    supplier_info_from_uid = fields.Many2one('res.partner', u'供应商获取人',domain=[('is_inter_partner','=',True)])
+    supplier_info_from_uid = fields.Many2one('res.partner', u'供应商获取人',domain=[('is_inter_partner','=',True),('company_type','=','personal')])
     attachment_business_license = fields.Many2many('ir.attachment', string='营业执照以及其他资料附件')
     actual_controlling_person = fields.Char(u'实际控股人')
 
@@ -261,13 +261,22 @@ class res_partner(models.Model):
             raise Warning(u'必须是创建人才能提交')
 
     def action_submit(self):
-        if self.child_contact_ids and self.customer_product_origin_ids:
+        war = ''
+        if self.full_name and self.country_id and self.jituan_id and self.sale_currency_id and self.property_payment_term_id and \
+                self.phone and self.fax and self.website and self.address_text and self.contract_type and \
+                self.gongsi_id and self.purchase_gongsi_id and partner_source and self.customer_info_from_uid and self.devloper_id and \
+                self.user_id and self.assiatant_id and self.customer_purchase_in_china and self.customer_sale_total and \
+                self.self.child_contact_ids and self.customer_product_origin_ids:
             self.state = 'submit'
         else:
+           if not self.full_name:
+               war += '全称不为空\n'
            if not self.customer_product_origin_ids:
-              raise Warning(u'至少需要一条经营产品信息')
+               war += '客户不能为空\n'
            if not self.child_contact_ids:
-              raise Warning(u'至少需要一条联系人信息')
+               war += '联系人信息不能为空'
+           if war:
+               raise Warning(war)
 
     def action_to_approve(self):
         if self.user_id == self.env.user:

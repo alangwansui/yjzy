@@ -430,6 +430,11 @@
                                 <field name="contract_code" string="合同号*" required="1" attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}"/>
                                 <field name="partner_id" string="客户*" required="1" domain="[('customer','=',True),('parent_id', '=', False),'|','|','|','|','|',('assistant_id','=',uid),('user_id','=',uid),('parent_id.assistant_id','=',uid),('parent_id.user_id','=',uid),('supplier','=',1),('x_studio_field_3ErQR','=',1)]"
                                        attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}" context="{'search_default_customer':1, 'show_address': 0}" options="{&quot;always_reload&quot;: True}"/>
+
+                                <field name="partner_invoice_id"  groups="sale.group_delivery_invoice_address" context="{'default_type':'invoice'}"
+                                       options="{&quot;always_reload&quot;: True}" attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
+                                <field name="partner_shipping_id"  groups="sale.group_delivery_invoice_address" attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"
+                                       context="{'default_type':'delivery'}" options="{&quot;always_reload&quot;: True}"/>
                                 <field name="country_id" invisible="1"/>
                                 <field name="can_directly_mark_as_paid" invisible="1"/>
                                 <field name="link_man_id" invisible="1" domain="[('parent_id','=',partner_id),('type', '=', 'contract')]" groups="base.group_system"/>
@@ -455,10 +460,7 @@
 
 
 
-                                <field name="partner_invoice_id" invisible="1" groups="sale.group_delivery_invoice_address" context="{'default_type':'invoice'}"
-                                       options="{&quot;always_reload&quot;: True}"/>
-                                <field name="partner_shipping_id" invisible="1" groups="sale.group_delivery_invoice_address"
-                                       context="{'default_type':'delivery','show_address': 1}" options="{&quot;always_reload&quot;: True}"/>
+
                                 <field name="dump_picking_id" readonly="1" invisible="1" groups="base.group_system"/>
 
 

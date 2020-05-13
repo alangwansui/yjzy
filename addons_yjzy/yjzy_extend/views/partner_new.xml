@@ -3417,6 +3417,10 @@
             </field>
         </record>
 
+
+
+
+
         <record id="action_new_partner_form" model="ir.actions.act_window">
             <field name="name">Customers</field>
             <field name="type">ir.actions.act_window</field>
@@ -3761,5 +3765,79 @@
         <menuitem id="new_supplier_create_menu" name="创建供应商" groups="base.group_system" parent="new_supplier_root"
                   action="action_supplier_create" sequence="99"/>
 
+        <record id="view_new_partner_contact_simple_form" model="ir.ui.view">
+            <field name="name">res.partner.contact.simple.form.new</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <form string="联系人">
+                    <field name="is_company" invisible="1"/>
+                    <field name="type" invisible="1"/>
+                    <field name="image" widget='image' class="oe_avatar" options='{"preview_image": "image_medium"}'/>
+                    <div class="oe_title">
+                        <field name="company_type" invisible="1" options="{'horizontal': true}" class="oe_edit_only" widget="radio"/>
+                        <h1>
+                            <field name="name" default_focus="1" placeholder="Name"
+                                   attrs="{'required' : [('type', '=', 'contact')]}"/>
+                        </h1>
+                        <field name="parent_id"
+                               placeholder="Company"
+                               domain="[('is_company', '=', True)]" context="{'default_is_company': True}"
+                               attrs="{'invisible': 1}"/>
+                    </div>
+                    <group>
+                        <field name="function" placeholder="e.g. Sales Director"/>
+                        <field name="user_ids" invisible="1"/>
+                        <field name="email"
+                               />
+                        <field name="phone" widget="phone"/>
+                        <field name="mobile" widget="phone"/>
+                        <field name="customer" invisible="1"/>
+                        <field name="is_inter_partner" invisible="1"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+         <record id="view_new_partner_contact_simple_tree" model="ir.ui.view">
+            <field name="name">res.partner.contact.simple.tree.new</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <tree string="联系人" editable="bottom">
+                    <field name="is_company" invisible="1"/>
+                    <field name="type" invisible="1"/>
+                    <field name="customer" invisible="1"/>
+                    <field name="is_inter_partner" invisible="1"/>
+                    <field name="name"/>
+
+                        <field name="function"/>
+                        <field name="user_ids" invisible="1"/>
+                        <field name="email"  />
+                        <field name="phone" />
+                        <field name="mobile" />
+
+
+                </tree>
+            </field>
+        </record>
+
+         <record id="action_new_partner_inter" model="ir.actions.act_window">
+            <field name="name">内部人员</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('is_company','=',False),('is_inter_partner','=',True)]</field>
+            <field name="context">{'default_is_company': False,'default_is_inter_partner': True,'default_customer':False}</field>
+            <field name="filter" eval="True"/>
+            <field name="search_view_id" ref="view_new_res_partner_filter"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_new_partner_contact_simple_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_new_partner_contact_simple_form')})]"/>
+        </record>
+
+
+        <menuitem id="new_partner_inter" parent="customer_config" name="内部人员" sequence="99"
+                  action="action_new_partner_inter"
+                  />
     </data>
 </odoo>
