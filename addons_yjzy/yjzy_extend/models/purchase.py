@@ -78,8 +78,8 @@ class purchase_order(models.Model):
         ('draft', 'RFQ'),
         ('check', '检查'),
         ('sent', 'RFQ Sent'),
-        ('approve_sales',u'责任人审批完成'),
-        ('submit',u'已提交'),
+        ('submit', u'带责任人审批'),
+        ('approve_sales',u'待产品经理审批'),
         ('to approve', 'To Approve'),  # akiny 翻译成等待出运
         ('purchase', 'Purchase Order'),
         ('done', 'Locked'),
