@@ -373,7 +373,7 @@
         </record>
 
         <!-- This Menu Item must have a parent and an action  -->
-        <menuitem id="new_purchase_order_sales_menu" name="业务待处理采购" parent="yjzy_extend.new_purchase_order_root" action="new_purchase_order_sales_action" sequence="1"/>
+        <menuitem id="new_purchase_order_sales_menu" name="业务待处理采购" groups="base.group_system" parent="yjzy_extend.new_purchase_order_root" action="new_purchase_order_sales_action" sequence="1"/>
 
 
         <record id="new_purchase_order_weiwei_action" model="ir.actions.act_window">
@@ -389,7 +389,7 @@
         </record>
 
         <!-- This Menu Item must have a parent and an 伟伟 action -->
-        <menuitem id="new_purchase_order_weiwei_menu" name="业务待处理采购" parent="yjzy_extend.new_purchase_order_root" action="new_purchase_order_weiwei_action" sequence="1"/>
+        <menuitem id="new_purchase_order_weiwei_menu" name="业务待处理采购" groups="base.group_system" parent="yjzy_extend.new_purchase_order_root" action="new_purchase_order_weiwei_action" sequence="1"/>
 
         <record id="new_purchase_order_purchaser_action" model="ir.actions.act_window">
             <field name="name">采购员待处理</field>
@@ -403,7 +403,7 @@
         </record>
 
         <!-- This Menu Item must have a parent and an action -->
-        <menuitem id="new_purchase_purchaser_order_menu" name="采购员待处理" parent="yjzy_extend.new_purchase_order_root" action="new_purchase_order_purchaser_action" sequence="2"/>
+        <menuitem id="new_purchase_purchaser_order_menu" name="采购员待处理" groups="base.group_system" parent="yjzy_extend.new_purchase_order_root" action="new_purchase_order_purchaser_action" sequence="2"/>
 
         <record id="new_purchase_order_hegui_action" model="ir.actions.act_window">
             <field name="name">合规待处理</field>
@@ -417,7 +417,7 @@
         </record>
 
         <!-- This Menu Item must have a parent and an action -->
-        <menuitem id="new_purchase_order_hegui_menu" name="合规待处理" parent="yjzy_extend.new_purchase_order_root" action="new_purchase_order_hegui_action" sequence="3"/>
+        <menuitem id="new_purchase_order_hegui_menu" name="合规待处理" groups="base.group_system" parent="yjzy_extend.new_purchase_order_root" action="new_purchase_order_hegui_action" sequence="3"/>
 
     <record id="new_purchase_order_my_action" model="ir.actions.act_window">
             <field name="name">我的采购单</field>
@@ -439,7 +439,7 @@
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">purchase.order</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[('purchase','to approve'])]</field>
+            <field name="domain">[('state','in',['purchase','to approve'])]</field>
             <field name="context">{'group_by':'state'}</field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('new_purchase_order_tree')}),
