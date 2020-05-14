@@ -463,7 +463,7 @@
         </record>
 
         <!-- This Menu Item must have a parent and an action  -->
-        <menuitem id="new_purchase_order_approval_menu" groups="base.group_system" name="未生效采购合同." parent="yjzy_extend.new_purchase_order_root"
+        <menuitem id="new_purchase_order_approval_menu" groups="base.group_system" name="未生效采购合同" parent="yjzy_extend.new_purchase_order_root"
                   action="new_purchase_order_approval_action" sequence="2"/>
 
 
