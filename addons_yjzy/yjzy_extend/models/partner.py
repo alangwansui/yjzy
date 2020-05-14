@@ -16,19 +16,21 @@ class res_partner(models.Model):
                 [line.get_amount_to_currency(one.advance_currency_id) for line in lines])
             one.amount_purchase_advance = sum([line.get_amount_to_currency(one.currency_id) for line in lines])
 
-    # def compute_info(self):
-    #     for one in self:
-    #
-    #         if not one.full_name or not one.country_id or not one.jituan_id or not one.sale_currency_id or not one.property_payment_term_id \
-    #                 or not one.phone or not one.fax or not one.website or not one.address_text or not one.contract_type or not \
-    #                 one.gongsi_id or not one.purchase_gongsi_id and one.partner_source_id or not one.customer_info_from_uid or not one.devloper_id \
-    #                 or not one.user_id or not one.assistant_id or not one.customer_purchase_in_china or not one.customer_sale_total or not \
-    #                 one.self.child_contact_ids or not one.customer_product_origin_ids:
-    #             is_required = True
-    #         else:
-    #             is_required = False
-    #
-    #         one.is_required = is_required
+    def compute_info(self):
+        for one in self:
+            for x in one.child_contact_ids:
+                if x.phone or x.mobile:
+                    phone_mobile = True
+                else:
+                    phone_mobile = False
+                if not x.name or not x.country_id or not phone_mobile or not x.email or not x.other_social_accounts or not x.comment_contact :
+                    is_child_ids = False
+                    one.is_child_ids = is_child_ids
+                    break
+                else:
+                    is_child_ids = True
+                    one.is_child_ids = is_child_ids
+
 
 
     # 增加地址翻译
@@ -159,6 +161,8 @@ class res_partner(models.Model):
     partner_level = fields.Many2one('partner.level', '等级')
     is_editable = fields.Boolean(u'是否允许编辑')
     is_required = fields.Boolean(u'检查必填', default=False)
+    is_child_ids = fields.Boolean(u'检查联系人字段', default=False, compute=compute_info)
+
 
 
     @api.onchange('invoice_title')
@@ -274,7 +278,7 @@ class res_partner(models.Model):
                     self.phone and self.fax and self.website and self.address_text and self.contract_type and \
                     self.gongsi_id and self.purchase_gongsi_id and self.partner_source_id and self.customer_info_from_uid and self.devloper_id and \
                     self.user_id and self.assistant_id and self.customer_purchase_in_china and self.customer_sale_total and \
-                    self.self.child_contact_ids and self.customer_product_origin_ids:
+                    self.self.child_contact_ids and self.customer_product_origin_ids and self.is_child_ids:
                 self.state = 'submit'
             else:
                 if not self.full_name:
@@ -318,7 +322,21 @@ class res_partner(models.Model):
                 if not self.customer_product_origin_ids:
                     war += '客户经营的产品不能为空\n'
                 if not self.child_contact_ids:
-                    war += '联系人信息不能为空'
+                    war += '联系人信息不能为空\n'
+
+                for x in self.child_contact_ids:
+                    if not x.country_id:
+                        war +='联系人%s 国家不能为空\n' % x.name
+                    if not x.function:
+                        war += '联系人%s 工作岗位不能为空\n' % x.name
+                    if not x.phone and not x.mobile:
+                        war += '联系人%s 电话或者手机不能为空\n' % x.name
+                    if not x.email:
+                        war += '联系人%s 电子邮件不能为空\n' % x.name
+                    if not x.other_social_accounts:
+                        war += '联系人%s 社交账号不能为空\n' % x.name
+                    if not x.comment_contact:
+                        war += '联系人%s 对接内容描述不能为空\n' % x.name
                 if war:
                     raise Warning(war)
         if self.supplier:
@@ -326,7 +344,7 @@ class res_partner(models.Model):
                     self.property_supplier_payment_term_id and self.phone and self.fax and self.website and self.address_text and \
                     self.partner_source_id and self.supplier_info_from_uid and \
                     self.supplier_export_total and self.supplier_sale_total and \
-                    self.self.child_contact_ids and self.customer_product_origin_ids:
+                    self.self.child_contact_ids and self.customer_product_origin_ids and self.is_child_ids:
                 self.state = 'submit'
             else:
                 if not self.full_name:
@@ -363,6 +381,19 @@ class res_partner(models.Model):
                     war += '供应商经营产品不能为空\n'
                 if not self.child_contact_ids:
                     war += '联系人信息不能为空'
+                for x in self.child_contact_ids:
+                    if not x.country_id:
+                        war += '联系人%s 国家不能为空\n' % x.name
+                    if not x.function:
+                        war += '联系人%s 工作岗位不能为空\n'% x.name
+                    if not x.phone and not x.mobile:
+                        war += '联系人%s 电话或者手机不能为空\n'% x.name
+                    if not x.email:
+                        war += '联系人%s 电子邮件不能为空\n'% x.name
+                    if not x.other_social_accounts:
+                        war += '联系人%s 社交账号不能为空\n'% x.name
+                    if not x.comment_contact:
+                        war += '联系人%s 对接内容描述不能为空\n'% x.name
                 if war:
                     raise Warning(war)
 

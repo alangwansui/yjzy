@@ -67,17 +67,20 @@
             <field name="arch" type="xml">
                 <tree string="Contacts">
                     <field name="name" string="简称"/>
-                    <field name="country_id"/>
-                    <field name="jituan_id"/>
-                    <field name="currency_id"/>
-                    <field name="property_payment_term_id"/>
+                    <field name="country_id" string="公司所在国"/>
+                    <field name="jituan_id" string="所属集团"/>
+                    <field name="sale_currency_id" string="销售货币"/>
+                    <field name="property_payment_term_id" string="客户付款条款"/>
                     <field name="phone"/>
                     <field name="fax" invisible="1"/>
                     <field name="contract_type" string="业务模式"/>
                     <field name="gongsi_id" string="销售主体"/>
                     <field name="purchase_gongsi_id" string="采购主体"/>
-                    <field name="user_id" string="责任人"/>
-                    <field name="child_contact_ids"/>
+                    <field name="user_id" string="目前客户负责人"/>
+                    <field name="customer_info_from_uid" string="客户获取人"/>
+                     <field name="devloper_id" string="客户开发人"/>
+
+                    <field name="child_contact_ids" attrs="{'invisible':1}"/>
                     <field name="is_company" invisible="1"/>
                     <field name="active" invisible="1"/>
 
@@ -846,7 +849,7 @@
                                 </field>
                             </page>
 
-                            <page string="联系人"
+                            <page string="联系人*"
                                   attrs="{'invisible':['|',('type','=','delivery'),('is_company','!=',True)]}">
 
                                 <field name="child_contact_ids" mode="tree,kanban"
@@ -1022,6 +1025,15 @@
                                         </sheet>
                                     </form>
 
+                                </field>
+                            </page>
+                            <page string="客户经营产品*"
+                                  attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)]}">
+                                <field name="customer_product_origin_ids" nolabel="1" string="客户经营产品">
+                                    <tree editable="bottom">
+                                        <field name="name" required="1"/>
+                                        <field name="description" />
+                                    </tree>
                                 </field>
                             </page>
                             <page string="客户交货信息"
@@ -1231,15 +1243,7 @@
 
                                 </field>
                             </page>
-                            <page string="客户经营产品"
-                                  attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)]}">
-                                <field name="customer_product_origin_ids" nolabel="1" string="客户经营产品">
-                                    <tree editable="bottom">
-                                        <field name="name" required="1"/>
-                                        <field name="description" />
-                                    </tree>
-                                </field>
-                            </page>
+
 
 
                             <page string="客户采购产品"
@@ -1602,6 +1606,7 @@
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)],'invisible':['|',('type','=','delivery'),('is_company','!=',True)]}"/>
                                 <field name="address_text" class="o_address_street"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
+                                <field name="is_child_ids" invisible="1"/>
                             </group>
                             <group>
                                 <field name="level" string="客户等级" invisible="1"
@@ -2600,7 +2605,7 @@
                                        'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <field name="address_text" attrs="{
                                        'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
-
+                              <field name="is_child_ids" invisible="1"/>
 
                             </group>
                             <group>
