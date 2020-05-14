@@ -16,6 +16,21 @@ class res_partner(models.Model):
                 [line.get_amount_to_currency(one.advance_currency_id) for line in lines])
             one.amount_purchase_advance = sum([line.get_amount_to_currency(one.currency_id) for line in lines])
 
+    # def compute_info(self):
+    #     for one in self:
+    #
+    #         if not one.full_name or not one.country_id or not one.jituan_id or not one.sale_currency_id or not one.property_payment_term_id \
+    #                 or not one.phone or not one.fax or not one.website or not one.address_text or not one.contract_type or not \
+    #                 one.gongsi_id or not one.purchase_gongsi_id and one.partner_source_id or not one.customer_info_from_uid or not one.devloper_id \
+    #                 or not one.user_id or not one.assistant_id or not one.customer_purchase_in_china or not one.customer_sale_total or not \
+    #                 one.self.child_contact_ids or not one.customer_product_origin_ids:
+    #             is_required = True
+    #         else:
+    #             is_required = False
+    #
+    #         one.is_required = is_required
+
+
     # 增加地址翻译
 
     code = fields.Char('编码')
@@ -82,7 +97,7 @@ class res_partner(models.Model):
                               ('approve', u'合规审批完成'), ('done', u'完成'), ('refuse', u'拒绝'), ('cancel', u'取消')],
                              string=u'状态', track_visibility='onchange', default='draft')
     auto_yfsqd = fields.Boolean(u'自动生成预付')
-    is_inter_partner = fields.Boolean(u'是否内部')
+    is_inter_partner = fields.Boolean(u'是否内部', default=False)
     jituan_name = fields.Char(u'集团名称')
 
     contract_type = fields.Selection([('a', '模式1'), ('b', '模式2'), ('c', '模式3')], '合同类型', default='c')
@@ -144,14 +159,6 @@ class res_partner(models.Model):
     partner_level = fields.Many2one('partner.level', '等级')
     is_editable = fields.Boolean(u'是否允许编辑')
     is_required = fields.Boolean(u'检查必填', default=False)
-
-    @api.onchange('name','address_text')
-    def onchange_required(self):
-        self.is_required = True
-        self.is_inter_partner = True
-        self.state = 'draft'
-
-
 
 
     @api.onchange('invoice_title')
@@ -256,27 +263,111 @@ class res_partner(models.Model):
     def action_check(self):
         if self.create_uid == self.env.user:
             self.state = 'check'
-          #  self.is_inter_partner = False
+
         else:
             raise Warning(u'必须是创建人才能提交')
 
     def action_submit(self):
         war = ''
-        if self.full_name and self.country_id and self.jituan_id and self.sale_currency_id and self.property_payment_term_id and \
-                self.phone and self.fax and self.website and self.address_text and self.contract_type and \
-                self.gongsi_id and self.purchase_gongsi_id and partner_source and self.customer_info_from_uid and self.devloper_id and \
-                self.user_id and self.assiatant_id and self.customer_purchase_in_china and self.customer_sale_total and \
-                self.self.child_contact_ids and self.customer_product_origin_ids:
-            self.state = 'submit'
-        else:
-           if not self.full_name:
-               war += '全称不为空\n'
-           if not self.customer_product_origin_ids:
-               war += '客户不能为空\n'
-           if not self.child_contact_ids:
-               war += '联系人信息不能为空'
-           if war:
-               raise Warning(war)
+        if self.customer :
+            if self.full_name and self.country_id and self.jituan_id and self.sale_currency_id and self.property_payment_term_id and \
+                    self.phone and self.fax and self.website and self.address_text and self.contract_type and \
+                    self.gongsi_id and self.purchase_gongsi_id and self.partner_source_id and self.customer_info_from_uid and self.devloper_id and \
+                    self.user_id and self.assistant_id and self.customer_purchase_in_china and self.customer_sale_total and \
+                    self.self.child_contact_ids and self.customer_product_origin_ids:
+                self.state = 'submit'
+            else:
+                if not self.full_name:
+                    war += '客户公司全称不为空\n'
+                if not self.country_id:
+                    war += '公司所在国不为空\n'
+                if not self.jituan_id:
+                    war += '所属集团不为空\n'
+                if not self.sale_currency_id:
+                    war += '销售币种不为空\n'
+                if not self.property_payment_term_id:
+                    war += '付款条款不为空\n'
+                if not self.phone:
+                    war += '电话不为空\n'
+                if not self.fax:
+                    war += '传真不为空\n'
+                if not self.website:
+                    war += '网址不为空\n'
+                if not self.address_text:
+                    war += '地址不为空\n'
+                if not self.contract_type:
+                    war += '模式不为空\n'
+                if not self.gongsi_id:
+                    war += '销售主体不为空\n'
+                if not self.purchase_gongsi_id:
+                    war += '采购主体不为空\n'
+                if not self.partner_source_id:
+                    war += '来源不为空\n'
+                if not self.customer_info_from_uid:
+                    war += '客户获取人不为空\n'
+                if not self.devloper_id:
+                    war += '开发者不为空\n'
+                if not self.user_id:
+                    war += '目前客户负责人不为空\n'
+                if not self.assistant_id:
+                    war += '助理不为空\n'
+                if not self.customer_purchase_in_china:
+                    war += '客户在中国采购规模不为空\n'
+                if not self.customer_sale_total:
+                    war += '客户销售额不为空\n'
+                if not self.customer_product_origin_ids:
+                    war += '客户经营的产品不能为空\n'
+                if not self.child_contact_ids:
+                    war += '联系人信息不能为空'
+                if war:
+                    raise Warning(war)
+        if self.supplier:
+            if self.full_name and self.country_id and self.city_product_origin and self.jituan_id and self.property_purchase_currency_id and\
+                    self.property_supplier_payment_term_id and self.phone and self.fax and self.website and self.address_text and \
+                    self.partner_source_id and self.supplier_info_from_uid and \
+                    self.supplier_export_total and self.supplier_sale_total and \
+                    self.self.child_contact_ids and self.customer_product_origin_ids:
+                self.state = 'submit'
+            else:
+                if not self.full_name:
+                    war += '客户公司全称不为空\n'
+                if not self.country_id:
+                    war += '公司所在国不为空\n'
+                if not self.city_product_origin:
+                    war += '产地不为空\n'
+                if not self.jituan_id:
+                    war += '所属集团不为空\n'
+                if not self.property_purchase_currency_id:
+                    war += '币种不为空\n'
+                if not self.property_supplier_payment_term_id:
+                    war += '付款条款不为空\n'
+                if not self.phone:
+                    war += '电话不为空\n'
+                if not self.fax:
+                    war += '传真不为空\n'
+                if not self.website:
+                    war += '网址不为空\n'
+                if not self.address_text:
+                    war += '地址不为空\n'
+
+                if not self.partner_source_id:
+                    war += '来源不为空\n'
+                if not self.supplier_info_from_uid:
+                    war += '供应商获取人不为空\n'
+
+                if not self.supplier_export_total:
+                    war += '供应商出口额不为空\n'
+                if not self.supplier_sale_total:
+                    war += '供应商销售额不为空\n'
+                if not self.customer_product_origin_ids:
+                    war += '供应商经营产品不能为空\n'
+                if not self.child_contact_ids:
+                    war += '联系人信息不能为空'
+                if war:
+                    raise Warning(war)
+
+
+
 
     def action_to_approve(self):
         if self.user_id == self.env.user:

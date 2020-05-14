@@ -100,7 +100,7 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('base.view_partner_bank_form')})]"/>
         </record>
 
-     <menuitem id="menu_partner_bank_personal" name="我登记的账户信息" parent="yjzy_extend.supplier_config" groups="base.group_system" action="action_new_bank_personal" sequence="99"/>
+     <menuitem id="menu_partner_bank_personal" name="我登记的账户信息" parent="contacts.res_partner_menu_config" groups="base.group_system" action="action_new_bank_personal" sequence="99"/>
 
 
     </data>
