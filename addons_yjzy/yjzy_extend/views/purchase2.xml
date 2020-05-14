@@ -372,7 +372,7 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('new_purchase_order_from')})]"/>
         </record>
 
-        <!-- This Menu Item must have a parent and an action -->
+        <!-- This Menu Item must have a parent and an action  -->
         <menuitem id="new_purchase_order_sales_menu" name="业务待处理采购" parent="yjzy_extend.new_purchase_order_root" action="new_purchase_order_sales_action" sequence="1"/>
 
 
@@ -388,7 +388,7 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('new_purchase_order_from')})]"/>
         </record>
 
-        <!-- This Menu Item must have a parent and an action -->
+        <!-- This Menu Item must have a parent and an 伟伟 action -->
         <menuitem id="new_purchase_order_weiwei_menu" name="业务待处理采购" parent="yjzy_extend.new_purchase_order_root" action="new_purchase_order_weiwei_action" sequence="1"/>
 
         <record id="new_purchase_order_purchaser_action" model="ir.actions.act_window">
@@ -432,6 +432,72 @@
         <!-- This Menu Item must have a parent and an action -->
 
         <menuitem id="new_purchase_order_my_menu" name="我的采购单" parent="yjzy_extend.new_purchase_order_root" action="new_purchase_order_my_action" sequence="4"/>
+
+
+        <record id="new_purchase_order_approve_action" model="ir.actions.act_window">
+            <field name="name">执行中采购合同</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">purchase.order</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('purchase','to approve'])]</field>
+            <field name="context">{'group_by':'state'}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('new_purchase_order_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('new_purchase_order_from')})]"/>
+        </record>
+
+        <!-- This Menu Item must have a parent and an action  -->
+        <menuitem id="new_purchase_order_approve_menu" groups="base.group_system" name="执行中采购合同" parent="yjzy_extend.new_purchase_order_root"
+                  action="new_purchase_order_approve_action" sequence="1"/>
+
+        <record id="new_purchase_order_approval_action" model="ir.actions.act_window">
+            <field name="name">未生效采购合同</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">purchase.order</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('state','in',['draft','refused','submit','approve_sales'])]</field>
+            <field name="context">{'group_by':'state'}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('new_purchase_order_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('new_purchase_order_from')})]"/>
+        </record>
+
+        <!-- This Menu Item must have a parent and an action  -->
+        <menuitem id="new_purchase_order_approval_menu" groups="base.group_system" name="未生效采购合同." parent="yjzy_extend.new_purchase_order_root"
+                  action="new_purchase_order_approval_action" sequence="2"/>
+
+
+         <record id="new_purchase_order_approve_weiwei_action" model="ir.actions.act_window">
+            <field name="name">执行中采购合同.</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">purchase.order</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('state','in',['purchase','to approve']),'|','|',('source_so_id.partner_id.x_studio_field_U7OvH','in',uid),('source_so_id.partner_id.user_id','=',uid),('source_so_id.partner_id.assistant_id','=',uid)]</field>
+            <field name="context">{'group_by':'state'}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('new_purchase_order_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('new_purchase_order_from')})]"/>
+        </record>
+
+        <!-- This Menu Item must have a parent and an action  -->
+        <menuitem id="new_purchase_order_approve_weiwei_menu" groups="base.group_system" name="执行中采购合同." parent="yjzy_extend.new_purchase_order_root"
+                  action="new_purchase_order_approve_weiwei_action" sequence="1"/>
+
+        <record id="new_purchase_order_approval_weiwei_action" model="ir.actions.act_window">
+            <field name="name">未生效采购合同.</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">purchase.order</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('state','in',['draft','refused','submit','approve_sales']),'|','|',('source_so_id.partner_id.x_studio_field_U7OvH','in',uid),('source_so_id.partner_id.user_id','=',uid),('source_so_id.partner_id.assistant_id','=',uid)]</field>
+            <field name="context">{'group_by':'state'}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('new_purchase_order_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('new_purchase_order_from')})]"/>
+        </record>
+
+        <!-- This Menu Item must have a parent and an action  -->
+        <menuitem id="new_purchase_order_approval_weiwei_menu" name="未生效采购合同." groups="base.group_system" parent="yjzy_extend.new_purchase_order_root"
+                  action="new_purchase_order_approval_weiwei_action" sequence="2"/>
 
 
     </data>
