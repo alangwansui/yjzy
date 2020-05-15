@@ -23,7 +23,11 @@ class res_partner(models.Model):
                     phone_mobile = True
                 else:
                     phone_mobile = False
-                if not x.name or not x.country_id or not phone_mobile or not x.email or not x.other_social_accounts or not x.comment_contact :
+                if x.email or x.other_social_accounts:
+                    email_social = True
+                else:
+                    email_social = False
+                if not x.name or not x.country_id or not phone_mobile or not email_social or not x.comment_contact :
                     is_child_ids = False
                     one.is_child_ids = is_child_ids
                     break
@@ -331,10 +335,8 @@ class res_partner(models.Model):
                         war += '联系人%s 工作岗位不能为空\n' % x.name
                     if not x.phone and not x.mobile:
                         war += '联系人%s 电话或者手机不能为空\n' % x.name
-                    if not x.email:
-                        war += '联系人%s 电子邮件不能为空\n' % x.name
-                    if not x.other_social_accounts:
-                        war += '联系人%s 社交账号不能为空\n' % x.name
+                    if not x.email and not x.other_social_accounts:
+                        war += '联系人%s 电子邮件或者社交账号不能为空\n' % x.name
                     if not x.comment_contact:
                         war += '联系人%s 对接内容描述不能为空\n' % x.name
                 if war:

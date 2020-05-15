@@ -2024,6 +2024,17 @@
 
                                 </field>
                             </page>
+
+                            <page string="客户经营产品"
+                                  attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],}">
+                                <field name="customer_product_origin_ids" nolabel="1" string="客户经营产品" attrs="{
+                                       'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}">
+                                    <tree editable="bottom">
+                                        <field name="name" required="1"/>
+                                        <field name="description"/>
+                                    </tree>
+                                </field>
+                            </page>
                             <page string="客户交货信息"
                                   attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],}">
 
@@ -2247,16 +2258,7 @@
 
                                 </field>
                             </page>
-                            <page string="客户经营产品"
-                                  attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],}">
-                                <field name="customer_product_origin_ids" nolabel="1" string="客户经营产品" attrs="{
-                                       'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}">
-                                    <tree editable="bottom">
-                                        <field name="name" required="1"/>
-                                        <field name="description" required="1"/>
-                                    </tree>
-                                </field>
-                            </page>
+
 
                             <page string="客户采购产品"
                                   attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)]}">
