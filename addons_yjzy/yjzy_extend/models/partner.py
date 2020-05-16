@@ -323,8 +323,6 @@ class res_partner(models.Model):
                     war += '客户在中国采购规模不为空\n'
                 if not self.customer_sale_total:
                     war += '客户销售额不为空\n'
-                if not self.customer_product_origin_ids:
-                    war += '客户经营的产品不能为空\n'
                 if not self.child_contact_ids:
                     war += '联系人信息不能为空\n'
 
@@ -339,13 +337,15 @@ class res_partner(models.Model):
                         war += '联系人%s 电子邮件或者社交账号不能为空\n' % x.name
                     if not x.comment_contact:
                         war += '联系人%s 对接内容描述不能为空\n' % x.name
+                if not self.customer_product_origin_ids:
+                    war += '客户经营的产品不能为空\n'
                 if war:
                     raise Warning(war)
         if self.supplier:
             if self.full_name and self.country_id and self.city_product_origin and self.jituan_id and self.property_purchase_currency_id and\
                     self.property_supplier_payment_term_id and self.phone and self.fax and self.website and self.address_text and \
-                    self.partner_source_id and self.supplier_info_from_uid and \
-                    self.supplier_export_total and self.supplier_sale_total and \
+                    self.partner_source_id and self.supplier_info_from_uid and self.actual_controlling_person and self.attachment_business_license and\
+                    self.supplier_export_total and self.supplier_sale_total and self.bank_ids and\
                     self.self.child_contact_ids and self.customer_product_origin_ids and self.is_child_ids:
                 self.state = 'submit'
             else:
@@ -379,10 +379,10 @@ class res_partner(models.Model):
                     war += '供应商出口额不为空\n'
                 if not self.supplier_sale_total:
                     war += '供应商销售额不为空\n'
-                if not self.customer_product_origin_ids:
-                    war += '供应商经营产品不能为空\n'
+
                 if not self.child_contact_ids:
-                    war += '联系人信息不能为空'
+                    war += '联系人信息不能为空\n'
+
                 for x in self.child_contact_ids:
                     if not x.country_id:
                         war += '联系人%s 国家不能为空\n' % x.name
@@ -390,12 +390,19 @@ class res_partner(models.Model):
                         war += '联系人%s 工作岗位不能为空\n'% x.name
                     if not x.phone and not x.mobile:
                         war += '联系人%s 电话或者手机不能为空\n'% x.name
-                    if not x.email:
-                        war += '联系人%s 电子邮件不能为空\n'% x.name
-                    if not x.other_social_accounts:
-                        war += '联系人%s 社交账号不能为空\n'% x.name
+                    if not x.email and not x.other_social_accounts:
+                        war += '联系人%s 电子邮件或者社交账号不能为空\n'% x.name
+
                     if not x.comment_contact:
                         war += '联系人%s 对接内容描述不能为空\n'% x.name
+                if not self.actual_controlling_person:
+                    war += '实际控股人不能为空\n'
+                if not self.attachment_business_license:
+                    war += '营业执照及其他资料附件不能为空\n'
+                if not self.bank_ids:
+                    war += '银行账户信息不能为空\n'
+                if not self.customer_product_origin_ids:
+                    war += '供应商经营产品不能为空\n'
                 if war:
                     raise Warning(war)
 

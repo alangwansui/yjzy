@@ -80,10 +80,27 @@ class Product_Product(models.Model):
     pi_description = fields.Text('PI_Description')
     pi_specification = fields.Text('PI_Specification')
 
-    state = fields.Selection([('draft', u'草稿'),('first', u'一级审批'),('done', u'完成')], u'状态', default='draft')
+    state = fields.Selection([('draft', u'草稿'),('submit',u'待业务责任人审批'),('first', '待产品合规审批'),('done', u'完成')], u'状态', default='draft')
 
     is_gold_sample = fields.Boolean('是否有金样')
 
+
+
+
+    def action_submit(self):
+        if self.customer_id.user_id == self.env.user or self.customer_id.assistant_id == self.env.user:
+            self.state = 'submit'
+        else:
+            raise Warning(u'您没有该产品的权限')
+
+
+    def action_first(self):
+        if self.customer_id.user_id == self.env.user:
+            self.state = 'first'
+        else:
+            raise Warning(u'您不是该产品的责任人')
+    def action_done(self):
+            self.state = 'done'
 
 
     @api.depends('seq', 'categ_id')

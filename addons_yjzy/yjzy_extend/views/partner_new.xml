@@ -77,8 +77,8 @@
                     <field name="gongsi_id" string="销售主体"/>
                     <field name="purchase_gongsi_id" string="采购主体"/>
                     <field name="user_id" string="目前客户负责人"/>
-                    <field name="customer_info_from_uid" string="客户获取人"/>
-                     <field name="devloper_id" string="客户开发人"/>
+                    <field name="customer_info_from_uid" string="客户获取人" invisible="1"/>
+                    <field name="devloper_id" string="客户开发人" invisible="1"/>
 
                     <field name="child_contact_ids" attrs="{'invisible':1}"/>
                     <field name="is_company" invisible="1"/>
@@ -2643,8 +2643,8 @@
                                 <separator colspan="2"/>
                                 <field name="advance_currency_id" invisible="1"/>
                                 <field name="currency_id" invisible="1"/>
-                                <field name="amount_purchase_advance_org" string="预付款余额"
-                                       attrs="{'invisible': ['|',('supplier','=',False),('is_company','=',False)]}"/>
+                                <field name="amount_purchase_advance_org" string="预付款余额" groups="base.group_system"
+                                       />
                                 <field name="amount_purchase_advance" groups="base.group_system"
                                        attrs="{'invisible': ['|',('supplier','=',False),('is_company','=',False)]}"/>
                                 <field name="need_purchase_fandian" groups="base.group_system"
@@ -3071,6 +3071,16 @@
                                     </field>
                                 </group>
                             </page>
+                            <page string="供应商制造产品">
+                                <field name="customer_product_origin_ids" nolabel="1" attrs="{
+                                       'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"
+                                       string="供应商制造产品">
+                                    <tree editable="bottom">
+                                        <field name="name" attrs="{'required':1}"/>
+                                        <field name="description"/>
+                                    </tree>
+                                </field>
+                            </page>
                             <page string="供应商发票主体信息"
                                   attrs="{'invisible':['|',('supplier','=',False),('is_company','=',False)]}">
 
@@ -3135,16 +3145,7 @@
 
                                 </field>
                             </page>
-                            <page string="供应商制造产品">
-                                <field name="customer_product_origin_ids" nolabel="1" attrs="{
-                                       'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"
-                                       string="供应商制造产品">
-                                    <tree editable="bottom">
-                                        <field name="name" attrs="{'required':1}"/>
-                                        <field name="description" attrs="{'required':1}"/>
-                                    </tree>
-                                </field>
-                            </page>
+
 
 
                             <page string="采购合同后置条款"
