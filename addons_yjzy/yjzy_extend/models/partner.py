@@ -269,11 +269,11 @@ class res_partner(models.Model):
 
     # @api.multi
     def action_check(self):
-        if self.create_uid == self.env.user:
-            self.state = 'check'
+        # if self.create_uid == self.env.user:
+        self.state = 'check'
 
-        else:
-            raise Warning(u'必须是创建人才能提交')
+        # else:
+        #     raise Warning(u'必须是创建人才能提交')
 
     def action_submit(self):
         war = ''
@@ -422,20 +422,24 @@ class res_partner(models.Model):
         return self.write({'state': 'done'})
 
     def action_refuse(self):
-        return self.write({'state': 'refuse'})
+        if self.state == 'submit' and self.user_id != self.env.user:
+            raise Warning(u'责任人审批状态必须是责任人才能拒绝')
+        else:
+            return self.write({'state': 'refuse'})
+
 
     def action_cancel(self):
-        if self.create_uid == self.env.user:
+        if self.state in ('refuse','draft'):
             return self.write({'state': 'cancel'})
         else:
-            raise Warning(u'必须是创建人才能取消')
+            raise Warning(u'只有拒绝或者草稿状态才能取消')
 
     def action_draft(self):
         partner = self.filtered(lambda s: s.state in ['cancel'])
-        if self.create_uid == self.env.user:
-            return self.write({'state': 'draft', })
-        else:
-            raise Warning(u'必须是创建人才能提交')
+        # if self.create_uid == self.env.user:
+        return self.write({'state': 'draft', })
+        # else:
+        #     raise Warning(u'必须是创建人才能提交')
 
     # def unlink(self):
     #    for one in self:

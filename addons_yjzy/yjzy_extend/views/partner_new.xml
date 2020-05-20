@@ -1635,11 +1635,11 @@
                                        domain="[('type','=','customer')]"/>
 
 
-                                <field name="customer_info_from_uid" options='{"no_open": True, "no_create": True}'
+                                <field name="customer_info_from_uid" domain="[('is_company','=',False),('is_inter_partner','=',True)]" options='{"no_open": True, "no_create": True}'
                                        attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],
                                        'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
 
-                                <field name="devloper_id" string="客户开发人" options='{"no_open": True, "no_create": True}'
+                                <field name="devloper_id" string="客户开发人" domain="[('is_company','=',False),('is_inter_partner','=',True)]" options='{"no_open": True, "no_create": True}'
                                        attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],
                                        'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <field name="user_id" string="目前客户负责人" options='{"no_open": True, "no_create": True}'
@@ -3079,6 +3079,10 @@
                                         <field name="name" attrs="{'required':1}"/>
                                         <field name="description"/>
                                     </tree>
+                                    <form>
+                                        <field name="name" attrs="{'required':1}"/>
+                                        <field name="description"/>
+                                    </form>
                                 </field>
                             </page>
                             <page string="供应商发票主体信息"
