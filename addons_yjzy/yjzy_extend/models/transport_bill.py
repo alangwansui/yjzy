@@ -990,16 +990,19 @@ class transport_bill(models.Model):
                 purchase_invoice.date_ship = one.date_ship
                 purchase_invoice.date_finish = one.date_supplier_finish
                 purchase_invoice.date_invoice = one.date_out_in
-                purchase_invoice.action_invoice_open()
+                if purchase_invoice.state == 'draft':
+                    purchase_invoice.action_invoice_open()
             #同步销售发票
             sale_invoice = one.sale_invoice_id
             if sale_invoice:
                 sale_invoice.date_invoice = one.date_out_in
                 sale_invoice.date_finish = one.date_customer_finish
                 sale_invoice.date_ship = one.date_ship
-                sale_invoice.action_invoice_open()
+                if sale_invoice.state == 'draft':
+                    sale_invoice.action_invoice_open()
             back_tax_invoice = one.back_tax_invoice_id
-            if back_tax_invoice:
+            back_tax_invoice_sate = one.back_tax_invoice_id.state
+            if back_tax_invoice and back_tax_invoice_sate == 'draft':
                 back_tax_invoice.action_invoice_open()
         return True
 

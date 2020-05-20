@@ -87,6 +87,7 @@
         'views/print_record.xml',
         'views/partner_level.xml',
         'views/partner_source.xml',
+        'views/product_product_new.xml',
         'views/dashboard.xml',
 
 

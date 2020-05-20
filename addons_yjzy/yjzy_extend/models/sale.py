@@ -5,6 +5,7 @@ from odoo.addons import decimal_precision as dp
 from datetime import datetime
 from odoo.exceptions import Warning
 from . comm import BACK_TAX_RATIO
+from dateutil import relativedelta
 
 
 class sale_order(models.Model):
@@ -120,7 +121,11 @@ class sale_order(models.Model):
                 else:
                     pass
 
-
+            # if one.delivery_status == 'received':
+            #     one.hexiao_type = 'write_off'
+            # else:
+            #     if one.requested_date > (datetime.now() - relativedelta.relativedelta(days=185)):
+            #      one.hexiao_type = 'abnormal'
 
 
             one.amount_total2 = amount_total2
@@ -325,7 +330,8 @@ class sale_order(models.Model):
 
     is_different_payment_term = fields.Boolean('付款条款是否不同')
 
-
+    # hexiao_type = fields.Selection([('abnormal',u'异常合同'),
+    #                                 ('write_off',u'待核销合同'),'核销状态'],compute=compute_info)
 
 
 
