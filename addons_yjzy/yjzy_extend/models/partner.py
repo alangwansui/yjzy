@@ -167,7 +167,7 @@ class res_partner(models.Model):
     is_required = fields.Boolean(u'检查必填', default=False)
     is_child_ids = fields.Boolean(u'检查联系人字段', default=False, compute=compute_info)
     former_name = fields.Char(u'曾用名')
-
+    can_not_be_deleted =fields.Boolean(u'不允许删除',default=False, readonly=True)
 
 
 
@@ -195,8 +195,12 @@ class res_partner(models.Model):
 
     def unlink(self):
         for one in self:
-            if one.state != 'cancel':
-                raise Warning(u'只有取消状态允许删除')
+            if one.create_uid != self.env.user:
+                raise Warning(u'只有创建者才允许删除')
+            if one.state not in ('refuse', 'draft'):
+                raise Warning(u'只有拒绝或者草稿状态才能删除！')
+            if one.can_not_be_deleted == True:
+                raise Warning(u'已经完成至少一次审批，不允许删除，请联系总经理！')
         return super(res_partner, self).unlink()
 
     @api.model
@@ -424,6 +428,8 @@ class res_partner(models.Model):
         return self.write({'state': 'approve'})
 
     def action_done(self):
+        if self.can_not_be_deleted == False:
+            self.can_not_be_deleted = True
         return self.write({'state': 'done'})
 
     def action_refuse(self):
@@ -432,12 +438,18 @@ class res_partner(models.Model):
         else:
             return self.write({'state': 'refuse'})
 
-
     def action_cancel(self):
-        if self.state in ('refuse','draft'):
-            return self.write({'state': 'cancel'})
-        else:
-            raise Warning(u'只有拒绝或者草稿状态才能取消')
+       # if self.state in ('refuse', 'draft') and self.can_not_be_deleted == False:
+       if self.state not in ('refuse', 'draft'):
+           raise Warning(u'只有拒绝或者草稿状态才能取消！')
+       else:
+           return self.write({'state': 'cancel'})
+     #   else:
+     #
+       #     if self.can_not_be_deleted == True:
+     #           raise Warning(u'已经审批过的记录不允许删除！请联系总经理！')
+
+       
 
     def action_draft(self):
         partner = self.filtered(lambda s: s.state in ['cancel'])
