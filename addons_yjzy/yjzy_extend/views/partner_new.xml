@@ -452,7 +452,7 @@
                                 <field name="city_product_origin"/>
                                 <!--/div-->
                                 <field name="jituan_id"
-                                       domain="['|','|','|',('user_id','=',uid),('assistant_id','=',uid),('user_id','=',False),('assistant_id','=',False)]"
+                                       domain="[('user_ids','in',uid)]"
                                        options='{"no_open": True, "no_create": True}'
                                        attrs="{'required' : [('is_company', '=', True),('customer','=',True)],'invisible':['|',('customer','=',False),('is_company','=',False)]}"/>
                                 <field name="sale_currency_id"

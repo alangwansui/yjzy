@@ -16,5 +16,6 @@ class jituan(models.Model):
     customer = fields.Boolean('客户')
     supplier = fields.Boolean('供应商')
     partner_type = fields.Selection([('customer',u'客户'),('supplier',u'供应商')])
+    user_ids = fields.Many2many('res.users',string='责任人')
 
 

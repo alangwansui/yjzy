@@ -9,9 +9,8 @@
                 <tree string="集团" editable="bottom">
                     <field name="name" attrs="{'required':1}"/>
                     <field name="description"/>
-                    <field name="user_id"/>
-                    <field name="assistant_id"/>
                     <field name="partner_type" invisible="1"/>
+                    <field name="user_ids"/>
                 </tree>
             </field>
         </record>
@@ -28,9 +27,8 @@
                         <group>
                             <field name="name" attrs="{'required':1}"/>
                             <field name="description"/>
-                            <field name="user_id"/>
-                            <field name="assistant_id"/>
                             <field name="partner_type" invisible="1"/>
+                            <field name="user_ids"/>
                         </group>
                         <notebook>
                             <page string="客户">

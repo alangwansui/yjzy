@@ -166,6 +166,8 @@ class res_partner(models.Model):
     is_editable = fields.Boolean(u'是否允许编辑')
     is_required = fields.Boolean(u'检查必填', default=False)
     is_child_ids = fields.Boolean(u'检查联系人字段', default=False, compute=compute_info)
+    former_name = fields.Char(u'曾用名')
+
 
 
 
@@ -191,8 +193,11 @@ class res_partner(models.Model):
     #        values['is_inter_partner'] = True
     #        return super(res_partner, self).write(values)
 
-
-
+    def unlink(self):
+        for one in self:
+            if one.state != 'cancel':
+                raise Warning(u'只有取消状态允许删除')
+        return super(res_partner, self).unlink()
 
     @api.model
     def create(self, vals):
