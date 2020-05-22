@@ -433,7 +433,7 @@ class res_partner(models.Model):
         return self.write({'state': 'done'})
 
     def action_refuse(self):
-        if self.state == 'submit' and self.user_id != self.env.user:
+        if self.state == 'submit' and self.user_id != self.env.user and self.customer == True:
             raise Warning(u'责任人审批状态必须是责任人才能拒绝')
         else:
             return self.write({'state': 'refuse'})
