@@ -93,7 +93,7 @@
             <field name="model">res.partner</field>
             <field eval="8" name="priority"/>
             <field name="arch" type="xml">
-                <tree string="Contacts">
+                <tree string="Contacts" create="false">
                     <field name="name" string="简称"/>
                     <field name="country_id"/>
                     <field name="city_product_origin"/>
@@ -1552,7 +1552,7 @@
                                        attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <field name="sale_currency_id" options="{'no_open':1}"
                                        attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
-                                <field name="property_payment_term_id" domain="[('type','=','sale')]"
+                                <field name="property_payment_term_id" help="做销售合同时，预设的付款条款和订单选择的条款有出入时，会标注红色" domain="[('type','=','sale')]"
                                        attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"
                                        widget="selection"/>
 
@@ -1635,17 +1635,17 @@
                                        domain="[('type','=','customer')]"/>
 
 
-                                <field name="customer_info_from_uid" domain="[('is_company','=',False),('is_inter_partner','=',True)]" options='{"no_open": True, "no_create": True}'
+                                <field name="customer_info_from_uid" help="可以是公司内部人员，也可以是外部人员，如果找不到，请联系合规负责人添加" domain="[('is_company','=',False),('is_inter_partner','=',True)]" options='{"no_open": True, "no_create": True}'
                                        attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],
                                        'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
 
-                                <field name="devloper_id" string="客户开发人" domain="[('is_company','=',False),('is_inter_partner','=',True)]" options='{"no_open": True, "no_create": True}'
+                                <field name="devloper_id" string="客户开发人" help="可以是公司内部人员，也可以是外部人员，如果找不到，请联系合规负责人添加" domain="[('is_company','=',False),('is_inter_partner','=',True)]" options='{"no_open": True, "no_create": True}'
                                        attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],
                                        'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <field name="user_id" string="目前客户负责人" options='{"no_open": True, "no_create": True}'
                                        attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],
                                        'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
-                                <field name="assistant_id" string="销售助理" options='{"no_open": True, "no_create": True}'
+                                <field name="assistant_id" string="销售助理" help="如果和负责人是同一人，请选择相同的用户" options='{"no_open": True, "no_create": True}'
                                        attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],
                                        'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <field name="product_manager_id" invisible="1"/>
@@ -1849,15 +1849,15 @@
                                                attrs="{'required' : [('type', '=', 'contact')]}"/>
                                         <field name="country_id"/>
                                         <field name="function"/>
-                                        <field name="phone"/>
-                                        <field name="mobile"/>
-                                        <field name="email"/>
+                                        <field name="phone" help="电话手机二选一"/>
+                                        <field name="mobile" help="电话手机二选一"/>
+                                        <field name="email" help="电子邮箱社交帐号二选一"/>
                                         <field name="other_social_accounts" placeholder="微信、tweet，facebook等社交账号"/>
                                         <field name="type" invisible="1"/>
                                         <field name="wechat" invisible="1"/>
                                         <field name="skype" invisible="1"/>
                                         <field name="qq" invisible="1"/>
-                                        <field name="comment_contact" placeholder="例:该联系人是价格最后决策人"/>
+                                        <field name="comment_contact" help="电子邮箱社交帐号二选一" placeholder="例:该联系人是价格最后决策人"/>
                                         <field name="address_text"/>
                                         <field name="street" invisible="1"/>
                                         <field name="street2" invisible="1"/>
@@ -2393,7 +2393,7 @@
             <field name="model">res.partner</field>
             <field name="priority" eval="1"/>
             <field name="arch" type="xml">
-                <form string="供应商">
+                <form string="供应商" create="false">
                     <header groups="base.group_system">
                         <button name="action_done" groups="base.group_system" string="确认" type="object"
                                 class="btn-primary"
@@ -2560,7 +2560,7 @@
                                        options="{'no_create': True, 'no_open': True}"
                                        attrs="{'invisible': ['|',('supplier','=',False),('is_company','=',False)],
                                        'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
-                                <field name="property_supplier_payment_term_id"
+                                <field name="property_supplier_payment_term_id" help="做采购合同时，预设的付款条款和订单选择的条款有出入时，会标注红色"
                                        attrs="{'invisible':['|',('supplier','=',False),('is_company','=',False)],
                                        'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"
                                        domain="[('type','=','purchase')]" widget="selection"/>
@@ -2635,7 +2635,7 @@
                                        attrs="{
                                        'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"
                                        domain="[('type','=','supplier')]"/>
-                                <field name="supplier_info_from_uid" string="供应商获取人" attrs="{'required' : [('state', '=', 'check')],
+                                <field name="supplier_info_from_uid"  help="可以是内部职员，也可以外部非正式职员，如果找不到请联系合规负责人添加" string="供应商获取人" attrs="{'required' : [('state', '=', 'check')],
                                        'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <field name="create_uid" options="{'no_open':1}"/>
                                 <field name="create_date" widget="date"/>
@@ -2853,10 +2853,10 @@
                                         <field name="country_id" string="国家" invisible="1"/>
                                         <field name="city_product_origin" string="产地(国家/城市)" invisible="1"/>
                                         <field name="function"/>
-                                        <field name="phone"/>
-                                        <field name="mobile"/>
-                                        <field name="email"/>
-                                        <field name="other_social_accounts" placeholder="如：微信，QQ，WHATSAPP等"/>
+                                        <field name="phone" help="电话和手机二选一"/>
+                                        <field name="mobile" help="电话和手机二选一"/>
+                                        <field name="email" help="电子邮箱和社交帐号二选一"/>
+                                        <field name="other_social_accounts" help="电子邮箱和社交帐号二选一" placeholder="如：微信，QQ，WHATSAPP等"/>
                                         <field name="wechat" invisible="1"/>
                                         <field name="skype" invisible="1"/>
                                         <field name="qq" invisible="1"/>

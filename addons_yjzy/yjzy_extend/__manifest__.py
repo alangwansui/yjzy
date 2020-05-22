@@ -141,6 +141,7 @@
         'report/transport_bill_vendor_template.xml',
         'report/purchase_contract_template.xml',
         'report/purchase_contract2_template.xml',
+        'report/report_partner_customer_template.xml',
 
         'report/sale_order_cost_template.xml',
 

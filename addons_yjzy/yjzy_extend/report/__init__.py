@@ -15,6 +15,7 @@ from . import transport_bill_packing
 from . import transport_bill_vendor
 from . import account_payment_ysrld_liushui
 from . import account_payment_yfrld_liushui
+from . import report_partner_customer
 
 
 
