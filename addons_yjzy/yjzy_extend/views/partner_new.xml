@@ -1858,6 +1858,7 @@
                                         <field name="skype" invisible="1"/>
                                         <field name="qq" invisible="1"/>
                                         <field name="comment_contact" help="电子邮箱社交帐号二选一" placeholder="例:该联系人是价格最后决策人"/>
+                                        <field name="birthday" widget="date"/>
                                         <field name="address_text"/>
                                         <field name="street" invisible="1"/>
                                         <field name="street2" invisible="1"/>
@@ -2048,7 +2049,7 @@
                                         <field name="name" string="收货人抬头" groups="base.group_system"/>
                                         <field name="invoice_title" string="境外收货人(报关单)"
                                                attrs="{'invisible': [('type', '!=', 'delivery')],'required' :1}"/>
-                                        <field name="country_id" string="目的国" required="1"/>
+                                        <field name="country_id" string="业务国" required="1"/>
                                         <field name="type" invisible="1"/>
                                         <field name="type1" invisible="1"/>
                                         <field name="wharf_src_id" attrs="{'invisible': [('type', '!=', 'delivery')]}"/>
@@ -2258,18 +2259,18 @@
 
                                 </field>
                             </page>
-
+<page string="销售合同后置条款"
+                                  attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)]}">
+                                <field name="term_description" attrs="{'invisible':[('customer','=',False)],
+                                       'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
+                            </page>
 
                             <page string="客户采购产品"
                                   attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)]}">
                                 <field name="customer_product_ids" readonly="1"/>
                             </page>
 
-                            <page string="销售合同后置条款"
-                                  attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)]}">
-                                <field name="term_description" attrs="{'invisible':[('customer','=',False)],
-                                       'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
-                            </page>
+
 
                             <page name='internal_notes' groups="base.group_system" string="Internal Notes"
                                   attrs="{'invisible':['|',('type','=','delivery'),('is_company','!=',True)]}">
@@ -2861,7 +2862,7 @@
                                         <field name="skype" invisible="1"/>
                                         <field name="qq" invisible="1"/>
                                         <field name="comment_contact" placeholder="例：联系人为供应商实际负责人"/>
-                                        <field name="address_text"/>
+                                        <field name="address_text" string="办公地址"/>
                                         <field name="street" invisible="1"/>
                                         <field name="street2" invisible="1"/>
                                         <field name="customer" invisible="1"/>

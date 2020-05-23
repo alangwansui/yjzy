@@ -60,18 +60,36 @@ class res_partner(models.Model):
     comment_contact = fields.Text(u'对接内容描述')
     devloper_id = fields.Many2one('res.partner', u'开发人员',domain=[('is_inter_partner','=',True),('company_type','=','personal')])
     full_name = fields.Char('公司全称')
+
+    #不要了
     invoice_title = fields.Char(u'发票抬头')
     mark_ids = fields.Many2many('transport.mark', 'ref_mark_patner', 'pid', 'mid', u'唛头')
     mark_comb_ids = fields.Many2many('mark.comb', 'ref_comb_partner', 'pid', 'cid', u'唛头组')
-
-    # mark_comb_id = fields.Many2one('mark.comb',u'唛头')
-
     exchange_type_ids = fields.Many2many('exchange.type', 'ref_exchange_partner', 'pid', 'eid', u'交单方式')
     exchange_demand_ids = fields.One2many('exchange.demand', 'partner_id', u'交单要求')
-
     demand_info = fields.Text(u'交单要求')
     notice_man = fields.Text(u'通知人')
     delivery_man = fields.Text(u'收货人')
+    wechat = fields.Char(u'微信')
+    qq = fields.Char(u'QQ')
+    skype = fields.Char('Skype')
+    auto_yfsqd = fields.Boolean(u'自动生成预付')
+    jituan_name = fields.Char(u'集团名称')
+    campaign_id = fields.Many2one('utm.campaign', u'客户来源')
+    partner_source_id = fields.Many2one('partner.source', u'来源')
+    customer_info_from_uid = fields.Many2one('res.partner', u'客户获取人', domain=[('is_inter_partner', '=', True),
+                                                                              ('company_type', '=', 'personal')])
+    is_required = fields.Boolean(u'检查必填', default=False)
+    is_child_ids = fields.Boolean(u'检查联系人字段', default=False, compute=compute_info)
+    # mark_comb_id = fields.Many2one('mark.comb',u'唛头')
+
+
+
+
+
+
+
+
 
     wharf_src_id = fields.Many2one('stock.wharf', u'装船港')
     wharf_dest_id = fields.Many2one('stock.wharf', u'目的港')
@@ -86,9 +104,7 @@ class res_partner(models.Model):
     term_purchase = fields.Html(u'采购条款')
 
     fax = fields.Char(u'传真')
-    wechat = fields.Char(u'微信')
-    qq = fields.Char(u'QQ')
-    skype = fields.Char('Skype')
+
     level = fields.Selection([(x, x.upper()) for x in 'abcde'], u'客户等级')
 
     sequence = fields.Integer(u'排序', default=10, index=True)
@@ -102,9 +118,9 @@ class res_partner(models.Model):
                               ('to approve', u'责任人已审批'),
                               ('approve', u'合规审批完成'), ('done', u'完成'), ('refuse', u'拒绝'), ('cancel', u'取消')],
                              string=u'状态', track_visibility='onchange', default='draft')
-    auto_yfsqd = fields.Boolean(u'自动生成预付')
+
     is_inter_partner = fields.Boolean(u'是否内部', default=False)
-    jituan_name = fields.Char(u'集团名称')
+
 
     contract_type = fields.Selection([('a', '模式1'), ('b', '模式2'), ('c', '模式3')], '合同类型', default='c')
     gongsi_id = fields.Many2one('gongsi', '销售主体')
@@ -113,9 +129,8 @@ class res_partner(models.Model):
     sale_currency_id = fields.Many2one('res.currency', '销售币种')
     customer_product_ids = fields.One2many('product.product', 'customer_id', '客户采购产品')
 
-    campaign_id = fields.Many2one('utm.campaign', u'客户来源')
-    partner_source_id = fields.Many2one('partner.source',u'来源')
-    customer_info_from_uid = fields.Many2one('res.partner', u'客户获取人', domain=[('is_inter_partner','=',True),('company_type','=','personal')])
+
+
 
     customer_purchase_in_china = fields.Char(u'客户在中国采购规模(CNY)')
     customer_purchase_in_china_currency_id = fields.Many2one('res.currency', '客户在中国采购规模币种', default=lambda
@@ -164,10 +179,10 @@ class res_partner(models.Model):
     other_social_accounts = fields.Char(u'社交帐号')
     partner_level = fields.Many2one('partner.level', '等级')
     is_editable = fields.Boolean(u'是否允许编辑')
-    is_required = fields.Boolean(u'检查必填', default=False)
-    is_child_ids = fields.Boolean(u'检查联系人字段', default=False, compute=compute_info)
+
     former_name = fields.Char(u'曾用名')
     can_not_be_deleted =fields.Boolean(u'不允许删除',default=False, readonly=True)
+    birthday = fields.Date(u'生日')
 
 
 

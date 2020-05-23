@@ -166,20 +166,41 @@ class sale_order(models.Model):
 
 
     #货币设置
-    sale_currency_id = fields.Many2one('res.currency', related='currency_id', string=u'交易货币', store=True)
-    company_currency_id = fields.Many2one('res.currency', u'公司货币', default=lambda self: self.env.user.company_id.currency_id.id)
-    third_currency_id = fields.Many2one('res.currency', u'统计货币', default=lambda self: self.env.user.company_id.currency_id.id)
-    other_currency_id = fields.Many2one('res.currency', u'其他国外费用货币', default=lambda self: self.env.ref('base.USD').id)
 
+
+    company_currency_id = fields.Many2one('res.currency', u'公司货币', default=lambda self: self.env.user.company_id.currency_id.id)
+
+    other_currency_id = fields.Many2one('res.currency', u'其他国外费用货币', default=lambda self: self.env.ref('base.USD').id)
+    third_currency_id = fields.Many2one('res.currency', u'统计货币',
+                                        default=lambda self: self.env.user.company_id.currency_id.id)
+    #不需要
+    third_currency_id = fields.Many2one('res.currency', u'统计货币',
+                                        default=lambda self: self.env.user.company_id.currency_id.id)
+    sale_currency_id = fields.Many2one('res.currency', related='currency_id', string=u'交易货币', store=True)
+    product_manager_id = fields.Many2one('res.users', u'产品经理')
+    incoterm_code = fields.Char(u'贸易术语', related='incoterm.code', readonly=True)
+    cost_id = fields.Many2one('sale.cost', u'成本单', copy=False)
+    fee_rmb2_note = fields.Text(u'人名币备注2')
+    fee_rmb1_note = fields.Text(u'人名币备注1')
+    fee_other_note = fields.Text(u'外币备注1')
+    advance_account_id = fields.Many2one('account.account', u'预收认领单')
+    advance_currency_id = fields.Many2one('res.currency', u'预收币种', related='advance_account_id.currency_id')
+    yjzy_payment_id = fields.Many2one('account.payment', u'预收认领单')
+    advance_residual = fields.Monetary(u'预收余额', compute=compute_info, currency_field='advance_currency_id')
+    is_inner_trade = fields.Boolean('内部交易')
+    second_company_id = fields.Many2one('res.company', '内部交易公司')
+    country_id = fields.Many2one('res.country', related='partner_id.country_id', readonly=True, string=u'国家')
+    second_partner_id = fields.Many2one('res.partner', u'第二客户')
+    order_line_b = fields.One2many('sale.order.line', related='order_line')
+    po_ids_term = fields.Many2many('purchase.order', '采购合同条款', related='po_ids')
+    #。。。。。
     contract_code = fields.Char(u'合同编码')
     contract_date = fields.Date(u'签订日期')
     link_man_id = fields.Many2one('res.partner', u'联系人')
     sale_assistant_id = fields.Many2one('res.users', u'业务助理')
-    product_manager_id = fields.Many2one('res.users', u'产品经理')
 
-    incoterm_code = fields.Char(u'贸易术语', related='incoterm.code', readonly=True)
 
-    cost_id = fields.Many2one('sale.cost', u'成本单', copy=False)
+
     #transport_bill_id = fields.Many2one('transport.bill', u'出运单', copy=False)
     is_cip = fields.Boolean(u'报关', default=True)
     cip_type = fields.Selection([('normal', u'正常报关'), ('buy', u'买单报关'), ('none', '不报关')], string=u'报关', default='normal')
@@ -187,9 +208,9 @@ class sale_order(models.Model):
 
     fee_inner = fields.Monetary(u'国内运杂费', currency_field='company_currency_id')
     fee_rmb1 = fields.Monetary(u'人民币费用1', currency_field='company_currency_id')
-    fee_rmb1_note = fields.Text(u'人名币备注1')
+
     fee_rmb2 = fields.Monetary(u'人民币费用2', currency_field='company_currency_id')
-    fee_rmb2_note = fields.Text(u'人名币备注2')
+
     fee_rmb_all = fields.Monetary(u'人民币费用合计', currency_field='company_currency_id',  compute=compute_info)
     fee_rmb_ratio = fields.Float(u'人名币费用占销售额比', digits=(2, 2), compute=compute_info) #akiny 4改成了2
 
@@ -198,7 +219,8 @@ class sale_order(models.Model):
     fee_export_insurance = fields.Monetary(u'出口保险费', currency_field='other_currency_id')
     export_insurance_currency_id = fields.Many2one('res.currency', u'出口保险费货币')
     fee_other = fields.Monetary(u'其他外币费用', currency_field='other_currency_id')
-    fee_other_note = fields.Text(u'外币备注1')
+
+
     fee_outer_all = fields.Monetary(u'外币费用合计', currency_field='other_currency_id',  compute=compute_info)
     fee_outer_ratio = fields.Float(u'外币费用占销售额比', digits=(2, 2), compute=compute_info) #akiny 4改成了2
 
@@ -208,14 +230,13 @@ class sale_order(models.Model):
 
 
 
-    advance_account_id = fields.Many2one('account.account', u'预收认领单')
-    advance_currency_id = fields.Many2one('res.currency', u'预收币种', related='advance_account_id.currency_id')
 
-    advance_residual = fields.Monetary(u'预收余额', compute=compute_info, currency_field='advance_currency_id')
+
+
 
     advance_po_residual = fields.Float(u'预付余额', compute=compute_po_residual, store=True)
 
-    yjzy_payment_id = fields.Many2one('account.payment', u'预收认领单')
+
     yjzy_payment_ids = fields.One2many('account.payment', 'so_id', u'预收认领单')
     yjzy_currency_id = fields.Many2one('res.currency', u'预收币种', related='yjzy_payment_ids.currency_id')
     balance = fields.Monetary(u'预收余额', compute=compute_balance, currency_field='yjzy_currency_id', store=True)
@@ -264,11 +285,11 @@ class sale_order(models.Model):
     is_editable = fields.Boolean(u'可编辑')
     display_detail = fields.Boolean(u'显示详情')
     aml_ids = fields.One2many('account.move.line', 'so_id', u'分录明细', readonly=True)
-    second_partner_id = fields.Many2one('res.partner', u'第二客户')
+
 
     gold_sample_state = fields.Selection([('all', '全部有'), ('part', '部分有'), ('none', '无金样')], '样金管理', compute=compute_info)
 
-    country_id = fields.Many2one('res.country', related='partner_id.country_id', readonly=True, string=u'国家')
+
 
 
 
@@ -277,16 +298,14 @@ class sale_order(models.Model):
     current_date_rate = fields.Float('当日汇率')
 
     contract_type = fields.Selection([('a', '模式1'), ('b', '模式2'), ('c', '模式3')], '合同类型', default='c')
-    is_inner_trade = fields.Boolean('内部交易')
-    second_company_id = fields.Many2one('res.company', '内部交易公司')
+
 
     gongsi_id = fields.Many2one('gongsi', '内部公司')
     purchase_gongsi_id = fields.Many2one('gongsi', '内部采购公司')
 
-    order_line_b = fields.One2many('sale.order.line', related='order_line')
+
     approvaled_date = fields.Datetime('审批完成时间')
 
-    po_ids_term = fields.Many2many('purchase.order','采购合同条款',related='po_ids')
     # akiny 增加state
     #state = fields.Selection(selection_add=[('refuse', u'拒绝'), ('submit', u'已提交'),('sales_approve', u'责任人已审批'),
                                        #     ('approve', u'审批完成'), ('manager_approval', u'待总经理审批'),
