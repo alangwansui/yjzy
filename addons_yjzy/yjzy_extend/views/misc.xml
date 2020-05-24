@@ -3,12 +3,16 @@
     <data>
 
 
-         <menuitem id="customer_config" name="配置"
+         <menuitem id="base_config_new" name="基础配置"
 
                   sequence="99"
                   />
-         <menuitem id="supplier_config" name="配置"
-
+         <menuitem id="customer_config" name="客户基础配置"
+                  parent="yjzy_extend.base_config_new"
+                  sequence="99"
+                  />
+         <menuitem id="supplier_config" name="供应商基础配置"
+                  parent="base_config_new"
                   sequence="99"
                   />
         <record model="ir.ui.view" id="transport_mark_tree_view">
