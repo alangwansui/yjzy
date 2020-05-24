@@ -3685,10 +3685,10 @@
             <field name="view_mode">kanban,tree,form</field>
             <field name="domain">
                 [('customer','=',True),('is_company','=',True),('name','!=','未定义'),('state','!=','done'),
-                '|','|','|','|','|','|','|','|','|',('create_uid','=',user.id),('assistant_id','=',user.id),
-                ('user_id','=',user.id),('parent_id.assistant_id','=',user.id),('parent_id.user_id','=',user.id),
-                ('supplier','=',1),('x_studio_field_3ErQR','=',1),('is_inter_partner','=',1),('x_studio_field_U7OvH', 'in',user.id),
-                ('parent_id.x_studio_field_U7OvH', 'in',user.id)]
+                '|','|','|','|','|','|','|','|','|',('create_uid','=',uid),('assistant_id','=',uid),
+                ('user_id','=',uid),('parent_id.assistant_id','=',uid),('parent_id.user_id','=',uid),
+                ('supplier','=',1),('x_studio_field_3ErQR','=',1),('is_inter_partner','=',1),('x_studio_field_U7OvH', 'in',uid),
+                ('parent_id.x_studio_field_U7OvH', 'in',uid)]
             </field>
             <field name="context">{'default_is_company': True,'default_customer': True,
                 'default_contract_type':'c','group_by':'x_wkf_state'}
@@ -3713,10 +3713,10 @@
             <field name="view_mode">kanban,tree,form</field>
             <field name="domain">
                 [('customer','=',True),('is_company','=',True),('name','!=','未定义'),('state','=','done'),
-                '|','|','|','|','|','|','|','|','|',('create_uid','=',user.id),('assistant_id','=',user.id),
-                ('user_id','=',user.id),('parent_id.assistant_id','=',user.id),('parent_id.user_id','=',user.id),
-                ('supplier','=',1),('x_studio_field_3ErQR','=',1),('is_inter_partner','=',1),('x_studio_field_U7OvH', 'in',user.id),
-                ('parent_id.x_studio_field_U7OvH', 'in',user.id)]
+                '|','|','|','|','|','|','|','|','|',('create_uid','=',uid),('assistant_id','=',uid),
+                ('user_id','=',uid),('parent_id.assistant_id','=',uid),('parent_id.user_id','=',uid),
+                ('supplier','=',1),('x_studio_field_3ErQR','=',1),('is_inter_partner','=',1),('x_studio_field_U7OvH', 'in',uid),
+                ('parent_id.x_studio_field_U7OvH', 'in',uid)]
             </field>
             <field name="context">{'default_is_company': True,'default_customer': True, 'default_contract_type':'c'}
             </field>
