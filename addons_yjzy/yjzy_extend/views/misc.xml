@@ -4,11 +4,11 @@
 
 
          <menuitem id="customer_config" name="配置"
-                  parent="yjzy_extend.new_customer_root"
+
                   sequence="99"
                   />
          <menuitem id="supplier_config" name="配置"
-                  parent="yjzy_extend.new_supplier_root"
+
                   sequence="99"
                   />
         <record model="ir.ui.view" id="transport_mark_tree_view">
