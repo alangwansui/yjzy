@@ -5,7 +5,7 @@ from odoo.addons import decimal_precision as dp
 from datetime import datetime
 from odoo.exceptions import Warning
 from . comm import BACK_TAX_RATIO
-from dateutil import relativedelta
+from dateutil.relativedelta import relativedelta
 
 
 class sale_order(models.Model):
@@ -110,6 +110,10 @@ class sale_order(models.Model):
 
 
             purchase_no_deliver_amount = sum(one.po_ids.mapped('no_deliver_amount'))
+            purchase_balance_sum = sum(one.po_ids.mapped('balance'))
+
+
+
 
             purchase_approve_date = False
             for po in one.po_ids:
@@ -120,12 +124,6 @@ class sale_order(models.Model):
                         pass
                 else:
                     pass
-
-            # if one.delivery_status == 'received':
-            #     one.hexiao_type = 'write_off'
-            # else:
-            #     if one.requested_date > (datetime.now() - relativedelta.relativedelta(days=185)):
-            #      one.hexiao_type = 'abnormal'
 
 
             one.amount_total2 = amount_total2
@@ -164,6 +162,7 @@ class sale_order(models.Model):
             one.commission_ratio_percent = one.commission_ratio * 100
             one.expense_cost_total = expense_cost_total
 
+            one.purchase_balance_sum = purchase_balance_sum
 
     #货币设置
 
@@ -341,6 +340,8 @@ class sale_order(models.Model):
     purchase_approve_date = fields.Datetime('采购审批时间', compute=compute_info)
 
     purchase_no_deliver_amount = fields.Float('未发货的采购金额', compute=compute_info)
+    purchase_delivery_status = fields.Boolean('采购发货完成', compute='update_purchase_delivery', store=True)
+    purchase_balance_sum = fields.Float('采购预付余额')
 
 
     second_cost = fields.Float('销售主体成本', compute=compute_info)   #second_amoun
@@ -349,14 +350,20 @@ class sale_order(models.Model):
 
     is_different_payment_term = fields.Boolean('付款条款是否不同')
 
-    # hexiao_type = fields.Selection([('abnormal',u'异常合同'),
-    #                                 ('write_off',u'待核销合同'),'核销状态'],compute=compute_info)
+    hexiao_type = fields.Selection([('abnormal',u'异常待核销'),('write_off',u'正常待核销')], string='待核销二级状态')
 
-
+    doing_type = fields.Selection([('undelivered', u'未发货'), ('start_delivery', u'开始发货'),
+                                   ('wait_hexiao',u'待核销'),('has_hexiao',u'已核销')],
+                                   u'出运与核销状态')
 
     # : 公式的cost改成second_cost
     # second_tenyale_profit：原公式的销售额改成second_cost
     # second_unit_price: = 订单
+
+
+
+
+
 
     @api.constrains('current_date_rate','fee_inner')
     def check_fields(self):
@@ -637,6 +644,57 @@ class sale_order(models.Model):
             print('===', one)
             one.gongsi_id = one.company_id.gongsi_id
             one.purchase_gongsi_id = one.company_id.gongsi_id
+
+
+    def update_hexiaotype_doing_type(self):
+        for one in self:
+            hexiao_type = False
+            today = datetime.now()
+            requested_date = one.requested_date
+            # 未发货，开始发货，待核销，已核销
+            doing_type = 'undelivered'
+            if one.delivery_status == False:
+                doing_type = 'undelivered'
+            if one.delivery_status == 'undelivered' or one.delivery_status == 'partially_delivered':
+                if requested_date and requested_date > (today - relativedelta(days=185)).strftime('%Y-%m-%d 00:00:00'):
+                    doing_type = 'start_delivery'
+                else:
+                    if one.state != 'verification':
+                        doing_type = 'wait_hexiao'
+                        hexiao_type = 'abnormal'
+                    else:
+                        doing_type = 'has_hexiao'
+                        hexiao_type = False
+            if one.delivery_status == 'received':
+                if one.state != 'verification':
+                    hexiao_type = 'write_off'
+                    doing_type = 'wait_hexiao'
+                if one.state == 'verification':
+                    doing_type = 'has_hexiao'
+                    hexiao_type = False
+
+            one.doing_type = doing_type
+            one.hexiao_type = hexiao_type
+
+    def action_verification(self):
+        if self.purchase_delivery_status == False:
+            raise Warning('采购合同还有未完成收货的，请核查！')
+        else:
+            if self.doing_type == 'wait_hexiao':
+                self.state='verification'
+                self.doing_type = 'has_hexiao'
+                self.hexiao_type = False
+            else:
+                raise Warning('不允许核销合同')
+
+    @api.depends('po_ids','po_ids.delivery_status')
+    def update_purchase_delivery(self):
+        for one in self:
+            if all([x.delivery_status == 'received' for x in one.po_ids]):
+                purchase_delivery_status = True
+            else:
+                purchase_delivery_status = False
+            one.purchase_delivery_status = purchase_delivery_status
 
 
 

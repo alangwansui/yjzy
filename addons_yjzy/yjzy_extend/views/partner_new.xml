@@ -2622,7 +2622,7 @@
 
 
                                 <!--供应商信息-->
-                                <field name="level" string="供应商等级"/>
+                                <field name="level" string="供应商等级" invisible="1"/>
                                 <field name="partner_level" string="供应商等级" widget="selection"
                                        domain="[('type','=','supplier')]"
                                        attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],
@@ -3799,7 +3799,7 @@
 
         <menuitem id="new_supplier_menu" parent="new_supplier_root" name="供应商查询" sequence="98"
                   action="action_new_partner_supplier"
-                  groups="base.group_system"/>
+                  />
 
         <record model="ir.actions.act_window" id="action_supplier_create">
             <field name="name">创建新供应商</field>
@@ -3813,7 +3813,7 @@
             <field name="view_ids" eval="[(5, 0, 0),
                                  (0, 0, {'view_mode': 'form', 'view_id': ref('view_new_supplier_form')})]"/>
         </record>
-        <menuitem id="new_supplier_create_menu" name="创建供应商" groups="base.group_system" parent="new_supplier_root"
+        <menuitem id="new_supplier_create_menu" name="创建供应商" parent="new_supplier_root"
                   action="action_supplier_create" sequence="99"/>
 
         <record id="view_new_partner_contact_simple_form" model="ir.ui.view">

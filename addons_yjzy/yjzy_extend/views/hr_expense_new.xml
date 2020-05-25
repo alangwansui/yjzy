@@ -455,6 +455,9 @@
                         <filter string="责任人" domain="[]" context="{'group_by': 'employee_id'}"/>
                         <filter string="付款时间" domain="[]" context="{'group_by': 'payment_date'}"
                                 help="按月分组"/>
+                        <filter string="付款年份" domain="[]" context="{'group_by': 'payment_date:year'}"
+                                help="按年分组"/>
+
                         <filter string="大类" domain="[]" context="{'group_by': 'categ_id'}"
                                 help="大类分组"/>
                         <filter string="费用对象" domain="[]" context="{'group_by': 'employee_sales_uid'}"
