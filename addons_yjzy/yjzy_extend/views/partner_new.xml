@@ -2622,7 +2622,7 @@
 
 
                                 <!--供应商信息-->
-                                <field name="level" string="供应商等级" invisible="1"/>
+                                <field name="level" string="供应商等级"/>
                                 <field name="partner_level" string="供应商等级" widget="selection"
                                        domain="[('type','=','supplier')]"
                                        attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],
