@@ -728,12 +728,11 @@ class sale_order(models.Model):
             today = datetime.now()
             requested_date = one.requested_date
             # 未发货，开始发货，待核销，已核销
-            if one.delivery_status == 'undelivered' or one.delivery_status == 'partially_delivered':
-                if requested_date and requested_date < (today - relativedelta(days=185)).strftime('%Y-%m-%d 00:00:00') and one.state != 'verification':
-                    state='verifying'
-                    hexiao_type = 'abnormal'
-            if one.delivery_status == 'received':
-                if one.balance == 0 and one.purchase_balance_sum == 0 and one.state != 'verification':
+            if (one.delivery_status == 'undelivered' or one.delivery_status == 'partially_delivered') and requested_date and requested_date < (today - relativedelta(days=185)).strftime('%Y-%m-%d 00:00:00') and one.state != 'verification':
+                state='verifying'
+                hexiao_type = 'abnormal'
+            if one.delivery_status == 'received' and one.state != 'verification':
+                if one.balance == 0 and one.purchase_balance_sum == 0:
                     hexiao_type = 'write_off'
                     state = 'verifying'
                 else:
