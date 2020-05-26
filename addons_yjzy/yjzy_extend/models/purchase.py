@@ -46,19 +46,24 @@ class purchase_order(models.Model):
         aml_obj = self.env['account.move.line']
         for one in self:
             polines = one.order_line
-
             sml_lines = aml_obj.search([('po_id', '=', one.id)]).filtered(lambda x: x.account_id.code == '1123')
-
             if one.yjzy_payment_ids and one.yjzy_payment_ids[0].currency_id.name == 'CNY':
                 balance = sum([x.debit - x.credit for x in sml_lines])
             else:
                 balance = sum([1 * x.amount_currency for x in sml_lines])
-
             no_deliver_amount = sum([x.price_unit * (x.product_qty - x.qty_received) for x in polines])
             one.balance = balance
             one.no_deliver_amount = no_deliver_amount
 
-
+    @api.depends('aml_ids')
+    def compute_balance(self):
+        for one in self:
+            sml_lines = one.aml_ids.filtered(lambda x: x.account_id.code == '1123')
+            if one.yjzy_payment_ids and one.yjzy_payment_ids[0].currency_id.name == 'CNY':
+                balance = -(sum([x.credit - x.debit for x in sml_lines]))
+            else:
+                balance = sum([1 * x.amount_currency for x in sml_lines])
+            one.balance_new = balance
 
     @api.depends('payment_term_id', 'amount_total')
     def compute_pre_advance(self):
@@ -97,6 +102,8 @@ class purchase_order(models.Model):
     yjzy_payment_ids = fields.One2many('account.payment', 'po_id', u'预付款单')
     yjzy_currency_id = fields.Many2one('res.currency', u'预收币种', related='yjzy_payment_ids.currency_id')
     balance = fields.Monetary(u'预付余额', compute=compute_info, currency_field='yjzy_currency_id')
+    #akiny_new
+    balance_new = fields.Monetary(u'预付余额_新', compute='compute_balance', currency_field='yjzy_currency_id',store=True)
     pre_advance = fields.Monetary(u'预付金额', currency_field='currency_id', compute=compute_pre_advance, store=True)
 
     need_purchase_fandian = fields.Boolean(u'采购返点')
@@ -134,6 +141,7 @@ class purchase_order(models.Model):
 
     #akiny
     so_id_state = fields.Selection('源销售合同状态',related='source_so_id.state')
+    aml_ids = fields.One2many('account.move.line', 'po_id', u'分录明细', readonly=True)
 
 
 
@@ -145,6 +153,9 @@ class purchase_order(models.Model):
             self.is_different_payment_term = True
         else:
             self.is_different_payment_term = False
+
+
+        
 
     @api.constrains('contract_code')
     def check_contract_code(self):

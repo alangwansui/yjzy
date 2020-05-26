@@ -52,8 +52,29 @@ class sale_order(models.Model):
         for one in self:
 
              purchase_balance_sum = sum(one.po_ids.mapped('balance'))
-
              one.purchase_balance_sum = purchase_balance_sum
+
+    @api.one
+    @api.depends('po_ids.balance_new')
+    def compute_purchase_balance2(self):
+        for one in self.search([]):
+            purchase_balance_sum = sum(one.po_ids.mapped('balance_new'))
+            one.purchase_balance_sum2 = purchase_balance_sum
+
+    # @api.one
+    # @api.depends('po_ids.aml_ids')
+    # def compute_purchase_balance1(self):
+    #     for one in self:
+    #         print('====', one)
+    #         total = 0.0
+    #         for po in one.po_ids:
+    #             sml_lines = po.aml_ids.filtered(lambda x: x.account_id.code == '1123')
+    #             if po.yjzy_payment_ids and po.yjzy_payment_ids[0].currency_id.name == 'CNY':
+    #                 balance = -(sum([x.credit - x.debit for x in sml_lines]))
+    #             else:
+    #                 balance = sum([1 * x.amount_currency for x in sml_lines])
+    #             total +=balance
+    #         one.purchase_balance_sum1 = total
 
     #@api.depends('po_ids.balance')
     def compute_po_residual(self):
@@ -349,7 +370,8 @@ class sale_order(models.Model):
     purchase_no_deliver_amount = fields.Float('未发货的采购金额', compute=compute_info)
     purchase_delivery_status = fields.Boolean('采购发货完成', compute='update_purchase_delivery')
     purchase_balance_sum = fields.Float('采购预付余额',compute='compute_purchase_balance')
-
+    #purchase_balance_sum1 = fields.Float('采购预付余额', compute='compute_purchase_balance1',store=True)
+    purchase_balance_sum2 = fields.Float('采购预付余额', compute='compute_purchase_balance2',store=True)
 
     second_cost = fields.Float('销售主体成本', compute=compute_info)   #second_amoun
     second_porfit = fields.Float('销售主体利润', compute=compute_info) #amount_total2-刚刚计算出来的 second_const
@@ -653,39 +675,62 @@ class sale_order(models.Model):
             one.purchase_gongsi_id = one.company_id.gongsi_id
 
 
+    # def update_hexiaotype_doing_type(self):
+    #     for one in self:
+    #         print('---',one)
+    #         hexiao_type = False
+    #         today = datetime.now()
+    #         requested_date = one.requested_date
+    #         # 未发货，开始发货，待核销，已核销
+    #         doing_type = 'undelivered'
+    #         if one.delivery_status == False:
+    #             doing_type = 'undelivered'
+    #         if one.delivery_status == 'undelivered' or one.delivery_status == 'partially_delivered':
+    #             if requested_date and requested_date > (today - relativedelta(days=185)).strftime('%Y-%m-%d 00:00:00'):
+    #                 doing_type = 'start_delivery'
+    #             else:
+    #                 if one.state != 'verification':
+    #                     doing_type = 'wait_hexiao'
+    #                     hexiao_type = 'abnormal'
+    #                 else:
+    #                     doing_type = 'has_hexiao'
+    #                     hexiao_type = False
+    #         if one.delivery_status == 'received':
+    #             if one.balance == 0 and one.purchase_balance_sum == 0 :
+    #                 if one.state != 'verification':
+    #                     hexiao_type = 'write_off'
+    #                     doing_type = 'wait_hexiao'
+    #                 if one.state == 'verification':
+    #                     doing_type = 'has_hexiao'
+    #                     hexiao_type = False
+    #             else:
+    #                 hexiao_type = 'abnormal'
+    #                 doing_type = 'wait_hexiao'
+    #
+    #         one.doing_type = doing_type
+    #         one.hexiao_type = hexiao_type
+
     def update_hexiaotype_doing_type(self):
         for one in self:
+            print('---', one)
             hexiao_type = False
+            state = one.state
             today = datetime.now()
             requested_date = one.requested_date
             # 未发货，开始发货，待核销，已核销
-            doing_type = 'undelivered'
-            if one.delivery_status == False:
-                doing_type = 'undelivered'
             if one.delivery_status == 'undelivered' or one.delivery_status == 'partially_delivered':
-                if requested_date and requested_date > (today - relativedelta(days=185)).strftime('%Y-%m-%d 00:00:00'):
-                    doing_type = 'start_delivery'
-                else:
-                    if one.state != 'verification':
-                        doing_type = 'wait_hexiao'
-                        hexiao_type = 'abnormal'
-                    else:
-                        doing_type = 'has_hexiao'
-                        hexiao_type = False
+                if requested_date and requested_date < (today - relativedelta(days=185)).strftime('%Y-%m-%d 00:00:00') and one.state != 'verification':
+                    state='verifying'
+                    hexiao_type = 'abnormal'
             if one.delivery_status == 'received':
-                if one.balance == 0 and one.purchase_balance_sum ==0 :
-                    if one.state != 'verification':
-                        hexiao_type = 'write_off'
-                        doing_type = 'wait_hexiao'
-                    if one.state == 'verification':
-                        doing_type = 'has_hexiao'
-                        hexiao_type = False
+                if one.balance == 0 and one.purchase_balance_sum == 0 and one.state != 'verification':
+                    hexiao_type = 'write_off'
+                    state = 'verifying'
                 else:
                     hexiao_type = 'abnormal'
-                    doing_type = 'wait_hexiao'
-
-            one.doing_type = doing_type
+                    state = 'verifying'
             one.hexiao_type = hexiao_type
+            one.state = state
 
     def action_verification(self):
         if self.purchase_delivery_status == False:
@@ -701,7 +746,7 @@ class sale_order(models.Model):
 
     def update_purchase_delivery(self):
         for one in self:
-            if all([x.delivery_status == 'received' for x in one.po_ids]):
+            if one.po_ids and all([x.delivery_status == 'received' for x in one.po_ids]):
                 purchase_delivery_status = True
             else:
                 purchase_delivery_status = False
