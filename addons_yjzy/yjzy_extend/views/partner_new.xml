@@ -2376,6 +2376,16 @@
                                     </group>
                                 </group>
                             </page>
+                            <page name="manager" string="管理页" groups="base.group_system">
+                                <group>
+                                <field name="sales_approve_uid"/>
+                                <field name="sales_approve_date"/>
+                                <field name="approve_uid"/>
+                                <field name="approve_date"/>
+                                <field name="done_uid"/>
+                                <field name="done_date"/>
+                                </group>
+                            </page>
                         </notebook>
                     </sheet>
                     <div class="oe_chatter">

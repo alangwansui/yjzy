@@ -183,7 +183,12 @@ class res_partner(models.Model):
     former_name = fields.Char(u'曾用名')
     can_not_be_deleted =fields.Boolean(u'不允许删除',default=False, readonly=True)
     birthday = fields.Date(u'生日')
-
+    sales_approve_uid = fields.Many2one('res.users','审批责任人')
+    sales_approve_date = fields.Date('责任人审批日期')
+    approve_uid = fields.Many2one('res.users','审批合规')
+    approve_date = fields.Date('合规审批日期')
+    done_uid = fields.Many2one('res.users','审批总经理')
+    done_date = fields.Date('总经理审批日期')
 
 
     @api.onchange('invoice_title')
@@ -436,17 +441,23 @@ class res_partner(models.Model):
 
     def action_to_approve(self):
         if self.user_id == self.env.user:
-            return self.write({'state': 'to approve'})
+            return self.write({'state': 'to approve',
+                               'sales_approve_uid':self.env.user.id,
+                               'sales_approve_date':fields.datetime.now()})
         else:
             raise Warning(u'必须是责任人才能审批')
 
     def action_approve(self):
-        return self.write({'state': 'approve'})
+        return self.write({'state': 'approve',
+                           'approve_uid':self.env.user.id,
+                           'approve_date':fields.datetime.now()})
 
     def action_done(self):
         if self.can_not_be_deleted == False:
             self.can_not_be_deleted = True
-        return self.write({'state': 'done'})
+        return self.write({'state': 'done',
+                           'done_uid':self.env.user.id,
+                           'done_date':fields.datetime.now()})
 
     def action_refuse(self):
         if self.state == 'submit' and self.user_id != self.env.user and self.customer == True:

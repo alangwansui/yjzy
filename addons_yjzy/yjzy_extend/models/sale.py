@@ -47,8 +47,13 @@ class sale_order(models.Model):
                 balance = sum([-1 * x.amount_currency for x in sml_lines])
             one.balance = balance
 
+   # @api.depends('po_ids')
+    def compute_purchase_balance(self):
+        for one in self:
 
+             purchase_balance_sum = sum(one.po_ids.mapped('balance'))
 
+             one.purchase_balance_sum = purchase_balance_sum
 
     #@api.depends('po_ids.balance')
     def compute_po_residual(self):
@@ -112,7 +117,7 @@ class sale_order(models.Model):
 
 
             purchase_no_deliver_amount = sum(one.po_ids.mapped('no_deliver_amount'))
-            purchase_balance_sum = sum(one.po_ids.mapped('balance'))
+
 
 
 
@@ -164,7 +169,7 @@ class sale_order(models.Model):
             one.commission_ratio_percent = one.commission_ratio * 100
             one.expense_cost_total = expense_cost_total
 
-            one.purchase_balance_sum = purchase_balance_sum
+
 
     #货币设置
 
@@ -343,7 +348,7 @@ class sale_order(models.Model):
 
     purchase_no_deliver_amount = fields.Float('未发货的采购金额', compute=compute_info)
     purchase_delivery_status = fields.Boolean('采购发货完成', compute='update_purchase_delivery', store=True)
-    purchase_balance_sum = fields.Float('采购预付余额',compute=compute_info, store=True)
+    purchase_balance_sum = fields.Float('采购预付余额',compute='compute_purchase_balance')
 
 
     second_cost = fields.Float('销售主体成本', compute=compute_info)   #second_amoun
@@ -668,12 +673,16 @@ class sale_order(models.Model):
                         doing_type = 'has_hexiao'
                         hexiao_type = False
             if one.delivery_status == 'received':
-                if one.state != 'verification':
-                    hexiao_type = 'write_off'
+                if one.balance == 0 and one.purchase_balance_sum ==0 :
+                    if one.state != 'verification':
+                        hexiao_type = 'write_off'
+                        doing_type = 'wait_hexiao'
+                    if one.state == 'verification':
+                        doing_type = 'has_hexiao'
+                        hexiao_type = False
+                else:
+                    hexiao_type = 'abnormal'
                     doing_type = 'wait_hexiao'
-                if one.state == 'verification':
-                    doing_type = 'has_hexiao'
-                    hexiao_type = False
 
             one.doing_type = doing_type
             one.hexiao_type = hexiao_type
