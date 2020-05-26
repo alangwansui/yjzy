@@ -287,7 +287,9 @@
                     <field name="no_sent_amount" string="未发货销售"/>
                     <field name="purchase_no_deliver_amount" string="未发货采购"/>
                     <field name="pre_advance" string="建议预收" invisible="1"/>
-                    <field name="balance" string="实际预收余额" invisible="1"/>
+                    <field name="balance" string="预收余额" invisible="0" groups="base.group_system"/>
+                    <field name="purchase_balance_sum" string="预付余额" invisible="0" groups="base.group_system"/>
+
                     <field name="invoice_status" invisible="1"/>
                     <field name="state" invisible="1"/>
                     <field name="user_id" groups="sale.hegui_all" string="责任人"/>
