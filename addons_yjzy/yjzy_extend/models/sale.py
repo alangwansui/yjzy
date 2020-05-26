@@ -347,7 +347,7 @@ class sale_order(models.Model):
     purchase_approve_date = fields.Datetime('采购审批时间', compute=compute_info)
 
     purchase_no_deliver_amount = fields.Float('未发货的采购金额', compute=compute_info)
-    purchase_delivery_status = fields.Boolean('采购发货完成', compute='update_purchase_delivery', store=True)
+    purchase_delivery_status = fields.Boolean('采购发货完成', compute='update_purchase_delivery')
     purchase_balance_sum = fields.Float('采购预付余额',compute='compute_purchase_balance')
 
 
@@ -698,7 +698,7 @@ class sale_order(models.Model):
             else:
                 raise Warning('不允许核销合同')
 
-    @api.depends('po_ids','po_ids.delivery_status')
+
     def update_purchase_delivery(self):
         for one in self:
             if all([x.delivery_status == 'received' for x in one.po_ids]):
