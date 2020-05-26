@@ -48,6 +48,8 @@ class sale_order(models.Model):
             one.balance = balance
 
 
+
+
     #@api.depends('po_ids.balance')
     def compute_po_residual(self):
         for one in self:
@@ -341,7 +343,7 @@ class sale_order(models.Model):
 
     purchase_no_deliver_amount = fields.Float('未发货的采购金额', compute=compute_info)
     purchase_delivery_status = fields.Boolean('采购发货完成', compute='update_purchase_delivery', store=True)
-    purchase_balance_sum = fields.Float('采购预付余额')
+    purchase_balance_sum = fields.Float('采购预付余额',compute=compute_info, store=True)
 
 
     second_cost = fields.Float('销售主体成本', compute=compute_info)   #second_amoun
