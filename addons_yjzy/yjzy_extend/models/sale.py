@@ -53,19 +53,19 @@ class sale_order(models.Model):
              purchase_balance_sum = sum(one.po_ids.mapped('balance'))
              one.purchase_balance_sum = purchase_balance_sum
     #临时解决方法
-    @api.depends('po_ids.balance_new')
-    def compute_purchase_balance3(self):
-        user = self.env.user
-        if user.has_group('yjzy_extend.group_expense_my_total'):
-            for one in self:
-                print('--',one)
-                purchase_balance_sum = sum(one.po_ids.mapped('balance_new'))
-                one.purchase_balance_sum3 = purchase_balance_sum
-        else:
-            for one in self.search(['|','|',('partner_id.x_studio_field_U7OvH','in',self.env.user.id),('partner_id.assistant_id','=',self.env.user.id),('partner_id.user_id','=',self.env.user.id)]):
-                print('--', one)
-                purchase_balance_sum = sum(one.po_ids.mapped('balance_new'))
-                one.purchase_balance_sum3 = purchase_balance_sum
+    # @api.depends('po_ids.balance_new')
+    # def compute_purchase_balance3(self):
+    #     user = self.env.user
+    #     if user.has_group('yjzy_extend.group_expense_my_total'):
+    #         for one in self:
+    #             print('--',one)
+    #             purchase_balance_sum = sum(one.po_ids.mapped('balance_new'))
+    #             one.purchase_balance_sum3 = purchase_balance_sum
+    #     else:
+    #         for one in self.search(['|','|',('partner_id.x_studio_field_U7OvH','in',self.env.user.id),('partner_id.assistant_id','=',self.env.user.id),('partner_id.user_id','=',self.env.user.id)]):
+    #             print('--', one)
+    #             purchase_balance_sum = sum(one.po_ids.mapped('balance_new'))
+    #             one.purchase_balance_sum3 = purchase_balance_sum
 
 
 
@@ -379,7 +379,7 @@ class sale_order(models.Model):
     purchase_no_deliver_amount = fields.Float('未发货的采购金额', compute=compute_info)
     purchase_delivery_status = fields.Boolean('采购发货完成', compute='update_purchase_delivery')
     purchase_balance_sum = fields.Float('采购预付余额',compute='compute_purchase_balance')
-    purchase_balance_sum3 = fields.Float('采购预付余额',compute='compute_purchase_balance3',store=True)
+    # purchase_balance_sum3 = fields.Float('采购预付余额',compute='compute_purchase_balance3',store=True)
 
 
     second_cost = fields.Float('销售主体成本', compute=compute_info)   #second_amoun
@@ -733,7 +733,7 @@ class sale_order(models.Model):
                     state='verifying'
                     hexiao_type = 'abnormal'
             if one.delivery_status == 'received':
-                if one.balance == 0 and one.purchase_balance_sum3 == 0 and one.state != 'verification':
+                if one.balance == 0 and one.purchase_balance_sum == 0 and one.state != 'verification':
                     hexiao_type = 'write_off'
                     state = 'verifying'
                 else:
