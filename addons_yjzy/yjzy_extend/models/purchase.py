@@ -104,6 +104,7 @@ class purchase_order(models.Model):
     balance = fields.Monetary(u'预付余额', compute=compute_info, currency_field='yjzy_currency_id')
     #akiny_new
     balance_new = fields.Monetary(u'预付余额_新', compute='compute_balance', currency_field='yjzy_currency_id',store=True)
+
     pre_advance = fields.Monetary(u'预付金额', currency_field='currency_id', compute=compute_pre_advance, store=True)
 
     need_purchase_fandian = fields.Boolean(u'采购返点')
@@ -155,7 +156,7 @@ class purchase_order(models.Model):
             self.is_different_payment_term = False
 
 
-        
+
 
     @api.constrains('contract_code')
     def check_contract_code(self):
