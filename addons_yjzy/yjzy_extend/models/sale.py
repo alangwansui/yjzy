@@ -69,6 +69,12 @@ class sale_order(models.Model):
 
 
 
+    # @api.one
+    # @api.depends('po_ids.balance_new', 'po_ids.aml_ids')
+    # def compute_purchase_balance2(self):
+    #     for one in self:
+    #         purchase_balance_sum = sum(one.po_ids.mapped('balance_new'))
+    #         one.purchase_balance_sum2 = purchase_balance_sum
 
     # @api.one
     # @api.depends('po_ids.aml_ids')
