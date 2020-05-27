@@ -759,6 +759,7 @@ class sale_order(models.Model):
             raise Warning('采购合同还有未完成收货的，请核查！')
         self.state = 'verification'
         self.x_wkf_state = '199'
+        self.hx_date = fields.date.today()
 
 
 

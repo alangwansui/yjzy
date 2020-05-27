@@ -1340,7 +1340,7 @@
             <field name="view_mode">tree,form,kanban</field>
             <field name="domain">[('state','in',['sale','approve','verifying'])]</field>
             <field name="search_view_id" ref="view_sales_order_new_approve_filter"/>
-            <field name="context">{'group_by':'state'}</field>
+            <field name="context">{'group_by':['state','hexiao_type']}</field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('new_sale_order_tree')}),
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('new_sale_order_kanban')}),
@@ -1355,7 +1355,7 @@
             <field name="limit">20</field>
             <field name="view_mode">tree,form,kanban</field>
             <field name="domain">[('state','in',['sale','approve','verifying']),'|',('partner_id.x_studio_field_U7OvH','in',uid),('partner_id.assistant_id','=',uid)]</field>
-            <field name="context">{}</field>
+            <field name="context">{'group_by':['state','hexiao_type']}</field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('new_sale_order_tree')}),
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('new_sale_order_kanban')}),
@@ -1371,7 +1371,7 @@
             <field name="view_mode">tree,form,kanban</field>
             <field name="domain">[('state','in',['verification'])]</field>
             <field name="search_view_id" ref="view_sales_order_new_approve_filter"/>
-            <field name="context">{'group_by':'state'}</field>
+            <field name="context">{'group_by':'hx_date:year'}</field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('new_sale_order_tree')}),
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('new_sale_order_kanban')}),
@@ -1387,7 +1387,7 @@
             <field name="limit">20</field>
             <field name="view_mode">tree,form,kanban</field>
             <field name="domain">[('state','in',['verification']),'|',('partner_id.x_studio_field_U7OvH','in',uid),('partner_id.assistant_id','=',uid)]</field>
-            <field name="context">{}</field>
+            <field name="context">{'group_by':'hx_date:year'}</field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('new_sale_order_tree')}),
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('new_sale_order_kanban')}),
