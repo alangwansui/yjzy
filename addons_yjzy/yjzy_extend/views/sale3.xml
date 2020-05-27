@@ -275,7 +275,7 @@
 
                     <field name="amount_total" sum="Total Tax Included" widget="monetary" string="销售金额"/>
                     <field name="purchase_cost"  string="采购金额" groups="base.group_system"/>
-                    <field name="purchase_amount_total"  string="采购金额"/>
+                    <field name="purchase_amount_total"  string="采购金额" sum="小计"/>
 
                     <field name="delivery_status" invisible="1"/>
                     <field name="confirmation_date" string="Order Date" invisible="1"/>
@@ -286,13 +286,13 @@
                     <field name="requested_date" widget="date" string="客户交期"/>
                     <field name="currency_id" invisible="1"/>
                     <field name="no_sent_amount" string="未发货销售" groups="base.group_system"/>
-                    <field name="no_sent_amount_new" string="未发货销售"/>
+                    <field name="no_sent_amount_new" string="未发货销售" sum="小计"/>
                     <field name="purchase_no_deliver_amount" string="未发货采购" groups="base.group_system"/>
-                    <field name="purchase_no_deliver_amount_new" string="未发货采购"/>
+                    <field name="purchase_no_deliver_amount_new" string="未发货采购" sum="小计"/>
                     <field name="pre_advance" string="建议预收" invisible="1"/>
-                    <field name="balance" string="预收余额" invisible="0" />
+                    <field name="balance" string="预收余额" invisible="0" sum="小计"/>
                     <field name="purchase_balance_sum" string="预付余额" invisible="0" groups="base.group_system"/>
-                    <field name="purchase_balance_sum3" string="预付余额" invisible="0" />
+                    <field name="purchase_balance_sum3" string="预付余额" invisible="0" sum="小计"/>
                     <field name="invoice_status" invisible="1"/>
                     <field name="state" invisible="1"/>
                     <field name="user_id" groups="sale.hegui_all" string="责任人"/>
@@ -396,7 +396,7 @@
                                 groups="sales_team.group_sale_assistant"/>
                         <button name="new_open_wizard_so2po" states="draft,send,sale" class="oe_highlight" type="object" context="{'new': 1}" string="创建采购单:新"
                                 groups="sales_team.group_sale_assistant"/>
-                        <field name="state" widget="statusbar" statusbar_invisible="draft"  groups="base.group_system"/><!--statusbar_visible="draft,sent,sale"-->
+                        <!--field name="state" widget="statusbar" statusbar_invisible="draft"  groups="base.group_system"/--><!--statusbar_visible="draft,sent,sale"-->
 
                         <button name="open_wizard_bom_sale" class="oe_highlight" type='object' string="套件销售" invisible="1" groups="base.group_system"/>
                         <button name="open_sale_cost" class="oe_highlight" type='object' string="成本单"/>
@@ -1269,7 +1269,7 @@
 
 <!--销售部待处理合同：草稿和提交状态-->
         <record id="new_sale_order_sales_action" model="ir.actions.act_window">
-            <field name="name">未生效合同列表</field>
+            <field name="name">未生效</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">sale.order</field>
             <field name="view_mode">tree,form,kanban</field>
@@ -1282,10 +1282,10 @@
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('new_sale_order_kanban')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_form')})]"/>
         </record>
-        <menuitem id="new_sale_order_sales_menu" name="未生效合同列表." parent="new_sale_order_root" action="new_sale_order_sales_action" sequence="2"/>
+        <menuitem id="new_sale_order_sales_menu" name="未生效." parent="new_sale_order_root" action="new_sale_order_sales_action" sequence="2"/>
         <!--伟伟-->
         <record id="new_sale_order_weiwei_action" model="ir.actions.act_window">
-            <field name="name">未生效合同列表</field>
+            <field name="name">未生效</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">sale.order</field>
             <field name="view_mode">tree,form,kanban</field>
@@ -1298,7 +1298,7 @@
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('new_sale_order_kanban')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_form')})]"/>
         </record>
-        <menuitem id="new_sale_order_weiwei_menu" name="未生效合同列表" parent="new_sale_order_root" action="new_sale_order_weiwei_action" sequence="2"/>
+        <menuitem id="new_sale_order_weiwei_menu" name="未生效" parent="new_sale_order_root" action="new_sale_order_weiwei_action" sequence="2"/>
 
 <!--合规待处理合同：合规审批、审批完成、出运中、核销中-->
         <record id="new_sale_order_hegui_action" model="ir.actions.act_window">
@@ -1339,7 +1339,7 @@
       <!--业务员执行中合同：权限内的合同-->
 
         <record id="new_sale_order_user_approve_action" model="ir.actions.act_window">
-            <field name="name">执行中合同列表</field>
+            <field name="name">执行中</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">sale.order</field>
             <field name="limit">20</field>
@@ -1352,10 +1352,10 @@
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('new_sale_order_kanban')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_form')})]"/>
         </record>
-        <menuitem id="new_sale_order_user_approve_menu" name="执行中合同列表." parent="new_sale_order_root" action="new_sale_order_user_approve_action" sequence="1"/>
+        <menuitem id="new_sale_order_user_approve_menu" name="执行中." parent="new_sale_order_root" action="new_sale_order_user_approve_action" sequence="1"/>
        <!--伟伟-->
         <record id="new_sale_order_weiwei_approve_action" model="ir.actions.act_window">
-            <field name="name">执行中合同列表</field>
+            <field name="name">执行中</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">sale.order</field>
             <field name="limit">20</field>
@@ -1367,10 +1367,10 @@
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('new_sale_order_kanban')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_form')})]"/>
         </record>
-        <menuitem id="new_sale_order_weiwei_approve_menu" name="执行中合同列表" parent="new_sale_order_root" action="new_sale_order_weiwei_approve_action" sequence="1"/>
+        <menuitem id="new_sale_order_weiwei_approve_menu" name="执行中合" parent="new_sale_order_root" action="new_sale_order_weiwei_approve_action" sequence="1"/>
 
          <record id="new_sale_order_user_hexiao_action" model="ir.actions.act_window">
-            <field name="name">已核销的合同</field>
+            <field name="name">已核销</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">sale.order</field>
             <field name="limit">20</field>
@@ -1383,11 +1383,11 @@
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('new_sale_order_kanban')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_form')})]"/>
         </record>
-        <menuitem id="new_sale_order_user_hexiao_menu" name="已核销的合同." parent="new_sale_order_root" action="new_sale_order_user_hexiao_action" sequence="4"/>
+        <menuitem id="new_sale_order_user_hexiao_menu" name="已核销." parent="new_sale_order_root" action="new_sale_order_user_hexiao_action" sequence="4"/>
 
 
          <record id="new_sale_order_weiwei_hexiao_action" model="ir.actions.act_window">
-            <field name="name">已核销的合同</field>
+            <field name="name">已核销</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">sale.order</field>
             <field name="limit">20</field>
@@ -1399,7 +1399,7 @@
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('new_sale_order_kanban')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_form')})]"/>
         </record>
-        <menuitem id="new_sale_order_weiwei_hexiao_menu" name="已核销的合同" parent="new_sale_order_root" action="new_sale_order_weiwei_hexiao_action" sequence="4"/>
+        <menuitem id="new_sale_order_weiwei_hexiao_menu" name="已核销" parent="new_sale_order_root" action="new_sale_order_weiwei_hexiao_action" sequence="4"/>
 
         <record id="new_sale_order_create_action" model="ir.actions.act_window">
             <field name="name">创建销售合同</field>
