@@ -749,7 +749,7 @@ class sale_order(models.Model):
 
     def action_verification(self):
         user = self.env.user
-        if not user.has_group('sale.hegui_all'):
+        if not user.has_group('sale.hegui_all') or not user.has_group('sales_team.group_manager'):
             raise Warning('非合规人员不允许核销！')
         if self.state != 'verifying':
             raise Warning('非待核销合同无法核销！')
