@@ -351,7 +351,8 @@
                        <header groups="base.group_system">
                          <field name="state" widget="statusbar" statusbar_invisible="draft"  groups="base.group_system"/>
                     </header>
-                    <header invisible="1">
+                    <header groups="base.group_system">
+                        <button name="action_verification" type="object" class="btn-primary"/>
                         <button name="260" string="Create Invoice" type="action" class="btn-primary"
                                 attrs="{'invisible': [('invoice_status', '!=', 'to invoice')]}" invisible="1"/>
                         <button name="260" invisible="1" string="Create Invoice" type="action" context="{'default_advance_payment_method': 'percentage'}"
@@ -517,6 +518,8 @@
 
                                 <field name="validity_date" attrs="{'invisible': [('state', 'in', ['sale', 'done']),('is_editable','=',False)]}"/>
                                 <field name="confirmation_date" attrs="{'invisible': [('state', 'in', ['draft', 'sent', 'cancel']),('is_editable','=',False)]}"/>
+                                <field name="hexiao_type" readonly="1"/>
+                                <field name="hexiao_comment" attrs="{'invisible':[('hexiao_type','!=','abnormal')]}"/>
                                 <field name="pricelist_id" groups="product.group_sale_pricelist" invisible="1"/>
                                 <field name="id" invisible="1"/>
                                 <field name="lot_sub_mark" groups="base.group_system" invisible="1"/>
