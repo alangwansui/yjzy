@@ -53,21 +53,53 @@ class sale_order(models.Model):
              purchase_balance_sum = sum(one.po_ids.mapped('balance'))
              one.purchase_balance_sum = purchase_balance_sum
     #临时解决方法
-    # @api.depends('po_ids.balance_new')
-    # def compute_purchase_balance3(self):
-    #     user = self.env.user
-    #     if user.has_group('yjzy_extend.group_expense_my_total'):	sale.hegui_all
-    #         for one in self:
-    #             print('--',one)
-    #             purchase_balance_sum = sum(one.po_ids.mapped('balance_new'))
-    #             one.purchase_balance_sum3 = purchase_balance_sum
-    #     else:
-    #         for one in self.search(['|','|',('partner_id.x_studio_field_U7OvH','in',self.env.user.id),('partner_id.assistant_id','=',self.env.user.id),('partner_id.user_id','=',self.env.user.id)]):
-    #             print('--', one)
-    #             purchase_balance_sum = sum(one.po_ids.mapped('balance_new'))
-    #             one.purchase_balance_sum3 = purchase_balance_sum
+    @api.depends('po_ids.balance_new')
+    def compute_purchase_balance3(self):
+        user = self.env.user
+        if user.has_group('yjzy_extend.group_expense_my_total'):
+            for one in self:
+                print('--',one)
+                purchase_balance_sum = sum(one.po_ids.mapped('balance_new'))
+                one.purchase_balance_sum3 = purchase_balance_sum
+        else:
+            for one in self.search(['|','|',('partner_id.x_studio_field_U7OvH','in',self.env.user.id),('partner_id.assistant_id','=',self.env.user.id),('partner_id.user_id','=',self.env.user.id)]):
+                print('--', one)
+                purchase_balance_sum = sum(one.po_ids.mapped('balance_new'))
+                one.purchase_balance_sum3 = purchase_balance_sum
 
+        # 临时解决方法
+    @api.depends('po_ids.amount_total')
+    def compute_purchase_amount_total(self):
+        user = self.env.user
+        if user.has_group('yjzy_extend.group_expense_my_total'):
+            for one in self:
+                print('--', one)
+                purchase_amount_total = sum(one.po_ids.mapped('amount_total'))
+                one.purchase_amount_total = purchase_amount_total
+        else:
+            for one in self.search(['|', '|', ('partner_id.x_studio_field_U7OvH', 'in', self.env.user.id),
+                                    ('partner_id.assistant_id', '=', self.env.user.id),
+                                    ('partner_id.user_id', '=', self.env.user.id)]):
+                print('--', one)
+                purchase_amount_total = sum(one.po_ids.mapped('amount_total'))
+                one.purchase_amount_total = purchase_amount_total
 
+    @api.depends('order_line.qty_delivered')
+    def compute_no_sent_amount(self):
+        for one in self:
+            one.no_sent_amount_new = sum([x.price_unit * (x.product_uom_qty - x.qty_delivered) for x in one.order_line])
+
+    @api.depends('po_ids.no_deliver_amount_new')
+    def compute_purchase_no_deliver_amount(self):
+        user = self.env.user
+        if user.has_group('yjzy_extend.group_expense_my_total'):
+            for one in self:
+                one.purchase_no_deliver_amount_new = sum(one.po_ids.mapped('no_deliver_amount_new'))
+        else:
+            for one in self.search(['|', '|', ('partner_id.x_studio_field_U7OvH', 'in', self.env.user.id),
+                                    ('partner_id.assistant_id', '=', self.env.user.id),
+                                    ('partner_id.user_id', '=', self.env.user.id)]):
+                one.purchase_no_deliver_amount_new = sum(one.po_ids.mapped('no_deliver_amount_new'))
 
     # @api.one
     # @api.depends('po_ids.balance_new', 'po_ids.aml_ids')
@@ -324,6 +356,7 @@ class sale_order(models.Model):
 
     mark_comb_id = fields.Many2one('mark.comb', u'唛头组')
     no_sent_amount = fields.Monetary(u'未发货的金额', compute=compute_info)
+    no_sent_amount_new = fields.Monetary(u'未发货的金额', compute=compute_no_sent_amount, store=True)
     is_editable = fields.Boolean(u'可编辑')
     display_detail = fields.Boolean(u'显示详情')
     aml_ids = fields.One2many('account.move.line', 'so_id', u'分录明细', readonly=True)
@@ -383,10 +416,12 @@ class sale_order(models.Model):
     purchase_approve_date = fields.Datetime('采购审批时间', compute=compute_info)
 
     purchase_no_deliver_amount = fields.Float('未发货的采购金额', compute=compute_info)
+    purchase_no_deliver_amount_new = fields.Float('未发货的采购金额', compute='compute_purchase_no_deliver_amount',store=True)
     purchase_delivery_status = fields.Boolean('采购发货完成', compute='update_purchase_delivery')
     purchase_balance_sum = fields.Float('采购预付余额',compute='compute_purchase_balance')
-    # purchase_balance_sum3 = fields.Float('采购预付余额',compute='compute_purchase_balance3',store=True)
-
+    purchase_balance_sum3 = fields.Float('采购预付余额',compute='compute_purchase_balance3',store=True)
+    # purchase_balance_sum2 = fields.Float('采购预付余额',compute='compute_purchase_balance2',store=True)
+    purchase_amount_total = fields.Float('采购预付余额',compute='compute_purchase_amount_total',store=True)
 
     second_cost = fields.Float('销售主体成本', compute=compute_info)   #second_amoun
     second_porfit = fields.Float('销售主体利润', compute=compute_info) #amount_total2-刚刚计算出来的 second_const
@@ -407,7 +442,7 @@ class sale_order(models.Model):
     def compute_purchase_balance4(self):
         print('---',self)
         purchase_balance_sum = sum(self.po_ids.mapped('balance_new'))
-        self.purchase_balance_sum3 = purchase_balance_sum
+        self.purchase_balance_sum4 = purchase_balance_sum
 
 
     @api.constrains('current_date_rate','fee_inner')

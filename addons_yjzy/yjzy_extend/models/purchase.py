@@ -65,6 +65,11 @@ class purchase_order(models.Model):
                 balance = sum([1 * x.amount_currency for x in sml_lines])
             one.balance_new = balance
 
+    @api.depends('order_line.qty_received')
+    def compute_no_deliver_amount(self):
+        for one in self:
+            one.no_deliver_amount_new = sum([x.price_unit * (x.product_qty - x.qty_received) for x in one.order_line])
+
     @api.depends('payment_term_id', 'amount_total')
     def compute_pre_advance(self):
         for one in self:
@@ -135,6 +140,7 @@ class purchase_order(models.Model):
     second_sign_uid = fields.Many2one('res.users', u'次签字人')
 
     no_deliver_amount = fields.Float('未发货金额', compute=compute_info)
+    no_deliver_amount_new = fields.Float('未发货金额', compute=compute_no_deliver_amount, store=True)
 
     partner_payment_term_id = fields.Many2one('account.payment.term', u'客户付款条款',
                                               related='partner_id.property_supplier_payment_term_id')
