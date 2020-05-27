@@ -751,13 +751,14 @@ class sale_order(models.Model):
         user = self.env.user
         if not user.has_group('sale.hegui_all') or not user.has_group('sales_team.group_manager'):
             raise Warning('非合规人员不允许核销！')
-        if self.state != 'verifying':
+        if self.state != 'sale':
             raise Warning('非待核销合同无法核销！')
         if self.hexiao_type == 'abnormal' and self.hexiao_comment == False:
             raise Warning('异常核销，请填写备注！')
         if self.purchase_delivery_status == False:
             raise Warning('采购合同还有未完成收货的，请核查！')
         self.state = 'verification'
+        self.x_wkf_state = '199'
 
 
 
