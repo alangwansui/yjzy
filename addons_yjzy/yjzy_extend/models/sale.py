@@ -56,7 +56,7 @@ class sale_order(models.Model):
     # @api.depends('po_ids.balance_new')
     # def compute_purchase_balance3(self):
     #     user = self.env.user
-    #     if user.has_group('yjzy_extend.group_expense_my_total'):
+    #     if user.has_group('yjzy_extend.group_expense_my_total'):	sale.hegui_all
     #         for one in self:
     #             print('--',one)
     #             purchase_balance_sum = sum(one.po_ids.mapped('balance_new'))
@@ -748,6 +748,9 @@ class sale_order(models.Model):
             one.state = state
 
     def action_verification(self):
+        user = self.env.user
+        if not user.has_group('sale.hegui_all'):
+            raise Warning('非合规人员不允许核销！')
         if self.state != 'verifying':
             raise Warning('非待核销合同无法核销！')
         if self.hexiao_type == 'abnormal' and self.heixao_comment == False:
