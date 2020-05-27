@@ -53,59 +53,82 @@ class sale_order(models.Model):
              purchase_balance_sum = sum(one.po_ids.mapped('balance'))
              one.purchase_balance_sum = purchase_balance_sum
     #临时解决方法
+    # @api.depends('po_ids.balance_new')
+    # def compute_purchase_balance3(self):
+    #     user = self.env.user
+    #     if user.has_group('yjzy_extend.group_expense_my_total'):
+    #         for one in self:
+    #             print('--',one)
+    #             purchase_balance_sum = sum(one.po_ids.mapped('balance_new'))
+    #             one.purchase_balance_sum3 = purchase_balance_sum
+    #     else:
+    #         for one in self.search(['|','|',('partner_id.x_studio_field_U7OvH','in',self.env.user.id),('partner_id.assistant_id','=',self.env.user.id),('partner_id.user_id','=',self.env.user.id)]):
+    #             print('--', one)
+    #             purchase_balance_sum = sum(one.po_ids.mapped('balance_new'))
+    #             one.purchase_balance_sum3 = purchase_balance_sum
+
     @api.depends('po_ids.balance_new')
     def compute_purchase_balance3(self):
-        user = self.env.user
-        if user.has_group('yjzy_extend.group_expense_my_total'):
-            for one in self:
-                print('--',one)
-                purchase_balance_sum = sum(one.po_ids.mapped('balance_new'))
-                one.purchase_balance_sum3 = purchase_balance_sum
-        else:
-            for one in self.search(['|','|',('partner_id.x_studio_field_U7OvH','in',self.env.user.id),('partner_id.assistant_id','=',self.env.user.id),('partner_id.user_id','=',self.env.user.id)]):
-                print('--', one)
-                purchase_balance_sum = sum(one.po_ids.mapped('balance_new'))
-                one.purchase_balance_sum3 = purchase_balance_sum
+        for one in self:
+            print('--', one)
+            purchase_balance_sum = sum(one.sudo().po_ids.mapped('balance_new'))
+            one.purchase_balance_sum3 = purchase_balance_sum
+
 
         # 临时解决方法
+    # @api.depends('po_ids.amount_total')
+    # def compute_purchase_amount_total(self):
+    #     user = self.env.user
+    #     if user.has_group('yjzy_extend.group_expense_my_total'):
+    #         for one in self:
+    #             print('--', one)
+    #             purchase_amount_total = sum(one.po_ids.mapped('amount_total'))
+    #             one.purchase_amount_total = purchase_amount_total
+    #     else:
+    #         for one in self.search(['|', '|', ('partner_id.x_studio_field_U7OvH', 'in', self.env.user.id),
+    #                                 ('partner_id.assistant_id', '=', self.env.user.id),
+    #                                 ('partner_id.user_id', '=', self.env.user.id)]):
+    #             print('--', one)
+    #             purchase_amount_total = sum(one.po_ids.mapped('amount_total'))
+    #             one.purchase_amount_total = purchase_amount_total
+
     @api.depends('po_ids.amount_total')
     def compute_purchase_amount_total(self):
-        user = self.env.user
-        if user.has_group('yjzy_extend.group_expense_my_total'):
-            for one in self:
-                print('--', one)
-                purchase_amount_total = sum(one.po_ids.mapped('amount_total'))
-                one.purchase_amount_total = purchase_amount_total
-        else:
-            for one in self.search(['|', '|', ('partner_id.x_studio_field_U7OvH', 'in', self.env.user.id),
-                                    ('partner_id.assistant_id', '=', self.env.user.id),
-                                    ('partner_id.user_id', '=', self.env.user.id)]):
-                print('--', one)
-                purchase_amount_total = sum(one.po_ids.mapped('amount_total'))
-                one.purchase_amount_total = purchase_amount_total
+        for one in self:
+            print('--', one)
+            purchase_amount_total = sum(one.sudo().po_ids.mapped('amount_total'))
+            one.purchase_amount_total = purchase_amount_total
+
+
 
     @api.depends('order_line.qty_delivered')
     def compute_no_sent_amount(self):
         for one in self:
             one.no_sent_amount_new = sum([x.price_unit * (x.product_uom_qty - x.qty_delivered) for x in one.order_line])
 
+    # @api.depends('po_ids.no_deliver_amount_new')
+    # def compute_purchase_no_deliver_amount(self):
+    #     user = self.env.user
+    #     if user.has_group('yjzy_extend.group_expense_my_total'):
+    #         for one in self:
+    #             one.purchase_no_deliver_amount_new = sum(one.po_ids.mapped('no_deliver_amount_new'))
+    #     else:
+    #         for one in self.search(['|', '|', ('partner_id.x_studio_field_U7OvH', 'in', self.env.user.id),
+    #                                 ('partner_id.assistant_id', '=', self.env.user.id),
+    #                                 ('partner_id.user_id', '=', self.env.user.id)]):
+    #             one.purchase_no_deliver_amount_new = sum(one.po_ids.mapped('no_deliver_amount_new'))
+
     @api.depends('po_ids.no_deliver_amount_new')
     def compute_purchase_no_deliver_amount(self):
-        user = self.env.user
-        if user.has_group('yjzy_extend.group_expense_my_total'):
-            for one in self:
-                one.purchase_no_deliver_amount_new = sum(one.po_ids.mapped('no_deliver_amount_new'))
-        else:
-            for one in self.search(['|', '|', ('partner_id.x_studio_field_U7OvH', 'in', self.env.user.id),
-                                    ('partner_id.assistant_id', '=', self.env.user.id),
-                                    ('partner_id.user_id', '=', self.env.user.id)]):
-                one.purchase_no_deliver_amount_new = sum(one.po_ids.mapped('no_deliver_amount_new'))
+        for one in self:
+            one.purchase_no_deliver_amount_new = sum(one.sudo().po_ids.mapped('no_deliver_amount_new'))
+
 
     # @api.one
-    # @api.depends('po_ids.balance_new', 'po_ids.aml_ids')
+    # @api.depends('po_ids.balance_new')
     # def compute_purchase_balance2(self):
     #     for one in self:
-    #         purchase_balance_sum = sum(one.po_ids.mapped('balance_new'))
+    #         purchase_balance_sum = sum(one.sudo().po_ids.mapped('balance_new'))
     #         one.purchase_balance_sum2 = purchase_balance_sum
 
     # @api.one
