@@ -394,7 +394,7 @@ class sale_order(models.Model):
 
     is_different_payment_term = fields.Boolean('付款条款是否不同')
 
-    hexiao_type = fields.Selection([('abnormal',u'异常待核销'),('write_off',u'正常待核销')], string='待核销二级状态')
+    hexiao_type = fields.Selection([('abnormal',u'异常核销'),('write_off',u'正常核销')], string='核销状态')
     hexiao_comment = fields.Text(u'异常核销备注')
     doing_type = fields.Selection([('undelivered', u'未发货'), ('start_delivery', u'开始发货'),
                                    ('wait_hexiao',u'待核销'),('has_hexiao',u'已核销')],
