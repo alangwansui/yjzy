@@ -1338,7 +1338,7 @@
             <field name="res_model">sale.order</field>
             <field name="limit">20</field>
             <field name="view_mode">tree,form,kanban</field>
-            <field name="domain">[('state','in',['sale','approve'])]</field>
+            <field name="domain">[('state','in',['sale','approve','verifying'])]</field>
             <field name="search_view_id" ref="view_sales_order_new_approve_filter"/>
             <field name="context">{'group_by':'state'}</field>
             <field name="view_ids" eval="[(5, 0, 0),
@@ -1354,7 +1354,7 @@
             <field name="res_model">sale.order</field>
             <field name="limit">20</field>
             <field name="view_mode">tree,form,kanban</field>
-            <field name="domain">[('state','in',['sale','approve']),'|',('partner_id.x_studio_field_U7OvH','in',uid),('partner_id.assistant_id','=',uid)]</field>
+            <field name="domain">[('state','in',['sale','approve','verifying']),'|',('partner_id.x_studio_field_U7OvH','in',uid),('partner_id.assistant_id','=',uid)]</field>
             <field name="context">{}</field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('new_sale_order_tree')}),
@@ -1362,6 +1362,38 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_form')})]"/>
         </record>
         <menuitem id="new_sale_order_weiwei_approve_menu" name="执行中合同列表" parent="new_sale_order_root" action="new_sale_order_weiwei_approve_action" sequence="1"/>
+
+         <record id="new_sale_order_user_hexiao_action" model="ir.actions.act_window">
+            <field name="name">已核销的合同</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sale.order</field>
+            <field name="limit">20</field>
+            <field name="view_mode">tree,form,kanban</field>
+            <field name="domain">[('state','in',['verification'])]</field>
+            <field name="search_view_id" ref="view_sales_order_new_approve_filter"/>
+            <field name="context">{'group_by':'state'}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('new_sale_order_tree')}),
+                          (0, 0, {'view_mode': 'kanban', 'view_id': ref('new_sale_order_kanban')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_form')})]"/>
+        </record>
+        <menuitem id="new_sale_order_user_hexiao_menu" name="已核销的合同." parent="new_sale_order_root" action="new_sale_order_user_hexiao_action" sequence="4"/>
+
+
+         <record id="new_sale_order_weiwei_hexiao_action" model="ir.actions.act_window">
+            <field name="name">已核销的合同</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sale.order</field>
+            <field name="limit">20</field>
+            <field name="view_mode">tree,form,kanban</field>
+            <field name="domain">[('state','in',['verification']),'|',('partner_id.x_studio_field_U7OvH','in',uid),('partner_id.assistant_id','=',uid)]</field>
+            <field name="context">{}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('new_sale_order_tree')}),
+                          (0, 0, {'view_mode': 'kanban', 'view_id': ref('new_sale_order_kanban')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('new_sale_order_form')})]"/>
+        </record>
+        <menuitem id="new_sale_order_weiwei_hexiao_menu" name="已核销的合同" parent="new_sale_order_root" action="new_sale_order_weiwei_hexiao_action" sequence="4"/>
 
         <record id="new_sale_order_create_action" model="ir.actions.act_window">
             <field name="name">创建销售合同</field>
