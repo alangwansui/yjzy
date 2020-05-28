@@ -70,7 +70,7 @@ class sale_order(models.Model):
     @api.depends('po_ids.balance_new')
     def compute_purchase_balance3(self):
         for one in self.search([('company_id', '=', self.env.user.company_id.id)]):
-            print('--', one)
+            print('banlance_new', one)
             purchase_balance_sum = sum(one.sudo().po_ids.mapped('balance_new'))
             one.purchase_balance_sum3 = purchase_balance_sum
 
@@ -95,7 +95,7 @@ class sale_order(models.Model):
     @api.depends('po_ids.amount_total')
     def compute_purchase_amount_total(self):
         for one in self.search([('company_id', '=', self.env.user.company_id.id)]):
-            print('--', one)
+            print('total', one)
             purchase_amount_total = sum(one.sudo().po_ids.mapped('amount_total'))
             one.purchase_amount_total = purchase_amount_total
 
@@ -121,6 +121,7 @@ class sale_order(models.Model):
     @api.depends('po_ids.no_deliver_amount_new')
     def compute_purchase_no_deliver_amount(self):
         for one in self.search([('company_id', '=', self.env.user.company_id.id)]):
+            print('total', one)
             one.purchase_no_deliver_amount_new = sum(one.sudo().po_ids.mapped('no_deliver_amount_new'))
 
 
