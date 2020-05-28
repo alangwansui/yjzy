@@ -57,7 +57,7 @@ class purchase_order(models.Model):
 
     @api.depends('aml_ids')
     def compute_balance(self):
-        for one in self.search([('company_id', '=', self.env.user.company_id.id)]):
+        for one in self:
             sml_lines = one.aml_ids.filtered(lambda x: x.account_id.code == '1123')
             if one.yjzy_payment_ids and one.yjzy_payment_ids[0].currency_id.name == 'CNY':
                 balance = sum([x.credit - x.debit for x in sml_lines])

@@ -66,14 +66,21 @@ class sale_order(models.Model):
     #             print('--', one)
     #             purchase_balance_sum = sum(one.po_ids.mapped('balance_new'))
     #             one.purchase_balance_sum3 = purchase_balance_sum
-    @api.one
-    @api.depends('po_ids.balance_new')
-    def compute_purchase_balance3(self):
-        for one in self.search([('company_id', '=', self.env.user.company_id.id)]):
-            print('balance_new', one.company_id.name)
-            purchase_balance_sum = sum(one.sudo().po_ids.mapped('balance_new'))
-            one.purchase_balance_sum3 = purchase_balance_sum
+    # @api.one
+    # @api.depends('customer_pi')
+    # def compute_purchase_balance3(self):
+    #     for one in self:
+    #         print('balance_new', one)
+    #         purchase_balance_sum = sum(one.sudo().po_ids.mapped('balance_new'))
+    #         one.purchase_balance_sum3 = purchase_balance_sum
 
+    @api.one
+    @api.depends('po_ids_new.balance_new')
+    def compute_purchase_balance3(self):
+        for one in self:
+            print('balance_new', one)
+            purchase_balance_sum = sum(one.sudo().po_ids_new.mapped('balance_new'))
+            one.purchase_balance_sum3 = purchase_balance_sum
 
         # 临时解决方法
     # @api.depends('po_ids.amount_total')
@@ -92,11 +99,11 @@ class sale_order(models.Model):
     #             purchase_amount_total = sum(one.po_ids.mapped('amount_total'))
     #             one.purchase_amount_total = purchase_amount_total
     @api.one
-    @api.depends('po_ids.amount_total')
+    @api.depends('po_ids_new.amount_total')
     def compute_purchase_amount_total(self):
-        for one in self.search([('company_id', '=', self.env.user.company_id.id)]):
+        for one in self:
             print('total', one)
-            purchase_amount_total = sum(one.sudo().po_ids.mapped('amount_total'))
+            purchase_amount_total = sum(one.sudo().po_ids_new.mapped('amount_total'))
             one.purchase_amount_total = purchase_amount_total
 
 
@@ -120,9 +127,9 @@ class sale_order(models.Model):
     @api.one
     @api.depends('po_ids.no_deliver_amount_new')
     def compute_purchase_no_deliver_amount(self):
-        for one in self.search([('company_id', '=', self.env.user.company_id.id)]):
+        for one in self:
             print('total', one)
-            one.purchase_no_deliver_amount_new = sum(one.sudo().po_ids.mapped('no_deliver_amount_new'))
+            one.purchase_no_deliver_amount_new = sum(one.sudo().po_ids_new.mapped('no_deliver_amount_new'))
 
 
     # @api.one
@@ -459,6 +466,9 @@ class sale_order(models.Model):
     doing_type = fields.Selection([('undelivered', u'未发货'), ('start_delivery', u'开始发货'),
                                    ('wait_hexiao',u'待核销'),('has_hexiao',u'已核销')],
                                    u'出运与核销状态')
+    # purchase_update_date = fields.Datetime(u'采购更新的时间')
+
+    po_ids_new = fields.One2many('purchase.order','source_so_id','采购合同新')
 
     # : 公式的cost改成second_cost
     # second_tenyale_profit：原公式的销售额改成second_cost
