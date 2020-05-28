@@ -70,7 +70,7 @@ class sale_order(models.Model):
     @api.depends('po_ids.balance_new')
     def compute_purchase_balance3(self):
         for one in self.search([('company_id', '=', self.env.user.company_id.id)]):
-            print('balance_new', one)
+            print('balance_new', one.company_id.name)
             purchase_balance_sum = sum(one.sudo().po_ids.mapped('balance_new'))
             one.purchase_balance_sum3 = purchase_balance_sum
 
