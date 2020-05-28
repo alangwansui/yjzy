@@ -79,7 +79,7 @@ class sale_order(models.Model):
     def compute_purchase_balance3(self):
         for one in self:
             print('balance_new', one)
-            purchase_balance_sum = sum(one.sudo().po_ids_new.mapped('balance_new'))
+            purchase_balance_sum = sum(one.po_ids_new.mapped('balance_new'))
             one.purchase_balance_sum3 = purchase_balance_sum
 
         # 临时解决方法
@@ -103,7 +103,7 @@ class sale_order(models.Model):
     def compute_purchase_amount_total(self):
         for one in self:
             print('total', one)
-            purchase_amount_total = sum(one.sudo().po_ids_new.mapped('amount_total'))
+            purchase_amount_total = sum(one.po_ids_new.mapped('amount_total'))
             one.purchase_amount_total = purchase_amount_total
 
 
@@ -129,7 +129,7 @@ class sale_order(models.Model):
     def compute_purchase_no_deliver_amount(self):
         for one in self:
             print('total', one)
-            one.purchase_no_deliver_amount_new = sum(one.sudo().po_ids_new.mapped('no_deliver_amount_new'))
+            one.purchase_no_deliver_amount_new = sum(one.po_ids_new.mapped('no_deliver_amount_new'))
 
 
     # @api.one
