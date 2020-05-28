@@ -355,7 +355,7 @@
             <field name="arch" type="xml">
                 <form string="销售订单" class="o_sale_order" create="false">
                        <header groups="base.group_system">
-                         <field name="state" widget="statusbar" statusbar_invisible="draft"  groups="base.group_system"/>
+                         <field name="state" widget="statusbar" statusbar_visible=" "  groups="base.group_system"/>
                     </header>
                     <header groups="base.group_system">
                         <button name="action_verification" type="object" class="btn-primary"/>

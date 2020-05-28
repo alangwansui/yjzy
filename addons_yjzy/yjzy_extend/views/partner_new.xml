@@ -2534,7 +2534,7 @@
                                        placeholder="Company"
                                        domain="[('is_company', '=', True)]"
                                        context="{'default_is_company': True, 'default_supplier': supplier, 'default_customer': customer}"
-                                       attrs="{'invisible': ['|', '&amp;', ('is_company','=', True),('parent_id', '=', False),('company_name', '!=', False),('company_name', '!=', '')]}"/>
+                                       attrs="{'invisible': ['|', '&amp;', ('is_company','=', True),('parent_id', '=', False),('company_name', '!=', False),('company_name', '!=', '')],'form_view_ref':'yjzy_extend.view_new_supplier_form'}"/>
                                 <field name="company_name"
                                        attrs="{'invisible': ['|', '|', ('company_name', '=', False), ('company_name', '=', ''), ('is_company', '=', True)]}"/>
                                 <button name="create_company" type="object" string="Create company"
@@ -3055,7 +3055,7 @@
                                 </group>
                                 <group string="银行账户信息">
                                     <field name="bank_ids" nolabel="1"
-                                           context="{'default_bank_type':'company_supplier'}" attrs="{
+                                           context="{'default_bank_type':'company_supplier','default_company_id':False}" attrs="{
                                        'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}">
                                         <tree editable="bottom">
                                             <field name="bank_type" invisible="1"/>
@@ -3066,6 +3066,7 @@
                                             <field name="kaihuhang" string="银行开户行" attrs="{'required':1}"/>
                                             <field name="kaihuhang_address" string="银行地址"/>
                                             <field name="partner_id" string="账户所有者" invisible="1"/>
+                                            <field name="company_id" invisible="1"/>
                                         </tree>
                                         <form>
                                             <group>

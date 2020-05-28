@@ -728,7 +728,7 @@
                                        context="{'expense_adding_line': True, 'default_company_id':company_id,'tracking_disable': True,
                                        'default_categ_id': categ_id, 'default_second_categ_id': second_categ_id,
                                        'no_show_mark': context.get('no_show_mark'),  'default_gongsi_id': gongsi_id,
-                                       'default_currency_id': currency_id, 'default_state': 'draft','form_view_ref':'yjzy_extend.view_hr_expense_new_from_sheet_form'}">
+                                       'default_currency_id': currency_id, 'default_state': 'draft','form_view_ref':'yjzy_extend.view_hr_expense_new_form'}">
 
                                     <tree decoration-danger="is_refused" editable="bottom">
                                         <field name="categ_id" string="大类*" options="{'no_create':True,'no_open':1}"
@@ -819,7 +819,7 @@
 
                                 <field name="my_expense_line_ids"
                                        attrs="{'invisible':[('state','in',['draft','cancel'])]}"
-                                       context="{'form_view_ref':'yjzy_extend.view_hr_expense_new_from_sheet_form'}">
+                                       context="{'form_view_ref':'yjzy_extend.view_hr_expense_new_form'}">
                                     <tree decoration-danger="is_refused">
                                         <field name="categ_id" string="大类*" options="{'no_create':True,'no_open':1}"
                                                domain="[('parent_id.name','=','费用')]"
@@ -1072,7 +1072,7 @@
                                        context="{'expense_adding_line': True, 'default_company_id':company_id,'tracking_disable': True,
                                        'default_categ_id': categ_id, 'default_second_categ_id': second_categ_id,
                                        'no_show_mark': context.get('no_show_mark'),  'default_gongsi_id': gongsi_id,
-                                       'default_currency_id': currency_id, 'default_state': 'draft','form_view_ref':'yjzy_extend.view_hr_expense_new_from_sheet_form'}">
+                                       'default_currency_id': currency_id, 'default_state': 'draft','form_view_ref':'yjzy_extend.view_hr_expense_new_form'}">
 
                                     <tree decoration-danger="is_refused" editable="bottom">
                                         <field name="categ_id" string="大类*" options="{'no_create':True,'no_open':1}"
@@ -1163,7 +1163,7 @@
 
                                 <field name="my_expense_line_ids"
                                        attrs="{'invisible':[('state','in',['draft','cancel'])]}"
-                                       context="{'form_view_ref':'yjzy_extend.view_hr_expense_new_from_sheet_form'}">
+                                       context="{'form_view_ref':'yjzy_extend.view_hr_expense_new_form'}">
                                     <tree decoration-danger="is_refused">
                                         <field name="categ_id" string="大类*" domain="[('parent_id.name','=','费用')]"
                                                context="{'search_order': 'sequence','only_name':1}" required="1"/>
@@ -1419,7 +1419,7 @@
                                        options="{'not_delete': True, 'reload_on_button': True, 'no_create': False}"
                                        context="{'expense_adding_line': True, 'default_company_id':company_id,'tracking_disable': True,
                                        'no_show_mark': context.get('no_show_mark'),  'default_gongsi_id': gongsi_id,
-                                       'default_currency_id': currency_id, 'default_state': 'draft','form_view_ref':'yjzy_extend.view_hr_expense_new_from_sheet_form'}">
+                                       'default_currency_id': currency_id, 'default_state': 'draft','form_view_ref':'yjzy_extend.view_hr_expense_new_form'}">
 
                                     <tree decoration-danger="is_refused" editable="bottom">
                                         <field name="categ_id" string="大类*" options="{'no_create':True,'no_open':1}"
@@ -1525,7 +1525,7 @@
 
                                 <field name="my_expense_line_ids"
                                        attrs="{'invisible':['|',('state','in',['draft','cancel']),('is_editable','=',True)]}"
-                                       context="{'form_view_ref':'yjzy_extend.view_hr_expense_new_from_sheet_form'}">
+                                       context="{'form_view_ref':'yjzy_extend.view_hr_expense_new_form'}">
                                     <tree decoration-danger="is_refused">
                                         <field name="categ_id" string="大类*" options="{'no_create':True,'no_open':1}"
                                                domain="[('parent_id.name','=','费用')]"

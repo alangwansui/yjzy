@@ -503,7 +503,7 @@
                                  <button name="action_packaging" type="object"  class="oe_highlight" string="装箱Packing list资料" />
                                  <!--button name="action_others" type="object" string="其他信息" /-->
                                 </header>
-                                <field name="hsname_ids" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}">
+                                <field name="hsname_ids" attrs="{'readonly':[('state','not in',['draft','sales_approve']),('is_editable','=',False)]}">
                                     <!--tree editable="bottom" decoration-danger="purchase_hs_id==False" class="o_list_scroll">
                                         <field name="purchase_hs_id" string="采购对应" groups="base.group_system"/>
                                         <button name="make_suppliser_hs" help="手动生成采购数据" type="object" icon="fa-plus-circle"  attrs="{'invisible':[('purchase_hs_id','!=',False)]}"/>
