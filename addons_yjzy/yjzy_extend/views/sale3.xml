@@ -274,8 +274,9 @@
                     <field name="partner_id"/>
 
                     <field name="amount_total" sum="Total Tax Included" widget="monetary" string="销售金额"/>
-                    <field name="purchase_cost"  string="采购金额" groups="base.group_system"/>
-                    <field name="purchase_amount_total"  string="采购金额" sum="小计"/>
+                    <field name="purchase_cost"  string="认领的采购金额成本" groups="base.group_system"/>
+                    <field name="purchase_amount_total"  string="采购金额" sum="小计" groups="base.group_system"/>
+                    <field name="purchase_amount_total_new"  string="采购金额" sum="小计"/>
 
                     <field name="delivery_status" invisible="1"/>
                     <field name="confirmation_date" string="Order Date" invisible="1"/>
@@ -290,9 +291,10 @@
                     <field name="purchase_no_deliver_amount" string="未发货采购" groups="base.group_system"/>
                     <field name="purchase_no_deliver_amount_new" string="未发货采购" sum="小计"/>
                     <field name="pre_advance" string="建议预收" invisible="1"/>
-                    <field name="balance" string="预收余额" invisible="0" sum="小计"/>
-                    <field name="purchase_balance_sum" string="预付余额" invisible="0" groups="base.group_system"/>
-                    <field name="purchase_balance_sum3" string="预付余额" invisible="0" sum="小计"/>
+                    <field name="balance" string="预收余额" groups="base.group_system" sum="小计"/>
+                    <field name="balance_new" string="预收余额" sum="小计"/>
+                    <field name="purchase_balance_sum" string="预付余额"  groups="base.group_system"/>
+                    <field name="purchase_balance_sum3" string="预付余额"  sum="小计"/>
                     <field name="invoice_status" invisible="1"/>
                     <field name="state" invisible="1"/>
                     <field name="user_id" groups="sale.hegui_all" string="责任人"/>
@@ -318,32 +320,47 @@
             <field name="model">sale.order</field>
             <field name="arch" type="xml">
                 <tree string="Sales Orders" decoration-bf="message_needaction==True" create="false" edit="false"  decoration-muted="state=='cancel'"><!--default_order="approve_date"-->
+
                     <field name="message_needaction" invisible="1"/>
                     <field name="id" groups="base.group_system" invisible="1"/>
                     <field name="name" string="订单流水" groups="base.group_system" invisible="1"/>
+                    <field name="approve_date" widget="date" string="合规审批日"/>
                     <field name="contract_code" string="合同号"/>
-                    <field name="partner_id"/>
-                    <field name="requested_date" widget="date" string="交货日"/>
+                    <field name="partner_id" string="客户"/>
+                    <field name="amount_total" sum="Total Tax Included" widget="monetary" string="销售金额"/>
+                    <field name="purchase_cost"  string="认领的采购金额成本" groups="base.group_system"/>
+                    <field name="purchase_amount_total"  string="采购金额" sum="小计" groups="base.group_system"/>
+                    <field name="purchase_amount_total_new"  string="采购金额" sum="小计"/>
                     <field name="delivery_status" invisible="1"/>
                     <field name="confirmation_date" string="Order Date" invisible="1"/>
-                    <field name="contract_date" attrs="{}" string="客户确认日期*" required="1"/>
-                    <field name="amount_total" sum="Total Tax Included" widget="monetary" string="销售金额"/>
-                    <field name="purchase_cost"  string="采购金额"/>
+
+
+
+                    <field name="requested_date" widget="date" string="客户交期"/>
                     <field name="currency_id" invisible="1"/>
-                    <field name="no_sent_amount" string="未发货销售"/>
-                    <field name="purchase_no_deliver_amount" string="未发货采购"/>
+                    <field name="no_sent_amount" string="未发货销售" groups="base.group_system"/>
+                    <field name="no_sent_amount_new" string="未发货销售" sum="小计"/>
+                    <field name="purchase_no_deliver_amount" string="未发货采购" groups="base.group_system"/>
+                    <field name="purchase_no_deliver_amount_new" string="未发货采购" sum="小计"/>
                     <field name="pre_advance" string="建议预收" invisible="1"/>
-                    <field name="balance" string="实际预收余额" invisible="1"/>
+                    <field name="balance" string="预收余额" groups="base.group_system" sum="小计"/>
+                    <field name="balance_new" string="预收余额" sum="小计"/>
+                    <field name="purchase_balance_sum" string="预付余额"  groups="base.group_system"/>
+                    <field name="purchase_balance_sum3" string="预付余额"  sum="小计"/>
                     <field name="invoice_status" invisible="1"/>
-                    <field name="state" invisible="1"/>
+                    <field name="state"/>
                     <field name="user_id" groups="sale.hegui_all" string="责任人"/>
                     <field name="commitment_date" invisible="1"/>
                     <field name="advance_po_residual" invisible="1"/>
-                    <field name="approve_date" widget="date" string="合规审批日"/>
-                    <field name="purchase_approve_date" widget="date" string="采购审批日"/>
-                    <field name="gongsi_id" string="销售主体"/>
-                    <field name="purchase_gongsi_id" string="采购主体"/>
+                    <field name="doing_type" invisible="1"/>
+                    <field name="hexiao_type" string="核销类型"/>
+                    <field name="hexiao_comment" widget="dynamic_popover_text"
+                        options="{'max_width': '20px', 'line_clamp': '1', 'mode_mouse':'hover','popover_max_width':'500px','placement':'right'}"/>
+
+                    <field name="gongsi_id" string="销售主体" />
+                    <field name="purchase_gongsi_id" string="采购主体" />
                     <field name="company_id" groups="base.group_system" />
+
                 </tree>
 
             </field>
@@ -358,6 +375,10 @@
                          <field name="state" widget="statusbar" statusbar_visible=" "  groups="base.group_system"/>
                     </header>
                     <header groups="base.group_system">
+
+                        <button name="update_purchase_datas" string="更新采购数据" type="object" class="btn-primary"/>
+
+
                         <button name="action_verification" type="object" class="btn-primary"/>
                         <button name="260" string="Create Invoice" type="action" class="btn-primary"
                                 attrs="{'invisible': [('invoice_status', '!=', 'to invoice')]}" invisible="1"/>
@@ -444,10 +465,8 @@
                                 <field name="partner_id" string="客户*" required="1" domain="[('customer','=',True),('parent_id', '=', False),('state','=','done'),'|','|','|','|','|',('assistant_id','=',uid),('user_id','=',uid),('parent_id.assistant_id','=',uid),('parent_id.user_id','=',uid),('supplier','=',1),('x_studio_field_3ErQR','=',1)]"
                                        attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}" context="{'search_default_customer':1, 'show_address': 0}" options="{&quot;always_reload&quot;: True}"/>
 
-                                <field name="partner_invoice_id"  groups="sale.group_delivery_invoice_address" context="{'default_type':'invoice'}"
-                                       options="{&quot;always_reload&quot;: True}" attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
-                                <field name="partner_shipping_id"  groups="sale.group_delivery_invoice_address" attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"
-                                       context="{'default_type':'delivery'}" options="{&quot;always_reload&quot;: True}"/>
+                                <field name="partner_invoice_id"  context="{'default_type':'invoice'}" options="{&quot;always_reload&quot;: True}" />
+                                <field name="partner_shipping_id"   context="{'default_type':'delivery'}" options="{&quot;always_reload&quot;: True}"/>
                                 <field name="country_id" invisible="1"/>
                                 <field name="can_directly_mark_as_paid" invisible="1"/>
                                 <field name="link_man_id" invisible="1" domain="[('parent_id','=',partner_id),('type', '=', 'contract')]" groups="base.group_system"/>

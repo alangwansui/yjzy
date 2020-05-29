@@ -87,7 +87,7 @@ class transport_bill(models.Model):
             one.shoukuan_amount = one.sale_invoice_id.amount_total - one.sale_invoice_id.residual_signed
             one.fukuan_amount = sum([i.amount_total - i.residual_signed for i in one.purchase_invoice_ids.filtered(lambda x: x.yjzy_type == 'purchase')]) #（采购发票line.合计金额 - 到期金额）
 
-            budget_amount = one.fee_inner + one.fee_rmb1 + one.fee_rmb2 + one.get_outer()
+            budget_amount = one.fee_inner + one.fee_rmb1 + one.fee_rmb2 #+ one.get_outer()
             budget_reset_amount = budget_amount - sum([x.total_amount for x in one.expense_ids])
 
             one.org_sale_amount = org_sale_amount

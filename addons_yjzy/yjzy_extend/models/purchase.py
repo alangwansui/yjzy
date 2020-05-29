@@ -78,14 +78,7 @@ class purchase_order(models.Model):
             else:
                 one.pre_advance = 0
 
-    def compute_balance_1(self):
-        for one in self:
-            sml_lines = one.aml_ids.filtered(lambda x: x.account_id.code == '1123')
-            if one.yjzy_payment_ids and one.yjzy_payment_ids[0].currency_id.name == 'CNY':
-                balance = sum([x.debit - x.credit for x in sml_lines])
-            else:
-                balance = sum([1 * x.amount_currency for x in sml_lines])
-            one.balance_new = balance
+
     # is_cip = fields.Boolean(u'报关', default=False)
     # is_fapiao = fields.Boolean(u'含税')
     #akiny 修改state

@@ -38,121 +38,76 @@ class sale_order(models.Model):
 
 
     @api.depends('aml_ids')
+    def compute_balance_new(self):
+        for one in self:
+            if one.state != 'verification':
+                sml_lines = one.aml_ids.filtered(lambda x: x.account_id.code == '2203')
+                if one.yjzy_payment_ids and one.yjzy_payment_ids[0].currency_id.name == 'CNY':
+                    balance = sum([x.credit - x.debit for x in sml_lines])
+                else:
+                    balance = sum([-1 * x.amount_currency for x in sml_lines])
+                one.balance_new = balance
+
+
     def compute_balance(self):
-        for one in self.search([('company_id', '=', self.env.user.company_id.id)]):
+        for one in self:
             sml_lines = one.aml_ids.filtered(lambda x: x.account_id.code == '2203')
             if one.yjzy_payment_ids and one.yjzy_payment_ids[0].currency_id.name == 'CNY':
                 balance = sum([x.credit - x.debit for x in sml_lines])
             else:
                 balance = sum([-1 * x.amount_currency for x in sml_lines])
             one.balance = balance
-
    # @api.depends('po_ids')
     def compute_purchase_balance(self):
         for one in self:
              purchase_balance_sum = sum(one.po_ids.mapped('balance'))
              one.purchase_balance_sum = purchase_balance_sum
-    #临时解决方法
-    # @api.depends('po_ids.balance_new')
-    # def compute_purchase_balance3(self):
-    #     user = self.env.user
-    #     if user.has_group('yjzy_extend.group_expense_my_total'):
-    #         for one in self:
-    #             print('--',one)
-    #             purchase_balance_sum = sum(one.po_ids.mapped('balance_new'))
-    #             one.purchase_balance_sum3 = purchase_balance_sum
-    #     else:
-    #         for one in self.search(['|','|',('partner_id.x_studio_field_U7OvH','in',self.env.user.id),('partner_id.assistant_id','=',self.env.user.id),('partner_id.user_id','=',self.env.user.id)]):
-    #             print('--', one)
-    #             purchase_balance_sum = sum(one.po_ids.mapped('balance_new'))
-    #             one.purchase_balance_sum3 = purchase_balance_sum
-    # @api.one
-    # @api.depends('customer_pi')
-    # def compute_purchase_balance3(self):
-    #     for one in self:
-    #         print('balance_new', one)
-    #         purchase_balance_sum = sum(one.sudo().po_ids.mapped('balance_new'))
-    #         one.purchase_balance_sum3 = purchase_balance_sum
-
     @api.one
     @api.depends('po_ids_new.balance_new')
     def compute_purchase_balance3(self):
         for one in self:
-            print('balance_new', one)
-            purchase_balance_sum = sum(one.po_ids_new.mapped('balance_new'))
-            one.purchase_balance_sum3 = purchase_balance_sum
+            if one.state != 'verification':
+                print('balance_new', one)
+                purchase_balance_sum = sum(one.po_ids_new.mapped('balance_new'))
+                one.purchase_balance_sum3 = purchase_balance_sum
 
-        # 临时解决方法
-    # @api.depends('po_ids.amount_total')
-    # def compute_purchase_amount_total(self):
-    #     user = self.env.user
-    #     if user.has_group('yjzy_extend.group_expense_my_total'):
-    #         for one in self:
-    #             print('--', one)
-    #             purchase_amount_total = sum(one.po_ids.mapped('amount_total'))
-    #             one.purchase_amount_total = purchase_amount_total
-    #     else:
-    #         for one in self.search(['|', '|', ('partner_id.x_studio_field_U7OvH', 'in', self.env.user.id),
-    #                                 ('partner_id.assistant_id', '=', self.env.user.id),
-    #                                 ('partner_id.user_id', '=', self.env.user.id)]):
-    #             print('--', one)
-    #             purchase_amount_total = sum(one.po_ids.mapped('amount_total'))
-    #             one.purchase_amount_total = purchase_amount_total
-    @api.one
-    @api.depends('po_ids_new.amount_total')
+
+
     def compute_purchase_amount_total(self):
         for one in self:
             print('total', one)
             purchase_amount_total = sum(one.po_ids_new.mapped('amount_total'))
             one.purchase_amount_total = purchase_amount_total
 
+    @api.one
+    @api.depends('po_ids_new.amount_total')
+    def compute_purchase_amount_total_new(self):
+        for one in self:
+            if one.state != 'verification':
+                print('total', one)
+                purchase_amount_total = sum(one.po_ids_new.mapped('amount_total'))
+                one.purchase_amount_total_new = purchase_amount_total
+
 
 
     @api.depends('order_line.qty_delivered')
     def compute_no_sent_amount(self):
         for one in self:
-            one.no_sent_amount_new = sum([x.price_unit * (x.product_uom_qty - x.qty_delivered) for x in one.order_line])
+            if one.state != 'verification':
+                one.no_sent_amount_new = sum([x.price_unit * (x.product_uom_qty - x.qty_delivered) for x in one.order_line])
 
-    # @api.depends('po_ids.no_deliver_amount_new')
-    # def compute_purchase_no_deliver_amount(self):
-    #     user = self.env.user
-    #     if user.has_group('yjzy_extend.group_expense_my_total'):
-    #         for one in self:
-    #             one.purchase_no_deliver_amount_new = sum(one.po_ids.mapped('no_deliver_amount_new'))
-    #     else:
-    #         for one in self.search(['|', '|', ('partner_id.x_studio_field_U7OvH', 'in', self.env.user.id),
-    #                                 ('partner_id.assistant_id', '=', self.env.user.id),
-    #                                 ('partner_id.user_id', '=', self.env.user.id)]):
-    #             one.purchase_no_deliver_amount_new = sum(one.po_ids.mapped('no_deliver_amount_new'))
+
+
     @api.one
-    @api.depends('po_ids.no_deliver_amount_new')
-    def compute_purchase_no_deliver_amount(self):
+    @api.depends('po_ids_new.no_deliver_amount_new')
+    def compute_purchase_no_deliver_amount_new(self):
         for one in self:
-            print('total', one)
-            one.purchase_no_deliver_amount_new = sum(one.po_ids_new.mapped('no_deliver_amount_new'))
+            if one.state != 'verification':
+                print('total', one)
+                one.purchase_no_deliver_amount_new = sum(one.po_ids_new.mapped('no_deliver_amount_new'))
 
 
-    # @api.one
-    # @api.depends('po_ids.balance_new')
-    # def compute_purchase_balance2(self):
-    #     for one in self:
-    #         purchase_balance_sum = sum(one.sudo().po_ids.mapped('balance_new'))
-    #         one.purchase_balance_sum2 = purchase_balance_sum
 
-    # @api.one
-    # @api.depends('po_ids.aml_ids')
-    # def compute_purchase_balance1(self):
-    #     for one in self:
-    #         print('====', one)
-    #         total = 0.0
-    #         for po in one.po_ids:
-    #             sml_lines = po.aml_ids.filtered(lambda x: x.account_id.code == '1123')
-    #             if po.yjzy_payment_ids and po.yjzy_payment_ids[0].currency_id.name == 'CNY':
-    #                 balance = -(sum([x.credit - x.debit for x in sml_lines]))
-    #             else:
-    #                 balance = sum([1 * x.amount_currency for x in sml_lines])
-    #             total +=balance
-    #         one.purchase_balance_sum1 = total
 
     #@api.depends('po_ids.balance')
     def compute_po_residual(self):
@@ -344,7 +299,8 @@ class sale_order(models.Model):
 
     yjzy_payment_ids = fields.One2many('account.payment', 'so_id', u'预收认领单')
     yjzy_currency_id = fields.Many2one('res.currency', u'预收币种', related='yjzy_payment_ids.currency_id')
-    balance = fields.Monetary(u'预收余额', compute=compute_balance, currency_field='yjzy_currency_id', store=True)
+    balance = fields.Monetary(u'预收余额', compute=compute_balance, currency_field='yjzy_currency_id')
+    balance_new = fields.Monetary(u'预收余额', compute=compute_balance_new, currency_field='yjzy_currency_id', store=True)
 
     exchange_rate = fields.Float(u'目前汇率', compute=compute_exchange_rate, digits=(2,2)) #akiny 4改成了2
     appoint_rate = fields.Float(u'使用汇率', digits=(2,6))
@@ -447,12 +403,13 @@ class sale_order(models.Model):
     purchase_approve_date = fields.Datetime('采购审批时间', compute=compute_info)
 
     purchase_no_deliver_amount = fields.Float('未发货的采购金额', compute=compute_info)
-    purchase_no_deliver_amount_new = fields.Float('未发货的采购金额', compute='compute_purchase_no_deliver_amount',store=True)
+    purchase_no_deliver_amount_new = fields.Float('未发货的采购金额', compute='compute_purchase_no_deliver_amount_new',store=True)
     purchase_delivery_status = fields.Boolean('采购发货完成', compute='update_purchase_delivery')
     purchase_balance_sum = fields.Float('采购预付余额',compute='compute_purchase_balance')
     purchase_balance_sum3 = fields.Float('采购预付余额',compute='compute_purchase_balance3',store=True)
     # purchase_balance_sum2 = fields.Float('采购预付余额',compute='compute_purchase_balance2',store=True)
-    purchase_amount_total = fields.Float('采购预付余额',compute='compute_purchase_amount_total',store=True)
+    purchase_amount_total_new = fields.Float('采购金额',compute='compute_purchase_amount_total_new',store=True)
+    purchase_amount_total = fields.Float('采购金额', compute='compute_purchase_amount_total')
 
     second_cost = fields.Float('销售主体成本', compute=compute_info)   #second_amoun
     second_porfit = fields.Float('销售主体利润', compute=compute_info) #amount_total2-刚刚计算出来的 second_const
@@ -830,8 +787,18 @@ class sale_order(models.Model):
         self.state = 'verification'
         self.x_wkf_state = '199'
         self.hx_date = fields.date.today()
+        self.no_sent_amount_new = 0
+        self.purchase_balance_sum3 = 0
+        self.purchase_no_deliver_amount_new = 0
+        self.balance_new = 0
 
+    def action_verification1(self):
+        user = self.env.user
 
+        self.state = 'verification'
+        self.x_wkf_state = '199'
+        self.hx_date = fields.date.today()
+        self.no_sent_amount_new = 0
 
 
     def update_purchase_delivery(self):
@@ -843,6 +810,9 @@ class sale_order(models.Model):
             one.purchase_delivery_status = purchase_delivery_status
 
 
-
-
+    def update_purchase_datas(self):
+        for one in self:
+             one.compute_purchase_balance3()
+             one.compute_purchase_amount_total_new()
+             one.compute_purchase_no_deliver_amount_new()
 
