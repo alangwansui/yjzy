@@ -1,19 +1,6 @@
 <odoo>
     <data>
- <!--record model="ir.actions.act_window" id="act_open_transport_bill_clearance_view">
-            <field name="name">清关资料</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="res_model">transport.bill</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">form</field>
-            <field name="domain">[]</field>
-            <field name="limit">20</field>
-            <field name="context">{'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3}</field>
-            <field name="view_ids" eval="[(5, 0, 0),
-            (0, 0, {'view_mode': 'form', 'view_id': ref('view_transport_bill_clearance_form')}),
-                        ]"/>
 
-        </record-->
         <record id="view_transport_bill_new_filter" model="ir.ui.view">
             <field name="name">transport.bill.new.select</field>
             <field name="model">transport.bill</field>
@@ -143,10 +130,7 @@
                 <form string="出运单">
                     <header groups="base.group_system" >
 
-                    <!--button class="oe_stat_button" type="action" name="%(yjzy_extend.act_open_transport_bill_clearance_view)d"
 
-                        icon="fa-usd">
-                    </button-->
 
 
                         <button string="添加销售合同" states="draft" type="object" name="open_wizard_transport4so"
