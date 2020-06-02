@@ -143,10 +143,10 @@
                 <form string="出运单">
                     <header groups="base.group_system" >
 
-                    <button class="oe_stat_button" type="action" name="%(yjzy_extend.act_open_transport_bill_clearance_view)d"
+                    <!--button class="oe_stat_button" type="action" name="%(yjzy_extend.act_open_transport_bill_clearance_view)d"
 
                         icon="fa-usd">
-                    </button>
+                    </button-->
 
 
                         <button string="添加销售合同" states="draft" type="object" name="open_wizard_transport4so"
