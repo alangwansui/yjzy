@@ -1,6 +1,6 @@
 <odoo>
     <data>
- <record model="ir.actions.act_window" id="act_open_transport_bill_clearance_view">
+ <!--record model="ir.actions.act_window" id="act_open_transport_bill_clearance_view">
             <field name="name">清关资料</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">transport.bill</field>
@@ -13,7 +13,7 @@
             (0, 0, {'view_mode': 'form', 'view_id': ref('view_transport_bill_clearance_form')}),
                         ]"/>
 
-        </record>
+        </record-->
         <record id="view_transport_bill_new_filter" model="ir.ui.view">
             <field name="name">transport.bill.new.select</field>
             <field name="model">transport.bill</field>
