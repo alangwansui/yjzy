@@ -1,0 +1,229 @@
+<odoo>
+    <data>
+
+        <record id="view_transport_bill_clearance_filter" model="ir.ui.view">
+            <field name="name">transport.bill.clearance.select</field>
+            <field name="model">transport.bill</field>
+            <field name="arch" type="xml">
+                <search string="Transport Bill clearance">
+
+                    <field name="ref" string="模糊搜索"
+                           filter_domain="['|','|',('ref','ilike',self),('name','ilike',self),('partner_id','child_of',self)]"/>
+                    <field name="ref" string="合同号" filter_domain="['|',('ref','ilike',self),('name','ilike',self)]"/>
+                    <field name="user_id"/>
+
+                    <separator/>
+                    <filter string="合同草稿" name="draft" domain="[('state','=','draft')]"/>
+                    <filter string="审批中" name="approval"
+                            domain="[('state','in',['submit','refused','sale_approve','locked','done'])]"/>
+                    <filter string="合规审批完成" name="approve" domain="[('state','in',['approve'])]"/>
+                    <filter string="单证审批完成" name="confirmed" domain="[('state','in',['confirmed'])]"/>
+                    <separator/>
+                    <filter string="出运完成" name="delivered" domain="[('state','in',['delivered'])]"/>
+                    <filter string="应收付完成" name="invoiced" domain="[('state','in',['invoiced'])]"/>
+                    <filter string="待货款收齐" name="done" domain="[('state','in',['done'])]"/>
+                    <filter string="已收款" name="paid" domain="[('state','in',['paid'])]"/>
+                    <separator/>
+
+                    <group expand="0" string="Group By">
+                        <filter string="状态" domain="[]" context="{'group_by':'state'}"/>
+                        <filter string="责任人" domain="[]" context="{'group_by':'user_id'}"/>
+                        <filter name="customer" string="客户" domain="[]" context="{'group_by':'partner_id'}"/>
+                        <separator/>
+                        <filter string="审批完成月份" domain="[]" context="{'group_by':'approve_date'}"/>
+                        <filter string="下单月份" domain="[]" context="{'group_by':'date_order'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <record id="view_transport_bill_clearance_tree" model="ir.ui.view">
+            <field name="name">transport.bill.clearance.tree</field>
+            <field name="model">transport.bill</field>
+            <field name="arch" type="xml">
+                <tree string="清关资料">
+                    <field name="ref"/>
+                    <field name="name" invisible="1" groups="base.group_system"/>
+                    <field name="partner_id" required="1"/>
+
+                    <field name="org_sale_amount"/>
+                    <field name="qingguan_amount"/>
+
+
+                    <field name="state" invisible="1" groups="base.group_system"/>
+
+                    <field name="company_currency_id" invisible="1" groups="base.group_system"/>
+                    <field name="sale_currency_id" invisible="1"/>
+                    <field name="third_currency_id" invisible="1" groups="base.group_system"/>
+
+
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_transport_bill_clearance_form" model="ir.ui.view">
+            <field name="name">transport.bill.clearance.form</field>
+            <field name="model">transport.bill</field>
+            <field name="arch" type="xml">
+                <form string="清关资料">
+                    <header groups="base.group_system">
+                        <button string="打印清关资料" attrs="{'invisible': [('qingguan_state','=','draft')]}" type="object"
+                                name="print_qingguan"
+                                class="oe_highlight"/>
+                        <button string="计算清关数据" type="object" name="create_qingguan_lines"
+                                attrs="{'invisible': [('qingguan_state','!=','draft')]}"
+                                class="oe_highlight"/>
+
+
+                        <field name="state" widget="statusbar" groups="base.group_system"/>
+                        <field name="is_editable" widget="boolean_toggle" groups="	sales_team.group_manager"/>
+
+                    </header>
+                    <sheet>
+
+                        <group col="3">
+                            <group name="general_information">
+                                <field name="id" invisible="1"/>
+
+                                <field name="partner_id" invisible="1"/>
+                                <field name="partner_shipping_id" string="TO" options="{'no_open':1}"
+                                       domain="[('parent_id','child_of', partner_id)]"
+                                       attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"
+                                       no_create="True"/>
+
+
+                                <!--field name="mark_ids" widget="many2many_tags"/-->
+
+                                <field name="notice_man" string="Notify Party"
+                                       attrs="{'readonly':[('state','not in',['draft','submit','sales_approve','approve']),('is_editable','=',False)]}"/>
+
+                                <field name="wharf_src_id" string="Shipment From" options="{'no_open':1}"
+                                       attrs="{'readonly':[('state','not in',['draft','submit','sales_approve','approve']),('is_editable','=',False)]}"/>
+                                <field name="wharf_dest_id" string="Shipment To" options="{'no_open':1}"
+                                       attrs="{'readonly':[('state','not in',['draft','submit','sales_approve','approve']),('is_editable','=',False)]}"/>
+
+
+                            </group>
+                            <group>
+                                <field name="ref" string="Invoice No"
+                                       attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
+                                <field name="date" string="Date"
+                                       attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"
+                                       invisible="0"/>
+                                <field name="name" readonly="1" groups="base.group_system" invisible="1"/>
+                                <field name="locked" groups="base.group_system" invisible="1"/>
+                                <field name="contract_type" groups="base.group_system"
+                                       attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
+                                <field name="gongsi_id" options="{'no_open':1}" string="销售主体"
+                                       attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
+                                <field name="purchase_gongsi_id" options="{'no_open':1}" string="采购主体"
+                                       attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
+
+                            </group>
+                            <group>
+                                <field name="mark_text" string="Marks"/>
+                                <field name="qingguan_description"
+                                       attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
+                            </group>
+
+                        </group>
+                        <notebook>
+                            <page string="清关资料" name="qgzl">
+
+                                <field name="qingguan_line_ids"
+                                       attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}">
+                                    <tree editable="bottom">
+                                        <field name="company_currency_id" invisible="1"/>
+                                        <field name="sale_currency_id" invisible="1"/>
+                                        <field name="third_currency_id" invisible="1"/>
+                                        <field name="so_id" string="销售合同"/>
+                                        <field name="product_id"/>
+                                        <field name="source_area"/>
+                                        <field name="source_country_id"/>
+                                        <field name="uom_id" groups="base.group_system" invisible="1"/>
+                                        <field name="s_uom_id" string="单位"/>
+                                        <field name="price"/>
+                                        <field name="qty" sum="小计"/>
+                                        <field name="qty_package" sum="小计" groups="base.group_system" invisible="1"/>
+                                        <field name="package_qty" sum="小计" string="箱数"/>
+                                        <field name="net_weight" sum="小计"/>
+                                        <field name="gross_weight" sum="小计"/>
+                                        <field name="tuopan_weight" sum="小计" string="托重"/>
+                                        <field name="shiji_weight" sum="小计"/>
+                                        <field name="volume" sum="小计" string="体积"/>
+                                        <field name="tuopan_volume" sum="小计" string="托体积"/>
+                                        <field name="shiji_volume" sum="小计"/>
+                                        <field name="sub_total" sum="小计"/>
+                                    </tree>
+
+                                </field>
+
+                            </page>
+                            <page string="统计">
+
+                                <group col="3">
+                                    <group name="sale_currency">
+                                        <field name="is_done_plan"/>
+                                        <field name="is_done_tuopan"/>
+                                        <field name="is_done_tb_vendor"/>
+                                        <field name="stage1state" invisible="1" groups="base.group_system"
+                                               attrs="{'readonly': [('locked','=',True)]}"/>
+                                        <field name="stage2state" invisible="1" groups="base.group_system"
+                                               attrs="{'readonly': [('locked','=',True)]}"/>
+                                        <field name="sale_collect_state"/>
+                                        <field name="purchase_collect_state"/>
+                                        <field name="qingguan_state"/>
+                                    </group>
+                                    <group name="self_currency">
+
+                                        <field name="company_id" readonly="1" invisible="1"/>
+                                        <field name="company_currency_id" readonly="1" invisible="1"/>
+
+
+                                        <field name="org_sale_amount" attrs="{'readonly': [('locked','=',True)]}"/>
+                                        <field name="org_real_sale_amount" attrs="{'readonly': [('locked','=',True)]}"/>
+
+                                        <field name="sale_commission_ratio"
+                                               attrs="{'readonly': [('locked','=',True)]}"/>
+                                        <field name="ciq_amount" attrs="{'readonly': [('locked','=',True)]}"/>
+                                        <field name="no_ciq_amount" attrs="{'readonly': [('locked','=',True)]}"/>
+
+                                        <field name="shoukuan_amount"/>
+                                        <field name="fukuan_amount"/>
+
+                                        <field name="budget_amount" invisible="1"/>
+                                        <field name="budget_reset_amount" invisible="1"/>
+                                    </group>
+                                    <group groups="base.group_system">
+                                        <field name="sale_currency_id" invisible="1"/>
+                                        <field name="third_currency_id" no_create="True"/>
+                                        <field name="sale_amount"/>
+                                        <field name="real_sale_amount"/>
+                                        <field name="sale_commission_amount"/>
+                                        <field name="purchase_cost"/>
+                                        <field name="fandian_amount"/>
+                                        <field name="stock_cost"/>
+                                        <field name="other_cost"/>
+                                        <field name="back_tax_amount"/>
+                                        <field name="vat_diff_amount"/>
+                                        <field name="profit_amount"/>
+                                        <field name="profit_ratio"/>
+
+
+                                    </group>
+                                </group>
+                            </page>
+
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="activity_ids" widget="mail_activity"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

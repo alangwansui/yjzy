@@ -68,6 +68,7 @@
         'views/transport_bill.xml',
         'views/transport_bill_account.xml',
         'views/transport_bill_new.xml',
+        'views/transport_bill_customs_clearance.xml',
         'views/transport_lot_plan.xml',
         'views/transport_bill_vendor.xml',
 
@@ -132,6 +133,7 @@
 
         'report/transport_bill_invoice_template.xml',
         'report/transport_bill_packing_template.xml',
+        'report/report_transport_bill_action.xml',
         'report/transport_bill_fytzd_template.xml',
         'report/transport_bill_bgzl_contract_template.xml',
         'report/transport_bill_bgzl_invoice_template.xml',

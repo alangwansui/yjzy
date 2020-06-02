@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <report 
+            id="action_report_transport_bill_invoice"
+            string="清关资料"
+            model="transport.bill"
+            report_type="qweb-pdf"
+            file="yjzy_extend.report_transport_bill_invoice"
+            name="yjzy_extend.report_transport_bill_invoice"
+            print_report_name="(object.state in ('draft', 'sent') and 'Quotation - %s' % (object.name)) or 'Order - %s' % (object.name)"
+        />
+
+
+    </data>
+</odoo>

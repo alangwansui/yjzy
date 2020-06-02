@@ -130,7 +130,7 @@ class purchase_order(models.Model):
     is_editable = fields.Boolean(u'可编辑')
     gongsi_id = fields.Many2one('gongsi', '内部公司')
 
-
+    #以下还没有进入文档
     submit_date = fields.Date('提交审批时间')
     submit_uid = fields.Many2one('res.users', u'提交审批')
 

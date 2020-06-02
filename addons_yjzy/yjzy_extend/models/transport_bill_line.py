@@ -63,6 +63,26 @@ class transport_bill_line(models.Model):
             one.vat_diff_amount = vat_diff_amount
             one.profit_amount = profit_amount
 
+   #akiny暂时不要
+    stage3move_ids = fields.Many2many('stock.move', 'ref_move_tbl', 'lid', 'mid', u'出库',
+                                      domain=[('picking_code', '=', 'outgoing')])
+    org_currency_sale_amount = fields.Monetary(u'销售货币金额', currency_field='sale_currency_id', compute=compute_info,
+                                               store=False, digits=dp.get_precision('Money'))
+    sale_amount = fields.Monetary(u'销售金额', currency_field='company_currency_id', compute=compute_info, store=False,
+                                  digits=dp.get_precision('Money'))
+    purchase_cost = fields.Monetary(u'采购成本', currency_field='company_currency_id', compute=compute_info,
+                                    digits=dp.get_precision('Money'))
+    stock_cost = fields.Monetary(u'库存成本', currency_field='company_currency_id', compute=compute_info,
+                                 digits=dp.get_precision('Money'))
+    vat_diff_amount = fields.Monetary(u'增值税差额', currency_field='company_currency_id', compute=compute_info,
+                                      digits=dp.get_precision('Money'))
+    profit_amount = fields.Monetary(u'利润', currency_field='company_currency_id', compute=compute_info,
+                                    digits=dp.get_precision('Money'))
+    back_tax_amount = fields.Monetary(u'退税金额', currency_field='company_currency_id', compute=compute_info,
+                                      digits=dp.get_precision('Money'))
+    s_uom_id = fields.Many2one('product.uom', u'销售打印单位', related='product_id.s_uom_id')
+    p_uom_id = fields.Many2one('product.uom', u'采购打印单位', related='product_id.p_uom_id')
+
     #currency_id = fields.Many2one(related='bill_id.currency_id', readonly=True, string='公司本币') #TODO
     company_currency_id = fields.Many2one('res.currency', string='公司货币', related='bill_id.company_currency_id', readonly=True)
     sale_currency_id = fields.Many2one(related='bill_id.sale_currency_id', readonly=True)
@@ -99,8 +119,7 @@ class transport_bill_line(models.Model):
     stage2move_ids = fields.Many2many('stock.move', 'ref_move_tbl', 'lid', 'mid', u'出库',
                                       domain=[('picking_code', '=', 'outgoing')])
 
-    stage3move_ids = fields.Many2many('stock.move', 'ref_move_tbl', 'lid', 'mid', u'出库',
-                                      domain=[('picking_code', '=', 'outgoing')])
+
 
     purchase_qty = fields.Float(u'采购数', related='sol_id.purchase_qty')
     qty_unreceived = fields.Float(u'未收数', related='sol_id.qty_unreceived')
@@ -121,13 +140,7 @@ class transport_bill_line(models.Model):
     qty2stage_new = fields.Float(u'发货数:新', compute='compute_qty2stage_new', store=True)
 
 
-    org_currency_sale_amount = fields.Monetary(u'销售货币金额', currency_field='sale_currency_id', compute=compute_info, store=False, digits=dp.get_precision('Money'))
-    sale_amount = fields.Monetary(u'销售金额', currency_field='company_currency_id', compute=compute_info, store=False, digits=dp.get_precision('Money'))
-    purchase_cost = fields.Monetary(u'采购成本', currency_field='company_currency_id', compute=compute_info, digits=dp.get_precision('Money'))
-    stock_cost = fields.Monetary(u'库存成本', currency_field='company_currency_id', compute=compute_info, digits=dp.get_precision('Money'))
-    vat_diff_amount = fields.Monetary(u'增值税差额', currency_field='company_currency_id', compute=compute_info, digits=dp.get_precision('Money'))
-    profit_amount = fields.Monetary(u'利润', currency_field='company_currency_id', compute=compute_info, digits=dp.get_precision('Money'))
-    back_tax_amount = fields.Monetary(u'退税金额', currency_field='company_currency_id', compute=compute_info, digits=dp.get_precision('Money'))
+
 
     pack_line_id = fields.Many2one('transport.pack.line', u'统计')
     #明细装箱统计
@@ -138,8 +151,7 @@ class transport_bill_line(models.Model):
     volume = fields.Float('体积', digits=dp.get_precision('Volume'))
     #批次明细
     tbl_lot_ids = fields.One2many('bill.line.lot', 'tb_line_id', string='明细批次')
-    s_uom_id = fields.Many2one('product.uom', u'销售打印单位', related='product_id.s_uom_id')
-    p_uom_id = fields.Many2one('product.uom', u'采购打印单位', related='product_id.p_uom_id')
+
     need_print = fields.Boolean('是否打印', defualt=True)
     #是否金样  akiny
     is_gold_sample = fields.Boolean('是否有金样', related='product_id.is_gold_sample', readonly=False)

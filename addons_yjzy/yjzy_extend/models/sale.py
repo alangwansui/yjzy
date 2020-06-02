@@ -753,6 +753,27 @@ class sale_order(models.Model):
     #         one.doing_type = doing_type
     #         one.hexiao_type = hexiao_type
 
+    # def update_hexiaotype_doing_type(self):
+    #     for one in self:
+    #         print('---', one)
+    #         hexiao_type = False
+    #         state = one.state
+    #         today = datetime.now()
+    #         requested_date = one.requested_date
+    #         # 未发货，开始发货，待核销，已核销
+    #         if (one.delivery_status == 'undelivered' or one.delivery_status == 'partially_delivered') and requested_date and requested_date < (today - relativedelta(days=185)).strftime('%Y-%m-%d 00:00:00') and one.state != 'verification':
+    #             state='verifying'
+    #             hexiao_type = 'abnormal'
+    #         if one.delivery_status == 'received' and one.state != 'verification':
+    #             if one.balance == 0 and one.purchase_balance_sum3 == 0:
+    #                 hexiao_type = 'write_off'
+    #                 state = 'verifying'
+    #             else:
+    #                 hexiao_type = 'abnormal'
+    #                 state = 'verifying'
+    #         one.hexiao_type = hexiao_type
+    #         one.state = state
+
     def update_hexiaotype_doing_type(self):
         for one in self:
             print('---', one)
@@ -761,10 +782,10 @@ class sale_order(models.Model):
             today = datetime.now()
             requested_date = one.requested_date
             # 未发货，开始发货，待核销，已核销
-            if (one.delivery_status == 'undelivered' or one.delivery_status == 'partially_delivered') and requested_date and requested_date < (today - relativedelta(days=185)).strftime('%Y-%m-%d 00:00:00') and one.state != 'verification':
+            if (one.no_sent_amount_new != 0 or one.purchase_no_deliver_amount_new != 0 ) and requested_date and requested_date < (today - relativedelta(days=185)).strftime('%Y-%m-%d 00:00:00') and one.state != 'verification':
                 state='verifying'
                 hexiao_type = 'abnormal'
-            if one.delivery_status == 'received' and one.state != 'verification':
+            if one.no_sent_amount_new == 0 and one.purchase_no_deliver_amount_new == 0 and one.state != 'verification':
                 if one.balance == 0 and one.purchase_balance_sum3 == 0:
                     hexiao_type = 'write_off'
                     state = 'verifying'
@@ -773,6 +794,7 @@ class sale_order(models.Model):
                     state = 'verifying'
             one.hexiao_type = hexiao_type
             one.state = state
+
 
     def action_verification(self):
         user = self.env.user
