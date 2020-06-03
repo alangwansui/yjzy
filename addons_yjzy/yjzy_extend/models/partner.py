@@ -38,11 +38,9 @@ class res_partner(models.Model):
     @api.depends('sale_order_ids')
     def last_sale_order(self):
         for one in self:
-            # if one.sale_order_ids:
-            #     last_order = one.sale_order_ids[-1]
-            #     one.last_sale_order_approve_date = last_order.approve_date
-            for x in one.sale_order_ids:
-                one.last_sale_order_approve_date = x.approve_date
+            if one.sale_order_ids:
+                last_order = one.sale_order_ids[-1]
+                one.last_sale_order_approve_date = last_order.approve_date
 
     # 增加地址翻译
 
@@ -196,7 +194,7 @@ class res_partner(models.Model):
     approve_date = fields.Date('合规审批日期')
     done_uid = fields.Many2one('res.users','审批总经理')
     done_date = fields.Date('总经理审批日期')
-    last_sale_order_approve_date = fields.Date(u'最近一次下单',compute='last_sale_order', store=True)
+    last_sale_order_approve_date = fields.Date(u'最近一次下单',compute='last_sale_order')
 
     @api.onchange('invoice_title')
     def onchange_invoice_title(self):
