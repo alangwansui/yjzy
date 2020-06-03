@@ -1378,7 +1378,7 @@
             <field name="view_mode">form</field>
             <field name="domain">[]</field>
             <field name="context">
-                {'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3}
+                {'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3,'show_po_code': 1}
             </field>
             <field name="view_ids" eval="[(5, 0, 0),
 
@@ -1400,7 +1400,7 @@
             <field name="view_mode">tree,form,kanban</field>
             <field name="domain">[('state','in',['cancel','draft','submit','sale_approve'])]</field>
             <field name="context">
-                {'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3,'group_by':'state'}
+                {'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3,'group_by':'state','show_po_code': 1}
             </field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_transport_bill_tenyale_sales_tree')}),
@@ -1424,7 +1424,7 @@
             <field name="view_mode">tree,form,kanban</field>
             <field name="domain">[('state','in',['approve','confirmed','delivered','invoiced'])]</field>
             <field name="context">
-                {'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3,'group_by':'state'}
+                {'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3,'group_by':'state','show_po_code': 1}
             </field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_transport_bill_tenyale_sales_tree')}),
@@ -1516,7 +1516,7 @@
             <field name="domain">[('state','=','approve')]</field>
             <field name="limit">20</field>
             <field name="context">
-                {'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3}
+                {'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3,'show_po_code': 1}
             </field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_transport_bill_tenyale_document_tree')}),
@@ -1563,7 +1563,7 @@
             <field name="domain">[]</field>
             <field name="limit">20</field>
             <field name="context">
-                {'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3}
+                {'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3,'show_po_code': 1}
             </field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_transport_bill_tenyale_sales_tree')}),
