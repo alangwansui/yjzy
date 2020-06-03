@@ -69,6 +69,7 @@
         'views/transport_bill_account.xml',
         'views/transport_bill_new.xml',
         'views/transport_bill_customs_clearance.xml',
+        'views/transport_bill_customs_declare.xml',
         'views/transport_lot_plan.xml',
         'views/transport_bill_vendor.xml',
 

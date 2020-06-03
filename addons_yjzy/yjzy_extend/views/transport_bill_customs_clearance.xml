@@ -80,7 +80,7 @@
                     </header>
                     <sheet>
 
-                        <group col="3">
+                        <group col="2">
                             <group name="general_information">
                                 <field name="id" invisible="1"/>
 
@@ -113,17 +113,17 @@
                                 <field name="locked" groups="base.group_system" invisible="1"/>
                                 <field name="contract_type" groups="base.group_system"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
-                                <field name="gongsi_id" options="{'no_open':1}" string="销售主体"
+                                <field name="gongsi_id" groups="base.group_system" options="{'no_open':1}" string="销售主体"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
-                                <field name="purchase_gongsi_id" options="{'no_open':1}" string="采购主体"
+                                <field name="purchase_gongsi_id" groups="base.group_system" options="{'no_open':1}" string="采购主体"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
-
-                            </group>
-                            <group>
                                 <field name="mark_text" string="Marks"/>
-                                <field name="qingguan_description"
+                                <field name="qingguan_description_text"
+                                       attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
+                                <field name="qingguan_description" invisible="1"
                                        attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
                             </group>
+
 
                         </group>
                         <notebook>

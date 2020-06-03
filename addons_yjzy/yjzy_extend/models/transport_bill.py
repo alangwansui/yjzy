@@ -249,7 +249,9 @@ class transport_bill(models.Model):
     # 其他费用 fee_inner,fee_rmb1,fee_rmb2,fee_outer,fee_export_insurance,fee_other
     fee_inner = fields.Monetary('国内运杂费', currency_field='company_currency_id')
     fee_rmb1 = fields.Monetary('人民币费用1', currency_field='company_currency_id')
+    fee_rmb1_note = fields.Text('人名币费用1备注')
     fee_rmb2 = fields.Monetary('人民币费用2', currency_field='company_currency_id')
+    fee_rmb2_note = fields.Text('人名币费用2备注')
 
     fee_outer = fields.Monetary('国外运保费', currency_field='outer_currency_id')
     fee_outer_need = fields.Boolean(u'国外运保费计入应收', default=False)
@@ -257,6 +259,8 @@ class transport_bill(models.Model):
     fee_export_insurance = fields.Monetary('出口保险费', currency_field='export_insurance_currency_id')
     export_insurance_currency_id = fields.Many2one('res.currency', '出口保险费货币')
     fee_other = fields.Monetary('其他外币费用', currency_field='other_currency_id')
+    fee_other_note = fields.Text('其他外币费用备注')
+
     other_currency_id = fields.Many2one('res.currency', '其他外币费用货币')
     account_type = fields.Selection([('tt', 'T/T'), ('lc', 'LC')], '收汇方式')
     credit_info = fields.Char('信用证信息')
@@ -322,7 +326,7 @@ class transport_bill(models.Model):
     ref = fields.Char(u'出运合同号')
     date = fields.Date(u'出运日期')
     exchange_rate = fields.Float(u'目前汇率', compute=compute_exchange_rate)
-
+    current_date_rate = fields.Float(u'当日汇率')
 
     partner_id = fields.Many2one('res.partner', '客户', required=True, domain=[('customer', '=', True)])
 
@@ -381,6 +385,7 @@ class transport_bill(models.Model):
 
 
     qingguan_description = fields.Html(u'清关描述')
+    qingguan_description_text = fields.Text(u'清关描述')
 
     qingguan_line_ids = fields.One2many('transport.qingguan.line', 'tb_id', '清关明细')
     qingguan_state = fields.Selection([('draft', u'未统计'), ('done', u'已统计')], string=u'清关统计', default='draft')
@@ -526,13 +531,16 @@ class transport_bill(models.Model):
     #         default['ref'] = "%s(copy)" % self.contract_code
     #     return super(transport_bill, self).copy(default)
     def action_sale_purchase(self):
-        self.hs_fill = 'sale_purchase'
+        for one in self:
+            one.hs_fill = 'sale_purchase'
 
     def action_packaging(self):
-        self.hs_fill = 'packaging'
+        for one in self:
+            one.hs_fill = 'packaging'
 
     def action_others(self):
-        self.hs_fill = 'others'
+        for one in self:
+            one.hs_fill = 'others'
 
     def unlink(self):
         sale_orders = self.mapped('so_ids')
@@ -1390,7 +1398,7 @@ class transport_bill(models.Model):
         return self.env.ref('yjzy_extend.action_report_transport_bill_invoice').report_action(self)
 
 
-    @api.multi
+
     def open_transport_bill_clearance(self):
         """ Utility method used to add an "Open Parent" button in partner views """
         self.ensure_one()
@@ -1403,6 +1411,35 @@ class transport_bill(models.Model):
                 'res_model': 'transport.bill',
                 'views': [(clearance_form_id, 'form')],
                 'res_id': self.id,
-                'target': 'new',
-                'flags': {'form': {'initial_mode': 'view'}}
+                'target': 'current',
+                'flags': {'form': {'initial_mode': 'view','action_buttons': False}}
                 }
+
+    def open_transport_bill_declare(self):
+        """ Utility method used to add an "Open Parent" button in partner views """
+        self.ensure_one()
+        declare_form_id = self.env.ref('yjzy_extend.view_transport_bill_declare_form').id
+        return {
+                'name': _(u'报关资料'),
+                'view_type': 'form',
+                'view_mode': 'form',
+                'type': 'ir.actions.act_window',
+                'res_model': 'transport.bill',
+                'views': [(declare_form_id, 'form')],
+                'res_id': self.id,
+                'target': 'current',
+                'flags': {'form': {'initial_mode': 'view','action_buttons': False}}
+                }
+
+    def open_transport_bill_delivery(self):
+        """ Utility method used to add an "Open Parent" button in partner views """
+        self.ensure_one()
+        return {
+                'name': _(u'供应商发货通知单'),
+                'view_type': 'form',
+                'view_mode': 'tree,form',
+                'type': 'ir.actions.act_window',
+                'res_model': 'transport.bill.vendor',
+                'domain': [('id', 'in', [x.id for x in self.tb_vendor_ids])]
+                }
+

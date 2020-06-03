@@ -35,7 +35,12 @@ class res_partner(models.Model):
                     is_child_ids = True
                     one.is_child_ids = is_child_ids
 
-
+    @api.depends('sale_order_ids')
+    def last_sale_order(self):
+        for one in self:
+            if one.sale_order_ids:
+                last_order = one.sale_order_ids[-1]
+                one.last_sale_order_approve_date = last_order.approve_date
 
     # 增加地址翻译
 
@@ -189,7 +194,7 @@ class res_partner(models.Model):
     approve_date = fields.Date('合规审批日期')
     done_uid = fields.Many2one('res.users','审批总经理')
     done_date = fields.Date('总经理审批日期')
-
+    last_sale_order_approve_date = fields.Date(u'最近一次下单',compute='last_sale_order', store=True)
 
     @api.onchange('invoice_title')
     def onchange_invoice_title(self):
@@ -214,14 +219,16 @@ class res_partner(models.Model):
     #        return super(res_partner, self).write(values)
 
     def unlink(self):
+        user = self.env.user
         for one in self:
-            if one.create_uid != self.env.user:
-                raise Warning(u'只有创建者才允许删除')
-            if one.state not in ('refuse', 'draft'):
-                raise Warning(u'只有拒绝或者草稿状态才能删除！')
-            if one.can_not_be_deleted == True:
-                raise Warning(u'已经完成至少一次审批，不允许删除，请联系总经理！')
-        return super(res_partner, self).unlink()
+            if user.has_group('sales_team.group_manager') or (one.create_uid == user and one.state in ('refuse', 'draft')):
+                return super(res_partner, self).unlink()
+            else:
+                if one.create_uid != user:
+                    raise Warning(u'只有创建者才允许删除')
+                if one.state not in ('refuse', 'draft'):
+                    raise Warning(u'只有拒绝或者草稿状态才能删除！')
+
 
     @api.model
     def create(self, vals):
