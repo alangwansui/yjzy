@@ -188,6 +188,7 @@ class transport_bill(models.Model):
     def compute_invoice_amount(self):
         for one in self:
             sale_invoice = one.sale_invoice_id.filtered(lambda x: x.state not in ['draft','cancel'])
+
             purchase_invoices = one.purchase_invoice_ids.filtered(lambda x: x.yjzy_type == 'purchase' and x.state not in ['draft','cancel'])
             back_tax_invoice = one.back_tax_invoice_id.filtered(lambda x: x.state not in ['draft','cancel'])
 
@@ -203,12 +204,92 @@ class transport_bill(models.Model):
 
             one.all_purchase_invoice_fill = all([x.date_finish for x in purchase_invoices])
 
+    # @api.depends('line_ids.plan_qty')
+    # def _amount_all(self):
+    #     """
+    #     Compute the total amounts of the SO.
+    #     """
+    #     for one in self:
+    #         org_sale_amount_new = 0
+    #         for line in one.line_ids:
+    #             org_sale_amount_new += line.org_currency_sale_amount
+    #         one.update({
+    #             'org_sale_amount_new': one.sale_currency_id.round(org_sale_amount_new),
+    #         })
+
+    @api.depends('line_ids.plan_qty')
+    def _sale_amount(self):
+        """
+        Compute the total amounts of the SO.
+        """
+        for one in self:
+            org_sale_amount = sum(x.org_currency_sale_amount for x in one.line_ids)
+
+            one.update({
+                'org_sale_amount_new': one.sale_currency_id.round(org_sale_amount),
+            })
+
+    @api.depends('sale_invoice_id.amount_total','sale_invoice_id.residual_signed')
+    def _sale_invoice_amount(self):
+
+        for one in self:
+            sale_invoice = one.sale_invoice_id.filtered(lambda x: x.state not in ['draft', 'cancel'])
+            sale_invoice_total = sale_invoice.amount_total
+            sale_invoice_paid = sale_invoice.amount_total - sale_invoice.residual_signed  # akiny
+            sale_invoice_balance = sale_invoice.residual_signed
+            one.update({
+                'sale_invoice_total_new': one.sale_currency_id.round(sale_invoice_total),
+                'sale_invoice_paid_new': one.sale_currency_id.round(sale_invoice_paid),
+                'sale_invoice_balance_new': one.sale_currency_id.round(sale_invoice_balance)
+            })
+
+    @api.depends('purchase_invoice_ids.amount_total','purchase_invoice_ids.residual_signed')
+    def _purchase_invoice_amount(self):
+        for one in self:
+            purchase_invoices = one.purchase_invoice_ids.filtered(
+                lambda x: x.yjzy_type == 'purchase' and x.state not in ['draft', 'cancel'])
+            purchase_invoice_total = sum([x.amount_total for x in purchase_invoices])
+            purchase_invoice_balance = sum([x.residual_signed for x in purchase_invoices])
+            purchase_invoice_paid = purchase_invoice_total - purchase_invoice_balance
+            one.update({
+                'purchase_invoice_total_new': one.sale_currency_id.round(purchase_invoice_total),
+                'purchase_invoice_paid_new': one.sale_currency_id.round(purchase_invoice_paid),
+                'purchase_invoice_balance_new': one.sale_currency_id.round(purchase_invoice_balance),
+            })
+
+    @api.depends('back_tax_invoice_id.amount_total','back_tax_invoice_id.residual_signed')
+    def _back_tax_invoice_amount(self):
+        for one in self:
+            back_tax_invoice = one.back_tax_invoice_id.filtered(lambda x: x.state not in ['draft', 'cancel'])
+            back_tax_invoice_total = back_tax_invoice.amount_total
+            back_tax_invoice_balance = back_tax_invoice.residual_signed
+            back_tax_invoice_paid = back_tax_invoice_total - back_tax_invoice_balance
+            one.update({
+                'back_tax_invoice_total_new': one.sale_currency_id.round(back_tax_invoice_total),
+                'back_tax_invoice_balance_new': one.sale_currency_id.round(back_tax_invoice_balance),
+                'back_tax_invoice_paid_new': one.sale_currency_id.round(back_tax_invoice_paid),
+            })
+
+
 
     # 货币设置
     #akiny 未加入
+    sale_invoice_total_new = fields.Monetary(u'销售发票金额', compute=_sale_invoice_amount, store=True)
+    sale_invoice_paid_new = fields.Monetary(u'已收销售发票', compute=_sale_invoice_amount, store=True)
+    sale_invoice_balance_new = fields.Monetary(u'未收销售发票', compute=_sale_invoice_amount, store=True)
+    purchase_invoice_total_new = fields.Monetary(u'采购发票金额', compute=_purchase_invoice_amount, store=True)
+    purchase_invoice_paid_new = fields.Monetary(u'已付采购金额', compute=_purchase_invoice_amount, store=True)
+    purchase_invoice_balance_new = fields.Monetary(u'未付采购金额', compute=_purchase_invoice_amount, store=True)
+    back_tax_invoice_total_new = fields.Monetary(u'退税金额', compute=_back_tax_invoice_amount, store=True)
+    back_tax_invoice_paid_new = fields.Monetary(u'已收退税金额', compute=_back_tax_invoice_amount, store=True)
+    back_tax_invoice_balance_new = fields.Monetary(u'未收退税金额', compute=_back_tax_invoice_amount, store=True)
+
+
     tba_id = fields.Many2one('transport.bill.account', '转账调节单')
     incoterm_code = fields.Char('贸易术语', related='incoterm.code', readonly=True)
     org_sale_amount = fields.Monetary('销售金额', currency_field='sale_currency_id', compute=compute_info,
+                                      digits=dp.get_precision('Money'))
+    org_sale_amount_new = fields.Monetary('销售金额', store=True, currency_field='sale_currency_id', compute='_sale_amount',
                                       digits=dp.get_precision('Money'))
     org_real_sale_amount = fields.Monetary('实际销售金额', currency_field='sale_currency_id', compute=compute_info,
                                            digits=dp.get_precision('Money'))
@@ -240,6 +321,7 @@ class transport_bill(models.Model):
     fukuan_amount = fields.Monetary(u'付款金额', digits=(2, 4), compute=compute_info)
 
     sale_invoice_total = fields.Monetary(u'销售发票金额', compute=compute_invoice_amount)
+
     purhcase_invoice_total = fields.Monetary(u'采购发票金额', compute=compute_invoice_amount)
     back_tax_invoice_total = fields.Monetary(u'退税发票金额', compute=compute_invoice_amount)
 
