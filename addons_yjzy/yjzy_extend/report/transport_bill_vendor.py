@@ -20,3 +20,9 @@ class ParticularReport(models.AbstractModel):
             'ceil': ceil,
             'collect_hs_lines': collect_hs_lines,
         }
+
+    @api.multi
+    def print_vendor(self):
+        if not self.line_ids:
+            raise Warning('没有可以打印的数据')
+        return self.env.ref('yjzy_extend.action_report_transport_bill_vendor').report_action(self)

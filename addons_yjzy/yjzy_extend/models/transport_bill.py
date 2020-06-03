@@ -42,6 +42,10 @@ class transport_bill(models.Model):
             one.sale_invoice_count = one.sale_invoice_id and 1 or 0
             one.back_tax_invoice_count = one.back_tax_invoice_id and 1 or 0
 
+            one.fhtzd_count = len(one.tb_vendor_ids)
+            one.qg_count = one.qingguan_line_ids and 1 or 0
+            one.bg_count = one.hsname_ids and 1 or 0
+
 
             #计算统计金额
             lines = one.line_ids
@@ -312,6 +316,7 @@ class transport_bill(models.Model):
                               ('w_sale_manager', u'待批准'),
                               ('w_sale_director', u'待销售总监'),('submit', u'待责任人审批'), ('sales_approve', u'待合规审批'),
                               ('approve', u'合规已审批'), ('confirmed', u'单证已审批'),('delivered', u'发货完成'), ('invoiced', u'已开票'),('locked', u'锁定'),
+                              ('verifying', u'待核销'),
                               ('done', u'完结'),('paid', '已收款'), ('edit', u'可修改')], '状态', default='draft', track_visibility='onchange',)
 
     locked = fields.Boolean(u'锁定不允许修改')
@@ -417,6 +422,10 @@ class transport_bill(models.Model):
     sale_invoice_count = fields.Integer(u'销售发票数', compute=compute_info)
     purchase_invoice_count = fields.Integer(u'采购发票数', compute=compute_info)
     back_tax_invoice_count = fields.Integer(u'退税发票数', compute=compute_info)
+
+    qg_count = fields.Integer(u'清关数量', compute=compute_info)
+    bg_count = fields.Integer(u'报关数量', compute=compute_info)
+    fhtzd_count = fields.Integer(u'发货通知单数量', compute=compute_info)
 
 
 
@@ -1392,12 +1401,40 @@ class transport_bill(models.Model):
 
 #akiny 新增
     @api.multi
-    def print_qingguan(self):
+    def print_qingguan_invoice(self):
         if not self.qingguan_line_ids:
             raise Warning('请先生成清关资料')
         return self.env.ref('yjzy_extend.action_report_transport_bill_invoice').report_action(self)
 
+    @api.multi
+    def print_qingguan_packing_list(self):
+        if not self.qingguan_line_ids:
+            raise Warning('请先生成清关资料')
+        return self.env.ref('yjzy_extend.action_report_transport_bill_packing').report_action(self)
 
+    @api.multi
+    def print_bg_contract(self):
+        if not self.qingguan_line_ids:
+            raise Warning('请先生成报关明细')
+        return self.env.ref('yjzy_extend.action_report_transport_bill_bg_contract').report_action(self)
+
+    @api.multi
+    def print_bg_invoice(self):
+        if not self.qingguan_line_ids:
+            raise Warning('请先生成报关明细')
+        return self.env.ref('yjzy_extend.action_report_transport_bill_bg_invoice').report_action(self)
+
+    @api.multi
+    def print_bg_packing_list(self):
+        if not self.qingguan_line_ids:
+            raise Warning('请先生成报关明细')
+        return self.env.ref('yjzy_extend.action_report_transport_bill_bg_packing_list').report_action(self)
+
+    @api.multi
+    def print_bgd(self):
+        if not self.qingguan_line_ids:
+            raise Warning('请先生成报关明细')
+        return self.env.ref('yjzy_extend.action_report_transport_bill_bgd').report_action(self)
 
     def open_transport_bill_clearance(self):
         """ Utility method used to add an "Open Parent" button in partner views """
@@ -1442,4 +1479,6 @@ class transport_bill(models.Model):
                 'res_model': 'transport.bill.vendor',
                 'domain': [('id', 'in', [x.id for x in self.tb_vendor_ids])]
                 }
+
+
 

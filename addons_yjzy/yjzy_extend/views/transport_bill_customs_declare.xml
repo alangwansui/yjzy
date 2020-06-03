@@ -65,16 +65,35 @@
             <field name="model">transport.bill</field>
             <field name="arch" type="xml">
                 <form string="报关资料">
+                    <header>
+                        <button string="打印报关contract"  type="object" attrs="{'invisible': [('hsname_ids','=',False)]}"
+                                name="print_bg_contract"
+                                class="oe_highlight"/>
+                        <button string="打印报关Invoice"  type="object" attrs="{'invisible': [('hsname_ids','=',False)]}"
+                                name="print_bg_invoice"
+                                class="oe_highlight"/>
+                        <button string="打印报关Packing List"  type="object" attrs="{'invisible': [('hsname_ids','=',False)]}"
+                                name="print_bg_packing_list"
+                                class="oe_highlight"/>
+                        <button string="打印报关单" type="object" attrs="{'invisible': [('hsname_ids','=',False)]}"
+                                name="print_bgd"
+                                class="oe_highlight"/>
+
+                    </header>
                     <header groups="base.group_system">
-                        <button string="打印清关资料" attrs="{'invisible': [('qingguan_state','=','draft')]}" type="object"
-                                name="print_qingguan"
+                        <button string="打印报关contract"  type="object" attrs="{'invisible': [('hsname_ids','=',False)]}"
+                                name="print_bg_contract"
                                 class="oe_highlight"/>
-                        <button string="计算清关数据" type="object" name="create_qingguan_lines"
-                                attrs="{'invisible': [('qingguan_state','!=','draft')]}"
+                        <button string="打印报关Invoice"  type="object" attrs="{'invisible': [('hsname_ids','=',False)]}"
+                                name="print_bg_invoice"
                                 class="oe_highlight"/>
-
-
-                        <field name="state" widget="statusbar" groups="base.group_system"/>
+                        <button string="打印报关Packing List"  type="object" attrs="{'invisible': [('hsname_ids','=',False)]}"
+                                name="print_bg_packing_list"
+                                class="oe_highlight"/>
+                        <button string="打印报关单" type="object" attrs="{'invisible': [('hsname_ids','=',False)]}"
+                                name="print_bgd"
+                                class="oe_highlight"/>
+                        <field name="state" widget="statusbar" statusbar_visible=" "  groups="base.group_system"/>
                         <field name="is_editable" widget="boolean_toggle" groups="	sales_team.group_manager"/>
 
                     </header>
@@ -83,13 +102,13 @@
                         <group col="2">
                             <group name="general_information">
                                 <field name="id" invisible="1"/>
-                               <field name="ref" string="Invoice No"
+                               <field name="ref" string="出运合同号"
                                        attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
-                                <field name="date" string="Date"
+                                <field name="date" string="出运日期"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"
                                        invisible="0"/>
-                                <field name="partner_id" string="贸易客户" invisible="1"/>
-                                <field name="partner_shipping_id" string="抵运地" options="{'no_open':1}"
+                                <field name="partner_id" string="客户" />
+                                <field name="partner_shipping_id" string="抵运地" invisible="1" options="{'no_open':1}"
                                        domain="[('parent_id','child_of', partner_id)]"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"
                                        no_create="True"/>
@@ -97,12 +116,9 @@
                                 <field name="production_sale_unit" attrs="{'readonly': 1}" />
 
                                 <!--field name="mark_ids" widget="many2many_tags"/-->
-
-
-
-                                <field name="wharf_src_id" string="Shipment From" options="{'no_open':1}"
+                                <field name="wharf_src_id" string="装船港" options="{'no_open':1}"
                                        attrs="{'readonly':[('state','not in',['draft','submit','sales_approve','approve']),('is_editable','=',False)]}"/>
-                                <field name="wharf_dest_id" string="Shipment To" options="{'no_open':1}"
+                                <field name="wharf_dest_id" string="目的港" options="{'no_open':1}"
                                        attrs="{'readonly':[('state','not in',['draft','submit','sales_approve','approve']),('is_editable','=',False)]}"/>
 
 

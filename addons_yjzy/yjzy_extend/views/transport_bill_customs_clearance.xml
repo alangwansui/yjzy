@@ -65,16 +65,28 @@
             <field name="model">transport.bill</field>
             <field name="arch" type="xml">
                 <form string="清关资料">
-                    <header groups="base.group_system">
-                        <button string="打印清关资料" attrs="{'invisible': [('qingguan_state','=','draft')]}" type="object"
-                                name="print_qingguan"
+                    <header>
+                         <button string="打印清关Invoice" attrs="{'invisible': [('qingguan_state','=','draft')]}" type="object"
+                                name="print_qingguan_invoice"
                                 class="oe_highlight"/>
+                        <button string="打印清关Packing List" attrs="{'invisible': [('qingguan_state','=','draft')]}" type="object"
+                                name="print_qingguan_packing_list"
+                                class="oe_highlight"/>
+                    </header>
+                    <header groups="base.group_system">
+                         <button string="打印清关Invoice" attrs="{'invisible': [('qingguan_state','=','draft')]}" type="object"
+                                name="print_qingguan_invoice"
+                                class="oe_highlight"/>
+                        <button string="打印清关Packing List" attrs="{'invisible': [('qingguan_state','=','draft')]}" type="object"
+                                name="print_qingguan_packing_list"
+                                class="oe_highlight"/>
+
                         <button string="计算清关数据" type="object" name="create_qingguan_lines"
                                 attrs="{'invisible': [('qingguan_state','!=','draft')]}"
                                 class="oe_highlight"/>
 
 
-                        <field name="state" widget="statusbar" groups="base.group_system"/>
+                        <field name="state" widget="statusbar"  statusbar_visible=" "  groups="base.group_system"/>
                         <field name="is_editable" widget="boolean_toggle" groups="	sales_team.group_manager"/>
 
                     </header>
@@ -118,7 +130,7 @@
                                 <field name="purchase_gongsi_id" groups="base.group_system" options="{'no_open':1}" string="采购主体"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <field name="mark_text" string="Marks"/>
-                                <field name="qingguan_description_text"
+                                <field name="qingguan_description_text" string="Description"
                                        attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
                                 <field name="qingguan_description" invisible="1"
                                        attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>

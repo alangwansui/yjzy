@@ -40,6 +40,43 @@
             name="yjzy_extend.report_transport_bill_packing"
             print_report_name="'CC_Packing_list_'+(object.ref)"
         />
+         <report
+            id="action_report_transport_bill_bg_contract"
+            string="报关Contract"
+            model="transport.bill"
+            report_type="qweb-pdf"
+            file="yjzy_extend.report_transport_bill_bgzl_contract"
+            name="yjzy_extend.report_transport_bill_bgzl_contract"
+            print_report_name="'CC_Packing_list_'+(object.ref)"
+        />
+        <report
+            id="action_report_transport_bill_bg_invoice"
+            string="报关Invoice"
+            model="transport.bill"
+            report_type="qweb-pdf"
+            file="yjzy_extend.report_transport_bill_bgzl_invoice"
+            name="yjzy_extend.report_transport_bill_bgzl_invoice"
+            print_report_name="'CC_Packing_list_'+(object.ref)"
+        />
+        <report
+            id="action_report_transport_bill_bg_packing_list"
+            string="报关Packing List"
+            model="transport.bill"
+            report_type="qweb-pdf"
+            file="yjzy_extend.report_transport_bill_bgzl_packing"
+            name="yjzy_extend.report_transport_bill_bgzl_packing"
+            print_report_name="'CC_Packing_list_'+(object.ref)"
+        />
+        <report
+            id="action_report_transport_bill_bgd"
+            string="报关单"
+            model="transport.bill"
+            report_type="qweb-pdf"
+            file="yjzy_extend.report_transport_bill_bgzl_bgd"
+            name="yjzy_extend.report_transport_bill_bgzl_bgd"
+            print_report_name="'CC_Packing_list_'+(object.ref)"
+        />
+
 
         <report
             id="action_report_transport_bill_test"

@@ -19,8 +19,9 @@ class stock_production_lot(models.Model):
         ctx = self.env.context
         res = []
         for one in self:
+
             name = one.name
             if ctx.get('show_po_code'):
-                name += '%s' % one.po_id.contract_code
+                name = '%s' % one.po_id.contract_code
             res.append((one.id, name))
         return res

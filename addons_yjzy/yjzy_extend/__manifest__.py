@@ -68,12 +68,14 @@
         'views/transport_bill.xml',
         'views/transport_bill_account.xml',
         'views/transport_bill_new.xml',
+        'views/transport_bill_tenyale.xml',
         'views/transport_bill_customs_clearance.xml',
         'views/transport_bill_customs_declare.xml',
         'views/transport_lot_plan.xml',
         'views/transport_bill_vendor.xml',
 
         'views/product_packaging.xml',
+
         'views/config_setting.xml',
         'views/hr_expense.xml',
         'views/hr_expense_new.xml',

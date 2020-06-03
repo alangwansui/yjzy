@@ -17,6 +17,12 @@
             <field name="model">transport.bill.vendor</field>
             <field name="arch" type="xml">
                 <form string="供应商发运单">
+                    <header>
+                        <button string="打印发货单通知单"  type="object" name="print_vendor"
+                                class="oe_highlight"/>
+
+                    </header>
+                    <sheet>
                     <group>
                         <field name="tb_id"/>
                         <field name="partner_id"/>
@@ -43,6 +49,7 @@
                             </field>
                         </page>
                     </notebook>
+                    </sheet>
                 </form>
             </field>
         </record>

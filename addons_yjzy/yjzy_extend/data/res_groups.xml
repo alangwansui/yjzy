@@ -22,7 +22,26 @@
 
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
         </record>
-
+        <record id="yjzy_extend.user_manager" model="res.groups">
+            <field name="name">总经理视图</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+        <record id="yjzy_extend.user_sales" model="res.groups">
+            <field name="name">业务视图</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+        <record id="yjzy_extend.user_purchase" model="res.groups">
+            <field name="name">采购视图</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+        <record id="yjzy_extend.user_document" model="res.groups">
+            <field name="name">单证视图</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+        <record id="yjzy_extend.user_hegui" model="res.groups">
+            <field name="name">合规视图</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
 
 
 
