@@ -218,15 +218,17 @@ class transport_bill(models.Model):
     #         })
 
     @api.depends('line_ids.plan_qty')
-    def _sale_amount(self):
+    def _sale_purchase_amount(self):
         """
         Compute the total amounts of the SO.
         """
         for one in self:
             org_sale_amount = sum(x.org_currency_sale_amount for x in one.line_ids)
-
+            purchase_cost_total = sum(x.purchase_cost for x in one.line_ids)
             one.update({
                 'org_sale_amount_new': one.sale_currency_id.round(org_sale_amount),
+                'purchase_cost_total': one.sale_currency_id.round(purchase_cost_total),
+
             })
 
     @api.depends('sale_invoice_id.amount_total','sale_invoice_id.residual_signed')
@@ -283,13 +285,13 @@ class transport_bill(models.Model):
     back_tax_invoice_total_new = fields.Monetary(u'退税金额', compute=_back_tax_invoice_amount, store=True)
     back_tax_invoice_paid_new = fields.Monetary(u'已收退税金额', compute=_back_tax_invoice_amount, store=True)
     back_tax_invoice_balance_new = fields.Monetary(u'未收退税金额', compute=_back_tax_invoice_amount, store=True)
-
+    purchase_cost_total = fields.Monetary(u'采购金额', compute=_sale_purchase_amount, store=True)
 
     tba_id = fields.Many2one('transport.bill.account', '转账调节单')
     incoterm_code = fields.Char('贸易术语', related='incoterm.code', readonly=True)
     org_sale_amount = fields.Monetary('销售金额', currency_field='sale_currency_id', compute=compute_info,
                                       digits=dp.get_precision('Money'))
-    org_sale_amount_new = fields.Monetary('销售金额', store=True, currency_field='sale_currency_id', compute='_sale_amount',
+    org_sale_amount_new = fields.Monetary('销售金额', store=True, currency_field='sale_currency_id', compute='_sale_purchase_amount',
                                       digits=dp.get_precision('Money'))
     org_real_sale_amount = fields.Monetary('实际销售金额', currency_field='sale_currency_id', compute=compute_info,
                                            digits=dp.get_precision('Money'))

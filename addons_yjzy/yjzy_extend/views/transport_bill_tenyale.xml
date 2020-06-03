@@ -49,8 +49,8 @@
 
                     <field name="org_sale_amount" groups="base.group_system"/>
                     <field name="org_sale_amount_new"/>
-                    <field name="purhcase_invoice_total" groups="base.group_system"/>
-                    <field name="purchase_invoice_total_new"/>
+                    <field name="purchase_cost_total"/>
+
                     <field name="sale_amount" groups="base.group_system" invisible="1"/>
                     <field name="ciq_amount" groups="base.group_system" invisible="1"/>
                     <field name="no_ciq_amount" groups="base.group_system" invisible="1"/>

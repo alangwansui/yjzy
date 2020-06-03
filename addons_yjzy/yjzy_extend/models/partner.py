@@ -38,9 +38,11 @@ class res_partner(models.Model):
     @api.depends('sale_order_ids')
     def last_sale_order(self):
         for one in self:
-            if one.sale_order_ids:
-                last_order = one.sale_order_ids[-1]
-                one.last_sale_order_approve_date = last_order.approve_date
+            # if one.sale_order_ids:
+            #     last_order = one.sale_order_ids[-1]
+            #     one.last_sale_order_approve_date = last_order.approve_date
+            for x in one.sale_order_ids:
+                one.last_sale_order_approve_date = x.approve_date
 
     # 增加地址翻译
 
