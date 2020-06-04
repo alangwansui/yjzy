@@ -81,6 +81,7 @@
                     <field name="back_tax_invoice_paid_new" string="已收退税"/>
                     <field name="back_tax_invoice_balance" string="未收退税" groups="base.group_system"/>
                     <field name="back_tax_invoice_balance_new" string="未收退税"/>
+                    <field name="state_type" invisible="1"/>
                     <field name="create_date"/>
                     <field name="gongsi_id" string="销售主体"/>
                     <field name="purchase_gongsi_id" string="采购主体"/>

@@ -3,6 +3,8 @@ from num2words import num2words
 from odoo.addons import decimal_precision as dp
 from odoo import models, fields, api, _
 from odoo.exceptions import Warning
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 
 Stage_Status = [
@@ -286,6 +288,8 @@ class transport_bill(models.Model):
     back_tax_invoice_paid_new = fields.Monetary(u'已收退税金额', compute=_back_tax_invoice_amount, store=True)
     back_tax_invoice_balance_new = fields.Monetary(u'未收退税金额', compute=_back_tax_invoice_amount, store=True)
     purchase_cost_total = fields.Monetary(u'采购金额', compute=_sale_purchase_amount, store=True)
+    state_type = fields.Selection([('no_delivery','未开始'),('wait_date',u'待完成相关日期'),('finish_date',u'已完成相关日期'),('abnormal_date',u'日期异常'),
+                                             ('write_off',u'正常核销'),('abnormal',u'异常核销')], u'状态类型', default='no_delivery')
 
     tba_id = fields.Many2one('transport.bill.account', '转账调节单')
     incoterm_code = fields.Char('贸易术语', related='incoterm.code', readonly=True)
@@ -1129,8 +1133,17 @@ class transport_bill(models.Model):
         date_out_in = self.date_out_in
         print('===write need==', need)
         if need and date_out_in:
-            self.sync_data2invoice()
-        return res
+            if self.state not in ('approve','confirmed','delivered','invoiced','verifying','done'):
+                raise Warning('非执行中的出运单，不允许填写日期')
+            else:
+                if self.state == 'approve':
+                    self.state = 'invoiced'
+                    self.onece_all_stage()
+                    self.sync_data2invoice()
+                elif self.state == 'invoiced':
+                    self.sync_data2invoice()
+            return res
+
 #akiny 发货的时候生成所有发票，填入进仓日期后，点生成应收应付按钮，完成确认。
     def sync_data2invoice(self):
         if not self.date_out_in:
@@ -1564,5 +1577,27 @@ class transport_bill(models.Model):
                 'domain': [('id', 'in', [x.id for x in self.tb_vendor_ids])]
                 }
 
+    @api.depends('date_out_in','date_in','date_ship','date_customer_fishish','all_purchase_invoice_fill')
+    def update_state_type(self):
+        for one in self:
+            state_type = one.state_type
+            date_out_in = one.date_out_in
+            date_in = one.date_out_in
+            date_ship = one.date_ship
+            date_customer_finish = one.date_customer_finish
+            all_purchase_invoice_fill = one.all_purchase_invoice_fill
+            today = datetime.now()
+            if one.state == 'invoiced':
+                if date_out_in and date_in and date_ship and date_customer_finish and all_purchase_invoice_fill:
+                    state_type = 'finish_date'
+                    if one.sale_invoice_balance_new == 0 and one.purchase_invoice_balance_new == 0:
+                        one.sate = 'verifying'
 
-
+                    else:
+                        if date_out_in < (today - relativedelta(days=185)).strftime('%Y-%m-%d 00:00:00'):
+                            one.sate = 'verifying'
+                            state_type = 'write_off'
+                else:
+                    state_type = 'wait_date'
+            print('--状态更新-', state_type,one,one.state)
+            one.state_type = state_type
