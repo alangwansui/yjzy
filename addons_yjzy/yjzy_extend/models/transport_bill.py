@@ -1590,7 +1590,7 @@ class transport_bill(models.Model):
             if one.state == 'invoiced':
                 if date_out_in and date_in and date_ship and date_customer_finish and all_purchase_invoice_fill:
                     state_type = 'finish_date'
-                    if one.sale_invoice_balance_new == 0 and one.purchase_invoice_balance_new == 0:
+                    if one.sale_invoice_balance_new == 0 and one.purchase_invoice_balance_new == 0 and one.back_tax_invoice_balance_new == 0:
                         one.sate = 'verifying'
 
                     else:
