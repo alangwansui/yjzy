@@ -1587,17 +1587,20 @@ class transport_bill(models.Model):
             date_customer_finish = one.date_customer_finish
             all_purchase_invoice_fill = one.all_purchase_invoice_fill
             today = datetime.now()
-            if one.state == 'invoiced':
+            state = one.state
+            if state == 'invoiced':
                 if date_out_in and date_in and date_ship and date_customer_finish and all_purchase_invoice_fill:
                     state_type = 'finish_date'
                     if one.sale_invoice_balance_new == 0 and one.purchase_invoice_balance_new == 0 and one.back_tax_invoice_balance_new == 0:
-                        one.sate = 'verifying'
+                        state = 'verifying'
+                        state_type = 'write_off'
 
                     else:
                         if date_out_in < (today - relativedelta(days=185)).strftime('%Y-%m-%d 00:00:00'):
-                            one.sate = 'verifying'
-                            state_type = 'write_off'
+                            state = 'verifying'
+                            state_type = 'abnormal'
                 else:
                     state_type = 'wait_date'
             print('--状态更新-', state_type,one,one.state)
             one.state_type = state_type
+            one.state= state
