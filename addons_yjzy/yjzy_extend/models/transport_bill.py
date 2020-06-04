@@ -89,6 +89,18 @@ class transport_bill(models.Model):
                 else:
                     gold_sample_state = 'part'
 
+           # 供应商交单日期审批状态
+            for one in self:
+
+                if all([x.purchase_date_finish_state == 'draft' for x in one.purchase_invoice_ids]):
+                    date_purchase_finish_state = 'draft'
+                else:
+                    if all([x.purchase_date_finish_state == 'done' for x in one.purchase_invoice_ids]):
+                        date_purchase_finish_state = 'done'
+                    else:
+                        date_purchase_finish_state = 'submit'
+                one.date_purchase_finish_state = date_purchase_finish_state
+
             if one.cip_type != 'normal':
                 back_tax_amount = 0
             else:
@@ -290,6 +302,16 @@ class transport_bill(models.Model):
     purchase_cost_total = fields.Monetary(u'采购金额', compute=_sale_purchase_amount, store=True)
     state_type = fields.Selection([('no_delivery','未开始'),('wait_date',u'待完成相关日期'),('finish_date',u'已完成相关日期'),('abnormal_date',u'日期异常'),
                                              ('write_off',u'正常核销'),('abnormal',u'异常核销')], u'状态类型', default='no_delivery')
+    date_out_in_att = fields.Many2many('ir.attachment',string='进仓日附件')
+    date_ship_att = fields.Many2many('ir.attachment', string='出运船日附件')
+    date_customer_finish_att = fields.Many2many('ir.attachment', string='客户交单日附件')
+    date_out_in_state = fields.Selection([('draft',u'草稿'),('submit',u'待审批'),('done',u'完成')],'进仓审批状态', default='draft')
+    date_ship_state = fields.Selection([('draft',u'草稿'),('submit',u'待审批'),('done',u'完成')],'出运船审批状态', default='draft')
+    date_customer_finish_state = fields.Selection([('draft',u'草稿'),('submit',u'待审批'),('done',u'完成')],'客户交单日审批状态',default='draft')
+    date_purchase_finish_state = fields.Selection([('draft',u'草稿'),
+                                                   ('submit',u'待审批'),
+                                                   ('done',u'完成')],'供应商交单日审批状态',default='draft', compute=compute_info)
+
 
     tba_id = fields.Many2one('transport.bill.account', '转账调节单')
     incoterm_code = fields.Char('贸易术语', related='incoterm.code', readonly=True)
@@ -388,7 +410,7 @@ class transport_bill(models.Model):
     amount_real_payment = fields.Monetary('实际支付', currency_field='sale_currency_id')
     amount_account_payment = fields.Monetary('支付账户', currency_field='sale_currency_id')
     amount_account_adjust = fields.Monetary('账户调节', currency_field='sale_currency_id')
-    all_purchase_invoice_fill = fields.Boolean('所有采购发票都已填写', compute=compute_invoice_amount)
+    all_purchase_invoice_fill = fields.Boolean('所有采购发票都已填写', compute=compute_info)
 
     hs_fill = fields.Selection(
         [('all', u'全部'), ('sale_purchase', u'销售采购'), ('packaging', u'包装资料'), ('others', u'其他信息')], '报关显示',
@@ -926,6 +948,8 @@ class transport_bill(models.Model):
                 'invoice_id': invoice.id,
                 'wizard_id': wizard.id,
                 'date': invoice.date_finish,
+                'purchase_date_finish_state':invoice.purchase_date_finish_state,
+                'purchase_date_finish_att': invoice.purchase_date_finish_att,
             })
 
         return {
@@ -1603,3 +1627,12 @@ class transport_bill(models.Model):
             print('--状态更新-', state_type,one,one.state)
             one.state_type = state_type
             one.state= state
+
+
+    @api.multi
+    def action_get_attachment_view(self):
+        self.ensure_one()
+        res = self.env['ir.actions.act_window'].for_xml_id('base', 'action_attachment')
+        res['domain'] = [('res_model', '=', 'hr.expense'), ('res_id', 'in', self.ids)]
+        res['context'] = {'default_res_model': 'hr.expense', 'default_res_id': self.id}
+        return res

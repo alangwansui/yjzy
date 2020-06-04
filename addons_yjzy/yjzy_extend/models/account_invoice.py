@@ -28,6 +28,8 @@ class account_invoice(models.Model):
     date_ship = fields.Date(u'出运船日期')
     date_finish = fields.Date(u'交单日期')
     reconcile_order_id = fields.Many2one('account.reconcile.order', u'核销单据')
+    purchase_date_finish_att = fields.Many2many('ir.attachment', string='供应商交单日附件')
+    purchase_date_finish_state = fields.Selection([('draft', u'草稿'), ('submit', u'待审批'), ('done', u'完成')], '供应商交单审批状态')
 
     move_ids = fields.One2many('account.move', 'invoice_id', u'发票相关的分录', help=u'记录发票相关的分录，方便统计')
     move_line_ids = fields.One2many('account.move.line', 'invoice_id', u'发票相关的分录明细', help=u'记录发票相关的分录明细，方便统计')

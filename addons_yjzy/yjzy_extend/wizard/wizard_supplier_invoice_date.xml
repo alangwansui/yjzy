@@ -14,6 +14,10 @@
                             <field name="partner_id" readonly="1"/>
                             <field name="invoice_id" readonly="1"/>
                             <field name="date"/>
+                            <field name="purchase_date_finish_att" widget="many2many_binary"/>
+                             <field name="purchase_date_finish_state"/>
+                            <button name="action_purchase_date_finish_state_submit" type="object" string="提交审批"/>
+                            <button name="action_purchase_date_finish_state_done" type="object" string="审批通过"/>
                             <field name="purchase_amount_total"/>
                             <field name="currency_id"/>
                         </tree>
