@@ -20,6 +20,10 @@ class account_invoice(models.Model):
                 diff = strptime(dump_date, DF) - strptime(one.date_invoice, DF)
                 one.date_deadline = (strptime(one.date_due, DF) + diff).strftime(DF)
 
+    def compute_info(self):
+        for one in self:
+            one.purchase_date_finish_att_count = len(one.purchase_date_finish_att)
+
     yjzy_type = fields.Selection([('sale', u'销售'), ('purchase', u'采购'), ('back_tax', u'退税')], string=u'发票类型')
     bill_id = fields.Many2one('transport.bill', u'发运单')
     tb_contract_code = fields.Char(u'出运合同号', related='bill_id.ref', readonly=True)
@@ -29,6 +33,7 @@ class account_invoice(models.Model):
     date_finish = fields.Date(u'交单日期')
     reconcile_order_id = fields.Many2one('account.reconcile.order', u'核销单据')
     purchase_date_finish_att = fields.Many2many('ir.attachment', string='供应商交单日附件')
+    purchase_date_finish_att_count = fields.Integer(u'供应商交单附件数量',compute=compute_info)
     purchase_date_finish_state = fields.Selection([('draft', u'草稿'), ('submit', u'待审批'), ('done', u'完成')], '供应商交单审批状态')
 
     move_ids = fields.One2many('account.move', 'invoice_id', u'发票相关的分录', help=u'记录发票相关的分录，方便统计')
@@ -44,17 +49,78 @@ class account_invoice(models.Model):
 
 
 
+    # def name_get(self):
+    #     ctx = self.env.context
+    #     print('=111====', ctx)
+    #
+    #
+    #     res = []
+    #     for one in self:
+    #         if ctx.get('params', {}).get('model', '') == 'transport.bill' and:
+    #             name = '%s %s' % (one.partner_id.name or '',  one.date_finish or '')
+    #         else:
+    #             name = '暂无交单时间'
+    #         res.append((one.id, name))
+    #     return res
+    @api.multi
     def name_get(self):
-        ctx = self.env.context
-        print('=111====', ctx)
+        show_date_finish = self.env.context.get('show_date_finish')
+        print('=112====', show_date_finish)
         res = []
+
         for one in self:
-            if ctx.get('params', {}).get('model', '') == 'transport.bill':
-                name = '%s %s' % (one.partner_id.name or '',  one.date_finish or '')
+            purchase_date_finish_state = one.purchase_date_finish_state
+            if one.purchase_date_finish_state == 'draft':
+                purchase_date_finish_state = '草稿'
+            if one.purchase_date_finish_state == 'submit':
+                purchase_date_finish_state = '待审批'
+            if one.purchase_date_finish_state == 'done':
+                purchase_date_finish_state = '完成'
+            if show_date_finish:
+                if one.date_finish:
+                    name = '%s %s %s' % (one.partner_id.name or '', one.date_finish or '', purchase_date_finish_state or '',)
+                else:
+                    name = '暂无交单时间'
             else:
-                name = '暂无交单时间'
+                name=one.number
             res.append((one.id, name))
+        print('=111====',res)
         return res
+
+    # def name_get(self):
+    #     # 多选：显示名称=（如果有客户编号显示客户编码，否则显示内部编码）+商品名称+关键属性，关键属性，供应商型号
+    #     result = []
+    #
+    #     only_name = self.env.context.get('only_name')
+    #     only_code = self.env.context.get('only_code')
+    #
+    #     # cat_name = self.env.context.get('cat_name')
+    #     # print('==name_get==', only_name, self.env.context)
+    #
+    #     def _get_name(one):
+    #         if only_name:
+    #             name = one.name
+    #         elif only_code:
+    #             name = one.default_code
+    #         # elif cat_name:
+    #         #    name = '%s-%s-%s' % (one.categ_id.parent_id.name, one.categ_id.name, one.name)
+    #         else:
+    #             name = '[%s]%s{%s}' % (one.default_code, one.name, one.key_value_string)
+    #
+    #         ref = one.customer_ref or one.customer_ref2
+    #         if ref:
+    #             name = '(%s)%s' % (ref, name)
+    #         return name
+    #
+    #     for one in self:
+    #         result.append((one.id, _get_name(one)))
+    #     return result
+
+
+
+
+
+
 
     def clear_zero_line(self):
         for one in self:
@@ -84,6 +150,20 @@ class account_invoice(models.Model):
             item.invoice_line_ids = lines
             item.compute_info()
 
+    def action_purchase_date_finish_state_submit(self):
+        for one in self:
+            if not one.date:
+                raise Warning('请先填写日期')
+            if not one.purchase_date_finish_att :
+                raise Warning('请提交附件')
+            one.purchase_date_finish_state = 'submit'
+
+    def action_purchase_date_finish_state_done(self):
+        for one in self:
+            one.purchase_date_finish_state = 'done'
+    def action_purchase_date_finish_state_refuse(self):
+        for one in self:
+            one.purchase_date_finish_state = 'refuse'
 
 class account_invoice_line(models.Model):
     _inherit = 'account.invoice.line'

@@ -137,6 +137,30 @@
 
         </field>
     </record>
+     <record id="view_account_invoice_new_tree" model="ir.ui.view">
+            <field name="name">account.invoice.new.tree</field>
+            <field name="model">account.invoice</field>
+            <field name="arch" type="xml">
+                <tree string="发票" editable="bottom">
+                    <field name="partner_id" groups="base.group_user" string="Vendor"/>
+                    <field name="date_invoice" string="Bill Date" invisible="1"/>
+                    <field name="number" invisible="1"/>
+                    <field name="reference" invisible="1"/>
+                    <field name="commercial_partner_id" invisible="1"/>
+                    <field name="date_finish"/>
+                    <field name="purchase_date_finish_att" widget="many2many_binary"/>
+                    <field name="purchase_date_finish_state"/>
+                    <button icon="fa-check" attrs="{'invisible':[('purchase_date_finish_state','!=','done')]}"/>
+                    <button name="action_purchase_date_finish_state_submit" attrs="{'invisible':[('purchase_date_finish_state','!=','draft')]}" type="object"  string="提交"/>
+                    <button name="action_purchase_date_finish_state_done" attrs="{'invisible':[('purchase_date_finish_state','!=','submit')]}" type="object" string="通过"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="company_currency_id" invisible="1"/>
+                    <field name="state"/>
+                    <field name="type" invisible="context.get('type',True)"/>
+                </tree>
+            </field>
+        </record>
+
 
 
 </odoo>

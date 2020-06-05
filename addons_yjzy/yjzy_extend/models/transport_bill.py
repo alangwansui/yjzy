@@ -90,16 +90,19 @@ class transport_bill(models.Model):
                     gold_sample_state = 'part'
 
            # 供应商交单日期审批状态
-            for one in self:
-
-                if all([x.purchase_date_finish_state == 'draft' for x in one.purchase_invoice_ids]):
-                    date_purchase_finish_state = 'draft'
+            if all([x.purchase_date_finish_state == 'draft' for x in one.purchase_invoice_ids]):
+                date_purchase_finish_state = 'draft'
+            else:
+                if all([x.purchase_date_finish_state == 'done' for x in one.purchase_invoice_ids]):
+                    date_purchase_finish_state = 'done'
                 else:
-                    if all([x.purchase_date_finish_state == 'done' for x in one.purchase_invoice_ids]):
-                        date_purchase_finish_state = 'done'
-                    else:
-                        date_purchase_finish_state = 'submit'
-                one.date_purchase_finish_state = date_purchase_finish_state
+                    date_purchase_finish_state = 'submit'
+            one.date_purchase_finish_state = date_purchase_finish_state
+
+
+            one.date_out_in_att_count = len(one.date_out_in_att)
+            one.date_ship_att_count = len(one.date_ship_att)
+            one.date_customer_finish_att_count = len(one.date_customer_finish_att)
 
             if one.cip_type != 'normal':
                 back_tax_amount = 0
@@ -303,8 +306,11 @@ class transport_bill(models.Model):
     state_type = fields.Selection([('no_delivery','未开始'),('wait_date',u'待完成相关日期'),('finish_date',u'已完成相关日期'),('abnormal_date',u'日期异常'),
                                              ('write_off',u'正常核销'),('abnormal',u'异常核销')], u'状态类型', default='no_delivery')
     date_out_in_att = fields.Many2many('ir.attachment',string='进仓日附件')
+    date_out_in_att_count = fields.Integer('进仓日期附件数量',compute=compute_info)
     date_ship_att = fields.Many2many('ir.attachment', string='出运船日附件')
+    date_ship_att_count = fields.Integer('出运船日期附件数量', compute=compute_info)
     date_customer_finish_att = fields.Many2many('ir.attachment', string='客户交单日附件')
+    date_customer_finish_att_count = fields.Integer('客户交单日期附件数量', compute=compute_info)
     date_out_in_state = fields.Selection([('draft',u'草稿'),('submit',u'待审批'),('done',u'完成')],'进仓审批状态', default='draft')
     date_ship_state = fields.Selection([('draft',u'草稿'),('submit',u'待审批'),('done',u'完成')],'出运船审批状态', default='draft')
     date_customer_finish_state = fields.Selection([('draft',u'草稿'),('submit',u'待审批'),('done',u'完成')],'客户交单日审批状态',default='draft')
@@ -586,8 +592,56 @@ class transport_bill(models.Model):
     gold_sample_state = fields.Selection([('all', '全部有'), ('part', '部分有'), ('none', '无金样')], '样金管理',
                                          compute=compute_info)
 
+    @api.multi
+    def action_save_test(self):
+        # your code
+        self.ensure_one()
+        # close popup
+        return {'type': 'ir.actions.act_window_close'}
 
+    def action_customer_date_state_submit(self):
+        date_type = self.env.context.get('date_type')
+        for one in self:
+            if date_type == 'date_out_in':
+                if not one.date_out_in:
+                    raise Warning('请先填写进仓日期')
+                if not one.date_out_in_att:
+                    raise Warning('请提交进仓日期附件')
+                one.date_out_in_state = 'submit'
 
+            if date_type == 'date_ship':
+                if not one.date_ship:
+                    raise Warning('请先填写出运船日期')
+                if not one.date_ship_att:
+                    raise Warning('请提交出运船日期附件')
+                one.date_ship_state = 'submit'
+
+            if date_type == 'date_customer_finish':
+                if not one.date_customer_finish:
+                    raise Warning('请先填写客户交单日期')
+                if not one.date_customer_finish_att:
+                    raise Warning('请提交客户交单日期附件')
+                one.date_customer_finish_state = 'submit'
+
+    def action_customer_date_state_done(self):
+        date_type = self.env.context.get('date_type')
+        for one in self:
+            if date_type == 'date_out_in':
+                one.date_out_in_state = 'done'
+            if date_type == 'date_ship':
+                one.date_ship_state = 'done'
+            if date_type == 'date_customer_finish':
+                one.date_customer_finish_state = 'done'
+
+    def action_customer_date_state_refuse(self):
+        date_type = self.env.context.get('date_type')
+        for one in self:
+            if date_type == 'date_out_in':
+                one.date_out_in_state = 'refuse'
+            if date_type == 'date_ship':
+                one.date_ship_state = 'refuse'
+            if date_type == 'date_customer_finish':
+                one.date_customer_finish_state = 'refuse'
 
 
 
@@ -948,8 +1002,6 @@ class transport_bill(models.Model):
                 'invoice_id': invoice.id,
                 'wizard_id': wizard.id,
                 'date': invoice.date_finish,
-                'purchase_date_finish_state':invoice.purchase_date_finish_state,
-                'purchase_date_finish_att': invoice.purchase_date_finish_att,
             })
 
         return {
@@ -1485,7 +1537,38 @@ class transport_bill(models.Model):
             'res_model': 'account.invoice',
             'type': 'ir.actions.act_window',
             'domain': [('id', 'in', [x.id for x in self.purchase_invoice_ids.filtered(lambda x: x.yjzy_type == 'purchase')])]
+
         }
+
+    def open_purchase_invoice_1(self):
+        self.ensure_one()
+        return {
+            'name': u'采购发票',
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'res_model': 'account.invoice',
+            'type': 'ir.actions.act_window',
+            'domain': [('id', 'in', [x.id for x in self.purchase_invoice_ids.filtered(lambda x: x.yjzy_type == 'purchase')])],
+            'tree_view_ref':'yjzy_extend.view_account_invoice_new_tree',
+            'target':'new'
+        }
+
+
+    def open_transport_date(self):
+        xml_id = self.env.context.get('form_xml_id')
+        form = self.env.ref(xml_id)
+        self.ensure_one()
+        return {
+            'name': u'销售发票',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'transport.bill',
+            'res_id': self.id,
+            'type': 'ir.actions.act_window',
+            "view_id": form.id,
+            'target': 'new'
+        }
+
 
     def open_back_tax_invoice(self):
         self.ensure_one()
@@ -1627,12 +1710,3 @@ class transport_bill(models.Model):
             print('--状态更新-', state_type,one,one.state)
             one.state_type = state_type
             one.state= state
-
-
-    @api.multi
-    def action_get_attachment_view(self):
-        self.ensure_one()
-        res = self.env['ir.actions.act_window'].for_xml_id('base', 'action_attachment')
-        res['domain'] = [('res_model', '=', 'hr.expense'), ('res_id', 'in', self.ids)]
-        res['context'] = {'default_res_model': 'hr.expense', 'default_res_id': self.id}
-        return res
