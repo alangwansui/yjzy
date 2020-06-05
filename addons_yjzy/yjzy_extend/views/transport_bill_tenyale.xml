@@ -938,7 +938,7 @@
                     <field name="date_out_in_state" string=" " attrs="{'column_invisible':[('date_out_in_state','!=','done')]}"/>
                     <field name="date_out_in_att_count" string=" "/>
                     <button name="open_transport_date" icon="fa-paperclip" type="object" context="{'form_xml_id': 'yjzy_extend.view_transport_bill_date_out_in'}" string="附件"/>
-                    <button icon="fa-check" style="color:red" attrs="{'invisible':[('date_out_in_state','!=','done')]}"/>
+                    <button icon="fa-check" attrs="{'invisible':[('date_out_in_state','!=','done')]}"/>
                     <button name="action_customer_date_state_submit" type="object" context="{'date_type':'date_out_in'}" attrs="{'invisible':[('date_out_in_state','not in',['draft','refuse'])]}" string="提交"/>
                     <button name="action_customer_date_state_done" type="object" context="{'date_type':'date_out_in'}" attrs="{'invisible':[('date_out_in_state','not in',['submit'])]}" string="通过"/>
                     <button name="action_customer_date_state_refuse" type="object" context="{'date_type':'date_out_in'}" attrs="{'invisible':[('date_out_in_state','not in',['submit'])]}" string="拒绝" invisible="1"/>
