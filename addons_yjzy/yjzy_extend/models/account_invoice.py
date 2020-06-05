@@ -77,10 +77,7 @@ class account_invoice(models.Model):
             if one.purchase_date_finish_state == 'done':
                 purchase_date_finish_state = '完成'
             if show_date_finish:
-                if one.date_finish:
-                    name = '%s %s %s' % (one.partner_id.name or '', one.date_finish or '', purchase_date_finish_state or '',)
-                else:
-                    name = '暂无交单时间'
+                name = '%s %s %s' % (one.partner_id.name or '', one.date_finish or '', purchase_date_finish_state or '',)
             else:
                 name=one.number
             res.append((one.id, name))
