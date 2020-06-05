@@ -305,11 +305,12 @@ class transport_bill(models.Model):
     purchase_cost_total = fields.Monetary(u'采购金额', compute=_sale_purchase_amount, store=True)
     state_type = fields.Selection([('no_delivery','未开始'),('wait_date',u'待完成相关日期'),('finish_date',u'已完成相关日期'),('abnormal_date',u'日期异常'),
                                              ('write_off',u'正常核销'),('abnormal',u'异常核销')], u'状态类型', default='no_delivery')
-    date_out_in_att = fields.Many2many('ir.attachment',string='进仓日附件')
+    #date_out_in_att = fields.Many2many('ir.attachment',string='进仓日附件')
+    date_out_in_att = fields.One2many('trans.date.attachment','tb_id', domain=[('type', '=', 'date_out_in')], string='进仓日附件')
     date_out_in_att_count = fields.Integer('进仓日期附件数量',compute=compute_info)
-    date_ship_att = fields.Many2many('ir.attachment', string='出运船日附件')
+    date_ship_att = fields.One2many('trans.date.attachment','tb_id',domain=[('type', '=', 'date_ship')],string='出运船日附件')
     date_ship_att_count = fields.Integer('出运船日期附件数量', compute=compute_info)
-    date_customer_finish_att = fields.Many2many('ir.attachment', string='客户交单日附件')
+    date_customer_finish_att = fields.One2many('trans.date.attachment','tb_id',domain=[('type', '=', 'date_customer_finish')],string='客户交单日附件')
     date_customer_finish_att_count = fields.Integer('客户交单日期附件数量', compute=compute_info)
     date_out_in_state = fields.Selection([('draft',u'草稿'),('submit',u'待审批'),('done',u'完成')],'进仓审批状态', default='draft')
     date_ship_state = fields.Selection([('draft',u'草稿'),('submit',u'待审批'),('done',u'完成')],'出运船审批状态', default='draft')
@@ -1566,6 +1567,21 @@ class transport_bill(models.Model):
             'res_id': self.id,
             'type': 'ir.actions.act_window',
             "view_id": form.id,
+            'target': 'new'
+        }
+
+    def open_transport_date_1(self):
+        xml_id = self.env.context.get('form_xml_id')
+        form = self.env.ref(xml_id)
+        self.ensure_one()
+        return {
+            'name': u'附件',
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'res_model': 'trans.date.attachment',
+            'type': 'ir.actions.act_window',
+            'domain': [('id', 'in', [self.date_out_in_att_new.id])],
+            'tree_view_ref': 'yjzy_extend.view_trans_date_attachment_tree',
             'target': 'new'
         }
 

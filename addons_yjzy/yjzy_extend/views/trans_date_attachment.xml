@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_trans_date_attachment_tree" model="ir.ui.view">
+            <field name="name">trans.date.attachment.tree</field>
+            <field name="model">trans.date.attachment</field>
+            <field name="arch" type="xml">
+                <tree string="" editable="bottom">
+                    <field name="name"/>
+                    <field name="attachment" widget="many2many_binary"/>
+                    <field name="type"/>
+                </tree>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

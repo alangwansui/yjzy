@@ -73,6 +73,7 @@
         'views/transport_bill_customs_declare.xml',
         'views/transport_lot_plan.xml',
         'views/transport_bill_vendor.xml',
+        'views/trans_date_attachment.xml',
 
         'views/product_packaging.xml',
 

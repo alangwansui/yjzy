@@ -60,6 +60,7 @@ from . import gongsi
 from . import employee
 from . import attachment
 from . import jituan
+from . import trans_date_attachment
 from . import pricelist
 from . import partner_product_origin
 from . import print_record
