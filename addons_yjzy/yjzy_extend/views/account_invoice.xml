@@ -161,6 +161,26 @@
             </field>
         </record>
 
+    <record id="view_account_invoice_back_tax_tree" model="ir.ui.view">
+            <field name="name">account.invoice.back.tax.tree</field>
+            <field name="model">account.invoice</field>
+            <field name="arch" type="xml">
+                <tree string="应收退税" editable="bottom">
+                    <field name="partner_id" groups="base.group_user" string="Vendor" invisible="1"/>
+                    <field name="tb_contract_code"/>
+                    <field name="amount_total_signed"/>
+                    <field name="residual_signed"/>
+                    <field name="date_invoice" string="Bill Date" invisible="1"/>
+                    <field name="number" invisible="1"/>
+                    <field name="reference" invisible="1"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="company_currency_id" invisible="1"/>
+                    <field name="state"/>
+                    <field name="type" invisible="context.get('type',True)"/>
+                </tree>
+            </field>
+        </record>
+
 
 
 </odoo>

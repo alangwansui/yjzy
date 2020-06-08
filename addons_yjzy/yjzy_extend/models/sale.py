@@ -838,3 +838,26 @@ class sale_order(models.Model):
              one.compute_purchase_amount_total_new()
              one.compute_purchase_no_deliver_amount_new()
 
+    #akiny
+    def action_submit(self):
+        war = ''
+        if self.contract_code and self.partner_id and self.customer_pi and self.contract_date and self.current_date_rate > 0 and \
+                self.requested_date and self.payment_term_id and self.order_line:
+            self.state = 'submit'
+        else:
+            if not self.contract_code:
+                war += '合同号不为空\n'
+            if not self.partner_id:
+                war += '客户不为空\n'
+            if not self.customer_pi:
+                war += '客户合同号不为空\n'
+            if not self.contract_date:
+                war += '客户确认日期不为空\n'
+            if not self.payment_term_id:
+                war += '付款条款不为空\n'
+            if self.current_date_rate <= 0:
+                war += '当日汇率不为0\n'
+            if not self.order_line:
+                war += '销售明细不为空\n'
+            if war:
+                raise Warning(war)

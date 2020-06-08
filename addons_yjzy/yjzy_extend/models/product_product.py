@@ -189,7 +189,7 @@ class Product_Product(models.Model):
             'domain': [('id', 'in', [x.id for x in quants])],
             'type': 'ir.actions.act_window',
         }
-
+    #13no
     @api.multi
     def copy(self, default=None):
 
@@ -202,7 +202,7 @@ class Product_Product(models.Model):
 
         _logger.info('====copy1 end')
         return pdt
-
+    #13no
     @api.model
     def create(self, vales):
         pdt = super(Product_Product, self).create(vales)
@@ -218,7 +218,7 @@ class Product_Product(models.Model):
     #      'res_model': 'product.product',
     #      'type': 'ir.actions.act_window',
     #   }
-
+    #13no
     def auto_rush_value_line(self):
         self.ensure_one()
         for line in self.value_line_ids:
@@ -231,7 +231,7 @@ class Product_Product(models.Model):
         #print('====onchange product.product cateogry ==========')
         #self.hs_id = self.categ_id.hs_id
         self.default_code = '%s%s' % (self.categ_id.complete_code, self.seq)
-
+    #13no 这里也没看到哪里有用到
     def wizard_product_lst_price(self):
         return {
             'name': u'属性设置向导',
@@ -242,7 +242,7 @@ class Product_Product(models.Model):
             'target': 'new',
             'type': 'ir.actions.act_window',
         }
-
+    #13no
     def open_wizard_attribute_configurator(self):
         wizard = self.env['wizard.attribute.configurator'].create({
             'product_id': self.id,
@@ -273,6 +273,7 @@ class Product_Product(models.Model):
             'type': 'ir.actions.act_window',
         }
 
+    #产品费雷设置bom模板，可以直接创建引用。13no
     def open_bom_template(self):
         self.ensure_one()
         bom_template = self.categ_id.bom_template_id
@@ -355,11 +356,12 @@ class Product_Product(models.Model):
             'max_qty_ng': max_qty_ng,
             'max_qty2': max_qty2,
         }
-
+    #13no
     def update_attribute_by_value(self):
         self.ensure_one()
         self.value_line_ids.update_attribute_by_value()
 
+    #13no
     @api.model
     def cron_sync_sp_uom(self, overwrite=True):
         for p in self.search([]):

@@ -66,13 +66,13 @@ class transport_bill(models.Model):
 
             #akiny新增 计算清关总量
             qingguan_lines = one.qingguan_line_ids
-            if not qingguan_lines: continue
-            one.qingguan_amount = sum([x.sub_total for x in qingguan_lines])
-            one.qingguan_qty_total = sum([x.qty for x in qingguan_lines])
-            one.qingguan_case_qty_total = sum([x.package_qty for x in qingguan_lines])
-            one.qingguan_net_weight_total = sum([x.net_weight for x in qingguan_lines])
-            one.qingguan_gross_wtight_total = sum([x.shiji_weight for x in qingguan_lines])
-            one.qingguan_volume_total = sum([x.shiji_volume for x in qingguan_lines])
+            if qingguan_lines:
+                one.qingguan_amount = sum([x.sub_total for x in qingguan_lines])
+                one.qingguan_qty_total = sum([x.qty for x in qingguan_lines])
+                one.qingguan_case_qty_total = sum([x.package_qty for x in qingguan_lines])
+                one.qingguan_net_weight_total = sum([x.net_weight for x in qingguan_lines])
+                one.qingguan_gross_wtight_total = sum([x.shiji_weight for x in qingguan_lines])
+                one.qingguan_volume_total = sum([x.shiji_volume for x in qingguan_lines])
 
 
 
@@ -97,6 +97,7 @@ class transport_bill(models.Model):
                     date_purchase_finish_state = 'done'
                 else:
                     date_purchase_finish_state = 'submit'
+
             one.date_purchase_finish_state = date_purchase_finish_state
 
 
@@ -123,7 +124,7 @@ class transport_bill(models.Model):
 
             budget_amount = one.fee_inner + one.fee_rmb1 + one.fee_rmb2 #+ one.get_outer()
             budget_reset_amount = budget_amount - sum([x.total_amount for x in one.expense_ids])
-
+            print('-org1-', org_sale_amount)
             one.org_sale_amount = org_sale_amount
             one.org_real_sale_amount = org_real_sale_amount
             one.sale_amount = sale_amount
@@ -166,7 +167,7 @@ class transport_bill(models.Model):
         """
         sale_amount = sum( x.company_currency_id.compute(x.sale_amount, self.third_currency_id) for x in lines)
         org_sale_amount = sum(x.org_currency_sale_amount for x in lines)
-
+        print('-org-',org_sale_amount )
         if self.fee_outer_need:
             org_sale_amount += self.outer_currency_id.compute(self.fee_outer, self.sale_currency_id)
             sale_amount += self.outer_currency_id.compute(self.fee_outer, self.third_currency_id)
@@ -221,18 +222,18 @@ class transport_bill(models.Model):
 
             one.all_purchase_invoice_fill = all([x.date_finish for x in purchase_invoices])
 
-    # @api.depends('line_ids.plan_qty')
-    # def _amount_all(self):
-    #     """
-    #     Compute the total amounts of the SO.
-    #     """
-    #     for one in self:
-    #         org_sale_amount_new = 0
-    #         for line in one.line_ids:
-    #             org_sale_amount_new += line.org_currency_sale_amount
-    #         one.update({
-    #             'org_sale_amount_new': one.sale_currency_id.round(org_sale_amount_new),
-    #         })
+    @api.depends('line_ids.plan_qty')
+    def _amount_all(self):
+        """
+        Compute the total amounts of the SO.
+        """
+        for one in self:
+            org_sale_amount_new = 0
+            for line in one.line_ids:
+                org_sale_amount_new += line.org_currency_sale_amount
+            one.update({
+                'org_sale_amount_new': one.sale_currency_id.round(org_sale_amount_new),
+            })
 
     @api.depends('line_ids.plan_qty')
     def _sale_purchase_amount(self):
@@ -324,7 +325,7 @@ class transport_bill(models.Model):
     incoterm_code = fields.Char('贸易术语', related='incoterm.code', readonly=True)
     org_sale_amount = fields.Monetary('销售金额', currency_field='sale_currency_id', compute=compute_info,
                                       digits=dp.get_precision('Money'))
-    org_sale_amount_new = fields.Monetary('销售金额', store=True, currency_field='sale_currency_id', compute='_sale_purchase_amount',
+    org_sale_amount_new = fields.Monetary('销售金额', store=True, currency_field='sale_currency_id', compute='_amount_all',
                                       digits=dp.get_precision('Money'))
     org_real_sale_amount = fields.Monetary('实际销售金额', currency_field='sale_currency_id', compute=compute_info,
                                            digits=dp.get_precision('Money'))
@@ -592,6 +593,10 @@ class transport_bill(models.Model):
 
     gold_sample_state = fields.Selection([('all', '全部有'), ('part', '部分有'), ('none', '无金样')], '样金管理',
                                          compute=compute_info)
+
+    def make_sale_purchase_collect(self):
+        self.make_sale_collect()
+        self.make_purchase_collect()
 
     @api.multi
     def action_save_test(self):
@@ -1125,6 +1130,7 @@ class transport_bill(models.Model):
             'view_mode': 'tree,form',
             'res_model': 'account.invoice',
             'type': 'ir.actions.act_window',
+            'tree_view_ref': 'account.invoice_tree',
             'domain': [('id', 'in', invoice_ids)]
         }
 
@@ -1285,9 +1291,10 @@ class transport_bill(models.Model):
         return {
             'name': '退税发票',
             'view_type': 'form',
-            'view_mode': 'form',
+            'view_mode': 'tree,form',
             'res_model': 'account.invoice',
             'type': 'ir.actions.act_window',
+            'tree_view_ref': 'account.invoice_tree',
             'res_id': back_tax_invoice.id
         }
 
@@ -1520,7 +1527,7 @@ class transport_bill(models.Model):
         form_view = self.env.ref('account.invoice_form')
         tree_view = self.env.ref('account.invoice_tree')
         return {
-            'name': u'销售发票',
+            'name': u'客户应收',
             'view_type': 'form',
             'view_mode': 'tree,form',
             'res_model': 'account.invoice',
@@ -1530,13 +1537,16 @@ class transport_bill(models.Model):
         }
 
     def open_purchase_invoice(self):
+        form_view = self.env.ref('account.invoice_supplier_tree')
+        tree_view = self.env.ref('account.invoice_supplier_tree')
         self.ensure_one()
         return {
-            'name': u'采购发票',
+            'name': u'供应商应付',
             'view_type': 'form',
             'view_mode': 'tree,form',
             'res_model': 'account.invoice',
             'type': 'ir.actions.act_window',
+            'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
             'domain': [('id', 'in', [x.id for x in self.purchase_invoice_ids.filtered(lambda x: x.yjzy_type == 'purchase')])]
 
         }
@@ -1560,7 +1570,7 @@ class transport_bill(models.Model):
         form = self.env.ref(xml_id)
         self.ensure_one()
         return {
-            'name': u'销售发票',
+            'name': u'日期附件添加',
             'view_type': 'form',
             'view_mode': 'form',
             'res_model': 'transport.bill',
@@ -1587,6 +1597,8 @@ class transport_bill(models.Model):
 
 
     def open_back_tax_invoice(self):
+        form_view = self.env.ref('account.invoice_form')
+        tree_view = self.env.ref('account.invoice_tree')
         self.ensure_one()
         return {
             'name': '销售发票',
@@ -1594,6 +1606,7 @@ class transport_bill(models.Model):
             'view_mode': 'tree,form',
             'res_model': 'account.invoice',
             'type': 'ir.actions.act_window',
+            'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
             'domain': [('id', 'in', [self.back_tax_invoice_id.id])]
         }
 
@@ -1655,6 +1668,11 @@ class transport_bill(models.Model):
         if not self.qingguan_line_ids:
             raise Warning('请先生成报关明细')
         return self.env.ref('yjzy_extend.action_report_transport_bill_bgd').report_action(self)
+
+    @api.multi
+    def print_cost(self):
+
+        return self.env.ref('yjzy_extend.action_report_transport_bill_cost').report_action(self)
 
     def open_transport_bill_clearance(self):
         """ Utility method used to add an "Open Parent" button in partner views """
@@ -1726,3 +1744,26 @@ class transport_bill(models.Model):
             print('--状态更新-', state_type,one,one.state)
             one.state_type = state_type
             one.state= state
+
+    def action_submit(self):
+        war = ''
+        if self.ref and self.partner_id and self.date and self.icoterm and self.current_date_rate > 0 and \
+                self.payment_term_id and self.line_ids:
+            self.state = 'submit'
+        else:
+            if not self.ref:
+                war += '合同号不为空\n'
+            if not self.partner_id:
+                war += '客户不为空\n'
+            if not self.date:
+                war += '出运日期不为空\n'
+            if not self.incoterm:
+                war += '价格条款不为空\n'
+            if not self.payment_term_id:
+                war += '付款条款不为空\n'
+            if self.current_date_rate <= 0:
+                war += '当日汇率不为0\n'
+            if not self.line_ids:
+                war += '出运明细不为空\n'
+            if war:
+                raise Warning(war)

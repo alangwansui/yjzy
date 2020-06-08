@@ -15,11 +15,11 @@
                     </group>
                     <group invisible="not context.get('add_so')">
                         <field name="so_ids" nolabel="1" option="{'no_create': True}"
-                               domain="[('purchase_gongsi_id', '=', purchase_gongsi_id),('gongsi_id', '=', gongsi_id),('partner_id','=', partner_id),('delivery_status', '!=', 'received'),('state', '=','sale')]"/>
+                               domain="[('purchase_gongsi_id', '=', purchase_gongsi_id),('gongsi_id', '=', gongsi_id),('partner_id','=', partner_id),('delivery_status', '!=', 'received'),('state', 'in',['sale','verifying'])]"/>
                     </group>
                     <group invisible="not context.get('add_sol')">
                         <field name="sol_ids" nolabel="1" option="{'no_create': True}" widget="many2many"
-                            domain="[('order_id.partner_id','=', partner_id),('new_rest_tb_qty', '!=', 0),('order_id.delivery_status', '!=', 'received'),('order_id.state', '=','sale'),
+                            domain="[('order_id.partner_id','=', partner_id),('new_rest_tb_qty', '!=', 0),('order_id.delivery_status', '!=', 'received'),('order_id.state','in',['sale','verifying']),
                                         ('order_id.purchase_gongsi_id', '=', purchase_gongsi_id),('order_id.gongsi_id', '=', gongsi_id)]"
                          context="{'tree_view_ref':'yjzy_extend.new_order_line_transport_tree'}">
                             <tree>
