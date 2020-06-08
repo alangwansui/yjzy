@@ -149,6 +149,7 @@
                         <button string="更新退税率" type="object" name="update_back_tax" class="oe_highlight" groups="base.group_system"/>
 
                         <button name="split_tuopan_weight" type="object" string="分配托盘重量" attrs="{'invisible': [('is_done_tuopan','=',True)]}"  class="oe_highlight"/>
+                        <button name="split_tuopan_weight2vendor" type="object" string="分配托盘重量:供应商发运"  class="oe_highlight"/>
 
                         <button name="test_get_package_tag" type="object" string="测试包裹分组数据"  class="oe_highlight"  groups="base.group_system"/>
 

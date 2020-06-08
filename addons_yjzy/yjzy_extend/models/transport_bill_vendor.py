@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from num2words import num2words
 from odoo import models, fields, api, _
+from odoo.addons import decimal_precision as dp
 from odoo.exceptions import Warning
 
 
@@ -53,6 +54,12 @@ class transport_bill_vendor(models.Model):
     _name = 'transport.bill.vendor.line'
     _description = '供应商发运单明细'
 
+    def compute_shiji(self):
+        for one in self:
+            one.shiji_weight = one.gross_weight + one.tuopan_weight
+            one.shiji_volume = one.volume + one.tuopan_volume
+
+
     tbv_id = fields.Many2one('transport.bill.vendor', u'供应商发运单')
     partner_id = fields.Many2one('res.partner', u'供应商', related='tbv_id.partner_id')
     product_id = fields.Many2one('product.product', u'产品')
@@ -65,6 +72,13 @@ class transport_bill_vendor(models.Model):
     net_weight = fields.Float(u'净重')
     volume = fields.Float(u'尺码m³')
     po_amount = fields.Float(u'采购金额')
+
+    tuopan_weight = fields.Float(u'托重')
+    shiji_weight = fields.Float(u'实际毛重', compute=compute_shiji, digits=dp.get_precision('Weight'))
+
+    tuopan_volume = fields.Float(u'托体积')
+    shiji_volume = fields.Float(u'实际体积', compute=compute_shiji, digits=dp.get_precision('Volume'))
+
 
     def compute_info(self):
         for one in self:

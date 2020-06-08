@@ -773,7 +773,7 @@ class transport_bill(models.Model):
 
 
     def split_tuopan_weight(self):
-        if  self.tuopan_weight <= 0 or self.tuopan_volume <=0:
+        if self.tuopan_weight <= 0 or self.tuopan_volume <=0:
             raise Warning(u'请先设置托盘重量和体积')
 
         qinguan_count = sum([x.qty for x in self.qingguan_line_ids])
@@ -798,6 +798,30 @@ class transport_bill(models.Model):
                 line.tuopan_volume = line.volume / hsl_volume * self.tuopan_volume
 
         self.is_done_tuopan = True
+
+
+    def split_tuopan_weight2vendor(self):
+        vendor_lines = self.tb_vendor_ids.mapped('line_ids')
+
+        print('===split_tuopan_weight2vendor==0:', self.tb_vendor_ids, vendor_lines)
+
+        if self.tuopan_weight <= 0 or self.tuopan_volume <=0:
+            raise Warning(u'请先设置托盘重量和体积')
+
+        all_count = sum([x.qty for x in vendor_lines])
+        print('===split_tuopan_weight2vendor==1:', all_count)
+        if all_count > 0:
+            for line in vendor_lines:
+                line.tuopan_weight = line.qty / all_count * self.tuopan_weight
+
+
+        all_volume = sum([x.volume for x in vendor_lines])
+        print('===split_tuopan_weight2vendor==2:', all_volume)
+        if all_volume > 0:
+            for line in vendor_lines:
+                line.tuopan_volume = line.volume / all_volume * self.tuopan_volume
+
+
 
 
 

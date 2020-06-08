@@ -42,8 +42,18 @@
                                     <field name="qty"/>
                                     <field name="max_qty"/>
                                     <field name="gross_weight"/>
+
+                                    <field name="tuopan_weight"/>
+                                    <field name="shiji_weight"/>
+
+
                                     <field name="net_weight"/>
                                     <field name="volume"/>
+                                    <field name="tuopan_volume"/>
+                                    <field name="shiji_volume"/>
+
+
+
                                     <field name="po_amount"/>
                                 </tree>
                             </field>
