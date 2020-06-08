@@ -24,6 +24,7 @@ class account_invoice(models.Model):
         for one in self:
             one.purchase_date_finish_att_count = len(one.purchase_date_finish_att)
 
+
     yjzy_type = fields.Selection([('sale', u'销售'), ('purchase', u'采购'), ('back_tax', u'退税')], string=u'发票类型')
     bill_id = fields.Many2one('transport.bill', u'发运单')
     tb_contract_code = fields.Char(u'出运合同号', related='bill_id.ref', readonly=True)
@@ -46,8 +47,9 @@ class account_invoice(models.Model):
 
     sale_assistant_id = fields.Many2one('res.users', u'业务助理')
     gongsi_id = fields.Many2one('gongsi', '内部公司')
-
-
+    #akiny
+    tb_purchase_invoice_balance = fields.Monetary('对应应付余额',related='bill_id.purchase_invoice_balance_new' )
+    tb_sale_invoice_balance = fields.Monetary('对应应收余额', related='bill_id.sale_invoice_balance_new')
 
     # def name_get(self):
     #     ctx = self.env.context
