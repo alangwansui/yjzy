@@ -132,6 +132,18 @@
                         </tree>
                     </field>
                 </page>
+                 <page string="账单修正明细">
+                    <field name="invoice_line_ids_add" context="{'default_is_manual':1}">
+                        <tree>
+                            <field name="product_id" domain="[('type','=','service')]"/>
+                            <field name="account_id"/>
+                            <field name="quantity"/>
+                            <field name="uom_id"/>
+                            <field name="price_unit"/>
+                            <field name="price_total"/>
+                        </tree>
+                    </field>
+                </page>
             </notebook>
 
 
@@ -165,7 +177,7 @@
             <field name="name">account.invoice.back.tax.tree</field>
             <field name="model">account.invoice</field>
             <field name="arch" type="xml">
-                <tree string="应收退税" editable="bottom">
+                <tree string="应收退税"  decoration-info="state == 'draft'">
                     <field name="partner_id" groups="base.group_user" string="Vendor" invisible="1"/>
                     <field name="tb_contract_code"/>
                     <field name="amount_total_signed"/>
@@ -223,7 +235,7 @@
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">account.invoice</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[('type','=','in_invoice'),('yjzy_type','=','back_tax')]</field>
+            <field name="domain">[('type','=','out_invoice'),('yjzy_type','=','back_tax')]</field>
             <field name="context">{'type':'out_invoice', 'journal_type': 'sale','yjzy_type':'back_tax'}</field>
             <!--field name="target">new</field-->
             <field name="view_ids" eval="[(5, 0, 0),

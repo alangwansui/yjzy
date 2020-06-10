@@ -50,6 +50,8 @@ class account_invoice(models.Model):
     #akiny
     tb_purchase_invoice_balance = fields.Monetary('对应应付余额',related='bill_id.purchase_invoice_balance_new' )
     tb_sale_invoice_balance = fields.Monetary('对应应收余额', related='bill_id.sale_invoice_balance_new')
+    invoice_line_ids_add = fields.One2many('account.invoice.line','invoice_id', domain=[('is_manual', '=', True)],
+                                           readonly=True, states={'draft': [('readonly', False)]}, copy=True)
 
     # def name_get(self):
     #     ctx = self.env.context
@@ -175,6 +177,7 @@ class account_invoice_line(models.Model):
     item_id = fields.Many2one('invoice.hs_name.item', 'Item')
 
     so_id = fields.Many2one('sale.order', u'销售订单', compute=_compute_so)
+    is_manual = fields.Boolean('是否手动添加', default=False)
 
 
 class invoice_hs_name_item(models.Model):

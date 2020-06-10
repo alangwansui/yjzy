@@ -1771,7 +1771,7 @@ class transport_bill(models.Model):
 
     def action_submit(self):
         war = ''
-        if self.ref and self.partner_id and self.date and self.icoterm and self.current_date_rate > 0 and \
+        if self.ref and self.partner_id and self.date and self.incoterm and self.current_date_rate > 0 and \
                 self.payment_term_id and self.line_ids:
             self.state = 'submit'
         else:
