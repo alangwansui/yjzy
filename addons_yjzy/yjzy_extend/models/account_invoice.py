@@ -102,6 +102,18 @@ class account_invoice(models.Model):
                                            compute=compute_residual_date_group)
     residual_times = fields.Integer('逾期天数',compute=compute_times)
     date_out_in = fields.Date('进仓日')
+    state = fields.Selection([
+        ('draft', u'未确认'),
+        ('open', u'已确认'),
+        ('paid', u'已付款'),
+        ('cancel', u'已取消'),
+    ], string='Status', index=True, readonly=True, default='draft',
+        track_visibility='onchange', copy=False,
+        help=" * The 'Draft' status is used when a user is encoding a new and unconfirmed Invoice.\n"
+             " * The 'Pro-forma' status is used when the invoice does not have an invoice number.\n"
+             " * The 'Open' status is used when user creates invoice, an invoice number is generated. It stays in the open status till the user pays the invoice.\n"
+             " * The 'Paid' status is set automatically when the invoice is paid. Its related journal entries may or may not be reconciled.\n"
+             " * The 'Cancelled' status is used when user cancel invoice.")
 
 
 
@@ -217,6 +229,18 @@ class account_invoice(models.Model):
     def action_purchase_date_finish_state_refuse(self):
         for one in self:
             one.purchase_date_finish_state = 'refuse'
+
+    def auto_account_invoice_open(self):
+        today = datetime.today()
+        strptime = datetime.strptime
+        company_after_date_out_in_times =self.company_id.after_date_out_in_times
+        for one in self:
+            if one.date_out_in:
+                after_date_out_in_times = today - strptime(one.date_out_in, DF)
+                if after_date_out_in_times >= company_after_date_out_in_times and one.bill_id.sale_type != 'proxy':
+                    one.action_invoice_open()
+
+
 
 class account_invoice_line(models.Model):
     _inherit = 'account.invoice.line'

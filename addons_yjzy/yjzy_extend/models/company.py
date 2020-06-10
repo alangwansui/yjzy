@@ -14,6 +14,7 @@ class res_company(models.Model):
     sale_image = fields.Binary(u'销售合同章', widget='image')
 
     is_current_date_rate = fields.Boolean(u'是否采用当天汇率')
+    after_date_out_in_times = fields.Integer(u'进仓日后账单确认')
 
     gongsi_id = fields.Many2one('gongsi','主体')
 

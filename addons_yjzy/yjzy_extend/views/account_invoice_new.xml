@@ -112,7 +112,7 @@
                     <field name="tb_contract_code"  attrs="{'invisible':1}"/>
                     <field name="po_id"  attrs="{'invisible':1}"/>
                     <field name="purchase_contract_code"  attrs="{'invisible':1}"/>
-                    <field name="residual_signed" string="到期金额"/>
+                    <field name="residual_signed" string="未收金额"/>
                     <field name="sale_assistant_id"/>
                     <field name="gongsi_id" string="销售主体"/>
                              <field name="date_invoice" attrs="{'invisible':1}"/>
@@ -124,7 +124,7 @@
                     </group>
                     <field name="sent" invisible="1"/>
                     <notebook colspan="4">
-                         <page string="账单原始明细">
+                         <page string="账单原始明细" attrs="{'invisible':[('state','in',['open','paid'])]}">
                     <field name="invoice_line_ids_origin" attrs="{'readonly':1}" context="{'default_is_manual':1}">
                         <tree editable="bottom">
                             <field name="product_id" domain="[('type','=','service')]"/>
@@ -141,7 +141,7 @@
                                 <field name="amount_automatic" class="oe_subtotal_footer_separator"/>
                         </group>
                 </page>
-                        <page string="账单修正明细">
+                        <page string="账单修正明细" attrs="{'invisible':[('state','in',['open','paid'])]}">
                     <field name="invoice_line_ids_add" context="{'default_is_manual':1}">
                         <tree editable="bottom">
                             <field name="product_id" domain="[('type','=','service')]"/>
@@ -355,7 +355,7 @@
                                 <field name="date_finish"/>
                                 <field name="bill_id"/>
                                 <field name="yjzy_type" attrs="{'invisible':1}"/>
-
+                                <field name="residual_signed" string="未付金额"/>
                                 <field name="tb_contract_code" attrs="{'invisible':1}"/>
                                 <field name="po_id" />
                                 <field name="purchase_contract_code"/>
@@ -367,7 +367,7 @@
                             </group>
                         </group>
                         <notebook>
-                            <page string="账单原始明细">
+                            <page string="账单原始明细" attrs="{'invisible':[('state','in',['open','paid'])]}">
                                 <field name="invoice_line_ids_origin" attrs="{'readonly':1}"
                                        context="{'default_is_manual':1}">
                                     <tree editable="bottom">
@@ -385,7 +385,7 @@
                                     <field name="amount_automatic" class="oe_subtotal_footer_separator"/>
                                 </group>
                             </page>
-                            <page string="账单修正明细">
+                            <page string="账单修正明细" attrs="{'invisible':[('state','in',['open','paid'])]}" >
                                 <field name="invoice_line_ids_add" context="{'default_is_manual':1}">
                                     <tree editable="bottom">
                                         <field name="product_id" domain="[('type','=','service')]"/>
@@ -531,7 +531,7 @@
             <field name="name">account.invoice.new.tree</field>
             <field name="model">account.invoice</field>
             <field name="arch" type="xml">
-                <tree string="发票" editable="bottom">
+                <tree string="应收" editable="bottom">
                     <field name="partner_id" groups="base.group_user" string="Vendor"/>
                     <field name="date_invoice" string="Bill Date" invisible="1"/>
                     <field name="number" invisible="1"/>
@@ -774,14 +774,27 @@
                 </form>
             </field>
         </record>
-
-        <record id="action_sale_invoice_unpaid_new" model="ir.actions.act_window">
-            <field name="name">未完成客户应收</field>
+        <record id="action_sale_invoice_draft_new" model="ir.actions.act_window">
+            <field name="name">未确认应收账单</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">account.invoice</field>
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_account_invoice_new_filter"/>
-            <field name="domain">[('type','=','out_invoice'),('yjzy_type','=','sale'),('state','!=','paid')]</field>
+            <field name="domain">[('type','=','out_invoice'),('yjzy_type','=','sale'),('state','in',['draft','cancel'])]</field>
+            <field name="context">{'group_by':'state','only_ref':1,'type':'out_invoice', 'journal_type': 'sale','yjzy_type':'sale'}</field>
+            <!--field name="target">new</field-->
+            <field name="view_ids" eval="[(5, 0, 0),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('account.invoice_tree')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('view_account_invoice_new_form')}),
+                              ]"/>
+        </record>
+        <record id="action_sale_invoice_unpaid_new" model="ir.actions.act_window">
+            <field name="name">已确认应收账单</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_account_invoice_new_filter"/>
+            <field name="domain">[('type','=','out_invoice'),('yjzy_type','=','sale'),('state','=','open')]</field>
             <field name="context">{'only_ref':1,'search_default_group_by_due_date':1,'type':'out_invoice', 'journal_type': 'sale','yjzy_type':'sale'}</field>
             <!--field name="target">new</field-->
             <field name="view_ids" eval="[(5, 0, 0),
@@ -790,7 +803,7 @@
                               ]"/>
         </record>
         <record id="action_sale_invoice_paid_new" model="ir.actions.act_window">
-            <field name="name">已完成客户应收</field>
+            <field name="name">已收款应收</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">account.invoice</field>
             <field name="view_mode">tree,form</field>
@@ -803,27 +816,50 @@
                               (0, 0, {'view_mode': 'form', 'view_id': ref('view_account_invoice_new_form')}),
                               ]"/>
         </record>
+        <menuitem id="menu_sale_invoice_new_root" name="应收付账单"
+
+                  sequence="99"
+        />
         <menuitem id="menu_sale_invoice_new" name="客户应收"
-                  parent="yjzy_extend.menu_transport_tenyale_bill_root"
+                  parent="yjzy_extend.menu_sale_invoice_new_root"
                   sequence="5"
         />
-        <menuitem id="menu_sale_invoice_unpaid_new" name="未完成应收"
+         <menuitem id="menu_sale_invoice_draft_new" name="未确认应收账单"
                   parent="yjzy_extend.menu_sale_invoice_new"
                   sequence="1"
-                  action="action_sale_invoice_unpaid_new"
+                  action="action_sale_invoice_draft_new"
         />
-        <menuitem id="menu_sale_invoice_paid_new" name="已完成客户应收"
+        <menuitem id="menu_sale_invoice_unpaid_new" name="已确认应收账单"
                   parent="yjzy_extend.menu_sale_invoice_new"
                   sequence="2"
+                  action="action_sale_invoice_unpaid_new"
+        />
+        <menuitem id="menu_sale_invoice_paid_new" name="已收款应收账单"
+                  parent="yjzy_extend.menu_sale_invoice_new"
+                  sequence="3"
                   action="action_sale_invoice_paid_new"
         />
-        <record id="action_purchase_invoice_unpaid_new" model="ir.actions.act_window">
-            <field name="name">未完成供应商应付</field>
+        <record id="action_purchase_invoice_draft_new" model="ir.actions.act_window">
+            <field name="name">未确认应付账单</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">account.invoice</field>
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_account_invoice_new_filter"/>
-            <field name="domain">[('type','=','in_invoice'),('yjzy_type','=','purchase'),('state','!=','paid')]</field>
+            <field name="domain">[('type','=','in_invoice'),('yjzy_type','=','purchase'),('state','in',['draft','cancel'])]</field>
+            <field name="context">{'only_ref':1,'type':'out_invoice', 'journal_type': 'sale','yjzy_type':'purchase'}</field>
+            <!--field name="target">new</field-->
+            <field name="view_ids" eval="[(5, 0, 0),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('account.invoice_supplier_tree')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('view_account_supplier_invoice_new_form')}),
+                              ]"/>
+        </record>
+        <record id="action_purchase_invoice_unpaid_new" model="ir.actions.act_window">
+            <field name="name">未完成应付账单</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_account_invoice_new_filter"/>
+            <field name="domain">[('type','=','in_invoice'),('yjzy_type','=','purchase'),('state','=','open')]</field>
             <field name="context">{'only_ref':1,'search_default_group_by_due_date':1,'type':'out_invoice', 'journal_type': 'sale','yjzy_type':'purchase'}</field>
             <!--field name="target">new</field-->
             <field name="view_ids" eval="[(5, 0, 0),
@@ -832,7 +868,7 @@
                               ]"/>
         </record>
          <record id="action_purchase_invoice_paid_new" model="ir.actions.act_window">
-            <field name="name">已完成供应商应付</field>
+            <field name="name">已完成应付账单</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">account.invoice</field>
             <field name="view_mode">tree,form</field>
@@ -848,18 +884,23 @@
 
 
         <menuitem id="menu_purchase_invoice_new" name="供应商应付"
-                  parent="yjzy_extend.menu_transport_tenyale_bill_root"
+                  parent="yjzy_extend.menu_sale_invoice_new_root"
                   sequence="5"
 
         />
-         <menuitem id="menu_purchase_invoice_unpaid_new" name="未完成应付"
+         <menuitem id="menu_purchase_invoice_draft_new" name="未确认应付账单"
                   parent="yjzy_extend.menu_purchase_invoice_new"
-                  sequence="5"
+                  sequence="1"
+                  action="action_purchase_invoice_draft_new"
+        />
+         <menuitem id="menu_purchase_invoice_unpaid_new" name="已确认应付账单"
+                  parent="yjzy_extend.menu_purchase_invoice_new"
+                  sequence="2"
                   action="action_purchase_invoice_unpaid_new"
         />
-         <menuitem id="menu_purchase_invoice_paid_new" name="已完成应付"
+         <menuitem id="menu_purchase_invoice_paid_new" name="已付款应付账单"
                   parent="yjzy_extend.menu_purchase_invoice_new"
-                  sequence="5"
+                  sequence="3"
                   action="action_purchase_invoice_paid_new"
         />
         <record id="action_back_tax_invoice_unpaid_new" model="ir.actions.act_window">
@@ -869,7 +910,7 @@
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_account_invoice_new_filter"/>
             <field name="domain">[('type','=','out_invoice'),('yjzy_type','=','back_tax'),('state','!=','paid')]</field>
-            <field name="context">{'only_ref':1,'type':'out_invoice', 'journal_type': 'sale','yjzy_type':'back_tax'}</field>
+            <field name="context">{'group_by':'state','only_ref':1,'type':'out_invoice', 'journal_type': 'sale','yjzy_type':'back_tax'}</field>
             <!--field name="target">new</field-->
             <field name="view_ids" eval="[(5, 0, 0),
                               (0, 0, {'view_mode': 'tree', 'view_id': ref('view_account_invoice_back_tax_tree')}),
