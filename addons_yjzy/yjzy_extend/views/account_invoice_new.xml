@@ -33,7 +33,7 @@
                     <filter string="Today Activities" name="activities_today" domain="[('activity_ids.date_deadline', '=', context_today().strftime('%Y-%m-%d'))]"/>
                     <filter string="Future Activities" name="activities_upcoming_all" domain="[('activity_ids.date_deadline', '&gt;', context_today().strftime('%Y-%m-%d'))                         ]"/>
                     <group expand="0" string="Group By">
-                        <filter name="group_by_due_date" string="逾期天数" context="{'group_by':('residual_date_group','partner_id','bill_id')}"/>
+                        <filter name="group_by_due_date" string="逾期天数" context="{'group_by':('residual_date_group','partner_id')}"/>
                         <filter name="group_by_partner_id" string="Partner" context="{'group_by':'commercial_partner_id'}"/>
                         <filter string="Salesperson" context="{'group_by':'user_id'}"/>
                         <filter name="status" string="Status" context="{'group_by':'state'}"/>
