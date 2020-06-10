@@ -746,11 +746,15 @@ class transport_bill(models.Model):
     def name_get(self):
         ctx = self.env.context
         result = []
+        only_ref = self.env.context.get('only_ref')
         for one in self:
             name = one.name
             if one.ref:
-                name += ':%s' % one.ref
-            result.append((one.id, name))
+                if only_ref:
+                    name = one.ref
+                else:
+                    name += ':%s' % one.ref
+                result.append((one.id, name))
         return result
 
     @api.model
@@ -1196,6 +1200,7 @@ class transport_bill(models.Model):
 
             sale_invoices.write({
                 'date_invoice': self.date_out_in,
+                'date_out_in': self.date_out_in,
                 'date_finish': self.date_customer_finish,
                 'include_tax': self.include_tax,
                 'date_ship': self.date_ship,

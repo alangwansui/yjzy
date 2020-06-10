@@ -51,8 +51,8 @@
             <field name="name">account.invoice.new.form</field>
             <field name="model">account.invoice</field>
             <field name="arch" type="xml">
-                <form string="Invoice" class="o_invoice_form">
-                <header>
+                <form string="应收账单" class="o_invoice_form">
+                <header groups="base.group_system">
                     <button name="action_invoice_sent" type="object" string="Send by Email" attrs="{'invisible':['|',('sent','=',True), ('state', 'not in', ('open','paid'))]}" class="oe_highlight o_invoice_send" groups="base.group_user"/>
                     <button name="invoice_print" string="Print Invoice" type="object" attrs="{'invisible':['|',('sent','=',True), ('state', 'not in', ('open','paid'))]}" class="oe_highlight" groups="base.group_user"/>
                     <button name="action_invoice_sent" type="object" string="Send by Email" attrs="{'invisible':['|',('sent','=',False), ('state', 'not in', ('open','paid'))]}" groups="base.group_user"/>
@@ -61,8 +61,8 @@
                     <button name="action_invoice_open" type="object" states="draft" string="Validate" class="oe_highlight o_invoice_validate" groups="account.group_account_invoice"/>
                     <button name="193" type="action" string="Add Credit Note" groups="account.group_account_invoice" attrs="{'invisible': ['|',('type', '=', 'out_refund'), ('state', 'not in', ('open','paid'))]}"/>
                     <button name="action_invoice_draft" states="cancel" string="Reset to Draft" type="object" groups="account.group_account_invoice"/>
-                     <button string="HS品名统计" type="object" name="make_hs_name_items"/>
-                     <button name="action_invoice_cancel" type="object" states="draft,open" string="Cancel Invoice" groups="account.group_account_invoice"/>
+                    <button string="HS品名统计" type="object" name="make_hs_name_items"/>
+                    <button name="action_invoice_cancel" type="object" states="draft,open" string="Cancel Invoice" groups="account.group_account_invoice"/>
                     <field name="state" widget="statusbar" nolabel="1" statusbar_visible="draft,open,paid"/>
                 </header>
                 <div groups="account.group_account_invoice" class="alert alert-info" role="alert" style="margin-bottom:0px;" attrs="{'invisible': [('has_outstanding','=',False)]}">
@@ -85,43 +85,62 @@
                             <field name="sequence_number_next" class="oe_inline"/>
                         </div>
                     </h1>
-                    <field name="type" invisible="0"/>
-                    <group col="3">
+                    <field name="type" invisible="1"/>
+                    <group col="2">
                         <group>
                             <field string="Customer" name="partner_id" context="{'search_default_customer':1, 'show_address': 1, 'default_company_type': 'company'}" options="{&quot;always_reload&quot;: True, &quot;no_quick_create&quot;: True}" domain="[('customer', '=', True)]"/>
-                            <field name="partner_shipping_id" groups="sale.group_delivery_invoice_address"/>
+                            <field name="partner_shipping_id" groups="sale.group_delivery_invoice_address" invisible="1"/>
                             <field name="payment_term_id"/>
                             <field name="cash_rounding_id" groups="account.group_cash_rounding"/>
-                        </group>
-                        <group>
-                            <field name="date_invoice"/>
-                            <field name="date_due" attrs="{'readonly': ['|',('payment_term_id','!=',False), ('state','=','paid')]}" force_save="1"/>
-                            <field name="move_name" invisible="1"/>
-                            <field name="user_id" groups="base.group_user"/>
-                            <field name="team_id"/>
-                            <label for="currency_id" groups="base.group_multi_currency"/>
+                            <field name="include_tax" />
+                             <label for="currency_id" groups="base.group_multi_currency"/>
                             <div groups="base.group_multi_currency">
                                 <field name="currency_id" options="{'no_create': True, 'no_open': True}" class="oe_inline"/>
                                 <field name="company_currency_id" invisible="1"/>
                             </div>
+                            <field name="user_id"  string="责任人"/>
                         </group>
+
                          <group>
                     <field name="date_ship"/>
                     <field name="date_finish"/>
                     <field name="date_deadline"/>
-                    <field name="bill_id"/>
-                    <field name="yjzy_type"/>
-                    <field name="include_tax"/>
-                    <field name="tb_contract_code"/>
-                    <field name="po_id" arrts="{'invisible':[('type','in',['out_invoice','out_refund'])]}"/>
-                    <field name="purchase_contract_code" arrts="{'invisible':[('type','in',['out_invoice','out_refund'])]}"/>
-                             <field name="residual_signed"/>
+                    <field name="residual_times"/>
+                    <field name="bill_id" string="出运合同" context="{'only_ref':1}"/>
+                    <field name="yjzy_type" attrs="{'invisible':1}"/>
+
+                    <field name="tb_contract_code"  attrs="{'invisible':1}"/>
+                    <field name="po_id"  attrs="{'invisible':1}"/>
+                    <field name="purchase_contract_code"  attrs="{'invisible':1}"/>
+                    <field name="residual_signed" string="到期金额"/>
                     <field name="sale_assistant_id"/>
                     <field name="gongsi_id" string="销售主体"/>
+                             <field name="date_invoice" attrs="{'invisible':1}"/>
+                            <field name="date_due"  attrs="{'readonly': ['|',('payment_term_id','!=',False), ('state','=','paid')],'invisible':1}" force_save="1"/>
+                            <field name="move_name" invisible="1"/>
+
+                            <field name="team_id" attrs="{'invisible':1}"/>
                 </group>
                     </group>
                     <field name="sent" invisible="1"/>
                     <notebook colspan="4">
+                         <page string="账单原始明细">
+                    <field name="invoice_line_ids_origin" attrs="{'readonly':1}" context="{'default_is_manual':1}">
+                        <tree editable="bottom">
+                            <field name="product_id" domain="[('type','=','service')]"/>
+                            <field name="name"/>
+                            <field name="account_id"/>
+                            <field name="quantity"/>
+                            <field name="uom_id"/>
+                            <field name="price_unit"/>
+                            <field name="price_total"/>
+                            <field name="is_manual"/>
+                        </tree>
+                    </field>
+                        <group class="oe_subtotal_footer oe_right">
+                                <field name="amount_automatic" class="oe_subtotal_footer_separator"/>
+                        </group>
+                </page>
                         <page string="账单修正明细">
                     <field name="invoice_line_ids_add" context="{'default_is_manual':1}">
                         <tree editable="bottom">
@@ -139,24 +158,8 @@
                                 <field name="amount_manual" class="oe_subtotal_footer_separator"/>
                         </group>
                 </page>
-                  <page string="账单原始明细">
-                    <field name="invoice_line_ids_origin" attrs="{'readonly':1}" context="{'default_is_manual':1}">
-                        <tree editable="bottom">
-                            <field name="product_id" domain="[('type','=','service')]"/>
-                            <field name="name"/>
-                            <field name="account_id"/>
-                            <field name="quantity"/>
-                            <field name="uom_id"/>
-                            <field name="price_unit"/>
-                            <field name="price_total"/>
-                            <field name="is_manual"/>
-                        </tree>
-                    </field>
-                        <group class="oe_subtotal_footer oe_right">
-                                <field name="amount_automatic" class="oe_subtotal_footer_separator"/>
-                        </group>
-                </page>
-                        <page string="Invoice Lines">
+
+                        <page string="账单综合明细">
                             <field name="invoice_line_ids" nolabel="1" widget="one2many_list" mode="tree,kanban" context="{'type': type, 'journal_id': journal_id, 'default_invoice_id': id}">
                                 <tree string="Invoice Lines" editable="bottom">
                                     <field name="sequence" widget="handle"/>
@@ -216,7 +219,7 @@
                             </group>
                             <field name="comment" placeholder="Terms and conditions..."/>
                         </page>
-                        <page string="Other Info" name="other_info">
+                        <page string="Other Info" name="other_info" groups="base.group_system">
                             <group>
                                 <group>
                                     <field name="fiscal_position_id" options="{'no_create': True}"/>
@@ -232,7 +235,7 @@
                                     <field name="name"/>
                                 </group>
                             </group>
-                            <field name="tax_line_ids">
+                            <field name="tax_line_ids" >
                                 <tree editable="bottom" string="Taxes" create="0">
                                     <field name="name"/>
                                     <!--Need invisible fields for on_change to create all necessary info -->
@@ -249,13 +252,13 @@
                                 </tree>
                             </field>
                         </page>
-                        <page string="相关分录">
+                        <page string="相关分录" groups="base.group_system">
                     <group>
                         <field name="move_ids" readonly="1"/>
                         <field name="move_line_ids" readonly="1"/>
                     </group>
                 </page>
-                <page string="HS品名汇总">
+                <page string="HS品名汇总" groups="base.group_system">
                     <field name="item_ids">
                         <tree>
                             <field name="name"/>
@@ -282,7 +285,7 @@
             <field name="name">account.invoice.supplier.new.form</field>
             <field name="model">account.invoice</field>
             <field name="arch" type="xml">
-                <form string="Vendor Bill">
+                <form string="应付账单">
                     <header>
                         <button name="action_invoice_open" type="object" states="draft" string="Validate"
                                 class="oe_highlight" groups="account.group_account_invoice"/>
@@ -327,57 +330,43 @@
                             </h1>
                         </div>
                         <field name="type" invisible="1"/>
-                        <group>
+                        <group col="2">
                             <group>
-                                <field string="Vendor" name="partner_id"
+                                <field string="供应商" name="partner_id"
                                        context="{'default_customer': 0, 'search_default_supplier': 1, 'default_supplier': 1, 'default_company_type': 'company'}"
                                        domain="[('supplier', '=', True)]"/>
-                                <field name="reference" string="Vendor Reference"/>
-                                <field name="purchase_id"
+                                <field name="reference" string="Vendor Reference" attrs="{'invisible':1}"/>
+                                <field name="purchase_id" groups="base.group_system"
                                        attrs="{'readonly': [('state','not in',['draft'])], 'invisible': ['|', ('state', '=', 'purchase'), ('type', '=', 'in_refund')]}"
                                        class="oe_edit_only" options="{'no_create': True}"
                                        context="{'show_total_amount': True}"/>
+                                 <field name="payment_term_id" options="{'no_create': True}"/>
+                                <field name="include_tax"/>
+                                <field name="currency_id" options="{'no_create': True, 'no_open': True}"
+                                       groups="base.group_multi_currency"/>
                             </group>
                             <group>
                                 <field name="origin" attrs="{'invisible': [('origin', '=', False)]}"/>
-                                <field name="date_invoice" string="Bill Date"/>
+                                <field name="date_invoice" string="账单日期" attrs="{'invisible':1}"/>
                                 <field name="date_due"
-                                       attrs="{'readonly': ['|',('payment_term_id','!=',False), ('state','=','paid')]}"/>
+                                       attrs="{'readonly': ['|',('payment_term_id','!=',False), ('state','=','paid')],'invisible':1}"/>
                                 <field name="move_name" invisible="1"/>
-                                <field name="date_ship"/>
+                                <field name="date_ship" attrs="{'invisible':1}"/>
                                 <field name="date_finish"/>
                                 <field name="bill_id"/>
-                                <field name="yjzy_type"/>
-                                <field name="include_tax"/>
-                                <field name="tb_contract_code"/>
-                                <field name="po_id"/>
+                                <field name="yjzy_type" attrs="{'invisible':1}"/>
+
+                                <field name="tb_contract_code" attrs="{'invisible':1}"/>
+                                <field name="po_id" />
                                 <field name="purchase_contract_code"/>
                                 <field name="gongsi_id"/>
-                                <field name="currency_id" options="{'no_create': True, 'no_open': True}"
-                                       groups="base.group_multi_currency"/>
+
                                 <field name="company_currency_id" invisible="1"/>
-                                <field name="purchase_date_finish_state"/>
-                                <field name="purchase_date_finish_att"/>
+                                <field name="purchase_date_finish_state" attrs="{'invisible':1}"/>
+                                <field name="purchase_date_finish_att" attrs="{'invisible':1}"/>
                             </group>
                         </group>
                         <notebook>
-                            <page string="账单修正明细">
-                                <field name="invoice_line_ids_add" context="{'default_is_manual':1}">
-                                    <tree editable="bottom">
-                                        <field name="product_id" domain="[('type','=','service')]"/>
-                                        <field name="name"/>
-                                        <field name="account_id"/>
-                                        <field name="quantity"/>
-                                        <field name="uom_id"/>
-                                        <field name="price_unit"/>
-                                        <field name="price_total"/>
-                                        <field name="is_manual"/>
-                                    </tree>
-                                </field>
-                                <group class="oe_subtotal_footer oe_right">
-                                    <field name="amount_manual" class="oe_subtotal_footer_separator"/>
-                                </group>
-                            </page>
                             <page string="账单原始明细">
                                 <field name="invoice_line_ids_origin" attrs="{'readonly':1}"
                                        context="{'default_is_manual':1}">
@@ -396,7 +385,25 @@
                                     <field name="amount_automatic" class="oe_subtotal_footer_separator"/>
                                 </group>
                             </page>
-                            <page string="Bill">
+                            <page string="账单修正明细">
+                                <field name="invoice_line_ids_add" context="{'default_is_manual':1}">
+                                    <tree editable="bottom">
+                                        <field name="product_id" domain="[('type','=','service')]"/>
+                                        <field name="name"/>
+                                        <field name="account_id"/>
+                                        <field name="quantity"/>
+                                        <field name="uom_id"/>
+                                        <field name="price_unit"/>
+                                        <field name="price_total"/>
+                                        <field name="is_manual"/>
+                                    </tree>
+                                </field>
+                                <group class="oe_subtotal_footer oe_right">
+                                    <field name="amount_manual" class="oe_subtotal_footer_separator"/>
+                                </group>
+                            </page>
+
+                            <page string="账单综合明细">
                                 <field context="{'type': type, 'journal_id': journal_id}" name="invoice_line_ids">
                                     <tree string="Bill lines" editable="bottom">
                                         <field name="sequence" widget="handle"/>
@@ -466,7 +473,7 @@
                                     <field name="comment" placeholder="Additional notes..."/>
                                 </div>
                             </page>
-                            <page string="Other Info" name="other_info">
+                            <page string="Other Info" name="other_info" groups="base.group_system">
                                 <group>
                                     <group>
                                         <field name="journal_id" groups="account.group_account_user"
@@ -477,7 +484,7 @@
                                         <field name="user_id" string="Responsible"/>
                                         <field domain="[('company_id', '=', company_id), ('internal_type', '=', 'payable'), ('deprecated', '=', False)]"
                                                name="account_id" groups="account.group_account_manager"/>
-                                        <field name="payment_term_id" options="{'no_create': True}"/>
+
                                         <field name="name"/>
                                     </group>
                                     <group>
@@ -493,13 +500,13 @@
                                     </group>
                                 </group>
                             </page>
-                            <page string="相关分录">
+                            <page string="相关分录" groups="base.group_system">
                                 <group>
                                     <field name="move_ids" readonly="1"/>
                                     <field name="move_line_ids" readonly="1"/>
                                 </group>
                             </page>
-                            <page string="HS品名汇总">
+                            <page string="HS品名汇总" groups="base.group_system">
                                 <field name="item_ids">
                                     <tree>
                                         <field name="name"/>
@@ -568,14 +575,228 @@
             </field>
         </record>
 
-        <record id="action_sale_invoice_new" model="ir.actions.act_window">
-            <field name="name">客户应收</field>
+         <record model="ir.ui.view" id="view_account_invoice_back_tax_form">
+            <field name="name">account.invoice.back.tax.form</field>
+            <field name="model">account.invoice</field>
+            <field name="arch" type="xml">
+                <form string="应收退税" class="o_invoice_form">
+                <header groups="base.group_system">
+                    <button name="action_invoice_sent" type="object" string="Send by Email" attrs="{'invisible':['|',('sent','=',True), ('state', 'not in', ('open','paid'))]}" class="oe_highlight o_invoice_send" groups="base.group_user"/>
+                    <button name="invoice_print" string="Print Invoice" type="object" attrs="{'invisible':['|',('sent','=',True), ('state', 'not in', ('open','paid'))]}" class="oe_highlight" groups="base.group_user"/>
+                    <button name="action_invoice_sent" type="object" string="Send by Email" attrs="{'invisible':['|',('sent','=',False), ('state', 'not in', ('open','paid'))]}" groups="base.group_user"/>
+                    <button name="invoice_print" string="Print Invoice" type="object" attrs="{'invisible':['|',('sent','=',False), ('state', 'not in', ('open','paid'))]}" groups="base.group_user"/>
+                    <button name="130" id="account_invoice_payment_btn" type="action" states="open" string="Register Payment" groups="account.group_account_invoice" class="oe_highlight"/>
+                    <button name="action_invoice_open" type="object" states="draft" string="Validate" class="oe_highlight o_invoice_validate" groups="account.group_account_invoice"/>
+                    <button name="193" type="action" string="Add Credit Note" groups="account.group_account_invoice" attrs="{'invisible': ['|',('type', '=', 'out_refund'), ('state', 'not in', ('open','paid'))]}"/>
+                    <button name="action_invoice_draft" states="cancel" string="Reset to Draft" type="object" groups="account.group_account_invoice"/>
+                    <button string="HS品名统计" type="object" name="make_hs_name_items"/>
+                    <button name="action_invoice_cancel" type="object" states="draft,open" string="Cancel Invoice" groups="account.group_account_invoice"/>
+                    <field name="state" widget="statusbar" nolabel="1" statusbar_visible="draft,open,paid"/>
+                </header>
+                <div groups="account.group_account_invoice" class="alert alert-info" role="alert" style="margin-bottom:0px;" attrs="{'invisible': [('has_outstanding','=',False)]}">
+                    You have <bold><a class="alert-link" href="#outstanding" role="button">outstanding payments</a></bold> for this customer. You can allocate them to mark this invoice as paid.
+                </div>
+                <field name="has_outstanding" invisible="1"/>
+                <sheet string="Invoice">
+                    <div class="oe_button_box" name="button_box">
+                    </div>
+                    <label string="Credit Note" attrs="{'invisible': ['|',('state','=','draft'), ('type','!=','out_refund')]}"/>
+                    <h1 class="mt0">
+                        <div attrs="{'invisible': [('sequence_number_next_prefix','!=',False)]}">
+                            <label string="Draft Invoice" attrs="{'invisible': ['|',('state','not in',('draft',)), ('type','!=','out_invoice')]}"/>
+                            <label string="Draft Credit Note" attrs="{'invisible': ['|',('state','not in',('draft',)), ('type','!=','out_refund')]}"/>
+                            <field name="number" readonly="1" class="oe_inline" attrs="{'invisible': [('state','in',('draft',))]}"/>
+                        </div>
+                        <div attrs="{'invisible': [('sequence_number_next_prefix','=',False)]}">
+                            <label string="Invoice Number:"/><br/>
+                            <field name="sequence_number_next_prefix" class="oe_inline"/>
+                            <field name="sequence_number_next" class="oe_inline"/>
+                        </div>
+                    </h1>
+                    <field name="type" invisible="1"/>
+                    <group col="2">
+                        <group>
+                            <field string="Customer" name="partner_id" attrs="{'invisible':1}" context="{'search_default_customer':1, 'show_address': 1, 'default_company_type': 'company'}" options="{&quot;always_reload&quot;: True, &quot;no_quick_create&quot;: True}" domain="[('customer', '=', True)]"/>
+                            <field name="partner_shipping_id" attrs="{'invisible':1}" groups="sale.group_delivery_invoice_address" invisible="1"/>
+                            <field name="payment_term_id" attrs="{'invisible':1}"/>
+                            <field name="cash_rounding_id" attrs="{'invisible':1}" groups="account.group_cash_rounding"/>
+                            <field name="include_tax" attrs="{'invisible':1}" />
+                             <label for="currency_id" groups="base.group_multi_currency"/>
+                            <div groups="base.group_multi_currency">
+                                <field name="currency_id" options="{'no_create': True, 'no_open': True}" class="oe_inline"/>
+                                <field name="company_currency_id" invisible="1"/>
+                            </div>
+                            <field name="user_id"  string="责任人"/>
+                        </group>
+
+                         <group>
+                    <field name="date_ship" attrs="{'invisible':1}"/>
+                    <field name="date_finish" attrs="{'invisible':1}"/>
+                    <field name="date_deadline" attrs="{'invisible':1}"/>
+                    <field name="residual_times" attrs="{'invisible':1}"/>
+                    <field name="bill_id" string="出运合同" context="{'only_ref':1}"/>
+                    <field name="yjzy_type" attrs="{'invisible':1}"/>
+
+                    <field name="tb_contract_code"  attrs="{'invisible':1}"/>
+                    <field name="po_id"  attrs="{'invisible':1}"/>
+                    <field name="purchase_contract_code"  attrs="{'invisible':1}"/>
+                    <field name="residual_signed" string="到期金额" attrs="{'invisible':1}"/>
+                    <field name="sale_assistant_id"/>
+                    <field name="gongsi_id" string="销售主体"/>
+                             <field name="date_invoice" attrs="{'invisible':1}"/>
+                            <field name="date_due"  attrs="{'readonly': ['|',('payment_term_id','!=',False), ('state','=','paid')],'invisible':1}" force_save="1"/>
+                            <field name="move_name" invisible="1"/>
+
+                            <field name="team_id" attrs="{'invisible':1}"/>
+                </group>
+                    </group>
+                    <field name="sent" invisible="1"/>
+                    <notebook colspan="4">
+
+
+                        <page string="退税明细">
+                            <field name="invoice_line_ids" nolabel="1" widget="one2many_list" mode="tree,kanban" context="{'type': type, 'journal_id': journal_id, 'default_invoice_id': id}">
+                                <tree string="Invoice Lines" editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="product_id" domain="[('sale_ok','=',True)]"/>
+                                    <field name="layout_category_id" groups="sale.group_sale_layout"/>
+                                    <field name="origin" invisible="1"/>
+                                    <field name="is_rounding_line" invisible="1"/>
+                                    <field name="name"/>
+                                    <field name="so_id"/>
+                                    <field name="company_id" invisible="1"/>
+                                    <field name="account_id" groups="account.group_account_user" domain="[('company_id', '=', parent.company_id), ('internal_type', '=', 'other'), ('deprecated', '=', False)]"/>
+                                    <field name="account_analytic_id" groups="analytic.group_analytic_accounting" domain="[('company_id', '=', parent.company_id)]" context="{'default_partner_id': parent.partner_id}"/>
+                                    <field name="analytic_tag_ids" groups="analytic.group_analytic_accounting" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                                    <field name="quantity"/>
+                                    <field name="uom_id" groups="product.group_uom"/>
+                                    <field name="price_unit"/>
+                                    <field name="discount" groups="base.group_no_one"/>
+                                    <field name="invoice_line_tax_ids" widget="many2many_tags" options="{'no_create': True}" context="{'type':parent.type}" domain="[('type_tax_use','=','sale'),('company_id', '=', parent.company_id)]"/>
+                                    <field string="Subtotal" name="price_subtotal" groups="sale.group_show_price_subtotal"/>
+                                    <field string="Total" name="price_total" groups="sale.group_show_price_total"/>
+                                    <field name="currency_id" invisible="1"/>
+                                </tree>
+                                <kanban class="o_kanban_mobile">
+                                    <field name="product_id"/>
+                                    <field name="price_subtotal"/>
+                                    <field name="quantity"/>
+                                    <field name="uom_id" groups="product.group_uom"/>
+                                    <templates>
+                                        <t t-name="kanban-box">
+                                            <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                                <div class="row">
+                                                    <div class="col-xs-12">
+                                                        <strong><span><t t-esc="record.product_id.value or 'None'"/></span></strong>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-xs-8 text-muted">
+                                                        <span><t t-esc="record.quantity.value"/> <t t-esc="record.uom_id.value"/></span>
+                                                    </div>
+                                                    <div class="col-xs-4 text-muted">
+                                                        <span class="text-right"><t t-esc="record.price_subtotal.value"/></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </templates>
+                                </kanban>
+                            </field>
+                            <group class="oe_subtotal_footer oe_right">
+                                <field name="amount_untaxed"/>
+                                <field name="amount_tax"/>
+                                <field name="amount_total" class="oe_subtotal_footer_separator"/>
+                                <field name="payments_widget" colspan="2" nolabel="1" widget="payment"/>
+                                <field name="residual" class="oe_subtotal_footer_separator" attrs="{'invisible': [('state', '=', 'draft')]}"/>
+                                <field name="reconciled" invisible="1"/>
+                                <field name="outstanding_credits_debits_widget" colspan="2" nolabel="1" widget="payment" attrs="{'invisible': [('state', 'not in', 'open')]}"/>
+                            </group>
+                            <field name="comment" placeholder="Terms and conditions..."/>
+                        </page>
+                        <page string="Other Info" name="other_info" groups="base.group_system">
+                            <group>
+                                <group>
+                                    <field name="fiscal_position_id" options="{'no_create': True}"/>
+                                    <field name="journal_id" groups="account.group_account_user" options="{'no_create': True}" attrs="{'readonly':[('move_name','!=',False)]}"/>
+                                    <field domain="[('company_id', '=', company_id),('internal_type','=', 'receivable'), ('deprecated', '=', False)]" name="account_id" groups="account.group_account_user"/>
+                                    <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
+                                    <field domain="[('partner_id.ref_company_ids', 'in', [company_id])]" name="partner_bank_id" invisible="1"/>
+                                </group>
+                                <group>
+                                    <field name="move_id" groups="account.group_account_user" attrs="{'invisible': [('move_id', '=', False)]}"/>
+                                    <field name="origin" groups="base.group_user" attrs="{'invisible': [('origin', '=', False)]}"/>
+                                   <field name="incoterms_id" widget="selection" groups="sale_stock.group_display_incoterm"/>
+                                    <field name="name"/>
+                                </group>
+                            </group>
+                            <field name="tax_line_ids" >
+                                <tree editable="bottom" string="Taxes" create="0">
+                                    <field name="name"/>
+                                    <!--Need invisible fields for on_change to create all necessary info -->
+                                    <field name="tax_id" invisible="1"/>
+                                     <field name="tax_code"/>
+                                    <field name="account_analytic_id" invisible="1"/>
+                                    <field name="sequence" invisible="1"/>
+                                    <field name="manual" invisible="1"/>
+                                    <field name="account_id" groups="account.group_account_user"/>
+                                    <field name="amount" invisible="1"/>
+                                    <field name="amount_rounding" invisible="1"/>
+                                    <field name="amount_total"/>
+                                    <field name="currency_id" invisible="1"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="相关分录" groups="base.group_system">
+                    <group>
+                        <field name="move_ids" readonly="1"/>
+                        <field name="move_line_ids" readonly="1"/>
+                    </group>
+                </page>
+                <page string="HS品名汇总" groups="base.group_system">
+                    <field name="item_ids">
+                        <tree>
+                            <field name="name"/>
+                            <field name="product_id"/>
+                            <field name="qty"/>
+                            <field name="price"/>
+                            <field name="amount"/>
+                        </tree>
+                    </field>
+                </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_sale_invoice_unpaid_new" model="ir.actions.act_window">
+            <field name="name">未完成客户应收</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">account.invoice</field>
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_account_invoice_new_filter"/>
-            <field name="domain">[('type','=','out_invoice'),('yjzy_type','=','sale')]</field>
-            <field name="context">{'search_default_group_by_due_date':1,'type':'out_invoice', 'journal_type': 'sale','yjzy_type':'sale'}</field>
+            <field name="domain">[('type','=','out_invoice'),('yjzy_type','=','sale'),('state','!=','paid')]</field>
+            <field name="context">{'only_ref':1,'search_default_group_by_due_date':1,'type':'out_invoice', 'journal_type': 'sale','yjzy_type':'sale'}</field>
+            <!--field name="target">new</field-->
+            <field name="view_ids" eval="[(5, 0, 0),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('account.invoice_tree')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('view_account_invoice_new_form')}),
+                              ]"/>
+        </record>
+        <record id="action_sale_invoice_paid_new" model="ir.actions.act_window">
+            <field name="name">已完成客户应收</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_account_invoice_new_filter"/>
+            <field name="domain">[('type','=','out_invoice'),('yjzy_type','=','sale'),('state','=','paid')]</field>
+            <field name="context">{'only_ref':1,'type':'out_invoice', 'journal_type': 'sale','yjzy_type':'sale'}</field>
             <!--field name="target">new</field-->
             <field name="view_ids" eval="[(5, 0, 0),
                               (0, 0, {'view_mode': 'tree', 'view_id': ref('account.invoice_tree')}),
@@ -585,16 +806,39 @@
         <menuitem id="menu_sale_invoice_new" name="客户应收"
                   parent="yjzy_extend.menu_transport_tenyale_bill_root"
                   sequence="5"
-                  action="action_sale_invoice_new"
         />
-        <record id="action_purchase_invoice_new" model="ir.actions.act_window">
-            <field name="name">供应商应付</field>
+        <menuitem id="menu_sale_invoice_unpaid_new" name="未完成应收"
+                  parent="yjzy_extend.menu_sale_invoice_new"
+                  sequence="1"
+                  action="action_sale_invoice_unpaid_new"
+        />
+        <menuitem id="menu_sale_invoice_paid_new" name="已完成客户应收"
+                  parent="yjzy_extend.menu_sale_invoice_new"
+                  sequence="2"
+                  action="action_sale_invoice_paid_new"
+        />
+        <record id="action_purchase_invoice_unpaid_new" model="ir.actions.act_window">
+            <field name="name">未完成供应商应付</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">account.invoice</field>
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_account_invoice_new_filter"/>
-            <field name="domain">[('type','=','in_invoice'),('yjzy_type','=','purchase')]</field>
-            <field name="context">{'search_default_group_by_due_date':1,'type':'out_invoice', 'journal_type': 'sale','yjzy_type':'purchase'}</field>
+            <field name="domain">[('type','=','in_invoice'),('yjzy_type','=','purchase'),('state','!=','paid')]</field>
+            <field name="context">{'only_ref':1,'search_default_group_by_due_date':1,'type':'out_invoice', 'journal_type': 'sale','yjzy_type':'purchase'}</field>
+            <!--field name="target">new</field-->
+            <field name="view_ids" eval="[(5, 0, 0),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('account.invoice_supplier_tree')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('view_account_supplier_invoice_new_form')}),
+                              ]"/>
+        </record>
+         <record id="action_purchase_invoice_paid_new" model="ir.actions.act_window">
+            <field name="name">已完成供应商应付</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_account_invoice_new_filter"/>
+            <field name="domain">[('type','=','in_invoice'),('yjzy_type','=','purchase'),('state','=','paid')]</field>
+            <field name="context">{'only_ref':1,'type':'out_invoice', 'journal_type': 'sale','yjzy_type':'purchase'}</field>
             <!--field name="target">new</field-->
             <field name="view_ids" eval="[(5, 0, 0),
                               (0, 0, {'view_mode': 'tree', 'view_id': ref('account.invoice_supplier_tree')}),
@@ -606,28 +850,61 @@
         <menuitem id="menu_purchase_invoice_new" name="供应商应付"
                   parent="yjzy_extend.menu_transport_tenyale_bill_root"
                   sequence="5"
-                  action="action_purchase_invoice_new"
+
         />
-        <record id="action_back_tax_invoice_new" model="ir.actions.act_window">
-            <field name="name">应收退税</field>
+         <menuitem id="menu_purchase_invoice_unpaid_new" name="未完成应付"
+                  parent="yjzy_extend.menu_purchase_invoice_new"
+                  sequence="5"
+                  action="action_purchase_invoice_unpaid_new"
+        />
+         <menuitem id="menu_purchase_invoice_paid_new" name="已完成应付"
+                  parent="yjzy_extend.menu_purchase_invoice_new"
+                  sequence="5"
+                  action="action_purchase_invoice_paid_new"
+        />
+        <record id="action_back_tax_invoice_unpaid_new" model="ir.actions.act_window">
+            <field name="name">未完成退税</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">account.invoice</field>
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_account_invoice_new_filter"/>
-            <field name="domain">[('type','=','out_invoice'),('yjzy_type','=','back_tax')]</field>
-            <field name="context">{'type':'out_invoice', 'journal_type': 'sale','yjzy_type':'back_tax'}</field>
+            <field name="domain">[('type','=','out_invoice'),('yjzy_type','=','back_tax'),('state','!=','paid')]</field>
+            <field name="context">{'only_ref':1,'type':'out_invoice', 'journal_type': 'sale','yjzy_type':'back_tax'}</field>
             <!--field name="target">new</field-->
             <field name="view_ids" eval="[(5, 0, 0),
                               (0, 0, {'view_mode': 'tree', 'view_id': ref('view_account_invoice_back_tax_tree')}),
-                              (0, 0, {'view_mode': 'form', 'view_id': ref('account.invoice_form')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('view_account_invoice_back_tax_form')}),
+                              ]"/>
+        </record>
+        <record id="action_back_tax_invoice_paid_new" model="ir.actions.act_window">
+            <field name="name">已完成退税</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_account_invoice_new_filter"/>
+            <field name="domain">[('type','=','out_invoice'),('yjzy_type','=','back_tax'),('state','=','paid')]</field>
+            <field name="context">{'only_ref':1,'type':'out_invoice', 'journal_type': 'sale','yjzy_type':'back_tax'}</field>
+            <!--field name="target">new</field-->
+            <field name="view_ids" eval="[(5, 0, 0),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('view_account_invoice_back_tax_tree')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('view_account_invoice_back_tax_form')}),
                               ]"/>
         </record>
         <menuitem id="menu_back_tax_invoice_new" name="应收退税"
                   parent="yjzy_extend.menu_transport_tenyale_bill_root"
                   sequence="5"
-                  action="action_back_tax_invoice_new"
-        />
 
+        />
+        <menuitem id="menu_back_tax_invoice_unpaid_new" name="未完成退税"
+                  parent="yjzy_extend.menu_back_tax_invoice_new"
+                  sequence="5"
+                  action="action_back_tax_invoice_unpaid_new"
+        />
+                <menuitem id="menu_back_tax_invoice_paid_new" name="已完成退税"
+                  parent="yjzy_extend.menu_back_tax_invoice_new"
+                  sequence="5"
+                  action="action_back_tax_invoice_paid_new"
+        />
 
     </data>
 </odoo>

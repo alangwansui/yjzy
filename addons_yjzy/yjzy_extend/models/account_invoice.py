@@ -101,7 +101,7 @@ class account_invoice(models.Model):
                                           ('before_60_90',u'未来60-90天'),('before_90',u'未来超过90天'),('un_begin',u'未开始')],'到期时间组',store=True,
                                            compute=compute_residual_date_group)
     residual_times = fields.Integer('逾期天数',compute=compute_times)
-
+    date_out_in = fields.Date('进仓日')
 
 
 
