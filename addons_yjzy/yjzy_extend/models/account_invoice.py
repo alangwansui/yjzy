@@ -21,8 +21,48 @@ class account_invoice(models.Model):
                 one.date_deadline = (strptime(one.date_due, DF) + diff).strftime(DF)
 
     def compute_info(self):
+
         for one in self:
             one.purchase_date_finish_att_count = len(one.purchase_date_finish_att)
+
+
+    def compute_times(self):
+        today = datetime.today()
+        strptime = datetime.strptime
+        for one in self:
+            if one.date_deadline:
+               residual_times = today - strptime(one.date_deadline,DF)
+               one.residual_times = residual_times.days
+
+    @api.depends('invoice_line_ids.price_subtotal', 'tax_line_ids.amount', 'tax_line_ids.amount_rounding',
+                 'currency_id', 'company_id', 'date_invoice', 'type')
+    def compute_amount(self):
+        for one in self:
+            one.amount_automatic = sum(line.price_total for line in one.invoice_line_ids_origin)
+            one.amount_manual = sum(line.price_total for line in one.invoice_line_ids_add)
+
+    @api.depends('residual_times','date_ship','date_finish')
+    def compute_residual_date_group(self):
+        residual_date_group = 'un_begin'
+        for one in self:
+            if one.date_deadline:
+                if one.residual_times >= 60:
+                    residual_date_group = 'after_60'
+                if one.residual_times >= 30 and one.residual_times < 60:
+                    residual_date_group = 'after_30'
+                if one.residual_times >= 0 and one.residual_times < 30:
+                    residual_date_group = '0_30'
+                if one.residual_times >= -30 and one.residual_times < 0:
+                    residual_date_group = 'before_30'
+                if one.residual_times >= -60 and one.residual_times < -30:
+                    residual_date_group = 'before_30_60'
+                if one.residual_times >= -90 and one.residual_times < -60:
+                    residual_date_group = 'before_60_90'
+                if one.residual_times < -90:
+                    residual_date_group = 'before_90'
+            else:
+                residual_date_group = 'un_begin'
+            one.residual_date_group = residual_date_group
 
 
     yjzy_type = fields.Selection([('sale', u'销售'), ('purchase', u'采购'), ('back_tax', u'退税')], string=u'发票类型')
@@ -52,6 +92,18 @@ class account_invoice(models.Model):
     tb_sale_invoice_balance = fields.Monetary('对应应收余额', related='bill_id.sale_invoice_balance_new')
     invoice_line_ids_add = fields.One2many('account.invoice.line','invoice_id', domain=[('is_manual', '=', True)],
                                            readonly=True, states={'draft': [('readonly', False)]}, copy=True)
+    invoice_line_ids_origin = fields.One2many('account.invoice.line', 'invoice_id', domain=[('is_manual', '=', False)],
+                                           readonly=True, states={'draft': [('readonly', False)]}, copy=True)
+    amount_automatic = fields.Monetary('原始合计金额',compute=compute_amount)
+    amount_manual = fields.Monetary('手动合计金额',compute=compute_amount)
+    residual_date_group = fields.Selection([('after_60',u'逾期>60天'),('after_30',u'逾期>30天'),('0_30',u'逾期0-30天'),
+                                          ('before_30',u'未来30天'),('before_30_60',u'未来30-60天'),
+                                          ('before_60_90',u'未来60-90天'),('before_90',u'未来超过90天'),('un_begin',u'未开始')],'到期时间组',store=True,
+                                           compute=compute_residual_date_group)
+    residual_times = fields.Integer('逾期天数',compute=compute_times)
+
+
+
 
     # def name_get(self):
     #     ctx = self.env.context

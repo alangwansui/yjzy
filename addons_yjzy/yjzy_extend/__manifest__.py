@@ -45,6 +45,7 @@
         'views/account_journal.xml',
         'views/account_move.xml',
         'views/account_invoice.xml',
+        'views/account_invoice_new.xml',
         'views/account_reconcile_orde.xml',
         'views/account_reconcile_orde2.xml',
         'views/bom_template.xml',
