@@ -1893,3 +1893,9 @@ class transport_bill(models.Model):
         return True
 
 
+    def update_state_to_invoiced_or_delivered(self):
+        for one in self:
+            if one.date_all_state == 'done' and one.state == 'delivered':
+                one.state = 'invoiced'
+            if one.date_all_state != 'done' and one.state == 'invoiced':
+                one.state = 'invoiced'
