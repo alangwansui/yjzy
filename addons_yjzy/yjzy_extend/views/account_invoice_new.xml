@@ -932,7 +932,7 @@
                               ]"/>
         </record>
         <menuitem id="menu_back_tax_invoice_new" name="应收退税"
-                  parent="yjzy_extend.menu_transport_tenyale_bill_root"
+                  parent="yjzy_extend.menu_purchase_invoice_new"
                   sequence="5"
 
         />
