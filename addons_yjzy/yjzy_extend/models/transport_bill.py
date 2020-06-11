@@ -89,6 +89,11 @@ class transport_bill(models.Model):
                 else:
                     gold_sample_state = 'part'
 
+
+
+
+
+
            # 供应商交单日期审批状态
             if all([x.purchase_date_finish_state == 'draft' for x in one.purchase_invoice_ids]):
                 date_purchase_finish_state = 'draft'
@@ -289,8 +294,19 @@ class transport_bill(models.Model):
                 'back_tax_invoice_balance_new': one.sale_currency_id.round(back_tax_invoice_balance),
                 'back_tax_invoice_paid_new': one.sale_currency_id.round(back_tax_invoice_paid),
             })
-
-
+    def _comput_date_all_state(self):
+        for one in self:
+            # 日期填写状态计算 akiny
+            today = datetime.now()
+            date_all_state = 'un_done'
+            if  one.date_out_in_state and one.date_ship_state and one.date_customer_finish_state and one.date_purchase_finish_state:
+                date_all_state = 'done'
+            else:
+                if one.approve_date and one.approve_date < (today - relativedelta(days=30)).strftime('%Y-%m-%d 00:00:00'):
+                    date_all_state = 'abnormal'
+                else:
+                    date_all_state = 'ub_done'
+            one.date_all_state = date_all_state
 
     # 货币设置
     #akiny 未加入
@@ -319,7 +335,10 @@ class transport_bill(models.Model):
     date_purchase_finish_state = fields.Selection([('draft',u'草稿'),
                                                    ('submit',u'待审批'),
                                                    ('done',u'完成')],'供应商交单日审批状态',default='draft', compute=compute_info)
-
+    date_all_state = fields.Selection([('un_done',u'待完成相关日期'),
+                                                   ('done',u'已完成相关日期'),
+                                                   ('abnormal',u'日期异常')],'所有日期状态',default='un_done', compute=_comput_date_all_state)
+    hexiao_type = fields.Selection([('abnormal',u'异常核销'),('write_off',u'正常核销')], string='核销类型')
 
     tba_id = fields.Many2one('transport.bill.account', '转账调节单')
     incoterm_code = fields.Char('贸易术语', related='incoterm.code', readonly=True)
@@ -593,6 +612,7 @@ class transport_bill(models.Model):
 
     gold_sample_state = fields.Selection([('all', '全部有'), ('part', '部分有'), ('none', '无金样')], '样金管理',
                                          compute=compute_info)
+
 
     def make_sale_purchase_collect(self):
         self.make_sale_collect()
@@ -1294,29 +1314,30 @@ class transport_bill(models.Model):
             #account = self.env['account.account'].search([('code','=', '50011'),('company_id', '=', self.user_id.company_id.id)], limit=1)
             account = product.property_account_income_id
 
+
             if not account:
                 raise Warning(u'没有找到退税科目,请先在退税产品的收入科目上设置')
+            if self.back_tax_amount != 0:
+                back_tax_invoice = self.env['account.invoice'].create({
+                    'partner_id': partner.id,
+                    'type': 'out_invoice',
+                    'journal_type': 'sale',
+                    'date_ship': self.date,
+                    'date_finish': self.date,
+                    'bill_id': self.id,
+                    'yjzy_type': 'back_tax',
+                    'gongsi_id': self.purchase_gongsi_id.id,
 
-            back_tax_invoice = self.env['account.invoice'].create({
-                'partner_id': partner.id,
-                'type': 'out_invoice',
-                'journal_type': 'sale',
-                'date_ship': self.date,
-                'date_finish': self.date,
-                'bill_id': self.id,
-                'yjzy_type': 'back_tax',
-                'gongsi_id': self.purchase_gongsi_id.id,
-
-                'include_tax': self.include_tax,
-                'invoice_line_ids': [(0, 0, {
-                    'name': '%s:%s' % (product.name, self.name),
-                    'product_id': product.id,
-                    'quantity': 1,
-                    'price_unit': self.back_tax_amount,
-                    'account_id': account.id,
-                })]
-            })
-            self.back_tax_invoice_id = back_tax_invoice
+                    'include_tax': self.include_tax,
+                    'invoice_line_ids': [(0, 0, {
+                        'name': '%s:%s' % (product.name, self.name),
+                        'product_id': product.id,
+                        'quantity': 1,
+                        'price_unit': self.back_tax_amount,
+                        'account_id': account.id,
+                    })]
+                })
+                self.back_tax_invoice_id = back_tax_invoice
         return {
             'name': '退税发票',
             'view_type': 'form',
@@ -1796,3 +1817,22 @@ class transport_bill(models.Model):
                 war += '出运明细不为空\n'
             if war:
                 raise Warning(war)
+
+
+    def update_hexiaotype_doing_type(self):
+        for one in self:
+            print('---', one)
+            hexiao_type = False
+            state = one.state
+            today = datetime.now()
+            approve_date = one.approve_date
+            # 未发货，开始发货，待核销，已核销
+            if (one.sale_invoice_balance_new!= 0 or one.purchase_invoice_balance_new != 0 ) and approve_date \
+                    and approve_date < (today - relativedelta(days=185)).strftime('%Y-%m-%d 00:00:00') and one.state != 'done':
+                hexiao_type = 'abnormal'
+                state = 'verifying'
+            if one.sale_invoice_balance_new == 0 and one.purchase_invoice_balance_new == 0 and one.state != 'done':
+                hexiao_type = 'write_off'
+                state = 'verifying'
+            one.hexiao_type = hexiao_type
+            one.state = state

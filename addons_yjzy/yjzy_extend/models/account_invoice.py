@@ -241,6 +241,12 @@ class account_invoice(models.Model):
                     one.action_invoice_open()
 
 
+    @api.multi
+    def action_invoice_cancel_1(self):
+        if self.filtered(lambda inv: inv.state not in ['draft', 'open','paid']):
+            raise UserError(_("Invoice must be in draft or open state in order to be cancelled."))
+        return self.action_cancel()
+
 
 class account_invoice_line(models.Model):
     _inherit = 'account.invoice.line'
