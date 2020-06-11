@@ -5,6 +5,7 @@ from odoo import models, fields, api, _
 from odoo.exceptions import Warning
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+from odoo.tools import DEFAULT_SERVER_DATE_FORMAT as DF
 
 
 Stage_Status = [
@@ -89,9 +90,17 @@ class transport_bill(models.Model):
                 else:
                     gold_sample_state = 'part'
 
+            #计算账单是否确认
+            invoice_state = 'draft'
+            line_count = len(one.purchase_invoice_ids)
+            line_count_open = len(one.purchase_invoice_ids.filtered(lambda x: x.state == 'open'))
 
-
-
+            if line_count_open > 0:
+                if line_count_open == line_count and one.sale_invoice_id.state == 'open' and one.back_tax_invoice_id.state == 'open':
+                    invoice_state = 'open'
+                else:
+                    invoice_state = 'draft'
+            one.invoice_state = invoice_state
 
 
            # 供应商交单日期审批状态
@@ -339,6 +348,7 @@ class transport_bill(models.Model):
                                                    ('done',u'已完成相关日期'),
                                                    ('abnormal',u'日期异常')],'所有日期状态',default='un_done', compute=_comput_date_all_state)
     hexiao_type = fields.Selection([('abnormal',u'异常核销'),('write_off',u'正常核销')], string='核销类型')
+    invoice_state = fields.Selection([('draft', u'未确认'), ('open', u'已确认'),('paid',u'已付款')], string='账单状态',compute=compute_info)
 
     tba_id = fields.Many2one('transport.bill.account', '转账调节单')
     incoterm_code = fields.Char('贸易术语', related='incoterm.code', readonly=True)
@@ -452,7 +462,7 @@ class transport_bill(models.Model):
                               ('draft', u'草稿'), ('check', u'检查'),
                               ('w_sale_manager', u'待批准'),
                               ('w_sale_director', u'待销售总监'),('submit', u'待责任人审批'), ('sales_approve', u'待合规审批'),
-                              ('approve', u'合规已审批'), ('confirmed', u'单证已审批'),('delivered', u'发货完成'), ('invoiced', u'已开票'),('locked', u'锁定'),
+                              ('approve', u'合规已审批'), ('confirmed', u'单证已审批'),('delivered', u'发货完成'), ('invoiced', u'账单已确认'),('locked', u'锁定'),
                               ('verifying', u'待核销'),
                               ('done', u'完结'),('paid', '已收款'), ('edit', u'可修改')], '状态', default='draft', track_visibility='onchange',)
 
@@ -1271,6 +1281,7 @@ class transport_bill(models.Model):
             if self.state not in ('approve','confirmed','delivered','invoiced','verifying','done'):
                 raise Warning('非执行中的出运单，不允许填写日期')
             else:
+                #如果是
                 if self.state == 'approve':
                     self.state = 'invoiced'
                     self.onece_all_stage()
@@ -1285,26 +1296,33 @@ class transport_bill(models.Model):
              raise Warning(u'请先设置进仓日期')
         for one in self:
             #同步采购发票日期
-            for purchase_invoice in self.purchase_invoice_ids.filtered(lambda x: x.yjzy_type == 'purchase'):
+            for purchase_invoice in one.purchase_invoice_ids.filtered(lambda x: x.yjzy_type == 'purchase'):
                 purchase_invoice.date_ship = one.date_ship
                 purchase_invoice.date_finish = one.date_supplier_finish
                 purchase_invoice.date_invoice = one.date_out_in
-                if purchase_invoice.state == 'draft':
-                    purchase_invoice.action_invoice_open()
+                purchase_invoice.date_out_in = one.date_out_in
+               # if purchase_invoice.state == 'draft':
+               #     purchase_invoice.action_invoice_open()
             #同步销售发票
             sale_invoice = one.sale_invoice_id
             if sale_invoice:
                 sale_invoice.date_invoice = one.date_out_in
+                sale_invoice.date_out_in = one.date_out_in
                 sale_invoice.date_finish = one.date_customer_finish
                 sale_invoice.date_ship = one.date_ship
-                if sale_invoice.state == 'draft':
-                    sale_invoice.action_invoice_open()
+               # if sale_invoice.state == 'draft':
+               #     sale_invoice.action_invoice_open()
             back_tax_invoice = one.back_tax_invoice_id
-            back_tax_invoice_sate = one.back_tax_invoice_id.state
-            if back_tax_invoice and back_tax_invoice_sate == 'draft':
-                back_tax_invoice.action_invoice_open()
+            if back_tax_invoice:
+                back_tax_invoice.date_out_in = one.date_out_in
+                back_tax_invoice.date_invoice = one.date_out_in
+                back_tax_invoice.date_finish = one.date_customer_finish
+                back_tax_invoice.date_ship = one.date_ship
+          #  back_tax_invoice = one.back_tax_invoice_id
+         #   back_tax_invoice_sate = one.back_tax_invoice_id.state
+           # if back_tax_invoice and back_tax_invoice_sate == 'draft':
+           #     back_tax_invoice.action_invoice_open()
         return True
-
 
     def make_back_tax_invoice(self):
         self.ensure_one()
@@ -1839,3 +1857,35 @@ class transport_bill(models.Model):
                 state = 'verifying'
             one.hexiao_type = hexiao_type
             one.state = state
+
+
+    def auto_invoice_open(self):
+        for one in self:
+            default_times = 0
+            if one.company_id.after_date_out_in_times:
+                default_times = one.company_id.after_date_out_in_times
+            today = datetime.now()
+            strptime = datetime.strptime
+            if one.date_out_in and one.state == 'delivery' and one.invoice_state == 'draft':
+                for purchase_invoice in one.purchase_invoice_ids.filtered(lambda x: x.yjzy_type == 'purchase'):
+                    if purchase_invoice and purchase_invoice.state == 'draft' and purchase_invoice.date_out_in:
+                        purchase_date_out_in_times = (today - strptime(purchase_invoice.date_out_in, DF)).days
+                        print('--times--',purchase_date_out_in_times)
+                        if default_times < purchase_date_out_in_times:
+                            purchase_invoice.action_invoice_open()
+                sale_invoice = one.sale_invoice_id
+                if sale_invoice and sale_invoice.state == 'draft' and sale_invoice.date_out_in:
+                    sale_date_out_in_times = (today - strptime(sale_invoice.date_out_in, DF)).days
+                    if default_times < sale_date_out_in_times:
+                        sale_invoice.action_invoice_open()
+                back_tax_invoice = one.back_tax_invoice_id
+                back_tax_invoice_state = one.back_tax_invoice_id.state
+                if back_tax_invoice and back_tax_invoice_state == 'draft' and back_tax_invoice.date_out_in:
+                    back_tax_date_out_in = (today - strptime(back_tax_invoice.date_out_in, DF)).days
+                    if default_times < back_tax_date_out_in:
+                        back_tax_invoice.action_invoice_open()
+            if one.state == 'delivery' and one.invoice_state == 'open':
+                one.state = 'invoiced'
+        return True
+
+
