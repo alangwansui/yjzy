@@ -1251,7 +1251,7 @@
             <field name="view_mode">tree,form</field>
             <field name="limit">20</field>
             <field name="domain">[('state','in',['delivered','invoiced'])]</field>
-            <field name="context">{'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3}</field>
+            <field name="context">{'show_date_finish':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3}</field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_transport_bill_new_date_tree')})]"/>
 

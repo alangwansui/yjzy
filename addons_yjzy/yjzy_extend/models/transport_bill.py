@@ -768,13 +768,16 @@ class transport_bill(models.Model):
         result = []
         only_ref = self.env.context.get('only_ref')
         for one in self:
+            print('---name_get---',one)
             name = one.name
             if one.ref:
                 if only_ref:
                     name = one.ref
                 else:
                     name += ':%s' % one.ref
-                result.append((one.id, name))
+            result.append((one.id, name))
+            print('---name_get---', result)
+
         return result
 
     @api.model
