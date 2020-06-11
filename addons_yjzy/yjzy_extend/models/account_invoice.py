@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime, timedelta
-from odoo import models, fields, api
+from odoo import models, fields, api,_
 from odoo.tools import DEFAULT_SERVER_DATE_FORMAT as DF
 from odoo.addons import decimal_precision as dp
-from odoo.exceptions import Warning
+from odoo.exceptions import Warning,UserError
 
 
 class account_invoice(models.Model):
