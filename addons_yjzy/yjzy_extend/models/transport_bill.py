@@ -308,7 +308,7 @@ class transport_bill(models.Model):
             # 日期填写状态计算 akiny
             today = datetime.now()
             date_all_state = 'un_done'
-            if  one.date_out_in and one.date_ship and one.date_customer_finish and one.date_purchase_finish:
+            if  one.date_out_in_state == 'done' and one.date_ship and one.date_customer_finish_state == 'done' and one.date_purchase_finish_state == 'done':
                 date_all_state = 'done'
             else:
                 if one.approve_date and one.approve_date < (today - relativedelta(days=30)).strftime('%Y-%m-%d 00:00:00'):
