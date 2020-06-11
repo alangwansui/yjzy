@@ -1298,7 +1298,7 @@ class transport_bill(models.Model):
             #同步采购发票日期
             for purchase_invoice in one.purchase_invoice_ids.filtered(lambda x: x.yjzy_type == 'purchase'):
                 purchase_invoice.date_ship = one.date_ship
-                purchase_invoice.date_finish = one.date_supplier_finish
+                #purchase_invoice.date_finish = one.date_supplier_finish
                 purchase_invoice.date_invoice = one.date_out_in
                 purchase_invoice.date_out_in = one.date_out_in
                # if purchase_invoice.state == 'draft':
