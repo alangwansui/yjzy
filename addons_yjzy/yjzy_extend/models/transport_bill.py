@@ -1898,4 +1898,4 @@ class transport_bill(models.Model):
             if one.date_all_state == 'done' and one.state == 'delivered':
                 one.state = 'invoiced'
             if one.date_all_state != 'done' and one.state == 'invoiced':
-                one.state = 'invoiced'
+                one.state = 'delivered'
