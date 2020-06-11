@@ -1850,10 +1850,10 @@ class transport_bill(models.Model):
             hexiao_type = False
             state = one.state
             today = datetime.now()
-            approve_date = one.approve_date
+            date_out_in = one.date_out_in
             # 未发货，开始发货，待核销，已核销
-            if (one.sale_invoice_balance_new!= 0 or one.purchase_invoice_balance_new != 0 ) and approve_date \
-                    and approve_date < (today - relativedelta(days=185)).strftime('%Y-%m-%d 00:00:00') and one.state != 'done':
+            if (one.sale_invoice_balance_new!= 0 or one.purchase_invoice_balance_new != 0 ) and date_out_in \
+                    and date_out_in < (today - relativedelta(days=90)).strftime('%Y-%m-%d 00:00:00') and one.state != 'done':
                 hexiao_type = 'abnormal'
                 state = 'verifying'
             if one.sale_invoice_balance_new == 0 and one.purchase_invoice_balance_new == 0 and one.state != 'done':
@@ -1870,7 +1870,7 @@ class transport_bill(models.Model):
                 default_times = one.company_id.after_date_out_in_times
             today = datetime.now()
             strptime = datetime.strptime
-            if one.date_out_in and one.state == 'delivery' and one.invoice_state == 'draft':
+            if one.date_out_in and one.date_out_in_state == 'done' and one.state == 'delivery' and one.invoice_state == 'draft':
                 for purchase_invoice in one.purchase_invoice_ids.filtered(lambda x: x.yjzy_type == 'purchase'):
                     if purchase_invoice and purchase_invoice.state == 'draft' and purchase_invoice.date_out_in:
                         purchase_date_out_in_times = (today - strptime(purchase_invoice.date_out_in, DF)).days
