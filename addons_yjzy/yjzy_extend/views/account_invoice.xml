@@ -68,7 +68,7 @@
                 </group>
             </xpath>
 
-            <xpath expr="//form[1]/sheet[1]/notebook[1]/page[1]" position="before">
+            <!--xpath expr="//form[1]/sheet[1]/notebook[1]/page[1]" position="before">
             <page string="账单修正明细">
                     <field name="invoice_line_ids_add" context="{'default_is_manual':1}">
                         <tree editable="bottom">
@@ -103,7 +103,7 @@
                                 <field name="amount_automatic" class="oe_subtotal_footer_separator"/>
                         </group>
                 </page>
-            </xpath>
+            </xpath-->
             <notebook position="inside">
                 <page string="相关分录">
                     <group>
@@ -150,7 +150,7 @@
                 <field name="purchase_contract_code"/>
                 <field name="gongsi_id"/>
             </field>
-              <xpath expr="//form[1]/sheet[1]/notebook[1]/page[1]" position="before">
+              <!--xpath expr="//form[1]/sheet[1]/notebook[1]/page[1]" position="before">
             <page string="账单修正明细">
                     <field name="invoice_line_ids_add" context="{'default_is_manual':1}">
                         <tree editable="bottom">
@@ -165,7 +165,7 @@
                         </tree>
                     </field>
                 </page>
-            </xpath>
+            </xpath-->
             <notebook position="inside">
                 <page string="相关分录">
                     <group>

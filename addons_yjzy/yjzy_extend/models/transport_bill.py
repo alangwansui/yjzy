@@ -314,7 +314,7 @@ class transport_bill(models.Model):
                 if one.approve_date and one.approve_date < (today - relativedelta(days=30)).strftime('%Y-%m-%d 00:00:00'):
                     date_all_state = 'abnormal'
                 else:
-                    date_all_state = 'ub_done'
+                    date_all_state = 'un_done'
             one.date_all_state = date_all_state
 
     # 货币设置
@@ -1283,11 +1283,12 @@ class transport_bill(models.Model):
             else:
                 #如果是
                 if self.state == 'approve':
-                    self.state = 'invoiced'
+                    self.state = 'delivered'
                     self.onece_all_stage()
                     self.sync_data2invoice()
-                elif self.state == 'invoiced':
-                    self.sync_data2invoice()
+                elif self.state in ('delivered','invoiced'):
+                      self.sync_data2invoice()
+
             return res
 
 #akiny 发货的时候生成所有发票，填入进仓日期后，点生成应收应付按钮，完成确认。
@@ -1322,6 +1323,9 @@ class transport_bill(models.Model):
          #   back_tax_invoice_sate = one.back_tax_invoice_id.state
            # if back_tax_invoice and back_tax_invoice_sate == 'draft':
            #     back_tax_invoice.action_invoice_open()
+            if one.date_all_state == 'done' and one.state == 'delivered':
+                one.state = 'invoiced'
+
         return True
 
     def make_back_tax_invoice(self):
