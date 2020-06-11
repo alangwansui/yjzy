@@ -1,6 +1,9 @@
 <odoo>
     <data>
-
+        <menuitem id="menu_transport_tenyale_bill_root"
+                  name="出运:新"
+                  sequence="99"
+        />
         <record id="view_transport_bill_tenyale_filter" model="ir.ui.view">
             <field name="name">transport.bill.tenyale.select</field>
             <field name="model">transport.bill</field>
@@ -1503,10 +1506,7 @@
 
         </record>
 
-        <menuitem id="menu_transport_tenyale_bill_root"
-                  name="出运:新"
-                  sequence="99"
-        />
+
         <menuitem id="menu_transport_tenyale_date_bill" name="出运单日期填制"
                   parent="yjzy_extend.menu_transport_tenyale_bill_root"
                   sequence="5"
