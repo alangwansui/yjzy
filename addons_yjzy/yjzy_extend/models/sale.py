@@ -782,16 +782,17 @@ class sale_order(models.Model):
             today = datetime.now()
             requested_date = one.requested_date
             # 未发货，开始发货，待核销，已核销
-            if (one.no_sent_amount_new != 0 or one.purchase_no_deliver_amount_new != 0 ) and requested_date and requested_date < (today - relativedelta(days=185)).strftime('%Y-%m-%d 00:00:00') and one.state != 'verification':
-                state='verifying'
-                hexiao_type = 'abnormal'
-            if one.no_sent_amount_new == 0 and one.purchase_no_deliver_amount_new == 0 and one.state != 'verification':
-                if one.balance == 0 and one.purchase_balance_sum3 == 0:
-                    hexiao_type = 'write_off'
-                    state = 'verifying'
-                else:
+            if one.state in ('sale','verifying'):
+                if (one.no_sent_amount_new != 0 or one.purchase_no_deliver_amount_new != 0 ) and requested_date and requested_date < (today - relativedelta(days=185)).strftime('%Y-%m-%d 00:00:00'):
+                    state='verifying'
                     hexiao_type = 'abnormal'
-                    state = 'verifying'
+                if one.no_sent_amount_new == 0 and one.purchase_no_deliver_amount_new == 0:
+                    if one.balance == 0 and one.purchase_balance_sum3 == 0:
+                        hexiao_type = 'write_off'
+                        state = 'verifying'
+                    else:
+                        hexiao_type = 'abnormal'
+                        state = 'verifying'
             one.hexiao_type = hexiao_type
             one.state = state
 

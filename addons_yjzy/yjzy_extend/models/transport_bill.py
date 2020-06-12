@@ -1165,6 +1165,7 @@ class transport_bill(models.Model):
                     'date_finish': self.date_supplier_finish,
                     'bill_id': self.id,
                     'date_invoice': self.date_out_in,
+                    'date': self.date_out_in,
                     'include_tax': self.include_tax,
                     'yjzy_type': 'purchase',
                     'gongsi_id': self.purchase_gongsi_id.id,
@@ -1234,6 +1235,7 @@ class transport_bill(models.Model):
             sale_invoices.write({
                 'date_invoice': self.date_out_in,
                 'date_out_in': self.date_out_in,
+                'date': self.date_out_in,
                 'date_finish': self.date_customer_finish,
                 'include_tax': self.include_tax,
                 'date_ship': self.date_ship,
@@ -1301,7 +1303,9 @@ class transport_bill(models.Model):
                 purchase_invoice.date_ship = one.date_ship
                 #purchase_invoice.date_finish = one.date_supplier_finish
                 purchase_invoice.date_invoice = one.date_out_in
+                purchase_invoice.date = one.date_out_in
                 purchase_invoice.date_out_in = one.date_out_in
+                purchase_invoice._onchange_payment_term_date_invoice()
                # if purchase_invoice.state == 'draft':
                #     purchase_invoice.action_invoice_open()
             #同步销售发票
@@ -1309,16 +1313,20 @@ class transport_bill(models.Model):
             if sale_invoice:
                 sale_invoice.date_invoice = one.date_out_in
                 sale_invoice.date_out_in = one.date_out_in
+                sale_invoice.date = one.date_out_in
                 sale_invoice.date_finish = one.date_customer_finish
                 sale_invoice.date_ship = one.date_ship
+                sale_invoice._onchange_payment_term_date_invoice()
                # if sale_invoice.state == 'draft':
                #     sale_invoice.action_invoice_open()
             back_tax_invoice = one.back_tax_invoice_id
             if back_tax_invoice:
                 back_tax_invoice.date_out_in = one.date_out_in
                 back_tax_invoice.date_invoice = one.date_out_in
+                back_tax_invoice.date = one.date_out_in
                 back_tax_invoice.date_finish = one.date_customer_finish
                 back_tax_invoice.date_ship = one.date_ship
+                back_tax_invoice._onchange_payment_term_date_invoice()
           #  back_tax_invoice = one.back_tax_invoice_id
          #   back_tax_invoice_sate = one.back_tax_invoice_id.state
            # if back_tax_invoice and back_tax_invoice_sate == 'draft':
@@ -1852,15 +1860,16 @@ class transport_bill(models.Model):
             today = datetime.now()
             date_out_in = one.date_out_in
             # 未发货，开始发货，待核销，已核销
-            if (one.sale_invoice_balance_new!= 0 or one.purchase_invoice_balance_new != 0 ) and date_out_in \
-                    and date_out_in < (today - relativedelta(days=90)).strftime('%Y-%m-%d 00:00:00') and one.state != 'done':
-                hexiao_type = 'abnormal'
-                state = 'verifying'
-            if one.sale_invoice_balance_new == 0 and one.purchase_invoice_balance_new == 0 and one.state != 'done':
-                hexiao_type = 'write_off'
-                state = 'verifying'
-            one.hexiao_type = hexiao_type
-            one.state = state
+            if one.state in ('invoiced'):
+                if (one.sale_invoice_balance_new!= 0 or one.purchase_invoice_balance_new != 0 ) and date_out_in \
+                        and date_out_in < (today - relativedelta(days=90)).strftime('%Y-%m-%d 00:00:00') :
+                    hexiao_type = 'abnormal'
+                    state = 'verifying'
+                if one.sale_invoice_balance_new == 0 and one.purchase_invoice_balance_new == 0:
+                    hexiao_type = 'write_off'
+                    state = 'verifying'
+                one.hexiao_type = hexiao_type
+                one.state = state
 
 
     def auto_invoice_open(self):
