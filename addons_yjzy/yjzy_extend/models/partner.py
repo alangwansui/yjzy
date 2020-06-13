@@ -39,9 +39,13 @@ class res_partner(models.Model):
     def last_sale_order(self):
         for one in self:
             if one.sale_order_ids:
-                last_order = one.sudo().sale_order_ids[0]
+                last_sale_orders = one.sale_order_ids.filtered(lambda x: x.approve_date != False)
+                last_order = last_sale_orders[0]
                 one.last_sale_order_approve_date = last_order.approve_date
-                print('--lastdate--', last_order, last_order.approve_date)
+            # if one.sale_order_ids:
+            #     last_order = one.sudo().sale_order_ids[0]
+            #     one.last_sale_order_approve_date = last_order.approve_date
+            #     print('--lastdate--', last_order, last_order.approve_date)
     # 增加地址翻译
 
     code = fields.Char('编码')
