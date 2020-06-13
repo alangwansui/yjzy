@@ -39,11 +39,12 @@ class res_partner(models.Model):
     def last_sale_order(self):
         company = self.env.user.company_id.id
         for one in self:
-            last_sale_orders = one.sale_order_ids.filtered(
-                lambda x: x.approve_date != False and x.company_id == company)
+            last_sale_orders = one.sudo().sale_order_ids.filtered(
+                lambda x: x.approve_date != False)
             if last_sale_orders:
                 last_order = last_sale_orders[0]
                 one.last_sale_order_approve_date = last_order.approve_date
+                print('--lastdate--', last_order, last_order.approve_date)
             # if one.sale_order_ids:
             #     last_order = one.sudo().sale_order_ids[0]
             #     one.last_sale_order_approve_date = last_order.approve_date
