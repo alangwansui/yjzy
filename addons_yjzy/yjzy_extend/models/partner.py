@@ -37,9 +37,10 @@ class res_partner(models.Model):
 
     @api.depends('sale_order_ids')
     def last_sale_order(self):
+        company = self.env.user.company_id.id
         for one in self:
             if one.sale_order_ids:
-                last_sale_orders = one.sudo().sale_order_ids.filtered(lambda x: x.approve_date != False)
+                last_sale_orders = one.sale_order_ids.filtered(lambda x: x.approve_date != False and x.company_id == company)
                 last_order = last_sale_orders[0]
                 one.last_sale_order_approve_date = last_order.approve_date
             # if one.sale_order_ids:
