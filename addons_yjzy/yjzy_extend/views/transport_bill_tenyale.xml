@@ -1569,6 +1569,7 @@
             <field name="view_type">form</field>
             <field name="limit">20</field>
             <field name="view_mode">tree,form,kanban</field>
+            <field name="search_view_id" ref="view_transport_bill_tenyale_filter"/>
             <field name="domain">[('state','in',['approve','confirmed','delivered','invoiced','verifying'])]</field>
             <field name="context">{'default_search_group_by_state_hexiao':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3,'group_by':'state','show_po_code':
                 1}
@@ -1710,6 +1711,7 @@
             <field name="view_mode">tree,form,kanban</field>
             <field name="domain">[]</field>
             <field name="limit">20</field>
+            <field name="search_view_id" ref="view_transport_bill_tenyale_filter"/>
             <field name="context">{'default_search_group_by_state_hexiao':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3,'show_po_code':1}</field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_transport_bill_tenyale_sales_tree')}),
