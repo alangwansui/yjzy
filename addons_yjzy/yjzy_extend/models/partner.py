@@ -39,7 +39,7 @@ class res_partner(models.Model):
     def last_sale_order(self):
         company = self.env.user.company_id.id
         for one in self:
-            last_sale_orders = one.sudo().sale_order_ids.filtered(
+            last_sale_orders = one.sale_order_ids.filtered(
                 lambda x: x.approve_date != False and x.company_id == company)
             if last_sale_orders:
                 last_order = last_sale_orders[0]
