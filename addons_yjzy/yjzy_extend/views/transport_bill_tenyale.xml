@@ -31,7 +31,7 @@
                     <group expand="0" string="Group By">
                         <filter string="状态核销分组" name="group_by_state_hexiao" domain="[]" context="{'group_by':['state','hexiao_type']}"/>
                         <filter string="时间状态分组" name="group_date_all_state" domain="[]" context="{'group_by':'date_all_state'}"/>
-
+                        <filter string="时间核销综合分组" name="group_by_state_type" domain="[]" context="{'group_by':['state','state_type']}"/>
                         <filter string="状态" name="group_state" domain="[]" context="{'group_by':'state'}"/>
                         <filter string="责任人" domain="[]" context="{'group_by':'user_id'}"/>
                         <filter name="customer" string="客户" domain="[]" context="{'group_by':'partner_id'}"/>
@@ -1605,7 +1605,7 @@
             <field name="view_mode">tree,form,kanban</field>
             <field name="search_view_id" ref="view_transport_bill_tenyale_filter"/>
             <field name="domain">[('state','in',['approve','confirmed','delivered','invoiced','verifying'])]</field>
-            <field name="context">{'search_default_group_by_state_hexiao':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3,'show_po_code':
+            <field name="context">{'search_default_group_by_state_type':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3,'show_po_code':
                 1}
             </field>
             <field name="view_ids" eval="[(5, 0, 0),

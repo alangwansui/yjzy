@@ -303,6 +303,8 @@ class transport_bill(models.Model):
                 'back_tax_invoice_balance_new': one.sale_currency_id.round(back_tax_invoice_balance),
                 'back_tax_invoice_paid_new': one.sale_currency_id.round(back_tax_invoice_paid),
             })
+
+    #失效
     @api.depends('date_out_in','date_in','date_ship','date_customer_finish','all_purchase_invoice_fill')
     def _compute_date_all_state(self):
         for one in self:
@@ -318,6 +320,35 @@ class transport_bill(models.Model):
                     date_all_state = 'un_done'
             one.date_all_state = date_all_state
 
+    @api.depends('date_out_in', 'date_in', 'date_ship', 'date_customer_finish', 'all_purchase_invoice_fill', 'state')
+    def update_state_type(self):
+        for one in self:
+            state_type = one.state_type
+            date_out_in = one.date_out_in
+            date_ship = one.date_ship
+            date_customer_finish = one.date_customer_finish
+            all_purchase_invoice_fill = one.all_purchase_invoice_fill
+            today = datetime.now()
+            state = one.state
+            if state in ('invoiced', 'verifying'):
+                if date_out_in and date_ship and date_customer_finish and all_purchase_invoice_fill:
+                    state_type = 'finish_date'
+                    if one.sale_invoice_balance_new == 0 and one.purchase_invoice_balance_new == 0 and one.back_tax_invoice_balance_new == 0:
+                        state = 'verifying'
+                        state_type = 'write_off'
+                    else:
+                        if date_out_in < (today - relativedelta(days=185)).strftime('%Y-%m-%d 00:00:00'):
+                            state = 'verifying'
+                            state_type = 'abnormal'
+                else:
+                    if one.approve_date and one.approve_date < (today - relativedelta(days=30)).strftime(
+                            '%Y-%m-%d 00:00:00'):
+                        state_type = 'abnormal_date'
+                        state='invoiced'
+            print('--状态更新-', state_type, one, one.state)
+            one.state_type = state_type
+            one.state = state
+
     # 货币设置
     #akiny 未加入
     sale_invoice_total_new = fields.Monetary(u'销售发票金额', compute=_sale_invoice_amount, store=True)
@@ -331,7 +362,7 @@ class transport_bill(models.Model):
     back_tax_invoice_balance_new = fields.Monetary(u'未收退税金额', compute=_back_tax_invoice_amount, store=True)
     purchase_cost_total = fields.Monetary(u'采购金额', compute=_sale_purchase_amount, store=True)
     state_type = fields.Selection([('no_delivery','未开始'),('wait_date',u'待完成相关日期'),('finish_date',u'已完成相关日期'),('abnormal_date',u'日期异常'),
-                                             ('write_off',u'正常核销'),('abnormal',u'异常核销')], u'状态类型', default='no_delivery')
+                                             ('write_off',u'正常核销'),('abnormal',u'异常核销')], u'状态类型', default='no_delivery',compute=update_state_type)
     #date_out_in_att = fields.Many2many('ir.attachment',string='进仓日附件')
     date_out_in_att = fields.One2many('trans.date.attachment','tb_id', domain=[('type', '=', 'date_out_in')], string='进仓日附件')
     date_out_in_att_count = fields.Integer('进仓日期附件数量',compute=compute_info)
@@ -1812,32 +1843,7 @@ class transport_bill(models.Model):
                 'domain': [('id', 'in', [x.id for x in self.tb_vendor_ids])]
                 }
 
-    # @api.depends('date_out_in','date_in','date_ship','date_customer_fishish','all_purchase_invoice_fill')
-    # def update_state_type(self):
-    #     for one in self:
-    #         state_type = one.state_type
-    #         date_out_in = one.date_out_in
-    #         date_in = one.date_out_in
-    #         date_ship = one.date_ship
-    #         date_customer_finish = one.date_customer_finish
-    #         all_purchase_invoice_fill = one.all_purchase_invoice_fill
-    #         today = datetime.now()
-    #         state = one.state
-    #         if state == 'invoiced':
-    #             if date_out_in and date_ship and date_customer_finish and all_purchase_invoice_fill:
-    #                 state_type = 'finish_date'
-    #                 if one.sale_invoice_balance_new == 0 and one.purchase_invoice_balance_new == 0 and one.back_tax_invoice_balance_new == 0:
-    #                     state = 'verifying'
-    #                     state_type = 'write_off'
-    #                 else:
-    #                     if date_out_in < (today - relativedelta(days=185)).strftime('%Y-%m-%d 00:00:00'):
-    #                         state = 'verifying'
-    #                         state_type = 'abnormal'
-    #             else:
-    #                 state_type = 'wait_date'
-    #         print('--状态更新-', state_type,one,one.state)
-    #         one.state_type = state_type
-    #         one.state= state
+
 
     def action_submit(self):
         war = ''
