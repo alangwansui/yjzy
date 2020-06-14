@@ -367,7 +367,7 @@ class transport_bill(models.Model):
     back_tax_invoice_balance_new = fields.Monetary(u'未收退税金额', compute=_back_tax_invoice_amount, store=True)
     purchase_cost_total = fields.Monetary(u'采购金额', compute=_sale_purchase_amount, store=True)
     state_type = fields.Selection([('no_delivery','未开始'),('wait_date',u'待完成相关日期'),('finish_date',u'已完成相关日期'),('abnormal_date',u'日期异常'),
-                                             ('write_off',u'正常核销'),('abnormal',u'异常核销')], u'状态类型', default='no_delivery',compute=update_state_type)
+                                             ('write_off',u'正常核销'),('abnormal',u'异常核销')], u'状态类型', default='no_delivery',store=True, compute=update_state_type)
     #date_out_in_att = fields.Many2many('ir.attachment',string='进仓日附件')
     date_out_in_att = fields.One2many('trans.date.attachment','tb_id', domain=[('type', '=', 'date_out_in')], string='进仓日附件')
     date_out_in_att_count = fields.Integer('进仓日期附件数量',compute=compute_info)
