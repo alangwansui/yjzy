@@ -204,7 +204,8 @@ class account_reconcile_order(models.Model):
         except Exception as e:
             return None
 
-
+    #akiny
+    reconcile_type = fields.Selection([('normal',u'正常阶段'),('un_normal',u'核销阶段')],string=u'阶段', default='normal')
 
     name = fields.Char(u'编号', default=lambda self: self._default_name())
     payment_type = fields.Selection([('outbound', u'付款'), ('inbound', u'收款'), ('claim_in', u'收款认领'), ('claim_out', u'付款认领')], string=u'收/付款',

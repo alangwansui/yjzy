@@ -5,7 +5,7 @@
         <field name="name">account.reconcile.order.tree</field>
         <field name="model">account.reconcile.order</field>
         <field name="arch" type="xml">
-            <tree string="核销单:付款">
+            <tree string="应付认领单">
                 <field name="name"/>
                 <field name="partner_id"/>
                 <field name="date"/>
@@ -20,7 +20,7 @@
         <field name="name">account.reconcile.order.form</field>
         <field name="model">account.reconcile.order</field>
         <field name="arch" type="xml">
-            <form string="核销单:付款">
+            <form string="应付认领单">
                 <header>
                     <button name="action_posted" class="oe_highlight" states="draft" string="确认" type="object"/>
                     <button name="action_cancel" class="oe_highlight" states="draft" string="取消" type="object"/>
@@ -136,7 +136,7 @@
     </record>
 
     <record model="ir.actions.act_window" id="action_outbound_account_reconcile_order2">
-        <field name="name">应付核销单</field>
+        <field name="name">应付认领单</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">account.reconcile.order</field>
         <field name="view_type">form</field>

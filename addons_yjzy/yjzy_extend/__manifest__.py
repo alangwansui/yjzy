@@ -48,6 +48,7 @@
         'views/account_invoice_new.xml',
         'views/account_reconcile_orde.xml',
         'views/account_reconcile_orde2.xml',
+        'views/account_reconcile_orde3.xml',
         'views/bom_template.xml',
         'views/misc.xml',
         'views/partner.xml',
