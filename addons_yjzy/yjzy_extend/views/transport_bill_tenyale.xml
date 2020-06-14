@@ -1530,6 +1530,7 @@
             <field name="res_model">transport.bill</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_transport_bill_tenyale_filter"/>
             <field name="limit">20</field>
             <field name="domain">[('date_all_state','!=','done')]</field>
             <field name="context">{'search_default_group_date_all_state':1,'show_date_finish':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3}
@@ -1576,6 +1577,7 @@
             <field name="view_type">form</field>
             <field name="limit">20</field>
             <field name="view_mode">tree,form,kanban</field>
+            <field name="search_view_id" ref="view_transport_bill_tenyale_filter"/>
             <field name="domain">[('state','in',['cancel','draft','submit','sale_approve'])]</field>
             <field name="context">
                 {'search_default_group_state':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3,'show_po_code':
