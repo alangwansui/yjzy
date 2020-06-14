@@ -320,7 +320,7 @@ class transport_bill(models.Model):
                     date_all_state = 'un_done'
             one.date_all_state = date_all_state
 
-    @api.depends('date_out_in', 'date_in', 'date_ship', 'date_customer_finish', 'all_purchase_invoice_fill', 'state')
+    #@api.depends('date_out_in', 'date_in', 'date_ship', 'date_customer_finish', 'all_purchase_invoice_fill', 'state')
     def update_state_type(self):
         for one in self:
             state_type = one.state_type
@@ -383,7 +383,7 @@ class transport_bill(models.Model):
                                                    ('done',u'完成')],'供应商交单日审批状态',default='draft', compute=compute_info)
     date_all_state = fields.Selection([('un_done',u'待完成相关日期'),
                                                    ('done',u'已完成相关日期'),
-                                                   ('abnormal',u'日期异常')],'所有日期状态',default='un_done',store=True, compute=_compute_date_all_state)
+                                                   ('abnormal',u'日期异常')],'所有日期状态',default='un_done')#store=True, compute=_compute_date_all_state
     hexiao_type = fields.Selection([('abnormal',u'异常核销'),('write_off',u'正常核销')], string='核销类型')
     invoice_state = fields.Selection([('draft', u'未确认'), ('open', u'已确认'),('paid',u'已付款')], string='账单状态',compute=compute_info)
 
