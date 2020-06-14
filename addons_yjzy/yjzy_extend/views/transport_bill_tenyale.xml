@@ -30,7 +30,7 @@
 
                     <group expand="0" string="Group By">
                         <filter string="状态核销分组" name="group_by_state_hexiao" domain="[]" context="{'group_by':['state','hexiao_type']}"/>
-                        <filter string="时间状态分组" name="group_date_all_state" domain="[]" context="{'group_by':['date_all_state']}"/>
+                        <filter string="时间状态分组" name="group_date_all_state" domain="[]" context="{'group_by':'date_all_state'}"/>
 
                         <filter string="状态" name="group_state" domain="[]" context="{'group_by':'state'}"/>
                         <filter string="责任人" domain="[]" context="{'group_by':'user_id'}"/>
