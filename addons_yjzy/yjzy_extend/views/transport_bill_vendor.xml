@@ -36,19 +36,20 @@
                             <field name="line_ids">
                                 <tree>
                                     <field name="product_id"/>
-                                    <field name="supplier_code"/>
-                                    <field name="default_code"/>
-                                    <field name="po_contract_code"/>
-                                    <field name="qty"/>
-                                    <field name="max_qty"/>
+                                    <field name="supplier_code" string="供应商型号"/>
+                                    <field name="default_code" string="天宇型号"/>
+                                    <field name="po_contract_code" string="采购合同号"/>
+                                    <field name="qty" />
+                                    <field name="max_qty" string="箱数"/>
+                                    <field name="net_weight"/>
                                     <field name="gross_weight"/>
 
                                     <field name="tuopan_weight"/>
                                     <field name="shiji_weight"/>
 
 
-                                    <field name="net_weight"/>
-                                    <field name="volume"/>
+
+                                    <field name="volume" string="体积"/>
                                     <field name="tuopan_volume"/>
                                     <field name="shiji_volume"/>
 

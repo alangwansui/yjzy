@@ -930,13 +930,14 @@ class transport_bill(models.Model):
 
         self.partner_invoice_id = addr['invoice']
         self.partner_shipping_id = addr['delivery']
-        self.invoice_title = self.partner_id.invoice_title
-        self.mark_ids = self.partner_id.mark_ids
-        self.partner_notice_id = notice_man and notice_man[0]
-        self.wharf_src_id = self.partner_id.wharf_src_id
-        self.wharf_dest_id = self.partner_id.wharf_dest_id
+        self.invoice_title = self.partner_shipping_id.invoice_title
+       # self.mark_ids = self.partner_shipping_id.mark_ids
+        self.mark_text = self.partner_shipping_id.mark_text
+        self.notice_man = self.partner_shipping_id.notice_man
+        self.wharf_src_id = self.partner_shipping_id.wharf_src_id
+        self.wharf_dest_id = self.partner_shipping_id.wharf_dest_id
         self.payment_term_id = self.partner_id.property_payment_term_id
-        self.partner_country_id = self.partner_id.country_id
+        self.partner_country_id = self.partner_shipping_id.country_id
         #akiny
        # self.user_id = self.partner_id.user_id
         self.sale_currency_id = self.partner_id.property_product_pricelist.currency_id
@@ -944,12 +945,21 @@ class transport_bill(models.Model):
      #   self.mark_html = self.partner_shipping_id.mark_html.currency_id
        # akiny
         ##self.outer_currency_id = self.sale_currency_id
-        self.notice_man = self.partner_id.notice_man
-        self.delivery_man = self.partner_id.delivery_man
-        self.demand_info  = self.partner_id.demand_info
+        #self.notice_man = self.partner_id.notice_man
+        self.delivery_man = self.partner_shipping_id.delivery_man
+        self.demand_info  = self.partner_shipping_id.demand_info
         self.contract_type = self.partner_id.contract_type
         self.gongsi_id = self.partner_id.gongsi_id
         self.purchase_gongsi_id = self.partner_id.purchase_gongsi_id
+
+    # @api.onchange('partner_shipping_id')
+    # def onchange_partner(self):
+    #
+    #     self.invoice_title = self.partner_shipping_id.invoice_title
+    #     self.mark_ids = self.partner_shipping_id.mark_ids
+    #     self.mark_text = self.partner_shipping_id.mark_text
+    #     self.notice_man = self.partner_shipping_id.notice_man
+
 
 
     def make_tb_vendor(self):
@@ -1801,32 +1811,32 @@ class transport_bill(models.Model):
                 'domain': [('id', 'in', [x.id for x in self.tb_vendor_ids])]
                 }
 
-    @api.depends('date_out_in','date_in','date_ship','date_customer_fishish','all_purchase_invoice_fill')
-    def update_state_type(self):
-        for one in self:
-            state_type = one.state_type
-            date_out_in = one.date_out_in
-            date_in = one.date_out_in
-            date_ship = one.date_ship
-            date_customer_finish = one.date_customer_finish
-            all_purchase_invoice_fill = one.all_purchase_invoice_fill
-            today = datetime.now()
-            state = one.state
-            if state == 'invoiced':
-                if date_out_in and date_ship and date_customer_finish and all_purchase_invoice_fill:
-                    state_type = 'finish_date'
-                    if one.sale_invoice_balance_new == 0 and one.purchase_invoice_balance_new == 0 and one.back_tax_invoice_balance_new == 0:
-                        state = 'verifying'
-                        state_type = 'write_off'
-                    else:
-                        if date_out_in < (today - relativedelta(days=185)).strftime('%Y-%m-%d 00:00:00'):
-                            state = 'verifying'
-                            state_type = 'abnormal'
-                else:
-                    state_type = 'wait_date'
-            print('--状态更新-', state_type,one,one.state)
-            one.state_type = state_type
-            one.state= state
+    # @api.depends('date_out_in','date_in','date_ship','date_customer_fishish','all_purchase_invoice_fill')
+    # def update_state_type(self):
+    #     for one in self:
+    #         state_type = one.state_type
+    #         date_out_in = one.date_out_in
+    #         date_in = one.date_out_in
+    #         date_ship = one.date_ship
+    #         date_customer_finish = one.date_customer_finish
+    #         all_purchase_invoice_fill = one.all_purchase_invoice_fill
+    #         today = datetime.now()
+    #         state = one.state
+    #         if state == 'invoiced':
+    #             if date_out_in and date_ship and date_customer_finish and all_purchase_invoice_fill:
+    #                 state_type = 'finish_date'
+    #                 if one.sale_invoice_balance_new == 0 and one.purchase_invoice_balance_new == 0 and one.back_tax_invoice_balance_new == 0:
+    #                     state = 'verifying'
+    #                     state_type = 'write_off'
+    #                 else:
+    #                     if date_out_in < (today - relativedelta(days=185)).strftime('%Y-%m-%d 00:00:00'):
+    #                         state = 'verifying'
+    #                         state_type = 'abnormal'
+    #             else:
+    #                 state_type = 'wait_date'
+    #         print('--状态更新-', state_type,one,one.state)
+    #         one.state_type = state_type
+    #         one.state= state
 
     def action_submit(self):
         war = ''
