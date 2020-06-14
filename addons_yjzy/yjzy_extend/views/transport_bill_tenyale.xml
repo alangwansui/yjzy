@@ -1533,7 +1533,7 @@
             <field name="search_view_id" ref="view_transport_bill_tenyale_filter"/>
             <field name="limit">20</field>
             <field name="domain">[('date_all_state','!=','done')]</field>
-            <field name="context">{'search_default_group_date_all_state':1,'show_date_finish':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3}
+            <field name="context">{'show_date_finish':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3}
             </field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_transport_bill_tenyale_date_tree')})]"/>

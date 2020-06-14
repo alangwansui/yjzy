@@ -333,6 +333,7 @@ class transport_bill(models.Model):
             if state in ('invoiced', 'verifying'):
                 if date_out_in and date_ship and date_customer_finish and all_purchase_invoice_fill:
                     state_type = 'finish_date'
+                    state = 'invoiced'
                     if one.sale_invoice_balance_new == 0 and one.purchase_invoice_balance_new == 0 and one.back_tax_invoice_balance_new == 0:
                         state = 'verifying'
                         state_type = 'write_off'
@@ -341,10 +342,14 @@ class transport_bill(models.Model):
                             state = 'verifying'
                             state_type = 'abnormal'
                 else:
-                    if one.approve_date and one.approve_date < (today - relativedelta(days=30)).strftime(
+                    if not date_out_in:
+                        state = 'invoiced'
+                        state_type = 'no_delivery'
+                    else:
+                        if one.approve_date and one.approve_date < (today - relativedelta(days=30)).strftime(
                             '%Y-%m-%d 00:00:00'):
-                        state_type = 'abnormal_date'
-                        state='invoiced'
+                            state_type = 'abnormal_date'
+                            state='invoiced'
             print('--状态更新-', state_type, one, one.state)
             one.state_type = state_type
             one.state = state
