@@ -1944,7 +1944,7 @@ class transport_bill(models.Model):
             date_out_in = one.date_out_in
             # 未发货，开始发货，待核销，已核销
             if one.state not in ('invoiced','verifying'):
-                one.hexiao_type = 'undefined'
+                hexiao_type = 'undefined'
             else:
                 if (one.sale_invoice_balance_new!= 0 or one.purchase_invoice_balance_new != 0 or one.back_tax_invoice_balance_new != 0) and \
                         date_out_in and date_out_in < (today - relativedelta(days=180)).strftime('%Y-%m-%d 00:00:00') :
@@ -1953,8 +1953,8 @@ class transport_bill(models.Model):
                 if one.sale_invoice_balance_new == 0 and one.purchase_invoice_balance_new == 0 and one.back_tax_invoice_balance_new == 0:
                     hexiao_type = 'write_off'
                     state = 'verifying'
-                one.hexiao_type = hexiao_type
-                one.state = state
+            one.hexiao_type = hexiao_type
+            one.state = state
 
 
     def auto_invoice_open(self):
