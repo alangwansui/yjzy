@@ -342,6 +342,8 @@ class sale_order(models.Model):
     vat_diff_amount = fields.Monetary(u'增值税差额', currency_field='third_currency_id', compute=compute_info)
 
     mark_comb_id = fields.Many2one('mark.comb', u'唛头组')
+    mark_text = fields.Text(u'唛头')
+
     no_sent_amount = fields.Monetary(u'未发货的金额', compute=compute_info)
     no_sent_amount_new = fields.Monetary(u'未发货的金额', compute=compute_no_sent_amount, store=True)
     is_editable = fields.Boolean(u'可编辑')
@@ -536,6 +538,10 @@ class sale_order(models.Model):
         self.gongsi_id = self.partner_id.gongsi_id
         self.purchase_gongsi_id = self.partner_id.purchase_gongsi_id
         self.link_man_id = self.partner_id.child_ids and self.partner_id.child_ids[0]
+        self.mark_text = self.partner.shipping_id.mark_text
+        self.from_wharf_id = self.partner.shipping_id.from_wharf_id
+        self.to_wharf_id = self.partner.shipping_id.to_wharf_id
+
 
         return super(sale_order, self).onchange_partner_id()
 

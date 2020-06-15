@@ -66,11 +66,14 @@
             <field name="arch" type="xml">
                 <form string="清关资料">
                     <header>
-                         <button string="打印清关Invoice" attrs="{'invisible': [('qingguan_state','=','draft')]}" type="object"
+                        <button string="打印清关Invoice" attrs="{'invisible': [('qingguan_state','=','draft')]}" type="object"
                                 name="print_qingguan_invoice"
                                 class="oe_highlight"/>
                         <button string="打印清关Packing List" attrs="{'invisible': [('qingguan_state','=','draft')]}" type="object"
                                 name="print_qingguan_packing_list"
+                                class="oe_highlight"/>
+                        <button string="初始化清关数据" type="object" name="create_qingguan_lines"
+                                confirm="该命令将会初始化清关资料！是否继续？"
                                 class="oe_highlight"/>
                     </header>
                     <header groups="base.group_system">

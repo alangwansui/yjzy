@@ -30,6 +30,12 @@ class transport_bill_vendor(models.Model):
         else:
             self.contact_id = False
 
+    def print_vendor(self):
+        return self.env.ref('yjzy_extend.action_report_transport_bill_vendor').report_action(self)
+
+
+
+
     def make_lines(self):
         line_obj = self.env['transport.bill.vendor.line']
         dic_pdt_plan = {}  #{'product': 'plans'， 'po_amount': 0}

@@ -191,8 +191,12 @@
                         <button string="添加销售明细" states="draft" type="object" name="open_wizard_transport4sol"
                                 groups="base.group_system"
                                 class="oe_highlight"/>
-                        <button string="准备默认出运计划" invisible="0" type="object" name="make_default_lot_plan"
+                        <button string="调取剩余订单数量" invisible="0" type="object" name="make_default_lot_plan"
+                                confirm="该命令将会初始化本次出运数量！是否继续？"
                                 attrs="{'invisible': [('is_done_plan','=',True)]}" class="oe_highlight"/>
+                        <button string="生成报关清关数据" name="make_all_document" confirm="该命令将会初始化清关资料，报关资料和供应商发货通知单！是否继续？"
+                                class="oe_highlight"
+                                type="object"/>
                         <button string="销售统计" name="make_sale_collect"
                                 attrs="{'invisible': [('sale_collect_state','!=','draft')]}" class="oe_highlight"
                                 type="object"/>
@@ -271,9 +275,15 @@
                                     icon="fa-usd">
                                 <field name="bg_count"/>
                             </button>
-                            <button class="oe_stat_button" type="object" string="发货通知单"
+                            <button class="oe_stat_button" type="object" string="发货通知单" invisible="1"
                                     attrs="{'invisible':[('fhtzd_count','=',0)]}"
                                     name="open_transport_bill_delivery"
+                                    icon="fa-usd">
+                                <field name="fhtzd_count"/>
+                            </button>
+                             <button class="oe_stat_button" type="object" string="发货通知单"
+                                    attrs="{'invisible':[('fhtzd_count','=',0)]}"
+                                    name="open_transport_bill_supplier"
                                     icon="fa-usd">
                                 <field name="fhtzd_count"/>
                             </button>
@@ -365,16 +375,15 @@
 
                                 <field name="pallet_type"
                                                attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
-
-
                                 <field name="pallet_qty"
-                                               attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
-
-                                <field name="tuopan_weight"
-                                               attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
-
-                                <field name="tuopan_volume"
-                                               attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
+                                               attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)],
+                                               'invisible':[('pallet_type','!=','plts')]}"/>
+                                <field name="tuopan_weight" string="托盘总重"
+                                               attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)],
+                                               'invisible':[('pallet_type','!=','plts')]}"/>
+                                <field name="tuopan_volume" string="托盘总体积"
+                                               attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)],
+                                               'invisible':[('pallet_type','!=','plts')]}"/>
 
 
                             </group>
@@ -410,7 +419,7 @@
                                 <field name="line_ids"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}">
                                     <tree create="false" editable="bottom">
-                                        <button icon="fa-paper-plane" type="object"
+                                        <button icon="fa-paper-plane" type="object" help="请点击，并初始化发货数量和金额等信息！"
                                                 attrs="{'invisible':[('parent.state','not in',['draft']),('parent.is_editable','=',False)]}"
                                                 name="make_default_lot_plan"/>
                                         <field name="sale_contract_code" string="销售合同"/>

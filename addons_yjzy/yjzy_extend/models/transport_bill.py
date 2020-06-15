@@ -386,6 +386,7 @@ class transport_bill(models.Model):
                                                    ('abnormal',u'日期异常')],'所有日期状态',default='un_done',store=True, compute=_compute_date_all_state)
     hexiao_type = fields.Selection([('abnormal',u'异常核销'),('write_off',u'正常核销')], string='核销类型')
     invoice_state = fields.Selection([('draft', u'未确认'), ('open', u'已确认'),('paid',u'已付款')], string='账单状态',compute=compute_info)
+    #is_tuopan = fields.Boolean(u'是否打托')
 
     tba_id = fields.Many2one('transport.bill.account', '转账调节单')
     incoterm_code = fields.Char('贸易术语', related='incoterm.code', readonly=True)
@@ -660,10 +661,18 @@ class transport_bill(models.Model):
     gold_sample_state = fields.Selection([('all', '全部有'), ('part', '部分有'), ('none', '无金样')], '样金管理',
                                          compute=compute_info)
 
+    def make_all_document(self):
+        self.make_sale_purchase_collect()
+        self.create_qingguan_lines()
+        self.make_tb_vendor()
+        self.split_tuopan_weight()
+        self.split_tuopan_weight2vendor()
+
 
     def make_sale_purchase_collect(self):
         self.make_sale_collect()
         self.make_purchase_collect()
+        self.split_tuopan_weight_baoguan()
 
     @api.multi
     def action_save_test(self):
@@ -847,53 +856,81 @@ class transport_bill(models.Model):
 
 
     def split_tuopan_weight(self):
-        if self.tuopan_weight <= 0 or self.tuopan_volume <=0:
-            raise Warning(u'请先设置托盘重量和体积')
+        if self.pallet_type == 'plts':
+            if self.tuopan_weight <= 0 or self.tuopan_volume <=0:
+                raise Warning(u'请先设置托盘重量和体积')
 
-        qinguan_count = sum([x.qty for x in self.qingguan_line_ids])
-        if qinguan_count > 0:
-            for line in self.qingguan_line_ids:
-                line.tuopan_weight = line.qty / qinguan_count * self.tuopan_weight
+            qinguan_count = sum([x.qty for x in self.qingguan_line_ids])
+            if qinguan_count > 0:
+                for line in self.qingguan_line_ids:
+                    line.tuopan_weight = line.qty / qinguan_count * self.tuopan_weight
 
-        hsl_count = sum([x.qty_max for x in self.hsname_ids])
-        if hsl_count > 0:
-            for line in self.hsname_ids:
-                line.tuopan_weight = line.qty_max / hsl_count * self.tuopan_weight
+            hsl_count = sum([x.qty_max for x in self.hsname_ids])
+            if hsl_count > 0:
+                for line in self.hsname_ids:
+                    line.tuopan_weight = line.qty_max / hsl_count * self.tuopan_weight
 
-        #================tuopan_volume
-        qinguan_volume = sum([x.volume for x in self.qingguan_line_ids])
-        if qinguan_volume > 0:
-            for line in self.qingguan_line_ids:
-                line.tuopan_volume = line.volume / qinguan_volume * self.tuopan_volume
+            #================tuopan_volume
+            qinguan_volume = sum([x.volume for x in self.qingguan_line_ids])
+            if qinguan_volume > 0:
+                for line in self.qingguan_line_ids:
+                    line.tuopan_volume = line.volume / qinguan_volume * self.tuopan_volume
 
-        hsl_volume = sum([x.volume for x in self.hsname_ids])
-        if hsl_volume > 0:
-            for line in self.hsname_ids:
-                line.tuopan_volume = line.volume / hsl_volume * self.tuopan_volume
+            hsl_volume = sum([x.volume for x in self.hsname_ids])
+            if hsl_volume > 0:
+                for line in self.hsname_ids:
+                    line.tuopan_volume = line.volume / hsl_volume * self.tuopan_volume
 
         self.is_done_tuopan = True
 
+    def split_tuopan_weight_qingguan(self):
+        if self.pallet_type == 'plts':
+            if self.tuopan_weight <= 0 or self.tuopan_volume <= 0:
+                raise Warning(u'请先设置托盘重量和体积')
+
+            qinguan_count = sum([x.qty for x in self.qingguan_line_ids])
+            if qinguan_count > 0:
+                for line in self.qingguan_line_ids:
+                    line.tuopan_weight = line.qty / qinguan_count * self.tuopan_weight
+            qinguan_volume = sum([x.volume for x in self.qingguan_line_ids])
+            if qinguan_volume > 0:
+                for line in self.qingguan_line_ids:
+                    line.tuopan_volume = line.volume / qinguan_volume * self.tuopan_volume
+
+    def split_tuopan_weight_baoguan(self):
+        if self.pallet_type == 'plts':
+            if self.tuopan_weight <= 0 or self.tuopan_volume <=0:
+                raise Warning(u'请先设置托盘重量和体积')
+            hsl_count = sum([x.qty_max for x in self.hsname_ids])
+            if hsl_count > 0:
+                for line in self.hsname_ids:
+                    line.tuopan_weight = line.qty_max / hsl_count * self.tuopan_weight
+            hsl_volume = sum([x.volume for x in self.hsname_ids])
+            if hsl_volume > 0:
+                for line in self.hsname_ids:
+                    line.tuopan_volume = line.volume / hsl_volume * self.tuopan_volume
 
     def split_tuopan_weight2vendor(self):
-        vendor_lines = self.tb_vendor_ids.mapped('line_ids')
+        if self.pallet_type == 'plts':
+            vendor_lines = self.tb_vendor_ids.mapped('line_ids')
 
-        print('===split_tuopan_weight2vendor==0:', self.tb_vendor_ids, vendor_lines)
+            print('===split_tuopan_weight2vendor==0:', self.tb_vendor_ids, vendor_lines)
 
-        if self.tuopan_weight <= 0 or self.tuopan_volume <=0:
-            raise Warning(u'请先设置托盘重量和体积')
+            if self.tuopan_weight <= 0 or self.tuopan_volume <=0:
+                raise Warning(u'请先设置托盘重量和体积')
 
-        all_count = sum([x.qty for x in vendor_lines])
-        print('===split_tuopan_weight2vendor==1:', all_count)
-        if all_count > 0:
-            for line in vendor_lines:
-                line.tuopan_weight = line.qty / all_count * self.tuopan_weight
+            all_count = sum([x.qty for x in vendor_lines])
+            print('===split_tuopan_weight2vendor==1:', all_count)
+            if all_count > 0:
+                for line in vendor_lines:
+                    line.tuopan_weight = line.qty / all_count * self.tuopan_weight
 
 
-        all_volume = sum([x.volume for x in vendor_lines])
-        print('===split_tuopan_weight2vendor==2:', all_volume)
-        if all_volume > 0:
-            for line in vendor_lines:
-                line.tuopan_volume = line.volume / all_volume * self.tuopan_volume
+            all_volume = sum([x.volume for x in vendor_lines])
+            print('===split_tuopan_weight2vendor==2:', all_volume)
+            if all_volume > 0:
+                for line in vendor_lines:
+                    line.tuopan_volume = line.volume / all_volume * self.tuopan_volume
 
 
 
@@ -1013,7 +1050,7 @@ class transport_bill(models.Model):
             })
             tbv.make_lines()
         self.is_done_tb_vendor = True
-
+        self.split_tuopan_weight2vendor()
 
     def make_tbl_lot(self):
         for one in self:
@@ -1642,7 +1679,7 @@ class transport_bill(models.Model):
             #print('>>', line)
             line.compute_info()
         self.qingguan_state = 'done'
-
+        self.split_tuopan_weight_qingguan()
 
     def get_product_total(self):
         self.ensure_one()
@@ -1801,7 +1838,6 @@ class transport_bill(models.Model):
 
     @api.multi
     def print_cost(self):
-
         return self.env.ref('yjzy_extend.action_report_transport_bill_cost').report_action(self)
 
     def open_transport_bill_clearance(self):
@@ -1820,12 +1856,12 @@ class transport_bill(models.Model):
                 'flags': {'form': {'initial_mode': 'view','action_buttons': False}}
                 }
 
-    def open_transport_bill_declare(self):
+    def open_transport_bill_supplier(self):
         """ Utility method used to add an "Open Parent" button in partner views """
         self.ensure_one()
-        declare_form_id = self.env.ref('yjzy_extend.view_transport_bill_declare_form').id
+        declare_form_id = self.env.ref('yjzy_extend.view_transport_bill_supplier_from').id
         return {
-                'name': _(u'报关资料'),
+                'name': _(u'发货通知单'),
                 'view_type': 'form',
                 'view_mode': 'form',
                 'type': 'ir.actions.act_window',
@@ -1848,7 +1884,21 @@ class transport_bill(models.Model):
                 'domain': [('id', 'in', [x.id for x in self.tb_vendor_ids])]
                 }
 
-
+    def open_transport_bill_declare(self):
+        """ Utility method used to add an "Open Parent" button in partner views """
+        self.ensure_one()
+        declare_form_id = self.env.ref('yjzy_extend.view_transport_bill_declare_form').id
+        return {
+            'name': _(u'报关资料'),
+            'view_type': 'form',
+            'view_mode': 'form',
+            'type': 'ir.actions.act_window',
+            'res_model': 'transport.bill',
+            'views': [(declare_form_id, 'form')],
+            'res_id': self.id,
+            'target': 'current',
+            'flags': {'form': {'initial_mode': 'view', 'action_buttons': False}}
+        }
 
     def action_submit(self):
         war = ''

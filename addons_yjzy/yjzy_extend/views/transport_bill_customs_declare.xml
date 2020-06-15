@@ -78,6 +78,9 @@
                         <button string="打印报关单" type="object" attrs="{'invisible': [('hsname_ids','=',False)]}"
                                 name="print_bgd"
                                 class="oe_highlight"/>
+                        <button string="初始化报关资料" name="make_sale_purchase_collect" confirm="该命令将会初始化报关资料！是否继续？"
+                                class="oe_highlight"
+                                type="object"/>
 
                     </header>
                     <header groups="base.group_system">
