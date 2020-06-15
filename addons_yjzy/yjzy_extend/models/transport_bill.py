@@ -311,15 +311,24 @@ class transport_bill(models.Model):
             # 日期填写状态计算 akiny
             today = datetime.now()
             date_all_state = 'un_done'
-            if  one.date_out_in_state == 'done' and one.date_ship and one.date_customer_finish_state == 'done' and one.date_purchase_finish_state == 'done':
-                date_all_state = 'done'
-            else:
-                if one.approve_date and one.approve_date < (today - relativedelta(days=30)).strftime('%Y-%m-%d 00:00:00'):
-                    date_all_state = 'abnormal'
+            if one.date_out_in_state != 'done':
+                if one.approve_date and one.approve_date >= (today - relativedelta(days=15)).strftime('%Y-%m-%d 00:00:00'):
+                    date_all_state = 'normal_no_date_out_in'
                 else:
-                    date_all_state = 'un_done'
+                    date_all_state = 'unnormal_no_date_out_in'
+            else:
+                if one.date_ship_state =='done' and one.date_customer_finish_state == 'done' and one.date_purchase_finish_state == 'done':
+                    date_all_state = 'done'
+                else:
+                    if one.date_out_in and one.approve_date < (today - relativedelta(days=30)).strftime('%Y-%m-%d 00:00:00'):
+                        date_all_state = 'abnormal'
+                    else:
+                        date_all_state = 'un_done'
             one.date_all_state = date_all_state
 
+
+
+    #失效
     @api.depends('date_out_in', 'date_in', 'date_ship', 'date_customer_finish', 'all_purchase_invoice_fill', 'state')
     def update_state_type(self):
         for one in self:
@@ -381,9 +390,11 @@ class transport_bill(models.Model):
     date_purchase_finish_state = fields.Selection([('draft',u'草稿'),
                                                    ('submit',u'待审批'),
                                                    ('done',u'完成')],'供应商交单日审批状态',default='draft', compute=compute_info)
-    date_all_state = fields.Selection([('un_done',u'待完成相关日期'),
-                                                   ('done',u'已完成相关日期'),
-                                                   ('abnormal',u'日期异常')],'所有日期状态',default='un_done',store=True, compute=_compute_date_all_state)
+    date_all_state = fields.Selection([('normal_no_date_out_in',u'正常未填制'),
+                                       ('unnormal_no_date_out_in',u'异常未填制'),
+                                       ('un_done',u'待完成相关日期'),
+                                       ('done',u'已完成相关日期'),
+                                       ('abnormal',u'日期异常')],'所有日期状态',default='un_done',store=True, compute=_compute_date_all_state)
     hexiao_type = fields.Selection([('abnormal',u'异常核销'),('write_off',u'正常核销')], string='核销类型')
     invoice_state = fields.Selection([('draft', u'未确认'), ('open', u'已确认'),('paid',u'已付款')], string='账单状态',compute=compute_info)
     #is_tuopan = fields.Boolean(u'是否打托')
@@ -1933,11 +1944,11 @@ class transport_bill(models.Model):
             date_out_in = one.date_out_in
             # 未发货，开始发货，待核销，已核销
             if one.state in ('invoiced','verifying'):
-                if (one.sale_invoice_balance_new!= 0 or one.purchase_invoice_balance_new != 0 ) and date_out_in \
-                        and date_out_in < (today - relativedelta(days=90)).strftime('%Y-%m-%d 00:00:00') :
+                if (one.sale_invoice_balance_new!= 0 or one.purchase_invoice_balance_new != 0 or one.back_tax_invoice_balance_new != 0) and \
+                        date_out_in and date_out_in < (today - relativedelta(days=180)).strftime('%Y-%m-%d 00:00:00') :
                     hexiao_type = 'abnormal'
                     state = 'verifying'
-                if one.sale_invoice_balance_new == 0 and one.purchase_invoice_balance_new == 0:
+                if one.sale_invoice_balance_new == 0 and one.purchase_invoice_balance_new == 0 and one.back_tax_invoice_balance_new == 0:
                     hexiao_type = 'write_off'
                     state = 'verifying'
                 one.hexiao_type = hexiao_type
