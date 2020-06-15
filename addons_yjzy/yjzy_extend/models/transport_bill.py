@@ -395,7 +395,7 @@ class transport_bill(models.Model):
                                        ('un_done',u'待完成相关日期'),
                                        ('done',u'已完成相关日期'),
                                        ('abnormal',u'日期异常')],'所有日期状态',default='un_done',store=True, compute=_compute_date_all_state)
-    hexiao_type = fields.Selection([('undefined','...')('abnormal',u'异常核销'),('write_off',u'正常核销')], string='核销类型')
+    hexiao_type = fields.Selection([('undefined','...'),('abnormal',u'异常核销'),('write_off',u'正常核销')], string='核销类型')
     invoice_state = fields.Selection([('draft', u'未确认'), ('open', u'已确认'),('paid',u'已付款')], string='账单状态',compute=compute_info)
     #is_tuopan = fields.Boolean(u'是否打托')
 
