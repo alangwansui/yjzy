@@ -55,7 +55,7 @@
             name="yjzy_extend.report_transport_bill_packing"
             print_report_name="'CC_Packing_list_'+(object.ref)"
         />
-         <report
+         <!--report
             id="action_report_transport_bill_bg_contract"
             string="报关Contract"
             model="transport.bill"
@@ -63,8 +63,8 @@
             file="yjzy_extend.report_transport_bill_bgzl_contract"
             name="yjzy_extend.report_transport_bill_bgzl_contract"
             print_report_name="'D_Contract_'+(object.ref)"
-        />
-        <report
+        /-->
+        <!--report
             id="action_report_transport_bill_bg_invoice"
             string="报关Invoice"
             model="transport.bill"
@@ -72,8 +72,8 @@
             file="yjzy_extend.report_transport_bill_bgzl_invoice"
             name="yjzy_extend.report_transport_bill_bgzl_invoice"
             print_report_name="'D_Invoice_'+(object.ref)"
-        />
-        <report
+        /-->
+        <!--report
             id="action_report_transport_bill_bg_packing_list"
             string="报关Packing List"
             model="transport.bill"
@@ -81,9 +81,9 @@
             file="yjzy_extend.report_transport_bill_bgzl_packing"
             name="yjzy_extend.report_transport_bill_bgzl_packing"
             print_report_name="'D_Packing_list_'+(object.ref)"
-        />
+        /-->
 
-        <report
+        <!--report
             id="action_report_transport_bill_bgd"
             string="报关单"
             model="transport.bill"
@@ -92,8 +92,8 @@
             name="yjzy_extend.report_transport_bill_bgzl_bgd"
             print_report_name="'D_Declaration_'+(object.ref)"
             paperformat="yjzy_extend.paperformat_bgd"
-        />
-         <report
+        /-->
+         <!--report
             id="action_report_transport_bill_cost"
             string="成本单"
             model="transport.bill"
@@ -101,7 +101,7 @@
             file="yjzy_extend.report_sale_order_cost"
             name="yjzy_extend.report_sale_order_cost"
             print_report_name="'CS_'+(object.ref)"
-        />
+        /-->
 
         <report
             id="action_report_transport_bill_test"
@@ -159,6 +159,7 @@
             file="yjzy_extend.report_transport_bill_bgzl_bgd"
             name="yjzy_extend.report_transport_bill_bgzl_bgd"
             print_report_name="'D_Declaration_'+(object.ref)"
+            paperformat="yjzy_extend.paperformat_bgd"
         />
 
 

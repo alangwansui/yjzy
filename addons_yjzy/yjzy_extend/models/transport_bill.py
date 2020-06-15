@@ -1816,29 +1816,29 @@ class transport_bill(models.Model):
     def print_bg_contract(self):
         if not self.qingguan_line_ids:
             raise Warning('请先生成报关明细')
-        return self.env.ref('yjzy_extend.action_report_transport_bill_bg_contract').report_action(self)
+        return self.env.ref('yjzy_extend.action_report_transport_bill_bgzl_contract').report_action(self)
 
     @api.multi
     def print_bg_invoice(self):
         if not self.qingguan_line_ids:
             raise Warning('请先生成报关明细')
-        return self.env.ref('yjzy_extend.action_report_transport_bill_bg_invoice').report_action(self)
+        return self.env.ref('yjzy_extend.action_report_transport_bill_bgzl_invoice').report_action(self)
 
     @api.multi
     def print_bg_packing_list(self):
         if not self.qingguan_line_ids:
             raise Warning('请先生成报关明细')
-        return self.env.ref('yjzy_extend.action_report_transport_bill_bg_packing_list').report_action(self)
+        return self.env.ref('yjzy_extend.action_report_transport_bill_bgzl_packing').report_action(self)
 
     @api.multi
     def print_bgd(self):
         if not self.qingguan_line_ids:
             raise Warning('请先生成报关明细')
-        return self.env.ref('yjzy_extend.action_report_transport_bill_bgd').report_action(self)
+        return self.env.ref('yjzy_extend.action_report_transport_bill_bgzl_bgd').report_action(self)
 
     @api.multi
     def print_cost(self):
-        return self.env.ref('yjzy_extend.action_report_transport_bill_cost').report_action(self)
+        return self.env.ref('yjzy_extend.action_report_sale_order_cost').report_action(self)
 
     def open_transport_bill_clearance(self):
         """ Utility method used to add an "Open Parent" button in partner views """
