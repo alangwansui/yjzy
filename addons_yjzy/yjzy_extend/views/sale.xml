@@ -110,6 +110,21 @@
                     <field name="p_uom_id"/>
                     <field name="second_unit_price" groups="base.group_system"/>
                     <field name="second_price_total" groups="base.group_system"/>
+
+                    <field name="fee_inner"/>
+                    <field name="fee_rmb1"/>
+                    <field name="fee_rmb2"/>
+                    <field name="fee_outer"/>
+                    <field name="fee_export_insurance"/>
+                    <field name="fee_other"/>
+
+                    <field name="outer_currency_id"/>
+                    <field name="export_insurance_currency_id"/>
+                    <field name="other_currency_id"/>
+
+
+
+
                 </xpath>
 
 
