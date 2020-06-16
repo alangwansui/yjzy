@@ -30,7 +30,8 @@
 
                     <group expand="0" string="Group By">
                         <filter string="状态核销分组" name="group_by_state_hexiao" domain="[]" context="{'group_by':['state','hexiao_type']}"/>
-                        <filter string="时间状态分组" name="group_date_all_state" domain="[]" context="{'group_by':'date_all_state'}"/>
+                        <filter string="进仓和其他时间分组" name="group_date_all_state" domain="[]" context="{'group_by':['date_out_in_state','date_all_state']}"/>
+
                         <filter string="时间核销综合分组" name="group_by_state_type" domain="[]" context="{'group_by':['state','state_type']}"/>
                         <filter string="状态" name="group_state" domain="[]" context="{'group_by':'state'}"/>
                         <filter string="责任人" domain="[]" context="{'group_by':'user_id'}"/>
@@ -392,8 +393,8 @@
                                 <field name="sale_type" invisible="0"/>
 
 
-                                <field name="account_type"
-                                       attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
+                                <!-- name="account_type"
+                                       attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/-->
                                 <field name="trans_type"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <field name="cip_type"
@@ -971,165 +972,7 @@
                 </form>
             </field>
         </record>
-        <!--日期填制视图-->
-        <record id="view_transport_bill_tenyale_date_tree" model="ir.ui.view">
-            <field name="name">transport.bill.tree</field>
-            <field name="model">transport.bill</field>
-            <field name="arch" type="xml">
-                <tree string="出运单" editable="bottom" default_order="date_out_in desc">
-                    <field name="name" invisible="1"/>
-                    <field name="ref"/>
-                    <field name="partner_id" required="1" readonly="1"/>
-                    <!--button name="sync_data2invoice" string="创建应收付" attrs="{'invisible':[('state','!=','delivered')]}"  class="oe_highlight" type="object"/-->
-                    <field name="date_out_in"/>
-                    <field name="date_out_in_att" string=" " widget="many2many_binary" invisible="1"/>
-                    <field name="date_out_in_state" string=" "
-                           attrs="{'column_invisible':[('date_out_in_state','!=','done')]}"/>
-                    <field name="date_out_in_att_count" string=" "/>
-                    <button name="open_transport_date" icon="fa-paperclip" type="object"
-                            context="{'form_xml_id': 'yjzy_extend.view_transport_bill_date_out_in'}" string="附件"/>
-                    <button name="open_transport_date" icon="fa-check" type="object"
-                            context="{'form_xml_id': 'yjzy_extend.view_transport_bill_date_out_in'}" attrs="{'invisible':[('date_out_in_state','!=','done')]}"/>
-                    <button name="action_customer_date_state_submit" type="object" context="{'date_type':'date_out_in'}"
-                            attrs="{'invisible':[('date_out_in_state','not in',['draft','refuse'])]}" string="提交"/>
-                    <button name="action_customer_date_state_done" type="object" context="{'date_type':'date_out_in'}"
-                            attrs="{'invisible':[('date_out_in_state','not in',['submit'])]}" string="通过"/>
-                    <button name="action_customer_date_state_refuse" type="object" context="{'date_type':'date_out_in'}"
-                            attrs="{'invisible':[('date_out_in_state','not in',['submit'])]}" string="拒绝"
-                            invisible="1"/>
-                    <field name="date_in" invisible="1"/>
-                    <field name="date_ship"/>
-                    <field name="date_ship_att" widget="many2many_binary" invisible="1"/>
-                    <field name="date_ship_att_count" string=" "/>
-                    <field name="date_ship_state" invisible="1"/>
-                    <button name="open_transport_date" icon="fa-paperclip" type="object"
-                            context="{'form_xml_id': 'yjzy_extend.view_transport_bill_date_ship'}" string="附件"/>
-                    <button name="open_transport_date" icon="fa-check" type="object"
-                            context="{'form_xml_id': 'yjzy_extend.view_transport_bill_date_ship'}" attrs="{'invisible':[('date_ship_state','!=','done')]}"/>
-                    <button name="action_customer_date_state_submit" type="object" context="{'date_type':'date_ship'}"
-                            attrs="{'invisible':[('date_ship_state','not in',['draft','refuse'])]}" string="提交"/>
-                    <button name="action_customer_date_state_done" type="object" context="{'date_type':'date_ship'}"
-                            attrs="{'invisible':[('date_ship_state','not in',['submit'])]}" string="通过"/>
 
-                    <field name="date_customer_finish"/>
-                    <field name="date_customer_finish_att" widget="many2many_binary" invisible="1"/>
-                    <field name="date_customer_finish_att_count" string=" "/>
-                    <field name="date_customer_finish_state" invisible="1"/>
-                    <button name="open_transport_date" icon="fa-paperclip" type="object"
-                            context="{'form_xml_id': 'yjzy_extend.view_transport_bill_date_customer_finish'}"
-                            string="附件"/>
-                    <button name="open_transport_date" icon="fa-check" type="object"
-                            context="{'form_xml_id': 'yjzy_extend.view_transport_bill_date_customer_finish'}" attrs="{'invisible':[('date_customer_finish_state','!=','done')]}"/>
-                    <button name="action_customer_date_state_submit" type="object"
-                            context="{'date_type':'date_customer_finish'}"
-                            attrs="{'invisible':[('date_customer_finish_state','not in',['draft','refuse'])]}"
-                            string="提交"/>
-                    <button name="action_customer_date_state_done" type="object"
-                            context="{'date_type':'date_customer_finish'}"
-                            attrs="{'invisible':[('date_customer_finish_state','not in',['submit'])]}" string="通过"/>
-                    <field name="date_supplier_finish" invisible="1"/>
-                    <field name="all_purchase_invoice_fill" invisible="1"/>
-                    <field name="purchase_invoice_ids" widget="many2many_tags" invisible="1"/>
-                    <field name="purchase_invoice_ids2" widget="many2many_tags" string="供应商交单"
-                           context="{'show_date_finish': 1}"/>
-                    <button name="open_purchase_invoice_1" type="object" class="oe_stat_button" string="供应商交单"
-                            attrs="{'invisible':[('date_purchase_finish_state','=','done')]}"/>
-                    <button name="update_supplier_invoice_date" string="供应商交单日期"
-                            attrs="{'invisible':[('state','!=','invoiced')]}" class="oe_highlight" type="object"
-                            invisible="1" icon="fa-pencil-square-o"/>
-                    <field name="date_purchase_finish_state" invisible="1"/>
-                    <button icon="fa-check" attrs="{'invisible':[('date_purchase_finish_state','!=','done')]}"/>
-                    <field name="date_out_in_related" invisible="1"/>
-                    <field name="date_in_related" invisible="1"/>
-                    <field name="date_ship_related" invisible="1"/>
-                    <field name="date_customer_finish_related" invisible="1"/>
-                    <field name="date_supplier_finish_related" modifiers="{}" invisible="1"/>
-                    <field name="state" invisible="0"/>
-                    <field name="create_date" widget="date" invisible="1"/>
-                    <field name="gongsi_id" string="销售主体" invisible="1"/>
-                    <field name="purchase_gongsi_id" string="采购主体" invisible="1"/>
-                </tree>
-            </field>
-        </record>
-        <record id="view_transport_bill_date_out_in" model="ir.ui.view">
-            <field name="name">transport.bill.form</field>
-            <field name="model">transport.bill</field>
-            <field name="arch" type="xml">
-                <form string="进仓日期附件">
-                    <sheet>
-
-                        <field name="name" invisible="1"/>
-                        <field name="date_out_in" invisible="1"/>
-                        <field nolabel="1" name="date_out_in_att" context="{'default_type':'date_out_in'}">
-                            <tree string="进仓日期附件" editable="bottom">
-
-                                <field name="attachment" widget="many2many_binary"/>
-                                <field name="name"/>
-                                <field name="type" invisible="1"/>
-                            </tree>
-                        </field>
-
-                        <footer>
-                            <button name="action_save_test" type="object" class="oe_highlight" string="保存并关闭"/>
-                        </footer>
-
-                    </sheet>
-                </form>
-            </field>
-        </record>
-        <record id="view_transport_bill_date_ship" model="ir.ui.view">
-            <field name="name">transport.bill.form</field>
-            <field name="model">transport.bill</field>
-            <field name="arch" type="xml">
-                <form string="出运船日期附件">
-                    <sheet>
-
-                        <field name="name" invisible="1"/>
-                        <field name="date_ship" invisible="1"/>
-                        <field nolabel="1" name="date_ship_att" context="{'default_type':'date_ship'}">
-                            <tree string="出运船日期附件" editable="bottom">
-
-                                <field name="attachment" widget="many2many_binary"/>
-                                <field name="name"/>
-                                <field name="type" invisible="1"/>
-                            </tree>
-                        </field>
-
-                        <footer>
-                            <button name="action_save_test" type="object" class="oe_highlight" string="保存并关闭"/>
-                        </footer>
-
-                    </sheet>
-                </form>
-            </field>
-        </record>
-        <record id="view_transport_bill_date_customer_finish" model="ir.ui.view">
-            <field name="name">transport.bill.form</field>
-            <field name="model">transport.bill</field>
-            <field name="arch" type="xml">
-                <form string="客户交单日期附件">
-                    <sheet>
-
-                        <field name="name" invisible="1"/>
-                        <field name="date_customer_finish" invisible="1"/>
-                        <field nolabel="1" name="date_customer_finish_att"
-                               context="{'default_type':'date_customer_finish'}">
-                            <tree string="客户交单日期附件" editable="bottom">
-
-                                <field name="attachment" widget="many2many_binary"/>
-                                <field name="name"/>
-                                <field name="type" invisible="1"/>
-                            </tree>
-                        </field>
-
-
-                        <footer>
-                            <button name="action_save_test" type="object" class="oe_highlight" string="保存并关闭"/>
-                        </footer>
-                    </sheet>
-                </form>
-            </field>
-        </record>
 
 
         <!--采购-->
@@ -1532,29 +1375,7 @@
                 </form>
             </field>
         </record>
-        <!--日期填制-->
-        <record model="ir.actions.act_window" id="act_open_transport_bill_tenyale_date_view">
-            <field name="name">出运单日期填制</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="res_model">transport.bill</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
-            <field name="search_view_id" ref="view_transport_bill_tenyale_filter"/>
-            <field name="limit">20</field>
-            <field name="domain">[('date_all_state','!=','done')]</field>
-            <field name="context">{'show_date_finish':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3}
-            </field>
-            <field name="view_ids" eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_transport_bill_tenyale_date_tree')})]"/>
 
-        </record>
-
-
-        <menuitem id="menu_transport_tenyale_date_bill" name="出运单日期填制"
-                  parent="yjzy_extend.menu_transport_tenyale_bill_root"
-                  sequence="5"
-                  action="act_open_transport_bill_tenyale_date_view"
-        />
 
 
         <record model="ir.actions.act_window" id="act_open_transport_bill_tenyale_create_view">
