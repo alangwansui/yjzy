@@ -79,6 +79,10 @@ class wizard_transport4so(models.TransientModel):
 
         tb.check_lines()
         #自动安排调拨计划
+        tb.incoterm = self.incoterm
+        tb.payment_term_id = self.payment_term_id
+        tb.sale_currency_id = self.currency_id
+        tb.include_tax = self.include_tax
         tblines.make_default_lot_plan()
         tb.is_done_plan = True
         return True
