@@ -225,7 +225,7 @@ class transport_bill(models.Model):
 
             one.all_purchase_invoice_fill = all([x.date_finish for x in purchase_invoices])
 
-    @api.depends('line_ids.plan_qty')
+    @api.depends('line_ids.plan_qty','line_ids','current_date_rate')
     def _amount_all(self):
         """
         Compute the total amounts of the SO.
