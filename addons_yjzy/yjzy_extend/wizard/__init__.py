@@ -11,6 +11,7 @@ from . import wizard_bom_sale
 from . import wizard_so2po
 from . import wizard_supplier_invoice_date
 from . import wizard_batch_passwd
+from . import wizard_so2sol
 
 
 

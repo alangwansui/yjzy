@@ -133,6 +133,7 @@
         'wizard/wizard_bom_sale.xml',
         'wizard/wizard_supplier_invoice_date.xml',
         'wizard/wizard_batch_passwd.xml',
+        'wizard/wizard_so2sol.xml',
         # report
         'report/report.xml',
         'report/sale_contract_template.xml',

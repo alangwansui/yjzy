@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+
+        <act_window id="act_so2sol"
+                    name="查看销售明细"
+                    view_mode="tree,form"
+                    res_model="sale.order.line"
+                    src_model="sale.order"
+                    multi="True"
+                    key2="client_action_multi"
+                    domain="[('order_id','in', active_ids)]"
+        />
+
+    </data>
+</odoo>
