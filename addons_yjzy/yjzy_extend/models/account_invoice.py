@@ -75,7 +75,7 @@ class account_invoice(models.Model):
     reconcile_order_id = fields.Many2one('account.reconcile.order', u'核销单据')
     purchase_date_finish_att = fields.Many2many('ir.attachment', string='供应商交单日附件')
     purchase_date_finish_att_count = fields.Integer(u'供应商交单附件数量',compute=compute_info)
-    purchase_date_finish_state = fields.Selection([('draft', u'草稿'), ('submit', u'待审批'), ('done', u'完成')], '供应商交单审批状态')
+    purchase_date_finish_state = fields.Selection([('draft', u'待提交'), ('submit', u'待审批'), ('done', u'完成')], '供应商交单审批状态', default='draft')
 
     move_ids = fields.One2many('account.move', 'invoice_id', u'发票相关的分录', help=u'记录发票相关的分录，方便统计')
     move_line_ids = fields.One2many('account.move.line', 'invoice_id', u'发票相关的分录明细', help=u'记录发票相关的分录明细，方便统计')
@@ -145,7 +145,7 @@ class account_invoice(models.Model):
             if one.purchase_date_finish_state == 'done':
                 purchase_date_finish_state = '完成'
             if show_date_finish:
-                name = '%s %s %s' % (one.partner_id.name or '', one.date_finish or '', purchase_date_finish_state or '',)
+                name = '%s %s %s' % (purchase_date_finish_state or '',one.date_finish or '', one.partner_id.name or '', )
             else:
                 name=one.number
             res.append((one.id, name))
@@ -217,11 +217,14 @@ class account_invoice(models.Model):
 
     def action_purchase_date_finish_state_submit(self):
         for one in self:
-            if not one.date:
+            if not one.date_finish:
                 raise Warning('请先填写日期')
             if not one.purchase_date_finish_att :
                 raise Warning('请提交附件')
             one.purchase_date_finish_state = 'submit'
+
+
+
 
     def action_purchase_date_finish_state_done(self):
         for one in self:

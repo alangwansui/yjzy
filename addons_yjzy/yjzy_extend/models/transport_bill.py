@@ -92,27 +92,16 @@ class transport_bill(models.Model):
 
             #计算账单是否确认
             invoice_state = 'draft'
-            line_count = len(one.purchase_invoice_ids)
-            line_count_open = len(one.purchase_invoice_ids.filtered(lambda x: x.state == 'open'))
-
+            line_count = len(one.all_invoice_ids)
+            line_count_open = len(one.all_invoice_ids.filtered(lambda x: x.state == 'open'))
             if line_count_open > 0:
-                if line_count_open == line_count and one.sale_invoice_id.state == 'open' and one.back_tax_invoice_id.state == 'open':
+                if line_count_open == line_count:
                     invoice_state = 'open'
                 else:
                     invoice_state = 'draft'
             one.invoice_state = invoice_state
 
 
-           # 供应商交单日期审批状态
-            if all([x.purchase_date_finish_state == 'draft' for x in one.purchase_invoice_ids]):
-                date_purchase_finish_state = 'draft'
-            else:
-                if all([x.purchase_date_finish_state == 'done' for x in one.purchase_invoice_ids]):
-                    date_purchase_finish_state = 'done'
-                else:
-                    date_purchase_finish_state = 'submit'
-
-            one.date_purchase_finish_state = date_purchase_finish_state
 
 
             one.date_out_in_att_count = len(one.date_out_in_att)
@@ -236,7 +225,7 @@ class transport_bill(models.Model):
 
             one.all_purchase_invoice_fill = all([x.date_finish for x in purchase_invoices])
 
-    @api.depends('line_ids.plan_qty')
+    @api.depends('line_ids.plan_qty','line_ids','current_date_rate')
     def _amount_all(self):
         """
         Compute the total amounts of the SO.
@@ -249,7 +238,7 @@ class transport_bill(models.Model):
                 'org_sale_amount_new': one.sale_currency_id.round(org_sale_amount_new),
             })
 
-    @api.depends('line_ids.plan_qty')
+    @api.depends('line_ids.plan_qty','line_ids','current_date_rate')
     def _sale_purchase_amount(self):
         """
         Compute the total amounts of the SO.
@@ -304,29 +293,68 @@ class transport_bill(models.Model):
                 'back_tax_invoice_paid_new': one.sale_currency_id.round(back_tax_invoice_paid),
             })
 
-    #失效
-    @api.depends('date_out_in','date_in','date_ship','date_customer_finish','all_purchase_invoice_fill')
+
+    # 供应商交单日期审批状态
+    def compute_date_purchase_finish_state(self):
+        for one in self:
+
+            print('-采购发票-',one.purchase_invoice_ids)
+            if all([x.purchase_date_finish_state == 'draft' for x in one.purchase_invoice_ids]):
+                date_purchase_finish_state = 'draft'
+            elif all([x.purchase_date_finish_state == 'done' for x in one.purchase_invoice_ids]):
+                date_purchase_finish_state = 'done'
+            elif any([x.purchase_date_finish_state == 'submit' for x in one.purchase_invoice_ids]):
+                      date_purchase_finish_state = 'submit'
+            else:
+                date_purchase_finish_state = 'draft'
+            one.date_purchase_finish_state = date_purchase_finish_state
+
+
+    # @api.depends('date_out_in','date_in','date_ship','date_customer_finish','all_purchase_invoice_fill')
+    # def _compute_date_all_state(self):
+    #     for one in self:
+    #         # 日期填写状态计算 akiny
+    #         today = datetime.now()
+    #         date_all_state = 'un_done'
+    #         if one.date_out_in_state != 'done':
+    #             if one.approve_date and one.approve_date >= (today - relativedelta(days=15)).strftime('%Y-%m-%d 00:00:00'):
+    #                 date_all_state = 'normal_no_date_out_in'
+    #             else:
+    #                 date_all_state = 'unnormal_no_date_out_in'
+    #         else:
+    #             if one.date_ship_state =='done' and one.date_customer_finish_state == 'done' and one.date_purchase_finish_state == 'done':
+    #                 date_all_state = 'done'
+    #             else:
+    #                 if one.date_out_in and one.approve_date < (today - relativedelta(days=30)).strftime('%Y-%m-%d 00:00:00'):
+    #                     date_all_state = 'abnormal'
+    #                 else:
+    #                     date_all_state = 'un_done'
+    #         one.date_all_state = date_all_state
+
+    @api.depends('date_out_in', 'date_in', 'date_ship', 'date_customer_finish', 'all_purchase_invoice_fill')
     def _compute_date_all_state(self):
         for one in self:
             # 日期填写状态计算 akiny
             today = datetime.now()
             date_all_state = 'un_done'
-            if one.date_out_in_state != 'done':
-                if one.approve_date and one.approve_date >= (today - relativedelta(days=15)).strftime('%Y-%m-%d 00:00:00'):
-                    date_all_state = 'normal_no_date_out_in'
-                else:
-                    date_all_state = 'unnormal_no_date_out_in'
+            if one.date_out_in_state == 'submit' or one.date_ship_state == 'submit'\
+                    or one.date_customer_finish_state == 'submit' or one.date_purchase_finish_state == 'submit':
+                date_all_state = 'date_approving'
             else:
-                if one.date_ship_state =='done' and one.date_customer_finish_state == 'done' and one.date_purchase_finish_state == 'done':
-                    date_all_state = 'done'
-                else:
-                    if one.date_out_in and one.approve_date < (today - relativedelta(days=30)).strftime('%Y-%m-%d 00:00:00'):
-                        date_all_state = 'abnormal'
+                if one.date_out_in_state == 'draft':
+                    if one.approve_date and one.approve_date >= (today - relativedelta(days=15)).strftime('%Y-%m-%d 00:00:00'):
+                        date_all_state = 'normal_no_date_out_in'
                     else:
-                        date_all_state = 'un_done'
+                        date_all_state = 'unnormal_no_date_out_in'
+                else:
+                    if one.date_ship_state == 'done' and one.date_customer_finish_state == 'done' and one.date_purchase_finish_state == 'done':
+                        date_all_state = 'done'
+                    else:
+                        if one.date_out_in and one.date_out_in < (today - relativedelta(days=15)).strftime('%Y-%m-%d 00:00:00'):
+                            date_all_state = 'abnormal'
+                        else:
+                            date_all_state = 'un_done'
             one.date_all_state = date_all_state
-
-
 
     #失效
     @api.depends('date_out_in', 'date_in', 'date_ship', 'date_customer_finish', 'all_purchase_invoice_fill', 'state')
@@ -384,19 +412,24 @@ class transport_bill(models.Model):
     date_ship_att_count = fields.Integer('出运船日期附件数量', compute=compute_info)
     date_customer_finish_att = fields.One2many('trans.date.attachment','tb_id',domain=[('type', '=', 'date_customer_finish')],string='客户交单日附件')
     date_customer_finish_att_count = fields.Integer('客户交单日期附件数量', compute=compute_info)
-    date_out_in_state = fields.Selection([('draft',u'草稿'),('submit',u'待审批'),('done',u'完成')],'进仓审批状态', default='draft')
-    date_ship_state = fields.Selection([('draft',u'草稿'),('submit',u'待审批'),('done',u'完成')],'出运船审批状态', default='draft')
-    date_customer_finish_state = fields.Selection([('draft',u'草稿'),('submit',u'待审批'),('done',u'完成')],'客户交单日审批状态',default='draft')
-    date_purchase_finish_state = fields.Selection([('draft',u'草稿'),
+    date_out_in_state = fields.Selection([('draft',u'发货时间待提交'),
+                                          ('submit',u'待审批发货时间'),
+                                          ('done',u'已完成发货时间'),
+                                          ],'进仓审批状态', default='draft')
+    date_ship_state = fields.Selection([('draft',u'待提交'),('submit',u'待审批'),('done',u'完成')],'出运船审批状态', default='draft')
+    date_customer_finish_state = fields.Selection([('draft',u'待提交'),('submit',u'待审批'),('done',u'完成')],'客户交单日审批状态',default='draft')
+    date_purchase_finish_state = fields.Selection([('draft',u'待提交'),
                                                    ('submit',u'待审批'),
-                                                   ('done',u'完成')],'供应商交单日审批状态',default='draft', compute=compute_info)
-    date_all_state = fields.Selection([('normal_no_date_out_in',u'正常未填制'),
-                                       ('unnormal_no_date_out_in',u'异常未填制'),
+                                                   ('done',u'完成')],'供应商交单日审批状态',default='draft', compute=compute_date_purchase_finish_state)
+    date_all_state = fields.Selection([('date_approving',u'日期审批中'),
+                                       ('normal_no_date_out_in',u'正常未提交'),
+                                       ('unnormal_no_date_out_in',u'异常未提交'),
                                        ('un_done',u'待完成相关日期'),
                                        ('done',u'已完成相关日期'),
                                        ('abnormal',u'日期异常')],'所有日期状态',default='un_done',store=True, compute=_compute_date_all_state)
-    hexiao_type = fields.Selection([('undefined','...'),('abnormal',u'异常核销'),('write_off',u'正常核销')], string='核销类型')
+    hexiao_type = fields.Selection([('undefined','...'),('abnormal',u'异常核销'),('write_off',u'正常核销')], default='undefined', string='核销类型')
     invoice_state = fields.Selection([('draft', u'未确认'), ('open', u'已确认'),('paid',u'已付款')], string='账单状态',compute=compute_info)
+
     #is_tuopan = fields.Boolean(u'是否打托')
 
     tba_id = fields.Many2one('transport.bill.account', '转账调节单')
@@ -611,9 +644,9 @@ class transport_bill(models.Model):
 
 
     sale_invoice_id = fields.Many2one('account.invoice', '销售发票')
-    purchase_invoice_ids = fields.One2many('account.invoice', 'bill_id', '采购发票')
+    purchase_invoice_ids = fields.One2many('account.invoice', 'bill_id', '采购发票',domain=[('yjzy_type','=','purchase')])
     purchase_invoice_ids2 = fields.One2many('account.invoice', string='采购发票2',  compute=compute_info)#顯示供應商的交單日期
-
+    all_invoice_ids = fields.One2many('account.invoice', 'bill_id', '所有发票')
     back_tax_invoice_id = fields.Many2one('account.invoice', '退税发票')
     sale_invoice_count = fields.Integer(u'销售发票数', compute=compute_info)
     purchase_invoice_count = fields.Integer(u'采购发票数', compute=compute_info)
@@ -1421,6 +1454,7 @@ class transport_bill(models.Model):
                 back_tax_invoice.date = one.date_out_in
                 back_tax_invoice.date_finish = one.date_customer_finish
                 back_tax_invoice.date_ship = one.date_ship
+                #调用防范，更新到期日期。因为是onchange发票日期，如果不调用，到期日期就无法计算
                 back_tax_invoice._onchange_payment_term_date_invoice()
           #  back_tax_invoice = one.back_tax_invoice_id
          #   back_tax_invoice_sate = one.back_tax_invoice_id.state
@@ -1730,15 +1764,17 @@ class transport_bill(models.Model):
         }
 
     def open_purchase_invoice_1(self):
+        form_view = self.env.ref('yjzy_extend.view_account_supplier_invoice_new_form')
+        tree_view = self.env.ref('yjzy_extend.view_account_invoice_new_tree')
         self.ensure_one()
         return {
-            'name': u'采购发票',
+            'name': u'供应商日期填制',
             'view_type': 'form',
             'view_mode': 'tree,form',
             'res_model': 'account.invoice',
             'type': 'ir.actions.act_window',
+            'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
             'domain': [('id', 'in', [x.id for x in self.purchase_invoice_ids.filtered(lambda x: x.yjzy_type == 'purchase')])],
-            'tree_view_ref':'yjzy_extend.view_account_invoice_new_tree',
             'target':'new'
         }
 
@@ -1943,14 +1979,12 @@ class transport_bill(models.Model):
             today = datetime.now()
             date_out_in = one.date_out_in
             # 未发货，开始发货，待核销，已核销
-            if one.state not in ('invoiced','verifying','done'):
-                one.hexiao_type = 'undefined'
-            else:
+            if one.state in ('invoiced','verifying'):
                 if (one.sale_invoice_balance_new!= 0 or one.purchase_invoice_balance_new != 0 or one.back_tax_invoice_balance_new != 0) and \
-                        date_out_in and date_out_in < (today - relativedelta(days=180)).strftime('%Y-%m-%d 00:00:00') and one.state in ('invoiced','verifying') :
+                        date_out_in and date_out_in < (today - relativedelta(days=180)).strftime('%Y-%m-%d 00:00:00'):
                     hexiao_type = 'abnormal'
                     state = 'verifying'
-                if one.sale_invoice_balance_new == 0 and one.purchase_invoice_balance_new == 0 and one.back_tax_invoice_balance_new == 0 and one.state in ('invoiced','verifying',):
+                if one.sale_invoice_balance_new == 0 and one.purchase_invoice_balance_new == 0 and one.back_tax_invoice_balance_new == 0:
                     hexiao_type = 'write_off'
                     state = 'verifying'
                 one.hexiao_type = hexiao_type
