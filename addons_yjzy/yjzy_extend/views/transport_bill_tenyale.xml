@@ -511,7 +511,13 @@
 
                                     </form>
                                 </field>
+                               <group class="oe_subtotal_footer oe_right">
+                                   <field name="back_tax_amount"/>
+                                <field name="org_sale_amount_new" class="oe_subtotal_footer_separator"/>
 
+                                <field name="purchase_cost_total" class="oe_subtotal_footer_separator" attrs="{'invisible': [('state', '=', 'draft')]}"/>
+
+                            </group>
 
                             </page>
 

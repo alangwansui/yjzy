@@ -238,7 +238,7 @@ class transport_bill(models.Model):
                 'org_sale_amount_new': one.sale_currency_id.round(org_sale_amount_new),
             })
 
-    @api.depends('line_ids.plan_qty')
+    @api.depends('line_ids.plan_qty','line_ids','current_date_rate')
     def _sale_purchase_amount(self):
         """
         Compute the total amounts of the SO.
@@ -422,8 +422,8 @@ class transport_bill(models.Model):
                                                    ('submit',u'待审批'),
                                                    ('done',u'完成')],'供应商交单日审批状态',default='draft', compute=compute_date_purchase_finish_state)
     date_all_state = fields.Selection([('date_approving',u'日期审批中'),
-                                       ('normal_no_date_out_in',u'正常未填制'),
-                                       ('unnormal_no_date_out_in',u'异常未填制'),
+                                       ('normal_no_date_out_in',u'正常未提交'),
+                                       ('unnormal_no_date_out_in',u'异常未提交'),
                                        ('un_done',u'待完成相关日期'),
                                        ('done',u'已完成相关日期'),
                                        ('abnormal',u'日期异常')],'所有日期状态',default='un_done',store=True, compute=_compute_date_all_state)
