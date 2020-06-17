@@ -155,6 +155,20 @@ class transport_bill_line(models.Model):
     need_print = fields.Boolean('是否打印', defualt=True)
     #是否金样  akiny
     is_gold_sample = fields.Boolean('是否有金样', related='product_id.is_gold_sample', readonly=False)
+    #单个费用 akiny
+    # fee_inner = fields.Monetary(u'国内运杂费:单个', currency_field='company_currency_id', compute=compute_info)
+    # fee_rmb1 = fields.Monetary(u'人民币费用1:单个', currency_field='company_currency_id', compute=compute_info)
+    # fee_rmb2 = fields.Monetary(u'人民币费用2:单个', currency_field='company_currency_id', compute=compute_info)
+    # fee_outer = fields.Monetary(u'国外运保费', currency_field='other_currency_id', compute=compute_info)
+    # fee_export_insurance = fields.Monetary(u'出口保险费:单个', currency_field='other_currency_id', compute=compute_info)
+    # fee_other = fields.Monetary(u'其他外币费用:单个', currency_field='other_currency_id', compute=compute_info)
+    #
+    # outer_currency_id = fields.Many2one('res.currency', u'国外运保费货币', related='order_id.outer_currency_id')
+    # export_insurance_currency_id = fields.Many2one('res.currency', u'出口保险费货币',
+    #                                                related='order_id.export_insurance_currency_id')
+    # other_currency_id = fields.Many2one('res.currency', u'其他国外费用货币', related='order_id.other_currency_id')
+
+
 
     @api.depends('lot_plan_ids', 'lot_plan_ids.stage_2', 'lot_plan_ids.qty')
     def compute_qty2stage_new(self):

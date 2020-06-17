@@ -119,7 +119,7 @@ class hr_expense_sheet(models.Model):
     expense_line_ids_b = fields.One2many('hr.expense', related='expense_line_ids')
     expense_line_ids_employee = fields.One2many('hr.expense', related='expense_line_ids')
     expense_line_ids_company = fields.One2many('hr.expense', related='expense_line_ids')
-    gongsi_id = fields.Many2one('gongsi', '内部公司')
+    gongsi_id = fields.Many2one('gongsi', '内部公司',default=lambda self: self.env.user.company_id.gongsi_id)
 
     #akiny
     is_budget = fields.Boolean(u'是否已预算')

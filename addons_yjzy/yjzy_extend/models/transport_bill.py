@@ -148,6 +148,38 @@ class transport_bill(models.Model):
             one.purchase_invoice_ids2 = one.purchase_invoice_ids.filtered(lambda x: x.yjzy_type == 'purchase')
 
 
+            fee_inner = 0.0
+            fee_rmb1 = 0.0
+            fee_rmb2 = 0.0
+            fee_outer = 0.0
+            fee_export_insurance =0.0
+            fee_other = 0.0
+            for x in one.line_ids:
+                fee_inner +=  x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_inner * x.plan_qty
+                fee_rmb1 += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_rmb1 * x.plan_qty
+                fee_rmb2 += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_rmb2 * x.plan_qty
+                fee_outer += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_outer * x.plan_qty
+                fee_export_insurance += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_export_insurance * x.plan_qty
+                fee_other += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_other * x.plan_qty
+            one.fee_inner_so = fee_inner
+            one.fee_rmb1_so = fee_rmb1
+            one.fee_rmb2_so = fee_rmb2
+            one.fee_other_so = fee_outer
+            one.fee_export_insurance_so = fee_export_insurance
+            one.fee_other_so = fee_other
+
+            # one.fee_inner = fee_inner
+            # one.fee_rmb1 = fee_rmb1
+            # one.fee_rmb2 = fee_rmb2
+            # one.fee_other = fee_outer
+            # one.fee_export_insurance = fee_export_insurance
+            # one.fee_other = fee_other
+            #
+            # print('---fee_inner_test---', fee_inner, fee_rmb1)
+
+
+
+
     def sum_other(self):
         self.ensure_one()
         return sum([self.fee_inner,
@@ -391,6 +423,46 @@ class transport_bill(models.Model):
             one.state_type = state_type
             one.state = state
 
+    @api.depends('so_ids','incoterm','payment_term_id','include_tax','line_ids')
+    def compute_same(self):
+        for one in self:
+            same_incoterm = one.so_ids.mapped('incoterm')
+            same_payment_term = one.so_ids.mapped('payment_term_id')
+            same_currency = one.so_ids.mapped('sale_currency_id')
+            same_include_tax = one.so_ids.mapped('include_tax')
+            print('-testincoterm-', same_incoterm)
+            if len(same_incoterm) == 1 and  one.incoterm == same_incoterm[0]:
+                is_same_incoterm = True
+            else:
+                is_same_incoterm = False
+            if len(same_payment_term) == 1 and one.payment_term_id == same_payment_term[0]:
+                is_same_payment_term = True
+            else:
+                is_same_payment_term = False
+            if len(same_currency) == 1 and one.sale_currency_id == same_currency[0]:
+                is_same_currency = True
+            else:
+                is_same_currency = False
+            if len(set(same_include_tax)) == 1 and one.include_tax == same_include_tax[0]:
+                is_same_include_tax = True
+            else:
+                is_same_include_tax = False
+            one.same_incoterm = is_same_incoterm
+            one.same_payment_term = is_same_payment_term
+            one.same_currency = is_same_currency
+            one.same_include_tax = is_same_include_tax
+
+    # @api.model
+    # def _default_fee_inner(self):
+    #     fee_inner = 0.0
+    #     for x in self.line_ids:
+    #         fee_inner += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_inner * x.plan_qty
+    #     print('---default_inner--',fee_inner)
+    #
+    #     if fee_inner > 0:
+    #         return fee_inner
+
+
     # 货币设置
     #akiny 未加入
     sale_invoice_total_new = fields.Monetary(u'销售发票金额', compute=_sale_invoice_amount, store=True)
@@ -429,6 +501,25 @@ class transport_bill(models.Model):
                                        ('abnormal',u'日期异常')],'所有日期状态',default='un_done',store=True, compute=_compute_date_all_state)
     hexiao_type = fields.Selection([('undefined','...'),('abnormal',u'异常核销'),('write_off',u'正常核销')], default='undefined', string='核销类型')
     invoice_state = fields.Selection([('draft', u'未确认'), ('open', u'已确认'),('paid',u'已付款')], string='账单状态',compute=compute_info)
+    same_incoterm = fields.Boolean(u'价格条款是否一致', store=True, compute='compute_same')
+    same_payment_term = fields.Boolean(u'付款条款是否一致',store=True, compute='compute_same')
+    same_currency = fields.Boolean(u'币种是否一致', store=True, compute='compute_same')
+    same_include_tax = fields.Boolean(u'含税是否一致', store=True, compute='compute_same')
+
+    fee_inner_so = fields.Monetary(u'国内运杂费', currency_field='company_currency_id', compute=compute_info)
+    fee_rmb1_so = fields.Monetary(u'人民币费用1', currency_field='company_currency_id', compute=compute_info)
+    fee_rmb2_so = fields.Monetary(u'人民币费用2', currency_field='company_currency_id', compute=compute_info)
+    fee_outer_so = fields.Monetary(u'国外运保费', currency_field='other_currency_id', compute=compute_info)
+    fee_export_insurance_so = fields.Monetary(u'出口保险费', currency_field='other_currency_id', compute=compute_info)
+    fee_other_so = fields.Monetary(u'其他外币费用', currency_field='other_currency_id', compute=compute_info)
+
+    outer_currency_id = fields.Many2one('res.currency', u'国外运保费货币', related='sol_id.outer_currency_id')
+    export_insurance_currency_id = fields.Many2one('res.currency', u'出口保险费货币',
+                                                   related='sol_id.export_insurance_currency_id')
+    other_currency_id = fields.Many2one('res.currency', u'其他国外费用货币', related='sol_id.other_currency_id')
+
+
+
 
     #is_tuopan = fields.Boolean(u'是否打托')
 
@@ -486,7 +577,7 @@ class transport_bill(models.Model):
     fee_rmb2 = fields.Monetary('人民币费用2', currency_field='company_currency_id')
     fee_rmb2_note = fields.Text('人名币费用2备注')
 
-    fee_outer = fields.Monetary('国外运保费', currency_field='outer_currency_id')
+    fee_outer = fields.Monetary('国外运保费', currency_field='outer_currency_id', )
     fee_outer_need = fields.Boolean(u'国外运保费计入应收', default=False)
     outer_currency_id = fields.Many2one('res.currency', '国外运保费货币', required=True)
     fee_export_insurance = fields.Monetary('出口保险费', currency_field='export_insurance_currency_id')
@@ -704,6 +795,84 @@ class transport_bill(models.Model):
 
     gold_sample_state = fields.Selection([('all', '全部有'), ('part', '部分有'), ('none', '无金样')], '样金管理',
                                          compute=compute_info)
+
+    def open_fee(self):
+        war = ''
+        war += '国内运杂费%s\n' % self.fee_inner_so
+        war += '人名币费用1%s\n' % self.fee_rmb1_so
+        war += '人名币费用2%s\n' % self.fee_rmb2_so
+        war += '国外运保费%s\n' % self.fee_outer_so
+        war += '出口保险费%s\n' % self.fee_export_insurance_so
+        war += '其他外币费用%s\n' % self.fee_other_so
+        raise Warning(war)
+
+
+    def open_same(self):
+        self.ensure_one()
+        #form_view = self.env.ref('yjzy_extend.view_account_supplier_invoice_new_form')
+        tree_view = self.env.ref('yjzy_extend.new_order_transport_same_tree')
+        ctx = self.env.context
+        if ctx.get('default_open', '') == 'incoterm':
+            self.ensure_one()
+            return {
+                'name': u'价格条款对比',
+                'view_type': 'form',
+                'view_mode': 'tree,form',
+                'res_model': 'sale.order',
+                'type': 'ir.actions.act_window',
+                'target': 'new',
+                'views': [(tree_view.id, 'tree')],
+                'domain': [('id', 'in', [x.id for x in self.so_ids])],
+                'context': {'same_incoterm':1},
+                }
+        if ctx.get('default_open', '') == 'payment_term':
+            self.ensure_one()
+            return {
+                'name': u'价格条款对比',
+                'view_type': 'form',
+                'view_mode': 'tree,form',
+                'res_model': 'sale.order',
+                'type': 'ir.actions.act_window',
+                'target': 'new',
+                'views': [(tree_view.id, 'tree')],
+                'domain': [('id', 'in', [x.id for x in self.so_ids])],
+                'context': {'same_payment_term':1},
+                }
+        if ctx.get('default_open', '') == 'currency':
+            self.ensure_one()
+            return {
+                'name': u'价格条款对比',
+                'view_type': 'form',
+                'view_mode': 'tree,form',
+                'res_model': 'sale.order',
+                'type': 'ir.actions.act_window',
+                'target': 'new',
+                'views': [(tree_view.id, 'tree')],
+                'domain': [('id', 'in', [x.id for x in self.so_ids])],
+                'context': {'same_currency':1},
+                }
+        if ctx.get('default_open', '') == 'include_tax':
+            self.ensure_one()
+            return {
+                'name': u'价格条款对比',
+                'view_type': 'form',
+                'view_mode': 'tree,form',
+                'res_model': 'sale.order',
+                'type': 'ir.actions.act_window',
+                'target': 'new',
+                'views': [(tree_view.id, 'tree')],
+                'domain': [('id', 'in', [x.id for x in self.so_ids])],
+                'context': {'same_include_tax': 1},
+            }
+    # ctx = self.env.context
+    # res = super(account_payment, self).default_get(fields)
+    #
+    # print('==========dg======', ctx)
+    #
+    # if ctx.get('default_sfk_type', '') == 'jiehui':
+    #     res.update({
+    #         'partner_id': self.env['res.partner'].search([('name', '=', '未定义')], limit=1).id
+    #     })
 
     def make_all_document(self):
         self.make_sale_purchase_collect()
@@ -1673,6 +1842,8 @@ class transport_bill(models.Model):
             'type': 'ir.actions.act_window',
             'context': ctx,
         }
+
+
 
     def make_default_lot_plan(self):
         self.ensure_one()

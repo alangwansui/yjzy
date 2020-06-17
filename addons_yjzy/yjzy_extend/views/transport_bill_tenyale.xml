@@ -330,16 +330,36 @@
                                 <field name="partner_invoice_id" domain="[('parent_id','child_of', partner_id)]"
                                        invisible="1"
                                        attrs="{'readonly': [('locked','=',True)]}" groups="base.group_system"/>
+                                <label for="incoterm" string="价格条款"/>
+                                <div class="o_row">
+                                    <span style="display:contents!important">
                                 <field name="incoterm" string="价格条款"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)],'required':[('state','=','check')]}"/>
+                               </span>
+                                <button name="open_same" attrs="{'invisible':[('same_incoterm','=',True)]}" type="object" class="btn-xs btn-link mb4 fa fa-times-circle" icon="" style="color:red" context="{'default_open':'incoterm'}"/>
+                                </div>
+                                <field name="same_incoterm" invisible="1"/>
+                                <label for="payment_term_id" string="付款条款"/>
+                                <div class="o_row">
                                 <field name="payment_term_id" options="{'no_open':1}"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)],'required':[('state','=','check')]}"/>
-
+<button name="open_same" attrs="{'invisible':[('same_payment_term','=',True)]}" type="object" class="btn-xs btn-link mb4 fa fa-times-circle" icon="" style="color:red" context="{'default_open':'payment_term'}"/>
+                                </div>
+                                <field name="same_payment_term" invisible="1"/>
                                 <field name="current_date_rate"/>
+                                <label for="sale_currency_id" string="交易货币"/>
+                                 <div class="o_row">
                                 <field name="sale_currency_id"/>
-
+                                <button name="open_same" attrs="{'invisible':[('same_currency','=',True)]}" type="object" class="btn-xs btn-link mb4 fa fa-times-circle" icon="" style="color:red" context="{'default_open':'currency'}"/>
+                                 </div>
+                                 <field name="same_currency" invisible="1"/>
+                                <label for="include_tax" string="含税"/>
+                                <div class="o_row">
                                 <field name="include_tax"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
+                                 <button name="open_same" attrs="{'invisible':[('same_include_tax','=',True)]}" type="object" class="btn-xs btn-link mb4 fa fa-times-circle" icon="" style="color:red" context="{'default_open':'include_tax'}"/>
+                                </div>
+                                 <field name="same_include_tax" invisible="1"/>
                                 <field name="locked" groups="base.group_system" invisible="1"/>
                                 <field name="contract_type" groups="base.group_system"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
@@ -349,10 +369,16 @@
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                             </group>
                             <group>
+                                <button name="open_fee" type="object" string="查看原始合同预算费用"/>
                                 <field name="sale_currency_id" invisible="1"/>
                                 <field name="fee_inner"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
+                                <field name="fee_inner_so"
+                                       attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
+
                                 <field name="fee_rmb1"
+                                       attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
+                                <field name="fee_rmb1_so"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <field name="fee_rmb1_note"
                                        attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)],'invisible':[('fee_rmb1','=',0)]}"/>

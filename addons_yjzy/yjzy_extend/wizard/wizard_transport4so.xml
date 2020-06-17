@@ -14,25 +14,56 @@
                         <field name="purchase_gongsi_id" groups="base.group_system"/>
                     </group>
                     <group invisible="not context.get('add_so')">
-                        <field name="so_ids" nolabel="1" option="{'no_create': True}"
-                               domain="[('purchase_gongsi_id', '=', purchase_gongsi_id),('gongsi_id', '=', gongsi_id),('partner_id','=', partner_id),('delivery_status', '!=', 'received'),('state', '=','sale')]"/>
+                        <field name="so_ids" nolabel="1" options="{'no_create': True,'no_open':True}"
+                               domain="[('purchase_gongsi_id', '=', purchase_gongsi_id),('gongsi_id', '=', gongsi_id),('partner_id','=', partner_id),('delivery_status', '!=', 'received'),('state', 'in',['sale','verifying'])]"/>
                     </group>
+
+
                     <group invisible="not context.get('add_sol')">
-                        <field name="sol_ids" nolabel="1" option="{'no_create': True}" widget="many2many"
-                            domain="[('order_id.partner_id','=', partner_id),('new_rest_tb_qty', '!=', 0),('order_id.delivery_status', '!=', 'received'),('order_id.state', '=','sale'),
-                                        ('order_id.purchase_gongsi_id', '=', purchase_gongsi_id),('order_id.gongsi_id', '=', gongsi_id)]"
-                         context="{'tree_view_ref':'yjzy_extend.new_order_line_transport_tree'}">
-                            <tree>
-                                <field name="order_id"/>
-                                <field name="product_id"/>
+                        <field name="sol_ids" nolabel="1" options="{'no_create': True,'no_open':True}" widget="many2many"
+                               domain="[('order_id.partner_id','=', partner_id),('new_rest_tb_qty', '!=', 0),('order_id.delivery_status', '!=', 'received'),('order_id.state','in',['sale','verifying']),
+                                                ('order_id.purchase_gongsi_id', '=', purchase_gongsi_id),('order_id.gongsi_id', '=', gongsi_id)]"
+                               context="{'tree_view_ref':'yjzy_extend.new_order_line_transport_tree'}">
+                            <tree editable="bottom">
+                                <field name="order_id" readonly="1"/>
+                                <field name="product_id" readonly="1"/>
                             </tree>
                         </field>
 
                     </group>
+                    <group>
+                      <div class="oe_form_box_info oe_text_center">
+                        <span>
+                            您选择的销售合同有存在关键字段不一致，请检查，并针对本次出运合同进行手动选择和确认！
+                        </span>
+                    </div>
+                    </group>
+                    <group invisible="not context.get('check_same')">
+                        <field name="incoterm"/>
+                        <field name="payment_term_id"/>
+                        <field name="currency_id"/>
+                        <field name="include_tax"/>
+
+                        <field name="sale_order_ids">
+                            <tree>
+                                <field name="name"/>
+                                <field name="incoterm"/>
+                                <field name="payment_term_id"/>
+                                <field name="currency_id"/>
+                                <field name="include_tax"/>
+
+                                <field name="state"/>
+
+                            </tree>
+                        </field>
+                    </group>
+
+
                     <footer>
+                        <button name="check_apply" class="oe_highlight" type='object' string="检查后确认" invisible="not context.get('check_same')"/>
                         <button name="new_apply" class="oe_highlight" type='object' string="确认:新" invisible="not context.get('add_sol')"/>
                         <button name="apply" class="oe_highlight" type='object' string="确认" invisible="not context.get('add_so')"/>
-                        <button special="cancel" class="oe_highlight" string="取消" />
+                        <button special="cancel" class="oe_highlight" string="取消"/>
                     </footer>
                 </form>
             </field>

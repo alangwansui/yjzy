@@ -126,6 +126,21 @@
                 </tree>
             </field>
         </record>
+
+        <!-- 检验一致性查看销售合同tree-->
+         <record id="new_order_transport_same_tree" model="ir.ui.view">
+            <field name="name">sale.order.same.tree</field>
+            <field name="model">sale.order</field>
+            <field name="arch" type="xml">
+                <tree string="销售合同" editable="bottom">
+                    <field name="contract_code" readonly="1"/>
+                    <field name="incoterm" invisible="not context.get('same_incoterm')" readonly="1"/>
+                    <field name="payment_term_id" invisible="not context.get('same_payment_term')" readonly="1"/>
+                    <field name="sale_currency_id" invisible="not context.get('same_currency')" readonly="1"/>
+                    <field name="include_tax" invisible="not context.get('same_include_tax')" readonly="1"/>
+                </tree>
+            </field>
+        </record>
 <!-- 选择销售明细的时候-->
         <record id="new_sale_order_line_from" model="ir.ui.view">
             <field name="name">sale.order.form</field>
