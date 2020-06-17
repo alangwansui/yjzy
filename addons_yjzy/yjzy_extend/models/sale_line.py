@@ -92,6 +92,17 @@ class sale_order_line(models.Model):
             one.gross_profit_ratio_line = round(gross_profit_ratio_line,2)
             one.gross_profit_line = price_total2-purchase_cost
 
+            one.fee_inner = one.order_id.amount_total and one.price_unit / one.order_id.amount_total * one.order_id.fee_inner
+            one.fee_rmb1 = one.order_id.amount_total and one.price_unit / one.order_id.amount_total * one.order_id.fee_rmb1
+            one.fee_rmb2 = one.order_id.amount_total and one.price_unit / one.order_id.amount_total * one.order_id.fee_rmb2
+            one.fee_outer = one.order_id.amount_total and one.price_unit / one.order_id.amount_total * one.order_id.fee_outer
+            one.fee_export_insurance = one.order_id.amount_total and one.price_unit / one.order_id.amount_total * one.order_id.fee_export_insurance
+            one.fee_other = one.order_id.amount_total and one.price_unit / one.order_id.amount_total * one.order_id.fee_other
+            print('==99999=',  one.order_id.amount_total and one.price_unit / one.order_id.amount_total * one.order_id.fee_inner)
+
+
+
+
     def compute_info_pol_id(self):
         for one in self:
             #统计未发货
@@ -149,6 +160,19 @@ class sale_order_line(models.Model):
     gross_profit_ratio_line = fields.Float(u'毛利润率', digits=(2, 2), compute=compute_info)
     gross_profit_line = fields.Float(u'毛利润', digits=(2, 2), compute=compute_info)
     #gross_profit_ratio_line_p = fields.Percent(u'毛利润率', digits=(2, 2), compute=compute_info)
+
+
+    fee_inner = fields.Monetary(u'国内运杂费:单个', currency_field='company_currency_id',  compute=compute_info)
+    fee_rmb1 = fields.Monetary(u'人民币费用1:单个', currency_field='company_currency_id', compute=compute_info)
+    fee_rmb2 = fields.Monetary(u'人民币费用2:单个', currency_field='company_currency_id', compute=compute_info)
+    fee_outer = fields.Monetary(u'国外运保费', currency_field='other_currency_id', compute=compute_info)
+    fee_export_insurance = fields.Monetary(u'出口保险费:单个', currency_field='other_currency_id', compute=compute_info)
+    fee_other = fields.Monetary(u'其他外币费用:单个', currency_field='other_currency_id', compute=compute_info)
+
+    outer_currency_id = fields.Many2one('res.currency', u'国外运保费货币', related='order_id.outer_currency_id')
+    export_insurance_currency_id = fields.Many2one('res.currency', u'出口保险费货币', related='order_id.export_insurance_currency_id')
+    other_currency_id = fields.Many2one('res.currency', u'其他国外费用货币', related='order_id.other_currency_id')
+
 
 
     @api.depends('tbl_ids', 'tbl_ids.qty2stage_new')
