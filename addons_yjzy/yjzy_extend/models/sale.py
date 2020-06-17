@@ -538,9 +538,9 @@ class sale_order(models.Model):
         self.gongsi_id = self.partner_id.gongsi_id
         self.purchase_gongsi_id = self.partner_id.purchase_gongsi_id
         self.link_man_id = self.partner_id.child_ids and self.partner_id.child_ids[0]
-        self.mark_text = self.partner.shipping_id.mark_text
-        self.from_wharf_id = self.partner.shipping_id.from_wharf_id
-        self.to_wharf_id = self.partner.shipping_id.to_wharf_id
+        self.mark_text = self.partner_shipping_id.mark_text
+        self.from_wharf_id = self.partner_shipping_id.from_wharf_id
+        self.to_wharf_id = self.partner_shipping_id.to_wharf_id
 
 
         return super(sale_order, self).onchange_partner_id()
