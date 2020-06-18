@@ -225,7 +225,7 @@
                                 class="oe_highlight"/>
                         <button string="完成" invisible="1" states="2locked" type="object" name="action_done"
                                 class="oe_highlight"/>
-
+                        <button name="compute_tb_ref" type="object" string="计算出运合同号" />
                         <button string="重置草稿" groups="base.group_system" invisible="1" type="object" name="action_draft"
                                 states="cancel" class="oe_highlight"/>
                         <button string="取消" groups="base.group_system" invisible="1" type="object" name="action_cancel"
@@ -458,7 +458,7 @@
                                         <field name="sol_id" invisible="1"/>
 
                                         <field name="so_id" groups="base.group_system" invisible="1"/>
-
+                                        <field name="so_tb_number"/>
 
                                         <field name="product_id" options="{'no_open':1}"/>
                                         <field name="hs_id" invisible="1"/>

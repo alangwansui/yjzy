@@ -133,7 +133,8 @@ class sale_order(models.Model):
             purchase_cost = one.company_currency_id.compute(sum([x.purchase_cost for x in lines]), one.third_currency_id)
             fandian_amoun = one.company_currency_id.compute(sum([x.fandian_amoun for x in lines]), one.third_currency_id)
             stock_cost = one.company_currency_id.compute(sum([x.stock_cost for x in lines]), one.third_currency_id)
-
+            #剩余出运数
+            rest_tb_qty_total = sum(lines.mapped('rest_tb_qty'))
             #样金计算
             gold_sample_state = 'none'
             line_count = len(one.order_line)
@@ -186,7 +187,7 @@ class sale_order(models.Model):
                 else:
                     pass
 
-
+            one.rest_tb_qty_total = rest_tb_qty_total
             one.amount_total2 = amount_total2
             one.commission_amount = commission_amount
             one.stock_cost = stock_cost
@@ -258,7 +259,7 @@ class sale_order(models.Model):
     contract_date = fields.Date(u'签订日期')
     link_man_id = fields.Many2one('res.partner', u'联系人')
     sale_assistant_id = fields.Many2one('res.users', u'业务助理')
-
+    rest_tb_qty_total = fields.Float(u'出运总数',compute=compute_info)
 
 
     #transport_bill_id = fields.Many2one('transport.bill', u'出运单', copy=False)

@@ -167,6 +167,10 @@ class transport_bill_line(models.Model):
     # export_insurance_currency_id = fields.Many2one('res.currency', u'出口保险费货币',
     #                                                related='order_id.export_insurance_currency_id')
     # other_currency_id = fields.Many2one('res.currency', u'其他国外费用货币', related='order_id.other_currency_id')
+    #这次出运单的批次
+    so_tb_number = fields.Char('销售合同发货次数')
+
+
 
 
 
