@@ -2198,3 +2198,8 @@ class transport_bill(models.Model):
                 one.state = 'invoiced'
             if one.date_all_state != 'done' and one.state == 'invoiced':
                 one.state = 'delivered'
+
+    def action_Warning(self):
+        if self.partner_id.state != 'done':
+            war = '客户正在审批中，请先完成客户的审批'
+            raise Warning(war)

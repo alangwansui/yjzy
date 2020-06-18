@@ -875,3 +875,8 @@ class sale_order(models.Model):
                 war += '采购主体不为空\n'
             if war:
                 raise Warning(war)
+
+    def action_Warning(self):
+        if self.partner_id.state != 'done':
+            war = '客户正在审批中，请先完成客户的审批'
+            raise Warning(war)

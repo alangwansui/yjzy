@@ -793,6 +793,10 @@ class account_reconcile_order(models.Model):
         self.state = 'done'
         return True
 
+    def action_Warning(self):
+        if self.partner_id.state != 'done':
+            war = '客户正在审批中，请先完成客户的审批'
+            raise Warning(war)
 
 class account_reconcile_order_line(models.Model):
     _name = 'account.reconcile.order.line'

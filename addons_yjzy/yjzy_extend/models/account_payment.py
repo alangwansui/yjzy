@@ -449,6 +449,10 @@ class account_payment(models.Model):
             'context': {'default_payment_type': 'inbound', 'default_partner_type': 'customer', 'default_yjzy_payment_id': self.id},
         }
 
+    def action_Warning(self):
+        if self.partner_id.state != 'done':
+            war = '客户正在审批中，请先完成客户的审批'
+            raise Warning(war)
 
 class account_payment_item(models.Model):
     _name = 'account.payment.item'
