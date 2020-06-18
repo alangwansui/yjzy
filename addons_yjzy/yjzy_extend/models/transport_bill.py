@@ -643,7 +643,7 @@ class transport_bill(models.Model):
     include_tax = fields.Boolean(u'含税')
     currency_id = fields.Many2one('res.currency', related='company_id.currency_id', readonly=True, string='公司货币')
     company_currency_id = fields.Many2one('res.currency', string='公司货币', related='company_id.currency_id', readonly=True)
-    sale_currency_id = fields.Many2one('res.currency', u'交易货币', required=True, store=True)
+    sale_currency_id = fields.Many2one('res.currency', u'交易货币',  store=True)#required=True,
     third_currency_id = fields.Many2one('res.currency', u'统计货币', required=True,
                                         default=lambda self: self.env.user.company_id.currency_id.id)
 
