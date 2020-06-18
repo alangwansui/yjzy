@@ -91,7 +91,7 @@ class wizard_transport4so(models.TransientModel):
         tb.sale_currency_id = self.currency_id
         tb.include_tax = self.include_tax
         tblines.make_default_lot_plan()
-        tblines.bill_id.compute_same()
+        tb.compute_same()
         tb.is_done_plan = True
         return True
 
@@ -126,7 +126,7 @@ class wizard_transport4so(models.TransientModel):
         tb.check_lines()
         tblines.make_default_lot_plan()
         tb.is_done_plan = True
-        tblines.bill_id.compute_same()
+        tb.compute_same()
         return True
 
     def apply(self):
