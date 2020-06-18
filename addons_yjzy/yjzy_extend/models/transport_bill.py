@@ -1223,11 +1223,11 @@ class transport_bill(models.Model):
         self.notice_man = self.partner_shipping_id.notice_man
         self.wharf_src_id = self.partner_shipping_id.wharf_src_id
         self.wharf_dest_id = self.partner_shipping_id.wharf_dest_id
-        self.payment_term_id = self.partner_id.property_payment_term_id
+        #self.payment_term_id = self.partner_id.property_payment_term_id
         self.partner_country_id = self.partner_shipping_id.country_id
         #akiny
        # self.user_id = self.partner_id.user_id
-        self.sale_currency_id = self.partner_id.property_product_pricelist.currency_id
+        #self.sale_currency_id = self.partner_id.property_product_pricelist.currency_id
 
      #   self.mark_html = self.partner_shipping_id.mark_html.currency_id
        # akiny
