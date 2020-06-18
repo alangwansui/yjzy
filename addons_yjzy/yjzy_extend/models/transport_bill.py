@@ -423,7 +423,7 @@ class transport_bill(models.Model):
             one.state_type = state_type
             one.state = state
 
-    @api.depends('so_ids','incoterm','payment_term_id','include_tax','line_ids')
+    #@api.depends('so_ids','incoterm','payment_term_id','include_tax','line_ids')
     def compute_same(self):
         for one in self:
             same_incoterm = one.so_ids.mapped('incoterm')
@@ -501,10 +501,10 @@ class transport_bill(models.Model):
                                        ('abnormal',u'日期异常')],'所有日期状态',default='un_done',store=True, compute=_compute_date_all_state)
     hexiao_type = fields.Selection([('undefined','...'),('abnormal',u'异常核销'),('write_off',u'正常核销')], default='undefined', string='核销类型')
     invoice_state = fields.Selection([('draft', u'未确认'), ('open', u'已确认'),('paid',u'已付款')], string='账单状态',compute=compute_info)
-    same_incoterm = fields.Boolean(u'价格条款是否一致', store=True, compute='compute_same')
-    same_payment_term = fields.Boolean(u'付款条款是否一致',store=True, compute='compute_same')
-    same_currency = fields.Boolean(u'币种是否一致', store=True, compute='compute_same')
-    same_include_tax = fields.Boolean(u'含税是否一致', store=True, compute='compute_same')
+    same_incoterm = fields.Boolean(u'价格条款是否一致',  compute='compute_same')#store=True,
+    same_payment_term = fields.Boolean(u'付款条款是否一致', compute='compute_same')
+    same_currency = fields.Boolean(u'币种是否一致', compute='compute_same')
+    same_include_tax = fields.Boolean(u'含税是否一致', compute='compute_same')
 
     fee_inner_so = fields.Monetary(u'国内运杂费', currency_field='company_currency_id', compute=compute_info)
     fee_rmb1_so = fields.Monetary(u'人民币费用1', currency_field='company_currency_id', compute=compute_info)
