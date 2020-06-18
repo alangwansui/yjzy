@@ -797,6 +797,7 @@ class transport_bill(models.Model):
                                          compute=compute_info)
 
 
+
     def make_picking_return(self):
 
         wizard = self.env['stock.return.picking']
@@ -813,15 +814,33 @@ class transport_bill(models.Model):
             print('===', wizard, action['res_id'])
 
 
+    def compute_tb_ref(self):
+        so_ids_len = len(self.so_ids)
+        ref = ''
+        ref2 = ''
+        for index, x in enumerate(self.so_ids):
+            print('-index-',index,so_ids_len,x.rest_tb_qty_total)
+            if index + 1 != so_ids_len:
+                if x.rest_tb_qty_total == 0 and x.tb_count == 1:
+                    ref += '%s /' % (x.contract_code)
+                else:
+                    ref += '%s - %s /' % (x.contract_code ,x.tb_count)
+            else:
+                if x.rest_tb_qty_total == 0 and x.tb_count == 1:
+                    ref2 = '%s %s ' % (ref, x.contract_code)
+                else:
+                    ref2 = '%s %s - %s' % (ref,x.contract_code ,x.tb_count)
+        self.ref = ref2
+
 
     def open_fee(self):
         war = ''
-        war += '国内运杂费%s\n' % self.fee_inner_so
-        war += '人名币费用1%s\n' % self.fee_rmb1_so
-        war += '人名币费用2%s\n' % self.fee_rmb2_so
-        war += '国外运保费%s\n' % self.fee_outer_so
-        war += '出口保险费%s\n' % self.fee_export_insurance_so
-        war += '其他外币费用%s\n' % self.fee_other_so
+        war += '国内运杂费： %s\n' % self.fee_inner_so
+        war += '人名币费用1： %s\n' % self.fee_rmb1_so
+        war += '人名币费用2： %s\n' % self.fee_rmb2_so
+        war += '国外运保费： %s\n' % self.fee_outer_so
+        war += '出口保险费： %s\n' % self.fee_export_insurance_so
+        war += '其他外币费用： %s\n' % self.fee_other_so
         raise Warning(war)
 
 
@@ -1005,7 +1024,7 @@ class transport_bill(models.Model):
     @api.constrains('ref')
     def check_contract_code(self):
         for one in self:
-            if self.search_count([('ref', '=', one.ref)]) > 1:
+            if one.ref and self.search_count([('ref', '=', one.ref)]) > 1:
                 raise Warning('出运合同号重复')
 
 
@@ -2139,7 +2158,7 @@ class transport_bill(models.Model):
     def action_submit(self):
         war = ''
         if self.ref and self.partner_id and self.date and self.incoterm and self.current_date_rate > 0 and \
-                self.payment_term_id and self.line_ids:
+                self.payment_term_id and self.line_ids and self.sale_currency_id:
             self.state = 'submit'
         else:
             if not self.ref:
@@ -2152,6 +2171,8 @@ class transport_bill(models.Model):
                 war += '价格条款不为空\n'
             if not self.payment_term_id:
                 war += '付款条款不为空\n'
+            if not self.sale_currency_id:
+                war += '交易货币不为空\n'
             if self.current_date_rate <= 0:
                 war += '当日汇率不为0\n'
             if not self.line_ids:

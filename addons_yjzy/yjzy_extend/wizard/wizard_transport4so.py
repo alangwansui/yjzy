@@ -81,6 +81,7 @@ class wizard_transport4so(models.TransientModel):
                     'qty': sol.qty_undelivered,
                     'qty1stage': sol.qty_unreceived,
                     'back_tax': sol.product_id.back_tax,
+                    'so_tb_number': sol.order_id.tb_count + 1,
                 })
                 tblines |= tbl
 
@@ -120,6 +121,7 @@ class wizard_transport4so(models.TransientModel):
                     'qty': sol.qty_undelivered,
                     'qty1stage': sol.qty_unreceived,
                     'back_tax': sol.product_id.back_tax,
+                    'so_tb_number':sol.order_id.tb_count+1,
                 })
                 tblines |= tbl
         tb.check_lines()
