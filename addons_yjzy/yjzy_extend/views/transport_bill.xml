@@ -153,7 +153,7 @@
 
                         <button name="test_get_package_tag" type="object" string="测试包裹分组数据"  class="oe_highlight"  groups="base.group_system"/>
 
-
+                        <button name="make_picking_return" type="object" string="测试退回" class="oe_highlight" />
 
                         <field name="state" widget="statusbar" groups="base.group_system"/>
                         <field name="is_editable"  widget="boolean_toggle"/>

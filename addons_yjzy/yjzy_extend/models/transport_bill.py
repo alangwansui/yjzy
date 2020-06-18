@@ -796,6 +796,24 @@ class transport_bill(models.Model):
     gold_sample_state = fields.Selection([('all', '全部有'), ('part', '部分有'), ('none', '无金样')], '样金管理',
                                          compute=compute_info)
 
+
+
+    def make_picking_return(self):
+
+        wizard = self.env['stock.return.picking']
+
+        pickings = self.stage2picking_ids | self.stage1picking_ids
+        for one in pickings:
+            ctx = {'active_ids': [one.id], 'active_id': one.id}
+            wizard = wizard.with_context(ctx).create({
+            })
+            for m in wizard.product_return_moves:
+                one.to_refund = True
+            action = wizard.create_returns()
+
+            print('===', wizard, action['res_id'])
+
+
     def compute_tb_ref(self):
         so_ids_len = len(self.so_ids)
         ref = ''
