@@ -804,14 +804,14 @@ class transport_bill(models.Model):
             print('-index-',index,so_ids_len,x.rest_tb_qty_total)
             if index + 1 != so_ids_len:
                 if x.rest_tb_qty_total == 0 and x.tb_count == 1:
-                    ref += '%s /' % (x.contract_code)
+                    ref += '%s/' % (x.contract_code)
                 else:
-                    ref += '%s - %s /' % (x.contract_code ,x.tb_count)
+                    ref += '%s-%s/' % (x.contract_code ,x.tb_count)
             else:
                 if x.rest_tb_qty_total == 0 and x.tb_count == 1:
-                    ref2 = '%s %s ' % (ref, x.contract_code)
+                    ref2 = '%s%s' % (ref, x.contract_code)
                 else:
-                    ref2 = '%s %s - %s' % (ref,x.contract_code ,x.tb_count)
+                    ref2 = '%s%s-%s' % (ref,x.contract_code ,x.tb_count)
         self.ref = ref2
 
 
