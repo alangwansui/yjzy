@@ -671,7 +671,7 @@ class transport_bill(models.Model):
     so_ids = fields.Many2many('sale.order', 'ref_tb_so', 'so_id', 'tb_id', string='销售订单', compute=compute_info, store=False)
     po_ids = fields.Many2many('purchase.order', string='采购订单', compute=compute_info, store=False)
 
-    cip_type = fields.Selection([('normal', u'正常报关'), ('buy', '买单报关'), ('none', '不报关')], string=u'报关', default='normal')
+    cip_type = fields.Selection([('normal', u'正常报关'), ('buy', '第三方报关'), ('none', '不报关')], string=u'报关', default='normal')
     line_ids = fields.One2many('transport.bill.line', 'bill_id', '明细', readonly=True, states={'draft': [('readonly', False)]})
 
     picking_ids = fields.Many2many('stock.picking', compute=compute_info, store=False, string='调拨') #Tenyale 2.0的项目先保持M2M 不变
@@ -700,11 +700,11 @@ class transport_bill(models.Model):
 
 
 
-    sale_type = fields.Selection([('inner', '自营'), ('export', '出口'), ('proxy', '代理')], '业务类型')
+    sale_type = fields.Selection([('inner', '自营'), ('proxy', '代理')],u'业务类型',default='inner')
 
     trans_type = fields.Selection([('sea', 'By SEA'), ('air', 'By AIR'), ('express', 'By Express'),('other', u'其他')], '运输方式')
     insurance_info = fields.Char('保险说明')
-    description = fields.Text(u'发运说明')
+    description = fields.Text(u'出运备注')
 
     pack_line_ids = fields.One2many('transport.pack.line', 'bill_id', '装箱统计')
 
@@ -770,7 +770,7 @@ class transport_bill(models.Model):
     is_done_plan = fields.Boolean(u'默认调拨计划完成')
     is_done_tuopan = fields.Boolean(u'托盘分配完成')
     is_done_tb_vendor = fields.Boolean(u'供应商发运完成')
-
+    is_fee_done = fields.Boolean(u'默认费用完成')
 
     is_editable = fields.Boolean(u'可编辑')
 
@@ -834,14 +834,23 @@ class transport_bill(models.Model):
 
 
     def open_fee(self):
-        war = ''
-        war += '国内运杂费： %s\n' % self.fee_inner_so
-        war += '人名币费用1： %s\n' % self.fee_rmb1_so
-        war += '人名币费用2： %s\n' % self.fee_rmb2_so
-        war += '国外运保费： %s\n' % self.fee_outer_so
-        war += '出口保险费： %s\n' % self.fee_export_insurance_so
-        war += '其他外币费用： %s\n' % self.fee_other_so
-        raise Warning(war)
+        if not self.is_fee_done :
+            self.fee_inner = self.fee_inner_so
+            self.fee_rmb1 = self.fee_rmb1_so
+            self.fee_rmb2 = self.fee_rmb2_so
+            self.fee_outer = self.fee_outer_so
+            self.fee_export_insurance = self.fee_export_insurance_so
+            self.fee_other = self.fee_other_so
+            self.is_fee_done = True
+        else:
+            war = ''
+            war += '国内运杂费： %s\n' % self.fee_inner_so
+            war += '人名币费用1： %s\n' % self.fee_rmb1_so
+            war += '人名币费用2： %s\n' % self.fee_rmb2_so
+            war += '国外运保费： %s\n' % self.fee_outer_so
+            war += '出口保险费： %s\n' % self.fee_export_insurance_so
+            war += '其他外币费用： %s\n' % self.fee_other_so
+            raise Warning(war)
 
 
     def open_same(self):
@@ -917,6 +926,7 @@ class transport_bill(models.Model):
         self.make_tb_vendor()
         self.split_tuopan_weight()
         self.split_tuopan_weight2vendor()
+        self.compute_tb_ref()
 
 
     def make_sale_purchase_collect(self):
