@@ -347,7 +347,7 @@
                                 <div class="o_row">
                                 <field name="payment_term_id" options="{'no_open':1}"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)],'required':[('state','=','check')]}"/>
-<button name="open_same" attrs="{'invisible':[('same_payment_term','=',True)]}" type="object" class="btn-xs btn-link mb4 fa fa-times-circle" icon="" style="color:red" context="{'default_open':'payment_term'}"/>
+                                <button name="open_same" attrs="{'invisible':[('same_payment_term','=',True)]}" type="object" class="btn-xs btn-link mb4 fa fa-times-circle" icon="" style="color:red" context="{'default_open':'payment_term'}"/>
                                 </div>
                                 <field name="same_payment_term" invisible="1"/>
                                 <field name="current_date_rate"/>
@@ -373,7 +373,9 @@
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                             </group>
                             <group>
-                                <button name="open_fee" type="object" string="查看原始合同预算费用" colspan="2"/>
+                                <button name="open_fee" type="object" string="默认取得销售合同费用预算" confirm="将会初始化费用金额" attrs="{'invisible':[('is_fee_done','=',False)]}" colspan="2"/>
+                                <button name="open_fee" type="object" string="查看原始合同预算费用" attrs="{'invisible':[('is_fee_done','=',True)]}" colspan="2"/>
+
                                 <field name="sale_currency_id" invisible="1"/>
                                 <field name="fee_inner"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
@@ -954,6 +956,7 @@
                                         <field name="sale_collect_state"/>
                                         <field name="purchase_collect_state"/>
                                         <field name="qingguan_state"/>
+                                        <field name="is_fee_done"/>
                                     </group>
                                     <group name="self_currency">
 
