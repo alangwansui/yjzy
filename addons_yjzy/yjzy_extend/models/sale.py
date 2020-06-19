@@ -789,17 +789,17 @@ class sale_order(models.Model):
             today = datetime.now()
             requested_date = one.requested_date
             # 未发货，开始发货，待核销，已核销
-            if one.state in ('sale','verifying'):
+            if one.state in ('sale','done','verifying'):
                 if (one.no_sent_amount_new != 0 or one.purchase_no_deliver_amount_new != 0 ) and requested_date and requested_date < (today - relativedelta(days=185)).strftime('%Y-%m-%d 00:00:00'):
-                    state='verifying'
+                    state='done'
                     hexiao_type = 'abnormal'
                 if one.no_sent_amount_new == 0 and one.purchase_no_deliver_amount_new == 0:
                     if one.balance == 0 and one.purchase_balance_sum3 == 0:
                         hexiao_type = 'write_off'
-                        state = 'verifying'
+                        state = 'done'
                     else:
                         hexiao_type = 'abnormal'
-                        state = 'verifying'
+                        state = 'done'
             one.hexiao_type = hexiao_type
             one.state = state
 
@@ -808,7 +808,7 @@ class sale_order(models.Model):
         user = self.env.user
         if not user.has_group('sale.hegui_all') or not user.has_group('sales_team.group_manager'):
             raise Warning('非合规人员不允许核销！')
-        if self.state != 'verifying':
+        if self.state != 'done':
             raise Warning('非待核销合同无法核销！')
         if self.hexiao_type == 'abnormal' and self.hexiao_comment == False:
             raise Warning('异常核销，请填写备注！')

@@ -1466,7 +1466,7 @@
             <field name="limit">20</field>
             <field name="view_mode">tree,form,kanban</field>
             <field name="search_view_id" ref="view_transport_bill_tenyale_filter"/>
-            <field name="domain">[('state','in',['approve','confirmed','delivered','invoiced','verifying'])]</field>
+            <field name="domain">[('state','in',['approve','confirmed','delivered','invoiced','verifying','done'])]</field>
             <field name="context">{'search_default_group_by_state_type':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3,'show_po_code':
                 1}
             </field>
