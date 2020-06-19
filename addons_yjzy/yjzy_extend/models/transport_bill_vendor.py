@@ -56,7 +56,7 @@ class transport_bill_vendor(models.Model):
             })
             l.compute_info()
 
-class transport_bill_vendor(models.Model):
+class transport_bill_vendor_line(models.Model):
     _name = 'transport.bill.vendor.line'
     _description = '供应商发运单明细'
 

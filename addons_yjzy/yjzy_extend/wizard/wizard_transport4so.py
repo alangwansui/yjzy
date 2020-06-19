@@ -60,8 +60,8 @@ class wizard_transport4so(models.TransientModel):
         self.payment_term_id = same_payment_term and same_payment_term[0]
         self.currency_id = same_currency and same_currency[0]
         self.include_tax = same_include_tax and same_include_tax[0]
-        return all([len(same_incoterm) == 1, len(same_payment_term) == 1, len(same_currency) == 1, len(set(same_include_tax)) == 1])
-
+        # return all([len(same_incoterm) == 1, len(same_payment_term) == 1, len(same_currency) == 1, len(set(same_include_tax)) == 1])
+        return False
 
     def check_apply(self):
         ctx = self.env.context
@@ -95,6 +95,37 @@ class wizard_transport4so(models.TransientModel):
         tb.is_done_plan = True
         return True
 
+    def check_apply_continue(self):
+        ctx = self.env.context
+        bill_id = ctx.get('active_id')
+        tb = self.env['transport.bill'].browse(bill_id)
+        sale_lines = self.sol_ids
+        if len(sale_lines.mapped('order_id').mapped('partner_id')) > 1:
+            raise Warning(u'必须是同一个客户的订单')
+
+        bill_line_obj = self.env['transport.bill.line']
+        tblines = bill_line_obj.browse([])
+        for sol in sale_lines:
+            if sol.qty_undelivered > 0:
+                tbl = bill_line_obj.create({
+                    'bill_id': bill_id,
+                    'sol_id': sol.id,
+                    'qty': sol.qty_undelivered,
+                    'qty1stage': sol.qty_unreceived,
+                    'back_tax': sol.product_id.back_tax,
+                    'so_tb_number': sol.order_id.tb_count + 1,
+                })
+                tblines |= tbl
+
+        tb.check_lines()
+        #自动安排调拨计划
+        tb.incoterm = self.incoterm
+        tb.payment_term_id = self.payment_term_id
+        tb.sale_currency_id = self.currency_id
+        tb.include_tax = self.include_tax
+        tblines.make_default_lot_plan()
+        tb.is_done_plan = True
+        return tb.edit_line_ids()
 
 
     def new_apply(self):

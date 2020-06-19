@@ -187,6 +187,9 @@
             <field name="arch" type="xml">
                 <form string="出运单">
                     <header groups="base.group_system">
+
+                        <button string="添加向导" states="draft" type="object" name="open_transport_self"
+                                context="{'form_xml_id':'yjzy_extend.view_transport_bill_wkf_form','name':'向导开始'}"  class="oe_highlight"/>
                         <button string="添加销售合同" states="draft" type="object" name="open_wizard_transport4so"
                                 class="oe_highlight"/>
                         <button string="添加销售明细" states="draft" type="object" name="open_wizard_transport4sol"
@@ -373,8 +376,8 @@
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                             </group>
                             <group>
-                                <button name="open_fee" type="object" string="默认取得销售合同费用预算" confirm="将会初始化费用金额" attrs="{'invisible':[('is_fee_done','=',False)]}" colspan="2"/>
-                                <button name="open_fee" type="object" string="查看原始合同预算费用" attrs="{'invisible':[('is_fee_done','=',True)]}" colspan="2"/>
+                                <button name="open_fee" type="object" string="计算取得销售合同费用预算" confirm="将会初始化费用金额" attrs="{'invisible':[('is_fee_done','=',True)]}" colspan="2"/>
+                                <button name="open_fee" type="object" string="查看原始合同预算费用" attrs="{'invisible':[('is_fee_done','=',False)]}" colspan="2"/>
 
                                 <field name="sale_currency_id" invisible="1"/>
                                 <field name="fee_inner"

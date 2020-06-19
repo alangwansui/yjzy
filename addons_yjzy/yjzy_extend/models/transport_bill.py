@@ -796,7 +796,57 @@ class transport_bill(models.Model):
     gold_sample_state = fields.Selection([('all', '全部有'), ('part', '部分有'), ('none', '无金样')], '样金管理',
                                          compute=compute_info)
 
+    # def add_customer(self):
+    #     self.ensure_one()
+    #     form_view = self.env.ref('yjzy_extend.view_transport_bill_wkf_form').id
+    #     # tree_view = self.env.ref('yjzy_extend.new_order_transport_same_tree')
+    #     ctx = self.env.context
+    #     # if ctx.get('default_open', '') == 'partner':
+    #         # return {'type': 'ir.actions.act_window_close'}
+    #
+    #     return {
+    #         'name': _(u'添加客户'),
+    #         'view_type': 'form',
+    #         'view_mode': 'form',
+    #         'type': 'ir.actions.act_window',
+    #         'res_model': 'transport.bill',
+    #         'views': [(form_view, 'form')],
+    #         'res_id': self.id,
+    #         'target': 'new',
+    #         }
 
+
+
+        # if ctx.get('default_open', '') == 'sol':
+        #     return self.open_wizard_transport4sol()
+
+    def edit_line_ids(self):
+        self.ensure_one()
+        form_view = self.env.ref('yjzy_extend.view_transport_bill_wkf_edit_line_form').id
+        return {
+            'name': _(u'添加客户'),
+            'view_type': 'form',
+            'view_mode': 'form',
+            'type': 'ir.actions.act_window',
+            'res_model': 'transport.bill',
+            'views': [(form_view, 'form')],
+            'res_id': self.id,
+            'target': 'new',
+            }
+    def open_ref_document(self):
+        self.ensure_one()
+        self.make_all_document()
+        form_view = self.env.ref('yjzy_extend.view_transport_bill_wkf_document_form').id
+        return {
+            'name': _(u'添加客户'),
+            'view_type': 'form',
+            'view_mode': 'form',
+            'type': 'ir.actions.act_window',
+            'res_model': 'transport.bill',
+            'views': [(form_view, 'form')],
+            'res_id': self.id,
+            'target': 'new',
+            }
 
     def make_picking_return(self):
 
@@ -940,6 +990,7 @@ class transport_bill(models.Model):
         self.ensure_one()
         # close popup
         return {'type': 'ir.actions.act_window_close'}
+
 
     def action_customer_date_state_submit(self):
         date_type = self.env.context.get('date_type')
@@ -1997,12 +2048,13 @@ class transport_bill(models.Model):
         }
 
 
-    def open_transport_date(self):
+    def open_transport_self(self):
         xml_id = self.env.context.get('form_xml_id')
+        name = self.env.context.get('name')
         form = self.env.ref(xml_id)
         self.ensure_one()
         return {
-            'name': u'日期附件添加',
+            'name': name,
             'view_type': 'form',
             'view_mode': 'form',
             'res_model': 'transport.bill',

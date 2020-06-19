@@ -263,8 +263,8 @@ class PRTMailMessage(models.Model):
             pass
         if again_type == 'out_all':
             body = (_(
-                "  <div font-style=normal;><br/><br/><br/>%s<br/><br/><br/></div><div style=font-size:13px; ><div style=background-color:#efefef>----- Original Mail----- <br/> Date: %s <br/> From: %s <br/> Subject: %s </div><br/><br/>%s</div>") %
-                    (self.env.user.signature or '', str(self.date), self.author_display, self.subject_display, self.body))
+                "  <div font-style=normal;><br/><br/><br/>%s<br/><br/><br/></div><div style=font-size:13px; ><div style=background-color:#efefef>----- Original Mail----- <br/> Date: %s <br/> From: %s <br/> CC: %s <br/> Subject: %s </div><br/><br/>%s</div>") %
+                    (self.env.user.signature or '', str(self.date), self.author_display,self.email_cc, self.subject_display, self.body))
             ctx.update({'default_body' :body})
 
         return {

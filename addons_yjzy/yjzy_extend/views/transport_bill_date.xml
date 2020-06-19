@@ -13,7 +13,7 @@
                     <field name="date_out_in" readonly="1"/>
                     <field name="date_out_in_att" string=" " widget="many2many_binary" invisible="1"/>
                     <field name="date_out_in_att_count" string=" "/>
-                    <button name="open_transport_date" icon="fa-paperclip" type="object"
+                    <button name="open_transport_self" icon="fa-paperclip" type="object"
                             context="{'form_xml_id': 'yjzy_extend.view_transport_bill_date_out_in'}" string="附件"/>
                     <field name="date_out_in_state" readonly="1" string="状态"/>
                     <field name="date_in" invisible="1"/>
@@ -21,19 +21,19 @@
                     <field name="date_ship_att" widget="many2many_binary" invisible="1"/>
                     <field name="date_ship_att_count" string=" "/>
 
-                    <button name="open_transport_date" icon="fa-paperclip" type="object"
+                    <button name="open_transport_self" icon="fa-paperclip" type="object"
                             context="{'form_xml_id': 'yjzy_extend.view_transport_bill_date_ship'}" string="附件"/>
-                    <!--button name="open_transport_date" icon="fa-check" type="object"
+                    <!--button name="open_transport_self" icon="fa-check" type="object"
                             context="{'form_xml_id': 'yjzy_extend.view_transport_bill_date_ship'}" attrs="{'invisible':[('date_ship_state','!=','done')]}"/-->
                     <field name="date_ship_state" readonly="1" string="状态"/>
 
                     <field name="date_customer_finish" readonly="1"/>
                     <field name="date_customer_finish_att" widget="many2many_binary" invisible="1"/>
                     <field name="date_customer_finish_att_count" string=" "/>
-                    <button name="open_transport_date" icon="fa-paperclip" type="object"
+                    <button name="open_transport_self" icon="fa-paperclip" type="object"
                             context="{'form_xml_id': 'yjzy_extend.view_transport_bill_date_customer_finish'}"
                             string="附件"/>
-                    <!--button name="open_transport_date" icon="fa-check" type="object"
+                    <!--button name="open_transport_self" icon="fa-check" type="object"
                             context="{'form_xml_id': 'yjzy_extend.view_transport_bill_date_customer_finish'}" attrs="{'invisible':[('date_customer_finish_state','!=','done')]}"/-->
                     <field name="date_customer_finish_state" readonly="1" string="状态"/>
                     <field name="date_supplier_finish" invisible="1"/>
