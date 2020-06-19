@@ -653,11 +653,11 @@ class transport_bill(models.Model):
     exchange_rate = fields.Float(u'目前汇率', compute=compute_exchange_rate)
     current_date_rate = fields.Float(u'当日汇率')
 
-    partner_id = fields.Many2one('res.partner', '客户', required=True, domain=[('customer', '=', True)])
+    partner_id = fields.Many2one('res.partner', '客户',  domain=[('customer', '=', True)])#required=True,
 
     user_id = fields.Many2one('res.users', u'业务员', default=lambda self: self.env.user.assistant_id.id)
     sale_assistant_id = fields.Many2one('res.users', u'业务助理', default=lambda self: self.env.user.id)
-    partner_invoice_id = fields.Many2one('res.partner', string='发票地址', readonly=False, required=True)
+    partner_invoice_id = fields.Many2one('res.partner', string='发票地址', readonly=False)
     partner_shipping_id = fields.Many2one('res.partner', string='送货地址',  required=False)
     notice_man = fields.Text(u'通知人')
     delivery_man = fields.Text(u'发货人')

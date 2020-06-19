@@ -207,6 +207,22 @@
                                        domain="[('customer','=',True),('parent_id', '=', False),'|','|','|','|','|',('assistant_id','=',uid),
                                        ('user_id','=',uid),('parent_id.assistant_id','=',uid),('parent_id.user_id','=',uid),('supplier','=',1),
                                        ('x_studio_field_3ErQR','=',1)]"/>
+                         <field name="partner_shipping_id" string="最终目的地" invisible="1" options="{'no_open':1}"
+                                       domain="[('parent_id','child_of', partner_id)]"
+                                       attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"
+                                       no_create="True"/>
+
+                                <field name="partner_invoice_id" domain="[('parent_id','child_of', partner_id)]"
+                                       invisible="1"
+                                       attrs="{'readonly': [('locked','=',True)]}" groups="base.group_system"/>
+
+                                <field name="contract_type"  invisible="1"
+                                       attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
+                                <field name="gongsi_id" options="{'no_open':1}" string="销售主体" invisible="1"
+                                       attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
+                                <field name="purchase_gongsi_id" options="{'no_open':1}" string="采购主体" invisible="1"
+                                       attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
+
                         </group>
                     </sheet>
                     <footer>
@@ -229,13 +245,50 @@
                             <group name="general_information" invisible="1">
                                 <field name="id" invisible="1"/>
                                 <field name="name" readonly="1" groups="base.group_system" invisible="1"/>
-                                <field name="partner_id" string="贸易客户" options="{'no_open':1}"
+                                <field name="partner_id" string="贸易客户" options="{'no_open':1}" invisible="1"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"
 
                                        no_create="True"/>
                                 <field name="locked" groups="base.group_system" invisible="1"/>
-                                      <field name="hs_fill" groups="base.group_system"/>
+                                      <field name="hs_fill" invisible="1"/>
+                            </group>
+                           <group col="2">
+                                <group>
+                                 <label for="incoterm" string="价格条款"/>
+                                <div class="o_row">
+                                    <span style="display:contents!important">
+                                <field name="incoterm" string="价格条款"
+                                       attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)],'required':[('state','=','check')]}"/>
+                               </span>
+                                <button name="open_same" attrs="{'invisible':[('same_incoterm','=',True)]}" type="object" class="btn-xs btn-link mb4 fa fa-times-circle" icon="" style="color:red" context="{'default_open':'incoterm'}"/>
+                                </div>
+                                <field name="same_incoterm" invisible="1"/>
+                                <label for="payment_term_id" string="付款条款"/>
+                                <div class="o_row">
+                                <field name="payment_term_id" options="{'no_open':1}"
+                                       attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)],'required':[('state','=','check')]}"/>
+                                <button name="open_same" attrs="{'invisible':[('same_payment_term','=',True)]}" type="object" class="btn-xs btn-link mb4 fa fa-times-circle" icon="" style="color:red" context="{'default_open':'payment_term'}"/>
+                                </div>
+                                <field name="same_payment_term" invisible="1"/>
+                                    </group>
+                               <group>
 
+                                <field name="current_date_rate"/>
+                                <label for="sale_currency_id" string="交易货币"/>
+                                 <div class="o_row">
+                                <field name="sale_currency_id"/>
+                                <button name="open_same" attrs="{'invisible':[('same_currency','=',True)]}" type="object" class="btn-xs btn-link mb4 fa fa-times-circle" icon="" style="color:red" context="{'default_open':'currency'}"/>
+                                 </div>
+                                 <field name="same_currency" invisible="1"/>
+                                <label for="include_tax" string="含税"/>
+                                <div class="o_row">
+                                <field name="include_tax"
+                                       attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
+                                 <button name="open_same" attrs="{'invisible':[('same_include_tax','=',True)]}" type="object" class="btn-xs btn-link mb4 fa fa-times-circle" icon="" style="color:red" context="{'default_open':'include_tax'}"/>
+                                </div>
+                                 <field name="same_include_tax" invisible="1"/>
+
+                               </group>
                             </group>
                         <notebook>
                             <page string="明细" name="cymx" groups="sales_team.group_sale_assistant">
