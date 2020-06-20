@@ -20,7 +20,7 @@
                     <field name="company_currency_id" groups="base.group_system"/>
                     <field name="sale_currency_id" invisible="1"/>
                     <field name="third_currency_id" groups="base.group_system"/>
-                    <field name="include_tax" />
+                    <field name="include_tax"/>
                     <field name="create_date"/>
 
                     <field name="sale_invoice_total"/>
@@ -36,11 +36,10 @@
                     <field name="gongsi_id"/>
 
 
-
                 </tree>
             </field>
         </record>
-<record id="view_transport_bill_kanban" model="ir.ui.view">
+        <record id="view_transport_bill_kanban" model="ir.ui.view">
             <field name="name">transport.bill.kanban</field>
             <field name="model">transport.bill</field>
             <field name="arch" type="xml">
@@ -56,15 +55,24 @@
                             <div t-attf-class="oe_kanban_global_click">
                                 <div class="row mb4">
                                     <div class="col-xs-6">
-                                        <strong><span><field name="ref"/></span></strong>
+                                        <strong>
+                                            <span>
+                                                <field name="ref"/>
+                                            </span>
+                                        </strong>
                                     </div>
                                     <div class="col-xs-6 text-right">
-                                        <strong><i class="fa fa-clock-o"/> <t t-esc="record.date.value"/></strong>
+                                        <strong>
+                                            <i class="fa fa-clock-o"/>
+                                            <t t-esc="record.date.value"/>
+                                        </strong>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-xs-12">
-                                        <span><field name="partner_id"/></span>
+                                        <span>
+                                            <field name="partner_id"/>
+                                        </span>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -94,7 +102,8 @@
                         <button string="添加销售明细" states="draft" type="object" name="open_wizard_transport4sol" groups="base.group_system"
                                 class="oe_highlight"/>
 
-                        <button string="准备默认出运计划" type="object" name="make_default_lot_plan" attrs="{'invisible': [('is_done_plan','=',True)]}"  class="oe_highlight"/>
+                        <button string="准备默认出运计划" type="object" name="make_default_lot_plan" attrs="{'invisible': [('is_done_plan','=',True)]}"
+                                class="oe_highlight"/>
                         <button string="销售统计" name="make_sale_collect" attrs="{'invisible': [('sale_collect_state','!=','draft')]}" class="oe_highlight"
                                 type="object"/>
                         <button string="采购统计" name="make_purchase_collect" attrs="{'invisible': [('purchase_collect_state','!=','draft')]}"
@@ -104,7 +113,8 @@
                                 class="oe_highlight"/>
                         <button string="返点统计" name="make_fandian_collect" attrs="{'invisible': [('purchase_collect_state','=','draft')]}"
                                 class="oe_highlight" type="object"/>
-                         <button string="生成供应商发货单" type="object" name="make_tb_vendor" attrs="{'invisible': [('is_done_tb_vendor','=',True)]}" class="oe_highlight"/>
+                        <button string="生成供应商发货单" type="object" name="make_tb_vendor" attrs="{'invisible': [('is_done_tb_vendor','=',True)]}"
+                                class="oe_highlight"/>
                         <button string="确认" states="draft" type="object" name="action2w_sale_manager" class="oe_highlight"/>
                         <button string="销售经理审批" states="w_sale_manager" type="object" name="action2w_sale_director" class="oe_highlight"/>
                         <button string="销售总监审批" states="w_sale_director" type="object" name="action2confirm" class="oe_highlight"/>
@@ -112,13 +122,10 @@
                         <button string="完成" states="2locked" type="object" name="action_done" class="oe_highlight"/>
 
                         <button string="重置草稿" type="object" name="action_draft" states="cancel" class="oe_highlight"/>
-                        <button string="取消" type="object" name="action_cancel" states="draft"  class="oe_highlight"/>
-
-
+                        <button string="取消" type="object" name="action_cancel" states="draft" class="oe_highlight"/>
 
 
                         <button string="清空移动：测试使用" type="object" name="clean_moves" class="oe_highlight"/>
-
 
 
                         <button string="入库:准备" type="object" name="prepare_1_picking" class="oe_highlight"
@@ -148,15 +155,18 @@
 
                         <button string="更新退税率" type="object" name="update_back_tax" class="oe_highlight" groups="base.group_system"/>
 
-                        <button name="split_tuopan_weight" type="object" string="分配托盘重量" attrs="{'invisible': [('is_done_tuopan','=',True)]}"  class="oe_highlight"/>
-                        <button name="split_tuopan_weight2vendor" type="object" string="分配托盘重量:供应商发运"  class="oe_highlight"/>
+                        <button name="split_tuopan_weight" type="object" string="分配托盘重量" attrs="{'invisible': [('is_done_tuopan','=',True)]}"
+                                class="oe_highlight"/>
+                        <button name="split_tuopan_weight2vendor" type="object" string="分配托盘重量:供应商发运" class="oe_highlight"/>
 
-                        <button name="test_get_package_tag" type="object" string="测试包裹分组数据"  class="oe_highlight"  groups="base.group_system"/>
+                        <button name="test_get_package_tag" type="object" string="测试包裹分组数据" class="oe_highlight" groups="base.group_system"/>
 
-                        <button name="make_picking_return" type="object" string="测试退回" class="oe_highlight" />
+                        <button name="make_picking_return" type="object" string="测试退回" class="oe_highlight"/>
+                        <button name="make_return4return" type="object" string="退回的退回" class="oe_highlight"/>
+
 
                         <field name="state" widget="statusbar" groups="base.group_system"/>
-                        <field name="is_editable"  widget="boolean_toggle"/>
+                        <field name="is_editable" widget="boolean_toggle"/>
                     </header>
 
 
@@ -188,11 +198,12 @@
                             <group name="general_information">
                                 <field name="id" invisible="1"/>
                                 <field name="name" attrs="{'readonly': [('locked','=',True)]}"/>
-                                <field name="date" attrs="{'readonly': [('locked','=',True)]}" />
+                                <field name="date" attrs="{'readonly': [('locked','=',True)]}"/>
                                 <field name="partner_id" required="1" attrs="{'readonly': [('locked','=',True)]}"
-                                       domain="[('customer','=',True),('parent_id', '=', False),('state','=','done'),'|','|','|','|','|',('assistant_id','=',uid),('user_id','=',uid),('parent_id.assistant_id','=',uid),('parent_id.user_id','=',uid),('supplier','=',1),('x_studio_field_3ErQR','=',1)]" no_create="True"/>
+                                       domain="[('customer','=',True),('parent_id', '=', False),('state','=','done'),'|','|','|','|','|',('assistant_id','=',uid),('user_id','=',uid),('parent_id.assistant_id','=',uid),('parent_id.user_id','=',uid),('supplier','=',1),('x_studio_field_3ErQR','=',1)]"
+                                       no_create="True"/>
                                 <field name="partner_shipping_id" domain="[('parent_id','child_of', partner_id)]"
-                                       attrs="{'readonly': [('locked','=',True)]}"  no_create="True"/>
+                                       attrs="{'readonly': [('locked','=',True)]}" no_create="True"/>
                                 <field name="partner_invoice_id" domain="[('parent_id','child_of', partner_id)]" invisible="1"
                                        attrs="{'readonly': [('locked','=',True)]}" groups="base.group_system"/>
                                 <field name="create_date" string="创建日期" attrs="{'readonly': [('locked','=',True)]}" widget="date"/>
@@ -204,18 +215,18 @@
 
                                 <field name="include_tax"/>
                                 <field name="locked" groups="base.group_system"/>
-                                <field name="sale_collect_state"  />
-                                <field name="purchase_collect_state" />
-                                <field name="qingguan_state"  />
+                                <field name="sale_collect_state"/>
+                                <field name="purchase_collect_state"/>
+                                <field name="qingguan_state"/>
 
                                 <field name="gongsi_id"/>
                             </group>
                             <group name="sale_currency">
-                                <field name="sale_currency_id" readonly="1" />
+                                <field name="sale_currency_id" readonly="1"/>
                                 <field name="company_id" readonly="1"/>
                                 <field name="company_currency_id" readonly="1"/>
                                 <field name="user_id" attrs="{'readonly': [('locked','=',True)]}" no_create="True"/>
-                                <field name="cip_type" attrs="{'readonly': [('locked','=',True)]}" />
+                                <field name="cip_type" attrs="{'readonly': [('locked','=',True)]}"/>
                                 <field name="org_sale_amount" attrs="{'readonly': [('locked','=',True)]}"/>
                                 <field name="org_real_sale_amount" attrs="{'readonly': [('locked','=',True)]}"/>
 
@@ -270,7 +281,7 @@
                                         <field name="plan_lot"/>
                                         <field name="plan_qty"/>
 
-                                        <field name="smline_str" />
+                                        <field name="smline_str"/>
                                         <field name="smline_qty" groups="base.group_system"/>
                                         <field name="dlr_str"/>
                                         <field name="dlr_qty" groups="base.group_system"/>
@@ -326,11 +337,6 @@
 
                                             </page>
 
-                                            <page>
-                                                <group>
-                                                    <field name="return_picking_ids"/>
-                                                </group>
-                                            </page>
 
                                         </notebook>
 
@@ -363,6 +369,11 @@
                                 <group>
                                     <field name="stage1move_ids" readonly="1"/>
                                     <field name="stage2move_ids" readonly="1"/>
+                                </group>
+                            </page>
+                            <page string="退回记录">
+                                <group>
+                                    <field name="return_picking_ids"/>
                                 </group>
                             </page>
                             <page string="其他信息" attrs="{'readonly': [('locked','=',True)]}" name="qtxx" groups="sales_team.group_sale_assistant">
@@ -516,7 +527,7 @@
                                         <field name="shiji_weight" sum="小计"/>
                                         <field name="volume" sum="小计" string="体积"/>
                                         <field name="tuopan_volume" sum="小计" string="托体积"/>
-                                        <field name="shiji_volume" sum="小计" />
+                                        <field name="shiji_volume" sum="小计"/>
                                         <field name="sub_total" sum="小计"/>
                                     </tree>
 
@@ -548,7 +559,7 @@
                                     </tree>
                                 </field>
                             </page>
-                            <page string="销售HS统计" >
+                            <page string="销售HS统计">
                                 <group>
                                     <field name="pallet_type"/>
                                     <field name="pallet_qty"/>
@@ -562,7 +573,7 @@
                                         <button name="make_suppliser_hs" type="object" icon="fa-th-large"/>
                                         <field name="id"/>
                                         <field name="package_tag"/>
-                                        <field name="name" />
+                                        <field name="name"/>
                                         <field name="dump_product_id" groups="base.group_system"/>
                                         <field name="hs_id" groups="base.group_system"/>
                                         <field name="hs_en_name" groups="base.group_system"/>
@@ -578,7 +589,7 @@
                                         <field name="source_area"/>
                                         <field name="source_country_id"/>
                                         <field name="qty_max" sum="小计"/>
-                                        <field name="qty_mid" groups="base.group_system" />
+                                        <field name="qty_mid" groups="base.group_system"/>
                                         <field name="qty_min" groups="base.group_system"/>
                                         <field name="net_weight" sum="小计"/>
                                         <field name="gross_weight" sum="小计"/>
@@ -594,40 +605,40 @@
                                     <form>
                                         <group>
                                             <group>
-                                        <field name="package_tag"/>
-                                        <field name="name" readonly="0"/>
-                                        <field name="dump_product_id" readonly="0"/>
-                                        <field name="hs_id" readonly="0"/>
-                                        <field name="hs_en_name" readonly="0"/>
-                                        <field name="back_tax" readonly="1"/>
-                                        <field name="out_qty" readonly="0"/>
-                                        <field name="price" />
-                                        <field name="amount"/>
-                                        <field name="hs_id2"/>
-                                        <field name="dump_product_id2"/>
-                                        <field name="out_qty2"/>
-                                        <field name="price2"/>
-                                        <field name="amount2"/>
+                                                <field name="package_tag"/>
+                                                <field name="name" readonly="0"/>
+                                                <field name="dump_product_id" readonly="0"/>
+                                                <field name="hs_id" readonly="0"/>
+                                                <field name="hs_en_name" readonly="0"/>
+                                                <field name="back_tax" readonly="1"/>
+                                                <field name="out_qty" readonly="0"/>
+                                                <field name="price"/>
+                                                <field name="amount"/>
+                                                <field name="hs_id2"/>
+                                                <field name="dump_product_id2"/>
+                                                <field name="out_qty2"/>
+                                                <field name="price2"/>
+                                                <field name="amount2"/>
                                             </group>
                                             <group>
-                                        <field name="source_area"/>
-                                        <field name="source_country_id"/>
-                                        <field name="qty_max"/>
-                                        <field name="qty_mid" invisible="1"/>
-                                        <field name="qty_min" readonly="1"/>
-                                        <field name="net_weight"/>
-                                        <field name="gross_weight"/>
-                                        <field name="tuopan_weight"/>
-                                        <field name="shiji_weight"/>
-                                        <field name="volume"/>
-                                        <field name="tuopan_volume"/>
-                                        <field name="shiji_volume"/>
-                                        <field name="type"/>
-                                        <field name="note"/>
+                                                <field name="source_area"/>
+                                                <field name="source_country_id"/>
+                                                <field name="qty_max"/>
+                                                <field name="qty_mid" invisible="1"/>
+                                                <field name="qty_min" readonly="1"/>
+                                                <field name="net_weight"/>
+                                                <field name="gross_weight"/>
+                                                <field name="tuopan_weight"/>
+                                                <field name="shiji_weight"/>
+                                                <field name="volume"/>
+                                                <field name="tuopan_volume"/>
+                                                <field name="shiji_volume"/>
+                                                <field name="type"/>
+                                                <field name="note"/>
                                             </group>
                                         </group>
                                         <group>
-                                        <field name="keyword"/>
+                                            <field name="keyword"/>
                                         </group>
 
 
@@ -678,7 +689,7 @@
                                         <field name="sale_hs_db_id"/>
                                         <field name="supplier_id"/>
                                         <field name="name"/>
-                                        <field name="po_id" />
+                                        <field name="po_id"/>
                                         <field name="po_code" groups="base.group_system"/>
                                         <field name="hs_id"/>
                                         <field name="product_id" groups="base.group_system"/>
@@ -687,7 +698,7 @@
                                         <field name="amount" groups="base.group_system"/>
                                         <field name="back_tax" groups="base.group_system"/>
                                         <field name="back_tax_amount" groups="base.group_system"/>
-                                        <field name="hs_id2" />
+                                        <field name="hs_id2"/>
                                         <field name="product_id2" groups="base.group_system"/>
                                         <field name="qty2" groups="base.group_system"/>
                                         <field name="price2" groups="base.group_system"/>
