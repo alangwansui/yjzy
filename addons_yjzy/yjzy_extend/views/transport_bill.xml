@@ -326,6 +326,12 @@
 
                                             </page>
 
+                                            <page>
+                                                <group>
+                                                    <field name="return_picking_ids"/>
+                                                </group>
+                                            </page>
+
                                         </notebook>
 
 

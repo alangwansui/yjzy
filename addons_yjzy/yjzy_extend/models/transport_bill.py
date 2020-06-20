@@ -796,6 +796,9 @@ class transport_bill(models.Model):
     gold_sample_state = fields.Selection([('all', '全部有'), ('part', '部分有'), ('none', '无金样')], '样金管理',
                                          compute=compute_info)
 
+    return_picking_ids = fields.Many2many('stock.picking', 'ref_tb_return_picking', 'pid', 'tid', '退货单')
+
+
     # def add_customer(self):
     #     self.ensure_one()
     #     form_view = self.env.ref('yjzy_extend.view_transport_bill_wkf_form').id
@@ -853,6 +856,8 @@ class transport_bill(models.Model):
         wizard = self.env['stock.return.picking']
 
         pickings = self.stage2picking_ids | self.stage1picking_ids
+
+        return_picking_ids = []
         for one in pickings:
             ctx = {'active_ids': [one.id], 'active_id': one.id}
             wizard = wizard.with_context(ctx).create({
@@ -860,8 +865,9 @@ class transport_bill(models.Model):
             for m in wizard.product_return_moves:
                 one.to_refund = True
             action = wizard.create_returns()
-
             print('===', wizard, action['res_id'])
+        self.write({'return_picking_ids': [(4, pid) for pid in return_picking_ids]})
+
 
 
     def compute_tb_ref(self):
