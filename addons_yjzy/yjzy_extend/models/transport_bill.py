@@ -858,27 +858,30 @@ class transport_bill(models.Model):
         pickings = self.stage2picking_ids | self.stage1picking_ids
 
         return_picking_ids = []
-        for one in pickings:
-            ctx = {'active_ids': [one.id], 'active_id': one.id}
+        for pk in pickings:
+            ctx = {'active_ids': [pk.id], 'active_id': pk.id}
             wizard = wizard_obj.with_context(ctx).create({
             })
-            for m in wizard.product_return_moves:
-                one.to_refund = True
+            for wzline in wizard.product_return_moves:
+                wzline.to_refund = True
+                wzline.quantity = wzline.move_id.quantity_done
             action = wizard.create_returns()
-            print('===', wizard, action['res_id'])
+            return_picking_ids.append(action['res_id'])
+            print('=make_picking_return==', wizard, action)
         self.write({'return_picking_ids': [(4, pid) for pid in return_picking_ids]})
 
 
     def make_return4return(self):
         wizard_obj = self.env['stock.return.picking']
-        for one in self.return_picking_ids:
-            ctx = {'active_ids': [one.id], 'active_id': one.id}
+        for pk in self.return_picking_ids:
+            ctx = {'active_ids': [pk.id], 'active_id': pk.id}
             wizard = wizard_obj.with_context(ctx).create({
             })
-            for m in wizard.product_return_moves:
-                one.to_refund = True
+            for wzline in wizard.product_return_moves:
+                wzline.to_refund = True
+                wzline.quantity = wzline.move_id.quantity_done
             action = wizard.create_returns()
-            print('===', wizard, action['res_id'])
+            print('=make_return4return==', wizard, action)
 
 
 
