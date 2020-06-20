@@ -376,6 +376,13 @@
                                     <field name="return_picking_ids"/>
                                 </group>
                             </page>
+                            <page string="重发记录">
+                                <group>
+                                    <field name="return4return_picking_ids"/>
+                                </group>
+                            </page>
+
+
                             <page string="其他信息" attrs="{'readonly': [('locked','=',True)]}" name="qtxx" groups="sales_team.group_sale_assistant">
                                 <group>
                                     <group>

@@ -797,7 +797,7 @@ class transport_bill(models.Model):
                                          compute=compute_info)
 
     return_picking_ids = fields.Many2many('stock.picking', 'ref_tb_return_picking', 'pid', 'tid', '退货单')
-
+    return4return_picking_ids = fields.Many2many('stock.picking', 'ref_tb_return4return_picking', 'pid', 'tid', '重发')
 
     # def add_customer(self):
     #     self.ensure_one()
@@ -868,11 +868,13 @@ class transport_bill(models.Model):
             action = wizard.create_returns()
             return_picking_ids.append(action['res_id'])
             print('=make_picking_return==', wizard, action)
-        self.write({'return_picking_ids': [(4, pid) for pid in return_picking_ids]})
+        self.write({'return4return_picking_ids': [(4, pid) for pid in return_picking_ids]})
 
 
     def make_return4return(self):
         wizard_obj = self.env['stock.return.picking']
+
+        return4return_picking_ids = []
         for pk in self.return_picking_ids:
             ctx = {'active_ids': [pk.id], 'active_id': pk.id}
             wizard = wizard_obj.with_context(ctx).create({
@@ -881,7 +883,9 @@ class transport_bill(models.Model):
                 wzline.to_refund = True
                 wzline.quantity = wzline.move_id.quantity_done
             action = wizard.create_returns()
+            return4return_picking_ids.append(action['res_id'])
             print('=make_return4return==', wizard, action)
+        self.write({'return_picking_ids': [(4, pid) for pid in return4return_picking_ids]})
 
 
 
