@@ -17,6 +17,7 @@ class AccountPaymentTerm(models.Model):
 
     type = fields.Selection([('purchase', '采购'), ('sale', '销售'), ('comm', u'通用')], u'类型', default='comm')
     invoice_date_deadline_field = fields.Selection([('date_ship', u'出运船日期'), ('date_finish', '交单日期')])
+    active = fields.Boolean(u'归档', default=True)
 
     def get_advance(self, amount):
         self.ensure_one()

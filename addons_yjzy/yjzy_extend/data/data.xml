@@ -3,7 +3,7 @@
 
 
     <data noupdate="1">
-        <!-- 采购箱号 -->
+        <!-- 客户供应商编号 -->
         <record id="seq_partner_code_customer" model="ir.sequence">
             <field name="name">res.partner.customer</field>
             <field name="code">res.partner.customer</field>

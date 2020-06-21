@@ -51,29 +51,7 @@ class res_partner(models.Model):
             #     print('--lastdate--', last_order, last_order.approve_date)
     # 增加地址翻译
 
-    code = fields.Char('编码')
-    street = fields.Char(translate=True)
-    street2 = fields.Char(translate=True)
-    city = fields.Char(translate=True)
-
-    assistant_id = fields.Many2one('res.users', store=True)
-    product_manager_id = fields.Many2one('res.users', related='user_id.product_manager_id', store=True)
-
-    type = fields.Selection(selection_add=[('notice', u'发货代理')])
-    type1 = fields.Selection(
-        [('contact', u'联系人'),
-         ('invoice', u'发票主体'),
-         ('delivery', u'收货地址'),
-         ], string='Address Type',
-        default='contact',
-        help="Used to select automatically the right address according to the context in sales and purchases documents.")
-
-    jituan_id = fields.Many2one('ji.tuan', '集团')
-    comment_contact = fields.Text(u'对接内容描述')
-    devloper_id = fields.Many2one('res.partner', u'开发人员',domain=[('is_inter_partner','=',True),('company_type','=','personal')])
-    full_name = fields.Char('公司全称')
-
-    #不要了
+    # 不要了
     invoice_title = fields.Char(u'发票抬头')
     mark_ids = fields.Many2many('transport.mark', 'ref_mark_patner', 'pid', 'mid', u'唛头')
     mark_comb_ids = fields.Many2many('mark.comb', 'ref_comb_partner', 'pid', 'cid', u'唛头组')
@@ -88,120 +66,123 @@ class res_partner(models.Model):
     auto_yfsqd = fields.Boolean(u'自动生成预付')
     jituan_name = fields.Char(u'集团名称')
     campaign_id = fields.Many2one('utm.campaign', u'客户来源')
-    partner_source_id = fields.Many2one('partner.source', u'来源')
-    customer_info_from_uid = fields.Many2one('res.partner', u'客户获取人', domain=[('is_inter_partner', '=', True),
-                                                                              ('company_type', '=', 'personal')])
     is_required = fields.Boolean(u'检查必填', default=False)
-    is_child_ids = fields.Boolean(u'检查联系人字段', default=False, compute=compute_info)
-    # mark_comb_id = fields.Many2one('mark.comb',u'唛头')
-
-
-
-
-
-
-
-
-
-    wharf_src_id = fields.Many2one('stock.wharf', u'装船港')
-    wharf_dest_id = fields.Many2one('stock.wharf', u'目的港')
-
-    advance_currency_id = fields.Many2one('res.currency', compute=compute_amount_purchase_advance, string=u'外币')
-    amount_purchase_advance_org = fields.Monetary('预付金额:外币', currency_field='advance_currency_id',
-                                                  compute=compute_amount_purchase_advance)
-    amount_purchase_advance = fields.Monetary('预付金额:本币', currency_field='currency_id',
-                                              compute=compute_amount_purchase_advance)
-
-    term_description = fields.Html(u'销售条款')
-    term_purchase = fields.Html(u'采购条款')
-
-    fax = fields.Char(u'传真')
-
     level = fields.Selection([(x, x.upper()) for x in 'abcde'], u'客户等级')
-
-    sequence = fields.Integer(u'排序', default=10, index=True)
-
-    need_purchase_fandian = fields.Boolean(u'采购返点')
-    purchase_fandian_ratio = fields.Float(u'返点比例：%')
-    purchase_fandian_partner_id = fields.Many2one('res.partner', u'返点对象')
-    state = fields.Selection([('draft', u'草稿'),
-                              ('check', u'提交前必填项检查'),
-                              ('submit', u'已提交'),
-                              ('to approve', u'责任人已审批'),
-                              ('approve', u'合规审批完成'), ('done', u'完成'), ('refuse', u'拒绝'), ('cancel', u'取消')],
-                             string=u'状态', track_visibility='onchange', default='draft')
-
-    is_inter_partner = fields.Boolean(u'是否内部', default=False)
-
-
-    contract_type = fields.Selection([('a', '模式1'), ('b', '模式2'), ('c', '模式3')], '合同类型', default='c')
-    gongsi_id = fields.Many2one('gongsi', '销售主体')
-    purchase_gongsi_id = fields.Many2one('gongsi', '采购主体')
-
-    sale_currency_id = fields.Many2one('res.currency', '销售币种')
-    customer_product_ids = fields.One2many('product.product', 'customer_id', '客户采购产品')
-
-
-
-
-    customer_purchase_in_china = fields.Char(u'客户在中国采购规模(CNY)')
+    street = fields.Char(translate=True)
+    street2 = fields.Char(translate=True)
+    city = fields.Char(translate=True)
+    code = fields.Char('编码')  # 13.0用ref替代
+    product_manager_id = fields.Many2one('res.users', related='user_id.product_manager_id', store=True)
+    type = fields.Selection(selection_add=[('notice', u'发货代理')])
+    type1 = fields.Selection(
+        [('contact', u'联系人'),
+         ('invoice', u'发票主体'),
+         ('delivery', u'收货地址'),
+         ], string='Address Type',
+        default='contact',
+        help="Used to select automatically the right address according to the context in sales and purchases documents.")
+    # mark_comb_id = fields.Many2one('mark.comb',u'唛头')
     customer_purchase_in_china_currency_id = fields.Many2one('res.currency', '客户在中国采购规模币种', default=lambda
         self: self.env.user.company_id.currency_id.id)
-    customer_purchase_in_china_note = fields.Text(u'备注')
-
-    customer_sale_total = fields.Char(u'客户销售额(CNY)')
     customer_sale_total_currency_id = fields.Many2one('res.currency', '客户销售额币种',
                                                       default=lambda self: self.env.user.company_id.currency_id.id)
-    customer_sale_total_note = fields.Text(u'备注')
-
-    supplier_sale_total = fields.Char(u'供应商销售额(CNY)',
-                                      currency_field='supplier_sale_total_currency_id')
     supplier_sale_total_currency_id = fields.Many2one('res.currency', '供应商销售额币种', default=lambda
         self: self.env.user.company_id.currency_id.id)
-    supplier_sale_total_note = fields.Text(u'备注')
-
-    supplier_export_total = fields.Char(u'供应商出口额(CNY)',
-                                        currency_field='supplier_export_total_currency_id')
     supplier_export_total_currency_id = fields.Many2one('res.currency', '供应商出口额币种', default=lambda
         self: self.env.user.company_id.currency_id.id)
-    supplier_export_total_note = fields.Text(u'备注')
-
-    child_delivery_ids = fields.One2many('res.partner', 'parent_id', domain=[('type', '=', 'delivery')], string='收货地址')
-    child_contact_ids = fields.One2many('res.partner', 'parent_id', domain=[('type', '=', 'contact')], string='联系人')
-    child_invoice_ids = fields.One2many('res.partner', 'parent_id', domain=[('type', '=', 'invoice')], string='发票主体')
-    # akiny
-    customer_product_origin_ids = fields.One2many('partner.product.origin', 'partner_id', u'客户产品')
-    address_text = fields.Text(u'地址')
     mark_html = fields.Html('唛头')
-    mark_text = fields.Text(u'唛头')
-    city_product_origin = fields.Char('产地')
-
     payee1 = fields.Char('收款人')
     payee1_address = fields.Text('收款人地址')
     account1 = fields.Char('账户')
     swift1 = fields.Char('SWIFT(非中国大陆供应商)')
     bank1 = fields.Char('银行')
     bank1_address = fields.Char('银行地址')
-    supplier_info_from_uid = fields.Many2one('res.partner', u'供应商获取人',domain=[('is_inter_partner','=',True),('company_type','=','personal')])
+    other_attachment = fields.Many2many('ir.attachment', string='其他补充资料附件')
+
+    #13已经添加
+    assistant_id = fields.Many2one('res.users', store=True)
+    jituan_id = fields.Many2one('ji.tuan', '集团')
+    comment_contact = fields.Text(u'对接内容描述')
+    devloper_id = fields.Many2one('res.partner', u'开发人员',domain=[('is_inter_partner','=',True),('company_type','=','personal')])
+    full_name = fields.Char('公司全称')
+    wharf_src_id = fields.Many2one('stock.wharf', u'装船港')
+    wharf_dest_id = fields.Many2one('stock.wharf', u'目的港')
+    term_description = fields.Html(u'销售条款')  #13改成term_sale
+    term_purchase = fields.Html(u'采购条款')
+    need_purchase_fandian = fields.Boolean(u'采购返点')
+    purchase_fandian_ratio = fields.Float(u'返点比例：%')
+    purchase_fandian_partner_id = fields.Many2one('res.partner', u'返点对象')
+    is_inter_partner = fields.Boolean(u'是否内部', default=False)
+
+
+    contract_type = fields.Selection([('a', '模式1'), ('b', '模式2'), ('c', '模式3')], '合同类型', default='c')
+    gongsi_id = fields.Many2one('gongsi', '销售主体')
+    purchase_gongsi_id = fields.Many2one('gongsi', '采购主体')
+    sale_currency_id = fields.Many2one('res.currency', '销售币种')
+    customer_product_ids = fields.One2many('product.product', 'customer_id', '客户采购产品')
+    child_delivery_ids = fields.One2many('res.partner', 'parent_id', domain=[('type', '=', 'delivery')], string='收货地址')
+    child_contact_ids = fields.One2many('res.partner', 'parent_id', domain=[('type', '=', 'contact')], string='联系人')
+    child_invoice_ids = fields.One2many('res.partner', 'parent_id', domain=[('type', '=', 'invoice')], string='发票主体')
+    fax = fields.Char(u'传真')
+    partner_source_id = fields.Many2one('partner.source', u'来源')#需要关联模块
+    customer_info_from_uid = fields.Many2one('res.partner', u'客户获取人', domain=[('is_inter_partner', '=', True),
+                                                                              ('company_type', '=', 'personal')])
+    is_child_ids = fields.Boolean(u'检查联系人字段', default=False, compute=compute_info)
+    sequence = fields.Integer(u'排序', default=10, index=True)
+    customer_purchase_in_china = fields.Char(u'客户在中国采购规模(CNY)')
+    customer_purchase_in_china_note = fields.Text(u'备注')
+    customer_sale_total = fields.Char(u'客户销售额(CNY)')
+    customer_sale_total_note = fields.Text(u'备注')
+    supplier_sale_total = fields.Char(u'供应商销售额(CNY)')
+    supplier_sale_total_note = fields.Text(u'备注')
+    supplier_export_total = fields.Char(u'供应商出口额(CNY)')
+    supplier_export_total_note = fields.Text(u'备注')
+    # akiny
+    customer_product_origin_ids = fields.One2many('partner.product.origin', 'partner_id', u'客户产品')#关联客户产品模型
+    address_text = fields.Text(u'地址')
+
+    mark_text = fields.Text(u'唛头')
+    city_product_origin = fields.Char('产地')
+
+    supplier_info_from_uid = fields.Many2one('res.partner', u'供应商获取人', domain=[('is_inter_partner', '=', True),
+                                                                               ('company_type', '=', 'personal')])
     attachment_business_license = fields.Many2many('ir.attachment', string='营业执照以及其他资料附件')
     actual_controlling_person = fields.Char(u'实际控股人')
 
-    other_attachment = fields.Many2many('ir.attachment', string='其他补充资料附件')
     partner_hs = fields.Many2many('hs.hs', string='产品品名')
     other_social_accounts = fields.Char(u'社交帐号')
     partner_level = fields.Many2one('partner.level', '等级')
     is_editable = fields.Boolean(u'是否允许编辑')
 
     former_name = fields.Char(u'曾用名')
-    can_not_be_deleted =fields.Boolean(u'不允许删除',default=False, readonly=True)
+    can_not_be_deleted = fields.Boolean(u'不允许删除', default=False, readonly=True)
     birthday = fields.Date(u'生日')
-    sales_approve_uid = fields.Many2one('res.users','审批责任人')
+
+    sales_approve_uid = fields.Many2one('res.users', '审批责任人')
     sales_approve_date = fields.Date('责任人审批日期')
-    approve_uid = fields.Many2one('res.users','审批合规')
+    approve_uid = fields.Many2one('res.users', '审批合规')
     approve_date = fields.Date('合规审批日期')
-    done_uid = fields.Many2one('res.users','审批总经理')
+    done_uid = fields.Many2one('res.users', '审批总经理')
     done_date = fields.Date('总经理审批日期')
-    last_sale_order_approve_date = fields.Date(u'最近一次下单',compute='last_sale_order')
+    last_sale_order_approve_date = fields.Date(u'最近一次下单', compute='last_sale_order')
+
+
+    #暂时未添加
+    state = fields.Selection([('draft', u'草稿'),
+                              ('check', u'提交前必填项检查'),
+                              ('submit', u'已提交'),
+                              ('to approve', u'责任人已审批'),
+                              ('approve', u'合规审批完成'), ('done', u'完成'), ('refuse', u'拒绝'), ('cancel', u'取消')],
+                             string=u'状态', track_visibility='onchange', default='draft')
+    advance_currency_id = fields.Many2one('res.currency', compute=compute_amount_purchase_advance, string=u'外币')#后期需要优化，分币种统计，根据分录的币种统计
+    amount_purchase_advance_org = fields.Monetary('预付金额:外币', currency_field='advance_currency_id',
+                                                  compute=compute_amount_purchase_advance)
+    amount_purchase_advance = fields.Monetary('预付金额:本币', currency_field='currency_id',
+                                              compute=compute_amount_purchase_advance)
+
+
+
+
 
     @api.onchange('invoice_title')
     def onchange_invoice_title(self):
