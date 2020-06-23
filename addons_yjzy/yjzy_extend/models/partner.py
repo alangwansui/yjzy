@@ -55,7 +55,9 @@ class res_partner(models.Model):
 
     mark_ids = fields.Many2many('transport.mark', 'ref_mark_patner', 'pid', 'mid', u'唛头')
     mark_comb_ids = fields.Many2many('mark.comb', 'ref_comb_partner', 'pid', 'cid', u'唛头组')
-
+    exchange_type_ids = fields.Many2many('exchange.type', 'ref_exchange_partner', 'pid', 'eid', u'交单方式')
+    exchange_demand_ids = fields.One2many('exchange.demand', 'partner_id', u'交单要求')
+    demand_info = fields.Text(u'交单要求')
     wechat = fields.Char(u'微信')
     qq = fields.Char(u'QQ')
     skype = fields.Char('Skype')
@@ -109,6 +111,7 @@ class res_partner(models.Model):
     purchase_fandian_ratio = fields.Float(u'返点比例：%')
     purchase_fandian_partner_id = fields.Many2one('res.partner', u'返点对象')
     is_inter_partner = fields.Boolean(u'是否内部', default=False)
+
     notice_man = fields.Text(u'通知人')
     delivery_man = fields.Text(u'收货人')
 
@@ -177,9 +180,6 @@ class res_partner(models.Model):
     amount_purchase_advance = fields.Monetary('预付金额:本币', currency_field='currency_id',
                                               compute=compute_amount_purchase_advance)
     invoice_title = fields.Char(u'发票抬头')
-    exchange_type_ids = fields.Many2many('exchange.type', 'ref_exchange_partner', 'pid', 'eid', u'交单方式')
-    exchange_demand_ids = fields.One2many('exchange.demand', 'partner_id', u'交单要求')
-    demand_info = fields.Text(u'交单要求')
 
 
 
