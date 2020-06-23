@@ -49,6 +49,7 @@
         <field name="inherit_id" ref="account.view_payment_term_tree"/>
         <field name="arch" type="xml">
             <tree position="inside">
+                <field name="sequence"/>
                 <field name="type"/>
                 <field name="invoice_date_deadline_field"/>
 
@@ -61,6 +62,7 @@
         <field name="inherit_id" ref="account.view_payment_term_form"/>
         <field name="arch" type="xml">
             <field name="name" position="after">
+                <field name="sequence"/>
                 <field name="type"/>
                 <field name="invoice_date_deadline_field"/>
             </field>
