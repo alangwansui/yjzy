@@ -874,11 +874,12 @@
                     <field name="date_in_related"  invisible="1" />
                     <field name="date_ship_related" invisible="1"/>
                     <field name="date_customer_finish_related" invisible="1" />
-                    <field name="date_supplier_finish_related" modifiers="{}" invisible="1" />
-                    <field name="state" invisible="0"/>
-                    <field name="create_date" widget="date"/>
-                    <field name="gongsi_id" string="销售主体" />
-                    <field name="purchase_gongsi_id" string="采购主体" />
+                    <field name="date_supplier_finish_related"  invisible="1" />
+                    <field name="org_sale_amount" readonly="1"/>
+                    <field name="state" invisible="0" readonly="1"/>
+                    <field name="create_date" widget="date" readonly="1" invisible="1"/>
+                    <field name="gongsi_id" string="销售主体" readonly="1" />
+                    <field name="purchase_gongsi_id" string="采购主体" readonly="1"/>
                 </tree>
             </field>
         </record>
@@ -1304,7 +1305,7 @@
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">transport.bill</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree</field>
             <field name="limit">20</field>
             <field name="domain">[('state','in',['delivered','invoiced','verifying'])]</field>
             <field name="context">{'show_date_finish':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3}</field>
