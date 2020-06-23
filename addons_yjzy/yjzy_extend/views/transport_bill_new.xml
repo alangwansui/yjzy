@@ -1309,7 +1309,7 @@
             <field name="domain">[('state','in',['delivered','invoiced','verifying'])]</field>
             <field name="context">{'show_date_finish':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3}</field>
             <field name="view_ids" eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_transport_bill_new_date_tree')})]"/>
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_transport_bill_new_date_account_tree')})]"/>
 
         </record>
                  <menuitem id="menu_transport_new_date_account_bill" name="财务查看出运日期"
