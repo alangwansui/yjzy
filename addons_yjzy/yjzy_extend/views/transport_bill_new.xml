@@ -851,6 +851,38 @@
             </field>
         </record>
 
+         <!--日期填制视图-->
+        <record id="view_transport_bill_new_date_account_tree" model="ir.ui.view">
+            <field name="name">transport.bill.date.accounttree</field>
+            <field name="model">transport.bill</field>
+            <field name="arch" type="xml">
+                <tree string="出运单" editable="bottom" default_order="date_out_in desc">
+                    <field name="name" invisible="1"/>
+                    <field name="ref" readonly="1"/>
+                    <field name="partner_id" required="1" readonly="1"/>
+                    <!--button name="sync_data2invoice" string="创建应收付" attrs="{'invisible':[('state','!=','delivered')]}"  class="oe_highlight" type="object"/-->
+                    <field name="date_out_in" readonly="1"/>
+                    <field name="date_in" invisible="1"/>
+                    <field name="date_ship" invisible="1"/>
+                    <field name="date_customer_finish" invisible="1"/>
+                    <field name="date_supplier_finish"   invisible="1"/>
+                    <field name="all_purchase_invoice_fill" invisible="1"/>
+                    <field name="purchase_invoice_ids" widget="many2many_tags" invisible="1"/>
+                    <field name="purchase_invoice_ids2" invisible="1" widget="many2many_tags" context="{'show_date_finish': 1}"/>
+                    <button name="update_supplier_invoice_date" invisible="1" string="供应商交单日期" attrs="{'invisible':[('state','!=','invoiced')]}" class="oe_highlight" type="object"/>
+                    <field name="date_out_in_related"  invisible="1"/>
+                    <field name="date_in_related"  invisible="1" />
+                    <field name="date_ship_related" invisible="1"/>
+                    <field name="date_customer_finish_related" invisible="1" />
+                    <field name="date_supplier_finish_related" modifiers="{}" invisible="1" />
+                    <field name="state" invisible="0"/>
+                    <field name="create_date" widget="date"/>
+                    <field name="gongsi_id" string="销售主体" />
+                    <field name="purchase_gongsi_id" string="采购主体" />
+                </tree>
+            </field>
+        </record>
+
 <!--采购-->
         <record id="view_transport_bill_new_purchase_tree" model="ir.ui.view">
             <field name="name">transport.bill.tree</field>
@@ -1267,6 +1299,24 @@
                   action="act_open_transport_bill_new_date_view"
                   />
 
+<record model="ir.actions.act_window" id="act_open_transport_bill_new_date_account_view">
+            <field name="name">财务查看出运日期</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">transport.bill</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="limit">20</field>
+            <field name="domain">[('state','in',['delivered','invoiced','verifying'])]</field>
+            <field name="context">{'show_date_finish':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_transport_bill_new_date_tree')})]"/>
+
+        </record>
+                 <menuitem id="menu_transport_new_date_account_bill" name="财务查看出运日期"
+                  parent="yjzy_extend.menu_transport_new_bill_root"
+                  sequence="5"
+                  action="act_open_transport_bill_new_date_account_view"
+                  />
 
             <record model="ir.actions.act_window" id="act_open_transport_bill_new_create_view">
             <field name="name">创建新出运单</field>
