@@ -13,6 +13,7 @@ class product_supplierinfo(models.Model):
         for one in self:
             one.full_name = '%s:%s:%s' % (one.name.name, one.product_code or '', one.product_name or '')
 
+    #13已经添加
     full_name = fields.Char(u'全称', compute=compute_full_name, store=True)
 
     # def  name_get(self):

@@ -15,7 +15,7 @@ class res_partner(models.Model):
             one.amount_purchase_advance_org = sum(
                 [line.get_amount_to_currency(one.advance_currency_id) for line in lines])
             one.amount_purchase_advance = sum([line.get_amount_to_currency(one.currency_id) for line in lines])
-
+    #以下两个13已添加
     def compute_info(self):
         for one in self:
             for x in one.child_contact_ids:
@@ -45,6 +45,8 @@ class res_partner(models.Model):
                 last_order = last_sale_orders[0]
                 one.last_sale_order_approve_date = last_order.approve_date
                 print('--lastdate--', last_order, last_order.approve_date)
+            else:
+                one.last_sale_order_approve_date = False
             # if one.sale_order_ids:
             #     last_order = one.sudo().sale_order_ids[0]
             #     one.last_sale_order_approve_date = last_order.approve_date
@@ -165,7 +167,7 @@ class res_partner(models.Model):
     done_uid = fields.Many2one('res.users', '审批总经理')
     done_date = fields.Date('总经理审批日期')
     last_sale_order_approve_date = fields.Date(u'最近一次下单', compute='last_sale_order')
-
+    invoice_title = fields.Char(u'发票抬头')
 
     #暂时未添加
     state = fields.Selection([('draft', u'草稿'),
@@ -173,21 +175,49 @@ class res_partner(models.Model):
                               ('submit', u'已提交'),
                               ('to approve', u'责任人已审批'),
                               ('approve', u'合规审批完成'), ('done', u'完成'), ('refuse', u'拒绝'), ('cancel', u'取消')],
-                             string=u'状态', track_visibility='onchange', default='draft')
+                             string=u'状态', index=True, track_visibility='onchange', default='draft')
     advance_currency_id = fields.Many2one('res.currency', compute=compute_amount_purchase_advance, string=u'外币')#后期需要优化，分币种统计，根据分录的币种统计
     amount_purchase_advance_org = fields.Monetary('预付金额:外币', currency_field='advance_currency_id',
                                                   compute=compute_amount_purchase_advance)
     amount_purchase_advance = fields.Monetary('预付金额:本币', currency_field='currency_id',
                                               compute=compute_amount_purchase_advance)
-    invoice_title = fields.Char(u'发票抬头')
 
 
 
 
+    #13已经添加
     @api.onchange('invoice_title')
     def onchange_invoice_title(self):
         if self.type == 'delivery':
             self.name = self.invoice_title
+
+    @api.model
+    def create(self, vals):
+        one = super(res_partner, self).create(vals)
+        if one.customer and one.company_type == 'company':
+            one.create_my_pricelist()  #这个方法还没有
+        one.generate_code() #这个已经用ref替换
+
+        return one
+
+    def generate_code(self):
+        seq_obj = self.env['ir.sequence']
+        for one in self:
+            if one.code: continue
+            seq_code = None
+            if one.customer and one.supplier:
+                seq_code = 'res.partner.both'
+            elif one.customer:
+                seq_code = 'res.partner.customer'
+            elif one.supplier:
+                seq_code = 'res.partner.supplier'
+            else:
+                pass
+
+            if seq_code:
+                one.code = seq_obj.next_by_code(seq_code)
+
+        return True
 
     @api.onchange('sale_currency_id')
     def onchange_sale_currency(self):
@@ -199,32 +229,6 @@ class res_partner(models.Model):
 
             if pricelist:
                 self.property_product_pricelist = pricelist
-
-    # @api.multi
-    # def write(self,values):
-    #     if values.get('state','') == 'check':
-    #        values['is_inter_partner'] = True
-    #        return super(res_partner, self).write(values)
-
-    def unlink(self):
-        user = self.env.user
-        for one in self:
-            if user.has_group('sales_team.group_manager') or (one.create_uid == user and one.state in ('refuse', 'draft')):
-                return super(res_partner, self).unlink()
-            else:
-                if one.create_uid != user:
-                    raise Warning(u'只有创建者才允许删除')
-                if one.state not in ('refuse', 'draft'):
-                    raise Warning(u'只有拒绝或者草稿状态才能删除！')
-
-
-    @api.model
-    def create(self, vals):
-        one = super(res_partner, self).create(vals)
-        if one.customer and one.company_type == 'company':
-            one.create_my_pricelist()
-            one.generate_code()
-        return one
 
     def create_my_pricelist(self):
         p_obj = self.env['product.pricelist']
@@ -279,25 +283,6 @@ class res_partner(models.Model):
                 one.property_product_pricelist = pricelist_usd
             else:
                 one.property_product_pricelist = pricelist_cny
-
-    def open_form_view(self):
-        return {
-            'name': '联系人',
-            'view_type': 'form',
-            'view_mode': 'form',
-            'res_model': self._name,
-            'res_id': self.id,
-            'type': 'ir.actions.act_window',
-            'target': 'new',
-        }
-
-    # @api.multi
-    def action_check(self):
-        # if self.create_uid == self.env.user:
-        self.state = 'check'
-
-        # else:
-        #     raise Warning(u'必须是创建人才能提交')
 
     def action_submit(self):
         war = ''
@@ -432,8 +417,6 @@ class res_partner(models.Model):
                     raise Warning(war)
 
 
-
-
     def action_to_approve(self):
         if self.user_id == self.env.user:
             return self.write({'state': 'to approve',
@@ -442,17 +425,24 @@ class res_partner(models.Model):
         else:
             raise Warning(u'必须是责任人才能审批')
 
+    @api.onchange('country_id')
+    def _onchange_country_id(self):
+        if self.country_id.code == 'CN':
+            self.lang = 'zh_CN'
+        else:
+            self.lang = 'en_US'
+
     def action_approve(self):
         return self.write({'state': 'approve',
-                           'approve_uid':self.env.user.id,
-                           'approve_date':fields.datetime.now()})
+                           'approve_uid': self.env.user.id,
+                           'approve_date': fields.datetime.now()})
 
     def action_done(self):
         if self.can_not_be_deleted == False:
             self.can_not_be_deleted = True
         return self.write({'state': 'done',
-                           'done_uid':self.env.user.id,
-                           'done_date':fields.datetime.now()})
+                           'done_uid': self.env.user.id,
+                           'done_date': fields.datetime.now()})
 
     def action_refuse(self):
         if self.state == 'submit' and self.user_id != self.env.user and self.customer == True:
@@ -461,17 +451,65 @@ class res_partner(models.Model):
             return self.write({'state': 'refuse'})
 
     def action_cancel(self):
-       # if self.state in ('refuse', 'draft') and self.can_not_be_deleted == False:
-       if self.state not in ('refuse', 'draft'):
-           raise Warning(u'只有拒绝或者草稿状态才能取消！')
-       else:
-           return self.write({'state': 'cancel'})
-     #   else:
-     #
-       #     if self.can_not_be_deleted == True:
-     #           raise Warning(u'已经审批过的记录不允许删除！请联系总经理！')
+        # if self.state in ('refuse', 'draft') and self.can_not_be_deleted == False:
+        if self.state not in ('refuse', 'draft'):
+            raise Warning(u'只有拒绝或者草稿状态才能取消！')
+        else:
+            return self.write({'state': 'cancel'})
 
-       
+    #   else:
+    #
+    #     if self.can_not_be_deleted == True:
+    #           raise Warning(u'已经审批过的记录不允许删除！请联系总经理！')
+
+    #准备添加
+
+
+    def unlink(self):
+        user = self.env.user
+        for one in self:
+            if user.has_group('sales_team.group_manager') or (one.create_uid == user and one.state in ('refuse', 'draft')):
+                return super(res_partner, self).unlink()
+            else:
+                if one.create_uid != user:
+                    raise Warning(u'只有创建者才允许删除')
+                if one.state not in ('refuse', 'draft'):
+                    raise Warning(u'只有拒绝或者草稿状态才能删除！')
+
+    # @api.multi
+    # def write(self,values):
+    #     if values.get('state','') == 'check':
+    #        values['is_inter_partner'] = True
+    #        return super(res_partner, self).write(values)
+
+
+
+
+
+
+
+
+    def open_form_view(self):
+        return {
+            'name': '联系人',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': self._name,
+            'res_id': self.id,
+            'type': 'ir.actions.act_window',
+            'target': 'new',
+        }
+
+    # @api.multi
+    def action_check(self):
+        # if self.create_uid == self.env.user:
+        self.state = 'check'
+
+        # else:
+        #     raise Warning(u'必须是创建人才能提交')
+
+
+
 
     def action_draft(self):
         partner = self.filtered(lambda s: s.state in ['cancel'])
@@ -485,7 +523,7 @@ class res_partner(models.Model):
     #        if one.state != 'cancel':
     #           raise Warning('不能删除非取消状态发运单')
     #    return super(res_partner, self).unlink()
-
+    #看起来应该是用不到的
     def select_products(self):
         if self.flag_order == 'so':
             order_id = self.env['sale.order'].browse(self._context.get('active_id', False))
@@ -509,48 +547,26 @@ class res_partner(models.Model):
                     'order_id': order_id.id
                 })
 
-    def generate_code(self):
-        seq_obj = self.env['ir.sequence']
-        for one in self:
-            if one.code: continue
-            seq_code = None
-            if one.customer and one.supplier:
-                seq_code = 'res.partner.both'
-            elif one.customer:
-                seq_code = 'res.partner.customer'
-            elif one.supplier:
-                seq_code = 'res.partner.supplier'
-            else:
-                pass
 
-            if seq_code:
-                one.code = seq_obj.next_by_code(seq_code)
-
-        return True
 
     @api.onchange('type1')
     def _onchange_type1(self):
         self.type = self.type1
 
-    @api.onchange('country_id')
-    def _onchange_country_id(self):
-        if self.country_id.code == 'CN':
-            self.lang = 'zh_CN'
-        else:
-            self.lang = 'en_US'
 
-    @api.one
-    def compute_child_delivery_ids(self):
-        for one in self:
-            child_delivery_ids = one.child_ids.filtered(
-                lambda x: x.type == 'delivery')
-            one.child_delivery_ids = child_delivery_ids
 
-    def compute_child_contact_ids(self):
-        for one in self:
-            child_contact_ids = one.child_ids.filtered(
-                lambda x: x.type == 'contact')
-            one.child_contact_ids = child_contact_ids
+    # @api.one
+    # def compute_child_delivery_ids(self):
+    #     for one in self:
+    #         child_delivery_ids = one.child_ids.filtered(
+    #             lambda x: x.type == 'delivery')
+    #         one.child_delivery_ids = child_delivery_ids
+    #
+    # def compute_child_contact_ids(self):
+    #     for one in self:
+    #         child_contact_ids = one.child_ids.filtered(
+    #             lambda x: x.type == 'contact')
+    #         one.child_contact_ids = child_contact_ids
 
 
 # akiny 客户等级

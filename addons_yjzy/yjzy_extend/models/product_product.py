@@ -156,7 +156,7 @@ class Product_Product(models.Model):
         return result
 
 
-
+    #13no
     @api.depends('value_line_ids')
     def compute_key_value_line(self):
         for one in self:
@@ -164,7 +164,7 @@ class Product_Product(models.Model):
             key_values = one.key_value_line_ids.mapped('product_attribute_value_id')
             one.key_value_string = ','.join([x[1] for x in  key_values.name_get()])
 
-
+    #13no
     def open_wizard_product_copy(self):
         wizard = self.env['wizard.product.copy'].create({'product_id': self.id})
         return {
@@ -176,7 +176,7 @@ class Product_Product(models.Model):
             'target': 'new',
             'type': 'ir.actions.act_window',
         }
-
+    #13yes
     def get_in_stock_quant(self):
         self.ensure_one()
         quants = self.env['stock.quant'].search([('product_id', '=', self.id), ('location_id.usage', '=', 'internal')])
@@ -273,7 +273,7 @@ class Product_Product(models.Model):
             'type': 'ir.actions.act_window',
         }
 
-    #产品费雷设置bom模板，可以直接创建引用。13no
+    #产品分类设置bom模板，可以直接创建引用。13no
     def open_bom_template(self):
         self.ensure_one()
         bom_template = self.categ_id.bom_template_id

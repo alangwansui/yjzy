@@ -390,7 +390,7 @@
                          <field name="state" widget="statusbar" statusbar_visible=" "  groups="base.group_system"/>
                     </header>
                     <header groups="base.group_system">
-
+<button name="compute_balance_new" type="object" string="计算预收余额"/>
                         <button name="update_purchase_datas" string="更新采购数据" type="object" class="btn-primary"/>
 
 

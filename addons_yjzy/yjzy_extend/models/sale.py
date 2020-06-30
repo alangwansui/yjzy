@@ -19,7 +19,7 @@ class sale_order(models.Model):
     #         one.advance_residual = -1 * sum([
     #             i.get_amount_to_currency(one.currency_id) for i in lines
     #         ])
-
+   #13已添加，规则改变
     @api.depends('currency_id', 'contract_date')
     def compute_exchange_rate(self):
         for one in self:
@@ -32,11 +32,11 @@ class sale_order(models.Model):
                 exchange_rate = currench_obj._get_conversion_rate(from_currency, to_currency)
             one.exchange_rate = exchange_rate
             one.appoint_rate = exchange_rate
-
+    #13已添加
     def default_commission_ratio(self):
         return  float(self.env['ir.config_parameter'].sudo().get_param('addons_yjzy.sale_commission', '0.015'))
 
-
+    #等待添加，这里的自动计算，有时候没有完成，需要再仔细观察一下
     @api.depends('aml_ids')
     def compute_balance_new(self):
         for one in self:
@@ -106,13 +106,14 @@ class sale_order(models.Model):
                 print('total', one)
                 one.purchase_no_deliver_amount_new = sum(one.po_ids_new.mapped('no_deliver_amount_new'))
 
-
-
-
     #@api.depends('po_ids.balance')
     def compute_po_residual(self):
         for one in self:
             one.advance_po_residual = sum([x.balance for x in one.po_ids])
+   #---------
+
+
+
 
     def compute_info(self):
         aml_obj = self.env['account.move.line']
@@ -241,6 +242,7 @@ class sale_order(models.Model):
     product_manager_id = fields.Many2one('res.users', u'产品经理')
     incoterm_code = fields.Char(u'贸易术语', related='incoterm.code', readonly=True)
     cost_id = fields.Many2one('sale.cost', u'成本单', copy=False)
+    #通过onchange的方式，保证13 的目前客户的使用体验不变
     fee_rmb2_note = fields.Text(u'人名币备注2')
     fee_rmb1_note = fields.Text(u'人名币备注1')
     fee_other_note = fields.Text(u'外币备注1')
@@ -255,31 +257,52 @@ class sale_order(models.Model):
     order_line_b = fields.One2many('sale.order.line', related='order_line')
     po_ids_term = fields.Many2many('purchase.order', '采购合同条款', related='po_ids')
     #。。。。。
+
+    #13已经添加
     contract_code = fields.Char(u'合同编码')
     contract_date = fields.Date(u'签订日期')
     link_man_id = fields.Many2one('res.partner', u'联系人')
     sale_assistant_id = fields.Many2one('res.users', u'业务助理')
-    rest_tb_qty_total = fields.Float(u'出运总数',compute=compute_info)
-
-
-    #transport_bill_id = fields.Many2one('transport.bill', u'出运单', copy=False)
-    is_cip = fields.Boolean(u'报关', default=True)
-    cip_type = fields.Selection([('normal', u'正常报关'), ('buy', u'买单报关'), ('none', '不报关')], string=u'报关', default='normal')
-    # 其他费用  fee_inner,fee_rmb1,fee_rmb2,fee_outer,fee_export_insurance,fee_other
-
+    partner_payment_term_id = fields.Many2one('account.payment.term', u'客户付款条款',
+                                              related='partner_id.property_payment_term_id')
+    contract_type = fields.Selection([('a', '模式1'), ('b', '模式2'), ('c', '模式3')], '合同类型', default='c')
+    gongsi_id = fields.Many2one('gongsi', '内部公司')
+    purchase_gongsi_id = fields.Many2one('gongsi', '内部采购公司')
+    cip_type = fields.Selection([('normal', u'正常报关'), ('buy', u'买单报关'), ('none', '不报关')], string=u'报关',
+                                default='normal')
+    current_date_rate = fields.Float('当日汇率')
+    include_tax = fields.Boolean(u'含税')
+    stock_cost = fields.Monetary(u'库存成本', currency_field='third_currency_id', compute=compute_info)
+    commission_amount = fields.Monetary(u'经营计提金额', currency_field='third_currency_id', compute=compute_info)
+    commission_ratio = fields.Float(u'经营计提比', digits=(2, 4), default=lambda self: self.default_commission_ratio())
+    commission_ratio_percent = fields.Float(u'经营计提比%',compute=compute_info)
+    approve_date = fields.Date('审批完成日期')
+    approve_uid = fields.Many2one('res.users', u'完成审批人')
+    gold_sample_state = fields.Selection([('all', '全部有'), ('part', '部分有'), ('none', '无金样')], '样金管理',
+                                         compute=compute_info)
+    customer_pi = fields.Char(u'客户订单号')
     fee_inner = fields.Monetary(u'国内运杂费', currency_field='company_currency_id')
     fee_rmb1 = fields.Monetary(u'人民币费用1', currency_field='company_currency_id')
-
     fee_rmb2 = fields.Monetary(u'人民币费用2', currency_field='company_currency_id')
-
-    fee_rmb_all = fields.Monetary(u'人民币费用合计', currency_field='company_currency_id',  compute=compute_info)
-    fee_rmb_ratio = fields.Float(u'人名币费用占销售额比', digits=(2, 2), compute=compute_info) #akiny 4改成了2
-
     fee_outer = fields.Monetary(u'国外运保费', currency_field='other_currency_id')
     outer_currency_id = fields.Many2one('res.currency', u'国外运保费货币', )
     fee_export_insurance = fields.Monetary(u'出口保险费', currency_field='other_currency_id')
     export_insurance_currency_id = fields.Many2one('res.currency', u'出口保险费货币')
     fee_other = fields.Monetary(u'其他外币费用', currency_field='other_currency_id')
+
+    rest_tb_qty_total = fields.Float(u'出运总数',compute=compute_info)
+
+
+    #transport_bill_id = fields.Many2one('transport.bill', u'出运单', copy=False)
+    is_cip = fields.Boolean(u'报关', default=True)
+
+    # 其他费用  fee_inner,fee_rmb1,fee_rmb2,fee_outer,fee_export_insurance,fee_other
+
+
+
+    fee_rmb_all = fields.Monetary(u'人民币费用合计', currency_field='company_currency_id',  compute=compute_info)
+    fee_rmb_ratio = fields.Float(u'人名币费用占销售额比', digits=(2, 2), compute=compute_info) #akiny 4改成了2
+
 
 
     fee_outer_all = fields.Monetary(u'外币费用合计', currency_field='other_currency_id',  compute=compute_info)
@@ -308,8 +331,7 @@ class sale_order(models.Model):
     #currency_tate = fields.Many2one('res.currency.rate',u'系统汇率')
     country_id = fields.Many2one('res.country', related='partner_id.country_id', string=u'国别', readonly=True)
     term_description = fields.Html(u'销售条款')
-    commission_ratio = fields.Float(u'经营计提比', digits=(2, 4), default=lambda self: self.default_commission_ratio())
-    commission_ratio_percent = fields.Float(u'经营计提比%',compute=compute_info)
+
     state2 = fields.Selection([('draft', u'草稿'),('to_approve', u'待批准'), ('edit', u'可修改'), ('confirmed', u'待审批'), ('done', u'审批完成')], u'状态', default='draft')
     amount_total2 = fields.Monetary(u'销售金额', currency_field='third_currency_id', compute=compute_info)
     #akiny 手动汇率
@@ -318,8 +340,7 @@ class sale_order(models.Model):
     purchase_cost = fields.Monetary(u'采购成本', currency_field='third_currency_id', compute=compute_info)
     purchase_stock_cost = fields.Monetary(u'采购库存成本合计',  currency_field='third_currency_id', compute=compute_info)
     fandian_amoun = fields.Monetary(u'返点金额', currency_field='third_currency_id', compute=compute_info)
-    stock_cost = fields.Monetary(u'库存成本', currency_field='third_currency_id', compute=compute_info)
-    commission_amount = fields.Monetary(u'经营计提金额', currency_field='third_currency_id', compute=compute_info)
+
     lines_profit_amount = fields.Monetary(u'明细利润计总', currency_field='third_currency_id')
     other_cost = fields.Monetary(u'其他费用总计', currency_field='third_currency_id', compute=compute_info)
 
@@ -336,8 +357,8 @@ class sale_order(models.Model):
     #is_tb_process = fields.Boolean(u'出运单运行中', help='是否有关联的出运单还未结案?')
     tb_ids = fields.Many2many('transport.bill', 'ref_tb_so', 'tb_id', 'so_id', string=u'出运单', compute=compute_info)
     tb_count = fields.Integer('发运单计数', compute=compute_info)
-    include_tax = fields.Boolean(u'含税')
-    customer_pi = fields.Char(u'客户订单号')
+
+
     from_wharf_id = fields.Many2one('stock.wharf', u'目的港POD')
     to_wharf_id = fields.Many2one('stock.wharf', u'目的港POL')
     vat_diff_amount = fields.Monetary(u'增值税差额', currency_field='third_currency_id', compute=compute_info)
@@ -352,21 +373,20 @@ class sale_order(models.Model):
     aml_ids = fields.One2many('account.move.line', 'so_id', u'分录明细', readonly=True)
 
 
-    gold_sample_state = fields.Selection([('all', '全部有'), ('part', '部分有'), ('none', '无金样')], '样金管理', compute=compute_info)
 
 
 
 
 
-    partner_payment_term_id = fields.Many2one('account.payment.term',u'客户付款条款', related='partner_id.property_payment_term_id')
-
-    current_date_rate = fields.Float('当日汇率')
-
-    contract_type = fields.Selection([('a', '模式1'), ('b', '模式2'), ('c', '模式3')], '合同类型', default='c')
 
 
-    gongsi_id = fields.Many2one('gongsi', '内部公司')
-    purchase_gongsi_id = fields.Many2one('gongsi', '内部采购公司')
+
+
+
+
+
+
+
 
 
     approvaled_date = fields.Datetime('审批完成时间')
@@ -395,8 +415,7 @@ class sale_order(models.Model):
     submit_uid = fields.Many2one('res.users', u'提交审批')
     sales_confirm_date = fields.Date('责任人审批时间')
     sales_confirm_uid = fields.Many2one('res.users', u'责任人审批')
-    approve_date = fields.Date('审批完成日期')
-    approve_uid = fields.Many2one('res.users', u'完成审批人')
+
 
     hegui_date = fields.Date('合规审批日期')
     hegui_uid = fields.Many2one('res.users', u'合规审批')
@@ -781,6 +800,10 @@ class sale_order(models.Model):
     #         one.hexiao_type = hexiao_type
     #         one.state = state
 
+    # 1.发货完成的合同，且没有待认领预收付的，进正常待核销，发货完成当天进去;
+    # 2.发货完成的合同，有预收付款的，认领完成后，进正常待核销，认领完成和发货完成，两者最后完成的日期当天进去
+    # 3.发货完成的合同，有预收付款的，超出90天未认领完成的，进异常待核销，90天到期日当天进去;
+    # 4.未发货完成的合同，离约定发货日期180天的，进异常待核销，180天到期当天进去
     def update_hexiaotype_doing_type(self):
         for one in self:
             print('---', one)
@@ -790,7 +813,7 @@ class sale_order(models.Model):
             requested_date = one.requested_date
             # 未发货，开始发货，待核销，已核销
             if one.state in ('sale','done','verifying'):
-                if (one.no_sent_amount_new != 0 or one.purchase_no_deliver_amount_new != 0 ) and requested_date and requested_date < (today - relativedelta(days=185)).strftime('%Y-%m-%d 00:00:00'):
+                if (one.no_sent_amount_new != 0 or one.purchase_no_deliver_amount_new != 0 ) and requested_date and requested_date < (today - relativedelta(days=180)).strftime('%Y-%m-%d 00:00:00'):
                     state='done'
                     hexiao_type = 'abnormal'
                 if one.no_sent_amount_new == 0 and one.purchase_no_deliver_amount_new == 0:
@@ -798,8 +821,9 @@ class sale_order(models.Model):
                         hexiao_type = 'write_off'
                         state = 'done'
                     else:
-                        hexiao_type = 'abnormal'
-                        state = 'done'
+                        if requested_date and requested_date < (today - relativedelta(days=90)).strftime('%Y-%m-%d 00:00:00'):
+                            hexiao_type = 'abnormal'
+                            state = 'done'
             one.hexiao_type = hexiao_type
             one.state = state
 

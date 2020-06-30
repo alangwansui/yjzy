@@ -21,7 +21,7 @@ class Product_Catgory(models.Model):
 
     budget_type = fields.Selection(Budget_Type_Selection, '预算类型')
 
-
+   #13已经添加
     @api.model
     def name_search(self, name, args=None, operator='ilike', limit=100):
         ctx = self.env.context
@@ -78,3 +78,4 @@ class Product_Catgory(models.Model):
     #         return self.back_tax
     #     else:
     #         return self.parent_id.back_tax
+    #-------------

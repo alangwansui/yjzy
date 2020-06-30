@@ -4,6 +4,7 @@ from odoo import models, fields, api
 from odoo.exceptions import Warning
 from odoo.addons import decimal_precision as dp
 
+#13完成
 class packaging_type(models.Model):
     _name = 'packaging.type'
 

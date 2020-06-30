@@ -859,7 +859,7 @@
                 <tree string="出运单" editable="bottom" default_order="date_out_in desc" create="false" edit="false">
                     <field name="name" invisible="1"/>
                     <field name="ref" readonly="1"/>
-                    <field name="partner_id" required="1" readonly="1"/>
+                    <field name="partner_id" required="1" options="{'no_open':1}" readonly="1"/>
                     <!--button name="sync_data2invoice" string="创建应收付" attrs="{'invisible':[('state','!=','delivered')]}"  class="oe_highlight" type="object"/-->
                     <field name="date_out_in" readonly="1"/>
                     <field name="date_in" invisible="1"/>
@@ -878,8 +878,8 @@
                     <field name="org_sale_amount" readonly="1"/>
                     <field name="state" invisible="0" readonly="1"/>
                     <field name="create_date" widget="date" readonly="1" invisible="1"/>
-                    <field name="gongsi_id" string="销售主体" readonly="1" />
-                    <field name="purchase_gongsi_id" string="采购主体" readonly="1"/>
+                    <field name="gongsi_id" string="销售主体" readonly="1" options="{'no_open':1}"/>
+                    <field name="purchase_gongsi_id" string="采购主体" readonly="1" options="{'no_open':1}"/>
                 </tree>
             </field>
         </record>

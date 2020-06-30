@@ -118,7 +118,7 @@
                             <field name="payment_type" widget="radio" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                             <field name="partner_type" widget="selection"
                                    attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))], 'invisible': [('payment_type', 'not in', ('inbound', 'outbound'))], 'readonly': [('state', '!=', 'draft')]}"/>
-                            <field name="partner_id" options="{'no_create':True}"
+                            <field name="partner_id" options="{'no_create':True}" domain="['|',('is_company','=',True),('name','=','未定义')]"
                                    attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))], 'invisible': [('payment_type', 'not in', ('inbound', 'outbound'))], 'readonly': [('state', '!=', 'draft')]}"
                                    context="{'default_is_company': True, 'default_supplier': payment_type == 'outbound', 'default_customer': payment_type == 'inbound'}"/>
                             <label for="amount"/>

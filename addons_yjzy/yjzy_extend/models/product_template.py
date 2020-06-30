@@ -8,6 +8,7 @@ _logger = logging.getLogger(__name__)
 class Product_Template(models.Model):
     _inherit = 'product.template'
 
+    #13不要
     def compute_tmpl_code(self):
         for one in self:
             one.tmpl_code = str(one.id).rjust(6, '0')
