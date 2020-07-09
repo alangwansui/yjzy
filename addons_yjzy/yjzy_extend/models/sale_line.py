@@ -114,45 +114,52 @@ class sale_order_line(models.Model):
           #  one.purchase_price = one.pol_id and one.pol_id.price_unit or False
 
     #currency_id ==销售货币
+
+    #13添加
     sale_currency_id = fields.Many2one('res.currency', related='currency_id', string=u'交易货币', readonly=True)
     company_currency_id = fields.Many2one('res.currency', related='order_id.company_currency_id', readonly=True)
     third_currency_id = fields.Many2one('res.currency', related='order_id.third_currency_id', readonly=True)
     include_tax = fields.Boolean(related='order_id.include_tax')
-
-    last_sale_price = fields.Float('最后销售价', related='product_id.last_sale_price')
     pol_ids = fields.One2many('purchase.order.line', 'sol_id', u'采购明细', copy=False)
     po_ids = fields.Many2many('purchase.order', string=u'采购订单', compute=compute_info, store=False)
-    purchase_qty = fields.Float(u'采购数', compute=compute_info, store=False)
-    purchase_qty_new = fields.Float(u'采购数',  related='pol_id.product_qty')#akiny 直接取对应的采购合同的数量而不是预留的数量
+    purchase_qty_new = fields.Float(u'采购数', related='pol_id.product_qty')  # akiny 直接取对应的采购合同的数量而不是预留的数量
     qty_unreceived = fields.Float(u'未收数', compute=compute_info, store=False)
     qty_undelivered = fields.Float(string=u'未发货', readonly=True, store=False, compute=compute_info)
+    tbl_ids = fields.One2many('transport.bill.line', 'sol_id', u'出运明细')  # 13已
+    rest_tb_qty = fields.Float('出运剩余数', compute=compute_info)  # 13已 参与测试后期删除
+    new_rest_tb_qty = fields.Float('新:出运剩余数', compute='compute_rest_tb_qty', store=True)  # 13已
     back_tax = fields.Float(u'退税率', digits=dp.get_precision('Back Tax'))
-
     price_total2 = fields.Monetary(u'销售金额', currency_field='company_currency_id', compute=compute_info)  # 'sale_amount': sol.price_total,
-    purchase_price_original = fields.Float(u'采购单价', related='pol_id.price_unit',digits=(2, 2))
+    purchase_price_original = fields.Float(u'采购单价', related='pol_id.price_unit', digits=(2, 2))
+    back_tax_amount = fields.Monetary(u'退税金额', currency_field='company_currency_id', compute=compute_info)
+    profit_amount = fields.Monetary(u'利润', currency_field='company_currency_id', compute=compute_info)
+    is_gold_sample = fields.Boolean('是否有金样', related='product_id.is_gold_sample', readonly=False)
+    bom_id = fields.Many2one('mrp.bom', 'BOM')#13已
+    bom_qty = fields.Float(u'BOM数量')#13已
+    need_split_bom = fields.Boolean(u'需要展开BOM')#13已
+    need_print = fields.Boolean('是否打印', defualt=True)#13已
+    #-----
+    last_sale_price = fields.Float('最后销售价', related='product_id.last_sale_price')
+
+    purchase_qty = fields.Float(u'采购数', compute=compute_info, store=False)
+
     purchase_cost = fields.Monetary(u'采购成本', currency_field='company_currency_id', compute=compute_info)
     fandian_amoun = fields.Monetary(u'返点金额', currency_field='company_currency_id', compute=compute_info)
     stock_cost = fields.Monetary(u'库存成本', currency_field='company_currency_id', compute=compute_info)
-    back_tax_amount = fields.Monetary(u'退税金额', currency_field='company_currency_id', compute=compute_info)
+
     cost_amount = fields.Monetary(u'成本金额', currency_field='company_currency_id', compute=compute_info)
-    profit_amount = fields.Monetary(u'利润', currency_field='company_currency_id', compute=compute_info)
-    bom_id = fields.Many2one('mrp.bom', 'BOM')
-    bom_qty = fields.Float(u'BOM数量')
-    need_split_bom = fields.Boolean(u'需要展开BOM')
-    need_print = fields.Boolean('是否打印', defualt=True)
 
     purchase_payment_term = fields.Many2one('account.payment.term',u'供应商付款条款', related='pol_id.order_id.payment_term_id')
 
     s_uom_id = fields.Many2one('product.uom', u'销售打印单位',)
     p_uom_id = fields.Many2one('product.uom', u'采购打印单位',)
-    tbl_ids = fields.One2many('transport.bill.line', 'sol_id', u'出运明细')
 
-    rest_tb_qty = fields.Float('出运剩余数', compute=compute_info)
-    new_rest_tb_qty = fields.Float('新:出运剩余数', compute='compute_rest_tb_qty', store=True)
+
+
 
     second_unit_price = fields.Float('第二价格')
     second_price_total = fields.Monetary(compute='_compute_second', string='第二小计', readonly=True, store=True)
-    is_gold_sample = fields.Boolean('是否有金样', related='product_id.is_gold_sample', readonly=False)
+
     hs_id = fields.Many2one('hs.hs', '报关品名', related='product_id.hs_id')
     hs_name = fields.Char('中文品名', related='product_id.hs_id.name')
     purchase_contract_code = fields.Char('采购合同', related='pol_id.order_id.contract_code')
@@ -160,7 +167,7 @@ class sale_order_line(models.Model):
     gross_profit_ratio_line = fields.Float(u'毛利润率', digits=(2, 2), compute=compute_info)
     gross_profit_line = fields.Float(u'毛利润', digits=(2, 2), compute=compute_info)
     #gross_profit_ratio_line_p = fields.Percent(u'毛利润率', digits=(2, 2), compute=compute_info)
-
+    #vat_diff_amount = fields.Monetary(u'增值税差额', currency_field='company_currency_id')
 
     fee_inner = fields.Monetary(u'国内运杂费:单个', currency_field='company_currency_id',  compute=compute_info)
     fee_rmb1 = fields.Monetary(u'人民币费用1:单个', currency_field='company_currency_id', compute=compute_info)
@@ -175,7 +182,7 @@ class sale_order_line(models.Model):
 
 
 
-    @api.depends('tbl_ids', 'tbl_ids.qty2stage_new')
+    @api.depends('tbl_ids', 'tbl_ids.qty2stage_new','product_qty')
     def compute_rest_tb_qty(self):
         for one in self:
             one.new_rest_tb_qty = one.product_qty - sum(one.tbl_ids.mapped('qty2stage_new'))

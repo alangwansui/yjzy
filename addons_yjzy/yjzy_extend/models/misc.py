@@ -48,8 +48,6 @@ class exchange_demand(models.Model):
     line_ids = fields.One2many('exchange.demand.line', 'demand_id', u'明细')
 
 
-
-
 class stock_wharf(models.Model):
     _name = 'stock.wharf'
 

@@ -19,7 +19,7 @@ class sale_order(models.Model):
     #         one.advance_residual = -1 * sum([
     #             i.get_amount_to_currency(one.currency_id) for i in lines
     #         ])
-   #13已添加，规则改变
+   #13已添加，规则改变 所有的汇率都计算后填入 current_date_rate,之后全部用这个字段计算转汇
     @api.depends('currency_id', 'contract_date')
     def compute_exchange_rate(self):
         for one in self:
@@ -57,6 +57,8 @@ class sale_order(models.Model):
             else:
                 balance = sum([-1 * x.amount_currency for x in sml_lines])
             one.balance = balance
+
+    # 13已添加
    # @api.depends('po_ids')
     def compute_purchase_balance(self):
         for one in self:
@@ -89,7 +91,7 @@ class sale_order(models.Model):
                 one.purchase_amount_total_new = purchase_amount_total
 
 
-
+   #13ok
     @api.depends('order_line.qty_delivered')
     def compute_no_sent_amount(self):
         for one in self:
@@ -97,7 +99,7 @@ class sale_order(models.Model):
                 one.no_sent_amount_new = sum([x.price_unit * (x.product_uom_qty - x.qty_delivered) for x in one.order_line])
 
 
-
+    #13ok
     @api.one
     @api.depends('po_ids_new.no_deliver_amount_new')
     def compute_purchase_no_deliver_amount_new(self):
@@ -120,7 +122,7 @@ class sale_order(models.Model):
         for one in self:
             one.tb_ids = one.order_line.mapped('tbl_ids').mapped('bill_id')
             one.tb_count = len(one.tb_ids)
-            one.no_sent_amount = sum([x.price_unit * (x.product_uom_qty - x.qty_delivered) for x in one.order_line])
+            one.no_sent_amount = sum([x.price_unit * (x.product_uom_qty - x.qty_delivered) for x in one.order_line]) #13ok
 
             #统计预收余额
             if one.payment_term_id:
@@ -242,10 +244,7 @@ class sale_order(models.Model):
     product_manager_id = fields.Many2one('res.users', u'产品经理')
     incoterm_code = fields.Char(u'贸易术语', related='incoterm.code', readonly=True)
     cost_id = fields.Many2one('sale.cost', u'成本单', copy=False)
-    #通过onchange的方式，保证13 的目前客户的使用体验不变
-    fee_rmb2_note = fields.Text(u'人名币备注2')
-    fee_rmb1_note = fields.Text(u'人名币备注1')
-    fee_other_note = fields.Text(u'外币备注1')
+
     advance_account_id = fields.Many2one('account.account', u'预收认领单')
     advance_currency_id = fields.Many2one('res.currency', u'预收币种', related='advance_account_id.currency_id')
     yjzy_payment_id = fields.Many2one('account.payment', u'预收认领单')
@@ -289,6 +288,51 @@ class sale_order(models.Model):
     fee_export_insurance = fields.Monetary(u'出口保险费', currency_field='other_currency_id')
     export_insurance_currency_id = fields.Many2one('res.currency', u'出口保险费货币')
     fee_other = fields.Monetary(u'其他外币费用', currency_field='other_currency_id')
+    # 通过onchange的方式，保证13 的目前客户的使用体验不变
+    fee_rmb2_note = fields.Text(u'人名币备注2')
+    fee_rmb1_note = fields.Text(u'人名币备注1')
+    fee_other_note = fields.Text(u'外币备注1')
+    tb_ids = fields.Many2many('transport.bill', 'ref_tb_so', 'tb_id', 'so_id', string=u'出运单', compute=compute_info)
+    tb_count = fields.Integer('发运单计数', compute=compute_info)
+    is_different_payment_term = fields.Boolean('付款条款是否不同')
+    is_editable = fields.Boolean(u'可编辑')
+    state = fields.Selection([
+        ('draft', 'Quotation'),
+        ('sent', 'Quotation Sent'),
+        ('check', u'检查'),
+        ('submit', u'待责任人审核'),
+        ('sales_approve', u'待业务合规审核'),
+        ('manager_approval', u'待总经理特批'),
+        ('approve', u'审批完成待出运'),
+        ('sale', 'Sales Order'),
+        ('done', 'Locked'),
+        ('cancel', 'Cancelled'),
+        ('refuse', u'拒绝'),
+        ('abnormal', u'异常'),
+        ('verifying', u'待核销'),
+        ('verification', u'核销完成'),
+    ], string='Status', readonly=True, copy=False, index=True, track_visibility='onchange', default='draft')
+    no_sent_amount = fields.Monetary(u'未发货的金额', compute=compute_info)
+    no_sent_amount_new = fields.Monetary(u'未发货的金额', compute=compute_no_sent_amount, store=True)
+
+    purchase_no_deliver_amount = fields.Float('未发货的采购金额', compute=compute_info)
+    purchase_no_deliver_amount_new = fields.Float('未发货的采购金额', compute='compute_purchase_no_deliver_amount_new',store=True)
+    po_ids_new = fields.One2many('purchase.order', 'source_so_id', '采购合同新')
+    purchase_delivery_status = fields.Boolean('采购发货完成', compute='update_purchase_delivery')
+    from_wharf_id = fields.Many2one('stock.wharf', u'目的港POD')
+    to_wharf_id = fields.Many2one('stock.wharf', u'目的港POL')
+    mark_text = fields.Text(u'唛头')
+
+    submit_date = fields.Date('提交审批时间') #13取消
+    submit_uid = fields.Many2one('res.users', u'提交审批') #13取消
+    sales_confirm_date = fields.Date('责任人审批时间') #13取消
+    sales_confirm_uid = fields.Many2one('res.users', u'责任人审批') #13取消
+    hegui_date = fields.Date('合规审批日期') #13换字段名
+    hegui_uid = fields.Many2one('res.users', u'合规审批')#13换字段名
+    hx_date = fields.Date('核销时间')
+    purchase_approve_date = fields.Datetime('采购审批时间', compute=compute_info)
+#---------
+
 
     rest_tb_qty_total = fields.Float(u'出运总数',compute=compute_info)
 
@@ -302,36 +346,22 @@ class sale_order(models.Model):
 
     fee_rmb_all = fields.Monetary(u'人民币费用合计', currency_field='company_currency_id',  compute=compute_info)
     fee_rmb_ratio = fields.Float(u'人名币费用占销售额比', digits=(2, 2), compute=compute_info) #akiny 4改成了2
-
-
-
     fee_outer_all = fields.Monetary(u'外币费用合计', currency_field='other_currency_id',  compute=compute_info)
     fee_outer_ratio = fields.Float(u'外币费用占销售额比', digits=(2, 2), compute=compute_info) #akiny 4改成了2
-
     fee_all_ratio = fields.Float(u'总费用占比', digits=(2, 2), compute=compute_info)#akiny 4改成了2
 
+
     pre_advance = fields.Monetary(u'预收金额', currency_field='currency_id', compute=compute_info, store=False)
-
-
-
-
-
-
-
     advance_po_residual = fields.Float(u'预付余额', compute=compute_po_residual, store=True)
-
-
     yjzy_payment_ids = fields.One2many('account.payment', 'so_id', u'预收认领单')
     yjzy_currency_id = fields.Many2one('res.currency', u'预收币种', related='yjzy_payment_ids.currency_id')
     balance = fields.Monetary(u'预收余额', compute=compute_balance, currency_field='yjzy_currency_id')
     balance_new = fields.Monetary(u'预收余额', compute=compute_balance_new, currency_field='yjzy_currency_id', store=True)
-
     exchange_rate = fields.Float(u'目前汇率', compute=compute_exchange_rate, digits=(2,2)) #akiny 4改成了2
     appoint_rate = fields.Float(u'使用汇率', digits=(2,6))
     #currency_tate = fields.Many2one('res.currency.rate',u'系统汇率')
     country_id = fields.Many2one('res.country', related='partner_id.country_id', string=u'国别', readonly=True)
     term_description = fields.Html(u'销售条款')
-
     state2 = fields.Selection([('draft', u'草稿'),('to_approve', u'待批准'), ('edit', u'可修改'), ('confirmed', u'待审批'), ('done', u'审批完成')], u'状态', default='draft')
     amount_total2 = fields.Monetary(u'销售金额', currency_field='third_currency_id', compute=compute_info)
     #akiny 手动汇率
@@ -352,81 +382,26 @@ class sale_order(models.Model):
 
     gross_profit = fields.Monetary(u'毛利', currency_field='third_currency_id', compute=compute_info)
     gorss_profit_ratio = fields.Float(u'毛利率%', compute=compute_info)
-
     pdt_value_id = fields.Many2one('product.attribute.value', string=u'产品属性', readonly=True, help=u'只是为在SO上搜索属性,不直接记录数据')
     #is_tb_process = fields.Boolean(u'出运单运行中', help='是否有关联的出运单还未结案?')
-    tb_ids = fields.Many2many('transport.bill', 'ref_tb_so', 'tb_id', 'so_id', string=u'出运单', compute=compute_info)
-    tb_count = fields.Integer('发运单计数', compute=compute_info)
 
-
-    from_wharf_id = fields.Many2one('stock.wharf', u'目的港POD')
-    to_wharf_id = fields.Many2one('stock.wharf', u'目的港POL')
     vat_diff_amount = fields.Monetary(u'增值税差额', currency_field='third_currency_id', compute=compute_info)
-
     mark_comb_id = fields.Many2one('mark.comb', u'唛头组')
-    mark_text = fields.Text(u'唛头')
 
-    no_sent_amount = fields.Monetary(u'未发货的金额', compute=compute_info)
-    no_sent_amount_new = fields.Monetary(u'未发货的金额', compute=compute_no_sent_amount, store=True)
-    is_editable = fields.Boolean(u'可编辑')
     display_detail = fields.Boolean(u'显示详情')
     aml_ids = fields.One2many('account.move.line', 'so_id', u'分录明细', readonly=True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     approvaled_date = fields.Datetime('审批完成时间')
 
     # akiny 增加state
     #state = fields.Selection(selection_add=[('refuse', u'拒绝'), ('submit', u'已提交'),('sales_approve', u'责任人已审批'),
                                        #     ('approve', u'审批完成'), ('manager_approval', u'待总经理审批'),
                                        #     ('verifying', u'核销中'), ('verification', u'核销完成')],readonly=False)
-    state = fields.Selection([
-        ('draft', 'Quotation'),
-        ('sent', 'Quotation Sent'),
-        ('check',u'检查'),
-        ('submit', u'待责任人审核'),
-        ('sales_approve', u'待业务合规审核'),
-        ('manager_approval', u'待总经理特批'),
-        ('approve', u'审批完成待出运'),
-        ('sale', 'Sales Order'),
-        ('done', 'Locked'),
-        ('cancel', 'Cancelled'),
-        ('refuse', u'拒绝'),
-        ('verifying', u'待核销'),
-        ('verification', u'核销完成'),
-    ], string='Status', readonly=True, copy=False, index=True, track_visibility='onchange', default='draft')
-
-    submit_date = fields.Date('提交审批时间')
-    submit_uid = fields.Many2one('res.users', u'提交审批')
-    sales_confirm_date = fields.Date('责任人审批时间')
-    sales_confirm_uid = fields.Many2one('res.users', u'责任人审批')
 
 
-    hegui_date = fields.Date('合规审批日期')
-    hegui_uid = fields.Many2one('res.users', u'合规审批')
 
 
-    hx_date = fields.Date('核销时间')
-    purchase_approve_date = fields.Datetime('采购审批时间', compute=compute_info)
 
-    purchase_no_deliver_amount = fields.Float('未发货的采购金额', compute=compute_info)
-    purchase_no_deliver_amount_new = fields.Float('未发货的采购金额', compute='compute_purchase_no_deliver_amount_new',store=True)
-    purchase_delivery_status = fields.Boolean('采购发货完成', compute='update_purchase_delivery')
+
     purchase_balance_sum = fields.Float('采购预付余额',compute='compute_purchase_balance')
     purchase_balance_sum3 = fields.Float('采购预付余额',compute='compute_purchase_balance3',store=True)
     # purchase_balance_sum2 = fields.Float('采购预付余额',compute='compute_purchase_balance2',store=True)
@@ -437,7 +412,7 @@ class sale_order(models.Model):
     second_porfit = fields.Float('销售主体利润', compute=compute_info) #amount_total2-刚刚计算出来的 second_const
     second_tenyale_profit = fields.Float('采购主体利润', compute=compute_info)#(采购主体利润)：
 
-    is_different_payment_term = fields.Boolean('付款条款是否不同')
+
 
     hexiao_type = fields.Selection([('abnormal',u'异常核销'),('write_off',u'正常核销')], string='核销类型')
 
@@ -447,8 +422,79 @@ class sale_order(models.Model):
                                    u'出运与核销状态')
     # purchase_update_date = fields.Datetime(u'采购更新的时间')
 
-    po_ids_new = fields.One2many('purchase.order','source_so_id','采购合同新')
 
+
+
+
+    #13已经添加
+    @api.constrains('current_date_rate','fee_inner')
+    def check_fields(self):
+        if self.current_date_rate <= 0:
+            raise Warning(u'汇率必须大于0')
+    @api.constrains('contract_code')
+    def check_contract_code(self):
+        for one in self:
+            if self.search_count([('contract_code', '=', one.contract_code)]) > 1:
+                raise Warning('合同编码重复')
+
+    # akiny 加入对是否使用今日手填汇率的判断
+    def _get_sale_amount(self):
+        if self.company_id.is_current_date_rate:
+            amount_total2 = self.amount_total * self.current_date_rate
+            if self.incoterm_code == 'FOB':
+                amount_total2 += self.fee_outer * self.current_date_rate
+        else:
+            amount_total2 = self.currency_id.compute(self.amount_total, self.third_currency_id)
+            if self.incoterm_code == 'FOB':
+                amount_total2 += self.outer_currency_id.compute(self.fee_outer, self.third_currency_id)
+
+        return amount_total2
+
+    # def _get_amount_total3(self):
+    #     current_date_rate = self.current_date_rate
+    #     amount_total3 = self.amount_total * current_date_rate
+    #     if self.incoterm_code == 'FOB':
+    #         amount_total3 += sself.fee_outer * self.current_date_rate
+    #     return amount_total3
+
+    # akiny 加入对是否使用今日手填汇率的判断
+    def _get_other_cost(self):
+        if self.company_id.is_current_date_rate:
+            other_cost = (
+                                     self.fee_outer + self.fee_export_insurance + self.fee_other) * self.current_date_rate + self.fee_inner + self.fee_rmb1 + self.fee_rmb2
+            return other_cost
+
+        else:
+            return sum([self.company_currency_id.compute(self.fee_inner, self.third_currency_id),
+                        self.company_currency_id.compute(self.fee_rmb1, self.third_currency_id),
+                        self.company_currency_id.compute(self.fee_rmb2, self.third_currency_id),
+                        self.outer_currency_id.compute(self.fee_outer, self.third_currency_id),
+                        self.export_insurance_currency_id.compute(self.fee_export_insurance,
+                                                                  self.third_currency_id),
+                        self.other_currency_id.compute(self.fee_other, self.third_currency_id),
+                        ])
+
+    # akiny 加入对是否使用今日手填汇率的判断
+    def _get_other_cost_no_rmb(self):
+        if self.company_id.is_current_date_rate:
+            other_cost_no_rmb = (
+                                            self.fee_outer + self.fee_export_insurance + self.fee_other) * self.current_date_rate
+            return other_cost_no_rmb
+        else:
+            return sum([self.outer_currency_id.compute(self.fee_outer, self.third_currency_id),
+                        self.export_insurance_currency_id.compute(self.fee_export_insurance,
+                                                                  self.third_currency_id),
+                        self.other_currency_id.compute(self.fee_other, self.third_currency_id),
+                        ])
+
+    def _get_sale_commission(self, sale_amount):
+        sale_commission_ratio = float(self.env['ir.config_parameter'].sudo().get_param('addons_yjzy.sale_commission', '0.015'))
+        return sale_commission_ratio, sale_amount * sale_commission_ratio
+
+    def get_appoint_rate(self):
+        self.ensure_one()
+        self.appoint_rate = self.exchange_rate
+    #--------
     # : 公式的cost改成second_cost
     # second_tenyale_profit：原公式的销售额改成second_cost
     # second_unit_price: = 订单
@@ -459,15 +505,11 @@ class sale_order(models.Model):
         self.purchase_balance_sum4 = purchase_balance_sum
 
 
-    @api.constrains('current_date_rate','fee_inner')
-    def check_fields(self):
-        if self.current_date_rate <= 0:
-            raise Warning(u'汇率必须大于0')
 
 
+    #13ok
     @api.onchange('payment_term_id')
     def onchange_payment_term_id(self):
-
         if self.payment_term_id != self.partner_payment_term_id:
             self.is_different_payment_term = True
         else:
@@ -489,14 +531,6 @@ class sale_order(models.Model):
     def onchange_second_company(self):
         self.second_partner_id = self.second_company_id.partner_id
 
-
-    @api.constrains('contract_code')
-    def check_contract_code(self):
-        for one in self:
-            if self.search_count([('contract_code', '=', one.contract_code)]) > 1:
-                raise Warning('合同编码重复')
-
-
     @api.multi
     def copy(self, default=None):
         default = dict(default or {})
@@ -504,21 +538,18 @@ class sale_order(models.Model):
             default['contract_code'] = "%s(copy)" % self.contract_code
         return super(sale_order, self).copy(default)
 
-
     @api.multi
     def write(self, vals):
         body = '%s' % vals
         self.message_post(body=body, subject='内容修改', message_type='notification')
         return super(sale_order, self).write(vals)
 
-
-
     def unlink(self):
         for one in self:
             if one.state != 'cancel':
                 raise Warning(u'只有取消状态允许删除')
         return super(sale_order, self).unlink()
-
+    #13ok
     def name_get(self):
         res = []
         for order in self:
@@ -546,7 +577,7 @@ class sale_order(models.Model):
     #         res |= sol_records.mapped('order_id')
     #     return res
 
-
+    #13ok
     @api.multi
     @api.onchange('partner_id')
     def onchange_partner_id(self):
@@ -561,8 +592,6 @@ class sale_order(models.Model):
         self.mark_text = self.partner_shipping_id.mark_text
         self.from_wharf_id = self.partner_shipping_id.wharf_src_id
         self.to_wharf_id = self.partner_shipping_id.wharf_dest_id
-
-
         return super(sale_order, self).onchange_partner_id()
 
     def open_advance_residual_lines(self):
@@ -577,53 +606,8 @@ class sale_order(models.Model):
             'domain': [('id', '=', [x.id for x in lines])],
             'target': 'new',
         }
-#akiny 加入对是否使用今日手填汇率的判断
-    def _get_sale_amount(self):
-        if self.company_id.is_current_date_rate:
-            amount_total2 = self.amount_total * self.current_date_rate
-            if self.incoterm_code == 'FOB':
-                amount_total2 += self.fee_outer * self.current_date_rate
-        else:
-            amount_total2 = self.currency_id.compute(self.amount_total, self.third_currency_id)
-            if self.incoterm_code == 'FOB':
-                amount_total2 += self.outer_currency_id.compute(self.fee_outer, self.third_currency_id)
 
-
-        return amount_total2
-
-   # def _get_amount_total3(self):
-   #     current_date_rate = self.current_date_rate
-   #     amount_total3 = self.amount_total * current_date_rate
-   #     if self.incoterm_code == 'FOB':
-   #         amount_total3 += sself.fee_outer * self.current_date_rate
-   #     return amount_total3
-
-    # akiny 加入对是否使用今日手填汇率的判断
-    def _get_other_cost(self):
-        if self.company_id.is_current_date_rate:
-            other_cost = (self.fee_outer + self.fee_export_insurance + self.fee_other) * self.current_date_rate + self.fee_inner + self.fee_rmb1 +self.fee_rmb2
-            return other_cost
-
-        else:
-           return sum([ self.company_currency_id.compute(self.fee_inner, self.third_currency_id),
-                     self.company_currency_id.compute(self.fee_rmb1, self.third_currency_id),
-                     self.company_currency_id.compute(self.fee_rmb2, self.third_currency_id),
-                    self.outer_currency_id.compute(self.fee_outer, self.third_currency_id),
-                    self.export_insurance_currency_id.compute(self.fee_export_insurance, self.third_currency_id),
-                    self.other_currency_id.compute(self.fee_other, self.third_currency_id),
-                    ])
-
-    # akiny 加入对是否使用今日手填汇率的判断
-    def _get_other_cost_no_rmb(self):
-        if self.company_id.is_current_date_rate:
-            other_cost_no_rmb = (self.fee_outer + self.fee_export_insurance + self.fee_other)*self.current_date_rate
-            return other_cost_no_rmb
-        else:
-            return sum([ self.outer_currency_id.compute(self.fee_outer, self.third_currency_id),
-                    self.export_insurance_currency_id.compute(self.fee_export_insurance, self.third_currency_id),
-                    self.other_currency_id.compute(self.fee_other, self.third_currency_id),
-                    ])
-
+    #13ok
     def open_view_transport_bill(self):
         self.ensure_one()
         tree_view = self.env.ref('yjzy_extend.view_transport_bill_new_sales_tree')
@@ -637,7 +621,7 @@ class sale_order(models.Model):
             'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
             'domain': [('id', 'in', [x.id for x in self.tb_ids])]
         }
-
+    #13ok
     def action_confirm(self):
         '''so auto po confirm'''
         res = super(sale_order, self).action_confirm()
@@ -658,17 +642,13 @@ class sale_order(models.Model):
         self.ensure_one()
         self.state2 = 'done'
 
-    def _get_sale_commission(self, sale_amount):
-        sale_commission_ratio = float(self.env['ir.config_parameter'].sudo().get_param('addons_yjzy.sale_commission', '0.015'))
-        return sale_commission_ratio, sale_amount * sale_commission_ratio
+
 
     def _check_done(self):
         pass
 
-    def get_appoint_rate(self):
-        self.ensure_one()
-        self.appoint_rate = self.exchange_rate
 
+    #13ok
     def open_sale_cost(self):
         self.ensure_one()
         view = self.env.ref('yjzy_extend.view_sale_order_cost_form')
@@ -712,7 +692,7 @@ class sale_order(models.Model):
 
         self.compute_info()
 
-
+   #13取消
     @api.model
     def cron_update_rate(self):
         print('=cron_update_rate==')
@@ -804,6 +784,7 @@ class sale_order(models.Model):
     # 2.发货完成的合同，有预收付款的，认领完成后，进正常待核销，认领完成和发货完成，两者最后完成的日期当天进去
     # 3.发货完成的合同，有预收付款的，超出90天未认领完成的，进异常待核销，90天到期日当天进去;
     # 4.未发货完成的合同，离约定发货日期180天的，进异常待核销，180天到期当天进去
+
     def update_hexiaotype_doing_type(self):
         for one in self:
             print('---', one)
@@ -826,6 +807,33 @@ class sale_order(models.Model):
                             state = 'done'
             one.hexiao_type = hexiao_type
             one.state = state
+    # 增加state:异常合同，将待核销的二级分组的异常核销进入state的异常合同
+    def update_hexiaotype_doing_type_new(self):
+        for one in self:
+            print('---', one)
+            hexiao_type = False
+            state = one.state
+            today = datetime.now()
+            requested_date = one.requested_date
+            # 未发货，开始发货，待核销，已核销
+            if one.state in ('sale','done','verifying'):
+                if (one.no_sent_amount_new != 0 or one.purchase_no_deliver_amount_new != 0 ) and requested_date and requested_date < (today - relativedelta(days=180)).strftime('%Y-%m-%d 00:00:00'):
+                    state='abnormal'
+                    hexiao_type = 'abnormal'
+                if one.no_sent_amount_new == 0 and one.purchase_no_deliver_amount_new == 0 :
+                    if one.balance == 0 and one.purchase_balance_sum3 == 0:
+                        if hexiao_type == 'abnormal':
+                            hexiao_type = 'abnormal'
+                            state = 'done'
+                        else:
+                            hexiao_type = 'write_off'
+                            state = 'done'
+                    else:
+                        if requested_date and requested_date < (today - relativedelta(days=90)).strftime('%Y-%m-%d 00:00:00'):
+                            hexiao_type = 'abnormal'
+                            state = 'abnormal'
+            one.hexiao_type = hexiao_type
+            one.state = state
 
 
     def action_verification(self):
@@ -845,6 +853,20 @@ class sale_order(models.Model):
         self.purchase_balance_sum3 = 0
         self.purchase_no_deliver_amount_new = 0
         self.balance_new = 0
+
+    def action_verification_new(self):
+        user = self.env.user
+        if not user.has_group('sale.hegui_all') or not user.has_group('sales_team.group_manager'):
+            raise Warning('非合规人员不允许核销！')
+        if self.state != 'done':
+            raise Warning('非待核销合同无法核销！')
+        if self.hexiao_type == 'abnormal' and self.hexiao_comment == False:
+            raise Warning('异常核销，请填写备注！')
+        if self.purchase_delivery_status == False:
+            raise Warning('采购合同还有未完成收货的，请核查！')
+        self.state = 'verification'
+        self.x_wkf_state = '199'
+        self.hx_date = fields.date.today()
 
     def action_verification1(self):
         user = self.env.user

@@ -1,3 +1,4 @@
+
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api, _
@@ -66,20 +67,13 @@ class transport_bill_line(models.Model):
    #akiny暂时不要
     stage3move_ids = fields.Many2many('stock.move', 'ref_move_tbl', 'lid', 'mid', u'出库',
                                       domain=[('picking_code', '=', 'outgoing')])
-    org_currency_sale_amount = fields.Monetary(u'销售货币金额', currency_field='sale_currency_id', compute=compute_info,
-                                               store=False, digits=dp.get_precision('Money'))
-    sale_amount = fields.Monetary(u'销售金额', currency_field='company_currency_id', compute=compute_info, store=False,
-                                  digits=dp.get_precision('Money'))
-    purchase_cost = fields.Monetary(u'采购成本', currency_field='company_currency_id', compute=compute_info,
-                                    digits=dp.get_precision('Money'))
-    stock_cost = fields.Monetary(u'库存成本', currency_field='company_currency_id', compute=compute_info,
-                                 digits=dp.get_precision('Money'))
+
+
     vat_diff_amount = fields.Monetary(u'增值税差额', currency_field='company_currency_id', compute=compute_info,
                                       digits=dp.get_precision('Money'))
     profit_amount = fields.Monetary(u'利润', currency_field='company_currency_id', compute=compute_info,
                                     digits=dp.get_precision('Money'))
-    back_tax_amount = fields.Monetary(u'退税金额', currency_field='company_currency_id', compute=compute_info,
-                                      digits=dp.get_precision('Money'))
+
     s_uom_id = fields.Many2one('product.uom', u'销售打印单位', related='product_id.s_uom_id')
     p_uom_id = fields.Many2one('product.uom', u'采购打印单位', related='product_id.p_uom_id')
 
@@ -88,15 +82,23 @@ class transport_bill_line(models.Model):
     sale_currency_id = fields.Many2one(related='bill_id.sale_currency_id', readonly=True)
     third_currency_id = fields.Many2one(related='bill_id.third_currency_id', readonly=True)
 
+    #13添加
+    back_tax_amount = fields.Monetary(u'退税金额', currency_field='company_currency_id', compute=compute_info,
+                                      digits=dp.get_precision('Money'))
+    org_currency_sale_amount = fields.Monetary(u'销售货币金额', currency_field='sale_currency_id', compute=compute_info,
+                                               store=False, digits=dp.get_precision('Money'))
+    sale_amount = fields.Monetary(u'销售金额', currency_field='company_currency_id', compute=compute_info, store=False,
+                                  digits=dp.get_precision('Money'))
+    purchase_cost = fields.Monetary(u'采购成本', currency_field='company_currency_id', compute=compute_info,
+                                    digits=dp.get_precision('Money'))
+    stock_cost = fields.Monetary(u'库存成本', currency_field='company_currency_id', compute=compute_info,
+                                 digits=dp.get_precision('Money'))
     name = fields.Char(u'说明', compute=compute_info)
     bill_id = fields.Many2one('transport.bill', u'发运单', ondelete='cascade', required=True)
     include_tax = fields.Boolean(related='bill_id.include_tax')
     state = fields.Selection(related='bill_id.state')
     sol_id = fields.Many2one('sale.order.line', u'销售明细')
     rest_tb_qty = fields.Float(related='sol_id.rest_tb_qty')
-
-
-
     cip_type = fields.Selection(related='bill_id.cip_type', readonly=True)
     smline_ids = fields.One2many('stock.move.line', related='sol_id.smline_ids', string=u'库存预留')
     smline_str = fields.Char(related='sol_id.smline_str', string=u'锁定内容')
@@ -105,43 +107,29 @@ class transport_bill_line(models.Model):
     dlr_str = fields.Char(related='sol_id.dlr_str', string=u'采购预留')
     dlr_qty = fields.Float(related='sol_id.dlr_qty', string=u'采购预留数')
     lot_plan_ids = fields.One2many('transport.lot.plan', 'tbline_id', u'调拨计划', copy=False)
-
-
     lot_plan_id = fields.Many2one('transport.lot.plan',  u'调拨计划:新')
     plan_lot = fields.Many2one('stock.production.lot',  '计划批次', related='lot_plan_id.lot_id')
     plan_qty = fields.Float('计划数量', related='lot_plan_id.qty')
-
-
     pol_ids = fields.One2many('purchase.order.line', related='sol_id.pol_ids', readonly=True)
     move_ids = fields.Many2many('stock.move', 'ref_move_tbl', 'lid', 'mid', u'库存移动详情')
     stage1move_ids = fields.Many2many('stock.move', 'ref_move_tbl', 'lid', 'mid', u'入库',
                                       domain=[('picking_code', '=', 'incoming')])
     stage2move_ids = fields.Many2many('stock.move', 'ref_move_tbl', 'lid', 'mid', u'出库',
                                       domain=[('picking_code', '=', 'outgoing')])
-
-
-
     purchase_qty = fields.Float(u'采购数', related='sol_id.purchase_qty')
     qty_unreceived = fields.Float(u'未收数', related='sol_id.qty_unreceived')
-
     so_id = fields.Many2one('sale.order', u'销售单', related='sol_id.order_id', readonly=True)
     sale_contract_code = fields.Char(u'合同编码', related='so_id.contract_code', readonly=True)
     product_id = fields.Many2one('product.product', related='sol_id.product_id', string=u'产品', readonly=True)
     hs_id = fields.Many2one('hs.hs', u'品名', related='product_id.hs_id', readonly=True)
     back_tax = fields.Float(u'退税率', digits=dp.get_precision('Back Tax'))
-
     sale_qty = fields.Float(u'销售数', related='sol_id.product_uom_qty', readonly=True)
     qty_delivered = fields.Float(u'已发货', related='sol_id.qty_delivered', readonly=True)
     qty_undelivered = fields.Float(u'未发货', related='sol_id.qty_undelivered', readonly=True)
-
     qty = fields.Float(u'发运数量')
     qty1stage = fields.Float(u'入库数', compute=compute_info)
     qty2stage = fields.Float(u'发货数', compute=compute_info)
     qty2stage_new = fields.Float(u'发货数:新', compute='compute_qty2stage_new', store=True)
-
-
-
-
     pack_line_id = fields.Many2one('transport.pack.line', u'统计')
     #明细装箱统计
     qty_package = fields.Float('数量/大包装')
@@ -151,6 +139,8 @@ class transport_bill_line(models.Model):
     volume = fields.Float('体积', digits=dp.get_precision('Volume'))
     #批次明细
     tbl_lot_ids = fields.One2many('bill.line.lot', 'tb_line_id', string='明细批次')
+
+#----
 
     need_print = fields.Boolean('是否打印', defualt=True)
     #是否金样  akiny
@@ -317,7 +307,7 @@ class transport_bill_line(models.Model):
     @api.onchange('qty')
     def onchange_qty(self):
         self.qty1stage = self.qty
-
+    #13 ok
     def open_wizard_transport_lot_plan(self):
         self.ensure_one()
         ctx = self.env.context.copy()

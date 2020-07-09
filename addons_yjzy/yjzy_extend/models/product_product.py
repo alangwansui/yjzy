@@ -47,8 +47,8 @@ class Product_Product(models.Model):
     customer_ref2 = fields.Char(u'客户型号2')
     customer_description = fields.Text(u'客户产品描述', translate=False)
     other_description = fields.Text(u'其他描述')
-    source_area = fields.Char(u'原产地')
-    source_country_id = fields.Many2one('res.country', u'原产国')
+    source_area = fields.Char(u'原产地') #13已经
+    source_country_id = fields.Many2one('res.country', u'原产国') #13ok
 
     value_line_ids = fields.One2many('product.value.rel', 'product_product_id', u'产品属性明细')
     key_value_line_ids = fields.One2many('product.value.rel', compute='compute_key_value_line', string='关键属性')

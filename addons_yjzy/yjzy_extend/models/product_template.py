@@ -36,8 +36,8 @@ class Product_Template(models.Model):
 
     tmpl_code = fields.Char(u'模板编码', required=False, compute=compute_tmpl_code)
 
-    need_print = fields.Boolean('是否打印', defualt=True)
-    need_split_bom = fields.Boolean(u'需要展开BOM')
+    need_print = fields.Boolean('是否打印', defualt=True) #13已
+    need_split_bom = fields.Boolean(u'需要展开BOM')#13已
 
     is_gold_sample = fields.Boolean('是否有金样')
 

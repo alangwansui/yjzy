@@ -506,17 +506,12 @@ class transport_bill(models.Model):
     same_currency = fields.Boolean(u'币种是否一致', compute='compute_same')
     same_include_tax = fields.Boolean(u'含税是否一致', compute='compute_same')
 
-    fee_inner_so = fields.Monetary(u'国内运杂费', currency_field='company_currency_id', compute=compute_info)
-    fee_rmb1_so = fields.Monetary(u'人民币费用1', currency_field='company_currency_id', compute=compute_info)
-    fee_rmb2_so = fields.Monetary(u'人民币费用2', currency_field='company_currency_id', compute=compute_info)
-    fee_outer_so = fields.Monetary(u'国外运保费', currency_field='other_currency_id', compute=compute_info)
-    fee_export_insurance_so = fields.Monetary(u'出口保险费', currency_field='other_currency_id', compute=compute_info)
-    fee_other_so = fields.Monetary(u'其他外币费用', currency_field='other_currency_id', compute=compute_info)
 
-    outer_currency_id = fields.Many2one('res.currency', u'国外运保费货币', related='sol_id.outer_currency_id')
-    export_insurance_currency_id = fields.Many2one('res.currency', u'出口保险费货币',
-                                                   related='sol_id.export_insurance_currency_id')
-    other_currency_id = fields.Many2one('res.currency', u'其他国外费用货币', related='sol_id.other_currency_id')
+
+    # outer_currency_id = fields.Many2one('res.currency', u'国外运保费货币', related='sol_id.outer_currency_id')
+    # export_insurance_currency_id = fields.Many2one('res.currency', u'出口保险费货币',
+    #                                                related='sol_id.export_insurance_currency_id')
+    # other_currency_id = fields.Many2one('res.currency', u'其他国外费用货币', related='sol_id.other_currency_id')
 
 
 
@@ -570,22 +565,7 @@ class transport_bill(models.Model):
     sale_invoice_balance = fields.Monetary(u'销售发票余额', compute=compute_invoice_amount)
     purhcase_invoice_balance = fields.Monetary(u'采购发票余额', compute=compute_invoice_amount)
     back_tax_invoice_balance = fields.Monetary(u'退税发票余额', compute=compute_invoice_amount)
-    # 其他费用 fee_inner,fee_rmb1,fee_rmb2,fee_outer,fee_export_insurance,fee_other
-    fee_inner = fields.Monetary('国内运杂费', currency_field='company_currency_id')
-    fee_rmb1 = fields.Monetary('人民币费用1', currency_field='company_currency_id')
-    fee_rmb1_note = fields.Text('人名币费用1备注')
-    fee_rmb2 = fields.Monetary('人民币费用2', currency_field='company_currency_id')
-    fee_rmb2_note = fields.Text('人名币费用2备注')
 
-    fee_outer = fields.Monetary('国外运保费', currency_field='outer_currency_id', )
-    fee_outer_need = fields.Boolean(u'国外运保费计入应收', default=False)
-    outer_currency_id = fields.Many2one('res.currency', '国外运保费货币', required=True)
-    fee_export_insurance = fields.Monetary('出口保险费', currency_field='export_insurance_currency_id')
-    export_insurance_currency_id = fields.Many2one('res.currency', '出口保险费货币')
-    fee_other = fields.Monetary('其他外币费用', currency_field='other_currency_id')
-    fee_other_note = fields.Text('其他外币费用备注')
-
-    other_currency_id = fields.Many2one('res.currency', '其他外币费用货币')
     account_type = fields.Selection([('tt', 'T/T'), ('lc', 'LC')], '收汇方式')
     credit_info = fields.Char('信用证信息')
     pack_line_ids2 = fields.One2many('transport.pack.line', related='pack_line_ids')
@@ -603,10 +583,10 @@ class transport_bill(models.Model):
     forwarder_name = fields.Char('货代公司')
     settlement = fields.Char('结算方式')
     notice = fields.Text('注意事项')
-    demand_info = fields.Text(u'交单要求')
+
     #akiny
     mark_html = fields.Html(u'唛头')
-    mark_text = fields.Text(u'唛头')
+
     #金额计算
     ciq_amount = fields.Monetary('报关金额', compute=compute_ciq_amount, currency_field='sale_currency_id', digits=dp.get_precision('Money'))
     no_ciq_amount = fields.Monetary('不报关金额', compute=compute_ciq_amount,  currency_field='company_currency_id')
@@ -622,6 +602,116 @@ class transport_bill(models.Model):
     amount_account_adjust = fields.Monetary('账户调节', currency_field='sale_currency_id')
     all_purchase_invoice_fill = fields.Boolean('所有采购发票都已填写', compute=compute_info)
 
+
+
+
+
+    locked = fields.Boolean(u'锁定不允许修改')
+
+    #13已经添加
+    state = fields.Selection([('cancel', u'取消'),
+                              ('refused', u'已拒绝'),
+                              ('draft', u'草稿'), ('check', u'检查'),
+                              ('w_sale_manager', u'待批准'),
+                              ('w_sale_director', u'待销售总监'), ('submit', u'待责任人审批'), ('sales_approve', u'待合规审批'),
+                              ('approve', u'合规已审批'), ('confirmed', u'单证已审批'), ('delivered', u'发货完成'),
+                              ('invoiced', u'账单已确认'), ('locked', u'锁定'),
+                              ('verifying', u'待核销'),
+                              ('done', u'完结'), ('paid', '已收款'), ('edit', u'可修改')], '状态', default='draft',
+                             track_visibility='onchange', )
+    include_tax = fields.Boolean(u'含税')
+    company_currency_id = fields.Many2one('res.currency', string='公司货币', related='company_id.currency_id',
+                                          readonly=True)
+    currency_id = fields.Many2one('res.currency', related='company_id.currency_id', readonly=True, string='公司货币')
+    name = fields.Char('编号', default=lambda self: self.env['ir.sequence'].next_by_code('transport.bill'))
+    ref = fields.Char(u'出运合同号')
+    date = fields.Date(u'出运日期')
+    current_date_rate = fields.Float(u'当日汇率')
+
+    exchange_rate = fields.Float(u'目前汇率', compute=compute_exchange_rate)#13取消
+    sale_currency_id = fields.Many2one('res.currency', u'交易货币',  store=True)#required=True,
+    third_currency_id = fields.Many2one('res.currency', u'统计货币', required=True,
+                                        default=lambda self: self.env.user.company_id.currency_id.id)
+
+    partner_id = fields.Many2one('res.partner', '客户', domain=[('customer', '=', True)])  # required=True,
+    partner_invoice_id = fields.Many2one('res.partner', string='发票地址', readonly=False)
+    partner_shipping_id = fields.Many2one('res.partner', string='送货地址',  required=False)
+    user_id = fields.Many2one('res.users', u'业务员', default=lambda self: self.env.user.assistant_id.id)
+    sale_assistant_id = fields.Many2one('res.users', u'业务助理', default=lambda self: self.env.user.id)
+    company_id = fields.Many2one('res.company', '公司', required=True, readonly=True,
+                                 default=lambda self: self.env.user.company_id.id)
+    tuopan_weight = fields.Float(u'托盘重量')
+    tuopan_volume = fields.Float(u'托盘体积')
+    so_ids = fields.Many2many('sale.order', 'ref_tb_so', 'so_id', 'tb_id', string='销售订单', compute=compute_info, store=False)
+    po_ids = fields.Many2many('purchase.order', string='采购订单', compute=compute_info, store=False)
+    cip_type = fields.Selection([('normal', u'正常报关'), ('buy', '第三方报关'), ('none', '不报关')], string=u'报关', default='normal')
+    line_ids = fields.One2many('transport.bill.line', 'bill_id', '明细', readonly=True, states={'draft': [('readonly', False)]})
+    picking_ids = fields.Many2many('stock.picking', compute=compute_info, store=False, string='调拨') #Tenyale 2.0的项目先保持M2M 不变
+    stage1picking_ids = fields.Many2many('stock.picking', '', compute=compute_info, store=False,
+                                         domain=[('picking_type_code', '=', 'incoming')], string='入库') #Tenyale 2.0的项目先保持M2M 不变
+    stage2picking_ids = fields.Many2many('stock.picking', compute=compute_info,
+                                         domain=[('picking_type_code', '=', 'internal')], string='出库') #Tenyale 2.0的项目先保持M2M 不变
+    move_ids = fields.Many2many('stock.move', string='库存移动详情', compute=compute_info)
+    stage1move_ids = fields.Many2many('stock.move', string='入库明细', compute=compute_info)
+    stage2move_ids = fields.Many2many('stock.move', string='发货明细', compute=compute_info)
+    stage1state = fields.Selection(Stage_Status, '入库', default=Stage_Status_Default, readonly=True)
+    stage2state = fields.Selection(Stage_Status, '出库', default=Stage_Status_Default, readonly=True)
+    sale_commission_ratio = fields.Float('经营计提', digits=(2, 4),
+                                         default=lambda self: self.env['ir.config_parameter'].sudo().get_param(
+                                             'addons_yjzy.sale_commission', '0.015'))
+    incoterm = fields.Many2one('stock.incoterms', '贸易术语')
+    qingguan_state = fields.Selection([('draft', u'未统计'), ('done', u'已统计')], string=u'清关统计', default='draft')
+    qingguan_description_text = fields.Text(u'清关描述')
+    qingguan_line_ids = fields.One2many('transport.qingguan.line', 'tb_id', '清关明细')
+    description_baoguan = fields.Html('报关合同说明')
+    date_out_in = fields.Date('进仓日期')
+    date_in = fields.Date('入库日期')
+    date_ship = fields.Date('出运船日期')
+    date_customer_finish = fields.Date('客户交单日期')
+    date_supplier_finish = fields.Date('供应商交单确认日期')
+    sale_invoice_id = fields.Many2one('account.invoice', '销售发票')
+    purchase_invoice_ids = fields.One2many('account.invoice', 'bill_id', '采购发票',
+                                           domain=[('yjzy_type', '=', 'purchase')])
+    purchase_invoice_ids2 = fields.One2many('account.invoice', string='采购发票2', compute=compute_info)  # 顯示供應商的交單日期
+    all_invoice_ids = fields.One2many('account.invoice', 'bill_id', '所有发票')
+    back_tax_invoice_id = fields.Many2one('account.invoice', '退税发票')
+    sale_invoice_count = fields.Integer(u'销售发票数', compute=compute_info)
+    purchase_invoice_count = fields.Integer(u'采购发票数', compute=compute_info)
+    back_tax_invoice_count = fields.Integer(u'退税发票数', compute=compute_info)
+    tbl_lot_ids = fields.One2many('bill.line.lot', 'tb_id', u'批次明细')
+    tb_vendor_ids = fields.One2many('transport.bill.vendor', 'tb_id', u'供应商发运单')
+    gongsi_id = fields.Many2one('gongsi', '销售主体')
+    purchase_gongsi_id = fields.Many2one('gongsi', '采购主体')
+    pallet_type = fields.Selection([('ctns', 'CTNS'),('plts', 'PLTS')], u'包装类型')
+    pallet_qty = fields.Integer(u'托盘数')
+    is_editable = fields.Boolean(u'可编辑')
+    contract_type = fields.Selection([('a', '模式1'), ('b', '模式2'), ('c', '模式3')], '合同类型', default='c')
+    # 其他费用 fee_inner,fee_rmb1,fee_rmb2,fee_outer,fee_export_insurance,fee_other
+    fee_inner = fields.Monetary('国内运杂费', currency_field='company_currency_id')
+    fee_rmb1 = fields.Monetary('人民币费用1', currency_field='company_currency_id')
+    fee_rmb1_note = fields.Text('人名币费用1备注')
+    fee_rmb2 = fields.Monetary('人民币费用2', currency_field='company_currency_id')
+    fee_rmb2_note = fields.Text('人名币费用2备注')
+
+    outer_currency_id = fields.Many2one('res.currency', '国外运保费货币', required=True)
+    fee_outer = fields.Monetary('国外运保费', currency_field='outer_currency_id')
+    fee_outer_need = fields.Boolean(u'国外运保费计入应收', default=False)
+
+    fee_export_insurance = fields.Monetary('出口保险费', currency_field='export_insurance_currency_id')
+    export_insurance_currency_id = fields.Many2one('res.currency', '出口保险费货币')
+    fee_other = fields.Monetary('其他外币费用', currency_field='other_currency_id')
+    fee_other_note = fields.Text('其他外币费用备注')
+
+    other_currency_id = fields.Many2one('res.currency', '其他外币费用货币')
+
+    fee_inner_so = fields.Monetary(u'国内运杂费', currency_field='company_currency_id', compute=compute_info)
+    fee_rmb1_so = fields.Monetary(u'人民币费用1', currency_field='company_currency_id', compute=compute_info)
+    fee_rmb2_so = fields.Monetary(u'人民币费用2', currency_field='company_currency_id', compute=compute_info)
+    fee_outer_so = fields.Monetary(u'国外运保费', currency_field='other_currency_id', compute=compute_info)
+    fee_export_insurance_so = fields.Monetary(u'出口保险费', currency_field='other_currency_id', compute=compute_info)
+    fee_other_so = fields.Monetary(u'其他外币费用', currency_field='other_currency_id', compute=compute_info)
+    is_fee_done = fields.Boolean(u'默认费用完成')
+    sale_type = fields.Selection([('inner', '自营'), ('proxy', '代理')], u'业务类型', default='inner')
     hs_fill = fields.Selection(
         [('all', u'全部'), ('sale_purchase', u'销售采购'), ('packaging', u'包装资料'), ('others', u'其他信息')], '报关显示',
         default='sale_purchase')
@@ -629,68 +719,32 @@ class transport_bill(models.Model):
     hs_fill_sale_purchase = fields.Boolean('报关invoice信息')
     hs_fill_sale_packaging = fields.Boolean('报关packing信息')
     hs_fill_sale_others = fields.Boolean('报关其他信息')
-
-    state = fields.Selection([('cancel', u'取消'),
-                              ('refused', u'已拒绝'),
-                              ('draft', u'草稿'), ('check', u'检查'),
-                              ('w_sale_manager', u'待批准'),
-                              ('w_sale_director', u'待销售总监'),('submit', u'待责任人审批'), ('sales_approve', u'待合规审批'),
-                              ('approve', u'合规已审批'), ('confirmed', u'单证已审批'),('delivered', u'发货完成'), ('invoiced', u'账单已确认'),('locked', u'锁定'),
-                              ('verifying', u'待核销'),
-                              ('done', u'完结'),('paid', '已收款'), ('edit', u'可修改')], '状态', default='draft', track_visibility='onchange',)
-
-    locked = fields.Boolean(u'锁定不允许修改')
-    include_tax = fields.Boolean(u'含税')
-    currency_id = fields.Many2one('res.currency', related='company_id.currency_id', readonly=True, string='公司货币')
-    company_currency_id = fields.Many2one('res.currency', string='公司货币', related='company_id.currency_id', readonly=True)
-    sale_currency_id = fields.Many2one('res.currency', u'交易货币',  store=True)#required=True,
-    third_currency_id = fields.Many2one('res.currency', u'统计货币', required=True,
-                                        default=lambda self: self.env.user.company_id.currency_id.id)
-
-    name = fields.Char('编号', default=lambda self: self.env['ir.sequence'].next_by_code('transport.bill'))
-    ref = fields.Char(u'出运合同号')
-    date = fields.Date(u'出运日期')
-    exchange_rate = fields.Float(u'目前汇率', compute=compute_exchange_rate)
-    current_date_rate = fields.Float(u'当日汇率')
-
-    partner_id = fields.Many2one('res.partner', '客户',  domain=[('customer', '=', True)])#required=True,
-
-    user_id = fields.Many2one('res.users', u'业务员', default=lambda self: self.env.user.assistant_id.id)
-    sale_assistant_id = fields.Many2one('res.users', u'业务助理', default=lambda self: self.env.user.id)
-    partner_invoice_id = fields.Many2one('res.partner', string='发票地址', readonly=False)
-    partner_shipping_id = fields.Many2one('res.partner', string='送货地址',  required=False)
+    gold_sample_state = fields.Selection([('all', '全部有'), ('part', '部分有'), ('none', '无金样')], '样金管理',
+                                         compute=compute_info)
+    description = fields.Text(u'出运备注')
+    mark_text = fields.Text(u'唛头')
+    wharf_src_id = fields.Many2one('stock.wharf', '装船港')
+    wharf_dest_id = fields.Many2one('stock.wharf', '目的港')
+    partner_country_id = fields.Many2one('res.country', '贸易国别')
+    invoice_title = fields.Char('发票抬头')
     notice_man = fields.Text(u'通知人')
     delivery_man = fields.Text(u'发货人')
+    demand_info = fields.Text(u'交单要求')
+    #-----
+
+
+
     production_sale_unit = fields.Char('生产销售单位')
-    company_id = fields.Many2one('res.company', '公司', required=True, readonly=True,
-                                 default=lambda self: self.env.user.company_id.id)
 
-    tuopan_weight = fields.Float(u'托盘重量')
-    tuopan_volume = fields.Float(u'托盘体积')
 
-    so_ids = fields.Many2many('sale.order', 'ref_tb_so', 'so_id', 'tb_id', string='销售订单', compute=compute_info, store=False)
-    po_ids = fields.Many2many('purchase.order', string='采购订单', compute=compute_info, store=False)
 
-    cip_type = fields.Selection([('normal', u'正常报关'), ('buy', '第三方报关'), ('none', '不报关')], string=u'报关', default='normal')
-    line_ids = fields.One2many('transport.bill.line', 'bill_id', '明细', readonly=True, states={'draft': [('readonly', False)]})
 
-    picking_ids = fields.Many2many('stock.picking', compute=compute_info, store=False, string='调拨') #Tenyale 2.0的项目先保持M2M 不变
-    stage1picking_ids = fields.Many2many('stock.picking', compute=compute_info, store=False,
-                                         domain=[('picking_type_code', '=', 'incoming')], string='入库') #Tenyale 2.0的项目先保持M2M 不变
-    stage2picking_ids = fields.Many2many('stock.picking', compute=compute_info,
-                                         domain=[('picking_type_code', '=', 'internal')], string='出库') #Tenyale 2.0的项目先保持M2M 不变
 
-    move_ids = fields.Many2many('stock.move', string='库存移动详情', compute=compute_info)
-    stage1move_ids = fields.Many2many('stock.move', string='入库明细', compute=compute_info)
-    stage2move_ids = fields.Many2many('stock.move', string='发货明细', compute=compute_info)
 
-    stage1state = fields.Selection(Stage_Status, '入库', default=Stage_Status_Default, readonly=True)
-    stage2state = fields.Selection(Stage_Status, '出库', default=Stage_Status_Default, readonly=True)
+
 
     # 出运成本单据
-    sale_commission_ratio = fields.Float('经营计提', digits=(2, 4),
-                                         default=lambda self: self.env['ir.config_parameter'].sudo().get_param('addons_yjzy.sale_commission', '0.015'))
-    incoterm = fields.Many2one('stock.incoterms', '贸易术语')
+
 
 
 
@@ -700,20 +754,18 @@ class transport_bill(models.Model):
 
 
 
-    sale_type = fields.Selection([('inner', '自营'), ('proxy', '代理')],u'业务类型',default='inner')
+
 
     trans_type = fields.Selection([('sea', 'By SEA'), ('air', 'By AIR'), ('express', 'By Express'),('other', u'其他')], '运输方式')
     insurance_info = fields.Char('保险说明')
-    description = fields.Text(u'出运备注')
+
 
     pack_line_ids = fields.One2many('transport.pack.line', 'bill_id', '装箱统计')
 
 
-    qingguan_description = fields.Html(u'清关描述')
-    qingguan_description_text = fields.Text(u'清关描述')
+    qingguan_description = fields.Html(u'清关描述')#13取消
 
-    qingguan_line_ids = fields.One2many('transport.qingguan.line', 'tb_id', '清关明细')
-    qingguan_state = fields.Selection([('draft', u'未统计'), ('done', u'已统计')], string=u'清关统计', default='draft')
+
 
     #akiny 新增
     qingguan_amount = fields.Monetary(u'清关总金额', currency_field='sale_currency_id' , compute=compute_info)
@@ -723,26 +775,6 @@ class transport_bill(models.Model):
     qingguan_gross_wtight_total = fields.Float(u'清关总毛重',compute=compute_info)
     qingguan_volume_total = fields.Float(u'清关总体积',compute=compute_info)
 
-
-    description_baoguan = fields.Html('报关合同说明')
-    date_out_in = fields.Date('进仓日期')
-    date_in = fields.Date('入库日期')
-    date_ship = fields.Date('出运船日期')
-    date_customer_finish = fields.Date('客户交单日期')
-    date_supplier_finish = fields.Date('供应商交单确认日期')
-
-
-
-
-    sale_invoice_id = fields.Many2one('account.invoice', '销售发票')
-    purchase_invoice_ids = fields.One2many('account.invoice', 'bill_id', '采购发票',domain=[('yjzy_type','=','purchase')])
-    purchase_invoice_ids2 = fields.One2many('account.invoice', string='采购发票2',  compute=compute_info)#顯示供應商的交單日期
-    all_invoice_ids = fields.One2many('account.invoice', 'bill_id', '所有发票')
-    back_tax_invoice_id = fields.Many2one('account.invoice', '退税发票')
-    sale_invoice_count = fields.Integer(u'销售发票数', compute=compute_info)
-    purchase_invoice_count = fields.Integer(u'采购发票数', compute=compute_info)
-    back_tax_invoice_count = fields.Integer(u'退税发票数', compute=compute_info)
-
     qg_count = fields.Integer(u'清关数量', compute=compute_info)
     bg_count = fields.Integer(u'报关数量', compute=compute_info)
     fhtzd_count = fields.Integer(u'发货通知单数量', compute=compute_info)
@@ -751,32 +783,28 @@ class transport_bill(models.Model):
 
 
     #单证信息
-    pallet_type = fields.Selection([('ctns', 'CTNS'),('plts', 'PLTS')], u'包装类型')
-    pallet_qty = fields.Integer(u'托盘数')
-    invoice_title = fields.Char('发票抬头')
 
 
 
-    wharf_src_id = fields.Many2one('stock.wharf', '装船港')
-    wharf_dest_id = fields.Many2one('stock.wharf', '目的港')
+
+
+
     payment_term_id = fields.Many2one('account.payment.term', string='付款条款')
-    partner_country_id = fields.Many2one('res.country', '贸易国别')
 
 
 
-    tbl_lot_ids = fields.One2many('bill.line.lot', 'tb_id', u'批次明细')
-    tb_vendor_ids = fields.One2many('transport.bill.vendor', 'tb_id', u'供应商发运单')
+
+
 
     is_done_plan = fields.Boolean(u'默认调拨计划完成')
     is_done_tuopan = fields.Boolean(u'托盘分配完成')
     is_done_tb_vendor = fields.Boolean(u'供应商发运完成')
-    is_fee_done = fields.Boolean(u'默认费用完成')
 
-    is_editable = fields.Boolean(u'可编辑')
 
-    contract_type = fields.Selection([('a', '模式1'), ('b', '模式2'), ('c', '模式3')], '合同类型', default='c')
-    gongsi_id = fields.Many2one('gongsi', '销售主体')
-    purchase_gongsi_id = fields.Many2one('gongsi', '采购主体')
+
+
+
+
   #审批记录 akiny
     submit_date = fields.Date('提交审批时间')
     submit_uid = fields.Many2one('res.users', u'提交审批')
@@ -793,8 +821,7 @@ class transport_bill(models.Model):
     paid_date = fields.Date('收款日期')
     paid_uid = fields.Many2one('res.users', u'收款完成')
 
-    gold_sample_state = fields.Selection([('all', '全部有'), ('part', '部分有'), ('none', '无金样')], '样金管理',
-                                         compute=compute_info)
+
 
     return_picking_ids = fields.Many2many('stock.picking', 'ref_tb_return_picking', 'pid', 'tid', '退货单')
     return4return_picking_ids = fields.Many2many('stock.picking', 'ref_tb_return4return_picking', 'pid', 'tid', '重发')
@@ -822,7 +849,7 @@ class transport_bill(models.Model):
 
         # if ctx.get('default_open', '') == 'sol':
         #     return self.open_wizard_transport4sol()
-
+   #akiny 向导
     def edit_line_ids(self):
         self.ensure_one()
         form_view = self.env.ref('yjzy_extend.view_transport_bill_wkf_edit_line_form').id
@@ -850,7 +877,7 @@ class transport_bill(models.Model):
             'res_id': self.id,
             'target': 'new',
             }
-
+   #退回发货
     def make_picking_return(self):
 
         wizard_obj = self.env['stock.return.picking']
@@ -889,7 +916,7 @@ class transport_bill(models.Model):
 
 
 
-
+     #akiny 计算出运合同号 13ok
     def compute_tb_ref(self):
         so_ids_len = len(self.so_ids)
         ref = ''
@@ -928,7 +955,7 @@ class transport_bill(models.Model):
             war += '其他外币费用： %s\n' % self.fee_other_so
             raise Warning(war)
 
-
+   #akiny 如果有不同的就添加编辑，可以打开查看
     def open_same(self):
         self.ensure_one()
         #form_view = self.env.ref('yjzy_extend.view_account_supplier_invoice_new_form')
@@ -1098,7 +1125,7 @@ class transport_bill(models.Model):
     #     for one in self:
     #         if len(one.line_ids) != len(one.line_ids.mapped('sol_id')):
     #             raise Warning('不能创建相同 销售明细 的出运明细行')
-
+    #13ok
     @api.model
     def create(self, vals):
         one = super(transport_bill, self).create(vals)
@@ -1108,6 +1135,7 @@ class transport_bill(models.Model):
         })
         return one
 
+    # 13ok
     @api.constrains('ref')
     def check_contract_code(self):
         for one in self:
@@ -1154,7 +1182,7 @@ class transport_bill(models.Model):
     def action_draft(self):
         self.state = 'draft'
 
-
+#13ok
     @api.multi
     def name_get(self):
         ctx = self.env.context
@@ -1172,7 +1200,7 @@ class transport_bill(models.Model):
             print('---name_get---', result)
 
         return result
-
+    #13ok
     @api.model
     def name_search(self, name, args=None, operator='ilike', limit=100):
         args = args or []
@@ -1191,7 +1219,7 @@ class transport_bill(models.Model):
         # else:
         #     self.fee_outer_need = False
 
-
+   #13ok
     def split_tuopan_weight(self):
         if self.pallet_type == 'plts':
             if self.tuopan_weight <= 0 or self.tuopan_volume <=0:
@@ -1220,6 +1248,7 @@ class transport_bill(models.Model):
 
         self.is_done_tuopan = True
 
+    # 13不需要
     def split_tuopan_weight_qingguan(self):
         if self.pallet_type == 'plts':
             if self.tuopan_weight <= 0 or self.tuopan_volume <= 0:
@@ -1274,7 +1303,7 @@ class transport_bill(models.Model):
 
 
 
-
+  #13ok
     def update_back_tax(self):
         for line in self.line_ids:
             line.back_tax = line.product_id.back_tax
@@ -1856,16 +1885,19 @@ class transport_bill(models.Model):
             if bill_line.qty1stage <= 0:
                 raise Warning('%s 入库数量不能小于0' % bill_line.name)
 
+    # 13ok
     def clean_moves(self):
         self.move_ids = False
         # self.line_ids._clean_moves()
 
+    # 13ok
     def prepare_1_picking(self):
         self.ensure_one()
         self.line_ids._prepare_1_picking()
         self.stage1state = 'confirmed'
         return True
 
+    # 13ok
     def prepare_2_picking(self):
         self.ensure_one()
         self.line_ids._prepare_2_picking()
@@ -1884,7 +1916,7 @@ class transport_bill(models.Model):
     #     self.line_ids._prepare_3_picking()
     #     self.stage3state = 'confirmed'
     #     return True
-
+    # 13ok
     def process_1_picking(self):
         self.ensure_one()
         todo_pickings = self.stage1picking_ids.filtered(lambda x: x.state == 'assigned')
@@ -1894,6 +1926,7 @@ class transport_bill(models.Model):
             self.stage1state = 'done'
         return True
 
+    # 13ok
     def process_2_picking(self):
         self.ensure_one()
         todo_pickings = self.stage2picking_ids.filtered(lambda x: x.state == 'assigned')
@@ -1925,7 +1958,7 @@ class transport_bill(models.Model):
         if len(self.line_ids) != len(self.line_ids.mapped('sol_id')):
             raise Warning('出运明细有重复的销售明细行')
 
-
+#13ok
     def open_wizard_transport4sol(self):
         self.ensure_one()
         ctx = self.env.context.copy()
@@ -1946,7 +1979,7 @@ class transport_bill(models.Model):
             'context': ctx,
         }
 
-
+#13ok
     def open_wizard_transport4so(self):
         self.ensure_one()
         ctx = self.env.context.copy()
@@ -1968,7 +2001,7 @@ class transport_bill(models.Model):
         }
 
 
-
+    #13ok
     def make_default_lot_plan(self):
         self.ensure_one()
         self.line_ids.make_default_lot_plan()

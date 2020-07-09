@@ -3903,7 +3903,6 @@
 
 
         <menuitem id="new_partner_inter" parent="customer_config" name="内部人员" sequence="99"
-                  action="action_new_partner_inter"
-        />
+                  action="action_new_partner_inter"         />
     </data>
 </odoo>

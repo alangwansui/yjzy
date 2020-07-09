@@ -133,11 +133,25 @@
                                                class="oe_inline"/>
                                     </div>
 
-                                    <label for="payment_term_id" string="收款条款" style="font-size:10px"/>
+                                    <!--label for="payment_term_id" string="收款条款" style="font-size:10px"/>
                                     <div style="width:150%;">
                                         <field name="payment_term_id" options="{'no_open':1}" readonly="1"
                                                class="oe_inline"/>
+                                    </div-->
+
+                                    <label for="payment_term_id" string="付款条款" style="font-size:10px" attrs="{'invisible':[('is_different_payment_term','=',False)]}"/>
+                                <div attrs="{'invisible':[('is_different_payment_term','=',False)]}" class="o_row" style="color:red">
+                                <field name="payment_term_id" options="{'no_create': True,'no_open':True}" class="oe_inline" attrs="{'readonly':1}"/></div>
+                                <label for="payment_term_id" string="付款条款" style="font-size:10px" attrs="{'invisible':[('is_different_payment_term','!=',False)]}"/>
+                                <div attrs="{'invisible':[('is_different_payment_term','!=',False)]}" class="o_row" style="color:grey">
+                                <field name="payment_term_id" options="{'no_create': True,'no_open':True}" class="oe_inline" attrs="{'readonly':1}"/></div>
+
+
+                                <label for="partner_payment_term_id" string="预设付款条款" style="font-size:10px" attrs="{'invisible':[('is_different_payment_term','=',False)]}"/>
+                                <div attrs="{'invisible':[('is_different_payment_term','=',False)]}" class="o_row">
+                                <field name="partner_payment_term_id" string="预设付款条款" readonly="1" options="{'no_open':1}" attrs="{'invisible':[('is_different_payment_term','=',False)]}"/>
                                     </div>
+                                    <field name="is_different_payment_term"  invisible="1"/>
                                     <!--label for="po_ids" style="font-size:10px"/-->
 
 
