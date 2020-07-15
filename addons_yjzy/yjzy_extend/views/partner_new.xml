@@ -60,6 +60,8 @@
             </field>
         </record>
 
+
+
         <record id="view_new_partner_customer_tree" model="ir.ui.view">
             <field name="name">res.partner.tree.customer.new</field>
             <field name="model">res.partner</field>
@@ -143,6 +145,138 @@
             </field>
         </record>
 
+                 <record id="view_new_partner_customer_account_tree" model="ir.ui.view">
+            <field name="name">res.partner.tree.customer.new</field>
+            <field name="model">res.partner</field>
+            <field eval="8" name="priority"/>
+            <field name="arch" type="xml">
+                <tree string="Contacts">
+                    <field name="name" string="简称"/>
+                    <field name="amount_invoice"/>
+                    <field name="amount_residual_invoice"/>
+                    <field name="amount_advance_payment"/>
+                    <field name="amount_advance_payment_reconcile"/>
+                    <field name="amount_residual_advance_payment"/>
+                    <field name="is_company" invisible="1"/>
+                    <field name="active" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+      <record id="view_new_customer_account_form" model="ir.ui.view">
+            <field name="name">res.partner.customer.form.new</field>
+            <field name="model">res.partner</field>
+            <field name="priority" eval="1"/>
+            <field name="arch" type="xml">
+                <form string="客户">
+                    <header groups="base.group_system">
+                        <field name="state" statusbar_invisible="draft" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box" groups="base.group_system">
+                            <button type="object" class="oe_stat_button" icon="fa-pencil-square-o"
+                                    name="action_view_partner_invoices_new"
+                                    attrs="{'invisible': [('customer', '=', False)]}">
+                                <div class="o_form_field o_stat_info">
+                                    <span class="o_stat_value">
+                                        <field name="total_invoiced" widget="monetary"
+                                               options="{'currency_field': 'currency_id'}"/>
+                                    </span>
+                                    <span class="o_stat_text">Invoiced</span>
+                                </div>
+                            </button>
+                            <button name="open_sale_order" class="oe_stat_button" type="object"
+                                    attrs="{'invisible': [('customer', '=', False)]}" icon="fa-usd">
+                                 <span class="o_stat_text">销售预收情况</span>
+                            </button>
+                            <button name="open_advance" class="oe_stat_button" type="object"
+                                    attrs="{'invisible': [('customer', '=', False)]}" icon="fa-usd">
+                                 <span class="o_stat_text">预收认领列表</span>
+                            </button>
+
+                            <field name="is_editable" widget="boolean_toggle"/>
+                        </div>
+                        <field name="image" widget='image' class="oe_avatar"
+                               options='{"preview_image": "image_medium", "size": [90, 90]}'/>
+                        <div class="oe_title">
+                            <field name="is_company" invisible="1"/>
+                            <field name="commercial_partner_id" invisible="1"/>
+                            <field name="company_type" widget="radio"
+                                   class="oe_edit_only" invisible="1"
+                                   options="{'horizontal': true}"/>
+                            <div attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)]}">
+                                客户简称：
+                            </div>
+
+                            <h1>
+                                <field name="name" default_focus="1" widget="field_clearbit" placeholder="客户简称"
+                                       attrs="{'required' : [('type', '=', 'contact')],'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
+                            </h1>
+
+                            <div class="o_row">
+                                <field name="code" readonly="1"/>
+                                <button name="generate_code" type="object" string="生成编码" groups="base.group_system"/>
+                                <field name="parent_id"
+                                       placeholder="Company"
+                                       domain="[('is_company', '=', True)]"
+                                       context="{'default_is_company': True, 'default_supplier': supplier, 'default_customer': customer}"
+                                       attrs="{'invisible': ['|', '&amp;', ('is_company','=', True),('parent_id', '=', False),('company_name', '!=', False),('company_name', '!=', '')]}"/>
+                                <field name="company_name"
+                                       attrs="{'invisible': ['|', '|', ('company_name', '=', False), ('company_name', '=', ''), ('is_company', '=', True)]}"/>
+                                <button name="create_company" type="object" string="Create company"
+                                        class="btn btn-sm oe_edit_only fa fa-external-link btn btn-link "
+                                        attrs="{'invisible': ['|', '|', ('is_company','=', True), ('company_name', '=', ''), ('company_name', '=', False)]}"/>
+                            </div>
+                        </div>
+                            <group>
+                                <field name="customer" invisible="1"/>
+                                <field name="supplier" invisible="1"/>
+                                <field name="type" invisible="1" attrs="{'invisible': [('parent_id','=', False)]}"
+                                       groups="base.group_no_one,sale.group_delivery_invoice_address"/>
+                                <field name="full_name" string="客户公司全称"
+                                       attrs="{'invisible':[('is_company','=',False)],'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
+
+                                <!--label for="country_id" string="业务国" attrs="{'invisible':[('type','!=','delivery')]}"/>
+                                <label for="country_id" string="所在国" attrs="{'invisible':[('type','=','delivery')]}"/>
+                                <div class="o_row"-->
+                                <field name="country_id" placeholder="Country" string="公司所在国"
+                                       class="o_address_country"
+                                       options='{"no_open": True, "no_create": True}'
+                                       attrs="{'readonly': [('state','not in',['draft','check']),('is_editable','=',False)]}"/>
+
+                                <!--/div-->
+                                <field name="jituan_id" string="所属集团" help="如果没有请填写无"
+                                       domain="['|',('partner_type','=','customer'),('partner_type','=',False)]"
+                                       options='{"no_open": True, "no_create": True}'
+                                       attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
+                                <field name="sale_currency_id" options="{'no_open':1}"
+                                       attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
+                                <field name="property_payment_term_id" help="做销售合同时，预设的付款条款和订单选择的条款有出入时，会标注红色" domain="[('type','=','sale')]"
+                                       attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"
+                                       widget="selection"/>
+
+                                <separator string="" colspan="2"/>
+                                </group>
+                        <notebook colspan="4" invisible="1">
+                            <page name="manager" string="管理页" groups="base.group_system">
+                                <group>
+                                <field name="sales_approve_uid"/>
+                                <field name="sales_approve_date"/>
+                                <field name="approve_uid"/>
+                                <field name="approve_date"/>
+                                <field name="done_uid"/>
+                                <field name="done_date"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="activity_ids" widget="mail_activity"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
 
         <!-- Open partner address -->
         <record id="view_new_partner_address_form" model="ir.ui.view">
@@ -302,6 +436,8 @@
                     </header>
                     <sheet>
                         <div class="oe_button_box" name="button_box" groups="base.group_system">
+
+
                             <button type="object" class="oe_stat_button" icon="fa-pencil-square-o"
                                     name="action_view_partner_invoices"
                                     attrs="{'invisible': [('customer', '=', False)]}">
@@ -1408,7 +1544,7 @@
                     <sheet>
                         <div class="oe_button_box" name="button_box" groups="base.group_system">
                             <button type="object" class="oe_stat_button" icon="fa-pencil-square-o"
-                                    name="action_view_partner_invoices"
+                                    name="action_view_partner_invoices_new"
                                     attrs="{'invisible': [('customer', '=', False)]}">
                                 <div class="o_form_field o_stat_info">
                                     <span class="o_stat_value">
@@ -1469,9 +1605,17 @@
                                     <span class="o_stat_text">Due</span>
                                 </div>
                             </button>
-                            <button class="oe_stat_button" type="action" name="274"
+                            <button class="oe_stat_button" type="action" name="274" invisible="1"
                                     attrs="{'invisible': [('customer', '=', False)]}" icon="fa-usd">
                                 <field string="Sales" name="sale_order_count" widget="statinfo"/>
+                            </button>
+                            <button name="open_sale_order" class="oe_stat_button" type="object"
+                                    attrs="{'invisible': [('customer', '=', False)]}" icon="fa-usd">
+                                 <span class="o_stat_text">销售预收情况</span>
+                            </button>
+                            <button name="open_advance" class="oe_stat_button" type="object"
+                                    attrs="{'invisible': [('customer', '=', False)]}" icon="fa-usd">
+                                 <span class="o_stat_text">预收认领列表</span>
                             </button>
                             <button class="oe_stat_button" name="347" type="action"
                                     attrs="{'invisible': [('supplier', '=', False)]}" icon="fa-shopping-cart">
@@ -3904,5 +4048,27 @@
 
         <menuitem id="new_partner_inter" parent="customer_config" name="内部人员" sequence="99"
                   action="action_new_partner_inter"         />
+
+
+         <record id="action_new_customer_account" model="ir.actions.act_window">
+            <field name="name">客户查询</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="domain">
+                [('customer','=',True),('is_company','=',True),('name','!=','未定义')]
+            </field>
+            <field name="context">{'default_is_company': True,'default_customer': True, 'default_contract_type':'c'}
+            </field>
+            <field name="filter" eval="True"/>
+            <field name="search_view_id" ref="view_new_res_partner_filter"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_new_partner_customer_account_tree')}),
+                          (0, 0, {'view_mode': 'kanban', 'view_id': ref('res_new_partner_kanban_view')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_new_customer_account_form')})]"/>
+        </record>
+                <menuitem id="mennu_new_customer_account" parent="menu_account_new_root" name="客户应收付" sequence="99"
+                  action="action_new_customer_account"/>
     </data>
 </odoo>

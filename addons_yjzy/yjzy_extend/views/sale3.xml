@@ -104,12 +104,26 @@
             </field>
         </record>
 
+        <!-- 查询预收使用明细-->
+         <record id="new_sale_order_advance_tree" model="ir.ui.view">
+            <field name="name">sale.order.advance.tree</field>
+            <field name="model">sale.order</field>
+            <field name="arch" type="xml">
+           <tree string="销售合同" >
+                    <field name="contract_code" readonly="1"/>
+                    <field name="advance_reconcile_order_line_ids" invisible="1"/>
+                    <field name="advance_total"/>
+                    <field name="advance_reconcile_order_line_date_char"/>
+                    <field name="advance_reconcile_order_line_amount_char"/>
+                </tree>
+            </field>
+        </record>
  <!-- 出运单选择销售明细-->
          <record id="new_order_line_transport_tree" model="ir.ui.view">
             <field name="name">sale.order.line.tree</field>
             <field name="model">sale.order.line</field>
             <field name="arch" type="xml">
-                <tree string="Sales Order Lines" decoration-danger="rest_tb_qty == 0">
+               <tree string="Sales Order Lines" decoration-danger="rest_tb_qty == 0">
 
                     <field name="order_id"/>
                     <field name="order_partner_id"/>

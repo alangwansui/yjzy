@@ -227,16 +227,36 @@ class sale_order(models.Model):
             one.commission_ratio_percent = one.commission_ratio * 100
             one.expense_cost_total = expense_cost_total
 
-
+    @api.depends('yjzy_payment_ids','yjzy_payment_ids.amount')
+    def compute_advance_total(self):
+        for one in self:
+            advance_total = sum(x.amount for x in one.yjzy_payment_ids)
+            dlrs = one.advance_reconcile_order_line_ids
+            advance_reconcile_order_line_amount_char = ''
+            advance_reconcile_order_line_date_char = ''
+            advance_reconcile_order_line_invoice_char = ''
+            for o in dlrs:
+                if o.amount_advance_org != 0:
+                    advance_reconcile_order_line_amount_char +='%s\n' % (o.amount_advance_org)
+                    advance_reconcile_order_line_date_char += '%s\n' % (o.order_id.date)
+                    advance_reconcile_order_line_invoice_char += '%s\n' % (o.invoice_id)
+            one.advance_reconcile_order_line_amount_char = advance_reconcile_order_line_amount_char
+            one.advance_reconcile_order_line_date_char = advance_reconcile_order_line_date_char
+            one.advance_total = advance_total
 
     #货币设置
 
+    #akiny715
+    advance_reconcile_order_line_ids = fields.One2many('account.reconcile.order.line', 'so_id',string='预收认领明细', domain=[('order_id.state','=','done'),('amount_total_org','!=',0)])
+    advance_reconcile_order_line_amount_char = fields.Char(compute=compute_advance_total, string=u'预收认领明细金额')
+    advance_reconcile_order_line_date_char = fields.Char(compute=compute_advance_total, string=u'预收认领日期')
+    advance_reconcile_order_line_invoice_char = fields.Char(compute=compute_advance_total, string=u'预收认领日期')
+    advance_total = fields.Monetary(u'预收总金额', compute=compute_advance_total,store=True)
 
     company_currency_id = fields.Many2one('res.currency', u'公司货币', default=lambda self: self.env.user.company_id.currency_id.id)
 
     other_currency_id = fields.Many2one('res.currency', u'其他国外费用货币', default=lambda self: self.env.ref('base.USD').id)
-    third_currency_id = fields.Many2one('res.currency', u'统计货币',
-                                        default=lambda self: self.env.user.company_id.currency_id.id)
+
     #不需要
     third_currency_id = fields.Many2one('res.currency', u'统计货币',
                                         default=lambda self: self.env.user.company_id.currency_id.id)
@@ -331,10 +351,11 @@ class sale_order(models.Model):
     hegui_uid = fields.Many2one('res.users', u'合规审批')#13换字段名
     hx_date = fields.Date('核销时间')
     purchase_approve_date = fields.Datetime('采购审批时间', compute=compute_info)
+    rest_tb_qty_total = fields.Float(u'出运总数', compute=compute_info)
 #---------
 
 
-    rest_tb_qty_total = fields.Float(u'出运总数',compute=compute_info)
+
 
 
     #transport_bill_id = fields.Many2one('transport.bill', u'出运单', copy=False)
@@ -355,12 +376,13 @@ class sale_order(models.Model):
     advance_po_residual = fields.Float(u'预付余额', compute=compute_po_residual, store=True)
     yjzy_payment_ids = fields.One2many('account.payment', 'so_id', u'预收认领单')
     yjzy_currency_id = fields.Many2one('res.currency', u'预收币种', related='yjzy_payment_ids.currency_id')
+
     balance = fields.Monetary(u'预收余额', compute=compute_balance, currency_field='yjzy_currency_id')
     balance_new = fields.Monetary(u'预收余额', compute=compute_balance_new, currency_field='yjzy_currency_id', store=True)
     exchange_rate = fields.Float(u'目前汇率', compute=compute_exchange_rate, digits=(2,2)) #akiny 4改成了2
     appoint_rate = fields.Float(u'使用汇率', digits=(2,6))
     #currency_tate = fields.Many2one('res.currency.rate',u'系统汇率')
-    country_id = fields.Many2one('res.country', related='partner_id.country_id', string=u'国别', readonly=True)
+    #country_id = fields.Many2one('res.country', related='partner_id.country_id', string=u'国别', readonly=True)
     term_description = fields.Html(u'销售条款')
     state2 = fields.Selection([('draft', u'草稿'),('to_approve', u'待批准'), ('edit', u'可修改'), ('confirmed', u'待审批'), ('done', u'审批完成')], u'状态', default='draft')
     amount_total2 = fields.Monetary(u'销售金额', currency_field='third_currency_id', compute=compute_info)

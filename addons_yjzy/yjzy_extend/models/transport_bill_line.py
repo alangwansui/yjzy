@@ -139,12 +139,13 @@ class transport_bill_line(models.Model):
     volume = fields.Float('体积', digits=dp.get_precision('Volume'))
     #批次明细
     tbl_lot_ids = fields.One2many('bill.line.lot', 'tb_line_id', string='明细批次')
-
+    so_tb_number = fields.Char('销售合同发货次数')
+    is_gold_sample = fields.Boolean('是否有金样', related='product_id.is_gold_sample', readonly=False)
 #----
 
     need_print = fields.Boolean('是否打印', defualt=True)
     #是否金样  akiny
-    is_gold_sample = fields.Boolean('是否有金样', related='product_id.is_gold_sample', readonly=False)
+
     #单个费用 akiny
     # fee_inner = fields.Monetary(u'国内运杂费:单个', currency_field='company_currency_id', compute=compute_info)
     # fee_rmb1 = fields.Monetary(u'人民币费用1:单个', currency_field='company_currency_id', compute=compute_info)
@@ -158,25 +159,25 @@ class transport_bill_line(models.Model):
     #                                                related='order_id.export_insurance_currency_id')
     # other_currency_id = fields.Many2one('res.currency', u'其他国外费用货币', related='order_id.other_currency_id')
     #这次出运单的批次
-    so_tb_number = fields.Char('销售合同发货次数')
 
 
 
 
 
+#13ok
     @api.depends('lot_plan_ids', 'lot_plan_ids.stage_2', 'lot_plan_ids.qty')
     def compute_qty2stage_new(self):
         for one in self:
             plan_lots = one.lot_plan_ids
             one.qty2stage_new = sum([x.qty for x in plan_lots.filtered(lambda x: x.stage_2 == True)])
 
-
+#13ok
     @api.onchange('sol_id')
     def onchange_sol(self):
         self.back_tax = self.sol_id.product_id.back_tax
         self.need_print = self.sol_id.product_id.back_tax.need_print
 
-
+  #13取消
     def compute_tbl_lot(self):
         obj = self.env['bill.line.lot']
         records = obj.browse([])
@@ -197,7 +198,7 @@ class transport_bill_line(models.Model):
                 })
             one.tbl_lot_ids = records
 
-
+   #13ok
     @api.multi
     def make_default_lot_plan(self):
         plan_obj = self.env['transport.lot.plan']
@@ -226,7 +227,7 @@ class transport_bill_line(models.Model):
                     'stage_1': False,
                     'stage_2': True,
                 })
-
+ #13ok
     def get_dict_plan_lots(self, stage):
         self.ensure_one()
         plan_lots = self.lot_plan_ids
@@ -243,7 +244,7 @@ class transport_bill_line(models.Model):
         for i in plan_lots:
             res[i.lot_id] += i.qty
         return res
-
+#ok
     def _prepare_1_picking(self):
         todo_moves = self.env['stock.move']
         for line in self:
@@ -260,9 +261,11 @@ class transport_bill_line(models.Model):
                         ml.qty_done = lot_dic[lot]
                         line.move_ids |= m
 
+    # 13ok
     def _new_prepare_2_picking(self):
         pass
 
+    # 13ok
     def _prepare_2_picking(self):
         #todo_moves = self.env['stock.move']
         ##pick_type = self.env.ref('stock.picking_type_out')

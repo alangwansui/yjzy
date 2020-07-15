@@ -474,7 +474,7 @@ class transport_bill(models.Model):
     back_tax_invoice_total_new = fields.Monetary(u'退税金额', compute=_back_tax_invoice_amount, store=True)
     back_tax_invoice_paid_new = fields.Monetary(u'已收退税金额', compute=_back_tax_invoice_amount, store=True)
     back_tax_invoice_balance_new = fields.Monetary(u'未收退税金额', compute=_back_tax_invoice_amount, store=True)
-    purchase_cost_total = fields.Monetary(u'采购金额', compute=_sale_purchase_amount, store=True)
+    purchase_cost_total = fields.Monetary(u'采购金额', compute=_sale_purchase_amount, store=True) #13ok
     state_type = fields.Selection([('no_delivery','未开始'),('wait_date',u'待完成相关日期'),('finish_date',u'已完成相关日期'),('abnormal_date',u'日期异常'),
                                              ('write_off',u'正常核销'),('abnormal',u'异常核销')], u'状态类型', default='no_delivery',store=True, compute=update_state_type)
     #date_out_in_att = fields.Many2many('ir.attachment',string='进仓日附件')
@@ -523,13 +523,13 @@ class transport_bill(models.Model):
     org_sale_amount = fields.Monetary('销售金额', currency_field='sale_currency_id', compute=compute_info,
                                       digits=dp.get_precision('Money'))
     org_sale_amount_new = fields.Monetary('销售金额', store=True, currency_field='sale_currency_id', compute='_amount_all',
-                                      digits=dp.get_precision('Money'))
+                                      digits=dp.get_precision('Money'))  #13ok
     org_real_sale_amount = fields.Monetary('实际销售金额', currency_field='sale_currency_id', compute=compute_info,
                                            digits=dp.get_precision('Money'))
 
     # 统计金额
     sale_amount = fields.Monetary('销售金额', currency_field='third_currency_id', compute=compute_info,
-                                  digits=dp.get_precision('Money'))
+                                  digits=dp.get_precision('Money')) #13ok
     real_sale_amount = fields.Monetary('实际销售金额', currency_field='third_currency_id', compute=compute_info,
                                        digits=dp.get_precision('Money'))
     sale_commission_amount = fields.Monetary('经营计提金额', currency_field='third_currency_id', compute=compute_info)
@@ -538,7 +538,7 @@ class transport_bill(models.Model):
     fandian_amount = fields.Monetary('返点金额字', currency_field='third_currency_id', compute=compute_info,
                                      digits=dp.get_precision('Money'))
     stock_cost = fields.Monetary('库存成本', currency_field='third_currency_id', compute=compute_info,
-                                 igits=dp.get_precision('Money'))
+                                 igits=dp.get_precision('Money')) #13ok
     other_cost = fields.Monetary('其他费用总计', currency_field='third_currency_id', compute=compute_info,
                                  igits=dp.get_precision('Money'))
 
@@ -730,6 +730,7 @@ class transport_bill(models.Model):
     notice_man = fields.Text(u'通知人')
     delivery_man = fields.Text(u'发货人')
     demand_info = fields.Text(u'交单要求')
+    payment_term_id = fields.Many2one('account.payment.term', string='付款条款')
     #-----
 
 
@@ -789,7 +790,7 @@ class transport_bill(models.Model):
 
 
 
-    payment_term_id = fields.Many2one('account.payment.term', string='付款条款')
+
 
 
 
@@ -1417,7 +1418,7 @@ class transport_bill(models.Model):
             tbv.make_lines()
         self.is_done_tb_vendor = True
         self.split_tuopan_weight2vendor()
-
+    #13取消
     def make_tbl_lot(self):
         for one in self:
             one.tbl_lot_ids = None
@@ -1594,7 +1595,7 @@ class transport_bill(models.Model):
             })
             pack_lines |= pack_line
         return pack_lines
-
+  #13ok
     def make_purchase_invoice(self):
         self.ensure_one()
    #     if not self.date_out_in:
@@ -1657,7 +1658,7 @@ class transport_bill(models.Model):
         })
 
 
-
+   #13ok
     def make_sale_invoice(self):
         self.ensure_one()
         #print('===make_sale_invoice===1', self.so_ids)
@@ -1947,7 +1948,7 @@ class transport_bill(models.Model):
     #         todo_pickings.action_done()
     #         self.stage3state = 'done'
     #     return True
-
+#13ok
     @api.constrains('line_ids')
     def check_lines(self):
         print('----------check_lines---------')

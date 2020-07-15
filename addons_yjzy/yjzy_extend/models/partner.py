@@ -2,7 +2,7 @@
 
 from odoo import models, fields, api
 from odoo.exceptions import Warning
-
+from ast import literal_eval
 class res_partner(models.Model):
     _inherit = 'res.partner'
     _order = "sequence, display_name"
@@ -52,6 +52,35 @@ class res_partner(models.Model):
             #     one.last_sale_order_approve_date = last_order.approve_date
             #     print('--lastdate--', last_order, last_order.approve_date)
     # 增加地址翻译
+    def compute_amount_invoice_advance_payment(self):
+        reconcile_ids = self.env['account.reconcile.order.line']
+        for one in self:
+            invoice = one.invoice_ids
+            payment = one.advance_payment_ids
+            reconcile = reconcile_ids.search([('order_id.partner_id','=',one.id)])
+            amount_invoice = sum(x.amount_total_signed for x in invoice)
+            amount_residual_invoice = sum(x.residual_signed for x in invoice)
+            amount_advance_payment = sum(x.amount for x in payment)
+            amount_advance_payment_reconcile =  sum(x.amount_advance_org for x in reconcile)
+            amount_residual_advance_payment = amount_advance_payment - amount_advance_payment_reconcile
+            one.amount_invoice = amount_invoice
+            one.amount_residual_invoice = amount_residual_invoice
+            one.amount_advance_payment = amount_advance_payment
+            one.amount_advance_payment_reconcile = amount_advance_payment_reconcile
+            one.amount_residual_advance_payment = amount_residual_advance_payment
+
+    invoice_ids = fields.One2many('account.invoice', 'partner_id','应收账单',
+                                  domain=[('yjzy_type', '=', 'sale'), ('type', '=', 'out_invoice'),
+                                          ('state', 'not in', ['draft', 'cancel'])])
+    advance_payment_ids = fields.One2many('account.payment', 'partner_id','预收认领',
+                                          domain=[('sfk_type', '=', 'ysrld'), ('state', 'in', ['posted', 'reconciled'])],
+                                          )
+
+    amount_invoice = fields.Float('应收账单总金额', compute=compute_amount_invoice_advance_payment)
+    amount_residual_invoice = fields.Float('应收到期金额',compute=compute_amount_invoice_advance_payment)
+    amount_advance_payment = fields.Float('预收总金额',compute=compute_amount_invoice_advance_payment)
+    amount_residual_advance_payment = fields.Float('预收剩余金额',compute=compute_amount_invoice_advance_payment)
+    amount_advance_payment_reconcile = fields.Float('预收认领金额',compute=compute_amount_invoice_advance_payment)
 
     # 不要了
 
@@ -184,6 +213,58 @@ class res_partner(models.Model):
 
 
 
+
+
+
+    def action_view_partner_invoices_new(self):
+        self.ensure_one()
+        form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form')
+        tree_view = self.env.ref('yjzy_extend.invoice_new_tree')
+        return {
+            'name': u'客户应收',
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'res_model': 'account.invoice',
+            'type': 'ir.actions.act_window',
+            'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
+            'domain': [('partner_id', 'in', [self.id]),('yjzy_type','=','sale'),('type','=','out_invoice')]
+
+        }
+
+    def open_sale_order(self):
+        self.ensure_one()
+        #form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form')
+        tree_view = self.env.ref('yjzy_extend.new_sale_order_advance_tree')
+        return {
+            'name': u'销售合同对应预收',
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'res_model': 'sale.order',
+            'type': 'ir.actions.act_window',
+            'views': [(tree_view.id, 'tree')],
+            'domain': [('partner_id', 'in', [self.id]),('yjzy_payment_ids', '!=', 'sale')]
+        }
+
+    def open_advance(self):
+        self.ensure_one()
+        form_view = self.env.ref('yjzy_extend.view_ysrld_advance_form')
+        tree_view = self.env.ref('yjzy_extend.view_ysrld_reconcile_tree')
+        return {
+            'name': u'预收列表',
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'res_model': 'account.payment',
+            'type': 'ir.actions.act_window',
+            'views': [(tree_view.id, 'tree'),(form_view.id, 'form')],
+            'domain': [('partner_id', 'in', [self.id]),('sfk_type','=','ysrld')]
+        }
+
+
+        # self.ensure_one()
+        # action = self.env.ref('yjzy_extend.action_sale_account_invoice_new').read()[0]
+        # action['domain'] = literal_eval(action['domain'])
+        # action['domain'].append(('partner_id', 'child_of', self.id))
+        # return action
 
     #13已经添加
     @api.onchange('invoice_title')

@@ -81,7 +81,7 @@ class account_payment(models.Model):
             one.balance = balance
 
 
-    @api.depends('aml_ids')
+    @api.depends('aml_ids','state')
     def compute_balance(self):
         for one in self:
             balance = 0
@@ -134,11 +134,22 @@ class account_payment(models.Model):
         return res
 
 
-    name = fields.Char(u'编号', default=lambda self: self._default_name())
-    state = fields.Selection(selection_add=[('approved', u'已审批')])
 
+
+    advance_reconcile_order_line_ids = fields.One2many('account.reconcile.order.line', 'so_id', string='预收认领明细',
+                                                       related='so_id.advance_reconcile_order_line_ids')
+    advance_reconcile_order_line_amount_char = fields.Char(related='so_id.advance_reconcile_order_line_amount_char', string=u'预收认领明细金额')
+    advance_reconcile_order_line_date_char = fields.Char(related='so_id.advance_reconcile_order_line_date_char',string=u'预收认领日期')
+    advance_reconcile_order_line_invoice_char = fields.Char(related='so_id.advance_reconcile_order_line_invoice_char',string=u'账单')
+
+    #13ok
+    name = fields.Char(u'编号', default=lambda self: self._default_name())
     sfk_type = fields.Selection(sfk_type, u'收付类型')
+    gongsi_id = fields.Many2one('gongsi', '内部公司')
+    #----
+    state = fields.Selection(selection_add=[('approved', u'已审批')])
     payment_type = fields.Selection(selection_add=[('claim_in', u'收款认领'), ('claim_out', u'付款认领')])
+
     tba_id = fields.Many2one('transport.bill.account', u'出运报关金额')
     line_ids = fields.One2many('account.payment.item', 'payment_id', u'付款明细')
     ###invoice_ids = fields.fk_jouMany2many('account.invoice', compute=compute_invoice_ids)
@@ -194,7 +205,7 @@ class account_payment(models.Model):
     jiehui_in_amount = fields.Float('结汇转入余额')
 
     payment_date_confirm = fields.Datetime('付款确认时间') ##akiny 付款确认时间
-    gongsi_id = fields.Many2one('gongsi', '内部公司')
+
 
 
 

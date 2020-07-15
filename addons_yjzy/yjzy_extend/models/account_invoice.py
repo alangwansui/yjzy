@@ -63,30 +63,90 @@ class account_invoice(models.Model):
             else:
                 residual_date_group = 'un_begin'
             one.residual_date_group = residual_date_group
+    def _get_reconcile_order_line_char(self):
+        for one in self:
+            dlrs = one.reconcile_order_line_id
+            # dlrs_2203 = one.payment_move_line_lds.move_id.line_ids.filtered(lambda mov: mov.account_idcode == '2203')
+            # dlrs_220301 = one.payment_move_line_lds.move_id.line_ids.filtered(lambda mov: mov.account_idcode == '220301')
+            # dlrs_5603 = one.payment_move_line_lds.move_id.line_ids.filtered(lambda mov: mov.account_idcode == '5603')
+            # dlrs_5601 = one.payment_move_line_lds.move_id.line_ids.filtered(lambda mov: mov.account_idcode == '5601')
+            reconcile_order_line_char = ''
+            reconcile_order_line_payment_char = ''
+            reconcile_order_line_advance_char = ''
+            reconcile_order_line_bank_char = ''
+            reconcile_order_line_amount_diff_char = ''
+            # for o in dlrs:
+            #     if o.amount_payment_org != 0:
+            #         reconcile_order_line_payment_char +='%s: %s\n' % (o.order_id.date, o.amount_payment_org)
+            #     if o.amount_advance_org != 0:
+            #         reconcile_order_line_advance_char += '%s: %s\n' % (o.order_id.date, o.amount_advance_org)
+            #     if o.amount_bank_org != 0:
+            #         reconcile_order_line_bank_char += '%s: %s\n' % (o.order_id.date, o.amount_bank_org)
+            #     if o.amount_diff_org != 0:
+            #         reconcile_order_line_amount_diff_char += '%s: %s\n' % (o.order_id.date, o.amount_diff_org)
+            for o in dlrs:
+                reconcile_order_line_char += '%s: %s\n' % (o.date, o.so_id)
+                reconcile_order_line_payment_char +='%s\n' % (o.amount_payment_org)
+                reconcile_order_line_advance_char += '%s\n' % (o.amount_advance_org)
+                reconcile_order_line_bank_char += '%s\n' % ( o.amount_bank_org)
+                reconcile_order_line_amount_diff_char += '%s\n' % ( o.amount_diff_org)
+            # for o in dlrs_2203:
+            #     reconcile_order_line_char += '%s: %s\n' % (o.order_id.date)
+            #     reconcile_order_line_advance_char += '%s\n' % (o.amount_advance_org)
+            # for o in dlrs_220301:
+            #     reconcile_order_line_char += '%s: %s\n' % (o.order_id.date)
+            #     reconcile_order_line_payment_char +='%s\n' % (o.amount_payment_org)
+            # for o in dlrs_5603:
+            #     reconcile_order_line_char += '%s: %s\n' % (o.order_id.date)
+            #     reconcile_order_line_bank_char += '%s\n' % ( o.amount_bank_org)
+            # for o in dlrs_5601:
+            #     reconcile_order_line_char += '%s: %s\n' % (o.order_id.date)
+            #     reconcile_order_line_amount_diff_char += '%s\n' % ( o.amount_diff_org)
+            one.reconcile_order_line_char = reconcile_order_line_char
+            one.reconcile_order_line_payment_char = reconcile_order_line_payment_char
+            one.reconcile_order_line_advance_char = reconcile_order_line_advance_char
+            one.reconcile_order_line_bank_char = reconcile_order_line_bank_char
+            one.reconcile_order_line_amount_diff_char = reconcile_order_line_amount_diff_char
 
 
+
+   #13ok
     yjzy_type = fields.Selection([('sale', u'销售'), ('purchase', u'采购'), ('back_tax', u'退税')], string=u'发票类型')
     bill_id = fields.Many2one('transport.bill', u'发运单')
     tb_contract_code = fields.Char(u'出运合同号', related='bill_id.ref', readonly=True)
     include_tax = fields.Boolean(u'含税', related='bill_id.include_tax')
-
     date_ship = fields.Date(u'出运船日期')
     date_finish = fields.Date(u'交单日期')
-    reconcile_order_id = fields.Many2one('account.reconcile.order', u'核销单据')
     purchase_date_finish_att = fields.Many2many('ir.attachment', string='供应商交单日附件')
-    purchase_date_finish_att_count = fields.Integer(u'供应商交单附件数量',compute=compute_info)
-    purchase_date_finish_state = fields.Selection([('draft', u'待提交'), ('submit', u'待审批'), ('done', u'完成')], '供应商交单审批状态', default='draft')
+    purchase_date_finish_att_count = fields.Integer(u'供应商交单附件数量', compute=compute_info)
+    purchase_date_finish_state = fields.Selection([('draft', u'待提交'), ('submit', u'待审批'), ('done', u'完成')], '供应商交单审批状态',
+                                                  default='draft')
+    date_deadline = fields.Date(u'到期日期', compute=compute_date_deadline)
+    gongsi_id = fields.Many2one('gongsi', '内部公司')
+    date_out_in = fields.Date('进仓日')
+    #----
+    reconcile_order_id = fields.Many2one('account.reconcile.order', u'核销单据')
+
+    reconcile_order_line_id = fields.One2many('account.reconcile.order.line', 'invoice_id', u'核销明细行', domain=[('order_id.state','=','done'),('amount_total_org','!=',0)])
+    reconcile_date = fields.Date(u'认领日期', related='reconcile_order_id.date')
+    reconcile_order_line_char = fields.Char(compute=_get_reconcile_order_line_char, string=u'销售合同')
+    reconcile_order_line_payment_char = fields.Char(compute=_get_reconcile_order_line_char, string=u'收款认领金额')
+    reconcile_order_line_advance_char = fields.Char(compute=_get_reconcile_order_line_char, string=u'预收认领金额')
+    reconcile_order_line_bank_char = fields.Char(compute=_get_reconcile_order_line_char, string=u'银行扣款认领金额')
+    reconcile_order_line_amount_diff_char = fields.Char(compute=_get_reconcile_order_line_char, string=u'销售费用认领金额')
+
+
 
     move_ids = fields.One2many('account.move', 'invoice_id', u'发票相关的分录', help=u'记录发票相关的分录，方便统计')
     move_line_ids = fields.One2many('account.move.line', 'invoice_id', u'发票相关的分录明细', help=u'记录发票相关的分录明细，方便统计')
-    date_deadline = fields.Date(u'到期日期', compute=compute_date_deadline)
+
 
     item_ids = fields.One2many('invoice.hs_name.item', 'invoice_id', u'品名汇总明细')
     po_id = fields.Many2one('purchase.order', u'采购订单')
     purchase_contract_code = fields.Char(u'合同编码', related='po_id.contract_code', readonly=True)
 
     sale_assistant_id = fields.Many2one('res.users', u'业务助理')
-    gongsi_id = fields.Many2one('gongsi', '内部公司')
+
     #akiny
     tb_purchase_invoice_balance = fields.Monetary('对应应付余额',related='bill_id.purchase_invoice_balance_new' )
     tb_sale_invoice_balance = fields.Monetary('对应应收余额', related='bill_id.sale_invoice_balance_new')
@@ -101,7 +161,7 @@ class account_invoice(models.Model):
                                           ('before_60_90',u'未来60-90天'),('before_90',u'未来超过90天'),('un_begin',u'未开始')],'到期时间组',store=True,
                                            compute=compute_residual_date_group)
     residual_times = fields.Integer('逾期天数',compute=compute_times)
-    date_out_in = fields.Date('进仓日')
+
     state = fields.Selection([
         ('draft', u'未确认'),
         ('open', u'已确认'),
@@ -115,7 +175,22 @@ class account_invoice(models.Model):
              " * The 'Paid' status is set automatically when the invoice is paid. Its related journal entries may or may not be reconciled.\n"
              " * The 'Cancelled' status is used when user cancel invoice.")
 
+    def open_reconcile_order_line(self):
+        self.ensure_one()
+        #form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form')
+        tree_view = self.env.ref('yjzy_extend.account_yshxd_line_tree_view')
+        for one in self:
+            return {
+                'name': u'客户应收',
+                'view_type': 'form',
+                'view_mode': 'tree,form',
+                'res_model': 'account.reconcile.order.line',
+                'type': 'ir.actions.act_window',
+                'views': [(tree_view.id, 'tree')],
+                'domain': [('invoice_id', 'in', [one.id])],
+                'target':'new'
 
+            }
 
     # def name_get(self):
     #     ctx = self.env.context
