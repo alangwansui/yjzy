@@ -57,6 +57,7 @@
                      <field name="amount_total_signed" string="Total" sum="Total"/>
                     <field name="residual_signed" string="未付金额" sum="Amount Due"/>
                     <field name="reconcile_order_line_char"/>
+                    <field name="reconcile_order_line_payment_char"/>
                     <field name="reconcile_order_line_advance_char"/>
                     <field name="reconcile_order_line_bank_char"/>
                     <field name="reconcile_order_line_amount_diff_char"/>
