@@ -85,11 +85,11 @@ class account_invoice(models.Model):
             #     if o.amount_diff_org != 0:
             #         reconcile_order_line_amount_diff_char += '%s: %s\n' % (o.order_id.date, o.amount_diff_org)
             for o in dlrs:
-                reconcile_order_line_char += '%s: %s' % (o.order_id.date, o.so_id.contract_code) + '\n'
-                reconcile_order_line_payment_char +='%s' % (o.amount_payment_org) + '\n'
-                reconcile_order_line_advance_char += '%s' % (o.amount_advance_org) + '\n'
-                reconcile_order_line_bank_char += '%s' % ( o.amount_bank_org) + '\n'
-                reconcile_order_line_amount_diff_char += '%s' % ( o.amount_diff_org) + '\n'
+                reconcile_order_line_char += '\n%s: %s' % (o.order_id.date, o.so_id.contract_code) + '\n'
+                reconcile_order_line_payment_char +='\n%s' % (o.amount_payment_org) + '\n'
+                reconcile_order_line_advance_char += '\n%s' % (o.amount_advance_org) + '\n'
+                reconcile_order_line_bank_char += '\n%s' % ( o.amount_bank_org) + '\n'
+                reconcile_order_line_amount_diff_char += '\n%s' % ( o.amount_diff_org) + '\n'
             # for o in dlrs_2203:
             #     reconcile_order_line_char += '%s: %s\n' % (o.order_id.date)
             #     reconcile_order_line_advance_char += '%s\n' % (o.amount_advance_org)
