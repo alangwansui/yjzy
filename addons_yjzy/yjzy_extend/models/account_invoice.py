@@ -85,7 +85,7 @@ class account_invoice(models.Model):
             #     if o.amount_diff_org != 0:
             #         reconcile_order_line_amount_diff_char += '%s: %s\n' % (o.order_id.date, o.amount_diff_org)
             for o in dlrs:
-                reconcile_order_line_char += '%s: %s\n' % (o.date, o.so_id)
+                reconcile_order_line_char += '%s: %s\n' % (o.order_id.date, o.so_id)
                 reconcile_order_line_payment_char +='%s\n' % (o.amount_payment_org)
                 reconcile_order_line_advance_char += '%s\n' % (o.amount_advance_org)
                 reconcile_order_line_bank_char += '%s\n' % ( o.amount_bank_org)
