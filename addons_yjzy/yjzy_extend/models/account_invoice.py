@@ -129,11 +129,11 @@ class account_invoice(models.Model):
 
     reconcile_order_line_id = fields.One2many('account.reconcile.order.line', 'invoice_id', u'核销明细行', domain=[('order_id.state','=','done'),('amount_total_org','!=',0)])
     reconcile_date = fields.Date(u'认领日期', related='reconcile_order_id.date')
-    reconcile_order_line_char = fields.Char(compute=_get_reconcile_order_line_char, string=u'销售合同')
-    reconcile_order_line_payment_char = fields.Char(compute=_get_reconcile_order_line_char, string=u'收款认领金额')
-    reconcile_order_line_advance_char = fields.Char(compute=_get_reconcile_order_line_char, string=u'预收认领金额')
-    reconcile_order_line_bank_char = fields.Char(compute=_get_reconcile_order_line_char, string=u'银行扣款认领金额')
-    reconcile_order_line_amount_diff_char = fields.Char(compute=_get_reconcile_order_line_char, string=u'销售费用认领金额')
+    reconcile_order_line_char = fields.Text(compute=_get_reconcile_order_line_char, string=u'销售合同')
+    reconcile_order_line_payment_char = fields.Text(compute=_get_reconcile_order_line_char, string=u'收款认领金额')
+    reconcile_order_line_advance_char = fields.Text(compute=_get_reconcile_order_line_char, string=u'预收认领金额')
+    reconcile_order_line_bank_char = fields.Text(compute=_get_reconcile_order_line_char, string=u'银行扣款认领金额')
+    reconcile_order_line_amount_diff_char = fields.Text(compute=_get_reconcile_order_line_char, string=u'销售费用认领金额')
 
 
 
