@@ -249,9 +249,9 @@ class sale_order(models.Model):
 
     #akiny715
     advance_reconcile_order_line_ids = fields.One2many('account.reconcile.order.line', 'so_id',string='预收认领明细', domain=[('order_id.state','=','done'),('amount_total_org','!=',0)])
-    advance_reconcile_order_line_amount_char = fields.Char(compute=compute_advance_total, string=u'预收认领明细金额')
-    advance_reconcile_order_line_date_char = fields.Char(compute=compute_advance_total, string=u'预收认领日期')
-    advance_reconcile_order_line_invoice_char = fields.Char(compute=compute_advance_total, string=u'预收认领对应账单')
+    advance_reconcile_order_line_amount_char = fields.Text(compute=compute_advance_total, string=u'预收认领明细金额')
+    advance_reconcile_order_line_date_char = fields.Text(compute=compute_advance_total, string=u'预收认领日期')
+    advance_reconcile_order_line_invoice_char = fields.Text(compute=compute_advance_total, string=u'预收认领对应账单')
     advance_total = fields.Monetary(u'预收总金额', compute=compute_advance_total,store=True)
     #按照预收款为对象统计：因为没有做关联，所以通过销售合同进行
 
