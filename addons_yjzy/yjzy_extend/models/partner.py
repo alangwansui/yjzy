@@ -58,7 +58,7 @@ class res_partner(models.Model):
         for one in self:
             invoice = one.invoice_ids
             payment = one.advance_payment_ids
-            reconcile = reconcile_ids.search([('order_id.partner_id','=',one.id)])
+            #reconcile = reconcile_ids.search([('order_id.partner_id','=',one.id)])
             amount_invoice = sum(x.amount_total_signed for x in invoice)
             amount_residual_invoice = sum(x.residual_signed for x in invoice)
             amount_advance_payment = sum(x.amount for x in payment)
