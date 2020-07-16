@@ -242,7 +242,7 @@ class res_partner(models.Model):
             'res_model': 'sale.order',
             'type': 'ir.actions.act_window',
             'views': [(tree_view.id, 'tree')],
-            'domain': [('partner_id', 'in', [self.id]),('yjzy_payment_ids', '!=', 'sale')]
+            'domain': [('partner_id', 'in', [self.id]),('yjzy_payment_ids', '!=', False)]
         }
 
     def open_advance(self):

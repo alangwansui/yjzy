@@ -845,6 +845,7 @@ class account_reconcile_order_line(models.Model):
     # def onchange_amount(self):
     #     self.amount_exchange_org = self.amount_invoice_so - self.amount_advance_org - self.amount_bank_org - self.amount_diff_org - self.amount_payment_org
 
+    date = fields.Date('日期',related="order_id.date")
     order_id = fields.Many2one('account.reconcile.order', u'核销单')
     partner_type = fields.Selection(related='order_id.partner_type')
     payment_type = fields.Selection(related='order_id.payment_type')

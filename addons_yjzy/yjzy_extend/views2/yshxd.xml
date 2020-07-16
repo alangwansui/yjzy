@@ -2,12 +2,13 @@
 <odoo>
 
 
-
+    <!--应收核销明细-->
     <record model="ir.ui.view" id="account_yshxd_line_tree_view">
         <field name="name">account.reconcile.order.line.tree</field>
         <field name="model">account.reconcile.order.line</field>
         <field name="arch" type="xml">
             <tree string="认领明细"  edit="false" create="false">
+                <field name="so_id"/>
                 <field name="so_id"/>
                 <field name="tb_contract_code"/>
                 <field name="advance_residual"/>
@@ -15,12 +16,11 @@
                 <field name="payment_currency_id" invisible="1"/>
                 <field name="currency_id" invisible="1"/>
                 <field name="yjzy_currency_id" invisible="1"/>
-                <field name="amount_advance_org" string="预收认领金额"/>
-                <field name="amount_payment_org" string="收款认领金额"/>
-                <field name="amount_bank_org" string="银行扣款认领金额"/>
-                <field name="amount_diff_org" string="销售费用认领金额"/>
-                <field name="amount_total_org" string="合计认领"/>
-
+                <field name="amount_advance_org" string="预收认领金额" sum="小计"/>
+                <field name="amount_payment_org" string="收款认领金额" sum="小计"/>
+                <field name="amount_bank_org" string="银行扣款认领金额" sum="小计"/>
+                <field name="amount_diff_org" string="销售费用认领金额" sum="小计"/>
+                <field name="amount_total_org" string="合计认领" sum="小计"/>
             </tree>
         </field>
     </record>

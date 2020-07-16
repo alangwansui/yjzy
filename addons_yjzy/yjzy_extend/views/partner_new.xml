@@ -257,6 +257,36 @@
                                 <separator string="" colspan="2"/>
                                 </group>
                         <notebook colspan="4" invisible="1">
+                            <page>
+                                <field name="invoice_ids">
+                                    <tree decoration-info="state == 'draft'" decoration-muted="state == 'cancel'" string="Invoice">
+
+                    <field name="date_invoice" string="账单日期"/>
+                    <field name="tb_contract_code" string="合同号"/>
+                    <button name="open_reconcile_order_line" icon="fa-pencil-square-o" type="object"/>
+                    <field name="amount_total_signed" string="Total" sum="Total"/>
+                    <field name="residual_signed" string="未付金额" sum="Amount Due"/>
+                    <field name="reconcile_order_line_payment"/>
+                    <field name="reconcile_order_line_advance"/>
+                    <field name="reconcile_order_line_bank"/>
+                    <field name="reconcile_order_line_amount_diff"/>
+                    <field name="commercial_partner_id" invisible="1"/>
+                    <field name="reference" invisible="1"/>
+                    <field name="name" invisible="1"/>
+                    <field name="journal_id" invisible="1"/>
+                    <field name="company_id" groups="base.group_multi_company" invisible="1"
+                           options="{'no_create': True}"/>
+                    <field name="user_id" invisible="1"/>
+                    <field name="origin" invisible="1"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="company_currency_id" invisible="1"/>
+                    <field name="state"/>
+                    <field name="type" invisible="context.get('type',True)"/>
+                    <field name="date_due" string="进仓到期日"/>
+                    <field name="date_deadline" string="实际到期日"/>
+                </tree>
+                                </field>
+                            </page>
                             <page name="manager" string="管理页" groups="base.group_system">
                                 <group>
                                 <field name="sales_approve_uid"/>
@@ -4051,7 +4081,7 @@
 
 
          <record id="action_new_customer_account" model="ir.actions.act_window">
-            <field name="name">客户查询</field>
+            <field name="name">公司客户</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">res.partner</field>
             <field name="view_type">form</field>
@@ -4068,7 +4098,27 @@
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('res_new_partner_kanban_view')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_new_customer_account_form')})]"/>
         </record>
-                <menuitem id="mennu_new_customer_account" parent="menu_account_new_root" name="客户应收付" sequence="99"
+        <menuitem id="mennu_new_customer_account" parent="menu_account_new_root" name="公司客户" sequence="99"
                   action="action_new_customer_account"/>
+         <record id="action_new_customer_account_all" model="ir.actions.act_window">
+            <field name="name">所有客户</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="domain">
+                [('customer','=',True),('name','!=','未定义')]
+            </field>
+            <field name="context">{'default_is_company': True,'default_customer': True, 'default_contract_type':'c'}
+            </field>
+            <field name="filter" eval="True"/>
+            <field name="search_view_id" ref="view_new_res_partner_filter"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_new_partner_customer_account_tree')}),
+                          (0, 0, {'view_mode': 'kanban', 'view_id': ref('res_new_partner_kanban_view')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_new_customer_account_form')})]"/>
+        </record>
+                <menuitem id="mennu_new_customer_account_all" parent="menu_account_new_root" name="所有客户" sequence="99"
+                  action="action_new_customer_account_all"/>
     </data>
 </odoo>

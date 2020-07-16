@@ -75,6 +75,7 @@ class account_invoice(models.Model):
             reconcile_order_line_advance_char = ''
             reconcile_order_line_bank_char = ''
             reconcile_order_line_amount_diff_char = ''
+            reconcile_order_line_so_id_char = ''
             # for o in dlrs:
             #     if o.amount_payment_org != 0:
             #         reconcile_order_line_payment_char +='%s: %s\n' % (o.order_id.date, o.amount_payment_org)
@@ -90,6 +91,7 @@ class account_invoice(models.Model):
                 reconcile_order_line_advance_char += '%s\n' % (o.amount_advance_org)
                 reconcile_order_line_bank_char += '%s\n' % ( o.amount_bank_org)
                 reconcile_order_line_amount_diff_char += '%s\n' % ( o.amount_diff_org)
+                reconcile_order_line_so_id_char += '%s\n' % ( o.so_id.contract_code)
             # for o in dlrs_2203:
             #     reconcile_order_line_char += '%s: %s\n' % (o.order_id.date)
             #     reconcile_order_line_advance_char += '%s\n' % (o.amount_advance_org)
@@ -103,12 +105,28 @@ class account_invoice(models.Model):
             #     reconcile_order_line_char += '%s: %s\n' % (o.order_id.date)
             #     reconcile_order_line_amount_diff_char += '%s\n' % ( o.amount_diff_org)
             one.reconcile_order_line_char = reconcile_order_line_char
+            one.reconcile_order_line_so_id_char = reconcile_order_line_so_id_char
             one.reconcile_order_line_payment_char = reconcile_order_line_payment_char
             one.reconcile_order_line_advance_char = reconcile_order_line_advance_char
             one.reconcile_order_line_bank_char = reconcile_order_line_bank_char
             one.reconcile_order_line_amount_diff_char = reconcile_order_line_amount_diff_char
 
-
+    @api.depends('reconcile_order_line_id','reconcile_order_line_id.amount_payment_org','reconcile_order_line_id.amount_advance_org','reconcile_order_line_id.amount_bank_org','reconcile_order_line_id.amount_diff_org')
+    def _get_reconcile_order_line(self):
+        for one in self:
+            dlrs = one.reconcile_order_line_id
+            # reconcile_order_line_payment = 0.0
+            # reconcile_order_line_advance = 0.0
+            # reconcile_order_line_bank = 0.0
+            # reconcile_order_line_amount_diff = 0.0
+            reconcile_order_line_payment = sum(x.amount_payment_org for x in dlrs) or 0.0
+            reconcile_order_line_advance = sum(x.amount_advance_org for x in dlrs) or 0.0
+            reconcile_order_line_bank = sum(x.amount_bank_org for x in dlrs) or 0.0
+            reconcile_order_line_amount_diff = sum(x.amount_diff_org for x in dlrs) or 0.0
+            one.reconcile_order_line_payment = reconcile_order_line_payment
+            one.reconcile_order_line_advance = reconcile_order_line_advance
+            one.reconcile_order_line_bank = reconcile_order_line_bank
+            one.reconcile_order_line_amount_diff = reconcile_order_line_amount_diff
 
    #13ok
     yjzy_type = fields.Selection([('sale', u'销售'), ('purchase', u'采购'), ('back_tax', u'退税')], string=u'发票类型')
@@ -134,8 +152,13 @@ class account_invoice(models.Model):
     reconcile_order_line_advance_char = fields.Text(compute=_get_reconcile_order_line_char, string=u'预收认领金额')
     reconcile_order_line_bank_char = fields.Text(compute=_get_reconcile_order_line_char, string=u'银行扣款认领金额')
     reconcile_order_line_amount_diff_char = fields.Text(compute=_get_reconcile_order_line_char, string=u'销售费用认领金额')
+    reconcile_order_line_so_id_char = fields.Text(compute=_get_reconcile_order_line_char, string=u'销售合同')
 
 
+    reconcile_order_line_payment = fields.Float(compute=_get_reconcile_order_line, string=u'收款认领金额',store=True)
+    reconcile_order_line_advance = fields.Float(compute=_get_reconcile_order_line, string=u'预收认领金额',store=True)
+    reconcile_order_line_bank = fields.Float(compute=_get_reconcile_order_line, string=u'银行扣款认领金额',store=True)
+    reconcile_order_line_amount_diff = fields.Float(compute=_get_reconcile_order_line, string=u'销售费用认领金额',store=True)
 
     move_ids = fields.One2many('account.move', 'invoice_id', u'发票相关的分录', help=u'记录发票相关的分录，方便统计')
     move_line_ids = fields.One2many('account.move.line', 'invoice_id', u'发票相关的分录明细', help=u'记录发票相关的分录明细，方便统计')
