@@ -8,7 +8,7 @@
         <field name="model">account.reconcile.order.line</field>
         <field name="arch" type="xml">
             <tree string="认领明细"  edit="false" create="false">
-                <field name="so_id"/>
+
                 <field name="so_id"/>
                 <field name="tb_contract_code"/>
                 <field name="advance_residual"/>
@@ -160,6 +160,7 @@
                                     <field name="amount_bank_org" invisible="not context.get('show_so')"/>
                                     <field name="amount_diff_org"/>
                                     <field name="amount_total_org"/>
+                                    <field name="yjzy_payment_id"/>
 
                                 </tree>
                             </field>

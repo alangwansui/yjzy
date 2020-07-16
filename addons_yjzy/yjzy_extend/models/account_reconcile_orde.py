@@ -571,7 +571,8 @@ class account_reconcile_order(models.Model):
             'partner_id': self.partner_id.id,
             'journal_id': self.journal_id.id,
             'invoice_id': line.invoice_id.id,
-            'new_payment_id': self.yjzy_payment_id.id,
+            'new_payment_id': self.yjzy_payment_id.id,#akiny new
+            'new_advance_payment_id':line.yjzy_payment_id.id,
             'gongsi_id': self.gongsi_id.id,
         }
         if account.code in ['2203']:
@@ -875,7 +876,9 @@ class account_reconcile_order_line(models.Model):
 
     advance_account_id = fields.Many2one(related='so_id.advance_account_id', string='预收账户')
 
-    yjzy_payment_id = fields.Many2one('account.payment', u'预收认领单', related='so_id.yjzy_payment_id')
+   # yjzy_payment_id = fields.Many2one('account.payment', u'预收认领单', related='so_id.yjzy_payment_id')
+    yjzy_payment_id = fields.Many2one('account.payment', u'预收认领单')
+
     yjzy_currency_id = fields.Many2one('res.currency', u'预收币种', related='yjzy_payment_id.currency_id')
     amount_advance_org = fields.Monetary(u'预收金额', currency_field='yjzy_currency_id')
 

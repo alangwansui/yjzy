@@ -230,7 +230,8 @@ class sale_order(models.Model):
     @api.depends('yjzy_payment_ids','yjzy_payment_ids.amount')
     def compute_advance_total(self):
         for one in self:
-            advance_total = sum(x.amount for x in one.yjzy_payment_ids)
+            yjzy_payment_ids = one.yjzy_payment_ids.filtered(lambda x: x.state in ['posted','reconciled'])
+            advance_total = sum(x.amount for x in yjzy_payment_ids)
             dlrs = one.advance_reconcile_order_line_ids
             advance_reconcile_order_line_amount_char = ''
             advance_reconcile_order_line_date_char = ''
@@ -250,8 +251,11 @@ class sale_order(models.Model):
     advance_reconcile_order_line_ids = fields.One2many('account.reconcile.order.line', 'so_id',string='预收认领明细', domain=[('order_id.state','=','done'),('amount_total_org','!=',0)])
     advance_reconcile_order_line_amount_char = fields.Char(compute=compute_advance_total, string=u'预收认领明细金额')
     advance_reconcile_order_line_date_char = fields.Char(compute=compute_advance_total, string=u'预收认领日期')
-    advance_reconcile_order_line_invoice_char = fields.Char(compute=compute_advance_total, string=u'预收认领日期')
+    advance_reconcile_order_line_invoice_char = fields.Char(compute=compute_advance_total, string=u'预收认领对应账单')
     advance_total = fields.Monetary(u'预收总金额', compute=compute_advance_total,store=True)
+    #按照预收款为对象统计：因为没有做关联，所以通过销售合同进行
+
+
 
     company_currency_id = fields.Many2one('res.currency', u'公司货币', default=lambda self: self.env.user.company_id.currency_id.id)
 

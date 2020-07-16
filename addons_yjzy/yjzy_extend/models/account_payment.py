@@ -133,14 +133,22 @@ class account_payment(models.Model):
 
         return res
 
+    @api.depends('advance_reconcile_order_line_ids','amount','advance_reconcile_order_line_ids.amount_advance_org')
+    def compute_advance_balance_total(self):
+        for one in self:
+            advance_total = sum([x.amount_advance_org for x in one.advance_reconcile_order_line_ids])
+            advance_balance_total = one.amount - advance_total
+            one.advance_total = advance_total
+            one.advance_balance_total = advance_balance_total
 
 
-
-    advance_reconcile_order_line_ids = fields.One2many('account.reconcile.order.line', 'so_id', string='预收认领明细',
-                                                       related='so_id.advance_reconcile_order_line_ids')
+    advance_reconcile_order_line_ids = fields.One2many('account.reconcile.order.line', 'yjzy_payment_id', string='预收认领明细',domain=[('amount_advance_org','>',0),('order_id.state','=','done')])
     advance_reconcile_order_line_amount_char = fields.Char(related='so_id.advance_reconcile_order_line_amount_char', string=u'预收认领明细金额')
     advance_reconcile_order_line_date_char = fields.Char(related='so_id.advance_reconcile_order_line_date_char',string=u'预收认领日期')
     advance_reconcile_order_line_invoice_char = fields.Char(related='so_id.advance_reconcile_order_line_invoice_char',string=u'账单')
+    advance_balance_total = fields.Monetary(u'预收余额', compute=compute_advance_balance_total, currency_field='yjzy_payment_currency_id', store=True)
+    advance_total = fields.Monetary(u'预收认领金额', compute=compute_advance_balance_total,
+                                            currency_field='yjzy_payment_currency_id', store=True)
 
     #13ok
     name = fields.Char(u'编号', default=lambda self: self._default_name())
@@ -207,7 +215,22 @@ class account_payment(models.Model):
     payment_date_confirm = fields.Datetime('付款确认时间') ##akiny 付款确认时间
 
 
+    def open_reconcile_order_line(self):
+        self.ensure_one()
+        #form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form')
+        tree_view = self.env.ref('yjzy_extend.account_ysrld_line_tree_view')
+        for one in self:
+            return {
+                'name': u'预收认领明细',
+                'view_type': 'form',
+                'view_mode': 'tree,form',
+                'res_model': 'account.reconcile.order.line',
+                'type': 'ir.actions.act_window',
+                'views': [(tree_view.id, 'tree')],
+                'domain': [('yjzy_payment_id', '=', one.id)],
+                'target':'new'
 
+            }
 
     def update_payment_date_confirm(self):
         for one in self:
@@ -306,6 +329,7 @@ class account_payment(models.Model):
             'new_payment_id': new_payment_id,
             'so_id': self.so_id.id,
             'po_id': self.po_id.id,
+            'new_advance_payment_id':self.id
         })
         return res
 

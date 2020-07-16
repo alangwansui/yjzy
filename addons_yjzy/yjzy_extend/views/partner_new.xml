@@ -61,7 +61,6 @@
         </record>
 
 
-
         <record id="view_new_partner_customer_tree" model="ir.ui.view">
             <field name="name">res.partner.tree.customer.new</field>
             <field name="model">res.partner</field>
@@ -145,24 +144,24 @@
             </field>
         </record>
 
-                 <record id="view_new_partner_customer_account_tree" model="ir.ui.view">
+        <record id="view_new_partner_customer_account_tree" model="ir.ui.view">
             <field name="name">res.partner.tree.customer.new</field>
             <field name="model">res.partner</field>
             <field eval="8" name="priority"/>
             <field name="arch" type="xml">
                 <tree string="Contacts">
                     <field name="name" string="简称"/>
-                    <field name="amount_invoice"/>
-                    <field name="amount_residual_invoice"/>
-                    <field name="amount_advance_payment"/>
-                    <field name="amount_advance_payment_reconcile"/>
-                    <field name="amount_residual_advance_payment"/>
+                    <field name="amount_invoice" sum="小计"/>
+                    <field name="amount_residual_invoice" sum="小计"/>
+                    <field name="amount_advance_payment" sum="小计"/>
+                    <field name="amount_advance_payment_reconcile" sum="小计"/>
+                    <field name="amount_residual_advance_payment" sum="小计"/>
                     <field name="is_company" invisible="1"/>
                     <field name="active" invisible="1"/>
                 </tree>
             </field>
         </record>
-      <record id="view_new_customer_account_form" model="ir.ui.view">
+        <record id="view_new_customer_account_form" model="ir.ui.view">
             <field name="name">res.partner.customer.form.new</field>
             <field name="model">res.partner</field>
             <field name="priority" eval="1"/>
@@ -186,11 +185,11 @@
                             </button>
                             <button name="open_sale_order" class="oe_stat_button" type="object"
                                     attrs="{'invisible': [('customer', '=', False)]}" icon="fa-usd">
-                                 <span class="o_stat_text">销售预收情况</span>
+                                <span class="o_stat_text">销售预收情况</span>
                             </button>
                             <button name="open_advance" class="oe_stat_button" type="object"
                                     attrs="{'invisible': [('customer', '=', False)]}" icon="fa-usd">
-                                 <span class="o_stat_text">预收认领列表</span>
+                                <span class="o_stat_text">预收认领列表</span>
                             </button>
 
                             <field name="is_editable" widget="boolean_toggle"/>
@@ -227,74 +226,92 @@
                                         attrs="{'invisible': ['|', '|', ('is_company','=', True), ('company_name', '=', ''), ('company_name', '=', False)]}"/>
                             </div>
                         </div>
-                            <group>
-                                <field name="customer" invisible="1"/>
-                                <field name="supplier" invisible="1"/>
-                                <field name="type" invisible="1" attrs="{'invisible': [('parent_id','=', False)]}"
-                                       groups="base.group_no_one,sale.group_delivery_invoice_address"/>
-                                <field name="full_name" string="客户公司全称"
-                                       attrs="{'invisible':[('is_company','=',False)],'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
+                        <group>
+                            <field name="customer" invisible="1"/>
+                            <field name="supplier" invisible="1"/>
+                            <field name="type" invisible="1" attrs="{'invisible': [('parent_id','=', False)]}"
+                                   groups="base.group_no_one,sale.group_delivery_invoice_address"/>
+                            <field name="full_name" string="客户公司全称"
+                                   attrs="{'invisible':[('is_company','=',False)],'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
 
-                                <!--label for="country_id" string="业务国" attrs="{'invisible':[('type','!=','delivery')]}"/>
-                                <label for="country_id" string="所在国" attrs="{'invisible':[('type','=','delivery')]}"/>
-                                <div class="o_row"-->
-                                <field name="country_id" placeholder="Country" string="公司所在国"
-                                       class="o_address_country"
-                                       options='{"no_open": True, "no_create": True}'
-                                       attrs="{'readonly': [('state','not in',['draft','check']),('is_editable','=',False)]}"/>
+                            <!--label for="country_id" string="业务国" attrs="{'invisible':[('type','!=','delivery')]}"/>
+                            <label for="country_id" string="所在国" attrs="{'invisible':[('type','=','delivery')]}"/>
+                            <div class="o_row"-->
+                            <field name="country_id" placeholder="Country" string="公司所在国"
+                                   class="o_address_country"
+                                   options='{"no_open": True, "no_create": True}'
+                                   attrs="{'readonly': [('state','not in',['draft','check']),('is_editable','=',False)]}"/>
 
-                                <!--/div-->
-                                <field name="jituan_id" string="所属集团" help="如果没有请填写无"
-                                       domain="['|',('partner_type','=','customer'),('partner_type','=',False)]"
-                                       options='{"no_open": True, "no_create": True}'
-                                       attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
-                                <field name="sale_currency_id" options="{'no_open':1}"
-                                       attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
-                                <field name="property_payment_term_id" help="做销售合同时，预设的付款条款和订单选择的条款有出入时，会标注红色" domain="[('type','=','sale')]"
-                                       attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"
-                                       widget="selection"/>
+                            <!--/div-->
+                            <field name="jituan_id" string="所属集团" help="如果没有请填写无"
+                                   domain="['|',('partner_type','=','customer'),('partner_type','=',False)]"
+                                   options='{"no_open": True, "no_create": True}'
+                                   attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
+                            <field name="sale_currency_id" options="{'no_open':1}"
+                                   attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
+                            <field name="property_payment_term_id" help="做销售合同时，预设的付款条款和订单选择的条款有出入时，会标注红色"
+                                   domain="[('type','=','sale')]"
+                                   attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"
+                                   widget="selection"/>
 
-                                <separator string="" colspan="2"/>
-                                </group>
-                        <notebook colspan="4" invisible="1">
-                            <page>
+                            <separator string="" colspan="2"/>
+                        </group>
+                        <notebook colspan="4">
+                            <page string="应收账单列表">
                                 <field name="invoice_ids">
-                                    <tree decoration-info="state == 'draft'" decoration-muted="state == 'cancel'" string="Invoice">
+                                    <tree decoration-info="state == 'draft'" decoration-muted="state == 'cancel'"
+                                          string="Invoice">
 
-                    <field name="date_invoice" string="账单日期"/>
-                    <field name="tb_contract_code" string="合同号"/>
-                    <button name="open_reconcile_order_line" icon="fa-pencil-square-o" type="object"/>
-                    <field name="amount_total_signed" string="Total" sum="Total"/>
-                    <field name="residual_signed" string="未付金额" sum="Amount Due"/>
-                    <field name="reconcile_order_line_payment"/>
-                    <field name="reconcile_order_line_advance"/>
-                    <field name="reconcile_order_line_bank"/>
-                    <field name="reconcile_order_line_amount_diff"/>
-                    <field name="commercial_partner_id" invisible="1"/>
-                    <field name="reference" invisible="1"/>
-                    <field name="name" invisible="1"/>
-                    <field name="journal_id" invisible="1"/>
-                    <field name="company_id" groups="base.group_multi_company" invisible="1"
-                           options="{'no_create': True}"/>
-                    <field name="user_id" invisible="1"/>
-                    <field name="origin" invisible="1"/>
-                    <field name="currency_id" invisible="1"/>
-                    <field name="company_currency_id" invisible="1"/>
-                    <field name="state"/>
-                    <field name="type" invisible="context.get('type',True)"/>
-                    <field name="date_due" string="进仓到期日"/>
-                    <field name="date_deadline" string="实际到期日"/>
-                </tree>
+                                        <field name="date_invoice" string="账单日期"/>
+                                        <field name="tb_contract_code" string="合同号"/>
+                                        <button name="open_reconcile_order_line" icon="fa-pencil-square-o"
+                                                type="object"/>
+                                        <field name="amount_total_signed" string="Total" sum="Total"/>
+                                        <field name="residual_signed" string="未付金额" sum="Amount Due"/>
+                                        <field name="reconcile_order_line_payment"/>
+                                        <field name="reconcile_order_line_advance"/>
+                                        <field name="reconcile_order_line_bank"/>
+                                        <field name="reconcile_order_line_amount_diff"/>
+                                        <field name="commercial_partner_id" invisible="1"/>
+                                        <field name="reference" invisible="1"/>
+                                        <field name="name" invisible="1"/>
+                                        <field name="journal_id" invisible="1"/>
+                                        <field name="company_id" groups="base.group_multi_company" invisible="1"
+                                               options="{'no_create': True}"/>
+                                        <field name="user_id" invisible="1"/>
+                                        <field name="origin" invisible="1"/>
+                                        <field name="currency_id" invisible="1"/>
+                                        <field name="company_currency_id" invisible="1"/>
+                                        <field name="state"/>
+                                        <field name="type" invisible="context.get('type',True)"/>
+                                        <field name="date_due" string="进仓到期日"/>
+                                        <field name="date_deadline" string="实际到期日"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="预收单列表">
+                                <field name="advance_payment_ids">
+                                    <tree string="预收认领单" edit="false" create="false">
+                                        <field name="name" invisible="1"/>
+                                        <field name="payment_date" string="认领日期"/>
+                                        <field name="amount" string="认领金额"/>
+                                        <field name="advance_reconcile_order_line_invoice_char" string="账单"/>
+                                        <field name="so_id" string="销售合同"/>
+                                        <field name="advance_reconcile_order_line_ids" invisible="1"/>
+                                        <field name="advance_reconcile_order_line_date_char"/>
+                                        <field name="advance_reconcile_order_line_amount_char"/>
+                                        <field name="state"/>
+                                    </tree>
                                 </field>
                             </page>
                             <page name="manager" string="管理页" groups="base.group_system">
                                 <group>
-                                <field name="sales_approve_uid"/>
-                                <field name="sales_approve_date"/>
-                                <field name="approve_uid"/>
-                                <field name="approve_date"/>
-                                <field name="done_uid"/>
-                                <field name="done_date"/>
+                                    <field name="sales_approve_uid"/>
+                                    <field name="sales_approve_date"/>
+                                    <field name="approve_uid"/>
+                                    <field name="approve_date"/>
+                                    <field name="done_uid"/>
+                                    <field name="done_date"/>
                                 </group>
                             </page>
                         </notebook>
@@ -1199,7 +1216,7 @@
                                 <field name="customer_product_origin_ids" nolabel="1" string="客户经营产品">
                                     <tree editable="bottom">
                                         <field name="name" required="1"/>
-                                        <field name="description" />
+                                        <field name="description"/>
                                     </tree>
                                 </field>
                             </page>
@@ -1410,7 +1427,6 @@
 
                                 </field>
                             </page>
-
 
 
                             <page string="客户采购产品"
@@ -1641,11 +1657,11 @@
                             </button>
                             <button name="open_sale_order" class="oe_stat_button" type="object"
                                     attrs="{'invisible': [('customer', '=', False)]}" icon="fa-usd">
-                                 <span class="o_stat_text">销售预收情况</span>
+                                <span class="o_stat_text">销售预收情况</span>
                             </button>
                             <button name="open_advance" class="oe_stat_button" type="object"
                                     attrs="{'invisible': [('customer', '=', False)]}" icon="fa-usd">
-                                 <span class="o_stat_text">预收认领列表</span>
+                                <span class="o_stat_text">预收认领列表</span>
                             </button>
                             <button class="oe_stat_button" name="347" type="action"
                                     attrs="{'invisible': [('supplier', '=', False)]}" icon="fa-shopping-cart">
@@ -1727,7 +1743,8 @@
                                        attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <field name="sale_currency_id" options="{'no_open':1}"
                                        attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
-                                <field name="property_payment_term_id" help="做销售合同时，预设的付款条款和订单选择的条款有出入时，会标注红色" domain="[('type','=','sale')]"
+                                <field name="property_payment_term_id" help="做销售合同时，预设的付款条款和订单选择的条款有出入时，会标注红色"
+                                       domain="[('type','=','sale')]"
                                        attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"
                                        widget="selection"/>
 
@@ -1810,17 +1827,22 @@
                                        domain="[('type','=','customer')]"/>
 
 
-                                <field name="customer_info_from_uid" help="可以是公司内部人员，也可以是外部人员，如果找不到，请联系合规负责人添加" domain="[('is_company','=',False),('is_inter_partner','=',True)]" options='{"no_open": True, "no_create": True}'
+                                <field name="customer_info_from_uid" help="可以是公司内部人员，也可以是外部人员，如果找不到，请联系合规负责人添加"
+                                       domain="[('is_company','=',False),('is_inter_partner','=',True)]"
+                                       options='{"no_open": True, "no_create": True}'
                                        attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],
                                        'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
 
-                                <field name="devloper_id" string="客户开发人" help="可以是公司内部人员，也可以是外部人员，如果找不到，请联系合规负责人添加" domain="[('is_company','=',False),('is_inter_partner','=',True)]" options='{"no_open": True, "no_create": True}'
+                                <field name="devloper_id" string="客户开发人" help="可以是公司内部人员，也可以是外部人员，如果找不到，请联系合规负责人添加"
+                                       domain="[('is_company','=',False),('is_inter_partner','=',True)]"
+                                       options='{"no_open": True, "no_create": True}'
                                        attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],
                                        'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <field name="user_id" string="目前客户负责人" options='{"no_open": True, "no_create": True}'
                                        attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],
                                        'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
-                                <field name="assistant_id" string="销售助理" help="如果和负责人是同一人，请选择相同的用户" options='{"no_open": True, "no_create": True}'
+                                <field name="assistant_id" string="销售助理" help="如果和负责人是同一人，请选择相同的用户"
+                                       options='{"no_open": True, "no_create": True}'
                                        attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],
                                        'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <field name="product_manager_id" invisible="1"/>
@@ -2434,7 +2456,7 @@
 
                                 </field>
                             </page>
-<page string="销售合同后置条款"
+                            <page string="销售合同后置条款"
                                   attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)]}">
                                 <field name="term_description" attrs="{'invisible':[('customer','=',False)],
                                        'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
@@ -2444,7 +2466,6 @@
                                   attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)]}">
                                 <field name="customer_product_ids" readonly="1"/>
                             </page>
-
 
 
                             <page name='internal_notes' groups="base.group_system" string="Internal Notes"
@@ -2553,12 +2574,12 @@
                             </page>
                             <page name="manager" string="管理页" groups="base.group_system">
                                 <group>
-                                <field name="sales_approve_uid"/>
-                                <field name="sales_approve_date"/>
-                                <field name="approve_uid"/>
-                                <field name="approve_date"/>
-                                <field name="done_uid"/>
-                                <field name="done_date"/>
+                                    <field name="sales_approve_uid"/>
+                                    <field name="sales_approve_date"/>
+                                    <field name="approve_uid"/>
+                                    <field name="approve_date"/>
+                                    <field name="done_uid"/>
+                                    <field name="done_date"/>
                                 </group>
                             </page>
                         </notebook>
@@ -2793,7 +2814,7 @@
                                        'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <field name="address_text" attrs="{
                                        'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
-                              <field name="is_child_ids" invisible="1"/>
+                                <field name="is_child_ids" invisible="1"/>
 
                             </group>
                             <group>
@@ -2821,7 +2842,8 @@
                                        attrs="{
                                        'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"
                                        domain="[('type','=','supplier')]"/>
-                                <field name="supplier_info_from_uid"  help="可以是内部职员，也可以外部非正式职员，如果找不到请联系合规负责人添加" string="供应商获取人" attrs="{'required' : [('state', '=', 'check')],
+                                <field name="supplier_info_from_uid" help="可以是内部职员，也可以外部非正式职员，如果找不到请联系合规负责人添加"
+                                       string="供应商获取人" attrs="{'required' : [('state', '=', 'check')],
                                        'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <field name="create_uid" options="{'no_open':1}"/>
                                 <field name="create_date" widget="date"/>
@@ -2830,7 +2852,7 @@
                                 <field name="advance_currency_id" invisible="1"/>
                                 <field name="currency_id" invisible="1"/>
                                 <field name="amount_purchase_advance_org" string="预付款余额" groups="base.group_system"
-                                       />
+                                />
                                 <field name="amount_purchase_advance" groups="base.group_system"
                                        attrs="{'invisible': ['|',('supplier','=',False),('is_company','=',False)]}"/>
                                 <field name="need_purchase_fandian" groups="base.group_system"
@@ -3042,7 +3064,8 @@
                                         <field name="phone" help="电话和手机二选一"/>
                                         <field name="mobile" help="电话和手机二选一"/>
                                         <field name="email" help="电子邮箱和社交帐号二选一"/>
-                                        <field name="other_social_accounts" help="电子邮箱和社交帐号二选一" placeholder="如：微信，QQ，WHATSAPP等"/>
+                                        <field name="other_social_accounts" help="电子邮箱和社交帐号二选一"
+                                               placeholder="如：微信，QQ，WHATSAPP等"/>
                                         <field name="wechat" invisible="1"/>
                                         <field name="skype" invisible="1"/>
                                         <field name="qq" invisible="1"/>
@@ -3230,7 +3253,8 @@
                                 </group>
                                 <group string="银行账户信息">
                                     <field name="bank_ids" nolabel="1"
-                                           context="{'default_bank_type':'company_supplier','default_company_id':False}" attrs="{
+                                           context="{'default_bank_type':'company_supplier','default_company_id':False}"
+                                           attrs="{
                                        'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}">
                                         <tree editable="bottom">
                                             <field name="bank_type" invisible="1"/>
@@ -3252,7 +3276,7 @@
                                                 <field name="swift" string="SWIFT(如有)"/>
                                                 <field name="kaihuhang" string="银行开户行" attrs="{'required':1}"/>
                                                 <field name="kaihuhang_address" string="银行地址"/>
-                                                <field name="partner_id" string="账户所有者" />
+                                                <field name="partner_id" string="账户所有者"/>
                                             </group>
                                         </form>
                                     </field>
@@ -3321,7 +3345,8 @@
                                                 <field name="is_company" invisible="1"/>
                                                 <field name="name" string="发票主体名称"
                                                        attrs="{'required':1}"/>
-                                                <field name="partner_hs" nolabel="many2many_tags" attrs="{'required':1}"/>
+                                                <field name="partner_hs" nolabel="many2many_tags"
+                                                       attrs="{'required':1}"/>
                                                 <field name="customer" invisible="1"/>
                                                 <field name="supplier" invisible="1"/>
                                                 <field name="lang" invisible="1"/>
@@ -3336,7 +3361,6 @@
 
                                 </field>
                             </page>
-
 
 
                             <page string="采购合同后置条款"
@@ -3873,7 +3897,8 @@
                 [('customer','=',True),('is_company','=',True),('name','!=','未定义'),('state','!=','done'),
                 '|','|','|','|','|','|','|','|','|',('create_uid','=',uid),('assistant_id','=',uid),
                 ('user_id','=',uid),('parent_id.assistant_id','=',uid),('parent_id.user_id','=',uid),
-                ('supplier','=',1),('x_studio_field_3ErQR','=',1),('is_inter_partner','=',1),('x_studio_field_U7OvH', 'in',uid),
+                ('supplier','=',1),('x_studio_field_3ErQR','=',1),('is_inter_partner','=',1),('x_studio_field_U7OvH',
+                'in',uid),
                 ('parent_id.x_studio_field_U7OvH', 'in',uid)]
             </field>
             <field name="context">{'default_is_company': True,'default_customer': True,
@@ -3901,7 +3926,8 @@
                 [('customer','=',True),('is_company','=',True),('name','!=','未定义'),('state','=','done'),
                 '|','|','|','|','|','|','|','|','|',('create_uid','=',uid),('assistant_id','=',uid),
                 ('user_id','=',uid),('parent_id.assistant_id','=',uid),('parent_id.user_id','=',uid),
-                ('supplier','=',1),('x_studio_field_3ErQR','=',1),('is_inter_partner','=',1),('x_studio_field_U7OvH', 'in',uid),
+                ('supplier','=',1),('x_studio_field_3ErQR','=',1),('is_inter_partner','=',1),('x_studio_field_U7OvH',
+                'in',uid),
                 ('parent_id.x_studio_field_U7OvH', 'in',uid)]
             </field>
             <field name="context">{'default_is_company': True,'default_customer': True, 'default_contract_type':'c'}
@@ -3985,7 +4011,7 @@
 
         <menuitem id="new_supplier_menu" parent="new_supplier_root" name="供应商查询" sequence="98"
                   action="action_new_partner_supplier"
-                  />
+        />
 
         <record model="ir.actions.act_window" id="action_supplier_create">
             <field name="name">创建新供应商</field>
@@ -4077,10 +4103,10 @@
 
 
         <menuitem id="new_partner_inter" parent="customer_config" name="内部人员" sequence="99"
-                  action="action_new_partner_inter"         />
+                  action="action_new_partner_inter"/>
 
 
-         <record id="action_new_customer_account" model="ir.actions.act_window">
+        <record id="action_new_customer_account" model="ir.actions.act_window">
             <field name="name">公司客户</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">res.partner</field>
@@ -4100,14 +4126,14 @@
         </record>
         <menuitem id="mennu_new_customer_account" parent="menu_account_new_root" name="公司客户" sequence="99"
                   action="action_new_customer_account"/>
-         <record id="action_new_customer_account_all" model="ir.actions.act_window">
+        <record id="action_new_customer_account_all" model="ir.actions.act_window">
             <field name="name">所有客户</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">res.partner</field>
             <field name="view_type">form</field>
             <field name="view_mode">kanban,tree,form</field>
             <field name="domain">
-                [('customer','=',True),('name','!=','未定义')]
+                [('customer','=',True),('name','!=','未定义'),('parent_id','=',False)]
             </field>
             <field name="context">{'default_is_company': True,'default_customer': True, 'default_contract_type':'c'}
             </field>
@@ -4118,7 +4144,7 @@
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('res_new_partner_kanban_view')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_new_customer_account_form')})]"/>
         </record>
-                <menuitem id="mennu_new_customer_account_all" parent="menu_account_new_root" name="所有客户" sequence="99"
+        <menuitem id="mennu_new_customer_account_all" parent="menu_account_new_root" name="所有客户" sequence="99"
                   action="action_new_customer_account_all"/>
     </data>
 </odoo>

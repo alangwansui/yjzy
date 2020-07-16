@@ -101,10 +101,10 @@
                     <button name="open_reconcile_order_line" icon="fa-pencil-square-o" type="object"/>
                     <field name="amount_total_signed" string="Total" sum="Total"/>
                     <field name="residual_signed" string="未付金额" sum="Amount Due"/>
-                    <field name="reconcile_order_line_payment"/>
-                    <field name="reconcile_order_line_advance"/>
-                    <field name="reconcile_order_line_bank"/>
-                    <field name="reconcile_order_line_amount_diff"/>
+                    <field name="reconcile_order_line_payment" sum="小计"/>
+                    <field name="reconcile_order_line_advance" sum="小计"/>
+                    <field name="reconcile_order_line_bank" sum="小计"/>
+                    <field name="reconcile_order_line_amount_diff" sum="小计"/>
                     <field name="commercial_partner_id" invisible="1"/>
                     <field name="reference" invisible="1"/>
                     <field name="name" invisible="1"/>
@@ -1224,7 +1224,7 @@
             <field name="res_model">account.invoice</field>
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_account_invoice_new_filter"/>
-            <field name="domain">[('type','=','out_invoice'),('yjzy_type','=','sale')]</field>
+            <field name="domain">[('type','=','out_invoice'),('yjzy_type','=','sale'),('state','not in',['cancel','draft'])]</field>
             <field name="context">{'search_default_group_by_partner_id':1,'only_ref':1,'type':'out_invoice',
                 'journal_type': 'sale','yjzy_type':'sale'}
             </field>
@@ -1240,7 +1240,7 @@
             <field name="res_model">account.invoice</field>
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_account_invoice_new_filter"/>
-            <field name="domain">[('type','=','out_invoice'),('yjzy_type','=','sale')]</field>
+            <field name="domain">[('type','=','out_invoice'),('yjzy_type','=','sale'),('state','not in',['cancel','draft'])]</field>
             <field name="context">{'search_default_group_by_partner_id':1,'only_ref':1,'type':'out_invoice',
                 'journal_type': 'sale','yjzy_type':'sale'}
             </field>

@@ -52,6 +52,7 @@ class res_partner(models.Model):
             #     one.last_sale_order_approve_date = last_order.approve_date
             #     print('--lastdate--', last_order, last_order.approve_date)
     # 增加地址翻译
+    @api.depends('advance_payment_ids','advance_payment_ids.amount','advance_payment_ids.advance_total','advance_payment_ids.advance_balance_total','invoice_ids','invoice_ids.amount_total')
     def compute_amount_invoice_advance_payment(self):
         reconcile_ids = self.env['account.reconcile.order.line']
         for one in self:
@@ -61,8 +62,10 @@ class res_partner(models.Model):
             amount_invoice = sum(x.amount_total_signed for x in invoice)
             amount_residual_invoice = sum(x.residual_signed for x in invoice)
             amount_advance_payment = sum(x.amount for x in payment)
-            amount_advance_payment_reconcile =  sum(x.amount_advance_org for x in reconcile)
-            amount_residual_advance_payment = amount_advance_payment - amount_advance_payment_reconcile
+            amount_advance_payment_reconcile = sum(x.advance_total for x in payment)
+            #amount_advance_payment_reconcile =  sum(x.amount_advance_org for x in reconcile)
+            #amount_residual_advance_payment = amount_advance_payment - amount_advance_payment_reconcile
+            amount_residual_advance_payment =  sum(x.advance_balance_total for x in payment)
             one.amount_invoice = amount_invoice
             one.amount_residual_invoice = amount_residual_invoice
             one.amount_advance_payment = amount_advance_payment
@@ -78,9 +81,9 @@ class res_partner(models.Model):
 
     amount_invoice = fields.Float('应收账单总金额', compute=compute_amount_invoice_advance_payment)
     amount_residual_invoice = fields.Float('应收到期金额',compute=compute_amount_invoice_advance_payment)
-    amount_advance_payment = fields.Float('预收总金额',compute=compute_amount_invoice_advance_payment)
-    amount_residual_advance_payment = fields.Float('预收剩余金额',compute=compute_amount_invoice_advance_payment)
-    amount_advance_payment_reconcile = fields.Float('预收认领金额',compute=compute_amount_invoice_advance_payment)
+    amount_advance_payment = fields.Float('预收总金额',compute=compute_amount_invoice_advance_payment,store=True)
+    amount_residual_advance_payment = fields.Float('预收剩余金额',compute=compute_amount_invoice_advance_payment,store=True)
+    amount_advance_payment_reconcile = fields.Float('预收认领金额',compute=compute_amount_invoice_advance_payment,store=True)
 
     # 不要了
 
