@@ -8,7 +8,7 @@
         <field name="model">account.reconcile.order.line</field>
         <field name="arch" type="xml">
             <tree string="认领明细"  edit="false" create="false">
-
+                <field name="order_id" invisible="1"/>
                 <field name="so_id"/>
                 <field name="tb_contract_code"/>
                 <field name="advance_residual"/>

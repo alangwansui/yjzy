@@ -174,6 +174,7 @@
                             string="Cancel" type="object" groups="base.group_system"/>
                     <button name="open_reconcile_account_move_line" class="oe_highlight" string="打开核销分录" type="object"
                             groups="base.group_system"/>
+                    <button name="compute_advance_balance_total" type="object" string="更新预收认领" groups="base.group_system"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,posted,reconciled,cancelled"/>
                     <field name="is_editable" widget="boolean_toggle" groups="sales_team.group_manager"/>
                 </header>

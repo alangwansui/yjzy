@@ -133,7 +133,7 @@ class account_payment(models.Model):
 
         return res
 
-    @api.depends('advance_reconcile_order_line_ids','amount','advance_reconcile_order_line_ids.amount_advance_org')
+    @api.depends('advance_reconcile_order_line_ids','amount','advance_reconcile_order_line_ids.amount_advance_org','advance_reconcile_order_line_ids.yjzy_payment_id')
     def compute_advance_balance_total(self):
         for one in self:
             advance_total = sum([x.amount_advance_org for x in one.advance_reconcile_order_line_ids])
@@ -143,9 +143,9 @@ class account_payment(models.Model):
 
 
     advance_reconcile_order_line_ids = fields.One2many('account.reconcile.order.line', 'yjzy_payment_id', string='预收认领明细',domain=[('amount_advance_org','>',0),('order_id.state','=','done')])
-    advance_reconcile_order_line_amount_char = fields.Char(related='so_id.advance_reconcile_order_line_amount_char', string=u'预收认领明细金额')
-    advance_reconcile_order_line_date_char = fields.Char(related='so_id.advance_reconcile_order_line_date_char',string=u'预收认领日期')
-    advance_reconcile_order_line_invoice_char = fields.Char(related='so_id.advance_reconcile_order_line_invoice_char',string=u'账单')
+    advance_reconcile_order_line_amount_char = fields.Text(related='so_id.advance_reconcile_order_line_amount_char', string=u'预收认领明细金额')
+    advance_reconcile_order_line_date_char = fields.Text(related='so_id.advance_reconcile_order_line_date_char',string=u'预收认领日期')
+    advance_reconcile_order_line_invoice_char = fields.Text(related='so_id.advance_reconcile_order_line_invoice_char',string=u'账单')
     advance_balance_total = fields.Monetary(u'预收余额', compute=compute_advance_balance_total, currency_field='yjzy_payment_currency_id', store=True)
     advance_total = fields.Monetary(u'预收认领金额', compute=compute_advance_balance_total,
                                             currency_field='yjzy_payment_currency_id', store=True)
