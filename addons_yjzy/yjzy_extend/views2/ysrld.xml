@@ -66,9 +66,12 @@
         <field name="model">account.payment</field>
         <field name="priority" eval="999"/>
         <field name="arch" type="xml">
-            <tree string="预收认领单" edit="false" create="false">
+            <tree string="预收认领单" edit="false" create="false" decoration-info="state == 'draft'" decoration-muted="state == 'cancel'">
                 <field name="partner_id"/>
                 <field name="name" invisible="1"/>
+                <field name="rcskd_date"/>
+                <field name="rcskd_amount"/>
+
                 <field name="payment_date" string="认领日期"/>
                 <field name="amount" string="金额"/>
                 <button name="open_reconcile_order_line" icon="fa-pencil-square-o" type="object"/>
