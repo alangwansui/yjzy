@@ -404,6 +404,8 @@
                         <button string="HS品名统计" type="object" name="make_hs_name_items"/>
                         <button name="action_invoice_cancel" type="object" states="draft,open" string="Cancel Invoice"
                                 groups="account.group_account_invoice"/>
+
+                        <button name="get_reconcile_order_line" string="计算预收" type="object" />
                         <field name="state" widget="statusbar" nolabel="1" statusbar_visible="draft,open,paid"/>
                     </header>
                     <div groups="account.group_account_invoice" class="alert alert-info" role="alert"
