@@ -149,7 +149,8 @@ class account_payment(models.Model):
     advance_balance_total = fields.Monetary(u'预收余额', compute=compute_advance_balance_total, currency_field='yjzy_payment_currency_id', store=True)
     advance_total = fields.Monetary(u'预收认领金额', compute=compute_advance_balance_total,
                                             currency_field='yjzy_payment_currency_id', store=True)
-
+    rcskd_amount = fields.Monetary(u'收款单金额',related='yjzy_payment_id.amount')
+    rcskd_date = fields.Monetary(u'收款日期', related='yjzy_payment_id.payment_date')
     #13ok
     name = fields.Char(u'编号', default=lambda self: self._default_name())
     sfk_type = fields.Selection(sfk_type, u'收付类型')
