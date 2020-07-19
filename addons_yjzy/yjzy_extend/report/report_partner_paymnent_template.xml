@@ -109,7 +109,6 @@
       <th>销售合同/应收站但</th>
     </tr>
 	 <t t-foreach="doc.payment_ids" t-as="line">
-
 	  <tr>
       <td><t t-esc="line.payment_date"/></td>
       <td><t t-esc="line.amount"/></td>
@@ -119,12 +118,11 @@
       <td></td>
       <td></td>
     </tr>
-
     <t t-foreach="line.ysrld_ids" t-as="line1">
     <tr>
       <td></td>
       <td></td>
-      <td>&nbsp;</td>
+      <td></td>
       <td>收款-预收认领</td>
       <td><t t-esc="line1.payment_date"/></td>
       <td>-<t t-esc="line1.amount"/></td>
