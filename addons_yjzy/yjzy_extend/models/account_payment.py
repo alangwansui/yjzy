@@ -183,7 +183,7 @@ class account_payment(models.Model):
     rcskd_amount = fields.Monetary(u'收款单金额',related='yjzy_payment_id.amount')
     rcskd_date = fields.Date(u'收款日期', related='yjzy_payment_id.payment_date')
 
-    partner_confirm_id = fields.Many2one('res_partner','确定的客户',compute='_compute_partner_confirm_id')
+    partner_confirm_id = fields.Many2one('res.partner','确定的客户',compute='_compute_partner_confirm_id')
 
     yshxd_amount_payment_org_total = fields.Float(u'应收认领金额',conpute=compute_rcskd_amount_total, store=True)
     ysrld_amount_total = fields.Float(u'预收认领金额',conpute=compute_rcskd_amount_total, store=True)
