@@ -159,12 +159,11 @@ class account_payment(models.Model):
         for one in self:
             ysrld_ids = one.ysrld_ids
             yshx_ids = one.yshx_ids
+            partner_confirm_id = one.partner_id
             if ysrld_ids:
                 partner_confirm_id = ysrld_ids[0].partner_id
             elif yshx_ids:
                 partner_confirm_id = yshx_ids[0].partner_id
-            else:
-                partner_confirm_id = one.partner_id
             one.partner_confirm_id = partner_confirm_id
 
 
