@@ -28,6 +28,7 @@
             <tree string="日常收款单" decoration-info="state == 'draft'" decoration-muted="state in ['reconciled', 'cancelled']" edit="false">
                 <field name="name"/>
                 <field name="partner_id"/>
+                <field name="partner_confirm_id"/>
                 <field name="payment_date" string="收款日期"/>
                 <field name="journal_id" string="收款日记账" invisible="1"/>
                 <field name="amount" string="收款金额"/>
