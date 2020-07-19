@@ -82,7 +82,7 @@ class res_partner(models.Model):
                                           domain=[('sfk_type', '=', 'rcskd'),
                                                   ('state', 'in', ['posted', 'reconciled'])],
                                           )
-    account_reconcile_ids = fields.One2many('account.reconcile.order','yjzy_payment_id','应收认领')
+    account_reconcile_ids = fields.One2many('account.reconcile.order','partner_id','应收认领')
     amount_invoice = fields.Float('应收账单总金额', compute=compute_amount_invoice_advance_payment)
     amount_residual_invoice = fields.Float('应收到期金额',compute=compute_amount_invoice_advance_payment)
     amount_advance_payment = fields.Float('预收总金额',compute=compute_amount_invoice_advance_payment,store=True)
