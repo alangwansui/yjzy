@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_partner_payment_document">
+        <t t-call="web.external_layout">
+            <t t-set="doc" t-value="doc.with_context({'lang':user.lang})"/>
+
+            <style>
+	  body{
+		    font-size:10px;
+		  font-family:"Arial";
+	  }
+	.title{
+		height: 30px;
+	    text-align: center;}
+	.main{
+		width: 100%;
+	    font-size: 10px ; }
+		.main td{height:20px}
+	.tablelist{
+		text-align: left;
+        border-bottom: 0.8px solid;
+
+		border-collapse: collapse;
+		font-size: 10px;
+		width: 100%;
+		vertical-align: middle
+	}
+	.tablelist th{
+		font-size: 10px;
+		text-align: center;
+	border-top: 0.8px solid;
+		border-bottom: 0.8px solid;
+		height: 20px;
+		line-height: 20px;
+		border-collapse: collapse;
+		vertical-align: middle;
+		font-weight: 200;
+		padding: 2px;
+	}
+	.tablelist td{
+		border-bottom: 0.8px solid;
+		height: 20px;
+		line-height: 20px;
+		vertical-align: middle;
+		padding-left: 2px;
+		padding-right: 5px;
+		border-collapse: collapse;
+	}
+	.buttom{
+		margin-top: 5px;
+		border-top: 1px solid;
+
+	}
+	.buttom th{
+		padding-top: 10px;
+        font-size: 16px;
+		font-weight: bolder;
+
+	}
+    .buttom td{
+
+		padding: 5px;
+		font-size: 12px;
+		vertical-align: middle;
+		border-collapse: collapse;
+
+	}
+	.buttom_bank{
+		font-size: 12px;
+	}
+	.buttom_bank2{
+		padding: 5px;
+		font-size: 12px;
+			vertical-align: middle;
+		border-collapse: collapse;
+	}
+
+    .buttom_bank1{
+		border-bottom:0.8px solid #8A8888;
+		padding: 5px;
+
+		vertical-align: middle;
+		border-collapse: collapse;
+		height: 15px;
+
+	}
+</style>
+
+<table width="100%" border="0" cellpadding="0" cellspacing="0"  class="title">
+  <tbody>
+    <tr>
+      <td width="20%" style="text-align: center; height: 30px;"></td>
+      <td style="text-align: center; height: 50px; vertical-align:top; padding-top: 10px" ><span style="font-size: 20px;font: bolder">客户收款认领请情况</span></td>
+      <td width="20%" ></td>
+    </tr>
+  </tbody>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablelist">
+  <tbody>
+    <tr>
+      <th>收款时间</th>
+      <th>认领性质</th>
+      <th>认领金额</th>
+      <th>销售合同/应收站但</th>
+    </tr>
+    <t t-foreach="advance_payment_ids" t-as="line">
+    <tr>
+      <td><t t-esc="line.yjzy_payment.payment_date"/></td>
+      <td>预收</td>
+      <td><t t-esc="line.amount"/></td>
+      <td><t t-esc="line.so_id.contract_code"/></td>
+    </tr>
+</t>
+    <t t-foreach="account_reconcile_ids" t-as="line">
+		  <t t-foreach="account_reconcile_ids" t-as="line1">
+    <tr>
+      <td><t t-esc="line1.order_id.date"/></td>
+      <td>应收</td>
+      <td><t t-esc="line.amount_payment_org"/></td>
+      <td><t t-esc="line1.invoice_id.tb_contract_code"/></td>
+    </tr>
+	</t>
+</t>
+
+
+  </tbody>
+</table>
+
+
+
+
+        </t>
+    </template>
+
+
+    <template id="report_partner_payment">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="yjzy_extend.report_partner_payment_document" t-lang="user.lang"/>
+            </t>
+        </t>
+    </template>
+
+
+</odoo>

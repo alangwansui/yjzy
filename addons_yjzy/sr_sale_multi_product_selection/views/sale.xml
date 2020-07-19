@@ -9,8 +9,9 @@
         <field name="arch" type="xml">
             <form string="Select Multiple product">
                 <field name="partner_id" invisible="1"/>
+                <field name="partner_shipping_id" invisible="1"/>
                 <group>
-                    <field name="product_ids" nolabel="1" domain="[('customer_id','=',partner_id)]" context="{'tree_view_ref':'yjzy_extend.new_product_product_search_from_tree'}"/>
+                    <field name="product_ids" nolabel="1" domain="[('state','in',['done','first']),'|','|',('customer_id','=',partner_id),('customer_id','=',partner_shipping_id),('hs_id','=',80)]" context="{'tree_view_ref':'yjzy_extend.new_product_product_search_from_tree'}"/>
                 </group>
                 <footer>
                     <button class="btn-primary" name="add_product" type="object" string="确定"/>

@@ -27,7 +27,7 @@ class SrMultiProduct(models.TransientModel):
 
     product_ids = fields.Many2many('product.product', string="Product")
     partner_id = fields.Many2one('res.partner', '客户')
-
+    partner_shipping_id = fields.Many2one('res.partner', '发货地址')
     @api.multi
     def add_product(self):
         for line in self.product_ids:
@@ -56,7 +56,9 @@ class sale_order(models.Model):
             'view_mode': 'form',
             'target': 'new',
             'res_model': 'sr.multi.product',
-            'context': {'default_partner_id': self.partner_id.id}
+            'context': {'default_partner_id': self.partner_id.id,
+                        'default_partner_shipping_id': self.partner_shipping.id,
+                        }
         }
 
 

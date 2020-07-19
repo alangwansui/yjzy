@@ -495,7 +495,7 @@
                                        attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}" context="{'search_default_customer':1, 'show_address': 0}" options="{&quot;always_reload&quot;: True}"/>
 
                                 <field name="partner_invoice_id"  context="{'default_type':'invoice'}" options="{&quot;always_reload&quot;: True}" />
-                                <field name="partner_shipping_id"   context="{'default_type':'delivery'}" options="{&quot;always_reload&quot;: True}"/>
+                                <field name="partner_shipping_id" domain="['|',('id','=',partner_id),'&amp;',('parent_id','=', partner_id),('type','=','delivery')]"  context="{'default_type':'delivery'}" options="{&quot;always_reload&quot;: True}"/>
                                 <field name="country_id" invisible="1"/>
                                 <field name="can_directly_mark_as_paid" invisible="1"/>
                                 <field name="link_man_id" invisible="1" domain="[('parent_id','=',partner_id),('type', '=', 'contract')]" groups="base.group_system"/>
@@ -593,7 +593,8 @@
                                         <group>
                                             <group>
                                                 <field name="product_updatable" invisible="1"/>
-                                                <field name="product_id" domain="[('state','in',['done','first']),'|',('customer_id','=',parent.partner_id),('hs_id','=',80)]"
+
+                                                <field name="product_id" domain="[('state','in',['done','first']),'|','|',('customer_id','=',parent.partner_id),('customer_id','=',parent.partner_shipping_id),('hs_id','=',80)]"
                                                        options="{'can_create': 1,'no_open':1}"
                                                        context="{'show_last_sale':1,'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"
                                                        attrs="{'readonly': [('product_updatable', '=', False)]}" force_save="1"/>
@@ -691,7 +692,7 @@
                                         <field name="sequence" widget="handle"/>
                                         <field name="product_updatable" invisible="1"/>
 
-                                        <field name="product_id" domain="[('state','in',['done','first']),'|',('customer_id','=',parent.partner_id),('hs_id','=',80)]"
+                                        <field name="product_id" domain="[('state','in',['done','first']),'|','|',('customer_id','=',parent.partner_id),('customer_id','=',parent.partner_shipping_id),('hs_id','=',80)]"
                                                attrs="{'readonly': [('product_updatable', '=', False)]}"
                                                orce_save="1" options="{'no_open':True}" context="{'show_last_sale':1,'partner_id':parent.partner_id, 'quantity':product_uom_qty,
                                            'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"/>

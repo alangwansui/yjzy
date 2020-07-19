@@ -19,6 +19,29 @@
             </tree>
         </field>
     </record>
+
+    <record model="ir.ui.view" id="view_new_account_rcskd_tree">
+        <field name="name">account.payment.tree</field>
+        <field name="model">account.payment</field>
+        <field name="priority" eval="999"/>
+        <field name="arch" type="xml">
+            <tree string="日常收款单" decoration-info="state == 'draft'" decoration-muted="state in ['reconciled', 'cancelled']" edit="false">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="payment_date" string="收款日期"/>
+                <field name="journal_id" string="收款日记账" invisible="1"/>
+                <field name="amount" string="收款金额"/>
+                <field name="yshxd_amount_payment_org_total"/>
+                <field name="ysrld_amount_total"/>
+                <field name="ysrld_amount_advance_total"/>
+                <field name="ysrld_amount_advance_balance_total"/>
+                <field name="balance" string="1"/>
+                <field name="company_id" invisible="1"/>
+                <field name="state"/>
+                <field name="currency_id" attrs="{}" invisible="1" required="1"/>
+            </tree>
+        </field>
+    </record>
 <record id="view_account_payment_kanban" model="ir.ui.view">
             <field name="name">account.payment.kanban</field>
             <field name="model">account.payment</field>
@@ -204,6 +227,20 @@
 
     <menuitem id="menu_rcskd"  sequence="0" name="日常收款单" parent="menu_skf_root" action="action_rcskd"/>
 
-
+ <record id="action_new_action_rcskd" model="ir.actions.act_window">
+        <field name="name">日常收款单:统计</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.payment</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('sfk_type','=','rcskd')]</field>
+        <field name="context">{'show_shoukuan': True, 'default_sfk_type': 'rcskd', 'default_payment_type': 'inbound', 'default_be_renling': False, 'default_advance_ok': True, 'default_partner_type': 'customer',}
+        </field>
+        <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_new_account_rcskd_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcskd_form')})]"/>
+    </record>
+    <menuitem id="mennu_new_action_rcskd" parent="menu_account_new_root" name="收款单" sequence="99"
+              action="action_new_action_rcskd"/>
 
 </odoo>

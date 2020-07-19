@@ -141,6 +141,20 @@ class account_payment(models.Model):
             one.advance_total = advance_total
             one.advance_balance_total = advance_balance_total
 
+    @api.depends('yshx_ids','yshx_ids.amount_advance_org','ysrld_ids','ysrld_ids.state','ysrld_ids.amount','ysrld_ids.advance_total','ysrld_ids.advance_balance_total')
+    def compute_rcskd_amount_total(self):
+        for one in self:
+            yshx_ids = one.yshx_ids.filtered(lambda x: x.state in ['posted','reconciled'])
+            ysrld_ids = one.ysrld_ids.filtered(lambda x: x.state in ['posted','reconciled'])
+            yshxd_amount_payment_org_total = sum(x.amount_advance_org for x in yshx_ids)
+            ysrld_amount_total = sum(x.amount for x in ysrld_ids)
+            ysrld_amount_advance_total = sum(x.advance_total for x in ysrld_ids)
+            ysrld_amount_advance_balance_total = sum(x.advance_balance_total for x in ysrld_ids)
+            one.yshxd_amount_payment_org_total = yshxd_amount_payment_org_total
+            one.ysrld_amount_total = ysrld_amount_total
+            one.ysrld_amount_advance_total = ysrld_amount_advance_total
+            one.ysrld_amount_advance_balance_total = ysrld_amount_advance_balance_total
+
 
     advance_reconcile_order_line_ids = fields.One2many('account.reconcile.order.line', 'yjzy_payment_id', string='预收认领明细',domain=[('amount_advance_org','>',0),('order_id.state','=','done')])
     advance_reconcile_order_line_amount_char = fields.Text(related='so_id.advance_reconcile_order_line_amount_char', string=u'预收认领明细金额')
@@ -151,6 +165,11 @@ class account_payment(models.Model):
                                             currency_field='yjzy_payment_currency_id', store=True)
     rcskd_amount = fields.Monetary(u'收款单金额',related='yjzy_payment_id.amount')
     rcskd_date = fields.Date(u'收款日期', related='yjzy_payment_id.payment_date')
+
+    yshxd_amount_payment_org_total = fields.Float(u'应收认领金额',conpute=compute_rcskd_amount_total, store=True)
+    ysrld_amount_total = fields.Float(u'预收认领金额',conpute=compute_rcskd_amount_total, store=True)
+    ysrld_amount_advance_total = fields.Float(u'预收被认领金额',conpute=compute_rcskd_amount_total, store=True)
+    ysrld_amount_advance_balance_total = fields.Float(u'预收未被认领金额',conpute=compute_rcskd_amount_total, store=True)
     #13ok
     name = fields.Char(u'编号', default=lambda self: self._default_name())
     sfk_type = fields.Selection(sfk_type, u'收付类型')

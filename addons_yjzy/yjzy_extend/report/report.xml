@@ -233,6 +233,15 @@
             name="yjzy_extend.report_partner_customer"
             print_report_name="(object.name)"
         />
+        <report
+            id="action_report_partner_payment"
+            string="收款认领明细"
+            model="res.partner"
+            report_type="qweb-pdf"
+            file="yjzy_extend.report_partner_payment"
+            name="yjzy_extend.report_partner_payment"
+            print_report_name="(object.name)"
+        />
 
 
 
