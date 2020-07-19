@@ -5,7 +5,7 @@
         <t t-call="web.external_layout">
             <t t-set="doc" t-value="doc.with_context({'lang':user.lang})"/>
 
-                     <style>
+                        <style>
 	  body{
 		    font-size:10px;
 		  font-family:"Arial";
@@ -91,7 +91,7 @@
   <tbody>
     <tr>
       <td width="20%" style="text-align: center; height: 30px;"/>
-      <td style="text-align: center; height: 50px; vertical-align:top; padding-top: 10px"><span style="font-size: 20px">客户应收明细</span></td>
+      <td style="text-align: center; height: 50px; vertical-align:top; padding-top: 10px"><span style="font-size: 20px;font: bolder">客户收款认领情况(因为我们的收款流水没有客户，所以起点是认领单)</span></td>
       <td width="20%"/>
     </tr>
   </tbody>
@@ -99,55 +99,53 @@
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablelist">
   <tbody>
     <tr>
-      <th>应收合同号</th>
-      <th>应收到期时间</th>
-      <th>应收金额</th>
-      <th>未收金额</th>
+      <th>收款时间</th>
+      <th>收款金额</th>
+      <th>认领性质</th>
       <th>认领时间</th>
 
-      <th>收款认领金额</th>
-      <th>预收认领金额</th>
-      <th>银行扣款</th>
-      <th>销售费用</th>
+      <th>认领金额</th>
       <th>销售合同/应收站但</th>
     </tr>
-    <t t-foreach="doc.invoice_ids" t-as="line">
+    <t t-foreach="doc.advance_payment_ids" t-as="line">
     <tr>
-      <td><t t-esc="line.tb_contract_code"/></td>
-      <td><t t-esc="line.date_deadline"/></td>
-      <td><t t-esc="line.amount_total"/></td>
-      <td><t t-esc="line.residual_signed"/></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
+      <td><t t-esc="line.yjzy_payment_id.payment_date"/></td>
+      <td><t t-esc="line.yjzy_payment_id.amount"/></td>
+      <td>预收</td>
+      <td><t t-esc="line.payment_date"/></td>
+      <td><t t-esc="line.amount"/></td>
+      <td><t t-esc="line.so_id.contract_code"/></td>
     </tr>
-		<t t-foreach="reconcile_order_line_id" t-as="line1">
+		<t t-foreach="line.advance_reconcile_order_line_ids" t-as="line1">
 			  <tr>
-			    <td></td>
 		   <td></td>
       <td></td>
-      <td></td>
+      <td>预收被认领</td>
       <td><t t-esc="line1.order_id.date"/></td>
-      <td><t t-esc="line1.amount_payment_org"/></td>
       <td><t t-esc="line1.amount_advance_org"/></td>
-      <td><t t-esc="line1.amount_bank_org"/></td>
-      <td><t t-esc="line1.amount_diff_org"/></td>
       <td><t t-esc="line.so_id.contract_code"/></td>
 				   </tr>
-		<tr>
-		  <td>
-	    </t>
-<tr>
-  <td>
-  </t>
-
+		</t>
+</t>
+    <t t-foreach="doc.account_reconcile_ids" t-as="line">
+		  <t t-foreach="line.line_ids" t-as="line1">
+    <tr>
+      <td><t t-esc="line1.order_id.yjzy_payment_id.payment_date"/></td>
+      <td><t t-esc="line1.order_id.yjzy_payment_id.amount"/></td>
+      <td>应收</td>
+      <td><t t-esc="line1.order_id.date"/></td>
+      <td><t t-esc="line.amount_payment_org"/></td>
+      <td><t t-esc="line1.invoice_id.tb_contract_code"/></td>
+    </tr>
+	</t>
+</t>
 
 
   </tbody>
 </table>
+
+
+
 
 
 
