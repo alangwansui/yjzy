@@ -85,7 +85,8 @@ class res_partner(models.Model):
             tb_ids = one.tb_approve_ids
             amount_total = sum(x.org_sale_amount_new for x in tb_ids)
             one.tb_approve_amount_total = amount_total
-    @api.depends('payment_ids','payment_id.amount')
+
+    @api.depends('payment_ids','payment_ids.amount')
     def compute_payment_amount_total(self):
         for one in self:
             payment_ids = self.payment_ids
