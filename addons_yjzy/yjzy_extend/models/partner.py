@@ -52,7 +52,7 @@ class res_partner(models.Model):
             #     one.last_sale_order_approve_date = last_order.approve_date
             #     print('--lastdate--', last_order, last_order.approve_date)
     # 增加地址翻译
-    @api.depends('advance_payment_ids','advance_payment_ids.amount','advance_payment_ids.advance_total','advance_payment_ids.advance_balance_total','invoice_ids','invoice_ids.amount_total')
+    @api.depends('advance_payment_ids','advance_payment_ids.amount','advance_payment_ids.advance_total','advance_payment_ids.advance_balance_total','invoice_ids','invoice_ids.amount_total','invoice_ids.residual_signed')
     def compute_amount_invoice_advance_payment(self):
         reconcile_ids = self.env['account.reconcile.order.line']
         for one in self:
@@ -109,8 +109,8 @@ class res_partner(models.Model):
                                      domain=[('state','in',['approve','confirmed','delivered','invoiced','locked','verifying','done','paid'])])
 
     account_reconcile_ids = fields.One2many('account.reconcile.order','partner_id','应收认领', domain=[('amount_payment_org','!=',0)])
-    amount_invoice = fields.Float('应收账单总金额', compute=compute_amount_invoice_advance_payment)
-    amount_residual_invoice = fields.Float('应收到期金额',compute=compute_amount_invoice_advance_payment)
+    amount_invoice = fields.Float('应收账单总金额', compute=compute_amount_invoice_advance_payment,store=True)
+    amount_residual_invoice = fields.Float('应收到期金额',compute=compute_amount_invoice_advance_payment,store=True)
     amount_advance_payment = fields.Float('预收总金额',compute=compute_amount_invoice_advance_payment,store=True)
     amount_residual_advance_payment = fields.Float('预收剩余金额',compute=compute_amount_invoice_advance_payment,store=True)
     amount_advance_payment_reconcile = fields.Float('预收认领金额',compute=compute_amount_invoice_advance_payment,store=True)
