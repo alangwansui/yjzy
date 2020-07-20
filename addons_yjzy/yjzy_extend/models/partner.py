@@ -89,7 +89,7 @@ class res_partner(models.Model):
     @api.depends('payment_ids','payment_ids.amount')
     def compute_payment_amount_total(self):
         for one in self:
-            payment_ids = self.payment_ids
+            payment_ids = one.payment_ids
             payment_amount_total = sum(x.amount for x in payment_ids)
             one.payment_amount_total = payment_amount_total
 
