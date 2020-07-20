@@ -103,6 +103,7 @@
                </search>
             </field>
         </record>
+<!-- 查询预收使用明细-->
 
         <!-- 查询预收使用明细-->
          <record id="new_sale_order_advance_tree" model="ir.ui.view">

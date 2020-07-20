@@ -5,7 +5,7 @@
         <t t-call="web.external_layout">
             <t t-set="doc" t-value="doc.with_context({'lang':user.lang})"/>
 
-                           <style>
+                            <style>
 	  body{
 		    font-size:10px;
 		  font-family:"Arial";
@@ -128,13 +128,13 @@
 			  <tr>
 			    <td></td>
 		   <td></td>
+      <td><span style="color: red">-<t t-esc="line1.amount_total_org"/></span></td>
       <td></td>
-      <td></td>
-      <td><t t-esc="line1.order_id.date"/></td>
-      <td><t t-esc="line1.amount_payment_org"/></td>
-      <td><t t-esc="line1.amount_advance_org"/></td>
-      <td><t t-esc="line1.amount_bank_org"/></td>
-      <td><t t-esc="line1.amount_diff_org"/></td>
+				  <td><span style="color: red"><t t-esc="line1.order_id.date"/></span></td>
+      <td><span style="color: red"><t t-esc="line1.amount_payment_org"/></span></td>
+      <td><span style="color: red"><t t-esc="line1.amount_advance_org"/></span></td>
+      <td><span style="color: red"><t t-esc="line1.amount_bank_org"/></span></td>
+      <td><span style="color: red"><t t-esc="line1.amount_diff_org"/></span></td>
       <td><t t-esc="line1.so_id.contract_code"/></td>
 				   </tr>
 
@@ -147,10 +147,6 @@
 
   </tbody>
 </table>
-
-
-
-
 
 
 

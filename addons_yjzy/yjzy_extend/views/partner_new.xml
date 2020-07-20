@@ -151,16 +151,26 @@
             <field name="arch" type="xml">
                 <tree string="Contacts">
                     <field name="name" string="简称"/>
+                    <button name="print_invoice_payment" string="收款-应收" type="object"/>
+                    <field name="sale_order_amount_total" sum="小计"/>
+
+                    <button name="open_sale_order_approve" icon="fa-pencil-square-o" type="object"/>
+                    <field name="tb_approve_amount_total"/>
+                    <button name="open_tb_approve" icon="fa-pencil-square-o" type="object"/>
                     <field name="amount_invoice" sum="小计"/>
                     <field name="amount_residual_invoice" sum="小计"/>
+                    <button name="action_view_partner_invoices_new" icon="fa-pencil-square-o" type="object"/>
+                    <field name="payment_amount_total" sum="小计"/>
                     <field name="amount_advance_payment" sum="小计"/>
                     <field name="amount_advance_payment_reconcile" sum="小计"/>
                     <field name="amount_residual_advance_payment" sum="小计"/>
+                    <!--button name="open_sale_order" icon="fa-pencil-square-o" type="object"/-->
                     <field name="is_company" invisible="1"/>
                     <field name="active" invisible="1"/>
                 </tree>
             </field>
         </record>
+
         <record id="view_new_customer_account_form" model="ir.ui.view">
             <field name="name">res.partner.customer.form.new</field>
             <field name="model">res.partner</field>

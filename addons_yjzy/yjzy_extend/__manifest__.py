@@ -155,6 +155,8 @@
         'report/purchase_contract2_template.xml',
         'report/report_partner_customer_template.xml',
         'report/report_partner_paymnent_template.xml',
+        'report/report_partner_invoice_paymnent_template.xml',
+
 
         'report/sale_order_cost_template.xml',
 

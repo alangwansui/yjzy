@@ -18,6 +18,7 @@ from . import account_payment_yfrld_liushui
 from . import report_partner_customer
 from . import report_partner_payment
 from . import report_partner_invoice
+from . import report_partner_invoice_payment
 
 
 

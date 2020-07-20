@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_partner_invoice_payment_document">
+        <t t-call="web.external_layout">
+            <t t-set="doc" t-value="doc.with_context({'lang':user.lang})"/>
+           <style>
+	  body{
+		    font-size:10px;
+		  font-family:"Arial";
+	  }
+	.title{
+		height: 30px;
+	    text-align: center;}
+	.main{
+		width: 100%;
+	    font-size: 10px ; }
+		.main td{height:20px}
+	.tablelist{
+		text-align: left;
+        border: 0.8px solid;
+		border-collapse: collapse;
+		font-size: 10px;
+		width: 100%;
+		vertical-align: middle
+	}
+	.tablelist th{
+		font-size: 10px;
+		text-align: center;
+	    border: 0.8px solid;
+		height: 20px;
+		line-height: 20px;
+		border-collapse: collapse;
+		vertical-align: middle;
+		font-weight: 200;
+		padding: 2px;
+	}
+	.tablelist td{
+		 border: 0.8px solid;
+		height: 20px;
+		line-height: 20px;
+		vertical-align: middle;
+		padding-left: 2px;
+		padding-right: 5px;
+		border-collapse: collapse;
+	}
+	.buttom{
+		margin-top: 5px;
+		border-top: 1px solid;
+
+	}
+	.buttom th{
+		padding-top: 10px;
+        font-size: 16px;
+		font-weight: bolder;
+
+	}
+    .buttom td{
+
+		padding: 5px;
+		font-size: 12px;
+		vertical-align: middle;
+		border-collapse: collapse;
+
+	}
+	.buttom_bank{
+		font-size: 12px;
+	}
+	.buttom_bank2{
+		padding: 5px;
+		font-size: 12px;
+			vertical-align: middle;
+		border-collapse: collapse;
+	}
+
+    .buttom_bank1{
+		border-bottom:0.8px solid #8A8888;
+		padding: 5px;
+
+		vertical-align: middle;
+		border-collapse: collapse;
+		height: 15px;
+
+	}
+</style>
+
+<table width="100%" border="0" cellpadding="0" cellspacing="0" class="title">
+  <tbody>
+    <tr>
+      <td width="20%" style="text-align: center; height: 30px;"/>
+      <td style="text-align: center; height: 50px; vertical-align:top; padding-top: 10px"><span style="font-size: 20px;font: bolder">客户<t t-esc="doc.name"/>收款-应收认领情况</span></td>
+      <td width="20%"/>
+    </tr>
+  </tbody>
+</table>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tbody>
+    <tr>
+      <td width="45%">
+		  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablelist">
+  <tbody>
+    <tr>
+      <th width="15%">收款时间</th>
+      <th width="13%">收款金额</th>
+      <th width="13%">未认领金额</th>
+      <th width="15%">认领性质</th>
+      <th width="15%">认领时间</th>
+      <th width="13%">认领金额</th>
+
+      <th width="15%">销售合同/应收账单</th>
+    </tr>
+	 <t t-foreach="doc.payment_ids" t-as="line">
+
+	  <tr>
+      <td><t t-esc="line.payment_date"/></td>
+      <td style="text-align: right;padding-right: 2px"><t t-esc="line.amount" t-options='{"widget": "float", "precision": 2}'/></td>
+      <td style="text-align: right;padding-right: 2px"><t t-esc="line.balance" t-options='{"widget": "float", "precision": 2}'/></td>
+      <td>收款</td>
+      <td></td>
+      <td style="text-align: right;padding-right: 2px"></td>
+      <td></td>
+
+    </tr>
+
+    <t t-foreach="line.ysrld_ids" t-as="line1">
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td>收款-预收认领</td>
+      <td><t t-esc="line1.payment_date"/></td>
+      <td style="text-align: right;padding-right: 2px"><span style="color: red">-<t t-esc="line1.amount" t-options='{"widget": "float", "precision": 2}'/></span></td>
+
+      <td><t t-esc="line1.so_id.contract_code"/></td>
+    </tr>
+
+</t>
+    <t t-foreach="line.yshx_ids" t-as="line3">
+		  <t t-foreach="line3.line_ids" t-as="line4">
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td>收款-应收认领</td>
+      <td><t t-esc="line4.order_id.date"/></td>
+		<td style="text-align: right;padding-right: 2px"><span style="color: red">-<t t-esc="line4.amount_payment_org"/></span></td>
+
+      <td><t t-esc="line4.invoice_id.tb_contract_code"/></td>
+    </tr>
+	</t>
+</t>
+	</t>
+
+
+  </tbody>
+</table></td>
+		<td width="1%"></td>
+      <td width="54%">
+		  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablelist">
+  <tbody>
+    <tr>
+      <th width="14%">应收合同号</th>
+      <th width="10%">应收到期时间</th>
+      <th width="10%">应收金额</th>
+      <th width="10%">未收金额</th>
+      <th width="10%">认领时间</th>
+
+      <th width="10%">收款认领金额</th>
+      <th width="10%">预收认领金额</th>
+      <th width="8%">银行扣款</th>
+      <th width="8%">销售费用</th>
+      <th width="10%">销售合同</th>
+    </tr>
+    <t t-foreach="doc.invoice_ids" t-as="line">
+    <tr>
+      <td><t t-esc="line.tb_contract_code"/></td>
+      <td><t t-esc="line.date_deadline"/></td>
+      <td style="text-align: right;padding-right: 2px"><t t-esc="line.amount_total" t-options='{"widget": "float", "precision": 2}'/></td>
+      <td style="text-align: right;padding-right: 2px"><t t-esc="line.residual_signed" t-options='{"widget": "float", "precision": 2}'/></td>
+      <td></td>
+      <td style="text-align: right;padding-right: 2px"></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+		<t t-foreach="line.reconcile_order_line_id" t-as="line1">
+			  <tr>
+			    <td></td>
+		   <td></td>
+      <td style="text-align: right;padding-right: 2px"><span style="color: red">-<t t-esc="line1.amount_total_org" t-options='{"widget": "float", "precision": 2}'/></span></td>
+      <td></td>
+				  <td><span style="color: red"><t t-esc="line1.order_id.date"/></span></td>
+      <td style="text-align: right;padding-right: 2px"><span style="color: red"><t t-esc="line1.amount_payment_org" t-options='{"widget": "float", "precision": 2}'/></span></td>
+      <td style="text-align: right;padding-right: 2px"><span style="color: red"><t t-esc="line1.amount_advance_org" t-options='{"widget": "float", "precision": 2}'/></span></td>
+      <td style="text-align: right;padding-right: 2px"><span style="color: red"><t t-esc="line1.amount_bank_org" t-options='{"widget": "float", "precision": 2}'/></span></td>
+      <td style="text-align: right;padding-right: 2px"><span style="color: red"><t t-esc="line1.amount_diff_org" t-options='{"widget": "float", "precision": 2}'/></span></td>
+      <td><t t-esc="line1.so_id.contract_code"/></td>
+				   </tr>
+
+
+	    </t>
+
+  </t>
+
+
+
+  </tbody>
+</table></td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+
+
+        </t>
+    </template>
+
+
+    <template id="report_partner_invoice_payment">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="yjzy_extend.report_partner_invoice_payment_document" t-lang="user.lang"/>
+            </t>
+        </t>
+    </template>
+
+
+</odoo>
