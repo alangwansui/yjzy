@@ -1,6 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+
+
+        <!--应付核销明细-->
+    <record model="ir.ui.view" id="account_yfhxd_line_tree_view">
+        <field name="name">account.reconcile.order.line.tree</field>
+        <field name="model">account.reconcile.order.line</field>
+        <field name="arch" type="xml">
+            <tree string="认领明细"  edit="false" create="false">
+                <field name="order_id" invisible="1"/>
+                <field name="invoice_display_name" invisible="1"/>
+                <field name="po_id"/>
+                <field name="tb_contract_code"/>
+                <field name="advance_residual" string="预付余额"/>
+                <field name="invoice_currency_id" invisible="1"/>
+                <field name="payment_currency_id" invisible="1"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="yjzy_currency_id" invisible="1"/>
+                <field name="amount_advance_org" string="预付认领金额" sum="小计"/>
+                <field name="amount_payment_org" string="付款认领金额" sum="小计"/>
+
+                <field name="amount_diff_org" string="费用认领金额" sum="小计"/>
+                <field name="amount_total_org" string="合计认领" sum="小计"/>
+                <field name="yjzy_payment_id" string="付款单"/>
+            </tree>
+        </field>
+    </record>
+
     <record model="ir.ui.view" id="account_yfhxd_tree_view">
         <field name="name">account.reconcile.order.tree</field>
         <field name="model">account.reconcile.order</field>
@@ -213,4 +240,19 @@
               parent="menu_skf_root"
               action="action_yfhxd"/>
 
+    <record id="action_account_yfhxd_line" model="ir.actions.act_window">
+            <field name="name">应付认领明细</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.reconcile.order.line</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,kanban</field>
+            <field name="domain">[('order_id.sfk_type','=','yfhxd')]</field>
+            <field name="context">{'group_by':'invoice_display_name'}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('account_yfhxd_line_tree_view')})]"/>
+    </record>
+        <menuitem id="menu_account_yfhxd_line" action="action_account_yfhxd_line"
+                  parent="menu_account_new_root" name="应付认领明细"
+                  sequence="99"
+        />
 </odoo>

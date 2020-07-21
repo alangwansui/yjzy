@@ -19,6 +19,26 @@
             </tree>
         </field>
     </record>
+     <record model="ir.ui.view" id="view_yfsqd_account_tree">
+        <field name="name">account.payment.tree</field>
+        <field name="model">account.payment</field>
+        <field name="priority" eval="999"/>
+        <field name="arch" type="xml">
+            <tree string="预付申请单" decoration-info="state == 'draft'" decoration-muted="state in ['reconciled', 'cancelled']" edit="false">
+                <field name="partner_id"/>
+                <field name="name" invisible="1"/>
+                <field name="rcskd_date" string="付款日期"/>
+                <field name="rcskd_amount" string="付款金额"/>
+                <field name="payment_date" string="申请日期"/>
+                <field name="amount" string="金额"/>
+                <button name="open_reconcile_order_line" icon="fa-pencil-square-o" type="object"/>
+                <field name="advance_balance_total" string="未认领金额"/>
+                <field name="advance_total" string="已认领金额"/>
+                <field name="po_id" string="采购合同"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
 
     <record id="view_yfsqd_form" model="ir.ui.view">
         <field name="name">account.payment.form</field>

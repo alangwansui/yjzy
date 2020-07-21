@@ -72,6 +72,28 @@ class res_partner(models.Model):
             one.amount_advance_payment_reconcile = amount_advance_payment_reconcile
             one.amount_residual_advance_payment = amount_residual_advance_payment
 
+    @api.depends('advance_payment_ids', 'advance_payment_ids.amount', 'advance_payment_ids.advance_total',
+                 'advance_payment_ids.advance_balance_total', 'invoice_ids', 'invoice_ids.amount_total',
+                 'invoice_ids.residual_signed')
+    def compute_supplier_amount_invoice_advance_payment(self):
+        reconcile_ids = self.env['account.reconcile.order.line']
+        for one in self:
+            invoice = one.supplier_invoice_ids
+            payment = one.supplier_advance_payment_ids
+            # reconcile = reconcile_ids.search([('order_id.partner_id','=',one.id)])
+            supplier_amount_invoice = sum(x.amount_total_signed for x in invoice)
+            supplier_amount_residual_invoice = sum(x.residual_signed for x in invoice)
+            supplier_amount_advance_payment = sum(x.amount for x in payment)
+            supplier_amount_advance_payment_reconcile = sum(x.advance_total for x in payment)
+            # amount_advance_payment_reconcile =  sum(x.amount_advance_org for x in reconcile)
+            # amount_residual_advance_payment = amount_advance_payment - amount_advance_payment_reconcile
+            supplier_amount_residual_advance_payment = sum(x.advance_balance_total for x in payment)
+            one.supplier_amount_invoice = supplier_amount_invoice
+            one.supplier_amount_residual_invoice = supplier_amount_residual_invoice
+            one.supplier_amount_advance_payment = supplier_amount_advance_payment
+            one.supplier_amount_advance_payment_reconcile = supplier_amount_advance_payment_reconcile
+            one.supplier_amount_residual_advance_payment = supplier_amount_residual_advance_payment
+
     @api.depends('sale_order_ids.amount_total','sale_order_ids')
     def compute_sale_order_amount_total(self):
         for one in self:
@@ -102,19 +124,32 @@ class res_partner(models.Model):
     invoice_ids = fields.One2many('account.invoice', 'partner_id','应收账单',
                                   domain=[('yjzy_type', '=', 'sale'), ('type', '=', 'out_invoice'),
                                           ('state', 'not in', ['draft', 'cancel'])])
+    supplier_invoice_ids = fields.One2many('account.invoice', 'partner_id', '应付账单',
+                                  domain=[('yjzy_type', '=', 'purchase'), ('type', '=', 'in_invoice'),
+                                          ('state', 'not in', ['draft', 'cancel'])])
     advance_payment_ids = fields.One2many('account.payment', 'partner_id','预收认领',
                                           domain=[('sfk_type', '=', 'ysrld'), ('state', 'in', ['posted', 'reconciled'])],
+                                          )
+    supplier_advance_payment_ids = fields.One2many('account.payment', 'partner_id', '预付认领',
+                                          domain=[('sfk_type', '=', 'yfsqd'),
+                                                  ('state', 'in', ['posted', 'reconciled'])],
                                           )
     payment_ids = fields.One2many('account.payment', 'partner_confirm_id', '收款流水',
                                           domain=[('sfk_type', '=', 'rcskd'),
                                                   ('state', 'in', ['posted', 'reconciled'])],
                                           )
+    supplier_payment_ids = fields.One2many('account.payment', 'partner_confirm_id', '付款流水',
+                                  domain=[('sfk_type', '=', 'rcfkd'),
+                                          ('state', 'in', ['posted', 'reconciled'])])
+
     tb_approve_ids = fields.One2many('transport.bill','partner_id','今年出运合同',
                                      domain=[('approve_date','!=',False),('approve_date','>',fields.datetime.now().strftime('%Y-01-01 00:00:00')),('state','in',['approve','confirmed','delivered','invoiced','locked','verifying','done','paid'])])
     so_approve_ids = fields.One2many('sale.order','partner_id','今年销售合同',
                                      domain=[('approve_date','!=',False),('approve_date','>',fields.datetime.now().strftime('%Y-01-01 00:00:00')),('state','in',['approve', 'sale', 'done','abnormal','verifying','verification'])])
     so_no_sent_amount = fields.Float('未发货余额', compute=compute_sale_order_amount_total,store=True)
-    account_reconcile_ids = fields.One2many('account.reconcile.order','partner_id','应收认领', domain=[('amount_payment_org','!=',0)])
+    account_reconcile_ids = fields.One2many('account.reconcile.order','partner_id','应收认领', domain=[('sfk_type','=','yshxd'),('amount_payment_org','!=',0)])
+    supplier_account_reconcile_ids = fields.One2many('account.reconcile.order', 'partner_id', '应付认领',
+                                            domain=[('sfk_type', '=', 'yfhxd'), ('amount_payment_org', '!=', 0)])
     amount_invoice = fields.Float(u'应收账单总金额', compute=compute_amount_invoice_advance_payment,store=True)
     amount_residual_invoice = fields.Float(u'应收款余额',compute=compute_amount_invoice_advance_payment,store=True)
     amount_advance_payment = fields.Float('u预收总金额',compute=compute_amount_invoice_advance_payment,store=True)
@@ -123,6 +158,13 @@ class res_partner(models.Model):
     sale_order_amount_total = fields.Float('今年审批完成销售金额', compute=compute_sale_order_amount_total,store=True)
     tb_approve_amount_total = fields.Float('今年审批完成出运金额', compute=compute_tb_approve_amount_total, store=True)
     payment_amount_total = fields.Float('收款总金额',compute=compute_payment_amount_total,store=True)
+    supplier_amount_invoice = fields.Float(u'应付账单总金额', compute=compute_supplier_amount_invoice_advance_payment, store=True)
+    supplier_amount_residual_invoice = fields.Float(u'应付款余额', compute=compute_supplier_amount_invoice_advance_payment, store=True)
+    supplier_amount_advance_payment = fields.Float('u预付总金额', compute=compute_supplier_amount_invoice_advance_payment, store=True)
+    supplier_amount_residual_advance_payment = fields.Float('预付余额', compute=compute_supplier_amount_invoice_advance_payment, store=True)
+    supplier_amount_advance_payment_reconcile = fields.Float('预付认领金额', compute=compute_supplier_amount_invoice_advance_payment,
+                                                    store=True)
+    supplier_payment_amount_total = fields.Float('付款总金额', compute=compute_payment_amount_total, store=True)
     # 不要了
 
     mark_ids = fields.Many2many('transport.mark', 'ref_mark_patner', 'pid', 'mid', u'唛头')
@@ -268,12 +310,28 @@ class res_partner(models.Model):
             'domain': [('partner_id', 'in', [self.id]),('yjzy_type','=','sale'),('type','=','out_invoice'),('state','in',['paid','open'])],
             'target':'new'
         }
+    def action_view_partner_supplier_invoices(self):
+        form_view = self.env.ref('yjzy_extend.view_account_supplier_invoice_new_form')
+        tree_view = self.env.ref('account.invoice_supplier_tree')
+        self.ensure_one()
+        return {
+            'name': u'供应商应付',
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'res_model': 'account.invoice',
+            'type': 'ir.actions.act_window',
+            'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
+            'domain': [('partner_id', 'in', [self.id]),('yjzy_type','=','purchase'),('type','=','in_invoice'),('state','in',['paid','open'])],
+            'target':'new'
+        }
 
 
 
     @api.multi
     def print_invoice_payment(self):
-        if not self.invoice_ids and not self.advance_payment_ids:
+        if self.customer == True and not self.invoice_ids and not self.advance_payment_ids:
+            raise Warning('没有可以打印的')
+        if self.supplier == True and not self.invoice_ids and not self.supplier_advance_payment_ids:
             raise Warning('没有可以打印的')
         return self.env.ref('yjzy_extend.action_report_partner_invoice_payment').report_action(self)
 
@@ -387,6 +445,23 @@ class res_partner(models.Model):
             'type': 'ir.actions.act_window',
             'views': [(tree_view.id, 'tree'),(form_view.id, 'form')],
             'domain': [('partner_id', 'in', [self.id]),('sfk_type','=','ysrld'),('state','in',['posted','reconciled'])],
+            'target': 'new'
+        }
+
+    def open_supplier_advance(self):
+        form_view = self.env.ref('yjzy_extend.view_yfsqd_form')
+        tree_view = self.env.ref('yjzy_extend.view_yfsqd_account_tree')
+        self.ensure_one()
+        return {
+            'name': u'预收列表',
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'res_model': 'account.payment',
+            'type': 'ir.actions.act_window',
+            'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
+            'domain': [('partner_id', 'in', [self.id]), ('sfk_type', '=', 'yfsqd'),
+                       ('state', 'in', ['posted', 'reconciled'])],
+            'target': 'new'
         }
 
 

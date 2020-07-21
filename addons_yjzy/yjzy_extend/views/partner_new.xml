@@ -183,24 +183,20 @@
             <field name="arch" type="xml">
                 <tree string="Contacts" editable="bottom" >
                     <field name="name" string="简称" readonly="1"/>
-                    <button name="print_invoice_payment" icon="fa-print" string="收款-应收"  type="object"/>
-                    <field name="sale_order_amount_total" sum="小计" readonly="1"/>
-                    <button name="open_sale_order_approve" icon="fa-pencil-square-o" type="object" readonly="1"/>
-                    <field name="tb_approve_amount_total"/>
-                    <button name="open_tb_approve" icon="fa-pencil-square-o" type="object" />
-                    <field name="amount_invoice" sum="小计" readonly="1" invisible="1"/>
-                    <field name="amount_residual_invoice" sum="小计" readonly="1"/>
-                    <button name="action_view_partner_invoices_new" icon="fa-pencil-square-o" type="object"/>
+                    <button name="print_invoice_payment" icon="fa-print" string="付款-应付"  type="object"/>
+
+                    <field name="supplier_amount_invoice" sum="小计" readonly="1" invisible="1"/>
+                    <field name="supplier_amount_residual_invoice" sum="小计" readonly="1"/>
+                    <button name="action_view_partner_supplier_invoices" icon="fa-pencil-square-o" type="object"/>
                     <!--button name="open_reconcile_order_line_invoice" icon="fa-pencil-square-o" type="object"/-->
 
                     <field name="payment_amount_total" sum="小计" readonly="1" invisible="1"/>
                     <field name="amount_advance_payment" sum="小计" readonly="1" invisible="1"/>
                     <field name="amount_advance_payment_reconcile" sum="小计" readonly="1"  invisible="1"/>
-                    <field name="amount_residual_advance_payment" sum="小计" readonly="1"/>
+                    <field name="supplier_amount_residual_advance_payment" sum="小计" readonly="1"/>
                     <!--button name="open_reconcile_order_line" icon="fa-pencil-square-o" type="object"/-->
-                    <button name="open_advance" icon="fa-pencil-square-o" type="object"/>
-                    <field name="so_no_sent_amount" readonly="1"/>
-                    <button name="open_sale_order_no_sent" icon="fa-pencil-square-o" type="object"/>
+                    <button name="open_supplier_advance" icon="fa-pencil-square-o" type="object"/>
+
                     <!--button name="open_sale_order" icon="fa-pencil-square-o" type="object"/-->
                     <field name="is_company" invisible="1"/>
                     <field name="active" invisible="1"/>
@@ -4171,8 +4167,34 @@
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('res_new_partner_kanban_view')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_new_customer_account_form')})]"/>
         </record>
-        <menuitem id="mennu_new_customer_account" parent="new_customer_root" name="客户数据查询" sequence="99"
+        <menuitem id="menu_new_customer_account" parent="new_customer_root" name="客户数据查询" sequence="99"
                   action="action_new_customer_account"/>
+
+
+
+         <record id="action_new_supplier_account" model="ir.actions.act_window">
+            <field name="name">供应商</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="domain">
+                [('supplier','=',True),('is_company','=',True),('name','!=','未定义'),('state','!=','done')]
+            </field>
+            <field name="context">{'default_is_company': True,'default_supplier': True,
+                'group_by':'x_wkf_state','default_customer':False}
+            </field>
+            <field name="filter" eval="True"/>
+            <field name="search_view_id" ref="view_new_res_partner_filter"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_new_partner_supplier_account_tree')}),
+                          (0, 0, {'view_mode': 'kanban', 'view_id': ref('res_new_partner_kanban_view')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_new_supplier_form')})]"/>
+        </record>
+
+
+        <menuitem id="menu_new_supplier_account" parent="new_customer_root" name="供应商数据查询" sequence="99"
+                  action="action_new_supplier_account"/>
 
         <record id="action_new_customer_account_all" model="ir.actions.act_window">
             <field name="name">所有客户</field>
