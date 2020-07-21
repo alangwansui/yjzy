@@ -9,6 +9,7 @@
         <field name="arch" type="xml">
             <tree string="认领明细"  edit="false" create="false">
                 <field name="order_id" invisible="1"/>
+                <field name="invoice_display_name" invisible="1"/>
                 <field name="so_id"/>
                 <field name="tb_contract_code"/>
                 <field name="advance_residual"/>
@@ -21,6 +22,7 @@
                 <field name="amount_bank_org" string="银行扣款认领金额" sum="小计"/>
                 <field name="amount_diff_org" string="销售费用认领金额" sum="小计"/>
                 <field name="amount_total_org" string="合计认领" sum="小计"/>
+                <field name="yjzy_payment_id"/>
             </tree>
         </field>
     </record>
@@ -223,5 +225,20 @@
     <menuitem id="menu_yshxd" name="应收核销单"
               parent="menu_skf_root" action="action_yshxd"/>
 
+    <record id="action_account_yshxd_line" model="ir.actions.act_window">
+            <field name="name">应收认领明细</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.reconcile.order.line</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,kanban</field>
+            <field name="domain">[('order_id.sfk_type','=','yshxd')]</field>
+            <field name="context">{'group_by':'invoice_display_name'}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('account_yshxd_line_tree_view')})]"/>
+    </record>
+        <menuitem id="menu_account_yshxd_line" action="action_account_yshxd_line"
+                  parent="menu_account_new_root" name="应收认领明细"
+                  sequence="99"
+        />
 
 </odoo>

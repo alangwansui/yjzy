@@ -128,6 +128,15 @@ class account_invoice(models.Model):
             one.reconcile_order_line_bank = reconcile_order_line_bank
             one.reconcile_order_line_amount_diff = reconcile_order_line_amount_diff
 
+
+    @api.depends('tb_contract_code', 'amount_total')
+    def compute_display_name(self):
+        for one in self:
+            one.display_name = '%s[%s]' % (one.tb_contract_code, str(one.amount_total))
+
+
+    #新增
+    display_name = fields.Char(u'显示名称', compute=compute_display_name, store=True)
    #13ok
     yjzy_type = fields.Selection([('sale', u'销售'), ('purchase', u'采购'), ('back_tax', u'退税')], string=u'发票类型')
     bill_id = fields.Many2one('transport.bill', u'发运单')

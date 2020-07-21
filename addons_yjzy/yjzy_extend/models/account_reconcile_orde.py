@@ -828,6 +828,12 @@ class account_reconcile_order_line(models.Model):
             if diff_currency and invoice_currency:
                 amount_total_org += diff_currency.compute(one.amount_diff_org, invoice_currency)
 
+
+            if one.yjzy_payment_id:
+                one.yjzy_currency_id = one.yjzy_payment_id.currency_id
+            else:
+                one.yjzy_currency_id = one.invoice_currency_id
+
             one.amount_total_org = amount_total_org
 
             # print('=payment_currency%s==invoice_currency%s==bank_currency%s==diff_currency%s=' % (payment_currency, invoice_currency, bank_currency, diff_currency) )
@@ -854,7 +860,7 @@ class account_reconcile_order_line(models.Model):
     so_id = fields.Many2one('sale.order', u'销售单')
     so_contract_code = fields.Char(u'销售合同号', related='so_id.contract_code', readonly=True)
 
-
+    invoice_display_name =  fields.Char('发票显示名字', related='invoice_id.display_name' , store=True)
 
 
     po_id = fields.Many2one('purchase.order', u'采购单')
@@ -879,7 +885,8 @@ class account_reconcile_order_line(models.Model):
    # yjzy_payment_id = fields.Many2one('account.payment', u'预收认领单', related='so_id.yjzy_payment_id')
     yjzy_payment_id = fields.Many2one('account.payment', u'预收认领单')
     yjzy_payment_display_name = fields.Char('显示名称',related='yjzy_payment_id.display_name',store=True)
-    yjzy_currency_id = fields.Many2one('res.currency', u'预收币种', related='yjzy_payment_id.currency_id')
+    #yjzy_currency_id = fields.Many2one('res.currency', u'预收币种', related='yjzy_payment_id.currency_id')
+    yjzy_currency_id = fields.Many2one('res.currency', u'预收币种', compute=compute_info)
     amount_advance_org = fields.Monetary(u'预收金额', currency_field='yjzy_currency_id')
 
     amount_advance = fields.Monetary(u'预收金额:本币', currency_field='currency_id', compute=compute_info)

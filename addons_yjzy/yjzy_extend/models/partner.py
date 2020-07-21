@@ -268,6 +268,9 @@ class res_partner(models.Model):
             'domain': [('partner_id', 'in', [self.id]),('yjzy_type','=','sale'),('type','=','out_invoice'),('state','in',['paid','open'])],
             'target':'new'
         }
+
+
+
     @api.multi
     def print_invoice_payment(self):
         if not self.invoice_ids and not self.advance_payment_ids:
@@ -304,6 +307,24 @@ class res_partner(models.Model):
                 'views': [(tree_view.id, 'tree')],
                 'domain': [('order_id.partner_id', 'in', [self.id]),('order_id.state','=','done'),('amount_advance_org','!=',0)],
                 'context':{'group_by':'yjzy_payment_display_name','default_sfk_type': 'yshxd',},
+                'target':'new'
+
+            }
+
+    def open_reconcile_order_line_invoice(self):
+        #form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form')
+        tree_view = self.env.ref('yjzy_extend.account_yshxd_line_tree_view')
+        self.ensure_one()
+        for one in self:
+            return {
+                'name': u'应收认领明细',
+                'view_type': 'form',
+                'view_mode': 'tree,form',
+                'res_model': 'account.reconcile.order.line',
+                'type': 'ir.actions.act_window',
+                'views': [(tree_view.id, 'tree')],
+                'domain': [('order_id.partner_id', 'in', [self.id]),('order_id.state','=','done'),('amount_total_org','!=',0)],
+                'context':{'group_by':'invoice_display_name','default_sfk_type': 'yshxd'},
                 'target':'new'
 
             }
@@ -356,7 +377,7 @@ class res_partner(models.Model):
 
     def open_advance(self):
         form_view = self.env.ref('yjzy_extend.view_ysrld_advance_form')
-        tree_view = self.env.ref('yjzy_extend.view_ysrld_reconcile_tree')
+        tree_view = self.env.ref('yjzy_extend.view_ysrld_reconcile_tree_1')
         self.ensure_one()
         return {
             'name': u'预收列表',
@@ -365,8 +386,7 @@ class res_partner(models.Model):
             'res_model': 'account.payment',
             'type': 'ir.actions.act_window',
             'views': [(tree_view.id, 'tree'),(form_view.id, 'form')],
-            'domain': [('partner_id', 'in', [self.id]),('sfk_type','=','ysrld')],
-            'target': 'new'
+            'domain': [('partner_id', 'in', [self.id]),('sfk_type','=','ysrld'),('state','in',['posted','reconciled'])],
         }
 
 

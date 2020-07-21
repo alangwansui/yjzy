@@ -51,7 +51,6 @@
                 <field name="payment_date" string="认领日期"/>
                 <field name="amount" string="认领金额"/>
                 <field name="advance_reconcile_order_line_invoice_char" string="账单"/>
-
                 <field name="so_id" string="销售合同"/>
                 <field name="advance_reconcile_order_line_ids" invisible="1"/>
                 <field name="advance_reconcile_order_line_date_char"/>
@@ -71,7 +70,6 @@
                 <field name="name" invisible="1"/>
                 <field name="rcskd_date"/>
                 <field name="rcskd_amount"/>
-
                 <field name="payment_date" string="认领日期"/>
                 <field name="amount" string="金额"/>
                 <button name="open_reconcile_order_line" icon="fa-pencil-square-o" type="object"/>
@@ -312,7 +310,7 @@
         <field name="res_model">account.payment</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
-        <field name="domain">[('sfk_type','=','ysrld'),('state','in',['post','reconciled'])]</field>
+        <field name="domain">[('sfk_type','=','ysrld'),('state','in',['posted','reconciled'])]</field>
         <field name="context">{'show_shoukuan': True, 'default_sfk_type': 'ysrld', 'default_payment_type': 'inbound',
             'default_be_renling': True,'default_advance_ok': True, 'default_partner_type': 'customer',}
         </field>
@@ -329,7 +327,7 @@
         <field name="res_model">account.payment</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
-        <field name="domain">[('sfk_type','=','ysrld')]</field>
+        <field name="domain">[('sfk_type','=','ysrld'),('state','in',['posted','reconciled'])]</field>
         <field name="context">{'show_shoukuan': True, 'default_sfk_type': 'ysrld', 'default_payment_type': 'inbound',
             'default_be_renling': True,'default_advance_ok': True, 'default_partner_type': 'customer',}
         </field>
