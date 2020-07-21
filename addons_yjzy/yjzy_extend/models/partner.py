@@ -122,10 +122,10 @@ class res_partner(models.Model):
     #新增
 
     invoice_ids = fields.One2many('account.invoice', 'partner_id','应收账单',
-                                  domain=[('yjzy_type', '=', 'sale'), ('type', '=', 'out_invoice'),
+                                  domain=[('type', '=', 'out_invoice'),
                                           ('state', 'not in', ['draft', 'cancel'])])
     supplier_invoice_ids = fields.One2many('account.invoice', 'partner_id', '应付账单',
-                                  domain=[('yjzy_type', '=', 'purchase'), ('type', '=', 'in_invoice'),
+                                  domain=[('type', '=', 'in_invoice'),
                                           ('state', 'not in', ['draft', 'cancel'])])
     advance_payment_ids = fields.One2many('account.payment', 'partner_id','预收认领',
                                           domain=[('sfk_type', '=', 'ysrld'), ('state', 'in', ['posted', 'reconciled'])],
@@ -148,14 +148,14 @@ class res_partner(models.Model):
                                      domain=[('approve_date','!=',False),('approve_date','>',fields.datetime.now().strftime('%Y-01-01 00:00:00')),('state','in',['approve', 'sale', 'done','abnormal','verifying','verification'])])
     so_no_sent_amount = fields.Float('未发货余额', compute=compute_sale_order_amount_total,store=True)
     account_reconcile_ids = fields.One2many('account.reconcile.order','partner_id','应收认领', domain=[('sfk_type','=','yshxd'),('state','=','done'),('amount_payment_org','!=',0)])
-    account_reconcile_have_sopo_ids = fields.One2many('account.reconcile.order', 'partner_id', '应收认领',
-                                            domain=[('sfk_type', '=', 'yshxd'), ('state', '=', 'done'),('no_sopo','!=',True),
-                                                    ('amount_payment_org', '!=', 0)])
+    # account_reconcile_have_sopo_ids = fields.One2many('account.reconcile.order', 'partner_id', '应收认领',
+    #                                         domain=[('sfk_type', '=', 'yshxd'), ('state', '=', 'done'),('no_sopo','!=',True),
+    #                                                 ('amount_payment_org', '!=', 0)])
     supplier_account_reconcile_ids = fields.One2many('account.reconcile.order', 'partner_id', '应付认领',
                                             domain=[('sfk_type', '=', 'yfhxd'),('state','=','done'), ('amount_payment_org', '!=', 0)])
-    supplier_account_reconcile_have_sopo_ids = fields.One2many('account.reconcile.order', 'partner_id', '应付认领',
-                                                     domain=[('sfk_type', '=', 'yfhxd'), ('state', '=', 'done'),('no_sopo','!=',True),
-                                                             ('amount_payment_org', '!=', 0)])
+    # supplier_account_reconcile_have_sopo_ids = fields.One2many('account.reconcile.order', 'partner_id', '应付认领',
+    #                                                  domain=[('sfk_type', '=', 'yfhxd'), ('state', '=', 'done'),('no_sopo','!=',True),
+    #                                                          ('amount_payment_org', '!=', 0)])
     amount_invoice = fields.Float(u'应收账单总金额', compute=compute_amount_invoice_advance_payment,store=True)
     amount_residual_invoice = fields.Float(u'应收款余额',compute=compute_amount_invoice_advance_payment,store=True)
     amount_advance_payment = fields.Float('u预收总金额',compute=compute_amount_invoice_advance_payment,store=True)
