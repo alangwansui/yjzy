@@ -368,11 +368,11 @@
             </field>
         </record>
         <record id="view_new_supplier_account_form" model="ir.ui.view">
-            <field name="name">res.partner.customer.form.new</field>
+            <field name="name">res.partner.supplier.form.new</field>
             <field name="model">res.partner</field>
             <field name="priority" eval="1"/>
             <field name="arch" type="xml">
-                <form string="客户">
+                <form string="供应商">
                     <header groups="base.group_system">
                         <field name="state" statusbar_invisible="draft" widget="statusbar"/>
                     </header>
@@ -435,6 +435,8 @@
 
 
                             <group>
+                                <field name="customer" invisible="1"/>
+                            <field name="supplier" invisible="1"/>
                                 <field name="type" invisible="1" attrs="{'invisible': [('parent_id','=', False)]}"
                                        groups="base.group_no_one,sale.group_delivery_invoice_address"/>
                                 <field name="full_name" string="供应商全称"
