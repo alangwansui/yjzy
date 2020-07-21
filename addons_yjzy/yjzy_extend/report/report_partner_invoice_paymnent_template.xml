@@ -246,16 +246,16 @@ body {
               <td style="text-align: right;padding-right: 2px"><t t-esc="sum(x.residual_signed for x in doc.invoice_ids)" t-options='{"widget": "float", "precision": 2}'/></td>
               <td></td>
               <td style="text-align: right;padding-right: 2px"><span style="color: red">
-                <t t-esc="sum(x.amount_payment_org for x in doc.account_reconcile_ids)" t-options='{"widget": "float", "precision": 2}'/>
+                <t t-esc="sum(x.amount_payment_org for x in doc.account_reconcile_have_sopo_ids)" t-options='{"widget": "float", "precision": 2}'/>
                 </span></td>
               <td style="text-align: right;padding-right: 2px"><span style="color: red">
-                <t t-esc="sum(x.amount_advance_org for x in doc.account_reconcile_ids)" t-options='{"widget": "float", "precision": 2}'/>
+                <t t-esc="sum(x.amount_advance_org for x in doc.account_reconcile_have_sopo_ids)" t-options='{"widget": "float", "precision": 2}'/>
                 </span></td>
               <td style="text-align: right;padding-right: 2px"><span style="color: red">
-                <t t-esc="sum(x.amount_bank_org for x in doc.account_reconcile_ids)" t-options='{"widget": "float", "precision": 2}'/>
+                <t t-esc="sum(x.amount_bank_org for x in doc.account_reconcile_have_sopo_ids)" t-options='{"widget": "float", "precision": 2}'/>
                 </span></td>
               <td style="text-align: right;padding-right: 2px"><span style="color: red">
-                <t t-esc="sum(x.amount_diff_org for x in doc.account_reconcile_ids)" t-options='{"widget": "float", "precision": 2}'/>
+                <t t-esc="sum(x.amount_diff_org for x in doc.account_reconcile_have_sopo_ids)" t-options='{"widget": "float", "precision": 2}'/>
                 </span></td>
               <td></td>
             </tr>
@@ -358,7 +358,7 @@ body {
               <td style="text-align: right;padding-right: 2px"><t t-esc="sum(x.balance for x in doc.supplier_payment_ids)" t-options='{"widget": "float", "precision": 2}'/></td>
               <td></td>
               <td style="text-align: right;padding-right: 2px"><span style="color: red">
-                <t t-esc="sum(x.amount_payment_org for x in doc.account_reconcile_ids)" t-options='{"widget": "float", "precision": 2}'/>
+                <t t-esc="sum(x.amount_payment_org for x in doc.supplier_account_reconcile_ids)" t-options='{"widget": "float", "precision": 2}'/>
                 </span></td>
               <td style="text-align: right;padding-right: 2px"><span style="color: red">
                 <t t-esc="doc.supplier_amount_advance_payment" t-options='{"widget": "float", "precision": 2}'/>
@@ -400,9 +400,7 @@ body {
             <tr>
               <td></td>
               <td></td>
-              <td style="text-align: right;padding-right: 2px"><span style="color: red">-
-                <t t-esc="line1.amount_total_org" t-options='{"widget": "float", "precision": 2}'/>
-                </span></td>
+              <td></td>
               <td></td>
               <td><t t-esc="line1.order_id.date"/></td>
               <td style="text-align: right;padding-right: 2px"><span style="color: red">
@@ -427,13 +425,13 @@ body {
               <td style="text-align: right;padding-right: 2px"><t t-esc="sum(x.residual_signed for x in doc.supplier_invoice_ids)" t-options='{"widget": "float", "precision": 2}'/></td>
               <td></td>
               <td style="text-align: right;padding-right: 2px"><span style="color: red">
-                <t t-esc="sum(x.amount_payment_org for x in doc.account_reconcile_ids)" t-options='{"widget": "float", "precision": 2}'/>
+                <t t-esc="sum(x.amount_payment_org for x in doc.supplier_account_reconcile_have_sopo_ids)" t-options='{"widget": "float", "precision": 2}'/>
                 </span></td>
               <td style="text-align: right;padding-right: 2px"><span style="color: red">
-                <t t-esc="sum(x.amount_advance_org for x in doc.supplier_account_reconcile_ids)" t-options='{"widget": "float", "precision": 2}'/>
+                <t t-esc="sum(x.amount_advance_org for x in doc.supplier_account_reconcile_have_sopo_ids)" t-options='{"widget": "float", "precision": 2}'/>
                 </span></td>
               <td style="text-align: right;padding-right: 2px"><span style="color: red">
-                <t t-esc="sum(x.amount_diff_org for x in doc.supplier_account_reconcile_ids)" t-options='{"widget": "float", "precision": 2}'/>
+                <t t-esc="sum(x.amount_diff_org for x in doc.supplier_account_reconcile_have_sopo_ids)" t-options='{"widget": "float", "precision": 2}'/>
                 </span></td>
               <td></td>
             </tr>
@@ -443,6 +441,7 @@ body {
   </tbody>
 </table>
 </t>
+
 
         </t>
     </template>
