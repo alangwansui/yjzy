@@ -331,7 +331,7 @@ class res_partner(models.Model):
     def print_invoice_payment(self):
         if self.customer == True and not self.invoice_ids and not self.advance_payment_ids:
             raise Warning('没有可以打印的')
-        if self.supplier == True and not self.invoice_ids and not self.supplier_advance_payment_ids:
+        if self.supplier == True and not self.supplier_invoice_ids and not self.supplier_advance_payment_ids:
             raise Warning('没有可以打印的')
         return self.env.ref('yjzy_extend.action_report_partner_invoice_payment').report_action(self)
 
