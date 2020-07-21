@@ -4173,7 +4173,7 @@
 
 
          <record id="action_new_supplier_account" model="ir.actions.act_window">
-            <field name="name">供应商</field>
+            <field name="name">供应商数据查询</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">res.partner</field>
             <field name="view_type">form</field>
@@ -4193,7 +4193,7 @@
         </record>
 
 
-        <menuitem id="menu_new_supplier_account" parent="new_customer_root" name="供应商数据查询" sequence="99"
+        <menuitem id="menu_new_supplier_account" parent="new_supplier_root" name="供应商数据查询" sequence="99"
                   action="action_new_supplier_account"/>
 
         <record id="action_new_customer_account_all" model="ir.actions.act_window">
