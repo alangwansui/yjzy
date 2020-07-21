@@ -223,6 +223,22 @@ class account_invoice(models.Model):
                 'target':'new'
 
             }
+    def open_supplier_reconcile_order_line(self):
+        self.ensure_one()
+        #form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form')
+        tree_view = self.env.ref('yjzy_extend.account_yfhxd_line_tree_view')
+        for one in self:
+            return {
+                'name': u'供应商应付',
+                'view_type': 'form',
+                'view_mode': 'tree,form',
+                'res_model': 'account.reconcile.order.line',
+                'type': 'ir.actions.act_window',
+                'views': [(tree_view.id, 'tree')],
+                'domain': [('invoice_id', 'in', [one.id]),('order_id.state','=','done')],
+                'target':'new'
+
+            }
 
     # def name_get(self):
     #     ctx = self.env.context
