@@ -75,9 +75,13 @@ class res_partner(models.Model):
     @api.depends('sale_order_ids.amount_total','sale_order_ids')
     def compute_sale_order_amount_total(self):
         for one in self:
-            so_ids = one.sale_order_ids.filtered(lambda s: s.state in ['approve', 'sale', 'done','abnormal','verifying','verification'])
+            so_ids = one.so_approve_ids
+            so_no_sent_ids = one.sale_order_ids.filtered(lambda x: x.no_sent_amount_new != 0 and x.state in ['approve', 'sale', 'done','abnormal','verifying','verification'])
+            print('tet',so_ids,so_no_sent_ids)
             amount_total = sum(x.amount_total for x in so_ids)
+            no_sent_amount = sum(x.no_sent_amount for x in so_no_sent_ids)
             one.sale_order_amount_total = amount_total
+            one.so_no_sent_amount = no_sent_amount
 
     @api.depends('tb_approve_ids', 'tb_approve_ids.org_sale_amount_new')
     def compute_tb_approve_amount_total(self):
@@ -105,17 +109,19 @@ class res_partner(models.Model):
                                           domain=[('sfk_type', '=', 'rcskd'),
                                                   ('state', 'in', ['posted', 'reconciled'])],
                                           )
-    tb_approve_ids = fields.One2many('transport.bill','partner_id','出运合同',
-                                     domain=[('state','in',['approve','confirmed','delivered','invoiced','locked','verifying','done','paid'])])
-
+    tb_approve_ids = fields.One2many('transport.bill','partner_id','今年出运合同',
+                                     domain=[('approve_date','!=',False),('approve_date','>',fields.datetime.now().strftime('%Y-01-01 00:00:00')),('state','in',['approve','confirmed','delivered','invoiced','locked','verifying','done','paid'])])
+    so_approve_ids = fields.One2many('sale.order','partner_id','今年销售合同',
+                                     domain=[('approve_date','!=',False),('approve_date','>',fields.datetime.now().strftime('%Y-01-01 00:00:00')),('state','in',['approve', 'sale', 'done','abnormal','verifying','verification'])])
+    so_no_sent_amount = fields.Float('未发货余额', compute=compute_sale_order_amount_total,store=True)
     account_reconcile_ids = fields.One2many('account.reconcile.order','partner_id','应收认领', domain=[('amount_payment_org','!=',0)])
-    amount_invoice = fields.Float('应收账单总金额', compute=compute_amount_invoice_advance_payment,store=True)
-    amount_residual_invoice = fields.Float('应收到期金额',compute=compute_amount_invoice_advance_payment,store=True)
-    amount_advance_payment = fields.Float('预收总金额',compute=compute_amount_invoice_advance_payment,store=True)
-    amount_residual_advance_payment = fields.Float('预收剩余金额',compute=compute_amount_invoice_advance_payment,store=True)
+    amount_invoice = fields.Float(u'应收账单总金额', compute=compute_amount_invoice_advance_payment,store=True)
+    amount_residual_invoice = fields.Float(u'应收款余额',compute=compute_amount_invoice_advance_payment,store=True)
+    amount_advance_payment = fields.Float('u预收总金额',compute=compute_amount_invoice_advance_payment,store=True)
+    amount_residual_advance_payment = fields.Float('预收余额',compute=compute_amount_invoice_advance_payment,store=True)
     amount_advance_payment_reconcile = fields.Float('预收认领金额',compute=compute_amount_invoice_advance_payment,store=True)
-    sale_order_amount_total = fields.Float('审批完成销售金额', compute=compute_sale_order_amount_total,store=True)
-    tb_approve_amount_total = fields.Float('审批完成的出运合同', compute=compute_tb_approve_amount_total, store=True)
+    sale_order_amount_total = fields.Float('今年审批完成销售金额', compute=compute_sale_order_amount_total,store=True)
+    tb_approve_amount_total = fields.Float('今年审批完成出运金额', compute=compute_tb_approve_amount_total, store=True)
     payment_amount_total = fields.Float('收款总金额',compute=compute_payment_amount_total,store=True)
     # 不要了
 
@@ -248,13 +254,10 @@ class res_partner(models.Model):
 
 
 
-
-
-
     def action_view_partner_invoices_new(self):
-        self.ensure_one()
         form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form')
         tree_view = self.env.ref('yjzy_extend.invoice_new_tree')
+        self.ensure_one()
         return {
             'name': u'客户应收',
             'view_type': 'form',
@@ -262,9 +265,8 @@ class res_partner(models.Model):
             'res_model': 'account.invoice',
             'type': 'ir.actions.act_window',
             'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
-            'domain': [('partner_id', 'in', [self.id]),('yjzy_type','=','sale'),('type','=','out_invoice')],
+            'domain': [('partner_id', 'in', [self.id]),('yjzy_type','=','sale'),('type','=','out_invoice'),('state','in',['paid','open'])],
             'target':'new'
-
         }
     @api.multi
     def print_invoice_payment(self):
@@ -275,9 +277,9 @@ class res_partner(models.Model):
 
 
     def open_sale_order(self):
-        self.ensure_one()
         #form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form')
         tree_view = self.env.ref('yjzy_extend.new_sale_order_advance_tree')
+        self.ensure_one()
         return {
             'name': u'销售合同对应预收',
             'view_type': 'form',
@@ -288,27 +290,28 @@ class res_partner(models.Model):
             'domain': [('partner_id', 'in', [self.id]),('yjzy_payment_ids', '!=', False)],
             'target': 'new'
         }
-    # def open_reconcile_order_line(self):
-    #     self.ensure_one()
-    #     #form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form')
-    #     tree_view = self.env.ref('yjzy_extend.account_yshxd_line_tree_view')
-    #     for one in self:
-    #         return {
-    #             'name': u'预收认领',
-    #             'view_type': 'form',
-    #             'view_mode': 'tree,form',
-    #             'res_model': 'account.reconcile.order.line',
-    #             'type': 'ir.actions.act_window',
-    #             'views': [(tree_view.id, 'tree')],
-    #             'domain': [('invoice_id', 'in', [one.id])],
-    #             'target':'new'
-    #
-    #         }
+    def open_reconcile_order_line(self):
+        #form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form')
+        tree_view = self.env.ref('yjzy_extend.account_yshxd_line_tree_view')
+        self.ensure_one()
+        for one in self:
+            return {
+                'name': u'预收认领',
+                'view_type': 'form',
+                'view_mode': 'tree,form',
+                'res_model': 'account.reconcile.order.line',
+                'type': 'ir.actions.act_window',
+                'views': [(tree_view.id, 'tree')],
+                'domain': [('order_id.partner_id', 'in', [self.id]),('order_id.state','=','done'),('amount_advance_org','!=',0)],
+                'context':{'group_by':'yjzy_payment_display_name','default_sfk_type': 'yshxd',},
+                'target':'new'
+
+            }
 
     def open_sale_order_approve(self):
-        self.ensure_one()
         #form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form')
-        tree_view = self.env.ref('yjzy_extend.new_sale_order_tree')
+        tree_view = self.env.ref('yjzy_extend.new_sale_order_approve_tree')
+        self.ensure_one()
         return {
             'name': u'销售合同',
             'view_type': 'form',
@@ -317,13 +320,28 @@ class res_partner(models.Model):
             'type': 'ir.actions.act_window',
             'views': [(tree_view.id, 'tree')],
             'domain': [('partner_id', 'in', [self.id]),('state','in',['approve', 'sale', 'done','abnormal','verifying','verification'])],
-            'context':{'group_by':'approve_date:year'},
+            'context':{'group_by':'approve_date:year','same_customer':1},
+            'target': 'new'
+        }
+    def open_sale_order_no_sent(self):
+        #form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form')
+        tree_view = self.env.ref('yjzy_extend.new_sale_order_approve_tree')
+        self.ensure_one()
+        return {
+            'name': u'销售合同',
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'res_model': 'sale.order',
+            'type': 'ir.actions.act_window',
+            'views': [(tree_view.id, 'tree')],
+            'domain': [('partner_id', 'in', [self.id]),('no_sent_amount_new','!=',0),('state','in',['approve', 'sale', 'done','abnormal','verifying','verification'])],
+            'context':{'group_by':'approve_date:year','same_customer':1},
             'target': 'new'
         }
     def open_tb_approve(self):
-        self.ensure_one()
         #form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form')
-        tree_view = self.env.ref('yjzy_extend.view_transport_bill_tenyale_approving_tree')
+        tree_view = self.env.ref('yjzy_extend.view_transport_bill_tenyale_sales_tree')
+        self.ensure_one()
         return {
             'name': u'出运合同',
             'view_type': 'form',
@@ -332,14 +350,14 @@ class res_partner(models.Model):
             'type': 'ir.actions.act_window',
             'views': [(tree_view.id, 'tree')],
             'domain': [('partner_id', 'in', [self.id]),('state','in',['approve','confirmed','delivered','invoiced','locked','verifying','done','paid'])],
-            'context':{'group_by':'approve_date:year'},
+            'context':{'group_by':'approve_date:year','same_customer':1},
             'target': 'new'
         }
 
     def open_advance(self):
-        self.ensure_one()
         form_view = self.env.ref('yjzy_extend.view_ysrld_advance_form')
         tree_view = self.env.ref('yjzy_extend.view_ysrld_reconcile_tree')
+        self.ensure_one()
         return {
             'name': u'预收列表',
             'view_type': 'form',

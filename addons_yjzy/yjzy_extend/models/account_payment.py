@@ -166,13 +166,14 @@ class account_payment(models.Model):
                 partner_confirm_id = yshx_ids[0].partner_id
             one.partner_confirm_id = partner_confirm_id
 
+    @api.depends('name', 'amount')
+    def compute_display_name(self):
+        for one in self:
+            one.display_name = '%s[%s]' % (one.name, str(one.amount))
 
 
-
-
-
-
-
+    #新增
+    display_name = fields.Char(u'显示名称', compute=compute_display_name, store=True)
     advance_reconcile_order_line_ids = fields.One2many('account.reconcile.order.line', 'yjzy_payment_id', string='预收认领明细',domain=[('amount_advance_org','>',0),('order_id.state','=','done')])
     advance_reconcile_order_line_amount_char = fields.Text(related='so_id.advance_reconcile_order_line_amount_char', string=u'预收认领明细金额')
     advance_reconcile_order_line_date_char = fields.Text(related='so_id.advance_reconcile_order_line_date_char',string=u'预收认领日期')

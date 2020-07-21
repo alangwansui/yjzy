@@ -210,7 +210,7 @@ class account_invoice(models.Model):
                 'res_model': 'account.reconcile.order.line',
                 'type': 'ir.actions.act_window',
                 'views': [(tree_view.id, 'tree')],
-                'domain': [('invoice_id', 'in', [one.id])],
+                'domain': [('invoice_id', 'in', [one.id]),('order_id.state','=','done')],
                 'target':'new'
 
             }
