@@ -1304,6 +1304,26 @@
                   sequence="90"
         />
 
+          <record id="action_sale_account_invoice_new_2" model="ir.actions.act_window">
+            <field name="name">应收账单:不含系统外</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_account_invoice_new_filter"/>
+            <field name="domain">[('type','=','out_invoice'),('bill_id','!=',False),('yjzy_type','=','sale'),('partner_id.is_company','=',True),('state','not in',['cancel','draft'])]</field>
+            <field name="context">{'search_default_group_by_partner_id':1,'only_ref':1,'type':'out_invoice',
+                'journal_type': 'sale','yjzy_type':'sale'}
+            </field>
+            <!--field name="target">new</field-->
+            <field name="view_ids" eval="[(5, 0, 0),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.invoice_new_1_tree')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.view_account_invoice_new_form')}),
+                              ]"/>
+        </record>
+        <menuitem id="menu_sale_account_invoice_new_2" action="action_sale_account_invoice_new_2"
+                  parent="menu_account_new_root" name="应收账单:不含系统外"
+                  sequence="93"
+        />
         <record id="action_sale_invoice_draft_new" model="ir.actions.act_window">
             <field name="name">未确认应收账单</field>
             <field name="type">ir.actions.act_window</field>
