@@ -466,26 +466,46 @@ class transport_bill(models.Model):
 
     @api.depends('all_invoice_ids','all_invoice_ids.state','sale_invoice_id','sale_invoice_id.state','purchase_invoice_ids','purchase_invoice_ids.state')
     def compute_invoice_paid_state(self):
-
         for one in self:
             invoice_paid_state = 'e'
-            line_purchase_invoice_count = len(one.purchase_invoice_ids.filtered(lambda x: x.state not in ['draft','cancel']))
-            line_count_paid = len(one.all_invoice_ids.filtered(lambda x: x.state == 'paid'))
+            line_purchase_invoice_count = len(
+                one.purchase_invoice_ids.filtered(lambda x: x.state not in ['draft', 'cancel']))
+            line_purchase_invoice_ids = one.purchase_invoice_ids
             sale_invoice_id = one.sale_invoice_id
-            line_purchase_invoice_paid_count = len(one.purchase_invoice_ids.filtered(lambda x: x.state == 'paid'))
-            if line_purchase_invoice_count > 0 and sale_invoice_id and sale_invoice_id.state not in ('draft','cancel'):
-                if line_count_paid > 0:
-                    if line_purchase_invoice_paid_count >0 and sale_invoice_id.state == 'paid':
-                        invoice_paid_state = 'b'
-                    elif line_purchase_invoice_paid_count == 0 and sale_invoice_id.state == 'open':
-                        invoice_paid_state = 'c'
-                    elif line_purchase_invoice_paid_count == 0 and sale_invoice_id.state == 'paid':
-                        invoice_paid_state = 'a_paid'
+            if line_purchase_invoice_count > 0 and sale_invoice_id and sale_invoice_id.state not in ('draft', 'cancel'):
+                if all([x.state == 'paid' for x in line_purchase_invoice_ids]) and sale_invoice_id.state == 'paid':
+                    invoice_paid_state = 'a_paid'
                 else:
-                    invoice_paid_state = 'd_no_paid'
+                    if not all([x.state == 'paid' for x in one.purchase_invoice_ids]) and sale_invoice_id.state == 'paid':
+                        invoice_paid_state = 'c'
+                    if all([x.state == 'paid' for x in one.purchase_invoice_ids]) and sale_invoice_id.state != 'paid':
+                        invoice_paid_state = 'b'
+                    if not all([x.state == 'paid' for x in one.purchase_invoice_ids]) and sale_invoice_id.state != 'paid':
+                        invoice_paid_state = 'd_no_paid'
                 one.invoice_paid_state = invoice_paid_state
             else:
                 one.invoice_paid_state = 'e'
+        # for one in self:
+        #     invoice_paid_state = 'e'
+        #     line_purchase_invoice_count = len(one.purchase_invoice_ids.filtered(lambda x: x.state not in ['draft','cancel']))
+        #     line_count_paid = len(one.all_invoice_ids.filtered(lambda x: x.state == 'paid'))
+        #     sale_invoice_id = one.sale_invoice_id
+        #     line_purchase_invoice_paid_count = len(one.purchase_invoice_ids.filtered(lambda x: x.state == 'paid'))
+        #     if line_purchase_invoice_count > 0 and sale_invoice_id and sale_invoice_id.state not in ('draft','cancel'):
+        #         if line_count_paid > 0:
+        #             if line_purchase_invoice_paid_count >0 and sale_invoice_id.state == 'paid':
+        #                 invoice_paid_state = 'b'
+        #             elif line_purchase_invoice_paid_count == 0 and sale_invoice_id.state == 'open':
+        #                 invoice_paid_state = 'c'
+        #             elif line_purchase_invoice_paid_count == 0 and sale_invoice_id.state == 'paid':
+        #                 invoice_paid_state = 'a_paid'
+        #         else:
+        #             invoice_paid_state = 'd_no_paid'
+        #         one.invoice_paid_state = invoice_paid_state
+        #     else:
+        #         one.invoice_paid_state = 'e'
+
+
     # @api.model
     # def _default_fee_inner(self):
     #     fee_inner = 0.0
