@@ -1260,28 +1260,28 @@
             </field>
         </record>
         <record id="action_sale_account_invoice_new" model="ir.actions.act_window">
-            <field name="name">应收账单:客户分组</field>
+            <field name="name">应收账单:公司客户分组</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">account.invoice</field>
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_account_invoice_new_filter"/>
-            <field name="domain">[('type','=','out_invoice'),('yjzy_type','=','sale'),('state','not in',['cancel','draft'])]</field>
+            <field name="domain">[('type','=','out_invoice'),('yjzy_type','=','sale'),('partner_id.is_company','=',True),('state','not in',['cancel','draft'])]</field>
             <field name="context">{'search_default_group_by_partner_id':1,'only_ref':1,'type':'out_invoice',
                 'journal_type': 'sale','yjzy_type':'sale'}
             </field>
             <!--field name="target">new</field-->
             <field name="view_ids" eval="[(5, 0, 0),
-                              (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.invoice_new_tree')}),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.invoice_new_1_tree')}),
                               (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.view_account_invoice_new_form')}),
                               ]"/>
         </record>
         <record id="action_sale_account_invoice_new_1" model="ir.actions.act_window">
-            <field name="name">应收账单账期排序</field>
+            <field name="name">应收账单账期排序（含个人简易订单）</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">account.invoice</field>
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_account_invoice_new_filter"/>
-            <field name="domain">[('type','=','out_invoice'),('yjzy_type','=','sale'),('state','not in',['cancel','draft'])]</field>
+            <field name="domain">[('residual_signed','!=',0),('type','=','out_invoice'),('yjzy_type','=','sale'),('state','not in',['cancel','draft'])]</field>
             <field name="context">{'only_ref':1,'type':'out_invoice',
                 'journal_type': 'sale','yjzy_type':'sale'}
             </field>
