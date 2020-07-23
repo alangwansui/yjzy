@@ -56,8 +56,8 @@ class res_partner(models.Model):
     def compute_amount_invoice_advance_payment(self):
         reconcile_ids = self.env['account.reconcile.order.line']
         for one in self:
-            invoice = one.invoice_ids
-            payment = one.advance_payment_ids
+            invoice = one.invoice_ids#.filtered(lambda x: x.company_id  == self.env.user.company_id)
+            payment = one.advance_payment_ids#.filtered(lambda x: x.company_id  == self.env.user.company_id)
             #reconcile = reconcile_ids.search([('order_id.partner_id','=',one.id)])
             amount_invoice = sum(x.amount_total_signed for x in invoice)
             amount_residual_invoice = sum(x.residual_signed for x in invoice)
@@ -78,8 +78,8 @@ class res_partner(models.Model):
     def compute_supplier_amount_invoice_advance_payment(self):
         reconcile_ids = self.env['account.reconcile.order.line']
         for one in self:
-            invoice = one.supplier_invoice_ids
-            payment = one.supplier_advance_payment_ids
+            invoice = one.supplier_invoice_ids.filtered(lambda x: x.company_id  == self.env.user.company_id)
+            payment = one.supplier_advance_payment_ids.filtered(lambda x: x.company_id  == self.env.user.company_id)
             # reconcile = reconcile_ids.search([('order_id.partner_id','=',one.id)])
             supplier_amount_invoice = sum(x.amount_total_signed for x in invoice)
             supplier_amount_residual_invoice = sum(x.residual_signed for x in invoice)
@@ -97,8 +97,8 @@ class res_partner(models.Model):
     @api.depends('sale_order_ids.amount_total','sale_order_ids')
     def compute_sale_order_amount_total(self):
         for one in self:
-            so_ids = one.so_approve_ids
-            so_no_sent_ids = one.sale_order_ids.filtered(lambda x: x.no_sent_amount_new != 0 and x.state in ['approve', 'sale', 'done','abnormal','verifying','verification'])
+            so_ids = one.so_approve_ids.filtered(lambda x: x.company_id  == self.env.user.company_id)
+            so_no_sent_ids = one.sale_order_ids.filtered(lambda x: x.company_id  == self.env.user.company_id and x.no_sent_amount_new != 0 and x.state in ['approve', 'sale', 'done','abnormal','verifying','verification'])
             print('tet',so_ids,so_no_sent_ids)
             amount_total = sum(x.amount_total for x in so_ids)
             no_sent_amount = sum(x.no_sent_amount for x in so_no_sent_ids)
@@ -108,7 +108,7 @@ class res_partner(models.Model):
     @api.depends('tb_approve_ids', 'tb_approve_ids.org_sale_amount_new')
     def compute_tb_approve_amount_total(self):
         for one in self:
-            tb_ids = one.tb_approve_ids
+            tb_ids = one.tb_approve_ids.filtered(lambda x: x.company_id  == self.env.user.company_id)
             amount_total = sum(x.org_sale_amount_new for x in tb_ids)
             one.tb_approve_amount_total = amount_total
 
@@ -156,12 +156,12 @@ class res_partner(models.Model):
     # supplier_account_reconcile_have_sopo_ids = fields.One2many('account.reconcile.order', 'partner_id', '应付认领',
     #                                                  domain=[('sfk_type', '=', 'yfhxd'), ('state', '=', 'done'),('no_sopo','!=',True),
     #                                                          ('amount_payment_org', '!=', 0)])
-    amount_invoice = fields.Float(u'应收账单总金额', compute=compute_amount_invoice_advance_payment,store=True)
-    amount_residual_invoice = fields.Float(u'应收款余额',compute=compute_amount_invoice_advance_payment,store=True)
-    amount_advance_payment = fields.Float('u预收总金额',compute=compute_amount_invoice_advance_payment,store=True)
-    amount_residual_advance_payment = fields.Float('预收余额',compute=compute_amount_invoice_advance_payment,store=True)
-    amount_advance_payment_reconcile = fields.Float('预收认领金额',compute=compute_amount_invoice_advance_payment,store=True)
-    sale_order_amount_total = fields.Float('今年审批完成销售金额', compute=compute_sale_order_amount_total,store=True)
+    amount_invoice = fields.Float(u'应收账单总金额', compute=compute_amount_invoice_advance_payment, store=True)
+    amount_residual_invoice = fields.Float(u'应收款余额',compute=compute_amount_invoice_advance_payment, store=True)
+    amount_advance_payment = fields.Float('u预收总金额',compute=compute_amount_invoice_advance_payment, store=True)
+    amount_residual_advance_payment = fields.Float('预收余额',compute=compute_amount_invoice_advance_payment, store=True)
+    amount_advance_payment_reconcile = fields.Float('预收认领金额',compute=compute_amount_invoice_advance_payment, store=True)
+    sale_order_amount_total = fields.Float('今年审批完成销售金额', compute=compute_sale_order_amount_total, store=True)
     tb_approve_amount_total = fields.Float('今年审批完成出运金额', compute=compute_tb_approve_amount_total, store=True)
     payment_amount_total = fields.Float('收款总金额',compute=compute_payment_amount_total,store=True)
     supplier_amount_invoice = fields.Float(u'应付账单总金额', compute=compute_supplier_amount_invoice_advance_payment, store=True)

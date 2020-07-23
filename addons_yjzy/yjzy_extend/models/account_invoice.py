@@ -25,7 +25,7 @@ class account_invoice(models.Model):
         for one in self:
             one.purchase_date_finish_att_count = len(one.purchase_date_finish_att)
 
-
+    @api.depends('date_deadline','date_ship','date_finish','date_invoice','date_out_in','date_due','date')
     def compute_times(self):
         today = datetime.today()
         strptime = datetime.strptime
@@ -33,6 +33,11 @@ class account_invoice(models.Model):
             if one.date_deadline:
                residual_times = today - strptime(one.date_deadline,DF)
                one.residual_times = residual_times.days
+               one.residual_times_new = residual_times.days
+            if one.date_due:
+                residual_times_out_in = today - strptime(one.date_due, DF)#参考
+                one.residual_times_out_in = residual_times_out_in.days
+                one.residual_times_out_in_new = residual_times_out_in.days
 
     @api.depends('invoice_line_ids.price_subtotal', 'tax_line_ids.amount', 'tax_line_ids.amount_rounding',
                  'currency_id', 'company_id', 'date_invoice', 'type')
@@ -149,6 +154,7 @@ class account_invoice(models.Model):
     purchase_date_finish_state = fields.Selection([('draft', u'待提交'), ('submit', u'待审批'), ('done', u'完成')], '供应商交单审批状态',
                                                   default='draft')
     date_deadline = fields.Date(u'到期日期', compute=compute_date_deadline)
+    date_deadline_new = fields.Date(u'到期日期', compute=compute_date_deadline,store=True)#0723
     gongsi_id = fields.Many2one('gongsi', '内部公司')
     date_out_in = fields.Date('进仓日')
     #----
@@ -193,7 +199,9 @@ class account_invoice(models.Model):
                                           ('before_60_90',u'未来60-90天'),('before_90',u'未来超过90天'),('un_begin',u'未开始')],'到期时间组',store=True,
                                            compute=compute_residual_date_group)
     residual_times = fields.Integer('逾期天数',compute=compute_times)
-
+    residual_times_new = fields.Integer('逾期天数', compute=compute_times, store=True)
+    residual_times_out_in = fields.Integer('进仓日逾期天数', compute=compute_times)
+    residual_times_out_in_new = fields.Integer('进仓日逾期天数', compute=compute_times, store=True)
     state = fields.Selection([
         ('draft', u'未确认'),
         ('open', u'已确认'),

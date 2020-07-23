@@ -881,7 +881,7 @@ class account_reconcile_order_line(models.Model):
     advance_residual2 = fields.Monetary(currency_field='yjzy_currency_id', string=u'预收余额', compute=compute_info, )
 
     advance_account_id = fields.Many2one(related='so_id.advance_account_id', string='预收账户')
-
+    company_id =  fields.Many2one('res.company', string=u'公司', related='order_id.company_id')
    # yjzy_payment_id = fields.Many2one('account.payment', u'预收认领单', related='so_id.yjzy_payment_id')
     yjzy_payment_id = fields.Many2one('account.payment', u'预收认领单')
     yjzy_payment_display_name = fields.Char('显示名称',related='yjzy_payment_id.display_name',store=True)
