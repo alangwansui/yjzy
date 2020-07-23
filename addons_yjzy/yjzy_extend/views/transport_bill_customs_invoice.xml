@@ -25,33 +25,31 @@
                     <field name="sale_currency_id" invisible="1"/>
                     <field name="third_currency_id" invisible="1" groups="base.group_system"/>
                     <field name="include_tax"/>
-
-
-                    <field name="sale_invoice_total" string="应收金额" groups="base.group_system"/>
-                    <field name="sale_invoice_total_new" string="应收金额"/>
-                    <field name="sale_invoice_paid" string="已收金额" groups="base.group_system"/>
-                    <field name="sale_invoice_paid_new" string="已收金额"/>
-                    <field name="sale_invoice_balance" string="未收金额" groups="base.group_system"/>
-                    <field name="sale_invoice_balance_new" string="未收金额"/>
+                    <field name="sale_invoice_total" string="应收金额" groups="base.group_system" sum="小计"/>
+                    <field name="sale_invoice_total_new" string="应收金额" sum="小计"/>
+                    <field name="sale_invoice_paid" string="已收金额" groups="base.group_system" sum="小计"/>
+                    <field name="sale_invoice_paid_new" string="已收金额" sum="小计"/>
+                    <field name="sale_invoice_balance" string="未收金额" groups="base.group_system" sum="小计"/>
+                    <field name="sale_invoice_balance_new" string="未收金额" sum="小计"/>
                     <button name="open_sale_invoice_new" icon="fa-pencil-square-o"
                                                 type="object"/>
-                    <field name="purhcase_invoice_total" string="应付金额" groups="base.group_system"/>
-                    <field name="purchase_invoice_total_new" string="应付金额"/>
-                    <field name="purhcase_invoice_paid" string="已付金额" groups="base.group_system"/>
-                    <field name="purchase_invoice_paid_new" string="已付金额"/>
-                    <field name="purhcase_invoice_balance" string="未付金额" groups="base.group_system"/>
-                    <field name="purchase_invoice_balance_new" string="未付金额"/>
+                    <field name="purhcase_invoice_total" string="应付金额" groups="base.group_system" sum="小计"/>
+                    <field name="purchase_invoice_total_new" string="应付金额" sum="小计"/>
+                    <field name="purhcase_invoice_paid" string="已付金额" groups="base.group_system" sum="小计"/>
+                    <field name="purchase_invoice_paid_new" string="已付金额" sum="小计"/>
+                    <field name="purhcase_invoice_balance" string="未付金额" groups="base.group_system" sum="小计"/>
+                    <field name="purchase_invoice_balance_new" string="未付金额" sum="小计"/>
                     <button name="open_purchase_invoice_new" icon="fa-pencil-square-o"
                                                 type="object"/>
 
-                    <field name="back_tax_invoice_total" string="退税金额" groups="base.group_system" invisible="1"/>
-                    <field name="back_tax_invoice_total_new" string="退税金额" invisible="1"/>
+                    <field name="back_tax_invoice_total" string="退税金额" groups="base.group_system" sum="小计"/>
+                    <field name="back_tax_invoice_total_new" string="退税金额" sum="小计"/>
 
 
-                    <field name="back_tax_invoice_paid" string="已收退税" groups="base.group_system" invisible="1"/>
-                    <field name="back_tax_invoice_paid_new" string="已收退税" invisible="1"/>
-                    <field name="back_tax_invoice_balance" string="未收退税" groups="base.group_system" invisible="1"/>
-                    <field name="back_tax_invoice_balance_new" string="未收退税" invisible="1"/>
+                    <field name="back_tax_invoice_paid" string="已收退税" groups="base.group_system" sum="小计"/>
+                    <field name="back_tax_invoice_paid_new" string="已收退税" sum="小计"/>
+                    <field name="back_tax_invoice_balance" string="未收退税" groups="base.group_system" sum="小计"/>
+                    <field name="back_tax_invoice_balance_new" string="未收退税" invisible="1" sum="小计"/>
                     <field name="state_type" invisible="1"/>
                     <field name="create_date"/>
                     <field name="gongsi_id" string="销售主体"/>

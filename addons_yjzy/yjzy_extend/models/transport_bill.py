@@ -469,23 +469,39 @@ class transport_bill(models.Model):
     def compute_invoice_paid_state(self):
         for one in self:
             invoice_paid_state = 'e'
+            back_tax_invoice_id = one.back_tax_invoice_id
             line_purchase_invoice_count = len(
                 one.purchase_invoice_ids.filtered(lambda x: x.state not in ['draft', 'cancel']))
             line_purchase_invoice_ids = one.purchase_invoice_ids
             sale_invoice_id = one.sale_invoice_id
-            if line_purchase_invoice_count > 0 and sale_invoice_id and sale_invoice_id.state not in ('draft', 'cancel'):
-                if all([x.state == 'paid' for x in line_purchase_invoice_ids]) and sale_invoice_id.state == 'paid':
-                    invoice_paid_state = 'a_paid'
+            if not back_tax_invoice_id:
+                if line_purchase_invoice_count > 0 and sale_invoice_id and sale_invoice_id.state not in ('draft', 'cancel'):
+                    if all([x.state == 'paid' for x in line_purchase_invoice_ids]) and sale_invoice_id.state == 'paid':
+                        invoice_paid_state = 'a_paid'
+                    else:
+                        if not all([x.state == 'paid' for x in one.purchase_invoice_ids]) and sale_invoice_id.state == 'paid':
+                            invoice_paid_state = 'c'
+                        if all([x.state == 'paid' for x in one.purchase_invoice_ids]) and sale_invoice_id.state != 'paid':
+                            invoice_paid_state = 'b'
+                        if not all([x.state == 'paid' for x in one.purchase_invoice_ids]) and sale_invoice_id.state != 'paid':
+                            invoice_paid_state = 'd_no_paid'
+                    one.invoice_paid_state = invoice_paid_state
                 else:
-                    if not all([x.state == 'paid' for x in one.purchase_invoice_ids]) and sale_invoice_id.state == 'paid':
-                        invoice_paid_state = 'c'
-                    if all([x.state == 'paid' for x in one.purchase_invoice_ids]) and sale_invoice_id.state != 'paid':
-                        invoice_paid_state = 'b'
-                    if not all([x.state == 'paid' for x in one.purchase_invoice_ids]) and sale_invoice_id.state != 'paid':
-                        invoice_paid_state = 'd_no_paid'
-                one.invoice_paid_state = invoice_paid_state
+                    one.invoice_paid_state = 'e'
             else:
-                one.invoice_paid_state = 'e'
+                if line_purchase_invoice_count > 0 and sale_invoice_id and sale_invoice_id.state not in ('draft', 'cancel') and back_tax_invoice_id not in ('draft', 'cancel'):
+                    if all([x.state == 'paid' for x in line_purchase_invoice_ids]) and sale_invoice_id.state == 'paid' and back_tax_invoice_id.state == 'paid':
+                        invoice_paid_state = 'a_paid'
+                    else:
+                        if not all([x.state == 'paid' for x in one.purchase_invoice_ids]) and sale_invoice_id.state == 'paid' and back_tax_invoice_id.state == 'paid':
+                            invoice_paid_state = 'c'
+                        if all([x.state == 'paid' for x in one.purchase_invoice_ids]) and (sale_invoice_id.state != 'paid' or back_tax_invoice_id.state != 'paid'):
+                            invoice_paid_state = 'b'
+                        if not all([x.state == 'paid' for x in one.purchase_invoice_ids]) and (sale_invoice_id.state != 'paid' or back_tax_invoice_id.state != 'paid'):
+                            invoice_paid_state = 'd_no_paid'
+                    one.invoice_paid_state = invoice_paid_state
+                else:
+                    one.invoice_paid_state = 'e'
         # for one in self:
         #     invoice_paid_state = 'e'
         #     line_purchase_invoice_count = len(one.purchase_invoice_ids.filtered(lambda x: x.state not in ['draft','cancel']))
