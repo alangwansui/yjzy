@@ -110,6 +110,7 @@ class transport_bill(models.Model):
 
             if one.cip_type != 'normal':
                 back_tax_amount = 0
+                back_tax_amount_org = 0
             else:
                 back_tax_amount = one.company_currency_id.compute(sum(x.back_tax_amount2 for x in one.btls_hs_ids), one.third_currency_id)
                 back_tax_amount_org = one.company_currency_id.compute(sum(x.back_tax_amount for x in one.line_ids), one.third_currency_id)
