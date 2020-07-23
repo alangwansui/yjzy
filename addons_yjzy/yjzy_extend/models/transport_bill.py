@@ -298,7 +298,7 @@ class transport_bill(models.Model):
             })
 
     @api.depends('sale_invoice_id.amount_total','sale_invoice_id.residual_signed')
-    def _sale_invoice_amount(self):
+    def sale_invoice_amount(self):
 
         for one in self:
             sale_invoice = one.sale_invoice_id.filtered(lambda x: x.state not in ['draft', 'cancel'])
@@ -312,7 +312,7 @@ class transport_bill(models.Model):
             })
 
     @api.depends('purchase_invoice_ids.amount_total','purchase_invoice_ids.residual_signed')
-    def _purchase_invoice_amount(self):
+    def purchase_invoice_amount(self):
         for one in self:
             purchase_invoices = one.purchase_invoice_ids.filtered(
                 lambda x: x.yjzy_type == 'purchase' and x.state not in ['draft', 'cancel'])
@@ -326,7 +326,7 @@ class transport_bill(models.Model):
             })
 
     @api.depends('back_tax_invoice_id.amount_total','back_tax_invoice_id.residual_signed')
-    def _back_tax_invoice_amount(self):
+    def back_tax_invoice_amount(self):
         for one in self:
             back_tax_invoice = one.back_tax_invoice_id.filtered(lambda x: x.state not in ['draft', 'cancel'])
             back_tax_invoice_total = back_tax_invoice.amount_total
@@ -536,15 +536,15 @@ class transport_bill(models.Model):
 
     # 货币设置
     #akiny 未加入
-    sale_invoice_total_new = fields.Monetary(u'销售发票金额', compute=_sale_invoice_amount, store=True)
-    sale_invoice_paid_new = fields.Monetary(u'已收销售发票', compute=_sale_invoice_amount, store=True)
-    sale_invoice_balance_new = fields.Monetary(u'未收销售发票', compute=_sale_invoice_amount, store=True)
-    purchase_invoice_total_new = fields.Monetary(u'采购发票金额', compute=_purchase_invoice_amount, store=True)
-    purchase_invoice_paid_new = fields.Monetary(u'已付采购金额', compute=_purchase_invoice_amount, store=True)
-    purchase_invoice_balance_new = fields.Monetary(u'未付采购金额', compute=_purchase_invoice_amount, store=True)
-    back_tax_invoice_total_new = fields.Monetary(u'退税金额', compute=_back_tax_invoice_amount, store=True)
-    back_tax_invoice_paid_new = fields.Monetary(u'已收退税金额', compute=_back_tax_invoice_amount, store=True)
-    back_tax_invoice_balance_new = fields.Monetary(u'未收退税金额', compute=_back_tax_invoice_amount, store=True)
+    sale_invoice_total_new = fields.Monetary(u'销售发票金额', compute=sale_invoice_amount, store=True)
+    sale_invoice_paid_new = fields.Monetary(u'已收销售发票', compute=sale_invoice_amount, store=True)
+    sale_invoice_balance_new = fields.Monetary(u'未收销售发票', compute=sale_invoice_amount, store=True)
+    purchase_invoice_total_new = fields.Monetary(u'采购发票金额', compute=purchase_invoice_amount, store=True)
+    purchase_invoice_paid_new = fields.Monetary(u'已付采购金额', compute=purchase_invoice_amount, store=True)
+    purchase_invoice_balance_new = fields.Monetary(u'未付采购金额', compute=purchase_invoice_amount, store=True)
+    back_tax_invoice_total_new = fields.Monetary(u'退税金额', compute=back_tax_invoice_amount, store=True)
+    back_tax_invoice_paid_new = fields.Monetary(u'已收退税金额', compute=back_tax_invoice_amount, store=True)
+    back_tax_invoice_balance_new = fields.Monetary(u'未收退税金额', compute=back_tax_invoice_amount, store=True)
     purchase_cost_total = fields.Monetary(u'采购金额', compute=_sale_purchase_amount, store=True) #13ok
     state_type = fields.Selection([('no_delivery','未开始'),('wait_date',u'待完成相关日期'),('finish_date',u'已完成相关日期'),('abnormal_date',u'日期异常'),
                                              ('write_off',u'正常核销'),('abnormal',u'异常核销')], u'状态类型', default='no_delivery',store=True, compute=update_state_type)
