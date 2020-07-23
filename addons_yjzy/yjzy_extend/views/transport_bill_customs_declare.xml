@@ -104,6 +104,7 @@
 
                         <group col="2">
                             <group name="general_information">
+                                <field name="operation_wizard" invisible="1"/>
                                 <field name="id" invisible="1"/>
                                <field name="ref" string="出运合同号"
                                        attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>

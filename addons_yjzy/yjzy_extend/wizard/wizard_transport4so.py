@@ -93,6 +93,10 @@ class wizard_transport4so(models.TransientModel):
         tb.include_tax = self.include_tax
         tblines.make_default_lot_plan()
         tb.is_done_plan = True
+        tb.amount_all()
+        tb.unlink_bgzl()
+        if tb.operation_wizard != 'sixth':
+            tb.operation_wizard = 'third'
         return True
 
     def check_apply_continue(self):
@@ -130,6 +134,8 @@ class wizard_transport4so(models.TransientModel):
 
     def new_apply(self):
         self.ensure_one()
+        if not self.sol_ids:
+            raise Warning('请先添加销售明细，再进行下一步')
         if not self._check_same():
             return self.check_same()
 
@@ -158,6 +164,10 @@ class wizard_transport4so(models.TransientModel):
         tb.check_lines()
         tblines.make_default_lot_plan()
         tb.is_done_plan = True
+        tb.amount_all()
+        tb.unlink_bgzl() #只要添加销售明细操作，那么就要自动删除所有的报关清关资料
+        if tb.operation_wizard != 'sixth':
+            tb.operation_wizard = 'third'
         return True
 
     def apply(self):

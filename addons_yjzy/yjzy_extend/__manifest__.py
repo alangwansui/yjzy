@@ -99,6 +99,7 @@
         'views/partner_source.xml',
         'views/product_product_new.xml',
         'views/dashboard.xml',
+        'views/transport_bill_customs_invoice.xml',
 
 
 

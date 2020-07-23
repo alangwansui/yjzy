@@ -1,87 +1,12 @@
 <odoo>
     <data>
-        <menuitem id="menu_transport_tenyale_bill_root"
-                  name="出运:新"
-                  sequence="99"
-        />
-        <record id="view_transport_bill_tenyale_filter" model="ir.ui.view">
-            <field name="name">transport.bill.tenyale.select</field>
-            <field name="model">transport.bill</field>
-            <field name="arch" type="xml">
-                <search string="Transport Bill">
-
-                    <field name="ref" string="模糊搜索"
-                           filter_domain="['|','|',('ref','ilike',self),('name','ilike',self),('partner_id','child_of',self)]"/>
-                    <field name="ref" string="合同号" filter_domain="['|',('ref','ilike',self),('name','ilike',self)]"/>
-                    <field name="user_id"/>
-
-                    <separator/>
-                    <filter string="合同草稿" name="draft" domain="[('state','=','draft')]"/>
-                    <filter string="审批中" name="approval"
-                            domain="[('state','in',['submit','refused','sale_approve','locked','done'])]"/>
-                    <filter string="合规审批完成" name="approve" domain="[('state','in',['approve'])]"/>
-                    <filter string="单证审批完成" name="confirmed" domain="[('state','in',['confirmed'])]"/>
-                    <separator/>
-                    <filter string="出运完成" name="delivered" domain="[('state','in',['delivered'])]"/>
-                    <filter string="应收付完成" name="invoiced" domain="[('state','in',['invoiced'])]"/>
-                    <filter string="待货款收齐" name="done" domain="[('state','in',['done'])]"/>
-                    <filter string="已收款" name="paid" domain="[('state','in',['paid'])]"/>
-                    <separator/>
-
-                    <group expand="0" string="Group By">
-                        <filter string="状态核销分组" name="group_by_state_hexiao" domain="[]" context="{'group_by':['state','hexiao_type']}"/>
-                        <filter string="进仓和其他时间分组" name="group_date_all_state" domain="[]" context="{'group_by':['date_out_in_state','date_all_state']}"/>
-
-                        <filter string="时间核销综合分组" name="group_by_state_type" domain="[]" context="{'group_by':['state','state_type']}"/>
-                        <filter string="应收付状态" name="group_by_invoice_paid_state" domain="[]" context="{'group_by':['invoice_paid_state']}"/>
-                        <filter string="状态" name="group_state" domain="[]" context="{'group_by':'state'}"/>
-                        <filter string="责任人" domain="[]" context="{'group_by':'user_id'}"/>
-                        <filter name="customer" string="客户" domain="[]" context="{'group_by':'partner_id'}"/>
-                        <separator/>
-                        <filter string="审批完成月份" domain="[]" context="{'group_by':'approve_date'}"/>
-                        <filter string="下单月份" domain="[]" context="{'group_by':'date_order'}"/>
-                    </group>
-                </search>
-            </field>
-        </record>
 
 
-        <record id="view_transport_bill_tenyale_approving_tree" model="ir.ui.view">
+         <record id="view_transport_bill_tenyale_account_tree" model="ir.ui.view">
             <field name="name">transport.bill.tree</field>
             <field name="model">transport.bill</field>
             <field name="arch" type="xml">
-                <tree string="未生效出运单">
-                    <field name="ref"/>
-                    <field name="name" invisible="1" groups="base.group_system"/>
-                    <field name="partner_id" required="1"/>
-
-                    <field name="org_sale_amount" groups="base.group_system"/>
-                    <field name="org_sale_amount_new"/>
-                    <field name="purchase_cost_total"/>
-
-
-
-                    <field name="state" invisible="1" groups="base.group_system"/>
-
-                    <field name="company_currency_id" invisible="1" groups="base.group_system"/>
-                    <field name="sale_currency_id" invisible="1"/>
-                    <field name="third_currency_id" invisible="1" groups="base.group_system"/>
-                    <field name="include_tax"/>
-                    <field name="state_type" invisible="1"/>
-                    <field name="create_date"/>
-                    <field name="gongsi_id" string="销售主体"/>
-                    <field name="purchase_gongsi_id" string="采购主体"/>
-
-
-                </tree>
-            </field>
-        </record>
-
-        <record id="view_transport_bill_tenyale_sales_tree" model="ir.ui.view">
-            <field name="name">transport.bill.tree</field>
-            <field name="model">transport.bill</field>
-            <field name="arch" type="xml">
-                <tree string="出运单">
+                <tree string="出运单" editable="bottom">
                     <field name="ref"/>
                     <field name="name" invisible="1" groups="base.group_system"/>
                     <field name="partner_id" required="1"/>
@@ -104,22 +29,29 @@
 
                     <field name="sale_invoice_total" string="应收金额" groups="base.group_system"/>
                     <field name="sale_invoice_total_new" string="应收金额"/>
-                    <field name="purhcase_invoice_total" string="应付金额" groups="base.group_system"/>
-                    <field name="purchase_invoice_total_new" string="应付金额"/>
-                    <field name="back_tax_invoice_total" string="退税金额" groups="base.group_system"/>
-                    <field name="back_tax_invoice_total_new" string="退税金额"/>
                     <field name="sale_invoice_paid" string="已收金额" groups="base.group_system"/>
                     <field name="sale_invoice_paid_new" string="已收金额"/>
                     <field name="sale_invoice_balance" string="未收金额" groups="base.group_system"/>
                     <field name="sale_invoice_balance_new" string="未收金额"/>
+                    <button name="open_sale_invoice_new" icon="fa-pencil-square-o"
+                                                type="object"/>
+                    <field name="purhcase_invoice_total" string="应付金额" groups="base.group_system"/>
+                    <field name="purchase_invoice_total_new" string="应付金额"/>
                     <field name="purhcase_invoice_paid" string="已付金额" groups="base.group_system"/>
                     <field name="purchase_invoice_paid_new" string="已付金额"/>
                     <field name="purhcase_invoice_balance" string="未付金额" groups="base.group_system"/>
                     <field name="purchase_invoice_balance_new" string="未付金额"/>
-                    <field name="back_tax_invoice_paid" string="已收退税" groups="base.group_system"/>
-                    <field name="back_tax_invoice_paid_new" string="已收退税"/>
-                    <field name="back_tax_invoice_balance" string="未收退税" groups="base.group_system"/>
-                    <field name="back_tax_invoice_balance_new" string="未收退税"/>
+                    <button name="open_purchase_invoice_new" icon="fa-pencil-square-o"
+                                                type="object"/>
+
+                    <field name="back_tax_invoice_total" string="退税金额" groups="base.group_system" invisible="1"/>
+                    <field name="back_tax_invoice_total_new" string="退税金额" invisible="1"/>
+
+
+                    <field name="back_tax_invoice_paid" string="已收退税" groups="base.group_system" invisible="1"/>
+                    <field name="back_tax_invoice_paid_new" string="已收退税" invisible="1"/>
+                    <field name="back_tax_invoice_balance" string="未收退税" groups="base.group_system" invisible="1"/>
+                    <field name="back_tax_invoice_balance_new" string="未收退税" invisible="1"/>
                     <field name="state_type" invisible="1"/>
                     <field name="create_date"/>
                     <field name="gongsi_id" string="销售主体"/>
@@ -129,60 +61,7 @@
                 </tree>
             </field>
         </record>
-        <record id="view_transport_bill_tenyale_sales_kanban" model="ir.ui.view">
-            <field name="name">transport.bill.kanban</field>
-            <field name="model">transport.bill</field>
-            <field name="arch" type="xml">
-                <kanban class="o_kanban_mobile">
-
-                    <field name="ref"/>
-                    <field name="partner_id"/>
-                    <field name="date"/>
-                    <field name="org_sale_amount"/>
-                    <field name="state"/>
-                    <templates>
-                        <t t-name="kanban-box">
-                            <div t-attf-class="oe_kanban_global_click">
-                                <div class="row mb4">
-                                    <div class="col-xs-6">
-                                        <strong>
-                                            <span>
-                                                <field name="ref"/>
-                                            </span>
-                                        </strong>
-                                    </div>
-                                    <div class="col-xs-6 text-right">
-                                        <strong>
-                                            <i class="fa fa-clock-o"/>
-                                            <t t-esc="record.date.value"/>
-                                        </strong>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-xs-12">
-                                        <span>
-                                            <field name="partner_id"/>
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-xs-6">
-                                        <field name="org_sale_amount" widget='monetary'/>
-                                    </div>
-                                    <div class="col-xs-6">
-                                        <span class="pull-right label label-default">
-                                            <field name="state" widget="kanban_label_selection"
-                                                   options="{'classes': {'draft': 'default', 'sent': 'success'}}"/>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </t>
-                    </templates>
-                </kanban>
-            </field>
-        </record>
-        <record id="view_transport_bill_tenyale_sales_form" model="ir.ui.view">
+        <record id="view_transport_bill_tenyale_account_form" model="ir.ui.view">
             <field name="name">transport.bill.form</field>
             <field name="model">transport.bill</field>
             <field name="arch" type="xml">
@@ -315,71 +194,67 @@
                         <group col="3">
                             <group name="general_information">
                                 <field name="operation_wizard" invisible="0"/>
-                                <button string="生成合同号" colspan="2" name="make_all_document" attrs="{'invisible':[('operation_wizard','not in',['fourth'])]}"
-                                        confirm="该命令将会初始化清关资料，报关资料和供应商发货通知单！是否继续？"
 
-                                type="object"/>
+
                                 <field name="id" invisible="1"/>
-                                <field name="ref"
-                                       attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)],'invisible':[('operation_wizard','in',['first','second','third','fourth'])]}"/>
+                                <field name="ref" readonly="1"/>
                                 <field name="name" readonly="1" groups="base.group_system" invisible="1"/>
+                                <field name="partner_id" string="贸易客户" required="0" options="{'no_open':1}" readonly="1"
 
-                                <field name="partner_id" string="贸易客户" required="0" options="{'no_open':1}"
-                                       attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"
-                                       domain="[('customer','=',True),('parent_id', '=', False),'|','|','|','|','|',('assistant_id','=',uid),('user_id','=',uid),('parent_id.assistant_id','=',uid),('parent_id.user_id','=',uid),('supplier','=',1),('x_studio_field_3ErQR','=',1)]"
                                        no_create="True"/>
 
-                                <field name="partner_shipping_id" string="最终目的地" options="{'no_open':1}"
-                                       domain="[('parent_id','child_of', partner_id)]"
-                                       attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)],'invisible':['|',('partner_id','=',False),('operation_wizard','in',['first'])]}"
+                                <field name="partner_shipping_id" string="最终目的地" options="{'no_open':1}" readonly="1"
                                        no_create="True"/>
-                                <field name="date"
-                                       attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"
-                                       invisible="0"/>
-                                 <button string="添加销售明细" type="object" attrs="{'invisible':['|',('partner_id','=',False),('operation_wizard','not in',['second'])]}"
-                                name="open_wizard_transport4sol" class="oe_highlight"/>
+                                <field name="date" readonly="1"/>
                                 <field name="partner_invoice_id" domain="[('parent_id','child_of', partner_id)]"
                                        invisible="1"
                                        attrs="{'readonly': [('locked','=',True)]}" groups="base.group_system"/>
-                                <label for="incoterm" string="价格条款" attrs="{'invisible':[('operation_wizard','in',['first','second'])]}"/>
-                                <div class="o_row" attrs="{'invisible':[('operation_wizard','in',['first','second'])]}">
+                                <label for="incoterm" string="价格条款" />
+                                <div class="o_row">
                                     <span style="display:contents!important">
-                                <field name="incoterm" string="价格条款"
-                                       attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)],'required':[('state','=','check')]}"/>
+                                <field name="incoterm" string="价格条款" readonly="1"
+                                       />
                                </span>
                                 <button name="open_same" attrs="{'invisible':[('same_incoterm','=',True),('operation_wizard','in',['first','second'])]}" type="object" class="btn-xs btn-link mb4 fa fa-times-circle" icon="" style="color:red" context="{'default_open':'incoterm'}"/>
                                 </div>
                                 <field name="same_incoterm" invisible="1"/>
-                                <label for="payment_term_id" string="付款条款" attrs="{'invisible':[('operation_wizard','in',['first','second'])]}"/>
-                                <div class="o_row" attrs="{'invisible':[('operation_wizard','in',['first','second'])]}">
-                                <field name="payment_term_id" options="{'no_open':1}"
-                                       attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)],'required':[('state','=','check')]}"/>
+                                <label for="payment_term_id" string="付款条款"/>
+                                <div class="o_row">
+                                <field name="payment_term_id" options="{'no_open':1}" readonly="1"
+                                       />
                                 <button name="open_same" attrs="{'invisible':[('operation_wizard','in',['first','second']),('same_payment_term','=',True)]}" type="object" class="btn-xs btn-link mb4 fa fa-times-circle" icon="" style="color:red" context="{'default_open':'payment_term'}"/>
                                 </div>
                                 <field name="same_payment_term" invisible="1"/>
-                                <field name="current_date_rate" attrs="{'invisible':[('operation_wizard','in',['first','second'])]}"/>
-                                <label for="sale_currency_id" string="交易货币" attrs="{'invisible':[('operation_wizard','in',['first','second'])]}"/>
-                                 <div class="o_row" attrs="{'invisible':[('operation_wizard','in',['first','second'])]}">
-                                <field name="sale_currency_id"/>
+                                <field name="current_date_rate" />
+                                <label for="sale_currency_id" string="交易货币"/>
+                                 <div class="o_row">
+                                <field name="sale_currency_id" readonly="1"/>
                                 <button name="open_same" attrs="{'invisible':[('operation_wizard','in',['first','second']),('same_currency','=',True)]}" type="object" class="btn-xs btn-link mb4 fa fa-times-circle" icon="" style="color:red" context="{'default_open':'currency'}"/>
                                  </div>
                                  <field name="same_currency" invisible="1"/>
-                                <label for="include_tax" string="含税" attrs="{'invisible':[('operation_wizard','in',['first','second'])]}"/>
-                                <div class="o_row" attrs="{'invisible':[('operation_wizard','in',['first','second'])]}">
-                                <field name="include_tax"
-                                       attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
+                                <label for="include_tax" string="含税" />
+                                <div class="o_row" >
+                                <field name="include_tax" readonly="1"
+                                       />
                                  <button name="open_same" attrs="{'invisible':[('operation_wizard','in',['first','second']),('same_include_tax','=',True)]}" type="object" class="btn-xs btn-link mb4 fa fa-times-circle" icon="" style="color:red" context="{'default_open':'include_tax'}"/>
                                 </div>
                                  <field name="same_include_tax" invisible="1"/>
                                 <field name="locked" groups="base.group_system" invisible="1"/>
                                 <field name="contract_type" groups="base.group_system"
-                                       attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)],'invisible':[('operation_wizard','in',['first','second','third','fourth'])]}"/>
+                                       attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <field name="gongsi_id" options="{'no_open':1}" string="销售主体"
-                                       attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)],'invisible':[('operation_wizard','in',['first','second','third','fourth'])]}"/>
+                                       attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <field name="purchase_gongsi_id" options="{'no_open':1}" string="采购主体"
-                                       attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)],'invisible':[('operation_wizard','in',['first','second','third','fourth'])]}"/>
+                                       attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                             </group>
-                            <group attrs="{'invisible':[('operation_wizard','in',['first','second','third','fourth'])]}">
+                            <group>
+                                <field name="sale_invoice_id"/>
+                                <field name="sale_invoice_total_new"/>
+                                <field name="sale_invoice_paid_new"/>
+                                <field name="sale_invoice_balance_new"/>
+
+                            </group>
+                            <group invisible="1">
                                 <button name="open_fee" type="object" string="计算取得销售合同费用预算" confirm="将会初始化费用金额" attrs="{'invisible':[('is_fee_done','=',True)]}" colspan="2"/>
                                 <button name="open_fee" type="object" string="查看原始合同预算费用" attrs="{'invisible':[('is_fee_done','=',False)]}" colspan="2"/>
 
@@ -452,6 +327,8 @@
 
                         </group>
                         <notebook>
+
+
                             <page string="明细" name="cymx" groups="sales_team.group_sale_assistant" attrs="{'invisible':[('operation_wizard','in',['first','second'])]}">
                                <group>
                                     <button name="finish_delivery_qty" string="出运数量确认完成" attrs="{'invisible':[('operation_wizard','in',['fourth'])]}" class="oe_highlight" type="object"/>
@@ -588,30 +465,7 @@
                                     <field name="stage2move_ids" readonly="1"/>
                                 </group>
                             </page>
-                            <page string="付款信息" name="fkxx" groups="base.group_system" invisible="1">
-                                <button name="get_payment_info" string="获取付款记录" class="oe_highlight" type="object"/>
-                                <group>
-                                    <field name="sale_currency_id"/>
-                                    <field name="ciq_amount"/>
-                                    <field name="no_ciq_amount"/>
-                                    <field name="amount_public1"/>
-                                    <field name="amount_public2"/>
-                                    <field name="amount_private1"/>
-                                    <field name="amount_private2"/>
-                                    <field name="amount_diff"/>
-                                    <field name="amount_received"/>
-                                    <field name="amount_real_payment"/>
-                                    <field name="amount_account_payment"/>
-                                    <field name="amount_account_adjust"/>
-                                </group>
-                                <group>
-                                    <field name="sale_invoice_id" invisible="1"/>
-                                    <field name="back_tax_invoice_id" invisible="1"/>
-                                    <field name="invoice_in_ids" readonly="1"/>
-                                    <field name="purchase_invoice_ids" readonly="1"/>
-                                </group>
 
-                            </page>
                             <page string="订舱信息" name="dcxx" attrs="{'invisible':[('operation_wizard','in',['first','second','third','fourth','fifth'])]}">
                                 <group>
                                     <group>
@@ -700,8 +554,6 @@
                                 </field>
                             </page>
                             <page string="报关资料" invisible="1" attrs="{'invisible':[('operation_wizard','in',['first','second','third','fourth','fifth'])]}">
-
-
                                 <header>
                                     <button name="action_sale_purchase" type="object" class="oe_highlight"
                                             string="报关Invoice资料"/>
@@ -711,53 +563,7 @@
                                 </header>
                                 <field name="hsname_ids"
                                        attrs="{'readonly':[('state','not in',['draft','sales_approve']),('is_editable','=',False)]}">
-                                    <!--tree editable="bottom" decoration-danger="purchase_hs_id==False" class="o_list_scroll">
-                                        <field name="purchase_hs_id" string="采购对应" groups="base.group_system"/>
-                                        <button name="make_suppliser_hs" help="手动生成采购数据" type="object" icon="fa-plus-circle"  attrs="{'invisible':[('purchase_hs_id','!=',False)]}"/>
-                                        <field name="id" invisible="1"/>
-                                        <field name="package_tag" invisible="1"/>
-                                        <field name="name" invisible="1"/>
 
-                                        <field name="dump_product_id" groups="base.group_system" invisible="1"/>
-                                        <field name="hs_id" attrs="{'required':[('purchase_hs_id','=',False)]}" />
-                                        <field name="hs_en_name" groups="base.group_system" invisible="1"/>
-
-                                        <field name="po_id" string="采购合同" attrs="{'required':[('purchase_hs_id','=',False)]}"/>
-                                        <field name="amount" sum="小计" string="销售额" attrs="{'readonly':[('purchase_hs_id','=',False)]}"/>
-                                        <field name="out_qty2" sum="小计" string="报关数量" attrs="{'readonly':[('purchase_hs_id','=',False)]}"/>
-                                        <field name="price2" string="单价" readonly="1" />
-                                        <field name="amount2" sum="小计" string="金额" attrs="{'readonly':[('purchase_hs_id','=',False)]}"/>
-                                        <field name="purchase_amount2" sum="小计" string="采购额" attrs="{'readonly':[('purchase_hs_id','=',False)]}"/>
-                                        <field name="back_tax" readonly="1" attrs="{}"/>
-                                        <field name="purchase_back_tax_amount2" sum="小计" string="退税额" readonly="1" />
-                                        <field name="out_qty" sum="小计" invisible="1"/>
-                                        <field name="price" string="单价" invisible="1"/>
-
-
-
-
-                                        <field name="purchase_amount" invisible="1"/>
-                                        <field name="hs_id2" invisible="1"/>
-                                        <field name="dump_product_id2" groups="base.group_system" invisible="1"/>
-
-
-                                        <field name="source_area" />
-                                        <field name="source_country_id" />
-                                        <field name="qty_max" sum="小计" string="件数" />
-                                        <field name="qty_mid" groups="base.group_system" invisible="1"/>
-                                        <field name="qty_min" groups="base.group_system" invisible="1"/>
-                                        <field name="net_weight" sum="小计" />
-                                        <field name="gross_weight" sum="小计" />
-                                        <field name="tuopan_weight" string="托重" />
-                                        <field name="shiji_weight" sum="小计" />
-                                        <field name="volume" string="体积" sum="小计" />
-                                        <field name="tuopan_volume" string="托体积" sum="小计" />
-                                        <field name="shiji_volume" sum="小计" />
-                                        <field name="keyword" />
-                                        <field name="type" invisible="1"/>
-                                        <field name="note" invisible="1"/>
-                                        <button name="open_form_view" type="object" icon="fa-arrows-v"/>
-                                    </tree-->
 
 
                                     <tree editable="bottom" decoration-danger="purchase_hs_id==False">
@@ -1021,621 +827,27 @@
             </field>
         </record>
 
-
-
-        <!--采购-->
-        <record id="view_transport_bill_tenyale_purchase_tree" model="ir.ui.view">
-            <field name="name">transport.bill.tree</field>
-            <field name="model">transport.bill</field>
-            <field name="arch" type="xml">
-                <tree string="出运单" create="false">
-                    <field name="name"/>
-
-                    <field name="ref"/>
-
-                    <field name="gongsi_id" string="销售主体"/>
-                    <field name="purchase_gongsi_id" string="采购主体"/>
-                </tree>
-            </field>
-        </record>
-
-
-        <!--采购-->
-        <record id="view_transport_bill_tenyale_purchase_form" model="ir.ui.view">
-            <field name="name">transport.bill.tenyale.form</field>
-            <field name="model">transport.bill</field>
-            <field name="arch" type="xml">
-                <form string="出运单">
-                    <header groups="sales_team.group_sale_assistant,transport.bills_all">
-                        <button string="生成供应商发货单" type="object" name="make_tb_vendor"
-                                attrs="{'invisible': [('is_done_tb_vendor','=',True)]}" class="oe_highlight"/>
-                        <button string="打印供应商发货单" type="object" name="action_transport_bill_vendor_report"
-                                class="oe_highlight"/>
-                        <field name="state" widget="statusbar" invisible="1"/>
-                    </header>
-                    <sheet>
-                        <group col="3">
-                            <group name="general_information">
-                                <field name="id" invisible="1"/>
-                                <field name="ref" readonly="1"/>
-                                <field name="name" attrs="{'readonly': 1}" invisible="1" groups="base.group_system"/>
-                                <field name="purchase_cost"/>
-
-
-                            </group>
-                            <group>
-                                <field name="date" attrs="{'readonly': 1}"/>
-
-                                <field name="locked" groups="base.group_system"/>
-                            </group>
-                            <group>
-                                <field name="gongsi_id" string="销售主体" attrs="{'readonly': 1}"/>
-                                <field name="purchase_gongsi_id" string="采购主体" attrs="{'readonly': 1}"/>
-                                <field name="is_done_tb_vendor" groups="base.group_system"/>
-                            </group>
-
-
-                        </group>
-                        <notebook>
-
-
-                            <page string="供应商发货通知">
-                                <field name="tb_vendor_ids"/>
-                            </page>
-
-
-                            <page groups="base.group_system" string="审批页面">
-                                <group>
-                                    <group>
-                                        <field name="submit_date"/>
-                                        <field name="submit_uid"/>
-                                        <field name="sales_confirm_date"/>
-                                        <field name="sales_confirm_uid"/>
-                                        <field name="approve_date"/>
-                                        <field name="approve_uid"/>
-                                    </group>
-                                    <group>
-                                        <field name="confirmed_date"/>
-                                        <field name="confirmed_uid"/>
-                                        <field name="delivered_date"/>
-                                        <field name="delivered_uid"/>
-                                        <field name="invoiced_date"/>
-                                        <field name="invoiced_uid"/>
-                                    </group>
-                                </group>
-                            </page>
-
-                        </notebook>
-                    </sheet>
-                    <div class="oe_chatter">
-                        <field name="message_follower_ids" widget="mail_followers"/>
-                        <field name="activity_ids" widget="mail_activity"/>
-                        <field name="message_ids" widget="mail_thread"/>
-                    </div>
-                </form>
-            </field>
-        </record>
-
-
-        <!--单证视图-->
-        <record id="view_transport_bill_tenyale_document_tree" model="ir.ui.view">
-            <field name="name">transport.bill.tree</field>
-            <field name="model">transport.bill</field>
-            <field name="arch" type="xml">
-                <tree string="出运单" create="false">
-                    <field name="name"/>
-                    <field name="partner_id" required="1"/>
-                    <field name="ref"/>
-
-                    <field name="gongsi_id" string="销售主体"/>
-                    <field name="purchase_gongsi_id" string="采购主体"/>
-                </tree>
-            </field>
-        </record>
-
-
-        <!--单证-->
-        <record id="view_transport_bill_tenyale_document_form" model="ir.ui.view">
-            <field name="name">transport.bill.tenyale.form</field>
-            <field name="model">transport.bill</field>
-            <field name="arch" type="xml">
-                <form string="出运单">
-                    <header groups="sales_team.group_sale_assistant,transport.bills_all">
-                        <button string="生成供应商发货单" type="object" name="make_tb_vendor"
-                                attrs="{'invisible': [('is_done_tb_vendor','=',True)]}" class="oe_highlight"/>
-                        <button string="打印供应商发货单" type="object" name="action_transport_bill_vendor_report"
-                                class="oe_highlight"/>
-                        <field name="state" widget="statusbar" invisible="1"/>
-                    </header>
-                    <sheet>
-                        <group col="3">
-                            <group name="general_information">
-                                <field name="id" invisible="1"/>
-                                <field name="ref" readonly="1"/>
-                                <field name="name" attrs="{'readonly': 1}" invisible="1" groups="base.group_system"/>
-
-                                <field name="partner_id" required="1" attrs="{'readonly': 1}"
-                                       domain="[('customer','=',True),('parent_id', '=', False)]" no_create="True"/>
-
-                                <field name="partner_shipping_id" domain="[('parent_id','child_of', partner_id)]"
-                                       attrs="{'readonly': 1}" no_create="True"/>
-
-
-                            </group>
-                            <group>
-                                <field name="date" attrs="{'readonly': 1}"/>
-                                <field name="payment_term_id" attrs="{'readonly': 1}"/>
-                                <field name="partner_invoice_id" domain="[('parent_id','child_of', partner_id)]"
-                                       invisible="1"
-                                       attrs="{'readonly': 1}" groups="base.group_system"/>
-
-                                <field name="locked" groups="base.group_system"/>
-                            </group>
-                            <group>
-                                <field name="gongsi_id" string="销售主体" attrs="{'readonly': 1}"/>
-                                <field name="purchase_gongsi_id" string="采购主体" attrs="{'readonly': 1}"/>
-                                <field name="is_done_tb_vendor" groups="base.group_system"/>
-                            </group>
-
-
-                        </group>
-                        <notebook>
-
-                            <page string="交单时间" name="jdsj" invisible="1">
-                                <!--button name="update_picking_date" string="更新调拨单时间" class="oe_highlight" type="object"/-->
-                                <button name="update_supplier_invoice_date" string="更新发票相关日期" class="oe_highlight"
-                                        type="object"/>
-                                <group>
-                                    <group>
-                                        <field name="date_out_in"/>
-                                        <field name="date_in"/>
-                                        <field name="date_ship"/>
-
-                                    </group>
-                                    <group>
-                                        <field name="date_customer_finish"/>
-                                        <field name="date_supplier_finish"/>
-                                    </group>
-                                </group>
-                            </page>
-
-                            <page string="订舱信息" name="dcxx">
-                                <group>
-                                    <group>
-                                        <field name="production_sale_unit" attrs="{'readonly': 1}"/>
-                                        <field name="invoice_title" attrs="{'readonly': 1}"/>
-                                        <field name="partner_mark_comb_ids" invisible="1"/>
-                                        <field name="mark_comb_id" domain="[('id', 'in', partner_mark_comb_ids)]"
-                                               attrs="{'readonly': 1}" string="唛头"/>
-                                        <field name="notice_man" attrs="{'readonly': 1}"/>
-                                        <field name="delivery_man" attrs="{'readonly': 1}"/>
-                                        <field name="wharf_src_id" attrs="{'readonly': 1}"/>
-                                        <field name="wharf_dest_id" attrs="{'readonly': 1}"/>
-                                        <field name="forwarder_name" attrs="{'readonly': 1}"/>
-                                        <field name="settlement" attrs="{'readonly': 1}"/>
-                                        <field name="notice" attrs="{'readonly': 1}"/>
-                                        <field name="demand_info" attrs="{'readonly': 1}"/>
-                                    </group>
-                                </group>
-                            </page>
-                            <page string="清关资料" name="qgzl">
-                                <field name="qingguan_line_ids" attrs="{'readonly': 1}">
-                                    <tree editable="bottom">
-                                        <field name="company_currency_id" invisible="1"/>
-                                        <field name="sale_currency_id" invisible="1"/>
-                                        <field name="third_currency_id" invisible="1"/>
-                                        <field name="so_id" string="销售合同"/>
-                                        <field name="product_id"/>
-                                        <field name="source_area"/>
-                                        <field name="source_country_id"/>
-                                        <field name="uom_id" groups="base.group_system"/>
-                                        <field name="s_uom_id" string="单位"/>
-                                        <field name="price"/>
-                                        <field name="qty" sum="小计"/>
-                                        <field name="qty_package" sum="小计" groups="base.group_system"/>
-                                        <field name="package_qty" sum="小计" string="箱数"/>
-                                        <field name="net_weight" sum="小计"/>
-                                        <field name="gross_weight" sum="小计"/>
-                                        <field name="tuopan_weight" sum="小计" string="托重"/>
-                                        <field name="shiji_weight" sum="小计"/>
-                                        <field name="volume" sum="小计" string="体积"/>
-                                        <field name="tuopan_volume" sum="小计" string="托体积"/>
-                                        <field name="shiji_volume" sum="小计"/>
-                                        <field name="sub_total" sum="小计"/>
-                                    </tree>
-
-                                </field>
-                                <group>
-                                    <field name="qingguan_description" attrs="{'readonly': 1}"/>
-                                </group>
-                            </page>
-
-                            <page string="供应商发货通知">
-                                <field name="tb_vendor_ids"/>
-                            </page>
-
-                            <page string="报关资料">
-                                <group col="4">
-                                    <group>
-                                        <field name="pallet_type" attrs="{'readonly':1}"/>
-                                    </group>
-                                    <group>
-                                        <field name="pallet_qty" attrs="{'readonly':1}"/>
-                                    </group>
-                                    <group>
-                                        <field name="tuopan_weight" attrs="{'readonly':1}"/>
-                                    </group>
-                                    <group>
-                                        <field name="tuopan_volume" attrs="{'readonly':1}"/>
-                                    </group>
-                                </group>
-                                <field name="hsname_ids" attrs="{'readonly':1}">
-                                    <tree editable="bottom" decoration-danger="purchase_hs_id==False">
-                                        <field name="purchase_hs_id" string="采购对应" invisible="1"/>
-                                        <button name="make_suppliser_hs" type="object" icon="fa-th-large"/>
-                                        <field name="id" invisible="1"/>
-                                        <field name="package_tag" invisible="1"/>
-                                        <field name="name" invisible="1"/>
-
-                                        <field name="dump_product_id" groups="base.group_system" invisible="1"/>
-                                        <field name="hs_id" attrs="{'required':[('purchase_hs_id','=',False)]}"/>
-                                        <field name="hs_en_name" groups="base.group_system" invisible="1"/>
-
-                                        <field name="po_id" string="采购合同"
-                                               attrs="{'required':[('purchase_hs_id','=',False)]}"/>
-                                        <field name="amount" sum="小计" string="销售额"
-                                               attrs="{'readonly':[('purchase_hs_id','=',False)]}"/>
-                                        <field name="out_qty2" sum="小计" string="报关数量"
-                                               attrs="{'readonly':[('purchase_hs_id','=',False)]}"/>
-                                        <field name="price2" string="单价" readonly="1"/>
-                                        <field name="amount2" sum="小计" string="金额"
-                                               attrs="{'readonly':[('purchase_hs_id','=',False)]}"/>
-                                        <field name="purchase_amount2" string="采购额"
-                                               attrs="{'readonly':[('purchase_hs_id','=',False)]}"/>
-                                        <field name="back_tax" readonly="1"/>
-                                        <field name="purchase_back_tax_amount2" string="退税额" readonly="1"/>
-                                        <field name="out_qty" sum="小计" invisible="1"/>
-                                        <field name="price" string="单价" invisible="1"/>
-
-
-                                        <field name="purchase_amount" invisible="1"/>
-                                        <field name="hs_id2" invisible="1"/>
-                                        <field name="dump_product_id2" groups="base.group_system" invisible="1"/>
-                                        <field name="source_area"/>
-                                        <field name="source_country_id"/>
-                                        <field name="qty_max" sum="小计" string="件数"/>
-                                        <field name="qty_mid" groups="base.group_system" invisible="1"/>
-                                        <field name="qty_min" groups="base.group_system" invisible="1"/>
-                                        <field name="net_weight" sum="小计"/>
-                                        <field name="gross_weight" sum="小计"/>
-                                        <field name="tuopan_weight" string="托重"/>
-                                        <field name="shiji_weight" sum="小计"/>
-                                        <field name="volume" string="体积"/>
-                                        <field name="tuopan_volume" string="托体积"/>
-                                        <field name="shiji_volume"/>
-                                        <field name="keyword" invisible="1"/>
-                                        <field name="type" invisible="1"/>
-                                        <field name="note" invisible="1"/>
-                                    </tree>
-                                    <form>
-                                        <group>
-                                            <group>
-                                                <field name="package_tag"/>
-                                                <field name="name" readonly="0"/>
-                                                <field name="dump_product_id" readonly="0"/>
-                                                <field name="hs_id" readonly="0"/>
-                                                <field name="hs_en_name" readonly="0"/>
-                                                <field name="po_id"/>
-                                                <field name="back_tax" readonly="1"/>
-                                                <field name="out_qty" readonly="0"/>
-                                                <field name="price"/>
-                                                <field name="purchase_amount"/>
-                                                <field name="purchase_amount2"/>
-                                                <field name="amount"/>
-                                                <field name="hs_id2"/>
-                                                <field name="dump_product_id2"/>
-                                                <field name="out_qty2"/>
-                                                <field name="price2"/>
-                                                <field name="amount2"/>
-                                            </group>
-                                            <group>
-                                                <field name="source_area"/>
-                                                <field name="source_country_id"/>
-                                                <field name="qty_max"/>
-                                                <field name="qty_mid" invisible="1"/>
-                                                <field name="qty_min" readonly="1"/>
-                                                <field name="net_weight"/>
-                                                <field name="gross_weight"/>
-                                                <field name="tuopan_weight"/>
-                                                <field name="shiji_weight"/>
-                                                <field name="volume"/>
-                                                <field name="tuopan_volume"/>
-                                                <field name="shiji_volume"/>
-                                                <field name="type"/>
-                                                <field name="note"/>
-                                            </group>
-                                        </group>
-                                        <group>
-                                            <field name="keyword"/>
-                                        </group>
-                                    </form>
-
-
-                                </field>
-                            </page>
-
-
-                            <page string="采购报关统计" invisible="1">
-                                <field name="btls_hs_ids" attrs="{'readonly': 1}">
-                                    <tree editable="bottom">
-                                        <field name="sale_hs_id" domain="[('tb_id','=', parent.id)]" string="销售统计"/>
-                                        <field name="sale_hs_db_id"/>
-                                        <field name="supplier_id"/>
-                                        <field name="name"/>
-                                        <field name="po_id"/>
-                                        <field name="po_code" groups="base.group_system"/>
-                                        <field name="hs_id"/>
-                                        <field name="product_id" groups="base.group_system"/>
-                                        <field name="qty" groups="base.group_system"/>
-                                        <field name="price" groups="base.group_system"/>
-                                        <field name="amount" groups="base.group_system"/>
-                                        <field name="back_tax" groups="base.group_system"/>
-                                        <field name="back_tax_amount" groups="base.group_system"/>
-                                        <field name="hs_id2"/>
-                                        <field name="product_id2" groups="base.group_system"/>
-                                        <field name="qty2" groups="base.group_system"/>
-                                        <field name="price2" groups="base.group_system"/>
-                                        <field name="amount2"/>
-                                        <field name="back_tax2"/>
-                                        <field name="back_tax_amount2"/>
-                                        <field name="tongji_type"/>
-                                    </tree>
-                                </field>
-                            </page>
-                            <page groups="base.group_system" string="审批页面">
-                                <group>
-                                    <group>
-                                        <field name="submit_date"/>
-                                        <field name="submit_uid"/>
-                                        <field name="sales_confirm_date"/>
-                                        <field name="sales_confirm_uid"/>
-                                        <field name="approve_date"/>
-                                        <field name="approve_uid"/>
-                                    </group>
-                                    <group>
-                                        <field name="confirmed_date"/>
-                                        <field name="confirmed_uid"/>
-                                        <field name="delivered_date"/>
-                                        <field name="delivered_uid"/>
-                                        <field name="invoiced_date"/>
-                                        <field name="invoiced_uid"/>
-                                    </group>
-                                </group>
-                            </page>
-
-                        </notebook>
-                    </sheet>
-                    <div class="oe_chatter">
-                        <field name="message_follower_ids" widget="mail_followers"/>
-                        <field name="activity_ids" widget="mail_activity"/>
-                        <field name="message_ids" widget="mail_thread"/>
-                    </div>
-                </form>
-            </field>
-        </record>
-
-
-
-        <record model="ir.actions.act_window" id="act_open_transport_bill_tenyale_create_view">
-            <field name="name">创建新出运单</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="res_model">transport.bill</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">form</field>
-            <field name="domain">[]</field>
-            <field name="context">
-                {'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3,'show_po_code':
-                1}
-            </field>
-            <field name="view_ids" eval="[(5, 0, 0),
-
-                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_transport_bill_tenyale_sales_form')})]"/>
-
-        </record>
-
-        <menuitem id="menu_transport_tenyale_create_bill" name="创建新出运单"
-                  parent="yjzy_extend.menu_transport_tenyale_bill_root"
-                  sequence="22"
-                  action="act_open_transport_bill_tenyale_create_view"
-        />
-        <record model="ir.actions.act_window" id="action_transport_bill_tenyale_approving">
-            <field name="name">未生效出运合同</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="res_model">transport.bill</field>
-            <field name="view_type">form</field>
-            <field name="limit">20</field>
-            <field name="view_mode">tree,form,kanban</field>
-            <field name="search_view_id" ref="view_transport_bill_tenyale_filter"/>
-            <field name="domain">[('state','in',['cancel','draft','submit','sale_approve'])]</field>
-            <field name="context">
-                {'search_default_group_state':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3,'show_po_code':
-                1}
-            </field>
-            <field name="view_ids" eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_transport_bill_tenyale_approving_tree')}),
-                          (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_transport_bill_tenyale_sales_kanban')}),
-                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_transport_bill_tenyale_sales_form')})]"/>
-
-        </record>
-
-        <menuitem id="menu_transport_tenyale_approving" name="未生效"
-                  parent="yjzy_extend.menu_transport_tenyale_bill_root"
-                  sequence="1"
-                  action="action_transport_bill_tenyale_approving"
-        />
-
-        <record model="ir.actions.act_window" id="action_transport_bill_tenyale_approve">
-            <field name="name">执行中出运合同</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="res_model">transport.bill</field>
-            <field name="view_type">form</field>
-            <field name="limit">20</field>
-            <field name="view_mode">tree,form,kanban</field>
-            <field name="search_view_id" ref="view_transport_bill_tenyale_filter"/>
-            <field name="domain">[('state','in',['approve','confirmed','delivered','invoiced','verifying','done'])]</field>
-            <field name="context">{'search_default_group_by_state_type':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3,'show_po_code':
-                1}
-            </field>
-            <field name="view_ids" eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_transport_bill_tenyale_sales_tree')}),
-                          (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_transport_bill_tenyale_sales_kanban')}),
-                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_transport_bill_tenyale_sales_form')})]"/>
-
-        </record>
-
-        <menuitem id="menu_transport_tenyale_approve" name="执行中"
-                  parent="yjzy_extend.menu_transport_tenyale_bill_root"
-                  sequence="1"
-                  action="action_transport_bill_tenyale_approve"
-        />
-
-        <!--record model="ir.actions.act_window" id="act_open_transport_bill_tenyale_sales_view">
-            <field name="name">业务待处理</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="res_model">transport.bill</field>
-            <field name="view_type">form</field>
-            <field name="limit">20</field>
-            <field name="view_mode">tree,form,kanban</field>
-            <field name="domain">[('state','in',['cancel','draft','submit'])]</field>
-            <field name="context">{'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3}</field>
-            <field name="view_ids" eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_transport_bill_tenyale_sales_tree')}),
-                          (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_transport_bill_tenyale_sales_kanban')}),
-                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_transport_bill_tenyale_sales_form')})]"/>
-
-        </record>
-
-        <menuitem id="menu_transport_tenyale_sales_bill" name="业务待处理"
-                  parent="yjzy_extend.menu_transport_tenyale_bill_root"
-                  sequence="1"
-                  action="act_open_transport_bill_tenyale_sales_view"
-                  /-->
-        <!--伟伟-->
-        <!--record model="ir.actions.act_window" id="act_open_transport_bill_tenyale_weiwei_view">
-            <field name="name">业务待处理</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="res_model">transport.bill</field>
-            <field name="view_type">form</field>
-            <field name="limit">20</field>
-            <field name="view_mode">tree,form,kanban</field>
-            <field name="domain">[('state','in',['cancel','draft','submit','sales_approve']),'|','|',('partner_id.x_studio_field_U7OvH','in',uid),('partner_id.user_id','=',uid),('partner_id.assistant_id','=',uid)]</field>
-            <field name="context">{'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3}</field>
-            <field name="view_ids" eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_transport_bill_tenyale_sales_tree')}),
-                          (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_transport_bill_tenyale_sales_kanban')}),
-                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_transport_bill_tenyale_sales_form')})]"/>
-
-        </record>
-
-        <menuitem id="menu_transport_tenyale_weiwei_bill" name="业务待处理"
-                  parent="yjzy_extend.menu_transport_tenyale_bill_root"
-                  sequence="1"
-                  action="act_open_transport_bill_tenyale_weiwei_view"
-                  /-->
-
-
-        <!--record model="ir.actions.act_window" id="act_open_transport_bill_tenyale_hegui_view">
-                  <field name="name">合规待处理</field>
-                  <field name="type">ir.actions.act_window</field>
-                  <field name="res_model">transport.bill</field>
-                  <field name="view_type">form</field>
-                  <field name="limit">20</field>
-                  <field name="view_mode">tree,form,kanban</field>
-                  <field name="domain">[('state','in',['approve','confirmed','delivered','invoiced'])]</field>
-                  <field name="context">{'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3}</field>
-                  <field name="view_ids" eval="[(5, 0, 0),
-                                (0, 0, {'view_mode': 'tree', 'view_id': ref('view_transport_bill_tenyale_sales_tree')}),
-                                (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_transport_bill_tenyale_sales_kanban')}),
-                                (0, 0, {'view_mode': 'form', 'view_id': ref('view_transport_bill_tenyale_sales_form')})]"/>
-
-              </record>
-
-              <menuitem id="menu_transport_tenyale_hegui_bill" name="合规待处理"
-                        parent="yjzy_extend.menu_transport_tenyale_bill_root"
-                        sequence="2"
-                        action="act_open_transport_bill_tenyale_hegui_view"
-                       /-->
-
-
-        <record model="ir.actions.act_window" id="act_open_transport_bill_tenyale_document_view">
-            <field name="name">单证待处理</field>
+         <record model="ir.actions.act_window" id="act_open_transport_bill_tenyale_invoice_view">
+            <field name="name">应收应付数据查询</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">transport.bill</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form,kanban</field>
-            <field name="domain">[('state','=','approve')]</field>
-            <field name="limit">20</field>
-            <field name="context">
-                {'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3,'show_po_code':
-                1}
-            </field>
-            <field name="view_ids" eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_transport_bill_tenyale_document_tree')}),
-                          (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_transport_bill_tenyale_sales_kanban')}),
-                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_transport_bill_tenyale_document_form')})]"/>
-
-        </record>
-
-        <menuitem id="menu_transport_tenyale_document_bill" name="单证待处理"
-                  parent="yjzy_extend.menu_transport_tenyale_bill_root"
-                  sequence="3"
-                  action="act_open_transport_bill_tenyale_document_view"
-        />
-
-        <!--record model="ir.actions.act_window" id="act_open_transport_bill_tenyale_purchase_view">
-            <field name="name">采购查询出运单</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="res_model">transport.bill</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">tree,form,kanban</field>
-            <field name="domain">[]</field>
-            <field name="limit">20</field>
-            <field name="context">{'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3}</field>
-            <field name="view_ids" eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_transport_bill_tenyale_purchase_tree')}),
-                          (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_transport_bill_tenyale_sales_kanban')}),
-                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_transport_bill_tenyale_purchase_form')})]"/>
-
-        </record>
-
-        <menuitem id="menu_transport_tenyale_purchase_bill" name="采购查询出运单"
-                  parent="yjzy_extend.menu_transport_tenyale_bill_root"
-                  sequence="3"
-                  action="act_open_transport_bill_tenyale_purchase_view"
-                  /-->
-
-
-        <record model="ir.actions.act_window" id="act_open_transport_bill_tenyale_all_view">
-            <field name="name">新出运单所有</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="res_model">transport.bill</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">tree,form,kanban</field>
-            <field name="domain">[]</field>
+            <field name="domain">[('state','=','invoiced')]</field>
             <field name="limit">20</field>
             <field name="search_view_id" ref="view_transport_bill_tenyale_filter"/>
-            <field name="context">{'search_default_group_by_state_type':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3,'show_po_code':1}</field>
+            <field name="context">{'search_default_group_by_invoice_paid_state':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3,'show_po_code':1}</field>
             <field name="view_ids" eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_transport_bill_tenyale_sales_tree')}),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_transport_bill_tenyale_account_tree')}),
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_transport_bill_tenyale_sales_kanban')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_transport_bill_tenyale_sales_form')})]"/>
 
         </record>
 
-        <menuitem id="menu_transport_tenyale_all_bill" name="新出运单所有"
+        <menuitem id="menu_transport_tenyale_invoice_bill" name="应收应付数据查询"
                   parent="yjzy_extend.menu_transport_tenyale_bill_root"
                   sequence="6"
-                  action="act_open_transport_bill_tenyale_all_view"
+                  action="act_open_transport_bill_tenyale_invoice_view"
         />
 
 

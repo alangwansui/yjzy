@@ -112,6 +112,7 @@ class transport_bill(models.Model):
                 back_tax_amount = 0
             else:
                 back_tax_amount = one.company_currency_id.compute(sum(x.back_tax_amount2 for x in one.btls_hs_ids), one.third_currency_id)
+                back_tax_amount_org = one.company_currency_id.compute(sum(x.back_tax_amount for x in one.line_ids), one.third_currency_id)
 
             other_cost = one.company_currency_id.compute(one._get_other_cost(), one.third_currency_id)
             sale_commission_amount = real_sale_amount * one.sale_commission_ratio
@@ -137,6 +138,7 @@ class transport_bill(models.Model):
             one.purchase_cost = purchase_cost
             one.other_cost = other_cost
             one.back_tax_amount = back_tax_amount
+            one.back_tax_amount_org = back_tax_amount_org
             one.profit_amount = profit_amount
             one.fandian_amount = fandian_amount
             one.budget_amount = budget_amount
@@ -257,18 +259,28 @@ class transport_bill(models.Model):
 
             one.all_purchase_invoice_fill = all([x.date_finish for x in purchase_invoices])
 
-    @api.depends('line_ids.plan_qty','line_ids','current_date_rate')
-    def _amount_all(self):
+    # @api.depends('line_ids.plan_qty','line_ids','current_date_rate')
+    # def amount_all(self):
+    #     """
+    #     Compute the total amounts of the SO.
+    #     """
+    #     for one in self:
+    #         org_sale_amount_new = 0
+    #         for line in one.line_ids:
+    #             org_sale_amount_new += line.org_currency_sale_amount
+    #         one.update({
+    #             'org_sale_amount_new': one.sale_currency_id.round(org_sale_amount_new),
+    #         })
+
+    @api.depends('line_ids','line_ids.plan_qty','current_date_rate')
+    def amount_all(self):
         """
         Compute the total amounts of the SO.
         """
-        for one in self:
-            org_sale_amount_new = 0
-            for line in one.line_ids:
-                org_sale_amount_new += line.org_currency_sale_amount
-            one.update({
-                'org_sale_amount_new': one.sale_currency_id.round(org_sale_amount_new),
-            })
+        org_sale_amount_new = 0
+        if self.line_ids:
+            org_sale_amount_new = sum(x.org_currency_sale_amount for x in self.line_ids)
+        self.org_sale_amount_new = org_sale_amount_new
 
     @api.depends('line_ids.plan_qty','line_ids','current_date_rate')
     def _sale_purchase_amount(self):
@@ -452,6 +464,28 @@ class transport_bill(models.Model):
             one.same_currency = is_same_currency
             one.same_include_tax = is_same_include_tax
 
+    @api.depends('all_invoice_ids','all_invoice_ids.state','sale_invoice_id','sale_invoice_id.state','purchase_invoice_ids','purchase_invoice_ids.state')
+    def compute_invoice_paid_state(self):
+
+        for one in self:
+            invoice_paid_state = 'e'
+            line_purchase_invoice_count = len(one.purchase_invoice_ids.filtered(lambda x: x.state not in ['draft','cancel']))
+            line_count_paid = len(one.all_invoice_ids.filtered(lambda x: x.state == 'paid'))
+            sale_invoice_id = one.sale_invoice_id
+            line_purchase_invoice_paid_count = len(one.purchase_invoice_ids.filtered(lambda x: x.state == 'paid'))
+            if line_purchase_invoice_count > 0 and sale_invoice_id and sale_invoice_id.state not in ('draft','cancel'):
+                if line_count_paid > 0:
+                    if line_purchase_invoice_paid_count >0 and sale_invoice_id.state == 'paid':
+                        invoice_paid_state = 'b'
+                    elif line_purchase_invoice_paid_count == 0 and sale_invoice_id.state == 'open':
+                        invoice_paid_state = 'c'
+                    elif line_purchase_invoice_paid_count == 0 and sale_invoice_id.state == 'paid':
+                        invoice_paid_state = 'a_paid'
+                else:
+                    invoice_paid_state = 'd_no_paid'
+                one.invoice_paid_state = invoice_paid_state
+            else:
+                one.invoice_paid_state = 'e'
     # @api.model
     # def _default_fee_inner(self):
     #     fee_inner = 0.0
@@ -505,7 +539,11 @@ class transport_bill(models.Model):
     same_payment_term = fields.Boolean(u'付款条款是否一致', compute='compute_same')
     same_currency = fields.Boolean(u'币种是否一致', compute='compute_same')
     same_include_tax = fields.Boolean(u'含税是否一致', compute='compute_same')
-
+    invoice_paid_state = fields.Selection([('a_paid',u'收付两清待核销'),
+                                           ('b',u'已付清未收齐'),
+                                           ('c',u'已收齐未付清'),
+                                           ('d_no_paid',u'收付均未清'),
+                                           ('e','未确认')], '收款状态',store=True, compute=compute_invoice_paid_state)#应收应付分组情况
 
 
     # outer_currency_id = fields.Many2one('res.currency', u'国外运保费货币', related='sol_id.outer_currency_id')
@@ -522,7 +560,7 @@ class transport_bill(models.Model):
     incoterm_code = fields.Char('贸易术语', related='incoterm.code', readonly=True)
     org_sale_amount = fields.Monetary('销售金额', currency_field='sale_currency_id', compute=compute_info,
                                       digits=dp.get_precision('Money'))
-    org_sale_amount_new = fields.Monetary('销售金额', store=True, currency_field='sale_currency_id', compute='_amount_all',
+    org_sale_amount_new = fields.Monetary('销售金额', store=True, currency_field='sale_currency_id', compute=amount_all,
                                       digits=dp.get_precision('Money'))  #13ok
     org_real_sale_amount = fields.Monetary('实际销售金额', currency_field='sale_currency_id', compute=compute_info,
                                            digits=dp.get_precision('Money'))
@@ -549,6 +587,8 @@ class transport_bill(models.Model):
     profit_ratio = fields.Float('利润率', digits=(2, 4), compute=compute_info)
 
     back_tax_amount = fields.Monetary('退税金额', currency_field='third_currency_id', compute=compute_info,
+                                      digits=dp.get_precision('Money'))
+    back_tax_amount_org = fields.Monetary('原始退税金额', currency_field='third_currency_id', compute=compute_info,
                                       digits=dp.get_precision('Money'))
     shoukuan_amount = fields.Monetary(u'收款金额', digits=(2, 4), compute=compute_info)
     fukuan_amount = fields.Monetary(u'付款金额', digits=(2, 4), compute=compute_info)
@@ -731,23 +771,16 @@ class transport_bill(models.Model):
     delivery_man = fields.Text(u'发货人')
     demand_info = fields.Text(u'交单要求')
     payment_term_id = fields.Many2one('account.payment.term', string='付款条款')
+    operation_wizard = fields.Selection([('first', u'选择客户'),
+                                         ('second', u'添加出运明细'),
+                                         ('third', u'填写出运数量'),
+                                         ('fourth', u'生成出运合同号'),
+                                         ('fifth', u'填写剩余字段')], '操作向导', default='first')
     #-----
 
 
-
     production_sale_unit = fields.Char('生产销售单位')
-
-
-
-
-
-
-
-
     # 出运成本单据
-
-
-
 
     budget_amount = fields.Monetary('预算', compute=compute_info, currency_field='company_currency_id')
     budget_reset_amount = fields.Monetary('预算剩余',  compute=compute_info, currency_field='company_currency_id')
@@ -1031,12 +1064,27 @@ class transport_bill(models.Model):
         self.split_tuopan_weight()
         self.split_tuopan_weight2vendor()
         self.compute_tb_ref()
+        if self.operation_wizard != 'sixth':
+            self.operation_wizard = 'fifth'
 
+    def split_tuopan_all(self):
+        self.split_tuopan_weight()
+        self.split_tuopan_weight2vendor()
+        self.operation_wizard = 'sixth'
 
     def make_sale_purchase_collect(self):
         self.make_sale_collect()
         self.make_purchase_collect()
-        self.split_tuopan_weight_baoguan()
+        #self.split_tuopan_weight_baoguan()
+
+    def unlink_bgzl(self):
+        self.hsname_ids.unlink()
+        self.comb_ids.unlink()
+        self.btls_hs_ids.unlink()
+        self.btls_comb_ids.unlink()
+        self.btl_supplier_ids.unlink()
+        self.qingguan_line_ids.unlink()
+        self.tb_vendor_ids.unlink()
 
     @api.multi
     def action_save_test(self):
@@ -1222,30 +1270,30 @@ class transport_bill(models.Model):
 
    #13ok
     def split_tuopan_weight(self):
-        if self.pallet_type == 'plts':
-            if self.tuopan_weight <= 0 or self.tuopan_volume <=0:
-                raise Warning(u'请先设置托盘重量和体积')
+        # if self.pallet_type == 'plts':
+        #     # if self.tuopan_weight <= 0 or self.tuopan_volume <=0:
+        #     #     raise Warning(u'请先设置托盘重量和体积')
 
-            qinguan_count = sum([x.qty for x in self.qingguan_line_ids])
-            if qinguan_count > 0:
-                for line in self.qingguan_line_ids:
-                    line.tuopan_weight = line.qty / qinguan_count * self.tuopan_weight
+        qinguan_count = sum([x.qty for x in self.qingguan_line_ids])
+        if qinguan_count > 0:
+            for line in self.qingguan_line_ids:
+                line.tuopan_weight = line.qty / qinguan_count * self.tuopan_weight
 
-            hsl_count = sum([x.qty_max for x in self.hsname_ids])
-            if hsl_count > 0:
-                for line in self.hsname_ids:
-                    line.tuopan_weight = line.qty_max / hsl_count * self.tuopan_weight
+        hsl_count = sum([x.qty_max for x in self.hsname_ids])
+        if hsl_count > 0:
+            for line in self.hsname_ids:
+                line.tuopan_weight = line.qty_max / hsl_count * self.tuopan_weight
 
-            #================tuopan_volume
-            qinguan_volume = sum([x.volume for x in self.qingguan_line_ids])
-            if qinguan_volume > 0:
-                for line in self.qingguan_line_ids:
-                    line.tuopan_volume = line.volume / qinguan_volume * self.tuopan_volume
+        #================tuopan_volume
+        qinguan_volume = sum([x.volume for x in self.qingguan_line_ids])
+        if qinguan_volume > 0:
+            for line in self.qingguan_line_ids:
+                line.tuopan_volume = line.volume / qinguan_volume * self.tuopan_volume
 
-            hsl_volume = sum([x.volume for x in self.hsname_ids])
-            if hsl_volume > 0:
-                for line in self.hsname_ids:
-                    line.tuopan_volume = line.volume / hsl_volume * self.tuopan_volume
+        hsl_volume = sum([x.volume for x in self.hsname_ids])
+        if hsl_volume > 0:
+            for line in self.hsname_ids:
+                line.tuopan_volume = line.volume / hsl_volume * self.tuopan_volume
 
         self.is_done_tuopan = True
 
@@ -1278,26 +1326,26 @@ class transport_bill(models.Model):
                     line.tuopan_volume = line.volume / hsl_volume * self.tuopan_volume
 
     def split_tuopan_weight2vendor(self):
-        if self.pallet_type == 'plts':
-            vendor_lines = self.tb_vendor_ids.mapped('line_ids')
+        # if self.pallet_type == 'plts':
+        vendor_lines = self.tb_vendor_ids.mapped('line_ids')
 
-            print('===split_tuopan_weight2vendor==0:', self.tb_vendor_ids, vendor_lines)
+           # print('===split_tuopan_weight2vendor==0:', self.tb_vendor_ids, vendor_lines)
 
-            if self.tuopan_weight <= 0 or self.tuopan_volume <=0:
-                raise Warning(u'请先设置托盘重量和体积')
+        # if self.tuopan_weight <= 0 or self.tuopan_volume <=0:
+        #     raise Warning(u'请先设置托盘重量和体积')
 
-            all_count = sum([x.qty for x in vendor_lines])
-            print('===split_tuopan_weight2vendor==1:', all_count)
-            if all_count > 0:
-                for line in vendor_lines:
-                    line.tuopan_weight = line.qty / all_count * self.tuopan_weight
+        all_count = sum([x.qty for x in vendor_lines])
+        print('===split_tuopan_weight2vendor==1:', all_count)
+        if all_count > 0:
+            for line in vendor_lines:
+                line.tuopan_weight = line.qty / all_count * self.tuopan_weight
 
 
-            all_volume = sum([x.volume for x in vendor_lines])
-            print('===split_tuopan_weight2vendor==2:', all_volume)
-            if all_volume > 0:
-                for line in vendor_lines:
-                    line.tuopan_volume = line.volume / all_volume * self.tuopan_volume
+        all_volume = sum([x.volume for x in vendor_lines])
+        print('===split_tuopan_weight2vendor==2:', all_volume)
+        if all_volume > 0:
+            for line in vendor_lines:
+                line.tuopan_volume = line.volume / all_volume * self.tuopan_volume
 
 
 
@@ -1379,6 +1427,7 @@ class transport_bill(models.Model):
         self.wharf_dest_id = self.partner_shipping_id.wharf_dest_id
         #self.payment_term_id = self.partner_id.property_payment_term_id
         self.partner_country_id = self.partner_shipping_id.country_id
+
         #akiny
        # self.user_id = self.partner_id.user_id
         #self.sale_currency_id = self.partner_id.property_product_pricelist.currency_id
@@ -1392,7 +1441,8 @@ class transport_bill(models.Model):
         self.contract_type = self.partner_id.contract_type
         self.gongsi_id = self.partner_id.gongsi_id
         self.purchase_gongsi_id = self.partner_id.purchase_gongsi_id
-
+        if self.operation_wizard != 'sixth':
+            self.operation_wizard = 'second'
     # @api.onchange('partner_shipping_id')
     # def onchange_partner(self):
     #
@@ -1402,6 +1452,10 @@ class transport_bill(models.Model):
     #     self.notice_man = self.partner_shipping_id.notice_man
 
 
+    def finish_delivery_qty(self):
+        self.amount_all()
+        if self.operation_wizard != 'sixth':
+            self.operation_wizard = 'fourth'
 
     def make_tb_vendor(self):
         #print('>>>>make_tb_vendor')
@@ -1980,6 +2034,7 @@ class transport_bill(models.Model):
             'context': ctx,
         }
 
+
 #13ok
     def open_wizard_transport4so(self):
         self.ensure_one()
@@ -2053,7 +2108,7 @@ class transport_bill(models.Model):
             #print('>>', line)
             line.compute_info()
         self.qingguan_state = 'done'
-        self.split_tuopan_weight_qingguan()
+        #self.split_tuopan_weight_qingguan()
 
     def get_product_total(self):
         self.ensure_one()
@@ -2076,6 +2131,20 @@ class transport_bill(models.Model):
             'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
             'domain': [('id', 'in', [self.sale_invoice_id.id])]
         }
+    def open_sale_invoice_new(self):
+        self.ensure_one()
+        form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form')
+        tree_view = self.env.ref('yjzy_extend.invoice_new_1_tree')
+        return {
+            'name': u'客户应收',
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'res_model': 'account.invoice',
+            'type': 'ir.actions.act_window',
+            'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
+            'domain': [('id', 'in', [self.sale_invoice_id.id])],
+            'target': 'new'
+        }
 
     def open_purchase_invoice(self):
         form_view = self.env.ref('yjzy_extend.view_account_supplier_invoice_new_form')
@@ -2090,6 +2159,20 @@ class transport_bill(models.Model):
             'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
             'domain': [('id', 'in', [x.id for x in self.purchase_invoice_ids.filtered(lambda x: x.yjzy_type == 'purchase')])]
 
+        }
+    def open_purchase_invoice_new(self):
+        form_view = self.env.ref('yjzy_extend.view_account_supplier_invoice_new_form')
+        tree_view = self.env.ref('yjzy_extend.invoice_new_supplier_1_tree')
+        self.ensure_one()
+        return {
+            'name': u'供应商应付',
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'res_model': 'account.invoice',
+            'type': 'ir.actions.act_window',
+            'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
+            'domain': [('id', 'in', [x.id for x in self.purchase_invoice_ids.filtered(lambda x: x.yjzy_type == 'purchase')])],
+            'target': 'new'
         }
 
     def open_purchase_invoice_1(self):
@@ -2322,7 +2405,7 @@ class transport_bill(models.Model):
                 one.hexiao_type = hexiao_type
                 one.state = state
 
-
+    #自动计算出运开票状态和自动发票过账
     def auto_invoice_open(self):
         for one in self:
             default_times = 0
@@ -2352,7 +2435,7 @@ class transport_bill(models.Model):
                 one.state = 'invoiced'
         return True
 
-
+    #手动更新一下状态使用
     def update_state_to_invoiced_or_delivered(self):
         for one in self:
             if one.date_all_state == 'done' and one.state == 'delivered':
