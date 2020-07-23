@@ -278,10 +278,11 @@ class transport_bill(models.Model):
         """
         Compute the total amounts of the SO.
         """
-        org_sale_amount_new = 0
-        if self.line_ids:
-            org_sale_amount_new = sum(x.org_currency_sale_amount for x in self.line_ids)
-        self.org_sale_amount_new = org_sale_amount_new
+        for one in self:
+            org_sale_amount_new = 0
+            if one.line_ids:
+                org_sale_amount_new = sum(x.org_currency_sale_amount for x in one.line_ids)
+            one.org_sale_amount_new = org_sale_amount_new
 
     @api.depends('line_ids.plan_qty','line_ids','current_date_rate')
     def _sale_purchase_amount(self):

@@ -12,8 +12,8 @@
                     <field name="partner_id" required="1"/>
                     <field name="invoice_paid_state" invisible="1"/>
                     <field name="org_sale_amount" groups="base.group_system"/>
-                    <field name="org_sale_amount_new"/>
-                    <field name="purchase_cost_total"/>
+                    <field name="org_sale_amount_new" sum="小计"/>
+                    <field name="purchase_cost_total" sum="小计"/>
 
                     <field name="sale_amount" groups="base.group_system" invisible="1"/>
                     <field name="ciq_amount" groups="base.group_system" invisible="1"/>
@@ -832,7 +832,7 @@
             <field name="res_model">transport.bill</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form,kanban</field>
-            <field name="domain">[('state','=','invoiced')]</field>
+            <field name="domain">[('state','in',['invoiced','verifying'])]</field>
             <field name="limit">20</field>
             <field name="search_view_id" ref="view_transport_bill_tenyale_filter"/>
             <field name="context">{'search_default_group_by_invoice_paid_state':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3,'show_po_code':1}</field>
