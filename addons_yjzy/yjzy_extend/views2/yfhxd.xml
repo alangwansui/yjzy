@@ -72,7 +72,7 @@
                             groups="base.group_system"/>
 
                     <button name="make_done" class="oe_highlight" string="确认核销" type="object"
-                            attrs="{'invisible': [('state','in', ['done'])]}" groups="base.group_system"/>
+                            attrs="{'invisible': [('state','in', ['done'])]}" />
 
                     <button name="open_reconcile_account_move_line" class="oe_highlight" string="打开核销分录" type="object" groups="base.group_system"/>
 
@@ -179,6 +179,7 @@
                                     <field name="amount_diff_org" string="费用"/>
 
                                     <field name="amount_total_org" string="应付认领合计"/>
+                                    <field name="yjzy_payment_id" string="预付申请单" domain="[('sfk_type','=','yfsqd'),('advance_balance_total','!=',0)]"/>
 
 
                                 </tree>

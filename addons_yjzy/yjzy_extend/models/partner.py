@@ -108,7 +108,7 @@ class res_partner(models.Model):
     @api.depends('tb_approve_ids', 'tb_approve_ids.org_sale_amount_new')
     def compute_tb_approve_amount_total(self):
         for one in self:
-            tb_ids = one.tb_approve_ids.filtered(lambda x: x.company_id  == self.env.user.company_id)
+            tb_ids = one.tb_approve_ids#.filtered(lambda x: x.company_id  == self.env.user.company_id)
             amount_total = sum(x.org_sale_amount_new for x in tb_ids)
             one.tb_approve_amount_total = amount_total
 

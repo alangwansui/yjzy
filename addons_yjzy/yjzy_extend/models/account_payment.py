@@ -141,7 +141,7 @@ class account_payment(models.Model):
             one.advance_total = advance_total
             one.advance_balance_total = advance_balance_total
 
-    @api.depends('yshx_ids','yshx_ids.amount_advance_org','ysrld_ids','ysrld_ids.state','ysrld_ids.amount','ysrld_ids.advance_total','ysrld_ids.advance_balance_total')
+    @api.depends('yshx_ids','yshx_ids.state','aml_ids','yshx_ids.amount_advance_org','ysrld_ids','ysrld_ids.state','ysrld_ids.state','ysrld_ids.amount','ysrld_ids.advance_total','ysrld_ids.advance_balance_total','fybg_ids.state')
     def compute_rcskd_amount_total(self):
         for one in self:
             yshx_ids = one.yshx_ids.filtered(lambda x: x.state in ['posted','reconciled'])
