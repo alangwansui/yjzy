@@ -110,6 +110,7 @@ class res_partner(models.Model):
         for one in self:
             tb_ids = one.tb_approve_ids#.filtered(lambda x: x.company_id  == self.env.user.company_id)
             amount_total = sum(x.org_sale_amount_new for x in tb_ids)
+            print('amount_total',amount_total)
             one.tb_approve_amount_total = amount_total
 
     @api.depends('payment_ids','payment_ids.amount')
@@ -143,7 +144,8 @@ class res_partner(models.Model):
                                           ('state', 'in', ['posted', 'reconciled'])])
 
     tb_approve_ids = fields.One2many('transport.bill','partner_id','今年出运合同',
-                                     domain=[('approve_date','!=',False),('approve_date','>',fields.datetime.now().strftime('%Y-01-01 00:00:00')),('state','in',['approve','confirmed','delivered','invoiced','locked','verifying','done','paid'])])
+                                     domain=[('approve_date','!=',False),('approve_date','>',fields.datetime.now().strftime('%Y-01-01 00:00:00')),
+                                             ('state','in',['approve','confirmed','delivered','invoiced','locked','verifying','done','paid'])])
     so_approve_ids = fields.One2many('sale.order','partner_id','今年销售合同',
                                      domain=[('approve_date','!=',False),('approve_date','>',fields.datetime.now().strftime('%Y-01-01 00:00:00')),('state','in',['approve', 'sale', 'done','abnormal','verifying','verification'])])
     so_no_sent_amount = fields.Float('未发货余额', compute=compute_sale_order_amount_total,store=True)
