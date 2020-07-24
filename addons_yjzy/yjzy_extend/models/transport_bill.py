@@ -723,7 +723,7 @@ class transport_bill(models.Model):
     so_ids = fields.Many2many('sale.order', 'ref_tb_so', 'so_id', 'tb_id', string='销售订单', compute=compute_info, store=False)
     po_ids = fields.Many2many('purchase.order', string='采购订单', compute=compute_info, store=False)
     cip_type = fields.Selection([('normal', u'正常报关'), ('buy', '第三方报关'), ('none', '不报关')], string=u'报关', default='normal')
-    line_ids = fields.One2many('transport.bill.line', 'bill_id', '明细', readonly=True, states={'draft': [('readonly', False)]})
+    line_ids = fields.One2many('transport.bill.line', 'bill_id', '明细')#readonly=True, states={'draft': [('readonly', False)]} #注意
     picking_ids = fields.Many2many('stock.picking', compute=compute_info, store=False, string='调拨') #Tenyale 2.0的项目先保持M2M 不变
     stage1picking_ids = fields.Many2many('stock.picking', '', compute=compute_info, store=False,
                                          domain=[('picking_type_code', '=', 'incoming')], string='入库') #Tenyale 2.0的项目先保持M2M 不变
