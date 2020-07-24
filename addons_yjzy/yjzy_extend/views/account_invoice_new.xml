@@ -96,7 +96,8 @@
             <field name="arch" type="xml">
                 <tree decoration-info="state == 'draft'"  default_order="residual_times_new desc" decoration-muted="state == 'cancel'" string="Invoice" >
                     <field name="partner_id" groups="base.group_user" string="Customer"/>
-                    <field name="tb_contract_code" string="合同号"/>
+                    <field name="bill_id" string="合同号"/>
+                    <field name="tb_contract_code" string="合同号" invisible="1"/>
                     <field name="date_invoice" string="账单日期"/>
                     <button name="open_reconcile_order_line" icon="fa-pencil-square-o" type="object"/>
                     <field name="date_deadline_new" string="实际到期日"/>
@@ -133,17 +134,22 @@
             <field name="name">account.invoice.new.supplier.tree</field>
             <field name="model">account.invoice</field>
             <field name="arch" type="xml">
-                <tree decoration-info="state == 'draft'" decoration-muted="state == 'cancel'" string="Invoice">
+                <tree decoration-info="state == 'draft'" default_order="residual_times_new desc" decoration-muted="state == 'cancel'" string="Invoice">
                     <field name="partner_id" groups="base.group_user" string="Supplier"/>
+                    <field name="bill_id" string="合同号"/>
+                    <field name="tb_contract_code" string="合同号" invisible="1"/>
                     <field name="date_invoice" string="账单日期"/>
-                    <field name="tb_contract_code" string="合同号"/>
                     <button name="open_supplier_reconcile_order_line" icon="fa-pencil-square-o" type="object"/>
-                    <field name="amount_total_signed" string="Total" sum="Total"/>
+                    <field name="date_deadline_new" string="实际到期日"/>
+                    <field name="residual_times_new" />
+                    <field name="date_due" string="进仓到期日"/>
+                    <field name="residual_times_out_in_new"/>
+                    <field name="amount_total_signed" string="应付金额" sum="Total"/>
                     <field name="residual_signed" string="未付金额" sum="Amount Due"/>
-                    <field name="reconcile_order_line_payment" sum="小计" string="付款认领金额"/>
-                    <field name="reconcile_order_line_advance" sum="小计" string="预付认领金额"/>
+                    <field name="reconcile_order_line_payment" sum="小计" string="付款认领金额" invisible="1"/>
+                    <field name="reconcile_order_line_advance" sum="小计" string="预付认领金额" invisible="1"/>
                     <field name="reconcile_order_line_bank" sum="小计" invisible="1"/>
-                    <field name="reconcile_order_line_amount_diff" sum="小计" string="费用认领金额"/>
+                    <field name="reconcile_order_line_amount_diff" sum="小计" string="费用认领金额" invisible="1"/>
                     <field name="commercial_partner_id" invisible="1"/>
                     <field name="reference" invisible="1"/>
                     <field name="name" invisible="1"/>
@@ -156,8 +162,9 @@
                     <field name="company_currency_id" invisible="1"/>
                     <field name="state"/>
                     <field name="type" invisible="context.get('type',True)"/>
-                    <field name="date_due" string="进仓到期日"/>
-                    <field name="date_deadline" string="实际到期日"/>
+                    <field name="residual_times" groups="base.group_system"/>
+                    <field name="residual_times_out_in" groups="base.group_system"/>
+                    <field name="date_deadline" string="实际到期日" groups="base.group_system"/>
                 </tree>
             </field>
         </record>
@@ -1323,6 +1330,26 @@
         <menuitem id="menu_sale_account_invoice_new_2" action="action_sale_account_invoice_new_2"
                   parent="menu_account_new_root" name="应收账单:不含系统外"
                   sequence="93"
+        />
+        <record id="action_supplier_account_invoice_new_1" model="ir.actions.act_window">
+            <field name="name">应付账单账期排序</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_account_invoice_new_filter"/>
+            <field name="domain">[('residual_signed','!=',0),('type','=','in_invoice'),('yjzy_type','=','purchase'),('state','not in',['cancel','draft'])]</field>
+            <field name="context">{'only_ref':1,'type':'in_invoice',
+                'journal_type': 'purchase','yjzy_type':'purchase'}
+            </field>
+            <!--field name="target">new</field-->
+            <field name="view_ids" eval="[(5, 0, 0),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.invoice_new_supplier_1_tree')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.view_account_invoice_new_form')}),
+                              ]"/>
+        </record>
+         <menuitem id="menu_supplier_account_invoice_new_1" action="action_supplier_account_invoice_new_1"
+                  parent="menu_account_new_root" name="应付账单账期排序"
+                  sequence="94"
         />
         <record id="action_sale_invoice_draft_new" model="ir.actions.act_window">
             <field name="name">未确认应收账单</field>

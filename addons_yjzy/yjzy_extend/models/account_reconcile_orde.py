@@ -325,6 +325,7 @@ class account_reconcile_order(models.Model):
         if self.back_tax_invoice_id:
             invoice = self.back_tax_invoice_id
             invoice.action_invoice_open()
+
         self.state = 'approved'
 
     def create_fygb(self):
@@ -791,6 +792,8 @@ class account_reconcile_order(models.Model):
         moves = self.move_ids
         moves.post()
         self.invoice_assign_outstanding_credit()
+        # self.line_ids.yjzy_payment_id.compute_advance_balance_total()
+        # print('test',self.line_ids.yjzy_payment_id.)
         self.state = 'done'
         return True
 

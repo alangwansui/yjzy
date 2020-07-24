@@ -78,8 +78,8 @@ class res_partner(models.Model):
     def compute_supplier_amount_invoice_advance_payment(self):
         reconcile_ids = self.env['account.reconcile.order.line']
         for one in self:
-            invoice = one.supplier_invoice_ids.filtered(lambda x: x.company_id  == self.env.user.company_id)
-            payment = one.supplier_advance_payment_ids.filtered(lambda x: x.company_id  == self.env.user.company_id)
+            invoice = one.supplier_invoice_ids#.filtered(lambda x: x.company_id  == self.env.user.company_id)#等待切换公司能触发执行的动作位置
+            payment = one.supplier_advance_payment_ids#.filtered(lambda x: x.company_id  == self.env.user.company_id)
             # reconcile = reconcile_ids.search([('order_id.partner_id','=',one.id)])
             supplier_amount_invoice = sum(x.amount_total_signed for x in invoice)
             supplier_amount_residual_invoice = sum(x.residual_signed for x in invoice)
@@ -330,6 +330,8 @@ class res_partner(models.Model):
             'domain': [('partner_id', 'in', [self.id]),('yjzy_type','=','purchase'),('type','=','in_invoice'),('state','in',['paid','open'])],
             'target':'new'
         }
+
+
 
 
 
