@@ -986,6 +986,9 @@ class transport_bill(models.Model):
             print('=make_return4return==', wizard, action)
         self.write({'return_picking_ids': [(4, pid) for pid in return4return_picking_ids]})
 
+    def compute_sale_invoice_id(self):
+        sale_invoice_id = self.all_invoice_ids.filtered(lambda x: x.yjzy_type == 'sale')
+        self.sale_invoice_id = sale_invoice_id[0]
 
 
      #akiny 计算出运合同号 13ok

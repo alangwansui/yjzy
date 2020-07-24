@@ -88,6 +88,7 @@
                     <field name="invoice_paid_state" invisible="1"/>
                     <field name="org_sale_amount" groups="base.group_system"/>
                     <field name="org_sale_amount_new"/>
+
                     <field name="purchase_cost_total"/>
 
                     <field name="sale_amount" groups="base.group_system" invisible="1"/>

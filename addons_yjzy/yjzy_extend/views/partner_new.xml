@@ -154,8 +154,8 @@
                     <button name="print_invoice_payment" icon="fa-print" string="收款-应收"  type="object"/>
                     <field name="sale_order_amount_total" sum="小计" readonly="1"/>
                     <button name="open_sale_order_approve" icon="fa-pencil-square-o" type="object" readonly="1"/>
-                    <field name="tb_approve_amount_total"/>
-                    <button name="open_tb_approve" icon="fa-pencil-square-o" type="object" />
+                    <field name="tb_approve_amount_total" sum="小计"/>
+                    <button name="open_tb_approve" icon="fa-pencil-square-o" type="object"/>
                     <field name="amount_invoice" sum="小计" readonly="1" invisible="1"/>
                     <field name="amount_residual_invoice" sum="小计" readonly="1"/>
                     <button name="action_view_partner_invoices_new" icon="fa-pencil-square-o" type="object"/>
@@ -4322,7 +4322,7 @@
 
 
         <record id="action_new_customer_account" model="ir.actions.act_window">
-            <field name="name">公司客户</field>
+            <field name="name">公司客户数据查询</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">res.partner</field>
             <field name="view_type">form</field>
