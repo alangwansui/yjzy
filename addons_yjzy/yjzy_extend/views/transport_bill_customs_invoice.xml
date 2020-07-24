@@ -6,7 +6,7 @@
             <field name="name">transport.bill.tree</field>
             <field name="model">transport.bill</field>
             <field name="arch" type="xml">
-                <tree string="出运单" editable="bottom">
+                <tree string="出运单" editable="bottom" decoration-danger="sale_invoice_total_new != org_sale_amount_new or purchase_cost_total != purchase_invoice_total_new">
                     <field name="ref"/>
                     <field name="name" invisible="1" groups="base.group_system"/>
                     <field name="partner_id" required="1"/>

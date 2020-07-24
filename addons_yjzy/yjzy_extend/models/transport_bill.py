@@ -284,7 +284,7 @@ class transport_bill(models.Model):
                 org_sale_amount_new = sum(x.org_currency_sale_amount for x in one.line_ids)
             one.org_sale_amount_new = org_sale_amount_new
 
-    @api.depends('line_ids.plan_qty','line_ids','current_date_rate')
+    @api.depends('line_ids.plan_qty','line_ids','current_date_rate','state')
     def _sale_purchase_amount(self):
         """
         Compute the total amounts of the SO.
@@ -723,7 +723,7 @@ class transport_bill(models.Model):
     so_ids = fields.Many2many('sale.order', 'ref_tb_so', 'so_id', 'tb_id', string='销售订单', compute=compute_info, store=False)
     po_ids = fields.Many2many('purchase.order', string='采购订单', compute=compute_info, store=False)
     cip_type = fields.Selection([('normal', u'正常报关'), ('buy', '第三方报关'), ('none', '不报关')], string=u'报关', default='normal')
-    line_ids = fields.One2many('transport.bill.line', 'bill_id', '明细')#readonly=True, states={'draft': [('readonly', False)]} #注意
+    line_ids = fields.One2many('transport.bill.line', 'bill_id', '明细',readonly=True, states={'draft': [('readonly', False)]}) #注意
     picking_ids = fields.Many2many('stock.picking', compute=compute_info, store=False, string='调拨') #Tenyale 2.0的项目先保持M2M 不变
     stage1picking_ids = fields.Many2many('stock.picking', '', compute=compute_info, store=False,
                                          domain=[('picking_type_code', '=', 'incoming')], string='入库') #Tenyale 2.0的项目先保持M2M 不变
@@ -985,7 +985,7 @@ class transport_bill(models.Model):
             return4return_picking_ids.append(action['res_id'])
             print('=make_return4return==', wizard, action)
         self.write({'return_picking_ids': [(4, pid) for pid in return4return_picking_ids]})
-
+    #当手动创建发票的时候，用这个来关联出运单
     def compute_sale_invoice_id(self):
         sale_invoice_id = self.all_invoice_ids.filtered(lambda x: x.yjzy_type == 'sale')
         self.sale_invoice_id = sale_invoice_id[0]

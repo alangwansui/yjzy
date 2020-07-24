@@ -60,15 +60,15 @@
                     <field name="include_tax"/>
 
 
-                    <field name="sale_invoice_total" string="应收金额"/>
-                    <field name="purhcase_invoice_total" string="应付金额"/>
-                    <field name="back_tax_invoice_total" string="退税金额"/>
-                    <field name="sale_invoice_paid" string="已收金额"/>
-                    <field name="purhcase_invoice_paid" string="已付金额"/>
-                    <field name="back_tax_invoice_paid" string="已收退税"/>
-                    <field name="sale_invoice_balance" string="未收金额"/>
-                    <field name="purhcase_invoice_balance" string="未付金额"/>
-                    <field name="back_tax_invoice_balance" string="未收退税"/>
+                    <field name="sale_invoice_total" string="应收金额" sum="sum"/>
+                    <field name="purhcase_invoice_total" string="应付金额" sum="sum"/>
+                    <field name="back_tax_invoice_total" string="退税金额" sum="sum"/>
+                    <field name="sale_invoice_paid" string="已收金额" sum="sum"/>
+                    <field name="purhcase_invoice_paid" string="已付金额" sum="sum"/>
+                    <field name="back_tax_invoice_paid" string="已收退税" sum="sum"/>
+                    <field name="sale_invoice_balance" string="未收金额" sum="sum"/>
+                    <field name="purhcase_invoice_balance" string="未付金额" sum="sum"/>
+                    <field name="back_tax_invoice_balance" string="未收退税" sum="sum"/>
                     <field name="create_date"/>
                     <field name="gongsi_id" string="销售主体"/>
                     <field name="purchase_gongsi_id" string="采购主体"/>
