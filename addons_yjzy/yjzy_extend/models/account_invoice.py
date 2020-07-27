@@ -19,6 +19,7 @@ class account_invoice(models.Model):
                     continue
                 diff = strptime(dump_date, DF) - strptime(one.date_invoice, DF)
                 one.date_deadline = (strptime(one.date_due, DF) + diff).strftime(DF)
+                one.date_deadline_new = (strptime(one.date_due, DF) + diff).strftime(DF)
 
     def compute_info(self):
 

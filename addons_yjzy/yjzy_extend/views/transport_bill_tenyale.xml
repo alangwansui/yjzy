@@ -230,7 +230,7 @@
                                 class="oe_highlight"/>
                         <button string="完成" invisible="1" states="2locked" type="object" name="action_done"
                                 class="oe_highlight"/>
-                        <button name="compute_tb_ref" type="object" string="计算出运合同号" />
+                        <button name="compute_tb_ref" type="object" string="计算出运合同号" class="oe_highlight" />
                         <button string="重置草稿" groups="base.group_system" invisible="1" type="object" name="action_draft"
                                 states="cancel" class="oe_highlight"/>
                         <button string="取消" groups="base.group_system" invisible="1" type="object" name="action_cancel"
@@ -315,7 +315,7 @@
                         </div>
                         <group col="3">
                             <group name="general_information">
-                                <field name="operation_wizard" invisible="0"/>
+
                                 <button string="生成合同号" colspan="2" name="make_all_document" attrs="{'invisible':[('operation_wizard','not in',['fourth'])]}"
                                         confirm="该命令将会初始化清关资料，报关资料和供应商发货通知单！是否继续？"
 
@@ -337,6 +337,7 @@
                                 <field name="date"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"
                                        invisible="0"/>
+                                <field name="current_date_rate" attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                  <button string="添加销售明细" type="object" attrs="{'invisible':['|',('partner_id','=',False),('operation_wizard','not in',['second'])]}"
                                 name="open_wizard_transport4sol" class="oe_highlight"/>
                                 <field name="partner_invoice_id" domain="[('parent_id','child_of', partner_id)]"
@@ -358,7 +359,7 @@
                                 <button name="open_same" attrs="{'invisible':[('operation_wizard','in',['first','second']),('same_payment_term','=',True)]}" type="object" class="btn-xs btn-link mb4 fa fa-times-circle" icon="" style="color:red" context="{'default_open':'payment_term'}"/>
                                 </div>
                                 <field name="same_payment_term" invisible="1"/>
-                                <field name="current_date_rate" attrs="{'invisible':[('operation_wizard','in',['first','second'])]}"/>
+
                                 <label for="sale_currency_id" string="交易货币" attrs="{'invisible':[('operation_wizard','in',['first','second'])]}"/>
                                  <div class="o_row" attrs="{'invisible':[('operation_wizard','in',['first','second'])]}">
                                 <field name="sale_currency_id"/>
@@ -455,7 +456,7 @@
                         <notebook>
                             <page string="明细" name="cymx" groups="sales_team.group_sale_assistant" attrs="{'invisible':[('operation_wizard','in',['first','second'])]}">
                                <group>
-                                    <button name="finish_delivery_qty" string="出运数量确认完成" attrs="{'invisible':[('operation_wizard','in',['fourth'])]}" class="oe_highlight" type="object"/>
+                                    <button name="finish_delivery_qty" string="出运数量确认完成" attrs="{'invisible':[('operation_wizard','in',['fourth','fifth'])]}" class="oe_highlight" type="object"/>
                                     <button name="finish_delivery_qty" string="重新修改出运数量"  invisible="1"/>
                                 </group>
                                 <field name="line_ids"
@@ -955,7 +956,7 @@
                                 <field name="expense_ids">
                                 </field>
                             </page>
-                            <page string="统计">
+                            <page string="统计" invisible="1">
 
                                 <group col="3">
                                     <group name="sale_currency">
@@ -1010,6 +1011,9 @@
 
                                     </group>
                                 </group>
+                            </page>
+                            <page groups="base.group_system" >
+                                <field name="operation_wizard" invisible="0"/>
                             </page>
                         </notebook>
                     </sheet>

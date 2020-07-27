@@ -2056,24 +2056,32 @@ class transport_bill(models.Model):
 
 #13ok
     def open_wizard_transport4sol(self):
-        self.ensure_one()
-        ctx = self.env.context.copy()
-        ctx.update({
-            'default_partner_id': self.partner_id.id,
-            'default_gongsi_id': self.gongsi_id.id,
-            'default_purchase_gongsi_id': self.purchase_gongsi_id.id,
-            'add_sol': True,
-        })
-        return {
-            'name': '添加销售明细',
-            'view_type': 'form',
-            'view_mode': 'form',
-            'res_model': 'wizard.transport4so',
-            #'res_id': bill.id,
-            'target': 'new',
-            'type': 'ir.actions.act_window',
-            'context': ctx,
-        }
+        war = ''
+        if not self.date:
+            war += '请填写出运日期\n'
+        if self.current_date_rate ==0:
+            war += '单日汇率不为零\n'
+        if war:
+            raise Warning(war)
+        else:
+            self.ensure_one()
+            ctx = self.env.context.copy()
+            ctx.update({
+                'default_partner_id': self.partner_id.id,
+                'default_gongsi_id': self.gongsi_id.id,
+                'default_purchase_gongsi_id': self.purchase_gongsi_id.id,
+                'add_sol': True,
+            })
+            return {
+                'name': '添加销售明细',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'wizard.transport4so',
+                #'res_id': bill.id,
+                'target': 'new',
+                'type': 'ir.actions.act_window',
+                'context': ctx,
+            }
 
 
 #13ok
