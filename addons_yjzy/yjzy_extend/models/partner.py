@@ -97,8 +97,8 @@ class res_partner(models.Model):
     @api.depends('sale_order_ids.amount_total','sale_order_ids')
     def compute_sale_order_amount_total(self):
         for one in self:
-            so_ids = one.so_approve_ids.filtered(lambda x: x.company_id  == self.env.user.company_id)
-            so_no_sent_ids = one.sale_order_ids.filtered(lambda x: x.company_id  == self.env.user.company_id and x.no_sent_amount_new != 0 and x.state in ['approve', 'sale', 'done','abnormal','verifying','verification'])
+            so_ids = one.so_approve_ids#.filtered(lambda x: x.company_id  == self.env.user.company_id)
+            so_no_sent_ids = one.sale_order_ids.filtered(lambda x: x.no_sent_amount_new != 0 and x.state in ['approve', 'sale', 'done','abnormal','verifying','verification'])
             print('tet',so_ids,so_no_sent_ids)
             amount_total = sum(x.amount_total for x in so_ids)
             no_sent_amount = sum(x.no_sent_amount for x in so_no_sent_ids)
