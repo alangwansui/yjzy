@@ -350,14 +350,19 @@ class hr_expense_sheet(models.Model):
     def unlink(self):
         lines = self.mapped('expense_line_ids')
         lines.unlink()
-        return super(hr_expense_sheet, self).unlink()
-
-    def unlink(self):
         for one in self:
             if one.state not in ('cancel', 'draft'):
                 raise Warning(u'只有草稿或者拒绝状态允许删除')
 
+            attachment_count = self.env['ir.attachment'].search([('res_model', '=', one._name), ('res_id', '=', one.id)])
+
+            if attachment_count and (not (one.state in ['draft', 'cancel'])):
+                raise Warning('费用报告 审批中禁止删除附件')
+
+
         return super(hr_expense_sheet, self).unlink()
+
+
 
     @api.model
     def _cron_approve(self, domain_str='[]', trans_id=None):
