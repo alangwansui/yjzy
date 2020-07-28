@@ -9,7 +9,7 @@ from odoo.exceptions import Warning,UserError
 class account_invoice(models.Model):
     _inherit = 'account.invoice'
 
-    @api.depends('payment_term_id', 'date_due')
+    @api.depends('payment_term_id', 'date_due','date_ship','date_finish','date_invoice')
     def compute_date_deadline(self):
         strptime = datetime.strptime
         for one in self:

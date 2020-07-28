@@ -832,10 +832,10 @@ class account_reconcile_order_line(models.Model):
                 amount_total_org += diff_currency.compute(one.amount_diff_org, invoice_currency)
 
 
-            if one.yjzy_payment_id:
-                one.yjzy_currency_id = one.yjzy_payment_id.currency_id
-            else:
-                one.yjzy_currency_id = one.invoice_currency_id
+            # if one.yjzy_payment_id:
+            #     one.yjzy_currency_id = one.yjzy_payment_id.currency_id
+            # else:
+            #     one.yjzy_currency_id = one.invoice_currency_id
 
             one.amount_total_org = amount_total_org
 
@@ -850,6 +850,9 @@ class account_reconcile_order_line(models.Model):
 
 
             one.amount_total = one.amount_advance + one.amount_payment + one.amount_bank + one.amount_diff
+
+    def _get_default_currency_id(self):
+        return self.invoice_currency_id
 
     # @api.onchange('amount_invoice_so', 'amount_advance_org', 'amount_bank_org', 'amount_diff_org', 'amount_payment_org')
     # def onchange_amount(self):
@@ -889,7 +892,7 @@ class account_reconcile_order_line(models.Model):
     yjzy_payment_id = fields.Many2one('account.payment', u'预收认领单')
     yjzy_payment_display_name = fields.Char('显示名称',related='yjzy_payment_id.display_name',store=True)
     #yjzy_currency_id = fields.Many2one('res.currency', u'预收币种', related='yjzy_payment_id.currency_id')
-    yjzy_currency_id = fields.Many2one('res.currency', u'预收币种', compute=compute_info)
+    yjzy_currency_id = fields.Many2one('res.currency', u'预收币种',default=lambda self: self.env.user.company_id.currency_id.id)
     amount_advance_org = fields.Monetary(u'预收金额', currency_field='yjzy_currency_id')
 
     amount_advance = fields.Monetary(u'预收金额:本币', currency_field='currency_id', compute=compute_info)
@@ -903,3 +906,7 @@ class account_reconcile_order_line(models.Model):
     amount_exchange = fields.Monetary(u'汇兑差异:本币', currency_field='currency_id')
     amount_total_org = fields.Monetary(u'收款合计', currency_field='invoice_currency_id', compute=compute_info)
     amount_total = fields.Monetary(u'收款合计:本币', currency_field='currency_id', compute=compute_info)
+
+    @api.onchange('yjzy_payment_id')
+    def onchange_yjzy_payment_id(self):
+        self.yjzy_currency_id = self.yjzy_payment_id.currency_id

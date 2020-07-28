@@ -95,7 +95,7 @@
             <field name="name">account.invoice.new.tree</field>
             <field name="model">account.invoice</field>
             <field name="arch" type="xml">
-                <tree decoration-info="state == 'draft'"  default_order="residual_times_new desc" decoration-muted="state == 'cancel'" string="Invoice" >
+                <tree decoration-info="state == 'draft'"  default_order="date_deadline_new" decoration-muted="state == 'cancel'" string="Invoice" >
                     <field name="partner_id" groups="base.group_user" string="Customer"/>
                     <field name="bill_id" string="合同号"/>
                     <field name="tb_contract_code" string="合同号" invisible="1"/>

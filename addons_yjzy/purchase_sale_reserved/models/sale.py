@@ -236,7 +236,7 @@ class sale_order_line(models.Model):
         if ('product_uom_qty' in values) or ('product_uom_qty' in values) or ('purchase_price' in values) or ('product_id' in values):
             for sol in self:
                 pol = sol.pol_id
-                if pol.state == 'draft':
+                if pol.state != 'purchase':
                     pol.write({
                         'product_qty': sol.product_uom_qty,
                         'price_unit': sol.purchase_price,
