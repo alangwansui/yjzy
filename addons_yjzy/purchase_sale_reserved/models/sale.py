@@ -2,6 +2,7 @@
 
 from odoo import models, fields, api, _
 from odoo.exceptions import Warning
+from odoo.addons import decimal_precision as dp
 
 class sale_order(models.Model):
     _inherit = 'sale.order'
@@ -206,7 +207,7 @@ class sale_order_line(models.Model):
     quant_id = fields.Many2one('stock.quant', '库存份', copy=False)
     lot_id = fields.Many2one('stock.production.lot', '销售批次', domain="[('product_id', '=', product_id)]", copy=False)
     supplier_id = fields.Many2one('res.partner', '供应商', domain=[('supplier', '=', True)], copy=False)
-    purchase_price = fields.Float('采购价格', copy=False)
+    purchase_price = fields.Float('采购价格', copy=False, digits=dp.get_precision('Product Price'), default = 0.0)
     pol_id = fields.Many2one('purchase.order.line', '采购明细', copy=False)
     po_id = fields.Many2one('purchase.order', '采购单',  related='pol_id.order_id',  copy=False)
 

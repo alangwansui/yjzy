@@ -130,7 +130,7 @@ class sale_order_line(models.Model):
     new_rest_tb_qty = fields.Float('新:出运剩余数', compute='compute_rest_tb_qty', store=True)  # 13已
     back_tax = fields.Float(u'退税率', digits=dp.get_precision('Back Tax'))
     price_total2 = fields.Monetary(u'销售金额', currency_field='company_currency_id', compute=compute_info)  # 'sale_amount': sol.price_total,
-    purchase_price_original = fields.Float(u'采购单价', related='pol_id.price_unit', digits=dp.get_precision('Product Price'), default = 0.0)
+    purchase_price_original = fields.Float(u'采购单价', related='pol_id.price_unit', digits=(2, 2))
     back_tax_amount = fields.Monetary(u'退税金额', currency_field='company_currency_id', compute=compute_info)
     profit_amount = fields.Monetary(u'利润', currency_field='company_currency_id', compute=compute_info)
     is_gold_sample = fields.Boolean('是否有金样', related='product_id.is_gold_sample', readonly=False)
