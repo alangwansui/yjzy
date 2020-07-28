@@ -15,6 +15,7 @@
                 <field name="po_id" string="采购合同"/>
                 <field name="amount" string="申请金额"/>
                 <field name="balance" attrs="{}" invisible="1" readonly="1"/>
+                <field name="fault_comments"/>
                 <field name="state"/>
             </tree>
         </field>
@@ -35,6 +36,7 @@
                 <field name="advance_balance_total" string="未认领金额"/>
                 <field name="advance_total" string="已认领金额"/>
                 <field name="po_id" string="采购合同"/>
+                <field name="fault_comments"/>
                 <field name="state"/>
             </tree>
         </field>
@@ -131,6 +133,7 @@
 
                             <field name="communication"
                                    attrs="{'invisible': [('state', '!=', 'draft'), ('communication', '=', False)], 'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="fault_comments"/>
                         </group>
                     </group>
 

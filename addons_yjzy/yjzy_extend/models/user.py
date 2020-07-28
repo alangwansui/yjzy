@@ -17,12 +17,12 @@ class res_users(models.Model):
         for one in self:
             one.leader_user_id = one.employee_id.parent_id.user_id
 
-    @api.multi #参考
-    def write(self,vals):
-        res = super(res_users, self).write(vals)
-        if 'company_id' in vals:
-            self.partner_id.compute_supplier_amount_invoice_advance_payment()
-            print('test',self.partner_id)
-        return res
+    # @api.multi #参考
+    # def write(self,vals):
+    #     res = super(res_users, self).write(vals)
+    #     if 'company_id' in vals:
+    #         self.partner_id.compute_supplier_amount_invoice_advance_payment()
+    #         print('test',self.partner_id)
+    #     return res
 
 

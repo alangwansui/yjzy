@@ -13,6 +13,7 @@
                 <field name="partner_id"/>
                 <field name="so_id" string="销售合同"/>
                 <field name="amount" string="认领金额"/>
+                <field name="fault_comments"/>
                 <field name="state"/>
             </tree>
         </field>
@@ -55,6 +56,7 @@
                 <field name="advance_reconcile_order_line_ids" invisible="1"/>
                 <field name="advance_reconcile_order_line_date_char"/>
                 <field name="advance_reconcile_order_line_amount_char"/>
+                <field name="fault_comments"/>
                 <field name="state"/>
             </tree>
         </field>
@@ -76,6 +78,7 @@
                 <field name="advance_balance_total" string="未认领金额"/>
                 <field name="advance_total" string="已认领金额"/>
                 <field name="so_id" string="销售合同"/>
+                <field name="fault_comments"/>
                 <field name="state"/>
             </tree>
         </field>
@@ -145,6 +148,7 @@
 
                             <field name="communication"
                                    attrs="{'invisible': [('state', '!=', 'draft'), ('communication', '=', False)], 'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="fault_comments"/>
                         </group>
                     </group>
                     <notebook>

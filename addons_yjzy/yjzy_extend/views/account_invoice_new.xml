@@ -86,6 +86,7 @@
                     <field name="type" invisible="context.get('type',True)"/>
                     <field name="date_due" string="进仓到期日"/>
                     <field name="date_deadline" string="实际到期日"/>
+                    <field name="fault_comments"/>
                 </tree>
             </field>
         </record>
@@ -125,7 +126,7 @@
                     <field name="residual_times" groups="base.group_system"/>
                     <field name="residual_times_out_in" groups="base.group_system"/>
                     <field name="date_deadline" string="实际到期日" groups="base.group_system"/>
-
+<field name="fault_comments"/>
 
                 </tree>
             </field>
@@ -165,6 +166,7 @@
                     <field name="residual_times" groups="base.group_system"/>
                     <field name="residual_times_out_in" groups="base.group_system"/>
                     <field name="date_deadline" string="实际到期日" groups="base.group_system"/>
+                    <field name="fault_comments"/>
                 </tree>
             </field>
         </record>
@@ -229,6 +231,7 @@
                                 </div>
                                 <field name="user_id" string="责任人"/>
                                 <field name="sale_assistant_id"/>
+                                <field name="fault_comments"/>
                             </group>
 
                             <group>
@@ -526,6 +529,7 @@
                                 <field name="move_name" invisible="1"/>
 
                                 <field name="team_id" attrs="{'invisible':1}"/>
+                                <field name="fault_comments"/>
                             </group>
                         </group>
                         <field name="sent" invisible="1"/>
@@ -798,6 +802,7 @@
                                 <field name="company_currency_id" invisible="1"/>
                                 <field name="purchase_date_finish_state" attrs="{'invisible':1}"/>
                                 <field name="purchase_date_finish_att" attrs="{'invisible':1}"/>
+                                <field name="fault_comments"/>
                             </group>
                         </group>
                         <notebook>
@@ -985,6 +990,7 @@
                     <field name="company_currency_id" invisible="1"/>
                     <field name="state" invisible="1"/>
                     <field name="type" invisible="context.get('type',True)"/>
+                    <field name="fault_comments"/>
                 </tree>
             </field>
         </record>
@@ -1005,6 +1011,7 @@
                     <field name="company_currency_id" invisible="1"/>
                     <field name="state"/>
                     <field name="type" invisible="context.get('type',True)"/>
+                    <field name="fault_comments"/>
                 </tree>
             </field>
         </record>
@@ -1113,6 +1120,7 @@
                                 <field name="move_name" invisible="1"/>
 
                                 <field name="team_id" attrs="{'invisible':1}"/>
+                                <field name="fault_comments"/>
                             </group>
                         </group>
                         <field name="sent" invisible="1"/>

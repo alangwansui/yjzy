@@ -148,6 +148,7 @@ class account_invoice(models.Model):
 
 
     #新增
+    fault_comments = fields.Text('异常备注')
     display_name = fields.Char(u'显示名称', compute=compute_display_name, store=True)
    #13ok
     yjzy_type = fields.Selection([('sale', u'销售'), ('purchase', u'采购'), ('back_tax', u'退税')], string=u'发票类型')
