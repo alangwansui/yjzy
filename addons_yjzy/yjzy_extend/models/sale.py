@@ -248,6 +248,7 @@ class sale_order(models.Model):
     #货币设置
 
     #akiny715
+    digits = fields.Selection([('2','2'),('3','3'),('4','4')],'打印小数位数')
     advance_reconcile_order_line_ids = fields.One2many('account.reconcile.order.line', 'so_id',string='预收认领明细', domain=[('order_id.state','=','done'),('amount_total_org','!=',0)])
     advance_reconcile_order_line_amount_char = fields.Text(compute=compute_advance_total, string=u'预收认领明细金额')
     advance_reconcile_order_line_date_char = fields.Text(compute=compute_advance_total, string=u'预收认领日期')
