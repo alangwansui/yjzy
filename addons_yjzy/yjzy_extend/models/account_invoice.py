@@ -35,10 +35,16 @@ class account_invoice(models.Model):
                residual_times = today - strptime(one.date_deadline,DF)
                one.residual_times = residual_times.days
                one.residual_times_new = residual_times.days
+            else:
+                one.residual_times = -999
+                one.residual_times_new = -999
             if one.date_due:
                 residual_times_out_in = today - strptime(one.date_due, DF)#参考
                 one.residual_times_out_in = residual_times_out_in.days
                 one.residual_times_out_in_new = residual_times_out_in.days
+            else:
+                one.residual_times_out_in = -999
+                one.residual_times_out_in_new = -999
 
     @api.depends('invoice_line_ids.price_subtotal', 'tax_line_ids.amount', 'tax_line_ids.amount_rounding',
                  'currency_id', 'company_id', 'date_invoice', 'type')

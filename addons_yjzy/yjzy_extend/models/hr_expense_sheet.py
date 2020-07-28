@@ -356,7 +356,6 @@ class hr_expense_sheet(models.Model):
         for one in self:
             if one.state not in ('cancel', 'draft'):
                 raise Warning(u'只有草稿或者拒绝状态允许删除')
-
         return super(hr_expense_sheet, self).unlink()
 
     @api.model
