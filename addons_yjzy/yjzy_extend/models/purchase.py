@@ -64,7 +64,7 @@ class purchase_order(models.Model):
                 balance = sum([1 * x.amount_currency for x in sml_lines])
             one.balance_new = balance
 
-    @api.depends('order_line.qty_received')
+    @api.depends('order_line.qty_received','state')
     def compute_no_deliver_amount(self):
         for one in self:
             one.no_deliver_amount_new = sum([x.price_unit * (x.product_qty - x.qty_received) for x in one.order_line])
@@ -104,7 +104,7 @@ class purchase_order(models.Model):
     main_sign_uid = fields.Many2one('res.users', u'主签字人')
     user_ids = fields.Many2many('res.users', 'ref_user_po', 'pid', 'uid', u'用户')
 
-    is_editable = fields.Boolean(u'可编辑')
+    is_editable = fields.Boolean(u'可编辑',related='source_so_id.is_editable')
 
 
     #已经添加13

@@ -429,8 +429,8 @@
                                 attrs="{'invisible': ['|', ('state', '=', 'draft'), ('invoice_count','&gt;=',1)]}" context="{'proforma': True}"/>
                         <button name="print_quotation" invisible="1" string="打印" type="object" states="sent,sale" class="o_sale_print"/>
                         <button name="action_quotation_send" invisible="1" string="通过电子邮件发送" type="object" states="sent,sale"/>
-                        <button name="action_cancel" states="draft,sent,sale" type="object" string="取消"/>
-                        <button name="action_draft" states="cancel" type="object" string="设为报价单"/>
+                        <button name="action_cancel" states="draft,refuse" type="object" string="设为可删除"/>
+                        <button name="action_draft" states="cancel" type="object" string="设为订单草稿"/>
                         <button name="action_done" invisible="1" type="object" string="锁定" states="sale" groups="sales_team.group_sale_manager"
                                 help="如果销售被锁定，您不能再修改它。 但是，您仍然可以开发票或交付。"/>
                         <button name="action_unlock" invisible="1" type="object" string="解锁" states="done" groups="sales_team.group_sale_manager"/>
@@ -491,7 +491,7 @@
                         <group col="3">
                             <group>
                                 <field name="is_different_payment_term"  invisible="1"/>
-                                <field name="contract_code" string="合同号*" required="1" attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}"/>
+                                <field name="contract_code" string="合同号*" attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}"/>
                                 <field name="partner_id" string="客户*" required="1" domain="[('customer','=',True),('parent_id', '=', False),('state','=','done'),'|','|','|','|','|',('assistant_id','=',uid),('user_id','=',uid),('parent_id.assistant_id','=',uid),('parent_id.user_id','=',uid),('supplier','=',1),('x_studio_field_3ErQR','=',1)]"
                                        attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}" context="{'search_default_customer':1, 'show_address': 0}" options="{&quot;always_reload&quot;: True}"/>
 

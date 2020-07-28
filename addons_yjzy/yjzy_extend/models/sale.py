@@ -101,7 +101,7 @@ class sale_order(models.Model):
 
     #13ok
     @api.one
-    @api.depends('po_ids_new.no_deliver_amount_new')
+    @api.depends('po_ids_new.no_deliver_amount_new','state')
     def compute_purchase_no_deliver_amount_new(self):
         for one in self:
             if one.state != 'verification':
@@ -573,7 +573,7 @@ class sale_order(models.Model):
     def unlink(self):
         for one in self:
             if one.state != 'cancel':
-                raise Warning(u'只有取消状态允许删除')
+                raise Warning(u'只有可删除状态订单允许删除')
         return super(sale_order, self).unlink()
     #13ok
     def name_get(self):

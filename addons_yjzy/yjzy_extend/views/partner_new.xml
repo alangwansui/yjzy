@@ -167,7 +167,7 @@
                     <field name="amount_residual_advance_payment" sum="小计" readonly="1"/>
                     <!--button name="open_reconcile_order_line" icon="fa-pencil-square-o" type="object"/-->
                     <button name="open_advance" icon="fa-pencil-square-o" type="object"/>
-                    <field name="so_no_sent_amount" readonly="1"/>
+                    <field name="so_no_sent_amount" readonly="1" sum="小计"/>
                     <button name="open_sale_order_no_sent" icon="fa-pencil-square-o" type="object"/>
                     <!--button name="open_sale_order" icon="fa-pencil-square-o" type="object"/-->
                     <field name="is_company" invisible="1"/>
