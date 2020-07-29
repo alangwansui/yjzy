@@ -693,7 +693,7 @@ class transport_bill(models.Model):
                               ('w_sale_manager', u'待批准'),
                               ('w_sale_director', u'待销售总监'), ('submit', u'待责任人审批'), ('sales_approve', u'待合规审批'),
                               ('approve', u'合规已审批'), ('confirmed', u'单证已审批'), ('delivered', u'发货完成'),
-                              ('invoiced', u'账单已确认'), ('locked', u'锁定'),
+                              ('invoiced', u'账单已确认'), ('locked', u'锁定'),('abnormal',u'异常'),
                               ('verifying', u'待核销'),
                               ('done', u'完结'), ('paid', '已收款'), ('edit', u'可修改')], '状态', default='draft',
                              track_visibility='onchange', )
@@ -2451,6 +2451,29 @@ class transport_bill(models.Model):
                 if one.sale_invoice_balance_new == 0 and one.purchase_invoice_balance_new == 0 and one.back_tax_invoice_balance_new == 0:
                     hexiao_type = 'write_off'
                     state = 'verifying'
+                one.hexiao_type = hexiao_type
+                one.state = state
+    #state异常的判断和核销状态的判断
+    def update_hexiaotype_doing_type_new(self):
+        for one in self:
+            print('---', one)
+            hexiao_type = False
+            state = one.state
+            today = datetime.now()
+            date_out_in = one.date_out_in
+            # 未发货，开始发货，待核销，已核销
+            if one.state in ('invoiced', 'verifying'):
+                if (one.sale_invoice_balance_new != 0 or one.purchase_invoice_balance_new != 0 or one.back_tax_invoice_balance_new != 0) and \
+                        date_out_in and date_out_in < (today - relativedelta(days=180)).strftime('%Y-%m-%d 00:00:00'):
+                    hexiao_type = 'abnormal'
+                    state = 'abnormal'
+                if one.sale_invoice_balance_new == 0 and one.purchase_invoice_balance_new == 0 and one.back_tax_invoice_balance_new == 0:
+                    if hexiao_type == 'abnormal':
+                        hexiao_type = 'abnormal'
+                        state = 'verifying'
+                    else:
+                        hexiao_type = 'write_off'
+                        state = 'verifying'
                 one.hexiao_type = hexiao_type
                 one.state = state
 
