@@ -66,10 +66,12 @@
             <field name="arch" type="xml">
                 <form string="清关资料">
                     <header>
-                        <button string="打印清关Invoice" attrs="{'invisible': [('qingguan_state','=','draft')]}" type="object"
+                        <button string="打印清关Invoice" attrs="{'invisible': [('qingguan_state','=','draft')]}"
+                                type="object"
                                 name="print_qingguan_invoice"
                                 class="oe_highlight"/>
-                        <button string="打印清关Packing List" attrs="{'invisible': [('qingguan_state','=','draft')]}" type="object"
+                        <button string="打印清关Packing List" attrs="{'invisible': [('qingguan_state','=','draft')]}"
+                                type="object"
                                 name="print_qingguan_packing_list"
                                 class="oe_highlight"/>
                         <button string="初始化清关数据" type="object" name="create_qingguan_lines"
@@ -77,10 +79,12 @@
                                 class="oe_highlight"/>
                     </header>
                     <header groups="base.group_system">
-                         <button string="打印清关Invoice" attrs="{'invisible': [('qingguan_state','=','draft')]}" type="object"
+                        <button string="打印清关Invoice" attrs="{'invisible': [('qingguan_state','=','draft')]}"
+                                type="object"
                                 name="print_qingguan_invoice"
                                 class="oe_highlight"/>
-                        <button string="打印清关Packing List" attrs="{'invisible': [('qingguan_state','=','draft')]}" type="object"
+                        <button string="打印清关Packing List" attrs="{'invisible': [('qingguan_state','=','draft')]}"
+                                type="object"
                                 name="print_qingguan_packing_list"
                                 class="oe_highlight"/>
 
@@ -89,7 +93,7 @@
                                 class="oe_highlight"/>
 
 
-                        <field name="state" widget="statusbar"  statusbar_visible=" "  groups="base.group_system"/>
+                        <field name="state" widget="statusbar" statusbar_visible=" " groups="base.group_system"/>
                         <field name="is_editable" widget="boolean_toggle" groups="	sales_team.group_manager"/>
 
                     </header>
@@ -98,7 +102,7 @@
                         <group col="2">
                             <group name="general_information">
                                 <field name="id" invisible="1"/>
-<field name="operation_wizard" invisible="1"/>
+                                <field name="operation_wizard" invisible="1"/>
                                 <field name="partner_id" invisible="1"/>
                                 <field name="partner_shipping_id" string="TO" options="{'no_open':1}"
                                        domain="[('parent_id','child_of', partner_id)]"
@@ -130,7 +134,8 @@
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <field name="gongsi_id" groups="base.group_system" options="{'no_open':1}" string="销售主体"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
-                                <field name="purchase_gongsi_id" groups="base.group_system" options="{'no_open':1}" string="采购主体"
+                                <field name="purchase_gongsi_id" groups="base.group_system" options="{'no_open':1}"
+                                       string="采购主体"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <field name="mark_text" string="Marks"/>
                                 <field name="qingguan_description_text" string="Description"
@@ -143,28 +148,31 @@
                         </group>
                         <notebook>
                             <page string="清关资料" name="qgzl">
-                                <group attrs="{'invisible':[('operation_wizard','in',['first','second','third','fourth'])]}" col="5">
+                                <group attrs="{'invisible':[('operation_wizard','in',['first','second','third','fourth'])]}"
+                                       col="5">
 
                                     <group>
-                                <field name="pallet_type"
+                                        <field name="pallet_type"
                                                attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
 
-                                        </group>
-                                    <group><field name="pallet_qty"
-                                               attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)],
-                                               'invisible':[('pallet_type','!=','plts')]}"/>
-                                        </group>
-                                <group><field name="tuopan_weight" string="托盘总重"
-                                               attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)],
-                                               'invisible':[('pallet_type','!=','plts')]}"/></group>
-                               <group> <field name="tuopan_volume" string="托盘总体积"
-                                               attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)],
-                                               'invisible':[('pallet_type','!=','plts')]}"/>
-                                   </group>
-                                <group>
-                                <button name="split_tuopan_weight" type="object" string="自动分配托盘"
-                                attrs="{'invisible': [('is_done_tuopan','=',True)]}" class="oe_highlight"/>
-                                        </group>
+                                    </group>
+                                    <group>
+                                        <field name="pallet_qty"
+                                               attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
+                                    </group>
+                                    <group>
+                                        <field name="tuopan_weight" string="托盘总重"
+                                               attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
+                                    </group>
+                                    <group>
+                                        <field name="tuopan_volume" string="托盘总体积"
+                                               attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
+                                    </group>
+                                    <group>
+                                        <button name="split_tuopan_weight" type="object" string="自动分配托盘"
+                                                attrs="{'invisible': [('is_done_tuopan','=',True)]}"
+                                                class="oe_highlight"/>
+                                    </group>
                                 </group>
 
                                 <field name="qingguan_line_ids"

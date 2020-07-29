@@ -195,12 +195,13 @@
                         <button string="添加销售合同" states="draft" type="object" invisible="1" name="open_wizard_transport4so"
                                 class="oe_highlight"/>
                         <button string="添加销售明细" states="draft" type="object" name="open_wizard_transport4sol" confirm="重新添加销售明细，将会清除所有的清关和报关资料！是否继续"
-                                groups="base.group_system"
+                                attrs="{'invisible':[('operation_wizard','in',['first','second','third','fourth'])]}"
                                 class="oe_highlight"/>
                         <button string="调取剩余订单数量" invisible="0" type="object" name="make_default_lot_plan"
                                 confirm="该命令将会初始化本次出运数量！是否继续？"
                                 attrs="{'invisible': [('is_done_plan','=',True)]}" class="oe_highlight"/>
-                        <button string="生成报关清关数据" name="make_all_document" confirm="该命令将会初始化清关资料，报关资料和供应商发货通知单！是否继续？"
+                        <button string="重新生成报关清关数据" name="make_all_document" confirm="该命令将会初始化清关资料，报关资料和供应商发货通知单！是否继续？"
+                                attrs="{'invisible':[('operation_wizard','in',['first','second','third','fourth'])]}"
                                 class="oe_highlight"
                                 type="object"/>
                         <button string="销售统计" name="make_sale_collect"
@@ -316,7 +317,7 @@
                         <group col="3">
                             <group name="general_information">
 
-                                <button string="生成合同号" colspan="2" name="make_all_document" attrs="{'invisible':[('operation_wizard','not in',['fourth'])]}"
+                                <button string="生成合同号以及清关报关资料" colspan="2" name="make_all_document" class="oe_highlight" attrs="{'invisible':[('operation_wizard','not in',['fourth'])]}"
                                         confirm="该命令将会初始化清关资料，报关资料和供应商发货通知单！是否继续？"
 
                                 type="object"/>
@@ -349,28 +350,28 @@
                                 <field name="incoterm" string="价格条款"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)],'required':[('state','=','check')]}"/>
                                </span>
-                                <button name="open_same" attrs="{'invisible':[('same_incoterm','=',True),('operation_wizard','in',['first','second'])]}" type="object" class="btn-xs btn-link mb4 fa fa-times-circle" icon="" style="color:red" context="{'default_open':'incoterm'}"/>
+                                <button name="open_same" attrs="{'invisible':['|',('same_incoterm','=',True),('operation_wizard','in',['first','second'])]}" type="object" class="btn-xs btn-link mb4 fa fa-times-circle" icon="" style="color:red" context="{'default_open':'incoterm'}"/>
                                 </div>
                                 <field name="same_incoterm" invisible="1"/>
                                 <label for="payment_term_id" string="付款条款" attrs="{'invisible':[('operation_wizard','in',['first','second'])]}"/>
                                 <div class="o_row" attrs="{'invisible':[('operation_wizard','in',['first','second'])]}">
                                 <field name="payment_term_id" options="{'no_open':1}"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)],'required':[('state','=','check')]}"/>
-                                <button name="open_same" attrs="{'invisible':[('operation_wizard','in',['first','second']),('same_payment_term','=',True)]}" type="object" class="btn-xs btn-link mb4 fa fa-times-circle" icon="" style="color:red" context="{'default_open':'payment_term'}"/>
+                                <button name="open_same" attrs="{'invisible':['|',('operation_wizard','in',['first','second']),('same_payment_term','=',True)]}" type="object" class="btn-xs btn-link mb4 fa fa-times-circle" icon="" style="color:red" context="{'default_open':'payment_term'}"/>
                                 </div>
                                 <field name="same_payment_term" invisible="1"/>
 
                                 <label for="sale_currency_id" string="交易货币" attrs="{'invisible':[('operation_wizard','in',['first','second'])]}"/>
                                  <div class="o_row" attrs="{'invisible':[('operation_wizard','in',['first','second'])]}">
                                 <field name="sale_currency_id"/>
-                                <button name="open_same" attrs="{'invisible':[('operation_wizard','in',['first','second']),('same_currency','=',True)]}" type="object" class="btn-xs btn-link mb4 fa fa-times-circle" icon="" style="color:red" context="{'default_open':'currency'}"/>
+                                <button name="open_same" attrs="{'invisible':['|',('operation_wizard','in',['first','second']),('same_currency','=',True)]}" type="object" class="btn-xs btn-link mb4 fa fa-times-circle" icon="" style="color:red" context="{'default_open':'currency'}"/>
                                  </div>
                                  <field name="same_currency" invisible="1"/>
                                 <label for="include_tax" string="含税" attrs="{'invisible':[('operation_wizard','in',['first','second'])]}"/>
                                 <div class="o_row" attrs="{'invisible':[('operation_wizard','in',['first','second'])]}">
                                 <field name="include_tax"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
-                                 <button name="open_same" attrs="{'invisible':[('operation_wizard','in',['first','second']),('same_include_tax','=',True)]}" type="object" class="btn-xs btn-link mb4 fa fa-times-circle" icon="" style="color:red" context="{'default_open':'include_tax'}"/>
+                                 <button name="open_same" attrs="{'invisible':['|',('operation_wizard','in',['first','second']),('same_include_tax','=',True)]}" type="object" class="btn-xs btn-link mb4 fa fa-times-circle" icon="" style="color:red" context="{'default_open':'include_tax'}"/>
                                 </div>
                                  <field name="same_include_tax" invisible="1"/>
                                 <field name="locked" groups="base.group_system" invisible="1"/>
