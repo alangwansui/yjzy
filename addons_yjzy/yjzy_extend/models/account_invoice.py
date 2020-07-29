@@ -149,7 +149,7 @@ class account_invoice(models.Model):
 
     #新增
     fault_comments = fields.Text('异常备注')
-    display_name = fields.Char(u'显示名称', compute=compute_display_name, store=True)
+   # display_name = fields.Char(u'显示名称', compute=compute_display_name, store=True)
    #13ok
     yjzy_type = fields.Selection([('sale', u'销售'), ('purchase', u'采购'), ('back_tax', u'退税')], string=u'发票类型')
     bill_id = fields.Many2one('transport.bill', u'发运单')
@@ -286,7 +286,7 @@ class account_invoice(models.Model):
             if show_date_finish:
                 name = '%s %s %s' % (purchase_date_finish_state or '',one.date_finish or '', one.partner_id.name or '', )
             else:
-                name=one.number
+                name = '暂无交单时间'
             res.append((one.id, name))
         print('=111====',res)
         return res
