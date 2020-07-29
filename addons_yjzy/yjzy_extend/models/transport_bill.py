@@ -536,6 +536,13 @@ class transport_bill(models.Model):
     def compute_border(self):
         for one in self:
             one.border_char = '|'
+    def compute_date_out_in_first_state(self):
+        for one in self:
+            if one.date_out_in_state in ['draft','submit']:
+                date_out_in_first_state = 'draft'
+            else:
+                date_out_in_first_state = 'done'
+            one.date_out_in_first_state = date_out_in_first_state
 
     # 货币设置
     #akiny 未加入
@@ -559,9 +566,11 @@ class transport_bill(models.Model):
     date_ship_att_count = fields.Integer('出运船日期附件数量', compute=compute_info)
     date_customer_finish_att = fields.One2many('trans.date.attachment','tb_id',domain=[('type', '=', 'date_customer_finish')],string='客户交单日附件')
     date_customer_finish_att_count = fields.Integer('客户交单日期附件数量', compute=compute_info)
-    date_out_in_state = fields.Selection([('draft',u'待提交'),
-                                          ('submit',u'待审核'),
-                                          ('done',u'已审核'),
+    date_out_in_first_state = fields.Selection([('draft','发货时间待提交'),
+                                                ('done','发货时间已王城')],u'进仓日一级状态',compute=compute_date_out_in_first_state)
+    date_out_in_state = fields.Selection([('draft',u'发货时间待提交'),
+                                          ('submit',u'发货时间待审核'),
+                                          ('done',u'发货时间已审核'),
                                           ],'进仓审批状态', default='draft')
     date_ship_state = fields.Selection([('draft',u'待提交'),('submit',u'待审核'),('done',u'已审核')],'出运船审批状态', default='draft')
     date_customer_finish_state = fields.Selection([('draft',u'待提交'),('submit',u'待审核'),('done',u'已审核')],'客户交单日审批状态',default='draft')
