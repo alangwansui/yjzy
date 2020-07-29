@@ -536,6 +536,7 @@ class transport_bill(models.Model):
     def compute_border(self):
         for one in self:
             one.border_char = '|'
+    @api.depends('date_out_in_state')
     def compute_date_out_in_first_state(self):
         for one in self:
             if one.date_out_in_state in ['draft','submit']:
@@ -567,7 +568,7 @@ class transport_bill(models.Model):
     date_customer_finish_att = fields.One2many('trans.date.attachment','tb_id',domain=[('type', '=', 'date_customer_finish')],string='客户交单日附件')
     date_customer_finish_att_count = fields.Integer('客户交单日期附件数量', compute=compute_info)
     date_out_in_first_state = fields.Selection([('draft','发货时间待提交'),
-                                                ('done','发货时间已王城')],u'进仓日一级状态',compute=compute_date_out_in_first_state)
+                                                ('done','发货时间已王城')],u'进仓日一级状态',compute=compute_date_out_in_first_state, store=True)
     date_out_in_state = fields.Selection([('draft',u'发货时间待提交'),
                                           ('submit',u'发货时间待审核'),
                                           ('done',u'发货时间已审核'),
