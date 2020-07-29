@@ -338,8 +338,8 @@
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"
                                        invisible="0"/>
                                 <field name="current_date_rate" attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
-                                 <button string="添加销售明细" type="object" attrs="{'invisible':['|',('partner_id','=',False),('operation_wizard','not in',['second'])]}"
-                                name="open_wizard_transport4sol" class="oe_highlight"/>
+                                     <button string="添加销售明细" type="object"  colspan="2" attrs="{'invisible':['|',('partner_id','=',False),('operation_wizard','not in',['second'])]}"
+                                    name="open_wizard_transport4sol" class="oe_highlight"/>
                                 <field name="partner_invoice_id" domain="[('parent_id','child_of', partner_id)]"
                                        invisible="1"
                                        attrs="{'readonly': [('locked','=',True)]}" groups="base.group_system"/>
@@ -413,7 +413,7 @@
                                 <field name="fee_outer_need" string="运保费计入应收" readonly="1" invisible="1"/>
                             </group>
                             <group attrs="{'invisible':[('operation_wizard','in',['first','second','third','fourth'])]}">
-                                <group invisible="1">
+                                <!--group invisible="1">
                                 <button name="split_tuopan_weight" type="object" string="分配托盘重量"
                                 attrs="{'invisible': [('is_done_tuopan','=',True)]}" class="oe_highlight"/>
                                 <field name="pallet_type"
@@ -428,8 +428,8 @@
                                                attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)],
                                                'invisible':[('pallet_type','!=','plts')]}"/>
                                 <field name="sale_type" invisible="0"/>
-                                </group>
-                                <group>
+                                </group-->
+
                                 <!-- name="account_type"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/-->
                                 <field name="trans_type"
@@ -448,7 +448,7 @@
                                 <field name="user_id" readonly="1" no_create="True" string="责任人"
                                        options="{'no_open':1}"/>
                                 <field name="sale_assistant_id" readonly="1" invisible="0" options="{'no_open':1}"/>
-                                    </group>
+
                             </group>
 
 
@@ -1487,7 +1487,7 @@
             <field name="limit">20</field>
             <field name="view_mode">tree,form,kanban</field>
             <field name="search_view_id" ref="view_transport_bill_tenyale_filter"/>
-            <field name="domain">[('state','in',['approve','confirmed','delivered','invoiced','verifying','done'])]</field>
+            <field name="domain">[('state','in',['approve','confirmed','delivered','invoiced','verifying','done','abnormal'])]</field>
             <field name="context">{'search_default_group_by_state_type':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3,'show_po_code':
                 1}
             </field>

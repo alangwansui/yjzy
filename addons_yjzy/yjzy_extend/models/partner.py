@@ -242,9 +242,9 @@ class res_partner(models.Model):
     purchase_gongsi_id = fields.Many2one('gongsi', '采购主体')
     sale_currency_id = fields.Many2one('res.currency', '销售币种')
     customer_product_ids = fields.One2many('product.product', 'customer_id', '客户采购产品')
-    child_delivery_ids = fields.One2many('res.partner', 'parent_id', domain=[('type', '=', 'delivery')], string='收货地址')
-    child_contact_ids = fields.One2many('res.partner', 'parent_id', domain=[('type', '=', 'contact')], string='联系人')
-    child_invoice_ids = fields.One2many('res.partner', 'parent_id', domain=[('type', '=', 'invoice')], string='发票主体')
+    child_delivery_ids = fields.One2many('res.partner', 'parent_id', domain=[('type', '=', 'delivery'),('active', '=', True)], string='收货地址')
+    child_contact_ids = fields.One2many('res.partner', 'parent_id', domain=[('type', '=', 'contact'),('active', '=', True)], string='联系人')
+    child_invoice_ids = fields.One2many('res.partner', 'parent_id', domain=[('type', '=', 'invoice'),('active', '=', True)], string='发票主体')
     fax = fields.Char(u'传真')
     partner_source_id = fields.Many2one('partner.source', u'来源')#需要关联模块
     customer_info_from_uid = fields.Many2one('res.partner', u'客户获取人', domain=[('is_inter_partner', '=', True),
