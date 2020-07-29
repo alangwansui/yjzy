@@ -312,39 +312,39 @@ class account_payment(models.Model):
             res.append((one.id, name))
         return res
 
-    # @api.multi
-    # def post(self):
-    #     """
-    #     日常付款单 按钮执行 确认的时候，关联的单子执行确认：（日常付款单一定要先执行）
-    #     1.	应付核销单：执行：make_account_move 生成的分录直接过账，invoice_assign_outstanding_credit
-    #     2.	预付申请单：执行post 以及   核销
-    #     3.	费用报告执行action_sheet_move_create，生成的日常付款申请单的核销按钮执行。
-    #     """
-    #     res = super(account_payment, self).post()
-    #     for one in self:
-    #         if one.sfk_type == 'rcfkd':
-    #             one.payment_date_confirm = fields.datetime.now() ##akiny 增加付款时间
-    #             if one.yshx_ids:
-    #                 ac_orders = one.yshx_ids
-    #                 ac_orders.make_done()
-    #
-    #             if one.yfsqd_ids:
-    #                 one.yfsqd_ids.post()
-    #
-    #             if one.fybg_ids:
-    #                 one.fybg_ids.action_sheet_move_create()
-    #                # one.fybg_ids.payment_date_store = fields.datetime.now()
-    #                 #akiny增加 费用明细的付款日期的写入
-    #            # if one.expense_ids:
-    #            #     for x in self.expense_ids:
-    #            #         x.payment_date_store = fields.datetime.now()
-    #
-    #         #重新计算so的应付余额
-    #         if one.po_id.source_so_id:
-    #             so = one.po_id.source_so_id
-    #             so.compute_po_residual()
-    #
-    #     return res
+    @api.multi
+    def post(self):
+        """
+        日常付款单 按钮执行 确认的时候，关联的单子执行确认：（日常付款单一定要先执行）
+        1.	应付核销单：执行：make_account_move 生成的分录直接过账，invoice_assign_outstanding_credit
+        2.	预付申请单：执行post 以及   核销
+        3.	费用报告执行action_sheet_move_create，生成的日常付款申请单的核销按钮执行。
+        """
+        res = super(account_payment, self).post()
+        for one in self:
+            if one.sfk_type == 'rcfkd':
+                one.payment_date_confirm = fields.datetime.now() ##akiny 增加付款时间
+                if one.yshx_ids:
+                    ac_orders = one.yshx_ids
+                    ac_orders.make_done()
+
+                if one.yfsqd_ids:
+                    one.yfsqd_ids.post()
+
+                if one.fybg_ids:
+                    one.fybg_ids.action_sheet_move_create()
+                   # one.fybg_ids.payment_date_store = fields.datetime.now()
+                    #akiny增加 费用明细的付款日期的写入
+               # if one.expense_ids:
+               #     for x in self.expense_ids:
+               #         x.payment_date_store = fields.datetime.now()
+
+            #重新计算so的应付余额
+            if one.po_id.source_so_id:
+                so = one.po_id.source_so_id
+                so.compute_po_residual()
+
+        return res
 
     @api.onchange('ysrld_ids', 'yshx_ids', 'ptskrl_ids', 'fybg_ids', 'sfk_type')
     def onchange_select_lines(self):
