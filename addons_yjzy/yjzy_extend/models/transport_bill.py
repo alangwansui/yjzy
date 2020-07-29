@@ -93,7 +93,7 @@ class transport_bill(models.Model):
             #计算账单是否确认
             invoice_state = 'draft'
             line_count = len(one.all_invoice_ids)
-            line_count_open = len(one.all_invoice_ids.filtered(lambda x: x.state == 'open'))
+            line_count_open = len(one.all_invoice_ids.filtered(lambda x: x.state in ['open','paid']))
             if line_count_open > 0:
                 if line_count_open == line_count:
                     invoice_state = 'open'
@@ -273,7 +273,7 @@ class transport_bill(models.Model):
     #             'org_sale_amount_new': one.sale_currency_id.round(org_sale_amount_new),
     #         })
 
-    @api.depends('line_ids','line_ids.plan_qty','current_date_rate')
+    @api.depends('line_ids','line_ids.plan_qty','current_date_rate','state')
     def amount_all(self):
         """
         Compute the total amounts of the SO.
@@ -533,10 +533,13 @@ class transport_bill(models.Model):
     #
     #     if fee_inner > 0:
     #         return fee_inner
-
+    def compute_border(self):
+        for one in self:
+            one.border_char = '|'
 
     # 货币设置
     #akiny 未加入
+    border_char = fields.Char(u' ',compute=compute_border)
     sale_invoice_total_new = fields.Monetary(u'销售发票金额', compute=sale_invoice_amount, store=True)
     sale_invoice_paid_new = fields.Monetary(u'已收销售发票', compute=sale_invoice_amount, store=True)
     sale_invoice_balance_new = fields.Monetary(u'未收销售发票', compute=sale_invoice_amount, store=True)
@@ -556,15 +559,15 @@ class transport_bill(models.Model):
     date_ship_att_count = fields.Integer('出运船日期附件数量', compute=compute_info)
     date_customer_finish_att = fields.One2many('trans.date.attachment','tb_id',domain=[('type', '=', 'date_customer_finish')],string='客户交单日附件')
     date_customer_finish_att_count = fields.Integer('客户交单日期附件数量', compute=compute_info)
-    date_out_in_state = fields.Selection([('draft',u'发货时间待提交'),
-                                          ('submit',u'待审批发货时间'),
-                                          ('done',u'已完成发货时间'),
+    date_out_in_state = fields.Selection([('draft',u'待提交'),
+                                          ('submit',u'待审核'),
+                                          ('done',u'已审核'),
                                           ],'进仓审批状态', default='draft')
-    date_ship_state = fields.Selection([('draft',u'待提交'),('submit',u'待审批'),('done',u'完成')],'出运船审批状态', default='draft')
-    date_customer_finish_state = fields.Selection([('draft',u'待提交'),('submit',u'待审批'),('done',u'完成')],'客户交单日审批状态',default='draft')
+    date_ship_state = fields.Selection([('draft',u'待提交'),('submit',u'待审核'),('done',u'已审核')],'出运船审批状态', default='draft')
+    date_customer_finish_state = fields.Selection([('draft',u'待提交'),('submit',u'待审核'),('done',u'已审核')],'客户交单日审批状态',default='draft')
     date_purchase_finish_state = fields.Selection([('draft',u'待提交'),
-                                                   ('submit',u'待审批'),
-                                                   ('done',u'完成')],'供应商交单日审批状态',default='draft', compute=compute_date_purchase_finish_state)
+                                                   ('submit',u'待审核'),
+                                                   ('done',u'已审核')],'供应商交单日审批状态',default='draft', compute=compute_date_purchase_finish_state)
     date_all_state = fields.Selection([('date_approving',u'日期审批中'),
                                        ('normal_no_date_out_in',u'正常未提交'),
                                        ('unnormal_no_date_out_in',u'异常未提交'),

@@ -14,6 +14,7 @@
                 <field name="amount" string="收款金额"/>
                 <field name="balance"/>
                 <field name="company_id"/>
+                <field name="fault_comments"/>
                 <field name="state"/>
                 <field name="currency_id" attrs="{}" invisible="1" required="1"/>
             </tree>
@@ -38,6 +39,7 @@
                 <field name="ysrld_amount_advance_balance_total"/>
                 <field name="balance" string="1"/>
                 <field name="company_id" invisible="1"/>
+                <field name="fault_comments"/>
                 <field name="state"/>
                 <field name="currency_id" attrs="{}" invisible="1" required="1"/>
             </tree>
@@ -168,6 +170,7 @@
                             <field name="payment_date" string="预收日期" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                             <field name="communication"
                                    attrs="{'invisible': [('state', '!=', 'draft'), ('communication', '=', False)], 'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="fault_comments"/>
                         </group>
                     </group>
                     <notebook>

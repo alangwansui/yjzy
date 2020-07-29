@@ -15,6 +15,7 @@
                 <field name="currency_id" attrs="{}" invisible="1" required="1"/>
                 <field name="amount"/>
                 <field name="balance" string="待认领余额"/>
+                <field name="fault_comments"/>
                 <field name="state"/>
             </tree>
         </field>
@@ -108,6 +109,7 @@
                             <field name="communication"
                                    attrs="{'invisible': [('state', '!=', 'draft'), ('communication', '=', False)], 'readonly': [('state', '!=', 'draft')]}"/>
                             <field name="payment_date_confirm"/>
+                            <field name="fault_comments"/>
                         </group>
                     </group>
                     <notebook>
