@@ -2488,7 +2488,7 @@ class transport_bill(models.Model):
                 default_times = one.company_id.after_date_out_in_times
             today = datetime.now()
             strptime = datetime.strptime
-            if one.date_out_in and one.date_out_in_state == 'done' and one.state == 'delivery' and one.invoice_state == 'draft':
+            if one.date_out_in and one.date_out_in_state == 'done' and one.state == 'delivered' and one.invoice_state == 'draft':
                 for purchase_invoice in one.purchase_invoice_ids.filtered(lambda x: x.yjzy_type == 'purchase'):
                     if purchase_invoice and purchase_invoice.state == 'draft' and purchase_invoice.date_out_in:
                         purchase_date_out_in_times = (today - strptime(purchase_invoice.date_out_in, DF)).days
@@ -2506,7 +2506,7 @@ class transport_bill(models.Model):
                     back_tax_date_out_in = (today - strptime(back_tax_invoice.date_out_in, DF)).days
                     if default_times < back_tax_date_out_in:
                         back_tax_invoice.action_invoice_open()
-            if one.state == 'delivery' and one.invoice_state == 'open':
+            if one.state == 'delivered' and one.invoice_state == 'open':
                 one.state = 'invoiced'
         return True
 
