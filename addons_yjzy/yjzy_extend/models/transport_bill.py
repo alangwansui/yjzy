@@ -377,8 +377,8 @@ class transport_bill(models.Model):
     #                     date_all_state = 'un_done'
     #         one.date_all_state = date_all_state
 
-    @api.depends('date_out_in', 'date_in', 'date_ship', 'date_customer_finish', 'all_purchase_invoice_fill')
-    def _compute_date_all_state(self):
+    @api.depends('date_out_in', 'date_in', 'date_ship', 'date_customer_finish', 'all_purchase_invoice_fill','date_ship_state','date_out_in_state','date_customer_finish_state','date_purchase_finish_state')
+    def compute_date_all_state(self):
         for one in self:
             # 日期填写状态计算 akiny
             today = datetime.now()
@@ -573,7 +573,7 @@ class transport_bill(models.Model):
                                        ('unnormal_no_date_out_in',u'异常未提交'),
                                        ('un_done',u'待完成相关日期'),
                                        ('done',u'已完成相关日期'),
-                                       ('abnormal',u'日期异常')],'所有日期状态',default='un_done',store=True, compute=_compute_date_all_state)
+                                       ('abnormal',u'日期异常')],'所有日期状态',default='un_done',store=True, compute=compute_date_all_state)
     hexiao_type = fields.Selection([('undefined','...'),('abnormal',u'异常核销'),('write_off',u'正常核销')], default='undefined', string='核销类型')
     invoice_state = fields.Selection([('draft', u'未确认'), ('open', u'已确认'),('paid',u'已付款')], string='账单状态',compute=compute_info)
     same_incoterm = fields.Boolean(u'价格条款是否一致',  compute='compute_same')#store=True,
