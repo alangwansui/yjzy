@@ -148,7 +148,7 @@ class account_invoice(models.Model):
 
 
     #新增
-    state_1 = fields.Selection([('a',u'无额外账单'),('b',u'待合规审批'),('c',u'待总经理审批'),('d',u'额外账单审批完成')],'额外治账单审批')
+    #state_1 = fields.Selection([('a',u'无额外账单'),('b',u'待合规审批'),('c',u'待总经理审批'),('d',u'额外账单审批完成')],'额外治账单审批')
     fault_comments = fields.Text('异常备注')
    # display_name = fields.Char(u'显示名称', compute=compute_display_name, store=True)
    #13ok
