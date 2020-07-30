@@ -23,7 +23,7 @@ from email.message import Message
 from email.utils import formataddr, parseaddr
 from lxml import etree
 from werkzeug import url_encode
-
+from tnefparse import TNEF
 from odoo import _, api, exceptions, fields, models, tools
 from odoo.tools import pycompat
 from odoo.tools.safe_eval import safe_eval
@@ -1606,7 +1606,21 @@ class MailThread(models.AbstractModel):
                     attachments.append(self._Attachment(filename or 'attachment', part.get_payload(decode=True), {}))
 
         body, attachments = self._message_extract_payload_postprocess(message, body, attachments)
-        return body, attachments
+
+        new_attachments = []
+        for name, content in attachments:
+            new_attachments.append((name, content))
+            if name and name.strip().lower() in ['winmail.dat', 'win.dat']:
+                try:
+                    winmail = TNEF(content)
+                    for attach in winmail.attachments:
+                        new_attachments.append((attach.name, attach.data))
+                except:
+                    # some processing here
+                    pass
+
+
+        return body, new_attachments
 
     @api.model
     def message_parse(self, message, save_original=False):
