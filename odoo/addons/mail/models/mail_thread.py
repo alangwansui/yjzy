@@ -1607,6 +1607,10 @@ class MailThread(models.AbstractModel):
 
         body, attachments = self._message_extract_payload_postprocess(message, body, attachments)
 
+
+
+        print('====yyyyyyyyyyyyy', attachments)
+
         new_attachments = []
         for name, content in attachments:
             new_attachments.append((name, content))
