@@ -2,62 +2,9 @@
 <odoo>
     <data>
 
-        <record id="view_account_invoice_new_filter" model="ir.ui.view">
-            <field name="name">account.invoice.new.select</field>
-            <field name="model">account.invoice</field>
-            <field name="arch" type="xml">
-                <search string="Search Invoice">
-                    <field name="bill_id" string="系统出运单"/>
-                    <field name="x_studio_field_lL3aM"/>
-                    <field name="x_studio_field_sG7RZ"/>
-                    <field name="number" string="Invoice"
-                           filter_domain="['|','|','|', ('number','ilike',self), ('origin','ilike',self), ('reference', 'ilike', self), ('partner_id', 'child_of', self)]"/>
-                    <field name="journal_id"/>
-                    <filter name="draft" string="Draft" domain="[('state','=','draft')]"/>
-                    <filter name="invoices" string="Invoices"
-                            domain="['&amp;', ('state','in',['draft','open','paid']),('type','in',('out_invoice','in_invoice'))]"/>
-                    <filter name="refunds" string="Credit Notes"
-                            domain="['&amp;', ('state','in',['draft','open','paid']),('type','in',('out_refund','in_refund'))]"/>
 
-                    <separator/>
-                    <filter name="unpaid" string="Not Paid" domain="[('state','=','open')]"/>
-                    <filter name="late" string="Overdue"
-                            domain="['&amp;', ('date_due', '&lt;', time.strftime('%Y-%m-%d')), ('state', '=', 'open')]"
-                            help="Overdue invoices, maturity date passed"/>
-                    <separator/>
-
-                    <field name="partner_id" operator="child_of"/>
-                    <field name="user_id" string="Salesperson" domain="[('share','=', False)]"/>
-                    <field name="date" string="Period"/>
-                    <separator/>
-                    <filter domain="[('user_id','=',uid)]" help="My Invoices"/>
-                    <separator/>
-                    <filter string="My Activities" name="activities_my" domain="[('activity_ids.user_id', '=', uid)]"/>
-                    <separator/>
-                    <filter string="Late Activities" name="activities_overdue"
-                            domain="[('activity_ids.date_deadline', '&lt;', context_today().strftime('%Y-%m-%d'))]"
-                            help="Show all records which has next action date is before today"/>
-                    <filter string="Today Activities" name="activities_today"
-                            domain="[('activity_ids.date_deadline', '=', context_today().strftime('%Y-%m-%d'))]"/>
-                    <filter string="Future Activities" name="activities_upcoming_all"
-                            domain="[('activity_ids.date_deadline', '&gt;', context_today().strftime('%Y-%m-%d'))                         ]"/>
-                    <group expand="0" string="Group By">
-                        <filter name="group_by_due_date" string="逾期天数"
-                                context="{'group_by':('residual_date_group','partner_id')}"/>
-                        <filter name="group_by_partner_id" string="Partner"
-                                context="{'group_by':'commercial_partner_id'}"/>
-                        <filter string="Salesperson" context="{'group_by':'user_id'}"/>
-                        <filter name="status" string="Status" context="{'group_by':'state'}"/>
-                        <separator/>
-                        <filter string="Invoice Date" context="{'group_by':'date_invoice'}"/>
-                        <filter string="Due Date" context="{'group_by':'date_due'}"/>
-                    </group>
-                </search>
-
-            </field>
-        </record>
-        <record id="invoice_new_tree" model="ir.ui.view">
-            <field name="name">account.invoice.new.tree</field>
+        <record id="invoice_new_extra_tree" model="ir.ui.view">
+            <field name="name">account.invoice.new.extra.tree</field>
             <field name="model">account.invoice</field>
             <field name="arch" type="xml">
                 <tree decoration-info="state == 'draft'" decoration-muted="state == 'cancel'" string="Invoice">
@@ -91,8 +38,8 @@
             </field>
         </record>
 
-        <record id="invoice_new_1_tree" model="ir.ui.view">
-            <field name="name">account.invoice.new.tree</field>
+        <record id="invoice_new_1_extra_tree" model="ir.ui.view">
+            <field name="name">account.invoice.new.extra.tree</field>
             <field name="model">account.invoice</field>
             <field name="arch" type="xml">
                 <tree decoration-info="state == 'draft'"  default_order="date_deadline_new" decoration-muted="state == 'cancel'" string="Invoice" >
@@ -126,12 +73,12 @@
                     <field name="residual_times" groups="base.group_system"/>
                     <field name="residual_times_out_in" groups="base.group_system"/>
                     <field name="date_deadline" string="实际到期日" groups="base.group_system"/>
-<field name="fault_comments"/>
+                    <field name="fault_comments"/>
 
                 </tree>
             </field>
         </record>
-        <record id="invoice_new_supplier_1_tree" model="ir.ui.view">
+        <record id="invoice_new_supplier_1_extra_tree" model="ir.ui.view">
             <field name="name">account.invoice.new.supplier.tree</field>
             <field name="model">account.invoice</field>
             <field name="arch" type="xml">
@@ -171,8 +118,8 @@
             </field>
         </record>
         <!--统计应收付款的视图-->
-        <record model="ir.ui.view" id="view_account_invoice_new_1_form">
-            <field name="name">account.invoice.new.form</field>
+        <record model="ir.ui.view" id="view_account_invoice_new_1_extra_form">
+            <field name="name">account.invoice.new.extra.form</field>
             <field name="model">account.invoice</field>
             <field name="arch" type="xml">
                 <form string="应收账单" class="o_invoice_form" edit="false">

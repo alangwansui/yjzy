@@ -178,14 +178,15 @@ class transport_bill(models.Model):
             # print('---fee_inner_test---', fee_inner, fee_rmb1)
     def _get_qingguan(self):
         # akiny新增 计算清关总量
-        qingguan_lines = self.qingguan_line_ids
-        if qingguan_lines:
-            self.qingguan_amount = sum([x.sub_total for x in qingguan_lines])
-            self.qingguan_qty_total = sum([x.qty for x in qingguan_lines])
-            self.qingguan_case_qty_total = sum([x.package_qty for x in qingguan_lines])
-            self.qingguan_net_weight_total = sum([x.net_weight for x in qingguan_lines])
-            self.qingguan_gross_wtight_total = sum([x.shiji_weight for x in qingguan_lines])
-            self.qingguan_volume_total = sum([x.shiji_volume for x in qingguan_lines])
+        for one in self:
+            qingguan_lines = one.qingguan_line_ids
+            if qingguan_lines:
+                one.qingguan_amount = sum([x.sub_total for x in qingguan_lines])
+                one.qingguan_qty_total = sum([x.qty for x in qingguan_lines])
+                one.qingguan_case_qty_total = sum([x.package_qty for x in qingguan_lines])
+                one.qingguan_net_weight_total = sum([x.net_weight for x in qingguan_lines])
+                one.qingguan_gross_wtight_total = sum([x.shiji_weight for x in qingguan_lines])
+                one.qingguan_volume_total = sum([x.shiji_volume for x in qingguan_lines])
 
     def _get_fee_inner_so(self):
         fee_inner = 0.0
@@ -756,7 +757,7 @@ class transport_bill(models.Model):
 
     locked = fields.Boolean(u'锁定不允许修改')
 
-    #13已经添加
+    #13已经添加   730：发货完成即开票完成：合规已审批更新为：出运日期待确认，invoiced更新为：出运日期已确认,交单日期审批完成后就发货并生成和确认发票。
     state = fields.Selection([('cancel', u'取消'),
                               ('refused', u'已拒绝'),
                               ('draft', u'草稿'), ('check', u'检查'),
@@ -1234,6 +1235,11 @@ class transport_bill(models.Model):
         for one in self:
             if date_type == 'date_out_in':
                 one.date_out_in_state = 'done'
+                if one.state not in ['delivered','invoiced']:
+                    one.state = 'invoiced'
+                    one.onece_all_stage()
+                    one.make_all_invoice()
+                    one.sync_data2invoice()
             if date_type == 'date_ship':
                 one.date_ship_state = 'done'
             if date_type == 'date_customer_finish':
@@ -1796,7 +1802,7 @@ class transport_bill(models.Model):
                     invoice.po_id = o
 
                 #确认发票
-             #   invoice.action_invoice_open()
+                invoice.action_invoice_open()
 
                 invoice_ids.append(invoice.id)
         else:
@@ -1873,8 +1879,7 @@ class transport_bill(models.Model):
                     'price_unit': self.fee_outer,
                 })
 
-
-
+            sale_invoices[0].action_invoice_open()
 
             self.sale_invoice_id = sale_invoices[0]
         else:
@@ -1899,14 +1904,16 @@ class transport_bill(models.Model):
             if self.state not in ('approve','confirmed','delivered','invoiced','verifying','done'):
                 raise Warning('非执行中的出运单，不允许填写日期')
             else:
-                #如果是
-                if self.state == 'approve':
-                    self.state = 'delivered'
-                    self.onece_all_stage()
+                #730 填写日期后，自动发货和生成账单，等待审批完成后过账
+                # if self.state == 'approve':
+                #     self.state = 'delivered'
+                #     self.onece_all_stage()
+                #     self.make_all_invoice()
+                #     self.sync_data2invoice()
+                # elif self.state in ('delivered','invoiced'):
+                #       self.sync_data2invoice()
+                if self.state in ('delivered','invoiced'):
                     self.sync_data2invoice()
-                elif self.state in ('delivered','invoiced'):
-                      self.sync_data2invoice()
-
             return res
 
 #akiny 发货的时候生成所有发票，填入进仓日期后，点生成应收应付按钮，完成确认。
@@ -1922,8 +1929,8 @@ class transport_bill(models.Model):
                 purchase_invoice.date = one.date_out_in
                 purchase_invoice.date_out_in = one.date_out_in
                 purchase_invoice._onchange_payment_term_date_invoice()
-               # if purchase_invoice.state == 'draft':
-               #     purchase_invoice.action_invoice_open()
+                # if purchase_invoice.state == 'draft':
+                #     purchase_invoice.action_invoice_open()
             #同步销售发票
             sale_invoice = one.sale_invoice_id
             if sale_invoice:
@@ -1933,8 +1940,8 @@ class transport_bill(models.Model):
                 sale_invoice.date_finish = one.date_customer_finish
                 sale_invoice.date_ship = one.date_ship
                 sale_invoice._onchange_payment_term_date_invoice()
-               # if sale_invoice.state == 'draft':
-               #     sale_invoice.action_invoice_open()
+                # if sale_invoice.state == 'draft':
+                #     sale_invoice.action_invoice_open()
             back_tax_invoice = one.back_tax_invoice_id
             if back_tax_invoice:
                 back_tax_invoice.date_out_in = one.date_out_in
@@ -1944,10 +1951,10 @@ class transport_bill(models.Model):
                 back_tax_invoice.date_ship = one.date_ship
                 #调用防范，更新到期日期。因为是onchange发票日期，如果不调用，到期日期就无法计算
                 back_tax_invoice._onchange_payment_term_date_invoice()
-          #  back_tax_invoice = one.back_tax_invoice_id
-         #   back_tax_invoice_sate = one.back_tax_invoice_id.state
-           # if back_tax_invoice and back_tax_invoice_sate == 'draft':
-           #     back_tax_invoice.action_invoice_open()
+            # back_tax_invoice = one.back_tax_invoice_id
+            # back_tax_invoice_sate = one.back_tax_invoice_id.state
+            # if back_tax_invoice and back_tax_invoice_sate == 'draft':
+            #     back_tax_invoice.action_invoice_open()
             if one.date_all_state == 'done' and one.state == 'delivered':
                 one.state = 'invoiced'
 
@@ -1987,6 +1994,8 @@ class transport_bill(models.Model):
                         'account_id': account.id,
                     })]
                 })
+                #730 创建后直接过账
+                back_tax_invoice.action_invoice_open()
                 self.back_tax_invoice_id = back_tax_invoice
         return {
             'name': '退税发票',

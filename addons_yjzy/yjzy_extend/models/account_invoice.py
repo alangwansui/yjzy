@@ -148,6 +148,7 @@ class account_invoice(models.Model):
 
 
     #新增
+    state_1 = fields.Selection([('a',u'无额外账单'),('b',u'待合规审批'),('c',u'待总经理审批'),('d',u'额外账单审批完成')],'额外治账单审批')
     fault_comments = fields.Text('异常备注')
    # display_name = fields.Char(u'显示名称', compute=compute_display_name, store=True)
    #13ok
@@ -197,7 +198,7 @@ class account_invoice(models.Model):
     tb_purchase_invoice_balance = fields.Monetary('对应应付余额',related='bill_id.purchase_invoice_balance_new' )
     tb_sale_invoice_balance = fields.Monetary('对应应收余额', related='bill_id.sale_invoice_balance_new')
     invoice_line_ids_add = fields.One2many('account.invoice.line','invoice_id', domain=[('is_manual', '=', True)],
-                                           readonly=True, states={'draft': [('readonly', False)]}, copy=True)
+                                            copy=True)
     invoice_line_ids_origin = fields.One2many('account.invoice.line', 'invoice_id', domain=[('is_manual', '=', False)],
                                            readonly=True, states={'draft': [('readonly', False)]}, copy=True)
     amount_automatic = fields.Monetary('原始合计金额',compute=compute_amount)
