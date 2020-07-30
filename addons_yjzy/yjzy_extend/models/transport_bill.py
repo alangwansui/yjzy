@@ -57,27 +57,35 @@ class transport_bill(models.Model):
             org_sale_amount, sale_amount = one._get_sale_amount(lines)
             org_real_sale_amount = sum([x.amount for x in one.hsname_ids])
 
-            real_sale_amount = one.third_currency_id and one.sale_currency_id.compute(org_real_sale_amount, one.third_currency_id) or 0
-
-            purchase_cost = one.company_currency_id.compute(sum(x.purchase_cost for x in lines), one.third_currency_id)
+            current_date_rate = one.current_date_rate
+            if one.company_id.is_current_date_rate:
+                real_sale_amount = org_real_sale_amount * current_date_rate
+                purchase_cost = sum(x.purchase_cost for x in lines)
+                stock_cost = sum(x.stock_cost for x in lines)
+                other_cost = one._get_other_cost()
+                if one.cip_type != 'normal':
+                    back_tax_amount = 0
+                    back_tax_amount_org = 0
+                else:
+                    back_tax_amount = sum(x.back_tax_amount2 for x in one.btls_hs_ids)
+                    back_tax_amount_org = sum(x.back_tax_amount for x in one.line_ids)
+            else:
+                real_sale_amount = one.third_currency_id and one.sale_currency_id.compute(org_real_sale_amount, one.third_currency_id) or 0
+                purchase_cost = one.company_currency_id.compute(sum(x.purchase_cost for x in lines), one.third_currency_id)
+                stock_cost = one.company_currency_id.compute(sum(x.stock_cost for x in lines), one.third_currency_id)
+                other_cost = one.company_currency_id.compute(one._get_other_cost(), one.third_currency_id)
+                if one.cip_type != 'normal':
+                    back_tax_amount = 0
+                    back_tax_amount_org = 0
+                else:
+                    back_tax_amount = one.company_currency_id.compute(sum(x.back_tax_amount2 for x in one.btls_hs_ids),
+                                                                      one.third_currency_id)
+                    back_tax_amount_org = one.company_currency_id.compute(sum(x.back_tax_amount for x in one.line_ids),
+                                                                          one.third_currency_id)
             fandian_amount = sum([x.fandian_amount for x in one.fandian_ids])   ##### 不含税）采购金额*返点比例，（含税）采购金额*0.87*返点比例
 
-            stock_cost = one.company_currency_id.compute(sum(x.stock_cost for x in lines), one.third_currency_id)
+
             #back_tax_amount = one.company_currency_id.compute(sum(x.back_tax_amount for x in lines), one.third_currency_id)
-
-            #akiny新增 计算清关总量
-            qingguan_lines = one.qingguan_line_ids
-            if qingguan_lines:
-                one.qingguan_amount = sum([x.sub_total for x in qingguan_lines])
-                one.qingguan_qty_total = sum([x.qty for x in qingguan_lines])
-                one.qingguan_case_qty_total = sum([x.package_qty for x in qingguan_lines])
-                one.qingguan_net_weight_total = sum([x.net_weight for x in qingguan_lines])
-                one.qingguan_gross_wtight_total = sum([x.shiji_weight for x in qingguan_lines])
-                one.qingguan_volume_total = sum([x.shiji_volume for x in qingguan_lines])
-
-
-
-
             # 样金计算 akiny
 
             gold_sample_state = 'none'
@@ -100,22 +108,11 @@ class transport_bill(models.Model):
                 else:
                     invoice_state = 'draft'
             one.invoice_state = invoice_state
-
-
-
-
             one.date_out_in_att_count = len(one.date_out_in_att)
             one.date_ship_att_count = len(one.date_ship_att)
             one.date_customer_finish_att_count = len(one.date_customer_finish_att)
 
-            if one.cip_type != 'normal':
-                back_tax_amount = 0
-                back_tax_amount_org = 0
-            else:
-                back_tax_amount = one.company_currency_id.compute(sum(x.back_tax_amount2 for x in one.btls_hs_ids), one.third_currency_id)
-                back_tax_amount_org = one.company_currency_id.compute(sum(x.back_tax_amount for x in one.line_ids), one.third_currency_id)
 
-            other_cost = one.company_currency_id.compute(one._get_other_cost(), one.third_currency_id)
             sale_commission_amount = real_sale_amount * one.sale_commission_ratio
 
             vat_diff_amount = 0
@@ -151,25 +148,25 @@ class transport_bill(models.Model):
             one.purchase_invoice_ids2 = one.purchase_invoice_ids.filtered(lambda x: x.yjzy_type == 'purchase')
 
 
-            fee_inner = 0.0
-            fee_rmb1 = 0.0
-            fee_rmb2 = 0.0
-            fee_outer = 0.0
-            fee_export_insurance =0.0
-            fee_other = 0.0
-            for x in one.line_ids:
-                fee_inner +=  x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_inner * x.plan_qty
-                fee_rmb1 += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_rmb1 * x.plan_qty
-                fee_rmb2 += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_rmb2 * x.plan_qty
-                fee_outer += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_outer * x.plan_qty
-                fee_export_insurance += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_export_insurance * x.plan_qty
-                fee_other += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_other * x.plan_qty
-            one.fee_inner_so = fee_inner
-            one.fee_rmb1_so = fee_rmb1
-            one.fee_rmb2_so = fee_rmb2
-            one.fee_other_so = fee_outer
-            one.fee_export_insurance_so = fee_export_insurance
-            one.fee_other_so = fee_other
+            # fee_inner = 0.0
+            # fee_rmb1 = 0.0
+            # fee_rmb2 = 0.0
+            # fee_outer = 0.0
+            # fee_export_insurance =0.0
+            # fee_other = 0.0
+            # for x in one.line_ids:
+            #     fee_inner +=  x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_inner * x.plan_qty
+            #     fee_rmb1 += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_rmb1 * x.plan_qty
+            #     fee_rmb2 += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_rmb2 * x.plan_qty
+            #     fee_outer += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_outer * x.plan_qty
+            #     fee_export_insurance += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_export_insurance * x.plan_qty
+            #     fee_other += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_other * x.plan_qty
+            # one.fee_inner_so = fee_inner
+            # one.fee_rmb1_so = fee_rmb1
+            # one.fee_rmb2_so = fee_rmb2
+            # one.fee_other_so = fee_outer
+            # one.fee_export_insurance_so = fee_export_insurance
+            # one.fee_other_so = fee_other
 
             # one.fee_inner = fee_inner
             # one.fee_rmb1 = fee_rmb1
@@ -179,7 +176,52 @@ class transport_bill(models.Model):
             # one.fee_other = fee_other
             #
             # print('---fee_inner_test---', fee_inner, fee_rmb1)
+    def _get_qingguan(self):
+        # akiny新增 计算清关总量
+        qingguan_lines = self.qingguan_line_ids
+        if qingguan_lines:
+            self.qingguan_amount = sum([x.sub_total for x in qingguan_lines])
+            self.qingguan_qty_total = sum([x.qty for x in qingguan_lines])
+            self.qingguan_case_qty_total = sum([x.package_qty for x in qingguan_lines])
+            self.qingguan_net_weight_total = sum([x.net_weight for x in qingguan_lines])
+            self.qingguan_gross_wtight_total = sum([x.shiji_weight for x in qingguan_lines])
+            self.qingguan_volume_total = sum([x.shiji_volume for x in qingguan_lines])
 
+    def _get_fee_inner_so(self):
+        fee_inner = 0.0
+        for x in self.line_ids:
+            fee_inner += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_inner * x.plan_qty
+        self.fee_inner_so = fee_inner
+
+    def _get_fee_rmb1_so(self):
+        fee_rmb1 = 0.0
+        for x in self.line_ids:
+            fee_rmb1 += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_rmb1 * x.plan_qty
+        self.fee_rmb1_so = fee_rmb1
+
+    def _get_fee_rmb2_so(self):
+        fee_rmb2 = 0.0
+        for x in self.line_ids:
+            fee_rmb2 += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_rmb2 * x.plan_qty
+        self.fee_rmb2_so = fee_rmb2
+
+    def _get_fee_outer_so(self):
+        fee_outer = 0.0
+        for x in self.line_ids:
+            fee_outer += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_outer * x.plan_qty
+        self.fee_outer_so = fee_outer
+
+    def _get_fee_export_insurance_so(self):
+        fee_export_insurance = 0.0
+        for x in self.line_ids:
+            fee_export_insurance += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_export_insurance * x.plan_qty
+        self.fee_export_insurance_so = fee_export_insurance
+
+    def _get_fee_other_so(self):
+        fee_other = 0.0
+        for x in self.line_ids:
+            fee_other += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_other * x.plan_qty
+        self.fee_other_so = fee_other
 
 
 
@@ -203,12 +245,21 @@ class transport_bill(models.Model):
         return:  org_sale_amount:sale_currency   sale_amount: third_currency
         line: sale_amount：company_currency_id， org_currency_sale_amount：sale_currency_id
         """
-        sale_amount = sum( x.company_currency_id.compute(x.sale_amount, self.third_currency_id) for x in lines)
         org_sale_amount = sum(x.org_currency_sale_amount for x in lines)
+        current_date_rate = self.current_date_rate
+        if self.company_id.is_current_date_rate:
+            sale_amount = org_sale_amount * current_date_rate
+            if self.fee_outer_need:
+                sale_amount += self.fee_outer * self.current_date_rate
+        else:
+            sale_amount = sum( x.company_currency_id.compute(x.sale_amount, self.third_currency_id) for x in lines)
+            if self.fee_outer_need:
+                sale_amount += self.outer_currency_id.compute(self.fee_outer, self.third_currency_id)
+
         print('-org-',org_sale_amount )
         if self.fee_outer_need:
             org_sale_amount += self.outer_currency_id.compute(self.fee_outer, self.sale_currency_id)
-            sale_amount += self.outer_currency_id.compute(self.fee_outer, self.third_currency_id)
+
         return org_sale_amount, sale_amount
 
     def _get_sale_commission(self, sale_amount):
@@ -217,11 +268,17 @@ class transport_bill(models.Model):
         return sale_commission_ratio, sale_amount * sale_commission_ratio
 
     def _get_other_cost(self):
-        return sum([self.fee_inner, self.fee_rmb1, self.fee_rmb2,
+        current_date_rate = self.current_date_rate
+        other_cost = 0.0
+        if self.company_id.is_current_date_rate:
+            other_cost = self.fee_inner + self.fee_rmb1 + self.fee_rmb2 + (self.fee_outer + self.fee_export_insurance + self.fee_other)*current_date_rate
+        else:
+            other_cost = sum([self.fee_inner, self.fee_rmb1, self.fee_rmb2,
                     self.outer_currency_id.compute(self.fee_outer, self.company_currency_id),
                     self.export_insurance_currency_id.compute(self.fee_export_insurance, self.company_currency_id),
                     self.other_currency_id.compute(self.fee_other, self.company_currency_id),
                     ])
+        return other_cost
 
     def compute_ciq_amount(self):
         for one in self:
@@ -795,12 +852,12 @@ class transport_bill(models.Model):
 
     other_currency_id = fields.Many2one('res.currency', '其他外币费用货币')
 
-    fee_inner_so = fields.Monetary(u'国内运杂费', currency_field='company_currency_id', compute=compute_info)
-    fee_rmb1_so = fields.Monetary(u'人民币费用1', currency_field='company_currency_id', compute=compute_info)
-    fee_rmb2_so = fields.Monetary(u'人民币费用2', currency_field='company_currency_id', compute=compute_info)
-    fee_outer_so = fields.Monetary(u'国外运保费', currency_field='other_currency_id', compute=compute_info)
-    fee_export_insurance_so = fields.Monetary(u'出口保险费', currency_field='other_currency_id', compute=compute_info)
-    fee_other_so = fields.Monetary(u'其他外币费用', currency_field='other_currency_id', compute=compute_info)
+    fee_inner_so = fields.Monetary(u'国内运杂费', currency_field='company_currency_id', compute=_get_fee_inner_so)
+    fee_rmb1_so = fields.Monetary(u'人民币费用1', currency_field='company_currency_id', compute=_get_fee_rmb1_so)
+    fee_rmb2_so = fields.Monetary(u'人民币费用2', currency_field='company_currency_id', compute=_get_fee_rmb2_so)
+    fee_outer_so = fields.Monetary(u'国外运保费', currency_field='other_currency_id', compute=_get_fee_outer_so)
+    fee_export_insurance_so = fields.Monetary(u'出口保险费', currency_field='other_currency_id', compute=_get_fee_export_insurance_so)
+    fee_other_so = fields.Monetary(u'其他外币费用', currency_field='other_currency_id', compute=_get_fee_other_so)
     is_fee_done = fields.Boolean(u'默认费用完成')
     sale_type = fields.Selection([('inner', '自营'), ('proxy', '代理')], u'业务类型', default='inner')
     hs_fill = fields.Selection(
@@ -853,12 +910,12 @@ class transport_bill(models.Model):
 
 
     #akiny 新增
-    qingguan_amount = fields.Monetary(u'清关总金额', currency_field='sale_currency_id' , compute=compute_info)
-    qingguan_qty_total = fields.Float(u'清关总数量',compute=compute_info)
-    qingguan_case_qty_total = fields.Float(u'清关总箱数',compute=compute_info)
-    qingguan_net_weight_total = fields.Float(u'清关总净重',compute=compute_info)
-    qingguan_gross_wtight_total = fields.Float(u'清关总毛重',compute=compute_info)
-    qingguan_volume_total = fields.Float(u'清关总体积',compute=compute_info)
+    qingguan_amount = fields.Monetary(u'清关总金额', currency_field='sale_currency_id' , compute=_get_qingguan)
+    qingguan_qty_total = fields.Float(u'清关总数量',compute=_get_qingguan)
+    qingguan_case_qty_total = fields.Float(u'清关总箱数',compute=_get_qingguan)
+    qingguan_net_weight_total = fields.Float(u'清关总净重',compute=_get_qingguan)
+    qingguan_gross_wtight_total = fields.Float(u'清关总毛重',compute=_get_qingguan)
+    qingguan_volume_total = fields.Float(u'清关总体积',compute=_get_qingguan)
 
     qg_count = fields.Integer(u'清关数量', compute=compute_info)
     bg_count = fields.Integer(u'报关数量', compute=compute_info)

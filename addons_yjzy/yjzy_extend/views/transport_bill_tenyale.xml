@@ -957,7 +957,7 @@
                                 <field name="expense_ids">
                                 </field>
                             </page>
-                            <page string="统计" invisible="1">
+                            <page string="统计" groups="base.group_system">
 
                                 <group col="3">
                                     <group name="sale_currency">
