@@ -1606,7 +1606,6 @@ class MailThread(models.AbstractModel):
                     attachments.append(self._Attachment(filename or 'attachment', part.get_payload(decode=True), {}))
 
         body, attachments = self._message_extract_payload_postprocess(message, body, attachments)
-
         # new_attachments = []
         # for name, content in attachments:
         #     new_attachments.append((name, content))
@@ -1618,7 +1617,6 @@ class MailThread(models.AbstractModel):
         #         except:
         #             # some processing here
         #             pass
-
 
         return body, attachments
 
