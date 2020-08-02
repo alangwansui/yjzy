@@ -1617,7 +1617,6 @@ class MailThread(models.AbstractModel):
         #         except:
         #             # some processing here
         #             pass
-
         return body, attachments
 
     @api.model
