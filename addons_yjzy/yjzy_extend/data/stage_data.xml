@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+        <record model="account.invoice.stage" id="stage_draft">
+            <field name="name">没有额外账单</field>
+            <field name="code">001</field>
+            <field name="sequence" eval="10"/>
+            <field name="state">draft</field>
+        </record>
+
+        <record model="account.invoice.stage" id="stage_submit">
+            <field name="name">待合规审批</field>
+            <field name="code">002</field>
+            <field name="sequence" eval="20"/>
+            <field name="state">submit</field>
+        </record>
+        <record model="account.invoice.stage" id="stage_approved">
+            <field name="name">待总经理审批</field>
+            <field name="code">003</field>
+            <field name="sequence" eval="30"/>
+            <field name="state">approved</field>
+        </record>
+       <record model="account.invoice.stage" id="stage_done">
+            <field name="name">额外账单审批完成</field>
+            <field name="code">004</field>
+            <field name="sequence" eval="40"/>
+            <field name="state">done</field>
+        </record>
+        <record model="account.invoice.stage" id="stage_refuse">
+            <field name="name">额外账单审批完成</field>
+            <field name="code">005</field>
+            <field name="sequence" eval="40"/>
+            <field name="state">refuse</field>
+        </record>
+
+
+
+    </data>
+</odoo>

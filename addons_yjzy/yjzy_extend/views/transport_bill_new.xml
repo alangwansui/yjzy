@@ -160,6 +160,7 @@
 
                         <button name="split_tuopan_weight2vendor" type="object" string="分配托盘重量:供应商发运"
                                 class="oe_highlight"/>
+                        <button name="split_tuopan_all" type="object" string="分配所有托盘重量"/>
 
 
                         <button string="返点统计" invisible="1" name="make_fandian_collect"

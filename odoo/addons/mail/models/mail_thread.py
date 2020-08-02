@@ -1607,20 +1607,20 @@ class MailThread(models.AbstractModel):
 
         body, attachments = self._message_extract_payload_postprocess(message, body, attachments)
 
-        new_attachments = []
-        for name, content in attachments:
-            new_attachments.append((name, content))
-            if name and name.strip().lower() in ['winmail.dat', 'win.dat']:
-                try:
-                    winmail = TNEF(content)
-                    for attach in winmail.attachments:
-                        new_attachments.append((attach.name, attach.data))
-                except:
-                    # some processing here
-                    pass
+        # new_attachments = []
+        # for name, content in attachments:
+        #     new_attachments.append((name, content))
+        #     if name and name.strip().lower() in ['winmail.dat', 'win.dat']:
+        #         try:
+        #             winmail = TNEF(content)
+        #             for attach in winmail.attachments:
+        #                 new_attachments.append((attach.name, attach.data))
+        #         except:
+        #             # some processing here
+        #             pass
 
 
-        return body, new_attachments
+        return body, attachments
 
     @api.model
     def message_parse(self, message, save_original=False):

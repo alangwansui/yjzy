@@ -222,6 +222,7 @@ class account_reconcile_order(models.Model):
 
     date = fields.Date(u'确认日期', index=True, required=True, default=lambda self: fields.date.today())
     invoice_ids = fields.One2many('account.invoice', 'reconcile_order_id', u'发票')
+    #invoice_ids = fields.Many2many('account.invoice', string= u'发票')
     payment_account_id = fields.Many2one('account.account', u'收款科目', required=True,
                                          default=lambda self: self.default_payment_account())
     bank_account_id = fields.Many2one('account.account', u'银行扣款科目', required=False,
@@ -761,6 +762,22 @@ class account_reconcile_order(models.Model):
     def clear_moves(self):
         self.ensure_one()
         self.move_ids.write({'reconcile_order_id': False})
+
+    def invoice_assign_outstanding_credit_new(self):
+        self.ensure_one()
+        # 没审核的分录不能核销
+        for m in self.move_ids:
+            if m.state == 'draft':
+                raise Warning(u'分录 %s  %s 还没审核' % (m.id, m.state))
+
+        lines = self.move_ids.mapped('line_ids')
+        invoice = self.line_ids.mapped('invoice_id')
+        print('invoice',invoice)
+        for inv in invoice.filtered(lambda x: x.state == 'open'):
+            print('inv', inv)
+            todo_lines = lines.filtered(lambda x: x.plan_invoice_id == inv and x.reconciled == False)
+            for todo in todo_lines:
+                inv.assign_outstanding_credit(todo.id)
 
     def invoice_assign_outstanding_credit(self):
         self.ensure_one()

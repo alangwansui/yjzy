@@ -5,10 +5,26 @@ from odoo.tools import DEFAULT_SERVER_DATE_FORMAT as DF
 from odoo.addons import decimal_precision as dp
 from odoo.exceptions import Warning,UserError
 
+Invoice_Selection = [('draft',u'无额外账单'),('submit',u'待合规审批'),('approved',u'待总经理审批'),('done',u'额外账单审批完成'),('refuse',u'拒绝')]
+
+class Stage(models.Model):
+
+    _name = "account.invoice.stage"
+    _description = "Invoice Stage"
+    _order = 'sequence'
+
+    name = fields.Char('Stage Name', translate=True, required=True)
+    code = fields.Char('code')
+    sequence = fields.Integer(help="Used to order the note stages", default=1)
+    state = fields.Selection(Invoice_Selection, 'State', default=Invoice_Selection[0][0]) #track_visibility='onchange',
+    fold = fields.Boolean('Folded by Default')
+    # _sql_constraints = [
+    #     ('name_code', 'unique(code)', u"编码不能重复"),
+    # ]
+    user_ids = fields.Many2many('res.users', 'ref_partner_users', 'fid', 'tid', 'Users') #可以进行判断也可以结合自定义视图模块使用
 
 class account_invoice(models.Model):
     _inherit = 'account.invoice'
-
     @api.depends('payment_term_id', 'date_due','date_ship','date_finish','date_invoice')
     def compute_date_deadline(self):
         strptime = datetime.strptime
@@ -146,9 +162,25 @@ class account_invoice(models.Model):
         for one in self:
             one.display_name = '%s[%s]' % (one.tb_contract_code, str(one.amount_total))
 
-
+    @api.model
+    def _default_invoice_stage(self):
+        stage = self.env['account.invoice.stage']
+        return stage.search([], limit=1)
+    def _compute_count(self):
+        for one in self:
+            one.yjzy_invoice_count = len(one.yjzy_invoice_ids)
+    @api.depends('yjzy_invoice_ids','yjzy_invoice_ids.amount_total_signed')
+    def compute_yjzy_invoice_amount_total(self):
+        for one in self:
+            yjzy_invoice_amount_total = sum(one.yjzy_invoice_ids.mapped('amount_total_signed'))
+            yjzy_invoice_residual_signed_total = sum(one.yjzy_invoice_ids.mapped('residual_signed'))
+            one.yjzy_invoice_amount_total = yjzy_invoice_amount_total
+            one.yjzy_invoice_residual_signed_total = yjzy_invoice_residual_signed_total
     #新增
-    #state_1 = fields.Selection([('a',u'无额外账单'),('b',u'待合规审批'),('c',u'待总经理审批'),('d',u'额外账单审批完成')],'额外治账单审批')
+    stage_id = fields.Many2one(
+        'account.invoice.stage',
+        default=_default_invoice_stage)
+    state_1 = fields.Selection(Invoice_Selection,'额外账单审批',related='stage_id.state')
     fault_comments = fields.Text('异常备注')
    # display_name = fields.Char(u'显示名称', compute=compute_display_name, store=True)
    #13ok
@@ -223,6 +255,360 @@ class account_invoice(models.Model):
              " * The 'Open' status is used when user creates invoice, an invoice number is generated. It stays in the open status till the user pays the invoice.\n"
              " * The 'Paid' status is set automatically when the invoice is paid. Its related journal entries may or may not be reconciled.\n"
              " * The 'Cancelled' status is used when user cancel invoice.")
+    yjzy_invoice_id = fields.Many2one('account.invoice',u'关联账单',default=lambda self: self.id)
+    yjzy_invoice_count = fields.Integer( u'关联账单数量',compute=_compute_count)
+    yjzy_invoice_ids = fields.One2many('account.invoice','yjzy_invoice_id',u'额外账单')
+    yjzy_payment_term_id = fields.Many2one('account.payment.term', string='Payment Terms_1')
+    yjzy_currency_id = fields.Many2one('res.currency', string='currency 1')
+    is_yjzy_invoice = fields.Boolean(u'是否额外账单',default=False)
+    yjzy_invoice_amount_total = fields.Monetary('额外账单应收金额',currency_field='currency_id',compute=compute_yjzy_invoice_amount_total,store=True)
+    yjzy_invoice_residual_signed_total = fields.Monetary('额外账单未收金额', currency_field='currency_id',
+                                                compute=compute_yjzy_invoice_amount_total, store=True)
+    extra_code = fields.Char(u'额外编号',default=lambda self: self._default_name())
+
+    def _default_name(self):
+        is_yjzy_invoice = self.env.context.get('is_yjzy_invoice')
+        yjzy_invoice_number = self.env.context.get('yjzy_invoice_number')
+        print('is_yjzy_invoice',is_yjzy_invoice,)
+        if is_yjzy_invoice:
+            name_1 = self.env['ir.sequence'].next_by_code('account.invoice.extra')
+            name = '%s/%s' % (yjzy_invoice_number, name_1)
+        else:
+            name = yjzy_invoice_number
+        return name
+
+    def create_yshxd(self):
+        self.ensure_one()
+        sfk_type = 'yshxd'
+        domain = [('code', '=', 'ysdrl'), ('company_id', '=', self.env.user.company_id.id)]
+        name = self.env['ir.sequence'].next_by_code('sfk.type.%s' % sfk_type)
+        journal = self.env['account.journal'].search(domain, limit=1)
+        account_obj = self.env['account.account']
+        bank_account = account_obj.search([('code', '=', '10021'), ('company_id', '=', self.env.user.company_id.id)],
+                                          limit=1)
+        yshxd =self.env['account.reconcile.order'].create({
+            'partner_id': self.partner_id.id,
+            'manual_payment_currency_id':self.currency_id.id,
+            'invoice_ids':[(4, self.id)],
+            'payment_type':'inbound',
+            'partner_type':'customer',
+            'sfk_type':'yshxd',
+            'be_renling':True,
+            'name':name,
+            'journal_id':journal.id,
+            'payment_account_id':bank_account.id
+        })
+        self.reconcile_order_id = yshxd
+        yshxd.make_lines()
+
+        form_view = self.env.ref('yjzy_extend.account_reconcile_order_form_view')
+        return {
+            'name': u'应收核销单',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'account.reconcile.order',
+            'type': 'ir.actions.act_window',
+            'views': [(form_view.id, 'form')],
+            'res_id': self.reconcile_order_id.id,
+            'target': 'current',
+            'flags': {'form': {'initial_mode': 'view','action_buttons': False}}
+        }
+
+    def submit_yshxd(self):
+        print('invoice_ids', self.ids)
+        sfk_type = 'yshxd'
+        domain = [('code', '=', 'ysdrl'), ('company_id', '=', self.env.user.company_id.id)]
+        name = self.env['ir.sequence'].next_by_code('sfk.type.%s' % sfk_type)
+        journal = self.env['account.journal'].search(domain, limit=1)
+        account_obj = self.env['account.account']
+        bank_account = account_obj.search([('code', '=', '10021'), ('company_id', '=', self.env.user.company_id.id)],
+                                          limit=1)
+        return {
+            'type': 'ir.actions.act_window',
+            'view_mode': 'form',
+            'res_model': 'account.reconcile.order',
+            'target': 'current',
+            'context': {
+                'default_invoice_ids': self.ids,#[line.id for line in self],
+                'default_partner_id': self[0].partner_id.id,
+                'default_manual_payment_currency_id': self[0].currency_id.id,
+                'default_payment_type': 'inbound',
+                'default_partner_type': 'customer',
+                'default_sfk_type': 'yshxd',
+                'default_be_renling': True,
+                'default_name': name,
+                'default_journal_id': journal.id,
+                'default_payment_account_id': bank_account.id
+            }
+        }
+
+    def open_invoice_ids(self):
+        tree_view = self.env.ref('yjzy_extend.invoice_new_1_tree')
+        form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form')
+        self.ensure_one()
+        return {
+            'name': u'额外账单',
+            'view_type': 'form',
+            'type': 'ir.actions.act_window',
+            'view_mode': 'tree,form',
+            'res_model': 'account.invoice',
+            'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
+            'target': 'current',
+            'domain':[('yjzy_invoice_id','=',self.id)]
+        }
+
+    def create_refund_id(self):
+        self.ensure_one()
+        invoice_id = self.env['account.invoice'].create({
+                'yjzy_invoice_id': self.id,  # [line.id for line in self],
+                'partner_id': self.partner_id.id,
+                'type': 'out_refund',
+                'journal_type': 'sale',
+                'yjzy_type': 'sale',
+                'is_yjzy_invoice': True,
+                'payment_term_id':self.payment_term_id.id,
+                'currency_id':self.currency_id.id,
+                'include_tax':self.include_tax,
+                'date_ship':self.date_ship,
+                'date_finish':self.date_finish,
+                'date_invoice':self.date_invoice,
+                'date':self.date,
+                'date_out_in':self.date_out_in,
+                'bill_id':self.bill_id.id,
+                'gongsi_id':self.gongsi_id.id,
+        })
+        form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form')
+        print('test', self.payment_term_id, self.currency_id)
+        return {
+            'type': 'ir.actions.act_window',
+            'view_mode': 'form',
+            'res_model': 'account.invoice',
+            'views': [(form_view.id, 'form')],
+            'res_id': invoice_id.id,
+            'target': 'current',
+            'context': {
+                'only_ref': 1,},
+            'flags': {'form': {'initial_mode': 'view', 'action_buttons': False}}
+        }
+
+    @api.onchange('invoice_line_ids')
+    def onchange_payment_currency(self):
+        self.payment_term_id = self.yjzy_payment_term_id
+        self.currency_id = self.yjzy_currency_id
+
+    def open_invoice_id(self):
+        form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form')
+        print('test',self.payment_term_id,self.currency_id)
+        return {
+            'type': 'ir.actions.act_window',
+            'view_mode': 'form',
+            'res_model': 'account.invoice',
+            'views': [(form_view.id, 'form')],
+            'target': 'current',
+            'context': {
+                'default_yjzy_invoice_id': self.id,  # [line.id for line in self],
+                'default_partner_id': self.partner_id.id,
+                'default_type': 'out_invoice',
+                'only_ref':1,
+                'type': 'out_invoice',
+                'journal_type': 'sale',
+                'default_yjzy_type': 'sale',
+                'is_yjzy_invoice':True,
+                'yjzy_invoice_number':self.number,
+                'default_is_yjzy_invoice': True,
+                'default_payment_term_id':self.payment_term_id.id,
+                'default_currency_id':self.currency_id.id,
+                'default_include_tax':self.include_tax,
+                'default_date_ship':self.date_ship,
+                'default_date_finish':self.date_finish,
+                'default_date_invoice':self.date_invoice,
+                'default_date':self.date,
+                'default_date_out_in':self.date_out_in,
+                'default_bill_id':self.bill_id.id,
+                'default_gongsi_id':self.gongsi_id.id,
+                'default_yjzy_payment_term_id':self.payment_term_id.id,
+                'default_yjzy_currency_id':self.currency_id.id,
+            }
+        }
+
+    def open_refund_id(self):
+        form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form')
+        print('test',self.payment_term_id,self.currency_id)
+        return {
+            'type': 'ir.actions.act_window',
+            'view_mode': 'form',
+            'res_model': 'account.invoice',
+            'views': [(form_view.id, 'form')],
+            'target': 'current',
+            'context': {
+                'default_yjzy_invoice_id': self.id,  # [line.id for line in self],
+                'default_partner_id': self.partner_id.id,
+                'default_type': 'out_refund',
+                'only_ref':1,
+                'type': 'out_refund',
+                'journal_type': 'sale',
+                'default_yjzy_type': 'sale',
+                'is_yjzy_invoice': True,
+                'yjzy_invoice_number': self.number,
+                'default_is_yjzy_invoice': True,
+                'default_payment_term_id':self.payment_term_id.id,
+                'default_currency_id':self.currency_id.id,
+                'default_include_tax':self.include_tax,
+                'default_date_ship':self.date_ship,
+                'default_date_finish':self.date_finish,
+                'default_date_invoice':self.date_invoice,
+                'default_date':self.date,
+                'default_date_out_in':self.date_out_in,
+                'default_bill_id':self.bill_id.id,
+                'default_gongsi_id':self.gongsi_id.id,
+                'default_yjzy_payment_term_id':self.payment_term_id.id,
+                'default_yjzy_currency_id':self.currency_id.id,
+            }
+        }
+
+    # @api.multi
+    # def write(self, vals):
+    #
+    #     for one in self:
+    #         one.payment_term_id = one.yjzy_payment_term_id
+    #     return super(account_invoice, self).write(vals)
+    def create_invoice_id(self):
+        self.ensure_one()
+        invoice_id = self.env['account.invoice'].create({
+                'yjzy_invoice_id': self.id,  # [line.id for line in self],
+                'partner_id': self.partner_id.id,
+                'type': 'out_invoice',
+                'journal_type': 'sale',
+                'yjzy_type': 'sale',
+                'is_yjzy_invoice': True,
+                'payment_term_id':self.payment_term_id.id,
+                'currency_id':self.currency_id.id,
+                'include_tax':self.include_tax,
+                'date_ship':self.date_ship,
+                'date_finish':self.date_finish,
+                'date_invoice':self.date_invoice,
+                'date':self.date,
+                'date_out_in':self.date_out_in,
+                'bill_id':self.bill_id.id,
+                'gongsi_id':self.gongsi_id.id,
+        })
+        form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form')
+        print('test', self.payment_term_id, self.currency_id)
+        return {
+            'type': 'ir.actions.act_window',
+            'view_mode': 'form',
+            'res_model': 'account.invoice',
+            'views': [(form_view.id, 'form')],
+            'res_id': invoice_id.id,
+            'target': 'current',
+            'context': {
+                'only_ref': 1,},
+            'flags': {'form': {'initial_mode': 'view', 'action_buttons': False}}
+        }
+
+    def invoice_assign_outstanding_credit(self):
+        self.ensure_one()
+        # 没审核的分录不能核销
+        if self.type =='out_refund':
+            lines = self.move_line_ids + self.yjzy_invoice_id.move_line_ids
+            todo_lines = lines.filtered(lambda x: (x.plan_invoice_id == self.yjzy_invoice_id or x.invoice_id == self.yjzy_invoice_id)
+                                                  and x.reconciled == False and x.account_id.code == '1122')
+            print('todo',todo_lines,self.yjzy_invoice_id)
+            for todo in todo_lines:
+                self.assign_outstanding_credit(todo.id)
+        elif self.type == 'in_refund':
+            lines = self.move_line_ids + self.yjzy_invoice_id.move_line_ids
+            todo_lines = lines.filtered(lambda x: (x.plan_invoice_id == self.yjzy_invoice_id or x.invoice_id == self.yjzy_invoice_id)
+                                                  and x.reconciled == False and x.account_id.code == '2202')
+            print('todo',todo_lines,self.yjzy_invoice_id)
+            for todo in todo_lines:
+                self.assign_outstanding_credit(todo.id)
+
+    # def create_yshxd_new(self):
+    #     sfk_type = 'yshxd'
+    #     domain = [('code', '=', 'ysdrl'), ('company_id', '=', self.env.user.company_id.id)]
+    #     name = self.env['ir.sequence'].next_by_code('sfk.type.%s' % sfk_type)
+    #     journal = self.env['account.journal'].search(domain, limit=1)
+    #     account_obj = self.env['account.account']
+    #     bank_account = account_obj.search([('code', '=', '10021'), ('company_id', '=', self.env.user.company_id.id)],
+    #                                       limit=1)
+    #     yshxd =self.env['account.reconcile.order'].create({
+    #         'partner_id': self[0].partner_id.id,
+    #         'manual_payment_currency_id':self[0].currency_id.id,
+    #         'invoice_ids':self.ids,
+    #         'payment_type':'inbound',
+    #         'partner_type':'customer',
+    #         'sfk_type':'yshxd',
+    #         'be_renling':True,
+    #         'name':name,
+    #         'journal_id':journal.id,
+    #         'payment_account_id':bank_account.id
+    #     })
+    #
+    #     yshxd.make_lines()
+    #
+    #     form_view = self.env.ref('yjzy_extend.account_reconcile_order_form_view')
+    #     return {
+    #         'name': u'应收核销单',
+    #         'view_type': 'form',
+    #         'view_mode': 'form',
+    #         'res_model': 'account.reconcile.order',
+    #         'type': 'ir.actions.act_window',
+    #         'views': [(form_view.id, 'form')],
+    #         'res_id': yshxd.id,
+    #         'target': 'current',
+    #         'flags': {'form': {'initial_mode': 'view','action_buttons': False}}
+    #     }
+
+    @api.onchange('invoice_line_ids')
+    def onchange_invoice_line_ids(self):
+        if self.amount_total <0 :
+            self.type = 'out_refund'
+        else:
+            self.type = 'out_invoice'
+
+    def _stage_find(self, domain=None, order='sequence'):
+        search_domain = list(domain)
+        return self.env['account.invoice.stage'].search(search_domain, order=order, limit=1)
+
+    def stage_action_submit(self):
+        stage_id = self._stage_find(domain=[('code', '=', '002')])
+        self.action_invoice_cancel()
+        self.action_invoice_draft()
+        self.action_invoice_open()
+        self.stage_id = stage_id.id
+    def stage_action_approved(self):
+        stage_id = self._stage_find(domain=[('code', '=', '003')])
+        self.action_invoice_open()
+        self.stage_id = stage_id.id
+    def stage_action_done(self):
+        stage_id = self._stage_find(domain=[('code', '=', '004')])
+        self.stage_id = stage_id.id
+    def stage_action_refuse(self):
+        stage_id = self._stage_find(domain=[('code', '=', '005')])
+        self.stage_id = stage_id.id
+    def stage_action_cancel(self):
+        stage_id = self._stage_find(domain=[('code', '=', '001')])
+        self.stage_id = stage_id.id
+        self.invoice_line_ids_add.unlink()
+
+
+    def open_invoice_extra(self):
+        """ Utility method used to add an "Open Parent" button in partner views """
+        self.ensure_one()
+        invoice_extra_form_id = self.env.ref('yjzy_extend.view_customer_invoice_extra_form').id
+
+        return {
+                'name': _(u'额外账单'),
+                'view_type': 'form',
+                'view_mode': 'form',
+                'type': 'ir.actions.act_window',
+                'res_model': 'account.invoice',
+                'views': [(invoice_extra_form_id, 'form')],
+                'res_id': self.id,
+                'target': 'current',
+                'flags': {'form': {'initial_mode': 'view','action_buttons': False}}
+                }
 
     def open_reconcile_order_line(self):
         self.ensure_one()

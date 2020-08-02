@@ -71,6 +71,8 @@ class transport_bill_vendor_line(models.Model):
     product_id = fields.Many2one('product.product', u'产品')
     po_contract_code = fields.Char(u'合同号')
     supplier_code = fields.Char('供应商产品代码')
+    customer_ref = fields.Char('客户型号',related='product_id.customer_ref')
+    customer_ref2 = fields.Char('客户型号', related='product_id.customer_ref2')
     default_code = fields.Char('产品内部编号', related='product_id.default_code')
     qty = fields.Float(u'数量')
     max_qty = fields.Float(u'包数')

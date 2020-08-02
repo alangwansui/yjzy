@@ -100,6 +100,7 @@
         'views/product_product_new.xml',
         'views/dashboard.xml',
         'views/transport_bill_customs_invoice.xml',
+        'views/account_invoice_extra.xml',
 
 
 
@@ -124,6 +125,7 @@
         'data/message_subtype.xml',
         'data/sequence_sfk.xml',
         'data/cron.xml',
+        'data/stage_data.xml',
 
         # 'wizard/wizard_so2po.xml',
         'wizard/wizard_transport4so.xml',
