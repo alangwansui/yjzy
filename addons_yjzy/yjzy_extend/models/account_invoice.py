@@ -5,7 +5,7 @@ from odoo.tools import DEFAULT_SERVER_DATE_FORMAT as DF
 from odoo.addons import decimal_precision as dp
 from odoo.exceptions import Warning,UserError
 
-Invoice_Selection = [('draft',u'无额外账单'),('submit',u'待合规审批'),('approved',u'待总经理审批'),('done',u'额外账单审批完成'),('refuse',u'拒绝')]
+Invoice_Selection = [('draft',u'无额外账单'),('submit',u'待合规审批'),('approved',u'待总经理审批'),('done',u'额外账单审批完成'),('refuse',u'拒绝'),('cancel',u'取消')]
 
 class Stage(models.Model):
 
@@ -42,7 +42,7 @@ class account_invoice(models.Model):
         for one in self:
             one.purchase_date_finish_att_count = len(one.purchase_date_finish_att)
 
-    @api.depends('date_deadline','date_ship','date_finish','date_invoice','date_out_in','date_due','date')
+    @api.depends('date_deadline','date_ship','date_finish','date_invoice','date_out_in','date_due','date','residual_times')
     def compute_times(self):
         today = datetime.today()
         strptime = datetime.strptime
@@ -169,13 +169,24 @@ class account_invoice(models.Model):
     def _compute_count(self):
         for one in self:
             one.yjzy_invoice_count = len(one.yjzy_invoice_ids)
-    @api.depends('yjzy_invoice_ids','yjzy_invoice_ids.amount_total_signed')
+    @api.depends('yjzy_invoice_ids','yjzy_invoice_ids.amount_total_signed','yjzy_invoice_ids.residual_signed','residual','amount_total')
     def compute_yjzy_invoice_amount_total(self):
         for one in self:
             yjzy_invoice_amount_total = sum(one.yjzy_invoice_ids.mapped('amount_total_signed'))
             yjzy_invoice_residual_signed_total = sum(one.yjzy_invoice_ids.mapped('residual_signed'))
+            yjzy_total = one.amount_total_signed + yjzy_invoice_amount_total
+            yjzy_residual = one.residual_signed + yjzy_invoice_residual_signed_total
             one.yjzy_invoice_amount_total = yjzy_invoice_amount_total
             one.yjzy_invoice_residual_signed_total = yjzy_invoice_residual_signed_total
+            one.yjzy_total = yjzy_total
+            one.yjzy_residual = yjzy_residual
+
+    def compute_yjzy_price_total(self):
+        yjzy_price_total = 0.0
+        for one in self:
+            yjzy_price_total = sum(one.invoice_line_ids.mapped('yjzy_price_total'))
+            one.yjzy_price_total = yjzy_price_total
+
     #新增
     stage_id = fields.Many2one(
         'account.invoice.stage',
@@ -186,7 +197,7 @@ class account_invoice(models.Model):
    #13ok
     yjzy_type = fields.Selection([('sale', u'销售'), ('purchase', u'采购'), ('back_tax', u'退税')], string=u'发票类型')
     bill_id = fields.Many2one('transport.bill', u'发运单')
-    tb_contract_code = fields.Char(u'出运合同号', related='bill_id.ref', readonly=True)
+    tb_contract_code = fields.Char(u'出运合同号', related='bill_id.ref', readonly=True, store=True)
     include_tax = fields.Boolean(u'含税', related='bill_id.include_tax')
     date_ship = fields.Date(u'出运船日期')
     date_finish = fields.Date(u'交单日期')
@@ -264,7 +275,12 @@ class account_invoice(models.Model):
     yjzy_invoice_amount_total = fields.Monetary('额外账单应收金额',currency_field='currency_id',compute=compute_yjzy_invoice_amount_total,store=True)
     yjzy_invoice_residual_signed_total = fields.Monetary('额外账单未收金额', currency_field='currency_id',
                                                 compute=compute_yjzy_invoice_amount_total, store=True)
+    yjzy_total = fields.Float(u'总应收金额', compute=compute_yjzy_invoice_amount_total,store=True)
+    yjzy_residual = fields.Float(u'总未收金额', compute=compute_yjzy_invoice_amount_total,store=True)
+    yjzy_price_total = fields.Float('新未收金额',compute=compute_yjzy_price_total)
     extra_code = fields.Char(u'额外编号',default=lambda self: self._default_name())
+    yjzy_invoice_line_ids = fields.One2many('account.invoice.line','yjzy_invoice_id',u'所有明细')
+
 
     def _default_name(self):
         is_yjzy_invoice = self.env.context.get('is_yjzy_invoice')
@@ -357,6 +373,7 @@ class account_invoice(models.Model):
             'domain':[('yjzy_invoice_id','=',self.id)]
         }
 
+
     def create_refund_id(self):
         self.ensure_one()
         invoice_id = self.env['account.invoice'].create({
@@ -395,8 +412,27 @@ class account_invoice(models.Model):
     def onchange_payment_currency(self):
         self.payment_term_id = self.yjzy_payment_term_id
         self.currency_id = self.yjzy_currency_id
+        yjzy_type = self.yjzy_type
+        if yjzy_type == 'sale' or yjzy_type == 'back_tax':
+            if self.yjzy_price_total < 0:
+                self.type = 'out_refund'
+                for x in self.invoice_line_ids:
+                    x.price_unit = -x.yjzy_price_unit
+            else:
+                self.type = 'out_invoice'
+                for x in self.invoice_line_ids:
+                    x.price_unit = x.yjzy_price_unit
+        else:
+            if self.yjzy_price_total < 0:
+                self.type = 'in_refund'
+                for x in self.invoice_line_ids:
+                    x.price_unit = -x.yjzy_price_unit
+            else:
+                self.type = 'in_invoice'
+                for x in self.invoice_line_ids:
+                    x.price_unit = x.yjzy_price_unit
 
-    def open_invoice_id(self):
+    def open_customer_invoice_id(self):
         form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form')
         print('test',self.payment_term_id,self.currency_id)
         return {
@@ -430,8 +466,42 @@ class account_invoice(models.Model):
                 'default_yjzy_currency_id':self.currency_id.id,
             }
         }
+    def open_supplier_invoice_id(self):
+        form_view = self.env.ref('yjzy_extend.view_account_supplier_invoice_new_form')
+        print('test',self.payment_term_id,self.currency_id)
+        return {
+            'type': 'ir.actions.act_window',
+            'view_mode': 'form',
+            'res_model': 'account.invoice',
+            'views': [(form_view.id, 'form')],
+            'target': 'current',
+            'context': {
+                'default_yjzy_invoice_id': self.id,  # [line.id for line in self],
+                'default_partner_id': self.partner_id.id,
+                'default_type': 'in_invoice',
+                'only_ref':1,
+                'type': 'in_invoice',
+                'journal_type': 'purchase',
+                'default_yjzy_type': 'purchase',
+                'is_yjzy_invoice':True,
+                'yjzy_invoice_number':self.number,
+                'default_is_yjzy_invoice': True,
+                'default_payment_term_id':self.payment_term_id.id,
+                'default_currency_id':self.currency_id.id,
+                'default_include_tax':self.include_tax,
+                'default_date_ship':self.date_ship,
+                'default_date_finish':self.date_finish,
+                'default_date_invoice':self.date_invoice,
+                'default_date':self.date,
+                'default_date_out_in':self.date_out_in,
+                'default_bill_id':self.bill_id.id,
+                'default_gongsi_id':self.gongsi_id.id,
+                'default_yjzy_payment_term_id':self.payment_term_id.id,
+                'default_yjzy_currency_id':self.currency_id.id,
+            }
+        }
 
-    def open_refund_id(self):
+    def open_customer_refund_id(self):
         form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form')
         print('test',self.payment_term_id,self.currency_id)
         return {
@@ -448,6 +518,40 @@ class account_invoice(models.Model):
                 'type': 'out_refund',
                 'journal_type': 'sale',
                 'default_yjzy_type': 'sale',
+                'is_yjzy_invoice': True,
+                'yjzy_invoice_number': self.number,
+                'default_is_yjzy_invoice': True,
+                'default_payment_term_id':self.payment_term_id.id,
+                'default_currency_id':self.currency_id.id,
+                'default_include_tax':self.include_tax,
+                'default_date_ship':self.date_ship,
+                'default_date_finish':self.date_finish,
+                'default_date_invoice':self.date_invoice,
+                'default_date':self.date,
+                'default_date_out_in':self.date_out_in,
+                'default_bill_id':self.bill_id.id,
+                'default_gongsi_id':self.gongsi_id.id,
+                'default_yjzy_payment_term_id':self.payment_term_id.id,
+                'default_yjzy_currency_id':self.currency_id.id,
+            }
+        }
+    def open_supplier_refund_id(self):
+        form_view = self.env.ref('yjzy_extend.view_account_supplier_invoice_new_form')
+        print('test',self.payment_term_id,self.currency_id)
+        return {
+            'type': 'ir.actions.act_window',
+            'view_mode': 'form',
+            'res_model': 'account.invoice',
+            'views': [(form_view.id, 'form')],
+            'target': 'current',
+            'context': {
+                'default_yjzy_invoice_id': self.id,  # [line.id for line in self],
+                'default_partner_id': self.partner_id.id,
+                'default_type': 'in_refund',
+                'only_ref':1,
+                'type': 'in_refund',
+                'journal_type': 'purchase',
+                'default_yjzy_type': 'purchase',
                 'is_yjzy_invoice': True,
                 'yjzy_invoice_number': self.number,
                 'default_is_yjzy_invoice': True,
@@ -571,26 +675,35 @@ class account_invoice(models.Model):
         search_domain = list(domain)
         return self.env['account.invoice.stage'].search(search_domain, order=order, limit=1)
 
+    def stage_action_draft(self):
+        stage_id = self._stage_find(domain=[('code', '=', '001')])
+        self.stage_id = stage_id.id
+        self.action_invoice_draft()
     def stage_action_submit(self):
         stage_id = self._stage_find(domain=[('code', '=', '002')])
-        self.action_invoice_cancel()
-        self.action_invoice_draft()
-        self.action_invoice_open()
         self.stage_id = stage_id.id
     def stage_action_approved(self):
         stage_id = self._stage_find(domain=[('code', '=', '003')])
-        self.action_invoice_open()
         self.stage_id = stage_id.id
     def stage_action_done(self):
         stage_id = self._stage_find(domain=[('code', '=', '004')])
         self.stage_id = stage_id.id
+        self.action_invoice_open()
+        self.invoice_assign_outstanding_credit()
     def stage_action_refuse(self):
         stage_id = self._stage_find(domain=[('code', '=', '005')])
         self.stage_id = stage_id.id
+        if self.state=='open':
+            self.action_invoice_cancel()
+            self.action_invoice_draft()
     def stage_action_cancel(self):
-        stage_id = self._stage_find(domain=[('code', '=', '001')])
+        stage_id = self._stage_find(domain=[('code', '=', '006')])
         self.stage_id = stage_id.id
-        self.invoice_line_ids_add.unlink()
+        if self.state =='paid':
+            raise Warning('已经支付的合同不允许取消')
+        if self.state=='open':
+            self.action_invoice_cancel()
+
 
 
     def open_invoice_extra(self):
@@ -785,15 +898,54 @@ class account_invoice_line(models.Model):
         for one in self:
             one.so_id = one.sale_line_ids and one.sale_line_ids[0].order_id or False
 
-    item_id = fields.Many2one('invoice.hs_name.item', 'Item')
+    @api.depends('price_unit')
+    def _compute_amount(self):
+        for one in self:
+            price_unit = one.price_unit
+            price_total = one.price_total
+            if one.invoice_id.type in ['in_refund','out_refund']:
+                yjzy_price_unit = -price_unit
 
+            else:
+                yjzy_price_unit = price_unit
+            return yjzy_price_unit
+
+    def _compute_yjzy_invoice(self):
+        for one in self:
+            print('yjzy_invoice',one.invoice_id.yjzy_invoice_id)
+            if one.invoice_id.yjzy_invoice_id:
+                one.yjzy_invoice_id = one.invoice_id.yjzy_invoice_id
+            else:
+                one.yjzy_invoice_id = one.invoice_id
+    @api.depends('yjzy_price_unit','quantity')
+    def _compute_price_total(self):
+        for one in self:
+            yjzy_price_total = one.yjzy_price_unit *  one.quantity
+            one.yjzy_price_total = yjzy_price_total
+
+    item_id = fields.Many2one('invoice.hs_name.item', 'Item')
     so_id = fields.Many2one('sale.order', u'销售订单', compute=_compute_so)
     is_manual = fields.Boolean('是否手动添加', default=False)
+    # yjzy_price_unit = fields.Float('新单价',compute=_compute_amount)
+    # yjzy_price_total = fields.Float('新总价',compute=_compute_amount)
+    yjzy_invoice_id = fields.Many2one('account.invoice',u'原始账单',compute=_compute_yjzy_invoice)
+    yjzy_price_unit = fields.Float('新单价',default=lambda self: self._compute_amount())
+    yjzy_price_total = fields.Monetary('新总价',compute=_compute_price_total,store= True,currency_field='currency_id')
+    #先默认将单价绝对值填入原生单价，之后通过invoice的onchange来决定最终的单价是正数还是负数
+    @api.onchange('yjzy_price_unit')
+    def onchange_yjzy_price_unit(self):
+        self.price_unit = abs(self.yjzy_price_unit)
+
+
+
+    def compute_yjzy_price_unit(self):
+        for one in self:
+            print('price_unit', one.price_unit)
+            one.yjzy_price_unit = one.price_unit
 
 
 class invoice_hs_name_item(models.Model):
     _name = 'invoice.hs_name.item'
-
     def compute_info(self):
         for one in self:
             one.product_id = one.invoice_line_ids.sorted(key=lambda x: x.quantity, reverse=True)[0].product_id

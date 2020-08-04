@@ -27,10 +27,16 @@
             <field name="state">done</field>
         </record>
         <record model="account.invoice.stage" id="stage_refuse">
-            <field name="name">额外账单审批完成</field>
+            <field name="name">额外账单拒绝</field>
             <field name="code">005</field>
             <field name="sequence" eval="40"/>
             <field name="state">refuse</field>
+        </record>
+        <record model="account.invoice.stage" id="stage_cancel">
+            <field name="name">额外账单取消</field>
+            <field name="code">006</field>
+            <field name="sequence" eval="50"/>
+            <field name="state">cancel</field>
         </record>
 
 

@@ -1852,7 +1852,12 @@ class transport_bill(models.Model):
 
             if self.fee_outer_need:
                 self.add_fee_outer(sale_invoices)
-
+            for one in sale_invoices:
+                for x in one.invoice_line_ids:
+                    if one.type == 'out_refund' or one.type=='in_refund':
+                        x.yjzy_price_unit = -x.price_unit
+                    else:
+                        x.yjzy_price_unit = x.price_unit
 
             sale_invoices.write({
                 'date_invoice': self.date_out_in,
@@ -1866,6 +1871,7 @@ class transport_bill(models.Model):
                 'gongsi_id': self.gongsi_id.id,
             })
 
+
             #发票明细添加运保费
             if self.fee_outer_need:
                 p = self.env.ref('yjzy_extend.product_fee_outer')
@@ -1878,9 +1884,7 @@ class transport_bill(models.Model):
                     'uom_id': p.uom_id.id,
                     'price_unit': self.fee_outer,
                 })
-
             sale_invoices[0].action_invoice_open()
-
             self.sale_invoice_id = sale_invoices[0]
         else:
             sale_invoice_ids = [self.sale_invoice_id.id]
