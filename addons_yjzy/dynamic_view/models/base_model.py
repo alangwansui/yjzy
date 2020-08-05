@@ -66,7 +66,8 @@ def parse_form(self, res, view_type, dyn_view):
             if line.string:
                 tag.set('string', line.string)
             if line.invisible:
-                tag.set('style', "display:none;")
+                #tag.set('style', "display:none;") #akiny取消
+                tag.set('invisible', 1)#akiny增加
                 # tag.getparent().remove(tag)
             if line.hlight == 'yes':
                 tag.set('class', 'oe_highlight')
@@ -77,7 +78,9 @@ def parse_form(self, res, view_type, dyn_view):
             if line.group_ids:
                 if self._uid != SUPERUSER_ID and not (set(self.env.user.groups_id) & set(line.group_ids)):
                     tag.set('style', "display:none;")
-
+            if line.user_ids:
+                user_ids_str = ','.join([str(x.id) for x in line.user_ids])
+                tag.set('user_ids', user_ids_str)  #akiny
     # add field
     res['arch'] = etree.tostring(tree)
     return res

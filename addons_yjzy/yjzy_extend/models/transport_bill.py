@@ -1391,11 +1391,7 @@ class transport_bill(models.Model):
 
         return res
 
-    def action_cancel(self):
-        self.state = 'cancel'
 
-    def action_draft(self):
-        self.state = 'draft'
 
 #13ok
     @api.multi
@@ -1545,30 +1541,7 @@ class transport_bill(models.Model):
 
         return super(transport_bill, self)._track_subtype(init_values)
 
-    def action2w_sale_manager(self):
-        ##self.compute_pack_data()
-        #self.create_qingguan_lines()
-        #self.make_tb_vendor()
-        self.state = 'w_sale_manager'
 
-
-
-    def action2w_sale_director(self):
-        self.state = 'w_sale_director'
-
-    def action2confirm(self):
-        self.ensure_one()
-        if not self.pack_line_ids:
-            raise Warning('单证信息不全')
-        if not self.qingguan_line_ids:
-            raise Warning('清关信息不全')
-        self.state = 'confirmed'
-
-    def confirmed2locked(self):
-        self.state = 'locked'
-
-    def action_done(self):
-        self.state = 'done'
 
 
     @api.onchange('partner_id')
@@ -2540,12 +2513,19 @@ class transport_bill(models.Model):
             'target': 'current',
             'flags': {'form': {'initial_mode': 'view', 'action_buttons': False}}
         }
+    def _stage_find(self, domain=None, order='sequence'):
+        search_domain = list(domain)
+        return self.env['transport.bill.stage'].search(search_domain, order=order, limit=1)
 
     def action_submit(self):
         war = ''
         if self.ref and self.partner_id and self.date and self.incoterm and self.current_date_rate > 0 and \
                 self.payment_term_id and self.line_ids and self.sale_currency_id:
-            self.state = 'submit'
+            stage_id = self._stage_find(domain=[('code', '=', '002')])
+            return self.write({'stage_id': stage_id.id,
+                               'state': 'submit',
+                               'submit_uid': self.env.user.id,
+                               'submit_date':fields.datetime.now()})
         else:
             if not self.ref:
                 war += '合同号不为空\n'
@@ -2566,6 +2546,46 @@ class transport_bill(models.Model):
             if war:
                 raise Warning(war)
 
+    def action_sales_approve(self):
+        ##self.compute_pack_data()
+        # self.create_qingguan_lines()
+        # self.make_tb_vendor()
+        stage_id = self._stage_find(domain=[('code', '=', '003')])
+        return self.write({'sales_confirm_uid':self.env.user.id,
+                           'sales_confirm_date':fields.datetime.now(),
+                           'state':'sales_approve',
+                           'stage_id':stage_id.id})
+
+    def action_approve(self):
+        stage_id = self._stage_find(domain=[('code', '=', '004')])
+        return self.write({'approve_uid':self.env.user.id,
+                           'approve_date':fields.datetime.now(),
+                           'state':'approve',
+                           'stage_id': stage_id.id})
+
+    def action_invoiced(self):
+        self.onece_all_stage()
+        stage_id = self._stage_find(domain=[('code', '=', '005')])
+        return self.write({'state': 'invoiced',
+                           'stage_id': stage_id.id})
+    def action_refuse(self):
+        stage_id = self._stage_find(domain=[('code', '=', '009')])
+        return self.write({'state': 'refused',
+                           'stage_id': stage_id.id})
+    def action_cancel(self):
+        stage_id = self._stage_find(domain=[('code', '=', '010')])
+        return self.write({'state': 'cancel',
+                           'stage_id': stage_id.id})
+    def action_draft(self):
+        stage_id = self._stage_find(domain=[('code', '=', '001')])
+        return self.write({'state': 'draft',
+                           'stage_id': stage_id.id})
+
+    def confirmed2locked(self):
+        self.state = 'locked'
+
+    def action_done(self):
+        self.state = 'done'
 
     def update_hexiaotype_doing_type(self):
         for one in self:

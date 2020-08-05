@@ -77,6 +77,7 @@
                                         <field name="hlight"/>
                                         <field name="confirm_text"/>
                                         <field name="group_ids" widget="many2many_tags"/>
+                                        <field name="user_ids" widget="many2many_tags"/>
                                     </tree>
                                 </field>
                             </page>

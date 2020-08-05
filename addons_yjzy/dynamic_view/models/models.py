@@ -58,7 +58,7 @@ class dynamic_view_button(models.Model):
 
     confirm_text = fields.Text(u'Pop Confirm')
     group_ids = fields.Many2many('res.groups', 'ref_vb_group', 'gid', 'bid', u'Groups')
-
+    user_ids = fields.Many2many('res.users', 'ref_vb_user', 'fid', 'tid', 'Users')
     @api.depends('group_ids')
     def _compute_group_str(self):
         data_obj = self.env['ir.model.data']
