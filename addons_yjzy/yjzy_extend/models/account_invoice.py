@@ -372,6 +372,20 @@ class account_invoice(models.Model):
             'target': 'current',
             'domain':[('yjzy_invoice_id','=',self.id)]
         }
+    def open_invoice_ids_new(self):
+        tree_view = self.env.ref('yjzy_extend.invoice_new_1_tree')
+        form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form')
+        self.ensure_one()
+        return {
+            'name': u'额外账单',
+            'view_type': 'form',
+            'type': 'ir.actions.act_window',
+            'view_mode': 'tree,form',
+            'res_model': 'account.invoice',
+            'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
+            'target': 'new',
+            'domain':[('yjzy_invoice_id','=',self.id)]
+        }
 
 
     def create_refund_id(self):
@@ -410,8 +424,8 @@ class account_invoice(models.Model):
 
     @api.onchange('invoice_line_ids')
     def onchange_payment_currency(self):
-        self.payment_term_id = self.yjzy_payment_term_id
-        self.currency_id = self.yjzy_currency_id
+        # self.payment_term_id = self.yjzy_payment_term_id
+        # self.currency_id = self.yjzy_currency_id
         yjzy_type = self.yjzy_type
         if yjzy_type == 'sale' or yjzy_type == 'back_tax':
             if self.yjzy_price_total < 0:
@@ -431,6 +445,14 @@ class account_invoice(models.Model):
                 self.type = 'in_invoice'
                 for x in self.invoice_line_ids:
                     x.price_unit = x.yjzy_price_unit
+
+    @api.onchange('yjzy_payment_term_id')
+    def onchange_payment_term(self):
+        self.payment_term_id = self.yjzy_payment_term_id
+
+    @api.onchange('yjzy_currency_id')
+    def onchange_currency_id(self):
+        self.currency_id = self.yjzy_currency_id
 
     def open_customer_invoice_id(self):
         form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form')
@@ -664,12 +686,7 @@ class account_invoice(models.Model):
     #         'flags': {'form': {'initial_mode': 'view','action_buttons': False}}
     #     }
 
-    @api.onchange('invoice_line_ids')
-    def onchange_invoice_line_ids(self):
-        if self.amount_total <0 :
-            self.type = 'out_refund'
-        else:
-            self.type = 'out_invoice'
+
 
     def _stage_find(self, domain=None, order='sequence'):
         search_domain = list(domain)

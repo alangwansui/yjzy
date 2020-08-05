@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <odoo>
     <data>
+        <!--额外账单审批-->
         <record model="account.invoice.stage" id="stage_draft">
             <field name="name">没有额外账单</field>
             <field name="code">001</field>
@@ -20,7 +21,7 @@
             <field name="sequence" eval="30"/>
             <field name="state">approved</field>
         </record>
-       <record model="account.invoice.stage" id="stage_done">
+        <record model="account.invoice.stage" id="stage_done">
             <field name="name">额外账单审批完成</field>
             <field name="code">004</field>
             <field name="sequence" eval="40"/>
@@ -39,7 +40,67 @@
             <field name="state">cancel</field>
         </record>
 
-
+        <!--出运合同审批-->
+        <record model="transport.bill.stage" id="stage_tb_draft">
+            <field name="name">草稿</field>
+            <field name="code">001</field>
+            <field name="sequence" eval="10"/>
+            <field name="state">draft</field>
+        </record>
+        <record model="transport.bill.stage" id="stage_tb_submit">
+            <field name="name">待责任人审批</field>
+            <field name="code">002</field>
+            <field name="sequence" eval="20"/>
+            <field name="state">submit</field>
+        </record>
+        <record model="transport.bill.stage" id="stage_tb_sales_approve">
+            <field name="name">待合规审批</field>
+            <field name="code">003</field>
+            <field name="sequence" eval="30"/>
+            <field name="state">sales_approve</field>
+        </record>
+        <record model="transport.bill.stage" id="stage_tb_approve">
+            <field name="name">出运日期待确认合同</field>
+            <field name="code">004</field>
+            <field name="sequence" eval="40"/>
+            <field name="state">approve</field>
+        </record>
+        <record model="transport.bill.stage" id="stage_tb_invoiced">
+            <field name="name">出运日期已确认合同</field>
+            <field name="code">005</field>
+            <field name="sequence" eval="50"/>
+            <field name="state">invoiced</field>
+        </record>
+        <record model="transport.bill.stage" id="stage_tb_abnormal">
+            <field name="name">异常待核销</field>
+            <field name="code">006</field>
+            <field name="sequence" eval="60"/>
+            <field name="state">abnormal</field>
+        </record>
+        <record model="transport.bill.stage" id="stage_tb_verifying">
+            <field name="name">正常待核销</field>
+            <field name="code">007</field>
+            <field name="sequence" eval="70"/>
+            <field name="state">verifying</field>
+        </record>
+        <record model="transport.bill.stage" id="stage_tb_done">
+            <field name="name">已核销</field>
+            <field name="code">008</field>
+            <field name="sequence" eval="80"/>
+            <field name="state">done</field>
+        </record>
+        <record model="transport.bill.stage" id="stage_tb_refused">
+            <field name="name">拒绝</field>
+            <field name="code">009</field>
+            <field name="sequence" eval="90"/>
+            <field name="state">refused</field>
+        </record>
+        <record model="transport.bill.stage" id="stage_tb_cancel">
+            <field name="name">取消</field>
+            <field name="code">010</field>
+            <field name="sequence" eval="91"/>
+            <field name="state">cancel</field>
+        </record>
 
     </data>
 </odoo>

@@ -57,7 +57,7 @@ class account_payment(models.Model):
             one.count_yfsqd = len(self.yfsqd_ids)
 
             one.count_yshx = len(self.yshx_ids)
-            one.count_ptskrl = len(self.ptskrl_ids)
+            # one.count_ptskrl = len(self.ptskrl_ids)
             one.count_fybg = len(self.fybg_ids)
 
 
@@ -86,23 +86,28 @@ class account_payment(models.Model):
         for one in self:
             balance = 0
             all_lines = one.aml_ids
-
             if one.sfk_type == 'rcskd':
                 lines = all_lines.filtered(lambda x: x.account_id.code == '220301')
                 if one.currency_id.name == 'CNY':
                     balance = sum([x.credit - x.debit for x in lines])
                 else:
                     balance = sum([-1 * x.amount_currency for x in lines])
-
-
             if one.sfk_type == 'rcfkd':
                 lines = all_lines.filtered(lambda x: x.account_id.code == '112301')
                 if one.currency_id.name == 'CNY':
                     balance = sum([x.debit - x.credit for x in lines])
                 else:
                     balance = sum([x.amount_currency for x in lines])
-
             one.balance = balance
+            if one.x_wkf_state:
+                if balance == 0 and one.x_wkf_state == '159':
+                 one.x_wkf_state = '163'
+                # elif balance !=0 and one.x_wkf_state == '163':
+                #  one.x_wkf_state = '159'
+            else:
+                pass
+
+
 
     def _default_name(self):
         sfk_type = self.env.context.get('default_sfk_type')
@@ -173,6 +178,7 @@ class account_payment(models.Model):
 
 
     #新增
+    payment_comments = fields.Text(u'收付款备注')
     fault_comments = fields.Text('异常备注')
     display_name = fields.Char(u'显示名称', compute=compute_display_name, store=True)
     advance_reconcile_order_line_ids = fields.One2many('account.reconcile.order.line', 'yjzy_payment_id', string='预收认领明细',domain=[('amount_advance_org','>',0),('order_id.state','=','done')])
@@ -194,7 +200,7 @@ class account_payment(models.Model):
     #13ok
     name = fields.Char(u'编号', default=lambda self: self._default_name())
     sfk_type = fields.Selection(sfk_type, u'收付类型')
-    gongsi_id = fields.Many2one('gongsi', '内部公司')
+    gongsi_id = fields.Many2one('gongsi', '内部公司',default=lambda self:self.env.user.company_id.id)
     #----
     state = fields.Selection(selection_add=[('approved', u'已审批')])
     payment_type = fields.Selection(selection_add=[('claim_in', u'收款认领'), ('claim_out', u'付款认领')])
@@ -233,7 +239,7 @@ class account_payment(models.Model):
     yfsqd_ids = fields.One2many('account.payment', 'yjzy_payment_id', u'预付申请单', domain=[('sfk_type','=','yfsqd')])
 
     yshx_ids = fields.One2many('account.reconcile.order', 'yjzy_payment_id', u'应收核销单')
-    ptskrl_ids = fields.One2many('yjzy.account.payment', 'yjzy_payment_id', u'普通收款认领单')
+    #ptskrl_ids = fields.One2many('yjzy.account.payment', 'yjzy_payment_id', u'普通收款认领单')
     fybg_ids = fields.One2many('hr.expense.sheet', 'payment_id', u'费用报告')
     expense_ids = fields.One2many('hr.expense', 'yjzy_payment_id',  u'费用明细')
     back_tax_invoice_ids = fields.Many2many('account.invoice',   string=u'退税发票')
@@ -242,7 +248,7 @@ class account_payment(models.Model):
     count_yfsqd = fields.Integer(u'预付申请单数量', compute=compute_count)
 
     count_yshx = fields.Integer(u'应收核销单数量', compute=compute_count)
-    count_ptskrl = fields.Integer(u'普通收款认领单数量', compute=compute_count)
+    #count_ptskrl = fields.Integer(u'普通收款认领单数量', compute=compute_count)
     count_fybg = fields.Integer(u'费用报告数量', compute=compute_count)
 
     is_editable = fields.Boolean(u'可编辑')
@@ -255,6 +261,11 @@ class account_payment(models.Model):
 
     payment_date_confirm = fields.Datetime('付款确认时间') ##akiny 付款确认时间
 
+    def judge_partner(self):
+        if self.partner_id.name == '未定义' and self.sfk_type not in ['rcskd','nbzz','jiehui']:
+            raise Warning('合作伙伴不允许未定义！')
+        else:
+            pass
 
     def open_reconcile_order_line(self):
         self.ensure_one()
@@ -346,7 +357,7 @@ class account_payment(models.Model):
 
         return res
 
-    @api.onchange('ysrld_ids', 'yshx_ids', 'ptskrl_ids', 'fybg_ids', 'sfk_type')
+    @api.onchange('ysrld_ids', 'yshx_ids',  'fybg_ids', 'sfk_type')
     def onchange_select_lines(self):
         print('==',self.sfk_type)
         if self.sfk_type == 'rcfkd':
@@ -490,22 +501,36 @@ class account_payment(models.Model):
             'context': {'default_payment_id': self.id},
         }
 
+    def open_yushourenling(self):
+        form_view = self.env.ref('yjzy_extend.view_ysrld_form')
+        tree_view = self.env.ref('yjzy_extend.view_ysrld_tree')
+        return {
+            'name': u'预收认领单',
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'res_model': 'account.payment',
+            'views': [(tree_view.id, 'tree'),(form_view.id,'form')],
+            'domain': [('yjzy_payment_id', '=', self.id)],
+            'context': {'show_shoukuan': True, 'default_sfk_type': 'ysrld', 'default_payment_type': 'inbound', 'default_be_renling': True, 'default_advance_ok': True, 'default_partner_type': 'customer', 'default_yjzy_payment_id': self.id},
+        }
     def open_yufurenling(self):
+        form_view = self.env.ref('yjzy_extend.view_yfsqd_form')
+        tree_view = self.env.ref('yjzy_extend.view_yfsqd_tree')
         return {
             'name': u'预付认领单',
             'type': 'ir.actions.act_window',
             'view_type': 'form',
             'view_mode': 'tree,form',
             'res_model': 'account.payment',
+            'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
             'domain': [('yjzy_payment_id', '=', self.id)],
-            'context': {'default_payment_type': 'outbound', 'default_partner_type': 'supplier', 'default_yjzy_payment_id': self.id},
+            'context': {'show_shoukuan': True, 'default_sfk_type': 'yfsqd', 'default_payment_type': 'outbound', 'default_be_renling': True, 'default_advance_ok': True, 'default_partner_type': 'supplier','default_yjzy_payment_id': self.id},
         }
 
     def open_yingfuhexiao(self):
-
         form_view = self.env.ref('yjzy_extend.account_reconcile_order2_form_view')
         tree_view = self.env.ref('yjzy_extend.account_reconcile_order2_tree_view')
-
         return {
             'name': u'应付款核销单',
             'type': 'ir.actions.act_window',

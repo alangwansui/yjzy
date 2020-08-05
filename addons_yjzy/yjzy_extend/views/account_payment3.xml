@@ -99,9 +99,7 @@
                         <page string="应收核销单">
                             <field name="yshx_ids" widget="many2many"/>
                         </page>
-                        <page string="普通收款认领单">
-                            <field name="ptskrl_ids" widget="many2many"/>
-                        </page>
+
                         <page string="费用报告">
                             <field name="fybg_ids" widget="many2many"/>
                         </page>

@@ -15,6 +15,30 @@ Stage_Status = [
 ]
 Stage_Status_Default = 'draft'
 
+Transport_Selection = [('cancel', u'取消'),
+                       ('refused', u'已拒绝'),
+                       ('draft', u'草稿'),
+                       ('submit', u'待责任人审批'), ('sales_approve', u'待合规审批'),
+                       ('approve', u'合规已审批'), ('delivered', u'发货完成'),
+                       ('invoiced', u'账单已确认'), ('locked', u'锁定'),('abnormal',u'异常待核销'),
+                       ('verifying', u'待核销'),
+                       ('done', u'已核销'), ('paid', '已收款'), ('edit', u'可修改')]
+
+class Stage(models.Model):
+
+    _name = "transport.bill.stage"
+    _description = "Transport Stage"
+    _order = 'sequence'
+
+    name = fields.Char('Stage Name', translate=True, required=True)
+    code = fields.Char('code')
+    sequence = fields.Integer(help="Used to order the note stages", default=1)
+    state = fields.Selection(Transport_Selection, 'State', default=Transport_Selection[0][0]) #track_visibility='onchange',
+    fold = fields.Boolean('Folded by Default')
+    # _sql_constraints = [
+    #     ('name_code', 'unique(code)', u"编码不能重复"),
+    # ]
+    user_ids = fields.Many2many('res.users', 'ref_partner_users', 'fid', 'tid', 'Users') #可以进行判断也可以结合自定义视图模块使用
 
 class transport_bill(models.Model):
     _name = 'transport.bill'
@@ -603,8 +627,15 @@ class transport_bill(models.Model):
                 date_out_in_first_state = 'done'
             one.date_out_in_first_state = date_out_in_first_state
 
+    @api.model
+    def _default_transport_stage(self):
+        stage = self.env['transport.bill.stage']
+        return stage.search([], limit=1)
     # 货币设置
     #akiny 未加入
+    stage_id = fields.Many2one(
+        'transport.bill.stage',
+        default=_default_transport_stage)
     border_char = fields.Char(u' ',compute=compute_border)
     sale_invoice_total_new = fields.Monetary(u'销售发票金额', compute=sale_invoice_amount, store=True)
     sale_invoice_paid_new = fields.Monetary(u'已收销售发票', compute=sale_invoice_amount, store=True)
@@ -758,16 +789,9 @@ class transport_bill(models.Model):
     locked = fields.Boolean(u'锁定不允许修改')
 
     #13已经添加   730：发货完成即开票完成：合规已审批更新为：出运日期待确认，invoiced更新为：出运日期已确认,交单日期审批完成后就发货并生成和确认发票。
-    state = fields.Selection([('cancel', u'取消'),
-                              ('refused', u'已拒绝'),
-                              ('draft', u'草稿'), ('check', u'检查'),
-                              ('w_sale_manager', u'待批准'),
-                              ('w_sale_director', u'待销售总监'), ('submit', u'待责任人审批'), ('sales_approve', u'待合规审批'),
-                              ('approve', u'合规已审批'), ('confirmed', u'单证已审批'), ('delivered', u'发货完成'),
-                              ('invoiced', u'账单已确认'), ('locked', u'锁定'),('abnormal',u'异常'),
-                              ('verifying', u'待核销'),
-                              ('done', u'完结'), ('paid', '已收款'), ('edit', u'可修改')], '状态', default='draft',
-                             track_visibility='onchange', )
+    state = fields.Selection(Transport_Selection, '状态', default='draft',
+                             track_visibility='onchange')
+
     include_tax = fields.Boolean(u'含税')
     company_currency_id = fields.Many2one('res.currency', string='公司货币', related='company_id.currency_id',
                                           readonly=True)
@@ -992,6 +1016,31 @@ class transport_bill(models.Model):
 
         # if ctx.get('default_open', '') == 'sol':
         #     return self.open_wizard_transport4sol()
+
+    def compute_stage_id(self):
+        if self.state=='draft':
+            self.stage_id =self.env.ref('yjzy_extend.stage_tb_draft').id
+        if self.state == 'submit':
+            self.stage_id = self.env.ref('yjzy_extend.stage_tb_submit').id
+        if self.state == 'sales_approve':
+            self.stage_id = self.env.ref('yjzy_extend.stage_tb_sales_approve').id
+        if self.state == 'approve':
+            self.stage_id = self.env.ref('yjzy_extend.stage_tb_approve').id
+        if self.state == 'invoiced':
+            self.stage_id = self.env.ref('yjzy_extend.stage_tb_invoiced').id
+        if self.state == 'abnormal':
+            self.stage_id = self.env.ref('yjzy_extend.stage_tb_abnormal').id
+        if self.state == 'verifying':
+            self.stage_id = self.env.ref('yjzy_extend.stage_tb_verifying').id
+        if self.state == 'done':
+            self.stage_id = self.env.ref('yjzy_extend.stage_tb_done').id
+        if self.state == 'cancel':
+            self.stage_id = self.env.ref('yjzy_extend.stage_tb_cancel').id
+        if self.state == 'refused':
+            self.stage_id = self.env.ref('yjzy_extend.stage_tb_refused').id
+
+
+
    #akiny 向导
     def edit_line_ids(self):
         self.ensure_one()

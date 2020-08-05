@@ -25,8 +25,6 @@
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
-
-
                         <button class="oe_stat_button" name="button_journal_entries"
                                 string="Journal Items" type="object"
                                 groups="account.group_account_user"
@@ -40,8 +38,6 @@
                                 attrs="{'invisible':[('move_reconciled','=',True)]}" icon="fa-university"/>
 
                         <button name="open_reconcile_account_move_line" class="oe_highlight" string="打开核销分录" type="object"/>
-
-
                         <field name="has_invoices" invisible="1"/>
                         <field name="move_reconciled" invisible="1"/>
                     </div>
@@ -78,9 +74,9 @@
                         <group>
                             <field name="be_renling" invisible="1"/>
                             <field name="advance_ok" label="是否预收" invisible="1"/>
-                            <field name="advance_account_id" label="预收科目" invisible="1"/>
+                            <field name="advance_account_id" label="预收科目"/>
                             <field name="balance" invisible="1"/>
-                            <field name="yjzy_payment_id" string="选择付款单" domain="[('sfk_type', '=', 'rcfkd')]"/>
+                            <field name="yjzy_payment_id" string="选择付款单" domain="[('sfk_type', '=', 'rcskd')]"/>
                             <field name="yjzy_payment_currency_id" string="货币"/>
                             <field name="yjzy_payment_balance" string="付款单余额"/>
                             <field name="payment_date" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
@@ -95,9 +91,7 @@
                         <page string="应收核销单">
                             <field name="yshx_ids" widget="many2many"/>
                         </page>
-                        <page string="普通收款认领单">
-                            <field name="ptskrl_ids" widget="many2many"/>
-                        </page>
+
                         <page string="费用报告">
                             <field name="fybg_ids" widget="many2many"/>
                         </page>
