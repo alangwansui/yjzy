@@ -66,8 +66,8 @@ def parse_form(self, res, view_type, dyn_view):
             if line.string:
                 tag.set('string', line.string)
             if line.invisible:
-                #tag.set('style', "display:none;") #akiny取消
-                tag.set('invisible', 1)#akiny增加
+                tag.set('style', "display:none;") #akiny取消
+               # tag.set('invisible', 1)#akiny增加
                 # tag.getparent().remove(tag)
             if line.hlight == 'yes':
                 tag.set('class', 'oe_highlight')
