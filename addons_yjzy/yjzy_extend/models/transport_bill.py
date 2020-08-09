@@ -790,7 +790,7 @@ class transport_bill(models.Model):
     locked = fields.Boolean(u'锁定不允许修改')
 
     #13已经添加   730：发货完成即开票完成：合规已审批更新为：出运日期待确认，invoiced更新为：出运日期已确认,交单日期审批完成后就发货并生成和确认发票。
-    state = fields.Selection(Transport_Selection, '状态', default='draft',
+    state = fields.Selection(Transport_Selection, '状态', default='draft', related='stage_id.state',
                              track_visibility='onchange')
 
     include_tax = fields.Boolean(u'含税')
