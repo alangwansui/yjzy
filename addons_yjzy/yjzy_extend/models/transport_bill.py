@@ -2544,7 +2544,7 @@ class transport_bill(models.Model):
                     self.payment_term_id and self.line_ids and self.sale_currency_id:
                 stage_id = self._stage_find(domain=[('code', '=', '002')])
                 return self.write({'stage_id': stage_id.id,
-                                   'state': 'submit',
+                                   #'state': 'submit',
                                    'submit_uid': self.env.user.id,
                                    'submit_date':fields.datetime.now()})
             else:
@@ -2582,7 +2582,7 @@ class transport_bill(models.Model):
         else:
             self.write({'sales_confirm_uid':self.env.user.id,
                                'sales_confirm_date':fields.datetime.now(),
-                               'state':'sales_approve',
+                               #'state':'sales_approve',
                                'stage_id':stage_id.id})
 
     def action_approve(self):
@@ -2595,13 +2595,13 @@ class transport_bill(models.Model):
         else:
             self.write({'approve_uid':self.env.user.id,
                            'approve_date':fields.datetime.now(),
-                           'state':'approve',
+                           #'state':'approve',
                            'stage_id': stage_id.id})
   #akiny
     def action_invoiced(self):
         self.onece_all_stage()
         stage_id = self._stage_find(domain=[('code', '=', '005')])
-        return self.write({'state': 'invoiced',
+        return self.write({#'state': 'invoiced',
                            'stage_id': stage_id.id})
 
     #阶段审批典型案例
@@ -2623,7 +2623,7 @@ class transport_bill(models.Model):
                            'confirmed_date':False,
                            'invoiced_uid':False,
                            'invoiced_date':False,
-                           'state': 'refused',
+                           #'state': 'refused',
                            'stage_id': stage_id.id,})
         for tb in self:
             tb.message_post_with_view('yjzy_extend.transport_template_refuse_reason',
@@ -2643,7 +2643,7 @@ class transport_bill(models.Model):
                            'confirmed_date':False,
                            'invoiced_uid':False,
                            'invoiced_date':False,
-                           'state': 'cancel',
+                           #'state': 'cancel',
                            'stage_id': stage_id.id})
     def action_draft(self):
         stage_id = self._stage_find(domain=[('code', '=', '001')])
@@ -2651,7 +2651,7 @@ class transport_bill(models.Model):
             'type': 'transport',
             'tb_id': self.id,
         })
-        self.write({'state': 'draft',
+        self.write({#'state': 'draft',
                     'stage_id': stage_id.id})
 
     def confirmed2locked(self):
@@ -2683,6 +2683,7 @@ class transport_bill(models.Model):
         for one in self:
             print('---', one)
             hexiao_type = False
+            stage_id = one.stage_id
             state = one.state
             today = datetime.now()
             date_out_in = one.date_out_in
@@ -2691,16 +2692,20 @@ class transport_bill(models.Model):
                 if (one.sale_invoice_balance_new != 0 or one.purchase_invoice_balance_new != 0 or one.back_tax_invoice_balance_new != 0) and \
                         date_out_in and date_out_in < (today - relativedelta(days=180)).strftime('%Y-%m-%d 00:00:00'):
                     hexiao_type = 'abnormal'
-                    state = 'abnormal'
+                    stage_id = self._stage_find(domain=[('code', '=', '006')])
+                    #state = 'abnormal'
                 if one.sale_invoice_balance_new == 0 and one.purchase_invoice_balance_new == 0 and one.back_tax_invoice_balance_new == 0:
                     if hexiao_type == 'abnormal':
                         hexiao_type = 'abnormal'
-                        state = 'verifying'
+                        stage_id = self._stage_find(domain=[('code', '=', '007')])
+                        #state = 'verifying'
                     else:
                         hexiao_type = 'write_off'
-                        state = 'verifying'
+                        stage_id = self._stage_find(domain=[('code', '=', '007')])
+                        #state = 'verifying'
                 one.hexiao_type = hexiao_type
-                one.state = state
+                #one.state = state
+                one.stage_id = stage_id
 
     #自动计算出运开票状态和自动发票过账
     def auto_invoice_open(self):
