@@ -32,7 +32,7 @@
                         <filter string="Stage状态核销分组" name="group_by_state_hexiao" domain="[]" context="{'group_by':['stage_id','hexiao_type']}"/>
                         <filter string="进仓和其他时间分组" name="group_date_all_state" domain="[]" context="{'group_by':['date_out_in_first_state','date_all_state']}"/>
                         <filter string="时间状态分组" name="group_date_all_state_1" domain="[]" context="{'group_by':['date_all_state']}"/>
-                        <filter string="时间核销综合分组" name="group_by_state_type" domain="[]" context="{'group_by':['state','date_all_state']}"/>
+                        <filter string="时间核销综合分组" name="group_by_state_type" domain="[]" context="{'group_by':['stage_id','date_all_state']}"/>
                         <filter string="Stage分组" name="group_by_stage" domain="[]" context="{'group_by':['stage_id']}"/>
                         <filter string="应收付状态" name="group_by_invoice_paid_state" domain="[]" context="{'group_by':['invoice_paid_state']}"/>
                         <filter string="状态" name="group_state" domain="[]" context="{'group_by':'stage_id'}"/>
