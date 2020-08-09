@@ -201,7 +201,9 @@
                         <button string="添加销售明细"  type="object" name="open_wizard_transport4sol" confirm="重新添加销售明细，将会清除所有的清关和报关资料！是否继续"
                                 attrs="{'invisible':['|',('operation_wizard','in',['first','second','third','fourth','fifth']),('state','not in',['draft'])]}"
                                 class="oe_highlight"/>
-                        <field name="stage_id" widget="statusbar" clickable="0" statusbar_visible=" "/>
+
+                        <field name="state"  widget="statusbar" statusbar_visible=" " />
+                        <field name="is_editable" widget="boolean_toggle" groups="sales_team.group_manager"/>
                     </header>
                     <header groups="base.group_system">
 
@@ -264,8 +266,8 @@
                         <button string="更新退税率" type="object" name="update_back_tax" class="oe_highlight"
                                 groups="base.group_system"/>
 
-                        <field name="state"  widget="statusbar" statusbar_visible=" "  groups="base.group_system"/>
-                        <field name="is_editable" widget="boolean_toggle" groups="	sales_team.group_manager"/>
+                        <field name="stage_id" widget="statusbar" clickable="0" statusbar_visible=" " />
+
                     </header>
 
 
