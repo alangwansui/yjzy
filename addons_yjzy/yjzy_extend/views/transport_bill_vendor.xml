@@ -24,9 +24,9 @@
                     </header>
                     <sheet>
                     <group>
-                        <field name="tb_id"/>
-                        <field name="partner_id"/>
-                        <field name="contact_id" domain="[('parent_id','=', partner_id)]"/>
+                        <field name="tb_id" options="{'no_open':1,'no_create':1}"/>
+                        <field name="partner_id" options="{'no_open':1,'no_create':1}" string="供应商"/>
+                        <field name="contact_id" domain="[('parent_id','=', partner_id)]" options="{'no_open':1,'no_create':1}"/>
                         <field name="delivery_type"/>
                         <field name="delivery_note"/>
                         <field name="delivery_type_c_info"/>
@@ -43,18 +43,11 @@
                                     <field name="max_qty" string="箱数"/>
                                     <field name="net_weight"/>
                                     <field name="gross_weight"/>
-
                                     <field name="tuopan_weight"/>
                                     <field name="shiji_weight"/>
-
-
-
                                     <field name="volume" string="体积"/>
                                     <field name="tuopan_volume"/>
                                     <field name="shiji_volume"/>
-
-
-
                                     <field name="po_amount"/>
                                 </tree>
                             </field>

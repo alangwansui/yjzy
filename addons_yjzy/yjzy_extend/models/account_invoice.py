@@ -5,7 +5,13 @@ from odoo.tools import DEFAULT_SERVER_DATE_FORMAT as DF
 from odoo.addons import decimal_precision as dp
 from odoo.exceptions import Warning,UserError
 
-Invoice_Selection = [('draft',u'无额外账单'),('submit',u'待合规审批'),('approved',u'待总经理审批'),('done',u'额外账单审批完成'),('refuse',u'拒绝'),('cancel',u'取消')]
+Invoice_Selection = [('draft',u'草稿'),
+                     ('submit',u'待合规审批'),
+                     ('approved',u'待总经理审批'),
+                     ('done',u'额外账单审批完成'),
+                     ('refuse',u'拒绝'),
+                     ('cancel',u'取消'),
+                     ('invoice_origin',u'原始账单')]
 
 class Stage(models.Model):
 
@@ -21,7 +27,8 @@ class Stage(models.Model):
     # _sql_constraints = [
     #     ('name_code', 'unique(code)', u"编码不能重复"),
     # ]
-    user_ids = fields.Many2many('res.users', 'ref_partner_users', 'fid', 'tid', 'Users') #可以进行判断也可以结合自定义视图模块使用
+    user_ids = fields.Many2many('res.users', 'ref_invoice_users', 'fid', 'tid', 'Users') #可以进行判断也可以结合自定义视图模块使用
+    group_ids = fields.Many2many('res.groups', 'ref_invoice_group', 'gid', 'bid', u'Groups')
 
 class account_invoice(models.Model):
     _inherit = 'account.invoice'
@@ -165,7 +172,7 @@ class account_invoice(models.Model):
     @api.model
     def _default_invoice_stage(self):
         stage = self.env['account.invoice.stage']
-        return stage.search([], limit=1)
+        return stage.search([('code','=','001')], limit=1)
     def _compute_count(self):
         for one in self:
             one.yjzy_invoice_count = len(one.yjzy_invoice_ids)
@@ -282,6 +289,18 @@ class account_invoice(models.Model):
     yjzy_invoice_line_ids = fields.One2many('account.invoice.line','yjzy_invoice_id',u'所有明细')
 
 
+
+    #更新原始账单的时候同时更新额外账单的时间
+    def update_date(self):
+        if self.yjzy_invoice_ids:
+           for one in self.yjzy_invoice_ids:
+                one.date_out_in = one.yjzy_invoice_id.date_out_in
+                one.date_finish = one.yjzy_invoice_id.date_finish
+                one.date_ship = one.yjzy_invoice_id.date_ship
+                one.date = one.yjzy_invoice_id.date
+                one.date_invoice = one.yjzy_invoice_id.date_invoice
+
+
     def _default_name(self):
         is_yjzy_invoice = self.env.context.get('is_yjzy_invoice')
         yjzy_invoice_number = self.env.context.get('yjzy_invoice_number')
@@ -292,6 +311,16 @@ class account_invoice(models.Model):
         else:
             name = yjzy_invoice_number
         return name
+    def compute_name_extra(self):
+        is_yjzy_invoice = self.is_yjzy_invoice
+        yjzy_invoice_number = self.yjzy_invoice_id.number
+        print('is_yjzy_invoice',is_yjzy_invoice,)
+        if is_yjzy_invoice:
+            name_1 = self.env['ir.sequence'].next_by_code('account.invoice.extra')
+            name = '%s/%s' % (yjzy_invoice_number, name_1)
+        else:
+            name = yjzy_invoice_number
+        self.extra_code = name
 
     def create_yshxd(self):
         self.ensure_one()
@@ -426,6 +455,7 @@ class account_invoice(models.Model):
     def onchange_payment_currency(self):
         # self.payment_term_id = self.yjzy_payment_term_id
         # self.currency_id = self.yjzy_currency_id
+
         yjzy_type = self.yjzy_type
         if yjzy_type == 'sale' or yjzy_type == 'back_tax':
             if self.yjzy_price_total < 0:
@@ -488,6 +518,23 @@ class account_invoice(models.Model):
                 'default_yjzy_currency_id':self.currency_id.id,
             }
         }
+    @api.onchange('yjzy_invoice_id')
+    def onchange_yjzy_invoice_id(self):
+        self.compute_name_extra()
+        self.partner_id = self.yjzy_invoice_id.partner_id
+        self.payment_term_id = self.yjzy_invoice_id.payment_term_id
+        self.currency_id = self.yjzy_invoice_id.currency_id
+        self.include_tax = self.yjzy_invoice_id.include_tax
+        self.date_ship = self.yjzy_invoice_id.date_ship
+        self.date_finish = self.yjzy_invoice_id.date_finish
+        self.date_invoice = self.yjzy_invoice_id.date_invoice
+        self.date = self.yjzy_invoice_id.date
+        self.date_out_in = self.yjzy_invoice_id.date_out_in
+        self.bill_id = self.yjzy_invoice_id.bill_id
+        self.gongsi_id = self.yjzy_invoice_id.gongsi_id
+        self.yjzy_payment_term_id = self.yjzy_invoice_id.payment_term_id
+        self.yjzy_currency_id = self.yjzy_invoice_id.currency_id
+
     def open_supplier_invoice_id(self):
         form_view = self.env.ref('yjzy_extend.view_account_supplier_invoice_new_form')
         print('test',self.payment_term_id,self.currency_id)
@@ -691,7 +738,6 @@ class account_invoice(models.Model):
     def _stage_find(self, domain=None, order='sequence'):
         search_domain = list(domain)
         return self.env['account.invoice.stage'].search(search_domain, order=order, limit=1)
-
     def stage_action_draft(self):
         stage_id = self._stage_find(domain=[('code', '=', '001')])
         self.stage_id = stage_id.id
@@ -707,12 +753,18 @@ class account_invoice(models.Model):
         self.stage_id = stage_id.id
         self.action_invoice_open()
         self.invoice_assign_outstanding_credit()
-    def stage_action_refuse(self):
+
+    def stage_action_refuse(self,reason):
         stage_id = self._stage_find(domain=[('code', '=', '005')])
         self.stage_id = stage_id.id
         if self.state=='open':
             self.action_invoice_cancel()
             self.action_invoice_draft()
+        for invoice in self:
+            invoice.message_post_with_view('yjzy_extend.account_invoice_template_refuse_reason',
+                                      values={'reason': reason, 'name': self.tb_contract_code},
+                                      subtype_id=self.env.ref(
+                                          'mail.mt_note').id)  # 定义了留言消息的模板，其他都可以参考，还可以继续参考费用发送计划以及邮件方式
     def stage_action_cancel(self):
         stage_id = self._stage_find(domain=[('code', '=', '006')])
         self.stage_id = stage_id.id

@@ -3,12 +3,11 @@
     <data>
         <!--额外账单审批-->
         <record model="account.invoice.stage" id="stage_draft">
-            <field name="name">没有额外账单</field>
+            <field name="name">草稿</field>
             <field name="code">001</field>
             <field name="sequence" eval="10"/>
             <field name="state">draft</field>
         </record>
-
         <record model="account.invoice.stage" id="stage_submit">
             <field name="name">待合规审批</field>
             <field name="code">002</field>
@@ -30,15 +29,22 @@
         <record model="account.invoice.stage" id="stage_refuse">
             <field name="name">额外账单拒绝</field>
             <field name="code">005</field>
-            <field name="sequence" eval="40"/>
+            <field name="sequence" eval="50"/>
             <field name="state">refuse</field>
         </record>
         <record model="account.invoice.stage" id="stage_cancel">
             <field name="name">额外账单取消</field>
             <field name="code">006</field>
-            <field name="sequence" eval="50"/>
+            <field name="sequence" eval="60"/>
             <field name="state">cancel</field>
         </record>
+        <record model="account.invoice.stage" id="stage_invoice_origin">
+            <field name="name">原始账单</field>
+            <field name="code">007</field>
+            <field name="sequence" eval="70"/>
+            <field name="state">invoice_origin</field>
+        </record>
+
 
         <!--出运合同审批-->
         <record model="transport.bill.stage" id="stage_tb_draft">

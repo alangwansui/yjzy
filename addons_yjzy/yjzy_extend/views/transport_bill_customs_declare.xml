@@ -82,6 +82,9 @@
                         <button string="初始化报关资料" name="make_sale_purchase_collect" confirm="该命令将会初始化报关资料！是否继续？"
                                 class="oe_highlight"
                                 type="object"/>
+                        <button string="初始化托盘重量体积" name="split_tuopan_weight_baoguan" confirm="该命令将会初始化托盘数据！是否继续？"
+                                class="oe_highlight"
+                                type="object"/>
 
                     </header>
                     <header groups="base.group_system">
@@ -104,7 +107,7 @@
                     </header>
                     <sheet>
 
-                        <group col="2">
+                        <group col="3">
                             <group name="general_information">
                                 <field name="operation_wizard" invisible="1"/>
                                 <field name="id" invisible="1"/>
@@ -139,11 +142,9 @@
                                        attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
                                 <field name="tuopan_volume"
                                        attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
-                                <button name="split_tuopan_weight" colspan="2" type="object" string="自动分配托盘"
-                                        attrs="{'invisible': [('is_done_tuopan','=',True)]}"
-                                        class="oe_highlight"/>
+                              </group>
 
-
+ <group>
                                 <field name="name" readonly="1" groups="base.group_system" invisible="1"/>
                                 <field name="locked" groups="base.group_system" invisible="1"/>
                                 <field name="contract_type" groups="base.group_system"
@@ -309,7 +310,7 @@
                                     </tree>
                                 </field>
                             </page>
-                            <page string="统计">
+                            <page string="统计" groups="base.group_system">
 
                                 <group col="3">
                                     <group name="sale_currency">
@@ -330,13 +331,13 @@
                                         <field name="company_currency_id" readonly="1" invisible="1"/>
 
 
-                                        <field name="org_sale_amount" attrs="{'readonly': [('locked','=',True)]}"/>
-                                        <field name="org_real_sale_amount" attrs="{'readonly': [('locked','=',True)]}"/>
+                                        <field name="org_sale_amount" />
+                                        <field name="org_real_sale_amount" />
 
                                         <field name="sale_commission_ratio"
-                                               attrs="{'readonly': [('locked','=',True)]}"/>
-                                        <field name="ciq_amount" attrs="{'readonly': [('locked','=',True)]}"/>
-                                        <field name="no_ciq_amount" attrs="{'readonly': [('locked','=',True)]}"/>
+                                               />
+                                        <field name="ciq_amount" />
+                                        <field name="no_ciq_amount" />
 
                                         <field name="shoukuan_amount"/>
                                         <field name="fukuan_amount"/>

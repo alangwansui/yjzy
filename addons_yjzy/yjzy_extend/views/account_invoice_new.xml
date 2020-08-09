@@ -42,6 +42,8 @@
                     <filter string="Future Activities" name="activities_upcoming_all"
                             domain="[('activity_ids.date_deadline', '&gt;', context_today().strftime('%Y-%m-%d'))                         ]"/>
                     <group expand="0" string="Group By">
+                        <filter name="group_by_stage_id" string="审批状态"
+                                context="{'group_by':'stage_id'}"/>
                         <filter name="group_by_bill_id" string="出运合同"
                                 context="{'group_by':'bill_id'}"/>
                         <filter name="group_by_due_date" string="逾期天数"
@@ -56,6 +58,47 @@
                     </group>
                 </search>
 
+            </field>
+        </record>
+        <record id="view_customer_invoice_extra_tree" model="ir.ui.view">
+            <field name="name">account.invoice.customer.extra.tree</field>
+            <field name="model">account.invoice</field>
+            <field name="arch" type="xml">
+                <tree decoration-info="state == 'draft'"  default_order="date_deadline_new" decoration-muted="state == 'cancel'" string="Invoice" >
+                    <field name="partner_id" groups="base.group_user" string="Customer"/>
+                    <field name="yjzy_invoice_id" string="原始账单"/>
+                    <field name="bill_id" string="合同号"/>
+                    <field name="tb_contract_code" string="合同号" invisible="1"/>
+                    <field name="date_invoice" string="账单日期"/>
+                    <button name="open_reconcile_order_line" icon="fa-pencil-square-o" type="object"/>
+                    <field name="date_deadline_new" string="实际到期日"/>
+                    <field name="residual_times_new" />
+                    <field name="date_due" string="进仓到期日"/>
+                    <field name="residual_times_out_in_new"/>
+                    <field name="amount_total_signed" string="应收金额" sum="Total"/>
+                    <field name="residual_signed" string="未收金额" sum="Amount Due"/>
+                    <field name="reconcile_order_line_payment" sum="小计" invisible="1"/>
+                    <field name="reconcile_order_line_advance" sum="小计" invisible="1"/>
+                    <field name="reconcile_order_line_bank" sum="小计" invisible="1"/>
+                    <field name="reconcile_order_line_amount_diff" sum="小计" invisible="1"/>
+                    <field name="commercial_partner_id" invisible="1"/>
+                    <field name="reference" invisible="1"/>
+                    <field name="name" invisible="1"/>
+                    <field name="journal_id" invisible="1"/>
+                    <field name="company_id" groups="base.group_multi_company" invisible="1"
+                           options="{'no_create': True}"/>
+                    <field name="user_id" invisible="1"/>
+                    <field name="origin" invisible="1"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="company_currency_id" invisible="1"/>
+                    <field name="state_1"/>
+                    <field name="state" invisible="1"/>
+                    <field name="type" invisible="context.get('type',True)"/>
+                    <field name="residual_times" groups="base.group_system"/>
+                    <field name="residual_times_out_in" groups="base.group_system"/>
+                    <field name="date_deadline" string="实际到期日" groups="base.group_system"/>
+
+                </tree>
             </field>
         </record>
         <record id="invoice_new_tree" model="ir.ui.view">
@@ -454,13 +497,13 @@
                                 class="oe_highlight" />
                         <button name="stage_action_done" type="object" string="总经理审批" attrs="{'invisible':[('state_1','!=','approved')]}"
                                 class="oe_highlight" />
-                        <button name="stage_action_refuse" type="object" string="拒绝" attrs="{'invisible':[('state_1','in',['draft','refuse'])]}"
-                                class="oe_highlight" />
+                        <button name="%(account_invoice_refuse_wizard_action)d" string="拒绝" attrs="{'invisible':[('state_1','in',['draft','refuse'])]}" type="action"/>
+
                         <button name="stage_action_cancel" type="object" string="取消" attrs="{'invisible':[('state_1','not in',['done'])]}"
                                 class="oe_highlight" />
                         <button name="invoice_assign_outstanding_credit" type="object" string="核销" groups="base.group_system"/>
-                         <field name="stage_id" widget="statusbar" clickable="1"/>
-                        <field name="state_1" invisible="1"/>
+                        <field name="stage_id" widget="statusbar" clickable="1" invisible="1"/>
+                        <field name="state_1" widget="statusbar" statusbar_visible=" "/>
                     </header>
                     <header  attrs="{'invisible':[('is_yjzy_invoice','=',True)]}">
                        <button name="open_customer_invoice_id" string="额外账单" type="object" />
@@ -532,44 +575,46 @@
                         </h1>
                         <field name="type" invisible="1" readonly="0"/>
 
-                        <group col="3">
+                        <group col="2">
                             <group>
                                 <field name="is_yjzy_invoice" invisible="1"/>
+
                                 <field string="Customer" name="partner_id"
-                                       context="{'search_default_customer':1, 'show_address': 1, 'default_company_type': 'company'}"
+                                       context="{'search_default_customer':1, 'show_address': 0, 'default_company_type': 'company'}"
                                        options="{&quot;always_reload&quot;: True, &quot;no_quick_create&quot;: True}"
                                        domain="[('customer', '=', True),('is_company','=',True)]"/>
+                                <field name="yjzy_invoice_id" attrs="{'invisible':[('is_yjzy_invoice','=',False)]}" domain="[('partner_id','=',partner_id)]" string="原始账单"/>
                                 <field name="bill_id" string="出运合同" context="{'only_ref':1}"/>
                                 <field name="partner_shipping_id" groups="sale.group_delivery_invoice_address"
                                        invisible="1"/>
                                 <field name="payment_term_id" invisible="1"/>
-                                <field name="yjzy_payment_term_id" string="付款条款"/>
-                                <field name="yjzy_currency_id" string="货币"/>
-                                <label for="currency_id" groups="base.group_multi_currency" string="1"/>
-                                <div groups="base.group_multi_currency">
+                                <field name="yjzy_payment_term_id" string="付款条款" attrs="{'invisible':[('is_yjzy_invoice','=',True)]}"/>
+                                <field name="yjzy_currency_id" string="货币" attrs="{'invisible':[('is_yjzy_invoice','=',True)]}"/>
+                                <label for="currency_id" groups="base.group_multi_currency" invisible="1"/>
+                                <div groups="base.group_multi_currency" invisible="1">
                                     <field name="currency_id" options="{'no_create': True, 'no_open': True}"
                                            class="oe_inline"/>
                                     <field name="company_currency_id" invisible="1"/>
                                 </div>
                                 <field name="cash_rounding_id" groups="account.group_cash_rounding"/>
-                                <field name="include_tax"/>
-                                <field name="gongsi_id" string="销售主体"/>
-                                <field name="user_id" string="责任人"/>
-                                <field name="sale_assistant_id"/>
-                                <field name="extra_code"/>
+                                <field name="include_tax" attrs="{'invisible':[('is_yjzy_invoice','=',True)]}"/>
+                                <field name="gongsi_id" string="销售主体" attrs="{'invisible':[('is_yjzy_invoice','=',True)]}"/>
+                                <field name="user_id" string="责任人" attrs="{'invisible':[('is_yjzy_invoice','=',True)]}"/>
+                                <field name="sale_assistant_id" attrs="{'invisible':[('is_yjzy_invoice','=',True)]}"/>
+
                             </group>
-  <group>
+  <!--group>
       <field name="amount_total" string="原始应收金额"/>
       <field name="yjzy_invoice_amount_total" string="额外应收金额"/>
       <field name="yjzy_total" string="应收总金额"/>
       <field name="residual" string="原始未收金额"/>
       <field name="yjzy_invoice_residual_signed_total" string="额外未收金额"/>
       <field name="yjzy_residual" string="未收总金额"/>
-  </group>
+  </group-->
                             <group>
-                                <field name="date_ship"/>
-                                <field name="date_finish"/>
-                                <field name="date_deadline"/>
+                                <field name="date_ship" attrs="{'invisible':[('is_yjzy_invoice','=',True)]}"/>
+                                <field name="date_finish" attrs="{'invisible':[('is_yjzy_invoice','=',True)]}"/>
+                                <field name="date_deadline" />
                                 <field name="residual_times"/>
                                 <field name="yjzy_type" attrs="{'invisible':1}"/>
                                 <field name="tb_contract_code" attrs="{'invisible':1}"/>
@@ -580,16 +625,15 @@
                                 <field name="date_due"
                                        attrs="{'readonly': ['|',('payment_term_id','!=',False), ('state','=','paid')],'invisible':1}"
                                        force_save="1"/>
-                                <field name="move_name" invisible="0"/>
-                                <field name="yjzy_invoice_id" attrs="{'invisible':[('is_yjzy_invoice','=',False)]}"/>
+                                <field name="move_name" invisible="1"/>
+                                <field name="extra_code" invisible="1"/>
                                 <field name="team_id" attrs="{'invisible':1}"/>
-                                <field name="fault_comments"/>
+                                <field name="fault_comments" attrs="{'invisible':[('is_yjzy_invoice','=',True)]}"/>
                             </group>
 
                         </group>
                         <field name="sent" invisible="1"/>
                         <notebook colspan="4">
-
                             <page string="账单明细">
                                 <field name="invoice_line_ids" nolabel="1" widget="one2many_list" mode="tree,kanban"
                                        context="{'type': type, 'journal_id': journal_id, 'default_invoice_id': id,'default_is_manual':True}">
@@ -673,19 +717,19 @@
                                 </group>
                                 <field name="comment" placeholder="Terms and conditions..."/>
                             </page>
-                             <page string="所有账单明细" attrs="{'invisible':[('is_yjzy_invoice','=',True)]}">
+                             <page string="所有账单明细">
                                 <field name="yjzy_invoice_line_ids">
                                     <tree default_order="id">
                                         <field name="sequence" widget="handle"/>
                                         <field name="is_manual" readonly="1" string="手动"/>
 
                                         <field name="id" invisible="1"/>
-                                        <field name="product_id" domain="[('sale_ok','=',True)]"/>
+                                        <field name="product_id" domain="[('sale_ok','=',True)]" string="账单项目"/>
                                         <field name="layout_category_id" groups="sale.group_sale_layout"/>
 
                                         <field name="so_id"/>
                                         <field name="company_id" invisible="1"/>
-                                        <field name="account_id" groups="account.group_account_user"
+                                        <field name="account_id" groups="account.group_account_user" invisible="1"
                                                domain="[('company_id', '=', parent.company_id), ('internal_type', '=', 'other'), ('deprecated', '=', False)]"/>
                                         <field name="account_analytic_id" groups="analytic.group_analytic_accounting" invisible="1"
                                                domain="[('company_id', '=', parent.company_id)]"
@@ -695,7 +739,6 @@
                                         <field name="quantity"/>
                                         <field name="uom_id" groups="product.group_uom"/>
                                         <field name="yjzy_price_unit" string="单价"/>
-
                                         <field name="price_unit" invisible="1"/>
                                         <field name="discount" groups="base.group_no_one" invisible="1"/>
                                         <field name="invoice_line_tax_ids" widget="many2many_tags" invisible="1"
@@ -1513,7 +1556,9 @@
                               (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.view_account_invoice_new_form')}),
                               ]"/>
         </record>
-
+        <menuitem id="menu_account_invoice_extra_root" name="额外账单"
+                  sequence="99"
+        />
         <menuitem id="menu_account_new_root" name="财务：新"
                   sequence="99"
         />
@@ -1772,8 +1817,63 @@
                   sequence="5"
                   action="action_back_tax_invoice_paid_new"
         />
+         <record id="action_customer_account_invoice_extra" model="ir.actions.act_window">
+            <field name="name">额外应收账单审批</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_account_invoice_new_filter"/>
+            <field name="domain">[('state_1','!=','done'),('type','=','out_invoice'),('yjzy_type','=','sale')]</field>
+            <field name="context">{'search_default_group_by_stage_id':1,'default_is_yjzy_invoice':1,'default_type':'out_invoice','only_ref':1,'default_yjzy_type':'sale'}
+            </field>
+            <!--field name="target">new</field-->
+            <field name="view_ids" eval="[(5, 0, 0),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.view_customer_invoice_extra_tree')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.view_account_invoice_new_form')}),
+                              ]"/>
+        </record>
+                <menuitem id="menu_customer_account_invoice_extra" action="action_customer_account_invoice_extra"
+                  parent="menu_account_invoice_extra_root" name="额外应收账单审批"
+                  sequence="99"
+        />
+        <record id="action_customer_account_invoice_extra_done" model="ir.actions.act_window">
+            <field name="name">额外应收账单查询</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_account_invoice_new_filter"/>
+            <field name="domain">[('state_1','=','done'),('type','=','out_invoice'),('yjzy_type','=','sale')]</field>
+            <field name="context">{'default_is_yjzy_invoice':1,'default_type':'out_invoice','only_ref':1,'default_yjzy_type':'sale'}
+            </field>
+            <!--field name="target">new</field-->
+            <field name="view_ids" eval="[(5, 0, 0),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.view_customer_invoice_extra_tree')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.view_account_invoice_new_form')}),
+                              ]"/>
+        </record>
+        <menuitem id="menu_customer_account_invoice_extra_done" action="action_customer_account_invoice_extra_done"
+                  parent="menu_account_invoice_extra_root" name="额外应收账单查询"
+                  sequence="99"
+        />
 
+         <record id="action_customer_account_invoice_extra_form" model="ir.actions.act_window">
+            <field name="name">创建额外应收账单</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_mode">form</field>
+            <field name="search_view_id" ref="view_account_invoice_new_filter"/>
+            <field name="domain">[('state_1','!=','draft'),('type','=','out_invoice'),('yjzy_type','=','sale')]</field>
+            <field name="context">{'default_is_yjzy_invoice':1,'default_type':'out_invoice','only_ref':1,'default_yjzy_type':'sale'}
+            </field>
+            <!--field name="target">new</field-->
+            <field name="view_ids" eval="[(5, 0, 0),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.view_account_invoice_new_form')}),
+                              ]"/>
+        </record>
 
-
+        <menuitem id="menu_customer_account_invoice_extra_form" action="action_customer_account_invoice_extra_form"
+                  parent="menu_account_invoice_extra_root" name="创建额外应收账单"
+                  sequence="99"
+        />
     </data>
 </odoo>

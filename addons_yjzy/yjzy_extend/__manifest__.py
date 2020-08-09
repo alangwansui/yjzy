@@ -41,6 +41,8 @@
         'views/account_payment.xml',
         #'views/account_payment2.xml',
         #'views/account_payment3.xml',
+        'wizard/transport_refuse_reason_views.xml',
+        'wizard/account_invoice_refuse_reason_views.xml',
 
         'views/account_journal.xml',
         'views/account_move.xml',
@@ -79,6 +81,7 @@
         'views/transport_lot_plan.xml',
         'views/transport_bill_vendor.xml',
         'views/trans_date_attachment.xml',
+        'views/account_invoice_stage.xml',
 
         'views/product_packaging.xml',
 
@@ -101,6 +104,8 @@
         'views/dashboard.xml',
         'views/transport_bill_customs_invoice.xml',
         'views/account_invoice_extra.xml',
+        'views/trasnport_bill_stage.xml',
+        'views/trasnport_bill_stage.xml',
 
 
 
@@ -126,6 +131,7 @@
         'data/sequence_sfk.xml',
         'data/cron.xml',
         'data/stage_data.xml',
+        'data/message_data.xml',
 
         # 'wizard/wizard_so2po.xml',
         'wizard/wizard_transport4so.xml',
@@ -139,6 +145,7 @@
         'wizard/wizard_supplier_invoice_date.xml',
         'wizard/wizard_batch_passwd.xml',
         'wizard/wizard_so2sol.xml',
+
         # report
         'report/report.xml',
         'report/sale_contract_template.xml',

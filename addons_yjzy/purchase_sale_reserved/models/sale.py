@@ -288,7 +288,7 @@ class sale_order_line(models.Model):
 
         #创建采购批次和预留
         if ('order_id' in vals) and sol.supplier_id and (not sol.pol_id):
-            p_orders = so.po_ids.filtered(lambda x: x.partner_id.id == sol.supplier_id.id and x.state == 'draft')
+            p_orders = so.po_ids.filtered(lambda x: x.partner_id.id == sol.supplier_id.id and x.state != 'purchase')
             if p_orders:
                 po = p_orders[0]
                 pol = self.env['purchase.order.line'].create({

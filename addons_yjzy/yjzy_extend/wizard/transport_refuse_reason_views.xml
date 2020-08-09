@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="transport_refuse_wizard_view_form" model="ir.ui.view">
+        <field name="name">transport.refuse.wizard.form</field>
+        <field name="model">transport.refuse.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Transport refuse reason">
+                <separator string="请填写出运合同的拒绝理由"/>
+                <field name="tb_id" invisible="1"/>
+                <field name="reason"/>
+                <footer>
+                    <button string='拒绝' name="transport_refuse_reason" type="object" class="oe_highlight"/>
+                    <button string="取消" class="oe_link" special="cancel"/>
+                </footer>
+           </form>
+        </field>
+    </record>
+
+    <record id="transport_refuse_wizard_action" model="ir.actions.act_window">
+        <field name="name">出运审批拒绝</field>
+        <field name="res_model">transport.refuse.wizard</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="transport_refuse_wizard_view_form"/>
+        <field name="target">new</field>
+    </record>
+</odoo>

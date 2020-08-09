@@ -61,12 +61,14 @@
                         <button string="初始化发货通知单" name="make_tb_vendor" confirm="供应商发货通知单！是否继续？"
                                  class="oe_highlight"
                                 type="object"/>
+                        <button string="初始化发货通知单" name="split_tuopan_weight2vendor" confirm="供应商发货通知单托盘数据！是否继续？"
+                                 class="oe_highlight"
+                                type="object"/>
                         <field name="state" widget="statusbar" statusbar_visible=" "  groups="base.group_system"/>
                         <field name="is_editable" widget="boolean_toggle" groups="	sales_team.group_manager"/>
 
                     </header>
                     <sheet>
-
                         <group col="2">
                             <group name="general_information">
                                 <field name="id" invisible="1"/>
@@ -75,16 +77,11 @@
                                 <field name="date" string="出运日期"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"
                                        invisible="0"/>
-                                <field name="partner_id" string="客户" />
-
+                                <field name="partner_id" string="客户" options="{'no_open':1,'no_create':1}" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
 
 
                             </group>
-
-
                              <group>
-
-
                                 <field name="contract_type" groups="base.group_system"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <field name="gongsi_id" groups="base.group_system" options="{'no_open':1}" string="销售主体"
@@ -100,7 +97,7 @@
 
                         <notebook>
                            <page string="供应商发货通知">
-                                <field name="tb_vendor_ids"/>
+                                <field name="tb_vendor_ids" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
                             </page>
 
                         </notebook>

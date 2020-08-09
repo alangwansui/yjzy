@@ -12,7 +12,8 @@ from . import wizard_so2po
 from . import wizard_supplier_invoice_date
 from . import wizard_batch_passwd
 from . import wizard_so2sol
-
+from . import transport_refuse_reason
+from . import account_invoice_refuse_reason
 
 
 

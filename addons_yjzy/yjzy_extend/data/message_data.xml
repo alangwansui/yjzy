@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Email Templates Partner-->
+        <template id="partner_template_refuse_reason">
+            <p>您的客户审批申请 <t t-esc="name"/> 已拒绝</p>
+            <ul class="o_timeline_tracking_value_list">
+                <li>Reason : <t t-esc="reason"/></li>
+            </ul>
+        </template>
+        <template id="partner_template_wkf">
+            <p>客户<t t-esc="name"/> 已被<t t-esc="user"/>审批</p>
+            <ul class="o_timeline_tracking_value_list">
+                <li>审批阶段: <t t-esc="stage_preview"/> - <t t-esc="stage_now"/></li>
+            </ul>
+        </template>
+                <!-- Email Templates sale-->
+        <template id="sale_template_refuse_reason">
+            <p>您的审批申请 <t t-esc="contract_code"/> 已拒绝</p>
+            <ul class="o_timeline_tracking_value_list">
+                <li>Reason : <t t-esc="reason"/></li>
+            </ul>
+        </template>
+          <!-- Email Templates purchase-->
+        <template id="purchase_template_refuse_reason">
+            <p>您的审批申请 <t t-esc="contract_code"/> 已拒绝</p>
+            <ul class="o_timeline_tracking_value_list">
+                <li>Reason : <t t-esc="reason"/></li>
+            </ul>
+        </template>
+    <!-- Email Templates transport-->
+        <template id="transport_template_refuse_reason">
+            <p>您的审批申请 <t t-esc="name"/> 已拒绝</p>
+            <ul class="o_timeline_tracking_value_list">
+                <li>原因 : <t t-esc="reason"/></li>
+            </ul>
+        </template>
+            <!-- Email Templates transport-->
+        <template id="account_invoice_template_refuse_reason">
+            <p>您的审批申请 <t t-esc="name"/> 已拒绝</p>
+            <ul class="o_timeline_tracking_value_list">
+                <li>原因 : <t t-esc="reason"/></li>
+            </ul>
+        </template>
+    </data>
+</odoo>

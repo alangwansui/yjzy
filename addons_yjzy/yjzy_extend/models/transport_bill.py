@@ -38,7 +38,8 @@ class Stage(models.Model):
     # _sql_constraints = [
     #     ('name_code', 'unique(code)', u"编码不能重复"),
     # ]
-    user_ids = fields.Many2many('res.users', 'ref_partner_users', 'fid', 'tid', 'Users') #可以进行判断也可以结合自定义视图模块使用
+    user_ids = fields.Many2many('res.users', 'ref_tb_users', 'fid', 'tid', 'Users') #可以进行判断也可以结合自定义视图模块使用
+    group_ids = fields.Many2many('res.groups', 'ref_tb_group', 'gid', 'bid', 'Groups')
 
 class transport_bill(models.Model):
     _name = 'transport.bill'
@@ -846,8 +847,12 @@ class transport_bill(models.Model):
     purchase_invoice_ids = fields.One2many('account.invoice', 'bill_id', '采购发票',
                                            domain=[('yjzy_type', '=', 'purchase')])
     purchase_invoice_ids2 = fields.One2many('account.invoice', string='采购发票2', compute=compute_info)  # 顯示供應商的交單日期
-    all_invoice_ids = fields.One2many('account.invoice', 'bill_id', '所有发票')
+    all_invoice_ids = fields.One2many('account.invoice', 'bill_id', u'所有发票')
     back_tax_invoice_id = fields.Many2one('account.invoice', '退税发票')
+    all_sale_invoice_ids = fields.One2many('account.invoice', 'bill_id',  u'所有销售发票',domain=[('yjzy_type', '=', 'sale')])
+    all_purchase_invoice_ids = fields.One2many('account.invoice', 'bill_id',  u'所有采购发票',domain=[('yjzy_type', '=', 'purchase')])
+    all_back_tax_invoice_ids = fields.One2many('account.invoice', 'bill_id', u'所有退税发票',
+                                               domain=[('yjzy_type', '=', 'back_tax')])
     sale_invoice_count = fields.Integer(u'销售发票数', compute=compute_info)
     purchase_invoice_count = fields.Integer(u'采购发票数', compute=compute_info)
     back_tax_invoice_count = fields.Integer(u'退税发票数', compute=compute_info)
@@ -917,6 +922,7 @@ class transport_bill(models.Model):
 
     budget_amount = fields.Monetary('预算', compute=compute_info, currency_field='company_currency_id')
     budget_reset_amount = fields.Monetary('预算剩余',  compute=compute_info, currency_field='company_currency_id')
+    budget_ids = fields.One2many('budget.budget','tb_id',u'预算明细')
     expense_ids = fields.One2many('hr.expense', 'tb_id', u'费用')
 
 
@@ -966,7 +972,7 @@ class transport_bill(models.Model):
     is_done_plan = fields.Boolean(u'默认调拨计划完成')
     is_done_tuopan = fields.Boolean(u'托盘分配完成')
     is_done_tb_vendor = fields.Boolean(u'供应商发运完成')
-
+    is_done_all_document = fields.Boolean(u'所有自动计算完成')
 
 
 
@@ -1130,8 +1136,7 @@ class transport_bill(models.Model):
                     ref2 = '%s%s-%s' % (ref,x.contract_code ,x.tb_count)
         self.ref = ref2
 
-
-    def open_fee(self):
+    def compute_fee(self):
         if not self.is_fee_done :
             self.fee_inner = self.fee_inner_so
             self.fee_rmb1 = self.fee_rmb1_so
@@ -1140,7 +1145,8 @@ class transport_bill(models.Model):
             self.fee_export_insurance = self.fee_export_insurance_so
             self.fee_other = self.fee_other_so
             self.is_fee_done = True
-        else:
+    def open_fee(self):
+        if self.is_fee_done == True:
             war = ''
             war += '国内运杂费： %s\n' % self.fee_inner_so
             war += '人名币费用1： %s\n' % self.fee_rmb1_so
@@ -1217,7 +1223,7 @@ class transport_bill(models.Model):
     #     res.update({
     #         'partner_id': self.env['res.partner'].search([('name', '=', '未定义')], limit=1).id
     #     })
-
+    #同时计算出运资料和生成出运合同号
     def make_all_document(self):
         self.make_sale_purchase_collect()
         self.create_qingguan_lines()
@@ -1225,13 +1231,14 @@ class transport_bill(models.Model):
         self.split_tuopan_weight()
         self.split_tuopan_weight2vendor()
         self.compute_tb_ref()
-        if self.operation_wizard != 'sixth':
-            self.operation_wizard = 'fifth'
+        self.compute_fee()
+        self.operation_wizard = 'fifth'
+        self.is_done_all_document = True
 
     def split_tuopan_all(self):
         self.split_tuopan_weight()
         self.split_tuopan_weight2vendor()
-        self.operation_wizard = 'sixth'
+
 
     def make_sale_purchase_collect(self):
         self.make_sale_collect()
@@ -1278,7 +1285,7 @@ class transport_bill(models.Model):
                 if not one.date_customer_finish_att:
                     raise Warning('请提交客户交单日期附件')
                 one.date_customer_finish_state = 'submit'
-
+    #日期审批完成后直接出运并生成账单同时更新进仓日期到对应的发票
     def action_customer_date_state_done(self):
         date_type = self.env.context.get('date_type')
         for one in self:
@@ -1286,8 +1293,9 @@ class transport_bill(models.Model):
                 one.date_out_in_state = 'done'
                 if one.state not in ['delivered','invoiced']:
                     one.state = 'invoiced'
-                    one.onece_all_stage()
-                    one.make_all_invoice()
+                    # one.onece_all_stage()
+                    # one.make_all_invoice()
+                    one.action_invoiced()
                     one.sync_data2invoice()
             if date_type == 'date_ship':
                 one.date_ship_state = 'done'
@@ -1303,17 +1311,12 @@ class transport_bill(models.Model):
                 one.date_ship_state = 'refuse'
             if date_type == 'date_customer_finish':
                 one.date_customer_finish_state = 'refuse'
-
-
-
     @api.onchange('contract_type')
     def onchange_contract_type(self):
         gongsi_obj = self.env['gongsi']
         if self.contract_type == 'b':
             self.gongsi_id = gongsi_obj.search([('name', '=', 'BERTZ')], limit=1)
             self.purchase_gongsi_id = gongsi_obj.search([('name', '=', '天宇进出口')], limit=1)
-
-
 
     @api.onchange('date_out_in')
     def onchange_date_out_in(self):
@@ -1378,19 +1381,18 @@ class transport_bill(models.Model):
             one.hs_fill = 'others'
 
     def unlink(self):
-        sale_orders = self.mapped('so_ids')
-
         for one in self:
+            sale_orders =one.mapped('so_ids')
             if one.state != 'cancel':
                 raise Warning(u'只有取消状态允许删除')
-
-        res = super(transport_bill, self).unlink()
-
-        sale_lines = sale_orders.mapped('order_line')
-        sale_lines.compute_rest_tb_qty()
-
-        return res
-
+            else:
+                one.budget_ids.unlink()
+                sale_lines = sale_orders.mapped('order_line')
+                sale_lines.compute_rest_tb_qty()
+                print('budget', one.budget_ids,sale_lines)
+        return super(transport_bill, self).unlink()
+    def unlink_budegt_ids(self):
+         self.budget_ids.unlink()
 
 
 #13ok
@@ -1461,31 +1463,31 @@ class transport_bill(models.Model):
 
     # 13不需要
     def split_tuopan_weight_qingguan(self):
-        if self.pallet_type == 'plts':
-            if self.tuopan_weight <= 0 or self.tuopan_volume <= 0:
-                raise Warning(u'请先设置托盘重量和体积')
+        # if self.pallet_type == 'plts':
+        # if self.tuopan_weight <= 0 or self.tuopan_volume <= 0:
+        #     raise Warning(u'请先设置托盘重量和体积')
 
-            qinguan_count = sum([x.qty for x in self.qingguan_line_ids])
-            if qinguan_count > 0:
-                for line in self.qingguan_line_ids:
-                    line.tuopan_weight = line.qty / qinguan_count * self.tuopan_weight
-            qinguan_volume = sum([x.volume for x in self.qingguan_line_ids])
-            if qinguan_volume > 0:
-                for line in self.qingguan_line_ids:
-                    line.tuopan_volume = line.volume / qinguan_volume * self.tuopan_volume
+        qinguan_count = sum([x.qty for x in self.qingguan_line_ids])
+        if qinguan_count > 0:
+            for line in self.qingguan_line_ids:
+                line.tuopan_weight = line.qty / qinguan_count * self.tuopan_weight
+        qinguan_volume = sum([x.volume for x in self.qingguan_line_ids])
+        if qinguan_volume > 0:
+            for line in self.qingguan_line_ids:
+                line.tuopan_volume = line.volume / qinguan_volume * self.tuopan_volume
 
     def split_tuopan_weight_baoguan(self):
-        if self.pallet_type == 'plts':
-            if self.tuopan_weight <= 0 or self.tuopan_volume <=0:
-                raise Warning(u'请先设置托盘重量和体积')
-            hsl_count = sum([x.qty_max for x in self.hsname_ids])
-            if hsl_count > 0:
-                for line in self.hsname_ids:
-                    line.tuopan_weight = line.qty_max / hsl_count * self.tuopan_weight
-            hsl_volume = sum([x.volume for x in self.hsname_ids])
-            if hsl_volume > 0:
-                for line in self.hsname_ids:
-                    line.tuopan_volume = line.volume / hsl_volume * self.tuopan_volume
+        # if self.pallet_type == 'plts':
+        # if self.tuopan_weight <= 0 or self.tuopan_volume <=0:
+        #     raise Warning(u'请先设置托盘重量和体积')
+        hsl_count = sum([x.qty_max for x in self.hsname_ids])
+        if hsl_count > 0:
+            for line in self.hsname_ids:
+                line.tuopan_weight = line.qty_max / hsl_count * self.tuopan_weight
+        hsl_volume = sum([x.volume for x in self.hsname_ids])
+        if hsl_volume > 0:
+            for line in self.hsname_ids:
+                line.tuopan_volume = line.volume / hsl_volume * self.tuopan_volume
 
     def split_tuopan_weight2vendor(self):
         # if self.pallet_type == 'plts':
@@ -1580,7 +1582,7 @@ class transport_bill(models.Model):
         self.contract_type = self.partner_id.contract_type
         self.gongsi_id = self.partner_id.gongsi_id
         self.purchase_gongsi_id = self.partner_id.purchase_gongsi_id
-        if self.operation_wizard != 'sixth':
+        if self.operation_wizard != 'fifth':
             self.operation_wizard = 'second'
     # @api.onchange('partner_shipping_id')
     # def onchange_partner(self):
@@ -1593,7 +1595,7 @@ class transport_bill(models.Model):
 
     def finish_delivery_qty(self):
         self.amount_all()
-        if self.operation_wizard != 'sixth':
+        if self.operation_wizard != 'fifth':
             self.operation_wizard = 'fourth'
 
     def make_tb_vendor(self):
@@ -1813,6 +1815,7 @@ class transport_bill(models.Model):
                     'include_tax': self.include_tax,
                     'yjzy_type': 'purchase',
                     'gongsi_id': self.purchase_gongsi_id.id,
+                    'stage_id': self.env['account.invoice.stage'].search([('code', '=', '007')], limit=1).id,
 
                 })
                 invoice.clear_zero_line()
@@ -1891,6 +1894,7 @@ class transport_bill(models.Model):
                 'bill_id': self.id,
                 'yjzy_type': 'sale',
                 'gongsi_id': self.gongsi_id.id,
+                'stage_id':self.env['account.invoice.stage'].search([('code','=','007')],limit=1).id,
             })
 
 
@@ -1947,8 +1951,8 @@ class transport_bill(models.Model):
         if not self.date_out_in:
              raise Warning(u'请先设置进仓日期')
         for one in self:
-            #同步采购发票日期
-            for purchase_invoice in one.purchase_invoice_ids.filtered(lambda x: x.yjzy_type == 'purchase'):
+            #同步采购发票日期  akiny修改purchase_invoice_ids为all_purchase_invoice_ids
+            for purchase_invoice in one.all_purchase_invoice_ids.filtered(lambda x: x.yjzy_type == 'purchase'):
                 purchase_invoice.date_ship = one.date_ship
                 #purchase_invoice.date_finish = one.date_supplier_finish
                 purchase_invoice.date_invoice = one.date_out_in
@@ -1957,35 +1961,50 @@ class transport_bill(models.Model):
                 purchase_invoice._onchange_payment_term_date_invoice()
                 # if purchase_invoice.state == 'draft':
                 #     purchase_invoice.action_invoice_open()
-            #同步销售发票
-            sale_invoice = one.sale_invoice_id
-            if sale_invoice:
-                sale_invoice.date_invoice = one.date_out_in
-                sale_invoice.date_out_in = one.date_out_in
-                sale_invoice.date = one.date_out_in
-                sale_invoice.date_finish = one.date_customer_finish
-                sale_invoice.date_ship = one.date_ship
-                sale_invoice._onchange_payment_term_date_invoice()
-                # if sale_invoice.state == 'draft':
-                #     sale_invoice.action_invoice_open()
-            back_tax_invoice = one.back_tax_invoice_id
-            if back_tax_invoice:
-                back_tax_invoice.date_out_in = one.date_out_in
-                back_tax_invoice.date_invoice = one.date_out_in
-                back_tax_invoice.date = one.date_out_in
-                back_tax_invoice.date_finish = one.date_customer_finish
-                back_tax_invoice.date_ship = one.date_ship
-                #调用防范，更新到期日期。因为是onchange发票日期，如果不调用，到期日期就无法计算
-                back_tax_invoice._onchange_payment_term_date_invoice()
+            #同步销售发票 akiny将sale_invoice_id更新为all_sale_invoice_ids
+            # sale_invoice = one.sale_invoice_id
+            # if sale_invoice:
+            #     sale_invoice.date_invoice = one.date_out_in
+            #     sale_invoice.date_out_in = one.date_out_in
+            #     sale_invoice.date = one.date_out_in
+            #     sale_invoice.date_finish = one.date_customer_finish
+            #     sale_invoice.date_ship = one.date_ship
+            #     sale_invoice._onchange_payment_term_date_invoice()
+            #     # if sale_invoice.state == 'draft':
+            #     #     sale_invoice.action_invoice_open()
+            if one.all_sale_invoice_ids:
+              for sale_invoice in one.all_sale_invoice_ids:
+                   sale_invoice.date_invoice = one.date_out_in
+                   sale_invoice.date_out_in = one.date_out_in
+                   sale_invoice.date = one.date_out_in
+                   sale_invoice.date_finish = one.date_customer_finish
+                   sale_invoice.date_ship = one.date_ship
+                   sale_invoice._onchange_payment_term_date_invoice()
+            if one.all_back_tax_invoice_ids:
+                for back_tax_invoice in one.all_back_tax_invoice_ids:
+                     back_tax_invoice.date_out_in = one.date_out_in
+                     back_tax_invoice.date_invoice = one.date_out_in
+                     back_tax_invoice.date = one.date_out_in
+                     back_tax_invoice.date_finish = one.date_customer_finish
+                     back_tax_invoice.date_ship = one.date_ship
+                     #调用防范，更新到期日期。因为是onchange发票日期，如果不调用，到期日期就无法计算
+                     back_tax_invoice._onchange_payment_term_date_invoice()
             # back_tax_invoice = one.back_tax_invoice_id
-            # back_tax_invoice_sate = one.back_tax_invoice_id.state
-            # if back_tax_invoice and back_tax_invoice_sate == 'draft':
-            #     back_tax_invoice.action_invoice_open()
+            # if back_tax_invoice:
+            #     back_tax_invoice.date_out_in = one.date_out_in
+            #     back_tax_invoice.date_invoice = one.date_out_in
+            #     back_tax_invoice.date = one.date_out_in
+            #     back_tax_invoice.date_finish = one.date_customer_finish
+            #     back_tax_invoice.date_ship = one.date_ship
+            #     #调用防范，更新到期日期。因为是onchange发票日期，如果不调用，到期日期就无法计算
+            #     back_tax_invoice._onchange_payment_term_date_invoice()
+            # # back_tax_invoice = one.back_tax_invoice_id
+            # # back_tax_invoice_sate = one.back_tax_invoice_id.state
+            # # if back_tax_invoice and back_tax_invoice_sate == 'draft':
+            # #     back_tax_invoice.action_invoice_open()
             if one.date_all_state == 'done' and one.state == 'delivered':
                 one.state = 'invoiced'
-
         return True
-
     def make_back_tax_invoice(self):
         self.ensure_one()
         #if not self.date_out_in:
@@ -1996,8 +2015,6 @@ class transport_bill(models.Model):
             product = self.env.ref('yjzy_extend.product_back_tax')
             #account = self.env['account.account'].search([('code','=', '50011'),('company_id', '=', self.user_id.company_id.id)], limit=1)
             account = product.property_account_income_id
-
-
             if not account:
                 raise Warning(u'没有找到退税科目,请先在退税产品的收入科目上设置')
             if self.back_tax_amount != 0:
@@ -2010,7 +2027,7 @@ class transport_bill(models.Model):
                     'bill_id': self.id,
                     'yjzy_type': 'back_tax',
                     'gongsi_id': self.purchase_gongsi_id.id,
-
+                    'stage_id': self.env['account.invoice.stage'].search([('code', '=', '007')], limit=1).id,
                     'include_tax': self.include_tax,
                     'invoice_line_ids': [(0, 0, {
                         'name': '%s:%s' % (product.name, self.name),
@@ -2518,68 +2535,124 @@ class transport_bill(models.Model):
         return self.env['transport.bill.stage'].search(search_domain, order=order, limit=1)
 
     def action_submit(self):
-        war = ''
-        if self.ref and self.partner_id and self.date and self.incoterm and self.current_date_rate > 0 and \
-                self.payment_term_id and self.line_ids and self.sale_currency_id:
-            stage_id = self._stage_find(domain=[('code', '=', '002')])
-            return self.write({'stage_id': stage_id.id,
-                               'state': 'submit',
-                               'submit_uid': self.env.user.id,
-                               'submit_date':fields.datetime.now()})
+        if (self.org_sale_amount == self.org_real_sale_amount and self.sale_type != 'proxy') or (self.sale_type == 'proxy'):
+            war = ''
+            # if self.create_uid != self.env.user:
+            #     raise Warning('您没有权限提交')
+            # else:
+            if self.ref and self.partner_id and self.date and self.incoterm and self.current_date_rate > 0 and \
+                    self.payment_term_id and self.line_ids and self.sale_currency_id:
+                stage_id = self._stage_find(domain=[('code', '=', '002')])
+                return self.write({'stage_id': stage_id.id,
+                                   'state': 'submit',
+                                   'submit_uid': self.env.user.id,
+                                   'submit_date':fields.datetime.now()})
+            else:
+                if not self.ref:
+                    war += '合同号不为空\n'
+                if not self.partner_id:
+                    war += '客户不为空\n'
+                if not self.date:
+                    war += '出运日期不为空\n'
+                if not self.incoterm:
+                    war += '价格条款不为空\n'
+                if not self.payment_term_id:
+                    war += '付款条款不为空\n'
+                if not self.sale_currency_id:
+                    war += '交易货币不为空\n'
+                if self.current_date_rate <= 0:
+                    war += '当日汇率不为0\n'
+                if not self.line_ids:
+                    war += '出运明细不为空\n'
+                if war:
+                    raise Warning(war)
         else:
-            if not self.ref:
-                war += '合同号不为空\n'
-            if not self.partner_id:
-                war += '客户不为空\n'
-            if not self.date:
-                war += '出运日期不为空\n'
-            if not self.incoterm:
-                war += '价格条款不为空\n'
-            if not self.payment_term_id:
-                war += '付款条款不为空\n'
-            if not self.sale_currency_id:
-                war += '交易货币不为空\n'
-            if self.current_date_rate <= 0:
-                war += '当日汇率不为0\n'
-            if not self.line_ids:
-                war += '出运明细不为空\n'
-            if war:
-                raise Warning(war)
+            raise Warning('销售金额和报关金额不相同')
 
     def action_sales_approve(self):
         ##self.compute_pack_data()
         # self.create_qingguan_lines()
         # self.make_tb_vendor()
         stage_id = self._stage_find(domain=[('code', '=', '003')])
-        return self.write({'sales_confirm_uid':self.env.user.id,
-                           'sales_confirm_date':fields.datetime.now(),
-                           'state':'sales_approve',
-                           'stage_id':stage_id.id})
+        stage_preview = self.stage_id
+        user = self.env.user
+        # group = self.env.user.groups_id
+        if user not in stage_preview.user_ids:
+            raise Warning('您没有权限审批')
+        else:
+            self.write({'sales_confirm_uid':self.env.user.id,
+                               'sales_confirm_date':fields.datetime.now(),
+                               'state':'sales_approve',
+                               'stage_id':stage_id.id})
 
     def action_approve(self):
         stage_id = self._stage_find(domain=[('code', '=', '004')])
-        return self.write({'approve_uid':self.env.user.id,
+        stage_preview = self.stage_id
+        user = self.env.user
+        # group = self.env.user.groups_id
+        if user not in stage_preview.user_ids:
+            raise Warning('您没有权限审批')
+        else:
+            self.write({'approve_uid':self.env.user.id,
                            'approve_date':fields.datetime.now(),
                            'state':'approve',
                            'stage_id': stage_id.id})
-
+  #akiny
     def action_invoiced(self):
         self.onece_all_stage()
         stage_id = self._stage_find(domain=[('code', '=', '005')])
         return self.write({'state': 'invoiced',
                            'stage_id': stage_id.id})
-    def action_refuse(self):
+
+    #阶段审批典型案例
+    def action_refuse(self,reason):
         stage_id = self._stage_find(domain=[('code', '=', '009')])
-        return self.write({'state': 'refused',
-                           'stage_id': stage_id.id})
+        # stage_preview = self.stage_id
+        # user = self.env.user
+        # group = self.env.user.groups_id
+        # if user not in stage_preview.user_ids:
+        #     raise Warning('您没有权限拒绝')
+        # else:
+        self.write({'submit_uid': False,
+                           'submit_date': False,
+                           'sales_confirm_uid': False,
+                           'sales_confirm_date': False,
+                           'approve_uid': False,
+                           'approve_date': False,
+                           'confirmed_uid':False,
+                           'confirmed_date':False,
+                           'invoiced_uid':False,
+                           'invoiced_date':False,
+                           'state': 'refused',
+                           'stage_id': stage_id.id,})
+        for tb in self:
+            tb.message_post_with_view('yjzy_extend.transport_template_refuse_reason',
+                                      values={'reason': reason, 'name': self.ref},
+                                      subtype_id=self.env.ref(
+                                          'mail.mt_note').id)  # 定义了留言消息的模板，其他都可以参考，还可以继续参考费用发送计划以及邮件方式
     def action_cancel(self):
         stage_id = self._stage_find(domain=[('code', '=', '010')])
-        return self.write({'state': 'cancel',
+        self.budget_ids.unlink()
+        self.write({'submit_uid': False,
+                           'submit_date': False,
+                           'sales_confirm_uid': False,
+                           'sales_confirm_date': False,
+                           'approve_uid': False,
+                           'approve_date': False,
+                           'confirmed_uid':False,
+                           'confirmed_date':False,
+                           'invoiced_uid':False,
+                           'invoiced_date':False,
+                           'state': 'cancel',
                            'stage_id': stage_id.id})
     def action_draft(self):
         stage_id = self._stage_find(domain=[('code', '=', '001')])
-        return self.write({'state': 'draft',
-                           'stage_id': stage_id.id})
+        budget = self.env['budget.budget'].create({
+            'type': 'transport',
+            'tb_id': self.id,
+        })
+        self.write({'state': 'draft',
+                    'stage_id': stage_id.id})
 
     def confirmed2locked(self):
         self.state = 'locked'

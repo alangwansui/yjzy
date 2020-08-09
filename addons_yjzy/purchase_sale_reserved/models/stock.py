@@ -46,7 +46,6 @@ class Stock_Move_Line(models.Model):
                     'new_qty': dlr.qty,
                 })
                 wizard.apply()
-
         return res
 
 

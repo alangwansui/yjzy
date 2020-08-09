@@ -66,8 +66,8 @@ def parse_form(self, res, view_type, dyn_view):
             if line.string:
                 tag.set('string', line.string)
             if line.invisible:
-                tag.set('style', "display:none;") #akiny取消
-               # tag.set('invisible', 1)#akiny增加
+                tag.set('style', "display:none;") #akiny13取消
+               # tag.set('invisible', 1)#akiny增加 引用到13
                 # tag.getparent().remove(tag)
             if line.hlight == 'yes':
                 tag.set('class', 'oe_highlight')
@@ -80,7 +80,7 @@ def parse_form(self, res, view_type, dyn_view):
                     tag.set('style', "display:none;")
             if line.user_ids:
                 user_ids_str = ','.join([str(x.id) for x in line.user_ids])
-                tag.set('user_ids', user_ids_str)  #akiny
+                tag.set('user_ids', user_ids_str)  #akiny引用wkf的代码
     # add field
     res['arch'] = etree.tostring(tree)
     return res

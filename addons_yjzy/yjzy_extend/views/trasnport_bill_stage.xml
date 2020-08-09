@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_transport_stage_tree" model="ir.ui.view">
+            <field name="name">transport.bill.stage.tree</field>
+            <field name="model">transport.bill.stage</field>
+            <field name="arch" type="xml">
+                <tree string="Transport Stage">
+                    <field name="name"/>
+                    <field name="code"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_transport_bill_stage_form" model="ir.ui.view">
+            <field name="name">transport.bill.stage.form</field>
+            <field name="model">transport.bill.stage</field>
+            <field name="arch" type="xml">
+                <form string="Transport Stage">
+                    <header>
+                    </header>
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="code"/>
+                            <field name="user_ids" widget="many2many_tags"/>
+                            <field name="group_ids" widget="many2many_tags"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="act_open_transport_bill_stage">
+            <field name="name">出运阶段</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">transport.bill.stage</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+        </record>
+
+        <menuitem id="menu_transport_bill_stage" name="出运阶段" parent="yjzy_extend.base_config_new" action="act_open_transport_bill_stage" sequence="99"/>
+
+
+    </data>
+</odoo>
