@@ -762,7 +762,7 @@ class account_reconcile_order(models.Model):
     def clear_moves(self):
         self.ensure_one()
         self.move_ids.write({'reconcile_order_id': False})
-
+    #调整：lines要改成invoice或者将line_ids改成m2m
     def invoice_assign_outstanding_credit_new(self):
         self.ensure_one()
         # 没审核的分录不能核销
