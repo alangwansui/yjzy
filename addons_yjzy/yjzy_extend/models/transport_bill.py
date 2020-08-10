@@ -1407,7 +1407,7 @@ class transport_bill(models.Model):
         ctx = self.env.context
         result = []
         only_ref = self.env.context.get('only_ref')
-        fhtzd = self.env.context.get(fhtzd)
+        # fhtzd = self.env.context.get(fhtzd)
         for one in self:
             print('---name_get---',one)
             name = one.name
