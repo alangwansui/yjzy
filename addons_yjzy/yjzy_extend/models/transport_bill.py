@@ -215,39 +215,45 @@ class transport_bill(models.Model):
 
     def _get_fee_inner_so(self):
         fee_inner = 0.0
-        for x in self.line_ids:
-            fee_inner += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_inner * x.plan_qty
-        self.fee_inner_so = fee_inner
+        for one in self:
+            for x in one.line_ids:
+                fee_inner += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_inner * x.plan_qty
+            one.fee_inner_so = fee_inner
 
     def _get_fee_rmb1_so(self):
-        fee_rmb1 = 0.0
-        for x in self.line_ids:
-            fee_rmb1 += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_rmb1 * x.plan_qty
-        self.fee_rmb1_so = fee_rmb1
+        for one in self:
+            fee_rmb1 = 0.0
+            for x in one.line_ids:
+                fee_rmb1 += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_rmb1 * x.plan_qty
+            one.fee_rmb1_so = fee_rmb1
 
     def _get_fee_rmb2_so(self):
         fee_rmb2 = 0.0
-        for x in self.line_ids:
-            fee_rmb2 += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_rmb2 * x.plan_qty
-        self.fee_rmb2_so = fee_rmb2
+        for one in self:
+            for x in one.line_ids:
+                fee_rmb2 += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_rmb2 * x.plan_qty
+            one.fee_rmb2_so = fee_rmb2
 
     def _get_fee_outer_so(self):
         fee_outer = 0.0
-        for x in self.line_ids:
-            fee_outer += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_outer * x.plan_qty
-        self.fee_outer_so = fee_outer
+        for one in self:
+            for x in one.line_ids:
+                fee_outer += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_outer * x.plan_qty
+            one.fee_outer_so = fee_outer
 
     def _get_fee_export_insurance_so(self):
         fee_export_insurance = 0.0
-        for x in self.line_ids:
-            fee_export_insurance += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_export_insurance * x.plan_qty
-        self.fee_export_insurance_so = fee_export_insurance
+        for one in self:
+            for x in one.line_ids:
+                fee_export_insurance += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_export_insurance * x.plan_qty
+            one.fee_export_insurance_so = fee_export_insurance
 
     def _get_fee_other_so(self):
         fee_other = 0.0
-        for x in self.line_ids:
-            fee_other += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_other * x.plan_qty
-        self.fee_other_so = fee_other
+        for one in self:
+            for x in one.line_ids:
+                fee_other += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_other * x.plan_qty
+            one.fee_other_so = fee_other
 
 
 
