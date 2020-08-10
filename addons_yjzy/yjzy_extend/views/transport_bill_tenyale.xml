@@ -1682,7 +1682,7 @@
 
         </record>
 
-        <menuitem id="menu_transport_tenyale_done_bill" name="新出运单所有"
+        <menuitem id="menu_transport_tenyale_done_bill" name="已经核销出运"
                   parent="yjzy_extend.menu_transport_tenyale_bill_root"
                   sequence="6"
                   action="act_open_transport_bill_tenyale_done_view"
