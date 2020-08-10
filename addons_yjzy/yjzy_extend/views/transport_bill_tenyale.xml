@@ -1665,6 +1665,28 @@
                   sequence="6"
                   action="act_open_transport_bill_tenyale_all_view"
         />
+        <record model="ir.actions.act_window" id="act_open_transport_bill_tenyale_done_view">
+            <field name="name">已核销出运</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">transport.bill</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,kanban</field>
+            <field name="domain">[('stage','=','done')]</field>
+            <field name="limit">20</field>
+            <field name="search_view_id" ref="view_transport_bill_tenyale_filter"/>
+            <field name="context">{'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3,'show_po_code':1}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_transport_bill_tenyale_sales_tree')}),
+                          (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_transport_bill_tenyale_sales_kanban')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_transport_bill_tenyale_sales_form')})]"/>
+
+        </record>
+
+        <menuitem id="menu_transport_tenyale_done_bill" name="新出运单所有"
+                  parent="yjzy_extend.menu_transport_tenyale_bill_root"
+                  sequence="6"
+                  action="act_open_transport_bill_tenyale_done_view"
+        />
 
 
     </data>
