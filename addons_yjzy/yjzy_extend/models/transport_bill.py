@@ -1137,15 +1137,14 @@ class transport_bill(models.Model):
         self.ref = ref2
 
     def compute_fee(self):
-        for one in self:
-            if not one.is_fee_done :
-                one.fee_inner = one.fee_inner_so
-                one.fee_rmb1 = one.fee_rmb1_so
-                one.fee_rmb2 = one.fee_rmb2_so
-                one.fee_outer = one.fee_outer_so
-                one.fee_export_insurance = one.fee_export_insurance_so
-                one.fee_other = one.fee_other_so
-                one.is_fee_done = True
+        if not self.is_fee_done :
+            self.fee_inner = self.fee_inner_so
+            self.fee_rmb1 = self.fee_rmb1_so
+            self.fee_rmb2 = self.fee_rmb2_so
+            self.fee_outer = self.fee_outer_so
+            self.fee_export_insurance = self.fee_export_insurance_so
+            self.fee_other = self.fee_other_so
+            self.is_fee_done = True
     def open_fee(self):
         if self.is_fee_done == True:
             war = ''
@@ -2689,7 +2688,7 @@ class transport_bill(models.Model):
             today = datetime.now()
             date_out_in = one.date_out_in
             # 未发货，开始发货，待核销，已核销
-            if one.state in ('invoiced', 'veifying'):
+            if one.state in ('invoiced', 'verifying'):
                 if (one.sale_invoice_balance_new != 0 or one.purchase_invoice_balance_new != 0 or one.back_tax_invoice_balance_new != 0) and \
                         date_out_in and date_out_in < (today - relativedelta(days=180)).strftime('%Y-%m-%d 00:00:00'):
                     hexiao_type = 'abnormal'
