@@ -215,13 +215,11 @@ class transport_bill(models.Model):
 
     def _get_fee_inner_so(self):
         fee_inner = 0.0
-        # for one in self:
         for x in self.line_ids:
             fee_inner += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_inner * x.plan_qty
         self.fee_inner_so = fee_inner
 
     def _get_fee_rmb1_so(self):
-        # for one in self:
         fee_rmb1 = 0.0
         for x in self.line_ids:
             fee_rmb1 += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_rmb1 * x.plan_qty
@@ -229,28 +227,24 @@ class transport_bill(models.Model):
 
     def _get_fee_rmb2_so(self):
         fee_rmb2 = 0.0
-        # for one in self:
         for x in self.line_ids:
             fee_rmb2 += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_rmb2 * x.plan_qty
         self.fee_rmb2_so = fee_rmb2
 
     def _get_fee_outer_so(self):
         fee_outer = 0.0
-        # for one in self:
         for x in self.line_ids:
             fee_outer += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_outer * x.plan_qty
         self.fee_outer_so = fee_outer
 
     def _get_fee_export_insurance_so(self):
         fee_export_insurance = 0.0
-        # for one in self:
         for x in self.line_ids:
             fee_export_insurance += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_export_insurance * x.plan_qty
         self.fee_export_insurance_so = fee_export_insurance
 
     def _get_fee_other_so(self):
         fee_other = 0.0
-        # for one in self:
         for x in self.line_ids:
             fee_other += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_other * x.plan_qty
         self.fee_other_so = fee_other
@@ -555,7 +549,7 @@ class transport_bill(models.Model):
             one.same_currency = is_same_currency
             one.same_include_tax = is_same_include_tax
 
-    @api.depends('all_invoice_ids','all_invoice_ids.state','all_invoice_ids.residual_signed','sale_invoice_id','sale_invoice_id.state','sale_invoice_id.residual_signed','purchase_invoice_ids','purchase_invoice_ids.state',)
+    @api.depends('all_invoice_ids','all_invoice_ids.state','sale_invoice_id','sale_invoice_id.state','purchase_invoice_ids','purchase_invoice_ids.state')
     def compute_invoice_paid_state(self):
         for one in self:
             invoice_paid_state = 'e'
@@ -1234,8 +1228,8 @@ class transport_bill(models.Model):
         self.make_sale_purchase_collect()
         self.create_qingguan_lines()
         self.make_tb_vendor()
-        # self.split_tuopan_weight()
-        # self.split_tuopan_weight2vendor()
+        self.split_tuopan_weight()
+        self.split_tuopan_weight2vendor()
         self.compute_tb_ref()
         self.compute_fee()
         self.operation_wizard = 'fifth'
@@ -1407,7 +1401,6 @@ class transport_bill(models.Model):
         ctx = self.env.context
         result = []
         only_ref = self.env.context.get('only_ref')
-        # fhtzd = self.env.context.get(fhtzd)
         for one in self:
             print('---name_get---',one)
             name = one.name
@@ -2499,7 +2492,7 @@ class transport_bill(models.Model):
         self.ensure_one()
         declare_form_id = self.env.ref('yjzy_extend.view_transport_bill_supplier_from').id
         return {
-                'name': u'发货通知单',
+                'name': _(u'发货通知单'),
                 'view_type': 'form',
                 'view_mode': 'form',
                 'type': 'ir.actions.act_window',
@@ -2700,18 +2693,18 @@ class transport_bill(models.Model):
                         date_out_in and date_out_in < (today - relativedelta(days=180)).strftime('%Y-%m-%d 00:00:00'):
                     hexiao_type = 'abnormal'
                     stage_id = self._stage_find(domain=[('code', '=', '006')])
-                    #state = 'abnormal'
+                    state = 'abnormal'
                 if one.sale_invoice_balance_new == 0 and one.purchase_invoice_balance_new == 0 and one.back_tax_invoice_balance_new == 0:
                     if hexiao_type == 'abnormal':
                         hexiao_type = 'abnormal'
                         stage_id = self._stage_find(domain=[('code', '=', '007')])
-                        #state = 'verifying'
+                        state = 'verifying'
                     else:
                         hexiao_type = 'write_off'
                         stage_id = self._stage_find(domain=[('code', '=', '007')])
-                        #state = 'verifying'
+                        state = 'verifying'
                 one.hexiao_type = hexiao_type
-                #one.state = state
+                one.state = state
                 one.stage_id = stage_id
 
     #自动计算出运开票状态和自动发票过账
