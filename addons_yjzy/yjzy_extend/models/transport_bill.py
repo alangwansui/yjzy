@@ -549,8 +549,7 @@ class transport_bill(models.Model):
             one.same_currency = is_same_currency
             one.same_include_tax = is_same_include_tax
 
-    @api.depends('all_invoice_ids','all_invoice_ids.state','all_invoice_ids.residual','sale_invoice_id','sale_invoice_id.state','sale_invoice_id.residual',
-                 'purchase_invoice_ids','purchase_invoice_ids.state',)
+    @api.depends('all_invoice_ids','all_invoice_ids.state','all_invoice_ids.residual_signed','sale_invoice_id','sale_invoice_id.state','sale_invoice_id.residual_signed','purchase_invoice_ids','purchase_invoice_ids.state',)
     def compute_invoice_paid_state(self):
         for one in self:
             invoice_paid_state = 'e'
