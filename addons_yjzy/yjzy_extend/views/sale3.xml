@@ -126,17 +126,17 @@
             <field name="arch" type="xml">
                <tree string="Sales Order Lines" decoration-danger="rest_tb_qty == 0">
 
-                    <field name="order_id"/>
-                    <field name="order_partner_id"/>
+                    <field name="order_id" string="销售合同"/>
+                    <field name="order_partner_id" invisible="1"/>
                     <field name="product_id" />
                     <field name="rest_tb_qty" invisible="1"/>
-                    <field name="new_rest_tb_qty"/>
+                    <field name="new_rest_tb_qty" string="本次发货前剩余数量"/>
                     <field name="name" invisible="1"/>
                     <field name="salesman_id" invisible="1"/>
-                    <field name="product_uom_qty" string="Qty"/>
-                    <field name="qty_delivered"/>
-                    <field name="qty_invoiced"/>
-                    <field name="qty_to_invoice"/>
+                    <field name="product_uom_qty" string="订单原始数量"/>
+                    <field name="qty_delivered" invisible="1"/>
+                    <field name="qty_invoiced" invisible="1"/>
+                    <field name="qty_to_invoice" invisible="1"/>
                     <field name="price_subtotal" sum="Total" widget="monetary" invisible="1"/>
                 </tree>
             </field>

@@ -315,6 +315,7 @@
                         <field name="type" invisible="1"/>
                         <group col="2">
                             <group>
+
                                 <field string="Customer" name="partner_id"
                                        context="{'search_default_customer':1, 'show_address': 1, 'default_company_type': 'company'}"
                                        options="{&quot;always_reload&quot;: True, &quot;no_quick_create&quot;: True}"

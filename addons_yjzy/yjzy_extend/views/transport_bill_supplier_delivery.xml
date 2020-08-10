@@ -57,7 +57,7 @@
             <field name="arch" type="xml">
                 <form string="报关资料">
 
-                    <header groups="base.group_system">
+                    <header>
                         <button string="初始化发货通知单" name="make_tb_vendor" confirm="供应商发货通知单！是否继续？"
                                  class="oe_highlight"
                                 type="object"/>

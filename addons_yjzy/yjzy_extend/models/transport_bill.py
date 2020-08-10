@@ -1407,6 +1407,7 @@ class transport_bill(models.Model):
         ctx = self.env.context
         result = []
         only_ref = self.env.context.get('only_ref')
+
         for one in self:
             print('---name_get---',one)
             name = one.name
@@ -2498,7 +2499,7 @@ class transport_bill(models.Model):
         self.ensure_one()
         declare_form_id = self.env.ref('yjzy_extend.view_transport_bill_supplier_from').id
         return {
-                'name': _(u'发货通知单'),
+                'name': u'发货通知单',
                 'view_type': 'form',
                 'view_mode': 'form',
                 'type': 'ir.actions.act_window',

@@ -83,15 +83,15 @@
             <field name="name">transport.bill.tree</field>
             <field name="model">transport.bill</field>
             <field name="arch" type="xml">
-                <tree string="出运单">
+                <tree string="出运单" create="false">
                     <field name="ref"/>
                     <field name="name" invisible="1" groups="base.group_system"/>
                     <field name="partner_id" required="1"/>
                     <field name="invoice_paid_state" invisible="1"/>
                     <field name="org_sale_amount" groups="base.group_system"/>
-                    <field name="org_sale_amount_new"/>
+                    <field name="org_sale_amount_new" sum="小计"/>
 
-                    <field name="purchase_cost_total"/>
+                    <field name="purchase_cost_total" sum="小计"/>
 
                     <field name="sale_amount" groups="base.group_system" invisible="1"/>
                     <field name="ciq_amount" groups="base.group_system" invisible="1"/>
@@ -106,27 +106,27 @@
 
 
                     <field name="sale_invoice_total" string="应收金额" groups="base.group_system"/>
-                    <field name="sale_invoice_total_new" string="应收金额"/>
+                    <field name="sale_invoice_total_new" string="应收金额" sum="小计"/>
                     <field name="purhcase_invoice_total" string="应付金额" groups="base.group_system"/>
-                    <field name="purchase_invoice_total_new" string="应付金额"/>
+                    <field name="purchase_invoice_total_new" string="应付金额" sum="小计"/>
                     <field name="back_tax_invoice_total" string="退税金额" groups="base.group_system"/>
-                    <field name="back_tax_invoice_total_new" string="退税金额"/>
+                    <field name="back_tax_invoice_total_new" string="退税金额" sum="小计"/>
                     <field name="sale_invoice_paid" string="已收金额" groups="base.group_system"/>
-                    <field name="sale_invoice_paid_new" string="已收金额"/>
+                    <field name="sale_invoice_paid_new" string="已收金额" sum="小计"/>
                     <field name="sale_invoice_balance" string="未收金额" groups="base.group_system"/>
-                    <field name="sale_invoice_balance_new" string="未收金额"/>
+                    <field name="sale_invoice_balance_new" string="未收金额" sum="小计"/>
                     <field name="purhcase_invoice_paid" string="已付金额" groups="base.group_system"/>
-                    <field name="purchase_invoice_paid_new" string="已付金额"/>
+                    <field name="purchase_invoice_paid_new" string="已付金额" sum="小计"/>
                     <field name="purhcase_invoice_balance" string="未付金额" groups="base.group_system"/>
-                    <field name="purchase_invoice_balance_new" string="未付金额"/>
+                    <field name="purchase_invoice_balance_new" string="未付金额" sum="小计"/>
                     <field name="back_tax_invoice_paid" string="已收退税" groups="base.group_system"/>
-                    <field name="back_tax_invoice_paid_new" string="已收退税"/>
+                    <field name="back_tax_invoice_paid_new" string="已收退税" sum="小计"/>
                     <field name="back_tax_invoice_balance" string="未收退税" groups="base.group_system"/>
-                    <field name="back_tax_invoice_balance_new" string="未收退税"/>
+                    <field name="back_tax_invoice_balance_new" string="未收退税" sum="小计"/>
                     <field name="state_type" invisible="1"/>
-                    <field name="create_date"/>
-                    <field name="gongsi_id" string="销售主体"/>
-                    <field name="purchase_gongsi_id" string="采购主体"/>
+                    <field name="create_date" invisible="1"/>
+                    <field name="gongsi_id" string="销售主体" invisible="1"/>
+                    <field name="purchase_gongsi_id" string="采购主体" invisible="1"/>
 
 
                 </tree>
@@ -338,7 +338,7 @@
                                        domain="[('parent_id','child_of', partner_id)]"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)],'invisible':['|',('partner_id','=',False),('operation_wizard','in',['first'])]}"
                                        no_create="True"/>
-                                <field name="date"
+                                <field name="date" string="预计出运日期"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"
                                        invisible="0"/>
                                 <field name="current_date_rate" attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>

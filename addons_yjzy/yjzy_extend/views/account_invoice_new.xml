@@ -578,13 +578,12 @@
                         <group col="2">
                             <group>
                                 <field name="is_yjzy_invoice" invisible="1"/>
-
-                                <field string="Customer" name="partner_id"
+                                <field string="客户" name="partner_id"
                                        context="{'search_default_customer':1, 'show_address': 0, 'default_company_type': 'company'}"
                                        options="{&quot;always_reload&quot;: True, &quot;no_quick_create&quot;: True}"
                                        domain="[('customer', '=', True),('is_company','=',True)]"/>
                                 <field name="yjzy_invoice_id" attrs="{'invisible':[('is_yjzy_invoice','=',False)]}" domain="[('partner_id','=',partner_id)]" string="原始账单"/>
-                                <field name="bill_id" string="出运合同" context="{'only_ref':1}"/>
+                                <field name="bill_id" string="出运合同" context="{'only_ref':1}" invisible="1"/>
                                 <field name="partner_shipping_id" groups="sale.group_delivery_invoice_address"
                                        invisible="1"/>
                                 <field name="payment_term_id" invisible="1"/>
@@ -645,7 +644,7 @@
                                         <field name="origin" invisible="1"/>
                                         <field name="is_rounding_line" invisible="1"/>
                                         <field name="name" invisible="1"/>
-                                        <field name="so_id"/>
+                                        <field name="so_id" invisible="1"/>
                                         <field name="company_id" invisible="1"/>
                                         <field name="account_id" groups="account.group_account_user" invisible="1"
                                                domain="[('company_id', '=', parent.company_id), ('internal_type', '=', 'other'), ('deprecated', '=', False)]"/>
@@ -654,8 +653,8 @@
                                                context="{'default_partner_id': parent.partner_id}"/>
                                         <field name="analytic_tag_ids" groups="analytic.group_analytic_accounting" invisible="1"
                                                widget="many2many_tags" options="{'color_field': 'color'}"/>
-                                        <field name="quantity"/>
-                                        <field name="uom_id" groups="product.group_uom"/>
+                                        <field name="quantity" invisible="1"/>
+                                        <field name="uom_id" groups="product.group_uom" invisible="1"/>
                                         <field name="yjzy_price_unit" string="单价"/>
                                         <field name="price_unit" invisible="1"/>
                                         <field name="discount" groups="base.group_no_one" invisible="1"/>
