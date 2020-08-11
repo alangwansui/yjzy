@@ -478,18 +478,18 @@ class transport_bill(models.Model):
     def compute_date_all_state(self):
         for one in self:
             # 日期填写状态计算 akiny
-            date_all_state = 'un_done'
+            date_all_state = '30_un_done'
             if one.date_out_in_state == 'submit' or one.date_ship_state == 'submit'\
                     or one.date_customer_finish_state == 'submit' or one.date_purchase_finish_state == 'submit':
-                date_all_state = 'date_approving'
+                date_all_state = '10_date_approving'
             else:
                 if one.date_out_in_state == 'draft':
-                    date_all_state = 'no_date_out_in'
+                    date_all_state = '20_no_date_out_in'
                 else:
                     if one.date_ship_state == 'done' and one.date_customer_finish_state == 'done' and one.date_purchase_finish_state == 'done':
-                        date_all_state = 'done'
+                        date_all_state = '40_done'
                     else:
-                        date_all_state = 'un_done'
+                        date_all_state = '30_un_done'
             one.date_all_state = date_all_state
 
     #失效
@@ -795,7 +795,7 @@ class transport_bill(models.Model):
     date_all_state = fields.Selection([('10_date_approving',u'日期审批中'),
                                        ('20_no_date_out_in',u'发货日期待填'),
                                        ('30_un_done',u'其他日期待填'),
-                                       ('done',u'已完成相关日期'),
+                                       ('40_done',u'已完成相关日期'),
                                        ],'所有日期状态',default='un_done',store=True, compute=compute_date_all_state)
     hexiao_type = fields.Selection([('undefined','...'),('abnormal',u'异常核销'),('write_off',u'正常核销')], default='undefined', string='核销类型')
     hexiao_date = fields.Date(u'核销时间')
