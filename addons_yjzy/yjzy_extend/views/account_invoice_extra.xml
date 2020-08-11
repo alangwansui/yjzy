@@ -758,25 +758,7 @@
         </record>
 
 
-<record id="action_supplier_account_invoice_extra" model="ir.actions.act_window">
-            <field name="name">额外应付账单</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="res_model">account.invoice</field>
-            <field name="view_mode">tree,form</field>
-            <field name="search_view_id" ref="view_account_invoice_new_filter"/>
-            <field name="domain">[('type','=','in_invoice'),('yjzy_type','=','purchase'),('state_1','!=','draft')]</field>
-            <field name="context">{}
-            </field>
-            <!--field name="target">new</field-->
-            <field name="view_ids" eval="[(5, 0, 0),
-                              (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.view_supplier_invoice_extra_tree')}),
-                              (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.view_supplier_invoice_extra_form')}),
-                              ]"/>
-        </record>
-       <menuitem id="menu_supplier_account_invoice_extra" action="action_supplier_account_invoice_extra"
-                  parent="menu_account_new_root" name="额外应付账单"
-                  sequence="90"
-        />
+
 
 
 

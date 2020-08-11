@@ -182,7 +182,7 @@ class sale_order_line(models.Model):
 
 
 
-    @api.depends('tbl_ids', 'tbl_ids.qty2stage_new','product_qty')
+    @api.depends('tbl_ids', 'tbl_ids.qty2stage_new','product_qty','order_id.tb_ids')
     def compute_rest_tb_qty(self):
         for one in self:
             one.new_rest_tb_qty = one.product_qty - sum(one.tbl_ids.mapped('qty2stage_new'))

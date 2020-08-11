@@ -54,20 +54,23 @@ class account_invoice(models.Model):
         today = datetime.today()
         strptime = datetime.strptime
         for one in self:
-            if one.date_deadline:
-               residual_times = today - strptime(one.date_deadline,DF)
-               one.residual_times = residual_times.days
-               one.residual_times_new = residual_times.days
+            if one.state  == 'open':
+                if one.date_deadline:
+                   residual_times = today - strptime(one.date_deadline,DF)
+                   one.residual_times = residual_times.days
+                   one.residual_times_new = residual_times.days
+                else:
+                    one.residual_times = -999
+                    one.residual_times_new = -999
+                if one.date_due:
+                    residual_times_out_in = today - strptime(one.date_due, DF)#参考
+                    one.residual_times_out_in = residual_times_out_in.days
+                    one.residual_times_out_in_new = residual_times_out_in.days
+                else:
+                    one.residual_times_out_in = -999
+                    one.residual_times_out_in_new = -999
             else:
-                one.residual_times = -999
-                one.residual_times_new = -999
-            if one.date_due:
-                residual_times_out_in = today - strptime(one.date_due, DF)#参考
-                one.residual_times_out_in = residual_times_out_in.days
-                one.residual_times_out_in_new = residual_times_out_in.days
-            else:
-                one.residual_times_out_in = -999
-                one.residual_times_out_in_new = -999
+                continue
 
     @api.depends('invoice_line_ids.price_subtotal', 'tax_line_ids.amount', 'tax_line_ids.amount_rounding',
                  'currency_id', 'company_id', 'date_invoice', 'type')
@@ -176,11 +179,12 @@ class account_invoice(models.Model):
     def _compute_count(self):
         for one in self:
             one.yjzy_invoice_count = len(one.yjzy_invoice_ids)
+    #额外账单只计算open和paid
     @api.depends('yjzy_invoice_ids','yjzy_invoice_ids.amount_total_signed','yjzy_invoice_ids.residual_signed','residual','amount_total')
     def compute_yjzy_invoice_amount_total(self):
         for one in self:
-            yjzy_invoice_amount_total = sum(one.yjzy_invoice_ids.mapped('amount_total_signed'))
-            yjzy_invoice_residual_signed_total = sum(one.yjzy_invoice_ids.mapped('residual_signed'))
+            yjzy_invoice_amount_total = sum(one.yjzy_invoice_ids.filtered(lambda inv: inv.state in ['open','paid']).mapped('amount_total_signed'))
+            yjzy_invoice_residual_signed_total = sum(one.yjzy_invoice_ids.filtered(lambda inv: inv.state in ['open','paid']).mapped('residual_signed'))
             yjzy_total = one.amount_total_signed + yjzy_invoice_amount_total
             yjzy_residual = one.residual_signed + yjzy_invoice_residual_signed_total
             one.yjzy_invoice_amount_total = yjzy_invoice_amount_total
@@ -251,8 +255,8 @@ class account_invoice(models.Model):
                                             copy=True)
     invoice_line_ids_origin = fields.One2many('account.invoice.line', 'invoice_id', domain=[('is_manual', '=', False)],
                                            readonly=True, states={'draft': [('readonly', False)]}, copy=True)
-    amount_automatic = fields.Monetary('原始合计金额',compute=compute_amount)
-    amount_manual = fields.Monetary('手动合计金额',compute=compute_amount)
+    amount_automatic = fields.Monetary('原始合计金额',currency_field='currency_id',compute=compute_amount)
+    amount_manual = fields.Monetary('手动合计金额', currency_field='currency_id', compute=compute_amount)
     residual_date_group = fields.Selection([('after_60',u'逾期>60天'),('after_30',u'逾期>30天'),('0_30',u'逾期0-30天'),
                                           ('before_30',u'未来30天'),('before_30_60',u'未来30-60天'),
                                           ('before_60_90',u'未来60-90天'),('before_90',u'未来超过90天'),('un_begin',u'未开始')],'到期时间组',store=True,
@@ -282,9 +286,9 @@ class account_invoice(models.Model):
     yjzy_invoice_amount_total = fields.Monetary('额外账单应收金额',currency_field='currency_id',compute=compute_yjzy_invoice_amount_total,store=True)
     yjzy_invoice_residual_signed_total = fields.Monetary('额外账单未收金额', currency_field='currency_id',
                                                 compute=compute_yjzy_invoice_amount_total, store=True)
-    yjzy_total = fields.Float(u'总应收金额', compute=compute_yjzy_invoice_amount_total,store=True)
-    yjzy_residual = fields.Float(u'总未收金额', compute=compute_yjzy_invoice_amount_total,store=True)
-    yjzy_price_total = fields.Float('新未收金额',compute=compute_yjzy_price_total)
+    yjzy_total = fields.Monetary(u'总应收金额',currency_field='currency_id', compute=compute_yjzy_invoice_amount_total,store=True)
+    yjzy_residual = fields.Monetary(u'总未收金额',currency_field='currency_id', compute=compute_yjzy_invoice_amount_total,store=True)
+    yjzy_price_total = fields.Monetary('新未收金额',currency_field='currency_id',compute=compute_yjzy_price_total)
     extra_code = fields.Char(u'额外编号',default=lambda self: self._default_name())
     yjzy_invoice_line_ids = fields.One2many('account.invoice.line','yjzy_invoice_id',u'所有明细')
 

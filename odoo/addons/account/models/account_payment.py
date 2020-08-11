@@ -392,7 +392,7 @@ class account_payment(models.Model):
     def _onchange_partner_type(self):
         # Set partner_id domain
         if self.partner_type:
-            return {'domain': {'partner_id': [(self.partner_type, '=', True)]}}
+            return {'domain': {'partner_id': [(self.partner_type, '=', True),('is_company','=',True)]}}
 
     @api.onchange('payment_type')
     def _onchange_payment_type(self):

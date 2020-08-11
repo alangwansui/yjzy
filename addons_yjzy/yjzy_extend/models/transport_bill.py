@@ -215,39 +215,45 @@ class transport_bill(models.Model):
 
     def _get_fee_inner_so(self):
         fee_inner = 0.0
-        for x in self.line_ids:
-            fee_inner += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_inner * x.plan_qty
-        self.fee_inner_so = fee_inner
+        for one in self:
+            for x in one.line_ids:
+                fee_inner += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_inner * x.plan_qty
+            one.fee_inner_so = fee_inner
 
     def _get_fee_rmb1_so(self):
-        fee_rmb1 = 0.0
-        for x in self.line_ids:
-            fee_rmb1 += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_rmb1 * x.plan_qty
-        self.fee_rmb1_so = fee_rmb1
+        for one in self:
+            fee_rmb1 = 0.0
+            for x in one.line_ids:
+                fee_rmb1 += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_rmb1 * x.plan_qty
+            one.fee_rmb1_so = fee_rmb1
 
     def _get_fee_rmb2_so(self):
         fee_rmb2 = 0.0
-        for x in self.line_ids:
-            fee_rmb2 += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_rmb2 * x.plan_qty
-        self.fee_rmb2_so = fee_rmb2
+        for one in self:
+            for x in one.line_ids:
+                fee_rmb2 += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_rmb2 * x.plan_qty
+            one.fee_rmb2_so = fee_rmb2
 
     def _get_fee_outer_so(self):
         fee_outer = 0.0
-        for x in self.line_ids:
-            fee_outer += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_outer * x.plan_qty
-        self.fee_outer_so = fee_outer
+        for one in self:
+            for x in one.line_ids:
+                fee_outer += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_outer * x.plan_qty
+            one.fee_outer_so = fee_outer
 
     def _get_fee_export_insurance_so(self):
         fee_export_insurance = 0.0
-        for x in self.line_ids:
-            fee_export_insurance += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_export_insurance * x.plan_qty
-        self.fee_export_insurance_so = fee_export_insurance
+        for one in self:
+            for x in one.line_ids:
+                fee_export_insurance += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_export_insurance * x.plan_qty
+            one.fee_export_insurance_so = fee_export_insurance
 
     def _get_fee_other_so(self):
         fee_other = 0.0
-        for x in self.line_ids:
-            fee_other += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_other * x.plan_qty
-        self.fee_other_so = fee_other
+        for one in self:
+            for x in one.line_ids:
+                fee_other += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_other * x.plan_qty
+            one.fee_other_so = fee_other
 
 
 
@@ -331,15 +337,15 @@ class transport_bill(models.Model):
             purchase_invoices = one.purchase_invoice_ids.filtered(lambda x: x.yjzy_type == 'purchase' and x.state not in ['draft','cancel'])
             back_tax_invoice = one.back_tax_invoice_id.filtered(lambda x: x.state not in ['draft','cancel'])
 
-            one.sale_invoice_total = sale_invoice.amount_total
-            one.purhcase_invoice_total = sum([x.amount_total for x in purchase_invoices])
-            one.back_tax_invoice_total = back_tax_invoice.amount_total
-            one.sale_invoice_paid = sale_invoice.amount_total-sale_invoice.residual_signed #akiny
-            one.purhcase_invoice_paid = sum([x.amount_total for x in purchase_invoices])-sum([x.residual_signed for x in purchase_invoices])
-            one.back_tax_invoice_paid = back_tax_invoice.amount_total-back_tax_invoice.residual_signed
-            one.sale_invoice_balance = sale_invoice.residual_signed
-            one.purhcase_invoice_balance = sum([x.residual_signed for x in purchase_invoices])
-            one.back_tax_invoice_balance = back_tax_invoice.residual_signed
+            # one.sale_invoice_total = sale_invoice.amount_total
+            # one.purhcase_invoice_total = sum([x.amount_total for x in purchase_invoices])
+            # one.back_tax_invoice_total = back_tax_invoice.amount_total
+            # one.sale_invoice_paid = sale_invoice.amount_total-sale_invoice.residual_signed #akiny
+            # one.purhcase_invoice_paid = sum([x.amount_total for x in purchase_invoices])-sum([x.residual_signed for x in purchase_invoices])
+            # one.back_tax_invoice_paid = back_tax_invoice.amount_total-back_tax_invoice.residual_signed
+            # one.sale_invoice_balance = sale_invoice.residual_signed
+            # one.purhcase_invoice_balance = sum([x.residual_signed for x in purchase_invoices])
+            # one.back_tax_invoice_balance = back_tax_invoice.residual_signed
 
             one.all_purchase_invoice_fill = all([x.date_finish for x in purchase_invoices])
 
@@ -380,46 +386,54 @@ class transport_bill(models.Model):
                 'purchase_cost_total': one.sale_currency_id.round(purchase_cost_total),
 
             })
-
-    @api.depends('sale_invoice_id.amount_total','sale_invoice_id.residual_signed')
+    #加上额外账单
+    @api.depends('sale_invoice_id.amount_total','sale_invoice_id.residual_signed','sale_invoice_id.yjzy_total','sale_invoice_id.yjzy_residual')
     def sale_invoice_amount(self):
-
         for one in self:
             sale_invoice = one.sale_invoice_id.filtered(lambda x: x.state not in ['draft', 'cancel'])
-            sale_invoice_total = sale_invoice.amount_total
-            sale_invoice_paid = sale_invoice.amount_total - sale_invoice.residual_signed  # akiny
-            sale_invoice_balance = sale_invoice.residual_signed
+            sale_invoice_total = sale_invoice.yjzy_total
+            sale_invoice_balance = sale_invoice.yjzy_residual
+            sale_invoice_paid = sale_invoice_total - sale_invoice_balance  # akiny
             one.update({
                 'sale_invoice_total_new': one.sale_currency_id.round(sale_invoice_total),
                 'sale_invoice_paid_new': one.sale_currency_id.round(sale_invoice_paid),
-                'sale_invoice_balance_new': one.sale_currency_id.round(sale_invoice_balance)
+                'sale_invoice_balance_new': one.sale_currency_id.round(sale_invoice_balance),
+                'sale_invoice_total': sale_invoice_total,
+                'sale_invoice_paid':sale_invoice_paid,
+                'sale_invoice_balance':sale_invoice_balance
             })
-
-    @api.depends('purchase_invoice_ids.amount_total','purchase_invoice_ids.residual_signed')
+#加入了额外账单的统计
+    @api.depends('purchase_invoice_ids.amount_total','purchase_invoice_ids.residual_signed','back_tax_invoice_id.yjzy_total','back_tax_invoice_id.yjzy_residual')
     def purchase_invoice_amount(self):
         for one in self:
             purchase_invoices = one.purchase_invoice_ids.filtered(
                 lambda x: x.yjzy_type == 'purchase' and x.state not in ['draft', 'cancel'])
-            purchase_invoice_total = sum([x.amount_total for x in purchase_invoices])
-            purchase_invoice_balance = sum([x.residual_signed for x in purchase_invoices])
+            purchase_invoice_total = sum([x.yjzy_total for x in purchase_invoices])
+            purchase_invoice_balance = sum([x.yjzy_residual for x in purchase_invoices])
             purchase_invoice_paid = purchase_invoice_total - purchase_invoice_balance
             one.update({
                 'purchase_invoice_total_new': one.sale_currency_id.round(purchase_invoice_total),
                 'purchase_invoice_paid_new': one.sale_currency_id.round(purchase_invoice_paid),
                 'purchase_invoice_balance_new': one.sale_currency_id.round(purchase_invoice_balance),
+                'purhcase_invoice_total':purchase_invoice_total,
+                'purhcase_invoice_paid':purchase_invoice_paid,
+                'purhcase_invoice_balance':purchase_invoice_balance
             })
 
-    @api.depends('back_tax_invoice_id.amount_total','back_tax_invoice_id.residual_signed')
+    @api.depends('back_tax_invoice_id.amount_total','back_tax_invoice_id.residual_signed','back_tax_invoice_id.yjzy_total', 'back_tax_invoice_id.yjzy_residual')
     def back_tax_invoice_amount(self):
         for one in self:
             back_tax_invoice = one.back_tax_invoice_id.filtered(lambda x: x.state not in ['draft', 'cancel'])
-            back_tax_invoice_total = back_tax_invoice.amount_total
-            back_tax_invoice_balance = back_tax_invoice.residual_signed
+            back_tax_invoice_total = back_tax_invoice.yjzy_total
+            back_tax_invoice_balance = back_tax_invoice.yjzy_residual
             back_tax_invoice_paid = back_tax_invoice_total - back_tax_invoice_balance
             one.update({
                 'back_tax_invoice_total_new': one.sale_currency_id.round(back_tax_invoice_total),
                 'back_tax_invoice_balance_new': one.sale_currency_id.round(back_tax_invoice_balance),
                 'back_tax_invoice_paid_new': one.sale_currency_id.round(back_tax_invoice_paid),
+                'back_tax_invoice_total':back_tax_invoice_total,
+                'back_tax_invoice_balance':back_tax_invoice_balance,
+                'back_tax_invoice_paid':back_tax_invoice_paid
             })
 
 
@@ -549,7 +563,7 @@ class transport_bill(models.Model):
             one.same_currency = is_same_currency
             one.same_include_tax = is_same_include_tax
 
-    @api.depends('all_invoice_ids','all_invoice_ids.state','sale_invoice_id','sale_invoice_id.state','purchase_invoice_ids','purchase_invoice_ids.state')
+    @api.depends('all_invoice_ids','all_invoice_ids.state','all_invoice_ids.residual_signed','sale_invoice_id','sale_invoice_id.state','sale_invoice_id.residual_signed','purchase_invoice_ids','purchase_invoice_ids.state',)
     def compute_invoice_paid_state(self):
         for one in self:
             invoice_paid_state = 'e'
@@ -616,6 +630,123 @@ class transport_bill(models.Model):
     #
     #     if fee_inner > 0:
     #         return fee_inner
+#qq注意额外账单加上后，怎么办
+    # @api.depends('all_invoice_ids', 'all_invoice_ids.state', 'all_invoice_ids.residual_signed', 'sale_invoice_id',
+    #              'sale_invoice_id.state', 'sale_invoice_id.residual_signed', 'purchase_invoice_ids',
+    #              'purchase_invoice_ids.state', )
+    # def compute_second_state(self):
+    #     for one in self:
+    #         second_state = '10'
+    #         back_tax_invoice_id = one.back_tax_invoice_id
+    #         line_purchase_invoice_count = len(
+    #             one.purchase_invoice_ids.filtered(lambda x: x.state not in ['draft', 'cancel']))
+    #         line_purchase_invoice_ids = one.purchase_invoice_ids
+    #         sale_invoice_id = one.sale_invoice_id
+    #         today = datetime.now()
+    #         # if not back_tax_invoice_id:
+    #         #     if line_purchase_invoice_count > 0 and sale_invoice_id and sale_invoice_id.state not in (
+    #         #     'draft', 'cancel'):
+    #         #         if all([x.state == 'paid' for x in line_purchase_invoice_ids]) and sale_invoice_id.state == 'paid':
+    #         #             second_state = '60'
+    #         #         else:
+    #         #             if sale_invoice_id.residual_times_new >30:
+    #         #                 second_state = '70'
+    #         #             else:
+    #         #                 if not all([x.state == 'paid' for x in
+    #         #                             one.purchase_invoice_ids]) and sale_invoice_id.state == 'paid':
+    #         #                     second_state = '40'
+    #         #                 if all([x.state == 'paid' for x in
+    #         #                         one.purchase_invoice_ids]) and sale_invoice_id.state != 'paid':
+    #         #                     second_state = '50'
+    #         #                 if not all([x.state == 'paid' for x in
+    #         #                             one.purchase_invoice_ids]) and sale_invoice_id.state != 'paid':
+    #         #                     second_state = '30'
+    #         #         one.second_state = second_state
+    #         #     else:
+    #         #         one.invoice_paid_state = 'e'
+    #         # else:
+    #         if line_purchase_invoice_count > 0 and sale_invoice_id and sale_invoice_id.state not in (
+    #         'draft', 'cancel') and (back_tax_invoice_id not in ('draft', 'cancel') or not back_tax_invoice_id):
+    #             if all([x.state == 'paid' for x in
+    #                     line_purchase_invoice_ids]) and sale_invoice_id.state == 'paid' and (back_tax_invoice_id.state == 'paid' or not back_tax_invoice_id):
+    #                 second_state = '60'
+    #             else:
+    #                 if (sale_invoice_id.state == 'open' and sale_invoice_id.residual_times_new >30) or \
+    #                         (back_tax_invoice_id and back_tax_invoice_id.state == 'open' and back_tax_invoice_id.residual_times_new > 30):
+    #                     second_state = '70'
+    #                 else:
+    #                     if not all([x.state == 'paid' for x in
+    #                                 one.purchase_invoice_ids]) and sale_invoice_id.state == 'paid' and (back_tax_invoice_id.state == 'paid' or not back_tax_invoice_id):
+    #                         second_state = '40'
+    #                     if all([x.state == 'paid' for x in one.purchase_invoice_ids]) and (
+    #                             sale_invoice_id.state != 'paid' or (back_tax_invoice_id and back_tax_invoice_id.state != 'paid')):
+    #                         second_state = '50'
+    #                     if not all([x.state == 'paid' for x in one.purchase_invoice_ids]) and (
+    #                             sale_invoice_id.state != 'paid' or (back_tax_invoice_id and back_tax_invoice_id.state != 'paid')):
+    #                         second_state = '30'
+    #         else:
+    #             if one.approve_date:
+    #                 if one.approve_date < (today - relativedelta(days=30)).strftime(
+    #                         '%Y-%m-%d 00:00:00'):
+    #                     second_state = '20'
+    #                 else:
+    #                     second_state = '10'
+    #         one.second_state = second_state
+#qq1
+    @api.depends('all_invoice_ids', 'all_invoice_ids.state', 'all_invoice_ids.residual_signed', 'sale_invoice_id',
+                 'sale_invoice_id.state', 'sale_invoice_id.residual_signed', 'purchase_invoice_ids',
+                 'purchase_invoice_ids.state', 'sale_invoice_balance_new','purchase_invoice_balance_new','back_tax_invoice_balance_new')
+    def compute_second_state(self):
+        for one in self:
+            back_tax_invoice_id = one.back_tax_invoice_id
+            line_purchase_invoice_count = len(
+                 one.purchase_invoice_ids.filtered(lambda x: x.state not in ['draft', 'cancel']))
+            line_purchase_invoice_ids = one.purchase_invoice_ids
+            sale_invoice_id = one.sale_invoice_id
+            second_state = '10'
+            sale_invoice_balance = one.sale_invoice_balance_new
+            purchase_invoice_balance = one.purchase_invoice_balance_new
+            back_tax_invoice_balance = one.back_tax_invoice_balance_new
+            stage_id = one.stage_id
+
+            today = datetime.now()
+            # 未发货，开始发货，待核销，已核销
+            if one.state in ('invoiced', 'verifying','abnormal'):
+                if sale_invoice_balance == 0 and purchase_invoice_balance== 0 and back_tax_invoice_balance == 0:
+                    stage_id = self._stage_find(domain=[('code', '=', '006')])
+                    second_state = '60'
+                else:
+                    if (sale_invoice_balance !=0 and sale_invoice_id.residual_times_new >30) or \
+                            (back_tax_invoice_balance != 0 and back_tax_invoice_id.residual_times_new > 30):
+                        second_state = '70'
+                        stage_id = self._stage_find(domain=[('code', '=', '005')])
+                    else:
+                        if purchase_invoice_balance !=0 and sale_invoice_balance ==0 and back_tax_invoice_balance ==0:
+                            second_state = '40'
+                            stage_id = self._stage_find(domain=[('code', '=', '005')])
+                        if purchase_invoice_balance == 0 and (sale_invoice_balance != 0 or back_tax_invoice_balance != 0):
+                            second_state = '50'
+                            stage_id = self._stage_find(domain=[('code', '=', '005')])
+                        if purchase_invoice_balance != 0 and (
+                                sale_invoice_balance != 0 or back_tax_invoice_balance != 0):
+                            second_state = '30'
+                            stage_id = self._stage_find(domain=[('code', '=', '005')])
+            else:
+                if one.approve_date:
+                    if one.approve_date < (today - relativedelta(days=30)).strftime(
+                            '%Y-%m-%d 00:00:00'):
+                        second_state = '20'
+                    else:
+                        second_state = '10'
+                    stage_id = self._stage_find(domain=[('code', '=', '004')])
+                else:
+                    second_state = '09'
+            one.second_state = second_state
+            one.stage_id = stage_id
+
+
+
+
     def compute_border(self):
         for one in self:
             one.border_char = '|'
@@ -675,6 +806,8 @@ class transport_bill(models.Model):
                                        ('done',u'已完成相关日期'),
                                        ('abnormal',u'日期异常')],'所有日期状态',default='un_done',store=True, compute=compute_date_all_state)
     hexiao_type = fields.Selection([('undefined','...'),('abnormal',u'异常核销'),('write_off',u'正常核销')], default='undefined', string='核销类型')
+    hexiao_date = fields.Date(u'核销时间')
+    hexiao_uid = fields.Many2one('res.user',u'核销人')
     invoice_state = fields.Selection([('draft', u'未确认'), ('open', u'已确认'),('paid',u'已付款')], string='账单状态',compute=compute_info)
     same_incoterm = fields.Boolean(u'价格条款是否一致',  compute='compute_same')#store=True,
     same_payment_term = fields.Boolean(u'付款条款是否一致', compute='compute_same')
@@ -685,6 +818,15 @@ class transport_bill(models.Model):
                                            ('c',u'已收齐未付清'),
                                            ('d_no_paid',u'收付均未清'),
                                            ('e','未确认')], '收款状态',store=True, compute=compute_invoice_paid_state)#应收应付分组情况
+    #qq
+    second_state = fields.Selection([('09',u'...'),
+                                     ('10',u'正常待确认'),
+                                     ('20',u'异常待确认'),
+                                     ('30',u'收付均未清'),
+                                     ('40',u'已收未付清'),
+                                     ('50','已付未收清'),
+                                     ('60',u'正常待核销'),
+                                     ('70','应收付异常')],'二级状态', store=True,compute=compute_second_state)
 
 
     # outer_currency_id = fields.Many2one('res.currency', u'国外运保费货币', related='sol_id.outer_currency_id')
@@ -734,18 +876,18 @@ class transport_bill(models.Model):
     shoukuan_amount = fields.Monetary(u'收款金额', digits=(2, 4), compute=compute_info)
     fukuan_amount = fields.Monetary(u'付款金额', digits=(2, 4), compute=compute_info)
 
-    sale_invoice_total = fields.Monetary(u'销售发票金额', compute=compute_invoice_amount)
+    sale_invoice_total = fields.Monetary(u'销售发票金额', compute=sale_invoice_amount)
 
-    purhcase_invoice_total = fields.Monetary(u'采购发票金额', compute=compute_invoice_amount)
-    back_tax_invoice_total = fields.Monetary(u'退税发票金额', compute=compute_invoice_amount)
+    purhcase_invoice_total = fields.Monetary(u'采购发票金额', compute=purchase_invoice_amount)
+    back_tax_invoice_total = fields.Monetary(u'退税发票金额', compute=back_tax_invoice_amount)
 
-    sale_invoice_paid = fields.Monetary(u'销售发票已付', compute=compute_invoice_amount)
-    purhcase_invoice_paid = fields.Monetary(u'采购发票已付', compute=compute_invoice_amount)
-    back_tax_invoice_paid = fields.Monetary(u'退税发票已付', compute=compute_invoice_amount)
+    sale_invoice_paid = fields.Monetary(u'销售发票已付', compute=sale_invoice_amount)
+    purhcase_invoice_paid = fields.Monetary(u'采购发票已付', compute=purchase_invoice_amount)
+    back_tax_invoice_paid = fields.Monetary(u'退税发票已付', compute=back_tax_invoice_amount)
 
-    sale_invoice_balance = fields.Monetary(u'销售发票余额', compute=compute_invoice_amount)
-    purhcase_invoice_balance = fields.Monetary(u'采购发票余额', compute=compute_invoice_amount)
-    back_tax_invoice_balance = fields.Monetary(u'退税发票余额', compute=compute_invoice_amount)
+    sale_invoice_balance = fields.Monetary(u'销售发票余额', compute=sale_invoice_amount)
+    purhcase_invoice_balance = fields.Monetary(u'采购发票余额', compute=purchase_invoice_amount)
+    back_tax_invoice_balance = fields.Monetary(u'退税发票余额', compute=back_tax_invoice_amount)
 
     account_type = fields.Selection([('tt', 'T/T'), ('lc', 'LC')], '收汇方式')
     credit_info = fields.Char('信用证信息')
@@ -781,7 +923,7 @@ class transport_bill(models.Model):
     amount_real_payment = fields.Monetary('实际支付', currency_field='sale_currency_id')
     amount_account_payment = fields.Monetary('支付账户', currency_field='sale_currency_id')
     amount_account_adjust = fields.Monetary('账户调节', currency_field='sale_currency_id')
-    all_purchase_invoice_fill = fields.Boolean('所有采购发票都已填写', compute=compute_info)
+    all_purchase_invoice_fill = fields.Boolean('所有采购发票都已填写', compute=compute_invoice_amount)
 
 
 
@@ -1023,6 +1165,26 @@ class transport_bill(models.Model):
         # if ctx.get('default_open', '') == 'sol':
         #     return self.open_wizard_transport4sol()
 
+    def action_hexiao(self):
+        today = fields.datetime.now()
+        stage_id = self._stage_find(domain=[('code', '=', '008')])
+        stage_preview = self.stage_id
+        user = self.env.user
+        second_state = self.second_state
+        hexiao_type = 'undefined'
+        # group = self.env.user.groups_id
+        if user not in stage_preview.user_ids:
+            raise Warning('您没有权限核销')
+        else:
+            if second_state == '60':
+                hexiao_type = 'write_off'
+            elif second_state == 70:
+                hexiao_type = 'abnormal'
+            self.write({'hexiao_uid': self.env.user.id,
+                        'hexiao_date': today,
+                        # 'state':'sales_approve',
+                        'stage_id': stage_id.id,
+                        'hexiao_type':hexiao_type})
     def compute_stage_id(self):
         if self.state=='draft':
             self.stage_id =self.env.ref('yjzy_extend.stage_tb_draft').id
@@ -1228,8 +1390,8 @@ class transport_bill(models.Model):
         self.make_sale_purchase_collect()
         self.create_qingguan_lines()
         self.make_tb_vendor()
-        self.split_tuopan_weight()
-        self.split_tuopan_weight2vendor()
+        # self.split_tuopan_weight()
+        # self.split_tuopan_weight2vendor()
         self.compute_tb_ref()
         self.compute_fee()
         self.operation_wizard = 'fifth'
@@ -1285,14 +1447,15 @@ class transport_bill(models.Model):
                 if not one.date_customer_finish_att:
                     raise Warning('请提交客户交单日期附件')
                 one.date_customer_finish_state = 'submit'
-    #日期审批完成后直接出运并生成账单同时更新进仓日期到对应的发票
+    #日期审批完成后直接出运并生成账单同时更新进仓日期到对应的发票 qq
     def action_customer_date_state_done(self):
         date_type = self.env.context.get('date_type')
         for one in self:
             if date_type == 'date_out_in':
                 one.date_out_in_state = 'done'
                 if one.state not in ['delivered','invoiced']:
-                    one.state = 'invoiced'
+                    # one.state = 'invoiced'
+                    one.stage_id = self._stage_find(domain=[('code', '=', '005')])
                     # one.onece_all_stage()
                     # one.make_all_invoice()
                     one.action_invoiced()
@@ -1401,6 +1564,7 @@ class transport_bill(models.Model):
         ctx = self.env.context
         result = []
         only_ref = self.env.context.get('only_ref')
+        # fhtzd = self.env.context.get(fhtzd)
         for one in self:
             print('---name_get---',one)
             name = one.name
@@ -2057,11 +2221,11 @@ class transport_bill(models.Model):
         self.make_back_tax_invoice()
       #  self.state = 'invoiced'
 
-    def unlink(self):
-        for one in self:
-            if one.state != 'cancel':
-                raise Warning('不能删除非取消状态发运单')
-        return super(transport_bill, self).unlink()
+    # def unlink(self):
+    #     for one in self:
+    #         if one.state != 'cancel':
+    #             raise Warning('不能删除非取消状态发运单')
+    #     return super(transport_bill, self).unlink()
 
     def onece_all_stage(self):
         self.prepare_1_picking()
@@ -2492,7 +2656,7 @@ class transport_bill(models.Model):
         self.ensure_one()
         declare_form_id = self.env.ref('yjzy_extend.view_transport_bill_supplier_from').id
         return {
-                'name': _(u'发货通知单'),
+                'name': u'发货通知单',
                 'view_type': 'form',
                 'view_mode': 'form',
                 'type': 'ir.actions.act_window',
@@ -2599,10 +2763,14 @@ class transport_bill(models.Model):
                            'stage_id': stage_id.id})
   #akiny
     def action_invoiced(self):
+        user = self.env.user
         self.onece_all_stage()
         stage_id = self._stage_find(domain=[('code', '=', '005')])
         return self.write({#'state': 'invoiced',
-                           'stage_id': stage_id.id})
+                           'invoiced_date':fields.datetime.now(),
+                           'invoiced_uid':user,
+                           'stage_id': stage_id.id
+        })
 
     #阶段审批典型案例
     def action_refuse(self,reason):
@@ -2678,6 +2846,17 @@ class transport_bill(models.Model):
                     state = 'verifying'
                 one.hexiao_type = hexiao_type
                 one.state = state
+#qq1
+    @api.depends('sale_invoice_balance_new','purchase_invoice_balance_new','back_tax_invoice_balance_new') #qq
+    def update_hexiao_state(self):
+        for one in self:
+            print('---', one)
+            stage_id = one.stage_id
+            # 未发货，开始发货，待核销，已核销
+            if one.state in ('invoiced', 'verifying'):
+                if one.sale_invoice_balance_new == 0 and one.purchase_invoice_balance_new == 0 and one.back_tax_invoice_balance_new == 0:
+                    stage_id = self._stage_find(domain=[('code', '=', '006')])
+                one.stage_id = stage_id
     #state异常的判断和核销状态的判断
     def update_hexiaotype_doing_type_new(self):
         for one in self:
@@ -2693,18 +2872,18 @@ class transport_bill(models.Model):
                         date_out_in and date_out_in < (today - relativedelta(days=180)).strftime('%Y-%m-%d 00:00:00'):
                     hexiao_type = 'abnormal'
                     stage_id = self._stage_find(domain=[('code', '=', '006')])
-                    state = 'abnormal'
+                    #state = 'abnormal'
                 if one.sale_invoice_balance_new == 0 and one.purchase_invoice_balance_new == 0 and one.back_tax_invoice_balance_new == 0:
                     if hexiao_type == 'abnormal':
                         hexiao_type = 'abnormal'
                         stage_id = self._stage_find(domain=[('code', '=', '007')])
-                        state = 'verifying'
+                        #state = 'verifying'
                     else:
                         hexiao_type = 'write_off'
                         stage_id = self._stage_find(domain=[('code', '=', '007')])
-                        state = 'verifying'
+                        #state = 'verifying'
                 one.hexiao_type = hexiao_type
-                one.state = state
+                #one.state = state
                 one.stage_id = stage_id
 
     #自动计算出运开票状态和自动发票过账
