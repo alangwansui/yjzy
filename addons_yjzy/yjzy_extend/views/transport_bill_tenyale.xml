@@ -29,7 +29,7 @@
 
                     <group expand="0" string="Group By">
                         <filter string="核销执行时间以及核销类型分组" name="group_by_date_hexiao" domain="[]" context="{'group_by':['hexiao_date','hexiao_type']}"/>
-                        <filter string="出运确认时间分组" name="group_invoiced_date" domain="[]" context="{'group_by':['invoiced_date']}"/>
+                        <filter string="出运确认时间分组" name="group_date_out_in" domain="[]" context="{'group_by':['date_out_in']}"/>
                         <filter string="时间状态分组" name="group_date_all_state_1" domain="[]" context="{'group_by':['date_all_state']}"/>
                         <filter string="状态和二级分组" name="group_by_state_type" domain="[]" context="{'group_by':['stage_id','second_state']}"/>
                         <filter string="Stage分组" name="group_by_stage" domain="[]" context="{'group_by':['stage_id']}"/>
@@ -86,7 +86,7 @@
                     <field name="ref"/>
                     <field name="name" invisible="1" groups="base.group_system"/>
                     <field name="approve_date" string="合规审批日"/>
-                    <field name="invoiced_date" string="出运日期"/>
+                    <field name="date_out_in" string="出运日期"/>
                     <field name="partner_id" required="1"/>
                     <field name="invoice_paid_state" invisible="1"/>
                     <field name="org_sale_amount" groups="base.group_system"/>
@@ -135,7 +135,7 @@
                 <tree string="已核销" default_order="hexiao_date">
                     <field name="ref"/>
                     <field name="name" invisible="1" groups="base.group_system"/>
-                    <field name="invoiced_date" string="出运日期"/>
+                    <field name="date_out_in" string="出运日期"/>
                     <field name="hexiao_date"/>
                     <field name="partner_id" required="1"/>
                     <field name="invoice_paid_state" invisible="1"/>
@@ -191,7 +191,7 @@
                 <tree string="已核销" default_order="invoiced_date">
                     <field name="ref"/>
                     <field name="name" invisible="1" groups="base.group_system"/>
-                    <field name="invoiced_date" string="出运时间"/>
+                    <field name="date_out_in" string="出运时间"/>
                     <field name="partner_id" required="1"/>
                     <field name="invoice_paid_state" invisible="1"/>
                     <field name="org_sale_amount" groups="base.group_system"/>
@@ -1803,7 +1803,7 @@
             <field name="domain">[('state','in',['approve','delivered','invoiced','verifying','done'])]</field>
             <field name="limit">20</field>
             <field name="search_view_id" ref="view_transport_bill_tenyale_filter"/>
-            <field name="context">{'search_default_group_invoiced_date':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3,'show_po_code':1}</field>
+            <field name="context">{'search_default_group_date_out_in':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3,'show_po_code':1}</field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_transport_bill_tenyale_years_tree')}),
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_transport_bill_tenyale_sales_kanban')}),

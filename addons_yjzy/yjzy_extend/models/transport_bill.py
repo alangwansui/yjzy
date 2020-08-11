@@ -2769,6 +2769,8 @@ class transport_bill(models.Model):
         return self.write({#'state': 'invoiced',
                            'invoiced_date':fields.datetime.now(),
                            'invoiced_uid':user,
+                           'delivered_date':fields.datetime.now(),
+                           'delivered_uid':user,
                            'stage_id': stage_id.id
         })
 
