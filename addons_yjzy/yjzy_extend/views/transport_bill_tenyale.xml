@@ -82,7 +82,7 @@
             <field name="name">transport.bill.tree</field>
             <field name="model">transport.bill</field>
             <field name="arch" type="xml">
-                <tree string="出运单" create="false">
+                <tree string="出运单" create="false" default_order="approve_date">
                     <field name="ref"/>
                     <field name="name" invisible="1" groups="base.group_system"/>
                     <field name="approve_date" string="合规审批日"/>
