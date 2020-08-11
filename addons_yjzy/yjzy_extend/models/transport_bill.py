@@ -486,7 +486,7 @@ class transport_bill(models.Model):
                 if one.date_out_in_state == 'draft':
                     date_all_state = '20_no_date_out_in'
                 else:
-                    if one.date_ship_state == 'done' and one.date_customer_finish_state == 'done' and one.date_purchase_finish_state == 'done':
+                    if one.date_out_in_state == 'done' and one.date_ship_state == 'done' and one.date_customer_finish_state == 'done' and one.date_purchase_finish_state == 'done':
                         date_all_state = '40_done'
                     else:
                         date_all_state = '30_un_done'
