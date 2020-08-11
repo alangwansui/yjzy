@@ -5,7 +5,7 @@
             <field name="name">transport.bill.tree</field>
             <field name="model">transport.bill</field>
             <field name="arch" type="xml">
-                <tree string="出运单" editable="bottom" default_order="date_out_in desc,date_out_in_state desc">
+                <tree string="出运单" editable="bottom" default_order="stage_id, date_out_in desc,date_out_in_state desc">
                     <field name="name" invisible="1"/>
                     <field name="ref" readonly="1"/>
                     <field name="partner_id" required="1" readonly="1"/>
@@ -295,7 +295,7 @@
 
         <!--日期填制-->
         <record model="ir.actions.act_window" id="act_open_transport_bill_tenyale_date_view">
-            <field name="name">出运单日期填制</field>
+            <field name="name">出运单日期维护</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">transport.bill</field>
             <field name="view_type">form</field>
@@ -311,7 +311,7 @@
                           ]"/>
         </record>
 
-        <menuitem id="menu_transport_tenyale_date_bill" name="出运单日期填制"
+        <menuitem id="menu_transport_tenyale_date_bill" name="出运单日期维护"
                   parent="yjzy_extend.menu_transport_tenyale_bill_root"
                   sequence="5"
                   action="act_open_transport_bill_tenyale_date_view"
