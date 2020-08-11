@@ -188,7 +188,7 @@
             <field name="name">transport.bill.tree</field>
             <field name="model">transport.bill</field>
             <field name="arch" type="xml">
-                <tree string="已核销" default_order="invoiced_date">
+                <tree string="已核销" default_order="date_out_in desc">
                     <field name="ref"/>
                     <field name="name" invisible="1" groups="base.group_system"/>
                     <field name="date_out_in" string="出运时间"/>

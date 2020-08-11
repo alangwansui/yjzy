@@ -78,13 +78,13 @@
             <field name="state">invoiced</field>
         </record>
         <record model="transport.bill.stage" id="stage_tb_abnormal">
-            <field name="name">待核销</field>
+            <field name="name">异常待核销</field>
             <field name="code">006</field>
             <field name="sequence" eval="60"/>
             <field name="state">abnormal</field>
         </record>
         <record model="transport.bill.stage" id="stage_tb_verifying">
-            <field name="name">正常待核销</field>
+            <field name="name">待核销</field>
             <field name="code">007</field>
             <field name="sequence" eval="70"/>
             <field name="state">verifying</field>

@@ -713,7 +713,7 @@ class transport_bill(models.Model):
             # 未发货，开始发货，待核销，已核销
             if one.state in ('invoiced', 'verifying','abnormal'):
                 if sale_invoice_balance == 0 and purchase_invoice_balance== 0 and back_tax_invoice_balance == 0:
-                    stage_id = self._stage_find(domain=[('code', '=', '006')])
+                    stage_id = self._stage_find(domain=[('code', '=', '007')])
                     second_state = '60'
                 else:
                     if (sale_invoice_balance !=0 and sale_invoice_id.residual_times_new >30) or \
@@ -2857,7 +2857,7 @@ class transport_bill(models.Model):
             # 未发货，开始发货，待核销，已核销
             if one.state in ('invoiced', 'verifying'):
                 if one.sale_invoice_balance_new == 0 and one.purchase_invoice_balance_new == 0 and one.back_tax_invoice_balance_new == 0:
-                    stage_id = self._stage_find(domain=[('code', '=', '006')])
+                    stage_id = self._stage_find(domain=[('code', '=', '007')])
                 one.stage_id = stage_id
     #state异常的判断和核销状态的判断
     def update_hexiaotype_doing_type_new(self):
