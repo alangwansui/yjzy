@@ -29,7 +29,7 @@
 
                     <group expand="0" string="Group By">
                         <filter string="核销执行时间以及核销类型分组" name="group_by_date_hexiao" domain="[]" context="{'group_by':['hexiao_date','hexiao_type']}"/>
-                        <filter string="出运确认时间分组" name="group_date_out_in" domain="[]" context="{'group_by':['date_out_in']}"/>
+                        <filter string="出运确认时间分组" name="group_date_out_in" domain="[]" context="{'group_by':['date_out_in:year','date_out_in']}"/>
                         <filter string="时间状态分组" name="group_date_all_state_1" domain="[]" context="{'group_by':['date_all_state']}"/>
                         <filter string="状态和二级分组" name="group_by_state_type" domain="[]" context="{'group_by':['stage_id','second_state']}"/>
                         <filter string="Stage分组" name="group_by_stage" domain="[]" context="{'group_by':['stage_id']}"/>
