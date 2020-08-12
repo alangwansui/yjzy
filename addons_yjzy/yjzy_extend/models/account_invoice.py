@@ -191,7 +191,7 @@ class account_invoice(models.Model):
             one.all_amount_org = all_amount_org
             one.all_usd_amount_org = all_usd_amount_org
             one.all_usd_amount_payment_org = all_usd_amount_payment_org
-            one.all_amount_advance_org = all_usd_amount_advance_org
+            one.all_usd_amount_advance_org = all_usd_amount_advance_org
             one.reconcile_order_line_payment_usd = yjzy_reconcile_order_line_payment_usd
             one.reconcile_order_line_advance_usd = yjzy_reconcile_order_line_advance_usd
 

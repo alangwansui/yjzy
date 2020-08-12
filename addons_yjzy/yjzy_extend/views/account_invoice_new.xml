@@ -201,15 +201,18 @@
                         <field name="date_invoice" string="账单日期"/>
                         <button name="open_reconcile_order_line" icon="fa-pencil-square-o" type="object"/>
 
-                         <field name="amount_total_signed" string="应收金额" sum="Total"/>
-                        <field name="residual_signed" string="未收金额" sum="Amount Due"/>
-                        <field name="yjzy_invoice_amount_total" sum="小计"/>
-                        <field name="yjzy_invoice_residual_signed_total" sum="小计"/>
-                        <field name="yjzy_total" string="应收总金额" sum="Total"/>
-                        <field name="yjzy_residual" string="未收总金额" sum="Amount Due"/>
+                         <field name="amount_total_signed" string="应收金额" sum="Total" invisible="1"/>
+                        <field name="residual_signed" string="未收金额" sum="Amount Due" invisible="1"/>
+                        <field name="yjzy_invoice_amount_total" sum="小计" invisible="1"/>
+                        <field name="yjzy_invoice_residual_signed_total" sum="小计" invisible="1"/>
+                        <field name="yjzy_total" string="应收总金额" sum="Total" />
+                        <field name="yjzy_residual" string="未收总金额" sum="Amount Due" />
                         <field name="declare_amount_total" sum="小计"/>
+                        <field name="all_usd_amount_org" sum="小计"/>
+                        <field name="all_usd_amount_payment_org" sum="小计"/>
+                        <field name="all_usd_amount_advance_org" sum="小计"/>
                         <button name="open_invoice_ids_new" icon="fa-pencil-square-o" type="object" attrs="{'invisible':[('yjzy_invoice_ids', '=', False)]}"/>
-                        <field name="all_amount_org" sum="小计"/>
+                        <field name="all_amount_org" sum="小计" invisible="1"/>
                         <field name="yjzy_invoice_ids" invisible="1"/>
                         <field name="payment_diff" sum="小计"/>
                         <field name="usd_pool" sum="小计"/>
@@ -646,9 +649,9 @@
                                 <field name="sale_assistant_id" attrs="{'invisible':[('is_yjzy_invoice','=',True)]}"/>
                                 <field name="usd_pool"/>
                                 <field name="declare_amount_total"/>
-                                <field name="all_amount_payment_org" invisible="1"/>
-                                <field name="all_amount_advance_org" invisible="1"/>
-                                <field name="all_amount_org" invisible="1"/>
+                                <field name="all_amount_payment_org" />
+                                <field name="all_amount_advance_org" />
+                                <field name="all_amount_org" />
                                 <field name="all_usd_amount_org"/>
                                 <field name="payment_diff"/>
 
