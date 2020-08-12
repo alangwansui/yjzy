@@ -181,8 +181,8 @@ class sale_order_line(models.Model):
     other_currency_id = fields.Many2one('res.currency', u'其他国外费用货币', related='order_id.other_currency_id')
 
 
-
-    @api.depends('tbl_ids', 'tbl_ids.qty2stage_new','product_qty','order_id.tb_ids')
+    #m2m不可以随便加入depends
+    @api.depends('tbl_ids', 'tbl_ids.qty2stage_new','product_qty')
     def compute_rest_tb_qty(self):
         for one in self:
             one.new_rest_tb_qty = one.product_qty - sum(one.tbl_ids.mapped('qty2stage_new'))

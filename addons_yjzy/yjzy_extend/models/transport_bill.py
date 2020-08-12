@@ -216,44 +216,50 @@ class transport_bill(models.Model):
     def _get_fee_inner_so(self):
         fee_inner = 0.0
         for one in self:
-            for x in one.line_ids:
-                fee_inner += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_inner * x.plan_qty
-            one.fee_inner_so = fee_inner
+            if one.line_ids:
+                for x in one.line_ids:
+                    fee_inner += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_inner * x.plan_qty
+                one.fee_inner_so = fee_inner
 
     def _get_fee_rmb1_so(self):
+        fee_rmb1 = 0.0
         for one in self:
-            fee_rmb1 = 0.0
-            for x in one.line_ids:
-                fee_rmb1 += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_rmb1 * x.plan_qty
-            one.fee_rmb1_so = fee_rmb1
+            if one.line_ids:
+                for x in one.line_ids:
+                    fee_rmb1 += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_rmb1 * x.plan_qty
+                one.fee_rmb1_so = fee_rmb1
 
     def _get_fee_rmb2_so(self):
         fee_rmb2 = 0.0
         for one in self:
-            for x in one.line_ids:
-                fee_rmb2 += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_rmb2 * x.plan_qty
-            one.fee_rmb2_so = fee_rmb2
+            if one.line_ids:
+                for x in one.line_ids:
+                    fee_rmb2 += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_rmb2 * x.plan_qty
+                one.fee_rmb2_so = fee_rmb2
 
     def _get_fee_outer_so(self):
         fee_outer = 0.0
         for one in self:
-            for x in one.line_ids:
-                fee_outer += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_outer * x.plan_qty
-            one.fee_outer_so = fee_outer
+            if one.line_ids:
+                for x in one.line_ids:
+                    fee_outer += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_outer * x.plan_qty
+                one.fee_outer_so = fee_outer
 
     def _get_fee_export_insurance_so(self):
         fee_export_insurance = 0.0
         for one in self:
-            for x in one.line_ids:
-                fee_export_insurance += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_export_insurance * x.plan_qty
-            one.fee_export_insurance_so = fee_export_insurance
+            if one.line_ids:
+                for x in one.line_ids:
+                    fee_export_insurance += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_export_insurance * x.plan_qty
+                one.fee_export_insurance_so = fee_export_insurance
 
     def _get_fee_other_so(self):
         fee_other = 0.0
         for one in self:
-            for x in one.line_ids:
-                fee_other += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_other * x.plan_qty
-            one.fee_other_so = fee_other
+            if one.line_ids:
+                for x in one.line_ids:
+                    fee_other += x.sol_id.order_id.amount_total and x.sol_id.price_unit / x.sol_id.order_id.amount_total * x.sol_id.order_id.fee_other * x.plan_qty
+                one.fee_other_so = fee_other
 
 
 
@@ -476,9 +482,10 @@ class transport_bill(models.Model):
 
     @api.depends('date_out_in', 'date_in', 'date_ship', 'date_customer_finish', 'all_purchase_invoice_fill','date_ship_state','date_out_in_state','date_customer_finish_state','date_purchase_finish_state')
     def compute_date_all_state(self):
+        date_all_state = '30_un_done'
         for one in self:
             # 日期填写状态计算 akiny
-            date_all_state = '30_un_done'
+
             if one.date_out_in_state == 'submit' or one.date_ship_state == 'submit'\
                     or one.date_customer_finish_state == 'submit' or one.date_purchase_finish_state == 'submit':
                 date_all_state = '10_date_approving'

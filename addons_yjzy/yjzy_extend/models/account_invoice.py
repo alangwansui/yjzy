@@ -193,6 +193,7 @@ class account_invoice(models.Model):
     #额外账单只计算open和paid
     @api.depends('yjzy_invoice_ids','yjzy_invoice_ids.amount_total_signed','yjzy_invoice_ids.residual_signed','residual','amount_total','declare_amount_total')
     def compute_yjzy_invoice_amount_total(self):
+        usd_pool = 0.0
         for one in self:
             yjzy_invoice_amount_total = sum(one.yjzy_invoice_ids.filtered(lambda inv: inv.state in ['open','paid']).mapped('amount_total_signed'))
             yjzy_invoice_residual_signed_total = sum(one.yjzy_invoice_ids.filtered(lambda inv: inv.state in ['open','paid']).mapped('residual_signed'))
@@ -201,14 +202,16 @@ class account_invoice(models.Model):
             yjzy_paid = yjzy_total - yjzy_residual
             declare_amount_total = one.declare_amount_total
             all_amount_org = one.all_amount_org
-            payment_diff = yjzy_total- all_amount_org
-            print('dddd',yjzy_total,yjzy_paid,yjzy_residual)
-            usd_pool = 0.0
+            payment_diff = yjzy_total - all_amount_org
+            print('dddd',yjzy_total,yjzy_paid,yjzy_residual,payment_diff)
+
             if yjzy_residual == 0:
                 if payment_diff > 100:
                     usd_pool = yjzy_paid - declare_amount_total
                 else:
                     usd_pool = yjzy_total - declare_amount_total
+            else:
+                usd_pool = yjzy_total - declare_amount_total
             one.yjzy_invoice_amount_total = yjzy_invoice_amount_total
             one.yjzy_invoice_residual_signed_total = yjzy_invoice_residual_signed_total
             one.yjzy_total = yjzy_total
@@ -235,7 +238,7 @@ class account_invoice(models.Model):
     all_amount_payment_org = fields.Float('所有账单收款认领金额', compute=get_reconcile_order_line, store=True)
     all_amount_advance_org = fields.Float('所有账单预收认领金额',compute=get_reconcile_order_line, store=True)
     all_amount_org = fields.Float('所有账单实际收款认领金额',compute=compute_yjzy_invoice_amount_total, store=True)
-    payment_diff = fields.Float('收款差额属性',compute=get_reconcile_order_line, store=True)
+    payment_diff = fields.Float('收款差额属性',compute=compute_yjzy_invoice_amount_total, store=True)
     usd_pool = fields.Float('美金池',compute=compute_yjzy_invoice_amount_total,store=True)
     stage_id = fields.Many2one(
         'account.invoice.stage',
@@ -260,7 +263,7 @@ class account_invoice(models.Model):
     date_out_in = fields.Date('进仓日')
     #----
     reconcile_order_id = fields.Many2one('account.reconcile.order', u'核销单据')
-
+    reconcile_order_id_ids = fields.One2many('account.reconcile.order','back_tax_invoice_id','额外退税对应核销单')
     reconcile_order_line_id = fields.One2many('account.reconcile.order.line', 'invoice_id', u'核销明细行', domain=[('order_id.state','=','done'),('amount_total_org','!=',0)])
     reconcile_date = fields.Date(u'认领日期', related='reconcile_order_id.date')
     reconcile_order_line_char = fields.Text(compute=_get_reconcile_order_line_char, string=u'销售合同')
