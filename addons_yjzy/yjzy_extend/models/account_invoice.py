@@ -197,7 +197,10 @@ class account_invoice(models.Model):
         for one in self:
             yjzy_price_total = sum(one.invoice_line_ids.mapped('yjzy_price_total'))
             one.yjzy_price_total = yjzy_price_total
-
+    def compute_declare_amount_total(self):
+        for one in self:
+            declare_amount_total = sum(one.hsname_ids.mapped('amount2'))
+            one.declare_amount_total = declare_amount_total
     #新增
     stage_id = fields.Many2one(
         'account.invoice.stage',
@@ -291,9 +294,9 @@ class account_invoice(models.Model):
     yjzy_price_total = fields.Monetary('新未收金额',currency_field='currency_id',compute=compute_yjzy_price_total)
     extra_code = fields.Char(u'额外编号',default=lambda self: self._default_name())
     yjzy_invoice_line_ids = fields.One2many('account.invoice.line','yjzy_invoice_id',u'所有明细')
-
-
-
+    hsname_ids = fields.One2many('tbl.hsname', u'HS统计',related='bill_id.hsname_ids')
+    declare_amount_total = fields.Many2one('报关金额',currency_field='currency_id',compute=compute_declare_amount_total,store=True)
+    usd_pool = fields.Float('美金池')
     #更新原始账单的时候同时更新额外账单的时间
     def update_date(self):
         if self.yjzy_invoice_ids:

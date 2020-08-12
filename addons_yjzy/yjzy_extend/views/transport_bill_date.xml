@@ -5,7 +5,7 @@
             <field name="name">transport.bill.tree</field>
             <field name="model">transport.bill</field>
             <field name="arch" type="xml">
-                <tree string="出运单" editable="bottom" default_order="stage_id, date_out_in desc,date_out_in_state desc">
+                <tree string="出运单" editable="bottom" default_order="date_all_state, date_out_in desc,date_out_in_state desc">
                     <field name="name" invisible="1"/>
                     <field name="ref" readonly="1"/>
                     <field name="partner_id" required="1" readonly="1"/>

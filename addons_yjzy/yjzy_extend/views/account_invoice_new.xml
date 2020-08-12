@@ -860,6 +860,9 @@
                                     </tree>
                                 </field>
                             </page>
+                            <page string="报关资料">
+                                <field name="hsname_ids"/>
+                            </page>
                             <page string="相关分录" groups="base.group_system">
                                 <group>
                                     <field name="move_ids" readonly="1"/>
