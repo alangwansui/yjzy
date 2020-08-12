@@ -237,7 +237,7 @@ class account_invoice(models.Model):
     declare_amount_total = fields.Float('报关金额', compute=compute_declare_amount_total,store=True)
     all_amount_payment_org = fields.Float('所有账单收款认领金额', compute=get_reconcile_order_line, store=True)
     all_amount_advance_org = fields.Float('所有账单预收认领金额',compute=get_reconcile_order_line, store=True)
-    all_amount_org = fields.Float('所有账单实际收款认领金额',compute=compute_yjzy_invoice_amount_total, store=True)
+    all_amount_org = fields.Float('所有账单实际收款认领金额',compute=get_reconcile_order_line, store=True)
     payment_diff = fields.Float('收款差额属性',compute=compute_yjzy_invoice_amount_total, store=True)
     usd_pool = fields.Float('美金池',compute=compute_yjzy_invoice_amount_total,store=True)
     stage_id = fields.Many2one(

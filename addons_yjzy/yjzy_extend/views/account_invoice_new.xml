@@ -1989,7 +1989,7 @@
             <field name="res_model">account.invoice</field>
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_account_invoice_new_filter"/>
-            <field name="domain">[('type','in',['out_invoice','out_refund']),('yjzy_type','=','sale'),('state','not in',['cancel','draft']),'|',('residual_signed','!=',0),('yjzy_invoice_residual_signed_total','!=','0')]</field>
+            <field name="domain">[('type','in',['out_invoice','out_refund']),('yjzy_type','=','sale'),('state','not in',['cancel','draft'])]</field>
             <field name="context">{'search_default_group_by_date_invoice':1,'only_ref':1,'type':'out_invoice',
                 'journal_type': 'sale','yjzy_type':'sale'}
             </field>
