@@ -796,7 +796,7 @@ class transport_bill(models.Model):
                                        ('20_no_date_out_in',u'发货日期待填'),
                                        ('30_un_done',u'其他日期待填'),
                                        ('40_done',u'已完成相关日期'),
-                                       ],'所有日期状态',default='un_done',store=True, compute=compute_date_all_state)
+                                       ],'所有日期状态',default='30_un_done',store=True, compute=compute_date_all_state)
     hexiao_type = fields.Selection([('undefined','...'),('abnormal',u'异常核销'),('write_off',u'正常核销')], default='undefined', string='核销类型')
     hexiao_date = fields.Date(u'核销时间')
     hexiao_uid = fields.Many2one('res.user',u'核销人')
