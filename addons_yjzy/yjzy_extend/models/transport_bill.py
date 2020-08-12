@@ -2760,7 +2760,9 @@ class transport_bill(models.Model):
         stage_id = self._stage_find(domain=[('code', '=', '005')])
         return self.write({#'state': 'invoiced',
                            'invoiced_date':fields.datetime.now(),
-                           'invoiced_uid':user,
+                           'invoiced_uid':user.id,
+                           'delivered_date':fields.datetime.now(),
+                           'delivered_uid':user.id,
                            'stage_id': stage_id.id
         })
 
