@@ -646,9 +646,10 @@
                                 <field name="sale_assistant_id" attrs="{'invisible':[('is_yjzy_invoice','=',True)]}"/>
                                 <field name="usd_pool"/>
                                 <field name="declare_amount_total"/>
-                                <field name="all_amount_payment_org"/>
-                                <field name="all_amount_advance_org"/>
-                                <field name="all_amount_org"/>
+                                <field name="all_amount_payment_org" invisible="1"/>
+                                <field name="all_amount_advance_org" invisible="1"/>
+                                <field name="all_amount_org" invisible="1"/>
+                                <field name="all_usd_amount_org"/>
                                 <field name="payment_diff"/>
 
                             </group>
