@@ -766,7 +766,6 @@ class transport_bill(models.Model):
 
     @api.depends('line_ids','line_ids.plan_qty','hsname_ids','hsname_ids.amount2')
     def compute_yjzy_invoice_amount_total(self):
-
         for one in self:
             usd_pool_id = False
             if one.state == 'approve':
@@ -774,7 +773,7 @@ class transport_bill(models.Model):
                 ciq_amount = one.ciq_amount
                 usd_pool = org_sale_amount - ciq_amount
                 usd_pool_1 = org_sale_amount - ciq_amount
-                usd_pool_id = self.env.ref('yjzy_extend.usd_pool_state1').id
+                #usd_pool_id = self.env.ref('yjzy_extend.usd_pool_state1').id
             else:
                 usd_pool_1 = 0
                 usd_pool = 0
