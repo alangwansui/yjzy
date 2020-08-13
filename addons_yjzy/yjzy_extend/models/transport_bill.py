@@ -482,6 +482,7 @@ class transport_bill(models.Model):
     #                     date_all_state = 'un_done'
     #         one.date_all_state = date_all_state
 
+    # 计算时间的有用
     @api.depends('date_out_in', 'date_in', 'date_ship', 'date_customer_finish', 'all_purchase_invoice_fill','date_ship_state','date_out_in_state','date_customer_finish_state','date_purchase_finish_state')
     def compute_date_all_state(self):
         date_all_state = '30_un_done'
@@ -694,7 +695,7 @@ class transport_bill(models.Model):
     #                 else:
     #                     second_state = '10'
     #         one.second_state = second_state
-#qq1
+#qq1  就这个一个就可以了
     @api.depends('all_invoice_ids', 'all_invoice_ids.state', 'all_invoice_ids.residual_signed', 'sale_invoice_id',
                  'sale_invoice_id.state', 'sale_invoice_id.residual_signed', 'purchase_invoice_ids','purchase_invoice_ids.residual_signed',
                  'purchase_invoice_ids.state', 'sale_invoice_balance_new','purchase_invoice_balance_new','back_tax_invoice_balance_new')
@@ -2854,7 +2855,7 @@ class transport_bill(models.Model):
 
     def action_done(self):
         self.state = 'done'
-
+    #失效
     def update_hexiaotype_doing_type(self):
         for one in self:
             print('---', one)
@@ -2884,7 +2885,7 @@ class transport_bill(models.Model):
                 if one.sale_invoice_balance_new == 0 and one.purchase_invoice_balance_new == 0 and one.back_tax_invoice_balance_new == 0:
                     stage_id = self._stage_find(domain=[('code', '=', '007')])
                 one.stage_id = stage_id
-    #state异常的判断和核销状态的判断
+    #state异常的判断和核销状态的判断   应该失效
     def update_hexiaotype_doing_type_new(self):
         for one in self:
             print('---', one)
@@ -2898,7 +2899,7 @@ class transport_bill(models.Model):
                 if (one.sale_invoice_balance_new != 0 or one.purchase_invoice_balance_new != 0 or one.back_tax_invoice_balance_new != 0) and \
                         date_out_in and date_out_in < (today - relativedelta(days=180)).strftime('%Y-%m-%d 00:00:00'):
                     hexiao_type = 'abnormal'
-                    stage_id = self._stage_find(domain=[('code', '=', '006')])
+                    stage_id = self._stage_find(domain=[('code', '=', '007')])
                     #state = 'abnormal'
                 if one.sale_invoice_balance_new == 0 and one.purchase_invoice_balance_new == 0 and one.back_tax_invoice_balance_new == 0:
                     if hexiao_type == 'abnormal':

@@ -12,6 +12,7 @@
                     <field name="tb_contract_code" string="合同号" widget="dynamic_popover_char"
                            options="{'max_width': '100px', 'line_clamp': '1', 'mode_mouse':'hover','popover_max_width':'200px','placement':'right'}"/>
                     <field name="date_invoice" string="账单日期"/>
+                    <field name="currency_id" invisible="1"/>
                     <field name="yjzy_total" sum="小计"/>
                     <field name="declare_amount_total" sum="小计"/>
                     <field name="all_usd_amount_org" string="收款" sum="小计"/>

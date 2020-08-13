@@ -26,6 +26,7 @@ access_print_record,access_print_record,model_print_record,base.group_user,1,1,1
 access_dashboard_dashboard,access_dashboard_dashboard,model_dashboard_dashboard,base.group_user,1,1,1,1
 access_account_invoice_stage,access_account_invoice_stage,model_account_invoice_stage,base.group_user,1,1,1,1
 access_transport_bill_stage,access_transport_bill_stage,model_transport_bill_stage,base.group_user,1,1,1,1
+access_usd_pool,access_usd_pool,model_usd_pool,base.group_user,1,1,1,1
 
 
 
