@@ -5,23 +5,25 @@
             <field name="name">account.invoice.tree</field>
             <field name="model">account.invoice</field>
             <field name="arch" type="xml">
-                <tree string="已锁定未收款" >
-                    <field name="partner_id" groups="base.group_user" string="Customer"/>
+                <tree string="已锁定未收款" editable="bottom">
+                    <field name="partner_id" groups="base.group_user" string="Customer" readonly="1"/>
                     <field name="yjzy_invoice_id" string="原始账单" invisible="1"/>
                     <field name="bill_id" string="合同号" invisible="1"/>
-                    <field name="tb_contract_code" string="合同号" widget="dynamic_popover_char"
+                    <field name="tb_contract_code" string="合同号" widget="dynamic_popover_char" readonly="1"
                            options="{'max_width': '100px', 'line_clamp': '1', 'mode_mouse':'hover','popover_max_width':'200px','placement':'right'}"/>
-                    <field name="date_invoice" string="账单日期"/>
-                    <field name="currency_id" invisible="1"/>
-                    <field name="yjzy_total" sum="小计"/>
-                    <field name="declare_amount_total" sum="小计"/>
-                    <field name="all_usd_amount_org" string="收款" sum="小计"/>
-                    <field name="payment_diff"/>
+                    <field name="date_invoice" string="账单日期" readonly="1"/>
+                    <field name="currency_id" invisible="1" readonly="1"/>
+                    <field name="yjzy_total" sum="小计" readonly="1"/>
+                    <field name="declare_amount_total" sum="小计" readonly="1"/>
+                    <field name="all_usd_amount_org" string="收款" sum="小计" readonly="1"/>
+                    <field name="payment_diff" readonly="1"/>
                     <field name="usd_pool_1" invisible="1"/>
                     <field name="usd_pool_2" invisible="1"/>
                     <field name="usd_pool_3" invisible="1"/>
                     <field name="usd_pool_4" invisible="1"/>
                     <field name="usd_pool" sum="小计"/>
+                    <field name="external_invoice_done"/>
+                    <field name="external_usd_pool" sum="小计"/>
                     <field name="state" invisible="1" readonly="1" />
                 </tree>
             </field>
@@ -72,6 +74,7 @@
                     <field name="usd_pool_3" sum="小计"/>
                     <field name="usd_pool_4" sum="小计"/>
                     <field name="usd_pool" sum="小计"/>
+                    <field name="external_usd_pool" sum="小计"/>
 
 
                 </tree>

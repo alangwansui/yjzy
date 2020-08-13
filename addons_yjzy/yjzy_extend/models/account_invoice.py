@@ -208,7 +208,7 @@ class account_invoice(models.Model):
         for one in self:
             one.yjzy_invoice_count = len(one.yjzy_invoice_ids)
     #额外账单只计算open和paid
-    @api.depends('yjzy_invoice_ids','yjzy_invoice_ids.amount_total_signed','yjzy_invoice_ids.residual_signed','residual','amount_total','declare_amount_total')
+    @api.depends('yjzy_invoice_ids','external_invoice_done','yjzy_invoice_ids.amount_total_signed','yjzy_invoice_ids.residual_signed','residual','amount_total','declare_amount_total')
     def compute_yjzy_invoice_amount_total(self):
         for one in self:
             yjzy_invoice_amount_total = sum(one.yjzy_invoice_ids.filtered(lambda inv: inv.state in ['open','paid']).mapped('amount_total_signed'))
@@ -217,6 +217,7 @@ class account_invoice(models.Model):
             yjzy_residual = one.residual_signed + yjzy_invoice_residual_signed_total
             yjzy_paid = yjzy_total - yjzy_residual
             usd_pool = 0.0
+            external_usd_pool = 0.0
             usd_pool_1 = 0.0
             usd_pool_2 = 0.0
             usd_pool_3 = 0.0
@@ -260,6 +261,10 @@ class account_invoice(models.Model):
                         usd_pool_3 = 0.0
                         usd_pool_4 = 0.0
                         usd_pool_id = self.env.ref('yjzy_extend.usd_pool_state2').id
+                if one.external_invoice_done == '20_yes' or one.external_invoice_done == '30_not':
+                    external_usd_pool = usd_pool
+                else:
+                    external_usd_pool =0.0
             one.yjzy_invoice_amount_total = yjzy_invoice_amount_total
             one.yjzy_invoice_residual_signed_total = yjzy_invoice_residual_signed_total
             one.yjzy_total = yjzy_total
@@ -271,6 +276,7 @@ class account_invoice(models.Model):
             one.usd_pool_4 = usd_pool_4
             one.payment_diff = payment_diff
             one.usd_pool_id = usd_pool_id
+            one.external_usd_pool = external_usd_pool
     def compute_yjzy_price_total(self):
         yjzy_price_total = 0.0
         for one in self:
@@ -290,6 +296,10 @@ class account_invoice(models.Model):
     #     for one in self:
 
     #新增
+    external_invoice_done = fields.Selection([('10_no',u'否'),
+                                              ('20_yes',u'是'),
+                                              ('30_not',u'非')],'外账是否确认销售')
+    external_usd_pool = fields.Float('外账美金池',compute=compute_yjzy_invoice_amount_total,store=True)
     usd_pool_id = fields.Many2one('usd.pool',u'美金池状态',compute=compute_yjzy_invoice_amount_total,store=True)
     hsname_ids = fields.One2many('tbl.hsname', u'HS统计', related='bill_id.hsname_ids')
     declare_amount_total = fields.Float(u'报关金额', compute=compute_declare_amount_total,store=True)
