@@ -236,7 +236,7 @@ class account_invoice(models.Model):
                     usd_pool_1 = 0.0
                     usd_pool_2 = 0.0
                     usd_pool_3 = 0.0
-                    usd_pool_id = self.env.ref('yjzy_extend.usd_pool_state5').id
+                    #usd_pool_id = self.env.ref('yjzy_extend.usd_pool_state5').id
                 else:
                     if yjzy_residual == 0:
                         if payment_diff > 100:
@@ -245,21 +245,21 @@ class account_invoice(models.Model):
                             usd_pool_2 = 0.0
                             usd_pool_4 = 0.0
                             usd_pool = all_usd_amount_org - declare_amount_total
-                            usd_pool_id = self.env.ref('yjzy_extend.usd_pool_state3').id
+                          #  usd_pool_id = self.env.ref('yjzy_extend.usd_pool_state3').id
                         else:
                             usd_pool_3 = yjzy_total - declare_amount_total
                             usd_pool = yjzy_total - declare_amount_total
                             usd_pool_1 = 0.0
                             usd_pool_2 = 0.0
                             usd_pool_4 = 0.0
-                            usd_pool_id = self.env.ref('yjzy_extend.usd_pool_state4').id
+                           # usd_pool_id = self.env.ref('yjzy_extend.usd_pool_state4').id
                     else:
                         usd_pool = yjzy_total - declare_amount_total
                         usd_pool_2 = yjzy_total - declare_amount_total
                         usd_pool_1 = 0.0
                         usd_pool_3 = 0.0
                         usd_pool_4 = 0.0
-                        usd_pool_id = self.env.ref('yjzy_extend.usd_pool_state2').id
+                        #usd_pool_id = self.env.ref('yjzy_extend.usd_pool_state2').id
             one.yjzy_invoice_amount_total = yjzy_invoice_amount_total
             one.yjzy_invoice_residual_signed_total = yjzy_invoice_residual_signed_total
             one.yjzy_total = yjzy_total
