@@ -184,6 +184,33 @@
             <field name="customer">True</field>
         </record>
 
+        <record id="usd_pool_state1" model="usd.pool">
+            <field name="name">未锁定</field>
+            <field name="sequence">10</field>
+            <field name="state">10_unlock</field>
+        </record>
+        <record id="usd_pool_state2" model="usd.pool">
+            <field name="name">已锁定未收款</field>
+            <field name="sequence">20</field>
+            <field name="state">20_unpaid</field>
+        </record>
+        <record id="usd_pool_state3" model="usd.pool">
+            <field name="name">已收款大于100</field>
+            <field name="sequence">30</field>
+            <field name="state">30_paid</field>
+        </record>
+        <record id="usd_pool_state4" model="usd.pool">
+            <field name="name">已收款小于100</field>
+            <field name="sequence">40</field>
+            <field name="state">40_paid</field>
+        </record>
+        <record id="usd_pool_state5" model="usd.pool">
+            <field name="name">非订单收款</field>
+            <field name="sequence">50</field>
+            <field name="state">50_no_sale_order</field>
+        </record>
+
+
     </data>
 
 </odoo>

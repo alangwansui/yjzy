@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_account_invoice_usd_pool_tree" model="ir.ui.view">
+            <field name="name">account.invoice.tree</field>
+            <field name="model">account.invoice</field>
+            <field name="arch" type="xml">
+                <tree string="已锁定未收款" >
+                    <field name="partner_id" groups="base.group_user" string="Customer"/>
+                    <field name="yjzy_invoice_id" string="原始账单" invisible="1"/>
+                    <field name="bill_id" string="合同号" invisible="1"/>
+                    <field name="tb_contract_code" string="合同号" widget="dynamic_popover_char"
+                           options="{'max_width': '100px', 'line_clamp': '1', 'mode_mouse':'hover','popover_max_width':'200px','placement':'right'}"/>
+                    <field name="date_invoice" string="账单日期"/>
+                    <field name="yjzy_total" sum="小计"/>
+                    <field name="declare_amount_total" sum="小计"/>
+                    <field name="all_usd_amount_org" string="收款" sum="小计"/>
+                    <field name="payment_diff"/>
+                    <field name="usd_pool_1" invisible="1"/>
+                    <field name="usd_pool_2" invisible="1"/>
+                    <field name="usd_pool_3" invisible="1"/>
+                    <field name="usd_pool_4" invisible="1"/>
+                    <field name="usd_pool" sum="小计"/>
+                    <field name="state" invisible="1" readonly="1" />
+                </tree>
+            </field>
+        </record>
+<record model="ir.actions.act_window" id="act_open_account_invoice_usd_pool">
+            <field name="name">已锁定未收款</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_account_invoice_new_filter"/>
+            <field name="limit">20</field>
+            <field name="target">new</field>
+            <field name="domain">[('usd_pool_id.state','=','20_unpaid')]</field>
+            <field name="context">{}
+            </field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_account_invoice_usd_pool_tree')}),
+                          ]"/>
+
+        </record>
+
+
+        <menuitem id="menu_account_invoice_uds_pool" name="已锁定未收款"
+                  parent="yjzy_extend.menu_account_new_root"
+                  sequence="98"
+                  action="act_open_account_invoice_usd_pool"
+        />
+        <record id="view_usd_pool_tree" model="ir.ui.view">
+            <field name="name">usd.pool.tree</field>
+            <field name="model">usd.pool</field>
+            <field name="arch" type="xml">
+                <tree string="美金池">
+                    <field name="name" attrs="{'required':1}"/>
+                    <field name="sequence" invisible="1"/>
+                    <field name="state" invisible="1"/>
+                    <field name="sale_receivable_amount"/>
+                    <button name="open_transport_bill_usd_pool" string="打开明细" icon="fa-pencil-square-o" type="object" attrs="{'invisible':[('state','!=','10_unpaid')]}"/>
+                    <!--button name="%(act_open_account_invoice_usd_pool)d" icon="fa-pencil-square-o" type="action" attrs="{'invisible':[('state','=','10_unpaid')]}"/-->
+                    <button name="open_invoice_usd_pool" string="打开明细" icon="fa-pencil-square-o" type="object" attrs="{'invisible':[('state','=','10_unpaid')]}"/>
+
+                    <field name="declare_amount" sum="小计"/>
+                    <field name="payment_amount" sum="小计"/>
+                    <field name="payment_sale_diff_amount" sum="小计"/>
+                    <field name="payment_sale_diff" invisible="1"/>
+                    <field name="usd_pool_1" sum="小计"/>
+                    <field name="usd_pool_2" sum="小计"/>
+                    <field name="usd_pool_3" sum="小计"/>
+                    <field name="usd_pool_4" sum="小计"/>
+                    <field name="usd_pool" sum="小计"/>
+
+
+                </tree>
+            </field>
+        </record>
+
+
+
+        <record id="view_usd_pool_form" model="ir.ui.view">
+            <field name="name">usd.pool.form</field>
+            <field name="model">usd.pool</field>
+            <field name="arch" type="xml">
+                <form string="美金池">
+                    <sheet>
+                        <header>
+
+                        </header>
+                    <group>
+                         <field name="name" attrs="{'required':1}"/>
+                    <field name="sequence"/>
+                    <field name="state" invisible="1"/>
+                    </group>
+                        <notebook>
+                            <page>
+                                <field name="tb_ids"/>
+                                <field name="invoice_ids"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!--美金池-->
+        <record id="view_transport_bill_usd_pool" model="ir.ui.view">
+            <field name="name">transport.bill.tree</field>
+            <field name="model">transport.bill</field>
+            <field name="arch" type="xml">
+                <tree string="未锁定美金池" editable="bottom" >
+                    <field name="name" invisible="1"/>
+                    <field name="ref" readonly="1"/>
+                    <field name="partner_id" required="1" readonly="1"/>
+                    <field name="org_sale_amount" sum="小计"/>
+                    <field name="ciq_amount" sum="小计"/>
+                    <field name="usd_pool_1" sum="小计"/>
+                    <field name="usd_pool" sum="小计"/>
+                    <field name="state" invisible="1" readonly="1" />
+                </tree>
+            </field>
+        </record>
+
+
+
+
+       <record model="ir.actions.act_window" id="act_open_transport_bill_usd_pool">
+            <field name="name">状态1_未锁定美金池</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">transport.bill</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_transport_bill_tenyale_filter"/>
+            <field name="limit">20</field>
+            <field name="domain">[('usd_pool_id','!=',False)]</field>
+            <field name="context">{'show_date_finish':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3}
+            </field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_transport_bill_usd_pool')}),
+                          ]"/>
+
+        </record>
+
+
+        <menuitem id="menu_transport_bill_uds_pool" name="未锁定美金池"
+                  parent="yjzy_extend.menu_account_new_root"
+                  sequence="98"
+                  action="act_open_transport_bill_usd_pool"
+        />
+
+        <record id="action_usd_pool" model="ir.actions.act_window">
+            <field name="name">美金池:总表</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">usd.pool</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_usd_pool_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_usd_pool_form')})]"/>
+        </record>
+
+     <menuitem id="menu_usd_pool" name="美金池：总表" parent="yjzy_extend.menu_account_new_root" action="action_usd_pool" sequence="90"/>
+
+
+    </data>
+</odoo>

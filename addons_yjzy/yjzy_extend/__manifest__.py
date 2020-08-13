@@ -61,6 +61,8 @@
         'views/product_category.xml',
         'views/product_attribute.xml',
         'views/product_supplierinfo.xml',
+        'views/usd_pool.xml',
+        'views/transport_bill_usd_pool.xml',
 
         'views/sale.xml',
         'views/sale2.xml',

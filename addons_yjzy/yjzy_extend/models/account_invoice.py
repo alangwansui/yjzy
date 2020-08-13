@@ -154,7 +154,7 @@ class account_invoice(models.Model):
         for one in self:
             dlrs = one.reconcile_order_line_id#原始账单的认领明细
             dlrs_payment_usd = one.reconcile_order_line_id.filtered(lambda x: x.payment_currency_id.name == 'USD')#原始账单收款美金
-            dlrs_advance_usd = one.reconcile_order_line_id.filtered(lambda x: x.yjzy_currency_id.name == 'USD')#原始账单预收美金
+            dlrs_advance_usd = one.reconcile_order_line_id.filtered(lambda x: x.yjzy_payment_id.currency_id.name == 'USD')#原始账单预收美金 akiny注意：因为有些明细货币币种没有取过来，所以直接取预收单的货币
             yjzy_invoice_open_paid= one.yjzy_invoice_ids.filtered(lambda x: x.state in ['open','paid']) #额外账单
 
 
@@ -217,33 +217,66 @@ class account_invoice(models.Model):
             yjzy_residual = one.residual_signed + yjzy_invoice_residual_signed_total
             yjzy_paid = yjzy_total - yjzy_residual
             usd_pool = 0.0
+            usd_pool_1 = 0.0
+            usd_pool_2 = 0.0
+            usd_pool_3 = 0.0
+            usd_pool_4 = 0.0
             declare_amount_total = 0.0
             all_usd_amount_org = 0.0
+            usd_pool_id = False
             payment_diff = 0.0
             if one.currency_id.name == 'USD':
                 declare_amount_total = one.declare_amount_total
                 all_usd_amount_org = one.all_usd_amount_org
                 payment_diff = yjzy_total - all_usd_amount_org
                 print('dddd',yjzy_total,yjzy_paid,yjzy_residual,payment_diff)
-                if yjzy_residual == 0:
-                    if payment_diff > 100:
-                        usd_pool = yjzy_paid - declare_amount_total
+                if not one.bill_id:
+                    usd_pool = all_usd_amount_org
+                    usd_pool_4 = all_usd_amount_org
+                    usd_pool_1 = 0.0
+                    usd_pool_2 = 0.0
+                    usd_pool_3 = 0.0
+                    usd_pool_id = self.env.ref('yjzy_extend.usd_pool_state5').id
+                else:
+                    if yjzy_residual == 0:
+                        if payment_diff > 100:
+                            usd_pool_3 = all_usd_amount_org - declare_amount_total
+                            usd_pool_1 = 0.0
+                            usd_pool_2 = 0.0
+                            usd_pool_4 = 0.0
+                            usd_pool = all_usd_amount_org - declare_amount_total
+                            usd_pool_id = self.env.ref('yjzy_extend.usd_pool_state3').id
+                        else:
+                            usd_pool_3 = yjzy_total - declare_amount_total
+                            usd_pool = yjzy_total - declare_amount_total
+                            usd_pool_1 = 0.0
+                            usd_pool_2 = 0.0
+                            usd_pool_4 = 0.0
+                            usd_pool_id = self.env.ref('yjzy_extend.usd_pool_state4').id
                     else:
                         usd_pool = yjzy_total - declare_amount_total
-                else:
-                    usd_pool = yjzy_total - declare_amount_total
-
+                        usd_pool_2 = yjzy_total - declare_amount_total
+                        usd_pool_1 = 0.0
+                        usd_pool_3 = 0.0
+                        usd_pool_4 = 0.0
+                        usd_pool_id = self.env.ref('yjzy_extend.usd_pool_state2').id
             one.yjzy_invoice_amount_total = yjzy_invoice_amount_total
             one.yjzy_invoice_residual_signed_total = yjzy_invoice_residual_signed_total
             one.yjzy_total = yjzy_total
             one.yjzy_residual = yjzy_residual
             one.usd_pool = usd_pool
+            one.usd_pool_1 = usd_pool_1
+            one.usd_pool_2 = usd_pool_2
+            one.usd_pool_3 = usd_pool_3
+            one.usd_pool_4 = usd_pool_4
             one.payment_diff = payment_diff
+            one.usd_pool_id = usd_pool_id
     def compute_yjzy_price_total(self):
         yjzy_price_total = 0.0
         for one in self:
             yjzy_price_total = sum(one.invoice_line_ids.mapped('yjzy_price_total'))
             one.yjzy_price_total = yjzy_price_total
+
     @api.depends('bill_id.ciq_amount','bill_id.hsname_ids.amount2')
     def compute_declare_amount_total(self):
         for one in self:
@@ -251,10 +284,13 @@ class account_invoice(models.Model):
                 declare_amount_total = one.bill_id.ciq_amount
                 one.declare_amount_total = declare_amount_total
 
+
+
     # def compute_usd_pool(self):
     #     for one in self:
 
     #新增
+    usd_pool_id = fields.Many2one('usd.pool',u'美金池状态',compute=compute_yjzy_invoice_amount_total,store=True)
     hsname_ids = fields.One2many('tbl.hsname', u'HS统计', related='bill_id.hsname_ids')
     declare_amount_total = fields.Float(u'报关金额', compute=compute_declare_amount_total,store=True)
     all_amount_payment_org = fields.Float(u'所有账单收款认领金额', compute=get_reconcile_order_line, store=True)
@@ -262,11 +298,15 @@ class account_invoice(models.Model):
     all_amount_advance_org = fields.Float(u'所有账单预收认领金额',compute=get_reconcile_order_line, store=True)
     all_usd_amount_advance_org = fields.Float(u'所有账单美金预收认领金额', compute=get_reconcile_order_line, store=True)
     all_amount_org = fields.Float(u'所有账单实际收款认领金额',compute=get_reconcile_order_line, store=True)
-    all_usd_amount_org = fields.Float(u'所有账单实际么劲收款认领金额',compute=get_reconcile_order_line, store=True)
+    all_usd_amount_org = fields.Float(u'所有账单实际美金收款认领金额',compute=get_reconcile_order_line, store=True)
     reconcile_order_line_payment_usd = fields.Float(compute=get_reconcile_order_line, string=u'美金收款认领金额',store=True)
     reconcile_order_line_advance_usd = fields.Float(compute=get_reconcile_order_line, string=u'美金预收认领金额',store=True)
     payment_diff = fields.Float('收款差额属性',compute=compute_yjzy_invoice_amount_total, store=True)
     usd_pool = fields.Float('美金池',compute=compute_yjzy_invoice_amount_total,store=True)
+    usd_pool_1 = fields.Float('美金池1',compute=compute_yjzy_invoice_amount_total,store=True)
+    usd_pool_2 = fields.Float('美金池2', compute=compute_yjzy_invoice_amount_total, store=True)
+    usd_pool_3 = fields.Float('美金池3', compute=compute_yjzy_invoice_amount_total, store=True)
+    usd_pool_4 = fields.Float('美金池4', compute=compute_yjzy_invoice_amount_total, store=True)
     stage_id = fields.Many2one(
         'account.invoice.stage',
         default=_default_invoice_stage)

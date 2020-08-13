@@ -24,6 +24,7 @@ from . import product_supplierinfo
 from . import sale
 from . import sale_line
 from . import purchase
+from . import usd_pool
 
 from . import transport_lot_plan
 from . import transport_bill_account

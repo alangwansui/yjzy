@@ -694,7 +694,7 @@ class transport_bill(models.Model):
     #         one.second_state = second_state
 #qq1
     @api.depends('all_invoice_ids', 'all_invoice_ids.state', 'all_invoice_ids.residual_signed', 'sale_invoice_id',
-                 'sale_invoice_id.state', 'sale_invoice_id.residual_signed', 'purchase_invoice_ids',
+                 'sale_invoice_id.state', 'sale_invoice_id.residual_signed', 'purchase_invoice_ids','purchase_invoice_ids.residual_signed',
                  'purchase_invoice_ids.state', 'sale_invoice_balance_new','purchase_invoice_balance_new','back_tax_invoice_balance_new')
     def compute_second_state(self):
         for one in self:
@@ -763,8 +763,31 @@ class transport_bill(models.Model):
     def _default_transport_stage(self):
         stage = self.env['transport.bill.stage']
         return stage.search([], limit=1)
+
+    @api.depends('line_ids','line_ids.plan_qty','hsname_ids','hsname_ids.amount2')
+    def compute_yjzy_invoice_amount_total(self):
+
+        for one in self:
+            usd_pool_id = False
+            if one.state == 'approve':
+                org_sale_amount = one.org_sale_amount
+                ciq_amount = one.ciq_amount
+                usd_pool = org_sale_amount - ciq_amount
+                usd_pool_1 = org_sale_amount - ciq_amount
+                usd_pool_id = self.env.ref('yjzy_extend.usd_pool_state1').id
+            else:
+                usd_pool_1 = 0
+                usd_pool = 0
+                usd_pool_id = False
+            one.usd_pool = usd_pool
+            one.usd_pool = usd_pool_1
+            one.usd_pool_id = usd_pool_id
     # 货币设置
     #akiny 未加入
+    usd_pool_id = fields.Many2one('usd.pool',u'美金池状态',compute=compute_yjzy_invoice_amount_total,store=True)
+    usd_pool = fields.Float('美金池', compute=compute_yjzy_invoice_amount_total, store=True)
+    usd_pool_1 = fields.Float('美金池1', compute=compute_yjzy_invoice_amount_total, store=True)
+
     stage_id = fields.Many2one(
         'transport.bill.stage',
         default=_default_transport_stage)
