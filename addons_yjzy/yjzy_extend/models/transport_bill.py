@@ -318,10 +318,12 @@ class transport_bill(models.Model):
                     ])
         return other_cost
 
+    @api.depends('hsname_ids','hsname_ids.amount2')
     def compute_ciq_amount(self):
         for one in self:
             pack_lines = one.pack_line_ids
             one.ciq_amount = sum([x.amount2 for x in one.hsname_ids])
+            one.ciq_amount_new = sum([x.amount2 for x in one.hsname_ids])
             one.no_ciq_amount = sum([x.no_ciq_amount for x in pack_lines])
 
     @api.depends('sale_currency_id', 'currency_id', 'date')
@@ -773,7 +775,7 @@ class transport_bill(models.Model):
                 ciq_amount = one.ciq_amount
                 usd_pool = org_sale_amount - ciq_amount
                 usd_pool_1 = org_sale_amount - ciq_amount
-                #usd_pool_id = self.env.ref('yjzy_extend.usd_pool_state1').id
+                usd_pool_id = self.env.ref('yjzy_extend.usd_pool_state1').id
             else:
                 usd_pool_1 = 0
                 usd_pool = 0
@@ -934,6 +936,8 @@ class transport_bill(models.Model):
     #金额计算
     ciq_amount = fields.Monetary('报关金额', compute=compute_ciq_amount, currency_field='sale_currency_id', digits=dp.get_precision('Money'))
     no_ciq_amount = fields.Monetary('不报关金额', compute=compute_ciq_amount,  currency_field='company_currency_id')
+    ciq_amount_new = fields.Monetary('报关金额', compute=compute_ciq_amount, currency_field='sale_currency_id',
+                                 digits=dp.get_precision('Money'))
     amount_public1 = fields.Monetary('美元账户1', currency_field='sale_currency_id')
     amount_public2 = fields.Monetary('美元账户11', currency_field='sale_currency_id')
     amount_private1 = fields.Monetary('人民币账户15', currency_field='sale_currency_id')

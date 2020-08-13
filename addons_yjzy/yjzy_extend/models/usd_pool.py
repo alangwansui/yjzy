@@ -18,9 +18,9 @@ class UsdPool(models.Model):
 
     def compute_info(self):
         for one in self:
-            tb_sale_amount = 0 #um(one.tb_ids.filtered(lambda x: x.state == 'approve').mapped('org_sale_amount')) #总的出运单的销售金额
+            tb_sale_amount = sum(one.tb_ids.filtered(lambda x: x.state == 'approve').mapped('org_sale_amount_new')) #总的出运单的销售金额
             invoice_sale_amount = sum(one.invoice_ids.filtered(lambda x: x.state in ['paid','open']).mapped('yjzy_total'))#总的发票的销售金额
-            tb_declare_amount =0 #sum(one.tb_ids.filtered(lambda x: x.state == 'approve').mapped('ciq_amount'))
+            tb_declare_amount =sum(one.tb_ids.filtered(lambda x: x.state == 'approve').mapped('ciq_amount_new'))
             invoice_declare_amount = sum(one.invoice_ids.filtered(lambda x: x.state in ['paid','open']).mapped('declare_amount_total'))
 
             invoice_all_usd_amount_org = sum(one.invoice_ids.filtered(lambda x: x.state in ['paid','open']).mapped('all_usd_amount_org'))
