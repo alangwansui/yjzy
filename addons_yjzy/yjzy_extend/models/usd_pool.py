@@ -16,16 +16,14 @@ class UsdPool(models.Model):
     _description = "USD Pool"
     _order = 'sequence'
 
-    def compute_info(self):
+    def _compute_info(self):
         for one in self:
             #修改计划：改成通过统计发票的usd_pool即可
             tb_sale_amount = sum(one.tb_ids.filtered(lambda x: x.state == 'approve').mapped('org_sale_amount_new')) #总的出运单的销售金额
             invoice_sale_amount = sum(one.invoice_ids.filtered(lambda x: x.state in ['paid','open']).mapped('yjzy_total'))#总的发票的销售金额
             tb_declare_amount =sum(one.tb_ids.filtered(lambda x: x.state == 'approve').mapped('ciq_amount_new'))
             invoice_declare_amount = sum(one.invoice_ids.filtered(lambda x: x.state in ['paid','open']).mapped('declare_amount_total'))
-
             invoice_all_usd_amount_org = sum(one.invoice_ids.filtered(lambda x: x.state in ['paid','open']).mapped('all_usd_amount_org'))
-
             external_usd_pool =  sum(one.invoice_ids.filtered(lambda x: x.state in ['paid','open']).mapped('external_usd_pool'))
             sale_receivable_amount = 0.0
             declare_amount = 0.0
@@ -75,7 +73,65 @@ class UsdPool(models.Model):
             one.payment_sale_diff = payment_sale_diff
             one.external_usd_pool = external_usd_pool
 
+    def compute_info(self):
+        for one in self:
+            #修改计划：改成通过统计发票的usd_pool即可
+            tb_sale_amount = sum(one.tb_ids.filtered(lambda x: x.state == 'approve').mapped('org_sale_amount_new')) #总的出运单的销售金额
+            invoice_sale_amount = sum(one.invoice_ids.filtered(lambda x: x.state in ['paid','open']).mapped('yjzy_total'))#总的发票的销售金额
+            tb_declare_amount =sum(one.tb_ids.filtered(lambda x: x.state == 'approve').mapped('ciq_amount_new'))
+            invoice_declare_amount = sum(one.invoice_ids.filtered(lambda x: x.state in ['paid','open']).mapped('declare_amount_total'))
+            invoice_all_usd_amount_org = sum(one.invoice_ids.filtered(lambda x: x.state in ['paid','open']).mapped('all_usd_amount_org'))
+            external_usd_pool =  sum(one.invoice_ids.filtered(lambda x: x.state in ['paid','open']).mapped('external_usd_pool'))
+            usd_pool_test = sum(one.tb_ids.filtered(lambda x: x.state == 'approve').mapped('usd_pool'))+sum(one.invoice_ids.filtered(lambda x: x.state in ['paid','open']).mapped('usd_pool'))
 
+            sale_receivable_amount = 0.0
+            declare_amount = 0.0
+            payment_amount = 0.0
+            payment_sale_diff = False
+            payment_sale_diff_amount = 0.0
+            usd_pool_1 = 0.0
+            usd_pool_2 = 0.0
+            usd_pool_3 = 0.0
+            usd_pool_4 = 0.0
+            usd_pool = 0.0
+            if one.state == '10_unlock':
+                sale_receivable_amount = tb_sale_amount
+                declare_amount = tb_declare_amount
+                usd_pool_1 = sale_receivable_amount - declare_amount
+                usd_pool = usd_pool_1
+            else:
+                sale_receivable_amount = invoice_sale_amount
+                declare_amount = invoice_declare_amount
+                payment_amount = invoice_all_usd_amount_org
+                payment_sale_diff_amount = sale_receivable_amount- payment_amount
+                if one.state == '20_unpaid':
+                    usd_pool_2 = sale_receivable_amount - declare_amount
+                    usd_pool = usd_pool_2
+
+                elif one.state == '30_paid':
+                    usd_pool_3 = payment_amount - declare_amount
+                    usd_pool = usd_pool_3
+                    payment_sale_diff = '10_greater_100'
+                elif one.state == '40_paid':
+                    usd_pool_3 = sale_receivable_amount - declare_amount
+                    usd_pool = usd_pool_3
+                    payment_sale_diff = '20_less_100'
+                else:
+                    usd_pool_4 = payment_amount
+                    usd_pool = usd_pool_4
+
+            one.sale_receivable_amount = sale_receivable_amount
+            one.declare_amount = declare_amount
+            one.payment_amount = payment_amount
+            one.usd_pool_1 = usd_pool_1
+            one.usd_pool_2 = usd_pool_2
+            one.usd_pool_3 = usd_pool_3
+            one.usd_pool_4 = usd_pool_4
+            one.usd_pool = usd_pool
+            one.payment_sale_diff_amount = payment_sale_diff_amount
+            one.payment_sale_diff = payment_sale_diff
+            one.external_usd_pool = external_usd_pool
+            one.usd_pool_test = usd_pool_test
 
 
     name = fields.Char('State Name')
@@ -98,6 +154,7 @@ class UsdPool(models.Model):
     usd_pool_3 = fields.Float(u'美金池3',compute=compute_info)
     usd_pool_4 = fields.Float(u'美金池4',compute=compute_info)
     usd_pool = fields.Float(u'美金池汇总',compute=compute_info)
+    usd_pool_test = fields.Float(u'美金池汇总', compute=compute_info)
     external_usd_pool = fields.Float(u'外账美金池汇总',compute=compute_info)
 
     def open_transport_bill_usd_pool(self):

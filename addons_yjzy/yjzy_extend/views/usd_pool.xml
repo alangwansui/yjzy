@@ -22,6 +22,7 @@
                     <field name="usd_pool_3" invisible="1"/>
                     <field name="usd_pool_4" invisible="1"/>
                     <field name="usd_pool" sum="小计"/>
+
                     <field name="external_invoice_done"/>
                     <field name="external_usd_pool" sum="小计"/>
                     <field name="state" invisible="1" readonly="1" />
@@ -74,6 +75,7 @@
                     <field name="usd_pool_3" sum="小计"/>
                     <field name="usd_pool_4" sum="小计"/>
                     <field name="usd_pool" sum="小计"/>
+                    <field name="usd_pool_test" sum="小计"/>
                     <field name="external_usd_pool" sum="小计"/>
 
 
