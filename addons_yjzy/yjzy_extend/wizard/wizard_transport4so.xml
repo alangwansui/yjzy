@@ -60,7 +60,7 @@
 
 
                     <footer>
-                        <button name="check_apply" class="oe_highlight" type='object' string="确认并关闭" invisible="not context.get('expense_po')"/>
+                        <button name="check_apply" class="oe_highlight" type='object' string="确认并关闭" invisible="not context.get('check_same')"/>
                         <button name="check_apply_continue" class="oe_highlight" type='object' string="下一步:确认发货数量" attrs="{'invisible':1}" /><!--invisible="not context.get('check_same')"-->
                         <button name="new_apply" class="oe_highlight" type='object' string="下一步:确定付款条款等" invisible="not context.get('add_sol')"/>
                         <button name="apply" class="oe_highlight" type='object' string="确认" invisible="not context.get('add_so')"/>
