@@ -172,8 +172,8 @@ class transport_bill(models.Model):
                 hs_dic[k]['amount2'] += amount2
                 hs_dic[k]['purchase_amount2'] += purchase_amount2
                 hs_dic[k]['purchase_back_tax_amount2_new'] += purchase_back_tax_amount2_new
-                # hs_dic[k]['purchase_amount2_tax'] += purchase_amount2_tax
-                # hs_dic[k]['purchase_amount2_no_tax'] += purchase_amount2_no_tax
+                hs_dic[k]['purchase_amount2_tax'] += purchase_amount2_tax
+                hs_dic[k]['purchase_amount2_no_tax'] += purchase_amount2_no_tax
                 # hs_dic[k]['purchase_amount_max_add_forecast'] += purchase_amount_max_add_forecast
                 # hs_dic[k]['purchase_amount_min_add_forecast'] += purchase_amount_min_add_forecast
             else:
@@ -182,8 +182,8 @@ class transport_bill(models.Model):
                              'purchase_amount2':purchase_amount2,
                              'back_tax':back_tax,
                              'purchase_back_tax_amount2_new':purchase_back_tax_amount2_new,
-                             # 'purchase_amount2_tax':purchase_amount2_tax,
-                             # 'purchase_amount2_no_tax': purchase_amount2_no_tax,
+                             'purchase_amount2_tax':purchase_amount2_tax,
+                             'purchase_amount2_no_tax': purchase_amount2_no_tax,
                              # 'purchase_amount_max_add_forecast':purchase_amount_max_add_forecast,
                              # 'purchase_amount_min_add_forecast':purchase_amount_min_add_forecast,
                              'hs_id': hs_id.id,
@@ -651,15 +651,15 @@ class tbl_hsname_all(models.Model):
 
 
             if one.is_po_include_tax:
-                purchase_amount2_tax = purchase_amount2
-                purchase_amount2_no_tax = 0.0
+                # purchase_amount2_tax = purchase_amount2
+                # purchase_amount2_no_tax = 0.0
                 purchase_amount_max_add_forecast = purchase_amount_max_forecast - purchase_amount2
                 purchase_amount_min_add_forecast = purchase_amount_min_forecast - purchase_amount2
                 #back_tax_amount_new_new = one.purchase_amount2 / 1.13 * one.back_tax - back_tax_amount_new #总的实际的应该另外创建的退税金额
 
             else:
-                purchase_amount2_tax = 0.0
-                purchase_amount2_no_tax = purchase_amount2
+                # purchase_amount2_tax = 0.0
+                # purchase_amount2_no_tax = purchase_amount2
                 #back_tax_amount_new_new = 0.0
                 purchase_amount_max_add_forecast = purchase_amount_max_forecast
                 purchase_amount_min_add_forecast = purchase_amount_min_forecast
@@ -672,8 +672,8 @@ class tbl_hsname_all(models.Model):
             one.p_s_add_actual = p_s_add_actual
             one.purchase_amount_max_add_rest = purchase_amount_max_add_rest
             one.purchase_amount_min_add_rest = purchase_amount_min_add_rest
-            one.purchase_amount2_tax = purchase_amount2_tax
-            one.purchase_amount2_no_tax = purchase_amount2_no_tax
+            # one.purchase_amount2_tax = purchase_amount2_tax
+            # one.purchase_amount2_no_tax = purchase_amount2_no_tax
             one.purchase_amount_max_forecast = purchase_amount_max_forecast
             one.purchase_amount_min_forecast = purchase_amount_min_forecast
             one.purchase_amount_max_add_forecast = purchase_amount_max_add_forecast
@@ -708,8 +708,8 @@ class tbl_hsname_all(models.Model):
     purchase_back_tax_amount2 = fields.Float(u'报关退税税金额')
     purchase_back_tax_amount2_new = fields.Float(u'原始退税金额')#根据是否含税来进行计算
     # purchase_back_tax_amount2_new_new = fields.Float(u'预计退税总金额',compute=compute_info)#根据是否含税来进行计算
-    purchase_amount2_tax = fields.Float(u'含税采购额',compute=compute_info)
-    purchase_amount2_no_tax = fields.Float(u'不含税采购额',compute=compute_info)
+    purchase_amount2_tax = fields.Float(u'含税采购额')
+    purchase_amount2_no_tax = fields.Float(u'不含税采购额')
 
 
     purchase_amount2_add_this_time = fields.Float(U'本次采购开票金额')
