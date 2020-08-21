@@ -1287,7 +1287,7 @@
                             string="提交"/>
                     <button name="action_purchase_date_finish_state_done"
                             attrs="{'invisible':[('purchase_date_finish_state','!=','submit')]}" type="object"
-                            string="通过"/>
+                            string="通过" groups="akiny.group_trans_hegui"/>
                     <field name="currency_id" invisible="1"/>
                     <field name="company_currency_id" invisible="1"/>
                     <field name="state" invisible="1"/>

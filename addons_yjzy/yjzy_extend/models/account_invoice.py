@@ -349,7 +349,7 @@ class account_invoice(models.Model):
     yjzy_type = fields.Selection([('sale', u'销售'), ('purchase', u'采购'), ('back_tax', u'退税')], string=u'发票类型')
     bill_id = fields.Many2one('transport.bill', u'发运单')
     tb_contract_code = fields.Char(u'出运合同号', related='bill_id.ref', readonly=True, store=True)
-    include_tax = fields.Boolean(u'含税', related='bill_id.include_tax')
+    include_tax = fields.Boolean(u'含税')
     date_ship = fields.Date(u'出运船日期')
     date_finish = fields.Date(u'交单日期')
     purchase_date_finish_att = fields.Many2many('ir.attachment', string='供应商交单日附件')
@@ -1086,7 +1086,10 @@ class account_invoice(models.Model):
 
     def action_purchase_date_finish_state_done(self):
         for one in self:
-            one.purchase_date_finish_state = 'done'
+            if self.env.ref('akiny.group_trans_hegui') not in self.env.user.groups_id:
+                raise Warning('您没有审批的权限！')
+            else:
+                one.purchase_date_finish_state = 'done'
     def action_purchase_date_finish_state_refuse(self):
         for one in self:
             one.purchase_date_finish_state = 'refuse'

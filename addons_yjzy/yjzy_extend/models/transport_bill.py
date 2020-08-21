@@ -1490,19 +1490,22 @@ class transport_bill(models.Model):
     def action_customer_date_state_done(self):
         date_type = self.env.context.get('date_type')
         for one in self:
-            if date_type == 'date_out_in':
-                one.date_out_in_state = 'done'
-                if one.state not in ['delivered','invoiced']:
-                    # one.state = 'invoiced'
-                    one.stage_id = self._stage_find(domain=[('code', '=', '005')])
-                    # one.onece_all_stage()
-                    # one.make_all_invoice()
-                    one.action_invoiced()
-                    one.sync_data2invoice()
-            if date_type == 'date_ship':
-                one.date_ship_state = 'done'
-            if date_type == 'date_customer_finish':
-                one.date_customer_finish_state = 'done'
+            if self.env.ref('akiny.group_trans_hegui') not in self.env.user.groups_id:
+                raise Warning('您没有审批的权限！')
+            else:
+                if date_type == 'date_out_in':
+                    one.date_out_in_state = 'done'
+                    if one.state not in ['delivered','invoiced']:
+                        # one.state = 'invoiced'
+                        one.stage_id = self._stage_find(domain=[('code', '=', '005')])
+                        # one.onece_all_stage()
+                        # one.make_all_invoice()
+                        one.action_invoiced()
+                        one.sync_data2invoice()
+                if date_type == 'date_ship':
+                    one.date_ship_state = 'done'
+                if date_type == 'date_customer_finish':
+                    one.date_customer_finish_state = 'done'
 
     def action_customer_date_state_refuse(self):
         date_type = self.env.context.get('date_type')
@@ -1593,6 +1596,7 @@ class transport_bill(models.Model):
                 sale_lines.compute_rest_tb_qty()
                 print('budget', one.budget_ids,sale_lines)
         return super(transport_bill, self).unlink()
+
     def unlink_budegt_ids(self):
          self.budget_ids.unlink()
 
@@ -2015,7 +2019,7 @@ class transport_bill(models.Model):
                     'bill_id': self.id,
                     'date_invoice': self.date_out_in,
                     'date': self.date_out_in,
-                    'include_tax': self.include_tax,
+                    # 'include_tax': x.include_tax,
                     'yjzy_type': 'purchase',
                     'gongsi_id': self.purchase_gongsi_id.id,
                     'stage_id': self.env['account.invoice.stage'].search([('code', '=', '007')], limit=1).id,
@@ -2028,7 +2032,7 @@ class transport_bill(models.Model):
                     invoice.purchase_id = o
                     invoice.purchase_order_change()
                     invoice.po_id = o
-
+                    invoice.include_tax = o.include_tax
                 #确认发票
                 invoice.action_invoice_open()
 
@@ -2789,17 +2793,20 @@ class transport_bill(models.Model):
                                'stage_id':stage_id.id})
 
     def action_approve(self):
-        stage_id = self._stage_find(domain=[('code', '=', '004')])
-        stage_preview = self.stage_id
-        user = self.env.user
-        # group = self.env.user.groups_id
-        if user not in stage_preview.user_ids:
-            raise Warning('您没有权限审批')
+        if (self.org_sale_amount == self.org_real_sale_amount and self.sale_type != 'proxy') or (self.sale_type == 'proxy'):
+            stage_id = self._stage_find(domain=[('code', '=', '004')])
+            stage_preview = self.stage_id
+            user = self.env.user
+            # group = self.env.user.groups_id
+            if user not in stage_preview.user_ids:
+                raise Warning('您没有权限审批')
+            else:
+                self.write({'approve_uid':self.env.user.id,
+                               'approve_date':fields.datetime.now(),
+                               #'state':'approve',
+                               'stage_id': stage_id.id})
         else:
-            self.write({'approve_uid':self.env.user.id,
-                           'approve_date':fields.datetime.now(),
-                           #'state':'approve',
-                           'stage_id': stage_id.id})
+            raise Warning('销售金额和原始销售不相等')
   #akiny
     def action_invoiced(self):
         user = self.env.user
@@ -2816,13 +2823,13 @@ class transport_bill(models.Model):
     #阶段审批典型案例
     def action_refuse(self,reason):
         stage_id = self._stage_find(domain=[('code', '=', '009')])
-        # stage_preview = self.stage_id
-        # user = self.env.user
-        # group = self.env.user.groups_id
-        # if user not in stage_preview.user_ids:
-        #     raise Warning('您没有权限拒绝')
-        # else:
-        self.write({'submit_uid': False,
+        stage_preview = self.stage_id
+        user = self.env.user
+        group = self.env.user.groups_id
+        if user not in stage_preview.user_ids:
+            raise Warning('您没有权限拒绝')
+        else:
+            self.write({'submit_uid': False,
                            'submit_date': False,
                            'sales_confirm_uid': False,
                            'sales_confirm_date': False,
@@ -2841,7 +2848,7 @@ class transport_bill(models.Model):
                                           'mail.mt_note').id)  # 定义了留言消息的模板，其他都可以参考，还可以继续参考费用发送计划以及邮件方式
     def action_cancel(self):
         stage_id = self._stage_find(domain=[('code', '=', '010')])
-        self.budget_ids.unlink()
+        #self.budget_ids.unlink()
         self.write({'submit_uid': False,
                            'submit_date': False,
                            'sales_confirm_uid': False,
@@ -2856,10 +2863,10 @@ class transport_bill(models.Model):
                            'stage_id': stage_id.id})
     def action_draft(self):
         stage_id = self._stage_find(domain=[('code', '=', '001')])
-        budget = self.env['budget.budget'].create({
-            'type': 'transport',
-            'tb_id': self.id,
-        })
+        # budget = self.env['budget.budget'].create({
+        #     'type': 'transport',
+        #     'tb_id': self.id,
+        # })
         self.write({#'state': 'draft',
                     'stage_id': stage_id.id})
 

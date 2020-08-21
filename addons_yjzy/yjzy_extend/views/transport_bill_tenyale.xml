@@ -310,7 +310,6 @@
                                 class="oe_highlight"/>
 
                         <field name="state"  widget="statusbar" statusbar_visible=" " />
-                        <field name="is_editable" widget="boolean_toggle" groups="sales_team.group_manager"/>
                     </header>
                     <header groups="base.group_system">
 
@@ -423,6 +422,7 @@
                                     string="退税应收">
                                 <field name="back_tax_invoice_count"/>
                             </button>
+                            <field name="is_editable" widget="boolean_toggle" groups="sales_team.group_manager"/>
                         </div>
                         <group col="3">
                             <group name="general_information">
