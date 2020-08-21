@@ -29,6 +29,7 @@ access_transport_bill_stage,access_transport_bill_stage,model_transport_bill_sta
 access_usd_pool,access_usd_pool,model_usd_pool,base.group_user,1,1,1,1
 access_tbl_hsname_all,access_tbl_hsname_all,model_tbl_hsname_all,base.group_user,1,1,1,1
 access_invoice_hs_name_all,access_invoice_hs_name_all,model_invoice_hs_name_all,base.group_user,1,1,1,1
+access_tb_po_invoice,access_tb_po_invoice,model_tb_po_invoice,base.group_user,1,1,1,1
 
 
 
