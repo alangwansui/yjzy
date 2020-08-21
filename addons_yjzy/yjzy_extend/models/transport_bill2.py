@@ -86,7 +86,7 @@ class transport_bill(models.Model):
     #817定稿
     def open_wizard_tb_po_invoice(self):
         self.ensure_one()
-        purchase_invoice_ids = self.purchase_invoice_ids[0]
+        purchase_invoice_ids = self.purchase_invoice_ids and self.purchase_invoice_ids[0]
         wizard = self.env['wizard.tb.po.invoice'].create({'tb_id': self.id,
                                                           # 'partner_id':self.purchase_invoice_ids[0] and self.purchase_invoice_ids[0].id or False,
                                                           'invoice_product_id': self.env.ref('yjzy_extend.product_qtyfk').id, #0821
