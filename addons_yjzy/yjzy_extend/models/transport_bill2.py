@@ -634,7 +634,7 @@ class tbl_hsname_all(models.Model):
             back_tax_add_actual = sum(x.back_tax_add_this_time for x in inv_hs_name_line_po_ids)
             p_s_add_actual = sum(x.p_s_add_this_time for x in inv_hs_name_line_po_ids)
             #purchase_back_tax_amount2_actual = purchase_amount2_add_actual / 1.13 * one.back_tax
-
+            purchase_amount2_tax = one.purchase_amount2_tax
 
 
             # purchase_amount_max_add_forecast = one.purchase_amount_max_add_forecast
@@ -650,19 +650,19 @@ class tbl_hsname_all(models.Model):
             purchase_amount2 = one.purchase_amount2
 
 
-            if one.is_po_include_tax:
-                # purchase_amount2_tax = purchase_amount2
-                # purchase_amount2_no_tax = 0.0
-                purchase_amount_max_add_forecast = purchase_amount_max_forecast - purchase_amount2
-                purchase_amount_min_add_forecast = purchase_amount_min_forecast - purchase_amount2
-                #back_tax_amount_new_new = one.purchase_amount2 / 1.13 * one.back_tax - back_tax_amount_new #总的实际的应该另外创建的退税金额
-
-            else:
-                # purchase_amount2_tax = 0.0
-                # purchase_amount2_no_tax = purchase_amount2
-                #back_tax_amount_new_new = 0.0
-                purchase_amount_max_add_forecast = purchase_amount_max_forecast
-                purchase_amount_min_add_forecast = purchase_amount_min_forecast
+            # if one.is_po_include_tax:
+            #     # purchase_amount2_tax = purchase_amount2
+            #     # purchase_amount2_no_tax = 0.0
+            purchase_amount_max_add_forecast = purchase_amount_max_forecast - purchase_amount2_tax
+            purchase_amount_min_add_forecast = purchase_amount_min_forecast - purchase_amount2_tax
+            #back_tax_amount_new_new = one.purchase_amount2 / 1.13 * one.back_tax - back_tax_amount_new #总的实际的应该另外创建的退税金额
+            #
+            # else:
+            #     # purchase_amount2_tax = 0.0
+            #     # purchase_amount2_no_tax = purchase_amount2
+            #     #back_tax_amount_new_new = 0.0
+            #     purchase_amount_max_add_forecast = purchase_amount_max_forecast
+            #     purchase_amount_min_add_forecast = purchase_amount_min_forecast
             purchase_amount_max_add_rest = purchase_amount_max_add_forecast - purchase_amount2_add_actual
             purchase_amount_min_add_rest = purchase_amount_min_add_forecast - purchase_amount2_add_actual
 
