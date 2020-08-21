@@ -422,6 +422,13 @@ class purchase_order_line(models.Model):
 
     need_print = fields.Boolean('是否打印', defualt=True)
 
+    def update_back_tax(self):
+        self.ensure_one()
+        for line in self.order_line:
+            line.back_tax = self.source_so_id.cip_type != 'none' and line.product_id.back_tax or 0
+
+        self.compute_info()
+
     def compute_package_info(self):
         for one in self:
             if one.product_id.type != 'product':

@@ -100,6 +100,14 @@
             <field name="company_id" eval="False"/>
         </record>
 
+        <record id="seq_tb_po_invoice" model="ir.sequence">
+            <field name="name">tb.po.invoice</field>
+            <field name="code">tb.po.invoice</field>
+            <field name="prefix">TBP</field>
+            <field name="padding">6</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
 
 
 
@@ -113,6 +121,15 @@
         <record id="icp_yjzy_sale_commission" model="ir.config_parameter">
             <field name="key">addons_yjzy.sale_commission</field>
             <field name="value">0.015</field>
+        </record>
+<!-- 销计算采购的综合利润率 814-->
+        <record id="icp_yjzy_overall_profit_max" model="ir.config_parameter">
+            <field name="key">addons_yjzy.overall_profit_max</field>
+            <field name="value">0.2</field>
+        </record>
+        <record id="icp_yjzy_overall_profit_min" model="ir.config_parameter">
+            <field name="key">addons_yjzy.overall_profit_min</field>
+            <field name="value">0.04</field>
         </record>
 
         <!--  出运发票付款信息科目配置记录 -->
@@ -176,6 +193,34 @@
             <field name="type">service</field>
             <field name="default_code">shuifei</field>
         </record>
+        <!-- 其他应付款-      -->
+        <record id="product_qtyfk" model="product.product">
+            <field name="name">其他应付款</field>
+            <field name="type">service</field>
+            <field name="default_code">qtyfk</field>
+        </record>
+        <!--record id="account_yfzk_c1" model="account.account">
+            <field name="code">220299</field>
+            <field name="name">应付账款-额外</field>
+            <field name="user_type_id">2</field>
+            <field name="company_id">1</field>
+            <field name="reconcile">True</field>
+        </record>
+         <record id="account_yfzk_c2" model="account.account">
+            <field name="code">220299</field>
+            <field name="name">应付账款-额外</field>
+            <field name="user_type_id">2</field>
+            <field name="company_id">3</field>
+            <field name="reconcile">True</field>
+        </record>
+         <record id="account_yfzk_c3" model="account.account">
+            <field name="code">220299</field>
+            <field name="name">应付账款-额外</field>
+            <field name="user_type_id">2</field>
+            <field name="company_id">4</field>
+            <field name="reconcile">True</field>
+        </record-->
+
 
 
         <!-- 退税产品 -->

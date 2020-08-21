@@ -92,7 +92,7 @@ class res_partner(models.Model):
             one.supplier_amount_advance_payment_reconcile = supplier_amount_advance_payment_reconcile
             one.supplier_amount_residual_advance_payment = supplier_amount_residual_advance_payment
 
-    @api.depends('sale_order_ids.amount_total','sale_order_ids')
+    @api.depends('sale_order_ids.amount_total','sale_order_ids','sale_order_ids.state','sale_order_ids.no_sent_amount_new')
     def compute_sale_order_amount_total(self):
         for one in self:
             so_ids = one.so_approve_ids#.filtered(lambda x: x.company_id  == self.env.user.company_id)

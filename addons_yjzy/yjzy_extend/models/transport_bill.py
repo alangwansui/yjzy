@@ -784,8 +784,21 @@ class transport_bill(models.Model):
             one.usd_pool = usd_pool
             one.usd_pool = usd_pool_1
             one.usd_pool_id = usd_pool_id
+    #814
+    def _compute_po_include_tax(self):
+        for one in self:
+            po_include_tax = 'none'
+            line_count = len(one.hsname_ids)
+            line_count_include_tax = len(one.hsname_ids.filtered(lambda x: x.is_po_include_tax))
+            if line_count_include_tax > 0:
+                if line_count_include_tax == line_count:
+                    po_include_tax = 'all'
+                else:
+                    po_include_tax = 'part'
+            one.po_include_tax = po_include_tax
     # 货币设置
     #akiny 未加入
+    po_include_tax = fields.Selection([('all', '全部含税'), ('part', '部分含税'), ('none', '不含税')],u'采购含税情况',compute=_compute_po_include_tax)  #814
     usd_pool_id = fields.Many2one('usd.pool',u'美金池状态',compute=compute_yjzy_invoice_amount_total,store=True)
     usd_pool = fields.Float('美金池', compute=compute_yjzy_invoice_amount_total, store=True)
     usd_pool_1 = fields.Float('美金池1', compute=compute_yjzy_invoice_amount_total, store=True)

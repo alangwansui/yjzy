@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields, api
+from odoo import models, fields, api,_
 from odoo.exceptions import Warning
 from odoo.tools import float_is_zero, float_compare
 
@@ -44,6 +44,9 @@ class hr_expense_sheet(models.Model):
             total_currency_amount = one.currency_id.compute(one.total_amount, one.company_currency_id)
             one.company_currency_total_amount = total_currency_amount
 
+    #819费用创建应付发票
+    invoice_id = fields.Many2one('account.invoice',u'Invoice')
+    is_to_invoice = fields.Boolean(u'是否转货款')
 
     todo_cron = fields.Boolean(u'可以执行')
     include_tax = fields.Boolean(u'含税')
@@ -144,7 +147,49 @@ class hr_expense_sheet(models.Model):
 #         for expense in self.expense_line_ids:
 #             second_categ_id = expense.second_categ_id
 #         self.second_categ_id = second_categ_id
+    #819 费用创建发票账单
+    def action_manager_approve(self):
+        if not self.is_to_invoice:
+            self.create_rcfkd()
+        else:
+            if self.invoice_id:
+                self.invoice_id.action_invoice_open()
 
+    def open_wizard_tb_po_invoice(self):
+        self.ensure_one()
+        bill_id = self.expense_line_ids.mapped('tb_id')
+        wizard = self.env['wizard.tb.po.invoice'].create({'tb_id': bill_id and bill_id[0].tb_id.id,
+                                                          'expense_sheet_id':self.id,
+                                                          'type':'expense_po'
+                                                          })
+
+        view = self.env.ref('yjzy_extend.wizard_tb_po_form')
+        line_obj = self.env['wizard.tb.po.invoice.line']
+        for hsl in bill_id.hsname_all_ids:
+            line_obj.create({
+                'wizard_id': wizard.id,
+                'hs_id': hsl.hs_id.id,
+                'hs_en_name': hsl.hs_en_name,
+                'purchase_amount2_tax': hsl.purchase_amount2_tax,
+                'purchase_amount2_no_tax': hsl.purchase_amount2_no_tax,
+                'purchase_amount_max_add_forecast': hsl.purchase_amount_max_add_forecast,
+                'purchase_amount_min_add_forecast': hsl.purchase_amount_min_add_forecast,
+                'purchase_amount_max_add_rest': hsl.purchase_amount_max_add_rest,
+                'purchase_amount_min_add_rest': hsl.purchase_amount_min_add_rest,
+                'hsname_all_line_id': hsl.id,
+                'back_tax': hsl.back_tax
+            })
+        return {
+            'name': _(u'创建采购单'),
+            'view_type': 'tree,form',
+            "view_mode": 'form',
+            'res_model': 'wizard.tb.po.invoice',
+            'type': 'ir.actions.act_window',
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wizard.id,
+            # 'context': { },
+        }
 
 
     @api.onchange('currency_id')
@@ -306,6 +351,9 @@ class hr_expense_sheet(models.Model):
         })
         self.back_tax_invoice_id = invoice_id
 
+
+
+
     @api.onchange('payment_id')
     def onchange_payment_id(self):
         ctx = self.env.context
@@ -313,12 +361,16 @@ class hr_expense_sheet(models.Model):
         if default_bank_journal_code == 'ysdrl':
             self.currency_id = self.payment_id.currency_id
 
+
+
+
     def create_rcfkd(self):
         amount = self.total_amount
         account_code = amount > 0 and '112301' or '220301'
         sfk_type = amount > 0 and 'rcfkd' or 'rcskd'
         ctx = {'default_sfk_type': sfk_type}
         advance_account = self.env['account.account'].search([('code', '=', account_code),('company_id', '=', self.company_id.id)], limit=1)
+
 
         if not self.fk_journal_id.currency_id:
             raise Warning(u'没有取到付款日记账的货币，请检查设置')

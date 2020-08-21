@@ -177,6 +177,9 @@ class account_payment(models.Model):
             one.display_name = '%s[%s]' % (one.name, str(one.amount))
 
 
+
+    #819增加汇率字段
+    current_date_rate = fields.Float(u'当日汇率')
     #新增
     payment_comments = fields.Text(u'收付款备注')
     fault_comments = fields.Text('异常备注')

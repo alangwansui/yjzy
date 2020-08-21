@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+
+        <record id="wizard_tb_po_form" model="ir.ui.view">
+            <field name="name">wizard.tb.po.from</field>
+            <field name="model">wizard.tb.po.invoice</field>
+            <field name="arch" type="xml">
+                <form string="添加采购金额">
+                    <group col="2">
+                    <group>
+                         <field name="partner_id" string="供应商" domain="[('supplier', '=', True),('is_company','=',True)]"/>
+                        <field name="purchase_invoice_amount" attrs="{'invisible':[('type','!=','other_po')]}"/>
+                        <field name="purchase_invoice_include_tax" string="原始采购含税" attrs="{'invisible':[('type','!=','other_po')]}"/>
+                        <field name="p_s_add_this_time_refund" attrs="{'invisible':['|',('purchase_invoice_include_tax','=',True),('type','!=','other_po')]}" string="冲减金额"/>
+                        <field name="p_s_add_this_time_extra_total" string="冲减后应收" attrs="{'invisible':[('type','!=','other_po')]}"/>
+                        <field name="purchase_amount2_add_this_time_total"/>
+                        <field name="back_tax_add_this_time_total" string="退税金额" attrs="{'invisible':[('type','!=','other_po')]}"/>
+                        <field name="expense_sheet_id" attrs="{'invisible':[('type','!=','expense_po')]}"/>
+                          <field name="expense_currency_id" attrs="{'invisible':[('type','!=','expense_po')]}"/>
+                          <field name="expense_sheet_amount" attrs="{'invisible':[('type','!=','expense_po')]}"/>
+
+
+                    </group>
+                        <group>
+                         <field name="purchase_invoice_origin_id" attrs="{'invisible':[('type','!=','other_po')]}"/>
+                         <field name="tb_id" attrs="{'invisible':[('type','!=','other_po')]}"/>
+                         <field name="invoice_product_id" attrs="{'invisible':[('type','!=','other_po')]}"/>
+
+                          <field name="type"/>
+                    </group>
+                    </group>
+                        <field name="hsname_all_ids">
+                            <tree editable="bottom">
+                                <field name="hs_id"/>
+                                <!--field name="purchase_amount2_tax"/>
+                                <field name="purchase_amount2_no_tax"/-->
+                                <field name="back_tax"/>
+                                <field name="purchase_amount2_tax" sum="小计"/>
+                                <field name="purchase_amount2_no_tax" sum="小计"/>
+                                <field name="purchase_amount_max_add_forecast" invisible="1"/>
+                                <field name="purchase_amount_min_add_forecast" invisible="1"/>
+                                <field name="purchase_amount_max_add_rest"/>
+                                <field name="purchase_amount_min_add_rest"/>
+                                <field name="purchase_amount2_add_this_time"/>
+                                <field name="p_s_add_this_time"/>
+                                <field name="back_tax_add_this_time"/>
+
+                            </tree>
+                        </field>
+
+
+                    <footer>
+                        <!--button name="apply_expense_sheet" class="oe_highlight" type='object' string="费用确认" attrs="{'invisible':[('type','!=','expense_po')]}"/-->
+                        <button name="apply_new" class="oe_highlight" type='object' string="确认"/>
+                        <button special="cancel" class="oe_highlight" string="取消"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

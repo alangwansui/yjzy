@@ -95,7 +95,7 @@ class account_invoice(models.Model):
                 if one.residual_times >= -60 and one.residual_times < -30:
                     residual_date_group = 'before_30_60'
                 if one.residual_times >= -90 and one.residual_times < -60:
-                    residual_date_group = 'before_60_90'
+                    residual_date_group = 'before_60_9  0'
                 if one.residual_times < -90:
                     residual_date_group = 'before_90'
             else:
@@ -303,7 +303,21 @@ class account_invoice(models.Model):
     # def compute_usd_pool(self):
     #     for one in self:
 
+
+    #820增加一个和新增采购关联的字段，把退税等一起关联起来
+    tb_po_invoice_id = fields.Many2one('tb.po.invoice',u'综合增加采购单')
+    #819费用转应付发票
+    expense_sheet_id = fields.Many2one('hr.expense.sheet',u'费用报告')
+    # 增加常规转直接的状态，明细那边增加是否已经转换的状态
+    invoice_attribute = fields.Selection(
+        [('normal', '常规账单'), ('extra', '额外账单'), ('other_po', '直接增加'),('expense_po', u'费用转换')], '账单类型')
     #新增
+
+
+    need_refund = fields.Boolean(u'是否需要退款')
+    refund_state = fields.Selection([('10_no','未退款'),('20_part','部分退款'),('30_all','完成退款')],u'退款状态')
+
+    hsname_all_ids = fields.One2many('invoice.hs_name.all','invoice_id',u'报关明细')
     external_invoice_done = fields.Selection([('10_no',u'否'),
                                               ('20_yes',u'是'),
                                               ('30_not',u'非')],'外账是否确认销售',default='10_no')
@@ -419,6 +433,12 @@ class account_invoice(models.Model):
     yjzy_price_total = fields.Monetary('新金额',currency_field='currency_id',compute=compute_yjzy_price_total)
     extra_code = fields.Char(u'额外编号',default=lambda self: self._default_name())
     yjzy_invoice_line_ids = fields.One2many('account.invoice.line','yjzy_invoice_id',u'所有明细')
+
+    #818
+    def unlink(self):
+        for one in self:
+            one.hsname_all_ids.unlink()
+        return super(account_invoice, self).unlink()
 
     #更新原始账单的时候同时更新额外账单的时间
     def update_date(self):
@@ -585,26 +605,26 @@ class account_invoice(models.Model):
     def onchange_payment_currency(self):
         # self.payment_term_id = self.yjzy_payment_term_id
         # self.currency_id = self.yjzy_currency_id
-
-        yjzy_type = self.yjzy_type
-        if yjzy_type == 'sale' or yjzy_type == 'back_tax':
-            if self.yjzy_price_total < 0:
-                self.type = 'out_refund'
-                for x in self.invoice_line_ids:
-                    x.price_unit = -x.yjzy_price_unit
+        if self.is_yjzy_invoice:
+            yjzy_type = self.yjzy_type
+            if yjzy_type == 'sale' or yjzy_type == 'back_tax':
+                if self.yjzy_price_total < 0:
+                    self.type = 'out_refund'
+                    for x in self.invoice_line_ids:
+                        x.price_unit = -x.yjzy_price_unit
+                else:
+                    self.type = 'out_invoice'
+                    for x in self.invoice_line_ids:
+                        x.price_unit = x.yjzy_price_unit
             else:
-                self.type = 'out_invoice'
-                for x in self.invoice_line_ids:
-                    x.price_unit = x.yjzy_price_unit
-        else:
-            if self.yjzy_price_total < 0:
-                self.type = 'in_refund'
-                for x in self.invoice_line_ids:
-                    x.price_unit = -x.yjzy_price_unit
-            else:
-                self.type = 'in_invoice'
-                for x in self.invoice_line_ids:
-                    x.price_unit = x.yjzy_price_unit
+                if self.yjzy_price_total < 0:
+                    self.type = 'in_refund'
+                    for x in self.invoice_line_ids:
+                        x.price_unit = -x.yjzy_price_unit
+                else:
+                    self.type = 'in_invoice'
+                    for x in self.invoice_line_ids:
+                        x.price_unit = x.yjzy_price_unit
 
     @api.onchange('yjzy_payment_term_id')
     def onchange_payment_term(self):
@@ -1133,7 +1153,8 @@ class account_invoice_line(models.Model):
     #先默认将单价绝对值填入原生单价，之后通过invoice的onchange来决定最终的单价是正数还是负数
     @api.onchange('yjzy_price_unit')
     def onchange_yjzy_price_unit(self):
-        self.price_unit = abs(self.yjzy_price_unit)
+        if self.invoice_id.is_yjzy_invoice:
+            self.price_unit = abs(self.yjzy_price_unit)
 
 
 
@@ -1159,3 +1180,14 @@ class invoice_hs_name_item(models.Model):
     price = fields.Float(u'价格')
     amount = fields.Float(u'金额', digits=dp.get_precision('Money'))
     invoice_line_ids = fields.One2many('account.invoice.line', 'item_id', 'Lines')
+    #tb_hsname_line_id = fields.Many2one('tbl.hsname',u'报关明细') #817
+
+class invoice_hs_name_all(models.Model):
+    _name = 'invoice.hs_name.all'
+
+    hs_id = fields.Many2one('hs.hs', u'品名')
+    purchase_amount2_add_this_time = fields.Float(U'本次采购开票金额')
+    p_s_add_this_time = fields.Float('本次应收总金额')
+    back_tax_add_this_time = fields.Float('本次退税金额')
+    invoice_id = fields.Many2one('account.invoice', u'发票')
+    tbl_hsname_all_id = fields.Many2one('tbl.hsname.all','报关汇总明细')

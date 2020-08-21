@@ -63,6 +63,7 @@
         'views/product_supplierinfo.xml',
         'views/usd_pool.xml',
         'views/transport_bill_usd_pool.xml',
+        'views/transport_bill_declare_po.xml',
 
         'views/sale.xml',
         'views/sale2.xml',
@@ -108,6 +109,8 @@
         'views/account_invoice_extra.xml',
         'views/trasnport_bill_stage.xml',
         'views/trasnport_bill_stage.xml',
+        'views/account_invoice_extra_po.xml',
+        'views/tb_po_invoice.xml',
 
 
 
@@ -147,6 +150,7 @@
         'wizard/wizard_supplier_invoice_date.xml',
         'wizard/wizard_batch_passwd.xml',
         'wizard/wizard_so2sol.xml',
+        'wizard/wizard_tb_po_invoice.xml',
 
         # report
         'report/report.xml',

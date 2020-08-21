@@ -300,13 +300,17 @@ class btls_hs(models.Model):
                 one.price2 = one.amount2 / one.qty2
             else:
                 one.price2 = 0
-
             if one.tb_id.cip_type != 'normal':
                 back_tax_amount = 0
             else:
                 back_tax_amount = one.amount2 / 1.13 * one.back_tax
+            if one.po_id.include_tax:
+                back_tax_amount_new = one.amount2 / 1.13 * one.back_tax
+            else:
+                back_tax_amount_new = 0
 
             one.back_tax_amount2 = back_tax_amount
+            one.back_tax_amount2_new = back_tax_amount_new
 
     name = fields.Char('HS:PO')
     tb_id = fields.Many2one('transport.bill', u'发运', ondelete='cascade')
@@ -323,6 +327,7 @@ class btls_hs(models.Model):
     qty = fields.Float('数量')
     price = fields.Float('单价')
     amount = fields.Float('金额', digits=dp.get_precision('Money'))
+    #akinyback_tax
     back_tax = fields.Float(related='hs_id.back_tax')
     back_tax_amount = fields.Float(u'退税金额', digits=dp.get_precision('Money'))
 
@@ -333,6 +338,7 @@ class btls_hs(models.Model):
     amount2 = fields.Float(u'采购金额', digits=dp.get_precision('Money'))
     back_tax2 = fields.Float(related='hs_id2.back_tax')
     back_tax_amount2 = fields.Float(u'报关退税金额', compute=compute_price2, digits=dp.get_precision('Money'))
+    back_tax_amount2_new = fields.Float(u'报关退税金额', compute=compute_price2, digits=dp.get_precision('Money'))
     tongji_type = fields.Selection([('purchase', u'采购'), ('stock', u'库存')], u'统计类型')
 
     @api.onchange('po_id')
