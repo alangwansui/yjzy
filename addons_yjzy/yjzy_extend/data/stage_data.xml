@@ -65,6 +65,12 @@
             <field name="sequence" eval="30"/>
             <field name="state">sales_approve</field>
         </record>
+        <record model="transport.bill.stage" id="stage_tb_manager_approve">
+            <field name="name">待总经理特批</field>
+            <field name="code">011</field>
+            <field name="sequence" eval="35"/>
+            <field name="state">manager_approve</field>
+        </record>
         <record model="transport.bill.stage" id="stage_tb_approve">
             <field name="name">出运日期待确认合同</field>
             <field name="code">004</field>

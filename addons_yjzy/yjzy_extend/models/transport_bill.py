@@ -18,7 +18,7 @@ Stage_Status_Default = 'draft'
 Transport_Selection = [('cancel', u'取消'),
                        ('refused', u'已拒绝'),
                        ('draft', u'草稿'),
-                       ('submit', u'待责任人审批'), ('sales_approve', u'待合规审批'),
+                       ('submit', u'待责任人审批'), ('sales_approve', u'待合规审批'),('manager_approve',u'总经理审批'),
                        ('approve', u'合规已审批'), ('delivered', u'发货完成'),
                        ('invoiced', u'账单已确认'), ('locked', u'锁定'),('abnormal',u'异常待核销'),
                        ('verifying', u'待核销'),
@@ -2793,6 +2793,38 @@ class transport_bill(models.Model):
                                'stage_id':stage_id.id})
 
     def action_approve(self):
+        if (self.org_sale_amount == self.org_real_sale_amount and self.sale_type != 'proxy') or (self.sale_type == 'proxy'):
+            stage_id = self._stage_find(domain=[('code', '=', '004')])
+            stage_preview = self.stage_id
+            user = self.env.user
+            # group = self.env.user.groups_id
+            if user not in stage_preview.user_ids:
+                raise Warning('您没有权限审批')
+            else:
+                self.write({'approve_uid':self.env.user.id,
+                               'approve_date':fields.datetime.now(),
+                               #'state':'approve',
+                               'stage_id': stage_id.id})
+        else:
+            raise Warning('销售金额和原始销售不相等')
+
+    def action_to_manager_approve(self):
+        if (self.org_sale_amount == self.org_real_sale_amount and self.sale_type != 'proxy') or (self.sale_type == 'proxy'):
+            stage_id = self._stage_find(domain=[('code', '=', '011')])
+            stage_preview = self.stage_id
+            user = self.env.user
+            # group = self.env.user.groups_id
+            if user not in stage_preview.user_ids:
+                raise Warning('您没有权限审批')
+            else:
+                self.write({#'approve_uid':self.env.user.id,
+                               # 'approve_date':fields.datetime.now(),
+                               #'state':'approve',
+                               'stage_id': stage_id.id})
+        else:
+            raise Warning('销售金额和原始销售不相等')
+
+    def action_manager_approve(self):
         if (self.org_sale_amount == self.org_real_sale_amount and self.sale_type != 'proxy') or (self.sale_type == 'proxy'):
             stage_id = self._stage_find(domain=[('code', '=', '004')])
             stage_preview = self.stage_id
