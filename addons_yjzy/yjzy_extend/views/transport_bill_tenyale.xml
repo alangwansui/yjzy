@@ -2,7 +2,7 @@
     <data>
         <menuitem id="menu_transport_tenyale_bill_root"
                   name="出运:新"
-                  sequence="99"
+                  sequence="22"
         />
         <record id="view_transport_bill_tenyale_filter" model="ir.ui.view">
             <field name="name">transport.bill.tenyale.select</field>

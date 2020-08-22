@@ -1400,7 +1400,7 @@
 
         <menuitem id="menu_transport_new_bill_root"
                   name="新出运"
-                  sequence="22"
+                  sequence="99"
                   groups="base.group_system"/>
         <menuitem id="menu_transport_new_date_bill" name="出运单日期填制"
                   parent="yjzy_extend.menu_transport_new_bill_root"
