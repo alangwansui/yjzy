@@ -368,12 +368,12 @@
                                 class="oe_highlight"/>
                         <!--button string="计算利润" states="confirmed" type="object" name="compute_amount"
                                 class="oe_highlight"/-->
-                        <button string="销售发票" invisible="1" type="object" name="make_sale_invoice" class="oe_highlight"
+                        <button string="销售发票" invisible="0" type="object" name="make_sale_invoice" class="oe_highlight"
                                 attrs="{'invisible': [('sale_invoice_count','>', 0)]}"/>
-                        <button string="采购发票" invisible="1" type="object" name="make_purchase_invoice"
+                        <button string="采购发票" invisible="0" type="object" name="make_purchase_invoice"
                                 class="oe_highlight"
                                 attrs="{'invisible': [('purchase_invoice_count','>', 0)]}"/>
-                        <button string="退税发票" invisible="1" type="object" name="make_back_tax_invoice"
+                        <button string="退税发票" invisible="0" type="object" name="make_back_tax_invoice"
                                 class="oe_highlight"
                                 attrs="{'invisible': [('back_tax_invoice_count','>', 0)]}"/>
                         <!--在出入库一次完成的时候，发票全部自动生成草稿状态，之后点发票过账，判断进仓日期，完成过账-->

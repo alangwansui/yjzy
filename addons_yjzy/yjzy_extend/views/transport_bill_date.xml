@@ -5,8 +5,7 @@
             <field name="name">transport.bill.tree</field>
             <field name="model">transport.bill</field>
             <field name="arch" type="xml">
-                <tree string="出运单" editable="bottom"
-                      default_order="date_all_state, date_out_in desc,date_out_in_state desc">
+                <tree string="出运单" editable="bottom" default_order="date_all_state, date_out_in desc,date_out_in_state desc">
                     <field name="name" invisible="1"/>
                     <field name="ref" readonly="1"/>
                     <field name="partner_id" required="1" readonly="1"/>
@@ -52,7 +51,7 @@
                     <field name="date_purchase_finish_state" readonly="1" string="状态"/>
 
 
-                    <field name="state" invisible="1" readonly="1"/>
+                    <field name="state" invisible="1" readonly="1" />
                     <field name="create_date" widget="date" invisible="1"/>
                     <field name="gongsi_id" string="销售主体" invisible="1"/>
                     <field name="purchase_gongsi_id" string="采购主体" invisible="1"/>
@@ -66,7 +65,7 @@
             <field name="arch" type="xml">
                 <tree string="出运单" editable="bottom" decoration-danger="date_out_in_state == 'submit' or date_ship_state == 'submit' or
                 date_customer_finish_state =='submit' or date_purchase_finish_state == 'submit' "
-                      default_order="date_out_in desc,date_out_in_state desc">
+                      default_order="date_out_in desc,date_out_in_state desc" >
                     <field name="name" invisible="1"/>
                     <field name="ref" readonly="1"/>
                     <field name="partner_id" required="1" readonly="1"/>
@@ -113,7 +112,7 @@
                     <field name="date_purchase_finish_state" readonly="1" string="状态"/>
 
 
-                    <field name="state" invisible="1" readonly="1"/>
+                    <field name="state" invisible="1" readonly="1" />
                     <field name="create_date" widget="date" invisible="1"/>
                     <field name="gongsi_id" string="销售主体" invisible="1"/>
                     <field name="purchase_gongsi_id" string="采购主体" invisible="1"/>
@@ -128,10 +127,10 @@
                     <header>
                         <button name="action_customer_date_state_submit" type="object" class="oe_highlight"
                                 context="{'date_type':'date_out_in'}"
-                                attrs="{'invisible':[('date_out_in_state','not in',['draft','refuse'])]}" string="提交"/>
+                                attrs="{'invisible':[('date_out_in_state','not in',['draft','refuse'])]}" string="提交" />
                         <button name="action_customer_date_state_done" type="object" class="oe_highlight"
                                 context="{'date_type':'date_out_in'}"
-                                attrs="{'invisible':[('date_out_in_state','not in',['submit'])]}" string="通过"/>
+                                attrs="{'invisible':[('date_out_in_state','not in',['submit'])]}" string="通过" />
                         <button name="action_customer_date_state_refuse" type="object" class="oe_highlight"
                                 context="{'date_type':'date_out_in'}"
                                 attrs="{'invisible':[('date_out_in_state','not in',['submit'])]}" string="拒绝"
@@ -216,8 +215,7 @@
                                 string="提交"/>
                         <button name="action_customer_date_state_done" type="object"
                                 context="{'date_type':'date_customer_finish'}"
-                                attrs="{'invisible':[('date_customer_finish_state','not in',['submit'])]}" string="通过"
-                                groups="akiny.group_trans_hegui"/>
+                                attrs="{'invisible':[('date_customer_finish_state','not in',['submit'])]}" string="通过" groups="akiny.group_trans_hegui"/>
                         <field name="date_customer_finish_state" widget="statusbar" statusbar_visible=" "/>
                     </header>
                     <sheet>
@@ -226,6 +224,7 @@
                             <field name="is_editable" invisible="1"/>
                             <field name="date_customer_finish"
                                    attrs="{'readonly':[('date_customer_finish_state','not in',['draft']),('is_editable','=',False)]}"/>
+
                         </group>
                         <field nolabel="1" name="date_customer_finish_att"
                                context="{'default_type':'date_customer_finish'}"
@@ -310,9 +309,7 @@
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_transport_bill_tenyale_filter"/>
             <field name="limit">20</field>
-            <field name="domain">[('date_all_state','!=','done'),('state','not
-                in',['draft','submit','sale_approve','refused','cancel','done'])]
-            </field>
+            <field name="domain">[('date_all_state','!=','done'),('state','not in',['draft','submit','sale_approve','refused','cancel','done'])]</field>
             <field name="context">
                 {'search_default_group_date_all_state_1':1,'show_date_finish':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3}
             </field>
@@ -335,15 +332,13 @@
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_transport_bill_tenyale_filter"/>
             <field name="limit">20</field>
-            <field name="domain">[('date_all_state','!=','done'),('state','not
-                in',['draft','submit','sale_approve','refused','cancel','done'])]
-            </field>
+            <field name="domain">[('date_all_state','!=','done'),('state','not in',['draft','submit','sale_approve','refused','cancel','done'])]</field>
             <field name="context">
                 {'show_date_finish':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3}
             </field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_transport_bill_tenyale_sales_date_tree')}),
-                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_transport_bill_tenyale_sales_form')})
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_transport_bill_tenyale_sales_form')}),
                           ]"/>
 
         </record>
