@@ -124,8 +124,7 @@
             <field name="name">sale.order.line.tree</field>
             <field name="model">sale.order.line</field>
             <field name="arch" type="xml">
-               <tree string="Sales Order Lines" decoration-danger="rest_tb_qty == 0">
-
+               <tree string="Sales Order Lines" decoration-danger="rest_tb_qty &lt;= 0">
                     <field name="order_id" string="销售合同"/>
                     <field name="order_partner_id" invisible="1"/>
                     <field name="product_id" />

@@ -1589,12 +1589,16 @@ class transport_bill(models.Model):
         for one in self:
             sale_orders =one.mapped('so_ids')
             if one.state != 'cancel':
-                raise Warning(u'只有取消状态允许删除')
+                raise Warning(u'只有取消状态允许删除！')
             else:
-                one.budget_ids.unlink()
-                sale_lines = sale_orders.mapped('order_line')
-                sale_lines.compute_rest_tb_qty()
-                print('budget', one.budget_ids,sale_lines)
+                if len(one.line_ids) != 0:
+                    raise Warning(u'请先删除明细行！')
+                else:
+                    one.budget_ids.unlink()
+                    sale_lines = sale_orders.mapped('order_line')
+                    one.line_ids.unlink()
+                    sale_lines.compute_rest_tb_qty()
+                    print('budget', one.budget_ids,sale_lines)
         return super(transport_bill, self).unlink()
 
     def unlink_budegt_ids(self):

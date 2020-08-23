@@ -56,7 +56,7 @@
             <field name="name">transport.bill.tree</field>
             <field name="model">transport.bill</field>
             <field name="arch" type="xml">
-                <tree string="未生效出运单">
+                <tree string="未生效出运单" create="false">
                     <field name="ref"/>
                     <field name="name" invisible="1" groups="base.group_system"/>
                     <field name="partner_id" required="1"/>
@@ -86,7 +86,7 @@
             <field name="name">transport.bill.tree</field>
             <field name="model">transport.bill</field>
             <field name="arch" type="xml">
-                <tree string="出运单" create="false" default_order="stage_id,approve_date desc">
+                <tree string="出运单" create="false" default_order="stage_id,approve_date desc" >
                     <field name="ref"/>
                     <field name="name" invisible="1" groups="base.group_system"/>
                     <field name="approve_date" string="合规审批日"/>
@@ -135,7 +135,7 @@
             <field name="name">transport.bill.tree</field>
             <field name="model">transport.bill</field>
             <field name="arch" type="xml">
-                <tree string="已核销" default_order="hexiao_date">
+                <tree string="已核销" default_order="hexiao_date" create="false">
                     <field name="ref"/>
                     <field name="name" invisible="1" groups="base.group_system"/>
                     <field name="date_out_in" string="出运日期"/>
@@ -191,7 +191,7 @@
             <field name="name">transport.bill.tree</field>
             <field name="model">transport.bill</field>
             <field name="arch" type="xml">
-                <tree string="已核销" default_order="date_out_in desc">
+                <tree string="已核销" default_order="date_out_in desc" create="false">
                     <field name="ref"/>
                     <field name="name" invisible="1" groups="base.group_system"/>
                     <field name="date_out_in" string="出运时间"/>
@@ -313,8 +313,8 @@
                                 class="oe_highlight"/>
                         <button name="%(transport_refuse_wizard_action)d" string="拒绝" type="action"/>
                         <button name="action_hexiao" states="verifying" string="核销" type="object"/>
-                        <button string="取消" groups="base.group_system" type="object" name="action_cancel"
-                                states="draft" class="oe_highlight"/>
+                        <button string="取消" type="object" confirm="确定要取消吗？取消后请即时删除单据" name="action_cancel"
+                                states="draft,refused" class="oe_highlight"/>
                         <button string="添加销售明细" type="object" name="open_wizard_transport4sol"
                                 confirm="重新添加销售明细，将会清除所有的清关和报关资料！是否继续"
                                 attrs="{'invisible':['|',('operation_wizard','in',['first','second','third','fourth','fifth']),('state','not in',['draft'])]}"
@@ -621,7 +621,7 @@
                                     <button name="finish_delivery_qty" string="重新修改出运数量" invisible="1"/>
                                 </group>
                                 <field name="line_ids"
-                                       attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}">
+                                       attrs="{'readonly':[('state','not in',['draft','check','refused','cancel']),('is_editable','=',False)]}">
                                     <tree create="false" editable="bottom">
                                         <button icon="fa-paper-plane" type="object" help="请点击，并初始化发货数量和金额等信息！"
                                                 attrs="{'invisible':[('parent.state','not in',['draft']),('parent.is_editable','=',False)]}"
@@ -1123,7 +1123,7 @@
                                 <field name="expense_ids">
                                 </field>
                             </page>
-                            <page string="时间管理页面">
+                            <page string="时间管理页面" attrs="{'invisible':[('operation_wizard','in',['first','second','third','fourth'])]}">
                                 <group>
                                     <group>
                                         <field name="submit_date" attrs="{'readonly':1}"/>

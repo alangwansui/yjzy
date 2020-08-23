@@ -114,7 +114,8 @@ class sale_order_line(models.Model):
           #  one.purchase_price = one.pol_id and one.pol_id.price_unit or False
 
     #currency_id ==销售货币
-
+    #822
+    contract_code = fields.Char('销售合同号',related='order_id.contract_code')
     #13添加
     sale_currency_id = fields.Many2one('res.currency', related='currency_id', string=u'交易货币', readonly=True)
     company_currency_id = fields.Many2one('res.currency', related='order_id.company_currency_id', readonly=True)
