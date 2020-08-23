@@ -20,10 +20,12 @@ class wizard_transport4so(models.TransientModel):
             purchase_invoice_amount = sum(x.residual for x in purchase_invoice_partner_id)
             purchase_invoice_include_tax = purchase_invoice_partner_id and purchase_invoice_partner_id[
                 0].include_tax or False
-            if purchase_invoice_amount - p_s_add_this_time_total > 0:
-                p_s_add_this_time_refund = p_s_add_this_time_total
-            else:
-                p_s_add_this_time_refund = purchase_invoice_amount
+            p_s_add_this_time_refund = 0.0
+            if not purchase_invoice_include_tax:
+                if purchase_invoice_amount - p_s_add_this_time_total > 0 :
+                    p_s_add_this_time_refund = p_s_add_this_time_total
+                else:
+                    p_s_add_this_time_refund = purchase_invoice_amount
             p_s_add_this_time_extra_total = p_s_add_this_time_total - p_s_add_this_time_refund
             one.p_s_add_this_time_extra_total = p_s_add_this_time_extra_total
             one.p_s_add_this_time_refund = p_s_add_this_time_refund
