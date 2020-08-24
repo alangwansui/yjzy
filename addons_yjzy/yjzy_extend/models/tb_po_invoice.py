@@ -97,15 +97,16 @@ class tb_po_invoice(models.Model):
         res=[]
         for line in hsname_all_ids:
             res.append((0, 0, {
-                'hs_id':line.hs_id.id,
-                'hs_en_name': line.hs_en_name,
-                'back_tax':line.back_tax,
-                'purchase_amount2_tax': line.purchase_amount2_tax,
-                'purchase_amount2_no_tax': line.purchase_amount2_no_tax,
-                'purchase_amount_max_add_forecast': line.purchase_amount_max_add_forecast,
-                'purchase_amount_min_add_forecast': line.purchase_amount_min_add_forecast,
-                'purchase_amount_max_add_rest': line.purchase_amount_max_add_rest,
-                'purchase_amount_min_add_rest': line.purchase_amount_min_add_rest,
+                #akiny
+                # 'hs_id':line.hs_id.id,
+                # 'hs_en_name': line.hs_en_name,
+                # 'back_tax':line.back_tax,
+                # 'purchase_amount2_tax': line.purchase_amount2_tax,
+                # 'purchase_amount2_no_tax': line.purchase_amount2_no_tax,
+                # 'purchase_amount_max_add_forecast': line.purchase_amount_max_add_forecast,
+                # 'purchase_amount_min_add_forecast': line.purchase_amount_min_add_forecast,
+                # 'purchase_amount_max_add_rest': line.purchase_amount_max_add_rest,
+                # 'purchase_amount_min_add_rest': line.purchase_amount_min_add_rest,
                 'hsname_all_line_id': line.id
             }))
         self.hsname_all_ids = res
