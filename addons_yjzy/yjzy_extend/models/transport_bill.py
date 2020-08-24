@@ -2805,6 +2805,7 @@ class transport_bill(models.Model):
             if user not in stage_preview.user_ids:
                 raise Warning('您没有权限审批')
             else:
+                self.compute_second_state()
                 self.write({'approve_uid':self.env.user.id,
                                'approve_date':fields.datetime.now(),
                                #'state':'approve',
@@ -2821,6 +2822,7 @@ class transport_bill(models.Model):
             if user not in stage_preview.user_ids:
                 raise Warning('您没有权限审批')
             else:
+                self.compute_second_state()
                 self.write({#'approve_uid':self.env.user.id,
                                # 'approve_date':fields.datetime.now(),
                                #'state':'approve',

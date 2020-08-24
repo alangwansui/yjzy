@@ -181,6 +181,7 @@
                             <field name="price_unit"/>
                             <field name="is_gold_sample" string="金样状态"/>
                             <field name="include_tax"/>
+
                             <field name="hs_id"/>
                             <field name="back_tax"/>
                             <field name="price_total" widget="monetary" groups="sale.group_show_price_total"/>
@@ -517,6 +518,7 @@
                                 <field name="current_date_rate" string="成本测算汇率*" attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}" options="{'no_open':True}"/>
                                 <field name="currency_id" invisible="0" attrs="{'readonly':1}" options="{'no_open':1}"/>
                                 <field name="include_tax" attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}"/>
+                                <field name="po_include_tax" groups="base.group_system"/>
                                 <!--field name="currency_tate"/-->
 
 
@@ -1213,6 +1215,7 @@
                     <field name="state" invisible="1"/>
                     <field name="delivery_status" invisible="1"/>
                     <field name="include_tax"/>
+
                     <field name="payment_term_id" attrs="{}" invisible="1"/>
                     <field name="sale_uid" />
                     <field name="sale_assistant_id"  invisible="1"/>

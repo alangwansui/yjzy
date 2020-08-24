@@ -245,8 +245,23 @@ class sale_order(models.Model):
             one.advance_reconcile_order_line_date_char = advance_reconcile_order_line_date_char
             one.advance_total = advance_total
 
-    #货币设置
+        # 814
 
+    def _compute_po_include_tax(self):
+        for one in self:
+            po_include_tax = 'none'
+            line_count = one.po_count
+            line_count_include_tax = len(one.po_ids.filtered(lambda x: x.include_tax))
+            if line_count_include_tax > 0:
+                if line_count_include_tax == line_count:
+                    po_include_tax = 'all'
+                else:
+                    po_include_tax = 'part'
+            one.po_include_tax = po_include_tax
+
+    #货币设置
+    #824
+    po_include_tax = fields.Selection([('all', '全部含税'), ('part', '部分含税'), ('none', '不含税')],u'采购含税情况',compute=_compute_po_include_tax)  #824
     #akiny715
     digits = fields.Selection([('2','2'),('3','3'),('4','4')],'打印小数位数')
     advance_reconcile_order_line_ids = fields.One2many('account.reconcile.order.line', 'so_id',string='预收认领明细', domain=[('order_id.state','=','done'),('amount_total_org','!=',0)])
