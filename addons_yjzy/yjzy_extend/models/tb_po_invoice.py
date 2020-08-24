@@ -381,7 +381,7 @@ class tb_po_invoice_line(models.Model):
     tb_po_id = fields.Many2one('tb.po.invoice', 'TB_PO')
     hsname_all_line_id = fields.Many2one('tbl.hsname.all', u'销售明细')
 
-    hs_id = fields.Many2one('hs.hs', u'品名')
+
 
 
     hs_en_name = fields.Char(related='hs_id.en_name')
@@ -398,6 +398,7 @@ class tb_po_invoice_line(models.Model):
 
     purchase_amount2 = fields.Float('采购金额')  # 814需要优化
     purchase_back_tax_amount2 = fields.Float(u'报关退税税金额', )
+    # hs_id = fields.Many2one('hs.hs', u'品名')
     # back_tax = fields.Float(u'退税率')
     # amount2 = fields.Float('报关金额', digits=dp.get_precision('Money'))
 
@@ -415,6 +416,7 @@ class tb_po_invoice_line(models.Model):
     p_s_add_this_time_old = fields.Float(u'冲减原始应付金额')
     yjzy_invoice_id = fields.Many2one('account.invoice',u'关联账单')
 
+    hs_id = fields.Many2one('hs.hs', u'品名',related='hsname_all_line_id.hs_id')
     back_tax = fields.Float(u'退税率',related='hsname_all_line_id.back_tax')
     amount2 = fields.Float('报关金额', digits=dp.get_precision('Money'),related='hsname_all_line_id.amount2')
     purchase_amount2_tax = fields.Float(u'含税采购金额',related='hsname_all_line_id.purchase_amount2_tax')
