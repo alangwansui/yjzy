@@ -158,7 +158,7 @@ class hr_expense_sheet(models.Model):
     def open_wizard_tb_po_invoice(self):
         self.ensure_one()
         bill_id = self.expense_line_ids.mapped('tb_id')
-        wizard = self.env['wizard.tb.po.invoice'].create({'tb_id': bill_id and bill_id[0].tb_id.id,
+        wizard = self.env['wizard.tb.po.invoice'].create({'tb_id': bill_id and bill_id[0].id,
                                                           'expense_sheet_id':self.id,
                                                           'type':'expense_po'
                                                           })
