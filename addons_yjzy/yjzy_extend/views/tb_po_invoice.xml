@@ -6,7 +6,7 @@
             <field name="name">tb.po.tree</field>
             <field name="model">tb.po.invoice</field>
             <field name="arch" type="xml">
-                <tree string="增加采购">
+                <tree string="增加采购" create="false">
                     <field name="name"/>
                     <field name="partner_id"/>
                     <field name="purchase_invoice_amount"/>
@@ -25,15 +25,25 @@
             <field name="arch" type="xml">
                 <form string="添加采购金额">
                     <header>
-                         <button name="apply_expense_sheet" class="oe_highlight" type='object' string="费用确认" />
-                        <button name="apply" class="oe_highlight" type='object' string="确认" />
-                        <button special="cancel" class="oe_highlight" string="取消"/>
+                        <button name="action_submit" states="10_draft,40_refuse" class="oe_highlight" type='object' string="提交"/>
+                        <button name="action_manager_approve"  states="20_submit" class="oe_highlight" type='object' string="总经理审批"/>
+                        <button name="action_refuse"  class="oe_highlight" type='object' string="拒绝"/>
+                        <button name="apply_expense_sheet" class="oe_highlight" type='object' groups="base.group_system" string="费用确认" attrs="{'invisible':[('type','!=','expense_po')]}"/>
+                        <button name="apply" class="oe_highlight" type='object' string="确认" groups="base.group_system" attrs="{'invisible':[('type','!=','other_po')]}"/>
+                        <button special="cancel" class="oe_highlight" groups="base.group_system" string="取消"/>
+                        <field name="state" widget="statusbar" />
                     </header>
                     <sheet>
                     <group col="2">
                     <group>
-                         <field name="partner_id" string="供应商" domain="[('supplier', '=', True),('is_company','=',True)]"/>
-                        <field name="purchase_invoice_amount" attrs="{'invisible':[('type','!=','other_po')]}"/>
+                        <field name="partner_id" string="供应商" domain="[('supplier', '=', True),('is_company','=',True)]"/>
+                        <field name="tb_id" attrs="{'invisible':[('type','!=','other_po')]}"/>
+                        <field name="purchase_invoice_origin_id" attrs="{'invisible':[('type','!=','other_po')]}"/>
+                        <field name="invoice_product_id" attrs="{'invisible':[('type','!=','other_po')]}"/>
+                        <field name="type"/>
+                    </group>
+                        <group>
+                            <field name="purchase_invoice_amount" attrs="{'invisible':[('type','!=','other_po')]}"/>
                         <field name="purchase_invoice_include_tax" string="原始采购含税" attrs="{'invisible':[('type','!=','other_po')]}"/>
                         <field name="p_s_add_this_time_refund" attrs="{'invisible':['|',('purchase_invoice_include_tax','=',True),('type','!=','other_po')]}" string="冲减金额"/>
                         <field name="p_s_add_this_time_extra_total" string="冲减后应收" attrs="{'invisible':[('type','!=','other_po')]}"/>
@@ -42,13 +52,6 @@
                         <field name="expense_sheet_id" attrs="{'invisible':[('type','!=','expense_po')]}"/>
                           <field name="expense_currency_id" attrs="{'invisible':[('type','!=','expense_po')]}"/>
                           <field name="expense_sheet_amount" attrs="{'invisible':[('type','!=','expense_po')]}"/>
-                    </group>
-                        <group>
-                         <field name="purchase_invoice_origin_id" attrs="{'invisible':[('type','!=','other_po')]}"/>
-                         <field name="tb_id" attrs="{'invisible':[('type','!=','other_po')]}"/>
-                         <field name="invoice_product_id" attrs="{'invisible':[('type','!=','other_po')]}"/>
-
-                          <field name="type"/>
                     </group>
                     </group>
                     <notebook>
@@ -59,12 +62,15 @@
                                 <!--field name="purchase_amount2_tax"/>
                                 <field name="purchase_amount2_no_tax"/-->
                                 <field name="back_tax"/>
+                                <field name="amount2"/>
                                 <field name="purchase_amount2_tax" sum="小计"/>
                                 <field name="purchase_amount2_no_tax" sum="小计"/>
-                                <field name="purchase_amount_max_add_forecast" invisible="1"/>
-                                <field name="purchase_amount_min_add_forecast" invisible="1"/>
-                                <field name="purchase_amount_max_add_rest"/>
+                                <field name="purchase_back_tax_amount2_new" string="实际退税金额" sum="小计"/>
+                                <field name="purchase_amount_min_add_forecast" sum="小计"/>
+                                <field name="purchase_amount_max_add_forecast" sum="小计"/>
+                                <field name="purchase_amount2_add_actual" sum="小计"/>
                                 <field name="purchase_amount_min_add_rest"/>
+                                <field name="purchase_amount_max_add_rest"/>
                                 <field name="purchase_amount2_add_this_time"/>
                                 <field name="p_s_add_this_time"/>
                                 <field name="back_tax_add_this_time"/>
@@ -94,14 +100,13 @@
             </field>
         </record>
         <record model="ir.actions.act_window" id="act_tb_po">
-            <field name="name">增加采购</field>
+            <field name="name">增加采购申请单</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">tb.po.invoice</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[]</field>
             <field name="limit">20</field>
-
             <field name="context">{}</field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('tb_po_tree')}),
@@ -109,9 +114,9 @@
 
         </record>
 
-        <menuitem id="menu_tb_po_tree" name="增加采购"
+        <menuitem id="menu_tb_po_tree" name="增加采购申请单"
                   parent="yjzy_extend.menu_extra_po_root"
-                  sequence="97"
+                  sequence="10"
                   action="act_tb_po"
         />
         <record model="ir.actions.act_window" id="act_tb_po_create">
@@ -129,7 +134,7 @@
 
         <menuitem id="menu_tb_po_create" name="创建新增采购应付单"
                   parent="yjzy_extend.menu_extra_po_root"
-                  sequence="99"
+                  sequence="20"
                   action="act_tb_po_create"        />
 
 

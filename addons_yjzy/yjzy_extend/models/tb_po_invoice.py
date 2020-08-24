@@ -24,10 +24,12 @@ class tb_po_invoice(models.Model):
             purchase_invoice_amount = sum(x.residual for x in purchase_invoice_partner_id)
             purchase_invoice_include_tax = purchase_invoice_partner_id and purchase_invoice_partner_id[
                 0].include_tax or False
-            if purchase_invoice_amount - p_s_add_this_time_total > 0:
-                p_s_add_this_time_refund = p_s_add_this_time_total
-            else:
-                p_s_add_this_time_refund = purchase_invoice_amount
+            p_s_add_this_time_refund = 0.0
+            if not purchase_invoice_include_tax:
+                if purchase_invoice_amount - p_s_add_this_time_total > 0:
+                    p_s_add_this_time_refund = p_s_add_this_time_total
+                else:
+                    p_s_add_this_time_refund = purchase_invoice_amount
             p_s_add_this_time_extra_total = p_s_add_this_time_total - p_s_add_this_time_refund
             one.p_s_add_this_time_extra_total = p_s_add_this_time_extra_total
             one.p_s_add_this_time_refund = p_s_add_this_time_refund
@@ -44,7 +46,7 @@ class tb_po_invoice(models.Model):
 
     # invoice_ids = fields.Many2many('account.invoice','ref_invoice_tb','invoice_id','tbl_id',u'额外账单')
     # hsname_id = fields.Many2one('tbl.hsname', u'报关明细')
-
+    state = fields.Selection([('10_draft',u'草稿'),('20_submit',u'已提交'),('30_done','审批完成'),('40_refuse',u'拒绝')],u'状态')
     type = fields.Selection([('other_po','直接增加'),('expense_po','费用转换')],u'类型')
     name = fields.Char('编号', default=lambda self: self.env['ir.sequence'].next_by_code('tb.po.invoice'))
     tb_id = fields.Many2one('transport.bill', u'出运单')
@@ -71,6 +73,20 @@ class tb_po_invoice(models.Model):
     expense_po_amount = fields.Float('费用转应付金额')
     purchase_invoice_amount = fields.Float('原始未付总金额', compute=compute_info)
     purchase_invoice_include_tax = fields.Boolean('原始采购是否含税', compute=compute_info)
+
+    def action_submit(self):
+        self.state = '20_submit'
+    def action_manager_approve(self):
+        self.state = '30_done'
+        if self.type == 'other_po':
+            self.apply()
+        if self.type == 'expense_po':
+            self.apply_expense_sheet()
+    def action_refuse(self):
+        self.state = '40_refuse'
+    def action_draft(self):
+        self.state = '10_draft'
+
 
 
 
@@ -364,29 +380,34 @@ class tb_po_invoice_line(models.Model):
 
     tb_po_id = fields.Many2one('tb.po.invoice', 'TB_PO')
     hsname_all_line_id = fields.Many2one('tbl.hsname.all', u'销售明细')
+
     hs_id = fields.Many2one('hs.hs', u'品名')
 
 
     hs_en_name = fields.Char(related='hs_id.en_name')
-    back_tax = fields.Float(u'退税率')
+
 
     hs_id2 = fields.Many2one('hs.hs', u'报关品名')
     out_qty2 = fields.Float('报关数量')
     price2 = fields.Float('报关价格', )
-    amount2 = fields.Float('报关金额', digits=dp.get_precision('Money'))
+
 
     suppliser_hs_amount = fields.Float('采购HS统计金额')
 
     # 销售hs统计同步采购hs统计
+
     purchase_amount2 = fields.Float('采购金额')  # 814需要优化
     purchase_back_tax_amount2 = fields.Float(u'报关退税税金额', )
-    purchase_amount2_tax = fields.Float(u'含税采购金额')
-    purchase_amount2_no_tax = fields.Float(u'不含税采购金额')
-    purchase_amount_min_add_forecast = fields.Float('可增加采购额(上限)', digits=(2, 2))
-    purchase_amount_max_add_forecast = fields.Float('可增加采购额(下限)', digits=(2, 2))
-    purchase_amount_max_add_rest = fields.Float('采购池(下限)', digits=(2, 2))
-    purchase_amount_min_add_rest = fields.Float('采购池(上限)', digits=(2, 2))
-    purchase_amount2_add_actual = fields.Float(U'实际已经增加采购额')
+    # back_tax = fields.Float(u'退税率')
+    # amount2 = fields.Float('报关金额', digits=dp.get_precision('Money'))
+
+    # purchase_amount2_tax = fields.Float(u'含税采购金额')
+    # purchase_amount2_no_tax = fields.Float(u'不含税采购金额')
+    # purchase_amount_min_add_forecast = fields.Float('可增加采购额(上限)', digits=(2, 2))
+    # purchase_amount_max_add_forecast = fields.Float('可增加采购额(下限)', digits=(2, 2))
+    # purchase_amount_max_add_rest = fields.Float('采购池(下限)', digits=(2, 2))
+    # purchase_amount_min_add_rest = fields.Float('采购池(上限)', digits=(2, 2))
+    # purchase_amount2_add_actual = fields.Float(U'实际已经增加采购额')
 
     purchase_amount2_add_this_time = fields.Float(U'本次采购开票金额')
     p_s_add_this_time = fields.Float(u'本次应收金额')
@@ -394,6 +415,16 @@ class tb_po_invoice_line(models.Model):
     p_s_add_this_time_old = fields.Float(u'冲减原始应付金额')
     yjzy_invoice_id = fields.Many2one('account.invoice',u'关联账单')
 
+    back_tax = fields.Float(u'退税率',related='hsname_all_line_id.back_tax')
+    amount2 = fields.Float('报关金额', digits=dp.get_precision('Money'),related='hsname_all_line_id.amount2')
+    purchase_amount2_tax = fields.Float(u'含税采购金额',related='hsname_all_line_id.purchase_amount2_tax')
+    purchase_amount2_no_tax = fields.Float(u'不含税采购金额',related='hsname_all_line_id.purchase_amount2_no_tax')
+    purchase_back_tax_amount2_new = fields.Float(u'原始退税金额',related='hsname_all_line_id.purchase_back_tax_amount2_new')#根据是否含税来进行计算
+    purchase_amount_min_add_forecast = fields.Float('可增加采购额(上限)', digits=(2, 2),related='hsname_all_line_id.purchase_amount_min_add_forecast')
+    purchase_amount_max_add_forecast = fields.Float('可增加采购额(下限)', digits=(2, 2),related='hsname_all_line_id.purchase_amount_max_add_forecast')
+    purchase_amount_max_add_rest = fields.Float('采购池(下限)', digits=(2, 2),related='hsname_all_line_id.purchase_amount_max_add_rest')
+    purchase_amount_min_add_rest = fields.Float('采购池(上限)', digits=(2, 2),related='hsname_all_line_id.purchase_amount_min_add_rest')
+    purchase_amount2_add_actual = fields.Float(U'实际已经增加采购额',related='hsname_all_line_id.purchase_amount2_add_actual')
     @api.onchange('purchase_amount2_add_this_time')
     def onchange_purchase_amount2_add_this_time(self):
         for one in self:

@@ -17,7 +17,7 @@
                     <separator/>
                     <filter string="合同草稿" name="draft" domain="[('state','=','draft')]"/>
                     <filter string="审批中" name="approval"
-                            domain="[('state','in',['submit','refused','sale_approve','locked','done'])]"/>
+                            domain="[('state','in',['submit','refused','sales_approve','locked','done'])]"/>
                     <filter string="合规审批完成" name="approve" domain="[('state','in',['approve'])]"/>
                     <filter string="单证审批完成" name="confirmed" domain="[('state','in',['confirmed'])]"/>
                     <separator/>
@@ -1670,7 +1670,7 @@
             <field name="limit">20</field>
             <field name="view_mode">tree,form,kanban</field>
             <field name="search_view_id" ref="view_transport_bill_tenyale_filter"/>
-            <field name="domain">[('state','in',['cancel','draft','submit','sale_approve'])]</field>
+            <field name="domain">[('state','in',['cancel','draft','submit','sales_approve'])]</field>
             <field name="context">
                 {'search_default_group_by_stage':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3,'show_po_code':
                 1}
