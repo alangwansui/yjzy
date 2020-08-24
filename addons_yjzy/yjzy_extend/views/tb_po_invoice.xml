@@ -106,7 +106,7 @@
             </field>
         </record>
         <record model="ir.actions.act_window" id="act_tb_po">
-            <field name="name">增加采购申请单</field>
+            <field name="name">新增采购申请单</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">tb.po.invoice</field>
             <field name="view_type">form</field>
@@ -120,13 +120,13 @@
 
         </record>
 
-        <menuitem id="menu_tb_po_tree" name="增加采购申请单"
+        <menuitem id="menu_tb_po_tree" name="新增采购申请单"
                   parent="yjzy_extend.menu_extra_po_root"
                   sequence="10"
                   action="act_tb_po"
         />
         <record model="ir.actions.act_window" id="act_tb_po_create">
-            <field name="name">创建新增采购应付单</field>
+            <field name="name">创建新增采购申请单</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">tb.po.invoice</field>
             <field name="view_type">form</field>
@@ -138,10 +138,28 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_form')})]"/>
         </record>
 
-        <menuitem id="menu_tb_po_create" name="创建新增采购应付单"
+        <menuitem id="menu_tb_po_create" name="创建新增采购申请单"
                   parent="yjzy_extend.menu_extra_po_root"
                   sequence="20"
                   action="act_tb_po_create"        />
+
+        <record model="ir.actions.act_window" id="act_expense_po_create">
+            <field name="name">创建费用转应付申请单</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">tb.po.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="domain">[]</field>
+            <field name="limit">20</field>
+            <field name="context">{'default_type':'expense_po'}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_form')})]"/>
+        </record>
+
+        <menuitem id="menu_expense_po_create" name="创建费用转应付申请单"
+                  parent="yjzy_extend.menu_extra_po_root"
+                  sequence="20"
+                  action="act_expense_po_create"/>
 
 
     </data>

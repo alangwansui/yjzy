@@ -1641,13 +1641,13 @@
                                         <field name="partner_id" string="付款对象"
                                                context="{'default_supplier':True, 'default_customer':True, 'default_is_company':1}"/>
                                         <field name="fk_journal_id" string="付款账户"
-                                               domain="[('type','in',['bank', 'cash'])]"/>
+                                               domain="[('type','in',['bank', 'cash'])]" attrs="{'readonly': [('state','=','approve'),('is_editable','=',False)]}"/>
 
                                         <field name="back_tax_product_id" invisible="1"
                                                attrs="{'readonly': [('state','=','approve')]}"/>
-                                        <field name="back_tax_amount" attrs="{'readonly': [('state','=','approve')]}"/>
+                                        <field name="back_tax_amount" attrs="{'readonly': [('state','=','approve'),('is_editable','=',False)]}"/>
                                         <field name="back_tax_invoice_id"
-                                               attrs="{'readonly': [('state','=','approve')]}"/>
+                                               attrs="{'readonly': [('state','=','approve'),('is_editable','=',False)]}"/>
                                         <field name="bank_journal_id" groups="account.group_account_user" invisible="1"
                                                options="{'no_open': True, 'no_create': True}"
                                                attrs="{'invisible': [('payment_mode', '!=', 'company_account')]}"
