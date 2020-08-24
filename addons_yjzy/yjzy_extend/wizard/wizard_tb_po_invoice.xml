@@ -33,6 +33,7 @@
                         <field name="hsname_all_ids">
                             <tree editable="bottom">
                                 <field name="hs_id"/>
+                                <field name="hsname_all_line_id" invisible="1"/>
                                 <!--field name="purchase_amount2_tax"/>
                                 <field name="purchase_amount2_no_tax"/-->
                                 <field name="back_tax"/>
