@@ -88,7 +88,7 @@
                                 <field name="appoint_rate" options="{'no_open':1}" readonly="1" class="oe_inline"
                                        invisible="1"/>
 
-                                <label for="current_date_rate" string="汇率" style="font-size:10px"/>
+                                <label for="current_date_rate" string="成本测算汇率" style="font-size:10px"/>
                                 <div class="o_row">
                                     <field name="current_date_rate" options="{'no_open':1}" readonly="1"
                                            class="oe_inline"/>

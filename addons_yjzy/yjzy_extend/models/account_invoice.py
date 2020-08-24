@@ -95,7 +95,7 @@ class account_invoice(models.Model):
                 if one.residual_times >= -60 and one.residual_times < -30:
                     residual_date_group = 'before_30_60'
                 if one.residual_times >= -90 and one.residual_times < -60:
-                    residual_date_group = 'before_60_9  0'
+                    residual_date_group = 'before_60_90'
                 if one.residual_times < -90:
                     residual_date_group = 'before_90'
             else:

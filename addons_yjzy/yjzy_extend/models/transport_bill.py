@@ -2930,7 +2930,7 @@ class transport_bill(models.Model):
                     state = 'verifying'
                 one.hexiao_type = hexiao_type
                 one.state = state
-#qq1
+#qq1 执行中的分组情况
     @api.depends('sale_invoice_balance_new','purchase_invoice_balance_new','back_tax_invoice_balance_new') #qq
     def update_hexiao_state(self):
         for one in self:

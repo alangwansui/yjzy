@@ -514,7 +514,7 @@
                                 attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}" domain="[('type','in', ['sale', 'comm'])]"/></div>
                                 <field name="partner_payment_term_id" string="预设付款条款" readonly="1" options="{'no_open':1}"
                                        attrs="{'invisible':[('is_different_payment_term','=',False)]}"/>
-                                <field name="current_date_rate" string="当日汇率*" attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}" options="{'no_open':True}"/>
+                                <field name="current_date_rate" string="成本测算汇率*" attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}" options="{'no_open':True}"/>
                                 <field name="currency_id" invisible="0" attrs="{'readonly':1}" options="{'no_open':1}"/>
                                 <field name="include_tax" attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}"/>
                                 <!--field name="currency_tate"/-->

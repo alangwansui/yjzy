@@ -792,6 +792,7 @@ class account_reconcile_order(models.Model):
             todo_lines = lines.filtered(lambda x: x.plan_invoice_id == inv and x.reconciled == False)
             for todo in todo_lines:
                 inv.assign_outstanding_credit(todo.id)
+                inv.till_id.update_hexiao_state()
 
             # domain = [
             #     ('plan_invoice_id', '=', inv.id),
