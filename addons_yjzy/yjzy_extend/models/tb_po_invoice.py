@@ -88,6 +88,10 @@ class tb_po_invoice(models.Model):
         self.state = '10_draft'
 
 
+    @api.onchange('expense_sheet_id')
+    def onchange_expense_sheet_id(self):
+        bill_id = self.expense_sheet_id.expense_line_ids.mapped('tb_id')
+        self.tb_id = bill_id
 
 
     @api.onchange('tb_id')
