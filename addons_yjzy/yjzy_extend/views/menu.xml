@@ -5,6 +5,7 @@
 
         <menuitem id="menu_yjzy_payment_root" name="新收付款"/>
         <menuitem id="menu_extra_po_root" name="增加采购额"/>
+        <menuitem id="menu_extra_invoice_root" name="额外账单"/>
 
 
     </data>

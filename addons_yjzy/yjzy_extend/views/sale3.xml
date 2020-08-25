@@ -466,6 +466,9 @@
                                     attrs="{'invisible': [('invoice_count', '=', 0)]}">
                                 <field name="invoice_count" widget="statinfo" string="发票" groups="base.group_system"/>
                             </button>
+                               <button name="open_view_tb_line" type="object" class="oe_stat_button" icon="fa-pencil-square-o">
+                                <field name="tb_line_count" widget="statinfo" string="出运明细"/>
+                            </button>
                             <button name="open_view_transport_bill" type="object" class="oe_stat_button" icon="fa-pencil-square-o">
                                 <field name="tb_count" widget="statinfo" string="出运单"/>
                             </button>
@@ -698,7 +701,7 @@
                                                attrs="{'readonly': [('product_updatable', '=', False)]}"
                                                orce_save="1" options="{'no_open':True}" context="{'show_last_sale':1,'partner_id':parent.partner_id, 'quantity':product_uom_qty,
                                            'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"/>
-                                        <field name="product_uom_qty" string="数量"
+                                        <field name="product_uom_qty" string="数量" sum="小计"
                                                context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"/>
                                         <button type="object" name="get_in_stock_quant" icon="fa-archive" groups="base.group_system"/>
                                         <field name="s_uom_id" string="单位" options="{'no_open':True}"/>

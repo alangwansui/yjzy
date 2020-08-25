@@ -17,15 +17,15 @@ class wizard_transport4so(models.TransientModel):
             purchase_invoice_partner_id = one.tb_id.purchase_invoice_ids.filtered(
                 lambda x: x.partner_id == one.partner_id)
             # if len(purchase_invoice_partner_id) != 0:
-            purchase_invoice_amount = sum(x.residual for x in purchase_invoice_partner_id)
-            purchase_invoice_include_tax = purchase_invoice_partner_id and purchase_invoice_partner_id[
+            yjzy_invoice_residual_amount = sum(x.residual for x in purchase_invoice_partner_id)
+            yjzy_invoice_include_tax = purchase_invoice_partner_id and purchase_invoice_partner_id[
                 0].include_tax or False
             p_s_add_this_time_refund = 0.0
-            if not purchase_invoice_include_tax:
-                if purchase_invoice_amount - p_s_add_this_time_total > 0 :
+            if not yjzy_invoice_include_tax:
+                if yjzy_invoice_residual_amount - p_s_add_this_time_total > 0 :
                     p_s_add_this_time_refund = p_s_add_this_time_total
                 else:
-                    p_s_add_this_time_refund = purchase_invoice_amount
+                    p_s_add_this_time_refund = yjzy_invoice_residual_amount
             p_s_add_this_time_extra_total = p_s_add_this_time_total - p_s_add_this_time_refund
             one.p_s_add_this_time_extra_total = p_s_add_this_time_extra_total
             one.p_s_add_this_time_refund = p_s_add_this_time_refund
@@ -34,9 +34,9 @@ class wizard_transport4so(models.TransientModel):
             one.back_tax_add_this_time_total = back_tax_add_this_time_total
 
 
-            one.purchase_invoice_amount = purchase_invoice_amount
-            one.purchase_invoice_include_tax = purchase_invoice_include_tax
-            one.purchase_invoice_origin_id = purchase_invoice_partner_id and purchase_invoice_partner_id[0] or False
+            one.yjzy_invoice_residual_amount = yjzy_invoice_residual_amount
+            one.yjzy_invoice_include_tax = yjzy_invoice_include_tax
+            one.yjzy_invoice_id = purchase_invoice_partner_id and purchase_invoice_partner_id[0] or False
             one.currency_id = purchase_invoice_partner_id and purchase_invoice_partner_id[0].currency_id or self.env.user.company_id.currency_id.id
 
 
@@ -46,7 +46,7 @@ class wizard_transport4so(models.TransientModel):
     tb_id = fields.Many2one('transport.bill', u'出运单')
     partner_id = fields.Many2one('res.partner',u'合作伙伴')
     hsname_all_ids = fields.One2many('wizard.tb.po.invoice.line','wizard_id',u'报关明细')
-    purchase_invoice_origin_id = fields.Many2one('account.invoice', '原始应付发票',compute=compute_info)
+    yjzy_invoice_id = fields.Many2one('account.invoice', '原始应付发票',compute=compute_info)
     currency_id = fields.Many2one('res.currency',compute=compute_info)
     purchase_amount2_add_this_time_total = fields.Float('本次增加采购金额',compute=compute_info)
     p_s_add_this_time_total = fields.Float('本次应收总金额',compute=compute_info)
@@ -60,18 +60,18 @@ class wizard_transport4so(models.TransientModel):
     expense_sheet_amount = fields.Float('费用报告金额', related='expense_sheet_id.total_amount')
     expense_po_amount = fields.Float('费用转应付金额',)
 
-    purchase_invoice_amount = fields.Float('原始未付总金额', compute=compute_info)
-    purchase_invoice_include_tax = fields.Boolean('原始采购是否含税', compute=compute_info)
+    yjzy_invoice_residual_amount = fields.Float('原始未付总金额', compute=compute_info)
+    yjzy_invoice_include_tax = fields.Boolean('原始采购是否含税', compute=compute_info)
 
     # @api.onchange('hsname_all_ids')
     # def onchange_p_s_add_this_time(self):
     #     for one in self:
     #         p_s_add_this_time_total = sum(x.p_s_add_this_time for x in one.hsname_all_ids)
-    #         purchase_invoice_amount = one.purchase_invoice_amount
-    #         if purchase_invoice_amount - p_s_add_this_time_total > 0:
+    #         yjzy_invoice_residual_amount = one.yjzy_invoice_residual_amount
+    #         if yjzy_invoice_residual_amount - p_s_add_this_time_total > 0:
     #             p_s_add_this_time_refund = p_s_add_this_time_total
     #         else:
-    #             p_s_add_this_time_refund = purchase_invoice_amount
+    #             p_s_add_this_time_refund = yjzy_invoice_residual_amount
     #         p_s_add_this_time_extra_total = p_s_add_this_time_total - p_s_add_this_time_refund
     #         one.p_s_add_this_time_extra_total = p_s_add_this_time_extra_total
     #         one.p_s_add_this_time_total = p_s_add_this_time_total
@@ -83,14 +83,14 @@ class wizard_transport4so(models.TransientModel):
     #         lambda x: x.partner_id == self.partner_id)
     #     print('purchase_invoice_partner_id', purchase_invoice_partner_id)
     #     # if len(purchase_invoice_partner_id) != 0:
-    #     purchase_invoice_amount = sum(x.residual for x in purchase_invoice_partner_id)
-    #     purchase_invoice_include_tax = purchase_invoice_partner_id and purchase_invoice_partner_id[
+    #     yjzy_invoice_residual_amount = sum(x.residual for x in purchase_invoice_partner_id)
+    #     yjzy_invoice_include_tax = purchase_invoice_partner_id and purchase_invoice_partner_id[
     #         0].include_tax or False
-    #     print('purchase_invoice_amount', purchase_invoice_amount, purchase_invoice_partner_id,
+    #     print('yjzy_invoice_residual_amount', yjzy_invoice_residual_amount, purchase_invoice_partner_id,
     #           self.tb_id.purchase_invoice_ids)
-    #     self.purchase_invoice_amount = purchase_invoice_amount
-    #     self.purchase_invoice_include_tax = purchase_invoice_include_tax
-    #     self.purchase_invoice_origin_id = purchase_invoice_partner_id and purchase_invoice_partner_id[0] or False
+    #     self.yjzy_invoice_residual_amount = yjzy_invoice_residual_amount
+    #     self.yjzy_invoice_include_tax = yjzy_invoice_include_tax
+    #     self.yjzy_invoice_id = purchase_invoice_partner_id and purchase_invoice_partner_id[0] or False
 
     def apply_new(self):
         self.ensure_one()
@@ -109,8 +109,8 @@ class wizard_transport4so(models.TransientModel):
             'expense_currency_id':self.expense_currency_id,
             #'expense_po_amount':self.expense_po_amount,
             'expense_sheet_amount':self.expense_sheet_amount,
-            'purchase_invoice_amount':self.purchase_invoice_amount,
-            'purchase_invoice_include_tax':self.purchase_invoice_include_tax,
+            'yjzy_invoice_residual_amount':self.yjzy_invoice_residual_amount,
+            'yjzy_invoice_include_tax':self.yjzy_invoice_include_tax,
             'type':self.type
         })
         for line in self.hsname_all_ids:

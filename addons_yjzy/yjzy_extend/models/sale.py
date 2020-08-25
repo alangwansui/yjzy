@@ -258,8 +258,14 @@ class sale_order(models.Model):
                 else:
                     po_include_tax = 'part'
             one.po_include_tax = po_include_tax
+    def _comput_tb_line_count(self):
+        for one in self:
+            one.tb_line_count = len(one.tb_line_ids)
 
     #货币设置
+    #825
+    tb_line_ids = fields.One2many('transport.bill.line','so_id',u'出运明细')
+    tb_line_count = fields.Integer('发运单计数', compute=_comput_tb_line_count)
     #824
     po_include_tax = fields.Selection([('all', '全部含税'), ('part', '部分含税'), ('none', '不含税')],u'采购含税情况',compute=_compute_po_include_tax)  #824
     #akiny715
@@ -649,13 +655,27 @@ class sale_order(models.Model):
             'target': 'new',
         }
 
+    #825
+    def open_view_tb_line(self):
+        self.ensure_one()
+        tree_view = self.env.ref('yjzy_extend.view_transport_bill_line_tenyale_tree')
+        return {
+            'name': _(u'出运明细'),
+            'view_type': 'form',
+            "view_mode": 'tree,form',
+            'res_model': 'transport.bill.line',
+            'type': 'ir.actions.act_window',
+            'views': [(tree_view.id, 'tree')],
+            'domain': [('id', 'in', [x.id for x in self.tb_line_ids])],
+            # 'context':{'search_default_group_by_bill_id':1}
+        }
     #13ok
     def open_view_transport_bill(self):
         self.ensure_one()
         tree_view = self.env.ref('yjzy_extend.view_transport_bill_new_sales_tree')
         form_view = self.env.ref('yjzy_extend.view_transport_bill_new_sales_form')
         return {
-            'name': _(u'成本单'),
+            'name': _(u'出运合同'),
             'view_type': 'form',
             "view_mode": 'tree,form',
             'res_model': 'transport.bill',

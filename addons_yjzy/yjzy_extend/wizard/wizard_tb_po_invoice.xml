@@ -11,7 +11,7 @@
                     <group col="2">
                     <group>
                          <field name="partner_id" string="供应商" domain="[('supplier', '=', True),('is_company','=',True)]"/>
-                        <field name="purchase_invoice_origin_id" attrs="{'invisible':[('type','!=','other_po')]}"/>
+                        <field name="yjzy_invoice_id" attrs="{'invisible':[('type','!=','other_po')]}"/>
                          <field name="tb_id" attrs="{'invisible':[('type','!=','other_po')]}"/>
                          <field name="invoice_product_id" attrs="{'invisible':[('type','!=','other_po')]}"/>
 
@@ -19,9 +19,9 @@
 
                     </group>
                         <group>
-                          <field name="purchase_invoice_amount" attrs="{'invisible':[('type','!=','other_po')]}"/>
-                        <field name="purchase_invoice_include_tax" string="原始采购含税" attrs="{'invisible':[('type','!=','other_po')]}"/>
-                        <field name="p_s_add_this_time_refund" attrs="{'invisible':['|',('purchase_invoice_include_tax','=',True),('type','!=','other_po')]}" string="冲减金额"/>
+                          <field name="yjzy_invoice_residual_amount" attrs="{'invisible':[('type','!=','other_po')]}"/>
+                        <field name="yjzy_invoice_include_tax" string="原始采购含税" attrs="{'invisible':[('type','!=','other_po')]}"/>
+                        <field name="p_s_add_this_time_refund" attrs="{'invisible':['|',('yjzy_invoice_include_tax','=',True),('type','!=','other_po')]}" string="冲减金额"/>
                         <field name="p_s_add_this_time_extra_total" string="冲减后应收" attrs="{'invisible':[('type','!=','other_po')]}"/>
                         <field name="purchase_amount2_add_this_time_total"/>
                         <field name="back_tax_add_this_time_total" string="退税金额" attrs="{'invisible':[('type','!=','other_po')]}"/>

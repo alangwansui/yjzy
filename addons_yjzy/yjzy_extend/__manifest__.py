@@ -83,6 +83,7 @@
         'views/transport_bill_wkf.xml',
         'views/transport_lot_plan.xml',
         'views/transport_bill_vendor.xml',
+        'views/transport_bill_line_tenyale.xml',
         'views/trans_date_attachment.xml',
         'views/account_invoice_stage.xml',
 
