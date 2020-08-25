@@ -56,7 +56,7 @@
                         <field name="yjzy_invoice_id" attrs="{'invisible':[('type','!=','other_po')]}"/>
                         <field name="invoice_product_id" attrs="{'invisible':[('type','!=','other_po')]}"/>
                         <field name="type"/>
-                        <field name="yjzy_invoice_id"/>
+
 
 
                     </group>
@@ -72,7 +72,7 @@
                     </group>
                     </group>
                     <notebook>
-                        <page string="账单明细行">
+                        <page string="账单明细行" attrs="{'invisible':[('type','!=','other_po')]}">
                             <field name="extra_invoice_line_ids">
                                 <tree>
                                     <field name="product_id"/>
@@ -89,7 +89,7 @@
                                 <!--field name="purchase_amount2_tax"/>
                                 <field name="purchase_amount2_no_tax"/-->
                                 <field name="back_tax" attrs="{'invisible':[('parent.type','!=','expense_po')]}"/>
-                                <field name="amount2"/>
+                                <field name="amount2" attrs="{'column_invisible':[('parent.type','!=','other_po')]}"/>
                                 <field name="purchase_amount2_tax" sum="小计" attrs="{'column_invisible':[('parent.type','!=','other_po')]}"/>
                                 <field name="purchase_amount2_no_tax" sum="小计" attrs="{'column_invisible':[('parent.type','!=','other_po')]}"/>
                                 <field name="purchase_back_tax_amount2_new" string="实际退税金额" sum="小计" attrs="{'column_invisible':[('parent.type','!=','other_po')]}"/>
@@ -151,7 +151,7 @@
                     <group col="2">
                     <group>
                         <field name="partner_id" string="客户" domain="[('customer', '=', True),('is_company','=',True)]"/>
-                        <field name="tb_id" />
+                        <field name="tb_id" invisible="1" />
                         <field name="type"/>
                         <field name="yjzy_invoice_id"/>
                         <field name="yjzy_type"/>
@@ -171,11 +171,12 @@
                     </group>
                     <notebook>
                         <page string="账单明细行">
-                            <field name="extra_invoice_line_ids">
+                            <field name="extra_invoice_line_ids" editable="bottom">
                                 <tree>
-                                    <field name="product_id"/>
-                                    <field name="price_unit"/>
-                                    <field name="price_total"/>
+                                    <field name="product_id" string="账单项目"/>
+                                    <field name="price_unit" string="单价"/>
+                                    <field name="quantity" string="数量"/>
+                                    <field name="price_total" string="总价"/>
                                 </tree>
                             </field>
                         </page>
@@ -224,7 +225,7 @@
             <field name="view_mode">tree,form</field>
             <field name="domain">[]</field>
             <field name="limit">20</field>
-            <field name="context">{'default_type':'extra','yjzy_type':'sale',}</field>
+            <field name="context">{'default_type':'extra','default_yjzy_type':'sale',}</field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('tb_po_extra_customer_invoice_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_extra_invoice_customer_form')})]"/>

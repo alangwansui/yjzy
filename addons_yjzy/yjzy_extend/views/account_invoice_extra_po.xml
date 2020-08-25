@@ -168,11 +168,11 @@
                                        attrs="{'readonly': [('state','not in',['draft'])], 'invisible': ['|', ('state', '=', 'purchase'), ('type', '=', 'in_refund')]}"
                                        class="oe_edit_only" options="{'no_create': True}"
                                        context="{'show_total_amount': True}"/>
-                                <field name="payment_term_id" options="{'no_create': True}" invisible="1"/>
-                                <field name="yjzy_payment_term_id" string="付款条款" attrs="{'invisible':[('is_yjzy_invoice','=',True)]}"/>
-                                <field name="yjzy_currency_id" string="货币" attrs="{'invisible':[('is_yjzy_invoice','=',True)]}"/>
+                                <field name="payment_term_id" options="{'no_create': True}" />
+                                <field name="yjzy_payment_term_id" string="付款条款" invisible="1" attrs="{'invisible':[('is_yjzy_invoice','=',True)]}"/>
+                                <field name="yjzy_currency_id" string="货币" invisible="1" attrs="{'invisible':[('is_yjzy_invoice','=',True)]}"/>
                                 <field name="include_tax" attrs="{'invisible':[('is_yjzy_invoice','=',True)]}"/>
-                                <field name="currency_id" options="{'no_create': True, 'no_open': True}" invisible="1"
+                                <field name="currency_id" options="{'no_create': True, 'no_open': True}"
                                        groups="base.group_multi_currency"/>
                             </group>
                              <group>
@@ -222,15 +222,15 @@
                                                widget="many2many_tags" options="{'color_field': 'color'}"/>
                                         <field name="quantity" attrs="{'column_invisible': [('parent.is_yjzy_invoice', '=',True)]}"/>
                                         <field name="uom_id" groups="product.group_uom" attrs="{'column_invisible': [('parent.is_yjzy_invoice', '=',True)]}"/>
-                                        <field name="yjzy_price_unit"/>
+                                        <field name="yjzy_price_unit" invisible="1"/>
 
-                                        <field name="price_unit" invisible="1"/>
+                                        <field name="price_unit"/>
                                         <field name="discount" groups="sale.group_discount_per_so_line" invisible="1"/>
                                         <field name="invoice_line_tax_ids" widget="many2many_tags" invisible="1"
                                                options="{'no_create': True}" context="{'type':parent.type}"
                                                domain="[('type_tax_use','=','purchase'),('company_id', '=', parent.company_id)]"/>
-                                        <field name="yjzy_price_total"/>
-                                        <field name="price_subtotal" invisible="1"/>
+                                        <field name="yjzy_price_total" invisible="1"/>
+                                        <field name="price_subtotal" />
                                         <field name="currency_id" invisible="1"/>
 
 

@@ -246,8 +246,8 @@ class tb_po_invoice(models.Model):
             'yjzy_currency_id':self.yjzy_invoice_id.currency_id.id,
             # 'payment_term_id': self.yjzy_invoice_id.payment_term_id.id,
             # 'currency_id': self.yjzy_invoice_id.currency_id.id,
-            'date':self.yjzy_invoice_id.date,
-            'date_invoice':self.yjzy_invoice_id.date_invoice,
+            'date':fields.datetime.now(),
+            'date_invoice':fields.datetime.now(),
             'date_finish': self.yjzy_invoice_id.date_finish,
             'po_id':self.yjzy_invoice_id.po_id.id,
             'account_id':account_id.id,
@@ -304,6 +304,8 @@ class tb_po_invoice(models.Model):
                 'bill_id': self.tb_id.id,
                 'invoice_attribute': 'other_po',
                 'yjzy_type': 'back_tax',
+                'date': fields.datetime.now(),
+                'date_invoice': fields.datetime.now(),
                 'invoice_line_ids': [(0, 0, {
                     'name': '%s' % (product.name,),
                     'product_id': product.id,
@@ -317,8 +319,6 @@ class tb_po_invoice(models.Model):
                     'invoice_id': back_tax_invoice.id,
                     'hs_id': line.hs_id.id,
                     'hs_en_name': line.hs_en_name,
-
-
                     'tbl_hsname_all_id': line.hsname_all_line_id.id
                     })
             # 730 创建后直接过账
@@ -341,6 +341,8 @@ class tb_po_invoice(models.Model):
                 'type': 'in_refund',
                 'journal_type': 'purchase',
                 'yjzy_type': 'purchase',
+                'date': fields.datetime.now(),
+                'date_invoice': fields.datetime.now(),
                 'invoice_line_ids': [(0, 0, {
                     'name': '%s' % (product.name),
                     'product_id': product.id,
@@ -376,6 +378,8 @@ class tb_po_invoice(models.Model):
                 'type': 'out_invoice',
                 'journal_type': 'sale',
                 'yjzy_type': 'sale',
+                'date': fields.datetime.now(),
+                'date_invoice': fields.datetime.now(),
                 'invoice_line_ids': [(0, 0, {
                     'name': '%s' % (product.name),
                     'product_id': product.id,
@@ -470,12 +474,15 @@ class tb_po_invoice(models.Model):
         account = product.property_account_income_id
         inv = invoice_obj.create({
                 'partner_id': self.partner_id.id,
+                'tb_po_invoice_id': self.id,
                 'bill_id': self.tb_id.id,
                 'invoice_attribute':'expense_po',
                 'expense_sheet_id':self.expense_sheet_id.id,
                 'type':'in_invoice',
                 'journal_type':'purchase',
                 'yjzy_type':'purchase',
+                'date': fields.datetime.now(),
+                'date_invoice': fields.datetime.now(),
                 'invoice_line_ids': [(0, 0, {
                                    'name': '%s' % (product.name),
                                    'product_id': product.id,
@@ -484,15 +491,13 @@ class tb_po_invoice(models.Model):
                                    'account_id': account.id,
             })]
             })
-
-
         for line in self.hsname_all_ids:
             hsname_all_line = hsname_all_line_obj.create({
-                'invoice_id': inv.id,
-                'hs_id': line.hs_id.id,
-                'hs_en_name':line.hs_en_name,
-                'purchase_amount2_add_this_time':line.purchase_amount2_add_this_time,
-                'tbl_hsname_all_id':line.hsname_all_line_id.id
+                                'invoice_id': inv.id,
+                                'hs_id': line.hs_id.id,
+                                'hs_en_name':line.hs_en_name,
+                                'purchase_amount2_add_this_time':line.purchase_amount2_add_this_time,
+                                'tbl_hsname_all_id':line.hsname_all_line_id.id
             })
         self.expense_sheet_id.invoice_id = inv
         form_view = self.env.ref('yjzy_extend.view_supplier_invoice_extra_po_form').id
@@ -567,7 +572,10 @@ class tb_po_invoice_line(models.Model):
             one.back_tax_add_this_time = back_tax_add_this_time
 
 
-
+    @api.onchange('hs_id')
+    def onchange_hs_id(self):
+        for one in self:
+            one.back_tax = one.hs_id.back_tax
 
     #
     # @api.constrains('qty', 'supplier_id')

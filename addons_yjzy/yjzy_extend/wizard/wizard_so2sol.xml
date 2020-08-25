@@ -13,5 +13,15 @@
                     domain="[('order_id','in', active_ids)]"
         />
 
+        <act_window id="act_po2pol"
+                    name="查看采购明细"
+                    view_mode="tree,form"
+                    res_model="purchase.order.line"
+                    src_model="purchase.order"
+                    multi="True"
+                    key2="client_action_multi"
+                    domain="[('order_id','in', active_ids)]"
+        />
+
     </data>
 </odoo>
