@@ -13,14 +13,11 @@ class account_reconcile_order(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _description = '核销单'
     _order = 'date desc'
-
-
-
     def compute_info(self):
         ctx = self.env.context
         for one in self:
+            print('one',one)
             partner = one.partner_id
-
             # payment_currency_id = fields.Many2one('res.currency', u'收款货币', related='yjzy_payment_id.currency_id', readonly=True)
             # payment_currency_id = fields.Many2one('res.currency', u'收款货币', related='fk_journal_id.currency_id', readonly=True)
             if one.sfk_type == 'yfhxd':
@@ -56,7 +53,6 @@ class account_reconcile_order(models.Model):
                     one.amount_advance_residual_org, company_currency) \
                                               or partner.advance_currency_id.compute(partner.amount_purchase_advance_org,
                                                                                      company_currency)
-
             if one.line_ids and one.payment_currency_id:
                 date = one.date
                 lines = one.line_ids
@@ -78,7 +74,6 @@ class account_reconcile_order(models.Model):
                 one.amount_total_org = sum([x.amount_total_org for x in lines])
                 one.amount_total = sum([x.amount_total for x in lines])
                 one.amount_exchange = one.amount_invoice - one.amount_total
-
                 one.other_feiyong_amount = one.amount_payment_org + one.feiyong_amount
                 one.final_coat =  one.other_feiyong_amount - one.back_tax_amount
 
@@ -271,6 +266,7 @@ class account_reconcile_order(models.Model):
     amount_total = fields.Monetary(u'收款合计:本币', currency_field='currency_id', compute=compute_by_lines, store=False)
 
     line_ids = fields.One2many('account.reconcile.order.line', 'order_id', u'明细')
+    line_no_ids = fields.One2many('account.reconcile.order.line.no', 'order_id', u'明细')
     move_ids = fields.One2many('account.move', 'reconcile_order_id', u'分录')
 
     yjzy_payment_id = fields.Many2one('account.payment', u'选择收款单')
@@ -717,7 +713,9 @@ class account_reconcile_order(models.Model):
     def _make_lines_po(self):
         self.ensure_one()
         line_obj = self.env['account.reconcile.order.line']
-        self.line_ids = None
+        line_no_obj = self.env['account.reconcile.order.line.no']
+        line_ids = None
+        self.line_ids = line_ids
 
         if self.no_sopo:
             for invoice in self.invoice_ids:
@@ -736,11 +734,42 @@ class account_reconcile_order(models.Model):
                         'invoice_id': invoice.id,
                         'amount_invoice_so': sum([i.price_subtotal for i in invlines]),
                     })
+    #826
+        # so_po_dic = {}
+        # print('line_obj', line_ids)
+        # self.line_no_ids = None
+        # for i in self.line_ids:
+        #     invoice = i.invoice_id
+        #     amount_invoice_so = i.amount_invoice_so
+        #     advance_residual = i.advance_residual
+        #     order = i.order_id
+        #
+        #     k = invoice.id
+        #     if k in so_po_dic:
+        #         print('k', k)
+        #         so_po_dic[k]['amount_invoice_so'] += amount_invoice_so
+        #         so_po_dic[k]['advance_residual'] += advance_residual
+        #     else:
+        #         print('k1', k)
+        #         so_po_dic[k] = {
+        #             'invoice_id': invoice.id,
+        #             'amount_invoice_so': amount_invoice_so,
+        #             'advance_residual': advance_residual, }
+        #
+        # for kk, data in list(so_po_dic.items()):
+        #     line_no = line_no_obj.create({
+        #         'order_id': self.id,
+        #         'invoice_id': data['invoice_id'],
+        #         'amount_invoice_so': data['amount_invoice_so'],
+        #         'advance_residual': data['advance_residual'],
+        #     })
 
     def _make_lines_so(self):
         self.ensure_one()
         line_obj = self.env['account.reconcile.order.line']
-        self.line_ids = None
+        line_no_obj = self.env['account.reconcile.order.line.no']
+        line_ids = None
+        self.line_ids = line_ids
         if self.no_sopo:
             for invoice in self.invoice_ids:
                 line_obj.create({
@@ -758,6 +787,51 @@ class account_reconcile_order(models.Model):
                         'invoice_id': invoice.id,
                         'amount_invoice_so': sum([i.price_subtotal for i in invlines]),
                     })
+
+        # so_po_dic = {}
+        # print('line_obj', line_ids)
+        # self.line_no_ids = None
+        # for i in self.line_ids:
+        #     invoice = i.invoice_id
+        #     amount_invoice_so = i.amount_invoice_so
+        #     advance_residual2 = i.advance_residual2
+        #     order = i.order_id
+        #
+        #     k = invoice.id
+        #     if k in so_po_dic:
+        #         print('k',k)
+        #         so_po_dic[k]['amount_invoice_so'] += amount_invoice_so
+        #         so_po_dic[k]['advance_residual2'] += advance_residual2
+        #     else:
+        #         print('k1', k)
+        #         so_po_dic[k] = {
+        #                         'invoice_id':invoice.id,
+        #                         'amount_invoice_so': amount_invoice_so,
+        #                         'advance_residual2': advance_residual2,}
+        #
+        # for kk, data in list(so_po_dic.items()):
+        #     line_no = line_no_obj.create({
+        #         'order_id': self.id,
+        #         'invoice_id': data['invoice_id'],
+        #         'amount_invoice_so': data['amount_invoice_so'],
+        #         'advance_residual2': data['advance_residual2'],
+        #     })
+            # print('>>', line)
+    #826 拆分发票填写的金额到明细上
+    def update_line_amount(self):
+        for x in self.line_no_ids:
+            invoice = x.invoice_id
+            amount_advance_org = x.amount_advance_org
+            amount_payment_org = x.amount_payment_org
+            line_ids = self.line_ids.filtered(lambda x: x.invoice_id == invoice)
+            for line in line_ids:
+                amount_invoice_so_proportion = line.amount_invoice_so_proportion
+                line.amount_advance_org = amount_invoice_so_proportion * amount_advance_org
+                line.amount_payment_org = amount_invoice_so_proportion * amount_payment_org
+
+
+
+
 
     def clear_moves(self):
         self.ensure_one()
@@ -792,7 +866,7 @@ class account_reconcile_order(models.Model):
             todo_lines = lines.filtered(lambda x: x.plan_invoice_id == inv and x.reconciled == False)
             for todo in todo_lines:
                 inv.assign_outstanding_credit(todo.id)
-                inv.till_id.update_hexiao_state()
+                inv.bill_id.update_hexiao_state()
 
             # domain = [
             #     ('plan_invoice_id', '=', inv.id),
@@ -873,6 +947,13 @@ class account_reconcile_order_line(models.Model):
     def _get_default_currency_id(self):
         return self.invoice_currency_id
 
+    def _compute_amount_invoice_so_proportion(self):
+        for one in self:
+            amount_invoice = one.invoice_id.amount_total
+            amount_invoice_so =  one.amount_invoice_so
+            amount_invoice_so_proportion = amount_invoice_so / amount_invoice
+            one.amount_invoice_so_proportion = amount_invoice_so_proportion
+
     # @api.onchange('amount_invoice_so', 'amount_advance_org', 'amount_bank_org', 'amount_diff_org', 'amount_payment_org')
     # def onchange_amount(self):
     #     self.amount_exchange_org = self.amount_invoice_so - self.amount_advance_org - self.amount_bank_org - self.amount_diff_org - self.amount_payment_org
@@ -901,6 +982,9 @@ class account_reconcile_order_line(models.Model):
     # diff_currency_id = fields.Many2one('res.currency', related='order_id.diff_currency_id', )
 
     amount_invoice_so = fields.Monetary(u'合计', currency_field='invoice_currency_id')
+    amount_invoice_so_proportion = fields.Float('销售金额占发票金额比',compute=_compute_amount_invoice_so_proportion)
+    #826
+    amount_invoice_so_residual = fields.Monetary(u'剩余',currency_field='invoice_currency_id')
 
     advance_residual = fields.Monetary(currency_field='yjzy_currency_id', string=u'预付余额', compute=compute_info, )
     advance_residual2 = fields.Monetary(currency_field='yjzy_currency_id', string=u'预收余额', compute=compute_info, )
@@ -929,3 +1013,27 @@ class account_reconcile_order_line(models.Model):
     @api.onchange('yjzy_payment_id')
     def onchange_yjzy_payment_id(self):
         self.yjzy_currency_id = self.yjzy_payment_id.currency_id
+
+
+class account_reconcile_order_line_no(models.Model):
+    _name = 'account.reconcile.order.line.no'
+
+    invoice_currency_id = fields.Many2one('res.currency', u'交易货币', related='invoice_id.currency_id', readonly=True)
+    order_id = fields.Many2one('account.reconcile.order', u'核销单')
+    invoice_id = fields.Many2one('account.invoice', u'发票')
+    yjzy_currency_id = fields.Many2one('res.currency', u'预收币种',
+                                       default=lambda self: self.env.user.company_id.currency_id.id)
+    payment_currency_id = fields.Many2one('res.currency', u'收款货币', related='order_id.payment_currency_id',
+                                          readonly=True)
+    currency_id = fields.Many2one('res.currency', u'公司货币', related='order_id.currency_id', readonly=True)
+    amount_invoice_so = fields.Monetary(u'合计', currency_field='invoice_currency_id')
+    amount_invoice_so_residual = fields.Monetary(u'剩余', currency_field='invoice_currency_id')
+    advance_residual = fields.Monetary(currency_field='yjzy_currency_id', string=u'预付余额')
+    advance_residual2 = fields.Monetary(currency_field='yjzy_currency_id', string=u'预收余额')
+    residual = fields.Monetary(related='invoice_id.residual', string=u'发票余额', readonly=True, currency_field='invoice_currency_id')
+
+    amount_advance_org = fields.Monetary(u'预收金额', currency_field='yjzy_currency_id')
+
+    amount_advance = fields.Monetary(u'预收金额:本币', currency_field='currency_id', )
+    amount_payment_org = fields.Monetary(u'收款金额', currency_field='payment_currency_id')
+    amount_payment = fields.Monetary(u'收款金额:本币', currency_field='currency_id', )

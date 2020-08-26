@@ -275,7 +275,7 @@
                                     </table>
                                 </div>
 
-                                <label for="fee_rmb2" string="人名币2" style="font-size:10px"/>
+                                <label for="fee_rmb2" string="人民币2" style="font-size:10px"/>
                                 <div style="width:200%">
                                     <table style="width:100%">
                                         <tr>
@@ -292,7 +292,7 @@
 
                                 </div>
 
-                                <label for="fee_rmb_all" string="人名币费用合计" style="font-size:10px"/>
+                                <label for="fee_rmb_all" string="人民币费用合计" style="font-size:10px"/>
                                 <div style="width:200%">
                                     <table style="width:100%">
                                         <tr>

@@ -245,6 +245,7 @@ class tb_po_invoice(models.Model):
             'type': 'in_invoice',
             'journal_type': 'purchase',
             'yjzy_type': 'purchase',
+            'yjzy_invoice_id':self.yjzy_invoice_id,
             'yjzy_payment_term_id':self.yjzy_invoice_id.payment_term_id.id,
             'yjzy_currency_id':self.yjzy_invoice_id.currency_id.id,
             # 'payment_term_id': self.yjzy_invoice_id.payment_term_id.id,

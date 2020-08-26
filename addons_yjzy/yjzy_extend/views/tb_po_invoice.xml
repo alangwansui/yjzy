@@ -337,7 +337,7 @@
         </record>
 
         <menuitem id="menu_extra_customer_create" name="创建额外应收申请"
-                  parent="yjzy_extend.menu_extra_po_root"
+                  parent="yjzy_extend.menu_extra_customer_invoice_root"
                   sequence="20"
                   action="act_extra_customer_create"/>
 
@@ -376,7 +376,7 @@
         </record>
 
         <menuitem id="menu_invoice_supplier_create" name="创建额外应付申请"
-                  parent="yjzy_extend.menu_extra_po_root"
+                  parent="yjzy_extend.menu_extra_supplier_invoice_root"
                   sequence="20"
                   action="act_extra_supplier_create"/>
 
@@ -412,7 +412,7 @@
         </record>
 
         <menuitem id="menu_expense_po_create" name="创建费用转应付申请单"
-                  parent="yjzy_extend.menu_extra_po_root"
+                  parent="yjzy_extend.menu_extra_po_expense_root"
                   sequence="20"
                   action="act_expense_po_create"/>
 

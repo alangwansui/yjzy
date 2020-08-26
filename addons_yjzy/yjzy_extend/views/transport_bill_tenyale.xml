@@ -541,11 +541,11 @@
                                 <field name="fee_rmb1"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
 
-                                <field name="fee_rmb1_note" string="人名币备注1"
+                                <field name="fee_rmb1_note" string="人民币备注1"
                                        attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)],'invisible':[('fee_rmb1','=',0)]}"/>
                                 <field name="fee_rmb2"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
-                                <field name="fee_rmb2_note" string="人名币备注2"
+                                <field name="fee_rmb2_note" string="人民币备注2"
                                        attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)],'invisible':[('fee_rmb2','=',0)]}"/>
                                 <field name="fee_outer"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
@@ -1119,8 +1119,21 @@
                                   attrs="{'invisible':[('operation_wizard','in',['first','second','third','fourth','fifth'])]}">
                                 <field name="tb_vendor_ids"/>
                             </page>
-                            <page string="费用明细" invisible="1">
-                                <field name="expense_ids">
+                            <page string="费用明细" invisible="0">
+                                <field name="expense_ids" readony="1">
+                                    <tree>
+                                        <field name="date"/>
+                                        <field name="create_uid"/>
+                                        <field name="employee_id" string="责任人"/>
+                                        <field name="categ_id" context="{'search_order': 'sequence','only_name':1}"/>
+                                        <field name="second_categ_id" context="{'search_order': 'sequence','only_name':1}"/>
+                                        <field name="product_id" string="小类"/>
+                                        <field name="payment_date"/>
+                                        <field name="total_amount" sum="小计"/>
+                                        <field name="budget_amount"/>
+                                        <field name="budget_id"/>
+                                        <field name="state"/>
+                                    </tree>
                                 </field>
                             </page>
                             <page string="时间管理页面" attrs="{'invisible':[('operation_wizard','in',['first','second','third','fourth'])]}">
@@ -1672,7 +1685,7 @@
             <field name="search_view_id" ref="view_transport_bill_tenyale_filter"/>
             <field name="domain">[('state','in',['cancel','draft','refused','submit','sales_approve'])]</field>
             <field name="context">
-                {'search_default_group_by_stage':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3,'show_po_code':
+                {'search_default_group_by_stage':1,'only_name':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3,'show_po_code':
                 1}
             </field>
             <field name="view_ids" eval="[(5, 0, 0),
@@ -1698,7 +1711,7 @@
             <field name="search_view_id" ref="view_transport_bill_tenyale_filter"/>
             <field name="domain">[('state','in',['approve','delivered','invoiced','verifying'])]</field>
             <field name="context">
-                {'search_default_group_by_state_type':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3,'show_po_code':
+                {'search_default_group_by_state_type':1,'only_name':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3,'show_po_code':
                 1}
             </field>
             <field name="view_ids" eval="[(5, 0, 0),
@@ -1840,7 +1853,7 @@
             <field name="limit">20</field>
             <field name="search_view_id" ref="view_transport_bill_tenyale_filter"/>
             <field name="context">
-                {'search_default_group_by_stage':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3,'show_po_code':1}
+                {'search_default_group_by_stage':1,'only_name':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3,'show_po_code':1}
             </field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_transport_bill_tenyale_sales_tree')}),
@@ -1864,7 +1877,7 @@
             <field name="limit">20</field>
             <field name="search_view_id" ref="view_transport_bill_tenyale_filter"/>
             <field name="context">
-                {'search_default_group_by_date_hexiao':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3,'show_po_code':1}
+                {'search_default_group_by_date_hexiao':1,'only_name':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3,'show_po_code':1}
             </field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_transport_bill_tenyale_hexiao_tree')}),
@@ -1888,7 +1901,7 @@
             <field name="limit">20</field>
             <field name="search_view_id" ref="view_transport_bill_tenyale_filter"/>
             <field name="context">
-                {'search_default_group_date_out_in':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3,'show_po_code':1}
+                {'search_default_group_date_out_in':1,'only_name':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3,'show_po_code':1}
             </field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_transport_bill_tenyale_years_tree')}),

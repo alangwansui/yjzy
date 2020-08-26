@@ -4,9 +4,10 @@
 
 
         <menuitem id="menu_yjzy_payment_root" name="新收付款"/>
-        <menuitem id="menu_extra_po_root" name="增加采购额"/>
-        <menuitem id="menu_extra_customer_invoice_root" name="额外应收申请"/>
-        <menuitem id="menu_extra_supplier_invoice_root" name="额外应付申请"/>
+        <menuitem id="menu_extra_po_root" name="直接增加采购" sequence="98"/>
+        <menuitem id="menu_extra_po_expense_root" name="费用转采购" sequence="98"/>
+        <menuitem id="menu_extra_customer_invoice_root" name="额外应收申请" sequence="99"/>
+        <menuitem id="menu_extra_supplier_invoice_root" name="额外应付申请" sequence="99"/>
 
 
     </data>

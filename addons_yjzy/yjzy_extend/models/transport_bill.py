@@ -381,7 +381,7 @@ class transport_bill(models.Model):
                 org_sale_amount_new = sum(x.org_currency_sale_amount for x in one.line_ids)
             one.org_sale_amount_new = org_sale_amount_new
 
-    @api.depends('line_ids.plan_qty','line_ids','current_date_rate','state')
+    @api.depends('line_ids.plan_qty','line_ids','current_date_rate','state','fee_inner','fee_rmb1','fee_rmb2','fee_outer')
     def _sale_purchase_amount(self):
         """
         Compute the total amounts of the SO.
@@ -1808,6 +1808,8 @@ class transport_bill(models.Model):
         self.amount_all()
         if self.operation_wizard != 'fifth':
             self.operation_wizard = 'fourth'
+        self._sale_purchase_amount()
+
 
     def make_tb_vendor(self):
         #print('>>>>make_tb_vendor')

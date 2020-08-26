@@ -140,7 +140,7 @@ class transport_bill(models.Model):
 
 
 
-    # 816 定稿
+    # 816 定稿 合并
     def create_hsname_all_ids(self):
         self.ensure_one()
         self.hsname_all_ids.unlink()

@@ -308,12 +308,12 @@
 
 
     <record id="action_account_invoice_extra_po" model="ir.actions.act_window">
-            <field name="name">额外采购账单</field>
+            <field name="name">新增采购账单</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">account.invoice</field>
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_account_invoice_new_filter"/>
-            <field name="domain">[('invoice_attribute','=','other_po')]</field>
+            <field name="domain">[('invoice_attribute','=','other_po'),('yjzy_type','=','purchase')]</field>
             <field name="context">{}
             </field>
             <!--field name="target">new</field-->
@@ -323,7 +323,45 @@
                               ]"/>
         </record>
        <menuitem id="menu_account_invoice_extra_po" action="action_account_invoice_extra_po"
-                  parent="yjzy_extend.menu_extra_po_root" name="额外采购账单"
+                  parent="yjzy_extend.menu_extra_po_root" name="新增采购账单"
+                  sequence="90"
+        />
+        <record id="action_account_out_invoice_extra_po" model="ir.actions.act_window">
+            <field name="name">新增采购对应应收账单</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_account_invoice_new_filter"/>
+            <field name="domain">[('invoice_attribute','=','other_po'),('yjzy_type','=','sale')]</field>
+            <field name="context">{}
+            </field>
+            <!--field name="target">new</field-->
+            <field name="view_ids" eval="[(5, 0, 0),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.invoice_supplier_extra_po_tree')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.view_supplier_invoice_extra_po_form')}),
+                              ]"/>
+        </record>
+       <menuitem id="menu_account_out_invoice_extra_po" action="action_account_out_invoice_extra_po"
+                  parent="yjzy_extend.menu_extra_po_root" name="新增采购对应应收账单"
+                  sequence="90"
+        />
+        <record id="action_account_out_invoice_back_tax_extra_po" model="ir.actions.act_window">
+            <field name="name">新增采购对应退税账单</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_account_invoice_new_filter"/>
+            <field name="domain">[('invoice_attribute','=','other_po'),('yjzy_type','=','back_tax')]</field>
+            <field name="context">{}
+            </field>
+            <!--field name="target">new</field-->
+            <field name="view_ids" eval="[(5, 0, 0),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.invoice_supplier_extra_po_tree')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.view_supplier_invoice_extra_po_form')}),
+                              ]"/>
+        </record>
+       <menuitem id="menu_account_out_invoice_back_tax_extra_po" action="action_account_out_invoice_back_tax_extra_po"
+                  parent="yjzy_extend.menu_extra_po_root" name="新增采购对应退税账单"
                   sequence="90"
         />
 

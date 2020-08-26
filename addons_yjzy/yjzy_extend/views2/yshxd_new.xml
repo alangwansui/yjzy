@@ -3,7 +3,7 @@
 
 
     <!--应收核销明细-->
-    <record model="ir.ui.view" id="account_yshxd_line_tree_view">
+    <record model="ir.ui.view" id="account_yshxd_line_tree_view_new">
         <field name="name">account.reconcile.order.line.tree</field>
         <field name="model">account.reconcile.order.line</field>
         <field name="arch" type="xml">
@@ -27,7 +27,7 @@
         </field>
     </record>
 
-    <record model="ir.ui.view" id="account_yshxd_tree_view">
+    <record model="ir.ui.view" id="account_yshxd_tree_view_new">
         <field name="name">account.reconcile.order.tree</field>
         <field name="model">account.reconcile.order</field>
         <field name="arch" type="xml">
@@ -43,7 +43,7 @@
             </tree>
         </field>
     </record>
-    <record model="ir.ui.view" id="account_yshxd_form_view">
+    <record model="ir.ui.view" id="account_yshxd_form_view_new">
         <field name="name">account.reconcile.order.form</field>
         <field name="model">account.reconcile.order</field>
         <field name="arch" type="xml">
@@ -75,7 +75,6 @@
                     <group col="2">
                         <group>
                             <field name="name"/>
-
                             <field name="payment_type"  attrs="{'invisible':1}"/>
                             <field name="partner_type"  attrs="{'invisible':1}"/>
                             <field name="partner_id" domain="[('is_company','=',True),('customer','=',1)]"
@@ -205,48 +204,6 @@
         </field>
     </record>
 
-    <record model="ir.actions.act_window" id="action_yshxd">
-        <field name="name">应收核销单</field>
-        <field name="type">ir.actions.act_window</field>
-        <field name="res_model">account.reconcile.order</field>
-        <field name="view_type">form</field>
-        <field name="view_mode">tree,form</field>
-        <field name="domain">[('sfk_type','=','yshxd')]</field>
-        <field name="context">{'default_sfk_type': 'yshxd', 'default_payment_type': 'inbound', 'default_be_renling': 1, 'default_partner_type': 'customer', 'show_so': 1}
-        </field>
-    </record>
 
-    <record model="ir.actions.act_window.view" id="act_open_yshxd_view_tree">
-        <field name="act_window_id" ref="action_yshxd"/>
-        <field name="sequence" eval="10"/>
-        <field name="view_mode">tree</field>
-        <field name="view_id" ref="account_yshxd_tree_view"/>
-    </record>
-    <record model="ir.actions.act_window.view" id="act_open_yshxd_view_form">
-        <field name="act_window_id" ref="action_yshxd"/>
-        <field name="sequence" eval="20"/>
-        <field name="view_mode">form</field>
-        <field name="view_id" ref="account_yshxd_form_view"/>
-    </record>
-
-
-    <menuitem id="menu_yshxd" name="应收核销单"
-              parent="menu_skf_root" action="action_yshxd"/>
-
-    <record id="action_account_yshxd_line" model="ir.actions.act_window">
-            <field name="name">应收认领明细</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="res_model">account.reconcile.order.line</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">tree,form,kanban</field>
-            <field name="domain">[('order_id.sfk_type','=','yshxd')]</field>
-            <field name="context">{'group_by':'invoice_display_name'}</field>
-            <field name="view_ids" eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'tree', 'view_id': ref('account_yshxd_line_tree_view')})]"/>
-    </record>
-        <menuitem id="menu_account_yshxd_line" action="action_account_yshxd_line"
-                  parent="menu_account_new_root" name="应收认领明细"
-                  sequence="99"
-        />
 
 </odoo>
