@@ -19,6 +19,8 @@ class transport_bill(models.Model):
             purchase_amount2_tax_total = sum(x.purchase_amount2_tax for x in hsname_all_ids)
             purchase_amount2_no_tax_total = sum(x.purchase_amount2_no_tax for x in hsname_all_ids)
             purchase_amount2_add_actual_total = sum(x.purchase_amount2_add_actual for x in hsname_all_ids)
+            purchase_amount_min_add_rest_total = sum(x.purchase_amount_min_add_rest for x in hsname_all_ids)
+            purchase_amount_max_add_rest_total = sum(x.purchase_amount_max_add_rest for x in hsname_all_ids)
             # purchase_back_tax_amount2_new_new_total = sum(x.purchase_back_tax_amount2_new_new for x in hsname_all_ids)
             # purchase_back_tax_amount2_rest_total = sum(x.purchase_back_tax_amount2_rest for x in hsname_all_ids)
             one.purchase_amount_max_forecast_total = purchase_amount_max_forecast_total
@@ -28,6 +30,8 @@ class transport_bill(models.Model):
             one.purchase_amount2_tax_total = purchase_amount2_tax_total
             one.purchase_amount2_no_tax_total = purchase_amount2_no_tax_total
             one.purchase_amount2_add_actual_total = purchase_amount2_add_actual_total
+            one.purchase_amount_min_add_rest_total = purchase_amount_min_add_rest_total
+            one.purchase_amount_max_add_rest_total = purchase_amount_max_add_rest_total
             # one.purchase_back_tax_amount2_new_new_total = purchase_back_tax_amount2_new_new_total
             # one.purchase_back_tax_amount2_rest_total = purchase_back_tax_amount2_rest_total
 
@@ -61,6 +65,9 @@ class transport_bill(models.Model):
     purchase_amount_min_forecast_total = fields.Float('预测采购金额(上限)', digits=(2, 2), compute=_compute_overall_profit)
     purchase_amount_max_add_forecast_total = fields.Float('可增加采购额(下限)', digits=(2, 2), compute=_compute_overall_profit)
     purchase_amount_min_add_forecast_total = fields.Float('可增加采购额(上限)', digits=(2, 2), compute=_compute_overall_profit)
+    purchase_amount_max_add_rest_total = fields.Float('采购池(下限)', digits=(2, 2), compute=_compute_overall_profit)
+    purchase_amount_min_add_rest_total = fields.Float('采购池(上限)', digits=(2, 2), compute=_compute_overall_profit)
+
     purchase_amount2_tax_total = fields.Float(u'含税采购金额', compute=_compute_overall_profit)
     purchase_amount2_no_tax_total = fields.Float(u'不含税采购金额', compute=_compute_overall_profit)
     purchase_amount2_add_actual_total = fields.Float(U'实际已经增加采购额', compute=_compute_overall_profit)
