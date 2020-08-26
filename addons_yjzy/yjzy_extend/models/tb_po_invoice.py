@@ -3,7 +3,7 @@
 from odoo import fields, models, api, _
 from odoo.exceptions import Warning
 from odoo.addons import decimal_precision as dp
-
+from lxml import etree
 
 class tb_po_invoice(models.Model):
     _name = 'tb.po.invoice'
@@ -31,7 +31,7 @@ class tb_po_invoice(models.Model):
                 else:
                     p_s_add_this_time_refund = yjzy_invoice_residual_amount
             p_s_add_this_time_extra_total = p_s_add_this_time_total - p_s_add_this_time_refund
-            if one.type=='extra':
+            if one.type =='extra':
                 price_total = sum(one.extra_invoice_line_ids.mapped('price_total'))
                 one.price_total = price_total
             else:
@@ -79,7 +79,8 @@ class tb_po_invoice(models.Model):
     #     self.extra_invoice_line_ids = res
     # # invoice_ids = fields.Many2many('account.invoice','ref_invoice_tb','invoice_id','tbl_id',u'额外账单')
     # # hsname_id = fields.Many2one('tbl.hsname', u'报关明细')
-
+    fiscal_position_id = fields.Many2one('account.fiscal.position', string='Fiscal Position', oldname='fiscal_position',
+                                         readonly=True, states={'draft': [('readonly', False)]})
     type_invoice = fields.Selection([
         ('out_invoice', 'Customer Invoice'),
         ('in_invoice', 'Vendor Bill'),
@@ -150,6 +151,8 @@ class tb_po_invoice(models.Model):
             self.apply()
         if self.type == 'expense_po':
             self.apply_expense_sheet()
+        if self.type == 'extra':
+            self.make_extra_invoice()
     def action_refuse(self):
         self.state = '40_refuse'
     def action_draft(self):
@@ -428,7 +431,6 @@ class tb_po_invoice(models.Model):
             'date_invoice': self.yjzy_invoice_id.date_invoice,
             'date': self.yjzy_invoice_id.date,
             'date_out_in': self.yjzy_invoice_id.date_out_in,
-
             'gongsi_id': self.yjzy_invoice_id.gongsi_id.id,
             # 'invoice_line_ids': [(0, 0, {
             #     'name': '%s' % (product.name),
@@ -438,16 +440,65 @@ class tb_po_invoice(models.Model):
             #     'account_id': account.id,
             # })]
         })
-        for line in self.extra_invoice_line_ids:
-            invoice_line = invoice_line_obj.create({
-                'name':line.name,
-                'invoice_id': inv.id,
-                'product_id': line.product_id.id,
-                'price_unit': line.price_unit,
-                'quantity':line.quantity,
-                'tp_po_invoice_line': line.id,
-                'account_id': line.product_id.property_account_income_id.id
-            })
+        yjzy_type = self.yjzy_type
+        if yjzy_type == 'sale' or yjzy_type == 'back_tax':
+            if self.price_total < 0:
+                self.type_invoice = 'out_refund'
+                for line in self.extra_invoice_line_ids:
+                    price_unit = -line.price_unit
+                    invoice_line = invoice_line_obj.create({
+                        'name': line.name,
+                        'invoice_id': inv.id,
+                        'product_id': line.product_id.id,
+                        'price_unit': price_unit,
+                        'quantity': line.quantity,
+                        'tp_po_invoice_line': line.id,
+                        'account_id': line.product_id.property_account_income_id.id
+                    })
+                    invoice_line._onchange_product_id()
+            else:
+                self.type_invoice = 'out_invoice'
+                for line in self.extra_invoice_line_ids:
+                    price_unit = line.price_unit
+                    invoice_line = invoice_line_obj.create({
+                        'name': line.name,
+                        'invoice_id': inv.id,
+                        'product_id': line.product_id.id,
+                        'price_unit': price_unit,
+                        'quantity': line.quantity,
+                        'tp_po_invoice_line': line.id,
+                        'account_id': line.product_id.property_account_income_id.id
+                    })
+                    invoice_line._onchange_product_id()
+        else:
+            if self.price_total < 0:
+                self.type_invoice = 'in_refund'
+                for line in self.extra_invoice_line_ids:
+                    price_unit = -line.price_unit
+                    invoice_line = invoice_line_obj.create({
+                        'name': line.name,
+                        'invoice_id': inv.id,
+                        'product_id': line.product_id.id,
+                        'price_unit': price_unit,
+                        'quantity': line.quantity,
+                        'tp_po_invoice_line': line.id,
+                        'account_id': line.product_id.property_account_income_id.id
+                    })
+                    invoice_line._onchange_product_id()
+            else:
+                self.type_invoice = 'in_invoice'
+                for line in self.extra_invoice_line_ids:
+                    price_unit = line.price_unit
+                    invoice_line = invoice_line_obj.create({
+                        'name': line.name,
+                        'invoice_id': inv.id,
+                        'product_id': line.product_id.id,
+                        'price_unit': price_unit,
+                        'quantity': line.quantity,
+                        'tp_po_invoice_line': line.id,
+                        'account_id': line.product_id.property_account_income_id.id
+                    })
+                    invoice_line._onchange_product_id()
         inv._default_name()
         inv.compute_name_extra()
         form_view = self.env.ref('yjzy_extend.view_supplier_invoice_extra_form').id
@@ -583,56 +634,142 @@ class tb_po_invoice_line(models.Model):
     #     if self.qty < 0:
     #         raise Warning(u'采购数量不能小于0')
 
-    class Extra_Invoice_Line(models.Model):
-        _name = 'extra.invoice.line'
+class Extra_Invoice_Line(models.Model):
+    _name = 'extra.invoice.line'
+    _description = "Extra Invoice Line"
+    @api.model
+    def _default_account(self):
+        if self._context.get('journal_id'):
+            journal = self.env['account.journal'].browse(self._context.get('journal_id'))
+            if self._context.get('type_invoice') in ('out_invoice', 'in_refund'):
+                return journal.default_credit_account_id.id
+            return journal.default_debit_account_id.id
 
-        @api.model
-        def _default_account(self):
-            if self._context.get('journal_id'):
-                journal = self.env['account.journal'].browse(self._context.get('journal_id'))
-                if self._context.get('type') in ('out_invoice', 'in_refund'):
-                    return journal.default_credit_account_id.id
-                return journal.default_debit_account_id.id
+    @api.one
+    @api.depends('price_unit',  'quantity','product_id', 'tb_po_id.partner_id', 'tb_po_id.currency_id', 'tb_po_id.company_id',)
+    def _compute_price(self):
+        currency = self.tb_po_id and self.tb_po_id.currency_id or None
+        price = self.price_unit
+        self.price_subtotal = price_subtotal_signed =  self.quantity * price
+        self.price_total =  self.price_subtotal
+        sign = self.tb_po_id.type in ['in_refund', 'out_refund'] and -1 or 1
+        self.price_subtotal_signed = price_subtotal_signed * sign
 
-        @api.one
-        @api.depends('price_unit',  'quantity','product_id', 'tb_po_id.partner_id', 'tb_po_id.currency_id', 'tb_po_id.company_id',)
-        def _compute_price(self):
-            price = self.price_unit
-            self.price_subtotal = price_subtotal_signed = self.quantity * price
-            self.price_total = self.price_subtotal
-            sign = self.tb_po_id.type_invoice in ['in_refund', 'out_refund'] and -1 or 1
-            self.price_subtotal_signed = price_subtotal_signed * sign
+    name = fields.Text(string='Description')
+    sequence = fields.Integer(default=10,
+                              help="Gives the sequence of this line when displaying the invoice.")
+    tb_po_id = fields.Many2one('tb.po.invoice', string='TB_PO',ondelete='cascade',index=True)
 
-        name = fields.Text(string='Description', required=True)
-        sequence = fields.Integer(default=10,
-                                  help="Gives the sequence of this line when displaying the invoice.")
-        tb_po_id = fields.Many2one('tb.po.invoice', string='TB_PO',ondelete='cascade',index=True)
+    product_id = fields.Many2one('product.product', string='Product',
+                                 ondelete='restrict', index=True)
+    account_id = fields.Many2one('account.account', string='Account',
+                                 required=True, domain=[('deprecated', '=', False)],
+                                 default=_default_account,
+                                 help="The income or expense account related to the selected product.")
+    price_unit = fields.Float(string='Unit Price', required=True, digits=dp.get_precision('Product Price'))
+    price_subtotal = fields.Monetary(string='Amount',
+                                     store=True, readonly=True, compute='_compute_price',
+                                     help="Total amount without taxes")
+    uom_id = fields.Many2one('product.uom', string='Unit of Measure',
+                             ondelete='set null', index=True, oldname='uos_id')
+    price_total = fields.Monetary(string='Amount',
+                                  store=True, readonly=True, compute='_compute_price',
+                                  help="Total amount with taxes")
+    price_subtotal_signed = fields.Monetary(string='Amount Signed', currency_field='company_currency_id',
+                                            store=True, readonly=True, compute='_compute_price',
+                                            help="Total amount in the currency of the company, negative for credit note.")
+    quantity = fields.Float(string='Quantity', digits=dp.get_precision('Product Unit of Measure'),
+                            required=True, default=1)
 
-        product_id = fields.Many2one('product.product', string='Product',
-                                     ondelete='restrict', index=True)
-        price_unit = fields.Float(string='Unit Price', required=True, digits=dp.get_precision('Product Price'))
-        price_subtotal = fields.Monetary(string='Amount',
-                                         store=True, readonly=True, compute='_compute_price',
-                                         help="Total amount without taxes")
-        price_total = fields.Monetary(string='Amount',
-                                      store=True, readonly=True, compute='_compute_price',
-                                      help="Total amount with taxes")
-        price_subtotal_signed = fields.Monetary(string='Amount Signed', currency_field='company_currency_id',
-                                                store=True, readonly=True, compute='_compute_price',
-                                                help="Total amount in the currency of the company, negative for credit note.")
-        quantity = fields.Float(string='Quantity', digits=dp.get_precision('Product Unit of Measure'),
-                                required=True, default=1)
 
-        company_id = fields.Many2one('res.company', string='Company',
-                                     related='tb_po_id.company_id', store=True, readonly=True, related_sudo=False)
-        partner_id = fields.Many2one('res.partner', string='Partner',
-                                     related='tb_po_id.partner_id', store=True, readonly=True, related_sudo=False)
-        currency_id = fields.Many2one('res.currency', related='tb_po_id.currency_id', store=True, related_sudo=False)
-        company_currency_id = fields.Many2one('res.currency', related='tb_po_id.company_currency_id', readonly=True,
+    company_id = fields.Many2one('res.company', string='Company',
+                                 related='tb_po_id.company_id', store=True, readonly=True, related_sudo=False)
+    partner_id = fields.Many2one('res.partner', string='Partner',
+                                 related='tb_po_id.partner_id', store=True, readonly=True, related_sudo=False)
+    currency_id = fields.Many2one('res.currency', related='tb_po_id.currency_id', store=True, related_sudo=False)
+    company_currency_id = fields.Many2one('res.currency', related='tb_po_id.company_currency_id', readonly=True,
                                               related_sudo=False)
 
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
+        res = super(Extra_Invoice_Line, self).fields_view_get(
+            view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
+        if self._context.get('type'):
+            doc = etree.XML(res['arch'])
+            for node in doc.xpath("//field[@name='product_id']"):
+                if self._context['type'] in ('in_invoice', 'in_refund'):
+                    # Hack to fix the stable version 8.0 -> saas-12
+                    # purchase_ok will be moved from purchase to product in master #13271
+                    if 'purchase_ok' in self.env['product.template']._fields:
+                        node.set('domain', "[('purchase_ok', '=', True)]")
+                else:
+                    node.set('domain', "[('sale_ok', '=', True)]")
+            res['arch'] = etree.tostring(doc, encoding='unicode')
+        return res
 
 
+    @api.v8
+    def get_invoice_line_account(self, type, product, fpos, company):
+        accounts = product.product_tmpl_id.get_product_accounts(fpos)
+        if type in ('out_invoice', 'out_refund'):
+            return accounts['income']
+        return accounts['expense']
+
+    @api.onchange('product_id')
+    def _onchange_product_id(self):
+        domain = {}
+        if not self.tb_po_id:
+            return
+
+        part = self.tb_po_id.partner_id
+        fpos = self.tb_po_id.fiscal_position_id
+        company = self.tb_po_id.company_id
+        currency = self.tb_po_id.currency_id
+        type = self.tb_po_id.type_invoice
+
+        if not part:
+            warning = {
+                    'title': _('Warning!'),
+                    'message': _('You must first select a partner!'),
+                }
+            return {'warning': warning}
+
+        if not self.product_id:
+            if type not in ('in_invoice', 'in_refund'):
+                self.price_unit = 0.0
+            domain['uom_id'] = []
+        else:
+            # Use the purchase uom by default
+            self.uom_id = self.product_id.uom_po_id
+
+            if part.lang:
+                product = self.product_id.with_context(lang=part.lang)
+            else:
+                product = self.product_id
+            self.name = product.partner_ref
+            account = self.get_invoice_line_account(type, product, fpos, company)
+            if account:
+                self.account_id = account.id
+
+
+            if type in ('in_invoice', 'in_refund'):
+                if product.description_purchase:
+                    self.name += '\n' + product.description_purchase
+            else:
+                if product.description_sale:
+                    self.name += '\n' + product.description_sale
+
+            if not self.uom_id or product.uom_id.category_id.id != self.uom_id.category_id.id:
+                self.uom_id = product.uom_id.id
+            domain['uom_id'] = [('category_id', '=', product.uom_id.category_id.id)]
+
+            if company and currency:
+                if company.currency_id != currency:
+                    self.price_unit = self.price_unit * currency.with_context(dict(self._context or {}, date=self.tb_po_id.date_invoice)).rate
+
+                if self.uom_id and self.uom_id.id != product.uom_id.id:
+                    self.price_unit = product.uom_id._compute_price(self.price_unit, self.uom_id)
+        return {'domain': domain}
 
 
 

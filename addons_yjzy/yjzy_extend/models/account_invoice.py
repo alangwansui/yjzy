@@ -601,30 +601,30 @@ class account_invoice(models.Model):
             'flags': {'form': {'initial_mode': 'view', 'action_buttons': False}}
         }
 
-    @api.onchange('invoice_line_ids')
-    def onchange_payment_currency(self):
-        # self.payment_term_id = self.yjzy_payment_term_id
-        # self.currency_id = self.yjzy_currency_id
-        if self.is_yjzy_invoice:
-            yjzy_type = self.yjzy_type
-            if yjzy_type == 'sale' or yjzy_type == 'back_tax':
-                if self.yjzy_price_total < 0:
-                    self.type = 'out_refund'
-                    for x in self.invoice_line_ids:
-                        x.price_unit = -x.yjzy_price_unit
-                else:
-                    self.type = 'out_invoice'
-                    for x in self.invoice_line_ids:
-                        x.price_unit = x.yjzy_price_unit
-            else:
-                if self.yjzy_price_total < 0:
-                    self.type = 'in_refund'
-                    for x in self.invoice_line_ids:
-                        x.price_unit = -x.yjzy_price_unit
-                else:
-                    self.type = 'in_invoice'
-                    for x in self.invoice_line_ids:
-                        x.price_unit = x.yjzy_price_unit
+    # @api.onchange('invoice_line_ids')
+    # def onchange_payment_currency(self):
+    #     # self.payment_term_id = self.yjzy_payment_term_id
+    #     # self.currency_id = self.yjzy_currency_id
+    #     if self.is_yjzy_invoice:
+    #         yjzy_type = self.yjzy_type
+    #         if yjzy_type == 'sale' or yjzy_type == 'back_tax':
+    #             if self.yjzy_price_total < 0:
+    #                 self.type = 'out_refund'
+    #                 for x in self.invoice_line_ids:
+    #                     x.price_unit = -x.yjzy_price_unit
+    #             else:
+    #                 self.type = 'out_invoice'
+    #                 for x in self.invoice_line_ids:
+    #                     x.price_unit = x.yjzy_price_unit
+    #         else:
+    #             if self.yjzy_price_total < 0:
+    #                 self.type = 'in_refund'
+    #                 for x in self.invoice_line_ids:
+    #                     x.price_unit = -x.yjzy_price_unit
+    #             else:
+    #                 self.type = 'in_invoice'
+    #                 for x in self.invoice_line_ids:
+    #                     x.price_unit = x.yjzy_price_unit
 
     @api.onchange('yjzy_payment_term_id')
     def onchange_payment_term(self):

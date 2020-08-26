@@ -1625,7 +1625,7 @@
                   parent="menu_account_new_root" name="应收账单账期排序"
                   sequence="90"
         />
-        <record id="action_customer_account_invoice_extra" model="ir.actions.act_window">
+        <!--record id="action_customer_account_invoice_extra" model="ir.actions.act_window">
             <field name="name">额外应收账单</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">account.invoice</field>
@@ -1633,9 +1633,9 @@
             <field name="search_view_id" ref="view_account_invoice_new_filter"/>
             <field name="domain">[('type','=','out_invoice'),('yjzy_type','=','sale'),('is_yjzy_invoice','=',True)]</field>
             <field name="context">{}
-            </field>
+            </field-->
             <!--field name="target">new</field-->
-            <field name="view_ids" eval="[(5, 0, 0),
+            <!--field name="view_ids" eval="[(5, 0, 0),
                               (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.invoice_new_1_tree')}),
                               (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.view_account_invoice_new_form')}),
                               ]"/>
@@ -1643,7 +1643,7 @@
          <menuitem id="menu_customer_account_invoice_extra" action="action_customer_account_invoice_extra"
                   parent="menu_account_new_root" name="额外应收账单"
                   sequence="99"
-        />
+        /-->
 
           <record id="action_sale_account_invoice_new_2" model="ir.actions.act_window">
             <field name="name">应收账单:不含系统外</field>
@@ -1897,7 +1897,7 @@
             <field name="res_model">account.invoice</field>
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_account_invoice_new_filter"/>
-            <field name="domain">[('state_1','=','done'),('type','=','out_invoice'),('yjzy_type','=','sale')]</field>
+            <field name="domain">[('type','=','out_invoice'),('yjzy_type','=','sale'),('is_yjzy_invoice','=',True)]</field>
             <field name="context">{'default_is_yjzy_invoice':1,'default_type':'out_invoice','only_ref':1,'default_yjzy_type':'sale'}
             </field>
             <!--field name="target">new</field-->
@@ -1907,7 +1907,7 @@
                               ]"/>
         </record>
         <menuitem id="menu_customer_account_invoice_extra_done" action="action_customer_account_invoice_extra_done"
-                  parent="menu_account_invoice_extra_root" name="额外应收账单查询"
+                  parent="menu_extra_customer_invoice_root" name="额外应收账单查询"
                   sequence="99"
         />
 
@@ -1956,7 +1956,7 @@
             <field name="res_model">account.invoice</field>
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_account_invoice_new_filter"/>
-            <field name="domain">[('state_1','=','done'),('type','=','in_invoice'),('yjzy_type','=','purchase')]</field>
+            <field name="domain">[('type','=','in_invoice'),('yjzy_type','=','purchase'),('is_yjzy_invoice','=',True)]</field>
             <field name="context">{'default_is_yjzy_invoice':1,'default_type':'in_invoice','only_ref':1,'default_yjzy_type':'purchase'}
             </field>
             <!--field name="target">new</field-->
@@ -1966,7 +1966,7 @@
                               ]"/>
         </record>
        <menuitem id="menu_supplier_account_invoice_extra_done" action="action_supplier_account_invoice_extra_done"
-                  parent="menu_supplier_account_invoice_extra_root" name="额外应付账单审批"
+                  parent="menu_extra_supplier_invoice_root" name="额外应付账单查询"
                   sequence="90"
         />
          <record id="action_supplier_account_invoice_extra_form" model="ir.actions.act_window">
