@@ -1611,7 +1611,7 @@ class transport_bill(models.Model):
         ctx = self.env.context
         result = []
         only_ref = self.env.context.get('only_ref')
-        min_add = self.env.context.ger('min_only')
+        min_add = self.env.context.get('min_only')
         # fhtzd = self.env.context.get(fhtzd)
         for one in self:
             print('---name_get---',one)
