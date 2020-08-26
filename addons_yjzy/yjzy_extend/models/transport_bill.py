@@ -1620,7 +1620,7 @@ class transport_bill(models.Model):
                 if only_ref:
                     name = one.ref
                 elif min_add:
-                      name = one.purchase_amount_min_add_rest_total
+                    name = '%s:%s' % (one.ref,one.purchase_amount_min_add_rest_total)
                 else:
                     name += ':%s' % one.ref
             result.append((one.id, name))

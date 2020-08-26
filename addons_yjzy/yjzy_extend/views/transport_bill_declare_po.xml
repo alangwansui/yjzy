@@ -22,7 +22,6 @@
                     <field name="purchase_amount_max_add_rest_total"/>
                     <field name="purchase_amount_min_add_rest_total"/>
                     <field name="purchase_amount2_add_actual_total"/>
-
                     <field name="state" invisible="1" groups="base.group_system"/>
                     <field name="company_currency_id" invisible="1" groups="base.group_system"/>
                     <field name="sale_currency_id" invisible="1"/>
@@ -64,9 +63,6 @@
                                        domain="[('parent_id','child_of', partner_id)]"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"
                                        no_create="True"/>
-
-
-
                             </group>
 
 
