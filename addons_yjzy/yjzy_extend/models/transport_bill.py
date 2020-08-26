@@ -1612,15 +1612,17 @@ class transport_bill(models.Model):
         result = []
         only_ref = self.env.context.get('only_ref')
         min_add = self.env.context.get('min_add')
+
         # fhtzd = self.env.context.get(fhtzd)
         for one in self:
+            purchase_amount_min_add_rest_total = round(one.purchase_amount_min_add_rest_total, 2)
             print('---name_get---',one)
             name = one.name
             if one.ref:
                 if only_ref:
                     name = one.ref
                 elif min_add:
-                    name = '%s:%s' % (one.ref,one.purchase_amount_min_add_rest_total)
+                    name = '%s:%s' % (one.ref,purchase_amount_min_add_rest_total)
                 else:
                     name += ':%s' % one.ref
             result.append((one.id, name))
