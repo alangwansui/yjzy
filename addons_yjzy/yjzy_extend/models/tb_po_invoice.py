@@ -131,8 +131,8 @@ class tb_po_invoice(models.Model):
     amount_diff = fields.Float('实际差额')
     tax_rate_add = fields.Float(u'增加采购税率')
     expense_tax = fields.Float(u'税费',compute=compute_info)
-    product_feiyong_tax = fields.Many2one('product.product',u'税费产品产品',domain=[('type','=','service')], default=_default_feiyong_tax_product)
-    product_zyywsr = fields.Many2one('product.product', u'税费产品', domain=[('type', '=', 'service')],default=_default_product_zyywsr)
+    product_feiyong_tax = fields.Many2one('product.product',u'税费产品',domain=[('type','=','service')], default=_default_feiyong_tax_product)
+    product_zyywsr = fields.Many2one('product.product', u'主营收入产品', domain=[('type', '=', 'service')],default=_default_product_zyywsr)
     product_qtysk = fields.Many2one('product.product', u'其他应收产品', domain=[('type', '=', 'service')],default=_default_product_qtysk)
     product_back_tax = fields.Many2one('product.product', u'退税产品', domain=[('type', '=', 'service')],default=_default_product_back_tax)
 
@@ -336,10 +336,10 @@ class tb_po_invoice(models.Model):
                                'account_id': account_product_zyywsr.id,}),
                                  (0, 0, {
                                      'name': '%s' % (product_qtysk.name),
-                                     'product_id': account_product_qtysk.id,
+                                     'product_id': product_qtysk.id,
                                      'quantity': 1,
                                      'price_unit': self.p_s_add_this_time_extra_total,
-                                     'account_id': product_qtysk.id,}),
+                                     'account_id': account_product_qtysk.id,}),
                                  (0, 0, {
                                      'name': '%s' % (product_feiyong_tax.name),
                                      'product_id': product_feiyong_tax.id,
