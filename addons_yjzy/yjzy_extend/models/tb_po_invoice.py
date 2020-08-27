@@ -79,6 +79,17 @@ class tb_po_invoice(models.Model):
     #     self.extra_invoice_line_ids = res
     # # invoice_ids = fields.Many2many('account.invoice','ref_invoice_tb','invoice_id','tbl_id',u'额外账单')
     # # hsname_id = fields.Many2one('tbl.hsname', u'报关明细')
+
+    @api.depends('hsname_all_ids','hsname_all_ids.tax_rate_add','hsname_all_ids.expense_tax')
+    def compute_expense_tax(self):
+        for one in self:
+            expense_tax = sum(x.expense_tax for x in one.hsname_all_ids)
+            one.expense_tax = expense_tax
+
+    #827
+
+    tax_rate_add = fields.Float(u'增加采购税率')
+    expense_tax = fields.Float(u'税费',compute=compute_expense_tax)
     fiscal_position_id = fields.Many2one('account.fiscal.position', string='Fiscal Position', oldname='fiscal_position',
                                          readonly=True, states={'draft': [('readonly', False)]})
     type_invoice = fields.Selection([
@@ -571,9 +582,17 @@ class tb_po_invoice(models.Model):
 class tb_po_invoice_line(models.Model):
     _name = 'tb.po.invoice.line'
 
+    @api.depends('purchase_amount2_add_this_time','tax_rate_add')
+    def compute_info(self):
+        for one in self:
+            tax_rate_add = one.tax_rate_add
+            purchase_amount2_add_this_time = one.purchase_amount2_add_this_time
+            expense_tax = purchase_amount2_add_this_time * tax_rate_add
+            one.expense_tax = expense_tax
 
-
-
+    #827
+    tax_rate_add = fields.Float(u'增加采购税率',related='tb_po_id.tax_rate_add')
+    expense_tax = fields.Float(u'税费',compute=compute_info)
     tb_po_id = fields.Many2one('tb.po.invoice', 'TB_PO',ondelete='cascade')
     hsname_all_line_id = fields.Many2one('tbl.hsname.all', u'销售明细')
     hs_en_name = fields.Char(related='hs_id.en_name')

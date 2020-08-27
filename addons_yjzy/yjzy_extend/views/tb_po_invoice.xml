@@ -59,7 +59,7 @@
                         <field name="state" widget="statusbar" />
                     </header>
                     <sheet>
-                    <group col="2">
+                    <group col="3">
                     <group>
                         <field name="partner_id" string="供应商" domain="[('supplier', '=', True),('is_company','=',True)]"/>
                         <field name="tb_id" attrs="{'invisible':[('type','!=','other_po')]}" context="{'min_add':1,'tree_view_ref':'yjzy_extend.view_transport_bill_declare_po_tree'}"/>
@@ -81,6 +81,11 @@
                         <field name="expense_currency_id" attrs="{'invisible':[('type','!=','expense_po')]}"/>
                         <field name="expense_sheet_amount" attrs="{'invisible':[('type','!=','expense_po')]}"/>
                         <field name="price_total" groups="base.group_system"/>
+                    </group>
+                        <group>
+                         <field name="tax_rate_add" />
+                        <field name="expense_tax" />
+
                     </group>
                     </group>
                     <notebook>
