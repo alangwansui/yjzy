@@ -302,10 +302,14 @@ class tb_po_invoice(models.Model):
         product_qtysk = self.product_qtysk
         product_feiyong_tax = self.product_feiyong_tax
         account = product.property_account_income_id
-        account_domain = [('code', '=', '2202'), ('company_id', '=', self.env.user.company_id.id)]
-        account_id = self.env['account.account'].search(account_domain, limit=1)
-        if account_id == False:
-            raise Warning('请先设置额外账单的科目')
+        account_product_zyywsr = product_zyywsr.property_account_income_id
+        account_product_qtysk = product_qtysk.property_account_income_id
+        account_product_feiyong_tax = product_feiyong_tax.property_account_income_id
+
+        # account_domain = [('code', '=', '2202'), ('company_id', '=', self.env.user.company_id.id)]
+        # account_id = self.env['account.account'].search(account_domain, limit=1)
+        # if account_id == False:
+        #     raise Warning('请先设置额外账单的科目')
         print('yjzy_invoice_id',self.yjzy_invoice_id)
         inv = invoice_obj.create({
             'tb_po_invoice_id':self.id,
@@ -323,25 +327,25 @@ class tb_po_invoice(models.Model):
             'date_invoice':fields.datetime.now(),
             'date_finish': self.yjzy_invoice_id.date_finish,
             'po_id':self.yjzy_invoice_id.po_id.id,
-            'account_id':account_id.id,
+            # 'account_id':account_id.id,
             'invoice_line_ids': [(0, 0, {
                                'name': '%s' % (product_zyywsr.name),
                                'product_id': product_zyywsr.id,
                                'quantity': 1,
                                'price_unit': self.p_s_add_this_time_refund,
-                               'account_id': account.id,}),
+                               'account_id': account_product_zyywsr.id,}),
                                  (0, 0, {
                                      'name': '%s' % (product_qtysk.name),
-                                     'product_id': product_qtysk.id,
+                                     'product_id': account_product_qtysk.id,
                                      'quantity': 1,
                                      'price_unit': self.p_s_add_this_time_extra_total,
-                                     'account_id': account.id, }),
+                                     'account_id': product_qtysk.id,}),
                                  (0, 0, {
                                      'name': '%s' % (product_feiyong_tax.name),
                                      'product_id': product_feiyong_tax.id,
                                      'quantity': 1,
                                      'price_unit': self.expense_tax,
-                                     'account_id': account.id, })
+                                     'account_id': account_product_feiyong_tax.id,})
                                  ]
 
             })
