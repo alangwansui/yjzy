@@ -19,7 +19,7 @@ class tb_po_invoice(models.Model):
             p_s_add_this_time_total = sum(x.p_s_add_this_time for x in one.hsname_all_ids)
             back_tax_add_this_time_total = sum(x.back_tax_add_this_time for x in one.hsname_all_ids)
             expense_tax = sum(x.expense_tax for x in one.hsname_all_ids)
-            yjzy_invoice_id = one.tb_id.purchase_invoice_ids.filtered(lambda x: x.partner_id == one.partner_id)
+            yjzy_invoice_id = one.tb_id.purchase_invoice_ids.filtered(lambda x: x.partner_id == one.partner_id and x.invoice_attribute in ['normal',False])
             # if len(purchase_invoice_partner_id) != 0:
             yjzy_invoice_residual_amount = sum(x.residual for x in yjzy_invoice_id)
             yjzy_invoice_include_tax = yjzy_invoice_id and yjzy_invoice_id[0].include_tax or False
