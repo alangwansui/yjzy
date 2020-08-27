@@ -11,19 +11,18 @@ class tb_po_invoice(models.Model):
     _description = '额外增加采购单'
     _order = 'id desc'
 
-    @api.depends('hsname_all_ids', 'hsname_all_ids.purchase_amount2_add_this_time', 'hsname_all_ids.p_s_add_this_time',
+    @api.depends('hsname_all_ids', 'hsname_all_ids.purchase_amount2_add_this_time', 'hsname_all_ids.p_s_add_this_time','hsname_all_ids.tax_rate_add','hsname_all_ids.expense_tax',
                  'partner_id','extra_invoice_line_ids','extra_invoice_line_ids.price_unit')
     def compute_info(self):
         for one in self:
             purchase_amount2_add_this_time_total = sum(x.purchase_amount2_add_this_time for x in one.hsname_all_ids)
             p_s_add_this_time_total = sum(x.p_s_add_this_time for x in one.hsname_all_ids)
             back_tax_add_this_time_total = sum(x.back_tax_add_this_time for x in one.hsname_all_ids)
-            yjzy_invoice_id = one.tb_id.purchase_invoice_ids.filtered(
-                lambda x: x.partner_id == one.partner_id)
+            expense_tax = sum(x.expense_tax for x in one.hsname_all_ids)
+            yjzy_invoice_id = one.tb_id.purchase_invoice_ids.filtered(lambda x: x.partner_id == one.partner_id)
             # if len(purchase_invoice_partner_id) != 0:
             yjzy_invoice_residual_amount = sum(x.residual for x in yjzy_invoice_id)
-            yjzy_invoice_include_tax = yjzy_invoice_id and yjzy_invoice_id[
-                0].include_tax or False
+            yjzy_invoice_include_tax = yjzy_invoice_id and yjzy_invoice_id[0].include_tax or False
             p_s_add_this_time_refund = 0.0
             if not yjzy_invoice_include_tax:
                 if yjzy_invoice_residual_amount - p_s_add_this_time_total > 0:
@@ -31,17 +30,20 @@ class tb_po_invoice(models.Model):
                 else:
                     p_s_add_this_time_refund = yjzy_invoice_residual_amount
             p_s_add_this_time_extra_total = p_s_add_this_time_total - p_s_add_this_time_refund
+            amount_diff = back_tax_add_this_time_total + p_s_add_this_time_total - purchase_amount2_add_this_time_total
+
             if one.type =='extra':
                 price_total = sum(one.extra_invoice_line_ids.mapped('price_total'))
                 one.price_total = price_total
             else:
                 one.price_total = purchase_amount2_add_this_time_total
+            one.expense_tax = expense_tax
             one.p_s_add_this_time_extra_total = p_s_add_this_time_extra_total
             one.p_s_add_this_time_refund = p_s_add_this_time_refund
             one.purchase_amount2_add_this_time_total = purchase_amount2_add_this_time_total
             one.p_s_add_this_time_total = p_s_add_this_time_total
             one.back_tax_add_this_time_total = back_tax_add_this_time_total
-
+            one.amount_diff = amount_diff
             one.yjzy_invoice_residual_amount = yjzy_invoice_residual_amount
             one.yjzy_invoice_include_tax = yjzy_invoice_include_tax
             # one.yjzy_invoice_id = yjzy_invoice_id and yjzy_invoice_id[0] or False
@@ -80,16 +82,62 @@ class tb_po_invoice(models.Model):
     # # invoice_ids = fields.Many2many('account.invoice','ref_invoice_tb','invoice_id','tbl_id',u'额外账单')
     # # hsname_id = fields.Many2one('tbl.hsname', u'报关明细')
 
-    @api.depends('hsname_all_ids','hsname_all_ids.tax_rate_add','hsname_all_ids.expense_tax')
-    def compute_expense_tax(self):
-        for one in self:
-            expense_tax = sum(x.expense_tax for x in one.hsname_all_ids)
-            one.expense_tax = expense_tax
+    # @api.depends('hsname_all_ids','hsname_all_ids.tax_rate_add','hsname_all_ids.expense_tax')
+    # def compute_expense_tax(self):
+    #     for one in self:
+    #         expense_tax = sum(x.expense_tax for x in one.hsname_all_ids)
+    #         one.expense_tax = expense_tax
+
+    def _default_feiyong_tax_product(self):
+        try:
+            #return self.env.ref('yjzy_extend.product_shuifei').id
+            p = self.env['product.product'].search([('default_code','=', 'C1102280A')], limit=1)
+            print('===_default_feiyong_product===', p)
+            return p.id
+
+        except Exception as e:
+            return None
+    def _default_product_zyywsr(self):
+        try:
+            #return self.env.ref('yjzy_extend.product_shuifei').id
+            p = self.env['product.product'].search([('default_code','=', '01000')], limit=1)
+            print('===_default_feiyong_product===', p)
+            return p.id
+
+        except Exception as e:
+            return None
+
+    def _default_product_qtysk(self):
+        try:
+            #return self.env.ref('yjzy_extend.product_shuifei').id
+            p = self.env['product.product'].search([('default_code','=', 'D01938')], limit=1)
+            print('===_default_feiyong_product===', p)
+            return p.id
+
+        except Exception as e:
+            return None
+
+    def _default_product_back_tax(self):
+        try:
+            #return self.env.ref('yjzy_extend.product_shuifei').id
+            p = self.env['product.product'].search([('default_code','=', 'back_tax')], limit=1)
+            print('===_default_feiyong_product===', p)
+            return p.id
+
+        except Exception as e:
+            return None
 
     #827
-
+    amount_diff = fields.Float('实际差额')
     tax_rate_add = fields.Float(u'增加采购税率')
-    expense_tax = fields.Float(u'税费',compute=compute_expense_tax)
+    expense_tax = fields.Float(u'税费',compute=compute_info)
+    product_feiyong_tax = fields.Many2one('product.product',u'税费产品产品',domain=[('type','=','service')], default=_default_feiyong_tax_product)
+    product_zyywsr = fields.Many2one('product.product', u'税费产品', domain=[('type', '=', 'service')],default=_default_product_zyywsr)
+    product_qtysk = fields.Many2one('product.product', u'其他应收产品', domain=[('type', '=', 'service')],default=_default_product_qtysk)
+    product_back_tax = fields.Many2one('product.product', u'退税产品', domain=[('type', '=', 'service')],default=_default_product_back_tax)
+
+
+
     fiscal_position_id = fields.Many2one('account.fiscal.position', string='Fiscal Position', oldname='fiscal_position',
                                          readonly=True, states={'draft': [('readonly', False)]})
     type_invoice = fields.Selection([
@@ -234,6 +282,15 @@ class tb_po_invoice(models.Model):
 
     def apply(self):
         self.ensure_one()
+        self.make_purchase_invoice()
+        self.make_back_tax()
+        self.make_sale_invoice()
+        self.make_sale_invoice_extra()
+
+
+    #应付发票
+    def make_purchase_invoice(self):
+        self.ensure_one()
         # self.check()
         invoice_obj = self.env['account.invoice']
         invoice_line_obj = self.env['account.invoice.line']
@@ -241,13 +298,15 @@ class tb_po_invoice(models.Model):
         purchase_orders = invoice_obj.browse()
         # product = self.env.ref('yjzy_extend.product_back_tax')
         product = self.invoice_product_id
+        product_zyywsr = self.product_zyywsr
+        product_qtysk = self.product_qtysk
+        product_feiyong_tax = self.product_feiyong_tax
         account = product.property_account_income_id
         account_domain = [('code', '=', '220299'), ('company_id', '=', self.env.user.company_id.id)]
         account_id = self.env['account.account'].search(account_domain, limit=1)
         if account_id == False:
             raise Warning('请先设置额外账单的科目')
         print('yjzy_invoice_id',self.yjzy_invoice_id)
-
         inv = invoice_obj.create({
             'tb_po_invoice_id':self.id,
             'partner_id': self.partner_id.id,
@@ -256,7 +315,6 @@ class tb_po_invoice(models.Model):
             'type': 'in_invoice',
             'journal_type': 'purchase',
             'yjzy_type': 'purchase',
-            'yjzy_invoice_id':self.yjzy_invoice_id,
             'yjzy_payment_term_id':self.yjzy_invoice_id.payment_term_id.id,
             'yjzy_currency_id':self.yjzy_invoice_id.currency_id.id,
             # 'payment_term_id': self.yjzy_invoice_id.payment_term_id.id,
@@ -267,13 +325,28 @@ class tb_po_invoice(models.Model):
             'po_id':self.yjzy_invoice_id.po_id.id,
             'account_id':account_id.id,
             'invoice_line_ids': [(0, 0, {
-                               'name': '%s' % (product.name),
-                               'product_id': product.id,
+                               'name': '%s' % (product_zyywsr.name),
+                               'product_id': product_zyywsr.id,
                                'quantity': 1,
-                               'price_unit': self.purchase_amount2_add_this_time_total,
-                               'account_id': account.id,
-            })]
+                               'price_unit': self.p_s_add_this_time_refund,
+                               'account_id': account.id,}),
+                                 (0, 0, {
+                                     'name': '%s' % (product_qtysk.name),
+                                     'product_id': product_qtysk.id,
+                                     'quantity': 1,
+                                     'price_unit': self.p_s_add_this_time_extra_total,
+                                     'account_id': account.id, }),
+                                 (0, 0, {
+                                     'name': '%s' % (product_feiyong_tax.name),
+                                     'product_id': product_feiyong_tax.id,
+                                     'quantity': 1,
+                                     'price_unit': self.expense_tax,
+                                     'account_id': account.id, })
+                                 ]
+
+
             })
+
         for line in self.hsname_all_ids:
             hsname_all_line = hsname_all_line_obj.create({
                 'invoice_id': inv.id,
@@ -284,24 +357,13 @@ class tb_po_invoice(models.Model):
                 'back_tax_add_this_time': line.back_tax_add_this_time,
                 'tbl_hsname_all_id':line.hsname_all_line_id.id
             })
-        self.make_back_tax()
-        self.make_sale_invoice()
-        self.make_sale_invoice_extra()
-        form_view = self.env.ref('yjzy_extend.view_supplier_invoice_extra_po_form').id
-        return {
-            'name': u'增加采购额外账单',
-            'view_type': 'form',
-            'view_mode': 'form',
-            'res_model': 'account.invoice',
-            'views':[(form_view,'form')],
-            'res_id':inv.id,
-            'type': 'ir.actions.act_window',
-            'target': 'new',
 
-        }
+
+
     def make_back_tax(self):
         partner = self.env.ref('yjzy_extend.partner_back_tax')
-        product = self.env.ref('yjzy_extend.product_back_tax')
+        # product = self.env.ref('yjzy_extend.product_back_tax')
+        product = self.product_feiyong_tax
         # account = self.env['account.account'].search([('code','=', '50011'),('company_id', '=', self.user_id.company_id.id)], limit=1)
         account = product.property_account_income_id
 
@@ -336,7 +398,7 @@ class tb_po_invoice(models.Model):
                     'hs_en_name': line.hs_en_name,
                     'tbl_hsname_all_id': line.hsname_all_line_id.id
                     })
-            # 730 创建后直接过账
+    # 730 创建后直接过账 冲减发票
     def make_sale_invoice(self):
         self.ensure_one()
         # self.check()
@@ -345,7 +407,8 @@ class tb_po_invoice(models.Model):
         hsname_all_line_obj = self.env['invoice.hs_name.all']
         purchase_orders = invoice_obj.browse()
         # product = self.env.ref('yjzy_extend.product_back_tax')
-        product = self.invoice_product_id
+        # product = self.invoice_product_id
+        product = self.product_zyywsr
         account = product.property_account_income_id
         if self.p_s_add_this_time_refund != 0:
             inv = invoice_obj.create({
@@ -354,8 +417,9 @@ class tb_po_invoice(models.Model):
                 'bill_id': self.tb_id.id,
                 'invoice_attribute': 'other_po',
                 'type': 'in_refund',
+                'yjzy_type':'purchase',
+                'yjzy_invoice_id':self.yjzy_invoice_id.id,
                 'journal_type': 'purchase',
-                'yjzy_type': 'purchase',
                 'date': fields.datetime.now(),
                 'date_invoice': fields.datetime.now(),
                 'invoice_line_ids': [(0, 0, {
@@ -382,7 +446,8 @@ class tb_po_invoice(models.Model):
         hsname_all_line_obj = self.env['invoice.hs_name.all']
         purchase_orders = invoice_obj.browse()
         # product = self.env.ref('yjzy_extend.product_back_tax')
-        product = self.invoice_product_id
+        # product = self.invoice_product_id
+        product = self.product_qtysk
         account = product.property_account_income_id
         if self.p_s_add_this_time_extra_total != 0:
             inv = invoice_obj.create({
@@ -413,7 +478,7 @@ class tb_po_invoice(models.Model):
 
                     'tbl_hsname_all_id': line.hsname_all_line_id.id
                 })
-    #825
+    #825 额外账单
     def make_extra_invoice(self):
         self.ensure_one()
         # self.check()
@@ -588,7 +653,9 @@ class tb_po_invoice_line(models.Model):
             tax_rate_add = one.tax_rate_add
             purchase_amount2_add_this_time = one.purchase_amount2_add_this_time
             expense_tax = purchase_amount2_add_this_time * tax_rate_add
+            p_s_add_this_time = purchase_amount2_add_this_time - expense_tax
             one.expense_tax = expense_tax
+            one.p_s_add_this_time = p_s_add_this_time
 
     #827
     tax_rate_add = fields.Float(u'增加采购税率',related='tb_po_id.tax_rate_add')
@@ -620,7 +687,7 @@ class tb_po_invoice_line(models.Model):
     # purchase_amount2_add_actual = fields.Float(U'实际已经增加采购额')
 
     purchase_amount2_add_this_time = fields.Float(U'本次采购开票金额')
-    p_s_add_this_time = fields.Float(u'本次应收金额')
+    p_s_add_this_time = fields.Float(u'本次应收金额' ,compute=compute_info)
     back_tax_add_this_time = fields.Float('本次应生成退税')
     p_s_add_this_time_old = fields.Float(u'冲减原始应付金额')
     yjzy_invoice_id = fields.Many2one('account.invoice',u'关联账单')
@@ -678,7 +745,7 @@ class Extra_Invoice_Line(models.Model):
     name = fields.Text(string='Description')
     sequence = fields.Integer(default=10,
                               help="Gives the sequence of this line when displaying the invoice.")
-    tb_po_id = fields.Many2one('tb.po.invoice', string='TB_PO',ondelete='cascade',index=True)
+    tb_po_id = fields.Many2one('tb.po.invoice', string='TB_PO', ondelete='cascade',index=True)
 
     product_id = fields.Many2one('product.product', string='Product',
                                  ondelete='restrict', index=True)
