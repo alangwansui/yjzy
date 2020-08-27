@@ -310,10 +310,10 @@ class tb_po_invoice(models.Model):
         inv = invoice_obj.create({
             'tb_po_invoice_id':self.id,
             'partner_id': self.partner_id.id,
-            'bill_id': self.tb_id.id,
-            'invoice_attribute':'other_po',
             'type': 'in_invoice',
             'journal_type': 'purchase',
+            'bill_id': self.tb_id.id,
+            'invoice_attribute':'other_po',
             'yjzy_type': 'purchase',
             'yjzy_payment_term_id':self.yjzy_invoice_id.payment_term_id.id,
             'yjzy_currency_id':self.yjzy_invoice_id.currency_id.id,
@@ -344,7 +344,6 @@ class tb_po_invoice(models.Model):
                                      'account_id': account.id, })
                                  ]
 
-
             })
 
         for line in self.hsname_all_ids:
@@ -357,9 +356,6 @@ class tb_po_invoice(models.Model):
                 'back_tax_add_this_time': line.back_tax_add_this_time,
                 'tbl_hsname_all_id':line.hsname_all_line_id.id
             })
-
-
-
     def make_back_tax(self):
         partner = self.env.ref('yjzy_extend.partner_back_tax')
         # product = self.env.ref('yjzy_extend.product_back_tax')
