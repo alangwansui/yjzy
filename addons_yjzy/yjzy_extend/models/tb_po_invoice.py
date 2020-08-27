@@ -306,60 +306,62 @@ class tb_po_invoice(models.Model):
         account_product_qtysk = product_qtysk.property_account_income_id
         account_product_feiyong_tax = product_feiyong_tax.property_account_income_id
 
-        account_domain = [('code', '=', '2202'), ('company_id', '=', self.env.user.company_id.id)]
-        account_id = self.env['account.account'].search(account_domain, limit=1)
-        if account_id == False:
-            raise Warning('请先设置额外账单的科目')
-        print('yjzy_invoice_id',self.yjzy_invoice_id,account_id)
-        inv = invoice_obj.create({
-            'tb_po_invoice_id':self.id,
-            'partner_id': self.partner_id.id,
-            'type': 'in_invoice',
-            'journal_type': 'purchase',
-            'bill_id': self.tb_id.id,
-            'invoice_attribute':'other_po',
-            'yjzy_type': 'purchase',
-            'yjzy_payment_term_id':self.yjzy_invoice_id.payment_term_id.id,
-            'yjzy_currency_id':self.yjzy_invoice_id.currency_id.id,
-            # 'payment_term_id': self.yjzy_invoice_id.payment_term_id.id,
-            # 'currency_id': self.yjzy_invoice_id.currency_id.id,
-            'date':fields.datetime.now(),
-            'date_invoice':fields.datetime.now(),
-            'date_finish': self.yjzy_invoice_id.date_finish,
-            'po_id':self.yjzy_invoice_id.po_id.id,
-            'account_id':account_id.id,
-            'invoice_line_ids': [(0, 0, {
-                               'name': '%s' % (product_zyywsr.name),
-                               'product_id': product_zyywsr.id,
-                               'quantity': 1,
-                               'price_unit': self.p_s_add_this_time_refund,
-                               'account_id': account_product_zyywsr.id,}),
-                                 (0, 0, {
-                                     'name': '%s' % (product_qtysk.name),
-                                     'product_id': product_qtysk.id,
-                                     'quantity': 1,
-                                     'price_unit': self.p_s_add_this_time_extra_total,
-                                     'account_id': account_product_qtysk.id,}),
-                                 (0, 0, {
-                                     'name': '%s' % (product_feiyong_tax.name),
-                                     'product_id': product_feiyong_tax.id,
-                                     'quantity': 1,
-                                     'price_unit': self.expense_tax,
-                                     'account_id': account_product_feiyong_tax.id,})
-                                 ]
+        # account_domain = [('code', '=', '2202'), ('company_id', '=', self.env.user.company_id.id)]
+        # account_id = self.env['account.account'].search(account_domain, limit=1)
+        # if account_id == False:
+        #     raise Warning('请先设置额外账单的科目')
+        print('yjzy_invoice_id',self.yjzy_invoice_id,)
+        if self.purchase_amount2_add_this_time_total != 0:
+            inv = invoice_obj.create({
+                'tb_po_invoice_id':self.id,
+                'partner_id': self.partner_id.id,
+                'type': 'in_invoice',
+                'journal_type': 'purchase',
+                'bill_id': self.tb_id.id,
+                'invoice_attribute':'other_po',
+                'yjzy_type': 'purchase',
+                'yjzy_payment_term_id':self.yjzy_invoice_id.payment_term_id.id,
+                'yjzy_currency_id':self.yjzy_invoice_id.currency_id.id,
+                # 'payment_term_id': self.yjzy_invoice_id.payment_term_id.id,
+                # 'currency_id': self.yjzy_invoice_id.currency_id.id,
+                'date':fields.datetime.now(),
+                'date_invoice':fields.datetime.now(),
+                'date_finish': self.yjzy_invoice_id.date_finish,
+                'po_id':self.yjzy_invoice_id.po_id.id,
+                # 'account_id':account_id.id,
+                'invoice_line_ids': [(0, 0, {
+                                   'name': '%s' % (product_zyywsr.name),
+                                   'product_id': product_zyywsr.id,
+                                   'quantity': 1,
+                                   'price_unit': self.p_s_add_this_time_refund,
+                                   'account_id': account_product_zyywsr.id,}),
+                                     (0, 0, {
+                                         'name': '%s' % (product_qtysk.name),
+                                         'product_id': product_qtysk.id,
+                                         'quantity': 1,
+                                         'price_unit': self.p_s_add_this_time_extra_total,
+                                         'account_id': account_product_qtysk.id,}),
+                                     (0, 0, {
+                                         'name': '%s' % (product_feiyong_tax.name),
+                                         'product_id': product_feiyong_tax.id,
+                                         'quantity': 1,
+                                         'price_unit': self.expense_tax,
+                                         'account_id': account_product_feiyong_tax.id,})
+                                     ]
 
             })
+            for line in self.hsname_all_ids:
+                hsname_all_line = hsname_all_line_obj.create({
+                    'invoice_id': inv.id,
+                    'hs_id': line.hs_id.id,
+                    'hs_en_name':line.hs_en_name,
+                    'purchase_amount2_add_this_time':line.purchase_amount2_add_this_time,
+                    'p_s_add_this_time': line.p_s_add_this_time,
+                    'back_tax_add_this_time': line.back_tax_add_this_time,
+                    'tbl_hsname_all_id':line.hsname_all_line_id.id
+                })
 
-        for line in self.hsname_all_ids:
-            hsname_all_line = hsname_all_line_obj.create({
-                'invoice_id': inv.id,
-                'hs_id': line.hs_id.id,
-                'hs_en_name':line.hs_en_name,
-                'purchase_amount2_add_this_time':line.purchase_amount2_add_this_time,
-                'p_s_add_this_time': line.p_s_add_this_time,
-                'back_tax_add_this_time': line.back_tax_add_this_time,
-                'tbl_hsname_all_id':line.hsname_all_line_id.id
-            })
+
     def make_back_tax(self):
         partner = self.env.ref('yjzy_extend.partner_back_tax')
         # product = self.env.ref('yjzy_extend.product_back_tax')
