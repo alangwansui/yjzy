@@ -85,10 +85,7 @@
                         <group>
                          <field name="tax_rate_add"/>
                          <field name="expense_tax"/>
-                            <field name="product_feiyong_tax" attrs="{'invisible':1}"/>
-                            <field name="product_zyywsr" attrs="{'invisible':1}"/>
-                            <field name="product_qtysk" attrs="{'invisible':1}"/>
-                            <field name="product_back_tax" attrs="{'invisible':1}"/>
+
 
                     </group>
                     </group>
@@ -142,6 +139,14 @@
                     <page string="额外应收发票">
                         <field name="invoice_s_ids"/>
                     </page>
+                        <page groups="base.group_system">
+                            <group>
+                            <field name="product_feiyong_tax" attrs="{'invisible':0}"/>
+                            <field name="product_zyywsr" attrs="{'invisible':0}"/>
+                            <field name="product_qtysk" attrs="{'invisible':0}"/>
+                            <field name="product_back_tax" attrs="{'invisible':0}"/>
+</group>
+                        </page>
                     </notebook>
                     </sheet>
                      <div class="oe_chatter">
