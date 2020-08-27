@@ -302,10 +302,10 @@ class tb_po_invoice(models.Model):
         product_qtysk = self.product_qtysk
         product_feiyong_tax = self.product_feiyong_tax
         account = product.property_account_income_id
-        # account_domain = [('code', '=', '220299'), ('company_id', '=', self.env.user.company_id.id)]
-        # account_id = self.env['account.account'].search(account_domain, limit=1)
-        # if account_id == False:
-        #     raise Warning('请先设置额外账单的科目')
+        account_domain = [('code', '=', '2202'), ('company_id', '=', self.env.user.company_id.id)]
+        account_id = self.env['account.account'].search(account_domain, limit=1)
+        if account_id == False:
+            raise Warning('请先设置额外账单的科目')
         print('yjzy_invoice_id',self.yjzy_invoice_id)
         inv = invoice_obj.create({
             'tb_po_invoice_id':self.id,
@@ -323,7 +323,7 @@ class tb_po_invoice(models.Model):
             'date_invoice':fields.datetime.now(),
             'date_finish': self.yjzy_invoice_id.date_finish,
             'po_id':self.yjzy_invoice_id.po_id.id,
-            # 'account_id':account_id.id,
+            'account_id':account_id.id,
             'invoice_line_ids': [(0, 0, {
                                'name': '%s' % (product_zyywsr.name),
                                'product_id': product_zyywsr.id,
