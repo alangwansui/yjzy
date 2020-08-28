@@ -298,6 +298,10 @@ class account_reconcile_order(models.Model):
     is_editable = fields.Boolean(u'可编辑')
     gongsi_id = fields.Many2one('gongsi', '内部公司')
 
+    @api.onchange('line_no_ids')
+    def _onchange_line_no_ids(self):
+        self.update_line_amount()
+
     def open_wizard_reconcile_invoice(self):
         self.ensure_one()
         ctx = self.env.context.copy()
@@ -1164,3 +1168,4 @@ class account_reconcile_order_line_no(models.Model):
     amount_advance = fields.Monetary(u'预收金额:本币', currency_field='currency_id', )
     amount_payment_org = fields.Monetary(u'收款金额', currency_field='payment_currency_id')
     amount_payment = fields.Monetary(u'收款金额:本币', currency_field='currency_id', )
+

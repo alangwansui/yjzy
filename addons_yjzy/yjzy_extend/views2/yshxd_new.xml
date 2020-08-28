@@ -173,7 +173,7 @@
                                     <field name="amount_bank_org" attrs="{'column_invisible':1}" /><!--invisible="not context.get('show_so')"-->
                                     <field name="amount_diff_org" attrs="{'column_invisible':1}"/>
                                     <field name="amount_total_org"/>
-                                    <field name="yjzy_payment_id" string="预收单"/>
+                                    <field name="yjzy_payment_id" string="预收单" domain="[('so_id','=',so_id),('sfk_type','=','ysrld')]"/>
 
                                 </tree>
                             </field>
@@ -186,7 +186,7 @@
                                 <field name="payment_currency_id" invisible="1"/>
                                 <field name="amount_payment_org"/>
                                 <field name="currency_id" invisible="1"/>
-                                <field name="amount_payment"/>
+                                <field name="amount_payment" invisible="1"/>
                                 </tree>
                             </field>
                         </page>

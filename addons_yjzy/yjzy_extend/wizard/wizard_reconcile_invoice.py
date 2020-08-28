@@ -31,8 +31,7 @@ class wizard_reconcile_invoice(models.TransientModel):
         line_no_obj = self.env['account.reconcile.order.line.no']
         ctx = self.env.context
         order_id = ctx.get('active_id')
-        # line_ids = None
-        # self.line_ids = line_ids
+        self.order_id.line_ids = None
 
         # if self.no_sopo:
         #     for invoice in self.invoice_ids:
@@ -65,7 +64,7 @@ class wizard_reconcile_invoice(models.TransientModel):
         self.order_id.invoice_ids = self.invoice_ids
         so_po_dic = {}
         print('line_obj', line_ids)
-        self.line_no_ids = None
+        self.order_id.line_no_ids = None
         for i in line_ids:
             invoice = i.invoice_id
             amount_invoice_so = i.amount_invoice_so
@@ -122,8 +121,8 @@ class wizard_reconcile_invoice(models.TransientModel):
         order_id = ctx.get('active_id')
         line_obj = self.env['account.reconcile.order.line']
         line_no_obj = self.env['account.reconcile.order.line.no']
-        line_ids = None
-        self.line_ids = line_ids
+
+        self.order_id.line_ids = None
         # if self.no_sopo:
         #     for invoice in self.invoice_ids:
         #         line_obj.create({
@@ -154,7 +153,7 @@ class wizard_reconcile_invoice(models.TransientModel):
         self.order_id.invoice_ids = self.invoice_ids
         so_po_dic = {}
         print('line_obj', line_ids)
-        # self.line_no_ids = None
+        self.order_id.line_no_ids = None
         for i in line_ids:
             invoice = i.invoice_id
             amount_invoice_so = i.amount_invoice_so
