@@ -50,9 +50,9 @@
                 <header>
                     <button name="action_posted_new" class="oe_highlight" states="draft" string="提交" type="object"/>
                     <button name="action_approve_new" class="oe_highlight" states="posted" string="总经理审批" attrs="{'invisible':[('sfk_type','!=','yfhxd')]}" type="object"/>
-                    <button name="action_done"  class="oe_highlight" states="approved" string="财务确认" attrs="{'invisible':[('sfk_type','!=','yshxd')]}" type="object"/>
+                    <button name="action_done"  class="oe_highlight"  string="财务确认" attrs="{'invisible':['|',('state','!=','approved'),('sfk_type','!=','yshxd')]}" type="object"/>
                     <button name="action_draft_new" class="oe_highlight" states="refused" string="重置草稿" type="object"/>
-                    <button name="%(reconcile_refuse_wizard_action)d" string="拒绝" type="action"/>
+                    <button name="%(reconcile_refuse_wizard_action)d" string="拒绝" type="action" attrs="{'invisible':[('state','=','done')]}"/>
                     <button name="open_wizard_reconcile_invoice" type="object" string="添加应收账单"/>
                     <field name="state" widget="statusbar"/>
                     <field name="is_editable"  widget="boolean_toggle" groups="sales_team.group_manager"/>
