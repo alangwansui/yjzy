@@ -323,6 +323,8 @@ class account_payment(models.Model):
                 name = '%s:%s' % (one.journal_id.name, one.amount)
             elif ctx.get('bank_amount'):
                 name = '%s[%s]' % (one.journal_id.name, str(one.amount))
+            elif ctx.get('advance_bank_amount'):
+                name = '%s[%s]' % (one.yjzy_payment_id.journal_id.name, str(one.amount))
             else:
                 name = one.name
             res.append((one.id, name))

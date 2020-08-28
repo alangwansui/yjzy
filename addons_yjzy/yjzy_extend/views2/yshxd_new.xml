@@ -36,7 +36,7 @@
                 <field name="partner_id"/>
                 <field name="date"/>
                 <field name="amount_payment_org" string="实际认领金额"/>
-                <field name="currency_id"/>
+                <field name="currency_id" invisible="1"/>
                 <field name="invoice_currency_id"/>
                 <field name="state"/>
             </tree>
@@ -173,7 +173,7 @@
                                     <field name="amount_bank_org" attrs="{'column_invisible':1}" /><!--invisible="not context.get('show_so')"-->
                                     <field name="amount_diff_org" attrs="{'column_invisible':1}"/>
                                     <field name="amount_total_org"/>
-                                    <field name="yjzy_payment_id" string="预收单" domain="[('so_id','=',so_id),('sfk_type','=','ysrld')]"/>
+                                    <field name="yjzy_payment_id" string="预收单" domain="[('advance_balance_total','!=',0),('sfk_type','=','ysrld')]" context="{'form_view_ref': 'yjzy_extend.view_rcskd_form','advance_bank_amount':1}"/>
 
                                 </tree>
                             </field>

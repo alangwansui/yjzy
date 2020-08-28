@@ -62,25 +62,15 @@ class sale_order_line(models.Model):
 
             purchase_cost, fandian_amoun = one.get_purchase_cost()
            # price_total_current_date_rate= one.price_total * one.order_id.current_date_rate
-
-
-
-
-
         #    print('====sdfdf===', gross_profit_ratio_line)
             stock_cost = one.get_stock_cost()
             #back_tax = one.order_id.cip_type != 'none' and one.product_id.back_tax or 0
-
             if one.order_id.cip_type != 'normal':
                 back_tax_amount = 0
             else:
                 back_tax_amount = (purchase_cost + stock_cost) / BACK_TAX_RATIO * one.back_tax  #固定0.16的税，退回0.05
-
-
             gross_profit_ratio_line = price_total2 != 0 and (
                         price_total2 + back_tax_amount - purchase_cost) / price_total2 * 100 / 5
-
-
             one.price_total2 = price_total2
             one.purchase_cost = purchase_cost
             one.fandian_amoun = fandian_amoun
@@ -88,10 +78,8 @@ class sale_order_line(models.Model):
             one.profit_amount = price_total2 - purchase_cost - stock_cost - fandian_amoun
             one.back_tax_amount = back_tax_amount
             one.rest_tb_qty = one.product_qty - sum(one.tbl_ids.mapped('qty2stage'))
-
             one.gross_profit_ratio_line = round(gross_profit_ratio_line,2)
             one.gross_profit_line = price_total2-purchase_cost
-
             one.fee_inner = one.order_id.amount_total and one.price_unit / one.order_id.amount_total * one.order_id.fee_inner
             one.fee_rmb1 = one.order_id.amount_total and one.price_unit / one.order_id.amount_total * one.order_id.fee_rmb1
             one.fee_rmb2 = one.order_id.amount_total and one.price_unit / one.order_id.amount_total * one.order_id.fee_rmb2
