@@ -1306,8 +1306,8 @@
                     <field name="number" invisible="1"/>
                     <field name="reference" invisible="1"/>
                     <field name="commercial_partner_id" invisible="1"/>
-                    <field name="date_finish" attrs="{'readonly':[('purchase_date_finish_state','in',['submit','done'])]}"/>
-                    <field name="purchase_date_finish_att" widget="many2many_binary" attrs="{'readonly':[('purchase_date_finish_state','in',['submit','done'])]}"/>
+                    <field name="date_finish" attrs="{'readonly':[('purchase_date_finish_state','in',['done'])]}"/>
+                    <field name="purchase_date_finish_att" widget="many2many_binary" attrs="{'readonly':[('purchase_date_finish_state','in',['done'])]}"/>
                     <field name="purchase_date_finish_state" string="状态" readonly="1"/>
                     <button icon="fa-check" attrs="{'invisible':[('purchase_date_finish_state','!=','done')]}"/>
                     <button name="action_purchase_date_finish_state_submit"

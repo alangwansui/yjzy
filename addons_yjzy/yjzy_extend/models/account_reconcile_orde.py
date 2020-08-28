@@ -201,6 +201,8 @@ class account_reconcile_order(models.Model):
         except Exception as e:
             return None
 
+    #828
+    comments = fields.Text('备注')
     #827
     operation_wizard = fields.Selection([('10', u'收付认领'),
                                          ('20', u'预收认领'),

@@ -142,10 +142,10 @@
                             <field name="name" readonly="1"/>
                             <field name="is_editable" invisible="1"/>
                             <field name="date_out_in"
-                                   attrs="{'readonly':[('date_out_in_state','not in',['draft']),('is_editable','=',False)]}"/>
+                                   attrs="{'readonly':[('date_out_in_state','in',['done']),('is_editable','=',False)]}"/>
                         </group>
                         <field nolabel="1" name="date_out_in_att" context="{'default_type':'date_out_in'}"
-                               attrs="{'readonly':[('date_out_in_state','not in',['draft']),('is_editable','=',False)]}">
+                               attrs="{'readonly':[('date_out_in_state','in',['done']),('is_editable','=',False)]}">
                             <tree string="进仓日期附件" editable="bottom">
                                 <field name="attachment" required="1" widget="many2many_binary"/>
                                 <field name="name"/>
@@ -181,12 +181,12 @@
                             <field name="name" readonly="1"/>
                             <field name="is_editable" invisible="1"/>
                             <field name="date_ship"
-                                   attrs="{'readonly':[('date_ship_state','not in',['draft']),('is_editable','=',False)]}"/>
+                                   attrs="{'readonly':[('date_ship_state','in',['done']),('is_editable','=',False)]}"/>
 
                         </group>
 
                         <field nolabel="1" name="date_ship_att" context="{'default_type':'date_ship'}"
-                               attrs="{'readonly':[('date_ship_state','not in',['draft']),('is_editable','=',False)]}">
+                               attrs="{'readonly':[('date_ship_state','in',['done']),('is_editable','=',False)]}">
                             <tree string="出运船日期附件" editable="bottom">
 
                                 <field name="attachment" required="1" widget="many2many_binary"/>
@@ -223,12 +223,12 @@
                             <field name="name" readonly="1"/>
                             <field name="is_editable" invisible="1"/>
                             <field name="date_customer_finish"
-                                   attrs="{'readonly':[('date_customer_finish_state','not in',['draft']),('is_editable','=',False)]}"/>
+                                   attrs="{'readonly':[('date_customer_finish_state','in',['done']),('is_editable','=',False)]}"/>
 
                         </group>
                         <field nolabel="1" name="date_customer_finish_att"
                                context="{'default_type':'date_customer_finish'}"
-                               attrs="{'readonly':[('date_customer_finish_state','not in',['draft']),('is_editable','=',False)]}">
+                               attrs="{'readonly':[('date_customer_finish_state','in',['done']),('is_editable','=',False)]}">
                             <tree string="客户交单日期附件" editable="bottom">
                                 <field name="attachment" required="1" widget="many2many_binary"/>
                                 <field name="name"/>

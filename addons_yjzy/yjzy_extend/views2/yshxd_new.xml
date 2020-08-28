@@ -122,6 +122,7 @@
                             <field name="amount_bank_org" attrs="{'invisible':1}"/>
                             <field name="amount_diff_org" attrs="{'invisible':1}"/>
                             <field name="create_date"/>
+                            <field name="comments"/>
                         </group>
                     </group>
                     <notebook>
