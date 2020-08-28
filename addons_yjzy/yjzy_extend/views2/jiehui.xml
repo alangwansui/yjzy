@@ -113,7 +113,7 @@
         <field name="view_mode">tree,form</field>
         <field name="domain">[('sfk_type','=','jiehui')]</field>
         <field name="context">{'show_shoukuan': True, 'default_sfk_type': 'jiehui', 'default_payment_type': 'outbound', 'default_be_renling': False, 'default_advance_ok': True, 'default_partner_type': 'supplier',}</field>
-
+        <field name="search_view_id" ref="view_account_payment_search_new"/>
     </record>
 
     <record id="action_jiehui_tree" model="ir.actions.act_window.view">

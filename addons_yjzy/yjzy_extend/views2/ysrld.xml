@@ -318,6 +318,7 @@
         <field name="context">{'show_shoukuan': True, 'default_sfk_type': 'ysrld', 'default_payment_type': 'inbound',
             'default_be_renling': True,'default_advance_ok': True, 'default_partner_type': 'customer',}
         </field>
+        <field name="search_view_id" ref="view_account_payment_search_new"/>
         <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_ysrld_reconcile_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_ysrld_form')})]"/>
@@ -335,6 +336,7 @@
         <field name="context">{'show_shoukuan': True, 'default_sfk_type': 'ysrld', 'default_payment_type': 'inbound',
             'default_be_renling': True,'default_advance_ok': True, 'default_partner_type': 'customer',}
         </field>
+            <field name="search_view_id" ref="view_account_payment_search_new"/>
         <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_ysrld_reconcile_tree_1')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_ysrld_form')})]"/>

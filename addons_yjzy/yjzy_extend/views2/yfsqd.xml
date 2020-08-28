@@ -156,7 +156,7 @@
         <field name="view_mode">tree,form</field>
         <field name="domain">[('sfk_type','=','yfsqd')]</field>
         <field name="context">{'show_shoukuan': True, 'default_sfk_type': 'yfsqd', 'default_payment_type': 'outbound', 'default_be_renling': True, 'default_advance_ok': True, 'default_partner_type': 'supplier',}</field>
-
+        <field name="search_view_id" ref="view_account_payment_search_new"/>
     </record>
 
     <record id="action_yfsqd_tree" model="ir.actions.act_window.view">

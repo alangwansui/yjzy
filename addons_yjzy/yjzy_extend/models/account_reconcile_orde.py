@@ -13,6 +13,8 @@ class account_reconcile_order(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _description = '核销单'
     _order = 'date desc'
+
+    api.depends('fk_journal_id')
     def compute_info(self):
         ctx = self.env.context
         for one in self:
@@ -199,9 +201,11 @@ class account_reconcile_order(models.Model):
         except Exception as e:
             return None
 
-    #akiny
+    #827
+    operation_wizard = fields.Selection([('10', u'收付认领'),
+                                         ('20', u'预收认领'),
+                                         ('30', u'同时认领')],'认领方式')    #akiny
     reconcile_type = fields.Selection([('normal',u'正常阶段'),('un_normal',u'核销阶段')],string=u'阶段', default='normal')
-
     name = fields.Char(u'编号', default=lambda self: self._default_name())
     payment_type = fields.Selection([('outbound', u'付款'), ('inbound', u'收款'), ('claim_in', u'收款认领'), ('claim_out', u'付款认领')], string=u'收/付款',
                                     required=True)
@@ -211,13 +215,11 @@ class account_reconcile_order(models.Model):
     partner_id = fields.Many2one('res.partner', u'合作伙伴', required=True)
     currency_id = fields.Many2one(related='company_id.currency_id', string=u'公司货币', store=True, index=True)
     invoice_currency_id = fields.Many2one('res.currency', u'交易货币', compute=compute_info)
-
-    state = fields.Selection([('draft', u'草稿'), ('posted', u'提交'),  ('approved', u'批准'), ('done', u'完成'), ('cancelled', u'取消')],
+    state = fields.Selection([('draft', u'草稿'), ('posted', u'待审批'),  ('approved', u'批准'), ('done', u'完成'), ('refused',u'拒绝'),('cancelled', u'取消')],
                              readonly=True, default='draft', copy=False, string=u"状态")
-
     date = fields.Date(u'确认日期', index=True, required=True, default=lambda self: fields.date.today())
-    invoice_ids = fields.One2many('account.invoice', 'reconcile_order_id', u'发票')
-    #invoice_ids = fields.Many2many('account.invoice', string= u'发票')
+    # invoice_ids = fields.One2many('account.invoice', 'reconcile_order_id', u'发票')
+    invoice_ids = fields.Many2many('account.invoice', string= u'发票')
     payment_account_id = fields.Many2one('account.account', u'收款科目', required=True,
                                          default=lambda self: self.default_payment_account())
     bank_account_id = fields.Many2one('account.account', u'银行扣款科目', required=False,
@@ -226,16 +228,11 @@ class account_reconcile_order(models.Model):
                                       default=lambda self: self.default_diff_account())
     exchange_account_id = fields.Many2one('account.account', u'汇兑差异科目', required=True,
                                           default=lambda self: self.default_exchange_account())
-
     #payment_currency_id = fields.Many2one('res.currency', u'收款货币', related='yjzy_payment_id.currency_id', readonly=True)
     #payment_currency_id = fields.Many2one('res.currency', u'收款货币', related='fk_journal_id.currency_id', readonly=True)
-
     payment_currency_id = fields.Many2one('res.currency', u'收款货币', compute=compute_info, readonly=True)
     manual_payment_currency_id = fields.Many2one('res.currency', u'收款货币:手动输入')
-
-
-    manual_currency_id = fields.Many2one('res.currency', u'手动设置收款货币',)
-
+    manual_currency_id = fields.Many2one('res.currency', u'手动设置收款货币')
 
     # 1银行扣款和销售费用的货币随收款货币；
     # bank_currency_id = fields.Many2one('res.currency', u'银行扣款货币', required=True,
@@ -299,6 +296,44 @@ class account_reconcile_order(models.Model):
     is_editable = fields.Boolean(u'可编辑')
     gongsi_id = fields.Many2one('gongsi', '内部公司')
 
+    def open_wizard_reconcile_invoice_yshxd(self):
+        self.ensure_one()
+        ctx = self.env.context.copy()
+        ctx.update({
+            'default_partner_id': self.partner_id.id,
+            'default_order_id':self.id,
+            'default_invoice_ids':self.invoice_ids.ids,
+            'sfk_type':self.sfk_type,
+        })
+        return {
+            'name': '添加账单',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'wizard.reconcile.invoice',
+            # 'res_id': bill.id,
+            'target': 'new',
+            'type': 'ir.actions.act_window',
+            'context': ctx,
+        }
+    def open_wizard_reconcile_invoice_yfhxd(self):
+        self.ensure_one()
+        ctx = self.env.context.copy()
+        ctx.update({
+            'default_partner_id': self.partner_id.id,
+            'default_order_id':self.id,
+            'default_invoice_ids':self.invoice_ids.ids,
+            'sfk_type':self.sfk_type,
+        })
+        return {
+            'name': '添加账单',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'wizard.reconcile.invoice',
+            # 'res_id': bill.id,
+            'target': 'new',
+            'type': 'ir.actions.act_window',
+            'context': ctx,
+        }
 
     def unlink(self):
         for one in self:
@@ -307,12 +342,56 @@ class account_reconcile_order(models.Model):
         return super(account_reconcile_order, self).unlink()
 
 
-    def action_cancel(self):
-        self.state = 'cancelled'
+    def action_posted_new(self):
+        self.ensure_one()
+        if self.sfk_type == 'yshxd':
+            amount_payment_org = self.amount_payment_org
+            yjzy_payment_balance = self.yjzy_payment_balance
+            amount_advance_residual_org = self.amount_advance_residual_org
+            amount_advance_org = self.amount_advance_org
+            if yjzy_payment_balance < amount_payment_org:
+                raise Warning(u'收款认领金额大于收款单余额')
+            if amount_advance_residual_org < amount_advance_org:
+                raise Warning(u'预收认领金额大于预收余额')
+            for x in self.line_ids:
+                if x.amount_advance_org != 0.0 and x.yjzy_payment_id == False:
+                    raise Warning('有预收单没有选择，请检查！')
+            self.state = 'approved'
+        if self.sfk_type == 'yfhxd':
+            for x in self.line_ids:
+                if x.amount_advance_org != 0.0 and x.yjzy_payment_id == False:
+                    raise Warning('有预付单没有选择，请检查！')
+            self.state = 'posted'
+        # self.date = fields.date.today()
+        return True
 
-    def action_draft(self):
+    def action_approve_new(self):
+        self.ensure_one()
+        if self.sfk_type == 'yfhxd':
+            self.create_rcfkd()
+        self.state = 'approved'
+
+    def action_draft_new(self):
+        if self.sfk_type == 'yfhxd':
+            self.yjzy_payment_id.unlink()
         self.state = 'draft'
 
+    def action_refuse_new(self,reason):
+        self.write({'state': 'refused',
+                     })
+
+        for tb in self:
+            tb.message_post_with_view('yjzy_extend.reconcile_hxd_template_refuse_reason',
+                                      values={'reason': reason, 'name': self.name},
+                                      subtype_id=self.env.ref(
+                                          'mail.mt_note').id)  # 定义了留言消息的模板，其他都可以参考，还可以继续参考费用发送计划以及邮件方式
+
+
+    def action_posted(self):
+        self.ensure_one()
+        self.state = 'posted'
+        #self.date = fields.date.today()
+        return True
 
 
     def action_approve(self):
@@ -324,6 +403,21 @@ class account_reconcile_order(models.Model):
             invoice.action_invoice_open()
 
         self.state = 'approved'
+
+    def action_cancel(self):
+        self.state = 'cancelled'
+
+    def action_draft(self):
+        self.state = 'draft'
+
+    def action_done(self):
+        if self.sfk_type == 'yshxd':
+            self.make_done()
+            self.state = 'done'
+
+
+
+
 
     def create_fygb(self):
         self.ensure_one()
@@ -448,11 +542,7 @@ class account_reconcile_order(models.Model):
         if self.partner_type:
             return {'domain': {'partner_id': [(self.partner_type, '=', True)]}}
 
-    def action_posted(self):
-        self.ensure_one()
-        self.state = 'posted'
-        #self.date = fields.date.today()
-        return True
+
 
     def open_reconcile_account_move_line(self):
         sfk_type = self.env.context.get('default_sfk_type', '')
@@ -689,7 +779,7 @@ class account_reconcile_order(models.Model):
                     dic_so_invl[so] |= line
                 else:
                     dic_so_invl[so] = line
-        return dic_so_invl
+        return dic_so_invl or False
 
     def _prepare_purchase_invoice_line(self, inv):
         self.ensure_one()
@@ -701,7 +791,7 @@ class account_reconcile_order(models.Model):
                     dic_po_invl[po] |= line
                 else:
                     dic_po_invl[po] = line
-        return dic_po_invl
+        return dic_po_invl or False
 
     def make_lines(self):
         self.ensure_one()
@@ -717,16 +807,23 @@ class account_reconcile_order(models.Model):
         line_ids = None
         self.line_ids = line_ids
 
-        if self.no_sopo:
-            for invoice in self.invoice_ids:
+        # if self.no_sopo:
+        #     for invoice in self.invoice_ids:
+        #         line_obj.create({
+        #             'order_id': self.id,
+        #             'invoice_id': invoice.id,
+        #             'amount_invoice_so': invoice.amount_total,
+        #         })
+        # else:
+        for invoice in self.invoice_ids:
+            po_invlines = self._prepare_purchase_invoice_line(invoice)
+            if not po_invlines:
                 line_obj.create({
                     'order_id': self.id,
                     'invoice_id': invoice.id,
                     'amount_invoice_so': invoice.amount_total,
                 })
-        else:
-            for invoice in self.invoice_ids:
-                po_invlines = self._prepare_purchase_invoice_line(invoice)
+            else:
                 for po, invlines in po_invlines.items():
                     line_obj.create({
                         'order_id': self.id,
@@ -735,34 +832,34 @@ class account_reconcile_order(models.Model):
                         'amount_invoice_so': sum([i.price_subtotal for i in invlines]),
                     })
     #826
-        # so_po_dic = {}
-        # print('line_obj', line_ids)
-        # self.line_no_ids = None
-        # for i in self.line_ids:
-        #     invoice = i.invoice_id
-        #     amount_invoice_so = i.amount_invoice_so
-        #     advance_residual = i.advance_residual
-        #     order = i.order_id
-        #
-        #     k = invoice.id
-        #     if k in so_po_dic:
-        #         print('k', k)
-        #         so_po_dic[k]['amount_invoice_so'] += amount_invoice_so
-        #         so_po_dic[k]['advance_residual'] += advance_residual
-        #     else:
-        #         print('k1', k)
-        #         so_po_dic[k] = {
-        #             'invoice_id': invoice.id,
-        #             'amount_invoice_so': amount_invoice_so,
-        #             'advance_residual': advance_residual, }
-        #
-        # for kk, data in list(so_po_dic.items()):
-        #     line_no = line_no_obj.create({
-        #         'order_id': self.id,
-        #         'invoice_id': data['invoice_id'],
-        #         'amount_invoice_so': data['amount_invoice_so'],
-        #         'advance_residual': data['advance_residual'],
-        #     })
+        so_po_dic = {}
+        print('line_obj', line_ids)
+        self.line_no_ids = None
+        for i in self.line_ids:
+            invoice = i.invoice_id
+            amount_invoice_so = i.amount_invoice_so
+            advance_residual = i.advance_residual
+            order = i.order_id
+
+            k = invoice.id
+            if k in so_po_dic:
+                print('k', k)
+                so_po_dic[k]['amount_invoice_so'] += amount_invoice_so
+                so_po_dic[k]['advance_residual'] += advance_residual
+            else:
+                print('k1', k)
+                so_po_dic[k] = {
+                    'invoice_id': invoice.id,
+                    'amount_invoice_so': amount_invoice_so,
+                    'advance_residual': advance_residual, }
+
+        for kk, data in list(so_po_dic.items()):
+            line_no = line_no_obj.create({
+                'order_id': self.id,
+                'invoice_id': data['invoice_id'],
+                'amount_invoice_so': data['amount_invoice_so'],
+                'advance_residual': data['advance_residual'],
+            })
 
     def _make_lines_so(self):
         self.ensure_one()
@@ -770,16 +867,23 @@ class account_reconcile_order(models.Model):
         line_no_obj = self.env['account.reconcile.order.line.no']
         line_ids = None
         self.line_ids = line_ids
-        if self.no_sopo:
-            for invoice in self.invoice_ids:
+        # if self.no_sopo:
+        #     for invoice in self.invoice_ids:
+        #         line_obj.create({
+        #             'order_id': self.id,
+        #             'invoice_id': invoice.id,
+        #             'amount_invoice_so': invoice.amount_total,
+        #         })
+        # else:
+        for invoice in self.invoice_ids:
+            so_invlines = self._prepare_sale_invoice_line(invoice)
+            if not so_invlines:
                 line_obj.create({
                     'order_id': self.id,
                     'invoice_id': invoice.id,
                     'amount_invoice_so': invoice.amount_total,
                 })
-        else:
-            for invoice in self.invoice_ids:
-                so_invlines = self._prepare_sale_invoice_line(invoice)
+            else:
                 for so, invlines in so_invlines.items():
                     line_obj.create({
                         'order_id': self.id,
@@ -788,34 +892,34 @@ class account_reconcile_order(models.Model):
                         'amount_invoice_so': sum([i.price_subtotal for i in invlines]),
                     })
 
-        # so_po_dic = {}
-        # print('line_obj', line_ids)
-        # self.line_no_ids = None
-        # for i in self.line_ids:
-        #     invoice = i.invoice_id
-        #     amount_invoice_so = i.amount_invoice_so
-        #     advance_residual2 = i.advance_residual2
-        #     order = i.order_id
-        #
-        #     k = invoice.id
-        #     if k in so_po_dic:
-        #         print('k',k)
-        #         so_po_dic[k]['amount_invoice_so'] += amount_invoice_so
-        #         so_po_dic[k]['advance_residual2'] += advance_residual2
-        #     else:
-        #         print('k1', k)
-        #         so_po_dic[k] = {
-        #                         'invoice_id':invoice.id,
-        #                         'amount_invoice_so': amount_invoice_so,
-        #                         'advance_residual2': advance_residual2,}
-        #
-        # for kk, data in list(so_po_dic.items()):
-        #     line_no = line_no_obj.create({
-        #         'order_id': self.id,
-        #         'invoice_id': data['invoice_id'],
-        #         'amount_invoice_so': data['amount_invoice_so'],
-        #         'advance_residual2': data['advance_residual2'],
-        #     })
+        so_po_dic = {}
+        print('line_obj', line_ids)
+        self.line_no_ids = None
+        for i in self.line_ids:
+            invoice = i.invoice_id
+            amount_invoice_so = i.amount_invoice_so
+            advance_residual2 = i.advance_residual2
+            order = i.order_id
+
+            k = invoice.id
+            if k in so_po_dic:
+                print('k',k)
+                so_po_dic[k]['amount_invoice_so'] += amount_invoice_so
+                so_po_dic[k]['advance_residual2'] += advance_residual2
+            else:
+                print('k1', k)
+                so_po_dic[k] = {
+                                'invoice_id':invoice.id,
+                                'amount_invoice_so': amount_invoice_so,
+                                'advance_residual2': advance_residual2,}
+
+        for kk, data in list(so_po_dic.items()):
+            line_no = line_no_obj.create({
+                'order_id': self.id,
+                'invoice_id': data['invoice_id'],
+                'amount_invoice_so': data['amount_invoice_so'],
+                'advance_residual2': data['advance_residual2'],
+            })
             # print('>>', line)
     #826 拆分发票填写的金额到明细上
     def update_line_amount(self):

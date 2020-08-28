@@ -321,10 +321,29 @@ class account_payment(models.Model):
         for one in self:
             if ctx.get('default_sfk_type', '') == 'ysrld':
                 name = '%s:%s' % (one.journal_id.name, one.amount)
+            elif ctx.get('bank_amount'):
+                name = '%s[%s]' % (one.journal_id.name, str(one.amount))
             else:
                 name = one.name
             res.append((one.id, name))
         return res
+
+    @api.model
+    def name_search(self, name='', args=None, operator='ilike', limit=100):
+        print('==name_search==', self.env.context)
+        res = super(account_payment, self).name_search(name=name, args=args, operator=operator, limit=limit)
+        # print('===', res)
+        res_ids = [x[0] for x in res]
+        products = self.search(['|', ('amount', operator, name), ('journal_id', operator, name)] + args,
+                               limit=limit)
+        result = products.name_get()
+        # print('===2', result)
+        for r in result:
+            if not (r[0] in res_ids):
+                res.append(r)
+        # print('===3', res)
+        return res
+
 
     @api.multi
     def post(self):

@@ -43,6 +43,7 @@
         #'views/account_payment3.xml',
         'wizard/transport_refuse_reason_views.xml',
         'wizard/account_invoice_refuse_reason_views.xml',
+        'wizard/hxd_refuse_reason_views.xml',
 
         'views/account_journal.xml',
         'views/account_move.xml',
@@ -124,7 +125,9 @@
         'views2/rcfksqd.xml',
         'views2/rcskrld.xml',
         'views2/yshxd.xml',
+        'views2/yshxd_new.xml',
         'views2/yfhxd.xml',
+        'views2/yfhxd_new.xml',
         'views2/nbzz.xml',
         'views2/jiehui.xml',
 
@@ -152,6 +155,7 @@
         'wizard/wizard_batch_passwd.xml',
         'wizard/wizard_so2sol.xml',
         'wizard/wizard_tb_po_invoice.xml',
+        'wizard/wizard_reconcile_invoice.xml',
 
         # report
         'report/report.xml',

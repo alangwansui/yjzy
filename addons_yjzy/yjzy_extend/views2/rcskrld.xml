@@ -116,7 +116,7 @@
         <field name="context">{'show_shoukuan': True, 'default_sfk_type': 'rcskrld', 'default_payment_type': 'inbound', 'default_be_renling': False,
             'default_advance_ok': True, 'default_partner_type': 'customer',}
         </field>
-
+        <field name="search_view_id" ref="view_account_payment_search_new"/>
     </record>
 
     <record id="action_rcskrld_tree" model="ir.actions.act_window.view">

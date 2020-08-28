@@ -1,5 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+     <record id="view_account_payment_search_new" model="ir.ui.view">
+            <field name="name">account.payment.search</field>
+            <field name="model">account.payment</field>
+            <field name="arch" type="xml">
+                <search string="Payments">
+                    <field name="name" filter_domain="['|','|', '|', ('name','ilike',self),('journal_id','ilike',self), ('communication','ilike',self),('amount','ilike',self)]" string="Description"/>
+                    <separator/>
+                    <field name="partner_id" />
+                    <field name="journal_id" />
+                    <field name="company_id" groups="base.group_multi_company" />
+                    <filter string="Payable" domain="[('payment_type','=','outbound')]"/>
+                    <filter string="Receivable" domain="[('payment_type','=','inbound')]"/>
+                    <filter string="Transfers" domain="[('payment_type','=','transfer')]"/>
+                    <separator/>
+                    <filter string="Draft" domain="[('state','=','draft')]" name='state_draft'/>
+                    <filter string="Posted" domain="[('state','=','posted')]" name='state_posted'/>
+                    <filter string="Sent" domain="[('state','=','sent')]" name='state_sent'/>
+                    <filter string="Reconciled" domain="[('state','=','reconciled')]"/>
+                    <separator/>
+                    <filter string="Partner" domain="[]" context="{'group_by': 'partner_id'}"/>
+                    <filter string="Journal" domain="[]" context="{'group_by': 'journal_id'}"/>
+                    <filter string="Payment Method" domain="[]" context="{'group_by': 'payment_method_id'}"/>
+                    <filter string="State" domain="[]" context="{'group_by': 'state'}"/>
+                    <filter string="Currency" domain="[]" context="{'group_by': 'currency_id'}" groups="base.group_multi_currency"/>
+                    <filter string="Company" domain="[]" context="{'group_by': 'company_id'}" groups="base.group_multi_company"/>
+                </search>
+            </field>
+        </record>
 
     <record model="ir.ui.view" id="view_rcskd_tree">
         <field name="name">account.payment.tree</field>
@@ -207,6 +235,7 @@
         <field name="view_type">form</field>
         <field name="view_mode">tree,form,kanban</field>
         <field name="domain">[('sfk_type','=','rcskd')]</field>
+           <field name="search_view_id" ref="view_account_payment_search_new"/>
         <field name="context">{'show_shoukuan': True, 'default_sfk_type': 'rcskd', 'default_payment_type': 'inbound', 'default_be_renling': False, 'default_advance_ok': True, 'default_partner_type': 'customer',}</field>
 
     </record>
