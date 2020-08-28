@@ -54,6 +54,7 @@
                     <button name="action_draft_new" class="oe_highlight" states="refused" string="重置草稿" type="object"/>
                     <button name="%(reconcile_refuse_wizard_action)d" string="拒绝" type="action" attrs="{'invisible':[('state','=','done')]}"/>
                     <button name="open_wizard_reconcile_invoice" type="object" string="添加应收账单"/>
+                    <button name="compute_invoice_ids" type="object" string="计算发票" groups="base.group_system"/>
                     <field name="state" widget="statusbar"/>
                     <field name="is_editable"  widget="boolean_toggle" groups="sales_team.group_manager"/>
                 </header>
@@ -180,7 +181,7 @@
                             <field name="line_no_ids">
                                 <tree  editable="bottom">
 
-                                <field name="invoice_id"/>
+                                <field name="invoice_id" readonly="1"/>
                                 <field name="payment_currency_id" invisible="1"/>
                                 <field name="amount_payment_org"/>
                                 <field name="currency_id" invisible="1"/>

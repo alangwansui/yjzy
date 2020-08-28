@@ -296,44 +296,62 @@ class account_reconcile_order(models.Model):
     is_editable = fields.Boolean(u'可编辑')
     gongsi_id = fields.Many2one('gongsi', '内部公司')
 
-    def open_wizard_reconcile_invoice_yshxd(self):
+    def open_wizard_reconcile_invoice(self):
         self.ensure_one()
         ctx = self.env.context.copy()
-        ctx.update({
-            'default_partner_id': self.partner_id.id,
-            'default_order_id':self.id,
-            'default_invoice_ids':self.invoice_ids.ids,
-            'sfk_type':self.sfk_type,
-        })
-        return {
-            'name': '添加账单',
-            'view_type': 'form',
-            'view_mode': 'form',
-            'res_model': 'wizard.reconcile.invoice',
-            # 'res_id': bill.id,
-            'target': 'new',
-            'type': 'ir.actions.act_window',
-            'context': ctx,
-        }
-    def open_wizard_reconcile_invoice_yfhxd(self):
-        self.ensure_one()
-        ctx = self.env.context.copy()
-        ctx.update({
-            'default_partner_id': self.partner_id.id,
-            'default_order_id':self.id,
-            'default_invoice_ids':self.invoice_ids.ids,
-            'sfk_type':self.sfk_type,
-        })
-        return {
-            'name': '添加账单',
-            'view_type': 'form',
-            'view_mode': 'form',
-            'res_model': 'wizard.reconcile.invoice',
-            # 'res_id': bill.id,
-            'target': 'new',
-            'type': 'ir.actions.act_window',
-            'context': ctx,
-        }
+        if self.sfk_type == 'yshxd':
+            ctx.update({
+                'default_partner_id': self.partner_id.id,
+                'default_order_id':self.id,
+                'default_invoice_ids':self.invoice_ids.ids,
+                'sfk_type':self.sfk_type,
+            })
+            return {
+                'name': '添加账单',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'wizard.reconcile.invoice',
+                # 'res_id': bill.id,
+                'target': 'new',
+                'type': 'ir.actions.act_window',
+                'context': ctx,
+            }
+        if self.sfk_type == 'yfhxd':
+            ctx.update({
+                'default_partner_id': self.partner_id.id,
+                'default_order_id': self.id,
+                'default_invoice_ids': self.invoice_ids.ids,
+                'sfk_type': self.sfk_type,
+            })
+            return {
+                'name': '添加账单',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'wizard.reconcile.invoice',
+                # 'res_id': bill.id,
+                'target': 'new',
+                'type': 'ir.actions.act_window',
+                'context': ctx,
+            }
+    # def open_wizard_reconcile_invoice_yfhxd(self):
+    #     self.ensure_one()
+    #     ctx = self.env.context.copy()
+    #     ctx.update({
+    #         'default_partner_id': self.partner_id.id,
+    #         'default_order_id':self.id,
+    #         'default_invoice_ids':self.invoice_ids.ids,
+    #         'sfk_type':self.sfk_type,
+    #     })
+    #     return {
+    #         'name': '添加账单',
+    #         'view_type': 'form',
+    #         'view_mode': 'form',
+    #         'res_model': 'wizard.reconcile.invoice',
+    #         # 'res_id': bill.id,
+    #         'target': 'new',
+    #         'type': 'ir.actions.act_window',
+    #         'context': ctx,
+    #     }
 
     def unlink(self):
         for one in self:
