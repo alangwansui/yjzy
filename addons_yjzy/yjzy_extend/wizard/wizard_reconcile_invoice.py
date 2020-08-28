@@ -18,7 +18,8 @@ class wizard_reconcile_invoice(models.TransientModel):
     def apply(self):
         self.ensure_one()
         ctx = self.env.context
-        sfk_type = ctx.get('skf_type')
+        sfk_type = ctx.get('sfk_type')
+        print('ctx', ctx)
         if sfk_type == 'yshxd':
             self.make_lines_so()
         if sfk_type == 'yfhxd':

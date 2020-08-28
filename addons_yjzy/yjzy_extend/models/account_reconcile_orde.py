@@ -300,6 +300,7 @@ class account_reconcile_order(models.Model):
         self.ensure_one()
         ctx = self.env.context.copy()
         if self.sfk_type == 'yshxd':
+
             ctx.update({
                 'default_partner_id': self.partner_id.id,
                 'default_order_id':self.id,
