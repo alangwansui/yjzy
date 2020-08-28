@@ -934,8 +934,10 @@ class account_reconcile_order(models.Model):
                 line.amount_payment_org = amount_invoice_so_proportion * amount_payment_org
 
 
-
-
+    #akiny 828,将jinvoice_ids从o2m调整为m2m后，初始化一次
+    def compute_invoice_ids(self):
+        invoice = self.line_ids.mapped('invoice_id')
+        self.invoice_ids = invoice
 
     def clear_moves(self):
         self.ensure_one()
