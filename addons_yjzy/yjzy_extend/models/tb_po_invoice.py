@@ -60,9 +60,9 @@ class tb_po_invoice(models.Model):
     #
     #     res = []
     #     type_obj = self.env['packaging.type']
-    #     yjzy_type=self.env.context.get('yjzy_type')
+    #     yjzy_type_1=self.env.context.get('yjzy_type_1')
     #     type = self.env.context.get('type')
-    #     if yjzy_type == 'purchase' and type == 'other_po':
+    #     if yjzy_type_1 == 'purchase' and type == 'other_po':
     #         res.append((0, 0, {
     #             'product_id':self.env.ref('yjzy_extend.product_qtyfk').id
     #         }))
@@ -72,9 +72,9 @@ class tb_po_invoice(models.Model):
     # def onchange_extra_invoice_line(self):
     #     res = []
     #     type_obj = self.env['packaging.type']
-    #     yjzy_type=self.yjzy_type
+    #     yjzy_type_1=self.yjzy_type_1
     #     type = self.type
-    #     if yjzy_type == 'purchase' and type == 'other_po':
+    #     if yjzy_type_1 == 'purchase' and type == 'other_po':
     #         res.append((0, 0, {
     #             'product_id':self.env.ref('yjzy_extend.product_qtyfk').id
     #         }))
@@ -127,6 +127,23 @@ class tb_po_invoice(models.Model):
         except Exception as e:
             return None
 
+    @api.depends('invoice_p_ids','invoice_s_ids','invoice_back_tax_ids.residual','invoice_p_s_ids.residual','invoice_p_s_ids.residual')
+    def compute_residual(self):
+        for one in self:
+            po_add_residual = sum(i.residual for i in one.invoice_p_ids.filtered(lambda x: x.state == 'open'))
+            p_s_add_residual = sum(i.residual for i in one.invoice_s_ids.filtered(lambda x: x.state == 'open'))
+            back_tax_add_residual = sum(i.residual for i in one.invoice_back_tax_ids.filtered(lambda x: x.state == 'open'))
+            p_s_add_refund_residual = sum(i.residual for i in one.invoice_p_s_ids.filtered(lambda x: x.state == 'open'))
+            one.po_add_residual = po_add_residual
+            one.p_s_add_residual = p_s_add_residual
+            one.back_tax_add_residual = back_tax_add_residual
+            one.p_s_add_refund_residual = p_s_add_refund_residual
+
+    #828
+    po_add_residual = fields.Float(u'增加采购未付金额',compute=compute_residual,store=True)
+    p_s_add_residual = fields.Float(u'应收未收金额',compute=compute_residual,store=True)
+    back_tax_add_residual = fields.Float(u'退税未收金额',compute=compute_residual,store=True)
+    p_s_add_refund_residual = fields.Float(u'直接抵扣未完成金额',compute=compute_residual,store=True)
     #827
     amount_diff = fields.Float('实际差额')
     tax_rate_add = fields.Float(u'增加采购税率')
@@ -149,6 +166,7 @@ class tb_po_invoice(models.Model):
         default=lambda self: self._context.get('type', 'out_invoice'),
         track_visibility='always')#825
     yjzy_type = fields.Selection([('sale', u'销售'), ('purchase', u'采购'), ('back_tax', u'退税')], string=u'发票类型')#825
+    yjzy_type_1 = fields.Selection([('sale', u'销售'), ('purchase', u'采购'), ('back_tax', u'退税')], string=u'发票类型')#825
     extra_invoice_line_ids = fields.One2many('extra.invoice.line', 'tb_po_id', u'账单明细',)  # 825default=lambda self: self._default_extra_invoice_line()
     price_total = fields.Monetary('金额合计',currency_field='currency_id',compute=compute_info,store=True)
 
@@ -163,10 +181,10 @@ class tb_po_invoice(models.Model):
 
     yjzy_invoice_id = fields.Many2one('account.invoice', '关联账单')
     currency_id = fields.Many2one('res.currency', compute=compute_info)
-    invoice_p_ids = fields.One2many('account.invoice','tb_po_invoice_id','相关采购发票',domain=[('type','=','in_invoice'),('yjzy_type','=','purchase')])
-    invoice_s_ids = fields.One2many('account.invoice','tb_po_invoice_id','相关应收发票',domain=[('type','=','out_invoice'),('yjzy_type','=','sale')])
-    invoice_back_tax_ids = fields.One2many('account.invoice','tb_po_invoice_id','相关退税发票',domain=[('type','=','out_invoice'),('yjzy_type','=','back_tax')])
-    invoice_p_s_ids = fields.One2many('account.invoice','tb_po_invoice_id','相关冲减发票',domain=[('type','=','in_refund'),('yjzy_type','=','purchase')])
+    invoice_p_ids = fields.One2many('account.invoice','tb_po_invoice_id','相关采购发票',domain=[('type','=','in_invoice'),('yjzy_type_1','=','purchase')])
+    invoice_s_ids = fields.One2many('account.invoice','tb_po_invoice_id','相关应收发票',domain=[('type','=','out_invoice'),('yjzy_type_1','=','sale')])
+    invoice_back_tax_ids = fields.One2many('account.invoice','tb_po_invoice_id','相关退税发票',domain=[('type','=','out_invoice'),('yjzy_type_1','=','back_tax')])
+    invoice_p_s_ids = fields.One2many('account.invoice','tb_po_invoice_id','相关冲减发票',domain=[('type','=','in_refund'),('yjzy_type_1','=','purchase')])
     company_id = fields.Many2one('res.company', '公司', required=True, readonly=True,
                                  default=lambda self: self.env.user.company_id.id)
     company_currency_id = fields.Many2one('res.currency', string='公司货币', related='company_id.currency_id',
@@ -177,6 +195,8 @@ class tb_po_invoice(models.Model):
     back_tax_add_this_time_total = fields.Float('本次退税金额', compute=compute_info)
     p_s_add_this_time_refund = fields.Float('本次冲减金额', compute=compute_info)
     invoice_product_id = fields.Many2one('product.product', u'账单项目')
+
+
 
     expense_sheet_id = fields.Many2one('hr.expense.sheet',u'费用报告')
     expense_currency_id = fields.Many2one('res.currency',related='expense_sheet_id.currency_id')
@@ -189,8 +209,8 @@ class tb_po_invoice(models.Model):
     #825
     @api.onchange('extra_invoice_line_ids')
     def onchange_payment_currency(self):
-        yjzy_type = self.yjzy_type
-        if yjzy_type == 'sale' or yjzy_type == 'back_tax':
+        yjzy_type_1 = self.yjzy_type_1
+        if yjzy_type_1 == 'sale' or yjzy_type_1 == 'back_tax':
             if self.price_total < 0:
                 self.type_invoice = 'out_refund'
             else:
@@ -204,15 +224,17 @@ class tb_po_invoice(models.Model):
 
     def action_submit(self):
         self.state = '20_submit'
-    def action_manager_approve(self):
-        self.state = '30_done'
         if self.type == 'other_po':
             self.apply()
         if self.type == 'expense_po':
             self.apply_expense_sheet()
         if self.type == 'extra':
             self.make_extra_invoice()
+    def action_manager_approve(self):
+        self.state = '30_done'
+        self.invoice_ids.action_invoice_open()
     def action_refuse(self):
+        self.invoice_ids.unlink()
         self.state = '40_refuse'
     def action_draft(self):
         self.state = '10_draft'
@@ -282,10 +304,18 @@ class tb_po_invoice(models.Model):
 
     def apply(self):
         self.ensure_one()
-        self.make_purchase_invoice()
-        self.make_back_tax()
-        self.make_sale_invoice()
-        self.make_sale_invoice_extra()
+        if type == 'other_po':
+            self.invoice_ids.unlink()
+            self.make_purchase_invoice()
+            self.make_back_tax()
+            self.make_sale_invoice()
+            self.make_sale_invoice_extra()
+        if type =='expense_po':
+            self.invoice_ids.unlink()
+            self.apply_expense_sheet()
+            self.make_back_tax()
+            self.make_sale_invoice()
+            self.make_sale_invoice_extra()
 
 
     #应付发票
@@ -319,7 +349,7 @@ class tb_po_invoice(models.Model):
                 'journal_type': 'purchase',
                 'bill_id': self.tb_id.id,
                 'invoice_attribute':'other_po',
-                'yjzy_type': 'purchase',
+                'yjzy_type_1': 'purchase',
                 'yjzy_payment_term_id':self.yjzy_invoice_id.payment_term_id.id,
                 'yjzy_currency_id':self.yjzy_invoice_id.currency_id.id,
                 # 'payment_term_id': self.yjzy_invoice_id.payment_term_id.id,
@@ -382,7 +412,7 @@ class tb_po_invoice(models.Model):
                 'journal_type': 'sale',
                 'bill_id': self.tb_id.id,
                 'invoice_attribute': 'other_po',
-                'yjzy_type': 'back_tax',
+                'yjzy_type_1': 'back_tax',
                 'date': fields.datetime.now(),
                 'date_invoice': fields.datetime.now(),
                 'invoice_line_ids': [(0, 0, {
@@ -419,7 +449,7 @@ class tb_po_invoice(models.Model):
                 'bill_id': self.tb_id.id,
                 'invoice_attribute': 'other_po',
                 'type': 'in_refund',
-                'yjzy_type':'purchase',
+                'yjzy_type_1':'purchase',
                 'yjzy_invoice_id':self.yjzy_invoice_id.id,
                 'journal_type': 'purchase',
                 'date': fields.datetime.now(),
@@ -459,7 +489,7 @@ class tb_po_invoice(models.Model):
                 'invoice_attribute': 'other_po',
                 'type': 'out_invoice',
                 'journal_type': 'sale',
-                'yjzy_type': 'sale',
+                'yjzy_type_1': 'sale',
                 'date': fields.datetime.now(),
                 'date_invoice': fields.datetime.now(),
                 'invoice_line_ids': [(0, 0, {
@@ -496,7 +526,7 @@ class tb_po_invoice(models.Model):
             'bill_id': self.yjzy_invoice_id.bill_id.id,
             'invoice_attribute': self.type,
             'type': self.type_invoice,
-            'yjzy_type':self.yjzy_type,
+            'yjzy_type_1':self.yjzy_type_1,
             'yjzy_invoice_number': self.yjzy_invoice_id.number,
             'is_yjzy_invoice': True,
             'payment_term_id': self.yjzy_invoice_id.payment_term_id.id,
@@ -516,8 +546,8 @@ class tb_po_invoice(models.Model):
             #     'account_id': account.id,
             # })]
         })
-        yjzy_type = self.yjzy_type
-        if yjzy_type == 'sale' or yjzy_type == 'back_tax':
+        yjzy_type_1 = self.yjzy_type_1
+        if yjzy_type_1 == 'sale' or yjzy_type_1 == 'back_tax':
             if self.price_total < 0:
                 self.type_invoice = 'out_refund'
                 for line in self.extra_invoice_line_ids:
@@ -607,7 +637,7 @@ class tb_po_invoice(models.Model):
                 'expense_sheet_id':self.expense_sheet_id.id,
                 'type':'in_invoice',
                 'journal_type':'purchase',
-                'yjzy_type':'purchase',
+                'yjzy_type_1':'purchase',
                 'date': fields.datetime.now(),
                 'date_invoice': fields.datetime.now(),
                 'invoice_line_ids': [(0, 0, {
@@ -656,6 +686,12 @@ class tb_po_invoice_line(models.Model):
             one.expense_tax = expense_tax
             one.p_s_add_this_time = p_s_add_this_time
 
+    @api.depends('purchase_amount2_add_this_time')
+    def compute_back_tax(self):
+        for one in self:
+            back_tax_add_this_time = one.purchase_amount2_add_this_time / 1.13 * one.back_tax
+            one.back_tax_add_this_time = back_tax_add_this_time
+
     #827
     tax_rate_add = fields.Float(u'增加采购税率',related='tb_po_id.tax_rate_add')
     expense_tax = fields.Float(u'税费',compute=compute_info)
@@ -687,7 +723,7 @@ class tb_po_invoice_line(models.Model):
 
     purchase_amount2_add_this_time = fields.Float(U'本次采购开票金额')
     p_s_add_this_time = fields.Float(u'本次应收金额' ,compute=compute_info)
-    back_tax_add_this_time = fields.Float('本次应生成退税')
+    back_tax_add_this_time = fields.Float('本次应生成退税', compute=compute_back_tax)
     p_s_add_this_time_old = fields.Float(u'冲减原始应付金额')
     yjzy_invoice_id = fields.Many2one('account.invoice',u'关联账单')
 
@@ -702,11 +738,7 @@ class tb_po_invoice_line(models.Model):
     purchase_amount_max_add_rest = fields.Float('采购池(下限)', digits=(2, 2),related='hsname_all_line_id.purchase_amount_max_add_rest')
     purchase_amount_min_add_rest = fields.Float('采购池(上限)', digits=(2, 2),related='hsname_all_line_id.purchase_amount_min_add_rest')
     purchase_amount2_add_actual = fields.Float(U'实际已经增加采购额',related='hsname_all_line_id.purchase_amount2_add_actual')
-    @api.onchange('purchase_amount2_add_this_time')
-    def onchange_purchase_amount2_add_this_time(self):
-        for one in self:
-            back_tax_add_this_time = one.purchase_amount2_add_this_time / 1.13 * one.back_tax
-            one.back_tax_add_this_time = back_tax_add_this_time
+
 
 
     @api.onchange('hs_id')

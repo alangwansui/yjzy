@@ -312,7 +312,7 @@ class account_invoice(models.Model):
     invoice_attribute = fields.Selection(
         [('normal', '常规账单'), ('extra', '额外账单'), ('other_po', '直接增加'),('expense_po', u'费用转换')], '账单类型')
     #新增
-
+    yjzy_type_1 = fields.Selection([('sale', u'应收'), ('purchase', u'应付'), ('back_tax', u'退税')], string=u'发票类型')
 
     need_refund = fields.Boolean(u'是否需要退款')
     refund_state = fields.Selection([('10_no','未退款'),('20_part','部分退款'),('30_all','完成退款')],u'退款状态')
@@ -346,7 +346,7 @@ class account_invoice(models.Model):
     fault_comments = fields.Text('异常备注')
    # display_name = fields.Char(u'显示名称', compute=compute_display_name, store=True)
    #13ok
-    yjzy_type = fields.Selection([('sale', u'销售'), ('purchase', u'采购'), ('back_tax', u'退税')], string=u'发票类型')
+    yjzy_type = fields.Selection([('sale', u'应收'), ('purchase', u'应付'), ('back_tax', u'退税')], string=u'发票类型')
     bill_id = fields.Many2one('transport.bill', u'发运单')
     tb_contract_code = fields.Char(u'出运合同号', related='bill_id.ref', readonly=True, store=True)
     include_tax = fields.Boolean(u'含税')

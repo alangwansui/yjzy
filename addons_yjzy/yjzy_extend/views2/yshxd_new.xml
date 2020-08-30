@@ -143,7 +143,7 @@
                         </page>
                         <page string="明细" attrs="{'invisible':[('operation_wizard','not in',['20','30'])]}">
                             <field name="line_ids" context="{'invisible_so': partner_type == 'supplier'}">
-                                <tree editable="top">
+                                <tree editable="top" create="false">
                                     <field name="payment_type" invisible="1"/>
                                     <field name="partner_type" invisible="1"/>
                                     <field name="so_id" readonly="1" invisible="not context.get('show_so')" />
@@ -180,7 +180,7 @@
                         </page>
                         <page string="认领发票" attrs="{'invisible':[('operation_wizard','not in',['10','30'])]}">
                             <field name="line_no_ids">
-                                <tree  editable="bottom">
+                                <tree  editable="bottom" create="false">
 
                                 <field name="invoice_id" readonly="1"/>
                                 <field name="payment_currency_id" invisible="1"/>

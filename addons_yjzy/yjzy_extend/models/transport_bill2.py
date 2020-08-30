@@ -150,6 +150,8 @@ class transport_bill(models.Model):
     # 816 定稿 合并
     def create_hsname_all_ids(self):
         self.ensure_one()
+        if self.tb_po_invoice_ids:
+            raise Warning('存在新增的采购申请单，请检查！')
         self.hsname_all_ids.unlink()
         hsname_all_obj = self.env['tbl.hsname.all']
         hs_dic = {}  # {pi*100+soid: }

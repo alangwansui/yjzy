@@ -34,10 +34,14 @@
                     <field name="partner_id"/>
                     <field name="yjzy_invoice_residual_amount"/>
                     <field name="yjzy_invoice_include_tax"/>
-                    <field name="purchase_amount2_add_this_time_total"/>
-                    <field name="p_s_add_this_time_refund"/>
-                    <field name="p_s_add_this_time_extra_total"/>
-                    <field name="back_tax_add_this_time_total"/>
+                    <field name="purchase_amount2_add_this_time_total" invisible="context.get('done')"/>
+                    <field name="p_s_add_this_time_refund" invisible="context.get('done')"/>
+                    <field name="p_s_add_this_time_extra_total" invisible="context.get('done')"/>
+                    <field name="back_tax_add_this_time_total" invisible="context.get('done')"/>
+                    <field name="po_add_residual" invisible="not context.get('done')"/>
+                    <field name="p_s_add_residual" invisible="not context.get('done')"/>
+                    <field name="back_tax_add_residual" invisible="not context.get('done')"/>
+                    <field name="p_s_add_refund_residual" invisible="not context.get('done')"/>
                     <field name="create_date"/>
                     <field name="yjzy_invoice_id"/>
                 </tree>
@@ -63,31 +67,44 @@
                     <group>
                         <field name="partner_id" string="供应商" domain="[('supplier', '=', True),('is_company','=',True)]"/>
                         <field name="tb_id" attrs="{'invisible':[('type','!=','other_po')]}" context="{'min_add':1,'tree_view_ref':'yjzy_extend.view_transport_bill_declare_po_tree'}"/>
-                        <field name="expense_sheet_id" attrs="{'invisible':[('type','!=','expense_po')]}"/>
-                        <field name="yjzy_invoice_id" attrs="{'invisible':[('type','!=','other_po')]}"/>
-                        <field name="invoice_product_id" attrs="{'invisible':[('type','!=','other_po')]}"/>
-                        <field name="type"/>
+                        <field name="expense_sheet_id" attrs="{'invisible':[('type','!=','expense_po')]}" domain="[('state','in',['account_approval','manager_approval','approval'])]"/>
+
+                        <field name="invoice_product_id" attrs="{'invisible':1}"/>
+
 
 
 
                     </group>
-                        <group>
-                         <field name="yjzy_invoice_residual_amount" attrs="{'invisible':[('type','!=','other_po')]}"/>
-                        <field name="yjzy_invoice_include_tax" string="原始采购含税" attrs="{'invisible':[('type','!=','other_po')]}"/>
-                        <field name="p_s_add_this_time_refund" attrs="{'invisible':['|',('yjzy_invoice_include_tax','=',True),('type','!=','other_po')]}" string="冲减金额"/>
-                        <field name="p_s_add_this_time_extra_total" string="冲减后应收" attrs="{'invisible':[('type','!=','other_po')]}"/>
-                        <field name="purchase_amount2_add_this_time_total" string="增加采购总额"/>
-                        <field name="back_tax_add_this_time_total" string="退税金额" attrs="{'invisible':[('type','!=','other_po')]}"/>
-                        <field name="expense_currency_id" attrs="{'invisible':[('type','!=','expense_po')]}"/>
-                        <field name="expense_sheet_amount" attrs="{'invisible':[('type','!=','expense_po')]}"/>
-                        <field name="price_total" groups="base.group_system"/>
-                    </group>
-                        <group>
+                         <group>
                          <field name="tax_rate_add"/>
                          <field name="expense_tax"/>
 
 
                     </group>
+                        <group>
+                         <field name="yjzy_invoice_residual_amount" attrs="{'invisible':['|',('type','!=','other_po'),('yjzy_invoice_include_tax','=',True)]}"/>
+                        <field name="yjzy_invoice_include_tax" string="原始采购含税" attrs="{'invisible':[('type','!=','other_po')]}"/>
+                        <field name="purchase_amount2_add_this_time_total" string="增加采购总额"/>
+                        <field name="p_s_add_this_time_refund" attrs="{'invisible':['|',('yjzy_invoice_include_tax','=',True),('type','!=','other_po')]}" string="冲减金额"/>
+                        <label for="" name="p_s_add_this_time_extra_total">
+                            <b attrs="{'invisible':['|',('yjzy_invoice_include_tax','=',True),('type','!=','other_po')]}">
+                            冲减后应收
+                            </b>
+                            <b attrs="{'invisible':['|',('yjzy_invoice_include_tax','=',False),('type','!=','other_po')]}">
+                              应收金额
+                            </b>
+                        </label>
+                                <div class="o_row">
+                                    <field name="p_s_add_this_time_extra_total"/>
+                                </div>
+                            <!--field name="p_s_add_this_time_extra_total" string="冲减后应收" attrs="{'invisible':[('type','!=','other_po')]}"/-->
+
+                        <field name="back_tax_add_this_time_total" string="退税金额" attrs="{'invisible':[('type','!=','other_po')]}"/>
+                        <field name="expense_currency_id" attrs="{'invisible':[('type','!=','expense_po')]}"/>
+                        <field name="expense_sheet_amount" attrs="{'invisible':[('type','!=','expense_po')]}"/>
+                        <field name="price_total" groups="base.group_system"/>
+                    </group>
+
                     </group>
                     <notebook>
                         <page string="账单明细行" attrs="{'invisible':[('type','!=','extra')]}">
@@ -101,46 +118,85 @@
                         </page>
                    <page string="明细行" >
                         <field name="hsname_all_ids">
-                            <tree editable="bottom">
-                                <field name="hs_id"/>
+                            <tree editable="bottom" >
+                                <field name="hs_id" attrs="{'readonly':['parent.state','!=','draft']}"/>
                                 <field name="hsname_all_line_id" invisible="1"/>
                                 <!--field name="purchase_amount2_tax"/>
                                 <field name="purchase_amount2_no_tax"/-->
-                                <field name="back_tax" attrs="{'invisible':[('parent.type','!=','expense_po')]}"/>
-                                <field name="amount2" attrs="{'column_invisible':[('parent.type','!=','other_po')]}"/>
-                                <field name="purchase_amount2_tax" sum="小计" attrs="{'column_invisible':[('parent.type','!=','other_po')]}"/>
-                                <field name="purchase_amount2_no_tax" sum="小计" attrs="{'column_invisible':[('parent.type','!=','other_po')]}"/>
-                                <field name="purchase_back_tax_amount2_new" string="实际退税金额" sum="小计" attrs="{'column_invisible':[('parent.type','!=','other_po')]}"/>
-                                <field name="purchase_amount_min_add_forecast" sum="小计" attrs="{'column_invisible':[('parent.type','!=','other_po')]}"/>
-                                <field name="purchase_amount_max_add_forecast" sum="小计" attrs="{'column_invisible':[('parent.type','!=','other_po')]}"/>
-                                <field name="purchase_amount2_add_actual" sum="小计" attrs="{'column_invisible':[('parent.type','!=','other_po')]}"/>
-                                <field name="purchase_amount_min_add_rest" attrs="{'column_invisible':[('parent.type','!=','other_po')]}"/>
-                                <field name="purchase_amount_max_add_rest" attrs="{'column_invisible':[('parent.type','!=','other_po')]}"/>
-                                <field name="purchase_amount2_add_this_time"/>
-                                <field name="p_s_add_this_time"/>
-                                <field name="back_tax_add_this_time"/>
+                                <field name="back_tax" readonly="1" attrs="{'invisible':[('parent.type','!=','expense_po')]}"/>
+                                <field name="amount2" readonly="1" attrs="{'column_invisible':[('parent.type','!=','other_po')]}"/>
+                                <field name="purchase_amount2_tax" readonly="1" sum="小计" attrs="{'column_invisible':[('parent.type','!=','other_po')]}"/>
+                                <field name="purchase_amount2_no_tax" readonly="1" sum="小计" attrs="{'column_invisible':[('parent.type','!=','other_po')]}"/>
+                                <field name="purchase_back_tax_amount2_new" readonly="1" string="实际退税金额" sum="小计" attrs="{'column_invisible':[('parent.type','!=','other_po')]}"/>
+                                <field name="purchase_amount_min_add_forecast" readonly="1" sum="小计" attrs="{'column_invisible':[('parent.type','!=','other_po')]}"/>
+                                <field name="purchase_amount_max_add_forecast" readonly="1" sum="小计" attrs="{'column_invisible':[('parent.type','!=','other_po')]}"/>
+                                <field name="purchase_amount2_add_actual" readonly="1" sum="小计" attrs="{'column_invisible':[('parent.type','!=','other_po')]}"/>
+                                <field name="purchase_amount_min_add_rest" readonly="1" attrs="{'column_invisible':[('parent.type','!=','other_po')]}"/>
+                                <field name="purchase_amount_max_add_rest" readonly="1" attrs="{'column_invisible':[('parent.type','!=','other_po')]}"/>
+                                <field name="purchase_amount2_add_this_time" attrs="{'readonly':['parent.state','!=','draft']}"/>
+                                <field name="p_s_add_this_time" attrs="{'readonly':['parent.state','!=','draft']}"/>
+                                <field name="back_tax_add_this_time" />
 
                             </tree>
                         </field>
 
                     </page>
                     <page string="额外发票">
-                        <field name="invoice_ids"/>
+                        <field name="invoice_ids">
+                            <tree>
+                                <field name="tb_contract_code"/>
+                                <field name="amount_total_signed" string="账单金额"/>
+                                <field name="residual_signed" string="未付金额"/>
+                                <field name="state"/>
+                            </tree>
+                        </field>
                     </page>
                     <page string="额外采购发票">
-                        <field name="invoice_p_ids"/>
+                        <field name="invoice_p_ids">
+                             <tree decoration-info="state == 'draft'" decoration-muted="state == 'cancel'">
+                                <field name="tb_contract_code"/>
+                                <field name="amount_total_signed" string="账单金额"/>
+                                <field name="residual_signed" string="未付金额"/>
+                                 <field name="yjzy_type_1"/>
+                                 <field name="yjzy_type"/>
+                                <field name="state"/>
+                            </tree>
+                        </field>
                     </page>
                     <page string="额外冲减发票">
-                        <field name="invoice_p_s_ids"/>
+                        <field name="invoice_p_s_ids">
+                             <tree decoration-info="state == 'draft'" decoration-muted="state == 'cancel'">
+                                <field name="tb_contract_code"/>
+                                <field name="amount_total_signed" string="账单金额"/>
+                                <field name="residual_signed" string="未完成金额"/>
+                                <field name="state"/>
+                            </tree>
+                        </field>
                     </page>
                     <page string="额外退税发票">
-                        <field name="invoice_back_tax_ids"/>
+                        <field name="invoice_back_tax_ids">
+                             <tree decoration-info="state == 'draft'" decoration-muted="state == 'cancel'">
+                                <field name="tb_contract_code"/>
+                                <field name="amount_total_signed" string="账单金额"/>
+                                <field name="residual_signed" string="未退金额"/>
+                                <field name="state"/>
+                            </tree>
+                        </field>
                     </page>
                     <page string="额外应收发票">
-                        <field name="invoice_s_ids"/>
+                        <field name="invoice_s_ids">
+                             <tree decoration-info="state == 'draft'" decoration-muted="state == 'cancel'">
+                                <field name="tb_contract_code"/>
+                                <field name="amount_total_signed" string="账单金额"/>
+                                <field name="residual_signed" string="未收金额"/>
+                                <field name="state"/>
+                            </tree>
+                        </field>
                     </page>
                         <page groups="base.group_system">
                             <group>
+                                <field name="type"/>
+                                <field name="yjzy_invoice_id" attrs="{'invisible':[('type','!=','other_po')]}"/>
                             <field name="product_feiyong_tax" attrs="{'invisible':0}"/>
                             <field name="product_zyywsr" attrs="{'invisible':0}"/>
                             <field name="product_qtysk" attrs="{'invisible':0}"/>
@@ -180,7 +236,7 @@
                         <field name="tb_id" invisible="1" />
                         <field name="type" attrs="{'invisible':1}"/>
                         <field name="yjzy_invoice_id"/>
-                        <field name="yjzy_type" attrs="{'invisible':1}"/>
+                        <field name="yjzy_type_1" attrs="{'invisible':1}"/>
                         <field name="type_invoice"  attrs="{'invisible':1}"/>
                     </group>
                         <group>
@@ -250,7 +306,7 @@
                         <field name="tb_id" invisible="1" />
                         <field name="type"/>
                         <field name="yjzy_invoice_id"/>
-                        <field name="yjzy_type"/>
+                        <field name="yjzy_type_1"/>
                         <field name="type_invoice"/>
                     </group>
                         <group>
@@ -298,34 +354,131 @@
                 </form>
             </field>
         </record>
-        <record model="ir.actions.act_window" id="act_tb_po">
-            <field name="name">新增采购申请单</field>
+        <record model="ir.actions.act_window" id="act_tb_po_approving">
+            <field name="name">审批中</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">tb.po.invoice</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[]</field>
             <field name="limit">20</field>
-            <field name="context">{}</field>
+            <field name="context">{'done':0}</field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('tb_po_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_form')})]"/>
 
         </record>
-        <menuitem id="menu_tb_po_tree" name="新增采购申请单"
+        <menuitem id="menu_tb_po_tree_approving" name="审批中"
                   parent="yjzy_extend.menu_extra_po_root"
                   sequence="10"
-                  action="act_tb_po"
+                  action="act_tb_po_approving"
         />
+
+<record model="ir.actions.act_window" id="act_tb_po_done">
+            <field name="name">审批完成</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">tb.po.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="limit">20</field>
+            <field name="context">{'done':1}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('tb_po_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_form')})]"/>
+
+        </record>
+        <menuitem id="menu_tb_po_tree_done" name="审批完成"
+                  parent="yjzy_extend.menu_extra_po_root"
+                  sequence="10"
+                  action="act_tb_po_done"
+        />
+         <record model="ir.actions.act_window" id="act_tb_po_create">
+            <field name="name">创建新增采购申请单</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">tb.po.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="domain">[]</field>
+            <field name="limit">20</field>
+            <field name="context">{'default_type':'other_po','default_yjzy_type_1':'purchase','min_add':1}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_form')})]"/>
+        </record>
+
+        <menuitem id="menu_tb_po_create" name="创建新增采购申请单"
+                  parent="yjzy_extend.menu_extra_po_root"
+                  sequence="20"
+                  action="act_tb_po_create"/>
+
+<record model="ir.actions.act_window" id="act_expense_po_approving">
+            <field name="name">审批中</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">tb.po.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="limit">20</field>
+            <field name="context">{'done':0}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('tb_po_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_form')})]"/>
+
+        </record>
+        <menuitem id="menu_expense_po_tree_approving" name="审批中"
+                  parent="yjzy_extend.menu_extra_po_expense_root"
+                  sequence="10"
+                  action="act_expense_po_approving"
+        />
+
+<record model="ir.actions.act_window" id="act_expense_po_done">
+            <field name="name">审批完成</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">tb.po.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="limit">20</field>
+            <field name="context">{'done':1}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('tb_po_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_form')})]"/>
+
+        </record>
+        <menuitem id="menu_expense_po_tree_done" name="审批完成"
+                  parent="yjzy_extend.menu_extra_po_expense_root"
+                  sequence="10"
+                  action="act_expense_po_done"
+        />
+
+         <record model="ir.actions.act_window" id="act_expense_po_create">
+            <field name="name">创建费用转应付申请单</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">tb.po.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="domain">[]</field>
+            <field name="limit">20</field>
+            <field name="context">{'default_type':'expense_po','default_yjzy_type_1':'purchase'}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_form')})]"/>
+        </record>
+
+        <menuitem id="menu_expense_po_create" name="创建费用转应付申请单"
+                  parent="yjzy_extend.menu_extra_po_expense_root"
+                  sequence="20"
+                  action="act_expense_po_create"/>
+
+
         <record model="ir.actions.act_window" id="act_extra_customer_invoice">
             <field name="name">常规额外应收申请单</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">tb.po.invoice</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[('yjzy_type','=','sale'),('type','=','extra')]</field>
+            <field name="domain">[('yjzy_type_1','=','sale'),('type','=','extra')]</field>
             <field name="limit">20</field>
-            <field name="context">{'default_type':'extra','default_yjzy_type':'sale',}</field>
+            <field name="context">{'default_type':'extra','default_yjzy_type_1':'sale',}</field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('tb_po_extra_customer_invoice_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_extra_invoice_customer_form')})]"/>
@@ -345,7 +498,7 @@
             <field name="view_mode">form</field>
             <field name="domain">[]</field>
             <field name="limit">20</field>
-            <field name="context">{'default_type':'extra','default_yjzy_type':'sale'}</field>
+            <field name="context">{'default_type':'extra','default_yjzy_type_1':'sale'}</field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_extra_invoice_customer_form')})]"/>
         </record>
@@ -362,9 +515,9 @@
             <field name="res_model">tb.po.invoice</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[('yjzy_type','=','purchase'),('type','=','extra')]</field>
+            <field name="domain">[('yjzy_type_1','=','purchase'),('type','=','extra')]</field>
             <field name="limit">20</field>
-            <field name="context">{'default_type':'extra','default_yjzy_type':'purchase',}</field>
+            <field name="context">{'default_type':'extra','default_yjzy_type_1':'purchase',}</field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('tb_po_extra_supplier_invoice_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_extra_invoice_supplier_form')})]"/>
@@ -384,7 +537,7 @@
             <field name="view_mode">form</field>
             <field name="domain">[]</field>
             <field name="limit">20</field>
-            <field name="context">{'default_type':'extra','default_yjzy_type':'purchase'}</field>
+            <field name="context">{'default_type':'extra','default_yjzy_type_1':'purchase'}</field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_extra_invoice_supplier_form')})]"/>
         </record>
@@ -394,41 +547,9 @@
                   sequence="20"
                   action="act_extra_supplier_create"/>
 
-        <record model="ir.actions.act_window" id="act_tb_po_create">
-            <field name="name">创建新增采购申请单</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="res_model">tb.po.invoice</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">form</field>
-            <field name="domain">[]</field>
-            <field name="limit">20</field>
-            <field name="context">{'default_type':'other_po','default_yjzy_type':'purchase','min_add':1}</field>
-            <field name="view_ids" eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_form')})]"/>
-        </record>
 
-        <menuitem id="menu_tb_po_create" name="创建新增采购申请单"
-                  parent="yjzy_extend.menu_extra_po_root"
-                  sequence="20"
-                  action="act_tb_po_create"/>
 
-        <record model="ir.actions.act_window" id="act_expense_po_create">
-            <field name="name">创建费用转应付申请单</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="res_model">tb.po.invoice</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">form</field>
-            <field name="domain">[]</field>
-            <field name="limit">20</field>
-            <field name="context">{'default_type':'expense_po','default_yjzy_type':'purchase'}</field>
-            <field name="view_ids" eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_form')})]"/>
-        </record>
 
-        <menuitem id="menu_expense_po_create" name="创建费用转应付申请单"
-                  parent="yjzy_extend.menu_extra_po_expense_root"
-                  sequence="20"
-                  action="act_expense_po_create"/>
 
 
     </data>
