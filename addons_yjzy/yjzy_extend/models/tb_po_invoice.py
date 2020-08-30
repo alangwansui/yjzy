@@ -12,7 +12,7 @@ class tb_po_invoice(models.Model):
     _order = 'id desc'
 
     @api.depends('hsname_all_ids', 'hsname_all_ids.purchase_amount2_add_this_time', 'hsname_all_ids.p_s_add_this_time','hsname_all_ids.tax_rate_add','hsname_all_ids.expense_tax',
-                 'partner_id','extra_invoice_line_ids','extra_invoice_line_ids.price_unit')
+                 'partner_id','extra_invoice_line_ids','extra_invoice_line_ids.price_unit','tb_id')
     def compute_info(self):
         for one in self:
             purchase_amount2_add_this_time_total = sum(x.purchase_amount2_add_this_time for x in one.hsname_all_ids)

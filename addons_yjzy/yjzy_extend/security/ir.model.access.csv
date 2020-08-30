@@ -30,6 +30,7 @@ access_usd_pool,access_usd_pool,model_usd_pool,base.group_user,1,1,1,1
 access_tbl_hsname_all,access_tbl_hsname_all,model_tbl_hsname_all,base.group_user,1,1,1,1
 access_invoice_hs_name_all,access_invoice_hs_name_all,model_invoice_hs_name_all,base.group_user,1,1,1,1
 access_tb_po_invoice,access_tb_po_invoice,model_tb_po_invoice,base.group_user,1,1,1,1
+access_tb_po_invoice_line,access_tb_po_invoice_line,model_tb_po_invoice_line,base.group_user,1,1,1,1
 access_budget_budget,access_budget_budget,model_budget_budget,base.group_user,1,1,1,1
 access_account_reconcile_order_line_no,access_account_reconcile_order_line_no,model_account_reconcile_order_line_no,base.group_user,1,1,1,1
 
