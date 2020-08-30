@@ -304,13 +304,13 @@ class tb_po_invoice(models.Model):
 
     def apply(self):
         self.ensure_one()
-        if type == 'other_po':
+        if self.type == 'other_po':
             self.invoice_ids.unlink()
             self.make_purchase_invoice()
             self.make_back_tax()
             self.make_sale_invoice()
             self.make_sale_invoice_extra()
-        if type =='expense_po':
+        if self.type =='expense_po':
             self.invoice_ids.unlink()
             self.apply_expense_sheet()
             self.make_back_tax()
