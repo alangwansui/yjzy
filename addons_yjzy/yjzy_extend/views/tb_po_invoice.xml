@@ -143,7 +143,7 @@
                     </page>
                     <page string="额外发票">
                         <field name="invoice_ids">
-                            <tree>
+                            <tree decoration-info="state == 'draft'" decoration-muted="state == 'cancel'">
                                 <field name="tb_contract_code"/>
                                 <field name="amount_total_signed" string="账单金额"/>
                                 <field name="residual_signed" string="未付金额"/>
