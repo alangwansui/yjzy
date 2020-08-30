@@ -728,7 +728,7 @@ class tb_po_invoice_line(models.Model):
     yjzy_invoice_id = fields.Many2one('account.invoice',u'关联账单')
 
     hs_id = fields.Many2one('hs.hs', u'品名',related='hsname_all_line_id.hs_id')
-    back_tax = fields.Float(u'退税率',related='hsname_all_line_id.back_tax')
+    back_tax = fields.Float(u'退税率',related='hsname_all_line_id.back_tax',store=True)
     amount2 = fields.Float('报关金额', digits=dp.get_precision('Money'),related='hsname_all_line_id.amount2')
     purchase_amount2_tax = fields.Float(u'含税采购金额',related='hsname_all_line_id.purchase_amount2_tax')
     purchase_amount2_no_tax = fields.Float(u'不含税采购金额',related='hsname_all_line_id.purchase_amount2_no_tax')
@@ -740,7 +740,7 @@ class tb_po_invoice_line(models.Model):
     purchase_amount2_add_actual = fields.Float(U'实际已经增加采购额',related='hsname_all_line_id.purchase_amount2_add_actual')
 
 
-
+    #830 退税的处理方式，手动要随hs_id但是自动又要和那边关联
     @api.onchange('hs_id')
     def onchange_hs_id(self):
         for one in self:

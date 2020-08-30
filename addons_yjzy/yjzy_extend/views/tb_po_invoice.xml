@@ -32,7 +32,7 @@
                 <tree string="增加采购" create="false">
                     <field name="name"/>
                     <field name="partner_id"/>
-                    <field name="yjzy_invoice_residual_amount"/>
+                    <field name="yjzy_invoice_residual_amount" attrs="{'invisible':1}"/>
                     <field name="yjzy_invoice_include_tax"/>
                     <field name="purchase_amount2_add_this_time_total" invisible="context.get('done')"/>
                     <field name="p_s_add_this_time_refund" invisible="context.get('done')"/>
@@ -123,7 +123,7 @@
                                 <field name="hsname_all_line_id" invisible="1"/>
                                 <!--field name="purchase_amount2_tax"/>
                                 <field name="purchase_amount2_no_tax"/-->
-                                <field name="back_tax" readonly="1" attrs="{'invisible':[('parent.type','!=','expense_po')]}"/>
+                                <field name="back_tax" attrs="{'readonly':[('parent.type','!=','expense_po')]}"/>
                                 <field name="amount2" readonly="1" attrs="{'column_invisible':[('parent.type','!=','other_po')]}"/>
                                 <field name="purchase_amount2_tax" readonly="1" sum="小计" attrs="{'column_invisible':[('parent.type','!=','other_po')]}"/>
                                 <field name="purchase_amount2_no_tax" readonly="1" sum="小计" attrs="{'column_invisible':[('parent.type','!=','other_po')]}"/>
@@ -360,7 +360,7 @@
             <field name="res_model">tb.po.invoice</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[]</field>
+            <field name="domain">[('state','not in',['30_done'])]</field>
             <field name="limit">20</field>
             <field name="context">{'done':0}</field>
             <field name="view_ids" eval="[(5, 0, 0),
@@ -380,7 +380,7 @@
             <field name="res_model">tb.po.invoice</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[]</field>
+            <field name="domain">[('state','not in',['30_done'])]</field>
             <field name="limit">20</field>
             <field name="context">{'done':1}</field>
             <field name="view_ids" eval="[(5, 0, 0),
