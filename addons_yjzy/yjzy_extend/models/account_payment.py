@@ -52,10 +52,10 @@ class account_payment(models.Model):
         for one in self:
             self.ysrld_ids = self.payment_ids.filtered(lambda x: x.sfk_type == 'ysrld')
             self.yfsqd_ids = self.payment_ids.filtered(lambda x: x.sfk_type == 'yfsqd')
-
+            advance_reconcile_order_count = len(self.advance_reconcile_order_line_ids.filtered(lambda x: x.amount_advance_org > 0 and x.order_id.state == 'done'))
+            one.advance_reconcile_order_count = advance_reconcile_order_count
             one.count_ysrld = len(self.ysrld_ids)
             one.count_yfsqd = len(self.yfsqd_ids)
-
             one.count_yshx = len(self.yshx_ids)
             # one.count_ptskrl = len(self.ptskrl_ids)
             one.count_fybg = len(self.fybg_ids)
@@ -130,6 +130,10 @@ class account_payment(models.Model):
             res.update({
                 'partner_id': self.env['res.partner'].search([('name','=','未定义')], limit=1).id
             })
+        if ctx.get('default_sfk_type','') == 'rcskd':
+            res.update({
+                'partner_id': self.env['res.partner'].search([('name','=','未定义')], limit=1).id
+            })
 
         if ctx.get('active_model', '') == 'account.invoice':
             invoice = self.env['account.invoice'].browse(ctx.get('active_id'))
@@ -185,6 +189,7 @@ class account_payment(models.Model):
     fault_comments = fields.Text('异常备注')
     display_name = fields.Char(u'显示名称', compute=compute_display_name, store=True)
     advance_reconcile_order_line_ids = fields.One2many('account.reconcile.order.line', 'yjzy_payment_id', string='预收认领明细',domain=[('amount_advance_org','>',0),('order_id.state','=','done')])
+    advance_reconcile_order_count = fields.Integer(u'应收认领数量', compute=compute_count)
     advance_reconcile_order_line_amount_char = fields.Text(related='so_id.advance_reconcile_order_line_amount_char', string=u'预收认领明细金额')
     advance_reconcile_order_line_date_char = fields.Text(related='so_id.advance_reconcile_order_line_date_char',string=u'预收认领日期')
     advance_reconcile_order_line_invoice_char = fields.Text(related='so_id.advance_reconcile_order_line_invoice_char',string=u'账单')

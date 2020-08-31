@@ -36,14 +36,15 @@
         <field name="arch" type="xml">
             <tree string="日常收款单" decoration-info="state == 'draft'" decoration-muted="state in ['reconciled', 'cancelled']" edit="false">
                 <field name="name"/>
-                <field name="partner_id"/>
+                <field name="partner_id" invisible="1"/>
                 <field name="payment_date" string="收款日期"/>
-                <field name="journal_id" string="收款日记账"/>
+                <field name="journal_id" string="收款账户"/>
                 <field name="amount" string="收款金额"/>
                 <field name="balance"/>
                 <field name="company_id"/>
+                <field name="payment_comments"/>
                 <field name="fault_comments"/>
-                <field name="state"/>
+                <field name="state" invisible=""/>
                 <field name="currency_id" attrs="{}" invisible="1" required="1"/>
             </tree>
         </field>
@@ -142,9 +143,6 @@
                         <button class="oe_stat_button" name="open_fybg"  type="object" icon="fa-pencil-square-o" string="费用报告">
                             <field name="count_fybg" widget="statinfo" nolabel="1"/>
                         </button>
-
-
-
                         <button class="oe_stat_button" name="button_journal_entries"
                                 string="Journal Items" type="object"
                                 groups="account.group_account_user"

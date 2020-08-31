@@ -94,15 +94,17 @@
                                    'invisible': [('payment_type', 'not in', ('inbound', 'outbound'))], 'readonly': [('state', '!=', 'draft')]}"
                                    context="{'default_is_company': True, 'default_supplier': payment_type == 'outbound', 'default_customer': payment_type == 'inbound'}"/>
                             <field name="bank_id" domain="[('partner_id','=',partner_id)]" options="{'no_create_edit': True}" string="收款方账户"/>
+                            <field name="po_id" domain="[('partner_id','=', partner_id),'|',('state','in',['approve','done','purchase','to approve']),('x_wkf_state','=',185)]" context="{'show_contract_code': 1}"/>
                             <field name="include_tax"/>
+                            <field name="fk_journal_id" string="付款银行"/>
                             <label for="amount"/>
                             <div name="amount_div" class="o_row">
                                 <field name="amount" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                                  货币：<field name="currency_id" options="{'no_create': True, 'no_open': True}" groups="base.group_multi_currency"
                                        attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                             </div>
-                            <field name="fk_journal_id" string="付款银行"/>
-                            <field name="journal_id"  domain="[('type','=','renling')]"  attrs="{'readonly': [('state', '!=', 'draft')]}" />
+
+                            <field name="journal_id"  domain="[('type','=','renling')]" invisible="1"  attrs="{'readonly': [('state', '!=', 'draft')],'invisible':1}" />
                             <field name="destination_journal_id" widget="selection"
                                    attrs="{'required': [('payment_type', '=', 'transfer')], 'invisible': [('payment_type', '!=', 'transfer')], 'readonly': [('state', '!=', 'draft')]}"/>
                             <field name="hide_payment_method" invisible="1"/>
@@ -118,17 +120,17 @@
 
                             <field name="payment_date"  string="预付申请日期" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
 
-                            <field name="yjzy_payment_id" string="选择付款单" domain="[('sfk_type', '=', 'rcfkd')]" context="{'form_view_ref': 'yjzy_extend.view_rcfkd_form'}"/>
+                            <field name="yjzy_payment_id" string="付款单" domain="[('sfk_type', '=', 'rcfkd')]" context="{'form_view_ref': 'yjzy_extend.view_rcfkd_form'}"/>
                             <field name="yjzy_payment_currency_id" string="货币"/>
                             <field name="yjzy_payment_balance" string="付款单余额"/>
                             <field name="is_renling" />
 
                             <field name="be_renling" />
-                            <field name="advance_ok" label="是否预收" />
-                            <field name="advance_account_id" label="预收科目" />
+                            <field name="advance_ok" label="是否预付" invisible="1"/>
+                            <field name="advance_account_id" label="预付科目" invisible=""/>
 
 
-                            <field name="po_id" domain="[('partner_id','=', partner_id),'|',('state','in',['approve','done','purchase','to approve']),('x_wkf_state','=',185)]" context="{'show_contract_code': 1}"/>
+
                             <field name="sale_uid"/>
                             <field name="assistant_uid"/>
 

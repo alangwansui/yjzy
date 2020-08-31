@@ -111,7 +111,8 @@
                             <field name="yjzy_payment_id" string="收款单"
                                    domain="['|','&amp;','&amp;','&amp;',('state','=','posted'),('sfk_type','=','rcskd'),('partner_id','=',partner_id),('balance','!=',0),'&amp;','&amp;','&amp;',('state','=','posted'),('sfk_type','=','rcskd'),('partner_id.name','=','未定义'),('balance','!=',0)]"
                                    options="{'no_create':True}"
-                                   context="{'form_view_ref':'yjzy_extend.view_rcskd_form'}"/>
+                                   context="{'form_view_ref': 'yjzy_extend.view_rcskd_form','advance_bank_amount':1}"/>
+
                             <field name="yjzy_payment_currency_id" string="货币" readonly="1"
                                    options="{'no_create':True,'no_open': True}"/>
                             <field name="yjzy_payment_balance" string="收款单余额"/>
@@ -221,7 +222,7 @@
                             <field name="yjzy_payment_id" string="选择收款单"
                                    domain="['|','&amp;','&amp;','&amp;',('state','=','posted'),('sfk_type','=','rcskd'),('partner_id','=',partner_id),('balance','!=',0),'&amp;','&amp;','&amp;',('state','=','posted'),('sfk_type','=','rcskd'),('partner_id.name','=','未定义'),('balance','!=',0)]"
                                    options="{'no_create':True}"
-                                   context="{'form_view_ref':'yjzy_extend.view_rcskd_form'}"/>
+                                   context="{'form_view_ref': 'yjzy_extend.view_rcskd_form','advance_bank_amount':1}"/>
                             <field name="yjzy_payment_currency_id" string="货币" readonly="1"
                                    options="{'no_create':True,'no_open': True}"/>
                             <field name="yjzy_payment_balance" string="收款单余额"/>
@@ -248,9 +249,9 @@
                         <group>
                             <field name="payment_date" string="认领收款日期"
                                    attrs="{'readonly': [('state', '!=', 'draft')]}"/>
-                            <field name="sfk_type" readonly="1"/>
-                            <field name="payment_type" widget="radio" readonly="1" required="1"/>
-                            <field name="partner_type" widget="selection"
+                            <field name="sfk_type" readonly="1" attrs="{'invisible':1}"/>
+                            <field name="payment_type" widget="radio" readonly="1" attrs="{'invisible':1}" required="1"/>
+                            <field name="partner_type" widget="selection" invisible="1"
                                    attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))], 'invisible': [('payment_type', 'not in', ('inbound', 'outbound'))], 'readonly': 1 }"/>
                             <field name="be_renling" invisible="1"/>
                             <field name="advance_ok" label="是否预收" string="是预收" invisible="1"/>
@@ -264,8 +265,19 @@
                         </group>
                     </group>
                    <notebook>
-                       <page>
-                           <field name="advance_reconcile_order_line_ids" />
+                       <page string="预收应收认领明细" attrs="{'invisible':[('advance_reconcile_order_count','=',0)]}">
+                           <field name="advance_reconcile_order_line_ids">
+                               <tree>
+                                   <field name="tb_contract_code"/>
+                                   <field name="amount_advance_org"/>
+                                   <field name="yjzy_payment_id"/>
+                               </tree>
+                           </field>
+                       </page>
+                       <page groups="base.group_system">
+                           <group>
+                               <field name="advance_reconcile_order_count"/>
+                           </group>
                        </page>
                    </notebook>
                 </sheet>
