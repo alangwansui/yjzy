@@ -208,9 +208,22 @@
                             <field name="yshx_ids" widget="many2many" domain="[('sfk_type','=','yshxd'), ('partner_id','=',partner_id),('yjzy_payment_id','=',False),('state','=','approved')]"
                                    context="{'form_view_ref':'yjzy_extend.account_yshxd_form_view','tree_view_ref':'yjzy_extend.account_yshxd_tree_view'}"/>
                         </page>
-                        <page string="费用报告" attrs="{'invisible':[('count_fybg','=',0)]}">
-                            <field name="fybg_ids" widget="many2many"/>
-                            <field name="expense_ids" widget="many2many"/>
+                        <page string="其他收款认领" attrs="{'invisible':[('count_fybg','=',0)]}">
+                            <field name="fybg_ids" widget="many2many">
+                                <tree>
+                                    <field name="create_date"/>
+                                    <field name="create_uid"/>
+                                    <field name="name" string="收入说明"/>
+                                    <field name="negative_total_amount" string="总金额"/>
+                                </tree>
+                            </field>
+                            <field name="expense_ids" widget="many2many">
+                                <tree>
+                                    <field name="product_id" string="收入类别项目"/>
+                                    <field name="negative_total_amount" string="明细金额"/>
+                                </tree>
+                            </field>
+
                         </page>
                         <page string="余额相关分录" groups="base.group_system">
                             <field name="aml_ids"/>
