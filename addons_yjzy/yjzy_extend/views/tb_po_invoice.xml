@@ -82,9 +82,24 @@
 
                     </group>
                         <group>
+                            <field name="yjzy_invoice_include_tax" string="原始采购含税" attrs="{'invisible':['|',('yjzy_invoice_id','=',False),('type','!=','other_po')]}"/>
+                            <label for="" name="yjzy_invoice_residual_amount" attrs="{'invisible':['|',('yjzy_invoice_id','=',False),('type','!=','other_po')]}">
+                                 <b attrs="{'invisible':['|',('yjzy_invoice_include_tax','=',True),('type','!=','other_po')]}">
+                            原始未税采购金额
+                            </b>
+                            <b attrs="{'invisible':['|',('yjzy_invoice_include_tax','=',False),('type','!=','other_po')]}">
+                              原始含税采购金额
+                            </b>
+                            </label>
+                                <div class="o_row" attrs="{'invisible':['|',('yjzy_invoice_id','=',False),('type','!=','other_po')]}">
+                                    <field name="yjzy_invoice_residual_amount"/>
+                                </div>
+
                          <field name="yjzy_invoice_residual_amount" attrs="{'invisible':['|',('type','!=','other_po'),('yjzy_invoice_include_tax','=',True)]}"/>
-                        <field name="yjzy_invoice_include_tax" string="原始采购含税" attrs="{'invisible':[('type','!=','other_po')]}"/>
-                        <field name="purchase_amount2_add_this_time_total" string="增加采购总额"/>
+
+
+
+                            <field name="purchase_amount2_add_this_time_total" string="增加采购总额"/>
                         <field name="p_s_add_this_time_refund" attrs="{'invisible':['|',('yjzy_invoice_include_tax','=',True),('type','!=','other_po')]}" string="冲减金额"/>
                         <label for="" name="p_s_add_this_time_extra_total">
                             <b attrs="{'invisible':['|',('yjzy_invoice_include_tax','=',True),('type','!=','other_po')]}">
