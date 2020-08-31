@@ -365,7 +365,7 @@
             <field name="res_model">tb.po.invoice</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[('state','not in',['30_done'])]</field>
+            <field name="domain">[('state','not in',['30_done']),('type','=','other_po')]</field>
             <field name="limit">20</field>
             <field name="context">{'done':0}</field>
             <field name="view_ids" eval="[(5, 0, 0),
@@ -385,7 +385,7 @@
             <field name="res_model">tb.po.invoice</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[('state','in',['30_done'])]</field>
+            <field name="domain">[('state','in',['30_done']),('type','=','other_po')]</field>
             <field name="limit">20</field>
             <field name="context">{'done':1}</field>
             <field name="view_ids" eval="[(5, 0, 0),
@@ -422,7 +422,7 @@
             <field name="res_model">tb.po.invoice</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[]</field>
+            <field name="domain">[('state','not in',['30_done']),('type','=','expense_po')]</field>
             <field name="limit">20</field>
             <field name="context">{'done':0}</field>
             <field name="view_ids" eval="[(5, 0, 0),
@@ -442,7 +442,7 @@
             <field name="res_model">tb.po.invoice</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[]</field>
+            <field name="domain">[('state','in',['30_done']),('type','=','expense_po')]</field>
             <field name="limit">20</field>
             <field name="context">{'done':1}</field>
             <field name="view_ids" eval="[(5, 0, 0),

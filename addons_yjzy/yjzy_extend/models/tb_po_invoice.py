@@ -232,7 +232,7 @@ class tb_po_invoice(models.Model):
             self.make_extra_invoice()
     def action_manager_approve(self):
         self.state = '30_done'
-        self.invoice_ids.action_invoice_open()
+        #self.invoice_ids.action_invoice_open()
     def action_refuse(self):
         self.invoice_ids.unlink()
         self.state = '40_refuse'
@@ -629,46 +629,47 @@ class tb_po_invoice(models.Model):
         # product = self.env.ref('yjzy_extend.product_back_tax')
         product = self.invoice_product_id
         account = product.property_account_income_id
-        inv = invoice_obj.create({
-                'partner_id': self.partner_id.id,
-                'tb_po_invoice_id': self.id,
-                'bill_id': self.tb_id.id,
-                'invoice_attribute':'expense_po',
-                'expense_sheet_id':self.expense_sheet_id.id,
-                'type':'in_invoice',
-                'journal_type':'purchase',
-                'yjzy_type_1':'purchase',
-                'date': fields.datetime.now(),
-                'date_invoice': fields.datetime.now(),
-                'invoice_line_ids': [(0, 0, {
-                                   'name': '%s' % (product.name),
-                                   'product_id': product.id,
-                                   'quantity': 1,
-                                   'price_unit': self.purchase_amount2_add_this_time_total,
-                                   'account_id': account.id,
-            })]
-            })
-        for line in self.hsname_all_ids:
-            hsname_all_line = hsname_all_line_obj.create({
-                                'invoice_id': inv.id,
-                                'hs_id': line.hs_id.id,
-                                'hs_en_name':line.hs_en_name,
-                                'purchase_amount2_add_this_time':line.purchase_amount2_add_this_time,
-                                'tbl_hsname_all_id':line.hsname_all_line_id.id
-            })
-        self.expense_sheet_id.invoice_id = inv
-        form_view = self.env.ref('yjzy_extend.view_supplier_invoice_extra_po_form').id
-        return {
-            'name': u'增加采购额外账单',
-            'view_type': 'form',
-            'view_mode': 'form',
-            'res_model': 'account.invoice',
-            'views':[(form_view,'form')],
-            'res_id':inv.id,
-            'type': 'ir.actions.act_window',
-            'target': 'new',
-
-        }
+        if self.purchase_amount2_add_this_time_total != 0:
+            inv = invoice_obj.create({
+                    'partner_id': self.partner_id.id,
+                    'tb_po_invoice_id': self.id,
+                    'bill_id': self.tb_id.id,
+                    'invoice_attribute':'expense_po',
+                    'expense_sheet_id':self.expense_sheet_id.id,
+                    'type':'in_invoice',
+                    'journal_type':'purchase',
+                    'yjzy_type_1':'purchase',
+                    'date': fields.datetime.now(),
+                    'date_invoice': fields.datetime.now(),
+                    'invoice_line_ids': [(0, 0, {
+                                       'name': '%s' % (product.name),
+                                       'product_id': product.id,
+                                       'quantity': 1,
+                                       'price_unit': self.purchase_amount2_add_this_time_total,
+                                       'account_id': account.id,
+                })]
+                })
+            for line in self.hsname_all_ids:
+                hsname_all_line = hsname_all_line_obj.create({
+                                    'invoice_id': inv.id,
+                                    'hs_id': line.hs_id.id,
+                                    'hs_en_name':line.hs_en_name,
+                                    'purchase_amount2_add_this_time':line.purchase_amount2_add_this_time,
+                                    'tbl_hsname_all_id':line.hsname_all_line_id.id
+                })
+            # self.expense_sheet_id.invoice_id = inv
+            # form_view = self.env.ref('yjzy_extend.view_supplier_invoice_extra_po_form').id
+            # return {
+            #     'name': u'增加采购额外账单',
+            #     'view_type': 'form',
+            #     'view_mode': 'form',
+            #     'res_model': 'account.invoice',
+            #     'views':[(form_view,'form')],
+            #     'res_id':inv.id,
+            #     'type': 'ir.actions.act_window',
+            #     'target': 'new',
+            #
+            # }
 
 
 
