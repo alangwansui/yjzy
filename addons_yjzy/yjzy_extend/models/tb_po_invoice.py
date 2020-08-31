@@ -641,14 +641,27 @@ class tb_po_invoice(models.Model):
                     'yjzy_type_1':'purchase',
                     'date': fields.datetime.now(),
                     'date_invoice': fields.datetime.now(),
-                    'invoice_line_ids': [(0, 0, {
-                                       'name': '%s' % (product.name),
-                                       'product_id': product.id,
-                                       'quantity': 1,
-                                       'price_unit': self.purchase_amount2_add_this_time_total,
-                                       'account_id': account.id,
-                })]
+                #     'invoice_line_ids': [(0, 0, {
+                #                        'name': '%s' % (product.name),
+                #                        'product_id': product.id,
+                #                        'quantity': 1,
+                #                        'price_unit': self.purchase_amount2_add_this_time_total,
+                #                        'account_id': account.id,
+                # })]
                 })
+            expense_line_ids = self.expense_sheet_id.expense_line_ids
+            for line_1 in expense_line_ids:
+                product = line_1.product_id
+                account = product.property_account_income_id
+                invoice_line = invoice_line_obj.create({
+                    'name': '%s' % (product.name),
+                    'invoice_id':inv.id,
+                    'product_id':line_1.product_id.id,
+                    'quantity':line_1.quantity,
+                    'price_unit':line_1.unit_amount,
+                    'account_id':account.id
+                })
+
             for line in self.hsname_all_ids:
                 hsname_all_line = hsname_all_line_obj.create({
                                     'invoice_id': inv.id,

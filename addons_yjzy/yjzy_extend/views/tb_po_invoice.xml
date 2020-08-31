@@ -464,7 +464,7 @@
             <field name="view_mode">form</field>
             <field name="domain">[]</field>
             <field name="limit">20</field>
-            <field name="context">{'default_type':'expense_po','default_yjzy_type_1':'purchase'}</field>
+            <field name="context">{'default_type':'expense_po','default_tax_rate_add':1,'default_yjzy_type_1':'purchase'}</field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_form')})]"/>
         </record>
