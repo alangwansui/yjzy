@@ -9,6 +9,7 @@
         <menuitem id="menu_extra_customer_invoice_root" name="额外应收申请" sequence="99"/>
         <menuitem id="menu_extra_supplier_invoice_root" name="额外应付申请" sequence="99"/>
         <menuitem id="menu_yjzy_advance_root" name="应收应付" sequence="99"/>
+        <menuitem id="menu_declare_root" name="报关申报" sequence="99"/>
 
 
     </data>

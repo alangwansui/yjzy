@@ -14,7 +14,7 @@ class account_reconcile_order(models.Model):
     _description = '核销单'
     _order = 'date desc'
 
-    api.depends('fk_journal_id')
+    @api.depends('fk_journal_id')
     def compute_info(self):
         ctx = self.env.context
         for one in self:
@@ -28,11 +28,8 @@ class account_reconcile_order(models.Model):
                 one.payment_currency_id = one.yjzy_payment_id.currency_id
             else:
                 one.payment_currency_id = one.yjzy_payment_id.currency_id
-
             if not one.payment_currency_id:
                 one.payment_currency_id = one.manual_payment_currency_id
-
-
             if one.line_ids:
                 invoices = one.line_ids.mapped('invoice_id')
                 sale_orders = invoices.mapped('invoice_line_ids').mapped('sale_line_ids').mapped('order_id')
@@ -44,8 +41,7 @@ class account_reconcile_order(models.Model):
 
                 one.invoice_currency_id = invoice_currency
                 one.amount_invoice_residual_org = sum([x.residual for x in invoices])
-                one.amount_invoice = sum(
-                    [invoice_currency.with_context(date=x.date_invoice).compute(x.residual, company_currency) for x in
+                one.amount_invoice = sum([invoice_currency.with_context(date=x.date_invoice).compute(x.residual, company_currency) for x in
                      invoices])
                 one.amount_advance_residual_org = one.partner_type == 'customer' and sum(
                     [x.advance_residual for x in sale_orders]) \
@@ -83,20 +79,15 @@ class account_reconcile_order(models.Model):
         for one in self:
             if not one.line_ids:
                 continue
-
             invoices = one.line_ids.mapped('invoice_id')
             if len(one.invoice_ids.mapped('currency_id')) > 1:
                 raise Warning('选择的发票的交易货币不一致')
-
             sale_orders = invoices.mapped('invoice_line_ids').mapped('sale_line_ids').mapped('order_id')
             #invoice_currency = one.invoice_ids[0].currency_id
             #<jon>
             invoice_currency = one.line_ids[0].invoice_currency_id
-
-
             company_currency = one.currency_id
             partner = one.partner_id
-
             one.invoice_currency_id = invoice_currency
             one.amount_invoice_residual_org = sum([x.residual for x in invoices])
             one.amount_invoice = sum(

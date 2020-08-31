@@ -10,17 +10,20 @@
                     <field name="ref"/>
                     <field name="name" invisible="1" groups="base.group_system"/>
                     <field name="partner_id" required="1"/>
-                    <field name="current_date_rate"/>
+                    <field name="current_date_rate" string="成本单测算汇率"/>
                     <field name="org_sale_amount"/>
                     <field name="ciq_amount"/>
                     <field name="purchase_amount2_tax_total"/>
                     <field name="purchase_amount2_no_tax_total"/>
-                    <field name="purchase_amount_max_forecast_total"/>
                     <field name="purchase_amount_min_forecast_total"/>
-                    <field name="purchase_amount_max_add_forecast_total" attrs="{'column_invisible':1}"/>
+                    <field name="purchase_amount_max_forecast_total"/>
+
                     <field name="purchase_amount_min_add_forecast_total" attrs="{'column_invisible':1}"/>
-                    <field name="purchase_amount_max_add_rest_total"/>
+                    <field name="purchase_amount_max_add_forecast_total" attrs="{'column_invisible':1}"/>
+
                     <field name="purchase_amount_min_add_rest_total"/>
+                    <field name="purchase_amount_max_add_rest_total"/>
+
                     <field name="purchase_amount2_add_actual_total"/>
                     <field name="state" invisible="1" groups="base.group_system"/>
                     <field name="company_currency_id" invisible="1" groups="base.group_system"/>

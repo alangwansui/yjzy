@@ -66,6 +66,7 @@
         'views/transport_bill_usd_pool.xml',
         'views/transport_bill_declare_po.xml',
 
+
         'views/sale.xml',
         'views/sale2.xml',
         'views/sale3.xml',
@@ -133,7 +134,7 @@
 
         'views2/expense.xml',
         'views2/expense_sheet.xml',
-
+        'views/declare_declaration.xml',
 
         'data/data.xml',
         'data/message_subtype.xml',

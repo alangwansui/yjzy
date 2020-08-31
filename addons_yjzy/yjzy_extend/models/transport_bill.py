@@ -698,7 +698,7 @@ class transport_bill(models.Model):
 #qq1  就这个一个就可以了
     @api.depends('all_invoice_ids', 'all_invoice_ids.state', 'all_invoice_ids.residual_signed', 'sale_invoice_id',
                  'sale_invoice_id.state', 'sale_invoice_id.residual_signed', 'purchase_invoice_ids','purchase_invoice_ids.residual_signed',
-                 'purchase_invoice_ids.state', 'sale_invoice_balance_new','purchase_invoice_balance_new','back_tax_invoice_balance_new')
+                 'purchase_invoice_ids.state', 'sale_invoice_balance_new','purchase_invoice_balance_new','back_tax_invoice_balance_new','state')
     def compute_second_state(self):
         for one in self:
             back_tax_invoice_id = one.back_tax_invoice_id
@@ -2812,11 +2812,11 @@ class transport_bill(models.Model):
             if user not in stage_preview.user_ids:
                 raise Warning('您没有权限审批')
             else:
-                self.compute_second_state()
                 self.write({'approve_uid':self.env.user.id,
                                'approve_date':fields.datetime.now(),
                                #'state':'approve',
                                'stage_id': stage_id.id})
+                self.compute_second_state()
         else:
             raise Warning('销售金额和原始销售不相等')
 
@@ -2829,11 +2829,12 @@ class transport_bill(models.Model):
             if user not in stage_preview.user_ids:
                 raise Warning('您没有权限审批')
             else:
-                self.compute_second_state()
+
                 self.write({#'approve_uid':self.env.user.id,
                                # 'approve_date':fields.datetime.now(),
                                #'state':'approve',
                                'stage_id': stage_id.id})
+                self.compute_second_state()
         else:
             raise Warning('销售金额和原始销售不相等')
 

@@ -69,7 +69,6 @@
             <field name="padding">6</field>
             <field name="company_id" eval="False"/>
         </record>
-
         <!-- 新收付款序列 -->back_tax2
         <record id="seq_yjzy_account_payment" model="ir.sequence">
             <field name="name">yjzy.account.payment</field>
@@ -108,9 +107,13 @@
             <field name="company_id" eval="False"/>
         </record>
 
-
-
-
+        <record id="seq_declaration_form" model="ir.sequence">
+            <field name="name">declare.declaration</field>
+            <field name="code">declare.declaration</field>
+            <field name="prefix">DF</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"/>
+        </record>
         <!-- PO BOX -->
         <record id="icp_yjzy_po_box" model="ir.config_parameter">
             <field name="key">po.box</field>

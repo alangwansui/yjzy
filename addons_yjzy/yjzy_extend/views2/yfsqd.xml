@@ -112,7 +112,7 @@
                                    attrs="{'invisible': [('hide_payment_method', '=', True)], 'readonly': [('state', '!=', 'draft')]}"/>
                             <field name="payment_method_code" invisible="1"/>
 
-
+                            <field name="advance_balance_total" string="预付余额"/>
                         </group>
                         <group>
 
