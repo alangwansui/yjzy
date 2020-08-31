@@ -314,7 +314,7 @@
             <field name="res_model">account.invoice</field>
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_account_invoice_new_filter"/>
-            <field name="domain">[('invoice_attribute','=','other_po'),('yjzy_type','=','purchase'),('type','=','in_invoice')]</field>
+            <field name="domain">[('invoice_attribute','=','other_po'),('yjzy_type_1','=','purchase'),('type','=','in_invoice')]</field>
             <field name="context">{}
             </field>
             <!--field name="target">new</field-->
@@ -333,7 +333,7 @@
             <field name="res_model">account.invoice</field>
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_account_invoice_new_filter"/>
-            <field name="domain">[('invoice_attribute','=','other_po'),('yjzy_type','=','sale'),('type','=','out_invoice')]</field>
+            <field name="domain">[('invoice_attribute','=','other_po'),('yjzy_type_1','=','sale'),('type','=','out_invoice')]</field>
             <field name="context">{}
             </field>
             <!--field name="target">new</field-->
@@ -352,7 +352,7 @@
             <field name="res_model">account.invoice</field>
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_account_invoice_new_filter"/>
-            <field name="domain">[('invoice_attribute','=','other_po'),('yjzy_type','=','back_tax'),('type','=','out_invoice')]</field>
+            <field name="domain">[('invoice_attribute','=','other_po'),('yjzy_type_1','=','back_tax'),('type','=','out_invoice')]</field>
             <field name="context">{}
             </field>
             <!--field name="target">new</field-->
@@ -371,7 +371,7 @@
             <field name="res_model">account.invoice</field>
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_account_invoice_new_filter"/>
-            <field name="domain">[('invoice_attribute','=','other_po'),('yjzy_type','=','purchase'),('type','=','in_refund')]</field>
+            <field name="domain">[('invoice_attribute','=','other_po'),('yjzy_type_1','=','purchase'),('type','=','in_refund')]</field>
             <field name="context">{}
             </field>
             <!--field name="target">new</field-->
