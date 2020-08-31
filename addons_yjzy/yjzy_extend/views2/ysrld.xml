@@ -222,7 +222,7 @@
                             <field name="yjzy_payment_id" string="选择收款单"
                                    domain="['|','&amp;','&amp;','&amp;',('state','=','posted'),('sfk_type','=','rcskd'),('partner_id','=',partner_id),('balance','!=',0),'&amp;','&amp;','&amp;',('state','=','posted'),('sfk_type','=','rcskd'),('partner_id.name','=','未定义'),('balance','!=',0)]"
                                    options="{'no_create':True}"
-                                   context="{'form_view_ref': 'yjzy_extend.view_rcskd_form','advance_bank_amount':1}"/>
+                                   context="{'form_view_ref': 'yjzy_extend.view_rcskd_form','bank_amount':1}"/>
                             <field name="yjzy_payment_currency_id" string="货币" readonly="1"
                                    options="{'no_create':True,'no_open': True}"/>
                             <field name="yjzy_payment_balance" string="收款单余额"/>
@@ -297,7 +297,7 @@
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="domain">[('sfk_type','=','ysrld'),('state','!=','cancel')]</field>
-        <field name="context">{'show_shoukuan': True, 'default_sfk_type': 'ysrld', 'default_payment_type': 'inbound',
+        <field name="context">{'bank_amount':1,'show_shoukuan': True, 'default_sfk_type': 'ysrld', 'default_payment_type': 'inbound',
             'default_be_renling': True,
             'default_advance_ok': True, 'default_partner_type': 'customer',}
         </field>
