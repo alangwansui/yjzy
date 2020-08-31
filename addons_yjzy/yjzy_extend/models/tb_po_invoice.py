@@ -561,7 +561,7 @@ class tb_po_invoice(models.Model):
                         'tp_po_invoice_line': line.id,
                         'account_id': line.product_id.property_account_income_id.id
                     })
-                    invoice_line._onchange_product_id()
+                    # invoice_line._onchange_product_id()
             else:
                 self.type_invoice = 'out_invoice'
                 for line in self.extra_invoice_line_ids:
@@ -575,7 +575,7 @@ class tb_po_invoice(models.Model):
                         'tp_po_invoice_line': line.id,
                         'account_id': line.product_id.property_account_income_id.id
                     })
-                    invoice_line._onchange_product_id()
+                    # invoice_line._onchange_product_id()
         else:
             if self.price_total < 0:
                 self.type_invoice = 'in_refund'
@@ -590,7 +590,7 @@ class tb_po_invoice(models.Model):
                         'tp_po_invoice_line': line.id,
                         'account_id': line.product_id.property_account_income_id.id
                     })
-                    invoice_line._onchange_product_id()
+                    # invoice_line._onchange_product_id()
             else:
                 self.type_invoice = 'in_invoice'
                 for line in self.extra_invoice_line_ids:
@@ -604,7 +604,7 @@ class tb_po_invoice(models.Model):
                         'tp_po_invoice_line': line.id,
                         'account_id': line.product_id.property_account_income_id.id
                     })
-                    invoice_line._onchange_product_id()
+                    # invoice_line._onchange_product_id()
         inv._default_name()
         inv.compute_name_extra()
         form_view = self.env.ref('yjzy_extend.view_supplier_invoice_extra_form').id
