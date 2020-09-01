@@ -49,7 +49,7 @@
         <field name="name">account.reconcile.order.tree</field>
         <field name="model">account.reconcile.order</field>
         <field name="arch" type="xml">
-            <tree string="应付申请单" decoration-info="state == 'draft'" default_order="approve_date"  decoration-muted="state =='cancelled'" edit="false">
+            <tree string="应付申请单" decoration-info="state == 'draft'" default_order="approve_date desc"  decoration-muted="state =='cancelled'" edit="false">
                 <field name="name"/>
                 <field name="partner_id"/>
                 <field name="date"/>

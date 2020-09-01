@@ -152,7 +152,10 @@ class account_reconcile_order(models.Model):
     def compute_approve_date_uid(self):
         message_id = self.message_ids[0]
         # message_id = self.message_ids.filtered(lambda x: x.author_id.name == '奚海峰')
-        approve_uid = message_id.owner_user_id
+        if message_id.owner_user_id:
+            approve_uid = message_id.owner_user_id
+        else:
+            approve_uid = message_id.create_uid
         approve_date =message_id.date
         print('message_id',message_id,approve_uid,approve_date)
         self.write({'approve_uid': approve_uid.id,
