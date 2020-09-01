@@ -160,7 +160,7 @@ class account_reconcile_order(models.Model):
 
     #0901
     approve_date = fields.Datetime(u'审批完成时间')
-    approve_uid = fields.Many2one('res.user',u'审批人')
+    approve_uid = fields.Many2one('res.users',u'审批人')
 
     #828
     comments = fields.Text('备注')
