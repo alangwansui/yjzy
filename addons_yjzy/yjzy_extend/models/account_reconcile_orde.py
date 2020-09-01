@@ -150,7 +150,7 @@ class account_reconcile_order(models.Model):
             return None
 
     def compute_approve_date_uid(self):
-        message_id = self.message_ids[0]
+        message_id = self.message_ids[-1]
         approve_uid = message_id.author_id.x_studio_field_REAqh
         approve_date =message_id.date
         print('message_id',message_id,approve_uid,approve_date)

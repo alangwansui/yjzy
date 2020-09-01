@@ -242,6 +242,8 @@
                             <field name="amount_payment" string="付款金额"/>
                             <field name="amount_diff"/>
                             <field name="amount_exchange"/>
+                                 <field name="approve_uid"/>
+                                 <field name="approve_date"/>
                         </group>
                         </page>
                     </notebook>
