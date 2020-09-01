@@ -304,7 +304,7 @@ class account_invoice(models.Model):
     #     for one in self:
 
     #831增加对应报关申报表
-    df_id = fields.Many2one('declare.declaration',u'报关申报表')
+    df_id = fields.Many2one('back.tax.declaration',u'报关申报表')
 
     #820增加一个和新增采购关联的字段，把退税等一起关联起来
     tb_po_invoice_id = fields.Many2one('tb.po.invoice',u'综合增加采购单')

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <record id="view_declare_declaration_tree" model="ir.ui.view">
-            <field name="name">declare.declaration.tree</field>
-            <field name="model">declare.declaration</field>
+        <record id="view_back_tax_declaration_tree" model="ir.ui.view">
+            <field name="name">back.tax.declaration.tree</field>
+            <field name="model">back.tax.declaration</field>
             <field name="arch" type="xml">
-                <tree string="报关申报表" >
+                <tree string="退税申报表" >
                     <field name="name"/>
                     <field name="create_date" string="创建日期"/>
                     <field name="amount_all"/>
@@ -13,11 +13,11 @@
                 </tree>
             </field>
         </record>
-        <record id="view_declare_declaration_form" model="ir.ui.view">
-            <field name="name">declare.declaration.form</field>
-            <field name="model">declare.declaration</field>
+        <record id="view_back_tax_declaration_form" model="ir.ui.view">
+            <field name="name">back.tax.declaration.form</field>
+            <field name="model">back.tax.declaration</field>
             <field name="arch" type="xml">
-                <form string="报关申报表">
+                <form string="退税申报表">
                     <header>
                         <field name="state" widget="statusbar"/>
                     </header>
@@ -54,15 +54,15 @@
             </field>
         </record>
 
-     <record id="action_declare_declaration" model="ir.actions.act_window">
-        <field name="name">报关申报表</field>
+     <record id="action_back_tax_declaration" model="ir.actions.act_window">
+        <field name="name">退税申报表</field>
         <field name="type">ir.actions.act_window</field>
-        <field name="res_model">declare.declaration</field>
+        <field name="res_model">back.tax.declaration</field>
         <field name="view_mode">tree,form</field>
     </record>
 
 
-    <menuitem id="menu_gongsi" name="报关申报表" parent="yjzy_extend.menu_declare_root" action="action_declare_declaration" sequence=""/>
+    <menuitem id="menu_back_tax_declaration" name="退税申报表" parent="yjzy_extend.menu_back_tax_declaration_root" action="action_back_tax_declaration" sequence=""/>
 
 
     </data>

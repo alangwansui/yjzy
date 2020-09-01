@@ -108,8 +108,8 @@
         </record>
 
         <record id="seq_declaration_form" model="ir.sequence">
-            <field name="name">declare.declaration</field>
-            <field name="code">declare.declaration</field>
+            <field name="name">back.tax.declaration</field>
+            <field name="code">back.tax.declaration</field>
             <field name="prefix">DF</field>
             <field name="padding">4</field>
             <field name="company_id" eval="False"/>

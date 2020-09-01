@@ -72,4 +72,4 @@ from . import user_menu
 from . import dashboard
 
 from . import tb_po_invoice
-from . import declare_declaration
+from . import back_tax_declaration

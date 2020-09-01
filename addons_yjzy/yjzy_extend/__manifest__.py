@@ -134,7 +134,7 @@
 
         'views2/expense.xml',
         'views2/expense_sheet.xml',
-        'views/declare_declaration.xml',
+        'views/back_tax_declaration.xml',
 
         'data/data.xml',
         'data/message_subtype.xml',

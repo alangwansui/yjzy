@@ -6,7 +6,7 @@ from odoo.addons import decimal_precision as dp
 from lxml import etree
 
 class DeclareDeclaration(models.Model):
-    _name = 'declare.declaration'
+    _name = 'back.tax.declaration'
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _description = '报关申报表'
     _order = 'id desc'
@@ -18,7 +18,7 @@ class DeclareDeclaration(models.Model):
         self.amount_all = amount_all
         self.amount_residual = amount_residual
 
-    name = fields.Char('编号', default=lambda self: self.env['ir.sequence'].next_by_code('declare.declaration'))
+    name = fields.Char('编号', default=lambda self: self.env['ir.sequence'].next_by_code('back.tax.declaration'))
     invoice_back_tax_ids = fields.One2many('account.invoice','df_id',u'退税发票')
     state = fields.Selection([('draft',u'草稿'),('done',u'确认'),('cancel',u'取消')],'State')
     amount_all = fields.Float(u'退税总金额',compute=compute_info)
