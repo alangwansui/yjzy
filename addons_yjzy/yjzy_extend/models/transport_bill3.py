@@ -319,6 +319,7 @@ class btls_hs(models.Model):
     sale_hs_db_id = fields.Integer(related='sale_hs_id.id', readonly=True, string=u'销售HS统计ID')
     supplier_id = fields.Many2one('res.partner', u'供应商')
     po_id = fields.Many2one('purchase.order', u'采购单')
+    is_po_include_tax = fields.Boolean(u'采购是否含税',related='po_id.include_tax', readonly=False)
     po_code = fields.Char(u'采购合同', related='po_id.contract_code')
 
 

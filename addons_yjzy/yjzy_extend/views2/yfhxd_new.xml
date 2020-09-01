@@ -44,11 +44,41 @@
             </tree>
         </field>
     </record>
+
+    <record model="ir.ui.view" id="account_yfhxd_tree_view_approve_new">
+        <field name="name">account.reconcile.order.tree</field>
+        <field name="model">account.reconcile.order</field>
+        <field name="arch" type="xml">
+            <tree string="应付申请单" decoration-info="state == 'draft'" default_order="approve_date"  decoration-muted="state =='cancelled'" edit="false">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="date"/>
+                <field name="approve_uid"/>
+                <field name="approve_date"/>
+                <field name="amount_total_org" string="应付合计"/>
+                <field name="other_feiyong_amount" string="实际申请金额"/>
+                <field name="amount_total"/>
+                <field name="currency_id" attrs="{}" invisible="1"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
     <record model="ir.ui.view" id="account_yfhxd_form_view_new">
         <field name="name">account.reconcile.order.form</field>
         <field name="model">account.reconcile.order</field>
         <field name="arch" type="xml">
             <form string="应付核销单">
+                  <header groups="base.group_system">
+                    <button name="action_posted_new" class="oe_highlight" states="draft" string="提交" type="object"/>
+                    <button name="action_approve_new" class="oe_highlight" states="posted" string="总经理审批" attrs="{'invisible':[('sfk_type','!=','yfhxd')]}" type="object"/>
+                    <button name="action_done"  class="oe_highlight"  string="财务确认" attrs="{'invisible':['|',('state','!=','approved'),('sfk_type','!=','yshxd')]}" type="object"/>
+                    <button name="action_draft_new" class="oe_highlight" states="refused" string="重置草稿" type="object"/>
+                    <button name="%(reconcile_refuse_wizard_action)d" string="拒绝" type="action" attrs="{'invisible':[('state','=','done')]}"/>
+                    <button name="open_wizard_reconcile_invoice" type="object" string="添加应付账单"/>
+                    <button name="compute_invoice_ids" type="object" string="计算发票" groups="base.group_system"/>
+                    <field name="state" widget="statusbar"/>
+                    <field name="is_editable"  widget="boolean_toggle" groups="sales_team.group_manager"/>
+                </header>
                 <header>
                     <button name="create_rcfkd" string="生成日常付款单" type='object' icon="" groups="account.group_account_manager"/>
                     <button name="create_fygb" string="生成费用报告" type='object' icon="" attrs="{'invisible': [('state','in', ['posted'])]}"
@@ -92,11 +122,11 @@
                             <field name="exchange_account_id" invisible="1"/>
                             <field name="fk_journal_id" string="付款银行" attrs="{'invisible':[('operation_wizard','not in',['10','30'])],'required':[('operation_wizard','in',['10','30'])]}"/>
                             <field name="payment_currency_id" string="申请付款货币" attrs="{'invisible':[('operation_wizard','not in',['10','30'])]}"/>
-                             <field name="yjzy_payment_id" string="日常付款单" domain="[('sfk_type', '=', 'rcfkd')]" attrs="{'invisible':[('operation_wizard','not in',['10','30'])]}"
-                                    context="{'form_view_ref': 'yjzy_extend.view_rcfkd_form'}"/>
-                            <field name="yjzy_payment_currency_id" string="付款货币" attrs="{'invisible':[('operation_wizard','not in',['10','30'])]}"/>
-                            <field name="yjzy_payment_balance" string="付款未认领余额" attrs="{'invisible':[('operation_wizard','not in',['10','30'])]}"/>
-
+                             <field name="yjzy_payment_id" string="日常付款单" domain="[('sfk_type', '=', 'rcfkd')]" attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),('state','!=','approved')]}"
+                                    context="{'form_view_ref': 'yjzy_extend.view_rcfkd_form','bank_amount':1}"/>
+                            <field name="yjzy_payment_currency_id" string="付款货币" attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),('state','!=','approved')]}"/>
+                            <field name="yjzy_payment_balance" string="付款未认领余额" attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),('state','!=','approved')]}"/>
+                            <field name="manual_payment_currency_id" string="预付币种"  attrs="{'invisible':1}"/>
                         </group>
                         <group attrs="{'invisible':[('operation_wizard','=',False)]}">
                             <field name="feiyong_product_id" attrs="{'invisible': 1}"/>
@@ -118,7 +148,7 @@
                             <field name="sfk_type" invisible="1"/>
                             <field name="be_renling" invisible="1"/>
 
-                            <field name="invoice_currency_id"/>
+                            <field name="invoice_currency_id" invisible="1"/>
                             <field name="amount_invoice_residual_org" string="认领后应付余额" attrs="{'invisible': 1}"/>
                             <field name="amount_payment_org" string="申请支付金额" attrs="{'invisible':[('operation_wizard','not in',['10','30'])]}"/>
                             <field name="amount_advance_residual_org" string="待认领预付" invisible="1"/>
@@ -126,10 +156,10 @@
 
                             <field name="amount_diff_org" string="冲应付费用金额" attrs="{'invisible': 1}"/>
                             <field name="amount_total_org" string="应付认领总金额" invisible="1"/>
-                            <field name="other_feiyong_amount" string="实际支付总金额"/>
+                            <field name="other_feiyong_amount" string="总金额"/>
                             <field name="final_coat" string="实际总成本" invisible="1"/>
 
-                            <field name="no_sopo" />
+                            <field name="no_sopo" attrs="{'invisible':1}"/>
 
                         </group>
 
@@ -153,36 +183,39 @@
                         </page>
                         <page string="本次认领明细" attrs="{'invisible':[('operation_wizard','not in',['20','30'])]}">
                             <field name="line_ids" context="{'invisible_so': partner_type == 'supplier'}">
-                                <tree editable="top">
+                                <tree editable="top" create="false">
                                     <field name="payment_type" invisible="1"/>
                                     <field name="partner_type" invisible="1"/>
                                     <field name="so_id" readonly="1" invisible="not context.get('show_so')"/>
                                     <field name="po_id" readonly="1" invisible="not context.get('show_po')"/>
                                     <field name="invoice_id" readonly="1" invisible="1"/>
                                     <field name="tb_contract_code"/>
-                                    <field name="advance_residual2" string="未认领预付余额" readonly="0"/>
-                                    <field name="residual" readonly="0" string="原始应付余额"/>
+                                    <field name="yjzy_currency_id" invisible="1"/>
+                                    <field name="amount_invoice_so" string="采购对应应付金额" invisible="1"/>
+                                    <field name="amount_invoice_so_residual" string="未认领应付"/>
+                                    <field name="advance_residual2" string="未认领预付" readonly="0"/>
+                                    <field name="residual" readonly="0" string="原始应付余额" invisible="1"/>
                                     <field name="invoice_currency_id" invisible="1"/>
                                     <field name="payment_currency_id" invisible="1"/>
                                     <field name="currency_id" invisible="1"/>
                                     <field name="amount_invoice_so" readonly="1" invisible=""/>
-
+                                    <field name="yjzy_payment_id" string="预付申请单" context="{'form_view_ref': 'yjzy_extend.view_rcfkd_form','advance_bank_amount':1}" domain="[('sfk_type','=','yfsqd'),('advance_balance_total','!=',0)]"/>
                                     <field name="amount_advance_org" string="预付认领金额"/>
 
                                     <field name="amount_payment_org" string="申请付款金额"/>
 
                                     <!--field name="amount_bank_org"/-->
                                     <!--field name="amount_bank"/-->
-                                    <field name="amount_diff_org" string="费用"/>
+                                    <field name="amount_diff_org" string="费用" invisible="1"/>
 
                                     <field name="amount_total_org" string="应付认领合计"/>
-                                    <field name="yjzy_payment_id" string="预付申请单" domain="[('sfk_type','=','yfsqd'),('advance_balance_total','!=',0)]"/>
+
 
 
                                 </tree>
                             </field>
                         </page>
-                         <page string="认领发票" attrs="{'invisible':[('operation_wizard','not in',['10','30'])]}">
+                         <page string="认领发票" attrs="{'invisible':[('operation_wizard','in',['20','30'])]}">
                             <field name="line_no_ids">
                                 <tree  editable="bottom">
                                 <field name="id"/>
@@ -230,24 +263,86 @@
         <field name="view_mode">tree,form</field>
         <field name="domain">[('sfk_type','=','yfhxd')]</field>
         <field name="context">{'default_sfk_type': 'yfhxd', 'default_payment_type': 'outbound', 'default_be_renling': 1, 'default_partner_type':
-            'supplier', 'show_po': 1}
+            'supplier', 'show_po': 1,'default_operation_wizard':'30'}
         </field>
-    </record>
-    <record model="ir.actions.act_window.view" id="act_open_yfhxd_view_tree_new">
-        <field name="act_window_id" ref="action_yfhxd_new"/>
-        <field name="sequence" eval="10"/>
-        <field name="view_mode">tree</field>
-        <field name="view_id" ref="account_yfhxd_tree_view_new"/>
-    </record>
-    <record model="ir.actions.act_window.view" id="act_yfhxd_view_form_new">
-        <field name="act_window_id" ref="action_yfhxd_new"/>
-        <field name="sequence" eval="20"/>
-        <field name="view_mode">form</field>
-        <field name="view_id" ref="account_yfhxd_form_view_new"/>
+          <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('account_yfhxd_tree_view_new')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('account_yfhxd_form_view_new')})]"/>
     </record>
 
     <menuitem id="menu_yfhxd_new" name="应付核销单:新"
-              parent="menu_skf_root"
+              parent="menu_yjzy_advance_root"
               action="action_yfhxd_new"/>
+    <record model="ir.actions.act_window" id="action_yfhxd_new_payment_form">
+        <field name="name">创建应付申请</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.reconcile.order</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="domain">[('sfk_type','=','yfhxd')]</field>
+        <field name="context">{'default_sfk_type': 'yfhxd', 'default_payment_type': 'outbound', 'default_be_renling': 1, 'default_partner_type':
+            'supplier', 'show_po': 1,'default_operation_wizard':'30'}
+        </field>
+             <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('account_yfhxd_form_view_new')})]"/>
+            </record>
+    <menuitem id="menu_yfhxd_new_payment_form" name="创建应付申请"
+              parent="menu_yjzy_advance_root"
+              action="action_yfhxd_new_payment_form"/>
+
+     <record model="ir.actions.act_window" id="action_yfhxd_new_advance_form">
+        <field name="name">创建预付-应付认领</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.reconcile.order</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="domain">[('sfk_type','=','yfhxd')]</field>
+        <field name="context">{'default_sfk_type': 'yfhxd', 'default_payment_type': 'outbound', 'default_be_renling': 1, 'default_partner_type':
+            'supplier', 'show_po': 1,'default_operation_wizard':'20'}
+        </field>
+             <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('account_yfhxd_form_view_new')})]"/>
+            </record>
+
+<menuitem id="menu_yfhxd_new_advance_form" name="创建预-应付认领"
+              parent="menu_yjzy_advance_root"
+              action="action_yfhxd_new_advance_form"/>
+
+    <record model="ir.actions.act_window" id="action_yfhxd_new_advance_form">
+        <field name="name">创建预付-应付认领</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.reconcile.order</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="domain">[('sfk_type','=','yfhxd')]</field>
+        <field name="context">{'default_sfk_type': 'yfhxd', 'default_payment_type': 'outbound', 'default_be_renling': 1, 'default_partner_type':
+            'supplier', 'show_po': 1,'default_operation_wizard':'20'}
+        </field>
+             <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('account_yfhxd_form_view_new')})]"/>
+            </record>
+
+<menuitem id="menu_yfhxd_new_advance_form" name="创建预-应付认领"
+              parent="menu_yjzy_advance_root"
+              action="action_yfhxd_new_advance_form"/>
+
+    <record model="ir.actions.act_window" id="action_yfhxd_new_payment_approve">
+        <field name="name">审批完成应付申请</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.reconcile.order</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('sfk_type','=','yfhxd'),('state','in',['approved','done'])]</field>
+        <field name="context">{'default_sfk_type': 'yfhxd', 'default_payment_type': 'outbound', 'default_be_renling': 1, 'default_partner_type':
+            'supplier', 'show_po': 1,'default_operation_wizard':'30'}
+        </field>
+              <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('account_yfhxd_tree_view_approve_new')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('account_yfhxd_form_view_new')})]"/>
+            </record>
+    <menuitem id="menu_yfhxd_new_payment_approve" name="审批完成的应付申请"
+              parent="menu_yjzy_advance_root"
+              action="action_yfhxd_new_payment_approve"/>
+
 
 </odoo>

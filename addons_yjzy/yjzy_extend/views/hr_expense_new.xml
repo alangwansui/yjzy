@@ -1336,6 +1336,7 @@
                 <form string="费用申请" class="o_expense_sheet">
                     <header groups="base.group_system">
                         <button name="open_wizard_tb_po_invoice" string="创建增加的采购" type="object"/>
+                        <button name="create_tb_po_invoice" string="创建增加的采购:xin" type="object"/>
                         <button name="approve_expense_sheets" states="submit" string="Approve" type="object"
                                 groups="base.group_system"
                                 class="oe_highlight o_expense_sheet_approve"/>
@@ -1374,6 +1375,12 @@
                         <field name="is_editable" widget="boolean_toggle" groups="sales_team.group_manager"/>
                     </header>
                     <sheet>
+                        <div class="oe_button_box"><!--"context.get('expense_adding_line')"-->
+                            <button name="open_tb_po_invoice" class="oe_stat_button" icon="fa-book"
+                                    type="object">
+                                <field name="tb_po_invoice_ids" widget="statinfo" string="费用转采购"/>
+                            </button>
+                        </div>
                         <div class="oe_button_box" invisible="1"><!--"context.get('expense_adding_line')"-->
                             <button name="action_get_attachment_view" class="oe_stat_button" icon="fa-book"
                                     type="object">

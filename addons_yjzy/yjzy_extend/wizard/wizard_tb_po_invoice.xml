@@ -54,6 +54,7 @@
                     <footer>
                         <!--button name="apply_expense_sheet" class="oe_highlight" type='object' string="费用确认" attrs="{'invisible':[('type','!=','expense_po')]}"/-->
                         <button name="apply_new" class="oe_highlight" type='object' string="确认"/>
+                        <button name="apply_new_1" class="oe_highlight" type='object' string="确认"/>
                         <button special="cancel" class="oe_highlight" string="取消"/>
                     </footer>
                 </form>

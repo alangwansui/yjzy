@@ -60,7 +60,7 @@ class account_reconcile_order(models.Model):
                 [invoice_currency.with_context(date=x.date_invoice).compute(x.residual, company_currency) for x in
                  invoices])
 
-
+    @api.depends('fk_journal_id')
     def compute_by_lines(self):
         for one in self:
             date = one.date
@@ -148,6 +148,18 @@ class account_reconcile_order(models.Model):
             return self.env.ref('yjzy_extend.product_back_tax').id
         except Exception as e:
             return None
+
+    def compute_approve_date_uid(self):
+        message_id = self.message_ids[0]
+        approve_uid = message_id.author_id.x_studio_field_REAqh
+        approve_date =message_id.date
+        print('message_id',message_id,approve_uid,approve_date)
+        self.write({'approve_uid': approve_uid.id,
+                    'approve_date':approve_date})
+
+    #0901
+    approve_date = fields.Datetime(u'审批完成时间')
+    approve_uid = fields.Many2one('res.user',u'审批人')
 
     #828
     comments = fields.Text('备注')
@@ -1030,8 +1042,17 @@ class account_reconcile_order_line(models.Model):
         for one in self:
             amount_invoice = one.invoice_id.amount_total
             amount_invoice_so =  one.amount_invoice_so
+            residual = one.residual
             amount_invoice_so_proportion = amount_invoice_so / amount_invoice
+            amount_invoice_so_residual = residual * amount_invoice_so_proportion
+            print('amount_invoice_so_residual',amount_invoice_so,amount_invoice_so_residual,amount_invoice_so_proportion)
             one.amount_invoice_so_proportion = amount_invoice_so_proportion
+            one.amount_invoice_so_residual = amount_invoice_so_residual
+
+
+
+
+
 
     # @api.onchange('amount_invoice_so', 'amount_advance_org', 'amount_bank_org', 'amount_diff_org', 'amount_payment_org')
     # def onchange_amount(self):
@@ -1063,7 +1084,7 @@ class account_reconcile_order_line(models.Model):
     amount_invoice_so = fields.Monetary(u'合计', currency_field='invoice_currency_id')
     amount_invoice_so_proportion = fields.Float('销售金额占发票金额比',compute=_compute_amount_invoice_so_proportion)
     #826
-    amount_invoice_so_residual = fields.Monetary(u'剩余',currency_field='invoice_currency_id')
+    amount_invoice_so_residual = fields.Monetary(u'剩余',currency_field='invoice_currency_id',compute=_compute_amount_invoice_so_proportion)
 
     advance_residual = fields.Monetary(currency_field='yjzy_currency_id', string=u'预付余额', compute=compute_info, )
     advance_residual2 = fields.Monetary(currency_field='yjzy_currency_id', string=u'预收余额', compute=compute_info, )
@@ -1091,6 +1112,7 @@ class account_reconcile_order_line(models.Model):
 
     @api.onchange('yjzy_payment_id')
     def onchange_yjzy_payment_id(self):
+        print('yjzy_currency_id',self.yjzy_currency_id)
         self.yjzy_currency_id = self.yjzy_payment_id.currency_id
 
 

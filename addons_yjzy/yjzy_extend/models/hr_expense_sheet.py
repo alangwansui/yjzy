@@ -44,6 +44,9 @@ class hr_expense_sheet(models.Model):
             total_currency_amount = one.currency_id.compute(one.total_amount, one.company_currency_id)
             one.company_currency_total_amount = total_currency_amount
 
+    #901
+    tb_po_invoice_ids = fields.One2many('tb.po.invoice','expense_sheet_id',u'费用转采购申请单')
+
     #819费用创建应付发票
     invoice_id = fields.Many2one('account.invoice',u'Invoice')
     is_to_invoice = fields.Boolean(u'是否转货款')
@@ -188,6 +191,82 @@ class hr_expense_sheet(models.Model):
             'view_id': view.id,
             'target': 'new',
             'res_id': wizard.id,
+            # 'context': { },
+        }
+
+    def open_wizard_tb_po_invoice_new(self):
+        self.ensure_one()
+        bill_id = self.expense_line_ids.mapped('tb_id')
+        wizard = self.env['wizard.tb.po.invoice'].create({'tb_id': bill_id and bill_id[0].id,
+                                                          'expense_sheet_id':self.id,
+                                                          'type':'expense_po'
+                                                          })
+
+        view = self.env.ref('yjzy_extend.wizard_tb_po_form')
+        return {
+            'name': _(u'创建采购单'),
+            'view_type': 'tree,form',
+            "view_mode": 'form',
+            'res_model': 'wizard.tb.po.invoice',
+            'type': 'ir.actions.act_window',
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wizard.id,
+            # 'context': { },
+        }
+
+    def create_tb_po_invoice(self):
+        self.ensure_one()
+        bill_id = self.expense_line_ids.mapped('tb_id')
+        tb_po_id = self.env['tb.po.invoice'].create({'tb_id': bill_id and bill_id[0].id,
+                                                    'expense_sheet_id':self.id,
+                                                    'type':'expense_po'
+                                                    })
+
+        view = self.env.ref('yjzy_extend.tb_po_form')
+        line_obj = self.env['tb.po.invoice.line']
+        for hsl in bill_id.hsname_all_ids:
+            line_obj.create({
+                'tb_po_id': tb_po_id.id,
+                'hs_id': hsl.hs_id.id,
+                'hs_en_name': hsl.hs_en_name,
+                'purchase_amount2_tax': hsl.purchase_amount2_tax,
+                'purchase_amount2_no_tax': hsl.purchase_amount2_no_tax,
+                'purchase_amount_max_add_forecast': hsl.purchase_amount_max_add_forecast,
+                'purchase_amount_min_add_forecast': hsl.purchase_amount_min_add_forecast,
+                'purchase_amount_max_add_rest': hsl.purchase_amount_max_add_rest,
+                'purchase_amount_min_add_rest': hsl.purchase_amount_min_add_rest,
+                'purchase_back_tax_amount2_new': hsl.purchase_back_tax_amount2_new,
+                'hsname_all_line_id': hsl.id,
+                'back_tax': hsl.back_tax
+            })
+        return {
+            'name': _(u'创建采购单'),
+            'view_type': 'tree,form',
+            "view_mode": 'form',
+            'res_model': 'tb.po.invoice',
+            'type': 'ir.actions.act_window',
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': tb_po_id.id,
+            # 'context': { },
+        }
+    def open_tb_po_invoice(self):
+        self.ensure_one()
+        bill_id = self.expense_line_ids.mapped('tb_id')
+        form_view_id = self.env.ref('yjzy_extend.tb_po_form')
+        tree_view_id = self.env.ref('yjzy_extend.tb_po_tree')
+
+        return {
+            'name': _(u'创建采购单'),
+            'view_type': 'form',
+            "view_mode": 'tree,form',
+            'res_model': 'tb.po.invoice',
+            'type': 'ir.actions.act_window',
+            'views': [(tree_view_id.id, 'tree'),(form_view_id.id, 'form')],
+            'domain': [('id', 'in', [x.id for x in self.tb_po_invoice_ids])],
+            'target': 'current',
+
             # 'context': { },
         }
 

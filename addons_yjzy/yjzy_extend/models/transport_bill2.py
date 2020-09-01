@@ -11,7 +11,7 @@ class transport_bill(models.Model):
     def _compute_overall_profit(self):
         for one in self:
             hsname_all_ids = one.hsname_all_ids
-            all_back_tax_invoice_ids = one.all_back_tax_invoice_ids.filtered(lambda x: x.yjzy_type =='back_tax' and x.invoice_attribute == 'other_po')
+            all_back_tax_invoice_ids = one.all_back_tax_invoice_ids.filtered(lambda x: x.yjzy_type_1 =='back_tax' and x.invoice_attribute == 'other_po')
             purchase_amount_max_forecast_total = sum(x.purchase_amount_max_forecast for x in hsname_all_ids)
             purchase_amount_min_forecast_total = sum(x.purchase_amount_min_forecast for x in hsname_all_ids)
             purchase_amount_max_add_forecast_total = sum(x.purchase_amount_max_add_forecast for x in hsname_all_ids)
@@ -45,19 +45,19 @@ class transport_bill(models.Model):
 
     sale_collect_state = fields.Selection([('draft', u'未统计'), ('done', u'已统计')], string=u'销售统计', default='draft')
     tb_po_invoice_ids = fields.One2many('tb.po.invoice','tb_id','增加采购申请单')
-    invoice_purchase_po_draft_ids = fields.One2many('account.invoice','bill_id',domain=[('yjzy_type','=','purchase'),('invoice_attribute','=','other_po'),('state','not in',['open','paid'])])
-    invoice_purchase_po_done_ids = fields.One2many('account.invoice', 'bill_id', domain=[('yjzy_type', '=', 'purchase'), (
+    invoice_purchase_po_draft_ids = fields.One2many('account.invoice','bill_id',domain=[('yjzy_type_1','=','purchase'),('invoice_attribute','=','other_po'),('state','not in',['open','paid'])])
+    invoice_purchase_po_done_ids = fields.One2many('account.invoice', 'bill_id', domain=[('yjzy_type_1', '=', 'purchase'), (
     'invoice_attribute', '=', 'other_po'), ('state', 'in', ['open', 'paid'])])
-    invoice_back_tax_po_draft_ids = fields.One2many('account.invoice', 'bill_id', domain=[('yjzy_type', '=', 'back_tax'), (
+    invoice_back_tax_po_draft_ids = fields.One2many('account.invoice', 'bill_id', domain=[('yjzy_type_1', '=', 'back_tax'), (
     'invoice_attribute', '=', 'other_po'), ('state', 'not in', ['open', 'paid'])])
-    invoice_back_tax_po_done_ids = fields.One2many('account.invoice', 'bill_id', domain=[('yjzy_type', '=', 'back_tax'), (
+    invoice_back_tax_po_done_ids = fields.One2many('account.invoice', 'bill_id', domain=[('yjzy_type_1', '=', 'back_tax'), (
         'invoice_attribute', '=', 'other_po'), ('state', 'in', ['open', 'paid'])])
     invoice_sale_po_draft_ids = fields.One2many('account.invoice', 'bill_id',
-                                                    domain=[('yjzy_type', '=', 'sale'),
+                                                    domain=[('yjzy_type_1', '=', 'sale'),
                                                             ('invoice_attribute', '=', 'other_po'),
                                                             ('state', 'not in', ['open', 'paid'])])
     invoice_sale_po_done_ids = fields.One2many('account.invoice', 'bill_id',
-                                                   domain=[('yjzy_type', '=', 'sale'), (
+                                                   domain=[('yjzy_type_1', '=', 'sale'), (
                                                        'invoice_attribute', '=', 'other_po'),
                                                            ('state', 'in', ['open', 'paid'])])
 
@@ -635,10 +635,10 @@ class tbl_hsname_all(models.Model):
 
     def compute_info(self):
         for one in self:
-            inv_hs_name_line_po_ids = one.inv_hs_name_line_ids.filtered(lambda x: x.invoice_id.yjzy_type == 'purchase')
-            # inv_hs_name_line_back_tax_ids = one.inv_hs_name_line_ids.filtered(lambda x: x.invoice_id.yjzy_type == 'back_tax')
+            inv_hs_name_line_po_ids = one.inv_hs_name_line_ids.filtered(lambda x: x.invoice_id.yjzy_type_1 == 'purchase')
+            # inv_hs_name_line_back_tax_ids = one.inv_hs_name_line_ids.filtered(lambda x: x.invoice_id.yjzy_type_1 == 'back_tax')
             # inv_hs_name_line_sale_ids = one.inv_hs_name_line_ids.filtered(
-            #     lambda x: x.invoice_id.yjzy_type == 'sale')
+            #     lambda x: x.invoice_id.yjzy_type_1 == 'sale')
             purchase_amount2_add_actual = sum(x.purchase_amount2_add_this_time for x in inv_hs_name_line_po_ids)
             back_tax_add_actual = sum(x.back_tax_add_this_time for x in inv_hs_name_line_po_ids)
             p_s_add_actual = sum(x.p_s_add_this_time for x in inv_hs_name_line_po_ids)

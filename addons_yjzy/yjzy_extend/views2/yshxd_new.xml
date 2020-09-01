@@ -47,7 +47,7 @@
         <field name="model">account.reconcile.order</field>
         <field name="arch" type="xml">
             <form string="应收核销单">
-                <header>
+                <header groups="base.group_system">
                     <button name="action_posted_new" class="oe_highlight" states="draft" string="提交" type="object"/>
                     <button name="action_approve_new" class="oe_highlight" states="posted" string="总经理审批" attrs="{'invisible':[('sfk_type','!=','yfhxd')]}" type="object"/>
                     <button name="action_done"  class="oe_highlight"  string="财务确认" attrs="{'invisible':['|',('state','!=','approved'),('sfk_type','!=','yshxd')]}" type="object"/>
@@ -160,11 +160,12 @@
                                     <!--field name="diff_currency_id"/-->
                                     <field name="currency_id" invisible="1"/>
 
-                                    <field name="amount_invoice_so" string="销售对应应收金额"/>
+                                    <field name="amount_invoice_so" string="销售对应应收金额" invisible="1"/>
+                                    <field name="amount_invoice_so_residual" string="销售对应应收余额"/>
                                     <field name="advance_residual" string="预收余额"/>
                                     <field name="advance_residual2" invisible="1"/>
 
-                                    <field name="yjzy_payment_id" invisible="1" />
+
                                     <field name="yjzy_currency_id" invisible="1"/>
                                     <field name="amount_advance_org" string="预收认领金额" attrs="{'column_invisible':[('parent.operation_wizard','not in',['20','30'])]}"/>
 
