@@ -20,6 +20,8 @@ class wizard_reconcile_invoice(models.TransientModel):
         ctx = self.env.context
         sfk_type = ctx.get('sfk_type')
         print('ctx', ctx)
+        if len(self.invoice_ids.mapped('currency_id')) > 1:
+            raise Warning('选择的发票的交易货币不一致，无法同时认领！')
         if sfk_type == 'yshxd':
             self.make_lines_so()
         if sfk_type == 'yfhxd':

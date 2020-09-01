@@ -14,14 +14,8 @@ class account_reconcile_order(models.Model):
     _description = '核销单'
     _order = 'date desc'
 
-    @api.depends('fk_journal_id')
-    def compute_info(self):
-        ctx = self.env.context
+    def _compute_payment_currency(self):
         for one in self:
-            print('one',one)
-            partner = one.partner_id
-            # payment_currency_id = fields.Many2one('res.currency', u'收款货币', related='yjzy_payment_id.currency_id', readonly=True)
-            # payment_currency_id = fields.Many2one('res.currency', u'收款货币', related='fk_journal_id.currency_id', readonly=True)
             if one.sfk_type == 'yfhxd':
                 one.payment_currency_id = one.fk_journal_id.currency_id
             elif one.sfk_type == 'yshxd':
@@ -30,50 +24,25 @@ class account_reconcile_order(models.Model):
                 one.payment_currency_id = one.yjzy_payment_id.currency_id
             if not one.payment_currency_id:
                 one.payment_currency_id = one.manual_payment_currency_id
-            if one.line_ids:
-                invoices = one.line_ids.mapped('invoice_id')
-                sale_orders = invoices.mapped('invoice_line_ids').mapped('sale_line_ids').mapped('order_id')
-                #invoice_currency = one.invoice_ids[0].currency_id
-                #<jon>
-                invoice_currency = one.line_ids[0].invoice_currency_id
 
-                company_currency = one.currency_id
-
-                one.invoice_currency_id = invoice_currency
-                one.amount_invoice_residual_org = sum([x.residual for x in invoices])
-                one.amount_invoice = sum([invoice_currency.with_context(date=x.date_invoice).compute(x.residual, company_currency) for x in
-                     invoices])
-                one.amount_advance_residual_org = one.partner_type == 'customer' and sum(
-                    [x.advance_residual for x in sale_orders]) \
-                                                  or partner.advance_currency_id.compute(
-                    partner.amount_purchase_advance_org, invoice_currency)
-                one.amount_advance_residual = one.partner_type == 'customer' and invoice_currency.compute(
-                    one.amount_advance_residual_org, company_currency) \
-                                              or partner.advance_currency_id.compute(partner.amount_purchase_advance_org,
-                                                                                     company_currency)
-            if one.line_ids and one.payment_currency_id:
-                date = one.date
-                lines = one.line_ids
-                if not one.line_ids:
-                    continue
-                bank_currency = one.payment_currency_id.with_context(date=date)
-                diff_currency = one.payment_currency_id.with_context(date=date)
-                payment_currency = one.payment_currency_id.with_context(date=date)
-
-                one.amount_advance_org = sum([x.amount_advance_org for x in lines])
-                one.amount_advance = sum([x.amount_advance for x in lines])
-                one.amount_bank_org = bank_currency and bank_currency.compute(sum([x.amount_bank_org for x in lines]), one.invoice_currency_id)
-                one.amount_bank = sum([x.amount_bank for x in lines])
-                one.amount_diff_org = diff_currency and diff_currency.compute(sum([x.amount_diff_org for x in lines]), one.invoice_currency_id)
-                one.amount_diff = sum([x.amount_diff for x in lines])
-                one.amount_payment_org = payment_currency and payment_currency.compute(sum([x.amount_payment_org for x in lines]),
-                                                                  one.invoice_currency_id)
-                one.amount_payment = sum([x.amount_payment for x in lines])
-                one.amount_total_org = sum([x.amount_total_org for x in lines])
-                one.amount_total = sum([x.amount_total for x in lines])
-                one.amount_exchange = one.amount_invoice - one.amount_total
-                one.other_feiyong_amount = one.amount_payment_org + one.feiyong_amount
-                one.final_coat =  one.other_feiyong_amount - one.back_tax_amount
+    def compute_advance(self):
+        for one in self:
+            if not one.line_ids:
+                continue
+            partner = one.partner_id
+            company_currency = one.currency_id
+            invoice_currency = one.invoice_currency_id
+            amount_advance_residual_org = 0.0
+            if one.sfk_type == 'yshxd':
+                amount_advance_residual_org = sum(x.advance_residual for x in one.line_ids)
+            elif one.sfk_type == 'yfhxd':
+                amount_advance_residual_org = sum(x.advance_residual2 for x in one.line_ids)
+            amount_advance_residual = one.partner_type == 'customer' and invoice_currency.compute(
+                one.amount_advance_residual_org, company_currency) \
+                                      or partner.advance_currency_id.compute(partner.amount_purchase_advance_org,
+                                                                             company_currency)
+            one.amount_advance_residual_org = amount_advance_residual_org
+            one.amount_advance_residual = amount_advance_residual
 
     def compute_by_invoice(self):
         for one in self:
@@ -82,25 +51,15 @@ class account_reconcile_order(models.Model):
             invoices = one.line_ids.mapped('invoice_id')
             if len(one.invoice_ids.mapped('currency_id')) > 1:
                 raise Warning('选择的发票的交易货币不一致')
-            sale_orders = invoices.mapped('invoice_line_ids').mapped('sale_line_ids').mapped('order_id')
-            #invoice_currency = one.invoice_ids[0].currency_id
             #<jon>
             invoice_currency = one.line_ids[0].invoice_currency_id
             company_currency = one.currency_id
-            partner = one.partner_id
             one.invoice_currency_id = invoice_currency
             one.amount_invoice_residual_org = sum([x.residual for x in invoices])
             one.amount_invoice = sum(
                 [invoice_currency.with_context(date=x.date_invoice).compute(x.residual, company_currency) for x in
                  invoices])
-            one.amount_advance_residual_org = one.partner_type == 'customer' and sum(
-                [x.advance_residual for x in sale_orders]) \
-                                              or partner.advance_currency_id.compute(
-                partner.amount_purchase_advance_org, invoice_currency)
-            one.amount_advance_residual = one.partner_type == 'customer' and invoice_currency.compute(
-                one.amount_advance_residual_org, company_currency) \
-                                          or partner.advance_currency_id.compute(partner.amount_purchase_advance_org,
-                                                                                 company_currency)
+
 
     def compute_by_lines(self):
         for one in self:
@@ -112,22 +71,20 @@ class account_reconcile_order(models.Model):
             payment_currency = one.payment_currency_id.with_context(date=date)
 
             lines = one.line_ids
-            # lines.compute_info()
 
             one.amount_advance_org = sum([x.amount_advance_org for x in lines])
             one.amount_advance = sum([x.amount_advance for x in lines])
-            one.amount_bank_org = bank_currency and bank_currency.compute(sum([x.amount_bank_org for x in lines]),
-                                                        one.invoice_currency_id)
+            one.amount_bank_org = bank_currency and bank_currency.compute(sum([x.amount_bank_org for x in lines]),one.invoice_currency_id)
             one.amount_bank = sum([x.amount_bank for x in lines])
-            one.amount_diff_org = diff_currency.compute(sum([x.amount_diff_org for x in lines]),
-                                                        one.invoice_currency_id)
+            one.amount_diff_org = diff_currency.compute(sum([x.amount_diff_org for x in lines]),one.invoice_currency_id)
             one.amount_diff = sum([x.amount_diff for x in lines])
-            one.amount_payment_org = payment_currency.compute(sum([x.amount_payment_org for x in lines]),
-                                                              one.invoice_currency_id)
+            one.amount_payment_org = payment_currency.compute(sum([x.amount_payment_org for x in lines]),one.invoice_currency_id)
             one.amount_payment = sum([x.amount_payment for x in lines])
             one.amount_total_org = sum([x.amount_total_org for x in lines])
             one.amount_total = sum([x.amount_total for x in lines])
             one.amount_exchange = one.amount_invoice - one.amount_total
+            one.other_feiyong_amount = one.amount_payment_org + one.feiyong_amount
+            one.final_coat = one.other_feiyong_amount - one.back_tax_amount
 
     def default_bank_currency(self):
         return self.env.user.company_id.currency_id
@@ -207,7 +164,7 @@ class account_reconcile_order(models.Model):
     company_id = fields.Many2one('res.company', string=u'公司', required=True, default=lambda self: self.env.user.company_id)
     partner_id = fields.Many2one('res.partner', u'合作伙伴', required=True)
     currency_id = fields.Many2one(related='company_id.currency_id', string=u'公司货币', store=True, index=True)
-    invoice_currency_id = fields.Many2one('res.currency', u'交易货币', compute=compute_info)
+    invoice_currency_id = fields.Many2one('res.currency', u'交易货币', compute=compute_by_invoice)
     state = fields.Selection([('draft', u'草稿'), ('posted', u'待审批'),  ('approved', u'批准'), ('done', u'完成'), ('refused',u'拒绝'),('cancelled', u'取消')],
                              readonly=True, default='draft', copy=False, string=u"状态")
     date = fields.Date(u'确认日期', index=True, required=True, default=lambda self: fields.date.today())
@@ -223,7 +180,7 @@ class account_reconcile_order(models.Model):
                                           default=lambda self: self.default_exchange_account())
     #payment_currency_id = fields.Many2one('res.currency', u'收款货币', related='yjzy_payment_id.currency_id', readonly=True)
     #payment_currency_id = fields.Many2one('res.currency', u'收款货币', related='fk_journal_id.currency_id', readonly=True)
-    payment_currency_id = fields.Many2one('res.currency', u'收款货币', compute=compute_info, readonly=True)
+    payment_currency_id = fields.Many2one('res.currency', u'收款货币', compute=_compute_payment_currency,readonly=True)
     manual_payment_currency_id = fields.Many2one('res.currency', u'收款货币:手动输入')
     manual_currency_id = fields.Many2one('res.currency', u'手动设置收款货币')
 
@@ -238,7 +195,7 @@ class account_reconcile_order(models.Model):
     amount_invoice_residual_org = fields.Monetary(u'发票余额', currency_field='invoice_currency_id', compute=compute_by_invoice)
 
     amount_advance_residual_org = fields.Monetary(u'待核销预收', currency_field='invoice_currency_id',
-                                                  compute=compute_by_invoice)
+                                                  compute=compute_advance)
     amount_advance_org = fields.Monetary(u'使用预收', currency_field='invoice_currency_id', compute=compute_by_lines)
     amount_payment_org = fields.Monetary(u'收款金额', currency_field='invoice_currency_id', compute=compute_by_lines)
     amount_bank_org = fields.Monetary(u'银行扣款', currency_field='invoice_currency_id', compute=compute_by_lines)
@@ -247,7 +204,7 @@ class account_reconcile_order(models.Model):
     amount_total_org = fields.Monetary(u'收款合计', currency_field='invoice_currency_id', compute=compute_by_lines, store=False)
 
     amount_invoice = fields.Monetary(u'发票金额', currency_field='currency_id', compute=compute_by_invoice)
-    amount_advance_residual = fields.Monetary(u'待核销预收', currency_field='currency_id', compute=compute_by_invoice)
+    amount_advance_residual = fields.Monetary(u'待核销预收', currency_field='currency_id', compute=compute_advance)
     amount_advance = fields.Monetary(u'使用预收', currency_field='currency_id', compute=compute_by_lines)
     amount_payment = fields.Monetary(u'收款金额', currency_field='currency_id', compute=compute_by_lines)
     amount_bank = fields.Monetary(u'银行扣款', currency_field='currency_id', compute=compute_by_lines)
@@ -283,8 +240,8 @@ class account_reconcile_order(models.Model):
     back_tax_amount = fields.Monetary(u'退税金额')
     back_tax_invoice_id = fields.Many2one('account.invoice', u'退税发票')
 
-    other_feiyong_amount = fields.Monetary('其他费用金额', compute=compute_info)
-    final_coat = fields.Monetary('最终成本', compute=compute_info)
+    other_feiyong_amount = fields.Monetary('其他费用金额', compute=compute_by_lines)
+    final_coat = fields.Monetary('最终成本', compute=compute_by_lines)
 
     is_editable = fields.Boolean(u'可编辑')
     gongsi_id = fields.Many2one('gongsi', '内部公司')
