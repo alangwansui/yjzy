@@ -724,7 +724,7 @@ class tb_po_invoice_line(models.Model):
             one.expense_tax = expense_tax
             one.p_s_add_this_time = p_s_add_this_time
 
-    @api.depends('purchase_amount2_add_this_time')
+    @api.depends('purchase_amount2_add_this_time','tb_po_id.tax_rate_add')
     def compute_back_tax(self):
         for one in self:
             back_tax_add_this_time = one.purchase_amount2_add_this_time / 1.13 * one.back_tax
