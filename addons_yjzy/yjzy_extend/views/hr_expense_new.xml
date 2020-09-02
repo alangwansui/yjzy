@@ -614,6 +614,28 @@
                       decoration-danger="state=='cancel'">
                     <field name="create_date" string="创建日期"/>
                     <field name="create_uid" string="创建人"/>
+                    <field name="manager_confirm_date"/>
+                    <field name="name" string="费用说明"/>
+                    <field name="fk_journal_id" string="付款账户" groups="account.group_account_invoice"/>
+                    <field name="total_amount" string="总金额"/>
+                    <field name="x_wkf_state" string="审批流程"/>
+                    <field name="state" string="状态" invisible="1"/>
+                    <field name="message_unread" invisible="1"/>
+                    <field name="gongsi_id" string="公司主体" options="{'no_create':true,'no_open':1}"/>
+                </tree>
+            </field>
+        </record>
+        <!--所有审批完成费用申请，按照审批时间排序-->
+        <record id="hr_expense_sheet_manager_approve_tree" model="ir.ui.view">
+            <field name="name">hr.expense.sheet.tree</field>
+            <field name="model">hr.expense.sheet</field>
+            <field name="arch" type="xml">
+                <tree string="费用申请" class="o_expense_tree" default_order="manager_confirm_date desc" create="false" edit="false" delete="false"
+                      decoration-warning="state=='draft'" decoration-bf="message_unread == True"
+                      decoration-danger="state=='cancel'">
+                    <field name="create_date" string="创建日期"/>
+                    <field name="create_uid" string="创建人"/>
+                    <field name="manager_confirm_date"/>
                     <field name="name" string="费用说明"/>
                     <field name="fk_journal_id" string="付款账户" groups="account.group_account_invoice"/>
                     <field name="total_amount" string="总金额"/>
@@ -1740,7 +1762,22 @@
                               ]"/>
         </record>
 
-
+        <record id="action_hr_expense_sheet_approve" model="ir.actions.act_window">
+            <field name="name">审批完成费用</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.expense.sheet</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('state','in',['approve','post','done'])]</field>
+            <field name="context">{}</field>
+            <!--field name="target">new</field-->
+            <field name="view_ids" eval="[(5, 0, 0),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('hr_expense_sheet_manager_approve_tree')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('view_hr_expense_sheet_new_form')}),
+                              ]"/>
+        </record>
+         <menuitem id="menu_hr_expense_sheet_approve" name="审批完成费用"
+              parent="menu_yjzy_advance_root"
+              action="action_hr_expense_sheet_approve"/>
         <!--record id="hr_expense_product_new_action" model="ir.actions.act_window">
            <field name="name">费用产品</field>
            <field name="type">ir.actions.act_window</field>
