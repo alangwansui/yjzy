@@ -247,7 +247,7 @@ class hr_expense_sheet(models.Model):
             'res_model': 'tb.po.invoice',
             'type': 'ir.actions.act_window',
             'view_id': view.id,
-            'target': 'new',
+            'target': 'current',
             'res_id': tb_po_id.id,
             # 'context': { },
         }
@@ -258,15 +258,14 @@ class hr_expense_sheet(models.Model):
         tree_view_id = self.env.ref('yjzy_extend.tb_po_tree')
 
         return {
-            'name': _(u'创建采购单'),
+            'name': _(u'费用转采购应付'),
             'view_type': 'form',
             "view_mode": 'tree,form',
             'res_model': 'tb.po.invoice',
             'type': 'ir.actions.act_window',
             'views': [(tree_view_id.id, 'tree'),(form_view_id.id, 'form')],
             'domain': [('id', 'in', [x.id for x in self.tb_po_invoice_ids])],
-            'target': 'current',
-
+            'target': 'current'
             # 'context': { },
         }
 
