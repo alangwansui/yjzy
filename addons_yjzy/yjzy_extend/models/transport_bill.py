@@ -2817,6 +2817,7 @@ class transport_bill(models.Model):
                                #'state':'approve',
                                'stage_id': stage_id.id})
                 self.compute_second_state()
+                self.create_hsname_all_ids()
         else:
             raise Warning('销售金额和原始销售不相等')
 
