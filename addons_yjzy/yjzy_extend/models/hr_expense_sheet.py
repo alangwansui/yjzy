@@ -150,6 +150,16 @@ class hr_expense_sheet(models.Model):
 #         for expense in self.expense_line_ids:
 #             second_categ_id = expense.second_categ_id
 #         self.second_categ_id = second_categ_id
+    #902更新历史的费用报告的总经理审批时间
+    def compute_manager_approve_date_uid(self):
+        # message_id = self.message_ids[0]
+        message_id = self.message_ids.filtered(lambda x: x.create_uid.name == '奚海峰')
+        manager_confirm = message_id[0].create_uid
+        manager_confirm_date =message_id[0].date
+        print('message_id',message_id,manager_confirm,manager_confirm_date)
+        self.write({'manager_confirm': manager_confirm.id,
+                    'manager_confirm_date':manager_confirm_date})
+
     #819 费用创建发票账单
     def action_manager_approve(self):
         if not self.is_to_invoice:
