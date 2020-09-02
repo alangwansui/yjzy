@@ -284,25 +284,7 @@ class tb_po_invoice(models.Model):
 
     @api.onchange('partner_id')
     def onchange_partner_id(self):
-        hsname_all_ids = self.tb_id.hsname_all_ids
-        res = []
-        for line in hsname_all_ids:
-            res.append((0, 0, {
-                # akiny
-                # 'hs_id':line.hs_id.id,
-                # 'hs_en_name': line.hs_en_name,
-                # 'back_tax':line.back_tax,
-                # 'purchase_amount2_tax': line.purchase_amount2_tax,
-                # 'purchase_amount2_no_tax': line.purchase_amount2_no_tax,
-                # 'purchase_amount_max_add_forecast': line.purchase_amount_max_add_forecast,
-                # 'purchase_amount_min_add_forecast': line.purchase_amount_min_add_forecast,
-                # 'purchase_amount_max_add_rest': line.purchase_amount_max_add_rest,
-                # 'purchase_amount_min_add_rest': line.purchase_amount_min_add_rest,
-                'hsname_all_line_id': line.id
-            }))
-        yjzy_invoice_id = self.tb_id.purchase_invoice_ids.filtered(
-            lambda x: x.partner_id == self.partner_id)
-        self.hsname_all_ids = res
+        yjzy_invoice_id = self.hsname_all_ids
         self.yjzy_invoice_id = yjzy_invoice_id and yjzy_invoice_id[0] or False
         self.invoice_product_id = self.env.ref('yjzy_extend.product_qtyfk').id
 
