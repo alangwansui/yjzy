@@ -192,10 +192,12 @@
                                     <field name="supplierinfo_id" invisible="1"/>
                                     <field name="box_start" />
                                     <field name="box_end"/>
+
                                     <field name="min_package_name" invisible="1"/>
                                     <field name="max_package_qty" invisible="1"/>
-                                    <field name="qty_max_package"/>
-                                     <field name="max_qty"/>
+                                    <field name="qty_max_package" sum="小计"/>
+                                     <field name="max_qty" sum="小计"/>
+                                     <field name="max_package_volume" sum="小计"/>
                                      <field name="max_qty2" invisible="1"/>
                                      <field name="max_qty_ng" invisible="1"/>
                                     <field name="price_section_base" invisible="1"/>

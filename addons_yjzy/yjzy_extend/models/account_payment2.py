@@ -21,7 +21,7 @@ class account_payment_line(models.Model):
 
     polar = fields.Selection([(1, '+'), (-1, '-')], u'正负号', required=True)
 
-    currency_id = fields.Many2one('res.currency', u'货币')
+    # currency_id = fields.Many2one('res.currency', u'货币')
 
     @api.onchange('product_id')
     def onchange_product(self):

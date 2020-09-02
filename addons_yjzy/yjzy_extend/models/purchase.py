@@ -179,9 +179,13 @@ class purchase_order(models.Model):
         return super(purchase_order, self).name_search(name, args, operator, limit)
     @api.multi
     def name_get(self):
+        ctx = self.env.context
         res = []
         for order in self:
-            name = '%s[%s]%s' % (order.name, order.contract_code, order.pre_advance)
+            if ctx.get('only_code'):
+                name = order.contract_code
+            else:
+                name = '%s[%s]%s' % (order.name, order.contract_code, order.pre_advance)
             res.append((order.id, name))
         return res
 
@@ -415,6 +419,7 @@ class purchase_order_line(models.Model):
     min_package_name = fields.Char(u'小包装名称')
     max_package_qty = fields.Float(u'大包装名称')
     qty_max_package = fields.Float(u'箱数')
+    max_package_volume = fields.Float(u'大包装体积')#902akiny  算大包装的体积
 
     max_qty = fields.Float(u'大包数')
     max_qty2 = fields.Float(u'大包数参考')
@@ -440,6 +445,7 @@ class purchase_order_line(models.Model):
             one.max_qty_ng = res['max_qty_ng']
             one.max_qty = res['max_qty']
             one.max_qty2 = res['max_qty2']
+            one.max_package_volume = res['volume']
 
     @api.onchange('product_id')
     def onchange_product_id(self):

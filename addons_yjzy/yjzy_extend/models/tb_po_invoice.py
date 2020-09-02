@@ -139,6 +139,18 @@ class tb_po_invoice(models.Model):
             one.back_tax_add_residual = back_tax_add_residual
             one.p_s_add_refund_residual = p_s_add_refund_residual
 
+    @api.depends('tb_id')
+    def compute_tb_id_po_supplier(self):
+        for one in self:
+            tb_id_po_supplier = ''
+            dlrs = one.tb_id.purchase_invoice_ids
+            for o in dlrs:
+                tb_id_po_supplier += '%s\n' % (o.partner_id.name)
+            one.tb_id_po_supplier = tb_id_po_supplier
+
+    #902
+    tb_id_po_supplier = fields.Text(compute=compute_tb_id_po_supplier, string='供应商')
+    expense_tax_algorithm = fields.Selection([('divide', u'除'), ('multiply', u'乘')], string='税点算法', default='divide')
     #828
     po_add_residual = fields.Float(u'增加采购未付金额',compute=compute_residual,store=True)
     p_s_add_residual = fields.Float(u'应收未收金额',compute=compute_residual,store=True)
@@ -690,12 +702,17 @@ class tb_po_invoice(models.Model):
 class tb_po_invoice_line(models.Model):
     _name = 'tb.po.invoice.line'
 
-    @api.depends('purchase_amount2_add_this_time','tax_rate_add')
+    @api.depends('purchase_amount2_add_this_time','tax_rate_add','tb_po_id.expense_tax_algorithm')
     def compute_info(self):
         for one in self:
             tax_rate_add = one.tax_rate_add
             purchase_amount2_add_this_time = one.purchase_amount2_add_this_time
-            expense_tax = purchase_amount2_add_this_time * tax_rate_add
+            expense_tax_algorithm = one.tb_po_id.expense_tax_algorithm
+            expense_tax = 0.0
+            if expense_tax_algorithm == 'multiply':
+                expense_tax = purchase_amount2_add_this_time * tax_rate_add
+            elif expense_tax_algorithm == 'divide':
+                expense_tax = purchase_amount2_add_this_time - purchase_amount2_add_this_time / (1- tax_rate_add)
             p_s_add_this_time = purchase_amount2_add_this_time - expense_tax
             one.expense_tax = expense_tax
             one.p_s_add_this_time = p_s_add_this_time
@@ -705,6 +722,8 @@ class tb_po_invoice_line(models.Model):
         for one in self:
             back_tax_add_this_time = one.purchase_amount2_add_this_time / 1.13 * one.back_tax
             one.back_tax_add_this_time = back_tax_add_this_time
+
+    #902
 
     #827
     tax_rate_add = fields.Float(u'增加采购税率',related='tb_po_id.tax_rate_add')

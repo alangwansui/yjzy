@@ -97,7 +97,7 @@
 
                         <notebook>
                            <page string="供应商发货通知">
-                                <field name="tb_vendor_ids" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
+                                <field name="tb_vendor_ids" attrs="{'readonly':[('state','not in',['draft','sales_approve','submit']),('is_editable','=',False)]}"/>
                             </page>
 
                         </notebook>

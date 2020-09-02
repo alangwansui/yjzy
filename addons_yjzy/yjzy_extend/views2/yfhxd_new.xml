@@ -335,7 +335,7 @@
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="domain">[('sfk_type','=','yfhxd'),('state','in',['approved','done']),('approve_uid.name','=','奚海峰')]</field>
-        <field name="context">{'default_sfk_type': 'yfhxd', 'default_payment_type': 'outbound', 'default_be_renling': 1, 'default_partner_type':
+        <field name="context">{'advance_bank_amount':1,'default_sfk_type': 'yfhxd', 'default_payment_type': 'outbound', 'default_be_renling': 1, 'default_partner_type':
             'supplier', 'show_po': 1,'default_operation_wizard':'30'}
         </field>
               <field name="view_ids" eval="[(5, 0, 0),

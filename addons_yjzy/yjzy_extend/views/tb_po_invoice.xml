@@ -64,19 +64,21 @@
                     </header>
                     <sheet>
                     <group col="3">
-                    <group>
-
-                        <field name="tb_id" domain="[('back_tax_invoice_balance_new','!=',0)]" attrs="{'invisible':[('type','not in',['other_po','expense_po'])]}" context="{'min_add':1,'tree_view_ref':'yjzy_extend.view_transport_bill_declare_po_tree'}"/>
+                       <group>
+                        <field name="tb_id" domain="[('back_tax_invoice_balance_new','!=',0)]" attrs="{'invisible':[('type','not in',['other_po','expense_po'])]}"
+                               context="{'min_add':1,'not_show_partner':1,'tree_view_ref':'yjzy_extend.view_transport_bill_declare_po_tree'}"/>
+                        <field name="tb_id_po_supplier" string="原始供应商"/>
                         <field name="expense_sheet_id" attrs="{'invisible':[('type','!=','expense_po')]}" domain="[('state','in',['account_approval','manager_approval','approval'])]"/>
                         <field name="invoice_product_id" attrs="{'invisible':1}"/>
-                    </group>
+                       </group>
                          <group>
-                             <field name="partner_id" string="供应商" domain="[('supplier', '=', True),('is_company','=',True)]"/>
-                             <field name="tax_rate_add"/>
-
-                    </group>
-                        <group>
-                            <field name="yjzy_invoice_include_tax" string="原始采购含税" attrs="{'invisible':1}"/>
+                             <field name="partner_id" string="新增供应商" domain="[('supplier', '=', True),('is_company','=',True)]"/>
+                             <field name="tax_rate_add" string="税点"/>
+                             <field name="expense_tax_algorithm" widget="radio" options="{'horizontal': true}"/>
+                        </group>
+                          <group col="1">
+                             <group>
+                             <field name="yjzy_invoice_include_tax" string="原始采购含税" attrs="{'invisible':1}"/>
                             <label for="" name="yjzy_invoice_residual_amount" attrs="{'invisible':['|',('yjzy_invoice_id','=',False),('type','!=','other_po')]}">
                                  <b attrs="{'invisible':['|',('yjzy_invoice_include_tax','=',True),('type','!=','other_po')]}">
                             原始未税采购额
@@ -88,26 +90,33 @@
                                 <div class="o_row" attrs="{'invisible':['|',('yjzy_invoice_id','=',False),('type','!=','other_po')]}">
                                     <field name="yjzy_invoice_residual_amount"/>
                                 </div>
-                            <field name="purchase_amount2_add_this_time_total" string="增加采购总额"/>
-                        <field name="p_s_add_this_time_refund" attrs="{'invisible':['|',('yjzy_invoice_include_tax','=',True),('type','!=','other_po')]}" string="冲减金额"/>
+
+
+                            <field name="purchase_amount2_add_this_time_total" string="本次增加应付"/>
+                            <field name="expense_tax" string="本次产生税费"/>
+                              </group>
+                             <group style="border-top:1px #6C6A6A solid;border-bottom:1px #6C6A6A solid;margin-top:-10px; ">
+                            <field name="p_s_add_this_time_total" string="本次增加应收"/>
+                        <field name="p_s_add_this_time_refund" attrs="{'invisible':['|',('yjzy_invoice_include_tax','=',True),('type','!=','other_po')]}" string="本次可冲减应收"/>
                         <label for="" name="p_s_add_this_time_extra_total">
                             <b attrs="{'invisible':['|',('yjzy_invoice_include_tax','=',True),('type','!=','other_po')]}">
-                            冲减后应收
+                            本次冲减后应收
                             </b>
                             <b attrs="{'invisible':['|',('yjzy_invoice_include_tax','=',False),('type','!=','other_po')]}">
-                              应收金额
+                              本次应收总额
                             </b>
                         </label>
                                 <div class="o_row">
                                     <field name="p_s_add_this_time_extra_total"/>
                                 </div>
                             <!--field name="p_s_add_this_time_extra_total" string="冲减后应收" attrs="{'invisible':[('type','!=','other_po')]}"/-->
-
+                            </group>
+                            <group style="margin-top:-10px; ">
                         <field name="back_tax_add_this_time_total" string="退税金额" attrs="{'invisible':[('type','!=','other_po')]}"/>
                         <field name="expense_currency_id" attrs="{'invisible':[('type','!=','expense_po')]}"/>
                         <field name="expense_sheet_amount" attrs="{'invisible':[('type','!=','expense_po')]}"/>
                         <field name="price_total" groups="base.group_system"/>
-                            <field name="expense_tax"/>
+                      </group>
                     </group>
 
                     </group>

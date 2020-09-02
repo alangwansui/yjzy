@@ -6,10 +6,11 @@
             <field name="name">transport.bill.declare.tree</field>
             <field name="model">transport.bill</field>
             <field name="arch" type="xml">
-                <tree string="报关资料">
+                <tree string="报关资料" default_order="purchase_amount_min_add_rest_total desc">
                     <field name="ref"/>
                     <field name="name" invisible="1" groups="base.group_system"/>
-                    <field name="partner_id" required="1"/>
+                    <field name="partner_id" required="1" invisible="context.get('not_show_partner')"/>
+                    <field name="date_out_in"/>
                     <field name="current_date_rate" string="成本单测算汇率"/>
                     <field name="org_sale_amount"/>
                     <field name="ciq_amount"/>
