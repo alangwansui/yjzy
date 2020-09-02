@@ -97,9 +97,9 @@
                               </group>
                              <group style="border-top:1px #6C6A6A solid;border-bottom:1px #6C6A6A solid;margin-top:-10px; ">
                             <field name="p_s_add_this_time_total" string="本次增加应收"/>
-                        <field name="p_s_add_this_time_refund" attrs="{'invisible':['|',('yjzy_invoice_include_tax','=',True),('type','!=','other_po')]}" string="本次可冲减应收"/>
+                        <field name="p_s_add_this_time_refund" attrs="{'invisible':['|','|',('yjzy_invoice_include_tax','=',True),('type','!=','other_po'),('yjzy_invoice_id','=',False)]}" string="本次可冲减应收"/>
                         <label for="" name="p_s_add_this_time_extra_total">
-                            <b attrs="{'invisible':['|',('yjzy_invoice_include_tax','=',True),('type','!=','other_po')]}">
+                            <b attrs="{'invisible':['|','|',('yjzy_invoice_include_tax','=',True),('type','!=','other_po'),('yjzy_invoice_id','=',False)]}">
                             本次冲减后应收
                             </b>
                             <b attrs="{'invisible':['|',('yjzy_invoice_include_tax','=',False),('type','!=','other_po')]}">
