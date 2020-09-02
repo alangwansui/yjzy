@@ -712,7 +712,7 @@ class tb_po_invoice_line(models.Model):
             if expense_tax_algorithm == 'multiply':
                 expense_tax = purchase_amount2_add_this_time * tax_rate_add
             elif expense_tax_algorithm == 'divide':
-                expense_tax = purchase_amount2_add_this_time - purchase_amount2_add_this_time / (1- tax_rate_add)
+                expense_tax = purchase_amount2_add_this_time - purchase_amount2_add_this_time / (1+ tax_rate_add)
             p_s_add_this_time = purchase_amount2_add_this_time - expense_tax
             one.expense_tax = expense_tax
             one.p_s_add_this_time = p_s_add_this_time
