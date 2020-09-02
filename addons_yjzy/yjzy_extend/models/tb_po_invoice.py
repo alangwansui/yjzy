@@ -284,7 +284,8 @@ class tb_po_invoice(models.Model):
 
     @api.onchange('partner_id')
     def onchange_partner_id(self):
-        yjzy_invoice_id = self.hsname_all_ids
+        yjzy_invoice_id = self.tb_id.purchase_invoice_ids.filtered(
+            lambda x: x.partner_id == self.partner_id)
         self.yjzy_invoice_id = yjzy_invoice_id and yjzy_invoice_id[0] or False
         self.invoice_product_id = self.env.ref('yjzy_extend.product_qtyfk').id
 
