@@ -1007,7 +1007,7 @@ class account_invoice(models.Model):
             if show_date_finish:
                 name = '%s %s %s' % (purchase_date_finish_state or '',one.date_finish or '', one.partner_id.name or '', )
             else:
-                name = '%s[%s]' % (one.tb_contract_code, str(one.amount_total))
+                name = '%s[%s]' % (one.tb_contract_code, str(one.residual))
             res.append((one.id, name))
         print('=111====',res)
         return res
