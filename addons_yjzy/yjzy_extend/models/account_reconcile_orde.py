@@ -14,6 +14,7 @@ class account_reconcile_order(models.Model):
     _description = '核销单'
     _order = 'date desc'
 
+    @api.depends('manual_payment_currency_id','yjzy_payment_id','fk_journal_id')
     def _compute_payment_currency(self):
         for one in self:
             if one.sfk_type == 'yfhxd':
@@ -335,24 +336,27 @@ class account_reconcile_order(models.Model):
 
     def action_posted_new(self):
         self.ensure_one()
-        if self.sfk_type == 'yshxd':
-            amount_payment_org = self.amount_payment_org
-            yjzy_payment_balance = self.yjzy_payment_balance
-            amount_advance_residual_org = self.amount_advance_residual_org
-            amount_advance_org = self.amount_advance_org
-            if yjzy_payment_balance < amount_payment_org:
-                raise Warning(u'收款认领金额大于收款单余额')
-            if amount_advance_residual_org < amount_advance_org:
-                raise Warning(u'预收认领金额大于预收余额')
-            for x in self.line_ids:
-                if x.amount_advance_org != 0.0 and x.yjzy_payment_id == False:
-                    raise Warning('有预收单没有选择，请检查！')
-            self.state = 'approved'
-        if self.sfk_type == 'yfhxd':
-            for x in self.line_ids:
-                if x.amount_advance_org != 0.0 and x.yjzy_payment_id == False:
-                    raise Warning('有预付单没有选择，请检查！')
-            self.state = 'posted'
+        if self.amount_total_org == 0:
+            raise Warning('认领金额为0，无法提交！')
+        else:
+            if self.sfk_type == 'yshxd':
+                amount_payment_org = self.amount_payment_org
+                yjzy_payment_balance = self.yjzy_payment_balance
+                amount_advance_residual_org = self.amount_advance_residual_org
+                amount_advance_org = self.amount_advance_org
+                if yjzy_payment_balance < amount_payment_org:
+                    raise Warning(u'收款认领金额大于收款单余额')
+                if amount_advance_residual_org < amount_advance_org:
+                    raise Warning(u'预收认领金额大于预收余额')
+                for x in self.line_ids:
+                    if x.amount_advance_org != 0.0 and x.yjzy_payment_id == False:
+                        raise Warning('有预收单没有选择，请检查！')
+                self.state = 'approved'
+            elif self.sfk_type == 'yfhxd':
+                for x in self.line_ids:
+                    if x.amount_advance_org != 0.0 and x.yjzy_payment_id == False:
+                        raise Warning('有预付单没有选择，请检查！')
+                self.state = 'posted'
         # self.date = fields.date.today()
         return True
 
@@ -360,17 +364,21 @@ class account_reconcile_order(models.Model):
         self.ensure_one()
         if self.sfk_type == 'yfhxd':
             self.create_rcfkd()
-        self.state = 'approved'
+        self.write({'state': 'approved',
+                    'approve_date': fields.date.today(),
+                    'approve_uid':self.env.user.id})
 
     def action_draft_new(self):
         if self.sfk_type == 'yfhxd':
             self.yjzy_payment_id.unlink()
-        self.state = 'draft'
+
+        self.write({'state': 'draft',
+                    'approve_date': False,
+                    'approve_uid': False})
 
     def action_refuse_new(self,reason):
         self.write({'state': 'refused',
                      })
-
         for tb in self:
             tb.message_post_with_view('yjzy_extend.reconcile_hxd_template_refuse_reason',
                                       values={'reason': reason, 'name': self.name},
@@ -392,7 +400,6 @@ class account_reconcile_order(models.Model):
         if self.back_tax_invoice_id:
             invoice = self.back_tax_invoice_id
             invoice.action_invoice_open()
-
         self.state = 'approved'
 
     def action_cancel(self):
@@ -405,6 +412,10 @@ class account_reconcile_order(models.Model):
         if self.sfk_type == 'yshxd':
             self.make_done()
             self.state = 'done'
+            self.approve_date = fields.date.today()
+            self.approve_uid = self.env.user
+        else:
+            raise Warning('无法审批！')
 
 
 
@@ -560,7 +571,9 @@ class account_reconcile_order(models.Model):
                 'domain': [('account_id', '=', account.id), ('so_id', 'in', [x.so_id.id for x in self.line_ids])],
             }
 
-
+    @api.onchange('yjzy_payment_id')
+    def onchange_yjzy_payment_id(self):
+        self.manual_payment_currency_id = self.yjzy_payment_id.currency_id
 
     @api.onchange('partner_id')
     def onchange_partner(self):
