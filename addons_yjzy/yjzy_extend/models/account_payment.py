@@ -197,7 +197,7 @@ class account_payment(models.Model):
     #新增
     payment_comments = fields.Text(u'收付款备注')
     fault_comments = fields.Text('异常备注')
-    display_name = fields.Char(u'显示名称', compute=compute_display_name, store=True)
+    display_name = fields.Char(u'显示名称', compute=compute_display_name)
     advance_reconcile_order_line_ids = fields.One2many('account.reconcile.order.line', 'yjzy_payment_id', string='预收认领明细',domain=[('amount_advance_org','>',0),('order_id.state','=','done')])
     advance_reconcile_order_count = fields.Integer(u'应收认领数量', compute=compute_count)
     advance_reconcile_order_line_amount_char = fields.Text(related='so_id.advance_reconcile_order_line_amount_char', string=u'预收认领明细金额')
