@@ -1149,6 +1149,7 @@ class account_reconcile_order_line_no(models.Model):
     invoice_currency_id = fields.Many2one('res.currency', u'交易货币', related='invoice_id.currency_id', readonly=True)
     order_id = fields.Many2one('account.reconcile.order', u'核销单')
     invoice_id = fields.Many2one('account.invoice', u'发票')
+    invoice_residual = fields.Monetary(related='invoice_id.residual', string=u'发票余额', readonly=True, currency_field='invoice_currency_id')
     yjzy_currency_id = fields.Many2one('res.currency', u'预收币种',
                                        default=lambda self: self.env.user.company_id.currency_id.id)
     payment_currency_id = fields.Many2one('res.currency', u'收款货币', related='order_id.payment_currency_id',

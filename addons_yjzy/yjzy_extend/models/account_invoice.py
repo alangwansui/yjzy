@@ -203,7 +203,8 @@ class account_invoice(models.Model):
     @api.depends('tb_contract_code', 'amount_total')
     def compute_display_name(self):
         for one in self:
-            one.display_name = '%s[%s]' % (one.tb_contract_code, str(one.amount_total))
+            # one.display_name = '%s[%s]' % (one.tb_contract_code, str(one.amount_total))
+            one.display_name = one.tb_contract_code
 
     @api.model
     def _default_invoice_stage(self):
@@ -346,7 +347,7 @@ class account_invoice(models.Model):
         default=_default_invoice_stage)
     state_1 = fields.Selection(Invoice_Selection,'额外账单审批',related='stage_id.state')
     fault_comments = fields.Text('异常备注')
-   # display_name = fields.Char(u'显示名称', compute=compute_display_name, store=True)
+    display_name = fields.Char(u'显示名称', compute=compute_display_name)
    #13ok
     yjzy_type = fields.Selection([('sale', u'应收'), ('purchase', u'应付'), ('back_tax', u'退税')], string=u'发票类型')
     bill_id = fields.Many2one('transport.bill', u'发运单')
