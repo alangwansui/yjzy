@@ -325,11 +325,11 @@ class account_payment(models.Model):
         res = []
         for one in self:
             if ctx.get('default_sfk_type', '') == 'ysrld':
-                name = '%s:%s' % (one.journal_id.name, one.amount)
+                name = '%s:%s' % (one.journal_id.name, one.blance)
             elif ctx.get('bank_amount'):
-                name = '%s[%s]' % (one.journal_id.name, str(one.amount))
+                name = '%s[%s]' % (one.journal_id.name, str(one.balance))
             elif ctx.get('advance_bank_amount'):
-                name = '%s[%s]' % (one.yjzy_payment_id.journal_id.name, str(one.amount))
+                name = '%s[%s]' % (one.yjzy_payment_id.journal_id.name, str(one.balance))
             else:
                 name = one.name
             res.append((one.id, name))
