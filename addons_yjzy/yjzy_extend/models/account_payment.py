@@ -177,8 +177,18 @@ class account_payment(models.Model):
 
     @api.depends('name', 'amount')
     def compute_display_name(self):
+        ctx = self.env.context
+        res = []
         for one in self:
-            one.display_name = '%s[%s]' % (one.name, str(one.amount))
+            if ctx.get('default_sfk_type', '') == 'ysrld':
+                name = '%s:%s' % (one.journal_id.name, one.blance)
+            elif ctx.get('bank_amount'):
+                name = '%s[%s]' % (one.journal_id.name, str(one.balance))
+            elif ctx.get('advance_bank_amount'):
+                name = '%s[%s]' % (one.yjzy_payment_id.journal_id.name, str(one.balance))
+            else:
+                name = '%s[%s]' % (one.name, str(one.balance))
+            one.display_name = name
 
 
 

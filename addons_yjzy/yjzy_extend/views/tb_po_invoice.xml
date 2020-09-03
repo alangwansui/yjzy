@@ -66,7 +66,7 @@
                     <group col="3">
                        <group>
                         <field name="tb_id" domain="[('back_tax_invoice_balance_new','!=',0)]" attrs="{'invisible':[('type','not in',['other_po','expense_po'])]}"
-                               context="{'min_add':1,'not_show_partner':1,'tree_view_ref':'yjzy_extend.view_transport_bill_declare_po_tree'}"/>
+                               context="{'min_add':1,'not_show_partner':1,'form_view_ref':'yjzy_extend.view_transport_bill_declare_po_form'}"/>
                         <field name="tb_id_po_supplier" string="原始供应商"/>
                         <field name="expense_sheet_id" attrs="{'invisible':[('type','!=','expense_po')]}" domain="[('state','in',['account_approval','manager_approval','approval'])]"/>
                         <field name="invoice_product_id" attrs="{'invisible':1}"/>
