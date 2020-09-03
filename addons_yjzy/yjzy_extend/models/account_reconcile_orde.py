@@ -351,11 +351,19 @@ class account_reconcile_order(models.Model):
                 for x in self.line_ids:
                     if x.amount_advance_org != 0.0 and x.yjzy_payment_id == False:
                         raise Warning('有预收单没有选择，请检查！')
+                    if x.amount_payment_org > x.amount_invoice_so_residual:
+                        raise Warning('明细行认领金额大于账单明细可认领金额!')
+                    if x.amount_advance_org > x.advance_residual:
+                        raise Warning('明细行预收认领金额大于账单明细可认领预收金额!')
                 self.state = 'approved'
             elif self.sfk_type == 'yfhxd':
                 for x in self.line_ids:
                     if x.amount_advance_org != 0.0 and x.yjzy_payment_id == False:
                         raise Warning('有预付单没有选择，请检查！')
+                    if x.amount_payment_org > x.amount_invoice_so_residual:
+                        raise Warning('明细行认领金额大于账单明细可认领金额!')
+                    if x.amount_advance_org > x.advance_residual2:
+                        raise Warning('明细行预付认领金额大于账单明细可认领预付金额!')
                 self.state = 'posted'
         # self.date = fields.date.today()
         return True
