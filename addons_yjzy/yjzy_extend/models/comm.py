@@ -11,6 +11,8 @@ sfk_type = [
     ('yfhxd', u'应付核销单'),
     ('ysrld', u'预收认领单'),
     ('yfsqd', u'预付申请单'),
+    ('yingshourld',u'应收认领单'),
+    ('yingfurld',u'应付认领单'),
 ]
 
 

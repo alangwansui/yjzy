@@ -23,7 +23,7 @@
         <field eval="25" name="priority"/>
         <field name="arch" type="xml">
             <form string="Expense Reports" class="o_expense_sheet">
-                <header>
+                <header groups="base.group_system">
                     <button name="approve_expense_sheets" states="submit" string="Approve" type="object" groups="hr_expense.group_hr_expense_user"
                             class="oe_highlight o_expense_sheet_approve"/>
                     <button name="action_sheet_move_create" states="approve" string="Post Journal Entries" type="object"
@@ -43,7 +43,7 @@
                 </header>
                 <sheet>
                     <div class="oe_button_box">
-                        <button name="action_get_attachment_view"
+                        <button name="action_get_attachment_view" invisible="1"
                                 class="oe_stat_button"
                                 icon="fa-book"
                                 type="object">
@@ -58,70 +58,55 @@
                     </div>
                     <group>
                         <group>
-                            <field name="employee_id" options="{'no_create':True}"/>
-                            <field name="employee_user_id" groups="base.group_system"/>
-                            <field name="payment_mode" groups="base.group_system"/>
-                            <field name="responsible_id" invisible="1"/>
-                            <field name="total_amount" widget="monetary" options="{'currency_field': 'currency_id'}" invisible="0" groups="base.group_system"/>
-                            <field name="negative_total_amount" widget="monetary" options="{'currency_field': 'currency_id'}" string="认领金额"/>
-                            <field name="currency_id" invisible="0"/>
-                            <field name="address_id" invisible="1"/>
-                            <field name="department_id" invisible="1"/>
-                            <field name="bank_id" groups="base.group_system"/>
-                            <field name="company_id" groups="base.group_multi_company" readonly="1" options="{'no_create':True}"/>
+                            <field name="payment_id" string="收款单"
+                                   domain="['&amp;','&amp;',('state', '=', 'posted'),('sfk_type', '=', 'rcskd'),('balance','!=',0)]"
+                                   options='{"no_create": True}' context="{'bank_amount':1}"/>
+                            <field name="balance" string="收款单余额"/>
+
+
                         </group>
                         <group>
-                            <field name="include_tax" />
-                            <field name="todo_cron"/>
-                            <field name="payment_id" string="收款单" domain="['&amp;','&amp;',('state', '=', 'posted'),('sfk_type', '=', 'rcskd'),('balance','!=',0)]"  options='{"no_create": True}'/>
-                            <field name="yjzy_payment_currency_id" string="收款单币种"  options='{"no_create": True}'/>
-                            <field name="balance"/>
-                            <field name="partner_id" groups="base.group_system"/>
-                            <field name="fk_journal_id" domain="[('type','in',['bank', 'cash'])]" groups="base.group_system"/>
-                            <field name="gongsi_id" options="{'no_create':1,'no_open':1}"/>
-
-
+                       <field name="negative_total_amount" widget="monetary" options="{'currency_field': 'currency_id'}" string="认领金额"/>
                         </group>
                     </group>
-
-
                     <notebook>
                         <page string="其他收入明细">
                             <field name="expense_line_ids" nolabel="1" widget="one2many" domain="[('state', '=', 'draft'),('total_amount','&lt;',0)]"
-
                                     options="{'not_delete': True, 'reload_on_button': True, 'no_create': False}"
                                        context="{'expense_adding_line': True, 'default_company_id':company_id,'tracking_disable': True,
-
                                        'no_show_mark': context.get('no_show_mark'),  'default_gongsi_id': gongsi_id,
                                        'default_currency_id': currency_id, 'default_state': 'draft','form_view_ref': 'yjzy_extend.other_income_view_form', }" >
-                                <tree decoration-danger="is_refused">
+                                <tree decoration-danger="is_refused" editable="bottom">
+
+                                    <field name="name" string="收入说明" invisible="1"/>
+                                    <field name="product_id" context="{'cat_name':1}" string="收入项目"/>
                                     <field name="date" string="收入日期"/>
-                                    <field name="name" string="收入说明"/>
-                                    <field name="product_id" context="{'cat_name':1}"/>
                                     <field name="state" invisible="1"/>
                                     <field name="currency_id" invisible="1"/>
-                                    <field name="analytic_account_id" groups="analytic.group_analytic_accounting"/>
+                                    <field name="analytic_account_id" groups="analytic.group_analytic_accounting" invisible="1"/>
                                     <field name="message_unread" invisible="1"/>
-                                    <field name="attachment_number" string=" "/>
-                                    <button name="action_get_attachment_view" string="View Attachments" type="object" icon="fa-paperclip"/>
+                                    <field name="attachment_number" string=" " invisible="1"/>
+                                    <button name="action_get_attachment_view" string="View Attachments" type="object" icon="fa-paperclip" invisible="1"/>
                                     <field name="tax_ids" invisible="1" widget="many2many_tags"/>
+                                    <field name="negative_unit_amount" string="认领金额金额" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                    <field name="unit_amount" invisible="1"/>
+                                    <field name="negative_total_amount" widget="monetary" options="{'currency_field': 'currency_id'}" string="认领金额" invisible="1"/>
                                     <field name="total_amount" widget="monetary" options="{'currency_field': 'currency_id'}" groups="base.group_system"/>
-                                    <field name="negative_total_amount" widget="monetary" options="{'currency_field': 'currency_id'}" string="认领金额"/>
                                     <field name="is_refused" invisible="True"/>
-                                    <field name="yjzy_payment_id"/>
-                                    <field name="hx_expense_id"/>
-                                    <field name="hx_code"/>
-                                    <field name="hx_balance"/>
-                                    <button name="make_hx_code"  string="生成内部核对标记" type='object' icon="" attrs="{'invisible':[('hx_code','!=',False)]}"/>
+                                    <field name="yjzy_payment_id" string="对应收款单" invisible="1"/>
+                                    <field name="hx_expense_id" invisible="1"/>
+                                    <field name="hx_code" invisible="1"/>
+                                    <field name="hx_balance" invisible="1"/>
+                                    <button name="make_hx_code" invisible="1" string="生成内部核对标记" type='object' icon="" attrs="{'invisible':[('hx_code','!=',False)]}"/>
 
-                                    <button name="%(hr_expense.hr_expense_refuse_wizard_action)d" states="reported, refused" string="Refuse"
+                                    <button name="%(hr_expense.hr_expense_refuse_wizard_action)d" invisible="1" states="reported, refused" string="Refuse"
                                             context="{'hr_expense_refuse_model':'hr.expense'}" type="action"
                                             groups="hr_expense.group_hr_expense_user, account.group_account_user" icon="fa-times"
                                             attrs="{'invisible': ['|', ('is_refused', '=', True),('state', 'in', ['done'])]}"/>
                                 </tree>
                             </field>
                         </page>
-                        <page string="Other Info">
+                        <page string="Other Info" groups="base.group_system">
                             <group>
                                 <group>
                                     <field name="journal_id" domain="[('type', '=', 'purchase')]" options="{'no_open': True, 'no_create': True}"
@@ -136,6 +121,26 @@
                                     <field name="account_move_id" groups="account.group_account_user"
                                            attrs="{'invisible': [('state', 'not in', ['post', 'done'])]}" readonly="1"/>
                                 </group>
+                            </group>
+                        </page>
+                        <page groups="base.group_system">
+                            <group>
+                                   <field name="employee_id" options="{'no_create':True}" />
+                            <field name="employee_user_id" groups="base.group_system"/>
+                                <field name="responsible_id" />
+                                <field name="total_amount" widget="monetary" options="{'currency_field': 'currency_id'}" invisible="0" groups="base.group_system"/>
+                            <field name="address_id" />
+                            <field name="department_id" />
+                            <field name="bank_id"/>
+                                <field name="include_tax" />
+                                 <field name="todo_cron"/>
+                                <field name="yjzy_payment_currency_id" string="收款单币种"  options='{"no_create": True}'/>
+                            <field name="partner_id"/>
+                                <field name="fk_journal_id" domain="[('type','in',['bank', 'cash'])]"/>
+                                <field name="gongsi_id" options="{'no_create':1,'no_open':1}"/>
+                                <field name="payment_mode" />
+                                <field name="currency_id" invisible="0"/>
+                                <field name="company_id" groups="base.group_multi_company" readonly="1" options="{'no_create':True}"/>
                             </group>
                         </page>
                     </notebook>
@@ -159,21 +164,19 @@
         <field name="context">{'default_bank_journal_code': 'ysdrl'}</field>
     </record>
 
+
     <record id="action_other_income_sheet_tree" model="ir.actions.act_window.view">
         <field name="sequence" eval="1"/>
         <field name="view_mode">tree</field>
         <field name="view_id" ref="other_income_sheet_view_tree"/>
         <field name="act_window_id" ref="action_other_income_sheet"/>
     </record>
-
     <record id="action_other_income_sheet_form" model="ir.actions.act_window.view">
         <field name="sequence" eval="2"/>
         <field name="view_mode">form</field>
         <field name="view_id" ref="other_income_sheet_view_form"/>
         <field name="act_window_id" ref="action_other_income_sheet"/>
     </record>
-
-
     <menuitem id="menu_other_income_sheet" sequence="0" name="其他收入" parent="menu_skf_root" action="action_other_income_sheet"/>
 
 

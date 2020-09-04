@@ -163,7 +163,8 @@ class account_reconcile_order(models.Model):
                     'approve_date':approve_date})
 
 
-
+    #903
+    # reconcile_payment_ids = fields.One2many('')
     #0901
     approve_date = fields.Datetime(u'审批完成时间')
     approve_uid = fields.Many2one('res.users',u'审批人')
@@ -264,6 +265,53 @@ class account_reconcile_order(models.Model):
 
     is_editable = fields.Boolean(u'可编辑')
     gongsi_id = fields.Many2one('gongsi', '内部公司')
+
+    def create_yjzy_payment_ysrl(self):
+        account_payment_obj = self.env['account.payment']
+        partner_id = self.partner_id
+        yjzy_payment_id = self.yjzy_payment_id
+        line_ids = self.line_ids
+        journal_domain = [('code', '=', 'yszk'), ('company_id', '=', self.env.user.company_id.id)]
+        journal_id = self.env['account.journal'].search(journal_domain, limit=1)
+        journal_domain_1 = [('code', '=', 'ysdrl'), ('company_id', '=', self.env.user.company_id.id)]
+        journal_id_1 = self.env['account.journal'].search(journal_domain_1, limit=1)
+
+        for line in line_ids:
+            if line.amount_payment_org >0:
+                reconcile_payment_id = account_payment_obj.create({
+                    'account_reconcile_order_line_id': line.id,
+                    'partner_id':partner_id.id,
+                    'yjzy_payment_id':yjzy_payment_id.id,
+                    'amount':line.amount_payment_org,
+                    'currency_id':line.payment_currency_id.id,
+                    'sfk_type': 'yingshourld',
+                    'payment_type': 'inbound',
+                    'partner_type': 'customer',
+                    'advance_ok':False,
+                    'journal_id':journal_id_1.id,
+                    'payment_method_id': 2,
+                    'invoice_ids': [(4, line.invoice_id.id, None)],
+                    'so_id':line.so_id.id,
+                })
+            if line.amount_advance_org > 0:
+                reconcile_payment_id_2 = account_payment_obj.create({
+                    'account_reconcile_order_line_id': line.id,
+                    'partner_id': partner_id.id,
+                    'amount': line.amount_advance_org,
+                    'sfk_type': 'yingshourld',
+                    'currency_id': line.yjzy_currency_id.id,
+                    'payment_type': 'inbound',
+                    'partner_type': 'customer',
+                    'advance_ok': False,
+                    'journal_id': journal_id.id,
+                    'payment_method_id': 2,
+                    'invoice_ids': [(4, line.invoice_id.id, None)],
+                    'so_id': line.so_id.id,
+
+                })
+
+
+
 
     @api.onchange('line_no_ids')
     def _onchange_line_no_ids(self):

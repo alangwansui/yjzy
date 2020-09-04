@@ -126,7 +126,7 @@ class sale_order_line(models.Model):
     bom_id = fields.Many2one('mrp.bom', 'BOM')#13已
     bom_qty = fields.Float(u'BOM数量')#13已
     need_split_bom = fields.Boolean(u'需要展开BOM')#13已
-    need_print = fields.Boolean('是否打印', defualt=True)#13已
+    need_print = fields.Boolean('是否打印', default=True)#13已
     #-----
     last_sale_price = fields.Float('最后销售价', related='product_id.last_sale_price')
 

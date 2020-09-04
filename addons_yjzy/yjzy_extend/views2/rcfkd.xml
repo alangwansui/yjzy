@@ -168,9 +168,36 @@
         <field name="act_window_id" ref="action_rcfkd"/>
     </record>
 
+    <menuitem id="menu_rcfkd"  sequence="00" name="日常付款单" parent="menu_skf_root" action="action_rcfkd"/>
 
-    <menuitem id="menu_rcfkd"  sequence="0" name="日常付款单" parent="menu_skf_root" action="action_rcfkd"/>
-
-
+<menuitem id="menu_rcfkd_new"  sequence="20" name="日常付款单" parent="menu_new_account_root"/>
+    <record model="ir.actions.act_window" id="action_rcfkd_undone_new">
+        <field name="name">未生效</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.payment</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('sfk_type','=','rcfkd'),('state','not in',['reconciled','posted'])]</field>
+        <field name="context">{'show_shoukuan': True, 'default_sfk_type': 'rcfkd', 'default_payment_type': 'outbound', 'default_be_renling': False, 'default_advance_ok': True, 'default_partner_type': 'supplier',}</field>
+        <field name="search_view_id" ref="view_account_payment_search_new"/>
+        <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_rcfkd_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcfkd_form')})]"/>
+    </record>
+    <menuitem id="menu_rcfkd_undone"  sequence="0" name="未生效" parent="menu_rcfkd_new" action="action_rcfkd_undone_new"/>
+ <record model="ir.actions.act_window" id="action_rcfkd_done_new">
+        <field name="name">已完成</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.payment</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('sfk_type','=','rcfkd'),('state','in',['reconciled','posted'])]</field>
+        <field name="context">{'show_shoukuan': True, 'default_sfk_type': 'rcfkd', 'default_payment_type': 'outbound', 'default_be_renling': False, 'default_advance_ok': True, 'default_partner_type': 'supplier',}</field>
+        <field name="search_view_id" ref="view_account_payment_search_new"/>
+        <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_rcfkd_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcfkd_form')})]"/>
+    </record>
+    <menuitem id="menu_rcfkd_done"  sequence="0" name="已完成" parent="menu_rcfkd_new" action="action_rcfkd_done_new"/>
 
 </odoo>

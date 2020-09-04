@@ -26,6 +26,7 @@ class hr_expense_sheet(models.Model):
         partner = self.env['res.partner'].search([('name', '=', u'未定义的')], limit=1)
         return partner
 
+    @api.depends('total_amount','expense_line_ids', 'expense_line_ids.total_amount', 'expense_line_ids.currency_id')
     def _compute_negative_total_amount(self):
         for one in self:
             one.negative_total_amount = -1 * one.total_amount
@@ -70,9 +71,7 @@ class hr_expense_sheet(models.Model):
     bank_journal_id = fields.Many2one('account.journal', string='Bank Journal', states={'done': [('readonly', True)], 'post': [('readonly', True)]},
                                       default=lambda self: self._default_bank_journal(),
                                       help="The payment method used when the expense is paid by the company.")
-
-    negative_total_amount = fields.Monetary(u'负数总计', currency_field='currency_id', compute=_compute_negative_total_amount)
-
+    negative_total_amount = fields.Monetary(u'负数总计', currency_field='currency_id', store=True, compute=_compute_negative_total_amount)
     back_tax_product_id = fields.Many2one('product.product', u'退税产品', domain=[('type', '=', 'service')], default=_default_back_tax_product)
     back_tax_amount = fields.Monetary(u'退税金额')
     back_tax_invoice_id = fields.Many2one('account.invoice', u'退税发票')

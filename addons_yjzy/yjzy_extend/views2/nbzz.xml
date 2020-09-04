@@ -122,10 +122,50 @@
         <field name="view_id" ref="view_nbzz_form"/>
         <field name="act_window_id" ref="action_nbzz"/>
     </record>
-
-
     <menuitem id="menu_nbzz"  sequence="0" name="内部转账" parent="menu_skf_root" action="action_nbzz"/>
 
+    <menuitem id="menu_nbzz_new"  sequence="25" name="内部转账" parent="menu_new_account_root"/>
+    <record model="ir.actions.act_window" id="action_nbzz_new_undone">
+        <field name="name">未生效</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.payment</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('sfk_type','=','nbzz'),('state','not in',['reconciled','posted'])]</field>
+        <field name="context">{'show_shoukuan': True, 'default_sfk_type': 'nbzz', 'default_payment_type': 'transfer', 'default_be_renling': False, 'default_advance_ok': False, 'default_partner_type': 'supplier',}</field>
+        <field name="search_view_id" ref="view_account_payment_search_new"/>
+         <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_nbzz_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_nbzz_form')})]"/>
+    </record>
+        <menuitem id="menu_nbzz_new_undone"  sequence="25" name="未生效" parent="menu_nbzz_new" action="action_nbzz_new_undone"/>
+    <record model="ir.actions.act_window" id="action_nbzz_new_done">
+        <field name="name">已生效</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.payment</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('sfk_type','=','nbzz'),('state','in',['reconciled','posted'])]</field>
+        <field name="context">{'show_shoukuan': True, 'default_sfk_type': 'nbzz', 'default_payment_type': 'transfer', 'default_be_renling': False, 'default_advance_ok': False, 'default_partner_type': 'supplier',}</field>
+        <field name="search_view_id" ref="view_account_payment_search_new"/>
+         <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_nbzz_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_nbzz_form')})]"/>
+    </record>
+        <menuitem id="menu_nbzz_new_done"  sequence="25" name="已生效" parent="menu_nbzz_new" action="action_nbzz_new_done"/>
+     <record model="ir.actions.act_window" id="action_nbzz_new_create">
+        <field name="name">创建内部转账</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.payment</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="domain">[('sfk_type','=','nbzz'),('state','in',['reconciled','posted'])]</field>
+        <field name="context">{'show_shoukuan': True, 'default_sfk_type': 'nbzz', 'default_payment_type': 'transfer', 'default_be_renling': False, 'default_advance_ok': False, 'default_partner_type': 'supplier',}</field>
+        <field name="search_view_id" ref="view_account_payment_search_new"/>
+         <field name="view_ids" eval="[(5, 0, 0),
 
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_nbzz_form')})]"/>
+    </record>
+        <menuitem id="menu_nbzz_new_create"  sequence="25" name="创建内部转账" parent="menu_nbzz_new" action="action_nbzz_new_create"/>
 
 </odoo>

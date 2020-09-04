@@ -349,7 +349,7 @@ class account_payment(models.Model):
         else:
             journal_domain = journal_domain.append(('id', '=', default_journal_id))
 
-        # jon 默认的journal
+        # jon 默认的journal akiny
         default_sfk_type = self.env.context.get('default_sfk_type', '')
         if default_sfk_type == 'yfsqd':
             journal_domain = [('code', '=', 'yfdrl'), ('company_id', '=', self.env.user.company_id.id)]
@@ -361,6 +361,9 @@ class account_payment(models.Model):
             journal_domain = [('type', 'in', ['bank','cash']), ('company_id', '=', self.env.user.company_id.id)]
         if default_sfk_type == 'rcfkd':
             journal_domain = [('type', 'in', ['bank','cash']), ('company_id', '=', self.env.user.company_id.id)]
+        if default_sfk_type == 'yingshoudrl':
+            journal_domain = [('code','=','yszk'),('company_id','=',self.env.user.company_id.id)]
+            self.journal_id = self.env['account.journal'].search(journal_domain, limit=1)
 
         print('============', journal_domain)
 

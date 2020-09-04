@@ -149,7 +149,7 @@
         </field>
     </record>
 
-
+    <menuitem id="menu_yfsqd_new"  sequence="40" name="预付申请单" parent="menu_new_account_root" />
     <record model="ir.actions.act_window" id="action_yfsqd">
         <field name="name">预付申请单</field>
         <field name="type">ir.actions.act_window</field>
@@ -178,6 +178,47 @@
 
     <menuitem id="menu_yfsqd"  sequence="0" name="预付申请单" parent="menu_skf_root" action="action_yfsqd"/>
 
+    <record model="ir.actions.act_window" id="action_yfsqd_undone">
+        <field name="name">未生效</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.payment</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('sfk_type','=','yfsqd'),('state','not in',['reconciled','posted'])]</field>
+        <field name="context">{'show_shoukuan': True, 'default_sfk_type': 'yfsqd', 'default_payment_type': 'outbound', 'default_be_renling': True, 'default_advance_ok': True, 'default_partner_type': 'supplier',}</field>
+        <field name="search_view_id" ref="view_account_payment_search_new"/>
+          <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_yfsqd_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_yfsqd_form')})]"/>
+    </record>
+    <menuitem id="menu_yfsqd_undone"  sequence="0" name="未生效" parent="menu_yfsqd_new" action="action_yfsqd_undone"/>
+    <record model="ir.actions.act_window" id="action_yfsqd_balance">
+        <field name="name">未完成认领</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.payment</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('sfk_type','=','yfsqd'),('state','in',['reconciled','posted']),('advance_balance_total','!=',0)]</field>
+        <field name="context">{'show_shoukuan': True, 'default_sfk_type': 'yfsqd', 'default_payment_type': 'outbound', 'default_be_renling': True, 'default_advance_ok': True, 'default_partner_type': 'supplier',}</field>
+        <field name="search_view_id" ref="view_account_payment_search_new"/>
+          <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_yfsqd_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_yfsqd_form')})]"/>
+    </record>
+    <menuitem id="menu_yfsqd_balance"  sequence="0" name="未完成认领" parent="menu_yfsqd_new" action="action_yfsqd_balance"/>
 
-
+<record model="ir.actions.act_window" id="action_yfsqd_no_balance">
+        <field name="name">已完成认领</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.payment</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('sfk_type','=','yfsqd'),('state','in',['reconciled','posted']),('advance_balance_total','=',0)]</field>
+        <field name="context">{'show_shoukuan': True, 'default_sfk_type': 'yfsqd', 'default_payment_type': 'outbound', 'default_be_renling': True, 'default_advance_ok': True, 'default_partner_type': 'supplier',}</field>
+        <field name="search_view_id" ref="view_account_payment_search_new"/>
+          <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_yfsqd_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_yfsqd_form')})]"/>
+    </record>
+    <menuitem id="menu_yfsqd_no_balance"  sequence="0" name="已完成认领" parent="menu_yfsqd_new" action="action_yfsqd_no_balance"/>
 </odoo>

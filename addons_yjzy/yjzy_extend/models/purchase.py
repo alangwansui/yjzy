@@ -425,7 +425,7 @@ class purchase_order_line(models.Model):
     max_qty2 = fields.Float(u'大包数参考')
     max_qty_ng = fields.Boolean(u'非整包')
 
-    need_print = fields.Boolean('是否打印', defualt=True)
+    need_print = fields.Boolean('是否打印', default=True)
 
     def update_back_tax(self):
         self.ensure_one()

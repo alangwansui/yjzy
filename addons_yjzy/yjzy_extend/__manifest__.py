@@ -132,6 +132,7 @@
         'views2/nbzz.xml',
         'views2/jiehui.xml',
 
+
         'views2/expense.xml',
         'views2/expense_sheet.xml',
         'views/back_tax_declaration.xml',

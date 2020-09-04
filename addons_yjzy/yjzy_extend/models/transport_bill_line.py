@@ -143,7 +143,7 @@ class transport_bill_line(models.Model):
     is_gold_sample = fields.Boolean('是否有金样', related='product_id.is_gold_sample', readonly=False)
 #----
 
-    need_print = fields.Boolean('是否打印', defualt=True)
+    need_print = fields.Boolean('是否打印', default=True)
     #是否金样  akiny
 
     #单个费用 akiny

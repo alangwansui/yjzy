@@ -3,6 +3,41 @@
     <data>
 
         <menuitem id="menu_skf_root" name="收付款"/>
+        <menuitem id="menu_new_account_root" name="新财务" sequence="99"/>
+        <menuitem id="menu_new_account_dashboard" name="仪表板" parent="menu_new_account_root" sequence="5" action="account.open_account_journal_dashboard_kanban"/>
+        <record id="view_account_payment_search_new" model="ir.ui.view">
+            <field name="name">account.payment.search</field>
+            <field name="model">account.payment</field>
+            <field name="arch" type="xml">
+                <search string="Payments">
+                    <field name="name" filter_domain="['|','|', '|', ('name','ilike',self),('journal_id','ilike',self), ('communication','ilike',self),('amount','ilike',self)]" string="Description"/>
+                    <separator/>
+                    <field name="partner_id" />
+                    <field name="journal_id" />
+                    <field name="company_id" groups="base.group_multi_company" />
+                    <filter string="Payable" domain="[('payment_type','=','outbound')]"/>
+                    <filter string="Receivable" domain="[('payment_type','=','inbound')]"/>
+                    <filter string="Transfers" domain="[('payment_type','=','transfer')]"/>
+                    <separator/>
+                    <filter string="Draft" domain="[('state','=','draft')]" name='state_draft'/>
+                    <filter string="Posted" domain="[('state','=','posted')]" name='state_posted'/>
+                    <filter string="Sent" domain="[('state','=','sent')]" name='state_sent'/>
+                    <filter string="Reconciled" domain="[('state','=','reconciled')]"/>
+                    <separator/>
+                    <filter string="Partner" domain="[]" context="{'group_by': 'partner_id'}"/>
+                    <filter string="Journal" domain="[]" context="{'group_by': 'journal_id'}"/>
+                    <filter string="Payment Method" domain="[]" context="{'group_by': 'payment_method_id'}"/>
+                    <filter string="State" domain="[]" context="{'group_by': 'state'}"/>
+                    <filter string="Currency" domain="[]" context="{'group_by': 'currency_id'}" groups="base.group_multi_currency"/>
+                    <filter string="Company" domain="[]" context="{'group_by': 'company_id'}" groups="base.group_multi_company"/>
+                    <separator/>
+                    <group expand="1" string="Group By">
+                        <filter string="状态分组" name="group_by_state" domain="[]" context="{'group_by':'state'}"/>
+                        <filter string="状态1分组" name="group_by_state_1" domain="[]" context="{'group_by':'state_1'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
 
     </data>
 </odoo>

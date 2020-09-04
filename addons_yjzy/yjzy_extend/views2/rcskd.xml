@@ -25,6 +25,7 @@
                     <filter string="State" domain="[]" context="{'group_by': 'state'}"/>
                     <filter string="Currency" domain="[]" context="{'group_by': 'currency_id'}" groups="base.group_multi_currency"/>
                     <filter string="Company" domain="[]" context="{'group_by': 'company_id'}" groups="base.group_multi_company"/>
+
                 </search>
             </field>
         </record>
@@ -44,7 +45,8 @@
                 <field name="company_id"/>
                 <field name="payment_comments"/>
                 <field name="fault_comments"/>
-                <field name="state" invisible=""/>
+                <field name="state_1" groups="base.group_system"/>
+                <field name="state" groups="base.group_system"/>
                 <field name="currency_id" attrs="{}" invisible="1" required="1"/>
             </tree>
         </field>
@@ -121,41 +123,42 @@
         <field name="model">account.payment</field>
         <field name="arch" type="xml">
             <form string="日常收款单">
-                <header>
+                <header groups="base.group_system">
                     <button name="compute_balance" class="oe_highlight"  string="计算余额" type="object" groups="base.group_system"/>
                     <button name="post" class="oe_highlight" states="draft" string="Confirm" type="object" groups="base.group_system"/>
                     <button name="cancel" attrs="{'invisible': [('state', 'in', ['draft','cancelled'])]}" string="Cancel" type="object" groups="base.group_system"/>
                     <button name="action_draft" class="oe_highlight" states="cancelled" string="Set To Draft" type="object" groups="base.group_system"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,posted,reconciled,cancelled"/>
-                    <field name="is_editable"  widget="boolean_toggle" groups="sales_team.group_manager"/>
+
                 </header>
                 <sheet>
-                    <div class="oe_button_box" name="button_box" groups="base.group_system">
-                        <button class="oe_stat_button" name="open_yushourenling"  type="object" icon="fa-pencil-square-o" string="预收认领单">
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" name="open_ysrl"  type="object" icon="fa-pencil-square-o" string="预收认领">
                             <field name="count_ysrld" widget="statinfo" nolabel="1"/>
                         </button>
-                        <button class="oe_stat_button" name="open_yingfuhexiao" type="object" icon="fa-pencil-square-o" string="应收核销单">
+                        <button class="oe_stat_button" name="open_yshx" type="object" icon="fa-pencil-square-o" string="应收认领">
                             <field name="count_yshx" widget="statinfo" nolabel="1" />
                         </button>
                         <!--button class="oe_stat_button" name="open_putongfukuanrenling" type="object" icon="fa-pencil-square-o" string="普通付款认领单">
                             <field name="count_ptskrl" widget="statinfo" nolabel="1" />
                         </button-->
-                        <button class="oe_stat_button" name="open_fybg"  type="object" icon="fa-pencil-square-o" string="费用报告">
+                        <button class="oe_stat_button" name="open_fybg"  type="object" icon="fa-pencil-square-o" string="其他收入">
                             <field name="count_fybg" widget="statinfo" nolabel="1"/>
                         </button>
                         <button class="oe_stat_button" name="button_journal_entries"
                                 string="Journal Items" type="object"
-                                groups="account.group_account_user"
+                                groups="base.group_system"
                                 attrs="{'invisible':[('move_line_ids','=',[])]}" icon="fa-bars"/>
                         <field name="move_line_ids" invisible="1"/>
                         <button class="oe_stat_button" name="button_invoices"
-                                string="Invoices" type="object"
+                                string="Invoices" type="object" groups="base.group_system"
                                 attrs="{'invisible':[('has_invoices','=',False)]}" icon="fa-bars"/>
                         <button class="oe_stat_button" name="open_payment_matching_screen"
-                                string="Payment Matching" type="object"
+                                string="Payment Matching" type="object" groups="base.group_system"
                                 attrs="{'invisible':[('move_reconciled','=',True)]}" icon="fa-university"/>
                         <field name="has_invoices" invisible="1"/>
                         <field name="move_reconciled" invisible="1"/>
+                        <field name="is_editable"  widget="boolean_toggle" groups="sales_team.group_manager"/>
                     </div>
                     <field name="id" invisible="1"/>
                     <div class="oe_title">
@@ -165,36 +168,26 @@
                     </div>
                     <group>
                         <group>
-                            <field name="sfk_type" invisible="1"/>
-                            <field name="gongsi_id" invisible="1"/>
-                            <field name="payment_type" widget="radio" attrs="{'readonly': [('state', '!=', 'draft')]}" invisible="1"/>
-                            <field name="partner_type" widget="selection" invisible="1"
-                                   attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))], 'invisible': [('payment_type', 'not in', ('inbound', 'outbound'))], 'readonly': [('state', '!=', 'draft')]}"/>
-                            <field name="partner_id" options="{'no_create':True}" domain="['|',('is_company','=',True),('name','=','未定义')]"
-                                   attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))], 'invisible': 1, 'readonly': [('state', '!=', 'draft')]}"
-                                   context="{'default_is_company': True, 'default_supplier': payment_type == 'outbound', 'default_customer': payment_type == 'inbound'}"/> <!--['|',('payment_type', 'not in', ('inbound', 'outbound')),('sfk_type','in',['rcskd','rcfkd'])],-->
+
+                             <field name="journal_id" string="收款账户" widget="selection" domain="[('type','in',['bank','cash'])]" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                             <label for="amount"/>
                             <div name="amount_div" class="o_row" string="收款金额">
                                 <field name="amount" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                                 <field name="currency_id" options="{'no_create': True, 'no_open': True}" groups="base.group_multi_currency"
                                        attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                             </div>
-                            <field name="journal_id" string="收款日记账" widget="selection" domain="[('type','in',['bank','cash'])]" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+
                             <field name="destination_journal_id" widget="selection"
                                    attrs="{'required': [('payment_type', '=', 'transfer')], 'invisible': [('payment_type', '!=', 'transfer')], 'readonly': [('state', '!=', 'draft')]}"/>
                             <field name="hide_payment_method" invisible="1"/>
                             <field name="payment_method_id" string=" " widget="radio"
                                    attrs="{'invisible': [('hide_payment_method', '=', True)], 'readonly': [('state', '!=', 'draft')]}"/>
                             <field name="payment_method_code" invisible="1"/>
-                             <field name="payment_comments"/>
+                             <field name="payment_comments" string="收款备注"/>
                         </group>
                         <group>
-                            <field name="be_renling" invisible="1"/>
-                            <field name="advance_ok" label="是否预收" string="是预收" invisible="1"/>
-                            <field name="advance_account_id" label="预收科目" string="预收科目" invisible="1" options="{'no_create':True}"/>
                             <field name="balance"/>
-
-                            <field name="payment_date" string="预收日期" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="payment_date" string="收款日期" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                             <field name="company_id"/>
                             <field name="fault_comments"/>
                         </group>
@@ -223,9 +216,22 @@
                                     <field name="negative_total_amount" string="明细金额"/>
                                 </tree>
                             </field>
-
                         </page>
-                        <page string="余额相关分录" groups="base.group_system">
+                        <page string="管理页" groups="base.group_system">
+                            <group>
+                                <field name="sfk_type"/>
+                                <field name="gongsi_id"/>
+                                <field name="payment_type" widget="radio" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="partner_type" widget="selection"
+                                   attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))], 'invisible': [('payment_type', 'not in', ('inbound', 'outbound'))], 'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="partner_id" options="{'no_create':True}" domain="['|',('is_company','=',True),('name','=','未定义')]"
+                                   attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))], 'readonly': [('state', '!=', 'draft')]}"
+                                   context="{'default_is_company': True, 'default_supplier': payment_type == 'outbound', 'default_customer': payment_type == 'inbound'}"/> <!--['|',('payment_type', 'not in', ('inbound', 'outbound')),('sfk_type','in',['rcskd','rcfkd'])],-->
+                            <field name="be_renling" />
+                                <field name="advance_ok" label="是否预收" string="是预收"/>
+                            <field name="advance_account_id" label="预收科目" string="预收科目" options="{'no_create':True}"/>
+
+                            </group>
                             <field name="aml_ids"/>
                         </page>
                     </notebook>
@@ -282,7 +288,69 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_new_account_rcskd_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcskd_form')})]"/>
     </record>
-    <menuitem id="mennu_new_action_rcskd" parent="menu_account_new_root" name="收款单" sequence="99"
+    <menuitem id="mennu_new_action_rcskd" parent="menu_rcskd_new" name="收款单:统计" sequence="90"
               action="action_new_action_rcskd"/>
+
+
+    <menuitem id="menu_rcskd_new"  sequence="10" name="日常收款单" parent="yjzy_extend.menu_new_account_root"/>
+<record model="ir.actions.act_window" id="action_rcskd_create_new">
+        <field name="name">创建日常收款单</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.payment</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="domain">[('sfk_type','=','rcskd'),('state','not in',['reconciled','posted'])]</field>
+        <field name="search_view_id" ref="view_account_payment_search_new"/>
+        <field name="context">{'search_default_group_by_state':1,'show_shoukuan': True, 'default_sfk_type': 'rcskd', 'default_payment_type': 'inbound', 'default_be_renling': False, 'default_advance_ok': True, 'default_partner_type': 'customer',}</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcskd_form')})]"/>
+    </record>
+<menuitem id="menu_rcskd_create_new"  sequence="99" name="创建日常收款单" parent="yjzy_extend.menu_rcskd_new" action="action_rcskd_create_new"/>
+    <record model="ir.actions.act_window" id="action_rcskd_undone_new">
+        <field name="name">未生效</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.payment</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form,kanban</field>
+        <field name="domain">[('sfk_type','=','rcskd'),('state','not in',['reconciled','posted'])]</field>
+           <field name="search_view_id" ref="view_account_payment_search_new"/>
+        <field name="context">{'search_default_group_by_state':1,'show_shoukuan': True, 'default_sfk_type': 'rcskd', 'default_payment_type': 'inbound', 'default_be_renling': False, 'default_advance_ok': True, 'default_partner_type': 'customer',}</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_rcskd_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcskd_form')})]"/>
+    </record>
+<menuitem id="menu_rcskd_undone_new"  sequence="20" name="未生效" parent="yjzy_extend.menu_rcskd_new" action="action_rcskd_undone_new"/>
+    <record model="ir.actions.act_window" id="action_rcskd_balance_new">
+        <field name="name">未认领完成</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.payment</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form,kanban</field>
+        <field name="domain">[('sfk_type','=','rcskd'),('balance','!=',0)]</field>
+           <field name="search_view_id" ref="view_account_payment_search_new"/>
+        <field name="context">{'show_shoukuan': True, 'default_sfk_type': 'rcskd', 'default_payment_type': 'inbound', 'default_be_renling': False, 'default_advance_ok': True, 'default_partner_type': 'customer',}</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_rcskd_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcskd_form')})]"/>
+    </record>
+     <menuitem id="menu_rcskd_balance_new"  sequence="30" name="未认领完成" parent="yjzy_extend.menu_rcskd_new" action="action_rcskd_balance_new"/>
+    <record model="ir.actions.act_window" id="action_rcskd_no_balance_new">
+        <field name="name">已认领完成</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.payment</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form,kanban</field>
+        <field name="domain">[('sfk_type','=','rcskd'),('balance','=',0),('state','in',['reconciled','posted'])]]</field>
+        <field name="search_view_id" ref="view_account_payment_search_new"/>
+        <field name="context">{'show_shoukuan': True, 'default_sfk_type': 'rcskd', 'default_payment_type': 'inbound', 'default_be_renling': False, 'default_advance_ok': True, 'default_partner_type': 'customer',}</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_rcskd_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcskd_form')})]"/>
+    </record>
+
+  <menuitem id="menu_rcskd_no_balance_new"  sequence="40" name="已认领完成" parent="yjzy_extend.menu_rcskd_new" action="action_rcskd_no_balance_new"/>
+
+
 
 </odoo>

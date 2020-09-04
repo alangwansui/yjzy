@@ -122,18 +122,16 @@ class account_payment(models.Model):
     def default_get(self, fields):
         ctx = self.env.context
         res = super(account_payment, self).default_get(fields)
-
-
         print('==========dg======', ctx)
+        if ctx.get('default_sfk_type') == 'jiehui':
+            res.update({
+                'partner_id': self.env['res.partner'].search([('name','=','未定义')], limit=1).id
+            })
+        if ctx.get('default_sfk_type') == 'rcskd':
+            res.update({
+                'partner_id': self.env['res.partner'].search([('name','=','未定义')], limit=1).id
+            })
 
-        if ctx.get('default_sfk_type','') == 'jiehui':
-            res.update({
-                'partner_id': self.env['res.partner'].search([('name','=','未定义')], limit=1).id
-            })
-        if ctx.get('default_sfk_type','') == 'rcskd':
-            res.update({
-                'partner_id': self.env['res.partner'].search([('name','=','未定义')], limit=1).id
-            })
 
         if ctx.get('active_model', '') == 'account.invoice':
             invoice = self.env['account.invoice'].browse(ctx.get('active_id'))
@@ -181,7 +179,7 @@ class account_payment(models.Model):
         res = []
         for one in self:
             if ctx.get('default_sfk_type', '') == 'ysrld':
-                name = '%s:%s' % (one.journal_id.name, one.blance)
+                name = '%s:%s' % (one.journal_id.name, one.balance)
             elif ctx.get('bank_amount'):
                 name = '%s[%s]' % (one.journal_id.name, str(one.balance))
             elif ctx.get('advance_bank_amount'):
@@ -191,6 +189,17 @@ class account_payment(models.Model):
             one.display_name = name
 
 
+
+    #903
+    account_reconcile_order_line_id = fields.Many2one('account.reconcile.order.line',u'应收付认领明细')
+    account_reconcile_order_id = fields.Many2one('account.reconcile.order',u'应收付认领单')
+    state_1 = fields.Selection([('10_draft',u'草稿'),
+                                ('20_submit',u'待出纳确认'),
+                                ('30_manager_approve',u'总经理审批完成'),
+                                ('40_posted',u'完成'),
+                                ('50_done',u'认领完成'),
+                                ('80_refused',u'已拒绝'),
+                                ('90_cancel',u'已取消')],u'审批状态',track_visibility='onchange',default='10_draft')
 
     #819增加汇率字段
     current_date_rate = fields.Float(u'当日汇率')
@@ -256,7 +265,8 @@ class account_payment(models.Model):
     ysrld_ids = fields.One2many('account.payment', 'yjzy_payment_id', u'预收认领单', domain=[('sfk_type','=','ysrld')])
     yfsqd_ids = fields.One2many('account.payment', 'yjzy_payment_id', u'预付申请单', domain=[('sfk_type','=','yfsqd')])
 
-    yshx_ids = fields.One2many('account.reconcile.order', 'yjzy_payment_id', u'应收核销单')
+    yshx_ids = fields.One2many('account.reconcile.order', 'yjzy_payment_id', u'收款-应收认领单')
+
     #ptskrl_ids = fields.One2many('yjzy.account.payment', 'yjzy_payment_id', u'普通收款认领单')
     fybg_ids = fields.One2many('hr.expense.sheet', 'payment_id', u'费用报告')
     expense_ids = fields.One2many('hr.expense', 'yjzy_payment_id',  u'费用明细')
@@ -278,6 +288,41 @@ class account_payment(models.Model):
     jiehui_in_amount = fields.Float('结汇转入余额')
 
     payment_date_confirm = fields.Datetime('付款确认时间') ##akiny 付款确认时间
+
+
+    @api.onchange('amount')
+    def onchange_amount(self):
+        if self.yjzy_payment_id:
+            self.currency_id = self.yjzy_payment_id.currency_id
+
+    #913审批流程
+    def action_submit(self):
+        ctx = self.env.context
+        if self.amount <= 0:
+            raise Warning('金额不为0!')
+        else:
+            if ctx.get('default_sfk_type','') == 'rcskd' :
+                if self.payment_comments == '':
+                    raise Warning('请填写收款备注信息！')
+            elif ctx.get('default_sfk_type', '') == 'rcfkd':
+                if not self.bank_id:
+                    raise Warning('请选择付款对象的银行账号!')
+            elif ctx.get('default_sfk_type', '') == 'ysrld':
+                if not self.yjzy_payment_id:
+                    raise Warning('请选择认领的收款单!')
+            elif ctx.get('default_sfk_type', '') == 'yfsqd':
+                if not self.bank_id:
+                    raise Warning('请选择付款对象的银行账号!')
+            elif ctx.get('default_sfk_type', '') == 'jiehui':
+                if not self.journal_id or not self.advance_account_id:
+                    raise Warning('收款或者付款银行没有填写!')
+            elif ctx.get('default_sfk_type', '') == 'nbzz':
+                if not self.journal_id or not self.destination_journal_id:
+                    raise Warning('收款或者付款银行没有填写!')
+        self.state_1 = '20_submit'
+
+
+
 
     def judge_partner(self):
         if self.partner_id.name == '未定义' and self.sfk_type not in ['rcskd','nbzz','jiehui']:
@@ -335,7 +380,7 @@ class account_payment(models.Model):
         res = []
         for one in self:
             if ctx.get('default_sfk_type', '') == 'ysrld':
-                name = '%s:%s' % (one.journal_id.name, one.blance)
+                name = '%s:%s' % (one.journal_id.name, one.balance)
             elif ctx.get('bank_amount'):
                 name = '%s[%s]' % (one.journal_id.name, str(one.balance))
             elif ctx.get('advance_bank_amount'):
@@ -497,25 +542,45 @@ class account_payment(models.Model):
 
 
     def open_ysrl(self):
+        form_view = self.env.ref('yjzy_extend.view_ysrld_form')
+        tree_view = self.env.ref('yjzy_extend.view_ysrld_tree')
+        print('currency_id',self.currency_id)
         return {
             'name': u'预收认领单',
             'type': 'ir.actions.act_window',
             'view_type': 'form',
             'view_mode': 'tree,form',
             'res_model': 'account.payment',
+            'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
             'domain': [('yjzy_payment_id', '=', self.id)],
-            'context': {'default_payment_type': 'inbound', 'default_partner_type': 'customer', 'default_yjzy_payment_id': self.id},
+            'context': {'default_sfk_type': 'ysrld',
+                        'default_payment_type': 'inbound',
+                        'default_be_renling': True,
+                        'default_advance_ok': True,
+                        'default_partner_type': 'customer',
+                        'default_currency_id':self.currency_id.id,
+                        'default_yjzy_payment_id': self.id}
         }
 
     def open_yshx(self):
+        form_view = self.env.ref('yjzy_extend.account_yshxd_form_view_new')
+        tree_view = self.env.ref('yjzy_extend.account_yshxd_tree_view_new')
         return {
-            'name': u'应收核销单',
+            'name': u'应收认领单',
             'type': 'ir.actions.act_window',
             'view_type': 'form',
             'view_mode': 'tree,form',
             'res_model': 'account.reconcile.order',
+            'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
             'domain': [('yjzy_payment_id', '=', self.id)],
-            'context': {'default_payment_type': 'inbound', 'default_partner_type': 'customer', 'default_yjzy_payment_id': self.id},
+            'context': {'default_sfk_type':'yshxd',
+                        'bank_amount':1,
+                        'default_operation_wizard':'10',
+                        'default_payment_type':'inbound',
+                        'default_be_renling':1,
+                        'default_partner_type': 'customer',
+                        'show_so': 1,
+                        'default_yjzy_payment_id':self.id},
         }
 
     def open_ptskrl(self):
@@ -530,12 +595,15 @@ class account_payment(models.Model):
         }
 
     def open_fybg(self):
+        form_view = self.env.ref('yjzy_extend.other_income_sheet_view_form')
+        tree_view = self.env.ref('yjzy_extend.other_income_sheet_view_tree')
         return {
-            'name': u'费用报告',
+            'name': u'其他收入',
             'type': 'ir.actions.act_window',
             'view_type': 'form',
             'view_mode': 'tree,form',
             'res_model': 'hr.expense.sheet',
+            'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
             'domain': [('payment_id', '=', self.id)],
             'context': {'default_payment_id': self.id},
         }
