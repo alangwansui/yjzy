@@ -557,10 +557,10 @@ class account_reconcile_order(models.Model):
                 #         raise Warning('明细行认领金额大于账单明细可认领金额!')
                 #     if x.amount_advance_org > x.advance_residual:
                 #         raise Warning('明细行预收认领金额大于账单明细可认领预收金额!')
-                self.state = 'approved'
+                # self.state = 'approved'
                 self.action_approve_new()
             elif self.sfk_type == 'yfhxd':
-                if self.operation_wizard == '25':
+                if self.operation_wizard in ['20','25']:
                     self.action_approve_new()
                 else:
                     self.state = 'posted'
@@ -589,7 +589,8 @@ class account_reconcile_order(models.Model):
     def action_done_new(self):
         self.ensure_one()
         if self.sfk_type == 'yfhxd':
-            self.create_yjzy_payment_yfrl()
+            if self.reconcile_payment_ids:
+                self.reconcile_payment_ids.post()
 
 
     def action_draft_new(self):
