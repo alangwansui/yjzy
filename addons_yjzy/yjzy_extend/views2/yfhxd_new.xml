@@ -1,7 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-
+<record id="view_reconcile_search_new" model="ir.ui.view">
+            <field name="name">account.reconcile.order.search</field>
+            <field name="model">account.reconcile.order</field>
+            <field name="arch" type="xml">
+                <search string="Payments">
+                    <field name="name" filter_domain="['|', ('name','ilike',self),('partner_id','child_of',self)]" string="Description"/>
+                    <separator/>
+                    <field name="partner_id" />
+                    <group expand="1" string="Group By">
+                        <filter string="状态分组" name="group_by_state" domain="[]" context="{'group_by':'state'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
 
         <!--应付核销明细-->
     <record model="ir.ui.view" id="account_yfhxd_line_tree_view_new">
@@ -78,9 +91,8 @@
                     <button name="compute_invoice_ids" type="object" string="计算发票" groups="base.group_system"/>
                       <button name="create_yjzy_payment_yfrl" type="object" string="创建认领单" groups="base.group_system"/>
                     <field name="state" widget="statusbar"/>
-
                 </header>
-                <header>
+                <header groups="base.group_system">
                     <button name="create_rcfkd" string="生成日常付款单" type='object' icon="" groups="account.group_account_manager"/>
                     <button name="create_fygb" string="生成费用报告" type='object' icon="" attrs="{'invisible': [('state','in', ['posted'])]}"
                             groups="base.group_system"/>
@@ -96,10 +108,8 @@
                     <button name="make_account_move" class="oe_highlight" string="生成分录" type="object" groups="base.group_system"/>
                     <button name="invoice_assign_outstanding_credit" class="oe_highlight" string="核销发票" type="object"
                             groups="base.group_system"/>
-
                     <button name="make_done" class="oe_highlight" string="确认核销" type="object"
                             attrs="{'invisible': [('state','in', ['done'])]}" />
-
                     <button name="open_reconcile_account_move_line" class="oe_highlight" string="打开核销分录" type="object" groups="base.group_system"/>
 
                     <field name="state" widget="statusbar"/>
@@ -252,6 +262,7 @@
                                  <field name="approve_date"/>
                                  <field name="operation_wizard"/>
                         </group>
+                            <field name="reconcile_payment_ids"/>
                         </page>
                     </notebook>
                 </sheet>
@@ -264,7 +275,7 @@
         </field>
     </record>
 
-    <menuitem id="menu_yfhxd_new"  sequence="50" name="应付认领单" parent="menu_new_account_root" />
+    <menuitem id="menu_yfhxd_new"  sequence="50" name="应付申请单" parent="menu_new_account_root"/>
     <record model="ir.actions.act_window" id="action_yfhxd_all_new">
         <field name="name">应付核销单:新</field>
         <field name="type">ir.actions.act_window</field>
@@ -297,7 +308,7 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('account_yfhxd_form_view_new')})]"/>
             </record>
     <menuitem id="menu_yfhxd_new_payment_form" name="创建应付申请"
-              parent="menu_yfhxd_new"
+              parent="menu_yfhxd_new" sequence="98"
               action="action_yfhxd_new_payment_form"/>
 
     <record model="ir.actions.act_window" id="action_yfhxd_new_advance_form">
@@ -315,11 +326,11 @@
             </record>
 
 <menuitem id="menu_yfhxd_new_advance_form" name="创建预-应付认领"
-              parent="menu_yfhxd_new"
+              parent="menu_yfhxd_new" sequence="99"
               action="action_yfhxd_new_advance_form"/>
 
  <record model="ir.actions.act_window" id="action_yfhxd_new_payment_no_submit">
-        <field name="name">未提交应付申请</field>
+        <field name="name">未提交</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">account.reconcile.order</field>
         <field name="view_type">form</field>
@@ -332,8 +343,8 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('account_yfhxd_tree_view_approve_new')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('account_yfhxd_form_view_new')})]"/>
         </record>
-    <menuitem id="menu_yfhxd_new_payment_no_submit" name="未提交应付申请"
-              parent="menu_yfhxd_new"
+    <menuitem id="menu_yfhxd_new_payment_no_submit" name="未提交"
+              parent="menu_yfhxd_new" sequence="10"
               action="action_yfhxd_new_payment_no_submit"/>
     <record model="ir.actions.act_window" id="action_yfhxd_new_payment_submit">
         <field name="name">审批中</field>
@@ -350,7 +361,7 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('account_yfhxd_form_view_new')})]"/>
         </record>
     <menuitem id="menu_yfhxd_new_payment_submit" name="审批中"
-              parent="menu_yfhxd_new"
+              parent="menu_yfhxd_new" sequence="20"
               action="action_yfhxd_new_payment_submit"/>
     <record model="ir.actions.act_window" id="action_yfhxd_new_payment_approve">
         <field name="name">等待付款</field>
@@ -366,8 +377,8 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('account_yfhxd_tree_view_approve_new')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('account_yfhxd_form_view_new')})]"/>
             </record>
-    <menuitem id="menu_yfhxd_new_payment_approve" name="审批完成的应付申请"
-              parent="menu_yfhxd_new"
+    <menuitem id="menu_yfhxd_new_payment_approve" name="等待付款"
+              parent="menu_yfhxd_new" sequence="30"
               action="action_yfhxd_new_payment_approve"/>
     <record model="ir.actions.act_window" id="action_yfhxd_new_payment_done">
         <field name="name">已完成</field>
@@ -383,7 +394,7 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('account_yfhxd_tree_view_approve_new')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('account_yfhxd_form_view_new')})]"/>
             </record>
-    <menuitem id="menu_yfhxd_new_payment_done" name="审批完成的应付申请"
+    <menuitem id="menu_yfhxd_new_payment_done" name="已完成" sequence="40"
               parent="menu_yfhxd_new"
               action="action_yfhxd_new_payment_done"/>
 
