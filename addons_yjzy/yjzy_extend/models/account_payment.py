@@ -198,6 +198,7 @@ class account_payment(models.Model):
                     else:
                         name= '%s[%s]' % ('无销售合同', str(one.advance_balance_total))
             elif ctx.get('advance_po_amount'):
+                name = '%s[%s]' % (one.name, str(one.balance))
                 if one.sfk_type == 'rcskd':
                     name = '%s[%s]' % (one.journal_id.name, str(one.balance))
                 elif one.sfk_type == 'ysrld':
