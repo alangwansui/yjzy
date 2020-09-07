@@ -277,7 +277,11 @@ class account_reconcile_order(models.Model):
     is_editable = fields.Boolean(u'可编辑')
     gongsi_id = fields.Many2one('gongsi', '内部公司')
 
-
+    @api.onchange('yjzy_advance_payment_id')
+    def onchange_yjzy_advance_payment_id(self):
+        for one in self.line_no_ids:
+            one.line_no_ids.yjzy_payment_id = self.yjzy_advance_payment_id
+            one.line_ids.yjzy_payment_id = self.yjzy_advance_payment_id
     #分别创建需要的付款单（原生）
     def create_yjzy_payment_ysrl(self):
         self.ensure_one()
