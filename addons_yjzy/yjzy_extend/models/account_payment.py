@@ -415,6 +415,7 @@ class account_payment(models.Model):
                     'post_date': today,
                     'state_1': '40_approve'
                     })
+        self.create_rcfkd()
 
     def action_account_refuse(self,reason):
         self.write({'state_1': '80_refused',
@@ -611,6 +612,7 @@ class account_payment(models.Model):
             'journal_id': self.fk_journal_id.id,
             'currency_id': self.fk_journal_id.currency_id.id,
             'amount': amount,
+            'company_id':self.company_id.id,
             'payment_method_id': 2,
             'advance_ok': True,
             'advance_account_id': advance_account.id,
