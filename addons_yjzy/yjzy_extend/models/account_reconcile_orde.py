@@ -579,7 +579,7 @@ class account_reconcile_order(models.Model):
     def action_approve_new(self):
         self.ensure_one()
         if self.sfk_type == 'yfhxd':
-            if self.operation_wizard in ['10','40']:
+            if self.operation_wizard in ['10','30']:
                 self.create_rcfkd()
             self.create_yjzy_payment_yfrl()
         self.write({'state': 'approved',

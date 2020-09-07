@@ -130,7 +130,7 @@
                             <field name="partner_id" required="1"  attrs="{'invisible':[('operation_wizard','=',False)]}"
                                    domain="[('is_company','=',True),('parent_id', '=', False),('supplier','=',1)]"
                                    context="{'default_is_company': True, 'default_supplier': payment_type == 'outbound', 'default_customer': payment_type == 'inbound'}"/>
-                            <field name="yjzy_advance_payment_id" string="预付单" attrs="{'invisible':[('operation_wizard','not in',['25'])]}" context="{'form_view_ref': 'yjzy_extend.view_yfsqd_form','advance_po_amount':1}"/>
+                            <field name="yjzy_advance_payment_id" string="预付单" attrs="{'invisible':[('operation_wizard','not in',['25'])]}" context="{'form_view_ref': 'yjzy_extend.view_yfsqd_form','advance_bank_amount':1}"/>
                             <field name="bank_id" string="收款方账号" domain="[('partner_id','=',partner_id)]"  attrs="{'invisible':[('operation_wizard','not in',['10','30'])]}" options="{'no_create_edit': True}"/>
                             <field name="journal_id" domain="[('type','=','renling')]" invisible="1"/>
                             <field name="payment_account_id" string="认领科目" invisible="1"/>
@@ -217,7 +217,7 @@
                                     <field name="payment_currency_id" invisible="1"/>
                                     <field name="currency_id" invisible="1"/>
                                     <field name="amount_invoice_so" readonly="1" invisible=""/>
-                                    <field name="yjzy_payment_id" string="预付申请单" context="{'form_view_ref': 'yjzy_extend.view_yfsqd_form','advance_po_amount':1}" domain="[('sfk_type','=','yfsqd'),('advance_balance_total','!=',0)]"/>
+                                    <field name="yjzy_payment_id" string="预付申请单" context="{'form_view_ref': 'yjzy_extend.view_rcfkd_form','advance_bank_amount':1}" domain="[('sfk_type','=','yfsqd'),('advance_balance_total','!=',0)]"/>
                                     <field name="amount_advance_org" string="预付认领金额" attrs="{'column_invisible':[('parent.operation_wizard','not in',['20','30','40'])]}"/>
                                     <field name="amount_payment_org" string="申请付款金额" attrs="{'column_invisible':[('parent.operation_wizard','not in',['10','30','40'])]}"/>
                                     <!--field name="amount_bank_org"/-->
@@ -233,7 +233,7 @@
                                 <field name="id" invisible="1"/>
                                 <field name="invoice_id" string="应付账单"/>
                                 <field name="payment_currency_id" invisible="1"/>
-                                <field name="yjzy_payment_id" string="预付单" domain="[('sfk_type','=','yfsqd'),('partner_id','=',parent.partner_id)]" attrs="{'column_invisible':[('parent.operation_wizard','not in',['25'])]}" context="{'form_view_ref': 'yjzy_extend.view_yfsqd_form','advance_po_amount':1}"/>
+                                <field name="yjzy_payment_id" string="预付单" domain="[('sfk_type','=','yfsqd'),('partner_id','=',parent.partner_id)]" attrs="{'column_invisible':[('parent.operation_wizard','not in',['25'])]}" context="{'form_view_ref': 'yjzy_extend.view_rcfkd_form','advance_bank_amount':1}"/>
                                 <field name="amount_advance_org" string="认领金额" attrs="{'column_invisible':[('parent.operation_wizard','not in',['25'])]}"/>
 
                                 <field name="amount_payment_org" attrs="{'column_invisible':[('parent.operation_wizard','not in',['10'])]}"/>
@@ -319,7 +319,7 @@
         <field name="view_mode">form</field>
         <field name="domain">[('sfk_type','=','yfhxd')]</field>
         <field name="context">{'default_sfk_type': 'yfhxd', 'default_operation_wizard':'25','default_payment_type': 'outbound', 'default_be_renling': 1, 'default_partner_type':
-            'supplier', 'show_po': 1,'advance_po_amount':1}
+            'supplier', 'show_po': 1,'advance_bank_amount':1}
         </field>
              <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('account_yfhxd_form_view_new')})]"/>
@@ -336,7 +336,7 @@
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="domain">[('sfk_type','=','yfhxd'),('state','in',['draft','refused','canceled'])]</field>
-        <field name="context">{'advance_po_amount':1,'default_sfk_type': 'yfhxd', 'default_payment_type': 'outbound', 'default_be_renling': 1, 'default_partner_type':
+        <field name="context">{'advance_bank_amount':1,'default_sfk_type': 'yfhxd', 'default_payment_type': 'outbound', 'default_be_renling': 1, 'default_partner_type':
             'supplier', 'show_po': 1,'default_operation_wizard':'30'}
         </field>
               <field name="view_ids" eval="[(5, 0, 0),
@@ -353,7 +353,7 @@
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="domain">[('sfk_type','=','yfhxd'),('state','in',['submit'])]</field>
-        <field name="context">{'advance_po_amount':1,'default_sfk_type': 'yfhxd', 'default_payment_type': 'outbound', 'default_be_renling': 1, 'default_partner_type':
+        <field name="context">{'advance_bank_amount':1,'default_sfk_type': 'yfhxd', 'default_payment_type': 'outbound', 'default_be_renling': 1, 'default_partner_type':
             'supplier', 'show_po': 1,'default_operation_wizard':'30'}
         </field>
               <field name="view_ids" eval="[(5, 0, 0),
@@ -370,7 +370,7 @@
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="domain">[('sfk_type','=','yfhxd'),('state','in',['approved'])]</field>
-        <field name="context">{'advance_po_amount':1,'default_sfk_type': 'yfhxd', 'default_payment_type': 'outbound', 'default_be_renling': 1, 'default_partner_type':
+        <field name="context">{'advance_bank_amount':1,'default_sfk_type': 'yfhxd', 'default_payment_type': 'outbound', 'default_be_renling': 1, 'default_partner_type':
             'supplier', 'show_po': 1,'default_operation_wizard':'30'}
         </field>
               <field name="view_ids" eval="[(5, 0, 0),
@@ -387,7 +387,7 @@
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="domain">[('sfk_type','=','yfhxd'),('state','in',['done']),('approve_uid.name','=','奚海峰')]</field>
-        <field name="context">{'advance_po_amount':1,'default_sfk_type': 'yfhxd', 'default_payment_type': 'outbound', 'default_be_renling': 1, 'default_partner_type':
+        <field name="context">{'advance_bank_amount':1,'default_sfk_type': 'yfhxd', 'default_payment_type': 'outbound', 'default_be_renling': 1, 'default_partner_type':
             'supplier', 'show_po': 1,'default_operation_wizard':'30'}
         </field>
               <field name="view_ids" eval="[(5, 0, 0),
