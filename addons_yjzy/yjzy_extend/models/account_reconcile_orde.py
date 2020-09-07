@@ -279,6 +279,8 @@ class account_reconcile_order(models.Model):
 
     @api.onchange('yjzy_advance_payment_id')
     def onchange_yjzy_advance_payment_id(self):
+        if self.reconcile_payment_ids:
+            raise Warning('已经生成认领单，不可修改预付单')
         for one in self.line_no_ids:
             one.yjzy_payment_id = self.yjzy_advance_payment_id
         # for one in self.line_ids:
@@ -548,33 +550,47 @@ class account_reconcile_order(models.Model):
                     raise Warning(u'收款认领金额大于收款单余额')
                 if amount_advance_residual_org < amount_advance_org:
                     raise Warning(u'预收认领金额大于预收余额')
-                for x in self.line_ids:
-                    if x.amount_advance_org != 0.0 and x.yjzy_payment_id == False:
-                        raise Warning('有预收单没有选择，请检查！')
-                    if x.amount_payment_org > x.amount_invoice_so_residual:
-                        raise Warning('明细行认领金额大于账单明细可认领金额!')
-                    if x.amount_advance_org > x.advance_residual:
-                        raise Warning('明细行预收认领金额大于账单明细可认领预收金额!')
+                # for x in self.line_ids:
+                #     if x.amount_advance_org != 0.0 and x.yjzy_payment_id == False:
+                #         raise Warning('有预收单没有选择，请检查！')
+                #     if x.amount_payment_org > x.amount_invoice_so_residual:
+                #         raise Warning('明细行认领金额大于账单明细可认领金额!')
+                #     if x.amount_advance_org > x.advance_residual:
+                #         raise Warning('明细行预收认领金额大于账单明细可认领预收金额!')
                 self.state = 'approved'
+                self.action_approve_new()
             elif self.sfk_type == 'yfhxd':
-                for x in self.line_ids:
-                    if x.amount_advance_org != 0.0 and x.yjzy_payment_id == False:
-                        raise Warning('有预付单没有选择，请检查！')
-                    if x.amount_payment_org > x.amount_invoice_so_residual:
-                        raise Warning('明细行认领金额大于账单明细可认领金额!')
-                    if x.amount_advance_org > x.advance_residual2:
-                        raise Warning('明细行预付认领金额大于账单明细可认领预付金额!')
-                self.state = 'posted'
+                if self.operation_wizard == '25':
+                    self.action_approve_new()
+                else:
+                    self.state = 'posted'
+
+            #     for x in self.line_ids:
+            #         if x.amount_advance_org != 0.0 and x.yjzy_payment_id == False:
+            #             raise Warning('有预付单没有选择，请检查！')
+            #         if x.amount_payment_org > x.amount_invoice_so_residual:
+            #             raise Warning('明细行认领金额大于账单明细可认领金额!')
+            #         if x.amount_advance_org > x.advance_residual2:
+            #             raise Warning('明细行预付认领金额大于账单明细可认领预付金额!')
+
         # self.date = fields.date.today()
         return True
 
     def action_approve_new(self):
         self.ensure_one()
         if self.sfk_type == 'yfhxd':
-            self.create_rcfkd()
+            if self.operation_wizard in ['10','40']:
+                self.create_rcfkd()
+            self.create_yjzy_payment_yfrl()
         self.write({'state': 'approved',
                     'approve_date': fields.date.today(),
                     'approve_uid':self.env.user.id})
+
+    def action_done_new(self):
+        self.ensure_one()
+        if self.sfk_type == 'yfhxd':
+            self.create_yjzy_payment_yfrl()
+
 
     def action_draft_new(self):
         if self.sfk_type == 'yfhxd':
@@ -583,6 +599,11 @@ class account_reconcile_order(models.Model):
         self.write({'state': 'draft',
                     'approve_date': False,
                     'approve_uid': False})
+
+
+
+
+
 
     def action_refuse_new(self,reason):
         self.write({'state': 'refused',
