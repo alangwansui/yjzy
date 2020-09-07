@@ -159,7 +159,7 @@
 
                             <field name="source_so_id" readonly="1" string="源销售合同" options="{'no_create': True}" context="{'form_view_ref':'yjzy_extend.new_sale_order_form'}"/>
                             <field name="origin" attrs="{'invisible': [('origin','=',False)]}" />
-                            <field name="company_id" groups="base.group_system" options="{'no_create': True}" invisible="1"/>
+
                             <field name="yjzy_currency_id" invisible="1"/>
                             <field name="pre_advance" invisible="1" string="建议预付金额"/>
                             <field name="balance" string="实际预付余额"/>
@@ -333,7 +333,7 @@
                     </page>
                         <page string="管理员信息" groups="base.group_system">
                         <group>
-
+<field name="company_id" groups="base.group_system" options="{'no_create': True}" invisible="0"/>
                         </group>
                     </page>
                     </notebook>

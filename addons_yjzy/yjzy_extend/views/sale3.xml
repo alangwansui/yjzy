@@ -1179,7 +1179,7 @@
                                         <field name="is_abandoned_cart" invisible="1"/>
                                         <field name="cart_recovery_email_sent" invisible="1"/>
                                         <field name="client_order_ref"/>
-                                        <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
+
                                         <field name="analytic_account_id" context="{'default_partner_id':partner_invoice_id, 'default_name':name}"
                                                attrs="{'readonly': ['|',('analytic_account_id','!=',False),('invoice_count','!=',0),('state','=','sale')]}"
                                                groups="analytic.group_analytic_accounting" force_save="1"/>
@@ -1293,6 +1293,9 @@
                                         <field name="delivery_message" force_save="1"/>
                                     </div>
                                 </div>
+                                <group>
+                                     <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
+                                </group>
                             </page>
                         </notebook>
                     </sheet>

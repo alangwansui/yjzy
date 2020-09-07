@@ -654,8 +654,8 @@ class account_payment(models.Model):
 
     @api.onchange('fk_journal_id')
     def onchange_fk_journal_payment(self):
-        if self.env.context.get('default_sfk_type','') == 'yfsqd':
-            self.currency_id = self.fk_journal_id
+        if self.env.context.get('default_sfk_type','') == 'yfsqd' and self.fk_journal_id:
+            self.currency_id = self.fk_journal_id.currency_id
 
     @api.onchange('line_ids', 'line_ids.amount')
     def onchange_lines(self):
