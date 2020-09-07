@@ -281,8 +281,8 @@ class account_reconcile_order(models.Model):
     def onchange_yjzy_advance_payment_id(self):
         for one in self.line_no_ids:
             one.yjzy_payment_id = self.yjzy_advance_payment_id
-        for one in self.line_ids:
-            one.yjzy_payment_id = self.yjzy_advance_payment_id
+        # for one in self.line_ids:
+        #     one.yjzy_payment_id = self.yjzy_advance_payment_id
     #分别创建需要的付款单（原生）
     def create_yjzy_payment_ysrl(self):
         self.ensure_one()
