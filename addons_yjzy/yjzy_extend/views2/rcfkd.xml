@@ -107,7 +107,7 @@
                         <group>
                             <field name="be_renling" invisible="1"/>
                             <field name="advance_ok" label="是否预收" invisible="1"/>
-                            <field name="advance_account_id" label="预收科目" options="{'no_create':True}" invisible="1"/>
+
                             <field name="balance"/>
                             <field name="include_tax" invisible="1"/>
                             <field name="payment_date" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
@@ -135,6 +135,11 @@
                         </page>
                         <page string="余额相关分录" groups="base.group_system">
                             <field name="aml_ids"/>
+                        </page>
+                        <page groups="base.group_system">
+                            <group >
+                                <field name="advance_account_id" label="预收科目" options="{'no_create':True}" invisible="0"/>
+                            </group>
                         </page>
 
                     </notebook>

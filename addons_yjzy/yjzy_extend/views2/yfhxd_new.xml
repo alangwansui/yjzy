@@ -113,7 +113,8 @@
 
                             <field name="payment_type" invisible="1"/>
                             <field name="partner_type" invisible="1"/>
-                            <field name="partner_id" required="1"  attrs="{'invisible':[('operation_wizard','=',False)]}"  domain="[('is_company','=',True),('parent_id', '=', False),('supplier','=',1)]"
+                            <field name="partner_id" required="1"  attrs="{'invisible':[('operation_wizard','=',False)]}"
+                                   domain="[('is_company','=',True),('parent_id', '=', False),('supplier','=',1)]"
                                    context="{'default_is_company': True, 'default_supplier': payment_type == 'outbound', 'default_customer': payment_type == 'inbound'}"/>
                             <field name="bank_id" string="收款方账号" domain="[('partner_id','=',partner_id)]"  attrs="{'invisible':[('operation_wizard','not in',['10','30'])]}" options="{'no_create_edit': True}"/>
                             <field name="journal_id" domain="[('type','=','renling')]" invisible="1"/>
@@ -211,14 +212,15 @@
                                 </tree>
                             </field>
                         </page>
-                         <page string="认领发票" attrs="{'invisible':[('operation_wizard','in',['20','30'])]}">
+                         <page string="认领应付账单" attrs="{'invisible':[('operation_wizard','in',['20','30'])]}">
                             <field name="line_no_ids">
-                                <tree  editable="bottom">
-                                <field name="id"/>
-                                <field name="invoice_id"/>
+                                <tree  editable="bottom" create="false">
+                                <field name="id" invisible="1"/>
+                                <field name="invoice_id" string="应付账单"/>
                                 <field name="payment_currency_id" invisible="1"/>
-                                <field name="amount_advance_org" attrs="{'column_invisible':[('parent.operation_wizard','not in',['25'])]}"/>
-                                <field name="yjzy_payment_id" domain="[('sfk_type','=','yfsqd'),('partner.id','=',parent.partner_id)]" attrs="{'column_invisible':[('parent.operation_wizard','not in',['25'])]}" context="{'form_view_ref': 'yjzy_extend.view_rcfkd_form','advance_bank_amount':1}"/>
+                                <field name="yjzy_payment_id" string="预付单" domain="[('sfk_type','=','yfsqd'),('partner_id','=',parent.partner_id)]" attrs="{'column_invisible':[('parent.operation_wizard','not in',['25'])]}" context="{'form_view_ref': 'yjzy_extend.view_rcfkd_form','advance_bank_amount':1}"/>
+                                <field name="amount_advance_org" string="认领金额" attrs="{'column_invisible':[('parent.operation_wizard','not in',['25'])]}"/>
+
                                 <field name="amount_payment_org" attrs="{'column_invisible':[('parent.operation_wizard','not in',['10'])]}"/>
                                 <field name="amount_diff_org" attrs="{'column_invisible':[('parent.operation_wizard','not in',['40'])]}"/>
                                 <field name="currency_id" invisible="1"/>
@@ -289,7 +291,7 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('account_yfhxd_form_view_new')})]"/>
             </record>
     <menuitem id="menu_yfhxd_new_payment_form" name="创建应付申请"
-              parent="menu_yjzy_advance_root"
+              parent="menu_yfhxd_new"
               action="action_yfhxd_new_payment_form"/>
 
     <record model="ir.actions.act_window" id="action_yfhxd_new_advance_form">
@@ -299,8 +301,8 @@
         <field name="view_type">form</field>
         <field name="view_mode">form</field>
         <field name="domain">[('sfk_type','=','yfhxd')]</field>
-        <field name="context">{'default_sfk_type': 'yfhxd', 'default_payment_type': 'outbound', 'default_be_renling': 1, 'default_partner_type':
-            'supplier', 'show_po': 1,'default_operation_wizard':'20','advance_bank_amount':1}
+        <field name="context">{'default_sfk_type': 'yfhxd', 'default_operation_wizard':'25','default_payment_type': 'outbound', 'default_be_renling': 1, 'default_partner_type':
+            'supplier', 'show_po': 1,'advance_bank_amount':1}
         </field>
              <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('account_yfhxd_form_view_new')})]"/>

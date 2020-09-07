@@ -316,6 +316,7 @@ class account_reconcile_order(models.Model):
                     'so_id':line.so_id.id,
                 })
             if line.amount_advance_org > 0:
+                print('journal_id_yszk',journal_id_yszk)
                 reconcile_payment_id_2 = account_payment_obj.create({
                     'account_reconcile_order_line_id': line.id,
                     'name':name,
@@ -334,7 +335,7 @@ class account_reconcile_order(models.Model):
 
                 })
             if line.amount_bank_org > 0:
-                reconcile_payment_id_2 = account_payment_obj.create({
+                reconcile_payment_id_3 = account_payment_obj.create({
                     'account_reconcile_order_line_id': line.id,
                     'name':name,
                     'partner_id': partner_id.id,
@@ -351,7 +352,7 @@ class account_reconcile_order(models.Model):
                 })
 
             if line.amount_diff_org > 0:
-                reconcile_payment_id_2 = account_payment_obj.create({
+                reconcile_payment_id_4 = account_payment_obj.create({
                     'account_reconcile_order_line_id': line.id,
                     'name':name,
                     'partner_id': partner_id.id,
@@ -741,10 +742,10 @@ class account_reconcile_order(models.Model):
     def onchange_journal(self):
         self.payment_account_id = self.journal_id.default_debit_account_id
 
-    @api.onchange('partner_type')
-    def _onchange_partner_type(self):
-        if self.partner_type:
-            return {'domain': {'partner_id': [(self.partner_type, '=', True)]}}
+    # @api.onchange('partner_type')
+    # def _onchange_partner_type(self):
+    #     if self.partner_type:
+    #         return {'domain': {'partner_id': [(self.partner_type, '=', True)]}}
 
 
 
