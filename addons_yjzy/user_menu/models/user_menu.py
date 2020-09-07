@@ -55,6 +55,7 @@ class user_menu(models.Model):
     user_ids = fields.Many2many('res.users', 'ref_menu_user_menu', 'mid', 'umid',  u'用户')
     len_records = fields.Integer(u'数量', compute='compute_len_records')
 
+    button_name = fields.Char(u'按钮名称')
     dynamic_template = fields.Text('模板a')
     dynamic_code = fields.Text('动态数据代码a')
     dynamic_html = fields.Text('动态内容a', compute='compute_dynamic_html')

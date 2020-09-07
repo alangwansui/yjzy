@@ -18,13 +18,19 @@ class account_reconcile_order(models.Model):
     def _compute_payment_currency(self):
         for one in self:
             if one.sfk_type == 'yfhxd':
-                one.payment_currency_id = one.fk_journal_id.currency_id
+                if not one.fk_journal_id:
+                    one.payment_currency_id = one.invoice_currency_id
+                else:
+                    one.payment_currency_id = one.fk_journal_id.currency_id
             elif one.sfk_type == 'yshxd':
-                one.payment_currency_id = one.yjzy_payment_id.currency_id
+                if not one.yjzy_payment_id:
+                    one.payment_currency_id = one.invoice_currency_id
+                else:
+                    one.payment_currency_id = one.yjzy_payment_id.currency_id
             else:
                 one.payment_currency_id = one.yjzy_payment_id.currency_id
-            if not one.payment_currency_id:
-                one.payment_currency_id = one.manual_payment_currency_id
+
+
 
     def compute_advance(self):
         for one in self:
@@ -97,6 +103,7 @@ class account_reconcile_order(models.Model):
         domain = [('type', '=', 'misc')]
         sfk_type = self.env.context.get('default_sfk_type', '')
         domain = []
+        print('sfk_type',sfk_type)
         if sfk_type == 'yfhxd':
             domain = [('code', '=', 'yfdrl'), ('company_id', '=', self.env.user.company_id.id)]
         if sfk_type == 'yshxd':
@@ -108,6 +115,7 @@ class account_reconcile_order(models.Model):
     def default_payment_account(self):
         account_obj = self.env['account.account']
         bank_account = account_obj.search([('code', '=', '10021'), ('company_id', '=', self.env.user.company_id.id)], limit=1)
+        print('bank_account',bank_account)
         return bank_account and bank_account.id
 
     def default_bank_account(self):
@@ -164,7 +172,8 @@ class account_reconcile_order(models.Model):
 
 
     #903
-    # reconcile_payment_ids = fields.One2many('')
+    reconcile_payment_ids = fields.One2many('account.payment','account_reconcile_order_id',u'认领单')
+    yjzy_advance_payment_id = fields.Many2one('account.payment',u'预收认领单')#从预收认领单创建过滤用
     #0901
     approve_date = fields.Datetime(u'审批完成时间')
     approve_uid = fields.Many2one('res.users',u'审批人')
@@ -174,7 +183,9 @@ class account_reconcile_order(models.Model):
     #827
     operation_wizard = fields.Selection([('10', u'收付认领'),
                                          ('20', u'预收认领'),
-                                         ('30', u'同时认领')],'认领方式')    #akiny
+                                         ('25', u'预收简易认领'),
+                                         ('30', u'同时认领'),
+                                         ('40', u'核销')],'认领方式')    #akiny
     reconcile_type = fields.Selection([('normal',u'正常阶段'),('un_normal',u'核销阶段')],string=u'阶段', default='normal')
     name = fields.Char(u'编号', default=lambda self: self._default_name())
     payment_type = fields.Selection([('outbound', u'付款'), ('inbound', u'收款'), ('claim_in', u'收款认领'), ('claim_out', u'付款认领')], string=u'收/付款',
@@ -266,29 +277,40 @@ class account_reconcile_order(models.Model):
     is_editable = fields.Boolean(u'可编辑')
     gongsi_id = fields.Many2one('gongsi', '内部公司')
 
+
+    #分别创建需要的付款单（原生）
     def create_yjzy_payment_ysrl(self):
+        self.ensure_one()
+        self.reconcile_payment_ids.unlink()
+        sfk_type = 'yingshourld'
+        name = self.env['ir.sequence'].next_by_code('sfk.type.%s' % sfk_type)
         account_payment_obj = self.env['account.payment']
         partner_id = self.partner_id
         yjzy_payment_id = self.yjzy_payment_id
         line_ids = self.line_ids
-        journal_domain = [('code', '=', 'yszk'), ('company_id', '=', self.env.user.company_id.id)]
-        journal_id = self.env['account.journal'].search(journal_domain, limit=1)
-        journal_domain_1 = [('code', '=', 'ysdrl'), ('company_id', '=', self.env.user.company_id.id)]
-        journal_id_1 = self.env['account.journal'].search(journal_domain_1, limit=1)
+        journal_domain_yszk = [('code', '=', 'yszk'), ('company_id', '=', self.env.user.company_id.id)]
+        journal_id_yszk = self.env['account.journal'].search(journal_domain_yszk, limit=1)
+        journal_domain_ysdrl = [('code', '=', 'ysdrl'), ('company_id', '=', self.env.user.company_id.id)]
+        journal_id_ysdrl = self.env['account.journal'].search(journal_domain_ysdrl, limit=1)
+        journal_domain_yhkk = [('code', '=', 'yhkk'), ('company_id', '=', self.env.user.company_id.id)]
+        journal_id_yhkk = self.env['account.journal'].search(journal_domain_yhkk, limit=1)
+        journal_domain_xsfy = [('code', '=', 'xsfy'), ('company_id', '=', self.env.user.company_id.id)]
+        journal_id_xsfy = self.env['account.journal'].search(journal_domain_xsfy, limit=1)
 
         for line in line_ids:
             if line.amount_payment_org >0:
                 reconcile_payment_id = account_payment_obj.create({
                     'account_reconcile_order_line_id': line.id,
+                    'name':name,
                     'partner_id':partner_id.id,
                     'yjzy_payment_id':yjzy_payment_id.id,
                     'amount':line.amount_payment_org,
                     'currency_id':line.payment_currency_id.id,
-                    'sfk_type': 'yingshourld',
+                    'sfk_type': sfk_type,
                     'payment_type': 'inbound',
                     'partner_type': 'customer',
                     'advance_ok':False,
-                    'journal_id':journal_id_1.id,
+                    'journal_id':journal_id_ysdrl.id,
                     'payment_method_id': 2,
                     'invoice_ids': [(4, line.invoice_id.id, None)],
                     'so_id':line.so_id.id,
@@ -296,18 +318,140 @@ class account_reconcile_order(models.Model):
             if line.amount_advance_org > 0:
                 reconcile_payment_id_2 = account_payment_obj.create({
                     'account_reconcile_order_line_id': line.id,
+                    'name':name,
                     'partner_id': partner_id.id,
                     'amount': line.amount_advance_org,
-                    'sfk_type': 'yingshourld',
+                    'sfk_type': sfk_type,
                     'currency_id': line.yjzy_currency_id.id,
+                    'yjzy_payment':line.yjzy_payment_id.id,
                     'payment_type': 'inbound',
                     'partner_type': 'customer',
                     'advance_ok': False,
-                    'journal_id': journal_id.id,
+                    'journal_id': journal_id_yszk.id,
                     'payment_method_id': 2,
                     'invoice_ids': [(4, line.invoice_id.id, None)],
                     'so_id': line.so_id.id,
 
+                })
+            if line.amount_bank_org > 0:
+                reconcile_payment_id_2 = account_payment_obj.create({
+                    'account_reconcile_order_line_id': line.id,
+                    'name':name,
+                    'partner_id': partner_id.id,
+                    'amount': line.amount_bank_org,
+                    'sfk_type': sfk_type,
+                    'currency_id': line.invoice_currency_id.id,
+                    'payment_type': 'inbound',
+                    'partner_type': 'customer',
+                    'advance_ok': False,
+                    'journal_id': journal_id_yhkk.  id,
+                    'payment_method_id': 2,
+                    'invoice_ids': [(4, line.invoice_id.id, None)],
+                    'so_id': line.so_id.id,
+                })
+
+            if line.amount_diff_org > 0:
+                reconcile_payment_id_2 = account_payment_obj.create({
+                    'account_reconcile_order_line_id': line.id,
+                    'name':name,
+                    'partner_id': partner_id.id,
+                    'amount': line.amount_diff_org,
+                    'sfk_type': sfk_type,
+                    'currency_id': line.invoice_currency_id.id,
+                    'payment_type': 'inbound',
+                    'partner_type': 'customer',
+                    'advance_ok': False,
+                    'journal_id': journal_id_xsfy.id,
+                    'payment_method_id': 2,
+                    'invoice_ids': [(4, line.invoice_id.id, None)],
+                    'so_id': line.so_id.id,
+                })
+
+    def create_yjzy_payment_yfrl(self):
+        self.ensure_one()
+        self.reconcile_payment_ids.unlink()
+        sfk_type = 'yingfurld'
+        name = self.env['ir.sequence'].next_by_code('sfk.type.%s' % sfk_type)
+        account_payment_obj = self.env['account.payment']
+        partner_id = self.partner_id
+        yjzy_payment_id = self.yjzy_payment_id
+        line_ids = self.line_ids
+        journal_domain_yfzk = [('code', '=', 'yfzk'), ('company_id', '=', self.env.user.company_id.id)]
+        journal_id_yfzk = self.env['account.journal'].search(journal_domain_yfzk, limit=1)
+        journal_domain_yfdrl = [('code', '=', 'yfdrl'), ('company_id', '=', self.env.user.company_id.id)]
+        journal_id_yfdrl = self.env['account.journal'].search(journal_domain_yfdrl, limit=1)
+        journal_domain_yhkk = [('code', '=', 'yhkk'), ('company_id', '=', self.env.user.company_id.id)]
+        journal_id_yhkk = self.env['account.journal'].search(journal_domain_yhkk, limit=1)
+        journal_domain_xsfy = [('code', '=', 'xsfy'), ('company_id', '=', self.env.user.company_id.id)]
+        journal_id_xsfy = self.env['account.journal'].search(journal_domain_xsfy, limit=1)
+
+        for line in line_ids:
+            if line.amount_payment_org > 0:
+                reconcile_payment_id = account_payment_obj.create({
+                    'account_reconcile_order_line_id': line.id,
+                    'name':name,
+                    'sfk_type': sfk_type,
+                    'partner_id': partner_id.id,
+                    'yjzy_payment_id': yjzy_payment_id.id,
+                    'amount': line.amount_payment_org,
+                    'currency_id': line.payment_currency_id.id,
+                    'payment_type': 'outbound',
+                    'partner_type': 'supplier',
+                    'advance_ok': False,
+                    'journal_id': journal_id_yfdrl.id,
+                    'payment_method_id': 2,
+                    'invoice_ids': [(4, line.invoice_id.id, None)],
+                    'po_id': line.so_id.id,
+                })
+            if line.amount_advance_org > 0:
+                reconcile_payment_id_2 = account_payment_obj.create({
+                    'account_reconcile_order_line_id': line.id,
+                    'partner_id': partner_id.id,
+                    'amount': line.amount_advance_org,
+                    'name':name,
+                    'sfk_type': sfk_type,
+                    'currency_id': line.yjzy_currency_id.id,
+                    'payment_type': 'outbound',
+                    'partner_type': 'supplier',
+                    'advance_ok': False,
+                    'journal_id': journal_id_yfzk.id,
+                    'payment_method_id': 2,
+                    'invoice_ids': [(4, line.invoice_id.id, None)],
+                    'po_id': line.so_id.id,
+
+                })
+            if line.amount_bank_org > 0:
+                reconcile_payment_id_2 = account_payment_obj.create({
+                    'account_reconcile_order_line_id': line.id,
+                    'partner_id': partner_id.id,
+                    'amount': line.amount_bank_org,
+                    'name':name,
+                    'sfk_type': sfk_type,
+                    'currency_id': line.invoice_currency_id.id,
+                    'payment_type': 'outbound',
+                    'partner_type': 'supplier',
+                    'advance_ok': False,
+                    'journal_id': journal_id_yhkk.id,
+                    'payment_method_id': 2,
+                    'invoice_ids': [(4, line.invoice_id.id, None)], #akiny参考 m2m
+                    'po_id': line.so_id.id,
+                })
+
+            if line.amount_diff_org > 0:
+                reconcile_payment_id_2 = account_payment_obj.create({
+                    'account_reconcile_order_line_id': line.id,
+                    'partner_id': partner_id.id,
+                    'amount': line.amount_diff_org,
+                    'name':name,
+                    'sfk_type': sfk_type,
+                    'currency_id': line.invoice_currency_id.id,
+                    'payment_type': 'outbound',
+                    'partner_type': 'supplier',
+                    'advance_ok': False,
+                    'journal_id': journal_id_xsfy.id,
+                    'payment_method_id': 2,
+                    'invoice_ids': [(4, line.invoice_id.id, None)],
+                    'po_id': line.so_id.id,
                 })
 
 
@@ -327,6 +471,7 @@ class account_reconcile_order(models.Model):
                 'default_order_id':self.id,
                 'default_invoice_ids':self.invoice_ids.ids,
                 'sfk_type':self.sfk_type,
+                'default_yjzy_advance_payment_id':self.yjzy_advance_payment_id.id
             })
             return {
                 'name': '添加账单',
@@ -344,6 +489,7 @@ class account_reconcile_order(models.Model):
                 'default_order_id': self.id,
                 'default_invoice_ids': self.invoice_ids.ids,
                 'sfk_type': self.sfk_type,
+                'default_yjzy_advance_payment_id': self.yjzy_advance_payment_id.id
             })
             return {
                 'name': '添加账单',
@@ -987,11 +1133,35 @@ class account_reconcile_order(models.Model):
             invoice = x.invoice_id
             amount_advance_org = x.amount_advance_org
             amount_payment_org = x.amount_payment_org
+            amount_bank_org = x.amount_bank_org
+            amount_diff_org = x.amount_diff_org
+            yjzy_payment_id = x.yjzy_payment_id
             line_ids = self.line_ids.filtered(lambda x: x.invoice_id == invoice)
             for line in line_ids:
                 amount_invoice_so_proportion = line.amount_invoice_so_proportion
-                line.amount_advance_org = amount_invoice_so_proportion * amount_advance_org
                 line.amount_payment_org = amount_invoice_so_proportion * amount_payment_org
+                line.amount_bank_org = amount_invoice_so_proportion * amount_bank_org
+                line.amount_diff_org = amount_invoice_so_proportion * amount_diff_org
+                if yjzy_payment_id:
+                    if yjzy_payment_id.so_id:
+                        if line.so_id == yjzy_payment_id.so_id:
+                            line.yjzy_payment_id = yjzy_payment_id
+                            line.amount_advance_org = amount_advance_org
+                        else:
+                            raise Warning('预收单的订单和应收明细订单不匹配！')
+                    else:
+                        if amount_advance_org !=0:
+                            # line.amount_advance_org = amount_advance_org * amount_invoice_so_proportion
+                            line[0].amount_advance_org = amount_advance_org
+                            line[0].yjzy_payment_id = yjzy_payment_id #填入后，看是否生成一张付款单
+                else:
+                    # if amount_advance_org != 0:
+                    #     raise Warning('请填写预收认领单，或者设置预收认领金额为0!') #提交的时候判断
+                    line.amount_advance_org = 0
+                    line.yjzy_payment_id = False
+
+
+
 
 
     #akiny 828,将jinvoice_ids从o2m调整为m2m后，初始化一次
@@ -1083,6 +1253,7 @@ class account_reconcile_order_line(models.Model):
             # one.amount_exchange = invoice_currency.compute(one.amount_exchange_org, company_currency)
             ###
             amount_total_org = one.amount_advance_org
+            print('test--reconcile',amount_total_org)
             if payment_currency and invoice_currency:
                 amount_total_org += payment_currency.compute(one.amount_payment_org, invoice_currency)
             if bank_currency and invoice_currency:
@@ -1126,7 +1297,13 @@ class account_reconcile_order_line(models.Model):
 
 
 
-
+    @api.depends('yjzy_currency_id','payment_currency_id')
+    def _compute_yjzy_currency_id(self):
+        for one in self:
+            if not one.yjzy_payment_id:
+                one.yjzy_currency_id = one.payment_currency_id
+            else:
+                one.yjzy_currency_id = one.yjzy_payment_id.currency_id
 
 
     # @api.onchange('amount_invoice_so', 'amount_advance_org', 'amount_bank_org', 'amount_diff_org', 'amount_payment_org')
@@ -1170,15 +1347,17 @@ class account_reconcile_order_line(models.Model):
     yjzy_payment_id = fields.Many2one('account.payment', u'预收认领单')
     yjzy_payment_display_name = fields.Char('显示名称',related='yjzy_payment_id.display_name',store=True)
     #yjzy_currency_id = fields.Many2one('res.currency', u'预收币种', related='yjzy_payment_id.currency_id')
-    yjzy_currency_id = fields.Many2one('res.currency', u'预收币种',default=lambda self: self.env.user.company_id.currency_id.id)
+    # yjzy_currency_id = fields.Many2one('res.currency', u'预收币种',default=lambda self: self.env.user.company_id.currency_id.id)
+    yjzy_currency_id = fields.Many2one('res.currency', u'预收币种',compute=_compute_yjzy_currency_id
+                                       )
     amount_advance_org = fields.Monetary(u'预收金额', currency_field='yjzy_currency_id')
 
     amount_advance = fields.Monetary(u'预收金额:本币', currency_field='currency_id', compute=compute_info)
     amount_payment_org = fields.Monetary(u'收款金额', currency_field='payment_currency_id')
     amount_payment = fields.Monetary(u'收款金额:本币', currency_field='currency_id', compute=compute_info)
-    amount_bank_org = fields.Monetary(u'银行扣款', currency_field='payment_currency_id')
+    amount_bank_org = fields.Monetary(u'银行扣款', currency_field='invoice_currency_id')
     amount_bank = fields.Monetary(u'银行扣款:本币', currency_field='currency_id', compute=compute_info)
-    amount_diff_org = fields.Monetary(u'销售费用', currency_field='payment_currency_id')
+    amount_diff_org = fields.Monetary(u'销售费用', currency_field='invoice_currency_id')
     amount_diff = fields.Monetary(u'销售费用:本币', currency_field='currency_id', compute=compute_info)
     amount_exchange_org = fields.Monetary(u'汇兑差异', currency_field='invoice_currency_id')
     amount_exchange = fields.Monetary(u'汇兑差异:本币', currency_field='currency_id')
@@ -1210,8 +1389,15 @@ class account_reconcile_order_line_no(models.Model):
     residual = fields.Monetary(related='invoice_id.residual', string=u'发票余额', readonly=True, currency_field='invoice_currency_id')
 
     amount_advance_org = fields.Monetary(u'预收金额', currency_field='yjzy_currency_id')
+    yjzy_payment_id = fields.Many2one('account.payment', u'预收认领单')
 
     amount_advance = fields.Monetary(u'预收金额:本币', currency_field='currency_id', )
     amount_payment_org = fields.Monetary(u'收款金额', currency_field='payment_currency_id')
     amount_payment = fields.Monetary(u'收款金额:本币', currency_field='currency_id', )
+
+    amount_bank_org = fields.Monetary(u'银行扣款', currency_field='payment_currency_id')
+    amount_diff_org = fields.Monetary(u'订单费用', currency_field='payment_currency_id')
+
+
+
 

@@ -47,6 +47,14 @@
         <field name="model">account.payment</field>
         <field name="arch" type="xml">
             <form string="预付申请单">
+                 <header groups="base.group_system">
+                     <button name="action_submit" class="oe_highlight"  string="提交" type="object" />
+                     <button name="action_account_post" class="oe_highlight"  string="财务确认" type="object" />
+                     <button name="action_manager_post" class="oe_highlight" string="总经理审批" type="object"/>
+                     <button name="action_account_refuse" class="oe_highlight" string="财务拒绝" type="object"/>
+                     <button name="action_manager_refuse" class="oe_highlight" string="总经理拒绝" type="object"/>
+
+                </header>
                 <header>
                     <button name="create_rcfkd"  string="生成日常付款单" type='object' icon="" groups="account.group_account_manager"/>
                     <button name="post" class="oe_highlight" states="draft" string="Confirm" type="object" groups="base.group_system"/>
@@ -61,10 +69,14 @@
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
+                        <button name="open_yfsqd_yfhxd" string="应付认领" type="object" groups="account.group_account_user" icon="fa-bars">
+                            <field name="advance_reconcile_order_count_all" widget="statinfo" nolabel="1"/>
+                        </button>
+
 
                         <button class="oe_stat_button" name="button_journal_entries"
                                 string="Journal Items" type="object"
-                                groups="account.group_account_user"
+                                groups="base.group_system"
                                 attrs="{'invisible':[('move_line_ids','=',[])]}" icon="fa-bars"/>
                         <field name="move_line_ids" invisible="1"/>
                         <button class="oe_stat_button" name="button_invoices"

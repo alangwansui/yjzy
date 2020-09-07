@@ -26,6 +26,11 @@
         <field name="model">account.payment</field>
         <field name="arch" type="xml">
             <form string="日常付款单">
+                <header groups="base.group_system">
+                   <button name="action_submit" class="oe_highlight"  string="提交" type="object" />
+                   <button name="action_cashier_post" class="oe_highlight"  string="出纳确认" type="object" />
+                   <button name="action_cashier_refuse" class="oe_highlight" string="出纳拒绝" type="object"/>
+                </header>
                 <header>
                     <button name="compute_balance" class="oe_highlight"  string="计算余额" type="object" groups="base.group_system"/>
                     <button name="post" class="oe_highlight" states="draft" string="Confirm" type="object" groups="base.group_system"/>
@@ -49,7 +54,7 @@
                             <field name="count_ptskrl" widget="statinfo" nolabel="1" />
                         </button-->
 
-                        <button class="oe_stat_button" name="open_fybg"  type="object" string="费用报告数量" icon="fa-pencil-square-o">
+                        <button class="oe_stat_button" name="open_fybg"  type="object" string="其他收入" icon="fa-pencil-square-o">
                             <field name="count_fybg" widget="statinfo" nolabel="1"/>
                         </button>
 

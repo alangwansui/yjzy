@@ -17,6 +17,7 @@ from . import account_invoice_refuse_reason
 from . import wizard_tb_po_invoice
 from . import wizard_reconcile_invoice
 from . import hxd_refuse_reason
+from . import payment_refuse_reason
 
 
 

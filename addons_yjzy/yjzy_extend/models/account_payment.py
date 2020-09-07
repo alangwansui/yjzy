@@ -101,7 +101,10 @@ class account_payment(models.Model):
             one.balance = balance
             if one.x_wkf_state:
                 if balance == 0 and one.x_wkf_state == '159':
-                 one.x_wkf_state = '163'
+                    one.x_wkf_state = '163'
+                    one.state_1 = '60_done'
+            elif balance == 0 and one.state_1 == '50_posted':
+                one.state_1 = '60_done'
                 # elif balance !=0 and one.x_wkf_state == '163':
                 #  one.x_wkf_state = '159'
             else:
@@ -145,6 +148,8 @@ class account_payment(models.Model):
         for one in self:
             advance_total = sum([x.amount_advance_org for x in one.advance_reconcile_order_line_ids])
             advance_balance_total = one.amount - advance_total
+            if advance_balance_total == 0 and one.state_1 == '50_posted':
+                one.state_1 = '60_done'
             one.advance_total = advance_total
             one.advance_balance_total = advance_balance_total
 
@@ -179,7 +184,7 @@ class account_payment(models.Model):
         res = []
         for one in self:
             if ctx.get('default_sfk_type', '') == 'ysrld':
-                name = '%s:%s' % (one.journal_id.name, one.balance)
+                name = '%s:%s' % (one.journal_id.name, str(one.balance))
             elif ctx.get('bank_amount'):
                 name = '%s[%s]' % (one.journal_id.name, str(one.balance))
             elif ctx.get('advance_bank_amount'):
@@ -188,16 +193,38 @@ class account_payment(models.Model):
                 name = '%s[%s]' % (one.name, str(one.balance))
             one.display_name = name
 
-
+    def _compute_advance_reconcile_order_count_all(self):
+        for one in self:
+            print('teee', len(one.advance_reconcile_order_ids))
+            one.advance_reconcile_order_count_all = len(one.advance_reconcile_order_ids)
 
     #903
-    account_reconcile_order_line_id = fields.Many2one('account.reconcile.order.line',u'应收付认领明细')
-    account_reconcile_order_id = fields.Many2one('account.reconcile.order',u'应收付认领单')
+    account_reconcile_order_line_id = fields.Many2one('account.reconcile.order.line',u'应收付认领明细') #过账后生成的实际的认领单明细
+    account_reconcile_order_id = fields.Many2one('account.reconcile.order',u'应收付认领单',related='account_reconcile_order_line_id.order_id') #过账收生成的实际的认领单
+
+    advance_reconcile_order_ids = fields.One2many('account.reconcile.order','yjzy_advance_payment_id',u'预收付-应收付认领')
+
+    advance_reconcile_order_count_all = fields.Integer(u'预收付-应收付认领数量', compute=_compute_advance_reconcile_order_count_all )
+    #老的
+    yshx_ids = fields.One2many('account.reconcile.order', 'yjzy_payment_id', u'收款-应收认领单')
+    advance_reconcile_order_line_ids = fields.One2many('account.reconcile.order.line', 'yjzy_payment_id',
+                                                       string='预收认领明细', domain=[('amount_advance_org', '>', 0),
+                                                                                ('order_id.state', '=', 'done')])
+    #日常收款单：10，25，50，60
+    #收款-预收认领单：10，20，50，60
+    #收款-应收认领单：10，20，50，60
+    #预收-应收认领单：10，20，50，60
+    #日常付款单：10，25，50，60
+    #应付-付款申请单：10，30，40，50，付款单从25-50，此处40-50，之后判断付款单余额是否为0，如果是，50-60
+    #预付-付款申请单：10，20，30，40，50，60 付款单从25-50，此处40-50，之后判断付款单余额是否为0，如果是，50-60
+    #应付-预付申请单：10，20，30，50付款单从25-50，此处40-50，之后判断预付款单余额是否为0，如果是，50-60
     state_1 = fields.Selection([('10_draft',u'草稿'),
-                                ('20_submit',u'待出纳确认'),
-                                ('30_manager_approve',u'总经理审批完成'),
-                                ('40_posted',u'完成'),
-                                ('50_done',u'认领完成'),
+                                ('20_account_submit',u'待财务审批'),
+                                ('25_cashier_submit',u'待出纳审批'),
+                                ('30_manager_approve',u'待总经理审批'),
+                                ('40_approve',u'审批完成'),
+                                ('50_posted',u'已过账'),
+                                ('60_done',u'完成'),#认领全部完成
                                 ('80_refused',u'已拒绝'),
                                 ('90_cancel',u'已取消')],u'审批状态',track_visibility='onchange',default='10_draft')
 
@@ -207,7 +234,7 @@ class account_payment(models.Model):
     payment_comments = fields.Text(u'收付款备注')
     fault_comments = fields.Text('异常备注')
     display_name = fields.Char(u'显示名称', compute=compute_display_name)
-    advance_reconcile_order_line_ids = fields.One2many('account.reconcile.order.line', 'yjzy_payment_id', string='预收认领明细',domain=[('amount_advance_org','>',0),('order_id.state','=','done')])
+
     advance_reconcile_order_count = fields.Integer(u'应收认领数量', compute=compute_count)
     advance_reconcile_order_line_amount_char = fields.Text(related='so_id.advance_reconcile_order_line_amount_char', string=u'预收认领明细金额')
     advance_reconcile_order_line_date_char = fields.Text(related='so_id.advance_reconcile_order_line_date_char',string=u'预收认领日期')
@@ -265,7 +292,7 @@ class account_payment(models.Model):
     ysrld_ids = fields.One2many('account.payment', 'yjzy_payment_id', u'预收认领单', domain=[('sfk_type','=','ysrld')])
     yfsqd_ids = fields.One2many('account.payment', 'yjzy_payment_id', u'预付申请单', domain=[('sfk_type','=','yfsqd')])
 
-    yshx_ids = fields.One2many('account.reconcile.order', 'yjzy_payment_id', u'收款-应收认领单')
+
 
     #ptskrl_ids = fields.One2many('yjzy.account.payment', 'yjzy_payment_id', u'普通收款认领单')
     fybg_ids = fields.One2many('hr.expense.sheet', 'payment_id', u'费用报告')
@@ -289,11 +316,24 @@ class account_payment(models.Model):
 
     payment_date_confirm = fields.Datetime('付款确认时间') ##akiny 付款确认时间
 
+    post_uid = fields.Many2one('res.users',u'审批人')
+    post_date = fields.Date(u'审批时间')
+
+    @api.multi
+    def cancel(self):
+        for rec in self:
+            if rec.advance_reconcile_order_ids or rec.advance_reconcile_order_line_ids or rec.payment_ids \
+                    or rec.ysrld_ids or rec.yfsqd_ids or rec.yshx_ids or rec.fybg_ids or rec.expense_ids:
+                raise Warning(u'此单据已经被认领，请先删除对应的认领单！')
+        return super(account_payment, self).cancel()
+
 
     @api.onchange('amount')
     def onchange_amount(self):
         if self.yjzy_payment_id:
             self.currency_id = self.yjzy_payment_id.currency_id
+
+
 
     #913审批流程
     def action_submit(self):
@@ -304,24 +344,103 @@ class account_payment(models.Model):
             if ctx.get('default_sfk_type','') == 'rcskd' :
                 if self.payment_comments == '':
                     raise Warning('请填写收款备注信息！')
+                else:
+                    self.state_1 = '25_cashier_submit'
             elif ctx.get('default_sfk_type', '') == 'rcfkd':
                 if not self.bank_id:
                     raise Warning('请选择付款对象的银行账号!')
+                else:
+                    self.state_1 = '25_cashier_submit'
             elif ctx.get('default_sfk_type', '') == 'ysrld':
                 if not self.yjzy_payment_id:
                     raise Warning('请选择认领的收款单!')
+                else:
+                    self.state_1 = '20_account_submit'
             elif ctx.get('default_sfk_type', '') == 'yfsqd':
                 if not self.bank_id:
                     raise Warning('请选择付款对象的银行账号!')
+                else:
+                    self.state_1 = '20_account_submit'
             elif ctx.get('default_sfk_type', '') == 'jiehui':
                 if not self.journal_id or not self.advance_account_id:
                     raise Warning('收款或者付款银行没有填写!')
+                else:
+                    self.state_1 = '25_cashier_submit'
             elif ctx.get('default_sfk_type', '') == 'nbzz':
                 if not self.journal_id or not self.destination_journal_id:
                     raise Warning('收款或者付款银行没有填写!')
-        self.state_1 = '20_submit'
+                else:
+                    self.state_1 = '25_cashier_submit'
 
+    # 日常收款单：10，25，50，60
+    # 收款-预收认领单：10，20，50，60
+    # 收款-应收认领单：10，20，50，60
+    # 预收-应收认领单：10，20，50，60
+    # 日常付款单：10，25，50，60
+    # 应付-付款申请单：10，30，40，50，付款单从25-50，此处40-50，之后判断付款单余额是否为0，如果是，50-60
+    # 预付-付款申请单：10，20，30，40，50，60 付款单从25-50，此处40-50，之后判断付款单余额是否为0，如果是，50-60
+    # 应付-预付申请单：10，20，30，50付款单从25-50，此处40-50，之后判断预付款单余额是否为0，如果是，50-60
 
+    # 日常收款单：10，25，50，60
+
+    def action_account_post(self):
+        today = fields.date.today()
+        ctx = self.env.context
+        if ctx.get('default_sfk_type','') == 'yfsqd':
+            self.write({'state_1': '30_manager_approve'
+                        })
+        # if ctx.get('default_sfk_type','') == 'yfhxd' and self.:
+        #     self.write({'post_uid': self.env.user.id,
+        #                 'post_date': today,
+        #                 'state_1': '30_manager_approve'
+        #                 })
+        if ctx.get('default_sfk_type','') == 'ysrld':
+            self.write({'post_uid': self.env.user.id,
+                        'post_date': today,
+                        'state_1': '50_posted'
+                        })
+            self.post()
+    def action_cashier_post(self):
+        today = fields.date.today()
+        self.write({'post_uid': self.env.user.id,
+                    'post_date': today,
+                    'state_1': '50_posted'
+                    })
+        self.post()
+        self.compute_balance()
+
+    def action_manager_post(self):
+        today = fields.date.today()
+        self.write({'post_uid': self.env.user.id,
+                    'post_date': today,
+                    'state_1': '40_approve'
+                    })
+
+    def action_account_refuse(self,reason):
+        self.write({'state_1': '80_refused',
+                    })
+        for tb in self:
+            tb.message_post_with_view('yjzy_extend.payment_template_refuse_reason',
+                                      values={'reason': reason, 'name': self.name},
+                                      subtype_id=self.env.ref(
+                                          'mail.mt_note').id)  # 定义了留言消息的模板，其他都可以参考，还可以继续参考费用发送计划以及邮件方式
+    def action_cashier_refuse(self,reason):
+        self.write({'state_1': '80_refused',
+                    })
+        for tb in self:
+            tb.message_post_with_view('yjzy_extend.payment_template_refuse_reason',
+                                      values={'reason': reason, 'name': self.name},
+                                      subtype_id=self.env.ref(
+                                          'mail.mt_note').id)  # 定义了留言消息的模板，其他都可以参考，还可以继续参考费用发送计划以及邮件方式
+
+    def action_manager_refuse(self, reason):
+        self.write({'state_1': '80_refused',
+                    })
+        for tb in self:
+            tb.message_post_with_view('yjzy_extend.payment_template_refuse_reason',
+                                      values={'reason': reason, 'name': self.name},
+                                      subtype_id=self.env.ref(
+                                          'mail.mt_note').id)  # 定义了留言消息的模板，其他都可以参考，还可以继续参考费用发送计划以及邮件方式
 
 
     def judge_partner(self):
@@ -380,7 +499,7 @@ class account_payment(models.Model):
         res = []
         for one in self:
             if ctx.get('default_sfk_type', '') == 'ysrld':
-                name = '%s:%s' % (one.journal_id.name, one.balance)
+                name = '%s:%s' % (one.journal_id.name, str(one.balance))
             elif ctx.get('bank_amount'):
                 name = '%s[%s]' % (one.journal_id.name, str(one.balance))
             elif ctx.get('advance_bank_amount'):
@@ -540,7 +659,7 @@ class account_payment(models.Model):
             total += line.amount
         self.amount = total
 
-
+    #打开预收认领
     def open_ysrl(self):
         form_view = self.env.ref('yjzy_extend.view_ysrld_form')
         tree_view = self.env.ref('yjzy_extend.view_ysrld_tree')
@@ -561,7 +680,28 @@ class account_payment(models.Model):
                         'default_currency_id':self.currency_id.id,
                         'default_yjzy_payment_id': self.id}
         }
-
+    #打开预付认领
+    def open_yufurenling(self):
+        form_view = self.env.ref('yjzy_extend.view_yfsqd_form')
+        tree_view = self.env.ref('yjzy_extend.view_yfsqd_tree')
+        return {
+            'name': u'预付认领单',
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'res_model': 'account.payment',
+            'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
+            'domain': [('yjzy_payment_id', '=', self.id)],
+            'context': {'show_shoukuan': True,
+                        'default_sfk_type': 'yfsqd',
+                        'default_payment_type': 'outbound',
+                        'default_be_renling': True,
+                        'default_advance_ok': True,
+                        'default_partner_type': 'supplier',
+                        'default_currency_id': self.currency_id.id,
+                        'default_yjzy_payment_id': self.id}
+        }
+    #从收款单打开应收核销
     def open_yshx(self):
         form_view = self.env.ref('yjzy_extend.account_yshxd_form_view_new')
         tree_view = self.env.ref('yjzy_extend.account_yshxd_tree_view_new')
@@ -582,19 +722,106 @@ class account_payment(models.Model):
                         'show_so': 1,
                         'default_yjzy_payment_id':self.id},
         }
-
-    def open_ptskrl(self):
+    # 从付款单打开应付核销
+    def open_yingfuhexiao(self):
+        form_view = self.env.ref('yjzy_extend.account_yshxd_form_view_new')
+        tree_view = self.env.ref('yjzy_extend.account_yshxd_tree_view_new')
         return {
-            'name': u'普通收款认领单',
+            'name': u'应付申请单',
             'type': 'ir.actions.act_window',
             'view_type': 'form',
             'view_mode': 'tree,form',
-            'res_model': 'yjzy.account.payment',
+            'res_model': 'account.reconcile.order',
+            'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
             'domain': [('yjzy_payment_id', '=', self.id)],
-            'context': {'default_payment_type': 'inbound', 'default_partner_type': 'customer', 'default_yjzy_payment_id': self.id},
+            'context': {'default_sfk_type':'yshxd',
+                        'bank_amount': 1,
+                        'default_operation_wizard': '10',
+                        'default_payment_type': 'outbound',
+                        'default_partner_type': 'supplier',
+                        'default_be_renling': True,
+                        'show_so': 1,
+                        'default_yjzy_payment_id': self.id},
         }
 
+
+
+    #从预收认领单打开应收核销单
+    def open_ysrld_yshx(self):
+        tree_view = self.env.ref('yjzy_extend.account_yshxd_tree_view_new').id
+        form_view = self.env.ref('yjzy_extend.account_yshxd_form_view_new').id
+        return {
+            'name': '认领单',
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'res_model': 'account.reconcile.order',
+            'views': [(tree_view, 'tree'), (form_view, 'form')],
+            'target': 'current',
+            'type': 'ir.actions.act_window',
+            'domain': [('yjzy_advance_payment_id', '=', self.id)],
+            'context': {'default_sfk_type': 'yshxd',
+                        'default_yjzy_advance_payment_id': self.id,
+                        'bank_amount': 1,
+                        'default_payment_type': 'inbound',
+                        'default_be_renling': 1,
+                        'default_partner_type': 'customer',
+                        'show_so': 1,
+                        'default_operation_wizard': '25',
+                        }
+        }
+
+    # 从预付款认领单打开应付核销单
+    def open_yfsqd_yfhxd(self):
+        tree_view = self.env.ref('yjzy_extend.account_yshxd_tree_view_new').id
+        form_view = self.env.ref('yjzy_extend.account_yshxd_form_view_new').id
+        return {
+            'name': '认领单',
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'res_model': 'account.reconcile.order',
+            'views': [(tree_view, 'tree'), (form_view, 'form')],
+            'target': 'current',
+            'type': 'ir.actions.act_window',
+            'domain': [('yjzy_advance_payment_id', '=', self.id)],
+            'context': {'default_sfk_type': 'yfhxd',
+                        'default_yjzy_advance_payment_id': self.id,
+                        'bank_amount': 1,
+                        'default_payment_type': 'outbound',
+                        'default_be_renling': 1,
+                        'default_partner_type': 'supplier',
+                        'show_so': 1,
+                        'default_operation_wizard': '25',
+                        }
+        }
+
+
+
+    # def open_ptskrl(self):
+    #     return {
+    #         'name': u'普通收款认领单',
+    #         'type': 'ir.actions.act_window',
+    #         'view_type': 'form',
+    #         'view_mode': 'tree,form',
+    #         'res_model': 'yjzy.account.payment',
+    #         'domain': [('yjzy_payment_id', '=', self.id)],
+    #         'context': {'default_payment_type': 'inbound', 'default_partner_type': 'customer', 'default_yjzy_payment_id': self.id},
+    #     }
+    #打开费用报告
     def open_fybg(self):
+        form_view = self.env.ref('yjzy_extend.view_hr_expense_sheet_new_form')
+        tree_view = self.env.ref('yjzy_extend.hr_expense_sheet_user_chaxun_tree')
+        return {
+            'name': u'费用申请单',
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'res_model': 'hr.expense.sheet',
+            'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
+            'domain': [('payment_id', '=', self.id)],
+            'context': {'default_payment_id': self.id},
+        }
+    #打开其他收入认领
+    def open_fybg_qtsr(self):
         form_view = self.env.ref('yjzy_extend.other_income_sheet_view_form')
         tree_view = self.env.ref('yjzy_extend.other_income_sheet_view_tree')
         return {
@@ -605,49 +832,26 @@ class account_payment(models.Model):
             'res_model': 'hr.expense.sheet',
             'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
             'domain': [('payment_id', '=', self.id)],
-            'context': {'default_payment_id': self.id},
-        }
+            'context': {'default_payment_id': self.id,
+                        'default_bank_journal_code':'ysdrl'},
 
-    def open_yushourenling(self):
-        form_view = self.env.ref('yjzy_extend.view_ysrld_form')
-        tree_view = self.env.ref('yjzy_extend.view_ysrld_tree')
-        return {
-            'name': u'预收认领单',
-            'type': 'ir.actions.act_window',
-            'view_type': 'form',
-            'view_mode': 'tree,form',
-            'res_model': 'account.payment',
-            'views': [(tree_view.id, 'tree'),(form_view.id,'form')],
-            'domain': [('yjzy_payment_id', '=', self.id)],
-            'context': {'show_shoukuan': True, 'default_sfk_type': 'ysrld', 'default_payment_type': 'inbound', 'default_be_renling': True, 'default_advance_ok': True, 'default_partner_type': 'customer', 'default_yjzy_payment_id': self.id},
         }
-    def open_yufurenling(self):
-        form_view = self.env.ref('yjzy_extend.view_yfsqd_form')
-        tree_view = self.env.ref('yjzy_extend.view_yfsqd_tree')
-        return {
-            'name': u'预付认领单',
-            'type': 'ir.actions.act_window',
-            'view_type': 'form',
-            'view_mode': 'tree,form',
-            'res_model': 'account.payment',
-            'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
-            'domain': [('yjzy_payment_id', '=', self.id)],
-            'context': {'show_shoukuan': True, 'default_sfk_type': 'yfsqd', 'default_payment_type': 'outbound', 'default_be_renling': True, 'default_advance_ok': True, 'default_partner_type': 'supplier','default_yjzy_payment_id': self.id},
-        }
+    # def open_yushourenling(self):
+    #     form_view = self.env.ref('yjzy_extend.view_ysrld_form')
+    #     tree_view = self.env.ref('yjzy_extend.view_ysrld_tree')
+    #     return {
+    #         'name': u'预收认领单',
+    #         'type': 'ir.actions.act_window',
+    #         'view_type': 'form',
+    #         'view_mode': 'tree,form',
+    #         'res_model': 'account.payment',
+    #         'views': [(tree_view.id, 'tree'),(form_view.id,'form')],
+    #         'domain': [('yjzy_payment_id', '=', self.id)],
+    #         'context': {'show_shoukuan': True, 'default_sfk_type': 'ysrld', 'default_payment_type': 'inbound', 'default_be_renling': True, 'default_advance_ok': True, 'default_partner_type': 'customer', 'default_yjzy_payment_id': self.id},
+    #     }
 
-    def open_yingfuhexiao(self):
-        form_view = self.env.ref('yjzy_extend.account_reconcile_order2_form_view')
-        tree_view = self.env.ref('yjzy_extend.account_reconcile_order2_tree_view')
-        return {
-            'name': u'应付款核销单',
-            'type': 'ir.actions.act_window',
-            'view_type': 'form',
-            'view_mode': 'tree,form',
-            'res_model': 'account.reconcile.order',
-            'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
-            'domain': [('yjzy_payment_id', '=', self.id)],
-            'context': {'default_payment_type': 'outbound', 'default_partner_type': 'supplier', 'default_be_renling': True, 'default_yjzy_payment_id': self.id},
-        }  #[('payment_type', '=', 'outbound'),('be_renling','=',True)]
+
+
 
 
     def open_putongfukuanrenling(self):
@@ -665,6 +869,38 @@ class account_payment(models.Model):
         if self.partner_id.state != 'done':
             war = '客户正在审批中，请先完成客户的审批'
             raise Warning(war)
+    #904 创建预收-应收认领单
+    def create_yshxd_ysrl(self):
+        yshxd_obj = self.env['account.reconcile.order']
+
+        yshxd_id = yshxd_obj.create({'operation_wizard':'25',
+                                     'yjzy_advance_payment_id':self.id,
+                                     'partner_id':self.partner_id.id,
+                                     'sfk_type':'yshxd',
+                                     'payment_type':'inbound',
+                                     'partner_type':'customer',
+                                     'be_renling':True,
+                                     })
+        form_view = self.env.ref('yjzy_extend.account_yshxd_form_view_new').id
+        return {
+            'name': '认领单',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'account.reconcile.order',
+            'views': [(form_view, 'form')],
+            'res_id': yshxd_id.id,
+            'target': 'current',
+            'type': 'ir.actions.act_window',
+            'context':{'default_sfk_type': 'yshxd',
+                       'active_id':yshxd_id.id
+                       }
+
+
+        }
+
+
+
+
 
 class account_payment_item(models.Model):
     _name = 'account.payment.item'

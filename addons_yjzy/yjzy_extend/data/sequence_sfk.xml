@@ -66,6 +66,20 @@
         <field name="padding">8</field>
         <field name="company_id" eval="False"/>
     </record>
+    <record id="seq_sfk_type_yingshourld" model="ir.sequence">
+        <field name="name">sfk.type.yingshourld</field>
+        <field name="code">sfk.type.yingshourld</field>
+        <field name="prefix">AS</field>
+        <field name="padding">8</field>
+        <field name="company_id" eval="False"/>
+    </record>
+     <record id="seq_sfk_type_yingfurld" model="ir.sequence">
+        <field name="name">sfk.type.yingfurld</field>
+        <field name="code">sfk.type.yingfurld</field>
+        <field name="prefix">AF</field>
+        <field name="padding">8</field>
+        <field name="company_id" eval="False"/>
+    </record>
 
 
     <record id="seq_account_payment_jiehui" model="ir.sequence">

@@ -13,6 +13,7 @@ class wizard_reconcile_invoice(models.TransientModel):
     purchase_gongsi_id = fields.Many2one('gongsi', '内部采购公司')
     invoice_ids = fields.Many2many('account.invoice', 'ref_rec_inv', 'inv_id', 'tb_id', u'Invoice')
     order_id = fields.Many2one('account.reconcile.order',u'核销单')
+    yjzy_advance_payment_id = fields.Many2one('account.payment',u'预收认领单')
 
 
     def apply(self):
@@ -32,7 +33,7 @@ class wizard_reconcile_invoice(models.TransientModel):
         line_obj = self.env['account.reconcile.order.line']
         line_no_obj = self.env['account.reconcile.order.line.no']
         ctx = self.env.context
-        order_id = ctx.get('active_id')
+        order_id = self.order_id #ctx.get('active_id')
         self.order_id.line_ids = None
 
         # if self.no_sopo:
@@ -49,14 +50,14 @@ class wizard_reconcile_invoice(models.TransientModel):
             po_invlines = self._prepare_purchase_invoice_line(invoice)
             if not po_invlines:
                 line_id =line_obj.create({
-                    'order_id': order_id,
+                    'order_id': order_id.id,
                     'invoice_id': invoice.id,
                     'amount_invoice_so': invoice.amount_total,
                 })
             else:
                 for po, invlines in po_invlines.items():
                     line_id=line_obj.create({
-                        'order_id': order_id,
+                        'order_id': order_id.id,
                         'po_id': po.id,
                         'invoice_id': invoice.id,
                         'amount_invoice_so': sum([i.price_subtotal for i in invlines]),
@@ -87,7 +88,7 @@ class wizard_reconcile_invoice(models.TransientModel):
 
         for kk, data in list(so_po_dic.items()):
             line_no = line_no_obj.create({
-                'order_id': order_id,
+                'order_id': order_id.id,
                 'invoice_id': data['invoice_id'],
                 'amount_invoice_so': data['amount_invoice_so'],
                 'advance_residual': data['advance_residual'],
@@ -120,7 +121,8 @@ class wizard_reconcile_invoice(models.TransientModel):
     def make_lines_so(self):
         self.ensure_one()
         ctx = self.env.context
-        order_id = ctx.get('active_id')
+        order_id = self.order_id#ctx.get('active_id')
+        print('order_id',order_id)
         line_obj = self.env['account.reconcile.order.line']
         line_no_obj = self.env['account.reconcile.order.line.no']
 
@@ -135,27 +137,30 @@ class wizard_reconcile_invoice(models.TransientModel):
         # else:
         line_ids = line_obj.browse([])
         line_id = None
+
         for invoice in self.invoice_ids:
             so_invlines = self._prepare_sale_invoice_line(invoice)
             if not so_invlines:
                 line_id=line_obj.create({
-                    'order_id': order_id,
+                    'order_id': order_id.id,
                     'invoice_id': invoice.id,
                     'amount_invoice_so': invoice.amount_total,
                 })
             else:
                 for so, invlines in so_invlines.items():
                   line_id = line_obj.create({
-                        'order_id': order_id,
+                        'order_id': order_id.id,
                         'so_id': so.id,
                         'invoice_id': invoice.id,
                         'amount_invoice_so': sum([i.price_subtotal for i in invlines]),
+
                     })
             line_ids |= line_id
         self.order_id.invoice_ids = self.invoice_ids
         so_po_dic = {}
         print('line_obj', line_ids)
         self.order_id.line_no_ids = None
+        yjzy_advance_payment_id = self.yjzy_advance_payment_id
         for i in line_ids:
             invoice = i.invoice_id
             amount_invoice_so = i.amount_invoice_so
@@ -172,14 +177,17 @@ class wizard_reconcile_invoice(models.TransientModel):
                 so_po_dic[k] = {
                                 'invoice_id':invoice.id,
                                 'amount_invoice_so': amount_invoice_so,
-                                'advance_residual2': advance_residual2,}
+                                'advance_residual2': advance_residual2,
+                                # 'yjzy_payment_id': yjzy_advance_payment_id.id
+                }
 
         for kk, data in list(so_po_dic.items()):
             line_no = line_no_obj.create({
-                'order_id': order_id,
+                'order_id': order_id.id,
                 'invoice_id': data['invoice_id'],
                 'amount_invoice_so': data['amount_invoice_so'],
                 'advance_residual2': data['advance_residual2'],
+                'yjzy_payment_id': yjzy_advance_payment_id.id
             })
 
     # def apply(self):

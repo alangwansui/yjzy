@@ -9,6 +9,8 @@
                 <form string="创建发运单">
                     <group>
                         <field name="partner_id" groups="base.group_system"/>
+                        <field name="yjzy_advance_payment_id"/>
+                        <field name="order_id"/>
                     </group>
 
                     <group>

@@ -123,6 +123,12 @@
         <field name="model">account.payment</field>
         <field name="arch" type="xml">
             <form string="日常收款单">
+                 <header groups="base.group_system">
+                   <button name="action_submit" class="oe_highlight"  string="提交" type="object" />
+                     <button name="action_cashier_post" class="oe_highlight"  string="出纳确认" type="object" />
+                     <button name="action_cashier_refuse" class="oe_highlight" string="出纳拒绝" type="object"/>
+
+                </header>
                 <header groups="base.group_system">
                     <button name="compute_balance" class="oe_highlight"  string="计算余额" type="object" groups="base.group_system"/>
                     <button name="post" class="oe_highlight" states="draft" string="Confirm" type="object" groups="base.group_system"/>
@@ -133,16 +139,18 @@
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
-                        <button class="oe_stat_button" name="open_ysrl"  type="object" icon="fa-pencil-square-o" string="预收认领">
+                        <button class="oe_stat_button" name="open_ysrl"  type="object" icon="fa-pencil-square-o" string="预收认领"
+                                attrs="{'invisible':[('state','not in',['posted','reconciled'])]}">
                             <field name="count_ysrld" widget="statinfo" nolabel="1"/>
                         </button>
-                        <button class="oe_stat_button" name="open_yshx" type="object" icon="fa-pencil-square-o" string="应收认领">
+                        <button class="oe_stat_button" name="open_yshx" type="object" icon="fa-pencil-square-o" string="应收认领"
+                        attrs="{'invisible':[('state','not in',['posted','reconciled'])]}">
                             <field name="count_yshx" widget="statinfo" nolabel="1" />
                         </button>
                         <!--button class="oe_stat_button" name="open_putongfukuanrenling" type="object" icon="fa-pencil-square-o" string="普通付款认领单">
                             <field name="count_ptskrl" widget="statinfo" nolabel="1" />
                         </button-->
-                        <button class="oe_stat_button" name="open_fybg"  type="object" icon="fa-pencil-square-o" string="其他收入">
+                        <button class="oe_stat_button" name="open_fybg_qtsr"  type="object" icon="fa-pencil-square-o" string="其他收入">
                             <field name="count_fybg" widget="statinfo" nolabel="1"/>
                         </button>
                         <button class="oe_stat_button" name="button_journal_entries"
@@ -169,14 +177,14 @@
                     <group>
                         <group>
 
-                             <field name="journal_id" string="收款账户" widget="selection" domain="[('type','in',['bank','cash'])]" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+
                             <label for="amount"/>
                             <div name="amount_div" class="o_row" string="收款金额">
                                 <field name="amount" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                                 <field name="currency_id" options="{'no_create': True, 'no_open': True}" groups="base.group_multi_currency"
                                        attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                             </div>
-
+                           <field name="journal_id" string="收款账户" widget="selection" domain="[('type','in',['bank','cash'])]" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                             <field name="destination_journal_id" widget="selection"
                                    attrs="{'required': [('payment_type', '=', 'transfer')], 'invisible': [('payment_type', '!=', 'transfer')], 'readonly': [('state', '!=', 'draft')]}"/>
                             <field name="hide_payment_method" invisible="1"/>

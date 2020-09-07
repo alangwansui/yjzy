@@ -9,10 +9,12 @@
             <tree string="预收认领单" decoration-info="state == 'draft'"
                   decoration-muted="state in ['reconciled', 'cancelled']" edit="false">
                 <field name="name"/>
+                <field name="yjzy_payment_id" string="收款单" context="{'bank_amount':1}"/>
                 <field name="payment_date" string="认领日期"/>
                 <field name="partner_id"/>
                 <field name="so_id" string="销售合同"/>
-                <field name="amount" string="认领金额"/>
+                <field name="amount" string="收款预收金额"/>
+                <field name="advance_balance_total" string="未被认领金额"/>
                 <field name="fault_comments"/>
                 <field name="state"/>
             </tree>
@@ -89,11 +91,14 @@
         <field name="model">account.payment</field>
         <field name="arch" type="xml">
             <form string="预收认领单">
+
                 <header>
                     <field name="state" widget="statusbar" statusbar_visible="draft,posted,reconciled,cancelled"/>
                     <field name="is_editable" widget="boolean_toggle" groups="sales_team.group_manager"/>
                 </header>
                 <sheet>
+
+
                     <field name="id" invisible="1"/>
                     <div class="oe_title">
                         <h1>
@@ -177,7 +182,13 @@
         <field name="model">account.payment</field>
         <field name="arch" type="xml">
             <form string="预收认领单">
-                <header>
+                 <header groups="base.group_system">
+                     <button name="action_submit" class="oe_highlight"  string="提交" type="object" />
+                     <button name="action_account_post" class="oe_highlight"  string="财务确认" type="object" />
+                     <button name="action_account_refuse" class="oe_highlight" string="财务拒绝" type="object"/>
+
+                </header>
+                <header groups="base.group_system">
                     <button name="post" class="oe_highlight" states="draft" string="Confirm" type="object"
                             groups="base.group_system"/>
                     <button name="action_draft" class="oe_highlight" states="cancelled" string="Set To Draft"
@@ -186,6 +197,7 @@
                             string="Cancel" type="object" groups="base.group_system"/>
                     <button name="open_reconcile_account_move_line" class="oe_highlight" string="打开核销分录" type="object"
                             groups="base.group_system"/>
+                    <button name="create_yshxd_ysrl" string="创建应收认领" type="object"/>
                     <button name="compute_advance_balance_total" type="object" string="更新预收认领" groups="base.group_system"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,posted,reconciled,cancelled"/>
                     <field name="is_editable" widget="boolean_toggle" groups="sales_team.group_manager"/>
@@ -193,16 +205,23 @@
                 <sheet>
                     <div class="oe_button_box" name="button_box">
 
+
+                        <button name="open_ysrld_yshx" type="object" class="oe_stat_button"
+                                icon="fa-bars" string="应收认领单" attrs="{'invisible':[('state','not in',['posted','reconciled'])]}">
+                        <field name="advance_reconcile_order_count_all" />
+
+                        </button>
+
                         <button class="oe_stat_button" name="button_journal_entries"
                                 string="Journal Items" type="object"
-                                groups="account.group_account_user"
+                                groups="base.group_system"
                                 attrs="{'invisible':[('move_line_ids','=',[])]}" icon="fa-bars"/>
                         <field name="move_line_ids" invisible="1"/>
                         <button class="oe_stat_button" name="button_invoices"
                                 string="Invoices" type="object"
                                 attrs="{'invisible':[('has_invoices','=',False)]}" icon="fa-bars"/>
                         <button class="oe_stat_button" name="open_payment_matching_screen"
-                                string="Payment Matching" type="object"
+                                string="Payment Matching" type="object" groups="base.group_system"
                                 attrs="{'invisible':[('move_reconciled','=',True)]}" icon="fa-university"/>
                         <field name="has_invoices" invisible="1"/>
                         <field name="move_reconciled" invisible="1"/>
@@ -276,11 +295,13 @@
                                </tree>
                            </field>
                        </page>
+
                        <page groups="base.group_system">
                            <group>
                                <field name="advance_reconcile_order_count"/>
                                <field name="gongsi_id" string="公司主体" options="{'no_create':True,'no_open': True}"/>
                            </group>
+                            <field name="advance_reconcile_order_ids"/>
                        </page>
                    </notebook>
                 </sheet>

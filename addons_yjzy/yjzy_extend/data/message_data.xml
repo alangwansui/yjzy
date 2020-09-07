@@ -49,5 +49,11 @@
                 <li>原因 : <t t-esc="reason"/></li>
             </ul>
         </template>
+        <template id="payment_template_refuse_reason">
+            <p>您的审批申请 <t t-esc="name"/> 已拒绝</p>
+            <ul class="o_timeline_tracking_value_list">
+                <li>原因 : <t t-esc="reason"/></li>
+            </ul>
+        </template>
     </data>
 </odoo>

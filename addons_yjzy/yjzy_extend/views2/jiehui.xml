@@ -18,6 +18,12 @@
         <field name="model">account.payment</field>
         <field name="arch" type="xml">
             <form string="结汇">
+                <header groups="base.group_system">
+                   <button name="action_submit" class="oe_highlight"  string="提交" type="object" />
+                     <button name="action_cashier_post" class="oe_highlight"  string="出纳确认" type="object" />
+                     <button name="action_cashier_refuse" class="oe_highlight" string="出纳拒绝" type="object"/>
+
+                </header>
                 <header>
                     <button name="post" class="oe_highlight" states="draft" string="Confirm" type="object"/>
                     <button name="action_draft" class="oe_highlight" states="cancelled" string="Set To Draft" type="object"/>

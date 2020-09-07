@@ -154,7 +154,7 @@
                                 <field name="purchase_gongsi_id" groups="base.group_system" options="{'no_open':1}"
                                        string="采购主体"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
-
+     <field name="sale_type"/>
 
                                 <field name="hs_fill" groups="base.group_system"/>
                             </group>
@@ -188,7 +188,7 @@
                                         <field name="po_id" string="采购合同"
                                                attrs="{'required':[('purchase_hs_id','=',False)],'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
 
-                                        <field name="amount" sum="小计" string="销售额" attrs="{'readonly':1}"/>
+                                        <field name="amount" sum="小计" string="销售额" attrs="{'readonly':[('parent.sale_type','!=','proxy')]}"/>
 
                                         <field name="price2" string="单价" readonly="1"
                                                attrs="{'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
