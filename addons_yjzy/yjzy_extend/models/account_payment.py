@@ -280,8 +280,8 @@ class account_payment(models.Model):
     sheet_id = fields.Many2one('hr.expense.sheet', u'费用报告', related='expense_id.sheet_id', store=True)
     bank_id = fields.Many2one('res.partner.bank', u'银行账号')
 
-    sale_uid = fields.Many2one('res.users', u'业务员')
-    assistant_uid = fields.Many2one('res.users', u'助理')
+    sale_uid = fields.Many2one('res.users', u'业务员', default=lambda self: self.env.user.assistant_id.id)
+    assistant_uid = fields.Many2one('res.users', u'助理',default=lambda self: self.env.user.assistant_id.id)
     fk_journal_id = fields.Many2one('account.journal', u'付款日记账', domain=[('type', 'in', ['cash', 'bank'])])
     include_tax = fields.Boolean(u'是否含税')
 
