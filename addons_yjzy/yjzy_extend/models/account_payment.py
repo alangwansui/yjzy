@@ -191,17 +191,20 @@ class account_payment(models.Model):
                 name = '%s[%s]' % (one.yjzy_payment_id.journal_id.name, str(one.advance_balance_total))
             elif ctx.get('advance_so_amount'):
                 if not one.yjzy_payment_id:
-                    name = '%s[%s]' % (one.one.journal_id.name, str(one.balance))
+                    name = '%s[%s]' % (one.journal_id.name, str(one.balance))
                 else:
                     if one.yjzy_payment_id.so_id:
                         name = '%s[%s]' % (one.yjzy_payment_id.so_id, str(one.advance_balance_total))
                     else:
                         name= '%s[%s]' % ('无销售合同', str(one.advance_balance_total))
             elif ctx.get('advance_po_amount'):
-                if one.yjzy_payment_id.po_id:
-                    name = '%s[%s]' % (one.yjzy_payment_id.po_id, str(one.advance_balance_total))
+                if not one.yjzy_payment_id:
+                    name = '%s[%s]' % (one.journal_id.name, str(one.balance))
                 else:
-                    name= '%s[%s]' % ('无采购合同', str(one.advance_balance_total))
+                    if one.yjzy_payment_id.po_id:
+                        name = '%s[%s]' % (one.yjzy_payment_id.po_id, str(one.advance_balance_total))
+                    else:
+                        name= '%s[%s]' % ('无采购合同', str(one.advance_balance_total))
             else:
                 name = '%s[%s]' % (one.name, str(one.balance))
             one.display_name = name
