@@ -188,7 +188,7 @@
                                 <field name="invoice_residual" string="应收账单余额"/>
                                 <field name="payment_currency_id" invisible="1"/>
                                  <field name="amount_advance_org" attrs="{'column_invisible':[('parent.operation_wizard','not in',['25'])]}"/>
-                                 <field name="yjzy_payment_id" domain="[('sfk_type','=','ysrld'),('partner.id','=',parent.partner_id)]" attrs="{'column_invisible':[('parent.operation_wizard','not in',['25'])]}" context="{'form_view_ref': 'yjzy_extend.view_rcskd_form','advance_bank_amount':1}"/>
+                                 <field name="yjzy_payment_id" attrs="{'column_invisible':[('parent.operation_wizard','not in',['25'])]}" context="{'form_view_ref': 'yjzy_extend.view_rcskd_form','advance_bank_amount':1}"/>
                                 <field name="amount_payment_org" string="收款认领金额" attrs="{'column_invisible':[('parent.operation_wizard','not in',['10'])]}"/>
                                 <field name="amount_bank_org" attrs="{'column_invisible':[('parent.operation_wizard','not in',['40'])]}"/>
                                 <field name="amount_diff_org" attrs="{'column_invisible':[('parent.operation_wizard','not in',['40'])]}"/>
