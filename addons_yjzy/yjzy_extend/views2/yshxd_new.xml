@@ -84,7 +84,7 @@
                 <sheet>
                     <group col="3">
                         <group>
-                            <field name="operation_wizard"/>
+
                             <field name="name" attrs="{'invisible':1}"/>
                             <field name="payment_type"  attrs="{'invisible':1}"/>
                             <field name="partner_type"  attrs="{'invisible':1}"/>
@@ -103,6 +103,8 @@
                             <field name="yjzy_payment_currency_id" string="货币" attrs="{'invisible':[('operation_wizard','not in',['10','30','40'])]}"/>
                             <field name="yjzy_payment_balance" string="收款单余额" attrs="{'invisible':[('operation_wizard','not in',['10','30'])]}"/>
                             <field name="manual_payment_currency_id" string="预收币种" attrs="{'invisible':1}"/>
+                            <field name="yjzy_advance_payment_id" attrs="{'invisible':[('operation_wizard','not in',['25'])]}" context="{'form_view_ref': 'yjzy_extend.view_ysrld_form','advance_so_amount':1}"/>
+
                         </group>
                           <group attrs="{'invisible':[('operation_wizard','=',False)]}">
                              <field name="company_id" attrs="{'invisible':1}"/>
@@ -110,7 +112,6 @@
                             <field name="gongsi_id" string="公司主体" attrs="{'invisible':[('operation_wizard','=',False)]}"/>
                             <field name="exchange_account_id"  invisible="1" required="1"/>
                             <field name="date" attrs="{'invisible':[('operation_wizard','=',False)]}"/>
-                              <field name="yjzy_advance_payment_id" context="{'form_view_ref': 'yjzy_extend.view_rcskd_form','advance_bank_amount':1}"/>
                         </group>
                         <group attrs="{'invisible':[('operation_wizard','=',False)]}">
                             <field name="sfk_type" attrs="{'invisible':1}"/>
@@ -219,6 +220,7 @@
                                 <field name="payment_type"/>
                                 <field name="partner_type"/>
                                 <field name="yjzy_advance_payment_id"/>
+                                <field name="operation_wizard"/>
                         </group>
                             <field name="reconcile_payment_ids"/>
                         </page>

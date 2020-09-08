@@ -1172,6 +1172,7 @@ class account_reconcile_order(models.Model):
                 line.amount_diff_org = amount_invoice_so_proportion * amount_diff_org
                 if yjzy_payment_id:
                     if yjzy_payment_id.so_id:
+                        print('line.so_id',line.so_id,yjzy_payment_id.so_id)
                         if line.so_id == yjzy_payment_id.so_id:
                             line.yjzy_payment_id = yjzy_payment_id
                             line.amount_advance_org = amount_advance_org

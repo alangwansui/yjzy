@@ -149,8 +149,7 @@
                                    attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))], 'invisible': [('payment_type', 'not in', ('inbound', 'outbound'))], 'readonly': 1 }"/>
                             <field name="be_renling" invisible="1"/>
                             <field name="advance_ok" label="是否预收" string="是预收" invisible="1"/>
-                            <field name="advance_account_id" label="预收科目" string="预收科目" options="{'no_create':True}"
-                                   invisible="1"/>
+
 
                             <field name="communication"
                                    attrs="{'invisible': [('state', '!=', 'draft'), ('communication', '=', False)], 'readonly': [('state', '!=', 'draft')]}"/>
@@ -163,6 +162,8 @@
                         </page>
                         <page groups="base.group_system">
                             <group>
+                                <field name="advance_account_id" label="预收科目" string="预收科目" options="{'no_create':True}"
+                                   invisible="0"/>
                                 <field name="gongsi_id" string="公司主体" options="{'no_create':True,'no_open': True}" />
                             </group>
                         </page>
