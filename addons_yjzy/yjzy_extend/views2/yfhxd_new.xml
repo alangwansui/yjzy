@@ -496,7 +496,7 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('account_yfhxd_form_view_new')})]"/>
             </record>
     <menuitem id="menu_yfhxd_new_payment_old_done" name="已完成" sequence="40"
-              parent="menu_yfhxd_new"
+              parent="menu_yjzy_advance_root"
               action="action_yfhxd_new_payment_old_done"/>
 
 </odoo>
