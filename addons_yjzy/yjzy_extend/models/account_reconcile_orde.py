@@ -170,25 +170,24 @@ class account_reconcile_order(models.Model):
         self.write({'approve_uid': approve_uid.id,
                     'approve_date':approve_date})
 
-    def _compute_supplier_advance_payment_ids_char(self):
-        for one in self:
-            supplier_advance_payment_ids_char = ''
-            supplier_advance_payment_ids = self.env['account.payment'].search([('partner_id','=',one.partner_id.id),('sfk_type','=','yfsqd'),('state', 'in', ['posted', 'reconciled'])])
-            for o in supplier_advance_payment_ids:
-                supplier_advance_payment_ids_char += '%s %s\n' % (o.po_id.contract_code,o.amount)
-            self.supplier_advance_payment_ids_char = supplier_advance_payment_ids_char
+    # def _compute_supplier_advance_payment_ids_char(self):
+    #     for one in self:
+    #         supplier_advance_payment_ids_char = ''
+    #         supplier_advance_payment_ids = self.env['account.payment'].search([('partner_id','=',one.partner_id.id),('sfk_type','=','yfsqd'),('state', 'in', ['posted', 'reconciled'])])
+    #         for o in supplier_advance_payment_ids:
+    #             supplier_advance_payment_ids_char += '%s %s\n' % (o.po_id.contract_code,o.amount)
+    #         self.supplier_advance_payment_ids_char = supplier_advance_payment_ids_char
 
     def _compute_supplier_advance_payment_ids(self):
-        supplier_advance_payment_ids = self.env['account.payment'].search(
-            [('partner_id', '=', self.partner_id.id), ('sfk_type', '=', 'yfsqd'),
-             ('state', 'in', ['posted', 'reconciled'])])
-        print('supplier_advance_payment_ids',supplier_advance_payment_ids)
         for one in self:
+            supplier_advance_payment_ids = self.env['account.payment'].search(
+                [('partner_id', '=', one.partner_id.id), ('sfk_type', '=', 'yfsqd'),
+                 ('state', 'in', ['posted', 'reconciled'])])
             one.supplier_advance_payment_ids = supplier_advance_payment_ids
             print('one.supplier_advance_payment_ids',one.supplier_advance_payment_ids)
         # self.write({'supplier_advance_payment_ids': [line.id for line in supplier_advance_payment_ids]})
     #908
-    supplier_advance_payment_ids_char = fields.Char(u'相关预付',compute=_compute_supplier_advance_payment_ids_char)
+    # supplier_advance_payment_ids_char = fields.Char(u'相关预付',compute=_compute_supplier_advance_payment_ids_char)
     supplier_advance_payment_ids = fields.Many2many('account.payment',u'相关预付', compute=_compute_supplier_advance_payment_ids)
     #903
     reconcile_payment_ids = fields.One2many('account.payment','account_reconcile_order_id',u'认领单')
