@@ -243,9 +243,10 @@
                                  <field name="approve_date"/>
                                  <field name="operation_wizard"/>
                         </group>
+                            <group>
                             <field name="reconcile_payment_ids"/>
-                        </page>
-                        <group>
+                            </group>
+                            <group>
                              <field name="invoice_ids" domain="[('partner_id','=', partner_id),('state', '=', 'open')]"
                                    options='{"no_create": True}'
                                    widget="many2many" context="{'tree_view_ref':'account.invoice_tree'}">
@@ -263,6 +264,8 @@
                          <group>
                                 <field name="move_ids"/>
                             </group>
+                        </page>
+
                     </notebook>
                 </sheet>
                 <div class="oe_chatter">
