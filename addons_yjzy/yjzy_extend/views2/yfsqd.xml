@@ -48,11 +48,20 @@
         <field name="arch" type="xml">
             <form string="预付申请单">
                  <header groups="base.group_system">
-                     <button name="action_submit" class="oe_highlight"  string="提交" type="object" />
-                     <button name="action_account_post" class="oe_highlight"  string="财务确认" type="object" />
-                     <button name="action_manager_post" class="oe_highlight" string="总经理审批" type="object"/>
-                     <button name="action_account_refuse" class="oe_highlight" string="财务拒绝" type="object"/>
-                     <button name="action_manager_refuse" class="oe_highlight" string="总经理拒绝" type="object"/>
+                     <button name="action_submit" class="oe_highlight"  string="提交" type="object" attrs="{'invisible': [('state_1','not in',['10_draft'])]}"/>
+                     <button name="action_account_post" class="oe_highlight"  string="财务确认" type="object"
+                             attrs="{'invisible': [('state_1','not in',['20_account_submit'])]}"/>
+                     <button name="action_manager_post" class="oe_highlight" string="总经理审批" type="object"
+                             attrs="{'invisible': [('state_1','not in',['30_manager_approve'])]}"/>
+                     <button name="action_account_refuse" class="oe_highlight" string="财务拒绝" type="object"
+                             attrs="{'invisible': [('state_1','not in',['20_account_submit'])]}"
+                     />
+                     <button name="action_manager_refuse" class="oe_highlight" string="总经理拒绝" type="object"
+                            attrs="{'invisible': [('state_1','not in',['30_manager_approve'])]}"/>
+                     <button name="action_draft" class="oe_highlight" string="重置草稿" type="object"
+                              attrs="{'invisible':[('state_1','not in',['80_refused'])]}"/>
+                      <field name="state_1" widget="statusbar" statusbar_visible=" "/>
+
 
                 </header>
                 <header>
@@ -64,7 +73,7 @@
                     <field name="state" widget="statusbar" statusbar_visible="draft,posted,reconciled,cancelled" />
 
                     <button name="open_reconcile_account_move_line" class="oe_highlight" string="打开核销分录" type="object"/>
-                    <field name="is_editable"  widget="boolean_toggle"/>
+
 
                 </header>
                 <sheet>
@@ -87,6 +96,7 @@
                                 attrs="{'invisible':[('move_reconciled','=',True)]}" icon="fa-university"/>
                         <field name="has_invoices" invisible="1"/>
                         <field name="move_reconciled" invisible="1"/>
+                        <field name="is_editable"  widget="boolean_toggle"/>
                     </div>
                     <field name="id" invisible="1"/>
                     <div class="oe_title">

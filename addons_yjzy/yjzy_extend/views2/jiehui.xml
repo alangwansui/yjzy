@@ -19,9 +19,15 @@
         <field name="arch" type="xml">
             <form string="结汇">
                 <header groups="base.group_system">
-                   <button name="action_submit" class="oe_highlight"  string="提交" type="object" />
-                     <button name="action_cashier_post" class="oe_highlight"  string="出纳确认" type="object" />
-                     <button name="action_cashier_refuse" class="oe_highlight" string="出纳拒绝" type="object"/>
+                   <button name="action_submit" class="oe_highlight"  string="提交" type="object"
+                           attrs="{'invisible':[('state_1','not in',['10_draft'])]}"/>
+                   <button name="action_cashier_post" class="oe_highlight"  string="出纳确认" type="object"
+                           attrs="{'invisible':[('state_1','not in',['25_cashier_submit'])]}"/>
+                   <button name="action_cashier_refuse" class="oe_highlight" string="出纳拒绝" type="object"
+                   attrs="{'invisible':[('state_1','not in',['25_cashier_submit'])]}"/>
+                    <button name="action_draft" class="oe_highlight" string="重置草稿" type="object"
+                            attrs="{'invisible':[('state_1','not in',['80_refused'])]}"/>
+                     <field name="state_1" widget="statusbar" statusbar_visible=" "/>
 
                 </header>
                 <header>
@@ -29,7 +35,7 @@
                     <button name="action_draft" class="oe_highlight" states="cancelled" string="Set To Draft" type="object"/>
                     <button name="cancel" attrs="{'invisible': [('state', 'in', ['draft','cancelled'])]}" string="Cancel" type="object" groups="base.group_system"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,posted,reconciled,cancelled"/>
-                    <field name="is_editable"  widget="boolean_toggle" groups="sales_team.group_manager"/>
+
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
@@ -47,6 +53,7 @@
                                 attrs="{'invisible':[('move_reconciled','=',True)]}" icon="fa-university"/>
                         <field name="has_invoices" invisible="1"/>
                         <field name="move_reconciled" invisible="1"/>
+                        <field name="is_editable"  widget="boolean_toggle" groups="sales_team.group_manager"/>
                     </div>
                     <field name="id" invisible="1"/>
                     <div class="oe_title">

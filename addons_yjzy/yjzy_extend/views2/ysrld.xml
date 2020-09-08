@@ -184,9 +184,15 @@
         <field name="arch" type="xml">
             <form string="预收认领单">
                  <header groups="base.group_system">
-                     <button name="action_submit" class="oe_highlight"  string="提交" type="object" />
-                     <button name="action_account_post" class="oe_highlight"  string="财务确认" type="object" />
-                     <button name="action_account_refuse" class="oe_highlight" string="财务拒绝" type="object"/>
+                     <button name="action_submit" class="oe_highlight"  string="提交" type="object"
+                             attrs="{'invisible':[('state_1','not in',['10_draft'])]}"/>
+                     <button name="action_account_post" class="oe_highlight"  string="财务确认" type="object"
+                     attrs="{'invisible':[('state_1','not in',['20_account_submit'])]}"/>
+                     <button name="action_account_refuse" class="oe_highlight" string="财务拒绝" type="object"
+                     attrs="{'invisible':[('state_1','not in',['20_account_submit'])]}"/>
+                      <button name="action_draft" class="oe_highlight" string="重置草稿" type="object"
+                              attrs="{'invisible':[('state_1','not in',['80_refused'])]}"/>
+                      <field name="state_1" widget="statusbar" statusbar_visible=" "/>
 
                 </header>
                 <header groups="base.group_system">
@@ -201,7 +207,7 @@
                     <button name="create_yshxd_ysrl" string="创建应收认领" type="object"/>
                     <button name="compute_advance_balance_total" type="object" string="更新预收认领" groups="base.group_system"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,posted,reconciled,cancelled"/>
-                    <field name="is_editable" widget="boolean_toggle" groups="sales_team.group_manager"/>
+
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
@@ -226,6 +232,7 @@
                                 attrs="{'invisible':[('move_reconciled','=',True)]}" icon="fa-university"/>
                         <field name="has_invoices" invisible="1"/>
                         <field name="move_reconciled" invisible="1"/>
+                        <field name="is_editable"  widget="boolean_toggle" groups="sales_team.group_manager"/>
                     </div>
                     <field name="id" invisible="1"/>
                     <div class="oe_title">
