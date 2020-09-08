@@ -183,7 +183,9 @@ class account_reconcile_order(models.Model):
             [('partner_id', '=', self.partner_id.id), ('sfk_type', '=', 'yfsqd'),
              ('state', 'in', ['posted', 'reconciled'])])
         print('supplier_advance_payment_ids',supplier_advance_payment_ids)
-        self.supplier_advance_payment_ids = supplier_advance_payment_ids
+        for one in self:
+            one.supplier_advance_payment_ids = supplier_advance_payment_ids
+            print('one.supplier_advance_payment_ids',one.supplier_advance_payment_ids)
         # self.write({'supplier_advance_payment_ids': [line.id for line in supplier_advance_payment_ids]})
     #908
     supplier_advance_payment_ids_char = fields.Char(u'相关预付',compute=_compute_supplier_advance_payment_ids_char)
