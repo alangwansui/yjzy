@@ -1185,7 +1185,7 @@ class account_reconcile_order(models.Model):
                 if yjzy_payment_id.so_id:
                     a=0
                     for line in line_ids:
-                        if yjzy_payment_id.so_id == line.so_id:
+                        if line.so_id == yjzy_payment_id.so_id:
                             line.yjzy_payment_id = yjzy_payment_id
                             line.amount_advance_org = amount_advance_org
                             a = 1
