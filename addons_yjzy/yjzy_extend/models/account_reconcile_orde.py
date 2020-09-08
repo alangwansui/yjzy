@@ -467,7 +467,10 @@ class account_reconcile_order(models.Model):
 
     @api.onchange('line_no_ids')
     def _onchange_line_no_ids(self):
-        self.update_line_amount()
+        if self.operation_wizard in ['10','40']:
+            self.update_line_amount()
+        if self.operation_wizard in ['25']:
+            self.update_line_advance_amount()
 
     def open_wizard_reconcile_invoice(self):
         self.ensure_one()
@@ -1159,38 +1162,61 @@ class account_reconcile_order(models.Model):
     def update_line_amount(self):
         for x in self.line_no_ids:
             invoice = x.invoice_id
-            amount_advance_org = x.amount_advance_org
+
             amount_payment_org = x.amount_payment_org
             amount_bank_org = x.amount_bank_org
             amount_diff_org = x.amount_diff_org
-            yjzy_payment_id = x.yjzy_payment_id
+
             line_ids = self.line_ids.filtered(lambda x: x.invoice_id == invoice)
             for line in line_ids:
                 amount_invoice_so_proportion = line.amount_invoice_so_proportion
                 line.amount_payment_org = amount_invoice_so_proportion * amount_payment_org
                 line.amount_bank_org = amount_invoice_so_proportion * amount_bank_org
                 line.amount_diff_org = amount_invoice_so_proportion * amount_diff_org
-                if yjzy_payment_id:
-                    if yjzy_payment_id.so_id:
-                        print('line.so_id',line.so_id,yjzy_payment_id.so_id)
-                        if line.so_id == yjzy_payment_id.so_id:
+
+
+    def update_line_advance_amount(self):
+        for one in self.line_no_ids:
+            invoice = one.invoice_id
+            yjzy_payment_id = one.yjzy_payment_id
+            amount_advance_org = one.amount_advance_org
+            line_ids = self.line_ids.filtered(lambda x: x.invoice_id == invoice)
+            if yjzy_payment_id:
+                if yjzy_payment_id.so_id:
+                    a=0
+                    for line in line_ids:
+                        if yjzy_payment_id.so_id == line.so_id:
                             line.yjzy_payment_id = yjzy_payment_id
                             line.amount_advance_org = amount_advance_org
-                        else:
-                            raise Warning('预收单的订单和应收明细订单不匹配！')
-                    else:
-                        if amount_advance_org !=0:
-                            # line.amount_advance_org = amount_advance_org * amount_invoice_so_proportion
-                            line[0].amount_advance_org = amount_advance_org
-                            line[0].yjzy_payment_id = yjzy_payment_id #填入后，看是否生成一张付款单
+                            a = 1
+                    if a == 0:
+                        raise Warning('预收认领单的销售合同和应收账单不匹配')
                 else:
-                    # if amount_advance_org != 0:
-                    #     raise Warning('请填写预收认领单，或者设置预收认领金额为0!') #提交的时候判断
-                    line.amount_advance_org = 0
-                    line.yjzy_payment_id = False
+                    line_ids[0].amount_advance_org = amount_advance_org
+                    line_ids[0].yjzy_payment_id = yjzy_payment_id
 
 
 
+        # amount_advance_org = x.amount_advance_org
+        # yjzy_payment_id = x.yjzy_payment_id
+        # if yjzy_payment_id:
+        #
+        #         print('line.so_id', line.so_id, yjzy_payment_id.so_id)
+        #         if line.so_id == yjzy_payment_id.so_id:
+        #             line.yjzy_payment_id = yjzy_payment_id
+        #             line.amount_advance_org = amount_advance_org
+        #         else:
+        #             raise Warning('预收单的订单和应收明细订单不匹配！')
+        #     else:
+        #         if amount_advance_org != 0:
+        #             # line.amount_advance_org = amount_advance_org * amount_invoice_so_proportion
+        #             line[0].amount_advance_org = amount_advance_org
+        #             line[0].yjzy_payment_id = yjzy_payment_id  # 填入后，看是否生成一张付款单
+        # else:
+        #     # if amount_advance_org != 0:
+        #     #     raise Warning('请填写预收认领单，或者设置预收认领金额为0!') #提交的时候判断
+        #     line.amount_advance_org = 0
+        #     line.yjzy_payment_id = False
 
 
     #akiny 828,将jinvoice_ids从o2m调整为m2m后，初始化一次
