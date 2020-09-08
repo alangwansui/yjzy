@@ -470,7 +470,7 @@
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">user.menu</field>
         <field name="view_mode">kanban</field>
-            <field name="domain">[('res_model','=','account.payment')]</field>
+            <field name="domain">[('res_model','in',['account.payment','account.reconcile.order'])]</field>
         <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('user_menu_account_kanban')}),
                          ]"/>

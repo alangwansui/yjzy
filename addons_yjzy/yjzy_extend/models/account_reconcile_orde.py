@@ -585,6 +585,8 @@ class account_reconcile_order(models.Model):
             if self.operation_wizard in ['10','30']:
                 self.create_rcfkd()
             self.create_yjzy_payment_yfrl()
+        if self.sfk_type == 'fshxd':
+            self.create_yjzy_payment_ysrl()
         self.write({'state': 'approved',
                     'approve_date': fields.date.today(),
                     'approve_uid':self.env.user.id})
