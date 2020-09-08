@@ -1766,7 +1766,7 @@
                   sequence="99"
         />
         <menuitem id="menu_sale_invoice_new" name="客户应收"
-                  parent="yjzy_extend.menu_sale_invoice_new_root"
+                  parent="yjzy_extend.menu_new_account_root"
                   sequence="5"
         />
         <menuitem id="menu_sale_invoice_draft_new" name="未确认应收账单"
@@ -1835,8 +1835,8 @@
 
 
         <menuitem id="menu_purchase_invoice_new" name="供应商应付"
-                  parent="yjzy_extend.menu_sale_invoice_new_root"
-                  sequence="5"
+                  parent="yjzy_extend.menu_new_account_root"
+                  sequence="6"
 
         />
         <menuitem id="menu_purchase_invoice_draft_new" name="未确认应付账单"
