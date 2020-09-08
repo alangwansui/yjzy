@@ -276,7 +276,7 @@
                                 <field name="move_ids"/>
                             </group>
 
-                            <field name="supplier_advance_payment_ids_char"/>
+<!--                            <field name="supplier_advance_payment_ids_char"/>-->
                         </page>
 
                     </notebook>
