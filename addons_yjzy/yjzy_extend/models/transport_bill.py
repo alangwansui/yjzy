@@ -1294,7 +1294,7 @@ class transport_bill(models.Model):
             action = wizard.create_returns()
             return_picking_ids.append(action['res_id'])
             print('=make_picking_return==', wizard, action)
-        self.write({'return4return_picking_ids': [(4, pid) for pid in return_picking_ids]})
+        self.write({'return4return_picking_ids': [(4, pid) for pid in return_picking_ids]})#参考
 
 
     def make_return4return(self):

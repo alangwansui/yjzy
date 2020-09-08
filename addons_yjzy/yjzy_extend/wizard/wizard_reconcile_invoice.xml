@@ -15,7 +15,7 @@
 
                     <group>
                         <field name="invoice_ids" nolabel="1" domain="[('partner_id','=',partner_id),('state','=','open')]"
-                               context="{'tree_view_ref':'account.invoice_new_hxd_tree'}"
+                               context="{'tree_view_ref':'yjzy_extend.invoice_new_hxd_tree'}"
                                options="{'no_create': True,'no_open':True}"/>
                     </group>
                     <footer>

@@ -123,7 +123,7 @@ class HrExpense(models.Model):
             'res_model': 'hr.expense.sheet',
             'target': 'current',
             'context': {
-                'default_expense_line_ids': [line.id for line in self],
+                'default_expense_line_ids': [line.id for line in self], #参考
                 'default_employee_id': self[0].employee_id.id,
                 'default_name': self[0].name if len(self.ids) == 1 else ''
             }

@@ -18,7 +18,7 @@
         <field name="model">account.payment</field>
         <field name="arch" type="xml">
             <form string="结汇">
-                <header>
+                <header groups="base.group_system">
                    <button name="action_submit" class="oe_highlight"  string="提交" type="object"
                            attrs="{'invisible':[('state_1','not in',['10_draft'])]}"/>
                    <button name="action_cashier_post" class="oe_highlight"  string="出纳确认" type="object"

@@ -218,13 +218,24 @@
                                 <field name="id" invisible="1"/>
                                 <field name="invoice_id" string="应付账单"/>
                                 <field name="payment_currency_id" invisible="1"/>
-                                <field name="yjzy_payment_id" string="预付单" domain="[('sfk_type','=','yfsqd'),('partner_id','=',parent.partner_id)]" attrs="{'column_invisible':[('parent.operation_wizard','not in',['25'])]}" context="{'form_view_ref': 'yjzy_extend.view_rcfkd_form','advance_po_amount':1}"/>
+                                <field name="yjzy_payment_id" string="预付单" domain="[('sfk_type','=','yfsqd'),('partner_id','=',parent.partner_id)]" attrs="{'column_invisible':[('parent.operation_wizard','not in',['25'])]}" context="{'form_view_ref': 'yjzy_extend.view_yfsqd_form','advance_po_amount':1}"/>
                                 <field name="amount_advance_org" string="认领金额" attrs="{'column_invisible':[('parent.operation_wizard','not in',['25'])]}"/>
 
                                 <field name="amount_payment_org" attrs="{'column_invisible':[('parent.operation_wizard','not in',['10'])]}"/>
                                 <field name="amount_diff_org" attrs="{'column_invisible':[('parent.operation_wizard','not in',['40'])]}"/>
                                 <field name="currency_id" invisible="1"/>
                                 <field name="amount_payment" invisible="1"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="所有预付单">
+                            <field name="supplier_advance_payment_ids" context="{'form_view_ref':'yjzy_extend.view_yfsqd_form','show_shoukuan': True, 'default_sfk_type': 'yfsqd', 'default_payment_type': 'outbound', 'default_be_renling': True, 'default_advance_ok': True, 'default_partner_type': 'supplier',}">
+                                <tree>
+                                    <field name="payment_date"/>
+                                    <field name="name" string="编号"/>
+                                    <field name="amount" string="申请金额"/>
+                                    <field name="advance_balance_total" string="未认领金额"/>
+                                    <field name="state"/>
                                 </tree>
                             </field>
                         </page>
@@ -264,6 +275,8 @@
                          <group>
                                 <field name="move_ids"/>
                             </group>
+
+                            <field name="supplier_advance_payment_ids_char"/>
                         </page>
 
                     </notebook>
