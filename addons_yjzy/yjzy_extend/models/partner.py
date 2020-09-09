@@ -72,7 +72,9 @@ class res_partner(models.Model):
             one.amount_advance_payment_reconcile = amount_advance_payment_reconcile
             one.amount_residual_advance_payment = amount_residual_advance_payment
 
-    @api.depends('advance_payment_ids', 'advance_payment_ids.amount', 'advance_payment_ids.advance_total','advance_payment_ids.advance_balance_total', 'invoice_ids', 'invoice_ids.amount_total','invoice_ids.residual_signed')
+    @api.depends('advance_payment_ids', 'advance_payment_ids.amount',
+                 'advance_payment_ids.advance_total','advance_payment_ids.advance_balance_total',
+                 'invoice_ids', 'invoice_ids.amount_total','invoice_ids.residual','invoice_ids.state','advance_payment_ids.state')
     def compute_supplier_amount_invoice_advance_payment(self):
         reconcile_ids = self.env['account.reconcile.order.line']
         for one in self:
