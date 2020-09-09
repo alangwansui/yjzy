@@ -108,9 +108,12 @@
                                 <field name="operation_wizard" invisible="1"/>
                                 <field name="partner_id" invisible="1"/>
                                 <field name="partner_shipping_id" string="TO" options="{'no_open':1}"
-                                       domain="[('parent_id','child_of', partner_id)]"
+                                       domain="[('parent_id','child_of', partner_id)]" invisible="1"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"
                                        no_create="True"/>
+                                <field name="qingguan_name" string="To"/>
+                                <field name="qingguan_address" string="Address"/>
+
 
 
                                 <!--field name="mark_ids" widget="many2many_tags"/-->
