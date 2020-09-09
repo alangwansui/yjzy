@@ -802,7 +802,8 @@ class transport_bill(models.Model):
     #akiny 未加入
 
     qingguan_name = fields.Char(u'交单抬头')
-    qingguan_address = fields.Char(u'交单地址')
+    qingguan_address = fields.Text(u'交单地址')
+    qingguan_phone = fields.Char(u'交单电话')
     po_include_tax = fields.Selection([('all', '全部含税'), ('part', '部分含税'), ('none', '不含税')],u'采购含税情况',compute=_compute_po_include_tax)  #814
     usd_pool_id = fields.Many2one('usd.pool',u'美金池状态',compute=compute_yjzy_invoice_amount_total,store=True)
     usd_pool = fields.Float('美金池', compute=compute_yjzy_invoice_amount_total, store=True)
@@ -1791,6 +1792,7 @@ class transport_bill(models.Model):
         self.partner_country_id = self.partner_shipping_id.country_id
         self.qingguan_name = self.partner_id.full_name
         self.qingguan_address = self.partner_id.address_text
+        self.qingguan_phone = self.partner_id.phone
 
         #akiny
        # self.user_id = self.partner_id.user_id
