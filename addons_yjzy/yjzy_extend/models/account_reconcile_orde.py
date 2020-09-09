@@ -1160,7 +1160,6 @@ class account_reconcile_order(models.Model):
                     'order_id': self.id,
                     'invoice_id': invoice.id,
                     'amount_invoice_so': invoice.amount_total,
-                    'invoice_currency_id':invoice.currency_id.id
                 })
             else:
                 for po, invlines in po_invlines.items():
@@ -1169,7 +1168,6 @@ class account_reconcile_order(models.Model):
                         'po_id': po.id,
                         'invoice_id': invoice.id,
                         'amount_invoice_so': sum([i.price_subtotal for i in invlines]),
-                        'invoice_currency_id': invoice.currency_id.id
                     })
     #826
         so_po_dic = {}
@@ -1222,7 +1220,6 @@ class account_reconcile_order(models.Model):
                     'order_id': self.id,
                     'invoice_id': invoice.id,
                     'amount_invoice_so': invoice.amount_total,
-                    'invoice_currency_id': invoice.currency_id.id
                 })
             else:
                 for so, invlines in so_invlines.items():
@@ -1231,7 +1228,6 @@ class account_reconcile_order(models.Model):
                         'so_id': so.id,
                         'invoice_id': invoice.id,
                         'amount_invoice_so': sum([i.price_subtotal for i in invlines]),
-                        'invoice_currency_id': invoice.currency_id.id
                     })
 
         so_po_dic = {}
@@ -1481,15 +1477,15 @@ class account_reconcile_order_line(models.Model):
     so_id = fields.Many2one('sale.order', u'销售单')
     so_contract_code = fields.Char(u'销售合同号', related='so_id.contract_code', readonly=True)
 
-    invoice_display_name =  fields.Char(u'发票显示名字' ,related='invoice_id.display_name',  store=True)#
+    invoice_display_name =  fields.Char('发票显示名字', related='invoice_id.display_name' , store=True)
 
 
     po_id = fields.Many2one('purchase.order', u'采购单')
     invoice_id = fields.Many2one('account.invoice', u'发票')
-    tb_contract_code = fields.Char('出运合同号', related='invoice_id.tb_contract_code', readonly=True)#
-    residual = fields.Monetary(string=u'发票余额', readonly=True,related='invoice_id.residual', currency_field='invoice_currency_id')#
+    tb_contract_code = fields.Char('出运合同号', related='invoice_id.tb_contract_code', readonly=True)
+    residual = fields.Monetary(related='invoice_id.residual', string=u'发票余额', readonly=True, currency_field='invoice_currency_id')
     currency_id = fields.Many2one('res.currency', u'公司货币', related='order_id.currency_id', readonly=True)
-    invoice_currency_id = fields.Many2one('res.currency', u'交易货币',related='invoice_id.currency_id', readonly=True)#
+    invoice_currency_id = fields.Many2one('res.currency', u'交易货币', related='invoice_id.currency_id', readonly=True)
     payment_currency_id = fields.Many2one('res.currency', u'收款货币', related='order_id.payment_currency_id', readonly=True)
 
     ##银行扣款和销售费用的货币随收款货币；
