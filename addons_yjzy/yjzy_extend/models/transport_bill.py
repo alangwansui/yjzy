@@ -1033,7 +1033,7 @@ class transport_bill(models.Model):
     sale_invoice_id = fields.Many2one('account.invoice', '销售发票')
     purchase_invoice_ids = fields.One2many('account.invoice', 'bill_id', '采购发票',
                                            domain=[('yjzy_type', '=', 'purchase')])
-    purchase_invoice_ids2 = fields.One2many('account.invoice', string='采购发票2', compute=compute_info)  # 顯示供應商的交單日期
+    purchase_invoice_ids2 = fields.One2many('account.invoice', string='采购发票2', compute=compute_info)  # 顯示供應商的交單日期,这个以后再斟酌一下
     all_invoice_ids = fields.One2many('account.invoice', 'bill_id', u'所有发票')
     back_tax_invoice_id = fields.Many2one('account.invoice', '退税发票')
     all_sale_invoice_ids = fields.One2many('account.invoice', 'bill_id',  u'所有销售发票',domain=[('yjzy_type', '=', 'sale')])

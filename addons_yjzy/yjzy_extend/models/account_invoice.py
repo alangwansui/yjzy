@@ -200,11 +200,15 @@ class account_invoice(models.Model):
             one.reconcile_order_line_payment_usd = yjzy_reconcile_order_line_payment_usd
             one.reconcile_order_line_advance_usd = yjzy_reconcile_order_line_advance_usd
 
-    @api.depends('tb_contract_code', 'amount_total')
+    @api.depends('bill_id.ref', 'amount_total','bill_id.ref')
     def compute_display_name(self):
         for one in self:
             # one.display_name = '%s[%s]' % (one.tb_contract_code, str(one.amount_total))
-            one.display_name = one.tb_contract_code
+            if one.bill_id:
+                one.display_name = '%s' % (one.bill_id.ref)
+            else:
+                one.display_name = '%s' % (one.number)
+            print('display_name',one.display_name)
 
     @api.model
     def _default_invoice_stage(self):
@@ -351,7 +355,7 @@ class account_invoice(models.Model):
    #13ok
     yjzy_type = fields.Selection([('sale', u'应收'), ('purchase', u'应付'), ('back_tax', u'退税')], string=u'发票类型')
     bill_id = fields.Many2one('transport.bill', u'发运单')
-    tb_contract_code = fields.Char(u'出运合同号', related='bill_id.ref', readonly=True, store=True)
+    tb_contract_code = fields.Char(u'出运合同号', related='bill_id.ref',readonly=True, store=True)
     include_tax = fields.Boolean(u'含税')
     date_ship = fields.Date(u'出运船日期')
     date_finish = fields.Date(u'交单日期')
