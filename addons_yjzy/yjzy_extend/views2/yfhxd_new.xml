@@ -46,18 +46,22 @@
         <field name="model">account.reconcile.order</field>
         <field name="arch" type="xml">
             <tree string="应付核销单" decoration-info="state == 'draft'" decoration-muted="state =='cancelled'" edit="false">
-                <field name="name"/>
+                 <field name="name"/>
                 <field name="partner_id"/>
-                <field name="date"/>
-                <field name="amount_total_org" string="应付合计"/>
-                <field name="other_feiyong_amount" string="实际申请金额"/>
-                <field name="amount_total"/>
+                <field name="date" invisible="1"/>
+                <field name="approve_uid" invisible="1"/>
+                <field name="approve_date"/>
+                <field name="amount_total_org" string="全部认领合计"/>
+                <field name="amount_payment_org" string="实际申请金额"/>
+                <field name="amount_advance_org" string="预付认领金额"/>
+                <field name="amount_total" invisible="1"/>
                 <field name="currency_id" attrs="{}" invisible="1"/>
                 <field name="state"/>
             </tree>
         </field>
     </record>
 
+<!--    审批完成的列表，按照审批时间排序-->
     <record model="ir.ui.view" id="account_yfhxd_tree_view_approve_new">
         <field name="name">account.reconcile.order.tree</field>
         <field name="model">account.reconcile.order</field>
@@ -65,12 +69,33 @@
             <tree string="应付申请单" decoration-info="state == 'draft'" default_order="approve_date desc"  decoration-muted="state =='cancelled'" edit="false">
                 <field name="name"/>
                 <field name="partner_id"/>
-                <field name="date"/>
-                <field name="approve_uid"/>
+                <field name="date" invisible="1"/>
+                <field name="approve_uid" invisible="1"/>
                 <field name="approve_date"/>
-                <field name="amount_total_org" string="应付合计"/>
-                <field name="other_feiyong_amount" string="实际申请金额"/>
-                <field name="amount_total"/>
+                <field name="amount_total_org" string="全部认领合计"/>
+                <field name="amount_payment_org" string="实际申请金额"/>
+                <field name="amount_advance_org" string="预付认领金额"/>
+                <field name="amount_total" invisible="1"/>
+                <field name="currency_id" attrs="{}" invisible="1"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+<!--    预付认领明细-->
+    <record model="ir.ui.view" id="account_yfhxd_advance_tree_view_new">
+        <field name="name">account.reconcile.order.tree</field>
+        <field name="model">account.reconcile.order</field>
+        <field name="arch" type="xml">
+            <tree string="应付核销单" decoration-info="state == 'draft'" decoration-muted="state =='cancelled'" edit="false">
+                 <field name="name"/>
+                <field name="partner_id"/>
+                <field name="date" invisible="1"/>
+                <field name="approve_uid" invisible="1"/>
+                <field name="approve_date"/>
+                <field name="amount_total_org" string="全部认领合计" invisible="1"/>
+                <field name="amount_payment_org" string="实际申请金额" invisible="1"/>
+                <field name="amount_advance_org" string="预付认领金额"/>
+                <field name="amount_total" invisible="1"/>
                 <field name="currency_id" attrs="{}" invisible="1"/>
                 <field name="state"/>
             </tree>
@@ -376,10 +401,10 @@
             'supplier', 'show_po': 1,'default_operation_wizard':'30'}
         </field>
               <field name="view_ids" eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'tree', 'view_id': ref('account_yfhxd_tree_view_approve_new')}),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('account_yfhxd_advance_tree_view_new')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('account_yfhxd_form_view_new')})]"/>
         </record>
-    <menuitem id="menu_yfhxd_new_payment_no_submit" name="未提交"
+    <menuitem id="menu_yfhxd_new_advance_no_submit" name="未提交"
               parent="menu_yfhxd_advance_new" sequence="10"
               action="action_yfhxd_new_advance_no_submit"/>
 
@@ -413,7 +438,7 @@
             'supplier', 'show_po': 1,'default_operation_wizard':'30'}
         </field>
               <field name="view_ids" eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'tree', 'view_id': ref('account_yfhxd_tree_view_approve_new')}),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('account_yfhxd_advance_tree_view_new')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('account_yfhxd_form_view_new')})]"/>
         </record>
     <menuitem id="menu_yfhxd_new_advance_submit" name="审批中"
@@ -471,7 +496,7 @@
             'supplier', 'show_po': 1,'default_operation_wizard':'30'}
         </field>
               <field name="view_ids" eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'tree', 'view_id': ref('account_yfhxd_tree_view_approve_new')}),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('account_yfhxd_advance_tree_view_new')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('account_yfhxd_form_view_new')})]"/>
             </record>
     <menuitem id="menu_yfhxd_new_advance_done" name="已完成" sequence="40"

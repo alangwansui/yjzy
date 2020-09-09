@@ -79,7 +79,7 @@ class account_reconcile_order(models.Model):
 
             lines = one.line_ids
 
-            one.amount_advance_org = sum([x.amount_advance_org for x in lines])
+            one.amount_advance_org = sum([x.amount_advance_org for x in lines]) #预收预付认领总计
             one.amount_advance = sum([x.amount_advance for x in lines])
             one.amount_bank_org = bank_currency and bank_currency.compute(sum([x.amount_bank_org for x in lines]),one.invoice_currency_id)
             one.amount_bank = sum([x.amount_bank for x in lines])
