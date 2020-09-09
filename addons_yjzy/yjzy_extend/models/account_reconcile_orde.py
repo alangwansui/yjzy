@@ -177,7 +177,7 @@ class account_reconcile_order(models.Model):
     #         for o in supplier_advance_payment_ids:
     #             supplier_advance_payment_ids_char += '%s %s\n' % (o.po_id.contract_code,o.amount)
     #         self.supplier_advance_payment_ids_char = supplier_advance_payment_ids_char
-
+    @api.depends('partner_id')
     def _compute_supplier_advance_payment_ids(self):
         for one in self:
             supplier_advance_payment_ids = self.env['account.payment'].search(
