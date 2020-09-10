@@ -269,7 +269,8 @@ class account_reconcile_order(models.Model):
     #828
     comments = fields.Text('备注')
     #827
-    operation_wizard = fields.Selection([('10', u'收付认领'),
+    operation_wizard = fields.Selection([('05',u'创建明细行'),
+                                         ('10', u'收付认领'),
                                          ('20', u'预收认领'),
                                          ('25', u'预收简易认领'),
                                          ('30', u'同时认领'),
@@ -1137,6 +1138,7 @@ class account_reconcile_order(models.Model):
             self._make_lines_so()
         if self.partner_type == 'supplier':
             self._make_lines_po()
+            self.operation_wizard = '10'
 
     def _make_lines_po(self):
         self.ensure_one()

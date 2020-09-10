@@ -540,7 +540,42 @@ class account_invoice(models.Model):
                 'default_be_renling': True,
                 'default_name': name,
                 'default_journal_id': journal.id,
-                'default_payment_account_id': bank_account.id
+                'default_payment_account_id': bank_account.id,
+                'default_operation_wizard':'5',
+            }
+        }
+
+    def submit_yfhxd(self):
+        print('invoice_ids', self.ids)
+        print('partner_id', len(self.mapped('partner_id')))
+        if len(self.mapped('partner_id')) > 1:
+            raise Warning('不同供应商')
+        sfk_type = 'yfhxd'
+        domain = [('code', '=', 'yfdrl'), ('company_id', '=', self.env.user.company_id.id)]
+        name = self.env['ir.sequence'].next_by_code('sfk.type.%s' % sfk_type)
+        journal = self.env['account.journal'].search(domain, limit=1)
+        account_obj = self.env['account.account']
+        bank_account = account_obj.search([('code', '=', '10021'), ('company_id', '=', self.env.user.company_id.id)],
+                                          limit=1)
+        form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new')
+        return {
+            'type': 'ir.actions.act_window',
+            'view_mode': 'form',
+            'res_model': 'account.reconcile.order',
+            'views': [(form_view.id, 'form')],
+            'target': 'current',
+            'context': {
+                'default_invoice_ids': self.ids,#[line.id for line in self],
+                'default_partner_id': self[0].partner_id.id,
+                'default_manual_payment_currency_id': self[0].currency_id.id,
+                'default_payment_type': 'outbound',
+                'default_partner_type': 'supplier',
+                'default_sfk_type': 'yfhxd',
+                'default_be_renling': True,
+                'default_name': name,
+                'default_journal_id': journal.id,
+                'default_payment_account_id': bank_account.id,
+                'default_operation_wizard':'05',
             }
         }
 
