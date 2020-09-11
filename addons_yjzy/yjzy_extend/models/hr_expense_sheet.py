@@ -45,6 +45,8 @@ class hr_expense_sheet(models.Model):
             total_currency_amount = one.currency_id.compute(one.total_amount, one.company_currency_id)
             one.company_currency_total_amount = total_currency_amount
 
+    #0911
+    expense_type_new = fields.Selection([('exp_to_pay',u'先申请后付款'),('pay_to_exp',u'先付款后申请')],u'费用生成类型')
     #901
     tb_po_invoice_ids = fields.One2many('tb.po.invoice','expense_sheet_id',u'费用转采购申请单')
 

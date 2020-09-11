@@ -852,7 +852,7 @@ class account_payment(models.Model):
     #打开费用报告
     def open_fybg(self):
         form_view = self.env.ref('yjzy_extend.view_hr_expense_sheet_new_form')
-        tree_view = self.env.ref('yjzy_extend.hr_expense_sheet_user_chaxun_tree')
+        tree_view = self.env.ref('yjzy_extend.hr_expense_sheet_user_can_create_tree')
         return {
             'name': u'费用申请单',
             'type': 'ir.actions.act_window',
@@ -861,7 +861,8 @@ class account_payment(models.Model):
             'res_model': 'hr.expense.sheet',
             'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
             'domain': [('payment_id', '=', self.id)],
-            'context': {'default_payment_id': self.id},
+            'context': {'default_payment_id': self.id,
+                        'default_expense_type_new':'pay_to_exp'},
         }
     #打开其他收入认领
     def open_fybg_qtsr(self):

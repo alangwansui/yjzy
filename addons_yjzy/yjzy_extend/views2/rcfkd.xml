@@ -52,7 +52,7 @@
                             <field name="count_yfsqd" widget="statinfo" nolabel="1"/>
                         </button>
 
-                        <button class="oe_stat_button" name="open_yingfuhexiao" type="object" icon="fa-pencil-square-o" string="应付核销单">
+                        <button class="oe_stat_button" name="open_yingfuhexiao" type="object" icon="fa-pencil-square-o" string="应付申请单">
                             <field name="count_yshx" widget="statinfo" nolabel="1" />
                         </button>
 
@@ -60,22 +60,22 @@
                             <field name="count_ptskrl" widget="statinfo" nolabel="1" />
                         </button-->
 
-                        <button class="oe_stat_button" name="open_fybg"  type="object" string="其他收入" icon="fa-pencil-square-o">
+                        <button class="oe_stat_button" name="open_fybg"  type="object" string="费用申请单" icon="fa-pencil-square-o">
                             <field name="count_fybg" widget="statinfo" nolabel="1"/>
                         </button>
 
                         <button class="oe_stat_button" name="button_journal_entries"
                                 string="Journal Items" type="object"
-                                groups="account.group_account_user"
+                                groups="base.group_system"
                                 attrs="{'invisible':[('move_line_ids','=',[])]}" icon="fa-bars"/>
                         <field name="move_line_ids" invisible="1"/>
                         <button class="oe_stat_button" name="button_invoices"
-                                string="Invoices" type="object"
+                                string="Invoices" type="object" groups="base.group_system"
                                 attrs="{'invisible':[('has_invoices','=',False)]}" icon="fa-bars"/>
                         <button class="oe_stat_button" name="open_payment_matching_screen"
-                                string="Payment Matching" type="object"
+                                string="Payment Matching" type="object" groups="base.group_system"
                                 attrs="{'invisible':[('move_reconciled','=',True)]}" icon="fa-university"/>
-                        <field name="has_invoices" />
+                        <field name="has_invoices" invisible="1"/>
                         <field name="move_reconciled" invisible="1"/>
                         <field name="is_editable"  widget="boolean_toggle" groups="sales_team.group_manager"/>
                     </div>
@@ -216,5 +216,20 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcfkd_form')})]"/>
     </record>
     <menuitem id="menu_rcfkd_done"  sequence="0" name="已完成" parent="menu_rcfkd_new" action="action_rcfkd_done_new"/>
+
+    <record model="ir.actions.act_window" id="action_rcfkd_undone_new">
+        <field name="name">未认领付款单</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.payment</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('sfk_type','=','rcfkd'),('state','in',['reconciled','posted']),('balance','!=',0)]</field>
+        <field name="context">{'show_shoukuan': True, 'default_sfk_type': 'rcfkd', 'default_payment_type': 'outbound', 'default_be_renling': False, 'default_advance_ok': True, 'default_partner_type': 'supplier',}</field>
+        <field name="search_view_id" ref="view_account_payment_search_new"/>
+        <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_rcfkd_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcfkd_form')})]"/>
+    </record>
+    <menuitem id="menu_rcfkd_undone_new"  sequence="0" name="未认领付款单" parent="menu_new_account_out_root" action="action_rcfkd_undone_new"/>
 
 </odoo>
