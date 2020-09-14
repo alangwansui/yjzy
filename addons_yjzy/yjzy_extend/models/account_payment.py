@@ -475,7 +475,7 @@ class account_payment(models.Model):
     def open_reconcile_order_line(self):
         self.ensure_one()
         #form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form')
-        tree_view = self.env.ref('yjzy_extend.account_ysrld_line_tree_view')
+        tree_view = self.env.ref('yjzy_extend.account_yfhxd_line_tree_view')
         for one in self:
             return {
                 'name': u'预收认领明细',

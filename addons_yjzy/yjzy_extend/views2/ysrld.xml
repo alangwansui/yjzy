@@ -28,6 +28,7 @@
         <field name="arch" type="xml">
             <tree string="预收认领明细"  edit="false" create="false">
                 <field name="so_id"/>
+                <field name="order_id"/>
                 <field name="tb_contract_code"/>
                 <field name="invoice_id" groups="base.group_system"/>
                 <field name="advance_residual" string="销售合同预收余额"/>
