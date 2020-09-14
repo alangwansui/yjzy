@@ -260,7 +260,9 @@ class account_reconcile_order(models.Model):
     hxd_type_new = fields.Selection([('10', u'预收-应收'),
                                      ('20', u'应收-收款'),
                                      ('30', u'预付-应付'),
-                                     ('40', u'应付-付款')],'认领来源')
+                                     ('40', u'应付-付款'),
+                                     ('50', u'核销-应收'),
+                                     ('60', u'核销-应付')],'认领来源')
     #908
     # supplier_advance_payment_ids_char = fields.Char(u'相关预付',compute=_compute_supplier_advance_payment_ids_char)
     supplier_advance_payment_ids = fields.Many2many('account.payment',u'相关预付', compute=_compute_supplier_advance_payment_ids)

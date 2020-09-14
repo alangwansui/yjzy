@@ -395,7 +395,7 @@
             </field>
         </record>
         <record model="ir.actions.act_window" id="act_tb_po_approving">
-            <field name="name">审批中</field>
+            <field name="name">审批中直接增加采购</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">tb.po.invoice</field>
             <field name="view_type">form</field>
@@ -415,7 +415,7 @@
         />
 
 <record model="ir.actions.act_window" id="act_tb_po_done">
-            <field name="name">审批完成</field>
+            <field name="name">审批完成直接增加采购</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">tb.po.invoice</field>
             <field name="view_type">form</field>
@@ -452,7 +452,7 @@
                   action="act_tb_po_create"/>
 
 <record model="ir.actions.act_window" id="act_expense_po_approving">
-            <field name="name">审批中</field>
+            <field name="name">审批中费用转采购</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">tb.po.invoice</field>
             <field name="view_type">form</field>
@@ -472,7 +472,7 @@
         />
 
 <record model="ir.actions.act_window" id="act_expense_po_done">
-            <field name="name">审批完成</field>
+            <field name="name">审批完成费用转采购</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">tb.po.invoice</field>
             <field name="view_type">form</field>
