@@ -373,7 +373,7 @@
         <field name="view_type">form</field>
         <field name="view_mode">form</field>
         <field name="domain">[('sfk_type','=','yfhxd')]</field>
-        <field name="context">{'default_sfk_type': 'yfhxd', 'default_payment_type': 'outbound', 'default_be_renling': 1, 'default_partner_type':
+        <field name="context">{'default_sfk_type': 'yfhxd', 'default_payment_type': 'outbound',  'default_hxd_type_new':'40','default_be_renling': 1, 'default_partner_type':
             'supplier', 'show_po': 1,'default_operation_wizard':'30','advance_po_amount':1}
         </field>
              <field name="view_ids" eval="[(5, 0, 0),
@@ -390,7 +390,7 @@
         <field name="view_type">form</field>
         <field name="view_mode">form</field>
         <field name="domain">[('sfk_type','=','yfhxd')]</field>
-        <field name="context">{'default_sfk_type': 'yfhxd', 'default_operation_wizard':'25','default_payment_type': 'outbound', 'default_be_renling': 1, 'default_partner_type':
+        <field name="context">{'default_sfk_type': 'yfhxd', 'default_hxd_type_new':'30','default_operation_wizard':'25','default_payment_type': 'outbound', 'default_be_renling': 1, 'default_partner_type':
             'supplier', 'show_po': 1,'advance_po_amount':1}
         </field>
              <field name="view_ids" eval="[(5, 0, 0),
@@ -407,8 +407,8 @@
         <field name="res_model">account.reconcile.order</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
-        <field name="domain">[('sfk_type','=','yfhxd'),('state','in',['draft','refused','canceled']),('operation_wizard','in',['30','10'])]</field>
-        <field name="context">{'advance_po_amount':1,'default_sfk_type': 'yfhxd', 'default_payment_type': 'outbound', 'default_be_renling': 1, 'default_partner_type':
+        <field name="domain">[('sfk_type','=','yfhxd'),('state','in',['draft','refused','canceled']),('hxd_type_new','in',['40'])]</field>
+        <field name="context">{'advance_po_amount':1,'default_sfk_type': 'yfhxd',  'default_hxd_type_new':'40','default_payment_type': 'outbound', 'default_be_renling': 1, 'default_partner_type':
             'supplier', 'show_po': 1,'default_operation_wizard':'30'}
         </field>
               <field name="view_ids" eval="[(5, 0, 0),
@@ -425,8 +425,8 @@
         <field name="res_model">account.reconcile.order</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
-        <field name="domain">[('sfk_type','=','yfhxd'),('state','in',['draft','refused','canceled']),('operation_wizard','=','25')]</field>
-        <field name="context">{'advance_po_amount':1,'default_sfk_type': 'yfhxd', 'default_payment_type': 'outbound', 'default_be_renling': 1, 'default_partner_type':
+        <field name="domain">[('sfk_type','=','yfhxd'),('state','in',['draft','refused','canceled']),('hxd_type_new','=','40')]</field>
+        <field name="context">{'advance_po_amount':1,'default_sfk_type': 'yfhxd', 'default_hxd_type_new':'40','default_payment_type': 'outbound', 'default_be_renling': 1, 'default_partner_type':
             'supplier', 'show_po': 1,'default_operation_wizard':'30'}
         </field>
               <field name="view_ids" eval="[(5, 0, 0),
@@ -444,8 +444,8 @@
         <field name="res_model">account.reconcile.order</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
-        <field name="domain">[('sfk_type','=','yfhxd'),('state','in',['submit']),('operation_wizard','in',['30','10'])]</field>
-        <field name="context">{'advance_po_amount':1,'default_sfk_type': 'yfhxd', 'default_payment_type': 'outbound', 'default_be_renling': 1, 'default_partner_type':
+        <field name="domain">[('sfk_type','=','yfhxd'),('state','in',['submit']),('hxd_type_new','in',['40'])]</field>
+        <field name="context">{'advance_po_amount':1,'default_sfk_type': 'yfhxd','default_hxd_type_new':'40', 'default_payment_type': 'outbound', 'default_be_renling': 1, 'default_partner_type':
             'supplier', 'show_po': 1,'default_operation_wizard':'30'}
         </field>
               <field name="view_ids" eval="[(5, 0, 0),
@@ -462,8 +462,8 @@
         <field name="res_model">account.reconcile.order</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
-        <field name="domain">[('sfk_type','=','yfhxd'),('state','in',['submit']),('operation_wizard','=','25')]</field>
-        <field name="context">{'advance_po_amount':1,'default_sfk_type': 'yfhxd', 'default_payment_type': 'outbound', 'default_be_renling': 1, 'default_partner_type':
+        <field name="domain">[('sfk_type','=','yfhxd'),('state','in',['submit']),('hxd_type_new','=','30')]</field>
+        <field name="context">{'advance_po_amount':1,'default_sfk_type': 'yfhxd','default_hxd_type_new':'30', 'default_payment_type': 'outbound', 'default_be_renling': 1, 'default_partner_type':
             'supplier', 'show_po': 1,'default_operation_wizard':'30'}
         </field>
               <field name="view_ids" eval="[(5, 0, 0),
@@ -481,8 +481,8 @@
         <field name="res_model">account.reconcile.order</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
-        <field name="domain">[('sfk_type','=','yfhxd'),('state','in',['approved'])]</field>
-        <field name="context">{'advance_po_amount':1,'default_sfk_type': 'yfhxd', 'default_payment_type': 'outbound', 'default_be_renling': 1, 'default_partner_type':
+        <field name="domain">[('sfk_type','=','yfhxd'),('state','in',['approved']),('hxd_type_new','in',['40'])]</field>
+        <field name="context">{'advance_po_amount':1,'default_sfk_type': 'yfhxd','default_hxd_type_new':'40', 'default_payment_type': 'outbound', 'default_be_renling': 1, 'default_partner_type':
             'supplier', 'show_po': 1,'default_operation_wizard':'30'}
         </field>
               <field name="view_ids" eval="[(5, 0, 0),
@@ -502,8 +502,8 @@
         <field name="res_model">account.reconcile.order</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
-        <field name="domain">[('sfk_type','=','yfhxd'),('state','in',['done']),('operation_wizard','in',['30','10']]</field>
-        <field name="context">{'advance_po_amount':1,'default_sfk_type': 'yfhxd', 'default_payment_type': 'outbound', 'default_be_renling': 1, 'default_partner_type':
+        <field name="domain">[('sfk_type','=','yfhxd'),('state','in',['done']),('hxd_type_new','in',['40']]</field>
+        <field name="context">{'advance_po_amount':1,'default_sfk_type': 'yfhxd', 'default_hxd_type_new':'40','default_payment_type': 'outbound', 'default_be_renling': 1, 'default_partner_type':
             'supplier', 'show_po': 1,'default_operation_wizard':'30'}
         </field>
               <field name="view_ids" eval="[(5, 0, 0),
@@ -520,8 +520,8 @@
         <field name="res_model">account.reconcile.order</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
-        <field name="domain">[('sfk_type','=','yfhxd'),('state','in',['done']),('operation_wizard','=','25')]</field>
-        <field name="context">{'advance_po_amount':1,'default_sfk_type': 'yfhxd', 'default_payment_type': 'outbound', 'default_be_renling': 1, 'default_partner_type':
+        <field name="domain">[('sfk_type','=','yfhxd'),('state','in',['done']),('hxd_type_new','=','30')]</field>
+        <field name="context">{'advance_po_amount':1,'default_sfk_type': 'yfhxd', 'default_hxd_type_new':'30','default_payment_type': 'outbound', 'default_be_renling': 1, 'default_partner_type':
             'supplier', 'show_po': 1,'default_operation_wizard':'30'}
         </field>
               <field name="view_ids" eval="[(5, 0, 0),

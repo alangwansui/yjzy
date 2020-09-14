@@ -16,6 +16,8 @@
                     <group expand="0" string="Group By">
                         <filter name="group_by_type" string="类型"
                                 context="{'group_by':'type'}"/>
+                        <filter name="group_by_state" string="状态"
+                                context="{'group_by':'state'}"/>
 
                     </group>
                 </search>
@@ -488,6 +490,26 @@
                   sequence="10"
                   action="act_expense_po_done"
         />
+<!--        工作台需要的-->
+        <record model="ir.actions.act_window" id="act_expense_po_all">
+            <field name="name">费用转采购</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">tb.po.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('type','=','expense_po')]</field>
+            <field name="limit">20</field>
+            <field name="context">{'search_default_group_by_state':1,'done':1,}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('tb_po_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_form')})]"/>
+
+        </record>
+        <menuitem id="menu_expense_po_tree_all" name="费用转采购"
+
+                  sequence="10"
+                  action="act_expense_po_all"
+        />
 
          <record model="ir.actions.act_window" id="act_expense_po_create">
             <field name="name">创建费用转应付申请单</field>
@@ -547,13 +569,34 @@
                   action="act_extra_customer_create"/>
 
 
-        <record model="ir.actions.act_window" id="act_extra_supplier_invoice">
-            <field name="name">常规额外应付账单</field>
+
+        <record model="ir.actions.act_window" id="act_extra_supplier_invoice_draft">
+            <field name="name">未提交</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">tb.po.invoice</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[('yjzy_type_1','=','purchase'),('type','=','extra')]</field>
+            <field name="domain">[('yjzy_type_1','=','purchase'),('type','=','extra'),('state','in',['10_draft','80_refuse','90_cancel'])]</field>
+            <field name="limit">20</field>
+            <field name="context">{'default_type':'extra','default_yjzy_type_1':'purchase',}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('tb_po_extra_supplier_invoice_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_extra_invoice_supplier_form')})]"/>
+
+        </record>
+            <menuitem id="menu_extra_supplier_invoice_draft" name="未提交"
+                  parent="yjzy_extend.menu_extra_supplier_invoice_root"
+                  sequence="10"
+                  action="act_extra_supplier_invoice_draft"
+        />
+
+        <record model="ir.actions.act_window" id="act_extra_supplier_invoice_undone">
+            <field name="name">审批中</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">tb.po.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('yjzy_type_1','=','purchase'),('type','=','extra'),('state','in',['20_submit'])]</field>
             <field name="limit">20</field>
             <field name="context">{'default_type':'extra','default_yjzy_type_1':'purchase',}</field>
             <field name="view_ids" eval="[(5, 0, 0),
@@ -562,12 +605,33 @@
 
         </record>
 
-        <menuitem id="menu_extra_supplier_invoice" name="常规额外应付账单"
+        <menuitem id="menu_extra_supplier_invoice_undone" name="审批中"
                   parent="yjzy_extend.menu_extra_supplier_invoice_root"
-                  sequence="10"
-                  action="act_extra_supplier_invoice"
+                  sequence="20"
+                  action="act_extra_supplier_invoice_undone"
         />
-                <record model="ir.actions.act_window" id="act_extra_supplier_create">
+        <record model="ir.actions.act_window" id="act_extra_supplier_invoice_done">
+            <field name="name">审批完成</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">tb.po.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('yjzy_type_1','=','purchase'),('type','=','extra'),('state','in',['30_done'])]</field>
+            <field name="limit">20</field>
+            <field name="context">{'default_type':'extra','default_yjzy_type_1':'purchase'}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('tb_po_extra_supplier_invoice_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_extra_invoice_supplier_form')})]"/>
+
+        </record>
+
+        <menuitem id="menu_extra_supplier_invoice_done" name="审批完成"
+                  parent="yjzy_extend.menu_extra_supplier_invoice_root"
+                  sequence="30"
+                  action="act_extra_supplier_invoice_done"
+        />
+
+        <record model="ir.actions.act_window" id="act_extra_supplier_create">
             <field name="name">创建额外应付申请</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">tb.po.invoice</field>
@@ -582,27 +646,95 @@
 
         <menuitem id="menu_invoice_supplier_create" name="创建额外应付申请"
                   parent="yjzy_extend.menu_extra_supplier_invoice_root"
-                  sequence="20"
+                  sequence="40"
                   action="act_extra_supplier_create"/>
 
 
-        <record model="ir.actions.act_window" id="act_tb_invoice_supplier">
-            <field name="name">额外应付账单</field>
+
+        <record model="ir.actions.act_window" id="act_tb_invoice_supplier_draft">
+            <field name="name">未提交</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">tb.po.invoice</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[('yjzy_type_1','=','purchase')]</field>
+            <field name="domain">[('yjzy_type_1','=','purchase'),('type','in',['other_po','expense_po']),
+                                  ('state','in',['10_draft','80_refuse','90_cancel'])]</field>
             <field name="limit">20</field>
             <field name="search_view_id" ref="view_tb_po_invoice_filter"/>
-            <field name="context">{'search_default_group_by_type':1,'default_type':'extra','default_yjzy_type_1':'purchase',}</field>
+            <field name="context">{'search_default_group_by_type':1,'default_yjzy_type_1':'purchase',}</field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('tb_po_extra_supplier_invoice_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_extra_invoice_supplier_form')})]"/>
 
         </record>
 
-        <menuitem id="menu_tb_invoice_supplier" name="额外应付账单:总"
+        <menuitem id="menu_tb_invoice_supplier_draft" name="未提交"
+                  parent="yjzy_extend.menu_extra_supplier_invoice_root"
+                  sequence="10"
+                  action="act_tb_invoice_supplier_draft"
+        />
+        <record model="ir.actions.act_window" id="act_tb_invoice_supplier_undone">
+            <field name="name">审批中</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">tb.po.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('yjzy_type_1','=','purchase'),('type','in',['other_po','expense_po']),
+                                  ('state','in',['20_submit'])]</field>
+            <field name="limit">20</field>
+            <field name="search_view_id" ref="view_tb_po_invoice_filter"/>
+            <field name="context">{'search_default_group_by_type':1,'default_yjzy_type_1':'purchase',}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('tb_po_extra_supplier_invoice_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_extra_invoice_supplier_form')})]"/>
+
+        </record>
+
+        <menuitem id="menu_tb_invoice_supplier_undone" name="审批中"
+                  parent="yjzy_extend.menu_extra_supplier_invoice_root"
+                  sequence="10"
+                  action="act_tb_invoice_supplier_undone"
+        />
+        <record model="ir.actions.act_window" id="act_tb_invoice_supplier_done">
+            <field name="name">审批完成</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">tb.po.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('yjzy_type_1','=','purchase'),('type','in',['other_po','expense_po']),
+                                  ('state','in',['30_done'])]</field>
+            <field name="limit">20</field>
+            <field name="search_view_id" ref="view_tb_po_invoice_filter"/>
+            <field name="context">{'search_default_group_by_type':1,'default_yjzy_type_1':'purchase',}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('tb_po_extra_supplier_invoice_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_extra_invoice_supplier_form')})]"/>
+
+        </record>
+
+        <menuitem id="menu_tb_invoice_supplier_done" name="审批中"
+                  parent="yjzy_extend.menu_extra_supplier_invoice_root"
+                  sequence="10"
+                  action="act_tb_invoice_supplier_done"
+        />
+
+        <record model="ir.actions.act_window" id="act_tb_invoice_supplier">
+            <field name="name">增加采购账单</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">tb.po.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('yjzy_type_1','=','purchase'),('type','in',['other_po','expense_po'])]</field>
+            <field name="limit">20</field>
+            <field name="search_view_id" ref="view_tb_po_invoice_filter"/>
+            <field name="context">{'search_default_group_by_type':1,'default_yjzy_type_1':'purchase',}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('tb_po_extra_supplier_invoice_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_extra_invoice_supplier_form')})]"/>
+
+        </record>
+
+        <menuitem id="menu_tb_invoice_supplier" name="增加采购账单"
                   parent="yjzy_extend.menu_extra_supplier_invoice_root"
                   sequence="10"
                   action="act_tb_invoice_supplier"
