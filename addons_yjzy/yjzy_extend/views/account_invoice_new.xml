@@ -1914,7 +1914,7 @@
                               ]"/>
         </record>
         <record id="action_purchase_invoice_unpaid_new" model="ir.actions.act_window">
-            <field name="name">未确认应付账单</field>
+            <field name="name">未付款应付账单</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">account.invoice</field>
             <field name="view_mode">tree,form</field>
@@ -1930,7 +1930,7 @@
                               ]"/>
         </record>
         <record id="action_purchase_invoice_paid_new" model="ir.actions.act_window">
-            <field name="name">已确认应付账单</field>
+            <field name="name">已付款应付账单</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">account.invoice</field>
             <field name="view_mode">tree,form</field>
