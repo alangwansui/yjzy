@@ -288,4 +288,18 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_yfsqd_form')})]"/>
     </record>
     <menuitem id="menu_yfsqd_no_balance"  sequence="0" name="已完成认领" parent="menu_yfsqd_new" action="action_yfsqd_no_balance"/>
+
+    <record model="ir.actions.act_window" id="action_yfsqd_create">
+        <field name="name">创建预付申请</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.payment</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="domain">[('sfk_type','=','yfsqd'),('state','in',['reconciled','posted']),('advance_balance_total','=',0)]</field>
+        <field name="context">{'show_shoukuan': True, 'default_sfk_type': 'yfsqd', 'default_payment_type': 'outbound', 'default_be_renling': True, 'default_advance_ok': True, 'default_partner_type': 'supplier',}</field>
+        <field name="search_view_id" ref="view_account_payment_search_new"/>
+          <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_yfsqd_form')})]"/>
+    </record>
+    <menuitem id="menu_yfsqd_create"  sequence="0" name="创建预付申请" parent="menu_yfsqd_new" action="action_yfsqd_create"/>
 </odoo>

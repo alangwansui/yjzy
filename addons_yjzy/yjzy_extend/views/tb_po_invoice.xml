@@ -400,7 +400,7 @@
             <field name="res_model">tb.po.invoice</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[('state','not in',['30_done']),('type','=','other_po')]</field>
+            <field name="domain">[('yjzy_type_1','=','purchase'),('state','not in',['30_done']),('type','=','other_po')]</field>
             <field name="limit">20</field>
             <field name="context">{'done':0}</field>
             <field name="view_ids" eval="[(5, 0, 0),
@@ -420,7 +420,7 @@
             <field name="res_model">tb.po.invoice</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[('state','in',['30_done']),('type','=','other_po')]</field>
+            <field name="domain">[('yjzy_type_1','=','purchase'),('state','in',['30_done']),('type','=','other_po')]</field>
             <field name="limit">20</field>
             <field name="context">{'done':1}</field>
             <field name="view_ids" eval="[(5, 0, 0),
@@ -457,7 +457,7 @@
             <field name="res_model">tb.po.invoice</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[('state','not in',['30_done']),('type','=','expense_po')]</field>
+            <field name="domain">[('yjzy_type_1','=','purchase'),('state','not in',['30_done']),('type','=','expense_po')]</field>
             <field name="limit">20</field>
             <field name="context">{'done':0}</field>
             <field name="view_ids" eval="[(5, 0, 0),
@@ -477,7 +477,7 @@
             <field name="res_model">tb.po.invoice</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[('state','in',['30_done']),('type','=','expense_po')]</field>
+            <field name="domain">[('yjzy_type_1','=','purchase'),('state','in',['30_done']),('type','=','expense_po')]</field>
             <field name="limit">20</field>
             <field name="context">{'done':1}</field>
             <field name="view_ids" eval="[(5, 0, 0),
@@ -497,7 +497,7 @@
             <field name="res_model">tb.po.invoice</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[('type','=','expense_po')]</field>
+            <field name="domain">[('yjzy_type_1','=','purchase'),('type','=','expense_po')]</field>
             <field name="limit">20</field>
             <field name="context">{'search_default_group_by_state':1,'done':1,}</field>
             <field name="view_ids" eval="[(5, 0, 0),
@@ -509,6 +509,25 @@
 
                   sequence="10"
                   action="act_expense_po_all"
+        />
+
+         <record model="ir.actions.act_window" id="act_other_po_all">
+            <field name="name">直接增加采购</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">tb.po.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('yjzy_type_1','=','purchase'),('type','=','other_po')]</field>
+            <field name="limit">20</field>
+            <field name="context">{'search_default_group_by_state':1,'done':1,}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('tb_po_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_form')})]"/>
+
+        </record>
+        <menuitem id="menu_other_po_tree_all" name="直接增加采购"
+                  sequence="10"
+                  action="act_other_po_all"
         />
 
          <record model="ir.actions.act_window" id="act_expense_po_create">
@@ -571,7 +590,7 @@
 
 
         <record model="ir.actions.act_window" id="act_extra_supplier_invoice_draft">
-            <field name="name">未提交</field>
+            <field name="name">未提交额外应付申请</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">tb.po.invoice</field>
             <field name="view_type">form</field>
@@ -591,7 +610,7 @@
         />
 
         <record model="ir.actions.act_window" id="act_extra_supplier_invoice_undone">
-            <field name="name">审批中</field>
+            <field name="name">审批中额外应付申请</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">tb.po.invoice</field>
             <field name="view_type">form</field>
@@ -611,7 +630,7 @@
                   action="act_extra_supplier_invoice_undone"
         />
         <record model="ir.actions.act_window" id="act_extra_supplier_invoice_done">
-            <field name="name">审批完成</field>
+            <field name="name">审批完成额外应付申请</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">tb.po.invoice</field>
             <field name="view_type">form</field>
@@ -652,7 +671,7 @@
 
 
         <record model="ir.actions.act_window" id="act_tb_invoice_supplier_draft">
-            <field name="name">未提交</field>
+            <field name="name">未提交增加采购</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">tb.po.invoice</field>
             <field name="view_type">form</field>
@@ -674,7 +693,7 @@
                   action="act_tb_invoice_supplier_draft"
         />
         <record model="ir.actions.act_window" id="act_tb_invoice_supplier_undone">
-            <field name="name">审批中</field>
+            <field name="name">审批中增加采购</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">tb.po.invoice</field>
             <field name="view_type">form</field>
@@ -696,7 +715,7 @@
                   action="act_tb_invoice_supplier_undone"
         />
         <record model="ir.actions.act_window" id="act_tb_invoice_supplier_done">
-            <field name="name">审批完成</field>
+            <field name="name">审批完成增加采购</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">tb.po.invoice</field>
             <field name="view_type">form</field>
