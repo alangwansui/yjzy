@@ -1470,7 +1470,7 @@ class account_reconcile_order_line(models.Model):
 
 
 
-    @api.depends('yjzy_currency_id','payment_currency_id')
+    @api.depends('yjzy_payment_id','payment_currency_id','yjzy_payment_id.currency_id')
     def _compute_yjzy_currency_id(self):
         for one in self:
             if not one.yjzy_payment_id:
@@ -1521,8 +1521,7 @@ class account_reconcile_order_line(models.Model):
     yjzy_payment_display_name = fields.Char('显示名称',related='yjzy_payment_id.display_name',store=True)
     #yjzy_currency_id = fields.Many2one('res.currency', u'预收币种', related='yjzy_payment_id.currency_id')
     # yjzy_currency_id = fields.Many2one('res.currency', u'预收币种',default=lambda self: self.env.user.company_id.currency_id.id)
-    yjzy_currency_id = fields.Many2one('res.currency', u'预收币种',compute=_compute_yjzy_currency_id
-                                       )
+    yjzy_currency_id = fields.Many2one('res.currency', u'预收币种',compute=_compute_yjzy_currency_id)
     amount_advance_org = fields.Monetary(u'预收金额', currency_field='yjzy_currency_id')
 
     amount_advance = fields.Monetary(u'预收金额:本币', currency_field='currency_id', compute=compute_info)

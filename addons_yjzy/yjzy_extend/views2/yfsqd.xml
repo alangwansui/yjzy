@@ -230,7 +230,7 @@
     <menuitem id="menu_yfsqd"  sequence="0" name="预付申请单" parent="menu_skf_root" action="action_yfsqd"/>
 
     <record model="ir.actions.act_window" id="action_yfsqd_draft">
-        <field name="name">未提交</field>
+        <field name="name">未提交预付申请</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">account.payment</field>
         <field name="view_type">form</field>
@@ -239,13 +239,13 @@
         <field name="context">{'search_default_group_by_state_1':1,'show_shoukuan': True, 'default_sfk_type': 'yfsqd', 'default_payment_type': 'outbound', 'default_be_renling': True, 'default_advance_ok': True, 'default_partner_type': 'supplier',}</field>
         <field name="search_view_id" ref="view_account_payment_search_new"/>
           <field name="view_ids" eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_yfsqd_tree')}),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_yfsqd_account_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_yfsqd_form')})]"/>
     </record>
     <menuitem id="menu_yfsqd_draft"  sequence="0" name="未提交" parent="menu_yfsqd_new" action="action_yfsqd_draft"/>
 
     <record model="ir.actions.act_window" id="action_yfsqd_undone">
-        <field name="name">审批中</field>
+        <field name="name">审批中预付申请</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">account.payment</field>
         <field name="view_type">form</field>
@@ -254,13 +254,13 @@
         <field name="context">{'search_default_group_by_state_1':1,'show_shoukuan': True, 'default_sfk_type': 'yfsqd', 'default_payment_type': 'outbound', 'default_be_renling': True, 'default_advance_ok': True, 'default_partner_type': 'supplier',}</field>
         <field name="search_view_id" ref="view_account_payment_search_new"/>
           <field name="view_ids" eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_yfsqd_tree')}),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_yfsqd_account_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_yfsqd_form')})]"/>
     </record>
     <menuitem id="menu_yfsqd_undone"  sequence="0" name="审批中" parent="menu_yfsqd_new" action="action_yfsqd_undone"/>
 
     <record model="ir.actions.act_window" id="action_yfsqd_balance">
-        <field name="name">未完成认领</field>
+        <field name="name">未完成认领预付申请</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">account.payment</field>
         <field name="view_type">form</field>
@@ -275,7 +275,7 @@
     <menuitem id="menu_yfsqd_balance"  sequence="0" name="未完成认领" parent="menu_yfsqd_new" action="action_yfsqd_balance"/>
 
 <record model="ir.actions.act_window" id="action_yfsqd_no_balance">
-        <field name="name">已完成认领</field>
+        <field name="name">已完成认领预付申请</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">account.payment</field>
         <field name="view_type">form</field>
