@@ -26,7 +26,9 @@
                 ],
 
     'data': [
+
         'data/res_groups.xml',
+        'views2/menu.xml',
         'views/menu.xml',
 
 
@@ -119,7 +121,7 @@
 
 
 
-        'views2/menu.xml',
+
         'views2/rcskd.xml',
         'views2/rcfkd.xml',
         'views2/ysrld.xml',
