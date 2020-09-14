@@ -220,7 +220,7 @@
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="domain">[('sfk_type','=','yfhxd')]</field>
-        <field name="context">{'default_sfk_type': 'yfhxd', 'default_payment_type': 'outbound', 'default_be_renling': 1, 'default_partner_type':
+        <field name="context">{'default_sfk_type': 'yfhxd','default_hxd_type_new':'40', 'default_payment_type': 'outbound', 'default_be_renling': 1, 'default_partner_type':
             'supplier', 'show_po': 1}
         </field>
     </record>
