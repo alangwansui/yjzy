@@ -189,7 +189,7 @@ class tb_po_invoice(models.Model):
     tb_id = fields.Many2one('transport.bill', u'出运单')
     partner_id = fields.Many2one('res.partner', u'合作伙伴')
     hsname_all_ids = fields.One2many('tb.po.invoice.line', 'tb_po_id', u'报关明细',)
-    invoice_ids = fields.One2many('account. invoice','tb_po_invoice_id','相关发票')
+    invoice_ids = fields.One2many('account.invoice','tb_po_invoice_id','相关发票')
 
     yjzy_invoice_id = fields.Many2one('account.invoice', '关联账单')
     currency_id = fields.Many2one('res.currency', compute=compute_info)
