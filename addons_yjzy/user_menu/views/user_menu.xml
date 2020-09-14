@@ -475,7 +475,7 @@
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('user_menu_account_kanban')}),
                          ]"/>
     </record>
-    <menuitem id="menu_user_account_menu" name="财务工作看板" parent="yjzy_extend.menu_new_account_root" action="action_user_account_menu" sequence="0"/>
+    <menuitem id="menu_user_account_menu" name="财务-付款工作台" parent="yjzy_extend.menu_new_account_out_root" action="action_user_account_menu" sequence="0"/>
 
 </odoo>
 <!--(0, 0, {'view_mode': 'tree', 'view_id': ref('user_menu_tree')}),-->
