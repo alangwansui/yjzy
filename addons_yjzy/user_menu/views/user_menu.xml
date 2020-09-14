@@ -223,9 +223,9 @@
                                 <div class="row">
                                     <div class="col-xs-5 o_kanban_primary_left">
 
-                                        <button class="btn btn-primary" name="open_action" type="object">
-                                            <field name="button_name"/>
-                                        </button>
+<!--                                        <button class="btn btn-primary" name="open_action" type="object">-->
+<!--                                            <field name="button_name"/>-->
+<!--                                        </button>-->
                                         <field name="dynamic_html_b" widget="html"/>
                                     </div>
 
