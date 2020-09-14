@@ -255,7 +255,12 @@ class account_reconcile_order(models.Model):
             # one.amount_exchange = one.amount_invoice - one.amount_total
             # one.other_feiyong_amount = one.amount_payment_org + one.feiyong_amount
             # one.final_coat = one.other_feiyong_amount - one.back_tax_amount
-
+    #0911
+    #核销单分预收付-应收付，应收付-收付款
+    hxd_type_new = fields.Selection([('10', u'预收-应收'),
+                                     ('20', u'应收-收款'),
+                                     ('30', u'预付-应付'),
+                                     ('40', u'应付-付款')],'认领来源')
     #908
     # supplier_advance_payment_ids_char = fields.Char(u'相关预付',compute=_compute_supplier_advance_payment_ids_char)
     supplier_advance_payment_ids = fields.Many2many('account.payment',u'相关预付', compute=_compute_supplier_advance_payment_ids)
@@ -269,7 +274,8 @@ class account_reconcile_order(models.Model):
     #828
     comments = fields.Text('备注')
     #827
-    operation_wizard = fields.Selection([('05',u'创建明细行'),
+    operation_wizard = fields.Selection([('03',u'预收付前置'),
+                                         ('05',u'创建明细行'),
                                          ('10', u'收付认领'),
                                          ('20', u'预收认领'),
                                          ('25', u'预收简易认领'),
@@ -288,8 +294,8 @@ class account_reconcile_order(models.Model):
     state = fields.Selection([('draft', u'草稿'), ('posted', u'待审批'),  ('approved', u'批准'), ('done', u'完成'), ('refused',u'拒绝'),('cancelled', u'取消')],
                              readonly=True, default='draft', copy=False, string=u"状态",track_visibility='onchange')
     date = fields.Date(u'确认日期', index=True, required=True, default=lambda self: fields.date.today())
-    # invoice_ids = fields.One2many('account.invoice', 'reconcile_order_id', u'发票')
-    invoice_ids = fields.Many2many('account.invoice', string= u'发票')
+    # invoice_ids_new = fields.One2many('account.invoice', 'reconcile_order_id', u'发票')#为了直接从发票创建预付-应付申请
+    invoice_ids = fields.Many2many('account.invoice', string= u'发票')#
     payment_account_id = fields.Many2one('account.account', u'收款科目', required=True,
                                          default=lambda self: self.default_payment_account())
     bank_account_id = fields.Many2one('account.account', u'银行扣款科目', required=False,
@@ -370,6 +376,10 @@ class account_reconcile_order(models.Model):
 
     is_editable = fields.Boolean(u'可编辑')
     gongsi_id = fields.Many2one('gongsi', '内部公司')
+
+    def action_05(self):
+        self.operation_wizard = '05'
+
 
     @api.onchange('yjzy_advance_payment_id')
     def onchange_yjzy_advance_payment_id(self):
@@ -911,10 +921,10 @@ class account_reconcile_order(models.Model):
             self.line_ids = False
             self.line_no_ids = False
             self.yjzy_payment_id = False
-            self.yjzy_advance_payment_id = False
             self.bank_id =False
             self.fk_journal_id = False
-
+            if self.hxd_type_new not in  ['30','10']:
+                self.yjzy_advance_payment_id = False
 
     def check_amount(self):
         self.ensure_one()

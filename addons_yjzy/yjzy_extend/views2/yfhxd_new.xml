@@ -113,10 +113,11 @@
         <field name="model">account.reconcile.order</field>
         <field name="arch" type="xml">
             <form string="应付核销单">
-                <header attrs="{'invisible':[('operation_wizard','!=','05')]}" >
-                    <button name="make_lines" class="oe_highlight" string="生成应付申请" type="object" groups="account.group_account_manager"/>
+                <header attrs="{'invisible':[('operation_wizard','not in',['03','05'])]}" >
+                    <button name="action_05" attrs="{'invisible':[('operation_wizard','not in',['03'])]}" class="oe_highlight" string="下一步确认账单" type="object" />
+                    <button name="make_lines" attrs="{'invisible':[('operation_wizard','not in',['05'])]}" class="oe_highlight" string="确认并填写付款金额" type="object" />
                 </header>
-                  <header attrs="{'invisible':[('operation_wizard','=','05')]}" >
+                  <header attrs="{'invisible':[('operation_wizard','in',['03','05'])]}" >
 
                     <button name="action_posted_new" class="oe_highlight" states="draft" string="提交" type="object"/>
                     <button name="action_approve_new" class="oe_highlight" states="posted" string="总经理审批" attrs="{'invisible':[('sfk_type','!=','yfhxd')]}" type="object"/>
@@ -157,7 +158,7 @@
                     </div>
 
                     <group col="3">
-                        <group>
+                        <group >
 
                             <field name="name" attrs="{'invisible':1}"/>
 
@@ -166,7 +167,7 @@
                             <field name="partner_id" required="1"  attrs="{'invisible':[('operation_wizard','=',False)]}"
                                    domain="[('is_company','=',True),('parent_id', '=', False),('supplier','=',1),('state','=','done')]"
                                    context="{'tree_view_ref':'yjzy_extend.view_new_partner_supplier_tree','default_is_company': True, 'default_supplier': payment_type == 'outbound', 'default_customer': payment_type == 'inbound'}"/>
-                            <field name="yjzy_advance_payment_id" string="预付单" attrs="{'invisible':1}" context="{'form_view_ref': 'yjzy_extend.view_yfsqd_form','advance_po_amount':1}"/>
+
                             <field name="bank_id" string="收款方账号" domain="[('partner_id','=',partner_id)]"  attrs="{'invisible':[('operation_wizard','not in',['10','30'])]}" options="{'no_create_edit': True}"/>
                             <field name="journal_id" domain="[('type','=','renling')]" invisible="1"/>
                             <field name="payment_account_id" string="认领科目" invisible="1"/>
@@ -181,7 +182,7 @@
                             <field name="yjzy_payment_balance" string="付款未认领余额" attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),('state','!=','approved')]}"/>
                             <field name="manual_payment_currency_id" string="预付币种"  attrs="{'invisible':1}"/>
                         </group>
-                        <group attrs="{'invisible':[('operation_wizard','=',False)]}">
+                        <group attrs="{'invisible':[('operation_wizard','in',['03','05',False])]}">
                             <field name="feiyong_product_id" attrs="{'invisible': 1}"/>
                             <field name="feiyong_amount" attrs="{'invisible': 1}"/>
                             <field name="fygb_id" attrs="{'invisible': 1}"/>
@@ -197,7 +198,7 @@
                             <field name="company_id" attrs="{'invisible':[('operation_wizard','=',False)]}"/>
 
                         </group>
-                        <group attrs="{'invisible':[('operation_wizard','=',False)]}">
+                        <group attrs="{'invisible':[('operation_wizard','in',['05',False])]}">
 
                             <field name="sfk_type" invisible="1"/>
                             <field name="be_renling" invisible="1"/>
@@ -224,18 +225,20 @@
                              <field name="invoice_ids" domain="[('partner_id','=', partner_id),('state', '=', 'open')]"
                                    options='{"no_create": True}'
                                    widget="many2many" context="{'tree_view_ref':'account.invoice_tree'}">
-                                <tree>
+                                <tree create="false" editable="bottom">
                                 <field name="partner_id" string="供应商"/>
                                 <field name="tb_contract_code" string="出运合同号"/>
                                 <field name="date_out_in" string="进仓日"/>
                                 <field name="date_deadline"/>
                                 <field name="amount_total_signed" string="合计"/>
                                 <field name="residual_signed" string="未付款"/>
+                                <field name="yjzy_advance_payment_id" context="{'form_view_ref': 'yjzy_extend.view_yfsqd_form','advance_po_amount':1}"/>
                                 <field name="state" sting="状态"/>
+                                 <button name="submit_yfhxd_new" icon="fa-pencil-square-o" type="object"/>
                             </tree>
                             </field>
                         </page>
-                        <page string="认领应付账单" attrs="{'invisible':[('operation_wizard','in',['20','30','05'])]}">
+                        <page string="认领应付账单" attrs="{'invisible':[('operation_wizard','in',['20','30','05','03'])]}">
                             <field name="line_no_ids">
                                 <tree  editable="bottom" create="false">
                                 <field name="id" invisible="1"/>
@@ -281,12 +284,14 @@
                             </field>
                         </page>
 
-                        <page string="所有预付单" attrs="{'invisible':[('operation_wizard','=','05')]}">
-                            <field name="supplier_advance_payment_ids" context="{'form_view_ref':'yjzy_extend.view_yfsqd_form','show_shoukuan': True, 'default_sfk_type': 'yfsqd', 'default_payment_type': 'outbound', 'default_be_renling': True, 'default_advance_ok': True, 'default_partner_type': 'supplier',}">
+                        <page string="所有预付单" attrs="{'invisible':[('hxd_type_new','in',['10','30'])]}">
+                            <field name="supplier_advance_payment_ids"
+                                   context="{'form_view_ref':'yjzy_extend.view_yfsqd_form','show_shoukuan': True, 'default_sfk_type': 'yfsqd', 'default_payment_type': 'outbound', 'default_be_renling': True, 'default_advance_ok': True, 'default_partner_type': 'supplier',}">
                                 <tree>
                                     <field name="payment_date"/>
                                     <field name="name" string="编号"/>
                                     <field name="amount" string="申请金额"/>
+
                                     <field name="advance_balance_total" string="未认领金额"/>
                                     <field name="state"/>
                                 </tree>
@@ -306,7 +311,9 @@
                                  <field name="approve_uid"/>
                                  <field name="approve_date"/>
                                  <field name="operation_wizard"/>
-                        </group>
+                                 <field name="yjzy_advance_payment_id" string="预付单" context="{'form_view_ref': 'yjzy_extend.view_yfsqd_form','advance_po_amount':1}"/>
+                                 <field name="hxd_type_new"/>
+                             </group>
                             <group>
                             <field name="reconcile_payment_ids"/>
                             </group>
@@ -332,8 +339,14 @@
     </record>
 
     <menuitem id="menu_yfhxd_new"  sequence="50" name="应付申请" parent="menu_new_account_root"/>
-    <menuitem id="menu_yfhxd_payment_new"  sequence="50" name="应付-付款申请" parent="menu_new_account_root"/>
-    <menuitem id="menu_yfhxd_advance_new"  sequence="50" name="应付-预付认领" parent="menu_new_account_root"/>
+    <menuitem id="menu_yfhxd_payment_new"  sequence="60" name="应付-付款申请" parent="menu_new_account_out_root"/>
+    <menuitem id="menu_yfhxd_advance_new"  sequence="50" name="应付-预付认领" parent="menu_new_account_out_root"/>
+
+
+    <menuitem id="menu_yfhxd_new_advance_submit" name="审批中"
+              parent="menu_yfhxd_advance_new" sequence="20"
+              action="action_yfhxd_new_advance_submit"/>
+
 
     <record model="ir.actions.act_window" id="action_yfhxd_all_new">
         <field name="name">应付核销单:新</field>

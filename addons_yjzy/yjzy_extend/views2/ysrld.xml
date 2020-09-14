@@ -26,7 +26,7 @@
         <field name="name">account.reconcile.order.line.tree</field>
         <field name="model">account.reconcile.order.line</field>
         <field name="arch" type="xml">
-            <tree string="认领明细"  edit="false" create="false">
+            <tree string="预收认领明细"  edit="false" create="false">
                 <field name="so_id"/>
                 <field name="tb_contract_code"/>
                 <field name="invoice_id" groups="base.group_system"/>

@@ -205,6 +205,8 @@ class account_payment(models.Model):
                         name = '%s[%s]' % (one.po_id.contract_code, str(one.advance_balance_total))
                     else:
                         name= '%s[%s]' % ('无采购合同', str(one.advance_balance_total))
+            elif ctx.get('default_sfk_type', '') == 'yfsqd':
+                name = '%s:%s' % (one.name, str(one.advance_balance_total))
             else:
                 name = '%s[%s]' % (one.name, str(one.balance))
             one.display_name = name
@@ -477,6 +479,23 @@ class account_payment(models.Model):
         for one in self:
             return {
                 'name': u'预收认领明细',
+                'view_type': 'form',
+                'view_mode': 'tree,form',
+                'res_model': 'account.reconcile.order.line',
+                'type': 'ir.actions.act_window',
+                'views': [(tree_view.id, 'tree')],
+                'domain': [('yjzy_payment_id', '=', one.id)],
+                'target':'new'
+
+            }
+
+    def open_reconcile_order_line_yfrld(self):
+        self.ensure_one()
+        #form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form')
+        tree_view = self.env.ref('yjzy_extend.account_yfrld_line_tree_view')
+        for one in self:
+            return {
+                'name': u'预付认领明细',
                 'view_type': 'form',
                 'view_mode': 'tree,form',
                 'res_model': 'account.reconcile.order.line',
@@ -802,7 +821,8 @@ class account_payment(models.Model):
             'target': 'current',
             'type': 'ir.actions.act_window',
             'domain': [('yjzy_advance_payment_id', '=', self.id)],
-            'context': {'default_sfk_type': 'yshxd',
+            'context': {'default_partner_id':self.partner_id.id,
+                        'default_sfk_type': 'yshxd',
                         'default_yjzy_advance_payment_id': self.id,
                         'bank_amount': 1,
                         'default_payment_type': 'inbound',
@@ -810,23 +830,102 @@ class account_payment(models.Model):
                         'default_partner_type': 'customer',
                         'show_so': 1,
                         'default_operation_wizard': '25',
+                        'default_hxd_type_new': '10',  # 预付-应付
                         }
         }
 
     # 从预付款认领单打开应付核销单
+
     def open_yfsqd_yfhxd(self):
-        tree_view = self.env.ref('yjzy_extend.account_yshxd_tree_view_new').id
-        form_view = self.env.ref('yjzy_extend.account_yshxd_form_view_new').id
+        tree_view = self.env.ref('yjzy_extend.account_yfhxd_advance_tree_view_new').id
+        form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new').id
+        advance_reconcile = self.mapped('advance_reconcile_order_ids')
+        action = self.env.ref('yjzy_extend.action_yfhxd_all_new').read()[0]
+        ctx={'default_partner_id':self.partner_id.id,
+                            'default_sfk_type': 'yfhxd',
+                            'default_yjzy_advance_payment_id': self.id,
+                            'bank_amount': 1,
+                            'default_payment_type': 'outbound',
+                            'default_be_renling': 1,
+                            'default_partner_type': 'supplier',
+                            'show_so': 1,
+                            'default_operation_wizard': '25',
+                            'default_hxd_type_new':'30',}#预付-应付
+        if len(advance_reconcile) >= 1:
+            action['views'] = [(tree_view, 'tree'), (form_view, 'form')]
+            action['domain'] = [('id', 'in', advance_reconcile.ids)]
+            action['context'] = ctx
+        # elif len(advance_reconcile) == 1:
+        #     action['views'] = [(self.env.ref('yjzy_extend.account_yfhxd_form_view_new').id, 'form')]
+        #     action['res_id'] = advance_reconcile.ids[0]
+        else:
+            action['views'] = [(form_view, 'form')]
+            action['context'] = ctx
+        return action
+
+
+        # tree_view = self.env.ref('yjzy_extend.account_yfhxd_tree_view_new').id
+        # form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new').id
+        # if self.advance_reconcile_order_count_all > 1:
+        #     return {
+        #         'name': '认领单',
+        #         'view_type': 'form',
+        #         'view_mode': 'tree,form',
+        #         'res_model': 'account.reconcile.order',
+        #         'views': [(tree_view, 'tree'), (form_view, 'form')],
+        #         'target': 'current',
+        #         'type': 'ir.actions.act_window',
+        #         'domain': [('yjzy_advance_payment_id', '=', self.id)],
+        #         'context': {'default_partner_id':self.partner_id.id,
+        #                     'default_sfk_type': 'yfhxd',
+        #                     'default_yjzy_advance_payment_id': self.id,
+        #                     'bank_amount': 1,
+        #                     'default_payment_type': 'outbound',
+        #                     'default_be_renling': 1,
+        #                     'default_partner_type': 'supplier',
+        #                     'show_so': 1,
+        #                     'default_operation_wizard': '25',
+        #                     'default_hxd_type_new':'30',#预付-应付
+        #
+        #                     }
+        #     }
+        # elif self.advance_reconcile_order_count_all == 1:
+        #     return {
+        #         'name': '认领单',
+        #         'view_type': 'form',
+        #         'view_mode': 'form',
+        #         'res_model': 'account.reconcile.order',
+        #         'views':  [(form_view, 'form')],
+        #         'target': 'current',
+        #         'type': 'ir.actions.act_window',
+        #         'domain': [('yjzy_advance_payment_id', '=', self.id)],
+        #         'context': {'default_partner_id': self.partner_id.id,
+        #                     'default_sfk_type': 'yfhxd',
+        #                     'default_yjzy_advance_payment_id': self.id,
+        #                     'bank_amount': 1,
+        #                     'default_payment_type': 'outbound',
+        #                     'default_be_renling': 1,
+        #                     'default_partner_type': 'supplier',
+        #                     'show_so': 1,
+        #                     'default_operation_wizard': '25',
+        #                     'default_hxd_type_new': '30',  # 预付-应付
+        #
+        #                     }
+        #     }
+    #从付款认领直接打开应付核销的form
+    def open_yfsqd_yfhxd_form(self):
+        form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new').id
         return {
             'name': '认领单',
             'view_type': 'form',
-            'view_mode': 'tree,form',
+            'view_mode': 'form',
             'res_model': 'account.reconcile.order',
-            'views': [(tree_view, 'tree'), (form_view, 'form')],
+            'views': [(form_view, 'form')],
             'target': 'current',
             'type': 'ir.actions.act_window',
-            'domain': [('yjzy_advance_payment_id', '=', self.id)],
-            'context': {'default_sfk_type': 'yfhxd',
+            # 'domain': [('yjzy_advance_payment_id', '=', self.id)],
+            'context': {'default_partner_id':self.partner_id.id,
+                        'default_sfk_type': 'yfhxd',
                         'default_yjzy_advance_payment_id': self.id,
                         'bank_amount': 1,
                         'default_payment_type': 'outbound',
@@ -834,10 +933,10 @@ class account_payment(models.Model):
                         'default_partner_type': 'supplier',
                         'show_so': 1,
                         'default_operation_wizard': '25',
+                        'default_hxd_type_new':'30',#预付-应付
+
                         }
         }
-
-
 
     # def open_ptskrl(self):
     #     return {

@@ -630,7 +630,7 @@ class tbl_hsname(models.Model):
 #816
 class tbl_hsname_all(models.Model):
     _name = 'tbl.hsname.all'
-    _description = u'采购金额统计'
+    _description = u'合并后报关明细'
     # _rec_name = 'name'
 
     def compute_info(self):

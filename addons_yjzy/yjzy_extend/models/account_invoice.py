@@ -156,7 +156,7 @@ class account_invoice(models.Model):
             dlrs = one.reconcile_order_line_id#原始账单的认领明细
             dlrs_payment_usd = one.reconcile_order_line_id.filtered(lambda x: x.payment_currency_id.name == 'USD')#原始账单收款美金
             dlrs_advance_usd = one.reconcile_order_line_id.filtered(lambda x: x.yjzy_payment_id.currency_id.name == 'USD')#原始账单预收美金 akiny注意：因为有些明细货币币种没有取过来，所以直接取预收单的货币
-
+            dlrs_count = len(dlrs)
             yjzy_invoice_open_paid= one.yjzy_invoice_ids.filtered(lambda x: x.state in ['open','paid']) #额外账单
 
 
@@ -199,7 +199,7 @@ class account_invoice(models.Model):
             one.all_usd_amount_advance_org = all_usd_amount_advance_org
             one.reconcile_order_line_payment_usd = yjzy_reconcile_order_line_payment_usd
             one.reconcile_order_line_advance_usd = yjzy_reconcile_order_line_advance_usd
-
+            one.reconcile_order_line_count = dlrs_count
     @api.depends('bill_id.ref', 'amount_total','bill_id.ref')
     def compute_display_name(self):
         for one in self:
@@ -308,6 +308,8 @@ class account_invoice(models.Model):
     # def compute_usd_pool(self):
     #     for one in self:
 
+    #0911
+    yjzy_advance_payment_id = fields.Many2one('account.payment',u'预收付单')
     #831增加对应报关申报表
     df_id = fields.Many2one('back.tax.declaration',u'报关申报表')
 
@@ -325,6 +327,8 @@ class account_invoice(models.Model):
     refund_state = fields.Selection([('10_no','未退款'),('20_part','部分退款'),('30_all','完成退款')],u'退款状态')
 
     hsname_all_ids = fields.One2many('invoice.hs_name.all','invoice_id',u'报关明细')
+    #显示开票资料对应出运单的报关资料汇总
+    tb_hsname_all_ids = fields.One2many('tbl.hsname.all', u'报关明细',related="bill_id.hsname_all_ids")
     external_invoice_done = fields.Selection([('10_no',u'否'),
                                               ('20_yes',u'是'),
                                               ('30_not',u'非')],'外账是否确认销售',default='10_no')
@@ -371,6 +375,8 @@ class account_invoice(models.Model):
     reconcile_order_id = fields.Many2one('account.reconcile.order', u'核销单据')
     reconcile_order_id_ids = fields.One2many('account.reconcile.order','back_tax_invoice_id','额外退税对应核销单')
     reconcile_order_line_id = fields.One2many('account.reconcile.order.line', 'invoice_id', u'核销明细行', domain=[('order_id.state','=','done'),('amount_total_org','!=',0)])
+    reconcile_order_line_count = fields.Float(u'核销明细行数量', compute=get_reconcile_order_line)
+
     reconcile_date = fields.Date(u'认领日期', related='reconcile_order_id.date')
     reconcile_order_line_char = fields.Text(compute=_get_reconcile_order_line_char, string=u'销售合同')
     reconcile_order_line_payment_char = fields.Text(compute=_get_reconcile_order_line_char, string=u'收款认领金额')
@@ -428,7 +434,8 @@ class account_invoice(models.Model):
              " * The 'Cancelled' status is used when user cancel invoice.")
     yjzy_invoice_id = fields.Many2one('account.invoice',u'关联账单',default=lambda self: self.id)
     yjzy_invoice_count = fields.Integer( u'关联账单数量',compute=_compute_count)
-    yjzy_invoice_ids = fields.One2many('account.invoice','yjzy_invoice_id',u'额外账单')
+    yjzy_invoice_ids = fields.One2many('account.invoice','yjzy_invoice_id',u'额外账单', domain=[('is_yjzy_invoice','=',True)])
+    yjzy_invoice_all_ids = fields.One2many('account.invoice', 'yjzy_invoice_id', u'所有关联账单') #所有额外账单和原始账单
     yjzy_payment_term_id = fields.Many2one('account.payment.term', string='Payment Terms_1')
     yjzy_currency_id = fields.Many2one('res.currency', string='currency 1')
     is_yjzy_invoice = fields.Boolean(u'是否额外账单',default=False)
@@ -441,6 +448,53 @@ class account_invoice(models.Model):
     extra_code = fields.Char(u'额外编号',default=lambda self: self._default_name())
     yjzy_invoice_line_ids = fields.One2many('account.invoice.line','yjzy_invoice_id',u'所有明细')
 
+
+    #913新建额外账单申请单
+    def open_tb_po_invoice(self):
+        form_view_supplier_id = self.env.ref('yjzy_extend.tb_po_extra_invoice_supplier_form').id
+        form_view_customer_id = self.env.ref('yjzy_extend.tb_po_extra_invoice_customer_form').id
+
+        if self.yjzy_type == 'sale':
+            return {
+                'name': u'创建应收额外账单',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'tb.po.invoice',
+                'type': 'ir.actions.act_window',
+                'views': [(form_view_customer_id, 'form')],
+                'target': 'current',
+                'context':{'default_type':'extra',
+                           'default_yjzy_type_1':'sale',
+                           'default_yjzy_invoice_id':self.id,
+                           'default_partner_id':self.partner_id.id}
+            }
+        elif self.yjzy_type == 'purchase':
+            return {
+                'name': u'创建应付额外账单',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'tb.po.invoice',
+                'type': 'ir.actions.act_window',
+                'views': [(form_view_supplier_id, 'form')],
+                'target': 'current',
+                'context': {'default_type': 'extra',
+                            'default_yjzy_type_1': 'purchase',
+                            'default_yjzy_invoice_id': self.id,
+                            'default_partner_id': self.partner_id.id}
+            }
+
+
+
+    #创建的时候，默认yjzy_invoice_id等于本身
+    @api.model
+    def create(self, vals):
+        one = super(account_invoice, self).create(vals)
+        # budget = self.env['budget.budget'].create({
+        #     'type': 'transport',
+        #     'tb_id': one.id,
+        # })
+        one.yjzy_invoice_id = one.id
+        return one
     #818
     def unlink(self):
         for one in self:
@@ -541,11 +595,59 @@ class account_invoice(models.Model):
                 'default_name': name,
                 'default_journal_id': journal.id,
                 'default_payment_account_id': bank_account.id,
-                'default_operation_wizard':'5',
+                'default_operation_wizard':'03',
             }
         }
 
     def submit_yfhxd(self):
+        print('invoice_ids', self.ids)
+        print('partner_id', len(self.mapped('partner_id')))
+        if len(self.mapped('partner_id')) > 1:
+            raise Warning('不同供应商')
+        sfk_type = 'yfhxd'
+        domain = [('code', '=', 'yfdrl'), ('company_id', '=', self.env.user.company_id.id)]
+        name = self.env['ir.sequence'].next_by_code('sfk.type.%s' % sfk_type)
+        journal = self.env['account.journal'].search(domain, limit=1)
+        account_obj = self.env['account.account']
+        bank_account = account_obj.search([('code', '=', '10021'), ('company_id', '=', self.env.user.company_id.id)],
+                                          limit=1)
+        form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new')
+
+        # for line in self:
+        #     for x in line.yjzy_invoice_all_ids:
+        #         test = x.id
+        so_po_dic = []
+
+        for one in self:
+            for x in one.yjzy_invoice_all_ids:
+                so_po_dic.append(x.id)
+
+
+        print('so_po_dic[k]',so_po_dic)
+        # test = [(for x in line.yjzy_invoice_all_ids) for line in self)]
+        return {
+            'type': 'ir.actions.act_window',
+            'view_mode': 'form',
+            'res_model': 'account.reconcile.order',
+            'views': [(form_view.id, 'form')],
+            'target': 'current',
+            'context': {
+                'default_invoice_ids': so_po_dic,# self.yjzy_invoice_all_ids,#
+                'default_partner_id': self[0].partner_id.id,
+                'default_manual_payment_currency_id': self[0].currency_id.id,
+                'default_payment_type': 'outbound',
+                'default_partner_type': 'supplier',
+                'default_sfk_type': 'yfhxd',
+                'default_be_renling': True,
+                'default_name': name,
+                'default_journal_id': journal.id,
+                'default_payment_account_id': bank_account.id,
+                'default_operation_wizard':'03',
+
+            }
+        }
+    #从核销单的发票明细创建核销单。（创建预付-应付的核销）
+    def submit_yfhxd_new(self):
         print('invoice_ids', self.ids)
         print('partner_id', len(self.mapped('partner_id')))
         if len(self.mapped('partner_id')) > 1:
@@ -575,7 +677,8 @@ class account_invoice(models.Model):
                 'default_name': name,
                 'default_journal_id': journal.id,
                 'default_payment_account_id': bank_account.id,
-                'default_operation_wizard':'05',
+                'default_operation_wizard':'03',
+                'default_yjzy_advance_payment_id':self.yjzy_advance_payment_id.id,
             }
         }
 
@@ -668,13 +771,13 @@ class account_invoice(models.Model):
     #                 for x in self.invoice_line_ids:
     #                     x.price_unit = x.yjzy_price_unit
 
-    @api.onchange('yjzy_payment_term_id')
-    def onchange_payment_term(self):
-        self.payment_term_id = self.yjzy_payment_term_id
+    # @api.onchange('yjzy_payment_term_id')
+    # def onchange_payment_term(self):
+    #     self.payment_term_id = self.yjzy_payment_term_id
 
-    @api.onchange('yjzy_currency_id')
-    def onchange_currency_id(self):
-        self.currency_id = self.yjzy_currency_id
+    # @api.onchange('yjzy_currency_id')
+    # def onchange_currency_id(self):
+    #     self.currency_id = self.yjzy_currency_id
 
     def open_customer_invoice_id(self):
         form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form')
@@ -1233,6 +1336,7 @@ class invoice_hs_name_all(models.Model):
 
     hs_id = fields.Many2one('hs.hs', u'品名')
     purchase_amount2_add_this_time = fields.Float(U'本次采购开票金额')
+
     p_s_add_this_time = fields.Float('本次应收总金额')
     back_tax_add_this_time = fields.Float('本次退税金额')
     invoice_id = fields.Many2one('account.invoice', u'发票')

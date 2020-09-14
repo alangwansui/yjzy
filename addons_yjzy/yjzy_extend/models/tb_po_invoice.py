@@ -216,8 +216,13 @@ class tb_po_invoice(models.Model):
     expense_po_amount = fields.Float('费用转应付金额')
     yjzy_invoice_residual_amount = fields.Float('原始未付总金额', compute=compute_info)
     yjzy_invoice_include_tax = fields.Boolean('原始采购是否含税', compute=compute_info)
+    extra_invoice_include_tax = fields.Boolean('原始账单是否含税')
 
 
+    #014
+    @api.onchange('yjzy_invoice_id')
+    def onchange_yjzy_invoice_id(self):
+        self.extra_invoice_include_tax = self.yjzy_invoice_id.include_tax
     #825
     @api.onchange('extra_invoice_line_ids')
     def onchange_payment_currency(self):

@@ -39,7 +39,7 @@
                     <button string="保存" name="save_action" type="object" class="btn-primary"/>
                     <button string="取消" class="btn-default" special="cancel"/>
                 </header>
-     <div style="margin-top:-50px">
+     <div style="margin-top:-50px;">
                 <group>
                     <!-- truly invisible fields for control and options -->
                     <field name="composition_mode" invisible="1"/>

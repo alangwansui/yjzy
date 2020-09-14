@@ -68,6 +68,7 @@ class wizard_reconcile_invoice(models.TransientModel):
         so_po_dic = {}
         print('line_obj', line_ids)
         self.order_id.line_no_ids = None
+        yjzy_advance_payment_id = self.yjzy_advance_payment_id
         for i in line_ids:
             invoice = i.invoice_id
             amount_invoice_so = i.amount_invoice_so
@@ -92,6 +93,7 @@ class wizard_reconcile_invoice(models.TransientModel):
                 'invoice_id': data['invoice_id'],
                 'amount_invoice_so': data['amount_invoice_so'],
                 'advance_residual': data['advance_residual'],
+                'yjzy_payment_id': yjzy_advance_payment_id.id
             })
 
     def _prepare_purchase_invoice_line(self, inv):

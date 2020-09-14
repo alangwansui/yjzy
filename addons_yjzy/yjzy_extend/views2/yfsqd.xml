@@ -1,6 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+      <!--预付认领明细-->
+    <record model="ir.ui.view" id="account_yfrld_line_tree_view">
+        <field name="name">account.reconcile.order.line.tree</field>
+        <field name="model">account.reconcile.order.line</field>
+        <field name="arch" type="xml">
+            <tree string="预付认领明细"  edit="false" create="false">
+                <field name="so_id"/>
+                <field name="tb_contract_code"/>
+                <field name="invoice_id" groups="base.group_system"/>
+                <field name="advance_residual" string="采购合同预付余额"/>
+                <field name="invoice_currency_id" invisible="1"/>
+                <field name="payment_currency_id" invisible="1"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="yjzy_currency_id" invisible="1"/>
+                <field name="amount_advance_org" string="预付认领金额" sum="小计"/>
+
+            </tree>
+        </field>
+    </record>
+
     <record model="ir.ui.view" id="view_yfsqd_tree">
         <field name="name">account.payment.tree</field>
         <field name="model">account.payment</field>
@@ -80,6 +100,7 @@
                     <div class="oe_button_box" name="button_box">
                         <button name="open_yfsqd_yfhxd" string="应付认领" type="object" groups="account.group_account_user" icon="fa-bars">
                             <field name="advance_reconcile_order_count_all" widget="statinfo" nolabel="1"/>
+                            <field name="advance_reconcile_order_ids" invisible="1"/>
                         </button>
 
 
@@ -179,7 +200,7 @@
         </field>
     </record>
 
-    <menuitem id="menu_yfsqd_new"  sequence="40" name="预付申请单" parent="menu_new_account_root" />
+    <menuitem id="menu_yfsqd_new"  sequence="10" name="预付申请单" parent="menu_new_account_out_root" />
     <record model="ir.actions.act_window" id="action_yfsqd">
         <field name="name">预付申请单</field>
         <field name="type">ir.actions.act_window</field>
@@ -208,20 +229,36 @@
 
     <menuitem id="menu_yfsqd"  sequence="0" name="预付申请单" parent="menu_skf_root" action="action_yfsqd"/>
 
-    <record model="ir.actions.act_window" id="action_yfsqd_undone">
-        <field name="name">未生效</field>
+    <record model="ir.actions.act_window" id="action_yfsqd_draft">
+        <field name="name">未提交</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">account.payment</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
-        <field name="domain">[('sfk_type','=','yfsqd'),('state','not in',['reconciled','posted'])]</field>
-        <field name="context">{'show_shoukuan': True, 'default_sfk_type': 'yfsqd', 'default_payment_type': 'outbound', 'default_be_renling': True, 'default_advance_ok': True, 'default_partner_type': 'supplier',}</field>
+        <field name="domain">[('sfk_type','=','yfsqd'),('state_1','in',['10_draft','80_refused','90_cancel'])]</field>
+        <field name="context">{'search_default_group_by_state_1':1,'show_shoukuan': True, 'default_sfk_type': 'yfsqd', 'default_payment_type': 'outbound', 'default_be_renling': True, 'default_advance_ok': True, 'default_partner_type': 'supplier',}</field>
         <field name="search_view_id" ref="view_account_payment_search_new"/>
           <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_yfsqd_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_yfsqd_form')})]"/>
     </record>
-    <menuitem id="menu_yfsqd_undone"  sequence="0" name="未生效" parent="menu_yfsqd_new" action="action_yfsqd_undone"/>
+    <menuitem id="menu_yfsqd_draft"  sequence="0" name="未提交" parent="menu_yfsqd_new" action="action_yfsqd_draft"/>
+
+    <record model="ir.actions.act_window" id="action_yfsqd_undone">
+        <field name="name">审批中</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.payment</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('sfk_type','=','yfsqd'),('state_1','in',['20_account_submit','30_manager_approve'])]</field>
+        <field name="context">{'search_default_group_by_state_1':1,'show_shoukuan': True, 'default_sfk_type': 'yfsqd', 'default_payment_type': 'outbound', 'default_be_renling': True, 'default_advance_ok': True, 'default_partner_type': 'supplier',}</field>
+        <field name="search_view_id" ref="view_account_payment_search_new"/>
+          <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_yfsqd_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_yfsqd_form')})]"/>
+    </record>
+    <menuitem id="menu_yfsqd_undone"  sequence="0" name="审批中" parent="menu_yfsqd_new" action="action_yfsqd_undone"/>
+
     <record model="ir.actions.act_window" id="action_yfsqd_balance">
         <field name="name">未完成认领</field>
         <field name="type">ir.actions.act_window</field>
@@ -232,7 +269,7 @@
         <field name="context">{'show_shoukuan': True, 'default_sfk_type': 'yfsqd', 'default_payment_type': 'outbound', 'default_be_renling': True, 'default_advance_ok': True, 'default_partner_type': 'supplier',}</field>
         <field name="search_view_id" ref="view_account_payment_search_new"/>
           <field name="view_ids" eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_yfsqd_tree')}),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_yfsqd_account_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_yfsqd_form')})]"/>
     </record>
     <menuitem id="menu_yfsqd_balance"  sequence="0" name="未完成认领" parent="menu_yfsqd_new" action="action_yfsqd_balance"/>
@@ -247,7 +284,7 @@
         <field name="context">{'show_shoukuan': True, 'default_sfk_type': 'yfsqd', 'default_payment_type': 'outbound', 'default_be_renling': True, 'default_advance_ok': True, 'default_partner_type': 'supplier',}</field>
         <field name="search_view_id" ref="view_account_payment_search_new"/>
           <field name="view_ids" eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_yfsqd_tree')}),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_yfsqd_account_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_yfsqd_form')})]"/>
     </record>
     <menuitem id="menu_yfsqd_no_balance"  sequence="0" name="已完成认领" parent="menu_yfsqd_new" action="action_yfsqd_no_balance"/>
