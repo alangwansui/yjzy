@@ -2147,5 +2147,50 @@
                   parent="menu_account_new_root" name="美金池"
                   sequence="90"
         />
+
+        <record id="action_supplier_account_invoice_extra_unpaid" model="ir.actions.act_window">
+            <field name="name">未付款额外应付账单</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_account_invoice_new_filter"/>
+            <field name="domain">[('type','=','in_invoice'),('yjzy_type','=','purchase'),('is_yjzy_invoice','=',True),('state','=','open')]</field>
+            <field name="context">{'default_is_yjzy_invoice':1,'default_type':'in_invoice','only_ref':1,'default_yjzy_type':'purchase'}
+            </field>
+            <!--field name="target">new</field-->
+            <field name="view_ids" eval="[(5, 0, 0),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.view_supplier_invoice_extra_tree')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.view_account_supplier_invoice_new_form')}),
+                              ]"/>
+        </record>
+       <menuitem id="menu_supplier_account_invoice_extra_unpaid" action="action_supplier_account_invoice_extra_unpaid"
+                  parent="menu_extra_supplier_invoice_root" name="未付款"
+                  sequence="90"
+        />
+        <record id="action_supplier_account_invoice_extra_paid" model="ir.actions.act_window">
+            <field name="name">未付款额外应付账单</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_account_invoice_new_filter"/>
+            <field name="domain">[('type','=','in_invoice'),('yjzy_type','=','purchase'),('is_yjzy_invoice','=',True),('state','=','paid')]</field>
+            <field name="context">{'default_is_yjzy_invoice':1,'default_type':'in_invoice','only_ref':1,'default_yjzy_type':'purchase'}
+            </field>
+            <!--field name="target">new</field-->
+            <field name="view_ids" eval="[(5, 0, 0),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.view_supplier_invoice_extra_tree')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.view_account_supplier_invoice_new_form')}),
+                              ]"/>
+        </record>
+       <menuitem id="menu_supplier_account_invoice_extra_paid" action="action_supplier_account_invoice_extra_paid"
+                  parent="menu_extra_supplier_invoice_root" name="未付款"
+                  sequence="90"
+        />
+
+
+
+
+
+
     </data>
 </odoo>
