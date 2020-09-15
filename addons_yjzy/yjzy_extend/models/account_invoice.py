@@ -617,12 +617,12 @@ class account_invoice(models.Model):
         #     for x in line.yjzy_invoice_all_ids:
         #         test = x.id
         so_po_dic = []
+        test = []
 
         for one in self:
-            for x in one.yjzy_invoice_all_ids:
+            for x in one.yjzy_invoice_ids:
                 so_po_dic.append(x.id)
-
-
+            so_po_dic.append(one.id)
         print('so_po_dic[k]',so_po_dic)
         # test = [(for x in line.yjzy_invoice_all_ids) for line in self)]
         return {
