@@ -17,7 +17,7 @@
         <field name="model">account.payment</field>
         <field name="arch" type="xml">
             <form string="内部转账">
-                <header groups="base.group_system">
+                <header>
                    <button name="action_submit" class="oe_highlight"  string="提交" type="object"
                            attrs="{'invisible':[('state_1','not in',['10_draft'])]}"/>
                    <button name="action_cashier_post" class="oe_highlight"  string="出纳确认" type="object"
@@ -29,7 +29,7 @@
                      <field name="state_1" widget="statusbar" statusbar_visible=" "/>
 
                 </header>
-                <header>
+                <header groups="base.group_system">
                     <button name="post" class="oe_highlight" states="draft" string="Confirm" type="object"/>
                     <button name="action_draft" class="oe_highlight" states="cancelled" string="Set To Draft" type="object"/>
                     <button name="cancel" attrs="{'invisible': [('state', 'in', ['draft','cancelled'])]}" string="Cancel" type="object" groups="base.group_system"/>
@@ -37,7 +37,7 @@
 
                 </header>
                 <sheet>
-                    <div class="oe_button_box" name="button_box">
+                    <div class="oe_button_box" name="button_box" groups="base.group_system">
 
                         <button class="oe_stat_button" name="open_yufurenling" string="预付认领单" type="object" />
                         <button class="oe_stat_button" name="open_yingfuhexiao" string="应付核销单" type="object" />
@@ -68,7 +68,7 @@
                     <group>
                         <group>
                             <field name="sfk_type"/>
-                            <field name="gongsi_id"/>
+                            <field name="gongsi_id" invisible="1"/>
                             <field name="payment_type" widget="radio" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                             <field name="partner_type" widget="selection"
                                    attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))], 'invisible': [('payment_type', 'not in', ('inbound', 'outbound'))], 'readonly': [('state', '!=', 'draft')]}"/>

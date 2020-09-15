@@ -37,7 +37,7 @@
                             attrs="{'invisible':[('state_1','not in',['80_refused'])]}"/>
                      <field name="state_1" widget="statusbar" statusbar_visible=" "/>
                 </header>
-                <header>
+                <header groups="base.group_system">
                     <button name="compute_balance" class="oe_highlight"  string="计算余额" type="object" groups="base.group_system"/>
                     <button name="post" class="oe_highlight" states="draft" string="Confirm" type="object" groups="base.group_system"/>
                     <button name="cancel" attrs="{'invisible': [('state', 'in', ['draft','cancelled'])]}" string="Cancel" type="object" groups="base.group_system"/>
@@ -134,7 +134,7 @@
 </page>
 
                         <page string="费用报告" attrs="{'invisible': [('count_fybg','=', 0)]}">
-                            <field name="fybg_ids" widget="many2many"/>
+                            <field name="fybg_ids" widget="many2many" context="{'form_view_ref':'yjzy_extend.view_hr_expense_sheet_new_form'}"/>
                             <field name="expense_ids" widget="many2many"/>
                         </page>
                         <page string="退税发票" invisible="1">
@@ -189,7 +189,7 @@
 
 <menuitem id="menu_rcfkd_new"  sequence="20" name="日常付款单" parent="menu_new_account_root"/>
     <record model="ir.actions.act_window" id="action_rcfkd_undone_new">
-        <field name="name">未生效</field>
+        <field name="name">未生效日常付款单</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">account.payment</field>
         <field name="view_type">form</field>
@@ -203,7 +203,7 @@
     </record>
     <menuitem id="menu_rcfkd_undone"  sequence="0" name="未生效" parent="menu_rcfkd_new" action="action_rcfkd_undone_new"/>
  <record model="ir.actions.act_window" id="action_rcfkd_done_new">
-        <field name="name">已完成</field>
+        <field name="name">已完成日常付款单</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">account.payment</field>
         <field name="view_type">form</field>

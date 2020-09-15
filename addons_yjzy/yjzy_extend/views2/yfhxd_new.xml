@@ -115,7 +115,8 @@
             <form string="应付核销单">
                 <header attrs="{'invisible':[('operation_wizard','not in',['03','05'])]}" >
                     <button name="action_05" attrs="{'invisible':[('operation_wizard','not in',['03'])]}" class="oe_highlight" string="下一步确认账单" type="object" />
-                    <button name="make_lines" attrs="{'invisible':[('operation_wizard','not in',['05'])]}" class="oe_highlight" string="确认并填写付款金额" type="object" />
+                    <button name="make_lines" invisible="context.get('from_tanchuang')" attrs="{'invisible':[('operation_wizard','not in',['05'])]}" class="oe_highlight" string="确认并填写金额" type="object" />
+                    <button name="make_lines_new"  invisible="not context.get('from_tanchuang')" string="确认并填写金额" type="object"/>
                 </header>
                   <header attrs="{'invisible':[('operation_wizard','in',['03','05'])]}" >
 
@@ -210,8 +211,8 @@
                             <field name="amount_advance_org" string="预付认领金额" attrs="{'invisible':[('operation_wizard','not in',['20','30'])]}"/>
 
                             <field name="amount_diff_org" string="冲应付费用金额" attrs="{'invisible': 1}"/>
-                            <field name="amount_total_org" string="应付认领总金额" invisible="1"/>
-                            <field name="other_feiyong_amount" string="总金额"/>
+                            <field name="amount_total_org" string="应付认领总金额" />
+                            <field name="other_feiyong_amount" string="费用合计" invisible="1"/>
                             <field name="final_coat" string="实际总成本" invisible="1"/>
 
                             <field name="no_sopo" attrs="{'invisible':1}"/>
@@ -291,8 +292,8 @@
                                     <field name="payment_date"/>
                                     <field name="name" string="编号"/>
                                     <field name="amount" string="申请金额"/>
-
                                     <field name="advance_balance_total" string="未认领金额"/>
+                                    <button name="open_yfsqd_yfhxd_form_new" type="object" string="认领预付"/>
                                     <field name="state"/>
                                 </tree>
                             </field>

@@ -52,7 +52,9 @@
                 <field name="rcskd_amount" string="付款金额"/>
                 <field name="payment_date" string="申请日期"/>
                 <field name="amount" string="金额"/>
-                <button name="open_reconcile_order_line" icon="fa-pencil-square-o" type="object"/>
+                <button name="open_reconcile_order_line_yfrld" icon="fa-pencil-square-o" type="object"
+                attrs="{'invisible':[('advance_reconcile_order_count','=',0)]}"/>
+                <field name="advance_reconcile_order_count" invisible="1"/>
                 <field name="advance_balance_total" string="未认领金额"/>
                 <field name="advance_total" string="已认领金额"/>
                 <field name="po_id" string="采购合同"/>
@@ -173,6 +175,7 @@
                         </group>
                     </group>
                     <notebook>
+
                         <page groups="base.group_system">
                             <group>
                                  <field name="sfk_type" />

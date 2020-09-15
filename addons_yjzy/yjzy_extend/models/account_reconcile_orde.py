@@ -1150,7 +1150,34 @@ class account_reconcile_order(models.Model):
             self._make_lines_so()
         if self.partner_type == 'supplier':
             self._make_lines_po()
-            self.operation_wizard = '10'
+            if self.hxd_type_new == '40':
+                self.operation_wizard = '10'
+            elif self.hxd_type_new == '30':
+                self.operation_wizard = '25'
+    #从应付-付款申请的预付弹窗认领，用这个
+    def make_lines_new(self):
+        self.ensure_one()
+        if self.partner_type == 'customer':
+            self._make_lines_so()
+        if self.partner_type == 'supplier':
+            self._make_lines_po()
+            if self.hxd_type_new == '40':
+                self.operation_wizard = '10'
+            elif self.hxd_type_new == '30':
+                self.operation_wizard = '25'
+                form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new').id
+                return {
+                    'name': '添加账单',
+                    'view_type': 'form',
+                    'view_mode': 'form',
+                    'res_model': 'account.reconcile.order',
+                    'views': [(form_view, 'form')],
+                    'res_id': self.id,
+                    'target': 'new',
+                    'type': 'ir.actions.act_window',
+                    # 'context': ctx,
+                }
+
 
     def _make_lines_po(self):
         self.ensure_one()
@@ -1187,6 +1214,7 @@ class account_reconcile_order(models.Model):
         so_po_dic = {}
         print('line_obj', line_ids)
         self.line_no_ids = None
+        yjzy_advance_payment_id = self.yjzy_advance_payment_id
         for i in self.line_ids:
             invoice = i.invoice_id
             amount_invoice_so = i.amount_invoice_so
@@ -1211,6 +1239,7 @@ class account_reconcile_order(models.Model):
                 'invoice_id': data['invoice_id'],
                 'amount_invoice_so': data['amount_invoice_so'],
                 'advance_residual': data['advance_residual'],
+                'yjzy_payment_id': yjzy_advance_payment_id.id
             })
 
     def _make_lines_so(self):
@@ -1247,6 +1276,7 @@ class account_reconcile_order(models.Model):
         so_po_dic = {}
         print('line_obj', line_ids)
         self.line_no_ids = None
+        yjzy_advance_payment_id = self.yjzy_advance_payment_id
         for i in self.line_ids:
             invoice = i.invoice_id
             amount_invoice_so = i.amount_invoice_so
@@ -1271,6 +1301,7 @@ class account_reconcile_order(models.Model):
                 'invoice_id': data['invoice_id'],
                 'amount_invoice_so': data['amount_invoice_so'],
                 'advance_residual2': data['advance_residual2'],
+                'yjzy_payment_id': yjzy_advance_payment_id.id
             })
             # print('>>', line)
     #826 拆分发票填写的金额到明细上

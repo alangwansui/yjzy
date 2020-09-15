@@ -213,7 +213,7 @@
                                    context="{'form_view_ref':'yjzy_extend.account_yshxd_form_view','tree_view_ref':'yjzy_extend.account_yshxd_tree_view'}"/>
                         </page>
                         <page string="其他收款认领" attrs="{'invisible':[('count_fybg','=',0)]}">
-                            <field name="fybg_ids" widget="many2many">
+                            <field name="fybg_ids" widget="many2many" context="{'form_view_ref':'yjzy_extend.other_income_sheet_view_form'}">
                                 <tree>
                                     <field name="create_date"/>
                                     <field name="create_uid"/>
@@ -221,12 +221,12 @@
                                     <field name="negative_total_amount" string="总金额"/>
                                 </tree>
                             </field>
-                            <field name="expense_ids" widget="many2many">
-                                <tree>
-                                    <field name="product_id" string="收入类别项目"/>
-                                    <field name="negative_total_amount" string="明细金额"/>
-                                </tree>
-                            </field>
+<!--                            <field name="expense_ids" widget="many2many">-->
+<!--                                <tree>-->
+<!--                                    <field name="product_id" string="收入类别项目"/>-->
+<!--                                    <field name="negative_total_amount" string="明细金额"/>-->
+<!--                                </tree>-->
+<!--                            </field>-->
                         </page>
                         <page string="管理页" groups="base.group_system">
                             <group>

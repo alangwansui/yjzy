@@ -413,6 +413,25 @@
                   sequence="10"
                   action="act_tb_po_approving"
         />
+        <record model="ir.actions.act_window" id="act_tb_po_approving">
+            <field name="name">审批中直接增加采购</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">tb.po.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('yjzy_type_1','=','purchase'),('state','not in',['30_done']),('type','=','other_po')]</field>
+            <field name="limit">20</field>
+            <field name="context">{'done':0}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('tb_po_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_form')})]"/>
+
+        </record>
+        <menuitem id="menu_tb_po_tree_approving" name="审批中"
+                  parent="yjzy_extend.menu_extra_po_root"
+                  sequence="10"
+                  action="act_tb_po_approving"
+        />
 
 <record model="ir.actions.act_window" id="act_tb_po_done">
             <field name="name">审批完成直接增加采购</field>
@@ -682,8 +701,8 @@
             <field name="search_view_id" ref="view_tb_po_invoice_filter"/>
             <field name="context">{'search_default_group_by_type':1,'default_yjzy_type_1':'purchase',}</field>
             <field name="view_ids" eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'tree', 'view_id': ref('tb_po_extra_supplier_invoice_tree')}),
-                          (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_extra_invoice_supplier_form')})]"/>
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('tb_po_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_form')})]"/>
 
         </record>
 
@@ -704,8 +723,8 @@
             <field name="search_view_id" ref="view_tb_po_invoice_filter"/>
             <field name="context">{'search_default_group_by_type':1,'default_yjzy_type_1':'purchase',}</field>
             <field name="view_ids" eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'tree', 'view_id': ref('tb_po_extra_supplier_invoice_tree')}),
-                          (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_extra_invoice_supplier_form')})]"/>
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('tb_po_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_form')})]"/>
 
         </record>
 
@@ -726,8 +745,8 @@
             <field name="search_view_id" ref="view_tb_po_invoice_filter"/>
             <field name="context">{'search_default_group_by_type':1,'default_yjzy_type_1':'purchase',}</field>
             <field name="view_ids" eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'tree', 'view_id': ref('tb_po_extra_supplier_invoice_tree')}),
-                          (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_extra_invoice_supplier_form')})]"/>
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('tb_po_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_form')})]"/>
 
         </record>
 
@@ -748,8 +767,8 @@
             <field name="search_view_id" ref="view_tb_po_invoice_filter"/>
             <field name="context">{'search_default_group_by_type':1,'default_yjzy_type_1':'purchase',}</field>
             <field name="view_ids" eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'tree', 'view_id': ref('tb_po_extra_supplier_invoice_tree')}),
-                          (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_extra_invoice_supplier_form')})]"/>
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('tb_po_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_form')})]"/>
 
         </record>
 

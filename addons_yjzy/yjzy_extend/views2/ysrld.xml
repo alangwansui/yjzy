@@ -64,7 +64,7 @@
             </tree>
         </field>
     </record>
-
+<!--       正在使用-->
         <record model="ir.ui.view" id="view_ysrld_reconcile_tree_1">
         <field name="name">account.payment.tree</field>
         <field name="model">account.payment</field>
@@ -77,7 +77,9 @@
                 <field name="rcskd_amount"/>
                 <field name="payment_date" string="认领日期"/>
                 <field name="amount" string="金额"/>
-                <button name="open_reconcile_order_line" icon="fa-pencil-square-o" type="object"/>
+                <button name="open_reconcile_order_line" icon="fa-pencil-square-o" type="object"
+                        attrs="{'invisible':[('advance_reconcile_order_count','=',0)]}"/>
+                <field name="advance_reconcile_order_count" invisible="1"/>
                 <field name="advance_balance_total" string="未认领金额"/>
                 <field name="advance_total" string="已认领金额"/>
                 <field name="so_id" string="销售合同"/>
@@ -122,7 +124,7 @@
                             <field name="yjzy_payment_currency_id" string="货币" readonly="1"
                                    options="{'no_create':True,'no_open': True}"/>
                             <field name="yjzy_payment_balance" string="收款单余额"/>
-                            <field name="so_id" string="销售合同"
+                            <field name="so_id" string="销售合同" attrs="{'readonly': [('state', '!=', 'draft'),('is_editable','=',False)]}"
                                    domain="[('partner_id','=', partner_id),('state','not in',['done','verifying','verification','cancel','refuse'])]"
                                    options="{'no_create':True,'no_open': True}"/>
                             <label for="amount" string="收款认领金额"/>
@@ -355,7 +357,7 @@
     <menuitem id="menu_ysrld_new" sequence="30" name="预收认领单" parent="menu_new_account_root"/>
 
     <record id="action_ysrld_undone" model="ir.actions.act_window">
-        <field name="name">未生效</field>
+        <field name="name">未生效预收</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">account.payment</field>
         <field name="view_type">form</field>
@@ -373,7 +375,7 @@
               action="action_ysrld_undone"/>
 
      <record id="action_ysrld_balance" model="ir.actions.act_window">
-        <field name="name">未认领完成</field>
+        <field name="name">未认领完成预收</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">account.payment</field>
         <field name="view_type">form</field>
@@ -391,7 +393,7 @@
               action="action_ysrld_balance"/>
 
     <record id="action_ysrld_no_balance" model="ir.actions.act_window">
-        <field name="name">认领完成</field>
+        <field name="name">认领完成预收</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">account.payment</field>
         <field name="view_type">form</field>

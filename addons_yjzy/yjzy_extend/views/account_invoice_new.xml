@@ -2168,7 +2168,7 @@
                   sequence="90"
         />
         <record id="action_supplier_account_invoice_extra_paid" model="ir.actions.act_window">
-            <field name="name">未付款额外应付账单</field>
+            <field name="name">已付款额外应付账单</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">account.invoice</field>
             <field name="view_mode">tree,form</field>
@@ -2183,7 +2183,7 @@
                               ]"/>
         </record>
        <menuitem id="menu_supplier_account_invoice_extra_paid" action="action_supplier_account_invoice_extra_paid"
-                  parent="menu_extra_supplier_invoice_root" name="未付款"
+                  parent="menu_extra_supplier_invoice_root" name="已付款"
                   sequence="90"
         />
 
