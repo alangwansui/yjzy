@@ -349,7 +349,18 @@
               parent="menu_yfhxd_advance_new" sequence="20"
               action="action_yfhxd_new_advance_submit"/>
 
+<record model="ir.actions.act_window" id="action_yfhxd_all_new_1">
+        <field name="name">应付核销单:新</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.reconcile.order</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
 
+
+          <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('account_yfhxd_tree_view_new')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('account_yfhxd_form_view_new')})]"/>
+    </record>
     <record model="ir.actions.act_window" id="action_yfhxd_all_new">
         <field name="name">应付核销单:新</field>
         <field name="type">ir.actions.act_window</field>
@@ -357,7 +368,7 @@
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="domain">[('sfk_type','=','yfhxd')]</field>
-        <field name="context">{'default_sfk_type': 'yfhxd', 'default_payment_type': 'outbound', 'default_be_renling': 1, 'default_partner_type':
+        <field name="context">{'default_sfk_type': 'yfhxd','advance_po_amount':1, 'default_payment_type': 'outbound', 'default_be_renling': 1, 'default_partner_type':
             'supplier', 'show_po': 1,'default_operation_wizard':'30'}
         </field>
           <field name="view_ids" eval="[(5, 0, 0),

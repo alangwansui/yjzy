@@ -209,6 +209,7 @@ class account_payment(models.Model):
                 name = '%s:%s' % (one.name, str(one.advance_balance_total))
             else:
                 name = '%s[%s]' % (one.name, str(one.balance))
+            print('ctx_1111',ctx)
             one.display_name = name
 
     def _compute_advance_reconcile_order_count_all(self):
@@ -847,16 +848,17 @@ class account_payment(models.Model):
         ctx={'default_partner_id':self.partner_id.id,
                             'default_sfk_type': 'yfhxd',
                             'default_yjzy_advance_payment_id': self.id,
-                            'bank_amount': 1,
+                            'advance_po_amount': 1,
                             'default_payment_type': 'outbound',
                             'default_be_renling': 1,
                             'default_partner_type': 'supplier',
                             'show_so': 1,
+
                             'default_operation_wizard': '25',
                             'default_hxd_type_new':'30',}#预付-应付
         if len(advance_reconcile) >= 1:
             action['views'] = [(tree_view, 'tree'), (form_view, 'form')]
-            action['domain'] = [('id', 'in', advance_reconcile.ids)]
+            action['domain'] = [('id', 'in', advance_reconcile.ids),('sfk_type','=','yfhxd')]
             action['context'] = ctx
         # elif len(advance_reconcile) == 1:
         #     action['views'] = [(self.env.ref('yjzy_extend.account_yfhxd_form_view_new').id, 'form')]
@@ -864,6 +866,8 @@ class account_payment(models.Model):
         else:
             action['views'] = [(form_view, 'form')]
             action['context'] = ctx
+        print('ctx_222',ctx)
+        print('action',action)
         return action
 
 
@@ -930,10 +934,11 @@ class account_payment(models.Model):
             'context': {'default_partner_id':self.partner_id.id,
                         'default_sfk_type': 'yfhxd',
                         'default_yjzy_advance_payment_id': self.id,
-                        'bank_amount': 1,
+                        'advance_po_amount': 1,
                         'default_payment_type': 'outbound',
                         'default_be_renling': 1,
                         'default_partner_type': 'supplier',
+
                         'show_so': 1,
                         'default_operation_wizard': '25',
                         'default_hxd_type_new':'30',#预付-应付

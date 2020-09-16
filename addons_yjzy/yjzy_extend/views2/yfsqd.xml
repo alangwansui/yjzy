@@ -100,7 +100,7 @@
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
-                        <button name="open_yfsqd_yfhxd" string="应付认领" type="object" groups="account.group_account_user" icon="fa-bars">
+                        <button name="open_yfsqd_yfhxd" string="应付认领" type="object"  groups="account.group_account_user" icon="fa-bars">
                             <field name="advance_reconcile_order_count_all" widget="statinfo" nolabel="1"/>
                             <field name="advance_reconcile_order_ids" invisible="1"/>
                         </button>
