@@ -307,15 +307,15 @@
             </field>
         </record>
 
-
-    <record id="action_account_invoice_extra_po" model="ir.actions.act_window">
-            <field name="name">增加采购账单</field>
+    <menuitem id="account_invoice_extra_po" name="增加采购应付账单" sequence="40" parent="yjzy_extend.menu_new_account_out_root"/>
+    <record id="action_account_invoice_extra_po_unpaid" model="ir.actions.act_window">
+            <field name="name">未付款增加采购应付账单</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">account.invoice</field>
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_account_invoice_new_filter"/>
-            <field name="domain">[('invoice_attribute','=','other_po'),('yjzy_type_1','=','purchase'),('type','=','in_invoice')]</field>
-            <field name="context">{}
+            <field name="domain">[('invoice_attribute','in',['other_po','expense_po']),('state','=','open'),('yjzy_type_1','=','purchase'),('type','=','in_invoice')]</field>
+            <field name="context">{'search_default_group_by_invoice_attribute':1}
             </field>
             <!--field name="target">new</field-->
             <field name="view_ids" eval="[(5, 0, 0),
@@ -323,9 +323,28 @@
                               (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.view_supplier_invoice_extra_po_form')}),
                               ]"/>
         </record>
-       <menuitem id="menu_account_invoice_extra_po" action="action_account_invoice_extra_po"
-                  parent="yjzy_extend.menu_extra_po_root" name="增加采购账单"
-                  sequence="90"
+       <menuitem id="menu_account_invoice_extra_po_unpaid" action="action_account_invoice_extra_po_unpaid"
+                  parent="yjzy_extend.account_invoice_extra_po" name="未付款"
+                  sequence="10"
+        />
+        <record id="action_account_invoice_extra_po_paid" model="ir.actions.act_window">
+            <field name="name">已付款增加采购应付账单</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_account_invoice_new_filter"/>
+            <field name="domain">[('invoice_attribute','in',['other_po','expense_po']),('state','=','paid'),('yjzy_type_1','=','purchase'),('type','=','in_invoice')]</field>
+            <field name="context">{'search_default_group_by_invoice_attribute':1}
+            </field>
+            <!--field name="target">new</field-->
+            <field name="view_ids" eval="[(5, 0, 0),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.invoice_supplier_extra_po_tree')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.view_supplier_invoice_extra_po_form')}),
+                              ]"/>
+        </record>
+       <menuitem id="menu_account_invoice_extra_po_paid" action="action_account_invoice_extra_po_paid"
+                  parent="yjzy_extend.account_invoice_extra_po" name="已付款"
+                  sequence="10"
         />
         <record id="action_account_out_invoice_extra_po" model="ir.actions.act_window">
             <field name="name">对应应收账单</field>

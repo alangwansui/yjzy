@@ -353,6 +353,7 @@
                         <field name="yjzy_invoice_residual_amount" string="关联账单未付金额" attrs="{'invisible':[('type','!=','other_po')]}"/>
                         <field name="yjzy_invoice_include_tax" string="关联账单是否含税" attrs="{'invisible':[('type','!=','other_po')]}"/>
                             <field name="price_total"/>
+                            <field name="extra_invoice_include_tax" attrs="{'invisible':[('type','!=','extra')]}"/>
                         <field name="p_s_add_this_time_refund" attrs="{'invisible':['|',('yjzy_invoice_include_tax','=',True),('type','!=','other_po')]}" string="冲减金额"/>
                         <field name="p_s_add_this_time_extra_total" string="冲减后应收" attrs="{'invisible':[('type','!=','other_po')]}"/>
                         <field name="purchase_amount2_add_this_time_total" string="增加采购总额"/>
@@ -524,11 +525,6 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_form')})]"/>
 
         </record>
-        <menuitem id="menu_expense_po_tree_all" name="费用转采购"
-
-                  sequence="10"
-                  action="act_expense_po_all"
-        />
 
          <record model="ir.actions.act_window" id="act_other_po_all">
             <field name="name">直接增加采购</field>
@@ -544,10 +540,6 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_form')})]"/>
 
         </record>
-        <menuitem id="menu_other_po_tree_all" name="直接增加采购"
-                  sequence="10"
-                  action="act_other_po_all"
-        />
 
          <record model="ir.actions.act_window" id="act_expense_po_create">
             <field name="name">创建费用转应付申请单</field>

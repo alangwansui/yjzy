@@ -187,7 +187,7 @@
 
     <menuitem id="menu_rcfkd"  sequence="00" name="日常付款单" parent="menu_skf_root" action="action_rcfkd"/>
 
-<menuitem id="menu_rcfkd_new"  sequence="20" name="日常付款单" parent="menu_new_account_root"/>
+    <menuitem id="menu_rcfkd_new"  sequence="10" name="日常付款单" parent="menu_new_account_out_root"/>
     <record model="ir.actions.act_window" id="action_rcfkd_undone_new">
         <field name="name">未生效日常付款单</field>
         <field name="type">ir.actions.act_window</field>
@@ -201,7 +201,7 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_rcfkd_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcfkd_form')})]"/>
     </record>
-    <menuitem id="menu_rcfkd_undone"  sequence="0" name="未生效" parent="menu_rcfkd_new" action="action_rcfkd_undone_new"/>
+    <menuitem id="menu_rcfkd_undone"  sequence="1" name="未生效" parent="menu_rcfkd_new" action="action_rcfkd_undone_new"/>
  <record model="ir.actions.act_window" id="action_rcfkd_done_new">
         <field name="name">已完成日常付款单</field>
         <field name="type">ir.actions.act_window</field>
@@ -215,7 +215,7 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_rcfkd_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcfkd_form')})]"/>
     </record>
-    <menuitem id="menu_rcfkd_done"  sequence="0" name="已完成" parent="menu_rcfkd_new" action="action_rcfkd_done_new"/>
+    <menuitem id="menu_rcfkd_done"  sequence="10" name="已完成" parent="menu_rcfkd_new" action="action_rcfkd_done_new"/>
 
     <record model="ir.actions.act_window" id="action_rcfkd_undone_new">
         <field name="name">未认领付款单</field>
@@ -230,6 +230,6 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_rcfkd_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcfkd_form')})]"/>
     </record>
-    <menuitem id="menu_rcfkd_undone_new"  sequence="200" name="未认领付款单" parent="menu_new_account_out_root" action="action_rcfkd_undone_new"/>
+    <menuitem id="menu_rcfkd_undone_new"  sequence="20" name="未认领付款单" parent="menu_rcfkd_new" action="action_rcfkd_undone_new"/>
 
 </odoo>

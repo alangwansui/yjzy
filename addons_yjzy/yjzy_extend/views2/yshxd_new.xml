@@ -278,13 +278,47 @@
         <field name="view_type">form</field>
         <field name="view_mode">form</field>
         <field name="domain">[('sfk_type','=','yshxd')]</field>
-        <field name="context">{'default_sfk_type': 'yshxd','default_operation_wizard':'10','advance_so_amount':1,'default_payment_type': 'inbound', 'default_be_renling': 1, 'default_partner_type': 'customer', 'show_so': 1}
+        <field name="context">{'hxd_type_new':'20','default_sfk_type': 'yshxd','default_operation_wizard':'10','advance_so_amount':1,'default_payment_type': 'inbound', 'default_be_renling': 1, 'default_partner_type': 'customer', 'show_so': 1}
         </field>
         <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('account_yshxd_form_view_new')})]"/>
     </record>
        <menuitem id="menu_rcskd_yshxd_create_new" name="创建收款-应收认领"
               parent="menu_yshxd_new" action="action_rcskd_yshxd_create_new"/>
+
+    <record model="ir.actions.act_window" id="action_yshxd_payment_undone_new">
+        <field name="name">未生效收款-应收认领单</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.reconcile.order</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('sfk_type','=','yshxd'),('state','not in',['done']),('hxd_type_new','=','20')]</field>
+        <field name="context">{'hxd_type_new':'20','default_sfk_type': 'yshxd', 'advance_so_amount':1,'default_payment_type': 'inbound', 'default_be_renling': 1, 'default_partner_type': 'customer', 'show_so': 1}
+        </field>
+
+        <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('account_yshxd_tree_view_new')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('account_yshxd_form_view_new')})]"/>
+    </record>
+       <menuitem id="menu_yshxd_payment_undone_new" name="未生效"
+              parent="menu_yshxd_new" action="action_yshxd_payment_undone_new"/>
+
+    <record model="ir.actions.act_window" id="action_yshxd_payment_done_new">
+        <field name="name">已完成收款-应收认领单</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.reconcile.order</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('sfk_type','=','yshxd'),('state','in',['done']),('hxd_type_new','=','20')]</field>
+        <field name="context">{'hxd_type_new':'20','default_sfk_type': 'yshxd', 'advance_so_amount':1,'default_payment_type': 'inbound', 'default_be_renling': 1, 'default_partner_type': 'customer', 'show_so': 1}
+        </field>
+
+        <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('account_yshxd_tree_view_new')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('account_yshxd_form_view_new')})]"/>
+    </record>
+       <menuitem id="menu_yshxd_payment_done_new" name="未生效"
+              parent="menu_yshxd_new" action="action_yshxd_payment_done_new"/>
 
      <record model="ir.actions.act_window" id="action_ysrld_yshxd_create_new">
         <field name="name">创建预收-应收认领</field>
@@ -293,7 +327,7 @@
         <field name="view_type">form</field>
         <field name="view_mode">form</field>
         <field name="domain">[('sfk_type','=','yshxd')]</field>
-        <field name="context">{'default_sfk_type': 'yshxd', 'advance_so_amount':1,'default_operation_wizard':'25','default_payment_type': 'inbound', 'default_be_renling': 1, 'default_partner_type': 'customer', 'show_so': 1}
+        <field name="context">{'hxd_type_new':'10','default_sfk_type': 'yshxd', 'advance_so_amount':1,'default_operation_wizard':'25','default_payment_type': 'inbound', 'default_be_renling': 1, 'default_partner_type': 'customer', 'show_so': 1}
         </field>
 
         <field name="view_ids" eval="[(5, 0, 0),
@@ -302,4 +336,38 @@
     </record>
        <menuitem id="menu_ysrld_yshxd_new" name="创建预收-应收认领"
               parent="menu_yshxd_new" action="action_ysrld_yshxd_create_new"/>
+
+    <record model="ir.actions.act_window" id="action_yshxd_advance_undone_new">
+        <field name="name">未生效预收-应收认领单</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.reconcile.order</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('sfk_type','=','yshxd'),('state','not in',['done']),('hxd_type_new','=','10')]</field>
+        <field name="context">{'hxd_type_new':'10','default_sfk_type': 'yshxd', 'advance_so_amount':1,'default_payment_type': 'inbound', 'default_be_renling': 1, 'default_partner_type': 'customer', 'show_so': 1}
+        </field>
+
+        <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('account_yshxd_tree_view_new')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('account_yshxd_form_view_new')})]"/>
+    </record>
+       <menuitem id="menu_yshxd_advance_undone_new" name="未生效"
+              parent="menu_yshxd_new" action="action_yshxd_advance_undone_new"/>
+
+    <record model="ir.actions.act_window" id="action_yshxd_advance_done_new">
+        <field name="name">已完成预收-应收认领单</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.reconcile.order</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('sfk_type','=','yshxd'),('state','in',['done']),('hxd_type_new','=','10')]</field>
+        <field name="context">{'hxd_type_new':'10','default_sfk_type': 'yshxd', 'advance_so_amount':1,'default_payment_type': 'inbound', 'default_be_renling': 1, 'default_partner_type': 'customer', 'show_so': 1}
+        </field>
+
+        <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('account_yshxd_tree_view_new')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('account_yshxd_form_view_new')})]"/>
+    </record>
+       <menuitem id="menu_yshxd_advance_done_new" name="未生效"
+              parent="menu_yshxd_new" action="action_yshxd_advance_done_new"/>
 </odoo>

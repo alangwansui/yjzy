@@ -354,7 +354,7 @@
     <menuitem id="menu_ysrld" sequence="00" name="预收认领单" parent="menu_skf_root" action="action_ysrld"/>
 
 
-    <menuitem id="menu_ysrld_new" sequence="30" name="预收认领单" parent="menu_new_account_root"/>
+    <menuitem id="menu_ysrld_new" sequence="30" name="预收认领单" parent="menu_new_account_in_root"/>
 
     <record id="action_ysrld_undone" model="ir.actions.act_window">
         <field name="name">未生效预收</field>

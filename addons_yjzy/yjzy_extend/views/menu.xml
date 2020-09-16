@@ -4,10 +4,10 @@
 
 
         <menuitem id="menu_yjzy_payment_root" name="新收付款"/>
-        <menuitem id="menu_extra_po_root" name="直接增加采购" sequence="70" parent="yjzy_extend.menu_new_account_out_root"/>
-        <menuitem id="menu_extra_po_expense_root" name="费用转采购" sequence="80" parent="yjzy_extend.menu_new_account_out_root"/>
+        <menuitem id="menu_extra_po_root" name="直接增加采购" sequence="90"/>
+        <menuitem id="menu_extra_po_expense_root" name="费用转采购" sequence="90"/>
         <menuitem id="menu_extra_customer_invoice_root" name="额外应收申请" sequence="99"/>
-        <menuitem id="menu_extra_supplier_invoice_root" name="额外应付申请" sequence="45" parent="yjzy_extend.menu_new_account_out_root"/>
+        <menuitem id="menu_extra_supplier_invoice_root" name="额外应付申请" sequence="99"/>
         <menuitem id="menu_yjzy_advance_root" name="应收应付" sequence="99"/>
         <menuitem id="menu_back_tax_declaration_root" name="退税申报" sequence="99"/>
 

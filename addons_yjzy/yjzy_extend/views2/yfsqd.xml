@@ -230,7 +230,7 @@
     </record>
 
 
-    <menuitem id="menu_yfsqd"  sequence="0" name="预付申请单" parent="menu_skf_root" action="action_yfsqd"/>
+    <menuitem id="menu_yfsqd"  sequence="20" name="预付申请单" parent="menu_skf_root" action="action_yfsqd"/>
 
     <record model="ir.actions.act_window" id="action_yfsqd_draft">
         <field name="name">未提交预付申请</field>
