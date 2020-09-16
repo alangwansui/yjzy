@@ -189,36 +189,51 @@
 
     <menuitem id="menu_rcfkd_new"  sequence="10" name="日常付款单" parent="menu_new_account_out_root"/>
     <record model="ir.actions.act_window" id="action_rcfkd_undone_new">
-        <field name="name">未生效日常付款单</field>
+        <field name="name">未提交日常付款单</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">account.payment</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
-        <field name="domain">[('sfk_type','=','rcfkd'),('state','not in',['reconciled','posted'])]</field>
+        <field name="domain">[('sfk_type','=','rcfkd'),('state_1','in',['10_draft','80_refused','90_cancel'])]</field>
         <field name="context">{'show_shoukuan': True, 'default_sfk_type': 'rcfkd', 'default_payment_type': 'outbound', 'default_be_renling': False, 'default_advance_ok': True, 'default_partner_type': 'supplier',}</field>
         <field name="search_view_id" ref="view_account_payment_search_new"/>
         <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_rcfkd_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcfkd_form')})]"/>
     </record>
-    <menuitem id="menu_rcfkd_undone"  sequence="1" name="未生效" parent="menu_rcfkd_new" action="action_rcfkd_undone_new"/>
+    <menuitem id="menu_rcfkd_undone"  sequence="10" name="未提交" parent="menu_rcfkd_new" action="action_rcfkd_undone_new"/>
+
+    <record model="ir.actions.act_window" id="action_rcfkd_submit_new">
+        <field name="name">审批中日常付款单</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.payment</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('sfk_type','=','rcfkd'),('state_1','in',['25_cashier_submit'])]</field>
+        <field name="context">{'show_shoukuan': True, 'default_sfk_type': 'rcfkd', 'default_payment_type': 'outbound', 'default_be_renling': False, 'default_advance_ok': True, 'default_partner_type': 'supplier',}</field>
+        <field name="search_view_id" ref="view_account_payment_search_new"/>
+        <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_rcfkd_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcfkd_form')})]"/>
+    </record>
+    <menuitem id="menu_rcfkd_submit"  sequence="20" name="审批中" parent="menu_rcfkd_new" action="action_rcfkd_submit_new"/>
  <record model="ir.actions.act_window" id="action_rcfkd_done_new">
         <field name="name">已完成日常付款单</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">account.payment</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
-        <field name="domain">[('sfk_type','=','rcfkd'),('state','in',['reconciled','posted'])]</field>
+        <field name="domain">[('sfk_type','=','rcfkd'),('state','in',['reconciled','posted']),('balance','=',0)]</field>
         <field name="context">{'show_shoukuan': True, 'default_sfk_type': 'rcfkd', 'default_payment_type': 'outbound', 'default_be_renling': False, 'default_advance_ok': True, 'default_partner_type': 'supplier',}</field>
         <field name="search_view_id" ref="view_account_payment_search_new"/>
         <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_rcfkd_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcfkd_form')})]"/>
     </record>
-    <menuitem id="menu_rcfkd_done"  sequence="10" name="已完成" parent="menu_rcfkd_new" action="action_rcfkd_done_new"/>
+    <menuitem id="menu_rcfkd_done"  sequence="40" name="已完成" parent="menu_rcfkd_new" action="action_rcfkd_done_new"/>
 
     <record model="ir.actions.act_window" id="action_rcfkd_undone_new">
-        <field name="name">未认领付款单</field>
+        <field name="name">未认领日常付款单</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">account.payment</field>
         <field name="view_type">form</field>
@@ -230,6 +245,6 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_rcfkd_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcfkd_form')})]"/>
     </record>
-    <menuitem id="menu_rcfkd_undone_new"  sequence="20" name="未认领付款单" parent="menu_rcfkd_new" action="action_rcfkd_undone_new"/>
+    <menuitem id="menu_rcfkd_undone_new"  sequence="30" name="未认领付款单" parent="menu_rcfkd_new" action="action_rcfkd_undone_new"/>
 
 </odoo>
