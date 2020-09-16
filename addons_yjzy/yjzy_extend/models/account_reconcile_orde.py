@@ -1166,33 +1166,33 @@ class account_reconcile_order(models.Model):
             elif self.hxd_type_new == '30':
                 self.operation_wizard = '25'
 
-                tree_view = self.env.ref('yjzy_extend.account_yfhxd_advance_tree_view_new').id
-                form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new').id
-
-                action = self.env.ref('yjzy_extend.action_yfhxd_all_new_1').read()[0]
-                ctx = {
-                       'advance_po_amount': 1,
-                      }  # 预付-应付
-
-                action['views'] = [(form_view, 'form')]
-                action['res_id'] = self.id,
-                action['context'] = ctx
-                action['target'] = 'new'
-                print('ctx_222', ctx)
-                print('action', action)
-                return action
+                # tree_view = self.env.ref('yjzy_extend.account_yfhxd_advance_tree_view_new').id
                 # form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new').id
-                # return {
-                #     'name': '添加账单',
-                #     'view_type': 'form',
-                #     'view_mode': 'form',
-                #     'res_model': 'account.reconcile.order',
-                #     'views': [(form_view, 'form')],
-                #     'res_id': self.id,
-                #     'target': 'new',
-                #     'type': 'ir.actions.act_window',
-                #     'context': {'advance_po_amount': 1,}
-                # }
+                #
+                # action = self.env.ref('yjzy_extend.action_yfhxd_all_new_1').read()[0]
+                # ctx = {
+                #        'advance_po_amount': 1,
+                #       }  # 预付-应付
+                #
+                # action['views'] = [(form_view, 'form')]
+                # action['res_id'] = self.id,
+                # action['context'] = ctx
+                # action['target'] = 'new'
+                # print('ctx_222', ctx)
+                # print('action', action)
+                # return action
+                form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new').id
+                return {
+                    'name': '添加账单',
+                    'view_type': 'form',
+                    'view_mode': 'form',
+                    'res_model': 'account.reconcile.order',
+                    'views': [(form_view, 'form')],
+                    'res_id': self.id,
+                    'target': 'new',
+                    'type': 'ir.actions.act_window',
+                    'context': {'advance_po_amount': 1,}
+                }
 
 
     def _make_lines_po(self):
