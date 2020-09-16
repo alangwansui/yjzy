@@ -643,10 +643,11 @@ class account_invoice(models.Model):
                 'default_journal_id': journal.id,
                 'default_payment_account_id': bank_account.id,
                 'default_operation_wizard':'03',
+                'default_hxd_type_new':'40'
 
             }
         }
-    #从核销单的发票明细创建核销单。（创建预付-应付的核销）
+    #从核销单的发票明细创建核销单。（创建预付-应付的核销）现在用不到了
     def submit_yfhxd_new(self):
         print('invoice_ids', self.ids)
         print('partner_id', len(self.mapped('partner_id')))
@@ -679,6 +680,7 @@ class account_invoice(models.Model):
                 'default_payment_account_id': bank_account.id,
                 'default_operation_wizard':'03',
                 'default_yjzy_advance_payment_id':self.yjzy_advance_payment_id.id,
+                'default_hxd_type_new': '30'
             }
         }
 
