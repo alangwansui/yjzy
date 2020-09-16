@@ -1168,7 +1168,7 @@ class account_reconcile_order(models.Model):
 
                 tree_view = self.env.ref('yjzy_extend.account_yfhxd_advance_tree_view_new').id
                 form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new').id
-                advance_reconcile = self.mapped('advance_reconcile_order_ids')
+
                 action = self.env.ref('yjzy_extend.action_yfhxd_all_new_1').read()[0]
                 ctx = {
                        'advance_po_amount': 1,
