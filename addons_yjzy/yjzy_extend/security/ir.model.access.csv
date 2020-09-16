@@ -34,7 +34,7 @@ access_tb_po_invoice_line,access_tb_po_invoice_line,model_tb_po_invoice_line,bas
 access_budget_budget,access_budget_budget,model_budget_budget,base.group_user,1,1,1,1
 access_account_reconcile_order_line_no,access_account_reconcile_order_line_no,model_account_reconcile_order_line_no,base.group_user,1,1,1,1
 access_back_tax_declaration,access_back_tax_declaration,model_back_tax_declaration,base.group_user,1,1,1,1
-access_extra.invoice.line,access_extra.invoice.line,model_extra.invoice.line,base.group_user,1,1,1,1
+access_extra_invoice_line,access_extra_invoice_line,model_extra_invoice_line,base.group_user,1,1,1,1
 
 
 
