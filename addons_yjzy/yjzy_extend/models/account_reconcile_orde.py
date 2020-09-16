@@ -1175,7 +1175,7 @@ class account_reconcile_order(models.Model):
                     'res_id': self.id,
                     'target': 'new',
                     'type': 'ir.actions.act_window',
-                    'context': {'advance_po_amount':1}
+                    'context': {'advance_po_amount': 1,}
                 }
 
 
