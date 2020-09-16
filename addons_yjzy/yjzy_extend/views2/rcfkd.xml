@@ -188,7 +188,7 @@
     <menuitem id="menu_rcfkd"  sequence="00" name="日常付款单" parent="menu_skf_root" action="action_rcfkd"/>
 
     <menuitem id="menu_rcfkd_new"  sequence="10" name="日常付款单" parent="menu_new_account_out_root"/>
-    <record model="ir.actions.act_window" id="action_rcfkd_undone_new">
+    <record model="ir.actions.act_window" id="action_rcfkd_draft_new">
         <field name="name">未提交日常付款单</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">account.payment</field>
@@ -201,7 +201,7 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_rcfkd_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcfkd_form')})]"/>
     </record>
-    <menuitem id="menu_rcfkd_undone"  sequence="10" name="未提交" parent="menu_rcfkd_new" action="action_rcfkd_undone_new"/>
+    <menuitem id="menu_rcfkd_draft"  sequence="10" name="未提交" parent="menu_rcfkd_new" action="action_rcfkd_draft_new"/>
 
     <record model="ir.actions.act_window" id="action_rcfkd_submit_new">
         <field name="name">审批中日常付款单</field>
