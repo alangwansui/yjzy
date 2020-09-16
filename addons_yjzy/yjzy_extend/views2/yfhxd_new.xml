@@ -256,7 +256,7 @@
                                 </tree>
                             </field>
                         </page>
-                        <page string="本次认领明细" attrs="{'invisible':[('operation_wizard','not in',['20','30','10'])]}">
+                        <page string="本次认领明细" attrs="{'invisible':[('operation_wizard','not in',['20','30'])]}">
                             <field name="line_ids" context="{'invisible_so': partner_type == 'supplier'}">
                                 <tree editable="top" create="false">
                                     <field name="payment_type" invisible="1"/>
@@ -285,7 +285,7 @@
                             </field>
                         </page>
 
-                        <page string="所有预付单" attrs="{'invisible':[('hxd_type_new','in',['10','30'])]}">
+                        <page string="所有预付单" attrs="{'invisible':['|',('hxd_type_new','in',['10','30']),('operation_wizard','in',['05'])]}">
                             <field name="supplier_advance_payment_ids"
                                    context="{'form_view_ref':'yjzy_extend.view_yfsqd_form','show_shoukuan': True, 'default_sfk_type': 'yfsqd', 'default_payment_type': 'outbound', 'default_be_renling': True, 'default_advance_ok': True, 'default_partner_type': 'supplier',}">
                                 <tree>

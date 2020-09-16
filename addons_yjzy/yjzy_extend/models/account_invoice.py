@@ -479,8 +479,8 @@ class account_invoice(models.Model):
                 'target': 'current',
                 'context': {'default_type': 'extra',
                             'default_yjzy_type_1': 'purchase',
-                            'default_yjzy_invoice_id': self.id,
-                            'default_partner_id': self.partner_id.id}
+                            'default_partner_id': self.partner_id.id,
+                            'default_yjzy_invoice_id': self.id,}
             }
 
 
