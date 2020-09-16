@@ -1175,7 +1175,7 @@ class account_reconcile_order(models.Model):
                       }  # 预付-应付
 
                 action['views'] = [(form_view, 'form')]
-                action['view_id'] = self.id,
+                action['res_id'] = self.id,
                 action['context'] = ctx
                 action['target'] = 'new'
                 print('ctx_222', ctx)
