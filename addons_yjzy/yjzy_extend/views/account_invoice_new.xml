@@ -1058,7 +1058,7 @@
                         <button name="invoice_assign_outstanding_credit" type="object" string="核销"/>
                         <field name="stage_id" widget="statusbar" clickable="1"/>
                     </header>
-                    <header groups="base.group_system" attrs="{'invisible':[('is_yjzy_invoice','=',True)]}">
+                    <header attrs="{'invisible':[('is_yjzy_invoice','=',True)]}">
                         <button name="open_tb_po_invoice" string="额外应付申请" type="object"/>
 <!--                       <button name="open_supplier_invoice_id" string="额外应付账单" type="object"/>-->
                        <!--button name="open_supplier_refund_id" string="额外账单：减少金额" type="object"/-->
