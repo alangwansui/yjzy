@@ -284,6 +284,7 @@
 
 
     <menuitem id="menu_rcskd_new"  sequence="10" name="日常收款单" parent="yjzy_extend.menu_new_account_in_root"/>
+     <menuitem id="menu_rcskd_new_cashier"  sequence="10" name="日常收款单" parent="yjzy_extend.menu_new_account_root"/>
     <menuitem id="menu_rcskd"  sequence="0" name="日常收款单" parent="menu_skf_root" action="action_rcskd"/>
 
  <record id="action_new_action_rcskd" model="ir.actions.act_window">
@@ -317,7 +318,7 @@
 
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcskd_form')})]"/>
     </record>
-<menuitem id="menu_rcskd_create_new"  sequence="99" name="创建日常收款单" parent="yjzy_extend.menu_rcskd_new" action="action_rcskd_create_new"/>
+<menuitem id="menu_rcskd_create_new"  sequence="99" name="创建日常收款单" parent="yjzy_extend.menu_rcskd_new_cashier" action="action_rcskd_create_new"/>
     <record model="ir.actions.act_window" id="action_rcskd_undone_new">
         <field name="name">未提交收款单</field>
         <field name="type">ir.actions.act_window</field>
@@ -331,7 +332,8 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_rcskd_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcskd_form')})]"/>
     </record>
-<menuitem id="menu_rcskd_undone_new"  sequence="20" name="未提交" parent="yjzy_extend.menu_rcskd_new" action="action_rcskd_undone_new"/>
+    <menuitem id="menu_rcskd_undone_new"  sequence="20" name="未提交" parent="yjzy_extend.menu_rcskd_new" action="action_rcskd_undone_new"/>
+    <menuitem id="menu_rcskd_undone_new_cashier"  sequence="20" name="未提交" parent="yjzy_extend.menu_rcskd_new_cashier" action="action_rcskd_undone_new"/>
     <record model="ir.actions.act_window" id="action_rcskd_balance_new">
         <field name="name">未认领完成收款单</field>
         <field name="type">ir.actions.act_window</field>
@@ -346,6 +348,7 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcskd_form')})]"/>
     </record>
      <menuitem id="menu_rcskd_balance_new"  sequence="30" name="未认领完成" parent="yjzy_extend.menu_rcskd_new" action="action_rcskd_balance_new"/>
+   <menuitem id="menu_rcskd_balance_new_cashier"  sequence="30" name="未认领完成" parent="yjzy_extend.menu_rcskd_new_cashier" action="action_rcskd_balance_new"/>
     <record model="ir.actions.act_window" id="action_rcskd_no_balance_new">
         <field name="name">已认领完成收款单</field>
         <field name="type">ir.actions.act_window</field>
@@ -360,7 +363,7 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcskd_form')})]"/>
     </record>
   <menuitem id="menu_rcskd_no_balance_new"  sequence="40" name="已认领完成" parent="yjzy_extend.menu_rcskd_new" action="action_rcskd_no_balance_new"/>
-
+  <menuitem id="menu_rcskd_no_balance_new_cashier"  sequence="40" name="已认领完成" parent="yjzy_extend.menu_rcskd_new_cashier" action="action_rcskd_no_balance_new"/>
 
 
 </odoo>

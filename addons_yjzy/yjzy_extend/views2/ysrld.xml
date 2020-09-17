@@ -447,5 +447,16 @@
     </record>
     <menuitem id="mennu_neew_ysrld_reconcile_1" parent="menu_ysrld_new" name="预收认领：新" sequence="90"
               action="action_new_ysrld_reconcile_1"/>
+<!--    #动作用-->
+    <record model="ir.actions.act_window" id="action_ysrld_all_new_1">
+        <field name="name">预收认领单</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.payment</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_ysrld_reconcile_tree_1')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_ysrld_form')})]"/>
+    </record>
 
 </odoo>

@@ -3,7 +3,7 @@
     <data>
 
         <menuitem id="menu_skf_root" name="收付款"/>
-        <menuitem id="menu_new_account_root" name="新财务" sequence="99"/>
+        <menuitem id="menu_new_account_root" name="出纳" sequence="99"/>
         <menuitem id="menu_new_account_out_root" name="财务-付款" sequence="99"/>
         <menuitem id="menu_new_account_in_root" name="财务-收款" sequence="99"/>
         <menuitem id="menu_new_account_dashboard" name="仪表板" parent="menu_new_account_root" sequence="5" action="account.open_account_journal_dashboard_kanban"/>

@@ -85,11 +85,11 @@ class account_invoice(models.Model):
         for one in self:
             if one.date_deadline:
                 if one.residual_times >= 60:
-                    residual_date_group = 'after_60'
+                    residual_date_group = '10_after_60'
                 if one.residual_times >= 30 and one.residual_times < 60:
-                    residual_date_group = 'after_30'
+                    residual_date_group = '20_after_30'
                 if one.residual_times >= 0 and one.residual_times < 30:
-                    residual_date_group = '0_30'
+                    residual_date_group = '30_0_30'
                 if one.residual_times >= -30 and one.residual_times < 0:
                     residual_date_group = 'before_30'
                 if one.residual_times >= -60 and one.residual_times < -30:
@@ -319,7 +319,7 @@ class account_invoice(models.Model):
     expense_sheet_id = fields.Many2one('hr.expense.sheet',u'费用报告')
     # 增加常规转直接的状态，明细那边增加是否已经转换的状态
     invoice_attribute = fields.Selection(
-        [('normal', '常规账单'), ('extra', '额外账单'), ('other_po', '直接增加'),('expense_po', u'费用转换')], '账单类型')
+        [('normal', u'常规账单'), ('reconcile', u'核销账单'), ('extra', u'额外账单'), ('other_po', u'直接增加'),('expense_po', u'费用转换')], '账单类型')
     #新增
     yjzy_type_1 = fields.Selection([('sale', u'应收'), ('purchase', u'应付'), ('back_tax', u'退税')], string=u'发票类型')
 
@@ -412,7 +412,7 @@ class account_invoice(models.Model):
                                            readonly=True, states={'draft': [('readonly', False)]}, copy=True)
     amount_automatic = fields.Monetary('原始合计金额',currency_field='currency_id',compute=compute_amount)
     amount_manual = fields.Monetary('手动合计金额', currency_field='currency_id', compute=compute_amount)
-    residual_date_group = fields.Selection([('after_60',u'逾期>60天'),('after_30',u'逾期>30天'),('0_30',u'逾期0-30天'),
+    residual_date_group = fields.Selection([('10_after_60',u'逾期>60天'),('20_after_30',u'逾期>30天'),('30_0_30',u'逾期0-30天'),
                                           ('before_30',u'未来30天'),('before_30_60',u'未来30-60天'),
                                           ('before_60_90',u'未来60-90天'),('before_90',u'未来超过90天'),('un_begin',u'未开始')],'到期时间组',store=True,
                                            compute=compute_residual_date_group)
@@ -483,7 +483,40 @@ class account_invoice(models.Model):
                             'default_partner_id': self.partner_id.id,
                             'default_yjzy_invoice_id': self.id,}
             }
-
+    #创建核销额外账单
+    def open_tb_po_reconcile_invoice(self):
+        form_view_supplier_id = self.env.ref('yjzy_extend.tb_po_extra_invoice_supplier_form').id
+        form_view_customer_id = self.env.ref('yjzy_extend.tb_po_extra_invoice_customer_form').id
+        if self.is_yjzy_invoice:
+            raise Warning('额外账单不允许创建额外账单！')
+        if self.yjzy_type == 'sale':
+            return {
+                'name': u'创建核销应收额外账单',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'tb.po.invoice',
+                'type': 'ir.actions.act_window',
+                'views': [(form_view_customer_id, 'form')],
+                'target': 'current',
+                'context':{'default_type':'reconcile',
+                           'default_yjzy_type_1':'sale',
+                           'default_yjzy_invoice_id':self.id,
+                           'default_partner_id':self.partner_id.id}
+            }
+        elif self.yjzy_type == 'purchase':
+            return {
+                'name': u'创建核销应付额外账单',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'tb.po.invoice',
+                'type': 'ir.actions.act_window',
+                'views': [(form_view_supplier_id, 'form')],
+                'target': 'current',
+                'context': {'default_type': 'reconcile',
+                            'default_yjzy_type_1': 'purchase',
+                            'default_partner_id': self.partner_id.id,
+                            'default_yjzy_invoice_id': self.id,}
+            }
 
 
     #创建的时候，默认yjzy_invoice_id等于本身
@@ -580,10 +613,19 @@ class account_invoice(models.Model):
         account_obj = self.env['account.account']
         bank_account = account_obj.search([('code', '=', '10021'), ('company_id', '=', self.env.user.company_id.id)],
                                           limit=1)
+        form_view = self.env.ref('yjzy_extend.account_yshxd_form_view_new')
+        invoice_dic = []
+        for one in self:
+            for x in one.yjzy_invoice_ids:
+                invoice_dic.append(x.id)
+            invoice_dic.append(one.id)
+        print('invoice_dic[k]', invoice_dic)
+        # test = [(for x in line.yjzy_invoice_all_ids) for line in self)]
         return {
             'type': 'ir.actions.act_window',
             'view_mode': 'form',
             'res_model': 'account.reconcile.order',
+            'views': [(form_view.id, 'form')],
             'target': 'current',
             'context': {
                 'default_invoice_ids': self.ids,#[line.id for line in self],
@@ -597,6 +639,7 @@ class account_invoice(models.Model):
                 'default_journal_id': journal.id,
                 'default_payment_account_id': bank_account.id,
                 'default_operation_wizard':'03',
+                'default_hxd_type_new': '20'
             }
         }
 
@@ -617,14 +660,12 @@ class account_invoice(models.Model):
         # for line in self:
         #     for x in line.yjzy_invoice_all_ids:
         #         test = x.id
-        so_po_dic = []
-        test = []
-
+        invoice_dic = []
         for one in self:
             for x in one.yjzy_invoice_ids:
-                so_po_dic.append(x.id)
-            so_po_dic.append(one.id)
-        print('so_po_dic[k]',so_po_dic)
+                invoice_dic.append(x.id)
+            invoice_dic.append(one.id)
+        print('invoice_dic[k]',invoice_dic)
         # test = [(for x in line.yjzy_invoice_all_ids) for line in self)]
         return {
             'type': 'ir.actions.act_window',
@@ -633,7 +674,7 @@ class account_invoice(models.Model):
             'views': [(form_view.id, 'form')],
             'target': 'current',
             'context': {
-                'default_invoice_ids': so_po_dic,# self.yjzy_invoice_all_ids,#
+                'default_invoice_ids': invoice_dic,# self.yjzy_invoice_all_ids,#
                 'default_partner_id': self[0].partner_id.id,
                 'default_manual_payment_currency_id': self[0].currency_id.id,
                 'default_payment_type': 'outbound',

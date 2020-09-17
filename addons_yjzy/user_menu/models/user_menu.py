@@ -56,7 +56,7 @@ class user_menu(models.Model):
     len_records = fields.Integer(u'数量', compute='compute_len_records')
 
     button_name = fields.Char(u'按钮名称')
-    dynamic_template = fields.Text('模板a')
+    dynamic_template = fields.Text('模板a',)
     dynamic_code = fields.Text('动态数据代码a')
     dynamic_html = fields.Text('动态内容a', compute='compute_dynamic_html')
 
@@ -68,7 +68,7 @@ class user_menu(models.Model):
     dynamic_code_c = fields.Text('动态数据代码d')
     dynamic_html_c = fields.Text('动态内容d', compute='compute_dynamic_html')
 
-    view_ids = fields.One2many('ir.actions.act_window.view', 'user_menu_id', string='Views')
+    view_ids = fields.One2many('ir.actions.act_window.view', 'user_menu_id', string='Views', copy=True)
 
     sequence = fields.Integer('排序')
     color = fields.Integer('颜色')

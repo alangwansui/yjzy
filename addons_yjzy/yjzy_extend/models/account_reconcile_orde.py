@@ -918,13 +918,15 @@ class account_reconcile_order(models.Model):
 
     @api.onchange('partner_id')
     def onchange_partner(self):
+        ctx = self.env.context.get('default_yjzy_payment_id')
         if self.partner_id:
             self.invoice_ids.write({'reconcile_order_id': None})
             self.line_ids = False
             self.line_no_ids = False
-            self.yjzy_payment_id = False
             self.bank_id =False
             self.fk_journal_id = False
+            if not ctx:
+                self.yjzy_payment_id = False
             if self.hxd_type_new not in  ['30','10']:
                 self.yjzy_advance_payment_id = False
 

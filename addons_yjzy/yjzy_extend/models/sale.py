@@ -473,7 +473,10 @@ class sale_order(models.Model):
 
 
 
-
+    #0917手动进入待核销
+    def action_manual_ubnormal_hexiao(self):
+        self.hexiao_type = 'abnormal'
+        self.state = 'done'
     #13已经添加
     @api.constrains('current_date_rate','fee_inner')
     def check_fields(self):

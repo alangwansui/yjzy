@@ -184,7 +184,7 @@ class tb_po_invoice(models.Model):
 
 
     state = fields.Selection([('10_draft',u'草稿'),('20_submit',u'已提交'),('30_done','审批完成'),('80_refuse',u'拒绝'),('90_cancel',u'取消')],u'状态',index=True, track_visibility='onchange', default='10_draft')
-    type = fields.Selection([('extra', '额外账单'), ('other_po', '直接增加'),('expense_po', u'费用转换')],u'类型')
+    type = fields.Selection([('reconcile', '核销账单'),('extra', '额外账单'), ('other_po', '直接增加'),('expense_po', u'费用转换'),],u'类型')
     name = fields.Char('编号', default=lambda self: self.env['ir.sequence'].next_by_code('tb.po.invoice'))
     tb_id = fields.Many2one('transport.bill', u'出运单')
     partner_id = fields.Many2one('res.partner', u'合作伙伴')

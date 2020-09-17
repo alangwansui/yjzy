@@ -728,24 +728,44 @@ class account_payment(models.Model):
     #打开预收认领
     def open_ysrl(self):
         form_view = self.env.ref('yjzy_extend.view_ysrld_form')
-        tree_view = self.env.ref('yjzy_extend.view_ysrld_tree')
-        print('currency_id',self.currency_id)
-        return {
-            'name': u'预收认领单',
-            'type': 'ir.actions.act_window',
-            'view_type': 'form',
-            'view_mode': 'tree,form',
-            'res_model': 'account.payment',
-            'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
-            'domain': [('yjzy_payment_id', '=', self.id),('sfk_type','=','ysrld')],
-            'context': {'default_sfk_type': 'ysrld',
+        tree_view = self.env.ref('yjzy_extend.view_ysrld_reconcile_tree_1')
+        # print('currency_id',self.currency_id)
+        # return {
+        #     'name': u'预收认领单',
+        #     'type': 'ir.actions.act_window',
+        #     'view_type': 'form',
+        #     'view_mode': 'tree,form',
+        #     'res_model': 'account.payment',
+        #     'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
+        #     'domain': [('yjzy_payment_id', '=', self.id),('sfk_type','=','ysrld')],
+        #     'context': {'default_sfk_type': 'ysrld',
+        #                 'default_payment_type': 'inbound',
+        #                 'default_be_renling': True,
+        #                 'default_advance_ok': True,
+        #                 'default_partner_type': 'customer',
+        #                 'default_currency_id':self.currency_id.id,
+        #                 'default_yjzy_payment_id': self.id}
+        # }
+        count_ysrld = self.count_ysrld
+        action = self.env.ref('yjzy_extend.action_ysrld_all_new_1').read()[0]
+        ctx = {'default_sfk_type': 'ysrld',
                         'default_payment_type': 'inbound',
                         'default_be_renling': True,
                         'default_advance_ok': True,
                         'default_partner_type': 'customer',
                         'default_currency_id':self.currency_id.id,
-                        'default_yjzy_payment_id': self.id}
-        }
+                        'default_yjzy_payment_id': self.id }  # 预付-应付
+        if count_ysrld >= 1:
+            action['views'] = [(tree_view.id, 'tree'), (form_view.id, 'form')]
+            action['domain'] = [('id', 'in', self.ysrld_ids.ids), ('sfk_type', '=', 'ysrld')]
+            action['context'] = ctx
+        else:
+            action['views'] = [(form_view.id, 'form')]
+            action['context'] = ctx
+        print('ctx_222', ctx)
+        print('action', action)
+        return action
+
     #打开预付认领
     def open_yufurenling(self):
         form_view = self.env.ref('yjzy_extend.view_yfsqd_form')
@@ -771,23 +791,46 @@ class account_payment(models.Model):
     def open_yshx(self):
         form_view = self.env.ref('yjzy_extend.account_yshxd_form_view_new')
         tree_view = self.env.ref('yjzy_extend.account_yshxd_tree_view_new')
-        return {
-            'name': u'应收认领单',
-            'type': 'ir.actions.act_window',
-            'view_type': 'form',
-            'view_mode': 'tree,form',
-            'res_model': 'account.reconcile.order',
-            'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
-            'domain': [('yjzy_payment_id', '=', self.id)],
-            'context': {'default_sfk_type':'yshxd',
-                        'bank_amount':1,
-                        'default_operation_wizard':'10',
-                        'default_payment_type':'inbound',
-                        'default_be_renling':1,
-                        'default_partner_type': 'customer',
-                        'show_so': 1,
-                        'default_yjzy_payment_id':self.id},
-        }
+        # return {
+        #     'name': u'应收认领单',
+        #     'type': 'ir.actions.act_window',
+        #     'view_type': 'form',
+        #     'view_mode': 'tree,form',
+        #     'res_model': 'account.reconcile.order',
+        #     'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
+        #     'domain': [('yjzy_payment_id', '=', self.id)],
+        #     'context': {'default_sfk_type':'yshxd',
+        #                 'bank_amount':1,
+        #                 'default_operation_wizard':'10',
+        #                 'default_payment_type':'inbound',
+        #                 'default_be_renling':1,
+        #                 'default_partner_type': 'customer',
+        #                 'show_so': 1,
+        #                 'default_yjzy_payment_id':self.id},
+        # }
+
+        count_yshx = self.count_yshx
+        action = self.env.ref('yjzy_extend.action_yshxd_all_new_1').read()[0]
+        ctx = {'default_sfk_type':'yshxd',
+                            'bank_amount':1,
+                            'default_operation_wizard':'10',
+                            'default_payment_type':'inbound',
+                            'default_be_renling':1,
+                            'default_partner_type': 'customer',
+                            'show_so': 1,
+                            'default_yjzy_payment_id':self.id}  # 预付-应付
+        if count_yshx >= 1:
+            action['views'] = [(tree_view.id, 'tree'), (form_view.id, 'form')]
+            action['domain'] = [('id', 'in', self.yshx_ids.ids), ('sfk_type', '=', 'yshxd')]
+            action['context'] = ctx
+        else:
+            action['views'] = [(form_view.id, 'form')]
+            action['context'] = ctx
+        print('ctx_222', ctx)
+        print('action', action)
+        return action
+
+
     # 从付款单打开应付核销
     def open_yingfuhexiao(self):
         form_view = self.env.ref('yjzy_extend.account_yshxd_form_view_new')

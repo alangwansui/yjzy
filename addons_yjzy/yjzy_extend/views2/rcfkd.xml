@@ -188,6 +188,7 @@
     <menuitem id="menu_rcfkd"  sequence="00" name="日常付款单" parent="menu_skf_root" action="action_rcfkd"/>
 
     <menuitem id="menu_rcfkd_new"  sequence="10" name="日常付款单" parent="menu_new_account_out_root"/>
+    <menuitem id="menu_rcfkd_new_cashier"  sequence="10" name="日常付款单" parent="menu_new_account_root"/>
     <record model="ir.actions.act_window" id="action_rcfkd_draft_new">
         <field name="name">未提交日常付款单</field>
         <field name="type">ir.actions.act_window</field>
@@ -202,7 +203,7 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcfkd_form')})]"/>
     </record>
     <menuitem id="menu_rcfkd_draft"  sequence="10" name="未提交" parent="menu_rcfkd_new" action="action_rcfkd_draft_new"/>
-
+<menuitem id="menu_rcfkd_draft_cashier"  sequence="10" name="未提交" parent="menu_rcfkd_new_cashier" action="action_rcfkd_draft_new"/>
     <record model="ir.actions.act_window" id="action_rcfkd_submit_new">
         <field name="name">审批中日常付款单</field>
         <field name="type">ir.actions.act_window</field>
@@ -217,6 +218,7 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcfkd_form')})]"/>
     </record>
     <menuitem id="menu_rcfkd_submit"  sequence="20" name="审批中" parent="menu_rcfkd_new" action="action_rcfkd_submit_new"/>
+    <menuitem id="menu_rcfkd_submit_cashier"  sequence="20" name="审批中" parent="menu_rcfkd_new_cashier" action="action_rcfkd_submit_new"/>
  <record model="ir.actions.act_window" id="action_rcfkd_done_new">
         <field name="name">已完成日常付款单</field>
         <field name="type">ir.actions.act_window</field>
@@ -231,6 +233,7 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcfkd_form')})]"/>
     </record>
     <menuitem id="menu_rcfkd_done"  sequence="40" name="已完成" parent="menu_rcfkd_new" action="action_rcfkd_done_new"/>
+    <menuitem id="menu_rcfkd_done_cashier"  sequence="40" name="已完成" parent="menu_rcfkd_new_cashier" action="action_rcfkd_done_new"/>
 
     <record model="ir.actions.act_window" id="action_rcfkd_undone_new">
         <field name="name">未认领日常付款单</field>
@@ -245,6 +248,6 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_rcfkd_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcfkd_form')})]"/>
     </record>
-    <menuitem id="menu_rcfkd_undone_new"  sequence="30" name="未认领付款单" parent="menu_rcfkd_new" action="action_rcfkd_undone_new"/>
+    <menuitem id="menu_rcfkd_undone_new_cashier"  sequence="30" name="未认领付款单" parent="menu_rcfkd_new_cashier" action="action_rcfkd_undone_new"/>
 
 </odoo>
