@@ -408,7 +408,7 @@ class account_invoice(models.Model):
     tb_sale_invoice_balance = fields.Monetary('对应应收余额', related='bill_id.sale_invoice_balance_new')
     invoice_line_ids_add = fields.One2many('account.invoice.line','invoice_id', domain=[('is_manual', '=', True)],
                                             copy=True)
-    invoice_line_ids_origin = fields.One2many('account.invoice.line', 'invoice_id', domain=[('is_manual', '=', False)],
+    invoice_line_ids_origin = fields.One2many('account.invoice.line', 'invoice_id', domain=[('is_manual', '=', False),('quantity','!=',0)],
                                            readonly=True, states={'draft': [('readonly', False)]}, copy=True)
     amount_automatic = fields.Monetary('原始合计金额',currency_field='currency_id',compute=compute_amount)
     amount_manual = fields.Monetary('手动合计金额', currency_field='currency_id', compute=compute_amount)
@@ -446,14 +446,15 @@ class account_invoice(models.Model):
     yjzy_residual = fields.Monetary(u'总未收金额',currency_field='currency_id', compute=compute_yjzy_invoice_amount_total,store=True)
     yjzy_price_total = fields.Monetary('新金额',currency_field='currency_id',compute=compute_yjzy_price_total)
     extra_code = fields.Char(u'额外编号',default=lambda self: self._default_name())
-    yjzy_invoice_line_ids = fields.One2many('account.invoice.line','yjzy_invoice_id',u'所有明细')
+    yjzy_invoice_line_ids = fields.One2many('account.invoice.line','yjzy_invoice_id',u'所有明细',domain=[('quantity','!=',0)])
 
 
     #913新建额外账单申请单
     def open_tb_po_invoice(self):
         form_view_supplier_id = self.env.ref('yjzy_extend.tb_po_extra_invoice_supplier_form').id
         form_view_customer_id = self.env.ref('yjzy_extend.tb_po_extra_invoice_customer_form').id
-
+        if self.is_yjzy_invoice:
+            raise Warning('额外账单不允许创建额外账单！')
         if self.yjzy_type == 'sale':
             return {
                 'name': u'创建应收额外账单',
@@ -1292,9 +1293,18 @@ class account_invoice_line(models.Model):
             yjzy_price_total = one.yjzy_price_unit *  one.quantity
             one.yjzy_price_total = yjzy_price_total
 
+    # @api.depends('price_total')
+    # def compute_back_tax(self):
+    #     for one in self:
+    #         back_tax_add_this_time = one.price_total / 1.13 * one.back_tax
+    #         one.back_tax_add_this_time = back_tax_add_this_time
+    #0911
+    # back_tax_add_this_time = fields.Float('本次应生成退税', compute=compute_back_tax)
+
     item_id = fields.Many2one('invoice.hs_name.item', 'Item')
     so_id = fields.Many2one('sale.order', u'销售订单', compute=_compute_so)
     is_manual = fields.Boolean('是否手动添加', default=False)
+
     # yjzy_price_unit = fields.Float('新单价',compute=_compute_amount)
     # yjzy_price_total = fields.Float('新总价',compute=_compute_amount)
     yjzy_invoice_id = fields.Many2one('account.invoice',u'原始账单',compute=_compute_yjzy_invoice)

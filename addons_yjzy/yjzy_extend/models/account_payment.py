@@ -957,7 +957,7 @@ class account_payment(models.Model):
             'view_mode': 'form',
             'res_model': 'account.reconcile.order',
             'views': [(form_view, 'form')],
-            'target': 'new',
+            'target': 'current',
             'type': 'ir.actions.act_window',
             # 'domain': [('yjzy_advance_payment_id', '=', self.id)],
             'context': {'default_partner_id':self.partner_id.id,
@@ -971,7 +971,7 @@ class account_payment(models.Model):
                         'show_so': 1,
                         'default_operation_wizard': '05',
                         'default_hxd_type_new':'30',#预付-应付
-                        'from_tanchuang':1,
+                        # 'from_tanchuang':1,
                         }
         }
 

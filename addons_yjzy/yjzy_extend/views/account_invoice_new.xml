@@ -1167,7 +1167,7 @@
                             </group>
                         </group>
                         <notebook>
-                            <page string="账单明细" groups="base.group_system">
+                            <page string="账单明细" attrs="{'invisible':[('state','in',['open','paid'])]}">
                                 <field context="{'type': type, 'journal_id': journal_id}" name="invoice_line_ids">
                                     <tree string="Bill lines" editable="bottom">
                                         <field name="sequence" widget="handle"/>
@@ -1188,14 +1188,15 @@
                                                widget="many2many_tags" options="{'color_field': 'color'}"/>
                                         <field name="quantity" attrs="{'column_invisible': [('parent.is_yjzy_invoice', '=',True)]}"/>
                                         <field name="uom_id" groups="product.group_uom" attrs="{'column_invisible': [('parent.is_yjzy_invoice', '=',True)]}"/>
-                                        <field name="yjzy_price_unit"/>
+                                        <field name="yjzy_price_unit" invisible="1"/>
 
-                                        <field name="price_unit" invisible="1"/>
+                                        <field name="price_unit"/>
                                         <field name="discount" groups="sale.group_discount_per_so_line" invisible="1"/>
                                         <field name="invoice_line_tax_ids" widget="many2many_tags" invisible="1"
                                                options="{'no_create': True}" context="{'type':parent.type}"
                                                domain="[('type_tax_use','=','purchase'),('company_id', '=', parent.company_id)]"/>
-                                        <field name="yjzy_price_total"/>
+                                        <field name="yjzy_price_total" invisible="1"/>
+                                        <field string="Total" name="price_total" groups="sale.group_show_price_total" sum="小计"  />
                                         <field name="price_subtotal" invisible="1"/>
                                         <field name="currency_id" invisible="1"/>
 
@@ -1219,6 +1220,53 @@
                                 <div>
                                     <field name="comment" placeholder="Additional notes..."/>
                                 </div>
+                            </page>
+                            <page string="账单明细" attrs="{'invisible':[('state','not in',['open','paid'])]}">
+                                <field name="invoice_line_ids_origin">
+                                    <tree default_order="id">
+                                        <field name="sequence" widget="handle"/>
+                                        <field name="is_manual" readonly="1" string="手动"/>
+
+                                        <field name="id" invisible="1"/>
+                                        <field name="product_id" domain="[('sale_ok','=',True)]"/>
+                                        <field name="layout_category_id" groups="sale.group_sale_layout"/>
+
+                                        <field name="so_id"/>
+                                        <field name="company_id" invisible="1"/>
+                                        <field name="account_id" groups="account.group_account_user"
+                                               domain="[('company_id', '=', parent.company_id), ('internal_type', '=', 'other'), ('deprecated', '=', False)]"/>
+                                        <field name="account_analytic_id" groups="analytic.group_analytic_accounting" invisible="1"
+                                               domain="[('company_id', '=', parent.company_id)]"
+                                               context="{'default_partner_id': parent.partner_id}"/>
+                                        <field name="analytic_tag_ids" groups="analytic.group_analytic_accounting" invisible="11"
+                                               widget="many2many_tags" options="{'color_field': 'color'}"/>
+                                        <field name="quantity"/>
+                                        <field name="uom_id" groups="product.group_uom"/>
+                                        <field name="yjzy_price_unit" string="单价" invisible="1"/>
+
+                                        <field name="price_unit" />
+                                        <field name="discount" groups="base.group_no_one" invisible="1"/>
+                                        <field name="invoice_line_tax_ids" widget="many2many_tags" invisible="1"
+                                               options="{'no_create': True}" context="{'type':parent.type}"
+                                               domain="[('type_tax_use','=','sale'),('company_id', '=', parent.company_id)]"/>
+                                        <field name="yjzy_price_total" string="总价" sum="小计" invisible="1"/>
+                                        <field string="Subtotal" name="price_subtotal" invisible="1"
+                                               groups="sale.group_show_price_subtotal"/>
+                                        <field string="Total" name="price_total" groups="sale.group_show_price_total" sum="小计"  />
+                                        <field name="currency_id" invisible="1"/>
+                                    </tree>
+                                </field>
+                                 <group class="oe_subtotal_footer oe_right">
+                                        <field name="amount_untaxed"/>
+                                        <field name="amount_tax"/>
+                                        <field name="amount_total" class="oe_subtotal_footer_separator"/>
+                                        <field name="payments_widget" colspan="2" nolabel="1" widget="payment"/>
+                                        <field name="residual" class="oe_subtotal_footer_separator"
+                                               attrs="{'invisible': [('state', '=', 'draft')]}"/>
+                                        <field name="reconciled" invisible="1"/>
+                                        <field name="outstanding_credits_debits_widget" colspan="2" nolabel="1"
+                                               widget="payment" attrs="{'invisible': [('state', 'not in', 'open')]}"/>
+                                    </group>
                             </page>
                             <page string="所有账单明细" attrs="{'invisible':[('is_yjzy_invoice','=',True)]}">
                                 <field name="yjzy_invoice_line_ids">
