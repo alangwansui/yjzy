@@ -293,7 +293,12 @@ class account_reconcile_order(models.Model):
     partner_id = fields.Many2one('res.partner', u'合作伙伴', required=True)
     currency_id = fields.Many2one(related='company_id.currency_id', string=u'公司货币', store=True, index=True)
     invoice_currency_id = fields.Many2one('res.currency', u'交易货币', compute=compute_by_invoice)
-    state = fields.Selection([('draft', u'草稿'), ('posted', u'待审批'),  ('approved', u'批准'), ('done', u'完成'), ('refused',u'拒绝'),('cancelled', u'取消')],
+    state = fields.Selection([('draft', u'草稿'),
+                              ('posted', u'待审批'),
+                              ('approved', u'批准'),
+                              ('done', u'完成'),
+                              ('refused',u'拒绝'),
+                              ('cancelled', u'取消')],
                              readonly=True, default='draft', copy=False, string=u"状态",track_visibility='onchange')
     date = fields.Date(u'确认日期', index=True, required=True, default=lambda self: fields.date.today())
     # invoice_ids_new = fields.One2many('account.invoice', 'reconcile_order_id', u'发票')#为了直接从发票创建预付-应付申请

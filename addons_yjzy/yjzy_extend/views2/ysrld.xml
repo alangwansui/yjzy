@@ -84,6 +84,7 @@
                 <field name="advance_total" string="已认领金额"/>
                 <field name="so_id" string="销售合同"/>
                 <field name="fault_comments"/>
+                <field name="advance_type"/>
                 <field name="state"/>
             </tree>
         </field>
@@ -356,13 +357,13 @@
 
     <menuitem id="menu_ysrld_new" sequence="30" name="预收认领单" parent="menu_new_account_in_root"/>
 
-    <record id="action_ysrld_undone" model="ir.actions.act_window">
-        <field name="name">未生效预收</field>
+    <record id="action_ysrld_draft" model="ir.actions.act_window">
+        <field name="name">未提交预收申请</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">account.payment</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
-        <field name="domain">[('sfk_type','=','ysrld'),('state','not in',['posted','reconciled'])]</field>
+        <field name="domain">[('sfk_type','=','ysrld'),('state_1','in',['10_draft','80_refused','90_cancel'])]</field>
         <field name="context">{'show_shoukuan': True, 'default_sfk_type': 'ysrld', 'default_payment_type': 'inbound',
             'default_be_renling': True,'default_advance_ok': True, 'default_partner_type': 'customer',}
         </field>
@@ -371,7 +372,25 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_ysrld_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_ysrld_form')})]"/>
     </record>
-    <menuitem id="menu_new_ysrld_undone" parent="menu_ysrld_new" name="未生效" sequence="10"
+    <menuitem id="menu_new_ysrld_draft" parent="menu_ysrld_new" name="未提交" sequence="10"
+              action="action_ysrld_draft"/>
+
+    <record id="action_ysrld_undone" model="ir.actions.act_window">
+        <field name="name">审批中预收</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.payment</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('sfk_type','=','ysrld'),('state_1','in',['20_account_submit'])]</field>
+        <field name="context">{'show_shoukuan': True, 'default_sfk_type': 'ysrld', 'default_payment_type': 'inbound',
+            'default_be_renling': True,'default_advance_ok': True, 'default_partner_type': 'customer',}
+        </field>
+        <field name="search_view_id" ref="view_account_payment_search_new"/>
+        <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_ysrld_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_ysrld_form')})]"/>
+    </record>
+    <menuitem id="menu_new_ysrld_undone" parent="menu_ysrld_new" name="审批中" sequence="10"
               action="action_ysrld_undone"/>
 
      <record id="action_ysrld_balance" model="ir.actions.act_window">
@@ -381,7 +400,7 @@
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="domain">[('sfk_type','=','ysrld'),('state','in',['posted','reconciled']),('advance_balance_total','!=',0)]</field>
-        <field name="context">{'show_shoukuan': True, 'default_sfk_type': 'ysrld', 'default_payment_type': 'inbound',
+        <field name="context">{'search_default_group_by_advance_type':1,'show_shoukuan': True, 'default_sfk_type': 'ysrld', 'default_payment_type': 'inbound',
             'default_be_renling': True,'default_advance_ok': True, 'default_partner_type': 'customer',}
         </field>
         <field name="search_view_id" ref="view_account_payment_search_new"/>
@@ -399,7 +418,7 @@
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="domain">[('sfk_type','=','ysrld'),('state','in',['posted','reconciled']),('advance_balance_total','=',0)]</field>
-        <field name="context">{'show_shoukuan': True, 'default_sfk_type': 'ysrld', 'default_payment_type': 'inbound',
+        <field name="context">{'search_default_group_by_advance_type':1,'show_shoukuan': True, 'default_sfk_type': 'ysrld', 'default_payment_type': 'inbound',
             'default_be_renling': True,'default_advance_ok': True, 'default_partner_type': 'customer',}
         </field>
             <field name="search_view_id" ref="view_account_payment_search_new"/>

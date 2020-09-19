@@ -317,7 +317,7 @@
                                 states="draft,refused" class="oe_highlight"/>
                         <button string="添加销售明细" type="object" name="open_wizard_transport4sol"
                                 confirm="重新添加销售明细，将会清除所有的清关和报关资料！是否继续"
-                                attrs="{'invisible':['|',('operation_wizard','in',['first','second','third','fourth','fifth']),('state','not in',['draft'])]}"
+                                attrs="{'invisible':['|',('operation_wizard','in',['first','second','third','fourth']),('state','not in',['draft'])]}"
                                 class="oe_highlight"/>
 
                         <field name="state" widget="statusbar" statusbar_visible=" "/>

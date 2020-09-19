@@ -395,13 +395,13 @@
                 </form>
             </field>
         </record>
-        <record model="ir.actions.act_window" id="act_tb_po_approving">
-            <field name="name">审批中直接增加采购</field>
+        <record model="ir.actions.act_window" id="act_tb_po_draft">
+            <field name="name">未提交直接增加采购</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">tb.po.invoice</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[('yjzy_type_1','=','purchase'),('state','not in',['30_done']),('type','=','other_po')]</field>
+            <field name="domain">[('yjzy_type_1','=','purchase'),('state','in',['10_draft','80_refuse','90_cancel']),('type','=','other_po')]</field>
             <field name="limit">20</field>
             <field name="context">{'done':0}</field>
             <field name="view_ids" eval="[(5, 0, 0),
@@ -409,10 +409,10 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_form')})]"/>
 
         </record>
-        <menuitem id="menu_tb_po_tree_approving" name="审批中"
+        <menuitem id="menu_tb_po_tree_draft" name="未提交"
                   parent="yjzy_extend.menu_extra_po_root"
                   sequence="10"
-                  action="act_tb_po_approving"
+                  action="act_tb_po_draft"
         />
         <record model="ir.actions.act_window" id="act_tb_po_approving">
             <field name="name">审批中直接增加采购</field>
@@ -420,7 +420,7 @@
             <field name="res_model">tb.po.invoice</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[('yjzy_type_1','=','purchase'),('state','not in',['30_done']),('type','=','other_po')]</field>
+            <field name="domain">[('yjzy_type_1','=','purchase'),('state','in',['20_submit']),('type','=','other_po')]</field>
             <field name="limit">20</field>
             <field name="context">{'done':0}</field>
             <field name="view_ids" eval="[(5, 0, 0),
@@ -430,7 +430,7 @@
         </record>
         <menuitem id="menu_tb_po_tree_approving" name="审批中"
                   parent="yjzy_extend.menu_extra_po_root"
-                  sequence="10"
+                  sequence="20"
                   action="act_tb_po_approving"
         />
 
@@ -450,7 +450,7 @@
         </record>
         <menuitem id="menu_tb_po_tree_done" name="审批完成"
                   parent="yjzy_extend.menu_extra_po_root"
-                  sequence="10"
+                  sequence="30"
                   action="act_tb_po_done"
         />
          <record model="ir.actions.act_window" id="act_tb_po_create">
@@ -468,16 +468,36 @@
 
         <menuitem id="menu_tb_po_create" name="创建新增采购申请单"
                   parent="yjzy_extend.menu_extra_po_root"
-                  sequence="20"
+                  sequence="40"
                   action="act_tb_po_create"/>
 
-<record model="ir.actions.act_window" id="act_expense_po_approving">
+
+        <record model="ir.actions.act_window" id="act_expense_po_draft">
+            <field name="name">未提交费用转采购</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">tb.po.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('yjzy_type_1','=','purchase'),('state','in',['10_draft','80_refuse','90_cancel']),('type','=','expense_po')]</field>
+            <field name="limit">20</field>
+            <field name="context">{'done':0}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('tb_po_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_form')})]"/>
+
+        </record>
+        <menuitem id="menu_expense_po_tree_draft" name="未提交"
+                  parent="yjzy_extend.menu_extra_po_expense_root"
+                  sequence="10"
+                  action="act_expense_po_draft"
+        />
+        <record model="ir.actions.act_window" id="act_expense_po_approving">
             <field name="name">审批中费用转采购</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">tb.po.invoice</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[('yjzy_type_1','=','purchase'),('state','not in',['30_done']),('type','=','expense_po')]</field>
+            <field name="domain">[('yjzy_type_1','=','purchase'),('state','in',['20_submit']),('type','=','expense_po')]</field>
             <field name="limit">20</field>
             <field name="context">{'done':0}</field>
             <field name="view_ids" eval="[(5, 0, 0),
@@ -487,7 +507,7 @@
         </record>
         <menuitem id="menu_expense_po_tree_approving" name="审批中"
                   parent="yjzy_extend.menu_extra_po_expense_root"
-                  sequence="10"
+                  sequence="20"
                   action="act_expense_po_approving"
         />
 
@@ -507,7 +527,7 @@
         </record>
         <menuitem id="menu_expense_po_tree_done" name="审批完成"
                   parent="yjzy_extend.menu_extra_po_expense_root"
-                  sequence="10"
+                  sequence="30"
                   action="act_expense_po_done"
         />
 <!--        工作台需要的-->
@@ -556,7 +576,7 @@
 
         <menuitem id="menu_expense_po_create" name="创建费用转应付申请单"
                   parent="yjzy_extend.menu_extra_po_expense_root"
-                  sequence="20"
+                  sequence="40"
                   action="act_expense_po_create"/>
 
 

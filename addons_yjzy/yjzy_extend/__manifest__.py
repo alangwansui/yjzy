@@ -68,6 +68,7 @@
         'views/usd_pool.xml',
         'views/transport_bill_usd_pool.xml',
         'views/transport_bill_declare_po.xml',
+        'views/account_journal_dashboard_view.xml',
 
 
         'views/sale.xml',

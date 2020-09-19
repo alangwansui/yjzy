@@ -217,6 +217,13 @@ class account_payment(models.Model):
             print('teee', len(one.advance_reconcile_order_ids))
             one.advance_reconcile_order_count_all = len(one.advance_reconcile_order_ids)
 
+    @api.depends('po_id','so_id','partner_id')
+    def compute_advance_type(self):
+        if self.po_id or self.so_id:
+            self.advance_type = '20_contract'
+        else:
+            self.advance_type = '10_no_contract'
+
     #903
     account_reconcile_order_line_id = fields.Many2one('account.reconcile.order.line',u'应收付认领明细') #过账后生成的实际的认领单明细
     account_reconcile_order_id = fields.Many2one('account.reconcile.order',u'应收付认领单',related='account_reconcile_order_line_id.order_id') #过账收生成的实际的认领单
@@ -250,6 +257,8 @@ class account_payment(models.Model):
                                 ('90_cancel',u'已取消')],u'审批状态',track_visibility='onchange',default='10_draft')
 
     #819增加汇率字段
+    advance_type = fields.Selection([('10_no_contract',u'无合同'),
+                                     ('20_contract',u'有合同')],u'预付类型',conpute=compute_advance_type, default='10_no_contract',store=True)
     current_date_rate = fields.Float(u'当日汇率')
     #新增
     payment_comments = fields.Text(u'收付款备注')
