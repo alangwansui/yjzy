@@ -731,11 +731,11 @@
                                 <field name="bill_id" string="出运合同" context="{'only_ref':1}" invisible="1"/>
                                 <field name="partner_shipping_id" groups="sale.group_delivery_invoice_address"
                                        invisible="1"/>
-                                <field name="payment_term_id" invisible="1"/>
-                                <field name="yjzy_payment_term_id" string="付款条款" attrs="{'invisible':[('is_yjzy_invoice','=',True)]}"/>
-                                <field name="yjzy_currency_id" string="货币" attrs="{'invisible':[('is_yjzy_invoice','=',True)]}"/>
-                                <label for="currency_id" groups="base.group_multi_currency" invisible="1"/>
-                                <div groups="base.group_multi_currency" invisible="1">
+                                <field name="payment_term_id" />
+                                <field name="yjzy_payment_term_id" string="付款条款" invisible="1"/> <!--    attrs="{'invisible':[('is_yjzy_invoice','=',True)]}"-->
+                                <field name="yjzy_currency_id" string="货币" invisible="1"/>
+                                <label for="currency_id" groups="base.group_multi_currency"/>
+                                <div groups="base.group_multi_currency" >
                                     <field name="currency_id" options="{'no_create': True, 'no_open': True}"
                                            class="oe_inline"/>
                                     <field name="company_currency_id" invisible="1"/>
@@ -1133,8 +1133,9 @@
                         <field name="stage_id" widget="statusbar" clickable="1"/>
                     </header>
                     <header attrs="{'invisible':[('is_yjzy_invoice','=',True)]}">
-                        <button name="open_tb_po_invoice" string="额外应付申请" type="object"/>
-                        <button name="open_tb_po_reconcile_invoice" string="创建核销应付申请" type="object"/>
+                        <button name="open_tb_po_invoice" string="额外应付账单申请" type="object"/>
+                        <button name="open_tb_po_reconcile_invoice" string="核销应付账单申请" type="object"/>
+                        <button name="submit_yfhxd" string="创建付款申请" type="object"/>
 <!--                       <button name="open_supplier_invoice_id" string="额外应付账单" type="object"/>-->
                        <!--button name="open_supplier_refund_id" string="额外账单：减少金额" type="object"/-->
                         <field name="state" widget="statusbar" nolabel="1" statusbar_visible="draft,open,paid"/>
@@ -1225,15 +1226,10 @@
                             </group>
 
                             <group>
-
-
-
                                 <field name="residual_signed" string="未付金额"/>
                                 <field name="tb_contract_code" attrs="{'invisible':1}"/>
-
                                 <field name="purchase_contract_code" string="采购合同号"/>
                                 <field name="gongsi_id" invisible="1"/>
-
                                 <field name="company_currency_id" invisible="1"/>
                                 <field name="purchase_date_finish_state" attrs="{'invisible':1}"/>
                                 <field name="purchase_date_finish_att" attrs="{'invisible':1}"/>
@@ -1241,6 +1237,9 @@
                             </group>
                         </group>
                         <notebook>
+                            <page>
+                                <field name="invoice_tb_partner_ids"/>
+                            </page>
                             <page string="账单明细" attrs="{'invisible':[('state','in',['open','paid'])]}">
                                 <field context="{'type': type, 'journal_id': journal_id}" name="invoice_line_ids">
                                     <tree string="Bill lines" editable="bottom">

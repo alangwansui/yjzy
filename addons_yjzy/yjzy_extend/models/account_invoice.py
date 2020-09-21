@@ -308,6 +308,17 @@ class account_invoice(models.Model):
     # def compute_usd_pool(self):
     #     for one in self:
 
+    @api.depends('partner_id')
+    def _compute_invoice_tb_partner_ids(self):
+        for one in self:
+            invoice_tb_partner_ids = self.env['account.invoice'].search(
+                [('partner_id', '=', one.partner_id.id), ('bill_id','=',one.bill_id.id)])
+            one.invoice_tb_partner_ids = invoice_tb_partner_ids
+            print('one.invoice_tb_partner_ids', one.invoice_tb_partner_ids)
+
+    #0921 = self.bill_id = self.partner
+
+    invoice_tb_partner_ids = fields.Many2many('account.invoice',u'和出运相关的账单',compute=_compute_invoice_tb_partner_ids)
     #0911
     yjzy_advance_payment_id = fields.Many2one('account.payment',u'预收付单')
     #831增加对应报关申报表
@@ -454,7 +465,9 @@ class account_invoice(models.Model):
         form_view_supplier_id = self.env.ref('yjzy_extend.tb_po_extra_invoice_supplier_form').id
         form_view_customer_id = self.env.ref('yjzy_extend.tb_po_extra_invoice_customer_form').id
         if self.is_yjzy_invoice:
-            raise Warning('额外账单不允许创建额外账单！')
+            raise Warning('额外账单不允许创建额外账单申请！')
+        if self.state != 'open':
+            raise Warning('当前状态不允许创建额外账单申请')
         if self.yjzy_type == 'sale':
             return {
                 'name': u'创建应收额外账单',
@@ -489,6 +502,8 @@ class account_invoice(models.Model):
         form_view_customer_id = self.env.ref('yjzy_extend.tb_po_extra_invoice_customer_form').id
         if self.is_yjzy_invoice:
             raise Warning('额外账单不允许创建额外账单！')
+        if self.state != 'open':
+            raise Warning('当前状态不允许创建额外账单申请')
         if self.yjzy_type == 'sale':
             return {
                 'name': u'创建核销应收额外账单',

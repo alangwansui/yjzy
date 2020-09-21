@@ -311,7 +311,7 @@ class account_payment(models.Model):
     bank_id = fields.Many2one('res.partner.bank', u'银行账号')
 
     sale_uid = fields.Many2one('res.users', u'业务员', default=lambda self: self.env.user.assistant_id.id)
-    assistant_uid = fields.Many2one('res.users', u'助理',default=lambda self: self.env.user.assistant_id.id)
+    assistant_uid = fields.Many2one('res.users', u'助理', default=lambda self: self.env.user.id)
     fk_journal_id = fields.Many2one('account.journal', u'付款日记账', domain=[('type', 'in', ['cash', 'bank'])])
     include_tax = fields.Boolean(u'是否含税')
 
@@ -893,6 +893,8 @@ class account_payment(models.Model):
     # 从预付款认领单打开应付核销单
 
     def open_yfsqd_yfhxd(self):
+        if self.state not in '50_posted':
+            raise Warning('当前状态不允许进行认领')
         tree_view = self.env.ref('yjzy_extend.account_yfhxd_advance_tree_view_new').id
         form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new').id
         advance_reconcile = self.mapped('advance_reconcile_order_ids')
