@@ -42,6 +42,7 @@
                     <filter string="Future Activities" name="activities_upcoming_all"
                             domain="[('activity_ids.date_deadline', '&gt;', context_today().strftime('%Y-%m-%d'))]"/>
                     <group expand="0" string="Group By">
+                        <filter name="group_invoice_attribute" string="账单类型" context="{'group_by':'invoice_attribute'}"/>
                         <filter name="group_by_date_invoice" string="账单日期"
                                 context="{'group_by':'date_invoice:year'}"/>
                         <filter name="group_by_stage_id" string="审批状态"
@@ -266,24 +267,27 @@
             <field name="name">account.invoice.new.supplier.tree</field>
             <field name="model">account.invoice</field>
             <field name="arch" type="xml">
-                <tree decoration-info="state == 'draft'" default_order="date_deadline_new" decoration-warning="is_yjzy_invoice == True" decoration-muted="state == 'cancel'" string="Invoice">
+                <tree decoration-info="state == 'draft'" default_order="date_deadline_new" decoration-warning="is_yjzy_invoice == True"
+                      decoration-muted="state == 'cancel'" string="Invoice" edit="false" create="false">
                      <field name="extra_code"/>
                     <field name="partner_id" groups="base.group_user" string="Supplier"/>
                     <field name="bill_id" string="合同号" invisible="1"/>
                     <field name="tb_contract_code" string="合同号" widget="dynamic_popover_char"
                        options="{'max_width': '100px', 'line_clamp': '1', 'mode_mouse':'hover','popover_max_width':'200px','placement':'right'}"/>
                     <field name="date_invoice" string="账单日期"/>
-                    <button name="open_supplier_reconcile_order_line" icon="fa-pencil-square-o" type="object"/>
+                    <button name="open_supplier_reconcile_order_line" icon="fa-pencil-square-o" type="object" attrs="{'invisible':[('reconcile_order_line_count','=',0)]}" />
                     <field name="date_deadline_new" string="实际到期日"/>
                     <field name="residual_times_new" />
                     <field name="date_due" string="进仓到期日"/>
+                    <field name="reconcile_order_line_count" invisible="1"/>
                     <field name="residual_times_out_in_new"/>
                     <field name="amount_total_signed" string="应付金额" sum="Total"/>
                     <field name="residual_signed" string="未付金额" sum="Amount Due"/>
                     <field name="yjzy_invoice_amount_total" string="额外账单应付余额" sum="小计"/>
                     <field name="yjzy_invoice_residual_signed_total" string="额外账单未付余额" sum="小计"/>
-                    <button name="open_invoice_ids_new" icon="fa-pencil-square-o" type="object" attrs="{'invisible':[('yjzy_invoice_ids', '=', False)]}"/>
+                    <button name="open_invoice_ids_new" icon="fa-pencil-square-o" type="object" attrs="{'invisible':[('yjzy_invoice_count', '=', 0)]}"/>
                     <field name="yjzy_invoice_ids" invisible="1"/>
+                    <field name="yjzy_invoice_count" invisible="1"/>
                     <field name="reconcile_order_line_payment" sum="小计" string="付款认领金额" invisible="1"/>
                     <field name="reconcile_order_line_advance" sum="小计" string="预付认领金额" invisible="1"/>
                     <field name="reconcile_order_line_bank" sum="小计" invisible="1"/>
@@ -1237,9 +1241,7 @@
                             </group>
                         </group>
                         <notebook>
-                            <page>
-                                <field name="invoice_tb_partner_ids"/>
-                            </page>
+
                             <page string="账单明细" attrs="{'invisible':[('state','in',['open','paid'])]}">
                                 <field context="{'type': type, 'journal_id': journal_id}" name="invoice_line_ids">
                                     <tree string="Bill lines" editable="bottom">
@@ -1421,7 +1423,9 @@
 
                             </page>
 
-
+                            <page>
+                                <field name="reconcile_order_ids"/>
+                            </page>
                             <page string="Other Info" name="other_info" groups="base.group_system">
                                 <group>
                                     <group>
@@ -1849,6 +1853,7 @@
                               (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.view_account_invoice_new_form')}),
                               ]"/>
         </record>
+        <menuitem id="menu_account_new_root" name="财务：新" sequence="99"/>
         <menuitem id="menu_account_invoice_extra_root" name="额外应收账单"
                   parent="yjzy_extend.menu_new_account_in_root"
                   sequence="99"
@@ -1857,9 +1862,7 @@
                   parent="yjzy_extend.menu_new_account_out_root"
                   sequence="30"
         />
-        <menuitem id="menu_account_new_root" name="财务：新"
-                  sequence="99"
-        />
+
         <menuitem id="menu_sale_account_invoice_new" action="action_sale_account_invoice_new"
                   parent="menu_account_new_root" name="我的应收账单"
                   sequence="99"
@@ -1930,14 +1933,13 @@
         />
 
         <record id="action_supplier_account_invoice_new_1" model="ir.actions.act_window">
-            <field name="name">应付账单账期排序</field>
+            <field name="name">未付款应付账单账期排序</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">account.invoice</field>
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_account_invoice_new_filter"/>
-            <field name="domain">[('residual_signed','!=',0),('type','=','in_invoice'),('yjzy_type','=','purchase'),('state','not in',['cancel','draft'])]</field>
-            <field name="context">{'only_ref':1,'type':'in_invoice',
-                'journal_type': 'purchase','yjzy_type':'purchase'}
+            <field name="domain">[('type','=','in_invoice'),('yjzy_type','=','purchase'),('state','in',['open'])]</field>
+            <field name="context">{'only_ref':1,'type':'in_invoice','journal_type': 'purchase','yjzy_type':'purchase'}
             </field>
             <!--field name="target">new</field-->
             <field name="view_ids" eval="[(5, 0, 0),
@@ -1946,7 +1948,7 @@
                               ]"/>
         </record>
          <menuitem id="menu_supplier_account_invoice_new_1" action="action_supplier_account_invoice_new_1"
-                  parent="menu_account_new_root" name="应付账单账期排序"
+                  parent="menu_supplier_invoice_main_root" name="未付款账单"
                   sequence="94"
         />
         <record id="action_sale_invoice_draft_new" model="ir.actions.act_window">
@@ -2053,6 +2055,78 @@
                               (0, 0, {'view_mode': 'form', 'view_id': ref('view_account_supplier_invoice_new_form')}),
                               ]"/>
         </record>
+<!--        账单管理，创建额外账单的-->
+        <record id="action_purchase_invoice_unpaid_new_extra" model="ir.actions.act_window">
+            <field name="name">未付款应付账单</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_account_invoice_new_filter"/>
+            <field name="domain">[('type','=','in_invoice'),('yjzy_type','=','purchase'),('state','=','open'),('is_yjzy_invoice','=',False)]</field>
+            <field name="context">{'only_ref':1,'type':'out_invoice','journal_type': 'sale','yjzy_type':'purchase'}
+            </field>
+            <!--field name="target">new</field-->
+            <field name="view_ids" eval="[(5, 0, 0),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.invoice_new_supplier_1_tree')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('view_account_supplier_invoice_new_form')}),
+                              ]"/>
+        </record>
+
+        <!--      创建主账单的付款申请不按到期时间分组-->
+        <record id="action_purchase_invoice_unpaid_normal" model="ir.actions.act_window">
+            <field name="name">未付款应付账单</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_account_invoice_new_filter"/>
+            <field name="domain">[('type','=','in_invoice'),('yjzy_type','=','purchase'),('state','=','open'),('is_yjzy_invoice','=',False),
+                ('invoice_attribute','in',['normal',False])]</field>
+            <field name="context">{'only_ref':1,'type':'out_invoice','journal_type': 'sale','yjzy_type':'purchase'}
+            </field>
+            <!--field name="target">new</field-->
+            <field name="view_ids" eval="[(5, 0, 0),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.invoice_new_supplier_1_tree')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('view_account_supplier_invoice_new_form')}),
+                              ]"/>
+        </record>
+        <!--      创建新增采购的付款申请不按到期时间分组-->
+        <record id="action_purchase_invoice_unpaid_other_po" model="ir.actions.act_window">
+            <field name="name">未付款应付账单</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_account_invoice_new_filter"/>
+            <field name="domain">[('type','=','in_invoice'),('yjzy_type','=','purchase'),('state','=','open'),('is_yjzy_invoice','=',False),
+                ('invoice_attribute','in',['other_po'])]</field>
+            <field name="context">{'only_ref':1,'type':'out_invoice','journal_type': 'sale','yjzy_type':'purchase'}
+            </field>
+            <!--field name="target">new</field-->
+            <field name="view_ids" eval="[(5, 0, 0),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.invoice_new_supplier_1_tree')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('view_account_supplier_invoice_new_form')}),
+                              ]"/>
+        </record>
+
+        <!--      创建新增采购的付款申请不按到期时间分组-->
+        <record id="action_purchase_invoice_unpaid_group_by_invoice_attribute" model="ir.actions.act_window">
+            <field name="name">未付款应付账单</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_account_invoice_new_filter"/>
+            <field name="domain">[('type','=','in_invoice'),('yjzy_type','=','purchase'),('state','=','open'),('is_yjzy_invoice','=',False)]</field>
+            <field name="context">{'only_ref':1,'search_default_group_invoice_attribute':1,'type':'out_invoice','journal_type': 'sale','yjzy_type':'purchase'}
+            </field>
+            <!--field name="target">new</field-->
+            <field name="view_ids" eval="[(5, 0, 0),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.invoice_new_supplier_1_tree')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('view_account_supplier_invoice_new_form')}),
+                              ]"/>
+        </record>
+
+
+        group_invoice_attribute
+
         <record id="action_purchase_invoice_paid_new" model="ir.actions.act_window">
             <field name="name">已付款应付账单</field>
             <field name="type">ir.actions.act_window</field>

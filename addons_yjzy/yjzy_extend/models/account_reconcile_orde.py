@@ -384,6 +384,13 @@ class account_reconcile_order(models.Model):
     is_editable = fields.Boolean(u'可编辑')
     gongsi_id = fields.Many2one('gongsi', '内部公司')
 
+    #924
+    def write(self, vals):
+        res = super(account_reconcile_order, self).write(vals)
+        self.invoice_ids.write({'state_2':'30_no_account_payment'})
+        return res
+
+
     def action_05(self):
         self.operation_wizard = '05'
 

@@ -946,17 +946,18 @@
             </field>
         </record>
 
-        <!--日期填制视图-->
+        <!--日期填制视图 财务-->
         <record id="view_transport_bill_new_date_account_tree" model="ir.ui.view">
             <field name="name">transport.bill.date.accounttree</field>
             <field name="model">transport.bill</field>
             <field name="arch" type="xml">
-                <tree string="出运单" editable="bottom" default_order="date_out_in desc" create="false" edit="false">
+                <tree string="出运单" editable="bottom" default_order="delivered_date desc" create="false" edit="false">
                     <field name="name" invisible="1"/>
                     <field name="ref" readonly="1"/>
                     <field name="partner_id" required="1" options="{'no_open':1}" readonly="1"/>
                     <!--button name="sync_data2invoice" string="创建应收付" attrs="{'invisible':[('state','!=','delivered')]}"  class="oe_highlight" type="object"/-->
                     <field name="date_out_in" readonly="1"/>
+                    <field name="delivered_date" readonly="1"/>
                     <field name="date_in" invisible="1"/>
                     <field name="date_ship" invisible="1"/>
                     <field name="date_customer_finish" invisible="1"/>

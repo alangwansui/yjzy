@@ -449,6 +449,7 @@
                     <filter string="New Mail" name="message_unread" domain="[('message_unread', '=', True)]"
                             invisible="1"/>
                     <group expand="0" string="Group By">
+
                         <filter string="审批流" domain="[]" context="{'group_by': 'x_sheet_wkf_state'}" invisible="1"/>
                         <filter string="审批状态" domain="[]" context="{'group_by': 'state'}"/>
                         <filter string="申请单" domain="[]" context="{'group_by': 'sheet_id'}"/>
@@ -478,6 +479,41 @@
                 </search>
 
 
+            </field>
+        </record>
+
+        <record id="hr_expense_sheet_search_new" model="ir.ui.view">
+            <field name="name">hr.expense.sheet.search.new</field>
+            <field name="model">hr.expense.sheet</field>
+            <field name="arch" type="xml">
+        <search string="Expense">
+                    <field name="name" string="Expenses"/>
+            <field name="create_date"/>
+            <field name="expense_line_ids"/>
+                    <field name="accounting_date"/>
+                    <field name="state"/>
+                    <field name="employee_id"/>
+                    <field name="department_id" string="Department"/>
+                    <separator/>
+                    <filter domain="[('state', '=', 'submit')]" string="To Approve" name="submitted" help="Confirmed Expenses"/>
+                    <filter domain="[('state', '=', 'approve')]" string="To Post" name="to_post" help="Approved Expenses"/>
+                    <filter domain="['|', ('state', '=', 'approve'), ('state', '=', 'post')]" string="To Pay" name="approved" help="Expenses to Invoice"/>
+                    <separator/>
+                    <filter string="My Team Reports" domain="[('employee_id.parent_id.user_id', '=', uid)]" groups="hr_expense.group_hr_expense_manager" help="Expenses of Your Team Member"/>
+                    <filter string="My Reports" domain="[('employee_id.user_id', '=', uid)]"/>
+                    <separator/>
+                    <filter string="New Mail" name="message_unread" domain="[('message_unread', '=', True)]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="是否转货款" domain="[]" name="group_to_invoice" context="{'group_by': 'expense_to_invoice_type'}"/>
+                        <filter string="Employee" domain="[]" context="{'group_by': 'employee_id'}"/>
+                        <filter string="Department" domain="[]" context="{'group_by': 'department_id'}"/>
+                        <filter string="Company" domain="[]" context="{'group_by': 'company_id'}" groups="base.group_multi_company"/>
+                        <filter string="Expenses Month" domain="[]" context="{'group_by': 'accounting_date'}" help="Expenses by Month"/>
+                        <filter string="State" domain="[]" context="{'group_by': 'state'}" name="state"/>
+                    </group>
+                    <separator/>
+                    <filter domain="[('employee_id.active', '=', False)]" string="Former Employees" name="inactive" groups="hr_expense.group_hr_expense_user,hr_expense.group_hr_expense_manager"/>
+                </search>
             </field>
         </record>
 
@@ -1810,6 +1846,9 @@
                          (0, 0, {'view_mode': 'form', 'view_id': ref('new_purhcase_order_from')})]"/>
        </record>
        <menuitem id="hr_expense_product_new_menu" name="费用小类" parent="hr_expense.menu_hr_expense_configuration" action="new_purhcase_order_action" sequence=""/-->
+
+
+
 
 
     </data>

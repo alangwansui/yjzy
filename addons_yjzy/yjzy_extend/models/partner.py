@@ -302,7 +302,26 @@ class res_partner(models.Model):
     amount_purchase_advance = fields.Monetary('预付金额:本币', currency_field='currency_id',
                                               compute=compute_amount_purchase_advance)
 
+    @api.constrains('name')
+    def check_name(self):
+        for one in self:
+            if self.search_count([('name', '=', one.name)]) > 1:
+                raise Warning('客户简称重复')
 
+    @api.constrains('full_name')
+    def check_full_name(self):
+        for one in self:
+            if self.search_count([('full_name', '=', one.full_name)]) > 1:
+                raise Warning('客户全称重复')
+
+    @api.multi
+    def toggle_active_partner(self):
+        """ Inverse the value of the field ``active`` on the records in ``self``. """
+
+        for record in self:
+            record.active = not record.active
+            for one in record.child_ids:
+                one.active = not one.active
 
     def action_view_partner_invoices_new(self):
         form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form')

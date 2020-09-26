@@ -783,7 +783,7 @@
                                     attrs="{'invisible': [('task_count', '=', 0)]}" icon="fa-tasks">
                                 <field string="Tasks" name="task_count" widget="statinfo"/>
                             </button>
-                            <button name="toggle_active" type="object"
+                            <button name="toggle_active_partner" type="object"
                                     class="oe_stat_button" icon="fa-archive">
                                 <field name="active" widget="boolean_button"
                                        options='{"terminology": "archive"}'/>
@@ -1895,7 +1895,7 @@
                                     attrs="{'invisible': [('task_count', '=', 0)]}" icon="fa-tasks">
                                 <field string="Tasks" name="task_count" widget="statinfo"/>
                             </button>
-                            <button name="toggle_active" type="object"
+                            <button name="toggle_active_partner" type="object"
                                     class="oe_stat_button" icon="fa-archive">
                                 <field name="active" widget="boolean_button"
                                        options='{"terminology": "archive"}'/>
@@ -2913,7 +2913,7 @@
                                     attrs="{'invisible': [('task_count', '=', 0)]}" icon="fa-tasks">
                                 <field string="Tasks" name="task_count" widget="statinfo"/>
                             </button>
-                            <button name="toggle_active" type="object"
+                            <button name="toggle_active_partner" type="object"
                                     class="oe_stat_button" icon="fa-archive">
                                 <field name="active" widget="boolean_button"
                                        options='{"terminology": "archive"}'/>
@@ -4109,7 +4109,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">kanban,tree,form</field>
             <field name="domain">
-                [('customer','=',True),('is_company','=',True),('name','!=','未定义'),('state','!=','done'),
+                [('customer','=',True),('is_company','=',True),('name','!=','未定义'),('name','!=','国税局'),('state','!=','done'),
                 '|','|','|','|','|','|','|','|','|',('create_uid','=',uid),('assistant_id','=',uid),
                 ('user_id','=',uid),('parent_id.assistant_id','=',uid),('parent_id.user_id','=',uid),
                 ('supplier','=',1),('x_studio_field_3ErQR','=',1),('is_inter_partner','=',1),('x_studio_field_U7OvH',
@@ -4138,7 +4138,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">kanban,tree,form</field>
             <field name="domain">
-                [('customer','=',True),('is_company','=',True),('name','!=','未定义'),('state','=','done'),
+                [('customer','=',True),('is_company','=',True),('name','!=','未定义'),('name','!=','国税局'),('state','=','done'),
                 '|','|','|','|','|','|','|','|','|',('create_uid','=',uid),('assistant_id','=',uid),
                 ('user_id','=',uid),('parent_id.assistant_id','=',uid),('parent_id.user_id','=',uid),
                 ('supplier','=',1),('x_studio_field_3ErQR','=',1),('is_inter_partner','=',1),('x_studio_field_U7OvH',
@@ -4327,7 +4327,7 @@
             <field name="res_model">res.partner</field>
             <field name="view_type">form</field>
             <field name="view_mode">kanban,tree,form</field>
-            <field name="domain">[('customer','=',True),('is_company','=',True),('name','!=','未定义')]
+            <field name="domain">[('customer','=',True),('is_company','=',True),('name','!=','未定义'),('name','!=','国税局')]
             </field>
             <field name="context">{'search_default_group_state':1,'default_is_company': True,'default_customer': True, 'default_contract_type':'c'}
             </field>
@@ -4374,7 +4374,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">kanban,tree,form</field>
             <field name="domain">
-                [('customer','=',True),('name','!=','未定义'),('parent_id','=',False)]
+                [('customer','=',True),('name','!=','未定义'),('name','!=','国税局'),('parent_id','=',False)]
             </field>
             <field name="context">{'default_is_company': True,'default_customer': True, 'default_contract_type':'c'}
             </field>

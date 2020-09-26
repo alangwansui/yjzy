@@ -395,6 +395,14 @@
                 </form>
             </field>
         </record>
+
+
+
+        <menuitem id="menu_tb_po_other_po_create" name="创建新增采购申请单"
+                  parent="yjzy_extend.menu_supplier_invoice_other_po_apply_root"
+                  sequence="10"
+                  action="act_open_transport_bill_declare_po"/>
+
         <record model="ir.actions.act_window" id="act_tb_po_draft">
             <field name="name">未提交直接增加采购</field>
             <field name="type">ir.actions.act_window</field>
@@ -617,8 +625,11 @@
                   parent="yjzy_extend.menu_extra_customer_invoice_root"
                   sequence="20"
                   action="act_extra_customer_create"/>
-
-
+<!--        额外账单查看并创建-->
+        <menuitem id="menu_invoice_supplier_create_invoice" name="查看并创建"
+                  parent="yjzy_extend.menu_supplier_invoice_extra_apply_root"
+                  sequence="10"
+                  action="action_purchase_invoice_unpaid_new_extra"/>
 
         <record model="ir.actions.act_window" id="act_extra_supplier_invoice_draft">
             <field name="name">未提交额外应付申请</field>
@@ -635,8 +646,8 @@
 
         </record>
             <menuitem id="menu_extra_supplier_invoice_draft" name="未提交"
-                  parent="yjzy_extend.menu_extra_supplier_invoice_root"
-                  sequence="10"
+                  parent="yjzy_extend.menu_supplier_invoice_extra_apply_root"
+                  sequence="20"
                   action="act_extra_supplier_invoice_draft"
         />
 
@@ -656,8 +667,8 @@
         </record>
 
         <menuitem id="menu_extra_supplier_invoice_undone" name="审批中"
-                  parent="yjzy_extend.menu_extra_supplier_invoice_root"
-                  sequence="20"
+                  parent="yjzy_extend.menu_supplier_invoice_extra_apply_root"
+                  sequence="30"
                   action="act_extra_supplier_invoice_undone"
         />
         <record model="ir.actions.act_window" id="act_extra_supplier_invoice_done">
@@ -676,8 +687,8 @@
         </record>
 
         <menuitem id="menu_extra_supplier_invoice_done" name="审批完成"
-                  parent="yjzy_extend.menu_extra_supplier_invoice_root"
-                  sequence="30"
+                  parent="yjzy_extend.menu_supplier_invoice_extra_apply_root"
+                  sequence="40"
                   action="act_extra_supplier_invoice_done"
         />
 
@@ -701,6 +712,8 @@
 
 
 
+
+
         <record model="ir.actions.act_window" id="act_tb_invoice_supplier_draft">
             <field name="name">未提交增加采购</field>
             <field name="type">ir.actions.act_window</field>
@@ -719,8 +732,8 @@
         </record>
 
         <menuitem id="menu_tb_invoice_supplier_draft" name="未提交"
-                  parent="yjzy_extend.menu_extra_supplier_invoice_root"
-                  sequence="10"
+                  parent="yjzy_extend.menu_supplier_invoice_other_po_apply_root"
+                  sequence="20"
                   action="act_tb_invoice_supplier_draft"
         />
         <record model="ir.actions.act_window" id="act_tb_invoice_supplier_undone">
@@ -741,8 +754,8 @@
         </record>
 
         <menuitem id="menu_tb_invoice_supplier_undone" name="审批中"
-                  parent="yjzy_extend.menu_extra_supplier_invoice_root"
-                  sequence="10"
+                  parent="yjzy_extend.menu_supplier_invoice_other_po_apply_root"
+                  sequence="30"
                   action="act_tb_invoice_supplier_undone"
         />
         <record model="ir.actions.act_window" id="act_tb_invoice_supplier_done">
@@ -762,9 +775,9 @@
 
         </record>
 
-        <menuitem id="menu_tb_invoice_supplier_done" name="审批中"
-                  parent="yjzy_extend.menu_extra_supplier_invoice_root"
-                  sequence="10"
+        <menuitem id="menu_tb_invoice_supplier_done" name="审批完成"
+                  parent="yjzy_extend.menu_supplier_invoice_other_po_apply_root"
+                  sequence="40"
                   action="act_tb_invoice_supplier_done"
         />
 

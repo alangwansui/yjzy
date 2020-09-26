@@ -54,6 +54,12 @@ class hr_expense(models.Model):
     def default_hx_code(self):
         return self.env['ir.sequence'].next_by_code('hx.code')
 
+
+    expense_to_invoice_type = fields.Selection( [('normal', u'常规费用'),
+                                                 ('to_invoice', u'转为货款'),
+                                                 ('other_payment', u'其他支出'),
+                                                 ('incoming', u'其他收入')], u'类型说明',related='sheet_id.expense_to_invoice_type')
+
     sheet_id = fields.Many2one('hr.expense.sheet', string="费用报告", readonly=True, copy=False, ondelete="cascade")
 
     include_tax = fields.Boolean(u'含税')

@@ -57,7 +57,7 @@ class sale_order(models.Model):
             'target': 'new',
             'res_model': 'sr.multi.product',
             'context': {'default_partner_id': self.partner_id.id,
-                        'default_partner_shipping_id': self.partner_shipping.id,
+                        'default_partner_shipping_id': self.partner_shipping_id.id,
                         }
         }
 

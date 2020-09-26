@@ -311,15 +311,33 @@ class account_invoice(models.Model):
     @api.depends('partner_id')
     def _compute_invoice_tb_partner_ids(self):
         for one in self:
-            invoice_tb_partner_ids = self.env['account.invoice'].search(
-                [('partner_id', '=', one.partner_id.id), ('bill_id','=',one.bill_id.id)])
-            one.invoice_tb_partner_ids = invoice_tb_partner_ids
+            if one.bill_id:
+                invoice_tb_partner_ids = self.env['account.invoice'].search(
+                    [('partner_id', '=', one.partner_id.id), ('bill_id','=',one.bill_id.id)])
+                invoice_tb_partner_ids_1 = self.env['account.invoice'].search(
+                    [('partner_id', '=', one.partner_id.id), ('bill_id','=',one.bill_id.id),('id','!=',one.id)])
+                one.invoice_tb_partner_ids = invoice_tb_partner_ids
+                one.invoice_tb_partner_ids_1 =invoice_tb_partner_ids_1
+            else:
+                one.invoice_tb_partner_ids = False
+                one.invoice_tb_partner_ids_1 = False
             print('one.invoice_tb_partner_ids', one.invoice_tb_partner_ids)
 
-    #0921 = self.bill_id = self.partner
+    def compute_reconcile_order_ids(self):
+        for one in self:
+            reconcile_order_ids = self.env['account.reconcile.order'].search([('invoice_ids','in',one.id)])
+            reconcile_order_ids_count = len(reconcile_order_ids)
+            one.reconcile_order_ids = reconcile_order_ids
+            one.reconcile_order_ids_count = reconcile_order_ids_count
 
-    invoice_tb_partner_ids = fields.Many2many('account.invoice',u'和出运相关的账单',compute=_compute_invoice_tb_partner_ids)
+
+    #0921 = self.bill_id = self.partner
+    #
+    # invoice_tb_partner_ids = fields.Many2many('account.invoice',u'和出运相关的账单',compute=_compute_invoice_tb_partner_ids)
+    # invoice_tb_partner_ids_1 = fields.Many2many('account.invoice', u'和出运相关的账单', compute=_compute_invoice_tb_partner_ids)
+
     #0911
+
     yjzy_advance_payment_id = fields.Many2one('account.payment',u'预收付单')
     #831增加对应报关申报表
     df_id = fields.Many2one('back.tax.declaration',u'报关申报表')
@@ -330,7 +348,12 @@ class account_invoice(models.Model):
     expense_sheet_id = fields.Many2one('hr.expense.sheet',u'费用报告')
     # 增加常规转直接的状态，明细那边增加是否已经转换的状态
     invoice_attribute = fields.Selection(
-        [('normal', u'常规账单'), ('reconcile', u'核销账单'), ('extra', u'额外账单'), ('other_po', u'直接增加'),('expense_po', u'费用转换')], '账单类型')
+        [('normal', u'常规账单'),
+         ('reconcile', u'核销账单'),
+         ('extra', u'额外账单'),
+         ('other_po', u'直接增加'),
+         ('expense_po', u'费用转换'),
+         ('other_payment',u'其他')], '账单类型')
     #新增
     yjzy_type_1 = fields.Selection([('sale', u'应收'), ('purchase', u'应付'), ('back_tax', u'退税')], string=u'发票类型')
 
@@ -365,6 +388,14 @@ class account_invoice(models.Model):
         'account.invoice.stage',
         default=_default_invoice_stage)
     state_1 = fields.Selection(Invoice_Selection,'额外账单审批',related='stage_id.state')
+    #新建一个账单的状态，可以用来筛选还没有开始付款申请的账单
+    state_2 = fields.Selection([
+        ('10_draft', u'未确认'),
+        ('20_open', u'已确认'),
+        ('30_no_account_payment',u'已申请未付款'),
+        ('40_paid', u'已付款'),
+        ('90_cancel', u'已取消'),
+    ], string='Status', index=True, readonly=True, default='10_draft',copy=False,)
     fault_comments = fields.Text('异常备注')
     display_name = fields.Char(u'显示名称', compute=compute_display_name)
    #13ok
@@ -384,6 +415,9 @@ class account_invoice(models.Model):
     date_out_in = fields.Date('进仓日')
     #----
     reconcile_order_id = fields.Many2one('account.reconcile.order', u'核销单据')
+    #上面这个是M2o,现在改成M2M
+    reconcile_order_ids = fields.Many2many('account.reconcile.order','re_tb','te_td', u'核销单据',compute=compute_reconcile_order_ids)
+    reconcile_order_ids_count = fields.Integer(u'核销单据数量',compute=compute_reconcile_order_ids)
     reconcile_order_id_ids = fields.One2many('account.reconcile.order','back_tax_invoice_id','额外退税对应核销单')
     reconcile_order_line_id = fields.One2many('account.reconcile.order.line', 'invoice_id', u'核销明细行', domain=[('order_id.state','=','done'),('amount_total_org','!=',0)])
     reconcile_order_line_count = fields.Float(u'核销明细行数量', compute=get_reconcile_order_line)

@@ -7,9 +7,23 @@
         <menuitem id="menu_extra_po_root" name="直接增加采购" sequence="90"/>
         <menuitem id="menu_extra_po_expense_root" name="费用转采购" sequence="90"/>
         <menuitem id="menu_extra_customer_invoice_root" name="额外应收申请" sequence="99"/>
+
         <menuitem id="menu_extra_supplier_invoice_root" name="额外应付申请" sequence="99"/>
         <menuitem id="menu_yjzy_advance_root" name="应收应付" sequence="99"/>
         <menuitem id="menu_back_tax_declaration_root" name="退税申报" sequence="99"/>
+<!--        新财务-->
+
+        <menuitem id="menu_supplier_invoice_apply_root" name="账单管理" parent="yjzy_extend.menu_new_account_out_root" sequence="10"/>
+        <menuitem id="menu_supplier_invoice_extra_apply_root" name="额外账单管理" parent="yjzy_extend.menu_supplier_invoice_apply_root" sequence="10"/>
+        <menuitem id="menu_supplier_invoice_other_po_apply_root" name="新增采购账单管理" parent="yjzy_extend.menu_supplier_invoice_apply_root" sequence="20"/>
+        <menuitem id="menu_supplier_invoice_main_root" name="主应付账单" parent="yjzy_extend.menu_supplier_invoice_apply_root" sequence="30"/>
+        <menuitem id="menu_payment_apply_root" name="付款申请管理" parent="yjzy_extend.menu_new_account_out_root" sequence="20"/>
+        <menuitem id="menu_expense_sheet_apply_root" name="费用申请管理" parent="yjzy_extend.menu_payment_apply_root" sequence="10"/>
+        <menuitem id="menu_advance_payment_apply_root" name="预付申请管理" parent="yjzy_extend.menu_payment_apply_root" sequence="20"/>
+        <menuitem id="menu_invoice_payment_apply_root" name="应付申请管理" parent="yjzy_extend.menu_payment_apply_root" sequence="30"/>
+        <menuitem id="menu_expense_sheet_other_payment_apply_root" name="其他支出申请管理" parent="yjzy_extend.menu_payment_apply_root" sequence="10"/>
+        <menuitem id="menu_invoice_payment_apply_create" name="应付查询和创建申请" parent="yjzy_extend.menu_invoice_payment_apply_root" sequence="10"/>
+
 
 
     </data>

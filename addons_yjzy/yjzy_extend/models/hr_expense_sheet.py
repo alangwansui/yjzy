@@ -44,9 +44,20 @@ class hr_expense_sheet(models.Model):
         for one in self:
             total_currency_amount = one.currency_id.compute(one.total_amount, one.company_currency_id)
             one.company_currency_total_amount = total_currency_amount
+    def _default_other_payment_invoice_product_id(self):
+        try:
+            return self.env.ref('yjzy_extend.product_back_tax').id
+        except Exception as e:
+            return None
 
+    #024 自动生成应收发票
+    other_payment_invoice_product_id = fields.Many2one('product.product', u'其他应收项目', domain=[('type', '=', 'service')],
+                                          default=_default_other_payment_invoice_product_id)
+    other_payment_invoice_amount = fields.Monetary(u'其他应收金额')
+    other_payment_invoice_id = fields.Many2one('account.invoice', u'其他应收发票')
     #0911
     expense_type_new = fields.Selection([('exp_to_pay',u'先申请后付款'),('pay_to_exp',u'先付款后申请')],u'费用生成类型')
+    expense_to_invoice_type = fields.Selection([('normal',u'常规费用'),('to_invoice',u'转为货款'),('other_payment',u'其他支出'),('incoming',u'其他收入')],u'类型说明')
     #901
     tb_po_invoice_ids = fields.One2many('tb.po.invoice','expense_sheet_id',u'费用转采购申请单')
 
@@ -135,6 +146,17 @@ class hr_expense_sheet(models.Model):
     company_currency_id = fields.Many2one('res.currency', u'公司货币',
                                           default=lambda self: self.env.user.company_id.currency_id.id)
     company_currency_total_amount = fields.Monetary(u'本币合计', currency_field='company_currency_id', digits=(2, 4),compute=compute_total_amount_currency, store=True)
+
+
+    #0925财务审批的时候判断是否已经转为货款
+    def action_account_approve(self):
+        if self.expense_to_invoice_type == 'normal':
+            if not self.fk_journal_id:
+                raise Warning('请填写付款账号')
+        else:
+            self.tb_po_invoice_ids.submit()
+
+
     #payment_date_store = fields.Datetime(u'付款日期', related='payment_id.payment_date_confirm', store=True)
 # #akiny
 #     @api.depends('expense_line_ids', 'expense_line_ids.categ_id')
@@ -166,13 +188,13 @@ class hr_expense_sheet(models.Model):
         self.write({'manager_confirm': manager_confirm.id,
                     'manager_confirm_date': manager_confirm_date})
 
-    #819 费用创建发票账单
+    #819 总经理审批费用，也同时审批生成的费用转货款
     def action_manager_approve(self):
-        if not self.is_to_invoice:
+        if self.expense_to_invoice_type != 'to_invoice':
             self.create_rcfkd()
         else:
-            if self.invoice_id:
-                self.invoice_id.action_invoice_open()
+            if self.tb_po_invoice_ids:
+                self.tb_po_invoice_ids.action_manager_approve()
 
     def open_wizard_tb_po_invoice(self):
         self.ensure_one()
@@ -230,7 +252,7 @@ class hr_expense_sheet(models.Model):
             'res_id': wizard.id,
             # 'context': { },
         }
-
+#定
     def create_tb_po_invoice(self):
         self.ensure_one()
         bill_id = self.expense_line_ids.mapped('tb_id')
@@ -241,6 +263,7 @@ class hr_expense_sheet(models.Model):
 
         view = self.env.ref('yjzy_extend.tb_po_form')
         line_obj = self.env['tb.po.invoice.line']
+
         for hsl in bill_id.hsname_all_ids:
             line_obj.create({
                 'tb_po_id': tb_po_id.id,
@@ -256,8 +279,9 @@ class hr_expense_sheet(models.Model):
                 'hsname_all_line_id': hsl.id,
                 'back_tax': hsl.back_tax
             })
+        self.expense_to_invoice_type = 'to_invoice'
         return {
-            'name': _(u'创建采购单'),
+            'name': _(u'创建费用转货款申请'),
             'view_type': 'tree,form',
             "view_mode": 'form',
             'res_model': 'tb.po.invoice',
@@ -444,6 +468,50 @@ class hr_expense_sheet(models.Model):
             'gongsi_id': self.gongsi_id.id,
         })
         self.back_tax_invoice_id = invoice_id
+
+    def create_other_payment_invoice(self):
+        self.ensure_one()
+        if self.other_payment_invoice_id:
+            return True
+        if self.other_payment_invoice_amount <= 0:
+            return True
+        if not self.other_payment_invoice_product_id:
+            return True
+
+        jounal_obj = self.env['account.invoice'].with_context({'type': 'out_invoice', 'journal_type': 'sale'})
+        pdt = self.other_payment_invoice_product_id
+        partner = self.partner_id
+        invoice_account = self.env['account.account'].search([('code', '=', '1122'), ('company_id', '=', self.env.user.company_id.id)], limit=1)
+        pdt_account = pdt.property_account_income_id
+
+        if not invoice_account:
+            raise Warning(u'发票科目 1122 未找到')
+        if not pdt:
+            raise Warning(u'请填写其他应收项目')
+        if not pdt_account:
+            raise Warning(u'请填写其他应收项目的科目未设置')
+
+        invoice_line_data = {
+            'product': pdt.id,
+            'name': pdt.name,
+            'account_id': pdt_account.id,
+            'price_unit': self.other_payment_invoice_amount,
+            'product_id': pdt.id,
+        }
+        invoice_id = jounal_obj.create({
+            'name': u'草稿发票',
+            'partner_id': partner.id,
+            'account_id': invoice_account.id,
+            'invoice_attribute': 'other_payment',
+            'yjzy_type_1': 'sale',
+            'journal_type': 'sale',
+            'date': fields.datetime.now(),
+            'date_invoice': fields.datetime.now(),
+            'type': 'out_invoice',
+            'invoice_line_ids': [(0, 0, invoice_line_data)],
+            'gongsi_id': self.gongsi_id.id,
+        })
+        self.other_payment_invoice_id = invoice_id
 
 
 

@@ -483,7 +483,7 @@ class tb_po_invoice(models.Model):
                 'type': 'in_refund',
                 'yjzy_type_1':'purchase',
                 'yjzy_invoice_id':self.yjzy_invoice_id.id,
-                'journal_type': 'purchase',
+                'journal_type': 'sale',
                 'date': fields.datetime.now(),
                 'date_invoice': fields.datetime.now(),
                 'invoice_line_ids': [(0, 0, {

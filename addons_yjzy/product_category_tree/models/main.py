@@ -61,7 +61,7 @@ class mail_message(models.Model):
                 {'id': 'customer', 'pid': None, 'name': '客户', 'no_action': True, 'nocheck': True},
                 {'id': 'supplier', 'pid': None, 'name': '供应商', 'no_action': True, 'nocheck': True},
                 {'id': 'personal', 'pid': None, 'name': '个人通讯录', 'no_action': True, 'nocheck': True},
-                # {'id': 'user', 'pid': None, 'name': '用户', 'no_action': True, 'nocheck': True},
+                {'id': 'user', 'pid': None, 'name': '用户', 'no_action': True, 'nocheck': True},
 
                # {'id': 'mail_list', 'pid': None, 'name': '邮件列表', 'no_action': True},
 

@@ -850,7 +850,7 @@ class transport_bill(models.Model):
                                        ],'所有日期状态',default='30_un_done',store=True, compute=compute_date_all_state)
     hexiao_type = fields.Selection([('undefined','...'),('abnormal',u'异常核销'),('write_off',u'正常核销')], default='undefined', string='核销类型')
     hexiao_date = fields.Date(u'核销时间')
-    hexiao_uid = fields.Many2one('res.user',u'核销人')
+    hexiao_uid = fields.Many2one('res.users',u'核销人')
     invoice_state = fields.Selection([('draft', u'未确认'), ('open', u'已确认'),('paid',u'已付款')], string='账单状态',compute=compute_info)
     same_incoterm = fields.Boolean(u'价格条款是否一致',  compute='compute_same')#store=True,
     same_payment_term = fields.Boolean(u'付款条款是否一致', compute='compute_same')
@@ -977,7 +977,7 @@ class transport_bill(models.Model):
     locked = fields.Boolean(u'锁定不允许修改')
 
     #13已经添加   730：发货完成即开票完成：合规已审批更新为：出运日期待确认，invoiced更新为：出运日期已确认,交单日期审批完成后就发货并生成和确认发票。
-    state = fields.Selection(Transport_Selection, '状态', default='draft', related='stage_id.state',
+    state = fields.Selection(Transport_Selection, '状态', default='draft', index=True,related='stage_id.state',
                              track_visibility='onchange')
 
     include_tax = fields.Boolean(u'含税')
@@ -1174,7 +1174,7 @@ class transport_bill(models.Model):
     approve_uid = fields.Many2one('res.users', u'合规审批')
     confirmed_date = fields.Date('单证审批日期')
     confirmed_uid = fields.Many2one('res.users','单证审批')
-    delivered_date = fields.Date('出运完成日期')
+    delivered_date = fields.Datetime('出运完成日期')
     delivered_uid = fields.Many2one('res.users', u'出运完成')
     invoiced_date = fields.Date('开票日期')
     invoiced_uid = fields.Many2one('res.users', u'开票完成')

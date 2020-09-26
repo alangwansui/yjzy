@@ -118,6 +118,7 @@
         'views/trasnport_bill_stage.xml',
         'views/account_invoice_extra_po.xml',
         'views/tb_po_invoice.xml',
+        'views/hr_expense_other_payment.xml',
 
 
 
