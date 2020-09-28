@@ -2188,7 +2188,7 @@
                               ]"/>
         </record>
          <menuitem id="menu_supplier_account_invoice_other_unpaid" action="action_supplier_account_invoice_other_unpaid"
-                  parent="menu_supplier_invoice_main_root" name="未付款"
+                  parent="menu_supplier_invoice_other_payment_root" name="未付款"
                   sequence="10"
         />
 
@@ -2208,7 +2208,7 @@
                               ]"/>
         </record>
          <menuitem id="menu_supplier_account_invoice_other_paid" action="action_supplier_account_invoice_other_paid"
-                  parent="menu_supplier_invoice_main_root" name="已付款"
+                  parent="menu_supplier_invoice_other_payment_root" name="已付款"
                   sequence="20"
         />
 
