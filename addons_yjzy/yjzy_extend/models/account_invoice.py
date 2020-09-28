@@ -1378,6 +1378,18 @@ class account_invoice_line(models.Model):
                 yjzy_price_unit = price_unit
             return yjzy_price_unit
 
+    @api.depends('price_unit')
+    def _compute_amount_new(self):
+        for one in self:
+            price_unit = one.price_unit
+            price_total = one.price_total
+            if one.invoice_id.type in ['in_refund', 'out_refund']:
+                one.yjzy_price_unit = -price_unit
+
+            else:
+                one.yjzy_price_unit = price_unit
+
+
     def _compute_yjzy_invoice(self):
         for one in self:
             print('yjzy_invoice',one.invoice_id.yjzy_invoice_id)
@@ -1406,7 +1418,7 @@ class account_invoice_line(models.Model):
     # yjzy_price_unit = fields.Float('新单价',compute=_compute_amount)
     # yjzy_price_total = fields.Float('新总价',compute=_compute_amount)
     yjzy_invoice_id = fields.Many2one('account.invoice',u'原始账单',compute=_compute_yjzy_invoice)
-    yjzy_price_unit = fields.Float('新单价',compute=_compute_amount,store= True)#default=lambda self: self._compute_amount()
+    yjzy_price_unit = fields.Float('新单价',compute=_compute_amount_new,store= True)#default=lambda self: self._compute_amount()
     yjzy_price_total = fields.Monetary('新总价',compute=_compute_price_total,store= True,currency_field='currency_id')
     tp_po_invoice_line = fields.Many2one('extra.invoice.line','申请单明细')
     #先默认将单价绝对值填入原生单价，之后通过invoice的onchange来决定最终的单价是正数还是负数
