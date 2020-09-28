@@ -145,7 +145,7 @@
 
 
     <menuitem id="menu_jiehui"  sequence="0" name="结汇" parent="menu_skf_root" action="action_jiehui"/>
-    <menuitem id="menu_jiehui_new"  sequence="27" name="结汇" parent="menu_new_account_root" />
+    <menuitem id="menu_jiehui_new"  sequence="30" name="结汇" parent="menu_invoice_payment_out_exchange" />
      <record model="ir.actions.act_window" id="action_jiehui_undone">
         <field name="name">未生效</field>
         <field name="type">ir.actions.act_window</field>

@@ -137,7 +137,7 @@
     </record>
     <menuitem id="menu_nbzz"  sequence="0" name="内部转账" parent="menu_skf_root" action="action_nbzz"/>
 
-    <menuitem id="menu_nbzz_new"  sequence="25" name="内部转账" parent="menu_new_account_root"/>
+    <menuitem id="menu_nbzz_new"  sequence="20" name="内部转账" parent="menu_invoice_payment_out_exchange"/>
     <record model="ir.actions.act_window" id="action_nbzz_new_undone">
         <field name="name">未生效</field>
         <field name="type">ir.actions.act_window</field>

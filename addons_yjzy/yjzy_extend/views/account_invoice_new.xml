@@ -1397,7 +1397,7 @@
                                 <field name="tb_po_invoice_ids"/>
                             </page>
                            <page string="额外账单" attrs="{'invisible':[('is_yjzy_invoice','=',True)]}">
-                                <field name="yjzy_invoice_ids" context="{'default_payment_term_id':payment_term_id}">
+                                <field name="yjzy_invoice_ids" context="{'default_payment_term_id':payment_term_id,'form_view_ref':'yjzy_extend.view_account_supplier_invoice_new_form'}">
                                 <tree string="Invoice" default_order="extra_code" decoration-info="state == 'draft'">
                         <field name="extra_code"/>
                         <field name="tb_contract_code" string="合同号" widget="dynamic_popover_char"
