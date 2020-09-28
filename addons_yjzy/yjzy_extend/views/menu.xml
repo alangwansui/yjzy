@@ -23,12 +23,14 @@
         <menuitem id="menu_expense_sheet_apply_root" name="费用申请付款" parent="yjzy_extend.menu_payment_apply_root" sequence="10"/>
         <menuitem id="menu_advance_payment_apply_root" name="预付管理" parent="yjzy_extend.menu_payment_apply_root" sequence="20"/>
         <menuitem id="menu_invoice_payment_apply_root" name="应付申请付款" parent="yjzy_extend.menu_payment_apply_root" sequence="30"/>
-        <menuitem id="menu_invoice_payment_out_exchange" name="付款和转账" parent="yjzy_extend.menu_payment_apply_root" sequence="40"/>
+
         <menuitem id="menu_expense_sheet_other_payment_apply_root" name="其他支出申请付款" parent="yjzy_extend.menu_payment_apply_root" sequence="10"/>
         <menuitem id="menu_invoice_payment_apply_create" name="应付查询和创建申请" parent="yjzy_extend.menu_invoice_payment_apply_root" sequence="10"/>
         <menuitem id="menu_no_payment_apply_root" name="非付款认领" parent="yjzy_extend.menu_new_account_out_root" sequence="30"/>
         <menuitem id="menu_advance_reconcile_apply" name="预付-应付认领" parent="yjzy_extend.menu_no_payment_apply_root" sequence="10"/>
         <menuitem id="menu_residual_reconcile_apply" name="应付尾款认领" parent="yjzy_extend.menu_no_payment_apply_root" sequence="10"/>
+
+        <menuitem id="menu_invoice_payment_out_exchange" name="付款和转账" parent="yjzy_extend.menu_new_account_out_root" sequence="40"/>
 
     </data>
 </odoo>
