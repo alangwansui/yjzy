@@ -546,7 +546,7 @@ class tb_po_invoice(models.Model):
         invoice_obj = self.env['account.invoice']
         invoice_line_obj = self.env['account.invoice.line']
         hsname_all_line_obj = self.env['invoice.hs_name.all']
-        purchase_orders = invoice_obj.browse()
+        purchase_orders = invoice_obj.browse()  
         # product = self.env.ref('yjzy_extend.product_back_tax')
         product = self.invoice_product_id
         account = product.property_account_income_id

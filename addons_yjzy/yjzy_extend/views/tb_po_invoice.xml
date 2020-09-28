@@ -260,7 +260,7 @@
             <field name="arch" type="xml">
                 <form string="客户应收">
                     <header>
-                        <button name="action_submit" states="10_draft,40_refuse" class="oe_highlight" type='object' string="提交"/>
+                        <button name="action_submit" states="10_draft,80_refuse" class="oe_highlight" type='object' string="提交"/>
                         <button name="action_manager_approve"  states="20_submit" class="oe_highlight" type='object' string="总经理审批"/>
                         <button name="action_refuse"  class="oe_highlight" type='object' string="拒绝"/>
                         <button name="apply_expense_sheet" class="oe_highlight" type='object' groups="base.group_system" string="费用确认" attrs="{'invisible':[('type','!=','expense_po')]}"/>
@@ -311,7 +311,7 @@
                         </page>
 
                     <page string="额外发票">
-                        <field name="invoice_ids"/>
+                        <field name="invoice_ids" context="{'form_view_ref':'yjzy_extend.view_account_supplier_invoice_new_form'}"/>
                     </page>
 
                     </notebook>

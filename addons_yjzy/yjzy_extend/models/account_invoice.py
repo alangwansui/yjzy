@@ -571,16 +571,16 @@ class account_invoice(models.Model):
             }
 
 
-    #创建的时候，默认yjzy_invoice_id等于本身
-    @api.model
-    def create(self, vals):
-        one = super(account_invoice, self).create(vals)
-        # budget = self.env['budget.budget'].create({
-        #     'type': 'transport',
-        #     'tb_id': one.id,
-        # })
-        one.yjzy_invoice_id = one.id
-        return one
+    #创建的时候，默认yjzy_invoice_id等于本身 928
+    # @api.model
+    # def create(self, vals):
+    #     one = super(account_invoice, self).create(vals)
+    #     # budget = self.env['budget.budget'].create({
+    #     #     'type': 'transport',
+    #     #     'tb_id': one.id,
+    #     # })
+    #     one.yjzy_invoice_id = one.id
+    #     return one
     #818
     def unlink(self):
         for one in self:
