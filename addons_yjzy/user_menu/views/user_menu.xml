@@ -583,7 +583,7 @@
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('user_menu_account_kanban_invoice')}),
                          ]"/>
     </record>
-    <menuitem id="menu_user_account_menu_invoice" name="财务test" parent="yjzy_extend.menu_new_account_root" action="action_user_account_menu_invoice" sequence="0"/>
+    <menuitem id="menu_user_account_menu_invoice" name="工作台" parent="yjzy_extend.menu_invoice_payment_apply_root" action="action_user_account_menu_invoice" sequence="0"/>
 </odoo>
 <!--(0, 0, {'view_mode': 'tree', 'view_id': ref('user_menu_tree')}),-->
 <!--                          (0, 0, {'view_mode': 'form', 'view_id': ref('user_menu_form')}),-->
