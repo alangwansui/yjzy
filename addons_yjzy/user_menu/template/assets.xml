@@ -22,6 +22,8 @@
 	     <xpath expr="//link[last()]" position="after">
 			<link rel="stylesheet" href="/user_menu/static/src/less/user_menu.less" />
 			<link rel="stylesheet" href="/user_menu/static/src/less/user_menu_dashboard.less" />
+			 <link rel="stylesheet" href="/user_menu/static/src/less/user_menu_kanban.less" />
+
 		</xpath>
 
 	</template>

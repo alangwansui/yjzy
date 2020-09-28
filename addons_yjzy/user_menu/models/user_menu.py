@@ -114,6 +114,7 @@ class user_menu(models.Model):
                     dic_b = safe_eval(one.dynamic_code_b, globals_dict)
                     html_b = Template(one.dynamic_template_b).render(**dic_b)
                     one.dynamic_html_b = html_b
+                    print('html_b',html_b)
 
                     dic_c = safe_eval(one.dynamic_code_c, globals_dict)
                     html_c = Template(one.dynamic_template_c).render(**dic_c)
