@@ -311,9 +311,9 @@
                             </div>
                             <div class="container o_kanban_card_content">
                                 <div class="row">
-                                        <div class="row">
+
                                             <field name="dynamic_html" widget="html"/>
-                                        </div>
+
                                 </div>
                             </div>
 
