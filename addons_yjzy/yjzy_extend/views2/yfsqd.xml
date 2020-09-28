@@ -305,5 +305,5 @@
           <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_yfsqd_form')})]"/>
     </record>
-    <menuitem id="menu_yfsqd_create"  sequence="50" name="创建预付申请" parent="menu_advance_payment_apply_root" action="action_yfsqd_create"/>
+    <menuitem id="menu_yfsqd_create"  sequence="5" name="创建预付申请" parent="menu_advance_payment_apply_root" action="action_yfsqd_create"/>
 </odoo>
