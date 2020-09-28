@@ -187,7 +187,7 @@
 
     <menuitem id="menu_rcfkd"  sequence="00" name="日常付款单" parent="menu_skf_root" action="action_rcfkd"/>
 
-    <menuitem id="menu_rcfkd_new"  sequence="10" name="日常付款单" parent="yjzy_extend.menu_invoice_payment_out_exchange"/>
+    <menuitem id="menu_rcfkd_new"  sequence="10" name="日常付款单" parent="menu_invoice_payment_out_exchange"/>
     <menuitem id="menu_rcfkd_new_cashier"  sequence="10" name="日常付款单" parent="menu_new_account_root"/>
     <record model="ir.actions.act_window" id="action_rcfkd_draft_new">
         <field name="name">未提交日常付款单</field>
