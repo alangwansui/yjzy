@@ -336,6 +336,9 @@ class account_invoice(models.Model):
     # invoice_tb_partner_ids = fields.Many2many('account.invoice',u'和出运相关的账单',compute=_compute_invoice_tb_partner_ids)
     # invoice_tb_partner_ids_1 = fields.Many2many('account.invoice', u'和出运相关的账单', compute=_compute_invoice_tb_partner_ids)
 
+
+    #928
+    tb_po_invoice_ids = fields.One2many('tb.po.invoice','yjzy_invoice_id',u'额外账单申请单',domain=[('type','=','extra')])
     #0911
 
     yjzy_advance_payment_id = fields.Many2one('account.payment',u'预收付单')
