@@ -2047,6 +2047,7 @@ class transport_bill(models.Model):
                 })
                 invoice.clear_zero_line()
                 invoice.yjzy_invoice_id = invoice.id
+                invoice.invoice_attribute = 'normal'
                 invoice.date_invoice = self.date_out_in
                 for o in purchase_orders.filtered(lambda x: x.partner_id == partner):
                     invoice.purchase_id = o
@@ -2111,6 +2112,7 @@ class transport_bill(models.Model):
                     else:
                         x.yjzy_price_unit = x.price_unit
                 one.yjzy_invoice_id = one.id
+                one.invoice_attribute = 'normal'
 
             sale_invoices.write({
 
@@ -2268,6 +2270,7 @@ class transport_bill(models.Model):
                 })
                 #730 创建后直接过账
                 back_tax_invoice.yjzy_invoice_id = back_tax_invoice.id
+                back_tax_invoice.invoice_attribute = 'normal'
                 back_tax_invoice.action_invoice_open()
                 self.back_tax_invoice_id = back_tax_invoice
         return {
