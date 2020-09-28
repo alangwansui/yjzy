@@ -1266,15 +1266,15 @@
                                                widget="many2many_tags" options="{'color_field': 'color'}"/>
                                         <field name="quantity" attrs="{'column_invisible': [('parent.is_yjzy_invoice', '=',True)]}"/>
                                         <field name="uom_id" groups="product.group_uom" attrs="{'column_invisible': [('parent.is_yjzy_invoice', '=',True)]}"/>
-                                        <field name="yjzy_price_unit" invisible="1"/>
+                                        <field name="yjzy_price_unit" />
 
-                                        <field name="price_unit"/>
+                                        <field name="price_unit" />
                                         <field name="discount" groups="sale.group_discount_per_so_line" invisible="1"/>
                                         <field name="invoice_line_tax_ids" widget="many2many_tags" invisible="1"
                                                options="{'no_create': True}" context="{'type':parent.type}"
                                                domain="[('type_tax_use','=','purchase'),('company_id', '=', parent.company_id)]"/>
-                                        <field name="yjzy_price_total" invisible="1"/>
-                                        <field string="Total" name="price_total" groups="sale.group_show_price_total" sum="小计"  />
+                                        <field name="yjzy_price_total" />
+                                        <field string="Total"  name="price_total" groups="sale.group_show_price_total" sum="小计"  />
                                         <field name="price_subtotal" invisible="1"/>
                                         <field name="currency_id" invisible="1"/>
 
@@ -1320,14 +1320,14 @@
                                                widget="many2many_tags" options="{'color_field': 'color'}"/>
                                         <field name="quantity"/>
                                         <field name="uom_id" groups="product.group_uom"/>
-                                        <field name="yjzy_price_unit" string="单价" invisible="1"/>
+                                        <field name="yjzy_price_unit" string="单价" />
 
                                         <field name="price_unit" />
                                         <field name="discount" groups="base.group_no_one" invisible="1"/>
                                         <field name="invoice_line_tax_ids" widget="many2many_tags" invisible="1"
                                                options="{'no_create': True}" context="{'type':parent.type}"
                                                domain="[('type_tax_use','=','sale'),('company_id', '=', parent.company_id)]"/>
-                                        <field name="yjzy_price_total" string="总价" sum="小计" invisible="1"/>
+                                        <field name="yjzy_price_total" string="总价" sum="小计" />
                                         <field string="Subtotal" name="price_subtotal" invisible="1"
                                                groups="sale.group_show_price_subtotal"/>
                                         <field string="Total" name="price_total" groups="sale.group_show_price_total" sum="小计"  />
@@ -1367,17 +1367,17 @@
                                                widget="many2many_tags" options="{'color_field': 'color'}"/>
                                         <field name="quantity"/>
                                         <field name="uom_id" groups="product.group_uom"/>
-                                        <field name="yjzy_price_unit" string="单价" invisible="1"/>
+                                        <field name="yjzy_price_unit" string="单价" />
 
-                                        <field name="price_unit" />
+                                        <field name="price_unit" invisible="1"/>
                                         <field name="discount" groups="base.group_no_one" invisible="1"/>
                                         <field name="invoice_line_tax_ids" widget="many2many_tags" invisible="1"
                                                options="{'no_create': True}" context="{'type':parent.type}"
                                                domain="[('type_tax_use','=','sale'),('company_id', '=', parent.company_id)]"/>
-                                        <field name="yjzy_price_total" string="总价" sum="小计" invisible="1"/>
+                                        <field name="yjzy_price_total" string="总价" sum="小计" />
                                         <field string="Subtotal" name="price_subtotal" invisible="1"
                                                groups="sale.group_show_price_subtotal"/>
-                                        <field string="Total" name="price_total" groups="sale.group_show_price_total" sum="小计"  />
+                                        <field string="Total" invisible="1" name="price_total" groups="sale.group_show_price_total" sum="小计"  />
                                         <field name="currency_id" invisible="1"/>
                                     </tree>
                                 </field>
