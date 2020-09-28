@@ -398,7 +398,7 @@
 
 
 
-        <menuitem id="menu_tb_po_other_po_create" name="查看可增出运并创建"
+        <menuitem id="menu_tb_po_other_po_create" name="查看并创建"
                   parent="yjzy_extend.menu_supplier_invoice_other_po_apply_root"
                   sequence="5"
                   action="act_open_transport_bill_declare_po"/>
@@ -626,7 +626,7 @@
                   sequence="20"
                   action="act_extra_customer_create"/>
 <!--        额外账单查看并创建-->
-        <menuitem id="menu_invoice_supplier_create_invoice" name="查看原始账单并创建"
+        <menuitem id="menu_invoice_supplier_create_invoice" name="查看并创建"
                   parent="yjzy_extend.menu_supplier_invoice_extra_apply_root"
                   sequence="10"
                   action="action_purchase_invoice_unpaid_new_extra"/>
