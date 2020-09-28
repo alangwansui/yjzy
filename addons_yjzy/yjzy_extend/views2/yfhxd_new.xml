@@ -402,6 +402,13 @@
               parent="menu_yfhxd_payment_new" sequence="98"
               action="action_yfhxd_new_payment_form"/>
 
+
+
+
+    <menuitem id="menu_yfhxd_advance_reconcile_apply_1" name="查看并创建"
+              parent="yjzy_extend.menu_residual_reconcile_apply" sequence="5"
+              action="yjzy_extend.action_yfsqd_balance"/>
+
     <record model="ir.actions.act_window" id="action_yfhxd_new_advance_form">
         <field name="name">创建预付-应付认领</field>
         <field name="type">ir.actions.act_window</field>
@@ -453,7 +460,7 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('account_yfhxd_form_view_new')})]"/>
         </record>
     <menuitem id="menu_yfhxd_new_advance_no_submit" name="未提交"
-              parent="menu_yfhxd_advance_new" sequence="10"
+              parent="menu_advance_reconcile_apply" sequence="10"
               action="action_yfhxd_new_advance_no_submit"/>
 
     <record model="ir.actions.act_window" id="action_yfhxd_new_reconcile_no_submit">
@@ -471,7 +478,7 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('account_yfhxd_form_view_new')})]"/>
         </record>
     <menuitem id="menu_yfhxd_new_reconcile_no_submit" name="未提交"
-              parent="menu_yfhxd_reconcile_new" sequence="10"
+              parent="menu_residual_reconcile_apply" sequence="10"
               action="action_yfhxd_new_reconcile_no_submit"/>
 
 
@@ -508,7 +515,7 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('account_yfhxd_form_view_new')})]"/>
         </record>
     <menuitem id="menu_yfhxd_new_advance_submit" name="审批中"
-              parent="menu_yfhxd_advance_new" sequence="20"
+              parent="menu_advance_reconcile_apply" sequence="20"
               action="action_yfhxd_new_advance_submit"/>
 
     <record model="ir.actions.act_window" id="action_yfhxd_new_reconcile_submit">
@@ -526,7 +533,7 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('account_yfhxd_form_view_new')})]"/>
         </record>
     <menuitem id="menu_yfhxd_new_reconcile_submit" name="审批中"
-              parent="menu_yfhxd_reconcile_new" sequence="20"
+              parent="menu_residual_reconcile_apply" sequence="20"
               action="action_yfhxd_new_reconcile_submit"/>
 
 
@@ -584,7 +591,7 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('account_yfhxd_form_view_new')})]"/>
             </record>
     <menuitem id="menu_yfhxd_new_advance_done" name="已完成" sequence="40"
-              parent="menu_yfhxd_advance_new"
+              parent="menu_advance_reconcile_apply"
               action="action_yfhxd_new_advance_done"/>
 
     <record model="ir.actions.act_window" id="action_yfhxd_new_reconcile_done">
@@ -602,7 +609,7 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('account_yfhxd_form_view_new')})]"/>
             </record>
     <menuitem id="menu_yfhxd_new_reconcile_done" name="已完成" sequence="40"
-              parent="menu_yfhxd_reconcile_new"
+              parent="menu_residual_reconcile_apply"
               action="action_yfhxd_new_reconcile_done"/>
 
 

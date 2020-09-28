@@ -120,6 +120,14 @@ class hr_expense_sheet(models.Model):
 
     manager_confirm = fields.Many2one('res.users', u'总经理审批')
     manager_confirm_date = fields.Date('总经理审批日期')
+    state_1 = fields.Selection([('10_draft',u'草稿'),
+                                ('20_employee_approval',u'待责任人确认'),
+                                ('30_account_approval',u'待财务审批'),
+                                ('40_manager_approval',u'待总经理审理'),
+                                ('50_post',u'审批完成'),
+                                ('60_done',u'完成')]) #费用审批流程
+    # state_2 = fields.Selection([('10_draft',u'草稿'),
+    #                             ('20_submit',u'')])#收入审批流程
     state = fields.Selection(selection_add=[
                                             ('approval', u'审批中'),
                                             ('employee_approval', u'待责任人审批'),
@@ -148,13 +156,54 @@ class hr_expense_sheet(models.Model):
     company_currency_total_amount = fields.Monetary(u'本币合计', currency_field='company_currency_id', digits=(2, 4),compute=compute_total_amount_currency, store=True)
 
 
+
+    #0926
+    def action_to_employee_approval(self):
+        if (self.employee_id.user_id == self.env.user or self.employee_id.name == '公司' or self.create_uid == self.env.user or self.env.user.id ==1 ) and self.total_amount >0:
+            self.write({'employee_confirm':self.env.user.id,
+                        'employee_confirm_date':fields.datetime.now(),
+                        'employee_wkf':True,
+                        'state':'approval',
+                        'state_1':'20_employee_approval'})
+            self.btn_user_confirm()
+            self.btn_match_budget()
+        else:
+            raise Warning('非权限用户或者金额等于0，请检查！')
+
+    def action_to_account_approval(self):
+        if self.expense_to_invoice_type == 'normal':
+            if self.all_line_is_confirmed == False or self.total_amount == 0:
+                raise Warning('费用明细没有完成审批或者总金额等于0，请查验！')
+            else:
+                self.write({'employee_wkf':False,'state':'account_approval'})
+                self.btn_match_budget()
+        elif self.expense_to_invoice_type == 'other_payment':
+            if self.total_amount == 0:
+                raise Warning('总金额不允许等于0，请查验！')
+            else:
+                self.write({'employee_wkf': False, 'state': 'account_approval'})
+
+
+
     #0925财务审批的时候判断是否已经转为货款
     def action_account_approve(self):
-        if self.expense_to_invoice_type == 'normal':
+        if self.expense_to_invoice_type == 'to_invoice':
+            if self.tb_po_invoice_ids:
+                self.tb_po_invoice_ids.submit()
+                self.write({'account_confirm': self.env.user.id,
+                            'state': 'manager_approval',
+                            'account_confirm_date':fields.datetime.now()})
+            else:
+                raise Warning('还没有生成费用转货款申请单，请检查！')
+        else:
             if not self.fk_journal_id:
                 raise Warning('请填写付款账号')
-        else:
-            self.tb_po_invoice_ids.submit()
+            else:
+                self.write({'account_confirm': self.env.user.id,
+                            'state': 'manager_approval',
+                            'account_confirm_date': fields.datetime.now()})
+
+
 
 
     #payment_date_store = fields.Datetime(u'付款日期', related='payment_id.payment_date_confirm', store=True)
@@ -191,10 +240,16 @@ class hr_expense_sheet(models.Model):
     #819 总经理审批费用，也同时审批生成的费用转货款
     def action_manager_approve(self):
         if self.expense_to_invoice_type != 'to_invoice':
+            self.approve_expense_sheets()
             self.create_rcfkd()
+            self.write({'manager_confirm':self.env.user.id,
+                        'manager_confirm_date':fields.datetime.now()})
         else:
             if self.tb_po_invoice_ids:
+                self.approve_expense_sheets()
                 self.tb_po_invoice_ids.action_manager_approve()
+                self.write({'manager_confirm': self.env.user.id,
+                            'manager_confirm_date': fields.datetime.now()})
 
     def open_wizard_tb_po_invoice(self):
         self.ensure_one()

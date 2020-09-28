@@ -274,18 +274,18 @@
                     <field name="bill_id" string="合同号" invisible="1"/>
                     <field name="tb_contract_code" string="合同号" widget="dynamic_popover_char"
                        options="{'max_width': '100px', 'line_clamp': '1', 'mode_mouse':'hover','popover_max_width':'200px','placement':'right'}"/>
-                    <field name="date_invoice" string="账单日期"/>
+                    <field name="date_invoice" string="账单日期" groups="base.group_system"/>
                     <button name="open_supplier_reconcile_order_line" icon="fa-pencil-square-o" type="object" attrs="{'invisible':[('reconcile_order_line_count','=',0)]}" />
                     <field name="date_deadline_new" string="实际到期日"/>
                     <field name="residual_times_new" />
-                    <field name="date_due" string="进仓到期日"/>
+                    <field name="date_due" string="进仓到期日" groups="base.group_system"/>
                     <field name="reconcile_order_line_count" invisible="1"/>
-                    <field name="residual_times_out_in_new"/>
-                    <field name="amount_total_signed" string="应付金额" sum="Total"/>
+                    <field name="residual_times_out_in_new" groups="base.group_system"/>
+                    <field name="amount_total_signed" string="应付金额" sum="Total" groups="base.group_system"/>
                     <field name="residual_signed" string="未付金额" sum="Amount Due"/>
-                    <field name="yjzy_invoice_amount_total" string="额外账单应付余额" sum="小计"/>
+                    <field name="yjzy_invoice_amount_total" string="额外账单应付余额" sum="小计" groups="base.group_system"/>
                     <field name="yjzy_invoice_residual_signed_total" string="额外账单未付余额" sum="小计"/>
-                    <button name="open_invoice_ids_new" icon="fa-pencil-square-o" type="object" attrs="{'invisible':[('yjzy_invoice_count', '=', 0)]}"/>
+                    <button name="open_invoice_ids_new" icon="fa-pencil-square-o" type="object" attrs="{'invisible':[('yjzy_invoice_count', '=', 0)]}" context="{'invoice_type':'purchase'}"/>
                     <field name="yjzy_invoice_ids" invisible="1"/>
                     <field name="yjzy_invoice_count" invisible="1"/>
                     <field name="reconcile_order_line_payment" sum="小计" string="付款认领金额" invisible="1"/>

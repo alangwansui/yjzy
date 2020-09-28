@@ -449,7 +449,7 @@
                     <filter string="New Mail" name="message_unread" domain="[('message_unread', '=', True)]"
                             invisible="1"/>
                     <group expand="0" string="Group By">
-
+                        <filter string="费用类型" domain="[]" name="group_expense_to_invoice_type" context="{'group_by': 'expense_to_invoice_type'}"/>
                         <filter string="审批流" domain="[]" context="{'group_by': 'x_sheet_wkf_state'}" invisible="1"/>
                         <filter string="审批状态" domain="[]" context="{'group_by': 'state'}"/>
                         <filter string="申请单" domain="[]" context="{'group_by': 'sheet_id'}"/>
@@ -1834,6 +1834,9 @@
          <menuitem id="menu_hr_expense_sheet_approve" name="审批完成费用"
               parent="menu_yjzy_advance_root"
               action="action_hr_expense_sheet_approve"/>
+
+
+
         <!--record id="hr_expense_product_new_action" model="ir.actions.act_window">
            <field name="name">费用产品</field>
            <field name="type">ir.actions.act_window</field>
@@ -1847,9 +1850,78 @@
        </record>
        <menuitem id="hr_expense_product_new_menu" name="费用小类" parent="hr_expense.menu_hr_expense_configuration" action="new_purhcase_order_action" sequence=""/-->
 
+          <record id="action_hr_expense_sheet_account_approval" model="ir.actions.act_window">
+            <field name="name">待财务审批费用</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.expense.sheet</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('total_amount','>=',0),
+                                  ('expense_to_invoice_type','in',['to_invoice','normal']),
+                                  ('state','in',['account_approval'])]</field>
+            <field name="context">{'search_default_group_expense_to_invoice_type':1}</field>
+            <!--field name="target">new</field-->
+            <field name="view_ids" eval="[(5, 0, 0),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('hr_expense_sheet_manager_approve_tree')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('view_hr_expense_sheet_new_form')}),
+                              ]"/>
+        </record>
+         <menuitem id="menu_hr_expense_sheet_account_approval" name="待财务审批费用"
+              parent="menu_expense_sheet_apply_root"
+              action="action_hr_expense_sheet_account_approval"/>
+
+        <record id="action_hr_expense_sheet_manager_approval" model="ir.actions.act_window">
+            <field name="name">待总经理审批费用</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.expense.sheet</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('total_amount','>=',0),
+                                  ('expense_to_invoice_type','in',['to_invoice','normal']),
+                                  ('state','in',['manager_approval'])]</field>
+            <field name="context">{'search_default_group_expense_to_invoice_type':1}</field>
+            <!--field name="target">new</field-->
+            <field name="view_ids" eval="[(5, 0, 0),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('hr_expense_sheet_manager_approve_tree')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('view_hr_expense_sheet_new_form')}),
+                              ]"/>
+        </record>
+         <menuitem id="menu_hr_expense_sheet_manager_approval" name="待总经理审批费用"
+              parent="menu_expense_sheet_apply_root"
+              action="action_hr_expense_sheet_manager_approval"/>
+
+        <record id="action_hr_expense_sheet_approve_1" model="ir.actions.act_window">
+            <field name="name">审批完成费用</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.expense.sheet</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('total_amount','>=',0),('state','in',['approve','post'])]</field>
+            <field name="context">{'search_default_group_expense_to_invoice_type':1}</field>
+            <!--field name="target">new</field-->
+            <field name="view_ids" eval="[(5, 0, 0),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('hr_expense_sheet_manager_approve_tree')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('view_hr_expense_sheet_new_form')}),
+                              ]"/>
+        </record>
+         <menuitem id="menu_hr_expense_sheet_approve_1" name="审批完成费用"
+              parent="menu_expense_sheet_apply_root"
+              action="action_hr_expense_sheet_approve_1"/>
 
 
-
+        <record id="action_hr_expense_sheet_done" model="ir.actions.act_window">
+            <field name="name">支付完成费用</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.expense.sheet</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('total_amount','>=',0),('state','in',['done'])]</field>
+            <field name="context">{'search_default_group_expense_to_invoice_type':1}</field>
+            <!--field name="target">new</field-->
+            <field name="view_ids" eval="[(5, 0, 0),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('hr_expense_sheet_manager_approve_tree')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('view_hr_expense_sheet_new_form')}),
+                              ]"/>
+        </record>
+         <menuitem id="menu_hr_expense_sheet_done" name="支付完成"
+              parent="menu_expense_sheet_apply_root"
+              action="action_hr_expense_sheet_done"/>
 
     </data>
 </odoo>

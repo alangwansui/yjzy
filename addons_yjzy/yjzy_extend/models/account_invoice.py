@@ -790,8 +790,13 @@ class account_invoice(models.Model):
             'domain':[('yjzy_invoice_id','=',self.id)]
         }
     def open_invoice_ids_new(self):
-        tree_view = self.env.ref('yjzy_extend.invoice_new_1_tree')
-        form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form')
+        ctx = self.env.context.get('invoice_type')
+        if ctx == 'sale':
+            tree_view = self.env.ref('yjzy_extend.invoice_new_1_tree')
+            form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form')
+        else:
+            tree_view = self.env.ref('yjzy_extend.invoice_new_supplier_1_tree')
+            form_view = self.env.ref('yjzy_extend.view_account_supplier_invoice_new_form')
         self.ensure_one()
         return {
             'name': u'额外账单',

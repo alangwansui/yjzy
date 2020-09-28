@@ -418,7 +418,7 @@
 
         </record>
         <menuitem id="menu_tb_po_tree_draft" name="未提交"
-                  parent="yjzy_extend.menu_extra_po_root"
+                  parent="yjzy_extend.menu_supplier_invoice_other_po_apply_root"
                   sequence="10"
                   action="act_tb_po_draft"
         />
@@ -437,7 +437,7 @@
 
         </record>
         <menuitem id="menu_tb_po_tree_approving" name="审批中"
-                  parent="yjzy_extend.menu_extra_po_root"
+                  parent="yjzy_extend.menu_supplier_invoice_other_po_apply_root"
                   sequence="20"
                   action="act_tb_po_approving"
         />
@@ -457,7 +457,7 @@
 
         </record>
         <menuitem id="menu_tb_po_tree_done" name="审批完成"
-                  parent="yjzy_extend.menu_extra_po_root"
+                  parent="yjzy_extend.menu_supplier_invoice_other_po_apply_root"
                   sequence="30"
                   action="act_tb_po_done"
         />
@@ -732,7 +732,7 @@
         </record>
 
         <menuitem id="menu_tb_invoice_supplier_draft" name="未提交"
-                  parent="yjzy_extend.menu_supplier_invoice_other_po_apply_root"
+                  parent="yjzy_extend.menu_extra_po_root"
                   sequence="20"
                   action="act_tb_invoice_supplier_draft"
         />
@@ -754,7 +754,7 @@
         </record>
 
         <menuitem id="menu_tb_invoice_supplier_undone" name="审批中"
-                  parent="yjzy_extend.menu_supplier_invoice_other_po_apply_root"
+                  parent="yjzy_extend.menu_extra_po_root"
                   sequence="30"
                   action="act_tb_invoice_supplier_undone"
         />
@@ -776,7 +776,7 @@
         </record>
 
         <menuitem id="menu_tb_invoice_supplier_done" name="审批完成"
-                  parent="yjzy_extend.menu_supplier_invoice_other_po_apply_root"
+                  parent="yjzy_extend.menu_extra_po_root"
                   sequence="40"
                   action="act_tb_invoice_supplier_done"
         />

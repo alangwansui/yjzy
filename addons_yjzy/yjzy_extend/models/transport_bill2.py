@@ -140,9 +140,56 @@ class transport_bill(models.Model):
             'res_model': 'tb.po.invoice',
             'views': [(view.id, 'form')],
             'target': 'current',
-            'res_id': self.id,
+            # 'res_id': self.id,
              'context': {'other_po':1,
-                        'expense_po':0},
+                        'expense_po':0,
+                         # 'default_tb_id':self.id,
+                         'default_type':'other_po','default_yjzy_type_1':'purchase','min_add':1},
+        }
+
+
+    def create_tb_po_invoice(self):
+        self.ensure_one()
+        bill_id = self.id
+        tb_po_id = self.env['tb.po.invoice'].create({'tb_id': bill_id,
+                                                    'invoice_product_id': self.env.ref('yjzy_extend.product_qtyfk').id, #0821
+                                                    'type':'other_po',
+                                                     'yjzy_type_1':'purchase'
+                                                    })
+
+        view = self.env.ref('yjzy_extend.tb_po_form')
+        line_obj = self.env['tb.po.invoice.line']
+
+        for hsl in self.hsname_all_ids:
+            line_obj.create({
+                'tb_po_id': tb_po_id.id,
+                'hs_id': hsl.hs_id.id,
+                'hs_en_name': hsl.hs_en_name,
+                'purchase_amount2_tax': hsl.purchase_amount2_tax,
+                'purchase_amount2_no_tax': hsl.purchase_amount2_no_tax,
+                'purchase_amount_max_add_forecast': hsl.purchase_amount_max_add_forecast,
+                'purchase_amount_min_add_forecast': hsl.purchase_amount_min_add_forecast,
+                'purchase_amount_max_add_rest': hsl.purchase_amount_max_add_rest,
+                'purchase_amount_min_add_rest': hsl.purchase_amount_min_add_rest,
+                'purchase_back_tax_amount2_new': hsl.purchase_back_tax_amount2_new,
+                'hsname_all_line_id': hsl.id,
+                'back_tax': hsl.back_tax
+            })
+        return {
+            'name': _(u'创建新增采购申请'),
+            'view_type': 'tree,form',
+            "view_mode": 'form',
+            'res_model': 'tb.po.invoice',
+            'type': 'ir.actions.act_window',
+            'view_id': view.id,
+            'target': 'current',
+            'res_id': tb_po_id.id,
+            # 'context': { },
+            'flag':{'initial_mode': 'edit',
+
+                    }
+
+
         }
 
 
