@@ -382,7 +382,7 @@
                         </page>
 
                     <page string="额外发票">
-                        <field name="invoice_ids"/>
+                        <field name="invoice_ids" context="{'form_view_ref':'yjzy_extend.view_account_supplier_invoice_new_form'}"/>
                     </page>
 
                     </notebook>
@@ -400,7 +400,7 @@
 
         <menuitem id="menu_tb_po_other_po_create" name="创建新增采购申请单"
                   parent="yjzy_extend.menu_supplier_invoice_other_po_apply_root"
-                  sequence="10"
+                  sequence="5"
                   action="act_open_transport_bill_declare_po"/>
 
         <record model="ir.actions.act_window" id="act_tb_po_draft">
