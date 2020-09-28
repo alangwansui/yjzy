@@ -350,6 +350,8 @@
     <menuitem id="menu_yfhxd_reconcile_new_other_po"  name="查询和创建"
               action="action_purchase_invoice_unpaid_group_by_invoice_attribute" parent="yjzy_extend.menu_invoice_payment_apply_root" sequence="5"/>
 
+    <menuitem id="menu_yfhxd_reconcile_new_other_po_next"  name="查询和创建"
+              action="action_purchase_invoice_unpaid_group_by_invoice_attribute" parent="yjzy_extend.menu_invoice_payment_apply_root_next" sequence="5"/>
 
     <menuitem id="menu_yfhxd_new_advance_submit" name="审批中"
               parent="menu_yfhxd_advance_new" sequence="20"
@@ -444,6 +446,9 @@
     <menuitem id="menu_yfhxd_new_payment_no_submit" name="未提交"
               parent="menu_invoice_payment_apply_root" sequence="10"
               action="action_yfhxd_new_payment_no_submit"/>
+    <menuitem id="menu_yfhxd_new_payment_no_submit_next" name="未提交"
+              parent="menu_invoice_payment_apply_root_next" sequence="10"
+              action="action_yfhxd_new_payment_no_submit"/>
 
     <record model="ir.actions.act_window" id="action_yfhxd_new_advance_no_submit">
         <field name="name">未提交预付-应付认领</field>
@@ -498,6 +503,9 @@
         </record>
     <menuitem id="menu_yfhxd_new_payment_submit" name="审批中"
               parent="menu_invoice_payment_apply_root" sequence="20"
+              action="action_yfhxd_new_payment_submit"/>
+    <menuitem id="menu_yfhxd_new_payment_submit_next" name="审批中"
+              parent="menu_invoice_payment_apply_root_next" sequence="20"
               action="action_yfhxd_new_payment_submit"/>
 
     <record model="ir.actions.act_window" id="action_yfhxd_new_advance_submit">
@@ -554,6 +562,9 @@
     <menuitem id="menu_yfhxd_new_payment_approve" name="等待付款"
               parent="menu_invoice_payment_apply_root" sequence="30"
               action="action_yfhxd_new_payment_approve"/>
+    <menuitem id="menu_yfhxd_new_payment_approve_next" name="等待付款"
+              parent="menu_invoice_payment_apply_root_next" sequence="30"
+              action="action_yfhxd_new_payment_approve"/>
 
 
 
@@ -574,6 +585,9 @@
             </record>
     <menuitem id="menu_yfhxd_new_payment_done" name="已完成" sequence="40"
               parent="menu_invoice_payment_apply_root"
+              action="action_yfhxd_new_payment_done"/>
+    <menuitem id="menu_yfhxd_new_payment_done_next" name="已完成" sequence="40"
+              parent="menu_invoice_payment_apply_root_next"
               action="action_yfhxd_new_payment_done"/>
 
     <record model="ir.actions.act_window" id="action_yfhxd_new_advance_done">

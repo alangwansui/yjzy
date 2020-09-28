@@ -243,7 +243,19 @@
 
 
 
+       <record id="action_client_menu_supplier_invoice_apply_root" model="ir.actions.client">
+          <field name="name">打开账单管理</field>
+          <field name="tag">reload</field>
+           <field name="target">new</field>
+          <field name="params" eval="{'menu_id': ref('yjzy_extend.menu_invoice_payment_apply_root_next')}"/>
+      </record>
 
+        <record id="action_client_menu_account_new_root" model="ir.actions.client">
+          <field name="name">打开财务-付款</field>
+          <field name="tag">reload</field>
+           <field name="target">new</field>
+          <field name="params" eval="{'menu_id': ref('yjzy_extend.menu_new_account_out_root')}"/>
+      </record>
 
 
     </data>
