@@ -83,6 +83,7 @@ class Product_Product(models.Model):
     state = fields.Selection([('draft', u'草稿'),('submit',u'待业务责任人审批'),('first', '待产品合规审批'),('done', u'完成')], u'状态', default='draft')
 
     is_gold_sample = fields.Boolean('是否有金样')
+    is_ps = fields.Boolean('是否有PS')
 
 
 

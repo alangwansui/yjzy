@@ -597,6 +597,7 @@
                                 <field name="insurance_info" invisible="1"/>
 
                                 <field name="gold_sample_state" readonly="1" string="金样管理"/>
+                                <field name="ps_state" readonly="1" string="PS管理"/>
                                 <field name="hs_fill" groups="base.group_system"/>
                                 <field name="create_date" string="创建日期" invisible="1" attrs="{'readonly': 1}"
                                        options="{'no_open':1}"
@@ -673,6 +674,7 @@
                                         <field name="p_uom_id" groups="base.group_system" invisible="1"/>
                                         <field name="need_print" invisible="1"/>
                                         <field name="is_gold_sample"/>
+                                        <field name="is_ps"/>
 
 
                                         <button icon="fa-list" type="object" name="open_wizard_transport_lot_plan"

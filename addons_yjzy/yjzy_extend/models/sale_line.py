@@ -123,6 +123,7 @@ class sale_order_line(models.Model):
     back_tax_amount = fields.Monetary(u'退税金额', currency_field='company_currency_id', compute=compute_info)
     profit_amount = fields.Monetary(u'利润', currency_field='company_currency_id', compute=compute_info)
     is_gold_sample = fields.Boolean('是否有金样', related='product_id.is_gold_sample', readonly=False)
+    is_ps = fields.Boolean('是否有PS',related='product_id.is_ps', readonly=False)
     bom_id = fields.Many2one('mrp.bom', 'BOM')#13已
     bom_qty = fields.Float(u'BOM数量')#13已
     need_split_bom = fields.Boolean(u'需要展开BOM')#13已

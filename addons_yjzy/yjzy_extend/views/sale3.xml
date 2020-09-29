@@ -180,6 +180,7 @@
                             </div>
                             <field name="price_unit"/>
                             <field name="is_gold_sample" string="金样状态"/>
+                            <field name="is_ps" string="PS状态"/>
                             <field name="include_tax"/>
 
                             <field name="hs_id"/>
@@ -575,6 +576,7 @@
                                 <field name="pre_advance" string="建议预收金额"/>
                                 <field name="balance" string="实际预收余额"/>
                                 <field name="gold_sample_state" string="金样管理"/>
+                                <field name="ps_state" string="PS管理"/>
 
                                 <field name="validity_date" attrs="{'invisible': [('state', 'in', ['sale', 'done']),('is_editable','=',False)]}"/>
                                 <field name="confirmation_date" attrs="{'invisible': [('state', 'in', ['draft', 'sent', 'cancel']),('is_editable','=',False)]}"/>
@@ -621,6 +623,7 @@
                                                 <field name="hs_id" options="{'no_open':1}"/>
                                                 <field name="price_unit"/>
                                                 <field name="is_gold_sample" string="金样状态"/>
+                                                <field name="is_ps" string="PS状态"/>
                                                 <field name="include_tax"/>
 
                                                 <field name="back_tax"/>
@@ -707,6 +710,7 @@
                                         <button type="object" name="get_in_stock_quant" icon="fa-archive" groups="base.group_system"/>
                                         <field name="s_uom_id" string="单位" options="{'no_open':True}"/>
                                         <field name="is_gold_sample" string="金样状态" />
+                                         <field name="is_ps" string="PS状态"/>
                                         <field name="layout_category_id" invisible="1" groups="sale.group_sale_layout"/>
                                         <field name="name" invisible="1"/>
                                         <field name="hs_id" attrs="{'column_invisible':[('parent.display_detail','=',False)]}" options="{'no_open':True}"/>

@@ -148,6 +148,15 @@ class sale_order(models.Model):
                     gold_sample_state = 'all'
                 else:
                     gold_sample_state = 'part'
+            ps_state = 'none'
+            line_count_ps = len(one.order_line.filtered(lambda x: x.is_ps))
+
+            if line_count_ps > 0:
+                if line_count_ps == line_count:
+                    ps_state = 'all'
+                else:
+                    ps_state = 'part'
+
 
             if one.cip_type != 'normal':
                 back_tax_amount = 0
@@ -219,6 +228,7 @@ class sale_order(models.Model):
             one.gross_profit = gross_profit
             one.gorss_profit_ratio = amount_total2 and (gross_profit / amount_total2 * 100)
             one.gold_sample_state = gold_sample_state
+            one.ps_state = ps_state
             one.purchase_no_deliver_amount = purchase_no_deliver_amount
             one.purchase_approve_date = purchase_approve_date
             one.second_cost = sum(one.order_line.mapped('second_price_total'))
@@ -324,6 +334,8 @@ class sale_order(models.Model):
     approve_date = fields.Date('审批完成日期')
     approve_uid = fields.Many2one('res.users', u'完成审批人')
     gold_sample_state = fields.Selection([('all', '全部有'), ('part', '部分有'), ('none', '无金样')], '样金管理',
+                                         compute=compute_info)
+    ps_state = fields.Selection([('all', '全部有'), ('part', '部分有'), ('none', '无PS')], 'PS管理',
                                          compute=compute_info)
     customer_pi = fields.Char(u'客户订单号')
     fee_inner = fields.Monetary(u'国内运杂费', currency_field='company_currency_id')

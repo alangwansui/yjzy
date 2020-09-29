@@ -123,6 +123,14 @@ class transport_bill(models.Model):
                 else:
                     gold_sample_state = 'part'
 
+            ps_state = 'none'
+            line_count_ps = len(one.line_ids.filtered(lambda x: x.is_ps))
+            if line_count_ps > 0:
+                if line_count_ps == line_count:
+                    ps_state = 'all'
+                else:
+                    ps_state = 'part'
+
             #计算账单是否确认
             invoice_state = 'draft'
             line_count = len(one.all_invoice_ids)
@@ -167,6 +175,7 @@ class transport_bill(models.Model):
             one.budget_amount = budget_amount
             one.budget_reset_amount = budget_reset_amount
             one.gold_sample_state = gold_sample_state
+            one.ps_state = ps_state
 
             ###profit_ratio_base = (one.sale_amount - one.get_outer())
             one.profit_ratio = one.sale_amount != 0.0 and one.profit_amount / one.sale_amount or 0
@@ -1085,6 +1094,8 @@ class transport_bill(models.Model):
     hs_fill_sale_packaging = fields.Boolean('报关packing信息')
     hs_fill_sale_others = fields.Boolean('报关其他信息')
     gold_sample_state = fields.Selection([('all', '全部有'), ('part', '部分有'), ('none', '无金样')], '样金管理',
+                                         compute=compute_info)
+    ps_state = fields.Selection([('all', '全部有'), ('part', '部分有'), ('none', '无PS')], 'PS管理',
                                          compute=compute_info)
     description = fields.Text(u'出运备注')
     mark_text = fields.Text(u'唛头')

@@ -141,6 +141,7 @@ class transport_bill_line(models.Model):
     tbl_lot_ids = fields.One2many('bill.line.lot', 'tb_line_id', string='明细批次')
     so_tb_number = fields.Char('销售合同发货次数')
     is_gold_sample = fields.Boolean('是否有金样', related='product_id.is_gold_sample', readonly=False)
+    is_ps = fields.Boolean('是否有PS', related='product_id.is_ps', readonly=False)
 #----
 
     need_print = fields.Boolean('是否打印', default=True)
