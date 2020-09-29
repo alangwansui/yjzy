@@ -736,7 +736,7 @@ class transport_bill(models.Model):
                             stage_id = self._stage_find(domain=[('code', '=', '005')])
             else:
                 if one.approve_date:
-                    if one.approve_date < (today - relativedelta(days=30)).strftime(
+                    if one.approve_date < (today - relativedelta(days=7)).strftime(
                             '%Y-%m-%d 00:00:00'):
                         second_state = '20'
                     else:
