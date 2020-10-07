@@ -218,6 +218,7 @@
                                 </field>
                             </page>
                             <page string="新增采购申请单" attrs="{'invisible':[('tb_po_invoice_ids_count','=',0)]}">
+                                <field name="tb_po_invoice_ids_count" invisible="1"/>
                                 <field name="tb_po_invoice_ids" context="{'other_po':1,'expense_po':0,'form_view_ref':'yjzy_extend.tb_po_form'}"/>
                             </page>
                             <page string="审批中新采购和退税" invisible="1">
