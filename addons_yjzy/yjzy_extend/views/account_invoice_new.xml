@@ -1266,15 +1266,15 @@
                                                widget="many2many_tags" options="{'color_field': 'color'}"/>
                                         <field name="quantity" attrs="{'column_invisible': [('parent.is_yjzy_invoice', '=',True)]}"/>
                                         <field name="uom_id" groups="product.group_uom" attrs="{'column_invisible': [('parent.is_yjzy_invoice', '=',True)]}"/>
-                                        <field name="yjzy_price_unit" />
+                                        <field name="yjzy_price_unit" string="单价"/>
 
-                                        <field name="price_unit" />
+                                        <field name="price_unit" invisible="1"/>
                                         <field name="discount" groups="sale.group_discount_per_so_line" invisible="1"/>
                                         <field name="invoice_line_tax_ids" widget="many2many_tags" invisible="1"
                                                options="{'no_create': True}" context="{'type':parent.type}"
                                                domain="[('type_tax_use','=','purchase'),('company_id', '=', parent.company_id)]"/>
-                                        <field name="yjzy_price_total" />
-                                        <field string="Total"  name="price_total" groups="sale.group_show_price_total" sum="小计"  />
+                                        <field name="yjzy_price_total" string="总价"/>
+                                        <field string="Total"  name="price_total" invisible="1" groups="sale.group_show_price_total" sum="小计"  />
                                         <field name="price_subtotal" invisible="1"/>
                                         <field name="currency_id" invisible="1"/>
 
@@ -1303,7 +1303,7 @@
                                 <field name="invoice_line_ids_origin">
                                     <tree default_order="id">
                                         <field name="sequence" widget="handle"/>
-                                        <field name="is_manual" readonly="1" string="手动"/>
+                                        <field name="is_manual" readonly="1" string="手动" invisible="1"/>
 
                                         <field name="id" invisible="1"/>
                                         <field name="product_id" domain="[('sale_ok','=',True)]"/>
@@ -1311,7 +1311,7 @@
 
                                         <field name="so_id"/>
                                         <field name="company_id" invisible="1"/>
-                                        <field name="account_id" groups="account.group_account_user"
+                                        <field name="account_id" groups="account.group_account_user" invisible="1"
                                                domain="[('company_id', '=', parent.company_id), ('internal_type', '=', 'other'), ('deprecated', '=', False)]"/>
                                         <field name="account_analytic_id" groups="analytic.group_analytic_accounting" invisible="1"
                                                domain="[('company_id', '=', parent.company_id)]"
@@ -1322,7 +1322,7 @@
                                         <field name="uom_id" groups="product.group_uom"/>
                                         <field name="yjzy_price_unit" string="单价" />
 
-                                        <field name="price_unit" />
+                                        <field name="price_unit" invisible="1"/>
                                         <field name="discount" groups="base.group_no_one" invisible="1"/>
                                         <field name="invoice_line_tax_ids" widget="many2many_tags" invisible="1"
                                                options="{'no_create': True}" context="{'type':parent.type}"
@@ -1330,7 +1330,7 @@
                                         <field name="yjzy_price_total" string="总价" sum="小计" />
                                         <field string="Subtotal" name="price_subtotal" invisible="1"
                                                groups="sale.group_show_price_subtotal"/>
-                                        <field string="Total" name="price_total" groups="sale.group_show_price_total" sum="小计"  />
+                                        <field string="Total" name="price_total" groups="sale.group_show_price_total" sum="小计"  invisible="1"/>
                                         <field name="currency_id" invisible="1"/>
                                     </tree>
                                 </field>
@@ -1350,7 +1350,7 @@
                                 <field name="yjzy_invoice_line_ids">
                                     <tree default_order="id">
                                         <field name="sequence" widget="handle"/>
-                                        <field name="is_manual" readonly="1" string="手动"/>
+                                        <field name="is_manual" readonly="1" string="手动" invisible="1"/>
 
                                         <field name="id" invisible="1"/>
                                         <field name="product_id" domain="[('sale_ok','=',True)]"/>
@@ -1358,7 +1358,7 @@
 
                                         <field name="so_id"/>
                                         <field name="company_id" invisible="1"/>
-                                        <field name="account_id" groups="account.group_account_user"
+                                        <field name="account_id" groups="account.group_account_user" invisible="1"
                                                domain="[('company_id', '=', parent.company_id), ('internal_type', '=', 'other'), ('deprecated', '=', False)]"/>
                                         <field name="account_analytic_id" groups="analytic.group_analytic_accounting" invisible="1"
                                                domain="[('company_id', '=', parent.company_id)]"
@@ -1394,7 +1394,17 @@
                                 </field>
                             </page>
                              <page string="额外账单申请单" attrs="{'invisible':[('tb_po_invoice_ids_count','=',0)]}">
-                                <field name="tb_po_invoice_ids"/>
+                                <field name="tb_po_invoice_ids" context="{'form_view_ref':'yjzy_extend.tb_po_extra_invoice_supplier_form'}">
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="create_date"/>
+                                        <field name="partner_id"/>
+                                        <field name="price_total"/>
+                                        <field name="state"/>
+
+                                    </tree>
+                                </field>
+
                                  <field name="tb_po_invoice_ids_count" invisible="1"/>
                             </page>
                            <page string="额外账单" attrs="{'invisible':['|',('is_yjzy_invoice','=',True),('yjzy_invoice_count','=',0)]}">
