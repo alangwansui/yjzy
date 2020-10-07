@@ -1244,7 +1244,6 @@
                             </group>
                         </group>
                         <notebook>
-
                             <page string="账单明细" attrs="{'invisible':[('state','in',['open','paid'])]}">
                                 <field context="{'type': type, 'journal_id': journal_id}" name="invoice_line_ids">
                                     <tree string="Bill lines" editable="bottom">
@@ -1267,7 +1266,6 @@
                                         <field name="quantity" attrs="{'column_invisible': [('parent.is_yjzy_invoice', '=',True)]}"/>
                                         <field name="uom_id" groups="product.group_uom" attrs="{'column_invisible': [('parent.is_yjzy_invoice', '=',True)]}"/>
                                         <field name="yjzy_price_unit" string="单价"/>
-
                                         <field name="price_unit" invisible="1"/>
                                         <field name="discount" groups="sale.group_discount_per_so_line" invisible="1"/>
                                         <field name="invoice_line_tax_ids" widget="many2many_tags" invisible="1"
@@ -1277,12 +1275,8 @@
                                         <field string="Total"  name="price_total" invisible="1" groups="sale.group_show_price_total" sum="小计"  />
                                         <field name="price_subtotal" invisible="1"/>
                                         <field name="currency_id" invisible="1"/>
-
-
                                     </tree>
                                 </field>
-
-
                                     <group class="oe_subtotal_footer oe_right">
                                         <field name="amount_untaxed"/>
                                         <field name="amount_tax"/>
@@ -2056,7 +2050,7 @@
         </record>
 <!--        账单管理，创建额外账单的-->
         <record id="action_purchase_invoice_unpaid_new_extra" model="ir.actions.act_window">
-            <field name="name">可以创建额外账单的应付账单(打开后查看后创建)</field>
+            <field name="name">可创建额外账单的应付账单</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">account.invoice</field>
             <field name="view_mode">tree,form</field>
