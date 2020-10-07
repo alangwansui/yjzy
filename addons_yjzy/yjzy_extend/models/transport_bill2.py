@@ -35,7 +35,9 @@ class transport_bill(models.Model):
             # one.purchase_back_tax_amount2_new_new_total = purchase_back_tax_amount2_new_new_total
             # one.purchase_back_tax_amount2_rest_total = purchase_back_tax_amount2_rest_total
 
-
+    def compute_tb_po_invoice_ids_count(self):
+        for one in self:
+            one.tb_po_invoice_ids_count = len(one.tb_po_invoice_ids)
 
 
     comb_ids = fields.One2many('tbl.comb', 'tb_id', u'bom分解组合')
@@ -45,6 +47,8 @@ class transport_bill(models.Model):
 
     sale_collect_state = fields.Selection([('draft', u'未统计'), ('done', u'已统计')], string=u'销售统计', default='draft')
     tb_po_invoice_ids = fields.One2many('tb.po.invoice','tb_id','增加采购申请单')
+    tb_po_invoice_ids_count = fields.Integer('增加采购申请单数量',compute=compute_tb_po_invoice_ids_count)
+
     invoice_purchase_po_draft_ids = fields.One2many('account.invoice','bill_id',domain=[('yjzy_type_1','=','purchase'),('invoice_attribute','=','other_po'),('state','not in',['open','paid'])])
     invoice_purchase_po_done_ids = fields.One2many('account.invoice', 'bill_id', domain=[('yjzy_type_1', '=', 'purchase'), (
     'invoice_attribute', '=', 'other_po'), ('state', 'in', ['open', 'paid'])])

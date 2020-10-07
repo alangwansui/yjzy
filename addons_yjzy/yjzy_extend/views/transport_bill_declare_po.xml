@@ -6,7 +6,7 @@
             <field name="name">transport.bill.declare.tree</field>
             <field name="model">transport.bill</field>
             <field name="arch" type="xml">
-                <tree string="报关资料" default_order="purchase_amount_min_add_rest_total desc">
+                <tree string="报关资料" default_order="purchase_amount_min_add_rest_total desc" create="false">
                     <field name="ref"/>
                     <field name="name" invisible="1" groups="base.group_system"/>
                     <field name="partner_id" required="1" invisible="context.get('not_show_partner')"/>
@@ -44,13 +44,13 @@
                     <header>
                         <button string="合并报关资料" name="create_hsname_all_ids" type="object" groups="base.group_system"/>
                         <button string="创建新增采购" type="object" name="open_wizard_tb_po_invoice" groups="base.group_system"/>
-                        <button string="创建新增采购新" type="object" name="create_tb_po_invoice"/>
+                        <button string="创建新增采购新" type="object" class="oe_highlight" name="create_tb_po_invoice"/>
 
                     </header>
                     <header groups="base.group_system">
 
                         <field name="state" widget="statusbar" statusbar_visible=" " groups="base.group_system"/>
-                        <field name="is_editable" widget="boolean_toggle" groups="	sales_team.group_manager"/>
+                        <field name="is_editable" widget="boolean_toggle" groups="sales_team.group_manager"/>
                     </header>
                     <sheet>
                         <group col="2">
@@ -217,7 +217,7 @@
                                     </tree>
                                 </field>
                             </page>
-                            <page string="新增采购申请单">
+                            <page string="新增采购申请单" attrs="{'invisible':[('tb_po_invoice_ids_count','=',0)]}">
                                 <field name="tb_po_invoice_ids" context="{'other_po':1,'expense_po':0,'form_view_ref':'yjzy_extend.tb_po_form'}"/>
                             </page>
                             <page string="审批中新采购和退税" invisible="1">

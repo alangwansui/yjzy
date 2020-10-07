@@ -40,7 +40,7 @@
             <field name="name">tb.po.extra.customer_invoice_tree</field>
             <field name="model">tb.po.invoice</field>
             <field name="arch" type="xml">
-                <tree string="供应商应付账单" >
+                <tree string="供应商应付账单" create="false">
                     <field name="name"/>
                     <field name="partner_id"/>
                     <field name="price_total"/>
@@ -724,7 +724,7 @@
             <field name="res_model">tb.po.invoice</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[('yjzy_type_1','=','purchase'),('type','=','extra'),('state','in',['30_done'])]</field>
+            <field name="domain">[('yjzy_type_1','=','purchase'),('type','=','extra')]</field>
             <field name="limit">20</field>
             <field name="context">{'search_default_group_by_state':1,'default_type':'extra','default_yjzy_type_1':'purchase'}</field>
             <field name="view_ids" eval="[(5, 0, 0),

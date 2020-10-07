@@ -1140,7 +1140,7 @@
                         <field name="stage_id" widget="statusbar" clickable="1"/>
                     </header>
                     <header attrs="{'invisible':[('is_yjzy_invoice','=',True)]}">
-                        <button name="open_tb_po_invoice" string="额外应付账单申请" type="object" invisible="not context.get('extra_type')"/>
+                        <button name="open_tb_po_invoice" string="额外应付账单申请" class="oe_highlight" type="object" invisible="not context.get('extra_type')"/>
                         <button name="open_tb_po_reconcile_invoice" string="核销应付账单申请" type="object" invisible="not context.get('reconcile_type')"/>
                         <button name="submit_yfhxd" string="创建付款申请" type="object" invisible="not context.get('fkhxd_type')"/>
 <!--                       <button name="open_supplier_invoice_id" string="额外应付账单" type="object"/>-->
@@ -2098,7 +2098,7 @@
 
         <!--      创建新增采购的付款申请不按到期时间分组-->
         <record id="action_purchase_invoice_unpaid_group_by_invoice_attribute" model="ir.actions.act_window">
-            <field name="name">未付款应付账单</field>
+            <field name="name">查看未付账单并创建付款申请(多选后创建)</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">account.invoice</field>
             <field name="view_mode">tree,form</field>
