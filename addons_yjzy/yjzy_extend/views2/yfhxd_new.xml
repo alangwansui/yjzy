@@ -115,7 +115,7 @@
             <form string="应付核销单">
                 <header attrs="{'invisible':[('operation_wizard','not in',['03','05'])]}" >
                     <button name="action_05" attrs="{'invisible':[('operation_wizard','not in',['03'])]}" class="oe_highlight" string="下一步:查看并确认账单" type="object" />
-                    <button name="make_lines" invisible="context.get('from_tanchuang')" attrs="{'invisible':[('operation_wizard','not in',['05'])]}" class="oe_highlight" string="确认并填写金额" type="object" />
+                    <button name="make_lines" invisible="context.get('from_tanchuang')" attrs="{'invisible':[('operation_wizard','not in',['05'])]}" class="oe_highlight" string="下一步:填写申请金额" type="object" />
                     <button name="make_lines_new"  invisible="not context.get('from_tanchuang')" string="下一步:填写申请金额" type="object"/>
                 </header>
                   <header attrs="{'invisible':[('operation_wizard','in',['03','05'])]}" >
