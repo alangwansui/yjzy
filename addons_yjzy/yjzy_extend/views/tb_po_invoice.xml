@@ -387,6 +387,7 @@
                         </page>
 
                     <page string="额外账单" attrs="{'invisible':[('invoice_ids_count','=',0)]}">
+                        <field name="invoice_ids_count" invisible="1"/>
                         <field name="invoice_ids" context="{'form_view_ref':'yjzy_extend.view_account_supplier_invoice_new_form'}"/>
                     </page>
                     <page groups="base.group_system" string="管理员页面">
