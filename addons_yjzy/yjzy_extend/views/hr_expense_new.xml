@@ -451,7 +451,8 @@
                     <group expand="0" string="Group By">
                         <filter string="费用类型" domain="[]" name="group_expense_to_invoice_type" context="{'group_by': 'expense_to_invoice_type'}"/>
                         <filter string="审批流" domain="[]" context="{'group_by': 'x_sheet_wkf_state'}" invisible="1"/>
-                        <filter string="审批状态" domain="[]" context="{'group_by': 'state'}"/>
+                        <filter string="审批状态" domain="[]" name="group_by_state_1" context="{'group_by': 'state_1'}"/>
+
                         <filter string="申请单" domain="[]" context="{'group_by': 'sheet_id'}"/>
                         <filter string="责任人" domain="[]" context="{'group_by': 'employee_id'}"/>
                         <filter string="付款时间" domain="[]" context="{'group_by': 'payment_date'}"
@@ -1412,6 +1413,16 @@
             <field name="priority">999</field>
             <field name="arch" type="xml">
                 <form string="费用申请" class="o_expense_sheet">
+                    <header >
+                        <button name="action_to_employee_approval" string="提交" type="object" attrs="{'invisible':[('state_1','not in',['draft'])]}"/>
+                        <button name="action_to_account_approval" string="责任人审批(自动)" groups="base.group_system"  type="object" attrs="{'invisible':[('state_1','not in',['employee_approval'])]}"/>
+                        <button name="action_account_approve" string="财务审批" type="object" attrs="{'invisible':[('state_1','not in',['account_approval'])]}"/>
+                       <button name="action_manager_approve" string="总经理审批" type="object" attrs="{'invisible':[('state_1','not in',['manager_approval'])]}"/>
+                        <button name="%(expense_sheet_refuse_wizard_action)d" string="拒绝" type="action"/>
+                        <field name="state_1" widget="statusbar"
+                               statusbar_visible=" "/>
+                        <field name="stage_id" groups="base.group_system"/>
+                    </header>
                     <header groups="base.group_system">
                         <button name="open_wizard_tb_po_invoice" string="创建增加的采购" type="object"/>
                         <button name="create_tb_po_invoice" string="创建增加的采购:xin" type="object"/>
@@ -1451,6 +1462,7 @@
                         <button name="btn_company_budget" type="object" string="公司预算" groups="base.group_system"/>
                         <button name="btn_user_budget" type="object" string="个人预算" groups="base.group_system"/>
                         <field name="is_editable" widget="boolean_toggle" groups="sales_team.group_manager"/>
+
                     </header>
                     <sheet>
                         <div class="oe_button_box"><!--"context.get('expense_adding_line')"-->
@@ -1922,6 +1934,65 @@
          <menuitem id="menu_hr_expense_sheet_done" name="支付完成"
               parent="menu_expense_sheet_apply_root"
               action="action_hr_expense_sheet_done"/>
+<!--          一般用户-->
+         <record id="action_hr_expense_sheet_todo" model="ir.actions.act_window">
+            <field name="name">待处理费用</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.expense.sheet</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">['&amp;',('total_amount','>', 0),'|','&amp;','|',('state_1','in', ['draft','refused','cancel']),
+                ('expense_line_ids.state_1','=','refused'),('employee_id.user_id','=',uid),'&amp;', '&amp;',
+                ('expense_line_ids.employee_id.user_id','=',uid),('expense_line_ids.state_1','=','reported'),
+                ('state_1','=', 'employee_approval')]</field>
+            <field name="context">{'search_default_group_by_state_1':1','default_account_confirm_uid': 9,
+                'default_manager_confirm_uid': 7,'only_name':1 }</field>
+            <!--field name="target">new</field-->
+            <field name="view_ids" eval="[(5, 0, 0),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('hr_expense_sheet_manager_approve_tree')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('view_hr_expense_sheet_new_form')}),
+                              ]"/>
+        </record>
+<!--    财务-->
+        <record id="action_hr_expense_sheet_todo" model="ir.actions.act_window">
+            <field name="name">待处理费用</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.expense.sheet</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">	['&amp;',('total_amount','>', 0),'|','|','&amp;','|',('state_1','in', ['draft','refused','cancel']),
+                ('expense_line_ids.state','in', ['draft','reported']),('employee_id.user_id','=',uid),'&amp;', '&amp;',
+                ('expense_line_ids.employee_id.user_id','=',uid),('expense_line_ids.state','in', ['draft','reported']),
+                ('state_1','=', 'employee_approval'),('state_1','in', ['account_approval'])]</field>
+            <field name="context">{'search_default_group_by_state_1':1','default_account_confirm_uid': 9,
+                'default_manager_confirm_uid': 7,'only_name':1 }</field>
+            <!--field name="target">new</field-->
+            <field name="view_ids" eval="[(5, 0, 0),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('hr_expense_sheet_manager_approve_tree')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('view_hr_expense_sheet_new_form')}),
+                              ]"/>
+        </record>
+
+        <!--    总经理-->
+        <record id="action_hr_expense_sheet_todo" model="ir.actions.act_window">
+            <field name="name">待处理费用</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.expense.sheet</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">['&amp;',('total_amount','>', 0),'|','|','&amp;','|',('state_1','in', ['draft','refused','cancel']),
+                ('expense_line_ids.state','in', ['draft','reported']),('employee_id.user_id','=',uid),'&amp;', '&amp;',
+                ('expense_line_ids.employee_id.user_id','=',uid),('expense_line_ids.state','in', ['draft','reported']),
+                ('state_1','=', 'employee_approval'),('state_1','in', ['manager_approval'])]</field>
+            <field name="context">{'search_default_group_by_state_1':1','default_account_confirm_uid': 9,
+                'default_manager_confirm_uid': 7,'only_name':1 }</field>
+            <!--field name="target">new</field-->
+            <field name="view_ids" eval="[(5, 0, 0),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('hr_expense_sheet_manager_approve_tree')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('view_hr_expense_sheet_new_form')}),
+                              ]"/>
+        </record>
+
+
+
+
 
     </data>
 </odoo>

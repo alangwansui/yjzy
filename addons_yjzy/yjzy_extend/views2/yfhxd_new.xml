@@ -114,9 +114,9 @@
         <field name="arch" type="xml">
             <form string="应付核销单">
                 <header attrs="{'invisible':[('operation_wizard','not in',['03','05'])]}" >
-                    <button name="action_05" attrs="{'invisible':[('operation_wizard','not in',['03'])]}" class="oe_highlight" string="下一步确认账单" type="object" />
+                    <button name="action_05" attrs="{'invisible':[('operation_wizard','not in',['03'])]}" class="oe_highlight" string="下一步:查看并确认账单" type="object" />
                     <button name="make_lines" invisible="context.get('from_tanchuang')" attrs="{'invisible':[('operation_wizard','not in',['05'])]}" class="oe_highlight" string="确认并填写金额" type="object" />
-                    <button name="make_lines_new"  invisible="not context.get('from_tanchuang')" string="确认并填写金额" type="object"/>
+                    <button name="make_lines_new"  invisible="not context.get('from_tanchuang')" string="下一步:填写申请金额" type="object"/>
                 </header>
                   <header attrs="{'invisible':[('operation_wizard','in',['03','05'])]}" >
 
@@ -154,6 +154,13 @@
 
                 </header>
                 <sheet>
+                    <group attrs="{'invisible':[('operation_wizard','not in',['03'])]}">
+                       <div class="oe_form_box_info oe_text_center">
+                        <span>
+                            第一步：确认是否有未认领的预付单
+                        </span>
+                    </div>
+                       </group>
                     <div class="oe_button_box" name="button_box">
                         <field name="is_editable" widget="boolean_toggle"/>
                     </div>
@@ -211,7 +218,8 @@
                             <field name="amount_advance_org" string="预付认领金额" attrs="{'invisible':[('operation_wizard','not in',['20','30'])]}"/>
 
                             <field name="amount_diff_org" string="冲应付费用金额" attrs="{'invisible': 1}"/>
-                            <field name="amount_total_org" string="应付认领总金额" />
+
+                            <field name="amount_total_org" string="本次申请金额" attrs="{'invisible': 1}"/>
                             <field name="other_feiyong_amount" string="费用合计" invisible="1"/>
                             <field name="final_coat" string="实际总成本" invisible="1"/>
 
@@ -286,7 +294,8 @@
                         </page>
 
                         <page string="所有预付单" attrs="{'invisible':['|',('hxd_type_new','in',['10','30']),('operation_wizard','in',['05'])]}">
-                            <field name="supplier_advance_payment_ids"
+                            <field name="supplier_advance_payment_ids_count" invisible="1"/>
+                            <field name="supplier_advance_payment_ids" attrs="{'invisible':[('supplier_advance_payment_ids_count','=',0)]}"
                                    context="{'form_view_ref':'yjzy_extend.view_yfsqd_form','show_shoukuan': True, 'default_sfk_type': 'yfsqd', 'default_payment_type': 'outbound', 'default_be_renling': True, 'default_advance_ok': True, 'default_partner_type': 'supplier',}">
                                 <tree>
                                     <field name="payment_date"/>
@@ -297,6 +306,13 @@
                                     <field name="state"/>
                                 </tree>
                             </field>
+                            <group attrs="{'invisible':[('supplier_advance_payment_ids_count','!=',0)]}">
+                       <div class="oe_form_box_info oe_text_center">
+                        <span>
+                            没有需要处理的预付单
+                        </span>
+                    </div>
+                       </group>
                         </page>
 
                         <page groups="base.group_system">

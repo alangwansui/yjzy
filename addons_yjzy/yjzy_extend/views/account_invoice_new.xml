@@ -1125,7 +1125,7 @@
             <field name="model">account.invoice</field>
             <field name="arch" type="xml">
                 <form string="应付账单">
-                    <header attrs="{'invisible':[('is_yjzy_invoice','=',False)]}">
+                    <header attrs="{'invisible':[('is_yjzy_invoice','=',False)]}" groups="base.group_system">
                         <button name="stage_action_submit" type="object" string="提交审批"
                                 class="oe_highlight" />
                         <button name="stage_action_approved" type="object" string="合规审批"
@@ -1140,9 +1140,9 @@
                         <field name="stage_id" widget="statusbar" clickable="1"/>
                     </header>
                     <header attrs="{'invisible':[('is_yjzy_invoice','=',True)]}">
-                        <button name="open_tb_po_invoice" string="额外应付账单申请" type="object"/>
-                        <button name="open_tb_po_reconcile_invoice" string="核销应付账单申请" type="object"/>
-                        <button name="submit_yfhxd" string="创建付款申请" type="object"/>
+                        <button name="open_tb_po_invoice" string="额外应付账单申请" type="object" invisible="not context.get('extra_type')"/>
+                        <button name="open_tb_po_reconcile_invoice" string="核销应付账单申请" type="object" invisible="not context.get('reconcile_type')"/>
+                        <button name="submit_yfhxd" string="创建付款申请" type="object" invisible="not context.get('fkhxd_type')"/>
 <!--                       <button name="open_supplier_invoice_id" string="额外应付账单" type="object"/>-->
                        <!--button name="open_supplier_refund_id" string="额外账单：减少金额" type="object"/-->
                         <field name="state" widget="statusbar" nolabel="1" statusbar_visible="draft,open,paid"/>
@@ -1173,7 +1173,7 @@
                     <field name="has_outstanding" invisible="1"/>
                     <sheet string="Vendor Bill">
                         <div class="oe_button_box" name="button_box">
-                            <button type="object" name="open_invoice_ids" class="oe_stat_button" icon="fa-truck" groups="base.group_system" context="{}">
+                            <button type="object" name="open_invoice_ids_new" class="oe_stat_button" icon="fa-truck" groups="base.group_system" context="{}">
                                 <field string="额外账单" name="yjzy_invoice_count" widget="statinfo"/>
                             </button>
                         </div>
@@ -1346,7 +1346,7 @@
                                                widget="payment" attrs="{'invisible': [('state', 'not in', 'open')]}"/>
                                     </group>
                             </page>
-                            <page string="所有账单明细" attrs="{'invisible':[('is_yjzy_invoice','=',True)]}">
+                            <page string="所有账单明细" attrs="{'invisible':[('is_yjzy_invoice','=',True)]}" groups="base.group_system">
                                 <field name="yjzy_invoice_line_ids">
                                     <tree default_order="id">
                                         <field name="sequence" widget="handle"/>
@@ -1382,7 +1382,7 @@
                                     </tree>
                                 </field>
                             </page>
-                            <page string="开票明细">
+                            <page string="开票明细" groups="base.group_system">
                                 <field name="tb_hsname_all_ids">
                                     <tree>
                                         <field name="hs_id"/>
@@ -1393,10 +1393,11 @@
                                     </tree>
                                 </field>
                             </page>
-                             <page string="额外账单申请单">
+                             <page string="额外账单申请单" attrs="{'invisible':[('tb_po_invoice_ids_count','=',0)]}">
                                 <field name="tb_po_invoice_ids"/>
+                                 <field name="tb_po_invoice_ids_count" invisible="1"/>
                             </page>
-                           <page string="额外账单" attrs="{'invisible':[('is_yjzy_invoice','=',True)]}">
+                           <page string="额外账单" attrs="{'invisible':['|',('is_yjzy_invoice','=',True),('yjzy_invoice_count','=',0)]}">
                                 <field name="yjzy_invoice_ids" context="{'default_payment_term_id':payment_term_id,'form_view_ref':'yjzy_extend.view_account_supplier_invoice_new_form'}">
                                 <tree string="Invoice" default_order="extra_code" decoration-info="state == 'draft'">
                         <field name="extra_code"/>
@@ -1429,7 +1430,7 @@
 
                             </page>
 
-                            <page>
+                            <page groups="base.group_system">
                                 <field name="reconcile_order_ids"/>
                             </page>
                             <page string="Other Info" name="other_info" groups="base.group_system">
@@ -2045,13 +2046,13 @@
         </record>
 <!--        账单管理，创建额外账单的-->
         <record id="action_purchase_invoice_unpaid_new_extra" model="ir.actions.act_window">
-            <field name="name">未付款应付账单</field>
+            <field name="name">可以创建额外账单的应付账单(打开后查看后创建)</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">account.invoice</field>
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_account_invoice_new_filter"/>
             <field name="domain">[('type','=','in_invoice'),('yjzy_type','=','purchase'),('state','=','open'),('is_yjzy_invoice','=',False)]</field>
-            <field name="context">{'only_ref':1,'type':'out_invoice','journal_type': 'sale','yjzy_type':'purchase'}
+            <field name="context">{'only_ref':1,'type':'out_invoice','journal_type': 'sale','yjzy_type':'purchase','extra_type':1}
             </field>
             <!--field name="target">new</field-->
             <field name="view_ids" eval="[(5, 0, 0),

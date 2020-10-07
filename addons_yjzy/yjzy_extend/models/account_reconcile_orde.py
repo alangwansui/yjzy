@@ -255,6 +255,11 @@ class account_reconcile_order(models.Model):
             # one.amount_exchange = one.amount_invoice - one.amount_total
             # one.other_feiyong_amount = one.amount_payment_org + one.feiyong_amount
             # one.final_coat = one.other_feiyong_amount - one.back_tax_amount
+
+    def compute_supplier_advance_payment_ids_count(self):
+        for one in self:
+            one.supplier_advance_payment_ids_count = len(one.supplier_advance_payment_ids)
+
     #0911
     #核销单分预收付-应收付，应收付-收付款
     hxd_type_new = fields.Selection([('10', u'预收-应收'),
@@ -266,6 +271,7 @@ class account_reconcile_order(models.Model):
     #908
     # supplier_advance_payment_ids_char = fields.Char(u'相关预付',compute=_compute_supplier_advance_payment_ids_char)
     supplier_advance_payment_ids = fields.Many2many('account.payment',u'相关预付', compute=_compute_supplier_advance_payment_ids)
+    supplier_advance_payment_ids_count = fields.Integer('相关预付数量',compute=compute_supplier_advance_payment_ids_count)
     #903
     reconcile_payment_ids = fields.One2many('account.payment','account_reconcile_order_id',u'认领单')
     yjzy_advance_payment_id = fields.Many2one('account.payment',u'预收认领单')#从预收认领单创建过滤用

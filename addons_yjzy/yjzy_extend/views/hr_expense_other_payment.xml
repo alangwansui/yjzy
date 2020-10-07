@@ -479,12 +479,15 @@
             <field name="priority">999</field>
             <field name="arch" type="xml">
                 <form string="费用申请" class="o_expense_sheet">
-                    <header>
+                    <header groups="base.group_system">
                         <button name="create_other_payment_invoice" string="创建其他应收账单" type="object"/>
-                        <button name="action_account_approve" string="财务提交" type="object"/>
-                        <button name="action_manager_approve" string="总经理审批" type="object"/>
-                        <button name="%(hr_expense.hr_expense_refuse_wizard_action)d" states="submit,approve" context="{'hr_expense_refuse_model':'hr.expense.sheet'}" string="Refuse" type="action"  />
-
+                        <button name="action_to_employee_approval" string="提交" type="object" attrs="{'invisible':[('state_1','not in',['draft'])]}"/>
+                        <button name="action_to_account_approval" string="责任人审批(自动)" groups="base.group_system"  type="object" attrs="{'invisible':[('state_1','not in',['employee_approval'])]}"/>
+                        <button name="action_account_approve" string="财务审批" type="object" attrs="{'invisible':[('state_1','not in',['account_approval'])]}"/>
+                       <button name="action_manager_approve" string="总经理审批" type="object" attrs="{'invisible':[('state_1','not in',['manager_approval'])]}"/>
+<field name="state_1" widget="statusbar"
+                               statusbar_visible=" "/>
+                        <field name="stage_id" groups="base.group_system"/>
                     </header>
                     <header groups="base.group_system">
 

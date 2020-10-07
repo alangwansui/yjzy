@@ -7,6 +7,33 @@ from odoo.tools import float_is_zero, float_compare
 from odoo.addons import decimal_precision as dp
 
 
+Hr_Expense_Selection = [('draft',u'草稿'),
+                         ('employee_approval',u'待责任人确认'),
+                         ('account_approval',u'待财务审批'),
+                         ('manager_approval',u'待总经理审理'),
+                         ('post',u'审批完成'),
+                         ('done',u'完成'),
+                         ('refused', u'已拒绝'),
+                         ('cancel', u'取消'),
+                        ]
+
+class ExpenseSheetStage(models.Model):
+
+    _name = "expense.sheet.stage"
+    _description = "Expense Stage"
+    _order = 'sequence'
+
+    name = fields.Char('Stage Name', translate=True, required=True)
+    code = fields.Char('code')
+    sequence = fields.Integer(help="Used to order the note stages", default=1)
+    state = fields.Selection(Hr_Expense_Selection, 'State', default=Hr_Expense_Selection[0][0]) #track_visibility='onchange',
+    fold = fields.Boolean('Folded by Default')
+    # _sql_constraints = [
+    #     ('name_code', 'unique(code)', u"编码不能重复"),
+    # ]
+    user_ids = fields.Many2many('res.users', 'ref_tb_users', 'fid', 'tid', 'Users') #可以进行判断也可以结合自定义视图模块使用
+    group_ids = fields.Many2many('res.groups', 'ref_tb_group', 'gid', 'bid', 'Groups')
+
 class hr_expense_sheet(models.Model):
     _inherit = 'hr.expense.sheet'
 
@@ -49,6 +76,15 @@ class hr_expense_sheet(models.Model):
             return self.env.ref('yjzy_extend.product_back_tax').id
         except Exception as e:
             return None
+
+    @api.model
+    def _default_expense_sheet_stage(self):
+        stage = self.env['expense.sheet.stage']
+        return stage.search([], limit=1)
+
+    stage_id = fields.Many2one(
+        'expense.sheet.stage',
+        default=_default_expense_sheet_stage)
 
     #024 自动生成应收发票
     other_payment_invoice_product_id = fields.Many2one('product.product', u'其他应收项目', domain=[('type', '=', 'service')],
@@ -120,12 +156,8 @@ class hr_expense_sheet(models.Model):
 
     manager_confirm = fields.Many2one('res.users', u'总经理审批')
     manager_confirm_date = fields.Date('总经理审批日期')
-    state_1 = fields.Selection([('10_draft',u'草稿'),
-                                ('20_employee_approval',u'待责任人确认'),
-                                ('30_account_approval',u'待财务审批'),
-                                ('40_manager_approval',u'待总经理审理'),
-                                ('50_post',u'审批完成'),
-                                ('60_done',u'完成')]) #费用审批流程
+    state_1 = fields.Selection(Hr_Expense_Selection,u'审批流程',default='draft', index=True,related='stage_id.state',
+                             track_visibility='onchange') #费用审批流程
     # state_2 = fields.Selection([('10_draft',u'草稿'),
     #                             ('20_submit',u'')])#收入审批流程
     state = fields.Selection(selection_add=[
@@ -157,51 +189,171 @@ class hr_expense_sheet(models.Model):
 
 
 
-    #0926
-    def action_to_employee_approval(self):
-        if (self.employee_id.user_id == self.env.user or self.employee_id.name == '公司' or self.create_uid == self.env.user or self.env.user.id ==1 ) and self.total_amount >0:
-            self.write({'employee_confirm':self.env.user.id,
-                        'employee_confirm_date':fields.datetime.now(),
-                        'employee_wkf':True,
-                        'state':'approval',
-                        'state_1':'20_employee_approval'})
-            self.btn_user_confirm()
-            self.btn_match_budget()
-        else:
-            raise Warning('非权限用户或者金额等于0，请检查！')
 
+
+
+    #0926
+    def _stage_find(self, domain=None, order='sequence'):
+        search_domain = list(domain)
+        return self.env['expense.sheet.stage'].search(search_domain, order=order, limit=1)
+
+    def action_to_employee_approval(self):
+        if self.expense_to_invoice_type == 'normal':
+            if (self.employee_id.user_id == self.env.user or self.employee_id.name == '公司' or self.create_uid == self.env.user or self.env.user.id ==1 ) and self.total_amount >0:
+                stage_id = self._stage_find(domain=[('code', '=', '020')])
+                self.write({'stage_id': stage_id.id,
+                            'employee_confirm': self.env.user.id,
+                            'employee_confirm_date': fields.datetime.now(),
+                            'employee_wkf': True,
+                            'state': 'approval',
+                                   })
+                self.btn_user_confirm()
+                self.btn_match_budget()
+            else:
+                raise Warning('非权限用户或者金额等于0，请检查！')
+        elif self.expense_to_invoice_type == 'incoming':
+            if self.total_amount < 0:
+                stage_id = self._stage_find(domain=[('code', '=', '030')])
+                self.write({'stage_id': stage_id.id,
+                            'employee_confirm': self.env.user.id,
+                            'employee_confirm_date': fields.datetime.now(),
+                            'state': 'approval',
+                            })
+                self.btn_user_confirm()
+            else:
+                raise Warning('金额等于0，请检查！')
+        elif self.expense_to_invoice_type == 'other_payment':
+            if self.total_amount <=0:
+                raise Warning('金额填写不正确，请检验！')
+            if not  self.fk_journal_id:
+                raise Warning('请填写付款账户！') 
+            stage_id = self._stage_find(domain=[('code', '=', '040')])
+            self.write({'stage_id': stage_id.id,
+                        'employee_confirm': self.env.user.id,
+                        'employee_confirm_date': fields.datetime.now(),
+                        'state': 'approval',
+                        })
+            self.btn_user_confirm()
+
+
+    #给管理员显示
     def action_to_account_approval(self):
+        stage_id = self._stage_find(domain=[('code', '=', '030')])
         if self.expense_to_invoice_type == 'normal':
             if self.all_line_is_confirmed == False or self.total_amount == 0:
                 raise Warning('费用明细没有完成审批或者总金额等于0，请查验！')
             else:
-                self.write({'employee_wkf':False,'state':'account_approval'})
+                stage_id = self._stage_find(domain=[('code', '=', '030')])
+                self.write({'employee_wkf':False,
+                            'stage_id': stage_id.id,
+                            })
                 self.btn_match_budget()
         elif self.expense_to_invoice_type == 'other_payment':
             if self.total_amount == 0:
                 raise Warning('总金额不允许等于0，请查验！')
             else:
-                self.write({'employee_wkf': False, 'state': 'account_approval'})
+                self.write({'employee_wkf': False,
+                            'stage_id': stage_id.id})
 
 
 
     #0925财务审批的时候判断是否已经转为货款
     def action_account_approve(self):
         if self.expense_to_invoice_type == 'to_invoice':
+            stage_id = self._stage_find(domain=[('code', '=', '040')])
             if self.tb_po_invoice_ids:
                 self.tb_po_invoice_ids.submit()
                 self.write({'account_confirm': self.env.user.id,
-                            'state': 'manager_approval',
+                            'stage_id': stage_id.id,
                             'account_confirm_date':fields.datetime.now()})
             else:
                 raise Warning('还没有生成费用转货款申请单，请检查！')
-        else:
+        elif self.expense_to_invoice_type == 'normal':
+            stage_id = self._stage_find(domain=[('code', '=', '040')])
             if not self.fk_journal_id:
                 raise Warning('请填写付款账号')
             else:
                 self.write({'account_confirm': self.env.user.id,
-                            'state': 'manager_approval',
+                            'stage_id': stage_id.id,
                             'account_confirm_date': fields.datetime.now()})
+
+        elif self.expense_to_invoice_type == 'incoming':
+            stage_id = self._stage_find(domain=[('code', '=', '060')])
+            if self.total_amount < 0:
+                self.write({'account_confirm': self.env.user.id,
+                            'stage_id': stage_id.id,
+                            'account_confirm_date': fields.datetime.now()})
+                self.approve_expense_sheets()
+                self.action_sheet_move_create()
+            else:
+                raise Warning('金额出错，请检查！')
+
+        # 819 总经理审批费用，也同时审批生成的费用转货款
+
+    def action_manager_approve(self):
+        stage_id = self._stage_find(domain=[('code', '=', '050')])
+        if self.expense_to_invoice_type == 'to_invoice':
+            if self.tb_po_invoice_ids:
+                self.approve_expense_sheets()
+                self.tb_po_invoice_ids.action_manager_approve()
+                self.write({'manager_confirm': self.env.user.id,
+                            'stage_id': stage_id.id,
+                            'manager_confirm_date': fields.datetime.now()})
+        elif self.expense_to_invoice_type == 'normal' or self.expense_to_invoice_type == 'other_payment':
+            self.approve_expense_sheets()
+            self.create_rcfkd()
+            self.write({'manager_confirm': self.env.user.id,
+                        'stage_id': stage_id.id,
+                        'manager_confirm_date': fields.datetime.now()})
+
+
+
+    def action_refuse(self, reason):
+        stage_id = self._stage_find(domain=[('code', '=', '090')])
+        stage_preview = self.stage_id
+        user = self.env.user
+        group = self.env.user.groups_id
+        if not stage_preview.user_ids and user not in stage_preview.user_ids:
+            raise Warning('您没有权限拒绝')
+        else:
+            self.write({'state': 'cancel',
+                        'account_confirm': False,
+                        'account_confirm_date': False,
+                        'employee_confirm': False,
+                        'employee_confirm_date': False,
+                        'manager_confirm': False,
+                        'manager_confirm_date': False,
+                        'stage_id': stage_id.id, })
+            self.btn_undo_confirm_force()
+            self.btn_release_budget()
+        for tb in self:
+            tb.message_post_with_view('yjzy_extend.expense_sheet_template_refuse_reason',
+                                      values={'reason': reason, 'name': self.ref},
+                                      subtype_id=self.env.ref(
+                                          'mail.mt_note').id)  # 定义了留言消息的模板，其他都可以参考，还可以继续参考费用发送计划以及邮件方式
+    #责任人审批阶段的拒绝
+    def action_refuse_user(self, reason):
+        stage_id = self._stage_find(domain=[('code', '=', '090')])
+        user = self.env.user
+        group = self.env.user.groups_id
+        if self.employee_id.user_id != user:
+            raise Warning('您没有权限拒绝')
+        else:
+            self.write({'state': 'cancel',
+                        'account_confirm': False,
+                        'account_confirm_date': False,
+                        'employee_confirm': False,
+                        'employee_confirm_date': False,
+                        'manager_confirm': False,
+                        'manager_confirm_date': False,
+                        'stage_id': stage_id.id, })
+            self.btn_undo_confirm_force()
+            self.btn_release_budget()
+        for tb in self:
+            tb.message_post_with_view('yjzy_extend.expense_sheet_template_refuse_reason',
+                                      values={'reason': reason, 'name': self.ref},
+                                      subtype_id=self.env.ref(
+                                          'mail.mt_note').id)  # 定义了留言消息的模板，其他都可以参考，还可以继续参考费用发送计划以及邮件方式
 
 
 
@@ -237,19 +389,7 @@ class hr_expense_sheet(models.Model):
         self.write({'manager_confirm': manager_confirm.id,
                     'manager_confirm_date': manager_confirm_date})
 
-    #819 总经理审批费用，也同时审批生成的费用转货款
-    def action_manager_approve(self):
-        if self.expense_to_invoice_type != 'to_invoice':
-            self.approve_expense_sheets()
-            self.create_rcfkd()
-            self.write({'manager_confirm':self.env.user.id,
-                        'manager_confirm_date':fields.datetime.now()})
-        else:
-            if self.tb_po_invoice_ids:
-                self.approve_expense_sheets()
-                self.tb_po_invoice_ids.action_manager_approve()
-                self.write({'manager_confirm': self.env.user.id,
-                            'manager_confirm_date': fields.datetime.now()})
+
 
     def open_wizard_tb_po_invoice(self):
         self.ensure_one()

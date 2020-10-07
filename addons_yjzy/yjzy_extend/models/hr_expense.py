@@ -318,6 +318,8 @@ class hr_expense(models.Model):
         self.ensure_one()
         ##if self.user_id != self.env.user:
         if self.user_id == self.env.user:
+            if self.categ_id.name == '订单费用' and self.tb_id == False and self.sys_outer_hetong =='':
+                raise Warning ('订单费用必须填写出运合同号!')
             self.is_confirmed = True
             self.state = 'employee_confirm'
             self.employee_confirm_date = fields.datetime.now()

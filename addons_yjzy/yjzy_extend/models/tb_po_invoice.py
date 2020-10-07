@@ -148,6 +148,14 @@ class tb_po_invoice(models.Model):
                 tb_id_po_supplier += '%s\n' % (o.partner_id.name)
             one.tb_id_po_supplier = tb_id_po_supplier
 
+    def compute_invoice_count(self):
+        for one in self:
+            one.invoice_ids_count = len(one.invoice_ids)
+            one.invoice_p_ids_count = len(one.invoice_p_ids)
+            one.invoice_s_ids_count = len(one.invoice_s_ids)
+            one.invoice_back_tax_ids_count = len(one.invoice_back_tax_ids)
+            one.invoice_p_s_ids_count = len(one.invoice_p_s_ids)
+
     #902
     tb_id_po_supplier = fields.Text(compute=compute_tb_id_po_supplier, string='供应商')
     expense_tax_algorithm = fields.Selection([('divide', u'除'), ('multiply', u'乘')], string='税点算法', default='divide')
@@ -190,13 +198,18 @@ class tb_po_invoice(models.Model):
     partner_id = fields.Many2one('res.partner', u'合作伙伴')
     hsname_all_ids = fields.One2many('tb.po.invoice.line', 'tb_po_id', u'报关明细',)
     invoice_ids = fields.One2many('account.invoice','tb_po_invoice_id','相关发票')
+    invoice_ids_count = fields.Integer('相关发票数量',compute=compute_invoice_count)
 
     yjzy_invoice_id = fields.Many2one('account.invoice', '关联账单')
     currency_id = fields.Many2one('res.currency', compute=compute_info)
     invoice_p_ids = fields.One2many('account.invoice','tb_po_invoice_id','相关采购发票',domain=[('type','=','in_invoice'),('yjzy_type_1','=','purchase')])
+    invoice_p_ids_count = fields.Integer('相关采购发票数量', compute=compute_invoice_count)
     invoice_s_ids = fields.One2many('account.invoice','tb_po_invoice_id','相关应收发票',domain=[('type','=','out_invoice'),('yjzy_type_1','=','sale')])
+    invoice_s_ids_count = fields.Integer('相关应收发票数量', compute=compute_invoice_count)
     invoice_back_tax_ids = fields.One2many('account.invoice','tb_po_invoice_id','相关退税发票',domain=[('type','=','out_invoice'),('yjzy_type_1','=','back_tax')])
+    invoice_back_tax_ids_count = fields.Integer('相关退税发票数量', compute=compute_invoice_count)
     invoice_p_s_ids = fields.One2many('account.invoice','tb_po_invoice_id','相关冲减发票',domain=[('type','=','in_refund'),('yjzy_type_1','=','purchase')])
+    invoice_p_s_ids_count = fields.Integer('相关冲减发票数量', compute=compute_invoice_count)
     company_id = fields.Many2one('res.company', '公司', required=True, readonly=True,
                                  default=lambda self: self.env.user.company_id.id)
     company_currency_id = fields.Many2one('res.currency', string='公司货币', related='company_id.currency_id',

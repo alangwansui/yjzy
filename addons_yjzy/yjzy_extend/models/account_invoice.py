@@ -331,6 +331,12 @@ class account_invoice(models.Model):
             one.reconcile_order_ids_count = reconcile_order_ids_count
 
 
+    def compute_tb_po_invoice_ids(self):
+        for one in self:
+            tb_po_invoice_ids_count = len(one.tb_po_invoice_ids)
+            one.tb_po_invoice_ids_count = tb_po_invoice_ids_count
+
+
     #0921 = self.bill_id = self.partner
     #
     # invoice_tb_partner_ids = fields.Many2many('account.invoice',u'和出运相关的账单',compute=_compute_invoice_tb_partner_ids)
@@ -339,6 +345,7 @@ class account_invoice(models.Model):
 
     #928
     tb_po_invoice_ids = fields.One2many('tb.po.invoice','yjzy_invoice_id',u'额外账单申请单',domain=[('type','=','extra')])
+    tb_po_invoice_ids_count = fields.Integer(u'额外账单申请单数量',compute=compute_tb_po_invoice_ids)
     #0911
 
     yjzy_advance_payment_id = fields.Many2one('account.payment',u'预收付单')

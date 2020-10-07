@@ -47,6 +47,7 @@
         'wizard/account_invoice_refuse_reason_views.xml',
         'wizard/hxd_refuse_reason_views.xml',
         'wizard/payment_refuse_reason_views.xml',
+        'wizard/expense_sheet_refuse_reason_views.xml',
 
         'views/account_journal.xml',
         'views/account_move.xml',

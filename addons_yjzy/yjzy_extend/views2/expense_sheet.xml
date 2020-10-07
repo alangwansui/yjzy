@@ -24,6 +24,13 @@
         <field name="arch" type="xml">
             <form string="Expense Reports" class="o_expense_sheet">
                 <header groups="base.group_system">
+                    <button name="action_to_employee_approval" type="object" string="提交" attrs="{'invisible':[('state_1','not in',['draft'])]}"/>
+                    <button name="action_account_approve" type="object" string="财务审批" attrs="{'invisible':[('state_1','not in',['account_approval'])]}"/>
+<field name="state_1" widget="statusbar"
+                               statusbar_visible=" "/>
+                        <field name="stage_id" groups="base.group_system"/>
+                </header>
+                <header groups="base.group_system">
                     <button name="approve_expense_sheets" states="submit" string="Approve" type="object" groups="hr_expense.group_hr_expense_user"
                             class="oe_highlight o_expense_sheet_approve"/>
                     <button name="action_sheet_move_create" states="approve" string="Post Journal Entries" type="object"
@@ -161,7 +168,7 @@
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="domain">[('total_amount','&lt;', 0)]</field>
-        <field name="context">{'default_bank_journal_code': 'ysdrl'}</field>
+        <field name="context">{'default_bank_journal_code': 'ysdrl','defualt_expense_to_invoice_type':'incoming'}</field>
     </record>
 
 

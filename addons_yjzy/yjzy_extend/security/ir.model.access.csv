@@ -36,6 +36,8 @@ access_account_reconcile_order_line_no,access_account_reconcile_order_line_no,mo
 access_back_tax_declaration,access_back_tax_declaration,model_back_tax_declaration,base.group_user,1,1,1,1
 access_extra_invoice_line,access_extra_invoice_line,model_extra_invoice_line,base.group_user,1,1,1,1
 access_dashboard_view,access_dashboard_view,model_dashboard_view,base.group_user,1,1,1,1
+access_expense_sheet_stage,access_expense_sheet_stage,model_expense_sheet_stage,base.group_user,1,1,1,1
+
 
 
 

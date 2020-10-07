@@ -6,7 +6,8 @@
         <field name="name">prt.mail.message.tree</field>
         <field name="model">mail.message</field>
         <field name="arch" type="xml">
-            <tree string="Messages" decoration-bf="needaction==True" decoration-it="is_error==False"  decoration-danger="is_error==True" delete="false" default_order="date desc, id desc" create='false'>
+            <tree string="Messages" decoration-bf="needaction==True" decoration-it="is_error==False"
+                  decoration-danger="is_error==True" delete="false" default_order="create_date desc, id desc" create='false'>
                 <field name="body_text" string="文本" invisible="1"/>
                 <field name="body" string="内容" invisible="1"/>
                 <button name="tip_button" type="object" class="tip_button" icon="fa-th-large" context="{'form_xml_id': 'prt_mail_messages.prt_mail_message_out_form'}"/>
@@ -29,6 +30,7 @@
                 <field name="is_error" groups="base.group_system"/>
                 <field name="compose_id" groups="base.group_system"/>
                 <field name="date"/>
+                <field name="create_date" string="创建日期"/>
                 <field name="process_type" groups="base.group_system"/>
                 <field name="state_delete" groups="base.group_system"/>
                 <field name="owner_user_id" groups="base.group_system" />

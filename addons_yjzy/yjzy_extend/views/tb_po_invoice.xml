@@ -181,7 +181,8 @@
                         </field>
 
                     </page>
-                    <page string="额外发票">
+                    <page string="新增采购对应所有账单" attrs="{'invisible':[('invoice_ids_count','=',0)]}">
+                        <field name="invoice_ids_count" invisible="1"/>
                         <field name="invoice_ids">
                             <tree decoration-info="state == 'draft'" decoration-muted="state == 'cancel'">
                                 <field name="tb_contract_code"/>
@@ -191,7 +192,8 @@
                             </tree>
                         </field>
                     </page>
-                    <page string="额外采购发票">
+                    <page string="新增采购账单" attrs="{'invisible':[('invoice_p_ids_count','=',0)]}">
+                        <field name="invoice_p_ids_count" invisible="1"/>
                         <field name="invoice_p_ids">
                              <tree decoration-info="state == 'draft'" decoration-muted="state == 'cancel'">
                                 <field name="tb_contract_code"/>
@@ -203,7 +205,8 @@
                             </tree>
                         </field>
                     </page>
-                    <page string="额外冲减发票">
+                    <page string="对应冲减账单" attrs="{'invisible':[('invoice_p_s_ids_count','=',0)]}">
+                        <field name="invoice_p_s_ids_count" invisible="1"/>
                         <field name="invoice_p_s_ids">
                              <tree decoration-info="state == 'draft'" decoration-muted="state == 'cancel'">
                                 <field name="tb_contract_code"/>
@@ -213,7 +216,8 @@
                             </tree>
                         </field>
                     </page>
-                    <page string="额外退税发票">
+                    <page string="对应退税账单" attrs="{'invisible':[('invoice_back_tax_ids_count','=',0)]}">
+                        <field name="invoice_back_tax_ids_count" invisible="1"/>
                         <field name="invoice_back_tax_ids">
                              <tree decoration-info="state == 'draft'" decoration-muted="state == 'cancel'">
                                 <field name="tb_contract_code"/>
@@ -223,9 +227,10 @@
                             </tree>
                         </field>
                     </page>
-                    <page string="额外应收发票">
+                    <page string="对应应收账单" attrs="{'invisible':[('invoice_s_ids_count','=',0)]}">
+                        <field name="invoice_s_ids_count" invisible="1"/>
                         <field name="invoice_s_ids">
-                             <tree decoration-info="state == 'draft'" decoration-muted="state == 'cancel'">
+                             <tree decoration-info="state == 'draft'" decoration-muted="state == 'cancel'" >
                                 <field name="tb_contract_code"/>
                                 <field name="amount_total_signed" string="账单金额"/>
                                 <field name="residual_signed" string="未收金额"/>
@@ -345,18 +350,18 @@
                         <field name="partner_id" string="供应商" domain="[('customer', '=', True),('is_company','=',True)]"/>
                         <field name="tb_id" invisible="1" />
                         <field name="type"/>
-                        <field name="yjzy_invoice_id"/>
-                        <field name="yjzy_type_1"/>
+                        <field name="yjzy_invoice_id" context="{'form_view_ref':'yjzy_extend.view_account_supplier_invoice_new_form'}"/>
+
                         <field name="type_invoice"/>
                     </group>
                         <group>
                         <field name="yjzy_invoice_residual_amount" string="关联账单未付金额" attrs="{'invisible':[('type','!=','other_po')]}"/>
                         <field name="yjzy_invoice_include_tax" string="关联账单是否含税" attrs="{'invisible':[('type','!=','other_po')]}"/>
                             <field name="price_total"/>
-                            <field name="extra_invoice_include_tax" attrs="{'invisible':[('type','!=','extra')]}"/>
+                            <field name="extra_invoice_include_tax" attrs="{'invisible':[('type','!=','extra')]}" string="原始账单含税"/>
                         <field name="p_s_add_this_time_refund" attrs="{'invisible':['|',('yjzy_invoice_include_tax','=',True),('type','!=','other_po')]}" string="冲减金额"/>
                         <field name="p_s_add_this_time_extra_total" string="冲减后应收" attrs="{'invisible':[('type','!=','other_po')]}"/>
-                        <field name="purchase_amount2_add_this_time_total" string="增加采购总额"/>
+                        <field name="purchase_amount2_add_this_time_total" string="增加采购总额" attrs="{'invisible':[('type','!=','other_po')]}"/>
                         <field name="back_tax_add_this_time_total" string="退税金额" attrs="{'invisible':[('type','!=','other_po')]}"/>
                         <field name="expense_currency_id" attrs="{'invisible':[('type','!=','expense_po')]}"/>
                         <field name="expense_sheet_amount" attrs="{'invisible':[('type','!=','expense_po')]}"/>
@@ -381,10 +386,12 @@
                             </field>
                         </page>
 
-                    <page string="额外发票">
+                    <page string="额外账单">
                         <field name="invoice_ids" context="{'form_view_ref':'yjzy_extend.view_account_supplier_invoice_new_form'}"/>
                     </page>
-
+                    <page groups="base.group_system" string="管理员页面">
+                        <field name="yjzy_type_1"/>
+                    </page>
                     </notebook>
                     </sheet>
                      <div class="oe_chatter">

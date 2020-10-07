@@ -114,5 +114,54 @@
             <field name="state">cancel</field>
         </record>
 
+        <!--费用审批-->
+        <record model="expense.sheet.stage" id="stage_expense_sheet_draft">
+            <field name="name">草稿</field>
+            <field name="code">010</field>
+            <field name="sequence" eval="10"/>
+            <field name="state">draft</field>
+        </record>
+        <record model="expense.sheet.stage" id="stage_expense_sheet_employee_approval">
+            <field name="name">待责任人确认</field>
+            <field name="code">020</field>
+            <field name="sequence" eval="20"/>
+            <field name="state">employee_approval</field>
+        </record>
+        <record model="expense.sheet.stage" id="stage_expense_sheet_account_approval">
+            <field name="name">待财务审批</field>
+            <field name="code">030</field>
+            <field name="sequence" eval="30"/>
+            <field name="state">account_approval</field>
+        </record>
+        <record model="expense.sheet.stage" id="stage_expense_sheet_manager_approval">
+            <field name="name">待总经理审批</field>
+            <field name="code">040</field>
+            <field name="sequence" eval="40"/>
+            <field name="state">manager_approval</field>
+        </record>
+        <record model="expense.sheet.stage" id="stage_expense_sheet_post">
+            <field name="name">审批完成</field>
+            <field name="code">050</field>
+            <field name="sequence" eval="50"/>
+            <field name="state">post</field>
+        </record>
+        <record model="expense.sheet.stage" id="stage_expense_sheet_done">
+            <field name="name">完成</field>
+            <field name="code">060</field>
+            <field name="sequence" eval="60"/>
+            <field name="state">done</field>
+        </record>
+        <record model="expense.sheet.stage" id="stage_expense_sheet_refused">
+            <field name="name">取消</field>
+            <field name="code">090</field>
+            <field name="sequence" eval="90"/>
+            <field name="state">refused</field>
+        </record>
+        <record model="expense.sheet.stage" id="stage_expense_sheet_cancel">
+            <field name="name">取消</field>
+            <field name="code">100</field>
+            <field name="sequence" eval="100"/>
+            <field name="state">cancel</field>
+        </record>
     </data>
 </odoo>
