@@ -789,4 +789,4 @@ class tbl_hsname_all(models.Model):
     purchase_amount_min_add_rest = fields.Float('采购池(上限)', digits=(2, 2),compute=compute_info)
     # purchase_back_tax_amount2_rest = fields.Float('本次退税金额', digits=(2, 2),compute=compute_info)
 
-
+    # def open_invoice_ids(self):

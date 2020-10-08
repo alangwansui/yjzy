@@ -42,8 +42,10 @@
             <field name="arch" type="xml">
                 <tree string="供应商应付账单" create="false">
                     <field name="name"/>
+                    <field name="create_date"/>
                     <field name="partner_id"/>
                     <field name="price_total"/>
+                    <field name="state"/>
                 </tree>
             </field>
         </record>
@@ -475,9 +477,9 @@
             <field name="res_model">tb.po.invoice</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[('yjzy_type_1','=','purchase'),('state','in',['30_done']),('type','=','other_po')]</field>
+            <field name="domain">[('yjzy_type_1','=','purchase'),('type','=','other_po')]</field>
             <field name="limit">20</field>
-            <field name="context">{'search_default_group_bt_state':1,'done':1}</field>
+            <field name="context">{'search_default_group_by_state':1,'done':1}</field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('tb_po_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_form')})]"/>
