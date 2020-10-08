@@ -262,7 +262,7 @@ class hr_expense_sheet(models.Model):
         if self.expense_to_invoice_type == 'to_invoice':
             stage_id = self._stage_find(domain=[('code', '=', '040')])
             if self.tb_po_invoice_ids:
-                self.tb_po_invoice_ids.submit()
+                self.tb_po_invoice_ids.action_submit()
                 self.write({'account_confirm': self.env.user.id,
                             'stage_id': stage_id.id,
                             'account_confirm_date':fields.datetime.now()})
@@ -452,10 +452,12 @@ class hr_expense_sheet(models.Model):
         self.ensure_one()
         bill_id = self.expense_line_ids.mapped('tb_id')
         tb_po_id = self.env['tb.po.invoice'].create({'tb_id': bill_id and bill_id[0].id,
-                                                    'expense_sheet_id':self.id,
-                                                    'type':'expense_po',
-
-                                                    })
+                                                     'invoice_product_id': self.env.ref('yjzy_extend.product_qtyfk').id,# 0821
+                                                     'tax_rate_add':1,
+                                                     'expense_tax_algorithm':'multiply',
+                                                     'expense_sheet_id':self.id,
+                                                     'type':'expense_po',
+                                                     })
 
         view = self.env.ref('yjzy_extend.tb_po_form')
         line_obj = self.env['tb.po.invoice.line']

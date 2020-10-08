@@ -257,7 +257,7 @@ class tb_po_invoice(models.Model):
         if self.type == 'other_po':
             self.apply()
         if self.type == 'expense_po':
-            self.apply_expense_sheet()
+            self.apply()
         if self.type == 'extra':
             self.make_extra_invoice()
     def action_manager_approve(self):
