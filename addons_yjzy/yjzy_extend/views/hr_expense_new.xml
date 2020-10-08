@@ -1413,7 +1413,7 @@
             <field name="priority">999</field>
             <field name="arch" type="xml">
                 <form string="费用申请" class="o_expense_sheet">
-                    <header >
+                    <header groups="base.group_system">
                         <button name="action_to_employee_approval" string="提交" type="object" attrs="{'invisible':[('state_1','not in',['draft'])]}"/>
                         <button name="action_to_account_approval" string="责任人审批(自动)" groups="base.group_system"  type="object" attrs="{'invisible':[('state_1','not in',['employee_approval'])]}"/>
                         <button name="action_account_approve" string="财务审批" type="object" attrs="{'invisible':[('state_1','not in',['account_approval'])]}"/>
@@ -1869,7 +1869,7 @@
             <field name="view_mode">tree,form</field>
             <field name="domain">[('total_amount','>=',0),
                                   ('expense_to_invoice_type','in',['to_invoice','normal']),
-                                  ('state','in',['account_approval'])]</field>
+                                  ('state_1','in',['account_approval'])]</field>
             <field name="context">{'search_default_group_expense_to_invoice_type':1}</field>
             <!--field name="target">new</field-->
             <field name="view_ids" eval="[(5, 0, 0),
@@ -1888,7 +1888,7 @@
             <field name="view_mode">tree,form</field>
             <field name="domain">[('total_amount','>=',0),
                                   ('expense_to_invoice_type','in',['to_invoice','normal']),
-                                  ('state','in',['manager_approval'])]</field>
+                                  ('state_1','in',['manager_approval'])]</field>
             <field name="context">{'search_default_group_expense_to_invoice_type':1}</field>
             <!--field name="target">new</field-->
             <field name="view_ids" eval="[(5, 0, 0),
@@ -1905,7 +1905,7 @@
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">hr.expense.sheet</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[('total_amount','>=',0),('state','in',['approve','post'])]</field>
+            <field name="domain">[('total_amount','>=',0),('state_1','in',['approve','post'])]</field>
             <field name="context">{'search_default_group_expense_to_invoice_type':1}</field>
             <!--field name="target">new</field-->
             <field name="view_ids" eval="[(5, 0, 0),
