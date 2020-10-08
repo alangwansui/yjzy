@@ -454,7 +454,7 @@ class hr_expense_sheet(models.Model):
         tb_po_id = self.env['tb.po.invoice'].create({'tb_id': bill_id and bill_id[0].id,
                                                     'expense_sheet_id':self.id,
                                                     'type':'expense_po',
-                                                     'partner_id':bill_id and bill_id[0].partner_id.id,
+
                                                     })
 
         view = self.env.ref('yjzy_extend.tb_po_form')
