@@ -1465,12 +1465,7 @@
 
                     </header>
                     <sheet>
-                        <div class="oe_button_box"><!--"context.get('expense_adding_line')"-->
-                            <button name="open_tb_po_invoice" class="oe_stat_button" icon="fa-book"
-                                    type="object">
-                                <field name="tb_po_invoice_ids" widget="statinfo" string="费用转采购"/>
-                            </button>
-                        </div>
+
                         <div class="oe_button_box" invisible="1"><!--"context.get('expense_adding_line')"-->
                             <button name="action_get_attachment_view" class="oe_stat_button" icon="fa-book"
                                     type="object">
@@ -1773,6 +1768,27 @@
                                         <field name="employee_wkf" groups="base.group_system"/>
                                     </group>
                                 </group>
+                            </page>
+                            <page string="费用转货款申请单" attrs="{'invisible':[('tb_po_invoice_ids_count','=',0)]}">
+                                <field name="tb_po_invoice_ids_count" invisible="1"/>
+                                <field name="tb_po_invoice_ids" >
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="partner_id"/>
+                                        <field name="yjzy_invoice_residual_amount" invisible="1"/>
+                                        <field name="yjzy_invoice_include_tax" invisible="1"/>
+                                        <field name="purchase_amount2_add_this_time_total" invisible="context.get('done')"/>
+                                        <field name="p_s_add_this_time_refund" invisible="context.get('done')"/>
+                                        <field name="p_s_add_this_time_extra_total" invisible="context.get('done')"/>
+                                        <field name="back_tax_add_this_time_total" invisible="context.get('done')"/>
+                                        <field name="po_add_residual" invisible="not context.get('done')"/>
+                                        <field name="p_s_add_residual" invisible="not context.get('done')"/>
+                                        <field name="back_tax_add_residual" invisible="not context.get('done')"/>
+                                        <field name="p_s_add_refund_residual" invisible="not context.get('done')"/>
+                                        <field name="create_date"/>
+                                        <field name="yjzy_invoice_id"/>
+                                    </tree>
+                                </field>
                             </page>
                             <page string="审批信息" groups="base.group_system">
                                 <group>

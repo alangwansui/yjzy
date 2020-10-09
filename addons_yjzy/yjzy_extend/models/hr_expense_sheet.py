@@ -82,6 +82,10 @@ class hr_expense_sheet(models.Model):
         stage = self.env['expense.sheet.stage']
         return stage.search([], limit=1)
 
+    def compute_tb_po_invoice_ids_count(self):
+        for one in self:
+            one.tb_po_invoice_ids_count = len(one.tb_po_invoice_ids)
+
     stage_id = fields.Many2one(
         'expense.sheet.stage',
         default=_default_expense_sheet_stage)
@@ -96,6 +100,7 @@ class hr_expense_sheet(models.Model):
     expense_to_invoice_type = fields.Selection([('normal',u'常规费用'),('to_invoice',u'转为货款'),('other_payment',u'其他支出'),('incoming',u'其他收入')],u'类型说明')
     #901
     tb_po_invoice_ids = fields.One2many('tb.po.invoice','expense_sheet_id',u'费用转采购申请单')
+    tb_po_invoice_ids_count = fields.Integer('费用转采购申请单', compute=compute_tb_po_invoice_ids_count)
 
     #819费用创建应付发票
     invoice_id = fields.Many2one('account.invoice',u'Invoice')
@@ -296,12 +301,14 @@ class hr_expense_sheet(models.Model):
             if self.tb_po_invoice_ids:
                 self.approve_expense_sheets()
                 self.tb_po_invoice_ids.action_manager_approve()
+                print('tb_po_invoice_ids',self.tb_po_invoice_ids)
                 self.write({'manager_confirm': self.env.user.id,
                             'stage_id': stage_id.id,
                             'manager_confirm_date': fields.datetime.now()})
         elif self.expense_to_invoice_type == 'normal' or self.expense_to_invoice_type == 'other_payment':
             self.approve_expense_sheets()
             self.create_rcfkd()
+            print('tb_po_invoice_ids', self.tb_po_invoice_ids)
             self.write({'manager_confirm': self.env.user.id,
                         'stage_id': stage_id.id,
                         'manager_confirm_date': fields.datetime.now()})
@@ -457,6 +464,7 @@ class hr_expense_sheet(models.Model):
                                                      'expense_tax_algorithm':'multiply',
                                                      'expense_sheet_id':self.id,
                                                      'type':'expense_po',
+                                                     'fk_journal_id': self.fk_journal_id.id,
                                                      })
 
         view = self.env.ref('yjzy_extend.tb_po_form')

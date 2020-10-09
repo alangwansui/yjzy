@@ -344,6 +344,7 @@ class account_invoice(models.Model):
 
 
     #928
+    fk_journal_id = fields.Many2one('account.journal', u'日记账',domain=[('type', 'in', ['cash', 'bank'])])
     tb_po_invoice_ids = fields.One2many('tb.po.invoice','yjzy_invoice_id',u'额外账单申请单',domain=[('type','=','extra')])
     tb_po_invoice_ids_count = fields.Integer(u'额外账单申请单数量',compute=compute_tb_po_invoice_ids)
     #0911
@@ -625,6 +626,48 @@ class account_invoice(models.Model):
         else:
             name = yjzy_invoice_number
         self.extra_code = name
+
+    # 费用转换为应付后，创建核销单并直接生成付款单。
+    def create_yfhxd(self):
+        self.ensure_one()
+        sfk_type = 'yfhxd'
+        domain = [('code', '=', 'yfdrl'), ('company_id', '=', self.env.user.company_id.id)]
+        name = self.env['ir.sequence'].next_by_code('sfk.type.%s' % sfk_type)
+        journal = self.env['account.journal'].search(domain, limit=1)
+        account_obj = self.env['account.account']
+        bank_account = account_obj.search(
+            [('code', '=', '10021'), ('company_id', '=', self.env.user.company_id.id)],
+            limit=1)
+        yfhxd = self.env['account.reconcile.order'].create({
+            'partner_id': self.partner_id.id,
+            'manual_payment_currency_id': self.currency_id.id,
+            'invoice_ids': [(4, self.id)],
+            'payment_type': 'outbound',
+            'fk_journal_id':self.fk_journal_id.id,
+            'partner_type': 'supplier',
+            'sfk_type': 'yfhxd',
+            'be_renling': True,
+            'name': name,
+            'journal_id': journal.id,
+            'payment_account_id': bank_account.id
+        })
+        self.reconcile_order_id = yfhxd
+        yfhxd._make_lines_po_from_expense()
+        yfhxd.create_rcfkd()
+
+        form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new')
+        return {
+            'name': u'应付核销单',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'account.reconcile.order',
+            'type': 'ir.actions.act_window',
+            'views': [(form_view.id, 'form')],
+            'res_id': self.reconcile_order_id.id,
+            'target': 'current',
+            'flags': {'form': {'initial_mode': 'view', 'action_buttons': False}}
+        }
+
 
     def create_yshxd(self):
         self.ensure_one()

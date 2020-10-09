@@ -1339,6 +1339,74 @@ class account_reconcile_order(models.Model):
                 'advance_residual2': data['advance_residual2'],
                 'yjzy_payment_id': yjzy_advance_payment_id.id
             })
+
+    def _make_lines_po_from_expense(self):
+        self.ensure_one()
+        line_obj = self.env['account.reconcile.order.line']
+        line_no_obj = self.env['account.reconcile.order.line.no']
+        line_ids = None
+        self.line_ids = line_ids
+
+        # if self.no_sopo:
+        #     for invoice in self.invoice_ids:
+        #         line_obj.create({
+        #             'order_id': self.id,
+        #             'invoice_id': invoice.id,
+        #             'amount_invoice_so': invoice.amount_total,
+        #         })
+        # else:
+        for invoice in self.invoice_ids:
+            po_invlines = self._prepare_purchase_invoice_line(invoice)
+            if not po_invlines:
+                line_obj.create({
+                    'order_id': self.id,
+                    'invoice_id': invoice.id,
+                    'amount_invoice_so': invoice.amount_total,
+                    'amount_payment_org': invoice.amount_total,
+                })
+            else:
+                for po, invlines in po_invlines.items():
+                    line_obj.create({
+                        'order_id': self.id,
+                        'po_id': po.id,
+                        'invoice_id': invoice.id,
+                        'amount_invoice_so': sum([i.price_subtotal for i in invlines]),
+                        'amount_payment_org': sum([i.price_subtotal for i in invlines]),
+
+                    })
+        # 826
+        so_po_dic = {}
+        print('line_obj', line_ids)
+        self.line_no_ids = None
+        yjzy_advance_payment_id = self.yjzy_advance_payment_id
+        for i in self.line_ids:
+            invoice = i.invoice_id
+            amount_invoice_so = i.amount_invoice_so
+            advance_residual = i.advance_residual
+            order = i.order_id
+
+            k = invoice.id
+            if k in so_po_dic:
+                print('k', k)
+                so_po_dic[k]['amount_invoice_so'] += amount_invoice_so
+                so_po_dic[k]['advance_residual'] += advance_residual
+            else:
+                print('k1', k)
+                so_po_dic[k] = {
+                    'invoice_id': invoice.id,
+                    'amount_invoice_so': amount_invoice_so,
+                    'advance_residual': advance_residual, }
+
+        for kk, data in list(so_po_dic.items()):
+            line_no = line_no_obj.create({
+                'order_id': self.id,
+                'invoice_id': data['invoice_id'],
+                'amount_invoice_so': data['amount_invoice_so'],
+                'amount_payment_org': data['amount_invoice_so'],
+                'advance_residual': data['advance_residual'],
+                'yjzy_payment_id': yjzy_advance_payment_id.id,
+
+            })
             # print('>>', line)
     #826 拆分发票填写的金额到明细上
     def update_line_amount(self):

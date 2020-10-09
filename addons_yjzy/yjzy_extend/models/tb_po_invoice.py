@@ -157,6 +157,7 @@ class tb_po_invoice(models.Model):
             one.invoice_p_s_ids_count = len(one.invoice_p_s_ids)
 
     #902
+    fk_journal_id = fields.Many2one('account.journal', u'日记账',domain=[('type', 'in', ['cash', 'bank'])])
     tb_id_po_supplier = fields.Text(compute=compute_tb_id_po_supplier, string='供应商')
     expense_tax_algorithm = fields.Selection([('divide', u'除'), ('multiply', u'乘')], string='税点算法', default='divide')
     #828
@@ -261,6 +262,9 @@ class tb_po_invoice(models.Model):
         if self.type == 'extra':
             self.make_extra_invoice()
     def action_manager_approve(self):
+        if self.type == 'expense_po':
+            self.create_yfhxd()
+            print('type', self.type)
         self.state = '30_done'
         #self.invoice_ids.action_invoice_open()
     def action_refuse(self):
@@ -684,6 +688,7 @@ class tb_po_invoice(models.Model):
                     'type':'in_invoice',
                     'journal_type':'purchase',
                     'yjzy_type_1':'purchase',
+                    'fk_journal_id': self.fk_journal_id.id,
                     'date': fields.datetime.now(),
                     'date_invoice': fields.datetime.now(),
                 #     'invoice_line_ids': [(0, 0, {
@@ -729,7 +734,10 @@ class tb_po_invoice(models.Model):
             #
             # }
 
-
+    def create_yfhxd(self):
+        self.invoice_back_tax_ids.action_invoice_open()
+        self.invoice_p_ids.action_invoice_open()
+        self.invoice_p_ids.create_yfhxd()
 
 
 class tb_po_invoice_line(models.Model):

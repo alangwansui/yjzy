@@ -297,6 +297,7 @@
                         <button name="apply" class="oe_highlight" type='object' string="确认" groups="base.group_system"
                                 attrs="{'invisible':[('type','!=','other_po')]}"/>
                         <button special="cancel" class="oe_highlight" groups="base.group_system" string="取消"/>
+
                         <button name="make_extra_invoice" type="object" string="创建额外账单" groups="base.group_system"/>
                         <field name="state" widget="statusbar"/>
                     </header>
@@ -378,6 +379,7 @@
                         <button name="apply" class="oe_highlight" type='object' string="确认" groups="base.group_system"
                                 attrs="{'invisible':[('type','!=','other_po')]}"/>
                         <button special="cancel" class="oe_highlight" groups="base.group_system" string="取消"/>
+                        <button name="create_yfhxd" string="创建应付核销单" type="object"/>
                         <button name="make_extra_invoice" type="object" string="创建额外账单" groups="base.group_system"/>
                         <field name="state" widget="statusbar"/>
                     </header>
