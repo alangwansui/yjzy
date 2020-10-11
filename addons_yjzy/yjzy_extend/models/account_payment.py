@@ -376,7 +376,7 @@ class account_payment(models.Model):
                     raise Warning('请填写收款备注信息！')
                 else:
                     self.state_1 = '25_cashier_submit'
-            elif ctx.get('default_sfk_type', '') == 'rcfkd':
+            elif ctx.get('default_sfk_type', '') == 'rcfkd' or self.sfk_type == 'rcfkd':
                 if not self.bank_id:
                     raise Warning('请选择付款对象的银行账号!')
                 else:
@@ -614,8 +614,17 @@ class account_payment(models.Model):
                 if one.yfsqd_ids:
                     one.yfsqd_ids.post()
 
+                # if one.fybg_ids:
+                #     one.fybg_ids.action_sheet_move_create()
+                # if one.fybg_ids:
+                #     for x in one.fybg_ids:
+                #         if x.expense_to_invoice_type != 'to_invoice':
+                #             x.action_sheet_move_create()
+                #         else:
+                #             x.action_to_invoice_done()
                 if one.fybg_ids:
-                    one.fybg_ids.action_sheet_move_create()
+                    one.fybg_ids.action_to_invoice_done()
+
                    # one.fybg_ids.payment_date_store = fields.datetime.now()
                     #akiny增加 费用明细的付款日期的写入
                # if one.expense_ids:

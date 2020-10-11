@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_expense_sheet_stage_tree" model="ir.ui.view">
+            <field name="name">expense.sheet.stage.tree</field>
+            <field name="model">expense.sheet.stage</field>
+            <field name="arch" type="xml">
+                <tree string="Expense Stage">
+                    <field name="name"/>
+                    <field name="code"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_expense_sheet_stage_form" model="ir.ui.view">
+            <field name="name">expense.sheet.stage.form</field>
+            <field name="model">expense.sheet.stage</field>
+            <field name="arch" type="xml">
+                <form string="Expense Stage">
+                    <header>
+                    </header>
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="code"/>
+                            <field name="user_ids" widget="many2many_tags"/>
+                            <field name="group_ids" widget="many2many_tags"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="act_open_expense_sheet_stage">
+            <field name="name">费用阶段</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">expense.sheet.stage</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+        </record>
+
+        <menuitem id="menu_expense_sheet_stage" name="费用阶段" parent="yjzy_extend.base_config_new" action="act_open_expense_sheet_stage" sequence="99"/>
+
+
+    </data>
+</odoo>

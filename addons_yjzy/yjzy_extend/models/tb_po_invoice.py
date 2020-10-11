@@ -157,6 +157,7 @@ class tb_po_invoice(models.Model):
             one.invoice_p_s_ids_count = len(one.invoice_p_s_ids)
 
     #902
+    bank_id = fields.Many2one('res.partner.bank', u'银行账号')
     fk_journal_id = fields.Many2one('account.journal', u'日记账',domain=[('type', 'in', ['cash', 'bank'])])
     tb_id_po_supplier = fields.Text(compute=compute_tb_id_po_supplier, string='供应商')
     expense_tax_algorithm = fields.Selection([('divide', u'除'), ('multiply', u'乘')], string='税点算法', default='divide')
@@ -689,6 +690,7 @@ class tb_po_invoice(models.Model):
                     'journal_type':'purchase',
                     'yjzy_type_1':'purchase',
                     'fk_journal_id': self.fk_journal_id.id,
+                    'bank_id':self.bank_id.id,
                     'date': fields.datetime.now(),
                     'date_invoice': fields.datetime.now(),
                 #     'invoice_line_ids': [(0, 0, {

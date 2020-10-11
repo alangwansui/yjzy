@@ -93,6 +93,7 @@
         'views/transport_bill_line_tenyale.xml',
         'views/trans_date_attachment.xml',
         'views/account_invoice_stage.xml',
+        'views/hr_expense_stage.xml',
 
         'views/product_packaging.xml',
 

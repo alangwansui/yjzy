@@ -31,8 +31,8 @@ class ExpenseSheetStage(models.Model):
     # _sql_constraints = [
     #     ('name_code', 'unique(code)', u"编码不能重复"),
     # ]
-    user_ids = fields.Many2many('res.users', 'ref_tb_users', 'fid', 'tid', 'Users') #可以进行判断也可以结合自定义视图模块使用
-    group_ids = fields.Many2many('res.groups', 'ref_tb_group', 'gid', 'bid', 'Groups')
+    user_ids = fields.Many2many('res.users', 'ref_expense_users', 'fid', 'tid', 'Users') #可以进行判断也可以结合自定义视图模块使用
+    group_ids = fields.Many2many('res.groups', 'ref_expense_group', 'gid', 'bid', 'Groups')
 
 class hr_expense_sheet(models.Model):
     _inherit = 'hr.expense.sheet'
@@ -266,6 +266,8 @@ class hr_expense_sheet(models.Model):
     def action_account_approve(self):
         if self.expense_to_invoice_type == 'to_invoice':
             stage_id = self._stage_find(domain=[('code', '=', '040')])
+            if not self.fk_journal_id:
+                raise Warning('请填写付款账号')
             if self.tb_po_invoice_ids:
                 self.tb_po_invoice_ids.action_submit()
                 self.write({'account_confirm': self.env.user.id,
@@ -313,6 +315,16 @@ class hr_expense_sheet(models.Model):
                         'stage_id': stage_id.id,
                         'manager_confirm_date': fields.datetime.now()})
 
+    def action_to_invoice_done(self):
+        stage_id = self._stage_find(domain=[('code', '=', '060')])
+        if self.expense_to_invoice_type == 'to_invoice':
+            self.write({'stage_id': stage_id.id,
+                        'state':'done',
+                        })
+            self.with_context(force=1).btn_user_confirm()#上面的状态改变后，会导致明细的状态被变化
+        else:
+            self.action_sheet_move_create()
+            self.write({'stage_id': stage_id.id, })
 
 
     def action_refuse(self, reason):
@@ -322,22 +334,39 @@ class hr_expense_sheet(models.Model):
         group = self.env.user.groups_id
         if not stage_preview.user_ids and user not in stage_preview.user_ids:
             raise Warning('您没有权限拒绝')
+        elif self.state in ['done','post']:
+            raise Warning('已经完成的费用不允许拒绝')
         else:
             self.write({'state': 'cancel',
-                        'account_confirm': False,
-                        'account_confirm_date': False,
-                        'employee_confirm': False,
-                        'employee_confirm_date': False,
-                        'manager_confirm': False,
-                        'manager_confirm_date': False,
-                        'stage_id': stage_id.id, })
+                    'account_confirm': False,
+                    'account_confirm_date': False,
+                    'employee_confirm': False,
+                    'employee_confirm_date': False,
+                    'manager_confirm': False,
+                    'manager_confirm_date': False,
+                    'stage_id': stage_id.id, })
             self.btn_undo_confirm_force()
             self.btn_release_budget()
+            self.payment_id.unlink()
+            if self.expense_to_invoice_type == 'to_invoice':
+                self.tb_po_invoice_ids.unlink()
+                self.expense_to_invoice_type = 'normal'
+
         for tb in self:
             tb.message_post_with_view('yjzy_extend.expense_sheet_template_refuse_reason',
-                                      values={'reason': reason, 'name': self.ref},
+                                      values={'reason': reason, 'name': self.name},
                                       subtype_id=self.env.ref(
                                           'mail.mt_note').id)  # 定义了留言消息的模板，其他都可以参考，还可以继续参考费用发送计划以及邮件方式
+
+    def action_draft(self):
+        stage_id = self._stage_find(domain=[('code', '=', '010')])
+        # budget = self.env['budget.budget'].create({
+        #     'type': 'transport',
+        #     'tb_id': self.id,
+        # })
+        self.write({'state': 'draft',
+                    'stage_id': stage_id.id})
+
     #责任人审批阶段的拒绝
     def action_refuse_user(self, reason):
         stage_id = self._stage_find(domain=[('code', '=', '090')])
@@ -457,14 +486,21 @@ class hr_expense_sheet(models.Model):
 #定
     def create_tb_po_invoice(self):
         self.ensure_one()
+        line_tb_id = len(self.expense_line_ids.filtered(lambda x: not x.tb_id))
+        if not self.fk_journal_id:
+            raise Warning('请先选择付款账户！')
+        if line_tb_id != 0:
+            raise Warning('有费用明细未选择出运合同！')
+
         bill_id = self.expense_line_ids.mapped('tb_id')
         tb_po_id = self.env['tb.po.invoice'].create({'tb_id': bill_id and bill_id[0].id,
                                                      'invoice_product_id': self.env.ref('yjzy_extend.product_qtyfk').id,# 0821
-                                                     'tax_rate_add':1,
+                                                     'tax_rate_add':0,
                                                      'expense_tax_algorithm':'multiply',
-                                                     'expense_sheet_id':self.id,
+                                                     'expense_sheet_id':self.id, #1009
                                                      'type':'expense_po',
                                                      'fk_journal_id': self.fk_journal_id.id,
+                                                     'bank_id':self.bank_id.id,
                                                      })
 
         view = self.env.ref('yjzy_extend.tb_po_form')

@@ -344,6 +344,7 @@ class account_invoice(models.Model):
 
 
     #928
+    bank_id = fields.Many2one('res.partner.bank', u'银行账号')
     fk_journal_id = fields.Many2one('account.journal', u'日记账',domain=[('type', 'in', ['cash', 'bank'])])
     tb_po_invoice_ids = fields.One2many('tb.po.invoice','yjzy_invoice_id',u'额外账单申请单',domain=[('type','=','extra')])
     tb_po_invoice_ids_count = fields.Integer(u'额外账单申请单数量',compute=compute_tb_po_invoice_ids)
@@ -636,7 +637,7 @@ class account_invoice(models.Model):
         journal = self.env['account.journal'].search(domain, limit=1)
         account_obj = self.env['account.account']
         bank_account = account_obj.search(
-            [('code', '=', '10021'), ('company_id', '=', self.env.user.company_id.id)],
+            [('code', '=', '112301'), ('company_id', '=', self.env.user.company_id.id)],
             limit=1)
         yfhxd = self.env['account.reconcile.order'].create({
             'partner_id': self.partner_id.id,
@@ -644,11 +645,13 @@ class account_invoice(models.Model):
             'invoice_ids': [(4, self.id)],
             'payment_type': 'outbound',
             'fk_journal_id':self.fk_journal_id.id,
+            'bank_id':self.bank_id.id,
             'partner_type': 'supplier',
             'sfk_type': 'yfhxd',
             'be_renling': True,
             'name': name,
             'journal_id': journal.id,
+            'expense_sheet_id':self.expense_sheet_id.id, #1009
             'payment_account_id': bank_account.id
         })
         self.reconcile_order_id = yfhxd

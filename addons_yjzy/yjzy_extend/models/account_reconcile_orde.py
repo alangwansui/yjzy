@@ -115,7 +115,7 @@ class account_reconcile_order(models.Model):
 
     def default_payment_account(self):
         account_obj = self.env['account.account']
-        bank_account = account_obj.search([('code', '=', '10021'), ('company_id', '=', self.env.user.company_id.id)], limit=1)
+        bank_account = account_obj.search([('code', '=', '112301'), ('company_id', '=', self.env.user.company_id.id)], limit=1)
         print('bank_account',bank_account)
         return bank_account and bank_account.id
 
@@ -270,6 +270,8 @@ class account_reconcile_order(models.Model):
                                      ('60', u'核销-应付')],'认领来源')
     #908
     # supplier_advance_payment_ids_char = fields.Char(u'相关预付',compute=_compute_supplier_advance_payment_ids_char)
+
+    expense_sheet_id = fields.Many2one('hr.expense.sheet',u'费用报告')
     supplier_advance_payment_ids = fields.Many2many('account.payment',u'相关预付', compute=_compute_supplier_advance_payment_ids)
     supplier_advance_payment_ids_count = fields.Integer('相关预付数量',compute=compute_supplier_advance_payment_ids_count)
     #903
@@ -889,8 +891,9 @@ class account_reconcile_order(models.Model):
             'include_tax': self.include_tax,
             'fybg_ids': fybg_data,
             'back_tax_invoice_ids': back_tax_invoice_data,
+            'expense_sheet_id':self.expense_sheet_id.id
         })
-
+        self.expense_sheet_id.payment_id = payment.id #1009
         self.yjzy_payment_id = payment
 
 
