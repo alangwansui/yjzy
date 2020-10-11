@@ -116,7 +116,7 @@
                                 </div>
                             </group>
                             <group>
-                                <field name="partner_id" string="新增供应商"
+                                <field name="partner_id" string="新增供应商" attrs="{'required':[('type','in',['other_po','expense_po'])]}"
                                        domain="[('supplier', '=', True),('is_company','=',True)]"/>
                                 <field name="tax_rate_add" string="税点" attrs="{'invisible':[('type','!=','other_po')]}"/>
                                 <field name="expense_tax_algorithm" widget="radio" options="{'horizontal': true}" attrs="{'invisible':[('type','!=','other_po')]}"/>

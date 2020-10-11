@@ -481,7 +481,7 @@
             <field name="arch" type="xml">
                 <form string="其他应付申请" class="o_expense_sheet">
                     <header>
-
+                        <button name="action_draft" string="重置草稿" type="object" attrs="{'invisible':[('state_1','not in',['refused'])]}"/>
                         <button name="action_to_employee_approval" string="提交" class="oe_highlight" type="object" attrs="{'invisible':[('state_1','not in',['draft'])]}"/>
                         <button name="action_to_account_approval" string="责任人审批(自动)" groups="base.group_system"  type="object" attrs="{'invisible':[('state_1','not in',['employee_approval'])]}"/>
                         <button name="action_account_approve" string="财务审批" class="oe_highlight" type="object" attrs="{'invisible':[('state_1','not in',['account_approval'])]}"/>

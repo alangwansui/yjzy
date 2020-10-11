@@ -23,10 +23,12 @@
         <field eval="25" name="priority"/>
         <field name="arch" type="xml">
             <form string="Expense Reports" class="o_expense_sheet">
-                <header groups="base.group_system">
-                    <button name="action_to_employee_approval" type="object" string="提交" attrs="{'invisible':[('state_1','not in',['draft'])]}"/>
-                    <button name="action_account_approve" type="object" string="财务审批" attrs="{'invisible':[('state_1','not in',['account_approval'])]}"/>
-<field name="state_1" widget="statusbar"
+                <header>
+                    <button name="action_draft" string="重置草稿" type="object" attrs="{'invisible':[('state_1','not in',['refused'])]}"/>
+                    <button name="action_to_employee_approval" type="object" string="提交" class="oe_highlight" attrs="{'invisible':[('state_1','not in',['draft'])]}"/>
+                    <button name="action_account_approve" type="object" string="财务审批" class="oe_highlight" attrs="{'invisible':[('state_1','not in',['account_approval'])]}"/>
+                     <button name="%(expense_sheet_refuse_wizard_action)d" string="拒绝" type="action" attrs="{'invisible':[('state_1','in',['draft','refused','done'])]}"/>
+                    <field name="state_1" widget="statusbar"
                                statusbar_visible=" "/>
                         <field name="stage_id" groups="base.group_system"/>
                 </header>
@@ -67,7 +69,7 @@
                         <group>
                             <field name="payment_id" string="收款单"
                                    domain="['&amp;','&amp;',('state', '=', 'posted'),('sfk_type', '=', 'rcskd'),('balance','!=',0)]"
-                                   options='{"no_create": True}' context="{'bank_amount':1}"/>
+                                   options='{"no_create": True}' context="{'bank_amount':1,'form_view_ref':'yjzy_extend.view_rcskd_form'}"/>
                             <field name="balance" string="收款单余额"/>
 
 
@@ -168,7 +170,7 @@
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="domain">[('total_amount','&lt;', 0)]</field>
-        <field name="context">{'default_bank_journal_code': 'ysdrl','defualt_expense_to_invoice_type':'incoming'}</field>
+        <field name="context">{'default_bank_journal_code': 'ysdrl','default_expense_to_invoice_type':'incoming'}</field>
     </record>
 
 

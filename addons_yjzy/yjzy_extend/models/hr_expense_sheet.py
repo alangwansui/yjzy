@@ -332,26 +332,27 @@ class hr_expense_sheet(models.Model):
         stage_preview = self.stage_id
         user = self.env.user
         group = self.env.user.groups_id
-        if not stage_preview.user_ids and user not in stage_preview.user_ids:
-            raise Warning('您没有权限拒绝')
-        elif self.state in ['done','post']:
-            raise Warning('已经完成的费用不允许拒绝')
-        else:
-            self.write({'state': 'cancel',
+        if self.state_1 in ['draft','employee_approval'] and self.employee_id.user_id != user:
+            raise Warning('您不是申请人，无权拒绝!')
+        if self.state_1 in ['done','post']:
+            raise Warning('已完成不允许拒绝!')
+        if self.state_1 not in ['draft','employee_approval','done','post'] and  user not in stage_preview.user_ids: #not stage_preview.user_ids and
+            raise Warning('您没有权限拒绝!')
+        self.write({'state': 'cancel',
                     'account_confirm': False,
                     'account_confirm_date': False,
                     'employee_confirm': False,
                     'employee_confirm_date': False,
                     'manager_confirm': False,
                     'manager_confirm_date': False,
-                    'stage_id': stage_id.id, })
-            self.btn_undo_confirm_force()
-            self.btn_release_budget()
+                    'stage_id': stage_id.id,})
+        self.btn_undo_confirm_force()
+        self.btn_release_budget()
+        if self.expense_to_invoice_type != 'incoming':
             self.payment_id.unlink()
-            if self.expense_to_invoice_type == 'to_invoice':
-                self.tb_po_invoice_ids.unlink()
-                self.expense_to_invoice_type = 'normal'
-
+        if self.expense_to_invoice_type == 'to_invoice':
+            self.tb_po_invoice_ids.unlink()
+            self.expense_to_invoice_type = 'normal'
         for tb in self:
             tb.message_post_with_view('yjzy_extend.expense_sheet_template_refuse_reason',
                                       values={'reason': reason, 'name': self.name},
