@@ -451,7 +451,7 @@
                     <group expand="0" string="Group By">
                         <filter string="费用类型" domain="[]" name="group_expense_to_invoice_type" context="{'group_by': 'expense_to_invoice_type'}"/>
                         <filter string="审批流" domain="[]" context="{'group_by': 'x_sheet_wkf_state'}" invisible="1"/>
-                        <filter string="审批状态" domain="[]" name="group_by_state_1" context="{'group_by': 'state_1'}"/>
+
 
                         <filter string="申请单" domain="[]" context="{'group_by': 'sheet_id'}"/>
                         <filter string="责任人" domain="[]" context="{'group_by': 'employee_id'}"/>
@@ -506,6 +506,7 @@
                     <filter string="New Mail" name="message_unread" domain="[('message_unread', '=', True)]"/>
                     <group expand="0" string="Group By">
                         <filter string="是否转货款" domain="[]" name="group_to_invoice" context="{'group_by': 'expense_to_invoice_type'}"/>
+                        <filter string="审批状态" domain="[]" name="group_by_stage_id" context="{'group_by': 'stage_id'}"/>
                         <filter string="Employee" domain="[]" context="{'group_by': 'employee_id'}"/>
                         <filter string="Department" domain="[]" context="{'group_by': 'department_id'}"/>
                         <filter string="Company" domain="[]" context="{'group_by': 'company_id'}" groups="base.group_multi_company"/>
@@ -1973,66 +1974,69 @@
               action="action_hr_expense_sheet_done"/>
 <!--          一般用户-->
          <record id="action_hr_expense_sheet_user_todo" model="ir.actions.act_window">
-            <field name="name">待处理费用</field>
+            <field name="name">用户待处理</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">hr.expense.sheet</field>
             <field name="view_mode">tree,form</field>
+             <field name="search_view_id" ref="hr_expense_sheet_search_new"/>
             <field name="domain">['&amp;',('total_amount','>', 0),'|','&amp;','|',('state_1','in', ['draft','refused','cancel']),
                 ('expense_line_ids.state','=','refused'),('employee_id.user_id','=',uid),'&amp;', '&amp;',
                 ('expense_line_ids.employee_id.user_id','=',uid),('expense_line_ids.state','=','reported'),
                 ('state_1','=', 'employee_approval')]</field>
-            <field name="context">{'search_default_group_by_state_1':1,'default_account_confirm_uid': 9,
+            <field name="context">{'search_default_group_by_stage_id':1,'default_account_confirm_uid': 9,
                 'default_manager_confirm_uid': 7,'only_name':1 }</field>
             <!--field name="target">new</field-->
             <field name="view_ids" eval="[(5, 0, 0),
-                              (0, 0, {'view_mode': 'tree', 'view_id': ref('hr_expense_sheet_manager_approve_tree')}),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('hr_expense_sheet_user_tree')}),
                               (0, 0, {'view_mode': 'form', 'view_id': ref('view_hr_expense_sheet_new_form')}),
                               ]"/>
         </record>
-        <menuitem id="menu_hr_expense_sheet_user_todo" name="用户待处理"
+        <menuitem id="menu_hr_expense_sheet_user_todo" name="待处理费用"
               parent="hr_expense.menu_hr_expense_root"
               action="action_hr_expense_sheet_user_todo" />
 <!--    财务-->
         <record id="action_hr_expense_sheet_account_todo" model="ir.actions.act_window">
-            <field name="name">待处理费用</field>
+            <field name="name">财务待处理</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">hr.expense.sheet</field>
             <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="hr_expense_sheet_search_new"/>
             <field name="domain">['&amp;',('total_amount','>', 0),'|','|','&amp;','|',('state_1','in', ['draft','refused','cancel']),
                 ('expense_line_ids.state','in', ['draft','reported']),('employee_id.user_id','=',uid),'&amp;', '&amp;',
                 ('expense_line_ids.employee_id.user_id','=',uid),('expense_line_ids.state','in', ['draft','reported']),
                 ('state_1','=', 'employee_approval'),('state_1','in', ['account_approval'])]</field>
-            <field name="context">{'search_default_group_by_state_1':1,'default_account_confirm_uid': 9,
+            <field name="context">{'search_default_group_by_stage_id':1,'default_account_confirm_uid': 9,
                 'default_manager_confirm_uid': 7,'only_name':1 }</field>
             <!--field name="target">new</field-->
             <field name="view_ids" eval="[(5, 0, 0),
-                              (0, 0, {'view_mode': 'tree', 'view_id': ref('hr_expense_sheet_manager_approve_tree')}),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('hr_expense_sheet_user_tree')}),
                               (0, 0, {'view_mode': 'form', 'view_id': ref('view_hr_expense_sheet_new_form')}),
                               ]"/>
         </record>
-<menuitem id="menu_hr_expense_sheet_account_todo" name="财务待处理"
+<menuitem id="menu_hr_expense_sheet_account_todo" name="待处理费用"
               parent="hr_expense.menu_hr_expense_root"
               action="action_hr_expense_sheet_account_todo" groups="base.group_system"/>
         <!--    总经理-->
         <record id="action_hr_expense_sheet_manager_todo" model="ir.actions.act_window">
-            <field name="name">待处理费用</field>
+            <field name="name">总经理待处理费用</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">hr.expense.sheet</field>
             <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="hr_expense_sheet_search_new"/>
             <field name="domain">['&amp;',('total_amount','>', 0),'|','|','&amp;','|',('state_1','in', ['draft','refused','cancel']),
                 ('expense_line_ids.state','in', ['draft','reported']),('employee_id.user_id','=',uid),'&amp;', '&amp;',
                 ('expense_line_ids.employee_id.user_id','=',uid),('expense_line_ids.state','in', ['draft','reported']),
                 ('state_1','=', 'employee_approval'),('state_1','in', ['manager_approval'])]</field>
-            <field name="context">{'search_default_group_by_state_1':1,'default_account_confirm_uid': 9,
+            <field name="context">{'search_default_group_by_stage_id':1,'default_account_confirm_uid': 9,
                 'default_manager_confirm_uid': 7,'only_name':1 }</field>
             <!--field name="target">new</field-->
             <field name="view_ids" eval="[(5, 0, 0),
-                              (0, 0, {'view_mode': 'tree', 'view_id': ref('hr_expense_sheet_manager_approve_tree')}),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('hr_expense_sheet_user_tree')}),
                               (0, 0, {'view_mode': 'form', 'view_id': ref('view_hr_expense_sheet_new_form')}),
                               ]"/>
         </record>
 
-        <menuitem id="menu_hr_expense_sheet_manager_todo" name="总经理待处理"
+        <menuitem id="menu_hr_expense_sheet_manager_todo" name="待处理费用"
               parent="hr_expense.menu_hr_expense_root"
               action="action_hr_expense_sheet_manager_todo" groups="base.group_system"/>
 

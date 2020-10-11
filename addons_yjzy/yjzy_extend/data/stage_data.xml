@@ -152,7 +152,7 @@
             <field name="state">done</field>
         </record>
         <record model="expense.sheet.stage" id="stage_expense_sheet_refused">
-            <field name="name">取消</field>
+            <field name="name">拒绝</field>
             <field name="code">090</field>
             <field name="sequence" eval="90"/>
             <field name="state">refused</field>
