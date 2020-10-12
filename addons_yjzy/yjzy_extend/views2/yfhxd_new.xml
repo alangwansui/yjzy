@@ -114,18 +114,18 @@
         <field name="arch" type="xml">
             <form string="应付核销单">
                 <header attrs="{'invisible':[('operation_wizard','not in',['03','05'])]}" >
-                    <button name="action_05" attrs="{'invisible':[('operation_wizard','not in',['03'])]}" class="oe_highlight" string="下一步:查看并确认账单" type="object" />
-                    <button name="make_lines" invisible="context.get('from_tanchuang')" attrs="{'invisible':[('operation_wizard','not in',['05'])]}" class="oe_highlight" string="下一步:填写申请金额" type="object" />
+                    <button name="action_05" attrs="{'invisible':[('operation_wizard','not in',['03'])]}" class="oe_highlight" string="下一步:查看并确认账单" type="object" context="{'show_tb_ref':1}"/>
+                    <button name="make_lines" invisible="context.get('from_tanchuang')" attrs="{'invisible':[('operation_wizard','not in',['05'])]}" class="oe_highlight" string="下一步:填写申请金额" type="object" context="{'show_tb_ref':1}"/>
                     <button name="make_lines_new"  invisible="not context.get('from_tanchuang')" string="下一步:填写申请金额" type="object"/>
                 </header>
                   <header attrs="{'invisible':[('operation_wizard','in',['03','05'])]}" >
 
                     <button name="action_posted_new" class="oe_highlight" states="draft" string="提交" type="object"/>
-                    <button name="action_approve_new" class="oe_highlight" states="posted" string="总经理审批" attrs="{'invisible':[('sfk_type','!=','yfhxd')]}" type="object"/>
+                    <button name="action_approve_new" class="oe_highlight" states="posted" string="总经理审批" attrs="{'invisible':['|',('state','!=','posted'),('sfk_type','!=','yfhxd')]}" type="object"/>
                     <button name="action_done"  class="oe_highlight"  string="财务确认" attrs="{'invisible':['|',('state','!=','approved'),('sfk_type','!=','yshxd')]}" type="object"/>
                     <button name="action_draft_new" class="oe_highlight" states="refused" string="重置草稿" type="object"/>
                     <button name="%(reconcile_refuse_wizard_action)d" string="拒绝" type="action" attrs="{'invisible':[('state','=','done')]}"/>
-                    <button name="open_wizard_reconcile_invoice" type="object" string="添加应付账单"/>
+                    <button name="open_wizard_reconcile_invoice" type="object" string="添加应付账单" groups="base.group_system"/>
                     <button name="compute_invoice_ids" type="object" string="计算发票" groups="base.group_system"/>
                       <button name="create_yjzy_payment_yfrl" type="object" string="创建认领单" groups="base.group_system"/>
                     <field name="state" widget="statusbar"/>
@@ -251,7 +251,7 @@
                             <field name="line_no_ids">
                                 <tree  editable="bottom" create="false">
                                 <field name="id" invisible="1"/>
-                                <field name="invoice_id" string="应付账单" />
+                                <field name="invoice_id" string="应付账单" context="{'show_tb_ref':1}"/>
                                  <field name="invoice_residual" string="未付金额" attrs="{'column_invisible':[('parent.operation_wizard','not in',['10'])]}"/>
                                 <field name="payment_currency_id" invisible="1"/>
                                 <field name="yjzy_payment_id" string="预付单" domain="[('sfk_type','=','yfsqd'),('partner_id','=',parent.partner_id)]" attrs="{'column_invisible':[('parent.operation_wizard','not in',['25'])]}" context="{'form_view_ref': 'yjzy_extend.view_yfsqd_form','advance_po_amount':1}"/>
@@ -466,6 +466,9 @@
               parent="menu_invoice_payment_apply_root_next" sequence="10"
               action="action_yfhxd_new_payment_no_submit"/>
 
+
+
+
     <record model="ir.actions.act_window" id="action_yfhxd_new_advance_no_submit">
         <field name="name">未提交预付-应付认领</field>
         <field name="type">ir.actions.act_window</field>
@@ -509,7 +512,7 @@
         <field name="res_model">account.reconcile.order</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
-        <field name="domain">[('sfk_type','=','yfhxd'),('state','in',['submit']),('hxd_type_new','in',['40'])]</field>
+        <field name="domain">[('sfk_type','=','yfhxd'),('state','in',['posted']),('hxd_type_new','in',['40'])]</field>
         <field name="context">{'advance_po_amount':1,'default_sfk_type': 'yfhxd','default_hxd_type_new':'40', 'default_payment_type': 'outbound', 'default_be_renling': 1, 'default_partner_type':
             'supplier', 'show_po': 1,'default_operation_wizard':'30'}
         </field>
@@ -524,13 +527,33 @@
               parent="menu_invoice_payment_apply_root_next" sequence="20"
               action="action_yfhxd_new_payment_submit"/>
 
+
+    <record model="ir.actions.act_window" id="action_yfhxd_new_payment_no_paid_all">
+        <field name="name">所有待处理应付-付款申请单</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.reconcile.order</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('sfk_type','=','yfhxd'),('state','in',['draft','refused','canceled','posted','approved']),('hxd_type_new','in',['40'])]</field>
+        <field name="context">{'search_default_group_by_state':1,'advance_po_amount':1,'default_sfk_type': 'yfhxd',
+            'default_hxd_type_new':'40','default_payment_type': 'outbound', 'default_be_renling': 1, 'default_partner_type':
+            'supplier', 'show_po': 1,'default_operation_wizard':'30'}
+        </field>
+              <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('account_yfhxd_tree_view_approve_new')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('account_yfhxd_form_view_new')})]"/>
+        </record>
+    <menuitem id="menu_yfhxd_new_payment_no_paid_all" name="待处理"
+              parent="menu_invoice_payment_apply_root" sequence="10"
+              action="action_yfhxd_new_payment_no_paid_all"/>
+
     <record model="ir.actions.act_window" id="action_yfhxd_new_advance_submit">
         <field name="name">审批中预付-应付认领</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">account.reconcile.order</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
-        <field name="domain">[('sfk_type','=','yfhxd'),('state','in',['submit']),('hxd_type_new','=','30')]</field>
+        <field name="domain">[('sfk_type','=','yfhxd'),('state','in',['posted']),('hxd_type_new','=','30')]</field>
         <field name="context">{'advance_po_amount':1,'default_sfk_type': 'yfhxd','default_hxd_type_new':'30', 'default_payment_type': 'outbound', 'default_be_renling': 1, 'default_partner_type':
             'supplier', 'show_po': 1,'default_operation_wizard':'30'}
         </field>
@@ -548,7 +571,7 @@
         <field name="res_model">account.reconcile.order</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
-        <field name="domain">[('sfk_type','=','yfhxd'),('state','in',['submit']),('hxd_type_new','=','60')]</field>
+        <field name="domain">[('sfk_type','=','yfhxd'),('state','in',['posted']),('hxd_type_new','=','60')]</field>
         <field name="context">{'advance_po_amount':1,'default_sfk_type': 'yfhxd','default_hxd_type_new':'60', 'default_payment_type': 'outbound', 'default_be_renling': 1, 'default_partner_type':
             'supplier', 'show_po': 1,'default_operation_wizard':'30'}
         </field>
@@ -605,6 +628,7 @@
     <menuitem id="menu_yfhxd_new_payment_done_next" name="已完成" sequence="40"
               parent="menu_invoice_payment_apply_root_next"
               action="action_yfhxd_new_payment_done"/>
+
 
     <record model="ir.actions.act_window" id="action_yfhxd_new_advance_done">
         <field name="name">已完成预付-应付认领</field>

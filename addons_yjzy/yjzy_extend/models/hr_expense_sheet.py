@@ -10,7 +10,7 @@ from odoo.addons import decimal_precision as dp
 Hr_Expense_Selection = [('draft',u'草稿'),
                          ('employee_approval',u'待责任人确认'),
                          ('account_approval',u'待财务审批'),
-                         ('manager_approval',u'待总经理审理'),
+                         ('manager_approval',u'待总经理审批'),
                          ('post',u'审批完成待支付'),
                          ('done',u'完成'),
                          ('refused', u'已拒绝'),
@@ -241,7 +241,15 @@ class hr_expense_sheet(models.Model):
             self.btn_user_confirm()
 
 
-    #给管理员显示
+    def action_account_to_manager(self):
+        if self.expense_to_invoice_type == 'normal' and self.employee_user_id == self.env.user:
+            self.with_context(force=1).btn_user_confirm()
+            self.action_account_approve()
+        else:
+            raise Warning('不允许直接提交总经理')
+
+
+            #给管理员显示
     def action_to_account_approval(self):
         stage_id = self._stage_find(domain=[('code', '=', '030')])
         if self.expense_to_invoice_type == 'normal':

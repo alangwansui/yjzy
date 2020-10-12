@@ -6,7 +6,31 @@ from .comm import sfk_type
 import logging
 
 _logger = logging.getLogger(__name__)
+Account_reconcile_Selection = [('draft',u'草稿'),
+                                 ('account_approval',u'待财务审批'),
+                                 ('manager_approval',u'待总经理审批'),
+                                 ('post',u'审批完成待支付'),
+                                 ('done',u'完成'),
+                                 ('refused', u'已拒绝'),
+                                 ('cancel', u'取消'),
+                        ]
 
+class AccountReconcileStage(models.Model):
+
+    _name = "account.reconcile.stage"
+    _description = "Account Reconcile Stage"
+    _order = 'sequence'
+
+    name = fields.Char('Stage Name', translate=True, required=True)
+    code = fields.Char('code')
+    sequence = fields.Integer(help="Used to order the note stages", default=1)
+    state = fields.Selection(Account_reconcile_Selection, 'State', default=Account_reconcile_Selection[0][0]) #track_visibility='onchange',
+    fold = fields.Boolean('Folded by Default')
+    # _sql_constraints = [
+    #     ('name_code', 'unique(code)', u"编码不能重复"),
+    # ]
+    user_ids = fields.Many2many('res.users', 'ref_reconcile_users', 'fid', 'tid', 'Users') #可以进行判断也可以结合自定义视图模块使用
+    group_ids = fields.Many2many('res.groups', 'ref_reconcile_group', 'gid', 'bid', 'Groups')
 
 class account_reconcile_order(models.Model):
     _name = 'account.reconcile.order'
@@ -260,6 +284,16 @@ class account_reconcile_order(models.Model):
         for one in self:
             one.supplier_advance_payment_ids_count = len(one.supplier_advance_payment_ids)
 
+    @api.model
+    def _default_account_reconcile_stage(self):
+        stage = self.env['account.reconcile.stage']
+        return stage.search([], limit=1)
+
+    stage_id = fields.Many2one(
+        'account.reconcile.stage',
+        default=_default_account_reconcile_stage)
+    state_1 = fields.Selection(Account_reconcile_Selection, u'审批流程', default='draft', index=True, related='stage_id.state',
+                               track_visibility='onchange')  # 费用审批流程
     #0911
     #核销单分预收付-应收付，应收付-收付款
     hxd_type_new = fields.Selection([('10', u'预收-应收'),

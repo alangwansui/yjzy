@@ -1292,7 +1292,6 @@ class account_invoice(models.Model):
         show_date_finish = self.env.context.get('show_date_finish')
         print('=112====', show_date_finish)
         res = []
-
         for one in self:
             purchase_date_finish_state = one.purchase_date_finish_state
             if one.purchase_date_finish_state == 'draft':

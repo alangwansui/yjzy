@@ -450,7 +450,7 @@
                             invisible="1"/>
                     <group expand="0" string="Group By">
                         <filter string="费用类型" domain="[]" name="group_expense_to_invoice_type" context="{'group_by': 'expense_to_invoice_type'}"/>
-                        <filter string="状态1费用类型" domain="[]" name="group_state_1_expense_to_invoice_type" context="{'group_by': 'state_1','expense_to_invoice_type'}"/>
+                        <filter string="状态1费用类型" domain="[]" name="group_state_1_expense_to_invoice_type" context="{'group_by':('state_1','expense_to_invoice_type')}"/>
                         <filter string="审批流" domain="[]" context="{'group_by': 'x_sheet_wkf_state'}" invisible="1"/>
 
 
@@ -1420,6 +1420,7 @@
                         <button name="action_draft" string="重置草稿" type="object" attrs="{'invisible':[('state_1','not in',['refused'])]}"/>
 
                         <button name="action_to_employee_approval" string="提交" type="object" class="oe_highlight" attrs="{'invisible':[('state_1','not in',['draft'])]}"/>
+                        <button name="action_account_to_manager" string="直接提交总经理" type="object" class="oe_highlight" attrs="{'invisible':[('state_1','not in',['draft'])]}" groups="account.group_account_manager"/>
                         <button name="action_to_account_approval" string="责任人审批(自动)" groups="base.group_system"  type="object" attrs="{'invisible':[('state_1','not in',['employee_approval'])]}"/>
                         <button name="action_account_approve" string="财务审批" type="object" class="oe_highlight"  attrs="{'invisible':[('state_1','not in',['account_approval'])]}"/>
                         <button name="action_manager_approve" string="总经理审批" type="object" class="oe_highlight"  attrs="{'invisible':[('state_1','not in',['manager_approval'])]}"/>

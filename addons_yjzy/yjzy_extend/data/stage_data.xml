@@ -163,5 +163,50 @@
             <field name="sequence" eval="100"/>
             <field name="state">cancel</field>
         </record>
+
+
+        <!--应付核销审批-->
+        <record model="account.reconcile.stage" id="stage_account_reconcile_draft">
+            <field name="name">草稿</field>
+            <field name="code">010</field>
+            <field name="sequence" eval="10"/>
+            <field name="state">draft</field>
+        </record>
+        <record model="account.reconcile.stage" id="stage_account_reconcile_account_approval">
+            <field name="name">待财务审批</field>
+            <field name="code">030</field>
+            <field name="sequence" eval="30"/>
+            <field name="state">account_approval</field>
+        </record>
+        <record model="account.reconcile.stage" id="stage_account_reconcile_manager_approval">
+            <field name="name">待总经理审批</field>
+            <field name="code">040</field>
+            <field name="sequence" eval="40"/>
+            <field name="state">manager_approval</field>
+        </record>
+        <record model="account.reconcile.stage" id="stage_account_reconcile_post">
+            <field name="name">审批完成待支付</field>
+            <field name="code">050</field>
+            <field name="sequence" eval="50"/>
+            <field name="state">post</field>
+        </record>
+        <record model="account.reconcile.stage" id="stage_account_reconcile_done">
+            <field name="name">完成</field>
+            <field name="code">060</field>
+            <field name="sequence" eval="60"/>
+            <field name="state">done</field>
+        </record>
+        <record model="account.reconcile.stage" id="stage_account_reconcile_refused">
+            <field name="name">拒绝</field>
+            <field name="code">090</field>
+            <field name="sequence" eval="90"/>
+            <field name="state">refused</field>
+        </record>
+        <record model="account.reconcile.stage" id="stage_account_reconcile_cancel">
+            <field name="name">取消</field>
+            <field name="code">100</field>
+            <field name="sequence" eval="100"/>
+            <field name="state">cancel</field>
+        </record>
     </data>
 </odoo>
