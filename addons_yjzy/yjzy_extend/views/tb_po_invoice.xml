@@ -82,7 +82,7 @@
                                 string="提交"/>
                         <button name="action_manager_approve" states="20_submit" class="oe_highlight" type='object'
                                 string="总经理审批"/>
-                        <button name="action_refuse" class="oe_highlight" type='object' string="拒绝"/>
+                        <button name="action_refuse" type='object' string="拒绝"/>
                         <button name="apply_expense_sheet" class="oe_highlight" type='object' groups="base.group_system"
                                 string="费用确认" attrs="{'invisible':[('type','!=','expense_po')]}"/>
                         <button name="apply" class="oe_highlight" type='object' string="确认" groups="base.group_system"

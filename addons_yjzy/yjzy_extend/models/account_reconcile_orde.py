@@ -927,7 +927,8 @@ class account_reconcile_order(models.Model):
             'back_tax_invoice_ids': back_tax_invoice_data,
             'expense_sheet_id':self.expense_sheet_id.id
         })
-        self.expense_sheet_id.payment_id = payment.id #1009
+        if self.expense_sheet_id:
+            self.expense_sheet_id.payment_id = payment.id #1009
         self.yjzy_payment_id = payment
 
 
