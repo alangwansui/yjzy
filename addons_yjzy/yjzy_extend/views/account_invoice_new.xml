@@ -1122,7 +1122,7 @@
             <field name="name">account.invoice.supplier.new.form</field>
             <field name="model">account.invoice</field>
             <field name="arch" type="xml">
-                <form string="应付账单">
+                <form string="应付账单" create="false">
                     <header attrs="{'invisible':[('is_yjzy_invoice','=',False)]}" groups="base.group_system">
                         <button name="stage_action_submit" type="object" string="提交审批"
                                 class="oe_highlight" />

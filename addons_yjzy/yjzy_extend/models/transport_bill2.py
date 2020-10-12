@@ -789,4 +789,16 @@ class tbl_hsname_all(models.Model):
     purchase_amount_min_add_rest = fields.Float('采购池(上限)', digits=(2, 2),compute=compute_info)
     # purchase_back_tax_amount2_rest = fields.Float('本次退税金额', digits=(2, 2),compute=compute_info)
 
-    # def open_invoice_ids(self):
+    # def open_inv_hs_name_line_ids(self):
+    #     tree_view = self.env.ref('yjzy_extend.invoice_new_1_tree')
+    #     form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form')
+    #     self.ensure_one()
+    #     return {
+    #         'name': u'额外账单',
+    #         'view_type': 'form',
+    #         'type': 'ir.actions.act_window',
+    #         'view_mode': 'tree,form',
+    #         'res_model': 'account.invoice',
+    #         'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
+    #         'target': 'current',
+    #         'domain': [('yjzy_invoice_id', '=', self.id)]

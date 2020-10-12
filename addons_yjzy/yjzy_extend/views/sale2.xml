@@ -116,6 +116,10 @@
 
                             <group col="1" class="o_inner_group1" style="width:20%;font-size:10px">
                                 <group class="o_inner_group1">
+                                    <label for="ps_state" string="PS状况" style="font-size:10px"/>
+                                    <div style="width:200%;">
+                                        <field name="ps_state" options="{'no_open':1}" readonly="1" class="oe_inline"/>
+                                    </div>
                                     <label for="gold_sample_state" string="金样状况" style="font-size:10px"/>
                                     <div style="width:200%;">
                                         <field name="gold_sample_state" options="{'no_open':1}" readonly="1"

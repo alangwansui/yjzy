@@ -40,7 +40,7 @@
             <field name="name">transport.bill.declare.form</field>
             <field name="model">transport.bill</field>
             <field name="arch" type="xml">
-                <form string="报关资料">
+                <form string="报关资料" create="false" edit="false">
                     <header>
                         <button string="合并报关资料" name="create_hsname_all_ids" type="object" groups="base.group_system"/>
                         <button string="创建新增采购" type="object" name="open_wizard_tb_po_invoice" groups="base.group_system"/>
