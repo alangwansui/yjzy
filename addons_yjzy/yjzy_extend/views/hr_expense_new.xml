@@ -450,7 +450,7 @@
                             invisible="1"/>
                     <group expand="0" string="Group By">
                         <filter string="费用类型" domain="[]" name="group_expense_to_invoice_type" context="{'group_by': 'expense_to_invoice_type'}"/>
-                        <filter string="状态1费用类型" domain="[]" name="group_state_1_expense_to_invoice_type" context="{'group_by':('state_1','expense_to_invoice_type')}"/>
+
                         <filter string="审批流" domain="[]" context="{'group_by': 'x_sheet_wkf_state'}" invisible="1"/>
 
 
@@ -508,6 +508,7 @@
                     <group expand="0" string="Group By">
                         <filter string="是否转货款" domain="[]" name="group_to_invoice" context="{'group_by': 'expense_to_invoice_type'}"/>
                         <filter string="审批状态" domain="[]" name="group_by_stage_id" context="{'group_by': 'stage_id'}"/>
+                        <filter string="状态1费用类型" domain="[]" name="group_stage_id_expense_to_invoice_type" context="{'group_by':('stage_id','expense_to_invoice_type')}"/>
                         <filter string="Employee" domain="[]" context="{'group_by': 'employee_id'}"/>
                         <filter string="Department" domain="[]" context="{'group_by': 'department_id'}"/>
                         <filter string="Company" domain="[]" context="{'group_by': 'company_id'}" groups="base.group_multi_company"/>
@@ -1959,22 +1960,23 @@
               action="action_hr_expense_sheet_approve_1"/>
 
         <record id="action_hr_expense_sheet_approval_all" model="ir.actions.act_window">
-            <field name="name">所有审批中费用</field>
+            <field name="name">所有待处理费用</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">hr.expense.sheet</field>
             <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="hr_expense_sheet_search_new"/>
             <field name="domain">[('total_amount','>=',0),
                                   ('expense_to_invoice_type','in',['to_invoice','normal']),
-                                  ('state_1','in',['manager_approval','account_approval'])]</field>
-            <field name="context">{'search_default_group_state_1_expense_to_invoice_type':1}</field>
+                                  ('state_1','in',['manager_approval','account_approval','post'])]</field>
+            <field name="context">{'search_default_group_stage_id_expense_to_invoice_type':1}</field>
             <!--field name="target">new</field-->
             <field name="view_ids" eval="[(5, 0, 0),
                               (0, 0, {'view_mode': 'tree', 'view_id': ref('hr_expense_sheet_manager_approve_tree')}),
                               (0, 0, {'view_mode': 'form', 'view_id': ref('view_hr_expense_sheet_new_form')}),
                               ]"/>
         </record>
-         <menuitem id="menu_hr_expense_sheet_approval_all" name="所有审批中费用"
-              parent="menu_expense_sheet_apply_root"
+         <menuitem id="menu_hr_expense_sheet_approval_all" name="待处理"
+              parent="menu_expense_sheet_apply_root" sequence="20"
               action="action_hr_expense_sheet_approval_all"/>
 
 
@@ -1992,7 +1994,7 @@
                               ]"/>
         </record>
          <menuitem id="menu_hr_expense_sheet_done" name="支付完成"
-              parent="menu_expense_sheet_apply_root"
+              parent="menu_expense_sheet_apply_root" sequence="30"
               action="action_hr_expense_sheet_done"/>
 <!--          一般用户-->
          <record id="action_hr_expense_sheet_user_todo" model="ir.actions.act_window">
