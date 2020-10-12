@@ -267,7 +267,7 @@ class tb_po_invoice(models.Model):
             self.create_yfhxd()
             print('type', self.type)
         self.state = '30_done'
-        #self.invoice_ids.action_invoice_open()
+        self.invoice_ids.action_invoice_open()
     def action_refuse(self):
         self.invoice_ids.unlink()
         self.state = '80_refuse'

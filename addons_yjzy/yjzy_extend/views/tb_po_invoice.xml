@@ -379,7 +379,7 @@
                         <button name="apply" class="oe_highlight" type='object' string="确认" groups="base.group_system"
                                 attrs="{'invisible':[('type','!=','other_po')]}"/>
                         <button special="cancel" class="oe_highlight" groups="base.group_system" string="取消"/>
-                        <button name="create_yfhxd" string="创建应付核销单" type="object"/>
+                        <button name="create_yfhxd" string="创建应付核销单" type="object" invisible="not context.get('create_yfhxd', True)"/>
                         <button name="make_extra_invoice" type="object" string="创建额外账单" groups="base.group_system"/>
                         <field name="state" widget="statusbar"/>
                     </header>
@@ -393,7 +393,7 @@
                                 <field name="yjzy_invoice_id"
                                        context="{'form_view_ref':'yjzy_extend.view_account_supplier_invoice_new_form'}"/>
 
-                                <field name="type_invoice"/>
+
                             </group>
                             <group>
                                 <field name="yjzy_invoice_residual_amount" string="关联账单未付金额"
@@ -438,10 +438,19 @@
                             <page string="额外账单" attrs="{'invisible':[('invoice_ids_count','=',0)]}">
                                 <field name="invoice_ids_count" invisible="1"/>
                                 <field name="invoice_ids"
-                                       context="{'form_view_ref':'yjzy_extend.view_account_supplier_invoice_new_form'}"/>
+                                       context="{'form_view_ref':'yjzy_extend.view_account_supplier_invoice_new_form'}">
+                                    <tree>
+                                        <field name="tb_contract_code"/>
+                                        <field name="amount_total_signed" string="应付金额"/>
+                                        <field name="residual_signed" string="未付金额"/>
+                                        <field name="state"/>
+                                    </tree>
+                                </field>
+
                             </page>
                             <page groups="base.group_system" string="管理员页面">
                                 <field name="yjzy_type_1"/>
+                                <field name="type_invoice"/>
                             </page>
                         </notebook>
                     </sheet>
