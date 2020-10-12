@@ -1,7 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-
+<record id="hr_expense_sheet_other_payment_search_new" model="ir.ui.view">
+            <field name="name">hr.expense.sheet.search.new</field>
+            <field name="model">hr.expense.sheet</field>
+            <field name="arch" type="xml">
+        <search string="Other Payment">
+                    <field name="name" string="其他收入说明"/>
+                    <field name="create_date"/>
+                    <field name="expense_line_ids"/>
+                    <field name="state"/>
+                    <separator/>
+                    <filter domain="[('state', '=', 'submit')]" string="To Approve" name="submitted" help="Confirmed Expenses"/>
+                    <filter domain="[('state', '=', 'approve')]" string="To Post" name="to_post" help="Approved Expenses"/>
+                    <filter domain="['|', ('state', '=', 'approve'), ('state', '=', 'post')]" string="To Pay" name="approved" help="Expenses to Invoice"/>
+                    <separator/>
+                    <filter string="New Mail" name="message_unread" domain="[('message_unread', '=', True)]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="审批状态" domain="[]" name="group_by_stage_id" context="{'group_by': 'stage_id'}"/>
+                        <filter string="Employee" domain="[]" context="{'group_by': 'employee_id'}"/>
+                        <filter string="Department" domain="[]" context="{'group_by': 'department_id'}"/>
+                        <filter string="Company" domain="[]" context="{'group_by': 'company_id'}" groups="base.group_multi_company"/>
+                        <filter string="Expenses Month" domain="[]" context="{'group_by': 'accounting_date'}" help="Expenses by Month"/>
+                        <filter string="State" domain="[]" context="{'group_by': 'state'}" name="state"/>
+                    </group>
+                    <separator/>
+                    <filter domain="[('employee_id.active', '=', False)]" string="Former Employees" name="inactive" groups="hr_expense.group_hr_expense_user,hr_expense.group_hr_expense_manager"/>
+                </search>
+            </field>
+        </record>
         <record model="ir.ui.view" id="view_hr_expense_other_payment_form">
             <field name="name">hr.expense.form</field>
             <field name="model">hr.expense</field>
@@ -487,7 +514,7 @@
                         <button name="action_account_approve" string="财务审批" class="oe_highlight" type="object" attrs="{'invisible':[('state_1','not in',['account_approval'])]}"/>
                         <button name="action_manager_approve" string="总经理审批" class="oe_highlight" type="object" attrs="{'invisible':[('state_1','not in',['manager_approval'])]}"/>
                         <button name="%(expense_sheet_refuse_wizard_action)d" string="拒绝" type="action"/>
-                        <button name="create_other_payment_invoice" string="创建其他应收账单" type="object"/>
+                        <button name="create_other_payment_invoice" string="创建其他应收账单" type="object" attrs="{'invisible':[('state_1','not in',['draft'])]}"/>
                         <field name="state_1" widget="statusbar"
                                statusbar_visible=" "/>
                         <field name="stage_id" groups="base.group_system"/>
@@ -843,6 +870,24 @@
          <menuitem id="menu_hr_expense_sheet_other_payment_manager_payment" name="待总经理审批"
               parent="menu_expense_sheet_other_payment_apply_root" sequence="30"
               action="action_hr_expense_sheet_other_payment_manager_payment"/>
+<!--  包括完成审批的未付款-->
+        <record id="action_hr_expense_sheet_other_payment_approval" model="ir.actions.act_window">
+            <field name="name">待处理其他支出</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.expense.sheet</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="hr_expense_sheet_other_payment_search_new"/>
+            <field name="domain">[('total_amount','>=',0),('expense_to_invoice_type','=','other_payment'),('state_1','in',['draft','account_approval','manager_approval','post'])]</field>
+            <field name="context">{'search_default_group_by_stage_id':1,'default_expense_to_invoice_type':'other_payment'}</field>
+            <!--field name="target">new</field-->
+            <field name="view_ids" eval="[(5, 0, 0),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('hr_expense_sheet_other_payment_tree')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('view_hr_expense_sheet_other_payment_form')}),
+                              ]"/>
+        </record>
+         <menuitem id="menu_hr_expense_sheet_other_payment_approval" name="待处理"
+              parent="menu_expense_sheet_other_payment_apply_root" sequence="40"
+              action="action_hr_expense_sheet_other_payment_approval"/>
 
         <record id="action_hr_expense_sheet_other_payment_post" model="ir.actions.act_window">
             <field name="name">完成审批其他支付申请</field>
@@ -860,6 +905,23 @@
          <menuitem id="menu_hr_expense_sheet_other_payment_post" name="完成审批"
               parent="menu_expense_sheet_other_payment_apply_root" sequence="40"
               action="action_hr_expense_sheet_other_payment_post"/>
+
+        <record id="action_hr_expense_sheet_other_payment_done" model="ir.actions.act_window">
+            <field name="name">已支付的其他支出</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.expense.sheet</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('total_amount','>=',0),('expense_to_invoice_type','=','other_payment'),('state_1','in',['done'])]</field>
+            <field name="context">{'default_expense_to_invoice_type':'other_payment'}</field>
+            <!--field name="target">new</field-->
+            <field name="view_ids" eval="[(5, 0, 0),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('hr_expense_sheet_other_payment_tree')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('view_hr_expense_sheet_other_payment_form')}),
+                              ]"/>
+        </record>
+         <menuitem id="menu_hr_expense_sheet_other_payment_done" name="支付完成"
+              parent="menu_expense_sheet_other_payment_apply_root" sequence="40"
+              action="action_hr_expense_sheet_other_payment_done"/>
 <!--        <record id="action_hr_expense_sheet_other_payment_done" model="ir.actions.act_window">-->
 <!--            <field name="name">完成审批其他支付申请</field>-->
 <!--            <field name="type">ir.actions.act_window</field>-->

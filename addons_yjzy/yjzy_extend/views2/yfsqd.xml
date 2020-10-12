@@ -277,6 +277,22 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_yfsqd_form')})]"/>
     </record>
     <menuitem id="menu_yfsqd_balance"  sequence="30" name="未完成认领" parent="menu_advance_payment_apply_root" action="action_yfsqd_balance"/>
+<!--    包括草稿以及所有未完成认领的-->
+    <record model="ir.actions.act_window" id="action_yfsqd_undone_all">
+        <field name="name">未付款预付申请</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.payment</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('sfk_type','=','yfsqd'),('state_1','in',['10_draft','20_account_submit','25_cashier_submit',
+            '30_manager_approve','40_approve','50_posted'])]</field>
+        <field name="context">{'search_default_group_by_state_1':1,'show_shoukuan': True, 'default_sfk_type': 'yfsqd', 'default_payment_type': 'outbound', 'default_be_renling': True, 'default_advance_ok': True, 'default_partner_type': 'supplier',}</field>
+        <field name="search_view_id" ref="view_account_payment_search_new"/>
+        <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_yfsqd_account_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_yfsqd_form')})]"/>
+    </record>
+    <menuitem id="menu_yfsqd_undone_all"  sequence="30" name="待处理" parent="menu_advance_payment_apply_root" action="action_yfsqd_undone_all"/>
 
 <record model="ir.actions.act_window" id="action_yfsqd_no_balance">
         <field name="name">已完成认领预付申请</field>

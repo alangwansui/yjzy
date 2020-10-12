@@ -416,7 +416,9 @@ class account_payment(models.Model):
     def action_account_post(self):
         today = fields.date.today()
         ctx = self.env.context
-        if ctx.get('default_sfk_type','') == 'yfsqd':
+        if ctx.get('default_sfk_type','') == 'yfsqd' or self.sfk_type == 'yfsqd':
+            if not self.fk_journal_id:
+                raise Warning('请填写付款账号')
             self.write({'state_1': '30_manager_approve'
                         })
         # if ctx.get('default_sfk_type','') == 'yfhxd' and self.:
@@ -424,7 +426,7 @@ class account_payment(models.Model):
         #                 'post_date': today,
         #                 'state_1': '30_manager_approve'
         #                 })
-        if ctx.get('default_sfk_type','') == 'ysrld':
+        if ctx.get('default_sfk_type','') == 'ysrld' or self.sfk_type == 'ysrld':
             self.write({'post_uid': self.env.user.id,
                         'post_date': today,
                         'state_1': '50_posted'

@@ -11,7 +11,7 @@ Hr_Expense_Selection = [('draft',u'草稿'),
                          ('employee_approval',u'待责任人确认'),
                          ('account_approval',u'待财务审批'),
                          ('manager_approval',u'待总经理审理'),
-                         ('post',u'审批完成'),
+                         ('post',u'审批完成待支付'),
                          ('done',u'完成'),
                          ('refused', u'已拒绝'),
                          ('cancel', u'取消'),
@@ -350,6 +350,7 @@ class hr_expense_sheet(models.Model):
         self.btn_release_budget()
         if self.expense_to_invoice_type != 'incoming':
             self.payment_id.unlink()
+            self.other_payment_invoice_id.unlink()
         if self.expense_to_invoice_type == 'to_invoice':
             self.tb_po_invoice_ids.unlink()
             self.expense_to_invoice_type = 'normal'

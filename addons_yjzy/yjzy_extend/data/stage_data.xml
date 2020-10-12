@@ -140,7 +140,7 @@
             <field name="state">manager_approval</field>
         </record>
         <record model="expense.sheet.stage" id="stage_expense_sheet_post">
-            <field name="name">审批完成</field>
+            <field name="name">审批完成待支付</field>
             <field name="code">050</field>
             <field name="sequence" eval="50"/>
             <field name="state">post</field>
