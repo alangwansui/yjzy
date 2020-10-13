@@ -529,10 +529,10 @@
         </record>
         <menuitem id="menu_tb_po_tree_done" name="审批完成"
                   parent="yjzy_extend.menu_supplier_invoice_other_po_apply_root"
-                  sequence="60"
+                  sequence="30"
                   action="act_tb_po_done"
         />
-        <record model="ir.actions.act_window" id="act_tb_po_all_approval">
+        <record model="ir.actions.act_window" id="act_tb_po_all">
             <field name="name">直接增加采购申请单</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">tb.po.invoice</field>
@@ -546,10 +546,10 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_form')})]"/>
 
         </record>
-        <menuitem id="menu_tb_po_tree_all_approval" name="审批未完成"
+        <menuitem id="menu_tb_po_tree_all" name="所有申请单"
                   parent="yjzy_extend.menu_supplier_invoice_other_po_apply_root"
                   sequence="50"
-                  action="act_tb_po_all_approval"
+                  action="act_tb_po_all"
         />
         <record model="ir.actions.act_window" id="act_tb_po_create">
             <field name="name">创建新增采购申请单</field>
