@@ -268,6 +268,24 @@ class hr_expense_sheet(models.Model):
                 self.write({'employee_wkf': False,
                             'stage_id': stage_id.id})
 
+    def action_to_account_approval_all(self):
+        stage_id = self._stage_find(domain=[('code', '=', '030')])
+        for one in self:
+            if one.expense_to_invoice_type == 'normal':
+                if one.all_line_is_confirmed == False or one.total_amount == 0:
+                    raise Warning('费用明细没有完成审批或者总金额等于0，请查验！')
+                else:
+                    stage_id = one._stage_find(domain=[('code', '=', '030')])
+                    one.write({'employee_wkf':False,
+                                'stage_id': stage_id.id,
+                                })
+                    one.btn_match_budget()
+            elif one.expense_to_invoice_type == 'other_payment':
+                if one.total_amount == 0:
+                    raise Warning('总金额不允许等于0，请查验！')
+                else:
+                    one.write({'employee_wkf': False,
+                                'stage_id': stage_id.id})
 
 
     #0925财务审批的时候判断是否已经转为货款

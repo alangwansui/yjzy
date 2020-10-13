@@ -602,7 +602,7 @@
                                             <group>
                                                 <field name="product_updatable" invisible="1"/>
 
-                                                <field name="product_id" domain="[('state','in',['done','first']),'|','|','|'('customer_id','=',parent.partner_id),('customer_id','=',parent.partner_shipping_id),('hs_id','=',80),('jituan_id','=',parent.jituan_id)]"
+                                                <field name="product_id" domain="[('state','in',['done','first']),'|','|','|',('customer_id','=',parent.partner_id),('customer_id','=',parent.partner_shipping_id),('hs_id','=',80),('jituan_id','=',parent.jituan_id)]"
                                                        options="{'can_create': 1,'no_open':1}"
                                                        context="{'show_last_sale':1,'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"
                                                        attrs="{'readonly': [('product_updatable', '=', False)]}" force_save="1"/>
@@ -701,7 +701,7 @@
                                         <field name="sequence" widget="handle"/>
                                         <field name="product_updatable" invisible="1"/>
 
-                                        <field name="product_id" domain="[('state','in',['done','first']),'|','|','|'('customer_id','=',parent.partner_id),('customer_id','=',parent.partner_shipping_id),('hs_id','=',80),('jituan_id','=',parent.jituan_id)]"
+                                        <field name="product_id" domain="[('state','in',['done','first']),'|','|','|',('customer_id','=',parent.partner_id),('customer_id','=',parent.partner_shipping_id),('hs_id','=',80),('jituan_id','=',parent.jituan_id)]"
                                                attrs="{'readonly': [('product_updatable', '=', False)]}"
                                                orce_save="1" options="{'no_open':True}" context="{'show_last_sale':1,'partner_id':parent.partner_id, 'quantity':product_uom_qty,
                                            'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"/>
