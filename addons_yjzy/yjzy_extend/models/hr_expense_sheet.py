@@ -268,20 +268,20 @@ class hr_expense_sheet(models.Model):
                 self.write({'employee_wkf': False,
                             'stage_id': stage_id.id})
 
-    def action_to_account_approval_all(self):
-        stage_id = self._stage_find(domain=[('code', '=', '030')])
-        for one in self:
-            if one.expense_to_invoice_type == 'normal':
-                if one.all_line_is_confirmed == True and one.total_amount >= 0:
-                    stage_id = one._stage_find(domain=[('code', '=', '030')])
-                    one.write({'employee_wkf':False,
-                                'stage_id': stage_id.id,
-                                })
-                    one.btn_match_budget()
-            elif one.expense_to_invoice_type == 'other_payment':
-                if one.total_amount >= 0:
-                    one.write({'employee_wkf': False,
-                                'stage_id': stage_id.id})
+    # def action_to_account_approval_all(self):
+    #     stage_id = self._stage_find(domain=[('code', '=', '030')])
+    #     for one in self:
+    #         if one.expense_to_invoice_type == 'normal':
+    #             if one.all_line_is_confirmed == True and one.total_amount >= 0:
+    #                 stage_id = one._stage_find(domain=[('code', '=', '030')])
+    #                 one.write({'employee_wkf':False,
+    #                             'stage_id': stage_id.id,
+    #                             })
+    #                 one.btn_match_budget()
+    #         elif one.expense_to_invoice_type == 'other_payment':
+    #             if one.total_amount >= 0:
+    #                 one.write({'employee_wkf': False,
+    #                             'stage_id': stage_id.id})
 
 
     #0925财务审批的时候判断是否已经转为货款
@@ -847,6 +847,18 @@ class hr_expense_sheet(models.Model):
         domain = eval(domain_str)
         for one in self.search(domain):
             one.with_context(trans_id=trans_id, no_pop=True).wkf_button_action()
+
+
+    def action_to_account_approval_all(self, domain_str='[]'):
+        domain = eval(domain_str)
+        for one in self.search(domain):
+            if one.expense_to_invoice_type == 'normal':
+                stage_id = one._stage_find(domain=[('code', '=', '030')])
+                if one.all_line_is_confirmed == True and one.total_amount >= 0:
+                    one.write({'employee_wkf':False,
+                                'stage_id': stage_id.id,
+                                })
+                    one.btn_match_budget()
 
     @api.multi
     def post_message_lines(self, message):
