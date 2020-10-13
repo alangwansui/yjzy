@@ -172,7 +172,7 @@ class sale_order_line(models.Model):
 
 
     #m2m不可以随便加入depends
-    @api.depends('tbl_ids', 'tbl_ids.qty2stage_new','product_qty')
+    @api.depends('tbl_ids', 'tbl_ids.qty2stage_new','product_qty','order_id.state','price_unit')
     def compute_rest_tb_qty(self):
         for one in self:
             one.new_rest_tb_qty = one.product_qty - sum(one.tbl_ids.mapped('qty2stage_new'))

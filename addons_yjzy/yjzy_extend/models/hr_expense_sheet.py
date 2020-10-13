@@ -253,7 +253,7 @@ class hr_expense_sheet(models.Model):
     def action_to_account_approval(self):
         stage_id = self._stage_find(domain=[('code', '=', '030')])
         if self.expense_to_invoice_type == 'normal':
-            if self.all_line_is_confirmed == False or self.total_amount == 0:
+            if self.all_line_is_confirmed == False or self.total_amount == 0 or self.state_1 != 'employee_approval':
                 raise Warning('费用明细没有完成审批或者总金额等于0，请查验！')
             else:
                 stage_id = self._stage_find(domain=[('code', '=', '030')])
