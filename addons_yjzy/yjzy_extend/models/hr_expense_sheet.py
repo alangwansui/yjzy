@@ -279,7 +279,7 @@ class hr_expense_sheet(models.Model):
                                 })
                     one.btn_match_budget()
             elif one.expense_to_invoice_type == 'other_payment':
-                if one.total_amount <= 0:
+                if one.total_amount >= 0:
                     one.write({'employee_wkf': False,
                                 'stage_id': stage_id.id})
 
