@@ -849,9 +849,8 @@ class hr_expense_sheet(models.Model):
             one.with_context(trans_id=trans_id, no_pop=True).wkf_button_action()
 
 
-    def action_to_account_approval_all(self, domain_str='[]'):
-        domain = eval(domain_str)
-        for one in self.search(domain):
+    def action_to_account_approval_all(self):
+        for one in self:
             if one.expense_to_invoice_type == 'normal':
                 stage_id = one._stage_find(domain=[('code', '=', '030')])
                 if one.all_line_is_confirmed == True and one.total_amount >= 0:
