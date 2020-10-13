@@ -742,6 +742,11 @@ class tb_po_invoice(models.Model):
         self.invoice_back_tax_ids.action_invoice_open()
         self.invoice_p_ids.action_invoice_open()
         self.invoice_p_ids.create_yfhxd()
+        # for one in self.invoice_back_tax_ids:
+        #     one.action_invoice_open()
+        # for one in self.invoice_p_ids:
+        #     one.action_invoice_open()
+        #     one.create_yfhxd()
 
 
 class tb_po_invoice_line(models.Model):
