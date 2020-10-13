@@ -2248,7 +2248,7 @@
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_account_invoice_new_filter"/>
             <field name="domain">[('type','=','in_invoice'),('yjzy_type','=','purchase'),('state','in',['paid','open']),('invoice_attribute','=','other_payment')]</field>
-            <field name="context">{'search_default_group_by_state':1'only_ref':1,'type':'in_invoice','journal_type': 'purchase','yjzy_type':'purchase'}
+            <field name="context">{'search_default_group_by_state':1,'only_ref':1,'type':'in_invoice','journal_type': 'purchase','yjzy_type':'purchase'}
             </field>
             <!--field name="target">new</field-->
             <field name="view_ids" eval="[(5, 0, 0),
