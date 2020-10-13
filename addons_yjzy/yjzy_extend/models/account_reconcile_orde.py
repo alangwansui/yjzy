@@ -208,6 +208,7 @@ class account_reconcile_order(models.Model):
             supplier_advance_payment_ids = self.env['account.payment'].search(
                 [('partner_id', '=', one.partner_id.id), ('sfk_type', '=', 'yfsqd'),
                  ('state', 'in', ['posted', 'reconciled'])])
+            one.supplier_advance_payment_ids_count = len(supplier_advance_payment_ids)
             one.supplier_advance_payment_ids = supplier_advance_payment_ids
             print('one.supplier_advance_payment_ids',one.supplier_advance_payment_ids)
         # self.write({'supplier_advance_payment_ids': [line.id for line in supplier_advance_payment_ids]})
@@ -280,9 +281,9 @@ class account_reconcile_order(models.Model):
             # one.other_feiyong_amount = one.amount_payment_org + one.feiyong_amount
             # one.final_coat = one.other_feiyong_amount - one.back_tax_amount
 
-    def compute_supplier_advance_payment_ids_count(self):
-        for one in self:
-            one.supplier_advance_payment_ids_count = len(one.supplier_advance_payment_ids)
+    # def compute_supplier_advance_payment_ids_count(self):
+    #     for one in self:
+    #         one.supplier_advance_payment_ids_count = len(one.supplier_advance_payment_ids)
 
     @api.model
     def _default_account_reconcile_stage(self):
@@ -307,7 +308,7 @@ class account_reconcile_order(models.Model):
 
     expense_sheet_id = fields.Many2one('hr.expense.sheet',u'费用报告')
     supplier_advance_payment_ids = fields.Many2many('account.payment',u'相关预付', compute=_compute_supplier_advance_payment_ids)
-    supplier_advance_payment_ids_count = fields.Integer('相关预付数量',compute=compute_supplier_advance_payment_ids_count)
+    supplier_advance_payment_ids_count = fields.Integer('相关预付数量',compute=_compute_supplier_advance_payment_ids)
     #903
     reconcile_payment_ids = fields.One2many('account.payment','account_reconcile_order_id',u'认领单')
     yjzy_advance_payment_id = fields.Many2one('account.payment',u'预收认领单')#从预收认领单创建过滤用

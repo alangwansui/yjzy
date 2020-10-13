@@ -43,6 +43,7 @@
                             domain="[('activity_ids.date_deadline', '&gt;', context_today().strftime('%Y-%m-%d'))]"/>
                     <group expand="0" string="Group By">
                         <filter name="group_invoice_attribute" string="账单类型" context="{'group_by':'invoice_attribute'}"/>
+                        <filter name="group_by_state" string="账单类型" context="{'group_by':'state'}"/>
                         <filter name="group_by_date_invoice" string="账单日期"
                                 context="{'group_by':'date_invoice:year'}"/>
                         <filter name="group_by_stage_id" string="审批状态"
@@ -2051,7 +2052,7 @@
         </record>
 <!--        账单管理，创建额外账单的-->
         <record id="action_purchase_invoice_unpaid_new_extra" model="ir.actions.act_window">
-            <field name="name">可创建额外账单的应付账单</field>
+            <field name="name">创建额外账单(点开查看并创建)</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">account.invoice</field>
             <field name="view_mode">tree,form</field>
@@ -2177,6 +2178,28 @@
                   action="action_purchase_invoice_paid_new"
         />
 
+        <record id="action_purchase_invoice_all" model="ir.actions.act_window">
+            <field name="name">主应付账单</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_account_invoice_new_filter"/>
+            <field name="domain">[('type','=','in_invoice'),('yjzy_type','=','purchase'),('state','in',['open','paid'])]</field>
+            <field name="context">{'search_default_group_by_state':1,'only_ref':1,'type':'out_invoice', 'journal_type': 'sale','yjzy_type':'purchase'}
+            </field>
+            <!--field name="target">new</field-->
+            <field name="view_ids" eval="[(5, 0, 0),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.invoice_new_supplier_2_tree')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('view_account_supplier_invoice_new_form')}),
+                              ]"/>
+        </record>
+
+        <menuitem id="menu_purchase_invoice_paid_new" name="查询"
+                  parent="yjzy_extend.menu_supplier_invoice_main_root"
+                  sequence="20"
+                  action="action_purchase_invoice_all"
+        />
+
 
          <record id="action_supplier_account_invoice_other_unpaid" model="ir.actions.act_window">
             <field name="name">未付款其他应付账单</field>
@@ -2218,7 +2241,25 @@
                   sequence="20"
         />
 
-
+        <record id="action_supplier_account_invoice_other_all" model="ir.actions.act_window">
+            <field name="name">其他应付账单</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_account_invoice_new_filter"/>
+            <field name="domain">[('type','=','in_invoice'),('yjzy_type','=','purchase'),('state','in',['paid','open']),('invoice_attribute','=','other_payment')]</field>
+            <field name="context">{'search_default_group_by_state':1'only_ref':1,'type':'in_invoice','journal_type': 'purchase','yjzy_type':'purchase'}
+            </field>
+            <!--field name="target">new</field-->
+            <field name="view_ids" eval="[(5, 0, 0),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.invoice_new_supplier_1_tree')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.view_account_supplier_invoice_new_form')}),
+                              ]"/>
+        </record>
+         <menuitem id="menu_supplier_account_invoice_other_all" action="action_supplier_account_invoice_other_all"
+                  parent="menu_supplier_invoice_other_payment_root" name="查询"
+                  sequence="20"
+        />
 
 
         <record id="action_back_tax_invoice_unpaid_new" model="ir.actions.act_window">

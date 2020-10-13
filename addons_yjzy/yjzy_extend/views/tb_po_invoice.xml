@@ -465,7 +465,7 @@
         </record>
 
 
-        <menuitem id="menu_tb_po_other_po_create" name="查看并创建"
+        <menuitem id="menu_tb_po_other_po_create" name="创建"
                   parent="yjzy_extend.menu_supplier_invoice_other_po_apply_root"
                   sequence="5"
                   action="act_open_transport_bill_declare_po"/>
@@ -546,7 +546,7 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_form')})]"/>
 
         </record>
-        <menuitem id="menu_tb_po_tree_all" name="所有申请单"
+        <menuitem id="menu_tb_po_tree_all" name="查询"
                   parent="yjzy_extend.menu_supplier_invoice_other_po_apply_root"
                   sequence="50"
                   action="act_tb_po_all"
@@ -723,7 +723,7 @@
                   sequence="20"
                   action="act_extra_customer_create"/>
         <!--        额外账单查看并创建-->
-        <menuitem id="menu_invoice_supplier_create_invoice" name="查看并创建"
+        <menuitem id="menu_invoice_supplier_create_invoice" name="创建"
                   parent="yjzy_extend.menu_supplier_invoice_extra_apply_root"
                   sequence="10"
                   action="action_purchase_invoice_unpaid_new_extra"/>
@@ -810,7 +810,7 @@
 
         </record>
 
-        <menuitem id="menu_extra_supplier_invoice_all" name="所有申请单"
+        <menuitem id="menu_extra_supplier_invoice_all" name="查询"
                   parent="yjzy_extend.menu_supplier_invoice_extra_apply_root"
                   sequence="50"
                   action="act_extra_supplier_invoice_all"
