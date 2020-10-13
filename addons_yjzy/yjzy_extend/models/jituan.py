@@ -17,5 +17,6 @@ class jituan(models.Model):
     supplier = fields.Boolean('供应商')
     partner_type = fields.Selection([('customer',u'客户'),('supplier',u'供应商')])
     user_ids = fields.Many2many('res.users',string='责任人')
+    is_product_share_group = fields.Boolean('产品是否共享')
 
 

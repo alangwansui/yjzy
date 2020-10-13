@@ -31,6 +31,17 @@ class Product_Product(models.Model):
             }))
         return res or None
 
+    @api.depends('customer_id')
+    def compute_jituan(self):
+        for one in self:
+            jituan = one.customer_id.jituan_id
+            if jituan.is_product_share_group:
+                one.jituan_id = jituan
+            else:
+                one.jituan_id = False
+
+    jituan_id = fields.Many2one('ji.tuan','集团',compute=compute_jituan,store=True)
+
     en_name = fields.Char(u'英文名')
     hs_id = fields.Many2one('hs.hs', string='HS品名')
     back_tax = fields.Float(related='hs_id.back_tax', readonly=True)

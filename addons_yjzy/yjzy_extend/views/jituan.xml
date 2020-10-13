@@ -11,6 +11,7 @@
                     <field name="description"/>
                     <field name="partner_type" invisible="1"/>
                     <field name="user_ids" widget="many2many_tags"/>
+                    <field name="is_product_share_group" />
                 </tree>
             </field>
         </record>

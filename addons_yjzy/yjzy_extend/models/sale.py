@@ -272,7 +272,16 @@ class sale_order(models.Model):
         for one in self:
             one.tb_line_count = len(one.tb_line_ids)
 
+    @api.depends('partner_id')
+    def compute_jituan(self):
+        for one in self:
+            jituan = one.partner_id.jituan_id
+            one.jituan_id = jituan
+
+
     #货币设置
+    #1013
+    jituan_id = fields.Many2one('ji.tuan','集团',compute=compute_jituan,store=True)
     #825
     tb_line_ids = fields.One2many('transport.bill.line','so_id',u'出运明细')
     tb_line_count = fields.Integer('发运单计数', compute=_comput_tb_line_count)
@@ -655,6 +664,7 @@ class sale_order(models.Model):
         self.mark_text = self.partner_shipping_id.mark_text
         self.from_wharf_id = self.partner_shipping_id.wharf_src_id
         self.to_wharf_id = self.partner_shipping_id.wharf_dest_id
+        # self.jituan_id = self.partner_id.jituan_id
         return super(sale_order, self).onchange_partner_id()
 
     def open_advance_residual_lines(self):

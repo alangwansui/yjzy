@@ -2262,6 +2262,8 @@
         />
 
 
+
+
         <record id="action_back_tax_invoice_unpaid_new" model="ir.actions.act_window">
             <field name="name">未完成退税</field>
             <field name="type">ir.actions.act_window</field>
