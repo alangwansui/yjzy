@@ -1223,8 +1223,7 @@
                                 <field name="origin" attrs="{'invisible': [('origin', '=', False)]}" />
 
                                 <field name="date_out_in" string="进仓日期"/>
-                                <field name="date_due"
-                                       attrs="{'readonly': ['|',('payment_term_id','!=',False), ('state','=','paid')],'invisible':[('is_yjzy_invoice','=',True)]}"/>
+
 
                                 <field name="date_ship" />
                                 <field name="date_finish" />
@@ -1303,7 +1302,7 @@
                                         <field name="product_id" domain="[('sale_ok','=',True)]"/>
                                         <field name="layout_category_id" groups="sale.group_sale_layout"/>
 
-                                        <field name="so_id"/>
+                                        <field name="so_id" invisible="1"/>
                                         <field name="company_id" invisible="1"/>
                                         <field name="account_id" groups="account.group_account_user" invisible="1"
                                                domain="[('company_id', '=', parent.company_id), ('internal_type', '=', 'other'), ('deprecated', '=', False)]"/>
@@ -1350,7 +1349,7 @@
                                         <field name="product_id" domain="[('sale_ok','=',True)]"/>
                                         <field name="layout_category_id" groups="sale.group_sale_layout"/>
 
-                                        <field name="so_id"/>
+                                        <field name="so_id" invisible="1"/>
                                         <field name="company_id" invisible="1"/>
                                         <field name="account_id" groups="account.group_account_user" invisible="1"
                                                domain="[('company_id', '=', parent.company_id), ('internal_type', '=', 'other'), ('deprecated', '=', False)]"/>
@@ -1511,6 +1510,8 @@
                                  <field name="move_name" />
                                 <field name="yjzy_type"/>
                                  <field name="po_id"/>
+                                     <field name="date_due"
+                                       attrs="{'readonly': ['|',('payment_term_id','!=',False), ('state','=','paid')],'invisible':[('is_yjzy_invoice','=',True)]}"/>
                                 </group>
                                 <field name="yjzy_invoice_all_ids"/>
                             </page>
