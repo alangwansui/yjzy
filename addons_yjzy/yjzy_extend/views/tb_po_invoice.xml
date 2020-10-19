@@ -305,20 +305,20 @@
                         <field name="state" widget="statusbar"/>
                     </header>
                     <sheet>
-                        <label for="is_tb_hs_id" string="转换货款" class="oe_avatar" attrs="{'invisible':[('type','in',['other_po','expense_po'])]}"/>
-                        <field name="is_tb_hs_id" class="oe_avatar" widget="boolean_toggle"  attrs="{'invisible':[('type','in',['other_po','expense_po'])]}"/>
+<!--                        <label for="is_tb_hs_id" string="转换货款" class="oe_avatar" attrs="{'invisible':[('type','in',['other_po','expense_po'])]}"/>-->
+<!--                        <field name="is_tb_hs_id" class="oe_avatar" widget="boolean_toggle"  attrs="{'invisible':[('type','in',['other_po','expense_po'])]}"/>-->
                         <div class="oe_title" attrs="{'invisible':[('type','=','other_payment')]}">
                         <label for="name" string="申请单号" class="oe_edit_only"/>
                         <h1>
                             <field name="name" readonly="1"/>
                         </h1>
                     </div>
-                        <div class="oe_title" attrs="{'invisible':[('type','!=','other_payment')]}" invisible="1">
-                        <label for="name_title" string="收入摘要" class="oe_edit_only"/>
-                        <h1>
-                            <field name="name_title" placeholder="e.g. Trip to NY" attrs="{'required':[('type','=','other_payment')]}"/>
-                        </h1>
-                    </div>
+<!--                        <div class="oe_title" attrs="{'invisible':[('type','!=','other_payment')]}" invisible="1">-->
+<!--                        <label for="name_title" string="收入摘要" class="oe_edit_only"/>-->
+<!--                        <h1>-->
+<!--                            <field name="name_title" placeholder="e.g. Trip to NY" attrs="{'required':[('type','=','other_payment')]}"/>-->
+<!--                        </h1>-->
+<!--                    </div>-->
                         <group col="3">
                             <group attrs="{'invisible':[('is_tb_hs_id','=',False)]}">
                                 <field name="tb_id" domain="[('back_tax_invoice_balance_new','!=',0)]"
