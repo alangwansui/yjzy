@@ -220,6 +220,8 @@ class tb_po_invoice(models.Model):
     #关联的申请单：其他应收对其他应付，其他应付对其他应收
     # payment_id = fields.Many2one('account.payment',u'收付款单')
     # display_name = fields.Char(u'显示名称', compute=compute_display_name)
+
+
     yjzy_tb_po_invoice = fields.Many2one('tb.po.invoice',u'关联应收付申请单')
     #902
     is_tb_hs_id = fields.Boolean('是否货款')
@@ -263,7 +265,8 @@ class tb_po_invoice(models.Model):
     state = fields.Selection([('10_draft',u'草稿'),('20_submit',u'已提交'),('30_done','审批完成'),('80_refuse',u'拒绝'),('90_cancel',u'取消')],u'状态',index=True, track_visibility='onchange', default='10_draft')
     type = fields.Selection([('reconcile', '核销账单'),('extra', '额外账单'), ('other_po', '直接增加'),('expense_po', u'费用转换'),('other_payment',u'其他收付')],u'类型')
     name = fields.Char('编号', default=lambda self: self.env['ir.sequence'].next_by_code('tb.po.invoice'))
-    name_title = fields.Char(u'摘要')
+    name_title = fields.Char(u'账单描述')
+    invoice_partner = fields.Char(u'账单对象')
     tb_id = fields.Many2one('transport.bill', u'出运单')
     partner_id = fields.Many2one('res.partner', u'合作伙伴', default=lambda self: self._default_partner())
     hsname_all_ids = fields.One2many('tb.po.invoice.line', 'tb_po_id', u'报关明细',)
@@ -534,6 +537,18 @@ class tb_po_invoice(models.Model):
 
             })
         self.yjzy_tb_po_invoice = tb_po_id
+
+        return {
+            'name': _(u'对应其他应收申请'),
+            'view_type': 'tree,form',
+            "view_mode": 'form',
+            'res_model': 'tb.po.invoice',
+            'type': 'ir.actions.act_window',
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': tb_po_id.id,
+
+        }
 
         # return {
         #     'name': _(u'创建费用转货款申请'),

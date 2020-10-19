@@ -313,7 +313,7 @@
                             <field name="name" readonly="1"/>
                         </h1>
                     </div>
-                        <div class="oe_title" attrs="{'invisible':[('type','!=','other_payment')]}">
+                        <div class="oe_title" attrs="{'invisible':[('type','!=','other_payment')]}" invisible="1">
                         <label for="name_title" string="收入摘要" class="oe_edit_only"/>
                         <h1>
                             <field name="name_title" placeholder="e.g. Trip to NY" attrs="{'required':[('type','=','other_payment')]}"/>
@@ -343,7 +343,9 @@
                                 </div>
                             </group>
                             <group>
+                                <field name="invoice_partner" attrs="{'invisible':[('type','not in',['other_payment'])]}"/>
 
+                       <field name="name_title" attrs="{'required':[('type','=','other_payment')]}"/>
                                 <field name="manual_currency_id" attrs="{'invisible':[('type','not in',['other_payment'])]}"/>
 
                                  <label for="" name="partner_id" attrs="{'invisible':[('is_tb_hs_id','=',False)]}">
@@ -485,7 +487,7 @@
                             </page>
                             <page string="其他应付账单" attrs="{'invisible':['|',('invoice_other_payment_ids_count','=',0),('type','!=','other_payment')]}" >
                                 <field name="invoice_other_payment_ids_count" invisible="1"/>
-                                <field name="invoice_other_payment_ids" readonly="1">
+                                <field name="invoice_other_payment_ids" readonly="1" context="{'form_view_ref':'yjzy_extend.view_account_supplier_invoice_new_form'}">>
                                     <tree decoration-info="state == 'draft'" decoration-muted="state == 'cancel'">
                                         <field name="number"/>
                                         <field name="tb_contract_code" invisible="1"/>
