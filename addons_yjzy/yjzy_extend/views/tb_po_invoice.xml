@@ -367,6 +367,7 @@
                                  <group  attrs="{'invisible':[('type','not in',['other_payment','extra','reconcile'])]}">
 
                                 <field name="price_total" string="金额合计" />
+                                 <field name="yjzy_tb_po_invoice" attrs="{'invisible':[('type','not in',['other_payment'])]}"/>
                                </group>
 
                                 <group attrs="{'invisible':[('is_tb_hs_id','=',False)]}">
@@ -551,7 +552,7 @@
                                     <field name="product_qtysk" attrs="{'invisible':0}"/>
                                     <field name="product_back_tax" attrs="{'invisible':0}"/>
                                      <field name="yjzy_type_1"/>
-                                    <field name="yjzy_tb_po_invoice"/>
+
                                     <field name="type_invoice"/>
                                 </group>
                             </page>

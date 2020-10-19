@@ -2544,7 +2544,7 @@
             <field name="res_model">account.invoice</field>
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_account_invoice_new_filter"/>
-            <field name="domain">[('type','=','in_invoice'),('yjzy_type_1','=','purchase'),('invoice_attribute','=','extra'),('is_yjzy_invoice','=',True),('state','in',['paid','open'])]</field>
+            <field name="domain">[('type','=','in_invoice'),('yjzy_type_1','=','purchase'),('invoice_attribute','=','extra'),('is_yjzy_invoice','=',True)]</field>
             <field name="context">{'search_default_group_by_state':1,'default_is_yjzy_invoice':1,'default_type':'in_invoice','only_ref':1,'default_yjzy_type_1':'purchase'}
             </field>
             <!--field name="target">new</field-->
@@ -2564,7 +2564,7 @@
             <field name="res_model">account.invoice</field>
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_account_invoice_new_filter"/>
-            <field name="domain">[('type','=','in_invoice'),('yjzy_type_1','=','purchase'),('invoice_attribute','=','other_po'),('state','in',['paid','open'])]</field>
+            <field name="domain">[('type','=','in_invoice'),('yjzy_type_1','=','purchase'),('invoice_attribute','=','other_po')]</field>
             <field name="context">{'search_default_group_by_state':1,'default_type':'in_invoice','only_ref':1,'default_yjzy_type_1':'purchase'}
             </field>
             <!--field name="target">new</field-->
@@ -2584,7 +2584,7 @@
             <field name="res_model">account.invoice</field>
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_account_invoice_new_filter"/>
-            <field name="domain">[('type','=','in_invoice'),('yjzy_type_1','=','purchase'),('invoice_attribute','=','other_payment'),('state','in',['paid','open'])]</field>
+            <field name="domain">[('type','=','in_invoice'),('yjzy_type_1','=','purchase'),('invoice_attribute','=','other_payment')]</field>
             <field name="context">{'search_default_group_by_state':1,'default_type':'in_invoice','only_ref':1,'default_yjzy_type_1':'purchase'}
             </field>
             <!--field name="target">new</field-->
