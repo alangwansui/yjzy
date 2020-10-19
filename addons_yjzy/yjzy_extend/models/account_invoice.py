@@ -508,7 +508,7 @@ class account_invoice(models.Model):
 
     #913新建额外账单申请单
     def open_tb_po_invoice(self):
-        form_view_supplier_id = self.env.ref('yjzy_extend.tb_po_extra_invoice_supplier_form').id
+        form_view_supplier_id = self.env.ref('yjzy_extend.tb_po_form').id
         form_view_customer_id = self.env.ref('yjzy_extend.tb_po_extra_invoice_customer_form').id
         if self.is_yjzy_invoice:
             raise Warning('额外账单不允许创建额外账单申请！')
@@ -524,9 +524,12 @@ class account_invoice(models.Model):
                 'views': [(form_view_customer_id, 'form')],
                 'target': 'current',
                 'context':{'default_type':'extra',
+                           'default_tb_id':self.bill_id.id,
                            'default_yjzy_type_1':'sale',
                            'default_yjzy_invoice_id':self.id,
-                           'default_partner_id':self.partner_id.id}
+                           'default_partner_id':self.partner_id.id,
+                           # 'default_is_tb_hs_id':True,
+                           }
             }
         elif self.yjzy_type == 'purchase':
             return {
@@ -538,10 +541,14 @@ class account_invoice(models.Model):
                 'views': [(form_view_supplier_id, 'form')],
                 'target': 'current',
                 'context': {'default_type': 'extra',
+                            'default_tb_id': self.bill_id.id,
                             'default_yjzy_type_1': 'purchase',
                             'default_partner_id': self.partner_id.id,
-                            'default_yjzy_invoice_id': self.id,}
+                            'default_yjzy_invoice_id': self.id,
+                            # 'default_is_tb_hs_id': True,
+                            }
             }
+
     #创建核销额外账单
     def open_tb_po_reconcile_invoice(self):
         form_view_supplier_id = self.env.ref('yjzy_extend.tb_po_extra_invoice_supplier_form').id

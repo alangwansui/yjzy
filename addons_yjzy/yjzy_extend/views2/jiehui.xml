@@ -145,7 +145,7 @@
 
 
     <menuitem id="menu_jiehui"  sequence="0" name="结汇" parent="menu_skf_root" action="action_jiehui"/>
-    <menuitem id="menu_jiehui_new"  sequence="30" name="结汇" parent="menu_invoice_payment_out_exchange" />
+    <menuitem id="menu_jiehui_new"  sequence="30" name="结汇" parent="menu_invoice_payment_exchange" />
      <record model="ir.actions.act_window" id="action_jiehui_undone">
         <field name="name">未生效</field>
         <field name="type">ir.actions.act_window</field>
@@ -159,7 +159,7 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_jiehui_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_jiehui_form')})]"/>
     </record>
-    <menuitem id="menu_jiehui_undone"  sequence="10" name="未生效" parent="menu_jiehui_new" action="action_jiehui_undone"/>
+    <menuitem id="menu_jiehui_undone"  sequence="10" name="未生效" parent="menu_jiehui_new" groups="base.group_system" action="action_jiehui_undone"/>
     <record model="ir.actions.act_window" id="action_jiehui_done">
         <field name="name">已完成</field>
         <field name="type">ir.actions.act_window</field>
@@ -173,7 +173,22 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_jiehui_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_jiehui_form')})]"/>
     </record>
-    <menuitem id="menu_jiehui_done"  sequence="20" name="已完成" parent="menu_jiehui_new" action="action_jiehui_done"/>
+    <menuitem id="menu_jiehui_done"  sequence="20" name="已完成" parent="menu_jiehui_new" groups="base.group_system" action="action_jiehui_done"/>
+
+    <record model="ir.actions.act_window" id="action_jiehui_all">
+        <field name="name">结汇单</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.payment</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('sfk_type','=','jiehui')]</field>
+        <field name="context">{'show_shoukuan': True, 'default_sfk_type': 'jiehui', 'default_payment_type': 'outbound', 'default_be_renling': False, 'default_advance_ok': True, 'default_partner_type': 'supplier',}</field>
+        <field name="search_view_id" ref="view_account_payment_search_new"/>
+         <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_jiehui_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_jiehui_form')})]"/>
+    </record>
+    <menuitem id="menu_jiehui_all"  sequence="20" name="已完成" parent="menu_jiehui_new" action="action_jiehui_all"/>
 
     <record model="ir.actions.act_window" id="action_jiehui_create">
         <field name="name">创建结汇单</field>

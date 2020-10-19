@@ -257,6 +257,7 @@ class account_payment(models.Model):
                                 ('90_cancel',u'已取消')],u'审批状态',track_visibility='onchange',default='10_draft')
 
     #819增加汇率字段
+    # tb_po_invoice_ids = fields.One2many('tb.po.invoice','payment_id','应收付申请单')
     advance_type = fields.Selection([('10_no_contract',u'无合同'),
                                      ('20_contract',u'有合同')],u'预付类型',conpute=compute_advance_type, default='10_no_contract',store=True)
     current_date_rate = fields.Float(u'当日汇率')

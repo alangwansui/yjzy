@@ -363,8 +363,7 @@
 <!--              action="action_purchase_invoice_unpaid_normal" parent="yjzy_extend.menu_invoice_payment_apply_create" sequence="10"/>-->
 <!--    <menuitem id="menu_yfhxd_reconcile_new_other_po"  name="新增采购付款申请"-->
 <!--              action="action_purchase_invoice_unpaid_other_po" parent="yjzy_extend.menu_invoice_payment_apply_create" sequence="10"/>-->
-    <menuitem id="menu_yfhxd_reconcile_new_other_po"  name="查询和创建"
-              action="action_purchase_invoice_unpaid_group_by_invoice_attribute" parent="yjzy_extend.menu_invoice_payment_apply_root" sequence="5"/>
+
 
     <menuitem id="menu_yfhxd_reconcile_new_other_po_next"  name="查询和创建"
               action="action_purchase_invoice_unpaid_group_by_invoice_attribute" parent="yjzy_extend.menu_invoice_payment_apply_root_next" sequence="5"/>
@@ -460,9 +459,9 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('account_yfhxd_form_view_new')})]"/>
         </record>
     <menuitem id="menu_yfhxd_new_payment_no_submit" name="未提交"
-              parent="menu_invoice_payment_apply_root" sequence="10"
+              parent="menu_invoice_payment_apply_root" sequence="10" groups="base.group_system"
               action="action_yfhxd_new_payment_no_submit"/>
-    <menuitem id="menu_yfhxd_new_payment_no_submit_next" name="未提交"
+    <menuitem id="menu_yfhxd_new_payment_no_submit_next" name="未提交" groups="base.group_system"
               parent="menu_invoice_payment_apply_root_next" sequence="10"
               action="action_yfhxd_new_payment_no_submit"/>
 
@@ -484,7 +483,7 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('account_yfhxd_form_view_new')})]"/>
         </record>
     <menuitem id="menu_yfhxd_new_advance_no_submit" name="未提交"
-              parent="menu_advance_reconcile_apply" sequence="10"
+              parent="menu_advance_reconcile_apply" sequence="10" groups="base.group_system"
               action="action_yfhxd_new_advance_no_submit"/>
 
     <record model="ir.actions.act_window" id="action_yfhxd_new_reconcile_no_submit">
@@ -502,7 +501,7 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('account_yfhxd_form_view_new')})]"/>
         </record>
     <menuitem id="menu_yfhxd_new_reconcile_no_submit" name="未提交"
-              parent="menu_residual_reconcile_apply" sequence="10"
+              parent="menu_residual_reconcile_apply" sequence="10" groups="base.group_system"
               action="action_yfhxd_new_reconcile_no_submit"/>
 
 
@@ -521,9 +520,9 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('account_yfhxd_form_view_new')})]"/>
         </record>
     <menuitem id="menu_yfhxd_new_payment_submit" name="审批中"
-              parent="menu_invoice_payment_apply_root" sequence="20"
+              parent="menu_invoice_payment_apply_root" sequence="20" groups="base.group_system"
               action="action_yfhxd_new_payment_submit"/>
-    <menuitem id="menu_yfhxd_new_payment_submit_next" name="审批中"
+    <menuitem id="menu_yfhxd_new_payment_submit_next" name="审批中" groups="base.group_system"
               parent="menu_invoice_payment_apply_root_next" sequence="20"
               action="action_yfhxd_new_payment_submit"/>
 
@@ -544,7 +543,7 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('account_yfhxd_form_view_new')})]"/>
         </record>
     <menuitem id="menu_yfhxd_new_payment_no_paid_all" name="待处理"
-              parent="menu_invoice_payment_apply_root" sequence="10"
+              parent="menu_invoice_payment_apply_root" sequence="10" groups="base.group_system"
               action="action_yfhxd_new_payment_no_paid_all"/>
 
     <record model="ir.actions.act_window" id="action_yfhxd_new_advance_submit">
@@ -561,7 +560,7 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('account_yfhxd_advance_tree_view_new')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('account_yfhxd_form_view_new')})]"/>
         </record>
-    <menuitem id="menu_yfhxd_new_advance_submit" name="审批中"
+    <menuitem id="menu_yfhxd_new_advance_submit" name="审批中" groups="base.group_system"
               parent="menu_advance_reconcile_apply" sequence="20"
               action="action_yfhxd_new_advance_submit"/>
 
@@ -599,9 +598,9 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('account_yfhxd_form_view_new')})]"/>
             </record>
     <menuitem id="menu_yfhxd_new_payment_approve" name="等待付款"
-              parent="menu_invoice_payment_apply_root" sequence="30"
+              parent="menu_invoice_payment_apply_root" sequence="30" groups="base.group_system"
               action="action_yfhxd_new_payment_approve"/>
-    <menuitem id="menu_yfhxd_new_payment_approve_next" name="等待付款"
+    <menuitem id="menu_yfhxd_new_payment_approve_next" name="等待付款" groups="base.group_system"
               parent="menu_invoice_payment_apply_root_next" sequence="30"
               action="action_yfhxd_new_payment_approve"/>
 
@@ -623,10 +622,10 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('account_yfhxd_form_view_new')})]"/>
             </record>
     <menuitem id="menu_yfhxd_new_payment_done" name="已完成" sequence="40"
-              parent="menu_invoice_payment_apply_root"
+              parent="menu_invoice_payment_apply_root" groups="base.group_system"
               action="action_yfhxd_new_payment_done"/>
     <menuitem id="menu_yfhxd_new_payment_done_next" name="已完成" sequence="40"
-              parent="menu_invoice_payment_apply_root_next"
+              parent="menu_invoice_payment_apply_root_next" groups="base.group_system"
               action="action_yfhxd_new_payment_done"/>
 
 
@@ -645,7 +644,7 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('account_yfhxd_form_view_new')})]"/>
             </record>
     <menuitem id="menu_yfhxd_new_advance_done" name="已完成" sequence="40"
-              parent="menu_advance_reconcile_apply"
+              parent="menu_advance_reconcile_apply" groups="base.group_system"
               action="action_yfhxd_new_advance_done"/>
 
     <record model="ir.actions.act_window" id="action_yfhxd_new_reconcile_done">
@@ -663,7 +662,7 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('account_yfhxd_form_view_new')})]"/>
             </record>
     <menuitem id="menu_yfhxd_new_reconcile_done" name="已完成" sequence="40"
-              parent="menu_residual_reconcile_apply"
+              parent="menu_residual_reconcile_apply" groups="base.group_system"
               action="action_yfhxd_new_reconcile_done"/>
 
 
@@ -684,7 +683,77 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('account_yfhxd_form_view_new')})]"/>
             </record>
     <menuitem id="menu_yfhxd_new_payment_old_done" name="已完成" sequence="40"
-              parent="menu_yjzy_advance_root"
+              parent="menu_yjzy_advance_root" groups="base.group_system"
               action="action_yfhxd_new_payment_old_done"/>
+
+
+    <menuitem id="menu_yfhxd_reconcile_new_other_po"  name="查询和创建"
+              action="action_purchase_invoice_unpaid_group_by_invoice_attribute" parent="yjzy_extend.menu_invoice_payment_apply_root" sequence="5"/>
+
+    <record model="ir.actions.act_window" id="action_yfhxd_new_payment_all">
+        <field name="name">账单付款申请单</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.reconcile.order</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('sfk_type','=','yfhxd'),('invoice_attribute','!=','other_payment'),('state','in',['draft','refused','canceled','posted','approved','done']),('hxd_type_new','in',['40'])]</field>
+        <field name="context">{'search_default_group_by_state':1,'advance_po_amount':1,'default_sfk_type': 'yfhxd',
+            'default_hxd_type_new':'40','default_payment_type': 'outbound', 'default_be_renling': 1, 'default_partner_type':
+            'supplier', 'show_po': 1,'default_operation_wizard':'30'}
+        </field>
+              <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('account_yfhxd_tree_view_approve_new')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('account_yfhxd_form_view_new')})]"/>
+        </record>
+    <menuitem id="menu_yfhxd_new_payment_all" name="查询申请单"
+              parent="menu_invoice_payment_apply_root" sequence="10"
+              action="action_yfhxd_new_payment_no_paid_all"/>
+
+
+    <menuitem id="menu_yfhxd_reconcile_new_other_po"  name="查询和创建"
+              action="action_purchase_invoice_unpaid_group_by_invoice_attribute" parent="yjzy_extend.menu_invoice_payment_apply_root" sequence="5"/>
+
+
+
+    <record model="ir.actions.act_window" id="action_yfhxd_new_payment_other_payment_all">
+        <field name="name">其他应付账单付款申请单</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.reconcile.order</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('sfk_type','=','yfhxd'),('invoice_attribute','=','other_payment'),('state','in',['draft','refused','canceled','posted','approved','done']),('hxd_type_new','in',['40'])]</field>
+        <field name="context">{'search_default_group_by_state':1,'advance_po_amount':1,'default_sfk_type': 'yfhxd',
+            'default_hxd_type_new':'40','default_payment_type': 'outbound', 'default_be_renling': 1, 'default_partner_type':
+            'supplier', 'show_po': 1,'default_operation_wizard':'30'}
+        </field>
+              <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('account_yfhxd_tree_view_approve_new')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('account_yfhxd_form_view_new')})]"/>
+        </record>
+    <menuitem id="menu_yfhxd_new_payment_other_payment_all" name="查询申请单"
+              parent="menu_invoice_other_payment_apply_root" sequence="10"
+              action="action_yfhxd_new_payment_other_payment_all"/>
+
+    <record model="ir.actions.act_window" id="action_yfhxd_new_advance_all">
+        <field name="name">预付-应付认领</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.reconcile.order</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('sfk_type','=','yfhxd'),('state','in',['done']),('hxd_type_new','=','30')]</field>
+        <field name="context">{'advance_po_amount':1,'default_sfk_type': 'yfhxd', 'default_hxd_type_new':'30','default_payment_type': 'outbound', 'default_be_renling': 1, 'default_partner_type':
+            'supplier', 'show_po': 1,'default_operation_wizard':'30'}
+        </field>
+              <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('account_yfhxd_advance_tree_view_new')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('account_yfhxd_form_view_new')})]"/>
+            </record>
+    <menuitem id="menu_yfhxd_new_advance_all" name="查询" sequence="40"
+              parent="menu_advance_reconcile_apply"
+              action="action_yfhxd_new_advance_all"/>
+
+    <menuitem id="menu_yfhxd_advance_reconcile_apply_2" name="查看并创建"
+              parent="yjzy_extend.menu_advance_reconcile_apply" sequence="5"
+              action="yjzy_extend.action_yfsqd_balance"/>
 
 </odoo>

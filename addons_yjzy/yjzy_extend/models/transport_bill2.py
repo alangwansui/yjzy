@@ -158,7 +158,9 @@ class transport_bill(models.Model):
         tb_po_id = self.env['tb.po.invoice'].create({'tb_id': bill_id,
                                                     'invoice_product_id': self.env.ref('yjzy_extend.product_qtyfk').id, #0821
                                                     'type':'other_po',
-                                                     'yjzy_type_1':'purchase'
+                                                     'yjzy_type_1':'purchase',
+                                                     'type_invoice':'in_invoice',
+                                                     'is_tb_hs_id':True,
                                                     })
 
         view = self.env.ref('yjzy_extend.tb_po_form')

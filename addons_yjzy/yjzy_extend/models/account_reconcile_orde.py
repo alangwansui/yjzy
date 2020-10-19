@@ -290,6 +290,14 @@ class account_reconcile_order(models.Model):
         stage = self.env['account.reconcile.stage']
         return stage.search([], limit=1)
 
+    invoice_attribute = fields.Selection(
+        [('normal', u'常规账单'),
+         ('reconcile', u'核销账单'),
+         ('extra', u'额外账单'),
+         ('other_po', u'直接增加'),
+         ('expense_po', u'费用转换'),
+         ('other_payment',u'其他')], '账单类型')
+
     stage_id = fields.Many2one(
         'account.reconcile.stage',
         default=_default_account_reconcile_stage)

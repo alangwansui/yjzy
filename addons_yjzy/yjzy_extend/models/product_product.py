@@ -40,6 +40,9 @@ class Product_Product(models.Model):
             else:
                 one.jituan_id = False
 
+    for_extra = fields.Boolean('可用于额外账单')
+    for_other_po = fields.Boolean('可用于增加采购')
+
     jituan_id = fields.Many2one('ji.tuan','集团',compute=compute_jituan,store=True)
 
     en_name = fields.Char(u'英文名')

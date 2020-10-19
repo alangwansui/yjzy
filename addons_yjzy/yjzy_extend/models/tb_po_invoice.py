@@ -32,7 +32,7 @@ class tb_po_invoice(models.Model):
             p_s_add_this_time_extra_total = p_s_add_this_time_total - p_s_add_this_time_refund
             amount_diff = back_tax_add_this_time_total + p_s_add_this_time_total - purchase_amount2_add_this_time_total
 
-            if one.type =='extra':
+            if one.type in ['extra','other_payment']:
                 price_total = sum(one.extra_invoice_line_ids.mapped('price_total'))
                 one.price_total = price_total
             else:
@@ -47,7 +47,7 @@ class tb_po_invoice(models.Model):
             one.yjzy_invoice_residual_amount = yjzy_invoice_residual_amount
             one.yjzy_invoice_include_tax = yjzy_invoice_include_tax
             # one.yjzy_invoice_id = yjzy_invoice_id and yjzy_invoice_id[0] or False
-            one.currency_id = yjzy_invoice_id and yjzy_invoice_id[0].currency_id or self.env.user.company_id.currency_id.id
+
     #825
     # @api.depends('extra_invoice_line_ids','extra_invoice_line_ids.price_unit')
     # def compute_price_total(self):
@@ -56,17 +56,24 @@ class tb_po_invoice(models.Model):
     #         price_total = sum(one.extra_invoice_line_ids.mapped('price_total'))
     #         one.price_total = price_total
         # 825
-    # def _default_extra_invoice_line(self):
-    #
-    #     res = []
-    #     type_obj = self.env['packaging.type']
-    #     yjzy_type_1=self.env.context.get('yjzy_type_1')
-    #     type = self.env.context.get('type')
-    #     if yjzy_type_1 == 'purchase' and type == 'other_po':
-    #         res.append((0, 0, {
-    #             'product_id':self.env.ref('yjzy_extend.product_qtyfk').id
-    #         }))
-    #     return res or None
+
+    def _default_currency_id(self):
+        return self.env.user.company_id.currency_id.id
+
+    def _default_extra_invoice_line(self): #参考one2many的default 默认
+        default_yjzy_type_1 = self.env.context.get('default_yjzy_type_1')
+        default_type = self.env.context.get('default_type')
+        res = []
+        # yjzy_type_1=self.env.context.get('yjzy_type_1')
+        # type = self.env.context.get('type')
+        product = self.env['product.product'].search([('for_other_po','=',True)])
+        print('default_yjzy_type_1',default_yjzy_type_1,default_type)
+        for line in product:
+            if default_yjzy_type_1 == 'purchase' and default_type == 'other_po':
+                res.append((0, 0, {
+                    'product_id': line.id
+                }))
+        return res or None
 
     # @api.onchange('partner_id')
     # def onchange_extra_invoice_line(self):
@@ -155,8 +162,67 @@ class tb_po_invoice(models.Model):
             one.invoice_s_ids_count = len(one.invoice_s_ids)
             one.invoice_back_tax_ids_count = len(one.invoice_back_tax_ids)
             one.invoice_p_s_ids_count = len(one.invoice_p_s_ids)
+            one.invoice_other_payment_ids_count = len(one.invoice_other_payment_ids)
+            one.invoice_extra_ids_count = len(one.invoice_extra_ids)
 
+    @api.depends('yjzy_invoice_id','manual_currency_id')
+    def compute_currency_id(self):
+        for one in self:
+            yjzy_invoice_id = one.yjzy_invoice_id
+            manual_currency_id = one.manual_currency_id
+            if yjzy_invoice_id:
+                one.currency_id = yjzy_invoice_id and yjzy_invoice_id[0].currency_id
+            else:
+                one.currency_id = manual_currency_id
+
+    def _default_partner(self):
+        ctx = self.env.context.get('default_type')
+        partner = False
+        if ctx == 'other_payment':
+            partner = self.env['res.partner'].search([('name', '=', '未定义')], limit=1)
+        return partner
+
+    # @api.depends('name','name_title')
+    # def compute_display_name(self):
+    #     ctx = self.env.context
+    #     res = []
+    #     for one in self:
+    #         if
+    #         if ctx.get('default_sfk_type', '') == 'ysrld':
+    #             name = '%s:%s' % (one.journal_id.name, str(one.balance))
+    #         elif ctx.get('bank_amount'):
+    #             name = '%s[%s]' % (one.journal_id.name, str(one.balance))
+    #         elif ctx.get('advance_bank_amount'):
+    #             name = '%s[%s]' % (one.yjzy_payment_id.journal_id.name, str(one.advance_balance_total))
+    #         elif ctx.get('advance_so_amount'):
+    #             if not one.yjzy_payment_id:
+    #                 name = '%s[%s]' % (one.journal_id.name, str(one.balance))
+    #             else:
+    #                 if one.so_id:
+    #                     name = '%s[%s]' % (one.so_id.contract_code, str(one.advance_balance_total))
+    #                 else:
+    #                     name = '%s[%s]' % ('无销售合同', str(one.advance_balance_total))
+    #         elif ctx.get('advance_po_amount'):
+    #             if not one.yjzy_payment_id:
+    #                 name = '%s[%s]' % (one.journal_id.name, str(one.amount))
+    #             else:
+    #                 if one.po_id:
+    #                     name = '%s[%s]' % (one.po_id.contract_code, str(one.advance_balance_total))
+    #                 else:
+    #                     name = '%s[%s]' % ('无采购合同', str(one.advance_balance_total))
+    #         elif ctx.get('default_sfk_type', '') == 'yfsqd':
+    #             name = '%s:%s' % (one.name, str(one.advance_balance_total))
+    #         else:
+    #             name = '%s[%s]' % (one.name, str(one.balance))
+    #         print('ctx_1111', ctx)
+    #         one.display_name = name
+
+    #关联的申请单：其他应收对其他应付，其他应付对其他应收
+    # payment_id = fields.Many2one('account.payment',u'收付款单')
+    # display_name = fields.Char(u'显示名称', compute=compute_display_name)
+    yjzy_tb_po_invoice = fields.Many2one('tb.po.invoice',u'关联应收付申请单')
     #902
+    is_tb_hs_id = fields.Boolean('是否货款')
     bank_id = fields.Many2one('res.partner.bank', u'银行账号')
     fk_journal_id = fields.Many2one('account.journal', u'日记账',domain=[('type', 'in', ['cash', 'bank'])])
     tb_id_po_supplier = fields.Text(compute=compute_tb_id_po_supplier, string='供应商')
@@ -177,6 +243,7 @@ class tb_po_invoice(models.Model):
 
 
 
+
     fiscal_position_id = fields.Many2one('account.fiscal.position', string='Fiscal Position', oldname='fiscal_position',
                                          readonly=True, states={'draft': [('readonly', False)]})
     type_invoice = fields.Selection([
@@ -188,23 +255,32 @@ class tb_po_invoice(models.Model):
         default=lambda self: self._context.get('type', 'out_invoice'),
         track_visibility='always')#825
     yjzy_type = fields.Selection([('sale', u'销售'), ('purchase', u'采购'), ('back_tax', u'退税')], string=u'发票类型')#825 对应生成的发票，不用利用原来出运生成的账单。所以这个也没用了
-    yjzy_type_1 = fields.Selection([('sale', u'销售'), ('purchase', u'采购'), ('back_tax', u'退税')], string=u'发票类型')#825
-    extra_invoice_line_ids = fields.One2many('extra.invoice.line', 'tb_po_id', u'账单明细',)  # 825default=lambda self: self._default_extra_invoice_line()
+    yjzy_type_1 = fields.Selection([('sale', u'应付'), ('purchase', u'采购'), ('back_tax', u'退税')], string=u'发票类型')#825
+    extra_invoice_line_ids = fields.One2many('extra.invoice.line', 'tb_po_id', u'账单明细',default=lambda self: self._default_extra_invoice_line())
     price_total = fields.Monetary('金额合计',currency_field='currency_id',compute=compute_info,store=True)
 
 
     state = fields.Selection([('10_draft',u'草稿'),('20_submit',u'已提交'),('30_done','审批完成'),('80_refuse',u'拒绝'),('90_cancel',u'取消')],u'状态',index=True, track_visibility='onchange', default='10_draft')
-    type = fields.Selection([('reconcile', '核销账单'),('extra', '额外账单'), ('other_po', '直接增加'),('expense_po', u'费用转换'),],u'类型')
+    type = fields.Selection([('reconcile', '核销账单'),('extra', '额外账单'), ('other_po', '直接增加'),('expense_po', u'费用转换'),('other_payment',u'其他收付')],u'类型')
     name = fields.Char('编号', default=lambda self: self.env['ir.sequence'].next_by_code('tb.po.invoice'))
+    name_title = fields.Char(u'摘要')
     tb_id = fields.Many2one('transport.bill', u'出运单')
-    partner_id = fields.Many2one('res.partner', u'合作伙伴')
+    partner_id = fields.Many2one('res.partner', u'合作伙伴', default=lambda self: self._default_partner())
     hsname_all_ids = fields.One2many('tb.po.invoice.line', 'tb_po_id', u'报关明细',)
     invoice_ids = fields.One2many('account.invoice','tb_po_invoice_id','相关发票')
     invoice_ids_count = fields.Integer('相关发票数量',compute=compute_invoice_count)
 
     yjzy_invoice_id = fields.Many2one('account.invoice', '关联账单')
-    currency_id = fields.Many2one('res.currency', compute=compute_info)
-    invoice_p_ids = fields.One2many('account.invoice','tb_po_invoice_id','相关采购发票',domain=[('type','=','in_invoice'),('yjzy_type_1','=','purchase')])
+    currency_id = fields.Many2one('res.currency', '货币',  compute=compute_currency_id)#default=_default_currency_id
+    manual_currency_id = fields.Many2one('res.currency', '货币',  default=_default_currency_id)
+    invoice_other_payment_ids = fields.One2many('account.invoice','tb_po_invoice_id','其他应付账单',domain=[('type','=','in_invoice'),('yjzy_type_1','=','purchase'),
+                                                                                                      ('invoice_attribute','=','other_payment')])
+    invoice_other_payment_ids_count = fields.Integer('其他应付账单数量', compute=compute_invoice_count)
+    invoice_extra_ids = fields.One2many('account.invoice', 'tb_po_invoice_id', '额外账单',
+                                                domain=[('invoice_attribute', '=', 'extra')])
+    invoice_extra_ids_count = fields.Integer('额外账单数量', compute=compute_invoice_count)
+    invoice_p_ids = fields.One2many('account.invoice','tb_po_invoice_id','新增采购应付发票',domain=[('type','=','in_invoice'),('yjzy_type_1','=','purchase'),
+                                                                                            ('invoice_attribute','=','other_po')])
     invoice_p_ids_count = fields.Integer('相关采购发票数量', compute=compute_invoice_count)
     invoice_s_ids = fields.One2many('account.invoice','tb_po_invoice_id','相关应收发票',domain=[('type','=','out_invoice'),('yjzy_type_1','=','sale')])
     invoice_s_ids_count = fields.Integer('相关应收发票数量', compute=compute_invoice_count)
@@ -233,11 +309,23 @@ class tb_po_invoice(models.Model):
     yjzy_invoice_include_tax = fields.Boolean('原始采购是否含税', compute=compute_info)
     extra_invoice_include_tax = fields.Boolean('原始账单是否含税')
 
+    @api.multi
+    def name_get(self):
+        ctx = self.env.context
+        res = []
+        for one in self:
+            if one.type == 'other_payment' and one.type_invoice == 'in_invoice':
+                name = '%s:%s' % ('其他应付', one.name)
+            else:
+                name = one.name
+            res.append((one.id, name))
+        return res
 
     #014
     @api.onchange('yjzy_invoice_id')
     def onchange_yjzy_invoice_id(self):
         self.extra_invoice_include_tax = self.yjzy_invoice_id.include_tax
+        # self.currency_id = self.yjzy_invoice_id.currency_id
     #825
     @api.onchange('extra_invoice_line_ids')
     def onchange_payment_currency(self):
@@ -261,7 +349,11 @@ class tb_po_invoice(models.Model):
         if self.type == 'expense_po':
             self.apply()
         if self.type == 'extra':
-            self.make_extra_invoice()
+            # self.make_extra_invoice()
+            self.apply() #1014
+        if self.type == 'other_payment':
+            # self.make_extra_invoice()
+            self.apply() #1014
     def action_manager_approve(self):
         if self.type == 'expense_po':
             self.create_yfhxd()
@@ -269,17 +361,24 @@ class tb_po_invoice(models.Model):
         self.state = '30_done'
         for one in self.invoice_ids:
             one.action_invoice_open()
-    def action_refuse(self):
+    def action_refuse(self,reason):
         self.invoice_ids.unlink()
         self.state = '80_refuse'
+        for tb in self:
+            tb.message_post_with_view('yjzy_extend.expense_sheet_template_refuse_reason',
+                                      values={'reason': reason, 'name': self.name},
+                                      subtype_id=self.env.ref(
+                                          'mail.mt_note').id)  # 定义了留言消息的模板，其他都可以参考，还可以继续参考费用发送计划以及邮件方式
     def action_draft(self):
         self.state = '10_draft'
 
 
     @api.onchange('expense_sheet_id')
     def onchange_expense_sheet_id(self):
-        bill_id = self.expense_sheet_id.expense_line_ids.mapped('tb_id')
-        self.tb_id = bill_id
+        if self.type == 'expense_po':
+            bill_id = self.expense_sheet_id.expense_line_ids.mapped('tb_id')
+            self.tb_id = bill_id
+
 
 
     @api.onchange('tb_id')
@@ -364,11 +463,87 @@ class tb_po_invoice(models.Model):
         if self.type =='expense_po':
             self.invoice_ids.unlink()
             self.apply_expense_sheet()
+            # self.make_extra_invoice()
+            self.make_back_tax()
+            self.make_sale_invoice()
+            self.make_sale_invoice_extra()
+        if self.type == 'extra':
+            self.invoice_ids.unlink()
+            self.make_extra_invoice()
+            self.make_back_tax()
+            self.make_sale_invoice()
+            self.make_sale_invoice_extra()
+        if self.type == 'other_payment':
+            self.invoice_ids.unlink()
+            self.make_other_payment_invoice()
             self.make_back_tax()
             self.make_sale_invoice()
             self.make_sale_invoice_extra()
 
+    def create_tb_po_invoice(self):
+        self.ensure_one()
+        line_tb_id = self.extra_invoice_line_ids
+        if self.type == 'other_payment' and self.yjzy_type_1 == 'purchase':
+            yjzy_type_1 = 'sale'
+            type_invoice = 'out_invoice'
+        elif self.type == 'other_payment' and self.yjzy_type_1 == 'sale':
+            yjzy_type_1 = 'purchase'
+            type_invoice = 'in_invoice'
 
+        tb_po_id = self.env['tb.po.invoice'].create({'tb_id': self.tb_id.id,
+                                                     'tax_rate_add': self.tax_rate_add,
+                                                     'type': self.type,
+                                                     'yjzy_type_1': yjzy_type_1,
+                                                     'manual_currency_id':self.manual_currency_id.id,
+                                                     'is_tb_hs_id':self.is_tb_hs_id,
+                                                     'currency_id': self.currency_id.id,
+                                                     'type_invoice':type_invoice
+                                                     })
+
+        view = self.env.ref('yjzy_extend.tb_po_form')
+        line_obj = self.env['tb.po.invoice.line']
+        extra_invoice_line_obj = self.env['extra.invoice.line']
+        for hsl in self.hsname_all_ids:
+            line_obj.create({
+                'tb_po_id': tb_po_id.id,
+                'hs_id': hsl.hs_id.id,
+                'hs_en_name': hsl.hs_en_name,
+                'purchase_amount2_tax': hsl.purchase_amount2_tax,
+                'purchase_amount2_no_tax': hsl.purchase_amount2_no_tax,
+                'purchase_amount_max_add_forecast': hsl.purchase_amount_max_add_forecast,
+                'purchase_amount_min_add_forecast': hsl.purchase_amount_min_add_forecast,
+                'purchase_amount_max_add_rest': hsl.purchase_amount_max_add_rest,
+                'purchase_amount_min_add_rest': hsl.purchase_amount_min_add_rest,
+                'purchase_back_tax_amount2_new': hsl.purchase_back_tax_amount2_new,
+                'hsname_all_line_id': hsl.id,
+                'back_tax': hsl.back_tax
+            })
+        for line in self.extra_invoice_line_ids:
+            product = line.product_id
+            account = product.property_account_income_id
+            # print('account', account)
+            extra_invoice_line_obj.create({
+                'tb_po_id': tb_po_id.id,
+                'name': '%s' % (product.name),
+                'product_id': product.id,
+                'quantity': line.quantity,
+                'price_unit': line.price_unit,
+                'account_id': account.id
+
+            })
+        self.yjzy_tb_po_invoice = tb_po_id
+
+        # return {
+        #     'name': _(u'创建费用转货款申请'),
+        #     'view_type': 'tree,form',
+        #     "view_mode": 'form',
+        #     'res_model': 'tb.po.invoice',
+        #     'type': 'ir.actions.act_window',
+        #     'view_id': view.id,
+        #     'target': 'current',
+        #     'res_id': tb_po_id.id,
+        #     # 'context': { },
+        # }
     #应付发票
     def make_purchase_invoice(self):
         self.ensure_one()
@@ -403,7 +578,7 @@ class tb_po_invoice(models.Model):
                 'invoice_attribute':'other_po',
                 'yjzy_type_1': 'purchase',
                 'yjzy_payment_term_id':self.yjzy_invoice_id.payment_term_id.id,
-                'yjzy_currency_id':self.yjzy_invoice_id.currency_id.id,
+                'yjzy_currency_id':self.currency_id.id,
                 # 'payment_term_id': self.yjzy_invoice_id.payment_term_id.id,
                 # 'currency_id': self.yjzy_invoice_id.currency_id.id,
                 'date':fields.datetime.now(),
@@ -559,9 +734,11 @@ class tb_po_invoice(models.Model):
                     'hs_en_name': line.hs_en_name,
                     'tbl_hsname_all_id': line.hsname_all_line_id.id
                 })
-    #825 额外账单
+    #825 额外账单  #ctx = {'type': [pk.id], 'active_id': pk.id} withcontext(ctx)
     def make_extra_invoice(self):
         self.ensure_one()
+        if self.purchase_amount2_add_this_time_total !=0 and self.price_total != self.purchase_amount2_add_this_time_total:
+            raise Warning('增加采购的金额不等于额外账单的总金额！')
         # self.check()
         invoice_obj = self.env['account.invoice']
         invoice_line_obj = self.env['account.invoice.line']
@@ -570,8 +747,8 @@ class tb_po_invoice(models.Model):
         # product = self.env.ref('yjzy_extend.product_back_tax')
         product = self.invoice_product_id
         account = product.property_account_income_id
-
-        inv = invoice_obj.create({
+        ctx = {'type': self.type_invoice}
+        inv = invoice_obj.with_context(ctx).create({
             'yjzy_invoice_id':self.yjzy_invoice_id.id,
             'tb_po_invoice_id': self.id,
             'partner_id': self.partner_id.id,
@@ -582,7 +759,7 @@ class tb_po_invoice(models.Model):
             'yjzy_invoice_number': self.yjzy_invoice_id.number,
             'is_yjzy_invoice': True,
             'payment_term_id': self.yjzy_invoice_id.payment_term_id.id,
-            'currency_id': self.yjzy_invoice_id.currency_id.id,
+            'currency_id': self.currency_id.id,
             'include_tax': self.yjzy_invoice_id.include_tax,
             'date_ship': self.yjzy_invoice_id.date_ship,
             'date_finish': self.yjzy_invoice_id.date_finish,
@@ -601,7 +778,7 @@ class tb_po_invoice(models.Model):
         yjzy_type_1 = self.yjzy_type_1
         if yjzy_type_1 == 'sale' or yjzy_type_1 == 'back_tax':
             if self.price_total < 0:
-                self.type_invoice = 'out_refund'
+                # self.type_invoice = 'out_refund' #好像没什么用
                 for line in self.extra_invoice_line_ids:
                     price_unit = -line.price_unit
                     invoice_line = invoice_line_obj.create({
@@ -614,8 +791,17 @@ class tb_po_invoice(models.Model):
                         'account_id': line.product_id.property_account_income_id.id
                     })
                     # invoice_line._onchange_product_id()
+                #1014
+                for line in self.hsname_all_ids:
+                    hsname_all_line = hsname_all_line_obj.create({
+                        'invoice_id': inv.id,
+                        'hs_id': line.hs_id.id,
+                        'hs_en_name': line.hs_en_name,
+                        'purchase_amount2_add_this_time': line.purchase_amount2_add_this_time,
+                        'tbl_hsname_all_id': line.hsname_all_line_id.id
+                    })
             else:
-                self.type_invoice = 'out_invoice'
+                # self.type_invoice = 'out_invoice'
                 for line in self.extra_invoice_line_ids:
                     price_unit = line.price_unit
                     invoice_line = invoice_line_obj.create({
@@ -628,9 +814,18 @@ class tb_po_invoice(models.Model):
                         'account_id': line.product_id.property_account_income_id.id
                     })
                     # invoice_line._onchange_product_id()
+                #1014
+                for line in self.hsname_all_ids:
+                    hsname_all_line = hsname_all_line_obj.create({
+                        'invoice_id': inv.id,
+                        'hs_id': line.hs_id.id,
+                        'hs_en_name': line.hs_en_name,
+                        'purchase_amount2_add_this_time': line.purchase_amount2_add_this_time,
+                        'tbl_hsname_all_id': line.hsname_all_line_id.id
+                    })
         else:
             if self.price_total < 0:
-                self.type_invoice = 'in_refund'
+                # self.type_invoice = 'in_refund'
                 for line in self.extra_invoice_line_ids:
                     price_unit = -line.price_unit
                     invoice_line = invoice_line_obj.create({
@@ -643,8 +838,17 @@ class tb_po_invoice(models.Model):
                         'account_id': line.product_id.property_account_income_id.id
                     })
                     # invoice_line._onchange_product_id()
+                    #1014
+                for line in self.hsname_all_ids:
+                    hsname_all_line = hsname_all_line_obj.create({
+                        'invoice_id': inv.id,
+                        'hs_id': line.hs_id.id,
+                        'hs_en_name': line.hs_en_name,
+                        'purchase_amount2_add_this_time': line.purchase_amount2_add_this_time,
+                        'tbl_hsname_all_id': line.hsname_all_line_id.id
+                    })
             else:
-                self.type_invoice = 'in_invoice'
+                # self.type_invoice = 'in_invoice'
                 for line in self.extra_invoice_line_ids:
                     price_unit = line.price_unit
                     invoice_line = invoice_line_obj.create({
@@ -657,8 +861,165 @@ class tb_po_invoice(models.Model):
                         'account_id': line.product_id.property_account_income_id.id
                     })
                     # invoice_line._onchange_product_id()
+                    #1014
+                for line in self.hsname_all_ids:
+                    hsname_all_line = hsname_all_line_obj.create({
+                        'invoice_id': inv.id,
+                        'hs_id': line.hs_id.id,
+                        'hs_en_name': line.hs_en_name,
+                        'purchase_amount2_add_this_time': line.purchase_amount2_add_this_time,
+                        'tbl_hsname_all_id': line.hsname_all_line_id.id
+                    })
         inv._default_name()
         inv.compute_name_extra()
+        form_view = self.env.ref('yjzy_extend.view_supplier_invoice_extra_form').id
+        return {
+            'name': u'采购额外账单',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'account.invoice',
+            'views': [(form_view, 'form')],
+            'res_id': inv.id,
+            'type': 'ir.actions.act_window',
+            'target': 'new',
+
+        }
+
+    #创建其他应付账单
+    def make_other_payment_invoice(self):
+        self.ensure_one()
+        if self.purchase_amount2_add_this_time_total != 0 and self.price_total != self.purchase_amount2_add_this_time_total:
+            raise Warning('开票金额不等于额外账单的总金额！')
+        # self.check()
+        invoice_obj = self.env['account.invoice']
+        invoice_line_obj = self.env['account.invoice.line']
+        hsname_all_line_obj = self.env['invoice.hs_name.all']
+        purchase_orders = invoice_obj.browse()
+        # product = self.env.ref('yjzy_extend.product_back_tax')
+        product = self.invoice_product_id
+        account = product.property_account_income_id
+
+        inv = invoice_obj.create({
+            'yjzy_invoice_id':self.yjzy_invoice_id.id,
+            'tb_po_invoice_id': self.id,
+            'partner_id': self.partner_id.id,
+
+            'invoice_attribute': self.type,
+            'type': self.type_invoice,
+            'yjzy_type_1':self.yjzy_type_1,
+            'is_yjzy_invoice': False,
+            'currency_id': self.currency_id.id,
+
+            # 'invoice_line_ids': [(0, 0, {
+            #     'name': '%s' % (product.name),
+            #     'product_id': product.id,
+            #     'quantity': 1,
+            #     'price_unit': self.p_s_add_this_time_extra_total,
+            #     'account_id': account.id,
+            # })]
+        })
+        yjzy_type_1 = self.yjzy_type_1
+        if yjzy_type_1 == 'sale' or yjzy_type_1 == 'back_tax':
+            if self.price_total < 0:
+                # self.type_invoice = 'out_refund' #好像没什么用
+                for line in self.extra_invoice_line_ids:
+                    price_unit = -line.price_unit
+                    invoice_line = invoice_line_obj.create({
+                        'name': line.name,
+                        'invoice_id': inv.id,
+                        'product_id': line.product_id.id,
+                        'price_unit': price_unit,
+                        'quantity': line.quantity,
+                        'tp_po_invoice_line': line.id,
+                        'account_id': line.product_id.property_account_income_id.id
+                    })
+                    # invoice_line._onchange_product_id()
+                #1014
+                for line in self.hsname_all_ids:
+                    hsname_all_line = hsname_all_line_obj.create({
+                        'invoice_id': inv.id,
+                        'hs_id': line.hs_id.id,
+                        'hs_en_name': line.hs_en_name,
+                        'purchase_amount2_add_this_time': line.purchase_amount2_add_this_time,
+                        'tbl_hsname_all_id': line.hsname_all_line_id.id
+                    })
+
+            else:
+                # self.type_invoice = 'out_invoice'
+                for line in self.extra_invoice_line_ids:
+                    price_unit = line.price_unit
+                    invoice_line = invoice_line_obj.create({
+                        'name': line.name,
+                        'invoice_id': inv.id,
+                        'product_id': line.product_id.id,
+                        'price_unit': price_unit,
+                        'quantity': line.quantity,
+                        'tp_po_invoice_line': line.id,
+                        'account_id': line.product_id.property_account_income_id.id
+                    })
+                    # invoice_line._onchange_product_id()
+                #1014
+                for line in self.hsname_all_ids:
+                    hsname_all_line = hsname_all_line_obj.create({
+                        'invoice_id': inv.id,
+                        'hs_id': line.hs_id.id,
+                        'hs_en_name': line.hs_en_name,
+                        'purchase_amount2_add_this_time': line.purchase_amount2_add_this_time,
+                        'tbl_hsname_all_id': line.hsname_all_line_id.id
+                    })
+
+        else:
+            if self.price_total < 0:
+                # self.type_invoice = 'in_refund'
+                for line in self.extra_invoice_line_ids:
+                    price_unit = -line.price_unit
+                    invoice_line = invoice_line_obj.create({
+                        'name': line.name,
+                        'invoice_id': inv.id,
+                        'product_id': line.product_id.id,
+                        'price_unit': price_unit,
+                        'quantity': line.quantity,
+                        'tp_po_invoice_line': line.id,
+                        'account_id': line.product_id.property_account_income_id.id
+                    })
+                    # invoice_line._onchange_product_id()
+                    #1014
+                for line in self.hsname_all_ids:
+                    hsname_all_line = hsname_all_line_obj.create({
+                        'invoice_id': inv.id,
+                        'hs_id': line.hs_id.id,
+                        'hs_en_name': line.hs_en_name,
+                        'purchase_amount2_add_this_time': line.purchase_amount2_add_this_time,
+                        'tbl_hsname_all_id': line.hsname_all_line_id.id
+                    })
+
+            else:
+                # self.type_invoice = 'in_invoice'
+                for line in self.extra_invoice_line_ids:
+                    price_unit = line.price_unit
+                    invoice_line = invoice_line_obj.create({
+                        'name': line.name,
+                        'invoice_id': inv.id,
+                        'product_id': line.product_id.id,
+                        'price_unit': price_unit,
+                        'quantity': line.quantity,
+                        'tp_po_invoice_line': line.id,
+                        'account_id': line.product_id.property_account_income_id.id
+                    })
+                    # invoice_line._onchange_product_id()
+                    #1014
+                for line in self.hsname_all_ids:
+                    hsname_all_line = hsname_all_line_obj.create({
+                        'invoice_id': inv.id,
+                        'hs_id': line.hs_id.id,
+                        'hs_en_name': line.hs_en_name,
+                        'purchase_amount2_add_this_time': line.purchase_amount2_add_this_time,
+                        'tbl_hsname_all_id': line.hsname_all_line_id.id
+                    })
+
+        inv._default_name()
+        inv.compute_name_extra()
+        inv.yjzy_invoice_id = inv.id
         form_view = self.env.ref('yjzy_extend.view_supplier_invoice_extra_form').id
         return {
             'name': u'采购额外账单',
@@ -945,7 +1306,6 @@ class Extra_Invoice_Line(models.Model):
         else:
             # Use the purchase uom by default
             self.uom_id = self.product_id.uom_po_id
-
             if part.lang:
                 product = self.product_id.with_context(lang=part.lang)
             else:

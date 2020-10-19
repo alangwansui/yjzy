@@ -525,11 +525,13 @@ class hr_expense_sheet(models.Model):
                                                      'type':'expense_po',
                                                      'fk_journal_id': self.fk_journal_id.id,
                                                      'bank_id':self.bank_id.id,
+                                                     'yjzy_type_1':'purchase',
+                                                     'is_tb_hs_id':True,
                                                      })
 
         view = self.env.ref('yjzy_extend.tb_po_form')
         line_obj = self.env['tb.po.invoice.line']
-
+        extra_invoice_line_obj = self.env['extra.invoice.line']
         for hsl in bill_id.hsname_all_ids:
             line_obj.create({
                 'tb_po_id': tb_po_id.id,
@@ -545,7 +547,21 @@ class hr_expense_sheet(models.Model):
                 'hsname_all_line_id': hsl.id,
                 'back_tax': hsl.back_tax
             })
+        for line in self.expense_line_ids:
+            product = line.product_id
+            account = product.property_account_income_id
+            print('account',account)
+            extra_invoice_line_obj.create({
+                'tb_po_id': tb_po_id.id,
+                'name':'%s' % (product.name),
+                'product_id': product.id,
+                'quantity': line.quantity,
+                'price_unit': line.unit_amount,
+                'account_id': account.id
+
+            })
         self.expense_to_invoice_type = 'to_invoice'
+
         return {
             'name': _(u'创建费用转货款申请'),
             'view_type': 'tree,form',

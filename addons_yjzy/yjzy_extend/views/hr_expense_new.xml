@@ -1920,7 +1920,7 @@
                               ]"/>
         </record>
          <menuitem id="menu_hr_expense_sheet_account_approval" name="待财务审批费用"
-              parent="menu_expense_sheet_apply_root"
+              parent="menu_expense_sheet_apply_root" groups="base.group_system"
               action="action_hr_expense_sheet_account_approval"/>
 
         <record id="action_hr_expense_sheet_manager_approval" model="ir.actions.act_window">
@@ -1939,7 +1939,7 @@
                               ]"/>
         </record>
          <menuitem id="menu_hr_expense_sheet_manager_approval" name="待总经理审批费用"
-              parent="menu_expense_sheet_apply_root"
+              parent="menu_expense_sheet_apply_root" groups="base.group_system"
               action="action_hr_expense_sheet_manager_approval"/>
 
         <record id="action_hr_expense_sheet_approve_1" model="ir.actions.act_window">
@@ -1956,7 +1956,7 @@
                               ]"/>
         </record>
          <menuitem id="menu_hr_expense_sheet_approve_1" name="审批完成费用"
-              parent="menu_expense_sheet_apply_root"
+              parent="menu_expense_sheet_apply_root" groups="base.group_system"
               action="action_hr_expense_sheet_approve_1"/>
 
         <record id="action_hr_expense_sheet_approval_all" model="ir.actions.act_window">

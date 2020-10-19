@@ -2126,7 +2126,6 @@ class transport_bill(models.Model):
                 one.invoice_attribute = 'normal'
 
             sale_invoices.write({
-
                 'date_invoice': self.date_out_in,
                 'date_out_in': self.date_out_in,
                 'date': self.date_out_in,
