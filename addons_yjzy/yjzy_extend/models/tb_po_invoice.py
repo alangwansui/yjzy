@@ -354,6 +354,7 @@ class tb_po_invoice(models.Model):
         if self.type == 'other_payment':
             # self.make_extra_invoice()
             self.apply() #1014
+
     def action_manager_approve(self):
         if self.type == 'expense_po':
             self.create_yfhxd()
@@ -361,6 +362,7 @@ class tb_po_invoice(models.Model):
         self.state = '30_done'
         for one in self.invoice_ids:
             one.action_invoice_open()
+
     def action_refuse(self,reason):
         self.invoice_ids.unlink()
         self.state = '80_refuse'
