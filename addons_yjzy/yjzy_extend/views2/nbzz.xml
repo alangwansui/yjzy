@@ -179,10 +179,10 @@
 
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_nbzz_form')})]"/>
     </record>
-        <menuitem id="menu_nbzz_new_create"  sequence="25" name="创建内部转账" parent="menu_nbzz_new" action="action_nbzz_new_create"/>
+        <menuitem id="menu_nbzz_new_create"  sequence="25" name="创建" parent="menu_nbzz_new" action="action_nbzz_new_create"/>
 
     <record model="ir.actions.act_window" id="action_nbzz_new_all">
-        <field name="name">内不转账</field>
+        <field name="name">内部转账</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">account.payment</field>
         <field name="view_type">form</field>

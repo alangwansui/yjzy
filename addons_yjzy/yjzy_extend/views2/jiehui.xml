@@ -188,7 +188,7 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_jiehui_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_jiehui_form')})]"/>
     </record>
-    <menuitem id="menu_jiehui_all"  sequence="20" name="已完成" parent="menu_jiehui_new" action="action_jiehui_all"/>
+    <menuitem id="menu_jiehui_all"  sequence="20" name="查询" parent="menu_jiehui_new" action="action_jiehui_all"/>
 
     <record model="ir.actions.act_window" id="action_jiehui_create">
         <field name="name">创建结汇单</field>
@@ -203,6 +203,6 @@
 
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_jiehui_form')})]"/>
     </record>
-    <menuitem id="menu_jiehui_create"  sequence="30" name="创建结汇单" parent="menu_jiehui_new" action="action_jiehui_create"/>
+    <menuitem id="menu_jiehui_create"  sequence="10" name="创建" parent="menu_jiehui_new" action="action_jiehui_create"/>
 
 </odoo>

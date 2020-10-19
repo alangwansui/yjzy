@@ -32,11 +32,11 @@
 
         <menuitem id="menu_expense_sheet_other_payment_apply_root" name="其他支出申请付款" parent="yjzy_extend.menu_payment_apply_root" groups="base.group_system" sequence="40"/>
         <menuitem id="menu_invoice_payment_apply_create" name="应付查询和创建申请" parent="yjzy_extend.menu_invoice_payment_apply_root" sequence="10"/>
-        <menuitem id="menu_no_payment_apply_root" name="非付款认领" parent="yjzy_extend.menu_new_account_out_root" sequence="30"/>
-        <menuitem id="menu_advance_reconcile_apply" name="预付-应付认领" parent="yjzy_extend.menu_no_payment_apply_root" sequence="10"/>
-        <menuitem id="menu_residual_reconcile_apply" name="应付尾款认领" parent="yjzy_extend.menu_no_payment_apply_root" sequence="10"/>
+        <menuitem id="menu_no_payment_apply_root" name="认领与核销" parent="yjzy_extend.menu_new_account_out_root" sequence="50"/>
+        <menuitem id="menu_advance_reconcile_apply" name="预付款认领" parent="yjzy_extend.menu_no_payment_apply_root" sequence="10"/>
+        <menuitem id="menu_residual_reconcile_apply" name="账单核销" parent="yjzy_extend.menu_no_payment_apply_root" sequence="10"/>
 
-        <menuitem id="menu_invoice_payment_out" name="付款" parent="yjzy_extend.menu_new_account_out_root" sequence="40"/>
+        <menuitem id="menu_invoice_payment_out" name="付款" parent="yjzy_extend.menu_new_account_out_root" sequence="30"/>
         <menuitem id="menu_invoice_payment_exchange" name="内部转账" parent="yjzy_extend.menu_new_account_out_root" sequence="40"/>
 
         <menuitem id="menu_invoice_payment_apply_root_next" name="应付申请付款"  sequence="30" />
