@@ -2554,7 +2554,7 @@
                               ]"/>
         </record>
        <menuitem id="menu_supplier_account_invoice_extra_all" action="action_supplier_account_invoice_extra_all"
-                  parent="menu_supplier_invoice_apply_root" name="额外应付账单" groups="base.group_system"
+                  parent="menu_supplier_invoice_apply_root" name="额外应付账单"
                   sequence="30"
         />
 
@@ -2598,8 +2598,8 @@
                   sequence="50"
         />
         <menuitem id="menu_supplier_account_invoice_other_payment_pay_all" action="action_supplier_account_invoice_other_payment_all"
-                  parent="menu_invoice_other_payment_apply_root" name="创建其他付款申请"
-                  sequence="50"
+                  parent="menu_invoice_other_payment_apply_root" name="创建申请单"
+                  sequence="05"
         />
 
 

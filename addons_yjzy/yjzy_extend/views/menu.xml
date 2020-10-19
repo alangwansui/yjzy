@@ -25,10 +25,10 @@
         <menuitem id="menu_supplier_invoice_other_payment_root" name="其他应付账单" parent="yjzy_extend.menu_supplier_invoice_apply_root" groups="base.group_system"
                   sequence="40"/>
         <menuitem id="menu_payment_apply_root" name="付款申请" parent="yjzy_extend.menu_new_account_out_root" sequence="20"/>
-        <menuitem id="menu_expense_sheet_apply_root" name="费用申请付款" parent="yjzy_extend.menu_payment_apply_root" sequence="30"/>
-        <menuitem id="menu_advance_payment_apply_root" name="预付管理" parent="yjzy_extend.menu_payment_apply_root" sequence="20"/>
-        <menuitem id="menu_invoice_payment_apply_root" name="账单付款申请" parent="yjzy_extend.menu_payment_apply_root" sequence="10"/>
-        <menuitem id="menu_invoice_other_payment_apply_root" name="其他应付付款申请" parent="yjzy_extend.menu_payment_apply_root" sequence="40"/>
+        <menuitem id="menu_expense_sheet_apply_root" name="费用支付申请" parent="yjzy_extend.menu_payment_apply_root" sequence="20"/>
+        <menuitem id="menu_advance_payment_apply_root" name="预付款支付申请" parent="yjzy_extend.menu_payment_apply_root" sequence="30"/>
+        <menuitem id="menu_invoice_payment_apply_root" name="账单支付申请" parent="yjzy_extend.menu_payment_apply_root" sequence="10"/>
+        <menuitem id="menu_invoice_other_payment_apply_root" name="其他支付申请" parent="yjzy_extend.menu_payment_apply_root" sequence="40"/>
 
         <menuitem id="menu_expense_sheet_other_payment_apply_root" name="其他支出申请付款" parent="yjzy_extend.menu_payment_apply_root" groups="base.group_system" sequence="40"/>
         <menuitem id="menu_invoice_payment_apply_create" name="应付查询和创建申请" parent="yjzy_extend.menu_invoice_payment_apply_root" sequence="10"/>

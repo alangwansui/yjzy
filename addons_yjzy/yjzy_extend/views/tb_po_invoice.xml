@@ -1292,7 +1292,7 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_form')})]"/>
         </record>
 
-        <menuitem id="menu_other_payment_create" name="创建其他应付申请"
+        <menuitem id="menu_other_payment_create" name="创建申请单"
                   parent="yjzy_extend.menu_supplier_invoice_other_payment_apply_root"
                   sequence="10"
                   action="act_other_payment_create"/>
