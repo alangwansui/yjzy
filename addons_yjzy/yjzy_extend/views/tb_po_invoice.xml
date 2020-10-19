@@ -362,7 +362,7 @@
                                 <field name="tax_rate_add" string="税点" attrs="{'invisible':[('type','!=','other_po')]}"/>
                                 <field name="expense_tax_algorithm" widget="radio" options="{'horizontal': true}" attrs="{'invisible':[('type','!=','other_po')]}"/>
                             </group>
-                            <group attrs="{'invisible':[('type','not in',['other_payment'])]}">
+                            <group attrs="{'invisible':1}">
                                  <field name="create_uid" string="创建人" attrs="{'invisible':[('type','not in',['other_payment'])]}"/>
                                 <field name="create_date" string="创建日期" widget="date" attrs="{'invisible':[('type','not in',['other_payment'])]}"/>
                             </group>
@@ -371,7 +371,7 @@
                                  <group  attrs="{'invisible':[('type','not in',['other_payment','extra','reconcile'])]}">
 
                                 <field name="price_total" string="金额合计" />
-                                 <field name="yjzy_tb_po_invoice" attrs="{'invisible':[('type','not in',['other_payment'])]}"/>
+                                 <field name="yjzy_tb_po_invoice" string="其他应收账单" attrs="{'invisible':[('type','not in',['other_payment'])]}"/>
                                </group>
 
                                 <group attrs="{'invisible':[('is_tb_hs_id','=',False)]}">
@@ -461,7 +461,7 @@
                                     </tree>
                                 </field>
                             </page>
-                            <page string="所有相关账单" attrs="{'invisible':0}">
+                            <page string="所有相关账单" attrs="{'invisible':1}">
                                 <field name="invoice_ids_count" invisible="1"/>
                                 <field name="invoice_ids">
                                     <tree decoration-info="state == 'draft'" decoration-muted="state == 'cancel'">
