@@ -422,7 +422,7 @@
 
 
 
-    <menuitem id="menu_yfhxd_advance_reconcile_apply_1" name="查看并创建"
+    <menuitem id="menu_yfhxd_advance_reconcile_apply_1" name="创建核销单"
               parent="yjzy_extend.menu_residual_reconcile_apply" sequence="5"
               action="yjzy_extend.action_yfsqd_balance"/>
 
@@ -579,8 +579,27 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('account_yfhxd_form_view_new')})]"/>
         </record>
     <menuitem id="menu_yfhxd_new_reconcile_submit" name="审批中"
-              parent="menu_residual_reconcile_apply" sequence="20"
+              parent="menu_residual_reconcile_apply" sequence="20" groups="base.group_system"
               action="action_yfhxd_new_reconcile_submit"/>
+
+
+    <record model="ir.actions.act_window" id="action_yfhxd_new_reconcile_all">
+        <field name="name">审批中核销-应付认领</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.reconcile.order</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('sfk_type','=','yfhxd'),('hxd_type_new','=','60')]</field>
+        <field name="context">{'advance_po_amount':1,'default_sfk_type': 'yfhxd','default_hxd_type_new':'60', 'default_payment_type': 'outbound', 'default_be_renling': 1, 'default_partner_type':
+            'supplier', 'show_po': 1,'default_operation_wizard':'30'}
+        </field>
+              <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('account_yfhxd_advance_tree_view_new')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('account_yfhxd_form_view_new')})]"/>
+        </record>
+    <menuitem id="menu_yfhxd_new_reconcile_all" name="查询"
+              parent="menu_residual_reconcile_apply" sequence="20"
+              action="action_yfhxd_new_reconcile_all"/>
 
 
     <record model="ir.actions.act_window" id="action_yfhxd_new_payment_approve">
@@ -751,7 +770,7 @@
               parent="menu_advance_reconcile_apply"
               action="action_yfhxd_new_advance_all"/>
 
-    <menuitem id="menu_yfhxd_advance_reconcile_apply_2" name="查看并创建"
+    <menuitem id="menu_yfhxd_advance_reconcile_apply_2" name="创建预付认领"
               parent="yjzy_extend.menu_advance_reconcile_apply" sequence="5"
               action="yjzy_extend.action_yfsqd_balance"/>
 
