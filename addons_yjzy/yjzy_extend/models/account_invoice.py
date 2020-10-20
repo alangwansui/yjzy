@@ -367,7 +367,9 @@ class account_invoice(models.Model):
          ('expense_po', u'费用转换'),
          ('other_payment',u'其他')], '账单类型')
     #新增
-    yjzy_type_1 = fields.Selection([('sale', u'应收'), ('purchase', u'应付'), ('back_tax', u'退税')], string=u'发票类型')
+    yjzy_type_1 = fields.Selection([('sale', u'应收'),('purchase', u'应付'), ('back_tax', u'退税')], string=u'发票类型')
+
+    # from_type = fields.Selection([('manual_create',u'手动创建'),('auto_crate',u'自动创建')],u'创建方式')
 
     need_refund = fields.Boolean(u'是否需要退款')
     refund_state = fields.Selection([('10_no','未退款'),('20_part','部分退款'),('30_all','完成退款')],u'退款状态')
@@ -528,7 +530,7 @@ class account_invoice(models.Model):
                            'default_yjzy_type_1':'sale',
                            'default_yjzy_invoice_id':self.id,
                            'default_partner_id':self.partner_id.id,
-                           # 'default_is_tb_hs_id':True,
+                           'default_is_tb_hs_id':True,
                            }
             }
         elif self.yjzy_type == 'purchase':
@@ -545,7 +547,7 @@ class account_invoice(models.Model):
                             'default_yjzy_type_1': 'purchase',
                             'default_partner_id': self.partner_id.id,
                             'default_yjzy_invoice_id': self.id,
-                            # 'default_is_tb_hs_id': True,
+                            'default_is_tb_hs_id': True,
                             }
             }
 

@@ -233,12 +233,13 @@ class tb_po_invoice(models.Model):
     def compute_yjzy_tb_po_invoice_amount(self):
         for one in self:
             one.yjzy_tb_po_invoice_amount = one.yjzy_tb_po_invoice.price_total
-            one.yjzy_tb_po_invoice_residual = one.yjzy_tb_po_invoice.residual
+            one.yjzy_tb_po_invoice_residual = one.yjzy_tb_po_invoice.invoice_normal_ids_residual
 
 
     yjzy_tb_po_invoice = fields.Many2one('tb.po.invoice',u'关联应收付申请单')
     yjzy_tb_po_invoice_amount = fields.Monetary('关联应收付申请单金额',currency_field='currency_id', compute=compute_yjzy_tb_po_invoice_amount,store=True)
     yjzy_tb_po_invoice_residual = fields.Monetary('关联应收付申请单余额',currency_field='currency_id', compute=compute_yjzy_tb_po_invoice_amount,store=True)
+    is_yjzy_tb_po_invoice = fields.Boolean('是否有对应账单', default=False)
     #902
     is_tb_hs_id = fields.Boolean('是否货款')
     bank_id = fields.Many2one('res.partner.bank', u'银行账号')
@@ -290,7 +291,7 @@ class tb_po_invoice(models.Model):
     invoice_ids_count = fields.Integer('相关发票数量',compute=compute_invoice_count)
 
     invoice_normal_ids = fields.One2many('account.invoice', 'tb_po_invoice_id', '申请账单',
-                                         domain=[('type', '=', 'in_invoice'), ('yjzy_type_1', 'in', ['purchase','sale'])])
+                                         domain=[('type', 'in', ['in_invoice','out_invoice']), ('yjzy_type_1', 'in', ['purchase','sale'])])
     invoice_normal_ids_count = fields.Integer('申请账单数量', compute=compute_invoice_count)
     invoice_normal_ids_residual = fields.Float('申请账单未付金额', compute=compute_invoice_amount, store=True)  # 让所有的付款都其中在这个字段下
 
@@ -313,7 +314,9 @@ class tb_po_invoice(models.Model):
     invoice_p_ids = fields.One2many('account.invoice','tb_po_invoice_id','新增采购应付发票',domain=[('type','=','in_invoice'),('yjzy_type_1','=','purchase'),
                                                                                             ('invoice_attribute','=','other_po')])
     invoice_p_ids_count = fields.Integer('相关采购发票数量', compute=compute_invoice_count)
-    invoice_s_ids = fields.One2many('account.invoice','tb_po_invoice_id','相关应收发票',domain=[('type','=','out_invoice'),('yjzy_type_1','=','sale')])
+
+
+    invoice_s_ids = fields.One2many('account.invoice','tb_po_invoice_id','相关应收发票',domain=[('type','=','out_invoice'),('yjzy_type_1','=','po_other_sale')])
     invoice_s_ids_count = fields.Integer('相关应收发票数量', compute=compute_invoice_count)
     invoice_back_tax_ids = fields.One2many('account.invoice','tb_po_invoice_id','相关退税发票',domain=[('type','=','out_invoice'),('yjzy_type_1','=','back_tax')])
     invoice_back_tax_ids_count = fields.Integer('相关退税发票数量', compute=compute_invoice_count)
@@ -565,6 +568,7 @@ class tb_po_invoice(models.Model):
 
             })
         self.yjzy_tb_po_invoice = tb_po_id
+        self.is_yjzy_tb_po_invoice = True
 
         return {
             'name': _(u'对应其他应收申请'),

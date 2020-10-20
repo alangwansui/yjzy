@@ -102,6 +102,7 @@ class sale_order_line(models.Model):
           #  one.purchase_price = one.pol_id and one.pol_id.price_unit or False
 
     #currency_id ==销售货币
+    product_so_line_count = fields.Integer(u'产品销售次数', related='product_id.so_line_count')
     #822
     contract_code = fields.Char('销售合同号',related='order_id.contract_code')
     #13添加

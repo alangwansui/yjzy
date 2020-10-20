@@ -39,6 +39,13 @@ class Product_Product(models.Model):
                 one.jituan_id = jituan
             else:
                 one.jituan_id = False
+    @api.depends('so_line_ids')
+    def compute_so_line_count(self):
+        for one in self:
+            one.so_line_count = len(one.so_line_ids)
+
+    so_line_ids = fields.One2many('sale.order.line','product_id', u'销售明细', domain=[('state','in',['approve','sale','done','abnormal','verifying','verification'])],)
+    so_line_count = fields.Integer('销售明细数量', compute=compute_so_line_count)
 
     for_extra = fields.Boolean('可用于额外账单')
     for_other_po = fields.Boolean('可用于增加采购')

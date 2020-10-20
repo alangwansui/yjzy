@@ -340,7 +340,7 @@
 <!--                    </div>-->
                         <group col="3">
                             <group attrs="{'invisible':[('is_tb_hs_id','=',False)]}">
-                                <field name="is_tb_hs_id" invisible="1"/>
+
                                 <field name="tb_id" domain="[('back_tax_invoice_balance_new','!=',0)]"
                                        attrs="{'invisible':[('is_tb_hs_id','=',False)]}"
                                        context="{'min_add':1,'not_show_partner':1,'form_view_ref':'yjzy_extend.view_transport_bill_declare_po_form'}"/>
@@ -390,11 +390,12 @@
                                  <group  attrs="{'invisible':[('type','not in',['other_payment','extra','reconcile'])]}">
 
                                  <field name="price_total" string="金额合计" />
+
                                      <field name="invoice_normal_ids_residual" string="未付金额"/>
 
-                                    <field name="yjzy_tb_po_invoice" string="其他应收账单" attrs="{'invisible':[('type','not in',['other_payment'])]}"/>
-                                 <field name="yjzy_tb_po_invoice_amount" string="其他应收金额" attrs="{'invisible':[('type','not in',['other_payment'])]}"/>
-                                 <field name="yjzy_tb_po_invoice_residual" string="其他应收余额" attrs="{'invisible':[('type','not in',['other_payment'])]}"/>
+                                    <field name="yjzy_tb_po_invoice" string="其他应收账单" attrs="{'invisible':[('is_yjzy_tb_po_invoice','=',False)]}"/>
+                                 <field name="yjzy_tb_po_invoice_amount" string="其他应收金额" attrs="{'invisible':[('is_yjzy_tb_po_invoice','=',False)]}"/>
+                                 <field name="yjzy_tb_po_invoice_residual" string="其他应收余额" attrs="{'invisible':[('is_yjzy_tb_po_invoice','=',False)]}"/>
 
 
                                </group>
@@ -451,7 +452,7 @@
                                     </tree>
                                 </field>
                             </page>
-                            <page string="明细行" attrs="{'invisible':[('is_tb_hs_id','=',False)]}">
+                            <page string="货款明细" attrs="{'invisible':[('is_tb_hs_id','=',False)]}">
                                 <field name="hsname_all_ids">
                                     <tree editable="bottom">
                                         <field name="hs_id" attrs="{'readonly':[('parent.state','!=','10_draft')]}"/>
@@ -582,7 +583,8 @@
                                     <field name="product_qtysk" attrs="{'invisible':0}"/>
                                     <field name="product_back_tax" attrs="{'invisible':0}"/>
                                      <field name="yjzy_type_1"/>
-
+                                    <field name="is_yjzy_tb_po_invoice" />
+                                    <field name="is_tb_hs_id" />
                                     <field name="type_invoice"/>
                                 </group>
                             </page>

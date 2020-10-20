@@ -624,6 +624,7 @@
                                                 <field name="price_unit"/>
                                                 <field name="is_gold_sample" string="金样状态"/>
                                                 <field name="is_ps" string="PS状态"/>
+                                                <field name="product_so_line_count"/>
                                                 <field name="include_tax"/>
 
                                                 <field name="back_tax"/>
@@ -711,6 +712,7 @@
                                         <field name="s_uom_id" string="单位" options="{'no_open':True}"/>
                                         <field name="is_gold_sample" string="金样状态" />
                                          <field name="is_ps" string="PS状态"/>
+                                         <field name="product_so_line_count" string="下单次数"/>
                                         <field name="layout_category_id" invisible="1" groups="sale.group_sale_layout"/>
                                         <field name="name" invisible="1"/>
                                         <field name="hs_id" attrs="{'column_invisible':[('parent.display_detail','=',False)]}" options="{'no_open':True}"/>
