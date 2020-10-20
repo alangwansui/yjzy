@@ -51,6 +51,25 @@
             </field>
         </record>
 
+        <record id="tb_po_invoice_other_payment_tree" model="ir.ui.view">
+            <field name="name">tb.po.other.payment.tree</field>
+            <field name="model">tb.po.invoice</field>
+            <field name="arch" type="xml">
+                <tree string="其他应付申请单" create="false">
+                    <field name="invoice_partner"/>
+                    <field name="name_title"/>
+                    <field name="currency_id" groups="base.group_system"/>
+                    <field name="partner_id" groups="base.group_system"/>
+                    <field name="price_total" string="应付金额"/>
+                    <field name="invoice_normal_ids_residual" string="未付金额"/>
+                    <field name="yjzy_tb_po_invoice_amount" string="应收金额"/>
+                    <field name="yjzy_tb_po_invoice_residual" string="未收金额"/>
+                    <field name="state"/>
+                    <field name="create_date"/>
+                </tree>
+            </field>
+        </record>
+
         <record id="tb_po_tree" model="ir.ui.view">
             <field name="name">tb.po.tree</field>
             <field name="model">tb.po.invoice</field>
@@ -370,8 +389,14 @@
 
                                  <group  attrs="{'invisible':[('type','not in',['other_payment','extra','reconcile'])]}">
 
-                                <field name="price_total" string="金额合计" />
-                                 <field name="yjzy_tb_po_invoice" string="其他应收账单" attrs="{'invisible':[('type','not in',['other_payment'])]}"/>
+                                 <field name="price_total" string="金额合计" />
+                                     <field name="invoice_normal_ids_residual" string="未付金额"/>
+
+                                    <field name="yjzy_tb_po_invoice" string="其他应收账单" attrs="{'invisible':[('type','not in',['other_payment'])]}"/>
+                                 <field name="yjzy_tb_po_invoice_amount" string="其他应收金额" attrs="{'invisible':[('type','not in',['other_payment'])]}"/>
+                                 <field name="yjzy_tb_po_invoice_residual" string="其他应收余额" attrs="{'invisible':[('type','not in',['other_payment'])]}"/>
+
+
                                </group>
 
                                 <group attrs="{'invisible':[('is_tb_hs_id','=',False)]}">
@@ -1274,7 +1299,7 @@
                 {'search_default_group_by_state':1,'default_type':'other_payment','default_yjzy_type_1':'purchase'}
             </field>
             <field name="view_ids" eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'tree', 'view_id': ref('tb_po_extra_supplier_invoice_tree')}),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('tb_po_invoice_other_payment_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_form')})]"/>
 
         </record>

@@ -134,47 +134,6 @@ class tb_po_invoice(models.Model):
         except Exception as e:
             return None
 
-    @api.depends('invoice_p_ids','invoice_s_ids','invoice_back_tax_ids.residual','invoice_p_s_ids.residual','invoice_p_s_ids.residual')
-    def compute_residual(self):
-        for one in self:
-            po_add_residual = sum(i.residual for i in one.invoice_p_ids.filtered(lambda x: x.state == 'open'))
-            p_s_add_residual = sum(i.residual for i in one.invoice_s_ids.filtered(lambda x: x.state == 'open'))
-            back_tax_add_residual = sum(i.residual for i in one.invoice_back_tax_ids.filtered(lambda x: x.state == 'open'))
-            p_s_add_refund_residual = sum(i.residual for i in one.invoice_p_s_ids.filtered(lambda x: x.state == 'open'))
-            one.po_add_residual = po_add_residual
-            one.p_s_add_residual = p_s_add_residual
-            one.back_tax_add_residual = back_tax_add_residual
-            one.p_s_add_refund_residual = p_s_add_refund_residual
-
-    @api.depends('tb_id')
-    def compute_tb_id_po_supplier(self):
-        for one in self:
-            tb_id_po_supplier = ''
-            dlrs = one.tb_id.purchase_invoice_ids
-            for o in dlrs:
-                tb_id_po_supplier += '%s\n' % (o.partner_id.name)
-            one.tb_id_po_supplier = tb_id_po_supplier
-
-    def compute_invoice_count(self):
-        for one in self:
-            one.invoice_ids_count = len(one.invoice_ids)
-            one.invoice_p_ids_count = len(one.invoice_p_ids)
-            one.invoice_s_ids_count = len(one.invoice_s_ids)
-            one.invoice_back_tax_ids_count = len(one.invoice_back_tax_ids)
-            one.invoice_p_s_ids_count = len(one.invoice_p_s_ids)
-            one.invoice_other_payment_ids_count = len(one.invoice_other_payment_ids)
-            one.invoice_extra_ids_count = len(one.invoice_extra_ids)
-
-    @api.depends('yjzy_invoice_id','manual_currency_id')
-    def compute_currency_id(self):
-        for one in self:
-            yjzy_invoice_id = one.yjzy_invoice_id
-            manual_currency_id = one.manual_currency_id
-            if yjzy_invoice_id:
-                one.currency_id = yjzy_invoice_id and yjzy_invoice_id[0].currency_id
-            else:
-                one.currency_id = manual_currency_id
-
     def _default_partner(self):
         ctx = self.env.context.get('default_type')
         partner = False
@@ -221,8 +180,65 @@ class tb_po_invoice(models.Model):
     # payment_id = fields.Many2one('account.payment',u'收付款单')
     # display_name = fields.Char(u'显示名称', compute=compute_display_name)
 
+    @api.depends('invoice_p_ids','invoice_s_ids','invoice_back_tax_ids.residual','invoice_p_s_ids.residual','invoice_p_s_ids.residual')
+    def compute_residual(self):
+        for one in self:
+            po_add_residual = sum(i.residual for i in one.invoice_p_ids.filtered(lambda x: x.state == 'open'))
+            p_s_add_residual = sum(i.residual for i in one.invoice_s_ids.filtered(lambda x: x.state == 'open'))
+            back_tax_add_residual = sum(i.residual for i in one.invoice_back_tax_ids.filtered(lambda x: x.state == 'open'))
+            p_s_add_refund_residual = sum(i.residual for i in one.invoice_p_s_ids.filtered(lambda x: x.state == 'open'))
+            one.po_add_residual = po_add_residual
+            one.p_s_add_residual = p_s_add_residual
+            one.back_tax_add_residual = back_tax_add_residual
+            one.p_s_add_refund_residual = p_s_add_refund_residual
+
+    @api.depends('tb_id')
+    def compute_tb_id_po_supplier(self):
+        for one in self:
+            tb_id_po_supplier = ''
+            dlrs = one.tb_id.purchase_invoice_ids
+            for o in dlrs:
+                tb_id_po_supplier += '%s\n' % (o.partner_id.name)
+            one.tb_id_po_supplier = tb_id_po_supplier
+
+    def compute_invoice_count(self):
+        for one in self:
+            one.invoice_ids_count = len(one.invoice_ids)
+            one.invoice_p_ids_count = len(one.invoice_p_ids)
+            one.invoice_s_ids_count = len(one.invoice_s_ids)
+            one.invoice_back_tax_ids_count = len(one.invoice_back_tax_ids)
+            one.invoice_p_s_ids_count = len(one.invoice_p_s_ids)
+            one.invoice_other_payment_ids_count = len(one.invoice_other_payment_ids)
+            one.invoice_extra_ids_count = len(one.invoice_extra_ids)
+            one.invoice_normal_ids_count = len(one.invoice_normal_ids)
+
+    @api.depends('invoice_ids', 'invoice_ids.residual','invoice_ids.amount_total')
+    def compute_invoice_amount(self):
+        for one in self:
+            invoice_normal_ids_residual = sum(x.residual for x in one.invoice_normal_ids)
+            one.invoice_normal_ids_residual = invoice_normal_ids_residual
+
+    @api.depends('yjzy_invoice_id','manual_currency_id')
+    def compute_currency_id(self):
+        for one in self:
+            yjzy_invoice_id = one.yjzy_invoice_id
+            manual_currency_id = one.manual_currency_id
+            if yjzy_invoice_id:
+                one.currency_id = yjzy_invoice_id and yjzy_invoice_id[0].currency_id
+            else:
+                one.currency_id = manual_currency_id
+
+
+    @api.depends('yjzy_tb_po_invoice','yjzy_tb_po_invoice.price_total')
+    def compute_yjzy_tb_po_invoice_amount(self):
+        for one in self:
+            one.yjzy_tb_po_invoice_amount = one.yjzy_tb_po_invoice.price_total
+            one.yjzy_tb_po_invoice_residual = one.yjzy_tb_po_invoice.residual
+
 
     yjzy_tb_po_invoice = fields.Many2one('tb.po.invoice',u'关联应收付申请单')
+    yjzy_tb_po_invoice_amount = fields.Monetary('关联应收付申请单金额',currency_field='currency_id', compute=compute_yjzy_tb_po_invoice_amount,store=True)
+    yjzy_tb_po_invoice_residual = fields.Monetary('关联应收付申请单余额',currency_field='currency_id', compute=compute_yjzy_tb_po_invoice_amount,store=True)
     #902
     is_tb_hs_id = fields.Boolean('是否货款')
     bank_id = fields.Many2one('res.partner.bank', u'银行账号')
@@ -273,12 +289,24 @@ class tb_po_invoice(models.Model):
     invoice_ids = fields.One2many('account.invoice','tb_po_invoice_id','相关发票')
     invoice_ids_count = fields.Integer('相关发票数量',compute=compute_invoice_count)
 
+    invoice_normal_ids = fields.One2many('account.invoice', 'tb_po_invoice_id', '申请账单',
+                                         domain=[('type', '=', 'in_invoice'), ('yjzy_type_1', 'in', ['purchase','sale'])])
+    invoice_normal_ids_count = fields.Integer('申请账单数量', compute=compute_invoice_count)
+    invoice_normal_ids_residual = fields.Float('申请账单未付金额', compute=compute_invoice_amount, store=True)  # 让所有的付款都其中在这个字段下
+
+
+
     yjzy_invoice_id = fields.Many2one('account.invoice', '关联账单')
     currency_id = fields.Many2one('res.currency', '货币',  compute=compute_currency_id)#default=_default_currency_id
     manual_currency_id = fields.Many2one('res.currency', '货币',  default=_default_currency_id)
+
+
+
+
     invoice_other_payment_ids = fields.One2many('account.invoice','tb_po_invoice_id','其他应付账单',domain=[('type','=','in_invoice'),('yjzy_type_1','=','purchase'),
                                                                                                       ('invoice_attribute','=','other_payment')])
     invoice_other_payment_ids_count = fields.Integer('其他应付账单数量', compute=compute_invoice_count)
+
     invoice_extra_ids = fields.One2many('account.invoice', 'tb_po_invoice_id', '额外账单',
                                                 domain=[('invoice_attribute', '=', 'extra')])
     invoice_extra_ids_count = fields.Integer('额外账单数量', compute=compute_invoice_count)
