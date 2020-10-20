@@ -229,11 +229,15 @@ class tb_po_invoice(models.Model):
                 one.currency_id = manual_currency_id
 
 
-    @api.depends('yjzy_tb_po_invoice','yjzy_tb_po_invoice.price_total')
+    @api.depends('yjzy_tb_po_invoice','yjzy_tb_po_invoice.price_total','yjzy_tb_po_invoice.invoice_normal_ids_residual','yjzy_tb_po_invoice.partner_id')
     def compute_yjzy_tb_po_invoice_amount(self):
         for one in self:
             one.yjzy_tb_po_invoice_amount = one.yjzy_tb_po_invoice.price_total
             one.yjzy_tb_po_invoice_residual = one.yjzy_tb_po_invoice.invoice_normal_ids_residual
+
+
+
+
 
 
     yjzy_tb_po_invoice = fields.Many2one('tb.po.invoice',u'关联应收付申请单')
@@ -291,7 +295,9 @@ class tb_po_invoice(models.Model):
     invoice_ids_count = fields.Integer('相关发票数量',compute=compute_invoice_count)
 
     invoice_normal_ids = fields.One2many('account.invoice', 'tb_po_invoice_id', '申请账单',
-                                         domain=[('type', 'in', ['in_invoice','out_invoice']), ('yjzy_type_1', 'in', ['purchase','sale'])])
+                                         domain=[('type', 'in', ['in_invoice','out_invoice']),'&',('yjzy_type_1', 'in', ['purchase','sale']),'|',
+                                                 ('invoice_attribute','not in',['other_po']),'&',('yjzy_type_1', 'in', ['purchase']),
+                                                 ('invoice_attribute','in',['other_po'])])
     invoice_normal_ids_count = fields.Integer('申请账单数量', compute=compute_invoice_count)
     invoice_normal_ids_residual = fields.Float('申请账单未付金额', compute=compute_invoice_amount, store=True)  # 让所有的付款都其中在这个字段下
 
@@ -316,12 +322,20 @@ class tb_po_invoice(models.Model):
     invoice_p_ids_count = fields.Integer('相关采购发票数量', compute=compute_invoice_count)
 
 
-    invoice_s_ids = fields.One2many('account.invoice','tb_po_invoice_id','相关应收发票',domain=[('type','=','out_invoice'),('yjzy_type_1','=','po_other_sale')])
+    invoice_s_ids = fields.One2many('account.invoice','tb_po_invoice_id','相关应收发票',domain=[('type','=','out_invoice'),('yjzy_type_1','=','sale'),('invoice_attribute','in',['other_po'])])
     invoice_s_ids_count = fields.Integer('相关应收发票数量', compute=compute_invoice_count)
+
+
+
     invoice_back_tax_ids = fields.One2many('account.invoice','tb_po_invoice_id','相关退税发票',domain=[('type','=','out_invoice'),('yjzy_type_1','=','back_tax')])
     invoice_back_tax_ids_count = fields.Integer('相关退税发票数量', compute=compute_invoice_count)
+
     invoice_p_s_ids = fields.One2many('account.invoice','tb_po_invoice_id','相关冲减发票',domain=[('type','=','in_refund'),('yjzy_type_1','=','purchase')])
     invoice_p_s_ids_count = fields.Integer('相关冲减发票数量', compute=compute_invoice_count)
+
+
+
+
     company_id = fields.Many2one('res.company', '公司', required=True, readonly=True,
                                  default=lambda self: self.env.user.company_id.id)
     company_currency_id = fields.Many2one('res.currency', string='公司货币', related='company_id.currency_id',

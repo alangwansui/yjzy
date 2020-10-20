@@ -645,7 +645,7 @@
                                         <field name="product_id"/>
                                         <field name="hs_id" invisible="1"/>
                                         <field name="hs_name" string="品名"/>
-
+<field name="product_so_line_count" string="下单次数"/>
 
                                         <field name="is_gold_sample" string="金样"/>
                                         <field name="product_uom_qty" string="销售数量"/>
