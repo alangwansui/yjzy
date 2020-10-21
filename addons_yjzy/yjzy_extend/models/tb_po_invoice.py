@@ -323,7 +323,7 @@ class tb_po_invoice(models.Model):
 
 
 
-    invoice_back_tax_ids = fields.One2many('account.invoice','tb_po_invoice_id','相关退税发票',domain=[('type','=','out_invoice'),('yjzy_type_1','=','back_tax')])
+    invoice_back_tax_ids = fields.One2many('account.invoice','tb_po_invoice_id','相关退税发票',domain=[('type','in',['out_invoice','extra']),('yjzy_type_1','=','back_tax')])
     invoice_back_tax_ids_count = fields.Integer('相关退税发票数量', compute=compute_invoice_count)
 
     invoice_p_s_ids = fields.One2many('account.invoice','tb_po_invoice_id','相关冲减发票',domain=[('type','=','in_refund'),('yjzy_type_1','=','purchase')])

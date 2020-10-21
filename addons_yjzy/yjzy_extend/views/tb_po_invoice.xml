@@ -586,7 +586,7 @@
                                     </tree>
                                 </field>
                             </page>
-                            <page string="对应冲减账单" attrs="{'invisible':[('invoice_p_s_ids_count','=',0)]}">
+                            <page string="对应冲减账单" attrs="{'invisible':[('invoice_p_s_ids_count','=',0)]}" groups="base.group_system">
                                 <field name="invoice_p_s_ids_count" invisible="1"/>
                                 <field name="invoice_p_s_ids">
                                     <tree decoration-info="state == 'draft'" decoration-muted="state == 'cancel'">
@@ -597,7 +597,7 @@
                                     </tree>
                                 </field>
                             </page>
-                            <page string="对应退税账单" attrs="{'invisible':[('invoice_back_tax_ids_count','=',0)]}" groups="base.group_system">
+                            <page string="对应退税账单" attrs="{'invisible':[('invoice_back_tax_ids_count','=',0)]}">
                                 <field name="invoice_back_tax_ids_count" invisible="1"/>
                                 <field name="invoice_back_tax_ids">
                                     <tree decoration-info="state == 'draft'" decoration-muted="state == 'cancel'">
