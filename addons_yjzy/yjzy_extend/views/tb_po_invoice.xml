@@ -312,9 +312,9 @@
             <field name="arch" type="xml">
                 <form string="添加采购金额">
                     <header attrs="{'invisible':[('type','=','expense_po')]}">
-                        <button name="action_submit" states="10_draft,80_refuse" class="oe_highlight" type='object'
+                        <button name="action_submit" states="10_draft" class="oe_highlight" type='object' invisible="context.get('open')"
                                 string="提交"/>
-                        <button name="action_draft" states="80_refuse" class="oe_highlight" type="object" string="重置草稿"/>
+                        <button name="action_draft" states="80_refuse" class="oe_highlight" type="object" string="重置草稿" invisible="context.get('open')"/>
                         <button name="action_manager_approve" states="20_submit" class="oe_highlight" type='object'
                                 string="总经理审批"/>
                         <button name="%(tb_po_invoice_refuse_wizard_action)d" string="拒绝" type="action" attrs="{'invisible':[('state','in',['10_draft','80_refuse','90_cancel'])]}"/>
@@ -322,12 +322,23 @@
                                 string="费用确认" attrs="{'invisible':[('type','!=','expense_po')]}"/>
                         <button name="apply" class="oe_highlight" type='object' string="确认" groups="base.group_system"
                                 attrs="{'invisible':[('type','!=','other_po')]}"/>
-                        <button special="cancel" class="oe_highlight" groups="base.group_system" string="取消"/>
+                        <button special="cancel" class="oe_highlight" groups="base.group_system" string="取消" invisible="context.get('open')"/>
                         <button name="make_extra_invoice" type="object" string="创建额外账单" groups="base.group_system" invisible="1"/>
                         <button name="create_tb_po_invoice" type="object" string="创建其他应收申请" attrs="{'invisible':['|','|',('is_yjzy_tb_po_invoice','=',True),('type','!=','other_payment'),('state','!=','10_draft')]}"/>
                         <field name="state" widget="statusbar" statusbar_visible=" "/>
                     </header>
                     <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button class="oe_stat_button" type="object" string="对应应收账单"
+                                    attrs="{'invisible':[('yjzy_tb_po_invoice','=',False)]}"
+                                    name="open_tb_yjzy_po_invoice_open"
+                                    icon="fa-usd">
+
+                            </button>
+                        </div>
+
+
+
 <!--                        label for="is_tb_hs_id" string="转换货款" class="oe_avatar" attrs="{'invisible':[('type','in',['other_po','expense_po'])]}"/-->
 <!--                        field name="is_tb_hs_id" class="oe_avatar" widget="boolean_toggle"  attrs="{'invisible':[('type','in',['other_po','expense_po'])]}"/-->
                         <div class="oe_title" attrs="{'invisible':[('type','=','other_payment')]}">
@@ -399,11 +410,18 @@
                                  <field name="price_total" string="金额合计" />
 
                                  <field name="invoice_normal_ids_residual" string="未付金额"/>
+                                 <label for=" " name="yjzy_tb_po_invoice" string="其他应收账单" attrs="{'invisible':[('is_yjzy_tb_po_invoice','=',False)]}"/>
+                                     <div class="o_row" attrs="{'invisible':[('is_yjzy_tb_po_invoice','=',False)]}">
+                                           <field name="yjzy_tb_po_invoice" string="其他应收账单" options="{'no_open':1}" class="oe_line" attrs="{'invisible':[('is_yjzy_tb_po_invoice','=',False)]}"/>
+                                         <button icon="fa-pencil-square-o" type="object" name="open_tb_yjzy_po_invoice_open" class="btn-xs btn-link mb4 fa fa-times-circle" style="color:red"/>
+
+                                     </div>
 
 
-                                 <field name="yjzy_tb_po_invoice" string="其他应收账单" attrs="{'invisible':[('is_yjzy_tb_po_invoice','=',False)]}"/>
+
                                  <field name="yjzy_tb_po_invoice_amount" string="其他应收金额" attrs="{'invisible':[('is_yjzy_tb_po_invoice','=',False)]}"/>
                                  <field name="yjzy_tb_po_invoice_residual" string="其他应收余额" attrs="{'invisible':[('is_yjzy_tb_po_invoice','=',False)]}"/>
+
 
 
                                </group>
@@ -609,9 +627,13 @@
                                     <field name="is_yjzy_tb_po_invoice" />
                                     <field name="is_tb_hs_id" />
                                     <field name="type_invoice"/>
+                                    <field name="company_id"/>
                                 </group>
                             </page>
                         </notebook>
+                        <footer invisible="not context.get('open')">
+                            <button name="action_save_test" type="object" class="oe_highlight" string="保存并关闭"/>
+                        </footer>
                     </sheet>
                     <div class="oe_chatter">
                         <field name="message_follower_ids" widget="mail_followers"/>
@@ -621,6 +643,7 @@
                 </form>
             </field>
         </record>
+
 
         <record id="tb_po_extra_invoice_customer_form" model="ir.ui.view">
             <field name="name">tb.po.extra.invoice.from</field>

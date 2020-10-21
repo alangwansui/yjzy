@@ -8,7 +8,7 @@ from lxml import etree
 class tb_po_invoice(models.Model):
     _name = 'tb.po.invoice'
     _inherit = ['mail.thread', 'mail.activity.mixin']
-    _description = '额外增加采购单'
+    _description = 'Invoice Apply'
     _order = 'id desc'
 
     @api.depends('hsname_all_ids', 'hsname_all_ids.purchase_amount2_add_this_time', 'hsname_all_ids.p_s_add_this_time','hsname_all_ids.tax_rate_add','hsname_all_ids.expense_tax',
@@ -235,11 +235,8 @@ class tb_po_invoice(models.Model):
             one.yjzy_tb_po_invoice_amount = one.yjzy_tb_po_invoice.price_total
             one.yjzy_tb_po_invoice_residual = one.yjzy_tb_po_invoice.invoice_normal_ids_residual
 
-
-
-
-
-
+    company_id = fields.Many2one('res.company', '公司', required=True, readonly=True,
+                                 default=lambda self: self.env.user.company_id.id)
     yjzy_tb_po_invoice = fields.Many2one('tb.po.invoice',u'关联应收付申请单')
     yjzy_tb_po_invoice_amount = fields.Monetary('关联应收付申请单金额',currency_field='currency_id', compute=compute_yjzy_tb_po_invoice_amount,store=True)
     yjzy_tb_po_invoice_residual = fields.Monetary('关联应收付申请单余额',currency_field='currency_id', compute=compute_yjzy_tb_po_invoice_amount,store=True)
@@ -356,6 +353,22 @@ class tb_po_invoice(models.Model):
     yjzy_invoice_residual_amount = fields.Float('原始未付总金额', compute=compute_info)
     yjzy_invoice_include_tax = fields.Boolean('原始采购是否含税', compute=compute_info)
     extra_invoice_include_tax = fields.Boolean('原始账单是否含税')
+
+
+    def open_tb_yjzy_po_invoice_open(self):
+        view = self.env.ref('yjzy_extend.tb_po_form')
+        return {
+            'name': _(u'对应其他应收申请'),
+            'view_type': 'tree,form',
+            "view_mode": 'form',
+            'res_model': 'tb.po.invoice',
+            'type': 'ir.actions.act_window',
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': self.yjzy_tb_po_invoice.id,
+            'context': {'open': True}
+
+        }
 
     @api.multi
     def name_get(self):
@@ -593,9 +606,16 @@ class tb_po_invoice(models.Model):
             'view_id': view.id,
             'target': 'new',
             'res_id': tb_po_id.id,
+            'context':{'open':True}
 
         }
 
+    @api.multi
+    def action_save_test(self):
+        # your code
+        self.ensure_one()
+        # close popup
+        return {'type': 'ir.actions.act_window_close'}
         # return {
         #     'name': _(u'创建费用转货款申请'),
         #     'view_type': 'tree,form',

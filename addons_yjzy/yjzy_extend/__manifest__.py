@@ -34,6 +34,7 @@
 
         'template/no_header_external_layout.xml',
         'security/ir.model.access.csv',
+        'security/yjzy_extend_security.xml',
 
         'views/hs.xml',
         'views/company.xml',
