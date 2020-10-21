@@ -328,14 +328,14 @@
                         <field name="state" widget="statusbar" statusbar_visible=" "/>
                     </header>
                     <sheet>
-                        <div class="oe_button_box" name="button_box">
-                            <button class="oe_stat_button" type="object" string="对应应收账单"
-                                    attrs="{'invisible':[('yjzy_tb_po_invoice','=',False)]}"
-                                    name="open_tb_yjzy_po_invoice_open"
-                                    icon="fa-usd">
+<!--                        <div class="oe_button_box" name="button_box">-->
+<!--                            <button class="oe_stat_button" type="object" string="对应应收账单"-->
+<!--                                    attrs="{'invisible':[('yjzy_tb_po_invoice','=',False)]}"-->
+<!--                                    name="open_tb_yjzy_po_invoice_open"-->
+<!--                                    icon="fa-usd">-->
 
-                            </button>
-                        </div>
+<!--                            </button>-->
+<!--                        </div>-->
 
 
 
@@ -388,7 +388,7 @@
 
                                  <label for="" name="partner_id" attrs="{'invisible':[('is_tb_hs_id','=',False)]}">
                                     <b attrs="{'invisible':[('type','in',['other_po','expense_po'])]}">供应商</b>
-                                    <b attrs="{'invisible':[('type','in',['extra','other_payment','reconcile'   ])]}">新增供应商</b>
+                                    <b attrs="{'invisible':[('type','in',['extra','other_payment','reconcile'])]}">新增供应商</b>
                                 </label>
                                 <div class="o_row" attrs="{'invisible':[('is_tb_hs_id','=',False)]}">
                                  <field name="partner_id"
@@ -413,7 +413,7 @@
                                  <label for=" " name="yjzy_tb_po_invoice" string="其他应收账单" attrs="{'invisible':[('is_yjzy_tb_po_invoice','=',False)]}"/>
                                      <div class="o_row" attrs="{'invisible':[('is_yjzy_tb_po_invoice','=',False)]}">
                                            <field name="yjzy_tb_po_invoice" string="其他应收账单" options="{'no_open':1}" class="oe_line" attrs="{'invisible':[('is_yjzy_tb_po_invoice','=',False)]}"/>
-                                         <button icon="fa-pencil-square-o" type="object" name="open_tb_yjzy_po_invoice_open" class="btn-xs btn-link mb4 fa fa-times-circle" style="color:red"/>
+                                         <button icon="fa-pencil-square-o" type="object" name="open_tb_yjzy_po_invoice_open" class="btn-xs btn-link mb4" style="color:red"/>
 
                                      </div>
 

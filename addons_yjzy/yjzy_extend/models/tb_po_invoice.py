@@ -423,6 +423,8 @@ class tb_po_invoice(models.Model):
         self.state = '30_done'
         for one in self.invoice_ids:
             one.action_invoice_open()
+        if self.yjzy_tb_po_invoice:
+            self.yjzy_tb_po_invoice.action_manager_approve()
 
     def action_refuse(self,reason):
         self.invoice_ids.unlink()
