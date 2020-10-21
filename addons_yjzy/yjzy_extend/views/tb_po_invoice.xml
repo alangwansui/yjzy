@@ -45,6 +45,7 @@
                     <field name="yjzy_invoice_id" string="原始账单"/>
                     <field name="yjzy_invoice_residual_amount" string="原始未付金额"/>
                     <field name="yjzy_invoice_include_tax" string="原始含税"/>
+                    <field name="name_title"/>
                     <field name="name" groups="base.group_system"/>
                     <field name="currency_id" invisible="1"/>
                     <field name="price_total" string="额外应付金额"/>
@@ -322,7 +323,7 @@
                                 string="费用确认" attrs="{'invisible':[('type','!=','expense_po')]}"/>
                         <button name="apply" class="oe_highlight" type='object' string="确认" groups="base.group_system"
                                 attrs="{'invisible':[('type','!=','other_po')]}"/>
-                        <button special="cancel" class="oe_highlight" groups="base.group_system" string="取消" invisible="context.get('open')"/>
+                        <button name="action_cancel" class="oe_highlight" groups="base.group_system" string="取消" invisible="context.get('open')"/>
                         <button name="make_extra_invoice" type="object" string="创建额外账单" groups="base.group_system" invisible="1"/>
                         <button name="create_tb_po_invoice" type="object" string="创建其他应收申请" attrs="{'invisible':['|','|',('is_yjzy_tb_po_invoice','=',True),('type','!=','other_payment'),('state','!=','10_draft')]}"/>
                         <button name="delete_tb_po_invoice" type="object" string="删除其他应收申请" attrs="{'invisible':['|','|',('is_yjzy_tb_po_invoice','=',False),('type','!=','other_payment'),('state','!=','10_draft')]}"/>

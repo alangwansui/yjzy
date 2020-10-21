@@ -355,6 +355,20 @@ class tb_po_invoice(models.Model):
     extra_invoice_include_tax = fields.Boolean('原始账单是否含税')
 
 
+
+    def unlink(self):
+        for one in self:
+            if one.state != '30_done':
+                one.invoice_ids.unlink()
+                one.yjzy_tb_po_invoice.unlink()
+            else:
+                raise Warning('完成审批不允许删除！')
+
+
+
+
+
+
     def open_tb_yjzy_po_invoice_open(self):
         view = self.env.ref('yjzy_extend.tb_po_form')
         return {
@@ -439,6 +453,17 @@ class tb_po_invoice(models.Model):
                                       values={'reason': reason, 'name': self.name},
                                       subtype_id=self.env.ref(
                                           'mail.mt_note').id)  # 定义了留言消息的模板，其他都可以参考，还可以继续参考费用发送计划以及邮件方式
+
+    # def action_cancel(self):
+    #     if self.state in
+    #     if self.state not in ['30_done']:
+    #         if self.invoice_ids:
+    #             for one in self.invoice_ids:
+    #                one.action_invoice_cancel()
+    #         self.invoice_ids.unlink()
+    #         self.state = '90_cancel'
+    #         self.yjzy_tb_po_invoice.action_cancel()
+
     def action_draft(self):
         self.state = '10_draft'
         if self.yjzy_tb_po_invoice:
@@ -837,7 +862,7 @@ class tb_po_invoice(models.Model):
     #825 额外账单  #ctx = {'type': [pk.id], 'active_id': pk.id} withcontext(ctx)
     def make_extra_invoice(self):
         self.ensure_one()
-        if self.purchase_amount2_add_this_time_total !=0 and self.price_total != self.purchase_amount2_add_this_time_total:
+        if self.price_total != self.purchase_amount2_add_this_time_total:
             raise Warning('增加采购的金额不等于额外账单的总金额！')
         # self.check()
         invoice_obj = self.env['account.invoice']
