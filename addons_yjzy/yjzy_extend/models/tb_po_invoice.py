@@ -415,6 +415,8 @@ class tb_po_invoice(models.Model):
         if self.type == 'other_payment':
             # self.make_extra_invoice()
             self.apply() #1014
+        if self.yjzy_tb_po_invoice:
+            self.yjzy_tb_po_invoice.action_submit()
 
     def action_manager_approve(self):
         if self.type == 'expense_po':
@@ -429,6 +431,9 @@ class tb_po_invoice(models.Model):
     def action_refuse(self,reason):
         self.invoice_ids.unlink()
         self.state = '80_refuse'
+        if self.yjzy_tb_po_invoice:
+            self.yjzy_tb_po_invoice.invoice_ids.unlink()
+            self.yjzy_tb_po_invoice.state = '80_refuse'
         for tb in self:
             tb.message_post_with_view('yjzy_extend.expense_sheet_template_refuse_reason',
                                       values={'reason': reason, 'name': self.name},
@@ -436,6 +441,9 @@ class tb_po_invoice(models.Model):
                                           'mail.mt_note').id)  # 定义了留言消息的模板，其他都可以参考，还可以继续参考费用发送计划以及邮件方式
     def action_draft(self):
         self.state = '10_draft'
+        if self.yjzy_tb_po_invoice:
+            self.yjzy_tb_po_invoice.state = '10_draft'
+
 
 
     @api.onchange('expense_sheet_id')
@@ -443,6 +451,7 @@ class tb_po_invoice(models.Model):
         if self.type == 'expense_po':
             bill_id = self.expense_sheet_id.expense_line_ids.mapped('tb_id')
             self.tb_id = bill_id
+
 
 
 
@@ -611,6 +620,12 @@ class tb_po_invoice(models.Model):
             'context':{'open':True}
 
         }
+
+    def delete_tb_po_invoice(self):
+        if self.yjzy_tb_po_invoice and self.yjzy_tb_po_invoice.state in ['10_draft','80_refuse','90_cancel']:
+            self.yjzy_tb_po_invoice.unlink()
+            self.is_yjzy_tb_po_invoice = False
+
 
     @api.multi
     def action_save_test(self):
