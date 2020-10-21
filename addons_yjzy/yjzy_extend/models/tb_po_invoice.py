@@ -13,7 +13,7 @@ class tb_po_invoice(models.Model):
 
     @api.depends('hsname_all_ids', 'hsname_all_ids.purchase_amount2_add_this_time', 'hsname_all_ids.p_s_add_this_time','hsname_all_ids.tax_rate_add','hsname_all_ids.expense_tax',
                  'partner_id','extra_invoice_line_ids','extra_invoice_line_ids.price_unit','tb_id')
-    def compute_info(self):
+    def compute_info_store(self):
         for one in self:
             purchase_amount2_add_this_time_total = sum(x.purchase_amount2_add_this_time for x in one.hsname_all_ids)
             p_s_add_this_time_total = sum(x.p_s_add_this_time for x in one.hsname_all_ids)
@@ -255,7 +255,7 @@ class tb_po_invoice(models.Model):
     #827
     amount_diff = fields.Float('实际差额')
     tax_rate_add = fields.Float(u'增加采购税率')
-    expense_tax = fields.Float(u'税费',compute=compute_info)
+    expense_tax = fields.Float(u'税费',compute=compute_info_store, store=True)
     product_feiyong_tax = fields.Many2one('product.product',u'税费产品',domain=[('type','=','service')], default=_default_feiyong_tax_product)
     product_zyywsr = fields.Many2one('product.product', u'主营收入产品', domain=[('type', '=', 'service')],default=_default_product_zyywsr)
     product_qtysk = fields.Many2one('product.product', u'其他应收产品', domain=[('type', '=', 'service')],default=_default_product_qtysk)
@@ -277,7 +277,7 @@ class tb_po_invoice(models.Model):
     yjzy_type = fields.Selection([('sale', u'销售'), ('purchase', u'采购'), ('back_tax', u'退税')], string=u'发票类型')#825 对应生成的发票，不用利用原来出运生成的账单。所以这个也没用了
     yjzy_type_1 = fields.Selection([('sale', u'应付'), ('purchase', u'采购'), ('back_tax', u'退税')], string=u'发票类型')#825
     extra_invoice_line_ids = fields.One2many('extra.invoice.line', 'tb_po_id', u'账单明细',default=lambda self: self._default_extra_invoice_line())
-    price_total = fields.Monetary('金额合计',currency_field='currency_id',compute=compute_info,store=True)
+    price_total = fields.Monetary('金额合计',currency_field='currency_id',compute=compute_info_store,store=True)
 
 
     state = fields.Selection([('10_draft',u'草稿'),('20_submit',u'已提交'),('30_done','审批完成'),('80_refuse',u'拒绝'),('90_cancel',u'取消')],u'状态',index=True, track_visibility='onchange', default='10_draft')
@@ -337,11 +337,11 @@ class tb_po_invoice(models.Model):
                                  default=lambda self: self.env.user.company_id.id)
     company_currency_id = fields.Many2one('res.currency', string='公司货币', related='company_id.currency_id',
                                           readonly=True)
-    purchase_amount2_add_this_time_total = fields.Float('本次增加采购金额', compute=compute_info)
-    p_s_add_this_time_total = fields.Float('本次应收总金额', compute=compute_info)
-    p_s_add_this_time_extra_total = fields.Float('本次额外应收金额', compute=compute_info)
-    back_tax_add_this_time_total = fields.Float('本次退税金额', compute=compute_info)
-    p_s_add_this_time_refund = fields.Float('本次冲减金额', compute=compute_info)
+    purchase_amount2_add_this_time_total = fields.Float('本次增加采购金额', compute=compute_info_store, store=True)
+    p_s_add_this_time_total = fields.Float('本次应收总金额', compute=compute_info_store, store=True)
+    p_s_add_this_time_extra_total = fields.Float('本次额外应收金额', compute=compute_info_store, store=True)
+    back_tax_add_this_time_total = fields.Float('本次退税金额', compute=compute_info_store, store=True)
+    p_s_add_this_time_refund = fields.Float('本次冲减金额', compute=compute_info_store, store=True)
     invoice_product_id = fields.Many2one('product.product', u'账单项目')
 
 
@@ -350,8 +350,8 @@ class tb_po_invoice(models.Model):
     expense_currency_id = fields.Many2one('res.currency',related='expense_sheet_id.currency_id')
     expense_sheet_amount = fields.Float('费用报告金额',related='expense_sheet_id.total_amount')
     expense_po_amount = fields.Float('费用转应付金额')
-    yjzy_invoice_residual_amount = fields.Float('原始未付总金额', compute=compute_info)
-    yjzy_invoice_include_tax = fields.Boolean('原始采购是否含税', compute=compute_info)
+    yjzy_invoice_residual_amount = fields.Float('原始未付总金额', compute=compute_info_store, store=True)
+    yjzy_invoice_include_tax = fields.Boolean('原始采购是否含税', compute=compute_info_store, store=True)
     extra_invoice_include_tax = fields.Boolean('原始账单是否含税')
 
 
@@ -363,12 +363,6 @@ class tb_po_invoice(models.Model):
                 one.yjzy_tb_po_invoice.unlink()
             else:
                 raise Warning('完成审批不允许删除！')
-
-
-
-
-
-
     def open_tb_yjzy_po_invoice_open(self):
         view = self.env.ref('yjzy_extend.tb_po_form')
         return {

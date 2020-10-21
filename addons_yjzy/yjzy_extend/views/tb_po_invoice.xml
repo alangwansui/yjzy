@@ -41,15 +41,17 @@
             <field name="model">tb.po.invoice</field>
             <field name="arch" type="xml">
                 <tree string="供应商额外账单申请" create="false">
+                    <field name="name_title"/>
                     <field name="partner_id" string="供应商"/>
                     <field name="yjzy_invoice_id" string="原始账单"/>
                     <field name="yjzy_invoice_residual_amount" string="原始未付金额"/>
                     <field name="yjzy_invoice_include_tax" string="原始含税"/>
-                    <field name="name_title"/>
                     <field name="name" groups="base.group_system"/>
                     <field name="currency_id" invisible="1"/>
                     <field name="price_total" string="额外应付金额"/>
                     <field name="invoice_normal_ids_residual" string="额外未付金额"/>
+                    <field name="back_tax_add_this_time_total" string="退税应收金额"/>
+                    <field name="back_tax_add_residual" string="退税未收金额"/>
                     <field name="state" groups="base.group_system"/>
                     <field name="create_date"/>
                 </tree>
