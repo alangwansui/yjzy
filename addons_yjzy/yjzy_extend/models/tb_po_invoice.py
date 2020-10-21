@@ -215,7 +215,7 @@ class tb_po_invoice(models.Model):
     @api.depends('invoice_ids', 'invoice_ids.residual','invoice_ids.amount_total','invoice_ids.state')
     def compute_invoice_amount(self):
         for one in self:
-            invoice_normal_ids_residual = sum(x.residual for x in one.invoice_normal_ids)
+            invoice_normal_ids_residual = sum(x.residual_signed for x in one.invoice_normal_ids)
             one.invoice_normal_ids_residual = invoice_normal_ids_residual
 
     @api.depends('yjzy_invoice_id','manual_currency_id')
