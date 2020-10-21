@@ -871,7 +871,7 @@ class account_invoice(models.Model):
             'res_model': 'account.invoice',
             'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
             'target': 'new',
-            'domain':[('yjzy_invoice_id','=',self.id)]
+            'domain':[('yjzy_invoice_id','=',self.id),('invoice_attribute','=','extra')]
         }
 
 
