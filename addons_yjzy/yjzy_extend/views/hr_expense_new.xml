@@ -1427,6 +1427,8 @@
                         <button name="action_manager_approve" string="总经理审批" type="object" class="oe_highlight"  attrs="{'invisible':[('state_1','not in',['manager_approval'])]}"/>
                         <button name="%(expense_sheet_refuse_wizard_action)d" string="拒绝" type="action" attrs="{'invisible':[('state_1','in',['draft','refused','done'])]}"/>
                         <button name="create_tb_po_invoice" string="费用转货款" type="object" attrs="{'invisible':['|',('expense_to_invoice_type','!=','normal'),('state_1','!=','account_approval')]}"/>
+                        <button name="btn_match_budget" string="生成预算" type="object" attrs="{'invisible':[('state_1','not in',['draft'])]}"/>
+
                         <field name="state_1" widget="statusbar"
                                statusbar_visible=" "/>
                         <field name="stage_id" groups="base.group_system"/>

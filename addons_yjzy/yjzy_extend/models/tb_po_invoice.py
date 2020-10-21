@@ -212,7 +212,7 @@ class tb_po_invoice(models.Model):
             one.invoice_extra_ids_count = len(one.invoice_extra_ids)
             one.invoice_normal_ids_count = len(one.invoice_normal_ids)
 
-    @api.depends('invoice_ids', 'invoice_ids.residual','invoice_ids.amount_total')
+    @api.depends('invoice_ids', 'invoice_ids.residual','invoice_ids.amount_total','invoice_ids.state')
     def compute_invoice_amount(self):
         for one in self:
             invoice_normal_ids_residual = sum(x.residual for x in one.invoice_normal_ids)
