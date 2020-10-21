@@ -12,7 +12,7 @@ class tb_po_invoice(models.Model):
     _order = 'id desc'
 
     @api.depends('hsname_all_ids', 'hsname_all_ids.purchase_amount2_add_this_time', 'hsname_all_ids.p_s_add_this_time','hsname_all_ids.tax_rate_add','hsname_all_ids.expense_tax',
-                 'partner_id','extra_invoice_line_ids','extra_invoice_line_ids.price_unit','tb_id')
+                 'partner_id','extra_invoice_line_ids','extra_invoice_line_ids.price_unit','tb_id','hsname_all_ids.back_tax_add_this_time',)
     def compute_info_store(self):
         for one in self:
             purchase_amount2_add_this_time_total = sum(x.purchase_amount2_add_this_time for x in one.hsname_all_ids)
@@ -235,8 +235,7 @@ class tb_po_invoice(models.Model):
             one.yjzy_tb_po_invoice_amount = one.yjzy_tb_po_invoice.price_total
             one.yjzy_tb_po_invoice_residual = one.yjzy_tb_po_invoice.invoice_normal_ids_residual
 
-    company_id = fields.Many2one('res.company', '公司', required=True, readonly=True,
-                                 default=lambda self: self.env.user.company_id.id)
+
     yjzy_tb_po_invoice = fields.Many2one('tb.po.invoice',u'关联应收付申请单')
     yjzy_tb_po_invoice_amount = fields.Monetary('关联应收付申请单金额',currency_field='currency_id', compute=compute_yjzy_tb_po_invoice_amount,store=True)
     yjzy_tb_po_invoice_residual = fields.Monetary('关联应收付申请单余额',currency_field='currency_id', compute=compute_yjzy_tb_po_invoice_amount,store=True)
@@ -329,10 +328,6 @@ class tb_po_invoice(models.Model):
 
     invoice_p_s_ids = fields.One2many('account.invoice','tb_po_invoice_id','相关冲减发票',domain=[('type','=','in_refund'),('yjzy_type_1','=','purchase')])
     invoice_p_s_ids_count = fields.Integer('相关冲减发票数量', compute=compute_invoice_count)
-
-
-
-
     company_id = fields.Many2one('res.company', '公司', required=True, readonly=True,
                                  default=lambda self: self.env.user.company_id.id)
     company_currency_id = fields.Many2one('res.currency', string='公司货币', related='company_id.currency_id',
