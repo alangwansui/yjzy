@@ -185,7 +185,7 @@ class tb_po_invoice(models.Model):
         for one in self:
             po_add_residual = sum(i.residual for i in one.invoice_p_ids.filtered(lambda x: x.state == 'open'))
             p_s_add_residual = sum(i.residual for i in one.invoice_s_ids.filtered(lambda x: x.state == 'open'))
-            back_tax_add_residual = sum(i.residual for i in one.invoice_back_tax_ids.filtered(lambda x: x.state == 'open'))
+            back_tax_add_residual = sum(i.residual_signed for i in one.invoice_back_tax_ids.filtered(lambda x: x.state == 'open'))
             p_s_add_refund_residual = sum(i.residual for i in one.invoice_p_s_ids.filtered(lambda x: x.state == 'open'))
             one.po_add_residual = po_add_residual
             one.p_s_add_residual = p_s_add_residual
