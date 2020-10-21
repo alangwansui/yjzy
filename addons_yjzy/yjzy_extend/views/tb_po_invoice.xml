@@ -401,6 +401,10 @@
 
 
                                 <field name="tax_rate_add" string="税点" attrs="{'invisible':[('type','!=','other_po')]}"/>
+                                <label for=" " string=" " attrs="{'invisible':['|',('tax_rate_add','&lt;',0.13),('type','!=','other_po')]}"/>
+                                <div attrs="{'invisible':['|',('tax_rate_add','&lt;',0.13),('type','!=','other_po')]}">
+                                    <span style="color:red">超出税点合理范围</span>
+                                </div>
                                 <field name="expense_tax_algorithm" widget="radio" options="{'horizontal': true}" attrs="{'invisible':[('type','!=','other_po')]}"/>
                             </group>
                             <group attrs="{'invisible':1}">

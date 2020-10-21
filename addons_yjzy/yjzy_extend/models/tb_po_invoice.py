@@ -212,7 +212,7 @@ class tb_po_invoice(models.Model):
             one.invoice_extra_ids_count = len(one.invoice_extra_ids)
             one.invoice_normal_ids_count = len(one.invoice_normal_ids)
 
-    @api.depends('invoice_ids', 'invoice_ids.residual','invoice_ids.amount_total','invoice_ids.state')
+    @api.depends('invoice_ids', 'invoice_ids.residual','invoice_ids.amount_total')
     def compute_invoice_amount(self):
         for one in self:
             invoice_normal_ids_residual = sum(x.residual_signed for x in one.invoice_normal_ids)
@@ -349,7 +349,10 @@ class tb_po_invoice(models.Model):
     yjzy_invoice_include_tax = fields.Boolean('原始采购是否含税', compute=compute_info_store, store=True)
     extra_invoice_include_tax = fields.Boolean('原始账单是否含税')
 
-
+    @api.onchange('tax_rate_add')
+    def onchange_tax_rate_add(self):
+        if self.tax_rate_add >= 1:
+            raise Warning('税率请填写小数！')
 
     def unlink(self):
         for one in self:
