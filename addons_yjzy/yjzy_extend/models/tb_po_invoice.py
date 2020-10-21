@@ -745,14 +745,14 @@ class tb_po_invoice(models.Model):
         hsname_all_line_obj = self.env['invoice.hs_name.all']
         if not account:
             raise Warning(u'没有找到退税科目,请先在退税产品的收入科目上设置')
-        if self.back_tax_add_this_time_total != 0:
+        if self.back_tax_add_this_time_total > 0:
             back_tax_invoice = invoice_obj.create({
                 'tb_po_invoice_id': self.id,
                 'partner_id': partner.id,
                 'type': 'out_invoice',
                 'journal_type': 'sale',
                 'bill_id': self.tb_id.id,
-                'invoice_attribute': 'other_po',
+                'invoice_attribute': self.type,
                 'yjzy_type_1': 'back_tax',
                 'date': fields.datetime.now(),
                 'date_invoice': fields.datetime.now(),
@@ -761,6 +761,33 @@ class tb_po_invoice(models.Model):
                     'product_id': product.id,
                     'quantity': 1,
                     'price_unit': self.back_tax_add_this_time_total,
+                    'account_id': account.id,
+                })]
+            })
+            for line in self.hsname_all_ids:
+                hsname_all_line = hsname_all_line_obj.create({
+                    'invoice_id': back_tax_invoice.id,
+                    'hs_id': line.hs_id.id,
+                    'hs_en_name': line.hs_en_name,
+                    'tbl_hsname_all_id': line.hsname_all_line_id.id
+                    })
+        if self.back_tax_add_this_time_total < 0:
+            back_tax_add_this_time_total = -self.back_tax_add_this_time_total
+            back_tax_invoice = invoice_obj.create({
+                'tb_po_invoice_id': self.id,
+                'partner_id': partner.id,
+                'type': 'out_refund',
+                'journal_type': 'sale',
+                'bill_id': self.tb_id.id,
+                'invoice_attribute': self.type,
+                'yjzy_type_1': 'back_tax',
+                'date': fields.datetime.now(),
+                'date_invoice': fields.datetime.now(),
+                'invoice_line_ids': [(0, 0, {
+                    'name': '%s' % (product.name,),
+                    'product_id': product.id,
+                    'quantity': 1,
+                    'price_unit': back_tax_add_this_time_total,
                     'account_id': account.id,
                 })]
             })
