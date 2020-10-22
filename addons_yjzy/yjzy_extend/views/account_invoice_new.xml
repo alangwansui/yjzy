@@ -44,6 +44,7 @@
                     <group expand="0" string="Group By">
                         <filter name="group_invoice_attribute" string="账单类型" context="{'group_by':'invoice_attribute'}"/>
                         <filter name="group_by_state" string="账单类型" context="{'group_by':'state'}"/>
+                        <filter name="group_by_state_yjzy_invoice_id" string="账单类型" context="{'group_by':['state','yjzy_invoice_id']}"/>
                         <filter name="group_by_date_invoice" string="账单日期"
                                 context="{'group_by':'date_invoice:year'}"/>
                         <filter name="group_by_stage_id" string="审批状态"
@@ -65,46 +66,46 @@
 
             </field>
         </record>
-        <record id="view_customer_invoice_extra_tree" model="ir.ui.view">
-            <field name="name">account.invoice.customer.extra.tree</field>
-            <field name="model">account.invoice</field>
-            <field name="arch" type="xml">
-                <tree decoration-info="state == 'draft'"  default_order="date_deadline_new" decoration-muted="state == 'cancel'" string="Invoice" >
-                    <field name="partner_id" groups="base.group_user" string="Customer"/>
-                    <field name="yjzy_invoice_id" string="原始账单" context="{'form_view_ref':'yjzy_extend.view_account_supplier_invoice_new_form'}"/>
-                    <field name="bill_id" string="合同号"/>
-                    <field name="tb_contract_code" string="合同号" invisible="1"/>
-                    <field name="date_invoice" string="账单日期"/>
-                    <button name="open_reconcile_order_line" icon="fa-pencil-square-o" type="object"/>
-                    <field name="date_deadline_new" string="实际到期日"/>
-                    <field name="residual_times_new" />
-                    <field name="date_due" string="进仓到期日"/>
-                    <field name="residual_times_out_in_new"/>
-                    <field name="amount_total_signed" string="应收金额" sum="Total"/>
-                    <field name="residual_signed" string="未收金额" sum="Amount Due"/>
-                    <field name="reconcile_order_line_payment" sum="小计" invisible="1"/>
-                    <field name="reconcile_order_line_advance" sum="小计" invisible="1"/>
-                    <field name="reconcile_order_line_bank" sum="小计" invisible="1"/>
-                    <field name="reconcile_order_line_amount_diff" sum="小计" invisible="1"/>
-                    <field name="commercial_partner_id" invisible="1"/>
-                    <field name="reference" invisible="1"/>
-                    <field name="name" invisible="1"/>
-                    <field name="journal_id" invisible="1"/>
-                    <field name="company_id" groups="base.group_multi_company" invisible="1"
-                           options="{'no_create': True}"/>
-                    <field name="user_id" invisible="1"/>
-                    <field name="origin" invisible="1"/>
-                    <field name="currency_id" invisible="1"/>
-                    <field name="company_currency_id" invisible="1"/>
-                    <field name="state"/>
-                    <field name="type" invisible="context.get('type',True)"/>
-                    <field name="residual_times" groups="base.group_system"/>
-                    <field name="residual_times_out_in" groups="base.group_system"/>
-                    <field name="date_deadline" string="实际到期日" groups="base.group_system"/>
+<!--        <record id="view_customer_invoice_extra_tree" model="ir.ui.view">-->
+<!--            <field name="name">account.invoice.customer.extra.tree</field>-->
+<!--            <field name="model">account.invoice</field>-->
+<!--            <field name="arch" type="xml">-->
+<!--                <tree decoration-info="state == 'draft'"  default_order="date_deadline_new" decoration-muted="state == 'cancel'" string="Invoice" >-->
+<!--                    <field name="partner_id" groups="base.group_user" string="Customer"/>-->
+<!--                    <field name="yjzy_invoice_id" string="原始账单" context="{'form_view_ref':'yjzy_extend.view_account_supplier_invoice_new_form'}"/>-->
+<!--                    <field name="bill_id" string="合同号"/>-->
+<!--                    <field name="tb_contract_code" string="合同号" invisible="1"/>-->
+<!--                    <field name="date_invoice" string="账单日期"/>-->
+<!--                    <button name="open_reconcile_order_line" icon="fa-pencil-square-o" type="object"/>-->
+<!--                    <field name="date_deadline_new" string="实际到期日"/>-->
+<!--                    <field name="residual_times_new" />-->
+<!--                    <field name="date_due" string="进仓到期日"/>-->
+<!--                    <field name="residual_times_out_in_new"/>-->
+<!--                    <field name="amount_total_signed" string="应收金额" sum="Total"/>-->
+<!--                    <field name="residual_signed" string="未收金额" sum="Amount Due"/>-->
+<!--                    <field name="reconcile_order_line_payment" sum="小计" invisible="1"/>-->
+<!--                    <field name="reconcile_order_line_advance" sum="小计" invisible="1"/>-->
+<!--                    <field name="reconcile_order_line_bank" sum="小计" invisible="1"/>-->
+<!--                    <field name="reconcile_order_line_amount_diff" sum="小计" invisible="1"/>-->
+<!--                    <field name="commercial_partner_id" invisible="1"/>-->
+<!--                    <field name="reference" invisible="1"/>-->
+<!--                    <field name="name" invisible="1"/>-->
+<!--                    <field name="journal_id" invisible="1"/>-->
+<!--                    <field name="company_id" groups="base.group_multi_company" invisible="1"-->
+<!--                           options="{'no_create': True}"/>-->
+<!--                    <field name="user_id" invisible="1"/>-->
+<!--                    <field name="origin" invisible="1"/>-->
+<!--                    <field name="currency_id" invisible="1"/>-->
+<!--                    <field name="company_currency_id" invisible="1"/>-->
+<!--                    <field name="state"/>-->
+<!--                    <field name="type" invisible="context.get('type',True)"/>-->
+<!--                    <field name="residual_times" groups="base.group_system"/>-->
+<!--                    <field name="residual_times_out_in" groups="base.group_system"/>-->
+<!--                    <field name="date_deadline" string="实际到期日" groups="base.group_system"/>-->
 
-                </tree>
-            </field>
-        </record>
+<!--                </tree>-->
+<!--            </field>-->
+<!--        </record>-->
 
         <!--选择应收应付认领的选择发票的时候使用的视图-->
         <record id="invoice_new_hxd_tree" model="ir.ui.view">
@@ -1118,7 +1119,7 @@
             </field>
         </record>
 
-
+<!--        应付账单-->
         <record model="ir.ui.view" id="view_account_supplier_invoice_new_form">
             <field name="name">account.invoice.supplier.new.form</field>
             <field name="model">account.invoice</field>
@@ -1865,7 +1866,7 @@
             <!--field name="target">new</field-->
             <field name="view_ids" eval="[(5, 0, 0),
                               (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.invoice_new_1_tree')}),
-                              (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.view_account_invoice_new_form')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.view_account_invoice_new_form_in_one')}),
                               ]"/>
         </record>
         <menuitem id="menu_account_new_root" name="财务：新" sequence="99"/>
@@ -2528,7 +2529,7 @@
             <!--field name="target">new</field-->
             <field name="view_ids" eval="[(5, 0, 0),
                               (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.invoice_new_supplier_2_tree')}),
-                              (0, 0, {'view_mode': 'form', 'view_id': ref('view_account_supplier_invoice_new_form')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('view_account_invoice_new_form_in_one')}),
                               ]"/>
         </record>
 
@@ -2545,12 +2546,12 @@
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_account_invoice_new_filter"/>
             <field name="domain">[('type','=','in_invoice'),('yjzy_type_1','=','purchase'),('invoice_attribute','=','extra'),('is_yjzy_invoice','=',True)]</field>
-            <field name="context">{'search_default_group_by_state':1,'default_is_yjzy_invoice':1,'default_type':'in_invoice','only_ref':1,'default_yjzy_type_1':'purchase'}
+            <field name="context">{'search_default_group_by_state_yjzy_invoice_id':1,'default_is_yjzy_invoice':1,'default_type':'in_invoice','only_ref':1,'default_yjzy_type_1':'purchase'}
             </field>
             <!--field name="target">new</field-->
             <field name="view_ids" eval="[(5, 0, 0),
                               (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.view_supplier_invoice_extra_tree')}),
-                              (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.view_account_supplier_invoice_new_form')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.view_account_invoice_new_form_in_one')}),
                               ]"/>
         </record>
        <menuitem id="menu_supplier_account_invoice_extra_all" action="action_supplier_account_invoice_extra_all"
@@ -2570,7 +2571,7 @@
             <!--field name="target">new</field-->
             <field name="view_ids" eval="[(5, 0, 0),
                               (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.view_supplier_invoice_extra_tree')}),
-                              (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.view_account_supplier_invoice_new_form')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.view_account_invoice_new_form_in_one')}),
                               ]"/>
         </record>
        <menuitem id="menu_supplier_account_invoice_other_po_all" action="action_supplier_account_invoice_other_po_all"
@@ -2590,7 +2591,7 @@
             <!--field name="target">new</field-->
             <field name="view_ids" eval="[(5, 0, 0),
                               (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.view_supplier_invoice_extra_tree')}),
-                              (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.view_account_supplier_invoice_new_form')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.view_account_invoice_new_form_in_one')}),
                               ]"/>
         </record>
        <menuitem id="menu_supplier_account_invoice_other_payment_all" action="action_supplier_account_invoice_other_payment_all"

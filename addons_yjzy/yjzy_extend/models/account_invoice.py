@@ -505,7 +505,7 @@ class account_invoice(models.Model):
     yjzy_residual = fields.Monetary(u'总未收金额',currency_field='currency_id', compute=compute_yjzy_invoice_amount_total,store=True)
     yjzy_price_total = fields.Monetary('新金额',currency_field='currency_id',compute=compute_yjzy_price_total)
     extra_code = fields.Char(u'额外编号',default=lambda self: self._default_name())
-    yjzy_invoice_line_ids = fields.One2many('account.invoice.line','yjzy_invoice_id',u'所有明细',domain=[('quantity','!=',0)])
+    yjzy_invoice_line_ids = fields.One2many('account.invoice.line','yjzy_invoice_id',u'所有明细',domain=[('quantity','!=',0),('invoice_attribute','in',['normal','extra'])])
 
 
     #913新建额外账单申请单
@@ -1479,6 +1479,7 @@ class account_invoice_line(models.Model):
     # yjzy_price_unit = fields.Float('新单价',compute=_compute_amount)
     # yjzy_price_total = fields.Float('新总价',compute=_compute_amount)
     yjzy_invoice_id = fields.Many2one('account.invoice',u'原始账单',compute=_compute_yjzy_invoice)
+    invoice_attribute = fields.Selection('账单类型',related='invoice_id.invoice_attribute')
     yjzy_price_unit = fields.Float('新单价',compute=_compute_amount_new,store= True)#default=lambda self: self._compute_amount()
     yjzy_price_total = fields.Monetary('新总价',compute=_compute_price_total,store= True,currency_field='currency_id')
     tp_po_invoice_line = fields.Many2one('extra.invoice.line','申请单明细')
