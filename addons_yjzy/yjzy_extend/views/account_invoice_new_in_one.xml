@@ -427,24 +427,7 @@
                                 <field name="yjzy_invoice_all_ids"/>
                             </page>
 
-                            <page string="账单原始明细" attrs="{'invisible':1}">
-                                <field name="invoice_line_ids_origin" attrs="{'readonly':1}"
-                                       context="{'default_is_manual':1}">
-                                    <tree editable="bottom">
-                                        <field name="product_id" domain="[('type','=','service')]"/>
-                                        <field name="name"/>
-                                        <field name="account_id"/>
-                                        <field name="quantity"/>
-                                        <field name="uom_id"/>
-                                        <field name="price_unit"/>
-                                        <field name="price_total"/>
-                                        <field name="is_manual"/>
-                                    </tree>
-                                </field>
-                                <group class="oe_subtotal_footer oe_right">
-                                    <field name="amount_automatic" class="oe_subtotal_footer_separator"/>
-                                </group>
-                            </page>
+
                             <page string="账单修正明细" attrs="{'invisible':1}">
                                 <field name="invoice_line_ids_add" context="{'default_is_manual':1}">
                                     <tree editable="bottom">
