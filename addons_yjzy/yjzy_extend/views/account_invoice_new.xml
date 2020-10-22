@@ -334,8 +334,8 @@
 
                     <field name="date_deadline_new" string="实际到期日"/>
                     <field name="residual_times_new" groups="base.group_system"/>
+                    <field name="residual_times" />
                     <field name="date_due" string="进仓到期日" groups="base.group_system"/>
-                    <field name="residual_times" groups="base.group_system"/>
                     <field name="residual_times_out_in_new" groups="base.group_system"/>
                     <field name="residual_signed" string="未付金额" sum="Amount Due"/>
                     <field name="include_tax" string="含税"/>
@@ -1246,7 +1246,7 @@
                         </group>
                         <notebook>
                             <page string="账单明细" attrs="{'invisible':[('state','in',['open','paid'])]}">
-                                <field context="{'type': type, 'journal_id': journal_id}" name="invoice_line_ids">
+                                <field context="{'type': type,   'journal_id': journal_id}" name="invoice_line_ids">
                                     <tree string="Bill lines" editable="bottom">
                                         <field name="sequence" widget="handle"/>
                                         <field name="is_manual" attrs="{'invisible':1}"/>

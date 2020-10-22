@@ -582,6 +582,8 @@ class tb_po_invoice(models.Model):
             type_invoice = 'in_invoice'
 
         tb_po_id = self.env['tb.po.invoice'].create({'tb_id': self.tb_id.id,
+                                                     'name_title':self.name_title,
+                                                     'invoice_partner':self.invoice_partner,
                                                      'tax_rate_add': self.tax_rate_add,
                                                      'type': self.type,
                                                      'yjzy_type_1': yjzy_type_1,
