@@ -6,14 +6,14 @@
             <field name="model">account.invoice</field>
             <field name="arch" type="xml">
                 <form string="应收账单" class="o_invoice_form">
-                     <header attrs="{'invisible':[('is_yjzy_invoice','=',True),('type','not in',['out_invoice','out_refund'])]}">
+                     <header attrs="{'invisible':['|',('is_yjzy_invoice','=',True),('type','not in',['out_invoice','out_refund'])]}">
                         <button name="open_tb_po_invoice" string="额外应收申请" type="object" />
                         <button name="open_tb_po_reconcile_invoice" string="创建核销应收申请" type="object"/>
                          <!--                       <button name="open_supplier_invoice_id" string="额外应付账单" type="object"/>-->
                            <!--button name="open_supplier_refund_id" string="额外账单：减少金额" type="object"/-->
                         <field name="state" widget="statusbar" nolabel="1" statusbar_visible="draft,open,paid"/>
                     </header>
-                    <header attrs="{'invisible':[('is_yjzy_invoice','=',True),('type','in',['out_invoice','out_refund'])]}">
+                    <header attrs="{'invisible':['|',('is_yjzy_invoice','=',True),('type','in',['out_invoice','out_refund'])]}">
                         <button name="open_tb_po_invoice" string="额外应付账单申请" class="oe_highlight" type="object" invisible="not context.get('extra_type')"/>
                         <button name="open_tb_po_reconcile_invoice" string="核销应付账单申请" type="object" invisible="not context.get('reconcile_type')"/>
                         <button name="submit_yfhxd" string="创建付款申请" type="object" invisible="not context.get('fkhxd_type')"/>
@@ -119,9 +119,8 @@
                                 </div>
                                 <field name="cash_rounding_id" groups="account.group_cash_rounding"/>
                                 <field name="include_tax" attrs="{'invisible':[('is_yjzy_invoice','=',True)]}"/>
-                                <field name="gongsi_id" string="销售主体" attrs="{'invisible':[('is_yjzy_invoice','=',True)]}"/>
-                                <field name="user_id" string="责任人" attrs="{'invisible':[('is_yjzy_invoice','=',True)]}"/>
-                                <field name="sale_assistant_id" attrs="{'invisible':[('is_yjzy_invoice','=',True)]}"/>
+                                <field name="gongsi_id" string="销售主体" attrs="{'invisible':1}"/>
+
 
 
                             </group>
@@ -155,6 +154,18 @@
                             </group>
                             <group  col="1" style="margin-top:-5px;">
                                 <group >
+                                    <label for="" name="amount_total">
+                                        <b attrs="{'invisible':[('type','in',['in_invoice','in_refund'])]}" >
+                                            本单应收金额
+                                        </b>
+                                        <b attrs="{'invisible':[('type','not in',['in_invoice','in_refund'])]}" >
+                                            本账单应付金额
+                                        </b>
+                                    </label>
+                                    <div class="o_row">
+                                    <field name="amount_total"/>
+                                    </div>
+
                                     <label for="" name="residual_signed">
                                         <b attrs="{'invisible':[('type','in',['in_invoice','in_refund'])]}" >
                                             本单未收金额
@@ -208,7 +219,7 @@
                         </group>
                         <field name="sent" invisible="1"/>
                         <notebook colspan="4">
-                            <page string="账单明细">
+                            <page string="账单明细" invisible="1">
                                 <field name="invoice_line_ids" nolabel="1" widget="one2many_list" mode="tree,kanban"
                                        context="{'type': type, 'journal_id': journal_id, 'default_invoice_id': id,'default_is_manual':True}">
                                     <tree string="Invoice Lines" editable="bottom">
@@ -292,7 +303,7 @@
                                 <field name="comment" placeholder="Terms and conditions..."/>
                             </page>
 
-                            <page string="账单明细" attrs="{'invisible':[('state','not in',['open','paid'])]}" invisible="1">
+                            <page string="账单明细">
                                 <field name="invoice_line_ids_origin">
                                     <tree default_order="id">
                                         <field name="sequence" widget="handle"/>
@@ -337,6 +348,10 @@
                                     <field name="outstanding_credits_debits_widget" colspan="2" nolabel="1"
                                            widget="payment" attrs="{'invisible': [('state', 'not in', 'open')]}"/>
                                 </group>
+                            </page>
+                            <page string="开票明细" attrs="{'invisible':[('tb_hsname_all_ids_count','=',0)]}">
+                                <field name="tb_hsname_all_ids"/>
+
                             </page>
                              <page string="所有账单明细" attrs="{'invisible':[('invoice_attribute','not in',['normal'])]}">
                                 <field name="yjzy_invoice_line_ids">
@@ -516,6 +531,9 @@
                                  <field name="move_name" />
                                 <field name="yjzy_type"/>
                                     <field name="invoice_attribute"/>
+                                     <field name="user_id" string="责任人" attrs="{'invisible':[('is_yjzy_invoice','=',True)]}"/>
+                                <field name="sale_assistant_id" attrs="{'invisible':[('is_yjzy_invoice','=',True)]}"/>
+                                    <field name="tb_hsname_all_ids_count"/>
 
                                 </group>
                                 <field name="yjzy_invoice_all_ids"/>

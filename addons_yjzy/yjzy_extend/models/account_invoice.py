@@ -43,6 +43,10 @@ class account_invoice(models.Model):
                 diff = strptime(dump_date, DF) - strptime(one.date_invoice, DF)
                 one.date_deadline = (strptime(one.date_due, DF) + diff).strftime(DF)
                 one.date_deadline_new = (strptime(one.date_due, DF) + diff).strftime(DF)
+            elif one.invoice_attribute in ['expense_po','other_payment']:
+                one.date_deadline = one.date_due
+                one.date_deadline_new = one.date_due
+
 
     def compute_info(self):
 
@@ -334,7 +338,9 @@ class account_invoice(models.Model):
     def compute_tb_po_invoice_ids(self):
         for one in self:
             tb_po_invoice_ids_count = len(one.tb_po_invoice_ids)
+            tb_hsname_all_ids_count = len(one.tb_hsname_all_ids)
             one.tb_po_invoice_ids_count = tb_po_invoice_ids_count
+            one.tb_hsname_all_ids_count = tb_hsname_all_ids_count
 
 
     #0921 = self.bill_id = self.partner
@@ -377,6 +383,7 @@ class account_invoice(models.Model):
     hsname_all_ids = fields.One2many('invoice.hs_name.all','invoice_id',u'报关明细')
     #显示开票资料对应出运单的报关资料汇总
     tb_hsname_all_ids = fields.One2many('tbl.hsname.all', u'报关明细',related="bill_id.hsname_all_ids")
+    tb_hsname_all_ids_count = fields.Integer('报关明细数量',compute=compute_tb_po_invoice_ids)
     external_invoice_done = fields.Selection([('10_no',u'否'),
                                               ('20_yes',u'是'),
                                               ('30_not',u'非')],'外账是否确认销售',default='10_no')

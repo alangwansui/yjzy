@@ -333,9 +333,9 @@
                     <field name="reconcile_order_line_count" invisible="1"/>
 
                     <field name="date_deadline_new" string="实际到期日"/>
-                    <field name="residual_times_new" />
-                    <field name="date_due" string="进仓到期日" />
-                    <field name="residual_times"/>
+                    <field name="residual_times_new" groups="base.group_system"/>
+                    <field name="date_due" string="进仓到期日" groups="base.group_system"/>
+                    <field name="residual_times" groups="base.group_system"/>
                     <field name="residual_times_out_in_new" groups="base.group_system"/>
                     <field name="residual_signed" string="未付金额" sum="Amount Due"/>
                     <field name="include_tax" string="含税"/>
