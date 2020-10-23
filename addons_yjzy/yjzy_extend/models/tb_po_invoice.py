@@ -300,6 +300,7 @@ class tb_po_invoice(models.Model):
 
 
     yjzy_invoice_id = fields.Many2one('account.invoice', '关联账单')
+    yjzy_invoice_back_tax_id = fields.Many2one('account.invoice', u'关联退税账单')
     currency_id = fields.Many2one('res.currency', '货币',  compute=compute_currency_id)#default=_default_currency_id
     manual_currency_id = fields.Many2one('res.currency', '货币',  default=_default_currency_id)
 
@@ -433,6 +434,15 @@ class tb_po_invoice(models.Model):
             one.action_invoice_open()
         if self.yjzy_tb_po_invoice:
             self.yjzy_tb_po_invoice.action_manager_approve()
+        if self.invoice_p_s_ids:
+            for one in self.invoice_p_s_ids:
+                one.invoice_assign_outstanding_credit()
+        if self.type == 'extra':
+            for one in self.invoice_extra_ids:
+                if one.type in ['in_refund','out_refund']:
+                    one.invoice_assign_outstanding_credit()
+
+
 
     def action_refuse(self,reason):
         self.invoice_ids.unlink()
@@ -688,7 +698,7 @@ class tb_po_invoice(models.Model):
         #     raise Warning('请先设置额外账单的科目')
         print('yjzy_invoice_id',self.yjzy_invoice_id,)
         if self.purchase_amount2_add_this_time_total != 0:
-            inv = invoice_obj.create({
+            inv = invoice_obj.with_context({'default_type': 'in_invoice', 'type': 'in_invoice', 'journal_type': 'purchase'}).create({
                 'tb_po_invoice_id':self.id,
                 'partner_id': self.partner_id.id,
                 'type': 'in_invoice',
@@ -761,6 +771,7 @@ class tb_po_invoice(models.Model):
                 'yjzy_type_1': 'back_tax',
                 'date': fields.datetime.now(),
                 'date_invoice': fields.datetime.now(),
+                'yjzy_invoice_id':self.yjzy_invoice_back_tax_id.id,
                 'invoice_line_ids': [(0, 0, {
                     'name': '%s' % (product.name,),
                     'product_id': product.id,
@@ -788,6 +799,7 @@ class tb_po_invoice(models.Model):
                 'yjzy_type_1': 'back_tax',
                 'date': fields.datetime.now(),
                 'date_invoice': fields.datetime.now(),
+                'yjzy_invoice_id': self.yjzy_invoice_back_tax_id.id,
                 'invoice_line_ids': [(0, 0, {
                     'name': '%s' % (product.name,),
                     'product_id': product.id,
@@ -804,6 +816,7 @@ class tb_po_invoice(models.Model):
                     'tbl_hsname_all_id': line.hsname_all_line_id.id
                     })
     # 730 创建后直接过账 冲减发票
+
     def make_sale_invoice(self):
         self.ensure_one()
         # self.check()
@@ -816,7 +829,7 @@ class tb_po_invoice(models.Model):
         product = self.product_zyywsr
         account = product.property_account_income_id
         if self.p_s_add_this_time_refund != 0:
-            inv = invoice_obj.create({
+            inv = invoice_obj.with_context({'default_type': 'in_refund', 'type': 'in_refund', 'journal_type': 'purchase'}).create({
                 'tb_po_invoice_id': self.id,
                 'partner_id': self.partner_id.id,
                 'bill_id': self.tb_id.id,
@@ -855,7 +868,7 @@ class tb_po_invoice(models.Model):
         product = self.product_qtysk
         account = product.property_account_income_id
         if self.p_s_add_this_time_extra_total != 0:
-            inv = invoice_obj.create({
+            inv = invoice_obj.with_context({'type':'out_invoice', 'journal_type': 'sale'}).create({
                 'tb_po_invoice_id': self.id,
                 'partner_id': self.partner_id.id,
                 'bill_id': self.tb_id.id,
@@ -1319,6 +1332,7 @@ class tb_po_invoice_line(models.Model):
     back_tax_add_this_time = fields.Float('本次应生成退税', compute=compute_back_tax)
     p_s_add_this_time_old = fields.Float(u'冲减原始应付金额')
     yjzy_invoice_id = fields.Many2one('account.invoice',u'关联账单')
+
 
     hs_id = fields.Many2one('hs.hs', u'品名',related='hsname_all_line_id.hs_id')
     back_tax = fields.Float(u'退税率',related='hsname_all_line_id.back_tax',store=True)

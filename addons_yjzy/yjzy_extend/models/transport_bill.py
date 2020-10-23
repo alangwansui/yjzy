@@ -1820,13 +1820,22 @@ class transport_bill(models.Model):
         self.purchase_gongsi_id = self.partner_id.purchase_gongsi_id
         if self.operation_wizard != 'fifth':
             self.operation_wizard = 'second'
-    # @api.onchange('partner_shipping_id')
-    # def onchange_partner(self):
-    #
-    #     self.invoice_title = self.partner_shipping_id.invoice_title
-    #     self.mark_ids = self.partner_shipping_id.mark_ids
-    #     self.mark_text = self.partner_shipping_id.mark_text
-    #     self.notice_man = self.partner_shipping_id.notice_man
+
+    @api.onchange('partner_shipping_id')
+    def onchange_partner_shipping(self):
+        self.invoice_title = self.partner_shipping_id.invoice_title
+        # self.mark_ids = self.partner_shipping_id.mark_ids
+        self.mark_text = self.partner_shipping_id.mark_text
+        self.notice_man = self.partner_shipping_id.notice_man
+        self.wharf_src_id = self.partner_shipping_id.wharf_src_id
+        self.wharf_dest_id = self.partner_shipping_id.wharf_dest_id
+        # self.payment_term_id = self.partner_id.property_payment_term_id
+        self.partner_country_id = self.partner_shipping_id.country_id
+        self.delivery_man = self.partner_shipping_id.delivery_man
+        self.demand_info = self.partner_shipping_id.demand_info
+        self.contract_type = self.partner_id.contract_type
+        self.gongsi_id = self.partner_id.gongsi_id
+        self.purchase_gongsi_id = self.partner_id.purchase_gongsi_id
 
 
     def finish_delivery_qty(self):

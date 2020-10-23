@@ -189,6 +189,8 @@ class account_payment(models.Model):
                 name = '%s[%s]' % (one.journal_id.name, str(one.balance))
             elif ctx.get('advance_bank_amount'):
                 name = '%s[%s]' % (one.yjzy_payment_id.journal_id.name, str(one.advance_balance_total))
+            elif ctx.get('fk_journal_id'):
+                name = '%s[%s]' % (one.fk_journal_id.name, str(one.advance_balance_total))
             elif ctx.get('advance_so_amount'):
                 if not one.yjzy_payment_id:
                     name = '%s[%s]' % (one.journal_id.name, str(one.balance))
@@ -216,6 +218,7 @@ class account_payment(models.Model):
         for one in self:
             print('teee', len(one.advance_reconcile_order_ids))
             one.advance_reconcile_order_count_all = len(one.advance_reconcile_order_ids)
+            one.advance_reconcile_order_draft_ids_count = len(one.advance_reconcile_order_draft_ids)
 
     @api.depends('po_id','so_id','partner_id')
     def compute_advance_type(self):
@@ -223,19 +226,27 @@ class account_payment(models.Model):
             self.advance_type = '20_contract'
         else:
             self.advance_type = '10_no_contract'
-
+    reconciling = fields.Boolean('正在认领')
     #903
     account_reconcile_order_line_id = fields.Many2one('account.reconcile.order.line',u'应收付认领明细') #过账后生成的实际的认领单明细
     account_reconcile_order_id = fields.Many2one('account.reconcile.order',u'应收付认领单',related='account_reconcile_order_line_id.order_id') #过账收生成的实际的认领单
 
     advance_reconcile_order_ids = fields.One2many('account.reconcile.order','yjzy_advance_payment_id',u'预收付-应收付认领')
+    advance_reconcile_order_draft_ids = fields.One2many('account.reconcile.order', 'yjzy_advance_payment_id',u'预收付-应收付认领未审批',
+                                                              domain=[('state', '=', 'posted')])
+    advance_reconcile_order_draft_ids_count = fields.Integer(u'预收付-应收付认领未审批数量', compute=_compute_advance_reconcile_order_count_all )
+
 
     advance_reconcile_order_count_all = fields.Integer(u'预收付-应收付认领数量', compute=_compute_advance_reconcile_order_count_all )
+
+
     #老的
     yshx_ids = fields.One2many('account.reconcile.order', 'yjzy_payment_id', u'收款-应收认领单')
     advance_reconcile_order_line_ids = fields.One2many('account.reconcile.order.line', 'yjzy_payment_id',
                                                        string='预收认领明细', domain=[('amount_advance_org', '>', 0),
                                                                                 ('order_id.state', '=', 'done')])
+
+
 
 
     #日常收款单：10，25，50，60
@@ -936,6 +947,40 @@ class account_payment(models.Model):
         print('action',action)
         return action
 
+    def open_yfsqd_yfhxd_new_window(self):
+        if self.state not in '50_posted':
+            raise Warning('当前状态不允许进行认领')
+        tree_view = self.env.ref('yjzy_extend.account_yfhxd_advance_tree_view_new').id
+        form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new').id
+        advance_reconcile = self.mapped('advance_reconcile_order_ids')
+        action = self.env.ref('yjzy_extend.action_yfhxd_all_new_1').read()[0]
+        ctx = {'default_partner_id': self.partner_id.id,
+               'default_sfk_type': 'yfhxd',
+               'default_yjzy_advance_payment_id': self.id,
+               # 'advance_po_amount': 1,
+               'fk_journal_id': 1,
+               'default_payment_type': 'outbound',
+               'default_be_renling': 1,
+               'default_partner_type': 'supplier',
+               'show_so': 1,
+
+               'default_operation_wizard': '25',
+               'default_hxd_type_new': '30', }  # 预付-应付
+        if len(advance_reconcile) >= 1:
+            action['views'] = [(tree_view, 'tree'), (form_view, 'form')]
+            action['domain'] = [('id', 'in', advance_reconcile.ids), ('sfk_type', '=', 'yfhxd')]
+            action['target'] = 'new'
+            action['context'] = ctx
+        # elif len(advance_reconcile) == 1:
+        #     action['views'] = [(self.env.ref('yjzy_extend.account_yfhxd_form_view_new').id, 'form')]
+        #     action['res_id'] = advance_reconcile.ids[0]
+        else:
+            action['views'] = [(form_view, 'form')]
+            action['context'] = ctx
+        print('ctx_222', ctx)
+        print('action', action)
+        return action
+
 
         # tree_view = self.env.ref('yjzy_extend.account_yfhxd_tree_view_new').id
         # form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new').id
@@ -1030,16 +1075,63 @@ class account_payment(models.Model):
                         'default_sfk_type': 'yfhxd',
                         'default_invoice_ids':invoice_ids,
                         'default_yjzy_advance_payment_id': self.id,
-                        'bank_amount': 1,
+                        'fk_journal_id': 1,
                         'default_payment_type': 'outbound',
                         'default_be_renling': 1,
                         'default_partner_type': 'supplier',
                         'show_so': 1,
                         'default_operation_wizard': '05',
                         'default_hxd_type_new':'30',#预付-应付
+
                         # 'from_tanchuang':1,
                         }
         }
+    #从预收账单直接创建认领
+    def create_yfsqd_yfhxd_form_new(self):
+        form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new').id
+        invoice_ids = self.env.context.get('default_invoice_ids')
+        account_reconcile_order_obj = self.env['account.reconcile.order']
+        print('invoice_ids_11', invoice_ids)
+        account_reconcile_id = account_reconcile_order_obj.with_context({'fk_journal_id': 1,'default_be_renling': 1,'default_invoice_ids': invoice_ids,'default_payment_type': 'outbound','show_so': 1,'default_sfk_type': 'yfhxd',}).\
+                                                          create({'partner_id':self.partner_id.id,
+                                                                  'sfk_type': 'yfhxd',
+                                                                  # 'invoice_ids': invoice_ids,
+                                                                  'yjzy_advance_payment_id': self.id,
+                                                                  'payment_type': 'outbound',
+                                                                  'be_renling': 1,
+                                                                  'partner_type': 'supplier',
+                                                                  'operation_wizard': '25',
+                                                                  'hxd_type_new': '30',  # 预付-应付
+                                                                  })
+
+        account_reconcile_id.make_lines()
+        print('account_reconcile_id',account_reconcile_id)
+        return {
+            'name': '认领单',
+            'view_type': 'tree,form',
+            "view_mode": 'form',
+            'res_model': 'account.reconcile.order',
+            'type': 'ir.actions.act_window',
+            'views': [(form_view, 'form')],
+            'res_id': account_reconcile_id.id,
+            'target': 'new',
+            # 'domain': [('yjzy_advance_payment_id', '=', self.id)],
+            'context': {'fk_journal_id': 1,
+                        'show_so': 1,
+
+                        }
+        }
+
+    def action_reconciling(self):
+        if self.reconciling == False:
+            self.reconciling = True
+        else:
+            self.reconciling = False
+
+    def action_cancel_reconciling(self):
+        self.reconciling = False
+
+
 
     # def open_ptskrl(self):
     #     return {

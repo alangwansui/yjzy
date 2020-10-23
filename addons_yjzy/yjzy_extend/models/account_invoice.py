@@ -499,8 +499,10 @@ class account_invoice(models.Model):
              " * The 'Paid' status is set automatically when the invoice is paid. Its related journal entries may or may not be reconciled.\n"
              " * The 'Cancelled' status is used when user cancel invoice.")
     yjzy_invoice_id = fields.Many2one('account.invoice',u'关联账单',default=lambda self: self.id)
+    yjzy_invoice_back_tax_id = fields.Many2one('account.invoice', u'关联退税账单')
     yjzy_invoice_count = fields.Integer( u'关联账单数量',compute=_compute_count)
     yjzy_invoice_ids = fields.One2many('account.invoice','yjzy_invoice_id',u'额外账单', domain=[('is_yjzy_invoice','=',True)])
+    yjzy_invoice_wait_payment_ids = fields.One2many('account.invoice','yjzy_invoice_id',u'额外账单', domain=[('is_yjzy_invoice','=',True),('type','in',['out_invoice','in_invoice']),('state','in',['open'])])
     yjzy_invoice_all_ids = fields.One2many('account.invoice', 'yjzy_invoice_id', u'所有关联账单') #所有额外账单和原始账单
     yjzy_payment_term_id = fields.Many2one('account.payment.term', string='Payment Terms_1')
     yjzy_currency_id = fields.Many2one('res.currency', string='currency 1')
@@ -515,10 +517,15 @@ class account_invoice(models.Model):
     yjzy_invoice_line_ids = fields.One2many('account.invoice.line','yjzy_invoice_id',u'所有明细',domain=[('quantity','!=',0),('invoice_attribute','in',['normal','extra'])])
 
 
+
+
+
+
     #913新建额外账单申请单
     def open_tb_po_invoice(self):
         form_view_supplier_id = self.env.ref('yjzy_extend.tb_po_form').id
         form_view_customer_id = self.env.ref('yjzy_extend.tb_po_extra_invoice_customer_form').id
+        back_tax_invoice_id = self.bill_id.back_tax_invoice_id
         if self.is_yjzy_invoice:
             raise Warning('额外账单不允许创建额外账单申请！')
         if self.state != 'open':
@@ -536,6 +543,7 @@ class account_invoice(models.Model):
                            'default_tb_id':self.bill_id.id,
                            'default_yjzy_type_1':'sale',
                            'default_yjzy_invoice_id':self.id,
+                           'default_yjzy_invoice_back_tax_id':back_tax_invoice_id.id,
                            'default_partner_id':self.partner_id.id,
                            'default_is_tb_hs_id':True,
                            }
@@ -554,6 +562,7 @@ class account_invoice(models.Model):
                             'default_yjzy_type_1': 'purchase',
                             'default_partner_id': self.partner_id.id,
                             'default_yjzy_invoice_id': self.id,
+                            'default_yjzy_invoice_back_tax_id': back_tax_invoice_id.id,
                             'default_is_tb_hs_id': True,
                             }
             }
@@ -738,7 +747,7 @@ class account_invoice(models.Model):
         invoice_dic = []
         for one in self:
             for x in one.yjzy_invoice_ids:
-                invoice_dic.append(x.id)
+                invoice_dic.append(x.id)#参考
             invoice_dic.append(one.id)
         print('invoice_dic[k]', invoice_dic)
         # test = [(for x in line.yjzy_invoice_all_ids) for line in self)]
@@ -783,7 +792,7 @@ class account_invoice(models.Model):
         #         test = x.id
         invoice_dic = []
         for one in self:
-            for x in one.yjzy_invoice_ids:
+            for x in one.yjzy_invoice_wait_payment_ids:#参考M2M的自动多选
                 invoice_dic.append(x.id)
             invoice_dic.append(one.id)
         print('invoice_dic[k]',invoice_dic)
@@ -810,6 +819,70 @@ class account_invoice(models.Model):
 
             }
         }
+
+    #创建预付核销单从多个账单通过服务器动作创建 不能用，
+    # def create_yfhxd_from_multi_invoice(self):
+    #     print('invoice_ids', self.ids)
+    #     print('partner_id', len(self.mapped('partner_id')))
+    #     if len(self.mapped('partner_id')) > 1:
+    #         raise Warning('不同供应商')
+    #     sfk_type = 'yfhxd'
+    #     domain = [('code', '=', 'yfdrl'), ('company_id', '=', self.env.user.company_id.id)]
+    #     name = self.env['ir.sequence'].next_by_code('sfk.type.%s' % sfk_type)
+    #     journal = self.env['account.journal'].search(domain, limit=1)
+    #     account_obj = self.env['account.account']
+    #     bank_account = account_obj.search([('code', '=', '10021'), ('company_id', '=', self.env.user.company_id.id)],
+    #                                       limit=1)
+    #     form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new')
+    #     invoice_dic = []
+    #     account_reconcile_order_obj = self.env['account.reconcile.order']
+    #     for one in self:
+    #         for x in one.yjzy_invoice_wait_payment_ids:#参考M2M的自动多选
+    #             invoice_dic.append(x.id)
+    #         invoice_dic.append(one.id)
+    #     print('invoice_dic[k]',invoice_dic)
+    #     # test = [(for x in line.yjzy_invoice_all_ids) for line in self)]
+    #
+    #     account_reconcile_id = account_reconcile_order_obj.with_context(
+    #         {'fk_journal_id': 1, 'default_be_renling': 1, 'default_invoice_ids': invoice_dic,
+    #          'default_payment_type': 'outbound', 'show_so': 1, 'default_sfk_type': 'yfhxd', }). \
+    #         create({
+    #             'partner_id': self[0].partner_id.id,
+    #             'manual_payment_currency_id': self[0].currency_id.id,
+    #             'payment_type': 'outbound',
+    #             'partner_type': 'supplier',
+    #             'sfk_type': 'yfhxd',
+    #             'be_renling': True,
+    #             'name': name,
+    #             'journal_id': journal.id,
+    #             'payment_account_id': bank_account.id,
+    #             'default_operation_wizard':'03',
+    #             'default_hxd_type_new':'40'
+    #
+    #
+    #         # 'partner_id': self.partner_id.id,
+    #         #         'sfk_type': 'yfhxd',
+    #         #         # 'invoice_ids': invoice_ids,
+    #         #         'yjzy_advance_payment_id': self.id,
+    #         #         'payment_type': 'outbound',
+    #         #         'be_renling': 1,
+    #         #         'partner_type': 'supplier',
+    #         #         'operation_wizard': '25',
+    #         #         'hxd_type_new': '30',  # 预付-应付
+    #                 })
+    #
+    #     return {
+    #         'type': 'ir.actions.act_window',
+    #         'view_mode': 'form',
+    #         'res_model': 'account.reconcile.order',
+    #         'views': [(form_view.id, 'form')],
+    #         'res_id':account_reconcile_id.id,
+    #         'target': 'current',
+    #         'context': {
+    #
+    #
+    #         }
+    #     }
     #从核销单的发票明细创建核销单。（创建预付-应付的核销）现在用不到了
     def submit_yfhxd_new(self):
         print('invoice_ids', self.ids)
@@ -1446,7 +1519,7 @@ class account_invoice_line(models.Model):
                 yjzy_price_unit = price_unit
             return yjzy_price_unit
 
-    @api.depends('price_unit')
+    @api.depends('price_unit','invoice_id.state','quantity')
     def _compute_amount_new(self):
         for one in self:
             price_unit = one.price_unit
@@ -1465,7 +1538,10 @@ class account_invoice_line(models.Model):
                 one.yjzy_invoice_id = one.invoice_id.yjzy_invoice_id
             else:
                 one.yjzy_invoice_id = one.invoice_id
-    @api.depends('yjzy_price_unit','quantity')
+
+
+
+    @api.depends('yjzy_price_unit','quantity','invoice_id.state','price_unit',)
     def _compute_price_total(self):
         for one in self:
             yjzy_price_total = one.yjzy_price_unit *  one.quantity

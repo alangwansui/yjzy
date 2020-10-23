@@ -151,6 +151,21 @@ class transport_bill(models.Model):
                          'default_type':'other_po','default_yjzy_type_1':'purchase','min_add':1},
         }
 
+    def open_tb_po_invoice_list(self):
+        self.ensure_one()
+        form_view = self.env.ref('yjzy_extend.tb_po_form')
+        tree_view = self.env.ref('yjzy_extend.tb_po_tree')
+        return {
+            'name': u'新增采购申请单',
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'res_model': 'tb.po.invoice',
+            'type': 'ir.actions.act_window',
+            'target': 'current',
+            'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
+            'context':{'search_default_group_by_state':1,},
+            'domain': [('tb_id', '=', self.id)]
+        }
 
     def create_tb_po_invoice(self):
         self.ensure_one()

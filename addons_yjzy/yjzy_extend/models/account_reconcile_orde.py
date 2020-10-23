@@ -6,7 +6,8 @@ from .comm import sfk_type
 import logging
 
 _logger = logging.getLogger(__name__)
-Account_reconcile_Selection = [('draft',u'草稿'),
+Account_reconcile_Selection =   [('draft',u'草稿'),
+                                 ('advance_approval',u'待预付确认'),
                                  ('account_approval',u'待财务审批'),
                                  ('manager_approval',u'待总经理审批'),
                                  ('post',u'审批完成待支付'),
@@ -205,9 +206,24 @@ class account_reconcile_order(models.Model):
     @api.depends('partner_id')
     def _compute_supplier_advance_payment_ids(self):
         for one in self:
+            po = []
+            for x in one.invoice_ids:
+                for line in x.invoice_line_ids.mapped('purchase_id'):
+                    po.append(line.id)
+                po.append(False)                #
+                # dic_po_invl = {}
+                # for line in inv.invoice_line_ids:
+                #     if line.purchase_id:
+                #         po = line.purchase_id
+                #         if po in dic_po_invl:
+                #             dic_po_invl[po] |= line
+                #         else:
+                #             dic_po_invl[po] = line
+                # return dic_po_invl or False
+            print('po',po)
             supplier_advance_payment_ids = self.env['account.payment'].search(
-                [('partner_id', '=', one.partner_id.id), ('sfk_type', '=', 'yfsqd'),
-                 ('state', 'in', ['posted', 'reconciled'])])
+                [('partner_id', '=', one.partner_id.id), ('sfk_type', '=', 'yfsqd'),('po_id','in',po),
+                 ('state', 'in', ['posted', 'reconciled']),])
             one.supplier_advance_payment_ids_count = len(supplier_advance_payment_ids)
             one.supplier_advance_payment_ids = supplier_advance_payment_ids
             print('one.supplier_advance_payment_ids',one.supplier_advance_payment_ids)
@@ -435,6 +451,56 @@ class account_reconcile_order(models.Model):
     is_editable = fields.Boolean(u'可编辑')
     gongsi_id = fields.Many2one('gongsi', '内部公司')
 
+
+
+
+    @api.multi
+    def action_save_test(self):
+        # your code
+        self.ensure_one()
+        # close popup
+        return {'type': 'ir.actions.act_window_close'}
+#102
+    def create_advance_payment_reconcile(self):
+        invoice_ids = self.invoice_ids
+        form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new').id
+        account_reconcile_order_obj = self.env['account.reconcile.order']
+        yjzy_advance_payment_id = self.supplier_advance_payment_ids.filtered(lambda x: x.reconciling == True)
+        if len(yjzy_advance_payment_id) > 1:
+            raise Warning('只能选择一个预付单进行预付申请')
+        if len(yjzy_advance_payment_id) == 0:
+            raise Warning('请选择一个预付单进行申请')
+        account_reconcile_id = account_reconcile_order_obj.with_context(
+            {'fk_journal_id': 1, 'default_be_renling': 1, 'default_invoice_ids': invoice_ids,
+             'default_payment_type': 'outbound', 'show_so': 1, 'default_sfk_type': 'yfhxd', }). \
+            create({'partner_id': self.partner_id.id,
+                    'sfk_type': 'yfhxd',
+                    # 'invoice_ids': invoice_ids,
+                    'yjzy_advance_payment_id': yjzy_advance_payment_id.id,
+                    'payment_type': 'outbound',
+                    'be_renling': 1,
+                    'partner_type': 'supplier',
+                    'operation_wizard': '25',
+                    'hxd_type_new': '30',  # 预付-应付
+                    })
+        account_reconcile_id.make_lines()
+        yjzy_advance_payment_id.reconciling = False
+        print('account_reconcile_id', account_reconcile_id)
+        return {
+            'name': '认领单',
+            'view_type': 'tree,form',
+            "view_mode": 'form',
+            'res_model': 'account.reconcile.order',
+            'type': 'ir.actions.act_window',
+            'views': [(form_view, 'form')],
+            'res_id': account_reconcile_id.id,
+            'target': 'new',
+            # 'domain': [('yjzy_advance_payment_id', '=', self.id)],
+            'context': {'fk_journal_id': 1,
+                        'show_so': 1,
+
+                        }
+        }
     #924
     def write(self, vals):
         res = super(account_reconcile_order, self).write(vals)
@@ -444,6 +510,7 @@ class account_reconcile_order(models.Model):
 
     def action_05(self):
         self.operation_wizard = '05'
+        self.make_lines()
 
 
     @api.onchange('yjzy_advance_payment_id')
@@ -707,6 +774,40 @@ class account_reconcile_order(models.Model):
                 raise Warning(u'只有取消状态允许删除')
         return super(account_reconcile_order, self).unlink()
 
+    def _stage_find(self, domain=None, order='sequence'):
+        search_domain = list(domain)
+        return self.env['account.reconcile.stage'].search(search_domain, order=order, limit=1)
+
+    #审批新
+    def action_submit_stage(self):
+        self.ensure_one()
+        if self.amount_total_org == 0:
+            raise Warning('认领金额为0，无法提交！')
+        # if self.sfk_type == 'yshxd':
+        #     self.action_approve()
+        #     stage_id = self._stage_find(domain=[('code', '=', '030')])
+        #     self.write({'stage_id': stage_id.id,
+        #                 'state': 'posted',
+        #                 })
+        #     # self.date = fields.date.today()
+
+        if self.sfk_type == 'yfhxd':
+            if self.hxd_type_new == '30':
+                stage_id = self._stage_find(domain=[('code', '=', '040')])
+                self.write({'stage_id': stage_id.id,
+                            'state': 'posted',
+                            })
+            elif self.hxd_type_new == '40':
+                stage_id = self._stage_find(domain=[('code', '=', '020')])
+                self.write({'stage_id': stage_id.id,
+                            'state': 'posted',
+                            })
+            self.create_customer_invoice()
+            self.create_fygb()
+        return True
+
+    # def action_ 做到这里，准备财务提交审批
+
 
     def action_posted_new(self):
         self.ensure_one()
@@ -794,17 +895,26 @@ class account_reconcile_order(models.Model):
         self.ensure_one()
         self.state = 'posted'
         #self.date = fields.date.today()
+        if self.sfk_type == 'yshxd':
+            self.action_approve()
+        elif self.sfk_type == 'yfhxd':
+            self.create_customer_invoice()
+            self.create_fygb()
         return True
 
 
-    def action_approve(self):
-        if self.fygb_id:
-            fygb = self.fygb_id
-            fygb.approve_expense_sheets()
-        if self.back_tax_invoice_id:
-            invoice = self.back_tax_invoice_id
-            invoice.action_invoice_open()
-        self.state = 'approved'
+    def action_approve(self):#预付提价的时候
+        if self.hxd_type_new in ['10','30']:#预付的时候
+            self.make_done()
+        else:
+            if self.fygb_id:
+                fygb = self.fygb_id
+                fygb.approve_expense_sheets()
+            if self.back_tax_invoice_id:
+                invoice = self.back_tax_invoice_id
+                invoice.action_invoice_open()
+            self.state = 'approved'
+
 
     def action_cancel(self):
         self.state = 'cancelled'
@@ -818,6 +928,8 @@ class account_reconcile_order(models.Model):
             self.state = 'done'
             self.approve_date = fields.date.today()
             self.approve_uid = self.env.user
+        elif self.hxd_type_new in ['10','30'] and self.sfk_type == 'yfhxd':#预付的时候
+            self.make_done()
         else:
             raise Warning('无法审批！')
 
@@ -1187,7 +1299,7 @@ class account_reconcile_order(models.Model):
         #     'domain': [('id', 'in', [x.id for x in moves])],
         # }
 
-    def _prepare_sale_invoice_line(self, inv):
+    def _prepare_sale_invoice_line(self, inv):#参考
         self.ensure_one()
         dic_so_invl = {}
         for line in inv.invoice_line_ids:

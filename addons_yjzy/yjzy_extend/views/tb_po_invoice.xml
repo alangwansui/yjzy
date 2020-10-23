@@ -345,6 +345,8 @@
 
 <!--                        label for="is_tb_hs_id" string="转换货款" class="oe_avatar" attrs="{'invisible':[('type','in',['other_po','expense_po'])]}"/-->
 <!--                        field name="is_tb_hs_id" class="oe_avatar" widget="boolean_toggle"  attrs="{'invisible':[('type','in',['other_po','expense_po'])]}"/-->
+
+
                         <div class="oe_title" attrs="{'invisible':[('type','=','other_payment')]}">
                         <label for="name" string="申请单号" class="oe_edit_only"/>
                         <h1>
@@ -387,7 +389,7 @@
                             <group>
                                 <field name="invoice_partner" attrs="{'invisible':[('type','not in',['other_payment'])]}"/>
 
-                                <field name="name_title"/>
+                                <field name="name_title" attrs="{'invisible':[('type','in',['other_po'])]}"/>
                                 <field name="manual_currency_id" attrs="{'invisible':[('type','not in',['other_payment'])]}"/>
 
                                  <label for="" name="partner_id" attrs="{'invisible':[('is_tb_hs_id','=',False)]}">
@@ -1324,6 +1326,10 @@
                   sequence="50"
                   action="act_tb_po_all"
         />
+
+
+
+
         <record model="ir.actions.act_window" id="act_tb_po_create">
             <field name="name">创建新增采购申请单</field>
             <field name="type">ir.actions.act_window</field>

@@ -53,6 +53,16 @@
                         <field name="is_editable" widget="boolean_toggle" groups="sales_team.group_manager"/>
                     </header>
                     <sheet>
+                        <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" attrs="{'invisible':[('tb_po_invoice_ids_count','=',0)]}"
+                                name="open_tb_po_invoice_list"
+                                icon="fa-th-list"
+                                type="object">
+                                <div class="o_field_widget o_stat_info">
+                                    <span class="o_stat_text">新增采购申请</span>
+                                </div>
+                            </button>
+                         </div>
                         <group col="2">
                             <group name="general_information">
                                 <field name="operation_wizard" invisible="1"/>

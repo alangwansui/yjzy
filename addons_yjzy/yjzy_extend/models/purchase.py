@@ -83,7 +83,8 @@ class purchase_order(models.Model):
     #akiny 修改state
     #state = fields.Selection(selection_add=[('edit', u'可修改'),('approve_sales',u'责任人审批完成'),('submit',u'已提交'),('refused',u'已拒绝')])
 
-
+    #
+    # invoice_line_ids = fields.One2many('account.invoice.line','purchase_id',u'账单明细行')
 
 
     balance = fields.Monetary(u'预付余额', compute=compute_info, currency_field='yjzy_currency_id')
