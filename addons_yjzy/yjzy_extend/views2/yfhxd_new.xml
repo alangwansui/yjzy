@@ -290,7 +290,7 @@
 
                                     <field name="advance_reconcile_order_count_all" string="认领明细" groups="base.group_system" invisible="1"/>
                                     <field name="advance_reconcile_order_draft_ids_count" string="未审批数" invisible="1"/>
-                                     <field name="advance_reconcile_order_count_char" string="未审批数"/>
+                                     <field name="advance_reconcile_order_count_char" string="未审批数" class="akiny_text"/>
                                     <field name="advance_reconcile_order_draft_ids" invisible="1"/>
                                     <button name="open_yfsqd_yfhxd_new_window" string="明细" type="object" attrs="{'invisible':[('advance_reconcile_order_count_all','=',0)]}"/>
                                     <field name="state" groups="base.group_system" invisible="1"/>
