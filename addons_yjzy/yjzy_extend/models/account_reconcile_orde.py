@@ -1859,7 +1859,10 @@ class account_reconcile_order_line(models.Model):
             amount_invoice = one.invoice_id.amount_total
             amount_invoice_so =  one.amount_invoice_so
             residual = one.residual
-            amount_invoice_so_proportion = amount_invoice_so / amount_invoice
+            if amount_invoice !=0:
+                amount_invoice_so_proportion = amount_invoice_so / amount_invoice
+            else:
+                amount_invoice_so_proportion = 0
             amount_invoice_so_residual = residual * amount_invoice_so_proportion
             print('amount_invoice_so_residual',amount_invoice_so,amount_invoice_so_residual,amount_invoice_so_proportion)
             one.amount_invoice_so_proportion = amount_invoice_so_proportion
