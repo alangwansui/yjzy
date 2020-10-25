@@ -217,8 +217,11 @@ class account_payment(models.Model):
     def _compute_advance_reconcile_order_count_all(self):
         for one in self:
             print('teee', len(one.advance_reconcile_order_ids))
-            one.advance_reconcile_order_count_all = len(one.advance_reconcile_order_ids)
-            one.advance_reconcile_order_draft_ids_count = len(one.advance_reconcile_order_draft_ids)
+            advance_reconcile_order_count_all = len(one.advance_reconcile_order_ids)
+            advance_reconcile_order_draft_ids_count = len(one.advance_reconcile_order_draft_ids)
+            one.advance_reconcile_order_count_all = advance_reconcile_order_count_all
+            one.advance_reconcile_order_draft_ids_count = advance_reconcile_order_draft_ids_count
+            one.advance_reconcile_order_count_char = '%s/%s' % (str(advance_reconcile_order_draft_ids_count), str(advance_reconcile_order_count_all))
 
     @api.depends('po_id','so_id','partner_id')
     def compute_advance_type(self):
@@ -238,6 +241,8 @@ class account_payment(models.Model):
 
 
     advance_reconcile_order_count_all = fields.Integer(u'预收付-应收付认领数量', compute=_compute_advance_reconcile_order_count_all )
+
+    advance_reconcile_order_count_char = fields.Char(u'预收付-应收付认领未审批数量/全部', compute=_compute_advance_reconcile_order_count_all)
 
 
     #老的
