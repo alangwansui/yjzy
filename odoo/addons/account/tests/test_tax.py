@@ -47,7 +47,7 @@ class TestTax(AccountTestUsers):
             'amount': 0,
             'sequence': 6,
             'children_tax_ids': [
-                (4, self.fixed_tax.id, 0),
+                (4, self.fixed_tax.id, 0),#参考默认M2M
                 (4, self.percent_tax.id, 0)
             ]
         })

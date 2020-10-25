@@ -135,7 +135,7 @@ class purchase_order(models.Model):
     yjzy_payment_ids = fields.One2many('account.payment', 'po_id', u'预付款单')
     yjzy_currency_id = fields.Many2one('res.currency', u'预收币种', related='yjzy_payment_ids.currency_id')
     balance_new = fields.Monetary(u'预付余额_新', compute='compute_balance', currency_field='yjzy_currency_id',store=True)
-    pre_advance = fields.Monetary(u'预付金额', currency_field='currency_id', compute=compute_pre_advance, store=True)
+    pre_advance = fields.Monetary(u'预付金额', currency_field='currency_id', compute=compute_pre_advance, store=True, help=u"根据付款条款计算的可预付金额\n")#计划预付金额，根据付款条款计算
 
     #以下还没有进入文档
     submit_date = fields.Date('提交审批时间')
@@ -190,6 +190,8 @@ class purchase_order(models.Model):
         for order in self:
             if ctx.get('only_code'):
                 name = order.contract_code
+            elif ctx.get('purchase_code_balance'):
+                name = '%s[%s]' % (order.contract_code, order.balance)
             else:
                 name = '%s[%s]%s' % (order.name, order.contract_code, order.pre_advance)
             res.append((order.id, name))

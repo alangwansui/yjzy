@@ -342,6 +342,11 @@ class account_invoice(models.Model):
             one.tb_po_invoice_ids_count = tb_po_invoice_ids_count
             one.tb_hsname_all_ids_count = tb_hsname_all_ids_count
 
+    def compute_po_ids(self):
+        for one in self:
+            po_ids = one.invoice_line_ids.mapped('purchase_id')
+            one.po_ids = po_ids
+
 
     #0921 = self.bill_id = self.partner
     #
@@ -465,6 +470,7 @@ class account_invoice(models.Model):
 
     item_ids = fields.One2many('invoice.hs_name.item', 'invoice_id', u'品名汇总明细')
     po_id = fields.Many2one('purchase.order', u'采购订单')
+    po_ids = fields.Many2many('purchase.order','invoice_po_ids_ref','po_id','invoice_id',compute=compute_po_ids)
     purchase_contract_code = fields.Char(u'合同编码', related='po_id.contract_code', readonly=True)
 
     sale_assistant_id = fields.Many2one('res.users', u'业务助理')
@@ -772,7 +778,7 @@ class account_invoice(models.Model):
                 'default_hxd_type_new': '20'
             }
         }
-
+#定稿，从发票多选创建应付申请
     def submit_yfhxd(self):
         print('invoice_ids', self.ids)
         print('partner_id', len(self.mapped('partner_id')))
@@ -783,8 +789,7 @@ class account_invoice(models.Model):
         name = self.env['ir.sequence'].next_by_code('sfk.type.%s' % sfk_type)
         journal = self.env['account.journal'].search(domain, limit=1)
         account_obj = self.env['account.account']
-        bank_account = account_obj.search([('code', '=', '10021'), ('company_id', '=', self.env.user.company_id.id)],
-                                          limit=1)
+        bank_account = account_obj.search([('code', '=', '10021'), ('company_id', '=', self.env.user.company_id.id)],                                          limit=1)
         form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new')
 
         # for line in self:
@@ -815,12 +820,13 @@ class account_invoice(models.Model):
                 'default_journal_id': journal.id,
                 'default_payment_account_id': bank_account.id,
                 'default_operation_wizard':'03',
-                'default_hxd_type_new':'40'
+                'default_hxd_type_new':'40',
+                'purchase_code_balance':1,
 
             }
         }
 
-    #创建预付核销单从多个账单通过服务器动作创建 不能用，
+    # #创建预付核销单从多个账单通过服务器动作创建 不能用，
     # def create_yfhxd_from_multi_invoice(self):
     #     print('invoice_ids', self.ids)
     #     print('partner_id', len(self.mapped('partner_id')))
@@ -842,13 +848,14 @@ class account_invoice(models.Model):
     #         invoice_dic.append(one.id)
     #     print('invoice_dic[k]',invoice_dic)
     #     # test = [(for x in line.yjzy_invoice_all_ids) for line in self)]
-    #
-    #     account_reconcile_id = account_reconcile_order_obj.with_context(
-    #         {'fk_journal_id': 1, 'default_be_renling': 1, 'default_invoice_ids': invoice_dic,
-    #          'default_payment_type': 'outbound', 'show_so': 1, 'default_sfk_type': 'yfhxd', }). \
-    #         create({
+    #     # invoice_ids = self.env['account.invoice'].search([('id','in',invoice_dic)])
+    #     # with_context(
+    #     #     {'fk_journal_id': 1, 'default_be_renling': 1, 'default_invoice_ids': invoice_dic,
+    #     #      'default_payment_type': 'outbound', 'show_so': 1, 'default_sfk_type': 'yfhxd', }).
+    #     account_reconcile_id = account_reconcile_order_obj.create({
     #             'partner_id': self[0].partner_id.id,
     #             'manual_payment_currency_id': self[0].currency_id.id,
+    #             'invoice_ids':[(6, 0, invoice_dic)],
     #             'payment_type': 'outbound',
     #             'partner_type': 'supplier',
     #             'sfk_type': 'yfhxd',

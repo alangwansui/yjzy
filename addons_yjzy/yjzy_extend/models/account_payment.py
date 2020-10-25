@@ -966,17 +966,17 @@ class account_payment(models.Model):
 
                'default_operation_wizard': '25',
                'default_hxd_type_new': '30', }  # 预付-应付
-        if len(advance_reconcile) >= 1:
-            action['views'] = [(tree_view, 'tree'), (form_view, 'form')]
-            action['domain'] = [('id', 'in', advance_reconcile.ids), ('sfk_type', '=', 'yfhxd')]
-            action['target'] = 'new'
-            action['context'] = ctx
+        # if len(advance_reconcile) >= 1:
+        action['views'] = [(tree_view, 'tree'), (form_view, 'form')]
+        action['domain'] = [('id', 'in', advance_reconcile.ids), ('sfk_type', '=', 'yfhxd')]
+        action['target'] = 'new'
+        action['context'] = ctx
         # elif len(advance_reconcile) == 1:
         #     action['views'] = [(self.env.ref('yjzy_extend.account_yfhxd_form_view_new').id, 'form')]
         #     action['res_id'] = advance_reconcile.ids[0]
-        else:
-            action['views'] = [(form_view, 'form')]
-            action['context'] = ctx
+        # else:
+        #     action['views'] = [(form_view, 'form')]
+        #     action['context'] = ctx
         print('ctx_222', ctx)
         print('action', action)
         return action
@@ -1086,16 +1086,31 @@ class account_payment(models.Model):
                         # 'from_tanchuang':1,
                         }
         }
-    #从预收账单直接创建认领
+    #从预收账单直接创建认领(从应付申请的时候，明细上创建)
     def create_yfsqd_yfhxd_form_new(self):
         form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new').id
-        invoice_ids = self.env.context.get('default_invoice_ids')
+        default_invoice_ids = self.env.context.get('default_invoice_ids')
+        invoice_ids_id = default_invoice_ids[0][2] #参考[6,False,[199,299,344]]取[199,299,344]
+        print('invoice_ids',invoice_ids_id)
+        #判断应付申请单里的发票和预付单上的采购是否有一致的。如果预付单有采购号，过滤掉没有这个采购单号 的发票，如果是0，提醒，不知道预收需不需要
+        invoice_ids = self.env['account.invoice'].search([('id','in',invoice_ids_id)])
+        invoice_ids_id_po = []
+        if self.po_id:
+            for line in invoice_ids:
+                print('line.po_ids',line.po_ids)
+                if self.po_id in line.po_ids:
+                    invoice_ids_id_po.append(line.id)
+        else:
+            invoice_ids_id_po = invoice_ids_id
+        if invoice_ids_id_po == []:
+            raise Warning('付款单有对应采购，但是选择的发票没有采购单对应')
+        default_invoice_ids_id_po = [[6, 0, invoice_ids_id_po]]
         account_reconcile_order_obj = self.env['account.reconcile.order']
-        print('invoice_ids_11', invoice_ids)
-        account_reconcile_id = account_reconcile_order_obj.with_context({'fk_journal_id': 1,'default_be_renling': 1,'default_invoice_ids': invoice_ids,'default_payment_type': 'outbound','show_so': 1,'default_sfk_type': 'yfhxd',}).\
+
+        account_reconcile_id = account_reconcile_order_obj.with_context({'fk_journal_id': 1,'default_be_renling': 1,'default_invoice_ids': default_invoice_ids_id_po,'default_payment_type': 'outbound','show_so': 1,'default_sfk_type': 'yfhxd',}).\
                                                           create({'partner_id':self.partner_id.id,
                                                                   'sfk_type': 'yfhxd',
-                                                                  # 'invoice_ids': invoice_ids,
+                                                                  #'invoice_ids': [6,0,invoice_ids_1],
                                                                   'yjzy_advance_payment_id': self.id,
                                                                   'payment_type': 'outbound',
                                                                   'be_renling': 1,
@@ -1103,6 +1118,15 @@ class account_payment(models.Model):
                                                                   'operation_wizard': '25',
                                                                   'hxd_type_new': '30',  # 预付-应付
                                                                   })
+
+        # if account_reconcile_id.yjzy_advance_payment_id.po_id:
+        #     for line in account_reconcile_id.invoice_ids:
+        #         print('line.po_ids',line.po_ids)
+        #         if account_reconcile_id.yjzy_advance_payment_id.po_id not in line.po_ids:
+        #
+        #             account_reconcile_id.invoice_ids = (3, line.id,)
+
+
 
         account_reconcile_id.make_lines()
         print('account_reconcile_id',account_reconcile_id)

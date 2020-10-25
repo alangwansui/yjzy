@@ -826,7 +826,7 @@ class hr_expense_sheet(models.Model):
             'payment_type': amount > 0 and 'outbound' or 'inbound',
             'partner_id': self.partner_id.id,
             'partner_type': amount > 0 and 'supplier' or 'customer',
-            'fybg_ids': [(6, 0, [self.id])],
+            'fybg_ids': [(6, 0, [self.id])],#参考o2m
             'journal_id': self.fk_journal_id.id,
             'currency_id': self.fk_journal_id.currency_id.id,
             'amount': abs(amount),

@@ -29,5 +29,5 @@ class ReconcileRefuseWizard(models.TransientModel):
     #写上拒绝的理由，sale_order上执行拒绝
     def reconcile_refuse_reason(self):
         self.ensure_one()
-        self.reconcile_id.action_refuse_new(self.reason)
+        self.reconcile_id.action_refuse_stage(self.reason)
         return {'type': 'ir.actions.act_window_close'}

@@ -83,7 +83,7 @@ class TestAccountSupplierInvoice(AccountingTestCase):
             'invoice_id': invoice.id,
             'name': 'product that cost 100',
             'account_id': invoice_line_account,
-            'invoice_line_tax_ids': [(6, 0, [tax_fixed.id, tax_percent_included_base_incl.id, tax_percentage.id])],
+            'invoice_line_tax_ids': [(6, 0, [tax_fixed.id, tax_percent_included_base_incl.id, tax_percentage.id])],#参考M2m
             'account_analytic_id': analytic_account.id,
         })
         invoice.compute_taxes()
