@@ -878,7 +878,7 @@
         <field name="view_mode">tree,form</field>
         <field name="search_view_id" ref="view_reconcile_search_new"/>
         <field name="domain">[('sfk_type','=','yfhxd'),('hxd_type_new','=','30')]</field>
-        <field name="context">{'search_default_group_by_state_1':1',fk_journal_id':1,'default_sfk_type': 'yfhxd','purchase_code_balance':1,
+        <field name="context">{'search_default_group_by_state_1':1,fk_journal_id':1,'default_sfk_type': 'yfhxd','purchase_code_balance':1,
             'default_hxd_type_new':'30','default_payment_type': 'outbound', 'default_be_renling': 1,
             'default_partner_type':
             'supplier', 'show_po': 1,'default_operation_wizard':'30'}
