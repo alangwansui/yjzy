@@ -12,7 +12,9 @@
                 <field name="partner_id"/>
                 <group expand="1" string="Group By">
                     <filter string="状态分组" name="group_by_state" domain="[]" context="{'group_by':'state'}"/>
+                    <filter string="状态分组:new" name="group_by_state_1" domain="[]" context="{'group_by':'state_1'}"/>
                 </group>
+
             </search>
         </field>
     </record>
@@ -295,7 +297,7 @@
                                     <field name="advance_reconcile_order_draft_ids_count" string="未审批数" invisible="1"/>
                                     <field name="advance_reconcile_order_count_char" string=" " class="akiny_text_right"/>
                                     <field name="advance_reconcile_order_draft_ids" invisible="1"/>
-                                    <button name="open_yfsqd_yfhxd_new_window" string="查看认领明细" type="object"  help="创建预付-应付认领单"
+                                    <button name="open_yfsqd_yfhxd_new_window" string="查看认领明细" type="object"  help="创建预付-应付认领单" context="{'open':1}"
                                             attrs="{'invisible':[('advance_reconcile_order_count_all','=',0)]}"/>
                                     <field name="state" groups="base.group_system" invisible="1"/>
                                     <field name="reconciling" attrs="{'column_invisible':[('parent.state_1','!=','draft')]}" invisible="1"/>
@@ -431,8 +433,9 @@
                     </notebook>
                           <footer invisible="not context.get('open')">
                             <button name="action_save_test" type="object" class="oe_highlight" string="保存并关闭"/>
-                            <button name="action_submit_stage" class="oe_highlight" type="object" string="提交审批"/>
-                            <button name="action_manager_approve_first_stage" class="oe_highlight" type="object" string="总经理审批"/>
+                            <button name="action_submit_stage" class="oe_highlight" type="object" string="提交审批" attrs="{'invisible':[('state_1','!=','draft')]}"/>
+                            <button name="action_manager_approve_first_stage" class="oe_highlight" type="object" string="总经理审批" attrs="{'invisible':[('state_1','!=','manager_approval')]}"/>
+
                         </footer>
                 </sheet>
 
@@ -873,8 +876,9 @@
         <field name="res_model">account.reconcile.order</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
-        <field name="domain">[('sfk_type','=','yfhxd'),('state','in',['done']),('hxd_type_new','=','30')]</field>
-        <field name="context">{'fk_journal_id':1,'default_sfk_type': 'yfhxd','purchase_code_balance':1,
+        <field name="search_view_id" ref="view_reconcile_search_new"/>
+        <field name="domain">[('sfk_type','=','yfhxd'),('hxd_type_new','=','30')]</field>
+        <field name="context">{'search_default_group_by_state_1':1',fk_journal_id':1,'default_sfk_type': 'yfhxd','purchase_code_balance':1,
             'default_hxd_type_new':'30','default_payment_type': 'outbound', 'default_be_renling': 1,
             'default_partner_type':
             'supplier', 'show_po': 1,'default_operation_wizard':'30'}

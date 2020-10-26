@@ -1135,7 +1135,7 @@
                                         <field name="company_currency_id" invisible="1"/>
                                         <field name="currency_id" invisible="1"/>
                                         <field name="total_amount" sum="小计" widget="monetary"/>
-                                        <field name="company_currency_total_amount"/>
+                                        <field name="company_currency_total_amount" sum="小计" />
                                         <field name="budget_amount"/>
                                         <field name="budget_id"/>
                                         <field name="state"/>
