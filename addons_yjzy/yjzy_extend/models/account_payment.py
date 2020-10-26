@@ -366,6 +366,14 @@ class account_payment(models.Model):
     post_uid = fields.Many2one('res.users',u'审批人')
     post_date = fields.Date(u'审批时间')
 
+
+    @api.multi
+    def action_save_test(self):
+        # your code
+        self.ensure_one()
+        # close popup
+        return {'type': 'ir.actions.act_window_close'}
+
     @api.multi
     def cancel(self):
         for rec in self:
@@ -968,7 +976,7 @@ class account_payment(models.Model):
                'default_be_renling': 1,
                'default_partner_type': 'supplier',
                'show_so': 1,
-
+                'open':1,
                'default_operation_wizard': '25',
                'default_hxd_type_new': '30', }  # 预付-应付
         # if len(advance_reconcile) >= 1:

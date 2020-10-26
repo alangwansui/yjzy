@@ -1131,7 +1131,11 @@
                                         <field name="second_categ_id" context="{'search_order': 'sequence','only_name':1}"/>
                                         <field name="product_id" string="小类"/>
                                         <field name="payment_date"/>
-                                        <field name="total_amount" sum="小计"/>
+                                        <field name="currency_id" invisible="1"/>
+                                        <field name="company_currency_id" invisible="1"/>
+                                        <field name="currency_id" invisible="1"/>
+                                        <field name="total_amount" sum="小计" widget="monetary"/>
+                                        <field name="company_currency_total_amount"/>
                                         <field name="budget_amount"/>
                                         <field name="budget_id"/>
                                         <field name="state"/>

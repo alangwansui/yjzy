@@ -146,8 +146,8 @@ class hr_expense(models.Model):
     sys_outer_hetong = fields.Char('系统外合同')
 
     budget_id = fields.Many2one('budget.budget', '预算')
-    budget_amount = fields.Monetary('预算金额', related='budget_id.amount', currency_field='currency_id', readonly=True)
-    budget_amount_reset = fields.Monetary('预算剩余', related='budget_id.amount_reset', currency_field='currency_id', readonly=True)
+    budget_amount = fields.Monetary('预算金额', related='budget_id.amount', currency_field='company_currency_id', readonly=True)
+    budget_amount_reset = fields.Monetary('预算剩余', related='budget_id.amount_reset', currency_field='company_currency_id', readonly=True)
     gongsi_id = fields.Many2one('gongsi', '内部公司')
 
     budget_expense_list_ids = fields.One2many('hr.expense','预算明细', related='budget_id.expense_ids',readonly=True)

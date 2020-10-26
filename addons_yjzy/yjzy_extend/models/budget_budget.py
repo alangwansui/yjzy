@@ -67,7 +67,7 @@ class budget_budget(models.Model):
                 amount = one.amount_input
 
             one.amount = amount
-            one.amount_reset = amount - sum(one.expense_ids.mapped('total_amount'))
+            one.amount_reset = amount - sum(one.expense_ids.mapped('company_currency_total_amount'))
 
     def get_budget(type, date):
         pass

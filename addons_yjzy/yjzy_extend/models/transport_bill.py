@@ -157,8 +157,8 @@ class transport_bill(models.Model):
             one.shoukuan_amount = one.sale_invoice_id.amount_total - one.sale_invoice_id.residual_signed
             one.fukuan_amount = sum([i.amount_total - i.residual_signed for i in one.purchase_invoice_ids.filtered(lambda x: x.yjzy_type == 'purchase')]) #（采购发票line.合计金额 - 到期金额）
 
-            budget_amount = one.fee_inner + one.fee_rmb1 + one.fee_rmb2 #+ one.get_outer()
-            budget_reset_amount = budget_amount - sum([x.total_amount for x in one.expense_ids])
+            budget_amount = one.fee_inner + one.fee_rmb1 + one.fee_rmb2 + one.get_budget_outer()#+ one.get_outer()
+            budget_reset_amount = budget_amount - sum([x.company_currency_total_amount for x in one.expense_ids])
             print('-org1-', org_sale_amount)
             one.org_sale_amount = org_sale_amount
             one.org_real_sale_amount = org_real_sale_amount
@@ -286,6 +286,11 @@ class transport_bill(models.Model):
         return sum([self.outer_currency_id.compute(self.fee_outer, self.company_currency_id),
                     self.export_insurance_currency_id.compute(self.fee_export_insurance, self.company_currency_id),
                     self.other_currency_id.compute(self.fee_other, self.company_currency_id), ])
+
+    def get_budget_outer(self):
+        self.ensure_one()
+        return sum([self.outer_currency_id.compute(self.fee_outer, self.company_currency_id),
+                    self.other_currency_id.compute(self.fee_other, self.company_currency_id),])
 
     def _get_sale_amount(self, lines):
         """

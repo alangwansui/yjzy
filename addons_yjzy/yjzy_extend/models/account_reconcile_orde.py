@@ -814,6 +814,7 @@ class account_reconcile_order(models.Model):
             # self.create_fygb()
             # for one in self.supplier_advance_payment_ids:
             #     one.reconciling = False
+        self.make_lines()
         return True
 
     def action_manager_approve_first_stage(self):
@@ -822,6 +823,7 @@ class account_reconcile_order(models.Model):
         stage_id = self._stage_find(domain=[('code', '=', '030')])
         self.write({'stage_id': stage_id.id,
                     'state': 'posted',
+                    'operation_wizard':'10',
                     })
 
     # 财务审批：预付没有审批，只有应付申请的时候才会审批。
@@ -838,17 +840,31 @@ class account_reconcile_order(models.Model):
         if self.sfk_type == 'yfhxd':
             if self.operation_wizard in ['10', '30']:
                 self.create_rcfkd()
+                stage_id = self._stage_find(domain=[('code', '=', '050')])
+                self.write({'stage_id': stage_id.id,
+                            'state': 'approved',
+                            'approve_date': fields.date.today(),
+                            'approve_uid': self.env.user.id
+                            })
             self.create_yjzy_payment_yfrl()
             if self.operation_wizard in ['20', '25']:
                 self.action_done_new()
+                stage_id = self._stage_find(domain=[('code', '=', '060')])
+                self.write({'stage_id': stage_id.id,
+                            'state': 'done',
+                            'approve_date': fields.date.today(),
+                            'approve_uid': self.env.user.id
+                            })
+       #应收核销待定:
         if self.sfk_type == 'fshxd':
             self.create_yjzy_payment_ysrl()
-        stage_id = self._stage_find(domain=[('code', '=', '050')])
-        self.write({'stage_id': stage_id.id,
-                    'state': 'approved',
-                    'approve_date': fields.date.today(),
-                    'approve_uid': self.env.user.id
-                    })
+            self.action_done_new()
+            stage_id = self._stage_find(domain=[('code', '=', '060')])
+            self.write({'stage_id': stage_id.id,
+                        'state': 'approved',
+                        'approve_date': fields.date.today(),
+                        'approve_uid': self.env.user.id
+                        })
 
 
 
@@ -877,14 +893,20 @@ class account_reconcile_order(models.Model):
 
     def action_refuse_stage(self,reason):
         stage_id = self._stage_find(domain=[('code', '=', '090')])
-        self.write({'stage_id': stage_id.id,
-                    'state': 'refused',
-                     })
-        for tb in self:
-            tb.message_post_with_view('yjzy_extend.reconcile_hxd_template_refuse_reason',
-                                      values={'reason': reason, 'name': self.name},
-                                      subtype_id=self.env.ref(
-                                          'mail.mt_note').id)  # 定义了留言消息的模板，其他都可以参考，还可以继续参考费用发送计划以及邮件方式
+        stage_preview = self.stage_id
+        user = self.env.user
+        group = self.env.user.groups_id
+        if user not in stage_preview.user_ids:
+            raise Warning('您没有权限拒绝')
+        else:
+            self.write({'stage_id': stage_id.id,
+                        'state': 'refused',
+                         })
+            for tb in self:
+                tb.message_post_with_view('yjzy_extend.reconcile_hxd_template_refuse_reason',
+                                          values={'reason': reason, 'name': self.name},
+                                          subtype_id=self.env.ref(
+                                              'mail.mt_note').id)  # 定义了留言消息的模板，其他都可以参考，还可以继续参考费用发送计划以及邮件方式
 
 
 

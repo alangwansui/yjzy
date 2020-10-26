@@ -186,13 +186,18 @@
                                    attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))], 'invisible': [('payment_type', 'not in', ('inbound', 'outbound'))], 'readonly': [('state', '!=', 'draft')]}"/>
                                 <field name="include_tax"/>
                                  <field name="is_renling" />
- <field name="advance_ok" label="是否预付" invisible="0"/>
+                            <field name="advance_ok" label="是否预付" invisible="0"/>
                             <field name="advance_account_id" label="预付科目" invisible="0"/>
                             <field name="be_renling" />
                                 <field name="journal_id"  domain="[('type','=','renling')]"  />
 
                             </group>
                         </page>
+                          <footer invisible="not context.get('open')">
+                            <button name="action_save_test" type="object" class="oe_highlight" string="保存并关闭"/>
+                            <button name="action_submit_stage" class="oe_highlight" type="object" string="提交审批"/>
+                            <button name="action_manager_approve_first_stage" class="oe_highlight" type="object" string="总经理审批"/>
+                        </footer>
                     </notebook>
 
                 </sheet>
