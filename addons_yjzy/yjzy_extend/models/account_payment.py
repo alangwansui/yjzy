@@ -1001,7 +1001,7 @@ class account_payment(models.Model):
         form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new').id
         advance_reconcile = self.mapped('advance_reconcile_order_ids')
         return {
-            'name': '预付申请单',
+            'name': '预付认领单',
             'view_type': 'form',
             'view_mode': 'tree,form',
             'res_model': 'account.reconcile.order',

@@ -7,7 +7,7 @@ import logging
 
 _logger = logging.getLogger(__name__)
 Account_reconcile_Selection =   [('draft',u'草稿'),
-                                 ('advance_approval',u'待预付确认'),
+                                 ('advance_approval',u'待预付认领审批'),
                                  ('account_approval',u'待财务审批'),
                                  ('manager_approval',u'待总经理审批'),
                                  ('post',u'审批完成待支付'),

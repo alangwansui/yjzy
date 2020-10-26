@@ -173,7 +173,7 @@
             <field name="state">draft</field>
         </record>
         <record model="account.reconcile.stage" id="stage_account_reconcile_advance_approval">
-            <field name="name">待预付确认</field>
+            <field name="name">待预付认领审批</field>
             <field name="code">020</field>
             <field name="sequence" eval="20"/>
             <field name="state">advance_approval</field>

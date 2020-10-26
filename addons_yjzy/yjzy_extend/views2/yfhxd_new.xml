@@ -286,7 +286,7 @@
                                     <field name="payment_date"/>
                                     <field name="name" string="编号" groups="base.group_system"/>
                                     <field name="po_id"/>
-                                    <field name="amount" string="申请金额"/>
+                                    <field name="amount" string="原始预付金额"/>
                                     <field name="advance_balance_total" string="未认领金额"/>
                                     <button name="open_yfsqd_yfhxd_form_new" type="object" string="认领预付" invisible="1" context="{'default_invoice_ids':parent.invoice_ids}"
                                             attrs="{'invisible':[('advance_balance_total','=',0)]}"/>

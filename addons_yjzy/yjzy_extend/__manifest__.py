@@ -143,6 +143,7 @@
         'views2/yfhxd_new.xml',
         'views2/nbzz.xml',
         'views2/jiehui.xml',
+        'views2/account_reconcile_stage.xml',
 
 
         'views2/expense.xml',
