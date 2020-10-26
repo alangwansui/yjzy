@@ -12,7 +12,7 @@
                 <field name="partner_id"/>
                 <group expand="1" string="Group By">
                     <filter string="状态分组" name="group_by_state" domain="[]" context="{'group_by':'state'}"/>
-                    <filter string="状态分组:new" name="group_by_state_1" domain="[]" context="{'group_by':'state_1'}"/>
+                    <filter string="状态分组:new" name="group_by_state_1" domain="[]" context="{'group_by':'stage_id'}"/>
                 </group>
 
             </search>
