@@ -651,7 +651,7 @@ class account_reconcile_order(models.Model):
                     'journal_id': journal_id_yfdrl.id,
                     'payment_method_id': 2,
                     'invoice_ids': [(4, line.invoice_id.id, None)],
-                    'po_id': line.so_id.id,
+                    'po_id': line.po_id.id,
                 })
             if line.amount_advance_org > 0:
                 reconcile_payment_id_2 = account_payment_obj.create({
@@ -667,7 +667,7 @@ class account_reconcile_order(models.Model):
                     'journal_id': journal_id_yfzk.id,
                     'payment_method_id': 2,
                     'invoice_ids': [(4, line.invoice_id.id, None)],
-                    'po_id': line.so_id.id,
+                    'po_id': line.po_id.id,
 
                 })
             if line.amount_bank_org > 0:
@@ -684,7 +684,7 @@ class account_reconcile_order(models.Model):
                     'journal_id': journal_id_yhkk.id,
                     'payment_method_id': 2,
                     'invoice_ids': [(4, line.invoice_id.id, None)], #akiny参考 m2m
-                    'po_id': line.so_id.id,
+                    'po_id': line.po_id.id,
                 })
 
             if line.amount_diff_org > 0:
@@ -701,7 +701,7 @@ class account_reconcile_order(models.Model):
                     'journal_id': journal_id_xsfy.id,
                     'payment_method_id': 2,
                     'invoice_ids': [(4, line.invoice_id.id, None)],
-                    'po_id': line.so_id.id,
+                    'po_id': line.po_id.id,
                 })
 
 
@@ -798,13 +798,19 @@ class account_reconcile_order(models.Model):
         #     # self.date = fields.date.today()
 
         if self.sfk_type == 'yfhxd':
+
+            amount_advance_residual_org = self.amount_advance_residual_org
+            amount_advance_org = self.amount_advance_org
+            if amount_advance_residual_org < amount_advance_org:
+                raise Warning(u'预付认领金额大于预付余额')
             if self.hxd_type_new == '30':
                 if self.amount_total_org == 0:
                     raise Warning('认领金额为0，无法提交！')
+
                 stage_id = self._stage_find(domain=[('code', '=', '040')])
                 self.write({'stage_id': stage_id.id,
                             'state': 'posted',
-                            'operation_wizard':'25'
+                            # 'operation_wizard':'25'
                             })
             elif self.hxd_type_new == '40':
                 stage_id = self._stage_find(domain=[('code', '=', '020')])
@@ -818,7 +824,7 @@ class account_reconcile_order(models.Model):
             # self.create_fygb()
             # for one in self.supplier_advance_payment_ids:
             #     one.reconciling = False
-        self.make_lines()
+        # self.make_lines()
 
         return True
 
@@ -1432,15 +1438,16 @@ class account_reconcile_order(models.Model):
 
     def make_lines(self):
         self.ensure_one()
-        if self.partner_type == 'customer':
-            self._make_lines_so()
-        if self.partner_type == 'supplier':
-            self._make_lines_po()
-            if self.operation_wizard != '03':
-                if self.hxd_type_new == '40':
-                    self.operation_wizard = '10'
-                elif self.hxd_type_new == '30':
-                    self.operation_wizard = '25'
+        if not self.line_ids:
+            if self.partner_type == 'customer':
+                self._make_lines_so()
+            if self.partner_type == 'supplier':
+                self._make_lines_po()
+                # if self.operation_wizard != '03':
+                #     if self.hxd_type_new == '40':
+                #         self.operation_wizard = '10'
+                #     elif self.hxd_type_new == '30':
+                #         self.operation_wizard = '25'
 
     #从应付-付款申请的预付弹窗认领，用这个
     def make_lines_new(self):
@@ -1849,6 +1856,7 @@ class account_reconcile_order_line(models.Model):
             one.amount_payment = payment_currency.compute(one.amount_payment_org, company_currency)
             one.amount_bank = bank_currency.compute(one.amount_bank_org, company_currency)
             one.amount_diff = diff_currency.compute(one.amount_diff_org, company_currency)
+            print('payment_currency',payment_currency)
             # one.amount_exchange = invoice_currency.compute(one.amount_exchange_org, company_currency)
             ###
             amount_total_org = one.amount_advance_org
