@@ -1636,7 +1636,7 @@
                                         <field name="sheet_state" groups="base.group_system" invisible="1"/>
                                         <field name="description" string="备注"
                                                attrs="{'readonly':[('parent.state','not in',['draft'])]}"/>
-<field name="company_currency_id" invisible="1"/>
+                                        <field name="company_currency_id" invisible="1"/>
 
                                         <field name="budget_id" invisible="1"
                                         />
@@ -1704,7 +1704,7 @@
                                         <field name="attachment_number" invisible="1"/>
                                         <button name="action_get_attachment_view" invisible="1"
                                                 string="View Attachments" type="object" icon="fa-paperclip"/>
-<field name="company_currency_id" invisible="1"/>
+                                        <field name="company_currency_id" invisible="1"/>
                                         <field name="total_amount" widget="monetary" invisible="1"
                                                options="{'currency_field': 'currency_id'}" sum="小计"/>
                                         <field name="is_refused" invisible="True"/>
