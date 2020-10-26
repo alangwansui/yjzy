@@ -122,10 +122,10 @@
                     <button name="action_manager_approve_first_stage" class="oe_highlight" type="object" attrs="{'invisible':[('state_1','!=','advance_approval')]}"
                             string="总经理审批"/>
                     <button name="action_account_approve_stage" string="财务审批" class="oe_highlight" type="object" attrs="{'invisible':[('state_1','!=','account_approval')]}"/>
-
+<button name="action_manager_approve_stage" type="object" string="总经理审批" class="oe_highlight" attrs="{'invisible':[('state_1','!=','manager_approval')]}"/>
                     <button name="%(reconcile_refuse_wizard_action)d" string="拒绝" type="action"
                             attrs="{'invisible':[('state','=','done')]}"/>
-                       <button name="action_manager_approve_stage" type="object" string="总经理审批" attrs="{'invisible':[('state_1','!=','manager_approval')]}"/>
+
                     <button name="action_draft_stage" class="oe_highlight" type="object" string="重置草稿" states="refused"/>
                     <button name="action_05" attrs="{'invisible':[('operation_wizard','not in',['03'])]}" groups="base.group_system"
                             class="oe_highlight" string="下一步:查看并确认账单" type="object" context="{'show_tb_ref':1}"/>

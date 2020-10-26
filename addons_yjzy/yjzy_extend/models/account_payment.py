@@ -960,14 +960,56 @@ class account_payment(models.Model):
         print('action',action)
         return action
 
+    # def open_yfsqd_yfhxd_new_window_old(self):
+    #     if self.state not in '50_posted':
+    #         raise Warning('当前状态不允许进行认领')
+    #     tree_view = self.env.ref('yjzy_extend.account_yfhxd_advance_tree_view_new').id
+    #     form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new').id
+    #     advance_reconcile = self.mapped('advance_reconcile_order_ids')
+    #     action = self.env.ref('yjzy_extend.action_yfhxd_all_new_1').read()[0]
+    #     ctx = {'default_partner_id': self.partner_id.id,
+    #            'default_sfk_type': 'yfhxd',
+    #            'default_yjzy_advance_payment_id': self.id,
+    #            # 'advance_po_amount': 1,
+    #            'fk_journal_id': 1,
+    #            'default_payment_type': 'outbound',
+    #            'default_be_renling': 1,
+    #            'default_partner_type': 'supplier',
+    #            'show_so': 1,
+    #            'open':1,
+    #            'default_operation_wizard': '25',
+    #            'default_hxd_type_new': '30', }  # 预付-应付
+    #     # if len(advance_reconcile) >= 1:
+    #     action['views'] = [(tree_view, 'tree'), (form_view, 'form')]
+    #     action['domain'] = [('id', 'in', advance_reconcile.ids), ('sfk_type', '=', 'yfhxd')]
+    #     action['target'] = 'new'
+    #     action['context'] = ctx
+    #     # elif len(advance_reconcile) == 1:
+    #     #     action['views'] = [(self.env.ref('yjzy_extend.account_yfhxd_form_view_new').id, 'form')]
+    #     #     action['res_id'] = advance_reconcile.ids[0]
+    #     # else:
+    #     #     action['views'] = [(form_view, 'form')]
+    #     #     action['context'] = ctx
+    #     print('ctx_222', ctx)
+    #     print('action', action)
+    #     return action
+
     def open_yfsqd_yfhxd_new_window(self):
         if self.state not in '50_posted':
             raise Warning('当前状态不允许进行认领')
         tree_view = self.env.ref('yjzy_extend.account_yfhxd_advance_tree_view_new').id
         form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new').id
         advance_reconcile = self.mapped('advance_reconcile_order_ids')
-        action = self.env.ref('yjzy_extend.action_yfhxd_all_new_1').read()[0]
-        ctx = {'default_partner_id': self.partner_id.id,
+        return {
+            'name': '预付申请单',
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'res_model': 'account.reconcile.order',
+            'type': 'ir.actions.act_window',
+            'views': [(tree_view, 'tree'),(form_view,'form')],
+            'target': 'new',
+            'domain': [('id', 'in', advance_reconcile.ids), ('sfk_type', '=', 'yfhxd')],
+            'context':{'default_partner_id': self.partner_id.id,
                'default_sfk_type': 'yfhxd',
                'default_yjzy_advance_payment_id': self.id,
                # 'advance_po_amount': 1,
@@ -976,23 +1018,12 @@ class account_payment(models.Model):
                'default_be_renling': 1,
                'default_partner_type': 'supplier',
                'show_so': 1,
-                'open':1,
+               'open': 1,
                'default_operation_wizard': '25',
-               'default_hxd_type_new': '30', }  # 预付-应付
-        # if len(advance_reconcile) >= 1:
-        action['views'] = [(tree_view, 'tree'), (form_view, 'form')]
-        action['domain'] = [('id', 'in', advance_reconcile.ids), ('sfk_type', '=', 'yfhxd')]
-        action['target'] = 'new'
-        action['context'] = ctx
-        # elif len(advance_reconcile) == 1:
-        #     action['views'] = [(self.env.ref('yjzy_extend.account_yfhxd_form_view_new').id, 'form')]
-        #     action['res_id'] = advance_reconcile.ids[0]
-        # else:
-        #     action['views'] = [(form_view, 'form')]
-        #     action['context'] = ctx
-        print('ctx_222', ctx)
-        print('action', action)
-        return action
+               'default_hxd_type_new': '30', }
+        }
+
+
 
 
         # tree_view = self.env.ref('yjzy_extend.account_yfhxd_tree_view_new').id

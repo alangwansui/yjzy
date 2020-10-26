@@ -804,17 +804,22 @@ class account_reconcile_order(models.Model):
                 stage_id = self._stage_find(domain=[('code', '=', '040')])
                 self.write({'stage_id': stage_id.id,
                             'state': 'posted',
+                            'operation_wizard':'25'
                             })
             elif self.hxd_type_new == '40':
                 stage_id = self._stage_find(domain=[('code', '=', '020')])
                 self.write({'stage_id': stage_id.id,
                             'state': 'posted',
+                            # 'operation_wizard':'10'
                             })
+
+
             # self.create_customer_invoice()
             # self.create_fygb()
             # for one in self.supplier_advance_payment_ids:
             #     one.reconciling = False
         self.make_lines()
+
         return True
 
     def action_manager_approve_first_stage(self):
@@ -1431,10 +1436,12 @@ class account_reconcile_order(models.Model):
             self._make_lines_so()
         if self.partner_type == 'supplier':
             self._make_lines_po()
-            if self.hxd_type_new == '40':
-                self.operation_wizard = '10'
-            elif self.hxd_type_new == '30':
-                self.operation_wizard = '25'
+            if self.operation_wizard != '03':
+                if self.hxd_type_new == '40':
+                    self.operation_wizard = '10'
+                elif self.hxd_type_new == '30':
+                    self.operation_wizard = '25'
+
     #从应付-付款申请的预付弹窗认领，用这个
     def make_lines_new(self):
         self.ensure_one()
