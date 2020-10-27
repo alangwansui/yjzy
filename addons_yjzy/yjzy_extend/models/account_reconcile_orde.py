@@ -712,7 +712,7 @@ class account_reconcile_order(models.Model):
     @api.onchange('line_no_ids')
     def _onchange_line_no_ids(self):
         lines = self.line_no_ids
-        if sum([x.amount_advance_org for x in lines]) > self.yjzy_advance_payment_balance:
+        if self.yjzy_advance_payment_balance < 0:
             print('yjzy_advance_payment_balance',self.yjzy_advance_payment_balance)
             raise Warning('预付认领大于可认领金额')
         for one in lines:
