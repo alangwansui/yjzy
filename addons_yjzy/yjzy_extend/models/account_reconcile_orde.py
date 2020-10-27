@@ -800,10 +800,10 @@ class account_reconcile_order(models.Model):
         #                 })
         #     # self.date = fields.date.today()
         if self.sfk_type == 'yfhxd':
-            amount_advance_residual_org = self.amount_advance_residual_org
-            amount_advance_org = self.amount_advance_org
-            if amount_advance_residual_org < amount_advance_org:
-                raise Warning(u'预付认领金额大于预付余额')
+            # amount_advance_residual_org = self.amount_advance_residual_org
+            # amount_advance_org = self.amount_advance_org
+            # # if amount_advance_residual_org < amount_advance_org:
+            # #     raise Warning(u'预付认领金额大于预付余额')
             if self.hxd_type_new == '30':
                 if self.amount_total_org == 0:
                     raise Warning('认领金额为0，无法提交！')
