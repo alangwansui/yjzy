@@ -102,6 +102,7 @@ class account_reconcile_order(models.Model):
             diff_currency = one.payment_currency_id.with_context(date=date)
             payment_currency = one.payment_currency_id.with_context(date=date)
             lines = one.line_ids
+
             one.amount_advance_org = sum([x.amount_advance_org for x in lines]) #预收预付认领总计
             one.amount_advance = sum([x.amount_advance for x in lines])
             one.amount_bank_org = bank_currency and bank_currency.compute(sum([x.amount_bank_org for x in lines]),one.invoice_currency_id)
@@ -342,6 +343,7 @@ class account_reconcile_order(models.Model):
     #903
     reconcile_payment_ids = fields.One2many('account.payment','account_reconcile_order_id',u'认领单')
     yjzy_advance_payment_id = fields.Many2one('account.payment',u'预收认领单')#从预收认领单创建过滤用
+    yjzy_advance_payment_balance = fields.Monetary('预付款单余额',related='yjzy_advance_payment_id.advance_balance_total')
     #0901
     approve_date = fields.Datetime(u'审批完成时间')
     approve_uid = fields.Many2one('res.users',u'审批人')
@@ -709,6 +711,13 @@ class account_reconcile_order(models.Model):
 
     @api.onchange('line_no_ids')
     def _onchange_line_no_ids(self):
+        lines = self.line_no_ids
+        if sum([x.amount_advance_org for x in lines]) > self.yjzy_advance_payment_balance:
+            print('yjzy_advance_payment_balance',self.yjzy_advance_payment_balance)
+            raise Warning('预付认领大于可认领金额')
+        for one in lines:
+            if one.amount_advance_org > one.invoice_residual:
+                raise Warning('预付认领金额大于可认领的应付金额')
         if self.operation_wizard in ['10','40']:
             self.update_line_amount()
         if self.operation_wizard in ['25']:
@@ -806,6 +815,8 @@ class account_reconcile_order(models.Model):
             if self.hxd_type_new == '30':
                 if self.amount_total_org == 0:
                     raise Warning('认领金额为0，无法提交！')
+                if self.yjzy_advance_payment_balance < self.amount_advance_org :
+                    raise Warning('预付认领金额大于预付款单余额！')
 
                 stage_id = self._stage_find(domain=[('code', '=', '040')])
                 self.write({'stage_id': stage_id.id,
@@ -827,6 +838,10 @@ class account_reconcile_order(models.Model):
         # self.make_lines()
 
         return True
+
+    # @api.onchange('amount_advance_org')
+    # def onchange_amount_advance_org(self):
+    #
 
     def action_manager_approve_first_stage(self):
         if self.advance_reconcile_line_draft_all_count != 0:
