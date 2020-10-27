@@ -808,12 +808,12 @@ class account_reconcile_order(models.Model):
         #                 'state': 'posted',
         #                 })
         #     # self.date = fields.date.today()
-
-        for one in self.invoice_ids:
-            #所有应付核销明细对应的核销单是付款申请的，并且审批中的，不等于本身的单子数量
-            reconcile_order_line_ids = one.reconcile_order_line_ids.filtered(lambda x: x.order_id.hxd_type_new == '40' and x.order_id.state in ['posted'] and x.order_id !=self)
-            if len(reconcile_order_line_ids) != 0:
-                raise Warning('还有进行中的付款申请，本账单无法提交')
+#暂时取消，等正式测试完毕打开
+        # for one in self.invoice_ids:
+        #     #所有应付核销明细对应的核销单是付款申请的，并且审批中的，不等于本身的单子数量
+        #     reconcile_order_line_ids = one.reconcile_order_line_ids.filtered(lambda x: x.order_id.hxd_type_new == '40' and x.order_id.state in ['posted'] and x.order_id !=self)
+        #     if len(reconcile_order_line_ids) != 0:
+        #         raise Warning('还有进行中的付款申请，本账单无法提交')
         if self.sfk_type == 'yfhxd':
             # amount_advance_residual_org = self.amount_advance_residual_org
             # amount_advance_org = self.amount_advance_org
