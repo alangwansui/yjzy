@@ -815,8 +815,6 @@ class account_reconcile_order(models.Model):
             if self.hxd_type_new == '30':
                 if self.amount_total_org == 0:
                     raise Warning('认领金额为0，无法提交！')
-                if self.yjzy_advance_payment_balance < self.amount_advance_org :
-                    raise Warning('预付认领金额大于预付款单余额！')
 
                 stage_id = self._stage_find(domain=[('code', '=', '040')])
                 self.write({'stage_id': stage_id.id,

@@ -642,7 +642,7 @@
         <field name="domain">
             [('sfk_type','=','yfhxd'),('state','in',['draft','refused','canceled','posted','approved']),('hxd_type_new','in',['40'])]
         </field>
-        <field name="context">{'search_default_group_by_state':1,'advance_po_amount':1,'default_sfk_type': 'yfhxd',
+        <field name="context">{'search_default_group_by_state_1':1,'advance_po_amount':1,'default_sfk_type': 'yfhxd',
             'default_hxd_type_new':'40','default_payment_type': 'outbound', 'default_be_renling': 1,'purchase_code_balance':1,
             'default_partner_type':'supplier', 'show_po': 1,'default_operation_wizard':'30'}
         </field>
