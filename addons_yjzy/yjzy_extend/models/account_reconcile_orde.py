@@ -712,12 +712,12 @@ class account_reconcile_order(models.Model):
     @api.onchange('line_no_ids')
     def _onchange_line_no_ids(self):
         lines = self.line_no_ids
-        if self.yjzy_advance_payment_balance < 0:
-            print('yjzy_advance_payment_balance',self.yjzy_advance_payment_balance)
-            raise Warning('预付认领大于可认领金额')
-        for one in lines:
-            if one.amount_advance_org > one.invoice_residual:
-                raise Warning('预付认领金额大于可认领的应付金额')
+        # if self.yjzy_advance_payment_balance < 0:
+        #     print('yjzy_advance_payment_balance',self.yjzy_advance_payment_balance)
+        #     raise Warning('预付认领大于可认领金额')
+        # for one in lines:
+        #     if one.amount_advance_org > one.invoice_residual:
+        #         raise Warning('预付认领金额大于可认领的应付金额')
         if self.operation_wizard in ['10','40']:
             self.update_line_amount()
         if self.operation_wizard in ['25']:
