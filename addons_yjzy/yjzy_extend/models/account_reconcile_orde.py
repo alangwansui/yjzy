@@ -711,13 +711,7 @@ class account_reconcile_order(models.Model):
     #判断预付金额和预付款单的余额问题
     @api.onchange('line_no_ids')
     def _onchange_line_no_ids(self):
-        lines = self.line_no_ids
-        # if self.yjzy_advance_payment_balance < 0:
-        #     print('yjzy_advance_payment_balance',self.yjzy_advance_payment_balance)
-        #     raise Warning('预付认领大于可认领金额')
-        # for one in lines:
-        #     if one.amount_advance_org > one.invoice_residual:
-        #         raise Warning('预付认领金额大于可认领的应付金额')
+
         if self.operation_wizard in ['10','40']:
             self.update_line_amount()
         if self.operation_wizard in ['25']:
@@ -805,9 +799,7 @@ class account_reconcile_order(models.Model):
         #                 'state': 'posted',
         #                 })
         #     # self.date = fields.date.today()
-
         if self.sfk_type == 'yfhxd':
-
             amount_advance_residual_org = self.amount_advance_residual_org
             amount_advance_org = self.amount_advance_org
             if amount_advance_residual_org < amount_advance_org:
@@ -815,6 +807,13 @@ class account_reconcile_order(models.Model):
             if self.hxd_type_new == '30':
                 if self.amount_total_org == 0:
                     raise Warning('认领金额为0，无法提交！')
+                # lines = self.line_no_ids
+                # if self.yjzy_advance_payment_balance < 0:
+                #     print('yjzy_advance_payment_balance',self.yjzy_advance_payment_balance)
+                #     raise Warning('预付认领大于可认领金额')
+                # for one in lines:
+                #     if one.amount_advance_org > one.invoice_residual:
+                #         raise Warning('预付认领金额大于可认领的应付金额')
 
                 stage_id = self._stage_find(domain=[('code', '=', '040')])
                 self.write({'stage_id': stage_id.id,
