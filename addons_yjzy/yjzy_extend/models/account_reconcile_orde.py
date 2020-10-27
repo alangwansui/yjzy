@@ -708,7 +708,7 @@ class account_reconcile_order(models.Model):
 
 
 
-
+    #判断预付金额和预付款单的余额问题
     @api.onchange('line_no_ids')
     def _onchange_line_no_ids(self):
         lines = self.line_no_ids
