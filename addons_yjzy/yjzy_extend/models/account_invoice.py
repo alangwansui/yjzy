@@ -810,7 +810,8 @@ class account_invoice(models.Model):
         for one in self:
             for x in one.yjzy_invoice_wait_payment_ids:#参考M2M的自动多选
                 invoice_dic.append(x.id)
-            invoice_dic.append(one.id)
+            if one.amount_payment_can_approve_all != 0:
+                invoice_dic.append(one.id)
         print('invoice_dic[k]',invoice_dic)
         # test = [(for x in line.yjzy_invoice_all_ids) for line in self)]
         return {
