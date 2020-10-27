@@ -157,9 +157,10 @@ class account_invoice(models.Model):
     def get_reconcile_order_line(self):
         for one in self:
 
-            dlrs = one.reconcile_order_line_id#原始账单的认领明细
+            dlrs = one.reconcile_order_line_id#原始账单的认领明细 已经完成的
             dlrs_payment_usd = one.reconcile_order_line_id.filtered(lambda x: x.payment_currency_id.name == 'USD')#原始账单收款美金
             dlrs_advance_usd = one.reconcile_order_line_id.filtered(lambda x: x.yjzy_payment_id.currency_id.name == 'USD')#原始账单预收美金 akiny注意：因为有些明细货币币种没有取过来，所以直接取预收单的货币
+
             dlrs_count = len(dlrs)
             yjzy_invoice_open_paid= one.yjzy_invoice_ids.filtered(lambda x: x.state in ['open','paid']) #额外账单
 
@@ -168,14 +169,14 @@ class account_invoice(models.Model):
             # reconcile_order_line_advance = 0.0
             # reconcile_order_line_bank = 0.0
             # reconcile_order_line_amount_diff = 0.0
-            reconcile_order_line_payment = sum(x.amount_payment_org for x in dlrs) or 0.0
-            reconcile_order_line_advance = sum(x.amount_advance_org for x in dlrs) or 0.0
+            reconcile_order_line_payment = sum(x.amount_payment_org for x in dlrs) or 0.0 #本账单收付款金额
+            reconcile_order_line_advance = sum(x.amount_advance_org for x in dlrs) or 0.0 #本账预收付认领金额
             reconcile_order_line_bank = sum(x.amount_bank_org for x in dlrs) or 0.0
             reconcile_order_line_amount_diff = sum(x.amount_diff_org for x in dlrs) or 0.0
             #额外账单的收款明细以及预收明细，当yjzy_type='sale'的时候，当不是额外账单的时候才允许计算
 
-            yjzy_reconcile_order_line_payment = sum([x.reconcile_order_line_payment for x in yjzy_invoice_open_paid]) or 0.0
-            yjzy_reconcile_order_line_advance = sum([x.reconcile_order_line_advance for x in yjzy_invoice_open_paid]) or 0.0
+            yjzy_reconcile_order_line_payment = sum([x.reconcile_order_line_payment for x in yjzy_invoice_open_paid]) or 0.0 #额外账单收付款金额
+            yjzy_reconcile_order_line_advance = sum([x.reconcile_order_line_advance for x in yjzy_invoice_open_paid]) or 0.0 #额外账单预收付款认领金额
             all_amount_payment_org = yjzy_reconcile_order_line_payment + reconcile_order_line_payment#所有的收款金额
             all_amount_advance_org = yjzy_reconcile_order_line_advance + reconcile_order_line_advance#所有的预收金额
             all_amount_org = all_amount_advance_org+all_amount_payment_org#所有金额
@@ -187,6 +188,7 @@ class account_invoice(models.Model):
             all_usd_amount_payment_org = reconcile_order_line_payment_usd + yjzy_reconcile_order_line_payment_usd
             all_usd_amount_advance_org = reconcile_order_line_advance_usd + yjzy_reconcile_order_line_advance_usd
             all_usd_amount_org = all_usd_amount_payment_org + all_usd_amount_advance_org
+
 
             one.reconcile_order_line_payment = reconcile_order_line_payment
             one.reconcile_order_line_advance = reconcile_order_line_advance
@@ -204,6 +206,8 @@ class account_invoice(models.Model):
             one.reconcile_order_line_payment_usd = yjzy_reconcile_order_line_payment_usd
             one.reconcile_order_line_advance_usd = yjzy_reconcile_order_line_advance_usd
             one.reconcile_order_line_count = dlrs_count
+
+
     @api.depends('bill_id.ref', 'amount_total','bill_id.ref')
     def compute_display_name(self):
         for one in self:
@@ -352,7 +356,12 @@ class account_invoice(models.Model):
     #
     # invoice_tb_partner_ids = fields.Many2many('account.invoice',u'和出运相关的账单',compute=_compute_invoice_tb_partner_ids)
     # invoice_tb_partner_ids_1 = fields.Many2many('account.invoice', u'和出运相关的账单', compute=_compute_invoice_tb_partner_ids)
-
+    @api.depends('reconcile_order_line_ids','reconcile_order_line_ids.amount_payment_org','residual','reconcile_order_line_ids.order_id.state')
+    def compute_amount_payment_can_approve_all(self):
+        for one in self:
+            payment_approved_all = one.reconcile_order_line_ids.filtered(lambda x: x.order_id.state == 'approved')
+            amount_payment_can_approve_all = one.residual - sum(x.amount_payment_org for x in payment_approved_all) or 0.0
+            one.amount_payment_can_approve_all = amount_payment_can_approve_all
 
     #928
     bank_id = fields.Many2one('res.partner.bank', u'银行账号')
@@ -447,7 +456,9 @@ class account_invoice(models.Model):
     reconcile_order_id_ids = fields.One2many('account.reconcile.order','back_tax_invoice_id','额外退税对应核销单')
     reconcile_order_line_id = fields.One2many('account.reconcile.order.line', 'invoice_id', u'核销明细行', domain=[('order_id.state','=','done'),('amount_total_org','!=',0)])
     reconcile_order_line_count = fields.Float(u'核销明细行数量', compute=get_reconcile_order_line)
-
+    reconcile_order_line_ids = fields.One2many('account.reconcile.order.line', 'invoice_id', u'核销明细行',
+                                              )#domain=[('order_id.state', 'in', ['approved']), ('amount_total_org', '!=', 0)]
+    amount_payment_can_approve_all = fields.Float(compute=compute_amount_payment_can_approve_all, string=u'可申请支付应付款',store=True)
     reconcile_date = fields.Date(u'认领日期', related='reconcile_order_id.date')
     reconcile_order_line_char = fields.Text(compute=_get_reconcile_order_line_char, string=u'销售合同')
     reconcile_order_line_payment_char = fields.Text(compute=_get_reconcile_order_line_char, string=u'收款认领金额')

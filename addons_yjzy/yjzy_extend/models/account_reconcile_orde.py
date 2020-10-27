@@ -311,6 +311,15 @@ class account_reconcile_order(models.Model):
         for one in self:
             one.advance_reconcile_line_draft_all_count = sum(x.advance_reconcile_order_draft_ids_count for x in one.supplier_advance_payment_ids)
 
+    @api.depends('stage_id')
+    def compute_supplier_advance_payment_ids_amount_advance_org(self):
+        for one in self:
+            if one.state_1 == 'advance_approval':
+                supplier_advance_payment_ids_amount_advance_org = sum(x.advance_reconcile_order_draft_amount_advance for x in one.supplier_advance_payment_ids)
+                one.supplier_advance_payment_ids_amount_advance_org = supplier_advance_payment_ids_amount_advance_org
+
+    supplier_advance_payment_ids_amount_advance_org = fields.Float('待审批预付认领金额',compute= compute_supplier_advance_payment_ids_amount_advance_org)
+
     invoice_attribute = fields.Selection(
         [('normal', u'常规账单'),
          ('reconcile', u'核销账单'),
@@ -799,6 +808,12 @@ class account_reconcile_order(models.Model):
         #                 'state': 'posted',
         #                 })
         #     # self.date = fields.date.today()
+
+        for one in self.invoice_ids:
+            #所有应付核销明细对应的核销单是付款申请的，并且审批中的，不等于本身的单子数量
+            reconcile_order_line_ids = one.reconcile_order_line_ids.filtered(lambda x: x.order_id.hxd_type_new == '40' and x.order_id.state in ['posted'] and x.order_id !=self)
+            if len(reconcile_order_line_ids) != 0:
+                raise Warning('还有进行中的付款申请，本账单无法提交')
         if self.sfk_type == 'yfhxd':
             # amount_advance_residual_org = self.amount_advance_residual_org
             # amount_advance_org = self.amount_advance_org

@@ -219,8 +219,10 @@ class account_payment(models.Model):
             print('teee', len(one.advance_reconcile_order_ids))
             advance_reconcile_order_count_all = len(one.advance_reconcile_order_ids)
             advance_reconcile_order_draft_ids_count = len(one.advance_reconcile_order_draft_ids)
+            advance_reconcile_order_draft_amount_advance = sum(x.amount_advance for x in one.advance_reconcile_order_draft_ids)
             one.advance_reconcile_order_count_all = advance_reconcile_order_count_all
             one.advance_reconcile_order_draft_ids_count = advance_reconcile_order_draft_ids_count
+            one.advance_reconcile_order_draft_amount_advance = advance_reconcile_order_draft_amount_advance
             one.advance_reconcile_order_count_char = '%s/%s' % (str(advance_reconcile_order_draft_ids_count), str(advance_reconcile_order_count_all))
 
     @api.depends('po_id','so_id','partner_id')
@@ -237,6 +239,7 @@ class account_payment(models.Model):
     advance_reconcile_order_ids = fields.One2many('account.reconcile.order','yjzy_advance_payment_id',u'预收付-应收付认领')
     advance_reconcile_order_draft_ids = fields.One2many('account.reconcile.order', 'yjzy_advance_payment_id',u'预收付-应收付认领未审批',
                                                               domain=[('state', '=', 'posted')])
+    advance_reconcile_order_draft_amount_advance = fields.Float('预收付-应收付认领未审批金额',compute=_compute_advance_reconcile_order_count_all)
     advance_reconcile_order_draft_ids_count = fields.Integer(u'预收付-应收付认领未审批数量', compute=_compute_advance_reconcile_order_count_all )
 
 
