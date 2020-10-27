@@ -226,13 +226,16 @@ class account_invoice(models.Model):
         for one in self:
             one.yjzy_invoice_count = len(one.yjzy_invoice_ids)
     #额外账单只计算open和paid
-    @api.depends('yjzy_invoice_ids','external_invoice_done','currency_id','yjzy_invoice_ids.amount_total_signed','yjzy_invoice_ids.residual_signed','residual','amount_total','declare_amount_total')
+    @api.depends('yjzy_invoice_ids','external_invoice_done','currency_id','yjzy_invoice_ids.amount_total_signed',
+                 'yjzy_invoice_ids.amount_payment_can_approve_all','yjzy_invoice_ids.residual_signed','residual',
+                 'amount_total','declare_amount_total')
     def compute_yjzy_invoice_amount_total(self):
         for one in self:
             #计算额外账单应收总金额
             yjzy_invoice_amount_total = sum(one.yjzy_invoice_ids.filtered(lambda inv: inv.state in ['open','paid']).mapped('amount_total_signed'))
             #计算额外账单未收总金额
             yjzy_invoice_residual_signed_total = sum(one.yjzy_invoice_ids.filtered(lambda inv: inv.state in ['open','paid']).mapped('residual_signed'))
+            yjzy_invoice_amount_payment_can_approve_all = sum(one.yjzy_invoice_ids.filtered(lambda inv: inv.state in ['open','paid']).mapped('amount_payment_can_approve_all'))
             yjzy_total = one.amount_total_signed + yjzy_invoice_amount_total
             yjzy_residual = one.residual_signed + yjzy_invoice_residual_signed_total
             yjzy_paid = yjzy_total - yjzy_residual
@@ -298,6 +301,7 @@ class account_invoice(models.Model):
             one.payment_diff = payment_diff
             one.usd_pool_id = usd_pool_id
             one.external_usd_pool = external_usd_pool
+            one.yjzy_invoice_amount_payment_can_approve_all = yjzy_invoice_amount_payment_can_approve_all
     def compute_yjzy_price_total(self):
         yjzy_price_total = 0.0
         for one in self:
@@ -526,6 +530,8 @@ class account_invoice(models.Model):
     is_yjzy_invoice = fields.Boolean(u'是否额外账单',default=False)
     yjzy_invoice_amount_total = fields.Monetary('额外账单应收金额',currency_field='currency_id',compute=compute_yjzy_invoice_amount_total,store=True)
     yjzy_invoice_residual_signed_total = fields.Monetary('额外账单未收金额', currency_field='currency_id',
+                                                compute=compute_yjzy_invoice_amount_total, store=True)
+    yjzy_invoice_amount_payment_can_approve_all = fields.Float('额外账单可申请支付金额',
                                                 compute=compute_yjzy_invoice_amount_total, store=True)
     yjzy_total = fields.Monetary(u'总应收金额',currency_field='currency_id', compute=compute_yjzy_invoice_amount_total,store=True)
     yjzy_residual = fields.Monetary(u'总未收金额',currency_field='currency_id', compute=compute_yjzy_invoice_amount_total,store=True)
@@ -810,7 +816,7 @@ class account_invoice(models.Model):
         for one in self:
             for x in one.yjzy_invoice_wait_payment_ids:#参考M2M的自动多选
                 invoice_dic.append(x.id)
-            if one.amount_payment_can_approve_all != 0:
+            if one.amount_payment_can_approve_all != 0:  #考虑已经提交审批的申请
                 invoice_dic.append(one.id)
         print('invoice_dic[k]',invoice_dic)
         # test = [(for x in line.yjzy_invoice_all_ids) for line in self)]
