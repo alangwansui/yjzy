@@ -8,7 +8,7 @@ import logging
 _logger = logging.getLogger(__name__)
 Account_reconcile_Selection =   [('draft',u'草稿'),
                                  ('advance_approval',u'待预付认领审批'),
-                                 ('account_approval',u'待财务审批'),
+                                 ('account_approval',u'待财务提交付款申请'),
                                  ('manager_approval',u'待总经理审批'),
                                  ('post',u'审批完成待支付'),
                                  ('done',u'完成'),
@@ -843,11 +843,13 @@ class account_reconcile_order(models.Model):
     def action_manager_approve_first_stage(self):
         if self.advance_reconcile_line_draft_all_count != 0:
             raise Warning('有未完成审批预付认领，请检查！')
+        self.make_lines()
         stage_id = self._stage_find(domain=[('code', '=', '030')])
         self.write({'stage_id': stage_id.id,
                     'state': 'posted',
                     'operation_wizard':'10',
                     })
+
 
     # 财务审批：预付没有审批，只有应付申请的时候才会审批。
     def action_account_approve_stage(self):
