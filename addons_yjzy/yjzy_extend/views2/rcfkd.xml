@@ -202,7 +202,7 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_rcfkd_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcfkd_form')})]"/>
     </record>
-    <menuitem id="menu_rcfkd_draft"  sequence="10" name="未提交" parent="menu_rcfkd_new" action="action_rcfkd_draft_new"/>
+    <menuitem id="menu_rcfkd_draft"  sequence="10" name="待提交付款单" parent="menu_rcfkd_new" action="action_rcfkd_draft_new"/>
 <menuitem id="menu_rcfkd_draft_cashier"  sequence="10" name="未提交" parent="menu_rcfkd_new_cashier" action="action_rcfkd_draft_new"/>
     <record model="ir.actions.act_window" id="action_rcfkd_submit_new">
         <field name="name">审批中日常付款单</field>
@@ -217,7 +217,7 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_rcfkd_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcfkd_form')})]"/>
     </record>
-    <menuitem id="menu_rcfkd_submit"  sequence="20" name="审批中" parent="menu_rcfkd_new" action="action_rcfkd_submit_new"/>
+    <menuitem id="menu_rcfkd_submit"  sequence="20" name="已提交待付款付款单" parent="menu_rcfkd_new" action="action_rcfkd_submit_new"/>
     <menuitem id="menu_rcfkd_submit_cashier"  sequence="20" name="审批中" parent="menu_rcfkd_new_cashier" action="action_rcfkd_submit_new"/>
      <record model="ir.actions.act_window" id="action_rcfkd_done_new">
         <field name="name">已完成日常付款单</field>
@@ -232,7 +232,7 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_rcfkd_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcfkd_form')})]"/>
     </record>
-    <menuitem id="menu_rcfkd_done"  sequence="40" name="已完成" parent="menu_rcfkd_new" action="action_rcfkd_done_new"/>
+    <menuitem id="menu_rcfkd_done"  sequence="40" name="已支付付款单" parent="menu_rcfkd_new" action="action_rcfkd_done_new"/>
     <menuitem id="menu_rcfkd_done_cashier"  sequence="40" name="已完成" parent="menu_rcfkd_new_cashier" action="action_rcfkd_done_new"/>
 
     <record model="ir.actions.act_window" id="action_rcfkd_undone_new">

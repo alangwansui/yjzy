@@ -519,7 +519,7 @@ class account_invoice(models.Model):
     yjzy_invoice_back_tax_id = fields.Many2one('account.invoice', u'关联退税账单')
     yjzy_invoice_count = fields.Integer( u'关联账单数量',compute=_compute_count)
     yjzy_invoice_ids = fields.One2many('account.invoice','yjzy_invoice_id',u'额外账单', domain=[('is_yjzy_invoice','=',True)])
-    yjzy_invoice_wait_payment_ids = fields.One2many('account.invoice','yjzy_invoice_id',u'额外账单', domain=[('is_yjzy_invoice','=',True),('type','in',['out_invoice','in_invoice']),('state','in',['open'])])
+    yjzy_invoice_wait_payment_ids = fields.One2many('account.invoice','yjzy_invoice_id',u'额外账单', domain=[('is_yjzy_invoice','=',True),('type','in',['out_invoice','in_invoice']),('state','in',['open']),('amount_payment_can_approve_all','!=',0)])
     yjzy_invoice_all_ids = fields.One2many('account.invoice', 'yjzy_invoice_id', u'所有关联账单') #所有额外账单和原始账单
     yjzy_payment_term_id = fields.Many2one('account.payment.term', string='Payment Terms_1')
     yjzy_currency_id = fields.Many2one('res.currency', string='currency 1')
