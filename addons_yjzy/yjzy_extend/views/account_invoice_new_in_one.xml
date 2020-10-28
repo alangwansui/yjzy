@@ -350,41 +350,6 @@
                                 </group>
                                 <field name="comment" placeholder="Terms and conditions..."/>
                             </page>
-<page string="所有账单明细" attrs="{'invisible':[('yjzy_invoice_count','=',0)]}">
-                                <field name="yjzy_invoice_line_ids">
-                                    <tree default_order="id">
-                                        <field name="sequence" widget="handle"/>
-                                        <field name="is_manual" readonly="1" string="手动"/>
-
-                                        <field name="id" invisible="1"/>
-                                        <field name="product_id" domain="[('sale_ok','=',True)]" string="账单项目"/>
-                                        <field name="layout_category_id" groups="sale.group_sale_layout"/>
-
-                                        <field name="so_id"/>
-                                        <field name="company_id" invisible="1"/>
-                                        <field name="account_id" groups="account.group_account_user" invisible="1"
-                                               domain="[('company_id', '=', parent.company_id), ('internal_type', '=', 'other'), ('deprecated', '=', False)]"/>
-                                        <field name="account_analytic_id" groups="analytic.group_analytic_accounting" invisible="1"
-                                               domain="[('company_id', '=', parent.company_id)]"
-                                               context="{'default_partner_id': parent.partner_id}"/>
-                                        <field name="analytic_tag_ids" groups="analytic.group_analytic_accounting" invisible="11"
-                                               widget="many2many_tags" options="{'color_field': 'color'}"/>
-                                        <field name="quantity"/>
-                                        <field name="uom_id" groups="product.group_uom"/>
-                                        <field name="yjzy_price_unit" string="单价"/>
-                                        <field name="price_unit" invisible="1"/>
-                                        <field name="discount" groups="base.group_no_one" invisible="1"/>
-                                        <field name="invoice_line_tax_ids" widget="many2many_tags" invisible="1"
-                                               options="{'no_create': True}" context="{'type':parent.type}"
-                                               domain="[('type_tax_use','=','sale'),('company_id', '=', parent.company_id)]"/>
-                                        <field name="yjzy_price_total" string="总价" sum="小计"/>
-                                        <field string="Subtotal" name="price_subtotal" invisible="1"
-                                               groups="sale.group_show_price_subtotal"/>
-                                        <field string="Total" name="price_total" groups="sale.group_show_price_total" invisible="1"/>
-                                        <field name="currency_id" invisible="1"/>
-                                    </tree>
-                                </field>
-                            </page>
                             <page string="本账单明细">
                                 <field name="invoice_line_ids_origin">
                                     <tree default_order="id">
@@ -431,6 +396,8 @@
                                            widget="payment" attrs="{'invisible': [('state', 'not in', 'open')]}"/>
                                 </group>
                             </page>
+
+
                             <page string="开票明细" attrs="{'invisible':1}">
                                 <field name="tb_hsname_all_ids">
                                     <tree>
@@ -451,13 +418,13 @@
                                 <field name="yjzy_invoice_ids" context="{'default_payment_term_id':payment_term_id}">
                                 <tree string="Invoice" default_order="extra_code" decoration-info="state == 'draft'">
                         <field name="extra_code"/>
-                        <field name="tb_contract_code" string="合同号" widget="dynamic_popover_char"
+                        <field name="tb_contract_code" string="合同号" widget="dynamic_popover_char" invisible="1"
                            options="{'max_width': '100px', 'line_clamp': '1', 'mode_mouse':'hover','popover_max_width':'200px','placement':'right'}"/>
                         <field name="date_invoice" string="账单日期"/>
                         <button name="open_reconcile_order_line" icon="fa-pencil-square-o" type="object"/>
 
-                        <field name="amount_total_signed" string="应收金额" sum="Total"/>
-                        <field name="residual_signed" string="未收金额" sum="Amount Due"/>
+                        <field name="amount_total_signed" string="应付金额" sum="Total"/>
+                        <field name="residual_signed" string="未付金额" sum="Amount Due"/>
                         <field name="yjzy_invoice_ids" invisible="1"/>
 
                         <field name="is_yjzy_invoice" invisible="1"/>
@@ -472,7 +439,11 @@
                         <field name="state"/>
                         <field name="type" invisible="context.get('type',True)"/>
 
-                       <field name="fault_comments"/>
+                       <field name="fault_comments" invisible="1"/>
+                                    <field name="reconcile_order_line_approve_date_html" widget="html" string="认领审批完成日期"/>
+                                    <field name="reconcile_order_line_payment_html" widget="html" string="付款申请金额"/>
+                                    <field name="reconcile_order_line_advance_html" widget="html" string="预付认领金额"/>
+
 
                 </tree>
                                 </field>
@@ -485,17 +456,19 @@
 
                            <page string="账单认领明细">
                                <field name="yjzy_invoice_reconcile_order_line_no_ids">
-                                   <tree>
-                                      <tree editable="bottom" create="false">
+
+                                      <tree editable="bottom" create="false" default_order="invoice_id,invoice_attribute desc">
+
                                     <field name="id" invisible="1"/>
+                                          <field name="approve_date"/>
                                     <field name="invoice_attribute"/>
                                     <field name="invoice_id" string="应付账单" context="{'show_tb_ref':1}"/>
-                                        <field name="amount_invoice_so"/>
-                                        <field name="amount_invoice_so_residual"/>
+
+                                        <field name="amount_invoice_so_residual" invisible="1"/>
 
                                     <field name="invoice_id_po_ids" widget="many2many_tags"/>
-
-                                    <field name="invoice_residual" string="未付金额"/><!--attrs="{'column_invisible':[('parent.operation_wizard','not in',['10'])]}"-->
+                                    <field name="amount_invoice_so" string="原始应付款" invisible="1"/>
+                                    <field name="invoice_residual" string="剩余应付款" invisible="1"/><!--attrs="{'column_invisible':[('parent.operation_wizard','not in',['10'])]}"-->
                                     <field name="payment_currency_id" invisible="1"/>
                                     <field name="yjzy_payment_id" string="预付单" invisible="1"/>
                                     <field name="yjzy_payment_po_id" invisible="1"/>
@@ -504,11 +477,11 @@
                                     <field name="amount_diff_org" invisible="1"/>
                                     <field name="currency_id" invisible="1"/>
                                     <field name="amount_payment" invisible="1"/>
-                                </tree>
+
                                    </tree>
                                </field>
 
-                                <field name="yjzy_invoice_reconcile_order_line_ids">
+                                 <field name="yjzy_invoice_reconcile_order_line_ids" groups="base.group_system">
                                <tree>
                                    <field name="tb_contract_code"/>
 <!--                                   <field name="po_id"/>-->
@@ -600,6 +573,41 @@
                                     </tree>
                                 </field>
                             </page>
+                            <page string="所有账单明细" attrs="{'invisible':[('yjzy_invoice_count','=',0)]}" groups="base.group_system">
+                                <field name="yjzy_invoice_line_ids">
+                                    <tree default_order="id">
+                                        <field name="sequence" widget="handle"/>
+                                        <field name="is_manual" readonly="1" string="手动"/>
+
+                                        <field name="id" invisible="1"/>
+                                        <field name="product_id" domain="[('sale_ok','=',True)]" string="账单项目"/>
+                                        <field name="layout_category_id" groups="sale.group_sale_layout"/>
+
+                                        <field name="so_id"/>
+                                        <field name="company_id" invisible="1"/>
+                                        <field name="account_id" groups="account.group_account_user" invisible="1"
+                                               domain="[('company_id', '=', parent.company_id), ('internal_type', '=', 'other'), ('deprecated', '=', False)]"/>
+                                        <field name="account_analytic_id" groups="analytic.group_analytic_accounting" invisible="1"
+                                               domain="[('company_id', '=', parent.company_id)]"
+                                               context="{'default_partner_id': parent.partner_id}"/>
+                                        <field name="analytic_tag_ids" groups="analytic.group_analytic_accounting" invisible="11"
+                                               widget="many2many_tags" options="{'color_field': 'color'}"/>
+                                        <field name="quantity"/>
+                                        <field name="uom_id" groups="product.group_uom"/>
+                                        <field name="yjzy_price_unit" string="单价"/>
+                                        <field name="price_unit" invisible="1"/>
+                                        <field name="discount" groups="base.group_no_one" invisible="1"/>
+                                        <field name="invoice_line_tax_ids" widget="many2many_tags" invisible="1"
+                                               options="{'no_create': True}" context="{'type':parent.type}"
+                                               domain="[('type_tax_use','=','sale'),('company_id', '=', parent.company_id)]"/>
+                                        <field name="yjzy_price_total" string="总价" sum="小计"/>
+                                        <field string="Subtotal" name="price_subtotal" invisible="1"
+                                               groups="sale.group_show_price_subtotal"/>
+                                        <field string="Total" name="price_total" groups="sale.group_show_price_total" invisible="1"/>
+                                        <field name="currency_id" invisible="1"/>
+                                    </tree>
+                                </field>
+                            </page>
                             <page groups="base.group_system">
                                 <group>
                                 <field name="is_yjzy_invoice"/>
@@ -614,6 +622,7 @@
                                 </group>
                                 <field name="yjzy_invoice_all_ids"/>
                             </page>
+
                         </notebook>
                     </sheet>
                     <div class="oe_chatter">

@@ -354,7 +354,7 @@ class account_reconcile_order(models.Model):
     yjzy_advance_payment_id = fields.Many2one('account.payment',u'预收认领单')#从预收认领单创建过滤用
     yjzy_advance_payment_balance = fields.Monetary('预付款单余额',related='yjzy_advance_payment_id.advance_balance_total')
     #0901
-    approve_date = fields.Datetime(u'审批完成时间')
+    approve_date = fields.Date(u'审批完成时间')
     approve_uid = fields.Many2one('res.users',u'审批人')
 
     #828
@@ -1954,7 +1954,7 @@ class account_reconcile_order_line(models.Model):
     order_id = fields.Many2one('account.reconcile.order', u'核销单',ondelete='cascade')
     partner_type = fields.Selection(related='order_id.partner_type')
     payment_type = fields.Selection(related='order_id.payment_type')
-
+    approve_date = fields.Date(u'审批完成时间', related='order_id.approve_date')
     so_id = fields.Many2one('sale.order', u'销售单')
     so_contract_code = fields.Char(u'销售合同号', related='so_id.contract_code', readonly=True)
 
@@ -2020,6 +2020,8 @@ class account_reconcile_order_line_no(models.Model):
     order_id = fields.Many2one('account.reconcile.order', u'核销单',ondelete='cascade')
     invoice_id = fields.Many2one('account.invoice', u'发票')
     yjzy_invoice_id = fields.Many2one('account.invoice', u'发票关联账单', related='invoice_id.yjzy_invoice_id')  # 额外账单的认领明细
+    approve_date = fields.Date(u'审批完成时间',related='order_id.approve_date')
+
 
     invoice_id_po_ids = fields.Many2many('purchase.order',related='invoice_id.po_ids')
 
