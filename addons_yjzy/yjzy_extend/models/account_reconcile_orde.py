@@ -44,7 +44,7 @@ class account_reconcile_order(models.Model):
         for one in self:
             if one.sfk_type == 'yfhxd':
                 if not one.fk_journal_id:
-                    one.payment_currency_id = one.invoice_currency_id
+                    one.payment_currency_id = one.invoice_currency_id#注意
                 else:
                     one.payment_currency_id = one.fk_journal_id.currency_id
             elif one.sfk_type == 'yshxd':
@@ -79,7 +79,6 @@ class account_reconcile_order(models.Model):
     def compute_by_invoice(self):
         for one in self:
             if not one.line_ids:
-                one.invoice_currency_id = one.currency_id
                 continue
             invoices = one.line_ids.mapped('invoice_id')
             if len(one.invoice_ids.mapped('currency_id')) > 1:
@@ -1883,9 +1882,9 @@ class account_reconcile_order_line(models.Model):
             one.advance_residual2 = one.po_id.balance
 
             one.amount_advance = invoice_currency.compute(one.amount_advance_org, company_currency)
-            one.amount_payment = one.amount_payment_org != 0 and payment_currency.compute(one.amount_payment_org, company_currency)
-            one.amount_bank = one.amount_bank_org !=0 and bank_currency.compute(one.amount_bank_org, company_currency)
-            one.amount_diff = one.amount_diff_org !=0 and diff_currency.compute(one.amount_diff_org, company_currency)
+            one.amount_payment = payment_currency != False and payment_currency.compute(one.amount_payment_org, company_currency)
+            one.amount_bank = bank_currency != False and bank_currency.compute(one.amount_bank_org, company_currency)
+            one.amount_diff = diff_currency != False and diff_currency.compute(one.amount_diff_org, company_currency)
             print('payment_currency',payment_currency)
             # one.amount_exchange = invoice_currency.compute(one.amount_exchange_org, company_currency)
             ###
