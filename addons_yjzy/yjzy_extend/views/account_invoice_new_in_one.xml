@@ -515,7 +515,7 @@
                                    <field name="invoice_id" string="账单"/>
                                    <field name="amount_advance_org" string="预付认领金额"/>
                                    <field name="amount_payment_org" string="付款申请金额"/>
-                                   <field name="state"/>
+                                   <field name="state_1"/>
                                </tree>
                                </field>
                                <field name="reconcile_order_ids" groups="base.group_system"/>
