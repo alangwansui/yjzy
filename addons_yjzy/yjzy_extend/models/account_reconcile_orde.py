@@ -1882,9 +1882,9 @@ class account_reconcile_order_line(models.Model):
             one.advance_residual2 = one.po_id.balance
 
             one.amount_advance = invoice_currency.compute(one.amount_advance_org, company_currency)
-            one.amount_payment = payment_currency != False and payment_currency.compute(one.amount_payment_org, company_currency)
-            one.amount_bank = bank_currency != False and bank_currency.compute(one.amount_bank_org, company_currency)
-            one.amount_diff = diff_currency != False and diff_currency.compute(one.amount_diff_org, company_currency)
+            # one.amount_payment = payment_currency != False and payment_currency.compute(one.amount_payment_org, company_currency)
+            # one.amount_bank = bank_currency != False and bank_currency.compute(one.amount_bank_org, company_currency)
+            # one.amount_diff = diff_currency != False and diff_currency.compute(one.amount_diff_org, company_currency)
             print('payment_currency',payment_currency)
             # one.amount_exchange = invoice_currency.compute(one.amount_exchange_org, company_currency)
             ###
@@ -1950,7 +1950,7 @@ class account_reconcile_order_line(models.Model):
     #     self.amount_exchange_org = self.amount_invoice_so - self.amount_advance_org - self.amount_bank_org - self.amount_diff_org - self.amount_payment_org
 
     date = fields.Date('日期',related="order_id.date")
-    order_id = fields.Many2one('account.reconcile.order', u'核销单',ondelete='cascade')
+    order_id = fields.Many2one('account.reconcile.order', u'核销单',)#ondelete='cascade'
     partner_type = fields.Selection(related='order_id.partner_type')
     payment_type = fields.Selection(related='order_id.payment_type')
 
