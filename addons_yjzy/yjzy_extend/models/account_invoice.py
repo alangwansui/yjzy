@@ -113,11 +113,11 @@ class account_invoice(models.Model):
             # dlrs_5603 = one.payment_move_line_lds.move_id.line_ids.filtered(lambda mov: mov.account_idcode == '5603')
             # dlrs_5601 = one.payment_move_line_lds.move_id.line_ids.filtered(lambda mov: mov.account_idcode == '5601')
             reconcile_order_line_char = ''
-            reconcile_order_line_approve_date_html = '<table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: rgba(0,0,0,0.00)"><tbody>'
+            reconcile_order_line_approve_date_html = '<table width="90%" border="0" cellspacing="0" cellpadding="0" style="background-color: rgba(0,0,0,0.00)" ><tbody>'
             reconcile_order_line_payment_char = ''
-            reconcile_order_line_payment_html = '<table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: rgba(0,0,0,0.00)"><tbody>'
+            reconcile_order_line_payment_html = '<table width="70%" border="0" cellspacing="0" cellpadding="0" style="background-color: rgba(0,0,0,0.00)"><tbody>'
             reconcile_order_line_advance_char = ''
-            reconcile_order_line_advance_html = '<table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: rgba(0,0,0,0.00)"><tbody>'
+            reconcile_order_line_advance_html = '<table width="70%" border="0" cellspacing="0" cellpadding="0" style="background-color: rgba(0,0,0,0.00)"><tbody>'
             reconcile_order_line_bank_char = ''
             reconcile_order_line_amount_diff_char = ''
             reconcile_order_line_so_id_char = ''
@@ -137,12 +137,12 @@ class account_invoice(models.Model):
                     approve_date = o.approve_date
 
                 reconcile_order_line_char += '%s\n' % (o.order_id.date)
-                reconcile_order_line_approve_date_html += '%s%s%s%s%s' % ('<tr>', '<td style="background-color: rgba(0,0,0,0.00)">',approve_date,'</td>', '</tr>')
+                reconcile_order_line_approve_date_html += '%s%s%s%s%s' % ('<tr>', '<td>',approve_date,'</td>', '</tr>')
                 reconcile_order_line_payment_char +='%s\n' % (o.amount_payment_org)
-                reconcile_order_line_payment_html += '%s%s%s%s%s' % ('<tr>', '<td style="background-color: rgba(0,0,0,0.00)">', o.amount_payment_org, '</td>', '</tr>')
+                reconcile_order_line_payment_html += '%s%s%s%s%s' % ('<tr>', '<td style="text-align: right">', o.amount_payment_org, '</td>', '</tr>')
 
                 reconcile_order_line_advance_char += '%s\n' % (o.amount_advance_org)
-                reconcile_order_line_advance_html += '%s%s%s%s%s' % ('<tr>', '<td style="background-color: rgba(0,0,0,0.00)">', o.amount_advance_org, '</td>', '</tr>')
+                reconcile_order_line_advance_html += '%s%s%s%s%s' % ('<tr>', '<td style="text-align: right">', o.amount_advance_org, '</td>', '</tr>')
                 reconcile_order_line_bank_char += '%s\n' % ( o.amount_bank_org)
                 reconcile_order_line_amount_diff_char += '%s\n' % ( o.amount_diff_org)
                 reconcile_order_line_so_id_char += '%s\n' % ( o.so_id.contract_code)

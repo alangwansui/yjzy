@@ -417,7 +417,7 @@
                              <page string="额外账单" attrs="{'invisible':[('yjzy_invoice_count','=',0)]}" >
                                 <field name="yjzy_invoice_ids" context="{'default_payment_term_id':payment_term_id}">
                                 <tree string="Invoice" default_order="extra_code" decoration-info="state == 'draft'">
-                        <field name="extra_code"/>
+                        <field name="extra_code" />
                         <field name="tb_contract_code" string="合同号" widget="dynamic_popover_char" invisible="1"
                            options="{'max_width': '100px', 'line_clamp': '1', 'mode_mouse':'hover','popover_max_width':'200px','placement':'right'}"/>
                         <field name="date_invoice" string="账单日期"/>
