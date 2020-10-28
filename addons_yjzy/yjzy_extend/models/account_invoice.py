@@ -107,7 +107,7 @@ class account_invoice(models.Model):
             one.residual_date_group = residual_date_group
     def _get_reconcile_order_line_char(self):
         for one in self:
-            dlrs = one.reconcile_order_line_id
+            dlrs = one.reconcile_order_line_approve_ids
             # dlrs_2203 = one.payment_move_line_lds.move_id.line_ids.filtered(lambda mov: mov.account_idcode == '2203')
             # dlrs_220301 = one.payment_move_line_lds.move_id.line_ids.filtered(lambda mov: mov.account_idcode == '220301')
             # dlrs_5603 = one.payment_move_line_lds.move_id.line_ids.filtered(lambda mov: mov.account_idcode == '5603')
@@ -479,8 +479,11 @@ class account_invoice(models.Model):
     reconcile_order_id_ids = fields.One2many('account.reconcile.order','back_tax_invoice_id','额外退税对应核销单')
     reconcile_order_line_id = fields.One2many('account.reconcile.order.line', 'invoice_id', u'核销明细行', domain=[('order_id.state','=','done'),('amount_total_org','!=',0)])
     reconcile_order_line_count = fields.Float(u'核销明细行数量', compute=get_reconcile_order_line)
-    reconcile_order_line_ids = fields.One2many('account.reconcile.order.line', 'invoice_id', u'核销明细行',
+    reconcile_order_line_ids = fields.One2many('account.reconcile.order.line', 'invoice_id', u'核销明细行',domain=[('order_id','!=',False),('order_id.sfk_type','=','yfhxd')]
                                               )#domain=[('order_id.state', 'in', ['approved']), ('amount_total_org', '!=', 0)]
+    reconcile_order_line_approve_ids = fields.One2many('account.reconcile.order.line', 'invoice_id', u'核销明细行',
+                                               domain=[('order_id.state','=','approved'),('order_id', '!=', False), ('order_id.sfk_type', '=', 'yfhxd')]
+                                               )  # domain=[('order_id.state', 'in', ['approved']), ('amount_total_org', '!=', 0)]
     yjzy_invoice_reconcile_order_line_ids = fields.One2many('account.reconcile.order.line', 'yjzy_invoice_id', u'所有核销明细行',domain=[('order_id','!=',False),('order_id.sfk_type','=','yfhxd')]
                                                )  # domain=[('order_id.state', 'in', ['approved']), ('amount_total_org', '!=', 0)]关联账单（额外账单以及自己）的所有认领明细
     yjzy_invoice_reconcile_order_line_no_ids = fields.One2many('account.reconcile.order.line.no', 'yjzy_invoice_id',
