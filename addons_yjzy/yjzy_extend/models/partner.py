@@ -302,11 +302,11 @@ class res_partner(models.Model):
     amount_purchase_advance = fields.Monetary('预付金额:本币', currency_field='currency_id',
                                               compute=compute_amount_purchase_advance)
 
-    @api.constrains('name')
-    def check_name(self):
-        for one in self:
-            if self.search_count([('name', '=', one.name)]) > 1:
-                raise Warning('客户简称重复')
+    # @api.constrains('name')
+    # def check_name(self):
+    #     for one in self:
+    #         if self.search_count([('name', '=', one.name)]) > 1:
+    #             raise Warning('客户简称重复')
 
     @api.constrains('full_name')
     def check_full_name(self):

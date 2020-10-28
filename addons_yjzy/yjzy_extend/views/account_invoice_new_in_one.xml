@@ -485,7 +485,15 @@
 
                            <page string="账单认领明细">
 
-                                <field name="yjzy_invoice_reconcile_order_line_ids"/>
+                                <field name="yjzy_invoice_reconcile_order_line_ids">
+                               <tree>
+                                   <field name="tb_contract_code"/>
+<!--                                   <field name="po_id"/>-->
+                                   <field name="invoice_id" string="账单"/>
+                                   <field name="amount_advance_org"/>
+                                   <field name="amount_payment_org"/>
+                               </tree>
+                               </field>
                                <field name="reconcile_order_ids" groups="base.group_system"/>
                             </page>
 
