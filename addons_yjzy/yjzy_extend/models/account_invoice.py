@@ -146,10 +146,13 @@ class account_invoice(models.Model):
                 reconcile_order_line_bank_char += '%s\n' % ( o.amount_bank_org)
                 reconcile_order_line_amount_diff_char += '%s\n' % ( o.amount_diff_org)
                 reconcile_order_line_so_id_char += '%s\n' % ( o.so_id.contract_code)
+                print('amount_payment_org',o.amount_payment_org)
 
             reconcile_order_line_payment_html += '</tbody></table>'
             reconcile_order_line_advance_html += '</tbody></table>'
             reconcile_order_line_approve_date_html += '</tbody></table>'
+
+
             # for o in dlrs_2203:
             #     reconcile_order_line_char += '%s: %s\n' % (o.order_id.date)
             #     reconcile_order_line_advance_char += '%s\n' % (o.amount_advance_org)
