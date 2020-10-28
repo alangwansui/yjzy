@@ -1950,6 +1950,7 @@ class account_reconcile_order_line(models.Model):
     #     self.amount_exchange_org = self.amount_invoice_so - self.amount_advance_org - self.amount_bank_org - self.amount_diff_org - self.amount_payment_org
 
     date = fields.Date('日期',related="order_id.date")
+    state_1 = fields.Selection('审批流程',related='order_id.state_1')
     order_id = fields.Many2one('account.reconcile.order', u'核销单',ondelete='cascade')
     partner_type = fields.Selection(related='order_id.partner_type')
     payment_type = fields.Selection(related='order_id.payment_type')
