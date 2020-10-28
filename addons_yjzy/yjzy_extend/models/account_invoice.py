@@ -464,6 +464,10 @@ class account_invoice(models.Model):
                                               )#domain=[('order_id.state', 'in', ['approved']), ('amount_total_org', '!=', 0)]
     yjzy_invoice_reconcile_order_line_ids = fields.One2many('account.reconcile.order.line', 'yjzy_invoice_id', u'所有核销明细行',domain=[('order_id','!=',False),('order_id.sfk_type','=','yfhxd')]
                                                )  # domain=[('order_id.state', 'in', ['approved']), ('amount_total_org', '!=', 0)]关联账单（额外账单以及自己）的所有认领明细
+    yjzy_invoice_reconcile_order_line_no_ids = fields.One2many('account.reconcile.order.line.no', 'yjzy_invoice_id',
+                                                            u'所有核销细行no', domain=[('order_id', '!=', False),
+                                                                                ('order_id.sfk_type', '=', 'yfhxd')]
+                                                            )  # domain=[('order_id.state', 'in', ['approved']), ('amount_total_org', '!=', 0)]关联账单（额外账
     amount_payment_can_approve_all = fields.Float(compute=compute_amount_payment_can_approve_all, string=u'可申请支付应付款',store=True)
     reconcile_date = fields.Date(u'认领日期', related='reconcile_order_id.date')
     reconcile_order_line_char = fields.Text(compute=_get_reconcile_order_line_char, string=u'销售合同')

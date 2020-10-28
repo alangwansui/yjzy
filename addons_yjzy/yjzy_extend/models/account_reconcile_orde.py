@@ -2018,6 +2018,7 @@ class account_reconcile_order_line_no(models.Model):
     invoice_currency_id = fields.Many2one('res.currency', u'交易货币', related='invoice_id.currency_id', readonly=True)
     order_id = fields.Many2one('account.reconcile.order', u'核销单',ondelete='cascade')
     invoice_id = fields.Many2one('account.invoice', u'发票')
+    yjzy_invoice_id = fields.Many2one('account.invoice', u'发票关联账单', related='invoice_id.yjzy_invoice_id')  # 额外账单的认领明细
 
     invoice_id_po_ids = fields.Many2many('purchase.order',related='invoice_id.po_ids')
 

@@ -484,6 +484,29 @@
                             </page>
 
                            <page string="账单认领明细">
+                               <field name="yjzy_invoice_reconcile_order_line_no_ids">
+                                   <tree>
+                                      <tree editable="bottom" create="false">
+                                    <field name="id" invisible="1"/>
+                                    <field name="invoice_attribute"/>
+                                    <field name="invoice_id" string="应付账单" context="{'show_tb_ref':1}"/>
+                                        <field name="amount_invoice_so"/>
+                                        <field name="amount_invoice_so_residual"/>
+
+                                    <field name="invoice_id_po_ids" widget="many2many_tags"/>
+
+                                    <field name="invoice_residual" string="未付金额"/><!--attrs="{'column_invisible':[('parent.operation_wizard','not in',['10'])]}"-->
+                                    <field name="payment_currency_id" invisible="1"/>
+                                    <field name="yjzy_payment_id" string="预付单" help="因为只整单对预付进行认领，所有不需要显示，这里每行都是一样的预付单" domain="[('sfk_type','=','yfsqd'),('partner_id','=',parent.partner_id)]" attrs="{'column_invisible':[('parent.operation_wizard','not in',['25'])]}" context="{'form_view_ref': 'yjzy_extend.view_yfsqd_form','advance_po_amount':1}"/>
+                                    <field name="yjzy_payment_po_id" attrs="{'column_invisible':[('parent.operation_wizard','not in',['25'])]}"/>
+                                    <field name="amount_advance_org" string="认领金额" attrs="{'column_invisible':[('parent.operation_wizard','not in',['25'])]}"/>
+                                    <field name="amount_payment_org" string="申请付款金额" attrs="{'column_invisible':[('parent.operation_wizard','not in',['10'])]}"/>
+                                    <field name="amount_diff_org" attrs="{'column_invisible':[('parent.operation_wizard','not in',['40'])]}"/>
+                                    <field name="currency_id" invisible="1"/>
+                                    <field name="amount_payment" invisible="1"/>
+                                </tree>
+                                   </tree>
+                               </field>
 
                                 <field name="yjzy_invoice_reconcile_order_line_ids">
                                <tree>
