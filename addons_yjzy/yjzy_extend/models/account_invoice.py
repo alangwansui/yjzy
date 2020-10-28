@@ -113,11 +113,17 @@ class account_invoice(models.Model):
             # dlrs_5603 = one.payment_move_line_lds.move_id.line_ids.filtered(lambda mov: mov.account_idcode == '5603')
             # dlrs_5601 = one.payment_move_line_lds.move_id.line_ids.filtered(lambda mov: mov.account_idcode == '5601')
             reconcile_order_line_char = ''
-            reconcile_order_line_approve_date_html = '<table width="90%" border="0" cellspacing="0" cellpadding="0" style="background-color: rgba(0,0,0,0.00)" ><tbody>'
+            # reconcile_order_line_approve_date_html = '<table width="90%" border="0" cellspacing="0" cellpadding="0" style="background-color: rgba(0,0,0,0.00)" ><tbody>'
+            reconcile_order_line_approve_date_html = '<div style="width:80%">'
+            reconcile_order_line_approve_date_char = ''
             reconcile_order_line_payment_char = ''
-            reconcile_order_line_payment_html = '<table width="70%" border="0" cellspacing="0" cellpadding="0" style="background-color: rgba(0,0,0,0.00)"><tbody>'
+            # reconcile_order_line_payment_html = '<table width="70%" border="0" cellspacing="0" cellpadding="0" style="background-color: rgba(0,0,0,0.00)"><tbody>'
+            reconcile_order_line_payment_html = '<div style="width:70%">'
+
             reconcile_order_line_advance_char = ''
-            reconcile_order_line_advance_html = '<table width="70%" border="0" cellspacing="0" cellpadding="0" style="background-color: rgba(0,0,0,0.00)"><tbody>'
+            # reconcile_order_line_advance_html = '<table width="70%" border="0" cellspacing="0" cellpadding="0" style="background-color: rgba(0,0,0,0.00)"><tbody>'
+            reconcile_order_line_advance_html = '<div style="width:70%">'
+
             reconcile_order_line_bank_char = ''
             reconcile_order_line_amount_diff_char = ''
             reconcile_order_line_so_id_char = ''
@@ -135,22 +141,34 @@ class account_invoice(models.Model):
                     approve_date = '&nbsp;'
                 else:
                     approve_date = o.approve_date
+                if not o.approve_date:
+                    approve_date_1 = ' '
+                else:
+                    approve_date_1 = o.approve_date
 
                 reconcile_order_line_char += '%s\n' % (o.order_id.date)
-                reconcile_order_line_approve_date_html += '%s%s%s%s%s' % ('<tr>', '<td>',approve_date,'</td>', '</tr>')
+                # reconcile_order_line_approve_date_html += '%s%s%s%s%s' % ('<tr>', '<td style="background-color: rgba(0,0,0,0.00)">',approve_date,'</td>', '</tr>')
+                reconcile_order_line_approve_date_html += '%s%s%s' % ('<div>',approve_date,'</div>')
+                reconcile_order_line_approve_date_char += '%s\n' % (approve_date_1)
                 reconcile_order_line_payment_char +='%s\n' % (o.amount_payment_org)
-                reconcile_order_line_payment_html += '%s%s%s%s%s' % ('<tr>', '<td style="text-align: right">', o.amount_payment_org, '</td>', '</tr>')
+                # reconcile_order_line_payment_html += '%s%s%s%s%s' % ('<tr>', '<td style="text-align: right;background-color: rgba(0,0,0,0.00)">', o.amount_payment_org, '</td>', '</tr>')
+                reconcile_order_line_payment_html += '%s%s%s' % ('<div>',o.amount_payment_org,'</div>')
 
                 reconcile_order_line_advance_char += '%s\n' % (o.amount_advance_org)
-                reconcile_order_line_advance_html += '%s%s%s%s%s' % ('<tr>', '<td style="text-align: right">', o.amount_advance_org, '</td>', '</tr>')
+                # reconcile_order_line_advance_html += '%s%s%s%s%s' % ('<tr>', '<td style="text-align: right;background-color: rgba(0,0,0,0.00)">', o.amount_advance_org, '</td>', '</tr>')
+                reconcile_order_line_advance_html += '%s%s%s' % ('<div>',o.amount_advance_org,'</div>')
+
                 reconcile_order_line_bank_char += '%s\n' % ( o.amount_bank_org)
                 reconcile_order_line_amount_diff_char += '%s\n' % ( o.amount_diff_org)
                 reconcile_order_line_so_id_char += '%s\n' % ( o.so_id.contract_code)
                 print('amount_payment_org',o.amount_payment_org)
 
-            reconcile_order_line_payment_html += '</tbody></table>'
-            reconcile_order_line_advance_html += '</tbody></table>'
-            reconcile_order_line_approve_date_html += '</tbody></table>'
+            # reconcile_order_line_payment_html += '</tbody></table>'
+            # reconcile_order_line_advance_html += '</tbody></table>'
+            # reconcile_order_line_approve_date_html += '</tbody></table>'
+            reconcile_order_line_payment_html += '</div>'
+            reconcile_order_line_advance_html += '</div>'
+            reconcile_order_line_approve_date_html += '</div>'
 
 
             # for o in dlrs_2203:
@@ -166,6 +184,7 @@ class account_invoice(models.Model):
             #     reconcile_order_line_char += '%s: %s\n' % (o.order_id.date)
             #     reconcile_order_line_amount_diff_char += '%s\n' % ( o.amount_diff_org)
             one.reconcile_order_line_char = reconcile_order_line_char
+            one.reconcile_order_line_approve_date_char = reconcile_order_line_approve_date_char
             one.reconcile_order_line_approve_date_html = reconcile_order_line_approve_date_html
             one.reconcile_order_line_so_id_char = reconcile_order_line_so_id_char
             one.reconcile_order_line_payment_char = reconcile_order_line_payment_char
@@ -496,7 +515,11 @@ class account_invoice(models.Model):
     amount_payment_can_approve_all = fields.Float(compute=compute_amount_payment_can_approve_all, string=u'可申请支付应付款',store=True)
     reconcile_date = fields.Date(u'认领日期', related='reconcile_order_id.date')
     reconcile_order_line_char = fields.Text(compute=_get_reconcile_order_line_char, string=u'销售合同')
+
+
     reconcile_order_line_approve_date_html = fields.Html(compute=_get_reconcile_order_line_char, string=u'确认日期')
+
+    reconcile_order_line_approve_date_char = fields.Text(compute=_get_reconcile_order_line_char, string=u'确认日期')
     reconcile_order_line_payment_char = fields.Text(compute=_get_reconcile_order_line_char, string=u'收款认领金额')
     reconcile_order_line_payment_html = fields.Html(compute=_get_reconcile_order_line_char, string=u'收款认领金额')
     reconcile_order_line_advance_char = fields.Text(compute=_get_reconcile_order_line_char, string=u'预收认领金额')
