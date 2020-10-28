@@ -497,11 +497,11 @@
 
                                     <field name="invoice_residual" string="未付金额"/><!--attrs="{'column_invisible':[('parent.operation_wizard','not in',['10'])]}"-->
                                     <field name="payment_currency_id" invisible="1"/>
-                                    <field name="yjzy_payment_id" string="预付单" help="因为只整单对预付进行认领，所有不需要显示，这里每行都是一样的预付单" domain="[('sfk_type','=','yfsqd'),('partner_id','=',parent.partner_id)]" attrs="{'column_invisible':[('parent.operation_wizard','not in',['25'])]}" context="{'form_view_ref': 'yjzy_extend.view_yfsqd_form','advance_po_amount':1}"/>
-                                    <field name="yjzy_payment_po_id" attrs="{'column_invisible':[('parent.operation_wizard','not in',['25'])]}"/>
-                                    <field name="amount_advance_org" string="认领金额" attrs="{'column_invisible':[('parent.operation_wizard','not in',['25'])]}"/>
-                                    <field name="amount_payment_org" string="申请付款金额" attrs="{'column_invisible':[('parent.operation_wizard','not in',['10'])]}"/>
-                                    <field name="amount_diff_org" attrs="{'column_invisible':[('parent.operation_wizard','not in',['40'])]}"/>
+                                    <field name="yjzy_payment_id" string="预付单" invisible="1"/>
+                                    <field name="yjzy_payment_po_id" invisible="1"/>
+                                    <field name="amount_advance_org" string="认领金额" />
+                                    <field name="amount_payment_org" string="申请付款金额" />
+                                    <field name="amount_diff_org" invisible="1"/>
                                     <field name="currency_id" invisible="1"/>
                                     <field name="amount_payment" invisible="1"/>
                                 </tree>
