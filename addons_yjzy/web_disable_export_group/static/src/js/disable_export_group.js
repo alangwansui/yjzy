@@ -47,6 +47,12 @@ odoo.define("web_disable_export_group", function(require) {
 
             };
 
+//                var cjyfsq_action_id = [1335]; //数字为需要显示的actionid, 可以通过‘菜单’ 查询得到
+//            if (cjyfsq_action_id.indexOf(menu_action_id) == -1){
+//                _items = _.reject(_items, {label: "创建核销单批量"});
+//
+//            };
+
 
 
             this._super(sectionCode, _items);

@@ -437,11 +437,11 @@
 
                             <!--                            <field name="supplier_advance_payment_ids_char"/>-->
                         </page>
-                        <page groups="base.group_system">
+                        <page groups="base.group_system" string="文档说明">
                             <p>
-                            1.原始应付款（原始账单金额）\n
-                            2.剩余应付款（原始减已完成支付和已完成已认领）\n
-                            3.可申请支付应付款（剩余应付款减已完成审批的付款申请和认领）\n
+                            1.原始应付款（原始账单金额）<br/>
+                            2.剩余应付款（原始减已完成支付和已完成已认领）<br/>
+                            3.可申请支付应付款（剩余应付款减已完成审批的付款申请和认领）<br/>
                             </p>
                         </page>
 

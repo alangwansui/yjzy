@@ -1439,6 +1439,7 @@
 
                             <page groups="base.group_system">
                                 <field name="reconcile_order_ids"/>
+                                <field name="yjzy_invoice_reconcile_order_line_ids"/>
                             </page>
                             <page string="Other Info" name="other_info" groups="base.group_system">
                                 <group>

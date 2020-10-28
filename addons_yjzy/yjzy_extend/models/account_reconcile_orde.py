@@ -1962,6 +1962,7 @@ class account_reconcile_order_line(models.Model):
 
     po_id = fields.Many2one('purchase.order', u'采购单')
     invoice_id = fields.Many2one('account.invoice', u'发票')
+    yjzy_invoice_id = fields.Many2one('account.invoice', u'发票关联账单', related='invoice_id.yjzy_invoice_id')  # 额外账单的认领明细
     tb_contract_code = fields.Char('出运合同号', related='invoice_id.tb_contract_code', readonly=True)
     residual = fields.Monetary(related='invoice_id.residual', string=u'发票余额', readonly=True, currency_field='invoice_currency_id')
     currency_id = fields.Many2one('res.currency', u'公司货币', related='order_id.currency_id', readonly=True)
@@ -2016,6 +2017,7 @@ class account_reconcile_order_line_no(models.Model):
     invoice_currency_id = fields.Many2one('res.currency', u'交易货币', related='invoice_id.currency_id', readonly=True)
     order_id = fields.Many2one('account.reconcile.order', u'核销单')
     invoice_id = fields.Many2one('account.invoice', u'发票')
+
     invoice_id_po_ids = fields.Many2many('purchase.order',related='invoice_id.po_ids')
 
     invoice_residual = fields.Monetary(related='invoice_id.residual', string=u'发票余额', readonly=True, currency_field='invoice_currency_id')
