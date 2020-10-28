@@ -1882,9 +1882,9 @@ class account_reconcile_order_line(models.Model):
             one.advance_residual2 = one.po_id.balance
 
             one.amount_advance = invoice_currency.compute(one.amount_advance_org, company_currency)
-            one.amount_payment = payment_currency.compute(one.amount_payment_org, company_currency)
-            one.amount_bank = bank_currency.compute(one.amount_bank_org, company_currency)
-            one.amount_diff = diff_currency.compute(one.amount_diff_org, company_currency)
+            one.amount_payment = one.amount_payment_org != 0 and payment_currency.compute(one.amount_payment_org, company_currency)
+            one.amount_bank = one.amount_bank_org !=0 and bank_currency.compute(one.amount_bank_org, company_currency)
+            one.amount_diff = one.amount_diff_org !=0 and diff_currency.compute(one.amount_diff_org, company_currency)
             print('payment_currency',payment_currency)
             # one.amount_exchange = invoice_currency.compute(one.amount_exchange_org, company_currency)
             ###
