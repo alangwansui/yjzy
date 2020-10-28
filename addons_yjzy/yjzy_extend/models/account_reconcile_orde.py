@@ -79,6 +79,7 @@ class account_reconcile_order(models.Model):
     def compute_by_invoice(self):
         for one in self:
             if not one.line_ids:
+                one.invoice_currency_id = one.currency_id
                 continue
             invoices = one.line_ids.mapped('invoice_id')
             if len(one.invoice_ids.mapped('currency_id')) > 1:
@@ -434,7 +435,7 @@ class account_reconcile_order(models.Model):
     amount_exchange = fields.Monetary(u'汇兑差异', currency_field='currency_id', compute=compute_by_lines)
     amount_total = fields.Monetary(u'收款合计:本币', currency_field='currency_id', compute=compute_by_lines, store=False)
 
-    line_ids = fields.One2many('account.reconcile.order.line', 'order_id', u'明细')
+    line_ids = fields.One2many('account.reconcile.order.line', 'order_id', u'明细', )
     line_no_ids = fields.One2many('account.reconcile.order.line.no', 'order_id', u'明细')
     move_ids = fields.One2many('account.move', 'reconcile_order_id', u'分录')
 
@@ -1950,7 +1951,7 @@ class account_reconcile_order_line(models.Model):
     #     self.amount_exchange_org = self.amount_invoice_so - self.amount_advance_org - self.amount_bank_org - self.amount_diff_org - self.amount_payment_org
 
     date = fields.Date('日期',related="order_id.date")
-    order_id = fields.Many2one('account.reconcile.order', u'核销单')
+    order_id = fields.Many2one('account.reconcile.order', u'核销单',ondelete='cascade')
     partner_type = fields.Selection(related='order_id.partner_type')
     payment_type = fields.Selection(related='order_id.payment_type')
 
@@ -2015,7 +2016,7 @@ class account_reconcile_order_line_no(models.Model):
 
 
     invoice_currency_id = fields.Many2one('res.currency', u'交易货币', related='invoice_id.currency_id', readonly=True)
-    order_id = fields.Many2one('account.reconcile.order', u'核销单')
+    order_id = fields.Many2one('account.reconcile.order', u'核销单',ondelete='cascade')
     invoice_id = fields.Many2one('account.invoice', u'发票')
 
     invoice_id_po_ids = fields.Many2many('purchase.order',related='invoice_id.po_ids')
