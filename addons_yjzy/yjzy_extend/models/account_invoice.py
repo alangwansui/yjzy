@@ -139,7 +139,7 @@ class account_invoice(models.Model):
                 reconcile_order_line_char += '%s\n' % (o.order_id.date)
                 reconcile_order_line_approve_date_html += '%s%s%s%s%s' % ('<tr>', '<td style="background-color: rgba(0,0,0,0.00)">',approve_date,'</td>', '</tr>')
                 reconcile_order_line_payment_char +='%s\n' % (o.amount_payment_org)
-                reconcile_order_line_payment_html += '%s%s%s%s%s' % ('<tr>', '<td style="background-color: rgba(0,0,0,0.00)">', o.amount_advance_org, '</td>', '</tr>')
+                reconcile_order_line_payment_html += '%s%s%s%s%s' % ('<tr>', '<td style="background-color: rgba(0,0,0,0.00)">', o.amount_payment_org, '</td>', '</tr>')
 
                 reconcile_order_line_advance_char += '%s\n' % (o.amount_advance_org)
                 reconcile_order_line_advance_html += '%s%s%s%s%s' % ('<tr>', '<td style="background-color: rgba(0,0,0,0.00)">', o.amount_advance_org, '</td>', '</tr>')
