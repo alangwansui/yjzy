@@ -919,8 +919,13 @@ class account_invoice(models.Model):
     def create_yfhxd_from_multi_invoice(self,attribute):
         print('invoice_ids', self.ids)
         print('partner_id', len(self.mapped('partner_id')))
-        if len(self.mapped('partner_id')) > 1:
+        state_draft = len(self.filtered(lambda x: x.state != 'open'))
+        if attribute != 'other_payment' and len(self.mapped('partner_id')) > 1:
             raise Warning('不同供应商')
+        elif attribute == 'other_payment' and len(self) > 1:
+            raise Warning('其他应付不允许多个一起申请付款')
+        elif state_draft > 1:
+            raise Warning('非确认账单不允许创建付款申请')
         sfk_type = 'yfhxd'
         domain = [('code', '=', 'yfdrl'), ('company_id', '=', self.env.user.company_id.id)]
         name = self.env['ir.sequence'].next_by_code('sfk.type.%s' % sfk_type)
