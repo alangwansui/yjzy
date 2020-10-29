@@ -908,7 +908,7 @@ class account_invoice(models.Model):
                     'default_operation_wizard':operation_wizard,
                     'default_hxd_type_new':'40',
                     'purchase_code_balance':1,
-
+                    'default_invoice_attribute': attribute,
                 }
             }
 
@@ -970,7 +970,7 @@ class account_invoice(models.Model):
                 'operation_wizard':operation_wizard,
                 'hxd_type_new':'40',
                 'purchase_code_balance': 1,
-
+                'invoice_attribute': attribute,
 
             # 'partner_id': self.partner_id.id,
             #         'sfk_type': 'yfhxd',
@@ -1028,7 +1028,8 @@ class account_invoice(models.Model):
                 'default_payment_account_id': bank_account.id,
                 'default_operation_wizard':'03',
                 'default_yjzy_advance_payment_id':self.yjzy_advance_payment_id.id,
-                'default_hxd_type_new': '30'
+                'default_hxd_type_new': '30',
+
             }
         }
 
