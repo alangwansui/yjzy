@@ -441,7 +441,7 @@
 
                        <field name="fault_comments" invisible="1"/>
                                     <field name="reconcile_order_line_approve_date_html" widget="html" string="认领审批完成日期"/>
-                                    <field name="reconcile_order_line_approve_date_char" widget="html" string="认领审批完成日期"/>
+
                                     <field name="reconcile_order_line_payment_html" widget="html" string="付款申请金额" class="akiny_text_right"/>
                                     <field name="reconcile_order_line_advance_html" widget="html" string="预付认领金额" class="akiny_text_right"/>
 

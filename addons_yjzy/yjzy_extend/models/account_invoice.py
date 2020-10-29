@@ -513,6 +513,7 @@ class account_invoice(models.Model):
                                                                                 ('order_id.sfk_type', '=', 'yfhxd')]
                                                             )  # domain=[('order_id.state', 'in', ['approved']), ('amount_total_org', '!=', 0)]关联账单（额外账
     amount_payment_can_approve_all = fields.Float(compute=compute_amount_payment_can_approve_all, string=u'可申请支付应付款',store=True)
+
     reconcile_date = fields.Date(u'认领日期', related='reconcile_order_id.date')
     reconcile_order_line_char = fields.Text(compute=_get_reconcile_order_line_char, string=u'销售合同')
 
@@ -853,17 +854,20 @@ class account_invoice(models.Model):
             }
         }
 #定稿，从发票多选创建应付申请
-    def submit_yfhxd(self):
+    def submit_yfhxd(self,attribute):
         print('invoice_ids', self.ids)
         print('partner_id', len(self.mapped('partner_id')))
-        if len(self.mapped('partner_id')) > 1:
+        if attribute != 'other_payment' and len(self.mapped('partner_id')) > 1 :
             raise Warning('不同供应商')
+        elif attribute == 'other_payment' and len(self) >1:
+            raise Warning('其他应付不允许多个一起申请付款')
+        # ctx = self.context.get('invoice_attribute')
         sfk_type = 'yfhxd'
         domain = [('code', '=', 'yfdrl'), ('company_id', '=', self.env.user.company_id.id)]
         name = self.env['ir.sequence'].next_by_code('sfk.type.%s' % sfk_type)
         journal = self.env['account.journal'].search(domain, limit=1)
         account_obj = self.env['account.account']
-        bank_account = account_obj.search([('code', '=', '10021'), ('company_id', '=', self.env.user.company_id.id)],                                          limit=1)
+        bank_account = account_obj.search([('code', '=', '10021'), ('company_id', '=', self.env.user.company_id.id)], limit=1)
         form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new')
 
         # for line in self:
@@ -877,94 +881,115 @@ class account_invoice(models.Model):
                 invoice_dic.append(one.id)
         print('invoice_dic[k]',invoice_dic)
         # test = [(for x in line.yjzy_invoice_all_ids) for line in self)]
+        # print('ctx',ctx)
+        if attribute != 'other_payment':
+            operation_wizard = '03'
+        else:
+            operation_wizard = '10'
+
+        if attribute != 'other_payment':
+            return {
+                'type': 'ir.actions.act_window',
+                'view_mode': 'form',
+                'res_model': 'account.reconcile.order',
+                'views': [(form_view.id, 'form')],
+                'target': 'current',
+                'context': {
+                    'default_invoice_ids': invoice_dic,# self.yjzy_invoice_all_ids,#
+                    'default_partner_id': self[0].partner_id.id,
+                    'default_manual_payment_currency_id': self[0].currency_id.id,
+                    'default_payment_type': 'outbound',
+                    'default_partner_type': 'supplier',
+                    'default_sfk_type': 'yfhxd',
+                    'default_be_renling': True,
+                    'default_name': name,
+                    'default_journal_id': journal.id,
+                    'default_payment_account_id': bank_account.id,
+                    'default_operation_wizard':operation_wizard,
+                    'default_hxd_type_new':'40',
+                    'purchase_code_balance':1,
+
+                }
+            }
+
+
+
+
+    #创建预付核销单从多个账单通过服务器动作创建 不能用，
+    def create_yfhxd_from_multi_invoice(self,attribute):
+        print('invoice_ids', self.ids)
+        print('partner_id', len(self.mapped('partner_id')))
+        if len(self.mapped('partner_id')) > 1:
+            raise Warning('不同供应商')
+        sfk_type = 'yfhxd'
+        domain = [('code', '=', 'yfdrl'), ('company_id', '=', self.env.user.company_id.id)]
+        name = self.env['ir.sequence'].next_by_code('sfk.type.%s' % sfk_type)
+        journal = self.env['account.journal'].search(domain, limit=1)
+        account_obj = self.env['account.account']
+        bank_account = account_obj.search([('code', '=', '10021'), ('company_id', '=', self.env.user.company_id.id)],
+                                          limit=1)
+        form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new')
+        invoice_dic = []
+        account_reconcile_order_obj = self.env['account.reconcile.order']
+        # for one in self:
+        #     for x in one.yjzy_invoice_wait_payment_ids:#参考M2M的自动多选
+        #         invoice_dic.append(x.id)
+        #     invoice_dic.append(one.id)
+        # print('invoice_dic[k]',invoice_dic)
+        for one in self:
+            for x in one.yjzy_invoice_wait_payment_ids:#参考M2M的自动多选
+                invoice_dic.append(x.id)
+            if one.amount_payment_can_approve_all != 0:  #考虑已经提交审批的申请
+                invoice_dic.append(one.id)
+        # test = [(for x in line.yjzy_invoice_all_ids) for line in self)]
+        # invoice_ids = self.env['account.invoice'].search([('id','in',invoice_dic)])
+        # with_context(
+        #     {'fk_journal_id': 1, 'default_be_renling': 1, 'default_invoice_ids': invoice_dic,
+        #      'default_payment_type': 'outbound', 'show_so': 1, 'default_sfk_type': 'yfhxd', }).
+        if attribute != 'other_payment':
+            operation_wizard = '03'
+        else:
+            operation_wizard = '10'
+
+        account_reconcile_id = account_reconcile_order_obj.create({
+                'partner_id': self[0].partner_id.id,
+                'manual_payment_currency_id': self[0].currency_id.id,
+                'invoice_ids':[(6, 0, invoice_dic)],
+                'payment_type': 'outbound',
+                'partner_type': 'supplier',
+                'sfk_type': 'yfhxd',
+                'be_renling': True,
+                'name': name,
+                'journal_id': journal.id,
+                'payment_account_id': bank_account.id,
+                'operation_wizard':operation_wizard,
+                'hxd_type_new':'40',
+                'purchase_code_balance': 1,
+
+
+            # 'partner_id': self.partner_id.id,
+            #         'sfk_type': 'yfhxd',
+            #         # 'invoice_ids': invoice_ids,
+            #         'yjzy_advance_payment_id': self.id,
+            #         'payment_type': 'outbound',
+            #         'be_renling': 1,
+            #         'partner_type': 'supplier',
+            #         'operation_wizard': '25',
+            #         'hxd_type_new': '30',  # 预付-应付
+                    })
+        account_reconcile_id.make_lines()
         return {
             'type': 'ir.actions.act_window',
             'view_mode': 'form',
             'res_model': 'account.reconcile.order',
             'views': [(form_view.id, 'form')],
+            'res_id':account_reconcile_id.id,
             'target': 'current',
             'context': {
-                'default_invoice_ids': invoice_dic,# self.yjzy_invoice_all_ids,#
-                'default_partner_id': self[0].partner_id.id,
-                'default_manual_payment_currency_id': self[0].currency_id.id,
-                'default_payment_type': 'outbound',
-                'default_partner_type': 'supplier',
-                'default_sfk_type': 'yfhxd',
-                'default_be_renling': True,
-                'default_name': name,
-                'default_journal_id': journal.id,
-                'default_payment_account_id': bank_account.id,
-                'default_operation_wizard':'03',
-                'default_hxd_type_new':'40',
-                'purchase_code_balance':1,
+
 
             }
         }
-
-    # #创建预付核销单从多个账单通过服务器动作创建 不能用，
-    # def create_yfhxd_from_multi_invoice(self):
-    #     print('invoice_ids', self.ids)
-    #     print('partner_id', len(self.mapped('partner_id')))
-    #     if len(self.mapped('partner_id')) > 1:
-    #         raise Warning('不同供应商')
-    #     sfk_type = 'yfhxd'
-    #     domain = [('code', '=', 'yfdrl'), ('company_id', '=', self.env.user.company_id.id)]
-    #     name = self.env['ir.sequence'].next_by_code('sfk.type.%s' % sfk_type)
-    #     journal = self.env['account.journal'].search(domain, limit=1)
-    #     account_obj = self.env['account.account']
-    #     bank_account = account_obj.search([('code', '=', '10021'), ('company_id', '=', self.env.user.company_id.id)],
-    #                                       limit=1)
-    #     form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new')
-    #     invoice_dic = []
-    #     account_reconcile_order_obj = self.env['account.reconcile.order']
-    #     for one in self:
-    #         for x in one.yjzy_invoice_wait_payment_ids:#参考M2M的自动多选
-    #             invoice_dic.append(x.id)
-    #         invoice_dic.append(one.id)
-    #     print('invoice_dic[k]',invoice_dic)
-    #     # test = [(for x in line.yjzy_invoice_all_ids) for line in self)]
-    #     # invoice_ids = self.env['account.invoice'].search([('id','in',invoice_dic)])
-    #     # with_context(
-    #     #     {'fk_journal_id': 1, 'default_be_renling': 1, 'default_invoice_ids': invoice_dic,
-    #     #      'default_payment_type': 'outbound', 'show_so': 1, 'default_sfk_type': 'yfhxd', }).
-    #     account_reconcile_id = account_reconcile_order_obj.create({
-    #             'partner_id': self[0].partner_id.id,
-    #             'manual_payment_currency_id': self[0].currency_id.id,
-    #             'invoice_ids':[(6, 0, invoice_dic)],
-    #             'payment_type': 'outbound',
-    #             'partner_type': 'supplier',
-    #             'sfk_type': 'yfhxd',
-    #             'be_renling': True,
-    #             'name': name,
-    #             'journal_id': journal.id,
-    #             'payment_account_id': bank_account.id,
-    #             'default_operation_wizard':'03',
-    #             'default_hxd_type_new':'40'
-    #
-    #
-    #         # 'partner_id': self.partner_id.id,
-    #         #         'sfk_type': 'yfhxd',
-    #         #         # 'invoice_ids': invoice_ids,
-    #         #         'yjzy_advance_payment_id': self.id,
-    #         #         'payment_type': 'outbound',
-    #         #         'be_renling': 1,
-    #         #         'partner_type': 'supplier',
-    #         #         'operation_wizard': '25',
-    #         #         'hxd_type_new': '30',  # 预付-应付
-    #                 })
-    #
-    #     return {
-    #         'type': 'ir.actions.act_window',
-    #         'view_mode': 'form',
-    #         'res_model': 'account.reconcile.order',
-    #         'views': [(form_view.id, 'form')],
-    #         'res_id':account_reconcile_id.id,
-    #         'target': 'current',
-    #         'context': {
-    #
-    #
-    #         }
-    #     }
     #从核销单的发票明细创建核销单。（创建预付-应付的核销）现在用不到了
     def submit_yfhxd_new(self):
         print('invoice_ids', self.ids)

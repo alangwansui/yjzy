@@ -79,11 +79,11 @@
                 <field name="date" invisible="1"/>
                 <field name="approve_uid" invisible="1"/>
                 <field name="approve_date"/>
-                <field name="amount_total_org" string="全部认领合计"/>
+                <field name="amount_total_org" string="全部认领合计" invisible="1"/>
                 <field name="amount_total_org_new" string="全部认领合计" groups="base.group_system"/>
                 <field name="amount_payment_org" string="实际申请金额"/>
                 <field name="amount_payment_org_new" string="实际申请金额" groups="base.group_system"/>
-                <field name="amount_advance_org" string="预付认领金额"/>
+                <field name="amount_advance_org" string="预付认领金额" invisible="1"/>
                 <field name="amount_advance_org_new" string="预付认领金额" groups="base.group_system"/>
                 <field name="supplier_advance_payment_ids_amount_advance_org"/>
                 <field name="amount_total" invisible="1"/>
@@ -190,6 +190,16 @@
                         <div class="oe_form_box_info oe_text_center" attrs="{'invisible':[('operation_wizard','not in',['03'])]}">
                             <span>
                                 第一步：确认是否有未认领的预付单
+                            </span>
+                        </div>
+                 <div class="oe_form_box_info oe_text_center" attrs="{'invisible':[('operation_wizard','not in',['03'])]}">
+                            <span>
+                                第一步：填写收款方账号以及付款银行
+                            </span>
+                        </div>
+                <div class="oe_form_box_info oe_text_center" attrs="{'invisible':[('operation_wizard','not in',['03'])]}">
+                            <span>
+                                第二步：填写金额明细
                             </span>
                         </div>
 
@@ -344,14 +354,16 @@
                                     <field name="id" invisible="1"/>
                                     <field name="invoice_attribute"/>
                                     <field name="invoice_id" string="应付账单" context="{'show_tb_ref':1}"/>
-                                        <field name="amount_invoice_so"/>
-                                        <field name="amount_invoice_so_residual"/>
+                                    <button name="open_invoice_id" icon="fa-pencil-square-o" type="object" />
 
-                                    <field name="invoice_id_po_ids" widget="many2many_tags"/>
+                                        <field name="amount_invoice_so_residual" invisible="1"/>
 
-                                    <field name="invoice_residual" string="未付金额"
+                                    <field name="invoice_id_po_ids" widget="many2many_tags" string="采购合同"/>
+                                    <field name="amount_invoice_so" string="原始应付款"/>
+                                    <field name="invoice_residual" string="剩余应付款"
                                            /><!--attrs="{'column_invisible':[('parent.operation_wizard','not in',['10'])]}"-->
                                     <field name="payment_currency_id" invisible="1"/>
+                                    <field name="amount_payment_can_approve_all" string="可以申请支付应付款"/>
                                     <field name="yjzy_payment_id" string="预付单"  help="因为只整单对预付进行认领，所有不需要显示，这里每行都是一样的预付单"
                                            domain="[('sfk_type','=','yfsqd'),('partner_id','=',parent.partner_id)]"
                                            attrs="{'column_invisible':[('parent.operation_wizard','not in',['25'])]}"

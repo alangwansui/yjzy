@@ -858,6 +858,9 @@ class account_reconcile_order(models.Model):
     def action_manager_approve_first_stage(self):
         if self.advance_reconcile_line_draft_all_count != 0:
             raise Warning('有未完成审批预付认领，请检查！')
+        # for one in self.invoice_ids:            如果invoice是0 余额的 可以从invoice_ids中删除了
+        #     if one.amount_payment_can_approve_all == 0 or one.residual == 0:
+        #         self.write({'invoice_ids':[(3,one.id)]})
         self.make_lines()
         stage_id = self._stage_find(domain=[('code', '=', '030')])
         self.write({'stage_id': stage_id.id,
@@ -2013,7 +2016,19 @@ class account_reconcile_order_line(models.Model):
 class account_reconcile_order_line_no(models.Model):
     _name = 'account.reconcile.order.line.no'
 
+    def open_invoice_id(self):
+        form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form_in_one').id
+        return {'name':'账单查看',
 
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'account.invoice',
+                'views': [(form_view, 'form')],
+                'res_id': self.id,
+                'target': 'new',
+                'type': 'ir.actions.act_window',
+                'context': {}
+                }
 
     invoice_currency_id = fields.Many2one('res.currency', u'交易货币', related='invoice_id.currency_id', readonly=True)
     state_1 = fields.Selection('审批流程', related='order_id.state_1')
