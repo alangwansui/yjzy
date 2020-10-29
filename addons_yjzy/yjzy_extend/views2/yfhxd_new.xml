@@ -223,8 +223,8 @@
                             <field name="bank_id" string="收款方账号" domain="[('partner_id','=',partner_id)]"
                                    attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),('invoice_attribute','=','other_payment')]}"
                                    options="{'no_create_edit': True}"/>
-                            <field name="invoice_partner"  attrs="{'invisible':[('invoice_attribute','=','other_payment')]}"/>
-                            <field name="name_title" attrs="{'invisible':[('invoice_attribute','=','other_payment')]}"/>
+                            <field name="invoice_partner"  attrs="{'invisible':[('invoice_attribute','!=','other_payment')]}"/>
+                            <field name="name_title" attrs="{'invisible':[('invoice_attribute','!=','other_payment')]}"/>
                             <field name="other_payment_bank_id" string="收款方账号" domain="[('create_uid','=',uid)]" context="{'form_view_ref':'base.view_partner_bank_form','default_bank_type':'personal'}"
                                    attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),('invoice_attribute','!=','other_payment')]}"
                                    options="{'no_create_edit': True}"/>
@@ -238,12 +238,12 @@
                             <field name="payment_currency_id" string="申请付款货币"
                                    attrs="{'invisible':[('operation_wizard','not in',['10','30'])]}"/>
                             <field name="yjzy_payment_id" string="日常付款单" domain="[('sfk_type', '=', 'rcfkd')]"
-                                   attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),('state','!=','approved')]}"
+                                   attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),('state','not in',['approved','done'])]}"
                                    context="{'form_view_ref': 'yjzy_extend.view_rcfkd_form','advance_po_amount':1}"/>
                             <field name="yjzy_payment_currency_id" string="付款货币"
-                                   attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),('state','!=','approved')]}"/>
+                                   attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),('state','not in',['approved','done'])]}"/>
                             <field name="yjzy_payment_balance" string="付款未认领余额"
-                                   attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),('state','!=','approved')]}"/>
+                                   attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),('state','not in',['approved','done'])]}"/>
                             <field name="manual_payment_currency_id" string="预付币种" attrs="{'invisible':1}"/>
                         </group>
 
@@ -278,7 +278,7 @@
                             <field name="back_tax_invoice_id" attrs="{'invisible': 1}"/>
 
                             <field name="date"/>
-                            <field name="yjzy_advance_payment_id" string="预付单"
+                            <field name="yjzy_advance_payment_id" string="预付单" attrs="{'invisible':[('hxd_type_new','not in',['10','30'])]}"
                                        context="{'form_view_ref': 'yjzy_extend.view_yfsqd_form','advance_po_amount':1}"/>
                             <field name="include_tax" attrs="{'invisible':1}"/>
                             <field name="sale_uid" attrs="{'invisible': 1}"/>
@@ -672,7 +672,7 @@
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="domain">
-            [('sfk_type','=','yfhxd'),('state','in',['draft','refused','canceled','posted','approved']),('hxd_type_new','in',['40'])]
+            [('sfk_type','=','yfhxd'),('state','in',['draft','refused','canceled','posted','approved']),('hxd_type_new','in',['40']),('invoice_attribute','!=','other_payment')]
         </field>
         <field name="context">{'search_default_group_by_state_1':1,'advance_po_amount':1,'default_sfk_type': 'yfhxd',
             'default_hxd_type_new':'40','default_payment_type': 'outbound', 'default_be_renling': 1,'purchase_code_balance':1,

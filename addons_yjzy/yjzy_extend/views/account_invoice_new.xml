@@ -271,7 +271,7 @@
             <field name="arch" type="xml">
                 <tree decoration-info="state == 'draft'" default_order="date_deadline_new" decoration-warning="is_yjzy_invoice == True"
                       decoration-muted="state == 'cancel'" string="Invoice" edit="false" create="false">
-                     <field name="extra_code"/>
+                     <field name="extra_code" invisible="1"/>
                     <field name="partner_id" groups="base.group_user" string="供应商"/>
                     <field name="bill_id" string="合同号" invisible="1"/>
                     <field name="tb_contract_code" string="合同号" widget="dynamic_popover_char"
@@ -283,12 +283,12 @@
                     <field name="date_due" string="进仓到期日" groups="base.group_system"/>
                     <field name="reconcile_order_line_count" invisible="1"/>
                     <field name="residual_times_out_in_new" groups="base.group_system"/>
-                    <field name="amount_total_signed" string="应付金额" sum="Total" groups="base.group_system"/>
-                    <field name="residual_signed" string="未付金额" sum="Amount Due"/>
-                    <field name="amount_payment_can_approve_all" string="可申请支付" sum="小计"/>
-                    <field name="yjzy_invoice_amount_total" string="额外账单应付金额" sum="小计" groups="base.group_system"/>
-                    <field name="yjzy_invoice_residual_signed_total" string="额外账单未付金额" sum="小计"/>
-                    <field name="yjzy_invoice_amount_payment_can_approve_all" string="额外账单可申请支付" sum="小计"/>
+                    <field name="amount_total_signed" string="原始应付款" sum="Total"/>
+                    <field name="residual_signed" string="剩余因付款" sum="Amount Due"/>
+                    <field name="amount_payment_can_approve_all" string="可申请支付应付款" sum="小计"/>
+                    <field name="yjzy_invoice_amount_total" string="额外原始应付款" sum="小计"/>
+                    <field name="yjzy_invoice_residual_signed_total" string="额外剩余因付款" sum="小计"/>
+                    <field name="yjzy_invoice_amount_payment_can_approve_all" string="额外可申请支付应付款" sum="小计"/>
                     <button name="open_invoice_ids_new" icon="fa-pencil-square-o" type="object" attrs="{'invisible':[('yjzy_invoice_count', '=', 0)]}" context="{'invoice_type':'purchase'}"/>
                     <field name="yjzy_invoice_ids" invisible="1"/>
                     <field name="yjzy_invoice_count" invisible="1"/>
@@ -307,7 +307,7 @@
                     <field name="origin" invisible="1"/>
                     <field name="currency_id" invisible="1"/>
                     <field name="company_currency_id" invisible="1"/>
-                    <field name="state"/>
+                    <field name="state" invisible="1"/>
                     <field name="type" invisible="context.get('type',True)"/>
                     <field name="residual_times" groups="base.group_system"/>
                     <field name="residual_times_out_in" groups="base.group_system"/>
@@ -2594,7 +2594,7 @@
             </field>
             <!--field name="target">new</field-->
             <field name="view_ids" eval="[(5, 0, 0),
-                              (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.view_supplier_invoice_extra_tree')}),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.view_other_payment_invoice_tree')}),
                               (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.view_account_invoice_new_form_in_one')}),
                               ]"/>
         </record>
@@ -2602,7 +2602,23 @@
                   parent="menu_supplier_invoice_apply_root" name="其他应付账单账单"
                   sequence="50"
         />
-        <menuitem id="menu_supplier_account_invoice_other_payment_pay_all" action="action_supplier_account_invoice_other_payment_all"
+        <record id="action_supplier_account_invoice_other_payment_open" model="ir.actions.act_window">
+            <field name="name">查看未付其支付账单并创建付款申请(单选)</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_account_invoice_new_filter"/>
+            <field name="domain">[('type','=','in_invoice'),('yjzy_type_1','=','purchase'),('state','=','open'),('invoice_attribute','=','other_payment')]</field>
+            <field name="context">{'search_default_group_by_state':1,'default_type':'in_invoice','only_ref':1,'default_yjzy_type_1':'purchase'}
+            </field>
+            <!--field name="target">new</field-->
+            <field name="view_ids" eval="[(5, 0, 0),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.view_other_payment_invoice_tree')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.view_account_invoice_new_form_in_one')}),
+                              ]"/>
+        </record>
+
+        <menuitem id="menu_supplier_account_invoice_other_payment_open" action="action_supplier_account_invoice_other_payment_open"
                   parent="menu_invoice_other_payment_apply_root" name="创建申请单"
                   sequence="05"
         />

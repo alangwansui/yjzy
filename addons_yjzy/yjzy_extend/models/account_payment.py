@@ -464,7 +464,7 @@ class account_payment(models.Model):
         today = fields.date.today()
         self.write({'post_uid': self.env.user.id,
                     'post_date': today,
-                    'state_1': '50_posted'
+                    'state_1': '60_done'
                     })
         self.post()
         self.compute_balance()
@@ -638,8 +638,13 @@ class account_payment(models.Model):
             if one.sfk_type == 'rcfkd':
                 one.payment_date_confirm = fields.datetime.now() ##akiny 增加付款时间
                 if one.yshx_ids:
-                    ac_orders = one.yshx_ids
-                    ac_orders.make_done()
+                    operation_wizard = len(one.yshx_ids.filtered(lambda x: x.reconcile_payment_ids == False))
+                    if operation_wizard > 0 :#通过这个字段，区别一下老的和新的两种认领方式，新的是生成一张应付认领单
+                        ac_orders = one.yshx_ids
+                        ac_orders.make_done()
+                    else:
+                        ac_orders = one.yshx_ids
+                        ac_orders.action_done_new_stage()
 
                 if one.yfsqd_ids:
                     one.yfsqd_ids.post()

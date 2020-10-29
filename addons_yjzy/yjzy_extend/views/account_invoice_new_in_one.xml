@@ -137,7 +137,7 @@
                         <group col="3">
                             <group>
                                 <field name="is_yjzy_invoice" invisible="1"/>
-                                <label for="" name="partner_id">
+                                <label for="" name="partner_id" attrs="{'invisible':[('invoice_attribute','=','other_payment')]}" >
                                 <b attrs="{'invisible':[('type','not in',['out_invoice','out_refund'])]}">
                                     客户
                                 </b>
@@ -145,18 +145,19 @@
                                     供应商
                                 </b>
                                 </label>
-                                <div class="o_row">
+                                <div class="o_row" attrs="{'invisible':[('invoice_attribute','=','other_payment')]}">
                                 <field name="partner_id"
                                        context="{'search_default_customer':1, 'show_address': 0, 'default_company_type': 'company'}"
                                        options="{&quot;always_reload&quot;: True, &quot;no_quick_create&quot;: True}"
                                        domain="[('customer', '=', True),('is_company','=',True)]"/>
                                 </div>
-
+                                <field name="invoice_partner" attrs="{'invisible':[('invoice_attribute','!=','other_payment')]}"/>
+                                <field name="name_title" attrs="{'invisible':[('invoice_attribute','!=','other_payment')]}"/>
                                 <field name="yjzy_invoice_id" attrs="{'invisible':[('is_yjzy_invoice','=',False)]}" domain="[('partner_id','=',partner_id)]" string="原始账单"/>
-                                <field name="bill_id" string="出运合同" context="{'only_ref':1}"/>
+                                <field name="bill_id" string="出运合同" context="{'only_ref':1}" attrs="{'invisible':[('invoice_attribute','=','other_payment')]}"/>
                                 <field name="partner_shipping_id" groups="sale.group_delivery_invoice_address"
                                        invisible="1"/>
-                                <field name="payment_term_id" />
+                                <field name="payment_term_id" attrs="{'invisible':[('invoice_attribute','=','other_payment')]}"/>
                                 <field name="yjzy_payment_term_id" string="付款条款" invisible="1"/> <!--    attrs="{'invisible':[('is_yjzy_invoice','=',True)]}"-->
                                 <field name="yjzy_currency_id" string="货币" invisible="1"/>
                                 <label for="currency_id" groups="base.group_multi_currency"/>
@@ -166,7 +167,7 @@
                                     <field name="company_currency_id" invisible="1"/>
                                 </div>
                                 <field name="cash_rounding_id" groups="account.group_cash_rounding"/>
-                                <field name="include_tax" attrs="{'invisible':[('is_yjzy_invoice','=',True)]}"/>
+                                <field name="include_tax" attrs="{'invisible':[('invoice_attribute','=','other_payment')]}"/>
                                 <field name="gongsi_id" string="销售主体" attrs="{'invisible':1}"/>
 
 
@@ -184,8 +185,8 @@
                                 <field name="date_out_in" string="进仓日期" attrs="{'invisible':[('type','in',['in_invoice','in_refund'])]}"/>
                                 <field name="date_ship" attrs="{'invisible':[('invoice_attribute','not in',['extra','normal'])]}"/>
                                 <field name="date_finish" attrs="{'invisible':[('invoice_attribute','not in',['extra','normal'])]}"/>
-                                <field name="date_deadline"/>
-                                <field name="residual_times"/>
+                                <field name="date_deadline" attrs="{'invisible':[('invoice_attribute','=','other_payment')]}"/>
+                                <field name="residual_times" attrs="{'invisible':[('invoice_attribute','=','other_payment')]}"/>
                                 <field name="yjzy_type" attrs="{'invisible':1}"/>
                                 <field name="tb_contract_code" attrs="{'invisible':1}"/>
                                 <field name="po_id" attrs="{'invisible':1}"/>

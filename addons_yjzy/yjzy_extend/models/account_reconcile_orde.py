@@ -476,7 +476,8 @@ class account_reconcile_order(models.Model):
 
     @api.onchange('other_payment_bank_id')
     def onchange_other_payment_bank_id(self):
-        self.bank_id = self.other_payment_bank_id
+        if self.invoice_attribute == 'other_payment':
+           self.bank_id = self.other_payment_bank_id
 
     @api.multi
     def action_save_test(self):
@@ -804,6 +805,8 @@ class account_reconcile_order(models.Model):
         return self.env['account.reconcile.stage'].search(search_domain, order=order, limit=1)
 
     #审批新
+
+    #提交：
     def action_submit_stage(self):
         self.ensure_one()
         # if self.amount_total_org == 0:
@@ -843,7 +846,14 @@ class account_reconcile_order(models.Model):
                             # 'operation_wizard':'25'
                             })
             elif self.hxd_type_new == '40':
-                stage_id = self._stage_find(domain=[('code', '=', '020')])
+                if self.invoice_attribute == 'other_payment':
+                    stage_id = self._stage_find(domain=[('code', '=', '040')])
+                    self.write({'stage_id': stage_id.id,
+                                'state': 'posted',
+                                # 'operation_wizard':'25'
+                                })
+                else:
+                    stage_id = self._stage_find(domain=[('code', '=', '020')])
                 self.write({'stage_id': stage_id.id,
                             'state': 'posted',
                             # 'operation_wizard':'10'
@@ -896,9 +906,9 @@ class account_reconcile_order(models.Model):
                             'approve_date': fields.date.today(),
                             'approve_uid': self.env.user.id
                             })
-            self.create_yjzy_payment_yfrl()
+            self.create_yjzy_payment_yfrl()  #生成应付认领单
             if self.operation_wizard in ['20', '25']:
-                self.action_done_new()
+                self.action_done_new() #生成的应付认领单过账
                 stage_id = self._stage_find(domain=[('code', '=', '060')])
                 self.write({'stage_id': stage_id.id,
                             'state': 'done',
@@ -926,7 +936,12 @@ class account_reconcile_order(models.Model):
         #     invoice.action_invoice_open()
         # self.create_rcfkd()
 
-
+    def action_done_new_stage(self):
+        stage_id = self._stage_find(domain=[('code', '=', '060')])
+        self.write({'stage_id': stage_id.id,
+                    'state': 'done',
+                    })
+        self.action_done_new()#对应的生成预付待认领的那个付款单的过账
 
 
 
