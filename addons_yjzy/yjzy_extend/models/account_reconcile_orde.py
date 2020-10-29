@@ -447,6 +447,7 @@ class account_reconcile_order(models.Model):
     sfk_type = fields.Selection(sfk_type, u'收付类型')
 
     bank_id = fields.Many2one('res.partner.bank', u'银行账号')
+    other_payment_bank_id = fields.Many2one('res.partner.bank', u'其他支付银行账号')
     sale_uid = fields.Many2one('res.users', u'业务员')
     assistant_uid = fields.Many2one('res.users', u'助理')
     fk_journal_id = fields.Many2one('account.journal', u'付款日记账', domain=[('type', 'in', ['cash', 'bank'])])
@@ -470,6 +471,9 @@ class account_reconcile_order(models.Model):
 
 
 
+    @api.onchange('other_payment_bank_id')
+    def onchange_other_payment_bank_id(self):
+        self.bank_id = self.other_payment_bank_id
 
     @api.multi
     def action_save_test(self):
