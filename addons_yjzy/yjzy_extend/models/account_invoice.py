@@ -920,6 +920,7 @@ class account_invoice(models.Model):
         print('invoice_ids', self.ids)
         print('partner_id', len(self.mapped('partner_id')))
         state_draft = len(self.filtered(lambda x: x.state != 'open'))
+        print('state_draft',state_draft)
         if attribute != 'other_payment' and len(self.mapped('partner_id')) > 1:
             raise Warning('不同供应商')
         elif attribute == 'other_payment' and len(self) > 1:
