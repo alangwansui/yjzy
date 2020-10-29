@@ -2115,7 +2115,7 @@
             <field name="res_model">account.invoice</field>
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_account_invoice_new_filter"/>
-            <field name="domain">[('type','=','in_invoice'),('state','=','open'),('is_yjzy_invoice','=',False),'|',('yjzy_type_1','=','purchase'),
+            <field name="domain">[('invoice_attribute','!=','other_payment'),('type','=','in_invoice'),('state','=','open'),('is_yjzy_invoice','=',False),'|',('yjzy_type_1','=','purchase'),
                 ('yjzy_type','=','purchase'),'|',('amount_payment_can_approve_all','!=',0),('yjzy_invoice_amount_payment_can_approve_all','!=',0)]</field>
             <field name="context">{'only_ref':1,'search_default_group_invoice_attribute':1,'type':'out_invoice','journal_type': 'sale','yjzy_type':'purchase'}
             </field>
