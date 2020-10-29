@@ -224,7 +224,7 @@
                                    attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),('invoice_attribute','=','other_payment')]}"
                                    options="{'no_create_edit': True}"/>
 
-                            <field name="other_payment_bank_id" string="收款方账号" domain="[('create_uid','=',uid)]"
+                            <field name="other_payment_bank_id" string="收款方账号" domain="[('create_uid','=',uid)]" context="{'form_view_ref':'base.view_partner_bank_form','default_bank_type':'personal'}"
                                    attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),('invoice_attribute','=','other_payment')]}"
                                    options="{'no_create_edit': True}"/>
                             <field name="journal_id" domain="[('type','=','renling')]" invisible="1"/>
@@ -438,7 +438,7 @@
                                 <field name="approve_uid"/>
                                 <field name="approve_date"/>
                                 <field name="operation_wizard"/>
-
+                                <field name="invoice_attribute"/>
                                 <field name="hxd_type_new"/>
                             </group>
                             <group>
