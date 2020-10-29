@@ -925,7 +925,7 @@ class account_invoice(models.Model):
             raise Warning('不同供应商')
         elif attribute == 'other_payment' and len(self) > 1:
             raise Warning('其他应付不允许多个一起申请付款')
-        elif state_draft > 1:
+        elif state_draft >= 1:
             raise Warning('非确认账单不允许创建付款申请')
         sfk_type = 'yfhxd'
         domain = [('code', '=', 'yfdrl'), ('company_id', '=', self.env.user.company_id.id)]
