@@ -221,7 +221,11 @@
                                    context="{'tree_view_ref':'yjzy_extend.view_new_partner_supplier_tree','default_is_company': True, 'default_supplier': payment_type == 'outbound', 'default_customer': payment_type == 'inbound'}"/>
                             <field name="supplier_advance_payment_ids_amount_advance_org" string="待认领预付金额"/>
                             <field name="bank_id" string="收款方账号" domain="[('partner_id','=',partner_id)]"
-                                   attrs="{'invisible':[('operation_wizard','not in',['10','30'])]}"
+                                   attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),('invoice_attribute','=','other_payment')]}"
+                                   options="{'no_create_edit': True}"/>
+
+                            <field name="other_payment_bank_id" string="收款方账号" domain="[('create_uid','=',uid)]"
+                                   attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),('invoice_attribute','=','other_payment')]}"
                                    options="{'no_create_edit': True}"/>
                             <field name="journal_id" domain="[('type','=','renling')]" invisible="1"/>
                             <field name="payment_account_id" string="认领科目" invisible="1"/>
