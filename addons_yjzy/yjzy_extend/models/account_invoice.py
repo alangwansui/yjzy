@@ -408,6 +408,10 @@ class account_invoice(models.Model):
             amount_payment_can_approve_all = one.residual - sum(x.amount_payment_org for x in payment_approved_all) or 0.0
             one.amount_payment_can_approve_all = amount_payment_can_approve_all
 
+    #1029
+    name_title = fields.Char(u'账单描述')
+    invoice_partner = fields.Char(u'账单对象')
+
     #928
     bank_id = fields.Many2one('res.partner.bank', u'银行账号')
     fk_journal_id = fields.Many2one('account.journal', u'日记账',domain=[('type', 'in', ['cash', 'bank'])])
@@ -909,6 +913,8 @@ class account_invoice(models.Model):
                     'default_hxd_type_new':'40',
                     'purchase_code_balance':1,
                     'default_invoice_attribute': attribute,
+                    'default_invoice_partner': self[0].invoice_partner,
+                    'default_name_title': self[0].name_title
                 }
             }
 
@@ -972,6 +978,8 @@ class account_invoice(models.Model):
                 'hxd_type_new':'40',
                 'purchase_code_balance': 1,
                 'invoice_attribute': attribute,
+                'invoice_partner':self[0].invoice_partner,
+                'name_title':self[0].name_title
 
             # 'partner_id': self.partner_id.id,
             #         'sfk_type': 'yfhxd',

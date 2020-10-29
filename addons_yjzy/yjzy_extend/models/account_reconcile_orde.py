@@ -318,6 +318,9 @@ class account_reconcile_order(models.Model):
                 supplier_advance_payment_ids_amount_advance_org = sum(x.advance_reconcile_order_draft_amount_advance for x in one.supplier_advance_payment_ids)
                 one.supplier_advance_payment_ids_amount_advance_org = supplier_advance_payment_ids_amount_advance_org
 
+    name_title = fields.Char(u'账单描述')
+    invoice_partner = fields.Char(u'账单对象')
+
     supplier_advance_payment_ids_amount_advance_org = fields.Float('待审批预付认领金额',compute= compute_supplier_advance_payment_ids_amount_advance_org)
 
     invoice_attribute = fields.Selection(

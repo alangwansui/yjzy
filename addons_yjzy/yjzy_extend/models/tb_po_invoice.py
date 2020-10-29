@@ -1059,6 +1059,8 @@ class tb_po_invoice(models.Model):
         account = product.property_account_income_id
 
         inv = invoice_obj.create({
+            'invoice_partner':self.invoice_partner,
+            'name_tilte':self.name_title,
             'yjzy_invoice_id':self.yjzy_invoice_id.id,
             'tb_po_invoice_id': self.id,
             'partner_id': self.partner_id.id,
