@@ -2041,6 +2041,7 @@ class account_reconcile_order_line_no(models.Model):
     invoice_id_po_ids = fields.Many2many('purchase.order',related='invoice_id.po_ids')
 
     invoice_residual = fields.Monetary(related='invoice_id.residual', string=u'发票余额', readonly=True, currency_field='invoice_currency_id')
+    amount_payment_can_approve_all = fields.Float(related='invoice_id.amount_payment_can_approve_all',string='可以申请支付应付款')
     invoice_attribute = fields.Selection(related='invoice_id.invoice_attribute',string=u'账单类型')
     yjzy_currency_id = fields.Many2one('res.currency', u'预收币种',
                                        default=lambda self: self.env.user.company_id.currency_id.id)
