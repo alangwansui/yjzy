@@ -2155,7 +2155,7 @@
             </field>
             <!--field name="target">new</field-->
             <field name="view_ids" eval="[(5, 0, 0),
-                              (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.invoice_new_supplier_1_tree')}),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.view_tb_po_invoice_tree')}),
                               (0, 0, {'view_mode': 'form', 'view_id': ref('view_account_supplier_invoice_new_form')}),
                               ]"/>
         </record>
@@ -2606,7 +2606,7 @@
             </field>
             <!--field name="target">new</field-->
             <field name="view_ids" eval="[(5, 0, 0),
-                              (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.view_supplier_invoice_extra_tree')}),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.view_tb_po_invoice_tree')}),
                               (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.view_account_invoice_new_form_in_one')}),
                               ]"/>
         </record>
@@ -2641,7 +2641,7 @@
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_account_invoice_new_filter"/>
             <field name="domain">[('type','=','in_invoice'),('yjzy_type_1','=','purchase'),('state','=','open'),('invoice_attribute','=','other_payment')]</field>
-            <field name="context">{'search_default_group_by_state':1,'default_type':'in_invoice','only_ref':1,'default_yjzy_type_1':'purchase'}
+            <field name="context">{'default_type':'in_invoice','only_ref':1,'default_yjzy_type_1':'purchase'}
             </field>
             <!--field name="target">new</field-->
             <field name="view_ids" eval="[(5, 0, 0),

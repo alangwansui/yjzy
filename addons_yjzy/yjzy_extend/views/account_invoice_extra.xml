@@ -93,7 +93,53 @@
                     <field name="date_invoice" string="账单日期"/>
                     <field name="invoice_partner"/>
                     <field name="name_title"/>
-                    <button name="open_supplier_reconcile_order_line" icon="fa-pencil-square-o" type="object"/>
+                     <button name="open_supplier_reconcile_order_line" attrs="{'invisible':[('reconcile_order_line_count','=',0)]}" icon="fa-pencil-square-o" type="object"/>
+                    <field name="reconcile_order_line_count" invisible="1"/>
+                    <field name="date_deadline_new" string="实际到期日" invisible="1"/>
+                    <field name="residual_times_new" invisible="1"/>
+                    <field name="date_due" string="进仓到期日" invisible="1"/>
+                    <field name="residual_times_out_in_new" invisible="1"/>
+                    <field name="amount_total_signed" string="原始应付款" sum="Total"/>
+                    <field name="residual_signed" string="剩余应付款" sum="Amount Due"/>
+                    <field name="amount_payment_can_approve_all" string="可申请支付应付款"/>
+                    <field name="reconcile_order_line_payment" sum="小计" string="付款认领金额" invisible="1"/>
+                    <field name="reconcile_order_line_advance" sum="小计" string="预付认领金额" invisible="1"/>
+                    <field name="reconcile_order_line_bank" sum="小计" invisible="1"/>
+                    <field name="reconcile_order_line_amount_diff" sum="小计" string="费用认领金额" invisible="1"/>
+                    <field name="commercial_partner_id" invisible="1"/>
+                    <field name="reference" invisible="1"/>
+                    <field name="name" invisible="1"/>
+                    <field name="journal_id" invisible="1"/>
+                    <field name="company_id" groups="base.group_multi_company" invisible="1"
+                           options="{'no_create': True}"/>
+                    <field name="user_id" invisible="1"/>
+                    <field name="origin" invisible="1"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="company_currency_id" invisible="1"/>
+                    <field name="state" />
+
+                    <field name="type" invisible="context.get('type',True)"/>
+                    <field name="residual_times" groups="base.group_system"/>
+                    <field name="residual_times_out_in" groups="base.group_system"/>
+                    <field name="date_deadline" string="实际到期日" groups="base.group_system"/>
+                    <field name="fault_comments"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_tb_po_invoice_tree" model="ir.ui.view">
+            <field name="name">account.invoice.other.payment.tree</field>
+            <field name="model">account.invoice</field>
+            <field name="arch" type="xml">
+                <tree decoration-info="state == 'draft'"  decoration-muted="state == 'cancel'" string="Invoice">
+                    <field name="partner_id" string="供应商" />
+                    <field name="bill_id" string="合同号" invisible="1"/>
+                    <field name="tb_contract_code" string="合同号"/>
+                    <field name="date_invoice" string="账单日期"/>
+                    <field name="invoice_partner" invisible="1"/>
+                    <field name="name_title" invisible="1"/>
+                    <button name="open_supplier_reconcile_order_line" attrs="{'invisible':[('reconcile_order_line_count','=',0)]}" icon="fa-pencil-square-o" type="object"/>
+                    <field name="reconcile_order_line_count" invisible="1"/>
                     <field name="date_deadline_new" string="实际到期日" invisible="1"/>
                     <field name="residual_times_new" invisible="1"/>
                     <field name="date_due" string="进仓到期日" invisible="1"/>

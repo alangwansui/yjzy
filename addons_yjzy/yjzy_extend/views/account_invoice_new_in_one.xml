@@ -363,7 +363,7 @@
                                         <field name="origin" invisible="1"/>
                                         <field name="is_rounding_line" invisible="1"/>
                                         <field name="name" invisible="1"/>
-                                        <field name="so_id" attrs="{'column_invisible': [('parent.is_yjzy_invoice', '=',True)]}"/>
+                                        <field name="so_id" attrs="{'column_invisible': [('parent.invoice_attribute','not in',['normal']),('parent.yjzy_type','!=','sale')]}"/>
                                         <field name="company_id" invisible="1"/>
                                         <field name="account_id" groups="account.group_account_user" invisible="1"
                                                domain="[('company_id', '=', parent.company_id), ('internal_type', '=', 'other'), ('deprecated', '=', False)]"/>
@@ -383,16 +383,16 @@
                                         <field string="Subtotal" name="price_subtotal" invisible="1"
                                                groups="sale.group_show_price_subtotal"/>
                                         <field name="yjzy_price_total" string="合计"/>
-                                        <field string="Total" name="price_total" groups="sale.group_show_price_total" attrs="{'column_invisible': [('parent.is_yjzy_invoice', '=',True)]}"/>
+                                        <field string="Total" name="price_total" groups="sale.group_show_price_total" invisible="1" attrs="{'column_invisible': [('parent.is_yjzy_invoice', '=',True)]}"/>
                                         <field name="currency_id" invisible="1"/>
                                     </tree>
                                 </field>
                                  <group class="oe_subtotal_footer oe_right">
-                                    <field name="amount_untaxed"/>
-                                    <field name="amount_tax"/>
+                                    <field name="amount_untaxed" invisible="1"/>
+                                    <field name="amount_tax" invisible="1"/>
                                     <field name="amount_total" class="oe_subtotal_footer_separator"/>
                                     <field name="payments_widget" colspan="2" nolabel="1" widget="payment"/>
-                                    <field name="residual" class="oe_subtotal_footer_separator"
+                                    <field name="residual" class="oe_subtotal_footer_separator" string="剩余金额"
                                            attrs="{'invisible': [('state', '=', 'draft')]}"/>
                                     <field name="reconciled" invisible="1"/>
                                     <field name="outstanding_credits_debits_widget" colspan="2" nolabel="1"
@@ -470,7 +470,7 @@
 
                                         <field name="amount_invoice_so_residual" invisible="1"/>
 
-                                    <field name="invoice_id_po_ids" widget="many2many_tags"/>
+                                    <field name="invoice_id_po_ids" widget="many2many_tags" attrs="{'invisible':['|','|',('parent.invoice_attribute','not in',['normal','extra']),('parent.yjzy_type_1','!=','purchase'),('parent.yjzy_type','!=','purchase'),]}"/>
                                     <field name="amount_invoice_so" string="原始应付款" invisible="1"/>
                                     <field name="invoice_residual" string="剩余应付款" invisible="1"/><!--attrs="{'column_invisible':[('parent.operation_wizard','not in',['10'])]}"-->
                                     <field name="payment_currency_id" invisible="1"/>
