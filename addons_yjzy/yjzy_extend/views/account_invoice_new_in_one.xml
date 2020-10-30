@@ -54,7 +54,7 @@
                         <button name="open_invoice_id" string="创建发票" type="object" groups="base.group_system"/>
                         <field name="state" widget="statusbar" nolabel="1" statusbar_visible="draft,open,paid"/>
                     </header>
-                    <div groups="account.group_account_invoice" class="alert alert-info" role="alert"
+                    <div groups="base.group_system" class="alert alert-info" role="alert"
                          style="margin-bottom:0px;" attrs="{'invisible': [('has_outstanding','=',False)]}">
                         You have
                         <bold>
@@ -210,7 +210,7 @@
                                 <field name="move_name" invisible="1"/>
                                 <field name="extra_code" invisible="1"/>
                                 <field name="team_id" attrs="{'invisible':1}"/>
-                                <field name="tb_po_invoice_id" string="申请单"/>
+                                <field name="tb_po_invoice_id" string="申请单" context="{'form_view_ref':'yjzy_extend.tb_po_form'}"/>
                                 <field name="fault_comments" attrs="{'invisible':[('is_yjzy_invoice','=',True)]}"/>
 
                             </group>
@@ -471,7 +471,9 @@
                                     </tree>
                                 </field>
                             </page>
-
+                            <page string="">
+                                <field name="tb_po_invoice_ids" />
+                            </page>
                             <page string="开票明细" attrs="{'invisible':[('invoice_attribute','not in',['other_po','expense_po'])]}" invisible="1">
                                 <field name="tb_hsname_all_ids">
                                     <tree>

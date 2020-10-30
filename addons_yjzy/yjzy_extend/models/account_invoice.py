@@ -417,13 +417,17 @@ class account_invoice(models.Model):
             tb_po_invoice_back_tax_ids = self.env['account.invoice'].search([('tb_po_invoice_id','=',one.tb_po_invoice_id),('yjzy_type_1','=','back_tax')])
             tb_po_invoice_p_s_ids = self.env['account.invoice'].search([('tb_po_invoice_id','=',one.tb_po_invoice_id),('yjzy_type_1','=','purchase'),('type','=','in_refund'),])
             tb_po_invoice_s_ids = self.env['account.invoice'].search([('tb_po_invoice_id','=',one.tb_po_invoice_id),('yjzy_type_1','=','sale'),('type','=','out_invoice')])
+            tb_po_invoice_ids = self.env['account.invoice'].search([('tb_po_invoice_id','=',one.tb_po_invoice_id)])
             one.tb_po_invoice_back_tax_ids = tb_po_invoice_back_tax_ids
             one.tb_po_invoice_p_s_ids = tb_po_invoice_p_s_ids
             one.tb_po_invoice_s_ids = tb_po_invoice_s_ids
+            one.tb_po_invoice_ids = tb_po_invoice_ids
     #1029
-    tb_po_invoice_back_tax_ids = fields.Many2many('account.invoice','相关退税发票',compute=compute_tb_po_invoice)
-    tb_po_invoice_p_s_ids = fields.Many2many('account.invoice','相关冲减发票',compute=compute_tb_po_invoice)
-    tb_po_invoice_s_ids = fields.Many2many('account.invoice','相关应收发票',compute=compute_tb_po_invoice)
+    tb_po_invoice_back_tax_ids = fields.Many2many('account.invoice','相关退税账单',compute=compute_tb_po_invoice)
+    tb_po_invoice_p_s_ids = fields.Many2many('account.invoice','相关冲减账单',compute=compute_tb_po_invoice)
+    tb_po_invoice_s_ids = fields.Many2many('account.invoice','相关应收账单',compute=compute_tb_po_invoice)
+    tb_po_invoice_ids = fields.Many2many('account.invoice','相关账单',compute=compute_tb_po_invoice)
+
 
     name_title = fields.Char(u'账单描述')
     invoice_partner = fields.Char(u'账单对象')
