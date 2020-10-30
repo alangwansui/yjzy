@@ -51,7 +51,7 @@
         'wizard/expense_sheet_refuse_reason_views.xml',
         'wizard/account_reconcile_refuse_reason_views.xml',
         'wizard/tb_po_invoice_refuse_reason_views.xml',
-
+        'views/account_invoice_extra.xml',
         'views/account_journal.xml',
         'views/account_move.xml',
         'views/account_invoice_new_in_one.xml',
@@ -120,7 +120,7 @@
         'views/product_product_new.xml',
         'views/dashboard.xml',
         'views/transport_bill_customs_invoice.xml',
-        'views/account_invoice_extra.xml',
+
         'views/trasnport_bill_stage.xml',
         'views/trasnport_bill_stage.xml',
         'views/account_invoice_extra_po.xml',
