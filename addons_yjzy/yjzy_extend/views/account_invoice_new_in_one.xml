@@ -6,6 +6,9 @@
             <field name="model">account.invoice</field>
             <field name="arch" type="xml">
                 <form string="应收账单" class="o_invoice_form" create="false">
+                    <header>
+                        <button name="create_yfhxd_from_multi_invoice" context="{'invoice_attribute':invoice_attribute}" class="oe_highlight" type="object" string="创建付款申请"/>
+                    </header>
                      <header attrs="{'invisible':['|',('is_yjzy_invoice','=',True),('type','not in',['out_invoice','out_refund'])]}">
                         <button name="open_tb_po_invoice" string="额外应收申请" type="object" />
                         <button name="open_tb_po_reconcile_invoice" string="创建核销应收申请" type="object"/>
@@ -66,6 +69,14 @@
                                 <field string="额外账单" name="yjzy_invoice_count" widget="statinfo"/>
                             </button>
                         </div>
+<!--                        <div class="oe_button_box" name="button_box">-->
+<!--                             <button type="object" name="open_other_payment_reconcile_order_ids" class="oe_stat_button" icon="fa-truck" context="{}"-->
+<!--                                     attrs="{'invisible':[('yjzy_invoice_count','=',0)]}">-->
+<!--                                <field string="付款和认领" name="reconcile_order_ids_count" widget="statinfo"/>-->
+<!--                            </button>-->
+<!--                        </div>-->
+
+
 
                     <div>
                         <label string="应收账单" class="oe_inline"  attrs="{'invisible':[('type','!=','out_invoice'),'|',('yjzy_type','!=','sale'),('yjzy_type_1','!=','sale')]}"/>
@@ -210,7 +221,7 @@
                                             本单应收金额
                                         </b>
                                         <b attrs="{'invisible':[('type','not in',['in_invoice','in_refund'])]}" >
-                                            本账单应付金额
+                                            本单原始应付款
                                         </b>
                                     </label>
                                     <div class="o_row">
@@ -219,21 +230,34 @@
 
                                     <label for="" name="residual_signed">
                                         <b attrs="{'invisible':[('type','in',['in_invoice','in_refund'])]}" >
-                                            本单未收金额
+                                            本单剩余应收款
                                         </b>
                                         <b attrs="{'invisible':[('type','not in',['in_invoice','in_refund'])]}" >
-                                            本账单未付金额
+                                            本单剩余应付款
                                         </b>
                                     </label>
                                     <div class="o_row">
                                     <field name="residual_signed"/>
                                     </div>
-                                    <label for="" name="yjzy_total" attrs="{'invisible':[('yjzy_invoice_count','=',0)]}">
+
+                                    <label for="" name="amount_payment_can_approve_all">
                                         <b attrs="{'invisible':[('type','in',['in_invoice','in_refund'])]}" >
-                                            总应收金额
+                                            本单可认领应收
                                         </b>
                                         <b attrs="{'invisible':[('type','not in',['in_invoice','in_refund'])]}" >
-                                            总应付金额
+                                            本单可申请应付
+                                        </b>
+                                    </label>
+                                    <div class="o_row">
+                                    <field name="amount_payment_can_approve_all"/>
+                                    </div>
+
+                                    <label for="" name="yjzy_total" attrs="{'invisible':[('yjzy_invoice_count','=',0)]}">
+                                        <b attrs="{'invisible':[('type','in',['in_invoice','in_refund'])]}" >
+                                            总原始应收款
+                                        </b>
+                                        <b attrs="{'invisible':[('type','not in',['in_invoice','in_refund'])]}" >
+                                            总原始应付款
                                         </b>
                                     </label>
                                     <div class="o_row" attrs="{'invisible':[('yjzy_invoice_count','=',0)]}">
@@ -241,15 +265,28 @@
                                     </div>
                                     <label for="" name="yjzy_residual" attrs="{'invisible':[('yjzy_invoice_count','=',0)]}">
                                         <b attrs="{'invisible':[('type','in',['in_invoice','in_refund'])]}" >
-                                            总未收金额
+                                            总剩余应收款
                                         </b>
                                         <b attrs="{'invisible':[('type','not in',['in_invoice','in_refund'])]}" >
-                                            总未付金额
+                                            总剩余应付款
                                         </b>
                                     </label>
                                     <div class="o_row" attrs="{'invisible':[('yjzy_invoice_count','=',0)]}">
                                    <field name="yjzy_residual"/>
                                     </div>
+                                    <label for="" name="amount_payment_can_approve_all" attrs="{'invisible':[('yjzy_invoice_count','=',0)]}">
+                                        <b attrs="{'invisible':[('type','in',['in_invoice','in_refund'])]}" >
+                                            总可认领应收
+                                        </b>
+                                        <b attrs="{'invisible':[('type','not in',['in_invoice','in_refund'])]}" >
+                                            总可申请应付
+                                        </b>
+                                    </label>
+                                    <div class="o_row" attrs="{'invisible':[('yjzy_invoice_count','=',0)]}">
+                                    <field name="yjzy_amount_payment_can_approve_all"/>
+                                    </div>
+
+
                                 </group>
 
                                 <group style="border-top:1px #6C6A6A solid;margin-top:-10px;" groups="base.group_system" invisible="1">
@@ -459,9 +496,12 @@
                             </page>
 
                            <page string="账单认领明细">
+
+                               <field name="reconcile_order_ids" groups="base.group_system"/>
+
                                <field name="yjzy_invoice_reconcile_order_line_no_ids">
 
-                                      <tree editable="bottom" create="false" default_order="invoice_id,invoice_attribute desc">
+                                   <tree editable="bottom" create="false" default_order="invoice_id,invoice_attribute desc">
 
                                     <field name="id" invisible="1"/>
                                           <field name="approve_date"/>
@@ -495,7 +535,7 @@
                                    <field name="state_1"/>
                                </tree>
                                </field>
-                               <field name="reconcile_order_ids" groups="base.group_system"/>
+
                             </page>
 
                             <page string="账单修正明细" attrs="{'invisible':1}">

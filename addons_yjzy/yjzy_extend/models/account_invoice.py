@@ -401,7 +401,7 @@ class account_invoice(models.Model):
     #
     # invoice_tb_partner_ids = fields.Many2many('account.invoice',u'和出运相关的账单',compute=_compute_invoice_tb_partner_ids)
     # invoice_tb_partner_ids_1 = fields.Many2many('account.invoice', u'和出运相关的账单', compute=_compute_invoice_tb_partner_ids)
-    @api.depends('reconcile_order_line_ids','reconcile_order_line_ids.amount_payment_org','residual','reconcile_order_line_ids.order_id.state',
+    @api.depends('amount_total','residual','reconcile_order_line_ids','reconcile_order_line_ids.amount_payment_org','residual','reconcile_order_line_ids.order_id.state',
                  'yjzy_invoice_reconcile_order_line_ids','yjzy_invoice_reconcile_order_line_ids.amount_payment_org','residual','yjzy_invoice_reconcile_order_line_ids.order_id.state')
     def compute_amount_payment_can_approve_all(self):
         for one in self:
@@ -935,8 +935,11 @@ class account_invoice(models.Model):
                 }
             }
 
-
-
+    def action_create_yfhxd(self):
+        ctx = self.env.context.get('invoice_attribute')
+        print('yfhx_ctx')
+        yfhxd = self.create_yfhxd_from_multi_invoice(ctx)
+        return yfhxd
 
     #创建预付核销单从多个账单通过服务器动作创建 不能用，
     def create_yfhxd_from_multi_invoice(self,attribute):
@@ -970,6 +973,7 @@ class account_invoice(models.Model):
                 invoice_dic.append(x.id)
             if one.amount_payment_can_approve_all != 0:  #考虑已经提交审批的申请
                 invoice_dic.append(one.id)
+        print('invoice_dic',invoice_dic)
         # test = [(for x in line.yjzy_invoice_all_ids) for line in self)]
         # invoice_ids = self.env['account.invoice'].search([('id','in',invoice_dic)])
         # with_context(
@@ -1021,6 +1025,21 @@ class account_invoice(models.Model):
 
             }
         }
+
+    def open_other_payment_reconcile_order_ids(self):
+        form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new')
+        tree_view = self.env.ref('yjzy_extend.account_yfhxd_tree_view_approve_new')
+
+        return {
+            'type': 'ir.actions.act_window',
+            'view_mode': 'form',
+            'res_model': 'account.reconcile.order',
+            'views': [(tree_view.id, 'tree'),(form_view.id, 'form')],
+            'target': 'current',
+            'domain':[('invoice_ids','in',self.id)],
+            'context': {}
+        }
+
     #从核销单的发票明细创建核销单。（创建预付-应付的核销）现在用不到了
     def submit_yfhxd_new(self):
         print('invoice_ids', self.ids)
