@@ -157,7 +157,8 @@
                                 <field name="bill_id" string="出运合同" context="{'only_ref':1}" attrs="{'invisible':[('invoice_attribute','=','other_payment')]}"/>
                                 <field name="partner_shipping_id" groups="sale.group_delivery_invoice_address"
                                        invisible="1"/>
-                                <field name="payment_term_id" attrs="{'invisible':[('invoice_attribute','=','other_payment')]}"/>
+                                <field name="payment_term_id" attrs="{'invisible':[('invoice_attribute','in',['other_payment','other_po'])]}"/>
+
                                 <field name="yjzy_payment_term_id" string="付款条款" invisible="1"/> <!--    attrs="{'invisible':[('is_yjzy_invoice','=',True)]}"-->
                                 <field name="yjzy_currency_id" string="货币" invisible="1"/>
                                 <label for="currency_id" groups="base.group_multi_currency"/>
@@ -185,8 +186,8 @@
                                 <field name="date_out_in" string="进仓日期" attrs="{'invisible':[('type','in',['in_invoice','in_refund'])]}"/>
                                 <field name="date_ship" attrs="{'invisible':[('invoice_attribute','not in',['extra','normal'])]}"/>
                                 <field name="date_finish" attrs="{'invisible':[('invoice_attribute','not in',['extra','normal'])]}"/>
-                                <field name="date_deadline" attrs="{'invisible':[('invoice_attribute','=','other_payment')]}"/>
-                                <field name="residual_times" attrs="{'invisible':[('invoice_attribute','=','other_payment')]}"/>
+                                <field name="date_deadline" attrs="{'invisible':[('invoice_attribute','in',['other_payment','other_po','expense_po'])]}"/>
+                                <field name="residual_times" attrs="{'invisible':[('invoice_attribute','in',['other_payment','other_po','expense_po'])]}"/>
                                 <field name="yjzy_type" attrs="{'invisible':1}"/>
                                 <field name="tb_contract_code" attrs="{'invisible':1}"/>
                                 <field name="po_id" attrs="{'invisible':1}"/>
@@ -198,6 +199,7 @@
                                 <field name="move_name" invisible="1"/>
                                 <field name="extra_code" invisible="1"/>
                                 <field name="team_id" attrs="{'invisible':1}"/>
+                                <field name="tb_po_invoice_id" string="申请单"/>
                                 <field name="fault_comments" attrs="{'invisible':[('is_yjzy_invoice','=',True)]}"/>
 
                             </group>
@@ -351,7 +353,7 @@
                                 </group>
                                 <field name="comment" placeholder="Terms and conditions..."/>
                             </page>
-                            <page string="本账单明细">
+                            <page string="本账单明细" attrs="{'invisible':[('invoice_attribute','in',['expense_po','other_po'])]}">
                                 <field name="invoice_line_ids_origin">
                                     <tree default_order="id">
                                         <field name="sequence" widget="handle"/>
@@ -399,7 +401,7 @@
                             </page>
 
 
-                            <page string="开票明细" attrs="{'invisible':1}">
+                            <page string="开票明细" attrs="{'invisible':[('invoice_attribute','not in',['other_po','expense_po'])]}">
                                 <field name="tb_hsname_all_ids">
                                     <tree>
                                          <field name="hs_id"/>
@@ -610,6 +612,7 @@
                                     </tree>
                                 </field>
                             </page>
+
                             <page groups="base.group_system">
                                 <group>
                                 <field name="is_yjzy_invoice"/>

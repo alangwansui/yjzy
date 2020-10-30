@@ -412,8 +412,19 @@ class account_invoice(models.Model):
 
             one.amount_payment_can_approve_all = amount_payment_can_approve_all
             one.yjzy_amount_payment_can_approve_all = yjzy_amount_payment_can_approve_all
-
+    def compute_tb_po_invoice(self):
+        for one in self:
+            tb_po_invoice_back_tax_ids = self.env['account.invoice'].search([('tb_po_invoice_id','=',one.tb_po_invoice_id),('yjzy_type_1','=','back_tax')])
+            tb_po_invoice_p_s_ids = self.env['account.invoice'].search([('tb_po_invoice_id','=',one.tb_po_invoice_id),('yjzy_type_1','=','purchase'),('type','=','in_refund'),])
+            tb_po_invoice_s_ids = self.env['account.invoice'].search([('tb_po_invoice_id','=',one.tb_po_invoice_id),('yjzy_type_1','=','sale'),('type','=','out_invoice')])
+            one.tb_po_invoice_back_tax_ids = tb_po_invoice_back_tax_ids
+            one.tb_po_invoice_p_s_ids = tb_po_invoice_p_s_ids
+            one.tb_po_invoice_s_ids = tb_po_invoice_s_ids
     #1029
+    tb_po_invoice_back_tax_ids = fields.Many2many('account.invoice','相关退税发票',compute=compute_tb_po_invoice)
+    tb_po_invoice_p_s_ids = fields.Many2many('account.invoice','相关冲减发票',compute=compute_tb_po_invoice)
+    tb_po_invoice_s_ids = fields.Many2many('account.invoice','相关应收发票',compute=compute_tb_po_invoice)
+
     name_title = fields.Char(u'账单描述')
     invoice_partner = fields.Char(u'账单对象')
 
@@ -588,7 +599,7 @@ class account_invoice(models.Model):
              " * The 'Paid' status is set automatically when the invoice is paid. Its related journal entries may or may not be reconciled.\n"
              " * The 'Cancelled' status is used when user cancel invoice.")
     yjzy_invoice_id = fields.Many2one('account.invoice',u'关联账单',default=lambda self: self.id)
-    yjzy_invoice_back_tax_id = fields.Many2one('account.invoice', u'关联退税账单')
+    yjzy_invoice_back_tax_id = fields.Many2one('account.invoice', u'关联退税账单') #计算退税的增加减少和原来的退税的关系
     yjzy_invoice_count = fields.Integer( u'关联账单数量',compute=_compute_count)
     yjzy_invoice_ids = fields.One2many('account.invoice','yjzy_invoice_id',u'额外账单', domain=[('is_yjzy_invoice','=',True)])
     yjzy_invoice_wait_payment_ids = fields.One2many('account.invoice','yjzy_invoice_id',u'额外账单', domain=[('is_yjzy_invoice','=',True),('type','in',['out_invoice','in_invoice']),('state','in',['open']),('amount_payment_can_approve_all','!=',0)])
