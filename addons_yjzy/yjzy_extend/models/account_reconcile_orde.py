@@ -311,17 +311,17 @@ class account_reconcile_order(models.Model):
         for one in self:
             one.advance_reconcile_line_draft_all_count = sum(x.advance_reconcile_order_draft_ids_count for x in one.supplier_advance_payment_ids)
 
-    @api.depends('stage_id')
+    @api.depends('stage_id','invoice_ids','supplier_advance_payment_ids')
     def compute_supplier_advance_payment_ids_amount_advance_org(self):
         for one in self:
-            if one.state_1 == 'advance_approval':
-                supplier_advance_payment_ids_amount_advance_org = sum(x.advance_reconcile_order_draft_amount_advance for x in one.supplier_advance_payment_ids)
-                one.supplier_advance_payment_ids_amount_advance_org = supplier_advance_payment_ids_amount_advance_org
+
+            supplier_advance_payment_ids_amount_advance_org = sum(x.advance_reconcile_order_draft_amount_advance for x in one.supplier_advance_payment_ids)
+            one.supplier_advance_payment_ids_amount_advance_org = supplier_advance_payment_ids_amount_advance_org
 
     name_title = fields.Char(u'账单描述')
     invoice_partner = fields.Char(u'账单对象')
 
-    supplier_advance_payment_ids_amount_advance_org = fields.Float('待审批预付认领金额',compute= compute_supplier_advance_payment_ids_amount_advance_org)
+    supplier_advance_payment_ids_amount_advance_org = fields.Float('待审批预付认领金额',compute= compute_supplier_advance_payment_ids_amount_advance_org,store=True)
 
     invoice_attribute = fields.Selection(
         [('normal', u'常规账单'),

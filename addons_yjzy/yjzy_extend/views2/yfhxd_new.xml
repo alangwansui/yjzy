@@ -86,6 +86,7 @@
                 <field name="amount_advance_org" string="预付认领金额" invisible="1"/>
                 <field name="amount_advance_org_new" string="预付认领金额" groups="base.group_system"/>
                 <field name="supplier_advance_payment_ids_amount_advance_org"/>
+                <field name="supplier_advance_payment_ids_amount_advance_org"/>
                 <field name="amount_total" invisible="1"/>
                 <field name="currency_id" attrs="{}" invisible="1"/>
                 <field name="state"/>
@@ -219,7 +220,7 @@
                             <field name="partner_id" required="1" attrs="{'invisible':['|',('operation_wizard','=',False),('invoice_attribute','=','other_payment')]}"
                                    domain="[('is_company','=',True),('parent_id', '=', False),('supplier','=',1),('state','=','done')]"
                                    context="{'tree_view_ref':'yjzy_extend.view_new_partner_supplier_tree','default_is_company': True, 'default_supplier': payment_type == 'outbound', 'default_customer': payment_type == 'inbound'}"/>
-                            <field name="supplier_advance_payment_ids_amount_advance_org" string="待认领预付金额" attrs="{'invisible':[('invoice_attribute','=','other_payment')]}"/>
+                            <field name="supplier_advance_payment_ids_amount_advance_org" string="待认领预付金额" attrs="{'invisible':[('invoice_attribute','in',['other_payment','expense_po','other_po'])]}"/>
                             <field name="bank_id" string="收款方账号" domain="[('partner_id','=',partner_id)]"
                                    attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),('invoice_attribute','=','other_payment')]}"
                                    options="{'no_create_edit': True}"/>
@@ -327,7 +328,7 @@
                                     <field name="po_id"/>
                                     <field name="amount" string="原始预付金额"/>
                                     <field name="advance_balance_total" string="未认领金额"/>
-                                    <field name="advance_reconcile_order_draft_amount_advance" string="待认领预付金额"/>
+                                    <field name="advance_reconcile_order_draft_amount_advance" string="待认领预付金额" />
                                     <button name="open_yfsqd_yfhxd_form_new" type="object" string="认领预付" invisible="1" context="{'default_invoice_ids':parent.invoice_ids}"
                                             attrs="{'invisible':[('advance_balance_total','=',0)]}"/>
                                     <button name="create_yfsqd_yfhxd_form_new" type="object" string="认领预付" help="创建预付-应付认领单" context="{'default_invoice_ids':parent.invoice_ids,'open':1}"
