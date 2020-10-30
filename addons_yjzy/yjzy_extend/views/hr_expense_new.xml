@@ -451,7 +451,7 @@
                     <group expand="0" string="Group By">
                         <filter string="费用类型" domain="[]" name="group_expense_to_invoice_type" context="{'group_by': 'expense_to_invoice_type'}"/>
 
-                        <filter string="审批流" domain="[]" context="{'group_by': 'x_sheet_wkf_state'}" invisible="1"/>
+                        <filter string="审批流" domain="[]" context="{'group_by': 'stage_id'}" invisible="1"/>
 
 
                         <filter string="申请单" domain="[]" context="{'group_by': 'sheet_id'}"/>
@@ -543,7 +543,7 @@
                            options="{'currency_field': 'company_currency_id'}"/>
                     <field name="currency_id" invisible="True"/>
                     <field name="attachment_number" invisible="True"/>
-                    <field name="sheet_wkf_state" string="审批流"/>
+                    <field name="stage_id" string="审批流"/>
                     <field name="sheet_employee_confirm_date" string="申请人"/>
                     <field name="employee_confirm_date" string="责任人"/>
                     <field name="sheet_account_confirm_date" string="财务"/>

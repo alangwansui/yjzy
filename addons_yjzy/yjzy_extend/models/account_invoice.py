@@ -462,6 +462,9 @@ class account_invoice(models.Model):
     hsname_all_ids = fields.One2many('invoice.hs_name.all','invoice_id',u'报关明细')
     #显示开票资料对应出运单的报关资料汇总
     tb_hsname_all_ids = fields.One2many('tbl.hsname.all', u'报关明细',related="bill_id.hsname_all_ids")
+    tb_po_hsname_all_ids = fields.One2many('tb.po.invoice.line', u'开票明细',related="tb_po_invoice_id.hsname_all_ids")
+
+
     tb_hsname_all_ids_count = fields.Integer('报关明细数量',compute=compute_tb_po_invoice_ids)
     external_invoice_done = fields.Selection([('10_no',u'否'),
                                               ('20_yes',u'是'),
@@ -532,8 +535,8 @@ class account_invoice(models.Model):
                                                             u'所有核销细行no', domain=[('order_id', '!=', False),
                                                                                 ('order_id.sfk_type', '=', 'yfhxd')]
                                                             )  # domain=[('order_id.state', 'in', ['approved']), ('amount_total_org', '!=', 0)]关联账单（额外账
-    amount_payment_can_approve_all = fields.Float(u'可申请应收付款',compute=compute_amount_payment_can_approve_all, store=True) #未付金额-审批完成的付款金额
-    yjzy_amount_payment_can_approve_all = fields.Float(u'所有可申请应收付款', compute=compute_amount_payment_can_approve_all,
+    amount_payment_can_approve_all = fields.Monetary(u'可申请应收付款',currency_field='currency_id',compute=compute_amount_payment_can_approve_all, store=True) #未付金额-审批完成的付款金额
+    yjzy_amount_payment_can_approve_all = fields.Monetary(u'所有可申请应收付款',currency_field='currency_id', compute=compute_amount_payment_can_approve_all,
                                                   store=True)  # 包括额外账单的
     reconcile_date = fields.Date(u'认领日期', related='reconcile_order_id.date')
     reconcile_order_line_char = fields.Text(compute=_get_reconcile_order_line_char, string=u'销售合同')

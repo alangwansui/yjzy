@@ -436,9 +436,43 @@
                                            widget="payment" attrs="{'invisible': [('state', 'not in', 'open')]}"/>
                                 </group>
                             </page>
+                            <page string="开票明细">
+                                <field name="tb_po_hsname_all_ids">
+                                     <tree editable="bottom">
+                                        <field name="hs_id" />
+                                        <field name="hsname_all_line_id" invisible="1"/>
+                                        <!--field name="purchase_amount2_tax"/>
+                                        <field name="purchase_amount2_no_tax"/-->
+                                        <field name="back_tax"
+                                               />
+                                        <field name="amount2" readonly="1"
+                                               />
+                                        <field name="purchase_amount2_tax" readonly="1" sum="小计"
+                                               />
+                                        <field name="purchase_amount2_no_tax" readonly="1" sum="小计"
+                                               />
+                                        <field name="purchase_back_tax_amount2_new" readonly="1" string="实际退税金额"
+                                               sum="小计" />
+                                        <field name="purchase_amount_min_add_forecast" readonly="1" sum="小计"
+                                               />
+                                        <field name="purchase_amount_max_add_forecast" readonly="1" sum="小计"
+                                              />
+                                        <field name="purchase_amount2_add_actual" readonly="1" sum="小计"
+                                               />
+                                        <field name="purchase_amount_min_add_rest" readonly="1"
+                                              />
+                                        <field name="purchase_amount_max_add_rest" readonly="1"
+                                               />
+                                        <field name="purchase_amount2_add_this_time"
+                                               />
+                                        <field name="p_s_add_this_time"
+                                               />
+                                        <field name="back_tax_add_this_time"/>
+                                    </tree>
+                                </field>
+                            </page>
 
-
-                            <page string="开票明细" attrs="{'invisible':[('invoice_attribute','not in',['other_po','expense_po'])]}">
+                            <page string="开票明细" attrs="{'invisible':[('invoice_attribute','not in',['other_po','expense_po'])]}" invisible="1">
                                 <field name="tb_hsname_all_ids">
                                     <tree>
                                          <field name="hs_id"/>
