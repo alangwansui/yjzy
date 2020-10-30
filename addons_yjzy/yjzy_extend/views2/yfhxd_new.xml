@@ -86,7 +86,7 @@
                 <field name="amount_advance_org" string="预付认领金额" invisible="1"/>
                 <field name="amount_advance_org_new" string="预付认领金额" groups="base.group_system"/>
                 <field name="supplier_advance_payment_ids_amount_advance_org"/>
-                <field name="supplier_advance_payment_ids_amount_advance_org"/>
+
                 <field name="amount_total" invisible="1"/>
                 <field name="currency_id" attrs="{}" invisible="1"/>
                 <field name="state"/>
