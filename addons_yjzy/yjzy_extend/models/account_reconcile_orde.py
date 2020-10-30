@@ -2060,7 +2060,7 @@ class account_reconcile_order_line_no(models.Model):
                 'view_mode': 'form',
                 'res_model': 'account.invoice',
                 'views': [(form_view, 'form')],
-                'res_id': self.id,
+                'res_id': self.invoice_id.id,
                 'target': 'new',
                 'type': 'ir.actions.act_window',
                 'context': {}

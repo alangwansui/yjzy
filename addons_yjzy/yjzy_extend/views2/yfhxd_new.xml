@@ -192,16 +192,16 @@
                                 第一步：确认是否有未认领的预付单
                             </span>
                         </div>
-                 <div class="oe_form_box_info oe_text_center" attrs="{'invisible':[('operation_wizard','not in',['03'])]}">
-                            <span>
-                                第一步：填写收款方账号以及付款银行
-                            </span>
-                        </div>
-                <div class="oe_form_box_info oe_text_center" attrs="{'invisible':[('operation_wizard','not in',['03'])]}">
-                            <span>
-                                第二步：填写金额明细
-                            </span>
-                        </div>
+<!--                 <div class="oe_form_box_info oe_text_center" attrs="{'invisible':[('operation_wizard','not in',['03'])]}">-->
+<!--                            <span>-->
+<!--                                第一步：填写收款方账号以及付款银行-->
+<!--                            </span>-->
+<!--                        </div>-->
+<!--                <div class="oe_form_box_info oe_text_center" attrs="{'invisible':[('operation_wizard','not in',['03'])]}">-->
+<!--                            <span>-->
+<!--                                第二步：填写金额明细-->
+<!--                            </span>-->
+<!--                        </div>-->
 
                 <sheet>
 
