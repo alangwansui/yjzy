@@ -37,9 +37,9 @@
                 <field name="amount_advance_org" string="预付认领金额" sum="小计"/>
                 <field name="amount_payment_org" string="付款认领金额" sum="小计"/>
 
-                <field name="amount_diff_org" string="费用认领金额" sum="小计"/>
+                <field name="amount_diff_org" string="费用认领金额" sum="小计" invisible="1"/>
                 <field name="amount_total_org" string="合计认领" sum="小计"/>
-                <field name="yjzy_payment_id" string="付款单"/>
+                <field name="yjzy_payment_id" string="预付款单"/>
             </tree>
         </field>
     </record>
@@ -363,7 +363,8 @@
 
                                         <field name="amount_invoice_so_residual" invisible="1"/>
 
-                                    <field name="invoice_id_po_ids" widget="many2many_tags" string="采购合同"/>
+                                    <field name="invoice_id_po_ids" widget="many2many_tags" string="采购合同"
+                                           attrs="{'column_invisible':[('parent.invoice_attribute','in',['other_payment'])]}"/>
                                     <field name="amount_invoice_so" string="原始应付款"/>
                                     <field name="invoice_residual" string="剩余应付款"
                                            /><!--attrs="{'column_invisible':[('parent.operation_wizard','not in',['10'])]}"-->
@@ -853,18 +854,20 @@
               action="action_yfhxd_new_payment_old_done"/>
 
 
-    <menuitem id="menu_yfhxd_reconcile_new_other_po" name="创建申请单"
-              action="action_purchase_invoice_unpaid_group_by_invoice_attribute"
+    <menuitem id="menu_normal_purchase_invoice_unpaid" name="创建申请单"
+              action="action_normal_purchase_invoice_unpaid"
               parent="yjzy_extend.menu_invoice_payment_apply_root" sequence="5"/>
 
-    <record model="ir.actions.act_window" id="action_yfhxd_new_payment_all">
+
+
+    <record model="ir.actions.act_window" id="action_yfhxd_new_payment_normal">
         <field name="name">账单付款申请单</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">account.reconcile.order</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="domain">
-            [('sfk_type','=','yfhxd'),('invoice_attribute','!=','other_payment'),('state','in',['draft','refused','canceled','posted','approved','done']),('hxd_type_new','in',['40'])]
+            [('sfk_type','=','yfhxd'),('invoice_attribute','in',['normal','extra']),('state','in',['draft','refused','canceled','posted','approved','done']),('hxd_type_new','in',['40'])]
         </field>
         <field name="context">{'search_default_group_by_state_1':1,'advance_po_amount':1,'default_sfk_type': 'yfhxd',
             'default_hxd_type_new':'40','default_payment_type': 'outbound', 'default_be_renling': 1,
@@ -875,9 +878,35 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('account_yfhxd_tree_view_approve_new')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('account_yfhxd_form_view_new')})]"/>
     </record>
-    <menuitem id="menu_yfhxd_new_payment_all" name="查询申请单"
+    <menuitem id="menu_yfhxd_new_payment_normal" name="查询申请单"
               parent="menu_invoice_payment_apply_root" sequence="10"
-              action="action_yfhxd_new_payment_no_paid_all"/>
+              action="action_yfhxd_new_payment_normal"/>
+
+    <menuitem id="menu_other_po_invoice_unpaid" name="创建申请单"
+              action="action_other_po_invoice_unpaid"
+              parent="yjzy_extend.menu_invoice_other_po_payment_apply_root" sequence="5"/>
+
+    <record model="ir.actions.act_window" id="action_yfhxd_new_other_po">
+        <field name="name">增加采购账单付款申请单</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.reconcile.order</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">
+            [('sfk_type','=','yfhxd'),('invoice_attribute','=','other_po'),('state','in',['draft','refused','canceled','posted','approved','done']),('hxd_type_new','in',['40'])]
+        </field>
+        <field name="context">{'search_default_group_by_state_1':1,'advance_po_amount':1,'default_sfk_type': 'yfhxd',
+            'default_hxd_type_new':'40','default_payment_type': 'outbound', 'default_be_renling': 1,
+            'default_partner_type':
+            'supplier', 'show_po': 1,'default_operation_wizard':'30'}
+        </field>
+        <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('account_yfhxd_tree_view_approve_new')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('account_yfhxd_form_view_new')})]"/>
+    </record>
+    <menuitem id="menu_yfhxd_new_other_po" name="查询申请单"
+              parent="menu_invoice_other_po_payment_apply_root" sequence="10"
+              action="action_yfhxd_new_other_po"/>
 
 
     <record model="ir.actions.act_window" id="action_yfhxd_new_payment_other_payment_all">

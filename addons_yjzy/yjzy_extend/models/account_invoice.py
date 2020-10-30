@@ -407,8 +407,8 @@ class account_invoice(models.Model):
         for one in self:
             payment_approved_all = one.reconcile_order_line_ids.filtered(lambda x: x.order_id.state == 'approved')
             yjzy_payment_approve_all = one.yjzy_invoice_reconcile_order_line_ids.filtered(lambda x: x.order_id.state == 'approved')
-            amount_payment_can_approve_all = one.residual - sum(x.amount_total_org for x in payment_approved_all) or 0.0   #由amount_payment_org改为amount_total_org
-            yjzy_amount_payment_can_approve_all = one.yjzy_residual - sum(x.amount_total_org for x in yjzy_payment_approve_all) or 0.0
+            amount_payment_can_approve_all = one.residual - sum(x.amount_total_org_new for x in payment_approved_all) or 0.0   #由amount_payment_org改为amount_total_org
+            yjzy_amount_payment_can_approve_all = one.yjzy_residual - sum(x.amount_total_org_new for x in yjzy_payment_approve_all) or 0.0
 
             one.amount_payment_can_approve_all = amount_payment_can_approve_all
             one.yjzy_amount_payment_can_approve_all = yjzy_amount_payment_can_approve_all
@@ -964,7 +964,7 @@ class account_invoice(models.Model):
         # with_context(
         #     {'fk_journal_id': 1, 'default_be_renling': 1, 'default_invoice_ids': invoice_dic,
         #      'default_payment_type': 'outbound', 'show_so': 1, 'default_sfk_type': 'yfhxd', }).
-        if attribute != 'other_payment':
+        if attribute not in ['other_po','expense_po','other_payment']:
             operation_wizard = '03'
         else:
             operation_wizard = '10'
@@ -1068,7 +1068,7 @@ class account_invoice(models.Model):
             tree_view = self.env.ref('yjzy_extend.invoice_new_1_tree')
             form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form')
         else:
-            tree_view = self.env.ref('yjzy_extend.invoice_new_supplier_1_tree')
+            tree_view = self.env.ref('yjzy_extend.view_supplier_invoice_extra_tree')
             form_view = self.env.ref('yjzy_extend.view_account_supplier_invoice_new_form')
         self.ensure_one()
         return {
@@ -1079,7 +1079,8 @@ class account_invoice(models.Model):
             'res_model': 'account.invoice',
             'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
             'target': 'new',
-            'domain':[('yjzy_invoice_id','=',self.id),('invoice_attribute','=','extra')]
+            'domain':[('yjzy_invoice_id','=',self.id),('invoice_attribute','=','extra')],
+            'context':{'open_from_normal':1}
         }
 
 
@@ -1477,10 +1478,10 @@ class account_invoice(models.Model):
     def open_supplier_reconcile_order_line(self):
         self.ensure_one()
         #form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form')
-        tree_view = self.env.ref('yjzy_extend.account_yfhxd_line_tree_view')
+        tree_view = self.env.ref('yjzy_extend.account_yfhxd_line_tree_view_new')
         for one in self:
             return {
-                'name': u'供应商应付',
+                'name': u'已完成的应付认领明细',
                 'view_type': 'form',
                 'view_mode': 'tree,form',
                 'res_model': 'account.reconcile.order.line',
@@ -1488,7 +1489,6 @@ class account_invoice(models.Model):
                 'views': [(tree_view.id, 'tree')],
                 'domain': [('invoice_id', 'in', [one.id]),('order_id.state','=','done')],
                 'target':'new'
-
             }
 
     # def name_get(self):

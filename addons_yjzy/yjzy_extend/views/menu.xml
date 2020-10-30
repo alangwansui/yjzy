@@ -28,6 +28,7 @@
         <menuitem id="menu_expense_sheet_apply_root" name="费用支付申请" parent="yjzy_extend.menu_payment_apply_root" sequence="20"/>
         <menuitem id="menu_advance_payment_apply_root" name="预付款支付申请" parent="yjzy_extend.menu_payment_apply_root" sequence="30"/>
         <menuitem id="menu_invoice_payment_apply_root" name="账单支付申请" parent="yjzy_extend.menu_payment_apply_root" sequence="10"/>
+        <menuitem id="menu_invoice_other_po_payment_apply_root" name="增加采购账单支付申请" parent="yjzy_extend.menu_payment_apply_root" sequence="25"/>
         <menuitem id="menu_invoice_other_payment_apply_root" name="其他支付申请" parent="yjzy_extend.menu_payment_apply_root" sequence="40"/>
 
         <menuitem id="menu_expense_sheet_other_payment_apply_root" name="其他支出申请付款" parent="yjzy_extend.menu_payment_apply_root" groups="base.group_system" sequence="40"/>

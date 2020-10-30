@@ -2115,7 +2115,7 @@
             <field name="res_model">account.invoice</field>
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_account_invoice_new_filter"/>
-            <field name="domain">[('invoice_attribute','!=','other_payment'),('type','=','in_invoice'),('state','=','open'),('is_yjzy_invoice','=',False),'|',('yjzy_type_1','=','purchase'),
+            <field name="domain">[('invoice_attribute','in',['normal']),('type','=','in_invoice'),('state','=','open'),('is_yjzy_invoice','=',False),'|',('yjzy_type_1','=','purchase'),
                 ('yjzy_type','=','purchase'),'|',('amount_payment_can_approve_all','!=',0),('yjzy_invoice_amount_payment_can_approve_all','!=',0)]</field>
             <field name="context">{'only_ref':1,'search_default_group_invoice_attribute':1,'type':'out_invoice','journal_type': 'sale','yjzy_type':'purchase'}
             </field>
@@ -2126,6 +2126,39 @@
                               ]"/>
         </record>
 
+          <record id="action_normal_purchase_invoice_unpaid" model="ir.actions.act_window">
+            <field name="name">查看未付账单并创建付款申请(多选后创建)</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_account_invoice_new_filter"/>
+            <field name="domain">[('invoice_attribute','in',['normal']),('type','=','in_invoice'),('state','=','open'),('is_yjzy_invoice','=',False),'|',('yjzy_type_1','=','purchase'),
+                ('yjzy_type','=','purchase'),'|',('amount_payment_can_approve_all','!=',0),('yjzy_invoice_amount_payment_can_approve_all','!=',0)]</field>
+            <field name="context">{'only_ref':1,'type':'out_invoice','journal_type': 'sale','yjzy_type':'purchase'}
+            </field>
+            <!--field name="target">new</field-->
+            <field name="view_ids" eval="[(5, 0, 0),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.invoice_new_supplier_1_tree')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('view_account_supplier_invoice_new_form')}),
+                              ]"/>
+        </record>
+
+<!--      创建新增采购的付款申请不按到期时间分组-->
+        <record id="action_other_po_invoice_unpaid" model="ir.actions.act_window">
+            <field name="name">查看未付款增加采购账单并创建付款申请(多选后创建)</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_account_invoice_new_filter"/>
+            <field name="domain">[('invoice_attribute','=','other_po'),('type','=','in_invoice'),('state','=','open'),('yjzy_type_1','=','purchase'),('amount_payment_can_approve_all','!=',0)]</field>
+            <field name="context">{'type':'out_invoice','journal_type': 'sale','yjzy_type':'purchase'}
+            </field>
+            <!--field name="target">new</field-->
+            <field name="view_ids" eval="[(5, 0, 0),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.invoice_new_supplier_1_tree')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('view_account_supplier_invoice_new_form')}),
+                              ]"/>
+        </record>
 
         <record id="action_supplier_account_invoice_new_1" model="ir.actions.act_window">
             <field name="name">未付款应付账单账期排序</field>
@@ -2184,7 +2217,6 @@
                   sequence="20"
                   action="action_purchase_invoice_paid_new"
         />
-
 
 
 
@@ -2622,6 +2654,9 @@
                   parent="menu_invoice_other_payment_apply_root" name="创建申请单"
                   sequence="05"
         />
+
+
+
 
 
     </data>

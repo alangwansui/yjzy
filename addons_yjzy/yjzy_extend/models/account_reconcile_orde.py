@@ -1968,6 +1968,19 @@ class account_reconcile_order_line(models.Model):
                 one.yjzy_currency_id = one.payment_currency_id
             else:
                 one.yjzy_currency_id = one.yjzy_payment_id.currency_id
+    @api.depends('order_id.date','invoice_currency_id','payment_currency_id','currency_id','amount_advance_org','amount_payment_org')
+    def compute_amount_total_org_new(self):
+        for one in self:
+            # date = one.order_id.date
+            # # invoice_currency = one.invoice_currency_id.with_context(date=date)
+            # # payment_currency = one.payment_currency_id.with_context(date=date)
+            # # company_currency = one.currency_id.with_context(date=date)
+            # # one.amount_advance = invoice_currency.compute(one.amount_advance_org, company_currency)
+            # # one.amount_payment = payment_currency != False and payment_currency.compute(one.amount_payment_org, company_currency)
+            amount_total_org = one.amount_advance_org + one.amount_payment_org
+
+            one.amount_total_org = amount_total_org
+            # one.amount_total = one.amount_advance + one.amount_payment
 
 
     # @api.onchange('amount_invoice_so', 'amount_advance_org', 'amount_bank_org', 'amount_diff_org', 'amount_payment_org')
@@ -2028,6 +2041,7 @@ class account_reconcile_order_line(models.Model):
     amount_exchange = fields.Monetary(u'汇兑差异:本币', currency_field='currency_id')
     amount_total_org = fields.Monetary(u'收款合计', currency_field='invoice_currency_id', compute=compute_info)
     amount_total = fields.Monetary(u'收款合计:本币', currency_field='currency_id', compute=compute_info)
+    amount_total_org_new = fields.Monetary(u'收款合计', currency_field='invoice_currency_id', compute=compute_amount_total_org_new,store=True)
 
     @api.onchange('yjzy_payment_id')
     def onchange_yjzy_payment_id(self):

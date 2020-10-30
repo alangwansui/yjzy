@@ -28,6 +28,7 @@
         </field>
     </record>
 
+
     <record model="ir.ui.view" id="account_yfhxd_tree_view">
         <field name="name">account.reconcile.order.tree</field>
         <field name="model">account.reconcile.order</field>
