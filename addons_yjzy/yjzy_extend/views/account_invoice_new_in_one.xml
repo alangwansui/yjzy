@@ -437,7 +437,7 @@
                                 </group>
                             </page>
                             <page string="开票明细">
-                                <field name="tb_po_hsname_all_ids">
+                                <field name="tb_po_hsname_all_ids" attrs="{'invisible':[('invoice_attribute','not in',['other_po','expense_po'])]}">
                                      <tree editable="bottom">
                                         <field name="hs_id" />
                                         <field name="hsname_all_line_id" invisible="1"/>
@@ -544,7 +544,7 @@
 
                                         <field name="amount_invoice_so_residual" invisible="1"/>
 
-                                    <field name="invoice_id_po_ids" widget="many2many_tags" attrs="{'invisible':['|','|',('parent.invoice_attribute','not in',['normal','extra']),('parent.yjzy_type_1','!=','purchase'),('parent.yjzy_type','!=','purchase'),]}"/>
+                                    <field name="invoice_id_po_ids" widget="many2many_tags" attrs="{'column_invisible':['|','|',('parent.invoice_attribute','not in',['normal','extra']),('parent.yjzy_type_1','!=','purchase'),('parent.yjzy_type','!=','purchase'),]}"/>
                                     <field name="amount_invoice_so" string="原始应付款" invisible="1"/>
                                     <field name="invoice_residual" string="剩余应付款" invisible="1"/><!--attrs="{'column_invisible':[('parent.operation_wizard','not in',['10'])]}"-->
                                     <field name="payment_currency_id" invisible="1"/>
