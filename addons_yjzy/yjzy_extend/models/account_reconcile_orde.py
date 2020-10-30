@@ -270,13 +270,14 @@ class account_reconcile_order(models.Model):
             lines = one.line_ids
             one.amount_diff_org_new = diff_currency.compute(sum([x.amount_diff_org for x in lines]),one.invoice_currency_id)
 
-    @api.depends('line_ids', 'line_ids.amount_diff_org', 'payment_currency_id')
+    @api.depends('line_ids', 'line_ids.amount_total_org_new', 'payment_currency_id')
     def compute_amount_total_org_new(self):
         for one in self:
             if (not one.line_ids) or (not one.payment_currency_id):
                 continue
             lines = one.line_ids
-            one.amount_total_org_new = sum([x.amount_total_org for x in lines])
+            one.amount_total_org_new = sum([x.amount_total_org_new for x in lines])
+            print('amount_total_org_new',one.amount_total_org_new)
 
 
 
@@ -1968,7 +1969,7 @@ class account_reconcile_order_line(models.Model):
                 one.yjzy_currency_id = one.payment_currency_id
             else:
                 one.yjzy_currency_id = one.yjzy_payment_id.currency_id
-    @api.depends('order_id.date','invoice_currency_id','payment_currency_id','currency_id','amount_advance_org','amount_payment_org')
+    @api.depends('order_id.state','invoice_currency_id','payment_currency_id','currency_id','amount_advance_org','amount_payment_org')
     def compute_amount_total_org_new(self):
         for one in self:
             # date = one.order_id.date
@@ -1977,9 +1978,9 @@ class account_reconcile_order_line(models.Model):
             # # company_currency = one.currency_id.with_context(date=date)
             # # one.amount_advance = invoice_currency.compute(one.amount_advance_org, company_currency)
             # # one.amount_payment = payment_currency != False and payment_currency.compute(one.amount_payment_org, company_currency)
-            amount_total_org = one.amount_advance_org + one.amount_payment_org
+            amount_total_org_new = one.amount_advance_org + one.amount_payment_org
 
-            one.amount_total_org = amount_total_org
+            one.amount_total_org_new = amount_total_org_new
             # one.amount_total = one.amount_advance + one.amount_payment
 
 
