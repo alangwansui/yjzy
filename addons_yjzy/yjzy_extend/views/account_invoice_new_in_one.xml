@@ -5,7 +5,7 @@
             <field name="name">account.invoice.new.form</field>
             <field name="model">account.invoice</field>
             <field name="arch" type="xml">
-                <form string="应收账单" class="o_invoice_form">
+                <form string="应收账单" class="o_invoice_form" create="false">
                      <header attrs="{'invisible':['|',('is_yjzy_invoice','=',True),('type','not in',['out_invoice','out_refund'])]}">
                         <button name="open_tb_po_invoice" string="额外应收申请" type="object" />
                         <button name="open_tb_po_reconcile_invoice" string="创建核销应收申请" type="object"/>
