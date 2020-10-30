@@ -984,8 +984,8 @@ class account_invoice(models.Model):
                 'hxd_type_new':'40',
                 'purchase_code_balance': 1,
                 'invoice_attribute': attribute,
-                'invoice_partner':self[0].invoice_partner,
-                'name_title':self[0].name_title
+                # 'invoice_partner':self[0].invoice_partner,
+                # 'name_title':self[0].name_title
 
             # 'partner_id': self.partner_id.id,
             #         'sfk_type': 'yfhxd',
