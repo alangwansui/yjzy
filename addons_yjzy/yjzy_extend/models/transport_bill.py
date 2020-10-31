@@ -180,6 +180,7 @@ class transport_bill(models.Model):
             ###profit_ratio_base = (one.sale_amount - one.get_outer())
             one.profit_ratio = one.sale_amount != 0.0 and one.profit_amount / one.sale_amount or 0
             one.purchase_invoice_ids2 = one.purchase_invoice_ids.filtered(lambda x: x.yjzy_type == 'purchase')
+            print('transport',ps_state)
 
 
             # fee_inner = 0.0

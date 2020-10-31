@@ -401,7 +401,8 @@ class account_invoice(models.Model):
     #
     # invoice_tb_partner_ids = fields.Many2many('account.invoice',u'和出运相关的账单',compute=_compute_invoice_tb_partner_ids)
     # invoice_tb_partner_ids_1 = fields.Many2many('account.invoice', u'和出运相关的账单', compute=_compute_invoice_tb_partner_ids)
-    @api.depends('amount_total','residual','reconcile_order_line_ids','yjzy_invoice_reconcile_order_line_no_ids.amount_payment_org','yjzy_invoice_reconcile_order_line_no_ids','yjzy_invoice_reconcile_order_line_ids','yjzy_invoice_reconcile_order_line_no_ids.order_id.state')
+    @api.depends('amount_total','residual','reconcile_order_line_ids','reconcile_order_line_ids.amount_total_org_new','reconcile_order_line_ids.order_id.state','yjzy_invoice_reconcile_order_line_no_ids.amount_payment_org',
+                 'yjzy_invoice_reconcile_order_line_no_ids','yjzy_invoice_reconcile_order_line_ids','yjzy_invoice_reconcile_order_line_no_ids.order_id.state')
     def compute_amount_payment_can_approve_all(self):
         for one in self:
             payment_approved_all = one.reconcile_order_line_ids.filtered(lambda x: x.order_id.state == 'approved')
@@ -411,21 +412,23 @@ class account_invoice(models.Model):
             print('yjzy_amount_payment_can_approve_all',yjzy_amount_payment_can_approve_all,amount_payment_can_approve_all)
             one.amount_payment_can_approve_all = amount_payment_can_approve_all
             one.yjzy_amount_payment_can_approve_all = yjzy_amount_payment_can_approve_all
+
+    @api.depends('state','residual')
     def compute_tb_po_invoice(self):
         for one in self:
-            tb_po_invoice_back_tax_ids = self.env['account.invoice'].search([('tb_po_invoice_id','=',one.tb_po_invoice_id),('yjzy_type_1','=','back_tax')])
-            tb_po_invoice_p_s_ids = self.env['account.invoice'].search([('tb_po_invoice_id','=',one.tb_po_invoice_id),('yjzy_type_1','=','purchase'),('type','=','in_refund'),])
-            tb_po_invoice_s_ids = self.env['account.invoice'].search([('tb_po_invoice_id','=',one.tb_po_invoice_id),('yjzy_type_1','=','sale'),('type','=','out_invoice')])
-            tb_po_invoice_ids = self.env['account.invoice'].search([('tb_po_invoice_id','=',one.tb_po_invoice_id)])
+            tb_po_invoice_back_tax_ids = self.env['account.invoice'].search([('tb_po_invoice_id','=',one.tb_po_invoice_id.id),('yjzy_type_1','=','back_tax')])
+            tb_po_invoice_p_s_ids = self.env['account.invoice'].search([('tb_po_invoice_id','=',one.tb_po_invoice_id.id),('yjzy_type_1','=','purchase'),('type','=','in_refund'),])
+            tb_po_invoice_s_ids = self.env['account.invoice'].search([('tb_po_invoice_id','=',one.tb_po_invoice_id.id),('yjzy_type_1','=','sale'),('type','=','out_invoice')])
+            tb_po_invoice_all_ids = self.env['account.invoice'].search([('tb_po_invoice_id','=',one.tb_po_invoice_id.id)])
             one.tb_po_invoice_back_tax_ids = tb_po_invoice_back_tax_ids
             one.tb_po_invoice_p_s_ids = tb_po_invoice_p_s_ids
             one.tb_po_invoice_s_ids = tb_po_invoice_s_ids
-            one.tb_po_invoice_ids = tb_po_invoice_ids
+            one.tb_po_invoice_all_ids = tb_po_invoice_all_ids
     #1029
     tb_po_invoice_back_tax_ids = fields.Many2many('account.invoice','相关退税账单',compute=compute_tb_po_invoice)
     tb_po_invoice_p_s_ids = fields.Many2many('account.invoice','相关冲减账单',compute=compute_tb_po_invoice)
     tb_po_invoice_s_ids = fields.Many2many('account.invoice','相关应收账单',compute=compute_tb_po_invoice)
-    tb_po_invoice_ids = fields.Many2many('account.invoice','相关账单',compute=compute_tb_po_invoice)
+    tb_po_invoice_all_ids = fields.Many2many('account.invoice','相关账单',compute=compute_tb_po_invoice)
 
 
     name_title = fields.Char(u'账单描述')
@@ -1694,7 +1697,7 @@ class account_invoice_line(models.Model):
             else:
                 one.yjzy_price_unit = price_unit
 
-
+    @api.depends('invoice_id','invoice_id.yjzy_invoice_id')
     def _compute_yjzy_invoice(self):
         for one in self:
             print('yjzy_invoice',one.invoice_id.yjzy_invoice_id)

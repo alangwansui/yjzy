@@ -847,7 +847,7 @@ class account_reconcile_order(models.Model):
                             # 'operation_wizard':'25'
                             })
             elif self.hxd_type_new == '40':
-                if self.invoice_attribute == 'other_payment':
+                if self.invoice_attribute in ['other_payment','other_po']:
                     stage_id = self._stage_find(domain=[('code', '=', '040')])
                     self.write({'stage_id': stage_id.id,
                                 'state': 'posted',
