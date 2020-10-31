@@ -619,12 +619,12 @@ class account_invoice(models.Model):
     yjzy_invoice_wait_payment_ids = fields.One2many('account.invoice','yjzy_invoice_id',u'额外账单', domain=[('is_yjzy_invoice','=',True),('type','in',['out_invoice','in_invoice']),('state','in',['open']),('amount_payment_can_approve_all','!=',0)])
     yjzy_invoice_all_ids = fields.One2many('account.invoice', 'yjzy_invoice_id', u'所有关联账单') #所有额外账单和原始账单
     yjzy_payment_term_id = fields.Many2one('account.payment.term', string='Payment Terms_1')
-    yjzy_currency_id = fields.Many2one('res.currency', string='currency 1')
+    yjzy_currency_id = fields.Many2one('res.currency', string='currency 1')#原来额外账单直接创建的时候需要用他来onchange，现在不需要
     is_yjzy_invoice = fields.Boolean(u'是否额外账单',default=False)
     yjzy_invoice_amount_total = fields.Monetary('额外账单应收金额',currency_field='currency_id',compute=compute_yjzy_invoice_amount_total,store=True)
     yjzy_invoice_residual_signed_total = fields.Monetary('额外账单未收金额', currency_field='currency_id',
                                                 compute=compute_yjzy_invoice_amount_total, store=True)
-    yjzy_invoice_amount_payment_can_approve_all = fields.Float('额外账单可申请支付金额',
+    yjzy_invoice_amount_payment_can_approve_all = fields.Monetary('额外账单可申请支付金额',currency_field='currency_id',
                                                 compute=compute_yjzy_invoice_amount_total, store=True)
     yjzy_total = fields.Monetary(u'总应收金额',currency_field='currency_id', compute=compute_yjzy_invoice_amount_total,store=True)
     yjzy_residual = fields.Monetary(u'总未收金额',currency_field='currency_id', compute=compute_yjzy_invoice_amount_total,store=True)
@@ -1531,7 +1531,7 @@ class account_invoice(models.Model):
                 'res_model': 'account.reconcile.order.line',
                 'type': 'ir.actions.act_window',
                 'views': [(tree_view.id, 'tree')],
-                'domain': [('invoice_id', 'in', [one.id]),('order_id.state','=','done')],
+                'domain': [('order_id.state','=','done'),'|',('invoice_id', 'in', [one.id]),('yjzy_invoice_id', 'in', [one.yjzy_invoice_id.id])],
                 'target':'new'
             }
 

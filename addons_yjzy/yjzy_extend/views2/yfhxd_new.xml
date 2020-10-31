@@ -27,6 +27,7 @@
             <tree string="认领明细" edit="false" create="false">
                 <field name="order_id" invisible="1"/>
                 <field name="invoice_display_name" invisible="1"/>
+                <field name="invoice_attribute"/>
                 <field name="po_id"/>
                 <field name="tb_contract_code"/>
                 <field name="advance_residual" string="预付余额"/>

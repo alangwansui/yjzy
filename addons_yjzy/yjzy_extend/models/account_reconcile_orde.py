@@ -2003,11 +2003,13 @@ class account_reconcile_order_line(models.Model):
     po_id = fields.Many2one('purchase.order', u'采购单')
     invoice_id = fields.Many2one('account.invoice', u'发票')
     yjzy_invoice_id = fields.Many2one('account.invoice', u'发票关联账单', related='invoice_id.yjzy_invoice_id')  # 额外账单的认领明细
+    invoice_attribute = fields.Selection(related='invoice_id.invoice_attribute', string=u'账单类型')
     tb_contract_code = fields.Char('出运合同号', related='invoice_id.tb_contract_code', readonly=True)
     residual = fields.Monetary(related='invoice_id.residual', string=u'发票余额', readonly=True, currency_field='invoice_currency_id')
     currency_id = fields.Many2one('res.currency', u'公司货币', related='order_id.currency_id', readonly=True)
     invoice_currency_id = fields.Many2one('res.currency', u'交易货币', related='invoice_id.currency_id', readonly=True)
     payment_currency_id = fields.Many2one('res.currency', u'收款货币', related='order_id.payment_currency_id', readonly=True)
+
 
     ##银行扣款和销售费用的货币随收款货币；
     # bank_currency_id = fields.Many2one('res.currency', related='order_id.bank_currency_id', )
