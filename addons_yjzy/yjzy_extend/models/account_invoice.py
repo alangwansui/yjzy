@@ -387,9 +387,9 @@ class account_invoice(models.Model):
     def compute_tb_po_invoice_ids(self):
         for one in self:
             tb_po_invoice_ids_count = len(one.tb_po_invoice_ids)
-            tb_hsname_all_ids_count = len(one.tb_hsname_all_ids)
+            # tb_hsname_all_ids_count = len(one.tb_hsname_all_ids)
             one.tb_po_invoice_ids_count = tb_po_invoice_ids_count
-            one.tb_hsname_all_ids_count = tb_hsname_all_ids_count
+            # one.tb_hsname_all_ids_count = tb_hsname_all_ids_count
 
     def compute_po_ids(self):
         for one in self:
@@ -424,6 +424,11 @@ class account_invoice(models.Model):
             one.tb_po_invoice_p_s_ids = tb_po_invoice_p_s_ids
             one.tb_po_invoice_s_ids = tb_po_invoice_s_ids
             one.tb_po_invoice_all_ids = tb_po_invoice_all_ids
+
+    @api.depends('tb_po_hsname_all_ids')
+    def compute_tb_po_hsname_all_ids_count(self):
+        for one in self:
+            one.tb_po_hsname_all_ids_count = len(one.tb_po_hsname_all_ids)
     #1029
     tb_po_invoice_back_tax_ids = fields.Many2many('account.invoice','相关退税账单',compute=compute_tb_po_invoice)
     tb_po_invoice_p_s_ids = fields.Many2many('account.invoice','相关冲减账单',compute=compute_tb_po_invoice)
@@ -467,11 +472,11 @@ class account_invoice(models.Model):
 
     hsname_all_ids = fields.One2many('invoice.hs_name.all','invoice_id',u'报关明细')
     #显示开票资料对应出运单的报关资料汇总
-    tb_hsname_all_ids = fields.One2many('tbl.hsname.all', u'报关明细',related="bill_id.hsname_all_ids")
-    tb_po_hsname_all_ids = fields.One2many('tb.po.invoice.line', u'开票明细',related="tb_po_invoice_id.hsname_all_ids")
+    # tb_hsname_all_ids = fields.One2many('tbl.hsname.all', u'报关明细',related="bill_id.hsname_all_ids")
+    tb_po_hsname_all_ids = fields.One2many('tb.po.invoice.line', u'开票(报关)明细',related="tb_po_invoice_id.hsname_all_ids")
+    tb_po_hsname_all_ids_count = fields.Integer('开票(报关)明细数量',compute=compute_tb_po_hsname_all_ids_count)
 
-
-    tb_hsname_all_ids_count = fields.Integer('报关明细数量',compute=compute_tb_po_invoice_ids)
+    # tb_hsname_all_ids_count = fields.Integer('报关明细数量',compute=compute_tb_po_invoice_ids)
     external_invoice_done = fields.Selection([('10_no',u'否'),
                                               ('20_yes',u'是'),
                                               ('30_not',u'非')],'外账是否确认销售',default='10_no')

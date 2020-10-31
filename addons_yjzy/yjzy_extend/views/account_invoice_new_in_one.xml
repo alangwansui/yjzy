@@ -475,7 +475,7 @@
                                 <field name="tb_po_invoice_all_ids" >
                                     <tree decoration-danger="amount_total_signed &lt;= 0">
                                         <field name="invoice_attribute"/>
-                                        <field name="yjzy_type_"/>
+                                        <field name="yjzy_type_1"/>
                                         <field name="partner_id" string="供应商" />
                     <field name="bill_id" string="合同号" invisible="1"/>
                     <field name="tb_contract_code" string="合同号"/>
@@ -514,18 +514,18 @@
                                     </tree>
                                 </field>
                             </page>
-                            <page string="开票明细" attrs="{'invisible':[('invoice_attribute','not in',['other_po','expense_po'])]}" invisible="1">
-                                <field name="tb_hsname_all_ids">
-                                    <tree>
-                                         <field name="hs_id"/>
-                                        <field name="back_tax"/>
-                                        <field name="amount2" sum="小计" string="报关金额"/>
-                                        <field name="purchase_amount2_no_tax" attrs="{'column_invisible':[('parent.include_tax','=',True)]}"/>
-                                        <field name="purchase_amount2_tax" attrs="{'column_invisible':[('parent.include_tax','=',False)]}"/>
-                                    </tree>
-                                </field>
+<!--                            <page string="开票明细" attrs="{'invisible':[('invoice_attribute','not in',['other_po','expense_po'])]}" invisible="1">-->
+<!--                                <field name="tb_hsname_all_ids">-->
+<!--                                    <tree>-->
+<!--                                         <field name="hs_id"/>-->
+<!--                                        <field name="back_tax"/>-->
+<!--                                        <field name="amount2" sum="小计" string="报关金额"/>-->
+<!--                                        <field name="purchase_amount2_no_tax" attrs="{'column_invisible':[('parent.include_tax','=',True)]}"/>-->
+<!--                                        <field name="purchase_amount2_tax" attrs="{'column_invisible':[('parent.include_tax','=',False)]}"/>-->
+<!--                                    </tree>-->
+<!--                                </field>-->
 
-                            </page>
+<!--                            </page>-->
 
                             <page string="额外账单申请单" invisible="1"><!--attrs="{'invisible':[('yjzy_invoice_count','=',0)]}"-->
                                 <field name="tb_po_invoice_ids"/>
@@ -738,7 +738,7 @@
                                     <field name="invoice_attribute"/>
                                      <field name="user_id" string="责任人" attrs="{'invisible':[('is_yjzy_invoice','=',True)]}"/>
                                 <field name="sale_assistant_id" attrs="{'invisible':[('is_yjzy_invoice','=',True)]}"/>
-                                    <field name="tb_hsname_all_ids_count"/>
+<!--                                    <field name="tb_hsname_all_ids_count"/>-->
                                    <field name="yjzy_type_1"/>
                                 </group>
                                 <field name="yjzy_invoice_all_ids"/>
