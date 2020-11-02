@@ -94,13 +94,15 @@ class res_partner(models.Model):
             one.supplier_amount_advance_payment_reconcile = supplier_amount_advance_payment_reconcile
             one.supplier_amount_residual_advance_payment = supplier_amount_residual_advance_payment
 
-    @api.depends('sale_order_ids.amount_total','sale_order_ids','sale_order_ids.state','sale_order_ids.no_sent_amount_new')
+    @api.depends('sale_order_ids.amount_total','sale_order_ids','sale_order_ids.state','sale_order_ids.no_sent_amount_new','so_approve_ids',
+                 'so_approve_ids.amount_total','so_approve_ids.state')
     def compute_sale_order_amount_total(self):
         for one in self:
             so_ids = one.so_approve_ids#.filtered(lambda x: x.company_id  == self.env.user.company_id)
             so_no_sent_ids = one.sale_order_ids.filtered(lambda x: x.no_sent_amount_new != 0 and x.state in ['approve', 'sale', 'done','abnormal','verifying','verification'])
             print('tet',so_ids,so_no_sent_ids)
             amount_total = sum(x.amount_total for x in so_ids)
+
             no_sent_amount = sum(x.no_sent_amount for x in so_no_sent_ids)
             one.sale_order_amount_total = amount_total
             one.so_no_sent_amount = no_sent_amount
@@ -119,6 +121,40 @@ class res_partner(models.Model):
             payment_ids = one.payment_ids
             payment_amount_total = sum(x.amount for x in payment_ids)
             one.payment_amount_total = payment_amount_total
+
+    @api.depends('po_approve_ids','po_approve_ids.amount_total','po_approve_ids.state','po_approve_ids.no_deliver_amount_new')
+    def compute_po_amount_total(self):
+        for one in self:
+            po_approve_ids = one.po_approve_ids  # .filtered(lambda x: x.company_id  == self.env.user.company_id)
+            po_amount_total = sum(x.amount_total for x in po_approve_ids)
+            po_no_sent_amount_total = sum(x.no_deliver_amount_new for x in po_approve_ids)
+            print('po_no_sent_amount_total',po_approve_ids,po_amount_total)
+            one.po_amount_total = po_amount_total
+            one.po_no_sent_amount_total = po_no_sent_amount_total
+
+    @api.depends('po_tb_line_ids','po_tb_line_ids.purchase_cost_new','po_tb_line_ids.bill_id.state')
+    def compute_tb_approve_po_amount_total(self):
+        for one in self:
+            po_tb_line_ids = one.po_tb_line_ids  # .filtered(lambda x: x.company_id  == self.env.user.company_id)
+            tb_approve_po_amount_total = sum(x.purchase_cost_new for x in po_tb_line_ids)
+            print('tb_approve_po_amount_total', tb_approve_po_amount_total)
+            one.tb_approve_po_amount_total = tb_approve_po_amount_total
+
+    #1102
+    #取采购订单
+    po_approve_ids = fields.One2many('purchase.order', 'partner_id', '今年采购合同',
+                                     domain=[('purchaser_date', '!=', False),
+                                             ('purchaser_date', '>', fields.datetime.now().strftime('%Y-01-01 00:00:00')),
+                                             ('state', 'in',
+                                              ['to_approve', 'purchase'])])
+    #出运合同明细，先创建明细的供应商字段，来自批次号
+    po_tb_line_ids = fields.One2many('transport.bill.line','supplier_id','今年出运合同明细',domain=[('bill_id.approve_date','!=', False),
+                                    ('bill_id.approve_date', '>', fields.datetime.now().strftime('%Y-01-01 00:00:00')),
+              ('bill_id.state', 'in', ['approve', 'confirmed', 'delivered', 'invoiced', 'locked', 'verifying', 'done', 'paid'])])
+
+    po_amount_total = fields.Float('今年审批完成采购金额', compute=compute_po_amount_total, store=True)
+    po_no_sent_amount_total = fields.Float('今年审批完成采购金额', compute=compute_po_amount_total, store=True)
+    tb_approve_po_amount_total = fields.Float('今年审批完成出运采购金额', compute=compute_tb_approve_po_amount_total, store=True)
 
     #新增
 
@@ -164,6 +200,8 @@ class res_partner(models.Model):
     amount_residual_advance_payment = fields.Float('预收余额',compute=compute_amount_invoice_advance_payment, store=True)
     amount_advance_payment_reconcile = fields.Float('预收认领金额',compute=compute_amount_invoice_advance_payment, store=True)
     sale_order_amount_total = fields.Float('今年审批完成销售金额', compute=compute_sale_order_amount_total, store=True)
+
+
     tb_approve_amount_total = fields.Float('今年审批完成出运金额', compute=compute_tb_approve_amount_total, store=True)
     payment_amount_total = fields.Float('收款总金额',compute=compute_payment_amount_total,store=True)
     supplier_amount_invoice = fields.Float(u'应付账单总金额', compute=compute_supplier_amount_invoice_advance_payment, store=True)

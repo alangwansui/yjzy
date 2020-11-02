@@ -863,42 +863,7 @@ class account_invoice(models.Model):
         }
 
 
-    def create_yshxd(self):
-        self.ensure_one()
-        sfk_type = 'yshxd'
-        domain = [('code', '=', 'ysdrl'), ('company_id', '=', self.env.user.company_id.id)]
-        name = self.env['ir.sequence'].next_by_code('sfk.type.%s' % sfk_type)
-        journal = self.env['account.journal'].search(domain, limit=1)
-        account_obj = self.env['account.account']
-        bank_account = account_obj.search([('code', '=', '10021'), ('company_id', '=', self.env.user.company_id.id)],
-                                          limit=1)
-        yshxd =self.env['account.reconcile.order'].create({
-            'partner_id': self.partner_id.id,
-            'manual_payment_currency_id':self.currency_id.id,
-            'invoice_ids':[(4, self.id)],
-            'payment_type':'inbound',
-            'partner_type':'customer',
-            'sfk_type':'yshxd',
-            'be_renling':True,
-            'name':name,
-            'journal_id':journal.id,
-            'payment_account_id':bank_account.id
-        })
-        self.reconcile_order_id = yshxd
-        yshxd.make_lines()
 
-        form_view = self.env.ref('yjzy_extend.account_reconcile_order_form_view')
-        return {
-            'name': u'应收核销单',
-            'view_type': 'form',
-            'view_mode': 'form',
-            'res_model': 'account.reconcile.order',
-            'type': 'ir.actions.act_window',
-            'views': [(form_view.id, 'form')],
-            'res_id': self.reconcile_order_id.id,
-            'target': 'current',
-            'flags': {'form': {'initial_mode': 'view','action_buttons': False}}
-        }
 
     def submit_yshxd(self):
         print('invoice_ids', self.ids)
@@ -938,7 +903,7 @@ class account_invoice(models.Model):
                 'default_hxd_type_new': '20'
             }
         }
-#定稿，从发票多选创建应付申请
+#定稿，从发票多选创建应付申请 不用了
     def submit_yfhxd(self,attribute):
         print('invoice_ids', self.ids)
         print('partner_id', len(self.mapped('partner_id')))
@@ -999,13 +964,58 @@ class account_invoice(models.Model):
                 }
             }
 
+    def create_yshxd_from_multi_invoice(self,attribute):
+        self.ensure_one()
+        sfk_type = 'yshxd'
+        domain = [('code', '=', 'ysdrl'), ('company_id', '=', self.env.user.company_id.id)]
+        name = self.env['ir.sequence'].next_by_code('sfk.type.%s' % sfk_type)
+        journal = self.env['account.journal'].search(domain, limit=1)
+        account_obj = self.env['account.account']
+        bank_account = account_obj.search([('code', '=', '10021'), ('company_id', '=', self.env.user.company_id.id)],
+                                          limit=1)
+        form_view = self.env.ref('yjzy_extend.account_reconcile_order_form_view')
+        invoice_dic = []
+        account_reconcile_order_obj = self.env['account.reconcile.order']
+        operation_wizard = '10'
+        yshxd =self.env['account.reconcile.order'].create({
+            'partner_id': self[0].partner_id.id,
+            'manual_payment_currency_id': self[0].currency_id.id,
+            'invoice_ids': [(6, 0, invoice_dic)],
+            'payment_type':'inbound',
+            'partner_type':'customer',
+            'sfk_type':'yshxd',
+            'be_renling':True,
+            'name':name,
+            'journal_id':journal.id,
+            'payment_account_id':bank_account.id,
+            'operation_wizard': operation_wizard,
+            'hxd_type_new': '20',
+            'invoice_attribute': attribute,
+            'invoice_partner': self[0].invoice_partner,
+            'name_title': self[0].name_title
+        })
+        self.reconcile_order_id = yshxd
+        yshxd.make_lines()
+
+        return {
+            'name': u'应收核销单',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'account.reconcile.order',
+            'type': 'ir.actions.act_window',
+            'views': [(form_view.id, 'form')],
+            'res_id': self.reconcile_order_id.id,
+            'target': 'current',
+            'flags': {'form': {'initial_mode': 'view','action_buttons': False}}
+        }
+
     def action_create_yfhxd(self):
         ctx = self.env.context.get('invoice_attribute')
         print('yfhx_ctx')
         yfhxd = self.create_yfhxd_from_multi_invoice(ctx)
         return yfhxd
 
-    #创建预付核销单从多个账单通过服务器动作创建 不能用，
+    #创建预付核销单从多个账单通过服务器动作创建 ok，
     def create_yfhxd_from_multi_invoice(self,attribute):
         print('invoice_ids', self.ids)
         print('partner_id', len(self.mapped('partner_id')))

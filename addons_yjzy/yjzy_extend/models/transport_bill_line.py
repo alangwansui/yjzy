@@ -64,6 +64,12 @@ class transport_bill_line(models.Model):
             one.vat_diff_amount = vat_diff_amount
             one.profit_amount = profit_amount
 
+    @api.depends('lot_plan_ids','lot_plan_ids.qty','lot_plan_ids.lot_id.purchase_price','lot_plan_ids.stage_1','lot_plan_ids.lot_id.pol_id.currency_id')
+    def compute_purchase_cost_new(self):
+        for one in self:
+            purchase_cost_new = one.get_purchase_cost()
+            one.purchase_cost_new = purchase_cost_new
+
    #akiny暂时不要
     stage3move_ids = fields.Many2many('stock.move', 'ref_move_tbl', 'lid', 'mid', u'出库',
                                       domain=[('picking_code', '=', 'outgoing')])
@@ -91,6 +97,9 @@ class transport_bill_line(models.Model):
                                   digits=dp.get_precision('Money'))
     purchase_cost = fields.Monetary(u'采购成本', currency_field='company_currency_id', compute=compute_info,
                                     digits=dp.get_precision('Money'))
+#1102
+    purchase_cost_new = fields.Monetary(u'采购成本', currency_field='company_currency_id', compute=compute_purchase_cost_new, store=True,
+                                    digits=dp.get_precision('Money'))
     stock_cost = fields.Monetary(u'库存成本', currency_field='company_currency_id', compute=compute_info,
                                  digits=dp.get_precision('Money'))
     name = fields.Char(u'说明', compute=compute_info)
@@ -108,6 +117,8 @@ class transport_bill_line(models.Model):
     dlr_qty = fields.Float(related='sol_id.dlr_qty', string=u'采购预留数')
     lot_plan_ids = fields.One2many('transport.lot.plan', 'tbline_id', u'调拨计划', copy=False)
     lot_plan_id = fields.Many2one('transport.lot.plan',  u'调拨计划:新')
+    #1102
+    supplier_id = fields.Many2one('res.partner','供应商',related='lot_plan_id.lot_id.supplier_id')
     plan_lot = fields.Many2one('stock.production.lot',  '计划批次', related='lot_plan_id.lot_id')
     plan_qty = fields.Float('计划数量', related='lot_plan_id.qty')
     pol_ids = fields.One2many('purchase.order.line', related='sol_id.pol_ids', readonly=True)

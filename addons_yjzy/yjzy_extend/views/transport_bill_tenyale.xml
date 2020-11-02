@@ -96,6 +96,7 @@
                     <field name="org_sale_amount" groups="base.group_system"/>
                     <field name="org_sale_amount_new" sum="小计"/>
                     <field name="purchase_cost_total" sum="小计"/>
+
                     <field name="sale_amount" groups="base.group_system" invisible="1"/>
                     <field name="ciq_amount" groups="base.group_system" invisible="1"/>
                     <field name="no_ciq_amount" groups="base.group_system" invisible="1"/>
@@ -661,6 +662,7 @@
                                         <field name="sale_amount" sum="销售" groups="base.group_system" invisible="1"/>
                                         <field name="back_tax"/>
                                         <field name="purchase_cost" sum="采购" string="出运采购金额"/>
+                                        <field name="purchase_cost_new" sum="采购" string="出运采购金额:new"/>
                                         <field name="stock_cost" sum="库存" groups="base.group_system" invisible="1"/>
                                         <field name="back_tax"/>
 

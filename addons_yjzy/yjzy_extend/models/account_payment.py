@@ -231,6 +231,26 @@ class account_payment(models.Model):
             self.advance_type = '20_contract'
         else:
             self.advance_type = '10_no_contract'
+
+    def compute_invoice_advance(self):
+        for one in self:
+            sale_normal_invoice_ids = self.env['account.invoice'].search([('residual','>',0),('state','=','open'),('yjzy_type','=','sale'),('type','=','out_invoice')])
+            sale_back_tax_invoice_ids = self.env['account.invoice'].search([('residual','>',0),('state','=','open'),('yjzy_type','=','back_tax'),('type','=','out_invoice')])
+            sale_other_invoice_ids = self.env['account.invoice'].search([('residual','>',0),('state','=','open'),('invoice_attribute','=','other_payment'),('yjzy_type_1','=','sale'),('type','=','out_invoice')])
+            advance_payment_ids = self.env['account.payment'].search([('sfk_type','=','ysrld'),('advance_balance_total','!=',0),('state','=','post')])
+
+
+    #1102
+    payment_for_goods = fields.Boolean('货款')
+    payment_for_back_tax = fields.Boolean('退税')
+    payment_for_other = fields.Boolean('其他')
+
+    sale_normal_invoice_ids = fields.Many2many('account.invoice','p1_id','i1_id','未完成认领货款应收账单',compute='compute_invoice_advance')
+    sale_back_tax_invoice_ids = fields.Many2many('account.invoice','p2_id','i2_id','未完成认领应收退税账单',compute='compute_invoice_advance')
+    sale_other_invoice_ids = fields.Many2many('account.invoice','p3_id','i3_id','未完成认领其他应收',compute='compute_invoice_advance')
+    advance_payment_ids = fields.Many2many('account.payment','p4_id','i4_id','未完成认领预收单',compute='compute_invoice_advance')
+
+
     reconciling = fields.Boolean('正在认领')
     #903
     account_reconcile_order_line_id = fields.Many2one('account.reconcile.order.line',u'应收付认领明细') #过账后生成的实际的认领单明细
