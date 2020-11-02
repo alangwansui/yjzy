@@ -146,7 +146,7 @@ class res_partner(models.Model):
                                      domain=[('purchaser_date', '!=', False),
                                              ('purchaser_date', '>', fields.datetime.now().strftime('%Y-01-01 00:00:00')),
                                              ('state', 'in',
-                                              ['to_approve', 'purchase'])])
+                                              ['to approve', 'purchase'])])
     #出运合同明细，先创建明细的供应商字段，来自批次号
     po_tb_line_ids = fields.One2many('transport.bill.line','supplier_id','今年出运合同明细',domain=[('bill_id.approve_date','!=', False),
                                     ('bill_id.approve_date', '>', fields.datetime.now().strftime('%Y-01-01 00:00:00')),
