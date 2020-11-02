@@ -417,14 +417,15 @@ class account_invoice(models.Model):
     @api.depends('state','residual')
     def compute_tb_po_invoice(self):
         for one in self:
-            tb_po_invoice_back_tax_ids = self.env['account.invoice'].search([('tb_po_invoice_id','=',one.tb_po_invoice_id.id),('yjzy_type_1','=','back_tax')])
-            tb_po_invoice_p_s_ids = self.env['account.invoice'].search([('tb_po_invoice_id','=',one.tb_po_invoice_id.id),('yjzy_type_1','=','purchase'),('type','=','in_refund'),])
-            tb_po_invoice_s_ids = self.env['account.invoice'].search([('tb_po_invoice_id','=',one.tb_po_invoice_id.id),('yjzy_type_1','=','sale'),('type','=','out_invoice')])
-            tb_po_invoice_all_ids = self.env['account.invoice'].search([('tb_po_invoice_id','=',one.tb_po_invoice_id.id)])
-            one.tb_po_invoice_back_tax_ids = tb_po_invoice_back_tax_ids
-            one.tb_po_invoice_p_s_ids = tb_po_invoice_p_s_ids
-            one.tb_po_invoice_s_ids = tb_po_invoice_s_ids
-            one.tb_po_invoice_all_ids = tb_po_invoice_all_ids
+            if one.tb_po_invoice_id:
+                tb_po_invoice_back_tax_ids = self.env['account.invoice'].search([('tb_po_invoice_id','=',one.tb_po_invoice_id.id),('yjzy_type_1','=','back_tax')])
+                tb_po_invoice_p_s_ids = self.env['account.invoice'].search([('tb_po_invoice_id','=',one.tb_po_invoice_id.id),('yjzy_type_1','=','purchase'),('type','=','in_refund'),])
+                tb_po_invoice_s_ids = self.env['account.invoice'].search([('tb_po_invoice_id','=',one.tb_po_invoice_id.id),('yjzy_type_1','=','sale'),('type','=','out_invoice')])
+                tb_po_invoice_all_ids = self.env['account.invoice'].search([('tb_po_invoice_id','=',one.tb_po_invoice_id.id)])
+                one.tb_po_invoice_back_tax_ids = tb_po_invoice_back_tax_ids
+                one.tb_po_invoice_p_s_ids = tb_po_invoice_p_s_ids
+                one.tb_po_invoice_s_ids = tb_po_invoice_s_ids
+                one.tb_po_invoice_all_ids = tb_po_invoice_all_ids
 
     @api.depends('tb_po_hsname_all_ids')
     def compute_tb_po_hsname_all_ids_count(self):

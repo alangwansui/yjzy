@@ -294,7 +294,8 @@
                     <field name="yjzy_invoice_amount_payment_can_approve_all" string="额外可申请支付应付款" sum="小计" invisible="1"/>
 
 
-                    <button name="open_invoice_ids_new" icon="fa-pencil-square-o" type="object" attrs="{'invisible':[('yjzy_invoice_count', '=', 0)]}" context="{'invoice_type':'purchase'}"/>
+                    <button name="open_invoice_ids_new" invisible="1" icon="fa-pencil-square-o" type="object" attrs="{'invisible':[('yjzy_invoice_count', '=', 0)]}" context="{'invoice_type':'purchase'}"/>
+                    <button name="open_invoice_ids_new_all" icon="fa-pencil-square-o" type="object" attrs="{'invisible':[('yjzy_invoice_count', '=', 0)]}" context="{'invoice_type':'purchase'}"/>
                     <field name="yjzy_invoice_ids" invisible="1"/>
                     <field name="yjzy_invoice_count" invisible="1"/>
                     <field name="reconcile_order_line_payment" sum="小计" string="付款认领金额" invisible="1"/>
