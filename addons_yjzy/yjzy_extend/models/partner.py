@@ -122,7 +122,7 @@ class res_partner(models.Model):
             payment_amount_total = sum(x.amount for x in payment_ids)
             one.payment_amount_total = payment_amount_total
 
-    @api.depends('po_approve_ids','po_approve_ids.amount_total','po_approve_ids.state','po_approve_ids.no_deliver_amount_new')
+    @api.depends('po_approve_ids','po_approve_ids.purchaser_date','po_approve_ids.amount_total','po_approve_ids.state','po_approve_ids.no_deliver_amount_new')
     def compute_po_amount_total(self):
         for one in self:
             po_approve_ids = one.po_approve_ids  # .filtered(lambda x: x.company_id  == self.env.user.company_id)
@@ -153,7 +153,7 @@ class res_partner(models.Model):
               ('bill_id.state', 'in', ['approve', 'confirmed', 'delivered', 'invoiced', 'locked', 'verifying', 'done', 'paid'])])
 
     po_amount_total = fields.Float('今年审批完成采购金额', compute=compute_po_amount_total, store=True)
-    po_no_sent_amount_total = fields.Float('今年审批完成采购金额', compute=compute_po_amount_total, store=True)
+    po_no_sent_amount_total = fields.Float('未发货余额', compute=compute_po_amount_total, store=True)
     tb_approve_po_amount_total = fields.Float('今年审批完成出运采购金额', compute=compute_tb_approve_po_amount_total, store=True)
 
     #新增

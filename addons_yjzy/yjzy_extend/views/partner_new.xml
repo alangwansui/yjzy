@@ -188,7 +188,7 @@
                     <field name="supplier_amount_invoice" sum="小计" readonly="1" invisible="1"/>
 
                     <field name="po_amount_total" sum="total" readonly="1"/>
-                    <field name="po_no_sent_amount_total" sum="total" readonly="1"/>
+                    <field name="tb_approve_po_amount_total" sum="total" readonly="1"/>
                     <field name="supplier_amount_residual_invoice" sum="小计" readonly="1"/>
 
                     <button name="action_view_partner_supplier_invoices" icon="fa-pencil-square-o" type="object"/>
@@ -199,10 +199,10 @@
                     <field name="amount_advance_payment_reconcile" sum="小计" readonly="1"  invisible="1"/>
 
                     <field name="supplier_amount_residual_advance_payment" sum="小计" readonly="1"/>
-                    <field name="tb_approve_po_amount_total" sum="total" readonly="1"/>
+
                     <!--button name="open_reconcile_order_line" icon="fa-pencil-square-o" type="object"/-->
                     <button name="open_supplier_advance" icon="fa-pencil-square-o" type="object"/>
-
+                    <field name="po_no_sent_amount_total" sum="total" readonly="1"/>
                     <!--button name="open_sale_order" icon="fa-pencil-square-o" type="object"/-->
                     <field name="is_company" invisible="1"/>
                     <field name="active" invisible="1"/>
