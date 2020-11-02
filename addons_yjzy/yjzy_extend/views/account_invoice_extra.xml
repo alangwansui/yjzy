@@ -194,7 +194,14 @@
                     <field name="residual_times_out_in_new" invisible="1"/>
                     <field name="amount_total_signed" string="原始应付款" sum="Total"/>
                     <field name="residual_signed" string="剩余应付款" sum="Amount Due"/>
-                    <field name="amount_payment_can_approve_all" string="可申请支付应付款"/>
+                    <field name="amount_payment_can_approve_all" string="可申请支付应付款" sum="Total"/>
+                    <field name="tb_po_invoice_s_ids_amount_total" string="原始应收款" sum="Total"/>
+                    <field name="tb_po_invoice_s_ids_residual" string="剩余应收款" sum="Total"/>
+                    <field name="tb_po_invoice_s_ids_can_approve_all" string="可认领应收款" sum="Total"/>
+                    <field name="tb_po_invoice_back_tax_ids_amount_total" string="原始退税款" sum="Total"/>
+                    <field name="tb_po_invoice_back_tax_ids_residual" string="剩余退税款" sum="Total"/>
+                    <field name="tb_po_invoice_back_tax_ids_can_approve_all" string="可认领退税款" sum="Total"/>
+
                     <field name="reconcile_order_line_payment" sum="小计" string="付款认领金额" invisible="1"/>
                     <field name="reconcile_order_line_advance" sum="小计" string="预付认领金额" invisible="1"/>
                     <field name="reconcile_order_line_bank" sum="小计" invisible="1"/>

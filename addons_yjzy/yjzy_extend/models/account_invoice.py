@@ -419,13 +419,33 @@ class account_invoice(models.Model):
         for one in self:
             if one.tb_po_invoice_id:
                 tb_po_invoice_back_tax_ids = self.env['account.invoice'].search([('tb_po_invoice_id','=',one.tb_po_invoice_id.id),('yjzy_type_1','=','back_tax')])
+                tb_po_invoice_back_tax_ids_amount_total = sum(x.amount_total_signed for x in tb_po_invoice_back_tax_ids)
+                tb_po_invoice_back_tax_ids_residual = sum(x.residual_signed for x in tb_po_invoice_back_tax_ids)
+                tb_po_invoice_back_tax_ids_can_approve_all = sum(x.amount_payment_can_approve_all for x in tb_po_invoice_back_tax_ids)
+
                 tb_po_invoice_p_s_ids = self.env['account.invoice'].search([('tb_po_invoice_id','=',one.tb_po_invoice_id.id),('yjzy_type_1','=','purchase'),('type','=','in_refund'),])
                 tb_po_invoice_s_ids = self.env['account.invoice'].search([('tb_po_invoice_id','=',one.tb_po_invoice_id.id),('yjzy_type_1','=','sale'),('type','=','out_invoice')])
+                tb_po_invoice_s_ids_amount_total = sum(x.amount_total_signed for x in tb_po_invoice_s_ids)
+                tb_po_invoice_s_ids_residual = sum(x.residual_signed for x in tb_po_invoice_s_ids)
+                tb_po_invoice_s_ids_can_approve_all = sum(x.amount_payment_can_approve_all for x in tb_po_invoice_s_ids)
+
                 tb_po_invoice_all_ids = self.env['account.invoice'].search([('tb_po_invoice_id','=',one.tb_po_invoice_id.id)])
+
                 one.tb_po_invoice_back_tax_ids = tb_po_invoice_back_tax_ids
+                one.tb_po_invoice_back_tax_ids_count = len(tb_po_invoice_back_tax_ids)
+                one.tb_po_invoice_back_tax_ids_amount_total = tb_po_invoice_back_tax_ids_amount_total
+                one.tb_po_invoice_back_tax_ids_residual = tb_po_invoice_back_tax_ids_residual
+                one.tb_po_invoice_back_tax_ids_can_approve_all = tb_po_invoice_back_tax_ids_can_approve_all
                 one.tb_po_invoice_p_s_ids = tb_po_invoice_p_s_ids
+                one.tb_po_invoice_p_s_ids_count =  len(tb_po_invoice_p_s_ids)
                 one.tb_po_invoice_s_ids = tb_po_invoice_s_ids
+                one.tb_po_invoice_s_ids_count = len(tb_po_invoice_s_ids)
+                one.tb_po_invoice_s_ids_amount_total = tb_po_invoice_s_ids_amount_total
+                one.tb_po_invoice_s_ids_residual = tb_po_invoice_s_ids_residual
+                one.tb_po_invoice_s_ids_can_approve_all = tb_po_invoice_s_ids_can_approve_all
                 one.tb_po_invoice_all_ids = tb_po_invoice_all_ids
+                one.tb_po_invoice_all_ids_count =  len(tb_po_invoice_all_ids)
+
 
     @api.depends('tb_po_hsname_all_ids')
     def compute_tb_po_hsname_all_ids_count(self):
@@ -433,9 +453,22 @@ class account_invoice(models.Model):
             one.tb_po_hsname_all_ids_count = len(one.tb_po_hsname_all_ids)
     #1029#通过他们是否同属于一张申请单来汇总所有相关账单,其他应收付和相关的应收付申请，这里还没有直接的联系，待处理
     tb_po_invoice_back_tax_ids = fields.Many2many('account.invoice','相关退税账单',compute=compute_tb_po_invoice)
+    tb_po_invoice_back_tax_ids_count = fields.Integer('相关退税账单数量',compute=compute_tb_po_invoice)
+    tb_po_invoice_back_tax_ids_amount_total = fields.Monetary('相关退税账单金额',compute=compute_tb_po_invoice)
+    tb_po_invoice_back_tax_ids_residual = fields.Monetary('相关退税账单金额', compute=compute_tb_po_invoice)
+    tb_po_invoice_back_tax_ids_can_approve_all = fields.Monetary('相关退税账单金额', compute=compute_tb_po_invoice)
+
     tb_po_invoice_p_s_ids = fields.Many2many('account.invoice','相关冲减账单',compute=compute_tb_po_invoice)
+    tb_po_invoice_p_s_ids_count = fields.Integer('相关冲减账单数量', compute=compute_tb_po_invoice)
     tb_po_invoice_s_ids = fields.Many2many('account.invoice','相关应收账单',compute=compute_tb_po_invoice)
+    tb_po_invoice_s_ids_count = fields.Integer('相关应收账单数量', compute=compute_tb_po_invoice)
+    tb_po_invoice_s_ids_amount_total = fields.Monetary('相关退税账单金额', compute=compute_tb_po_invoice)
+    tb_po_invoice_s_ids_residual = fields.Monetary('相关退税账单金额', compute=compute_tb_po_invoice)
+    tb_po_invoice_s_ids_can_approve_all = fields.Monetary('相关退税账单金额', compute=compute_tb_po_invoice)
+
+
     tb_po_invoice_all_ids = fields.Many2many('account.invoice','相关账单',compute=compute_tb_po_invoice)
+    tb_po_invoice_all_ids_count = fields.Integer('相关账单数量',compute=compute_tb_po_invoice)
 
 
     name_title = fields.Char(u'账单描述')
