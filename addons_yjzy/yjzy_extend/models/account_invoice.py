@@ -535,25 +535,19 @@ class account_invoice(models.Model):
     reconcile_order_ids = fields.Many2many('account.reconcile.order','re_tb','te_td', u'核销单据',compute=compute_reconcile_order_ids)
     reconcile_order_ids_count = fields.Integer(u'核销单据数量',compute=compute_reconcile_order_ids)
     reconcile_order_id_ids = fields.One2many('account.reconcile.order','back_tax_invoice_id','额外退税对应核销单')
-
     reconcile_order_line_id = fields.One2many('account.reconcile.order.line', 'invoice_id', u'核销明细行', domain=[('order_id.state','=','done'),('amount_total_org','!=',0)])
     reconcile_order_line_count = fields.Float(u'核销明细行数量', compute=get_reconcile_order_line)
-
     reconcile_order_line_ids = fields.One2many('account.reconcile.order.line', 'invoice_id', u'核销明细行',domain=[('order_id','!=',False),('order_id.sfk_type','=','yfhxd')]
                                               )#domain=[('order_id.state', 'in', ['approved']), ('amount_total_org', '!=', 0)]
-
     reconcile_order_line_approve_ids = fields.One2many('account.reconcile.order.line', 'invoice_id', u'核销明细行',
                                                domain=[('order_id.state','=','approved'),('order_id', '!=', False), ('order_id.sfk_type', '=', 'yfhxd')]
                                                )  # domain=[('order_id.state', 'in', ['approved']), ('amount_total_org', '!=', 0)]
-
     yjzy_invoice_reconcile_order_line_ids = fields.One2many('account.reconcile.order.line', 'yjzy_invoice_id', u'所有核销明细行',domain=[('order_id','!=',False),('order_id.sfk_type','=','yfhxd')]
                                                )  # domain=[('order_id.state', 'in', ['approved']), ('amount_total_org', '!=', 0)]关联账单（额外账单以及自己）的所有认领明细
     yjzy_invoice_reconcile_order_line_no_ids = fields.One2many('account.reconcile.order.line.no', 'yjzy_invoice_id',
                                                             u'所有核销细行no', domain=[('order_id', '!=', False),
                                                                                 ('order_id.sfk_type', '=', 'yfhxd')]
                                                             )  # domain=[('order_id.state', 'in', ['approved']), ('amount_total_org', '!=', 0)]关联账单（额外账
-
-
     amount_payment_can_approve_all = fields.Monetary(u'可申请应收付款',currency_field='currency_id',compute=compute_amount_payment_can_approve_all, store=True) #未付金额-审批完成的付款金额
     yjzy_amount_payment_can_approve_all = fields.Monetary(u'所有可申请应收付款',currency_field='currency_id', compute=compute_amount_payment_can_approve_all,
                                                   store=True)  # 包括额外账单的
@@ -1132,6 +1126,27 @@ class account_invoice(models.Model):
             'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
             'target': 'new',
             'domain':[('yjzy_invoice_id','=',self.id),('invoice_attribute','=','extra')],
+            'context':{'open_from_normal':1}
+        }
+
+    def open_invoice_ids_new_all(self):
+        ctx = self.env.context.get('invoice_type')
+        if ctx == 'sale':
+            tree_view = self.env.ref('yjzy_extend.invoice_new_1_tree')
+            form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form')
+        else:
+            tree_view = self.env.ref('yjzy_extend.view_supplier_invoice_extra_tree')
+            form_view = self.env.ref('yjzy_extend.view_account_supplier_invoice_new_form')
+        self.ensure_one()
+        return {
+            'name': u'所有账单',
+            'view_type': 'form',
+            'type': 'ir.actions.act_window',
+            'view_mode': 'tree,form',
+            'res_model': 'account.invoice',
+            'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
+            'target': 'new',
+            'domain':[('yjzy_invoice_id','=',self.id),('invoice_attribute','in',['extra','normal'])],
             'context':{'open_from_normal':1}
         }
 

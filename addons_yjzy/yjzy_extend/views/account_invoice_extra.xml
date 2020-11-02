@@ -46,7 +46,9 @@
             <field name="model">account.invoice</field>
             <field name="arch" type="xml">
                 <tree decoration-info="state == 'draft'" default_order="date_deadline_new" decoration-muted="state == 'cancel'" string="Invoice">
+                    <field name="invoice_attribute"/>
                     <field name="partner_id" groups="base.group_user" string="供应商" invisible="context.get('open_from_normal')"/>
+
                     <field name="bill_id" string="合同号"/>
                     <field name="tb_contract_code" string="合同号" invisible="1"/>
                     <field name="date_invoice" string="账单日期"/>
@@ -81,6 +83,8 @@
                 </tree>
             </field>
         </record>
+
+
 
         <record id="view_other_payment_invoice_tree" model="ir.ui.view">
             <field name="name">account.invoice.other.payment.tree</field>
