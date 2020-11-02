@@ -748,6 +748,7 @@ class tb_po_invoice(models.Model):
                 })
 
 
+
     def make_back_tax(self):
         partner = self.env.ref('yjzy_extend.partner_back_tax')
         # product = self.env.ref('yjzy_extend.product_back_tax')

@@ -274,6 +274,7 @@ class account_invoice(models.Model):
         for one in self:
             #计算额外账单应收总金额
             yjzy_invoice_amount_total = sum(one.yjzy_invoice_ids.filtered(lambda inv: inv.state in ['open','paid']).mapped('amount_total_signed'))
+            print(yjzy_invoice_amount_total)
             #计算额外账单未收总金额
             yjzy_invoice_residual_signed_total = sum(one.yjzy_invoice_ids.filtered(lambda inv: inv.state in ['open','paid']).mapped('residual_signed'))
             yjzy_invoice_amount_payment_can_approve_all = sum(one.yjzy_invoice_ids.filtered(lambda inv: inv.state in ['open','paid']).mapped('amount_payment_can_approve_all'))
@@ -429,7 +430,7 @@ class account_invoice(models.Model):
     def compute_tb_po_hsname_all_ids_count(self):
         for one in self:
             one.tb_po_hsname_all_ids_count = len(one.tb_po_hsname_all_ids)
-    #1029
+    #1029#通过他们是否同属于一张申请单来汇总所有相关账单,其他应收付和相关的应收付申请，这里还没有直接的联系，待处理
     tb_po_invoice_back_tax_ids = fields.Many2many('account.invoice','相关退税账单',compute=compute_tb_po_invoice)
     tb_po_invoice_p_s_ids = fields.Many2many('account.invoice','相关冲减账单',compute=compute_tb_po_invoice)
     tb_po_invoice_s_ids = fields.Many2many('account.invoice','相关应收账单',compute=compute_tb_po_invoice)
@@ -442,6 +443,7 @@ class account_invoice(models.Model):
     #928
     bank_id = fields.Many2one('res.partner.bank', u'银行账号')
     fk_journal_id = fields.Many2one('account.journal', u'日记账',domain=[('type', 'in', ['cash', 'bank'])])
+    #作用，待处理
     tb_po_invoice_ids = fields.One2many('tb.po.invoice','yjzy_invoice_id',u'额外账单申请单',domain=[('type','=','extra')])
     tb_po_invoice_ids_count = fields.Integer(u'额外账单申请单数量',compute=compute_tb_po_invoice_ids)
     #0911
@@ -533,19 +535,25 @@ class account_invoice(models.Model):
     reconcile_order_ids = fields.Many2many('account.reconcile.order','re_tb','te_td', u'核销单据',compute=compute_reconcile_order_ids)
     reconcile_order_ids_count = fields.Integer(u'核销单据数量',compute=compute_reconcile_order_ids)
     reconcile_order_id_ids = fields.One2many('account.reconcile.order','back_tax_invoice_id','额外退税对应核销单')
+
     reconcile_order_line_id = fields.One2many('account.reconcile.order.line', 'invoice_id', u'核销明细行', domain=[('order_id.state','=','done'),('amount_total_org','!=',0)])
     reconcile_order_line_count = fields.Float(u'核销明细行数量', compute=get_reconcile_order_line)
+
     reconcile_order_line_ids = fields.One2many('account.reconcile.order.line', 'invoice_id', u'核销明细行',domain=[('order_id','!=',False),('order_id.sfk_type','=','yfhxd')]
                                               )#domain=[('order_id.state', 'in', ['approved']), ('amount_total_org', '!=', 0)]
+
     reconcile_order_line_approve_ids = fields.One2many('account.reconcile.order.line', 'invoice_id', u'核销明细行',
                                                domain=[('order_id.state','=','approved'),('order_id', '!=', False), ('order_id.sfk_type', '=', 'yfhxd')]
                                                )  # domain=[('order_id.state', 'in', ['approved']), ('amount_total_org', '!=', 0)]
+
     yjzy_invoice_reconcile_order_line_ids = fields.One2many('account.reconcile.order.line', 'yjzy_invoice_id', u'所有核销明细行',domain=[('order_id','!=',False),('order_id.sfk_type','=','yfhxd')]
                                                )  # domain=[('order_id.state', 'in', ['approved']), ('amount_total_org', '!=', 0)]关联账单（额外账单以及自己）的所有认领明细
     yjzy_invoice_reconcile_order_line_no_ids = fields.One2many('account.reconcile.order.line.no', 'yjzy_invoice_id',
                                                             u'所有核销细行no', domain=[('order_id', '!=', False),
                                                                                 ('order_id.sfk_type', '=', 'yfhxd')]
                                                             )  # domain=[('order_id.state', 'in', ['approved']), ('amount_total_org', '!=', 0)]关联账单（额外账
+
+
     amount_payment_can_approve_all = fields.Monetary(u'可申请应收付款',currency_field='currency_id',compute=compute_amount_payment_can_approve_all, store=True) #未付金额-审批完成的付款金额
     yjzy_amount_payment_can_approve_all = fields.Monetary(u'所有可申请应收付款',currency_field='currency_id', compute=compute_amount_payment_can_approve_all,
                                                   store=True)  # 包括额外账单的
