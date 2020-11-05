@@ -232,23 +232,42 @@ class account_payment(models.Model):
         else:
             self.advance_type = '10_no_contract'
 
-    def compute_invoice_advance(self):
-        for one in self:
-            sale_normal_invoice_ids = self.env['account.invoice'].search([('residual','>',0),('state','=','open'),('yjzy_type','=','sale'),('type','=','out_invoice')])
-            sale_back_tax_invoice_ids = self.env['account.invoice'].search([('residual','>',0),('state','=','open'),('yjzy_type','=','back_tax'),('type','=','out_invoice')])
-            sale_other_invoice_ids = self.env['account.invoice'].search([('residual','>',0),('state','=','open'),('invoice_attribute','=','other_payment'),('yjzy_type_1','=','sale'),('type','=','out_invoice')])
-            advance_payment_ids = self.env['account.payment'].search([('sfk_type','=','ysrld'),('advance_balance_total','!=',0),('state','=','post')])
-
+    # @api.depends('yjzy_partner_id')
+    # def compute_invoice_advance(self):
+    #     for one in self:
+    #         if one.yjzy_partner_id:
+    #             sale_normal_invoice_ids = self.env['account.invoice'].search(
+    #                 [('residual', '>', 0), ('state', '=', 'open'), ('yjzy_type', '=', 'sale'), ('type', '=', 'out_invoice'),
+    #                  ('partner_id', '=', one.yjzy_partner_id.id)])
+    #         else:
+    #             sale_normal_invoice_ids = self.env['account.invoice'].search(
+    #                 [('residual', '>', 0), ('state', '=', 'open'), ('yjzy_type', '=', 'sale'),
+    #                  ('type', '=', 'out_invoice')])
+    #         sale_back_tax_invoice_ids = self.env['account.invoice'].search(
+    #             [('residual', '>', 0), ('state', '=', 'open'), ('yjzy_type', '=', 'back_tax'),
+    #              ('type', '=', 'out_invoice')])
+    #         sale_other_invoice_ids = self.env['account.invoice'].search(
+    #             [('residual', '>', 0), ('state', '=', 'open'), ('invoice_attribute', '=', 'other_payment'),
+    #              ('yjzy_type_1', '=', 'sale'), ('type', '=', 'out_invoice')])
+    #         advance_payment_ids = self.env['account.payment'].search(
+    #             [('sfk_type', '=', 'ysrld'), ('advance_balance_total', '!=', 0),
+    #              ('state', 'in', ['posted', 'reconciled'])])
+    #         one.sale_normal_invoice_ids = sale_normal_invoice_ids
+    #         one.sale_back_tax_invoice_ids = sale_back_tax_invoice_ids
+    #         one.sale_other_invoice_ids = sale_other_invoice_ids
+    #         one.advance_payment_ids = advance_payment_ids
 
     #1102
+    yjzy_partner_id = fields.Many2one('res.partner', 'Customer')
+
     payment_for_goods = fields.Boolean('货款')
     payment_for_back_tax = fields.Boolean('退税')
     payment_for_other = fields.Boolean('其他')
 
-    sale_normal_invoice_ids = fields.Many2many('account.invoice','p1_id','i1_id','未完成认领货款应收账单',compute='compute_invoice_advance')
-    sale_back_tax_invoice_ids = fields.Many2many('account.invoice','p2_id','i2_id','未完成认领应收退税账单',compute='compute_invoice_advance')
-    sale_other_invoice_ids = fields.Many2many('account.invoice','p3_id','i3_id','未完成认领其他应收',compute='compute_invoice_advance')
-    advance_payment_ids = fields.Many2many('account.payment','p4_id','i4_id','未完成认领预收单',compute='compute_invoice_advance')
+    # sale_normal_invoice_ids = fields.Many2many('account.invoice','p1_id','i1_id','未完成认领货款应收账单',compute='compute_invoice_advance')
+    # sale_back_tax_invoice_ids = fields.Many2many('account.invoice','p2_id','i2_id','未完成认领应收退税账单',compute='compute_invoice_advance')
+    # sale_other_invoice_ids = fields.Many2many('account.invoice','p3_id','i3_id','未完成认领其他应收',compute='compute_invoice_advance')
+    # advance_payment_ids = fields.Many2many('account.payment','p4_id','i4_id','未完成认领预收单',compute='compute_invoice_advance')
 
 
     reconciling = fields.Boolean('正在认领')
@@ -389,6 +408,24 @@ class account_payment(models.Model):
     post_uid = fields.Many2one('res.users',u'审批人')
     post_date = fields.Date(u'审批时间')
 
+    # @api.onchange('yjzy_partner_id')
+    # def onchange_yjzy_partner_id(self):
+    #     if self.yjzy_partner_id != False:
+    #         self.partner_id = self.yjzy_partner_id
+
+    def open_account_invoice(self):
+        form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form_in_one')
+        tree_view = self.env.ref('yjzy_extend.invoice_new_1_tree')
+
+        return { 'name': u'应收账单',
+                'view_type': 'form',
+                'view_mode': 'tree,form',
+                'res_model': 'account.invoice',
+                'type': 'ir.actions.act_window',
+                'views': [(tree_view.id, 'tree'),(form_view.id, 'form')],
+                'domain':   [('residual', '>', 0), ('state', '=', 'open'), ('yjzy_type', '=', 'sale'),('type', '=', 'out_invoice')],
+                'context':{'yjzy_payment_id':self.id}
+                }
 
     @api.multi
     def action_save_test(self):
@@ -819,6 +856,13 @@ class account_payment(models.Model):
         #                 'default_currency_id':self.currency_id.id,
         #                 'default_yjzy_payment_id': self.id}
         # }
+        yjzy_payment_id = self.env.context.get('yjzy_payment_id')
+        if not yjzy_payment_id:
+            yjzy_payment_id = self.id
+        partner_id = False
+        # if self.yjzy_partner_id:
+        #     partner_id = self.yjzy_partner_id
+
         count_ysrld = self.count_ysrld
         action = self.env.ref('yjzy_extend.action_ysrld_all_new_1').read()[0]
         ctx = {'default_sfk_type': 'ysrld',
@@ -827,7 +871,8 @@ class account_payment(models.Model):
                         'default_advance_ok': True,
                         'default_partner_type': 'customer',
                         'default_currency_id':self.currency_id.id,
-                        'default_yjzy_payment_id': self.id }  # 预付-应付
+                        'default_yjzy_payment_id': yjzy_payment_id,
+                        'default_partner_id': partner_id.id}  # 预付-应付
         if count_ysrld >= 1:
             action['views'] = [(tree_view.id, 'tree'), (form_view.id, 'form')]
             action['domain'] = [('id', 'in', self.ysrld_ids.ids), ('sfk_type', '=', 'ysrld')]
@@ -835,6 +880,8 @@ class account_payment(models.Model):
         else:
             action['views'] = [(form_view.id, 'form')]
             action['context'] = ctx
+        # if self.yjzy_partner_id:
+        #     self.partner_id = self.yjzy_partner_id
         print('ctx_222', ctx)
         print('action', action)
         return action
@@ -1158,7 +1205,7 @@ class account_payment(models.Model):
                         # 'from_tanchuang':1,
                         }
         }
-    #从预收账单直接创建认领(从应付申请的时候，明细上创建)
+    #从预收账单直接创建认领(从应付申请的时候，明细上创建)   从应付核销单上的预付列表来做认领的动作
     def create_yfsqd_yfhxd_form_new(self):
         form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new').id
         default_invoice_ids = self.env.context.get('default_invoice_ids')
@@ -1303,34 +1350,75 @@ class account_payment(models.Model):
         if self.partner_id.state != 'done':
             war = '客户正在审批中，请先完成客户的审批'
             raise Warning(war)
-    #904 创建预收-应收认领单
+
+    @api.onchange('payment_for_back_tax')
+    def onchange_payment_for_back_tax(self):
+        if self.payment_for_back_tax:
+            self.partner_id = self.env.ref('yjzy_extend.partner_back_tax')
+        else:
+            partner_id = self.env['res.partner'].search([('name','=','未定义'),('customer','=',True)])
+            self.partner_id = partner_id
+
+    #904 创建预收-应收认领单   收款-应收认领单
     def create_yshxd_ysrl(self):
+        invoice_attribute = self.env.context.get('invoice_attribute')
+        if self.partner_id.name == '未定义' and self.payment_for_goods :
+            raise Warning('请先选择客户，再进行认领')
         yshxd_obj = self.env['account.reconcile.order']
+        if self.sfk_type == 'ysrld':
+            yshxd_id = yshxd_obj.create({'operation_wizard':'25',
+                                         'yjzy_advance_payment_id':self.id,
+                                         'partner_id':self.partner_id.id,
+                                         'sfk_type':'yshxd',
+                                         'payment_type':'inbound',
+                                         'partner_type':'customer',
+                                         'be_renling':True,
 
-        yshxd_id = yshxd_obj.create({'operation_wizard':'25',
-                                     'yjzy_advance_payment_id':self.id,
-                                     'partner_id':self.partner_id.id,
-                                     'sfk_type':'yshxd',
-                                     'payment_type':'inbound',
-                                     'partner_type':'customer',
-                                     'be_renling':True,
-                                     })
-        form_view = self.env.ref('yjzy_extend.account_yshxd_form_view_new').id
-        return {
-            'name': '认领单',
-            'view_type': 'form',
-            'view_mode': 'form',
-            'res_model': 'account.reconcile.order',
-            'views': [(form_view, 'form')],
-            'res_id': yshxd_id.id,
-            'target': 'current',
-            'type': 'ir.actions.act_window',
-            'context':{'default_sfk_type': 'yshxd',
-                       'active_id':yshxd_id.id
-                       }
+                                         })
+            form_view = self.env.ref('yjzy_extend.account_yshxd_form_view_new').id
+            return {
+                'name': '认领单',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'account.reconcile.order',
+                'views': [(form_view, 'form')],
+                'res_id': yshxd_id.id,
+                'target': 'current',
+                'type': 'ir.actions.act_window',
+                'context':{'default_sfk_type': 'yshxd',
+                           'active_id':yshxd_id.id
+                           }
+            }
+        elif self.sfk_type == 'rcskd':
+            yshxd_id = yshxd_obj.create({'operation_wizard': '10',
+                                         'partner_id': self.partner_id.id,
+                                         'sfk_type': 'yshxd',
+                                         'payment_type': 'inbound',
+                                         'partner_type': 'customer',
+                                         'yjzy_payment_id':self.id,
+                                         'be_renling': True,
+                                         'invoice_attribute': invoice_attribute,
+                                         })
 
+            # if self.yjzy_partner_id:
+            #     self.partner_id = self.yjzy_partner_id
+            form_view = self.env.ref('yjzy_extend.account_yshxd_form_view_new').id
+            return {
+                'name': '应收认领单',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'account.reconcile.order',
+                'views': [(form_view, 'form')],
+                'res_id': yshxd_id.id,
+                'target': 'current',
+                'type': 'ir.actions.act_window',
+                'context': {'default_sfk_type': 'yshxd',
+                            'active_id': yshxd_id.id,
+                            'bank_amount': 1,
+                            'show_so': 1,
+                            }
 
-        }
+            }
 
 
 

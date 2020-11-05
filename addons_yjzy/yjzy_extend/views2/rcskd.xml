@@ -300,7 +300,7 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_new_account_rcskd_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcskd_form')})]"/>
     </record>
-    <menuitem id="mennu_new_action_rcskd" parent="menu_rcskd_new" name="收款单:统计" sequence="90"
+    <menuitem id="mennu_new_action_rcskd" parent="menu_rcskd_new" name="收款单:统计" sequence="90" groups="base.group_system"
               action="action_new_action_rcskd"/>
 
 
@@ -313,7 +313,8 @@
         <field name="view_mode">form</field>
         <field name="domain">[('sfk_type','=','rcskd'),('state','not in',['reconciled','posted'])]</field>
         <field name="search_view_id" ref="view_account_payment_search_new"/>
-        <field name="context">{'search_default_group_by_state':1,'show_shoukuan': True, 'default_sfk_type': 'rcskd', 'default_payment_type': 'inbound', 'default_be_renling': False, 'default_advance_ok': True, 'default_partner_type': 'customer',}</field>
+        <field name="context">{'search_default_group_by_state':1,'show_shoukuan': True, 'default_sfk_type': 'rcskd',
+            'default_payment_type': 'inbound', 'default_be_renling': False, 'default_advance_ok': True, 'default_partner_type': 'customer',}</field>
         <field name="view_ids" eval="[(5, 0, 0),
 
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcskd_form')})]"/>
@@ -332,7 +333,7 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_rcskd_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcskd_form')})]"/>
     </record>
-    <menuitem id="menu_rcskd_undone_new"  sequence="20" name="未提交" parent="yjzy_extend.menu_rcskd_new" action="action_rcskd_undone_new"/>
+    <menuitem id="menu_rcskd_undone_new"  sequence="20" name="未提交" groups="base.group_system" parent="yjzy_extend.menu_rcskd_new" action="action_rcskd_undone_new"/>
     <menuitem id="menu_rcskd_undone_new_cashier"  sequence="20" name="未提交" parent="yjzy_extend.menu_rcskd_new_cashier" action="action_rcskd_undone_new"/>
     <record model="ir.actions.act_window" id="action_rcskd_balance_new">
         <field name="name">未认领完成收款单</field>
@@ -347,7 +348,7 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_rcskd_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcskd_form')})]"/>
     </record>
-     <menuitem id="menu_rcskd_balance_new"  sequence="30" name="未认领完成" parent="yjzy_extend.menu_rcskd_new" action="action_rcskd_balance_new"/>
+     <menuitem id="menu_rcskd_balance_new"  sequence="30" name="未认领完成" parent="yjzy_extend.menu_rcskd_new" groups="base.group_system"  action="action_rcskd_balance_new"/>
    <menuitem id="menu_rcskd_balance_new_cashier"  sequence="30" name="未认领完成" parent="yjzy_extend.menu_rcskd_new_cashier" action="action_rcskd_balance_new"/>
     <record model="ir.actions.act_window" id="action_rcskd_no_balance_new">
         <field name="name">已认领完成收款单</field>
@@ -362,7 +363,7 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_rcskd_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcskd_form')})]"/>
     </record>
-  <menuitem id="menu_rcskd_no_balance_new"  sequence="40" name="已认领完成" parent="yjzy_extend.menu_rcskd_new" action="action_rcskd_no_balance_new"/>
+  <menuitem id="menu_rcskd_no_balance_new"  sequence="40" name="已认领完成" parent="yjzy_extend.menu_rcskd_new" groups="base.group_system"  action="action_rcskd_no_balance_new"/>
   <menuitem id="menu_rcskd_no_balance_new_cashier"  sequence="40" name="已认领完成" parent="yjzy_extend.menu_rcskd_new_cashier" action="action_rcskd_no_balance_new"/>
 
 

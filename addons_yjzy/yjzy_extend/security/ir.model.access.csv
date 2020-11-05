@@ -39,7 +39,7 @@ access_dashboard_view,access_dashboard_view,model_dashboard_view,base.group_user
 access_expense_sheet_stage,access_expense_sheet_stage,model_expense_sheet_stage,base.group_user,1,1,1,1
 access_account_reconcile_stage,access_account_reconcile_stage,model_account_reconcile_stage,base.group_user,1,1,1,1
 
-
+access_back_tax_declaration_line,access_back_tax_declaration_line,model_back_tax_declaration_line,base.group_user,1,1,1,1
 
 
 

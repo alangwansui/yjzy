@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="wizard_back_tax_declaration_form" model="ir.ui.view">
+            <field name="name">wizard.back.tax.declarationfrom</field>
+            <field name="model">wizard.back.tax.declaration</field>
+            <field name="arch" type="xml">
+                <form string="添加应收退税账单">
+                    <group>
+                        <div>为选中的退税账单创建申报单</div>
+                        <field name="gongsi_id" groups="base.group_system"/>
+                    </group>
+                    <group >
+                        <field name="invoice_ids" nolabel="1" options="{'no_create': True,'no_open':True}" context="{'search_default_group_by_bill_id':1}"
+                               domain="[('yjzy_type', '=', 'back_tax'),('state', 'in',['open'])]"/>
+                    </group>
+
+                    <footer>
+                        <button name="apply" class="oe_highlight" type='object' string="确认" />
+                        <button special="cancel" class="oe_highlight" string="取消"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>
+

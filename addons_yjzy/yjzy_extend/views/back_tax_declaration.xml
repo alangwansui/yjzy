@@ -8,8 +8,8 @@
                 <tree string="退税申报表" >
                     <field name="name"/>
                     <field name="create_date" string="创建日期"/>
-                    <field name="amount_all"/>
-                    <field name="amount_residual"/>
+                    <field name="invoice_amount_all"/>
+                    <field name="invoice_residual_all"/>
                 </tree>
             </field>
         </record>
@@ -19,6 +19,8 @@
             <field name="arch" type="xml">
                 <form string="退税申报表">
                     <header>
+                        <button name="action_confirm" string="确认申报" type="object" states="draft"/>
+                        <button name="open_wizard_back_tax_declaration" string="添加应收退税" type="object"/>
                         <field name="state" widget="statusbar"/>
                     </header>
                     <sheet>
@@ -26,23 +28,29 @@
 
                         <group>
                             <field name="name"/>
-                            <field name="amount_all"/>
-                            <field name="amount_residual"/>
-                            <field name="create_uid" string="创建者"/>
-                            <field name="create_date" string="创建日期"/>
+                            <field name="invoice_amount_all"/>
+                            <field name="invoice_residual_all"/>
+                            <field name="declaration_amount_all"/>
+                            <field name="declaration_date"/>
+                            <field name="create_uid" string="创建者" invisible="1"/>
+                            <field name="create_date" string="创建日期" invisible="1"/>
                         </group>
 
                         </group>
                     <notebook>
                         <page>
-                            <field name="invoice_back_tax_ids" widget="many2many" domain="[('yjzy_type','=','back_tax')]">
-                                <tree>
-                                    <field name="tb_contract_code"/>
-                                    <field name="residual_signed"/>
-                                    <field name="state"/>
-                                    <field name="fault_comments"/>
+                            <field name="btd_line_ids">
+                                <tree create="false" editable="bottom">
+                                    <field name="invoice_id"/>
+                                    <field name="invoice_currency_id" invisible="1"/>
+                                    <field name="invoice_amount_total"/>
+                                    <field name="invoice_residual_total"/>
+                                    <field name="declaration_amount"/>
+                                    <field name="comments"/>
+
                                 </tree>
                             </field>
+
                         </page>
                     </notebook>
                        </sheet>
@@ -54,16 +62,25 @@
             </field>
         </record>
 
-     <record id="action_back_tax_declaration" model="ir.actions.act_window">
+     <record id="action_create_back_tax_declaration" model="ir.actions.act_window">
         <field name="name">退税申报表</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">back.tax.declaration</field>
         <field name="view_mode">tree,form</field>
+         <field name="context">{}</field>
     </record>
 
 
-    <menuitem id="menu_back_tax_declaration" name="退税申报表" parent="yjzy_extend.menu_back_tax_declaration_root" action="action_back_tax_declaration" sequence=""/>
-
+    <menuitem id="menu_back_tax_declaration" name="退税申报单" parent="yjzy_extend.menu_back_tax_declaration_root" action="action_back_tax_declaration" sequence=""/>
+    <menuitem id="menu_back_tax_declaration_1" name="退税申报单" parent="yjzy_extend.menu_customer_invoice_back_tax_root" action="action_back_tax_declaration" sequence="20"/>
+    <record id="action_back_tax_declaration" model="ir.actions.act_window">
+        <field name="name">创建退税申报表</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">back.tax.declaration</field>
+        <field name="view_mode">form</field>
+         <field name="context">{}</field>
+    </record>
+        <menuitem id="menu_action_create_back_tax_declaration" name="创建退税申报" parent="yjzy_extend.menu_customer_invoice_back_tax_root" action="action_create_back_tax_declaration" sequence="25"/>
 
     </data>
 </odoo>

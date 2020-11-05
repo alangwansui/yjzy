@@ -355,34 +355,18 @@
     <menuitem id="menu_ysrld" sequence="00" name="预收认领单" parent="menu_skf_root" action="action_ysrld"/>
 
 
-    <menuitem id="menu_ysrld_new" sequence="30" name="预收认领单" parent="menu_new_account_in_root"/>
 
-    <record id="action_ysrld_draft" model="ir.actions.act_window">
-        <field name="name">未提交预收申请</field>
-        <field name="type">ir.actions.act_window</field>
-        <field name="res_model">account.payment</field>
-        <field name="view_type">form</field>
-        <field name="view_mode">tree,form</field>
-        <field name="domain">[('sfk_type','=','ysrld'),('state_1','in',['10_draft','80_refused','90_cancel'])]</field>
-        <field name="context">{'show_shoukuan': True, 'default_sfk_type': 'ysrld', 'default_payment_type': 'inbound',
-            'default_be_renling': True,'default_advance_ok': True, 'default_partner_type': 'customer',}
-        </field>
-        <field name="search_view_id" ref="view_account_payment_search_new"/>
-        <field name="view_ids" eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_ysrld_tree')}),
-                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_ysrld_form')})]"/>
-    </record>
-    <menuitem id="menu_new_ysrld_draft" parent="menu_ysrld_new" name="未提交" sequence="10"
-              action="action_ysrld_draft"/>
+
+
 
     <record id="action_ysrld_undone" model="ir.actions.act_window">
-        <field name="name">审批中预收</field>
+        <field name="name">待审批完成预收</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">account.payment</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
-        <field name="domain">[('sfk_type','=','ysrld'),('state_1','in',['20_account_submit'])]</field>
-        <field name="context">{'show_shoukuan': True, 'default_sfk_type': 'ysrld', 'default_payment_type': 'inbound',
+        <field name="domain">[('sfk_type','=','ysrld'),('state_1','in',['20_account_submit','10_draft','80_refused','90_cancel'])]</field>
+        <field name="context">{'search_default_group_by_state_1':1,'show_shoukuan': True, 'default_sfk_type': 'ysrld', 'default_payment_type': 'inbound',
             'default_be_renling': True,'default_advance_ok': True, 'default_partner_type': 'customer',}
         </field>
         <field name="search_view_id" ref="view_account_payment_search_new"/>
@@ -390,7 +374,7 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_ysrld_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_ysrld_form')})]"/>
     </record>
-    <menuitem id="menu_new_ysrld_undone" parent="menu_ysrld_new" name="审批中" sequence="10"
+    <menuitem id="menu_new_ysrld_undone" parent="menu_advance_payment_in_apply_root" name="待审批完成" sequence="10"
               action="action_ysrld_undone"/>
 
      <record id="action_ysrld_balance" model="ir.actions.act_window">
@@ -408,7 +392,7 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_ysrld_reconcile_tree_1')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_ysrld_form')})]"/>
     </record>
-    <menuitem id="menu_new_ysrld_balance" parent="menu_ysrld_new" name="未认领完成" sequence="20"
+    <menuitem id="menu_new_ysrld_balance" parent="menu_advance_payment_in_apply_root" name="未认领完成" sequence="20"
               action="action_ysrld_balance"/>
 
     <record id="action_ysrld_no_balance" model="ir.actions.act_window">
@@ -426,7 +410,7 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_ysrld_reconcile_tree_1')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_ysrld_form')})]"/>
     </record>
-    <menuitem id="menu_new_ysrld_no_balance" parent="menu_ysrld_new" name="认领完成" sequence="30"
+    <menuitem id="menu_new_ysrld_no_balance" parent="menu_advance_payment_in_apply_root" name="认领完成" sequence="30"
               action="action_ysrld_no_balance"/>
 
      <record id="action_ysrld_create" model="ir.actions.act_window">
@@ -444,7 +428,7 @@
 
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_ysrld_form')})]"/>
     </record>
-    <menuitem id="menu_new_ysrld_create" parent="menu_ysrld_new" name="创建预收认领单" sequence="99"
+    <menuitem id="menu_new_ysrld_create" parent="menu_advance_payment_in_apply_root" name="创建预收认领单" sequence="99"
               action="action_ysrld_create"/>
 
 
@@ -464,7 +448,7 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_ysrld_reconcile_tree_1')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_ysrld_form')})]"/>
     </record>
-    <menuitem id="mennu_neew_ysrld_reconcile_1" parent="menu_ysrld_new" name="预收认领：新" sequence="90"
+    <menuitem id="mennu_neew_ysrld_reconcile_1" parent="menu_advance_payment_in_apply_root" name="预收认领：新" groups="base.group_system" sequence="90"
               action="action_new_ysrld_reconcile_1"/>
 <!--    #动作用-->
     <record model="ir.actions.act_window" id="action_ysrld_all_new_1">

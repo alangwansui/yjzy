@@ -14,6 +14,21 @@ class wizard_reconcile_invoice(models.TransientModel):
     invoice_ids = fields.Many2many('account.invoice', 'ref_rec_inv', 'inv_id', 'tb_id', u'Invoice')
     order_id = fields.Many2one('account.reconcile.order',u'核销单')
     yjzy_advance_payment_id = fields.Many2one('account.payment',u'预收认领单')
+    btd_id = fields.Many2one('back.tax.declaration','退税申报单')
+
+    @api.onchange('btd_id')
+    def onchange_btd_id(self):
+        if not self.btd_id:
+            return {}
+        invoice_ids = self.invoice_ids
+        for line in self.btd_id.btd_line_ids.mapped('invoice_id') - self.invoice_ids:
+            invoice_ids += line
+            print('line_1111111111',line)
+        self.invoice_ids = invoice_ids
+        self.btd_id = False
+        return {}
+
+
 
 
     def apply(self):
@@ -140,13 +155,20 @@ class wizard_reconcile_invoice(models.TransientModel):
         line_ids = line_obj.browse([])
         line_id = None
 
+        declaration_amount = 0
         for invoice in self.invoice_ids:
             so_invlines = self._prepare_sale_invoice_line(invoice)
+            if invoice.yjzy_type == 'back_tax' or invoice.yjzy_type_1 == 'back_tax':
+                declaration_amount = invoice.residual
+            else:
+                declaration_amount = 0
+            print('declaration_amount_0000000000',declaration_amount)
             if not so_invlines:
                 line_id=line_obj.create({
                     'order_id': order_id.id,
                     'invoice_id': invoice.id,
                     'amount_invoice_so': invoice.amount_total,
+                    'amount_payment_org':declaration_amount
                 })
             else:
                 for so, invlines in so_invlines.items():
@@ -155,10 +177,12 @@ class wizard_reconcile_invoice(models.TransientModel):
                         'so_id': so.id,
                         'invoice_id': invoice.id,
                         'amount_invoice_so': sum([i.price_subtotal for i in invlines]),
+                        'amount_payment_org':declaration_amount
 
                     })
             line_ids |= line_id
         self.order_id.invoice_ids = self.invoice_ids
+        # self.order_id.invoice_attribute = self.invoice_ids[0].invoice_attribute
         so_po_dic = {}
         print('line_obj', line_ids)
         self.order_id.line_no_ids = None
@@ -181,6 +205,7 @@ class wizard_reconcile_invoice(models.TransientModel):
                                 'amount_invoice_so': amount_invoice_so,
                                 'advance_residual2': advance_residual2,
                                 # 'yjzy_payment_id': yjzy_advance_payment_id.id
+                    'amount_payment_org':declaration_amount
                 }
 
         for kk, data in list(so_po_dic.items()):
@@ -189,8 +214,10 @@ class wizard_reconcile_invoice(models.TransientModel):
                 'invoice_id': data['invoice_id'],
                 'amount_invoice_so': data['amount_invoice_so'],
                 'advance_residual2': data['advance_residual2'],
-                'yjzy_payment_id': yjzy_advance_payment_id.id
+                'yjzy_payment_id': yjzy_advance_payment_id.id,
+                'amount_payment_org':declaration_amount
             })
+
 
     # def apply(self):
     #     self.ensure_one()

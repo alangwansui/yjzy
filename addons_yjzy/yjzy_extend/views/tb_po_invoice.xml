@@ -29,7 +29,7 @@
             <field name="name">tb.po.extra.customer_invoice_tree</field>
             <field name="model">tb.po.invoice</field>
             <field name="arch" type="xml">
-                <tree string="客户应收账单">
+                <tree string="客户应收账单申请">
                     <field name="name"/>
                     <field name="partner_id"/>
                     <field name="price_total"/>
@@ -1300,12 +1300,40 @@
                   action="act_extra_supplier_invoice_all"
         />
 
+        <record model="ir.actions.act_window" id="act_extra_customer_invoice_all">
+            <field name="name">额外应收账单申请单</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">tb.po.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('yjzy_type_1','=','sale'),('type','=','extra')]</field>
+            <field name="limit">20</field>
+            <field name="context">
+                {'search_default_group_by_state':1,'default_type':'extra','default_yjzy_type_1':'sale'}
+            </field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('tb_po_extra_supplier_invoice_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_form')})]"/>
+
+        </record>
+
+        <menuitem id="menu_extra_customer_invoice_all" name="查询申请单"
+                  parent="yjzy_extend.menu_customer_invoice_extra_apply_root"
+                  sequence="10"
+                  action="act_extra_customer_invoice_all"
+        />
+
 
 <!--        额外账单查看并创建-->
         <menuitem id="menu_invoice_supplier_create_invoice" name="创建申请单"
                   parent="yjzy_extend.menu_supplier_invoice_extra_apply_root"
                   sequence="10"
                   action="action_purchase_invoice_unpaid_new_extra"/>
+
+        <menuitem id="menu_customer_invoice_unpaid_new_extra" name="创建申请单"
+                  parent="yjzy_extend.menu_customer_invoice_extra_apply_root"
+                  sequence="20"
+                  action="action_customer_invoice_unpaid_new_extra"/>
 
         <record model="ir.actions.act_window" id="act_tb_po_all">
             <field name="name">直接增加采购申请单</field>
@@ -1389,6 +1417,47 @@
                   parent="yjzy_extend.menu_supplier_invoice_other_payment_apply_root"
                   sequence="10"
                   action="act_other_payment_create"/>
+
+
+        <record model="ir.actions.act_window" id="act_other_payment_customer_invoice_all">
+            <field name="name">其他应收申请单</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">tb.po.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('yjzy_type_1','=','sale'),('type','=','other_payment')]</field>
+            <field name="limit">20</field>
+            <field name="context">
+                {'search_default_group_by_state':1,'default_type':'other_payment','default_yjzy_type_1':'sale'}
+            </field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('tb_po_invoice_other_payment_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_form')})]"/>
+
+        </record>
+
+        <menuitem id="menu_other_payment_customer_invoice_all" name="查询申请单"
+                  parent="yjzy_extend.menu_customer_invoice_other_payment_apply_root"
+                  sequence="10"
+                  action="act_other_payment_customer_invoice_all"
+        />
+
+        <record model="ir.actions.act_window" id="act_other_payment_customer_invoice_create">
+            <field name="name">创建其他应收申请</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">tb.po.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="domain">[]</field>
+            <field name="limit">20</field>
+            <field name="context">{'default_type':'other_payment','default_yjzy_type_1':'sale'}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_form')})]"/>
+        </record>
+        <menuitem id="menu_other_payment_customer_invoice_create" name="创建申请单"
+                  parent="yjzy_extend.menu_customer_invoice_other_payment_apply_root"
+                  sequence="20"
+                  action="act_other_payment_customer_invoice_create"/>
 
         <!--        工作台需要的-->
         <record model="ir.actions.act_window" id="act_expense_po_all">

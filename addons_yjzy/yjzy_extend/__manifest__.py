@@ -132,6 +132,7 @@
 
 
         'views2/rcskd.xml',
+        'views2/rcskd_new.xml',
         'views2/rcfkd.xml',
         'views2/ysrld.xml',
         'views2/yfsqd.xml',
@@ -171,6 +172,7 @@
         'wizard/wizard_so2sol.xml',
         'wizard/wizard_tb_po_invoice.xml',
         'wizard/wizard_reconcile_invoice.xml',
+        'wizard/wizard_back_tax_declaration_line.xml',
 
         # report
         'report/report.xml',

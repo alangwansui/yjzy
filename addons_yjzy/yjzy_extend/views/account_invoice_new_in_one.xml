@@ -285,6 +285,8 @@
                                     <div class="o_row" attrs="{'invisible':[('yjzy_invoice_count','=',0)]}">
                                     <field name="yjzy_amount_payment_can_approve_all"/>
                                     </div>
+                                    <field name="declaration_amount" attrs="{'invisible':[('yjzy_type','!=','back_tax'),('yjzy_type_1','!=','back_tax')]}"/>
+                                    <field name="back_tax_declaration_state" readonly="1" attrs="{'invisible':[('yjzy_type','!=','back_tax'),('yjzy_type_1','!=','back_tax')]}"/>
 
 
                                 </group>

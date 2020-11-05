@@ -43,8 +43,8 @@
                             domain="[('activity_ids.date_deadline', '&gt;', context_today().strftime('%Y-%m-%d'))]"/>
                     <group expand="0" string="Group By">
                         <filter name="group_invoice_attribute" string="账单类型" context="{'group_by':'invoice_attribute'}"/>
-                        <filter name="group_by_state" string="账单类型" context="{'group_by':'state'}"/>
-                        <filter name="group_by_state_yjzy_invoice_id" string="账单类型" context="{'group_by':['state','yjzy_invoice_id']}"/>
+                        <filter name="group_by_state" string="状态分组" context="{'group_by':'state'}"/>
+                        <filter name="group_by_state_yjzy_invoice_id" string="状态+主账单分组" context="{'group_by':['state','yjzy_invoice_id']}"/>
                         <filter name="group_by_date_invoice" string="账单日期"
                                 context="{'group_by':'date_invoice:year'}"/>
                         <filter name="group_by_stage_id" string="审批状态"
@@ -1879,7 +1879,7 @@
                               ]"/>
         </record>
         <menuitem id="menu_account_new_root" name="财务：新" sequence="99"/>
-        <menuitem id="menu_account_invoice_extra_root" name="额外应收账单"
+        <menuitem id="menu_account_invoice_extra_root" name="额外应收账单" groups="base.group_system"
                   parent="yjzy_extend.menu_new_account_in_root"
                   sequence="99"
         />
@@ -2010,7 +2010,7 @@
 
                   sequence="99"
         />
-        <menuitem id="menu_customer_invoice_new" name="客户应收"
+        <menuitem id="menu_customer_invoice_new" name="客户应收" groups="base.group_system"
                   parent="yjzy_extend.menu_new_account_in_root"
                   sequence="40"
         />
@@ -2070,7 +2070,7 @@
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_account_invoice_new_filter"/>
             <field name="domain">[('type','=','in_invoice'),('yjzy_type','=','purchase'),('state','=','open'),('is_yjzy_invoice','=',False)]</field>
-            <field name="context">{'only_ref':1,'type':'out_invoice','journal_type': 'sale','yjzy_type':'purchase','extra_type':1}
+            <field name="context">{'only_ref':1,'type':'in_invoice','journal_type': 'purchase','yjzy_type':'purchase','extra_type':1}
             </field>
             <!--field name="target">new</field-->
             <field name="view_ids" eval="[(5, 0, 0),
@@ -2078,6 +2078,9 @@
                               (0, 0, {'view_mode': 'form', 'view_id': ref('view_account_invoice_new_form_in_one')}),
                               ]"/>
         </record>
+
+
+
 
         <!--      创建主账单的付款申请不按到期时间分组-->
         <record id="action_purchase_invoice_unpaid_normal" model="ir.actions.act_window">
@@ -2286,6 +2289,26 @@
                   sequence="20"
         />
 
+         <record id="action_customer_account_invoice_other_all" model="ir.actions.act_window">
+            <field name="name">其他应收账单</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_account_invoice_new_filter"/>
+            <field name="domain">[('type','=','out_invoice'),('yjzy_type_1','=','sale'),('state','in',['paid','open']),('invoice_attribute','=','other_payment')]</field>
+            <field name="context">{'search_default_group_by_state':1,'only_ref':1,'type':'in_invoice','journal_type': 'purchase','yjzy_type_1':'purchase'}
+            </field>
+            <!--field name="target">new</field-->
+            <field name="view_ids" eval="[(5, 0, 0),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.invoice_new_supplier_1_tree')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.view_account_supplier_invoice_new_form')}),
+                              ]"/>
+        </record>
+         <menuitem id="menu_customer_account_invoice_other_all" action="action_customer_account_invoice_other_all"
+                  parent="menu_customer_invoice_other_payment_root" name="其他应收账单查询"
+                  sequence="20"
+        />
+
 
 
 
@@ -2321,7 +2344,7 @@
                               ]"/>
         </record>
         <menuitem id="menu_back_tax_invoice_new" name="应收退税"
-                  parent="yjzy_extend.menu_new_account_in_root"
+                  parent="yjzy_extend.menu_new_account_in_root" groups="base.group_system"
                   sequence="40"
 
         />
@@ -2661,8 +2684,62 @@
                   sequence="05"
         />
 
+       <record id="action_customer_invoice_all" model="ir.actions.act_window">
+            <field name="name">主应收账单</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_account_invoice_new_filter"/>
+            <field name="domain">[('type','in',['out_invoice','out_refund']),('yjzy_type','=','sale'),('invoice_attribute','=','normal')]</field>
+            <field name="context">{'search_default_group_by_state':1,'only_ref':1,'type':'out_invoice','journal_type': 'sale','yjzy_type':'sale'}
+            </field>
+            <!--field name="target">new</field-->
+            <field name="view_ids" eval="[(5, 0, 0),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.invoice_new_1_tree')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.view_account_invoice_new_form_in_one')}),
+                              ]"/>
+        </record>
 
+        <menuitem id="menu_customer_invoice_all" action="action_customer_invoice_all"
+                  parent="menu_customer_invoice_for_goods_root" name="主应收账单"
+                  sequence="10"
+        />
 
+         <record id="action_back_tax_invoice_all" model="ir.actions.act_window">
+            <field name="name">应收退税账单</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_account_invoice_new_filter"/>
+            <field name="domain">[('type','in',['out_invoice','out_refund']),'|',('yjzy_type','=','back_tax'),('yjzy_type_1','=','back_tax')]</field>
+            <field name="context">{'search_default_group_by_state':1,'only_ref':1,'type':'out_invoice','journal_type': 'sale','yjzy_type':'sale'}
+            </field>
+            <!--field name="target">new</field-->
+            <field name="view_ids" eval="[(5, 0, 0),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.invoice_new_1_tree')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.view_account_invoice_new_form_in_one')}),
+                              ]"/>
+        </record>
+
+        <menuitem id="menu_back_tax_invoice_all" action="action_back_tax_invoice_all"
+                  parent="menu_customer_invoice_back_tax_root" name="应收退税账单"
+                  sequence="10"
+        />
+            <record id="action_customer_invoice_unpaid_new_extra" model="ir.actions.act_window">
+            <field name="name">创建额外应收账单(点开查看并创建)</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_account_invoice_new_filter"/>
+            <field name="domain">[('type','=','out_invoice'),('yjzy_type','=','sale'),('state','=','open'),('is_yjzy_invoice','=',False)]</field>
+            <field name="context">{'only_ref':1,'type':'out_invoice','journal_type': 'sale','yjzy_type':'sale','extra_type':1}
+            </field>
+            <!--field name="target">new</field-->
+            <field name="view_ids" eval="[(5, 0, 0),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.invoice_new_1_tree')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('view_account_invoice_new_form_in_one')}),
+                              ]"/>
+        </record>
 
 
     </data>

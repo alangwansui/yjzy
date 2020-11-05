@@ -11,6 +11,7 @@
                         <field name="partner_id" groups="base.group_system"/>
                         <field name="yjzy_advance_payment_id" invisible="1"/>
                         <field name="order_id" invisible="1"/>
+                        <field name="btd_id"/>
                     </group>
 
                     <group>

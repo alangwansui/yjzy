@@ -465,7 +465,18 @@ class account_invoice(models.Model):
     def compute_tb_po_hsname_all_ids_count(self):
         for one in self:
             one.tb_po_hsname_all_ids_count = len(one.tb_po_hsname_all_ids)
+
+    @api.depends('btd_line_ids','btd_line_ids.declaration_amount')
+    def compute_declaration_amount(self):
+        for one in self:
+            one.declaration_amount = sum(x.declaration_amount for x in one.btd_line_ids)
+
+
     #1029#通过他们是否同属于一张申请单来汇总所有相关账单,其他应收付和相关的应收付申请，这里还没有直接的联系，待处理
+    back_tax_declaration_state = fields.Selection([('10','未申报'),('20','已申报')],'退税申报状态',default='10')
+    declaration_amount = fields.Monetary('申报金额',currency_field='currency_id',compute=compute_declaration_amount, store=True)
+    btd_line_ids = fields.One2many('back.tax.declaration.line','invoice_id',u'申报明细')
+
     tb_po_invoice_back_tax_ids = fields.Many2many('account.invoice','相关退税账单',compute=compute_tb_po_invoice)
     tb_po_invoice_back_tax_ids_count = fields.Integer('相关退税账单数量',compute=compute_tb_po_invoice)
     tb_po_invoice_back_tax_ids_amount_total = fields.Monetary('相关退税账单金额',compute=compute_tb_invoice_amount, store=True)
@@ -965,7 +976,17 @@ class account_invoice(models.Model):
             }
 
     def create_yshxd_from_multi_invoice(self,attribute):
-        self.ensure_one()
+        print('invoice_ids', self.ids)
+
+        state_draft = len(self.filtered(lambda x: x.state != 'open'))
+        print('state_draft', state_draft)
+        print('attribute',attribute)
+        if attribute != 'other_payment' and len(self.mapped('partner_id')) > 1:
+            raise Warning('不同供应商')
+        elif attribute == 'other_payment' and len(self) > 1:
+            raise Warning('其他应付不允许多个一起申请付款')
+        elif state_draft >= 1:
+            raise Warning('非确认账单不允许创建付款申请')
         sfk_type = 'yshxd'
         domain = [('code', '=', 'ysdrl'), ('company_id', '=', self.env.user.company_id.id)]
         name = self.env['ir.sequence'].next_by_code('sfk.type.%s' % sfk_type)
@@ -973,10 +994,25 @@ class account_invoice(models.Model):
         account_obj = self.env['account.account']
         bank_account = account_obj.search([('code', '=', '10021'), ('company_id', '=', self.env.user.company_id.id)],
                                           limit=1)
-        form_view = self.env.ref('yjzy_extend.account_reconcile_order_form_view')
+        form_view = self.env.ref('yjzy_extend.account_yshxd_form_view_new')
         invoice_dic = []
         account_reconcile_order_obj = self.env['account.reconcile.order']
+        yjzy_payment_id = self.env.context.get('yjzy_payment_id')
         operation_wizard = '10'
+        for one in self:
+            for x in one.yjzy_invoice_wait_payment_ids:  # 参考M2M的自动多选
+                invoice_dic.append(x.id)
+            if one.amount_payment_can_approve_all != 0:  # 考虑已经提交审批的申请
+                invoice_dic.append(one.id)
+        print('invoice_dic', invoice_dic)
+        # test = [(for x in line.yjzy_invoice_all_ids) for line in self)]
+        # invoice_ids = self.env['account.invoice'].search([('id','in',invoice_dic)])
+        # with_context(
+        #     {'fk_journal_id': 1, 'default_be_renling': 1, 'default_invoice_ids': invoice_dic,
+        #      'default_payment_type': 'outbound', 'show_so': 1, 'default_sfk_type': 'yfhxd', }).
+
+
+
         yshxd =self.env['account.reconcile.order'].create({
             'partner_id': self[0].partner_id.id,
             'manual_payment_currency_id': self[0].currency_id.id,
@@ -991,10 +1027,11 @@ class account_invoice(models.Model):
             'operation_wizard': operation_wizard,
             'hxd_type_new': '20',
             'invoice_attribute': attribute,
-            'invoice_partner': self[0].invoice_partner,
-            'name_title': self[0].name_title
+            'yjzy_payment_id':yjzy_payment_id,
+            # 'invoice_partner': self[0].invoice_partner,
+            # 'name_title': self[0].name_title
         })
-        self.reconcile_order_id = yshxd
+        # self.reconcile_order_id = yshxd
         yshxd.make_lines()
 
         return {
@@ -1004,16 +1041,21 @@ class account_invoice(models.Model):
             'res_model': 'account.reconcile.order',
             'type': 'ir.actions.act_window',
             'views': [(form_view.id, 'form')],
-            'res_id': self.reconcile_order_id.id,
+            'res_id': yshxd.id,
             'target': 'current',
             'flags': {'form': {'initial_mode': 'view','action_buttons': False}}
         }
 
     def action_create_yfhxd(self):
         ctx = self.env.context.get('invoice_attribute')
-        print('yfhx_ctx')
-        yfhxd = self.create_yfhxd_from_multi_invoice(ctx)
-        return yfhxd
+        yjzy_payment_id = self.env.context.get('yjzy_payment_id')
+        print('yjzy_payment_id',yjzy_payment_id)
+        hxd = False
+        if self.type == 'in_invoice':
+            hxd = self.create_yfhxd_from_multi_invoice(ctx)
+        elif self.type == 'out_invoice':
+            hxd = self.with_context({'yjzy_payment_id':yjzy_payment_id}).create_yshxd_from_multi_invoice(ctx)
+        return hxd
 
     #创建预付核销单从多个账单通过服务器动作创建 ok，
     def create_yfhxd_from_multi_invoice(self,attribute):

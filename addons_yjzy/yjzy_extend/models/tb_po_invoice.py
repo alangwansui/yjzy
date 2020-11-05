@@ -235,7 +235,7 @@ class tb_po_invoice(models.Model):
             one.yjzy_tb_po_invoice_amount = one.yjzy_tb_po_invoice.price_total
             one.yjzy_tb_po_invoice_residual = one.yjzy_tb_po_invoice.invoice_normal_ids_residual
 
-
+    gongsi_id = fields.Many2one('gongsi', '内部公司')
     yjzy_tb_po_invoice = fields.Many2one('tb.po.invoice',u'关联应收付申请单')
     yjzy_tb_po_invoice_amount = fields.Monetary('关联应收付申请单金额',currency_field='currency_id', compute=compute_yjzy_tb_po_invoice_amount,store=True)
     yjzy_tb_po_invoice_residual = fields.Monetary('关联应收付申请单余额',currency_field='currency_id', compute=compute_yjzy_tb_po_invoice_amount,store=True)
