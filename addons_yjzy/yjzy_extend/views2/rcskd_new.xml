@@ -34,18 +34,22 @@
 <!--                        </button>-->
 
                         <button class="oe_stat_button" name="open_ysrl"  type="object" icon="fa-pencil-square-o" string="预收认领"
-                                attrs="{'invisible':[('state','not in',['posted','reconciled'])]}">
+                                attrs="{'invisible':[('count_ysrld','=',0)]}">
                             <field name="count_ysrld" widget="statinfo" nolabel="1"/>
                         </button>
                         <button class="oe_stat_button" name="open_yshx" type="object" icon="fa-pencil-square-o" string="应收认领"
-                        attrs="{'invisible':[('state','not in',['posted','reconciled'])]}">
+                        attrs="{'invisible':[('count_yshx','=',0)]}">
                             <field name="count_yshx" widget="statinfo" nolabel="1" />
                         </button>
                         <!--button class="oe_stat_button" name="open_putongfukuanrenling" type="object" icon="fa-pencil-square-o" string="普通付款认领单">
                             <field name="count_ptskrl" widget="statinfo" nolabel="1" />
                         </button-->
-                        <button class="oe_stat_button" name="open_fybg_qtsr"  type="object" icon="fa-pencil-square-o" string="其他收入">
+                        <button class="oe_stat_button" name="open_fybg_qtsr"  type="object" icon="fa-pencil-square-o" string="其他收入" invisble="1">
                             <field name="count_fybg" widget="statinfo" nolabel="1"/>
+                        </button>
+                         <button class="oe_stat_button" name="open_tb_po_invoice"  type="object" icon="fa-pencil-square-o" string="其他收款"
+                         attrs="{'invisible':[('tb_po_invoice_ids_count','=',0)]}">
+                            <field name="tb_po_invoice_ids_count" widget="statinfo" nolabel="1"/>
                         </button>
                         <button class="oe_stat_button" name="button_journal_entries"
                                 string="Journal Items" type="object"
@@ -284,6 +288,29 @@
                                     <field name="name" string="收入说明"/>
                                     <field name="negative_total_amount" string="总金额"/>
                                 </tree>
+                            </field>
+<!--                            <field name="expense_ids" widget="many2many">-->
+<!--                                <tree>-->
+<!--                                    <field name="product_id" string="收入类别项目"/>-->
+<!--                                    <field name="negative_total_amount" string="明细金额"/>-->
+<!--                                </tree>-->
+<!--                            </field>-->
+                        </page>
+                        <page string="其他收款认领" attrs="{'invisible':[('tb_po_invoice_ids_count','=',0)]}">
+
+                            <field name="tb_po_invoice_ids"  context="{'form_view_ref':'yjzy_extend.tb_po_form'}">
+                                <tree string="其他应付申请单" create="false">
+                    <field name="invoice_partner"/>
+                    <field name="name_title"/>
+                    <field name="currency_id" groups="base.group_system"/>
+                    <field name="partner_id" groups="base.group_system"/>
+                    <field name="price_total" string="应收金额"/>
+                    <field name="invoice_normal_ids_residual" string="未收金额"/>
+                    <field name="yjzy_tb_po_invoice_amount" string="应付金额"/>
+                    <field name="yjzy_tb_po_invoice_residual" string="未付金额"/>
+                    <field name="state"/>
+                    <field name="create_date"/>
+                </tree>
                             </field>
 <!--                            <field name="expense_ids" widget="many2many">-->
 <!--                                <tree>-->

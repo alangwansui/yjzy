@@ -1456,6 +1456,19 @@
                   action="act_other_payment_customer_invoice_all"
         />
 
+
+        <record model="ir.actions.act_window" id="act_other_payment_customer_invoice_all_from_open_ycskd">
+            <field name="name">其他应收申请单</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">tb.po.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('tb_po_invoice_other_payment_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_form')})]"/>
+
+        </record>
+
         <record model="ir.actions.act_window" id="act_other_payment_customer_invoice_create">
             <field name="name">创建其他应收申请</field>
             <field name="type">ir.actions.act_window</field>

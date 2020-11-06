@@ -256,13 +256,18 @@ class account_payment(models.Model):
     #         one.sale_back_tax_invoice_ids = sale_back_tax_invoice_ids
             one.sale_other_invoice_ids = sale_other_invoice_ids
     #         one.advance_payment_ids = advance_payment_ids
-
+    def compute_tb_po_invoice_ids_count(self):
+        for one in self:
+            one.tb_po_invoice_ids_count = len(one.tb_po_invoice_ids)
     #1102
     yjzy_partner_id = fields.Many2one('res.partner', 'Customer')
 
     payment_for_goods = fields.Boolean('货款')
     payment_for_back_tax = fields.Boolean('退税')
     payment_for_other = fields.Boolean('其他')
+
+    tb_po_invoice_ids = fields.One2many('tb.po.invoice','yjzy_payment_id','应收付申请单')
+    tb_po_invoice_ids_count = fields.Integer('应收付申请单数量', compute=compute_tb_po_invoice_ids_count)
 
     # sale_normal_invoice_ids = fields.Many2many('account.invoice','p1_id','i1_id','未完成认领货款应收账单',compute='compute_invoice_advance')
     # sale_back_tax_invoice_ids = fields.Many2many('account.invoice','p2_id','i2_id','未完成认领应收退税账单',compute='compute_invoice_advance')
@@ -315,7 +320,8 @@ class account_payment(models.Model):
                                 ('90_cancel',u'已取消')],u'审批状态',track_visibility='onchange',default='10_draft')
 
     #819增加汇率字段
-    tb_po_invoice_ids = fields.One2many('tb.po.invoice','yjzy_payment_id','应收付申请单')
+
+
     advance_type = fields.Selection([('10_no_contract',u'无合同'),
                                      ('20_contract',u'有合同')],u'预付类型',conpute=compute_advance_type, default='10_no_contract',store=True)
     current_date_rate = fields.Float(u'当日汇率')
@@ -893,7 +899,7 @@ class account_payment(models.Model):
 
         count_ysrld = self.count_ysrld
         action = self.env.ref('yjzy_extend.action_ysrld_all_new_1').read()[0]
-        ctx = {'default_sfk_type': 'ysrld',
+        ctx = {         'default_sfk_type': 'ysrld',
                         'default_payment_type': 'inbound',
                         'default_be_renling': True,
                         'default_advance_ok': True,
@@ -1359,6 +1365,23 @@ class account_payment(models.Model):
     #         'context': {'show_shoukuan': True, 'default_sfk_type': 'ysrld', 'default_payment_type': 'inbound', 'default_be_renling': True, 'default_advance_ok': True, 'default_partner_type': 'customer', 'default_yjzy_payment_id': self.id},
     #     }
 
+
+    def open_tb_po_invoice(self):
+        form_view = self.env.ref('yjzy_extend.tb_po_form')
+        tree_view = self.env.ref('yjzy_extend.tb_po_invoice_other_payment_tree')
+        return {
+            'name': u'其他收款认领申请',
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'res_model': 'tb.po.invoice',
+            'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
+            'domain': [('yjzy_payment_id', '=', self.id),('yjzy_type_1','=','sale'),('type','=','other_payment')],
+            'context': {'search_default_group_by_state':1,
+                        'default_type':'other_payment',
+                        'default_yjzy_type_1':'sale'},
+
+        }
 
 
 
