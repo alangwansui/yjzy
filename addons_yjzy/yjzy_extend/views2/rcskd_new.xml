@@ -15,7 +15,7 @@
                              attrs="{'invisible':[('state_1','not in',['25_cashier_submit'])]}" type="object" />
                      <button name="action_cashier_refuse" class="oe_highlight" string="出纳拒绝" type="object"
                              attrs="{'invisible':[('state_1','not in',['25_cashier_submit'])]}" />
-                     <button name="action_draft" class="oe_highlight" string="重置草稿" type="object" attrs="{'invisible':[('state_1','not in',['80_refused'])]}"/>
+                     <button name="action_draft_new" class="oe_highlight" string="重置草稿" type="object" attrs="{'invisible':[('state_1','not in',['80_refused'])]}"/>
                    <field name="state_1" widget="statusbar" statusbar_visible=" "/>
                 </header>
                 <header groups="base.group_system">

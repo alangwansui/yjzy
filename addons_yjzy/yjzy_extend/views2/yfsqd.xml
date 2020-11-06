@@ -81,7 +81,7 @@
                      />
                      <button name="action_manager_refuse" class="oe_highlight" string="总经理拒绝" type="object"
                             attrs="{'invisible': [('state_1','not in',['30_manager_approve'])]}"/>
-                     <button name="action_draft" class="oe_highlight" string="重置草稿" type="object"
+                     <button name="action_draft_new" class="oe_highlight" string="重置草稿" type="object"
                               attrs="{'invisible':[('state_1','not in',['80_refused'])]}"/>
                       <field name="state_1" widget="statusbar" statusbar_visible=" "/>
 

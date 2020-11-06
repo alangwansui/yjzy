@@ -194,7 +194,7 @@
                      attrs="{'invisible':[('state_1','not in',['20_account_submit'])]}"/>
                      <button name="action_account_refuse" class="oe_highlight" string="财务拒绝" type="object"
                      attrs="{'invisible':[('state_1','not in',['20_account_submit'])]}"/>
-                      <button name="action_draft" class="oe_highlight" string="重置草稿" type="object"
+                      <button name="action_draft_new" class="oe_highlight" string="重置草稿" type="object"
                               attrs="{'invisible':[('state_1','not in',['80_refused'])]}"/>
                       <field name="state_1" widget="statusbar" statusbar_visible=" "/>
 

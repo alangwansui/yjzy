@@ -595,10 +595,10 @@ class account_payment(models.Model):
                                       subtype_id=self.env.ref(
                                           'mail.mt_note').id)  # 定义了留言消息的模板，其他都可以参考，还可以继续参考费用发送计划以及邮件方式
 
-    def action_draft(self):
+    def action_draft_new(self):
         self.write({'state_1': '10_draft',
                     })
-
+        self.action_draft()
 
     def judge_partner(self):
         if self.partner_id.name == '未定义' and self.sfk_type not in ['rcskd','nbzz','jiehui']:
