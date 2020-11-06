@@ -44,7 +44,7 @@
                         <!--button class="oe_stat_button" name="open_putongfukuanrenling" type="object" icon="fa-pencil-square-o" string="普通付款认领单">
                             <field name="count_ptskrl" widget="statinfo" nolabel="1" />
                         </button-->
-                        <button class="oe_stat_button" name="open_fybg_qtsr"  type="object" icon="fa-pencil-square-o" string="其他收入" invisble="1">
+                        <button class="oe_stat_button" name="open_fybg_qtsr"  type="object" icon="fa-pencil-square-o" string="其他收入" invisible="1">
                             <field name="count_fybg" widget="statinfo" nolabel="1"/>
                         </button>
                          <button class="oe_stat_button" name="open_tb_po_invoice"  type="object" icon="fa-pencil-square-o" string="其他收款"
@@ -86,18 +86,19 @@
                                 <label for="" string=" "/>
                                 <label for="" string=" "/>
                                 <label for="" string=" "/>
-                                <button name="create_yshxd_ysrl" string="创建应收认领" type="object" class="oe_highlight" attrs="{'invisible':['|',('payment_for_goods','=',False),('balance','=','0')]}"/>
+                                <button name="create_yshxd_ysrl" string="创建应收认领" type="object" class="oe_highlight"
+                                        context="{'default_yjzy_type':'sale'}" attrs="{'invisible':['|',('payment_for_goods','=',False),('balance','=','0')]}"/>
                                 <label for="" string=" "/>
                                 <label for="" string=" "/>
                                 <label for="" string=" "/>
-                                <button name="open_ysrl" string="创建预收认领单" type="object" class="oe_highlight" attrs="{'invisible':['|',('payment_for_goods','=',False),('balance','=','0')]}"/>
+                                <button name="open_ysrl" string="创建预收认领单" context="{'default_yjzy_type':'sale'}" type="object" class="oe_highlight" attrs="{'invisible':['|',('payment_for_goods','=',False),('balance','=','0')]}"/>
                             </div>
                              <div style="margin-top:5px">
                                 <label for="payment_for_back_tax"/>
                                 <field name="payment_for_back_tax" widget="boolean_toggle" attrs="{'readonly':['|',('payment_for_goods','=',True),('payment_for_other','=',True)]}"/>
                                 <label for="" string=" "/>
                                 <label for="" string=" "/>
-                                <button name="create_yshxd_ysrl" string="创建退税认领" type="object" class="oe_highlight" attrs="{'invisible':['|',('payment_for_back_tax','=',False),('balance','=','0')]}"/>
+                                <button name="create_yshxd_ysrl" string="创建退税认领" context="{'default_yjzy_type':'back_tax'}" type="object" class="oe_highlight" attrs="{'invisible':['|',('payment_for_back_tax','=',False),('balance','=','0')]}"/>
 
                             </div>
                             <div style="margin-top:5px">
@@ -106,14 +107,16 @@
                                 <label for="" string=" "/>
                                 <label for="" string=" "/>
 
-                                <button name="create_yshxd_ysrl" string="创建其他认领" type="object" class="oe_highlight"
+                                <button name="create_yshxd_ysrl" string="创建其他认领"  type="object" class="oe_highlight"
                                         attrs="{'invisible':1}"
-                                context="{'invoice_attribute':'other_payment'}"/>
+                                context="{'invoice_attribute':'other_payment','default_yjzy_type':'sale'}"/>
 
-                                <button name="create_tb_po_invoice" string="创建其他收款申请" type="object" class="oe_highlight"
+                                <button name="create_tb_po_invoice" string="新建其他收款申请" type="object" class="oe_highlight"
                                         attrs="{'invisible':['|',('payment_for_other','=',False),('balance','=','0')]}"
                                 context="{'default_type':'other_payment','default_yjzy_type_1':'sale','default_type_invoice':'out_invoice'}"/>
-
+                                <button name="open_tb_po_invoice" string="查看其他收款申请" type="object"
+                                        attrs="{'invisible':['|','|',('payment_for_other','=',False),('balance','=','0'),('tb_po_invoice_ids_count','=',0)]}"
+                                context="{'default_type':'other_payment','default_yjzy_type_1':'sale','default_type_invoice':'out_invoice'}"/>
 
                             </div>
                         </div>
@@ -225,7 +228,7 @@
 <!--                        </page>-->
                         <page string="未完成认领其他应收"  attrs="{'invisible':[('payment_for_other','=',False)]}">
                             <field name="sale_other_invoice_ids">
-                                <tree>
+                                <tree decoration-warning="parent.amount == amount_total_signed">
                                      <field name="invoice_attribute"/>
                                      <field name="partner_id" groups="base.group_user" invisible="1" string="Customer"/>
                     <field name="date_invoice"/>
@@ -296,7 +299,7 @@
 <!--                                </tree>-->
 <!--                            </field>-->
                         </page>
-                        <page string="其他收款认领" attrs="{'invisible':[('tb_po_invoice_ids_count','=',0)]}">
+                        <page string="其他收款认领" attrs="{'invisible':[('tb_po_invoice_ids_count','=',0)]}" invisible="1">
 
                             <field name="tb_po_invoice_ids"  context="{'form_view_ref':'yjzy_extend.tb_po_form'}">
                                 <tree string="其他应付申请单" create="false">

@@ -11,7 +11,8 @@
                         <field name="partner_id" groups="base.group_system"/>
                         <field name="yjzy_advance_payment_id" invisible="1"/>
                         <field name="order_id" invisible="1"/>
-                        <field name="btd_id"/>
+                        <field name="btd_id" attrs="{'invisible':[('yjzy_type','!=','back_tax')]}" />
+                        <field name="yjzy_type" invisible="1"/>
                     </group>
 
                     <group>

@@ -15,6 +15,9 @@ class wizard_reconcile_invoice(models.TransientModel):
     order_id = fields.Many2one('account.reconcile.order',u'核销单')
     yjzy_advance_payment_id = fields.Many2one('account.payment',u'预收认领单')
     btd_id = fields.Many2one('back.tax.declaration','退税申报单')
+    yjzy_type = fields.Selection([('sale', '销售'),
+                                  ('purchase', '采购'),
+                                  ('back_tax', '退税')], u'发票类型')
 
     @api.onchange('btd_id')
     def onchange_btd_id(self):

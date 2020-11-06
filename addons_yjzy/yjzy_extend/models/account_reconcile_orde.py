@@ -323,7 +323,9 @@ class account_reconcile_order(models.Model):
     invoice_partner = fields.Char(u'账单对象')
 
     supplier_advance_payment_ids_amount_advance_org = fields.Float('待审批预付认领金额',compute= compute_supplier_advance_payment_ids_amount_advance_org,store=True)
-
+    yjzy_type = fields.Selection([('sale','销售'),
+                                  ('purchase','采购'),
+                                  ('back_tax','退税')],u'发票类型')
     invoice_attribute = fields.Selection(
         [('normal', u'常规账单'),
          ('reconcile', u'核销账单'),
@@ -745,7 +747,8 @@ class account_reconcile_order(models.Model):
                 'default_order_id':self.id,
                 'default_invoice_ids':self.invoice_ids.ids,
                 'sfk_type':self.sfk_type,
-                'default_yjzy_advance_payment_id':self.yjzy_advance_payment_id.id
+                'default_yjzy_advance_payment_id':self.yjzy_advance_payment_id.id,
+                'default_yjzy_type':self.yjzy_type,
             })
             return {
                 'name': '添加账单',

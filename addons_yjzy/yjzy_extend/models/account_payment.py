@@ -266,6 +266,7 @@ class account_payment(models.Model):
     payment_for_back_tax = fields.Boolean('退税')
     payment_for_other = fields.Boolean('其他')
 
+
     tb_po_invoice_ids = fields.One2many('tb.po.invoice','yjzy_payment_id','应收付申请单')
     tb_po_invoice_ids_count = fields.Integer('应收付申请单数量', compute=compute_tb_po_invoice_ids_count)
 
@@ -1270,6 +1271,7 @@ class account_payment(models.Model):
                                                                   'partner_type': 'supplier',
                                                                   'operation_wizard': '25',
                                                                   'hxd_type_new': '30',  # 预付-应付
+                                                                  'default_yjzy_type':'purchase',
                                                                   })
 
         # if account_reconcile_id.yjzy_advance_payment_id.po_id:
@@ -1426,6 +1428,7 @@ class account_payment(models.Model):
         invoice_attribute = self.env.context.get('invoice_attribute')
         if self.partner_id.name == '未定义' and self.payment_for_goods :
             raise Warning('请先选择客户，再进行认领')
+        yjzy_type = self.env.context.get('default_yjzy_type')
         yshxd_obj = self.env['account.reconcile.order']
 
         sfk_type = 'yshxd'
@@ -1468,6 +1471,7 @@ class account_payment(models.Model):
                                          'yjzy_payment_id':self.id,
                                          'be_renling': True,
                                          'invoice_attribute': invoice_attribute,
+                                         'yjzy_type': yjzy_type
                                          })
 
             # if self.yjzy_partner_id:

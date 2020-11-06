@@ -77,7 +77,7 @@
                     <button name="action_done"  class="oe_highlight"  string="财务确认" attrs="{'invisible':['|',('state','!=','approved'),('sfk_type','!=','yshxd')]}" type="object"/>
                     <button name="action_draft_new" class="oe_highlight" states="refused" string="重置草稿" type="object"/>
                     <button name="%(reconcile_refuse_wizard_action)d" string="拒绝" type="action" attrs="{'invisible':[('state','=','done')]}"/>
-                    <button name="open_wizard_reconcile_invoice" type="object" string="添加应收账单"/>
+                    <button name="open_wizard_reconcile_invoice" type="object" string="添加应收账单" />
                     <button name="compute_invoice_ids" type="object" string="计算发票" groups="base.group_system"/>
                     <button name="create_yjzy_payment_ysrl" type="object" string="创建认领单"  groups="base.group_system" context="{'default_sfk_type':'yingshourld'}"/>
                     <field name="state" widget="statusbar"/>
