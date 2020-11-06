@@ -177,12 +177,14 @@ class wizard_reconcile_invoice(models.TransientModel):
                         'so_id': so.id,
                         'invoice_id': invoice.id,
                         'amount_invoice_so': sum([i.price_subtotal for i in invlines]),
-                        'amount_payment_org':declaration_amount
+                        'amount_payment_org':sum([i.price_subtotal for i in invlines]),
 
                     })
             line_ids |= line_id
         self.order_id.invoice_ids = self.invoice_ids
         # self.order_id.invoice_attribute = self.invoice_ids[0].invoice_attribute
+        self.invoice_partner = self.invoice_ids[0].invoice_partner
+        self.name_title = self.invoice_ids[0].name_title
         so_po_dic = {}
         print('line_obj', line_ids)
         self.order_id.line_no_ids = None
@@ -191,13 +193,21 @@ class wizard_reconcile_invoice(models.TransientModel):
             invoice = i.invoice_id
             amount_invoice_so = i.amount_invoice_so
             advance_residual2 = i.advance_residual2
+
             order = i.order_id
 
             k = invoice.id
+
+
+            if i.invoice_id.yjzy_type == 'back_tax' or i.invoice_id.yjzy_type_1 == 'back_tax':
+                declaration_amount_1 = amount_invoice_so
+            else:
+                declaration_amount_1 = 0
             if k in so_po_dic:
                 print('k',k)
                 so_po_dic[k]['amount_invoice_so'] += amount_invoice_so
                 so_po_dic[k]['advance_residual2'] += advance_residual2
+                so_po_dic[k]['amount_payment_org'] += declaration_amount_1
             else:
                 print('k1', k)
                 so_po_dic[k] = {
@@ -205,7 +215,7 @@ class wizard_reconcile_invoice(models.TransientModel):
                                 'amount_invoice_so': amount_invoice_so,
                                 'advance_residual2': advance_residual2,
                                 # 'yjzy_payment_id': yjzy_advance_payment_id.id
-                    'amount_payment_org':declaration_amount
+                                'amount_payment_org':declaration_amount_1,
                 }
 
         for kk, data in list(so_po_dic.items()):
@@ -215,7 +225,7 @@ class wizard_reconcile_invoice(models.TransientModel):
                 'amount_invoice_so': data['amount_invoice_so'],
                 'advance_residual2': data['advance_residual2'],
                 'yjzy_payment_id': yjzy_advance_payment_id.id,
-                'amount_payment_org':declaration_amount
+                'amount_payment_org':data['amount_payment_org'],
             })
 
 

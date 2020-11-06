@@ -31,7 +31,7 @@ class account_move_line(models.Model):
     po_id = fields.Many2one('purchase.order', u'采购订单')
 
     plan_invoice_id = fields.Many2one('account.invoice', u'核销安排的发票')
-    yjzy_payment_id = fields.Many2one('yjzy.account.payment', u'新收付款')
+    # yjzy_payment_id = fields.Many2one('yjzy.account.payment', u'新收付款')  #1106
 
 
     

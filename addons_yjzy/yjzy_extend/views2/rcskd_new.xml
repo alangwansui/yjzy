@@ -70,14 +70,15 @@
                         <div name="options">
                             <div>
                                 <label for="payment_for_goods"/>
-                                <field name="payment_for_goods" widget="boolean_toggle"/>
+                                <field name="payment_for_goods" widget="boolean_toggle" attrs="{'readonly':['|',('payment_for_back_tax','=',True),('payment_for_other','=',True)]}"/>
                                 <label for="" string=" "/>
                                 <label for="" string=" "/>
 
                                 <label for="partner_id" string="客户" attrs="{'invisible':['|',('payment_for_goods','=',False),('balance','=','0')]}"/>
-                                <field name="partner_id" options="{'no_create':True}" domain="['|',('is_company','=',True),('name','=','未定义')]"
-                                   attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))], 'readonly': [('state', '!=', 'draft'),('payment_for_goods','=',False)],'invisible':['|',('payment_for_goods','=',False),('balance','=','0')]}"
+                                <field name="partner_id" options="{'no_create':True}" domain="[('is_company','=',True),('customer','=',True)]"
+                                   attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))], 'invisible':['|',('payment_for_goods','=',False),('balance','=','0')]}"
                                    context="{'default_is_company': True, 'default_supplier': payment_type == 'outbound', 'default_customer': payment_type == 'inbound'}"/> <!--['|',('payment_type', 'not in', ('inbound', 'outbound')),('sfk_type','in',['rcskd','rcfkd'])],-->
+<!--                                'readonly': [('state', '!=', 'draft'),('payment_for_goods','=',False)],-->
                                 <label for="" string=" "/>
                                 <label for="" string=" "/>
                                 <label for="" string=" "/>
@@ -89,7 +90,7 @@
                             </div>
                              <div style="margin-top:5px">
                                 <label for="payment_for_back_tax"/>
-                                <field name="payment_for_back_tax" widget="boolean_toggle"/>
+                                <field name="payment_for_back_tax" widget="boolean_toggle" attrs="{'readonly':['|',('payment_for_goods','=',True),('payment_for_other','=',True)]}"/>
                                 <label for="" string=" "/>
                                 <label for="" string=" "/>
                                 <button name="create_yshxd_ysrl" string="创建退税认领" type="object" class="oe_highlight" attrs="{'invisible':['|',('payment_for_back_tax','=',False),('balance','=','0')]}"/>
@@ -97,13 +98,17 @@
                             </div>
                             <div style="margin-top:5px">
                                 <label for="payment_for_other" />
-                                <field name="payment_for_other" widget="boolean_toggle"/>
+                                <field name="payment_for_other" widget="boolean_toggle" attrs="{'readonly':['|',('payment_for_goods','=',True),('payment_for_back_tax','=',True)]}"/>
                                 <label for="" string=" "/>
                                 <label for="" string=" "/>
 
                                 <button name="create_yshxd_ysrl" string="创建其他认领" type="object" class="oe_highlight"
-                                        attrs="{'invisible':['|',('payment_for_other','=',False),('balance','=','0')]}"
+                                        attrs="{'invisible':1}"
                                 context="{'invoice_attribute':'other_payment'}"/>
+
+                                <button name="create_tb_po_invoice" string="创建其他收款申请" type="object" class="oe_highlight"
+                                        attrs="{'invisible':['|',('payment_for_other','=',False),('balance','=','0')]}"
+                                context="{'default_type':'other_payment','default_yjzy_type_1':'sale','default_type_invoice':'out_invoice'}"/>
 
 
                             </div>
@@ -214,33 +219,33 @@
 <!--                                </tree>-->
 <!--                            </field>-->
 <!--                        </page>-->
-<!--                        <page string="未完成认领其他应收"  attrs="{'invisible':[('payment_for_other','=',False)]}">-->
-<!--                            <field name="sale_other_invoice_ids">-->
-<!--                                <tree>-->
-<!--                                     <field name="invoice_attribute"/>-->
-<!--                                     <field name="partner_id" groups="base.group_user" invisible="1" string="Customer"/>-->
-<!--                    <field name="date_invoice"/>-->
-<!--                    <field name="number"/>-->
-<!--                                    <field name="tb_contract_code" invisible="1"/>-->
-<!--                    <field name="commercial_partner_id" invisible="1"/>-->
-<!--                    <field name="reference" invisible="1"/>-->
-<!--                    <field name="name" invisible="1"/>-->
-<!--                    <field name="journal_id" invisible="1"/>-->
-<!--                    <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"/>-->
-<!--                    <field name="user_id" invisible="1"/>-->
-<!--                    <field name="date_deadline" invisible="1"/>-->
-<!--                    <field name="origin" invisible="1"/>-->
-<!--                    <field name="amount_total_signed" string="Total" sum="Total"/>-->
-<!--                    <field name="residual_signed" string="Amount Due" sum="未收金额"/>-->
-<!--                    <field name="currency_id" invisible="1"/>-->
-<!--                    <field name="company_currency_id" invisible="1"/>-->
-<!--                    <field name="state"/>-->
-<!--                    <field name="type" invisible="context.get('type',True)"/>-->
+                        <page string="未完成认领其他应收"  attrs="{'invisible':[('payment_for_other','=',False)]}">
+                            <field name="sale_other_invoice_ids">
+                                <tree>
+                                     <field name="invoice_attribute"/>
+                                     <field name="partner_id" groups="base.group_user" invisible="1" string="Customer"/>
+                    <field name="date_invoice"/>
+                    <field name="number"/>
+                                    <field name="tb_contract_code" invisible="1"/>
+                    <field name="commercial_partner_id" invisible="1"/>
+                    <field name="reference" invisible="1"/>
+                    <field name="name" invisible="1"/>
+                    <field name="journal_id" invisible="1"/>
+                    <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"/>
+                    <field name="user_id" invisible="1"/>
+                    <field name="date_deadline" invisible="1"/>
+                    <field name="origin" invisible="1"/>
+                    <field name="amount_total_signed" string="Total" sum="Total"/>
+                    <field name="residual_signed" string="Amount Due" sum="未收金额"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="company_currency_id" invisible="1"/>
+                    <field name="state"/>
+                    <field name="type" invisible="context.get('type',True)"/>
 
-<!--                                    <button string="创建应收认领" name="action_create_yfhxd" type="object" context="{'yjzy_payment_id':parent.id,'invoice_attribute':invoice_attribute}"/>-->
-<!--                                </tree>-->
-<!--                            </field>-->
-<!--                        </page>-->
+                                    <button string="创建应收认领" name="action_create_yfhxd" type="object" attrs="{'invisible':['parent.payment_for_other','=',False]}" context="{'yjzy_payment_id':parent.id,'invoice_attribute':invoice_attribute}"/>
+                                </tree>
+                            </field>
+                        </page>
 
                         <page string="预收认领单" attrs="{'invisible':[('count_ysrld','=',0)]}">
                             <field name="ysrld_ids" widget="many2many" domain="[('sfk_type','=','ysrld_'),('partner_id','=',partner_id),('yjzy_payment_id','=',False),('state','=','approved')]"

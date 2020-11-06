@@ -42,7 +42,7 @@
                 <field name="reconciled" readonly="0"/>
                 <field name="so_id" readonly="1"/>
                 <field name="po_id"/>
-                <field name="yjzy_payment_id" readonly="1"/>
+<!--                <field name="yjzy_payment_id" readonly="1"/>-->
                 <field name="invoice_id" readonly="1"/>
                 <field name="plan_invoice_id" readonly="1"/>
                 <field name="sheet_id" readonly="1"/>
@@ -70,7 +70,7 @@
                 <field name="reconciled" readonly="1"/>
                 <field name="so_id"/>
                 <field name="po_id"/>
-                <field name="yjzy_payment_id" readonly="1"/>
+<!--                <field name="yjzy_payment_id" readonly="1"/>-->
                 <field name="invoice_id" readonly="1"/>
                 <field name="plan_invoice_id" readonly="1"/>
                 <field name="sheet_id" readonly="1"/>
@@ -89,7 +89,7 @@
             <field name="invoice_id" position="after">
                 <field name="so_id"/>
                 <field name="po_id"/>
-                <field name="yjzy_payment_id" readonly="1"/>
+<!--                <field name="yjzy_payment_id" readonly="1"/>-->
                 <field name="sheet_id" readonly="1"/>
                 <field name="expense_id" readonly="1"/>
                 <field name="new_payment_id" readonly="1"/>

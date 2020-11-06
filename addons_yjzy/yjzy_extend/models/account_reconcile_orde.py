@@ -8,7 +8,7 @@ import logging
 _logger = logging.getLogger(__name__)
 Account_reconcile_Selection =   [('draft',u'草稿'),
                                  ('advance_approval',u'待预付认领审批'),
-                                 ('account_approval',u'待财务提交付款申请'),
+                                 ('account_approval',u'待财务提交申请'),
                                  ('manager_approval',u'待总经理审批'),
                                  ('post',u'审批完成待支付'),
                                  ('done',u'完成'),
@@ -859,14 +859,29 @@ class account_reconcile_order(models.Model):
                             'state': 'posted',
                             # 'operation_wizard':'10'
                             })
+        elif self.sfk_type == 'yshxd':
+            # amount_advance_residual_org = self.amount_advance_residual_org
+            # amount_advance_org = self.amount_advance_org
+            # # if amount_advance_residual_org < amount_advance_org:
+            # #     raise Warning(u'预付认领金额大于预付余额')
+            if self.hxd_type_new == '30' and self.amount_total_org == 0:
 
+                raise Warning('认领金额为0，无法提交！')
+            if self.hxd_type_new == '40' and self.amount_payment_org == 0:
+                raise Warning('认领金额为0，无法提交！')
 
-            # self.create_customer_invoice()
-            # self.create_fygb()
-            # for one in self.supplier_advance_payment_ids:
-            #     one.reconciling = False
-        # self.make_lines()
-
+                # lines = self.line_no_ids
+                # if self.yjzy_advance_payment_balance < 0:
+                #     print('yjzy_advance_payment_balance',self.yjzy_advance_payment_balance)
+                #     raise Warning('预付认领大于可认领金额')
+                # for one in lines:
+                #     if one.amount_advance_org > one.invoice_residual:
+                #         raise Warning('预付认领金额大于可认领的应付金额')
+            stage_id = self._stage_find(domain=[('code', '=', '030')])
+            self.write({'stage_id': stage_id.id,
+                        'state': 'posted',
+                        # 'operation_wizard':'25'
+                        })
         return True
 
     # @api.onchange('amount_advance_org')
@@ -889,11 +904,13 @@ class account_reconcile_order(models.Model):
 
     # 财务审批：预付没有审批，只有应付申请的时候才会审批。
     def action_account_approve_stage(self):
-        stage_id = self._stage_find(domain=[('code', '=', '040')])
-        self.write({'stage_id': stage_id.id,
-                    'state': 'posted',
-                    })
-
+        if self.sfk_type == 'yfhxd':
+            stage_id = self._stage_find(domain=[('code', '=', '040')])
+            self.write({'stage_id': stage_id.id,
+                        'state': 'posted',
+                        })
+        if self.sfk_type == 'yshxd':
+            self.action_manager_approve_stage()
 
     # 总经理审批：如果是预付申请，直接完成makedone，只有应付申请的时候才会审批。
     def action_manager_approve_stage(self):
@@ -917,12 +934,15 @@ class account_reconcile_order(models.Model):
                             'approve_uid': self.env.user.id
                             })
        #应收核销待定:
-        if self.sfk_type == 'fshxd':
+        if self.sfk_type == 'yshxd':
+            print('sfk_type_____111',self.sfk_type)
+            if not self.yjzy_payment_id:
+                raise Warning('没有对应的收款单，请检查！')
             self.create_yjzy_payment_ysrl()
             self.action_done_new()
             stage_id = self._stage_find(domain=[('code', '=', '060')])
             self.write({'stage_id': stage_id.id,
-                        'state': 'approved',
+                        'state': 'done',
                         'approve_date': fields.date.today(),
                         'approve_uid': self.env.user.id
                         })
@@ -1032,6 +1052,9 @@ class account_reconcile_order(models.Model):
     def action_done_new(self):
         self.ensure_one()
         if self.sfk_type == 'yfhxd':
+            if self.reconcile_payment_ids:
+                self.reconcile_payment_ids.post()
+        if self.sfk_type == 'yshxd':
             if self.reconcile_payment_ids:
                 self.reconcile_payment_ids.post()
 

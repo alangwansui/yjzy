@@ -997,7 +997,8 @@ class account_invoice(models.Model):
         form_view = self.env.ref('yjzy_extend.account_yshxd_form_view_new')
         invoice_dic = []
         account_reconcile_order_obj = self.env['account.reconcile.order']
-        yjzy_payment_id = self.env.context.get('yjzy_payment_id')
+        yjzy_payment_id = self.env.context.get('default_yjzy_payment_id')
+        print('yjzy_payment_id___11111',yjzy_payment_id)
         operation_wizard = '10'
         for one in self:
             for x in one.yjzy_invoice_wait_payment_ids:  # 参考M2M的自动多选
@@ -1033,6 +1034,14 @@ class account_invoice(models.Model):
         })
         # self.reconcile_order_id = yshxd
         yshxd.make_lines()
+        if attribute == 'other_payment':
+            for x in yshxd.line_no_ids:
+                x.amount_payment_org = x.invoice_residual
+            for x in yshxd.line_ids:
+                x.amount_payment_org = x.amount_invoice_so_residual
+            print('test_qeqwe',yshxd)
+            # yshxd.action_manager_approve_stage()
+
 
         return {
             'name': u'应收核销单',
@@ -1046,6 +1055,7 @@ class account_invoice(models.Model):
             'flags': {'form': {'initial_mode': 'view','action_buttons': False}}
         }
 
+
     def action_create_yfhxd(self):
         ctx = self.env.context.get('invoice_attribute')
         yjzy_payment_id = self.env.context.get('yjzy_payment_id')
@@ -1054,7 +1064,7 @@ class account_invoice(models.Model):
         if self.type == 'in_invoice':
             hxd = self.create_yfhxd_from_multi_invoice(ctx)
         elif self.type == 'out_invoice':
-            hxd = self.with_context({'yjzy_payment_id':yjzy_payment_id}).create_yshxd_from_multi_invoice(ctx)
+            hxd = self.with_context({'default_yjzy_payment_id':yjzy_payment_id}).create_yshxd_from_multi_invoice(ctx)
         return hxd
 
     #创建预付核销单从多个账单通过服务器动作创建 ok，

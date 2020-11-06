@@ -390,7 +390,9 @@
                                 <field name="invoice_partner" attrs="{'invisible':[('type','not in',['other_payment'])]}"/>
 
                                 <field name="name_title" attrs="{'invisible':[('type','in',['other_po'])]}"/>
+                                 <field name="yjzy_payment_id" string="收款单" attrs="{'invisible':[('type_invoice','not in',['out_invoice'])]}"/>
                                 <field name="manual_currency_id" attrs="{'invisible':[('type','not in',['other_payment'])]}"/>
+
 
                                  <label for="" name="partner_id" attrs="{'invisible':[('is_tb_hs_id','=',False)]}">
                                     <b attrs="{'invisible':[('type','in',['other_po','expense_po'])]}">供应商</b>
@@ -638,6 +640,7 @@
                                     <field name="is_tb_hs_id" />
                                     <field name="type_invoice"/>
                                     <field name="company_id"/>
+                                    <field name="currency_id"/>
                                 </group>
                             </page>
                         </notebook>
@@ -1408,7 +1411,7 @@
             <field name="view_mode">form</field>
             <field name="domain">[]</field>
             <field name="limit">20</field>
-            <field name="context">{'default_type':'other_payment','default_yjzy_type_1':'purchase'}</field>
+            <field name="context">{'default_type':'other_payment','default_yjzy_type_1':'purchase','default_type_invoice':'in_invoice'}</field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_form')})]"/>
         </record>
@@ -1450,7 +1453,7 @@
             <field name="view_mode">form</field>
             <field name="domain">[]</field>
             <field name="limit">20</field>
-            <field name="context">{'default_type':'other_payment','default_yjzy_type_1':'sale'}</field>
+            <field name="context">{'default_type':'other_payment','default_yjzy_type_1':'sale','default_type_invoice':'out_invoice'}</field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_form')})]"/>
         </record>

@@ -232,9 +232,9 @@ class account_payment(models.Model):
         else:
             self.advance_type = '10_no_contract'
 
-    # @api.depends('yjzy_partner_id')
-    # def compute_invoice_advance(self):
-    #     for one in self:
+    @api.depends('yjzy_partner_id')
+    def compute_invoice_advance(self):
+        for one in self:
     #         if one.yjzy_partner_id:
     #             sale_normal_invoice_ids = self.env['account.invoice'].search(
     #                 [('residual', '>', 0), ('state', '=', 'open'), ('yjzy_type', '=', 'sale'), ('type', '=', 'out_invoice'),
@@ -246,15 +246,15 @@ class account_payment(models.Model):
     #         sale_back_tax_invoice_ids = self.env['account.invoice'].search(
     #             [('residual', '>', 0), ('state', '=', 'open'), ('yjzy_type', '=', 'back_tax'),
     #              ('type', '=', 'out_invoice')])
-    #         sale_other_invoice_ids = self.env['account.invoice'].search(
-    #             [('residual', '>', 0), ('state', '=', 'open'), ('invoice_attribute', '=', 'other_payment'),
-    #              ('yjzy_type_1', '=', 'sale'), ('type', '=', 'out_invoice')])
+            sale_other_invoice_ids = self.env['account.invoice'].search(
+                [('residual', '>', 0), ('state', '=', 'open'), ('invoice_attribute', '=', 'other_payment'),
+                 ('yjzy_type_1', '=', 'sale'), ('type', '=', 'out_invoice')])
     #         advance_payment_ids = self.env['account.payment'].search(
     #             [('sfk_type', '=', 'ysrld'), ('advance_balance_total', '!=', 0),
     #              ('state', 'in', ['posted', 'reconciled'])])
     #         one.sale_normal_invoice_ids = sale_normal_invoice_ids
     #         one.sale_back_tax_invoice_ids = sale_back_tax_invoice_ids
-    #         one.sale_other_invoice_ids = sale_other_invoice_ids
+            one.sale_other_invoice_ids = sale_other_invoice_ids
     #         one.advance_payment_ids = advance_payment_ids
 
     #1102
@@ -266,7 +266,7 @@ class account_payment(models.Model):
 
     # sale_normal_invoice_ids = fields.Many2many('account.invoice','p1_id','i1_id','未完成认领货款应收账单',compute='compute_invoice_advance')
     # sale_back_tax_invoice_ids = fields.Many2many('account.invoice','p2_id','i2_id','未完成认领应收退税账单',compute='compute_invoice_advance')
-    # sale_other_invoice_ids = fields.Many2many('account.invoice','p3_id','i3_id','未完成认领其他应收',compute='compute_invoice_advance')
+    sale_other_invoice_ids = fields.Many2many('account.invoice','p3_id','i3_id','未完成认领其他应收',compute='compute_invoice_advance')
     # advance_payment_ids = fields.Many2many('account.payment','p4_id','i4_id','未完成认领预收单',compute='compute_invoice_advance')
 
 
@@ -315,7 +315,7 @@ class account_payment(models.Model):
                                 ('90_cancel',u'已取消')],u'审批状态',track_visibility='onchange',default='10_draft')
 
     #819增加汇率字段
-    # tb_po_invoice_ids = fields.One2many('tb.po.invoice','payment_id','应收付申请单')
+    tb_po_invoice_ids = fields.One2many('tb.po.invoice','yjzy_payment_id','应收付申请单')
     advance_type = fields.Selection([('10_no_contract',u'无合同'),
                                      ('20_contract',u'有合同')],u'预付类型',conpute=compute_advance_type, default='10_no_contract',store=True)
     current_date_rate = fields.Float(u'当日汇率')
@@ -412,6 +412,34 @@ class account_payment(models.Model):
     # def onchange_yjzy_partner_id(self):
     #     if self.yjzy_partner_id != False:
     #         self.partner_id = self.yjzy_partner_id
+
+    def create_tb_po_invoice(self):
+        form_view = self.env.ref('yjzy_extend.tb_po_form')
+        type = self.env.context.get('default_type')
+        yjzy_type_1 = self.env.context.get('default_yjzy_type_1')
+        type_invoice = self.env.context.get('default_type_invoice')
+
+        tb_po_invoice_obj = self.env['tb.po.invoice']
+        tb_po_invoice_id = tb_po_invoice_obj.create({'currency_id':self.currency_id.id,
+                                                     'manual_currency_id':self.currency_id.id,
+                                                     'type':type,
+                                                     'yjzy_type_1':yjzy_type_1,
+                                                     'type_invoice':type_invoice,
+                                                     'yjzy_payment_id':self.id
+                                                     })
+        print('tb_po_invoice_id',tb_po_invoice_id)
+        return {
+            'name': '其他应收申请单',
+            'view_type': 'tree,form',
+            "view_mode": 'form',
+            'res_model': 'tb.po.invoice',
+            'type': 'ir.actions.act_window',
+            'views': [(form_view.id, 'form')],
+            'res_id': tb_po_invoice_id.id,
+            # 'target': 'new',
+            # 'domain': [('yjzy_advance_payment_id', '=', self.id)],
+            'context': {}
+        }
 
     def open_account_invoice(self):
         form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form_in_one')
@@ -859,7 +887,7 @@ class account_payment(models.Model):
         yjzy_payment_id = self.env.context.get('yjzy_payment_id')
         if not yjzy_payment_id:
             yjzy_payment_id = self.id
-        partner_id = False
+        partner_id = self.partner_id
         # if self.yjzy_partner_id:
         #     partner_id = self.yjzy_partner_id
 
@@ -1359,14 +1387,31 @@ class account_payment(models.Model):
             partner_id = self.env['res.partner'].search([('name','=','未定义'),('customer','=',True)])
             self.partner_id = partner_id
 
+    @api.onchange('payment_for_goods')
+    def onchange_payment_for_goods(self):
+        if not self.payment_for_goods:
+            partner_id = self.env['res.partner'].search([('name', '=', '未定义'), ('customer', '=', True)])
+            self.partner_id = partner_id
+
+    @api.onchange('payment_for_other')
+    def onchange_payment_for_other(self):
+        partner_id = self.env['res.partner'].search([('name', '=', '未定义'), ('customer', '=', True)])
+        self.partner_id = partner_id
+
     #904 创建预收-应收认领单   收款-应收认领单
     def create_yshxd_ysrl(self):
         invoice_attribute = self.env.context.get('invoice_attribute')
         if self.partner_id.name == '未定义' and self.payment_for_goods :
             raise Warning('请先选择客户，再进行认领')
         yshxd_obj = self.env['account.reconcile.order']
+
+        sfk_type = 'yshxd'
+        name = self.env['ir.sequence'].next_by_code('sfk.type.%s' % sfk_type)
+
         if self.sfk_type == 'ysrld':
-            yshxd_id = yshxd_obj.create({'operation_wizard':'25',
+            yshxd_id = yshxd_obj.create({
+                                         'name':name,
+                                         'operation_wizard':'25',
                                          'yjzy_advance_payment_id':self.id,
                                          'partner_id':self.partner_id.id,
                                          'sfk_type':'yshxd',
@@ -1390,7 +1435,9 @@ class account_payment(models.Model):
                            }
             }
         elif self.sfk_type == 'rcskd':
-            yshxd_id = yshxd_obj.create({'operation_wizard': '10',
+            yshxd_id = yshxd_obj.create({
+                                         'name': name,
+                                         'operation_wizard': '10',
                                          'partner_id': self.partner_id.id,
                                          'sfk_type': 'yshxd',
                                          'payment_type': 'inbound',

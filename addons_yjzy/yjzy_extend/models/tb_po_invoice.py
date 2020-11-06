@@ -176,9 +176,6 @@ class tb_po_invoice(models.Model):
     #         print('ctx_1111', ctx)
     #         one.display_name = name
 
-    #关联的申请单：其他应收对其他应付，其他应付对其他应收
-    # payment_id = fields.Many2one('account.payment',u'收付款单')
-    # display_name = fields.Char(u'显示名称', compute=compute_display_name)
 
     @api.depends('invoice_p_ids','invoice_s_ids','invoice_back_tax_ids.residual','invoice_p_s_ids.residual','invoice_p_s_ids.residual')
     def compute_residual(self):
@@ -211,6 +208,7 @@ class tb_po_invoice(models.Model):
             one.invoice_other_payment_ids_count = len(one.invoice_other_payment_ids)
             one.invoice_extra_ids_count = len(one.invoice_extra_ids)
             one.invoice_normal_ids_count = len(one.invoice_normal_ids)
+            one.invoice_other_payment_in_ids_count = len(one.invoice_other_payment_in_ids)
 
     @api.depends('invoice_ids', 'invoice_ids.residual','invoice_ids.amount_total')
     def compute_invoice_amount(self):
@@ -221,6 +219,7 @@ class tb_po_invoice(models.Model):
     @api.depends('yjzy_invoice_id','manual_currency_id')
     def compute_currency_id(self):
         for one in self:
+
             yjzy_invoice_id = one.yjzy_invoice_id
             manual_currency_id = one.manual_currency_id
             if yjzy_invoice_id:
@@ -234,6 +233,11 @@ class tb_po_invoice(models.Model):
         for one in self:
             one.yjzy_tb_po_invoice_amount = one.yjzy_tb_po_invoice.price_total
             one.yjzy_tb_po_invoice_residual = one.yjzy_tb_po_invoice.invoice_normal_ids_residual
+
+    #关联的申请单：其他应收对其他应付，其他应付对其他应收
+    yjzy_payment_id = fields.Many2one('account.payment',u'收付款单')
+    # display_name = fields.Char(u'显示名称', compute=compute_display_name)
+
 
     gongsi_id = fields.Many2one('gongsi', '内部公司')
     yjzy_tb_po_invoice = fields.Many2one('tb.po.invoice',u'关联应收付申请单')
@@ -304,7 +308,10 @@ class tb_po_invoice(models.Model):
     currency_id = fields.Many2one('res.currency', '货币',  compute=compute_currency_id)#default=_default_currency_id
     manual_currency_id = fields.Many2one('res.currency', '货币',  default=_default_currency_id)
 
-
+    invoice_other_payment_in_ids = fields.One2many('account.invoice', 'tb_po_invoice_id', '其他应收账单',
+                                                domain=[('type', '=', 'out_invoice'), ('yjzy_type_1', '=', 'sale'),
+                                                        ('invoice_attribute', '=', 'other_payment')])
+    invoice_other_payment_in_ids_count = fields.Integer('其他应收账单数量', compute=compute_invoice_count)
 
 
     invoice_other_payment_ids = fields.One2many('account.invoice','tb_po_invoice_id','其他应付账单',domain=[('type','=','in_invoice'),('yjzy_type_1','=','purchase'),
@@ -436,11 +443,19 @@ class tb_po_invoice(models.Model):
             self.yjzy_tb_po_invoice.action_manager_approve()
         if self.invoice_p_s_ids:
             for one in self.invoice_p_s_ids:
-                one.invoice_assign_outstanding_credit()
+                one.invoice_assign_outstanding_credit()  #如果是冲减的 发票，直接核销
         if self.type == 'extra':
             for one in self.invoice_extra_ids:
                 if one.type in ['in_refund','out_refund']:
                     one.invoice_assign_outstanding_credit()
+        # 如果是其他应收款，创建应收核销单，并直接完成总经理蛇皮
+        if self.invoice_other_payment_in_ids:
+            for one in self.invoice_other_payment_in_ids:
+                one.with_context({'default_yjzy_payment_id':self.yjzy_payment_id.id}).create_yshxd_from_multi_invoice(self.type)
+                for x in one.reconcile_order_ids:
+                    x.action_manager_approve_stage()
+
+
 
 
 
@@ -1046,6 +1061,9 @@ class tb_po_invoice(models.Model):
         }
 
     #创建其他应付账单
+
+
+
     def make_other_payment_invoice(self):
         self.ensure_one()
         if self.purchase_amount2_add_this_time_total != 0 and self.price_total != self.purchase_amount2_add_this_time_total:
