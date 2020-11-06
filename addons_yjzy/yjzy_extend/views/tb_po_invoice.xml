@@ -627,8 +627,9 @@
                                     </tree>
                                 </field>
                             </page>
-                            <page>
-                                <field name="invoice_other_payment_in_ids" attrs="{'invisible':[('invoice_other_payment_in_ids_count','=',0)]}">
+                            <page string="其他应收账单" attrs="{'invisible':[('invoice_other_payment_in_ids_count','=',0)]}">
+                                <field name="invoice_other_payment_in_ids_count" invisible="1"/>
+                                <field name="invoice_other_payment_in_ids">
                                     <tree>
                                         <field name="tb_contract_code"/>
                                         <field name="amount_total_signed" string="账单金额"/>
