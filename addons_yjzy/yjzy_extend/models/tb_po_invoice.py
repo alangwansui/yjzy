@@ -450,10 +450,13 @@ class tb_po_invoice(models.Model):
                     one.invoice_assign_outstanding_credit()
         # 如果是其他应收款，创建应收核销单，并直接完成总经理蛇皮
         if self.invoice_other_payment_in_ids:
-            for one in self.invoice_other_payment_in_ids:
-                one.with_context({'default_yjzy_payment_id':self.yjzy_payment_id.id}).create_yshxd_from_multi_invoice(self.type)
-                for x in one.reconcile_order_ids:
-                    x.action_manager_approve_stage()
+            if self.yjzy_payment_id:
+                for one in self.invoice_other_payment_in_ids:
+                    one.with_context({'default_yjzy_payment_id':self.yjzy_payment_id.id}).create_yshxd_from_multi_invoice(self.type)
+                    for x in one.reconcile_order_ids:
+                        x.action_manager_approve_stage()
+
+
 
 
 
