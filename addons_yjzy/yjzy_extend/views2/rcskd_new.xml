@@ -226,7 +226,7 @@
 <!--                                </tree>-->
 <!--                            </field>-->
 <!--                        </page>-->
-                        <page string="未完成认领其他应收"  attrs="{'invisible':[('payment_for_other','=',False)]}">
+                        <page string="未完成认领其他应收"  attrs="{'invisible':['|',('payment_for_other','=',False),('balance','=',0)]}">
                             <field name="sale_other_invoice_ids">
                                 <tree decoration-warning="parent.amount == amount_total_signed">
                                      <field name="invoice_attribute"/>

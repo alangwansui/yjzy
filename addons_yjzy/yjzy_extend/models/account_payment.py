@@ -782,8 +782,9 @@ class account_payment(models.Model):
         res = super(account_payment, self)._get_shared_move_line_vals(debit, credit, amount_currency, move_id, invoice_id=invoice_id)
 
         new_payment_id = self.id
-        if self.sfk_type in ['ysrld', 'yfsqd', 'rcfksqd', 'rcskrld']:
+        if self.sfk_type in ['ysrld', 'yfsqd', 'rcfksqd', 'rcskrld','yingshourld','yingfurld']:
             new_payment_id = self.yjzy_payment_id.id
+
 
         res.update({
             'new_payment_id': new_payment_id,
