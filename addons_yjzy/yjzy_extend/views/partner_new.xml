@@ -67,6 +67,7 @@
             <field eval="8" name="priority"/>
             <field name="arch" type="xml">
                 <tree string="Contacts">
+                    <field name="customer_code" string="编号"/>
                     <field name="name" string="简称"/>
                     <field name="country_id" string="公司所在国"/>
                     <field name="jituan_id" string="所属集团"/>
@@ -96,6 +97,7 @@
             <field eval="8" name="priority"/>
             <field name="arch" type="xml">
                 <tree string="Contacts" create="false">
+                    <field name="supplier_code" string="编号"/>
                     <field name="name" string="简称"/>
                     <field name="country_id"/>
                     <field name="city_product_origin"/>
@@ -2949,8 +2951,8 @@
                             <div class="o_row">
                                 <field name="supplier_code" readonly="1"/>
                                 <button name="approve_create_code" type="object" string="生成编码" groups="base.group_system"/>
-                                <field name="code" readonly="1"/>
-                                <button name="generate_code" type="object" string="生成编码" groups="base.group_system"/>
+                                <field name="code" readonly="1" invisible="1"/>
+                                <button name="generate_code" type="object" string="生成编码" groups="base.group_system" invisible="1"/>
                                 <field name="parent_id"
                                        placeholder="Company"
                                        domain="[('is_company', '=', True)]"
