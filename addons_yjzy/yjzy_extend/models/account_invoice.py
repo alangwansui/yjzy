@@ -994,7 +994,7 @@ class account_invoice(models.Model):
         account_obj = self.env['account.account']
         bank_account = account_obj.search([('code', '=', '10021'), ('company_id', '=', self.env.user.company_id.id)],
                                           limit=1)
-        form_view = self.env.ref('yjzy_extend.account_yshxd_form_view_new')
+        form_view = self.env.ref('yjzy_extend.account_yshxd_form_view_other_payment_simple')
         invoice_dic = []
         account_reconcile_order_obj = self.env['account.reconcile.order']
         yjzy_payment_id = self.env.context.get('default_yjzy_payment_id')
@@ -1036,9 +1036,15 @@ class account_invoice(models.Model):
         yshxd.make_lines()
         if attribute == 'other_payment':
             for x in yshxd.line_no_ids:
-                x.amount_payment_org = x.invoice_residual
+                if x.invoice_residual >= yshxd.yjzy_payment_balance:
+                    x.amount_payment_org = yshxd.yjzy_payment_balance
+                else:
+                    x.amount_payment_org = x.invoice_residual
             for x in yshxd.line_ids:
-                x.amount_payment_org = x.amount_invoice_so_residual
+                if x.amount_invoice_so_residual >= yshxd.yjzy_payment_balance:
+                    x.amount_payment_org = x.yshxd.yjzy_payment_balance
+                else:
+                    x.amount_payment_org = x.amount_invoice_so_residual
             print('test_qeqwe',yshxd)
             # yshxd.action_manager_approve_stage()
 
@@ -1051,7 +1057,7 @@ class account_invoice(models.Model):
             'type': 'ir.actions.act_window',
             'views': [(form_view.id, 'form')],
             'res_id': yshxd.id,
-            'target': 'current',
+            'target': 'new',
             'flags': {'form': {'initial_mode': 'view','action_buttons': False}}
         }
 
@@ -1145,7 +1151,7 @@ class account_invoice(models.Model):
             'res_model': 'account.reconcile.order',
             'views': [(form_view.id, 'form')],
             'res_id':account_reconcile_id.id,
-            'target': 'current',
+            'target': 'new',
             'context': {
 
 

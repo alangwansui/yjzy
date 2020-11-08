@@ -140,6 +140,12 @@ class res_partner(models.Model):
             print('tb_approve_po_amount_total', tb_approve_po_amount_total)
             one.tb_approve_po_amount_total = tb_approve_po_amount_total
 
+    qingguan_precision = fields.Integer('清关资料打印小数位数')
+
+    #增加供应商和客户的独立编号
+    customer_code = fields.Char('客户编码')
+    supplier_code = fields.Char('供应商编码')
+
     #1102
     #取采购订单
     po_approve_ids = fields.One2many('purchase.order', 'partner_id', '今年采购合同',
@@ -339,6 +345,21 @@ class res_partner(models.Model):
                                                   compute=compute_amount_purchase_advance)
     amount_purchase_advance = fields.Monetary('预付金额:本币', currency_field='currency_id',
                                               compute=compute_amount_purchase_advance)
+
+    #审批完成的时候添加客户和供应商编号
+    def approve_create_code(self):
+        seq_obj = self.env['ir.sequence']
+        for one in self:
+            if one.customer_code: continue
+            if one.supplier_code:continue
+            if one.customer and one.is_company == True:
+                one.customer_code = seq_obj.next_by_code('res.partner.customer.new')
+            elif one.supplier and one.is_company == True:
+                one.supplier_code = seq_obj.next_by_code('res.partner.supplier.new')
+            else:
+                pass
+
+        return True
 
     # @api.constrains('name')
     # def check_name(self):
@@ -770,6 +791,7 @@ class res_partner(models.Model):
                     raise Warning(war)
 
 
+
     def action_to_approve(self):
         if self.user_id == self.env.user:
             return self.write({'state': 'to approve',
@@ -790,7 +812,9 @@ class res_partner(models.Model):
                            'approve_uid': self.env.user.id,
                            'approve_date': fields.datetime.now()})
 
+
     def action_done(self):
+        self.approve_create_code()
         if self.can_not_be_deleted == False:
             self.can_not_be_deleted = True
         return self.write({'state': 'done',

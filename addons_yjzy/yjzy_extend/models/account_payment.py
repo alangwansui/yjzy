@@ -415,10 +415,37 @@ class account_payment(models.Model):
     post_uid = fields.Many2one('res.users',u'审批人')
     post_date = fields.Date(u'审批时间')
 
+    def open_wizard_renling(self):
+        self.ensure_one()
+        ctx = self.env.context.copy()
+        ctx.update({
+            'default_partner_id': self.partner_id.id,
+            'default_yjzy_payment_id': self.id,
+
+        })
+        return {
+            'name': '创建认领',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'wizard.renling',
+            # 'res_id': bill.id,
+            'target': 'new',
+            'type': 'ir.actions.act_window',
+            'context': ctx,
+        }
+
     # @api.onchange('yjzy_partner_id')
     # def onchange_yjzy_partner_id(self):
     #     if self.yjzy_partner_id != False:
     #         self.partner_id = self.yjzy_partner_id
+
+    # def action_multi(self):
+    #     print('sdfsdfd',self.ysrld_ids.records)
+
+    @api.multi
+    def action_multi(self):
+        for record in self.ysrld_ids:
+            print('record',record)
 
     def create_tb_po_invoice(self):
         form_view = self.env.ref('yjzy_extend.tb_po_form')

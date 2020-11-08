@@ -26,6 +26,22 @@
             <field name="company_id" eval="False"/>
         </record>
 
+        <record id="seq_partner_code_customer_new" model="ir.sequence">
+            <field name="name">res.partner.customer.new</field>
+            <field name="code">res.partner.customer.new</field>
+            <field name="prefix">C</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"/>
+        </record>
+        <record id="seq_partner_code_supplier_new" model="ir.sequence">
+            <field name="name">res.partner.supplier.new</field>
+            <field name="code">res.partner.supplier.new</field>
+            <field name="prefix">S</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+
 
         <!-- 采购箱号 -->
         <record id="seq_po_box" model="ir.sequence">

@@ -1926,8 +1926,10 @@
                             </h1>
 
                             <div class="o_row">
-                                <field name="code" readonly="1"/>
-                                <button name="generate_code" type="object" string="生成编码" groups="base.group_system"/>
+                                <field name="customer_code" readonly="1"/>
+                                <button name="approve_create_code" type="object" string="生成编码" groups="base.group_system"/>
+                                <field name="code" readonly="1" invisible="1"/>
+                                <button name="generate_code" type="object" string="生成编码" groups="base.group_system" invisible="1"/>
                                 <field name="parent_id"
                                        placeholder="Company"
                                        domain="[('is_company', '=', True)]"
@@ -2800,6 +2802,7 @@
                                     <field name="approve_date"/>
                                     <field name="done_uid"/>
                                     <field name="done_date"/>
+                                    <field name="qingguan_precision"/>
                                 </group>
                             </page>
                         </notebook>
@@ -2944,6 +2947,8 @@
                                        'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                             </h1>
                             <div class="o_row">
+                                <field name="supplier_code" readonly="1"/>
+                                <button name="approve_create_code" type="object" string="生成编码" groups="base.group_system"/>
                                 <field name="code" readonly="1"/>
                                 <button name="generate_code" type="object" string="生成编码" groups="base.group_system"/>
                                 <field name="parent_id"

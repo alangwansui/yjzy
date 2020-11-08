@@ -866,6 +866,7 @@ class hr_expense_sheet(models.Model):
 
 
     def action_to_account_approval_all(self):
+
         stage_id = self._stage_find(domain=[('code', '=', '030')])
         for one in self:
             if one.expense_to_invoice_type == 'normal' and one.all_line_is_confirmed == True and one.total_amount >= 0 and one.state_1 == 'employee_approval':

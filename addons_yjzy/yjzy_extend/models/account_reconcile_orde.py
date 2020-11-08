@@ -319,6 +319,10 @@ class account_reconcile_order(models.Model):
             supplier_advance_payment_ids_amount_advance_org = sum(x.advance_reconcile_order_draft_amount_advance for x in one.supplier_advance_payment_ids)
             one.supplier_advance_payment_ids_amount_advance_org = supplier_advance_payment_ids_amount_advance_org
 
+    #其他应收认领的时候，一个快速添加金额的字段，onchange到line_no_ids和line_ids的第一行
+    # other_payment_amount_payment_org = fields.Monetary(u'其他应收认领快速录入金额')
+    # other
+
     name_title = fields.Char(u'账单描述')
     invoice_partner = fields.Char(u'账单对象')
 

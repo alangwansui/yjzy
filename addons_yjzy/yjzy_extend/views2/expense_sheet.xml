@@ -31,7 +31,7 @@
                      <button name="%(expense_sheet_refuse_wizard_action)d" string="拒绝" type="action" attrs="{'invisible':[('state_1','in',['draft','refused','done'])]}"/>
                     <field name="state_1" widget="statusbar"
                                statusbar_visible=" "/>
-                        <field name="stage_id" groups="base.group_system"/>
+
                 </header>
                 <header groups="base.group_system">
                     <button name="approve_expense_sheets" states="submit" string="Approve" type="object" groups="hr_expense.group_hr_expense_user"
@@ -135,6 +135,7 @@
                         </page>
                         <page groups="base.group_system">
                             <group>
+                                <field name="stage_id" />
                                    <field name="employee_id" options="{'no_create':True}" />
                             <field name="employee_user_id" groups="base.group_system"/>
                                 <field name="responsible_id" />
