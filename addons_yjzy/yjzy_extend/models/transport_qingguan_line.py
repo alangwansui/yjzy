@@ -46,7 +46,7 @@ class transport_qingguan_line(models.Model):
     volume = fields.Float(u'尺码m³', digits=dp.get_precision('Volume'))
 
     uom_id = fields.Many2one(related='product_id.uom_id', readonly=True, string=u'单位')
-    price = fields.Float(u'单价', currency_field='sale_currency_id', compute=compute_price,digits=(2,3))
+    price = fields.Float(u'单价', currency_field='sale_currency_id', compute=compute_price, digits=dp.get_precision('Qingguan Price'))
     sub_total = fields.Monetary(u'小计', currency_field='sale_currency_id', digits=dp.get_precision('Money'))
 
     supplier_id = fields.Many2one('res.partner', u'供应商业')
