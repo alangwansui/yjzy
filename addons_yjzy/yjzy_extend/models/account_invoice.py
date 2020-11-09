@@ -524,7 +524,8 @@ class account_invoice(models.Model):
          ('expense_po', u'费用转换'),
          ('other_payment',u'其他')], '账单类型')
     #新增
-    yjzy_type_1 = fields.Selection([('sale', u'应收'),('purchase', u'应付'), ('back_tax', u'退税')], string=u'发票类型')
+    yjzy_type_1 = fields.Selection([('sale', u'应收'),('purchase', u'应付'), ('back_tax', u'退税'), ('other_payment_sale','其他应收'),
+                                  ('other_payment_purchase','其他应付')], string=u'发票类型')
 
     # from_type = fields.Selection([('manual_create',u'手动创建'),('auto_crate',u'自动创建')],u'创建方式')
 

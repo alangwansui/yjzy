@@ -25,29 +25,40 @@ class wizard_renling(models.TransientModel):
     btd_id = fields.Many2one('back.tax.declaration','退税申报单')
     sale_other_invoice_ids = fields.Many2many('account.invoice', 'p3_id', 'i3_id', '未完成认领其他应收',
                                               compute='compute_invoice_advance')
-    yjzy_type = fields.Selection([('sale', '销售'),
-                                 ('purchase', '采购'),
-                                 ('back_tax', '退税')], u'发票类型')
+
     renling_type = fields.Selection([('yshxd', '应收认领'),
                                  ('ysrld', '预收认领'),
                                  ('back_tax', '退税认领'),('other_payment', '其他认领')], u'认领属性')
 
+
+    # @api.onchange('renling_type')
+    # def onchange_renling_type:
+    #
 
     def apply(self):
         self.ensure_one()
         self.create_yshxd_ysrl()
 
     def create_yshxd_ysrl(self):
-        if self.renling_type in ['yshxd','back_tax'] :
+        if self.renling_type in ['yshxd'] :
             invoice_attribute = 'normal'
+            sfk_type = 'yshxd'
+            yjzy_type = 'sale'
+        elif self.renling_type == 'back_tax':
+            invoice_attribute = 'normal'
+            sfk_type = 'yshxd'
+            yjzy_type = 'back_tax'
         elif self.renling_type == 'other_paymnet':
             invoice_attribute = 'other_payment'
+            sfk_type = 'yshxd'
+            yjzy_type = 'other_payment_sale'
         else:
             invoice_attribute = False
+            sfk_type = 'ysrld'
 
-        yjzy_type = self.yjzy_type
         yshxd_obj = self.env['account.reconcile.order']
-        sfk_type = 'yshxd'
+        ysrld_obj = self.env['account.payment']
+
         name = self.env['ir.sequence'].next_by_code('sfk.type.%s' % sfk_type)
         if self.renling_type in ['yshxd','back_tax','other_payment']:
             yshxd_id = yshxd_obj.create({
@@ -80,7 +91,37 @@ class wizard_renling(models.TransientModel):
                             }
 
             }
+        elif self.renling_type in ['ysrld']:
+            ysrld = yshxd_obj.create({
+                'name': name,
+                'advance_ok': True,
+                'partner_id': self.partner_id.id,
+                'sfk_type': sfk_type,
+                'payment_type': 'inbound',
+                'partner_type': 'customer',
+                'yjzy_payment_id': self.yjzy_payment_id.id,
+                'be_renling': True,
+                'invoice_attribute': invoice_attribute,
+                'currency_id': self.currency_id.id,
+            })
 
+            form_view = self.env.ref('yjzy_extend.account_yshxd_form_view_new').id
+            return {
+                'name': '应收认领单',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'account.reconcile.order',
+                'views': [(form_view, 'form')],
+                'res_id': ysrld.id,
+                'target': 'new',
+                'type': 'ir.actions.act_window',
+                'context': {'default_sfk_type': 'yshxd',
+                            'active_id': ysrld.id,
+                            'bank_amount': 1,
+                            'show_so': 1,
+                            }
+
+            }
 
 
 

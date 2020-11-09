@@ -329,7 +329,9 @@ class account_reconcile_order(models.Model):
     supplier_advance_payment_ids_amount_advance_org = fields.Float('待审批预付认领金额',compute= compute_supplier_advance_payment_ids_amount_advance_org,store=True)
     yjzy_type = fields.Selection([('sale','销售'),
                                   ('purchase','采购'),
-                                  ('back_tax','退税')],u'发票类型')
+                                  ('back_tax','退税'),
+                                  ('other_payment_sale','其他应收'),
+                                  ('other_payment_purchase','其他应付')],u'发票类型')
     invoice_attribute = fields.Selection(
         [('normal', u'常规账单'),
          ('reconcile', u'核销账单'),
