@@ -241,10 +241,10 @@ class tb_po_invoice(models.Model):
             one.yjzy_tb_po_invoice_parent_amount = one.yjzy_tb_po_invoice_parent.price_total
             one.yjzy_tb_po_invoice_parent_residual = one.yjzy_tb_po_invoice_parent.invoice_normal_ids_residual
 
-    # 新增
-    yjzy_type_invoice = fields.Selection(
-        [('sale', u'应收'), ('purchase', u'应付'), ('back_tax', u'退税'), ('other_payment_sale', '其他应收'),
-         ('other_payment_purchase', '其他应付')], string=u'发票类型')
+    # # 新增
+    # yjzy_type_invoice = fields.Selection(
+    #     [('sale', u'应收'), ('purchase', u'应付'), ('back_tax', u'退税'), ('other_payment_sale', '其他应收'),
+    #      ('other_payment_purchase', '其他应付')], string=u'发票类型')
     #关联的申请单：其他应收对其他应付，其他应付对其他应收
 
     date_invoice = fields.Date('账单日期')
@@ -296,7 +296,8 @@ class tb_po_invoice(models.Model):
         default=lambda self: self._context.get('type', 'out_invoice'),
         track_visibility='always')#825
     yjzy_type = fields.Selection([('sale', u'销售'), ('purchase', u'采购'), ('back_tax', u'退税')], string=u'发票类型')#825 对应生成的发票，不用利用原来出运生成的账单。所以这个也没用了
-    yjzy_type_1 = fields.Selection([('sale', u'应付'), ('purchase', u'采购'), ('back_tax', u'退税')], string=u'发票类型')#825
+    yjzy_type_1 = fields.Selection([('sale', u'应付'), ('purchase', u'采购'), ('back_tax', u'退税'),('other_payment_sale', '其他应收'),
+         ('other_payment_purchase', '其他应付')], string=u'发票类型')#825
     extra_invoice_line_ids = fields.One2many('extra.invoice.line', 'tb_po_id', u'账单明细',default=lambda self: self._default_extra_invoice_line())
     price_total = fields.Monetary('金额合计',currency_field='currency_id',compute=compute_info_store,store=True)
 
@@ -327,12 +328,12 @@ class tb_po_invoice(models.Model):
     manual_currency_id = fields.Many2one('res.currency', '货币',  default=_default_currency_id)
 
     invoice_other_payment_in_ids = fields.One2many('account.invoice', 'tb_po_invoice_id', '其他应收账单',
-                                                domain=[('type', '=', 'out_invoice'), ('yjzy_type_1', '=', 'sale'),
+                                                domain=[('type', '=', 'out_invoice'), ('yjzy_type_1', '=', 'other_payment_sale'),
                                                         ('invoice_attribute', '=', 'other_payment')])
     invoice_other_payment_in_ids_count = fields.Integer('其他应收账单数量', compute=compute_invoice_count)
 
 
-    invoice_other_payment_ids = fields.One2many('account.invoice','tb_po_invoice_id','其他应付账单',domain=[('type','=','in_invoice'),('yjzy_type_1','=','purchase'),
+    invoice_other_payment_ids = fields.One2many('account.invoice','tb_po_invoice_id','其他应付账单',domain=[('type','=','in_invoice'),('yjzy_type_1','=','other_payment_purchase'),
                                                                                                       ('invoice_attribute','=','other_payment')])
     invoice_other_payment_ids_count = fields.Integer('其他应付账单数量', compute=compute_invoice_count)
 

@@ -383,7 +383,7 @@ class wizard_renling(models.TransientModel):
         type = self.renling_type
         yjzy_type_1 = self.env.context.get('default_yjzy_type_1')
         type_invoice = self.env.context.get('default_type_invoice')
-        yjzy_type_invoice = self.context.get('yjzy_type_invoice')
+
         print('type_invoice',type_invoice,yjzy_type_1)
 
         tb_po_invoice_obj = self.env['tb.po.invoice']
@@ -393,7 +393,7 @@ class wizard_renling(models.TransientModel):
                                                      'yjzy_type_1':yjzy_type_1,
                                                      'type_invoice':type_invoice,
                                                      'yjzy_payment_id':self.yjzy_payment_id.id,
-                                                     'yjzy_type_invoice':yjzy_type_invoice
+
                                                      })
         print('tb_po_invoice_id',tb_po_invoice_id)
         return {

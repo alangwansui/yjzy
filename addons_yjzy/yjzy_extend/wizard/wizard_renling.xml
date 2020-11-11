@@ -63,7 +63,7 @@
                     <footer>
                         <button name="create_tb_po_invoice" string="新建其他收款申请" type="object" class="oe_highlight" colspan="2"
                             attrs="{'invisible':['|',('renling_type','not in','other_payment'),('other_payment_invoice_ok','=',True)]}"
-                                  context="{'default_type':'other_payment','default_yjzy_type_1':'sale','default_type_invoice':'out_invoice','default_yjzy_type_invoice':'other_payment_sale'}"/>
+                                  context="{'default_type':'other_payment','default_yjzy_type_1':'other_payment_sale','default_type_invoice':'out_invoice'}"/>
                         <button name="create_yshxd_ysrl" class="oe_highlight" type='object' string="创建应收认领"
                                 attrs="{'invisible':['|',('renling_type','not in',['back_tax','yshxd','other_payment']),('other_payment_invoice_ok','=',False)]}"/>
                         <button name="create_yshxd_ysrl" class="oe_highlight" type='object' string="创建预收认领"  attrs="{'invisible':[('renling_type','not in',['ysrld'])]}"/>
