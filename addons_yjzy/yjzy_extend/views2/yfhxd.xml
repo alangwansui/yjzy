@@ -170,7 +170,7 @@
                                     <field name="payment_currency_id" invisible="1"/>
                                     <field name="currency_id" invisible="1"/>
                                     <field name="yjzy_currency_id" invisible="1"/>
-                                    <field name="amount_invoice_so" readonly="1" invisible=""/>
+                                    <field name="amount_invoice_so" readonly="1" invisible="1"/>
 
                                     <field name="amount_advance_org" string="预付认领金额"/>
 

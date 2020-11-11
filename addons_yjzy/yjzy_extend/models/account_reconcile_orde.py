@@ -238,7 +238,7 @@ class account_reconcile_order(models.Model):
             lines = one.line_ids
             one.amount_advance_org_new = sum([x.amount_advance_org for x in lines])
 
-    @api.depends('line_ids', 'line_ids.amount_payment_org','payment_currency_id')
+    @api.depends('line_ids', 'line_ids.amount_payment_org','payment_currency_id','line_no_ids', 'line_no_ids.amount_payment_org')
     def compute_amount_payment_org_new(self):
         for one in self:
             date = one.date
@@ -248,6 +248,7 @@ class account_reconcile_order(models.Model):
             lines = one.line_ids
             one.amount_payment_org_new = payment_currency.compute(sum([x.amount_payment_org for x in lines]),
                                                               one.invoice_currency_id)
+
 
     @api.depends('line_ids', 'line_ids.amount_bank_org', 'payment_currency_id')
     def compute_amount_bank_org_new(self):
@@ -319,9 +320,18 @@ class account_reconcile_order(models.Model):
             supplier_advance_payment_ids_amount_advance_org = sum(x.advance_reconcile_order_draft_amount_advance for x in one.supplier_advance_payment_ids)
             one.supplier_advance_payment_ids_amount_advance_org = supplier_advance_payment_ids_amount_advance_org
 
+    # @api.depends('yjzy_payment_id','yjzy_payment_id.balance')
+    # def compute_yjzy_payment_balance(self):
+    #     for one in self:
+    #         one.yjzy_payment_balance = one.yjzy_payment_id.balance
+
     #其他应收认领的时候，一个快速添加金额的字段，onchange到line_no_ids和line_ids的第一行
     # other_payment_amount_payment_org = fields.Monetary(u'其他应收认领快速录入金额')
     # other
+    renling_type = fields.Selection([('yshxd', '应收认领'),
+
+                                     ('back_tax', '退税认领'), ('other_payment', '其他认领')], u'认领属性')
+    back_tax_declaration_id = fields.Many2one('back.tax.declaration',u'退税申报表')
 
     name_title = fields.Char(u'账单描述')
     invoice_partner = fields.Char(u'账单对象')
@@ -452,8 +462,8 @@ class account_reconcile_order(models.Model):
 
     yjzy_payment_id = fields.Many2one('account.payment', u'选择收款单')
     yjzy_payment_currency_id = fields.Many2one('res.currency', related='yjzy_payment_id.currency_id')
-    yjzy_payment_balance = fields.Monetary(u'认领余额', related='yjzy_payment_id.balance', currency_field='yjzy_payment_currency_id')
-
+    yjzy_payment_balance = fields.Monetary(u'认领余额', related = 'yjzy_payment_id.balance',  currency_field='yjzy_payment_currency_id',)
+    # compute=compute_yjzy_payment_balance,
 
     be_renling = fields.Boolean(u'是否认领单')
     sfk_type = fields.Selection(sfk_type, u'收付类型')
@@ -622,7 +632,7 @@ class account_reconcile_order(models.Model):
                     'payment_type': 'inbound',
                     'partner_type': 'customer',
                     'advance_ok': False,
-                    'journal_id': journal_id_yhkk.  id,
+                    'journal_id': journal_id_yhkk.id,
                     'payment_method_id': 2,
                     'invoice_ids': [(4, line.invoice_id.id, None)],
                     'so_id': line.so_id.id,
@@ -949,6 +959,8 @@ class account_reconcile_order(models.Model):
                 raise Warning('没有对应的收款单，请检查！')
             self.create_yjzy_payment_ysrl()
             self.action_done_new()
+            if self.back_tax_declaration_id:
+                self.back_tax_declaration_id.state = 'paid'
             stage_id = self._stage_find(domain=[('code', '=', '060')])
             self.write({'stage_id': stage_id.id,
                         'state': 'done',

@@ -323,6 +323,158 @@
         </field>
     </record>
 
+<!--    新版预收认领-->
+    <record id="view_ysrld_form_new_open" model="ir.ui.view">
+        <field name="name">account.payment.form</field>
+        <field name="model">account.payment</field>
+        <field name="arch" type="xml">
+            <form string="预收认领单">
+                 <header >
+                     <button name="action_submit" class="oe_highlight"  string="提交" type="object"
+                             attrs="{'invisible':[('state_1','not in',['10_draft'])]}"/>
+                     <button name="action_account_post" class="oe_highlight"  string="财务确认" type="object"
+                     attrs="{'invisible':[('state_1','not in',['20_account_submit'])]}"/>
+                     <button name="action_account_refuse" class="oe_highlight" string="财务拒绝" type="object"
+                     attrs="{'invisible':[('state_1','not in',['20_account_submit'])]}"/>
+                      <button name="action_draft_new" class="oe_highlight" string="重置草稿" type="object"
+                              attrs="{'invisible':[('state_1','not in',['80_refused'])]}"/>
+                      <field name="state_1" widget="statusbar" statusbar_visible=" "/>
+
+                </header>
+                <header groups="base.group_system">
+                    <button name="post" class="oe_highlight" states="draft" string="Confirm" type="object"
+                            groups="base.group_system"/>
+                    <button name="action_draft" class="oe_highlight" states="cancelled" string="Set To Draft"
+                            type="object" groups="base.group_system"/>
+                    <button name="cancel" attrs="{'invisible': [('state', 'in', ['draft','cancelled'])]}"
+                            string="Cancel" type="object" groups="base.group_system"/>
+                    <button name="open_reconcile_account_move_line" class="oe_highlight" string="打开核销分录" type="object"
+                            groups="base.group_system"/>
+                    <button name="create_yshxd_ysrl" string="创建应收认领" type="object"/>
+                    <button name="compute_advance_balance_total" type="object" string="更新预收认领" groups="base.group_system"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,posted,reconciled,cancelled"/>
+
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+
+
+                        <button name="open_ysrld_yshx" type="object" class="oe_stat_button"
+                                icon="fa-bars" string="应收认领单" attrs="{'invisible':[('state','not in',['posted','reconciled'])]}">
+                        <field name="advance_reconcile_order_count_all" />
+
+                        </button>
+
+                        <button class="oe_stat_button" name="button_journal_entries"
+                                string="Journal Items" type="object"
+                                groups="base.group_system"
+                                attrs="{'invisible':[('move_line_ids','=',[])]}" icon="fa-bars"/>
+                        <field name="move_line_ids" invisible="1"/>
+                        <button class="oe_stat_button" name="button_invoices"
+                                string="Invoices" type="object"
+                                attrs="{'invisible':[('has_invoices','=',False)]}" icon="fa-bars"/>
+                        <button class="oe_stat_button" name="open_payment_matching_screen"
+                                string="Payment Matching" type="object" groups="base.group_system"
+                                attrs="{'invisible':[('move_reconciled','=',True)]}" icon="fa-university"/>
+                        <field name="has_invoices" invisible="1"/>
+                        <field name="move_reconciled" invisible="1"/>
+                        <field name="is_editable"  widget="boolean_toggle" groups="sales_team.group_manager"/>
+                    </div>
+                    <field name="id" invisible="1"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="partner_id" options="{'no_create':True,'no_open': True}"
+                                   domain="[('is_company','=',True),('customer','=',True)]"
+                                   attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))], 'invisible': [('payment_type', 'not in', ('inbound', 'outbound'))], 'readonly': 1}"
+                                   context="{'default_is_company': True, 'default_supplier': payment_type == 'outbound', 'default_customer': payment_type == 'inbound'}"/>
+
+
+
+                            <field name="so_id" string="销售合同"
+                                   domain="[('partner_id','=', partner_id),('state','not in',['done','verifying','verification','cancel','refuse'])]"
+                                   options="{'no_create':True,'no_open': True}"/>
+
+                            <label for="amount" string="本次认领金额"/>
+                            <div name="amount_div" class="o_row" string="收款金额">
+                                <field name="amount" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                <field name="currency_id" options="{'no_create': True, 'no_open': True}"
+                                       groups="base.group_multi_currency"
+                                       attrs="{'readonly': [('state', '!=', 'draft')]}" invisible="1"/>
+                            </div>
+                            <field name="journal_id" domain="[('type','=', 'renling')]" string="收款日记账"
+                                   widget="selection" invisible="1"/>
+                            <field name="destination_journal_id" widget="selection"
+                                   attrs="{'required': [('payment_type', '=', 'transfer')], 'invisible': [('payment_type', '!=', 'transfer')], 'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="hide_payment_method" invisible="1"/>
+                            <field name="payment_method_id" string=" " widget="radio"
+                                   attrs="{'invisible': [('hide_payment_method', '=', True)], 'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="payment_method_code" invisible="1"/>
+                            <field name="communication"
+                                   attrs="{'invisible': [('state', '!=', 'draft'), ('communication', '=', False)], 'readonly': [('state', '!=', 'draft')]}"/>
+                        </group>
+                        <group>
+                              <field name="yjzy_payment_balance" string="收款单余额"/>
+                            <field name="advance_total" string="被认领金额"/>
+                            <field name="advance_balance_total" string="未被认领金额"/>
+
+                            <field name="sfk_type" readonly="1" attrs="{'invisible':1}"/>
+                            <field name="payment_type" widget="radio" readonly="1" attrs="{'invisible':1}" required="1"/>
+                            <field name="partner_type" widget="selection" invisible="1"
+                                   attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))], 'invisible': [('payment_type', 'not in', ('inbound', 'outbound'))], 'readonly': 1 }"/>
+                            <field name="be_renling" invisible="1"/>
+                            <field name="advance_ok" label="是否预收" string="是预收" invisible="1"/>
+                            <field name="advance_account_id" label="预收科目" string="预收科目" options="{'no_create':True}"
+                                   invisible="1"/>
+
+
+                        </group>
+                    </group>
+                   <notebook>
+                       <page string="预收应收认领明细" attrs="{'invisible':[('advance_reconcile_order_count','=',0)]}">
+                           <field name="advance_reconcile_order_line_ids">
+                               <tree>
+                                   <field name="tb_contract_code"/>
+                                   <field name="amount_advance_org"/>
+                                   <field name="yjzy_payment_id"/>
+                               </tree>
+                           </field>
+                       </page>
+
+                       <page groups="base.group_system">
+                           <group>
+                               <field name="advance_reconcile_order_count"/>
+                               <field name="gongsi_id" string="公司主体" options="{'no_create':True,'no_open': True}"/>
+                                <field name="yjzy_payment_id" string="选择收款单"
+                                   domain="['|','&amp;','&amp;','&amp;',('state','=','posted'),('sfk_type','=','rcskd'),('partner_id','=',partner_id),('balance','!=',0),'&amp;','&amp;','&amp;',('state','=','posted'),('sfk_type','=','rcskd'),('partner_id.name','=','未定义'),('balance','!=',0)]"
+                                   options="{'no_create':True}"
+                                   context="{'form_view_ref': 'yjzy_extend.view_rcskd_form','bank_amount':1}"/>
+                                 <field name="yjzy_payment_currency_id" string="货币" readonly="1"
+                                   options="{'no_create':True,'no_open': True}"/>
+                                <field name="payment_date" string="认领收款日期"
+                                   attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                           </group>
+                            <field name="advance_reconcile_order_ids"/>
+                       </page>
+                   </notebook>
+
+                </sheet>
+ <footer>
+                   <button name="action_ysrld_one_in_all" type="object" class="oe_highlight" string="确定认领并关闭"/>
+                      <button name="action_save_test" type="object" class="oe_highlight" string="保存但不确认"/>
+                  </footer>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
 
     <record model="ir.actions.act_window" id="action_ysrld">
         <field name="name">预收认领单</field>

@@ -34,16 +34,46 @@ class DeclareDeclaration(models.Model):
             one.declaration_amount_all = declaration_amount_all
 
 
+    @api.depends('reconcile_order_ids','reconcile_order_ids.amount_total_org_new')
+    def compute_reconcile_amount(self):
+        for one in self:
+            reconcile_amount = sum(x.amount_total_org_new for x in one.reconcile_order_ids)
+            declaration_amount_all = one.declaration_amount_all
+            one.reconcile_amount = reconcile_amount
+            one.declaration_amount_all_residual = declaration_amount_all - reconcile_amount
+
+    @api.depends('btd_line_ids','btd_line_ids.declaration_amount_residual')
+    def compute_declaration_amount_all_residual_new(self):
+        for one in self:
+            declaration_amount_all_residual_new = sum(x.declaration_amount_residual for x in one.btd_line_ids)
+            one.declaration_amount_all_residual_new = declaration_amount_all_residual_new
+
+
     name = fields.Char('编号', default=lambda self: self.env['ir.sequence'].next_by_code('back.tax.declaration'))
     btd_line_ids = fields.One2many('back.tax.declaration.line','btd_id',u'申报明细')
     gongsi_id = fields.Many2one('gongsi', '内部公司')
     state = fields.Selection([('draft',u'草稿'),('done',u'确认'),('paid',u'已收款'),('cancel',u'取消')],'State', default='draft')
+    company_currency_id = fields.Many2one('res.currency', string='公司货币', related='company_id.currency_id',
+                                          readonly=True)
     declaration_date = fields.Date('申报日期')
-    invoice_amount_all = fields.Float(u'原始应收退税',compute=compute_invoice_amount_all,store=True)
-    invoice_residual_all = fields.Float(u'剩余应收退税',compute=compute_invoice_residual_all,store=True)
-    declaration_amount_all = fields.Float(u'本次申报金额',compute=compute_declaration_amount,store=True)
+    invoice_amount_all = fields.Monetary(u'原始应收退税',currency_field='company_currency_id',compute=compute_invoice_amount_all, store=True)
+    invoice_residual_all = fields.Monetary(u'剩余应收退税',currency_field='company_currency_id',compute=compute_invoice_residual_all,store=True)
+    declaration_amount_all = fields.Monetary(u'本次申报金额',currency_field='company_currency_id',compute=compute_declaration_amount,store=True)
+    declaration_amount_all_residual_new = fields.Monetary(u'本次申报金额', currency_field='company_currency_id',
+                                             compute=compute_declaration_amount_all_residual_new, store=True)
     company_id = fields.Many2one('res.company', string='Company',required=True, readonly=True,
                                  default=lambda self: self.env.user.company_id.id)
+    reconcile_order_ids = fields.One2many('account.reconcile.order','back_tax_declaration_id','核销单')
+    reconcile_amount = fields.Monetary('收款认领金额',currency_field='company_currency_id',compute=compute_reconcile_amount,store=True)
+    declaration_amount_all_residual = fields.Monetary(u'本次申报金额收款金额',currency_field='company_currency_id',compute=compute_declaration_amount,store=True)
+
+    @api.multi
+    def name_get(self):
+        res = []
+        for one in self:
+            name = '%s:%s' % (one.name, one.declaration_amount_all)
+            res.append((one.id, name))
+        return res
 
 
     def action_confirm(self):
@@ -97,6 +127,12 @@ class DeclareDeclarationLine(models.Model):
         for one in self:
             one.invoice_residual_total = one.invoice_id.residual
 
+    @api.depends('declaration_amount','invoice_residual_total','declaration_amount')
+    def compute_declaration_amount_residual(self):
+        for one in self:
+            declaration_amount_residual = one.declaration_amount - (one.invoice_amount_total - one.invoice_residual_total)
+            one.declaration_amount_residual = declaration_amount_residual
+
     btd_id = fields.Many2one('back.tax.declaration',u'退税申报单',ondelete='cascade',  required=True)
     invoice_id = fields.Many2one('account.invoice',u'账单', required=True)
     invoice_currency_id = fields.Many2one('res.currency', u'交易货币', related='invoice_id.currency_id', readonly=True)
@@ -105,6 +141,7 @@ class DeclareDeclarationLine(models.Model):
     company_id = fields.Many2one('res.company', string='Company',
                                  related='btd_id.company_id', store=True, readonly=True, related_sudo=False)
     declaration_amount = fields.Monetary(u'退税申报金额',currency_field='invoice_currency_id')
+    declaration_amount_residual = fields.Monetary(u'未收款申报金额',currency_field='invoice_currency_id',compute=compute_declaration_amount_residual,store=True)
     comments = fields.Text(u'备注')
 
 

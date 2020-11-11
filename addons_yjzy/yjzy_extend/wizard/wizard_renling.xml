@@ -9,18 +9,63 @@
                 <form string="创建发运单">
                     <group>
                         <field name="renling_type"/>
-                        <field name="partner_id" groups="base.group_system"/>
-                        <field name="so_id" />
-                        <field name="btd_id" />
+                        <field name="partner_id" attrs="{'invisible':[('renling_type','not in',['yshxd','ysrld'])]}"/>
+                        <field name="so_id" attrs="{'invisible':['|',('renling_type','not in',['ysrld']),('step','!=','20')]}"/>
+                        <field name="btd_id" attrs="{'invisible':[('renling_type','not in',['back_tax'])]}"/>
+                        <field name="declaration_amount_all" attrs="{'invisible':[('renling_type','not in',['back_tax'])]}" string="申报单申报金额"/>
+                        <field name="other_payment_invoice_ok" attrs="{'invisible':[('renling_type','not in',['other_payment'])]}"/>
+
                     </group>
-                    <group>
-                        <field name="invoice_ids" nolabel="1" domain="[('partner_id','=',partner_id),('state','=','open'),('type','in',['out_invoice'])]"
-                               context="{'tree_view_ref':'yjzy_extend.invoice_new_hxd_tree'}"
-                               options="{'no_create': True,'no_open':True}"/>
+
+                            <span attrs="{'invisible':['|',('renling_type','not in',['yshxd'])]}" style="font-weight:bolder; margin-bottom:5px">
+                                选择需要认领的账单
+                            </span>
+                       <span attrs="{'invisible':['|',('renling_type','not in',['back_tax']),('step','!=','20')]}" style="font-weight:bolder; margin-bottom:5px">
+                                申报单对应的应收账单
+                            </span>
+
+
+                        <field name="invoice_ids" nolabel="1"  attrs="{'invisible':['|','|',('renling_type','not in',['yshxd','other_payment']),('step','!=','20'),
+                        ('other_payment_invoice_ok','=',False)]}"
+                               domain="[('partner_id','=',partner_id),('state','=','open'),('type','in',['out_invoice'])]"
+                               context="{'tree_view_ref':'yjzy_extend.invoice_sale_new_hxd_tree'}"
+                               options="{'no_create': True,'no_open':True}">
+                            <tree>
+                                <field name="date_invoice" string="进仓日期"/>
+                                <field name="date_deadline_new" string="到期日" attrs="{'column_invisible':[('parent.renling_type','in',['back_tax','other_payment'])]}"/>
+                                <field name="tb_contract_code" string="合同号"/>
+                                <field name="amount_total_signed" string="原始应收款" sum="小计"/>
+                                <field name="residual_signed" string="剩余应收款" sum="小计"/>
+                                <field name="state"/>
+                                <field name="currency_id" invisible="1"/>
+
+                            </tree>
+                        </field>
+
+                    <field name="btd_line_ids" domain="['|',('btd_id.declaration_amount_all_residual','!=',0),('state','=','done')]"
+                    attrs="{'invisible':['|',('renling_type','not in',['back_tax']),('step','!=','20')]}">
+                        <tree create="false">
+                            <field name="invoice_id" string="应收账单"/>
+                            <field name="invoice_amount_total" string="原始应收款"/>
+                            <field name="invoice_residual_total" string="剩余应收款"/>
+                            <field name="declaration_amount" string="退税申报金额"/>
+                            <field name="comments" string="备注"/>
+                        </tree>
+                    </field>
+
+
+                <div groups="base.group_system">
+                         <field name="step"/>
                         <field name="sale_other_invoice_ids" invisible="1"/>
-                    </group>
+
+                </div>
                     <footer>
-                        <button name="create_yshxd_ysrl" class="oe_highlight" type='object' string="确认" />
+                        <button name="create_tb_po_invoice" string="新建其他收款申请" type="object" class="oe_highlight" colspan="2"
+                            attrs="{'invisible':['|',('renling_type','not in','other_payment'),('other_payment_invoice_ok','=',True)]}"
+                                  context="{'default_type':'other_payment','default_yjzy_type_1':'sale','default_type_invoice':'out_invoice'}"/>
+                        <button name="create_yshxd_ysrl" class="oe_highlight" type='object' string="创建应收认领"
+                                attrs="{'invisible':['|',('renling_type','not in',['back_tax','yshxd','other_payment']),('other_payment_invoice_ok','=',False)]}"/>
+                        <button name="create_yshxd_ysrl" class="oe_highlight" type='object' string="创建预收认领"  attrs="{'invisible':[('renling_type','not in',['ysrld'])]}"/>
                         <button special="cancel" class="oe_highlight" string="取消"/>
                     </footer>
                 </form>

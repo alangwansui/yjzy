@@ -472,6 +472,9 @@ class account_invoice(models.Model):
             one.declaration_amount = sum(x.declaration_amount for x in one.btd_line_ids)
 
 
+    other_payment_invoice_id = fields.Many2one('account.invoice','关联的其他应收付下级账单')
+    other_payment_invoice_parent_id = fields.Many2one('account.invoice','关联的其他应收付上级账单')
+
     #1029#通过他们是否同属于一张申请单来汇总所有相关账单,其他应收付和相关的应收付申请，这里还没有直接的联系，待处理
     back_tax_declaration_state = fields.Selection([('10','未申报'),('20','已申报')],'退税申报状态',default='10')
     declaration_amount = fields.Monetary('申报金额',currency_field='currency_id',compute=compute_declaration_amount, store=True)

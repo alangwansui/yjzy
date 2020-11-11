@@ -241,7 +241,7 @@
         <field name="model">account.reconcile.order</field>
         <field name="arch" type="xml">
             <form string="应收认领单">
-                <header>
+                <header invisible="context.get('open')">
                     <button name="action_submit_stage" class="oe_highlight" type="object" string="提交" attrs="{'invisible':[('state_1','!=','draft')]}"/>
                     <button name="action_manager_approve_first_stage" class="oe_highlight" type="object" attrs="{'invisible':[('state_1','!=','advance_approval')]}"
                             string="总经理审批"/>
@@ -260,12 +260,8 @@
                             type="object"/>
                     <field name="state_1" widget="statusbar"/>
                 </header>
-                 <header attrs="{'invisible':[('operation_wizard','not in',['03','05'])]}" >
-                    <button name="action_05" attrs="{'invisible':[('operation_wizard','not in',['03'])]}" class="oe_highlight" string="下一步确认账单" type="object" />
-                    <button name="make_lines" invisible="context.get('from_tanchuang')" attrs="{'invisible':[('operation_wizard','not in',['05'])]}" class="oe_highlight" string="确认并填写金额" type="object" />
-                    <button name="make_lines_new"  invisible="not context.get('from_tanchuang')" string="确认并填写金额" type="object"/>
-                </header>
-                 <header attrs="{'invisible':[('operation_wizard','in',['03','05'])]}" >
+
+                 <header groups="base.group_system">
                     <button name="action_posted_new" class="oe_highlight" states="draft" string="提交" type="object"/>
                     <button name="action_approve_new" class="oe_highlight" states="posted" string="总经理审批" attrs="{'invisible':[('sfk_type','!=','yfhxd')]}" type="object"/>
                     <button name="action_done"  class="oe_highlight"  string="财务确认" attrs="{'invisible':['|',('state','!=','approved'),('sfk_type','!=','yshxd')]}" type="object"/>
@@ -300,52 +296,48 @@
 
                 </header>
                 <sheet>
-                    <group col="3">
+                    <group col="2">
                         <group>
 
                             <field name="name" attrs="{'invisible':1}"/>
                             <field name="payment_type"  attrs="{'invisible':1}"/>
                             <field name="partner_type"  attrs="{'invisible':1}"/>
-                            <field name="partner_id" attrs="{'invisible':[('operation_wizard','=',False)]}" domain="[('is_company','=',True),('parent_id', '=', False),('customer','=',1)]"
+                            <field name="renling_type" string="认领属性"/>
+                            <field name="partner_id" string="客户" attrs="{'invisible':[('operation_wizard','=',False)]}" domain="[('is_company','=',True),('parent_id', '=', False),('customer','=',1)]"
                                    context="{'default_is_company': True, 'default_supplier': payment_type == 'outbound', 'default_customer': payment_type == 'inbound'}"/>
                             <field name="journal_id"  domain="[('type','=','renling')]" attrs="{'invisible':1}"/>
                             <field name="payment_account_id" attrs="{'invisible':1}"/>
                             <field name="payment_currency_id" string="认领货币" attrs="{'invisible':1}"/>
                             <field name="bank_account_id" attrs="{'invisible':1}"/>
                             <field name="diff_account_id" attrs="{'invisible':1}"/>
-                            <field name="yjzy_payment_id" string="选择收款单"  attrs="{'required':[('operation_wizard','in',['10','30'])],'invisible':[('operation_wizard','not in',['10','30'])]}"
-                                   domain="['|','&amp;','&amp;','&amp;',('state','=','posted'),('sfk_type','=','rcskd'),('partner_id','=',partner_id),
-                                   ('balance','!=',0),'&amp;','&amp;','&amp;',('state','=','posted'),
-                                   ('sfk_type','=','rcskd'),('partner_id.name','=','未定义'),('balance','!=',0)]"
-                                    context="{'form_view_ref': 'yjzy_extend.view_rcskd_form','bank_amount':1}"/>
-                            <field name="yjzy_payment_currency_id" string="货币" attrs="{'invisible':[('operation_wizard','not in',['10','30','40'])]}"/>
-                            <field name="yjzy_payment_balance" string="收款单余额" attrs="{'invisible':[('operation_wizard','not in',['10','30'])]}"/>
+
+
                             <field name="manual_payment_currency_id" string="预收币种" attrs="{'invisible':1}"/>
                             <field name="yjzy_advance_payment_id" attrs="{'invisible':[('operation_wizard','not in',['25'])]}" context="{'form_view_ref': 'yjzy_extend.view_ysrld_form','advance_so_amount':1}"/>
                             <field name="invoice_partner"  attrs="{'invisible':[('invoice_attribute','!=','other_payment')]}"/>
                             <field name="name_title" attrs="{'invisible':[('invoice_attribute','!=','other_payment')]}"/>
+                             <field name="date" attrs="{'invisible':[('operation_wizard','=',False)]}"/>
+                            <field name="comments"/>
                         </group>
-                          <group attrs="{'invisible':[('operation_wizard','=',False)]}">
-                             <field name="company_id" attrs="{'invisible':1}"/>
-                            <field name="include_tax" attrs="{'invisible':1}"/>
-                            <field name="gongsi_id" string="公司主体" attrs="{'invisible':[('operation_wizard','=',False)]}"/>
-                            <field name="exchange_account_id"  invisible="1" required="1"/>
-                            <field name="date" attrs="{'invisible':[('operation_wizard','=',False)]}"/>
-                        </group>
+
                         <group attrs="{'invisible':[('operation_wizard','=',False)]}">
                             <field name="sfk_type" attrs="{'invisible':1}"/>
                             <field name="be_renling" attrs="{'invisible':1}"/>
                             <field name="invoice_currency_id" attrs="{'invisible':1}"/>
                             <field name="amount_invoice_residual_org" string="未收金额" attrs="{'invisible':1}"/>
-
+                            <field name="yjzy_payment_balance" string="收款单余额" attrs="{'invisible':[('operation_wizard','not in',['10','30'])]}"/>
                             <field name="amount_advance_residual_org" string="待认领预收" invisible="1"/>
                             <field name="amount_advance_org" string="预收认领金额" attrs="{'invisible':[('operation_wizard','not in',['20','30'])]}"/>
-                            <field name="amount_payment_org" string="收款认领金额" attrs="{'invisible':[('operation_wizard','not in',['10','30'])]}"/>
+                            <field name="amount_payment_org" string="收款认领金额" invisible="1" attrs="{'invisible':[('operation_wizard','not in',['10','30'])]}"/>
+                            <field name="amount_payment_org_new" string="收款认领金额" attrs="{'invisible':[('operation_wizard','not in',['10','30'])]}"/>
+<!--                            <spam colspan="2" style="font-color:red" attrs="{'invisible':[('amount_payment_org_new','&lt;','yjzy_payment_balance')]}">-->
+<!--                                认领金额大于收款单可被认领金额！-->
+<!--                            </spam>-->
                             <field name="amount_bank_org" attrs="{'invisible':1}"/>
                             <field name="amount_diff_org" attrs="{'invisible':1}"/>
-                            <field name="amount_total_org" string="认领总金额"/>
+                            <field name="amount_total_org" string="认领总金额" invisible="1"/>
                             <field name="create_date" invisible="1"/>
-                            <field name="comments"/>
+
                         </group>
                     </group>
                     <notebook>
@@ -403,15 +395,16 @@
                                 </tree>
                             </field>
                         </page>
-                        <page string="认领" attrs="{'invisible':[('operation_wizard','not in',['10','25','40'])]}">
+                        <page string="填写并确认认领金额" attrs="{'invisible':[('operation_wizard','not in',['10','25','40'])]}">
                             <field name="line_no_ids">
                                 <tree  editable="bottom" create="false">
                                 <field name="invoice_id" readonly="1" string="应收账单"/>
-                                <field name="invoice_residual" string="应收账单余额"/>
+                                <field name="amount_invoice_so" string="原始应收款"/>
+                                <field name="invoice_residual" string="剩余应收款"/>
                                 <field name="payment_currency_id" invisible="1"/>
                                  <field name="amount_advance_org" attrs="{'column_invisible':[('parent.operation_wizard','not in',['25'])]}"/>
                                  <field name="yjzy_payment_id" attrs="{'column_invisible':[('parent.operation_wizard','not in',['25'])]}" context="{'form_view_ref': 'yjzy_extend.view_rcskd_form','advance_bank_amount':1}"/>
-                                <field name="amount_payment_org" string="收款认领金额" attrs="{'column_invisible':[('parent.operation_wizard','not in',['10'])]}"/>
+                                <field name="amount_payment_org" string="本次收款认领金额" attrs="{'column_invisible':[('parent.operation_wizard','not in',['10'])]}"/>
                                 <field name="amount_bank_org" attrs="{'column_invisible':[('parent.operation_wizard','not in',['40'])]}"/>
                                 <field name="amount_diff_org" attrs="{'column_invisible':[('parent.operation_wizard','not in',['40'])]}"/>
                                 <field name="currency_id" invisible="1"/>
@@ -422,6 +415,12 @@
 
                         <page groups="base.group_system">
                             <group>
+                                                            <field name="yjzy_payment_id" string="选择收款单"  attrs="{'required':[('operation_wizard','in',['10','30'])],'invisible':[('operation_wizard','not in',['10','30'])]}"
+                                   domain="['|','&amp;','&amp;','&amp;',('state','=','posted'),('sfk_type','=','rcskd'),('partner_id','=',partner_id),
+                                   ('balance','!=',0),'&amp;','&amp;','&amp;',('state','=','posted'),
+                                   ('sfk_type','=','rcskd'),('partner_id.name','=','未定义'),('balance','!=',0)]"
+                                    context="{'form_view_ref': 'yjzy_extend.view_rcskd_form','bank_amount':1}"/>
+                            <field name="yjzy_payment_currency_id" string="货币" attrs="{'invisible':[('operation_wizard','not in',['10','30','40'])]}"/>
                             <field name="currency_id"/>
                             <field name="amount_invoice"/>
                             <field name="amount_total"/>
@@ -439,6 +438,10 @@
                                 <field name="yjzy_advance_payment_id"/>
                                 <field name="operation_wizard"/>
                                 <field name="invoice_attribute"/>
+                                <field name="company_id" attrs="{'invisible':1}"/>
+                            <field name="include_tax" attrs="{'invisible':1}"/>
+                            <field name="gongsi_id" string="公司主体" attrs="{'invisible':[('operation_wizard','=',False)]}"/>
+                            <field name="exchange_account_id"  invisible="1" required="1"/>
                         </group>
                             <group>
                             <field name="reconcile_payment_ids"/>
@@ -452,6 +455,11 @@
                         </page>
                     </notebook>
                 </sheet>
+                  <footer invisible="not context.get('open')">
+                      <button name="action_manager_approve_stage" type="object" class="oe_highlight" string="确定认领并关闭"/>
+                      <button name="action_save_test" type="object" class="oe_highlight" string="保存但不确认"/>
+
+                        </footer>
                 <div class="oe_chatter">
                     <field name="message_follower_ids" widget="mail_followers"/>
                     <field name="activity_ids" widget="mail_activity"/>

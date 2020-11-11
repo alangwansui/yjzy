@@ -81,7 +81,7 @@ class account_payment(models.Model):
             one.balance = balance
 
 
-    @api.depends('aml_ids','state')
+    @api.depends('aml_ids','state','ysrld_ids','ysrld_ids.state')
     def compute_balance(self):
         for one in self:
             balance = 0
@@ -578,6 +578,7 @@ class account_payment(models.Model):
                         'post_date': today,
                         'state_1': '50_posted'
                         })
+            print('testddddddd',self.sfk_type)
             self.post()
     def action_cashier_post(self):
         today = fields.date.today()
@@ -587,6 +588,10 @@ class account_payment(models.Model):
                     })
         self.post()
         self.compute_balance()
+
+    def action_ysrld_one_in_all(self):
+        self.action_submit()
+        self.action_account_post()
 
     def action_manager_post(self):
         today = fields.date.today()

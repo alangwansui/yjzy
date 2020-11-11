@@ -234,16 +234,30 @@ class tb_po_invoice(models.Model):
             one.yjzy_tb_po_invoice_amount = one.yjzy_tb_po_invoice.price_total
             one.yjzy_tb_po_invoice_residual = one.yjzy_tb_po_invoice.invoice_normal_ids_residual
 
+    @api.depends('yjzy_tb_po_invoice_parent', 'yjzy_tb_po_invoice_parent.price_total',
+                 'yjzy_tb_po_invoice_parent.invoice_normal_ids_residual', 'yjzy_tb_po_invoice_parent.partner_id')
+    def compute_yjzy_tb_po_invoice_parent_amount(self):
+        for one in self:
+            one.yjzy_tb_po_invoice_parent_amount = one.yjzy_tb_po_invoice_parent.price_total
+            one.yjzy_tb_po_invoice_parent_residual = one.yjzy_tb_po_invoice_parent.invoice_normal_ids_residual
+
     #关联的申请单：其他应收对其他应付，其他应付对其他应收
+
+    date_invoice = fields.Date('账单日期')
     yjzy_payment_id = fields.Many2one('account.payment',u'收付款单')
     # display_name = fields.Char(u'显示名称', compute=compute_display_name)
 
 
     gongsi_id = fields.Many2one('gongsi', '内部公司')
-    yjzy_tb_po_invoice = fields.Many2one('tb.po.invoice',u'关联应收付申请单')
+    yjzy_tb_po_invoice = fields.Many2one('tb.po.invoice',u'关联应收付下级申请单')
+    yjzy_tb_po_invoice_parent = fields.Many2one('tb.po.invoice',u'关联应收付上级申请单')
+    yjzy_tb_po_invoice_parent_amount = fields.Monetary('关联上级应收付申请单金额',currency_field='currency_id', compute=compute_yjzy_tb_po_invoice_parent_amount,store=True)
+    yjzy_tb_po_invoice_parent_residual = fields.Monetary('关联上级应收付申请单金额',currency_field='currency_id', compute=compute_yjzy_tb_po_invoice_parent_amount,store=True)
+
     yjzy_tb_po_invoice_amount = fields.Monetary('关联应收付申请单金额',currency_field='currency_id', compute=compute_yjzy_tb_po_invoice_amount,store=True)
     yjzy_tb_po_invoice_residual = fields.Monetary('关联应收付申请单余额',currency_field='currency_id', compute=compute_yjzy_tb_po_invoice_amount,store=True)
-    is_yjzy_tb_po_invoice = fields.Boolean('是否有对应账单', default=False)
+    is_yjzy_tb_po_invoice = fields.Boolean('是否有对应下级账单', default=False)
+    is_yjzy_tb_po_invoice_parent = fields.Boolean('是否有对应上级账单', default=False)
     #902
     is_tb_hs_id = fields.Boolean('是否货款')
     bank_id = fields.Many2one('res.partner.bank', u'银行账号')
@@ -433,6 +447,19 @@ class tb_po_invoice(models.Model):
             self.yjzy_tb_po_invoice.action_submit()
 
     def action_manager_approve(self):
+        other_payment_invoice_id = False
+        other_payment_invoice_parent_id =  False
+        if self.is_yjzy_tb_po_invoice :
+            if self.yjzy_type_1 == 'purchase':
+                other_payment_invoice_id = self.yjzy_tb_po_invoice.invoice_other_payment_in_ids[0]
+            else:
+                other_payment_invoice_id = self.yjzy_tb_po_invoice.invoice_other_payment_ids[0]
+        if self.is_yjzy_tb_po_invoice_parent:
+            if self.yjzy_type_1 == 'sale':
+                other_payment_invoice_parent_id = self.yjzy_tb_po_invoice_parent.invoice_other_payment_ids[0]
+            else:
+                other_payment_invoice_parent_id = self.yjzy_tb_po_invoice_parent.invoice_other_payment_in_ids[0]
+
         if self.type == 'expense_po':
             self.create_yfhxd()
             print('type', self.type)
@@ -453,6 +480,8 @@ class tb_po_invoice(models.Model):
             if self.yjzy_payment_id:
                 for one in self.invoice_other_payment_in_ids:
                     one.with_context({'default_yjzy_payment_id':self.yjzy_payment_id.id}).create_yshxd_from_multi_invoice(self.type)
+                    one.other_payment_invoice_id = other_payment_invoice_id
+                    one.other_payment_invoice_parent_id = other_payment_invoice_parent_id
                     for x in one.reconcile_order_ids:
                         x.action_manager_approve_stage()
 
@@ -602,12 +631,19 @@ class tb_po_invoice(models.Model):
     def create_tb_po_invoice(self):
         self.ensure_one()
         line_tb_id = self.extra_invoice_line_ids
+        name = ''
+        ctx = {}
         if self.type == 'other_payment' and self.yjzy_type_1 == 'purchase':
             yjzy_type_1 = 'sale'
             type_invoice = 'out_invoice'
+            name = '创建其他应收申请'
         elif self.type == 'other_payment' and self.yjzy_type_1 == 'sale':
             yjzy_type_1 = 'purchase'
             type_invoice = 'in_invoice'
+            name = '创建其他应付申请'
+            ctx = {'open':True,
+                   'tb_po_invoice_old':self.id,
+                   'open_other':1}
 
         tb_po_id = self.env['tb.po.invoice'].create({'tb_id': self.tb_id.id,
                                                      'name_title':self.name_title,
@@ -618,7 +654,9 @@ class tb_po_invoice(models.Model):
                                                      'manual_currency_id':self.manual_currency_id.id,
                                                      'is_tb_hs_id':self.is_tb_hs_id,
                                                      'currency_id': self.currency_id.id,
-                                                     'type_invoice':type_invoice
+                                                     'type_invoice':type_invoice,
+                                                     'is_yjzy_tb_po_invoice_parent':True,
+                                                     'yjzy_tb_po_invoice_parent':self.id,
                                                      })
 
         view = self.env.ref('yjzy_extend.tb_po_form')
@@ -656,7 +694,7 @@ class tb_po_invoice(models.Model):
         self.is_yjzy_tb_po_invoice = True
 
         return {
-            'name': _(u'对应其他应收申请'),
+            'name': _(name),
             'view_type': 'tree,form',
             "view_mode": 'form',
             'res_model': 'tb.po.invoice',
@@ -664,14 +702,32 @@ class tb_po_invoice(models.Model):
             'view_id': view.id,
             'target': 'new',
             'res_id': tb_po_id.id,
-            'context':{'open':True}
-
+            'context':ctx
         }
 
     def delete_tb_po_invoice(self):
-        if self.yjzy_tb_po_invoice and self.yjzy_tb_po_invoice.state in ['10_draft','80_refuse','90_cancel']:
+        open = self.env.context.get('open_delete')
+        if self.yjzy_tb_po_invoice and self.yjzy_tb_po_invoice.state in ['10_draft', '80_refuse', '90_cancel']:
             self.yjzy_tb_po_invoice.unlink()
             self.is_yjzy_tb_po_invoice = False
+            if open:
+                view = self.env.ref('yjzy_extend.tb_po_form')
+                return {
+                    'name': _('创建其他应收申请'),
+                    'view_type': 'tree,form',
+                    "view_mode": 'form',
+                    'res_model': 'tb.po.invoice',
+                    'type': 'ir.actions.act_window',
+                    'view_id': view.id,
+                    'target': 'new',
+                    'res_id': self.id,
+                    'context': {}
+
+                }
+
+
+
+
 
 
     @api.multi
@@ -691,6 +747,27 @@ class tb_po_invoice(models.Model):
         #     'res_id': tb_po_id.id,
         #     # 'context': { },
         # }
+
+
+    def action_return_qtys(self):
+        self.ensure_one()
+        tb_po_invoice_old = self.env.context.get('tb_po_invoice_old')
+        print('ctx_1111111111111111',tb_po_invoice_old)
+        view = self.env.ref('yjzy_extend.tb_po_form')
+        return {
+            'name': _('其他应收申请'),
+            'view_type': 'tree,form',
+            "view_mode": 'form',
+            'res_model': 'tb.po.invoice',
+            'type': 'ir.actions.act_window',
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': tb_po_invoice_old,
+            'context': {
+                        }
+
+        }
+
     #应付发票
     def make_purchase_invoice(self):
         self.ensure_one()
@@ -925,7 +1002,12 @@ class tb_po_invoice(models.Model):
         # product = self.env.ref('yjzy_extend.product_back_tax')
         product = self.invoice_product_id
         account = product.property_account_income_id
-        ctx = {'type': self.type_invoice}
+        if self.yjzy_type_1 in ['sale','back_tax']:
+            journal_type = 'sale'
+        else:
+            journal_type = 'purchase'
+        ctx = {'type': self.type_invoice,
+               'journal_type': journal_type}
         inv = invoice_obj.with_context(ctx).create({
             'yjzy_invoice_id':self.yjzy_invoice_id.id,
             'tb_po_invoice_id': self.id,
@@ -1079,8 +1161,17 @@ class tb_po_invoice(models.Model):
         # product = self.env.ref('yjzy_extend.product_back_tax')
         product = self.invoice_product_id
         account = product.property_account_income_id
-
-        inv = invoice_obj.create({
+        if self.yjzy_type_1 in ['sale','back_tax']:
+            journal_type = 'sale'
+        else:
+            journal_type = 'purchase'
+        # other_payment_invoice_id = False
+        # other_payment_invoice_parent_id =  False
+        # if self.is_yjzy_tb_po_invoice :
+        #     other_payment_invoice_id = self.yjzy_tb_po_invoice.id
+        # if self.is_yjzy_tb_po_invoice_parent:
+        #     other_payment_invoice_parent_id = self.id
+        inv = invoice_obj.with_context({'default_type': self.type_invoice, 'type': self.type_invoice, 'journal_type': journal_type}).create({
             'invoice_partner':self.invoice_partner,
             'name_tilte':self.name_title,
             'yjzy_invoice_id':self.yjzy_invoice_id.id,
@@ -1088,10 +1179,13 @@ class tb_po_invoice(models.Model):
             'partner_id': self.partner_id.id,
 
             'invoice_attribute': self.type,
-            'type': self.type_invoice,
+            # 'type': self.type_invoice,
             'yjzy_type_1':self.yjzy_type_1,
             'is_yjzy_invoice': False,
             'currency_id': self.currency_id.id,
+            # 'other_payment_invoice_id':other_payment_invoice_id,
+            # 'other_payment_invoice_parent_id': other_payment_invoice_parent_id
+
 
             # 'invoice_line_ids': [(0, 0, {
             #     'name': '%s' % (product.name),

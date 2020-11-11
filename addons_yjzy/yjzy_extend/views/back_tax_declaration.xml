@@ -10,6 +10,8 @@
                     <field name="create_date" string="创建日期"/>
                     <field name="invoice_amount_all"/>
                     <field name="invoice_residual_all"/>
+                    <field name="reconcile_amount" invisible="1"/>
+                    <field name="declaration_amount_all_residual_new" string="剩余未收申报金额"/>
                 </tree>
             </field>
         </record>
@@ -31,6 +33,7 @@
                             <field name="invoice_amount_all"/>
                             <field name="invoice_residual_all"/>
                             <field name="declaration_amount_all"/>
+                             <field name="declaration_amount_all_residual_new" string="剩余未收申报金额"/>
                             <field name="declaration_date"/>
                             <field name="create_uid" string="创建者" invisible="1"/>
                             <field name="create_date" string="创建日期" invisible="1"/>
@@ -46,6 +49,7 @@
                                     <field name="invoice_amount_total"/>
                                     <field name="invoice_residual_total"/>
                                     <field name="declaration_amount"/>
+                                    <field name="declaration_amount_residual"/>
                                     <field name="comments"/>
 
                                 </tree>
