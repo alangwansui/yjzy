@@ -58,7 +58,10 @@ class tb_po_invoice(models.Model):
         # 825
 
     def _default_currency_id(self):
-        return self.env.user.company_id.currency_id.id
+        if self.yjzy_payment_id:
+            return self.yjzy_payment_currency_id
+        else:
+            return self.env.user.company_id.currency_id.id
 
     def _default_extra_invoice_line(self): #参考one2many的default 默认
         default_yjzy_type_1 = self.env.context.get('default_yjzy_type_1')
@@ -249,6 +252,8 @@ class tb_po_invoice(models.Model):
 
     date_invoice = fields.Date('账单日期')
     yjzy_payment_id = fields.Many2one('account.payment',u'收付款单')
+    yjzy_payment_currency_id = fields.Many2one('res.currency', related='yjzy_payment_id.currency_id')
+    yjzy_payment_balance = fields.Monetary(u'收款单未认领金额', related = 'yjzy_payment_id.balance',  currency_field='yjzy_payment_currency_id',)
     # display_name = fields.Char(u'显示名称', compute=compute_display_name)
 
 
@@ -375,6 +380,11 @@ class tb_po_invoice(models.Model):
     yjzy_invoice_residual_amount = fields.Float('原始未付总金额', compute=compute_info_store, store=True)
     yjzy_invoice_include_tax = fields.Boolean('原始采购是否含税', compute=compute_info_store, store=True)
     extra_invoice_include_tax = fields.Boolean('原始账单是否含税')
+
+    @api.onchange('yjzy_payment_id')
+    def onchange_yjzy_payment_id(self):
+        self.manual_currency_id = self.yjzy_payment_currency_id
+
 
     @api.onchange('tax_rate_add')
     def onchange_tax_rate_add(self):

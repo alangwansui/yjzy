@@ -421,7 +421,7 @@
                             <group col="1" style="margin-top:-5px;">
 
                                  <group  attrs="{'invisible':[('type','not in',['other_payment','extra','reconcile'])]}">
-
+                                 <field name="yjzy_payment_balance" string="收款单未认领金额" attrs="{'invisible':['yjzy_payment_id','=',False]}"/>
                                  <field name="price_total" string="金额合计" />
 
                                  <field name="invoice_normal_ids_residual" string="未付金额" attrs="{'invisible':[('yjzy_type_1','in',['sale','other_payment_sale'])]}"/>
@@ -681,7 +681,7 @@
                             </page>
                         </notebook>
                         <footer invisible="not context.get('open')">
-                            <button name="action_other_paymnet_one_in_all" type="object" class="oe_highlight" attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',True)]}"/>
+                            <button name="action_other_paymnet_one_in_all" type="object" class="oe_highlight" string="直接完成收款认领" attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',True)]}"/>
                             <button name="action_return_qtys" type="object" class="oe_highlight"  attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',False)]}" string="完成对应账单编辑"/>
                             <button name="action_save_test" type="object" class="oe_highlight" attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',True)]}" string="保存并关闭"/>
 
