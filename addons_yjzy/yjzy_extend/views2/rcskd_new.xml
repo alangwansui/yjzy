@@ -300,7 +300,7 @@
 <!--                                </tree>-->
 <!--                            </field>-->
                         </page>
-                        <page string="其他收款认领" attrs="{'invisible':[('tb_po_invoice_ids_count','=',0)]}" invisible="1">
+                        <page string="直接认领的其他收入" attrs="{'invisible':[('tb_po_invoice_ids_count','=',0)]}">
 
                             <field name="tb_po_invoice_ids"  context="{'form_view_ref':'yjzy_extend.tb_po_form'}">
                                 <tree string="其他应付申请单" create="false">

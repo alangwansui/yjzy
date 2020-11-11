@@ -1046,7 +1046,7 @@ class account_invoice(models.Model):
                     x.amount_payment_org = x.invoice_residual
             for x in yshxd.line_ids:
                 if x.amount_invoice_so_residual >= yshxd.yjzy_payment_balance:
-                    x.amount_payment_org = x.yshxd.yjzy_payment_balance
+                    x.amount_payment_org = yshxd.yjzy_payment_balance
                 else:
                     x.amount_payment_org = x.amount_invoice_so_residual
             print('test_qeqwe',yshxd)
