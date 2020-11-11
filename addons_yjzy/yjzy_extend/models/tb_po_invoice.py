@@ -491,7 +491,9 @@ class tb_po_invoice(models.Model):
                         x.action_manager_approve_stage()
 
 
-
+    def action_other_paymnet_one_in_all(self):
+        self.action_submit()
+        self.action_manager_approve()
 
 
 
@@ -918,7 +920,7 @@ class tb_po_invoice(models.Model):
                     })
     # 730 创建后直接过账 冲减发票
 
-    def make_sale_invoice(self):
+    def make_sale_invoice(self): #再次检查
         self.ensure_one()
         # self.check()
         invoice_obj = self.env['account.invoice']
@@ -938,7 +940,7 @@ class tb_po_invoice(models.Model):
                 'type': 'in_refund',
                 'yjzy_type_1':'purchase',
                 'yjzy_invoice_id':self.yjzy_invoice_id.id,
-                'journal_type': 'sale',
+                'journal_type': 'purchase',
                 'date': fields.datetime.now(),
                 'date_invoice': fields.datetime.now(),
                 'invoice_line_ids': [(0, 0, {
@@ -1176,15 +1178,16 @@ class tb_po_invoice(models.Model):
         #     other_payment_invoice_id = self.yjzy_tb_po_invoice.id
         # if self.is_yjzy_tb_po_invoice_parent:
         #     other_payment_invoice_parent_id = self.id
-        inv = invoice_obj.with_context({'default_type': self.type_invoice, 'type': self.type_invoice, 'journal_type': journal_type}).create({
+        print('journal_type_9999999999999',journal_type)
+        inv = invoice_obj.with_context({'default_type': self.type_invoice, 'type': self.type_invoice, 'journal_type':journal_type }).create({
             'invoice_partner':self.invoice_partner,
             'name_tilte':self.name_title,
             'yjzy_invoice_id':self.yjzy_invoice_id.id,
             'tb_po_invoice_id': self.id,
             'partner_id': self.partner_id.id,
-
+            'journal_type': journal_type,
             'invoice_attribute': self.type,
-            # 'type': self.type_invoice,
+            'type': self.type_invoice,
             'yjzy_type_1':self.yjzy_type_1,
             'is_yjzy_invoice': False,
             'currency_id': self.currency_id.id,
