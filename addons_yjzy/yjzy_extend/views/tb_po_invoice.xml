@@ -439,7 +439,7 @@
 
                               <label for="" name="yjzy_tb_po_invoice" attrs="{'invisible':[('is_yjzy_tb_po_invoice','=',False)]}">
                                      <b attrs="{'invisible':[('yjzy_type_1','in',['sale','other_payment_sale'])]}">其他应收金额</b>
-                                    <b attrs="{'invisible':[('yjzy_type_1','in',['purchase',other_payment_purchase])]}">其他应付金额</b>
+                                    <b attrs="{'invisible':[('yjzy_type_1','in',['purchase','other_payment_purchase'])]}">其他应付金额</b>
                                  </label>
                                      <div class="o_row" attrs="{'invisible':[('is_yjzy_tb_po_invoice','=',False)]}">
                                  <field name="yjzy_tb_po_invoice_amount" string="其他应收金额" />
