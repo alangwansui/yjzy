@@ -88,6 +88,7 @@ class account_reconcile_order(models.Model):
             company_currency = one.currency_id
             one.invoice_currency_id = invoice_currency
             one.amount_invoice_residual_org = sum([x.residual for x in invoices])
+            one.amount_invoice_org = sum([x.amount_total for x in invoices])
             one.amount_invoice = sum(
                 [invoice_currency.with_context(date=x.date_invoice).compute(x.residual, company_currency) for x in
                  invoices])
@@ -329,8 +330,7 @@ class account_reconcile_order(models.Model):
     # other_payment_amount_payment_org = fields.Monetary(u'其他应收认领快速录入金额')
     # other
     renling_type = fields.Selection([('yshxd', '应收认领'),
-
-                                     ('back_tax', '退税认领'), ('other_payment', '其他认领')], u'认领属性')
+                                     ('back_tax', '退税认领'), ('other_payment', '其他认领')], u'认领属性') #没有是指作用
     back_tax_declaration_id = fields.Many2one('back.tax.declaration',u'退税申报表')
 
     name_title = fields.Char(u'账单描述')

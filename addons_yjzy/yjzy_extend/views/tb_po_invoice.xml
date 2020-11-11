@@ -421,7 +421,7 @@
                             <group col="1" style="margin-top:-5px;">
 
                                  <group  attrs="{'invisible':[('type','not in',['other_payment','extra','reconcile'])]}">
-                                 <field name="yjzy_payment_balance" string="收款单未认领金额" attrs="{'invisible':['yjzy_payment_id','=',False]}"/>
+                                 <field name="yjzy_payment_balance" string="未认领收款金额" attrs="{'invisible':[('yjzy_payment_id','=',False)]}"/>
                                  <field name="price_total" string="金额合计" />
 
                                  <field name="invoice_normal_ids_residual" string="未付金额" attrs="{'invisible':[('yjzy_type_1','in',['sale','other_payment_sale'])]}"/>
