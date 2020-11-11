@@ -9,7 +9,7 @@
                 <form string="创建发运单">
                     <group>
                         <field name="renling_type"/>
-                        <field name="partner_id" attrs="{'invisible':[('renling_type','not in',['yshxd','ysrld'])]}"/>
+                        <field name="partner_id" attrs="{'invisible':[('renling_type','not in',['yshxd','ysrld'])]}" domain="[('is_company','=',True),('parent_id', '=', False),('customer','=',1)]"/>
                         <field name="so_id" attrs="{'invisible':['|',('renling_type','not in',['ysrld']),('step','!=','20')]}"/>
                         <field name="btd_id" attrs="{'invisible':[('renling_type','not in',['back_tax'])]}"/>
                         <field name="declaration_amount_all" attrs="{'invisible':[('renling_type','not in',['back_tax'])]}" string="申报单申报金额"/>
@@ -17,7 +17,7 @@
 
                     </group>
 
-                            <span attrs="{'invisible':['|',('renling_type','not in',['yshxd'])]}" style="font-weight:bolder; margin-bottom:5px">
+                            <span attrs="{'invisible':['|','|',('renling_type','not in',['yshxd']),('step','!=','20')]}" style="font-weight:bolder; margin-bottom:5px">
                                 选择需要认领的账单
                             </span>
                        <span attrs="{'invisible':['|',('renling_type','not in',['back_tax']),('step','!=','20')]}" style="font-weight:bolder; margin-bottom:5px">

@@ -120,7 +120,7 @@ class wizard_renling(models.TransientModel):
                 raise Warning('请先选择客户')
             if not self.btd_line_ids:
                 raise Warning('请先选择需要认领的退税申报')
-
+        back_tax_declaration_id = False
         if self.renling_type in ['yshxd']:
             invoice_attribute = 'normal'
             sfk_type = 'yshxd'

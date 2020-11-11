@@ -204,6 +204,9 @@ class hr_expense_sheet(models.Model):
 
     def action_to_employee_approval(self):
         if self.expense_to_invoice_type == 'normal':
+            if len(self.expense_line_ids.filtered(lambda x: x.date == False)) > 0:
+                raise Warning('明细行有未填写的费用发生日期')
+
             if (self.employee_id.user_id == self.env.user or self.employee_id.name == '公司' or self.create_uid == self.env.user or self.env.user.id ==1 ) and self.total_amount >0:
                 stage_id = self._stage_find(domain=[('code', '=', '020')])
                 self.write({'stage_id': stage_id.id,

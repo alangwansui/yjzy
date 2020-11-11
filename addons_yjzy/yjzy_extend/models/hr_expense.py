@@ -68,6 +68,7 @@ class hr_expense(models.Model):
 
 
 
+
     expense_to_invoice_type = fields.Selection( [('normal', u'常规费用'),
                                                  ('to_invoice', u'转为货款'),
                                                  ('other_payment', u'其他支出'),
