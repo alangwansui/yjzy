@@ -393,7 +393,7 @@
                                 <field name="invoice_partner" attrs="{'invisible':[('type','not in',['other_payment'])]}"/>
 
                                 <field name="name_title" attrs="{'invisible':[('type','in',['other_po'])]}"/>
-                                 <field name="yjzy_payment_id" string="收款单" attrs="{'invisible':[('type_invoice','not in',['out_invoice'])]}"/>
+                                 <field name="yjzy_payment_id" string="收款单" readonly="1" attrs="{'invisible':[('type_invoice','not in',['out_invoice'])]}"/>
                                 <field name="manual_currency_id" attrs="{'invisible':[('type','not in',['other_payment'])]}"/>
 
 

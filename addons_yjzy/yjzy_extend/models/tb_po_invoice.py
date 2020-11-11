@@ -398,6 +398,9 @@ class tb_po_invoice(models.Model):
                 one.yjzy_tb_po_invoice.unlink()
             else:
                 raise Warning('完成审批不允许删除！')
+
+        return super(tb_po_invoice, self).unlink()
+
     def open_tb_yjzy_po_invoice_open(self):
         view = self.env.ref('yjzy_extend.tb_po_form')
         return {
