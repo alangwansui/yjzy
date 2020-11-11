@@ -273,7 +273,7 @@
                         <page string="应收认领单" attrs="{'invisible':[('count_yshx','=',0)]}">
                             <field name="yshx_ids" widget="many2many" domain="[('sfk_type','=','yshxd'), ('partner_id','=',partner_id),('yjzy_payment_id','=',False),('state','=','approved')]"
                                    context="{'form_view_ref':'yjzy_extend.account_yshxd_form_view_new','tree_view_ref':'yjzy_extend.account_yshxd_tree_view'}">
-                                <tree>
+                                <tree create="false">
                                     <field name="name"/>
                                     <field name="date"/>
                                     <field name="amount_total_org" string="本次认领金额"/>

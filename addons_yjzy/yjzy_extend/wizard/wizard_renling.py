@@ -130,7 +130,7 @@ class wizard_renling(models.TransientModel):
             sfk_type = 'yshxd'
             yjzy_type = 'back_tax'
             back_tax_declaration_id = self.btd_id.id
-        elif self.renling_type == 'other_paymnet':
+        elif self.renling_type == 'other_payment':
             invoice_attribute = 'other_payment'
             sfk_type = 'yshxd'
             yjzy_type = 'other_payment_sale'
