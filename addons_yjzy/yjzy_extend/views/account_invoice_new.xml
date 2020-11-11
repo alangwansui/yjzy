@@ -2330,7 +2330,7 @@
             <field name="res_model">account.invoice</field>
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_account_invoice_new_filter"/>
-            <field name="domain">[('type','=','out_invoice'),('yjzy_type_1','=','other_payment_sale'),('state','in',['paid','open']),('invoice_attribute','=','other_payment')]</field>
+            <field name="domain">[('type','=','out_invoice'),('yjzy_type_1','in',['sale','other_payment_sale']),('state','in',['paid','open']),('invoice_attribute','=','other_payment')]</field>
             <field name="context">{'search_default_group_by_state':1,'only_ref':1,'type':'in_invoice','journal_type': 'purchase','yjzy_type_1':'other_payment_sale'}
             </field>
             <!--field name="target">new</field-->
@@ -2685,7 +2685,7 @@
             <field name="res_model">account.invoice</field>
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_account_invoice_new_filter"/>
-            <field name="domain">[('type','=','in_invoice'),('yjzy_type_1','=','other_payment_purchase'),('invoice_attribute','=','other_payment')]</field>
+            <field name="domain">[('type','=','in_invoice'),('yjzy_type_1','in',['purchase','other_payment_purchase']),('invoice_attribute','=','other_payment')]</field>
             <field name="context">{'search_default_group_by_state':1,'default_type':'in_invoice','only_ref':1,'default_yjzy_type_1':'other_payment_purchase'}
             </field>
             <!--field name="target">new</field-->

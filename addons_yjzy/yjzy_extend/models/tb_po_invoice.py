@@ -328,12 +328,12 @@ class tb_po_invoice(models.Model):
     manual_currency_id = fields.Many2one('res.currency', '货币',  default=_default_currency_id)
 
     invoice_other_payment_in_ids = fields.One2many('account.invoice', 'tb_po_invoice_id', '其他应收账单',
-                                                domain=[('type', '=', 'out_invoice'), ('yjzy_type_1', '=', 'other_payment_sale'),
+                                                domain=[('type', '=', 'out_invoice'), ('yjzy_type_1', 'in', ['sale','other_payment_sale']),
                                                         ('invoice_attribute', '=', 'other_payment')])
     invoice_other_payment_in_ids_count = fields.Integer('其他应收账单数量', compute=compute_invoice_count)
 
 
-    invoice_other_payment_ids = fields.One2many('account.invoice','tb_po_invoice_id','其他应付账单',domain=[('type','=','in_invoice'),('yjzy_type_1','=','other_payment_purchase'),
+    invoice_other_payment_ids = fields.One2many('account.invoice','tb_po_invoice_id','其他应付账单',domain=[('type','=','in_invoice'),('yjzy_type_1','in',['purchse','other_payment_purchase']),
                                                                                                       ('invoice_attribute','=','other_payment')])
     invoice_other_payment_ids_count = fields.Integer('其他应付账单数量', compute=compute_invoice_count)
 
