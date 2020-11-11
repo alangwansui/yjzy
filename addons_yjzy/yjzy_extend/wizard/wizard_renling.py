@@ -22,6 +22,8 @@ class wizard_renling(models.TransientModel):
 
     invoice_ids = fields.Many2many('account.invoice', 'ref_wz_inv', 'inv_id', 'wz_id', u'Invoice')
     so_id = fields.Many2one('sale.order','销售合同')
+    so_id_currency_id = fields.Many2one('res.currency',related='so_id.currency_id')
+    amount_total_so = fields.Monetary('合同金额',related='so_id.amount_total' ,currency_field='so_id_currency_id')
     btd_id = fields.Many2one('back.tax.declaration','退税申报单')
     sale_other_invoice_ids = fields.Many2many('account.invoice', 'p3_id', 'i3_id', '未完成认领其他应收',
                                               compute='compute_invoice_advance')
@@ -42,6 +44,7 @@ class wizard_renling(models.TransientModel):
     btd_line_ids = fields.Many2many('back.tax.declaration.line','ref_btd_id','wz_renling_id',u'申报明细')
     other_payment_invoice_ok = fields.Boolean('待认领其他应收',default=True)
     other_payment_invoice_ok_f = fields.Boolean('是否其他应付', default=False)
+
 
     @api.onchange('btd_id')
     def onchange_btd_id(self):

@@ -371,6 +371,8 @@ class account_payment(models.Model):
     aml_ids = fields.One2many('account.move.line', 'new_payment_id', u'余额相关分录')
 
     so_id = fields.Many2one('sale.order', u'报价单')
+    so_id_currency_id = fields.Many2one('res.currency', related='so_id.currency_id')
+    amount_total_so = fields.Monetary('合同金额', related='so_id.amount_total', currency_field='so_id_currency_id')
     po_id = fields.Many2one('purchase.order', u'采购单')
     expense_id = fields.Many2one('hr.expense', u'费用明细')
     sheet_id = fields.Many2one('hr.expense.sheet', u'费用报告', related='expense_id.sheet_id', store=True)

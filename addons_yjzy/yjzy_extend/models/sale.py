@@ -37,7 +37,7 @@ class sale_order(models.Model):
         return  float(self.env['ir.config_parameter'].sudo().get_param('addons_yjzy.sale_commission', '0.015'))
 
     #等待添加，这里的自动计算，有时候没有完成，需要再仔细观察一下
-    @api.depends('aml_ids')
+    @api.depends('aml_ids','state','yjzy_payment_ids','yjzy_payment_ids.amount')
     def compute_balance_new(self):
         for one in self:
             if one.state != 'verification':

@@ -258,8 +258,10 @@
                                    options="{'no_create':True,'no_open': True}"/>
                             <field name="yjzy_payment_balance" string="收款单余额"/>
                             <field name="so_id" string="销售合同"
-                                   domain="[('partner_id','=', partner_id),('state','not in',['done','verifying','verification','cancel','refuse'])]"
+                                   domain="[('partner_id','=', partner_id),('state','not in',['done','verifying','abnormal','verification','cancel','refuse'])]"
                                    options="{'no_create':True,'no_open': True}"/>
+                             <field name="amount_total_so"/>
+                             <field name="so_id_currency_id" invisible="1"/>
 
                             <label for="amount" string="收款认领金额"/>
                             <div name="amount_div" class="o_row" string="收款金额">
