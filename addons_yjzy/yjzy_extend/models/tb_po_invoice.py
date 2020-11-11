@@ -241,6 +241,10 @@ class tb_po_invoice(models.Model):
             one.yjzy_tb_po_invoice_parent_amount = one.yjzy_tb_po_invoice_parent.price_total
             one.yjzy_tb_po_invoice_parent_residual = one.yjzy_tb_po_invoice_parent.invoice_normal_ids_residual
 
+    # 新增
+    yjzy_type_invoice = fields.Selection(
+        [('sale', u'应收'), ('purchase', u'应付'), ('back_tax', u'退税'), ('other_payment_sale', '其他应收'),
+         ('other_payment_purchase', '其他应付')], string=u'发票类型')
     #关联的申请单：其他应收对其他应付，其他应付对其他应收
 
     date_invoice = fields.Date('账单日期')

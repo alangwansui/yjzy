@@ -1449,7 +1449,7 @@
             <field name="view_mode">form</field>
             <field name="domain">[]</field>
             <field name="limit">20</field>
-            <field name="context">{'default_type':'other_payment','default_yjzy_type_1':'purchase','default_type_invoice':'in_invoice'}</field>
+            <field name="context">{'default_type':'other_payment','default_yjzy_type_invoice':'other_payment_purchase','default_yjzy_type_1':'purchase','default_type_invoice':'in_invoice'}</field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_form')})]"/>
         </record>
@@ -1504,7 +1504,7 @@
             <field name="view_mode">form</field>
             <field name="domain">[]</field>
             <field name="limit">20</field>
-            <field name="context">{'default_type':'other_payment','default_yjzy_type_1':'sale','default_type_invoice':'out_invoice'}</field>
+            <field name="context">{'default_type':'other_payment','default_yjzy_type_invoice':'other_payment_sale','default_yjzy_type_1':'sale','default_type_invoice':'out_invoice'}</field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_form')})]"/>
         </record>

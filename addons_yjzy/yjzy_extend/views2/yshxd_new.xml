@@ -43,6 +43,7 @@
         </field>
     </record>
 
+
     <record model="ir.ui.view" id="account_yshxd_form_view_other_payment_simple">
         <field name="name">account.reconcile.order.form</field>
         <field name="model">account.reconcile.order</field>
@@ -308,7 +309,8 @@
                             <field name="payment_type"  attrs="{'invisible':1}"/>
                             <field name="partner_type"  attrs="{'invisible':1}"/>
                             <field name="renling_type" string="认领属性"/>
-                            <field name="partner_id" string="客户" attrs="{'invisible':[('operation_wizard','=',False)]}" domain="[('is_company','=',True),('parent_id', '=', False),('customer','=',1)]"
+                            <field name="partner_id" string="客户" attrs="{'invisible':['|',('yjzy_type','in',['back_tax','other_payment_sale','other_payment_purchase']),('operation_wizard','=',False)]}"
+                                   domain="[('is_company','=',True),('parent_id', '=', False),('customer','=',1)]"
                                    context="{'default_is_company': True, 'default_supplier': payment_type == 'outbound', 'default_customer': payment_type == 'inbound'}"/>
                             <field name="journal_id"  domain="[('type','=','renling')]" attrs="{'invisible':1}"/>
                             <field name="payment_account_id" attrs="{'invisible':1}"/>
@@ -321,7 +323,7 @@
                             <field name="yjzy_advance_payment_id" attrs="{'invisible':[('operation_wizard','not in',['25'])]}" context="{'form_view_ref': 'yjzy_extend.view_ysrld_form','advance_so_amount':1}"/>
                             <field name="invoice_partner"  attrs="{'invisible':[('invoice_attribute','!=','other_payment')]}"/>
                             <field name="name_title" attrs="{'invisible':[('invoice_attribute','!=','other_payment')]}"/>
-                             <field name="date" attrs="{'invisible':[('operation_wizard','=',False)]}"/>
+                             <field name="date" attrs="{'invisible':[('operation_wizard','=',False)]}" invisible="1"/>
                             <field name="comments"/>
                         </group>
 
@@ -448,6 +450,8 @@
                             <field name="include_tax" attrs="{'invisible':1}"/>
                             <field name="gongsi_id" string="公司主体" attrs="{'invisible':[('operation_wizard','=',False)]}"/>
                             <field name="exchange_account_id"  invisible="1" required="1"/>
+                                 <field name="hxd_type_new"/>
+                        <field name="yjzy_type"/>
                         </group>
                             <group>
                             <field name="reconcile_payment_ids"/>

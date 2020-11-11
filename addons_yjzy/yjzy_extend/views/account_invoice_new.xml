@@ -143,9 +143,11 @@
             <field name="arch" type="xml">
                 <tree decoration-info="state == 'draft'" decoration-muted="state == 'cancel'" string="Invoice" default_order="date_deadline_new desc">
                     <field name="partner_id" groups="base.group_user"/>
-                    <field name="date_invoice" string="进仓日期"/>
-                    <field name="date_deadline_new" string="实际到期日"/>
-                    <field name="tb_contract_code" string="合同号"/>
+                    <field name="date_invoice" string="进仓日期" invisible="context.get('other_payment')"/>
+                    <field name="date_deadline_new" string="实际到期日" invisible="context.get('other_payment')"/>
+                    <field name="tb_contract_code" string="合同号" invisible="context.get('other_payment')"/>
+                    <field name="invoice_partner" invisible="not context.get('other_payment')"/>
+                    <field name="name_title" invisible="not context.get('other_payment')"/>
                     <field name="amount_total_signed" string="原始应收款" sum="Total"/>
                     <field name="residual_signed" string="剩余应收款" sum="Amount Due"/>
                     <field name="commercial_partner_id" invisible="1"/>
@@ -159,6 +161,7 @@
                     <field name="currency_id" invisible="1"/>
                     <field name="company_currency_id" invisible="1"/>
                     <field name="state"/>
+                    <field name="yjzy_type_1"/>
                     <field name="type" invisible="context.get('type',True)"/>
                     <field name="date_due" string="进仓到期日" invisible="1"/>
                     <field name="date_deadline" string="实际到期日" invisible="1"/>

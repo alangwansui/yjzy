@@ -41,6 +41,7 @@ class wizard_renling(models.TransientModel):
     declaration_amount_all = fields.Monetary(u'本次申报金额',currency_field='company_currency_id', related = 'btd_id.declaration_amount_all')
     btd_line_ids = fields.Many2many('back.tax.declaration.line','ref_btd_id','wz_renling_id',u'申报明细')
     other_payment_invoice_ok = fields.Boolean('待认领其他应收',default=True)
+    other_payment_invoice_ok_f = fields.Boolean('是否其他应付', default=False)
 
     @api.onchange('btd_id')
     def onchange_btd_id(self):
@@ -66,14 +67,18 @@ class wizard_renling(models.TransientModel):
             partner_id = False
             self.step = '10'
             self.btd_id = False
+            self.other_payment_invoice_ok_f = False
         elif renling_type == 'back_tax':
             partner_id = self.env.ref('yjzy_extend.partner_back_tax')
             self.step = '10'
             self.btd_id = False
+            self.other_payment_invoice_ok_f = False
         elif renling_type == 'other_payment':
             partner_id = self.env['res.partner'].search([('name', '=', '未定义'), ('customer', '=', True)])
             self.step = '20'
             self.btd_id = False
+            self.other_payment_invoice_ok_f = True
+
         else:
             partner_id = False
             self.step = '10'
@@ -125,15 +130,18 @@ class wizard_renling(models.TransientModel):
             invoice_attribute = 'normal'
             sfk_type = 'yshxd'
             yjzy_type = 'sale'
+            hxd_type_new = '20'
         elif self.renling_type == 'back_tax':
             invoice_attribute = 'normal'
             sfk_type = 'yshxd'
             yjzy_type = 'back_tax'
             back_tax_declaration_id = self.btd_id.id
+            hxd_type_new = '20'
         elif self.renling_type == 'other_payment':
             invoice_attribute = 'other_payment'
             sfk_type = 'yshxd'
             yjzy_type = 'other_payment_sale'
+            hxd_type_new = '20'
         else:
             invoice_attribute = False
             sfk_type = 'ysrld'
@@ -155,7 +163,9 @@ class wizard_renling(models.TransientModel):
                                          'yjzy_payment_id':self.yjzy_payment_id.id,
                                          'be_renling': True,
                                          'invoice_attribute': invoice_attribute,
-                                         'yjzy_type': yjzy_type
+                                         'yjzy_type': yjzy_type,
+                                         'hxd_type_new':hxd_type_new
+
                                          })
 
             self.make_lines_so(yshxd_id)
@@ -373,6 +383,7 @@ class wizard_renling(models.TransientModel):
         type = self.renling_type
         yjzy_type_1 = self.env.context.get('default_yjzy_type_1')
         type_invoice = self.env.context.get('default_type_invoice')
+        yjzy_type_invoice = self.context.get('yjzy_type_invoice')
         print('type_invoice',type_invoice,yjzy_type_1)
 
         tb_po_invoice_obj = self.env['tb.po.invoice']
@@ -381,7 +392,8 @@ class wizard_renling(models.TransientModel):
                                                      'type':type,
                                                      'yjzy_type_1':yjzy_type_1,
                                                      'type_invoice':type_invoice,
-                                                     'yjzy_payment_id':self.yjzy_payment_id.id
+                                                     'yjzy_payment_id':self.yjzy_payment_id.id,
+                                                     'yjzy_type_invoice':yjzy_type_invoice
                                                      })
         print('tb_po_invoice_id',tb_po_invoice_id)
         return {
