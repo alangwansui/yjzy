@@ -788,7 +788,7 @@ class hr_expense_sheet(models.Model):
             'partner_id': partner.id,
             'account_id': invoice_account.id,
             'invoice_attribute': 'other_payment',
-            'yjzy_type_1': 'sale',
+            'yjzy_type_1': 'sale',#other_payment_修改
             'journal_type': 'sale',
             'date': fields.datetime.now(),
             'date_invoice': fields.datetime.now(),

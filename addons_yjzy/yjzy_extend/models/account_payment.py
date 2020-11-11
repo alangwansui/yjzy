@@ -248,7 +248,7 @@ class account_payment(models.Model):
     #              ('type', '=', 'out_invoice')])
             sale_other_invoice_ids = self.env['account.invoice'].search(
                 [('residual', '>', 0), ('state', '=', 'open'), ('invoice_attribute', '=', 'other_payment'),
-                 ('yjzy_type_1', '=', 'sale'), ('type', '=', 'out_invoice')])
+                 ('yjzy_type_1', 'in', ['sale','other_payment_sale']), ('type', '=', 'out_invoice')])
     #         advance_payment_ids = self.env['account.payment'].search(
     #             [('sfk_type', '=', 'ysrld'), ('advance_balance_total', '!=', 0),
     #              ('state', 'in', ['posted', 'reconciled'])])
@@ -580,6 +580,7 @@ class account_payment(models.Model):
                         })
             print('testddddddd',self.sfk_type)
             self.post()
+            self.compute_balance()
     def action_cashier_post(self):
         today = fields.date.today()
         self.write({'post_uid': self.env.user.id,
@@ -1411,10 +1412,10 @@ class account_payment(models.Model):
             'view_mode': 'tree,form',
             'res_model': 'tb.po.invoice',
             'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
-            'domain': [('yjzy_payment_id', '=', self.id),('yjzy_type_1','=','sale'),('type','=','other_payment')],
+            'domain': [('yjzy_payment_id', '=', self.id),('yjzy_type_1','in',['sale','other_payment_sale']),('type','=','other_payment')],
             'context': {'search_default_group_by_state':1,
                         'default_type':'other_payment',
-                        'default_yjzy_type_1':'sale'},
+                        'default_yjzy_type_1':'other_payment_sale'},
 
         }
 

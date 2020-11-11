@@ -424,7 +424,7 @@ class tb_po_invoice(models.Model):
     @api.onchange('extra_invoice_line_ids')
     def onchange_payment_currency(self):
         yjzy_type_1 = self.yjzy_type_1
-        if yjzy_type_1 == 'sale' or yjzy_type_1 == 'back_tax':
+        if yjzy_type_1 in ['sale','back_tax','other_payment_sale']:
             if self.price_total < 0:
                 self.type_invoice = 'out_refund'
             else:
@@ -455,12 +455,12 @@ class tb_po_invoice(models.Model):
         other_payment_invoice_id = False
         other_payment_invoice_parent_id =  False
         if self.is_yjzy_tb_po_invoice :
-            if self.yjzy_type_1 == 'purchase':
+            if self.yjzy_type_1 in ['purchase','other_payment_purchase']:
                 other_payment_invoice_id = self.yjzy_tb_po_invoice.invoice_other_payment_in_ids[0]
             else:
                 other_payment_invoice_id = self.yjzy_tb_po_invoice.invoice_other_payment_ids[0]
         if self.is_yjzy_tb_po_invoice_parent:
-            if self.yjzy_type_1 == 'sale':
+            if self.yjzy_type_1 in ['sale','other_payment_sale']:
                 other_payment_invoice_parent_id = self.yjzy_tb_po_invoice_parent.invoice_other_payment_ids[0]
             else:
                 other_payment_invoice_parent_id = self.yjzy_tb_po_invoice_parent.invoice_other_payment_in_ids[0]
@@ -638,12 +638,12 @@ class tb_po_invoice(models.Model):
         line_tb_id = self.extra_invoice_line_ids
         name = ''
         ctx = {}
-        if self.type == 'other_payment' and self.yjzy_type_1 == 'purchase':
-            yjzy_type_1 = 'sale'
+        if self.type == 'other_payment' and self.yjzy_type_1 in ['purchase','other_payment_purchase']:
+            yjzy_type_1 = 'other_payment_sale'
             type_invoice = 'out_invoice'
             name = '创建其他应收申请'
-        elif self.type == 'other_payment' and self.yjzy_type_1 == 'sale':
-            yjzy_type_1 = 'purchase'
+        elif self.type == 'other_payment' and self.yjzy_type_1 in ['sale','other_payment_sale']:
+            yjzy_type_1 = 'other_payment_purchase'
             type_invoice = 'in_invoice'
             name = '创建其他应付申请'
             ctx = {'open':True,
@@ -1007,7 +1007,7 @@ class tb_po_invoice(models.Model):
         # product = self.env.ref('yjzy_extend.product_back_tax')
         product = self.invoice_product_id
         account = product.property_account_income_id
-        if self.yjzy_type_1 in ['sale','back_tax']:
+        if self.yjzy_type_1 in ['sale','back_tax','other_payment_sale']:
             journal_type = 'sale'
         else:
             journal_type = 'purchase'
@@ -1041,7 +1041,7 @@ class tb_po_invoice(models.Model):
             # })]
         })
         yjzy_type_1 = self.yjzy_type_1
-        if yjzy_type_1 == 'sale' or yjzy_type_1 == 'back_tax':
+        if yjzy_type_1 in ['sale','other_payment_sale','back_tax']:
             if self.price_total < 0:
                 # self.type_invoice = 'out_refund' #好像没什么用
                 for line in self.extra_invoice_line_ids:
@@ -1166,7 +1166,7 @@ class tb_po_invoice(models.Model):
         # product = self.env.ref('yjzy_extend.product_back_tax')
         product = self.invoice_product_id
         account = product.property_account_income_id
-        if self.yjzy_type_1 in ['sale','back_tax']:
+        if self.yjzy_type_1 in ['sale','back_tax','other_payment_sale']:
             journal_type = 'sale'
         else:
             journal_type = 'purchase'
@@ -1201,7 +1201,7 @@ class tb_po_invoice(models.Model):
             # })]
         })
         yjzy_type_1 = self.yjzy_type_1
-        if yjzy_type_1 == 'sale' or yjzy_type_1 == 'back_tax':
+        if yjzy_type_1 in ['sale','back_tax','other_payment_sale']:
             if self.price_total < 0:
                 # self.type_invoice = 'out_refund' #好像没什么用
                 for line in self.extra_invoice_line_ids:
