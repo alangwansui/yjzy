@@ -584,7 +584,7 @@ class account_payment(models.Model):
         today = fields.date.today()
         self.write({'post_uid': self.env.user.id,
                     'post_date': today,
-                    'state_1': '60_done'
+                     'state_1': '50_posted'
                     })
         self.post()
         self.compute_balance()
