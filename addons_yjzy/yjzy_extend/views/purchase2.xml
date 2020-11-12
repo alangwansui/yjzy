@@ -65,6 +65,15 @@
             <field name="model">purchase.order</field>
             <field name="arch" type="xml">
                 <form string="采购合同">
+                 <header groups="base.group_system">
+                     <button name="action_submit_stage" type="object" string="提交" attrs="{'invisible':[('state_1','!=','draft')]}"/>
+
+                      <button name="action_sales_approve_stage" type="object" string="客户经理审批" attrs="{'invisible':[('state_1','!=','submit')]}"/>
+                     <button name="action_approve_stage" type="object" string="采购员审批" attrs="{'invisible':[('state_1','!=','sales_approve')]}"/>
+                     <button name="action_to_draft_stage" type="object" string="重置草稿" attrs="{'invisible':[('state_1','not in',['refused','cancel'])]}"/>
+                     <button name="%(po_refuse_wizard_action)d" string="拒绝" type="action"/>
+                     <field name="state_1" widget="statusbar" statusbar_visible=" "/>
+                 </header>
                 <header groups="base.group_system">
                     <button name="action_rfq_send" states="draft" invisible="1" string="Send RFQ by Email" type="object" context="{'send_rfq':True}" class="oe_highlight"/>
                     <button name="action_rfq_send" states="sent" invisible="1" string="Re-Send RFQ by Email" type="object" context="{'send_rfq':True}"/>
@@ -168,7 +177,7 @@
                             <field name="sale_uid" attrs="{'readonly': 1}" required="1" options="{'no_create': True,'no_open':1}"/><!--已经在字段上默认-->
                             <field name="sale_assistant_id" attrs="{'readonly': 1}" options="{'no_create': True,'no_open':1}"/>
                             <field name="delivery_status"/>
-                            <field name="main_sign_uid" groups="sale.hegui_all" invisible="1"/>
+
                         </group>
                     </group>
                     <notebook>
@@ -333,9 +342,15 @@
                     </page>
                         <page string="管理员信息" groups="base.group_system">
                         <group>
-<field name="company_id" groups="base.group_system" options="{'no_create': True}" invisible="0"/>
+                            <field name="company_id" groups="base.group_system" options="{'no_create': True}" invisible="0"/>
+                            <field name="main_sign_uid" groups="sale.hegui_all" />
                         </group>
                     </page>
+                        <page groups="base.group_system">
+                            <p>
+                                1)加上stage，根绝stage的用户来决定主签字人<br/>
+                            </p>
+                        </page>
                     </notebook>
                 </sheet>
                 <div class="oe_chatter">

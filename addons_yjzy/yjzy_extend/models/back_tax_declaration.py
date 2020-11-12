@@ -79,6 +79,8 @@ class DeclareDeclaration(models.Model):
     def action_confirm(self):
         self.state = 'done'
         invoice_ids = self.btd_line_ids.mapped('invoice_id')
+        if len(self.btd_line_ids.filtered(lambda x: x.invoice_back_tax_declaration_state == '20')) > 0:
+            raise Warning('明细行存在已经申报的应收退税账单，请查验!')
         for one in invoice_ids:
             one.back_tax_declaration_state = '20'
 
@@ -137,6 +139,7 @@ class DeclareDeclarationLine(models.Model):
 
     btd_id = fields.Many2one('back.tax.declaration',u'退税申报单',ondelete='cascade',  required=True)
     invoice_id = fields.Many2one('account.invoice',u'账单', required=True)
+    invoice_back_tax_declaration_state = fields.Selection([('10','未申报'),('20','已申报')],'退税申报状态',related='invoice_id.back_tax_declaration_state')
     invoice_currency_id = fields.Many2one('res.currency', u'交易货币', related='invoice_id.currency_id', readonly=True)
     invoice_amount_total = fields.Monetary(u'账单原始金额',currency_field='invoice_currency_id',compute=compute_invoice_amount_total,store=True)
     invoice_residual_total = fields.Monetary(u'账单剩余金额',currency_field='invoice_currency_id',compute=compute_invoice_residual,store=True)

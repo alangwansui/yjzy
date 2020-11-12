@@ -214,5 +214,128 @@
             <field name="sequence" eval="100"/>
             <field name="state">cancel</field>
         </record>
+
+<!--        销售合同-->
+        <record model="sale.order.stage" id="stage_so_draft">
+            <field name="name">草稿</field>
+            <field name="code">010</field>
+            <field name="sequence" eval="10"/>
+            <field name="state">draft</field>
+        </record>
+        <record model="sale.order.stage" id="stage_so_submit">
+            <field name="name">待责任人审核</field>
+            <field name="code">020</field>
+            <field name="sequence" eval="20"/>
+            <field name="state">submit</field>
+        </record>
+         <record model="sale.order.stage" id="stage_so_sales_approve">
+            <field name="name">待业务合规审核</field>
+            <field name="code">030</field>
+            <field name="sequence" eval="30"/>
+            <field name="state">sales_approve</field>
+        </record>
+          <record model="sale.order.stage" id="stage_so_manager_approval">
+            <field name="name">待总经理特批</field>
+            <field name="code">040</field>
+            <field name="sequence" eval="40"/>
+            <field name="state">manager_approval</field>
+        </record>
+          <record model="sale.order.stage" id="stage_so_approve">
+            <field name="name">审批完成等待出运</field>
+            <field name="code">050</field>
+            <field name="sequence" eval="50"/>
+            <field name="state">approve</field>
+        </record>
+        <record model="sale.order.stage" id="stage_so_sale">
+            <field name="name">开始出运</field>
+            <field name="code">060</field>
+            <field name="sequence" eval="60"/>
+            <field name="state">sale</field>
+        </record>
+
+        <record model="sale.order.stage" id="stage_so_verifying">
+            <field name="name">正常核销</field>
+            <field name="code">070</field>
+            <field name="sequence" eval="70"/>
+            <field name="state">verifying</field>
+        </record>
+        <record model="sale.order.stage" id="stage_so_abnormal">
+            <field name="name">异常核销</field>
+            <field name="code">080</field>
+            <field name="sequence" eval="80"/>
+            <field name="state">abnormal</field>
+        </record>
+             <record model="sale.order.stage" id="stage_so_verification">
+            <field name="name">核销完成</field>
+            <field name="code">090</field>
+            <field name="sequence" eval="90"/>
+            <field name="state">verification</field>
+        </record>
+        <record model="sale.order.stage" id="stage_so_refused">
+            <field name="name">拒绝</field>
+            <field name="code">100</field>
+            <field name="sequence" eval="100"/>
+            <field name="state">refused</field>
+
+        </record>
+        <record model="sale.order.stage" id="stage_so_cancel">
+            <field name="name">取消</field>
+            <field name="code">110</field>
+            <field name="sequence" eval="110"/>
+            <field name="state">cancel</field>
+
+        </record>
+
+<!--        采购stage-->
+        <record model="purchase.order.stage" id="stage_po_draft">
+            <field name="name">草稿</field>
+            <field name="code">010</field>
+            <field name="sequence" eval="10"/>
+            <field name="state">draft</field>
+        </record>
+        <record model="purchase.order.stage" id="stage_po_submit">
+            <field name="name">待责任人审核</field>
+            <field name="code">020</field>
+            <field name="sequence" eval="20"/>
+            <field name="state">submit</field>
+        </record>
+         <record model="purchase.order.stage" id="stage_po_sales_approve">
+            <field name="name">待产品经理审批</field>
+            <field name="code">030</field>
+            <field name="sequence" eval="30"/>
+            <field name="state">sales_approve</field>
+        </record>
+        <record model="purchase.order.stage" id="stage_po_approve">
+            <field name="name">审批完成等待出运</field>
+            <field name="code">040</field>
+            <field name="sequence" eval="40"/>
+            <field name="state">approve</field>
+        </record>
+          <record model="purchase.order.stage" id="stage_po_purchase">
+            <field name="name">开始出运</field>
+            <field name="code">050</field>
+            <field name="sequence" eval="50"/>
+            <field name="state">purchase</field>
+        </record>
+        <record model="purchase.order.stage" id="stage_po_done">
+            <field name="name">核销完成</field>
+            <field name="code">060</field>
+            <field name="sequence" eval="60"/>
+            <field name="state">done</field>
+        </record>
+         <record model="purchase.order.stage" id="stage_po_refused">
+            <field name="name">已拒绝</field>
+            <field name="code">090</field>
+            <field name="sequence" eval="90"/>
+            <field name="state">refused</field>
+         </record>
+
+         <record model="purchase.order.stage" id="stage_po_cancel">
+            <field name="name">取消</field>
+            <field name="code">100</field>
+            <field name="sequence" eval="100"/>
+            <field name="state">cancel</field>
+
+        </record>
     </data>
 </odoo>

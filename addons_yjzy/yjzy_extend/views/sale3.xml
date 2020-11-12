@@ -402,7 +402,19 @@
             <field name="model">sale.order</field>
             <field name="arch" type="xml">
                 <form string="销售订单" class="o_sale_order" create="false">
+                     <header groups="base.group_system">
+                           <button name="action_submit_stage" string="提交" type="object" attrs="{'invisible':[('state_1','!=','draft')]}"/>
+                         <button name="action_to_draft" string="重置草稿" type="object" attrs="{'invisible':[('state_1','!=','refused')]}"/>d
+
+                         <button name="action_sales_approve_stage" string="客户经理审批" type="object" attrs="{'invisible':[('state_1','!=','submit')]}"/>
+                          <button name="action_approve_stage" string="合规审批" type="object" attrs="{'invisible':[('state_1','!=','sales_approve')]}"/>
+
+                         <button name="%(so_refuse_wizard_action)d" string="拒绝" type="action"/>
+
+                           <field name="state_1" widget="statusbar" statusbar_visible=" "/>
+                     </header>
                        <header groups="base.group_system">
+
                          <field name="state" widget="statusbar" statusbar_visible=" "  groups="base.group_system"/>
                     </header>
                     <header groups="base.group_system">
@@ -1304,6 +1316,13 @@
                                 <group>
                                      <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
                                 </group>
+                            </page>
+                            <page groups="base.group_system" string="说明文档">
+                                <p>
+
+                            test<br/>
+
+                                </p>
                             </page>
                         </notebook>
                     </sheet>

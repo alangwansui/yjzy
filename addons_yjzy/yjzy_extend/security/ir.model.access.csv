@@ -38,7 +38,8 @@ access_extra_invoice_line,access_extra_invoice_line,model_extra_invoice_line,bas
 access_dashboard_view,access_dashboard_view,model_dashboard_view,base.group_user,1,1,1,1
 access_expense_sheet_stage,access_expense_sheet_stage,model_expense_sheet_stage,base.group_user,1,1,1,1
 access_account_reconcile_stage,access_account_reconcile_stage,model_account_reconcile_stage,base.group_user,1,1,1,1
-
+access_sale_order_stage,access_sale_order_stage,model_sale_order_stage,base.group_user,1,1,1,1
+access_purchase_order_stage,access_purchase_order_stage,model_purchase_order_stage,base.group_user,1,1,1,1
 access_back_tax_declaration_line,access_back_tax_declaration_line,model_back_tax_declaration_line,base.group_user,1,1,1,1
 
 

@@ -23,6 +23,8 @@ from . import account_reconcile_refuse_reason
 from . import tb_po_invoice_refuse_reason
 from . import wizard_back_tax_declaration_line
 from . import wizard_renling
+from . import so_refuse_reason
+from . import po_refuse_reason
 
 
 

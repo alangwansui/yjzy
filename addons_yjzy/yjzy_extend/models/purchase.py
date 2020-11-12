@@ -31,6 +31,35 @@ def new_onchange_partner_id(self):
 PurchaseOrder.onchange_partner_id = new_onchange_partner_id
 
 
+Stage_Status_Default = 'draft'
+
+Purchase_Selection = [('draft', '草稿'),
+                  ('sent', 'RFQ Sent'),
+                  ('submit', u'带责任人审批'),
+                  ('sales_approve', u'待产品经理审批'),
+                  ('approve', '待出运'),  # akiny 翻译成等待出运
+                  ('purchase', '开始出运'),
+                  ('done', '锁定'),
+                  ('cancel', '取消'),
+                  ('refused', u'已拒绝')]
+
+class PurchaseOrderStage(models.Model):
+    _name = "purchase.order.stage"
+    _description = "Purchase Order Stage"
+    _order = 'sequence'
+
+    name = fields.Char('Stage Name', translate=True, required=True)
+    code = fields.Char('code')
+    sequence = fields.Integer(help="Used to order the note stages", default=1)
+    state = fields.Selection(Purchase_Selection, 'State', default=Stage_Status_Default) #track_visibility='onchange',
+    fold = fields.Boolean('Folded by Default')
+    # _sql_constraints = [
+    #     ('name_code', 'unique(code)', u"编码不能重复"),
+    # ]
+    user_ids = fields.Many2many('res.users', 'ref_po_users', 'fid', 'tid', 'Users') #可以进行判断也可以结合自定义视图模块使用
+    group_ids = fields.Many2many('res.groups', 'ref_po_group', 'gid', 'bid', 'Groups')
+
+
 class purchase_order(models.Model):
     _inherit = 'purchase.order'
     #13已经添加
@@ -85,7 +114,17 @@ class purchase_order(models.Model):
 
     #
     # invoice_line_ids = fields.One2many('account.invoice.line','purchase_id',u'账单明细行')
+    @api.model
+    def _default_purchase_order_stage(self):
+        stage = self.env['purchase.order.stage']
+        return stage.search([], limit=1)
 
+    stage_id = fields.Many2one(
+        'purchase.order.stage',
+        default=_default_purchase_order_stage)
+
+    state_1 = fields.Selection(Purchase_Selection, u'审批流程', default='draft', index=True, related='stage_id.state',
+                               track_visibility='onchange')  # 费用审批流程
 
     balance = fields.Monetary(u'预付余额', compute=compute_info, currency_field='yjzy_currency_id')
     #akiny_new
@@ -156,6 +195,89 @@ class purchase_order(models.Model):
     #akiny
     so_id_state = fields.Selection('源销售合同状态',related='source_so_id.state')
     aml_ids = fields.One2many('account.move.line', 'po_id', u'分录明细', readonly=True)
+
+    def _stage_find(self, domain=None, order='sequence'):
+        search_domain = list(domain)
+        return self.env['purchase.order.stage'].search(search_domain, order=order, limit=1)
+
+        # 新的审批流程
+
+    def action_submit_stage(self):
+        if not self.contract_code:
+            raise Warning('合同号不为空！')
+        if not self.payment_term_id:
+            raise Warning('付款条款不为空！')
+        for line in self.order_line:
+            if line.dlr_str == '':
+                raise Warning('采购和销售没有完全对应！')
+        stage_id = self._stage_find(domain=[('code', '=', '020')])
+        return self.write({'stage_id': stage_id.id,
+                           'state': 'submit',
+                           'submit_uid': self.env.user.id,
+                           'submit_date': fields.datetime.now()})
+
+    def action_sales_approve_stage(self):
+        stage_id = self._stage_find(domain=[('code', '=', '030')])
+        return self.write({'stage_id': stage_id.id,
+                           'state': 'approve_sales',
+                           })
+
+    def action_approve_stage(self):
+        stage_id = self._stage_find(domain=[('code', '=', '040')])
+        if not stage_id.user_ids:
+            raise Warning('请先设置采购签字人员！')
+        print('stage_id.user_ids',stage_id.user_ids)
+        main_sign_uid = stage_id.user_ids[0]
+        return self.write({'stage_id': stage_id.id,
+                           'can_confirm_by_so': True,
+                           'purchaser_uid': self.env.user.id,
+                           'purchaser_date': fields.datetime.now(),
+                           'state': 'to approve',
+                           'main_sign_uid':main_sign_uid.id
+                           })
+
+    def action_refuse_stage(self, reason):
+        stage_id = self._stage_find(domain=[('code', '=', '090')])
+        stage_preview = self.stage_id
+        user = self.env.user
+        group = self.env.user.groups_id
+        if user not in stage_preview.user_ids:
+            raise Warning('您没有权限拒绝')
+        else:
+            self.write({'state': 'refused',
+                        'submit_date': False,
+                        'submit_uid': False,
+                        'purchaser_uid': False,
+                        'purchaser_date': False,
+                        'main_sign_uid':False,
+                        'stage_id': stage_id.id})
+        for so in self:
+            so.message_post_with_view('yjzy_extend.po_template_refuse_reason',
+                                      values={'reason': reason, 'name': self.contract_code},
+                                      subtype_id=self.env.ref(
+                                          'mail.mt_note').id)  # 定义了留言消息的模板，其他都可以参考，还可以继续参考费用发送计划以及邮件方式
+
+    def action_to_draft_stage(self):
+        stage_id = self._stage_find(domain=[('code', '=', '010')])
+        self.write({ 'state': 'draft',
+                     'stage_id': stage_id.id})
+
+
+    def action_to_cancel_stage(self):
+        if self.create_uid.id != self.env.user.id:
+            raise Warning('只有创建者才允许取消！')
+        if self.state not in ['draft','refused']:
+            raise Warning('只有草稿或者拒绝状态的才能取消')
+        self.button_cancel()
+        stage_id = self._stage_find(domain=[('code', '=', '100')])
+        self.write({
+            'submit_date': False,
+            'submit_uid': False,
+            'purchaser_uid': False,
+            'purchaser_date': False,
+            'main_sign_uid':False,
+            'stage_id': stage_id.id})
+
 
 
     def update_back_tax(self):

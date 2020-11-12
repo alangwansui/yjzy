@@ -8,6 +8,43 @@ from . comm import BACK_TAX_RATIO
 from dateutil.relativedelta import relativedelta
 
 
+Stage_Status = [
+    ('draft', '未开始'),
+    ('confirmed', '就绪'),
+    ('done', '完成'),
+]
+Stage_Status_Default = 'draft'
+
+Sale_Selection = [('draft', '草稿'),
+                  ('cancel', '取消'),
+                  ('refused', u'拒绝'),
+                  ('submit', u'待责任人审核'),
+                  ('sales_approve', u'待业务合规审核'),
+                  ('manager_approval', u'待总经理特批'),
+                  ('approve', u'审批完成待出运'),
+                  ('sale', '开始出运'),
+                  ('abnormal', u'异常核销'),
+                  ('verifying', u'正常核销'),
+                  ('verification', u'核销完成'),]
+
+class SaleOrderStage(models.Model):
+
+    _name = "sale.order.stage"
+    _description = "Sale Order Stage"
+    _order = 'sequence'
+
+    name = fields.Char('Stage Name', translate=True, required=True)
+    code = fields.Char('code')
+    sequence = fields.Integer(help="Used to order the note stages", default=1)
+    state = fields.Selection(Sale_Selection, 'State', default=Stage_Status_Default) #track_visibility='onchange',
+    fold = fields.Boolean('Folded by Default')
+    # _sql_constraints = [
+    #     ('name_code', 'unique(code)', u"编码不能重复"),
+    # ]
+    user_ids = fields.Many2many('res.users', 'ref_so_users', 'fid', 'tid', 'Users') #可以进行判断也可以结合自定义视图模块使用
+    group_ids = fields.Many2many('res.groups', 'ref_so_group', 'gid', 'bid', 'Groups')
+
+
 class sale_order(models.Model):
     _inherit = 'sale.order'
 
@@ -278,6 +315,17 @@ class sale_order(models.Model):
             jituan = one.partner_id.jituan_id
             one.jituan_id = jituan
 
+    @api.model
+    def _default_sale_order_stage(self):
+        stage = self.env['sale.order.stage']
+        return stage.search([], limit=1)
+
+    stage_id = fields.Many2one(
+        'sale.order.stage',
+        default=_default_sale_order_stage)
+
+    state_1 = fields.Selection(Sale_Selection, u'审批流程', default='draft', index=True, related='stage_id.state',
+                               track_visibility='onchange')  # 费用审批流程
 
     #货币设置
     #1013
@@ -401,10 +449,6 @@ class sale_order(models.Model):
     rest_tb_qty_total = fields.Float(u'出运总数', compute=compute_info)
 #---------
 
-
-
-
-
     #transport_bill_id = fields.Many2one('transport.bill', u'出运单', copy=False)
     is_cip = fields.Boolean(u'报关', default=True)
 
@@ -466,11 +510,6 @@ class sale_order(models.Model):
                                        #     ('approve', u'审批完成'), ('manager_approval', u'待总经理审批'),
                                        #     ('verifying', u'核销中'), ('verification', u'核销完成')],readonly=False)
 
-
-
-
-
-
     purchase_balance_sum = fields.Float('采购预付余额',compute='compute_purchase_balance')
     purchase_balance_sum3 = fields.Float('采购预付余额',compute='compute_purchase_balance3',store=True)
     # purchase_balance_sum2 = fields.Float('采购预付余额',compute='compute_purchase_balance2',store=True)
@@ -481,8 +520,6 @@ class sale_order(models.Model):
     second_porfit = fields.Float('销售主体利润', compute=compute_info) #amount_total2-刚刚计算出来的 second_const
     second_tenyale_profit = fields.Float('采购主体利润', compute=compute_info)#(采购主体利润)：
 
-
-
     hexiao_type = fields.Selection([('abnormal',u'异常核销'),('write_off',u'正常核销')], string='核销类型')
 
     hexiao_comment = fields.Text(u'异常核销备注')
@@ -490,6 +527,95 @@ class sale_order(models.Model):
                                    ('wait_hexiao',u'待核销'),('has_hexiao',u'已核销')],
                                    u'出运与核销状态')
     # purchase_update_date = fields.Datetime(u'采购更新的时间')
+
+    def _stage_find(self, domain=None, order='sequence'):
+        search_domain = list(domain)
+        return self.env['sale.order.stage'].search(search_domain, order=order, limit=1)
+
+    #新的审批流程
+    def action_submit_stage(self):
+        for line in self.order_line:
+            if line.product_uom_qty != line.dlr_qty:
+                raise Warning('采购和销售的数量不匹配，请检查！')
+        self.action_submit()
+        stage_id = self._stage_find(domain=[('code', '=', '020')])
+        return self.write({'stage_id': stage_id.id,
+                           # 'state': 'submit',
+                           'submit_uid': self.env.user.id,
+                           'submit_date': fields.datetime.now()})
+
+    def action_sales_approve_stage(self):
+        stage_id = self._stage_find(domain=[('code', '=', '030')])
+        return self.write({'stage_id': stage_id.id,
+                           'state': 'sales_approve',
+                           'sales_confirm_uid': self.env.user.id,
+                           'sales_confirm_date': fields.datetime.now()})
+
+    def action_approve_stage(self):
+        self.check_po_allow()
+        self.action_Warning()
+        stage_id = self._stage_find(domain=[('code', '=', '050')])
+        return self.write({'stage_id': stage_id.id,
+                           'state': 'approve',
+                           'approve_uid': self.env.user.id,
+                           'approve_date': fields.datetime.now()})
+
+    def action_to_manager_stage(self):
+        stage_id = self._stage_find(domain=[('code', '=', '040')])
+        return self.write({'stage_id': stage_id.id,
+                           'state': 'manager_approval',
+                           'hegui_uid': self.env.user.id,
+                           'hegui_date': fields.datetime.now()})
+
+
+    def action_refuse_stage(self, reason):
+        stage_id = self._stage_find(domain=[('code', '=', '100')])
+        stage_preview = self.stage_id
+        user = self.env.user
+        group = self.env.user.groups_id
+        if user not in stage_preview.user_ids:
+            raise Warning('您没有权限拒绝')
+        else:
+            self.write({'state': 'refuse',
+                        'submit_date': False,
+                        'submit_uid': False,
+                        'sales_confirm_date': False,
+                        'sales_confirm_uid': False,
+                        'approve_date': False,
+                        'approve_uid': False,
+                        'stage_id': stage_id.id})
+        for so in self:
+            so.message_post_with_view('yjzy_extend.so_template_refuse_reason',
+                                      values={'reason': reason, 'name': self.contract_code},
+                                      subtype_id=self.env.ref(
+                                          'mail.mt_note').id)  # 定义了留言消息的模板，其他都可以参考，还可以继续参考费用发送计划以及邮件方式
+
+    #核销的动作还要再考虑：核销完成后，又要退回了， 所以我们那个新的核销后 清零的数量的字段有么有用
+    def action_to_draft_stage(self):
+        stage_id = self._stage_find(domain=[('code', '=', '010')])
+        self.write({  'state': 'draft',
+                      'stage_id': stage_id.id})
+
+    def action_to_cancel_stage(self):
+        if self.create_uid.id != self.env.user.id:
+            raise Warning('只有创建者才允许取消！')
+        if self.state not in ['draft', 'refuse']:
+            raise Warning('只有草稿或者拒绝状态的才能取消')
+        self.action_cancel()
+        stage_id = self._stage_find(domain=[('code', '=', '110')])
+        self.write({
+            'submit_date': False,
+            'submit_uid': False,
+            'sales_confirm_date': False,
+            'sales_confirm_uid': False,
+            'approve_date': False,
+            'approve_uid': False,
+            'stage_id': stage_id.id})
+
+
+
+
+
 
 
 
@@ -610,11 +736,11 @@ class sale_order(models.Model):
             default['contract_code'] = "%s(copy)" % self.contract_code
         return super(sale_order, self).copy(default)
 
-    @api.multi
-    def write(self, vals):
-        body = '%s' % vals
-        self.message_post(body=body, subject='内容修改', message_type='notification')
-        return super(sale_order, self).write(vals)
+    # @api.multi
+    # def write(self, vals):
+    #     body = '%s' % vals
+    #     self.message_post(body=body, subject='内容修改', message_type='notification')
+    #     return super(sale_order, self).write(vals)
 
     def unlink(self):
         for one in self:
@@ -713,12 +839,21 @@ class sale_order(models.Model):
         '''so auto po confirm'''
         res = super(sale_order, self).action_confirm()
         #akiny to approve的时候触发button_approve
-       # todo_po = self.po_ids.filtered(lambda x: x.can_confirm_by_so and x.state not in ['purchase', 'done', 'cancel', 'edit'])
-        todo_po1 = self.po_ids.filtered(lambda x: x.can_confirm_by_so and x.state in ['to approve'])
+        todo_po = self.po_ids.filtered(lambda x: x.can_confirm_by_so and x.state not in ['purchase', 'done', 'cancel', 'edit'])
+       #  todo_po1 = self.po_ids.filtered(lambda x: x.can_confirm_by_so and x.state in ['to approve'])
+
       #  if todo_po:
       #      todo_po.button_confirm()
-        if todo_po1:
-            todo_po1.button_approve()
+      #   if todo_po1:
+      #       todo_po1.button_approve()
+
+        for po in todo_po:
+            if po.state == 'to approve':
+                po.button_approve()
+                res = super(sale_order, self).button_approve()
+            else:
+                po.button_confirm()
+                res = super(sale_order, self).action_confirm()
         return res
 
     def action_confirm2(self):
@@ -981,6 +1116,7 @@ class sale_order(models.Model):
 
     #akiny
     def action_submit(self):
+        self.action_Warning()
         war = ''
         if self.contract_code and self.partner_id and self.customer_pi and self.contract_date and self.current_date_rate > 0 and \
                 self.requested_date and self.payment_term_id and self.order_line and self.contract_type and self.gongsi_id and\
@@ -1011,6 +1147,9 @@ class sale_order(models.Model):
                 raise Warning(war)
 
     def action_Warning(self):
+        war = ''
         if self.partner_id.state != 'done':
             war = '客户正在审批中，请先完成客户的审批'
-            raise Warning(war)
+        if  len(self.order_line.filtered(lambda x: x.supplier_id.state != 'done')) > 0:
+            war = '供应商正在审批中，请先完成供应商的审批'
+        raise Warning(war)

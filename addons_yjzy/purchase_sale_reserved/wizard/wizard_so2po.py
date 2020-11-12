@@ -56,13 +56,15 @@ class wizard_so2po(models.TransientModel):
             po.create_lots()
             po.action_sale_reserve()
             purchase_orders |= po
-
+        form_view = self.env.ref('yjzy_extend.new_purchase_order_from')
+        tree_view = self.env.ref('yjzy_extend.new_purchase_order_tree')
         return {
             'name': _(u'创建采购单'),
             'view_type': 'form',
             'view_mode': 'tree,form',
             'res_model': 'purchase.order',
             'type': 'ir.actions.act_window',
+            'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
             # 'target': 'new',
             'domain': [('id', '=', purchase_orders.mapped('id'))],
             # 'context': { },

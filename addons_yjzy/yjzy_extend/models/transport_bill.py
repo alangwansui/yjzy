@@ -24,7 +24,7 @@ Transport_Selection = [('cancel', u'取消'),
                        ('verifying', u'待核销'),
                        ('done', u'已核销'), ('paid', '已收款'), ('edit', u'可修改')]
 
-class Stage(models.Model):
+class TransportStage(models.Model):
 
     _name = "transport.bill.stage"
     _description = "Transport Stage"
@@ -823,7 +823,7 @@ class transport_bill(models.Model):
     usd_pool_id = fields.Many2one('usd.pool',u'美金池状态',compute=compute_yjzy_invoice_amount_total,store=True)
     usd_pool = fields.Float('美金池', compute=compute_yjzy_invoice_amount_total, store=True)
     usd_pool_1 = fields.Float('美金池1', compute=compute_yjzy_invoice_amount_total, store=True)
-
+    #state2
     stage_id = fields.Many2one(
         'transport.bill.stage',
         default=_default_transport_stage)
@@ -2846,6 +2846,10 @@ class transport_bill(models.Model):
     def action_approve(self):
         if (self.org_sale_amount == self.org_real_sale_amount and self.sale_type != 'proxy') or (self.sale_type == 'proxy'):
             stage_id = self._stage_find(domain=[('code', '=', '004')])
+            so_id = self.line_ids.mapped('so_id')
+            for so in so_id:
+                if so.state == 'approve':
+                    so.action_confirm()
             stage_preview = self.stage_id
             user = self.env.user
             # group = self.env.user.groups_id
@@ -2884,6 +2888,10 @@ class transport_bill(models.Model):
             stage_id = self._stage_find(domain=[('code', '=', '004')])
             stage_preview = self.stage_id
             user = self.env.user
+            so_id = self.line_ids.mapped('so_id')
+            for so in so_id:
+                if so.sate == 'approve':
+                    so.action_confirm()
             # group = self.env.user.groups_id
             if user not in stage_preview.user_ids:
                 raise Warning('您没有权限审批')

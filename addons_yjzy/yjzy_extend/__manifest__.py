@@ -46,6 +46,8 @@
         #'views/account_payment3.xml',
         'wizard/transport_refuse_reason_views.xml',
         'wizard/account_invoice_refuse_reason_views.xml',
+        'wizard/so_refuse_reason_views.xml',
+        'wizard/po_refuse_reason_views.xml',
         'wizard/hxd_refuse_reason_views.xml',
         'wizard/payment_refuse_reason_views.xml',
         'wizard/expense_sheet_refuse_reason_views.xml',
@@ -123,7 +125,8 @@
         'views/transport_bill_customs_invoice.xml',
 
         'views/trasnport_bill_stage.xml',
-        'views/trasnport_bill_stage.xml',
+        'views/sale_stage.xml',
+        'views/purchase_stage.xml',
         'views/account_invoice_extra_po.xml',
         'views/tb_po_invoice.xml',
         'views/hr_expense_other_payment.xml',

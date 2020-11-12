@@ -77,6 +77,25 @@
             </field>
         </record>
 
+         <record id="tb_po_invoice_other_payment_in_tree" model="ir.ui.view">
+            <field name="name">tb.po.other.payment.tree</field>
+            <field name="model">tb.po.invoice</field>
+            <field name="arch" type="xml">
+                <tree string="其他应收申请单" create="false">
+                    <field name="invoice_partner"/>
+                    <field name="name_title"/>
+                    <field name="currency_id" groups="base.group_system"/>
+                    <field name="partner_id" groups="base.group_system"/>
+                    <field name="price_total" string="应收金额"/>
+                    <field name="invoice_normal_ids_residual" string="未收金额"/>
+                    <field name="yjzy_tb_po_invoice_amount" string="未付金额"/>
+                    <field name="yjzy_tb_po_invoice_residual" string="未付金额"/>
+                    <field name="state"/>
+                    <field name="create_date"/>
+                </tree>
+            </field>
+        </record>
+
         <record id="tb_po_tree" model="ir.ui.view">
             <field name="name">tb.po.tree</field>
             <field name="model">tb.po.invoice</field>
@@ -1473,7 +1492,7 @@
                 {'search_default_group_by_state':1,'default_type':'other_payment','default_yjzy_type_1':'other_payment_sale'}
             </field>
             <field name="view_ids" eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'tree', 'view_id': ref('tb_po_invoice_other_payment_tree')}),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('tb_po_invoice_other_payment_in_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_form')})]"/>
 
         </record>

@@ -13,7 +13,7 @@
                     </group>
                     <group >
                         <field name="invoice_ids" nolabel="1" options="{'no_create': True,'no_open':True}" context="{'search_default_group_by_bill_id':1}"
-                               domain="[('yjzy_type', '=', 'back_tax'),('state', 'in',['open'])]"/>
+                               domain="[('yjzy_type', '=', 'back_tax'),('state', 'in',['open']),('back_tax_declaration_state','!=','20')]"/>
                     </group>
 
                     <footer>
