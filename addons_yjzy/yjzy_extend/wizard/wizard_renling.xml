@@ -9,7 +9,8 @@
                 <form string="创建发运单">
                     <group>
                         <field name="renling_type"/>
-                        <field name="partner_id" attrs="{'invisible':[('renling_type','not in',['yshxd','ysrld'])]}" domain="[('is_company','=',True),('parent_id', '=', False),('customer','=',1)]"/>
+                        <field name="partner_id" attrs="{'invisible':[('renling_type','not in',['yshxd','ysrld'])]}"
+                               domain="[('is_company','=',True),('parent_id', '=', False),('customer','=',1),('invoice_open_ids_count','!=',0)]"/>
                         <field name="so_id" domain="[('partner_id','=', partner_id),('state','not in',['done','verifying','abnormal','verification','cancel','refuse'])]" attrs="{'invisible':['|',('renling_type','not in',['ysrld']),('step','!=','20')]}"/>
                         <field name="amount_total_so" attrs="{'invisible':['|',('renling_type','not in',['ysrld']),('step','!=','20')]}"/>
                         <field name="so_id_currency_id" invisible="1"/>

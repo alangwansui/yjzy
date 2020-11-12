@@ -140,6 +140,12 @@ class res_partner(models.Model):
             print('tb_approve_po_amount_total', tb_approve_po_amount_total)
             one.tb_approve_po_amount_total = tb_approve_po_amount_total
 
+    @api.depends('invoice_open_ids')
+    def compute_invoice_open_ids_count(self):
+        for one in self:
+            one.invoice_open_ids_count = len(one.invoice_open_ids)
+
+
     qingguan_precision = fields.Integer('清关资料打印小数位数')
 
     #增加供应商和客户的独立编号
@@ -167,6 +173,11 @@ class res_partner(models.Model):
     invoice_ids = fields.One2many('account.invoice', 'partner_id','应收账单',
                                   domain=[('type', '=', 'out_invoice'),
                                           ('state', 'not in', ['draft', 'cancel'])])
+    invoice_open_ids = fields.One2many('account.invoice', 'partner_id', '有余额应收账单',
+                                  domain=[('type', '=', 'out_invoice'),
+                                          ('state', 'in', ['open'])])
+    invoice_open_ids_count = fields.Integer('有余额应收账单数量',compute=compute_invoice_open_ids_count, store=True)
+
     supplier_invoice_ids = fields.One2many('account.invoice', 'partner_id', '应付账单',
                                   domain=[('type', '=', 'in_invoice'),
                                           ('state', 'not in', ['draft', 'cancel'])])
