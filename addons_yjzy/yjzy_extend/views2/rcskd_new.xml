@@ -10,7 +10,7 @@
         <field name="arch" type="xml">
             <form string="日常收款单">
                  <header >
-                     <button name="open_wizard_renling" type="object" string="创建认领单" attrs="{'invisible':[('state_1','!=','50_posted')]}"/>
+                     <button name="open_wizard_renling" type="object" string="创建认领单" attrs="{'invisible':[('state_1','!=','50_posted'),()]}"/>
                    <button name="action_submit" class="oe_highlight"  string="提交" type="object" attrs="{'invisible':[('state_1','not in',['10_draft'])]}"/>
                      <button name="action_cashier_post" class="oe_highlight"  string="出纳确认"
                              attrs="{'invisible':[('state_1','not in',['25_cashier_submit'])]}" type="object" />

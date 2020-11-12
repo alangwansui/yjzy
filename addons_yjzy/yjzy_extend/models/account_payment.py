@@ -99,16 +99,23 @@ class account_payment(models.Model):
                 else:
                     balance = sum([x.amount_currency for x in lines])
             one.balance = balance
-            if one.x_wkf_state:
-                if balance == 0 and one.x_wkf_state == '159':
-                    one.x_wkf_state = '163'
-                    one.state_1 = '60_done'
-            elif balance == 0 and one.state_1 == '50_posted':
+
+
+            if balance == 0 and one.x_wkf_state == '159':
+                one.x_wkf_state = '163'
                 one.state_1 = '60_done'
+                one.test_reconcile()
+                one.write({'state': 'reconciled'})
+            elif balance == 0 and one.state_1 == '50_posted':#参考核销
+                one.state_1 = '60_done'
+                one.test_reconcile()
+                one.write({'state': 'reconciled'})
+                print('compute_balance_1111111',one.state_1)
                 # elif balance !=0 and one.x_wkf_state == '163':
                 #  one.x_wkf_state = '159'
             else:
                 pass
+
 
 
 
@@ -416,6 +423,24 @@ class account_payment(models.Model):
 
     post_uid = fields.Many2one('res.users',u'审批人')
     post_date = fields.Date(u'审批时间')
+
+
+    #test 定稿 参考核销
+    def test_reconcile(self):
+        if self.sfk_type == 'rcskd':
+            account = self.env['account.account'].search([('code', '=', '220301'), ('company_id', '=', self.company_id.id)],limit=1)
+            # aml_recs = self.env['account.move.line'].search([('new_payment_id','=',self.id),('account_id','=',account.id)])
+            aml_recs = self.aml_ids.filtered(lambda x: x.new_payment_id.id == self.id and x.account_id.id == account.id and x.reconciled == False)
+            if self.balance == 0:
+                wizard = self.env['account.move.line.reconcile'].with_context(active_ids=[x.id for x in aml_recs]).create({})
+                wizard.trans_rec_reconcile_full()
+        if self.sfk_type == 'rcfkd':
+            account = self.env['account.account'].search([('code', '=', '112301'), ('company_id', '=', self.company_id.id)],limit=1)
+            # aml_recs = self.env['account.move.line'].search([('new_payment_id','=',self.id),('account_id','=',account.id)])
+            aml_recs = self.aml_ids.filtered(lambda x: x.new_payment_id.id == self.id and x.account_id.id == account.id and x.reconciled == False)
+            if self.balance == 0:
+                wizard = self.env['account.move.line.reconcile'].with_context(active_ids=[x.id for x in aml_recs]).create({})
+                wizard.trans_rec_reconcile_full()
 
     def open_wizard_renling(self):
         self.ensure_one()
