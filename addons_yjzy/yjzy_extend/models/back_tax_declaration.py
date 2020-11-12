@@ -78,7 +78,9 @@ class DeclareDeclaration(models.Model):
 
     def action_confirm(self):
         self.state = 'done'
-        self.btd_line_ids.mapped('invoice_id').back_tax_declaration_state = '20'
+        invoice_ids = self.btd_line_ids.mapped('invoice_id')
+        for one in invoice_ids:
+            one.back_tax_declaration_state = '20'
 
 
     def action_cancel(self):

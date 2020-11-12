@@ -329,7 +329,7 @@
                         <button name="make_extra_invoice" type="object" string="创建额外账单" groups="base.group_system" invisible="1"/>
                         <button name="create_tb_po_invoice" type="object" string="创建其他应收申请" attrs="{'invisible':['|','|','|','|',('is_yjzy_tb_po_invoice_parent','=',True),('yjzy_type_1','in',['sale','other_payment_sale']),('is_yjzy_tb_po_invoice','=',True),('type','!=','other_payment'),('state','!=','10_draft')]}"/>
                         <button name="create_tb_po_invoice" type="object" string="创建其他应付申请" context="{'open_other':1}" attrs="{'invisible':['|','|','|','|',('is_yjzy_tb_po_invoice_parent','=',True),('yjzy_type_1','in',['purchase','other_payment_purchase']),('is_yjzy_tb_po_invoice','=',True),('type','!=','other_payment'),('state','!=','10_draft')]}"/>
-                        <button name="delete_tb_po_invoice" type="object" string="删除其他应收申请" attrs="{'invisible':['|','|','|',('yjzy_type_1','=','sale'),('is_yjzy_tb_po_invoice','=',False),('type','!=','other_payment'),('state','!=','10_draft')]}"/>
+                        <button name="delete_tb_po_invoice" type="object" string="删除其他应收申请" attrs="{'invisible':['|','|','|',('yjzy_type_1','in',['sale','other_payment_sale']),('is_yjzy_tb_po_invoice','=',False),('type','!=','other_payment'),('state','!=','10_draft')]}"/>
                         <button name="delete_tb_po_invoice" type="object" string="删除其他应付申请" context="{'open_delete':1}" attrs="{'invisible':['|','|','|',('yjzy_type_1','in',['purchase','other_payment_purchase']),('is_yjzy_tb_po_invoice','=',False),('type','!=','other_payment'),('state','!=','10_draft')]}"/>
 
                         <field name="state" widget="statusbar" statusbar_visible=" "/>
