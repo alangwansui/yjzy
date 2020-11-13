@@ -885,6 +885,7 @@ class account_payment(models.Model):
         new_payment_id = self.id
         if self.sfk_type in ['ysrld', 'yfsqd', 'rcfksqd', 'rcskrld','yingshourld','yingfurld']:
             new_payment_id = self.yjzy_payment_id.id
+        new_advance_payment_id = False
         if self.sfk_type in ['ysrld','yfsqd']:
             new_advance_payment_id = self.id
         if self.sfk_type in ['yingshourld','yingfurld']:

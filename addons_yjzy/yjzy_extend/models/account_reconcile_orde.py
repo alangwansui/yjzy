@@ -317,7 +317,6 @@ class account_reconcile_order(models.Model):
     @api.depends('stage_id','invoice_ids','supplier_advance_payment_ids')
     def compute_supplier_advance_payment_ids_amount_advance_org(self):
         for one in self:
-
             supplier_advance_payment_ids_amount_advance_org = sum(x.advance_reconcile_order_draft_amount_advance for x in one.supplier_advance_payment_ids)
             one.supplier_advance_payment_ids_amount_advance_org = supplier_advance_payment_ids_amount_advance_org
 
@@ -845,20 +844,26 @@ class account_reconcile_order(models.Model):
         #     if len(reconcile_order_line_ids) != 0:
         #         raise Warning('还有进行中的付款申请，本账单无法提交')
         if self.sfk_type == 'yfhxd':
-            # amount_advance_residual_org = self.amount_advance_residual_org
-            # amount_advance_org = self.amount_advance_org
-            # # if amount_advance_residual_org < amount_advance_org:
-            # #     raise Warning(u'预付认领金额大于预付余额')
+            amount_advance_residual_org = self.amount_advance_residual_org
+            amount_advance_org = self.amount_advance_org
+            yjzy_advance_payment_balance = self.yjzy_advance_payment_balance
+            for one in self.line_no_ids:
+                if one.amount_payment_can_approve_all < one.amount_payment_org:
+                    raise Warning('申请的金额大于可申请的应付,请检查')
+            if amount_advance_residual_org < amount_advance_org:
+                raise Warning(u'预付认领金额大于采购单剩余的可认领金额') #出现历史数据错误的时候。也就是预付被认领的时候，没有填写预付单
+            if yjzy_advance_payment_balance < amount_advance_org:
+                raise Warning(u'预付认领金额大于预付款单剩余的可认领金额')
+            if self.amount_total_org == 0:
+                raise Warning('认领金额为0，无法提交！')
             if self.hxd_type_new == '30':
-                if self.amount_total_org == 0:
-                    raise Warning('认领金额为0，无法提交！')
-                # lines = self.line_no_ids
-                # if self.yjzy_advance_payment_balance < 0:
-                #     print('yjzy_advance_payment_balance',self.yjzy_advance_payment_balance)
-                #     raise Warning('预付认领大于可认领金额')
-                # for one in lines:
-                #     if one.amount_advance_org > one.invoice_residual:
-                #         raise Warning('预付认领金额大于可认领的应付金额')
+                lines = self.line_no_ids
+                if self.yjzy_advance_payment_balance < 0:
+                    print('yjzy_advance_payment_balance',self.yjzy_advance_payment_balance)
+                    raise Warning('预付认领大于可认领金额')
+                for one in lines:
+                    if one.amount_advance_org > one.invoice_residual:
+                        raise Warning('预付认领金额大于可认领的应付金额')
 
                 stage_id = self._stage_find(domain=[('code', '=', '040')])
                 self.write({'stage_id': stage_id.id,
@@ -910,9 +915,9 @@ class account_reconcile_order(models.Model):
     def action_manager_approve_first_stage(self):
         if self.advance_reconcile_line_draft_all_count != 0:
             raise Warning('有未完成审批预付认领，请检查！')
-        # for one in self.invoice_ids:            如果invoice是0 余额的 可以从invoice_ids中删除了
-        #     if one.amount_payment_can_approve_all == 0 or one.residual == 0:
-        #         self.write({'invoice_ids':[(3,one.id)]})
+        for one in self.invoice_ids:            #如果invoice是0 余额的 可以从invoice_ids中删除了
+            if one.amount_payment_can_approve_all == 0 or one.residual == 0:
+                self.write({'invoice_ids':[(3,one.id)]})
         self.make_lines()
         stage_id = self._stage_find(domain=[('code', '=', '030')])
         self.write({'stage_id': stage_id.id,
@@ -923,6 +928,12 @@ class account_reconcile_order(models.Model):
 
     # 财务审批：预付没有审批，只有应付申请的时候才会审批。
     def action_account_approve_stage(self):
+        if self.amount_total_org == 0:
+            raise Warning('认领金额为0，无法提交！')
+        for one in self.line_no_ids:
+            if one.amount_payment_can_approve_all < one.amount_payment_org:
+                raise Warning('申请的金额大于可申请的应付,请检查')
+
         if self.sfk_type == 'yfhxd':
             stage_id = self._stage_find(domain=[('code', '=', '040')])
             self.write({'stage_id': stage_id.id,
@@ -2107,7 +2118,6 @@ class account_reconcile_order_line_no(models.Model):
     def open_invoice_id(self):
         form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form_in_one').id
         return {'name':'账单查看',
-
                 'view_type': 'form',
                 'view_mode': 'form',
                 'res_model': 'account.invoice',
@@ -2115,7 +2125,15 @@ class account_reconcile_order_line_no(models.Model):
                 'res_id': self.invoice_id.id,
                 'target': 'new',
                 'type': 'ir.actions.act_window',
-                'context': {}
+                # 'flags': {'sidebar': False,  #参考flag
+                #           'initial_mode': 'read',
+                #     'form': {
+                #         'action_buttons': False,
+                #          'initial_mode': 'read',
+                #          'options': {'mode': 'view'},
+                #     }},
+
+                 'context': {'open':1}
                 }
 
     invoice_currency_id = fields.Many2one('res.currency', u'交易货币', related='invoice_id.currency_id', readonly=True)

@@ -87,12 +87,10 @@
                     </div>
                     <group>
                         <group>
-                            <field name="sfk_type" invisible="1"/>
                             <field name="gongsi_id" invisible="1"/>
-                            <field name="payment_type" widget="radio" attrs="{'readonly': [('state', '!=', 'draft')]}" invisible="1"/>
-                            <field name="partner_type" widget="selection" invisible="1"
-                                   attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))], 'invisible': [('payment_type', 'not in', ('inbound', 'outbound'))], 'readonly': [('state', '!=', 'draft')]}"/>
-                            <field name="partner_id" options="{'no_create':True}"  attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))], 'invisible': ['|',('payment_type', 'not in', ('inbound', 'outbound')),('sfk_type','in',['rcskd','rcfkd'])], 'readonly': [('state', '!=', 'draft')]}"
+                            <field name="partner_id" options="{'no_create':True}"  attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))],
+                            'invisible': ['|',('payment_type', 'not in', ('inbound', 'outbound')),('sfk_type','in',['rcskd','rcfkd'])],
+                            'readonly': [('state', '!=', 'draft')]}"
                                    context="{'default_is_company': True, 'default_supplier': payment_type == 'outbound', 'default_customer': payment_type == 'inbound'}"/>
                             <label for="amount"/>
                             <div name="amount_div" class="o_row">
@@ -100,8 +98,9 @@
                                 <field name="currency_id" options="{'no_create': True, 'no_open': True}" groups="base.group_multi_currency"
                                        attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                             </div>
-                            <field name="bank_id" domain="[('partner_id','=',partner_id)]" options="{'no_create': True}" string="付款对象银行账号" />
-                            <field name="journal_id" widget="selection"  domain="[('type','in',['bank','cash'])]"  attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="bank_id" domain="[('partner_id','=',partner_id)]" options="{'no_create': True}"
+                                   string="付款对象银行账号" />
+
 
                             <field name="destination_journal_id" widget="selection"
                                    attrs="{'required': [('payment_type', '=', 'transfer')], 'invisible': [('payment_type', '!=', 'transfer')], 'readonly': [('state', '!=', 'draft')]}"/>
@@ -109,11 +108,9 @@
                             <field name="payment_method_id" string=" " widget="radio"
                                    attrs="{'invisible': [('hide_payment_method', '=', True)], 'readonly': [('state', '!=', 'draft')]}"/>
                             <field name="payment_method_code" invisible="1"/>
-                            <field name="payment_comments" string="付款信息备注"/>
+                            <field name="payment_comments" string="付款信息备注"  attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                         </group>
                         <group>
-                            <field name="be_renling" invisible="1"/>
-                            <field name="advance_ok" label="是否预收" invisible="1"/>
 
                             <field name="balance"/>
                             <field name="include_tax" invisible="1"/>
@@ -128,9 +125,19 @@
                             <field name="yfsqd_ids" widget="many2many"  domain="[('sfk_type','=','yfsqd'),('partner_id','=',partner_id),('yjzy_payment_id','=',False),('state','=','approved')]"
                                    context="{'form_view_ref':'yjzy_extend.view_yfsqd_form','tree_view_ref':'yjzy_extend.view_yfsqd_tree'}"/>
                         </page>
-                        <page string="应付核销单" attrs="{'invisible': [('count_yshx','=', 0)]}">
-                            <field name="yshx_ids" widget="many2many"  domain="[('sfk_type','=','yfhxd'),('partner_id','=',partner_id),('state','=','approved'),('yjzy_payment_id','=',False)]"
-                                   context="{'form_view_ref':'yjzy_extend.account_yfhxd_form_view','tree_view_ref':'yjzy_extend.account_yfhxd_tree_view'}"/>
+                        <page string="应付-付款申请单" attrs="{'invisible': [('count_yshx','=', 0)]}">
+                            <field name="yshx_ids" widget="many2many"  domain="[('sfk_type','=','yfhxd'),('partner_id','=',partner_id),('state','=','approved'),
+                            ('yjzy_payment_id','=',False)]"
+                                   context="{'form_view_ref':'yjzy_extend.account_yfhxd_form_view','tree_view_ref':'yjzy_extend.account_yfhxd_tree_view'}">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="partner_id" string="供应商"/>
+                                    <field name="date"/>
+                                    <field name="amount_total_org" string="申请金额"/>
+                                    <field name="amount_invoice_residual_org" string="总剩余应付款" invisible="1"/>
+                                    <field name="state"/>
+                                </tree>
+                            </field>
 </page>
 
                         <page string="费用报告" attrs="{'invisible': [('count_fybg','=', 0)]}">
@@ -146,6 +153,18 @@
                         <page groups="base.group_system">
                             <group >
                                 <field name="advance_account_id" label="预收科目" options="{'no_create':True}" invisible="0"/>
+                            </group>
+                        </page>
+                        <page groups="base.group_system" string="管理页">
+                            <group>
+                                <field name="sfk_type" />
+                                <field name="journal_id" widget="selection"  domain="[('type','in',['bank','cash'])]"  attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="payment_type" widget="radio" attrs="{'readonly': [('state', '!=', 'draft')]}" />
+                           <field name="partner_type" widget="selection"
+                                   attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))], 'invisible': [('payment_type', 'not in', ('inbound', 'outbound'))], 'readonly': [('state', '!=', 'draft')]}"/>
+<field name="be_renling" invisible="0"/>
+                                 <field name="advance_ok" label="是否预收" invisible="0"/>
+                                    <field name="company_id"/>
                             </group>
                         </page>
 

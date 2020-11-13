@@ -315,7 +315,8 @@ class purchase_order(models.Model):
             elif ctx.get('purchase_code_balance'):
                 name = '%s[%s]' % (order.contract_code, order.balance)
             else:
-                name = '%s[%s]%s' % (order.name, order.contract_code, order.pre_advance)
+                # name = '%s[%s]' % (order.name, order.contract_code)
+                name = '%s' % (order.contract_code)
             res.append((order.id, name))
         return res
 
