@@ -373,7 +373,7 @@
                                     <field name="invoice_residual" string="剩余应付款"
                                            /><!--attrs="{'column_invisible':[('parent.operation_wizard','not in',['10'])]}"-->
                                     <field name="payment_currency_id" invisible="1"/>
-                                    <field name="amount_payment_can_approve_all" string="可以申请支付应付款" attrs="{'column_invisible':[('patent.state','=','done')]}"/>
+                                    <field name="amount_payment_can_approve_all" string="可以申请支付应付款" attrs="{'column_invisible':[('parent.state','=','done')]}"/>
                                     <field name="yjzy_payment_id" string="预付单" readonly="context.get('open')" help="因为只整单对预付进行认领，所有不需要显示，这里每行都是一样的预付单"
                                            domain="[('sfk_type','=','yfsqd'),('partner_id','=',parent.partner_id)]"
                                            attrs="{'column_invisible':1}"
