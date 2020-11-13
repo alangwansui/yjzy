@@ -187,8 +187,8 @@
         <field name="model">account.payment</field>
         <field name="arch" type="xml">
             <form string="预收认领单">
-                 <header groups="base.group_system">
-
+                 <header >
+                     <button name="open_wizard_renling" type="object" string="创建认领单" />
                      <button name="action_submit" class="oe_highlight"  string="提交" type="object"
                              attrs="{'invisible':[('state_1','not in',['10_draft'])]}"/>
                      <button name="action_account_post" class="oe_highlight"  string="财务确认" type="object"
@@ -291,9 +291,8 @@
                         </group>
                     </group>
                    <notebook>
-                       <page string="预收应收认领单" attrs="{'invisible':[('advance_reconcile_order_count','!=',0)]}"
-                        context="{'form_view_ref':'yjzy_extend.account_yshxd_form_view_new','tree_view_ref':'yjzy_extend.account_yshxd_tree_view'}">>
-                           <field name="advance_reconcile_order_ids" >
+                       <page string="预收应收认领单" attrs="{'invisible':[('advance_reconcile_order_count','=',0)]}">
+                           <field name="advance_reconcile_order_ids"  context="{'form_view_ref':'yjzy_extend.account_yshxd_form_view_new','tree_view_ref':'yjzy_extend.account_yshxd_tree_view'}">
                                <tree>
                                    <field name="yjzy_type"/>
                                    <field name="name"/>

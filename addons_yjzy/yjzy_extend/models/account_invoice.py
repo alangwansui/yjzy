@@ -1155,7 +1155,7 @@ class account_invoice(models.Model):
             'res_model': 'account.reconcile.order',
             'views': [(form_view.id, 'form')],
             'res_id':account_reconcile_id.id,
-            'target': 'new',
+            'target': 'current',
             'context': {
 
 
