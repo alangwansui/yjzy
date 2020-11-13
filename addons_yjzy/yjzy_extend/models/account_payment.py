@@ -101,20 +101,20 @@ class account_payment(models.Model):
             one.balance = balance
 
 
-            if balance == 0 and one.x_wkf_state == '159':
-                one.x_wkf_state = '163'
-                one.state_1 = '60_done'
-                one.test_reconcile()
-                one.write({'state': 'reconciled'})
-            elif balance == 0 and one.state_1 == '50_posted':#参考核销
-                one.state_1 = '60_done'
-                one.test_reconcile()
-                one.write({'state': 'reconciled'})
-                print('compute_balance_1111111',one.state_1)
-                # elif balance !=0 and one.x_wkf_state == '163':
-                #  one.x_wkf_state = '159'
-            else:
-                pass
+            # if balance == 0 and one.x_wkf_state == '159':
+            #     one.x_wkf_state = '163'
+            #     one.state_1 = '60_done'
+            #     one.test_reconcile()
+            #     one.write({'state': 'reconciled'})
+            # elif balance == 0 and one.state_1 == '50_posted':#参考核销
+            #     one.state_1 = '60_done'
+            #     one.test_reconcile()
+            #     one.write({'state': 'reconciled'})
+            #     print('compute_balance_1111111',one.state_1)
+            #     # elif balance !=0 and one.x_wkf_state == '163':
+            #     #  one.x_wkf_state = '159'
+            # else:
+            #     pass
 
 
 
@@ -157,6 +157,8 @@ class account_payment(models.Model):
             advance_balance_total = one.amount - advance_total
             if advance_balance_total == 0 and one.state_1 == '50_posted':
                 one.state_1 = '60_done'
+                one.test_reconcile()
+                one.write({'state': 'reconciled'})
             one.advance_total = advance_total
             one.advance_balance_total = advance_balance_total
 
@@ -368,6 +370,7 @@ class account_payment(models.Model):
     diff_account_id = fields.Many2one('account.account', u'差异科目')
     diff_amount = fields.Monetary(u'差异金额', currency_field='currency_id')
     yjzy_payment_id = fields.Many2one('account.payment', u'选择收款单')
+    # yjzy_advance_payment_id = fields.Many2one('account.payment', u'预收认领单')#给最后核销生成的payment作为核销参考
     yjzy_payment_currency_id = fields.Many2one('res.currency', related='yjzy_payment_id.currency_id')
     yjzy_payment_balance = fields.Monetary(u'认领余额', related='yjzy_payment_id.balance', currency_field='yjzy_payment_currency_id')
 
@@ -424,6 +427,22 @@ class account_payment(models.Model):
     post_uid = fields.Many2one('res.users',u'审批人')
     post_date = fields.Date(u'审批时间')
 
+    #原生会计核销单独方法
+    def action_reconcile(self):
+        if self.balance == 0 and self.x_wkf_state == '159':
+            self.x_wkf_state = '163'
+            self.state_1 = '60_done'
+            self.test_reconcile()
+            self.write({'state': 'reconciled'})
+        elif self.balance == 0 and self.state_1 == '50_posted':  # 参考核销
+            self.state_1 = '60_done'
+            self.test_reconcile()
+            self.write({'state': 'reconciled'})
+            print('compute_balance_1111111', self.state_1)
+            # elif balance !=0 and one.x_wkf_state == '163':
+            #  one.x_wkf_state = '159'
+        else:
+            pass
 
     #test 定稿 参考核销
     def test_reconcile(self):
@@ -441,6 +460,21 @@ class account_payment(models.Model):
             if self.balance == 0:
                 wizard = self.env['account.move.line.reconcile'].with_context(active_ids=[x.id for x in aml_recs]).create({})
                 wizard.trans_rec_reconcile_full()
+        if self.sfk_type == 'ysrld':
+            account = self.env['account.account'].search([('code', '=', '2203'), ('company_id', '=', self.company_id.id)],limit=1)
+            # aml_recs = self.env['account.move.line'].search([('new_payment_id','=',self.id),('account_id','=',account.id)])
+            aml_recs = self.aml_ids.filtered(lambda x: x.new_advance_payment_id.id == self.id and x.account_id.id == account.id and x.reconciled == False)
+            if self.balance == 0:
+                wizard = self.env['account.move.line.reconcile'].with_context(active_ids=[x.id for x in aml_recs]).create({})
+                wizard.trans_rec_reconcile_full()
+        if self.sfk_type == 'yfrld':
+            account = self.env['account.account'].search([('code', '=', '1123'), ('company_id', '=', self.company_id.id)],limit=1)
+            # aml_recs = self.env['account.move.line'].search([('new_payment_id','=',self.id),('account_id','=',account.id)])
+            aml_recs = self.aml_ids.filtered(lambda x: x.new_advance_payment_id.id == self.id and x.account_id.id == account.id and x.reconciled == False)
+            if self.balance == 0:
+                wizard = self.env['account.move.line.reconcile'].with_context(active_ids=[x.id for x in aml_recs]).create({})
+                wizard.trans_rec_reconcile_full()
+
 
     def open_wizard_renling(self):
         self.ensure_one()
@@ -450,16 +484,23 @@ class account_payment(models.Model):
             'default_yjzy_payment_id': self.id,
 
         })
+
+        if self.sfk_type == 'rcskd':
+            form_view = self.env.ref('yjzy_extend.wizard_renling_form')
+        elif self.sfk_type == 'ysrld':
+            form_view = self.env.ref('yjzy_extend.wizard_renling_form_advance')
         return {
             'name': '创建认领',
             'view_type': 'form',
             'view_mode': 'form',
             'res_model': 'wizard.renling',
+            'views':[(form_view.id,'form')],
             # 'res_id': bill.id,
             'target': 'new',
             'type': 'ir.actions.act_window',
             'context': ctx,
         }
+
 
     # @api.onchange('yjzy_partner_id')
     # def onchange_yjzy_partner_id(self):
@@ -844,13 +885,16 @@ class account_payment(models.Model):
         new_payment_id = self.id
         if self.sfk_type in ['ysrld', 'yfsqd', 'rcfksqd', 'rcskrld','yingshourld','yingfurld']:
             new_payment_id = self.yjzy_payment_id.id
-
+        if self.sfk_type in ['ysrld','yfsqd']:
+            new_advance_payment_id = self.id
+        if self.sfk_type in ['yingshourld','yingfurld']:
+            new_advance_payment_id = self.yjzy_payment_id.id
 
         res.update({
             'new_payment_id': new_payment_id,
             'so_id': self.so_id.id,
             'po_id': self.po_id.id,
-            'new_advance_payment_id':self.id
+            'new_advance_payment_id':new_advance_payment_id
         })
         return res
 
@@ -1505,6 +1549,9 @@ class account_payment(models.Model):
                                          'payment_type':'inbound',
                                          'partner_type':'customer',
                                          'be_renling':True,
+                                         'invoice_attribute': 'normal',
+                                         'yjzy_type': 'sale',
+                                          'hxd_type_new':'10'
 
                                          })
             form_view = self.env.ref('yjzy_extend.account_yshxd_form_view_new').id
@@ -1515,7 +1562,7 @@ class account_payment(models.Model):
                 'res_model': 'account.reconcile.order',
                 'views': [(form_view, 'form')],
                 'res_id': yshxd_id.id,
-                'target': 'current',
+                'target': 'new',
                 'type': 'ir.actions.act_window',
                 'context':{'default_sfk_type': 'yshxd',
                            'active_id':yshxd_id.id
@@ -1532,7 +1579,8 @@ class account_payment(models.Model):
                                          'yjzy_payment_id':self.id,
                                          'be_renling': True,
                                          'invoice_attribute': invoice_attribute,
-                                         'yjzy_type': yjzy_type
+                                         'yjzy_type': yjzy_type,
+                'hxd_type_new': '20'
                                          })
 
             # if self.yjzy_partner_id:

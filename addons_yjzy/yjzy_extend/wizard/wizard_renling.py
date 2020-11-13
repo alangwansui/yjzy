@@ -105,6 +105,43 @@ class wizard_renling(models.TransientModel):
 
         self.create_yshxd_ysrl()
 
+    #从预收单申请应收
+    def create_ysrld_yxhxd(self):
+        if len(self.invoice_ids.mapped('currency_id')) > 1:
+            raise Warning('不同币种的账单，不能同时认领！')
+        sfk_type = 'yshxd'
+        name = self.env['ir.sequence'].next_by_code('sfk.type.%s' % sfk_type)
+        yshxd_obj = self.env['account.reconcile.order']
+        yshxd_id = yshxd_obj.create({
+            'name': name,
+            'operation_wizard': '25',
+            'yjzy_advance_payment_id': self.yjzy_payment_id.id,
+            'partner_id': self.partner_id.id,
+            'sfk_type': sfk_type,
+            'payment_type': 'inbound',
+            'partner_type': 'customer',
+            'be_renling': True,
+            'invoice_attribute': 'normal',
+            'yjzy_type': 'sale',
+            'hxd_type_new': '10'
+
+        })
+        self.make_lines_so(yshxd_id)
+        form_view = self.env.ref('yjzy_extend.account_yshxd_form_view_new').id
+        return {
+            'name': '认领单',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'account.reconcile.order',
+            'views': [(form_view, 'form')],
+            'res_id': yshxd_id.id,
+            'target': 'new',
+            'type': 'ir.actions.act_window',
+            'context': {'default_sfk_type': 'yshxd',
+                        'active_id': yshxd_id.id
+                        }
+        }
+
     def create_yshxd_ysrl(self):
         if len(self.invoice_ids.mapped('currency_id')) > 1:
             raise Warning('不同币种的账单，不能同时认领！')

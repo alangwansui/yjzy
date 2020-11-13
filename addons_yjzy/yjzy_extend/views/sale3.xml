@@ -1319,8 +1319,9 @@
                             </page>
                             <page groups="base.group_system" string="说明文档">
                                 <p>
-
-                            test<br/>
+                                     11.12<br/>
+                                    1.用新的审批流程<br/>
+                                    1.增加对明细行没有关联采购的判断<br/>
 
                                 </p>
                             </page>

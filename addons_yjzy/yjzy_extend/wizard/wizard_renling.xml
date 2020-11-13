@@ -86,6 +86,59 @@
             </field>
         </record>
 
+
+        <record id="wizard_renling_form_advance" model="ir.ui.view">
+            <field name="name">wizard.renling.advance.from</field>
+            <field name="model">wizard.renling</field>
+            <field name="arch" type="xml">
+                <form string="创建发运单">
+                    <group>
+
+                        <field name="partner_id" attrs="{'invisible':1}"
+                               domain="[('is_company','=',True),('parent_id', '=', False),('customer','=',1),('invoice_open_ids_count','!=',0),('name','not in',['未定义','国税局'])]"/>
+
+
+                    </group>
+
+                            <span  style="font-weight:bolder; margin-bottom:5px">
+                                选择需要认领的账单
+                            </span>
+
+
+                        <field name="invoice_ids" nolabel="1"
+                               domain="[('partner_id','=',partner_id),('state','=','open'),('type','in',['out_invoice'])]"
+                               context="{'tree_view_ref':'yjzy_extend.invoice_sale_new_hxd_tree'}"
+                               options="{'no_create': True,'no_open':True}">
+                            <tree>
+                                <field name="invoice_partner"/>
+                                <field name="name_title"/>
+                                <field name="date_invoice" string="进仓日期"/>
+                                <field name="date_deadline_new" string="到期日"/>
+                                <field name="tb_contract_code" string="合同号" />
+                                <field name="amount_total_signed" string="原始应收款" sum="小计"/>
+                                <field name="residual_signed" string="剩余应收款" sum="小计"/>
+                                <field name="state"/>
+                                <field name="currency_id" invisible="1"/>
+
+                            </tree>
+                        </field>
+                <div groups="base.group_system">
+                         <field name="step"/>
+                        <field name="sale_other_invoice_ids" invisible="1"/>
+
+                </div>
+                    <footer>
+
+
+                        <button name="create_ysrld_yxhxd" class="oe_highlight" type="object" string="创建应收认领" attrs=""
+                                />
+
+                        <button special="cancel" class="oe_highlight" string="取消"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
         <!--
               <act_window id="act_wizard_transport4so"
                           name="创建发运单"

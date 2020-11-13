@@ -188,6 +188,7 @@
         <field name="arch" type="xml">
             <form string="预收认领单">
                  <header groups="base.group_system">
+
                      <button name="action_submit" class="oe_highlight"  string="提交" type="object"
                              attrs="{'invisible':[('state_1','not in',['10_draft'])]}"/>
                      <button name="action_account_post" class="oe_highlight"  string="财务确认" type="object"
@@ -250,20 +251,20 @@
                                    domain="[('is_company','=',True),('customer','=',True)]"
                                    attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))], 'invisible': [('payment_type', 'not in', ('inbound', 'outbound'))], 'readonly': [('state', '!=', 'draft')]}"
                                    context="{'default_is_company': True, 'default_supplier': payment_type == 'outbound', 'default_customer': payment_type == 'inbound'}"/>
-                            <field name="yjzy_payment_id" string="选择收款单"
+                            <field name="yjzy_payment_id" string="选择收款单" invisible="1"
                                    domain="['|','&amp;','&amp;','&amp;',('state','=','posted'),('sfk_type','=','rcskd'),('partner_id','=',partner_id),('balance','!=',0),'&amp;','&amp;','&amp;',('state','=','posted'),('sfk_type','=','rcskd'),('partner_id.name','=','未定义'),('balance','!=',0)]"
                                    options="{'no_create':True}"
                                    context="{'form_view_ref': 'yjzy_extend.view_rcskd_form','bank_amount':1}"/>
                             <field name="yjzy_payment_currency_id" string="货币" readonly="1"
                                    options="{'no_create':True,'no_open': True}"/>
-                            <field name="yjzy_payment_balance" string="收款单余额"/>
+                            <field name="yjzy_payment_balance" string="收款单余额" invisible="1"/>
                             <field name="so_id" string="销售合同"
                                    domain="[('partner_id','=', partner_id),('state','not in',['done','verifying','abnormal','verification','cancel','refuse'])]"
                                    options="{'no_create':True,'no_open': True}"/>
                              <field name="amount_total_so"/>
                              <field name="so_id_currency_id" invisible="1"/>
 
-                            <label for="amount" string="收款认领金额"/>
+                            <label for="amount" string="预收金额"/>
                             <div name="amount_div" class="o_row" string="收款金额">
                                 <field name="amount" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                                 <field name="currency_id" options="{'no_create': True, 'no_open': True}"
@@ -280,24 +281,30 @@
                             <field name="payment_method_code" invisible="1"/>
                         </group>
                         <group>
-                            <field name="advance_total" string="被认领金额"/>
                             <field name="advance_balance_total" string="未被认领金额"/>
+                            <field name="advance_total" string="被认领金额"/>
                             <field name="payment_date" string="认领收款日期"
                                    attrs="{'readonly': [('state', '!=', 'draft')]}"/>
-                            <field name="sfk_type" readonly="1" attrs="{'invisible':1}"/>
-                            <field name="payment_type" widget="radio" readonly="1" attrs="{'invisible':1}" required="1"/>
-                            <field name="partner_type" widget="selection" invisible="1"
-                                   attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))], 'invisible': [('payment_type', 'not in', ('inbound', 'outbound'))], 'readonly': 1 }"/>
-                            <field name="be_renling" invisible="1"/>
-                            <field name="advance_ok" label="是否预收" string="是预收" invisible="1"/>
-                            <field name="advance_account_id" label="预收科目" string="预收科目" options="{'no_create':True}"
-                                   invisible="1"/>
                             <field name="communication"
                                    attrs="{'invisible': [('state', '!=', 'draft'), ('communication', '=', False)], 'readonly': [('state', '!=', 'draft')]}"/>
 
                         </group>
                     </group>
                    <notebook>
+                       <page string="预收应收认领单" attrs="{'invisible':[('advance_reconcile_order_count','!=',0)]}"
+                        context="{'form_view_ref':'yjzy_extend.account_yshxd_form_view_new','tree_view_ref':'yjzy_extend.account_yshxd_tree_view'}">>
+                           <field name="advance_reconcile_order_ids" >
+                               <tree>
+                                   <field name="yjzy_type"/>
+                                   <field name="name"/>
+                                   <field name="date"/>
+                                   <field name="amount_invoice_org"/>
+                                   <field name="amount_invoice_residual_org"/>
+                                   <field name="amount_total_org"/>
+                                   <field name="state"/>
+                               </tree>
+                           </field>
+                       </page>
                        <page string="预收应收认领明细" attrs="{'invisible':[('advance_reconcile_order_count','=',0)]}">
                            <field name="advance_reconcile_order_line_ids">
                                <tree>
@@ -312,6 +319,14 @@
                            <group>
                                <field name="advance_reconcile_order_count"/>
                                <field name="gongsi_id" string="公司主体" options="{'no_create':True,'no_open': True}"/>
+                               <field name="sfk_type" readonly="1" />
+                                <field name="payment_type" widget="radio" readonly="1"  required="1"/>
+                            <field name="partner_type" widget="selection"
+                                   attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))], 'invisible': [('payment_type', 'not in', ('inbound', 'outbound'))], 'readonly': 1 }"/>
+                            <field name="be_renling" />
+                            <field name="advance_ok" label="是否预收" string="是预收" />
+                            <field name="advance_account_id" label="预收科目" string="预收科目" options="{'no_create':True}"
+                                   />
                            </group>
                             <field name="advance_reconcile_order_ids"/>
                        </page>

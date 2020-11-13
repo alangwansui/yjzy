@@ -611,7 +611,7 @@ class account_reconcile_order(models.Model):
                     'amount': line.amount_advance_org,
                     'sfk_type': sfk_type,
                     'currency_id': line.yjzy_currency_id.id,
-                    'yjzy_payment':line.yjzy_payment_id.id,
+                    'yjzy_payment_id':line.yjzy_payment_id.id,
                     'payment_type': 'inbound',
                     'partner_type': 'customer',
                     'advance_ok': False,
@@ -967,6 +967,11 @@ class account_reconcile_order(models.Model):
                         'approve_date': fields.date.today(),
                         'approve_uid': self.env.user.id
                         })
+            #核销的动作这里完成
+            if self.yjzy_payment_id:
+                self.yjzy_payment_id.action_reconcile()
+            if self.yjzy_advance_payment_id:
+                self.yjzy_advance_payment_id.action_reconcile()
 
 
 

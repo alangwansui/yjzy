@@ -346,9 +346,11 @@
                             <field name="main_sign_uid" groups="sale.hegui_all" />
                         </group>
                     </page>
-                        <page groups="base.group_system">
+                        <page groups="base.group_system" string="说明文档">
                             <p>
+                                11.12<br/>
                                 1)加上stage，根绝stage的用户来决定主签字人<br/>
+                                2)增加对采购合同号和付款条款必填的判断<br/>
                             </p>
                         </page>
                     </notebook>
