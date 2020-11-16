@@ -408,25 +408,24 @@
             <field name="model">sale.order</field>
             <field name="arch" type="xml">
                 <form string="销售订单" class="o_sale_order" create="false">
-                    <header groups="base.group_system">
-                        <button name="action_submit_stage" string="提交" type="object"
+                    <header>
+                        <button name="action_submit_stage" string="提交" type="object" class="oe_highlight"
                                 attrs="{'invisible':[('state_1','!=','draft')]}"/>
-                        <button name="action_to_draft" string="重置草稿" type="object"
-                                attrs="{'invisible':[('state_1','!=','refused')]}"/>d
-
-                        <button name="action_sales_approve_stage" string="客户经理审批" type="object"
+                        <button name="action_to_draft_stage" string="重置草稿" type="object" class="oe_highlight"
+                                attrs="{'invisible':[('state_1','not in',['refused','cancel'])]}"/>
+                        <button name="action_sales_approve_stage" string="客户经理审批" type="object" class="oe_highlight"
                                 attrs="{'invisible':[('state_1','!=','submit')]}"/>
-                        <button name="action_approve_stage" string="合规审批" type="object"
+                        <button name="action_approve_stage" string="合规审批" type="object" class="oe_highlight"
                                 attrs="{'invisible':[('state_1','!=','sales_approve')]}"/>
-
-                        <button name="%(so_refuse_wizard_action)d" string="拒绝" type="action"/>
-
+                        <button name="%(so_refuse_wizard_action)d" string="拒绝" type="action"  attrs="{'invisible':[('state_1','in',['draft','cancel','refused'])]}"/>
+                        <button name="action_to_cancel_stage" string="取消" type="object"  attrs="{'invisible':[('state_1','not in',['draft','refused'])]}"/>
+                        <button name="new_open_wizard_so2po" states="draft,send,sale" type="object"
+                                context="{'new': 1}" string="创建采购单:新"
+                                groups="sales_team.group_sale_assistant"/>
+                          <button name="open_sale_cost"  type='object' string="成本单"/>
                         <field name="state_1" widget="statusbar" statusbar_visible=" "/>
                     </header>
-                    <header groups="base.group_system">
 
-                        <field name="state" widget="statusbar" statusbar_visible=" " groups="base.group_system"/>
-                    </header>
                     <header groups="base.group_system">
                         <button name="action_manual_ubnormal_hexiao" type="object" string="手动异常核销"/>
                         <button name="compute_balance_new" type="object" string="计算预收余额"/>
@@ -486,20 +485,20 @@
                         <button name="open_wizard_so2po" invisible="1" states="draft,send,sale" class="oe_highlight"
                                 type="object" string="创建采购单"
                                 groups="sales_team.group_sale_assistant"/>
-                        <button name="new_open_wizard_so2po" states="draft,send,sale" class="oe_highlight" type="object"
-                                context="{'new': 1}" string="创建采购单:新"
-                                groups="sales_team.group_sale_assistant"/>
+
                         <!--field name="state" widget="statusbar" statusbar_invisible="draft"  groups="base.group_system"/--><!--statusbar_visible="draft,sent,sale"-->
 
                         <button name="open_wizard_bom_sale" class="oe_highlight" type='object' string="套件销售"
                                 invisible="1" groups="base.group_system"/>
-                        <button name="open_sale_cost" class="oe_highlight" type='object' string="成本单"/>
+
                         <button name="open_advance_residual_lines" groups="base.group_system" invisible="1"
                                 class="oe_highlight" type='object' string="预收分录明细"/>
                         <button name="check_po_allow" class="oe_highlight" invisible="1" type='object'
                                 string="检查采购已审批"/>
                         <button name="compute_po_residual" type="object" groups="base.group_system" invisible="1"
                                 string="计算采购预付款"/>
+
+                        <field name="state" widget="statusbar" statusbar_visible=" " groups="base.group_system"/>
                     </header>
                     <sheet>
                         <div class="oe_button_box" name="button_box">

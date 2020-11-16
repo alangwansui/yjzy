@@ -236,6 +236,14 @@ class purchase_order(models.Model):
                            'main_sign_uid':main_sign_uid.id
                            })
 
+    def action_confirm_stage(self):
+        if self.state == 'to approve':
+            self.button_approve()
+        stage_id = self._stage_find(domain=[('code', '=', '050')])
+        return self.write({'stage_id': stage_id.id,
+                           })
+
+
     def action_refuse_stage(self, reason):
         stage_id = self._stage_find(domain=[('code', '=', '090')])
         stage_preview = self.stage_id

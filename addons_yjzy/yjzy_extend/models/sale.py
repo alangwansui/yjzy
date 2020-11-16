@@ -567,6 +567,12 @@ class sale_order(models.Model):
                            'hegui_uid': self.env.user.id,
                            'hegui_date': fields.datetime.now()})
 
+    def action_confirm_stage(self):
+        self.action_confirm_new()
+        stage_id = self._stage_find(domain=[('code', '=', '060')])
+        return self.write({'stage_id': stage_id.id,
+                           })
+
 
     def action_refuse_stage(self, reason):
         stage_id = self._stage_find(domain=[('code', '=', '100')])
@@ -840,21 +846,44 @@ class sale_order(models.Model):
         res = super(sale_order, self).action_confirm()
         #akiny to approve的时候触发button_approve
         todo_po = self.po_ids.filtered(lambda x: x.can_confirm_by_so and x.state not in ['purchase', 'done', 'cancel', 'edit'])
-       #  todo_po1 = self.po_ids.filtered(lambda x: x.can_confirm_by_so and x.state in ['to approve'])
+        todo_po1 = self.po_ids.filtered(lambda x: x.can_confirm_by_so and x.state in ['to approve'])
 
       #  if todo_po:
       #      todo_po.button_confirm()
-      #   if todo_po1:
-      #       todo_po1.button_approve()
+        if todo_po1:
+            todo_po1.button_approve()
 
-        for po in todo_po:
-            if po.state == 'to approve':
-                po.button_approve()
-                res = super(sale_order, self).button_approve()
-            else:
-                po.button_confirm()
-                res = super(sale_order, self).action_confirm()
+        # for po in todo_po:
+        #     if po.state == 'to approve':
+        #         po.button_approve()
+        #
+        #     else:
+        #         po.button_confirm()
+
         return res
+
+    def action_confirm_new(self):
+        '''so auto po confirm'''
+        res = super(sale_order, self).action_confirm()
+        #akiny to approve的时候触发button_approve
+        todo_po = self.po_ids.filtered(lambda x: x.can_confirm_by_so and x.state not in ['purchase', 'done', 'cancel', 'edit'])
+        todo_po1 = self.po_ids.filtered(lambda x: x.can_confirm_by_so and x.state in ['to approve'])
+
+      #  if todo_po:
+      #      todo_po.button_confirm()
+        if todo_po1:
+            # todo_po1.button_approve()
+            for po in todo_po1:
+                po.action_confirm_stage()
+        # for po in todo_po:
+        #     if po.state == 'to approve':
+        #         po.button_approve()
+        #
+        #     else:
+        #         po.button_confirm()
+        return res
+
+
 
     def action_confirm2(self):
         self.ensure_one()
@@ -904,7 +933,7 @@ class sale_order(models.Model):
         self.ensure_one()
         for po in self.po_ids:
             if not po.can_confirm_by_so:
-                raise Warning(u'PO%s 自动跟随审批还未完成' % po.name)
+                raise Warning(u'PO-%s审批还未完成' % po.comtract_code)
         return True
 
     def update_back_tax(self):

@@ -67,11 +67,11 @@
                 <form string="采购合同">
                  <header groups="base.group_system">
                      <button name="action_submit_stage" type="object" string="提交" attrs="{'invisible':[('state_1','!=','draft')]}"/>
-
-                      <button name="action_sales_approve_stage" type="object" string="客户经理审批" attrs="{'invisible':[('state_1','!=','submit')]}"/>
+                     <button name="action_sales_approve_stage" type="object" string="客户经理审批" attrs="{'invisible':[('state_1','!=','submit')]}"/>
                      <button name="action_approve_stage" type="object" string="采购员审批" attrs="{'invisible':[('state_1','!=','sales_approve')]}"/>
                      <button name="action_to_draft_stage" type="object" string="重置草稿" attrs="{'invisible':[('state_1','not in',['refused','cancel'])]}"/>
-                     <button name="%(po_refuse_wizard_action)d" string="拒绝" type="action"/>
+                     <button name="%(po_refuse_wizard_action)d" string="拒绝" type="action" attrs="{'invisible':[('state_1','in',['draft','refused','cancel'])]}"/>
+                     <button name="action_to_cancel_stage" string="取消" type="object" attrs="{'invisible':[('state_1','not in',['draft','refused'])]}"/>
                      <field name="state_1" widget="statusbar" statusbar_visible=" "/>
                  </header>
                 <header groups="base.group_system">
@@ -88,8 +88,8 @@
                     <button name="button_cancel" invisible="1" groups="base.group_system" states="draft,to approve,sent,purchase"  string="Cancel" type="object"/>
                     <button name="button_done" invisible="1" groups="base.group_system" type="object" string="Lock" states="purchase"/>
                     <button name="button_unlock" invisible="1" groups="base.group_system" type="object" string="Unlock" states="done" />
-                    <button string="创建批次号" invisible="1" states="" type="object" name="create_lots"/>
-                    <button string="虚拟入库" invisible="1" states="" type="object" name="make_dump_income_picking"/>
+                    <button string="创建批次号" invisible="0" states="" type="object" name="create_lots"/>
+                    <button string="虚拟入库" invisible="0" states="" type="object" name="make_dump_income_picking"/>
                     <button name="test_pre_advance" string="预付款测试按钮" type="object" class="oe_highlight" invisible="1" groups="base.group_no_one"/>
                     <button name="make_yfsqd" string="测试生成预付申请单"  type="object" class="oe_highlight"  invisible="1" groups="base.group_no_one"/>
                     <button name="clear_yfsqd" string="清除预付申请单" invisible="1" type="object" class="oe_highlight"/>
