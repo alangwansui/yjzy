@@ -841,7 +841,7 @@ class account_reconcile_order(models.Model):
         #                 'state': 'posted',
         #                 })
         #     # self.date = fields.date.today()
-#暂时取消，等正式测试完毕打开
+         #暂时取消，等正式测试完毕打开
         # for one in self.invoice_ids:
         #     #所有应付核销明细对应的核销单是付款申请的，并且审批中的，不等于本身的单子数量
         #     reconcile_order_line_ids = one.reconcile_order_line_ids.filtered(lambda x: x.order_id.hxd_type_new == '40' and x.order_id.state in ['posted'] and x.order_id !=self)
@@ -851,15 +851,18 @@ class account_reconcile_order(models.Model):
             amount_advance_residual_org = self.amount_advance_residual_org
             amount_advance_org = self.amount_advance_org
             yjzy_advance_payment_balance = self.yjzy_advance_payment_balance
-            for one in self.line_no_ids:
-                if one.amount_payment_can_approve_all < one.amount_payment_org:
-                    raise Warning('申请的金额大于可申请的应付,请检查')
-            if amount_advance_residual_org < amount_advance_org:
-                raise Warning(u'预付认领金额大于采购单剩余的可认领金额') #出现历史数据错误的时候。也就是预付被认领的时候，没有填写预付单
-            if yjzy_advance_payment_balance < amount_advance_org:
-                raise Warning(u'预付认领金额大于预付款单剩余的可认领金额')
-            if self.amount_total_org == 0:
-                raise Warning('认领金额为0，无法提交！')
+            if self.operation_wizard != '03':
+                for one in self.line_no_ids:
+                    if one.amount_payment_can_approve_all < one.amount_payment_org:
+                        raise Warning('申请的金额大于可申请的应付,请检查')
+                if amount_advance_residual_org < amount_advance_org:
+                    raise Warning(u'预付认领金额大于采购单剩余的可认领金额') #出现历史数据错误的时候。也就是预付被认领的时候，没有填写预付单
+                if yjzy_advance_payment_balance < amount_advance_org:
+                    raise Warning(u'预付认领金额大于预付款单剩余的可认领金额')
+                if self.amount_total_org == 0:
+                    raise Warning('认领金额为0，无法提交！')
+
+
             if self.hxd_type_new == '30':
                 lines = self.line_no_ids
                 if self.yjzy_advance_payment_balance < 0:
@@ -882,11 +885,18 @@ class account_reconcile_order(models.Model):
                                 # 'operation_wizard':'25'
                                 })
                 else:
-                    stage_id = self._stage_find(domain=[('code', '=', '020')])
-                self.write({'stage_id': stage_id.id,
+                    if self.operation_wizard == '03':
+                        stage_id = self._stage_find(domain=[('code', '=', '020')])
+                        self.write({'stage_id': stage_id.id,
                             'state': 'posted',
                             # 'operation_wizard':'10'
                             })
+                    else:
+                        stage_id = self._stage_find(domain=[('code', '=', '040')])
+                        self.write({'stage_id': stage_id.id,
+                                    'state': 'posted',
+                                    # 'operation_wizard':'25'
+                                    })
         elif self.sfk_type == 'yshxd':
             # amount_advance_residual_org = self.amount_advance_residual_org
             # amount_advance_org = self.amount_advance_org

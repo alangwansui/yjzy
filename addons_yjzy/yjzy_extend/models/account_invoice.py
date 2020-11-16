@@ -1148,7 +1148,10 @@ class account_invoice(models.Model):
             #         'operation_wizard': '25',
             #         'hxd_type_new': '30',  # 预付-应付
                     })
+
         account_reconcile_id.make_lines()
+        if account_reconcile_id.supplier_advance_payment_ids_count == 0:
+            account_reconcile_id.operation_wizard = '10'
         return {
             'type': 'ir.actions.act_window',
             'view_mode': 'form',

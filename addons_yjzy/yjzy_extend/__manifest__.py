@@ -83,6 +83,7 @@
         'views/sale.xml',
         'views/sale2.xml',
         'views/sale3.xml',
+        'views/sale4.xml',
         'views/purchase.xml',
         'views/purchase2.xml',
         # 'views/sale_cost.xml',

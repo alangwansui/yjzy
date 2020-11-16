@@ -1006,7 +1006,7 @@ class sale_order(models.Model):
     # 2.发货完成的合同，有预收付款的，认领完成后，进正常待核销，认领完成和发货完成，两者最后完成的日期当天进去
     # 3.发货完成的合同，有预收付款的，超出90天未认领完成的，进异常待核销，90天到期日当天进去;
     # 4.未发货完成的合同，离约定发货日期180天的，进异常待核销，180天到期当天进去
-
+   #1116 正式，加入stage
     def update_hexiaotype_doing_type(self):
         for one in self:
             print('---', one)
@@ -1014,21 +1014,26 @@ class sale_order(models.Model):
             state = one.state
             today = datetime.now()
             requested_date = one.requested_date
+            stage_id = one.stage_id
             # 未发货，开始发货，待核销，已核销
             if one.state in ('sale','done','verifying'):
                 if (one.no_sent_amount_new != 0 or one.purchase_no_deliver_amount_new != 0 ) and requested_date and requested_date < (today - relativedelta(days=180)).strftime('%Y-%m-%d 00:00:00'):
                     state='done'
                     hexiao_type = 'abnormal'
+                    stage_id = self._stage_find(domain=[('code', '=', '080')])
                 if one.no_sent_amount_new == 0 and one.purchase_no_deliver_amount_new == 0:
                     if one.balance == 0 and one.purchase_balance_sum3 == 0:
                         hexiao_type = 'write_off'
                         state = 'done'
+                        stage_id = self._stage_find(domain=[('code', '=', '070')])
                     else:
                         if requested_date and requested_date < (today - relativedelta(days=90)).strftime('%Y-%m-%d 00:00:00'):
                             hexiao_type = 'abnormal'
                             state = 'done'
+                            stage_id = self._stage_find(domain=[('code', '=', '070')])
             one.hexiao_type = hexiao_type
             one.state = state
+            one.state_id = stage_id
     # 增加state:异常合同，将待核销的二级分组的异常核销进入state的异常合同
     def update_hexiaotype_doing_type_new(self):
         for one in self:
