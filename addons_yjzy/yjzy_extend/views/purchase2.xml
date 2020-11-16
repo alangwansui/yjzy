@@ -65,13 +65,13 @@
             <field name="model">purchase.order</field>
             <field name="arch" type="xml">
                 <form string="采购合同">
-                 <header groups="base.group_system">
-                     <button name="action_submit_stage" type="object" string="提交" attrs="{'invisible':[('state_1','!=','draft')]}"/>
-                     <button name="action_sales_approve_stage" type="object" string="客户经理审批" attrs="{'invisible':[('state_1','!=','submit')]}"/>
-                     <button name="action_approve_stage" type="object" string="采购员审批" attrs="{'invisible':[('state_1','!=','sales_approve')]}"/>
-                     <button name="action_to_draft_stage" type="object" string="重置草稿" attrs="{'invisible':[('state_1','not in',['refused','cancel'])]}"/>
+                 <header>
+                     <button name="action_submit_stage" type="object" string="提交" class="highlight" attrs="{'invisible':[('state_1','!=','draft')]}"/>
+                     <button name="action_sales_approve_stage" type="object" string="客户经理审批" class="highlight" attrs="{'invisible':[('state_1','!=','submit')]}"/>
+                     <button name="action_approve_stage" type="object" string="采购员审批"  class="highlight" attrs="{'invisible':[('state_1','!=','sales_approve')]}"/>
+                     <button name="action_to_draft_stage" type="object" string="重置草稿" class="highlight" attrs="{'invisible':[('state_1','not in',['refused','cancel'])]}"/>
                      <button name="%(po_refuse_wizard_action)d" string="拒绝" type="action" attrs="{'invisible':[('state_1','in',['draft','refused','cancel'])]}"/>
-                     <button name="action_to_cancel_stage" string="取消" type="object" attrs="{'invisible':[('state_1','not in',['draft','refused'])]}"/>
+                     <button name="action_to_cancel_stage" string="取消" groups="base.group_system" type="object" attrs="{'invisible':[('state_1','not in',['draft','refused'])]}"/>
                      <field name="state_1" widget="statusbar" statusbar_visible=" "/>
                  </header>
                 <header groups="base.group_system">

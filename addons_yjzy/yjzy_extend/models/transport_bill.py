@@ -2849,8 +2849,8 @@ class transport_bill(models.Model):
             so_id = self.line_ids.mapped('so_id')
             for so in so_id:
                 if so.state == 'approve':
-                    so.action_confirm()
-                    # so.action_confirm_stage() 等待更新
+                    # so.action_confirm()
+                    so.action_confirm_stage()
             stage_preview = self.stage_id
             user = self.env.user
             # group = self.env.user.groups_id

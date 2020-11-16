@@ -419,7 +419,7 @@
                         <button name="action_approve_stage" string="合规审批" type="object" class="oe_highlight"
                                 attrs="{'invisible':[('state_1','!=','sales_approve')]}"/>
                         <button name="%(so_refuse_wizard_action)d" string="拒绝" type="action"  attrs="{'invisible':[('state_1','in',['draft','cancel','refused'])]}"/>
-                        <button name="action_to_cancel_stage" string="取消" type="object"  attrs="{'invisible':[('state_1','not in',['draft','refused'])]}"/>
+                        <button name="action_to_cancel_stage" string="取消" groups="base.group_system" type="object"  attrs="{'invisible':[('state_1','not in',['draft','refused'])]}"/>
                         <button name="new_open_wizard_so2po" states="draft,send,sale" type="object"
                                 context="{'new': 1}" string="创建采购单:新"
                                 groups="sales_team.group_sale_assistant"/>
@@ -1192,7 +1192,7 @@
             <field name="domain">
                 [('state','in',['draft','submit','sales_approve','manager_approval','cancel','refuse'])]
             </field>
-            <field name="context">{'search_default_group_by_state':1}</field>
+            <field name="context">{'search_default_group_by_stage_id':1}</field>
             <field name="search_view_id" ref="view_sales_order_new_approval_filter_4"/>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('new_sale_order_tree_4')}),
@@ -1231,7 +1231,7 @@
             <field name="view_mode">tree,form,kanban</field>
             <field name="domain">[('state','in',['sale','approve','verifying','done'])]</field>
             <field name="search_view_id" ref="view_sales_order_new_approve_filter_4"/>
-            <field name="context">{'search_default_group_by_state_hexiao_type':1}</field>
+            <field name="context">{'search_default_group_by_stage_id':1}</field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('new_sale_order_tree_4')}),
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('new_sale_order_kanban_4')}),
