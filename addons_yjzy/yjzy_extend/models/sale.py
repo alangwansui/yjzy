@@ -1062,7 +1062,7 @@ class sale_order(models.Model):
                             stage_id = self._stage_find(domain=[('code', '=', '070')])
             one.hexiao_type = hexiao_type
             one.state = state
-            one.state_id = stage_id
+            one.stage_id = stage_id
     # 增加state:异常合同，将待核销的二级分组的异常核销进入state的异常合同
     def update_hexiaotype_doing_type_new(self):
         for one in self:
