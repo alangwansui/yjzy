@@ -243,6 +243,7 @@
         <field name="arch" type="xml">
             <form string="应收认领单">
                 <header invisible="context.get('open')">
+                    <button name="compute_advice_amount_advance_org" type="object" class="oe_highlight" string="计算建议预收认领金额"/>
                     <button name="action_manager_approve_stage" type="object" class="oe_highlight" string="确定认领"/>
                     <field name="state_1" statusbar_invisible=" " widget="statusbar"/>
                 </header>

@@ -1709,6 +1709,7 @@ class account_reconcile_order(models.Model):
             advance_residual2 = i.advance_residual2
             order = i.order_id
 
+
             k = invoice.id
             if k in so_po_dic:
                 print('k',k)
@@ -1952,6 +1953,17 @@ class account_reconcile_order(models.Model):
             war = '客户正在审批中，请先完成客户的审批'
             raise Warning(war)
 
+    def compute_advice_amount_advance_org(self):
+        if self.line_ids and self.line_no_ids:
+            for one in self.line_no_ids:
+                so_id = one.yjzy_payment_id.so_id
+                invoice_id = one.invoice_id
+                for line in self.line_ids:
+                    if line.so_id == so_id and line.invoice_id == invoice_id:
+                        one.advice_amount_advance_org = line.so_tb_percent * one.yjzy_payment_id.amount
+
+
+
 class account_reconcile_order_line(models.Model):
     _name = 'account.reconcile.order.line'
 
@@ -2042,6 +2054,24 @@ class account_reconcile_order_line(models.Model):
 
             one.amount_total_org_new = amount_total_org_new
             # one.amount_total = one.amount_advance + one.amount_payment
+    @api.depends('so_id','so_id.amount_total')
+    def compute_amount_so(self):
+        for one in self:
+            one.amount_so = one.so_id.amount_total
+
+
+    @api.depends('amount_invoice_so','amount_so')
+    def compute_so_tb_percent(self):
+        for one in self:
+            amount_invoice_so = one.amount_invoice_so
+            amount_so = one.amount_so
+            if one.so_id:
+                so_tb_percent = amount_so / amount_invoice_so
+            else:
+                so_tb_percent = 0.0
+            one.so_tb_percent = so_tb_percent
+
+
 
 
     # @api.onchange('amount_invoice_so', 'amount_advance_org', 'amount_bank_org', 'amount_diff_org', 'amount_payment_org')
@@ -2076,6 +2106,8 @@ class account_reconcile_order_line(models.Model):
     # diff_currency_id = fields.Many2one('res.currency', related='order_id.diff_currency_id', )
 
     amount_invoice_so = fields.Monetary(u'合计', currency_field='invoice_currency_id')
+    amount_so = fields.Monetary(u'原始销售金额',currency_field='invoice_currency_id',compute=compute_amount_so,store=True)
+    so_tb_percent = fields.Float(u'出运占原销售金额的比例',compute=compute_so_tb_percent,store=True)
     amount_invoice_so_proportion = fields.Float('销售金额占发票金额比',compute=_compute_amount_invoice_so_proportion)
     #826
     amount_invoice_so_residual = fields.Monetary(u'剩余',currency_field='invoice_currency_id',compute=_compute_amount_invoice_so_proportion)
@@ -2136,6 +2168,9 @@ class account_reconcile_order_line_no(models.Model):
                  'context': {'open':1}
                 }
 
+
+
+
     invoice_currency_id = fields.Many2one('res.currency', u'交易货币', related='invoice_id.currency_id', readonly=True)
     state_1 = fields.Selection('审批流程', related='order_id.state_1')
     order_id = fields.Many2one('account.reconcile.order', u'核销单',ondelete='cascade')
@@ -2162,6 +2197,7 @@ class account_reconcile_order_line_no(models.Model):
     residual = fields.Monetary(related='invoice_id.residual', string=u'发票余额', readonly=True, currency_field='invoice_currency_id')
 
     amount_advance_org = fields.Monetary(u'预收金额', currency_field='yjzy_currency_id')
+    advice_amount_advance_org = fields.Monetary(u'预收金额', currency_field='yjzy_currency_id')
     yjzy_payment_id = fields.Many2one('account.payment', u'预收认领单')
     yjzy_payment_po_id = fields.Many2one('purchase.order',related='yjzy_payment_id.po_id',string='预付采购')
 

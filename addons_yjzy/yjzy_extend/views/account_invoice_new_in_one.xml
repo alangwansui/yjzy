@@ -83,8 +83,8 @@
                         <label string="应收冲销账单" class="oe_inline" attrs="{'invisible':[('type','!=','out_refund'),'|',('yjzy_type','!=','sale'),('yjzy_type_1','!=','sale')]}"/>
                         <label string="应付账单" class="oe_inline" attrs="{'invisible':[('type','!=','in_invoice'),'|',('yjzy_type','!=','purchase'),('yjzy_type_1','!=','purchase')]}"/>
                         <label string="应付冲销账单" class="oe_inline" attrs="{'invisible':[('type','!=','in_refund'),'|',('yjzy_type','!=','purchase'),('yjzy_type_1','!=','purchase')]}"/>
-                        <label string="退税账单" class="oe_inline" attrs="{'invisible':[('type','!=','out_invoice'),'|',('yjzy_type','!=','sale'),('yjzy_type_1','!=','sale')]}"/>
-                        <label string="退税冲销账单" class="oe_inline" attrs="{'invisible':[('type','!=','out_refund'),'|',('yjzy_type','!=','sale'),('yjzy_type_1','!=','sale')]}"/>
+                        <label string="退税账单" class="oe_inline" attrs="{'invisible':[('type','!=','out_invoice'),'|',('yjzy_type','!=','back_tax'),('yjzy_type_1','!=','back_tax')]}"/>
+                        <label string="退税冲销账单" class="oe_inline" attrs="{'invisible':[('type','!=','out_refund'),'|',('yjzy_type','!=','back_tax'),('yjzy_type_1','!=','back_tax')]}"/>
                         <field name="invoice_attribute" class="oe_inline" attrs="{'readonly':[('state','not in',['draft'])]}"/>
                         <h1 class="mt0">
                             <field name="number" class="oe_inline" attrs="{'invisible': [('state', '=', 'draft')]}"/>

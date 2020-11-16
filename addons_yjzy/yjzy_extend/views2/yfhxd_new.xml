@@ -280,7 +280,6 @@
                             <field name="back_tax_product_id" attrs="{'invisible': 1}"/>
                             <field name="back_tax_amount" attrs="{'invisible': 1}"/>
                             <field name="back_tax_invoice_id" attrs="{'invisible': 1}"/>
-
                             <field name="date" readonly="context.get('open')" attrs="{'readonly':[('state_1','!=','draft')]}"/>
                             <field name="yjzy_advance_payment_id" readonly="context.get('open')" string="预付单" attrs="{'invisible':[('hxd_type_new','not in',['10','30'])]}"
                                        context="{'form_view_ref': 'yjzy_extend.view_yfsqd_form','advance_po_amount':1}"/>
@@ -289,7 +288,6 @@
                             <field name="assistant_uid" attrs="{'invisible': 1}"/>
                             <field name="gongsi_id" string="公司主体" attrs="{'invisible':1}"/>
                             <field name="company_id" attrs="{'invisible':1}"/>
-
                         </group>
                         <group attrs="{'invisible':[('operation_wizard','in',['05',False])]}">
 

@@ -127,6 +127,7 @@ class wizard_renling(models.TransientModel):
 
         })
         self.make_lines_so(yshxd_id)
+        yshxd_id.compute_advice_amount_advance_org()
         form_view = self.env.ref('yjzy_extend.account_yshxd_form_view_new').id
         return {
             'name': '认领单',
