@@ -15,6 +15,7 @@
                     <filter name="approval" string="审批中" domain="[('state','in',('submit','to_approve'))]"/>
                     <filter name="approve" string="审批完成" domain="[('state', '=', 'approve')]"/>
                     <group expand="0" string="Group By">
+                        <filter string="状态" domain="[]" name="group_by_state" context="{'group_by':'state'}"/>
                         <filter string="供应商" domain="[]" context="{'group_by':'partner_id'}"/>
                         <filter string="下单日期" domain="[]" context="{'group_by':'date_order'}"/>
                         <filter string="交单日期" domain="[]" context="{'group_by':'date_planned'}"/>
@@ -72,6 +73,10 @@
                      <button name="action_to_draft_stage" type="object" string="重置草稿" class="highlight" attrs="{'invisible':[('state_1','not in',['refused','cancel'])]}"/>
                      <button name="%(po_refuse_wizard_action)d" string="拒绝" type="action" attrs="{'invisible':[('state_1','in',['draft','refused','cancel'])]}"/>
                      <button name="action_to_cancel_stage" string="取消" groups="base.group_system" type="object" attrs="{'invisible':[('state_1','not in',['draft','refused'])]}"/>
+                      <button name="compute_package_info" string="计算包装信息" type="object" class="oe_highlight"/>
+                    <button name="open_wizard_po_box" string="生成箱号" type="object" class="oe_highlight"/>
+                    <button name="clear_po_box" string="清除箱号" type="object" class="oe_highlight"/>
+                      <button string="创建批次号" invisible="0" states="" type="object" groups="base.group_system" name="create_lots"/>
                      <field name="state_1" widget="statusbar" statusbar_visible=" "/>
                  </header>
                 <header groups="base.group_system">
@@ -88,22 +93,23 @@
                     <button name="button_cancel" invisible="1" groups="base.group_system" states="draft,to approve,sent,purchase"  string="Cancel" type="object"/>
                     <button name="button_done" invisible="1" groups="base.group_system" type="object" string="Lock" states="purchase"/>
                     <button name="button_unlock" invisible="1" groups="base.group_system" type="object" string="Unlock" states="done" />
-                    <button string="创建批次号" invisible="0" states="" type="object" name="create_lots"/>
+
                     <button string="虚拟入库" invisible="0" states="" type="object" name="make_dump_income_picking"/>
                     <button name="test_pre_advance" string="预付款测试按钮" type="object" class="oe_highlight" invisible="1" groups="base.group_no_one"/>
                     <button name="make_yfsqd" string="测试生成预付申请单"  type="object" class="oe_highlight"  invisible="1" groups="base.group_no_one"/>
                     <button name="clear_yfsqd" string="清除预付申请单" invisible="1" type="object" class="oe_highlight"/>
 
                     <button name="set_tax_zero" string="设置含税" invisible="1" type="object" class="oe_highlight"/>
-                    <button name="compute_package_info" string="计算包装信息" type="object" class="oe_highlight"/>
-                    <button name="open_wizard_po_box" string="生成箱号" type="object" class="oe_highlight"/>
-                    <button name="clear_po_box" string="清除箱号" type="object" class="oe_highlight"/>
+
 
 
                     <field name="state" widget="statusbar" statusbar_visible="draft,sent,purchase" readonly="1"/>
-                    <field name="is_editable" widget="boolean_toggle"/>
+
                 </header>
                 <sheet>
+                      <div class="oe_button_box" name="button_box" groups="sales_team.group_sale_manager">
+                          <field name="is_editable" widget="boolean_toggle" groups="sales_team.group_sale_manager"/>
+                      </div>
                     <div class="oe_button_box" name="button_box" groups="base.group_system">
                         <button type="object" name="action_view_picking" class="oe_stat_button" icon="fa-truck" groups="base.group_system"
                                 attrs="{'invisible':[('state', 'in', ('draft','sent','approve_sales')),('picking_ids','=',[])]}">
