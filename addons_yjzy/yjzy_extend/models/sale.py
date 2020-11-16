@@ -1059,7 +1059,7 @@ class sale_order(models.Model):
                         if requested_date and requested_date < (today - relativedelta(days=90)).strftime('%Y-%m-%d 00:00:00'):
                             hexiao_type = 'abnormal'
                             state = 'done'
-                            stage_id = self._stage_find(domain=[('code', '=', '070')])
+                            stage_id = self._stage_find(domain=[('code', '=', '080')])
             one.hexiao_type = hexiao_type
             one.state = state
             one.stage_id = stage_id
