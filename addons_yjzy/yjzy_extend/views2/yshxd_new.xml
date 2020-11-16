@@ -309,8 +309,8 @@
                             <field name="name" attrs="{'invisible':1}"/>
                             <field name="payment_type"  attrs="{'invisible':1}"/>
                             <field name="partner_type"  attrs="{'invisible':1}"/>
-                            <field name="renling_type" string="认领属性"/>
-                            <field name="partner_id" string="客户" attrs="{'invisible':['|',('yjzy_type','in',['back_tax','other_payment_sale','other_payment_purchase']),('operation_wizard','=',False)]}"
+                            <field name="renling_type" string="认领属性" invisible="1"/>
+                            <field name="partner_id" string="客户"  attrs="{'invisible':['|',('yjzy_type','in',['back_tax','other_payment_sale','other_payment_purchase']),('operation_wizard','=',False)]}"
                                    domain="[('is_company','=',True),('parent_id', '=', False),('customer','=',1)]"
                                    context="{'default_is_company': True, 'default_supplier': payment_type == 'outbound', 'default_customer': payment_type == 'inbound'}"/>
                             <field name="journal_id"  domain="[('type','=','renling')]" attrs="{'invisible':1}"/>
@@ -322,6 +322,11 @@
 
                             <field name="manual_payment_currency_id" string="预收币种" attrs="{'invisible':1}"/>
                             <field name="yjzy_advance_payment_id" attrs="{'invisible':[('operation_wizard','not in',['25'])]}" context="{'form_view_ref': 'yjzy_extend.view_ysrld_form','advance_so_amount':1}"/>
+                            <field name="yjzy_advance_payment_amount" string="预收原始金额" readonly="1"/>
+                            <field name="yjzy_advance_payment_balance" string="预收剩余金额" readonly="1"/>
+                            <field name="yjzy_advance_currency_id" invisible="1"/>
+
+
                             <field name="invoice_partner"  attrs="{'invisible':[('invoice_attribute','!=','other_payment')]}"/>
                             <field name="name_title" attrs="{'invisible':[('invoice_attribute','!=','other_payment')]}"/>
                              <field name="date" attrs="{'invisible':[('operation_wizard','=',False)]}" invisible="1"/>
@@ -362,6 +367,7 @@
                                 <field name="amount_total_signed" string="合计"/>
                                 <field name="residual_signed" string="未收款"/>
                                 <field name="yjzy_advance_payment_id" string="预收账单" context="{'form_view_ref': 'yjzy_extend.view_yfsqd_form','advance_po_amount':1}"/>
+
                                 <field name="state" sting="状态"/>
                             </tree>
                             </field>
@@ -409,12 +415,15 @@
                                 <tree  editable="bottom" create="false">
                                 <field name="invoice_id" readonly="1" string="应收账单"/>
                                 <field name="invoice_amount_total" string="原始应收款" sum="小计"/>
+                                    <field name="invoice_currency_id" invisible="1"/>
                                 <field name="invoice_residual" string="剩余应收款" sum="小计"/>
                                 <field name="payment_currency_id" invisible="1"/>
-                                 <field name="amount_advance_org" attrs="{'column_invisible':[('parent.operation_wizard','not in',['25'])]}"/>
-                                 <field name="yjzy_payment_id" attrs="{'column_invisible':[('parent.operation_wizard','not in',['25'])]}" context="{'form_view_ref': 'yjzy_extend.view_rcskd_form','advance_bank_amount':1}"/>
+                                 <field name="advice_amount_advance_org" readonly="1" string="建议预收认领金额"/>
+
+                                 <field name="yjzy_payment_id" attrs="{'column_invisible':1}" context="{'form_view_ref': 'yjzy_extend.view_rcskd_form','advance_bank_amount':1}"/>
                                 <field name="amount_payment_org" string="本次收款认领金额" sum="小计" attrs="{'column_invisible':[('parent.operation_wizard','not in',['10'])]}"/>
-                                <field name="amount_bank_org" attrs="{'column_invisible':[('parent.operation_wizard','not in',['40'])]}"/>
+                                <field name="amount_advance_org" string="本次预收认领金额" sum="小计" attrs="{'column_invisible':[('parent.operation_wizard','not in',['25'])]}"/>
+                                 <field name="amount_bank_org" attrs="{'column_invisible':[('parent.operation_wizard','not in',['40'])]}"/>
                                 <field name="amount_diff_org" attrs="{'column_invisible':[('parent.operation_wizard','not in',['40'])]}"/>
                                 <field name="currency_id" invisible="1"/>
                                 <field name="amount_payment" invisible="1"/>

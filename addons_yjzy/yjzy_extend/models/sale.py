@@ -1152,4 +1152,7 @@ class sale_order(models.Model):
             war = '客户正在审批中，请先完成客户的审批'
         if  len(self.order_line.filtered(lambda x: x.supplier_id.state != 'done')) > 0:
             war = '供应商正在审批中，请先完成供应商的审批'
-        raise Warning(war)
+        if war != '':
+            raise Warning(war)
+        else:
+            return True

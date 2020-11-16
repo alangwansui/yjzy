@@ -116,12 +116,12 @@
                                 <field name="date" string="出运日期"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"
                                        invisible="0"/>
-                                <field name="partner_id" string="客户"/>
+                                <field name="partner_id" string="客户" attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <field name="partner_shipping_id" string="抵运地" invisible="1" options="{'no_open':1}"
                                        domain="[('parent_id','child_of', partner_id)]"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"
                                        no_create="True"/>
-                                <field name="invoice_title" string="境外收货人"/>
+                                <field name="invoice_title" string="境外收货人" attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <field name="production_sale_unit" attrs="{'readonly': 1}"/>
 
                                 <!--field name="mark_ids" widget="many2many_tags"/-->
@@ -235,7 +235,7 @@
                                                attrs="{'column_invisible': [('parent.hs_fill','!=','packaging')]}"/>
                                         <field name="type" invisible="1"/>
                                         <field name="note" invisible="1"/>
-                                        <button name="open_form_view" type="object" icon="fa-arrows-v"/>
+                                        <button name="open_form_view" type="object" icon="fa-arrows-v" attrs="{'invisible':[('parent.state','not in',['draft','check']),('parent.is_editable','=',False)]}"/>
                                     </tree>
                                     <form>
                                         <group>

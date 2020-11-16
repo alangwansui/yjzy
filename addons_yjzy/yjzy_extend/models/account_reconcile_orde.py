@@ -328,6 +328,8 @@ class account_reconcile_order(models.Model):
     #其他应收认领的时候，一个快速添加金额的字段，onchange到line_no_ids和line_ids的第一行
     # other_payment_amount_payment_org = fields.Monetary(u'其他应收认领快速录入金额')
     # other
+
+
     renling_type = fields.Selection([('yshxd', '应收认领'),
                                      ('back_tax', '退税认领'), ('other_payment', '其他认领')], u'认领属性') #没有是指作用
     back_tax_declaration_id = fields.Many2one('back.tax.declaration',u'退税申报表')
@@ -373,7 +375,9 @@ class account_reconcile_order(models.Model):
     #903
     reconcile_payment_ids = fields.One2many('account.payment','account_reconcile_order_id',u'认领单')
     yjzy_advance_payment_id = fields.Many2one('account.payment',u'预收认领单')#从预收认领单创建过滤用
-    yjzy_advance_payment_balance = fields.Monetary('预付款单余额',related='yjzy_advance_payment_id.advance_balance_total')
+    yjzy_advance_currency_id = fields.Many2one('res.currency','预收付款单货币',related='yjzy_advance_payment_id.currency_id')
+    yjzy_advance_payment_balance = fields.Monetary('预付款单余额',currency_field='yjzy_advance_currency_id', related='yjzy_advance_payment_id.advance_balance_total')
+    yjzy_advance_payment_amount = fields.Monetary('预付款单原始金额', currency_field='yjzy_advance_currency_id', related='yjzy_advance_payment_id.amount')
     #0901
     approve_date = fields.Date(u'审批完成时间')
     approve_uid = fields.Many2one('res.users',u'审批人')
@@ -1961,6 +1965,7 @@ class account_reconcile_order(models.Model):
                 for line in self.line_ids:
                     if line.so_id == so_id and line.invoice_id == invoice_id:
                         one.advice_amount_advance_org = line.so_tb_percent * one.yjzy_payment_id.amount
+                        print('werewrewrer',one.yjzy_payment_id.amount)
 
 
 
@@ -2197,7 +2202,7 @@ class account_reconcile_order_line_no(models.Model):
     residual = fields.Monetary(related='invoice_id.residual', string=u'发票余额', readonly=True, currency_field='invoice_currency_id')
 
     amount_advance_org = fields.Monetary(u'预收金额', currency_field='yjzy_currency_id')
-    advice_amount_advance_org = fields.Monetary(u'预收金额', currency_field='yjzy_currency_id')
+    advice_amount_advance_org = fields.Monetary(u'建议预收金额', currency_field='yjzy_currency_id')
     yjzy_payment_id = fields.Many2one('account.payment', u'预收认领单')
     yjzy_payment_po_id = fields.Many2one('purchase.order',related='yjzy_payment_id.po_id',string='预付采购')
 

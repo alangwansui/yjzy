@@ -27,9 +27,37 @@
 
                         <field name="other_payment_invoice_ok_f" invisible="1"/>
 
+<!--                       <button name="open_ysrld" class="oe_highlight" type="object" string="打开预收认领列表" attrs=""/>-->
+                       <field name="customer_advance_payment_ids_count" invisible="1"/>
+                        <label for=" " string="待认领预收" attrs="{'invisible':['|',('renling_type','not in',['yshxd']),('customer_advance_payment_ids_count','=',0)]}"/>
+                        <div class="o_row" attrs="{'invisible':['|',('renling_type','not in',['yshxd']),('customer_advance_payment_ids_count','=',0)]}">
+                             <field name="ysrld_ok" attrs="{'invisible':['|',('renling_type','not in',['yshxd']),('customer_advance_payment_ids_count','=',0)]}"/>
+                             <span attrs="{'invisible':['|',('renling_type','not in',['yshxd']),('customer_advance_payment_ids_count','=',0)]}" style="color:red">
+                               客户有未认领的预收，请确认是否认领
+                            </span>
+                            <button name="open_ysrld" type="object" class="oe_highlight" string="打开认领操作列表"/>
+                        </div>
                     </group>
-
-                            <span attrs="{'invisible':['|','|',('renling_type','not in',['yshxd']),('step','!=','20')]}" style="font-weight:bolder; margin-bottom:5px">
+                    <field name="customer_advance_payment_ids" nolabel="1"
+                           attrs="{'invisible':['|',('ysrld_ok','=',False),('renling_type','not in',['yshxd'])]}">
+                         <tree string="预收认领单" edit="false" create="false">
+                    <field name="partner_id" invisible="1"/>
+                    <field name="name" invisible="1"/>
+                    <field name="rcskd_date" invisible="1"/>
+                    <field name="rcskd_amount" invisible="1"/>
+                    <field name="payment_date" string="认领日期"/>
+                    <field name="amount" string="原始金额" />
+                    <field name="advance_reconcile_order_count" invisible="1"/>
+                    <field name="advance_balance_total" string="未认领金额"/>
+                    <field name="advance_total" string="已认领金额" invisible="1"/>
+                    <field name="so_id" string="销售合同"/>
+                    <field name="fault_comments" invisible="1"/>
+                    <field name="advance_type" invisible="1"/>
+                    <field name="state" invisible="1"/>
+                             <button name="open_wizard_renling" type="object" string="创建认领单" invisible="1"/>
+            </tree>
+                    </field>
+                            <span attrs="{'invisible':['|','|','|','|',('ysrld_ok','=',True),('renling_type','not in',['yshxd']),('step','!=','20'),('ysrld_ok','=',True)]}" style="font-weight:bolder; margin-bottom:5px">
                                 选择需要认领的账单
                             </span>
                        <span attrs="{'invisible':['|',('renling_type','not in',['back_tax']),('step','!=','20')]}" style="font-weight:bolder; margin-bottom:5px">
@@ -37,7 +65,7 @@
                             </span>
 
 
-                        <field name="invoice_ids" nolabel="1"  attrs="{'invisible':['|','|',('renling_type','not in',['yshxd','other_payment']),('step','!=','20'),
+                        <field name="invoice_ids" nolabel="1"  attrs="{'invisible':['|','|','|',('ysrld_ok','=',True),('renling_type','not in',['yshxd','other_payment']),('step','!=','20'),
                         ('other_payment_invoice_ok','=',False)]}"
                                domain="[('partner_id','=',partner_id),('state','=','open'),('type','in',['out_invoice'])]"
                                context="{'tree_view_ref':'yjzy_extend.invoice_sale_new_hxd_tree','other_payment':other_payment_invoice_ok_f}"
@@ -66,6 +94,9 @@
                             <field name="comments" string="备注"/>
                         </tree>
                     </field>
+<!--                      <span attrs="{'invisible':['|','|',('ysrld_ok','=',False),('renling_type','not in',['yshxd']),('customer_advance_payment_ids_count','=',0)]}" style="font-weight:bolder">-->
+<!--                                该客户存在未认领的预收，是否需要预收-->
+<!--                      </span>-->
 
 
                 <div groups="base.group_system">
@@ -77,7 +108,7 @@
                         <button name="create_tb_po_invoice" string="新建其他收款申请" type="object" class="oe_highlight" colspan="2"
                             attrs="{'invisible':['|',('renling_type','not in','other_payment'),('other_payment_invoice_ok','=',True)]}"
                                   context="{'default_type':'other_payment','default_yjzy_type_1':'other_payment_sale','default_type_invoice':'out_invoice','open':1}"/>
-                        <button name="create_yshxd_ysrl" class="oe_highlight" type='object' string="创建应收认领"
+                        <button name="create_yshxd_ysrl" class="oe_highlight" type='object' string="创建应收认领" context="{'advance_so_amount':1}"
                                 attrs="{'invisible':['|',('renling_type','not in',['back_tax','yshxd','other_payment']),('other_payment_invoice_ok','=',False)]}"/>
                         <button name="create_yshxd_ysrl" class="oe_highlight" type='object' string="创建预收认领"  attrs="{'invisible':[('renling_type','not in',['ysrld'])]}"/>
                         <button special="cancel" class="oe_highlight" string="取消"/>
@@ -122,6 +153,7 @@
 
                             </tree>
                         </field>
+
                 <div groups="base.group_system">
                          <field name="step"/>
                         <field name="sale_other_invoice_ids" invisible="1"/>
@@ -132,6 +164,7 @@
 
                         <button name="create_ysrld_yxhxd" class="oe_highlight" type="object" string="创建应收认领" attrs=""
                                 />
+
 
                         <button special="cancel" class="oe_highlight" string="取消"/>
                     </footer>

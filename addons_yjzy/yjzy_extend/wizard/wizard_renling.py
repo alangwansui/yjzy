@@ -9,12 +9,54 @@ class wizard_renling(models.TransientModel):
 
     @api.depends('partner_id')
     def compute_invoice_advance(self):
-        sale_other_invoice_ids = self.env['account.invoice'].search(
-            [('residual', '>', 0), ('state', '=', 'open'), ('invoice_attribute', '=', 'other_payment'),
-             ('yjzy_type_1', '=', 'sale'), ('type', '=', 'out_invoice')])
-        self.sale_other_invoice_ids = sale_other_invoice_ids
+        if self.renling_type == 'other_payment':
+            sale_other_invoice_ids = self.env['account.invoice'].search(
+                [('residual', '>', 0), ('state', '=', 'open'), ('invoice_attribute', '=', 'other_payment'),
+                 ('yjzy_type_1', '=', 'sale'), ('type', '=', 'out_invoice')])
+            self.sale_other_invoice_ids = sale_other_invoice_ids
+
+    @api.depends('partner_id')
+    def _compute_customer_advance_payment_ids(self):
+        for one in self:
+            if self.invoice_ids:
+                self.invoice_ids = False
+            so = []
+            for x in one.invoice_ids:
+                for line in x.invoice_line_ids.mapped('so_id'):
+                    so.append(line.id)
+                so.append(False)  #
+
+            customer_advance_payment_ids = self.env['account.payment'].search(
+                [('partner_id', '=', one.partner_id.id), ('sfk_type', '=', 'ysrld'),
+                 ('state', 'in', ['posted']),('advance_balance_total','!=',0)])
+            customer_advance_payment_ids_count = len(customer_advance_payment_ids)
+            one.customer_advance_payment_ids_count = customer_advance_payment_ids_count
+            one.customer_advance_payment_ids = customer_advance_payment_ids
+            if customer_advance_payment_ids_count == 0:
+                one.ysrld_ok = False
+            else:
+                one.ysrld_ok = True
+
+            print('one.customer_advance_payment_ids', one.customer_advance_payment_ids)
+
+    # @api.onchange('invoice_ids')
+    # def _onchange_customer_advance_payment_ids(self):
+    #     self._compute_customer_advance_payment_ids()
+
+    # def _default_ysrld_ok(self):
+    #     if self.customer_advance_payment_ids_count == 0:
+    #         return False
+    #     else:
+    #         return True
+    # @api.onchange('partner_id')
+    # def onchange_partner_id(self):
 
 
+    # 1115
+    customer_advance_payment_ids = fields.Many2many('account.payment', u'相关预收',compute=_compute_customer_advance_payment_ids
+                                                    ) #
+    customer_advance_payment_ids_count = fields.Integer('相关预收数量', compute=_compute_customer_advance_payment_ids)#
+    ysrld_ok = fields.Boolean('是否预收-应收认领',default=False,compute=_compute_customer_advance_payment_ids ,store=True)
 
     partner_id = fields.Many2one('res.partner', u'合作伙伴', domain=[('customer', '=', True)])
     yjzy_payment_id = fields.Many2one('account.payment',u'日常收款单')
@@ -95,11 +137,28 @@ class wizard_renling(models.TransientModel):
     def onchange_partner_id(self):
         renling_type = self.renling_type
         if renling_type in ['yshxd','ysrld'] and self.partner_id:
-
             self.step = '20'
 
-
-
+    def open_ysrld(self):
+        tree_view = self.env.ref('yjzy_extend.view_ysrld_reconcile_tree_1')
+        form_view = self.env.ref('yjzy_extend.view_ysrld_form')
+        return {
+            'name': '预收认领单',
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'res_model': 'account.payment',
+            'views': [(tree_view.id, 'tree'),(form_view.id, 'form')],
+            'domain': [('id', 'in', [x.id for x in self.customer_advance_payment_ids])],
+            'target': 'current',
+            'type': 'ir.actions.act_window',
+            'context': {'show_shoukuan': True,
+                        'default_sfk_type': 'ysrld',
+                        'default_payment_type': 'inbound',
+                        'default_be_renling': True,
+                        'default_advance_ok': True,
+                        'default_partner_type': 'customer',
+                        }
+        }
     def apply(self):
         self.ensure_one()
 
@@ -226,6 +285,7 @@ class wizard_renling(models.TransientModel):
                             'bank_amount': 1,
                             'show_so': 1,
                             'open':1,
+                            'advance_so_amount': 1
                             }
 
             }
