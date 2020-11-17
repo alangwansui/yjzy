@@ -14,7 +14,7 @@
                 <field name="company_id"/>
                 <field name="currency_id" attrs="{}" invisible="1" required="1"/>
                 <field name="amount"/>
-                <field name="balance" string="待认领余额"/>
+                <field name="balance" string="待认领余额" invisible="1"/>
                 <field name="fault_comments"/>
                 <field name="state"/>
             </tree>
@@ -29,9 +29,9 @@
                 <header groups="base.group_system">
                    <button name="action_submit" class="oe_highlight"  string="提交" type="object"
                            attrs="{'invisible':[('state_1','not in',['10_draft'])]}"/>
-                   <button name="action_cashier_post" class="oe_highlight"  string="出纳确认" type="object"
+                   <button name="action_cashier_post" class="oe_highlight"  string="出纳确认支付" type="object"
                            attrs="{'invisible':[('state_1','not in',['25_cashier_submit'])]}"/>
-                   <button name="action_cashier_refuse" class="oe_highlight" string="出纳拒绝" type="object"
+                   <button name="action_cashier_refuse" class="oe_highlight" string="出纳拒绝支付" type="object"
                    attrs="{'invisible':[('state_1','not in',['25_cashier_submit'])]}"/>
                     <button name="action_draft_new" class="oe_highlight" string="重置草稿" type="object"
                             attrs="{'invisible':[('state_1','not in',['80_refused'])]}"/>
@@ -88,9 +88,10 @@
                     <group>
                         <group>
                             <field name="gongsi_id" invisible="1"/>
-                            <field name="partner_id" options="{'no_create':True}"  attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))],
+                            <field name="partner_id" string="付款对象" options="{'no_create':True}"
+                                   attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))],
                             'invisible': ['|',('payment_type', 'not in', ('inbound', 'outbound')),('sfk_type','in',['rcskd','rcfkd'])],
-                            'readonly': [('state', '!=', 'draft')]}"
+                            'readonly': 1}"
                                    context="{'default_is_company': True, 'default_supplier': payment_type == 'outbound', 'default_customer': payment_type == 'inbound'}"/>
                             <label for="amount"/>
                             <div name="amount_div" class="o_row">
@@ -99,9 +100,7 @@
                                        attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                             </div>
                             <field name="bank_id" domain="[('partner_id','=',partner_id)]" options="{'no_create': True}"
-                                   string="付款对象银行账号" />
-
-
+                                   string="付款对象账号"/>
                             <field name="destination_journal_id" widget="selection"
                                    attrs="{'required': [('payment_type', '=', 'transfer')], 'invisible': [('payment_type', '!=', 'transfer')], 'readonly': [('state', '!=', 'draft')]}"/>
                             <field name="hide_payment_method" invisible="1"/>
@@ -209,7 +208,7 @@
     <menuitem id="menu_rcfkd_new"  sequence="10" name="日常付款单" parent="menu_invoice_payment_out"/>
     <menuitem id="menu_rcfkd_new_cashier"  sequence="10" name="日常付款单" parent="menu_new_account_root"/>
     <record model="ir.actions.act_window" id="action_rcfkd_draft_new">
-        <field name="name">未提交日常付款单</field>
+        <field name="name">待提交付款单</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">account.payment</field>
         <field name="view_type">form</field>
@@ -224,7 +223,7 @@
     <menuitem id="menu_rcfkd_draft"  sequence="10" name="待提交付款单" parent="menu_rcfkd_new" action="action_rcfkd_draft_new"/>
 <menuitem id="menu_rcfkd_draft_cashier"  sequence="10" name="未提交" parent="menu_rcfkd_new_cashier" action="action_rcfkd_draft_new"/>
     <record model="ir.actions.act_window" id="action_rcfkd_submit_new">
-        <field name="name">审批中日常付款单</field>
+        <field name="name">已提交待付款付款单</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">account.payment</field>
         <field name="view_type">form</field>
@@ -239,7 +238,7 @@
     <menuitem id="menu_rcfkd_submit"  sequence="20" name="已提交待付款付款单" parent="menu_rcfkd_new" action="action_rcfkd_submit_new"/>
     <menuitem id="menu_rcfkd_submit_cashier"  sequence="20" name="审批中" parent="menu_rcfkd_new_cashier" action="action_rcfkd_submit_new"/>
      <record model="ir.actions.act_window" id="action_rcfkd_done_new">
-        <field name="name">已完成日常付款单</field>
+        <field name="name">已支付付款单</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">account.payment</field>
         <field name="view_type">form</field>
