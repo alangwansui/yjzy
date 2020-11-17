@@ -333,6 +333,8 @@ class account_reconcile_order(models.Model):
 
     yjzy_reconcile_order_ids = fields.One2many('account.reconcile.order','yjzy_reconcile_order_id','相关的核销单汇总')#从自身创建的所有的预付-应付认领单。
 
+    yjzy_reconcile_order_approval_ids = fields.One2many('account.reconcile.order', 'yjzy_reconcile_order_id', u'相关待审批预付-应付认领',domain=[('state_1','=','manager_approval')],
+                                              )  # 从自身创建的所有的预付-应付认领单。
 
     renling_type = fields.Selection([('yshxd', '应收认领'),
                                      ('back_tax', '退税认领'), ('other_payment', '其他认领')], u'认领属性') #没有是指作用
@@ -501,24 +503,22 @@ class account_reconcile_order(models.Model):
 
 
     def open_yjzy_reconcile_order_id(self):
-        tree_view = self.env.ref('yjzy_extend.account_yfhxd_advance_tree_view_approve_new')
-        form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new')
-        yjzy_reconcile_order_approval_ids = self.yjzy_reconcile_order_ids.filtered(lambda x: x.state == 'posted')
-        return {
-            'name': '预付-应付认领列表',
-            'view_type': 'form',
-            "view_mode": 'tree,form',
-            'res_model': 'account.reconcile.order',
-            'type': 'ir.actions.act_window',
-            'views': [(tree_view.id,'tree'),(form_view.id, 'form')],
-            'domain': [('id','in',[x.id for x in yjzy_reconcile_order_approval_ids])],
-            'target': 'new',
-            # 'domain': [('yjzy_advance_payment_id', '=', self.id)],
-            'context': {'fk_journal_id': 1,
-                        'show_so': 1,
-
-                        }
-        }
+        form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new_for_advance_approve')
+        if not self.yjzy_reconcile_order_approval_ids:
+            self.action_manager_approve_first_stage()
+        else:
+            return {
+                'name': '预付-应付认领列表',
+                'view_type': 'form',
+                "view_mode": 'form',
+                'res_model': 'account.reconcile.order',
+                'type': 'ir.actions.act_window',
+                'views': [(form_view.id, 'form')],
+                'res_id': self.id,
+                'target': 'new',
+                'context': {'fk_journal_id': 1,
+                            'show_so': 1,                        }
+            }
 
     @api.onchange('other_payment_bank_id')
     def onchange_other_payment_bank_id(self):
@@ -841,10 +841,14 @@ class account_reconcile_order(models.Model):
     #         'context': ctx,
     #     }
 
+    def action_unlink(self):
+        self.unlink()
+        return True
+
     def unlink(self):
         for one in self:
-            if one.state != 'cancelled':
-                raise Warning(u'只有取消状态允许删除')
+            if one.state not in ['cancelled','draft']:
+                raise Warning(u'只有取消草稿状态允许删除')
         return super(account_reconcile_order, self).unlink()
 
     def _stage_find(self, domain=None, order='sequence'):
@@ -988,28 +992,46 @@ class account_reconcile_order(models.Model):
         self.action_manager_approve_stage()
         if self.yjzy_reconcile_order_id:
             self.yjzy_reconcile_order_id.action_manager_approve_first_stage()
-        tree_view = self.env.ref('yjzy_extend.account_yfhxd_advance_tree_view_approve_new')
-        form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new')
-        yjzy_reconcile_order_approval_ids = self.yjzy_reconcile_order_id.yjzy_reconcile_order_ids.filtered(lambda x: x.state == 'posted')
-        print('yjzy_reconcile_order_approval_ids',yjzy_reconcile_order_approval_ids)
+        print('yjzy_reconcile_order_approval_ids', self.yjzy_reconcile_order_id)
+        form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new_for_advance_approve')
         if self.yjzy_reconcile_order_id.state_1 == 'advance_approval':
             return {
                 'name': '预付-应付认领列表',
                 'view_type': 'form',
-                "view_mode": 'tree,form',
+                "view_mode": 'form',
                 'res_model': 'account.reconcile.order',
                 'type': 'ir.actions.act_window',
-                'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
-                'domain': [('id', 'in', [x.id for x in yjzy_reconcile_order_approval_ids])],
+                'views': [(form_view.id, 'form')],
+                'res_id': self.yjzy_reconcile_order_id.id,
                 'target': 'new',
-                # 'domain': [('yjzy_advance_payment_id', '=', self.id)],
                 'context': {'fk_journal_id': 1,
-                            'show_so': 1,
-
-                            }
-            }
+                            'show_so': 1, }
+        }
         else:
             return {'type': 'ir.actions.act_window_close'}
+
+        # tree_view = self.env.ref('yjzy_extend.account_yfhxd_advance_tree_view_approve_new')
+        # form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new')
+        # yjzy_reconcile_order_approval_ids = self.yjzy_reconcile_order_id.yjzy_reconcile_order_ids.filtered(lambda x: x.state == 'posted')
+        # print('yjzy_reconcile_order_approval_ids',yjzy_reconcile_order_approval_ids)
+        # if self.yjzy_reconcile_order_id.state_1 == 'advance_approval':
+        #     return {
+        #         'name': '预付-应付认领列表',
+        #         'view_type': 'form',
+        #         "view_mode": 'tree,form',
+        #         'res_model': 'account.reconcile.order',
+        #         'type': 'ir.actions.act_window',
+        #         'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
+        #         'domain': [('id', 'in', [x.id for x in yjzy_reconcile_order_approval_ids])],
+        #         'target': 'new',
+        #         # 'domain': [('yjzy_advance_payment_id', '=', self.id)],
+        #         'context': {'fk_journal_id': 1,
+        #                     'show_so': 1,
+        #
+        #                     }
+        #     }
+        # else:
+        #     return {'type': 'ir.actions.act_window_close'}
 
     # 总经理审批：如果是预付申请，直接完成makedone，只有应付申请的时候才会审批。
     def action_manager_approve_stage(self):

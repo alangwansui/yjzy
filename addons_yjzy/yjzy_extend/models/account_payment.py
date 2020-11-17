@@ -437,6 +437,8 @@ class account_payment(models.Model):
     post_uid = fields.Many2one('res.users',u'审批人')
     post_date = fields.Date(u'审批时间')
 
+
+
     #原生会计核销单独方法
     def action_reconcile(self):
         if self.balance == 0 and self.x_wkf_state == '159':
