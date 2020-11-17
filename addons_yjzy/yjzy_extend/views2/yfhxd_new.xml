@@ -130,12 +130,12 @@
                 <field name="amount_payment_org" string="实际申请金额" invisible="1"/>
                 <field name="amount_advance_org" string="预付认领金额"/>
                 <field name="amount_advance_org_new" string="预付认领金额" groups="base.group_system"/>
-                <button name="action_manager_approve_from_yfhxd" string="审批" type="object"
+                <button name="action_manager_approve_from_yfhxd" string="审批" type="object" invisible="context.get('open')"
                         attrs="{'invisible':[('state','!=','posted')]}"/>
                 <field name="amount_total" invisible="1"/>
                 <field name="currency_id" attrs="{}" invisible="1"/>
                 <field name="state"/>
-                <button name="action_unlink" type="object" string="删除" invisible="not context.get('open')"/>
+                <button name="action_unlink" type="object" icon="fa-trash-o" invisible="not context.get('open')"/>
             </tree>
         </field>
     </record>
@@ -609,6 +609,10 @@
 
 
                             </p>
+                            <p>
+                                一.总经理预付阶段审批：弹出等待本单相关的等待审批的预付-应付认领，逐个审批，最后一个审批完成后，进入财务填制付款申请阶段
+                                执行常规应付的5，6步骤 <br/>
+                            </p>
 
                         </page>
 
@@ -617,7 +621,7 @@
                         <button name="action_submit_stage" class="oe_highlight" type="object" string="提交审批"
                                 attrs="{'invisible':[('state_1','!=','draft')]}"/>
                         <button name="action_save_test" type="object" class="oe_highlight" string="保存并关闭"/>
-
+<button name="action_unlink" class="oe_highlight" type="object" string="取消并删除"/>
                         <button name="action_manager_approve_first_stage" class="oe_highlight" type="object"
                                 string="总经理审批" attrs="{'invisible':[('state_1','!=','manager_approval')]}"/>
 

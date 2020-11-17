@@ -843,7 +843,7 @@ class account_reconcile_order(models.Model):
 
     def action_unlink(self):
         self.unlink()
-        return True
+        return {'type': 'ir.actions.act_window_close'}
 
     def unlink(self):
         for one in self:
