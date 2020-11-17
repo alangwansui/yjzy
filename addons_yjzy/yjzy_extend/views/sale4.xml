@@ -341,13 +341,13 @@
                     <field name="user_id" groups="sale.hegui_all" string="责任人"/>
                     <field name="commitment_date" invisible="1"/>
                     <field name="advance_po_residual" invisible="1"/>
-                    <field name="doing_type"/>
+                    <field name="doing_type" invisible="1"/>
                     <field name="hexiao_type" invisible="1"/>
                     <field name="hexiao_comment" widget="dynamic_popover_text"
                            options="{'max_width': '20px', 'line_clamp': '1', 'mode_mouse':'hover','popover_max_width':'500px','placement':'right'}"/>
-                    <field name="gongsi_id" string="销售主体"/>
-                    <field name="purchase_gongsi_id" string="采购主体"/>
-                    <field name="company_id" groups="base.group_system"/>
+                    <field name="gongsi_id" string="销售主体" invisible="1"/>
+                    <field name="purchase_gongsi_id" string="采购主体" invisible="1"/>
+                    <field name="company_id" groups="base.group_system" invisible="1"/>
                 </tree>
 
             </field>
