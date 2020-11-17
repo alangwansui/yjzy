@@ -915,6 +915,9 @@ class account_reconcile_order(models.Model):
                                 })
                 else:
                     if self.operation_wizard == '03':
+                        yjzy_reconcile_order_approval_ids = self.yjzy_reconcile_order_ids.filtered(lambda x: x.state in ['draft','refused','cancelled'])
+                        yjzy_reconcile_order_approval_ids.unlink()
+                        print('yjzy_reconcile_order_approval_ids',yjzy_reconcile_order_approval_ids)
                         stage_id = self._stage_find(domain=[('code', '=', '020')])
                         self.write({'stage_id': stage_id.id,
                             'state': 'posted',
