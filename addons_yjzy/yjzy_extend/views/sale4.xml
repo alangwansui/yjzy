@@ -37,6 +37,7 @@
                     <filter string="审批完成" name="approve" domain="[('state','in',['approve'])]"/>
                     <separator/>
                     <group expand="0" string="Group By">
+                         <filter string="审批流程" domain="[]" name="group_by_stage_id" context="{'group_by':'stage_id'}"/>
                         <filter string="状态" domain="[]" name="group_by_state" context="{'group_by':'state'}"/>
                         <filter string="责任人" domain="[]" context="{'group_by':'user_id'}"/>
                         <filter string="状态+核销类型" name="group_by_state_hexiao_type"

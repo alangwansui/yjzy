@@ -228,11 +228,15 @@ class account_payment(models.Model):
             print('teee', len(one.advance_reconcile_order_ids))
             advance_reconcile_order_count_all = len(one.advance_reconcile_order_ids)
             advance_reconcile_order_draft_ids_count = len(one.advance_reconcile_order_draft_ids)
+            advance_reconcile_order_no_draft_ids_count = len(one.advance_reconcile_order_no_draft_ids)
             advance_reconcile_order_draft_amount_advance = sum(x.amount_advance for x in one.advance_reconcile_order_draft_ids)
             one.advance_reconcile_order_count_all = advance_reconcile_order_count_all
             one.advance_reconcile_order_draft_ids_count = advance_reconcile_order_draft_ids_count
+            one.advance_reconcile_order_no_draft_ids_count = advance_reconcile_order_no_draft_ids_count
             one.advance_reconcile_order_draft_amount_advance = advance_reconcile_order_draft_amount_advance
             one.advance_reconcile_order_count_char = '%s/%s' % (str(advance_reconcile_order_draft_ids_count), str(advance_reconcile_order_count_all))
+            one.advance_reconcile_order_no_draft_count_char = '%s/%s' % (
+            str(advance_reconcile_order_draft_ids_count), str(advance_reconcile_order_no_draft_ids_count))
 
     @api.depends('po_id','so_id','partner_id')
     def compute_advance_type(self):
@@ -293,14 +297,20 @@ class account_payment(models.Model):
     advance_reconcile_order_ids = fields.One2many('account.reconcile.order','yjzy_advance_payment_id',u'预收付-应收付认领')
     advance_reconcile_order_draft_ids = fields.One2many('account.reconcile.order', 'yjzy_advance_payment_id',u'预收付-应收付认领未审批',
                                                               domain=[('state', '=', 'posted')])
+    advance_reconcile_order_draft_ids_count = fields.Integer(u'预收付-应收付认领未审批数量',
+                                                             compute=_compute_advance_reconcile_order_count_all)
+    advance_reconcile_order_no_draft_ids = fields.One2many('account.reconcile.order', 'yjzy_advance_payment_id',
+                                                        u'预收付-应收付非草稿',
+                                                        domain=[('state', 'not in', ['draft','cancelled','refused'])])
+    advance_reconcile_order_no_draft_ids_count = fields.Integer(u'预收付-应收付非草稿数量',
+                                                             compute=_compute_advance_reconcile_order_count_all)
+
     advance_reconcile_order_draft_amount_advance = fields.Float('预收付-应收付认领未审批金额',compute=_compute_advance_reconcile_order_count_all)
-    advance_reconcile_order_draft_ids_count = fields.Integer(u'预收付-应收付认领未审批数量', compute=_compute_advance_reconcile_order_count_all )
 
 
     advance_reconcile_order_count_all = fields.Integer(u'预收付-应收付认领数量', compute=_compute_advance_reconcile_order_count_all )
-
     advance_reconcile_order_count_char = fields.Char(u'预收付-应收付认领未审批数量/全部', compute=_compute_advance_reconcile_order_count_all)
-
+    advance_reconcile_order_no_draft_count_char = fields.Char(u'预收付-应收付认领未审批数量/非草稿', compute=_compute_advance_reconcile_order_count_all)
 
     #老的
     yshx_ids = fields.One2many('account.reconcile.order', 'yjzy_payment_id', u'收款-应收认领单')
@@ -1213,9 +1223,18 @@ class account_payment(models.Model):
     def open_yfsqd_yfhxd_new_window(self):
         if self.state not in '50_posted':
             raise Warning('当前状态不允许进行认领')
-        tree_view = self.env.ref('yjzy_extend.account_yfhxd_advance_tree_view_new').id
+        tree_view = self.env.ref('yjzy_extend.account_yfhxd_advance_tree_view_approve_new').id
         form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new').id
         advance_reconcile = self.mapped('advance_reconcile_order_ids')
+
+        yfhxd_id = self.env.context.get('yfhxd_id')
+        yfhxd_id_cool = self.env['account.reconcile.order'].search([('id','=',yfhxd_id)])
+        print('yfhxd_id_cool',yfhxd_id_cool,yfhxd_id)
+        if yfhxd_id_cool.state == 'draft':
+            domain = [('id', 'in', advance_reconcile.ids), ('sfk_type', '=', 'yfhxd')]
+        else:
+            domain = [('id', 'in', advance_reconcile.ids), ('sfk_type', '=', 'yfhxd'),('state','not in',['draft','refused','cancelled'])]
+
         return {
             'name': '预付认领单',
             'view_type': 'form',
@@ -1224,7 +1243,7 @@ class account_payment(models.Model):
             'type': 'ir.actions.act_window',
             'views': [(tree_view, 'tree'),(form_view,'form')],
             'target': 'new',
-            'domain': [('id', 'in', advance_reconcile.ids), ('sfk_type', '=', 'yfhxd')],
+            'domain': domain,
             'context':{'default_partner_id': self.partner_id.id,
                'default_sfk_type': 'yfhxd',
                'default_yjzy_advance_payment_id': self.id,
@@ -1350,6 +1369,7 @@ class account_payment(models.Model):
     def create_yfsqd_yfhxd_form_new(self):
         form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new').id
         default_invoice_ids = self.env.context.get('default_invoice_ids')
+        default_yfhxd_id = self.env.context.get('default_yfhxd_id')
         invoice_ids_id = default_invoice_ids[0][2] #参考[6,False,[199,299,344]]取[199,299,344]
         print('invoice_ids',invoice_ids_id)
         #判断应付申请单里的发票和预付单上的采购是否有一致的。如果预付单有采购号，过滤掉没有这个采购单号 的发票，如果是0，提醒，不知道预收需不需要
@@ -1378,6 +1398,7 @@ class account_payment(models.Model):
                                                                   'operation_wizard': '25',
                                                                   'hxd_type_new': '30',  # 预付-应付
                                                                   'default_yjzy_type':'purchase',
+                                                                  'yjzy_reconcile_order_id': default_yfhxd_id
                                                                   })
 
         # if account_reconcile_id.yjzy_advance_payment_id.po_id:

@@ -329,6 +329,10 @@ class account_reconcile_order(models.Model):
     # other_payment_amount_payment_org = fields.Monetary(u'其他应收认领快速录入金额')
     # other
 
+    yjzy_reconcile_order_id = fields.Many2one('account.reconcile.order','关联的核销单')#从付款申请认领的时候，创建预付申请，让两者之间产生关联
+
+    yjzy_reconcile_order_ids = fields.One2many('account.reconcile.order','yjzy_reconcile_order_id','相关的核销单汇总')#从自身创建的所有的预付-应付认领单。
+
 
     renling_type = fields.Selection([('yshxd', '应收认领'),
                                      ('back_tax', '退税认领'), ('other_payment', '其他认领')], u'认领属性') #没有是指作用
@@ -496,6 +500,26 @@ class account_reconcile_order(models.Model):
 
 
 
+    def open_yjzy_reconcile_order_id(self):
+        tree_view = self.env.ref('yjzy_extend.account_yfhxd_advance_tree_view_approve_new')
+        form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new')
+        yjzy_reconcile_order_approval_ids = self.yjzy_reconcile_order_ids.filtered(lambda x: x.state == 'posted')
+        return {
+            'name': '预付-应付认领列表',
+            'view_type': 'form',
+            "view_mode": 'tree,form',
+            'res_model': 'account.reconcile.order',
+            'type': 'ir.actions.act_window',
+            'views': [(tree_view.id,'tree'),(form_view.id, 'form')],
+            'domain': [('id','in',[x.id for x in yjzy_reconcile_order_approval_ids])],
+            'target': 'new',
+            # 'domain': [('yjzy_advance_payment_id', '=', self.id)],
+            'context': {'fk_journal_id': 1,
+                        'show_so': 1,
+
+                        }
+        }
+
     @api.onchange('other_payment_bank_id')
     def onchange_other_payment_bank_id(self):
         if self.invoice_attribute == 'other_payment':
@@ -535,7 +559,7 @@ class account_reconcile_order(models.Model):
         print('account_reconcile_id', account_reconcile_id)
         return {
             'name': '认领单',
-            'view_type': 'tree,form',
+            'view_type': 'form',
             "view_mode": 'form',
             'res_model': 'account.reconcile.order',
             'type': 'ir.actions.act_window',
@@ -851,18 +875,19 @@ class account_reconcile_order(models.Model):
             amount_advance_residual_org = self.amount_advance_residual_org
             amount_advance_org = self.amount_advance_org
             yjzy_advance_payment_balance = self.yjzy_advance_payment_balance
+            # if self.operation_wizard != '03':
+            #
+            #     if amount_advance_residual_org < amount_advance_org:
+            #         raise Warning(u'预付认领金额大于采购单剩余的可认领金额') #出现历史数据错误的时候。也就是预付被认领的时候，没有填写预付单
+            #     if yjzy_advance_payment_balance < amount_advance_org:
+            #         raise Warning(u'预付认领金额大于预付款单剩余的可认领金额')
+            #
             if self.operation_wizard != '03':
+                if self.amount_total_org == 0:
+                    raise Warning('认领金额为0，无法提交！')
                 for one in self.line_no_ids:
                     if one.amount_payment_can_approve_all < one.amount_payment_org:
                         raise Warning('申请的金额大于可申请的应付,请检查')
-                if amount_advance_residual_org < amount_advance_org:
-                    raise Warning(u'预付认领金额大于采购单剩余的可认领金额') #出现历史数据错误的时候。也就是预付被认领的时候，没有填写预付单
-                if yjzy_advance_payment_balance < amount_advance_org:
-                    raise Warning(u'预付认领金额大于预付款单剩余的可认领金额')
-                if self.amount_total_org == 0:
-                    raise Warning('认领金额为0，无法提交！')
-
-
             if self.hxd_type_new == '30':
                 lines = self.line_no_ids
                 if self.yjzy_advance_payment_balance < 0:
@@ -926,18 +951,20 @@ class account_reconcile_order(models.Model):
     # def onchange_amount_advance_org(self):
     #
 
+
+
     def action_manager_approve_first_stage(self):
-        if self.advance_reconcile_line_draft_all_count != 0:
-            raise Warning('有未完成审批预付认领，请检查！')
-        for one in self.invoice_ids:            #如果invoice是0 余额的 可以从invoice_ids中删除了
-            if one.amount_payment_can_approve_all == 0 or one.residual == 0:
-                self.write({'invoice_ids':[(3,one.id)]})
-        self.make_lines()
-        stage_id = self._stage_find(domain=[('code', '=', '030')])
-        self.write({'stage_id': stage_id.id,
-                    'state': 'posted',
-                    'operation_wizard':'10',
-                    })
+        if self.advance_reconcile_line_draft_all_count == 0:
+            # raise Warning('有未完成审批预付认领，请检查！')
+            for one in self.invoice_ids:            #如果invoice是0 余额的 可以从invoice_ids中删除了
+                if one.amount_payment_can_approve_all == 0 or one.residual == 0:
+                    self.write({'invoice_ids':[(3,one.id)]})
+            self.make_lines()
+            stage_id = self._stage_find(domain=[('code', '=', '030')])
+            self.write({'stage_id': stage_id.id,
+                        'state': 'posted',
+                        'operation_wizard':'10',
+                        })
 
 
     # 财务审批：预付没有审批，只有应付申请的时候才会审批。
@@ -956,6 +983,34 @@ class account_reconcile_order(models.Model):
         if self.sfk_type == 'yshxd':
             self.action_manager_approve_stage()
 
+    #从应付申请生成的预付认领进行直接审批
+    def action_manager_approve_from_yfhxd(self):
+        self.action_manager_approve_stage()
+        if self.yjzy_reconcile_order_id:
+            self.yjzy_reconcile_order_id.action_manager_approve_first_stage()
+        tree_view = self.env.ref('yjzy_extend.account_yfhxd_advance_tree_view_approve_new')
+        form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new')
+        yjzy_reconcile_order_approval_ids = self.yjzy_reconcile_order_id.yjzy_reconcile_order_ids.filtered(lambda x: x.state == 'posted')
+        print('yjzy_reconcile_order_approval_ids',yjzy_reconcile_order_approval_ids)
+        if self.yjzy_reconcile_order_id.state_1 == 'advance_approval':
+            return {
+                'name': '预付-应付认领列表',
+                'view_type': 'form',
+                "view_mode": 'tree,form',
+                'res_model': 'account.reconcile.order',
+                'type': 'ir.actions.act_window',
+                'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
+                'domain': [('id', 'in', [x.id for x in yjzy_reconcile_order_approval_ids])],
+                'target': 'new',
+                # 'domain': [('yjzy_advance_payment_id', '=', self.id)],
+                'context': {'fk_journal_id': 1,
+                            'show_so': 1,
+
+                            }
+            }
+        else:
+            return {'type': 'ir.actions.act_window_close'}
+
     # 总经理审批：如果是预付申请，直接完成makedone，只有应付申请的时候才会审批。
     def action_manager_approve_stage(self):
         self.ensure_one()
@@ -972,11 +1027,13 @@ class account_reconcile_order(models.Model):
             if self.operation_wizard in ['20', '25']:
                 self.action_done_new() #生成的应付认领单过账
                 stage_id = self._stage_find(domain=[('code', '=', '060')])
+
                 self.write({'stage_id': stage_id.id,
                             'state': 'done',
                             'approve_date': fields.date.today(),
                             'approve_uid': self.env.user.id
                             })
+
        #应收核销待定:
         if self.sfk_type == 'yshxd':
             print('sfk_type_____111',self.sfk_type)
@@ -997,6 +1054,7 @@ class account_reconcile_order(models.Model):
                 self.yjzy_payment_id.action_reconcile()
             if self.yjzy_advance_payment_id:
                 self.yjzy_advance_payment_id.action_reconcile()
+        return True
 
 
 

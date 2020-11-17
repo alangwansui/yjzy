@@ -75,15 +75,17 @@ class purchase_order(models.Model):
         for one in self:
             polines = one.order_line
             sml_lines = aml_obj.search([('po_id', '=', one.id)]).filtered(lambda x: x.account_id.code == '1123')
+            print('sml_lines__11717171',sml_lines)
             if one.yjzy_payment_ids and one.yjzy_payment_ids[0].currency_id.name == 'CNY':
                 balance = sum([x.debit - x.credit for x in sml_lines])
             else:
                 balance = sum([1 * x.amount_currency for x in sml_lines])
             no_deliver_amount = sum([x.price_unit * (x.product_qty - x.qty_received) for x in polines])
+
             one.balance = balance
             one.no_deliver_amount = no_deliver_amount
   #13ok
-    @api.depends('aml_ids')
+    @api.depends('aml_ids','aml_ids.credit','aml_ids.debit','aml_ids.amount_currency')
     def compute_balance(self):
         for one in self:
             sml_lines = one.aml_ids.filtered(lambda x: x.account_id.code == '1123')
