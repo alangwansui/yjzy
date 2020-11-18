@@ -10,7 +10,7 @@ class IrAttachment(models.Model):
             if one.res_model and one.res_id:
                 record = self.env[one.res_model].browse(one.res_id)
 
-                print('===', record.state)
+                # print('===', record.state)
 
 
                 if record._name == 'sale.order':
