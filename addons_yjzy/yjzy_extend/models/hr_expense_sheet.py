@@ -3,7 +3,7 @@
 from odoo import models, fields, api,_
 from odoo.exceptions import Warning
 from odoo.tools import float_is_zero, float_compare
-
+from odoo.exceptions import UserError, ValidationError
 from odoo.addons import decimal_precision as dp
 
 
@@ -552,7 +552,20 @@ class hr_expense_sheet(models.Model):
             })
         for line in self.expense_line_ids:
             product = line.product_id
-            account = product.property_account_income_id
+            if product:
+                account = product.product_tmpl_id._get_product_accounts()['expense']
+                if not account:
+                    raise UserError(
+                        _("No Expense account found for the product %s (or for its category), please configure one.") % (
+                            self.product_id.name))
+            else:
+                account = self.env['ir.property'].with_context(force_company=self.company_id.id).get(
+                    'property_account_expense_categ_id', 'product.category')
+                if not account:
+                    raise UserError(
+                        _('Please configure Default Expense account for Product expense: `property_account_expense_categ_id`.'))
+
+            # account = product.property_account_income_id
             print('account',account)
             extra_invoice_line_obj.create({
                 'tb_po_id': tb_po_id.id,

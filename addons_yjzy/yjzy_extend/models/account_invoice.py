@@ -836,7 +836,7 @@ class account_invoice(models.Model):
 
     # 费用转换为应付后，创建核销单并直接生成付款单。
     def create_yfhxd(self):
-        self.ensure_one()
+        # self.ensure_one()
         sfk_type = 'yfhxd'
         domain = [('code', '=', 'yfdrl'), ('company_id', '=', self.env.user.company_id.id)]
         name = self.env['ir.sequence'].next_by_code('sfk.type.%s' % sfk_type)

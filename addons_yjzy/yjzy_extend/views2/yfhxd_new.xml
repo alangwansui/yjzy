@@ -73,7 +73,7 @@
         <field name="name">account.reconcile.order.tree</field>
         <field name="model">account.reconcile.order</field>
         <field name="arch" type="xml">
-            <tree string="应付申请单" decoration-info="state == 'draft'" default_order="approve_date desc"
+            <tree string="应付申请单" decoration-info="state == 'draft'" default_order="stage_id"
                   decoration-muted="state =='cancelled'" edit="false">
                 <field name="name"/>
                 <field name="partner_id"/>
@@ -152,8 +152,10 @@
                         <field name="name" attrs="{'invisible':1}"/>
 
                     </group>
-                    <field name="yjzy_reconcile_order_approval_ids">
-                        <tree string="预付-应付认领审批明细" editable="false" create="false" decoration-info="state == 'draft'"
+                    <field name="yjzy_reconcile_order_approval_ids" readonly="1" options="{'no_create':1}"
+                           context="{'form_view_ref':'yjzy_extend.account_yfhxd_form_view_new','from_yfhxd':1}">
+                        <tree string="预付-应付认领审批明细" edite="false" create="false" decoration-info="state == 'draft'"
+
                               default_order="state desc" decoration-muted="state =='cancelled'" edit="false">
                             <field name="name"/>
                             <field name="partner_id"/>
@@ -174,6 +176,11 @@
 
 
                 </sheet>
+                                 <footer invisible="not context.get('open')">
+
+                        <button name="action_save_test" type="object" class="oe_highlight" string="保存并关闭"/>
+
+                    </footer>
 
                 <div class="oe_chatter">
                     <field name="message_follower_ids" widget="mail_followers"/>
@@ -195,13 +202,14 @@
                     <button name="action_manager_approve_first_stage" class="oe_highlight" type="object" invisible="1"
                             attrs="{'invisible':[('state_1','!=','advance_approval')]}"
                             string="总经理审批"/>
+
                     <button name="open_yjzy_reconcile_order_id" string="总经理审批预付认领" class="oe_highlight" type="object"
                             attrs="{'invisible':[('state_1','!=','advance_approval')]}"/>
                     <button name="action_account_approve_stage" string="财务审批" class="oe_highlight" type="object"
                             attrs="{'invisible':[('state_1','!=','account_approval')]}"/>
-                    <button name="action_manager_approve_stage" type="object" string="总经理审批" class="oe_highlight"
-                            attrs="{'invisible':[('state_1','!=','manager_approval')]}"/>
-
+                    <button name="action_manager_approve_stage" type="object" string="总经理预付认领审批" class="oe_highlight"
+                            attrs="{'invisible':[('state_1','!=','manager_approval')]}" invisible="context.get('from_yfhxd')"/>
+                    <button name="action_manager_approve_from_yfhxd" type="object" string="总经理预付认领审批" class="oe_highlight" invisible="not context.get('from_yfhxd')"/>
 
                     <button name="action_draft_stage" class="oe_highlight" type="object" string="重置草稿"
                             states="refused"/>

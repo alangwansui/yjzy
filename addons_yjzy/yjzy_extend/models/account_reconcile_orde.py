@@ -961,7 +961,8 @@ class account_reconcile_order(models.Model):
 
 
     def action_manager_approve_first_stage(self):
-        if self.advance_reconcile_line_draft_all_count == 0:
+        if not self.yjzy_reconcile_order_approval_ids:
+        # if self.advance_reconcile_line_draft_all_count == 0:
             # raise Warning('有未完成审批预付认领，请检查！')
             for one in self.invoice_ids:            #如果invoice是0 余额的 可以从invoice_ids中删除了
                 if one.amount_payment_can_approve_all == 0 or one.residual == 0:

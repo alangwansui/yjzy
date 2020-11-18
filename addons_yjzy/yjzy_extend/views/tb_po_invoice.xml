@@ -705,7 +705,14 @@
                             <button name="action_save_test" type="object" class="oe_highlight" attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',True)]}" string="保存并关闭"/>
 
                         </footer>
+                           <footer invisible="not context.get('open_expense')">
+                        <button name="action_save_test" type="object" class="oe_highlight" attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',True)]}" string="保存并关闭"/>
+
+                        <button string="取消" special="cancel"/>
+                        </footer>
+
                     </sheet>
+
                     <div class="oe_chatter">
                         <field name="message_follower_ids" widget="mail_followers"/>
                         <field name="activity_ids" widget="mail_activity"/>

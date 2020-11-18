@@ -251,24 +251,36 @@ class hr_expense(models.Model):
             if budget:
                 one.budget_id = budget
 
+    # @api.onchange('categ_id')
+    # def onchange_categ(self):
+    #     if self.is_onchange_false:
+    #        self.second_categ_id = False
+    #     else:
+    #         if self.categ_id:
+    #            self._cache_categ.update({self._uid: self.categ_id.id})
+    #            self.is_onchange_false = True
     @api.onchange('categ_id')
     def onchange_categ(self):
-        if self.is_onchange_false:
-           self.second_categ_id = False
-        else:
-            if self.categ_id:
-               self._cache_categ.update({self._uid: self.categ_id.id})
-               self.is_onchange_false = True
-
+        a =0
+        if self.categ_id.id != self._cache_categ.get(self._uid):
+            print('test_onchange',self.categ_id,self._cache_categ.get(self._uid))
+            self.second_categ_id = False
+            self._cache_categ.update({self._uid: self.categ_id.id})
+    #
+    # @api.onchange('second_categ_id')
+    # def onchange_second_categ(self):
+    #     if self.is_onchange_false1:
+    #        self.product_id = False
+    #     else:
+    #         if self.second_categ_id:
+    #            self._cache_second_categ.update({self._uid: self.second_categ_id.id})
+    #            self.is_onchange_false1 = True
 
     @api.onchange('second_categ_id')
     def onchange_second_categ(self):
-        if self.is_onchange_false1:
-           self.product_id = False
-        else:
-            if self.second_categ_id:
-               self._cache_second_categ.update({self._uid: self.second_categ_id.id})
-               self.is_onchange_false1 = True
+        self.product_id = False
+        self._cache_second_categ.update({self._uid: self.second_categ_id.id})
+
 
 
 

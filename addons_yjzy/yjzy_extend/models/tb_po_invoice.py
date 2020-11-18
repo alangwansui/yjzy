@@ -4,6 +4,7 @@ from odoo import fields, models, api, _
 from odoo.exceptions import Warning
 from odoo.addons import decimal_precision as dp
 from lxml import etree
+from odoo.exceptions import UserError, ValidationError
 
 class tb_po_invoice(models.Model):
     _name = 'tb.po.invoice'
@@ -346,7 +347,7 @@ class tb_po_invoice(models.Model):
                                                 domain=[('invoice_attribute', '=', 'extra')])
     invoice_extra_ids_count = fields.Integer('额外账单数量', compute=compute_invoice_count)
     invoice_p_ids = fields.One2many('account.invoice','tb_po_invoice_id','新增采购应付发票',domain=[('type','=','in_invoice'),('yjzy_type_1','=','purchase'),
-                                                                                            ('invoice_attribute','=','other_po')])
+                                                                                            ('invoice_attribute','in',['other_po','expense_po'])])
     invoice_p_ids_count = fields.Integer('相关采购发票数量', compute=compute_invoice_count)
 
 
@@ -373,13 +374,27 @@ class tb_po_invoice(models.Model):
 
 
 
-    expense_sheet_id = fields.Many2one('hr.expense.sheet',u'费用报告')
+    expense_sheet_id = fields.Many2one('hr.expense.sheet',u'费用报告' ,ondelete='cascade',index=True)
     expense_currency_id = fields.Many2one('res.currency',related='expense_sheet_id.currency_id')
     expense_sheet_amount = fields.Float('费用报告金额',related='expense_sheet_id.total_amount')
     expense_po_amount = fields.Float('费用转应付金额')
     yjzy_invoice_residual_amount = fields.Float('原始未付总金额', compute=compute_info_store, store=True)
     yjzy_invoice_include_tax = fields.Boolean('原始采购是否含税', compute=compute_info_store, store=True)
     extra_invoice_include_tax = fields.Boolean('原始账单是否含税')
+
+    def open_tb_po_invoice(self):
+        form_view = self.env.ref('yjzy_extend.tb_po_form')
+        return {
+            'name': _(u'费用转换货'),
+            'view_type': 'form',
+            "view_mode": 'form',
+            'res_model': 'tb.po.invoice',
+            'type': 'ir.actions.act_window',
+            'view_id': form_view.id,
+            'target': 'new',
+            'res_id': self.id,
+            'context': {}
+        }
 
     @api.onchange('yjzy_payment_id')
     def onchange_yjzy_payment_id(self):
@@ -477,7 +492,6 @@ class tb_po_invoice(models.Model):
                 other_payment_invoice_parent_id = self.yjzy_tb_po_invoice_parent.invoice_other_payment_ids[0]
             else:
                 other_payment_invoice_parent_id = self.yjzy_tb_po_invoice_parent.invoice_other_payment_in_ids[0]
-
         if self.type == 'expense_po':
             self.create_yfhxd()
             print('type', self.type)
@@ -629,12 +643,14 @@ class tb_po_invoice(models.Model):
             self.make_sale_invoice()
             self.make_sale_invoice_extra()
         if self.type =='expense_po':
+            if self.purchase_amount2_add_this_time_total != self.expense_sheet_amount:
+                raise Warning('货款总金额不等于费用金额，请检查')
             self.invoice_ids.unlink()
             self.apply_expense_sheet()
             # self.make_extra_invoice()
             self.make_back_tax()
-            self.make_sale_invoice()
-            self.make_sale_invoice_extra()
+            # self.make_sale_invoice()
+            # self.make_sale_invoice_extra()
         if self.type == 'extra':
             self.invoice_ids.unlink()
             self.make_extra_invoice()
@@ -1365,7 +1381,19 @@ class tb_po_invoice(models.Model):
             expense_line_ids = self.expense_sheet_id.expense_line_ids
             for line_1 in expense_line_ids:
                 product = line_1.product_id
-                account = product.property_account_income_id
+                if product:
+                    account = product.product_tmpl_id._get_product_accounts()['expense']
+                    if not account:
+                        raise UserError(
+                            _("No Expense account found for the product %s (or for its category), please configure one.") % (
+                                self.product_id.name))
+                else:
+                    account = self.env['ir.property'].with_context(force_company=self.company_id.id).get(
+                        'property_account_expense_categ_id', 'product.category')
+                    if not account:
+                        raise UserError(
+                            _('Please configure Default Expense account for Product expense: `property_account_expense_categ_id`.'))
+                # account = product.property_account_income_id
                 invoice_line = invoice_line_obj.create({
                     'name': '%s' % (product.name),
                     'invoice_id':inv.id,
