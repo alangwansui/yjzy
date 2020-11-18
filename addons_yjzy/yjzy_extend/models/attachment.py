@@ -18,9 +18,9 @@ class IrAttachment(models.Model):
                         raise Warning('确认的销售订单禁止删除附件')
 
 
-                # elif record._name == 'hr.expense.sheet':
-                #     if record.state not in ['draft', 'cancel']:
-                #         raise Warning('审批中禁止删除附件')
+                elif record._name == 'hr.expense.sheet':
+                    if record.state not in ['draft', 'cancel']:
+                        raise Warning('审批中禁止删除附件')
 
 
                 else:
