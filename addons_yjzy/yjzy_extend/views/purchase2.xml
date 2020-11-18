@@ -90,7 +90,7 @@
                     <button name="action_rfq_send" invisible="1"  groups="base.group_system" states="purchase" string="Send PO by Email" type="object" context="{'send_rfq':False}"/>
                     <button name="action_view_picking"  string="Receive Products" invisible="1" class="oe_highlight" type="object" attrs="{'invisible': ['|', '|' , ('is_shipped', '=', True), ('state','not in', ('purchase','done')), ('picking_count', '=', 0)]}"/>
                     <button name="button_draft" states="cancel" string="Set to Draft" type="object" invisible="1" groups="base.group_system"/>
-                    <button name="button_cancel" invisible="1" groups="base.group_system" states="draft,to approve,sent,purchase"  string="Cancel" type="object"/>
+                    <button name="button_cancel" invisible="0" groups="base.group_system" states="draft,to approve,sent,purchase"  string="Cancel" type="object"/>
                     <button name="button_done" invisible="1" groups="base.group_system" type="object" string="Lock" states="purchase"/>
                     <button name="button_unlock" invisible="1" groups="base.group_system" type="object" string="Unlock" states="done" />
 

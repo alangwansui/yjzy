@@ -61,7 +61,7 @@ class hr_expense(models.Model):
             one.expense_to_invoice_type = expense_to_invoice_type
 
     @api.depends('sheet_id','stage_id')
-    def _compute_stage_id(self):
+    def compute_stage_id(self):
         for one in self:
             stage_id = one.sheet_id.stage_id
             one.stage_id = stage_id
@@ -75,7 +75,7 @@ class hr_expense(models.Model):
                                                  ('incoming', u'其他收入')], u'类型说明',compute=_compute_expense_to_invoice_type, store=True)#related='sheet_id.expense_to_invoice_type'
 
     sheet_id = fields.Many2one('hr.expense.sheet', string="费用报告", readonly=True, copy=False, ondelete="cascade")
-    stage_id = fields.Many2one('expense.sheet.stage',u'审批流', compute=_compute_stage_id, store=True)
+    stage_id = fields.Many2one('expense.sheet.stage',u'审批流', compute=compute_stage_id, store=True)
     include_tax = fields.Boolean(u'含税')
     line_ids = fields.One2many('hr.expense.line', 'expense_id', u'分配明细')
     # user_ids = fields.Many2many('res.users', compute=compute_line_user, string='用户s', store=True)
