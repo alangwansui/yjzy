@@ -565,7 +565,7 @@ class account_invoice(models.Model):
     usd_pool_4 = fields.Float('美金池4', compute=compute_yjzy_invoice_amount_total, store=True)
     stage_id = fields.Many2one(
         'account.invoice.stage',
-        default=_default_invoice_stage)
+        default=_default_invoice_stage,copy=False)
     state_1 = fields.Selection(Invoice_Selection,'额外账单审批',related='stage_id.state')
     #新建一个账单的状态，可以用来筛选还没有开始付款申请的账单
     state_2 = fields.Selection([

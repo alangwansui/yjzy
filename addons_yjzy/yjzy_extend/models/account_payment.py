@@ -162,6 +162,7 @@ class account_payment(models.Model):
             one.advance_total = advance_total
             one.advance_balance_total = advance_balance_total
 
+    #针对收款单的查询
     @api.depends('yshx_ids','yshx_ids.state','aml_ids','yshx_ids.amount_advance_org','ysrld_ids','ysrld_ids.state','ysrld_ids.state','ysrld_ids.amount','ysrld_ids.advance_total','ysrld_ids.advance_balance_total','fybg_ids.state')
     def compute_rcskd_amount_total(self):
         for one in self:
@@ -272,7 +273,20 @@ class account_payment(models.Model):
     def compute_tb_po_invoice_ids_count(self):
         for one in self:
             one.tb_po_invoice_ids_count = len(one.tb_po_invoice_ids)
+
+    # @api.depends('advance_reconcile_order_approve_ids','advance_reconcile_order_approve_ids.amount_advance_org_new')
+    # def compute_advance_reconcile_order_approve_amount(self):
+    #     for one in self:
+    #         advance_reconcile_order_approve_amount = sum(x.amount_advance_org_new for x in one.advance_reconcile_order_approve_ids)
+    #         approve_balance = one.advance_balance_total - advance_reconcile_order_approve_amount
+    #         one.advance_reconcile_order_approve_amount = advance_reconcile_order_approve_amount
+    #         one.approve_balance = approve_balance
     #1102
+    # advance_reconcile_order_approve_ids = fields.One2many('account.reconcile.order', 'yjzy_advance_payment_id',u'预收付-应收付认领已审批',
+    #                                                           domain=[('state_1', '=', '40_approve')])
+    # advance_reconcile_order_approve_amount = fields.Monetary('预收付-应收付认领审批完成金额', currency_field='yjzy_payment_currency_id',compute=compute_advance_reconcile_order_approve_amount, store=True )
+    # approve_balance = fields.Monetary('预收付-应收付认领可认领金额', currency_field='yjzy_payment_currency_id', compute=compute_advance_reconcile_order_approve_amount, store=True )
+
     yjzy_partner_id = fields.Many2one('res.partner', 'Customer')
 
     payment_for_goods = fields.Boolean('货款')
@@ -306,6 +320,7 @@ class account_payment(models.Model):
                                                              compute=_compute_advance_reconcile_order_count_all)
 
     advance_reconcile_order_draft_amount_advance = fields.Float('预收付-应收付认领未审批金额',compute=_compute_advance_reconcile_order_count_all)
+
 
 
     advance_reconcile_order_count_all = fields.Integer(u'预收付-应收付认领数量', compute=_compute_advance_reconcile_order_count_all )
@@ -1371,9 +1386,13 @@ class account_payment(models.Model):
         }
     #从预收账单直接创建认领(从应付申请的时候，明细上创建)   从应付核销单上的预付列表来做认领的动作
     def create_yfsqd_yfhxd_form_new(self):
-        form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new').id
         default_invoice_ids = self.env.context.get('default_invoice_ids')
         default_yfhxd_id = self.env.context.get('default_yfhxd_id')
+        advance_reconcile_order_ids = self.advance_reconcile_order_ids.filtered(lambda x: x.state not in ['done','approved'] and x.yjzy_reconcile_order_id.id == default_yfhxd_id)
+        if advance_reconcile_order_ids:
+            raise Warning('已经存在未审批的预收认领，无法再次创建')
+        form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new').id
+
         invoice_ids_id = default_invoice_ids[0][2] #参考[6,False,[199,299,344]]取[199,299,344]
         print('invoice_ids',invoice_ids_id)
         #判断应付申请单里的发票和预付单上的采购是否有一致的。如果预付单有采购号，过滤掉没有这个采购单号 的发票，如果是0，提醒，不知道预收需不需要
@@ -1415,6 +1434,7 @@ class account_payment(models.Model):
 
 
         account_reconcile_id.make_lines()
+        account_reconcile_id.compute_advice_amount_advance_org()
         print('account_reconcile_id',account_reconcile_id)
         return {
             'name': '认领单',

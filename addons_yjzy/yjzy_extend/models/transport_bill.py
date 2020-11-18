@@ -826,7 +826,7 @@ class transport_bill(models.Model):
     #state2
     stage_id = fields.Many2one(
         'transport.bill.stage',
-        default=_default_transport_stage)
+        default=_default_transport_stage,copy=False)
     border_char = fields.Char(u' ',compute=compute_border)
     sale_invoice_total_new = fields.Monetary(u'销售发票金额', compute=sale_invoice_amount, store=True)
     sale_invoice_paid_new = fields.Monetary(u'已收销售发票', compute=sale_invoice_amount, store=True)

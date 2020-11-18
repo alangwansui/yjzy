@@ -320,6 +320,12 @@ class account_reconcile_order(models.Model):
             supplier_advance_payment_ids_amount_advance_org = sum(x.advance_reconcile_order_draft_amount_advance for x in one.supplier_advance_payment_ids)
             one.supplier_advance_payment_ids_amount_advance_org = supplier_advance_payment_ids_amount_advance_org
 
+
+    def compute_advice_amount_advance_org_total(self):
+        for one in self:
+            advice_amount_advance_org_total = sum(x.advice_amount_advance_org for x in one.line_no_ids)
+            one.advice_amount_advance_org_total = advice_amount_advance_org_total
+
     # @api.depends('yjzy_payment_id','yjzy_payment_id.balance')
     # def compute_yjzy_payment_balance(self):
     #     for one in self:
@@ -328,8 +334,9 @@ class account_reconcile_order(models.Model):
     #其他应收认领的时候，一个快速添加金额的字段，onchange到line_no_ids和line_ids的第一行
     # other_payment_amount_payment_org = fields.Monetary(u'其他应收认领快速录入金额')
     # other
+    advice_amount_advance_org_total = fields.Monetary(u'建议预收金额', currency_field='yjzy_advance_currency_id',compute=compute_advice_amount_advance_org_total)
 
-    yjzy_reconcile_order_id = fields.Many2one('account.reconcile.order','关联的核销单')#从付款申请认领的时候，创建预付申请，让两者之间产生关联
+    yjzy_reconcile_order_id = fields.Many2one('account.reconcile.order','关联的核销单',ondelete='cascade')#从付款申请认领的时候，创建预付申请，让两者之间产生关联
 
     yjzy_reconcile_order_ids = fields.One2many('account.reconcile.order','yjzy_reconcile_order_id','相关的核销单汇总')#从自身创建的所有的预付-应付认领单。
 
@@ -359,7 +366,7 @@ class account_reconcile_order(models.Model):
 
     stage_id = fields.Many2one(
         'account.reconcile.stage',
-        default=_default_account_reconcile_stage)
+        default=_default_account_reconcile_stage,copy=False)
     state_1 = fields.Selection(Account_reconcile_Selection, u'审批流程', default='draft', index=True, related='stage_id.state',
                                track_visibility='onchange')  # 费用审批流程
     #0911
@@ -384,6 +391,8 @@ class account_reconcile_order(models.Model):
     yjzy_advance_currency_id = fields.Many2one('res.currency','预收付款单货币',related='yjzy_advance_payment_id.currency_id')
     yjzy_advance_payment_balance = fields.Monetary('预付款单余额',currency_field='yjzy_advance_currency_id', related='yjzy_advance_payment_id.advance_balance_total')
     yjzy_advance_payment_amount = fields.Monetary('预付款单原始金额', currency_field='yjzy_advance_currency_id', related='yjzy_advance_payment_id.amount')
+    # yjzy_advance_payment_approve_balance = fields.Monetary('预付款单余额',currency_field='yjzy_advance_currency_id', related='yjzy_advance_payment_id.approve_balance')
+
     #0901
     approve_date = fields.Date(u'审批完成时间')
     approve_uid = fields.Many2one('res.users',u'审批人')
@@ -2054,12 +2063,21 @@ class account_reconcile_order(models.Model):
     def compute_advice_amount_advance_org(self):
         if self.line_ids and self.line_no_ids:
             for one in self.line_no_ids:
-                so_id = one.yjzy_payment_id.so_id
-                invoice_id = one.invoice_id
-                for line in self.line_ids:
-                    if line.so_id == so_id and line.invoice_id == invoice_id:
-                        one.advice_amount_advance_org = line.so_tb_percent * one.yjzy_payment_id.amount
-                        print('werewrewrer',one.yjzy_payment_id.amount)
+                if self.sfk_type == 'yshxd':
+                    so_id = one.yjzy_payment_id.so_id
+                    invoice_id = one.invoice_id
+                    for line in self.line_ids:
+                        if line.so_id == so_id and line.invoice_id == invoice_id:
+                            one.advice_amount_advance_org = line.so_tb_percent * one.yjzy_payment_id.amount
+                            print('werewrewrer',one.yjzy_payment_id.amount)
+                elif self.sfk_type == 'yfhxd':
+                    po_id = one.yjzy_payment_id.po_id
+                    invoice_id = one.invoice_id
+                    for line in self.line_ids:
+                        if line.po_id == po_id and line.invoice_id == invoice_id:
+                            one.advice_amount_advance_org = line.so_tb_percent * one.yjzy_payment_id.amount
+                            print('werewrewrer______', one.yjzy_payment_id.amount,one.advice_amount_advance_org)
+
 
 
 
@@ -2156,7 +2174,11 @@ class account_reconcile_order_line(models.Model):
     @api.depends('so_id','so_id.amount_total')
     def compute_amount_so(self):
         for one in self:
-            one.amount_so = one.so_id.amount_total
+            if one.order_id.sfk_type == 'yshxd':
+                one.amount_so = one.so_id.amount_total
+            elif one.order_id.sfk_type == 'yfhxd':
+                one.amount_so = one.po_id.amount_total
+
 
 
     @api.depends('amount_invoice_so','amount_so')
@@ -2164,10 +2186,17 @@ class account_reconcile_order_line(models.Model):
         for one in self:
             amount_invoice_so = one.amount_invoice_so
             amount_so = one.amount_so
-            if one.so_id:
-                so_tb_percent = amount_so / amount_invoice_so
-            else:
-                so_tb_percent = 0.0
+
+            if one.order_id.sfk_type == 'yshxd':
+                if one.so_id:
+                    so_tb_percent = amount_so / amount_invoice_so
+                else:
+                    so_tb_percent = 0.0
+            if one.order_id.sfk_type == 'yfhxd':
+                if one.po_id:
+                    so_tb_percent = amount_so / amount_invoice_so
+                else:
+                    so_tb_percent = 0.0
             one.so_tb_percent = so_tb_percent
 
 

@@ -88,7 +88,7 @@ class hr_expense_sheet(models.Model):
 
     stage_id = fields.Many2one(
         'expense.sheet.stage',
-        default=_default_expense_sheet_stage)
+        default=_default_expense_sheet_stage,copy=False)
 
     #024 自动生成应收发票
     other_payment_invoice_product_id = fields.Many2one('product.product', u'其他应收项目', domain=[('type', '=', 'service')],

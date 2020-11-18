@@ -322,7 +322,7 @@ class sale_order(models.Model):
 
     stage_id = fields.Many2one(
         'sale.order.stage',
-        default=_default_sale_order_stage)
+        default=_default_sale_order_stage,copy=False)
 
     state_1 = fields.Selection(Sale_Selection, u'审批流程', default='draft', index=True, related='stage_id.state',
                                track_visibility='onchange')  # 费用审批流程
