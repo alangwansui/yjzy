@@ -6,7 +6,7 @@
             <field name="name">hr.expense.form</field>
             <field name="model">hr.expense</field>
             <field name="arch" type="xml">
-                <form string="Expenses" class="o_expense_form" delete="false">
+                <form string="Expenses" class="o_expense_form" delete="false" edit="false" create="false">
                     <header> <!--invisible="context.get('expense_adding_line')"-->
                         <button name="submit_expenses" states="draft" groups="base.group_system"
                                 string="Submit to Manager" type="object"
@@ -16,11 +16,11 @@
                                 attrs="{'invisible': [('state', '=','draft')]}"
                                 invisible="1"/>
                         <button name="action_employee_confirm" type="object" string="责任人确认"
-                                attrs="{'invisible':['|',('state','in',['draft','done','refused','confirmed','employee_confirm']),('sheet_state','=','cancel')]}"/>
+                                attrs="{'invisible':[('state','not in',['draft','reported']),('state_1','=','employee_approval')]}"/>
                         <button name="make_diff_mvoe" type="object" string="创建差额分录" groups="base.group_system"/>
                         <button name="btn_user_confirm" type="object" string="所有责任人确认" groups="base.group_system"/>
-                        <button name="btn_undo_confirm" type="object" string="取消责任人确认"
-                                attrs="{'invisible':['|',('state','in',['draft','done','refused','confirmed','reported']),('sheet_all_line_is_confirmed','=',True)]}"/>
+                        <button name="btn_undo_confirm" type="object" string="取消责任人确认" attrs="{'invisible':[('state','not in',['employee_confirm']),('state_1','=','employee_approval')]}"
+                                /><!--attrs="{'invisible':['|',('state','in',['draft','done','refused','confirmed','reported']),('sheet_all_line_is_confirmed','=',True)]}"-->
                     </header>
                     <sheet>
                         <div class="oe_button_box" invisible="1"><!--invisible="context.get('expense_adding_line')"-->
@@ -38,17 +38,20 @@
                         <group>
                             <group>
                                 <field name="categ_id" string="大类" options="{'no_open':1}"
-                                       domain="[('parent_id.name','=','费用')]"
+                                       domain="[('parent_id.name','=','费用')]" attrs="{'readonly':['|',('sheet_state','not in',['draft','cancel']),('state','not in',['draft','refused','reported'])]}"
                                        context="{'search_order': 'sequence','only_name':1}" required="1"/>
                                 <field name="second_categ_id" string="中类" options="{'no_open':1}"
+                                       attrs="{'readonly':['|',('sheet_state','not in',['draft','cancel']),('state','in',['done','employee_confirm','confirmed'])]}"
                                        domain="[('parent_id','=', categ_id)]"
                                        context="{'search_order': 'sequence','only_name':1}"
                                        required="1"/>
                                 <field name="product_id" required="1" string="小类"
+                                       attrs="{'readonly':['|',('sheet_state','not in',['draft','cancel']),('state','in',['done','employee_confirm','confirmed'])]}"
                                        options="{'no_create':True,'no_open':1}"
                                        domain="[('can_be_expensed','=',True),('categ_id','=',second_categ_id)]"
                                        context="{'default_can_be_expensed': 1, 'tree_view_ref': 'hr_expense.product_product_expense_tree_view','only_name':1}"/>
                                 <field name="unit_amount" string="费用金额" required="1" widget="monetary"
+                                       attrs="{'readonly':['|',('sheet_state','not in',['draft','cancel']),('state','in',['done','employee_confirm','confirmed'])]}"
                                        options="{'currency_field': 'currency_id'}"/>
                                 <label for="quantity" invisible="1"/>
                                 <div invisible="1">
@@ -56,14 +59,20 @@
                                     <field name="product_uom_id" class="oe_inline" groups="product.group_uom"/>
                                 </div>
                                 <field name="include_tax" invisible="1"/>
-                                <field name="sys_outer_hetong" string="系统外合同"/>
+                                <field name="sys_outer_hetong" string="系统外合同"
+                                       attrs="{'readonly':['|',('state_1','not in',['draft','employee_approval']),('state','in',['done','employee_confirm','confirmed'])]}"/>
                                 <field name="tb_id" string="系统内合同" context="{'show_ref': 1}"
+                                       attrs="{'readonly':['|',('state_1','not in',['draft','employee_approval']),('state','in',['done','employee_confirm','confirmed'])]}"
                                        domain="[('state','not in',['cancel','refused','draft','check','submit','sales_approve'])]"/>
-                                <field name="lead_id" string="项目编号" options="{'quick_create': 1}"/>
-                                <field name="employee_id" string="责任人" options="{'no_open':True}"/>
+                                <field name="lead_id" string="项目编号" options="{'quick_create': 1}"
+                                       attrs="{'readonly':['|',('state_1','not in',['draft','employee_approval']),('state','in',['done','employee_confirm','confirmed'])]}"/>
+                                <field name="employee_id" string="责任人" options="{'no_open':True}"
+                                       attrs="{'readonly':['|',('sheet_state','not in',['draft','cancel']),('state','in',['done','employee_confirm','confirmed'])]}"/>
                                 <field name="employee_sales_uid" required="1" string="费用对象"
+                                       attrs="{'readonly':['|',('sheet_state','not in',['draft','cancel']),('state','in',['done','employee_confirm','confirmed'])]}"
                                        domain="['|',('job_id.name','=','客户经理'),('job_id.name','=','公司')]"/>
-                                <field name="date" string="费用发生日期"/>
+                                <field name="date" string="费用发生日期"
+                                       attrs="{'readonly':['|',('sheet_state','not in',['draft','cancel']),('state','in',['done','employee_confirm','confirmed'])]}"/>
                                 <field name="tax_ids" domain="[('type_tax_use', '=', 'purchase')]"
                                        widget="many2many_tags" invisible="1"
                                        groups="account.group_account_user"/>
@@ -82,11 +91,11 @@
                                 <field name="user_id" invisible="1"/>
                                 <field name="ask_uid" invisible="1"/>
 
-                                <field name="create_uid"/>
+                                <field name="create_uid" />
 
                                 <field name="budget_id" groups="base.group_system"/>
-                                <field name="budget_amount"/>
-                                <field name="budget_amount_reset"/>
+                                <field name="budget_amount" readonly="1"/>
+                                <field name="budget_amount_reset" readonly="1"/>
 
 
                             </group>
@@ -127,6 +136,7 @@
                             <page string="申请单信息" groups="base.group_system">
                                 <group>
                                     <group name="account_left">
+                                        <field name="state_1"/>
                                         <field name="sheet_id"/>
                                         <field name="sheet_employee_id"/>
                                         <field name="sheet_wkf_state"/>
@@ -1509,13 +1519,13 @@
                                        context="{'search_order': 'sequence','only_name':1}"/>
                                 <field name="total_amount" string="总金额" readonly="1" invisible="1"/>
                                 <field name="my_total_amount" string="总金额"/>
-                                <field name="document_number"/>
+                                <field name="document_number" attrs="{'readonly': [('state','in',['approve','post','done']),('is_editable','=',False)]}"/>
                                 <field name="include_tax" attrs="{'readonly':[('state','not in',['submit','draft'])]}"/>
                                 <field name="payment_mode" invisible="1" readonly="1"/>
                                 <field name="currency_id" options="{'no_create':true,'no_open':1}"
                                        attrs="{'readonly':[('state','not in',['submit','draft'])]}"/>
                                 <field name="responsible_id" invisible="1"/>
-                                <field name="bank_id" string="对方收款账号*" options="{'can_create':True}"
+                                <field name="bank_id" string="对方收款账号*" options="{'can_create':True}" attrs="{'readonly': [('state','in',['approve','post','done']),('is_editable','=',False)]}"
                                        domain="['|',('create_uid','=',uid),('partner_id.supplier','=',True)]"
                                        context="{'form_view_ref':'base.view_partner_bank_form','default_bank_type':'personal'}"
                                        required="1"/>
@@ -1536,12 +1546,13 @@
                                        options="{'no_create':true,'no_open':1}"/>
                              </group>
 
-                                <group groups="account.group_account_invoice" style="margin-top:-5px;" attrs="{'invisible':[('state_1','!=','account_approval')]}">
+                                <group groups="account.group_account_invoice" style="margin-top:-5px;"
+                                       attrs="{'invisible':[('state_1','not in',['account_approval','manager_approval','post','done'])]}">
 
                                         <field name="partner_id" string="付款对象" invisible="1"
                                                context="{'default_supplier':True, 'default_customer':True, 'default_is_company':1}"/>
                                         <field name="fk_journal_id" string="付款账户"
-                                               domain="[('type','in',['bank', 'cash'])]" attrs="{'readonly': [('state','=','approve'),('is_editable','=',False)]}"/>
+                                               domain="[('type','in',['bank', 'cash'])]" attrs="{'readonly': [('state','in',['approve','post','done']),('is_editable','=',False)]}"/>
 
                                         <field name="back_tax_product_id" invisible="1"
                                                attrs="{'readonly': [('state','=','approve')]}"/>
@@ -1554,7 +1565,7 @@
                                                domain="[('type', 'in', ['cash', 'bank'])]"
                                                context="{'default_bank_journal_code':'yfdrl'}"/>
                                         <field name="accounting_date" groups="account.group_account_user"
-                                               attrs="{'invisible': [('state', 'not in', ['approve', 'post', 'done'])]}"/>
+                                               attrs="{'invisible': [('state', 'not in', ['approve', 'post', 'done'])],'readonly': [('state','in',['approve','post','done']),('is_editable','=',False)]}"/>
                                         <field name="journal_id" domain="[('type', '=', 'purchase')]"
                                                options="{'no_open': True, 'no_create': True}"
                                                attrs="{'invisible': [('payment_mode', '!=', 'own_account')]}"/>

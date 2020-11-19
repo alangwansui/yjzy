@@ -76,6 +76,15 @@ class hr_expense(models.Model):
 
     sheet_id = fields.Many2one('hr.expense.sheet', string="费用报告", readonly=True, copy=False, ondelete="cascade")
     stage_id = fields.Many2one('expense.sheet.stage',u'审批流', compute=compute_stage_id, store=True)
+    state_1 = fields.Selection([('draft',u'草稿'),
+                         ('employee_approval',u'待责任人确认'),
+                         ('account_approval',u'待财务审批'),
+                         ('manager_approval',u'待总经理审批'),
+                         ('post',u'审批完成待支付'),
+                         ('done',u'完成'),
+                         ('refused', u'已拒绝'),
+                         ('cancel', u'取消'),
+                        ],u'报告审批状态', related='stage_id.state')
     include_tax = fields.Boolean(u'含税')
     line_ids = fields.One2many('hr.expense.line', 'expense_id', u'分配明细')
     # user_ids = fields.Many2many('res.users', compute=compute_line_user, string='用户s', store=True)
