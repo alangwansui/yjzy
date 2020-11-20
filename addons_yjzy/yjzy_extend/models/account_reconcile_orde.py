@@ -320,11 +320,13 @@ class account_reconcile_order(models.Model):
             supplier_advance_payment_ids_amount_advance_org = sum(x.advance_reconcile_order_draft_amount_advance for x in one.supplier_advance_payment_ids)
             one.supplier_advance_payment_ids_amount_advance_org = supplier_advance_payment_ids_amount_advance_org
 
-
+    @api.depends('line_no_ids','line_no_ids.advice_amount_advance_org','line_no_ids.least_advice_amount_advance_org')
     def compute_advice_amount_advance_org_total(self):
         for one in self:
             advice_amount_advance_org_total = sum(x.advice_amount_advance_org for x in one.line_no_ids)
+            least_advice_amount_advance_org = sum(x.least_advice_amount_advance_org for x in one.line_no_ids)
             one.advice_amount_advance_org_total = advice_amount_advance_org_total
+            one.least_advice_amount_advance_org = least_advice_amount_advance_org
 
     # @api.depends('yjzy_payment_id','yjzy_payment_id.balance')
     # def compute_yjzy_payment_balance(self):
@@ -353,7 +355,8 @@ class account_reconcile_order(models.Model):
     duoyu_this_time_advice_advance_org = fields.Float('多余的预收付这次应该加上的认领金额',compute=compute_ysrld_amount_advance_org_all,store=True)
 
 
-    advice_amount_advance_org_total = fields.Monetary(u'建议预收金额', currency_field='yjzy_advance_currency_id',compute=compute_advice_amount_advance_org_total)
+    advice_amount_advance_org_total = fields.Monetary(u'建议预收金额', currency_field='yjzy_advance_currency_id',compute=compute_advice_amount_advance_org_total,store=True)
+    least_advice_amount_advance_org = fields.Monetary(u'最低预收预付金额', currency_field='yjzy_advance_currency_id',compute=compute_advice_amount_advance_org_total,store=True)
 
     yjzy_reconcile_order_id = fields.Many2one('account.reconcile.order','关联的核销单',ondelete='cascade')#从付款申请认领的时候，创建预付申请，让两者之间产生关联
 
@@ -2234,6 +2237,7 @@ class account_reconcile_order_line(models.Model):
             amount_so = one.amount_so
             no_delivery_amount_so = one.no_delivery_amount_so
             so_tb_percent = 0.0
+            advice_amount_advance_org = 0
             if one.order_id.sfk_type == 'yshxd':
                 if one.so_id and amount_so != 0:
                     so_tb_percent = amount_invoice_so / amount_so
