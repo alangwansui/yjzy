@@ -571,10 +571,10 @@
                                     <field name="invoice_id" readonly="1" invisible="1"/>
                                     <field name="tb_contract_code"/>
                                     <field name="yjzy_currency_id" invisible="1"/>
-                                    <field name="so_tb_percent"/>
-                                    <field name="no_delivery_amount_so"/>
+                                    <field name="so_tb_percent" string="出运占原采购金额比例"/>
+                                    <field name="no_delivery_amount_so" invisible="1"/>
                                     <field name="amount_invoice_so" string="采购对应应付金额" invisible="0"/>
-                                    <field name="amount_invoice_so_proportion"/>
+                                    <field name="amount_invoice_so_proportion" invisible="1"/> <!--没用了-->
                                     <field name="amount_invoice_so_residual" string="未认领应付"/>
                                     <field name="advance_residual2" string="未认领预付" readonly="0"/>
                                     <field name="residual" readonly="0" string="原始应付余额" invisible="1"/>

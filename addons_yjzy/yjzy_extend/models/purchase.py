@@ -121,6 +121,11 @@ class purchase_order(models.Model):
         stage = self.env['purchase.order.stage']
         return stage.search([], limit=1)
 
+    @api.depends('source_so_id','source_so_id.amount_total')
+    def compute_so_id_amount_total(self):
+        for one in self:
+            one.so_id_amount_total = one.source_so_id.amount_total
+
     stage_id = fields.Many2one(
         'purchase.order.stage',
         default=_default_purchase_order_stage, copy=False)
@@ -197,6 +202,8 @@ class purchase_order(models.Model):
     #akiny
     so_id_state = fields.Selection('源销售合同状态',related='source_so_id.state')
     aml_ids = fields.One2many('account.move.line', 'po_id', u'分录明细', readonly=True)
+    so_currentcy_id = fields.Many2one('res.currency','销售合同币种',related='source_so_id.currency_id')
+    so_id_amount_total = fields.Monetary('对应销售金额',currency_field='so_currentcy_id', compute=compute_so_id_amount_total,store=True)
 
     def _stage_find(self, domain=None, order='sequence'):
         search_domain = list(domain)

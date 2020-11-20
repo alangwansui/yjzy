@@ -70,6 +70,18 @@ class transport_bill_line(models.Model):
             purchase_cost_new = one.get_purchase_cost()
             one.purchase_cost_new = purchase_cost_new
 
+    @api.depends('sol_id.new_rest_tb_qty','sol_id')
+    def compute_rest_tb_qty(self):
+        for one in self:
+            one.rest_tb_qty = one.sol_id.new_rest_tb_qty
+
+    # 13ok
+    @api.depends('lot_plan_ids', 'lot_plan_ids.stage_2', 'lot_plan_ids.qty', 'plan_qty')
+    def compute_qty2stage_new(self):
+        for one in self:
+            plan_lots = one.lot_plan_ids
+            one.qty2stage_new = sum([x.qty for x in plan_lots.filtered(lambda x: x.stage_2 == True)])
+
    #akiny暂时不要
     stage3move_ids = fields.Many2many('stock.move', 'ref_move_tbl', 'lid', 'mid', u'出库',
                                       domain=[('picking_code', '=', 'outgoing')])
@@ -107,7 +119,8 @@ class transport_bill_line(models.Model):
     include_tax = fields.Boolean(related='bill_id.include_tax')
     state = fields.Selection(related='bill_id.state')
     sol_id = fields.Many2one('sale.order.line', u'销售明细')
-    rest_tb_qty = fields.Float(related='sol_id.rest_tb_qty')
+    # rest_tb_qty = fields.Float(related='sol_id.rest_tb_qty')
+    rest_tb_qty = fields.Float(compute=compute_rest_tb_qty)
     cip_type = fields.Selection(related='bill_id.cip_type', readonly=True)
     smline_ids = fields.One2many('stock.move.line', related='sol_id.smline_ids', string=u'库存预留')
     smline_str = fields.Char(related='sol_id.smline_str', string=u'锁定内容')
@@ -176,12 +189,7 @@ class transport_bill_line(models.Model):
 
 
 
-#13ok
-    @api.depends('lot_plan_ids', 'lot_plan_ids.stage_2', 'lot_plan_ids.qty')
-    def compute_qty2stage_new(self):
-        for one in self:
-            plan_lots = one.lot_plan_ids
-            one.qty2stage_new = sum([x.qty for x in plan_lots.filtered(lambda x: x.stage_2 == True)])
+
 
 #13ok
     @api.onchange('sol_id')
