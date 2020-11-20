@@ -274,6 +274,15 @@ class account_payment(models.Model):
         for one in self:
             one.tb_po_invoice_ids_count = len(one.tb_po_invoice_ids)
 
+    @api.depends('advance_reconcile_order_line_ids','advance_reconcile_order_line_ids.amount_advance_org')
+    def compute_amount_advance_org_all(self):
+        for one in self:
+            amount_advance_org_all = sum(x.amount_advance_org for x in one.advance_reconcile_order_line_ids)
+            advice_amount_advance_org_all = sum(x.advice_amount_advance_org for x in one.advance_reconcile_order_line_ids)
+            one.amount_advance_org_all = amount_advance_org_all
+            one.advice_amount_advance_org_all =advice_amount_advance_org_all
+
+
     # @api.depends('advance_reconcile_order_approve_ids','advance_reconcile_order_approve_ids.amount_advance_org_new')
     # def compute_advance_reconcile_order_approve_amount(self):
     #     for one in self:
@@ -332,6 +341,10 @@ class account_payment(models.Model):
     advance_reconcile_order_line_ids = fields.One2many('account.reconcile.order.line', 'yjzy_payment_id',
                                                        string='预收认领明细', domain=[('amount_advance_org', '>', 0),
                                                                                 ('order_id.state', '=', 'done')])
+    #1119计算建议预收预付金额
+    amount_advance_org_all = fields.Float('实际已经支付完成的认领金额总额',compute=compute_amount_advance_org_all, store=True)
+    advice_amount_advance_org_all = fields.Float('实际已经支付完成的原则分配总额',compute=compute_amount_advance_org_all, store=True)
+
 
 
 
@@ -690,7 +703,7 @@ class account_payment(models.Model):
         self.action_account_post()
 
     def action_manager_post(self):
-        if self.po_id and self.po_id.state not in ['to_approve','purchase','done']:
+        if self.po_id and self.po_id.state not in ['to approve','purchase','done']:
             raise Warning('采购单为完成审批！')
         today = fields.date.today()
         self.write({'post_uid': self.env.user.id,

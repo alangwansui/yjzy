@@ -430,6 +430,7 @@ class sale_order(models.Model):
     no_sent_amount = fields.Monetary(u'未发货的金额', compute=compute_info)
     no_sent_amount_new = fields.Monetary(u'未发货的金额', compute=compute_no_sent_amount, store=True)
 
+
     purchase_no_deliver_amount = fields.Float('未发货的采购金额', compute=compute_info)
     purchase_no_deliver_amount_new = fields.Float('未发货的采购金额', compute='compute_purchase_no_deliver_amount_new',store=True)
     po_ids_new = fields.One2many('purchase.order', 'source_so_id', '采购合同新')

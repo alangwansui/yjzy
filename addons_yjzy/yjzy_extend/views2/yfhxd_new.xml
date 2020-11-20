@@ -464,16 +464,19 @@
                     <notebook>
                         <!--参考page autofocus="autofocus" 默认分页-->
                         <page string="认领明细" attrs="{'invisible':['|','|',('operation_wizard','!=','03'),('hxd_type_new','!=','40'),('invoice_attribute','!=','normal')]}">
-                            <field name="yjzy_reconcile_order_ids" context="{'form_view_ref':'yjzy_extend.account_yfhxd_form_view_new','from_yfhxd':1}">
+                            <field name="yjzy_reconcile_order_ids"
+                                   context="{'show_po':1,'form_view_ref':'yjzy_extend.account_yfhxd_form_view_new','from_yfhxd':1}">
                                 <tree default_order="stage_id">
-                                    <field name="name"/>
-                                    <field name="partner_id"/>
+                                    <field name="name" invisible="1"/>
+                                    <field name="yjzy_advance_payment_id"/>
+                                    <field name="partner_id" invisible="1"/>
                                     <field name="date" invisible="1"/>
                                     <field name="approve_uid" invisible="1"/>
-                                    <field name="approve_date"/>
+                                    <field name="approve_date" invisible="1"/>
                                     <field name="yjzy_advance_payment_amount" string="原始预付款金额"/>
                                     <field name="yjzy_advance_payment_balance" string="可认领金额"/>
                                     <field name="advice_amount_advance_org_total" string="本次建议认领金额"/>
+
                                     <field name="amount_total_org" string="全部认领合计" invisible="1"/>
                                     <field name="amount_payment_org" string="实际申请金额" invisible="1"/>
                                     <field name="amount_advance_org" string="本次实际认领金额"/>
@@ -519,6 +522,7 @@
 
                                     <field name="amount_invoice_so_residual" invisible="1"/>
                                     <field name="advice_amount_advance_org"/>
+                                    <field name="least_advice_amount_advance_org" string="最低认领金额"/>
                                     <field name="invoice_id_po_ids" widget="many2many_tags" string="采购合同"
                                            attrs="{'column_invisible':[('parent.invoice_attribute','in',['other_payment'])]}"/>
                                     <field name="amount_invoice_so" string="原始应付款" readonly="1"/>
@@ -543,6 +547,7 @@
                                            attrs="{'column_invisible':[('parent.operation_wizard','not in',['40'])]}"/>
                                     <field name="currency_id" invisible="1"/>
                                     <field name="amount_payment" invisible="1"/>
+
                                 </tree>
                             </field>
                         </page>
@@ -563,7 +568,8 @@
                                     <field name="tb_contract_code"/>
                                     <field name="yjzy_currency_id" invisible="1"/>
                                     <field name="so_tb_percent"/>
-                                    <field name="amount_invoice_so" string="采购对应应付金额" invisible="1"/>
+                                    <field name="no_delivery_amount_so"/>
+                                    <field name="amount_invoice_so" string="采购对应应付金额" invisible="0"/>
                                     <field name="amount_invoice_so_proportion"/>
                                     <field name="amount_invoice_so_residual" string="未认领应付"/>
                                     <field name="advance_residual2" string="未认领预付" readonly="0"/>
@@ -571,7 +577,7 @@
                                     <field name="invoice_currency_id" invisible="1"/>
                                     <field name="payment_currency_id" invisible="1"/>
                                     <field name="currency_id" invisible="1"/>
-                                    <field name="amount_invoice_so" readonly="1" invisible=""/>
+
                                     <field name="yjzy_payment_id" string="预付申请单"
                                            context="{'form_view_ref': 'yjzy_extend.view_rcfkd_form','advance_po_amount':1}"
                                            domain="[('sfk_type','=','yfsqd'),('advance_balance_total','!=',0)]"/>
@@ -583,6 +589,9 @@
                                     <!--field name="amount_bank"/-->
                                     <field name="amount_diff_org" string="费用" invisible="1"/>
                                     <field name="amount_total_org" string="应付认领合计"/>
+                                     <button name="compute_amount_so" type="object" class="oe_highlight" string="计算上一次的未发货金额"/>
+                                    <button name="compute_so_tb_percent" type="object" class="oe_highlight" string="计算比例"/>
+
                                 </tree>
                             </field>
                         </page>

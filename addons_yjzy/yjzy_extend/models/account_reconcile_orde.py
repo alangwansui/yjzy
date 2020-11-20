@@ -334,6 +334,25 @@ class account_reconcile_order(models.Model):
     #其他应收认领的时候，一个快速添加金额的字段，onchange到line_no_ids和line_ids的第一行
     # other_payment_amount_payment_org = fields.Monetary(u'其他应收认领快速录入金额')
     # other
+
+    @api.depends('yjzy_advance_payment_id','yjzy_advance_payment_id.amount_advance_org_all','yjzy_advance_payment_id.advice_amount_advance_org_all')
+    def compute_ysrld_amount_advance_org_all(self):
+        for one in self:
+            ysrld_amount_advance_org_all =  one.yjzy_advance_payment_id.amount_advance_org_all
+            ysrld_advice_amount_advance_org_all = one.yjzy_advance_payment_id.advice_amount_advance_org_all
+            duoyu_this_time_advice_advance_org = ysrld_advice_amount_advance_org_all - ysrld_amount_advance_org_all
+            print('duoyu_this_time_advice_advance_org', duoyu_this_time_advice_advance_org)
+            one.ysrld_amount_advance_org_all = ysrld_amount_advance_org_all
+            one.ysrld_advice_amount_advance_org_all = ysrld_advice_amount_advance_org_all
+            one.duoyu_this_time_advice_advance_org = duoyu_this_time_advice_advance_org
+
+
+
+    ysrld_amount_advance_org_all = fields.Float('预收单的所有被认领金额',compute=compute_ysrld_amount_advance_org_all,store=True)
+    ysrld_advice_amount_advance_org_all = fields.Float('预收认领单的所有被认领的原则分配金额',compute=compute_ysrld_amount_advance_org_all,store=True)
+    duoyu_this_time_advice_advance_org = fields.Float('多余的预收付这次应该加上的认领金额',compute=compute_ysrld_amount_advance_org_all,store=True)
+
+
     advice_amount_advance_org_total = fields.Monetary(u'建议预收金额', currency_field='yjzy_advance_currency_id',compute=compute_advice_amount_advance_org_total)
 
     yjzy_reconcile_order_id = fields.Many2one('account.reconcile.order','关联的核销单',ondelete='cascade')#从付款申请认领的时候，创建预付申请，让两者之间产生关联
@@ -2061,22 +2080,44 @@ class account_reconcile_order(models.Model):
             raise Warning(war)
 
     def compute_advice_amount_advance_org(self):
+        so_id = self.yjzy_advance_payment_id.so_id
+        po_id = self.yjzy_advance_payment_id.po_id
+        so_line_ids = self.line_ids.filtered(lambda x: x.so_id == so_id)
+        po_line_ids = self.line_ids.filtered(lambda x: x.po_id == po_id)
+        so_amount_all = sum(x.amount_invoice_so for x in so_line_ids) #计算这次认领的发票的对应的销售的出运总金额，为了计算各自和他的比例
+        po_amount_all = sum(x.amount_invoice_so for x in po_line_ids)
         if self.line_ids and self.line_no_ids:
             for one in self.line_no_ids:
                 if self.sfk_type == 'yshxd':
-                    so_id = one.yjzy_payment_id.so_id
                     invoice_id = one.invoice_id
-                    for line in self.line_ids:
-                        if line.so_id == so_id and line.invoice_id == invoice_id:
-                            one.advice_amount_advance_org = line.so_tb_percent * one.yjzy_payment_id.amount
-                            print('werewrewrer',one.yjzy_payment_id.amount)
+                    line_id = self.line_ids.filtered(lambda x: x.so_id == so_id and x.invoice_id == invoice_id)
+                    amount_invoice_so = line_id.amount_invoice_so
+
+                    least_advice_amount_advance_org = one.yjzy_payment_id.advance_balance_total - so_id.no_sent_amount_new
+                    if least_advice_amount_advance_org < 0:
+                        least_advice_amount_advance_org = 0
+
+
+                    # one.advice_amount_advance_org = line_id.so_tb_percent * one.yjzy_payment_id.advance_balance_total
+                    one.advice_amount_advance_org = line_id.so_tb_percent * one.yjzy_payment_id.amount + one.order_id.duoyu_this_time_advice_advance_org * (amount_invoice_so / so_amount_all)
+                    one.least_advice_amount_advance_org = least_advice_amount_advance_org
+
+                    print('werewrewrer',one.yjzy_payment_id.advance_balance_total)
                 elif self.sfk_type == 'yfhxd':
-                    po_id = one.yjzy_payment_id.po_id
+
                     invoice_id = one.invoice_id
-                    for line in self.line_ids:
-                        if line.po_id == po_id and line.invoice_id == invoice_id:
-                            one.advice_amount_advance_org = line.so_tb_percent * one.yjzy_payment_id.amount
-                            print('werewrewrer______', one.yjzy_payment_id.amount,one.advice_amount_advance_org)
+                    line_id = self.line_ids.filtered(lambda x: x.po_id == po_id and x.invoice_id == invoice_id)
+                    amount_invoice_so = line_id.amount_invoice_so
+                    least_advice_amount_advance_org = one.yjzy_payment_id.advance_balance_total - po_id.no_deliver_amount_new
+                    if least_advice_amount_advance_org < 0:
+                        least_advice_amount_advance_org = 0
+                    one.advice_amount_advance_org = line_id.so_tb_percent * one.yjzy_payment_id.amount + one.order_id.duoyu_this_time_advice_advance_org * (amount_invoice_so / po_amount_all)
+                    one.least_advice_amount_advance_org = least_advice_amount_advance_org
+                    # one.advice_amount_advance_org = line_id.so_tb_percent * one.yjzy_payment_id.advance_balance_total
+                    print('werewrewrer______', one.yjzy_payment_id.advance_balance_total,one.advice_amount_advance_org)
+
+
+
 
 
 
@@ -2171,33 +2212,47 @@ class account_reconcile_order_line(models.Model):
 
             one.amount_total_org_new = amount_total_org_new
             # one.amount_total = one.amount_advance + one.amount_payment
-    @api.depends('so_id','so_id.amount_total')
+
+    #计算原始的剩余未发货金额，集中再一个字段上 计算出原始销售采购金额和剩余的销售采购金额，用剩余的是最新的算法。算建议认领预收和预付
+    @api.depends('so_id','so_id.amount_total','so_id.no_sent_amount_new','amount_invoice_so','po_id.amount_total','po_id.no_deliver_amount_new','po_id')
     def compute_amount_so(self):
         for one in self:
             if one.order_id.sfk_type == 'yshxd':
                 one.amount_so = one.so_id.amount_total
+                one.no_delivery_amount_so = one.so_id.no_sent_amount_new + one.amount_invoice_so
             elif one.order_id.sfk_type == 'yfhxd':
                 one.amount_so = one.po_id.amount_total
+                one.no_delivery_amount_so = one.po_id.no_deliver_amount_new + one.amount_invoice_so
+            print('one.no_delivery_amount_so',one.order_id.sfk_type,one.no_delivery_amount_so,one.so_id.no_sent_amount_new,  one.amount_invoice_so)
 
 
-
-    @api.depends('amount_invoice_so','amount_so')
+    #原来计算的是出运占销售金额的比例，现在改成出运占销售剩余金额的比例
+    @api.depends('amount_invoice_so','amount_so','no_delivery_amount_so','order_id.yjzy_advance_payment_id.amount','order_id.yjzy_advance_payment_id','order_id')
     def compute_so_tb_percent(self):
         for one in self:
             amount_invoice_so = one.amount_invoice_so
             amount_so = one.amount_so
-
+            no_delivery_amount_so = one.no_delivery_amount_so
+            so_tb_percent = 0.0
             if one.order_id.sfk_type == 'yshxd':
-                if one.so_id:
-                    so_tb_percent = amount_so / amount_invoice_so
+                if one.so_id and amount_so != 0:
+                    so_tb_percent = amount_invoice_so / amount_so
+                    # so_tb_percent = amount_invoice_so / no_delivery_amount_so
                 else:
                     so_tb_percent = 0.0
+                advice_amount_advance_org = so_tb_percent * one.order_id.yjzy_advance_payment_id.amount
             if one.order_id.sfk_type == 'yfhxd':
-                if one.po_id:
-                    so_tb_percent = amount_so / amount_invoice_so
+                if one.po_id and amount_so != 0:
+                    so_tb_percent = amount_invoice_so / amount_so
+                    # so_tb_percent = amount_invoice_so / no_delivery_amount_so
                 else:
                     so_tb_percent = 0.0
+                advice_amount_advance_org = so_tb_percent * one.order_id.yjzy_advance_payment_id.amount
             one.so_tb_percent = so_tb_percent
+            one.advice_amount_advance_org = advice_amount_advance_org
+
+
+
 
 
 
@@ -2205,6 +2260,7 @@ class account_reconcile_order_line(models.Model):
     # @api.onchange('amount_invoice_so', 'amount_advance_org', 'amount_bank_org', 'amount_diff_org', 'amount_payment_org')
     # def onchange_amount(self):
     #     self.amount_exchange_org = self.amount_invoice_so - self.amount_advance_org - self.amount_bank_org - self.amount_diff_org - self.amount_payment_org
+    advice_amount_advance_org = fields.Monetary(u'建议预收金额', currency_field='yjzy_currency_id',compute=compute_so_tb_percent, store=True)#原则上的分配金额，就是销售采购占原始比例*原始的预收预付金额
 
     date = fields.Date('日期',related="order_id.date")
     state_1 = fields.Selection('审批流程',related='order_id.state_1')
@@ -2235,7 +2291,10 @@ class account_reconcile_order_line(models.Model):
 
     amount_invoice_so = fields.Monetary(u'合计', currency_field='invoice_currency_id')
     amount_so = fields.Monetary(u'原始销售金额',currency_field='invoice_currency_id',compute=compute_amount_so,store=True)
-    so_tb_percent = fields.Float(u'出运占原销售金额的比例',compute=compute_so_tb_percent,store=True)
+    no_delivery_amount_so = fields.Monetary(u'未发货销售或者采购金额', currency_field='invoice_currency_id', compute=compute_amount_so, store=True)
+    so_tb_percent = fields.Float(u'出运占原销售采购金额的比例',compute=compute_so_tb_percent,store=True) #原则上的比例
+
+
     amount_invoice_so_proportion = fields.Float('销售金额占发票金额比',compute=_compute_amount_invoice_so_proportion)
     #826
     amount_invoice_so_residual = fields.Monetary(u'剩余',currency_field='invoice_currency_id',compute=_compute_amount_invoice_so_proportion)
@@ -2326,6 +2385,9 @@ class account_reconcile_order_line_no(models.Model):
 
     amount_advance_org = fields.Monetary(u'预收金额', currency_field='yjzy_currency_id')
     advice_amount_advance_org = fields.Monetary(u'建议预收金额', currency_field='yjzy_currency_id')
+    least_advice_amount_advance_org = fields.Monetary(u'最低建议金额',currency_field='yjzy_currency_id')
+
+
     yjzy_payment_id = fields.Many2one('account.payment', u'预收认领单')
     yjzy_payment_po_id = fields.Many2one('purchase.order',related='yjzy_payment_id.po_id',string='预付采购')
 
