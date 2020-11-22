@@ -622,10 +622,12 @@
                     <field name="create_date" string="创建日期"/>
                     <field name="create_uid" string="创建人"/>
                     <field name="name" string="费用说明"/>
+                    <field name="include_tax" string="含税"/>
+                    <field name="document_number" string="单据数量"/>
                     <field name="my_total_amount" string="总金额"/>
                     <field name="state" string="状态" invisible="1"/>
                     <field name="message_unread" invisible="1"/>
-                    <field name="stage_id"/>
+                    <field name="stage_id" string="审批流"/>
                     <field name="gongsi_id" string="公司主体" options="{'no_create':true,'no_open':1}" invisible="1"/>
                 </tree>
             </field>
@@ -1428,7 +1430,8 @@
                         <button name="action_draft" string="重置草稿" type="object" attrs="{'invisible':[('state_1','not in',['refused'])]}"/>
 
                         <button name="action_to_employee_approval" string="提交" type="object" class="oe_highlight" attrs="{'invisible':[('state_1','not in',['draft'])]}"/>
-                        <button name="action_account_to_manager" string="直接提交总经理" type="object" class="oe_highlight" attrs="{'invisible':[('state_1','not in',['draft'])]}" groups="account.group_account_manager"/>
+                        <button name="action_account_to_manager" string="直接提交总经理" type="object" class="oe_highlight"
+                                attrs="{'invisible':[('state_1','not in',['draft'])]}" groups="account.group_account_manager"/>
                         <button name="action_to_account_approval" string="责任人审批(自动)" groups="base.group_system"  type="object" attrs="{'invisible':[('state_1','not in',['employee_approval'])]}"/>
                         <button name="action_account_approve" string="财务审批" type="object" class="oe_highlight"  attrs="{'invisible':[('state_1','not in',['account_approval'])]}"/>
                         <button name="action_manager_approve" string="总经理审批" type="object" class="oe_highlight"  attrs="{'invisible':[('state_1','not in',['manager_approval'])]}"/>
@@ -1590,7 +1593,30 @@
 
 
                         </group>
-                        <notebook>
+                        <notebook><page string="费用转货款" attrs="{'invisible':[('tb_po_invoice_ids_count','=',0)]}">
+                                <field name="tb_po_invoice_ids_count" invisible="1"/>
+                                <field name="tb_po_invoice_ids" context="{'form_view_ref':'yjzy_extend.tb_po_form'}">
+                                    <tree decoration-info="state not in ['post','done']" create="false" edit="false">
+                                        <field name="name" invisible="1"/>
+                                        <field name="partner_id"/>
+                                        <field name="yjzy_invoice_residual_amount" invisible="1"/>
+                                        <field name="yjzy_invoice_include_tax" invisible="1"/>
+                                        <field name="purchase_amount2_add_this_time_total" string="货款金额"/>
+                                        <field name="p_s_add_this_time_refund" invisible="1"/>
+                                        <field name="p_s_add_this_time_extra_total" invisible="1"/>
+                                        <field name="back_tax_add_this_time_total" invisible="0" string="退税金额"/>
+                                        <field name="po_add_residual" invisible="0" string="货款未付金额"/>
+                                        <field name="p_s_add_residual" invisible="1"/>
+                                        <field name="back_tax_add_residual"  string="退税未收金额"/>
+                                        <field name="p_s_add_refund_residual" invisible="1"/>
+                                        <field name="create_date" string="创建日期"/>
+                                        <field name="yjzy_invoice_id" groups="base.group_system"/>
+                                        <field name="state"/>
+                                        <button name="open_tb_po_invoice" string="编辑" type="object" context="{'open_expense':1}"
+                                                attrs="{'invisible':[('state','!=','10_draft')]}"/>
+                                    </tree>
+                                </field>
+                            </page>
                             <page string="Expense Lines">
                                 <field name="expense_line_ids"
                                        attrs="{'invisible':[('state','not in',['draft','cancel']),('is_editable','=',False)]}"
@@ -1623,6 +1649,8 @@
                                         <field name="unit_amount" string="费用金额" required="1" sum="小计"
                                                attrs="{'readonly':[('parent.state','not in',['draft'])]}"
                                                widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                          <field name="date" string="费用发生日期*"
+                                               attrs="{'readonly':[('parent.state','not in',['draft'])]}"/>
                                         <field name="employee_id" string="责任人*"
                                                attrs="{'readonly':[('parent.state','not in',['draft'])]}"
                                                options="{'no_create':True,'no_open':1}"/>
@@ -1632,8 +1660,7 @@
                                                options="{'no_create':True,'no_open':1}"
                                                domain="['|',('job_id.name','=','客户经理'),('job_id.name','=','公司')]"
                                                required="1"/>
-                                        <field name="date" string="费用发生日期*"
-                                               attrs="{'readonly':[('parent.state','not in',['draft'])]}"/>
+
                                         <field name="name" invisible="1"/>
                                         <field name="sys_outer_hetong"
                                                attrs="{'readonly':[('budget_type','!=','transport')]}"/>
@@ -1806,30 +1833,7 @@
                                     </group>
                                 </group>
                             </page>
-                            <page string="费用转货款申请单" attrs="{'invisible':[('tb_po_invoice_ids_count','=',0)]}">
-                                <field name="tb_po_invoice_ids_count" invisible="1"/>
-                                <field name="tb_po_invoice_ids" context="{'form_view_ref':'yjzy_extend.tb_po_form'}">
-                                    <tree decoration-info="state not in ['post','done']" create="false" edit="false">
-                                        <field name="name" invisible="1"/>
-                                        <field name="partner_id"/>
-                                        <field name="yjzy_invoice_residual_amount" invisible="1"/>
-                                        <field name="yjzy_invoice_include_tax" invisible="1"/>
-                                        <field name="purchase_amount2_add_this_time_total" invisible="0"/>
-                                        <field name="p_s_add_this_time_refund" invisible="1"/>
-                                        <field name="p_s_add_this_time_extra_total" invisible="1"/>
-                                        <field name="back_tax_add_this_time_total" invisible="0"/>
-                                        <field name="po_add_residual" invisible="0"/>
-                                        <field name="p_s_add_residual" invisible="1"/>
-                                        <field name="back_tax_add_residual" invisible="0"/>
-                                        <field name="p_s_add_refund_residual" invisible="1"/>
-                                        <field name="create_date" string="创建日期"/>
-                                        <field name="yjzy_invoice_id" groups="base.group_system"/>
-                                        <field name="state"/>
-                                        <button name="open_tb_po_invoice" string="编辑" type="object" context="{'open_expense':1}"
-                                                attrs="{'invisible':[('state','!=','10_draft')]}"/>
-                                    </tree>
-                                </field>
-                            </page>
+
                             <page string="审批信息" groups="base.group_system">
                                 <group>
                                     <group>

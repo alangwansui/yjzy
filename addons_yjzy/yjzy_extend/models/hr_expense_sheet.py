@@ -102,6 +102,8 @@ class hr_expense_sheet(models.Model):
     tb_po_invoice_ids = fields.One2many('tb.po.invoice','expense_sheet_id',u'费用转采购申请单')
     tb_po_invoice_ids_count = fields.Integer('费用转采购申请单', compute=compute_tb_po_invoice_ids_count)
 
+
+
     #819费用创建应付发票
     invoice_id = fields.Many2one('account.invoice',u'Invoice')
     is_to_invoice = fields.Boolean(u'是否转货款')
@@ -137,7 +139,8 @@ class hr_expense_sheet(models.Model):
 
     manager_confirm_uid = fields.Many2one('res.users', u'总经理审批')
 
-    my_total_amount = fields.Float(string='权限金额', compute='compute_my_total_amount', digits=dp.get_precision('Account'))
+    # my_total_amount = fields.Float(string='权限金额', compute='compute_my_total_amount', digits=dp.get_precision('Account'))
+    my_total_amount = fields.Monetary(string='权限金额',currency_field='currency_id', compute='compute_my_total_amount')
     my_expense_line_ids = fields.One2many('hr.expense', compute='compute_my_total_amount', string='权限明细')
     my_expense_line_ids_b = fields.One2many('hr.expense', compute='compute_my_total_amount', string='权限明细')
     my_expense_line_ids_employee = fields.One2many('hr.expense', compute='compute_my_total_amount', string='权限明细')

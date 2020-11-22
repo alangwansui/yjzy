@@ -125,6 +125,10 @@ class purchase_order(models.Model):
     def compute_so_id_amount_total(self):
         for one in self:
             one.so_id_amount_total = one.source_so_id.amount_total
+    @api.depends('hxd_ids','hxd_ids.amount_total_org_new')
+    def compute_amount_org_hxd(self):
+        for one in self:
+            one.amount_org_hxd = sum(x.amount_total_org_new for x in one.hxd_ids)
 
     stage_id = fields.Many2one(
         'purchase.order.stage',
@@ -136,7 +140,8 @@ class purchase_order(models.Model):
     balance = fields.Monetary(u'预付余额', compute=compute_info, currency_field='yjzy_currency_id')
     #akiny_new
 
-
+    hxd_ids = fields.One2many('account.reconcile.order.line','po_id','所有核销单',domain=[('order_id','=','done')])
+    amount_org_hxd = fields.Float('核销单的付款金额总和',compute=compute_amount_org_hxd,store=True)
     need_purchase_fandian = fields.Boolean(u'采购返点')
     purchase_fandian_ratio = fields.Float(u'返点比例：%')
     purchase_fandian_partner_id = fields.Many2one('res.partner', u'返点对象')

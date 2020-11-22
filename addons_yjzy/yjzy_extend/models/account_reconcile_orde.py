@@ -350,7 +350,7 @@ class account_reconcile_order(models.Model):
 
 
 
-    ysrld_amount_advance_org_all = fields.Float('预收单的所有被认领金额',compute=compute_ysrld_amount_advance_org_all,store=True)
+    ysrld_amount_advance_org_all = fields.Float('预收单的本所有被认领金额',compute=compute_ysrld_amount_advance_org_all,store=True)
     ysrld_advice_amount_advance_org_all = fields.Float('预收认领单的所有被认领的原则分配金额',compute=compute_ysrld_amount_advance_org_all,store=True)
     duoyu_this_time_advice_advance_org = fields.Float('多余的预收付这次应该加上的认领金额',compute=compute_ysrld_amount_advance_org_all,store=True)
 
@@ -2082,7 +2082,7 @@ class account_reconcile_order(models.Model):
             war = '客户正在审批中，请先完成客户的审批'
             raise Warning(war)
 
-    def compute_advice_amount_advance_org(self):
+    def _compute_advice_amount_advance_org(self):
         so_id = self.yjzy_advance_payment_id.so_id
         po_id = self.yjzy_advance_payment_id.po_id
         so_line_ids = self.line_ids.filtered(lambda x: x.so_id == so_id)
@@ -2119,6 +2119,45 @@ class account_reconcile_order(models.Model):
                     # one.advice_amount_advance_org = line_id.so_tb_percent * one.yjzy_payment_id.advance_balance_total
                     print('werewrewrer______', one.yjzy_payment_id.advance_balance_total,one.advice_amount_advance_org)
 
+    def compute_advice_amount_advance_org(self):
+        so_id = self.yjzy_advance_payment_id.so_id
+        po_id = self.yjzy_advance_payment_id.po_id
+        so_line_ids = self.line_ids.filtered(lambda x: x.so_id == so_id)
+        po_line_ids = self.line_ids.filtered(lambda x: x.po_id == po_id)
+        so_amount_all = sum(x.amount_invoice_so for x in so_line_ids) #计算这次认领的发票的对应的销售的出运总金额，为了计算各自和他的比例
+        po_amount_all = sum(x.amount_invoice_so for x in po_line_ids)
+        if self.line_ids and self.line_no_ids:
+            for one in self.line_no_ids:
+                if self.sfk_type == 'yshxd':
+                    invoice_id = one.invoice_id
+                    line_id = self.line_ids.filtered(lambda x: x.so_id == so_id and x.invoice_id == invoice_id)
+                    amount_invoice_so = line_id.amount_invoice_so
+
+                    least_advice_amount_advance_org = one.yjzy_payment_id.advance_balance_total - so_id.no_sent_amount_new
+                    if least_advice_amount_advance_org < 0:
+                        least_advice_amount_advance_org = 0
+
+
+                    # one.advice_amount_advance_org = line_id.so_tb_percent * one.yjzy_payment_id.advance_balance_total
+                    one.advice_amount_advance_org = line_id.so_tb_percent * one.yjzy_payment_id.amount + one.order_id.duoyu_this_time_advice_advance_org * (amount_invoice_so / so_amount_all)
+                    one.least_advice_amount_advance_org = least_advice_amount_advance_org
+
+                    print('werewrewrer',one.yjzy_payment_id.advance_balance_total)
+                elif self.sfk_type == 'yfhxd':
+                    invoice_id = one.invoice_id
+                    line_id = self.line_ids.filtered(lambda x: x.po_id == po_id and x.invoice_id == invoice_id)
+                    amount_invoice_so = line_id.amount_invoice_so
+                    amount_org_hxd = self.yjzy_advance_payment_id.po_id.amount_org_hxd
+                    least_advice_amount_advance_org = one.yjzy_payment_id.advance_balance_total - po_id.no_deliver_amount_new - amount_org_hxd#缺一个所有发票的未收金额
+                    if least_advice_amount_advance_org < 0:
+                        least_advice_amount_advance_org = 0
+                    one.advice_amount_advance_org = line_id.so_tb_percent * one.yjzy_payment_id.amount - line_id.amount_advance_org_self + line_id.duoyu_this_time_advice_advance_org * (amount_invoice_so / so_amount_all)
+
+
+
+                    one.least_advice_amount_advance_org = least_advice_amount_advance_org
+                    # one.advice_amount_advance_org = line_id.so_tb_percent * one.yjzy_payment_id.advance_balance_total
+                    print('werewrewrer______', one.yjzy_payment_id.advance_balance_total,one.advice_amount_advance_org)
 
 
 
@@ -2256,8 +2295,50 @@ class account_reconcile_order_line(models.Model):
             one.advice_amount_advance_org = advice_amount_advance_org
 
 
+    def compute_ysrld_amount_advance_org_all(self):
+        for one in self:
+            hxd_ids = one.yjzy_payment_id.advance_reconcile_order_line_ids.filtered(lambda x: x.invoice_id != one.invoice_id)
+            hxd_self_ids = one.yjzy_payment_id.advance_reconcile_order_line_ids.filtered(lambda x:x.invoice_id == one.invoice_id)#等于当前发票的核销单
 
+            line_obj = self.env['account.reconcile.order.line']
+            # amount_advance_org_all = sum(x.amount_advance_org for x in hxd_ids)
+            lines = line_obj.browse([])
+            dic = {}
+            for i in hxd_ids:
+                invoice = i.invoice_id
+                k = invoice.id
+                if k not in dic:
+                    print('k', k)
+                    dic[k] = {'invoice_id': invoice.id,
+                              }
+                    lines |= i
 
+            ysrld_amount_advance_org_all = sum(x.amount_advance_org for x in hxd_ids)
+            ysrld_advice_amount_advance_org_all = sum(x.advice_amount_advance_org for x in lines)
+
+            amount_advance_org_self = sum(x.amount_advance_org for x in hxd_self_ids)
+
+            duoyu_this_time_advice_advance_org = ysrld_advice_amount_advance_org_all - ysrld_amount_advance_org_all
+            one.ysrld_amount_advance_org_all= ysrld_amount_advance_org_all
+            one.ysrld_advice_amount_advance_org_all = ysrld_advice_amount_advance_org_all
+            one.amount_advance_org_self = amount_advance_org_self
+            one.duoyu_this_time_advice_advance_org = duoyu_this_time_advice_advance_org
+
+            print('lines______111111111',lines)
+
+            # ysrld_amount_advance_org_all = one.yjzy_advance_payment_id.amount_advance_org_all
+            # ysrld_advice_amount_advance_org_all = one.yjzy_advance_payment_id.advice_amount_advance_org_all
+            # duoyu_this_time_advice_advance_org = ysrld_advice_amount_advance_org_all - ysrld_amount_advance_org_all
+            # print('duoyu_this_time_advice_advance_org', duoyu_this_time_advice_advance_org)
+            # one.ysrld_amount_advance_org_all = ysrld_amount_advance_org_all
+            # one.ysrld_advice_amount_advance_org_all = ysrld_advice_amount_advance_org_all
+            # one.duoyu_this_time_advice_advance_org = duoyu_this_time_advice_advance_org
+
+    ysrld_amount_advance_org_all = fields.Float('预收单的本所有非本账单采购的被认领金额', compute=compute_ysrld_amount_advance_org_all)
+    ysrld_advice_amount_advance_org_all = fields.Float('预收认领单的非本账单采购的被认领的原则分配金额',
+                                                       compute=compute_ysrld_amount_advance_org_all)
+    amount_advance_org_self = fields.Float('自己的所有的认领金额',compute=compute_ysrld_amount_advance_org_all)
+    duoyu_this_time_advice_advance_org = fields.Float('多余的预收付这次应该加上的认领金额', compute=compute_ysrld_amount_advance_org_all)
 
 
 
@@ -2360,7 +2441,12 @@ class account_reconcile_order_line_no(models.Model):
                 }
 
 
+    #计算出非自己认领明细原则
 
+
+    ysrld_amount_advance_org_all = fields.Float('预收单的本所有非本账单采购的被认领金额',)
+    ysrld_advice_amount_advance_org_all = fields.Float('预收认领单的非本账单采购的被认领的原则分配金额',)
+    duoyu_this_time_advice_advance_org = fields.Float('多余的预收付这次应该加上的认领金额',)
 
     invoice_currency_id = fields.Many2one('res.currency', u'交易货币', related='invoice_id.currency_id', readonly=True)
     state_1 = fields.Selection('审批流程', related='order_id.state_1')

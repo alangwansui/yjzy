@@ -118,6 +118,29 @@
                 </tree>
             </field>
         </record>
+
+        <record id="tb_po_expense_po_tree" model="ir.ui.view">
+            <field name="name">tb.po.tree</field>
+            <field name="model">tb.po.invoice</field>
+            <field name="arch" type="xml">
+                <tree string="增加采购" create="false">
+                    <field name="name"/>
+                    <field name="partner_id"/>
+                    <field name="yjzy_invoice_residual_amount" invisible="1"/>
+                    <field name="yjzy_invoice_include_tax" invisible="1"/>
+                    <field name="purchase_amount2_add_this_time_total" string="货款金额"/><!--invisible="context.get('done')"-->
+                    <field name="p_s_add_this_time_refund" invisible="1"/>
+                    <field name="p_s_add_this_time_extra_total" invisible="1"/>
+                    <field name="back_tax_add_this_time_total" string="退税金额"/>
+                    <field name="po_add_residual" invisible="1"/><!--invisible="not context.get('done')"-->
+                    <field name="p_s_add_residual" invisible="1"/>
+                    <field name="back_tax_add_residual" string="退税未收金额"/>
+                    <field name="p_s_add_refund_residual" invisible="1"/>
+                    <field name="create_date"/>
+                    <field name="yjzy_invoice_id" invisible="1"/>
+                </tree>
+            </field>
+        </record>
         <record id="tb_po_form_old" model="ir.ui.view">
             <field name="name">tb.po.from</field>
             <field name="model">tb.po.invoice</field>
@@ -593,7 +616,7 @@
                                     </tree>
                                 </field>
                             </page>
-                            <page string="新增采购账单" attrs="{'invisible':['|',('invoice_p_ids_count','=',0),('type','!=','other_po')]}" >
+                            <page string="新增货款账单" attrs="{'invisible':['|',('invoice_p_ids_count','=',0)]}" >
                                 <field name="invoice_p_ids_count" invisible="1"/>
                                 <field name="invoice_p_ids" readonly="1">
                                     <tree decoration-info="state == 'draft'" decoration-muted="state == 'cancel'">
@@ -1029,7 +1052,7 @@
 
 
         <record model="ir.actions.act_window" id="act_expense_po_draft">
-            <field name="name">未提交费用转采购</field>
+            <field name="name">未提交费用转货款</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">tb.po.invoice</field>
             <field name="view_type">form</field>
@@ -1040,7 +1063,7 @@
             <field name="limit">20</field>
             <field name="context">{'done':0}</field>
             <field name="view_ids" eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'tree', 'view_id': ref('tb_po_tree')}),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('tb_po_expense_po_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_form')})]"/>
 
         </record>
@@ -1050,7 +1073,7 @@
                   action="act_expense_po_draft"
         />
         <record model="ir.actions.act_window" id="act_expense_po_approving">
-            <field name="name">审批中费用转采购</field>
+            <field name="name">审批中费用转货款</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">tb.po.invoice</field>
             <field name="view_type">form</field>
@@ -1061,7 +1084,7 @@
             <field name="limit">20</field>
             <field name="context">{'done':0}</field>
             <field name="view_ids" eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'tree', 'view_id': ref('tb_po_tree')}),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('tb_po_expense_po_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_form')})]"/>
 
         </record>
@@ -1072,7 +1095,7 @@
         />
 
         <record model="ir.actions.act_window" id="act_expense_po_done">
-            <field name="name">审批完成费用转采购</field>
+            <field name="name">审批完成费用转货款</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">tb.po.invoice</field>
             <field name="view_type">form</field>
@@ -1082,7 +1105,7 @@
             <field name="limit">20</field>
             <field name="context">{'done':1}</field>
             <field name="view_ids" eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'tree', 'view_id': ref('tb_po_tree')}),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('tb_po_expense_po_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_form')})]"/>
 
         </record>
@@ -1551,7 +1574,7 @@
             <field name="limit">20</field>
             <field name="context">{'search_default_group_by_state':1,'done':1,}</field>
             <field name="view_ids" eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'tree', 'view_id': ref('tb_po_tree')}),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('tb_po_expense_po_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_form')})]"/>
 
         </record>
