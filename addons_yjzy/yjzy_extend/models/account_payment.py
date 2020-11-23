@@ -704,7 +704,7 @@ class account_payment(models.Model):
 
     def action_manager_post(self):
         if self.po_id and self.po_id.state not in ['to approve','purchase','done']:
-            raise Warning('采购单为完成审批！')
+            raise Warning('采购单未完成审批！')
         today = fields.date.today()
         self.write({'post_uid': self.env.user.id,
                     'post_date': today,
