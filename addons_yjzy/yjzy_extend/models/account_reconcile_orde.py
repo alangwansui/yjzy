@@ -1759,11 +1759,19 @@ class account_reconcile_order(models.Model):
                 })
             else:
                 for po, invlines in po_invlines.items():
+                    if self.yjzy_advance_payment_id.po_id:
+                        if po.id == self.yjzy_advance_payment_id.po_id.id:
+                            yjzy_payment_id = self.yjzy_advance_payment_id.id
+                        else:
+                            yjzy_payment_id =False
+                    else:
+                        yjzy_payment_id = self.yjzy_advance_payment_id.id
                     line_obj.create({
                         'order_id': self.id,
                         'po_id': po.id,
                         'invoice_id': invoice.id,
                         'amount_invoice_so': sum([i.price_subtotal for i in invlines]),
+                        'yjzy_payment_id':yjzy_payment_id
                     })
     #826
         so_po_dic = {}
@@ -1775,16 +1783,20 @@ class account_reconcile_order(models.Model):
             amount_invoice_so = i.amount_invoice_so
             advance_residual = i.advance_residual
             order = i.order_id
-
+            yjzy_payment_id = i.yjzy_payment_id
+            print('yjzy_payment_id_1111111',yjzy_payment_id)
             k = invoice.id
             if k in so_po_dic:
                 print('k', k)
                 so_po_dic[k]['amount_invoice_so'] += amount_invoice_so
                 so_po_dic[k]['advance_residual'] += advance_residual
+                if not so_po_dic[k]['yjzy_payment_id']:
+                    so_po_dic[k]['yjzy_payment_id'] = yjzy_payment_id.id
             else:
                 print('k1', k)
                 so_po_dic[k] = {
                     'invoice_id': invoice.id,
+                    'yjzy_payment_id':yjzy_payment_id.id,
                     'amount_invoice_so': amount_invoice_so,
                     'advance_residual': advance_residual, }
 
@@ -1794,7 +1806,7 @@ class account_reconcile_order(models.Model):
                 'invoice_id': data['invoice_id'],
                 'amount_invoice_so': data['amount_invoice_so'],
                 'advance_residual': data['advance_residual'],
-                'yjzy_payment_id': yjzy_advance_payment_id.id
+                'yjzy_payment_id': data['yjzy_payment_id']
             })
 
     def _make_lines_so(self):
@@ -1821,11 +1833,19 @@ class account_reconcile_order(models.Model):
                 })
             else:
                 for so, invlines in so_invlines.items():
+                    if self.yjzy_advance_payment_id.so_id:
+                        if so.id == self.yjzy_advance_payment_id.so_id.id:
+                            yjzy_payment_id = self.yjzy_advance_payment_id.id
+                        else:
+                            yjzy_payment_id = False
+                    else:
+                        yjzy_payment_id = self.yjzy_advance_payment_id.id
                     line_obj.create({
                         'order_id': self.id,
                         'so_id': so.id,
                         'invoice_id': invoice.id,
                         'amount_invoice_so': sum([i.price_subtotal for i in invlines]),
+                        'yjzy_payment_id': yjzy_payment_id
                     })
 
         so_po_dic = {}
@@ -1837,17 +1857,21 @@ class account_reconcile_order(models.Model):
             amount_invoice_so = i.amount_invoice_so
             advance_residual2 = i.advance_residual2
             order = i.order_id
-
+            yjzy_payment_id = i.yjzy_payment_id
+            print('yjzy_payment_id_1111111', yjzy_payment_id)
 
             k = invoice.id
             if k in so_po_dic:
                 print('k',k)
                 so_po_dic[k]['amount_invoice_so'] += amount_invoice_so
                 so_po_dic[k]['advance_residual2'] += advance_residual2
+                if not so_po_dic[k]['yjzy_payment_id']:
+                    so_po_dic[k]['yjzy_payment_id'] = yjzy_payment_id.id
             else:
                 print('k1', k)
                 so_po_dic[k] = {
                                 'invoice_id':invoice.id,
+                                'yjzy_payment_id': yjzy_payment_id.id,
                                 'amount_invoice_so': amount_invoice_so,
                                 'advance_residual2': advance_residual2,}
 
@@ -1857,7 +1881,7 @@ class account_reconcile_order(models.Model):
                 'invoice_id': data['invoice_id'],
                 'amount_invoice_so': data['amount_invoice_so'],
                 'advance_residual2': data['advance_residual2'],
-                'yjzy_payment_id': yjzy_advance_payment_id.id
+                'yjzy_payment_id': data['yjzy_payment_id']
             })
 
     def _make_lines_po_from_expense(self):
@@ -1898,7 +1922,7 @@ class account_reconcile_order(models.Model):
         so_po_dic = {}
         print('line_obj', line_ids)
         self.line_no_ids = None
-        yjzy_advance_payment_id = self.yjzy_advance_payment_id
+        # yjzy_advance_payment_id = self.yjzy_advance_payment_id
         for i in self.line_ids:
             invoice = i.invoice_id
             amount_invoice_so = i.amount_invoice_so
@@ -1924,7 +1948,7 @@ class account_reconcile_order(models.Model):
                 'amount_invoice_so': data['amount_invoice_so'],
                 'amount_payment_org': data['amount_invoice_so'],
                 'advance_residual': data['advance_residual'],
-                'yjzy_payment_id': yjzy_advance_payment_id.id,
+                # 'yjzy_payment_id': yjzy_advance_payment_id.id,
 
             })
             # print('>>', line)
