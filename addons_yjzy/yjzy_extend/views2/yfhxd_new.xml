@@ -525,8 +525,8 @@
                                             type="object"/>
 
                                     <field name="amount_invoice_so_residual" invisible="1"/>
-                                    <field name="advice_amount_advance_org" string="建议认领" attrs="{'column_invisible':[('hxd_type_new','not in',['10','30'])]}"/>
-                                    <field name="least_advice_amount_advance_org" string="最低认领" attrs="{'column_invisible':[('hxd_type_new','not in',['10','30'])]}"/>
+                                    <field name="advice_amount_advance_org" string="建议认领" attrs="{'column_invisible':[('parent.hxd_type_new','not in',['10','30'])]}"/>
+                                    <field name="least_advice_amount_advance_org" string="最低认领" attrs="{'column_invisible':[('parent.hxd_type_new','not in',['10','30'])]}"/>
                                     <field name="invoice_id_po_ids" widget="many2many_tags" string="采购合同" invisible="1"
                                            attrs="{'column_invisible':[('parent.invoice_attribute','in',['other_payment'])]}"/>
                                     <field name="amount_invoice_so" string="原始应付款" readonly="1"/>
