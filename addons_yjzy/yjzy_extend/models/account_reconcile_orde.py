@@ -2150,7 +2150,7 @@ class account_reconcile_order(models.Model):
                     amount_org_hxd = self.yjzy_advance_payment_id.po_id.amount_org_hxd
                     amount_po = self.yjzy_advance_payment_id.po_id.amount_total
                     rest_amount_org_hxd = amount_po - amount_org_hxd
-                    least_advice_amount_advance_org = one.yjzy_payment_id.advance_balance_total - po_id.no_deliver_amount_new - amount_org_hxd#缺一个所有发票的未收金额
+                    least_advice_amount_advance_org = one.yjzy_payment_id.advance_balance_total - po_id.no_deliver_amount_new - rest_amount_org_hxd#缺一个所有发票的未收金额
                     if least_advice_amount_advance_org < 0:
                         least_advice_amount_advance_org = 0
                     one.advice_amount_advance_org = line_id.so_tb_percent * one.yjzy_payment_id.amount - line_id.amount_advance_org_self + line_id.duoyu_this_time_advice_advance_org * (amount_invoice_so / so_amount_all)
