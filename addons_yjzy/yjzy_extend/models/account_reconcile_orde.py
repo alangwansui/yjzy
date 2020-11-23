@@ -2328,7 +2328,7 @@ class account_reconcile_order_line(models.Model):
 
     def compute_ysrld_amount_advance_org_all(self):
         for one in self:
-            invoice_ids = one.order_id.invoice_ids # （自己原则-自己认领）+（其他原则-其他认领）（这个其他是本次认领的所有发票的其他，不是这次进行认领的）
+            invoice_ids = one.order_id.invoice_ids # （自己原则-自己认领）+（其他原则-其他认领）（这个其他是本次认领的所有发票的其他，不是这次进行认领的）这个多余的要给这次认领的所有的发票的采购进行比较分配
             hxd_ids = one.yjzy_payment_id.advance_reconcile_order_line_ids.filtered(lambda x: x.invoice_id not in invoice_ids and x.amount_advance_org !=0 and x.order_id.state == 'done')
             hxd_self_ids = one.yjzy_payment_id.advance_reconcile_order_line_ids.filtered(lambda x:x.invoice_id == one.invoice_id and x.amount_advance_org !=0  and x.order_id.state =='done')#不等于0 是因为 老的数据，只要符合po相yjzy_payent同，就会给明细加上等于当前发票的核销单
 
