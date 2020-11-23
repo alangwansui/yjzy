@@ -2126,7 +2126,8 @@ class account_reconcile_order(models.Model):
 
 
                     # one.advice_amount_advance_org = line_id.so_tb_percent * one.yjzy_payment_id.advance_balance_total
-                    one.advice_amount_advance_org = line_id.so_tb_percent * one.yjzy_payment_id.amount + one.order_id.duoyu_this_time_advice_advance_org * (amount_invoice_so / so_amount_all)
+                    one.advice_amount_advance_org = line_id.so_tb_percent * one.yjzy_payment_id.amount + \
+                                                    one.order_id.duoyu_this_time_advice_advance_org * (amount_invoice_so / so_amount_all)
                     one.least_advice_amount_advance_org = least_advice_amount_advance_org
 
                     print('werewrewrer',one.yjzy_payment_id.advance_balance_total)
@@ -2138,7 +2139,8 @@ class account_reconcile_order(models.Model):
                     least_advice_amount_advance_org = one.yjzy_payment_id.advance_balance_total - po_id.no_deliver_amount_new
                     if least_advice_amount_advance_org < 0:
                         least_advice_amount_advance_org = 0
-                    one.advice_amount_advance_org = line_id.so_tb_percent * one.yjzy_payment_id.amount + one.order_id.duoyu_this_time_advice_advance_org * (amount_invoice_so / po_amount_all)
+                    one.advice_amount_advance_org = line_id.so_tb_percent * one.yjzy_payment_id.amount + \
+                                                    one.order_id.duoyu_this_time_advice_advance_org * (amount_invoice_so / po_amount_all)
                     one.least_advice_amount_advance_org = least_advice_amount_advance_org
                     # one.advice_amount_advance_org = line_id.so_tb_percent * one.yjzy_payment_id.advance_balance_total
                     print('werewrewrer______', one.yjzy_payment_id.advance_balance_total,one.advice_amount_advance_org)
@@ -2163,7 +2165,8 @@ class account_reconcile_order(models.Model):
 
 
                     # one.advice_amount_advance_org = line_id.so_tb_percent * one.yjzy_payment_id.advance_balance_total
-                    one.advice_amount_advance_org = line_id.so_tb_percent * one.yjzy_payment_id.amount + one.order_id.duoyu_this_time_advice_advance_org * (amount_invoice_so / so_amount_all)
+                    one.advice_amount_advance_org = line_id.so_tb_percent * one.yjzy_payment_id.amount + \
+                                                    one.order_id.duoyu_this_time_advice_advance_org * (amount_invoice_so / so_amount_all)
                     one.least_advice_amount_advance_org = least_advice_amount_advance_org
 
                     print('werewrewrer',one.yjzy_payment_id.advance_balance_total)
@@ -2177,7 +2180,9 @@ class account_reconcile_order(models.Model):
                     least_advice_amount_advance_org = one.yjzy_payment_id.advance_balance_total - po_id.no_deliver_amount_new - rest_amount_org_hxd#缺一个所有发票的未收金额
                     if least_advice_amount_advance_org < 0:
                         least_advice_amount_advance_org = 0
-                    one.advice_amount_advance_org = line_id.so_tb_percent * one.yjzy_payment_id.amount - line_id.amount_advance_org_self + line_id.duoyu_this_time_advice_advance_org * (amount_invoice_so / so_amount_all)
+                    one.advice_amount_advance_org = line_id.so_tb_percent * one.yjzy_payment_id.amount - \
+                                                    line_id.amount_advance_org_self + line_id.duoyu_this_time_advice_advance_org \
+                                                    * (amount_invoice_so / so_amount_all)
 
 
 
@@ -2323,8 +2328,9 @@ class account_reconcile_order_line(models.Model):
 
     def compute_ysrld_amount_advance_org_all(self):
         for one in self:
-            hxd_ids = one.yjzy_payment_id.advance_reconcile_order_line_ids.filtered(lambda x: x.invoice_id != one.invoice_id)
-            hxd_self_ids = one.yjzy_payment_id.advance_reconcile_order_line_ids.filtered(lambda x:x.invoice_id == one.invoice_id)#等于当前发票的核销单
+            invoice_ids = one.order_id.invoice_ids # （自己原则-自己认领）+（其他原则-其他认领）（这个其他是本次认领的所有发票的其他，不是这次进行认领的）
+            hxd_ids = one.yjzy_payment_id.advance_reconcile_order_line_ids.filtered(lambda x: x.invoice_id not in invoice_ids and x.amount_advance_org !=0 and x.order_id.state == 'done')
+            hxd_self_ids = one.yjzy_payment_id.advance_reconcile_order_line_ids.filtered(lambda x:x.invoice_id == one.invoice_id and x.amount_advance_org !=0  and x.order_id.state =='done')#不等于0 是因为 老的数据，只要符合po相yjzy_payent同，就会给明细加上等于当前发票的核销单
 
             line_obj = self.env['account.reconcile.order.line']
             # amount_advance_org_all = sum(x.amount_advance_org for x in hxd_ids)
@@ -2340,7 +2346,7 @@ class account_reconcile_order_line(models.Model):
                     lines |= i
 
             ysrld_amount_advance_org_all = sum(x.amount_advance_org for x in hxd_ids)
-            ysrld_advice_amount_advance_org_all = sum(x.advice_amount_advance_org for x in lines)
+            ysrld_advice_amount_advance_org_all = sum(x.advice_amount_advance_org for x in lines)#ok
 
             amount_advance_org_self = sum(x.amount_advance_org for x in hxd_self_ids)
 

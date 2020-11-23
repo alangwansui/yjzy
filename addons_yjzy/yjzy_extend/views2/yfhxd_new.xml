@@ -582,7 +582,8 @@
                                     <field name="invoice_currency_id" invisible="1"/>
                                     <field name="payment_currency_id" invisible="1"/>
                                     <field name="currency_id" invisible="1"/>
-
+<field name="amount_advance_org_self"/>
+                                    <field name="duoyu_this_time_advice_advance_org"/>
                                     <field name="yjzy_payment_id" string="预付申请单"
                                            context="{'form_view_ref': 'yjzy_extend.view_rcfkd_form','advance_po_amount':1}"
                                            domain="[('sfk_type','=','yfsqd'),('advance_balance_total','!=',0)]"/>
