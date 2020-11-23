@@ -2148,6 +2148,8 @@ class account_reconcile_order(models.Model):
                     line_id = self.line_ids.filtered(lambda x: x.po_id == po_id and x.invoice_id == invoice_id)
                     amount_invoice_so = line_id.amount_invoice_so
                     amount_org_hxd = self.yjzy_advance_payment_id.po_id.amount_org_hxd
+                    amount_po = self.yjzy_advance_payment_id.po_id.amount_total
+                    rest_amount_org_hxd = amount_po - amount_org_hxd
                     least_advice_amount_advance_org = one.yjzy_payment_id.advance_balance_total - po_id.no_deliver_amount_new - amount_org_hxd#缺一个所有发票的未收金额
                     if least_advice_amount_advance_org < 0:
                         least_advice_amount_advance_org = 0
