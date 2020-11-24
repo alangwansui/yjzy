@@ -947,6 +947,10 @@ class account_reconcile_order(models.Model):
                             })
             elif self.hxd_type_new == '40':
                 if self.invoice_attribute in ['other_payment','other_po']:
+                    if not self.other_payment_bank_id:
+                        raise Warning('请填写收款单账号')
+                    if not self.fk_journal_id:
+                        raise Warning('请填写付款银行')
                     stage_id = self._stage_find(domain=[('code', '=', '040')])
                     self.write({'stage_id': stage_id.id,
                                 'state': 'posted',
@@ -1013,6 +1017,12 @@ class account_reconcile_order(models.Model):
             for one in self.invoice_ids:            #如果invoice是0 余额的 可以从invoice_ids中删除了
                 if one.amount_payment_can_approve_all == 0 or one.residual == 0:
                     self.write({'invoice_ids':[(3,one.id)]})
+            if self.amount_invoice_residual_org == 0:  #当预付把这次认领的账单全部认领完了，这个应付申请单 就直接跳转完成，并将页面恢复前置状态
+                stage_id = self._stage_find(domain=[('code', '=', '060')])
+                self.write({'stage_id': stage_id.id,
+                    'state': 'done',
+                    'operation_wizard': '03',
+                    })
             self.make_lines()
             stage_id = self._stage_find(domain=[('code', '=', '030')])
             self.write({'stage_id': stage_id.id,
@@ -1030,6 +1040,11 @@ class account_reconcile_order(models.Model):
                 raise Warning('申请的金额大于可申请的应付,请检查')
 
         if self.sfk_type == 'yfhxd':
+            if self.hxd_type_new == '40':
+                if not self.other_payment_bank_id:
+                    raise Warning('请填写收款单账号')
+                if not self.fk_journal_id:
+                    raise Warning('请填写付款银行')
             stage_id = self._stage_find(domain=[('code', '=', '040')])
             self.write({'stage_id': stage_id.id,
                         'state': 'posted',
