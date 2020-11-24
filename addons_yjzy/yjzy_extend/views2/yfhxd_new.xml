@@ -209,9 +209,9 @@
                             attrs="{'invisible':[('state_1','!=','advance_approval')]}"/>
                     <button name="action_account_approve_stage" string="财务审批" class="oe_highlight" type="object"
                             attrs="{'invisible':[('state_1','!=','account_approval')]}"/>
-                    <button name="action_manager_approve_stage" type="object" string="总经理预付认领审批" class="oe_highlight"
+                    <button name="action_manager_approve_stage" type="object" string="总经理审批" class="oe_highlight"
                             attrs="{'invisible':[('state_1','!=','manager_approval')]}" invisible="context.get('from_yfhxd')"/>
-                    <button name="action_manager_approve_from_yfhxd" type="object" string="总经理预付认领审批" class="oe_highlight" invisible="not context.get('from_yfhxd')"
+                    <button name="action_manager_approve_from_yfhxd" type="object" string="总经理审批" class="oe_highlight" invisible="not context.get('from_yfhxd')"
                             attrs="{'invisible':[('state_1','!=','manager_approval')]}"
                     />
 
