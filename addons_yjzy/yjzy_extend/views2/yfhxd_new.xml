@@ -69,6 +69,30 @@
         </field>
     </record>
 
+    <record model="ir.ui.view" id="account_yfhxd_no_normal_tree_view_new">
+        <field name="name">account.reconcile.order.tree</field>
+        <field name="model">account.reconcile.order</field>
+        <field name="arch" type="xml">
+            <tree string="应付核销单" create="false" decoration-info="state == 'draft'" decoration-muted="state =='cancelled'" edit="false">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="date" invisible="1"/>
+                <field name="approve_uid" invisible="1"/>
+                <field name="approve_date"/>
+                <field name="amount_total_org" string="全部认领合计"  groups="base.group_system"/>
+                <field name="amount_total_org_new" string="全部认领合计" groups="base.group_system"/>
+                <field name="amount_payment_org" string="实际申请付款金额" groups="base.group_system"/>
+                <field name="amount_payment_org_new" string="实际申请金额" />
+                <field name="amount_advance_org" string="预付认领金额" groups="base.group_system"/>
+                <field name="amount_advance_org_new" string="预付认领金额" groups="base.group_system"/>
+
+                <field name="amount_total" invisible="1"/>
+                <field name="currency_id" attrs="{}" invisible="1"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
 
 
     <record model="ir.ui.view" id="account_yfhxd_other_payment_tree_view_new">
@@ -87,7 +111,7 @@
                 <field name="amount_payment_org_new" string="实际申请金额" groups="base.group_system"/>
                 <field name="amount_advance_org" string="预付认领金额" groups="base.group_system"/>
                 <field name="amount_advance_org_new" string="预付认领金额" groups="base.group_system"/>
-                 <field name="supplier_advance_payment_ids_amount_advance_org" string="待审批预付认领金额"/>
+
                 <field name="amount_total" invisible="1"/>
                 <field name="currency_id" attrs="{}" invisible="1"/>
                 <field name="state"/>
@@ -1155,7 +1179,7 @@
             'supplier', 'show_po': 1,'default_operation_wizard':'30'}
         </field>
         <field name="view_ids" eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'tree', 'view_id': ref('account_yfhxd_tree_view_new')}),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('account_yfhxd_no_normal_tree_view_new')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('account_yfhxd_form_view_new')})]"/>
     </record>
     <menuitem id="menu_yfhxd_new_other_po" name="查询申请单"
