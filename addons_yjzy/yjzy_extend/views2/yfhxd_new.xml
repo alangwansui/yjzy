@@ -210,9 +210,9 @@
                     <button name="action_account_approve_stage" string="财务提交申请" class="oe_highlight" type="object"
                             attrs="{'invisible':[('state_1','!=','account_approval')]}"/>
                     <button name="action_manager_approve_stage" type="object" string="总经理审批" class="oe_highlight"
-                            attrs="{'invisible':[('state_1','!=','manager_approval')]}" /><!--invisible="context.get('from_yfhxd')"-->
+                            attrs="{'invisible':[('state_1','!=','manager_approval')]}" invisible="context.get('from_yfhxd')"/>
                     <button name="action_manager_approve_from_yfhxd" type="object" string="总经理审批" class="oe_highlight"
-                            attrs="{'invisible':[('state_1','!=','manager_approval')]}" invisible="1"/> <!--invisible="not context.get('from_yfhxd')"-->
+                            attrs="{'invisible':[('state_1','!=','manager_approval')]}" invisible="not context.get('from_yfhxd')"/>
 
                     <button name="action_draft_stage" class="oe_highlight" type="object" string="重置草稿"
                             states="refused"/>
@@ -494,10 +494,11 @@
                                     <button name="action_submit_stage" type="object" string="提交"
                                         attrs="{'invisible':[('state_1','!=','draft')]}"/>
 
-                                    <button name="action_manager_approve_stage" type="object" string="审批"
+                                    <button name="action_manager_approve_from_yfhxd" type="object" string="审批"
                                          class="oe_highlight" attrs="{'invisible':[('state_1','!=','manager_approval')]}"/>
-
-                                     <button name="%(reconcile_refuse_wizard_action)d" string="拒绝" type="action"
+   <button name="action_draft_stage" class="oe_highlight" type="object" string="重置草稿"
+                            states="refused"/>
+                                     <button name="%(reconcile_refuse_wizard_action)d" string="拒绝" type="action" invisible="1"
                                                  attrs="{'invisible':[('state_1','!=','manager_approval')]}"/>
 
 
