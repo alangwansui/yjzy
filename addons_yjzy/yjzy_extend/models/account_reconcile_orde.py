@@ -531,7 +531,18 @@ class account_reconcile_order(models.Model):
     is_editable = fields.Boolean(u'可编辑')
     gongsi_id = fields.Many2one('gongsi', '内部公司')
 
-
+    def name_get(self):
+        res = []
+        ctx = self.env.context
+        for one in self:
+            if ctx.get('default_sfk_type', '') == 'yfhxd' and one.hxd_type_new == '30':
+                name = '%s:%s' % ('预付-应付认领', one.name)
+            elif ctx.get('default_sfk_type', '') == 'yfhxd'  and one.hxd_type_new == '40':
+                name = '%s:%s' % ('应付付款申请', one.name)
+            else:
+                name = one.name
+            res.append((one.id, name))
+        return res
 
     def open_yjzy_reconcile_order_id(self):
         form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new_for_advance_approve')
