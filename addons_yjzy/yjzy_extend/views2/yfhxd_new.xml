@@ -49,7 +49,7 @@
         <field name="name">account.reconcile.order.tree</field>
         <field name="model">account.reconcile.order</field>
         <field name="arch" type="xml">
-            <tree string="应付核销单" decoration-info="state == 'draft'" decoration-muted="state =='cancelled'" edit="false">
+            <tree string="应付核销单" create="false" decoration-info="state == 'draft'" decoration-muted="state =='cancelled'" edit="false">
                 <field name="name"/>
                 <field name="partner_id"/>
                 <field name="date" invisible="1"/>
@@ -196,7 +196,7 @@
         <field name="name">account.reconcile.order.form</field>
         <field name="model">account.reconcile.order</field>
         <field name="arch" type="xml">
-            <form string="应付核销单">
+            <form string="应付核销单" create="false">
                 <header>
                       <button name="compute_advice_amount_advance_org" type="object" class="oe_highlight" string="计算建议预收认领金额" groups="base.group_system"/>
                     <button name="action_submit_stage" class="oe_highlight" type="object" string="提交"
@@ -211,7 +211,9 @@
                             attrs="{'invisible':[('state_1','!=','account_approval')]}"/>
                     <button name="action_manager_approve_stage" type="object" string="总经理预付认领审批" class="oe_highlight"
                             attrs="{'invisible':[('state_1','!=','manager_approval')]}" invisible="context.get('from_yfhxd')"/>
-                    <button name="action_manager_approve_from_yfhxd" type="object" string="总经理预付认领审批" class="oe_highlight" invisible="not context.get('from_yfhxd')"/>
+                    <button name="action_manager_approve_from_yfhxd" type="object" string="总经理预付认领审批" class="oe_highlight" invisible="not context.get('from_yfhxd')"
+                            attrs="{'invisible':[('state_1','!=','manager_approval')]}"
+                    />
 
                     <button name="action_draft_stage" class="oe_highlight" type="object" string="重置草稿"
                             states="refused"/>
@@ -465,7 +467,7 @@
                     <notebook>
                         <!--参考page autofocus="autofocus" 默认分页-->
                         <page string="认领明细" attrs="{'invisible':['|','|',('operation_wizard','!=','03'),('hxd_type_new','!=','40'),('invoice_attribute','!=','normal')]}">
-                            <field name="yjzy_reconcile_order_ids"
+                            <field name="yjzy_reconcile_order_ids" attrs="{'readonly':[('state_1','!=','draft')]}"
                                    context="{'show_po':1,'form_view_ref':'yjzy_extend.account_yfhxd_form_view_new','from_yfhxd':1}">
                                 <tree default_order="stage_id">
                                     <field name="name" invisible="1"/>
@@ -493,10 +495,11 @@
                                     <button name="action_submit_stage" type="object" string="提交"
                                         attrs="{'invisible':[('state_1','!=','draft')]}"/>
 
-                                    <button name="open_yjzy_reconcile_order_id" string="总经理审批" class="oe_highlight" type="object"
-                                                attrs="{'invisible':[('state_1','!=','advance_approval')]}"/>
+                                 <button name="action_manager_approve_from_yfhxd" type="object" string="审批"
+                                         class="oe_highlight" atrrs="{'invisible':[('parent.state_1','!=','advance_approval')]}"/>
+
                                      <button name="%(reconcile_refuse_wizard_action)d" string="拒绝" type="action"
-                                                 attrs="{'invisible':[('state_1','!=','advance_approval')]}"/>
+                                                 attrs="{'invisible':[('parent.state_1','!=','advance_approval')]}"/>
 
 
                                 </tree>
@@ -552,7 +555,7 @@
                                            attrs="{'column_invisible':[('parent.operation_wizard','not in',['40'])]}"/>
                                     <field name="currency_id" invisible="1"/>
                                     <field name="amount_payment" invisible="1"/>
-                                    <button name="compute_ysrld_amount_advance_org_all" type="object" string="test"/>
+                                    <button name="compute_ysrld_amount_advance_org_all" type="object" string="test" groups="base.group_system"/>
 
                                 </tree>
                             </field>
