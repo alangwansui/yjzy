@@ -1164,9 +1164,7 @@ class account_invoice(models.Model):
             'views': [(form_view.id, 'form')],
             'res_id':account_reconcile_id.id,
             'target': 'current',
-            'context': {
-
-
+            'context': {'default_sfk_type':'yfhxd',
             }
         }
 

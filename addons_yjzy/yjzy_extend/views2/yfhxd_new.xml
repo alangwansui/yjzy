@@ -385,7 +385,7 @@
                             <field name="diff_account_id" string="采购费用科目" invisible="1"/>
                             <field name="exchange_account_id" invisible="1"/>
                             <field name="fk_journal_id" string="付款银行"
-                                   attrs="{'invisible':[('operation_wizard','not in',['10','30'])],'required':[('operation_wizard','in',['10','30'])]}"/>
+                                   attrs="{'invisible':[('operation_wizard','not in',['10','30'])],}"/>
                             <field name="yjzy_payment_id" string="日常付款单" domain="[('sfk_type', '=', 'rcfkd')]"
                                    attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),('state','not in',['approved','done'])]}"
                                    context="{'form_view_ref': 'yjzy_extend.view_rcfkd_form','advance_po_amount':1}"/>
