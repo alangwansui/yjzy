@@ -938,15 +938,15 @@ class account_reconcile_order(models.Model):
                 lines = self.line_ids
                 for one in lines:
                     if one.so_id or one.po_id:
-                        if one.amount_advance_org > one.amount_invoice_so:
+                        amount_org_hxd = one.yjz_payment_id.po_id.amount_org_hxd
+                        amount_po = one.yjz_payment_id.po_id.amount_total
+                        rest_amount_org_hxd = amount_po - amount_org_hxd
+                        if one.amount_advance_org > rest_amount_org_hxd:
                             raise Warning('预付认领金额大于可认领的应付金额')
                         if one.amount_advance_org > one.advance_residual2:
                             raise Warning('预付认领金额大于可认领的预付金额')
                 for x in self.line_no_ids:
-                    amount_org_hxd = x.yjz_payment_id.po_id.amount_org_hxd
-                    amount_po = x.yjz_payment_id.po_id.amount_total
-                    rest_amount_org_hxd = amount_po - amount_org_hxd
-                    if x.amount_advance_org > rest_amount_org_hxd:
+                    if x.amount_advance_org > x.amount_payment_can_approve_all:
                         raise Warning('预付认领金额大于可申请账单金额')
                 if self.amount_advance_org_new - self.yjzy_advance_payment_balance > 0:
                     print('yjzy_advance_payment_balance',self.yjzy_advance_payment_balance)
