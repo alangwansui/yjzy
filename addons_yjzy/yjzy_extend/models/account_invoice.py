@@ -1083,12 +1083,17 @@ class account_invoice(models.Model):
         print('partner_id', len(self.mapped('partner_id')))
         state_draft = len(self.filtered(lambda x: x.state != 'open'))
         print('state_draft',state_draft)
+        hxd_line_approval_ids = self.env['account.reconcile.order.line'].search([('invoice_id.id','in',self.ids),('order_id.state','not in',['done','approved'])])
+        if hxd_line_approval_ids:
+            raise Warning('选择的应付账单，有存在审批中的，请查验')
         if attribute != 'other_payment' and len(self.mapped('partner_id')) > 1:
             raise Warning('不同供应商')
         elif attribute == 'other_payment' and len(self) > 1:
             raise Warning('其他应付不允许多个一起申请付款')
         elif state_draft >= 1:
             raise Warning('非确认账单不允许创建付款申请')
+
+
         sfk_type = 'yfhxd'
         domain = [('code', '=', 'yfdrl'), ('company_id', '=', self.env.user.company_id.id)]
         name = self.env['ir.sequence'].next_by_code('sfk.type.%s' % sfk_type)

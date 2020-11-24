@@ -1041,7 +1041,7 @@ class account_reconcile_order(models.Model):
 
         if self.sfk_type == 'yfhxd':
             if self.hxd_type_new == '40':
-                if not self.other_payment_bank_id:
+                if not self.bank_id:
                     raise Warning('请填写收款单账号')
                 if not self.fk_journal_id:
                     raise Warning('请填写付款银行')

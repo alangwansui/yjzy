@@ -1403,7 +1403,7 @@ class account_payment(models.Model):
         default_yfhxd_id = self.env.context.get('default_yfhxd_id')
         advance_reconcile_order_ids = self.advance_reconcile_order_ids.filtered(lambda x: x.state not in ['done','approved'] and x.yjzy_reconcile_order_id.id == default_yfhxd_id)
         if advance_reconcile_order_ids:
-            raise Warning('已经存在未审批的预收认领，无法再次创建')
+            raise Warning('已经存在未审批的预认领，无法再次创建')
         form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new').id
 
         invoice_ids_id = default_invoice_ids[0][2] #参考[6,False,[199,299,344]]取[199,299,344]

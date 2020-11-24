@@ -179,7 +179,7 @@
             <field name="state">advance_approval</field>
         </record>
         <record model="account.reconcile.stage" id="stage_account_reconcile_account_approval">
-            <field name="name">待财务审批</field>
+            <field name="name">待财务提交申请</field>
             <field name="code">030</field>
             <field name="sequence" eval="30"/>
             <field name="state">account_approval</field>
