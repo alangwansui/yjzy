@@ -55,6 +55,7 @@
                 <field name="date" invisible="1"/>
                 <field name="approve_uid" invisible="1"/>
                 <field name="approve_date"/>
+
                 <field name="amount_total_org" string="全部认领合计"  groups="base.group_system"/>
                 <field name="amount_total_org_new" string="全部认领合计" groups="base.group_system"/>
                 <field name="amount_payment_org" string="实际申请付款金额" groups="base.group_system"/>
