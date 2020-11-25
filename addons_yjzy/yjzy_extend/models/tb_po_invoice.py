@@ -893,7 +893,7 @@ class tb_po_invoice(models.Model):
         if not account:
             raise Warning(u'没有找到退税科目,请先在退税产品的收入科目上设置')
         if self.back_tax_add_this_time_total > 0:
-            back_tax_invoice = invoice_obj.create({
+            back_tax_invoice = invoice_obj.with_context({'default_type': 'out_invoice', 'type':'out_invoice', 'journal_type': 'sale'}).create({
                 'tb_po_invoice_id': self.id,
                 'partner_id': partner.id,
                 'type': 'out_invoice',

@@ -7,60 +7,64 @@
             <field name="model">account.invoice</field>
             <field name="arch" type="xml">
                 <search string="Search Invoice">
+
+                    <field name="number" string="模糊查询"
+                           filter_domain="['|','|','|','|',('number','ilike',self),('tb_contract_code','ilike',self), ('origin','ilike',self), ('reference', 'ilike', self), ('partner_id', 'child_of', self)]"/>
                     <field name="bill_id" string="系统出运单"/>
-                    <field name="x_studio_field_lL3aM"/>
-                    <field name="x_studio_field_sG7RZ"/>
-                    <field name="number" string="Invoice"
-                           filter_domain="['|','|','|', ('number','ilike',self), ('origin','ilike',self), ('reference', 'ilike', self), ('partner_id', 'child_of', self)]"/>
-                    <field name="journal_id"/>
-                    <filter name="draft" string="Draft" domain="[('state','=','draft')]"/>
-                    <filter name="invoices" string="Invoices"
+                    <field name="journal_id" invisible="1"/>
+                     <separator/>
+                    <field name="partner_id" operator="child_of" string="合作伙伴"/>
+                    <field name="user_id" string="业务员" domain="[('share','=', False)]"/>
+                    <field name="date" string="Period" invisible="1"/>
+                    <filter name="draft" string="草稿" domain="[('state','=','draft')]"/>
+                    <filter name="open" string="未完成" domain="[('state','=','open')]"/>
+                    <filter name="paid" string="已完成" domain="[('state','=','paid')]"/>
+                    <filter name="invoices" string="Invoices" invisible="1"
                             domain="['&amp;', ('state','in',['draft','open','paid']),('type','in',('out_invoice','in_invoice'))]"/>
-                    <filter name="refunds" string="Credit Notes"
+                    <filter name="refunds" string="Credit Notes" invisible="1"
                             domain="['&amp;', ('state','in',['draft','open','paid']),('type','in',('out_refund','in_refund'))]"/>
 
                     <separator/>
-                    <filter name="unpaid" string="Not Paid" domain="[('state','=','open')]"/>
-                    <filter name="late" string="Overdue"
+                    <filter name="unpaid" string="Not Paid" domain="[('state','=','open')]" invisible="1"/>
+                    <filter name="late" string="Overdue" invisible="1"
                             domain="['&amp;', ('date_due', '&lt;', time.strftime('%Y-%m-%d')), ('state', '=', 'open')]"
                             help="Overdue invoices, maturity date passed"/>
-                    <separator/>
+                    <filter name="late" string="超期账单"
+                            domain="['&amp;', ('date_deadline', '&lt;', time.strftime('%Y-%m-%d')), ('state', '=', 'open')]"
+                            help="Overdue invoices, maturity date passed"/>
 
-                    <field name="partner_id" operator="child_of"/>
-                    <field name="user_id" string="Salesperson" domain="[('share','=', False)]"/>
-                    <field name="date" string="Period"/>
                     <separator/>
-                    <filter domain="[('user_id','=',uid)]" help="My Invoices"/>
+                    <filter domain="[('user_id','=',uid)]" help="My Invoices" invisible="1"/>
                     <separator/>
-                    <filter string="My Activities" name="activities_my" domain="[('activity_ids.user_id', '=', uid)]"/>
+                    <filter string="My Activities" name="activities_my" domain="[('activity_ids.user_id', '=', uid)]" invisible="1"/>
                     <separator/>
-                    <filter string="Late Activities" name="activities_overdue"
+                    <filter string="Late Activities" name="activities_overdue" invisible="1"
                             domain="[('activity_ids.date_deadline', '&lt;', context_today().strftime('%Y-%m-%d'))]"
                             help="Show all records which has next action date is before today"/>
-                    <filter string="Today Activities" name="activities_today"
+                    <filter string="Today Activities" name="activities_today" invisible="1"
                             domain="[('activity_ids.date_deadline', '=', context_today().strftime('%Y-%m-%d'))]"/>
-                    <filter string="Future Activities" name="activities_upcoming_all"
+                    <filter string="Future Activities" name="activities_upcoming_all" invisible="1"
                             domain="[('activity_ids.date_deadline', '&gt;', context_today().strftime('%Y-%m-%d'))]"/>
                     <group expand="0" string="Group By">
                         <filter name="group_invoice_attribute" string="账单类型" context="{'group_by':'invoice_attribute'}"/>
-                        <filter name="group_by_state" string="状态分组" context="{'group_by':'state'}"/>
+                        <filter name="group_by_state" string="状态分组" context="{'group_by':'state'}" invisible="1"/>
                         <filter name="group_by_state_yjzy_invoice_id" string="状态+主账单分组" context="{'group_by':['state','yjzy_invoice_id']}"/>
                         <filter name="group_by_date_invoice" string="账单日期"
                                 context="{'group_by':'date_invoice:year'}"/>
-                        <filter name="group_by_stage_id" string="审批状态"
+                        <filter name="group_by_stage_id" string="审批状态" invisible="1"
                                 context="{'group_by':'stage_id'}"/>
                         <filter name="group_by_bill_id" string="出运合同"
                                 context="{'group_by':'bill_id'}"/>
                         <filter name="group_by_due_date" string="逾期天数"
                                 context="{'group_by':('residual_date_group','partner_id')}"/>
-                        <filter name="group_by_partner_id" string="Partner"
+                        <filter name="group_by_partner_id" string="合作伙伴"
                                 context="{'group_by':'commercial_partner_id'}"/>
-                        <filter string="Salesperson" context="{'group_by':'user_id'}"/>
-                        <filter name="status" string="Status" context="{'group_by':'state'}"/>
+                        <filter string="业务员" context="{'group_by':'user_id'}"/>
+                        <filter name="status" string="状态" context="{'group_by':'state'}"/>
                         <separator/>
                         <filter string="Invoice Date" context="{'group_by':'date_invoice'}"/>
                         <filter string="Due Date" context="{'group_by':'date_due'}"/>
-                        <filter name="group_by_invoice_attribute" string="增加采购类型" context="{'group_by':'invoice_attribute'}"/>
+                        <filter name="group_by_invoice_attribute" string="增加采购类型" context="{'group_by':'invoice_attribute'}" invisible="1"/>
                     </group>
                 </search>
 

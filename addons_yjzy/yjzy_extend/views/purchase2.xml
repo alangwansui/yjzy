@@ -76,6 +76,7 @@
                       <button name="compute_package_info" string="计算包装信息" type="object" class="oe_highlight"/>
                     <button name="open_wizard_po_box" string="生成箱号" type="object" class="oe_highlight"/>
                     <button name="clear_po_box" string="清除箱号" type="object" class="oe_highlight"/>
+                     <button name="change_supplier" string="更新供应商到销售合同" comfirm="更新供应商到对应的销售合同！" type="object" class="oe_highlight" attrs="{'invisible':[('is_editable','=',False)]}"/>
                       <button string="创建批次号" invisible="0" states="" type="object" groups="base.group_system" name="create_lots"/>
                      <field name="state_1" widget="statusbar" statusbar_visible=" "/>
                  </header>
@@ -160,7 +161,7 @@
                               <field name="date_order" string="下单日期" widget="date" />
                               <label for="date_planned" string="供应商交期"/>
                                     <div>
-                                       <field name="date_planned" widget="date" required="1" attrs="{'readonly': [('state', 'not in', ('draft', 'sent'))]}"/>
+                                       <field name="date_planned" widget="date" required="1" attrs="{'readonly': [('state', 'not in', ['draft', 'sent']),('is_editable','=',False)]}"/>
                                        <button name="action_set_date_planned" type="object" states="draft,sent" string="修改交单日期请点击这里" help="This changes the scheduled date of all order lines to the given date" class="fa fa-calendar o_icon_button oe_edit_only"/>
                                   </div>
                             <field name="is_shipped" invisible="1"/>
@@ -207,7 +208,6 @@
                                     <field name="supplierinfo_id" invisible="1"/>
                                     <field name="box_start" />
                                     <field name="box_end"/>
-
                                     <field name="min_package_name" invisible="1"/>
                                     <field name="max_package_qty" invisible="1"/>
                                     <field name="qty_max_package" sum="小计"/>
@@ -224,7 +224,7 @@
                                     <field name="dlr_no_qty" invisible="1"/>
                                     <field name="lot_sub_name" invisible="1"/>
                                     <field name="move_dest_ids" invisible="1"/>
-                                    <field name="date_planned" string="客户交期" widget="date" invisible="1"/>
+                                    <field name="date_planned" string="客户交期" widget="date" groups="base.group_system"/>
                                     <field name="company_id" groups="base.group_multi_company" invisible="1" options="{'no_create': True}"/>
                                     <field name="account_analytic_id" context="{'default_partner_id':parent.partner_id}" groups="purchase.group_analytic_accounting"/>
                                     <field name="analytic_tag_ids" groups="purchase.group_analytic_accounting" widget="many2many_tags" options="{'color_field': 'color'}"/>

@@ -6,7 +6,7 @@
             <field name="model">account.invoice</field>
             <field name="arch" type="xml">
                 <form string="应收账单" class="o_invoice_form" create="false">
-                    <header>
+                    <header groups="base.group_system">
                         <button name="action_create_yfhxd" context="{'invoice_attribute':invoice_attribute}" class="oe_highlight" type="object" string="创建付款申请"/>
                     </header>
                      <header attrs="{'invisible':['|',('is_yjzy_invoice','=',True),('type','not in',['out_invoice','out_refund'])]}">
@@ -17,7 +17,7 @@
                         <field name="state" widget="statusbar" nolabel="1" statusbar_visible="draft,open,paid"/>
                     </header>
                     <header attrs="{'invisible':['|',('is_yjzy_invoice','=',True),('type','in',['out_invoice','out_refund'])]}">
-                        <button name="open_tb_po_invoice" string="额外应付账单申请" class="oe_highlight" type="object" invisible="not context.get('extra_type')"/>
+                        <button name="open_tb_po_invoice" string="额外应付账单申请" class="oe_highlight" type="object" attrs="{'invisible':[('state','=','paid')]}" invisible="not context.get('extra_type')"/>
                         <button name="open_tb_po_reconcile_invoice" string="核销应付账单申请" type="object" invisible="not context.get('reconcile_type')"/>
                         <button name="submit_yfhxd" string="创建付款申请" type="object" invisible="not context.get('fkhxd_type')"/>
 <!--                       <button name="open_supplier_invoice_id" string="额外应付账单" type="object"/>-->
@@ -86,7 +86,7 @@
                         <label string="退税账单" class="oe_inline" attrs="{'invisible':[('type','!=','out_invoice'),'|',('yjzy_type','!=','back_tax'),('yjzy_type_1','!=','back_tax')]}"/>
                         <label string="退税冲销账单" class="oe_inline" attrs="{'invisible':[('type','!=','out_refund'),'|',('yjzy_type','!=','back_tax'),('yjzy_type_1','!=','back_tax')]}"/>
                         <field name="invoice_attribute" class="oe_inline" attrs="{'readonly':[('state','not in',['draft'])]}"/>
-                        <h1 class="mt0">
+                        <h1 class="mt0" groups="base.group_system">
                             <field name="number" class="oe_inline" attrs="{'invisible': [('state', '=', 'draft')]}"/>
                             <div attrs="{'invisible': [('sequence_number_next_prefix','=',False)]}">
                                 <field name="sequence_number_next_prefix" class="oe_inline"/>

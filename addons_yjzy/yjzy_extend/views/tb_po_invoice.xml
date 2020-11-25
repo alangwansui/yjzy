@@ -571,7 +571,7 @@
                                 </field>
                             </page>
                             <page string="货款明细" attrs="{'invisible':[('is_tb_hs_id','=',False)]}" >
-                                <field name="hsname_all_ids">
+                                <field name="hsname_all_ids" attrs="{'invisible':[('is_tb_hs_id','=',False)]}">
                                     <tree editable="bottom">
                                         <field name="hs_id" attrs="{'readonly':[('parent.state','!=','10_draft')]}"/>
                                         <field name="hsname_all_line_id" invisible="1"/>
@@ -600,7 +600,7 @@
                                         <field name="purchase_amount2_add_this_time"
                                                attrs="{'readonly':[('parent.state','!=','10_draft')]}"/>
                                         <field name="p_s_add_this_time"
-                                               attrs="{'readonly':[('parent.state','!=','10_draft')],'column_invisible':[('parent.type','=','expense_po')]}"/>
+                                               attrs="{'readonly':[('parent.state','!=','10_draft')],'column_invisible':[('parent.type','in',['expense_po','extra'])]}"/>
                                         <field name="back_tax_add_this_time"/>
                                     </tree>
                                 </field>
@@ -649,10 +649,11 @@
                                 <field name="invoice_extra_ids_count" invisible="1"/>
                                 <field name="invoice_extra_ids" readonly="1">
                                     <tree decoration-info="state == 'draft'" decoration-muted="state == 'cancel'">
+                                        <field name="yjzy_type_1" string="收付类型" />
                                         <field name="tb_contract_code"/>
                                         <field name="amount_total_signed" string="账单金额"/>
                                         <field name="residual_signed" string="未付金额"/>
-                                        <field name="yjzy_type_1" groups="base.group_system"/>
+
                                         <field name="invoice_attribute"/>
                                         <field name="yjzy_type" groups="base.group_system"/>
                                         <field name="state"/>

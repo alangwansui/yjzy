@@ -210,6 +210,11 @@ class purchase_order(models.Model):
     so_currentcy_id = fields.Many2one('res.currency','销售合同币种',related='source_so_id.currency_id')
     so_id_amount_total = fields.Monetary('对应销售金额',currency_field='so_currentcy_id', compute=compute_so_id_amount_total,store=True)
 
+    #采购单更换了供应商，需要更新对应的销售明细上的供应商
+    def change_supplier(self):
+        for one in self.order_line:
+            one.sol_id.supplier_id = self.partner_id
+
     def _stage_find(self, domain=None, order='sequence'):
         search_domain = list(domain)
         return self.env['purchase.order.stage'].search(search_domain, order=order, limit=1)

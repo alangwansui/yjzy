@@ -529,6 +529,9 @@ class sale_order(models.Model):
                                    u'出运与核销状态')
     # purchase_update_date = fields.Datetime(u'采购更新的时间')
 
+    #更新
+
+
     def _stage_find(self, domain=None, order='sequence'):
         search_domain = list(domain)
         return self.env['sale.order.stage'].search(search_domain, order=order, limit=1)
