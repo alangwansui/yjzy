@@ -1261,7 +1261,7 @@ class account_payment(models.Model):
         if self.state not in '50_posted':
             raise Warning('当前状态不允许进行认领')
         tree_view = self.env.ref('yjzy_extend.account_yfhxd_advance_tree_view_approve_new').id
-        form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new').id
+        form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new_open').id
         advance_reconcile = self.mapped('advance_reconcile_order_ids')
 
         yfhxd_id = self.env.context.get('yfhxd_id')
