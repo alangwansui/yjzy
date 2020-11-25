@@ -504,7 +504,8 @@
                         <button name="action_submit_stage" class="oe_highlight" type="object" string="提交审批"
                                 attrs="{'invisible':[('state_1','!=','draft')]}"/>
                         <button name="action_save_test" type="object" class="oe_highlight" string="保存并关闭"/>
-                            <button name="action_unlink" class="oe_highlight" type="object" string="取消并删除删除"/>
+                        <button string="取消" special="cancel"/>
+<!--                        <button name="action_unlink" class="oe_highlight" type="object" string="取消并删除"/>-->
                         <button name="action_manager_approve_first_stage" class="oe_highlight" type="object"
                                 string="总经理审批" attrs="{'invisible':[('state_1','!=','manager_approval')]}"/>
 
@@ -787,7 +788,7 @@
                     <button name="action_draft_stage" class="oe_highlight" type="object" string="重置草稿"
                             states="refused"/>
                     <button name="%(reconcile_refuse_wizard_action)d" string="拒绝" type="action"
-                            attrs="{'invisible':[('state','in',['done','refused','draft','cancelled'])]}"/>
+                            attrs="{'invisible':[('state_1','in',['done','refused','draft','cancel','account_approval','post'])]}"/>
                     <button name="action_05" attrs="{'invisible':[('operation_wizard','not in',['03'])]}"
                             groups="base.group_system"
                             class="oe_highlight" string="下一步:查看并确认账单" type="object" context="{'show_tb_ref':1}"/>
