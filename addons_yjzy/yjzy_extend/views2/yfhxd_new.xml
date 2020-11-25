@@ -250,7 +250,7 @@
             <form string="应付核销单" create="false">
                 <header>
                       <button name="compute_advice_amount_advance_org" type="object" class="oe_highlight" string="计算建议预收认领金额" groups="base.group_system"/>
-                    <button name="action_submit_stage" class="oe_highlight" type="object" string="提交"
+                    <button name="action_submit_stage" class="oe_highlight" type="object" string="提交" invisible="context.get('open')"
                             attrs="{'invisible':[('state_1','!=','draft')]}"/>
                     <button name="action_manager_approve_first_stage" class="oe_highlight" type="object"
                             attrs="{'invisible':['|',('state_1','!=','advance_approval'),('yjzy_reconcile_order_ids_count','!=',0)]}"
@@ -268,7 +268,7 @@
                     <button name="action_draft_stage" class="oe_highlight" type="object" string="重置草稿"
                             states="refused"/>
                     <button name="%(reconcile_refuse_wizard_action)d" string="拒绝" type="action"
-                            attrs="{'invisible':[('state','=','done')]}"/>
+                            attrs="{'invisible':[('state','in',['done','refused','draft','cancelled'])]}"/>
                     <button name="action_05" attrs="{'invisible':[('operation_wizard','not in',['03'])]}"
                             groups="base.group_system"
                             class="oe_highlight" string="下一步:查看并确认账单" type="object" context="{'show_tb_ref':1}"/>
@@ -744,7 +744,7 @@
                         <button name="action_submit_stage" class="oe_highlight" type="object" string="提交审批"
                                 attrs="{'invisible':[('state_1','!=','draft')]}"/>
                         <button name="action_save_test" type="object" class="oe_highlight" string="保存并关闭"/>
-<button name="action_unlink" class="oe_highlight" type="object" string="取消并删除"/>
+                            <button name="action_unlink" class="oe_highlight" type="object" string="取消并删除"/>
                         <button name="action_manager_approve_first_stage" class="oe_highlight" type="object"
                                 string="总经理审批" attrs="{'invisible':[('state_1','!=','manager_approval')]}"/>
 

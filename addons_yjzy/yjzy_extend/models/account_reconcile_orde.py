@@ -944,8 +944,8 @@ class account_reconcile_order(models.Model):
                 lines = self.line_ids
                 for one in lines:
                     if one.so_id or one.po_id:
-                        amount_org_hxd = one.yjz_payment_id.po_id.amount_org_hxd
-                        amount_po = one.yjz_payment_id.po_id.amount_total
+                        amount_org_hxd = one.yjzy_payment_id.po_id.amount_org_hxd
+                        amount_po = one.yjzy_payment_id.po_id.amount_total
                         rest_amount_org_hxd = amount_po - amount_org_hxd
                         if one.amount_advance_org > rest_amount_org_hxd:
                             raise Warning('预付认领金额大于可认领的应付金额')
