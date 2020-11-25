@@ -252,8 +252,8 @@
                       <button name="compute_advice_amount_advance_org" type="object" class="oe_highlight" string="计算建议预收认领金额" groups="base.group_system"/>
                     <button name="action_submit_stage" class="oe_highlight" type="object" string="提交"
                             attrs="{'invisible':[('state_1','!=','draft')]}"/>
-                    <button name="action_manager_approve_first_stage" class="oe_highlight" type="object" invisible="1"
-                            attrs="{'invisible':[('state_1','!=','advance_approval')]}"
+                    <button name="action_manager_approve_first_stage" class="oe_highlight" type="object"
+                            attrs="{'invisible':['|',('state_1','!=','advance_approval'),('yjzy_reconcile_order_ids_count','!=',0)]}"
                             string="总经理审批"/>
 
                     <button name="open_yjzy_reconcile_order_id" string="总经理审批预付认领" class="oe_highlight" type="object" invisible="1"
@@ -660,6 +660,7 @@
 
                         <page groups="base.group_system">
                             <group>
+                                <field name="yjzy_reconcile_order_ids_count"/>
                                 <field name="currency_id"/>
                                 <field name="amount_invoice"/>
                                 <field name="amount_total" string="付款合计：本币"/>

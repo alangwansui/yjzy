@@ -149,13 +149,14 @@
                         <page string="余额相关分录" groups="base.group_system">
                             <field name="aml_ids"/>
                         </page>
-                        <page groups="base.group_system">
+                        <page groups="sales_team.group_manager" string="新规则手动">
                             <group >
-                                <field name="advance_account_id" label="预收科目" options="{'no_create':True}" invisible="0"/>
+                                <field name="new_rule"/>
                             </group>
                         </page>
                         <page groups="base.group_system" string="管理页">
                             <group>
+                                <field name="advance_account_id" label="预收科目" options="{'no_create':True}" invisible="0"/>
                                 <field name="sfk_type" />
                                 <field name="journal_id" widget="selection"  domain="[('type','in',['bank','cash'])]"  attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                             <field name="payment_type" widget="radio" attrs="{'readonly': [('state', '!=', 'draft')]}" />

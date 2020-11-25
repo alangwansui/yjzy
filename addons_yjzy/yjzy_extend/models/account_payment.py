@@ -296,6 +296,8 @@ class account_payment(models.Model):
     # advance_reconcile_order_approve_amount = fields.Monetary('预收付-应收付认领审批完成金额', currency_field='yjzy_payment_currency_id',compute=compute_advance_reconcile_order_approve_amount, store=True )
     # approve_balance = fields.Monetary('预收付-应收付认领可认领金额', currency_field='yjzy_payment_currency_id', compute=compute_advance_reconcile_order_approve_amount, store=True )
 
+    new_rule = fields.Boolean('是否新规则',default=False)
+
     yjzy_partner_id = fields.Many2one('res.partner', 'Customer')
 
     payment_for_goods = fields.Boolean('货款')
@@ -873,8 +875,11 @@ class account_payment(models.Model):
             if one.sfk_type == 'rcfkd':
                 one.payment_date_confirm = fields.datetime.now() ##akiny 增加付款时间
                 if one.yshx_ids:
-                    operation_wizard = len(one.yshx_ids.filtered(lambda x: x.reconcile_payment_ids == False))
-                    if operation_wizard > 0 :#通过这个字段，区别一下老的和新的两种认领方式，新的是生成一张应付认领单
+                    # operation_wizard = len(one.yshx_ids.filtered(lambda x: x.reconcile_payment_ids == False))
+                    # print('operation_wizard_1111',operation_wizard,)
+                    # if operation_wizard > 0 :#通过这个字段，区别一下老的和新的两种认领方式，新的是生成一张应付认领单
+                    print('new_rule____1111',one.new_rule)
+                    if one.new_rule == False:
                         ac_orders = one.yshx_ids
                         ac_orders.make_done()
                     else:

@@ -348,6 +348,11 @@ class account_reconcile_order(models.Model):
             one.ysrld_advice_amount_advance_org_all = ysrld_advice_amount_advance_org_all
             one.duoyu_this_time_advice_advance_org = duoyu_this_time_advice_advance_org
 
+    def compute_yjzy_reconcile_order_ids_count(self):
+        for one in self:
+            yjzy_reconcile_order_ids_count = len(one.yjzy_reconcile_order_ids)
+            one.yjzy_reconcile_order_ids_count = yjzy_reconcile_order_ids_count
+
 
 
     ysrld_amount_advance_org_all = fields.Float('预收单的本所有被认领金额',compute=compute_ysrld_amount_advance_org_all,store=True)
@@ -361,6 +366,7 @@ class account_reconcile_order(models.Model):
     yjzy_reconcile_order_id = fields.Many2one('account.reconcile.order','关联的核销单',ondelete='cascade')#从付款申请认领的时候，创建预付申请，让两者之间产生关联
 
     yjzy_reconcile_order_ids = fields.One2many('account.reconcile.order','yjzy_reconcile_order_id','相关的核销单汇总')#从自身创建的所有的预付-应付认领单。
+    yjzy_reconcile_order_ids_count = fields.Integer('相关的核销单汇总数量',compute=compute_yjzy_reconcile_order_ids_count)
 
     yjzy_reconcile_order_approval_ids = fields.One2many('account.reconcile.order', 'yjzy_reconcile_order_id', u'相关待审批预付-应付认领',domain=[('state_1','=','manager_approval')],
                                               )  # 从自身创建的所有的预付-应付认领单。
