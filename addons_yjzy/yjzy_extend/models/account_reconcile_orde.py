@@ -979,7 +979,9 @@ class account_reconcile_order(models.Model):
                 else:
                     if self.operation_wizard == '03':
                         yjzy_reconcile_order_approval_ids = self.yjzy_reconcile_order_ids.filtered(lambda x: x.state in ['draft','cancelled'])
-                        yjzy_reconcile_order_approval_ids.unlink()
+                        if len(yjzy_reconcile_order_approval_ids) !=0:
+                            raise Warning('有存在草稿状态的预付-应付认领单，请先提交或者删除！')
+                        # yjzy_reconcile_order_approval_ids.unlink()
 
                         for one in self.yjzy_reconcile_order_ids:
                             if one.state == 'refused':
