@@ -1156,6 +1156,7 @@ class account_invoice(models.Model):
             'res_id':account_reconcile_id.id,
             'target': 'current',
             'context': {'default_sfk_type':'yfhxd',
+                        'show_po':1,
             }
         }
 
