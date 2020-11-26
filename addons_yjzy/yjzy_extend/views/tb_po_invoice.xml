@@ -355,7 +355,7 @@
             <field name="name">tb.po.from</field>
             <field name="model">tb.po.invoice</field>
             <field name="arch" type="xml">
-                <form string="添加采购金额">
+                <form string="添加采购金额" create="false">
                     <header attrs="{'invisible':[('type','=','expense_po')]}">
                         <button name="action_submit" states="10_draft" class="oe_highlight" type='object' invisible="context.get('open')"
                                 string="提交"/>
@@ -616,7 +616,7 @@
                                     </tree>
                                 </field>
                             </page>
-                            <page string="新增货款账单" attrs="{'invisible':['|',('invoice_p_ids_count','=',0)]}" >
+                            <page string="新增货款账单" attrs="{'invisible':['|',('invoice_p_ids_count','=',0)]}" groups="base.group_system">
                                 <field name="invoice_p_ids_count" invisible="1"/>
                                 <field name="invoice_p_ids" readonly="1">
                                     <tree decoration-info="state == 'draft'" decoration-muted="state == 'cancel'">

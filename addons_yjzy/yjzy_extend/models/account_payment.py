@@ -230,7 +230,7 @@ class account_payment(models.Model):
             advance_reconcile_order_count_all = len(one.advance_reconcile_order_ids)
             advance_reconcile_order_draft_ids_count = len(one.advance_reconcile_order_draft_ids)
             advance_reconcile_order_no_draft_ids_count = len(one.advance_reconcile_order_no_draft_ids)
-            advance_reconcile_order_draft_amount_advance = sum(x.amount_advance for x in one.advance_reconcile_order_draft_ids)
+            advance_reconcile_order_draft_amount_advance = sum(x.amount_advance_org for x in one.advance_reconcile_order_draft_ids)
             one.advance_reconcile_order_count_all = advance_reconcile_order_count_all
             one.advance_reconcile_order_draft_ids_count = advance_reconcile_order_draft_ids_count
             one.advance_reconcile_order_no_draft_ids_count = advance_reconcile_order_no_draft_ids_count
@@ -281,6 +281,11 @@ class account_payment(models.Model):
             advice_amount_advance_org_all = sum(x.advice_amount_advance_org for x in one.advance_reconcile_order_line_ids)
             one.amount_advance_org_all = amount_advance_org_all
             one.advice_amount_advance_org_all =advice_amount_advance_org_all
+
+    @api.depends('advance_reconcile_order_line_approval_ids', 'advance_reconcile_order_line_approval_ids.amount_advance_org')
+    def compute_advance_amount_reconcile_order_line_approval(self):
+        for one in self:
+            one.advance_amount_reconcile_order_line_approval = sum(x.amount_advance_org for x in one.advance_reconcile_order_line_approval_ids)
 
 
     # @api.depends('advance_reconcile_order_approve_ids','advance_reconcile_order_approve_ids.amount_advance_org_new')
@@ -343,6 +348,11 @@ class account_payment(models.Model):
     advance_reconcile_order_line_ids = fields.One2many('account.reconcile.order.line', 'yjzy_payment_id',
                                                        string='预收认领明细', domain=[('amount_advance_org', '>', 0),
                                                                                 ('order_id.state', '=', 'done')])
+
+    advance_reconcile_order_line_approval_ids = fields.One2many('account.reconcile.order.line', 'yjzy_payment_id',
+                                                       string='审批中的预收认领明细', domain=[('amount_advance_org', '>', 0),
+                                                                                ('order_id.state_1', '=', 'advance_approval')])
+    advance_amount_reconcile_order_line_approval = fields.Float('预收付-应收付认领未审批金额',compute=compute_advance_amount_reconcile_order_line_approval)
     #1119计算建议预收预付金额
     amount_advance_org_all = fields.Float('实际已经支付完成的认领金额总额',compute=compute_amount_advance_org_all, store=True)
     advice_amount_advance_org_all = fields.Float('实际已经支付完成的原则分配总额',compute=compute_amount_advance_org_all, store=True)
@@ -466,6 +476,14 @@ class account_payment(models.Model):
 
     post_uid = fields.Many2one('res.users',u'审批人')
     post_date = fields.Date(u'审批时间')
+
+
+    #1126
+    def make_reconcile_line_ids(self):
+        ctx_hxd = self.env.context.get('hxd_id')
+        hxd_id = self.env['account.reconcile.order'].search([('id','=',ctx_hxd)],limit=1)
+        hxd_id.with_context({'advance_payment_id':self.id}).make_lines_11_16()
+        print('hxd_id_akiny',hxd_id,ctx_hxd)
 
 
 
@@ -646,6 +664,8 @@ class account_payment(models.Model):
             elif ctx.get('default_sfk_type', '') == 'yfsqd':
                 if not self.bank_id:
                     raise Warning('请选择付款对象的银行账号!')
+                if self.po_id and self.po_id.so_id_state not in ['approve', 'sale']:
+                    raise Warning('合同未审批不允许提交!')
                 else:
                     self.state_1 = '20_account_submit'
             elif ctx.get('default_sfk_type', '') == 'jiehui':
@@ -676,6 +696,8 @@ class account_payment(models.Model):
         if ctx.get('default_sfk_type','') == 'yfsqd' or self.sfk_type == 'yfsqd':
             if not self.fk_journal_id:
                 raise Warning('请填写付款账号')
+            if self.po_id and self.po_id.so_id_state not in ['approve', 'sale']:
+                raise Warning('合同未审批不允许提交!')
             self.write({'state_1': '30_manager_approve'
                         })
         # if ctx.get('default_sfk_type','') == 'yfhxd' and self.:
@@ -705,8 +727,8 @@ class account_payment(models.Model):
         self.action_account_post()
 
     def action_manager_post(self):
-        if self.po_id and self.po_id.state not in ['to approve','purchase','done']:
-            raise Warning('采购单未完成审批！')
+        if self.po_id and self.po_id.so_id_state not in ['approve', 'sale']:
+            raise Warning('合同未完成审批！')
         today = fields.date.today()
         self.write({'post_uid': self.env.user.id,
                     'post_date': today,
