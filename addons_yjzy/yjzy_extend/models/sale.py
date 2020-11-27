@@ -439,13 +439,13 @@ class sale_order(models.Model):
     to_wharf_id = fields.Many2one('stock.wharf', u'目的港POL')
     mark_text = fields.Text(u'唛头')
 
-    submit_date = fields.Date('提交审批时间') #13取消
-    submit_uid = fields.Many2one('res.users', u'提交审批') #13取消
-    sales_confirm_date = fields.Date('责任人审批时间') #13取消
-    sales_confirm_uid = fields.Many2one('res.users', u'责任人审批') #13取消
-    hegui_date = fields.Date('合规审批日期') #13换字段名
-    hegui_uid = fields.Many2one('res.users', u'合规审批')#13换字段名
-    hx_date = fields.Date('核销时间')
+    submit_date = fields.Date('提交审批时间',copy=False) #13取消
+    submit_uid = fields.Many2one('res.users', u'提交审批',copy=False) #13取消
+    sales_confirm_date = fields.Date('责任人审批时间',copy=False) #13取消
+    sales_confirm_uid = fields.Many2one('res.users', u'责任人审批',copy=False) #13取消
+    hegui_date = fields.Date('合规审批日期',copy=False) #13换字段名
+    hegui_uid = fields.Many2one('res.users', u'合规审批',copy=False)#13换字段名
+    hx_date = fields.Date('核销时间',copy=False)
     purchase_approve_date = fields.Datetime('采购审批时间', compute=compute_info)
     rest_tb_qty_total = fields.Float(u'出运总数', compute=compute_info)
 #---------

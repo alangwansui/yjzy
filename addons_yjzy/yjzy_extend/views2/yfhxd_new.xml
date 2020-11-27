@@ -966,8 +966,7 @@
 
                     </group>
 
-                    <group col="2">
-
+                    <group col="2" attrs="{'invisible':[('operation_wizard','not in',['03'])]}">
                         <group>
 <!--                        <div  colspan="2" attrs="{'invisible':[('operation_wizard','not in',['03'])]}" style="width:100%">-->
 <!--                            <span attrs="{'invisible':[('operation_wizard','not in',['03'])]}"  style="font-weight:bolder; margin-bottom:5px">-->
@@ -996,7 +995,8 @@
                             </field>
 <!--    </div>-->
                             </group>
-                        <group>
+                        <group  attrs="{'invisible':['|',('supplier_advance_payment_ids_count','=',0),
+                            ('operation_wizard','not in',['03'])]}">
 <!--                                <div  colspan="2" attrs="{'invisible':[('operation_wizard','not in',['03'])]}" style="width:100%">-->
 <!--                            <span attrs="{'invisible':[('operation_wizard','not in',['03'])]}"  style="font-weight:bolder; margin-bottom:5px">-->
 <!--                                相关预付账单-->

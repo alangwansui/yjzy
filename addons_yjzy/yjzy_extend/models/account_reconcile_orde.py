@@ -354,7 +354,6 @@ class account_reconcile_order(models.Model):
             one.yjzy_reconcile_order_ids_count = yjzy_reconcile_order_ids_count
 
 
-
     ysrld_amount_advance_org_all = fields.Float('预收单的本所有被认领金额',compute=compute_ysrld_amount_advance_org_all,store=True)
     ysrld_advice_amount_advance_org_all = fields.Float('预收认领单的所有被认领的原则分配金额',compute=compute_ysrld_amount_advance_org_all,store=True)
     duoyu_this_time_advice_advance_org = fields.Float('多余的预收付这次应该加上的认领金额',compute=compute_ysrld_amount_advance_org_all,store=True)
@@ -739,6 +738,7 @@ class account_reconcile_order(models.Model):
         account_payment_obj = self.env['account.payment']
         partner_id = self.partner_id
         yjzy_payment_id = self.yjzy_payment_id
+
         line_ids = self.line_ids
         journal_domain_yfzk = [('code', '=', 'yfzk'), ('company_id', '=', self.env.user.company_id.id)]
         journal_id_yfzk = self.env['account.journal'].search(journal_domain_yfzk, limit=1)
@@ -782,7 +782,7 @@ class account_reconcile_order(models.Model):
                     'payment_method_id': 2,
                     'invoice_ids': [(4, line.invoice_id.id, None)],
                     'po_id': line.po_id.id,
-
+                    'yjzy_payment_id':line.yjzy_payment_id.id
                 })
             if line.amount_bank_org > 0:
                 reconcile_payment_id_2 = account_payment_obj.create({
@@ -919,12 +919,10 @@ class account_reconcile_order(models.Model):
             #line申请的总金额不能大于line的审批中的采购剩余应付金额
             #line申请的预付金额不能大于预付金额
             #line申请的金额不能大于最低（下一阶段）
-            if self.amount_total_org == 0:
-                raise Warning('认领金额为0，无法提交！')
-            # for one in self.line_no_ids:
-            #     if one.amount_payment_can_approve_all < one.amount_payment_org:
-            #         raise Warning('申请的金额大于可申请的应付,请检查')
+
             if self.hxd_type_new == '30':
+                if self.amount_total_org == 0:
+                    raise Warning('认领金额为0，无法提交！')
                 lines = self.line_ids
                 if lines:
                     for one in lines:
@@ -942,9 +940,10 @@ class account_reconcile_order(models.Model):
                                 'state': 'posted',
                                 # 'operation_wizard':'25'
                                 })
-
             elif self.hxd_type_new == '40':
                 if self.invoice_attribute in ['other_payment','other_po']:
+                    if self.amount_total_org == 0:
+                        raise Warning('认领金额为0，无法提交！')
                     if not self.other_payment_bank_id:
                         raise Warning('请填写收款单账号')
                     if not self.fk_journal_id:
@@ -952,32 +951,17 @@ class account_reconcile_order(models.Model):
                     stage_id = self._stage_find(domain=[('code', '=', '040')])
                     self.write({'stage_id': stage_id.id,
                                 'state': 'posted',
-                                # 'operation_wizard':'25'
                                 })
                 else:
                     if self.operation_wizard == '03':
-                        yjzy_reconcile_order_approval_ids = self.yjzy_reconcile_order_ids.filtered(lambda x: x.state in ['draft','cancelled'])
-                        if len(yjzy_reconcile_order_approval_ids) !=0:
-                            raise Warning('有存在草稿状态的预付-应付认领单，请先提交或者删除！')
-                        # yjzy_reconcile_order_approval_ids.unlink()
-
-                        for one in self.yjzy_reconcile_order_ids:
-                            if one.state == 'refused':
-                                raise Warning('有拒绝状态的预付认领，请检查！')
-
-
-                        print('yjzy_reconcile_order_approval_ids',yjzy_reconcile_order_approval_ids)
                         stage_id = self._stage_find(domain=[('code', '=', '020')])
                         self.write({'stage_id': stage_id.id,
-                            'state': 'posted',
-                            # 'operation_wizard':'10'
+                                    'state': 'posted',
                             })
                     else:
-
                         stage_id = self._stage_find(domain=[('code', '=', '040')])
                         self.write({'stage_id': stage_id.id,
                                     'state': 'posted',
-                                    # 'operation_wizard':'25'
                                     })
         elif self.sfk_type == 'yshxd':
             # amount_advance_residual_org = self.amount_advance_residual_org
@@ -1130,61 +1114,88 @@ class account_reconcile_order(models.Model):
     #
 
     def action_manager_approve_first_stage(self):
-        self.action_manager_approve_stage()
-        if self.amount_invoice_residual_org == 0:  # 当预付把这次认领的账单全部认领完了，这个应付申请单 就直接跳转完成，并将页面恢复前置状态
-            stage_id = self._stage_find(domain=[('code', '=', '060')])
+        amount_payment_can_approve_all = sum(x.amount_payment_can_approve_all for x in self.invoice_ids)
+        print('amount_payment_can_approve_all_akiny',amount_payment_can_approve_all)
+        if not self.line_ids :
+            if amount_payment_can_approve_all == 0:
+                raise Warning('请检查等待认领的发票！')
+            self.operation_wizard = '10'
+            stage_id = self._stage_find(domain=[('code', '=', '030')])
             self.write({'stage_id': stage_id.id,
-                'state': 'done',
-                'operation_wizard': '03',
-                })
-        else:
-            if self.yjzy_reconcile_order_id_new:
-                raise Warning('已经审批过一次')
-            invoice_dic = []
-            for one in self.invoice_ids:            #如果invoice是0 余额的 可以从invoice_ids中删除了
-                if one.amount_payment_can_approve_all != 0:
-                    invoice_dic.append(one.id)
-            print('invoice_dic', invoice_dic)
-            sfk_type = 'yfhxd'
-            name = self.env['ir.sequence'].next_by_code('sfk.type.%s' % sfk_type)
-            form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new')
-            account_reconcile_order_obj = self.env['account.reconcile.order']
-            account_reconcile_id = account_reconcile_order_obj.create({
-                'partner_id': self.partner_id.id,
-                'manual_payment_currency_id': self.manual_payment_currency_id.id,
-                'invoice_ids': [(6, 0, invoice_dic)],
-                'payment_type': 'outbound',
-                'partner_type': 'supplier',
-                'sfk_type': 'yfhxd',
-                'be_renling': True,
-                'name': name,
-                'journal_id': self.journal_id.id,
-                'payment_account_id': self.payment_account_id.id,
-                # 'operation_wizard':operation_wizard,
-                'hxd_type_new':'40',
-                'operation_wizard':'10',
-                'purchase_code_balance': 1,
-                'invoice_attribute': self.invoice_attribute,
-                'invoice_partner': self.invoice_partner,
-                'name_title': self.name_title,
-                'yjzy_reconcile_order_id_new':self.id
-            })
-            account_reconcile_id.make_lines()
-            self.yjzy_reconcile_order_id_new = account_reconcile_id
-            view=self.env.ref('sh_message.sh_message_wizard')
+                        'state': 'posted',
+                        'operation_wizard': '10',
+                        })
+            self.make_lines()
+            view = self.env.ref('sh_message.sh_message_wizard')
             view_id = view and view.id or False
             context = dict(self._context or {})
-            context['message'] = "审批完成"
-            return{
-                'name':'Success',
-                'type':'ir.actions.act_window',
-                'view_type':'form',
-                'view_mode':'form',
-                'res_model':'sh.message.wizard',
-                'views':[(view.id,'form')],
-                'target':'new',
-                'context':context,
+            context['message'] = "审批完成，等待财务继续提交付款申请"
+            return {
+                'name': 'Success',
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'sh.message.wizard',
+                'views': [(view.id, 'form')],
+                'target': 'new',
+                'context': context,
             }
+        else:
+            self.action_manager_approve_stage()
+            if amount_payment_can_approve_all == 0: # 当预付把这次认领的账单全部认领完了，这个应付申请单 就直接跳转完成，并将页面恢复前置状态
+                stage_id = self._stage_find(domain=[('code', '=', '060')])
+                self.write({'stage_id': stage_id.id,
+                    'state': 'done',
+                    'operation_wizard': '03',
+                    })
+            else:
+                if self.yjzy_reconcile_order_id_new:
+                    raise Warning('已经审批过一次')
+                invoice_dic = []
+                for one in self.invoice_ids:            #如果invoice是0 余额的 可以从invoice_ids中删除了
+                    if one.amount_payment_can_approve_all != 0:
+                        invoice_dic.append(one.id)
+                print('invoice_dic', invoice_dic)
+                sfk_type = 'yfhxd'
+                name = self.env['ir.sequence'].next_by_code('sfk.type.%s' % sfk_type)
+                form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new')
+                account_reconcile_order_obj = self.env['account.reconcile.order']
+                account_reconcile_id = account_reconcile_order_obj.create({
+                    'partner_id': self.partner_id.id,
+                    'manual_payment_currency_id': self.manual_payment_currency_id.id,
+                    'invoice_ids': [(6, 0, invoice_dic)],
+                    'payment_type': 'outbound',
+                    'partner_type': 'supplier',
+                    'sfk_type': 'yfhxd',
+                    'be_renling': True,
+                    'name': name,
+                    'journal_id': self.journal_id.id,
+                    'payment_account_id': self.payment_account_id.id,
+                    # 'operation_wizard':operation_wizard,
+                    'hxd_type_new':'40',
+                    'operation_wizard':'10',
+                    'purchase_code_balance': 1,
+                    'invoice_attribute': self.invoice_attribute,
+                    'invoice_partner': self.invoice_partner,
+                    'name_title': self.name_title,
+                    'yjzy_reconcile_order_id_new':self.id
+                })
+                account_reconcile_id.make_lines()
+                self.yjzy_reconcile_order_id_new = account_reconcile_id
+                view=self.env.ref('sh_message.sh_message_wizard')
+                view_id = view and view.id or False
+                context = dict(self._context or {})
+                context['message'] = "审批完成"
+                return{
+                    'name':'Success',
+                    'type':'ir.actions.act_window',
+                    'view_type':'form',
+                    'view_mode':'form',
+                    'res_model':'sh.message.wizard',
+                    'views':[(view.id,'form')],
+                    'target':'new',
+                    'context':context,
+                }
 
 
 
@@ -1374,6 +1385,34 @@ class account_reconcile_order(models.Model):
     def action_draft_stage(self):
         if self.sfk_type == 'yfhxd':
             self.yjzy_payment_id.unlink()
+            if self.hxd_type_new == '30':
+                stage_id = self._stage_find(domain=[('code', '=', '010')])
+                self.write({'stage_id': stage_id.id,
+                            'state': 'draft',
+                            'approve_date': False,
+                            'approve_uid': False
+                            })
+            else:
+                if self.hxd_type_new == '40': #如果是应付，看是否前置，前置，退回草稿，否则退回财务申请
+                    if self.operation_wizard == '03':
+                        stage_id = self._stage_find(domain=[('code', '=', '010')])
+                        self.write({'stage_id': stage_id.id,
+                                    'state': 'draft',
+                                    'approve_date': False,
+                                    'approve_uid': False
+                                    })
+                    else:
+                        stage_id = self._stage_find(domain=[('code', '=', '030')])
+                        self.write({'stage_id': stage_id.id,
+                                    'state': 'posted',
+                                    'approve_date': False,
+                                    'approve_uid': False
+                                    })
+
+#1126
+    def action_draft_stage_old(self):
+        if self.sfk_type == 'yfhxd':
+            self.yjzy_payment_id.unlink()
         for one in self.yjzy_reconcile_order_ids:
             if one.state == 'refused':
                 one.action_draft_stage()
@@ -1384,8 +1423,25 @@ class account_reconcile_order(models.Model):
                     'approve_uid': False
                     })
 
-
     def action_refuse_stage(self,reason):
+        stage_id = self._stage_find(domain=[('code', '=', '090')])
+        stage_preview = self.stage_id
+        user = self.env.user
+        group = self.env.user.groups_id
+        if user not in stage_preview.user_ids:
+            raise Warning('您没有权限拒绝')
+        else:
+            self.write({'stage_id': stage_id.id,
+                        'state': 'refused',
+                         })
+            for tb in self:
+                tb.message_post_with_view('yjzy_extend.reconcile_hxd_template_refuse_reason',
+                                          values={'reason': reason, 'name': self.name},
+                                          subtype_id=self.env.ref(
+                                              'mail.mt_note').id)  # 定义了留言消息的模板，其他都可以参考，还可以继续参考费用发送计划以及邮件方式
+
+    #1126
+    def action_refuse_stage_old(self,reason):
         stage_id = self._stage_find(domain=[('code', '=', '090')])
         stage_preview = self.stage_id
         user = self.env.user
@@ -1405,7 +1461,7 @@ class account_reconcile_order(models.Model):
                                           values={'reason': reason, 'name': self.name},
                                           subtype_id=self.env.ref(
                                               'mail.mt_note').id)  # 定义了留言消息的模板，其他都可以参考，还可以继续参考费用发送计划以及邮件方式
-    def action_refuse_no_message(self):
+    def action_refuse_no_message_old(self):
         stage_id = self._stage_find(domain=[('code', '=', '090')])
         self.write({'stage_id': stage_id.id,
                 'state': 'refused',
