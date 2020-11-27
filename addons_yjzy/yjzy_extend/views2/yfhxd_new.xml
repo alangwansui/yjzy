@@ -979,7 +979,7 @@
                                    widget="many2many" context="{'tree_view_ref':'account.invoice_tree'}">
                                 <tree create="false" editable="bottom"
                                       default_order="tb_contract_code, invoice_attribute desc ">
-                                    <field name="invoice_attribute"/>
+                                   <field name="invoice_attribute" groups="base.group_system"/>
                                     <field name="partner_id" string="供应商" invisible="1"/>
                                     <field name="tb_contract_code" string="出运合同号"/>
                                     <field name="po_ids" widget="many2many_tags" string="采购合同" invisible="1"/>
@@ -1163,16 +1163,16 @@
                                     <field name="invoice_id" readonly="1" invisible="1"/>
                                     <field name="tb_contract_code"/>
                                     <field name="yjzy_currency_id" invisible="1"/>
-                                    <field name="advice_amount_advance_org_real" string="建议预收认领"/>
-                                    <field name="least_advice_amount_advance_org" string="最低预收认领"/>
+                                    <field name="advice_amount_advance_org_real" string="建议预付认领"/>
+                                    <field name="least_advice_amount_advance_org" string="最低预付认领"/>
                                     <field name="so_tb_percent" string="出运占原采购金额比例" groups="base.group_system"/>
                                     <field name="no_delivery_amount_so" invisible="1"/>
-                                    <field name="amount_invoice_so" string="采购对应应付金额" invisible="0" groups="base.group_system"/>
+                                    <field name="amount_invoice_so" string="本次采购原始金额" invisible="0" />
                                     <field name="amount_invoice_so_proportion" invisible="1"/>
                                     <field name="amount_invoice_so_residual" string="未认领应付"/>
                                     <field name="amount_invoice_so_residual_can_approve" string="可申请应付"/>
                                     <field name="advance_residual2" string="采购合同未认领预付" readonly="0" groups="base.group_system"/>
-                                    <field name="residual" readonly="0" string="总账单应付余额" invisible="0"/>
+                                    <field name="residual" readonly="0" string="总账单应付余额" invisible="1"/>
                                     <field name="invoice_currency_id" invisible="1"/>
                                     <field name="payment_currency_id" invisible="1"/>
 
