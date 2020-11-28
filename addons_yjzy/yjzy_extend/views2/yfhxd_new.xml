@@ -891,10 +891,11 @@
                                    'readonly':[('state_1','!=','draft')]}"
                                    domain="[('is_company','=',True),('parent_id', '=', False),('supplier','=',1),('state','=','done')]"
                                    context="{'tree_view_ref':'yjzy_extend.view_new_partner_supplier_tree','default_is_company': True, 'default_supplier': payment_type == 'outbound', 'default_customer': payment_type == 'inbound'}"/>
-                            <field name="amount_purchase_advance" string="预付金额"/>
+                            <field name="amount_purchase_advance" string="预付金额" groups="base.group_system"/>
                             <field name="supplier_amount_advance_payment"/>
                             <field name="supplier_amount_residual_advance_payment"/>
-                            <field name="supplier_advance_payment_ids_amount_advance_org" string="待认领预付金额" invisible="0"
+                            <field name="yjzy_reconcile_order_id_new" string="相关单"/>
+                            <field name="supplier_advance_payment_ids_amount_advance_org" string="待认领预付金额" invisible="1"
                                    attrs="{'invisible':['|',('operation_wizard','!=','03'),('invoice_attribute','in',['other_payment','expense_po','other_po'])]}"/>
                             <field name="bank_id" string="收款方账号" domain="[('partner_id','=',partner_id)]"
                                    attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),('invoice_attribute','=','other_payment')]}"

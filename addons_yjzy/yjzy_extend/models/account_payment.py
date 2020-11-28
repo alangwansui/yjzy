@@ -626,10 +626,10 @@ class account_payment(models.Model):
 
     @api.multi
     def cancel(self):
-        for rec in self:
-            if rec.advance_reconcile_order_ids or rec.advance_reconcile_order_line_ids or rec.payment_ids \
-                    or rec.ysrld_ids or rec.yfsqd_ids or rec.yshx_ids or rec.fybg_ids or rec.expense_ids:
-                raise Warning(u'此单据已经被认领，请先删除对应的认领单！')
+        # for rec in self:
+        #     if rec.advance_reconcile_order_ids or rec.advance_reconcile_order_line_ids or rec.payment_ids \
+        #             or rec.ysrld_ids or rec.yfsqd_ids or rec.yshx_ids or rec.fybg_ids or rec.expense_ids:
+        #         raise Warning(u'此单据已经被认领，请先删除对应的认领单！')
         return super(account_payment, self).cancel()
 
 
