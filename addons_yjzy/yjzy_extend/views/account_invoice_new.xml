@@ -2708,7 +2708,7 @@
             <field name="res_model">account.invoice</field>
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_account_invoice_new_filter"/>
-            <field name="domain">[('type','=','in_invoice'),('yjzy_type_1','=','purchase'),('state','=','open'),('invoice_attribute','=','other_payment')]</field>
+            <field name="domain">[('type','=','in_invoice'),('yjzy_type_1','=','other_payment_purchase'),('state','=','open'),('invoice_attribute','=','other_payment')]</field>
             <field name="context">{'default_type':'in_invoice','only_ref':1,'default_yjzy_type_1':'purchase'}
             </field>
             <!--field name="target">new</field-->

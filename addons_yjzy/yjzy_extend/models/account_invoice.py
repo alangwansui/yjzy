@@ -1109,6 +1109,7 @@ class account_invoice(models.Model):
         for one in self:
             for x in one.yjzy_invoice_wait_payment_ids:#参考M2M的自动多选  剩余应付金额！=0的额外账单
                 invoice_dic.append(x.id)
+            print('amount_payment_can_approve_all_akiny', one.amount_payment_can_approve_all)
             if one.amount_payment_can_approve_all != 0:  #考虑已经提交审批的申请
                 invoice_dic.append(one.id)
         print('invoice_dic',invoice_dic)
@@ -1139,6 +1140,8 @@ class account_invoice(models.Model):
 
         if account_reconcile_id.invoice_attribute in ['other_po', 'expense_po', 'other_payment']:
             account_reconcile_id.operation_wizard = '10'
+            account_reconcile_id.hxd_type_new = '40'
+            account_reconcile_id.make_lines()
         else:
             if account_reconcile_id.supplier_advance_payment_ids_count == 0: #如果相关的预付单数量=0，跳过第一步的预付认领
                 account_reconcile_id.operation_wizard = '10'

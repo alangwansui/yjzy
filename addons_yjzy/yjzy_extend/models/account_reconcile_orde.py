@@ -1347,6 +1347,7 @@ class account_reconcile_order(models.Model):
                             'approve_uid': self.env.user.id
                             })
             self.create_yjzy_payment_yfrl()  #生成应付认领单
+
             if self.operation_wizard in ['03','20', '25']:
                 self.action_done_new() #生成的应付认领单过账
                 stage_id = self._stage_find(domain=[('code', '=', '060')])
@@ -1356,6 +1357,8 @@ class account_reconcile_order(models.Model):
                             'approve_date': fields.date.today(),
                             'approve_uid': self.env.user.id
                             })
+        for x in self.line_no_ids:
+            x.amount_payment_can_approve_all_this_time = x.invoice_id.amount_payment_can_approve_all
 
        #应收核销待定:
         if self.sfk_type == 'yshxd':
@@ -2121,7 +2124,7 @@ class account_reconcile_order(models.Model):
                     'yjzy_payment_id':yjzy_payment_id.id,
                     'amount_invoice_so': amount_invoice_so,
                     'advance_residual': advance_residual, }
-
+        line_nos = line_no_obj.browse([])
         for kk, data in list(so_po_dic.items()):
             line_no = line_no_obj.create({
                 'order_id': self.id,
@@ -2130,6 +2133,8 @@ class account_reconcile_order(models.Model):
                 'advance_residual': data['advance_residual'],
                 'yjzy_payment_id': data['yjzy_payment_id']
             })
+
+
 
     def _make_lines_so(self):
         self.ensure_one()
@@ -2836,6 +2841,7 @@ class account_reconcile_order_line(models.Model):
             # one.ysrld_advice_amount_advance_org_all = ysrld_advice_amount_advance_org_all
             # one.duoyu_this_time_advice_advance_org = duoyu_this_time_advice_advance_org
 
+
     least_advice_amount_advance_org = fields.Monetary(u'最低建议金额',currency_field='yjzy_currency_id')
 
     ysrld_amount_advance_org_all = fields.Float('预收单的本所有非本账单采购的被认领金额', compute=compute_ysrld_amount_advance_org_all)
@@ -3003,6 +3009,8 @@ class account_reconcile_order_line_no(models.Model):
     invoice_residual = fields.Monetary(related='invoice_id.residual', string=u'发票余额', readonly=True, currency_field='invoice_currency_id')
     invoice_amount_total = fields.Monetary(related='invoice_id.amount_total', string=u'发票金额', readonly=True, currency_field='invoice_currency_id')
     amount_payment_can_approve_all = fields.Monetary(related='invoice_id.amount_payment_can_approve_all',string='可以申请支付应付款')
+    amount_payment_can_approve_all_this_time = fields.Monetary(u'可以申请支付应付款',currency_field='invoice_currency_id')
+
     invoice_attribute = fields.Selection(related='invoice_id.invoice_attribute',string=u'账单类型')
     yjzy_currency_id = fields.Many2one('res.currency', u'预收币种',
                                        default=lambda self: self.env.user.company_id.currency_id.id)
