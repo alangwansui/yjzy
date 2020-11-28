@@ -1501,34 +1501,33 @@ class transport_bill(models.Model):
                     raise Warning('请先填写出运船日期')
                 if not one.date_ship_att:
                     raise Warning('请提交出运船日期附件')
-                one.date_ship_state = 'submit'
+                one.date_ship_state = 'done' #由原来的两步审批，直接提交完成
 
             if date_type == 'date_customer_finish':
                 if not one.date_customer_finish:
                     raise Warning('请先填写客户交单日期')
                 if not one.date_customer_finish_att:
                     raise Warning('请提交客户交单日期附件')
-                one.date_customer_finish_state = 'submit'
+                one.date_customer_finish_state = 'done'
     #日期审批完成后直接出运并生成账单同时更新进仓日期到对应的发票 qq
     def action_customer_date_state_done(self):
         date_type = self.env.context.get('date_type')
         for one in self:
             if self.env.ref('akiny.group_trans_hegui') not in self.env.user.groups_id:
                 raise Warning('您没有审批的权限！')
-            else:
-                if date_type == 'date_out_in':
-                    one.date_out_in_state = 'done'
-                    if one.state not in ['delivered','invoiced']:
-                        # one.state = 'invoiced'
-                        one.stage_id = self._stage_find(domain=[('code', '=', '005')])
-                        # one.onece_all_stage()
-                        # one.make_all_invoice()
-                        one.action_invoiced()
-                        one.sync_data2invoice()
-                if date_type == 'date_ship':
-                    one.date_ship_state = 'done'
-                if date_type == 'date_customer_finish':
-                    one.date_customer_finish_state = 'done'
+            if date_type == 'date_out_in':
+                one.date_out_in_state = 'done'
+                if one.state not in ['delivered','invoiced']:
+                    # one.state = 'invoiced'
+                    one.stage_id = self._stage_find(domain=[('code', '=', '005')])
+                    # one.onece_all_stage()
+                    # one.make_all_invoice()
+                    one.action_invoiced()
+                    one.sync_data2invoice()
+            if date_type == 'date_ship':
+                one.date_ship_state = 'done'
+            if date_type == 'date_customer_finish':
+                one.date_customer_finish_state = 'done'
 
     def action_customer_date_state_refuse(self):
         date_type = self.env.context.get('date_type')

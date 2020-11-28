@@ -574,6 +574,7 @@
             <tree string="应付核销单" create="false" decoration-info="state == 'draft'" decoration-muted="state =='cancelled'" edit="false">
                 <field name="name"/>
                 <field name="partner_id"/>
+                <field name="invoice_ids" widget="many2many_tags" string="应付账单"/>
                 <field name="date" invisible="1"/>
                 <field name="approve_uid" invisible="1"/>
                 <field name="approve_date"/>
@@ -890,7 +891,10 @@
                                    'readonly':[('state_1','!=','draft')]}"
                                    domain="[('is_company','=',True),('parent_id', '=', False),('supplier','=',1),('state','=','done')]"
                                    context="{'tree_view_ref':'yjzy_extend.view_new_partner_supplier_tree','default_is_company': True, 'default_supplier': payment_type == 'outbound', 'default_customer': payment_type == 'inbound'}"/>
-                            <field name="supplier_advance_payment_ids_amount_advance_org" string="待认领预付金额" invisible="1"
+                            <field name="amount_purchase_advance" string="预付金额"/>
+                            <field name="supplier_amount_advance_payment"/>
+                            <field name="supplier_amount_residual_advance_payment"/>
+                            <field name="supplier_advance_payment_ids_amount_advance_org" string="待认领预付金额" invisible="0"
                                    attrs="{'invisible':['|',('operation_wizard','!=','03'),('invoice_attribute','in',['other_payment','expense_po','other_po'])]}"/>
                             <field name="bank_id" string="收款方账号" domain="[('partner_id','=',partner_id)]"
                                    attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),('invoice_attribute','=','other_payment')]}"
@@ -969,9 +973,9 @@
                     <group col="2" attrs="{'invisible':[('operation_wizard','not in',['03'])]}">
                         <group>
 <!--                        <div  colspan="2" attrs="{'invisible':[('operation_wizard','not in',['03'])]}" style="width:100%">-->
-<!--                            <span attrs="{'invisible':[('operation_wizard','not in',['03'])]}"  style="font-weight:bolder; margin-bottom:5px">-->
-<!--                                本次账单-->
-<!--                            </span>-->
+                            <span colspan="2" attrs="{'invisible':[('operation_wizard','not in',['03'])]}"  style="font-weight:bolder; margin-bottom:5px">
+                                本次账单
+                            </span>
                             <field nolabel="1"  name="invoice_ids" domain="[('partner_id','=', partner_id),('state', '=', 'open')]"
                                    options='{"no_create": True}'
                                    attrs="{'readonly':[('state_1','!=','draft'),('is_editable','=',False)]}"
@@ -998,9 +1002,9 @@
                         <group  attrs="{'invisible':['|',('supplier_advance_payment_ids_count','=',0),
                             ('operation_wizard','not in',['03'])]}">
 <!--                                <div  colspan="2" attrs="{'invisible':[('operation_wizard','not in',['03'])]}" style="width:100%">-->
-<!--                            <span attrs="{'invisible':[('operation_wizard','not in',['03'])]}"  style="font-weight:bolder; margin-bottom:5px">-->
-<!--                                相关预付账单-->
-<!--                            </span>-->
+                            <span colspan="2" attrs="{'invisible':[('operation_wizard','not in',['03'])]}"  style="font-weight:bolder">
+                                相关预付账单
+                            </span>
                             <field nolabel="1" name="supplier_advance_payment_ids" attrs="{'invisible':['|',('supplier_advance_payment_ids_count','=',0),
                             ('operation_wizard','not in',['03'])]}"
                                    context="{'form_view_ref':'yjzy_extend.view_yfsqd_form','show_shoukuan': True, 'default_sfk_type': 'yfsqd', 'default_payment_type': 'outbound', 'default_be_renling': True, 'default_advance_ok': True, 'default_partner_type': 'supplier',}">
@@ -1167,7 +1171,7 @@
                                     <field name="least_advice_amount_advance_org" string="最低预付认领"/>
                                     <field name="so_tb_percent" string="出运占原采购金额比例" groups="base.group_system"/>
                                     <field name="no_delivery_amount_so" invisible="1"/>
-                                    <field name="amount_invoice_so" string="本次采购原始金额" invisible="0" />
+                                    <field name="amount_invoice_so" string="本次出运采购额" invisible="0" />
                                     <field name="amount_invoice_so_proportion" invisible="1"/>
                                     <field name="amount_invoice_so_residual" string="未认领应付"/>
                                     <field name="amount_invoice_so_residual_can_approve" string="可申请应付"/>

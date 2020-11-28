@@ -443,7 +443,12 @@ class account_reconcile_order(models.Model):
     journal_id = fields.Many2one('account.journal', u'日记账', required=True, default=lambda self: self.default_journal())
     company_id = fields.Many2one('res.company', string=u'公司', required=True, default=lambda self: self.env.user.company_id)
     partner_id = fields.Many2one('res.partner', u'合作伙伴', required=True)
+
+    amount_purchase_advance = fields.Monetary('预付金额:本币', currency_field='currency_id',related='partner_id.amount_purchase_advance')
     currency_id = fields.Many2one(related='company_id.currency_id', string=u'公司货币', store=True, index=True)
+    supplier_amount_advance_payment = fields.Float('u预付总金额', related='partner_id.supplier_amount_advance_payment')
+    supplier_amount_residual_advance_payment = fields.Float('预付余额',related='partner_id.supplier_amount_residual_advance_payment')
+
     invoice_currency_id = fields.Many2one('res.currency', u'交易货币', compute=compute_by_invoice)
     state = fields.Selection([('draft', u'草稿'),
                               ('posted', u'待审批'),
@@ -1142,6 +1147,8 @@ class account_reconcile_order(models.Model):
             }
         else:
             self.action_manager_approve_stage()
+            self.operation_wizard = '20'
+            self.hxd_type_new = '30'
             if amount_payment_can_approve_all == 0: # 当预付把这次认领的账单全部认领完了，这个应付申请单 就直接跳转完成，并将页面恢复前置状态
                 stage_id = self._stage_find(domain=[('code', '=', '060')])
                 self.write({'stage_id': stage_id.id,
@@ -1180,19 +1187,28 @@ class account_reconcile_order(models.Model):
                     'name_title': self.name_title,
                     'yjzy_reconcile_order_id_new':self.id
                 })
+                stage_id = self._stage_find(domain=[('code', '=', '030')])
+                account_reconcile_id.write({'stage_id': stage_id.id,
+                                            'state': 'posted',
+                                            'operation_wizard': '10',
+                                            })
                 account_reconcile_id.make_lines()
                 self.yjzy_reconcile_order_id_new = account_reconcile_id
                 view=self.env.ref('sh_message.sh_message_wizard')
                 view_id = view and view.id or False
                 context = dict(self._context or {})
                 context['message'] = "审批完成"
+                context['res_model'] = "account.reconcile.order"
+                context['res_id'] = account_reconcile_id.id
+                context['views'] = self.env.ref('yjzy_extend.account_yfhxd_form_view_new').id
+                print('context_akiny',context)
                 return{
                     'name':'Success',
                     'type':'ir.actions.act_window',
                     'view_type':'form',
                     'view_mode':'form',
                     'res_model':'sh.message.wizard',
-                    'views':[(view.id,'form')],
+                    'views':[(view_id,'form')],
                     'target':'new',
                     'context':context,
                 }
@@ -2640,6 +2656,9 @@ class account_reconcile_order(models.Model):
 
 
 
+    @api.onchange('line_ids')
+    def onchange_line_ids(self):
+        invoice = self.line_ids.mapped('invoice_id')
 
 
 
@@ -2900,6 +2919,41 @@ class account_reconcile_order_line(models.Model):
     def onchange_yjzy_payment_id(self):
         print('yjzy_currency_id',self.yjzy_currency_id)
         self.yjzy_currency_id = self.yjzy_payment_id.currency_id
+
+
+
+# class reconcile_order_line_related(models.Model):
+#     _name = 'reconcile.order.line.related'
+#
+#     order_line_id = fields.Many2one('account.reconcile.order.line',u'预收付认领明细')
+#     order_id = fields.Many2one('account.reconcile.order','核销单',ondelete='cascade')
+#     yjzy_currency_id = fields.Many2one('res.currency', u'预收币种', related='order_line_id.yjzy_currency_id')
+#     least_advice_amount_advance_org = fields.Monetary(u'最低建议金额',currency_field='yjzy_currency_id',related='order_line_id.least_advice_amount_advance_org')
+#
+#     advice_amount_advance_org = fields.Monetary(u'建议预收金额', currency_field='yjzy_currency_id',related='order_line_id.advice_amount_advance_org')#原则上的分配金额，就是销售采购占原始比例*原始的预收预付金额
+#     advice_amount_advance_org_real = fields.Monetary(u'实际建议预收金额',currency_field='yjzy_currency_id',related='order_line_id.advice_amount_advance_org_real')
+#
+#     so_id = fields.Many2one('sale.order', u'销售单',related='order_line_id.so_id')
+#     po_id = fields.Many2one('purchase.order', u'采购单',related='order_line_id.po_id')
+#     tb_contract_code = fields.Char('出运合同号', related='order_line_id.tb_contract_code', readonly=True)
+#
+#     currency_id = fields.Many2one('res.currency', u'公司货币', related='order_line_id.currency_id', readonly=True)
+#     invoice_currency_id = fields.Many2one('res.currency', u'交易货币', related='order_line_id.invoice_currency_id', readonly=True)
+#     payment_currency_id = fields.Many2one('res.currency', u'收款货币', related='order_line_id.payment_currency_id', readonly=True)
+#
+#
+#     amount_invoice_so = fields.Monetary(u'合计', currency_field='invoice_currency_id',related='order_line_id.amount_invoice_so')
+#     amount_so = fields.Monetary(u'原始销售金额',currency_field='invoice_currency_id',related='order_line_id.amount_so')
+#
+#     #826
+#     amount_invoice_so_residual = fields.Monetary(u'占比剩余应收付',currency_field='invoice_currency_id',related='order_line_id.amount_invoice_so_residual')
+#     amount_invoice_so_residual_can_approve = fields.Monetary(u'占比剩余可申请的应收付',currency_field='invoice_currency_id',related='order_line_id.amount_invoice_so_residual_can_approve')
+#
+#     company_id =  fields.Many2one('res.company', string=u'公司', related='order_id.company_id')
+#
+#     yjzy_payment_id = fields.Many2one('account.payment', u'预收认领单',related='order_line_id.yjzy_payment_id')
+#     amount_advance_org = fields.Monetary(u'预收金额', currency_field='yjzy_currency_id',related='order_line_id.amount_advance_org')
+
 
 
 

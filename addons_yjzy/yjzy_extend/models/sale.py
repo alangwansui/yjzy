@@ -530,7 +530,31 @@ class sale_order(models.Model):
     # purchase_update_date = fields.Datetime(u'采购更新的时间')
 
     #更新
-
+    def open_wizard_multi_sale_line(self):
+        # war = ''
+        # if not self.date:
+        #     war += '请填写出运日期\n'
+        # if self.current_date_rate ==0:
+        #     war += '单日汇率不为零\n'
+        # if war:
+        #     raise Warning(war)
+        # else:
+        self.ensure_one()
+        ctx = self.env.context.copy()
+        product_ids = self.order_line.mapped('product_id')
+        ctx.update({'default_so_id': self.id,
+                    'default_so_product_ids':product_ids.ids
+        })
+        return {
+            'name': '添加销售明细',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'wizard.multi.sale.line',
+            #'res_id': bill.id,
+            'target': 'new',
+            'type': 'ir.actions.act_window',
+            'context': ctx,
+        }
 
     def _stage_find(self, domain=None, order='sequence'):
         search_domain = list(domain)

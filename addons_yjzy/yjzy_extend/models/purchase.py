@@ -130,6 +130,17 @@ class purchase_order(models.Model):
         for one in self:
             one.amount_org_hxd = sum(x.amount_total_org_new for x in one.hxd_ids)
 
+    @api.depends('partner_id')
+    def compute_need_change_partner(self):
+        for one in self:
+            for x in one.order_line:
+                if x.sol_id.partner != one.partner_id:
+                    one.need_change_partner = True
+                    continue
+
+
+
+
     stage_id = fields.Many2one(
         'purchase.order.stage',
         default=_default_purchase_order_stage, copy=False)
@@ -138,6 +149,8 @@ class purchase_order(models.Model):
                                track_visibility='onchange')  # 费用审批流程
 
     balance = fields.Monetary(u'预付余额', compute=compute_info, currency_field='yjzy_currency_id')
+
+    need_change_partner = fields.Boolean('需要同步供应商',compute=compute_need_change_partner)
     #akiny_new
 
     hxd_ids = fields.One2many('account.reconcile.order.line','po_id','所有已经批准的核销单',domain=[('order_id.state_1','in',['done','post'])])
@@ -212,8 +225,10 @@ class purchase_order(models.Model):
 
     #采购单更换了供应商，需要更新对应的销售明细上的供应商
     def change_supplier(self):
-        for one in self.order_line:
-            one.sol_id.supplier_id = self.partner_id
+        if self.need_change_partner:
+            for one in self.order_line:
+                one.sol_id.supplier_id = self.partner_id
+        self.need_change_partner = False
 
     def _stage_find(self, domain=None, order='sequence'):
         search_domain = list(domain)

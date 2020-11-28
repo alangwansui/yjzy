@@ -1887,11 +1887,7 @@ class account_invoice(models.Model):
                 raise Warning('请先填写日期')
             if not one.purchase_date_finish_att :
                 raise Warning('请提交附件')
-            one.purchase_date_finish_state = 'submit'
-
-
-
-
+            one.purchase_date_finish_state = 'done' #直接一步完成
     def action_purchase_date_finish_state_done(self):
         for one in self:
             if self.env.ref('akiny.group_trans_hegui') not in self.env.user.groups_id:
