@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="wizard_multi_sale_line_form" model="ir.ui.view">
+            <field name="name">wizard.multi.sale.line.from</field>
+            <field name="model">wizard.multi.sale.line</field>
+            <field name="arch" type="xml">
+                <form string="添加产品">
+                    <group>
+                        <div>为选中的销售订单创建发运单</div>
+                        <field name="so_id" />
+<field name="so_product_ids"/>
+                    </group>
+                    <group >
+                        <field name="product_ids" nolabel="1" domain="[('id','not in',so_product_ids)]" options="{'no_create': True,'no_open':True}"/>
+                    </group>
+
+                    <footer>
+                        <button name="apply" class="oe_highlight" type='object' string="确认"/>
+                        <button special="cancel" class="oe_highlight" string="取消"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+
+
+    </data>
+</odoo>
+
