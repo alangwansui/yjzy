@@ -1210,7 +1210,7 @@ class tb_po_invoice(models.Model):
         print('journal_type_9999999999999',journal_type)
         inv = invoice_obj.with_context({'default_type': self.type_invoice, 'type': self.type_invoice, 'journal_type':journal_type }).create({
             'invoice_partner':self.invoice_partner,
-            'name_tilte':self.name_title,
+            'name_title':self.name_title,
             'yjzy_invoice_id':self.yjzy_invoice_id.id,
             'tb_po_invoice_id': self.id,
             'partner_id': self.partner_id.id,

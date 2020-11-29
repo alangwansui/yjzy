@@ -353,6 +353,12 @@ class account_reconcile_order(models.Model):
             yjzy_reconcile_order_ids_count = len(one.yjzy_reconcile_order_ids)
             one.yjzy_reconcile_order_ids_count = yjzy_reconcile_order_ids_count
 
+    @api.depends('line_ids','line_ids.invoice_id','line_ids.amount_total_invoice')
+    def compute_by_invoice_line_ids(self):
+        for one in self:
+            amount_invoice_org_new = sum(x.amount_total_invoice for x in one.line_ids)
+            one.amount_invoice_org_new = amount_invoice_org_new
+
 
     ysrld_amount_advance_org_all = fields.Float('预收单的本所有被认领金额',compute=compute_ysrld_amount_advance_org_all,store=True)
     ysrld_advice_amount_advance_org_all = fields.Float('预收认领单的所有被认领的原则分配金额',compute=compute_ysrld_amount_advance_org_all,store=True)
@@ -481,6 +487,8 @@ class account_reconcile_order(models.Model):
     #                                    default=lambda self: self.default_diff_currency())
 
     amount_invoice_org = fields.Monetary(u'发票金额', currency_field='invoice_currency_id', compute=compute_by_invoice)
+
+    amount_invoice_org_new = fields.Monetary(u'发票金额',compute=compute_by_invoice_line_ids,store=True)#按照明细的发票进行汇总计算
 
     amount_invoice_residual_org = fields.Monetary(u'发票余额', currency_field='invoice_currency_id', compute=compute_by_invoice)
 
@@ -2833,6 +2841,8 @@ class account_reconcile_order_line(models.Model):
 
             print('lines______111111111',lines)
 
+
+
             # ysrld_amount_advance_org_all = one.yjzy_advance_payment_id.amount_advance_org_all
             # ysrld_advice_amount_advance_org_all = one.yjzy_advance_payment_id.advice_amount_advance_org_all
             # duoyu_this_time_advice_advance_org = ysrld_advice_amount_advance_org_all - ysrld_amount_advance_org_all
@@ -2840,6 +2850,11 @@ class account_reconcile_order_line(models.Model):
             # one.ysrld_amount_advance_org_all = ysrld_amount_advance_org_all
             # one.ysrld_advice_amount_advance_org_all = ysrld_advice_amount_advance_org_all
             # one.duoyu_this_time_advice_advance_org = duoyu_this_time_advice_advance_org
+
+    @api.depends('invoice_id', 'invoice_id.amount_total')
+    def compute_amount_total_invoice(self):
+        for one in self:
+            one.amount_total_invoice = one.invoice_id.amount_total
 
 
     least_advice_amount_advance_org = fields.Monetary(u'最低建议金额',currency_field='yjzy_currency_id')
@@ -2875,6 +2890,8 @@ class account_reconcile_order_line(models.Model):
     invoice_attribute = fields.Selection(related='invoice_id.invoice_attribute', string=u'账单类型')
     tb_contract_code = fields.Char('出运合同号', related='invoice_id.tb_contract_code', readonly=True)
     residual = fields.Monetary(related='invoice_id.residual', string=u'发票余额', readonly=True, currency_field='invoice_currency_id')
+    amount_total_invoice = fields.Monetary(u'发票原始金额',compute=compute_amount_total_invoice, readonly=True,
+                               currency_field='invoice_currency_id',store=True)
     currency_id = fields.Many2one('res.currency', u'公司货币', related='order_id.currency_id', readonly=True)
     invoice_currency_id = fields.Many2one('res.currency', u'交易货币', related='invoice_id.currency_id', readonly=True)
     payment_currency_id = fields.Many2one('res.currency', u'收款货币', related='order_id.payment_currency_id', readonly=True)

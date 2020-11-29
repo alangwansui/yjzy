@@ -474,7 +474,7 @@
                                     </tree>
                                 </field>
                             </page>
-                            <page string="相关账单（和申请单一起生成的退税等）" attrs="{'invisible':[('tb_po_invoice_all_ids_count','=',0)]}">
+                            <page string="相关账单（和申请单一起生成的退税等）" attrs="{'invisible':['|',('tb_po_invoice_all_ids_count','=',0),('invoice_attribute','in',['other_payment'])]}">
                                 <field name="tb_po_invoice_all_ids_count" invisible="1"/>
                                 <field name="tb_po_invoice_all_ids" >
                                     <tree decoration-danger="amount_total_signed &lt;= 0">
