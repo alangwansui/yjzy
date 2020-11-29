@@ -1129,8 +1129,10 @@
                                     <field name="invoice_id_po_ids" widget="many2many_tags" string="采购合同" invisible="1"
                                            attrs="{'column_invisible':[('parent.invoice_attribute','in',['other_payment'])]}"/>
                                     <field name="amount_invoice_so" string="原始应付款" readonly="1"/>
-                                    <field name="invoice_residual" string="剩余应付款"
-                                    /><!--attrs="{'column_invisible':[('parent.operation_wizard','not in',['10'])]}"-->
+                                    <field name="reconcile_order_line_payment" string="付款支付" readonly="1"/>
+                                    <field name="reconcile_order_line_advance" string="预付认领" readonly="1"/>
+                                    <field name="invoice_residual" string="剩余应付款"/><!--attrs="{'column_invisible':[('parent.operation_wizard','not in',['10'])]}"-->
+
                                     <field name="payment_currency_id" invisible="1"/>
 
                                     <field name="amount_payment_can_approve_all" string="可申请应付款"

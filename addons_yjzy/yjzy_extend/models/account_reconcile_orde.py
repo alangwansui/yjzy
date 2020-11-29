@@ -2892,6 +2892,7 @@ class account_reconcile_order_line(models.Model):
     residual = fields.Monetary(related='invoice_id.residual', string=u'发票余额', readonly=True, currency_field='invoice_currency_id')
     amount_total_invoice = fields.Monetary(u'发票原始金额',compute=compute_amount_total_invoice, readonly=True,
                                currency_field='invoice_currency_id',store=True)
+
     currency_id = fields.Many2one('res.currency', u'公司货币', related='order_id.currency_id', readonly=True)
     invoice_currency_id = fields.Many2one('res.currency', u'交易货币', related='invoice_id.currency_id', readonly=True)
     payment_currency_id = fields.Many2one('res.currency', u'收款货币', related='order_id.payment_currency_id', readonly=True)
@@ -3027,6 +3028,10 @@ class account_reconcile_order_line_no(models.Model):
     invoice_amount_total = fields.Monetary(related='invoice_id.amount_total', string=u'发票金额', readonly=True, currency_field='invoice_currency_id')
     amount_payment_can_approve_all = fields.Monetary(related='invoice_id.amount_payment_can_approve_all',string='可以申请支付应付款')
     amount_payment_can_approve_all_this_time = fields.Monetary(u'可以申请支付应付款',currency_field='invoice_currency_id')
+    reconcile_order_line_payment = fields.Monetary(related='invoice_id.reconcile_order_line_payment', string=u'发票付款支付',
+                                                   readonly=True)
+    reconcile_order_line_advance = fields.Monetary(related='invoice_id.reconcile_order_line_advance', string=u'发票预付认领',
+                                                   readonly=True)
 
     invoice_attribute = fields.Selection(related='invoice_id.invoice_attribute',string=u'账单类型')
     yjzy_currency_id = fields.Many2one('res.currency', u'预收币种',
