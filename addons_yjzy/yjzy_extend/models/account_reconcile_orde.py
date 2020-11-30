@@ -359,6 +359,26 @@ class account_reconcile_order(models.Model):
             amount_invoice_org_new = sum(x.amount_total_invoice for x in one.line_ids)
             one.amount_invoice_org_new = amount_invoice_org_new
 
+    @api.depends('partner_id','partner_id.supplier_amount_invoice_approval','partner_id.supplier_amount_invoice_approve',
+                 'partner_id.supplier_amount_residual_invoice','partner_id.supplier_advance_amount_hxd_line_approval')
+    def compute_supplier_amount_invoice_approve_approval(self):
+        for one in self:
+            supplier_amount_invoice_approval = one.partner_id.supplier_amount_invoice_approval
+            supplier_amount_invoice_approve = one.partner_id.supplier_amount_invoice_approve
+            supplier_amount_invoice_residual = one.partner_id.supplier_amount_residual_invoice
+            supplier_advance_amount_hxd_line_approval= one.partner_id.supplier_advance_amount_hxd_line_approval
+            supplier_amount_residual_advance_payment = one.supplier_amount_residual_advance_payment
+            supplier_amount_invoice_residual2 = supplier_amount_invoice_residual - supplier_amount_invoice_approval - supplier_amount_invoice_approve
+            supplier_advance_amount_hxd_line_approval2 = supplier_amount_residual_advance_payment - supplier_advance_amount_hxd_line_approval
+            one.supplier_amount_invoice_approval = supplier_amount_invoice_approval
+            one.supplier_amount_invoice_approve = supplier_amount_invoice_approve
+            one.supplier_amount_invoice_residual = supplier_amount_invoice_residual
+            one.supplier_amount_invoice_residual2 = supplier_amount_invoice_residual2
+            one.supplier_advance_amount_hxd_line_approval = supplier_advance_amount_hxd_line_approval
+            one.supplier_advance_amount_hxd_line_approval2 = supplier_advance_amount_hxd_line_approval2
+
+
+
 
     ysrld_amount_advance_org_all = fields.Float('预收单的本所有被认领金额',compute=compute_ysrld_amount_advance_org_all,store=True)
     ysrld_advice_amount_advance_org_all = fields.Float('预收认领单的所有被认领的原则分配金额',compute=compute_ysrld_amount_advance_org_all,store=True)
@@ -385,6 +405,15 @@ class account_reconcile_order(models.Model):
     invoice_partner = fields.Char(u'账单对象')
 
     supplier_advance_payment_ids_amount_advance_org = fields.Float('待审批预付认领金额',compute= compute_supplier_advance_payment_ids_amount_advance_org,store=True)
+    supplier_amount_invoice_approval = fields.Float(u'已申请未审批',compute=compute_supplier_amount_invoice_approve_approval,store=True)
+    supplier_amount_invoice_approve = fields.Float(u'已审批未付款',compute=compute_supplier_amount_invoice_approve_approval,store=True)
+    supplier_amount_invoice_residual = fields.Float(u'供应商应付余额',compute=compute_supplier_amount_invoice_approve_approval,store=True)
+    supplier_amount_invoice_residual2 = fields.Float(u'供应商应付余额2',
+                                                    compute=compute_supplier_amount_invoice_approve_approval,
+                                                    store=True)
+
+    supplier_advance_amount_hxd_line_approval= fields.Float(u'供应商预付审批中预付认领',compute=compute_supplier_amount_invoice_approve_approval,store=True)
+    supplier_advance_amount_hxd_line_approval2 = fields.Float(u'供应商预付余额2',compute=compute_supplier_amount_invoice_approve_approval,store=True)
     yjzy_type = fields.Selection([('sale','销售'),
                                   ('purchase','采购'),
                                   ('back_tax','退税'),

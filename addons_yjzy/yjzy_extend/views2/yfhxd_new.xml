@@ -967,6 +967,33 @@
                             <field name="final_coat" string="实际总成本" invisible="1"/>
 
                             <field name="no_sopo" attrs="{'invisible':1}"/>
+                            <separator  colspan="2"/>
+
+                            <field name="supplier_amount_invoice_residual" string="应付余额" attrs="{'invisible':[('operation_wizard','not in',['10','30'])]}"/>
+
+                            <field name="supplier_amount_invoice_approval"
+                                    attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),
+                                   ('invoice_attribute','in',['other_payment','expense_po','other_po'])]}"/>
+                            <field name="supplier_amount_invoice_approve"
+                                    attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),
+                                   ('invoice_attribute','in',['other_payment','expense_po','other_po'])]}"/>
+                            <field name="supplier_amount_invoice_residual2" string="应付余额2"
+                                   attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),
+                                   ('invoice_attribute','in',['other_payment','expense_po','other_po'])]}"/>
+                            <separator  colspan="2"
+                                       attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),
+                                   ('invoice_attribute','in',['other_payment','expense_po','other_po'])]}"/>
+                            <field name="supplier_amount_residual_advance_payment" string="预付余额"
+                                   attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),
+                                   ('invoice_attribute','in',['other_payment','expense_po','other_po'])]}"/>
+                            <field name="supplier_advance_amount_hxd_line_approval" string="已申请未认领"
+                                   attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),
+                                   ('invoice_attribute','in',['other_payment','expense_po','other_po'])]}"/>
+                            <field name="supplier_advance_amount_hxd_line_approval2" string="应付余额2"
+                            attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),
+                                   ('invoice_attribute','in',['other_payment','expense_po','other_po'])]}"/>
+
+
 
                         </group>
 
@@ -1152,6 +1179,7 @@
                                            attrs="{'column_invisible':[('parent.operation_wizard','not in',['40'])]}"/>
                                     <field name="currency_id" invisible="1"/>
                                     <field name="amount_payment" invisible="1"/>
+                                    <field name="state_1" string="状态"/>
                                     <button name="compute_ysrld_amount_advance_org_all" type="object" string="test" groups="base.group_system"/>
 
                                 </tree>

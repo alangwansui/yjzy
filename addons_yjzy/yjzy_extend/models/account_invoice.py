@@ -408,11 +408,20 @@ class account_invoice(models.Model):
         for one in self:
             payment_approved_all = one.reconcile_order_line_ids.filtered(lambda x: x.order_id.state == 'approved')
             yjzy_payment_approve_all = one.yjzy_invoice_reconcile_order_line_ids.filtered(lambda x: x.order_id.state == 'approved')
+            amount_payment_approve_all = sum(x.amount_total_org_new for x in payment_approved_all)
             amount_payment_can_approve_all = one.residual - sum(x.amount_total_org_new for x in payment_approved_all) or 0.0   #由amount_payment_org改为amount_total_org
             yjzy_amount_payment_can_approve_all = one.yjzy_residual - sum(x.amount_total_org_new for x in yjzy_payment_approve_all) or 0.0
             print('yjzy_amount_payment_can_approve_all',yjzy_amount_payment_can_approve_all,amount_payment_can_approve_all)
+            one.amount_payment_approve_all = amount_payment_approve_all
             one.amount_payment_can_approve_all = amount_payment_can_approve_all
             one.yjzy_amount_payment_can_approve_all = yjzy_amount_payment_can_approve_all
+
+    @api.depends('reconcile_order_line_ids','reconcile_order_line_ids.amount_total_org_new')
+    def compute_amount_payment_approval_all(self):
+        for one in self:
+            amount_payment_approval_all = one.reconcile_order_line_ids.filtered(lambda x: x.order_id.state == 'posted')
+            one.amount_payment_approval_all = sum(x.amount_total_org_new for x in amount_payment_approval_all)
+
 
     @api.depends('state','residual')
     def compute_tb_po_invoice(self):
@@ -611,7 +620,11 @@ class account_invoice(models.Model):
                                                             u'所有核销细行no', domain=[('order_id', '!=', False),
                                                                                 ('order_id.sfk_type', '=', 'yfhxd')]
                                                             )  # domain=[('order_id.state', 'in', ['approved']), ('amount_total_org', '!=', 0)]关联账单（额外账
-    amount_payment_can_approve_all = fields.Monetary(u'可申请应收付款',currency_field='currency_id',compute=compute_amount_payment_can_approve_all, store=True) #未付金额-审批完成的付款金额
+    amount_payment_can_approve_all = fields.Monetary(u'可申请应收付款',currency_field='currency_id',compute=compute_amount_payment_can_approve_all, store=True)
+
+
+    amount_payment_approval_all = fields.Monetary(u'审批中应收付款',currency_field='currency_id',compute=compute_amount_payment_approval_all, store=True)#未付金额-审批完成的付款金额
+    amount_payment_approve_all = fields.Monetary(u'已审批未支付',currency_field='currency_id',compute=compute_amount_payment_can_approve_all, store=True)
     yjzy_amount_payment_can_approve_all = fields.Monetary(u'所有可申请应收付款',currency_field='currency_id', compute=compute_amount_payment_can_approve_all,
                                                   store=True)  # 包括额外账单的
     reconcile_date = fields.Date(u'认领日期', related='reconcile_order_id.date')

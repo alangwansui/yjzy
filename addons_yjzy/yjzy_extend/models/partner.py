@@ -145,6 +145,25 @@ class res_partner(models.Model):
         for one in self:
             one.invoice_open_ids_count = len(one.invoice_open_ids)
 
+    @api.depends('supplier_invoice_ids','supplier_invoice_ids.amount_payment_approval_all')
+    def compute_supplier_amount_invoice_approval(self):
+        for one in self:
+            supplier_amount_invoice_approval = sum(x.amount_payment_approval_all for x in one.supplier_invoice_ids)
+            one.supplier_amount_invoice_approval = supplier_amount_invoice_approval
+
+    @api.depends('supplier_invoice_ids','supplier_invoice_ids.amount_payment_approve_all')
+    def compute_supplier_amount_invoice_approve(self):
+        for one in self:
+            supplier_amount_invoice_approve = sum(x.amount_payment_approve_all for x in one.supplier_invoice_ids)
+            one.supplier_amount_invoice_approve = supplier_amount_invoice_approve
+
+
+    @api.depends('supplier_advance_payment_ids','supplier_advance_payment_ids.advance_amount_reconcile_order_line_approval')
+    def compute_supplier_advance_amount_hxd_line_approval(self):
+        for one in self:
+            supplier_advance_amount_hxd_line_approval = sum(x.advance_amount_reconcile_order_line_approval for x in one.supplier_advance_payment_ids)
+            one.supplier_advance_amount_hxd_line_approval = supplier_advance_amount_hxd_line_approval
+
 
     qingguan_precision = fields.Integer('清关资料打印小数位数')
 
@@ -223,10 +242,15 @@ class res_partner(models.Model):
     payment_amount_total = fields.Float('收款总金额',compute=compute_payment_amount_total,store=True)
     supplier_amount_invoice = fields.Float(u'应付账单总金额', compute=compute_supplier_amount_invoice_advance_payment, store=True)
     supplier_amount_residual_invoice = fields.Float(u'应付款余额', compute=compute_supplier_amount_invoice_advance_payment, store=True)
+    supplier_amount_invoice_approval = fields.Float(u'已申请未审批',compute=compute_supplier_amount_invoice_approval,store=True)
+    supplier_amount_invoice_approve = fields.Float(u'已审批未付款',compute=compute_supplier_amount_invoice_approve,store=True)
     supplier_amount_advance_payment = fields.Float('u预付总金额', compute=compute_supplier_amount_invoice_advance_payment, store=True)
     supplier_amount_residual_advance_payment = fields.Float('预付余额', compute=compute_supplier_amount_invoice_advance_payment, store=True)
     supplier_amount_advance_payment_reconcile = fields.Float('预付认领金额', compute=compute_supplier_amount_invoice_advance_payment,
                                                     store=True)
+    supplier_advance_amount_hxd_line_approval = fields.Float('审批中预付', compute=compute_supplier_advance_amount_hxd_line_approval,
+                                                    store=True)
+
     supplier_payment_amount_total = fields.Float('付款总金额', compute=compute_payment_amount_total, store=True)
     # 不要了
 

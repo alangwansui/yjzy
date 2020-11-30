@@ -351,8 +351,8 @@ class account_payment(models.Model):
 
     advance_reconcile_order_line_approval_ids = fields.One2many('account.reconcile.order.line', 'yjzy_payment_id',
                                                        string='审批中的预收认领明细', domain=[('amount_advance_org', '>', 0),
-                                                                                ('order_id.state_1', '=', 'advance_approval')])
-    advance_amount_reconcile_order_line_approval = fields.Float('预收付-应收付认领未审批金额',compute=compute_advance_amount_reconcile_order_line_approval)
+                                                                                ('order_id.state_1', 'in', ['advance_approval','manager_approval'])])
+    advance_amount_reconcile_order_line_approval = fields.Float('预收付-应收付认领未审批金额',compute=compute_advance_amount_reconcile_order_line_approval,store=True)
     #1119计算建议预收预付金额
     amount_advance_org_all = fields.Float('实际已经支付完成的认领金额总额',compute=compute_amount_advance_org_all, store=True)
     advice_amount_advance_org_all = fields.Float('实际已经支付完成的原则分配总额',compute=compute_amount_advance_org_all, store=True)
@@ -395,6 +395,8 @@ class account_payment(models.Model):
     advance_reconcile_order_line_date_char = fields.Text(related='so_id.advance_reconcile_order_line_date_char',string=u'预收认领日期')
     advance_reconcile_order_line_invoice_char = fields.Text(related='so_id.advance_reconcile_order_line_invoice_char',string=u'账单')
     advance_balance_total = fields.Monetary(u'预收余额', compute=compute_advance_balance_total, currency_field='yjzy_payment_currency_id', store=True)
+
+
     advance_total = fields.Monetary(u'预收认领金额', compute=compute_advance_balance_total,
                                             currency_field='yjzy_payment_currency_id', store=True)
     rcskd_amount = fields.Monetary(u'收款单金额',related='yjzy_payment_id.amount')
