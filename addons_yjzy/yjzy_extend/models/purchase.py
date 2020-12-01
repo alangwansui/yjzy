@@ -134,7 +134,7 @@ class purchase_order(models.Model):
     def compute_need_change_partner(self):
         for one in self:
             for x in one.order_line:
-                if x.sol_id.partner_id != one.partner_id:
+                if x.sol_id.supplier_partner_id != one.partner_id:
                     one.need_change_partner = True
                     continue
 
