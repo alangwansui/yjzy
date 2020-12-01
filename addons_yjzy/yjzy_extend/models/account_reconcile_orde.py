@@ -997,7 +997,7 @@ class account_reconcile_order(models.Model):
                 else:
                     if self.operation_wizard == '03':
                         if self.line_ids:
-                            for one in self.lines:
+                            for one in self.line_ids:
                                 if one.po_id:
                                     if one.amount_total_org_new > one.amount_invoice_so_residual_can_approve:
                                         raise Warning('申请的金额大于可认领应付')
