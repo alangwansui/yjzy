@@ -977,7 +977,7 @@ class account_reconcile_order(models.Model):
                                 raise Warning('预付认领金额大于可认领的预付金额')
                         if one.amount_advance_org == 0:
                             raise Warning('有明细行预付金额为0，请填写或者删除明细行！')
-                    stage_id = self._stage_find(domain=[('code', '=', '040')])
+                    stage_id = self._stage_find(domain=[('code', '=', '020')])
                     self.write({'stage_id': stage_id.id,
                                 'state': 'posted',
                                 # 'operation_wizard':'25'
