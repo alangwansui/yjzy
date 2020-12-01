@@ -1208,7 +1208,7 @@
                                     <field name="amount_invoice_so" string="本次出运采购额" invisible="0" />
                                     <field name="amount_invoice_so_proportion" invisible="1"/>
                                     <field name="amount_invoice_so_residual" string="最新未认领应付"/>
-                                    <field name="amount_invoice_so_residual_d" string="审批前未认领应付" groups="base.group_system"/>
+                                    <field name="amount_invoice_so_residual_d" string="审批前未认领应付"/>
                                     <field name="amount_invoice_so_residual_can_approve" string="可申请应付" groups="base.group_system"/>
                                     <field name="amount_invoice_so_residual_can_approve_d" string="可申请应付" groups="base.group_system"/>
                                     <field name="advance_residual2" string="采购合同未认领预付" readonly="0" groups="base.group_system"/>
