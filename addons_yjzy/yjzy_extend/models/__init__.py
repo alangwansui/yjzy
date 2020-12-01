@@ -73,3 +73,4 @@ from . import dashboard
 
 from . import tb_po_invoice
 from . import back_tax_declaration
+from . import account_bank_statement

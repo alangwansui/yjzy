@@ -1394,8 +1394,7 @@ class account_reconcile_order(models.Model):
                             'approve_date': fields.date.today(),
                             'approve_uid': self.env.user.id
                             })
-        for x in self.line_no_ids:
-            x.amount_payment_can_approve_all_this_time = x.invoice_id.amount_payment_can_approve_all
+
 
        #应收核销待定:
         if self.sfk_type == 'yshxd':
@@ -2114,11 +2113,13 @@ class account_reconcile_order(models.Model):
         for invoice in self.invoice_ids:
             po_invlines = self._prepare_purchase_invoice_line(invoice)
             if not po_invlines:
-                line_obj.create({
+                line = line_obj.create({
                     'order_id': self.id,
                     'invoice_id': invoice.id,
                     'amount_invoice_so': invoice.amount_total,
                 })
+                line.amount_invoice_so_residual_d = line.amount_invoice_so_residual
+                line.amount_invoice_so_residual_can_approve_d = line.amount_invoice_so_residual_can_approve
             else:
                 for po, invlines in po_invlines.items():
                     if self.yjzy_advance_payment_id.po_id:
@@ -2128,13 +2129,15 @@ class account_reconcile_order(models.Model):
                             yjzy_payment_id =False
                     else:
                         yjzy_payment_id = self.yjzy_advance_payment_id.id
-                    line_obj.create({
+                    line = line_obj.create({
                         'order_id': self.id,
                         'po_id': po.id,
                         'invoice_id': invoice.id,
                         'amount_invoice_so': sum([i.price_subtotal for i in invlines]),
                         'yjzy_payment_id':yjzy_payment_id
                     })
+                    line.amount_invoice_so_residual_d = line.amount_invoice_so_residual
+                    line.amount_invoice_so_residual_can_approve_d = line.amount_invoice_so_residual_can_approve
     #826
         so_po_dic = {}
         print('line_obj', line_ids)
@@ -2170,6 +2173,10 @@ class account_reconcile_order(models.Model):
                 'advance_residual': data['advance_residual'],
                 'yjzy_payment_id': data['yjzy_payment_id']
             })
+
+            line_no.amount_payment_can_approve_all_this_time = line_no.invoice_id.amount_payment_can_approve_all
+            line_no.invoice_residual_this_time = line_no.invoice_residual
+
 
 
 
@@ -2557,7 +2564,6 @@ class account_reconcile_order(models.Model):
 
 
 #11-26预付和付款申请同一个入口的新方法
-
     def make_lines_11_16(self):
         if self.partner_type == 'customer':
             self._make_lines_so()
@@ -2589,11 +2595,14 @@ class account_reconcile_order(models.Model):
         for invoice in self.invoice_ids:
             po_invlines = self._prepare_purchase_invoice_line(invoice)
             if not po_invlines:
-                line_obj.create({
+                line = line_obj.create({
                     'order_id': self.id,
                     'invoice_id': invoice.id,
                     'amount_invoice_so': invoice.amount_total,
+
                 })
+                line.amount_invoice_so_residual_d = line.amount_invoice_so_residual
+                line.amount_invoice_so_residual_can_approve_d = line.amount_invoice_so_residual_can_approve
             else:
                 for po, invlines in po_invlines.items():
                     if yjzy_advance_payment_id.po_id:
@@ -2610,22 +2619,26 @@ class account_reconcile_order(models.Model):
 
                     if yjzy_advance_payment_id.po_id:
                         if (po.id == yjzy_advance_payment_id.po_id.id and lines_same_count == 0):
-                            line_obj.create({
+                            line=line_obj.create({
                                 'order_id': self.id,
                                 'po_id': po.id,
                                 'invoice_id': invoice.id,
                                 'amount_invoice_so': sum([i.price_subtotal for i in invlines]),
                                 'yjzy_payment_id':yjzy_payment_id
                             })
+                            line.amount_invoice_so_residual_d = line.amount_invoice_so_residual
+                            line.amount_invoice_so_residual_can_approve_d = line.amount_invoice_so_residual_can_approve
                             self.compute_line_ids_advice_amount_advance_org()
                     else:
-                        line_obj.create({
+                        line=line_obj.create({
                             'order_id': self.id,
                             'po_id': po.id,
                             'invoice_id': invoice.id,
                             'amount_invoice_so': sum([i.price_subtotal for i in invlines]),
                             'yjzy_payment_id': yjzy_payment_id
                         })
+                        line.amount_invoice_so_residual_d = line.amount_invoice_so_residual
+                        line.amount_invoice_so_residual_can_approve_d = line.amount_invoice_so_residual_can_approve
 
 
     #826
@@ -2762,18 +2775,34 @@ class account_reconcile_order_line(models.Model):
         for one in self:
             amount_invoice = one.invoice_id.amount_total
             amount_invoice_so =  one.amount_invoice_so
-            residual = one.residual
-            amount_payment_can_approve_all = one.invoice_id.amount_payment_can_approve_all
+
+
             if amount_invoice !=0:
                 amount_invoice_so_proportion = amount_invoice_so / amount_invoice
             else:
                 amount_invoice_so_proportion = 0
-            amount_invoice_so_residual = residual * amount_invoice_so_proportion
-            amount_invoice_so_residual_can_approve = amount_payment_can_approve_all * amount_invoice_so_proportion
-            print('amount_invoice_so_residual',amount_invoice_so,amount_invoice_so_residual,amount_invoice_so_proportion)
+
+            #算法：要amount_invoice_so - po=我的所有的认领明细金额。= 所有已经审批完成以及付款完成的 所有的明细
+
             one.amount_invoice_so_proportion = amount_invoice_so_proportion
+
+    @api.depends('amount_invoice_so','order_id','order_id.state_1','order_id.state_1','po_id','yjzy_payment_id')
+    def compute_can_approve(self):
+        for one in self:
+            amount_invoice_so = one.amount_invoice_so
+            # amount_payment_can_approve_all = one.invoice_id.amount_payment_can_approve_all
+            reconcile_line_ids = self.env['account.reconcile.order.line'].search(
+                [('order_id.state', 'in', ['post', 'done']), ('po_id', '=', one.po_id.id)])
+            amount_payment_all = sum(x.amount_total_org_new for x in reconcile_line_ids)
+            reconcile_line_done_ids = self.env['account.reconcile.order.line'].search(
+                [('order_id.state', 'in', ['done']), ('po_id', '=', one.po_id.id)])
+            amount_payment_done = sum(x.amount_total_org_new for x in reconcile_line_done_ids)
+            amount_invoice_so_residual = amount_invoice_so - amount_payment_done
+            amount_invoice_so_residual_can_approve = amount_invoice_so - amount_payment_all
             one.amount_invoice_so_residual = amount_invoice_so_residual
-            one.amount_invoice_so_residual_can_approve = amount_invoice_so_residual_can_approve #采购销售占可申请的账单余额的金额
+            one.amount_invoice_so_residual_can_approve = amount_invoice_so_residual_can_approve
+
+
 
 
 
@@ -2939,9 +2968,10 @@ class account_reconcile_order_line(models.Model):
 
     amount_invoice_so_proportion = fields.Float('销售金额占发票金额比',compute=_compute_amount_invoice_so_proportion)
     #826
-    amount_invoice_so_residual = fields.Monetary(u'占比剩余应收付',currency_field='invoice_currency_id',compute=_compute_amount_invoice_so_proportion)
-    amount_invoice_so_residual_can_approve = fields.Monetary(u'占比剩余可申请的应收付',currency_field='invoice_currency_id',compute=_compute_amount_invoice_so_proportion)
-
+    amount_invoice_so_residual = fields.Monetary(u'占比剩余应收付',currency_field='invoice_currency_id',compute=compute_can_approve)
+    amount_invoice_so_residual_d = fields.Monetary(u'静态占比剩余应收付',currency_field='invoice_currency_id')
+    amount_invoice_so_residual_can_approve = fields.Monetary(u'占比剩余可申请的应收付',currency_field='invoice_currency_id',compute=compute_can_approve)
+    amount_invoice_so_residual_can_approve_d = fields.Monetary(u'静态占比剩余可申请的应收付',currency_field='invoice_currency_id')
     advance_residual = fields.Monetary(currency_field='yjzy_currency_id', string=u'预付余额', compute=compute_info, )
     advance_residual2 = fields.Monetary(currency_field='yjzy_currency_id', string=u'预收余额', compute=compute_info, )
 
@@ -3056,7 +3086,8 @@ class account_reconcile_order_line_no(models.Model):
     invoice_residual = fields.Monetary(related='invoice_id.residual', string=u'发票余额', readonly=True, currency_field='invoice_currency_id')
     invoice_amount_total = fields.Monetary(related='invoice_id.amount_total', string=u'发票金额', readonly=True, currency_field='invoice_currency_id')
     amount_payment_can_approve_all = fields.Monetary(related='invoice_id.amount_payment_can_approve_all',string='可以申请支付应付款')
-    amount_payment_can_approve_all_this_time = fields.Monetary(u'可以申请支付应付款',currency_field='invoice_currency_id')
+    amount_payment_can_approve_all_this_time = fields.Monetary(u'可以申请支付应付款d',currency_field='invoice_currency_id')
+    invoice_residual_this_time = fields.Monetary( string=u'发票余额d', readonly=True,currency_field='invoice_currency_id')
     reconcile_order_line_payment = fields.Monetary(related='invoice_id.reconcile_order_line_payment', string=u'发票付款支付',
                                                    readonly=True)
     reconcile_order_line_advance = fields.Monetary(related='invoice_id.reconcile_order_line_advance', string=u'发票预付认领',

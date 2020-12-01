@@ -287,6 +287,16 @@ class account_payment(models.Model):
         for one in self:
             one.advance_amount_reconcile_order_line_approval = sum(x.amount_advance_org for x in one.advance_reconcile_order_line_approval_ids)
 
+    @api.depends('amount')
+    def compute_amount_signed_payment(self):
+        for one in self:
+            amount_signed_payment = 0
+            if one.sfk_type == 'rcfkd':
+                amount_signed_payment = -one.amount
+            elif one.sfk_type == 'rcskd':
+                amount_signed_payment = one.amount
+            one.amount_signed_payment = amount_signed_payment
+
 
     # @api.depends('advance_reconcile_order_approve_ids','advance_reconcile_order_approve_ids.amount_advance_org_new')
     # def compute_advance_reconcile_order_approve_amount(self):
@@ -300,6 +310,13 @@ class account_payment(models.Model):
     #                                                           domain=[('state_1', '=', '40_approve')])
     # advance_reconcile_order_approve_amount = fields.Monetary('预收付-应收付认领审批完成金额', currency_field='yjzy_payment_currency_id',compute=compute_advance_reconcile_order_approve_amount, store=True )
     # approve_balance = fields.Monetary('预收付-应收付认领可认领金额', currency_field='yjzy_payment_currency_id', compute=compute_advance_reconcile_order_approve_amount, store=True )
+    print_times = fields.Integer(u'打印次数')
+    print_date = fields.Datetime('打印时间')
+    print_uid = fields.Many2one('res.users',u'最新打印人员')
+    can_print = fields.Boolean('允许打印',default=True)
+
+    amount_signed_payment = fields.Monetary(u'收付金额', currency_field='currency_id',
+                                            compute=compute_amount_signed_payment, store=True)
 
     new_rule = fields.Boolean('是否新规则',default=False)
 
@@ -373,9 +390,11 @@ class account_payment(models.Model):
                                 ('20_account_submit',u'待财务审批'),
                                 ('25_cashier_submit',u'待出纳审批'),
                                 ('30_manager_approve',u'待总经理审批'),
+                                ('35_account_approve', u'待会计核对确认'),
                                 ('40_approve',u'审批完成'),
                                 ('50_posted',u'已过账'),
                                 ('60_done',u'完成'),#认领全部完成
+                                ('70_checked',u'已对账'),
                                 ('80_refused',u'已拒绝'),
                                 ('90_cancel',u'已取消')],u'审批状态',track_visibility='onchange',default='10_draft')
 
@@ -479,6 +498,70 @@ class account_payment(models.Model):
     post_uid = fields.Many2one('res.users',u'审批人')
     post_date = fields.Date(u'审批时间')
 
+
+    # def create_account_bank_statement(self):
+    #     print('invoice_ids', self.ids)
+    #     print('partner_id', len(self.mapped('partner_id')))
+    #     sfk_type = 'yfhxd'
+    #     # name = self.env['ir.sequence'].next_by_code('sfk.type.%s' % sfk_type)
+    #     account_bank_statement_obj = self.env['account.bank.statement']
+    #     form_view = self.env.ref('account.view_bank_statement_form')
+    #     for one in self:
+    #         for x in one.yjzy_invoice_wait_payment_ids:  # 参考M2M的自动多选  剩余应付金额！=0的额外账单
+    #             invoice_dic.append(x.id)
+    #         print('amount_payment_can_approve_all_akiny', one.amount_payment_can_approve_all)
+    #         if one.amount_payment_can_approve_all != 0:  # 考虑已经提交审批的申请
+    #             invoice_dic.append(one.id)
+    #     print('invoice_dic', invoice_dic)
+    #     # test = [(for x in line.yjzy_invoice_all_ids) for line in self)]
+    #     # invoice_ids = self.env['account.invoice'].search([('id','in',invoice_dic)])
+    #     # with_context(
+    #     #     {'fk_journal_id': 1, 'default_be_renling': 1, 'default_invoice_ids': invoice_dic,
+    #     #      'default_payment_type': 'outbound', 'show_so': 1, 'default_sfk_type': 'yfhxd', }).
+    #
+    #     account_reconcile_id = account_reconcile_order_obj.create({
+    #         'partner_id': self[0].partner_id.id,
+    #         'manual_payment_currency_id': self[0].currency_id.id,
+    #         'invoice_ids': [(6, 0, invoice_dic)],
+    #         'payment_type': 'outbound',
+    #         'partner_type': 'supplier',
+    #         'sfk_type': 'yfhxd',
+    #         'be_renling': True,
+    #         'name': name,
+    #         'journal_id': journal.id,
+    #         'payment_account_id': bank_account.id,
+    #         # 'operation_wizard':operation_wizard,
+    #
+    #         'purchase_code_balance': 1,
+    #         'invoice_attribute': attribute,
+    #         'invoice_partner': self[0].invoice_partner,
+    #         'name_title': self[0].name_title
+    #     })
+    #
+    #     if account_reconcile_id.invoice_attribute in ['other_po', 'expense_po', 'other_payment']:
+    #         account_reconcile_id.operation_wizard = '10'
+    #         account_reconcile_id.hxd_type_new = '40'
+    #         account_reconcile_id.make_lines()
+    #     else:
+    #         if account_reconcile_id.supplier_advance_payment_ids_count == 0:  # 如果相关的预付单数量=0，跳过第一步的预付认领
+    #             account_reconcile_id.operation_wizard = '10'
+    #             account_reconcile_id.hxd_type_new = '40'
+    #             account_reconcile_id.make_lines()
+    #         else:
+    #             account_reconcile_id.operation_wizard = '03'
+    #             account_reconcile_id.hxd_type_new = '40'
+    #
+    #     return {
+    #         'type': 'ir.actions.act_window',
+    #         'view_mode': 'form',
+    #         'res_model': 'account.reconcile.order',
+    #         'views': [(form_view.id, 'form')],
+    #         'res_id': account_reconcile_id.id,
+    #         'target': 'current',
+    #         'context': {'default_sfk_type': 'yfhxd',
+    #                     'show_po': 1,
+    #                     }
+    #     }
 
     #1126
     def make_reconcile_line_ids(self):
@@ -640,7 +723,17 @@ class account_payment(models.Model):
         if self.yjzy_payment_id:
             self.currency_id = self.yjzy_payment_id.currency_id
 
-
+    @api.multi
+    def print_fkzl(self):
+        today = fields.datetime.now()
+        uid = self.env.user.id
+        print_times = self.print_times
+        print_times_last = print_times + 1
+        self.write({'print_date':today,
+                    'print_uid':uid,
+                    'can_print':False,
+                    'print_times':print_times_last})
+        return self.env.ref('yjzy_extend.action_report_fkzl').report_action(self)
 
     #913审批流程
     def action_submit(self):
@@ -658,6 +751,8 @@ class account_payment(models.Model):
                     raise Warning('请选择付款对象的银行账号!')
                 else:
                     self.state_1 = '25_cashier_submit'
+                # self.print_fkzl()
+                # return self.env.ref('yjzy_extend.action_report_fkzl').report_action(self)
             elif ctx.get('default_sfk_type', '') == 'ysrld':
                 if not self.yjzy_payment_id:
                     raise Warning('请选择认领的收款单!')
@@ -716,6 +811,21 @@ class account_payment(models.Model):
             self.post()
             self.compute_balance()
     def action_cashier_post(self):
+        if self.sfk_type =='rcfkd':
+            self.write({
+                'state_1': '35_account_approve'
+                        })
+        else:
+            today = fields.date.today()
+            self.write({'post_uid': self.env.user.id,
+                        'post_date': today,
+                        'state_1': '50_posted'
+                        })
+            self.post()
+            self.compute_balance()
+
+
+    def action_account_approve(self):
         today = fields.date.today()
         self.write({'post_uid': self.env.user.id,
                     'post_date': today,

@@ -17,6 +17,7 @@
                 <field name="balance" string="待认领余额" invisible="1"/>
                 <field name="fault_comments"/>
                 <field name="state"/>
+                <field name="state_1" groups="sales_team.group_manager"/>
             </tree>
         </field>
     </record>
@@ -29,10 +30,15 @@
                 <header groups="base.group_system">
                    <button name="action_submit" class="oe_highlight"  string="提交" type="object"
                            attrs="{'invisible':[('state_1','not in',['10_draft'])]}"/>
+                    <button name="print_fkzl" string="打印付款指令" type="object" attrs="{'invisible':[('can_print','=',False)]}"/>
                    <button name="action_cashier_post" class="oe_highlight"  string="出纳确认支付" type="object"
-                           attrs="{'invisible':[('state_1','not in',['25_cashier_submit'])]}"/>
-                   <button name="action_cashier_refuse" class="oe_highlight" string="出纳拒绝支付" type="object"
+                           attrs="{'invisible':['|',('can_print','=',True),('state_1','not in',['25_cashier_submit'])]}"/>
+                    <bitton name="action_account_approve" class="oe_highlight" string="会计核对确认" type="object"
+                   attrs="{'invisible':[('state_1','not in',['35_account_approve'])]}"/>
+                    <button name="action_cashier_refuse" class="oe_highlight" string="出纳拒绝支付" type="object"
                    attrs="{'invisible':[('state_1','not in',['25_cashier_submit'])]}"/>
+                    <button name="action_account_refuse" class="oe_highlight" string="会计拒绝确认" type="object"
+                   attrs="{'invisible':[('state_1','not in',['35_account_approve'])]}"/>
                     <button name="action_draft_new" class="oe_highlight" string="重置草稿" type="object"
                             attrs="{'invisible':[('state_1','not in',['80_refused'])]}"/>
                      <field name="state_1" widget="statusbar" statusbar_visible=" "/>
@@ -114,8 +120,12 @@
                             <field name="balance"/>
                             <field name="include_tax" invisible="1"/>
                             <field name="payment_date" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
-
+                            <field name="print_date"/>
+                            <field name="print_uid"/>
+                            <field name="print_times"/>
                             <field name="payment_date_confirm"/>
+                            <field name="can_print" invisible="1"/>
+
                             <field name="fault_comments"/>
                         </group>
                     </group>
@@ -283,5 +293,39 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcfkd_form')})]"/>
     </record>
     <menuitem id="menu_rcfkd_new_all"  sequence="30" name="日常付款单" parent="menu_rcfkd_new_cashier" action="action_rcfkd_new_all"/>
+
+
+    <!--1130-->
+    <record model="ir.actions.act_window" id="action_rcfkd_todo">
+        <field name="name">操作付款</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.payment</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('sfk_type','=','rcfkd'),('state_1','in',['10_draft','25_cashier_submit','35_account_approve'])]</field>
+        <field name="context">{'search_default_group_by_state_1':1,'show_shoukuan': True, 'default_sfk_type': 'rcfkd',
+            'default_payment_type': 'outbound', 'default_be_renling': False, 'default_advance_ok': True, 'default_partner_type': 'supplier',}</field>
+        <field name="search_view_id" ref="view_account_payment_search_new"/>
+        <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_rcfkd_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcfkd_form')})]"/>
+    </record>
+    <menuitem id="menu_rcfkd_todo"  sequence="20" name="操作付款" parent="menu_rcfkd_new" action="action_rcfkd_todo"/>
+
+    <record model="ir.actions.act_window" id="action_rcfkd_done_post">
+        <field name="name">查询</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.payment</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('sfk_type','=','rcfkd'),('state_1','in',['50_post','60_done'])]</field>
+        <field name="context">{'show_shoukuan': True, 'default_sfk_type': 'rcfkd',
+            'default_payment_type': 'outbound', 'default_be_renling': False, 'default_advance_ok': True, 'default_partner_type': 'supplier',}</field>
+        <field name="search_view_id" ref="view_account_payment_search_new"/>
+        <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_rcfkd_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcfkd_form')})]"/>
+    </record>
+    <menuitem id="menu_rcfkd_done_post"  sequence="20" name="查询" parent="menu_rcfkd_new" action="action_rcfkd_done_post"/>
 
 </odoo>

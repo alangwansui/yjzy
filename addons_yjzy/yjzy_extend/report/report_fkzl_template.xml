@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_fkzl_document">
+        <t t-call="yjzy_extend.no_header_external_layout">
+            <t t-set="doc" t-value="doc.with_context({'lang':user.lang})"/>
+<style>
+	  body{
+		    font-size:10px;
+		  font-family:Arial,Helvetica,sans-serif,simsun;
+	  }
+	.title{
+		height: 30px;
+	    text-align: center;}
+	.title td {height: 20px;
+	font-size: 12px}
+	.main{
+		width: 100%;
+	    font-size: 12px ; }
+		.main td{height:20px}
+	.tablelist{
+		text-align: left;
+
+		border: 0.5px solid ;
+		border-collapse: collapse;
+		font-size: 11px;
+		width: 100%;
+		vertical-align: middle
+	}
+	.tablelist th{
+		font-size: 12px;
+		text-align: center;
+		border: 0.5px solid ;
+		height: 25px;
+		line-height: 20px;
+		background-color:#E3ECF4;
+		vertical-align: middle;
+		font-weight: 200
+	}
+	.tablelist td{
+		border: 0.5px solid;
+		height: 30px;
+		line-height: 20px;
+		vertical-align: middle;
+		padding-left: 8px;
+		padding-right: 8px;
+	}
+	.buttom{
+
+	}
+    .buttom td{
+		border:0.5px solid;
+		padding: 5px;
+		vertical-align: middle: ;
+
+	}
+</style>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="title">
+  <tbody>
+    <tr>
+      <td><span style="font-size: 16px">付款申请指令 1.0</span></td>
+    </tr>
+  </tbody>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="main">
+  <tbody>
+    <tr>
+      <td width="15%">订单 □ 非订单 □ </td>
+      <td width="20%">单号：<span t-esc="doc.name"/></td>
+      <td width="9%">报销主体：</td>
+      <td width="15%"><span t-esc="doc.company_id.name"/></td>
+      <td width="9%">付款银行：</td>
+      <td width="17%"><span t-esc="doc.journal_id.name"/></td>
+      <td width="15%">第<span t-esc="doc.id"/>号</td>
+    </tr>
+  </tbody>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablelist">
+  <tbody>
+   <tr>
+      <td width="12%">日期</td>
+      <td width="19%"><span t-esc="doc.payment_date"/></td>
+      <td width="10%">申请部门</td>
+      <td width="15%"></td>
+      <td  width="7%">小组</td>
+      <td  width="10%"></td>
+      <td  width="9%">总金额</td>
+      <td  width="18%"><span t-esc="doc.currency_id.symbol"/><t t-esc="doc.amount" t-options='{"widget": "float", "precision": 2}'/></td>
+    </tr>
+   <tr>
+     <td>收款账户名</td>
+	   <td colspan="2"><span t-esc="doc.bank_id.huming"/><t t-foreach="doc.fybg_ids" t-as="line9"><span t-esc="line9.x_studio_field_zJvMS"/></t></td>
+     <td>银行明细及账号</td>
+     <td colspan="4"><span t-esc="doc.bank_id.kaihuhang"/><span t-esc="doc.bank_id.acc_number"/><t t-foreach="doc.fybg_ids" t-as="line9"><span t-esc="line9.x_studio_field_geMPb"/></t></td>
+   </tr>
+  </tbody>
+</table>
+<t t-if="doc.yfsqd_ids or doc.yshx_ids">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablelist">
+
+<tbody>
+
+  <tr>
+    <th width="15%">大类</th>
+    <th width="24%">小类</th>
+    <th width="30%">合同</th>
+
+    <th width="11%">金额</th>
+
+    <th width="10%">申请人</th>
+    <th width="10%">审批状态</th>
+  </tr>
+	<t t-if="doc.sfk_type == 'rcfkd'">
+    <t t-foreach="doc.yfsqd_ids" t-as="line">
+
+
+    <tr>
+      <td >货款</td>
+      <td>预付账款</td>
+      <td><span t-esc="line.po_id.contract_code"/></td>
+
+      <td style="text-align:right"><span t-esc="line.currency_id.symbol"/><span t-esc="line.amount" t-options='{"widget": "float", "precision": 2}'/></td>
+
+      <td style="text-align: center"><span t-esc="line.assistant_uid.name"/></td>
+      <td style="text-align: center"><t t-if="line.x_wkf_state == '130'">已批准</t></td>
+    </tr>
+
+  </t>
+
+	  <t t-foreach="doc.yshx_ids" t-as="line2">
+   <t t-foreach="line2.line_ids" t-as="line21">
+
+    <tr>
+      <td >货款</td>
+      <td>应付账款</td>
+      <td><span t-esc="line21.invoice_id.tb_contract_code"/><span t-esc="line21.invoice_id.x_studio_field_sG7RZ"/></td>
+
+      <td style="text-align:right"><span t-esc="line21.payment_currency_id.symbol"/><span t-esc="line21.amount_payment_org" t-options='{"widget": "float", "precision": 2}'/></td>
+
+      <td style="text-align: center"><span t-esc="line21.create_uid.name"/></td>
+          <td style="text-align: center"><t t-if="line2.x_wkf_state == '139'">已批准</t></td>
+    </tr>
+	  </t>
+  </t>
+
+		</t>
+
+  <tr>
+    <td colspan="3" style="text-align: center" >合计</td>
+    <td style="text-align: right;font-weight: bolder"><span t-esc="doc.currency_id.symbol"/><t t-esc="sum(x.amount_payment_org for x in doc.yshx_ids)+sum(x.amount for x in doc.yfsqd_ids)" t-options='{"widget": "float", "precision": 2}'/></td>
+
+	  <td></td>
+	  <td></td>
+  </tr>
+
+</tbody>
+
+</table>
+
+</t>
+<t t-if="doc.fybg_ids">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablelist">
+
+<tbody>
+
+  <tr>
+    <th colspan="2"  width="19%">费用明细</th>
+    <th width="30%">合同</th>
+    <th width="30%">摘要</th>
+
+    <th width="8%">金额</th>
+
+    <th width="5%">单据</th>
+    <th width="9%">责任人</th>
+  </tr>
+
+		<t t-foreach="doc.fybg_ids" t-as="line3">
+		<t t-foreach="line3.expense_line_ids" t-as="line31">
+
+      <tr>
+      <td  colspan="2" ><span t-esc="line31.product_id.name"/></td>
+      <td><span t-esc="line31.tb_id.name"/></td>
+      <td><span t-esc="line31.name"/></td>
+
+      <td style="text-align:right; "><span t-esc="line31.currency_id.symbol"/><span t-esc="line31.total_amount" t-options='{"widget": "float", "precision": 2}'/></td>
+
+      <td style="text-align: center"><span t-esc="line31.x_studio_field_otyLL" /></td>
+      <td style="text-align: center"><span t-esc="line31.employee_id.name" /></td>
+    </tr>
+			</t>
+  </t>
+
+
+  <tr>
+    <td colspan="4" style="text-align: center" >合计</td>
+
+    <td style="text-align: right;font-weight: bolder"><span t-esc="doc.currency_id.symbol"/><t t-esc="sum(x.total_amount for x in doc.fybg_ids)" t-options='{"widget": "float", "precision": 2}'/></td>
+
+	  <td></td>
+	  <td></td>
+  </tr>
+	<t t-foreach="doc.fybg_ids" t-as="sp">
+ <tr>
+    <td colspan="2">申请人：<span t-esc="sp.employee_id.name"/></td>
+    <td>审核人:<span t-esc="sp.x_studio_field_RhQwU"/></td>
+    <td >财务：<span t-esc="sp.x_studio_field_QPCiz"/></td>
+    <td colspan="3">总经理：<span t-esc="sp.x_studio_field_aWTXD"/></td>
+    </tr>
+	</t>
+</tbody>
+
+</table>
+	</t>
+	<table width="100%" border="0" cellspacing="0" cellpadding="0"  style="font-size: 12px; margin-top: 20px">
+  <tbody>
+    <tr>
+      <td width="50%"></td>
+
+      <td width="50%">出纳已付款确认：</td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+</t>
+
+
+
+
+    </template>
+
+
+    <template id="report_fkzl">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="yjzy_extend.report_fkzl_document" t-lang="user.lang"/>
+            </t>
+        </t>
+    </template>
+
+
+</odoo>

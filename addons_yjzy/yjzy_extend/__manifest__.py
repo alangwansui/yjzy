@@ -132,6 +132,7 @@
         'views/account_invoice_extra_po.xml',
         'views/tb_po_invoice.xml',
         'views/hr_expense_other_payment.xml',
+        'views/account_bank_statement_1.xml',
 
 
 
@@ -208,6 +209,7 @@
         'report/account_payment_yfrld_liushui_template.xml',
         'report/report_transport_bill_test_template.xml',
         'report/report_partner_invoice_template.xml',
+        'report/report_fkzl_template.xml',
 
         'template/assets.xml',
 
