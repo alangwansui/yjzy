@@ -962,7 +962,7 @@ class account_reconcile_order(models.Model):
             #line申请的预付金额不能大于预付金额
             #line申请的金额不能大于最低（下一阶段）
 
-            if self.hxd_type_new == '30':
+            if self.hxd_type_new == '20':
                 if self.amount_total_org == 0:
                     raise Warning('认领金额为0，无法提交！')
                 lines = self.line_ids
