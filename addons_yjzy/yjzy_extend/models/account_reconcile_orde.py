@@ -2807,8 +2807,7 @@ class account_reconcile_order_line(models.Model):
         for one in self:
             amount_invoice_so = one.amount_invoice_so
             # amount_payment_can_approve_all = one.invoice_id.amount_payment_can_approve_all
-            reconcile_line_ids = self.env['account.reconcile.order.line'].search(
-                [('order_id.state', 'in', ['post', 'done']), ('po_id', '=', one.po_id.id),('invoice_id','=',one.invoice_id.id)])
+            reconcile_line_ids = self.env['account.reconcile.order.line'].search([('order_id.state', 'in', ['post', 'done']), ('po_id', '=', one.po_id.id),('invoice_id','=',one.invoice_id.id)])
             amount_payment_all = sum(x.amount_total_org_new for x in reconcile_line_ids)
             reconcile_line_done_ids = self.env['account.reconcile.order.line'].search(
                 [('order_id.state', 'in', ['done']), ('po_id', '=', one.po_id.id)])
