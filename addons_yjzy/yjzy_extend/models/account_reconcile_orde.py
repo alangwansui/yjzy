@@ -962,9 +962,9 @@ class account_reconcile_order(models.Model):
             #line申请的预付金额不能大于预付金额
             #line申请的金额不能大于最低（下一阶段）
 
-            if self.hxd_type_new == '30' or (self.hxd_type_new == '40' and self.operation_wizard == '03'):
-                if self.amount_total_org == 0:
-                    raise Warning('认领金额为0，无法提交！')
+            if self.hxd_type_new == '30':
+                # if self.amount_total_org == 0:
+                #     raise Warning('认领金额为0，无法提交！')
                 lines = self.line_ids
                 if lines:
                     for one in lines:
@@ -996,10 +996,26 @@ class account_reconcile_order(models.Model):
                                 })
                 else:
                     if self.operation_wizard == '03':
-                        stage_id = self._stage_find(domain=[('code', '=', '020')])
-                        self.write({'stage_id': stage_id.id,
-                                    'state': 'posted',
-                            })
+                        if self.line_ids:
+                            for one in self.lines:
+                                if one.po_id:
+                                    if one.amount_total_org_new > one.amount_invoice_so_residual_can_approve:
+                                        raise Warning('申请的金额大于可认领应付')
+                                    if one.amount_advance_org > one.advance_residual2:
+                                        raise Warning('预付认领金额大于可认领的预付金额')
+                                    if one.amount_advance_org > one.yjzy_payment_id.advance_balance_total:
+                                        raise Warning('预付认领金额大于可认领的预付金额')
+                                if one.amount_advance_org == 0:
+                                    raise Warning('有明细行预付金额为0，请填写或者删除明细行！')
+                            stage_id = self._stage_find(domain=[('code', '=', '020')])
+                            self.write({'stage_id': stage_id.id,
+                                        'state': 'posted',
+                                })
+                        else:
+                            stage_id = self._stage_find(domain=[('code', '=', '020')])
+                            self.write({'stage_id': stage_id.id,
+                                        'state': 'posted',
+                                        })
                     else:
                         stage_id = self._stage_find(domain=[('code', '=', '040')])
                         self.write({'stage_id': stage_id.id,
@@ -2792,7 +2808,7 @@ class account_reconcile_order_line(models.Model):
             amount_invoice_so = one.amount_invoice_so
             # amount_payment_can_approve_all = one.invoice_id.amount_payment_can_approve_all
             reconcile_line_ids = self.env['account.reconcile.order.line'].search(
-                [('order_id.state', 'in', ['post', 'done']), ('po_id', '=', one.po_id.id)])
+                [('order_id.state', 'in', ['post', 'done']), ('po_id', '=', one.po_id.id),('invoice_id','=',one.invoice_id.id)])
             amount_payment_all = sum(x.amount_total_org_new for x in reconcile_line_ids)
             reconcile_line_done_ids = self.env['account.reconcile.order.line'].search(
                 [('order_id.state', 'in', ['done']), ('po_id', '=', one.po_id.id)])
