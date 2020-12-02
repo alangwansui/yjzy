@@ -568,6 +568,8 @@ class account_payment(models.Model):
         ctx_hxd = self.env.context.get('hxd_id')
         hxd_id = self.env['account.reconcile.order'].search([('id','=',ctx_hxd)],limit=1)
         hxd_id.with_context({'advance_payment_id':self.id}).make_lines_11_16()
+
+
         print('hxd_id_akiny',hxd_id,ctx_hxd)
 
 

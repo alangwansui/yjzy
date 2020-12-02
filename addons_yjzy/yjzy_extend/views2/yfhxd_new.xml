@@ -1202,6 +1202,8 @@
                                     <field name="invoice_residual"
                                            string="最新剩余应付款"/><!--attrs="{'column_invisible':[('parent.operation_wizard','not in',['10'])]}"-->
                                     <field name="invoice_residual_this_time" string="剩余应付款"/>
+                                    <field name="amount_payment_can_approve_all_after"/>
+                                    <field name="invoice_residual_after"/>
                                     <field name="payment_currency_id" invisible="1"/>
 
                                     <field name="amount_payment_can_approve_all" string="最新可申请应付款"
@@ -1253,6 +1255,8 @@
                                     <field name="amount_invoice_so_proportion" invisible="1"/>
                                     <field name="amount_invoice_so_residual" string="最新未认领应付"/>
                                     <field name="amount_invoice_so_residual_d" string="审批前未认领应付"/>
+                                    <field name="amount_invoice_so_residual_d_after"/>
+                                    <field name="amount_invoice_so_residual_can_approve_d_after"/>
                                     <field name="amount_invoice_so_residual_can_approve" string="可申请应付"
                                            groups="base.group_system"/>
                                     <field name="amount_invoice_so_residual_can_approve_d" string="可申请应付"
@@ -1313,6 +1317,15 @@
                             </group>
                             <group>
                                 <field name="reconcile_payment_ids"/>
+                                <field name="account_payment_state_ids">
+                                    <tree>
+                                        <field name="advance_payment_id"/>
+                                        <field name="amount_advance_balance"/>
+                                        <field name="amount_advance_balance_d"/>
+                                        <field name="amount_advance_balance_after"/>
+<!--                                        <field name="advance_payment_currency" invisible="1"/>-->
+                                    </tree>
+                                </field>
                             </group>
                             <group>
 
@@ -1320,6 +1333,7 @@
                             <group>
                                 <field name="move_ids"/>
                             </group>
+
 
                             <!--                            <field name="supplier_advance_payment_ids_char"/>-->
                         </page>
