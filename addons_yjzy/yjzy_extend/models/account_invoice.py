@@ -1163,6 +1163,8 @@ class account_invoice(models.Model):
             else:
                 account_reconcile_id.operation_wizard = '03'
                 account_reconcile_id.hxd_type_new = '40'
+                account_reconcile_id.make_account_payment_state_ids()
+
 
         return {
             'type': 'ir.actions.act_window',
@@ -1196,7 +1198,7 @@ class account_invoice(models.Model):
         hxd_line_approval_ids = self.env['account.reconcile.order.line'].search(
             [('invoice_id.id', 'in', self.ids), ('order_id.state', 'not in', ['done', 'approved'])])
         if hxd_line_approval_ids:
-            raise Warning('选择的应付账单，有存在审批中的，请查验')
+            raise Warning('选择的应付账单，有存在待处理的，请查验')
         if attribute != 'other_payment' and len(self.mapped('partner_id')) > 1:
             raise Warning('不同供应商')
         elif attribute == 'other_payment' and len(self) > 1:

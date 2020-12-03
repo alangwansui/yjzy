@@ -41,6 +41,7 @@ access_account_reconcile_stage,access_account_reconcile_stage,model_account_reco
 access_sale_order_stage,access_sale_order_stage,model_sale_order_stage,base.group_user,1,1,1,1
 access_purchase_order_stage,access_purchase_order_stage,model_purchase_order_stage,base.group_user,1,1,1,1
 access_back_tax_declaration_line,access_back_tax_declaration_line,model_back_tax_declaration_line,base.group_user,1,1,1,1
+access_account_payment_state,access_account_payment_state,model_account_payment_state,base.group_user,1,1,1,1
 
 
 

@@ -578,6 +578,17 @@ class account_reconcile_order(models.Model):
     is_editable = fields.Boolean(u'可编辑')
     gongsi_id = fields.Many2one('gongsi', '内部公司')
 
+    def make_account_payment_state_ids(self):
+        account_payment_state_ids = self.supplier_advance_payment_ids
+        account_payment_state_obj = self.env['account.payment.state']
+        for one in account_payment_state_ids:
+            account_payment_state_id = account_payment_state_obj.create({
+                'advance_payment_id':one.id,
+                'reconcile_order_id':self.id,
+
+            })
+
+
     def name_get(self):
         res = []
         ctx = self.env.context
@@ -1402,12 +1413,14 @@ class account_reconcile_order(models.Model):
                             'approve_date': fields.date.today(),
                             'approve_uid': self.env.user.id
                             })
-                for x in self.line_ids:
-                    x.amount_invoice_so_residual_can_approve_d_after = x.amount_invoice_so_residual_can_approve_d - x.amount_total_org_new
-                for line in self.line_no_ids:
-                    line.amount_payment_can_approve_all_after = line.amount_payment_can_approve_all_this_time - line.amount_total_org_new
-                for x in self.account_payment_state_ids:
-                    x.amount_advance_balance_after = x.amount_advance_balance_d - x.reconcile_order_line_id.amount_total_org_new
+                # for x in self.line_ids:
+                #     x.amount_invoice_so_residual_can_approve_d_after = x.amount_invoice_so_residual_can_approve_d - x.amount_total_org_new
+                # for line in self.line_no_ids:
+                #     line.amount_payment_can_approve_all_after = line.amount_payment_can_approve_all_this_time - line.amount_total_org_new
+                # for x in self.account_payment_state_ids:
+                #     if x.reconcile_order_line_id:
+                #         x.amount_advance_balance_after = x.amount_advance_balance_d - x.reconcile_order_line_id.amount_total_org_new
+                #         x.amount_reconcile = x.reconcile_order_line_id.amount_total_org_new
             self.create_yjzy_payment_yfrl()  #生成应付认领单
 
             if self.operation_wizard in ['03','20', '25']:
@@ -1458,18 +1471,21 @@ class account_reconcile_order(models.Model):
                     'state': 'done',
                     })
         self.action_done_new()#对应的生成预付待认领的那个付款单的过账
-        if self.line_ids:
-            for x in self.line_ids:
-                x.amount_invoice_so_residual_d_after = x.amount_invoice_so_residual_d - x.amount_total_org_new
-                x.amount_invoice_so_residual_can_approve_d_after = x.amount_invoice_so_residual_can_approve_d - x.amount_total_org_new
-        if self.line_no_ids:
-            for line in self.line_no_ids:
-                line.amount_payment_can_approve_all_after = line.amount_payment_can_approve_all_this_time - line.amount_total_org_new
-                line.invoice_residual_after = line.invoice_residual_after - line.amount_total_org_new
+        #1203取消
+        # if self.line_ids:
+        #     for x in self.line_ids:
+        #         x.amount_invoice_so_residual_d_after = x.amount_invoice_so_residual_d - x.amount_total_org_new
+        #         x.amount_invoice_so_residual_can_approve_d_after = x.amount_invoice_so_residual_can_approve_d - x.amount_total_org_new
+        # if self.line_no_ids:
+        #     for line in self.line_no_ids:
+        #         line.amount_payment_can_approve_all_after = line.amount_payment_can_approve_all_this_time - line.amount_total_org_new
+        #         line.invoice_residual_after = line.invoice_residual_after - line.amount_total_org_new
 
-        if self.account_payment_state_ids:
-            for x in self.account_payment_state_ids:
-                x.amount_advance_balance_after = x.amount_advance_balance_d - x.reconcile_order_line_id.amount_total_org_new
+        # if self.account_payment_state_ids:
+        #     for x in self.account_payment_state_ids:
+        #         if x.reconcile_order_line_id:
+        #             x.amount_advance_balance_after = x.amount_advance_balance_d - x.reconcile_order_line_id.amount_total_org_new
+        #             x.amount_reconcile = x.reconcile_order_line_id.amount_total_org_new
 
 
 
@@ -2178,13 +2194,10 @@ class account_reconcile_order(models.Model):
                     line.amount_invoice_so_residual_d = line.amount_invoice_so_residual
                     line.amount_invoice_so_residual_can_approve_d = line.amount_invoice_so_residual_can_approve
 
-                    account_payment_state_id = account_payment_state_obj.create({
-                        'advance_payment_id': yjzy_payment_id,
-                        'reconcile_order_id': self.id,
-                        'reconcile_order_line_id': line.id,
-
-                    })
-                    account_payment_state_id.amount_advance_balance_d = account_payment_state_id.advance_payment_id.advance_balance_total
+                    for x in self.account_payment_state_ids:
+                        if x.advance_payment_id.id == yjzy_payment_id:
+                            x.amount_advance_balance_d = x.advance_payment_id.advance_balance_total
+                            x.reconcile_order_line_id = line
     #826
         so_po_dic = {}
         print('line_obj', line_ids)
@@ -2679,13 +2692,12 @@ class account_reconcile_order(models.Model):
                             line.amount_invoice_so_residual_d = line.amount_invoice_so_residual
                             line.amount_invoice_so_residual_can_approve_d = line.amount_invoice_so_residual_can_approve
                             self.compute_line_ids_advice_amount_advance_org()
-                            account_payment_state_id = account_payment_state_obj.create({
-                                'advance_payment_id': yjzy_payment_id,
-                                'reconcile_order_id': self.id,
-                                'reconcile_order_line_id': line.id,
 
-                            })
-                            account_payment_state_id.amount_advance_balance_d = account_payment_state_id.advance_payment_id.advance_balance_total
+                            for x in self.account_payment_state_ids:
+                                if x.advance_payment_id.id == yjzy_payment_id:
+                                    x.amount_advance_balance_d = x.advance_payment_id.advance_balance_total
+                                    x.reconcile_order_line_id = line.id
+
                     else:
                         line=line_obj.create({
                             'order_id': self.id,
@@ -2696,13 +2708,13 @@ class account_reconcile_order(models.Model):
                         })
                         line.amount_invoice_so_residual_d = line.amount_invoice_so_residual
                         line.amount_invoice_so_residual_can_approve_d = line.amount_invoice_so_residual_can_approve
-                        account_payment_state_id = account_payment_state_obj.create({
-                            'advance_payment_id': yjzy_payment_id,
-                            'reconcile_order_id': self.id,
-                            'reconcile_order_line_id':line.id,
 
-                        })
-                        account_payment_state_id.amount_advance_balance_d = account_payment_state_id.advance_payment_id.advance_balance_total
+                        for x in self.account_payment_state_ids:
+                            if x.advance_payment_id.id == yjzy_payment_id:
+                                x.amount_advance_balance_d = x.advance_payment_id.advance_balance_total
+                                x.reconcile_order_line_id = line.id
+
+
 
 
     #826
@@ -2979,6 +2991,14 @@ class account_reconcile_order_line(models.Model):
         for one in self:
             one.amount_total_invoice = one.invoice_id.amount_total
 
+    @api.depends('amount_invoice_so_residual_can_approve_d','amount_total_org_new','amount_invoice_so_residual_d')
+    def compute_amount_invoice_so_residual_can_approve_d_after(self):
+        for x in self:
+            amount_invoice_so_residual_can_approve_d = x.amount_invoice_so_residual_can_approve_d
+            amount_total_org_new = x.amount_total_org_new
+            amount_invoice_so_residual_d = x.amount_invoice_so_residual_d
+            x.amount_invoice_so_residual_can_approve_d_after = amount_invoice_so_residual_can_approve_d - amount_total_org_new
+            x.amount_invoice_so_residual_d_after = amount_invoice_so_residual_d - amount_total_org_new
 
     least_advice_amount_advance_org = fields.Monetary(u'最低建议金额',currency_field='yjzy_currency_id')
 
@@ -3038,7 +3058,7 @@ class account_reconcile_order_line(models.Model):
     amount_invoice_so_residual_d_after = fields.Monetary(u'本次认领后可认领金额',currency_field='invoice_currency_id')
     amount_invoice_so_residual_can_approve = fields.Monetary(u'占比剩余可申请的应收付',currency_field='invoice_currency_id',compute=compute_can_approve)
     amount_invoice_so_residual_can_approve_d = fields.Monetary(u'静态占比剩余可申请的应收付',currency_field='invoice_currency_id')
-    amount_invoice_so_residual_can_approve_d_after = fields.Monetary(u'本次认领后可申请金额', currency_field='invoice_currency_id')
+    amount_invoice_so_residual_can_approve_d_after = fields.Monetary(u'本次认领后可申请金额', currency_field='invoice_currency_id',compute=compute_amount_invoice_so_residual_can_approve_d_after)
     advance_residual = fields.Monetary(currency_field='yjzy_currency_id', string=u'预付余额', compute=compute_info, )
     advance_residual2 = fields.Monetary(currency_field='yjzy_currency_id', string=u'预收余额', compute=compute_info, )
 
@@ -3132,6 +3152,14 @@ class account_reconcile_order_line_no(models.Model):
                  'context': {'open':1}
                 }
 
+    @api.depends('amount_payment_can_approve_all_this_time','invoice_residual_this_time','amount_payment_org')
+    def compute_amount_payment_can_approve_all_after(self):
+        for line in self:
+            amount_payment_can_approve_all_this_time = line.amount_payment_can_approve_all_this_time
+            amount_payment_org = line.amount_payment_org
+            invoice_residual_this_time = line.invoice_residual_this_time
+            line.amount_payment_can_approve_all_after = amount_payment_can_approve_all_this_time - amount_payment_org
+            line.invoice_residual_after = invoice_residual_this_time - amount_payment_org
 
     #计算出非自己认领明细原则
 
@@ -3156,8 +3184,8 @@ class account_reconcile_order_line_no(models.Model):
     amount_payment_can_approve_all_this_time = fields.Monetary(u'可以申请支付应付款d',currency_field='invoice_currency_id')
     invoice_residual_this_time = fields.Monetary( string=u'发票余额d', readonly=True,currency_field='invoice_currency_id')
 
-    amount_payment_can_approve_all_after = fields.Monetary(u'本次申请后可申请金额', currency_field='invoice_currency_id')
-    invoice_residual_after = fields.Monetary(string=u'本次认领后可认领金额', readonly=True, currency_field='invoice_currency_id')
+    amount_payment_can_approve_all_after = fields.Monetary(u'本次申请后可申请金额', currency_field='invoice_currency_id' ,compute=compute_amount_payment_can_approve_all_after)
+    invoice_residual_after = fields.Monetary(string=u'本次认领后可认领金额', readonly=True, currency_field='invoice_currency_id',compute=compute_amount_payment_can_approve_all_after)
 
     reconcile_order_line_payment = fields.Monetary(related='invoice_id.reconcile_order_line_payment', string=u'发票付款支付',
                                                    readonly=True)
@@ -3199,16 +3227,40 @@ class advance_payment_state(models.Model):
         for one in self:
             advance_payment_currency = one.advance_payment_id.yjzy_payment_currency_id
             amount_advance_balance = one.advance_payment_id.advance_balance_total
+            amount_payment = one.advance_payment_id.amount
             one.advance_payment_currency = advance_payment_currency
             one.amount_advance_balance = amount_advance_balance
+            one.amount_payment = amount_payment
+    @api.depends('reconcile_order_line_id','reconcile_order_line_id.amount_total_org_new','amount_advance_balance_d')
+    def compute_amount_reconcile(self):
+        for one in self:
+            amount_reconcile = one.reconcile_order_line_id.amount_total_org_new
+            amount_advance_balance_d = one.amount_advance_balance_d
+            one.amount_reconcile = amount_reconcile
+            one.amount_advance_balance_after = amount_advance_balance_d - amount_reconcile
 
 
-    advance_payment_id = fields.Many2one('account.payment',u'预收付款单')
-    reconcile_order_id = fields.Many2one('account.reconcile.order','认领单')#手动写进来
+    advance_payment_id = fields.Many2one('account.payment',u'预收付款单',ondelete='cascade')
+    reconcile_order_id = fields.Many2one('account.reconcile.order','认领单',ondelete='cascade')#手动写进来
+    advance_payment_date = fields.Date('付款日期',related='advance_payment_id.payment_date')
+    po_id = fields.Many2one('purchase.order',related='advance_payment_id.po_id')
+
     reconcile_order_line_id = fields.Many2one('account.reconcile.order.line','认领明细')
+    amount_payment = fields.Monetary(u'预收付款单余额',currency_field='advance_payment_currency',compute=compute_info)
     amount_advance_balance = fields.Monetary(u'预收付款单余额',currency_field='advance_payment_currency',compute=compute_info)
     advance_payment_currency = fields.Many2one('res.currency',compute=compute_info)
+
     amount_advance_balance_d = fields.Monetary(u'本次认领前可认领金额',currency_field='advance_payment_currency')
-    amount_advance_balance_after = fields.Monetary(u'本次认领后可认领金额',currency_field='advance_payment_currency')
+    amount_advance_balance_after = fields.Monetary(u'本次认领后可认领金额',currency_field='advance_payment_currency',compute=compute_amount_reconcile)
+    amount_reconcile = fields.Monetary(u'本次认领金额',currency_field='advance_payment_currency',compute=compute_amount_reconcile)
+
+    def action_make_reconcile_line_ids(self):
+        ctx_hxd = self.env.context.get('hxd_id')
+        hxd_id = self.reconcile_order_id
+        hxd_id.with_context({'advance_payment_id': self.advance_payment_id.id}).make_lines_11_16()
+
+        # self.amount_advance_balance_d = self.advance_payment_id.advance_balance_total
+
+
 
 
