@@ -322,9 +322,9 @@
                     <field name="residual_times_out_in_new" groups="base.group_system"/>
                     <field name="amount_total_signed" string="原始应付款" sum="Total"/>
                     <field name="residual_signed" string="剩余因付款" sum="Amount Due"/>
-                    <field name="amount_payment_can_approve_all" string="可申请支付应付款" sum="小计"/>
+                    <field name="amount_payment_can_approve_all" string="可申请支付应付款" sum="小计" options="{'fg_color':'black'}"/>
                     <field name="yjzy_total" string="总原始应付款"  sum="小计"/>
-                    <field name="yjzy_residual" string="总剩余应付款"  sum="小计"/>
+                    <field name="yjzy_residual" string="总剩余应付款"  sum="小计" options="{'fg_color':'black'}"/>
                     <field name="yjzy_amount_payment_can_approve_all" string="总可申请应付款"  sum="小计"/>
                     <field name="yjzy_invoice_amount_total" string="额外原始应付款" sum="小计" invisible="1"/>
                     <field name="yjzy_invoice_residual_signed_total" string="额外剩余因付款" sum="小计" invisible="1"/>

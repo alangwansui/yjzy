@@ -3055,7 +3055,7 @@ class account_reconcile_order_line(models.Model):
     #826
     amount_invoice_so_residual = fields.Monetary(u'占比剩余应收付',currency_field='invoice_currency_id',compute=compute_can_approve)
     amount_invoice_so_residual_d = fields.Monetary(u'静态占比剩余应收付',currency_field='invoice_currency_id')#认领前
-    amount_invoice_so_residual_d_after = fields.Monetary(u'本次认领后可认领金额',currency_field='invoice_currency_id')
+    amount_invoice_so_residual_d_after = fields.Monetary(u'本次认领后可认领金额',currency_field='invoice_currency_id',compute=compute_amount_invoice_so_residual_can_approve_d_after)
     amount_invoice_so_residual_can_approve = fields.Monetary(u'占比剩余可申请的应收付',currency_field='invoice_currency_id',compute=compute_can_approve)
     amount_invoice_so_residual_can_approve_d = fields.Monetary(u'静态占比剩余可申请的应收付',currency_field='invoice_currency_id')
     amount_invoice_so_residual_can_approve_d_after = fields.Monetary(u'本次认领后可申请金额', currency_field='invoice_currency_id',compute=compute_amount_invoice_so_residual_can_approve_d_after)
