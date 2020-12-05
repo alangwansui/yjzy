@@ -183,9 +183,9 @@ class HrExpense(models.Model):
             total_currency -= line['amount_currency'] or line['price']
         return total, total_currency, account_move_lines
 
-
+#1204 先不用新的，付款指令还是从生成的付款单来创建
     @api.multi
-    def action_move_create(self):
+    def action_move_create_new(self):
         '''
         main function that is called when trying to create the accounting entries related to an expense
         '''
@@ -233,7 +233,8 @@ class HrExpense(models.Model):
                     'partner_type': 'supplier',
                     'journal_id': journal.id,
                     'payment_date': expense.date,
-                    'state': 'reconciled',  #jon 'state': 'reconciled',
+                    # 'state': 'reconciled',  #jon 'state': 'reconciled',
+                    'state':'draft',#akiny
                     'currency_id': diff_currency_p and expense.currency_id.id or journal_currency.id,
                     'amount': diff_currency_p and abs(total_currency) or abs(total),
                     'name': expense.name,
@@ -283,8 +284,116 @@ class HrExpense(models.Model):
             expense.sheet_id.write({'account_move_id': move.id})
             if expense.payment_mode == 'company_account':
                 expense.sheet_id.paid_expense_sheets()
+                #akiny:取消对分录的过账：原理是，生成的这个付款单不用原生的post过账，直接将付款单状态更新为核销，并且让分录过账
+                #120
+        # for move in move_group_by_sheet.values():
+        #     pass
+        #     #默认不过账
+        #     move.post()
+        return True
+    #1204备份1
+    @api.multi
+    def action_move_create(self):
+        '''
+        main function that is called when trying to create the accounting entries related to an expense
+        '''
+        move_group_by_sheet = {}
+        for expense in self:
+            journal = expense.sheet_id.bank_journal_id if expense.payment_mode == 'company_account' else expense.sheet_id.journal_id
+            # create the move that will contain the accounting entries
+            acc_date = expense.sheet_id.accounting_date or expense.date
+            if not expense.sheet_id.id in move_group_by_sheet:
+                move = self.env['account.move'].create({
+                    'journal_id': journal.id,
+                    'company_id': self.env.user.company_id.id,
+                    'date': acc_date,
+                    'ref': expense.sheet_id.name,
+                    # force the name to the default value, to avoid an eventual 'default_name' in the context
+                    # to set it to '' which cause no number to be given to the account.move when posted.
+                    'name': '/',
+                    'gongsi_id': expense.gongsi_id.id or expense.sheet_id.gongsi_id.id,
+                })
+                move_group_by_sheet[expense.sheet_id.id] = move
+            else:
+                move = move_group_by_sheet[expense.sheet_id.id]
+            company_currency = expense.company_id.currency_id
+            diff_currency_p = expense.currency_id != company_currency
+            # one account.move.line per expense (+taxes..)
+            move_lines = expense._move_line_get()
+
+            # create one more move line, a counterline for the total on payable account
+            payment_id = False
+            total, total_currency, move_lines = expense._compute_expense_totals(company_currency, move_lines, acc_date)
+            if expense.payment_mode == 'company_account':
+                if not expense.sheet_id.bank_journal_id.default_credit_account_id:
+                    raise UserError(_("No credit account found for the %s journal, please configure one.") % (
+                        expense.sheet_id.bank_journal_id.name))
+                emp_account = expense.sheet_id.bank_journal_id.default_credit_account_id.id
+                journal = expense.sheet_id.bank_journal_id
+                # create payment
+                payment_methods = (
+                                              total < 0) and journal.outbound_payment_method_ids or journal.inbound_payment_method_ids
+                journal_currency = journal.currency_id or journal.company_id.currency_id
+
+                # <jon> 费用分录创建
+                payment = self.env['account.payment'].create({
+                    'payment_method_id': payment_methods and payment_methods[0].id or False,
+                    'payment_type': total < 0 and 'outbound' or 'inbound',
+                    'partner_id': expense.partner_id.id or expense.employee_id.address_home_id.commercial_partner_id.id,
+                    'partner_type': 'supplier',
+                    'journal_id': journal.id,
+                    'payment_date': expense.date,
+                    'state': 'reconciled',  #jon 'state': 'reconciled',
+                    'currency_id': diff_currency_p and expense.currency_id.id or journal_currency.id,
+                    'amount': diff_currency_p and abs(total_currency) or abs(total),
+                    'name': expense.name,
+                    'sfk_type': total < 0 and 'rcfksqd' or 'rcskrld',
+                    'expense_id': expense.id,
+                    'yjzy_payment_id': expense.yjzy_payment_id.id,
+                    'gongsi_id': expense.gongsi_id.id or expense.sheet_id.gongsi_id.id,
+                })
+                payment_id = payment.id
+            else:
+                if not expense.employee_id.address_home_id:
+                    raise UserError(_("No Home Address found for the employee %s, please configure one.") % (
+                        expense.employee_id.name))
+                emp_account = expense.employee_id.address_home_id.property_account_payable_id.id
+
+            aml_name = expense.employee_id.name + ': ' + expense.name.split('\n')[0][:64]
+
+            print('---->,', move, expense.partner_id.id, expense.partner_id.name, aml_name)
+
+            move_lines.append({
+                'type': 'dest',
+                'name': aml_name,
+                'price': total,
+                'account_id': emp_account,
+                'date_maturity': acc_date,
+                'amount_currency': diff_currency_p and total_currency or False,
+                'currency_id': diff_currency_p and expense.currency_id.id or False,
+                'payment_id': payment_id,
+                'expense_id': expense.id,
+                'new_payment_id': expense.yjzy_payment_id.id,
+                'partner_id': expense.partner_id.id or expense.employee_id.address_home_id.commercial_partner_id.id,
+                'gongsi_id': expense.gongsi_id.id or expense.sheet_id.gongsi_id.id,
+            })
+
+            # <jon> 添加差额分录明细
+            # if expense.account_id.polarity:
+            #     diff_debit_move, diff_credit_move = expense.prepare_diff_account_move_line()
+            #     move_lines.append(diff_debit_move)
+            #     move_lines.append(diff_credit_move)
+
+            # convert eml into an osv-valid format
+            lines = [(0, 0, expense._prepare_move_line(x)) for x in move_lines]
+
+            move.with_context(dont_create_taxes=True).write({'line_ids': lines})
+            expense.sheet_id.write({'account_move_id': move.id})
+            if expense.payment_mode == 'company_account':
+                expense.sheet_id.paid_expense_sheets()
+
         for move in move_group_by_sheet.values():
-            #pass
+            # pass
             #默认不过账
             move.post()
         return True

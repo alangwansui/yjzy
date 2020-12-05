@@ -106,6 +106,7 @@ class hr_expense(models.Model):
     tb_budget_rest = fields.Monetary('出运单预算剩余', related='tb_id.budget_reset_amount', currency_field='currency_id')
 
     yjzy_payment_id = fields.Many2one('account.payment', u'新付款单', related='sheet_id.payment_id', store=True)
+    fkzl_id = fields.Many2one('account.payment', u'付款指令',related='sheet_id.fkzl_id', store=True)
     yjzy_payment_currency_id = fields.Many2one('res.currency', u'新付款单币种', related='yjzy_payment_id.currency_id')
     balance = fields.Monetary(related='yjzy_payment_id.balance', currency_field='yjzy_payment_currency_id')
 

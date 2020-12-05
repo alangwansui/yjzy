@@ -412,7 +412,7 @@
                     <field name="state"/>
                     <field name="type" invisible="context.get('type',True)"/>
                     <field name="residual_times_out_in" groups="base.group_system"/>
-                    <field name="fault_comments" invisible="1"/>
+                    <field name="fault_comments" invisible="0"/>
                 </tree>
             </field>
         </record>

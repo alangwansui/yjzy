@@ -125,6 +125,14 @@ class purchase_order(models.Model):
     def compute_so_id_amount_total(self):
         for one in self:
             one.so_id_amount_total = one.source_so_id.amount_total
+
+    @api.depends('order_line','order_line.sol_id_price_total')
+    def compute_sol_ids_amount_total(self):
+        for one in self:
+            sol_ids_amount_total = sum(x.sol_id_price_total for x in one.order_line)
+            one.sol_ids_amount_total = sol_ids_amount_total
+
+
     @api.depends('hxd_ids','hxd_ids.amount_total_org_new')
     def compute_amount_org_hxd(self):
         for one in self:
@@ -222,6 +230,9 @@ class purchase_order(models.Model):
     aml_ids = fields.One2many('account.move.line', 'po_id', u'分录明细', readonly=True)
     so_currentcy_id = fields.Many2one('res.currency','销售合同币种',related='source_so_id.currency_id')
     so_id_amount_total = fields.Monetary('对应销售金额',currency_field='so_currentcy_id', compute=compute_so_id_amount_total,store=True)
+    sol_ids_amount_total = fields.Monetary('对应销售金额', currency_field='so_currentcy_id', compute=compute_sol_ids_amount_total,
+                                         store=True)
+
 
     #采购单更换了供应商，需要更新对应的销售明细上的供应商
     def change_supplier(self):
@@ -572,10 +583,19 @@ class purchase_order_line(models.Model):
             # print ('===>', info)
             one.supplierinfo_id = info
 
+    @api.depends('sol_id','sol_id.price_total')
+    def compute_sol_id_price_total(self):
+        for one in self:
+            one.sol_id_price_total = one.sol_id.price_total
+
     s_uom_id = fields.Many2one('product.uom', u'销售打印单位', related='product_id.s_uom_id')
     p_uom_id = fields.Many2one('product.uom', u'采购打印单位', related='product_id.p_uom_id')
 
     sol_id = fields.Many2one('sale.order.line', u'销售明细', copy=False)
+    sol_currency_id = fields.Many2one('res.currency',related='sol_id.currency_id')
+    sol_id_price_total = fields.Monetary(u'对应销售金额',currency_field='sol_currency_id',compute=compute_sol_id_price_total, store=True)
+
+
     so_id = fields.Many2one('sale.order', related='sol_id.order_id', string=u'销售订单', readonly=True)
     back_tax = fields.Float(u'退税率', digits=dp.get_precision('Back Tax'))
 

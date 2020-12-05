@@ -156,6 +156,8 @@
 
         'views2/expense.xml',
         'views2/expense_sheet.xml',
+        'views2/fkzl.xml',
+        'views2/rcfkd_fksq.xml',
         'views/back_tax_declaration.xml',
 
         'data/data.xml',

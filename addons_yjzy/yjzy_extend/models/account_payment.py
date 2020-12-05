@@ -310,6 +310,21 @@ class account_payment(models.Model):
     #                                                           domain=[('state_1', '=', '40_approve')])
     # advance_reconcile_order_approve_amount = fields.Monetary('预收付-应收付认领审批完成金额', currency_field='yjzy_payment_currency_id',compute=compute_advance_reconcile_order_approve_amount, store=True )
     # approve_balance = fields.Monetary('预收付-应收付认领可认领金额', currency_field='yjzy_payment_currency_id', compute=compute_advance_reconcile_order_approve_amount, store=True )
+
+    @api.depends('partner_id','bank_id')
+    def compute_pay_to(self):
+        for one in self:
+            partner_id = one.partner_id
+            bank_id = one.bank_id
+            bank_huming = bank_id.huming
+            if partner_id.name == '未定义':
+                pay_to = bank_huming
+            else:
+                pay_to = partner_id.name
+            one.pay_to = pay_to
+
+    pay_to = fields.Char('付款对象', compute = compute_pay_to,store=True)
+
     print_times = fields.Integer(u'打印次数')
     print_date = fields.Datetime('打印时间')
     print_uid = fields.Many2one('res.users',u'最新打印人员')
@@ -400,6 +415,7 @@ class account_payment(models.Model):
 
     #819增加汇率字段
 
+    # zlsx = fields.Selection([('fkzl',u'付款指令'),('fksq',u'付款申请'),('fkzl_fksq',u'付款指令和申请')],u'指令付款属性') #鉴定这个付款单的指令和付款属性，可以用来综合历史数据
 
     advance_type = fields.Selection([('10_no_contract',u'无合同'),
                                      ('20_contract',u'有合同')],u'预付类型',conpute=compute_advance_type, default='10_no_contract',store=True)
@@ -441,6 +457,7 @@ class account_payment(models.Model):
     diff_account_id = fields.Many2one('account.account', u'差异科目')
     diff_amount = fields.Monetary(u'差异金额', currency_field='currency_id')
     yjzy_payment_id = fields.Many2one('account.payment', u'选择收款单')
+
     # yjzy_advance_payment_id = fields.Many2one('account.payment', u'预收认领单')#给最后核销生成的payment作为核销参考
     yjzy_payment_currency_id = fields.Many2one('res.currency', related='yjzy_payment_id.currency_id')
     yjzy_payment_balance = fields.Monetary(u'认领余额', related='yjzy_payment_id.balance', currency_field='yjzy_payment_currency_id')

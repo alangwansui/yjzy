@@ -548,6 +548,7 @@ class account_reconcile_order(models.Model):
     move_ids = fields.One2many('account.move', 'reconcile_order_id', u'分录')
 
     yjzy_payment_id = fields.Many2one('account.payment', u'选择收款单')
+    fkzl_id = fields.Many2one('account.payment', u'付款指令')
     yjzy_payment_currency_id = fields.Many2one('res.currency', related='yjzy_payment_id.currency_id')
     yjzy_payment_balance = fields.Monetary(u'认领余额', related = 'yjzy_payment_id.balance',  currency_field='yjzy_payment_currency_id',)
     # compute=compute_yjzy_payment_balance,

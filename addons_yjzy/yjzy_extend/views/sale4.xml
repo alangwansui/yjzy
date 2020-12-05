@@ -1051,7 +1051,8 @@
                                             <field name="amount_untaxed" sum="Total Untaxed amount" string="Untaxed"
                                                    widget="monetary" invisible="1"/>
                                             <field name="amount_total" sum="Total amount" widget="monetary"/>
-                                            <field name="so_id_amount_total" string="对应销售额"/>
+                                            <field name="so_id_amount_total" string="对应销售额" groups="base.group_system"/>
+                                            <field name="sol_ids_amount_total" string="对应销售额"/>
                                             <field name="so_currentcy_id" invisible="1"/>
                                             <field name="balance" string="预付余额"/>
                                             <field name="currency_id" invisible="1"/>
