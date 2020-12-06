@@ -142,13 +142,24 @@
                         <page string="应付-付款申请单" attrs="{'invisible': [('count_yshx','=', 0)]}">
                             <field name="yshx_ids" widget="many2many"  domain="[('sfk_type','=','yfhxd'),('partner_id','=',partner_id),('state','=','approved'),
                             ('yjzy_payment_id','=',False)]"
-                                   context="{'form_view_ref':'yjzy_extend.account_yfhxd_form_view','tree_view_ref':'yjzy_extend.account_yfhxd_tree_view'}">
-                                <tree>
+                                   context="{'form_view_ref':'yjzy_extend.account_yfhxd_form_view_new','tree_view_ref':'yjzy_extend.account_yfhxd_tree_view'}">
+                                <tree string="应付核销单" >
                                     <field name="name"/>
-                                    <field name="partner_id" string="供应商"/>
-                                    <field name="date"/>
-                                    <field name="amount_total_org" string="申请金额"/>
-                                    <field name="amount_invoice_residual_org" string="总剩余应付款" invisible="1"/>
+                                    <field name="partner_id"/>
+                                    <field name="invoice_ids" widget="many2many_tags" string="应付账单"/>
+                                    <field name="date" invisible="1"/>
+                                    <field name="approve_uid" invisible="1"/>
+                                    <field name="approve_date"/>
+
+                                    <field name="amount_total_org" string="全部认领合计" groups="base.group_system"/>
+                                    <field name="amount_total_org_new" string="全部认领合计" groups="base.group_system"/>
+                                    <field name="amount_payment_org" string="实际申请付款金额" groups="base.group_system"/>
+                                    <field name="amount_payment_org_new" string="实际申请金额"/>
+                                    <field name="amount_advance_org" string="预付认领金额" groups="base.group_system"/>
+                                    <field name="amount_advance_org_new" string="预付认领金额" groups="base.group_system"/>
+                                    <field name="supplier_advance_payment_ids_amount_advance_org" string="待审批预付认领金额"/>
+                                    <field name="amount_total" invisible="1"/>
+                                    <field name="currency_id" attrs="{}" invisible="1"/>
                                     <field name="state"/>
                                 </tree>
                             </field>
@@ -170,7 +181,7 @@
                                         <field name="employee_sales_uid" string="费用对象" />
 
                                         <field name="name" invisible="1"/>
-                                        <field name="sys_outer_hetong" />
+                                        <field name="sys_outer_hetong" invisible="1"/>
                                         <field name="tb_id" context="{'show_ref': 1}" options="{'no_create':True}" domain="[('state','not in',['cancel','refused','draft','check','submit','sales_approve'])]"/>
 
                                         <field name="lead_id" string="项目编号" options="{'quick_create': 1,'no_open':1}" />

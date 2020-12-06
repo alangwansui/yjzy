@@ -103,6 +103,7 @@ class account_payment(models.Model):
             'res_id': fkzl_id.id,
             'target': 'current',
             'context': {'default_sfk_type': 'fkzl',
+                        'only_name':1
 
                         }
         }
