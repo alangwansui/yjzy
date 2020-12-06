@@ -135,7 +135,7 @@
                             <field name="yshx_fkzl_ids" widget="many2many" />
                         </page>
                         <page string="费用报告" attrs="{'invisible': [('fybg_fkzl_ids_count','=', 0)]}">
-                            <field name="fybg_fkzl_ids" widget="many2many" />
+
                              <field name="expense_fkzl_ids" widget="many2many">
                                  <tree >
                                         <field name="categ_id" string="大类*" options="{'no_create':True,'no_open':1}" domain="[('parent_id.name','=','费用')]"  context="{'search_order': 'sequence','only_name':1}" />
@@ -179,6 +179,7 @@
                                         <field name="gongsi_id" string="公司主体" options="{'no_create':true,'no_open':1}" invisible="1"/>
                                     </tree>
                              </field>
+                                  <field name="fybg_fkzl_ids" widget="many2many" />
                         </page>
                         <page string="付款申请" groups="base.group_system">
                             <field name="fksqd_2_ids" widget="many2many" />
