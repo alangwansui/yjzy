@@ -157,23 +157,23 @@
                         <page string="费用报告" attrs="{'invisible': [('count_fybg','=', 0)]}">
                             <field name="expense_ids" widget="many2many" readonly="True">
                                 <tree >
-                                        <field name="categ_id" string="大类*" options="{'no_create':True,'no_open':1}" domain="[('parent_id.name','=','费用')]" attrs="{'readonly':[('parent.state','not in',['draft'])]}" context="{'search_order': 'sequence','only_name':1}" required="1"/>
-                                        <field name="second_categ_id" string="中类*" options="{'no_create':True,'no_open':1}" attrs="{'readonly':[('parent.state','not in',['draft'])]}" domain="[('parent_id','=', categ_id)]" context="{'search_order': 'sequence','only_name':1}" required="1"/>
-                                        <field name="product_id" required="1" string="小类*" options="{'no_create':True,'no_open':1}" attrs="{'readonly':[('parent.state','not in',['draft'])]}" domain="[('can_be_expensed','=',True),('categ_id','=',second_categ_id)]" context="{'default_can_be_expensed': 1,'tree_view_ref':'hr_expense.product_product_expense_tree_view','only_name':1}"/>
+                                        <field name="categ_id" string="大类*" options="{'no_create':True,'no_open':1}" domain="[('parent_id.name','=','费用')]"  context="{'search_order': 'sequence','only_name':1}" />
+                                        <field name="second_categ_id" string="中类*" options="{'no_create':True,'no_open':1}"   context="{'search_order': 'sequence','only_name':1}" />
+                                        <field name="product_id" required="1" string="小类*" options="{'no_create':True,'no_open':1}" context="{'default_can_be_expensed': 1,'tree_view_ref':'hr_expense.product_product_expense_tree_view','only_name':1}"/>
 
 
 
-                                        <field name="unit_amount" string="费用金额" required="1" sum="小计" attrs="{'readonly':[('parent.state','not in',['draft'])]}" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                                          <field name="date" string="费用发生日期*" attrs="{'readonly':[('parent.state','not in',['draft'])]}"/>
-                                        <field name="employee_id" string="责任人*" attrs="{'readonly':[('parent.state','not in',['draft'])]}" options="{'no_create':True,'no_open':1}"/>
+                                        <field name="unit_amount" string="费用金额"  sum="小计"  widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                          <field name="date" string="费用发生日期*" />
+                                        <field name="employee_id" string="责任人"  options="{'no_create':True,'no_open':1}"/>
 
-                                        <field name="employee_sales_uid" string="费用对象*" attrs="{'readonly':[('parent.state','not in',['draft'])]}" options="{'no_create':True,'no_open':1}" domain="['|',('job_id.name','=','客户经理'),('job_id.name','=','公司')]" required="1"/>
+                                        <field name="employee_sales_uid" string="费用对象" />
 
                                         <field name="name" invisible="1"/>
-                                        <field name="sys_outer_hetong" attrs="{'readonly':[('budget_type','!=','transport')]}"/>
-                                        <field name="tb_id" context="{'show_ref': 1}" options="{'no_create':True}" attrs="{'readonly':[('budget_type','!=','transport')]}" domain="[('state','not in',['cancel','refused','draft','check','submit','sales_approve'])]"/>
+                                        <field name="sys_outer_hetong" />
+                                        <field name="tb_id" context="{'show_ref': 1}" options="{'no_create':True}" domain="[('state','not in',['cancel','refused','draft','check','submit','sales_approve'])]"/>
 
-                                        <field name="lead_id" string="项目编号" options="{'quick_create': 1,'no_open':1}" attrs="{'readonly':[('budget_type','!=','lead')]}"/>
+                                        <field name="lead_id" string="项目编号" options="{'quick_create': 1,'no_open':1}" />
                                         <field name="sale_order_id" context="{'sale_show_partner_name': True}" invisible="1"/>
                                         <field name="quantity" invisible="1"/>
                                         <field name="state" invisible="1"/>
@@ -192,7 +192,7 @@
                                         <field name="sheet_all_line_is_confirmed" invisible="1"/>
 
 
-                                        <field name="description" string="备注" attrs="{'readonly':[('parent.state','not in',['draft'])]}"/>
+                                        <field name="description" string="备注" />
                                         <field name="company_currency_id" invisible="1"/>
                                         <field name="date" string="明细日期" invisible="1"/> <!--invisible="context.get('no_show_mark')" -->
                                         <field name="gongsi_id" string="公司主体" options="{'no_create':true,'no_open':1}" invisible="1"/>
