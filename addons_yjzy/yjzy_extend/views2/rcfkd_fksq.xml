@@ -18,8 +18,8 @@
                 <field name="amount"/>
                 <field name="balance" string="待认领余额" invisible="1"/>
                 <field name="fault_comments"/>
-                <field name="state"/>
-                <field name="state_1" groups="sales_team.group_manager"/>
+                <field name="state_fkzl"/>
+                <field name="state_1" invisible="1"/>
             </tree>
         </field>
     </record>
@@ -29,7 +29,7 @@
         <field name="model">account.payment</field>
         <field name="arch" type="xml">
             <form string="日常付款单">
-                <header groups="sales_team.group_manager">
+                <header groups="base.group_system">
                    <button name="action_submit" class="oe_highlight"  string="提交" type="object"
                            attrs="{'invisible':[('state_1','not in',['10_draft'])]}"/>
                     <button name="print_fkzl" string="打印付款指令" type="object" attrs="{'invisible':[('can_print','=',False)]}"/>
@@ -43,7 +43,7 @@
                    attrs="{'invisible':[('state_1','not in',['35_account_approve'])]}"/>
                     <button name="action_draft_new" class="oe_highlight" string="重置草稿" type="object"
                             attrs="{'invisible':[('state_1','not in',['80_refused'])]}"/>
-                     <field name="state_1" widget="statusbar" statusbar_visible=" "/>
+                     <field name="state_fkzl" widget="statusbar" statusbar_visible=" "/>
                 </header>
                 <header groups="base.group_system">
                     <button name="compute_balance" class="oe_highlight"  string="计算余额" type="object" groups="base.group_system"/>
@@ -154,8 +154,51 @@
 </page>
 
                         <page string="费用报告" attrs="{'invisible': [('count_fybg','=', 0)]}">
+                            <field name="expense_ids" widget="many2many" readonly="True">
+                                <tree >
+                                        <field name="categ_id" string="大类*" options="{'no_create':True,'no_open':1}" domain="[('parent_id.name','=','费用')]" attrs="{'readonly':[('parent.state','not in',['draft'])]}" context="{'search_order': 'sequence','only_name':1}" required="1"/>
+                                        <field name="second_categ_id" string="中类*" options="{'no_create':True,'no_open':1}" attrs="{'readonly':[('parent.state','not in',['draft'])]}" domain="[('parent_id','=', categ_id)]" context="{'search_order': 'sequence','only_name':1}" required="1"/>
+                                        <field name="product_id" required="1" string="小类*" options="{'no_create':True,'no_open':1}" attrs="{'readonly':[('parent.state','not in',['draft'])]}" domain="[('can_be_expensed','=',True),('categ_id','=',second_categ_id)]" context="{'default_can_be_expensed': 1,'tree_view_ref':'hr_expense.product_product_expense_tree_view','only_name':1}"/>
+
+
+
+                                        <field name="unit_amount" string="费用金额" required="1" sum="小计" attrs="{'readonly':[('parent.state','not in',['draft'])]}" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                          <field name="date" string="费用发生日期*" attrs="{'readonly':[('parent.state','not in',['draft'])]}"/>
+                                        <field name="employee_id" string="责任人*" attrs="{'readonly':[('parent.state','not in',['draft'])]}" options="{'no_create':True,'no_open':1}"/>
+
+                                        <field name="employee_sales_uid" string="费用对象*" attrs="{'readonly':[('parent.state','not in',['draft'])]}" options="{'no_create':True,'no_open':1}" domain="['|',('job_id.name','=','客户经理'),('job_id.name','=','公司')]" required="1"/>
+
+                                        <field name="name" invisible="1"/>
+                                        <field name="sys_outer_hetong" attrs="{'readonly':[('budget_type','!=','transport')]}"/>
+                                        <field name="tb_id" context="{'show_ref': 1}" options="{'no_create':True}" attrs="{'readonly':[('budget_type','!=','transport')]}" domain="[('state','not in',['cancel','refused','draft','check','submit','sales_approve'])]"/>
+
+                                        <field name="lead_id" string="项目编号" options="{'quick_create': 1,'no_open':1}" attrs="{'readonly':[('budget_type','!=','lead')]}"/>
+                                        <field name="sale_order_id" context="{'sale_show_partner_name': True}" invisible="1"/>
+                                        <field name="quantity" invisible="1"/>
+                                        <field name="state" invisible="1"/>
+                                        <field name="currency_id" invisible="1"/>
+                                        <field name="ask_uid" invisible="1"/>
+                                        <field name="analytic_account_id" invisible="1"/>
+                                        <field name="message_unread" invisible="1"/>
+                                        <field name="attachment_number" invisible="1"/>
+                                        <button name="action_get_attachment_view" invisible="1" string="View Attachments" type="object" icon="fa-paperclip"/>
+
+                                        <field name="total_amount" widget="monetary" invisible="1" options="{'currency_field': 'currency_id'}" sum="小计"/>
+                                        <field name="is_refused" invisible="True"/>
+                                        <field name="hx_expense_id" groups="base.group_system" invisible="1"/>
+                                        <field name="hx_code" groups="base.group_system" invisible="1"/>
+                                        <field name="hx_balance" groups="base.group_system" invisible="1"/>
+                                        <field name="sheet_all_line_is_confirmed" invisible="1"/>
+
+
+                                        <field name="description" string="备注" attrs="{'readonly':[('parent.state','not in',['draft'])]}"/>
+                                        <field name="company_currency_id" invisible="1"/>
+                                        <field name="date" string="明细日期" invisible="1"/> <!--invisible="context.get('no_show_mark')" -->
+                                        <field name="gongsi_id" string="公司主体" options="{'no_create':true,'no_open':1}" invisible="1"/>
+                                    </tree>
+                            </field>
                             <field name="fybg_ids" widget="many2many" context="{'form_view_ref':'yjzy_extend.view_hr_expense_sheet_new_form'}"/>
-                            <field name="expense_ids" widget="many2many"/>
+
                         </page>
                         <page string="退税发票" invisible="1">
                             <field name="back_tax_invoice_ids"/>
@@ -172,6 +215,7 @@
                             <group>
                                 <field name="advance_account_id" label="预收科目" options="{'no_create':True}" invisible="0"/>
                                 <field name="sfk_type" />
+                                <field name="state_1"/>
                                 <field name="journal_id" widget="selection"  domain="[('type','in',['bank','cash'])]"  attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                             <field name="payment_type" widget="radio" attrs="{'readonly': [('state', '!=', 'draft')]}" />
                            <field name="partner_type" widget="selection"
