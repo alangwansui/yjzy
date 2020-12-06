@@ -402,6 +402,7 @@ class account_payment(models.Model):
     #预付-付款申请单：10，20，30，40，50，60 付款单从25-50，此处40-50，之后判断付款单余额是否为0，如果是，50-60
     #应付-预付申请单：10，20，30，50付款单从25-50，此处40-50，之后判断预付款单余额是否为0，如果是，50-60
     state_1 = fields.Selection([('10_draft',u'草稿'),
+
                                 ('20_account_submit',u'待财务审批'),
                                 ('25_cashier_submit',u'待出纳审批'),
                                 ('30_manager_approve',u'待总经理审批'),
@@ -412,6 +413,15 @@ class account_payment(models.Model):
                                 ('70_checked',u'已对账'),
                                 ('80_refused',u'已拒绝'),
                                 ('90_cancel',u'已取消')],u'审批状态',track_visibility='onchange',default='10_draft')
+
+    state_fkzl = fields.Selection([
+        ('05_fksq', u'待创建付款指令'),
+        ('10_draft', u'付款指令待审批'),
+        ('20_wait_pay', u'付款指令待支付'),
+        ('30_done',u'完成'),
+        ('80_refused', u'已拒绝'),
+        ('90_cancel', u'已取消')],
+        u'付款指令审批状态', track_visibility='onchange', default='10_draft')
 
     #819增加汇率字段
 
@@ -794,6 +804,10 @@ class account_payment(models.Model):
                     raise Warning('收款或者付款银行没有填写!')
                 else:
                     self.state_1 = '25_cashier_submit'
+            elif ctx.get('default_sfk_type', '') == 'fkzl' or self.sfk_type == 'fkzl':
+                self.state_1 = '25_cashier_submit'
+                self.state_fkzl = '20_wait_pay'
+                self.fksqd_2_ids.state_1 = '20_account_submit'
 
     # 日常收款单：10，25，50，60
     # 收款-预收认领单：10，20，50，60
@@ -896,6 +910,9 @@ class account_payment(models.Model):
     def action_draft_new(self):
         self.write({'state_1': '10_draft',
                     })
+        if self.sfk_type == 'fkzl':
+            self.write({'state_2': '10_draft',
+                        })
         self.action_draft()
 
     def judge_partner(self):
@@ -1058,7 +1075,37 @@ class account_payment(models.Model):
                # if one.expense_ids:
                #     for x in self.expense_ids:
                #         x.payment_date_store = fields.datetime.now()
+            if one.sfk_type == 'fkzl':
+                one.payment_date_confirm = fields.datetime.now() ##akiny 增加付款时间
+                if one.yshx_fkzl_ids:
+                    # operation_wizard = len(one.yshx_ids.filtered(lambda x: x.reconcile_payment_ids == False))
+                    # print('operation_wizard_1111',operation_wizard,)
+                    # if operation_wizard > 0 :#通过这个字段，区别一下老的和新的两种认领方式，新的是生成一张应付认领单
+                    print('new_rule____1111',one.new_rule)
+                    if one.new_rule == False:
+                        ac_orders = one.yshx_ids
+                        ac_orders.make_done()
+                    else:
+                        ac_orders = one.yshx_fkzl_ids
+                        ac_orders.action_done_new_stage()
 
+                if one.yfsqd_fkzl_ids:
+                    one.yfsqd_fkzl_ids.post()
+
+                # if one.fybg_ids:
+                #     one.fybg_ids.action_sheet_move_create()
+                # if one.fybg_ids:
+                #     for x in one.fybg_ids:
+                #         if x.expense_to_invoice_type != 'to_invoice':
+                #             x.action_sheet_move_create()
+                #         else:
+                #             x.action_to_invoice_done()
+                if one.fybg_fkzl_ids:
+                    one.fybg_fkzl_ids.action_to_invoice_done()
+                one.fksqd_2_ids.state = 'posted'
+                one.fksqd_2_ids.state_1 = '60_done'
+                one.state_fkzl = '60_done'
+                one.state_1 = '60_done'
             #重新计算so的应付余额
             if one.po_id.source_so_id:
                 so = one.po_id.source_so_id

@@ -10,16 +10,33 @@ from .comm import sfk_type
 class account_payment(models.Model):
     _inherit = 'account.payment'
 
+    rckfd_attribute = fields.Selection([('expense',u'费用'),
+                                        ('yfzk',u'应付账单'),
+                                        ('other_payment',u'其他应付款'),
+                                        ('expense_po',u'费用转货款'),
+                                        ('other_po',u'增加采购应付')],u'付款属性')
+
+    def compute_fkzl_count(self):
+        for one in self:
+            one.fksqd_2_ids_count = len(one.fksqd_2_ids)
+            one.fybg_fkzl_ids_count = len(one.fybg_fkzl_ids)
+            one.yfsqd_fkzl_ids_count = len(one.yfsqd_fkzl_ids)
+            one.yshx_fkzl_ids_count = len(one.yshx_fkzl_ids)
+
     bank_id_huming = fields.Char('收款账户名',related='bank_id.huming')
     bank_id_bank = fields.Many2one('res.bank',u'银行名称')
     acc_number = fields.Char('账号')
     fkzl_id = fields.Many2one('account.payment',u'付款指令')
-    fksqd_2_ids = fields.One2many('account.payment','fkzl_id',u'付款申请单')
+    fksqd_2_ids = fields.One2many('account.payment','fkzl_id',u'付款申请单',domain=[('sfk_type','=','fksqd')])
+    fksqd_2_ids_count = fields.Integer('付款申请单数量',compute=compute_fkzl_count)
 
     fybg_fkzl_ids = fields.One2many('hr.expense.sheet', 'fkzl_id', u'费用报告')
+    fybg_fkzl_ids_count = fields.Integer('费用报告数量', compute=compute_fkzl_count)
     expense_fkzl_ids =  fields.One2many('hr.expense', 'fkzl_id', u'费用明细')
     yfsqd_fkzl_ids = fields.One2many('account.payment', 'fkzl_id', u'预付申请单',domain=[('sfk_type','=','yfsqd')])
+    yfsqd_fkzl_ids_count = fields.Integer('预付申请单数量', compute=compute_fkzl_count)
     yshx_fkzl_ids = fields.One2many('account.reconcile.order', 'fkzl_id', u'应收付认领单')
+    yshx_fkzl_ids_count = fields.Integer('应收付认领单数量', compute=compute_fkzl_count)
 
     def create_fkzl(self):
         if len(self.mapped('partner_id')) > 1:
@@ -77,7 +94,6 @@ class account_payment(models.Model):
 
 
 
-
         form_view = self.env.ref('yjzy_extend.view_fkzl_form')
         return {
             'type': 'ir.actions.act_window',
@@ -90,4 +106,23 @@ class account_payment(models.Model):
 
                         }
         }
+    #支付完成
+    def action_fkzl_approve(self):
+        today = fields.date.today()
+        self.write({'post_uid': self.env.user.id,
+                    'post_date': today,
+                    })
+        self.post()
+        self.compute_balance()
+
+    def action_hegui_refuse(self, reason):
+        self.write({'state_1': '80_refused',
+                    'state_fkzl': '80_refused',
+                    })
+        for tb in self:
+            tb.message_post_with_view('yjzy_extend.payment_template_refuse_reason',
+                                      values={'reason': reason, 'name': self.name},
+                                      subtype_id=self.env.ref(
+                                          'mail.mt_note').id)  # 定义了留言消息的模板，其他都可以参考，还可以继续参考费用发送计划以及邮件方式
+
 

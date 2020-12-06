@@ -856,7 +856,11 @@ class hr_expense_sheet(models.Model):
             'bank_id': self.bank_id.id,
             'include_tax': self.include_tax,
             'gongsi_id': self.gongsi_id.id,
+            'rckfd_attribute':'expense',
+
         })
+        if payment.sfk_type == 'rcfkd':
+            payment.state_fkzl = '05_fksq'
         self.payment_id = payment
         for one in self.expense_line_ids:
             one.state = 'confirmed'

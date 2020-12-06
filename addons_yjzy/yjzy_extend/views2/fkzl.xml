@@ -9,7 +9,8 @@
             <tree string="付款指令" decoration-info="state == 'draft'" decoration-muted="state in ['reconciled', 'cancelled']" edit="false">
                 <field name="name"/>
                 <field name="payment_date"/>
-                <field name="partner_id"/>
+                <field name="partner_id" groups="base.group_system"/>
+                <field name="pay_to"/>
                 <field name="journal_id"/>
                 <field name="company_id"/>
                 <field name="currency_id" attrs="{}" invisible="1" required="1"/>
@@ -26,7 +27,20 @@
         <field name="model">account.payment</field>
         <field name="arch" type="xml">
             <form string="付款指令">
-
+                <header groups="sales_team.group_manager">
+                   <button name="action_submit" class="oe_highlight"  string="审批" type="object"
+                           attrs="{'invisible':[('state_fkzl','not in',['10_draft'])]}"/>
+                    <button name="print_fkzl" string="打印付款指令" type="object" attrs="{'invisible':[('can_print','=',False)]}"/>
+                    <button name="action_fkzl_approve" class="oe_highlight" string="支付完成" type="object"
+                   attrs="{'invisible':[('state_fkzl','not in',['20_wait_pay'])]}"/>
+                     <button name="action_hegui_refuse"  string="会计拒绝确认" type="object"
+                   attrs="{'invisible':[('state_fkzl','not in',['10_draft'])]}"/>
+                    <button name="action_cashier_refuse" class="oe_highlight" string="出纳拒绝支付" type="object"
+                   attrs="{'invisible':[('state_fkzl','not in',['20_wait_pay'])]}"/>
+                    <button name="action_draft_new" class="oe_highlight" string="重置草稿" type="object"
+                            attrs="{'invisible':[('state_fkzl','not in',['80_refused'])]}"/>
+                     <field name="state_fkzl" widget="statusbar" statusbar_visible=" "/>
+                </header>
                 <header groups="base.group_system">
                     <button name="create_fkzl" string="创建付款指令"  class="oe_highlight" type="object"/>
                     <button name="compute_balance" class="oe_highlight"  string="计算余额" type="object" groups="base.group_system"/>
@@ -79,11 +93,12 @@
                     <group>
                         <group>
 
-                            <field name="partner_id" string="付款对象" options="{'no_create':True}"
+                            <field name="partner_id" string="付款对象" options="{'no_create':True}" groups="base.group_system"
                                    attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))],
                             'invisible': ['|',('payment_type', 'not in', ('inbound', 'outbound')),('sfk_type','in',['rcskd','rcfkd'])],
                             'readonly': 1}"
                                    context="{'default_is_company': True, 'default_supplier': payment_type == 'outbound', 'default_customer': payment_type == 'inbound'}"/>
+                            <field name="pay_to"/>
                             <label for="amount"/>
                             <div name="amount_div" class="o_row">
                                 <field name="amount" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
@@ -111,22 +126,34 @@
                         </group>
                     </group>
                     <notebook>
-                        <page string="付款申请" >
-                            <field name="fksqd_2_ids" widget="many2many" />
-                        </page>
-                        <page string="预付申请" >
+
+                        <page string="预付申请" attrs="{'invisible': [('yfsqd_fkzl_ids_count','=', 0)]}">
                             <field name="yfsqd_fkzl_ids" widget="many2many" />
+
                         </page>
-                        <page string="应付申请" >
+                        <page string="应付申请" attrs="{'invisible': [('yshx_fkzl_ids_count','=', 0)]}">
                             <field name="yshx_fkzl_ids" widget="many2many" />
                         </page>
-                        <page string="费用报告" >
+                        <page string="费用报告" attrs="{'invisible': [('fybg_fkzl_ids_count','=', 0)]}">
                             <field name="fybg_fkzl_ids" widget="many2many" />
                              <field name="expense_fkzl_ids" widget="many2many" />
                         </page>
-
+                        <page string="付款申请" groups="base.group_system">
+                            <field name="fksqd_2_ids" widget="many2many" />
+                        </page>
+             <page groups="sales_team.group_manager" string="新规则手动">
+                            <group >
+                                <field name="new_rule"/>
+                            </group>
+                        </page>
                         <page groups="base.group_system" string="管理页">
                             <group>
+                                 <field name="yfsqd_fkzl_ids_count"/>
+                                 <field name="yshx_fkzl_ids_count"/>
+                                 <field name="fybg_fkzl_ids_count"/>
+
+                                <field name="state_1" />
+                                <field name="can_print"/>
                                 <field name="advance_account_id" label="预收科目" options="{'no_create':True}" invisible="0"/>
                                 <field name="sfk_type" />
                                 <field name="journal_id" widget="selection"  domain="[('type','in',['bank','cash'])]"  attrs="{'readonly': [('state', '!=', 'draft')]}"/>

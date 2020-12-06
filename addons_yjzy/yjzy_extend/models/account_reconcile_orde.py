@@ -1801,6 +1801,22 @@ class account_reconcile_order(models.Model):
         if not advance_account:
             raise Warning(u'没有找到对应的预处理科目%s' % account_code)
 
+        invoice_attribute = self.invoice_attribute
+        yjzy_type = self.yjzy_type
+        if invoice_attribute == 'normal' and yjzy_type == 'purchase':
+            rckfd_attribute = 'yfzk'
+        elif yjzy_type == 'other_payment_purchase':
+            rckfd_attribute = 'other_payment'
+        elif invoice_attribute == 'other_po':
+            rckfd_attribute = 'other_po'
+        elif invoice_attribute == 'expense_po':
+            rckfd_attribute = 'expense_po'
+        else:
+            rckfd_attribute = False
+
+
+
+
         back_tax_invoice_data = self.back_tax_invoice_id and  [(4, self.back_tax_invoice_id.id)] or None
         fybg_data = self.fygb_id and [(4, self.fygb_id.id)] or None
 
@@ -1819,7 +1835,8 @@ class account_reconcile_order(models.Model):
             'include_tax': self.include_tax,
             'fybg_ids': fybg_data,
             'back_tax_invoice_ids': back_tax_invoice_data,
-            'expense_sheet_id':self.expense_sheet_id.id
+            'expense_sheet_id':self.expense_sheet_id.id,
+            'rckfd_attribute':rckfd_attribute
         })
         if self.expense_sheet_id:
             self.expense_sheet_id.payment_id = payment.id #1009

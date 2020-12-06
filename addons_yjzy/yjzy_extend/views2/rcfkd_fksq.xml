@@ -8,6 +8,7 @@
         <field name="arch" type="xml">
             <tree string="付款申请单" decoration-info="state == 'draft'" decoration-muted="state in ['reconciled', 'cancelled']" edit="false">
                 <field name="name"/>
+                <field name="rckfd_attribute"/>
                 <field name="payment_date"/>
                 <field name="partner_id" groups="base.group_system"/>
                 <field name="pay_to"/>
@@ -198,8 +199,8 @@
         <field name="res_model">account.payment</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
-        <field name="domain">[('sfk_type','=','fksqd')]</field>
-        <field name="context">{'show_shoukuan': True, 'default_sfk_type': 'fksqd',
+        <field name="domain">[('sfk_type','=','rcfkd'),('state_fkzl','=','05_fksq')]</field>
+        <field name="context">{'show_shoukuan': True, 'default_sfk_type': 'fksqd','search_default_group_by_pay_to':1,
             'default_payment_type': 'outbound', 'default_be_renling': False, 'default_advance_ok': True, 'default_partner_type': 'supplier',}</field>
         <field name="search_view_id" ref="view_account_payment_search_new"/>
         <field name="view_ids" eval="[(5, 0, 0),
