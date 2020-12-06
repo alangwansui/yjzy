@@ -20,6 +20,7 @@
                 <field name="fault_comments"/>
                 <field name="state_fkzl"/>
                 <field name="state_1" invisible="1"/>
+                <field name="state" invisible="1"/>
             </tree>
         </field>
     </record>
