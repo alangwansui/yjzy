@@ -226,7 +226,7 @@
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="domain">[('sfk_type','=','fkzl')]</field>
-        <field name="context">{'default_sfk_type': 'fkzl','only_name':1
+        <field name="context">{'default_sfk_type': 'fkzl','only_name':1,
             'default_payment_type': 'outbound', 'default_be_renling': False, 'default_advance_ok': True, 'default_partner_type': 'supplier',}</field>
         <field name="search_view_id" ref="view_account_payment_search_new"/>
         <field name="view_ids" eval="[(5, 0, 0),
