@@ -1073,7 +1073,7 @@
                              ('operation_wizard','not in',['03','20',25])]}"><!---->
                                     <tree>
                                         <field name="advance_payment_id" groups="base.group_system"/>
-                                        <field name="reconcile_order_line_ids" />
+                                        <field name="reconcile_order_line_ids" invisible="1"/>
                                         <field name="advance_payment_date" string="申请日期"/>
                                         <field name="po_id"/>
                                         <field name="amount_payment" string="原始预付" sum="小计"/>

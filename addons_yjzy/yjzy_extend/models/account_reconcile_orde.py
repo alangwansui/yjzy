@@ -3305,6 +3305,16 @@ class advance_payment_state(models.Model):
 
         # self.amount_advance_balance_d = self.advance_payment_id.advance_balance_total
 
+    def action_cancel_reconcile_line_ids(self):
+        hxd_id = self.reconcile_order_id
+        for one in hxd_id.line_ids:
+            if one.yjzy_payment_id == self:
+                one.unlink()
+        for one in hxd_id.line_no_ids:
+            if one.yjzy_payment_id == self:
+                one.unlink()
+
+
 
 
 
