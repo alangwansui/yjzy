@@ -1147,7 +1147,7 @@ class account_invoice(models.Model):
                 'journal_id': journal.id,
                 'payment_account_id': bank_account.id,
                 # 'operation_wizard':operation_wizard,
-
+                'yjzy_type':self[0].yjzy_type_1,#1207akiny
                 'purchase_code_balance': 1,
                 'invoice_attribute': attribute,
                 'invoice_partner':self[0].invoice_partner,
