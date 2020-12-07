@@ -1081,10 +1081,10 @@
                                         <field name="amount_advance_balance_d" string="本次认领前可认领金额" sum="小计"/>
                                         <field name="amount_advance_balance_after" string="本次认领后可认领金额" sum="小计"/>
                                         <field name="amount_reconcile" string="本次认领金额" sum="小计"/>
-                                        <button name="action_make_reconcile_line_ids" type="object" string="认领" attrs="{'invisible':[('state','=','no_reconcile')]}"/>
-                                        <button name="action_cancel_reconcile_line_ids" type="object" string="取消"
+                                        <button name="action_make_reconcile_line_ids" type="object" string="认领" invisible="1" attrs="{'invisible':[('state','=','no_reconcile')]}"/>
+                                        <button name="action_cancel_reconcile_line_ids" type="object" string="取消" invisible="1"
                                                 attrs="{'invisible':[('state','=','reconcile')]}"/>
-                                        <field name="renling" widget="boolean_toggle"/>
+                                        <field name="renling" widget="boolean_toggle" string="认领"/>
                                         <field name="state" invisible="1"/>
 <!--                                        <field name="advance_payment_currency" invisible="1"/>-->
                                     </tree>

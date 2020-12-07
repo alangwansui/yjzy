@@ -3303,7 +3303,7 @@ class advance_payment_state(models.Model):
 
     @api.onchange('renling')
     def onchange_renling(self):
-        if self.renling:
+        if self.state == 'no_reconcile':
             self.action_make_reconcile_line_ids()
         else:
             self.action_cancel_reconcile_line_ids()
