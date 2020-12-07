@@ -3299,25 +3299,6 @@ class advance_payment_state(models.Model):
 
     state = fields.Selection([('reconcile','认领'),('no_reconcile','未认领')],u'认领状态',default='reconcile')
 
-    read_img = fields.Binary('已读图片', compute='compute_read_img')
-
-    @api.depends('have_read')
-    def compute_read_img(self):
-        img_have_read = self.env['ir.attachment'].search([('name', '=', 'message_have_read')], limit=1)
-        img_no_read = self.env['ir.attachment'].search([('name', '=', 'message_no_read')], limit=1)
-        img_have_replay = self.env['ir.attachment'].search([('name', '=', 'message_have_replay')], limit=1)
-        img_no_replay = self.env['ir.attachment'].search([('name', '=', 'message_no_replay')], limit=1)
-
-        img_have_read = tools.image_resize_image(img_have_read.datas, (30, None))
-        img_no_read = tools.image_resize_image(img_no_read.datas, (30, None))
-        img_have_replay = tools.image_resize_image(img_have_replay.datas, (30, None))
-        img_no_replay = tools.image_resize_image(img_no_replay.datas, (30, None))
-
-        for one in self:
-            if one.state == 'reconcile':
-                one.read_img = img_have_read
-            else:
-                one.read_img = img_no_read
 
     # renling = fields.Boolean('认领')
     #
