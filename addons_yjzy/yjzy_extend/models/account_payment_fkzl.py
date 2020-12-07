@@ -27,7 +27,7 @@ class account_payment(models.Model):
     bank_id_bank = fields.Many2one('res.bank',u'银行名称')
     acc_number = fields.Char('账号')
     fkzl_id = fields.Many2one('account.payment',u'付款指令')
-    fksqd_2_ids = fields.One2many('account.payment','fkzl_id',u'付款申请单',domain=[('sfk_type','=','fksqd')])
+    fksqd_2_ids = fields.One2many('account.payment','fkzl_id',u'付款申请单',domain=[('sfk_type','=','rcfkd'),('state_fkzl','=','05_fksq')])#domain=[('sfk_type','=','fksqd')]
     fksqd_2_ids_count = fields.Integer('付款申请单数量',compute=compute_fkzl_count)
 
     fybg_fkzl_ids = fields.One2many('hr.expense.sheet', 'fkzl_id', u'费用报告')
@@ -91,6 +91,7 @@ class account_payment(models.Model):
             if one.yshx_ids:
                 for x in one.yshx_ids:
                     x.fkzl_id = fkzl_id
+
 
 
 

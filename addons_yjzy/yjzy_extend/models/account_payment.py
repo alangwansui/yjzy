@@ -1104,7 +1104,7 @@ class account_payment(models.Model):
                     one.fybg_fkzl_ids.action_to_invoice_done()
                 one.fksqd_2_ids.state = 'posted'
                 one.fksqd_2_ids.state_1 = '60_done'
-                one.state_fkzl = '60_done'
+                one.state_fkzl = '30_done'
                 one.state_1 = '60_done'
             #重新计算so的应付余额
             if one.po_id.source_so_id:

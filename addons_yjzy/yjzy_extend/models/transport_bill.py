@@ -2205,60 +2205,60 @@ class transport_bill(models.Model):
     def sync_data2invoice(self):
         if not self.date_out_in:
              raise Warning(u'请先设置进仓日期')
-        for one in self:
+        # for one in self:
             #同步采购发票日期  akiny修改purchase_invoice_ids为all_purchase_invoice_ids
-            for purchase_invoice in one.all_purchase_invoice_ids.filtered(lambda x: x.yjzy_type == 'purchase'):
-                purchase_invoice.date_ship = one.date_ship
-                #purchase_invoice.date_finish = one.date_supplier_finish
-                purchase_invoice.date_invoice = one.date_out_in
-                purchase_invoice.date = one.date_out_in
-                purchase_invoice.date_out_in = one.date_out_in
-                purchase_invoice._onchange_payment_term_date_invoice()
-                # if purchase_invoice.state == 'draft':
-                #     purchase_invoice.action_invoice_open()
-            #同步销售发票 akiny将sale_invoice_id更新为all_sale_invoice_ids
-            # sale_invoice = one.sale_invoice_id
-            # if sale_invoice:
-            #     sale_invoice.date_invoice = one.date_out_in
-            #     sale_invoice.date_out_in = one.date_out_in
-            #     sale_invoice.date = one.date_out_in
-            #     sale_invoice.date_finish = one.date_customer_finish
-            #     sale_invoice.date_ship = one.date_ship
-            #     sale_invoice._onchange_payment_term_date_invoice()
-            #     # if sale_invoice.state == 'draft':
-            #     #     sale_invoice.action_invoice_open()
-            if one.all_sale_invoice_ids:
-              for sale_invoice in one.all_sale_invoice_ids:
-                   sale_invoice.date_invoice = one.date_out_in
-                   sale_invoice.date_out_in = one.date_out_in
-                   sale_invoice.date = one.date_out_in
-                   sale_invoice.date_finish = one.date_customer_finish
-                   sale_invoice.date_ship = one.date_ship
-                   sale_invoice._onchange_payment_term_date_invoice()
-            if one.all_back_tax_invoice_ids:
-                for back_tax_invoice in one.all_back_tax_invoice_ids:
-                     back_tax_invoice.date_out_in = one.date_out_in
-                     back_tax_invoice.date_invoice = one.date_out_in
-                     back_tax_invoice.date = one.date_out_in
-                     back_tax_invoice.date_finish = one.date_customer_finish
-                     back_tax_invoice.date_ship = one.date_ship
-                     #调用防范，更新到期日期。因为是onchange发票日期，如果不调用，到期日期就无法计算
-                     back_tax_invoice._onchange_payment_term_date_invoice()
-            # back_tax_invoice = one.back_tax_invoice_id
-            # if back_tax_invoice:
-            #     back_tax_invoice.date_out_in = one.date_out_in
-            #     back_tax_invoice.date_invoice = one.date_out_in
-            #     back_tax_invoice.date = one.date_out_in
-            #     back_tax_invoice.date_finish = one.date_customer_finish
-            #     back_tax_invoice.date_ship = one.date_ship
-            #     #调用防范，更新到期日期。因为是onchange发票日期，如果不调用，到期日期就无法计算
-            #     back_tax_invoice._onchange_payment_term_date_invoice()
-            # # back_tax_invoice = one.back_tax_invoice_id
-            # # back_tax_invoice_sate = one.back_tax_invoice_id.state
-            # # if back_tax_invoice and back_tax_invoice_sate == 'draft':
-            # #     back_tax_invoice.action_invoice_open()
-            # if one.date_all_state == 'done' and one.state == 'delivered':
-            #     one.state = 'invoiced'
+        for purchase_invoice in self.all_purchase_invoice_ids.filtered(lambda x: x.yjzy_type == 'purchase'):
+            purchase_invoice.date_ship = self.date_ship
+            #purchase_invoice.date_finish = one.date_supplier_finish
+            purchase_invoice.date_invoice = self.date_out_in
+            purchase_invoice.date = self.date_out_in
+            purchase_invoice.date_out_in = self.date_out_in
+            purchase_invoice._onchange_payment_term_date_invoice()
+            # if purchase_invoice.state == 'draft':
+            #     purchase_invoice.action_invoice_open()
+        #同步销售发票 akiny将sale_invoice_id更新为all_sale_invoice_ids
+        # sale_invoice = one.sale_invoice_id
+        # if sale_invoice:
+        #     sale_invoice.date_invoice = one.date_out_in
+        #     sale_invoice.date_out_in = one.date_out_in
+        #     sale_invoice.date = one.date_out_in
+        #     sale_invoice.date_finish = one.date_customer_finish
+        #     sale_invoice.date_ship = one.date_ship
+        #     sale_invoice._onchange_payment_term_date_invoice()
+        #     # if sale_invoice.state == 'draft':
+        #     #     sale_invoice.action_invoice_open()
+        if self.all_sale_invoice_ids:
+          for sale_invoice in self.all_sale_invoice_ids:
+               sale_invoice.date_invoice = self.date_out_in
+               sale_invoice.date_out_in = self.date_out_in
+               sale_invoice.date = self.date_out_in
+               sale_invoice.date_finish = self.date_customer_finish
+               sale_invoice.date_ship = self.date_ship
+               sale_invoice._onchange_payment_term_date_invoice()
+        if self.all_back_tax_invoice_ids:
+            for back_tax_invoice in self.all_back_tax_invoice_ids:
+                 back_tax_invoice.date_out_in = self.date_out_in
+                 back_tax_invoice.date_invoice = self.date_out_in
+                 back_tax_invoice.date = self.date_out_in
+                 back_tax_invoice.date_finish = self.date_customer_finish
+                 back_tax_invoice.date_ship = self.date_ship
+                 #调用防范，更新到期日期。因为是onchange发票日期，如果不调用，到期日期就无法计算
+                 back_tax_invoice._onchange_payment_term_date_invoice()
+        # back_tax_invoice = one.back_tax_invoice_id
+        # if back_tax_invoice:
+        #     back_tax_invoice.date_out_in = one.date_out_in
+        #     back_tax_invoice.date_invoice = one.date_out_in
+        #     back_tax_invoice.date = one.date_out_in
+        #     back_tax_invoice.date_finish = one.date_customer_finish
+        #     back_tax_invoice.date_ship = one.date_ship
+        #     #调用防范，更新到期日期。因为是onchange发票日期，如果不调用，到期日期就无法计算
+        #     back_tax_invoice._onchange_payment_term_date_invoice()
+        # # back_tax_invoice = one.back_tax_invoice_id
+        # # back_tax_invoice_sate = one.back_tax_invoice_id.state
+        # # if back_tax_invoice and back_tax_invoice_sate == 'draft':
+        # #     back_tax_invoice.action_invoice_open()
+        # if one.date_all_state == 'done' and one.state == 'delivered':
+        #     one.state = 'invoiced'
         return True
     def make_back_tax_invoice(self):
         self.ensure_one()
