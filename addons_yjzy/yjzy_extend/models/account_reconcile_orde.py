@@ -3299,24 +3299,30 @@ class advance_payment_state(models.Model):
 
     state = fields.Selection([('reconcile','认领'),('no_reconcile','未认领')],u'认领状态',default='reconcile')
 
-    renling = fields.Boolean('认领')
-
-    @api.onchange('renling')
-    def onchange_renling(self):
-        if self.renling:
-            self.action_make_reconcile_line_ids()
-        else:
-            self.action_cancel_reconcile_line_ids()
+    # renling = fields.Boolean('认领')
+    #
+    # @api.onchange('renling')
+    # def onchange_renling(self):
+    #     print('renling_akiny',self.renling)
+    #     renling = self.renling
+    # # if renling:
+    #     print('renling_akiny2', renling)
+    #     self.action_make_reconcile_line_ids()
+    #     # else:
+    #     #     print('renling_akiny3', renling)
+    #     #     self.action_cancel_reconcile_line_ids()
 
     def action_make_reconcile_line_ids(self):
         ctx_hxd = self.env.context.get('hxd_id')
         hxd_id = self.reconcile_order_id
+        print('hxd_id_akiny',hxd_id.id)
         hxd_id.with_context({'advance_payment_id': self.advance_payment_id.id,
                              'account_payment_state_id':self.id}).make_lines_11_16()
         self.state = 'reconcile'
         # self.amount_advance_balance_d = self.advance_payment_id.advance_balance_total
 
     def action_cancel_reconcile_line_ids(self):
+        hxd_id = self.reconcile_order_id
         hxd_id = self.reconcile_order_id
         if hxd_id.line_ids:
             for one in hxd_id.line_ids:
