@@ -139,7 +139,27 @@
 
                         </page>
                         <page string="应付申请" attrs="{'invisible': [('yshx_fkzl_ids_count','=', 0)]}">
-                            <field name="yshx_fkzl_ids" widget="many2many" />
+                            <field name="yshx_fkzl_ids" widget="many2many" >
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="partner_id"/>
+                                    <field name="invoice_ids" widget="many2many_tags" string="应付账单"/>
+                                    <field name="date" invisible="1"/>
+                                    <field name="approve_uid" invisible="1"/>
+                                    <field name="approve_date"/>
+                                    <field name="amount_total_org" string="全部认领合计" groups="base.group_system"/>
+                                    <field name="amount_total_org_new" string="全部认领合计" groups="base.group_system"/>
+                                    <field name="amount_payment_org" string="实际申请付款金额" groups="base.group_system"/>
+                                    <field name="amount_payment_org_new" string="实际申请金额"/>
+                                    <field name="amount_advance_org" string="预付认领金额" groups="base.group_system"/>
+                                    <field name="amount_advance_org_new" string="预付认领金额" groups="base.group_system"/>
+                                    <field name="supplier_advance_payment_ids_amount_advance_org" string="待审批预付认领金额"/>
+                                    <field name="amount_total" invisible="1"/>
+                                    <field name="currency_id" attrs="{}" invisible="1"/>
+                                    <field name="state_1"/>
+                                    <field name="state" groups="base.group_system"/>
+                                </tree>
+                            </field>
                         </page>
                         <page string="费用明细和报告" attrs="{'invisible': [('fybg_fkzl_ids_count','=', 0)]}">
 
