@@ -277,6 +277,6 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_rcfkd_fksq_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcfkd_fksq_form')})]"/>
     </record>
-    <menuitem id="menu_rcfkd_fksq"  sequence="20" name="创建付款指令" parent="menu_rcfkd_new" action="action_rcfkd_fksq"/>
+    <menuitem id="menu_rcfkd_fksq"  sequence="10" name="创建付款指令" parent="menu_rcfkd_new" action="action_rcfkd_fksq"/>
 
 </odoo>
