@@ -3316,6 +3316,8 @@ class advance_payment_state(models.Model):
             if one.yjzy_payment_id == self:
                 one.unlink()
         self.state = 'no_reconcile'
+        self.amount_advance_balance_d = 0
+        self.compute_amount_reconcile()
 
 
 
