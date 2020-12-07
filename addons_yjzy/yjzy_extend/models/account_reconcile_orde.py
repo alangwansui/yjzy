@@ -3297,12 +3297,14 @@ class advance_payment_state(models.Model):
     amount_advance_balance_after = fields.Monetary(u'本次认领后可认领金额',currency_field='advance_payment_currency',compute=compute_amount_reconcile)
     amount_reconcile = fields.Monetary(u'本次认领金额',currency_field='advance_payment_currency',compute=compute_amount_reconcile)
 
+    state = fields.Selection([('reconcile','认领'),('no_reconcile','未认领')],u'认领状态',default='reconcile')
+
     def action_make_reconcile_line_ids(self):
         ctx_hxd = self.env.context.get('hxd_id')
         hxd_id = self.reconcile_order_id
         hxd_id.with_context({'advance_payment_id': self.advance_payment_id.id,
                              'account_payment_state_id':self.id}).make_lines_11_16()
-
+        self.state = 'reconcile'
         # self.amount_advance_balance_d = self.advance_payment_id.advance_balance_total
 
     def action_cancel_reconcile_line_ids(self):
@@ -3313,6 +3315,7 @@ class advance_payment_state(models.Model):
         for one in hxd_id.line_no_ids:
             if one.yjzy_payment_id == self:
                 one.unlink()
+        self.state = 'no_reconcile'
 
 
 
