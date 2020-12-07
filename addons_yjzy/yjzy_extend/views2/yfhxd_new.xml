@@ -1084,6 +1084,7 @@
                                         <button name="action_make_reconcile_line_ids" type="object" string="认领" attrs="{'invisible':[('state','=','no_reconcile')]}"/>
                                         <button name="action_cancel_reconcile_line_ids" type="object" string="取消"
                                                 attrs="{'invisible':[('state','=','reconcile')]}"/>
+                                        <field name="renling" widget="boolean_toggle"/>
                                         <field name="state" invisible="1"/>
 <!--                                        <field name="advance_payment_currency" invisible="1"/>-->
                                     </tree>

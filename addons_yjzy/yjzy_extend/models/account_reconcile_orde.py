@@ -3299,6 +3299,15 @@ class advance_payment_state(models.Model):
 
     state = fields.Selection([('reconcile','认领'),('no_reconcile','未认领')],u'认领状态',default='reconcile')
 
+    renling = fields.Boolean('认领')
+
+    @api.onchange('renling')
+    def onchange_renling(self):
+        if self.renling:
+            self.action_make_reconcile_line_ids()
+        else:
+            self.action_cancel_reconcile_line_ids()
+
     def action_make_reconcile_line_ids(self):
         ctx_hxd = self.env.context.get('hxd_id')
         hxd_id = self.reconcile_order_id
