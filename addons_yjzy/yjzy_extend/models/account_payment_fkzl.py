@@ -92,7 +92,7 @@ class account_payment(models.Model):
             if one.yshx_ids:
                 for x in one.yshx_ids:
                     x.fkzl_id = fkzl_id
-        self.state_fkzl = '07_post_fkzl'
+            one.state_fkzl = '07_post_fkzl'
 
 
 
