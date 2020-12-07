@@ -1109,7 +1109,7 @@ class account_invoice(models.Model):
             raise Warning('不同供应商')
         elif attribute == 'other_payment' and len(self) > 1:
             raise Warning('其他应付不允许多个一起申请付款')
-        elif len(self.yjzy_type_1) > 1:
+        elif len(self.mapped('yjzy_type_1')) > 1:
             raise  Warning('不同类型的账单不允许一起申请！')
         elif state_draft >= 1:
             raise Warning('非确认账单不允许创建付款申请')
