@@ -319,10 +319,13 @@ class tb_po_invoice(models.Model):
     invoice_ids = fields.One2many('account.invoice','tb_po_invoice_id','相关发票')
     invoice_ids_count = fields.Integer('相关发票数量',compute=compute_invoice_count)
 
+    # invoice_normal_ids = fields.One2many('account.invoice', 'tb_po_invoice_id', '申请账单',
+    #                                      domain=['&',('yjzy_type_1', 'in', ['purchase','sale']),'|',
+    #                                              ('invoice_attribute','not in',['other_po']),'&',('yjzy_type_1', 'in', ['purchase']),
+    #                                              ('invoice_attribute','in',['other_po'])])#('type', 'in', ['in_invoice','out_invoice']),第一个
+
     invoice_normal_ids = fields.One2many('account.invoice', 'tb_po_invoice_id', '申请账单',
-                                         domain=['&',('yjzy_type_1', 'in', ['purchase','sale']),'|',
-                                                 ('invoice_attribute','not in',['other_po']),'&',('yjzy_type_1', 'in', ['purchase']),
-                                                 ('invoice_attribute','in',['other_po'])])#('type', 'in', ['in_invoice','out_invoice']),第一个
+                                         domain=[('yjzy_type_1', 'in', ['purchase', 'other_payment_purchase'])])  # ('type', 'in', ['in_invoice','out_invoice']),第一个
     invoice_normal_ids_count = fields.Integer('申请账单数量', compute=compute_invoice_count)
     invoice_normal_ids_residual = fields.Float('申请账单未付金额', compute=compute_invoice_amount, store=True)  # 让所有的付款都其中在这个字段下
 
