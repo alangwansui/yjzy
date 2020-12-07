@@ -1183,6 +1183,8 @@ class account_payment(models.Model):
             'include_tax': self.include_tax,
             'rckfd_attribute':'advance_payment',
         })
+        if payment.sfk_type == 'rcfkd':
+            payment.state_fkzl = '05_fksq'
         self.yjzy_payment_id = payment
 
 
