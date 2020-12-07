@@ -1085,6 +1085,7 @@
                                         <button name="action_cancel_reconcile_line_ids" type="object" string="取消" groups="base.group_system"
                                                 />
 
+
                                         <field name="state" invisible="1"/>
 <!--                                        <field name="advance_payment_currency" invisible="1"/>-->
                                     </tree>

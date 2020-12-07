@@ -2066,6 +2066,7 @@ class transport_bill(models.Model):
                     'date': self.date_out_in,
                     # 'include_tax': x.include_tax,
                     'yjzy_type': 'purchase',
+                    'yjzy_type_1':'purchase',
                     'gongsi_id': self.purchase_gongsi_id.id,
                     'stage_id': self.env['account.invoice.stage'].search([('code', '=', '007')], limit=1).id,
 
@@ -2148,6 +2149,7 @@ class transport_bill(models.Model):
                 'date_ship': self.date_ship,
                 'bill_id': self.id,
                 'yjzy_type': 'sale',
+                'yjzy_type_1': 'sale',
                 'gongsi_id': self.gongsi_id.id,
                 'stage_id':self.env['account.invoice.stage'].search([('code','=','007')],limit=1).id,
             })
@@ -2281,6 +2283,7 @@ class transport_bill(models.Model):
                     'date_finish': self.date,
                     'bill_id': self.id,
                     'yjzy_type': 'back_tax',
+                    'yjzy_type_1': 'bak_tax',
                     'gongsi_id': self.purchase_gongsi_id.id,
                     'stage_id': self.env['account.invoice.stage'].search([('code', '=', '007')], limit=1).id,
                     'include_tax': self.include_tax,
