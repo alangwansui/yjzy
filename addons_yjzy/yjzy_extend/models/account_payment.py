@@ -1181,7 +1181,7 @@ class account_payment(models.Model):
             'advance_account_id': advance_account.id,
             'bank_id': self.bank_id.id,
             'include_tax': self.include_tax,
-
+            'rckfd_attribute':'advance_payment',
         })
         self.yjzy_payment_id = payment
 

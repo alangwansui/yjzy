@@ -11,6 +11,7 @@ class account_payment(models.Model):
     _inherit = 'account.payment'
 
     rckfd_attribute = fields.Selection([('expense',u'费用'),
+                                        ('advance_payment', u'预付账款'),
                                         ('yfzk',u'应付账单'),
                                         ('other_payment',u'其他应付款'),
                                         ('expense_po',u'费用转货款'),
