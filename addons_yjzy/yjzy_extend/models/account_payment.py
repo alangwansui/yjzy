@@ -323,6 +323,11 @@ class account_payment(models.Model):
                 pay_to = partner_id.name
             one.pay_to = pay_to
 
+    def compute_advance_reconcile_lines_count(self):
+        for one in self:
+            advance_reconcile_order_line_ids_count = len(one.advance_reconcile_order_line_ids)
+            one.advance_reconcile_order_line_ids_count = advance_reconcile_order_line_ids_count
+
     pay_to = fields.Char('付款对象', compute = compute_pay_to,store=True)
 
     print_times = fields.Integer(u'打印次数')
@@ -380,6 +385,7 @@ class account_payment(models.Model):
     advance_reconcile_order_line_ids = fields.One2many('account.reconcile.order.line', 'yjzy_payment_id',
                                                        string='预收认领明细', domain=[('amount_advance_org', '>', 0),
                                                                                 ('order_id.state', '=', 'done')])
+    advance_reconcile_order_line_ids_count = fields.Integer('预收付认领明细数量',compute=compute_advance_reconcile_lines_count)
 
     advance_reconcile_order_line_approval_ids = fields.One2many('account.reconcile.order.line', 'yjzy_payment_id',
                                                        string='审批中的预收认领明细', domain=[('amount_advance_org', '>', 0),
