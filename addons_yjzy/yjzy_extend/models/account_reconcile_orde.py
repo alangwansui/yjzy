@@ -1468,6 +1468,7 @@ class account_reconcile_order(models.Model):
 
     def action_done_new_stage(self):
         stage_id = self._stage_find(domain=[('code', '=', '060')])
+        print('state_id_akiny',stage_id.code)
         self.write({'stage_id': stage_id.id,
                     'state': 'done',
                     })
@@ -2362,7 +2363,7 @@ class account_reconcile_order(models.Model):
                 })
             else:
                 for po, invlines in po_invlines.items():
-                    line_obj.create({
+                    line = line_obj.create({
                         'order_id': self.id,
                         'po_id': po.id,
                         'invoice_id': invoice.id,
@@ -2370,6 +2371,8 @@ class account_reconcile_order(models.Model):
                         'amount_payment_org': sum([i.price_subtotal for i in invlines]),
 
                     })
+                    line.amount_invoice_so_residual_d = line.amount_invoice_so_residual
+                    line.amount_invoice_so_residual_can_approve_d = line.amount_invoice_so_residual_can_approve
         # 826
         so_po_dic = {}
         print('line_obj', line_ids)
@@ -2403,6 +2406,14 @@ class account_reconcile_order(models.Model):
                 # 'yjzy_payment_id': yjzy_advance_payment_id.id,
 
             })
+            line_no.amount_payment_can_approve_all_this_time = line_no.invoice_id.amount_payment_can_approve_all
+            line_no.invoice_residual_this_time = line_no.invoice_residual
+
+
+
+
+
+
             # print('>>', line)
     #826 拆分发票填写的金额到明细上
     def update_line_amount(self):

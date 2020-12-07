@@ -873,10 +873,14 @@ class account_invoice(models.Model):
             'expense_sheet_id':self.expense_sheet_id.id, #1009
             'payment_account_id': bank_account.id,
             'invoice_attribute':self.invoice_attribute,
+            'operation_wizard':'10',
+            'hxd_type_new':'40',
+
         })
         self.reconcile_order_id = yfhxd
         yfhxd._make_lines_po_from_expense()
-        yfhxd.create_rcfkd()
+        yfhxd.action_manager_approve_stage()
+        # yfhxd.create_rcfkd()
 
         form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new')
         return {
