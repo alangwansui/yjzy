@@ -171,6 +171,7 @@
                     </group>
                     <notebook>
                         <page string="认领明细" attrs="{'invisible':[('advance_reconcile_order_line_ids_count','=',0)]}">
+                            <field name="advance_reconcile_order_line_ids_count" invisible="1"/>
                             <field name="advance_reconcile_order_line_ids" readonly="1" >
 
                                     <tree >
