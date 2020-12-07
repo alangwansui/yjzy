@@ -1272,6 +1272,7 @@
 
                         <page groups="base.group_system">
                             <group>
+                                <field name="yjzy_type"/>
                                 <field name="yjzy_reconcile_order_ids_count"/>
                                 <field name="currency_id"/>
                                 <field name="amount_invoice"/>
