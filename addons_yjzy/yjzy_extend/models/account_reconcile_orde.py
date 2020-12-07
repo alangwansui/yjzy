@@ -3303,7 +3303,7 @@ class advance_payment_state(models.Model):
 
     @api.onchange('renling')
     def onchange_renling(self):
-        if self.state == 'no_reconcile':
+        if self.renling:
             self.action_make_reconcile_line_ids()
         else:
             self.action_cancel_reconcile_line_ids()
@@ -3318,12 +3318,15 @@ class advance_payment_state(models.Model):
 
     def action_cancel_reconcile_line_ids(self):
         hxd_id = self.reconcile_order_id
-        for one in hxd_id.line_ids:
-            if one.yjzy_payment_id == self.advance_payment_id:
-                one.unlink()
-        for one in hxd_id.line_no_ids:
-            if one.yjzy_payment_id == self.advance_payment_id:
-                one.unlink()
+        if hxd_id.line_ids:
+            for one in hxd_id.line_ids:
+                if one.yjzy_payment_id == self.advance_payment_id:
+                    one.unlink()
+
+        if hxd_id.line_no_ids:
+            for one in hxd_id.line_no_ids:
+                if one.yjzy_payment_id == self.advance_payment_id:
+                    one.unlink()
         self.state = 'no_reconcile'
         self.amount_advance_balance_d = 0.0
         self.compute_amount_reconcile()
