@@ -1203,16 +1203,23 @@ class account_reconcile_order(models.Model):
             view_id = view and view.id or False
             context = dict(self._context or {})
             context['message'] = "审批完成，等待财务继续提交付款申请"
+            context['res_model'] = "account.reconcile.order"
+            context['res_id'] = self.id
+            context['views'] = self.env.ref('yjzy_extend.account_yfhxd_form_view_new').id
+            context['no_advance'] = 1
+            print('context_akiny', context)
             return {
                 'name': 'Success',
                 'type': 'ir.actions.act_window',
                 'view_type': 'form',
                 'view_mode': 'form',
                 'res_model': 'sh.message.wizard',
-                'views': [(view.id, 'form')],
+                'views': [(view_id, 'form')],
                 'target': 'new',
                 'context': context,
             }
+
+
         else:
             self.action_manager_approve_stage()
             self.operation_wizard = '20'
