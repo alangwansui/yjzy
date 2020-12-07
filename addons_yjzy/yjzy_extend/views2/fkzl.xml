@@ -212,6 +212,7 @@
                         </page>
                         <page groups="base.group_system" string="管理页">
                             <group>
+                                <field name="rckfd_attribute"/>
                                  <field name="yfsqd_fkzl_ids_count"/>
                                  <field name="yshx_fkzl_ids_count"/>
                                  <field name="fybg_fkzl_ids_count"/>

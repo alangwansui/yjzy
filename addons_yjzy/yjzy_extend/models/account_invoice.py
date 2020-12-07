@@ -871,7 +871,8 @@ class account_invoice(models.Model):
             'name': name,
             'journal_id': journal.id,
             'expense_sheet_id':self.expense_sheet_id.id, #1009
-            'payment_account_id': bank_account.id
+            'payment_account_id': bank_account.id,
+            'invoice_attribute':self.invoice_attribute,
         })
         self.reconcile_order_id = yfhxd
         yfhxd._make_lines_po_from_expense()
