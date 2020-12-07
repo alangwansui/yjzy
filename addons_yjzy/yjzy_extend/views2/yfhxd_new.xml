@@ -1001,7 +1001,7 @@
                             <separator colspan="2"/>
 
                             <field name="supplier_amount_invoice_residual" string="应付余额"
-                                   attrs="{'invisible':[('operation_wizard','not in',['10','30'])]}"/>
+                                   attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),('yjzy_type','in',['other_payment_purchase'])]}"/>
 
                             <field name="supplier_amount_invoice_approval"
                                    attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),

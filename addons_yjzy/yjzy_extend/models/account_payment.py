@@ -422,6 +422,7 @@ class account_payment(models.Model):
 
     state_fkzl = fields.Selection([
         ('05_fksq', u'待创建付款指令'),
+        ('07_post_fkzl',u'已提交付款指令'),
         ('10_draft', u'付款指令待审批'),
         ('20_wait_pay', u'付款指令待支付'),
         ('30_done',u'完成'),
@@ -1110,6 +1111,7 @@ class account_payment(models.Model):
                     one.fybg_fkzl_ids.action_to_invoice_done()
                 one.fksqd_2_ids.state = 'posted'
                 one.fksqd_2_ids.state_1 = '60_done'
+                one.fksqd_2_ids.state_fkzl = '30_done'
                 one.state_fkzl = '30_done'
                 one.state_1 = '60_done'
             #重新计算so的应付余额
