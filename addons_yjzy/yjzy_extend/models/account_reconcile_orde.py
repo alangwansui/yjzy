@@ -1804,7 +1804,7 @@ class account_reconcile_order(models.Model):
 
         invoice_attribute = self.invoice_attribute
         yjzy_type = self.yjzy_type
-        if invoice_attribute == 'normal' and yjzy_type == 'purchase':
+        if invoice_attribute == 'normal':
             rckfd_attribute = 'yfzk'
         elif yjzy_type == 'other_payment_purchase':
             rckfd_attribute = 'other_payment'

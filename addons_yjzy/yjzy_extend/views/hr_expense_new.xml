@@ -202,7 +202,9 @@
                                 <field name="tb_id" string="系统内合同" context="{'show_ref': 1}"
                                        domain="[('state','not in',['cancel','refused','draft','check','submit','sales_approve'])]"/>
                                 <field name="lead_id" string="项目编号" options="{'quick_create': 1}"
+
                                 />
+                                <field name="state" invisible="1"/>
                             </group>
 
 

@@ -60,7 +60,7 @@ class hr_expense(models.Model):
             expense_to_invoice_type = one.sheet_id.expense_to_invoice_type
             one.expense_to_invoice_type = expense_to_invoice_type
 
-    @api.depends('sheet_id','stage_id')
+    @api.depends('sheet_id','sheet_id.stage_id')
     def compute_stage_id(self):
         for one in self:
             stage_id = one.sheet_id.stage_id
