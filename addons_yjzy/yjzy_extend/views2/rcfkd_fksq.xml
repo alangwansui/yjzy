@@ -6,19 +6,19 @@
         <field name="model">account.payment</field>
         <field name="priority" eval="999"/>
         <field name="arch" type="xml">
-            <tree string="付款申请单" decoration-info="state == 'draft'" decoration-muted="state in ['reconciled', 'cancelled']" edit="false">
-                <field name="name"/>
+            <tree string="付款申请单" decoration-info="state == 'draft'" create="false" decoration-muted="state in ['reconciled', 'cancelled']" edit="false">
+                <field name="name" string="编号"/>
                 <field name="rckfd_attribute"/>
-                <field name="payment_date"/>
+                <field name="payment_date" string="日期"/>
                 <field name="partner_id" groups="base.group_system"/>
                 <field name="pay_to"/>
-                <field name="journal_id"/>
-                <field name="company_id"/>
+                <field name="journal_id" string="付款账号"/>
+                <field name="company_id" invisible="1"/>
                 <field name="currency_id" attrs="{}" invisible="1" required="1"/>
-                <field name="amount"/>
+                <field name="amount" string="金额"/>
                 <field name="balance" string="待认领余额" invisible="1"/>
                 <field name="fault_comments"/>
-                <field name="state_fkzl"/>
+                <field name="state_fkzl" string="状态"/>
                 <field name="state_1" invisible="1"/>
                 <field name="state" invisible="1"/>
             </tree>
@@ -29,7 +29,7 @@
         <field name="name">account.payment.form</field>
         <field name="model">account.payment</field>
         <field name="arch" type="xml">
-            <form string="日常付款单">
+            <form string="日常付款单" create="false" edit="false">
                 <header groups="base.group_system">
                    <button name="action_submit" class="oe_highlight"  string="提交" type="object"
                            attrs="{'invisible':[('state_1','not in',['10_draft'])]}"/>
@@ -165,9 +165,9 @@
                             </field>
 </page>
 
-                        <page string="费用报告" attrs="{'invisible': [('count_fybg','=', 0)]}">
+                        <page string="费用明细和报告" attrs="{'invisible': [('count_fybg','=', 0)]}">
                             <field name="expense_ids" widget="many2many" readonly="True">
-                                <tree >
+                                <tree>
                                         <field name="categ_id" string="大类*" options="{'no_create':True,'no_open':1}" domain="[('parent_id.name','=','费用')]"  context="{'search_order': 'sequence','only_name':1}" />
                                         <field name="second_categ_id" string="中类*" options="{'no_create':True,'no_open':1}"   context="{'search_order': 'sequence','only_name':1}" />
                                         <field name="product_id" required="1" string="小类*" options="{'no_create':True,'no_open':1}" context="{'default_can_be_expensed': 1,'tree_view_ref':'hr_expense.product_product_expense_tree_view','only_name':1}"/>
@@ -209,7 +209,21 @@
                                         <field name="gongsi_id" string="公司主体" options="{'no_create':true,'no_open':1}" invisible="1"/>
                                     </tree>
                             </field>
-                            <field name="fybg_ids" widget="many2many" context="{'form_view_ref':'yjzy_extend.view_hr_expense_sheet_new_form'}"/>
+                            <field name="fybg_ids" widget="many2many" context="{'form_view_ref':'yjzy_extend.view_hr_expense_sheet_new_form'}">
+                                <tree string="费用申请" class="o_expense_tree" create='false' decoration-warning="state=='draft'"
+                                      decoration-bf="message_unread == True" decoration-danger="state=='cancel'">
+                                    <field name="create_date" string="创建日期"/>
+                                    <field name="create_uid" string="创建人"/>
+                                    <field name="name" string="费用说明"/>
+                                    <field name="include_tax" string="含税"/>
+                                    <field name="document_number" string="单据数量"/>
+                                    <field name="my_total_amount" string="总金额"/>
+                                    <field name="state" string="状态" invisible="1"/>
+                                    <field name="message_unread" invisible="1"/>
+                                    <field name="stage_id" string="审批流"/>
+                                    <field name="gongsi_id" string="公司主体" options="{'no_create':true,'no_open':1}" invisible="1"/>
+                                </tree>
+                            </field>
 
                         </page>
                         <page string="退税发票" invisible="1">
@@ -256,7 +270,7 @@
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="domain">[('sfk_type','=','rcfkd'),('state_fkzl','=','05_fksq')]</field>
-        <field name="context">{'show_shoukuan': True, 'default_sfk_type': 'fksqd','search_default_group_by_pay_to':1,
+        <field name="context">{'show_shoukuan': True, 'default_sfk_type': 'fksqd','search_default_group_by_pay_to':1,'only_name':1,'display_name_code':1,
             'default_payment_type': 'outbound', 'default_be_renling': False, 'default_advance_ok': True, 'default_partner_type': 'supplier',}</field>
         <field name="search_view_id" ref="view_account_payment_search_new"/>
         <field name="view_ids" eval="[(5, 0, 0),

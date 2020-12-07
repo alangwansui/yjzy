@@ -261,7 +261,7 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_rcfkd_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcfkd_form')})]"/>
     </record>
-    <menuitem id="menu_rcfkd_done"  sequence="40" name="已支付付款单" parent="menu_rcfkd_new" action="action_rcfkd_done_new"/>
+    <menuitem id="menu_rcfkd_done"  sequence="40" name="已支付付款单" parent="menu_rcfkd_new" groups="base.group_system"  action="action_rcfkd_done_new"/>
     <menuitem id="menu_rcfkd_done_cashier"  sequence="40" name="已完成" parent="menu_rcfkd_new_cashier" action="action_rcfkd_done_new"/>
 
     <record model="ir.actions.act_window" id="action_rcfkd_undone_new">
@@ -310,7 +310,7 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_rcfkd_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcfkd_form')})]"/>
     </record>
-    <menuitem id="menu_rcfkd_todo"  sequence="20" name="操作付款" parent="menu_rcfkd_new" action="action_rcfkd_todo"/>
+    <menuitem id="menu_rcfkd_todo"  sequence="20" name="操作付款" groups="base.group_system" parent="menu_rcfkd_new" action="action_rcfkd_todo"/>
 
     <record model="ir.actions.act_window" id="action_rcfkd_done_post">
         <field name="name">查询</field>
@@ -326,6 +326,6 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_rcfkd_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcfkd_form')})]"/>
     </record>
-    <menuitem id="menu_rcfkd_done_post"  sequence="20" name="查询" parent="menu_rcfkd_new" action="action_rcfkd_done_post"/>
+    <menuitem id="menu_rcfkd_done_post"  sequence="20" name="查询"  parent="menu_rcfkd_new" action="action_rcfkd_done_post"/>
 
 </odoo>

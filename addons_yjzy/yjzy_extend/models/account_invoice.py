@@ -1092,6 +1092,7 @@ class account_invoice(models.Model):
 
     #创建预付核销单从多个账单通过服务器动作创建 ok，
     def create_yfhxd_from_multi_invoice(self,attribute):
+
         print('invoice_ids', self.ids)
         print('partner_id', len(self.mapped('partner_id')))
         state_draft = len(self.filtered(lambda x: x.state != 'open'))
@@ -1103,6 +1104,8 @@ class account_invoice(models.Model):
             raise Warning('不同供应商')
         elif attribute == 'other_payment' and len(self) > 1:
             raise Warning('其他应付不允许多个一起申请付款')
+        elif len(self.yjzy_type_1) > 1:
+            raise  Warning('不同类型的账单不允许一起申请！')
         elif state_draft >= 1:
             raise Warning('非确认账单不允许创建付款申请')
         sfk_type = 'yfhxd'

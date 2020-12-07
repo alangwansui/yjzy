@@ -1840,6 +1840,8 @@ class account_reconcile_order(models.Model):
         })
         if self.expense_sheet_id:
             self.expense_sheet_id.payment_id = payment.id #1009
+        if payment.sfk_type == 'rcfkd':
+            payment.state_fkzl = '05_fksq'
         self.yjzy_payment_id = payment
 
 
