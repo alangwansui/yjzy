@@ -1073,7 +1073,7 @@
                                   <table style="width:100%">
                                              <tbody>
                                                 <tr>
-                                                  <th style="width:30%;text-align: center">采购单</th>
+                                                  <th style="width:30%;text-align: left">相关预付明细</th>
                                                   <th style="width:14%;text-align: center">原始预付</th>
                                                   <th style="width:14%;text-align: center">本次认领前可认领金额</th>
                                                     <th style="width:14%;text-align: center">本次认领后可认领金额</th>
