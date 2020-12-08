@@ -377,7 +377,18 @@ class account_reconcile_order(models.Model):
             one.supplier_advance_amount_hxd_line_approval = supplier_advance_amount_hxd_line_approval
             one.supplier_advance_amount_hxd_line_approval2 = supplier_advance_amount_hxd_line_approval2
 
+    @api.depends('account_payment_state_ids','account_payment_state_ids.amount_advance_balance_d','account_payment_state_ids.amount_reconcile','account_payment_state_ids.amount_advance_balance_after',)
+    def compute_account_payment_state_ids(self):
+        for one in self:
+            account_payment_state_ids = one.account_payment_state_ids
+            one.account_payment_state_ids_amount_1 = sum(x.amount_advance_balance_d for x in account_payment_state_ids)
+            one.account_payment_state_ids_amount_2 = sum(x.amount_advance_balance_after for x in account_payment_state_ids)
+            one.account_payment_state_ids_amount_2 = sum(x.amount_reconcile for x in account_payment_state_ids)
 
+
+    account_payment_state_ids_amount_1 = fields.Float('预收本次认领前金额',compute=compute_account_payment_state_ids)
+    account_payment_state_ids_amount_2 = fields.Float('预收本次认领后金额', compute=compute_account_payment_state_ids)
+    account_payment_state_ids_amount_3 = fields.Float('预收本次金额', compute=compute_account_payment_state_ids)
 
 
     account_payment_state_ids = fields.One2many('account.payment.state','reconcile_order_id')
@@ -3279,7 +3290,8 @@ class advance_payment_state(models.Model):
             one.amount_advance_balance = amount_advance_balance
             one.amount_payment = amount_payment
 
-    @api.depends('reconcile_order_line_id','reconcile_order_line_id.amount_total_org_new','amount_advance_balance_d')
+    @api.depends('reconcile_order_line_id','reconcile_order_line_id.amount_total_org_new','amount_advance_balance_d',
+                 'reconcile_order_line_id.amount_total_org_new')
     def compute_amount_reconcile(self):
         for one in self:
             amount_reconcile_old = one.reconcile_order_line_id.amount_total_org_new
@@ -3303,8 +3315,8 @@ class advance_payment_state(models.Model):
     advance_payment_currency = fields.Many2one('res.currency',compute=compute_info)
 
     amount_advance_balance_d = fields.Monetary(u'本次认领前可认领金额',currency_field='advance_payment_currency',)
-    amount_advance_balance_after = fields.Monetary(u'本次认领后可认领金额',currency_field='advance_payment_currency',compute=compute_amount_reconcile)
-    amount_reconcile = fields.Monetary(u'本次认领金额',currency_field='advance_payment_currency',compute=compute_amount_reconcile)
+    amount_advance_balance_after = fields.Monetary(u'本次认领后可认领金额',currency_field='advance_payment_currency',compute=compute_amount_reconcile,store=True)
+    amount_reconcile = fields.Monetary(u'本次认领金额',currency_field='advance_payment_currency',compute=compute_amount_reconcile,store=True)
 
     state = fields.Selection([('reconcile','认领'),('no_reconcile','未认领')],u'认领状态',default='no_reconcile')
 

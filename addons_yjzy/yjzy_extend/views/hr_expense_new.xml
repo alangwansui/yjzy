@@ -1553,7 +1553,7 @@
                              </group>
 
                                 <group groups="account.group_account_invoice" style="margin-top:-5px;"
-                                       attrs="{'invisible':[('state_1','not in',['account_approval','manager_approval','post','done'])]}">
+                                       attrs="{'invisible':[('state_1','not in',['draft','account_approval','manager_approval','post','done'])]}">
 
                                         <field name="partner_id" string="付款对象" invisible="1"
                                                context="{'default_supplier':True, 'default_customer':True, 'default_is_company':1}"/>
@@ -1562,7 +1562,7 @@
 
                                         <field name="back_tax_product_id" invisible="1"
                                                attrs="{'readonly': [('state','=','approve')]}"/>
-                                        <field name="back_tax_amount" invisible="1" attrs="{'readonly': [('state','=','approve'),('is_editable','=',False)]}"/>
+                                        <field name="back_tax_amount" invisible="0" attrs="{'readonly': [('state','=','approve'),('is_editable','=',False)]}"/>
                                         <field name="back_tax_invoice_id" invisible="1"
                                                attrs="{'readonly': [('state','=','approve'),('is_editable','=',False)]}"/>
                                         <field name="bank_journal_id" groups="account.group_account_user" invisible="1"

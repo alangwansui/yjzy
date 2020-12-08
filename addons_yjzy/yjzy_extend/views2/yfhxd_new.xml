@@ -1073,12 +1073,12 @@
                                   <table style="width:100%">
                                              <tbody>
                                                 <tr>
-                                                  <th style="width:35%;text-align: center">采购单</th>
-                                                  <th style="width:13%;text-align: center">原始预付</th>
-                                                  <th style="width:13%;text-align: center">本次认领前可认领金额</th>
-                                                    <th style="width:13%;text-align: center">本次认领后可认领金额</th>
-                                                  <th style="width:13%;text-align: center">本次认领金额</th>
-                                                    <th style="width:13%;text-align: center"> </th>
+                                                  <th style="width:30%;text-align: center">采购单</th>
+                                                  <th style="width:14%;text-align: center">原始预付</th>
+                                                  <th style="width:14%;text-align: center">本次认领前可认领金额</th>
+                                                    <th style="width:14%;text-align: center">本次认领后可认领金额</th>
+                                                  <th style="width:14%;text-align: center">本次认领金额</th>
+                                                    <th style="width:14%;text-align: center"> </th>
                                                 </tr>
                                               </tbody>
                                         </table>
@@ -1121,12 +1121,12 @@
                                             <table style="width:100%">
                                               <tbody >
                                                 <tr>
-                                                  <td style="width:35%"><t t-if="record.po_id.raw_value == False"><span>无</span></t><field name="po_id"/></td>
-                                                  <td style="width:13%;text-align: right"><a type="object" name="open_yfsqd"><field name="amount_payment"/></a></td>
-                                                  <td style="width:13%;text-align: right"><field name="amount_advance_balance_d"/></td>
-                                                    <td style="width:13%;text-align: right"><field name="amount_advance_balance_after"/></td>
-                                                  <td style="width:13%;text-align: right"><field name="amount_reconcile"/></td>
-                                                    <td style="width:13%;text-align: right"><t t-if="record.state.raw_value == 'no_reconcile'">
+                                                  <td style="width:30%"><t t-if="record.po_id.raw_value == False"><span>无</span></t><field name="po_id"/></td>
+                                                  <td style="width:14%;text-align: right"><a type="object" name="open_yfsqd" target="new"><field name="amount_payment"/></a></td>
+                                                  <td style="width:14%;text-align: right"><field name="amount_advance_balance_d"/></td>
+                                                    <td style="width:14%;text-align: right"><field name="amount_advance_balance_after"/></td>
+                                                  <td style="width:14%;text-align: right"><field name="amount_reconcile"/></td>
+                                                    <td style="width:14%;text-align: right"><t t-if="record.state.raw_value == 'no_reconcile'">
                                                         <button name="action_make_reconcile_line_ids" type="object"><span>认领</span></button></t>
                                                         <t t-if="record.state.raw_value == 'reconcile'">
                                                         <button name="action_cancel_reconcile_line_ids" type="object"><span>取消</span></button></t>
@@ -1141,6 +1141,20 @@
 
 
                                 </field>
+                             <div  colspan="2" style="padding-left:10px;padding-right:10px">
+                                  <table style="width:100%">
+                                             <tbody>
+                                                <tr>
+                                                  <th style="width:30%;text-align: center"> </th>
+                                                  <th style="width:14%;text-align: center"> </th>
+                                                  <th style="width:14%;text-align: right"><field name="account_payment_state_ids_amount_1"/></th>
+                                                    <th style="width:14%;text-align: right"><field name="account_payment_state_ids_amount_2"/></th>
+                                                  <th style="width:14%;text-align: right"><field name="account_payment_state_ids_amount_3"/></th>
+                                                    <th style="width:14%;text-align: right"> </th>
+                                                </tr>
+                                              </tbody>
+                                        </table>
+                            </div>
 
 
 
