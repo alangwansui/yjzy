@@ -2925,10 +2925,11 @@ class account_reconcile_order_line(models.Model):
             # amount_payment_can_approve_all = one.invoice_id.amount_payment_can_approve_all
             #认领后的金额：减掉的 是包括其他单子参与一起计算的金额。 如果只是自己的，那么就是认领前的减去认领后金额
             #增加字段：认领后金额
-            reconcile_line_ids = self.env['account.reconcile.order.line'].search([('order_id.state', 'in', ['post', 'done']), ('po_id', '=', one.po_id.id),('invoice_id','=',one.invoice_id.id)])
+            reconcile_line_ids = self.env['account.reconcile.order.line'].search([('order_id.state', 'in', ['post', 'done']),('company_id', '=', self.env.user.company_id.id), ('po_id', '=', one.po_id.id),
+                                                                                  ('invoice_id','=',one.invoice_id.id)])
             amount_payment_all = sum(x.amount_total_org_new for x in reconcile_line_ids)
             reconcile_line_done_ids = self.env['account.reconcile.order.line'].search(
-                [('order_id.state', 'in', ['done']), ('po_id', '=', one.po_id.id),('invoice_id','=',one.invoice_id.id)])
+                [('order_id.state', 'in', ['done']),('company_id', '=', self.env.user.company_id.id),('po_id', '=', one.po_id.id),('invoice_id','=',one.invoice_id.id)])
             amount_payment_done = sum(x.amount_total_org_new for x in reconcile_line_done_ids)
             amount_invoice_so_residual = amount_invoice_so - amount_payment_done
             amount_invoice_so_residual_can_approve = amount_invoice_so - amount_payment_all
