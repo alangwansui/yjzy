@@ -812,9 +812,11 @@ class account_payment(models.Model):
                 else:
                     self.state_1 = '25_cashier_submit'
             elif ctx.get('default_sfk_type', '') == 'fkzl' or self.sfk_type == 'fkzl':
+
                 self.state_1 = '25_cashier_submit'
                 self.state_fkzl = '20_wait_pay'
-                self.fksqd_2_ids.state_1 = '20_account_submit'
+                for one in self.fksqd_2_ids:
+                    one.state_1 = '20_account_submit'
 
     # 日常收款单：10，25，50，60
     # 收款-预收认领单：10，20，50，60

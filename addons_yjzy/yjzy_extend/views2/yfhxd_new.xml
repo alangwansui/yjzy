@@ -908,7 +908,7 @@
 
 
 
-                    <group col="3">
+                    <group col="2">
                         <group>
 
                             <field name="name" attrs="{'invisible':1}"/>
@@ -951,7 +951,7 @@
                             <field name="exchange_account_id" invisible="1"/>
                             <field name="fk_journal_id" string="付款银行"
                                    attrs="{'invisible':[('operation_wizard','not in',['10','30'])],}"/>
-                            <field name="yjzy_payment_id" string="日常付款单" domain="[('sfk_type', '=', 'rcfkd')]"
+                            <field name="yjzy_payment_id" string="日常付款单" domain="[('sfk_type', '=', 'rcfkd')]" invisible="1"
                                    attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),('state','not in',['approved','done'])]}"
                                    context="{'form_view_ref': 'yjzy_extend.view_rcfkd_form','advance_po_amount':1}"/>
 
@@ -962,24 +962,7 @@
                         </group>
 
 
-                        <group attrs="{'invisible':[('operation_wizard','in',['03','05',False])]}">
-                            <field name="feiyong_product_id" attrs="{'invisible': 1}"/>
-                            <field name="feiyong_amount" attrs="{'invisible': 1}"/>
-                            <field name="fygb_id" attrs="{'invisible': 1}"/>
-                            <field name="back_tax_product_id" attrs="{'invisible': 1}"/>
-                            <field name="back_tax_amount" attrs="{'invisible': 1}"/>
-                            <field name="back_tax_invoice_id" attrs="{'invisible': 1}"/>
-                            <field name="date" readonly="context.get('open')"
-                                   attrs="{'readonly':[('state_1','!=','draft')]}" invisible="1"/>
-                            <field name="yjzy_advance_payment_id" readonly="context.get('open')" string="预付单" invisible="1"
-                                   attrs="{'invisible':[('hxd_type_new','not in',['10','30'])]}"
-                                   context="{'form_view_ref': 'yjzy_extend.view_yfsqd_form','advance_po_amount':1}"/>
-                            <field name="include_tax" attrs="{'invisible':1}"/>
-                            <field name="sale_uid" attrs="{'invisible': 1}"/>
-                            <field name="assistant_uid" attrs="{'invisible': 1}"/>
-                            <field name="gongsi_id" string="公司主体" attrs="{'invisible':1}"/>
-                            <field name="company_id" attrs="{'invisible':1}"/>
-                        </group>
+
                         <group attrs="{'invisible':[('operation_wizard','in',['05',False])]}">
 
                             <field name="sfk_type" invisible="1"/>
@@ -1360,6 +1343,24 @@
                                        attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),('state','not in',['approved','done'])]}"/>
                                 <field name="yjzy_reconcile_order_id"/>
                             </group>
+                             <group attrs="{'invisible':[('operation_wizard','in',['03','05',False])]}">
+                            <field name="feiyong_product_id" attrs="{'invisible': 1}"/>
+                            <field name="feiyong_amount" attrs="{'invisible': 1}"/>
+                            <field name="fygb_id" attrs="{'invisible': 1}"/>
+                            <field name="back_tax_product_id" attrs="{'invisible': 1}"/>
+                            <field name="back_tax_amount" attrs="{'invisible': 1}"/>
+                            <field name="back_tax_invoice_id" attrs="{'invisible': 1}"/>
+                            <field name="date" readonly="context.get('open')"
+                                   attrs="{'readonly':[('state_1','!=','draft')]}" invisible="1"/>
+                            <field name="yjzy_advance_payment_id" readonly="context.get('open')" string="预付单" invisible="1"
+                                   attrs="{'invisible':[('hxd_type_new','not in',['10','30'])]}"
+                                   context="{'form_view_ref': 'yjzy_extend.view_yfsqd_form','advance_po_amount':1}"/>
+                            <field name="include_tax" attrs="{'invisible':1}"/>
+                            <field name="sale_uid" attrs="{'invisible': 1}"/>
+                            <field name="assistant_uid" attrs="{'invisible': 1}"/>
+                            <field name="gongsi_id" string="公司主体" attrs="{'invisible':1}"/>
+                            <field name="company_id" attrs="{'invisible':1}"/>
+                        </group>
                             <group>
                                 <field name="reconcile_payment_ids"/>
 
