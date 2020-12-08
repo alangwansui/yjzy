@@ -1100,14 +1100,14 @@ class account_invoice(models.Model):
 
     #创建预付核销单从多个账单通过服务器动作创建 ok，
     def create_yfhxd_from_multi_invoice(self,attribute):
-
         print('invoice_ids', self.ids)
         print('partner_id', len(self.mapped('partner_id')))
         state_draft = len(self.filtered(lambda x: x.state != 'open'))
         print('state_draft',state_draft)
         hxd_line_approval_ids = self.env['account.reconcile.order.line'].search([('invoice_id.id','in',self.ids),('order_id.state','not in',['done','approved'])])
-        order_id = hxd_line_approval_ids[0].order_id
 
+        order_id = hxd_line_approval_ids.mapped('order_id')
+        print('xd_line_approval_ids[0]_akiny', order_id)
         if hxd_line_approval_ids:
             view = self.env.ref('sh_message.sh_message_wizard_1')
             view_id = view and view.id or False
@@ -1131,12 +1131,13 @@ class account_invoice(models.Model):
 
             # raise Warning('选择的应付账单，有存在审批中的，请查验')
 
-
+        print('akiny_test',len(self.mapped('invoice_attribute')))
         if attribute != 'other_payment' and len(self.mapped('partner_id')) > 1:
             raise Warning('不同供应商')
         elif attribute == 'other_payment' and len(self) > 1:
             raise Warning('其他应付不允许多个一起申请付款')
-        elif len(self.mapped('yjzy_type_1')) > 1:
+
+        elif len(self.mapped('invoice_attribute')) > 1:
             raise  Warning('不同类型的账单不允许一起申请！')
         elif state_draft >= 1:
             raise Warning('非确认账单不允许创建付款申请')
