@@ -16,8 +16,8 @@
                 <field name="currency_id" attrs="{}" invisible="1" required="1"/>
                 <field name="amount" string="金额"/>
                 <field name="state_fkzl"/>
-                <field name="state"/>
-                <field name="state_1" groups="sales_team.group_manager"/>
+                <field name="state" invisible="1"/>
+                <field name="state_1" groups="sales_team.group_manager" invisible="1"/>
             </tree>
         </field>
     </record>
@@ -30,7 +30,7 @@
                 <header groups="sales_team.group_manager">
                    <button name="action_submit" class="oe_highlight"  string="审批" type="object"
                            attrs="{'invisible':[('state_fkzl','not in',['10_draft'])]}"/>
-                    <button name="print_fkzl" string="打印付款指令" type="object" attrs="{'invisible':[('can_print','=',False)]}"/>
+                    <button name="print_fkzl" string="打印付款指令" type="object" attrs="{'invisible':['|',('state_fkzl','!=','20_wait_pay'),('can_print','=',False)]}"/>
                     <button name="action_fkzl_approve" class="oe_highlight" string="支付完成" type="object"
                    attrs="{'invisible':[('state_fkzl','not in',['20_wait_pay'])]}"/>
                      <button name="action_hegui_refuse"  string="会计拒绝确认" type="object"
@@ -135,7 +135,22 @@
                     <notebook>
 
                         <page string="预付申请" attrs="{'invisible': [('yfsqd_fkzl_ids_count','=', 0)]}">
-                            <field name="yfsqd_fkzl_ids" widget="many2many" />
+                            <field name="yfsqd_fkzl_ids" widget="many2many" >
+                                <field name="partner_id"/>
+                                <field name="name" invisible="1"/>
+                                <field name="payment_date" string="申请日期"/>
+                                <field name="rcskd_date" string="完成付款日期"/>
+                                <field name="rcskd_amount" string="申请金额" invisible="1"/>
+                                <field name="amount" string="金额"/>
+                                <button name="open_reconcile_order_line_yfrld" icon="fa-pencil-square-o" type="object" attrs="{'invisible':[('advance_reconcile_order_count','=',0)]}"/>
+                                <field name="advance_reconcile_order_count" invisible="1"/>
+                                <field name="advance_balance_total" string="未认领金额"/>
+                                <field name="advance_total" string="已认领金额"/>
+                                <field name="po_id" string="采购合同"/>
+                                <field name="advance_type"/>
+                                <field name="fault_comments"/>
+                                <field name="state"/>
+                            </field>
 
                         </page>
                         <page string="应付申请" attrs="{'invisible': [('yshx_fkzl_ids_count','=', 0)]}">
@@ -268,7 +283,7 @@
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="domain">[('sfk_type','=','fkzl')]</field>
-        <field name="context">{'default_sfk_type': 'fkzl','only_name':1,'display_name_code':1,
+        <field name="context">{'search_default_group_by_state_fkzl':1,'default_sfk_type': 'fkzl','only_name':1,'display_name_code':1,
             'default_payment_type': 'outbound', 'default_be_renling': False, 'default_advance_ok': True, 'default_partner_type': 'supplier',}</field>
         <field name="search_view_id" ref="view_account_payment_search_new"/>
         <field name="view_ids" eval="[(5, 0, 0),

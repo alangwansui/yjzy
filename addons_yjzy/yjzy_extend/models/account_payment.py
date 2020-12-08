@@ -150,6 +150,12 @@ class account_payment(models.Model):
 
         return res
 
+    # @api.multi
+    # def write(self, vals):
+    #     res = super(account_payment, self).write(vals)
+    #     self.compute_advance_type()
+    #     return res
+
     @api.depends('advance_reconcile_order_line_ids.order_id.state','amount','advance_reconcile_order_line_ids.amount_advance_org','advance_reconcile_order_line_ids.yjzy_payment_id')
     def compute_advance_balance_total(self):
         for one in self:
@@ -239,7 +245,7 @@ class account_payment(models.Model):
             one.advance_reconcile_order_no_draft_count_char = '%s/%s' % (
             str(advance_reconcile_order_draft_ids_count), str(advance_reconcile_order_no_draft_ids_count))
 
-    @api.depends('po_id','so_id','partner_id')
+    @api.depends('po_id','so_id','partner_id','state','state_1')
     def compute_advance_type(self):
         if self.po_id or self.so_id:
             self.advance_type = '20_contract'
@@ -435,7 +441,7 @@ class account_payment(models.Model):
     # zlsx = fields.Selection([('fkzl',u'付款指令'),('fksq',u'付款申请'),('fkzl_fksq',u'付款指令和申请')],u'指令付款属性') #鉴定这个付款单的指令和付款属性，可以用来综合历史数据
 
     advance_type = fields.Selection([('10_no_contract',u'无合同'),
-                                     ('20_contract',u'有合同')],u'预付类型',conpute=compute_advance_type, default='10_no_contract',store=True)
+                                     ('20_contract',u'有合同')],u'预付类型',compute=compute_advance_type, default='10_no_contract',store=True)
     current_date_rate = fields.Float(u'当日汇率')
     #新增
     payment_comments = fields.Text(u'收付款备注')
@@ -456,10 +462,10 @@ class account_payment(models.Model):
 
     partner_confirm_id = fields.Many2one('res.partner','确定的客户',compute='_compute_partner_confirm_id')
 
-    yshxd_amount_payment_org_total = fields.Float(u'应收认领金额',conpute=compute_rcskd_amount_total, store=True)
-    ysrld_amount_total = fields.Float(u'预收认领金额',conpute=compute_rcskd_amount_total, store=True)
-    ysrld_amount_advance_total = fields.Float(u'预收被认领金额',conpute=compute_rcskd_amount_total, store=True)
-    ysrld_amount_advance_balance_total = fields.Float(u'预收未被认领金额',conpute=compute_rcskd_amount_total, store=True)
+    yshxd_amount_payment_org_total = fields.Float(u'应收认领金额',compute=compute_rcskd_amount_total, store=True)
+    ysrld_amount_total = fields.Float(u'预收认领金额',compute=compute_rcskd_amount_total, store=True)
+    ysrld_amount_advance_total = fields.Float(u'预收被认领金额',compute=compute_rcskd_amount_total, store=True)
+    ysrld_amount_advance_balance_total = fields.Float(u'预收未被认领金额',compute=compute_rcskd_amount_total, store=True)
     #13ok
     name = fields.Char(u'编号', default=lambda self: self._default_name())
     sfk_type = fields.Selection(sfk_type, u'收付类型')
