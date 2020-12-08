@@ -10,8 +10,8 @@
 			<form string="Message">
 				<field name="name"/>
 				<footer>
-					<button name="apply" string="确认进入付款申请" class="btn-primary" type="object" invisible="context.get('no_advance',True)"/>
-					<button string="关闭留在当前" class="btn-primary" special="cancel" invisible="context.get('no_advance',True)"/>
+					<button name="apply" string="确认进入付款申请" class="btn-primary" type="object" invisible="context.get('no_advance')"/>
+					<button string="关闭留在当前" class="btn-primary" special="cancel" invisible="context.get('no_advance')"/>
 					<button string="确认进入付款申请" class="btn-primary" special="cancel" invisible="not context.get('no_advance')"/>
 				</footer>
 				
