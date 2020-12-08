@@ -906,6 +906,8 @@
                         <field name="is_editable" widget="boolean_toggle"/>
                     </div>
 
+
+
                     <group col="3">
                         <group>
 
@@ -968,7 +970,7 @@
                             <field name="back_tax_amount" attrs="{'invisible': 1}"/>
                             <field name="back_tax_invoice_id" attrs="{'invisible': 1}"/>
                             <field name="date" readonly="context.get('open')"
-                                   attrs="{'readonly':[('state_1','!=','draft')]}"/>
+                                   attrs="{'readonly':[('state_1','!=','draft')]}" invisible="1"/>
                             <field name="yjzy_advance_payment_id" readonly="context.get('open')" string="预付单" invisible="1"
                                    attrs="{'invisible':[('hxd_type_new','not in',['10','30'])]}"
                                    context="{'form_view_ref': 'yjzy_extend.view_yfsqd_form','advance_po_amount':1}"/>
@@ -1065,10 +1067,10 @@
                         <group attrs="{'invisible':['|',('supplier_advance_payment_ids_count','=',0),
                             ('operation_wizard','not in',['03','20',25])]}">
                             <!--                                <div  colspan="2" attrs="{'invisible':[('operation_wizard','not in',['03'])]}" style="width:100%">-->
-                            <span colspan="2" attrs="{'invisible':[('operation_wizard','not in',['03','20',25])]}"
-                                  style="font-weight:bolder">
-                                相关预付账单
-                            </span>
+<!--                            <span colspan="2" attrs="{'invisible':[('operation_wizard','not in',['03','20',25])]}"-->
+<!--                                  style="font-weight:bolder">-->
+<!--                                相关预付账单-->
+<!--                            </span>-->
                             <div  colspan="2" style="padding-left:10px;padding-right:10px">
                                   <table style="width:100%">
                                              <tbody>
@@ -1875,10 +1877,9 @@
         <field name="domain">[('sfk_type','=','yfhxd'),('invoice_attribute','in',['normal','extra']),
             ('state','in',['draft','refused','canceled','posted','approved','done']),('hxd_type_new','in',['40'])]
         </field>
-        <field name="context">{'search_default_group_by_state_1':1,'advance_po_amount':1,'default_sfk_type': 'yfhxd',
+        <field name="context">{'search_default_group_by_state_1':1,'advance_po_amount':1,'default_sfk_type': 'yfhxd','display_name_code':1,
             'default_hxd_type_new':'40','default_payment_type': 'outbound', 'default_be_renling': 1,
-            'default_partner_type':
-            'supplier', 'show_po': 1,'default_operation_wizard':'30'}
+            'default_partner_type':'supplier', 'show_po': 1,'default_operation_wizard':'30'}
         </field>
         <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('account_yfhxd_tree_view_new')}),

@@ -224,7 +224,7 @@ class account_reconcile_order(models.Model):
                 # return dic_po_invl or False
             print('po',po)
             supplier_advance_payment_ids = self.env['account.payment'].search(
-                [('partner_id', '=', one.partner_id.id), ('sfk_type', '=', 'yfsqd'),('po_id','in',po),
+                [('partner_id', '=', one.partner_id.id), ('sfk_type', '=', 'yfsqd'),('po_id','in',po),('company_id', '=', self.env.user.company_id.id),
                  ('state', 'in', ['posted', 'reconciled']),])
             one.supplier_advance_payment_ids_count = len(supplier_advance_payment_ids)
             one.supplier_advance_payment_ids = supplier_advance_payment_ids
