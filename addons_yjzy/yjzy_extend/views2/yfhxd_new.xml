@@ -915,7 +915,7 @@
 
                             <field name="payment_type" invisible="1"/>
                             <field name="partner_type" invisible="1"/>
-                            <field name="partner_id" readonly="context.get('open')" required="1"
+                            <field name="partner_id" readonly="context.get('open')" required="1" string="供应商"
                                    attrs="{'invisible':['|',('operation_wizard','=',False),('invoice_attribute','=','other_payment')],
                                    'readonly':[('state_1','!=','draft')]}"
                                    domain="[('is_company','=',True),('parent_id', '=', False),('supplier','=',1),('state','=','done')]"
@@ -1006,7 +1006,7 @@
                             <field name="supplier_advance_amount_hxd_line_approval" string="已申请未认领"
                                    attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),
                                    ('invoice_attribute','in',['other_payment','expense_po','other_po'])]}"/>
-                            <field name="supplier_advance_amount_hxd_line_approval2" string="应付余额2"
+                            <field name="supplier_advance_amount_hxd_line_approval2" string="预付余额2"
                                    attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),
                                    ('invoice_attribute','in',['other_payment','expense_po','other_po'])]}"/>
 
@@ -1027,7 +1027,7 @@
                                    domain="[('partner_id','=', partner_id),('state', '=', 'open')]"
                                    options='{"no_create": True}'
                                    attrs="{'readonly':[('state_1','!=','draft'),('is_editable','=',False)]}"
-                                   widget="many2many" context="{'tree_view_ref':'account.invoice_tree'}">
+                                   widget="many2many" context="{'tree_view_ref':'account.invoice_tree','form_view_ref':'yjzy_extend.view_account_invoice_new_form_in_one'}">
                                 <tree create="false" editable="bottom"
                                       default_order="tb_contract_code, invoice_attribute desc ">
                                     <field name="invoice_attribute" groups="base.group_system"/>
@@ -1068,7 +1068,7 @@
                                               </tbody>
                                         </table>
                             </div>
-                             <field name="account_payment_state_ids" context="{'form_view_ref':'yjzy_extend.view_yfsqd_form'}" nolabel="1" mode="kanban" attrs="{'invisible':['|',('supplier_advance_payment_ids_count','=',0),
+                             <field name="account_payment_state_ids"  nolabel="1" mode="kanban" readonly="1" attrs="{'invisible':['|',('supplier_advance_payment_ids_count','=',0),
                              ('operation_wizard','not in',['03','20',25])]}"><!---->
 <!--                                    <tree>-->
 <!--                                        <field name="advance_payment_id" groups="base.group_system"/>-->
@@ -1090,7 +1090,7 @@
 <!--                                    </tree>-->
 
 
-                                 <kanban class="o_kanban_mobile o_kanban_dashboard_akiny o_saleakiny_kanban oe_kanban_global_click">
+                                 <kanban class="o_kanban_mobile o_kanban_dashboard_akiny o_saleakiny_kanban ">
                                         <field name="advance_payment_id"/>
                                         <field name="po_id"/>
                                         <field name="amount_payment"/>
@@ -1101,7 +1101,7 @@
                                     <templates>
 
                                         <t t-name="kanban-box" style="width:100%">
-                                            <div style="width:100%" t-attf-class="oe_kanban_global_click">
+                                            <div style="width:100%" >
 
                                             <table style="width:100%">
                                               <tbody >
@@ -1111,9 +1111,9 @@
                                                   <td style="width:14%;text-align: right"><field name="amount_advance_balance_d"/></td>
                                                     <td style="width:14%;text-align: right"><field name="amount_advance_balance_after"/></td>
                                                   <td style="width:14%;text-align: right"><field name="amount_reconcile"/></td>
-                                                    <td style="width:14%;text-align: right"><t t-if="record.state.raw_value == 'no_reconcile'">
-                                                        <button name="action_make_reconcile_line_ids" type="object"><span>认领</span></button></t>
-                                                        <t t-if="record.state.raw_value == 'reconcile'">
+                                                    <td style="width:14%;text-align: right"><t t-if="record.state.raw_value == 'no_reconcile' and state_1 == 'draft'">
+                                                        <button name="action_make_reconcile_line_ids" type="object" ><span>认领</span></button></t>
+                                                        <t t-if="record.state.raw_value == 'reconcile' and state_1 == 'draft'">
                                                         <button name="action_cancel_reconcile_line_ids" type="object"><span>取消</span></button></t>
                                                     </td>
                                                 </tr>

@@ -87,12 +87,12 @@
                     <field name="id" invisible="1"/>
                     <div class="oe_title">
                         <h1>
-                            <field name="name"/>
+
                         </h1>
                     </div>
                     <group>
                         <group>
-
+                            <field name="name" string="编号"/>
                             <field name="partner_id" string="付款对象" options="{'no_create':True}" groups="base.group_system"
                                    attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))],
                             'invisible': ['|',('payment_type', 'not in', ('inbound', 'outbound')),('sfk_type','in',['rcskd','rcfkd'])],
@@ -121,10 +121,10 @@
                             <field name="include_tax" invisible="1"/>
 
                             <field name="payment_date" attrs="{'readonly': [('state', '!=', 'draft')]}" invisible="1"/>
-                            <field name="print_date"/>
-                            <field name="print_uid"/>
-                            <field name="print_times"/>
-                            <field name="payment_date_confirm"/>
+                            <field name="print_date" attrs="{'readonly':1}"/>
+                            <field name="print_uid" attrs="{'readonly':1}"/>
+                            <field name="print_times" attrs="{'readonly':1}"/>
+                            <field name="payment_date_confirm" attrs="{'readonly':1}"/>
                             <field name="can_print" invisible="1"/>
                             <field name="fault_comments"/>
 
@@ -136,6 +136,7 @@
 
                         <page string="预付申请" attrs="{'invisible': [('yfsqd_fkzl_ids_count','=', 0)]}">
                             <field name="yfsqd_fkzl_ids" widget="many2many" >
+                                <tree>
                                 <field name="partner_id"/>
                                 <field name="name" invisible="1"/>
                                 <field name="payment_date" string="申请日期"/>
@@ -149,7 +150,8 @@
                                 <field name="po_id" string="采购合同"/>
                                 <field name="advance_type"/>
                                 <field name="fault_comments"/>
-                                <field name="state"/>
+                                <field name="state_1"/>
+                                </tree>
                             </field>
 
                         </page>

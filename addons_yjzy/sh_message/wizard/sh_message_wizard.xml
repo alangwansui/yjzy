@@ -19,5 +19,21 @@
 		</field>	
 	</record>
 
+		<record id="sh_message_wizard_1" model="ir.ui.view">
+		<field name="name">sh.message.wizard</field>
+		<field name="model">sh.message.wizard</field>
+		<field name="arch" type="xml">
+			<form string="Message">
+				<field name="name"/>
+				<footer>
+					<button name="apply" string="打开申请单" class="btn-primary" type="object" />
+					<button string="关闭留在当前" class="btn-primary" special="cancel" />
+
+				</footer>
+
+			</form>
+		</field>
+	</record>
+
 </data>
 </odoo>

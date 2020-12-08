@@ -1106,8 +1106,32 @@ class account_invoice(models.Model):
         state_draft = len(self.filtered(lambda x: x.state != 'open'))
         print('state_draft',state_draft)
         hxd_line_approval_ids = self.env['account.reconcile.order.line'].search([('invoice_id.id','in',self.ids),('order_id.state','not in',['done','approved'])])
+        order_id = hxd_line_approval_ids[0].order_id
+
         if hxd_line_approval_ids:
-            raise Warning('选择的应付账单，有存在审批中的，请查验')
+            view = self.env.ref('sh_message.sh_message_wizard_1')
+            view_id = view and view.id or False
+            context = dict(self._context or {})
+            context['message'] = "选择的应付账单，有存在审批中的，请查验"
+            context['res_model'] = "account.reconcile.order"
+            context['res_id'] = order_id.id
+            context['views'] = self.env.ref('yjzy_extend.account_yfhxd_form_view_new').id
+            context['no_advance'] = True
+            print('context_akiny', context)
+            return {
+                'name': 'Success',
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'sh.message.wizard',
+                'views': [(view_id, 'form')],
+                'target': 'new',
+                'context': context,
+            }
+
+            # raise Warning('选择的应付账单，有存在审批中的，请查验')
+
+
         if attribute != 'other_payment' and len(self.mapped('partner_id')) > 1:
             raise Warning('不同供应商')
         elif attribute == 'other_payment' and len(self) > 1:
