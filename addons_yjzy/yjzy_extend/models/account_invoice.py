@@ -211,6 +211,7 @@ class account_invoice(models.Model):
             # reconcile_order_line_bank = 0.0
             # reconcile_order_line_amount_diff = 0.0
             reconcile_order_line_payment = sum(x.amount_payment_org for x in dlrs) or 0.0 #本账单收付款金额
+            print('akiny_get_reconcile_order_line',dlrs,reconcile_order_line_payment)
             reconcile_order_line_advance = sum(x.amount_advance_org for x in dlrs) or 0.0 #本账预收付认领金额
             reconcile_order_line_bank = sum(x.amount_bank_org for x in dlrs) or 0.0
             reconcile_order_line_amount_diff = sum(x.amount_diff_org for x in dlrs) or 0.0
