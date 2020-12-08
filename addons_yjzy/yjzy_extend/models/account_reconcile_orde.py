@@ -377,6 +377,9 @@ class account_reconcile_order(models.Model):
             one.supplier_advance_amount_hxd_line_approval = supplier_advance_amount_hxd_line_approval
             one.supplier_advance_amount_hxd_line_approval2 = supplier_advance_amount_hxd_line_approval2
 
+
+
+
     account_payment_state_ids = fields.One2many('account.payment.state','reconcile_order_id')
 
     ysrld_amount_advance_org_all = fields.Float('预收单的本所有被认领金额',compute=compute_ysrld_amount_advance_org_all,store=True)
@@ -1206,7 +1209,7 @@ class account_reconcile_order(models.Model):
             context['res_model'] = "account.reconcile.order"
             context['res_id'] = self.id
             context['views'] = self.env.ref('yjzy_extend.account_yfhxd_form_view_new').id
-            context['no_advance'] = 1
+            context['no_advance'] = True
             print('context_akiny', context)
             return {
                 'name': 'Success',
@@ -1218,8 +1221,6 @@ class account_reconcile_order(models.Model):
                 'target': 'new',
                 'context': context,
             }
-
-
         else:
             self.action_manager_approve_stage()
             self.operation_wizard = '20'
@@ -1276,6 +1277,7 @@ class account_reconcile_order(models.Model):
                 context['res_model'] = "account.reconcile.order"
                 context['res_id'] = account_reconcile_id.id
                 context['views'] = self.env.ref('yjzy_extend.account_yfhxd_form_view_new').id
+                # context['no_advance'] = False
                 print('context_akiny',context)
                 return{
                     'name':'Success',
