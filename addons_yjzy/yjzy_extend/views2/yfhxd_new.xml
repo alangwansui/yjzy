@@ -1083,7 +1083,7 @@
                                               </tbody>
                                         </table>
                             </div>
-                             <field name="account_payment_state_ids" nolabel="1" mode="kanban" attrs="{'invisible':['|',('supplier_advance_payment_ids_count','=',0),
+                             <field name="account_payment_state_ids" context="{'form_view_ref':'yjzy_extend.view_yfsqd_form'}" nolabel="1" mode="kanban" attrs="{'invisible':['|',('supplier_advance_payment_ids_count','=',0),
                              ('operation_wizard','not in',['03','20',25])]}"><!---->
 <!--                                    <tree>-->
 <!--                                        <field name="advance_payment_id" groups="base.group_system"/>-->
@@ -1122,7 +1122,7 @@
                                               <tbody >
                                                 <tr>
                                                   <td style="width:35%"><t t-if="record.po_id.raw_value == False"><span>无</span></t><field name="po_id"/></td>
-                                                  <td style="width:13%;text-align: right"><field name="amount_payment"/></td>
+                                                  <td style="width:13%;text-align: right"><a type="object" name="open_yfsqd"><field name="amount_payment"/></a></td>
                                                   <td style="width:13%;text-align: right"><field name="amount_advance_balance_d"/></td>
                                                     <td style="width:13%;text-align: right"><field name="amount_advance_balance_after"/></td>
                                                   <td style="width:13%;text-align: right"><field name="amount_reconcile"/></td>

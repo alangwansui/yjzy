@@ -3347,6 +3347,18 @@ class advance_payment_state(models.Model):
         self.amount_advance_balance_d = 0.0
         self.compute_amount_reconcile()
 
+    def open_yfsqd(self):
+        form_view = self.env.ref('yjzy_extend.view_yfsqd_form')
+        return {'name': u'预付款申请单',
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'res_model': 'account.payment',
+            'views': [ (form_view.id, 'form')],
+            'res_id': self.advance_payment_id.id,
+            'target':'new',
+            'context': {'display_name_code':1,
+                        }}
 
 
 
