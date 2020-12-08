@@ -3306,7 +3306,7 @@ class advance_payment_state(models.Model):
     amount_advance_balance_after = fields.Monetary(u'本次认领后可认领金额',currency_field='advance_payment_currency',compute=compute_amount_reconcile)
     amount_reconcile = fields.Monetary(u'本次认领金额',currency_field='advance_payment_currency',compute=compute_amount_reconcile)
 
-    state = fields.Selection([('reconcile','认领'),('no_reconcile','未认领')],u'认领状态',default='reconcile')
+    state = fields.Selection([('reconcile','认领'),('no_reconcile','未认领')],u'认领状态',default='no_reconcile')
 
 
     # renling = fields.Boolean('认领')

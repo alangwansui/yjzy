@@ -1069,30 +1069,81 @@
                                   style="font-weight:bolder">
                                 相关预付账单
                             </span>
-                             <field name="account_payment_state_ids" nolabel="1" attrs="{'invisible':['|',('supplier_advance_payment_ids_count','=',0),
+                            <div  colspan="2" style="padding-left:10px;padding-right:10px">
+                                  <table style="width:100%">
+                                             <tbody>
+                                                <tr>
+                                                  <th style="width:35%;text-align: center">采购单</th>
+                                                  <th style="width:13%;text-align: center">原始预付</th>
+                                                  <th style="width:13%;text-align: center">本次认领前可认领金额</th>
+                                                    <th style="width:13%;text-align: center">本次认领后可认领金额</th>
+                                                  <th style="width:13%;text-align: center">本次认领金额</th>
+                                                    <th style="width:13%;text-align: center"> </th>
+                                                </tr>
+                                              </tbody>
+                                        </table>
+                            </div>
+                             <field name="account_payment_state_ids" nolabel="1" mode="kanban" attrs="{'invisible':['|',('supplier_advance_payment_ids_count','=',0),
                              ('operation_wizard','not in',['03','20',25])]}"><!---->
-                                    <tree>
-                                        <field name="advance_payment_id" groups="base.group_system"/>
-                                        <field name="reconcile_order_line_ids" invisible="1"/>
-                                        <field name="advance_payment_date" string="申请日期" invisible="1"/>
+<!--                                    <tree>-->
+<!--                                        <field name="advance_payment_id" groups="base.group_system"/>-->
+<!--                                        <field name="reconcile_order_line_ids" invisible="1"/>-->
+<!--                                        <field name="advance_payment_date" string="申请日期" invisible="1"/>-->
+<!--                                        <field name="po_id"/>-->
+<!--                                        <field name="amount_payment" string="原始预付" sum="小计"/>-->
+<!--                                        <field name="amount_advance_balance" invisible="1"/>-->
+<!--                                        <field name="amount_advance_balance_d" string="本次认领前可认领金额" sum="小计"/>-->
+<!--                                        <field name="amount_advance_balance_after" string="本次认领后可认领金额" sum="小计"/>-->
+<!--                                        <field name="amount_reconcile" string="本次认领金额" sum="小计"/>-->
+<!--                                        <button name="action_make_reconcile_line_ids" type="object" string="认领" invisible="0" /> &lt;!&ndash;attrs="{'invisible':[('state','=','reconcile')]}"&ndash;&gt;-->
+<!--                                        <button name="action_cancel_reconcile_line_ids" type="object" string="取消" groups="base.group_system"-->
+<!--                                                />-->
+
+
+<!--                                        <field name="state" invisible="1"/>-->
+<!--&lt;!&ndash;                                        <field name="advance_payment_currency" invisible="1"/>&ndash;&gt;-->
+<!--                                    </tree>-->
+
+
+                                 <kanban class="o_kanban_mobile o_kanban_dashboard_akiny o_saleakiny_kanban oe_kanban_global_click">
+                                        <field name="advance_payment_id"/>
                                         <field name="po_id"/>
-                                        <field name="amount_payment" string="原始预付" sum="小计"/>
-                                        <field name="amount_advance_balance" invisible="1"/>
-                                        <field name="amount_advance_balance_d" string="本次认领前可认领金额" sum="小计"/>
-                                        <field name="amount_advance_balance_after" string="本次认领后可认领金额" sum="小计"/>
-                                        <field name="amount_reconcile" string="本次认领金额" sum="小计"/>
-                                        <button name="action_make_reconcile_line_ids" type="object" string="认领" invisible="0" /> <!--attrs="{'invisible':[('state','=','reconcile')]}"-->
-                                        <button name="action_cancel_reconcile_line_ids" type="object" string="取消" groups="base.group_system"
-                                                />
+                                        <field name="amount_payment"/>
+                                        <field name="amount_advance_balance_d"/>
+                                        <field name="amount_advance_balance_after"/>
+                                        <field name="amount_reconcile"/>
+                                        <field name="state"/>
+                                    <templates>
+
+                                        <t t-name="kanban-box" style="width:100%">
+                                            <div style="width:100%" t-attf-class="oe_kanban_global_click">
+
+                                            <table style="width:100%">
+                                              <tbody >
+                                                <tr>
+                                                  <td style="width:35%"><t t-if="record.po_id.raw_value == False"><span>无</span></t><field name="po_id"/></td>
+                                                  <td style="width:13%;text-align: right"><field name="amount_payment"/></td>
+                                                  <td style="width:13%;text-align: right"><field name="amount_advance_balance_d"/></td>
+                                                    <td style="width:13%;text-align: right"><field name="amount_advance_balance_after"/></td>
+                                                  <td style="width:13%;text-align: right"><field name="amount_reconcile"/></td>
+                                                    <td style="width:13%;text-align: right"><t t-if="record.state.raw_value == 'no_reconcile'">
+                                                        <button name="action_make_reconcile_line_ids" type="object"><span>认领</span></button></t>
+                                                        <t t-if="record.state.raw_value == 'reconcile'">
+                                                        <button name="action_cancel_reconcile_line_ids" type="object"><span>取消</span></button></t>
+                                                    </td>
+                                                </tr>
+                                              </tbody>
+                                            </table>
+                                            </div>
+                                        </t>
+                                        </templates>
+                                </kanban>
 
 
-                                        <field name="state" invisible="1"/>
-<!--                                        <field name="advance_payment_currency" invisible="1"/>-->
-                                    </tree>
                                 </field>
 
 
-                            <!--                                </div>-->
+
                         </group>
 
                     </group>
