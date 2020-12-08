@@ -224,7 +224,7 @@ class account_reconcile_order(models.Model):
                 # return dic_po_invl or False
             print('po',po)
             supplier_advance_payment_ids = self.env['account.payment'].search(
-                [('partner_id', '=', one.partner_id.id), ('sfk_type', '=', 'yfsqd'),('po_id','in',po),('company_id', '=', self.env.user.company_id.id),
+                [('partner_id', '=', one.partner_id.id), ('sfk_type', '=', 'yfsqd'),('po_id','in',po),
                  ('state', 'in', ['posted', 'reconciled']),])
             one.supplier_advance_payment_ids_count = len(supplier_advance_payment_ids)
             one.supplier_advance_payment_ids = supplier_advance_payment_ids
@@ -2925,11 +2925,10 @@ class account_reconcile_order_line(models.Model):
             # amount_payment_can_approve_all = one.invoice_id.amount_payment_can_approve_all
             #认领后的金额：减掉的 是包括其他单子参与一起计算的金额。 如果只是自己的，那么就是认领前的减去认领后金额
             #增加字段：认领后金额
-            reconcile_line_ids = self.env['account.reconcile.order.line'].search([('order_id.state', 'in', ['post', 'done']),('company_id', '=', self.env.user.company_id.id), ('po_id', '=', one.po_id.id),
-                                                                                  ('invoice_id','=',one.invoice_id.id)])
+            reconcile_line_ids = self.env['account.reconcile.order.line'].search([('order_id.state', 'in', ['post', 'done']), ('po_id', '=', one.po_id.id),('invoice_id','=',one.invoice_id.id)])
             amount_payment_all = sum(x.amount_total_org_new for x in reconcile_line_ids)
             reconcile_line_done_ids = self.env['account.reconcile.order.line'].search(
-                [('order_id.state', 'in', ['done']),('company_id', '=', self.env.user.company_id.id),('po_id', '=', one.po_id.id),('invoice_id','=',one.invoice_id.id)])
+                [('order_id.state', 'in', ['done']), ('po_id', '=', one.po_id.id),('invoice_id','=',one.invoice_id.id)])
             amount_payment_done = sum(x.amount_total_org_new for x in reconcile_line_done_ids)
             amount_invoice_so_residual = amount_invoice_so - amount_payment_done
             amount_invoice_so_residual_can_approve = amount_invoice_so - amount_payment_all
@@ -3314,11 +3313,11 @@ class advance_payment_state(models.Model):
     amount_payment = fields.Monetary(u'预收付款单余额',currency_field='advance_payment_currency',compute=compute_info)
     amount_advance_balance = fields.Monetary(u'预收付款单余额',currency_field='advance_payment_currency',compute=compute_info)
     advance_payment_currency = fields.Many2one('res.currency',compute=compute_info)
-
+    company_id =  fields.Many2one('res.company', string=u'公司', related='reconcile_order_id.company_id')
     amount_advance_balance_d = fields.Monetary(u'本次认领前可认领金额',currency_field='advance_payment_currency',)
     amount_advance_balance_after = fields.Monetary(u'本次认领后可认领金额',currency_field='advance_payment_currency',compute=compute_amount_reconcile,store=True)
     amount_reconcile = fields.Monetary(u'本次认领金额',currency_field='advance_payment_currency',compute=compute_amount_reconcile,store=True)
-    company_id = fields.Many2one('res.company', string=u'公司', related='reconcile_order_id.company_id')
+
     state = fields.Selection([('reconcile','认领'),('no_reconcile','未认领')],u'认领状态',default='no_reconcile')
 
 
