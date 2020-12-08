@@ -194,7 +194,9 @@ class account_invoice(models.Model):
             one.reconcile_order_line_bank_char = reconcile_order_line_bank_char
             one.reconcile_order_line_amount_diff_char = reconcile_order_line_amount_diff_char
 
-    @api.depends('reconcile_order_line_id','reconcile_order_line_id.amount_payment_org','reconcile_order_line_id.amount_advance_org','reconcile_order_line_id.amount_bank_org','reconcile_order_line_id.amount_diff_org','reconcile_order_line_id.yjzy_payment_id')
+    @api.depends('reconcile_order_line_id','reconcile_order_line_id.amount_payment_org',
+                 'reconcile_order_line_id.amount_advance_org','reconcile_order_line_id.amount_bank_org',
+                 'reconcile_order_line_id.amount_diff_org','reconcile_order_line_id.yjzy_payment_id')
     def get_reconcile_order_line(self):
         for one in self:
 
