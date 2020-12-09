@@ -531,16 +531,24 @@ class account_invoice(models.Model):
     #819费用转应付发票
     expense_sheet_id = fields.Many2one('hr.expense.sheet',u'费用报告')
     # 增加常规转直接的状态，明细那边增加是否已经转换的状态
+
+    #以下三个组成对账单的属性全局判断，主账单同时拥有yjzy_type和yjzy_type_1的两个值，以完成对老数据的过滤，新版本可以将两者合并
     invoice_attribute = fields.Selection(
-        [('normal', u'常规账单'),
-         ('reconcile', u'核销账单'),
-         ('extra', u'额外账单'),
+        [('normal', u'主账单'),
+         ('reconcile', u'核销账单'),#这个等待删除
+         ('extra', u'额外账单'),#这个等待删除
          ('other_po', u'直接增加'),
          ('expense_po', u'费用转换'),
-         ('other_payment',u'其他')], '账单类型')
-    #新增
-    yjzy_type_1 = fields.Selection([('sale', u'应收'),('purchase', u'应付'), ('back_tax', u'退税'), ('other_payment_sale','其他应收'),
-                                  ('other_payment_purchase','其他应付')], string=u'发票类型')
+         ('other_payment',u'其他')], u'账单属性')
+
+    yjzy_type_1 = fields.Selection([('sale', u'应收'),('purchase', u'应付'), ('back_tax', u'退税'),
+                                    ('other_payment_sale','其他应收'),
+                                    ('other_payment_purchase','其他应付')#这个等待删除
+                                    ], string=u'发票类型')
+
+    invoice_type_main = fields.Selection([('10_main',u'常规账单'),
+                                          ('20_extra',u'额外账单'),
+                                          ('30_reconcile',u'核销账单')],u'账单类型')
 
     # from_type = fields.Selection([('manual_create',u'手动创建'),('auto_crate',u'自动创建')],u'创建方式')
 
@@ -999,7 +1007,7 @@ class account_invoice(models.Model):
                     'default_name_title': self[0].name_title
                 }
             }
-
+    #创建应收 等待定稿
     def create_yshxd_from_multi_invoice(self,attribute):
         print('invoice_ids', self.ids)
 
@@ -1086,7 +1094,7 @@ class account_invoice(models.Model):
             'flags': {'form': {'initial_mode': 'view','action_buttons': False}}
         }
 
-
+    # 1209定稿
     def action_create_yfhxd(self):
         ctx = self.env.context.get('invoice_attribute')
         yjzy_payment_id = self.env.context.get('yjzy_payment_id')
@@ -1098,7 +1106,7 @@ class account_invoice(models.Model):
             hxd = self.with_context({'default_yjzy_payment_id':yjzy_payment_id}).create_yshxd_from_multi_invoice(ctx)
         return hxd
 
-    #创建预付核销单从多个账单通过服务器动作创建 ok，
+    #1209定稿
     def create_yfhxd_from_multi_invoice(self,attribute):
         print('invoice_ids', self.ids)
         print('partner_id', len(self.mapped('partner_id')))
@@ -1108,6 +1116,7 @@ class account_invoice(models.Model):
 
         order_id = hxd_line_approval_ids.mapped('order_id')
         print('xd_line_approval_ids[0]_akiny', order_id)
+        #如果有存在审批中的账单，可以跳转对应的申请单
         if hxd_line_approval_ids:
             view = self.env.ref('sh_message.sh_message_wizard_1')
             view_id = view and view.id or False
@@ -1128,16 +1137,12 @@ class account_invoice(models.Model):
                 'target': 'new',
                 'context': context,
             }
-
-            # raise Warning('选择的应付账单，有存在审批中的，请查验')
-
         print('akiny_test',len(self.mapped('invoice_attribute')))
         if attribute != 'other_payment' and len(self.mapped('partner_id')) > 1:
             raise Warning('不同供应商')
         elif attribute == 'other_payment' and len(self) > 1:
             raise Warning('其他应付不允许多个一起申请付款')
-
-        elif len(self.mapped('invoice_attribute')) > 1:
+        elif len(self.mapped('invoice_attribute')) > 1 or len(self.mapped('yjzy_type')) > 1 or len(self.mapped('invoice_type_main')) > 1:
             raise  Warning('不同类型的账单不允许一起申请！')
         elif state_draft >= 1:
             raise Warning('非确认账单不允许创建付款申请')
@@ -1150,11 +1155,7 @@ class account_invoice(models.Model):
         form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new')
         invoice_dic = []
         account_reconcile_order_obj = self.env['account.reconcile.order']
-        # for one in self:
-        #     for x in one.yjzy_invoice_wait_payment_ids:#参考M2M的自动多选
-        #         invoice_dic.append(x.id)
-        #     invoice_dic.append(one.id)
-        # print('invoice_dic[k]',invoice_dic)
+
         for one in self:
             for x in one.yjzy_invoice_wait_payment_ids:#参考M2M的自动多选  剩余应付金额！=0的额外账单
                 invoice_dic.append(x.id)
@@ -1162,12 +1163,6 @@ class account_invoice(models.Model):
             if one.amount_payment_can_approve_all != 0:  #考虑已经提交审批的申请
                 invoice_dic.append(one.id)
         print('invoice_dic',invoice_dic)
-        # test = [(for x in line.yjzy_invoice_all_ids) for line in self)]
-        # invoice_ids = self.env['account.invoice'].search([('id','in',invoice_dic)])
-        # with_context(
-        #     {'fk_journal_id': 1, 'default_be_renling': 1, 'default_invoice_ids': invoice_dic,
-        #      'default_payment_type': 'outbound', 'show_so': 1, 'default_sfk_type': 'yfhxd', }).
-
         account_reconcile_id = account_reconcile_order_obj.create({
                 'partner_id': self[0].partner_id.id,
                 'manual_payment_currency_id': self[0].currency_id.id,
@@ -1179,14 +1174,13 @@ class account_invoice(models.Model):
                 'name': name,
                 'journal_id': journal.id,
                 'payment_account_id': bank_account.id,
-                # 'operation_wizard':operation_wizard,
                 'yjzy_type':self[0].yjzy_type_1,#1207akiny
                 'purchase_code_balance': 1,
                 'invoice_attribute': attribute,
+                'invoice_type_main':self[0].invoice_type_main,
                 'invoice_partner':self[0].invoice_partner,
                 'name_title':self[0].name_title
                     })
-
         if account_reconcile_id.invoice_attribute in ['other_po', 'expense_po', 'other_payment']:
             account_reconcile_id.operation_wizard = '10'
             account_reconcile_id.hxd_type_new = '40'
@@ -1200,8 +1194,6 @@ class account_invoice(models.Model):
                 account_reconcile_id.operation_wizard = '03'
                 account_reconcile_id.hxd_type_new = '40'
                 account_reconcile_id.make_account_payment_state_ids()
-
-
         return {
             'type': 'ir.actions.act_window',
             'view_mode': 'form',

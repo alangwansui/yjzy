@@ -368,8 +368,8 @@
                 <tree decoration-info="state == 'draft'" create="false" default_order="date_deadline_new" decoration-warning="is_yjzy_invoice == True" decoration-muted="state == 'cancel'" string="Invoice">
                     <field name="extra_code" invisible="1"/>
                     <field name="partner_id" groups="base.group_user" string="供应商"/>
-                    <field name="bill_id" string="合同号" invisible="1"/>
-                    <field name="tb_contract_code" string="合同号" widget="dynamic_popover_char"
+                    <field name="bill_id" string="合同号" invisible="0"/>
+                    <field name="tb_contract_code" string="合同号" widget="dynamic_popover_char" invisible="1"
                        options="{'max_width': '100px', 'line_clamp': '1', 'mode_mouse':'hover','popover_max_width':'200px','placement':'right'}"/>
 
                     <button name="open_supplier_reconcile_order_line" icon="fa-pencil-square-o" attrs="{'invisible':[('reconcile_order_line_count','=',0)]}"  type="object"/>
@@ -410,7 +410,7 @@
                     <field name="origin" invisible="1"/>
                     <field name="currency_id" invisible="1"/>
                     <field name="company_currency_id" invisible="1"/>
-                    <field name="state"/>
+                    <field name="state" groups="base.group_system"/>
                     <field name="type" invisible="context.get('type',True)"/>
                     <field name="residual_times_out_in" groups="base.group_system"/>
                     <field name="fault_comments" invisible="0"/>
@@ -2159,12 +2159,12 @@
 
         <!--      创建新增采购的付款申请不按到期时间分组-->
         <record id="action_purchase_invoice_unpaid_group_by_invoice_attribute" model="ir.actions.act_window">
-            <field name="name">查看未付账单并创建付款申请(多选后创建)</field>
+            <field name="name">查看未付账单并创建付款申请(多选后点击动作创建)</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">account.invoice</field>
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_account_invoice_new_filter"/>
-            <field name="domain">[('invoice_attribute','in',['normal']),('type','=','in_invoice'),('state','=','open'),('is_yjzy_invoice','=',False),'|',('yjzy_type_1','=','purchase'),
+            <field name="domain">[('invoice_type_main','=','main'),('invoice_attribute','in',['normal']),('type','=','in_invoice'),('state','=','open'),('is_yjzy_invoice','=',False),'|',('yjzy_type_1','=','purchase'),
                 ('yjzy_type','=','purchase'),'|',('amount_payment_can_approve_all','!=',0),('yjzy_invoice_amount_payment_can_approve_all','!=',0)]</field>
             <field name="context">{'only_ref':1,'search_default_group_invoice_attribute':1,'type':'out_invoice','journal_type': 'sale','yjzy_type':'purchase'}
             </field>

@@ -262,7 +262,7 @@ class tb_po_invoice(models.Model):
     yjzy_tb_po_invoice = fields.Many2one('tb.po.invoice',u'关联应收付下级申请单')
     yjzy_tb_po_invoice_parent = fields.Many2one('tb.po.invoice',u'关联应收付上级申请单')
     yjzy_tb_po_invoice_parent_amount = fields.Monetary('关联上级应收付申请单金额',currency_field='currency_id', compute=compute_yjzy_tb_po_invoice_parent_amount,store=True)
-    yjzy_tb_po_invoice_parent_residual = fields.Monetary('关联上级应收付申请单金额',currency_field='currency_id', compute=compute_yjzy_tb_po_invoice_parent_amount,store=True)
+    yjzy_tb_po_invoice_parent_residual = fields.Monetary('关联上级应收付申请单余额',currency_field='currency_id', compute=compute_yjzy_tb_po_invoice_parent_amount,store=True)
 
     yjzy_tb_po_invoice_amount = fields.Monetary('关联应收付申请单金额',currency_field='currency_id', compute=compute_yjzy_tb_po_invoice_amount,store=True)
     yjzy_tb_po_invoice_residual = fields.Monetary('关联应收付申请单余额',currency_field='currency_id', compute=compute_yjzy_tb_po_invoice_amount,store=True)

@@ -134,7 +134,7 @@
                                    attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))],
                                    'invisible': [('payment_type', 'not in', ('inbound', 'outbound'))], 'readonly': [('state', '!=', 'draft')]}"
                                    context="{'default_is_company': True, 'default_supplier': payment_type == 'outbound', 'default_customer': payment_type == 'inbound'}"/>
-                            <field name="bank_id" domain="[('partner_id','=',partner_id)]" options="{'no_create_edit': True}" string="收款方账户"/>
+                            <field name="bank_id" domain="[('partner_id','=',partner_id)]" attrs="{'readonly':[('state', 'in', ['posted','reconciled'])]}" options="{'no_create_edit': True}" string="收款方账户"/>
                             <field name="po_id" domain="[('partner_id','=', partner_id),'|',('state','in',['approve','done','purchase','to approve']),
                             ('x_wkf_state','=',185)]" context="{'show_contract_code': 1}" attrs="{'readonly':[('state', '!=', 'draft')]}"/>
 

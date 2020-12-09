@@ -6,10 +6,11 @@ from .comm import sfk_type
 import logging
 
 _logger = logging.getLogger(__name__)
-Account_reconcile_Selection =   [('draft',u'草稿'),
-                                 ('advance_approval',u'待预付认领审批'),
-                                 ('account_approval',u'完成预付等待付款申请'),
-                                 ('manager_approval',u'待总经理审批'),
+#注意：直接单独创建应付申请，和预付认领的时候，默认状态需要注意
+Account_reconcile_Selection =   [('draft',u'待预付认领草稿'),
+                                 ('advance_approval',u'预付款认领待审批'),
+                                 ('account_approval',u'应付款申请草稿'),
+                                 ('manager_approval',u'应付款申请待审批'),
                                  ('post',u'审批完成待支付'),
                                  ('done',u'完成'),
                                  ('refused', u'已拒绝'),
@@ -348,10 +349,10 @@ class account_reconcile_order(models.Model):
             one.ysrld_advice_amount_advance_org_all = ysrld_advice_amount_advance_org_all
             one.duoyu_this_time_advice_advance_org = duoyu_this_time_advice_advance_org
 
-    def compute_yjzy_reconcile_order_ids_count(self):
-        for one in self:
-            yjzy_reconcile_order_ids_count = len(one.yjzy_reconcile_order_ids)
-            one.yjzy_reconcile_order_ids_count = yjzy_reconcile_order_ids_count
+    # def compute_yjzy_reconcile_order_ids_count(self):
+    #     for one in self:
+    #         yjzy_reconcile_order_ids_count = len(one.yjzy_reconcile_order_ids)
+    #         one.yjzy_reconcile_order_ids_count = yjzy_reconcile_order_ids_count
 
     @api.depends('line_ids','line_ids.invoice_id','line_ids.amount_total_invoice')
     def compute_by_invoice_line_ids(self):
@@ -410,8 +411,8 @@ class account_reconcile_order(models.Model):
 
     yjzy_reconcile_order_id = fields.Many2one('account.reconcile.order','关联的核销单',ondelete='cascade')#从付款申请认领的时候，创建预付申请，让两者之间产生关联
 
-    yjzy_reconcile_order_ids = fields.One2many('account.reconcile.order','yjzy_reconcile_order_id','相关的核销单汇总')#从自身创建的所有的预付-应付认领单。
-    yjzy_reconcile_order_ids_count = fields.Integer('相关的核销单汇总数量',compute=compute_yjzy_reconcile_order_ids_count)
+    # yjzy_reconcile_order_ids = fields.One2many('account.reconcile.order','yjzy_reconcile_order_id','相关的核销单汇总')#从自身创建的所有的预付-应付认领单。
+    # yjzy_reconcile_order_ids_count = fields.Integer('相关的核销单汇总数量',compute=compute_yjzy_reconcile_order_ids_count)
 
     yjzy_reconcile_order_approval_ids = fields.One2many('account.reconcile.order', 'yjzy_reconcile_order_id', u'相关待审批预付-应付认领',domain=[('state_1','=','manager_approval')],
                                               )  # 从自身创建的所有的预付-应付认领单。
@@ -436,15 +437,20 @@ class account_reconcile_order(models.Model):
     yjzy_type = fields.Selection([('sale','销售'),
                                   ('purchase','采购'),
                                   ('back_tax','退税'),
-                                  ('other_payment_sale','其他应收'),
-                                  ('other_payment_purchase','其他应付')],u'发票类型')
+                                  ('other_payment_sale','其他应收'),#等待删除
+                                  ('other_payment_purchase','其他应付')#等待删除
+                                  ],u'发票类型')
     invoice_attribute = fields.Selection(
         [('normal', u'常规账单'),
-         ('reconcile', u'核销账单'),
-         ('extra', u'额外账单'),
+         ('reconcile', u'核销账单'),#等待删除
+         ('extra', u'额外账单'),#等待删除
          ('other_po', u'直接增加'),
          ('expense_po', u'费用转换'),
-         ('other_payment',u'其他')], '账单类型')
+         ('other_payment',u'其他')], '账单属性')
+
+    invoice_type_main = fields.Selection([('10_main', u'常规账单'),
+                                          ('20_extra', u'额外账单'),
+                                          ('30_reconcile', u'核销账单')],'账单类型')
 
     stage_id = fields.Many2one(
         'account.reconcile.stage',
@@ -459,6 +465,14 @@ class account_reconcile_order(models.Model):
                                      ('40', u'应付-付款'),
                                      ('50', u'核销-应收'),
                                      ('60', u'核销-应付')],'认领来源')
+    # 827
+    operation_wizard = fields.Selection([('03', u'预收付前置'),
+                                         ('05', u'创建明细行'),#
+                                         ('10', u'收付认领'),
+                                         ('20', u'预收认领'),
+                                         ('25', u'预收简易认领'),#
+                                         ('30', u'同时认领'),#
+                                         ('40', u'核销')], '认领方式')  # 决定视图上预收付认领还是收付款申请，引用line_no_ids或者line_ids
     #908
     # supplier_advance_payment_ids_char = fields.Char(u'相关预付',compute=_compute_supplier_advance_payment_ids_char)
 
@@ -481,14 +495,7 @@ class account_reconcile_order(models.Model):
 
     #828
     comments = fields.Text('备注')
-    #827
-    operation_wizard = fields.Selection([('03',u'预收付前置'),
-                                         ('05',u'创建明细行'),
-                                         ('10', u'收付认领'),
-                                         ('20', u'预收认领'),
-                                         ('25', u'预收简易认领'),
-                                         ('30', u'同时认领'),
-                                         ('40', u'核销')],'认领方式')    #akiny
+
     reconcile_type = fields.Selection([('normal',u'正常阶段'),('un_normal',u'核销阶段')],string=u'阶段', default='normal')
     name = fields.Char(u'编号', default=lambda self: self._default_name())
     payment_type = fields.Selection([('outbound', u'付款'), ('inbound', u'收款'), ('claim_in', u'收款认领'), ('claim_out', u'付款认领')], string=u'收/付款',
@@ -616,30 +623,32 @@ class account_reconcile_order(models.Model):
         for one in self:
             if ctx.get('default_sfk_type', '') == 'yfhxd' and one.hxd_type_new == '30':
                 name = '%s:%s' % ('预付-应付认领', one.name)
-            elif ctx.get('default_sfk_type', '') == 'yfhxd'  and one.hxd_type_new == '40':
+            elif ctx.get('default_sfk_type', '') == 'yfhxd' and one.hxd_type_new == '40' and one.operation_wizard != '03':
                 name = '%s:%s' % ('应付付款申请', one.name)
+            elif ctx.get('default_sfk_type', '') == 'yfhxd' and one.hxd_type_new == '40' and one.operation_wizard == '03':
+                name = '%s:%s' % ('应付申请前的预付认领审批', one.name)
             else:
                 name = one.name
             res.append((one.id, name))
         return res
 
-    def open_yjzy_reconcile_order_id(self):
-        form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new_for_advance_approve')
-        if not self.yjzy_reconcile_order_approval_ids:
-            self.action_manager_approve_first_stage()
-        else:
-            return {
-                'name': '预付-应付认领列表',
-                'view_type': 'form',
-                "view_mode": 'form',
-                'res_model': 'account.reconcile.order',
-                'type': 'ir.actions.act_window',
-                'views': [(form_view.id, 'form')],
-                'res_id': self.id,
-                'target': 'new',
-                'context': {'fk_journal_id': 1,
-                            'show_so': 1,                        }
-            }
+    # def open_yjzy_reconcile_order_id(self):
+    #     form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new_for_advance_approve')
+    #     if not self.yjzy_reconcile_order_approval_ids:
+    #         self.action_manager_approve_first_stage()
+    #     else:
+    #         return {
+    #             'name': '预付-应付认领列表',
+    #             'view_type': 'form',
+    #             "view_mode": 'form',
+    #             'res_model': 'account.reconcile.order',
+    #             'type': 'ir.actions.act_window',
+    #             'views': [(form_view.id, 'form')],
+    #             'res_id': self.id,
+    #             'target': 'new',
+    #             'context': {'fk_journal_id': 1,
+    #                         'show_so': 1,                        }
+    #         }
 
     @api.onchange('other_payment_bank_id')
     def onchange_other_payment_bank_id(self):
@@ -700,9 +709,9 @@ class account_reconcile_order(models.Model):
         return res
 
 
-    def action_05(self):
-        self.operation_wizard = '05'
-        self.make_lines()
+    # def action_05(self):
+    #     self.operation_wizard = '05'
+    #     self.make_lines()
 
 
     @api.onchange('yjzy_advance_payment_id')
@@ -1382,28 +1391,28 @@ class account_reconcile_order(models.Model):
         if self.sfk_type == 'yshxd':
             self.action_manager_approve_stage()
 
-    #从应付申请生成的预付认领进行直接审批
-    def action_manager_approve_from_yfhxd(self):
-        self.action_manager_approve_stage()
-        if self.yjzy_reconcile_order_id:
-            self.yjzy_reconcile_order_id.action_manager_approve_first_stage()
-        print('yjzy_reconcile_order_approval_ids', self.yjzy_reconcile_order_id)
-        form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new_for_advance_approve')
-        if self.yjzy_reconcile_order_id.state_1 == 'advance_approval':
-            return {
-                'name': '预付-应付认领列表',
-                'view_type': 'form',
-                "view_mode": 'form',
-                'res_model': 'account.reconcile.order',
-                'type': 'ir.actions.act_window',
-                'views': [(form_view.id, 'form')],
-                'res_id': self.yjzy_reconcile_order_id.id,
-                'target': 'new',
-                'context': {'fk_journal_id': 1,
-                            'show_so': 1, }
-        }
-        else:
-            return {'type': 'ir.actions.act_window_close'}
+    # #从应付申请生成的预付认领进行直接审批
+    # def action_manager_approve_from_yfhxd(self):
+    #     self.action_manager_approve_stage()
+    #     if self.yjzy_reconcile_order_id:
+    #         self.yjzy_reconcile_order_id.action_manager_approve_first_stage()
+    #     print('yjzy_reconcile_order_approval_ids', self.yjzy_reconcile_order_id)
+    #     form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new_for_advance_approve')
+    #     if self.yjzy_reconcile_order_id.state_1 == 'advance_approval':
+    #         return {
+    #             'name': '预付-应付认领列表',
+    #             'view_type': 'form',
+    #             "view_mode": 'form',
+    #             'res_model': 'account.reconcile.order',
+    #             'type': 'ir.actions.act_window',
+    #             'views': [(form_view.id, 'form')],
+    #             'res_id': self.yjzy_reconcile_order_id.id,
+    #             'target': 'new',
+    #             'context': {'fk_journal_id': 1,
+    #                         'show_so': 1, }
+    #     }
+    #     else:
+    #         return {'type': 'ir.actions.act_window_close'}
 
         # tree_view = self.env.ref('yjzy_extend.account_yfhxd_advance_tree_view_approve_new')
         # form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new')
@@ -1547,18 +1556,18 @@ class account_reconcile_order(models.Model):
                                     })
 
 #1126
-    def action_draft_stage_old(self):
-        if self.sfk_type == 'yfhxd':
-            self.yjzy_payment_id.unlink()
-        for one in self.yjzy_reconcile_order_ids:
-            if one.state == 'refused':
-                one.action_draft_stage()
-        stage_id = self._stage_find(domain=[('code', '=', '010')])
-        self.write({'stage_id': stage_id.id,
-                    'state': 'draft',
-                    'approve_date': False,
-                    'approve_uid': False
-                    })
+    # def action_draft_stage_old(self):
+    #     if self.sfk_type == 'yfhxd':
+    #         self.yjzy_payment_id.unlink()
+    #     for one in self.yjzy_reconcile_order_ids:
+    #         if one.state == 'refused':
+    #             one.action_draft_stage()
+    #     stage_id = self._stage_find(domain=[('code', '=', '010')])
+    #     self.write({'stage_id': stage_id.id,
+    #                 'state': 'draft',
+    #                 'approve_date': False,
+    #                 'approve_uid': False
+    #                 })
 
     def action_refuse_stage(self,reason):
         stage_id = self._stage_find(domain=[('code', '=', '090')])

@@ -167,25 +167,25 @@
 
         <!--应付核销审批-->
         <record model="account.reconcile.stage" id="stage_account_reconcile_draft">
-            <field name="name">草稿</field>
+            <field name="name">待预付认领草稿</field>
             <field name="code">010</field>
             <field name="sequence" eval="10"/>
             <field name="state">draft</field>
         </record>
         <record model="account.reconcile.stage" id="stage_account_reconcile_advance_approval">
-            <field name="name">待预付认领审批</field>
+            <field name="name">预付款认领待审批</field>
             <field name="code">020</field>
             <field name="sequence" eval="20"/>
             <field name="state">advance_approval</field>
         </record>
         <record model="account.reconcile.stage" id="stage_account_reconcile_account_approval">
-            <field name="name">待财务提交申请</field>
+            <field name="name">应付款申请草稿</field>
             <field name="code">030</field>
             <field name="sequence" eval="30"/>
             <field name="state">account_approval</field>
         </record>
         <record model="account.reconcile.stage" id="stage_account_reconcile_manager_approval">
-            <field name="name">待总经理审批</field>
+            <field name="name">应付款申请待审批</field>
             <field name="code">040</field>
             <field name="sequence" eval="40"/>
             <field name="state">manager_approval</field>

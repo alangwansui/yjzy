@@ -2070,6 +2070,8 @@ class transport_bill(models.Model):
                     # 'include_tax': x.include_tax,
                     'yjzy_type': 'purchase',
                     'yjzy_type_1':'purchase',
+                    'invoice_type_main': 'main',
+                    'invoice_attribute': 'normal',
                     'gongsi_id': self.purchase_gongsi_id.id,
                     'stage_id': self.env['account.invoice.stage'].search([('code', '=', '007')], limit=1).id,
 
@@ -2091,7 +2093,7 @@ class transport_bill(models.Model):
             invoice_ids = [x.id for x in self.purchase_invoice_ids]
 
         return {
-            'name': '采购发票',
+            'name': '采购账单',
             'view_type': 'form',
             'view_mode': 'tree,form',
             'res_model': 'account.invoice',
@@ -2153,6 +2155,8 @@ class transport_bill(models.Model):
                 'bill_id': self.id,
                 'yjzy_type': 'sale',
                 'yjzy_type_1': 'sale',
+                'invoice_attribute':'normal',
+                'invoice_type_main': 'main',
                 'gongsi_id': self.gongsi_id.id,
                 'stage_id':self.env['account.invoice.stage'].search([('code','=','007')],limit=1).id,
             })
@@ -2176,7 +2180,7 @@ class transport_bill(models.Model):
             sale_invoice_ids = [self.sale_invoice_id.id]
 
         return {
-            'name': '销售发票',
+            'name': '销售账单',
             'view_type': 'form',
             'view_mode': 'tree,form',
             'res_model': 'account.invoice',
@@ -2287,6 +2291,8 @@ class transport_bill(models.Model):
                     'bill_id': self.id,
                     'yjzy_type': 'back_tax',
                     'yjzy_type_1': 'back_tax',
+                    'invoice_attribute': 'normal',
+                    'invoice_type_main':'main',
                     'gongsi_id': self.purchase_gongsi_id.id,
                     'stage_id': self.env['account.invoice.stage'].search([('code', '=', '007')], limit=1).id,
                     'include_tax': self.include_tax,
@@ -2304,7 +2310,7 @@ class transport_bill(models.Model):
                 back_tax_invoice.action_invoice_open()
                 self.back_tax_invoice_id = back_tax_invoice
         return {
-            'name': '退税发票',
+            'name': '退税账单',
             'view_type': 'form',
             'view_mode': 'tree,form',
             'res_model': 'account.invoice',
