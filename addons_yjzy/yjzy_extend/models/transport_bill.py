@@ -2286,7 +2286,7 @@ class transport_bill(models.Model):
                     'date_finish': self.date,
                     'bill_id': self.id,
                     'yjzy_type': 'back_tax',
-                    'yjzy_type_1': 'bak_tax',
+                    'yjzy_type_1': 'back_tax',
                     'gongsi_id': self.purchase_gongsi_id.id,
                     'stage_id': self.env['account.invoice.stage'].search([('code', '=', '007')], limit=1).id,
                     'include_tax': self.include_tax,

@@ -140,8 +140,8 @@
                                        attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
                                 <field name="qingguan_description" invisible="1"
                                        attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
-                                <field name="qingguan_container_no" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
-                                <field name="qingguan_seal_no" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
+                                <field name="qingguan_container_no" />
+                                <field name="qingguan_seal_no" />
                             </group>
                              <group>
                                 <field name="name" readonly="1" groups="base.group_system" invisible="1"/>
