@@ -467,7 +467,9 @@
                                        no_create="True"/>
                                 <field name="date" string="预计出运日期"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"
-                                       invisible="0"/>
+                                       invisible="1"/>
+                                 <field name="date_project" string="预计出运日期"
+                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <field name="current_date_rate" string="成本测算汇率"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <button string="添加销售明细" type="object" colspan="2"

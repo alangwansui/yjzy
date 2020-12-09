@@ -50,6 +50,7 @@
                     <field name="date"/>
                     <field name="org_sale_amount"/>
                     <field name="state"/>
+                    <field name="date_project"/>
                     <templates>
                         <t t-name="kanban-box">
                             <div t-attf-class="oe_kanban_global_click">
@@ -198,7 +199,8 @@
                             <group name="general_information">
                                 <field name="id" invisible="1"/>
                                 <field name="name" attrs="{'readonly': [('locked','=',True)]}"/>
-                                <field name="date" attrs="{'readonly': [('locked','=',True)]}"/>
+                                <field name="date" attrs="{'readonly': [('locked','=',True)]}" />
+
                                 <field name="partner_id" required="1" attrs="{'readonly': [('locked','=',True)]}"
                                        domain="[('customer','=',True),('parent_id', '=', False),('state','=','done'),'|','|','|','|','|',('assistant_id','=',uid),('user_id','=',uid),('parent_id.assistant_id','=',uid),('parent_id.user_id','=',uid),('supplier','=',1),('x_studio_field_3ErQR','=',1)]"
                                        no_create="True"/>

@@ -133,8 +133,9 @@
                                 <field name="ref" string="Invoice No"
                                        attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
                                 <field name="date" string="Date"
-                                       attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"
-                                       invisible="0"/>
+                                       invisible="0"/><!--attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"-->
+                                 <field name="payment_due_date" string="Payment Due Date"
+                                       invisible="0"/><!--attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"-->
                                 <field name="mark_text" string="Marks"/>
                                 <field name="qingguan_description_text" string="Description"
                                        attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>

@@ -392,6 +392,7 @@ class account_reconcile_order(models.Model):
             one.supplier_amount_residual_advance_payment = one.partner_id.supplier_amount_residual_advance_payment
             one.supplier_amount_advance_payment = one.partner_id.supplier_amount_advance_payment
 
+    yingfurld_ids = fields.One2many('account.payment','account_reconcile_order_id','应付认领单')
 
     account_payment_state_ids_amount_1 = fields.Float('预收本次认领前金额',compute=compute_account_payment_state_ids)
     account_payment_state_ids_amount_2 = fields.Float('预收本次认领后金额', compute=compute_account_payment_state_ids)

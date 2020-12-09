@@ -114,7 +114,7 @@ class hr_expense_sheet(models.Model):
     yjzy_payment_id = fields.Many2one('yjzy.account.payment', u'新付款单')
 
     payment_id = fields.Many2one('account.payment', u'付款单ID')
-    fkzl_id = fields.Many2one('account.payment', u'付款指令')
+    fkzl_id = fields.Many2one('account.payment', u'付款指令',ondelete="restrict")
     yjzy_payment_currency_id = fields.Many2one('res.currency', u'付款单ID币种', related='payment_id.currency_id')
     balance = fields.Monetary(related='payment_id.balance', currency_field='yjzy_payment_currency_id')
 

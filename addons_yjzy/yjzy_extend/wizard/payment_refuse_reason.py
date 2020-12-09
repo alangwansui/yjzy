@@ -29,5 +29,7 @@ class PaymentRefuseWizard(models.TransientModel):
     #写上拒绝的理由，sale_order上执行拒绝
     def payment_refuse_reason(self):
         self.ensure_one()
-        self.account_payment_id.action_refuse_new(self.reason)
+        self.account_payment_id.action_refuse(self.reason)
         return {'type': 'ir.actions.act_window_close'}
+
+

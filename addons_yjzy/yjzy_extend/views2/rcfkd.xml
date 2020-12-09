@@ -195,7 +195,7 @@
         <field name="res_model">account.payment</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
-        <field name="domain">[('sfk_type','=','rcfkd')]</field>
+        <field name="domain">[('sfk_type','in',['fksqd','rcfkd'])]</field>
         <field name="context">{'show_shoukuan': True,'display_name_code':1, 'default_sfk_type': 'rcfkd', 'default_payment_type': 'outbound', 'default_be_renling': False, 'default_advance_ok': True, 'default_partner_type': 'supplier',}</field>
         <field name="search_view_id" ref="view_account_payment_search_new"/>
     </record>
@@ -285,7 +285,7 @@
         <field name="res_model">account.payment</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
-        <field name="domain">[('sfk_type','=','rcfkd')]</field>
+        <field name="domain">[('sfk_type','in',['rcfkd'])]</field>
         <field name="context">{'show_shoukuan': True, 'default_sfk_type': 'rcfkd', 'default_payment_type': 'outbound', 'default_be_renling': False, 'default_advance_ok': True, 'default_partner_type': 'supplier',}</field>
         <field name="search_view_id" ref="view_account_payment_search_new"/>
         <field name="view_ids" eval="[(5, 0, 0),

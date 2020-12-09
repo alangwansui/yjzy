@@ -1005,6 +1005,8 @@ class transport_bill(models.Model):
     name = fields.Char('编号', default=lambda self: self.env['ir.sequence'].next_by_code('transport.bill'))
     ref = fields.Char(u'出运合同号')
     date = fields.Date(u'出运日期')
+    date_project = fields.Date(u'预计出运日期')
+    payment_due_date = fields.Date('Payment Due Date')
     current_date_rate = fields.Float(u'当日汇率')
 
     exchange_rate = fields.Float(u'目前汇率', compute=compute_exchange_rate)#13取消
@@ -1343,6 +1345,17 @@ class transport_bill(models.Model):
         sale_invoice_id = self.all_invoice_ids.filtered(lambda x: x.yjzy_type == 'sale')
         self.sale_invoice_id = sale_invoice_id[0]
 
+    @api.multi
+    def _get_printed_report_name(self):
+        self.ensure_one()
+        date = fields.datetime.now().strftime('%m%d')
+        return _('%s-%sCommercial Invoice') % (self.ref,date)
+
+    @api.multi
+    def _get_printed_report_name_packing_qingguan(self):
+        self.ensure_one()
+        date = fields.datetime.now().strftime('%m%d')
+        return _('%s-%sPacking List') % (self.ref, date)
 
      #akiny 计算出运合同号 13ok
     def compute_tb_ref(self):

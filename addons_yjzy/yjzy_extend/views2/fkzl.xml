@@ -26,18 +26,18 @@
         <field name="name">account.payment.form</field>
         <field name="model">account.payment</field>
         <field name="arch" type="xml">
-            <form string="付款指令">
+            <form string="付款指令" create="false" >
                 <header groups="sales_team.group_manager">
                    <button name="action_submit" class="oe_highlight"  string="审批" type="object"
                            attrs="{'invisible':[('state_fkzl','not in',['10_draft'])]}"/>
                     <button name="print_fkzl" string="打印付款指令" type="object" attrs="{'invisible':['|',('state_fkzl','!=','20_wait_pay'),('can_print','=',False)]}"/>
                     <button name="action_fkzl_approve" class="oe_highlight" string="支付完成" type="object"
                    attrs="{'invisible':[('state_fkzl','not in',['20_wait_pay'])]}"/>
-                     <button name="action_hegui_refuse"  string="会计拒绝确认" type="object"
-                   attrs="{'invisible':[('state_fkzl','not in',['10_draft'])]}" invisible="1"/>
-                    <button name="action_cashier_refuse" class="oe_highlight" string="出纳拒绝支付" type="object"
-                   attrs="{'invisible':[('state_fkzl','not in',['20_wait_pay'])]}"/>
-                    <button name="action_draft_new" class="oe_highlight" string="重置草稿" type="object"
+                     <button name="%(payment_refuse_wizard_action)d" string="会计拒绝确认" type="action"
+                             attrs="{'invisible':[('state_fkzl','not in',['10_draft'])]}"/>
+                    <button name="%(payment_refuse_wizard_action)d" string="出纳拒绝支付" type="action"
+                            attrs="{'invisible':[('state_fkzl','not in',['20_wait_pay'])]}"/>
+                    <button name="action_draft_new" class="oe_highlight" string="重新提交审批" type="object"
                             attrs="{'invisible':[('state_fkzl','not in',['80_refused'])]}"/>
                      <field name="state_fkzl" widget="statusbar" statusbar_visible=" "/>
                 </header>
@@ -99,14 +99,15 @@
                             'readonly': 1}"
                                    context="{'default_is_company': True, 'default_supplier': payment_type == 'outbound', 'default_customer': payment_type == 'inbound'}"/>
                             <field name="pay_to"/>
-                            <label for="amount"/>
+                            <label for="amount" />
                             <div name="amount_div" class="o_row">
-                                <field name="amount" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                <field name="amount" attrs="{'readonly':1}"/>
                                 <field name="currency_id" options="{'no_create': True, 'no_open': True}" groups="base.group_multi_currency"
-                                       attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                       attrs="{'readonly': 1}"/>
                             </div>
-                            <field name="bank_id" domain="[('partner_id','=',partner_id)]" options="{'no_create': True}"
+                            <field name="bank_id" domain="[('partner_id','=',partner_id)]" options="{'no_create': True}" readonly="1"
                                    string="付款对象账号"/>
+                            <field name="journal_id" widget="selection" attrs="{'readonly': 1}"/>
                             <field name="destination_journal_id" widget="selection"
                                    attrs="{'required': [('payment_type', '=', 'transfer')], 'invisible': [('payment_type', '!=', 'transfer')], 'readonly': [('state', '!=', 'draft')]}"/>
                             <field name="hide_payment_method" invisible="1"/>

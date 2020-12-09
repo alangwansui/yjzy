@@ -98,6 +98,12 @@ class account_payment(models.Model):
                     balance = sum([x.debit - x.credit for x in lines])
                 else:
                     balance = sum([x.amount_currency for x in lines])
+            if one.sfk_type == 'fkzl':
+                lines = all_lines.filtered(lambda x: x.account_id.code == '112301')
+                if one.currency_id.name == 'CNY':
+                    balance = sum([x.debit - x.credit for x in lines])
+                else:
+                    balance = sum([x.amount_currency for x in lines])
             one.balance = balance
 
 
@@ -297,7 +303,7 @@ class account_payment(models.Model):
     def compute_amount_signed_payment(self):
         for one in self:
             amount_signed_payment = 0
-            if one.sfk_type == 'rcfkd':
+            if one.sfk_type in ['rcfkd','fkzl']:
                 amount_signed_payment = -one.amount
             elif one.sfk_type == 'rcskd':
                 amount_signed_payment = one.amount
@@ -640,7 +646,7 @@ class account_payment(models.Model):
             if self.balance == 0:
                 wizard = self.env['account.move.line.reconcile'].with_context(active_ids=[x.id for x in aml_recs]).create({})
                 wizard.trans_rec_reconcile_full()
-        if self.sfk_type == 'rcfkd':
+        if self.sfk_type in ['rcfkd','fkzl']:
             account = self.env['account.account'].search([('code', '=', '112301'), ('company_id', '=', self.company_id.id)],limit=1)
             # aml_recs = self.env['account.move.line'].search([('new_payment_id','=',self.id),('account_id','=',account.id)])
             aml_recs = self.aml_ids.filtered(lambda x: x.new_payment_id.id == self.id and x.account_id.id == account.id and x.reconciled == False)
@@ -821,6 +827,7 @@ class account_payment(models.Model):
 
                 self.state_1 = '25_cashier_submit'
                 self.state_fkzl = '20_wait_pay'
+                self.state = 'approved'
                 for one in self.fksqd_2_ids:
                     one.state_1 = '20_account_submit'
 
@@ -896,37 +903,25 @@ class account_payment(models.Model):
                     })
         self.create_rcfkd()
 
-    def action_account_refuse(self,reason):
-        self.write({'state_1': '80_refused',
-                    })
-        for tb in self:
-            tb.message_post_with_view('yjzy_extend.payment_template_refuse_reason',
-                                      values={'reason': reason, 'name': self.name},
-                                      subtype_id=self.env.ref(
-                                          'mail.mt_note').id)  # 定义了留言消息的模板，其他都可以参考，还可以继续参考费用发送计划以及邮件方式
-    def action_cashier_refuse(self,reason):
-        self.write({'state_1': '80_refused',
-                    })
+    def action_refuse(self,reason):
+        if self.sfk_type == 'fkzl':
+            self.write({'state_1': '80_refused',
+                        'state_fkzl':'80_refused',
+                        'state':'draft'
+                        })
         for tb in self:
             tb.message_post_with_view('yjzy_extend.payment_template_refuse_reason',
                                       values={'reason': reason, 'name': self.name},
                                       subtype_id=self.env.ref(
                                           'mail.mt_note').id)  # 定义了留言消息的模板，其他都可以参考，还可以继续参考费用发送计划以及邮件方式
 
-    def action_manager_refuse(self, reason):
-        self.write({'state_1': '80_refused',
-                    })
-        for tb in self:
-            tb.message_post_with_view('yjzy_extend.payment_template_refuse_reason',
-                                      values={'reason': reason, 'name': self.name},
-                                      subtype_id=self.env.ref(
-                                          'mail.mt_note').id)  # 定义了留言消息的模板，其他都可以参考，还可以继续参考费用发送计划以及邮件方式
+
 
     def action_draft_new(self):
         self.write({'state_1': '10_draft',
                     })
         if self.sfk_type == 'fkzl':
-            self.write({'state_2': '10_draft',
+            self.write({'state_fkzl': '10_draft',
                         })
         self.action_draft()
 
@@ -1150,13 +1145,18 @@ class account_payment(models.Model):
 
         new_payment_id = self.id
         if self.sfk_type in ['ysrld', 'yfsqd', 'rcfksqd', 'rcskrld','yingshourld','yingfurld']:
-            new_payment_id = self.yjzy_payment_id.id
+            if self.fkzl_id:
+                new_payment_id = self.fkzl_id.id
+            else:
+                new_payment_id = self.yjzy_payment_id.id
         new_advance_payment_id = False
         if self.sfk_type in ['ysrld','yfsqd']:
             new_advance_payment_id = self.id
         if self.sfk_type in ['yingshourld','yingfurld']:
-            new_advance_payment_id = self.yjzy_payment_id.id
-
+            if self.fkzl_id:
+                new_advance_payment_id = self.fkzl_id.id
+            else:
+                new_advance_payment_id = self.yjzy_payment_id.id
         res.update({
             'new_payment_id': new_payment_id,
             'so_id': self.so_id.id,
