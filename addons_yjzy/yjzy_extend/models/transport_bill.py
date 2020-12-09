@@ -814,6 +814,9 @@ class transport_bill(models.Model):
 
 
     # 货币设置
+
+    qingguan_container_no = fields.Text('CONTAINER NO')
+    qingguan_seal_no = fields.Text('SEAL NO')
     #akiny 未加入
 
     qingguan_name = fields.Char(u'交单抬头')
