@@ -14,7 +14,6 @@
 					<button string="关闭留在当前" class="btn-primary" special="cancel" invisible="context.get('no_advance')"/>
 					<button string="确认进入付款申请" class="btn-primary" special="cancel" invisible="not context.get('no_advance')"/>
 				</footer>
-				
 			</form>
 		</field>	
 	</record>
@@ -28,7 +27,6 @@
 				<footer>
 					<button name="apply" string="打开申请单" class="btn-primary" type="object" />
 					<button string="关闭留在当前" class="btn-primary" special="cancel" />
-
 				</footer>
 
 			</form>
