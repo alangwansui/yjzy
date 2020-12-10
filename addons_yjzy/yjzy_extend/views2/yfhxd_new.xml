@@ -924,7 +924,7 @@
                                    attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),('state','not in',['approved','done'])]}"
                                    context="{'form_view_ref': 'yjzy_extend.view_rcfkd_form','advance_po_amount':1}"/>
 
-                            <field name="yjzy_payment_balance" string="付款未认领余额"
+                            <field name="yjzy_payment_balance" string="付款未认领余额" invisible="1"
                                    attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),('state','not in',['approved','done'])]}"/>
                             <field name="manual_payment_currency_id" string="预付币种" attrs="{'invisible':1}"/>
 
@@ -1077,7 +1077,7 @@
                                               <tbody >
                                                 <tr>
                                                   <td style="width:30%"><t t-if="record.po_id.raw_value == False"><span>无</span></t><field name="po_id"/></td>
-                                                  <td style="width:14%;text-align: right"><a type="object" name="open_yfsqd" target="new"><field name="amount_payment"/></a></td>
+                                                  <td style="width:14%;text-align: right"><a type="object" name="open_yfsqd" context="{'open':1}" target="new"><field name="amount_payment"/></a></td>
                                                   <td style="width:14%;text-align: right"><field name="amount_advance_balance_d"/></td>
                                                     <td style="width:14%;text-align: right"><field name="amount_advance_balance_after"/></td>
                                                   <td style="width:14%;text-align: right"><field name="amount_reconcile"/></td>

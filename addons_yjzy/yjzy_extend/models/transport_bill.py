@@ -1348,14 +1348,14 @@ class transport_bill(models.Model):
     @api.multi
     def _get_printed_report_name(self):
         self.ensure_one()
-        date = fields.datetime.now().strftime('%m%d')
-        return _('%s-%sCommercial Invoice') % (self.ref,date)
+        # date = fields.datetime.now().strftime('%m%d')
+        return _('%s-Commercial Invoice') % (self.ref)
 
     @api.multi
     def _get_printed_report_name_packing_qingguan(self):
         self.ensure_one()
-        date = fields.datetime.now().strftime('%m%d')
-        return _('%s-%sPacking List') % (self.ref, date)
+        # date = fields.datetime.now().strftime('%m%d')
+        return _('%s-Packing List') % (self.ref)
 
      #akiny 计算出运合同号 13ok
     def compute_tb_ref(self):
