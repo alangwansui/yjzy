@@ -2458,10 +2458,14 @@ class transport_bill(models.Model):
         if len(self.line_ids) != len(self.line_ids.mapped('sol_id')):
             raise Warning('出运明细有重复的销售明细行')
 
+
+
 #13ok
     def open_wizard_transport4sol(self):
         war = ''
-        if not self.date:
+        # if not self.date:
+        #     war += '请填写出运日期\n'
+        if not self.date_project:
             war += '请填写出运日期\n'
         if self.current_date_rate ==0:
             war += '单日汇率不为零\n'
