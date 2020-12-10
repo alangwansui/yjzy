@@ -842,7 +842,7 @@ class account_reconcile_order(models.Model):
         journal_id_xsfy = self.env['account.journal'].search(journal_domain_xsfy, limit=1)
 
         #当是付款申请的时候，取line_no_ids
-        if self.hxd_type_new == '40':
+        if self.hxd_type_new == '40' and self.operation_wizard in ['10']:
             for line_no in line_no_ids:
                 if line_no.amount_payment_org > 0:
                     reconcile_payment_no_id = account_payment_obj.create({
@@ -1499,7 +1499,6 @@ class account_reconcile_order(models.Model):
                 #         x.amount_advance_balance_after = x.amount_advance_balance_d - x.reconcile_order_line_id.amount_total_org_new
                 #         x.amount_reconcile = x.reconcile_order_line_id.amount_total_org_new
             self.create_yjzy_payment_yfrl()  #生成应付认领单
-
             if self.operation_wizard in ['03','20', '25']:
                 self.action_done_new_stage()
 
