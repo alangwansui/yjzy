@@ -2826,7 +2826,7 @@ class transport_bill(models.Model):
             # if self.create_uid != self.env.user:
             #     raise Warning('您没有权限提交')
             # else:
-            if self.ref and self.partner_id and self.date and self.incoterm and self.current_date_rate > 0 and \
+            if self.ref and self.partner_id and self.date_project and self.incoterm and self.current_date_rate > 0 and \
                     self.payment_term_id and self.line_ids and self.sale_currency_id:
                 stage_id = self._stage_find(domain=[('code', '=', '002')])
                 return self.write({'stage_id': stage_id.id,
