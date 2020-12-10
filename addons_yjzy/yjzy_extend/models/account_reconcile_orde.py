@@ -384,7 +384,7 @@ class account_reconcile_order(models.Model):
             account_payment_state_ids = one.account_payment_state_ids
             one.account_payment_state_ids_amount_1 = sum(x.amount_advance_balance_d for x in account_payment_state_ids)
             one.account_payment_state_ids_amount_2 = sum(x.amount_advance_balance_after for x in account_payment_state_ids)
-            one.account_payment_state_ids_amount_2 = sum(x.amount_reconcile for x in account_payment_state_ids)
+            one.account_payment_state_ids_amount_3 = sum(x.amount_reconcile for x in account_payment_state_ids)
 
     @api.depends('partner_id.supplier_amount_advance_payment','partner_id','partner_id.supplier_amount_residual_advance_payment')
     def compute_supplier_amount_residual_advance_payment(self):
