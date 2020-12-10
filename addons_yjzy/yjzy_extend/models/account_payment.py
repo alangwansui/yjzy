@@ -909,7 +909,7 @@ class account_payment(models.Model):
                         'state_fkzl':'80_refused',
                         'state':'draft'
                         })
-            for one in self.fqskd_2_ids:
+            for one in self.fksqd_2_ids:
                 one.state_fkzl = '05_fksq'
                 one.state = 'draft'
         for tb in self:
