@@ -909,6 +909,9 @@ class account_payment(models.Model):
                         'state_fkzl':'80_refused',
                         'state':'draft'
                         })
+            for one in self.fqskd_2_ids:
+                one.state_fkzl = '05_fksq'
+                one.state = 'draft'
         for tb in self:
             tb.message_post_with_view('yjzy_extend.payment_template_refuse_reason',
                                       values={'reason': reason, 'name': self.name},
