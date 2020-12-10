@@ -340,6 +340,8 @@ class account_payment(models.Model):
             advance_reconcile_order_line_ids_count = len(one.advance_reconcile_order_line_ids)
             one.advance_reconcile_order_line_ids_count = advance_reconcile_order_line_ids_count
 
+    invoice_log_id = fields.Many2one('account.invoice','付款指令以及预收预付认领关联账单')
+
     pay_to = fields.Char('付款对象', compute = compute_pay_to,store=True)
 
     print_times = fields.Integer(u'打印次数')
@@ -371,7 +373,7 @@ class account_payment(models.Model):
     reconciling = fields.Boolean('正在认领')
     #903
     account_reconcile_order_line_id = fields.Many2one('account.reconcile.order.line',u'应收付认领明细') #过账后生成的实际的认领单明细
-    account_reconcile_order_id = fields.Many2one('account.reconcile.order',u'应收付认领单',related='account_reconcile_order_line_id.order_id') #过账收生成的实际的认领单
+    account_reconcile_order_id = fields.Many2one('account.reconcile.order',u'应收付认领单',) #过账收生成的实际的认领单
 
     advance_reconcile_order_ids = fields.One2many('account.reconcile.order','yjzy_advance_payment_id',u'预收付-应收付认领')
     advance_reconcile_order_draft_ids = fields.One2many('account.reconcile.order', 'yjzy_advance_payment_id',u'预收付-应收付认领未审批',

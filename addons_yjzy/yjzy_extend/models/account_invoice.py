@@ -194,12 +194,11 @@ class account_invoice(models.Model):
             one.reconcile_order_line_bank_char = reconcile_order_line_bank_char
             one.reconcile_order_line_amount_diff_char = reconcile_order_line_amount_diff_char
 
-    @api.depends('reconcile_order_line_id','reconcile_order_line_id.amount_payment_org',
+    @api.depends('reconcile_order_line_id','reconcile_order_line_id.amount_payment_org','reconcile_order_line_id.order_id.state_1','reconcile_order_line_id.order_id.state',
                  'reconcile_order_line_id.amount_advance_org','reconcile_order_line_id.amount_bank_org',
                  'reconcile_order_line_id.amount_diff_org','reconcile_order_line_id.yjzy_payment_id')
     def get_reconcile_order_line(self):
         for one in self:
-
             dlrs = one.reconcile_order_line_id#原始账单的认领明细 已经完成的
             dlrs_payment_usd = one.reconcile_order_line_id.filtered(lambda x: x.payment_currency_id.name == 'USD')#原始账单收款美金
             dlrs_advance_usd = one.reconcile_order_line_id.filtered(lambda x: x.yjzy_payment_id.currency_id.name == 'USD')#原始账单预收美金 akiny注意：因为有些明细货币币种没有取过来，所以直接取预收单的货币
@@ -483,6 +482,8 @@ class account_invoice(models.Model):
         for one in self:
             one.declaration_amount = sum(x.declaration_amount for x in one.btd_line_ids)
 
+    payment_log_ids = fields.One2many('account.payment','invoice_log_id','认领以及收付明细')
+
 
     other_payment_invoice_id = fields.Many2one('account.invoice','关联的其他应收付下级账单')
     other_payment_invoice_parent_id = fields.Many2one('account.invoice','关联的其他应收付上级账单')
@@ -619,6 +620,8 @@ class account_invoice(models.Model):
     reconcile_order_ids_count = fields.Integer(u'核销单据数量',compute=compute_reconcile_order_ids)
     reconcile_order_id_ids = fields.One2many('account.reconcile.order','back_tax_invoice_id','额外退税对应核销单')
     reconcile_order_line_id = fields.One2many('account.reconcile.order.line', 'invoice_id', u'核销明细行', domain=[('order_id.state','=','done'),('amount_total_org','!=',0)])
+
+
     reconcile_order_line_count = fields.Float(u'核销明细行数量', compute=get_reconcile_order_line)
     reconcile_order_line_ids = fields.One2many('account.reconcile.order.line', 'invoice_id', u'核销明细行',domain=[('order_id','!=',False),('order_id.sfk_type','=','yfhxd')]
                                               )#domain=[('order_id.state', 'in', ['approved']), ('amount_total_org', '!=', 0)]
@@ -1137,15 +1140,27 @@ class account_invoice(models.Model):
                 'target': 'new',
                 'context': context,
             }
-        print('akiny_test',len(self.mapped('invoice_attribute')))
+        print('akiny_test',len(self.mapped('invoice_attribute')),len(self.mapped('yjzy_type')),len(self.mapped('invoice_type_main')))
+
         if attribute != 'other_payment' and len(self.mapped('partner_id')) > 1:
             raise Warning('不同供应商')
         elif attribute == 'other_payment' and len(self) > 1:
             raise Warning('其他应付不允许多个一起申请付款')
-        elif len(self.mapped('invoice_attribute')) > 1 or len(self.mapped('yjzy_type')) > 1 or len(self.mapped('invoice_type_main')) > 1:
-            raise  Warning('不同类型的账单不允许一起申请！')
-        elif state_draft >= 1:
+
+
+        if state_draft >= 1:
             raise Warning('非确认账单不允许创建付款申请')
+        # x = []
+        # for l in self:
+        #     x |= l.invoice_attribute
+        # myset = set(x)
+        #
+        # print("ererew",myset)
+        #
+        # if len(self.mapped('invoice_attribute')) > 1 or len(self.mapped('yjzy_type')) > 1 or len(
+        #         self.mapped('invoice_type_main')) > 1:
+        #
+        #     raise Warning('不同类型的账单不允许一起申请！')
         sfk_type = 'yfhxd'
         domain = [('code', '=', 'yfdrl'), ('company_id', '=', self.env.user.company_id.id)]
         name = self.env['ir.sequence'].next_by_code('sfk.type.%s' % sfk_type)

@@ -92,7 +92,7 @@ class account_payment(models.Model):
             if one.yshx_ids:
                 for x in one.yshx_ids:
                     x.fkzl_id = fkzl_id
-                    for fkzl in x.yingfurld_ids:
+                    for fkzl in x.reconcile_payment_ids:
                         fkzl.fkzl_id = fkzl_id
 
 

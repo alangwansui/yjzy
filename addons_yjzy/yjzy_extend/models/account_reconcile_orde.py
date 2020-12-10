@@ -392,7 +392,7 @@ class account_reconcile_order(models.Model):
             one.supplier_amount_residual_advance_payment = one.partner_id.supplier_amount_residual_advance_payment
             one.supplier_amount_advance_payment = one.partner_id.supplier_amount_advance_payment
 
-    yingfurld_ids = fields.One2many('account.payment','account_reconcile_order_id','应付认领单')
+    # yingfurld_ids = fields.One2many('account.payment','account_reconcile_order_id','应付认领单')
 
     account_payment_state_ids_amount_1 = fields.Float('预收本次认领前金额',compute=compute_account_payment_state_ids)
     account_payment_state_ids_amount_2 = fields.Float('预收本次认领后金额', compute=compute_account_payment_state_ids)
@@ -745,6 +745,7 @@ class account_reconcile_order(models.Model):
         for line in line_ids:
             if line.amount_payment_org >0:
                 reconcile_payment_id = account_payment_obj.create({
+                    'account_reconcile_order_id':self.id,
                     'account_reconcile_order_line_id': line.id,
                     'name':name,
                     'partner_id':partner_id.id,
@@ -759,10 +760,12 @@ class account_reconcile_order(models.Model):
                     'payment_method_id': 2,
                     'invoice_ids': [(4, line.invoice_id.id, None)],#参考m2m
                     'so_id':line.so_id.id,
+                    # 'invoice_log_id': line.invoice_id.id,
                 })
             if line.amount_advance_org > 0:
                 print('journal_id_yszk',journal_id_yszk)
                 reconcile_payment_id_2 = account_payment_obj.create({
+                    'account_reconcile_order_id': self.id,
                     'account_reconcile_order_line_id': line.id,
                     'name':name,
                     'partner_id': partner_id.id,
@@ -777,10 +780,12 @@ class account_reconcile_order(models.Model):
                     'payment_method_id': 2,
                     'invoice_ids': [(4, line.invoice_id.id, None)],
                     'so_id': line.so_id.id,
+                    'invoice_log_id': line.invoice_id.id,
 
                 })
             if line.amount_bank_org > 0:
                 reconcile_payment_id_3 = account_payment_obj.create({
+                    'account_reconcile_order_id': self.id,
                     'account_reconcile_order_line_id': line.id,
                     'name':name,
                     'partner_id': partner_id.id,
@@ -794,10 +799,12 @@ class account_reconcile_order(models.Model):
                     'payment_method_id': 2,
                     'invoice_ids': [(4, line.invoice_id.id, None)],
                     'so_id': line.so_id.id,
+                    # 'invoice_log_id': line.invoice_id.id,
                 })
 
             if line.amount_diff_org > 0:
                 reconcile_payment_id_4 = account_payment_obj.create({
+                    'account_reconcile_order_id': self.id,
                     'account_reconcile_order_line_id': line.id,
                     'name':name,
                     'partner_id': partner_id.id,
@@ -811,6 +818,7 @@ class account_reconcile_order(models.Model):
                     'payment_method_id': 2,
                     'invoice_ids': [(4, line.invoice_id.id, None)],
                     'so_id': line.so_id.id,
+                    # 'invoice_log_id': line.invoice_id.id,
                 })
 
     def create_yjzy_payment_yfrl(self):
@@ -823,6 +831,7 @@ class account_reconcile_order(models.Model):
         yjzy_payment_id = self.yjzy_payment_id
 
         line_ids = self.line_ids
+        line_no_ids = self.line_no_ids
         journal_domain_yfzk = [('code', '=', 'yfzk'), ('company_id', '=', self.env.user.company_id.id)]
         journal_id_yfzk = self.env['account.journal'].search(journal_domain_yfzk, limit=1)
         journal_domain_yfdrl = [('code', '=', 'yfdrl'), ('company_id', '=', self.env.user.company_id.id)]
@@ -832,74 +841,105 @@ class account_reconcile_order(models.Model):
         journal_domain_xsfy = [('code', '=', 'xsfy'), ('company_id', '=', self.env.user.company_id.id)]
         journal_id_xsfy = self.env['account.journal'].search(journal_domain_xsfy, limit=1)
 
-        for line in line_ids:
-            if line.amount_payment_org > 0:
-                reconcile_payment_id = account_payment_obj.create({
-                    'account_reconcile_order_line_id': line.id,
-                    'name':name,
-                    'sfk_type': sfk_type,
-                    'partner_id': partner_id.id,
-                    'yjzy_payment_id': yjzy_payment_id.id,
-                    'amount': line.amount_payment_org,
-                    'currency_id': line.payment_currency_id.id,
-                    'payment_type': 'outbound',
-                    'partner_type': 'supplier',
-                    'advance_ok': False,
-                    'journal_id': journal_id_yfdrl.id,
-                    'payment_method_id': 2,
-                    'invoice_ids': [(4, line.invoice_id.id, None)],
-                    'po_id': line.po_id.id,
-                })
-            if line.amount_advance_org > 0:
-                reconcile_payment_id_2 = account_payment_obj.create({
-                    'account_reconcile_order_line_id': line.id,
-                    'partner_id': partner_id.id,
-                    'amount': line.amount_advance_org,
-                    'name':name,
-                    'sfk_type': sfk_type,
-                    'currency_id': line.yjzy_currency_id.id,
-                    'payment_type': 'outbound',
-                    'partner_type': 'supplier',
-                    'advance_ok': False,
-                    'journal_id': journal_id_yfzk.id,
-                    'payment_method_id': 2,
-                    'invoice_ids': [(4, line.invoice_id.id, None)],
-                    'po_id': line.po_id.id,
-                    'yjzy_payment_id':line.yjzy_payment_id.id
-                })
-            if line.amount_bank_org > 0:
-                reconcile_payment_id_2 = account_payment_obj.create({
-                    'account_reconcile_order_line_id': line.id,
-                    'partner_id': partner_id.id,
-                    'amount': line.amount_bank_org,
-                    'name':name,
-                    'sfk_type': sfk_type,
-                    'currency_id': line.invoice_currency_id.id,
-                    'payment_type': 'outbound',
-                    'partner_type': 'supplier',
-                    'advance_ok': False,
-                    'journal_id': journal_id_yhkk.id,
-                    'payment_method_id': 2,
-                    'invoice_ids': [(4, line.invoice_id.id, None)], #akiny参考 m2m
-                    'po_id': line.po_id.id,
-                })
+        #当是付款申请的时候，取line_no_ids
+        if self.hxd_type_new == '40':
+            for line_no in line_no_ids:
+                if line_no.amount_payment_org > 0:
+                    reconcile_payment_no_id = account_payment_obj.create({
+                        'account_reconcile_order_id': self.id,
+                        # 'account_reconcile_order_line_id': line_no.id,
+                        'name': name,
+                        'sfk_type': sfk_type,
+                        'partner_id': partner_id.id,
+                        'yjzy_payment_id': yjzy_payment_id.id,
+                        'amount': line_no.amount_payment_org,
+                        'currency_id': line_no.payment_currency_id.id,
+                        'payment_type': 'outbound',
+                        'partner_type': 'supplier',
+                        'advance_ok': False,
+                        'journal_id': journal_id_yfdrl.id,
+                        'payment_method_id': 2,
+                        'invoice_ids': [(4, line_no.invoice_id.id, None)],
+                        # 'po_id': line_no.po_id.id,
+                        'invoice_log_id':line_no.invoice_id.id
+                    })
+        else:
+            for line in line_ids:
+                if line.amount_payment_org > 0:
+                    reconcile_payment_id = account_payment_obj.create({
+                        'account_reconcile_order_id': self.id,
+                        'account_reconcile_order_line_id': line.id,
+                        'name':name,
+                        'sfk_type': sfk_type,
+                        'partner_id': partner_id.id,
+                        'yjzy_payment_id': yjzy_payment_id.id,
+                        'amount': line.amount_payment_org,
+                        'currency_id': line.payment_currency_id.id,
+                        'payment_type': 'outbound',
+                        'partner_type': 'supplier',
+                        'advance_ok': False,
+                        'journal_id': journal_id_yfdrl.id,
+                        'payment_method_id': 2,
+                        'invoice_ids': [(4, line.invoice_id.id, None)],
+                        'po_id': line.po_id.id,
+                        # 'invoice_log_id':line.invoice_id.id
+                    })
+                if line.amount_advance_org > 0:
+                    reconcile_payment_id_2 = account_payment_obj.create({
+                        'account_reconcile_order_id': self.id,
+                        'account_reconcile_order_line_id': line.id,
+                        'partner_id': partner_id.id,
+                        'amount': line.amount_advance_org,
+                        'name':name,
+                        'sfk_type': sfk_type,
+                        'currency_id': line.yjzy_currency_id.id,
+                        'payment_type': 'outbound',
+                        'partner_type': 'supplier',
+                        'advance_ok': False,
+                        'journal_id': journal_id_yfzk.id,
+                        'payment_method_id': 2,
+                        'invoice_ids': [(4, line.invoice_id.id, None)],
+                        'po_id': line.po_id.id,
+                        'yjzy_payment_id':line.yjzy_payment_id.id,
+                        'invoice_log_id': line.invoice_id.id
+                    })
+                if line.amount_bank_org > 0:
+                    reconcile_payment_id_2 = account_payment_obj.create({
+                        'account_reconcile_order_id': self.id,
+                        'account_reconcile_order_line_id': line.id,
+                        'partner_id': partner_id.id,
+                        'amount': line.amount_bank_org,
+                        'name':name,
+                        'sfk_type': sfk_type,
+                        'currency_id': line.invoice_currency_id.id,
+                        'payment_type': 'outbound',
+                        'partner_type': 'supplier',
+                        'advance_ok': False,
+                        'journal_id': journal_id_yhkk.id,
+                        'payment_method_id': 2,
+                        'invoice_ids': [(4, line.invoice_id.id, None)], #akiny参考 m2m
+                        'po_id': line.po_id.id,
+                        # 'invoice_log_id': line.invoice_id.id,
+                    })
 
-            if line.amount_diff_org > 0:
-                reconcile_payment_id_2 = account_payment_obj.create({
-                    'account_reconcile_order_line_id': line.id,
-                    'partner_id': partner_id.id,
-                    'amount': line.amount_diff_org,
-                    'name':name,
-                    'sfk_type': sfk_type,
-                    'currency_id': line.invoice_currency_id.id,
-                    'payment_type': 'outbound',
-                    'partner_type': 'supplier',
-                    'advance_ok': False,
-                    'journal_id': journal_id_xsfy.id,
-                    'payment_method_id': 2,
-                    'invoice_ids': [(4, line.invoice_id.id, None)],
-                    'po_id': line.po_id.id,
-                })
+                if line.amount_diff_org > 0:
+                    reconcile_payment_id_2 = account_payment_obj.create({
+                        'account_reconcile_order_id': self.id,
+                        'account_reconcile_order_line_id': line.id,
+                        'partner_id': partner_id.id,
+                        'amount': line.amount_diff_org,
+                        'name':name,
+                        'sfk_type': sfk_type,
+                        'currency_id': line.invoice_currency_id.id,
+                        'payment_type': 'outbound',
+                        'partner_type': 'supplier',
+                        'advance_ok': False,
+                        'journal_id': journal_id_xsfy.id,
+                        'payment_method_id': 2,
+                        'invoice_ids': [(4, line.invoice_id.id, None)],
+                        'po_id': line.po_id.id,
+                        # 'invoice_log_id': line.invoice_id.id,
+                    })
 
 
 
@@ -1672,9 +1712,14 @@ class account_reconcile_order(models.Model):
         if self.sfk_type == 'yfhxd':
             if self.reconcile_payment_ids:
                 self.reconcile_payment_ids.post()
+                for one in self.reconcile_payment_ids:#所有认领单
+                    one.invoice_log_id.get_reconcile_order_line()
         if self.sfk_type == 'yshxd':
             if self.reconcile_payment_ids:
                 self.reconcile_payment_ids.post()
+                for one in self.reconcile_payment_ids:#所有认领单
+                    one.invoice_log_id.get_reconcile_order_line()
+
 
 
     def action_draft_new(self):
