@@ -905,13 +905,15 @@ class account_payment(models.Model):
 
     def action_refuse(self,reason):
         if self.sfk_type == 'fkzl':
-            self.write({'state_1': '80_refused',
-                        'state_fkzl':'80_refused',
-                        'state':'draft'
-                        })
+            self.unlink()
+            # self.write({'state_1': '80_refused',
+            #             'state_fkzl':'80_refused',
+            #             'state':'draft'
+            #             })
             for one in self.fksqd_2_ids:
                 one.state_fkzl = '05_fksq'
                 one.state = 'draft'
+
         for tb in self:
             tb.message_post_with_view('yjzy_extend.payment_template_refuse_reason',
                                       values={'reason': reason, 'name': self.name},
