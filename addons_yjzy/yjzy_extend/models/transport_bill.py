@@ -2838,7 +2838,9 @@ class transport_bill(models.Model):
                     war += '合同号不为空\n'
                 if not self.partner_id:
                     war += '客户不为空\n'
-                if not self.date:
+                # if not self.date:
+                #     war += '出运日期不为空\n'
+                if not self.date_project:
                     war += '出运日期不为空\n'
                 if not self.incoterm:
                     war += '价格条款不为空\n'
