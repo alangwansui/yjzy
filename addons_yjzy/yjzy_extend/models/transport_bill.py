@@ -2358,6 +2358,11 @@ class transport_bill(models.Model):
       #  self.make_purchase_invoice()
         self.make_all_invoice()
 
+    @api.onchange('date_project')
+    def onchange_date_project(self):
+        if not self.date:
+            self.date=self.date_project
+
     @api.model
     def process_move_operation(self, move, lot, qty):
         move_line_obj = self.env['stock.move.line']
