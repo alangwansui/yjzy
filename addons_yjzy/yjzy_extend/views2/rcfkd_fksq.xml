@@ -239,6 +239,7 @@
                         </page>
                         <page groups="base.group_system" string="管理页">
                             <group>
+                                <button name="open_wizard_fkzl" type="object" string="创建付款指令" />
                                 <field name="advance_account_id" label="预收科目" options="{'no_create':True}" invisible="0"/>
                                 <field name="sfk_type" />
                                 <field name="state_1"/>

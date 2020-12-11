@@ -394,6 +394,17 @@ class account_reconcile_order(models.Model):
 
     # yingfurld_ids = fields.One2many('account.payment','account_reconcile_order_id','应付认领单')
 
+    @api.depends('line_no_ids')
+    def compute_line_no_compute_ids(self):
+        for one in self:
+            one.line_no_compute_ids = one.line_no_ids
+
+    def compute_amount_payment_can_approve_all_after(self):
+        for one in self:
+            one.amount_payment_can_approve_all_after = sum(x.amount_payment_can_approve_all_after for x in one.line_no_ids)
+
+    amount_payment_can_approve_all_after = fields.Float('所有账单本次申请后可申请支付金额合计',compute=compute_amount_payment_can_approve_all_after)
+
     account_payment_state_ids_amount_1 = fields.Float('预收本次认领前金额',compute=compute_account_payment_state_ids)
     account_payment_state_ids_amount_2 = fields.Float('预收本次认领后金额', compute=compute_account_payment_state_ids)
     account_payment_state_ids_amount_3 = fields.Float('预收本次金额', compute=compute_account_payment_state_ids)
@@ -572,7 +583,8 @@ class account_reconcile_order(models.Model):
     amount_total = fields.Monetary(u'收款合计:本币', currency_field='currency_id', compute=compute_by_lines, store=False)
 
     line_ids = fields.One2many('account.reconcile.order.line', 'order_id', u'明细', )
-    line_no_ids = fields.One2many('account.reconcile.order.line.no', 'order_id', u'明细')
+    line_no_ids = fields.One2many('account.reconcile.order.line.no', 'order_id',u'明细')
+    line_no_compute_ids = fields.One2many('account.reconcile.order.line.no', compute=compute_line_no_compute_ids, string='本次认领账单')
     move_ids = fields.One2many('account.move', 'reconcile_order_id', u'分录')
 
     yjzy_payment_id = fields.Many2one('account.payment', u'选择收款单')
@@ -3273,14 +3285,17 @@ class account_reconcile_order_line_no(models.Model):
     @api.depends('amount_payment_can_approve_all_this_time','invoice_residual_this_time','amount_payment_org')
     def compute_amount_payment_can_approve_all_after(self):
         for line in self:
+            line_ids_line = line.order_id.line_ids.filtered(lambda x: x.invoice_id == line.invoice_id)#本条发票未拆分明细对应的拆分明细
+            advance_amount_org = sum(x.amount_advance_org for x in line_ids_line)
             amount_payment_can_approve_all_this_time = line.amount_payment_can_approve_all_this_time
             amount_payment_org = line.amount_payment_org
             invoice_residual_this_time = line.invoice_residual_this_time
-            line.amount_payment_can_approve_all_after = amount_payment_can_approve_all_this_time - amount_payment_org
+            line.amount_payment_can_approve_all_after = amount_payment_can_approve_all_this_time - amount_payment_org - advance_amount_org#再减去line_ids里面对应的预付认领的金额。其实可以把amount_payment_org也可以从line_ids计算
             line.invoice_residual_after = invoice_residual_this_time - amount_payment_org
 
     #计算出非自己认领明细原则
 
+    fkzl_id = fields.Many2one('account.payment',u'付款指令')
 
     ysrld_amount_advance_org_all = fields.Float('预收单的本所有非本账单采购的被认领金额',)
     ysrld_advice_amount_advance_org_all = fields.Float('预收认领单的非本账单采购的被认领的原则分配金额',)

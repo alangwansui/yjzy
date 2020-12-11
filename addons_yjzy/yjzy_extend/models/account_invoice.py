@@ -1115,8 +1115,7 @@ class account_invoice(models.Model):
         print('partner_id', len(self.mapped('partner_id')))
         state_draft = len(self.filtered(lambda x: x.state != 'open'))
         print('state_draft',state_draft)
-        hxd_line_approval_ids = self.env['account.reconcile.order.line'].search([('invoice_id.id','in',self.ids),('order_id.state','not in',['done','approved'])])
-
+        hxd_line_approval_ids = self.env['account.reconcile.order.line.no'].search([('invoice_id.id','in',self.ids),('order_id.state','not in',['done','approved'])])
         order_id = hxd_line_approval_ids.mapped('order_id')
         print('xd_line_approval_ids[0]_akiny', order_id)
         #如果有存在审批中的账单，可以跳转对应的申请单
@@ -1208,7 +1207,10 @@ class account_invoice(models.Model):
             else:
                 account_reconcile_id.operation_wizard = '03'
                 account_reconcile_id.hxd_type_new = '40'
+                account_reconcile_id.make_lines()
+                account_reconcile_id.line_ids.unlink()
                 account_reconcile_id.make_account_payment_state_ids()
+
         return {
             'type': 'ir.actions.act_window',
             'view_mode': 'form',

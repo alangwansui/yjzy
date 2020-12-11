@@ -27,6 +27,64 @@
         <field name="model">account.payment</field>
         <field name="arch" type="xml">
             <form string="付款指令" create="false" >
+                <style>
+	  body{
+		    font-size:10px;
+		  font-family:Arial,Helvetica,sans-serif,simsun;
+	  }
+	.title{
+		height: 30px;
+	    text-align: center;}
+	.title td {height: 20px;
+	font-size: 12px}
+	.main{
+		width: 100%;
+	    font-size: 12px ; }
+		.main td{height:20px}
+	.tablelist{
+		text-align: left;
+
+		border: 0.5px solid ;
+		border-collapse: collapse;
+		font-size: 11px;
+		width: 100%;
+		vertical-align: middle
+	}
+	.tablelist th{
+		font-size: 12px;
+		text-align: center;
+		border: 0.5px solid ;
+		height: 25px;
+		line-height: 20px;
+		background-color:#E3ECF4;
+		vertical-align: middle;
+		font-weight: 200
+	}
+	.tablelist td{
+		border: 0.5px solid;
+		height: 30px;
+		line-height: 20px;
+		vertical-align: middle;
+		padding-left: 8px;
+		padding-right: 8px;
+	}
+	.buttom{
+
+	}
+    .buttom td{
+		border:0.5px solid;
+		padding: 5px;
+		vertical-align: middle: ;
+
+	}
+	.signal {
+		text-align: left;
+		border-collapse: collapse;
+		font-size: 11px;
+		width: 100%;
+		vertical-align: middle
+	}
+</style>
                 <header groups="sales_team.group_manager">
                    <button name="action_submit" class="oe_highlight"  string="审批" type="object"
                            attrs="{'invisible':[('state_fkzl','not in',['10_draft'])]}"/>
@@ -90,49 +148,85 @@
 
                         </h1>
                     </div>
-                    <group>
-                        <group>
-                            <field name="name" string="编号"/>
-                            <field name="partner_id" string="付款对象" options="{'no_create':True}" groups="base.group_system"
-                                   attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))],
-                            'invisible': ['|',('payment_type', 'not in', ('inbound', 'outbound')),('sfk_type','in',['rcskd','rcfkd'])],
-                            'readonly': 1}"
-                                   context="{'default_is_company': True, 'default_supplier': payment_type == 'outbound', 'default_customer': payment_type == 'inbound'}"/>
-                            <field name="pay_to"/>
-                            <label for="amount" />
-                            <div name="amount_div" class="o_row">
-                                <field name="amount" attrs="{'readonly':1}"/>
-                                <field name="currency_id" options="{'no_create': True, 'no_open': True}" groups="base.group_multi_currency"
-                                       attrs="{'readonly': 1}"/>
-                            </div>
-                            <field name="bank_id" domain="[('partner_id','=',partner_id)]" options="{'no_create': True}" readonly="1"
-                                   string="付款对象账号"/>
-                            <field name="journal_id" widget="selection" attrs="{'readonly': 1}"/>
-                            <field name="destination_journal_id" widget="selection"
-                                   attrs="{'required': [('payment_type', '=', 'transfer')], 'invisible': [('payment_type', '!=', 'transfer')], 'readonly': [('state', '!=', 'draft')]}"/>
-                            <field name="hide_payment_method" invisible="1"/>
-                            <field name="payment_method_id" string=" " widget="radio"
-                                   attrs="{'invisible': [('hide_payment_method', '=', True)], 'readonly': [('state', '!=', 'draft')]}"/>
-                            <field name="payment_method_code" invisible="1"/>
-                            <field name="payment_comments" string="付款信息备注"  attrs="{'readonly': [('state', '!=', 'draft')]}"/>
-                        </group>
-                         <group>
 
-                            <field name="balance" invisible="1"/>
-                            <field name="include_tax" invisible="1"/>
+                    <table cellpadding="0" class="main">
+  <tbody>
+    <tr>
+      <td width="15%">订单 □ 非订单 □ </td>
+      <td width="20%">单号：<field name="name" readonly="1"/></td>
+      <td width="24%">付款主体：<field name="company_id" readonly="1"/></td>
 
-                            <field name="payment_date" attrs="{'readonly': [('state', '!=', 'draft')]}" invisible="1"/>
-                            <field name="print_date" attrs="{'readonly':1}"/>
-                            <field name="print_uid" attrs="{'readonly':1}"/>
-                            <field name="print_times" attrs="{'readonly':1}"/>
-                            <field name="payment_date_confirm" attrs="{'readonly':1}"/>
-                            <field name="can_print" invisible="1"/>
-                            <field name="fault_comments"/>
+      <td width="26%">付款银行：<field name="journal_id" readonly="1"/></td>
 
-                        </group>
+      <td width="15%">第<field name="id" readonly="1"/>号</td>
+    </tr>
+  </tbody>
+</table>
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablelist">
+  <tbody>
+   <tr>
+      <td width="12%">日期</td>
+      <td width="19%"><field name="payment_date" readonly="1"/></td>
+      <td width="10%">申请部门</td>
+      <td width="15%"></td>
+      <td  width="7%">小组</td>
+      <td  width="10%"></td>
+      <td  width="9%">总金额</td>
+      <td  width="18%"><field name="amount" readonly="1"/></td>
+    </tr>
+   <tr>
+     <td>收款账户名</td>
+	   <td colspan="2"><field name="bank_id_huming" readonly="1"/></td>
+     <td>银行明细及账号</td>
+     <td colspan="4"><field name="bank_id_kaihuhang" readonly="1"/><field name="bank_id_acc_number" readonly="1"/></td>
+   </tr>
+  </tbody>
+</table>
 
 
-                    </group>
+<!--                    <group>-->
+<!--                        <group>-->
+<!--                            <field name="name" string="编号"/>-->
+<!--                            <field name="partner_id" string="付款对象" options="{'no_create':True}" groups="base.group_system"-->
+<!--                                   attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))],-->
+<!--                            'invisible': ['|',('payment_type', 'not in', ('inbound', 'outbound')),('sfk_type','in',['rcskd','rcfkd'])],-->
+<!--                            'readonly': 1}"-->
+<!--                                   context="{'default_is_company': True, 'default_supplier': payment_type == 'outbound', 'default_customer': payment_type == 'inbound'}"/>-->
+<!--                            <field name="pay_to"/>-->
+<!--                            <label for="amount" />-->
+<!--                            <div name="amount_div" class="o_row">-->
+<!--                                <field name="amount" attrs="{'readonly':1}"/>-->
+<!--                                <field name="currency_id" options="{'no_create': True, 'no_open': True}" groups="base.group_multi_currency"-->
+<!--                                       attrs="{'readonly': 1}"/>-->
+<!--                            </div>-->
+<!--                            <field name="bank_id" domain="[('partner_id','=',partner_id)]" options="{'no_create': True}" readonly="1"-->
+<!--                                   string="付款对象账号"/>-->
+<!--                            <field name="journal_id" widget="selection" attrs="{'readonly': 1}"/>-->
+<!--                            <field name="destination_journal_id" widget="selection"-->
+<!--                                   attrs="{'required': [('payment_type', '=', 'transfer')], 'invisible': [('payment_type', '!=', 'transfer')], 'readonly': [('state', '!=', 'draft')]}"/>-->
+<!--                            <field name="hide_payment_method" invisible="1"/>-->
+<!--                            <field name="payment_method_id" string=" " widget="radio"-->
+<!--                                   attrs="{'invisible': [('hide_payment_method', '=', True)], 'readonly': [('state', '!=', 'draft')]}"/>-->
+<!--                            <field name="payment_method_code" invisible="1"/>-->
+<!--                            <field name="payment_comments" string="付款信息备注"  attrs="{'readonly': [('state', '!=', 'draft')]}"/>-->
+<!--                        </group>-->
+<!--                         <group>-->
+
+<!--                            <field name="balance" invisible="1"/>-->
+<!--                            <field name="include_tax" invisible="1"/>-->
+
+<!--                            <field name="payment_date" attrs="{'readonly': [('state', '!=', 'draft')]}" invisible="1"/>-->
+<!--                            <field name="print_date" attrs="{'readonly':1}"/>-->
+<!--                            <field name="print_uid" attrs="{'readonly':1}"/>-->
+<!--                            <field name="print_times" attrs="{'readonly':1}"/>-->
+<!--                            <field name="payment_date_confirm" attrs="{'readonly':1}"/>-->
+<!--                            <field name="can_print" invisible="1"/>-->
+<!--                            <field name="fault_comments"/>-->
+
+<!--                        </group>-->
+
+
+<!--                    </group>-->
                     <notebook>
 
                         <page string="预付申请" attrs="{'invisible': [('yfsqd_fkzl_ids_count','=', 0)]}">
@@ -178,10 +272,17 @@
                                     <field name="state" groups="base.group_system"/>
                                 </tree>
                             </field>
+                            <field name="yshx_fkzl_line_ids" attrs="{'invisible': [('yshx_fkzl_line_ids_count','=', 0)]}">
+                                <tree>
+                                    <field name="invoice_id"/>
+                                    <field name="amount_payment_org"/>
+                                </tree>
+                            </field>
+                            <field name="yshx_fkzl_line_ids_count" invisible="1"/>
                         </page>
                         <page string="费用明细和报告" attrs="{'invisible': [('fybg_fkzl_ids_count','=', 0)]}">
 
-                             <field name="expense_fkzl_ids" widget="many2many">
+                             <field name="expense_fkzl_ids" widget="many2many" invisible="1">
                                  <tree >
                                         <field name="categ_id" string="大类*" options="{'no_create':True,'no_open':1}" domain="[('parent_id.name','=','费用')]"  context="{'search_order': 'sequence','only_name':1}" />
                                         <field name="second_categ_id" string="中类*" options="{'no_create':True,'no_open':1}"   context="{'search_order': 'sequence','only_name':1}" />
@@ -243,7 +344,7 @@
                         <page string="付款申请" groups="base.group_system">
                             <field name="fksqd_2_ids" widget="many2many" />
                         </page>
-             <page groups="sales_team.group_manager" string="新规则手动">
+                        <page groups="sales_team.group_manager" string="新规则手动">
                             <group >
                                 <field name="new_rule"/>
                             </group>

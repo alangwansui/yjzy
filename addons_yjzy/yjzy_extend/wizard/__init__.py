@@ -26,6 +26,7 @@ from . import wizard_renling
 from . import so_refuse_reason
 from . import po_refuse_reason
 from . import wizard_multi_sale_line
+from . import wizard_fkzl
 
 
 

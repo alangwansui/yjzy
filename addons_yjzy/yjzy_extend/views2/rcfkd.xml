@@ -28,6 +28,7 @@
         <field name="arch" type="xml">
             <form string="日常付款单">
                 <header groups="sales_team.group_manager">
+
                    <button name="action_submit" class="oe_highlight"  string="提交" type="object"
                            attrs="{'invisible':[('state_1','not in',['10_draft'])]}"/>
                     <button name="print_fkzl" string="打印付款指令" type="object" attrs="{'invisible':[('can_print','=',False)]}"/>
@@ -166,6 +167,7 @@
                         </page>
                         <page groups="base.group_system" string="管理页">
                             <group>
+                                <button name="open_wizard_fkzl" type="object" string="创建付款指令" />
                                 <field name="advance_account_id" label="预收科目" options="{'no_create':True}" invisible="0"/>
                                 <field name="sfk_type" />
                                 <field name="journal_id" widget="selection"  domain="[('type','in',['bank','cash'])]"  attrs="{'readonly': [('state', '!=', 'draft')]}"/>

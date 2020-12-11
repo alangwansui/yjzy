@@ -55,6 +55,7 @@
         'wizard/tb_po_invoice_refuse_reason_views.xml',
         'wizard/wizard_renling.xml',
         'wizard/wizard_multi_sale_line.xml',
+        'wizard/wizard_fkzl.xml',
         'views/account_invoice_extra.xml',
         'views/account_journal.xml',
         'views/account_move.xml',
