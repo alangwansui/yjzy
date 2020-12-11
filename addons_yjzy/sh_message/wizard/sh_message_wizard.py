@@ -16,6 +16,7 @@ class sh_message_wizard(models.TransientModel):
         res_model = self.env.context.get('res_model')
         res_id = self.env.context.get('res_id')
         views = self.env.context.get('views')
+        default_sfk_type = self.env.context.get('default_sfk_type')
         return{
             'name': 'test',
             'view_type': 'form',
@@ -26,7 +27,7 @@ class sh_message_wizard(models.TransientModel):
             # 'target': 'new',
 
             'type': 'ir.actions.act_window',
-            'context': {},
+            'context': {'default_sfk_type':default_sfk_type},
 
         }
 

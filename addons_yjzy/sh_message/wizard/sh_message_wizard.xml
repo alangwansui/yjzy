@@ -25,7 +25,7 @@
 			<form string="Message">
 				<field name="name"/>
 				<footer>
-					<button name="apply" string="打开申请单" class="btn-primary" type="object" />
+					<button name="apply" string="打开申请单" class="btn-primary" type="object" context="{'default_sfk_type':'yfhxd'}"/>
 					<button string="关闭留在当前" class="btn-primary" special="cancel" />
 				</footer>
 
