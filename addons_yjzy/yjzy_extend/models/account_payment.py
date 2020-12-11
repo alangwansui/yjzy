@@ -783,7 +783,10 @@ class account_payment(models.Model):
                     'print_uid':uid,
                     'can_print':False,
                     'print_times':print_times_last})
-        return self.env.ref('yjzy_extend.action_report_fkzl').report_action(self)
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'reload',
+        },self.env.ref('yjzy_extend.action_report_fkzl').report_action(self)
 
     #913审批流程
     def action_submit(self):
