@@ -95,7 +95,6 @@ class wizard_fkzl(models.TransientModel):
                     x.fkzl_id = fkzl_id
             if one.yshx_ids:
                 for x in one.yshx_ids:
-
                     x.fkzl_id = fkzl_id
                     print('x_akiny', x)
                     x.action_to_fkzl()
