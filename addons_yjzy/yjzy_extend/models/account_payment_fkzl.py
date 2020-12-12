@@ -44,6 +44,7 @@ class account_payment(models.Model):
     yshx_fkzl_ids_count = fields.Integer('应收付认领单数量', compute=compute_fkzl_count)
     yshx_fkzl_line_ids = fields.One2many('account.reconcile.order.line.no','fkzl_id',u'应付明细')
     yshx_fkzl_line_ids_count = fields.Integer('应收付认领单数量', compute=compute_fkzl_count)
+
     def create_fkzl(self):
         if len(self.mapped('partner_id')) > 1:
             raise Warning('不同对象不允许一起付款！')
@@ -97,6 +98,7 @@ class account_payment(models.Model):
             if one.yshx_ids:
                 for x in one.yshx_ids:
                     x.fkzl_id = fkzl_id
+                    x.action_to_fkzl()
                     for yingfurld in x.reconcile_payment_ids:
                         yingfurld.fkzl_id = fkzl_id
                     for line_no in x.line_no_ids:

@@ -101,7 +101,22 @@ class sale_order_line(models.Model):
             one.supplier_id = one.pol_ids and one.pol_ids[0].partner_id or False
           #  one.purchase_price = one.pol_id and one.pol_id.price_unit or False
 
+
+
     #currency_id ==销售货币
+    order_state = fields.Selection([('draft', '草稿'),
+                  ('cancel', '取消'),
+                  ('refused', u'拒绝'),
+                  ('submit', u'待责任人审核'),
+                  ('sales_approve', u'待业务合规审核'),
+                  ('manager_approval', u'待总经理特批'),
+                  ('approve', u'审批完成待出运'),
+                  ('sale', '开始出运'),
+                  ('abnormal', u'异常核销'),
+                  ('verifying', u'正常核销'),
+                  ('verification', u'核销完成'),],u'订单审批状态',related="order_id.state")
+    current_date_rate = fields.Float('成本测算汇率',related='order_id.current_date_rate')
+    contract_date = fields.Date('客户确认日期',related='order_id.contract_date')
     product_so_line_count = fields.Integer(u'产品销售次数', related='product_id.so_line_count')
     #822
     contract_code = fields.Char('销售合同号',related='order_id.contract_code')

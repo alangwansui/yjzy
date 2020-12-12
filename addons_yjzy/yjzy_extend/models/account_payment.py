@@ -340,6 +340,12 @@ class account_payment(models.Model):
             advance_reconcile_order_line_ids_count = len(one.advance_reconcile_order_line_ids)
             one.advance_reconcile_order_line_ids_count = advance_reconcile_order_line_ids_count
 
+    reconcile_type = fields.Selection([('10_payment_out',u'付款'),
+                                       ('20_advance_out','预付'),
+                                       ('30_payment_in',u'收款'),
+                                       ('40_advance_in',u'预收'),
+                                       ('50_reconcile',u'核销')],'认领方式')
+
     invoice_log_id = fields.Many2one('account.invoice','付款指令以及预收预付认领关联账单')
 
     pay_to = fields.Char('付款对象', compute = compute_pay_to,store=True)
@@ -1063,6 +1069,7 @@ class account_payment(models.Model):
         """
         res = super(account_payment, self).post()
         for one in self:
+            one.payment_date_confirm = fields.datetime.now()
             if one.sfk_type == 'rcfkd':
                 one.payment_date_confirm = fields.datetime.now() ##akiny 增加付款时间
                 if one.yshx_ids:
@@ -1127,6 +1134,7 @@ class account_payment(models.Model):
                     fksqd.state = 'posted'
                     fksqd.state_1 = '60_done'
                     fksqd.state_fkzl = '30_done'
+                    fksqd.payment_date_confirm = self.payment_date_confirm
                 one.state_fkzl = '30_done'
                 one.state_1 = '60_done'
             #重新计算so的应付余额

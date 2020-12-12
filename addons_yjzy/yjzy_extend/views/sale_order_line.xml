@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+	<data>	
+
+<!-- Quotation Lines akiny 销售明细-->
+
+ 		<record id="sh_sol_sale_quotation_line_form_view_inherit_1" model="ir.ui.view">
+			<field name="name">Quotation Line Form</field>
+			<field name="model">sale.order.line</field>
+			<field name="priority" eval="1"/>
+			<field name="arch" type="xml">
+				<form>
+					<sheet>
+						<group>
+							<group>
+								<field name="order_id" string="订单号"/>
+								<field name="purchase_contract_code" string="PO号"/>
+								<field name="contract_date" string="下单日期"/>
+								<field name="product_id" string="客户型号"/>
+								<field name="product_uom" invisible="1"/>
+								<field name="product_uom_qty" string="数量"/>
+								<field name="tax_id" widget="many2many_tags"/>
+								<field name="price_subtotal"/>
+							</group>
+							<group>
+								<field name="order_partner_id"/>
+								<field name="name"/>
+								<field name="price_unit"/>
+								<field name="discount"/>
+							</group>
+						</group>
+					</sheet>
+				</form>
+			</field>
+		</record>
+		
+ 		<record id="sh_sol_sale_quotation_line_tree_view_inherit_1" model="ir.ui.view">
+			<field name="name">Quotation Line Tree</field>
+			<field name="model">sale.order.line</field>
+			<field name="priority" eval="1"/>
+			<field name="arch" type="xml">			
+				<tree>
+					<field name="order_partner_id" string="客户"/>
+					<field name="order_id" string="订单号"/>
+					<field name="purchase_contract_code" string="PO号"/>
+					<field name="contract_date" string="下单日期"/>
+					<field name="product_id" string="客户型号"/>
+					<field name="name" invisible="1"/>
+					<field name="product_uom" invisible="1"/>
+					<field name="product_uom_qty" string="数量"/>
+					<field name="price_unit" string="销售单价"/>
+					<field name="purchase_price" string="采购单价"/>
+					<field name="tax_id" widget="many2many_tags" invisible="1"/>
+					<field name="discount" invisible="1"/>
+					<field name="price_subtotal" string="销售总价"/>
+					<field name="purchase_cost" string="采购总价"/>
+					<field name="current_date_rate" string="下单时汇率"/>
+				</tree>				
+			</field>
+		</record>
+		
+        <record id="sh_sol_sale_quotation_line_kanban_view_inherit_1" model="ir.ui.view">
+            <field name="name">Quotation Line Kanban</field>
+            <field name="model">sale.order.line</field>
+			<field name="priority" eval="1"/>
+            <field name="arch" type="xml">
+                <kanban default_group_by="order_partner_id">
+                    <field name="product_id"/>
+                    <field name="product_uom_qty" string="Qty"/>
+                    <field name="order_id" string="Order"/>
+                    <field name="order_partner_id"/>
+                	<templates>	                	
+	                    <t t-name="kanban-box">
+	                        <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+    	                        <div class="o_kanban_details">
+			                		<strong>Order : <field name="order_id"/> </strong>
+			                		<br/>
+			   	        			Customer : <field name="order_partner_id" string="product_id :"/>
+			  	        			<br/>
+			   	        			Product : <field name="product_id"/>
+			  	        			<br/>
+			   	        			Qty : <field name="product_uom_qty"/>
+		   	        			</div>
+		                	</div>
+	                    </t>
+                    </templates>
+				</kanban>            
+            </field>
+		</record>            
+		
+        <record id="sh_sol_sale_quotation_line_search_view_inherit_1" model="ir.ui.view">
+            <field name="name">Quotation Line Search</field>
+            <field name="model">sale.order.line</field>
+			<field name="priority" eval="1"/>
+            <field name="arch" type="xml">
+                <search string="Search Quotation Order Line">
+                    <field name="name" string="模糊搜索" filter_domain="['|','|',('contract_code','ilike',self),('product_id','ilike',self),('order_partner_id','child_of',self)]"/>
+                    <field name="order_partner_id" string="客户" filter_domain="['|','|',('order_partner_id','ilike',self),('order_id','ilike',self),('product_id','ilike',self)]"/>
+                    <field name="contract_code" string="合同号"/>
+                    <field name="product_id" string="产品"/>
+                    <field name="contract_date" string="客户下单日期"/>
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter string="客户" name="group_by_partner" context="{'group_by':'order_partner_id'}"/>
+                        <filter string="合同号" context="{'group_by':'order_id'}"/>
+                        <filter string="产品" context="{'group_by':'product_id'}"/>
+						<filter string="未发货完成" domain="[('qty_undelivered','!=',0)]" name="Undelivered" invisible="1"/>
+						<filter string="执行中" domain="[('order_state','in',['sale','approve','verifying','done'])]"/>
+						<filter string="未生效" domain="[('order_state','in',['draft','submit','sales_approve','manager_approval','cancel','refuse'])]"/>
+						<filter string="今天" name="today"
+							domain="[('contract_date', '&gt;=', datetime.datetime.now().strftime('%m/%d/%Y 00:00:00')),('contract_date', '&lt;=', datetime.datetime.now().strftime('%m/%d/%Y 23:23:59'))]"/>
+			
+					    <filter string="昨天" name="yesterday"
+                         	domain="[('contract_date','&gt;=', ((context_today()+datetime.timedelta(days=-1)).strftime('%Y-%m-%d'))), ('contract_date','&lt;=', ((context_today()+datetime.timedelta(days=-1)).strftime('%Y-%m-%d')))]"/>
+					
+						<filter string="本周" name="this_week"
+						    domain="[('contract_date', '&gt;=', ((context_today()+ relativedelta(weeks=-1,weekday=0)).strftime('%Y-%m-%d'))), ('contract_date', '&lt;=', ((context_today()+ relativedelta(weeks=-1,days=5,weekday=6)).strftime('%Y-%m-%d')))]"  />
+
+					   <filter string="上周" name="prev_week"
+					   		domain="[('contract_date', '&gt;=', ((context_today()+relativedelta(weeks=-2, weekday=0)).strftime('%Y-%m-%d'))),('contract_date', '&lt;=', ((context_today()+relativedelta(weeks=-1,weekday=6)).strftime('%Y-%m-%d')))]"/>
+	
+					   <filter string="本月" name="this_month"
+							domain="[('contract_date','&lt;',(context_today()+relativedelta(months=1)).strftime('%%Y-%%m-01')), ('contract_date','&gt;=',time.strftime('%%Y-%%m-01'))]"/>
+	
+					  <filter string="上月" name="prev_month"
+					  		domain="[('contract_date','&gt;=',(context_today()-relativedelta(months=1)).strftime('%%Y-%%m-01')),('contract_date','&lt;',time.strftime('%%Y-%%m-01'))]"/>
+
+			    	  <filter string="今年" name="this_year"
+			    	  		domain="[('contract_date','&lt;=', time.strftime('%%Y-12-31')),('contract_date','&gt;=',time.strftime('%%Y-01-01'))]"/>
+
+					  <filter string="去年" name="prev_year"
+                			domain="[('contract_date', '&gt;=' ,(context_today()-relativedelta(years=1)).strftime('%Y-01-01')),('contract_date','&lt;=',time.strftime('%Y-01-01'))]"/>
+
+                    </group>
+                </search>
+            </field>
+        </record>
+
+
+		<record id="sh_action_sale_order_lines_all" model="ir.actions.act_window">
+			<field name="name">Sale Order Line</field>
+			<field name="res_model">sale.order.line</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form,kanban</field>
+            <field name="domain">[]</field>
+
+			<field name="context">{'only_customer_ref':1,'search_default_group_by_partner':1}</field>
+            <field name="view_id" ref="sh_sol_sale_quotation_line_tree_view_inherit_1"/>
+		</record>
+
+ 	<menuitem id="sh_sol_quotation_line_all" name="所有销售明细" action="sh_action_sale_order_lines_all"
+		groups="sales_team.group_sale_manager" parent="new_sale_order_root_4" sequence="99"/>
+	</data>
+</odoo>

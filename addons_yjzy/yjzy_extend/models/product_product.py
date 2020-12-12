@@ -154,23 +154,27 @@ class Product_Product(models.Model):
 
         only_name = self.env.context.get('only_name')
         only_code = self.env.context.get('only_code')
+        only_customer_ref = self.env.context.get('only_customer_ref')
 
         #cat_name = self.env.context.get('cat_name')
         #print('==name_get==', only_name, self.env.context)
 
         def _get_name(one):
+            ref = one.customer_ref or one.customer_ref2
             if only_name:
                 name = one.name
             elif only_code:
                 name = one.default_code
+            elif only_customer_ref:
+                name = one.customer_ref
            # elif cat_name:
             #    name = '%s-%s-%s' % (one.categ_id.parent_id.name, one.categ_id.name, one.name)
             else:
-                name = '[%s]%s{%s}' % (one.default_code, one.name, one.key_value_string)
+                name = '[%s]%s{%s}' % (ref, one.name, one.key_value_string)
 
-            ref = one.customer_ref or one.customer_ref2
-            if ref:
-                name = '(%s)%s' % (ref, name)
+            # ref = one.customer_ref or one.customer_ref2
+            # if ref:
+            #     name = '(%s)%s' % (ref, name)
             return name
 
         for one in self:

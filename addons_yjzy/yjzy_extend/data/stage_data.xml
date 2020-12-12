@@ -191,10 +191,16 @@
             <field name="state">manager_approval</field>
         </record>
         <record model="account.reconcile.stage" id="stage_account_reconcile_post">
-            <field name="name">审批完成待支付</field>
+            <field name="name">未提交付款指令</field>
             <field name="code">050</field>
             <field name="sequence" eval="50"/>
             <field name="state">post</field>
+        </record>
+        <record model="account.reconcile.stage" id="stage_account_reconcile_fkzl">
+            <field name="name">已提交付款指令</field>
+            <field name="code">055</field>
+            <field name="sequence" eval="55"/>
+            <field name="state">fkzl</field>
         </record>
         <record model="account.reconcile.stage" id="stage_account_reconcile_done">
             <field name="name">完成</field>

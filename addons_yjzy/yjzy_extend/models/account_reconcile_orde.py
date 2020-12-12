@@ -11,7 +11,8 @@ Account_reconcile_Selection =   [('draft',u'待预付认领草稿'),
                                  ('advance_approval',u'预付款认领待审批'),
                                  ('account_approval',u'应付款申请草稿'),
                                  ('manager_approval',u'应付款申请待审批'),
-                                 ('post',u'审批完成待支付'),
+                                 ('post',u'未提交付款指令'),
+                                 ('fkzl',u'已提交付款指令'),
                                  ('done',u'完成'),
                                  ('refused', u'已拒绝'),
                                  ('cancel', u'取消'),
@@ -226,7 +227,7 @@ class account_reconcile_order(models.Model):
             print('po',po)
             supplier_advance_payment_ids = self.env['account.payment'].search(
                 [('partner_id', '=', one.partner_id.id), ('sfk_type', '=', 'yfsqd'),('po_id','in',po),
-                 ('state', 'in', ['posted', 'reconciled']),])
+                 ('state', 'in', ['posted', 'reconciled']),('advance_balance_total','!=',0)])
             one.supplier_advance_payment_ids_count = len(supplier_advance_payment_ids)
             one.supplier_advance_payment_ids = supplier_advance_payment_ids
             print('one.supplier_advance_payment_ids',one.supplier_advance_payment_ids)
@@ -619,6 +620,13 @@ class account_reconcile_order(models.Model):
     is_editable = fields.Boolean(u'可编辑')
     gongsi_id = fields.Many2one('gongsi', '内部公司')
 
+
+    def action_to_fkzl(self):
+        stage_id = self._stage_find(domain=[('code', '=', '055')])
+        self.write({'stage_id': stage_id.id,
+
+                    })
+
     def make_account_payment_state_ids(self):
         account_payment_state_ids = self.supplier_advance_payment_ids
         account_payment_state_obj = self.env['account.payment.state']
@@ -626,7 +634,7 @@ class account_reconcile_order(models.Model):
             account_payment_state_id = account_payment_state_obj.create({
                 'advance_payment_id':one.id,
                 'reconcile_order_id':self.id,
-
+                'amount_advance_balance_d':one.advance_balance_total,
             })
 
 
@@ -874,7 +882,9 @@ class account_reconcile_order(models.Model):
                         'payment_method_id': 2,
                         'invoice_ids': [(4, line_no.invoice_id.id, None)],
                         # 'po_id': line_no.po_id.id,
-                        'invoice_log_id':line_no.invoice_id.id
+                        'invoice_log_id':line_no.invoice_id.id,
+                        'reconcile_type':'10_payment_out',
+                        'post_date':fields.date.today()
                     })
         else:
             for line in line_ids:
@@ -895,7 +905,9 @@ class account_reconcile_order(models.Model):
                         'payment_method_id': 2,
                         'invoice_ids': [(4, line.invoice_id.id, None)],
                         'po_id': line.po_id.id,
-                        # 'invoice_log_id':line.invoice_id.id
+                        # 'invoice_log_id':line.invoice_id.id,
+                        'reconcile_type': '10_payment_out',
+                        'post_date': fields.date.today()
                     })
                 if line.amount_advance_org > 0:
                     reconcile_payment_id_2 = account_payment_obj.create({
@@ -914,7 +926,9 @@ class account_reconcile_order(models.Model):
                         'invoice_ids': [(4, line.invoice_id.id, None)],
                         'po_id': line.po_id.id,
                         'yjzy_payment_id':line.yjzy_payment_id.id,
-                        'invoice_log_id': line.invoice_id.id
+                        'invoice_log_id': line.invoice_id.id,
+                        'reconcile_type': '20_advance_out',
+                        'post_date': fields.date.today()
                     })
                 if line.amount_bank_org > 0:
                     reconcile_payment_id_2 = account_payment_obj.create({
@@ -933,6 +947,8 @@ class account_reconcile_order(models.Model):
                         'invoice_ids': [(4, line.invoice_id.id, None)], #akiny参考 m2m
                         'po_id': line.po_id.id,
                         # 'invoice_log_id': line.invoice_id.id,
+                        'reconcile_type': '50_reconcile',
+                        'post_date': fields.date.today()
                     })
 
                 if line.amount_diff_org > 0:
@@ -952,6 +968,8 @@ class account_reconcile_order(models.Model):
                         'invoice_ids': [(4, line.invoice_id.id, None)],
                         'po_id': line.po_id.id,
                         # 'invoice_log_id': line.invoice_id.id,
+                        'reconcile_type': '50_reconcile',
+                        'post_date': fields.date.today()
                     })
 
 
@@ -3255,6 +3273,26 @@ class account_reconcile_order_line(models.Model):
 #     yjzy_payment_id = fields.Many2one('account.payment', u'预收认领单',related='order_line_id.yjzy_payment_id')
 #     amount_advance_org = fields.Monetary(u'预收金额', currency_field='yjzy_currency_id',related='order_line_id.amount_advance_org')
 
+    def open_invoice_id(self):
+        form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form_in_one_open').id
+        return {'name':'账单查看',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'account.invoice',
+                'views': [(form_view, 'form')],
+                'res_id': self.invoice_id.id,
+                'target': 'new',
+                'type': 'ir.actions.act_window',
+                # 'flags': {'sidebar': False,  #参考flag
+                #           'initial_mode': 'read',
+                #     'form': {
+                #         'action_buttons': False,
+                #          'initial_mode': 'read',
+                #          'options': {'mode': 'view'},
+                #     }},
+
+                 'context': {'open':1}
+                }
 
 
 
@@ -3263,7 +3301,7 @@ class account_reconcile_order_line_no(models.Model):
     _name = 'account.reconcile.order.line.no'
 
     def open_invoice_id(self):
-        form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form_in_one').id
+        form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form_in_one_open').id
         return {'name':'账单查看',
                 'view_type': 'form',
                 'view_mode': 'form',
@@ -3438,7 +3476,7 @@ class advance_payment_state(models.Model):
                 if one.yjzy_payment_id == self.advance_payment_id:
                     one.unlink()
         self.state = 'no_reconcile'
-        self.amount_advance_balance_d = 0.0
+        # self.amount_advance_balance_d = 0.0
         self.compute_amount_reconcile()
 
     def open_yfsqd(self):

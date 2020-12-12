@@ -11,6 +11,9 @@
                     multi="True"
                     key2="client_action_multi"
                     domain="[('order_id','in', active_ids)]"
+                    view_id="sh_sol_sale_quotation_line_tree_view_inherit_1"
+                    context="{'only_customer_ref':1}"
+                    groups="base.group_system"
         />
 
         <act_window id="act_po2pol"

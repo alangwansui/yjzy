@@ -105,6 +105,7 @@
         'views/trans_date_attachment.xml',
         'views/account_invoice_stage.xml',
         'views/hr_expense_stage.xml',
+        'views/sale_order_line.xml',
 
         'views/product_packaging.xml',
 
