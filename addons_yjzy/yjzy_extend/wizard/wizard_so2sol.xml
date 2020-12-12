@@ -13,7 +13,7 @@
                     domain="[('order_id','in', active_ids)]"
                     view_id="sh_sol_sale_quotation_line_tree_view_inherit_1"
                     context="{'only_customer_ref':1}"
-                    groups="base.group_system"
+                    groups="sales_team.group_sale_manager"
         />
 
         <act_window id="act_po2pol"
