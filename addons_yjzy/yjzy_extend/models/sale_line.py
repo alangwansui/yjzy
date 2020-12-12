@@ -104,6 +104,7 @@ class sale_order_line(models.Model):
 
 
     #currency_id ==销售货币
+    customer_pi = fields.Char(u'客户订单号',related='order_id.customer_pi')
     order_state = fields.Selection([('draft', '草稿'),
                   ('cancel', '取消'),
                   ('refused', u'拒绝'),
