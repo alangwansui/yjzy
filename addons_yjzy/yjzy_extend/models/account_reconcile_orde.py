@@ -623,8 +623,8 @@ class account_reconcile_order(models.Model):
 
     def action_to_fkzl(self):
         stage_id = self._stage_find(domain=[('code', '=', '055')])
+        print('action_to_fkzl',stage_id)
         self.write({'stage_id': stage_id.id,
-
                     })
 
     def make_account_payment_state_ids(self):
