@@ -645,9 +645,13 @@ class account_reconcile_order(models.Model):
             if ctx.get('default_sfk_type', '') == 'yfhxd' and one.hxd_type_new == '30':
                 name = '%s:%s' % ('预付-应付认领', one.name)
             elif ctx.get('default_sfk_type', '') == 'yfhxd' and one.hxd_type_new == '40' and one.operation_wizard != '03':
-                name = '%s:%s' % ('应付付款申请', one.name)
+                if one.invoice_attribute == 'other_payment':
+                    name = '%s:%s' % ('其他应付付款申请', one.name)
+                else:
+                    name = '%s:%s' % ('应付付款申请', one.name)
             elif ctx.get('default_sfk_type', '') == 'yfhxd' and one.hxd_type_new == '40' and one.operation_wizard == '03':
                 name = '%s:%s' % ('应付申请前的预付认领审批', one.name)
+
             else:
                 name = one.name
             res.append((one.id, name))

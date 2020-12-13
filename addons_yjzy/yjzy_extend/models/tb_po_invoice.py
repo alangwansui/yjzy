@@ -466,7 +466,7 @@ class tb_po_invoice(models.Model):
             else:
                 self.type_invoice = 'in_invoice'
 
-
+    @api.multi
     def action_submit(self):
         self.state = '20_submit'
         if self.type == 'other_po':
@@ -652,6 +652,8 @@ class tb_po_invoice(models.Model):
             self.apply_expense_sheet()
             # self.make_extra_invoice()
             self.make_back_tax()
+            # self.expense_sheet_id.with_context({'from_tb_po':1}).action_account_approve()
+
             # self.make_sale_invoice()
             # self.make_sale_invoice_extra()
         if self.type == 'extra':

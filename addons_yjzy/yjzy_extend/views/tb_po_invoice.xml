@@ -727,12 +727,11 @@
                             <button name="action_other_paymnet_one_in_all" type="object" class="oe_highlight" string="直接完成收款认领" attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',True)]}"/>
                             <button name="action_return_qtys" type="object" class="oe_highlight"  attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',False)]}" string="完成对应账单编辑"/>
                             <button name="action_save_test" type="object" class="oe_highlight" attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',True)]}" string="保存并关闭"/>
-
                         </footer>
                            <footer invisible="not context.get('open_expense')">
                         <button name="action_save_test" type="object" class="oe_highlight" attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',True)]}" string="保存并关闭"/>
 
-                        <button string="取消" special="cancel"/>
+
                         </footer>
 
                     </sheet>
@@ -972,6 +971,7 @@
                             </page>
                         </notebook>
                     </sheet>
+
                     <div class="oe_chatter">
                         <field name="message_follower_ids" widget="mail_followers"/>
                         <field name="activity_ids" widget="mail_activity"/>

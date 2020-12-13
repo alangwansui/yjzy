@@ -1198,6 +1198,9 @@ class account_invoice(models.Model):
         if account_reconcile_id.invoice_attribute in ['other_po', 'expense_po', 'other_payment']:
             account_reconcile_id.operation_wizard = '10'
             account_reconcile_id.hxd_type_new = '40'
+            stage_id = account_reconcile_id._stage_find(domain=[('code', '=', '030')])
+            account_reconcile_id.write({'stage_id': stage_id.id,
+                        })
             account_reconcile_id.make_lines()
         else:
             if account_reconcile_id.supplier_advance_payment_ids_count == 0: #如果相关的预付单数量=0，跳过第一步的预付认领

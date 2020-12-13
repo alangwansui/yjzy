@@ -1186,7 +1186,7 @@
                                 </div>
                             </group>
                         </page>
-                        <page string="认领应付账单" attrs="{'invisible':[('operation_wizard','in',['20','30','05','03'])]}">
+                        <page string="账单认领" attrs="{'invisible':[('operation_wizard','in',['20','30','05','03'])]}">
                             <field name="line_no_ids"
                                    attrs="{'readonly':[('state_1','not in',['draft','account_approval'])]}">
                                 <tree editable="bottom" create="false">
@@ -1204,8 +1204,9 @@
                                     <field name="invoice_id_po_ids" widget="many2many_tags" string="采购合同" invisible="1"
                                            attrs="{'column_invisible':[('parent.invoice_attribute','in',['other_payment'])]}"/>
                                     <field name="amount_invoice_so" string="原始应付款" readonly="1"/>
-                                    <field name="reconcile_order_line_payment" string="付款支付" readonly="1"/>
-                                    <field name="reconcile_order_line_advance" string="预付认领" readonly="1"/>
+                                    <field name="reconcile_order_line_payment" string="付款支付" readonly="1" />
+                                    <field name="reconcile_order_line_advance" string="预付认领" readonly="1"
+                                           attrs="{'column_invisible':[('parent.invoice_attribute','!=','normal')]}"/>
                                     <field name="invoice_residual"
                                            string="最新剩余应付款" invisible="1"/><!--attrs="{'column_invisible':[('parent.operation_wizard','not in',['10'])]}"-->
                                     <field name="invoice_residual_this_time" string="本次申请前剩余应付款"/>

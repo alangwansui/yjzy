@@ -297,13 +297,16 @@ class hr_expense_sheet(models.Model):
             stage_id = self._stage_find(domain=[('code', '=', '040')])
             if not self.fk_journal_id:
                 raise Warning('请填写付款账号')
+            from_tb_po = self.env.context.get('from_tb_po')
+            print('from_tb_po',from_tb_po)
             if self.tb_po_invoice_ids:
-                self.tb_po_invoice_ids.action_submit()
-                self.write({'account_confirm': self.env.user.id,
-                            'stage_id': stage_id.id,
-                            'account_confirm_date':fields.datetime.now()})
+                if not from_tb_po:
+                    self.tb_po_invoice_ids.action_submit()
             else:
                 raise Warning('还没有生成费用转货款申请单，请检查！')
+            self.write({'account_confirm': self.env.user.id,
+                        'stage_id': stage_id.id,
+                        'account_confirm_date': fields.datetime.now()})
         elif self.expense_to_invoice_type == 'normal':
             stage_id = self._stage_find(domain=[('code', '=', '040')])
             if not self.fk_journal_id:
@@ -589,9 +592,9 @@ class hr_expense_sheet(models.Model):
             'res_model': 'tb.po.invoice',
             'type': 'ir.actions.act_window',
             'view_id': view.id,
-            'target': 'current',
+            'target': 'new',
             'res_id': tb_po_id.id,
-            # 'context': { },
+            'context': {'open_expense':1 },
         }
     def open_tb_po_invoice(self):
         self.ensure_one()
