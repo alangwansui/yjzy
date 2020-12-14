@@ -205,10 +205,12 @@ class account_payment(models.Model):
         ctx = self.env.context
         res = []
         for one in self:
-            if ctx.get('default_sfk_type', '') == 'ysrld':
-                name = '%s:%s' % (one.journal_id.name, str(one.balance))
+            if ctx.get('default_sfk_type', '') == 'ysrld' or one.sfk_type == 'ysrld':
+                name = '%s:%s' % ('预收认领单', str(one.advance_balance_total))
             elif ctx.get('default_sfk_type', '') == 'fkzl' or one.sfk_type == 'fkzl':
                 name = '%s:%s' % ('付款指令', one.name)
+            elif ctx.get('default_sfk_type', '') == 'rcskd' or one.sfk_type == 'rcskd':
+                name = '%s:%s' % ('日常收款单', one.balance)
             elif ctx.get('bank_amount'):
                 name = '%s[%s]' % (one.journal_id.name, str(one.balance))
             elif ctx.get('advance_bank_amount'):
@@ -922,8 +924,16 @@ class account_payment(models.Model):
         self.compute_balance()
 
     def action_ysrld_one_in_all(self):
-        self.action_submit()
-        self.action_account_post()
+        if not self.yjzy_payment_id:
+            raise Warning('请选择认领的收款单!')
+        elif self.yjzy_payment_balance < self.amount:
+            raise Warning('认领金额不能大于待认领金额!')
+        elif self.amount_total_so < self.amount:
+            raise Warning('认领金额不能大于销售合同金额！')
+        else:
+            self.action_submit()
+            self.action_account_post()
+            self.compute_balance()
 
     def action_manager_post(self):
         if self.po_id and self.po_id.so_id_state not in ['approve', 'sale']:
@@ -1033,10 +1043,13 @@ class account_payment(models.Model):
         ctx = self.env.context
         res = []
         for one in self:
-            if ctx.get('default_sfk_type', '') == 'ysrld':
-                name = '%s:%s' % (one.journal_id.name, str(one.balance))
+            if ctx.get('default_sfk_type', '') == 'ysrld' or one.sfk_type == 'ysrld':
+                # name = '%s:%s' % (one.journal_id.name, str(one.balance))
+                name = '%s:%s' % ('预收认领单', str(one.advance_balance_total))
             elif ctx.get('default_sfk_type', '') == 'fkzl' or one.sfk_type == 'fkzl':
                 name = '%s:%s' % ('付款指令', one.name)
+            elif ctx.get('default_sfk_type', '') == 'rcskd' or one.sfk_type == 'rcskd':
+                name = '%s:%s' % ('日常收款单', one.balance)
             elif ctx.get('bank_amount'):
                 name = '%s[%s]' % (one.journal_id.name, str(one.balance))
             elif ctx.get('advance_bank_amount'):

@@ -10,7 +10,7 @@
         <field name="arch" type="xml">
             <form string="日常收款单">
                  <header >
-                     <button name="open_wizard_renling" type="object" string="创建认领单" attrs="{'invisible':[('state_1','!=','50_posted')]}"/>
+                     <button name="open_wizard_renling" type="object" string="创建认领单" attrs="{'invisible':['|',('state_1','!=','50_posted'),('balance','=',0)]}"/>
                    <button name="action_submit" class="oe_highlight"  string="提交" type="object" attrs="{'invisible':[('state_1','not in',['10_draft'])]}"/>
                      <button name="action_cashier_post" class="oe_highlight"  string="出纳确认"
                              attrs="{'invisible':[('state_1','not in',['25_cashier_submit'])]}" type="object" />
@@ -28,6 +28,7 @@
 
                 </header>
                 <sheet>
+
                     <div class="oe_button_box" name="button_box">
 <!--                        <button class="oe_stat_button" name="open_account_invoice"  type="object" icon="fa-pencil-square-o" string="test"-->
 <!--                                attrs="{'invisible':[('state','not in',['posted','reconciled'])]}">-->
@@ -69,9 +70,9 @@
                     </div>
                     <field name="id" invisible="1"/>
                     <div class="oe_title">
-                        <h1>
-                            <field name="name"/>
-                        </h1>
+<!--                        <h1>-->
+<!--                            <field name="name"/>-->
+<!--                        </h1>-->
                         <div name="options" invisible="1">
                             <div>
                                 <label for="payment_for_goods"/>
@@ -125,7 +126,7 @@
                     <group>
                         <group>
 
-
+                            <field name="name"/>
                             <label for="amount" string="收款金额"/>
                             <div name="amount_div" class="o_row" string="收款金额">
                                 <field name="amount" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
@@ -267,7 +268,7 @@
                                     <field name="amount" string="认领金额"/>
                                     <field name="advance_balance_total" string="未被认领金额"/>
                                     <field name="state"/>
-                                    <button name="action_ysrld_one_in_all" type="object" string="认领确认"/>
+                                    <button name="action_ysrld_one_in_all" type="object" string="认领确认" attrs="{'invisible':[('state','in',['posted','reconciled'])]}"/>
 
                                 </tree>
                             </field>
