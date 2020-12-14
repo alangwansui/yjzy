@@ -785,8 +785,9 @@ class sale_order(models.Model):
     def name_get(self):
         res = []
         for order in self:
-            name = '%s' % (order.contract_code)
+            name = '%s' % str((order.contract_code))
             res.append((order.id, name))
+            name = '%s[%s]' % (one.journal_id.name, str(one.balance))
         return res
     # @api.multi
     # def name_get(self):

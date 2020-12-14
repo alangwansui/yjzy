@@ -41,8 +41,8 @@
                 <field name="payment_date" string="收款日期"/>
                 <field name="journal_id" string="收款账户"/>
                 <field name="amount" string="收款金额"/>
-                <field name="balance"/>
-                <field name="company_id"/>
+                <field name="balance" string="未认领金额"/>
+                <field name="company_id" groups="base.group_system"/>
                 <field name="payment_comments"/>
                 <field name="fault_comments"/>
                 <field name="state_1" groups="base.group_system"/>

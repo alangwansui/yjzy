@@ -436,7 +436,7 @@ class account_payment(models.Model):
                                 ('30_manager_approve',u'待总经理审批'),
                                 ('35_account_approve', u'待会计核对确认'),
                                 ('40_approve',u'审批完成'),
-                                ('50_posted',u'已过账'),
+                                ('50_posted',u'等待完成认领'),
                                 ('60_done',u'完成'),#认领全部完成
                                 ('70_checked',u'已对账'),
                                 ('80_refused',u'已拒绝'),
@@ -682,12 +682,20 @@ class account_payment(models.Model):
     def open_wizard_renling(self):
         self.ensure_one()
         ctx = self.env.context.copy()
-        ctx.update({
-            'default_partner_id': self.partner_id.id,
-            'default_yjzy_payment_id': self.id,
-            'default_so_id':self.so_id,
 
-        })
+        if self.so_id:
+            ctx.update({
+                'default_so_id': self.so_id,
+                'default_partner_id': self.partner_id.id,
+                'default_yjzy_payment_id': self.id,
+            })
+        else:
+            ctx.update({
+
+                'default_partner_id': self.partner_id.id,
+                'default_yjzy_payment_id': self.id,
+            })
+
 
         if self.sfk_type == 'rcskd':
             form_view = self.env.ref('yjzy_extend.wizard_renling_form')
