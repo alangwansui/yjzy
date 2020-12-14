@@ -425,7 +425,7 @@
                                 context="{'new': 1}" string="创建采购单:新"
                                 groups="sales_team.group_sale_assistant"/>
                           <button name="open_sale_cost"  type='object' string="成本单"/>
-                        <button name="open_wizard_multi_sale_line" type='object' string="测试批量"/>
+                        <button name="open_wizard_multi_sale_line" type='object' string="测试批量" groups="base.group_system"/>
                         <field name="state_1" widget="statusbar" statusbar_visible=" "/>
                     </header>
 

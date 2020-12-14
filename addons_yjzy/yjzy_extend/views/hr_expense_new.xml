@@ -1527,6 +1527,10 @@
                                        context="{'search_order': 'sequence','only_name':1}"/>
                                 <field name="total_amount" string="总金额" readonly="1" invisible="1"/>
                                 <field name="my_total_amount" string="总金额"/>
+                                <field name="purchase_amount2_add_this_time_total" style="color:red" attrs="{'invisible':[('tb_po_invoice_ids_count','=',0)]}"/>
+                                <field name="back_tax_add_this_time_total" style="color:red" attrs="{'invisible':[('tb_po_invoice_ids_count','=',0)]}"/>
+                                <field name="tb_po_invoice_ids" widget="many2many_tags" string="费用转货款申请"
+                                       attrs="{'invisible':[('tb_po_invoice_ids_count','=',0)]}" options="{'open_view': True}" context="{'open_expense':1}"/>
                                 <field name="document_number" attrs="{'readonly': [('state','in',['approve','post','done']),('is_editable','=',False)]}"/>
                                 <field name="include_tax" attrs="{'readonly':[('state','not in',['submit','draft'])]}"/>
                                 <field name="payment_mode" invisible="1" readonly="1"/>
@@ -1578,9 +1582,9 @@
                                                options="{'no_open': True, 'no_create': True}"
                                                attrs="{'invisible': [('payment_mode', '!=', 'own_account')]}"/>
                                         <field name="todo_cron" invisible="1"/>
-                                        <field name="payment_id" readonly="1" domain="[('sfk_type','=', 'rcfkd')]" string="日常付款单"
+                                        <field name="payment_id" readonly="1" domain="[('sfk_type','=', 'rcfkd')]" string="付款单申请单"
                                                context="{'form_view_ref':'yjzy_extend.view_rcfkd_form'}"/>
-                                        <field name="yjzy_payment_currency_id" readonly="1" string="付款单货币"/>
+                                        <field name="yjzy_payment_currency_id" readonly="1" string="货币" invisible="1"/>
                                         <field name="balance" string="付款单未认领" invisible="1"/>
                                     </group>
 
@@ -1597,29 +1601,29 @@
 
 
                         </group>
-                        <notebook><page string="费用转货款" attrs="{'invisible':[('tb_po_invoice_ids_count','=',0)]}">
+                        <notebook><page string="费用转货款" attrs="{'invisible':[('tb_po_invoice_ids_count','=',0)]}" invisible="1">
                                 <field name="tb_po_invoice_ids_count" invisible="1"/>
-                                <field name="tb_po_invoice_ids" context="{'form_view_ref':'yjzy_extend.tb_po_form'}">
-                                    <tree decoration-info="state not in ['post','done']" create="false" edit="false">
-                                        <field name="name" invisible="1"/>
-                                        <field name="partner_id"/>
-                                        <field name="yjzy_invoice_residual_amount" invisible="1"/>
-                                        <field name="yjzy_invoice_include_tax" invisible="1"/>
-                                        <field name="purchase_amount2_add_this_time_total" string="货款金额"/>
-                                        <field name="p_s_add_this_time_refund" invisible="1"/>
-                                        <field name="p_s_add_this_time_extra_total" invisible="1"/>
-                                        <field name="back_tax_add_this_time_total" invisible="0" string="退税金额"/>
-                                        <field name="po_add_residual" invisible="0" string="货款未付金额"/>
-                                        <field name="p_s_add_residual" invisible="1"/>
-                                        <field name="back_tax_add_residual"  string="退税未收金额"/>
-                                        <field name="p_s_add_refund_residual" invisible="1"/>
-                                        <field name="create_date" string="创建日期"/>
-                                        <field name="yjzy_invoice_id" groups="base.group_system"/>
-                                        <field name="state"/>
-                                        <button name="open_tb_po_invoice" string="编辑" type="object" context="{'open_expense':1}"
-                                                attrs="{'invisible':[('state','!=','10_draft')]}"/>
-                                    </tree>
-                                </field>
+<!--                                <field name="tb_po_invoice_ids" context="{'form_view_ref':'yjzy_extend.tb_po_form'}">-->
+<!--                                    <tree decoration-info="state not in ['post','done']" create="false" edit="false">-->
+<!--                                        <field name="name" invisible="1"/>-->
+<!--                                        <field name="partner_id"/>-->
+<!--                                        <field name="yjzy_invoice_residual_amount" invisible="1"/>-->
+<!--                                        <field name="yjzy_invoice_include_tax" invisible="1"/>-->
+<!--                                        <field name="purchase_amount2_add_this_time_total" string="货款金额"/>-->
+<!--                                        <field name="p_s_add_this_time_refund" invisible="1"/>-->
+<!--                                        <field name="p_s_add_this_time_extra_total" invisible="1"/>-->
+<!--                                        <field name="back_tax_add_this_time_total" invisible="0" string="退税金额"/>-->
+<!--                                        <field name="po_add_residual" invisible="0" string="货款未付金额"/>-->
+<!--                                        <field name="p_s_add_residual" invisible="1"/>-->
+<!--                                        <field name="back_tax_add_residual"  string="退税未收金额"/>-->
+<!--                                        <field name="p_s_add_refund_residual" invisible="1"/>-->
+<!--                                        <field name="create_date" string="创建日期"/>-->
+<!--                                        <field name="yjzy_invoice_id" groups="base.group_system"/>-->
+<!--                                        <field name="state" groups="base.group_system"/>-->
+<!--                                        <button name="open_tb_po_invoice" string="编辑" type="object" context="{'open_expense':1}"-->
+<!--                                                attrs="{'invisible':[('state','!=','10_draft')]}"/>-->
+<!--                                    </tree>-->
+<!--                                </field>-->
                             </page>
                             <page string="Expense Lines">
                                 <field name="expense_line_ids"
@@ -2053,7 +2057,7 @@
                 ('expense_line_ids.state','in', ['draft','reported']),('employee_id.user_id','=',uid),'&amp;', '&amp;',
                 ('expense_line_ids.employee_id.user_id','=',uid),('expense_line_ids.state','in', ['draft','reported']),
                 ('state_1','=', 'employee_approval'),('state_1','in', ['account_approval'])]</field>
-            <field name="context">{'display_name_code':1,'search_default_group_by_stage_id':1,'default_account_confirm_uid': 9,
+            <field name="context">{'display_name_code':1,'search_default_group_stage_id_expense_to_invoice_type':1,'default_account_confirm_uid': 9,
                 'default_manager_confirm_uid': 7,'only_name':1 }</field>
             <!--field name="target">new</field-->
             <field name="view_ids" eval="[(5, 0, 0),
@@ -2075,7 +2079,7 @@
                 ('expense_line_ids.state','in', ['draft','reported']),('employee_id.user_id','=',uid),'&amp;', '&amp;',
                 ('expense_line_ids.employee_id.user_id','=',uid),('expense_line_ids.state','in', ['draft','reported']),
                 ('state_1','=', 'employee_approval'),('state_1','in', ['manager_approval'])]</field>
-            <field name="context">{'display_name_code':1,'search_default_group_by_stage_id':1,'default_account_confirm_uid': 9,
+            <field name="context">{'display_name_code':1,'search_default_group_stage_id_expense_to_invoice_type':1,'default_account_confirm_uid': 9,
                 'default_manager_confirm_uid': 7,'only_name':1 }</field>
             <!--field name="target">new</field-->
             <field name="view_ids" eval="[(5, 0, 0),

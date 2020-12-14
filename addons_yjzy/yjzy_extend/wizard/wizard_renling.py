@@ -198,7 +198,8 @@ class wizard_renling(models.TransientModel):
             'target': 'new',
             'type': 'ir.actions.act_window',
             'context': {'default_sfk_type': 'yshxd',
-                        'active_id': yshxd_id.id
+                        'active_id': yshxd_id.id,
+                        'open':1
                         }
         }
 

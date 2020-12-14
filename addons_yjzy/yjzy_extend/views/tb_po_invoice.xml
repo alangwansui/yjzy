@@ -467,7 +467,17 @@
                                  <field name="price_total" string="金额合计" />
 
                                  <field name="invoice_normal_ids_residual" string="未付金额" attrs="{'invisible':[('yjzy_type_1','in',['sale','other_payment_sale'])]}"/>
-
+<!--<div colspan="2"  attrs="{'invisible':[('yjzy_type_1','in',['sale','other_payment_sale'])]}">-->
+<!--    <b>-->
+<!--        有对应的其他应收-->
+<!--    </b>-->
+<!--</div>-->
+<!--                                     <div colspan="2" class="oe_text_center"-->
+<!--                                          attrs="{'invisible':[('yjzy_type_1','in',['purchase','other_payment_purchase'])]}">-->
+<!--    <b>-->
+<!--        有对应的其他应付-->
+<!--    </b>-->
+<!--</div>-->
                                  <label for="" name="yjzy_tb_po_invoice" attrs="{'invisible':[('is_yjzy_tb_po_invoice','=',False)]}">
                                      <b attrs="{'invisible':[('yjzy_type_1','in',['sale','other_payment_sale'])]}">其他应收申请单</b>
                                     <b attrs="{'invisible':[('yjzy_type_1','in',['purchase','other_payment_purchase'])]}">其他应付申请单</b>
@@ -496,8 +506,8 @@
 
                                                   </div>
                                       <field name="yjzy_tb_po_invoice_parent" attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',False)]}" string="上级账单"/>
-                                    <field name="yjzy_tb_po_invoice_parent_amount" string="上级账单原始金额" attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',False)]}"/>
-                                    <field name="yjzy_tb_po_invoice_parent_residual" string="上级账单剩余金额" attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',False)]}"/>
+                                    <field name="yjzy_tb_po_invoice_parent_amount" string="上级原始金额" attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',False)]}"/>
+                                    <field name="yjzy_tb_po_invoice_parent_residual" string="上级剩余金额" attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',False)]}"/>
 
                                </group>
 
@@ -730,8 +740,7 @@
                         </footer>
                            <footer invisible="not context.get('open_expense')">
                         <button name="action_save_test" type="object" class="oe_highlight" attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',True)]}" string="保存并关闭"/>
-
-
+                        <button string="关闭" class="btn-primary" special="cancel" />
                         </footer>
 
                     </sheet>

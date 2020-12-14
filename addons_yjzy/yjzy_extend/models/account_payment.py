@@ -685,6 +685,7 @@ class account_payment(models.Model):
         ctx.update({
             'default_partner_id': self.partner_id.id,
             'default_yjzy_payment_id': self.id,
+            'default_so_id':self.so_id,
 
         })
 

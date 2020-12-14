@@ -86,11 +86,19 @@ class hr_expense_sheet(models.Model):
         for one in self:
             one.tb_po_invoice_ids_count = len(one.tb_po_invoice_ids)
 
+    @api.depends('tb_po_invoice_ids','tb_po_invoice_ids.purchase_amount2_add_this_time_total')
+    def compute_tb_po(self):
+        for one in self:
+            one.purchase_amount2_add_this_time_total = sum(x.purchase_amount2_add_this_time_total for x in one.tb_po_invoice_ids)
+            one.back_tax_add_this_time_total = sum(x.back_tax_add_this_time_total for x in one.tb_po_invoice_ids)
+
     stage_id = fields.Many2one(
         'expense.sheet.stage',
         default=_default_expense_sheet_stage,copy=False)
 
     #024 自动生成应收发票
+
+
     other_payment_invoice_product_id = fields.Many2one('product.product', u'其他应收项目', domain=[('type', '=', 'service')],
                                           default=_default_other_payment_invoice_product_id)
     other_payment_invoice_amount = fields.Monetary(u'其他应收金额')
@@ -101,7 +109,8 @@ class hr_expense_sheet(models.Model):
     #901
     tb_po_invoice_ids = fields.One2many('tb.po.invoice','expense_sheet_id',u'费用转采购申请单')
     tb_po_invoice_ids_count = fields.Integer('费用转采购申请单', compute=compute_tb_po_invoice_ids_count)
-
+    purchase_amount2_add_this_time_total = fields.Float('费用转货款金额',compute=compute_tb_po)
+    back_tax_add_this_time_total = fields.Float('费用转货款退税',compute=compute_tb_po)
 
 
     #819费用创建应付发票
@@ -584,18 +593,18 @@ class hr_expense_sheet(models.Model):
 
             })
         self.expense_to_invoice_type = 'to_invoice'
-
-        return {
-            'name': _(u'创建费用转货款申请'),
-            'view_type': 'tree,form',
-            "view_mode": 'form',
-            'res_model': 'tb.po.invoice',
-            'type': 'ir.actions.act_window',
-            'view_id': view.id,
-            'target': 'new',
-            'res_id': tb_po_id.id,
-            'context': {'open_expense':1 },
-        }
+        return True
+        # return {
+        #     'name': _(u'创建费用转货款申请'),
+        #     'view_type': 'tree,form',
+        #     "view_mode": 'form',
+        #     'res_model': 'tb.po.invoice',
+        #     'type': 'ir.actions.act_window',
+        #     'view_id': view.id,
+        #     'target': 'new',
+        #     'res_id': tb_po_id.id,
+        #     'context': {'open_expense':1 },
+        # }
     def open_tb_po_invoice(self):
         self.ensure_one()
         bill_id = self.expense_line_ids.mapped('tb_id')

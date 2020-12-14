@@ -1462,6 +1462,26 @@ class BaseModel(MetaModel('DummyModel', (object,), {'_register': False})):
         }
 
     @api.multi
+    def get_formview_action_akiny(self, access_uid=None): #akiby1213
+        """ Return an action to open the document ``self``. This method is meant
+            to be overridden in addons that want to give specific view ids for
+            example.
+
+        An optional access_uid holds the user that will access the document
+        that could be different from the current user. """
+        view_id = self.sudo().get_formview_id(access_uid=access_uid)
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': self._name,
+            'view_type': 'form',
+            'view_mode': 'form',
+            'views': [(view_id, 'form')],
+            'target': 'new',
+            'res_id': self.id,
+            'context': {'open_expense':1},
+        }
+
+    @api.multi
     def get_access_action(self, access_uid=None):
         """ Return an action to open the document. This method is meant to be
         overridden in addons that want to give specific access to the document.

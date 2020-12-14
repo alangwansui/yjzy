@@ -734,17 +734,18 @@ class tb_po_invoice(models.Model):
         self.yjzy_tb_po_invoice = tb_po_id
         self.is_yjzy_tb_po_invoice = True
 
-        return {
-            'name': _(name),
-            'view_type': 'tree,form',
-            "view_mode": 'form',
-            'res_model': 'tb.po.invoice',
-            'type': 'ir.actions.act_window',
-            'view_id': view.id,
-            'target': 'new',
-            'res_id': tb_po_id.id,
-            'context':ctx
-        }
+        return True
+        # return {
+        #     'name': _(name),
+        #     'view_type': 'tree,form',
+        #     "view_mode": 'form',
+        #     'res_model': 'tb.po.invoice',
+        #     'type': 'ir.actions.act_window',
+        #     'view_id': view.id,
+        #     'target': 'new',
+        #     'res_id': tb_po_id.id,
+        #     'context':ctx
+        # }
 
     def delete_tb_po_invoice(self):
         open = self.env.context.get('open_delete')

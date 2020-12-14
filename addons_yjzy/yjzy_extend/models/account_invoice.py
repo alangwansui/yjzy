@@ -399,6 +399,11 @@ class account_invoice(models.Model):
             po_ids = one.invoice_line_ids.mapped('purchase_id')
             one.po_ids = po_ids
 
+    def compute_so_ids(self):
+        for one in self:
+            so_ids = one.invoice_line_ids.mapped('so_id')
+            one.po_ids = so_ids
+
 
     #0921 = self.bill_id = self.partner
     #
@@ -672,6 +677,8 @@ class account_invoice(models.Model):
     po_id = fields.Many2one('purchase.order', u'采购订单')
     po_ids = fields.Many2many('purchase.order','invoice_po_ids_ref','po_id','invoice_id',compute=compute_po_ids)
     purchase_contract_code = fields.Char(u'合同编码', related='po_id.contract_code', readonly=True)
+    so_ids = fields.Many2many('sale.order','invoice_so_ids_ref','so_id','invoice_id',compute=compute_so_ids)
+
 
     sale_assistant_id = fields.Many2one('res.users', u'业务助理')
 
@@ -1065,6 +1072,9 @@ class account_invoice(models.Model):
             'hxd_type_new': '20',
             'invoice_attribute': attribute,
             'yjzy_payment_id':yjzy_payment_id,
+            'invoice_type_main': self[0].invoice_type_main,
+            'invoice_partner': self[0].invoice_partner,
+            'name_title': self[0].name_title
             # 'invoice_partner': self[0].invoice_partner,
             # 'name_title': self[0].name_title
         })
