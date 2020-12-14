@@ -263,6 +263,7 @@
                                     <field name="payment_date"/>
                                     <field name="partner_id" string="客户"/>
                                     <field name="so_id" string="销售合同"/>
+                                    <field name="amount_total_so" string="合同金额"/>
                                     <field name="amount" string="认领金额"/>
                                     <field name="advance_balance_total" string="未被认领金额"/>
                                     <field name="state"/>
