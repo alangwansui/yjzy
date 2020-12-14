@@ -1088,8 +1088,9 @@ class account_payment(models.Model):
                         ac_orders.action_done_new_stage()
 
                 if one.yfsqd_ids:
+                    one.yfsqd_ids.write({'state_1': '50_posted'})
                     one.yfsqd_ids.post()
-                    one.yfsqd_ids.write({'state_1' :'50_posted'})
+
 
 
 
