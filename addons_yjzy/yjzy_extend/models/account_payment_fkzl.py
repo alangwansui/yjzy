@@ -172,7 +172,7 @@ class account_payment(models.Model):
             raise Warning(u'没有取到付款日记账的货币，请检查设置')
         if not advance_account:
             raise Warning(u'没有找到对应的预处理科目%s' % account_code)#参考
-        fkzl_id = fkzl_obj.with_context({'default_yshx_ids_new':yshx_ids,'yfsqd_ids':yfsqd_ids,'default_rcfkd_ids':rcfkd_ids,'default_expense_ids':expense_ids,
+        fkzl_id = fkzl_obj.with_context({'default_yshx_ids_new':yshx_ids,'default_yfsqd_ids':yfsqd_ids,'default_rcfkd_ids':rcfkd_ids,'default_expense_ids':expense_ids,
                                          'default_fybg_ids': fybg_ids,'default_yshx_ids_line_no':yshxline_ids}).create({
             # 'name': name,
             'sfk_type': sfk_type,

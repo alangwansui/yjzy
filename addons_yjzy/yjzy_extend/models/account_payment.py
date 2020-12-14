@@ -474,7 +474,7 @@ class account_payment(models.Model):
     advance_total = fields.Monetary(u'预收认领金额', compute=compute_advance_balance_total,
                                             currency_field='yjzy_payment_currency_id', store=True)
     rcskd_amount = fields.Monetary(u'收款单金额',related='yjzy_payment_id.amount')
-    rcskd_date = fields.Date(u'收款日期', related='yjzy_payment_id.payment_date')
+    rcskd_date = fields.Date(u'收款日期', related='yjzy_payment_id.payment_date' )
 
     partner_confirm_id = fields.Many2one('res.partner','确定的客户',compute='_compute_partner_confirm_id')
 

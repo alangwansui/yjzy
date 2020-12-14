@@ -48,8 +48,8 @@
             <tree string="预付申请单" decoration-info="state == 'draft'" decoration-muted="state in ['reconciled', 'cancelled']" edit="false">
                 <field name="partner_id"/>
                 <field name="name" invisible="1"/>
-                <field name="rcskd_date" string="付款日期"/>
-                <field name="rcskd_amount" string="付款金额"/>
+                <field name="rcskd_date" string="付款日期" groups="base.group_system"/>
+                <field name="rcskd_amount" string="付款金额" groups="base.group_system"/>
                 <field name="payment_date" string="申请日期"/>
                 <field name="amount" string="金额"/>
                 <button name="open_reconcile_order_line_yfrld" icon="fa-pencil-square-o" type="object"
@@ -152,14 +152,15 @@
                             <field name="payment_method_id" string=" " widget="radio"
                                    attrs="{'invisible': [('hide_payment_method', '=', True)], 'readonly': [('state', '!=', 'draft')]}"/>
                             <field name="payment_method_code" invisible="1"/>
-                            <field name="amount_advance_org_all" string="完成认领预付"/>
                             <field name="advance_balance_total" string="未认领预付"/>
+                            <field name="amount_advance_org_all" string="完成认领预付"/>
+
                         </group>
                         <group>
 
                             <field name="payment_date"  string="预付申请日期" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
 
-                            <field name="yjzy_payment_id" string="对应付款单" attrs="{'invisible':[('state_1','not in',['40_approve','50_posted','60_done'])]}" domain="[('sfk_type', '=', 'rcfkd')]" readonly="1" context="{'form_view_ref': 'yjzy_extend.view_rcfkd_form'}"/>
+                            <field name="yjzy_payment_id" groups="base.group_system" string="对应付款单" attrs="{'invisible':[('state_1','not in',['40_approve','50_posted','60_done'])]}" domain="[('sfk_type', '=', 'rcfkd')]" readonly="1" context="{'form_view_ref': 'yjzy_extend.view_rcfkd_form'}"/>
                             <field name="yjzy_payment_currency_id" string="货币" invisible="1" attrs="{'readonly':[('state_1','not in',['40_approve','50_posted','60_done'])], 'invisible':[('state_1','not in',['40_approve','50_posted','60_done'])]}"/>
                             <field name="yjzy_payment_balance" string="付款单余额" groups="base.group_system"/>
 
