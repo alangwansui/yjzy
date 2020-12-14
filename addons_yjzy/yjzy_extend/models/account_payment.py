@@ -92,6 +92,7 @@ class account_payment(models.Model):
                     balance = sum([x.credit - x.debit for x in lines])
                 else:
                     balance = sum([-1 * x.amount_currency for x in lines])
+
             if one.sfk_type == 'rcfkd':
                 lines = all_lines.filtered(lambda x: x.account_id.code == '112301')
                 if one.currency_id.name == 'CNY':
@@ -105,6 +106,8 @@ class account_payment(models.Model):
                 else:
                     balance = sum([x.amount_currency for x in lines])
             one.balance = balance
+            if balance == 0 and one.state_1 == '50_posted':
+                self.state_1 = '60_done'
 
 
             # if balance == 0 and one.x_wkf_state == '159':
@@ -933,7 +936,7 @@ class account_payment(models.Model):
         else:
             self.action_submit()
             self.action_account_post()
-            self.compute_balance()
+            self.yjzy_payment_id.compute_balance()
 
     def action_manager_post(self):
         if self.po_id and self.po_id.so_id_state not in ['approve', 'sale']:
@@ -1120,11 +1123,6 @@ class account_payment(models.Model):
 
                 if one.yfsqd_ids:
                     one.yfsqd_ids.post()
-
-
-
-
-
                 # if one.fybg_ids:
                 #     one.fybg_ids.action_sheet_move_create()
                 # if one.fybg_ids:
