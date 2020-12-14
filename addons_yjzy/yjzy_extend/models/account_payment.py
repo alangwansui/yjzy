@@ -255,10 +255,11 @@ class account_payment(models.Model):
 
     @api.depends('po_id','so_id','partner_id','state','state_1')
     def compute_advance_type(self):
-        if self.po_id or self.so_id:
-            self.advance_type = '20_contract'
-        else:
-            self.advance_type = '10_no_contract'
+        for one in self:
+            if one.po_id or one.so_id:
+                one.advance_type = '20_contract'
+            else:
+                one.advance_type = '10_no_contract'
 
     @api.depends('yjzy_partner_id')
     def compute_invoice_advance(self):
@@ -698,8 +699,13 @@ class account_payment(models.Model):
 
 
         if self.sfk_type == 'rcskd':
-            form_view = self.env.ref('yjzy_extend.wizard_renling_form')
-        elif self.sfk_type == 'ysrld':
+            ysrld_draft_ids = self.ysrld_ids.filtered(lambda x: x.state == 'draft')
+            len_ysrld_draft_ids = len(ysrld_draft_ids)
+            if self.ysrld_ids and len_ysrld_draft_ids > 0:
+                raise Warning('有存在草稿状态的预收认领单，请先完成认领！')
+            else:
+                form_view = self.env.ref('yjzy_extend.wizard_renling_form')
+        if self.sfk_type == 'ysrld':
             form_view = self.env.ref('yjzy_extend.wizard_renling_form_advance')
         return {
             'name': '创建认领',
@@ -811,7 +817,7 @@ class account_payment(models.Model):
         if self.amount <= 0:
             raise Warning('金额不为0!')
         else:
-            if ctx.get('default_sfk_type','') == 'rcskd' :
+            if ctx.get('default_sfk_type','') == 'rcskd' or self.sfk_type == 'rcskd':
                 if self.payment_comments == '':
                     raise Warning('请填写收款备注信息！')
                 else:
@@ -823,24 +829,28 @@ class account_payment(models.Model):
                     self.state_1 = '25_cashier_submit'
                 # self.print_fkzl()
                 # return self.env.ref('yjzy_extend.action_report_fkzl').report_action(self)
-            elif ctx.get('default_sfk_type', '') == 'ysrld':
+            elif ctx.get('default_sfk_type', '') == 'ysrld' or self.sfk_type == 'ysrld':
                 if not self.yjzy_payment_id:
                     raise Warning('请选择认领的收款单!')
+                elif self.yjzy_payment_balance < self.amount:
+                    raise Warning('认领金额不能大于待认领金额!')
+                elif self.amount_total_so < self.amount:
+                    raise Warning('认领金额不能大于销售合同金额！')
                 else:
                     self.state_1 = '20_account_submit'
-            elif ctx.get('default_sfk_type', '') == 'yfsqd':
+            elif ctx.get('default_sfk_type', '') == 'yfsqd' or self.sfk_type == 'yfsqd':
                 if not self.bank_id:
                     raise Warning('请选择付款对象的银行账号!')
                 if self.po_id and self.po_id.so_id_state not in ['approve', 'sale']:
                     raise Warning('合同未审批不允许提交!')
                 else:
                     self.state_1 = '20_account_submit'
-            elif ctx.get('default_sfk_type', '') == 'jiehui':
+            elif ctx.get('default_sfk_type', '') == 'jiehui' or self.sfk_type == 'jiehui':
                 if not self.journal_id or not self.advance_account_id:
                     raise Warning('收款或者付款银行没有填写!')
                 else:
                     self.state_1 = '25_cashier_submit'
-            elif ctx.get('default_sfk_type', '') == 'nbzz':
+            elif ctx.get('default_sfk_type', '') == 'nbzz' or self.sfk_type == 'nbzz':
                 if not self.journal_id or not self.destination_journal_id:
                     raise Warning('收款或者付款银行没有填写!')
                 else:

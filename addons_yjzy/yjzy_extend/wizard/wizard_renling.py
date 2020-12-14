@@ -317,7 +317,7 @@ class wizard_renling(models.TransientModel):
 
             form_view = self.env.ref('yjzy_extend.view_ysrld_form_new_open').id
             return {
-                'name': '应收认领单',
+                'name': '预收认领单',
                 'view_type': 'form',
                 'view_mode': 'form',
                 'res_model': 'account.payment',
@@ -329,6 +329,7 @@ class wizard_renling(models.TransientModel):
                             'active_id': ysrld.id,
                             'bank_amount': 1,
                             'show_so': 1,
+                            'ysrls_open':1
                             }
 
             }

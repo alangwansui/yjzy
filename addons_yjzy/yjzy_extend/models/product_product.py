@@ -173,8 +173,8 @@ class Product_Product(models.Model):
                 name = '[%s]%s{%s}' % (ref, one.name, one.key_value_string)
 
             # ref = one.customer_ref or one.customer_ref2
-            # if ref:
-            #     name = '(%s)%s' % (ref, name)
+            if ref:
+                name = '(%s)%s' % (ref, name)
             return name
 
         for one in self:

@@ -257,8 +257,8 @@
 
                         <page string="预收认领单" attrs="{'invisible':[('count_ysrld','=',0)]}">
                             <field name="ysrld_ids" widget="many2many" domain="[('sfk_type','=','ysrld_'),('partner_id','=',partner_id),('yjzy_payment_id','=',False),('state','=','approved')]"
-                                   context="{'form_view_ref':'yjzy_extend.view_ysrld_form','tree_view_ref':'yjzy_extend.view_ysrld_tree'}">
-                                <tree>
+                                   context="{'form_view_ref':'yjzy_extend.view_ysrld_form_new_no_open','tree_view_ref':'yjzy_extend.view_ysrld_tree'}">
+                                <tree editable="bottom">
                                     <field name="name"/>
                                     <field name="payment_date"/>
                                     <field name="partner_id" string="客户"/>
@@ -266,6 +266,8 @@
                                     <field name="amount" string="认领金额"/>
                                     <field name="advance_balance_total" string="未被认领金额"/>
                                     <field name="state"/>
+                                    <button name="action_ysrld_one_in_all" type="object" string="认领确认"/>
+
                                 </tree>
                             </field>
 
