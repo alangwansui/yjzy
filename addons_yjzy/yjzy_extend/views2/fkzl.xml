@@ -232,16 +232,16 @@
                         <page string="预付申请" attrs="{'invisible': [('yfsqd_fkzl_ids_count','=', 0)]}">
                             <field name="yfsqd_fkzl_ids" widget="many2many" >
                                 <tree>
-                                <field name="partner_id"/>
+                                <field name="partner_id" string="对象"/>
                                 <field name="name" invisible="1"/>
                                 <field name="payment_date" string="申请日期"/>
-                                <field name="rcskd_date" string="完成付款日期"/>
+                                <field name="rcskd_date" string="完成付款日期" groups="base.group_system"/>
                                 <field name="rcskd_amount" string="申请金额" invisible="1"/>
                                 <field name="amount" string="金额"/>
                                 <button name="open_reconcile_order_line_yfrld" icon="fa-pencil-square-o" type="object" attrs="{'invisible':[('advance_reconcile_order_count','=',0)]}"/>
                                 <field name="advance_reconcile_order_count" invisible="1"/>
-                                <field name="advance_balance_total" string="未认领金额"/>
-                                <field name="advance_total" string="已认领金额"/>
+                                <field name="advance_balance_total" string="未认领金额" groups="base.group_system"/>
+                                <field name="advance_total" string="已认领金额" groups="base.group_system"/>
                                 <field name="po_id" string="采购合同"/>
                                 <field name="advance_type"/>
                                 <field name="fault_comments"/>

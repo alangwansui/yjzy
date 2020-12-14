@@ -8,145 +8,160 @@
             <field name="arch" type="xml">
                 <form string="付款指令">
                     <style>
-	  body{
-		    font-size:10px;
-		  font-family:Arial,Helvetica,sans-serif,simsun;
-	  }
-	.title{
-		height: 30px;
-	    text-align: center;}
-	.title td {height: 20px;
-	font-size: 12px}
-	.main{
-		width: 100%;
-	    font-size: 12px ; }
-		.main td{height:20px}
-	.tablelist{
-		text-align: left;
+                        body{
+                        font-size:10px;
+                        font-family:Arial,Helvetica,sans-serif,simsun;
+                        }
+                        .title{
+                        height: 30px;
+                        text-align: center;}
+                        .title td {height: 20px;
+                        font-size: 12px}
+                        .main{
+                        width: 100%;
+                        font-size: 12px ; }
+                        .main td{height:20px}
+                        .tablelist{
+                        text-align: left;
 
-		border: 0.5px solid ;
-		border-collapse: collapse;
-		font-size: 11px;
-		width: 100%;
-		vertical-align: middle
-	}
-	.tablelist th{
-		font-size: 12px;
-		text-align: center;
-		border: 0.5px solid ;
-		height: 25px;
-		line-height: 20px;
-		background-color:#E3ECF4;
-		vertical-align: middle;
-		font-weight: 200
-	}
-	.tablelist td{
-		border: 0.5px solid;
-		height: 30px;
-		line-height: 20px;
-		vertical-align: middle;
-		padding-left: 8px;
-		padding-right: 8px;
-	}
-	.buttom{
+                        border: 0.5px solid ;
+                        border-collapse: collapse;
+                        font-size: 11px;
+                        width: 100%;
+                        vertical-align: middle
+                        }
+                        .tablelist th{
+                        font-size: 12px;
+                        text-align: center;
+                        border: 0.5px solid ;
+                        height: 25px;
+                        line-height: 20px;
+                        background-color:#E3ECF4;
+                        vertical-align: middle;
+                        font-weight: 200
+                        }
+                        .tablelist td{
+                        border: 0.5px solid;
+                        height: 30px;
+                        line-height: 20px;
+                        vertical-align: middle;
+                        padding-left: 8px;
+                        padding-right: 8px;
+                        }
+                        .buttom{
 
-	}
-    .buttom td{
-		border:0.5px solid;
-		padding: 5px;
-		vertical-align: middle: ;
+                        }
+                        .buttom td{
+                        border:0.5px solid;
+                        padding: 5px;
+                        vertical-align: middle: ;
 
-	}
-	.signal {
-		text-align: left;
-		border-collapse: collapse;
-		font-size: 11px;
-		width: 100%;
-		vertical-align: middle
-	}
-</style>
- <table cellpadding="0" class="main">
-  <tbody>
-    <tr>
-      <td width="15%">订单 □ 非订单 □ </td>
-      <td width="20%">单号：<field name="name" readonly="1"/></td>
-      <td width="24%">付款主体：<field name="company_id" readonly="1"/></td>
+                        }
+                        .signal {
+                        text-align: left;
+                        border-collapse: collapse;
+                        font-size: 11px;
+                        width: 100%;
+                        vertical-align: middle
+                        }
+                    </style>
+                    <table cellpadding="0" class="main">
+                        <tbody>
+                            <tr>
+                                <td width="15%">订单 □ 非订单 □</td>
+                                <td width="20%">单号：
+                                    <field name="name" readonly="1"/>
+                                </td>
+                                <td width="24%">付款主体：
+                                    <field name="company_id" readonly="1"/>
+                                </td>
 
-      <td width="26%">付款银行：<field name="journal_id" readonly="1"/></td>
+                                <td width="26%">付款银行：
+                                    <field name="journal_id" readonly="1"/>
+                                </td>
 
-      <td width="15%">第<field name="id" readonly="1"/>号</td>
-    </tr>
-  </tbody>
-</table>
+                                <td width="15%">第<field name="id" readonly="1"/>号
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                     <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablelist">
-  <tbody>
-   <tr>
-      <td width="12%">日期</td>
-      <td width="19%"><field name="create_date" readonly="1"/></td>
-      <td width="10%">申请部门</td>
-      <td width="15%"></td>
-      <td  width="7%">小组</td>
-      <td  width="10%"></td>
-      <td  width="9%">总金额</td>
-      <td  width="18%"><field name="amount" readonly="1"/></td>
-    </tr>
-   <tr>
-     <td>收款账户名</td>
-	   <td colspan="2"><field name="bank_id_huming" readonly="1"/></td>
-     <td>银行明细及账号</td>
-     <td colspan="4"><field name="bank_id_kaihuhang" readonly="1"/><field name="bank_id_acc_number" readonly="1"/></td>
-   </tr>
-  </tbody>
-</table>
+                        <tbody>
+                            <tr>
+                                <td width="12%">日期</td>
+                                <td width="19%">
+                                    <field name="create_date" readonly="1"/>
+                                </td>
+                                <td width="10%">申请部门</td>
+                                <td width="15%"></td>
+                                <td width="7%">小组</td>
+                                <td width="10%"></td>
+                                <td width="9%">总金额</td>
+                                <td width="18%">
+                                    <field name="amount" readonly="1"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>收款账户名</td>
+                                <td colspan="2">
+                                    <field name="bank_id_huming" readonly="1"/>
+                                </td>
+                                <td>银行明细及账号</td>
+                                <td colspan="4">
+                                    <field name="bank_id_kaihuhang" readonly="1"/>
+                                    <field name="bank_id_acc_number" readonly="1"/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
 
 
-
-<field name="expense_ids_count" invisible="1"/>
-                <field name="yshx_ids_line_no_count" invisible="1"/>
+                    <field name="expense_ids_count" invisible="1"/>
+                    <field name="yshx_ids_line_no_count" invisible="1"/>
                     <field name="yfsqd_ids_count" invisible="1"/>
-
-
-                        <field name="yshx_ids_line_no" readonly="1" attrs="{'invisible':[('yshx_ids_line_no_count','=',0)]}">
-                            <tree>
-                                <field name="invoice_id" string="应付账单"/>
-                                <field name="amount_payment_org" sum="小计" string="付款金额"/>
-                            </tree>
-                        </field>
+                    <field name="yshx_ids_line_no" readonly="1"
+                           attrs="{'invisible':[('yshx_ids_line_no_count','=',0)]}">
+                        <tree>
+                            <field name="invoice_id" string="应付账单"/>
+                            <field name="amount_payment_org" sum="小计" string="付款金额"/>
+                        </tree>
+                    </field>
                     <field name="yfsqd_ids" readonly="1" attrs="{'invisible':[('yfsqd_ids_count','=',0)]}">
+                        <tree>
+                            <field name="sfk_type"/>
                         <field name="po_id" string="采购单"/>
                         <field name="amount" sum="小计" string="金额"/>
+                        </tree>
                     </field>
                     <field name="expense_ids" readonly="1" attrs="{'invisible':[('expense_ids_count','=',0)]}">
                         <tree>
                             <field name="categ_id" string="大类*" options="{'no_create':True,'no_open':1}"
-                                               context="{'search_order': 'sequence','only_name':1}" required="1"/>
-                                        <field name="second_categ_id" string="中类*"
-                                               options="{'no_create':True,'no_open':1}"
+                                   context="{'search_order': 'sequence','only_name':1}" required="1"/>
+                            <field name="second_categ_id" string="中类*"
+                                   options="{'no_create':True,'no_open':1}"
 
-                                               context="{'search_order': 'sequence','only_name':1}"
-                                               required="1"/>
-                                        <field name="product_id" required="1" string="小类*"
-                                               options="{'no_create':True,'no_open':1}"
+                                   context="{'search_order': 'sequence','only_name':1}"
+                                   required="1"/>
+                            <field name="product_id" required="1" string="小类*"
+                                   options="{'no_create':True,'no_open':1}"
 
-                                               context="{'default_can_be_expensed': 1,'tree_view_ref':'hr_expense.product_product_expense_tree_view','only_name':1}"/>
-                                            <field name="tb_id" context="{'show_ref': 1}" options="{'no_create':True}"
+                                   context="{'default_can_be_expensed': 1,'tree_view_ref':'hr_expense.product_product_expense_tree_view','only_name':1}"/>
+                            <field name="tb_id" context="{'show_ref': 1}" options="{'no_create':True}"
 
-                                               domain="[('state','not in',['cancel','refused','draft','check','submit','sales_approve'])]"/>
-                                         <field name="lead_id" string="项目编号" options="{'quick_create': 1,'no_open':1}"
-                                              />
+                                   domain="[('state','not in',['cancel','refused','draft','check','submit','sales_approve'])]"/>
+                            <field name="lead_id" string="项目编号" options="{'quick_create': 1,'no_open':1}"
+                            />
                             <field name="unit_amount"/>
                         </tree>
                     </field>
 
                     <footer>
-                        <button name="apply" string="确认创建" class="btn-primary" type="object" />
+                        <button name="apply" string="确认创建" class="btn-primary" type="object"/>
                         <button special="cancel" class="oe_highlight" string="取消"/>
                     </footer>
                 </form>
             </field>
         </record>
-
-
 
 
     </data>

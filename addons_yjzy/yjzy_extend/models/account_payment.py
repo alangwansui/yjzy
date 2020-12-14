@@ -1089,6 +1089,8 @@ class account_payment(models.Model):
 
                 if one.yfsqd_ids:
                     one.yfsqd_ids.post()
+                    for x in one.yfsqd_ids:
+                        x.state_1 = '50_posted'
 
                 # if one.fybg_ids:
                 #     one.fybg_ids.action_sheet_move_create()
