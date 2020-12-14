@@ -107,7 +107,7 @@ class account_payment(models.Model):
                     balance = sum([x.amount_currency for x in lines])
             one.balance = balance
             if balance == 0 and one.state_1 == '50_posted':
-                self.state_1 = '60_done'
+                one.state_1 = '60_done'
 
 
             # if balance == 0 and one.x_wkf_state == '159':
@@ -662,6 +662,7 @@ class account_payment(models.Model):
             if self.balance == 0:
                 wizard = self.env['account.move.line.reconcile'].with_context(active_ids=[x.id for x in aml_recs]).create({})
                 wizard.trans_rec_reconcile_full()
+                self.state = 'reconciled'
         if self.sfk_type in ['rcfkd','fkzl']:
             account = self.env['account.account'].search([('code', '=', '112301'), ('company_id', '=', self.company_id.id)],limit=1)
             # aml_recs = self.env['account.move.line'].search([('new_payment_id','=',self.id),('account_id','=',account.id)])
@@ -937,6 +938,8 @@ class account_payment(models.Model):
             self.action_submit()
             self.action_account_post()
             self.yjzy_payment_id.compute_balance()
+            self.yjzy_payment_id.test_reconcile()
+
 
     def action_manager_post(self):
         if self.po_id and self.po_id.so_id_state not in ['approve', 'sale']:
