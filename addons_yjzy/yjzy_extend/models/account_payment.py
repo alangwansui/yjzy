@@ -1088,7 +1088,6 @@ class account_payment(models.Model):
                         ac_orders.action_done_new_stage()
 
                 if one.yfsqd_ids:
-                    one.yfsqd_ids.write({'state_1': '50_posted'})
                     one.yfsqd_ids.post()
 
 
@@ -1127,7 +1126,8 @@ class account_payment(models.Model):
 
                 if one.yfsqd_fkzl_ids:
                     one.yfsqd_fkzl_ids.post()
-                    one.yfsqd_fkzl_ids.write({'state_1': '50_posted'})
+                    for x in one.yfsqd_fkzl_ids:
+                        x.write({'state_1': '50_posted'})
                 # if one.fybg_ids:
                 #     one.fybg_ids.action_sheet_move_create()
                 # if one.fybg_ids:
