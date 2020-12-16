@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- vim:fdl=1:
+-->
+<templates id="template" xml:space="preserve">
+
+    <t t-name="popup_reminder.switch_panel_popup_top_button">
+         <li t-att-title='widget.title' class="oe_topbar_item oe_topbar_popupbutton">
+            <div id="popup_reminder_panel">
+                <button class="popup_notification_button">
+                    <i class="fa fa-bell oe_popup_notification" />
+                </button>
+            </div>
+        </li>
+    </t>
+
+    <t t-name="popup_reminder.ReminderPanel">
+        <div class="oe_popup" id="popup_reminder_panel">
+            <div class="oe_popup_top_panel">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-1">
+                                <a class="fa fa-chevron-left btn btn-default oe-pager-button oe_previous_button"></a>
+                            </div>
+                            <div class="oe_record_header_selector col-md-10 center-block"></div>
+                            <div class="col-md-1">
+                                <a class="fa fa-chevron-right btn btn-default oe-pager-button oe_next_button"></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="oe_popup_reminders"></div>
+        </div>
+    </t>
+
+    <t t-name="popup_reminder.record_header">
+        <div><select class='select_record_header'>
+            <t t-if="widget.reminder_panel.record_header" t-foreach='widget.reminder_panel.record_header' t-as='rec_header'>
+                <option t-att-value='rec_header'>
+                    <t t-esc='rec_header'/>
+                </option>
+            </t>
+        </select></div>
+    </t>
+
+    <t t-name="popup_reminder.remider_widget_panel">
+        <div>
+            <table class="oe_popup_list" style="width:100%;">
+                <t t-foreach="header_obj" t-as="item" t-if="header_obj.length > 0" class="tb1">
+                    <thead>
+                        <tr class="openerp oe_list_header_columns">
+                            <th t-foreach="item" t-as="it" class="oe_popup_list_header_column">
+                                <div t-esc="item[it]" style="border-left:1px solid red;"/>
+                            </th>
+                            <th style="width:18px;background:#EEEEEE;"/>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="reminder_list" t-as="record">
+                            <t t-foreach="item" t-as="ite">
+                                <td t-foreach="record" t-as="data" t-if="data == ite"
+                                    style="vertical-align:middle;" t-att-recid="record.id"
+                                    class='oe_popup_record_click'>
+                                    <t t-if="typeof(record[data]) == 'object' ">
+                                        <div t-esc="record[data][1]"/>
+                                    </t>
+                                    <t t-if="typeof(record[data]) !== 'object' ">
+                                        <div t-if="record[data]" t-esc="record[data]"/>
+                                    </t>
+                                </td>
+                            </t>
+                            <td>
+                                <i t-att-recid="record.id" class="fa fa-trash-o oe_popup_record_read" aria-hidden="true"></i>
+                            </td>
+                        </tr>
+                    </tbody>
+                </t>
+            </table>
+        </div>
+    </t>
+</templates>
