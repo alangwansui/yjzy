@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="wizard_renling_ysrld_form" model="ir.ui.view">
+            <field name="name">wizard.renling.ysrldfrom</field>
+            <field name="model">wizard.renling.ysrld</field>
+            <field name="arch" type="xml">
+                <form string="创建发运单">
+                    <group>
+
+                        <field name="partner_id"/>
+                        <field name="invoice_attribute"/>
+                        <field name="yjzy_type"/>
+                        <field name="invoice_type_main"/>
+                        <field name="yjzy_advance_payment_id"/>
+                    </group>
+                    <field name="invoice_ids"/>
+
+                    <footer>
+                        <button name="create_hxd" string="创建预收-应收认领" type="object" class="oe_highlight"/>
+
+                        <button special="cancel" class="oe_highlight" string="取消"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>
+

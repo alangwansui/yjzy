@@ -215,7 +215,9 @@
                     <tree decoration-info="state == 'draft'"  default_order="date_deadline_new,extra_code"
                           decoration-danger="is_yjzy_invoice == True and state not in ['draft','cancel']" decoration-muted="state == 'cancel'" string="Invoice" >
                         <field name="extra_code"/>
+
                         <field name="partner_id" groups="base.group_user" string="Customer"/>
+                        <field name="current_date_rate" string="汇率"/>
                         <field name="bill_id" string="合同号" invisible="1"/>
                         <field name="tb_contract_code" string="合同号" widget="dynamic_popover_char"
                            options="{'max_width': '100px', 'line_clamp': '1', 'mode_mouse':'hover','popover_max_width':'200px','placement':'right'}"/>

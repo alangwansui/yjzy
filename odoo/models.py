@@ -1462,7 +1462,7 @@ class BaseModel(MetaModel('DummyModel', (object,), {'_register': False})):
         }
 
     @api.multi
-    def get_formview_action_akiny(self, access_uid=None): #akiby1213
+    def get_formview_action_akiny(self, access_uid=None): #akiny原生1213
         """ Return an action to open the document ``self``. This method is meant
             to be overridden in addons that want to give specific view ids for
             example.

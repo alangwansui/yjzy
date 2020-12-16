@@ -38,7 +38,7 @@
                         <field name="customer_advance_payment_ids_count" invisible="1"/>
                         <label for=" " string="待认领预收"
                                attrs="{'invisible':['|',('renling_type','not in',['yshxd']),('customer_advance_payment_ids_count','=',0)]}"/>
-                        <div class="o_row"
+                        <div class="o_row" invisible="1"
                              attrs="{'invisible':['|',('renling_type','not in',['yshxd']),('customer_advance_payment_ids_count','=',0)]}">
                             <field name="ysrld_ok"
                                    attrs="{'invisible':['|',('renling_type','not in',['yshxd']),('customer_advance_payment_ids_count','=',0)]}"/>
@@ -49,7 +49,7 @@
                             <button name="open_ysrld" type="object" class="oe_highlight" string="打开认领操作列表"/>
                         </div>
                     </group>
-                    <field name="customer_advance_payment_ids" nolabel="1"
+                    <field name="customer_advance_payment_ids" nolabel="1" invisible="1"
                            attrs="{'invisible':['|',('ysrld_ok','=',False),('renling_type','not in',['yshxd'])]}">
                         <tree string="预收认领单" edit="false" create="false">
                             <field name="partner_id" invisible="1"/>
@@ -68,7 +68,7 @@
                             <button name="open_wizard_renling" type="object" string="创建认领单" invisible="1"/>
                         </tree>
                     </field>
-                    <span attrs="{'invisible':['|','|','|','|',('ysrld_ok','=',True),('renling_type','not in',['yshxd']),('step','!=','20'),('ysrld_ok','=',True)]}"
+                    <span attrs="{'invisible':['|','|',('renling_type','not in',['yshxd']),('step','!=','20')]}"
                           style="font-weight:bolder; margin-bottom:5px">
                         选择需要认领的账单
                     </span>
@@ -77,8 +77,8 @@
                         申报单对应的应收账单
                     </span>
 
-                    <field name="invoice_ids" nolabel="1" attrs="{'invisible':['|','|','|',('ysrld_ok','=',True),('renling_type','not in',['yshxd','other_payment']),('step','!=','20'),
-                        ('other_payment_invoice_ok','=',False)]}"
+                    <field name="invoice_ids" nolabel="1" attrs="{'invisible':['|','|',
+                    ('renling_type','not in',['yshxd','other_payment']),('step','!=','20'),('other_payment_invoice_ok','=',False)]}"
                            domain="[('partner_id','=',partner_id),('state','=','open'),('type','in',['out_invoice'])]"
                            context="{'tree_view_ref':'yjzy_extend.invoice_sale_new_hxd_tree','other_payment':other_payment_invoice_ok_f}"
                            options="{'no_create': True,'no_open':True}">

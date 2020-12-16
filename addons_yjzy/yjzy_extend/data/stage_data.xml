@@ -172,11 +172,23 @@
             <field name="sequence" eval="10"/>
             <field name="state">draft</field>
         </record>
+        <record model="account.reconcile.stage" id="stage_account_reconcile_draft_yshxd">
+            <field name="name">待预收认领草稿</field>
+            <field name="code">015</field>
+            <field name="sequence" eval="15"/>
+            <field name="state">draft_yshxd</field>
+        </record>
         <record model="account.reconcile.stage" id="stage_account_reconcile_advance_approval">
             <field name="name">预付款认领待审批</field>
             <field name="code">020</field>
             <field name="sequence" eval="20"/>
             <field name="state">advance_approval</field>
+        </record>
+        <record model="account.reconcile.stage" id="stage_account_reconcile_advance_approval_yshxd">
+            <field name="name">预收款认领待审批</field>
+            <field name="code">025</field>
+            <field name="sequence" eval="25"/>
+            <field name="state">advance_approval_yshxd</field>
         </record>
         <record model="account.reconcile.stage" id="stage_account_reconcile_account_approval">
             <field name="name">应付款申请草稿</field>
@@ -184,11 +196,23 @@
             <field name="sequence" eval="30"/>
             <field name="state">account_approval</field>
         </record>
+        <record model="account.reconcile.stage" id="stage_account_reconcile_account_approval_yshxd">
+            <field name="name">应收款认领草稿</field>
+            <field name="code">035</field>
+            <field name="sequence" eval="30"/>
+            <field name="state">account_approval_yshxd</field>
+        </record>
         <record model="account.reconcile.stage" id="stage_account_reconcile_manager_approval">
             <field name="name">应付款申请待审批</field>
             <field name="code">040</field>
             <field name="sequence" eval="40"/>
             <field name="state">manager_approval</field>
+        </record>
+        <record model="account.reconcile.stage" id="stage_account_reconcile_manager_approval_yshxd">
+            <field name="name">应收款认领待审批</field>
+            <field name="code">045</field>
+            <field name="sequence" eval="45"/>
+            <field name="state">manager_approval_yshxd</field>
         </record>
         <record model="account.reconcile.stage" id="stage_account_reconcile_post">
             <field name="name">未提交付款指令</field>

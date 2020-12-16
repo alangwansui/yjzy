@@ -487,6 +487,10 @@ class account_invoice(models.Model):
         for one in self:
             one.declaration_amount = sum(x.declaration_amount for x in one.btd_line_ids)
 
+
+
+    current_date_rate = fields.Float('出运单汇率',related='bill_id.current_date_rate')
+
     payment_log_ids = fields.One2many('account.payment','invoice_log_id','认领以及收付明细')
 
 
@@ -599,8 +603,14 @@ class account_invoice(models.Model):
         ('20_open', u'已确认'),
         ('30_no_account_payment',u'已申请未付款'),
         ('40_paid', u'已付款'),
+        ('50_certified',u'已认证'),
         ('90_cancel', u'已取消'),
     ], string='Status', index=True, readonly=True, default='10_draft',copy=False,)
+
+    # real_invoice_line_id = fields.Many2one('real.invoice.line',u'实际发票')
+    # real_invoice_id = fields.Many2one('real.invoice',u'实际发票认证单')
+    certifying = fields.Boolean('正在认证')
+
     fault_comments = fields.Text('异常备注')
     display_name = fields.Char(u'显示名称', compute=compute_display_name)
    #13ok
@@ -732,8 +742,20 @@ class account_invoice(models.Model):
     yjzy_invoice_line_ids = fields.One2many('account.invoice.line','yjzy_invoice_id',u'所有明细',domain=[('quantity','!=',0),('invoice_attribute','in',['normal','extra'])])
 
 
+    #创建认证明细
+    def create_real_invoice_line(self):
+        real_invoice_id = self.env.context.get('real_invoice_id')
+        certification_invoice_obj = self.env['sys.invoice.line']
+        #取得正在认证的实际发票明细行
+        real_invoice_line_id = self.env['real.invoice.line'].search([('real_invoice_id','=',real_invoice_id),('certifying','=',True)],limit=1)
 
-
+        sys_invoice_line = certification_invoice_obj.create({'real_invoice_id':real_invoice_id,
+                                                             'invoice_id':self.id,
+                                                             'amount':self.amount_total,
+                                                             'real_invoice_line_id':real_invoice_line_id.id})
+        # sys_invoice_line.real_invoice_line_id = real_invoice_line_id
+        self.certifying = True
+        return True
 
 
     #913新建额外账单申请单

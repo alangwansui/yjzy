@@ -56,6 +56,8 @@
         'wizard/wizard_renling.xml',
         'wizard/wizard_multi_sale_line.xml',
         'wizard/wizard_fkzl.xml',
+        'wizard/wizard_renling_ysrld.xml',
+
         'views/account_invoice_extra.xml',
         'views/account_journal.xml',
         'views/account_move.xml',
@@ -135,6 +137,7 @@
         'views/tb_po_invoice.xml',
         'views/hr_expense_other_payment.xml',
         'views/account_bank_statement_1.xml',
+        'views/real_invoice.xml',
 
 
 

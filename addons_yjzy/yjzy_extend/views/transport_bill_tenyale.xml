@@ -57,6 +57,7 @@
             <field name="model">transport.bill</field>
             <field name="arch" type="xml">
                 <tree string="未生效出运单" create="false">
+                     <field name="current_date_rate" string="汇率"/>
                     <field name="ref"/>
                     <field name="name" invisible="1" groups="base.group_system"/>
                     <field name="partner_id" required="1"/>
@@ -87,6 +88,7 @@
             <field name="model">transport.bill</field>
             <field name="arch" type="xml">
                 <tree string="出运单" create="false" default_order="stage_id,approve_date desc" >
+                     <field name="current_date_rate" string="汇率"/>
                     <field name="ref"/>
                     <field name="name" invisible="1" groups="base.group_system"/>
                     <field name="approve_date" string="合规审批日"/>
@@ -137,6 +139,7 @@
             <field name="model">transport.bill</field>
             <field name="arch" type="xml">
                 <tree string="已核销" default_order="hexiao_date" create="false">
+                    <field name="current_date_rate" string="汇率"/>
                     <field name="ref"/>
                     <field name="name" invisible="1" groups="base.group_system"/>
                     <field name="date_out_in" string="出运日期"/>
@@ -192,7 +195,8 @@
             <field name="name">transport.bill.tree</field>
             <field name="model">transport.bill</field>
             <field name="arch" type="xml">
-                <tree string="已核销" default_order="date_out_in desc" create="false">
+                <tree string="年度合同" default_order="date_out_in desc" create="false">
+                    <field name="current_date_rate" string="汇率"/>
                     <field name="ref"/>
                     <field name="name" invisible="1" groups="base.group_system"/>
                     <field name="date_out_in" string="出运时间"/>

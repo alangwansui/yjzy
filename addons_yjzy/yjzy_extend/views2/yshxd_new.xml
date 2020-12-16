@@ -66,7 +66,7 @@
                             string="下一步:填写申请金额" type="object" context="{'show_tb_ref':1}"/>
                     <button name="make_lines_new" invisible="not context.get('from_tanchuang')" string="下一步:填写申请金额" groups="base.group_system"
                             type="object"/>
-                    <field name="state_1" widget="statusbar"/>
+                    <field name="state_1" widget="statusbar" statusbar_visible=" "/>
                 </header>
                 <header attrs="{'invisible':[('operation_wizard','in',['03','05'])]}" >
                     <button name="action_posted_new" class="oe_highlight" states="draft" string="提交" type="object"/>
@@ -101,7 +101,7 @@
                             <field name="yjzy_payment_balance" string="收款单余额" attrs="{'invisible':[('operation_wizard','not in',['10','30'])]}"/>
                             <field name="manual_payment_currency_id" string="预收币种" attrs="{'invisible':1}"/>
                             <field name="yjzy_advance_payment_id" attrs="{'invisible':1}" context="{'form_view_ref': 'yjzy_extend.view_ysrld_form','advance_so_amount':1}"/>
-<field name="comments"/>
+                    <field name="comments"/>
                         </group>
                         <group>
                              <field name="line_no_ids" nolabel="1">
@@ -242,12 +242,12 @@
         <field name="model">account.reconcile.order</field>
         <field name="arch" type="xml">
             <form string="应收认领单">
-                <header invisible="not context.get('open')">
+                <header>
                     <button name="compute_advice_amount_advance_org" type="object" class="oe_highlight" string="计算建议预收认领金额" groups="base.group_system"/>
-                    <button name="action_manager_approve_stage" type="object" class="oe_highlight" string="确定认领" />
+                    <button name="action_confirm_ysrld_stage" type="object" class="oe_highlight" string="确定认领" />
                     <field name="state_1" statusbar_invisible=" " widget="statusbar"/>
                 </header>
-                <header invisible="context.get('open')" groups="base.system">
+                <header invisible="context.get('open')" groups="base.group_system">
 
                     <button name="action_submit_stage" class="oe_highlight" type="object" string="提交" attrs="{'invisible':[('state_1','!=','draft')]}"/>
                     <button name="action_manager_approve_first_stage" class="oe_highlight" type="object" attrs="{'invisible':[('state_1','!=','advance_approval')]}"
@@ -322,8 +322,8 @@
 
                             <field name="manual_payment_currency_id" string="预收币种" attrs="{'invisible':1}"/>
                             <field name="yjzy_advance_payment_id" attrs="{'invisible':[('operation_wizard','not in',['25'])]}" context="{'form_view_ref': 'yjzy_extend.view_ysrld_form','advance_so_amount':1}"/>
-                            <field name="yjzy_advance_payment_amount" string="预收原始金额" readonly="1"/>
-                            <field name="yjzy_advance_payment_balance" string="预收剩余金额" readonly="1"/>
+                            <field name="yjzy_advance_payment_amount" string="预收原始金额" readonly="1" invisible="1"/>
+                            <field name="yjzy_advance_payment_balance" string="预收剩余金额" readonly="1" invisible="1"/>
                             <field name="yjzy_advance_currency_id" invisible="1"/>
 
 
@@ -337,8 +337,12 @@
                             <field name="sfk_type" attrs="{'invisible':1}"/>
                             <field name="be_renling" attrs="{'invisible':1}"/>
                             <field name="invoice_currency_id" attrs="{'invisible':1}"/>
-
-                            <field name="yjzy_payment_balance" string="收款单余额" attrs="{'invisible':[('operation_wizard','not in',['10','30'])]}"/>
+                            <label string="收款单待认领" attrs="{'invisible':[('hxd_type_new','not in',['20'])]}"/>
+                            <div attrs="{'invisible':[('hxd_type_new','not in',['20'])]}">
+                            <button name="open_rcskd" type="object" class="btn-xxs btn-link mb2" > <!--按钮大小参考-->
+                            <field name="yjzy_payment_balance" string="收款单待认领金额" attrs="{'invisible':[('operation_wizard','not in',['10','30'])]}"/>
+                            </button>
+                            </div>
                              <field name="amount_invoice_residual_org" string="剩余应收款" attrs="{'invisible':1}"/>
                             <field name="amount_advance_residual_org" string="待认领预收" invisible="1"/>
                             <field name="amount_advance_org" string="预收认领金额" attrs="{'invisible':[('operation_wizard','not in',['20','30'])]}"/>
@@ -354,6 +358,112 @@
 
                         </group>
                     </group>
+                       <group col="2" >
+                        <group attrs="{'invisible':[('hxd_type_new','not in',['10'])]}">
+
+
+                            <field  colspan="2" name="line_no_compute_ids" nolabel="1" readonly="1">
+                                <tree editable="bottom" create="false">
+                                    <field name="id" invisible="1"/>
+                                    <field name="invoice_attribute" readonly="1" invisible="1"/>
+                                    <field name="invoice_id" string="应收账单" context="{'show_tb_ref':1}" readonly="1"/>
+                                    <button name="open_invoice_id" icon="fa-pencil-square-o" context="{'open':1}"
+                                            type="object"/>
+
+                                    <field name="amount_invoice_so_residual" invisible="1"/>
+                                    <field name="amount_invoice_so" string="原始应收款" readonly="1"/>
+
+                                    <field name="invoice_residual"
+                                           string="最新剩余应付款" invisible="1"/><!--attrs="{'column_invisible':[('parent.operation_wizard','not in',['10'])]}"-->
+                                    <field name="invoice_residual_this_time" string="本次认领前剩余应收款"/>
+                                       <field name="amount_payment_can_approve_all_this_time"
+                                           string="本次申请前可认领应收款" invisible="1"/><!--attrs="{'column_invisible':[('parent.state','=','done')]}"-->
+                                    <field name="amount_payment_can_approve_all_after" string="本次认领后可认领"/>
+                                    <field name="invoice_residual_after" invisible="1"/>
+                                    <field name="payment_currency_id" invisible="1"/>
+
+                                    <field name="amount_payment_can_approve_all" string="最新可申请应付款" invisible="1"
+                                    /><!--attrs="{'column_invisible':[('parent.state','=','done')]}"-->
+                                    <field name="currency_id" invisible="1"/>
+                                    <field name="state_1" string="状态" invisible="1" groups="base.group_system"/>
+
+
+                                </tree>
+                            </field>
+                             <field name="amount_total_org_new" string="本次认领金额"
+                                   attrs="{'invisible':[('operation_wizard','not in',['03','20'])]}"/>
+                            <field name="amount_payment_can_approve_all_after" string="本次认领后可认领金额" attrs="{'invisible':[('operation_wizard','not in',['03','20'])]}"/>
+
+                        </group>
+                    <group attrs="{'invisible':[('hxd_type_new','not in',['10'])]}">
+                        <div  colspan="2" style="padding-left:10px;padding-right:10px">
+                                  <table style="width:100%">
+                                             <tbody>
+                                                <tr>
+                                                  <th style="width:30%;text-align: left">预收对应销售单</th>
+                                                  <th style="width:14%;text-align: center">原始预收</th>
+                                                  <th style="width:14%;text-align: center">本次认领前可认领金额</th>
+                                                    <th style="width:14%;text-align: center">本次认领后可认领金额</th>
+                                                  <th style="width:14%;text-align: center">本次认领金额</th>
+                                                    <th style="width:14%;text-align: center"> </th>
+                                                </tr>
+                                              </tbody>
+                                        </table>
+                            </div>
+                    <field name="account_payment_state_ids"  nolabel="1" mode="kanban" readonly="1">
+                                 <kanban class="o_kanban_mobile o_kanban_dashboard_akiny o_saleakiny_kanban ">
+                                        <field name="advance_payment_id"/>
+                                        <field name="so_id"/>
+                                        <field name="amount_payment"/>
+                                        <field name="amount_advance_balance_d"/>
+                                        <field name="amount_advance_balance_after"/>
+                                        <field name="amount_reconcile"/>
+                                        <field name="state"/>
+                                     <field name="state_1"/>
+                                    <templates>
+
+                                        <t t-name="kanban-box" style="width:100%">
+                                            <div style="width:100%" >
+
+                                            <table style="width:100%">
+                                              <tbody >
+                                                <tr>
+                                                  <td style="width:30%"><t t-if="record.so_id.raw_value == False"><span>无</span></t><field name="so_id"/></td>
+                                                  <td style="width:14%;text-align: right"><a type="object" name="open_yfsqd" context="{'open':1}" target="new"><field name="amount_payment"/></a></td>
+                                                  <td style="width:14%;text-align: right"><field name="amount_advance_balance_d"/></td>
+                                                    <td style="width:14%;text-align: right"><field name="amount_advance_balance_after"/></td>
+                                                  <td style="width:14%;text-align: right"><field name="amount_reconcile"/></td>
+                                                    <td style="width:14%;text-align: right"><t t-if="record.state.raw_value == 'no_reconcile' and record.state_1.raw_value == 'draft'">
+                                                        <button name="action_make_reconcile_line_ids" type="object" ><span>认领</span></button></t>
+                                                        <t t-if="record.state.raw_value == 'reconcile' and record.state_1.raw_value == 'draft'">
+                                                        <button name="action_cancel_reconcile_line_ids" type="object" class="btn btn-primary btn-sm"><span>取消</span></button></t>
+                                                    </td>
+                                                </tr>
+                                              </tbody>
+                                            </table>
+                                            </div>
+                                        </t>
+                                        </templates>
+                                </kanban>
+
+
+                                </field>
+                        <div  colspan="2" style="padding-left:10px;padding-right:10px">
+                                  <table style="width:100%">
+                                             <tbody>
+                                                <tr>
+                                                  <th style="width:30%;text-align: center"> </th>
+                                                  <th style="width:14%;text-align: center"> </th>
+                                                  <th style="width:14%;text-align: right"><field name="account_payment_state_ids_amount_1"/></th>
+                                                    <th style="width:14%;text-align: right"><field name="account_payment_state_ids_amount_2"/></th>
+                                                  <th style="width:14%;text-align: right"><field name="account_payment_state_ids_amount_3"/></th>
+                                                    <th style="width:14%;text-align: right"> </th>
+                                                </tr>
+                                              </tbody>
+                                        </table>
+                            </div>
+                    </group>
+                       </group>
                     <notebook>
                         <page string="本次认领的账单" attrs="{'invisible':[('operation_wizard','!=','05')]}">
                          <field name="invoice_ids" domain="[('partner_id','=', partner_id),('state', '=', 'open')]"
@@ -372,17 +482,18 @@
                             </tree>
                             </field>
                         </page>
-                        <page string="明细" attrs="{'invisible':[('operation_wizard','not in',['20','30','40'])]}">
+                        <page string="本次认领明细" attrs="{'invisible':[('operation_wizard','not in',['20','30','40'])]}">
                             <field name="line_ids" context="{'invisible_so': partner_type == 'supplier'}">
                                 <tree editable="top" create="false">
                                     <field name="payment_type" invisible="1"/>
                                     <field name="partner_type" invisible="1"/>
-                                    <field name="so_id" readonly="1" invisible="not context.get('show_so')" />
+                                    <field name="so_id" readonly="1" />
                                     <field name="so_contract_code" invisible="1"/>
 
-                                    <field name="po_id" readonly="1" invisible="not context.get('show_po')"/>
-                                    <field name="invoice_id" readonly="1" invisible="1"/>
-                                    <field name="tb_contract_code"/>
+                                    <field name="invoice_id" string="应收账单" readonly="1" invisible="0" context="{'form_view_ref':'yjzy_extend.view_account_invoice_new_form_in_one'}"/>
+                                    <button name="open_invoice_id" icon="fa-pencil-square-o" context="{'open':1}"
+                                            type="object"/>
+                                    <field name="tb_contract_code" invisible="1"/>
 
                                     <field name="residual" readonly="1" string="账单总余额"/>
                                     <field name="invoice_currency_id" invisible="1"/>
@@ -390,45 +501,94 @@
                                     <!--field name="bank_currency_id"/-->
                                     <!--field name="diff_currency_id"/-->
                                     <field name="currency_id" invisible="1"/>
-
-                                    <field name="amount_invoice_so" string="销售对应应收金额" invisible="1"/>
+                                    <field name="advice_amount_advance_org_real" string="建议预收认领" groups="base.group_system"/>
+                                    <field name="least_advice_amount_advance_org" string="最低预收认领" groups="base.group_system"/>
+                                    <field name="amount_invoice_so" string="本次出运金额" invisible="0"/>
                                     <field name="amount_invoice_so_residual" string="销售对应应收余额"/>
                                     <field name="advance_residual" string="预收余额"/>
-                                    <field name="advance_residual2" invisible="1"/>
-
+                                    <field name="advance_residual2" string="销售总的未认领预收"/>
+                                    <field name="amount_invoice_so_residual_d" string="本次认领前可认领金额" sum="小计"/>
+                                    <field name="amount_invoice_so_residual_d_after" string="本次认领后可认领金额" sum="小计"/>
 
                                     <field name="yjzy_currency_id" invisible="1"/>
-                                    <field name="amount_advance_org" string="预收认领金额" attrs="{'column_invisible':[('parent.operation_wizard','not in',['20','30'])]}"/>
+                                    <field name="amount_advance_org" string="本次预收认领金额" sum="小计" attrs="{'column_invisible':[('parent.operation_wizard','not in',['20','30'])]}"/>
 
                                     <field name="amount_payment_org" string="认领金额" attrs="{'column_invisible':[('parent.operation_wizard','not in',['10','30'])]}"/>
 
                                     <field name="amount_bank_org" attrs="{'column_invisible':[('parent.operation_wizard','not in',['40'])]}" /><!--invisible="not context.get('show_so')"-->
                                     <field name="amount_diff_org" attrs="{'column_invisible':[('parent.operation_wizard','not in',['40'])]}" />
-                                    <field name="amount_total_org"/>
+                                    <field name="amount_total_org" invisible="1"/>
                                     <field name="yjzy_payment_id" string="预收单" domain="[('advance_balance_total','!=',0),('sfk_type','=','ysrld')]" context="{'form_view_ref': 'yjzy_extend.view_rcskd_form','advance_bank_amount':1}"/>
 
                                 </tree>
                             </field>
                         </page>
-                        <page string="填写并确认认领金额" attrs="{'invisible':[('operation_wizard','not in',['10','25','40'])]}">
-                            <field name="line_no_ids">
-                                <tree  editable="bottom" create="false">
-                                <field name="invoice_id" readonly="1" string="应收账单"/>
-                                <field name="invoice_amount_total" string="原始应收款" sum="小计"/>
-                                    <field name="invoice_currency_id" invisible="1"/>
-                                <field name="invoice_residual" string="剩余应收款" sum="小计"/>
-                                <field name="payment_currency_id" invisible="1"/>
-                                 <field name="advice_amount_advance_org" readonly="1" string="建议预收认领金额"/>
+                        <page string="认领应收账单" attrs="{'invisible':[('operation_wizard','not in',['10','25','40'])]}">
+                             <field name="line_no_ids"
+                                   attrs="{'readonly':[('state_1','not in',['draft','account_approval'])]}">
+                            <tree editable="bottom" create="false">
+                                    <field name="id" invisible="1"/>
+                                    <field name="invoice_attribute" readonly="1"/>
+                                    <field name="invoice_id" string="应付账单" context="{'show_tb_ref':1}" readonly="1"/>
+                                    <button name="open_invoice_id" icon="fa-pencil-square-o" context="{'open':1}"
+                                            type="object"/>
+                                    <field name="amount_invoice_so_residual" invisible="1"/>
+                                    <field name="invoice_id_po_ids" widget="many2many_tags" string="采购合同" invisible="1"
+                                           attrs="{'column_invisible':[('parent.invoice_attribute','in',['other_payment'])]}"/>
+                                    <field name="amount_invoice_so" string="原始应付款" readonly="1"/>
+                                    <field name="reconcile_order_line_payment" string="付款支付" readonly="1" />
 
-                                 <field name="yjzy_payment_id" attrs="{'column_invisible':1}" context="{'form_view_ref': 'yjzy_extend.view_rcskd_form','advance_bank_amount':1}"/>
-                                <field name="amount_payment_org" string="本次收款认领金额" sum="小计" attrs="{'column_invisible':[('parent.operation_wizard','not in',['10'])]}"/>
-                                <field name="amount_advance_org" string="本次预收认领金额" sum="小计" attrs="{'column_invisible':[('parent.operation_wizard','not in',['25'])]}"/>
-                                 <field name="amount_bank_org" attrs="{'column_invisible':[('parent.operation_wizard','not in',['40'])]}"/>
-                                <field name="amount_diff_org" attrs="{'column_invisible':[('parent.operation_wizard','not in',['40'])]}"/>
-                                <field name="currency_id" invisible="1"/>
-                                <field name="amount_payment" invisible="1"/>
+                                    <field name="invoice_residual"
+                                           string="最新剩余应付款" invisible="1"/><!--attrs="{'column_invisible':[('parent.operation_wizard','not in',['10'])]}"-->
+                                    <field name="invoice_residual_this_time" string="本次申请前剩余应付款"/>
+                                       <field name="amount_payment_can_approve_all_this_time"
+                                           string="本次申请前可申请应付款"/><!--attrs="{'column_invisible':[('parent.state','=','done')]}"-->
+                                    <field name="amount_payment_can_approve_all_after"/>
+                                    <field name="invoice_residual_after" invisible="1"/>
+                                    <field name="payment_currency_id" invisible="1"/>
+
+                                    <field name="amount_payment_can_approve_all" string="最新可申请应付款" invisible="1"
+                                    /><!--attrs="{'column_invisible':[('parent.state','=','done')]}"-->
+
+                                    <field name="yjzy_payment_id" string="预付单" readonly="context.get('open')"
+                                           help="因为只整单对预付进行认领，所有不需要显示，这里每行都是一样的预付单"
+                                           domain="[('sfk_type','=','yfsqd'),('partner_id','=',parent.partner_id)]"
+                                           attrs="{'column_invisible':1}"
+                                           context="{'form_view_ref': 'yjzy_extend.view_yfsqd_form','advance_po_amount':1}"/><!--[('parent.operation_wizard','not in',['25'])]-->
+                                    <field name="yjzy_payment_po_id" readonly="context.get('open')" invisible="1"
+                                           attrs="{'column_invisible':[('parent.operation_wizard','not in',['25'])]}"/>
+                                    <field name="amount_advance_org" string="预付认领金额"
+                                           attrs="{'column_invisible':[('parent.operation_wizard','not in',['25'])],'readonly':[('parent.state_1','not in',['draft'])]}"/>
+                                    <field name="amount_payment_org" string="收款认领金额"
+                                           attrs="{'column_invisible':[('parent.operation_wizard','not in',['10'])]}"/>
+                                    <field name="amount_diff_org"
+                                           attrs="{'column_invisible':[('parent.operation_wizard','not in',['40'])]}"/>
+                                    <field name="currency_id" invisible="1"/>
+                                    <field name="amount_payment" invisible="1"/>
+                                    <field name="state_1" string="状态" groups="base.group_system"/>
+                                    <button name="compute_ysrld_amount_advance_org_all" type="object" string="test"
+                                            groups="base.group_system"/>
+
                                 </tree>
-                            </field>
+                             </field>
+<!--                            <field name="line_no_ids">-->
+<!--                                <tree  editable="bottom" create="false">-->
+<!--                                <field name="invoice_id" readonly="1" string="应收账单"/>-->
+<!--                                <field name="invoice_amount_total" string="原始应收款" sum="小计"/>-->
+<!--                                    <field name="invoice_currency_id" invisible="1"/>-->
+<!--                                <field name="invoice_residual" string="剩余应收款" sum="小计"/>-->
+<!--                                <field name="payment_currency_id" invisible="1"/>-->
+<!--                                 <field name="advice_amount_advance_org" readonly="1" string="建议预收认领金额" invisible="1"/>-->
+
+<!--                                 <field name="yjzy_payment_id" attrs="{'column_invisible':1}" context="{'form_view_ref': 'yjzy_extend.view_rcskd_form','advance_bank_amount':1}"/>-->
+<!--                                <field name="amount_payment_org" string="本次收款认领金额" sum="小计" attrs="{'column_invisible':[('parent.operation_wizard','not in',['10'])]}"/>-->
+<!--                                <field name="amount_advance_org" string="本次预收认领金额" sum="小计" attrs="{'column_invisible':[('parent.operation_wizard','not in',['25'])]}"/>-->
+<!--                                 <field name="amount_bank_org" attrs="{'column_invisible':[('parent.operation_wizard','not in',['40'])]}"/>-->
+<!--                                <field name="amount_diff_org" attrs="{'column_invisible':[('parent.operation_wizard','not in',['40'])]}"/>-->
+<!--                                <field name="currency_id" invisible="1"/>-->
+<!--                                <field name="amount_payment" invisible="1"/>-->
+<!--                                </tree>-->
+<!--                            </field>-->
                         </page>
 
                         <page groups="base.group_system">
@@ -475,11 +635,11 @@
                         </page>
                     </notebook>
                 </sheet>
-                  <footer invisible="not context.get('open')">
-                      <button name="action_manager_approve_stage" type="object" class="oe_highlight" string="确定认领并关闭"/>
-                      <button name="action_save_test" type="object" class="oe_highlight" string="保存但不确认"/>
+<!--                  <footer invisible="not context.get('open')" >-->
+<!--                      <button name="action_manager_approve_stage" type="object" class="oe_highlight" string="确定认领并关闭"/>-->
+<!--                      <button name="action_save_test" type="object" class="oe_highlight" string="保存但不确认"/>-->
 
-                        </footer>
+<!--                        </footer>-->
                 <div class="oe_chatter">
                     <field name="message_follower_ids" widget="mail_followers"/>
                     <field name="activity_ids" widget="mail_activity"/>

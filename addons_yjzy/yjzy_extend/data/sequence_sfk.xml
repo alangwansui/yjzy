@@ -119,5 +119,13 @@
         <field name="padding">5</field>
         <field name="company_id" eval="False"/>
     </record>
+
+    <record id="seq_real_invoice" model="ir.sequence">
+        <field name="name">real.invoice</field>
+        <field name="code">real.invoice</field>
+        <field name="prefix">RI</field>
+        <field name="padding">4</field>
+        <field name="company_id" eval="False"/>
+    </record>
 </odoo>
 

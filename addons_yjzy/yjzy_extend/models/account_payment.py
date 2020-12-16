@@ -692,7 +692,7 @@ class account_payment(models.Model):
 
         if self.so_id:
             ctx.update({
-                'default_so_id': self.so_id,
+                'default_so_id': self.so_id.id,
                 'default_partner_id': self.partner_id.id,
                 'default_yjzy_payment_id': self.id,
             })
@@ -1893,8 +1893,7 @@ class account_payment(models.Model):
                                          'be_renling':True,
                                          'invoice_attribute': 'normal',
                                          'yjzy_type': 'sale',
-                                          'hxd_type_new':'10'
-
+                                         'hxd_type_new':'10'
                                          })
             form_view = self.env.ref('yjzy_extend.account_yshxd_form_view_new').id
             return {
@@ -1904,7 +1903,7 @@ class account_payment(models.Model):
                 'res_model': 'account.reconcile.order',
                 'views': [(form_view, 'form')],
                 'res_id': yshxd_id.id,
-                'target': 'new',
+                'target': 'current',
                 'type': 'ir.actions.act_window',
                 'context':{'default_sfk_type': 'yshxd',
                            'active_id':yshxd_id.id

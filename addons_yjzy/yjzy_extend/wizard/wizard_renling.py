@@ -166,12 +166,12 @@ class wizard_renling(models.TransientModel):
 
     #从预收单申请应收
     def create_ysrld_yxhxd(self):
-        if len(self.invoice_ids.mapped('currency_id')) > 1:
-            raise Warning('不同币种的账单，不能同时认领！')
+        # if len(self.invoice_ids.mapped('currency_id')) > 1:
+        #     raise Warning('不同币种的账单，不能同时认领！')
         sfk_type = 'yshxd'
         name = self.env['ir.sequence'].next_by_code('sfk.type.%s' % sfk_type)
         yshxd_obj = self.env['account.reconcile.order']
-        yshxd_id = yshxd_obj.create({
+        yshxd_id = yshxd_obj.with_context({'default_invoice_ids':self.invoice_ids}).create({
             'name': name,
             'operation_wizard': '25',
             'yjzy_advance_payment_id': self.yjzy_payment_id.id,
@@ -185,8 +185,8 @@ class wizard_renling(models.TransientModel):
             'hxd_type_new': '10'
 
         })
-        self.make_lines_so(yshxd_id)
-        yshxd_id.compute_advice_amount_advance_org()
+        # self.make_lines_so(yshxd_id)
+        # yshxd_id.compute_advice_amount_advance_org()
         form_view = self.env.ref('yjzy_extend.account_yshxd_form_view_new').id
         return {
             'name': '认领单',
@@ -249,10 +249,15 @@ class wizard_renling(models.TransientModel):
 
         yshxd_obj = self.env['account.reconcile.order']
         ysrld_obj = self.env['account.payment']
+        if self.renling_type == 'back_tax':
+            invoice_ids = self.btd_line_ids.mapped('invoice_id')
+        else:
+            invoice_ids = self.invoice_ids
+        print('invoice_ids', invoice_ids)
 
         name = self.env['ir.sequence'].next_by_code('sfk.type.%s' % sfk_type)
         if self.renling_type in ['yshxd','back_tax','other_payment']:
-            yshxd_id = yshxd_obj.create({
+            yshxd_id = yshxd_obj.with_context({'default_invoice_ids':invoice_ids}).create({
                                          'name': name,
                                          'operation_wizard': '10',
                                          'partner_id': self.partner_id.id,
@@ -269,7 +274,14 @@ class wizard_renling(models.TransientModel):
 
                                          })
 
-            self.make_lines_so(yshxd_id)
+            # self.make_lines_so(yshxd_id)
+            stage_id = yshxd_id._stage_find(domain=[('code', '=', '015')])
+            print('_stage_find',stage_id)
+            yshxd_id.write({'stage_id': stage_id.id,
+                            'state': 'posted',
+                            # 'operation_wizard':'25'
+                            })
+            yshxd_id.make_lines()
 
             form_view = self.env.ref('yjzy_extend.account_yshxd_form_view_new').id
             return {
@@ -279,7 +291,7 @@ class wizard_renling(models.TransientModel):
                 'res_model': 'account.reconcile.order',
                 'views': [(form_view, 'form')],
                 'res_id': yshxd_id.id,
-                'target': 'new',
+                'target': 'current',
                 'type': 'ir.actions.act_window',
                 'context': {'default_sfk_type': 'yshxd',
                             'active_id': yshxd_id.id,

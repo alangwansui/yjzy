@@ -8,9 +8,13 @@ import logging
 _logger = logging.getLogger(__name__)
 #注意：直接单独创建应付申请，和预付认领的时候，默认状态需要注意
 Account_reconcile_Selection =   [('draft',u'待预付认领草稿'),
+                                 ('draft_yshxd',u'待预收认领草稿'),
                                  ('advance_approval',u'预付款认领待审批'),
+                                 ('advance_approval_yshxd',u'预收款认领待审批'),
                                  ('account_approval',u'应付款申请草稿'),
+                                ('account_approval_yshxd',u'应收款认领草稿'),
                                  ('manager_approval',u'应付款申请待审批'),
+                                ('manager_approval_yshxd',u'应收款认领待审批'),
                                  ('post',u'未提交付款指令'),
                                  ('fkzl',u'已提交付款指令'),
                                  ('done',u'完成'),
@@ -208,26 +212,45 @@ class account_reconcile_order(models.Model):
     #             supplier_advance_payment_ids_char += '%s %s\n' % (o.po_id.contract_code,o.amount)
     #         self.supplier_advance_payment_ids_char = supplier_advance_payment_ids_char
     @api.depends('partner_id')
-    def _compute_supplier_advance_payment_ids(self):
+    def _compute_supplier_advance_payment_ids(self):#字段用作预收和预付一起
         for one in self:
             po = []
-            for x in one.invoice_ids:
-                for line in x.invoice_line_ids.mapped('purchase_id'):
-                    po.append(line.id)
-                po.append(False)                #
-                # dic_po_invl = {}
-                # for line in inv.invoice_line_ids:
-                #     if line.purchase_id:
-                #         po = line.purchase_id
-                #         if po in dic_po_invl:
-                #             dic_po_invl[po] |= line
-                #         else:
-                #             dic_po_invl[po] = line
-                # return dic_po_invl or False
-            print('po',po)
-            supplier_advance_payment_ids = self.env['account.payment'].search(
-                [('partner_id', '=', one.partner_id.id), ('sfk_type', '=', 'yfsqd'),('po_id','in',po),
-                 ('state', 'in', ['posted', 'reconciled']),('advance_balance_total','!=',0)])
+            if one.sfk_type == 'yfhxd':
+                for x in one.invoice_ids:
+                    for line in x.invoice_line_ids.mapped('purchase_id'):
+                        po.append(line.id)
+                    po.append(False)                #
+                    # dic_po_invl = {}
+                    # for line in inv.invoice_line_ids:
+                    #     if line.purchase_id:
+                    #         po = line.purchase_id
+                    #         if po in dic_po_invl:
+                    #             dic_po_invl[po] |= line
+                    #         else:
+                    #             dic_po_invl[po] = line
+                    # return dic_po_invl or False
+                print('po',po)
+                supplier_advance_payment_ids = self.env['account.payment'].search(
+                    [('partner_id', '=', one.partner_id.id), ('sfk_type', '=', 'yfsqd'),('po_id','in',po),
+                     ('state', 'in', ['posted', 'reconciled']),('advance_balance_total','!=',0)])
+            else:
+                for x in one.invoice_ids:
+                    for line in x.invoice_line_ids.mapped('so_id'):
+                        po.append(line.id)
+                    po.append(False)  #
+                    # dic_po_invl = {}
+                    # for line in inv.invoice_line_ids:
+                    #     if line.purchase_id:
+                    #         po = line.purchase_id
+                    #         if po in dic_po_invl:
+                    #             dic_po_invl[po] |= line
+                    #         else:
+                    #             dic_po_invl[po] = line
+                    # return dic_po_invl or False
+                print('po', po)
+                supplier_advance_payment_ids = self.env['account.payment'].search(
+                    [('partner_id', '=', one.partner_id.id), ('sfk_type', '=', 'ysrld'), ('so_id', 'in', po),
+                     ('state', 'in', ['posted', 'reconciled']), ('advance_balance_total', '!=', 0)])
             one.supplier_advance_payment_ids_count = len(supplier_advance_payment_ids)
             one.supplier_advance_payment_ids = supplier_advance_payment_ids
             print('one.supplier_advance_payment_ids',one.supplier_advance_payment_ids)
@@ -274,7 +297,7 @@ class account_reconcile_order(models.Model):
             lines = one.line_ids
             one.amount_diff_org_new = diff_currency.compute(sum([x.amount_diff_org for x in lines]),one.invoice_currency_id)
 
-    @api.depends('line_ids', 'line_ids.amount_total_org_new', 'payment_currency_id')
+    @api.depends('line_ids', 'line_ids.amount_total_org_new','line_ids.amount_advance_org','line_ids.amount_payment_org',  'payment_currency_id')
     def compute_amount_total_org_new(self):
         for one in self:
             if (not one.line_ids) or (not one.payment_currency_id):
@@ -282,9 +305,6 @@ class account_reconcile_order(models.Model):
             lines = one.line_ids
             one.amount_total_org_new = sum([x.amount_total_org_new for x in lines])
             print('amount_total_org_new',one.amount_total_org_new)
-
-
-
             # bank_currency = one.payment_currency_id.with_context(date=date)
             # diff_currency = one.payment_currency_id.with_context(date=date)
             # payment_currency = one.payment_currency_id.with_context(date=date)
@@ -400,9 +420,13 @@ class account_reconcile_order(models.Model):
         for one in self:
             one.line_no_compute_ids = one.line_no_ids
 
+    @api.depends('line_no_ids','line_no_ids.amount_payment_can_approve_all_after')
     def compute_amount_payment_can_approve_all_after(self):
         for one in self:
             one.amount_payment_can_approve_all_after = sum(x.amount_payment_can_approve_all_after for x in one.line_no_ids)
+
+
+
 
     amount_payment_can_approve_all_after = fields.Float('所有账单本次申请后可申请支付金额合计',compute=compute_amount_payment_can_approve_all_after)
 
@@ -492,7 +516,7 @@ class account_reconcile_order(models.Model):
     advance_reconcile_line_draft_all_count = fields.Integer('未完成审批的预付认领单数量',compute=compute_advance_reconcile_line_draft_all_count)
 
     expense_sheet_id = fields.Many2one('hr.expense.sheet',u'费用报告')
-    supplier_advance_payment_ids = fields.Many2many('account.payment',u'相关预付', compute=_compute_supplier_advance_payment_ids)
+    supplier_advance_payment_ids = fields.Many2many('account.payment',u'相关预收付', compute=_compute_supplier_advance_payment_ids) #相关的预收和预付
     supplier_advance_payment_ids_count = fields.Integer('相关预付数量',compute=_compute_supplier_advance_payment_ids)
     #903
     reconcile_payment_ids = fields.One2many('account.payment','account_reconcile_order_id',u'认领单')
@@ -620,13 +644,31 @@ class account_reconcile_order(models.Model):
     is_editable = fields.Boolean(u'可编辑')
     gongsi_id = fields.Many2one('gongsi', '内部公司')
 
+    def open_rcskd(self):
+        form_view = self.env.ref('yjzy_extend.view_rcskd_form_new')
+        return {
+            'name': '查看日常收款单',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'account.payment',
+            'type': 'ir.actions.act_window',
+            'views': [(form_view.id, 'form')],
+            'res_id': self.yjzy_payment_id.id,
+            'target': 'new',
+            'context': {'show_shoukuan': True,
+                         'default_sfk_type': 'rcskd',
+                         'default_payment_type': 'inbound',
+                         'default_be_renling': False,
+                         'default_advance_ok': True,
+                         'default_partner_type': 'customer'}
+        }
 
     def action_to_fkzl(self):
         stage_id = self._stage_find(domain=[('code', '=', '055')])
         print('action_to_fkzl',stage_id)
         self.write({'stage_id': stage_id.id,
                     })
-
+    #1215
     def make_account_payment_state_ids(self):
         account_payment_state_ids = self.supplier_advance_payment_ids
         account_payment_state_obj = self.env['account.payment.state']
@@ -758,6 +800,8 @@ class account_reconcile_order(models.Model):
         partner_id = self.partner_id
         yjzy_payment_id = self.yjzy_payment_id
         line_ids = self.line_ids
+
+        line_no_ids = self.line_no_ids
         journal_domain_yszk = [('code', '=', 'yszk'), ('company_id', '=', self.env.user.company_id.id)]
         journal_id_yszk = self.env['account.journal'].search(journal_domain_yszk, limit=1)
         journal_domain_ysdrl = [('code', '=', 'ysdrl'), ('company_id', '=', self.env.user.company_id.id)]
@@ -767,84 +811,113 @@ class account_reconcile_order(models.Model):
         journal_domain_xsfy = [('code', '=', 'xsfy'), ('company_id', '=', self.env.user.company_id.id)]
         journal_id_xsfy = self.env['account.journal'].search(journal_domain_xsfy, limit=1)
 
-        for line in line_ids:
-            if line.amount_payment_org >0:
-                reconcile_payment_id = account_payment_obj.create({
-                    'account_reconcile_order_id':self.id,
-                    'account_reconcile_order_line_id': line.id,
-                    'name':name,
-                    'partner_id':partner_id.id,
-                    'yjzy_payment_id':yjzy_payment_id.id,
-                    'amount':line.amount_payment_org,
-                    'currency_id':line.payment_currency_id.id,
-                    'sfk_type': sfk_type,
-                    'payment_type': 'inbound',
-                    'partner_type': 'customer',
-                    'advance_ok':False,
-                    'journal_id':journal_id_ysdrl.id,
-                    'payment_method_id': 2,
-                    'invoice_ids': [(4, line.invoice_id.id, None)],#参考m2m
-                    'so_id':line.so_id.id,
-                    # 'invoice_log_id': line.invoice_id.id,
-                })
-            if line.amount_advance_org > 0:
-                print('journal_id_yszk',journal_id_yszk)
-                reconcile_payment_id_2 = account_payment_obj.create({
-                    'account_reconcile_order_id': self.id,
-                    'account_reconcile_order_line_id': line.id,
-                    'name':name,
-                    'partner_id': partner_id.id,
-                    'amount': line.amount_advance_org,
-                    'sfk_type': sfk_type,
-                    'currency_id': line.yjzy_currency_id.id,
-                    'yjzy_payment_id':line.yjzy_payment_id.id,
-                    'payment_type': 'inbound',
-                    'partner_type': 'customer',
-                    'advance_ok': False,
-                    'journal_id': journal_id_yszk.id,
-                    'payment_method_id': 2,
-                    'invoice_ids': [(4, line.invoice_id.id, None)],
-                    'so_id': line.so_id.id,
-                    'invoice_log_id': line.invoice_id.id,
+        if self.hxd_type_new == '20' and self.operation_wizard in ['10']: #同时满足两个条件
+            for line_no in line_no_ids:
+                if line_no.amount_payment_org > 0:
+                    reconcile_payment_id = account_payment_obj.create({
+                        'account_reconcile_order_id':self.id,
+                        # 'account_reconcile_order_line_id': line.id,
+                        'name':name,
+                        'partner_id':partner_id.id,
+                        'yjzy_payment_id':yjzy_payment_id.id,
+                        'amount': line_no.amount_payment_org,
+                        'currency_id': line_no.payment_currency_id.id,
+                        'sfk_type': sfk_type,
+                        'payment_type': 'inbound',
+                        'partner_type': 'customer',
+                        'advance_ok':False,
+                        'journal_id':journal_id_ysdrl.id,
+                        'payment_method_id': 2,
+                        'invoice_ids': [(4, line_no.invoice_id.id, None)],#参考m2m
+                        'invoice_log_id': line_no.invoice_id.id,
+                        'reconcile_type': '30_payment_in',
+                        'post_date': fields.date.today()
+                        # 'so_id':line.so_id.id,
+                        # 'invoice_log_id': line.invoice_id.id,
+                    })
+        else:
+            for line in line_ids:
+                if line.amount_payment_org > 0:
+                    reconcile_payment_id = account_payment_obj.create({
+                        'account_reconcile_order_id': self.id,
+                        # 'account_reconcile_order_line_id': line.id,
+                        'name': name,
+                        'partner_id': partner_id.id,
+                        'yjzy_payment_id': yjzy_payment_id.id,
+                        'amount': line.amount_payment_org,
+                        'currency_id': line.payment_currency_id.id,
+                        'sfk_type': sfk_type,
+                        'payment_type': 'inbound',
+                        'partner_type': 'customer',
+                        'advance_ok': False,
+                        'journal_id': journal_id_ysdrl.id,
+                        'payment_method_id': 2,
+                        'invoice_ids': [(4, line.invoice_id.id, None)],  # 参考m2m
+                        'invoice_log_id': line.invoice_id.id,
+                        'reconcile_type': '30_payment_in',
+                        'post_date': fields.date.today(),
+                        'so_id':line.so_id.id,
+                        # 'invoice_log_id': line.invoice_id.id,
+                    })
 
-                })
-            if line.amount_bank_org > 0:
-                reconcile_payment_id_3 = account_payment_obj.create({
-                    'account_reconcile_order_id': self.id,
-                    'account_reconcile_order_line_id': line.id,
-                    'name':name,
-                    'partner_id': partner_id.id,
-                    'amount': line.amount_bank_org,
-                    'sfk_type': sfk_type,
-                    'currency_id': line.invoice_currency_id.id,
-                    'payment_type': 'inbound',
-                    'partner_type': 'customer',
-                    'advance_ok': False,
-                    'journal_id': journal_id_yhkk.id,
-                    'payment_method_id': 2,
-                    'invoice_ids': [(4, line.invoice_id.id, None)],
-                    'so_id': line.so_id.id,
-                    # 'invoice_log_id': line.invoice_id.id,
-                })
+                if line.amount_advance_org > 0:
+                    print('journal_id_yszk',journal_id_yszk)
+                    reconcile_payment_id_2 = account_payment_obj.create({
+                        'account_reconcile_order_id': self.id,
+                        'account_reconcile_order_line_id': line.id,
+                        'name':name,
+                        'partner_id': partner_id.id,
+                        'amount': line.amount_advance_org,
+                        'sfk_type': sfk_type,
+                        'currency_id': line.yjzy_currency_id.id,
+                        'yjzy_payment_id':line.yjzy_payment_id.id,
+                        'payment_type': 'inbound',
+                        'partner_type': 'customer',
+                        'advance_ok': False,
+                        'journal_id': journal_id_yszk.id,
+                        'payment_method_id': 2,
+                        'invoice_ids': [(4, line.invoice_id.id, None)],
+                        'so_id': line.so_id.id,
+                        'invoice_log_id': line.invoice_id.id,
 
-            if line.amount_diff_org > 0:
-                reconcile_payment_id_4 = account_payment_obj.create({
-                    'account_reconcile_order_id': self.id,
-                    'account_reconcile_order_line_id': line.id,
-                    'name':name,
-                    'partner_id': partner_id.id,
-                    'amount': line.amount_diff_org,
-                    'sfk_type': sfk_type,
-                    'currency_id': line.invoice_currency_id.id,
-                    'payment_type': 'inbound',
-                    'partner_type': 'customer',
-                    'advance_ok': False,
-                    'journal_id': journal_id_xsfy.id,
-                    'payment_method_id': 2,
-                    'invoice_ids': [(4, line.invoice_id.id, None)],
-                    'so_id': line.so_id.id,
-                    # 'invoice_log_id': line.invoice_id.id,
-                })
+                    })
+                if line.amount_bank_org > 0:
+                    reconcile_payment_id_3 = account_payment_obj.create({
+                        'account_reconcile_order_id': self.id,
+                        'account_reconcile_order_line_id': line.id,
+                        'name':name,
+                        'partner_id': partner_id.id,
+                        'amount': line.amount_bank_org,
+                        'sfk_type': sfk_type,
+                        'currency_id': line.invoice_currency_id.id,
+                        'payment_type': 'inbound',
+                        'partner_type': 'customer',
+                        'advance_ok': False,
+                        'journal_id': journal_id_yhkk.id,
+                        'payment_method_id': 2,
+                        'invoice_ids': [(4, line.invoice_id.id, None)],
+                        'so_id': line.so_id.id,
+                        # 'invoice_log_id': line.invoice_id.id,
+                    })
+
+                if line.amount_diff_org > 0:
+                    reconcile_payment_id_4 = account_payment_obj.create({
+                        'account_reconcile_order_id': self.id,
+                        'account_reconcile_order_line_id': line.id,
+                        'name':name,
+                        'partner_id': partner_id.id,
+                        'amount': line.amount_diff_org,
+                        'sfk_type': sfk_type,
+                        'currency_id': line.invoice_currency_id.id,
+                        'payment_type': 'inbound',
+                        'partner_type': 'customer',
+                        'advance_ok': False,
+                        'journal_id': journal_id_xsfy.id,
+                        'payment_method_id': 2,
+                        'invoice_ids': [(4, line.invoice_id.id, None)],
+                        'so_id': line.so_id.id,
+                        # 'invoice_log_id': line.invoice_id.id,
+                    })
 
     def create_yjzy_payment_yfrl(self):
         self.ensure_one()
@@ -975,9 +1048,6 @@ class account_reconcile_order(models.Model):
                         'reconcile_type': '50_reconcile',
                         'post_date': fields.date.today()
                     })
-
-
-
     #判断预付金额和预付款单的余额问题
     @api.onchange('line_no_ids')
     def _onchange_line_no_ids(self):
@@ -1348,7 +1418,7 @@ class account_reconcile_order(models.Model):
                 account_reconcile_id = account_reconcile_order_obj.create({
                     'partner_id': self.partner_id.id,
                     'manual_payment_currency_id': self.manual_payment_currency_id.id,
-                    'invoice_ids': [(6, 0, invoice_dic)],
+                    'invoice_ids': [(6, 0, invoice_dic)], #akiny参考
                     'payment_type': 'outbound',
                     'partner_type': 'supplier',
                     'sfk_type': 'yfhxd',
@@ -1541,14 +1611,13 @@ class account_reconcile_order(models.Model):
                 self.write({'approve_date': fields.date.today(),
                             'approve_uid': self.env.user.id
                             })
-
-
-
        #应收核销待定:
         if self.sfk_type == 'yshxd':
             print('sfk_type_____111',self.sfk_type)
-            if not self.yjzy_payment_id:
+            if not self.yjzy_payment_id and self.hxd_type_new == '20':
                 raise Warning('没有对应的收款单，请检查！')
+            if not self.yjzy_advance_payment_id and self.hxd_type_new == '10':
+                raise Warning('没有对应的预收认领单，请检查！')
             self.create_yjzy_payment_ysrl()
             self.action_done_new()
             if self.back_tax_declaration_id:
@@ -1559,12 +1628,40 @@ class account_reconcile_order(models.Model):
                         'approve_date': fields.date.today(),
                         'approve_uid': self.env.user.id
                         })
+
             #核销的动作这里完成
             if self.yjzy_payment_id:
                 self.yjzy_payment_id.action_reconcile()
             if self.yjzy_advance_payment_id:
                 self.yjzy_advance_payment_id.action_reconcile()
+        # supplier_advance_payment_ids = self.supplier_advance_payment_ids
+        # supplier_advance_payment_ids_count = self.supplier_advance_payment_ids_count
+        # form_view = self.env.ref('yjzy_extend.account_yshxd_form_view_new')
+        # if self.operation_wizard == '20' and self.hxd_type_new == '20' and supplier_advance_payment_ids_count != 0:
+        #     ctx = self.env.context.copy()
+        #
+        #
+        #     ctx.update({
+        #         'default_so_id': self.so_id,
+        #         'default_partner_id': self.partner_id.id,
+        #         'default_yjzy_payment_id': self.id,
+        #     })
+        #     return {
+        #         'name': '创建认领',
+        #         'view_type': 'form',
+        #         'view_mode': 'form',
+        #         'res_model': 'wizard.renling',
+        #         'views': [(form_view.id, 'form')],
+        #         # 'res_id': bill.id,
+        #         'target': 'new',
+        #         'type': 'ir.actions.act_window',
+        #         'context': ctx,
+        #
+        #     }
+        # else:
+
         return True
+
 
 
 
@@ -1575,6 +1672,84 @@ class account_reconcile_order(models.Model):
         #     invoice = self.back_tax_invoice_id
         #     invoice.action_invoice_open()
         # self.create_rcfkd()
+
+    def action_confirm_ysrld_stage(self):
+        self.ensure_one()
+        if self.hxd_type_new == '10' and self.amount_total_org == 0:
+            raise Warning('认领金额为0，无法提交！')
+        if self.hxd_type_new == '20' and self.amount_payment_org == 0:
+            raise Warning('认领金额为0，无法提交！')
+        lines = self.line_ids
+        if lines:
+            for one in lines:
+                if one.so_id:
+                    if one.amount_total_org_new > one.amount_invoice_so_residual_can_approve:
+                        raise Warning('申请的金额大于可认领预收')
+                    if one.amount_advance_org > one.advance_residual2:
+                        raise Warning('预收认领金额大于可认领的预收金额')
+                    if one.amount_advance_org > one.yjzy_payment_id.advance_balance_total:
+                        raise Warning('预收认领金额大于可认领的预收金额')
+                if one.amount_advance_org == 0 and self.hxd_type_new == '10':
+                    raise Warning('有明细行预收金额为0，请填写或者删除明细行！')
+
+        for one in self.line_no_ids:
+            if one.amount_payment_can_approve_all < one.amount_payment_org:
+                raise Warning('申请的金额大于可申请的应付,请检查')
+        self.action_manager_approve_stage()
+        invoice_dic = []
+        for one in self.invoice_ids:  # 如果invoice是0 余额的 可以从invoice_ids中删除了
+            if one.amount_payment_can_approve_all != 0:
+                invoice_dic.append(one.id)
+        print('invoice_dic', invoice_dic)
+        sfk_type = 'yshxd'
+        name = self.env['ir.sequence'].next_by_code('sfk.type.%s' % sfk_type)
+        form_view = self.env.ref('yjzy_extend.account_yshxd_form_view_new')
+        account_reconcile_order_obj = self.env['account.reconcile.order']
+        account_reconcile_id = account_reconcile_order_obj.create({
+            'partner_id': self.partner_id.id,
+            'manual_payment_currency_id': self.manual_payment_currency_id.id,
+            'invoice_ids': [(6, 0, invoice_dic)],  # akiny参考
+            'payment_type': 'inbound',
+            'partner_type': 'customer',
+            'sfk_type': 'yshxd',
+            'be_renling': True,
+            'name': name,
+            'journal_id': self.journal_id.id,
+            'payment_account_id': self.payment_account_id.id,
+            # 'operation_wizard':operation_wizard,
+            'hxd_type_new': '10',
+            'operation_wizard': '20',
+            'purchase_code_balance': 1,
+            'invoice_attribute': self.invoice_attribute,
+            'invoice_partner': self.invoice_partner,
+            'name_title': self.name_title,
+            'yjzy_reconcile_order_id_new': self.id
+        })
+        account_reconcile_id.make_lines()
+        account_reconcile_id.line_ids.unlink()
+        account_reconcile_id.make_account_payment_state_ids()
+        self.yjzy_reconcile_order_id_new = account_reconcile_id
+        view = self.env.ref('sh_message.sh_message_wizard')
+        view_id = view and view.id or False
+        context = dict(self._context or {})
+        context['message'] = "审批完成"
+        context['res_model'] = "account.reconcile.order"
+        context['res_id'] = account_reconcile_id.id
+        context['views'] = self.env.ref('yjzy_extend.account_yshxd_form_view_new').id
+        # context['no_advance'] = False
+        print('context_akiny', context)
+        return {
+            'name': 'Success',
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'sh.message.wizard',
+            'views': [(view_id, 'form')],
+            'target': 'new',
+            'context': context,
+        }
+
+        # self.make_account_payment_state_ids()
 
     def action_done_new_stage(self):
         stage_id = self._stage_find(domain=[('code', '=', '060')])
@@ -2255,7 +2430,6 @@ class account_reconcile_order(models.Model):
                 self.operation_wizard = '10'
             elif self.hxd_type_new == '30':
                 self.operation_wizard = '25'
-
                 # tree_view = self.env.ref('yjzy_extend.account_yfhxd_advance_tree_view_new').id
                 # form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new').id
                 #
@@ -2381,6 +2555,7 @@ class account_reconcile_order(models.Model):
         self.ensure_one()
         line_obj = self.env['account.reconcile.order.line']
         line_no_obj = self.env['account.reconcile.order.line.no']
+        print('line_no_obj',line_no_obj)
         line_ids = None
         self.line_ids = line_ids
         # if self.no_sopo:
@@ -2394,11 +2569,14 @@ class account_reconcile_order(models.Model):
         for invoice in self.invoice_ids:
             so_invlines = self._prepare_sale_invoice_line(invoice)
             if not so_invlines:
-                line_obj.create({
+                line = line_obj.create({
                     'order_id': self.id,
                     'invoice_id': invoice.id,
                     'amount_invoice_so': invoice.amount_total,
+                    'amount_payment_org':invoice.declaration_amount
                 })
+                line.amount_invoice_so_residual_d = line.amount_invoice_so_residual
+                line.amount_invoice_so_residual_can_approve_d = line.amount_invoice_so_residual_can_approve
             else:
                 for so, invlines in so_invlines.items():
                     if self.yjzy_advance_payment_id.so_id:
@@ -2424,6 +2602,7 @@ class account_reconcile_order(models.Model):
             invoice = i.invoice_id
             amount_invoice_so = i.amount_invoice_so
             advance_residual2 = i.advance_residual2
+            amount_payment_org = i.amount_payment_org
             order = i.order_id
             yjzy_payment_id = i.yjzy_payment_id
             print('yjzy_payment_id_1111111', yjzy_payment_id)
@@ -2433,6 +2612,8 @@ class account_reconcile_order(models.Model):
                 print('k',k)
                 so_po_dic[k]['amount_invoice_so'] += amount_invoice_so
                 so_po_dic[k]['advance_residual2'] += advance_residual2
+                so_po_dic[k]['amount_payment_org'] += amount_payment_org
+
                 if not so_po_dic[k]['yjzy_payment_id']:
                     so_po_dic[k]['yjzy_payment_id'] = yjzy_payment_id.id
             else:
@@ -2441,7 +2622,10 @@ class account_reconcile_order(models.Model):
                                 'invoice_id':invoice.id,
                                 'yjzy_payment_id': yjzy_payment_id.id,
                                 'amount_invoice_so': amount_invoice_so,
-                                'advance_residual2': advance_residual2,}
+                                'advance_residual2': advance_residual2,
+                                'amount_payment_org':amount_payment_org}
+
+
 
         for kk, data in list(so_po_dic.items()):
             line_no = line_no_obj.create({
@@ -2449,8 +2633,12 @@ class account_reconcile_order(models.Model):
                 'invoice_id': data['invoice_id'],
                 'amount_invoice_so': data['amount_invoice_so'],
                 'advance_residual2': data['advance_residual2'],
-                'yjzy_payment_id': data['yjzy_payment_id']
+                'yjzy_payment_id': data['yjzy_payment_id'],
+                'amount_payment_org':data['amount_payment_org'],
             })
+
+            line_no.amount_payment_can_approve_all_this_time = line_no.invoice_id.amount_payment_can_approve_all
+            line_no.invoice_residual_this_time = line_no.invoice_residual
 
     def _make_lines_po_from_expense(self):
         self.ensure_one()
@@ -2773,7 +2961,7 @@ class account_reconcile_order(models.Model):
 #11-26预付和付款申请同一个入口的新方法
     def make_lines_11_16(self):
         if self.partner_type == 'customer':
-            self._make_lines_so()
+            self._make_lines_so_new()
         if self.partner_type == 'supplier':
             self._make_lines_po_new()
             # if self.operation_wizard != '03':
@@ -2866,43 +3054,82 @@ class account_reconcile_order(models.Model):
                                 x.reconcile_order_line_id = line.id
 
 
+    def _make_lines_so_new(self):
+        self.ensure_one()
 
+        line_obj = self.env['account.reconcile.order.line']
+        line_no_obj = self.env['account.reconcile.order.line.no']
+        account_payment_state_obj = self.env['account.payment.state']
+        if self.yjzy_advance_payment_id:
+            yjzy_advance_payment_id = self.yjzy_advance_payment_id
+        else:
+            advance_payment_id = self.env.context.get('advance_payment_id') #从核销单上的预付单进行直接创建
+            yjzy_advance_payment_id = self.env['account.payment'].search([('id','=',advance_payment_id)])
+        account_payment_state_id = self.env.context.get('account_payment_state_id')
+        print('yjzy_advance_payment_id_akiny',yjzy_advance_payment_id)
+        print('le_akiny', len(self.line_ids), self.line_ids)
+        for invoice in self.invoice_ids:
+            po_invlines = self._prepare_sale_invoice_line(invoice)
+            print('po_invline_akiny',po_invlines)
+            if not po_invlines:
+                line = line_obj.create({
+                    'order_id': self.id,
+                    'invoice_id': invoice.id,
+                    'amount_invoice_so': invoice.amount_total,
+                })
+                line.amount_invoice_so_residual_d = line.amount_invoice_so_residual
+                line.amount_invoice_so_residual_can_approve_d = line.amount_invoice_so_residual_can_approve
+            else:
+                for so, invlines in po_invlines.items():
+                    if yjzy_advance_payment_id.so_id:
+                        if so.id == yjzy_advance_payment_id.so_id.id:
+                            yjzy_payment_id = yjzy_advance_payment_id.id
+                        else:
+                            yjzy_payment_id =False
+                    else:
+                        yjzy_payment_id = yjzy_advance_payment_id.id
+                    #如果前端加了限制，这个就可以不用了
 
-    #826
-        # so_po_dic = {}
-        # # print('line_obj', line_ids)
-        # self.line_no_ids = None
-        # yjzy_advance_payment_id = self.yjzy_advance_payment_id
-        # for i in self.line_ids:
-        #     invoice = i.invoice_id
-        #     amount_invoice_so = i.amount_invoice_so
-        #     advance_residual = i.advance_residual
-        #     order = i.order_id
-        #     yjzy_payment_id = i.yjzy_payment_id
-        #     print('yjzy_payment_id_1111111',yjzy_payment_id)
-        #     k = invoice.id
-        #     if k in so_po_dic:
-        #         print('k', k)
-        #         so_po_dic[k]['amount_invoice_so'] += amount_invoice_so
-        #         so_po_dic[k]['advance_residual'] += advance_residual
-        #         if not so_po_dic[k]['yjzy_payment_id']:
-        #             so_po_dic[k]['yjzy_payment_id'] = yjzy_payment_id.id
-        #     else:
-        #         print('k1', k)
-        #         so_po_dic[k] = {
-        #             'invoice_id': invoice.id,
-        #             'yjzy_payment_id':yjzy_payment_id.id,
-        #             'amount_invoice_so': amount_invoice_so,
-        #             'advance_residual': advance_residual, }
-        #
-        # for kk, data in list(so_po_dic.items()):
-        #     line_no = line_no_obj.create({
-        #         'order_id': self.id,
-        #         'invoice_id': data['invoice_id'],
-        #         'amount_invoice_so': data['amount_invoice_so'],
-        #         'advance_residual': data['advance_residual'],
-        #         'yjzy_payment_id': data['yjzy_payment_id']
-        #     })
+                    print('yjzy_payment_id_akiny',yjzy_payment_id)
+                    lines_same_count = len(self.line_ids.filtered(lambda x: (x.yjzy_payment_id.id == yjzy_payment_id and x.invoice_id.id == invoice.id) or
+                                                                            (x.yjzy_payment_id and not x.yjzy_payment_id.so_id)))
+                    print('line_same_count_akiny',lines_same_count,invoice.id)
+                    if yjzy_advance_payment_id.so_id:
+                        if (so.id == yjzy_advance_payment_id.so_id.id and lines_same_count == 0):
+                            line=line_obj.create({
+                                'order_id': self.id,
+                                'so_id': so.id,
+                                'invoice_id': invoice.id,
+                                'amount_invoice_so': sum([i.price_subtotal for i in invlines]),
+                                'yjzy_payment_id':yjzy_payment_id,
+                                'account_payment_state_id':account_payment_state_id
+                            })
+                            print('')
+                            line.amount_invoice_so_residual_d = line.amount_invoice_so_residual
+                            line.amount_invoice_so_residual_can_approve_d = line.amount_invoice_so_residual_can_approve
+                            self.compute_line_ids_advice_amount_advance_org()
+
+                            for x in self.account_payment_state_ids:
+                                if x.advance_payment_id.id == yjzy_payment_id:
+                                    x.amount_advance_balance_d = x.advance_payment_id.advance_balance_total
+                                    x.reconcile_order_line_id = line.id
+
+                    else:
+                        line=line_obj.create({
+                            'order_id': self.id,
+                            'so_id': so.id,
+                            'invoice_id': invoice.id,
+                            'amount_invoice_so': sum([i.price_subtotal for i in invlines]),
+                            'yjzy_payment_id': yjzy_payment_id,
+                            'account_payment_state_id': account_payment_state_id
+                        })
+                        line.amount_invoice_so_residual_d = line.amount_invoice_so_residual
+                        line.amount_invoice_so_residual_can_approve_d = line.amount_invoice_so_residual_can_approve
+
+                        for x in self.account_payment_state_ids:
+                            if x.advance_payment_id.id == yjzy_payment_id:
+                                x.amount_advance_balance_d = x.advance_payment_id.advance_balance_total
+                                x.reconcile_order_line_id = line.id
 
     #line_ids计算建议预付认领
     def compute_line_ids_advice_amount_advance_org(self):
@@ -3431,7 +3658,7 @@ class advance_payment_state(models.Model):
     reconcile_order_id = fields.Many2one('account.reconcile.order','认领单',ondelete='cascade')#手动写进来
     advance_payment_date = fields.Date('付款日期',related='advance_payment_id.payment_date')
     po_id = fields.Many2one('purchase.order',related='advance_payment_id.po_id')
-
+    so_id = fields.Many2one('sale.order',related='advance_payment_id.so_id')
     reconcile_order_line_id = fields.Many2one('account.reconcile.order.line','认领明细')  #错误：认领明细是一对多的关系。。
     reconcile_order_line_ids = fields.One2many('account.reconcile.order.line','account_payment_state_id')
     amount_payment = fields.Monetary(u'预收付款单余额',currency_field='advance_payment_currency',compute=compute_info)
@@ -3467,6 +3694,8 @@ class advance_payment_state(models.Model):
         self.state = 'reconcile'
         # self.amount_advance_balance_d = self.advance_payment_id.advance_balance_total
 
+
+
     def action_cancel_reconcile_line_ids(self):
         hxd_id = self.reconcile_order_id
         hxd_id = self.reconcile_order_id
@@ -3495,6 +3724,46 @@ class advance_payment_state(models.Model):
             'target':'new',
             'context': {'display_name_code':1,
                         }}
+
+    def open_wizard_renling_ysrld(self):
+        self.ensure_one()
+        ctx = self.env.context.copy()
+        invoice_ids = self.reconcile_order_id.invoice_ids
+        wizard_obj = self.env['wizard.renling.ysrld']
+        if self.so_id:
+            ctx.update({
+                'default_so_id': self.so_id.id,
+                'default_partner_id': self.reconcile_order_id.partner_id.id,
+                'default_yjzy_advance_payment_id': self.advance_payment_id.id,
+                'default_invoice_ids': invoice_ids.ids,
+                'default_invoice_attribute':self.reconcile_order_id.invoice_attribute,
+                'default_yjzy_type':self.reconcile_order_id.yjzy_type,
+                'default_invoice_type_main':self.reconcile_order_id.invoice_type_main,
+            })
+        else:
+            ctx.update({
+                'default_partner_id': self.reconcile_order_id.partner_id.id,
+                'default_yjzy_advance_payment_id': self.advance_payment_id.id,
+                'default_invoice_ids':invoice_ids.ids,
+                'default_invoice_attribute': self.reconcile_order_id.invoice_attribute,
+                'default_yjzy_type': self.reconcile_order_id.yjzy_type,
+                'default_invoice_type_main': self.reconcile_order_id.invoice_type_main,
+            })
+
+        wizard = wizard_obj.with_context(ctx).create()
+
+        form_view = self.env.ref('yjzy_extend.wizard_renling_ysrld_form')
+        return {
+            'name': '创建认领',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'wizard.renling.ysrld',
+            'views': [(form_view.id, 'form')],
+            # 'res_id': bill.id,
+            'target': 'new',
+            'type': 'ir.actions.act_window',
+            'context': ctx,
+        }
 
 
 

@@ -988,10 +988,10 @@
                     <group col="2" >
                         <group attrs="{'invisible':[('operation_wizard','not in',['03','20',25])]}">
                             <!--                        <div  colspan="2" attrs="{'invisible':[('operation_wizard','not in',['03'])]}" style="width:100%">-->
-                            <span colspan="2"  attrs="{'invisible':[('operation_wizard','not in',['03','20',25])]}"
-                                  style="font-weight:bolder; margin-bottom:5px"> <!---->
-                                本次账单
-                            </span>
+<!--                            <span colspan="2"  attrs="{'invisible':[('operation_wizard','not in',['03','20',25])]}"-->
+<!--                                  style="font-weight:bolder; margin-bottom:5px"> &lt;!&ndash;&ndash;&gt;-->
+<!--                                本次账单-->
+<!--                            </span>-->
 
                             <field  colspan="2" name="line_no_compute_ids" nolabel="1" readonly="1">
                                 <tree editable="bottom" create="false">
