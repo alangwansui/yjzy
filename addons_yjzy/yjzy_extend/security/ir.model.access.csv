@@ -43,6 +43,8 @@ access_purchase_order_stage,access_purchase_order_stage,model_purchase_order_sta
 access_back_tax_declaration_line,access_back_tax_declaration_line,model_back_tax_declaration_line,base.group_user,1,1,1,1
 access_account_payment_state,access_account_payment_state,model_account_payment_state,base.group_user,1,1,1,1
 access_real_invoice,access_real_invoice,model_real_invoice,base.group_user,1,1,1,1
+access_sys_invoice_line,access_sys_invoice_line,model_sys_invoice_line,base.group_user,1,1,1,1
+access_real_invoice_line,access_real_invoice_line,model_real_invoice_line,base.group_user,1,1,1,1
 
 
 
