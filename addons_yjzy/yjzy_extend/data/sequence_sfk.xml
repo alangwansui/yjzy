@@ -127,5 +127,12 @@
         <field name="padding">4</field>
         <field name="company_id" eval="False"/>
     </record>
+      <record id="seq_real_invoice_line" model="ir.sequence">
+        <field name="name">real.invoice.line</field>
+        <field name="code">real.invoice</field>
+        <field name="prefix">RIL</field>
+        <field name="padding">4</field>
+        <field name="company_id" eval="False"/>
+    </record>
 </odoo>
 
