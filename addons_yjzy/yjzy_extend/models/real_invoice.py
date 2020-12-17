@@ -165,6 +165,9 @@ class SysInvoiceLine(models.Model):
         self.write({'state':'05'})
         # self.state = '05'
         print('action_test',self.state)
+        self.certifying = False
+        print('action_test', self.certifying)
+
         self.real_invoice_line_id = False
 
 

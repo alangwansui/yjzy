@@ -382,7 +382,7 @@ class sale_order(models.Model):
     purchase_gongsi_id = fields.Many2one('gongsi', '内部采购公司')
     cip_type = fields.Selection([('normal', u'正常报关'), ('buy', u'买单报关'), ('none', '不报关')], string=u'报关',
                                 default='normal')
-    current_date_rate = fields.Float('当日汇率',group_operator=False)
+    current_date_rate = fields.Float('当日汇率',group_operator=False)#akiny参考group不汇总计算
     include_tax = fields.Boolean(u'含税')
     stock_cost = fields.Monetary(u'库存成本', currency_field='third_currency_id', compute=compute_info)
     commission_amount = fields.Monetary(u'经营计提金额', currency_field='third_currency_id', compute=compute_info)
