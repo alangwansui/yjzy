@@ -245,7 +245,8 @@
                 <header>
                     <button name="compute_advice_amount_advance_org" type="object" class="oe_highlight" string="计算建议预收认领金额" groups="base.group_system"/>
                     <button name="action_confirm_ysrld_stage" type="object" class="oe_highlight" string="确定认领" />
-                    <field name="state_1" statusbar_invisible=" " widget="statusbar"/>
+                    <field name="state_1" statusbar_visible=" " widget="statusbar"/>
+
                 </header>
                 <header invisible="context.get('open')" groups="base.group_system">
 

@@ -275,7 +275,7 @@ class wizard_renling(models.TransientModel):
                                          })
 
             # self.make_lines_so(yshxd_id)
-            stage_id = yshxd_id._stage_find(domain=[('code', '=', '015')])
+            stage_id = yshxd_id._stage_find(domain=[('code', '=', '035')])
             print('_stage_find',stage_id)
             yshxd_id.write({'stage_id': stage_id.id,
                             'state': 'posted',
