@@ -54,7 +54,7 @@
                                     </tree>
                                     <form>
                                         <groups>
-                                            <field name="real_invoice_id" invisible="1"/>
+                                            <field name="real_invoice_id" invisible="1" />
                                         <field name="real_invoice_date"/>
                                         <field name="real_invoice_partner" invisible="1"/>
                                         <field name="certification_amount"/>
@@ -69,7 +69,7 @@
                                 </field>
                             </group>
                                 <group>
-                            <field name="certification_invoice_ids" colspan="2" nolabel="1" >
+                            <field name="certification_invoice_ids" colspan="2" nolabel="1" readonly="1" >
                                 <tree decoration-danger ="state == '10'" decoration-bf="state=='20'" limit="10">
                                     <field name="real_invoice_line_id" invisible="1"/>
                                     <field name="invoice_id" string="账单"/>

@@ -11,12 +11,29 @@ class RealInvoice(models.Model):
     _description = '实际发票认证'
     _order = 'id desc'
 
+    # @api.depends('partner_id')
+    # def compute_invoice_ids(self):
+    #     for one in self:
+    #         if one.partner_id:
+    #             invoice_ids = self.env['account.invoice'].search([('partner_id','=',one.partner_id.id),('state','in',['open','paid'])],limit=100)
+    #             one.invoice_ids = invoice_ids
+
     @api.depends('partner_id')
-    def compute_invoice_ids(self):
-        for one in self:
-            if one.partner_id:
-                invoice_ids = self.env['account.invoice'].search([('partner_id','=',one.partner_id.id),('state','in',['open','paid'])],limit=100)
-                one.invoice_ids = invoice_ids
+    def compute_certification_invoice_ids(self):
+        if self.state == '05':
+            invoice_ids = self.env['account.invoice'].search(
+                [('partner_id', '=', self.partner_id.id), ('state', 'in', ['open', 'paid'])], )
+            # akiny参考
+            res = []
+            for one in invoice_ids:
+                res.append((0, 0, {
+                    'invoice_id': one.id,
+                    'amount': one.amount_total,
+                    'state': '05'
+                }))
+            self.certification_invoice_ids = res
+
+
 
 
 
@@ -30,7 +47,7 @@ class RealInvoice(models.Model):
     company_currency_id = fields.Many2one('res.currency', string='公司货币', related='company_id.currency_id',  readonly=True)
     company_id = fields.Many2one('res.company', string='Company',required=True, readonly=True,
                                  default=lambda self: self.env.user.company_id.id)
-    certification_invoice_ids = fields.One2many('sys.invoice.line','real_invoice_id',u'认证账单')
+    certification_invoice_ids = fields.One2many('sys.invoice.line','real_invoice_id',u'认证账单',compute=compute_certification_invoice_ids,store=True)
     # invoice_ids = fields.Many2many('account.invoice',u'待认证账单',)compute=compute_invoice_ids
 
 
@@ -43,31 +60,31 @@ class RealInvoice(models.Model):
     def action_state(self):
         line_ids = self.line_ids
         line_20_ids = self.line_ids.filtered(lambda x: x.state == '20')
+
         if len(line_20_ids) == 0:
             self.state = '05'
         elif len(line_20_ids) == len(line_ids):
             self.state = '20'
+            # state_line_no_20_ids.unlink()
         else:
             self.state = '10'
 
     @api.onchange('partner_id')
     def onchange_partner_id(self):
-        invoice_ids = self.env['account.invoice'].search(
-            [('partner_id', '=', self.partner_id.id), ('state', 'in', ['open', 'paid'])],)
-        #akiny参考
-        res = []
-        for one in invoice_ids:
-            res.append((0, 0, {
-                'invoice_id': one.id,
-                'amount':one.amount_total,
-                'state':'05'
-            }))
-        self.certification_invoice_ids = res
+        # invoice_ids = self.env['account.invoice'].search(
+        #     [('partner_id', '=', self.partner_id.id), ('state', 'in', ['open', 'paid'])],)
+        # #akiny参考
+        # res = []
+        # for one in invoice_ids:
+        #     res.append((0, 0, {
+        #         'invoice_id': one.id,
+        #         'amount':one.amount_total,
+        #         'state':'05'
+        #     }))
+        # self.certification_invoice_ids = res
 
         if self.line_ids:
-            for one in self.line_ids:
-                one.state = '05'
-            self.line_ids.unlink()
+            raise Warning('已经添加认证发票，无法更换供应商，请先删除认证发票')
 
         # certification_invoice_obj = self.env['sys.invoice.line']
             # certification_invoice_obj.create({'real_invoice_id': self.id,
