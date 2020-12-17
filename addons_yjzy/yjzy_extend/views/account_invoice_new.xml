@@ -371,6 +371,7 @@
                     <field name="extra_code" invisible="1"/>
                     <field name="partner_id" groups="base.group_user" string="供应商"/>
                     <field name="bill_id" string="合同号" invisible="0"/>
+                    <field name="current_date_rate" string="汇率"/>
                     <field name="tb_contract_code" string="合同号" widget="dynamic_popover_char" invisible="1"
                        options="{'max_width': '100px', 'line_clamp': '1', 'mode_mouse':'hover','popover_max_width':'200px','placement':'right'}"/>
 
