@@ -526,7 +526,7 @@
                         </page>
                         <page string="认领应收账单" attrs="{'invisible':[('operation_wizard','not in',['10','25','40'])]}">
                              <field name="line_no_ids"
-                                   attrs="{'readonly':[('state_1','not in',['draft','account_approval'])]}">
+                                   attrs="{'readonly':[('state_1','not in',['draft','account_approval','advance_approval_yshxd','account_approval_yshxd'])]}">
                             <tree editable="bottom" create="false">
                                     <field name="id" invisible="1"/>
                                     <field name="invoice_attribute" readonly="1"/>
