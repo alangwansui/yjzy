@@ -72,7 +72,7 @@
                      <button name="action_approve_stage" type="object" string="采购员审批"  class="highlight" attrs="{'invisible':[('state_1','!=','sales_approve')]}"/>
                      <button name="action_to_draft_stage" type="object" string="重置草稿" class="highlight" attrs="{'invisible':[('state_1','not in',['refused','cancel'])]}"/>
                      <button name="%(po_refuse_wizard_action)d" string="拒绝" type="action" attrs="{'invisible':[('state_1','in',['draft','refused','cancel'])]}"/>
-                     <button name="action_to_cancel_stage" string="取消" groups="base.group_system" type="object" attrs="{'invisible':[('state_1','not in',['draft','refused'])]}"/>
+                     <button name="action_to_cancel_stage" string="取消" type="object" confirm="确定取消吗？"  attrs="{'invisible':[('state_1','not in',['draft','refused'])]}"/>
                       <button name="compute_package_info" string="计算包装信息" type="object" class="oe_highlight"/>
                     <button name="open_wizard_po_box" string="生成箱号" type="object" class="oe_highlight"/>
                     <button name="clear_po_box" string="清除箱号" type="object" class="oe_highlight"/>

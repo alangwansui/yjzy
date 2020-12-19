@@ -1042,7 +1042,6 @@ class account_invoice(models.Model):
     #创建应收 等待定稿
     def create_yshxd_from_multi_invoice(self,attribute):
         print('invoice_ids', self.ids)
-
         state_draft = len(self.filtered(lambda x: x.state != 'open'))
         print('state_draft', state_draft)
         print('attribute',attribute)
@@ -1057,8 +1056,7 @@ class account_invoice(models.Model):
         name = self.env['ir.sequence'].next_by_code('sfk.type.%s' % sfk_type)
         journal = self.env['account.journal'].search(domain, limit=1)
         account_obj = self.env['account.account']
-        bank_account = account_obj.search([('code', '=', '10021'), ('company_id', '=', self.env.user.company_id.id)],
-                                          limit=1)
+        bank_account = account_obj.search([('code', '=', '10021'), ('company_id', '=', self.env.user.company_id.id)],limit=1)
         form_view = self.env.ref('yjzy_extend.account_yshxd_form_view_other_payment_simple')
         invoice_dic = []
         account_reconcile_order_obj = self.env['account.reconcile.order']
@@ -1071,14 +1069,6 @@ class account_invoice(models.Model):
             if one.amount_payment_can_approve_all != 0:  # 考虑已经提交审批的申请
                 invoice_dic.append(one.id)
         print('invoice_dic', invoice_dic)
-        # test = [(for x in line.yjzy_invoice_all_ids) for line in self)]
-        # invoice_ids = self.env['account.invoice'].search([('id','in',invoice_dic)])
-        # with_context(
-        #     {'fk_journal_id': 1, 'default_be_renling': 1, 'default_invoice_ids': invoice_dic,
-        #      'default_payment_type': 'outbound', 'show_so': 1, 'default_sfk_type': 'yfhxd', }).
-
-
-
         yshxd =self.env['account.reconcile.order'].create({
             'partner_id': self[0].partner_id.id,
             'manual_payment_currency_id': self[0].currency_id.id,
@@ -1100,7 +1090,6 @@ class account_invoice(models.Model):
             # 'invoice_partner': self[0].invoice_partner,
             # 'name_title': self[0].name_title
         })
-        # self.reconcile_order_id = yshxd
         yshxd.make_lines()
         if attribute == 'other_payment':
             for x in yshxd.line_no_ids:
@@ -1114,8 +1103,6 @@ class account_invoice(models.Model):
                 else:
                     x.amount_payment_org = x.amount_invoice_so_residual
             print('test_qeqwe',yshxd)
-            # yshxd.action_manager_approve_stage()
-
 
         return {
             'name': u'应收核销单',
@@ -1141,7 +1128,7 @@ class account_invoice(models.Model):
             hxd = self.with_context({'default_yjzy_payment_id':yjzy_payment_id}).create_yshxd_from_multi_invoice(ctx)
         return hxd
 
-    #1209定稿
+    #1209定稿 ok1218
     def create_yfhxd_from_multi_invoice(self,attribute):
         print('invoice_ids', self.ids)
         print('partner_id', len(self.mapped('partner_id')))
@@ -1172,26 +1159,13 @@ class account_invoice(models.Model):
                 'context': context,
             }
         print('akiny_test',len(self.mapped('invoice_attribute')),len(self.mapped('yjzy_type')),len(self.mapped('invoice_type_main')))
-
         if attribute != 'other_payment' and len(self.mapped('partner_id')) > 1:
             raise Warning('不同供应商')
         elif attribute == 'other_payment' and len(self) > 1:
             raise Warning('其他应付不允许多个一起申请付款')
-
-
         if state_draft >= 1:
             raise Warning('非确认账单不允许创建付款申请')
-        # x = []
-        # for l in self:
-        #     x |= l.invoice_attribute
-        # myset = set(x)
-        #
-        # print("ererew",myset)
-        #
-        # if len(self.mapped('invoice_attribute')) > 1 or len(self.mapped('yjzy_type')) > 1 or len(
-        #         self.mapped('invoice_type_main')) > 1:
-        #
-        #     raise Warning('不同类型的账单不允许一起申请！')
+
         sfk_type = 'yfhxd'
         domain = [('code', '=', 'yfdrl'), ('company_id', '=', self.env.user.company_id.id)]
         name = self.env['ir.sequence'].next_by_code('sfk.type.%s' % sfk_type)
@@ -1201,8 +1175,9 @@ class account_invoice(models.Model):
         form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new')
         invoice_dic = []
         account_reconcile_order_obj = self.env['account.reconcile.order']
-
         for one in self:
+            if one.amount_payment_can_approve_all == 0:
+                raise Warning('可申请付款金额为0，不允许提交！')
             for x in one.yjzy_invoice_wait_payment_ids:#参考M2M的自动多选  剩余应付金额！=0的额外账单
                 invoice_dic.append(x.id)
             print('amount_payment_can_approve_all_akiny', one.amount_payment_can_approve_all)
@@ -1231,8 +1206,7 @@ class account_invoice(models.Model):
             account_reconcile_id.operation_wizard = '10'
             account_reconcile_id.hxd_type_new = '40'
             stage_id = account_reconcile_id._stage_find(domain=[('code', '=', '030')])
-            account_reconcile_id.write({'stage_id': stage_id.id,
-                        })
+            account_reconcile_id.write({'stage_id': stage_id.id,})
             account_reconcile_id.make_lines()
         else:
             if account_reconcile_id.supplier_advance_payment_ids_count == 0: #如果相关的预付单数量=0，跳过第一步的预付认领
@@ -1241,9 +1215,10 @@ class account_invoice(models.Model):
                 account_reconcile_id.make_lines()
             else:
                 account_reconcile_id.operation_wizard = '03'
-                account_reconcile_id.hxd_type_new = '40'
+                # account_reconcile_id.hxd_type_new = '40'#以前是40 1218删除
+                account_reconcile_id.hxd_type_new = '30'
                 account_reconcile_id.make_lines()
-                account_reconcile_id.line_ids.unlink()
+                # account_reconcile_id.line_ids.unlink() 1218删除
                 account_reconcile_id.make_account_payment_state_ids()
 
         return {

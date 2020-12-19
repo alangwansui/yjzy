@@ -102,7 +102,7 @@ class sale_order(models.Model):
              purchase_balance_sum = sum(one.po_ids.mapped('balance'))
              one.purchase_balance_sum = purchase_balance_sum
     @api.one
-    @api.depends('po_ids_new.balance_new')
+    @api.depends('po_ids_new.balance_new','po_ids_new')
     def compute_purchase_balance3(self):
         for one in self:
             if one.state != 'verification':
@@ -119,7 +119,7 @@ class sale_order(models.Model):
             one.purchase_amount_total = purchase_amount_total
 
     @api.one
-    @api.depends('po_ids_new.amount_total')
+    @api.depends('po_ids_new.amount_total','po_ids_new')
     def compute_purchase_amount_total_new(self):
         for one in self:
             if one.state != 'verification':
@@ -138,7 +138,7 @@ class sale_order(models.Model):
 
     #13ok
     @api.one
-    @api.depends('po_ids_new.no_deliver_amount_new')
+    @api.depends('po_ids_new.no_deliver_amount_new','po_ids_new')
     def compute_purchase_no_deliver_amount_new(self):
         for one in self:
             if one.state != 'verification':

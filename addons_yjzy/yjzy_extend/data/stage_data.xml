@@ -178,6 +178,13 @@
             <field name="sequence" eval="15"/>
             <field name="state">draft_yshxd</field>
         </record>
+        <record model="account.reconcile.stage" id="stage_account_reconcile_draft_all">
+            <field name="name">待认领草稿</field>
+            <field name="code">017</field>
+            <field name="sequence" eval="17"/>
+            <field name="state">draft_all</field>
+        </record>
+
         <record model="account.reconcile.stage" id="stage_account_reconcile_advance_approval">
             <field name="name">预付款认领待审批</field>
             <field name="code">020</field>
@@ -214,6 +221,13 @@
             <field name="sequence" eval="45"/>
             <field name="state">manager_approval_yshxd</field>
         </record>
+         <record model="account.reconcile.stage" id="stage_account_reconcile_manager_approval_all">
+            <field name="name">认领待审批</field>
+            <field name="code">047</field>
+            <field name="sequence" eval="47"/>
+            <field name="state">manager_approval_all</field>
+        </record>
+
         <record model="account.reconcile.stage" id="stage_account_reconcile_post">
             <field name="name">未提交付款指令</field>
             <field name="code">050</field>

@@ -422,7 +422,7 @@
                         <button name="action_approve_stage" string="合规审批" type="object" class="oe_highlight"
                                 attrs="{'invisible':[('state_1','!=','sales_approve')]}"/>
                         <button name="%(so_refuse_wizard_action)d" string="拒绝" type="action"  attrs="{'invisible':[('state_1','in',['draft','cancel','refused'])]}"/>
-                        <button name="action_to_cancel_stage" string="取消" groups="base.group_system" type="object"  attrs="{'invisible':[('state_1','not in',['draft','refused'])]}"/>
+                        <button name="action_to_cancel_stage" string="取消" type="object" confirm="确定取消吗？"  attrs="{'invisible':[('state_1','not in',['draft','refused'])]}"/>
                         <button name="new_open_wizard_so2po" states="draft,send,sale" type="object"
                                 context="{'new': 1}" string="创建采购单:新"
                                 groups="sales_team.group_sale_assistant"/>
