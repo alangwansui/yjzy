@@ -1176,11 +1176,11 @@ class account_invoice(models.Model):
         invoice_dic = []
         account_reconcile_order_obj = self.env['account.reconcile.order']
         for one in self:
-            if one.amount_payment_can_approve_all == 0:
-                raise Warning('可申请付款金额为0，不允许提交！')
-            for x in one.yjzy_invoice_wait_payment_ids:#参考M2M的自动多选  剩余应付金额！=0的额外账单
-                invoice_dic.append(x.id)
-            print('amount_payment_can_approve_all_akiny', one.amount_payment_can_approve_all)
+            # if one.amount_payment_can_approve_all == 0:
+            #     raise Warning('可申请付款金额为0，不允许提交！')
+            # for x in one.yjzy_invoice_wait_payment_ids:#参考M2M的自动多选  剩余应付金额！=0的额外账单
+            #     invoice_dic.append(x.id)
+            # print('amount_payment_can_approve_all_akiny', one.amount_payment_can_approve_all)
             if one.amount_payment_can_approve_all != 0:  #考虑已经提交审批的申请
                 invoice_dic.append(one.id)
         print('invoice_dic',invoice_dic)
@@ -1205,8 +1205,8 @@ class account_invoice(models.Model):
         if account_reconcile_id.invoice_attribute in ['other_po', 'expense_po', 'other_payment']:
             account_reconcile_id.operation_wizard = '10'
             account_reconcile_id.hxd_type_new = '40'
-            stage_id = account_reconcile_id._stage_find(domain=[('code', '=', '030')])
-            account_reconcile_id.write({'stage_id': stage_id.id,})
+            # stage_id = account_reconcile_id._stage_find(domain=[('code', '=', '030')])
+            # account_reconcile_id.write({'stage_id': stage_id.id,})
             account_reconcile_id.make_lines()
         else:
             if account_reconcile_id.supplier_advance_payment_ids_count == 0: #如果相关的预付单数量=0，跳过第一步的预付认领
