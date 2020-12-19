@@ -209,7 +209,10 @@ class account_payment(models.Model):
         res = []
         for one in self:
             if ctx.get('default_sfk_type', '') == 'ysrld' or one.sfk_type == 'ysrld':
-                name = '%s:%s' % ('预收认领单', str(one.advance_balance_total))
+                if ctx.get('only_number'):
+                    name='%s' % (str(one.advance_balance_total))
+                else:
+                    name = '%s:%s' % ('预收认领单', str(one.advance_balance_total))
             elif ctx.get('default_sfk_type', '') == 'fkzl' or one.sfk_type == 'fkzl':
                 name = '%s:%s' % ('付款指令', one.name)
             elif ctx.get('default_sfk_type', '') == 'rcskd' or one.sfk_type == 'rcskd':
