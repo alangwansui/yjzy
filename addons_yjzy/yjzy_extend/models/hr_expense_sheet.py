@@ -534,6 +534,9 @@ class hr_expense_sheet(models.Model):
             raise Warning('请先选择付款账户！')
         if line_tb_id != 0:
             raise Warning('有费用明细未选择出运合同！')
+        if not self.bank_id.partner_id:
+            raise Warning('选择的收款账号非供应商对应账号，请检查！')
+        partner_id = self.bank_id.partner_id
 
         bill_id = self.expense_line_ids.mapped('tb_id')
         tb_po_id = self.env['tb.po.invoice'].create({'tb_id': bill_id and bill_id[0].id,
@@ -546,7 +549,7 @@ class hr_expense_sheet(models.Model):
                                                      'bank_id':self.bank_id.id,
                                                      'yjzy_type_1':'purchase',
                                                      'is_tb_hs_id':True,
-                                                     'partner_id':bill_id and bill_id[0].partner_id.id,
+                                                     'partner_id':partner_id.id,
                                                      })
 
         view = self.env.ref('yjzy_extend.tb_po_form')
