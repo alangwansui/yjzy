@@ -276,7 +276,7 @@
         <field name="arch" type="xml">
             <form string="应收认领单">
                 <header>
-                    <button name="compute_advice_amount_advance_org" type="object" class="oe_highlight"
+                    <button name="compute_line_ids_advice_amount_advance_org" type="object" class="oe_highlight"
                             string="计算建议预收认领金额" groups="base.group_system"/>
                     <button name="action_confirm_ysrld_stage" type="object" class="oe_highlight" string="确定认领"/>
                     <field name="state_1" statusbar_visible=" " widget="statusbar"/>
@@ -484,8 +484,8 @@
                                             type="object"/>
 
                                     <field name="amount_invoice_so_residual" invisible="1"/>
-                                    <field name="amount_invoice_so" string="原始应收款" readonly="1"/>
-
+                                    <field name="amount_invoice_so" string="原始应收款" readonly="1" invisible="1"/>
+                                    <field name="amount_total_invoice" string="原始应收款" readonly="1"/>
                                     <field name="invoice_residual"
                                            string="最新剩余应付款"
                                            invisible="1"/><!--attrs="{'column_invisible':[('parent.operation_wizard','not in',['10'])]}"-->
@@ -508,9 +508,9 @@
                                 </tree>
                             </field>
                             <field name="amount_total_org_new" string="本次认领金额"
-                                   attrs="{'invisible':[('operation_wizard','not in',['03','20','25'])]}"/>
+                                   attrs="{'invisible':[('operation_wizard','not in',['03','20','30'])]}"/>
                             <field name="amount_payment_can_approve_all_after" string="本次认领后可认领金额"
-                                   attrs="{'invisible':[('operation_wizard','not in',['03','20','25'])]}"/>
+                                   attrs="{'invisible':[('operation_wizard','not in',['03','20','30'])]}"/>
 
                         </group>
                         <group attrs="{'invisible':[('hxd_type_new','not in',['10','25'])]}">
@@ -656,7 +656,7 @@
                         </page>
                         <page string="本次预收认领明细"> <!--attrs="{'invisible':[('operation_wizard','not in',['20','30','40'])]}"-->
                             <field name="line_do_ids" context="{'invisible_so': partner_type == 'supplier'}">
-                                <tree editable="top" create="false">
+                                <tree editable="bottom" create="false">
                                     <field name="payment_type" invisible="1"/>
                                     <field name="partner_type" invisible="1"/>
                                     <field name="so_id" readonly="1"/>
@@ -679,17 +679,20 @@
                                     <field name="least_advice_amount_advance_org" string="最低预收认领"
                                            groups="base.group_system"/>
                                     <field name="amount_invoice_so" string="本次出运金额" invisible="0"/>
-                                    <field name="amount_invoice_so_residual" string="销售对应应收余额"/>
+                                    <field name="amount_invoice_so_residual" string="销售对应应收余额" invisible="1"/>
+                                    <field name="yjzy_payment_id" string="预收单"
+                                           domain="[('advance_balance_total','!=',0),('sfk_type','=','ysrld')]"
+                                           context="{'only_number':1,'form_view_ref': 'yjzy_extend.view_rcskd_form','advance_bank_amount':1}"/>
                                     <field name="advance_residual" string="销售总未认领预收"/>
                                     <field name="advance_residual2" string="采购总未认领预付" invisible="1"/>
-                                    <field name="amount_invoice_so_residual_d" string="本次认领前可认领金额" sum="小计"/>
-                                    <field name="amount_invoice_so_residual_d_after" string="本次认领后可认领金额" sum="小计"/>
+                                    <field name="amount_invoice_so_residual_d" string="本次认领前可认领金额" sum="小计" invisible="1"/>
+                                    <field name="amount_invoice_so_residual_d_after" string="本次认领后可认领金额" sum="小计" invisible="1"/>
 
                                     <field name="yjzy_currency_id" invisible="1"/>
                                     <field name="amount_advance_org" string="本次预收认领金额" sum="小计"
                                            attrs="{'column_invisible':[('parent.operation_wizard','not in',['20','30'])]}"/>
 
-                                    <field name="amount_payment_org" string="认领金额"
+                                    <field name="amount_payment_org" string="认领金额" invisible="1"
                                            attrs="{'column_invisible':[('parent.operation_wizard','not in',['10','30','25'])]}"/>
 
                                     <field name="amount_bank_org"
@@ -697,9 +700,7 @@
                                     <field name="amount_diff_org"
                                            attrs="{'column_invisible':[('parent.operation_wizard','not in',['40'])]}"/>
                                     <field name="amount_total_org" invisible="1"/>
-                                    <field name="yjzy_payment_id" string="预收单"
-                                           domain="[('advance_balance_total','!=',0),('sfk_type','=','ysrld')]"
-                                           context="{'form_view_ref': 'yjzy_extend.view_rcskd_form','advance_bank_amount':1}"/>
+
 
                                 </tree>
                             </field>
@@ -939,7 +940,7 @@
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="domain">[('sfk_type','=','yshxd'),('hxd_type_new','in',['25','20'])]</field>
-        <field name="context">{'hxd_type_new':'20','default_sfk_type': 'yshxd',
+        <field name="context">{'only_number':1,'hxd_type_new':'20','default_sfk_type': 'yshxd',
             'advance_so_amount':1,'default_payment_type': 'inbound', 'default_be_renling': 1, 'default_partner_type':
             'customer', 'show_so': 1}
         </field>

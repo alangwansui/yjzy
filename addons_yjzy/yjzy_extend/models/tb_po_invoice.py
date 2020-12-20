@@ -1408,16 +1408,16 @@ class tb_po_invoice(models.Model):
                     'price_unit':line_1.unit_amount,
                     'account_id':account.id
                 })
-
-            for line in self.hsname_all_ids:
-                hsname_all_line = hsname_all_line_obj.create({
-                                    'invoice_id': inv.id,
-                                    'hs_id': line.hs_id.id,
-                                    'hs_en_name':line.hs_en_name,
-                                    'purchase_amount2_add_this_time':line.purchase_amount2_add_this_time,
-                                    'tbl_hsname_all_id':line.hsname_all_line_id.id
-                })
-            # self.expense_sheet_id.invoice_id = inv
+            #1220 暂时取消这个，发票上明细不创建，那么就不会参与出运单的池子的计算
+            # for line in self.hsname_all_ids:
+            #     hsname_all_line = hsname_all_line_obj.create({
+            #                         'invoice_id': inv.id,
+            #                         'hs_id': line.hs_id.id,
+            #                         'hs_en_name':line.hs_en_name,
+            #                         'purchase_amount2_add_this_time':line.purchase_amount2_add_this_time,
+            #                         'tbl_hsname_all_id':line.hsname_all_line_id.id
+            #     })
+            # # self.expense_sheet_id.invoice_id = inv
             # form_view = self.env.ref('yjzy_extend.view_supplier_invoice_extra_po_form').id
             # return {
             #     'name': u'增加采购额外账单',

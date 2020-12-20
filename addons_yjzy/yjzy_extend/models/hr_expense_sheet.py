@@ -192,9 +192,9 @@ class hr_expense_sheet(models.Model):
     budget_type = fields.Selection("预算类型", related="categ_id.budget_type")
 
 
-    expense_line_ids_b = fields.One2many('hr.expense', related='expense_line_ids')
-    expense_line_ids_employee = fields.One2many('hr.expense', related='expense_line_ids')
-    expense_line_ids_company = fields.One2many('hr.expense', related='expense_line_ids')
+    # expense_line_ids_b = fields.One2many('hr.expense', related='expense_line_ids')
+    # expense_line_ids_employee = fields.One2many('hr.expense', related='expense_line_ids')
+    # expense_line_ids_company = fields.One2many('hr.expense', related='expense_line_ids')
     gongsi_id = fields.Many2one('gongsi', '内部公司',default=lambda self: self.env.user.company_id.gongsi_id)
 
     #akiny
@@ -546,6 +546,7 @@ class hr_expense_sheet(models.Model):
                                                      'bank_id':self.bank_id.id,
                                                      'yjzy_type_1':'purchase',
                                                      'is_tb_hs_id':True,
+                                                     'partner_id':bill_id and bill_id[0].partner_id.id,
                                                      })
 
         view = self.env.ref('yjzy_extend.tb_po_form')
@@ -566,6 +567,8 @@ class hr_expense_sheet(models.Model):
                 'hsname_all_line_id': hsl.id,
                 'back_tax': hsl.back_tax
             })
+        tb_po_id.hsname_all_ids[0].purchase_amount2_add_this_time = self.total_amount
+
         for line in self.expense_line_ids:
             product = line.product_id
             if product:

@@ -274,16 +274,16 @@ class wizard_renling(models.TransientModel):
                                          'hxd_type_new':hxd_type_new
 
                                          })
-
-            # self.make_lines_so(yshxd_id)
             stage_id = yshxd_id._stage_find(domain=[('code', '=', '015')])
             print('_stage_find',stage_id)
             yshxd_id.write({'stage_id': stage_id.id,
                             'state': 'posted',
                             # 'operation_wizard':'25'
                             })
-            yshxd_id.make_lines()
-            if self.renling_type == 'yshxd':#如果是应收核销，那么同时认领的话，就创建预收明细和删除line_ids
+            if self.renling_type != 'yshxd':
+                yshxd_id.make_lines()
+            else:
+                yshxd_id.make_line_no()
                 yshxd_id.make_account_payment_state_ids()
                 yshxd_id.operation_wizard = '30'
             form_view = self.env.ref('yjzy_extend.account_yshxd_form_view_new').id
@@ -301,7 +301,8 @@ class wizard_renling(models.TransientModel):
                             'bank_amount': 1,
                             'show_so': 1,
                             'open':1,
-                            'advance_so_amount': 1
+                            'advance_so_amount': 1,
+                            'only_number': 1,
                             }
 
             }

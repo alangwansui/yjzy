@@ -320,6 +320,11 @@ class sale_order(models.Model):
         stage = self.env['sale.order.stage']
         return stage.search([], limit=1)
 
+    @api.depends('hxd_ids', 'hxd_ids.amount_total_org_new')
+    def compute_amount_org_hxd(self):
+        for one in self:
+            one.amount_org_hxd = sum(x.amount_total_org_new for x in one.hxd_ids)
+
     stage_id = fields.Many2one(
         'sale.order.stage',
         default=_default_sale_order_stage,copy=False)
@@ -327,6 +332,9 @@ class sale_order(models.Model):
     state_1 = fields.Selection(Sale_Selection, u'审批流程', default='draft', index=True, related='stage_id.state',
                                track_visibility='onchange')  # 费用审批流程
 
+    hxd_ids = fields.One2many('account.reconcile.order.line', 'po_id', '所有已经批准的核销单',
+                              domain=[('order_id.state_1', 'in', ['done', 'post'])])
+    amount_org_hxd = fields.Float('核销单的付款金额总和', compute=compute_amount_org_hxd, store=True)
     #货币设置
     #1013
     jituan_id = fields.Many2one('ji.tuan','集团',compute=compute_jituan,store=True)
