@@ -232,9 +232,11 @@ class wizard_renling(models.TransientModel):
             sfk_type = 'yshxd'
             yjzy_type = 'sale'
             hxd_type_new = '25' #同时认领
+            operation_wizard = '30'
             # hxd_type_new = '20'  #单独认领收款-应收
         elif self.renling_type == 'back_tax':
             invoice_attribute = 'normal'
+            operation_wizard = '20'
             sfk_type = 'yshxd'
             yjzy_type = 'back_tax'
             back_tax_declaration_id = self.btd_id.id
@@ -244,8 +246,10 @@ class wizard_renling(models.TransientModel):
             sfk_type = 'yshxd'
             yjzy_type = 'other_payment_sale'
             hxd_type_new = '20'
+            operation_wizard = '20'
         else:
             invoice_attribute = False
+            operation_wizard = '10'
             sfk_type = 'ysrld'
 
         yshxd_obj = self.env['account.reconcile.order']
@@ -260,7 +264,7 @@ class wizard_renling(models.TransientModel):
         if self.renling_type in ['yshxd','back_tax','other_payment']:
             yshxd_id = yshxd_obj.with_context({'default_invoice_ids':invoice_ids}).create({
                                          'name': name,
-                                         'operation_wizard': '10',
+                                         'operation_wizard': operation_wizard,
                                          'partner_id': self.partner_id.id,
                                          'sfk_type': 'yshxd',
                                          'renling_type':self.renling_type,
@@ -274,18 +278,26 @@ class wizard_renling(models.TransientModel):
                                          'hxd_type_new':hxd_type_new
 
                                          })
-            stage_id = yshxd_id._stage_find(domain=[('code', '=', '015')])
-            print('_stage_find',stage_id)
-            yshxd_id.write({'stage_id': stage_id.id,
-                            'state': 'posted',
-                            # 'operation_wizard':'25'
-                            })
+
             if self.renling_type != 'yshxd':
                 yshxd_id.make_lines()
+                yshxd_id.operation_wizard = '20'
+                stage_id = yshxd_id._stage_find(domain=[('code', '=', '030')])
+                print('_stage_find', stage_id)
+                yshxd_id.write({'stage_id': stage_id.id,
+                                'state': 'posted',
+                                # 'operation_wizard':'25'
+                                })
             else:
                 yshxd_id.make_line_no()
                 yshxd_id.make_account_payment_state_ids()
                 yshxd_id.operation_wizard = '30'
+                stage_id = yshxd_id._stage_find(domain=[('code', '=', '015')])
+                print('_stage_find', stage_id)
+                yshxd_id.write({'stage_id': stage_id.id,
+                                'state': 'posted',
+                                # 'operation_wizard':'25'
+                                })
             form_view = self.env.ref('yjzy_extend.account_yshxd_form_view_new').id
             return {
                 'name': '应收认领单',
