@@ -485,7 +485,7 @@
 
                                     <field name="amount_invoice_so_residual" invisible="1"/>
                                     <field name="amount_invoice_so" string="原始应收款" readonly="1" invisible="1"/>
-                                    <field name="amount_total_invoice" string="原始应收款" readonly="1"/>
+                                    <field name="invoice_amount_total" string="原始应收款" readonly="1"/>
                                     <field name="invoice_residual"
                                            string="最新剩余应付款"
                                            invisible="1"/><!--attrs="{'column_invisible':[('parent.operation_wizard','not in',['10'])]}"-->
