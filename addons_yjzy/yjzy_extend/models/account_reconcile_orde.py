@@ -597,6 +597,7 @@ class account_reconcile_order(models.Model):
     line_ids = fields.One2many('account.reconcile.order.line', 'order_id', u'明细', )
     line_do_ids = fields.One2many('account.reconcile.order.line', 'order_id', u'明细', domain=[('yjzy_payment_id','!=',False)])
     line_no_ids = fields.One2many('account.reconcile.order.line.no', 'order_id',u'明细')
+    line_no_other_ids = fields.One2many('account.reconcile.order.line.no', 'order_id', u'明细')
     line_no_compute_ids = fields.One2many('account.reconcile.order.line.no', compute=compute_line_no_compute_ids, string='本次认领账单')
     move_ids = fields.One2many('account.move', 'reconcile_order_id', u'分录')
 

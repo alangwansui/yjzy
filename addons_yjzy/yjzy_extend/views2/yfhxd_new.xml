@@ -357,7 +357,10 @@
                                            attrs="{'column_invisible':[('parent.hxd_type_new','not in',['10','30'])]}"/>
                                     <field name="invoice_id_po_ids" widget="many2many_tags" string="采购合同" invisible="1"
                                            attrs="{'column_invisible':[('parent.invoice_attribute','in',['other_payment'])]}"/>
-                                    <field name="amount_invoice_so" string="原始应付款" readonly="1"/>
+
+                                    <field name="amount_invoice_so" string="原始应付款款" readonly="1" invisible="1"/>
+                                    <field name="invoice_amount_total" string="原始应付款" readonly="1"/>
+
                                     <field name="invoice_residual" string="剩余应付款"
                                     /><!--attrs="{'column_invisible':[('parent.operation_wizard','not in',['10'])]}"-->
                                     <field name="payment_currency_id" invisible="1"/>
@@ -1002,7 +1005,9 @@
                                             type="object"/>
 
                                     <field name="amount_invoice_so_residual" invisible="1"/>
-                                    <field name="amount_invoice_so" string="原始应付款" readonly="1"/>
+
+                                    <field name="amount_invoice_so" string="原始应付款" readonly="1" invisible="1"/>
+                                    <field name="invoice_amount_total" string="原始应付款" readonly="1"/>
 
                                     <field name="invoice_residual"
                                            string="最新剩余应付款" invisible="1"/><!--attrs="{'column_invisible':[('parent.operation_wizard','not in',['10'])]}"-->
@@ -1231,7 +1236,7 @@
                                            attrs="{'column_invisible':[('parent.operation_wizard','not in',['25'])],'readonly':[('parent.state_1','not in',['draft'])]}"/>
                                     <field name="amount_payment_org" string="申请付款金额"
                                            attrs="{'column_invisible':[('parent.operation_wizard','not in',['10'])]}"/>
-                                    <field name="amount_advance_org_compute" string="申请预付金额"/>
+                                    <field name="amount_advance_org_compute" string="申请预付金额"  attrs="{'column_invisible':[('parent.hxd_type_new','not in',['10','30'])]}"/>
                                     <field name="amount_diff_org"
                                            attrs="{'column_invisible':[('parent.operation_wizard','not in',['40'])]}"/>
                                     <field name="currency_id" invisible="1"/>
