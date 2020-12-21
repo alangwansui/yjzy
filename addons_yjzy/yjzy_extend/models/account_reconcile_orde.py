@@ -3376,18 +3376,18 @@ class advance_payment_state(models.Model):
         if hxd_id.sfk_type == 'yfhxd':
             if advance_payment_id.id not in yjzy_payment_id_lines.ids:
                 self._make_lines_po()
-                line_do_ids= hxd_id.line_ids.filtered(lambda x: x.yjzy_payment_id.id != False)
-                print('line_do_ids_akiny',line_do_ids)
-                hxd_id.line_do_ids = line_do_ids
+                # line_do_ids= hxd_id.line_ids.filtered(lambda x: x.yjzy_payment_id.id != False)
+                # print('line_do_ids_akiny',line_do_ids)
+                # hxd_id.line_do_ids = line_do_ids
                 hxd_id.compute_line_ids_advice_amount_advance_org()
         if hxd_id.sfk_type == 'yshxd':
             if advance_payment_id.id not in yjzy_payment_id_lines.ids:
                 self._make_lines_so()
                 # line_do_ids = self.env['account.reconcile.order.line'].search(
                 #     [('yjzy_payment_id', '!=', False), ('order_id', '=', hxd_id.id)])
-                line_do_ids = hxd_id.line_ids.filtered(lambda x: x.yjzy_payment_id.id != False)
-                print('line_do_ids_akiny', line_do_ids)
-                hxd_id.line_do_ids = line_do_ids
+                # line_do_ids = hxd_id.line_ids.filtered(lambda x: x.yjzy_payment_id.id != False)
+                # print('line_do_ids_akiny', line_do_ids)
+                # hxd_id.line_do_ids = line_do_ids
                 hxd_id.compute_line_ids_advice_amount_advance_org()
         self.state = 'reconcile'
 
@@ -3432,6 +3432,8 @@ class advance_payment_state(models.Model):
                     'invoice_id': invoice.id,
                     'amount_invoice_so': invoice.amount_total,
                 })
+
+                self.reconcile_order_id.write({'line_do_ids': [(4, line.id)]})
                 line.amount_invoice_so_residual_d = line.amount_invoice_so_residual
                 line.amount_invoice_so_residual_can_approve_d = line.amount_invoice_so_residual_can_approve
             else:
@@ -3451,6 +3453,9 @@ class advance_payment_state(models.Model):
                         'yjzy_payment_id': yjzy_payment_id,
                         'account_payment_state_id':self.id
                     })
+                    print('yjzy_payment_id_akiny', yjzy_payment_id)
+                    if yjzy_payment_id != False:
+                        self.reconcile_order_id.write({'line_do_ids': [(4, line.id)]})
                     line.amount_invoice_so_residual_d = line.amount_invoice_so_residual
                     line.amount_invoice_so_residual_can_approve_d = line.amount_invoice_so_residual_can_approve
 
@@ -3475,6 +3480,7 @@ class advance_payment_state(models.Model):
                     'invoice_id': invoice.id,
                     'amount_invoice_so': invoice.amount_total,
                 })
+                self.reconcile_order_id.write({'line_do_ids': [(4, line.id)]})
                 line.amount_invoice_so_residual_d = line.amount_invoice_so_residual
                 line.amount_invoice_so_residual_can_approve_d = line.amount_invoice_so_residual_can_approve
             else:
@@ -3494,8 +3500,12 @@ class advance_payment_state(models.Model):
                         'yjzy_payment_id': yjzy_payment_id,
                         'account_payment_state_id': self.id
                     })
+                    print('yjzy_payment_id_akiny',yjzy_payment_id)
+                    if yjzy_payment_id != False:
+                        self.reconcile_order_id.write({'line_do_ids':[(4,line.id)]})
                     line.amount_invoice_so_residual_d = line.amount_invoice_so_residual
                     line.amount_invoice_so_residual_can_approve_d = line.amount_invoice_so_residual_can_approve
+
         if not order_id.line_no_ids:
             order_id.make_line_no()
 
