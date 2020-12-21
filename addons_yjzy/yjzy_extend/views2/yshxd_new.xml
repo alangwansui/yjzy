@@ -659,7 +659,7 @@
                         </page>
                         <page string="本次预收认领明细" attrs="{'invisible':[('invoice_attribute','not in',['normal'])]}"> <!---->
                             <field name="line_do_ids" context="{'invisible_so': partner_type == 'supplier'}">
-                                <tree editable="bottom" create="false">
+                                <tree editable="bottom" create="false" >
                                     <field name="payment_type" invisible="1"/>
                                     <field name="partner_type" invisible="1"/>
                                     <field name="so_id" readonly="1"/>
@@ -730,9 +730,9 @@
                                     <!--field name="diff_currency_id"/-->
                                     <field name="currency_id" invisible="1"/>
                                     <field name="advice_amount_advance_org_real" string="建议预收认领"
-                                           groups="base.group_system"/>
+                                           />
                                     <field name="least_advice_amount_advance_org" string="最低预收认领"
-                                           groups="base.group_system"/>
+                                           />
                                     <field name="amount_invoice_so" string="本次出运金额" invisible="0"/>
                                     <field name="amount_invoice_so_residual" string="销售对应应收余额"/>
                                     <field name="advance_residual" string="预收余额"/>
