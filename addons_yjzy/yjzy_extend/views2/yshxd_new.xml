@@ -678,9 +678,9 @@
                                     <!--field name="diff_currency_id"/-->
                                     <field name="currency_id" invisible="1"/>
                                     <field name="advice_amount_advance_org_real" string="建议预收认领"
-                                           groups="base.group_system"/>
+                                           />
                                     <field name="least_advice_amount_advance_org" string="最低预收认领"
-                                           groups="base.group_system"/>
+                                           />
                                     <field name="amount_invoice_so" string="本次出运金额" invisible="0"/>
                                     <field name="amount_invoice_so_residual" string="销售对应应收余额" invisible="1"/>
                                     <field name="yjzy_payment_id" string="预收单"
