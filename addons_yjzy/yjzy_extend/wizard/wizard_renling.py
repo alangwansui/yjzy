@@ -236,7 +236,7 @@ class wizard_renling(models.TransientModel):
             # hxd_type_new = '20'  #单独认领收款-应收
         elif self.renling_type == 'back_tax':
             invoice_attribute = 'normal'
-            operation_wizard = '20'
+            operation_wizard = '10'
             sfk_type = 'yshxd'
             yjzy_type = 'back_tax'
             back_tax_declaration_id = self.btd_id.id
@@ -246,7 +246,7 @@ class wizard_renling(models.TransientModel):
             sfk_type = 'yshxd'
             yjzy_type = 'other_payment_sale'
             hxd_type_new = '20'
-            operation_wizard = '20'
+            operation_wizard = '10'
         else:
             invoice_attribute = False
             operation_wizard = '10'

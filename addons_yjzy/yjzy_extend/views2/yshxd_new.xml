@@ -637,7 +637,7 @@
                             </field>
                         </page>
 
-                        <page string="认领应收账单"  attrs="{'invisible':[('invoice_attribute','in',['normal'])]}">
+                        <page string="认领应收账单"  attrs="{'invisible':[('yjzy_type','not in',['back_tax','other_payment_sale'])]}">
                             <field name="line_no_other_ids">
                                 <tree  editable="bottom" create="false">
                                 <field name="invoice_id" readonly="1" string="应收账单"/>

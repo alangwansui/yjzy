@@ -470,6 +470,10 @@ class tb_po_invoice(models.Model):
     def action_submit(self):
         self.state = '20_submit'
         if self.type == 'other_po':
+            if self.purchase_amount2_add_this_time_total == 0:
+                raise Warning('增加采购金额为0！')
+            if self.partner_id == False:
+                raise Warning('请选择新增对象供应行')
             self.apply()
         if self.type == 'expense_po':
             self.apply()

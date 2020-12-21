@@ -77,7 +77,7 @@
             </field>
         </record>
 
-         <record id="tb_po_invoice_other_payment_in_tree" model="ir.ui.view">
+        <record id="tb_po_invoice_other_payment_in_tree" model="ir.ui.view">
             <field name="name">tb.po.other.payment.tree</field>
             <field name="model">tb.po.invoice</field>
             <field name="arch" type="xml">
@@ -105,14 +105,14 @@
                     <field name="partner_id"/>
                     <field name="yjzy_invoice_residual_amount" invisible="1"/>
                     <field name="yjzy_invoice_include_tax" invisible="1"/>
-                    <field name="purchase_amount2_add_this_time_total" /><!--invisible="context.get('done')"-->
-                    <field name="p_s_add_this_time_refund" />
-                    <field name="p_s_add_this_time_extra_total" />
-                    <field name="back_tax_add_this_time_total" />
-                    <field name="po_add_residual" /><!--invisible="not context.get('done')"-->
-                    <field name="p_s_add_residual" />
-                    <field name="back_tax_add_residual" />
-                    <field name="p_s_add_refund_residual" />
+                    <field name="purchase_amount2_add_this_time_total"/><!--invisible="context.get('done')"-->
+                    <field name="p_s_add_this_time_refund"/>
+                    <field name="p_s_add_this_time_extra_total"/>
+                    <field name="back_tax_add_this_time_total"/>
+                    <field name="po_add_residual"/><!--invisible="not context.get('done')"-->
+                    <field name="p_s_add_residual"/>
+                    <field name="back_tax_add_residual"/>
+                    <field name="p_s_add_refund_residual"/>
                     <field name="create_date"/>
                     <field name="yjzy_invoice_id"/>
                 </tree>
@@ -128,7 +128,8 @@
                     <field name="partner_id"/>
                     <field name="yjzy_invoice_residual_amount" invisible="1"/>
                     <field name="yjzy_invoice_include_tax" invisible="1"/>
-                    <field name="purchase_amount2_add_this_time_total" string="货款金额"/><!--invisible="context.get('done')"-->
+                    <field name="purchase_amount2_add_this_time_total"
+                           string="货款金额"/><!--invisible="context.get('done')"-->
                     <field name="p_s_add_this_time_refund" invisible="1"/>
                     <field name="p_s_add_this_time_extra_total" invisible="1"/>
                     <field name="back_tax_add_this_time_total" string="退税金额"/>
@@ -185,16 +186,20 @@
                                 </div>
                             </group>
                             <group>
-                                 <field name="partner_id" string="新增供应商" attrs="{'required':[('type','in',['other_po','expense_po'])]}"
+                                <field name="partner_id" string="新增供应商"
+                                       attrs="{'required':[('type','in',['other_po','expense_po'])]}"
                                        domain="[('supplier', '=', True),('is_company','=',True)]"/>
-                                <field name="tax_rate_add" string="税点" attrs="{'invisible':[('type','!=','other_po')]}"/>
-                                <field name="expense_tax_algorithm" widget="radio" options="{'horizontal': true}" attrs="{'invisible':[('type','!=','other_po')]}"/>
+                                <field name="tax_rate_add" string="税点"
+                                       attrs="{'invisible':[('type','!=','other_po')]}"/>
+                                <field name="expense_tax_algorithm" widget="radio" options="{'horizontal': true}"
+                                       attrs="{'invisible':[('type','!=','other_po')]}"/>
                             </group>
                             <group col="1">
                                 <group>
                                     <field name="yjzy_invoice_include_tax" string="原始采购含税" attrs="{'invisible':1}"/>
                                     <field name="purchase_amount2_add_this_time_total" string="本次增加应付"/>
-                                    <field name="expense_tax" string="本次产生税费" attrs="{'invisible':[('type','!=','other_po')]}"/>
+                                    <field name="expense_tax" string="本次产生税费"
+                                           attrs="{'invisible':[('type','!=','other_po')]}"/>
                                 </group>
                                 <group style="border-top:1px #6C6A6A solid;border-bottom:1px #6C6A6A solid;margin-top:-10px;"
                                        attrs="{'invisible':[('type','=','expense_po')]}">
@@ -337,7 +342,7 @@
                                     <field name="product_zyywsr" attrs="{'invisible':0}"/>
                                     <field name="product_qtysk" attrs="{'invisible':0}"/>
                                     <field name="product_back_tax" attrs="{'invisible':0}"/>
-                                     <field name="yjzy_type_1"/>
+                                    <field name="yjzy_type_1"/>
                                 </group>
                             </page>
                         </notebook>
@@ -356,179 +361,224 @@
             <field name="model">tb.po.invoice</field>
             <field name="arch" type="xml">
                 <form string="添加采购金额" create="false">
-                    <header attrs="{'invisible':[('type','=','expense_po')]}">
-                        <button name="action_submit" states="10_draft" class="oe_highlight" type='object' invisible="context.get('open')"
+                    <header  attrs="{'invisible':[('type','=','expense_po')]}" invisible="context.get('open')">
+                        <button name="action_submit" states="10_draft" class="oe_highlight" type='object'
+                                invisible="context.get('open')"
                                 string="提交"/>
-                        <button name="action_draft" states="80_refuse" class="oe_highlight" type="object" string="重置草稿" invisible="context.get('open')"/>
+                        <button name="action_draft" states="80_refuse" class="oe_highlight" type="object" string="重置草稿"
+                                invisible="context.get('open')"/>
                         <button name="action_manager_approve" states="20_submit" class="oe_highlight" type='object'
-                                string="总经理审批"/>
-                        <button name="%(tb_po_invoice_refuse_wizard_action)d" string="拒绝" type="action" attrs="{'invisible':[('state','in',['10_draft','80_refuse','90_cancel'])]}"/>
+                                string="总经理审批" invisible="context.get('open')"/>
+                        <button name="%(tb_po_invoice_refuse_wizard_action)d" string="拒绝" type="action" invisible="context.get('open')"
+                                attrs="{'invisible':[('state','in',['10_draft','80_refuse','90_cancel'])]}"/>
                         <button name="apply_expense_sheet" class="oe_highlight" type='object' groups="base.group_system"
                                 string="费用确认" attrs="{'invisible':[('type','!=','expense_po')]}"/>
                         <button name="apply" class="oe_highlight" type='object' string="确认" groups="base.group_system"
                                 attrs="{'invisible':[('type','!=','other_po')]}"/>
-                        <button name="action_cancel" class="oe_highlight" groups="base.group_system" string="取消" invisible="context.get('open')"/>
-                        <button name="make_extra_invoice" type="object" string="创建额外账单" groups="base.group_system" invisible="1"/>
-                        <button name="create_tb_po_invoice" type="object" string="创建其他应收申请" attrs="{'invisible':['|','|','|','|',('is_yjzy_tb_po_invoice_parent','=',True),('yjzy_type_1','in',['sale','other_payment_sale']),('is_yjzy_tb_po_invoice','=',True),('type','!=','other_payment'),('state','!=','10_draft')]}"/>
-                        <button name="create_tb_po_invoice" type="object" string="创建其他应付申请" context="{'open_other':1}" attrs="{'invisible':['|','|','|','|',('is_yjzy_tb_po_invoice_parent','=',True),('yjzy_type_1','in',['purchase','other_payment_purchase']),('is_yjzy_tb_po_invoice','=',True),('type','!=','other_payment'),('state','!=','10_draft')]}"/>
-                        <button name="delete_tb_po_invoice" type="object" string="删除其他应收申请" attrs="{'invisible':['|','|','|',('yjzy_type_1','in',['sale','other_payment_sale']),('is_yjzy_tb_po_invoice','=',False),('type','!=','other_payment'),('state','!=','10_draft')]}"/>
-                        <button name="delete_tb_po_invoice" type="object" string="删除其他应付申请" context="{'open_delete':1}" attrs="{'invisible':['|','|','|',('yjzy_type_1','in',['purchase','other_payment_purchase']),('is_yjzy_tb_po_invoice','=',False),('type','!=','other_payment'),('state','!=','10_draft')]}"/>
+                        <button name="action_cancel" class="oe_highlight" groups="base.group_system" string="取消"
+                                invisible="context.get('open')"/>
+                        <button name="make_extra_invoice" type="object" string="创建额外账单" groups="base.group_system"
+                                invisible="1"/>
+                        <button name="create_tb_po_invoice" type="object" string="创建其他应收申请"
+                                attrs="{'invisible':['|','|','|','|',('is_yjzy_tb_po_invoice_parent','=',True),('yjzy_type_1','in',['sale','other_payment_sale']),('is_yjzy_tb_po_invoice','=',True),('type','!=','other_payment'),('state','!=','10_draft')]}"/>
+                        <button name="create_tb_po_invoice" type="object" string="创建其他应付申请" context="{'open_other':1}"
+                                attrs="{'invisible':['|','|','|','|',('is_yjzy_tb_po_invoice_parent','=',True),('yjzy_type_1','in',['purchase','other_payment_purchase']),('is_yjzy_tb_po_invoice','=',True),('type','!=','other_payment'),('state','!=','10_draft')]}"/>
+                        <button name="delete_tb_po_invoice" type="object" string="删除其他应收申请"
+                                attrs="{'invisible':['|','|','|',('yjzy_type_1','in',['sale','other_payment_sale']),('is_yjzy_tb_po_invoice','=',False),('type','!=','other_payment'),('state','!=','10_draft')]}"/>
+                        <button name="delete_tb_po_invoice" type="object" string="删除其他应付申请" context="{'open_delete':1}"
+                                attrs="{'invisible':['|','|','|',('yjzy_type_1','in',['purchase','other_payment_purchase']),('is_yjzy_tb_po_invoice','=',False),('type','!=','other_payment'),('state','!=','10_draft')]}"/>
 
                         <field name="state" widget="statusbar" statusbar_visible=" "/>
                     </header>
                     <sheet>
-<!--                        <div class="oe_button_box" name="button_box">-->
-<!--                            <button class="oe_stat_button" type="object" string="对应应收账单"-->
-<!--                                    attrs="{'invisible':[('yjzy_tb_po_invoice','=',False)]}"-->
-<!--                                    name="open_tb_yjzy_po_invoice_open"-->
-<!--                                    icon="fa-usd">-->
+                        <!--                        <div class="oe_button_box" name="button_box">-->
+                        <!--                            <button class="oe_stat_button" type="object" string="对应应收账单"-->
+                        <!--                                    attrs="{'invisible':[('yjzy_tb_po_invoice','=',False)]}"-->
+                        <!--                                    name="open_tb_yjzy_po_invoice_open"-->
+                        <!--                                    icon="fa-usd">-->
 
-<!--                            </button>-->
-<!--                        </div>-->
+                        <!--                            </button>-->
+                        <!--                        </div>-->
 
 
-
-<!--                        label for="is_tb_hs_id" string="转换货款" class="oe_avatar" attrs="{'invisible':[('type','in',['other_po','expense_po'])]}"/-->
-<!--                        field name="is_tb_hs_id" class="oe_avatar" widget="boolean_toggle"  attrs="{'invisible':[('type','in',['other_po','expense_po'])]}"/-->
+                        <!--                        label for="is_tb_hs_id" string="转换货款" class="oe_avatar" attrs="{'invisible':[('type','in',['other_po','expense_po'])]}"/-->
+                        <!--                        field name="is_tb_hs_id" class="oe_avatar" widget="boolean_toggle"  attrs="{'invisible':[('type','in',['other_po','expense_po'])]}"/-->
 
 
                         <div class="oe_title" attrs="{'invisible':[('type','=','other_payment')]}">
-                        <label for="name" string="申请单号" class="oe_edit_only"/>
-                        <h1>
-                            <field name="name" readonly="1"/>
-                        </h1>
-                    </div>
-<!--                        div class="oe_title" attrs="{'invisible':[('type','!=','other_payment')]}" invisible="1">-->
-<!--                        <label for="name_title" string="收入摘要" class="oe_edit_only"/>-->
-<!--                        <h1>-->
-<!--                            <field name="name_title" placeholder="e.g. Trip to NY" attrs="{'required':[('type','=','other_payment')]}"/>-->
-<!--                        </h1>-->
-<!--                    </div>-->
+                            <label for="name" string="申请单号" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name" readonly="1"/>
+                            </h1>
+                        </div>
+                        <!--                        div class="oe_title" attrs="{'invisible':[('type','!=','other_payment')]}" invisible="1">-->
+                        <!--                        <label for="name_title" string="收入摘要" class="oe_edit_only"/>-->
+                        <!--                        <h1>-->
+                        <!--                            <field name="name_title" placeholder="e.g. Trip to NY" attrs="{'required':[('type','=','other_payment')]}"/>-->
+                        <!--                        </h1>-->
+                        <!--                    </div>-->
                         <group col="3">
                             <group attrs="{'invisible':[('is_tb_hs_id','=',False)]}">
 
                                 <field name="tb_id" domain="[('back_tax_invoice_balance_new','!=',0)]"
-                                       attrs="{'invisible':[('is_tb_hs_id','=',False)]}"
+                                       attrs="{'invisible':[('is_tb_hs_id','=',False)],'readonly':[('state','!=','10_draft')]}"
                                        context="{'min_add':1,'not_show_partner':1,'form_view_ref':'yjzy_extend.view_transport_bill_declare_po_form'}"/>
-                                <field name="tb_id_po_supplier" string="原始供应商" attrs="{'invisible':[('type','not in',['other_po','expense_po'])]}"/>
+                                <field name="tb_id_po_supplier" string="原始供应商"
+                                       attrs="{'invisible':[('type','not in',['other_po','expense_po'])]}"/>
                                 <field name="expense_sheet_id" attrs="{'invisible':[('type','!=','expense_po')]}"
                                        domain="[('state','in',['account_approval','manager_approval','approval'])]"/>
                                 <field name="invoice_product_id" attrs="{'invisible':1}"/>
-                                <field name="yjzy_invoice_id" string="原始账单" attrs="{'invisible':[('type','!=','extra')]}"/>
-                                <field name="yjzy_invoice_residual_amount" string="原始未付金额" attrs="{'invisible':['|',('yjzy_invoice_id','=',False),('type','not in',['other_po','extra'])]}"/>
+                                <field name="yjzy_invoice_id" string="原始账单"
+                                       attrs="{'invisible':[('type','!=','extra')]}"/>
+                                <field name="yjzy_invoice_residual_amount" string="原始未付金额"
+                                       attrs="{'invisible':['|',('yjzy_invoice_id','=',False),('type','not in',['other_po','extra'])]}"/>
                                 <field name="yjzy_invoice_include_tax" string="原始采购含税" attrs="{'invisible':1}"/>
-<!--                                <label for="" name="yjzy_invoice_residual_amount"-->
-<!--                                       attrs="{'invisible':['|',('yjzy_invoice_id','=',False),('type','not in',['other_po','extra'])]}">-->
-<!--                                    <b attrs="{'invisible':['|',('yjzy_invoice_include_tax','=',True),('type','not in',['other_po','extra'])]}">-->
-<!--                                        原始未税采购额-->
-<!--                                    </b>-->
-<!--                                    <b attrs="{'invisible':['|',('yjzy_invoice_include_tax','=',False),('type','not in',['other_po','extra'])]}">-->
-<!--                                        原始含税采购额-->
-<!--                                    </b>-->
-<!--                                </label>-->
-<!--                                <div class="o_row"-->
-<!--                                     attrs="{'invisible':['|',('yjzy_invoice_id','=',False),('type','not in',['other_po','extra'])]}">-->
-<!--                                    <field name="yjzy_invoice_residual_amount"/>-->
-<!--                                </div>-->
+                                <!--                                <label for="" name="yjzy_invoice_residual_amount"-->
+                                <!--                                       attrs="{'invisible':['|',('yjzy_invoice_id','=',False),('type','not in',['other_po','extra'])]}">-->
+                                <!--                                    <b attrs="{'invisible':['|',('yjzy_invoice_include_tax','=',True),('type','not in',['other_po','extra'])]}">-->
+                                <!--                                        原始未税采购额-->
+                                <!--                                    </b>-->
+                                <!--                                    <b attrs="{'invisible':['|',('yjzy_invoice_include_tax','=',False),('type','not in',['other_po','extra'])]}">-->
+                                <!--                                        原始含税采购额-->
+                                <!--                                    </b>-->
+                                <!--                                </label>-->
+                                <!--                                <div class="o_row"-->
+                                <!--                                     attrs="{'invisible':['|',('yjzy_invoice_id','=',False),('type','not in',['other_po','extra'])]}">-->
+                                <!--                                    <field name="yjzy_invoice_residual_amount"/>-->
+                                <!--                                </div>-->
                             </group>
                             <group>
-                                <field name="invoice_partner" attrs="{'invisible':[('type','not in',['other_payment'])]}"/>
+                                <field name="invoice_partner"
+                                       attrs="{'invisible':[('type','not in',['other_payment'])],'readonly':[('state','!=','10_draft')]}"/>
 
-                                <field name="name_title" attrs="{'invisible':[('type','in',['other_po'])]}"/>
-                                 <field name="yjzy_payment_id" string="收款单" readonly="1" attrs="{'invisible':[('type_invoice','not in',['out_invoice'])]}"/>
-                                <field name="manual_currency_id" attrs="{'invisible':['|',('type','not in',['other_payment']),('yjzy_payment_id','!=',False)]}"/>
+                                <field name="name_title"
+                                       attrs="{'invisible':[('type','in',['other_po'])],'readonly':[('state','!=','10_draft')]}"/>
+                                <field name="yjzy_payment_id" string="收款单" readonly="1"
+                                       attrs="{'invisible':[('type_invoice','not in',['out_invoice'])]}"/>
+                                <field name="manual_currency_id" attrs="{'invisible':['|',('type','not in',['other_payment']),('yjzy_payment_id','!=',False)],
+                                'readonly':[('state','!=','10_draft')]}"/>
 
 
-                                 <label for="" name="partner_id" attrs="{'invisible':[('is_tb_hs_id','=',False)]}">
+                                <label for="" name="partner_id" attrs="{'invisible':[('is_tb_hs_id','=',False)]}">
                                     <b attrs="{'invisible':[('type','in',['other_po','expense_po'])]}">供应商</b>
-                                    <b attrs="{'invisible':[('type','in',['extra','other_payment','reconcile'])]}">新增供应商</b>
+                                    <b attrs="{'invisible':[('type','in',['extra','other_payment','reconcile'])]}">
+                                        新增供应商
+                                    </b>
                                 </label>
                                 <div class="o_row" attrs="{'invisible':[('is_tb_hs_id','=',False)]}">
-                                 <field name="partner_id"
-                                       domain="[('supplier', '=', True),('is_company','=',True)]"/>
+                                    <field name="partner_id" attrs="{'readonly':[('state','!=','10_draft')]}"
+                                           domain="[('supplier', '=', True),('is_company','=',True)]"/>
                                 </div>
 
 
-                                <field name="tax_rate_add" string="税点" attrs="{'invisible':[('type','!=','other_po')]}"/>
-                                <label for=" " string=" " attrs="{'invisible':['|',('tax_rate_add','&lt;',0.13),('type','!=','other_po')]}"/>
+                                <field name="tax_rate_add" string="税点"
+                                       attrs="{'invisible':[('type','!=','other_po')],'readonly':[('state','!=','10_draft')]}"/>
+                                <label for=" " string=" "
+                                       attrs="{'invisible':['|',('tax_rate_add','&lt;',0.13),('type','!=','other_po')]}"/>
                                 <div attrs="{'invisible':['|',('tax_rate_add','&lt;',0.13),('type','!=','other_po')]}">
                                     <span style="color:red">超出税点合理范围</span>
                                 </div>
-                                <field name="expense_tax_algorithm" widget="radio" options="{'horizontal': true}" attrs="{'invisible':[('type','!=','other_po')]}"/>
+                                <field name="expense_tax_algorithm" widget="radio" options="{'horizontal': true}"
+                                       attrs="{'invisible':[('type','!=','other_po')],'readonly':[('state','!=','10_draft')]}"/>
                             </group>
                             <group attrs="{'invisible':1}">
-                                 <field name="create_uid" string="创建人" attrs="{'invisible':[('type','not in',['other_payment'])]}"/>
-                                <field name="create_date" string="创建日期" widget="date" attrs="{'invisible':[('type','not in',['other_payment'])]}"/>
+                                <field name="create_uid" string="创建人"
+                                       attrs="{'invisible':[('type','not in',['other_payment'])]}"/>
+                                <field name="create_date" string="创建日期" widget="date"
+                                       attrs="{'invisible':[('type','not in',['other_payment'])]}"/>
                             </group>
                             <group col="1" style="margin-top:-5px;">
 
-                                 <group  attrs="{'invisible':[('type','not in',['other_payment','extra','reconcile'])]}">
-                                 <field name="yjzy_payment_balance" string="未认领收款金额" attrs="{'invisible':[('yjzy_payment_id','=',False)]}"/>
-                                 <field name="price_total" string="金额合计" />
+                                <group attrs="{'invisible':[('type','not in',['other_payment','extra','reconcile'])]}">
+                                    <field name="yjzy_payment_balance" string="未认领收款金额"
+                                           attrs="{'invisible':[('yjzy_payment_id','=',False)]}"/>
+                                    <field name="price_total" string="金额合计"/>
 
-                                 <field name="invoice_normal_ids_residual" string="未付金额" attrs="{'invisible':[('yjzy_type_1','in',['sale','other_payment_sale'])]}"/>
-<!--<div colspan="2"  attrs="{'invisible':[('yjzy_type_1','in',['sale','other_payment_sale'])]}">-->
-<!--    <b>-->
-<!--        有对应的其他应收-->
-<!--    </b>-->
-<!--</div>-->
-<!--                                     <div colspan="2" class="oe_text_center"-->
-<!--                                          attrs="{'invisible':[('yjzy_type_1','in',['purchase','other_payment_purchase'])]}">-->
-<!--    <b>-->
-<!--        有对应的其他应付-->
-<!--    </b>-->
-<!--</div>-->
-                                 <label for="" name="yjzy_tb_po_invoice" attrs="{'invisible':[('is_yjzy_tb_po_invoice','=',False)]}">
-                                     <b attrs="{'invisible':[('yjzy_type_1','in',['sale','other_payment_sale'])]}">其他应收申请单</b>
-                                    <b attrs="{'invisible':[('yjzy_type_1','in',['purchase','other_payment_purchase'])]}">其他应付申请单</b>
-                                 </label>
-                                 <div class="o_row" attrs="{'invisible':[('is_yjzy_tb_po_invoice','=',False)]}">
-                                       <field name="yjzy_tb_po_invoice" string="其他应收账单" options="{'no_open':1}" class="oe_line" attrs="{'invisible':[('is_yjzy_tb_po_invoice','=',False)]}"/>
-                                     <button icon="fa-pencil-square-o" type="object" name="open_tb_yjzy_po_invoice_open" class="btn-xs btn-link mb4" style="color:red"/>
-
-                                 </div>
-
-
-                              <label for="" name="yjzy_tb_po_invoice" attrs="{'invisible':[('is_yjzy_tb_po_invoice','=',False)]}">
-                                     <b attrs="{'invisible':[('yjzy_type_1','in',['sale','other_payment_sale'])]}">其他应收金额</b>
-                                    <b attrs="{'invisible':[('yjzy_type_1','in',['purchase','other_payment_purchase'])]}">其他应付金额</b>
-                                 </label>
-                                     <div class="o_row" attrs="{'invisible':[('is_yjzy_tb_po_invoice','=',False)]}">
-                                 <field name="yjzy_tb_po_invoice_amount" string="其他应收金额" />
-                                     </div>
-
-                                     <label for="" name="yjzy_tb_po_invoice" attrs="{'invisible':[('is_yjzy_tb_po_invoice','=',False)]}">
-                                     <b attrs="{'invisible':[('yjzy_type_1','in',['sale','other_payment_sale'])]}">其他应收余额</b>
-                                    <b attrs="{'invisible':[('yjzy_type_1','in',['purchase','other_payment_purchase'])]}">其他应付余额</b>
-                                 </label>
-                                                  <div class="o_row" attrs="{'invisible':[('is_yjzy_tb_po_invoice','=',False)]}">
-                                 <field name="yjzy_tb_po_invoice_residual" string="其他应收余额" />
-
-                                                  </div>
-                                      <field name="yjzy_tb_po_invoice_parent" attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',False)]}" string="上级账单"/>
-                                    <field name="yjzy_tb_po_invoice_parent_amount" string="上级原始金额" attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',False)]}"/>
-                                    <field name="yjzy_tb_po_invoice_parent_residual" string="上级剩余金额" attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',False)]}"/>
-
-                               </group>
-
-                                <group attrs="{'invisible':[('is_tb_hs_id','=',False)]}">
-                                    <label for="" name="purchase_amount2_add_this_time_total" >
-                                       <b attrs="{'invisible':[('type','!=','other_po')]}">
-                                        本次增加应付
+                                    <field name="invoice_normal_ids_residual" string="未付金额"
+                                           attrs="{'invisible':[('yjzy_type_1','in',['sale','other_payment_sale'])]}"/>
+                                    <!--<div colspan="2"  attrs="{'invisible':[('yjzy_type_1','in',['sale','other_payment_sale'])]}">-->
+                                    <!--    <b>-->
+                                    <!--        有对应的其他应收-->
+                                    <!--    </b>-->
+                                    <!--</div>-->
+                                    <!--                                     <div colspan="2" class="oe_text_center"-->
+                                    <!--                                          attrs="{'invisible':[('yjzy_type_1','in',['purchase','other_payment_purchase'])]}">-->
+                                    <!--    <b>-->
+                                    <!--        有对应的其他应付-->
+                                    <!--    </b>-->
+                                    <!--</div>-->
+                                    <label for="" name="yjzy_tb_po_invoice"
+                                           attrs="{'invisible':[('is_yjzy_tb_po_invoice','=',False)]}">
+                                        <b attrs="{'invisible':[('yjzy_type_1','in',['sale','other_payment_sale'])]}">
+                                            其他应收申请单
                                         </b>
-                                        <b attrs="{'invisible':[('type','=','other_po')]}">
-                                         货款开票金额
+                                        <b attrs="{'invisible':[('yjzy_type_1','in',['purchase','other_payment_purchase'])]}">
+                                            其他应付申请单
                                         </b>
                                     </label>
-                                            <div class="o_row">
-                                                <field name="purchase_amount2_add_this_time_total" string="本次增加应付"/>
-                                            </div>
+                                    <div class="o_row" attrs="{'invisible':[('is_yjzy_tb_po_invoice','=',False)]}">
+                                        <field name="yjzy_tb_po_invoice" string="其他应收账单" options="{'no_open':1}"
+                                               class="oe_line"
+                                               attrs="{'invisible':[('is_yjzy_tb_po_invoice','=',False)],'readonly':[('state','!=','10_draft')]}"/>
+                                        <button icon="fa-pencil-square-o" type="object"
+                                                name="open_tb_yjzy_po_invoice_open" class="btn-xs btn-link mb4"
+                                                style="color:red"/>
+
+                                    </div>
 
 
+                                    <label for="" name="yjzy_tb_po_invoice"
+                                           attrs="{'invisible':[('is_yjzy_tb_po_invoice','=',False)]}">
+                                        <b attrs="{'invisible':[('yjzy_type_1','in',['sale','other_payment_sale'])]}">
+                                            其他应收金额
+                                        </b>
+                                        <b attrs="{'invisible':[('yjzy_type_1','in',['purchase','other_payment_purchase'])]}">
+                                            其他应付金额
+                                        </b>
+                                    </label>
+                                    <div class="o_row" attrs="{'invisible':[('is_yjzy_tb_po_invoice','=',False)]}">
+                                        <field name="yjzy_tb_po_invoice_amount" string="其他应收金额"/>
+                                    </div>
 
-                                    <field name="expense_tax" string="本次产生税费" attrs="{'invisible':[('type','!=','other_po')]}"/>
+                                    <label for="" name="yjzy_tb_po_invoice"
+                                           attrs="{'invisible':[('is_yjzy_tb_po_invoice','=',False)]}">
+                                        <b attrs="{'invisible':[('yjzy_type_1','in',['sale','other_payment_sale'])]}">
+                                            其他应收余额
+                                        </b>
+                                        <b attrs="{'invisible':[('yjzy_type_1','in',['purchase','other_payment_purchase'])]}">
+                                            其他应付余额
+                                        </b>
+                                    </label>
+                                    <div class="o_row" attrs="{'invisible':[('is_yjzy_tb_po_invoice','=',False)]}">
+                                        <field name="yjzy_tb_po_invoice_residual" string="其他应收余额"/>
+
+                                    </div>
+                                    <field name="yjzy_tb_po_invoice_parent"
+                                           attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',False)],'readonly':[('state','!=','10_draft')]}"
+                                           string="上级账单"/>
+                                    <field name="yjzy_tb_po_invoice_parent_amount" string="上级原始金额"
+                                           attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',False)]}"/>
+                                    <field name="yjzy_tb_po_invoice_parent_residual" string="上级剩余金额"
+                                           attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',False)]}"/>
+
+                                </group>
+
+                                <group attrs="{'invisible':[('is_tb_hs_id','=',False)]}">
+                                    <label for="" name="purchase_amount2_add_this_time_total">
+                                        <b attrs="{'invisible':[('type','!=','other_po')]}">
+                                            本次增加应付
+                                        </b>
+                                        <b attrs="{'invisible':[('type','=','other_po')]}">
+                                            货款开票金额
+                                        </b>
+                                    </label>
+                                    <div class="o_row">
+                                        <field name="purchase_amount2_add_this_time_total" string="本次增加应付"/>
+                                    </div>
 
 
+                                    <field name="expense_tax" string="本次产生税费"
+                                           attrs="{'invisible':[('type','!=','other_po')]}"/>
 
 
                                 </group>
@@ -551,10 +601,11 @@
                                     <field name="p_s_add_this_time_extra_total" string="本次冲减后应收"/>
                                     <!--field name="p_s_add_this_time_extra_total" string="冲减后应收" attrs="{'invisible':[('type','!=','other_po')]}"/-->
                                 </group>
-                                <group style="margin-top:-10px; "  attrs="{'invisible':[('is_tb_hs_id','=',False)]}">
+                                <group style="margin-top:-10px; " attrs="{'invisible':[('is_tb_hs_id','=',False)]}">
                                     <field name="back_tax_add_this_time_total" string="退税金额"
                                            attrs="{'invisible':[('type','not in',['other_payment','extra'])]}"/>
-                                    <field name="back_tax_add_residual" string="未收退税金额" attrs="{'invisible':[('type','not in',['other_payment','extra'])]}"/>
+                                    <field name="back_tax_add_residual" string="未收退税金额"
+                                           attrs="{'invisible':[('type','not in',['other_payment','extra'])]}"/>
                                     <field name="expense_currency_id" invisible="1"
                                            attrs="{'invisible':[('type','!=','expense_po')]}"/>
                                     <field name="expense_sheet_amount"
@@ -565,9 +616,9 @@
                         </group>
                         <notebook>
                             <page string="账单明细行" attrs="{'invisible':[('type','not in',['extra','other_payment'])]}">
-                                <field name="extra_invoice_line_ids">
+                                <field name="extra_invoice_line_ids" attrs="{'readonly':[('state','!=','10_draft')]}">
                                     <tree editable="bottom">
-                                      <field name="product_id" string="账单项目"/>
+                                        <field name="product_id" string="账单项目"/>
                                         <field name="name" invisible="1"/>
                                         <field name="tb_po_id" invisible="1"/>
                                         <field name="company_id" invisible="1"/>
@@ -580,8 +631,8 @@
                                     </tree>
                                 </field>
                             </page>
-                            <page string="货款明细" attrs="{'invisible':[('is_tb_hs_id','=',False)]}" >
-                                <field name="hsname_all_ids" attrs="{'invisible':[('is_tb_hs_id','=',False)]}">
+                            <page string="货款明细" attrs="{'invisible':[('is_tb_hs_id','=',False)]}">
+                                <field name="hsname_all_ids" attrs="{'invisible':[('is_tb_hs_id','=',False)],'readonly':[('state','!=','10_draft')]}">
                                     <tree editable="bottom">
                                         <field name="hs_id" attrs="{'readonly':[('parent.state','!=','10_draft')]}"/>
                                         <field name="hsname_all_line_id" invisible="1"/>
@@ -626,7 +677,7 @@
                                     </tree>
                                 </field>
                             </page>
-                            <page string="新增货款账单" attrs="{'invisible':['|',('invoice_p_ids_count','=',0)]}" >
+                            <page string="新增货款账单" attrs="{'invisible':['|',('invoice_p_ids_count','=',0)]}">
                                 <field name="invoice_p_ids_count" invisible="1"/>
                                 <field name="invoice_p_ids" readonly="1">
                                     <tree decoration-info="state == 'draft'" decoration-muted="state == 'cancel'">
@@ -640,26 +691,31 @@
                                     </tree>
                                 </field>
                             </page>
-                            <page string="其他应付账单" groups="base.group_system" attrs="{'invisible':['|',('invoice_other_payment_ids_count','=',0),('type','!=','other_payment')]}" >
+                            <page string="其他应付账单" groups="base.group_system"
+                                  attrs="{'invisible':['|',('invoice_other_payment_ids_count','=',0),('type','!=','other_payment')]}">
                                 <field name="invoice_other_payment_ids_count" invisible="1"/>
-                                <field name="invoice_other_payment_ids" readonly="1" context="{'form_view_ref':'yjzy_extend.view_account_supplier_invoice_new_form'}">>
+                                <field name="invoice_other_payment_ids" readonly="1"
+                                       context="{'form_view_ref':'yjzy_extend.view_account_supplier_invoice_new_form'}">
+                                    >
                                     <tree decoration-info="state == 'draft'" decoration-muted="state == 'cancel'">
                                         <field name="number"/>
                                         <field name="tb_contract_code" invisible="1"/>
                                         <field name="amount_total_signed" string="账单金额"/>
                                         <field name="residual_signed" string="未付金额"/>
                                         <field name="yjzy_type_1" groups="base.group_system"/>
-                                        <field name="invoice_attribute" />
+                                        <field name="invoice_attribute"/>
                                         <field name="yjzy_type" groups="base.group_system"/>
                                         <field name="state"/>
                                     </tree>
                                 </field>
                             </page>
-                            <page string="额外账单" attrs="{'invisible':['|',('invoice_extra_ids_count','=',0),('type','!=','extra')]}" groups="base.group_system">
+                            <page string="额外账单"
+                                  attrs="{'invisible':['|',('invoice_extra_ids_count','=',0),('type','!=','extra')]}"
+                                  groups="base.group_system">
                                 <field name="invoice_extra_ids_count" invisible="1"/>
                                 <field name="invoice_extra_ids" readonly="1">
                                     <tree decoration-info="state == 'draft'" decoration-muted="state == 'cancel'">
-                                        <field name="yjzy_type_1" string="收付类型" />
+                                        <field name="yjzy_type_1" string="收付类型"/>
                                         <field name="tb_contract_code"/>
                                         <field name="amount_total_signed" string="账单金额"/>
                                         <field name="residual_signed" string="未付金额"/>
@@ -670,7 +726,8 @@
                                     </tree>
                                 </field>
                             </page>
-                            <page string="对应冲减账单" attrs="{'invisible':[('invoice_p_s_ids_count','=',0)]}" groups="base.group_system">
+                            <page string="对应冲减账单" attrs="{'invisible':[('invoice_p_s_ids_count','=',0)]}"
+                                  groups="base.group_system">
                                 <field name="invoice_p_s_ids_count" invisible="1"/>
                                 <field name="invoice_p_s_ids">
                                     <tree decoration-info="state == 'draft'" decoration-muted="state == 'cancel'">
@@ -722,10 +779,10 @@
                                     <field name="product_zyywsr" attrs="{'invisible':0}"/>
                                     <field name="product_qtysk" attrs="{'invisible':0}"/>
                                     <field name="product_back_tax" attrs="{'invisible':0}"/>
-                                     <field name="yjzy_type_1"/>
-                                    <field name="is_yjzy_tb_po_invoice" />
+                                    <field name="yjzy_type_1"/>
+                                    <field name="is_yjzy_tb_po_invoice"/>
                                     <field name="is_yjzy_tb_po_invoice_parent"/>
-                                    <field name="is_tb_hs_id" />
+                                    <field name="is_tb_hs_id"/>
                                     <field name="type_invoice"/>
                                     <field name="company_id"/>
                                     <field name="currency_id"/>
@@ -734,13 +791,19 @@
                             </page>
                         </notebook>
                         <footer invisible="not context.get('open')">
-                            <button name="action_other_paymnet_one_in_all" type="object" class="oe_highlight" string="直接完成收款认领" attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',True)]}"/>
-                            <button name="action_return_qtys" type="object" class="oe_highlight"  attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',False)]}" string="完成对应账单编辑"/>
-                            <button name="action_save_test" type="object" class="oe_highlight" attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',True)]}" string="保存并关闭"/>
+                            <button name="action_other_paymnet_one_in_all" type="object" class="oe_highlight"
+                                    string="直接完成收款认领"
+                                    attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',True)]}"/>
+                            <button name="action_return_qtys" type="object" class="oe_highlight"
+                                    attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',False)]}"
+                                    string="完成对应账单编辑"/>
+                            <button name="action_save_test" type="object" class="oe_highlight"
+                                    attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',True)]}" string="保存并关闭"/>
                         </footer>
-                           <footer invisible="not context.get('open_expense')">
-                        <button name="action_save_test" type="object" class="oe_highlight" attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',True)]}" string="保存并关闭"/>
-                        <button string="关闭" class="btn-primary" special="cancel" />
+                        <footer invisible="not context.get('open_expense')">
+                            <button name="action_save_test" type="object" class="oe_highlight"
+                                    attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',True)]}" string="保存并关闭"/>
+                            <button string="关闭" class="btn-primary" special="cancel"/>
                         </footer>
 
                     </sheet>
@@ -853,7 +916,8 @@
                         <button name="apply" class="oe_highlight" type='object' string="确认" groups="base.group_system"
                                 attrs="{'invisible':[('type','!=','other_po')]}"/>
                         <button special="cancel" class="oe_highlight" groups="base.group_system" string="取消"/>
-                        <button name="create_yfhxd" string="创建应付核销单" type="object" invisible="not context.get('create_yfhxd')"/>
+                        <button name="create_yfhxd" string="创建应付核销单" type="object"
+                                invisible="not context.get('create_yfhxd')"/>
                         <button name="create_tb_po_invoice" string="创建应收申请" type="object"/>
                         <button name="make_extra_invoice" type="object" string="创建额外账单" groups="base.group_system"/>
                         <field name="state" widget="statusbar"/>
@@ -861,13 +925,14 @@
                     <sheet>
                         <group col="2">
                             <group>
-                                <field name="partner_id" string="供应商" attrs="{'invisible':[('type','=','other_payment'),('is_tb_hs_id','=',False)]}"
+                                <field name="partner_id" string="供应商"
+                                       attrs="{'invisible':[('type','=','other_payment'),('is_tb_hs_id','=',False)]}"
                                        domain="[('supplier', '=', True),('is_company','=',True)]"/>
                                 <field name="is_tb_hs_id"/>
                                 <field name="tb_id" attrs="{'invisible':[('is_tb_hs_id','=',False)]}"/>
 
 
-                                <field name="yjzy_invoice_id"  attrs="{'invisible':[('type','!=','extra')]}"
+                                <field name="yjzy_invoice_id" attrs="{'invisible':[('type','!=','extra')]}"
                                        context="{'form_view_ref':'yjzy_extend.view_account_supplier_invoice_new_form'}"/>
                                 <field name="manual_currency_id" attrs="{'invisible':[('type','!=','other_payment')]}"/>
                             </group>
@@ -1058,7 +1123,6 @@
                   sequence="30" groups="base.group_system"
                   action="act_tb_po_done"
         />
-
 
 
         <record model="ir.actions.act_window" id="act_expense_po_draft">
@@ -1266,7 +1330,7 @@
                   action="act_extra_supplier_invoice_done"
         />
 
-<record model="ir.actions.act_window" id="act_extra_supplier_create">
+        <record model="ir.actions.act_window" id="act_extra_supplier_create">
             <field name="name">创建额外应付申请</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">tb.po.invoice</field>
@@ -1377,7 +1441,7 @@
                   action="act_tb_invoice_supplier"
         />
 
-<!--        最新菜单-->
+        <!--        最新菜单-->
         <record model="ir.actions.act_window" id="act_extra_supplier_invoice_all">
             <field name="name">额外应付账单申请</field>
             <field name="type">ir.actions.act_window</field>
@@ -1425,7 +1489,7 @@
         />
 
 
-<!--        额外账单查看并创建-->
+        <!--        额外账单查看并创建-->
         <menuitem id="menu_invoice_supplier_create_invoice" name="创建申请单"
                   parent="yjzy_extend.menu_supplier_invoice_extra_apply_root"
                   sequence="10"
@@ -1457,8 +1521,6 @@
         />
 
 
-
-
         <record model="ir.actions.act_window" id="act_tb_po_create">
             <field name="name">创建新增采购申请单</field>
             <field name="type">ir.actions.act_window</field>
@@ -1484,7 +1546,9 @@
             <field name="res_model">tb.po.invoice</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[('yjzy_type_1','in',['purchase','other_payment_purchase']),('type','=','other_payment')]</field>
+            <field name="domain">
+                [('yjzy_type_1','in',['purchase','other_payment_purchase']),('type','=','other_payment')]
+            </field>
             <field name="limit">20</field>
             <field name="context">
                 {'search_default_group_by_state':1,'default_type':'other_payment','default_yjzy_type_1':'other_payment_purchase'}
@@ -1509,7 +1573,9 @@
             <field name="view_mode">form</field>
             <field name="domain">[]</field>
             <field name="limit">20</field>
-            <field name="context">{'default_type':'other_payment','default_yjzy_type_1':'other_payment_purchase','default_type_invoice':'in_invoice'}</field>
+            <field name="context">
+                {'default_type':'other_payment','default_yjzy_type_1':'other_payment_purchase','default_type_invoice':'in_invoice'}
+            </field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_form')})]"/>
         </record>
@@ -1526,7 +1592,8 @@
             <field name="res_model">tb.po.invoice</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[('yjzy_type_1','in',['sale','other_payment_sale']),('type','=','other_payment')]</field>
+            <field name="domain">[('yjzy_type_1','in',['sale','other_payment_sale']),('type','=','other_payment')]
+            </field>
             <field name="limit">20</field>
             <field name="context">
                 {'search_default_group_by_state':1,'default_type':'other_payment','default_yjzy_type_1':'other_payment_sale'}
@@ -1564,7 +1631,9 @@
             <field name="view_mode">form</field>
             <field name="domain">[]</field>
             <field name="limit">20</field>
-            <field name="context">{'default_type':'other_payment','default_yjzy_type_1':'other_payment_sale','default_type_invoice':'out_invoice'}</field>
+            <field name="context">
+                {'default_type':'other_payment','default_yjzy_type_1':'other_payment_sale','default_type_invoice':'out_invoice'}
+            </field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_form')})]"/>
         </record>

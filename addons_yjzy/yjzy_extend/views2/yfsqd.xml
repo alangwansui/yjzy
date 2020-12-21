@@ -123,34 +123,40 @@
                         <field name="is_editable"  widget="boolean_toggle"/>
                     </div>
                     <field name="id" invisible="1"/>
-                    <div class="oe_title">
+                    <div class="oe_title" invisible="1">
                         <h1>
-                            <field name="name"/>
+                            <field name="name" invisible="1"/>
                         </h1>
                     </div>
                     <group>
                         <group>
+                            <div colspan="2">
+                            <field name="display_name"/>
+                            </div>
                             <field name="partner_id" domain="[('is_company','=',True)]" string="供应商"
                                    attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))],
                                    'invisible': [('payment_type', 'not in', ('inbound', 'outbound'))], 'readonly': [('state', '!=', 'draft')]}"
                                    context="{'default_is_company': True, 'default_supplier': payment_type == 'outbound', 'default_customer': payment_type == 'inbound'}"/>
-                            <field name="bank_id" domain="[('partner_id','=',partner_id)]" attrs="{'readonly':[('state', 'in', ['posted','reconciled'])]}" options="{'no_create_edit': True}" string="收款方账户"/>
+                            <field name="bank_id" domain="[('partner_id','=',partner_id)]"
+                                   attrs="{'readonly':['|',('state_1','!=','10_draft'),('state', 'in', ['posted','reconciled'])]}"
+                                   options="{'no_create_edit': True}" string="收款方账户"/>
                             <field name="po_id" domain="[('partner_id','=', partner_id),'|',('state','in',['approve','done','purchase','to approve']),
-                            ('x_wkf_state','=',185)]" context="{'show_contract_code': 1}" attrs="{'readonly':[('state', '!=', 'draft')]}"/>
+                            ('x_wkf_state','=',185)]" context="{'show_contract_code': 1}" attrs="{'readonly':['|',('state_1','!=','10_draft'),('state', '!=', 'draft')]}"/>
 
                             <field name="fk_journal_id" string="付款银行" attrs="{'invisible':[('state_1','in',['10_draft','80_refused','90_cancel'])],
-                            'readonly':[('state', 'in', ['posted','reconciled'])]}"/>
+                            'readonly':['|',('state_1','not in',['10_draft','20_account_submit']),('state', 'in', ['posted','reconciled'])]}"/>
                             <label for="amount"/>
                             <div name="amount_div" class="o_row">
-                                <field name="amount" attrs="{'readonly': [('state', '!=', 'draft')]}" string="预付金额"/>
+                                <field name="amount" attrs="{'readonly': ['|',('state_1','!=','10_draft'),('state', '!=', 'draft')]}" string="预付金额"/>
                                  <span invisible="1">货币：</span><field name="currency_id" options="{'no_create': True, 'no_open': True}" invisible="1" groups="base.group_multi_currency"
                                        attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                             </div>
                             <field name="destination_journal_id" widget="selection"
-                                   attrs="{'required': [('payment_type', '=', 'transfer')], 'invisible': [('payment_type', '!=', 'transfer')], 'readonly': [('state', '!=', 'draft')]}"/>
+                                   attrs="{'required': [('payment_type', '=', 'transfer')], 'invisible': [('payment_type', '!=', 'transfer')],
+                                   'readonly': ['|',('state_1','!=','10_draft'),('state', '!=', 'draft')]}"/>
                             <field name="hide_payment_method" invisible="1"/>
                             <field name="payment_method_id" string=" " widget="radio"
-                                   attrs="{'invisible': [('hide_payment_method', '=', True)], 'readonly': [('state', '!=', 'draft')]}"/>
+                                   attrs="{'invisible': [('hide_payment_method', '=', True)], 'readonly': ['|',('state_1','!=','10_draft'),('state', '!=', 'draft')]}"/>
                             <field name="payment_method_code" invisible="1"/>
                             <field name="advance_balance_total" string="未认领预付"/>
                             <field name="amount_advance_org_all" string="完成认领预付"/>

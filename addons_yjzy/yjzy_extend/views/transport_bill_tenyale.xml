@@ -462,7 +462,9 @@
 
                                 <field name="partner_id" string="贸易客户" required="0" options="{'no_open':1}"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"
-                                       domain="[('customer','=',True),('parent_id', '=', False),'|','|','|','|','|',('assistant_id','=',uid),('user_id','=',uid),('parent_id.assistant_id','=',uid),('parent_id.user_id','=',uid),('supplier','=',1),('x_studio_field_3ErQR','=',1)]"
+                                       domain="[('customer','=',True),('parent_id', '=', False),'|','|','|','|','|','|',('x_studio_field_U7OvH','in',uid),
+                                       ('assistant_id','=',uid),('user_id','=',uid),('parent_id.assistant_id','=',uid),
+                                       ('parent_id.user_id','=',uid),('supplier','=',1),('x_studio_field_3ErQR','=',1)]"
                                        no_create="True"/>
 
                                 <field name="partner_shipping_id" string="最终目的地" options="{'no_open':1}"

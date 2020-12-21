@@ -1484,6 +1484,21 @@ class account_reconcile_order(models.Model):
                                     'approve_date': False,
                                     'approve_uid': False
                                     })
+        if self.sfk_type == 'yshxd':
+            if self.hxd_type_new == '30':
+                stage_id = self._stage_find(domain=[('code', '=', '010')])
+                self.write({'stage_id': stage_id.id,
+                            'state': 'draft',
+                            'approve_date': False,
+                            'approve_uid': False
+                            })
+            else:
+                stage_id = self._stage_find(domain=[('code', '=', '030')])
+                self.write({'stage_id': stage_id.id,
+                            'state': 'posted',
+                            'approve_date': False,
+                            'approve_uid': False
+                            })
 
 #1126
     # def action_draft_stage_old(self):

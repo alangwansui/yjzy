@@ -217,6 +217,11 @@ class account_payment(models.Model):
                 name = '%s:%s' % ('付款指令', one.name)
             elif ctx.get('default_sfk_type', '') == 'rcskd' or one.sfk_type == 'rcskd':
                 name = '%s:%s' % ('日常收款单', one.balance)
+            elif ctx.get('default_sfk_type', '') == 'yfsqd' or one.sfk_type == 'yfsqd':
+                if ctx.get('advance_balance_total'):
+                    name = '%s:%s' % (one.name, str(one.advance_balance_total))
+                else:
+                    name = '%s:%s' % ('预付申请', one.name)
             elif ctx.get('bank_amount'):
                 name = '%s[%s]' % (one.journal_id.name, str(one.balance))
             elif ctx.get('advance_bank_amount'):
@@ -239,8 +244,8 @@ class account_payment(models.Model):
                         name = '%s[%s]' % (one.po_id.contract_code, str(one.advance_balance_total))
                     else:
                         name= '%s[%s]' % ('无采购合同', str(one.advance_balance_total))
-            elif ctx.get('default_sfk_type', '') == 'yfsqd':
-                name = '%s:%s' % (one.name, str(one.advance_balance_total))
+
+
             else:
                 name = '%s[%s]' % (one.name, str(one.balance))
             print('ctx_1111',ctx)
@@ -1057,6 +1062,8 @@ class account_payment(models.Model):
                 name = '%s:%s' % ('预收认领单', str(one.advance_balance_total))
             elif ctx.get('default_sfk_type', '') == 'fkzl' or one.sfk_type == 'fkzl':
                 name = '%s:%s' % ('付款指令', one.name)
+            elif ctx.get('default_sfk_type', '') == 'yfsql' or one.sfk_type == 'yfsql':
+                name = '%s:%s' % ('预付申请', one.name)
             elif ctx.get('default_sfk_type', '') == 'rcskd' or one.sfk_type == 'rcskd':
                 name = '%s:%s' % ('日常收款单', one.balance)
             elif ctx.get('bank_amount'):
