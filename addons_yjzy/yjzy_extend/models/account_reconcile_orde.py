@@ -413,7 +413,7 @@ class account_reconcile_order(models.Model):
 
 
 
-    amount_payment_can_approve_all_after = fields.Float('所有账单本次申请后可申请支付金额合计',compute=compute_amount_payment_can_approve_all_after)
+    amount_payment_can_approve_all_after = fields.Monetary('所有账单本次申请后可申请支付金额合计',currency_field='invoice_currcncy_id' , compute=compute_amount_payment_can_approve_all_after)
 
     account_payment_state_ids_amount_1 = fields.Float('预收本次认领前金额',compute=compute_account_payment_state_ids)
     account_payment_state_ids_amount_2 = fields.Float('预收本次认领后金额', compute=compute_account_payment_state_ids)
@@ -1108,9 +1108,9 @@ class account_reconcile_order(models.Model):
                                 raise Warning('预付认领金额大于可认领的预付金额')
                             if one.amount_advance_org > one.yjzy_payment_id.advance_balance_total:
                                 raise Warning('预付认领金额大于可认领的预付金额')
-                    for one in line_do_ids:
-                        if one.amount_advance_org == 0 and one.po_id:
-                            raise Warning('有明细行预付金额为0，请填写或者删除明细行！')
+                    # for one in line_do_ids:
+                    #     if one.amount_advance_org == 0 and one.po_id:
+                    #         raise Warning('有明细行预付金额为0，请填写或者删除明细行！')
                     stage_id = self._stage_find(domain=[('code', '=', '020')])
                     self.write({'stage_id': stage_id.id,
                                 'state': 'posted',
@@ -3249,7 +3249,8 @@ class account_reconcile_order_line_no(models.Model):
 
     invoice_residual_this_time = fields.Monetary( string=u'发票余额d', readonly=True,currency_field='invoice_currency_id')
 
-    amount_payment_can_approve_all_after = fields.Monetary(u'本次申请后可申请金额', currency_field='invoice_currency_id' ,compute=compute_amount_payment_can_approve_all_after)
+    amount_payment_can_approve_all_after = fields.Monetary(u'本次申请后可申请金额', currency_field='invoice_currency_id',
+                                                           compute=compute_amount_payment_can_approve_all_after)
 
     invoice_residual_after = fields.Monetary(string=u'本次认领后可认领金额', readonly=True, currency_field='invoice_currency_id',compute=compute_amount_payment_can_approve_all_after)
 

@@ -1029,7 +1029,8 @@
                             </field>
                             <field name="amount_total_org_new" string="本次申请金额"
                                    attrs="{'invisible':[('operation_wizard','not in',['03','20'])]}"/>
-                            <field name="amount_payment_can_approve_all_after" string="本次认领后可申请支付金额" attrs="{'invisible':[('operation_wizard','not in',['03','20'])]}"/>
+                            <field name="amount_payment_can_approve_all_after" string="本次认领后可申请支付金额"
+                                   attrs="{'invisible':[('operation_wizard','not in',['03','20'])]}"/>
 
                             <!--    </div>-->
                         </group>
@@ -1255,25 +1256,27 @@
                         <!--                        attrs="{'invisible':[('operation_wizard','!=','05')]}"-->
 
                         <page string="本次认领明细" attrs="{'invisible':[('operation_wizard','not in',['20','30','03'])]}">
-                            <field name="line_do_ids" context="{'invisible_so': partner_type == 'supplier'}">
+                            <field name="line_do_ids" context="{'invisible_so': partner_type == 'supplier','readonly':[('state_1','not in',['draft'])]}">
                                 <tree editable="top" create="false">
                                     <field name="payment_type" invisible="1"/>
                                     <field name="partner_type" invisible="1"/>
                                     <field name="so_id" readonly="1" invisible="not context.get('show_so')"/>
-                                    <field name="po_id" readonly="1" context="{'form_view_ref':'yjzy_extend.new_purchase_order_from'}"  invisible="not context.get('show_po')"/>
-                                    <field name="invoice_id" readonly="1" invisible="0" context="{'form_view_ref':'yjzy_extend.view_account_invoice_new_form_in_one'}"  />
+                                    <field name="po_id" readonly="1" context="{'form_view_ref':'yjzy_extend.new_purchase_order_from'}"
+                                           invisible="not context.get('show_po')"/>
+                                    <field name="invoice_id" readonly="1" invisible="0"
+                                           context="{'form_view_ref':'yjzy_extend.view_account_invoice_new_form_in_one'}"  />
                                     <button name="open_invoice_id" icon="fa-pencil-square-o" context="{'open':1}"
                                             type="object"/>
                                     <field name="tb_contract_code" invisible="1"/>
                                     <field name="yjzy_currency_id" invisible="1"/>
-                                    <field name="advice_amount_advance_org_real" string="建议预付认领"/>
-                                    <field name="least_advice_amount_advance_org" string="最低预付认领"/>
+                                    <field name="advice_amount_advance_org_real" string="建议预付认领" readonly="1"/>
+                                    <field name="least_advice_amount_advance_org" string="最低预付认领" readonly="1"/>
                                     <field name="so_tb_percent" string="出运占原采购金额比例" groups="base.group_system"/>
                                     <field name="no_delivery_amount_so" invisible="1"/>
-                                    <field name="amount_invoice_so" string="本次出运采购额" invisible="0"/>
+                                    <field name="amount_invoice_so" string="本次出运采购额" invisible="0" readonly="1"/>
                                     <field name="amount_invoice_so_proportion" invisible="1"/>
                                     <field name="amount_invoice_so_residual" string="最新未认领应付" invisible="1"/>
-                                    <field name="amount_invoice_so_residual_d" string="本次认领前可申请支付金额" sum="小计"/>
+                                    <field name="amount_invoice_so_residual_d" string="本次认领前可申请支付金额" sum="小计" readonly="1"/>
                                     <field name="amount_invoice_so_residual_d_after" string="本次认领后可申请支付金额" sum="小计"/>
                                     <field name="amount_invoice_so_residual_can_approve_d_after" groups="base.group_system"/>
                                     <field name="amount_invoice_so_residual_can_approve" string="可申请应付"
@@ -1285,7 +1288,6 @@
                                     <field name="residual" readonly="0" string="总账单应付余额" invisible="1"/>
                                     <field name="invoice_currency_id" invisible="1"/>
                                     <field name="payment_currency_id" invisible="1"/>
-
                                     <field name="currency_id" invisible="1"/>
                                     <field name="amount_advance_org_self" groups="base.group_system"/>
                                     <field name="duoyu_this_time_advice_advance_org" groups="base.group_system"/>
