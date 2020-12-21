@@ -629,6 +629,7 @@ class tbl_hsname(models.Model):
 
 
     def open_form_view(self):
+
         return {
             'name': '发运HS统计',
             'view_type': 'form',

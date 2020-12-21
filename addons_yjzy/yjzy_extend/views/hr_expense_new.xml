@@ -1438,7 +1438,7 @@
                         <button name="action_account_approve" string="财务审批" type="object" class="oe_highlight"  attrs="{'invisible':[('state_1','not in',['account_approval'])]}"/>
                         <button name="action_manager_approve" string="总经理审批" type="object" class="oe_highlight"  attrs="{'invisible':[('state_1','not in',['manager_approval'])]}"/>
                         <button name="%(expense_sheet_refuse_wizard_action)d" string="拒绝" type="action" attrs="{'invisible':[('state_1','in',['draft','refused','done'])]}"/>
-                        <button name="create_tb_po_invoice" string="费用转货款" confirm="费用将会转换为货款，确定吗？"  groups="base.group_system" type="object"
+                        <button name="create_tb_po_invoice" string="费用转货款" confirm="费用将会转换为货款，确定吗？" groups="sales_team.group_manager" type="object"
                                 attrs="{'invisible':['|',('expense_to_invoice_type','!=','normal'),('state_1','!=','account_approval')]}"
                         context="{'open_expense':1}"/>
                         <button name="btn_match_budget" string="生成预算" type="object" attrs="{'invisible':[('state_1','not in',['draft'])]}"/>
@@ -1530,14 +1530,15 @@
                                 <field name="purchase_amount2_add_this_time_total" style="color:red" attrs="{'invisible':[('tb_po_invoice_ids_count','=',0)]}"/>
                                 <field name="back_tax_add_this_time_total" style="color:red" attrs="{'invisible':[('tb_po_invoice_ids_count','=',0)]}"/>
                                 <field name="tb_po_invoice_ids" widget="many2many_tags" string="费用转货款申请"
-                                       attrs="{'invisible':[('tb_po_invoice_ids_count','=',0)]}" options="{'open_view': True}" context="{'open_expense':1}"/>
+                                       attrs="{'invisible':[('tb_po_invoice_ids_count','=',0)],'readonly':[('state_1','not in',['account_approval'])]}" options="{'open_view': True}" context="{'open_expense':1}"/>
                                 <field name="document_number" attrs="{'readonly': [('state','in',['approve','post','done']),('is_editable','=',False)]}"/>
                                 <field name="include_tax" attrs="{'readonly':[('state','not in',['submit','draft'])]}"/>
                                 <field name="payment_mode" invisible="1" readonly="1"/>
                                 <field name="currency_id" options="{'no_create':true,'no_open':1}"
                                        attrs="{'readonly':[('state','not in',['submit','draft'])]}"/>
                                 <field name="responsible_id" invisible="1"/>
-                                <field name="bank_id" string="对方收款账号*" options="{'can_create':True}" attrs="{'readonly': [('state','in',['approve','post','done']),('is_editable','=',False)]}"
+                                <field name="bank_id" string="对方收款账号*" options="{'can_create':True}"
+                                       attrs="{'readonly': [('state','in',['approve','post','done']),('is_editable','=',False)]}"
                                        domain="['|',('create_uid','=',uid),('partner_id.supplier','=',True)]"
                                        context="{'form_view_ref':'base.view_partner_bank_form','default_bank_type':'personal'}"
                                        required="1"/>
@@ -1564,11 +1565,12 @@
                                         <field name="partner_id" string="付款对象" invisible="1"
                                                context="{'default_supplier':True, 'default_customer':True, 'default_is_company':1}"/>
                                         <field name="fk_journal_id" string="付款账户"
-                                               domain="[('type','in',['bank', 'cash'])]" attrs="{'readonly': [('state','in',['approve','post','done']),('is_editable','=',False)]}"/>
-
+                                               domain="[('type','in',['bank', 'cash'])]"  options="{'no_create':True}"
+                                               attrs="{'readonly': [('is_editable','=',False),'|',('state_1','not in',['account_approval']),('state','in',['approve','post','done'])]}"/>
                                         <field name="back_tax_product_id" invisible="1"
                                                attrs="{'readonly': [('state','=','approve')]}"/>
-                                        <field name="back_tax_amount" invisible="0" attrs="{'readonly': [('state','=','approve'),('is_editable','=',False)]}"/>
+                                        <field name="back_tax_amount" invisible="0"
+                                                attrs="{'readonly': [('is_editable','=',False),'|',('state_1','not in',['account_approval']),('state','in',['approve','post','done'])]}"/>
                                         <field name="back_tax_invoice_id" invisible="1"
                                                attrs="{'readonly': [('state','=','approve'),('is_editable','=',False)]}"/>
                                         <field name="bank_journal_id" groups="account.group_account_user" invisible="1"

@@ -213,7 +213,8 @@
                                 <field name="date_out_in" string="进仓日期"
                                        attrs="{'invisible':[('type','in',['in_invoice','in_refund'])]}"/>
                                 <field name="date_ship"
-                                       attrs="{'invisible':[('invoice_attribute','not in',['extra','normal'])],'readonly':[('state','not in',['draft','open'])]}"/>
+                                       attrs="{'invisible':[('invoice_attribute','not in',['extra','normal'])],
+                                       'readonly':[('state','not in',['draft','open'])]}"/>
                                 <field name="date_finish"
                                        attrs="{'invisible':[('invoice_attribute','not in',['extra','normal'])]}"/>
                                 <field name="date_deadline"
@@ -917,7 +918,8 @@
                                 <field name="date_out_in" string="进仓日期"
                                        attrs="{'invisible':[('type','in',['in_invoice','in_refund'])]}"/>
                                 <field name="date_ship"
-                                       attrs="{'invisible':[('invoice_attribute','not in',['extra','normal'])],'readonly':[('state','not in',['draft','open'])]}"/>
+                                       attrs="{'invisible':[('invoice_attribute','not in',['extra','normal'])],
+                                       'readonly':[('state','not in',['draft','open'])]}"/>
                                 <field name="date_finish"
                                        attrs="{'invisible':[('invoice_attribute','not in',['extra','normal'])]}"/>
                                 <field name="date_deadline"

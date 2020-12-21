@@ -60,6 +60,24 @@
             </field>
         </record>
 
+<!--        <record id="view_transport_bill_declare_form" model="ir.ui.view">-->
+<!--            <field name="name">transport.bill.declare.form</field>-->
+<!--            <field name="model">tbl.hsname</field>-->
+<!--            <field name="arch" type="xml">-->
+<!--                <form string="报关资料明细">-->
+<!--                    <sheet>-->
+<!--                        <group col="2">-->
+<!--                            <group>-->
+<!--                                -->
+<!--                            </group>-->
+
+<!--                        </group>-->
+<!--                    </sheet>-->
+<!--                </form>-->
+<!--            </field>-->
+<!--        </record>-->
+
+
         <record id="view_transport_bill_declare_form" model="ir.ui.view">
             <field name="name">transport.bill.declare.form</field>
             <field name="model">transport.bill</field>
