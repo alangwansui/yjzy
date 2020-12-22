@@ -226,17 +226,16 @@ class account_reconcile_order(models.Model):
 
                 print('po',po)
                 supplier_advance_payment_ids = self.env['account.payment'].search(
-                    [('partner_id', '=', one.partner_id.id), ('sfk_type', '=', 'yfsqd'),('po_id','in',po),
+                    [('company_id','=',self.env.user.company_id.id),('partner_id', '=', one.partner_id.id), ('sfk_type', '=', 'yfsqd'),('po_id','in',po),
                      ('state', 'in', ['posted', 'reconciled']),('advance_balance_total','!=',0)])
             else:
                 for x in one.invoice_ids:
                     for line in x.invoice_line_ids.mapped('so_id'):
                         po.append(line.id)
                     po.append(False)  #
-
                 print('po', po)
                 supplier_advance_payment_ids = self.env['account.payment'].search(
-                    [('partner_id', '=', one.partner_id.id), ('sfk_type', '=', 'ysrld'), ('so_id', 'in', po),
+                    [('company_id','=',self.env.user.company_id.id),('partner_id', '=', one.partner_id.id), ('sfk_type', '=', 'ysrld'), ('so_id', 'in', po),
                      ('state', 'in', ['posted', 'reconciled']), ('advance_balance_total', '!=', 0)])
             one.supplier_advance_payment_ids_count = len(supplier_advance_payment_ids)
             one.supplier_advance_payment_ids = supplier_advance_payment_ids
@@ -381,11 +380,15 @@ class account_reconcile_order(models.Model):
                  'partner_id.supplier_amount_residual_invoice','partner_id.supplier_advance_amount_hxd_line_approval')
     def compute_supplier_amount_invoice_approve_approval(self):
         for one in self:
-            supplier_amount_invoice_approval = one.partner_id.supplier_amount_invoice_approval
-            supplier_amount_invoice_approve = one.partner_id.supplier_amount_invoice_approve
-            supplier_amount_invoice_residual = one.partner_id.supplier_amount_residual_invoice
-            supplier_advance_amount_hxd_line_approval= one.partner_id.supplier_advance_amount_hxd_line_approval
-            supplier_amount_residual_advance_payment = one.supplier_amount_residual_advance_payment
+            supplier_invoice_ids = one.partner_id.supplier_invoice_ids.filtered(lambda x: x.company_id  == self.env.user.company_id)
+            supplier_advance_payment_ids = one.partner_id.supplier_advance_payment_ids.filtered(lambda x: x.company_id  == self.env.user.company_id)
+
+            supplier_amount_invoice_approval = sum(x.amount_payment_approval_all for x in supplier_invoice_ids)
+            supplier_amount_invoice_approve = sum(x.amount_payment_approve_all for x in supplier_invoice_ids)
+            supplier_amount_invoice_residual = sum(x.residual_signed for x in supplier_invoice_ids)
+            supplier_advance_amount_hxd_line_approval = sum(x.advance_amount_reconcile_order_line_approval for x in supplier_advance_payment_ids)
+            supplier_amount_residual_advance_payment = sum(x.advance_balance_total for x in supplier_advance_payment_ids)
+
             supplier_amount_invoice_residual2 = supplier_amount_invoice_residual - supplier_amount_invoice_approval - supplier_amount_invoice_approve
             supplier_advance_amount_hxd_line_approval2 = supplier_amount_residual_advance_payment - supplier_advance_amount_hxd_line_approval
             one.supplier_amount_invoice_approval = supplier_amount_invoice_approval
@@ -407,8 +410,11 @@ class account_reconcile_order(models.Model):
     @api.depends('partner_id.supplier_amount_advance_payment','partner_id','partner_id.supplier_amount_residual_advance_payment')
     def compute_supplier_amount_residual_advance_payment(self):
         for one in self:
-            one.supplier_amount_residual_advance_payment = one.partner_id.supplier_amount_residual_advance_payment
-            one.supplier_amount_advance_payment = one.partner_id.supplier_amount_advance_payment
+            supplier_advance_payment_ids = one.partner_id.supplier_advance_payment_ids.filtered(
+                lambda x: x.company_id == self.env.user.company_id)
+
+            one.supplier_amount_residual_advance_payment = sum(x.advance_balance_total for x in supplier_advance_payment_ids)
+            one.supplier_amount_advance_payment = sum(x.amount for x in supplier_advance_payment_ids)
 
     # yingfurld_ids = fields.One2many('account.payment','account_reconcile_order_id','应付认领单')
 

@@ -10,7 +10,7 @@ class res_partner(models.Model):
     def compute_amount_purchase_advance(self):
         aml_obj = self.env['account.move.line']
         for one in self:
-            lines = aml_obj.search([('partner_id', '=', one.id), ('account_id.code', '=', '1123')])
+            lines = aml_obj.search([('company_id','=',self.env.user.company_id.id),('partner_id', '=', one.id), ('account_id.code', '=', '1123')])
             one.advance_currency_id = one.property_purchase_currency_id or one.currency_id
             one.amount_purchase_advance_org = sum(
                 [line.get_amount_to_currency(one.advance_currency_id) for line in lines])
@@ -252,6 +252,9 @@ class res_partner(models.Model):
                                                     store=True)
 
     supplier_payment_amount_total = fields.Float('付款总金额', compute=compute_payment_amount_total, store=True)
+
+
+
     # 不要了
 
     mark_ids = fields.Many2many('transport.mark', 'ref_mark_patner', 'pid', 'mid', u'唛头')
