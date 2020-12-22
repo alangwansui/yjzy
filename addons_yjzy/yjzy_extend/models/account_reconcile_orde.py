@@ -1281,13 +1281,13 @@ class account_reconcile_order(models.Model):
                 self.action_manager_approve_stage()
                 self.operation_wizard = '20'
                 self.hxd_type_new = '30'
-                if amount_payment_can_approve_all == 0: # 当预付把这次认领的账单全部认领完了，这个应付申请单 就直接跳转完成
-                    stage_id = self._stage_find(domain=[('code', '=', '060')])
-                    self.write({'stage_id': stage_id.id,
-                        'state': 'done',
-                        # 'operation_wizard': '03',
-                        })
-                else:
+                if amount_payment_can_approve_all != 0: # 当预付把这次认领的账单全部认领完了，这个应付申请单 就直接跳转完成
+                #     stage_id = self._stage_find(domain=[('code', '=', '060')])
+                #     self.write({'stage_id': stage_id.id,
+                #                 'state': 'done',
+                #                 # 'operation_wizard': '03',
+                #         })
+                # else:
                     if self.yjzy_reconcile_order_id_new:
                         raise Warning('已经审批过一次')
                     invoice_dic = []
