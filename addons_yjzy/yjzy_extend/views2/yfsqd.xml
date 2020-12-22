@@ -269,12 +269,12 @@
                             </group>
                         </page>
 
-                        <footer invisible="not context.get('open')">
-                            <button name="action_save_test" type="object" class="oe_highlight" string="保存并关闭"/>
-                            <button name="action_submit_stage" class="oe_highlight" type="object" string="提交审批"/>
-                            <button name="action_manager_approve_first_stage" class="oe_highlight" type="object"
-                                    string="总经理审批"/>
-                        </footer>
+<!--                        <footer invisible="not context.get('open')">-->
+<!--                            <button name="action_save_test" type="object" class="oe_highlight" string="保存并关闭"/>-->
+<!--                            <button name="action_submit_stage" class="oe_highlight" type="object" string="提交审批"/>-->
+<!--                            <button name="action_manager_approve_first_stage" class="oe_highlight" type="object"-->
+<!--                                    string="总经理审批"/>-->
+<!--                        </footer>-->
                     </notebook>
 
                 </sheet>

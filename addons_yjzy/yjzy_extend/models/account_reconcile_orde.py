@@ -3669,7 +3669,7 @@ class advance_payment_state(models.Model):
         return dic_po_invl or False
 
     def open_yfsqd(self):
-        form_view = self.env.ref('yjzy_extend.view_yfsqd_form')
+        form_view = self.env.ref('yjzy_extend.view_yfsqd_form_open')
         return {'name': u'预付款申请单',
             'type': 'ir.actions.act_window',
             'view_type': 'form',
@@ -3679,6 +3679,7 @@ class advance_payment_state(models.Model):
             'res_id': self.advance_payment_id.id,
             'target':'new',
             'context': {'display_name_code':1,
+                        'open':1
                         }}
 
     def open_wizard_renling_ysrld(self):
