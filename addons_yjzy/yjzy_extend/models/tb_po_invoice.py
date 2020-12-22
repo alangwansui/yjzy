@@ -893,7 +893,7 @@ class tb_po_invoice(models.Model):
     def make_back_tax(self):
         partner = self.env.ref('yjzy_extend.partner_back_tax')
         # product = self.env.ref('yjzy_extend.product_back_tax')
-        product = self.product_feiyong_tax
+        product = self.product_back_tax
         # account = self.env['account.account'].search([('code','=', '50011'),('company_id', '=', self.user_id.company_id.id)], limit=1)
         account = product.property_account_income_id
 
