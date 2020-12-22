@@ -409,10 +409,10 @@ class account_invoice(models.Model):
     #
     # invoice_tb_partner_ids = fields.Many2many('account.invoice',u'和出运相关的账单',compute=_compute_invoice_tb_partner_ids)
     # invoice_tb_partner_ids_1 = fields.Many2many('account.invoice', u'和出运相关的账单', compute=_compute_invoice_tb_partner_ids)
-    @api.depends('amount_total','residual','reconcile_order_line_ids','reconcile_order_line_ids.amount_total_org_new','reconcile_order_line_ids.order_id.state',
-                 'yjzy_invoice_reconcile_order_line_no_ids.amount_payment_org','reconcile_order_line_no_ids','reconcile_order_line_no_ids.order_id.state',
-                 'reconcile_order_line_no_ids.amount_payment_org',
-                 'yjzy_invoice_reconcile_order_line_no_ids','yjzy_invoice_reconcile_order_line_ids','yjzy_invoice_reconcile_order_line_no_ids.order_id.state')
+    # @api.depends('amount_total','residual','reconcile_order_line_ids','reconcile_order_line_ids.amount_total_org_new','reconcile_order_line_ids.order_id.state',
+    #              'yjzy_invoice_reconcile_order_line_no_ids.amount_payment_org','reconcile_order_line_no_ids','reconcile_order_line_no_ids.order_id.state',
+    #              'reconcile_order_line_no_ids.amount_payment_org',
+    #              'yjzy_invoice_reconcile_order_line_no_ids','yjzy_invoice_reconcile_order_line_ids','yjzy_invoice_reconcile_order_line_no_ids.order_id.state')
     def compute_amount_payment_can_approve_all(self):
         for one in self:
             payment_approved_all = one.reconcile_order_line_ids.filtered(lambda x: x.order_id.state == 'approved')
