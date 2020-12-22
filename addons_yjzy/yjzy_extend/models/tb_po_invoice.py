@@ -1369,7 +1369,7 @@ class tb_po_invoice(models.Model):
         product = self.invoice_product_id
         account = product.property_account_income_id
         if self.purchase_amount2_add_this_time_total != 0:
-            inv = invoice_obj.with_context({'default_type': self.type_invoice, 'type': self.type_invoice, 'journal_type':journal_type }).create({
+            inv = invoice_obj.with_context({'default_type': 'in_invoice', 'type': 'in_invoice', 'journal_type': 'purchase'}).create({
                     'partner_id': self.partner_id.id,
                     'tb_po_invoice_id': self.id,
                     'bill_id': self.tb_id.id,
