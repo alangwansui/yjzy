@@ -1364,17 +1364,19 @@ class tb_po_invoice(models.Model):
         hsname_all_line_obj = self.env['invoice.hs_name.all']
         purchase_orders = invoice_obj.browse()
         # product = self.env.ref('yjzy_extend.product_back_tax')
+
+        journal_type = 'purchase'
         product = self.invoice_product_id
         account = product.property_account_income_id
         if self.purchase_amount2_add_this_time_total != 0:
-            inv = invoice_obj.create({
+            inv = invoice_obj.with_context({'default_type': self.type_invoice, 'type': self.type_invoice, 'journal_type':journal_type }).create({
                     'partner_id': self.partner_id.id,
                     'tb_po_invoice_id': self.id,
                     'bill_id': self.tb_id.id,
                     'invoice_attribute':'expense_po',
                     'expense_sheet_id':self.expense_sheet_id.id,
                     'type':'in_invoice',
-                    'journal_type':'purchase',
+                    'journal_type':journal_type,
                     'yjzy_type_1':'purchase',
                     'fk_journal_id': self.fk_journal_id.id,
                     'bank_id':self.bank_id.id,

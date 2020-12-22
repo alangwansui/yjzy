@@ -394,8 +394,11 @@ class account_payment(models.Model):
 
     reconciling = fields.Boolean('正在认领')
     #903
-    account_reconcile_order_line_id = fields.Many2one('account.reconcile.order.line',u'应收付认领明细') #过账后生成的实际的认领单明细
+    account_reconcile_order_line_id = fields.Many2one('account.reconcile.order.line',u'预收付-应收付认领明细') #过账后生成的实际的认领单明细
+    account_reconcile_order_line_no_id = fields.Many2one('account.reconcile.order.line.no', u'收付款-应收付认领明细')  # 过账后生成的实际的认领单明细
     account_reconcile_order_id = fields.Many2one('account.reconcile.order',u'应收付认领单',) #过账收生成的实际的认领单
+
+
 
     advance_reconcile_order_ids = fields.One2many('account.reconcile.order','yjzy_advance_payment_id',u'预收付-应收付认领')
     advance_reconcile_order_draft_ids = fields.One2many('account.reconcile.order', 'yjzy_advance_payment_id',u'预收付-应收付认领未审批',

@@ -997,7 +997,7 @@
 <!--                                本次账单-->
 <!--                            </span>-->
 
-                            <field  colspan="2" name="line_no_compute_ids" nolabel="1" readonly="1">
+                            <field  colspan="2" name="line_no_ids" nolabel="1" readonly="1">
                                 <tree editable="bottom" create="false">
                                     <field name="id" invisible="1"/>
                                     <field name="invoice_attribute" readonly="1" invisible="1"/>
@@ -1195,7 +1195,7 @@
                             </group>
                         </page>
                         <page string="账单认领" attrs="{'invisible':[('operation_wizard','in',['20','30','05','03'])]}">
-                            <field name="line_no_ids"
+                            <field name="line_no_other_ids"
                                    attrs="{'readonly':[('state_1','not in',['draft','account_approval'])]}">
                                 <tree editable="bottom" create="false">
                                     <field name="id" invisible="1"/>

@@ -278,7 +278,7 @@
                 <header>
                     <button name="compute_line_ids_advice_amount_advance_org" type="object" class="oe_highlight"
                             string="计算建议预收认领金额" groups="base.group_system"/>
-                    <button name="action_confirm_ysrld_stage" type="object" class="oe_highlight" string="确定认领"/>
+                    <button name="action_confirm_ysrld_stage" type="object" class="oe_highlight" string="确定认领" attrs="{'invisible':[('state_1','=','done')]}"/>
                     <field name="state_1" statusbar_visible=" " widget="statusbar"/>
 
                 </header>
@@ -479,38 +479,38 @@
                             </field>
 
 
-                            <field colspan="2" name="line_no_compute_ids" nolabel="1" invisible="1" readonly="1">
-                                <tree editable="bottom" create="false">
-                                    <field name="id" invisible="1"/>
-                                    <field name="invoice_attribute" readonly="1" invisible="1"/>
-                                    <field name="invoice_id" string="应收账单" context="{'show_tb_ref':1}" readonly="1"/>
-                                    <button name="open_invoice_id" icon="fa-pencil-square-o" context="{'open':1}"
-                                            type="object"/>
+<!--                            <field colspan="2" name="line_no_ids" nolabel="1" invisible="1" readonly="1">-->
+<!--                                <tree editable="bottom" create="false">-->
+<!--                                    <field name="id" invisible="1"/>-->
+<!--                                    <field name="invoice_attribute" readonly="1" invisible="1"/>-->
+<!--                                    <field name="invoice_id" string="应收账单" context="{'show_tb_ref':1}" readonly="1"/>-->
+<!--                                    <button name="open_invoice_id" icon="fa-pencil-square-o" context="{'open':1}"-->
+<!--                                            type="object"/>-->
 
-                                    <field name="amount_invoice_so_residual" invisible="1"/>
-                                    <field name="amount_invoice_so" string="原始应收款" readonly="1" invisible="1"/>
-                                    <field name="invoice_amount_total" string="原始应收款" readonly="1"/>
-                                    <field name="invoice_residual"
-                                           string="最新剩余应付款"
-                                           invisible="1"/><!--attrs="{'column_invisible':[('parent.operation_wizard','not in',['10'])]}"-->
-                                    <field name="invoice_residual_this_time" string="本次认领前剩余应收款"/>
-                                    <field name="amount_payment_can_approve_all_this_time"
-                                           string="本次申请前可认领应收款"
-                                           invisible="1"/><!--attrs="{'column_invisible':[('parent.state','=','done')]}"-->
-                                    <field name="amount_payment_can_approve_all_after" string="本次认领后可认领"/>
-                                    <field name="amount_payment_org"/>
-                                    <field name="amount_advance_org"/>
-                                    <field name="invoice_residual_after" invisible="1"/>
-                                    <field name="payment_currency_id" invisible="1"/>
+<!--                                    <field name="amount_invoice_so_residual" invisible="1"/>-->
+<!--                                    <field name="amount_invoice_so" string="原始应收款" readonly="1" invisible="1"/>-->
+<!--                                    <field name="invoice_amount_total" string="原始应收款" readonly="1"/>-->
+<!--                                    <field name="invoice_residual"-->
+<!--                                           string="最新剩余应付款"-->
+<!--                                           invisible="1"/>&lt;!&ndash;attrs="{'column_invisible':[('parent.operation_wizard','not in',['10'])]}"&ndash;&gt;-->
+<!--                                    <field name="invoice_residual_this_time" string="本次认领前剩余应收款"/>-->
+<!--                                    <field name="amount_payment_can_approve_all_this_time"-->
+<!--                                           string="本次申请前可认领应收款"-->
+<!--                                           invisible="1"/>&lt;!&ndash;attrs="{'column_invisible':[('parent.state','=','done')]}"&ndash;&gt;-->
+<!--                                    <field name="amount_payment_can_approve_all_after" string="本次认领后可认领"/>-->
+<!--                                    <field name="amount_payment_org"/>-->
+<!--                                    <field name="amount_advance_org"/>-->
+<!--                                    <field name="invoice_residual_after" invisible="1"/>-->
+<!--                                    <field name="payment_currency_id" invisible="1"/>-->
 
-                                    <field name="amount_payment_can_approve_all" string="最新可申请应付款" invisible="1"
-                                    /><!--attrs="{'column_invisible':[('parent.state','=','done')]}"-->
-                                    <field name="currency_id" invisible="1"/>
-                                    <field name="state_1" string="状态" invisible="1" groups="base.group_system"/>
+<!--                                    <field name="amount_payment_can_approve_all" string="最新可申请应付款" invisible="1"-->
+<!--                                    />&lt;!&ndash;attrs="{'column_invisible':[('parent.state','=','done')]}"&ndash;&gt;-->
+<!--                                    <field name="currency_id" invisible="1"/>-->
+<!--                                    <field name="state_1" string="状态" invisible="1" groups="base.group_system"/>-->
 
 
-                                </tree>
-                            </field>
+<!--                                </tree>-->
+<!--                            </field>-->
                             <field name="amount_total_org_new" string="本次认领金额"
                                    attrs="{'invisible':[('operation_wizard','not in',['03','20','30'])]}"/>
                             <field name="amount_payment_can_approve_all_after" string="本次认领后可认领金额"
@@ -677,13 +677,13 @@
                                     <!--field name="bank_currency_id"/-->
                                     <!--field name="diff_currency_id"/-->
                                     <field name="currency_id" invisible="1"/>
-                                    <field name="advice_amount_advance_org_real" string="建议预收认领"
+                                    <field name="advice_amount_advance_org_real" string="建议预收认领" readonly="1"
                                            />
-                                    <field name="least_advice_amount_advance_org" string="最低预收认领"
+                                    <field name="least_advice_amount_advance_org" string="最低预收认领" readonly="1"
                                            />
-                                    <field name="amount_invoice_so" string="本次出运金额" invisible="0"/>
+                                    <field name="amount_invoice_so" string="本次出运金额" invisible="0" readonly="1"/>
                                     <field name="amount_invoice_so_residual" string="销售对应应收余额" invisible="1"/>
-                                    <field name="yjzy_payment_id" string="预收单"
+                                    <field name="yjzy_payment_id" string="预收单" readonly="1"
                                            domain="[('advance_balance_total','!=',0),('sfk_type','=','ysrld')]"
                                            context="{'only_number':1,'form_view_ref': 'yjzy_extend.view_rcskd_form','advance_bank_amount':1}"/>
                                     <field name="advance_residual" string="销售总未认领预收"/>

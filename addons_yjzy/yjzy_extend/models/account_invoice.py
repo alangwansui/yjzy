@@ -921,7 +921,8 @@ class account_invoice(models.Model):
 
         })
         self.reconcile_order_id = yfhxd
-        yfhxd._make_lines_po_from_expense()
+        # yfhxd._make_lines_po_from_expense()
+        yfhxd.make_line_no()
         yfhxd.action_manager_approve_stage()
         # yfhxd.create_rcfkd()
 

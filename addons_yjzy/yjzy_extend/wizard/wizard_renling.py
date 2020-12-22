@@ -280,14 +280,16 @@ class wizard_renling(models.TransientModel):
                                          })
 
             if self.renling_type != 'yshxd':
-                yshxd_id.make_lines()
-                yshxd_id.operation_wizard = '20'
+                yshxd_id.make_line_no()
+                yshxd_id.operation_wizard = '10'
                 stage_id = yshxd_id._stage_find(domain=[('code', '=', '030')])
                 print('_stage_find', stage_id)
                 yshxd_id.write({'stage_id': stage_id.id,
                                 'state': 'posted',
                                 # 'operation_wizard':'25'
                                 })
+
+
             else:
                 yshxd_id.make_line_no()
                 yshxd_id.make_account_payment_state_ids()

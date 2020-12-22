@@ -182,7 +182,7 @@
 
                                         <field name="name" invisible="1"/>
                                         <field name="sys_outer_hetong" invisible="1"/>
-                                        <field name="tb_id" context="{'show_ref': 1}" options="{'no_create':True}" domain="[('state','not in',['cancel','refused','draft','check','submit','sales_approve'])]"/>
+                                        <field name="tb_id" context="{'show_ref': 1}" options="{'no_create':True}" />
 
                                         <field name="lead_id" string="项目编号" options="{'quick_create': 1,'no_open':1}" />
                                         <field name="sale_order_id" context="{'sale_show_partner_name': True}" invisible="1"/>

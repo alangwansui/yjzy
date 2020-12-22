@@ -33,7 +33,7 @@ class wizard_fkzl(models.TransientModel):
     expense_ids_count = fields.Integer('费用明细数量',compute=compute_count)
     yfsqd_ids = fields.Many2many('account.payment','ref_rec_yfsqd', 'yfsqd_id', 'zl_id',)
     yfsqd_ids_count = fields.Integer('预收数量', compute=compute_count)
-    yshx_ids = fields.Many2many('account.payment','ref_rec_yshx', 'yshx_id', 'zl_id',)
+    # yshx_ids = fields.Many2many('account.payment','ref_rec_yshx', 'yshx_id', 'zl_id',)
     yshx_ids_new = fields.Many2many('account.reconcile.order', 'ref_rec_yshx_new', 'yshx_new_id', 'zl_id', )
 
     yshx_ids_line_no = fields.Many2many('account.reconcile.order.line.no', 'ref_rec_yshx_line', 'yshx_line_id', 'zl_id', )

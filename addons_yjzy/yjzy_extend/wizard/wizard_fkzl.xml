@@ -136,22 +136,19 @@
                     <field name="expense_ids" readonly="1" attrs="{'invisible':[('expense_ids_count','=',0)]}">
                         <tree>
                             <field name="categ_id" string="大类*" options="{'no_create':True,'no_open':1}"
-                                   context="{'search_order': 'sequence','only_name':1}" required="1"/>
+                                   required="1"/>
                             <field name="second_categ_id" string="中类*"
                                    options="{'no_create':True,'no_open':1}"
 
-                                   context="{'search_order': 'sequence','only_name':1}"
+
                                    required="1"/>
                             <field name="product_id" required="1" string="小类*"
                                    options="{'no_create':True,'no_open':1}"
-
-                                   context="{'default_can_be_expensed': 1,'tree_view_ref':'hr_expense.product_product_expense_tree_view','only_name':1}"/>
-                            <field name="tb_id" context="{'show_ref': 1}" options="{'no_create':True}"
-
-                                   domain="[('state','not in',['cancel','refused','draft','check','submit','sales_approve'])]"/>
-                            <field name="lead_id" string="项目编号" options="{'quick_create': 1,'no_open':1}"
-                            />
+                                  />
+                            <field name="tb_id" context="{'show_ref': 1}" options="{'no_create':True}"  />
+                            <field name="lead_id" string="项目编号" options="{'quick_create': 1,'no_open':1}"/>
                             <field name="unit_amount"/>
+                            <field name="state"/>
                         </tree>
                     </field>
 
