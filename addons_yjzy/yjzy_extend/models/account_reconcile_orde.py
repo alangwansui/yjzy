@@ -1430,7 +1430,7 @@ class account_reconcile_order(models.Model):
             raise Warning('收款认领金额为0，无法提交！')
         if self.hxd_type_new == '20' and self.amount_payment_org == 0:
             raise Warning('认领金额为0，无法提交！')
-        if self.amount_total_org_new > self.yjzy_payment_balance:
+        if self.amount_payment_org_new > self.yjzy_payment_balance:
             raise Warning('认领金额大于可认领的收款金额，无法提交！')
         lines = self.line_ids
         if lines:
