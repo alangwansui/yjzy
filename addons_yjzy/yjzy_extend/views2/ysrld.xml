@@ -481,9 +481,14 @@
                    </notebook>
 
                 </sheet>
-                <footer >
-                   <button name="action_ysrld_one_in_all" type="object" class="oe_highlight" string="确定认领并关闭" attrs="{'invisible':[('state','in',['posted','reconciled'])]}"/>
-                      <button name="action_save_test" type="object" class="oe_highlight" string="保存但不确认"/>
+                <footer attrs="{'invisible':[('state','in',['posted','reconciled'])]}">
+                   <button name="action_ysrld_one_in_all" type="object" class="oe_highlight" string="确定认领并关闭"
+                           attrs="{'invisible':[('state','in',['posted','reconciled'])]}"/>
+                   <button name="action_save_test" type="object" class="oe_highlight" string="保存但不确认"/>
+                </footer>
+                <footer attrs="{'invisible':[('state','not in',['posted','reconciled'])]}">
+                    <button name="action_save_test" string="确认" class="btn-primary" type="object"/>
+                    <button string="关闭" class="btn-primary" special="cancel"/>
                 </footer>
                 <div class="oe_chatter">
                     <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>

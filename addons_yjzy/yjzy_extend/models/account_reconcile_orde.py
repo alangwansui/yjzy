@@ -3688,6 +3688,20 @@ class advance_payment_state(models.Model):
                         'open':1
                         }}
 
+    def open_ysqd(self):
+        form_view = self.env.ref('yjzy_extend.view_ysrld_form_new_open')
+        return {'name': u'预收认领单',
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'res_model': 'account.payment',
+            'views': [ (form_view.id, 'form')],
+            'res_id': self.advance_payment_id.id,
+            'target':'new',
+            'context': {'display_name_code':1,
+                        'open':1
+                        }}
+
     def open_wizard_renling_ysrld(self):
         self.ensure_one()
         ctx = self.env.context.copy()
