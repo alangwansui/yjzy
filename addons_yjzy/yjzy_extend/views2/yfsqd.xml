@@ -359,15 +359,17 @@
                     </div>
                     <group>
                         <group>
-                            <field name="partner_id" domain="[('is_company','=',True)]" string="供应商"
+                            <field name="partner_id" domain="[('is_company','=',True)]" string="供应商" options="{'no_open':1}"
                                    attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))],
                                    'invisible': [('payment_type', 'not in', ('inbound', 'outbound'))], 'readonly': [('state', '!=', 'draft')]}"
-                                   context="{'default_is_company': True, 'default_supplier': payment_type == 'outbound', 'default_customer': payment_type == 'inbound'}"/>
+                                   context="{'default_is_company': True, 'default_supplier': payment_type == 'outbound',
+                                   'default_customer': payment_type == 'inbound'}"/>
                             <field name="bank_id" domain="[('partner_id','=',partner_id)]"
                                    attrs="{'readonly':[('state', 'in', ['posted','reconciled'])]}"
                                    options="{'no_create_edit': True}" string="收款方账户"/>
                             <field name="po_id" domain="[('partner_id','=', partner_id),'|',('state','in',['approve','done','purchase','to approve']),
-                            ('x_wkf_state','=',185)]" context="{'show_contract_code': 1}"
+                            ('x_wkf_state','=',185)]"
+                                   context="{'show_contract_code': 1}"
                                    attrs="{'readonly':[('state', '!=', 'draft')]}"/>
 
                             <field name="fk_journal_id" string="付款银行" attrs="{'invisible':[('state_1','in',['10_draft','80_refused','90_cancel'])],
@@ -478,11 +480,12 @@
                             </group>
                         </page>
 
-                        <footer>
+
+                    </notebook>
+                     <footer>
                             <button name="action_save_test" string="确认" class="btn-primary" type="object"/>
                             <button string="关闭" class="btn-primary" special="cancel"/>
                         </footer>
-                    </notebook>
 
                 </sheet>
 

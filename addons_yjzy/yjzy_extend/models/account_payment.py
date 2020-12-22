@@ -165,7 +165,8 @@ class account_payment(models.Model):
     #     self.compute_advance_type()
     #     return res
 
-    @api.depends('advance_reconcile_order_line_ids.order_id.state','amount','advance_reconcile_order_line_ids.amount_advance_org','advance_reconcile_order_line_ids.yjzy_payment_id')
+    @api.depends('advance_reconcile_order_line_ids.order_id.state','amount','advance_reconcile_order_line_ids.amount_advance_org',
+                 'advance_reconcile_order_line_ids.yjzy_payment_id')
     def compute_advance_balance_total(self):
         for one in self:
             advance_total = sum([x.amount_advance_org for x in one.advance_reconcile_order_line_ids])
@@ -302,7 +303,8 @@ class account_payment(models.Model):
         for one in self:
             one.tb_po_invoice_ids_count = len(one.tb_po_invoice_ids)
 
-    @api.depends('advance_reconcile_order_line_ids','advance_reconcile_order_line_ids.amount_advance_org')
+    @api.depends('advance_reconcile_order_line_ids','advance_reconcile_order_line_ids.order_id.state',
+                 'advance_reconcile_order_line_ids.amount_advance_org', 'advance_reconcile_order_line_ids.yjzy_payment_id')
     def compute_amount_advance_org_all(self):
         for one in self:
             amount_advance_org_all = sum(x.amount_advance_org for x in one.advance_reconcile_order_line_ids)

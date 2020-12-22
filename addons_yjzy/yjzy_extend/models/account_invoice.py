@@ -409,15 +409,21 @@ class account_invoice(models.Model):
     #
     # invoice_tb_partner_ids = fields.Many2many('account.invoice',u'和出运相关的账单',compute=_compute_invoice_tb_partner_ids)
     # invoice_tb_partner_ids_1 = fields.Many2many('account.invoice', u'和出运相关的账单', compute=_compute_invoice_tb_partner_ids)
-    @api.depends('amount_total','residual','reconcile_order_line_ids','reconcile_order_line_ids.amount_total_org_new','reconcile_order_line_ids.order_id.state','yjzy_invoice_reconcile_order_line_no_ids.amount_payment_org',
+    @api.depends('amount_total','residual','reconcile_order_line_ids','reconcile_order_line_ids.amount_total_org_new','reconcile_order_line_ids.order_id.state',
+                 'yjzy_invoice_reconcile_order_line_no_ids.amount_payment_org','reconcile_order_line_no_ids','reconcile_order_line_no_ids.order_id.state',
+                 'reconcile_order_line_no_ids.amount_payment_org',
                  'yjzy_invoice_reconcile_order_line_no_ids','yjzy_invoice_reconcile_order_line_ids','yjzy_invoice_reconcile_order_line_no_ids.order_id.state')
     def compute_amount_payment_can_approve_all(self):
         for one in self:
             payment_approved_all = one.reconcile_order_line_ids.filtered(lambda x: x.order_id.state == 'approved')
+            payment_approved_no_all = one.reconcile_order_line_no_ids.filtered(lambda x: x.order_id.state == 'approved')
             yjzy_payment_approve_all = one.yjzy_invoice_reconcile_order_line_ids.filtered(lambda x: x.order_id.state == 'approved')
-            amount_payment_approve_all = sum(x.amount_total_org_new for x in payment_approved_all)
-            amount_payment_can_approve_all = one.residual - sum(x.amount_total_org_new for x in payment_approved_all) or 0.0   #由amount_payment_org改为amount_total_org
-            yjzy_amount_payment_can_approve_all = one.yjzy_residual - sum(x.amount_total_org_new for x in yjzy_payment_approve_all) or 0.0
+            yjzy_payment_approved_no_all = one.yjzy_invoice_reconcile_order_line_no_ids.filtered(lambda x: x.order_id.state == 'approved')
+            amount_payment_approve_all = sum(x.amount_total_org_new for x in payment_approved_all) + sum(x.amount_payment_org for x in payment_approved_no_all)
+            yjzy_amount_payment_approve_all = sum(x.amount_total_org_new for x in yjzy_payment_approve_all) + sum(x.amount_payment_org for x in yjzy_payment_approved_no_all)
+            amount_payment_can_approve_all = one.residual - amount_payment_approve_all or 0.0   #由amount_payment_org改为amount_total_org
+
+            yjzy_amount_payment_can_approve_all = one.yjzy_residual - yjzy_amount_payment_approve_all or 0.0
             print('yjzy_amount_payment_can_approve_all',yjzy_amount_payment_can_approve_all,amount_payment_can_approve_all)
             one.amount_payment_approve_all = amount_payment_approve_all
             one.amount_payment_can_approve_all = amount_payment_can_approve_all
@@ -638,13 +644,18 @@ class account_invoice(models.Model):
 
 
     reconcile_order_line_count = fields.Float(u'核销明细行数量', compute=get_reconcile_order_line)
-    reconcile_order_line_ids = fields.One2many('account.reconcile.order.line', 'invoice_id', u'核销明细行',domain=[('order_id','!=',False),('order_id.sfk_type','=','yfhxd')]
+    reconcile_order_line_ids = fields.One2many('account.reconcile.order.line', 'invoice_id', u'核销明细行',
+                                               domain=[('order_id','!=',False),('order_id.sfk_type','=','yfhxd')]
                                               )#domain=[('order_id.state', 'in', ['approved']), ('amount_total_org', '!=', 0)]
     reconcile_order_line_approve_ids = fields.One2many('account.reconcile.order.line', 'invoice_id', u'核销明细行',
                                                domain=[('order_id.state','=','approved'),('order_id', '!=', False), ('order_id.sfk_type', '=', 'yfhxd')]
                                                )  # domain=[('order_id.state', 'in', ['approved']), ('amount_total_org', '!=', 0)]
-    yjzy_invoice_reconcile_order_line_ids = fields.One2many('account.reconcile.order.line', 'yjzy_invoice_id', u'所有核销明细行',domain=[('order_id','!=',False),('order_id.sfk_type','=','yfhxd')]
-                                               )  # domain=[('order_id.state', 'in', ['approved']), ('amount_total_org', '!=', 0)]关联账单（额外账单以及自己）的所有认领明细
+    reconcile_order_line_no_ids = fields.One2many('account.reconcile.order.line.no', 'invoice_id',
+                                                          u'所有核销细行no', domain=[('order_id', '!=', False),
+                                                                               ('order_id.sfk_type', '=', 'yfhxd')])
+
+    yjzy_invoice_reconcile_order_line_ids = fields.One2many('account.reconcile.order.line', 'yjzy_invoice_id', u'所有核销明细行',
+                                                            domain=[('order_id','!=',False),('order_id.sfk_type','=','yfhxd')])  # domain=[('order_id.state', 'in', ['approved']), ('amount_total_org', '!=', 0)]关联账单（额外账单以及自己）的所有认领明细
     yjzy_invoice_reconcile_order_line_no_ids = fields.One2many('account.reconcile.order.line.no', 'yjzy_invoice_id',
                                                             u'所有核销细行no', domain=[('order_id', '!=', False),
                                                                                 ('order_id.sfk_type', '=', 'yfhxd')]
