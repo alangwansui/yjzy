@@ -423,7 +423,7 @@
                     <group col="2">
                         <group attrs="{'invisible':[('hxd_type_new','not in',['10','25'])]}">
 
-                            <field name="line_no_ids" nolabel="1" colspan="2"
+                            <field name="line_no_other_ids" nolabel="1" colspan="2"
                                    attrs="{'readonly':[('state_1','not in',['draft','draft_yshxd','account_approval','advance_approval_yshxd',
                                    'account_approval_yshxd'])]}">
                                 <tree editable="bottom" create="false">
@@ -638,7 +638,7 @@
                         </page>
 
                         <page string="认领应收账单"  attrs="{'invisible':[('yjzy_type','not in',['back_tax','other_payment_sale'])]}">
-                            <field name="line_no_other_ids">
+                            <field name="line_no_ids">
                                 <tree  editable="bottom" create="false">
                                 <field name="invoice_id" readonly="1" string="应收账单"/>
                                 <field name="invoice_amount_total" string="原始应收款" sum="小计"/>
