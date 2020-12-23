@@ -249,7 +249,9 @@ class account_reconcile_order(models.Model):
                 continue
             lines = one.line_ids
             lines_no = one.line_no_ids
+
             one.amount_advance_org_new = sum([x.amount_advance_org for x in lines])
+            print('amount_advance_org_new_akiny', one.amount_advance_org_new)
 
     @api.depends('line_ids', 'line_ids.amount_payment_org','payment_currency_id','line_no_ids','line_no_ids.amount_payment_org')
     def compute_amount_payment_org_new(self):
