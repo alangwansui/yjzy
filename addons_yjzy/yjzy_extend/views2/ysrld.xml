@@ -406,7 +406,7 @@
                     <group>
                         <group>
                             <field name="partner_id" options="{'no_create':True,'no_open': True}"
-                                   domain="[('is_company','=',True),('customer','=',True)]"
+                                   domain="[('is_company','=',True),('customer','=',True),('name','not in',['未定义','国税局'])]"
                                    attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))], 'invisible': [('payment_type', 'not in', ('inbound', 'outbound'))], 'readonly': 1}"
                                    context="{'default_is_company': True, 'default_supplier': payment_type == 'outbound', 'default_customer': payment_type == 'inbound'}"/>
 

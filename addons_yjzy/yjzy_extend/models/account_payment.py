@@ -535,7 +535,17 @@ class account_payment(models.Model):
     so_id = fields.Many2one('sale.order', u'报价单')
     so_id_currency_id = fields.Many2one('res.currency', related='so_id.currency_id')
     amount_total_so = fields.Monetary('合同金额', related='so_id.amount_total', currency_field='so_id_currency_id')
+
     po_id = fields.Many2one('purchase.order', u'采购单')
+    supplier_payment_term_id = fields.Many2one('account.payment.term',u'供应商付款条款',related='partner_id.property_supplier_payment_term_id')
+    purchase_payment_term_id = fields.Many2one('account.payment.term',u'采购合同付款条款',related='po_id.payment_term_id' )
+    po_id_currency_id = fields.Many2one('res.currency', related='po_id.currency_id')
+    po_amount = fields.Monetary(u'采购合同总金额',currency_field='po_id_currency_id',related='po_id.amount_total')
+    po_pre_advance = fields.Monetary(u'应付预付款',currency_field='po_id_currency_id',related='po_id.pre_advance')
+    po_real_advance = fields.Monetary(u'预付金额', currency_field='po_id_currency_id',related='po_id.real_advance')
+
+
+
     expense_id = fields.Many2one('hr.expense', u'费用明细')
     sheet_id = fields.Many2one('hr.expense.sheet', u'费用报告', related='expense_id.sheet_id', store=True)
     bank_id = fields.Many2one('res.partner.bank', u'银行账号')
@@ -752,6 +762,14 @@ class account_payment(models.Model):
 
     # def action_multi(self):
     #     print('sdfsdfd',self.ysrld_ids.records)
+
+    @api.onchange('partner_id')
+    def onchange_partner_id(self):
+        if self.sfk_type == 'yfsqd':
+            self.bank_id = False
+            self.po_id = False
+
+
 
     @api.multi
     def action_multi(self):
@@ -1077,6 +1095,8 @@ class account_payment(models.Model):
                 name = '%s:%s' % ('预付申请', one.name)
             elif ctx.get('default_sfk_type', '') == 'rcskd' or one.sfk_type == 'rcskd':
                 name = '%s:%s' % ('日常收款单', one.balance)
+            elif ctx.get('default_sfk_type', '') == 'nbzz' or one.sfk_type == 'nbzz':
+                name = '%s:%s' % ('内部转账', one.name)
             elif ctx.get('bank_amount'):
                 name = '%s[%s]' % (one.journal_id.name, str(one.balance))
             elif ctx.get('advance_bank_amount'):

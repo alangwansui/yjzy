@@ -91,9 +91,14 @@ class purchase_order(models.Model):
             sml_lines = one.aml_ids.filtered(lambda x: x.account_id.code == '1123')
             if one.yjzy_payment_ids and one.yjzy_payment_ids[0].currency_id.name == 'CNY':
                 balance = sum([x.debit - x.credit for x in sml_lines])
+                real_advance = sum([x.debit for x in sml_lines])
             else:
                 balance = sum([1 * x.amount_currency for x in sml_lines])
+                real_advance = sum([1 * i.amount_currency for i in sml_lines.filtered(lambda x: x.amount_currency >0)])
             one.balance_new = balance
+            one.real_advance = real_advance
+
+
 
     @api.depends('order_line.qty_received','source_so_id')
     def compute_no_deliver_amount(self):
@@ -207,6 +212,7 @@ class purchase_order(models.Model):
     yjzy_payment_ids = fields.One2many('account.payment', 'po_id', u'预付款单')
     yjzy_currency_id = fields.Many2one('res.currency', u'预收币种', related='yjzy_payment_ids.currency_id')
     balance_new = fields.Monetary(u'预付余额_新', compute='compute_balance', currency_field='yjzy_currency_id',store=True)
+    real_advance = fields.Monetary(u'预付金额', compute='compute_balance', currency_field='yjzy_currency_id',store=True)
     pre_advance = fields.Monetary(u'预付金额', currency_field='currency_id', compute=compute_pre_advance, store=True, help=u"根据付款条款计算的可预付金额\n")#计划预付金额，根据付款条款计算
 
     #以下还没有进入文档

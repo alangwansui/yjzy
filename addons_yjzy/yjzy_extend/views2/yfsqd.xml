@@ -136,12 +136,12 @@
                             <field name="name" invisible="1"/>
                         </h1>
                     </div>
-                    <group>
+                    <group col="3">
                         <group>
                             <div colspan="2">
                                 <field name="display_name"/>
                             </div>
-                            <field name="partner_id" domain="[('is_company','=',True)]" string="供应商"
+                            <field name="partner_id" domain="[('is_company','=',True),('supplier','=',1)]" string="供应商"
                                    attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))],
                                    'invisible': [('payment_type', 'not in', ('inbound', 'outbound'))],
                                    'readonly': ['|',('state_1','!=','10_draft'),('state', '!=', 'draft')]}"
@@ -175,7 +175,13 @@
                             <field name="payment_method_code" invisible="1"/>
                             <field name="advance_balance_total" string="未认领预付"/>
                             <field name="amount_advance_org_all" string="完成认领预付"/>
-
+                        </group>
+                        <group>
+                            <field name="supplier_payment_term_id"/>
+                            <field name="purchase_payment_term_id" string="采购单付款条款"/>
+                            <field name="po_amount"/>
+                            <field name="po_real_advance"/>
+                            <field name="po_pre_advance"/>
                         </group>
                         <group>
 
