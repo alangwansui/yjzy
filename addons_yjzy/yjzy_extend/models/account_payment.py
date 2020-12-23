@@ -223,6 +223,12 @@ class account_payment(models.Model):
                     name = '%s:%s' % (one.name, str(one.advance_balance_total))
                 else:
                     name = '%s:%s' % ('预付申请', one.name)
+            elif ctx.get('default_sfk_type', '') == 'nbzz' or one.sfk_type == 'nbzz':
+                name = '%s:%s' % ('内部转账', one.name)
+
+            elif ctx.get('default_sfk_type', '') == 'jiehui' or one.sfk_type == 'jiehui':
+                name = '%s:%s' % ('结汇', one.name)
+
             elif ctx.get('bank_amount'):
                 name = '%s[%s]' % (one.journal_id.name, str(one.balance))
             elif ctx.get('advance_bank_amount'):

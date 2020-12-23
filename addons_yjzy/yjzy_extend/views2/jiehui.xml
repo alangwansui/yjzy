@@ -63,27 +63,27 @@
                     </div>
                     <group>
                         <group>
-                            <field name="sfk_type" />
-                            <field name="gongsi_id"/>
+                            <field name="sfk_type" invisible="1"/>
+                            <field name="gongsi_id" invisible="1"/>
                             <field name="payment_type" widget="radio" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                             <field name="partner_type" widget="selection"
                                    attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))], 'invisible': [('payment_type', 'not in', ('inbound', 'outbound'))], 'readonly': [('state', '!=', 'draft')]}"/>
                             <field name="partner_id"
                                    attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))], 'invisible': [('payment_type', 'not in', ('inbound', 'outbound'))], 'readonly': [('state', '!=', 'draft')]}"
                                    context="{'default_is_company': True, 'default_supplier': payment_type == 'outbound', 'default_customer': payment_type == 'inbound'}"/>
-                             <field name="journal_id" widget="selection" string="转出日记账"  domain="[('type','in',['bank','cash'])]"
-                                   attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+
                             <label for="amount" string="转出金额"/>
                             <div name="amount_div" class="o_row">
                                 <field name="amount" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                                 <field name="currency_id" options="{'no_create': True, 'no_open': True}" groups="base.group_multi_currency"
                                        attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                             </div>
-
+                            <field name="journal_id" widget="selection" string="转出账户"  domain="[('type','in',['bank','cash'])]"
+                                   attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                             <field name="destination_journal_id" widget="selection"
                                    attrs="{'required': [('payment_type', '=', 'transfer')], 'invisible': [('payment_type', '!=', 'transfer')], 'readonly': [('state', '!=', 'draft')]}"/>
                               <field name="advance_ok" label="是否预收"/>
-                            <field name="advance_account_id" label="转入" domain="[('user_type_id.id','=',3)]" />
+                            <field name="advance_account_id" domain="[('user_type_id.id','=',3)]" string="转入账户"/>
                             <field name="jiehui_in_amount"/>
                             <field name="balance"/>
                             <field name="hide_payment_method" invisible="1"/>
@@ -95,13 +95,13 @@
                             <field name="be_renling"/>
 
 
-                            <field name="payment_date" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="payment_date" attrs="{'readonly': [('state', '!=', 'draft')]}" string="转账日期"/>
                             <field name="communication"
                                    attrs="{'invisible': [('state', '!=', 'draft'), ('communication', '=', False)], 'readonly': [('state', '!=', 'draft')]}"/>
 
-                            <field name="jiehui_amount"/>
-                            <field name="jiehui_amount_currency"/>
-                            <field name="jiehui_rate"/>
+                            <field name="jiehui_amount" invisible="1"/>
+                            <field name="jiehui_amount_currency" invisible="1"/>
+                            <field name="jiehui_rate" invisible="1"/>
 
 
 
