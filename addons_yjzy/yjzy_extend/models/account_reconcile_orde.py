@@ -242,14 +242,14 @@ class account_reconcile_order(models.Model):
             print('one.supplier_advance_payment_ids',one.supplier_advance_payment_ids)
         # self.write({'supplier_advance_payment_ids': [line.id for line in supplier_advance_payment_ids]})
 
-    @api.depends('line_ids','line_ids.amount_advance_org')
+    @api.depends('line_ids','line_ids.amount_advance_org','line_no_ids','state_1')
     def compute_amount_advance_org_new(self):
         for one in self:
             if (not one.line_ids) or (not one.payment_currency_id):
                 continue
             lines = one.line_ids
             lines_no = one.line_no_ids
-            one.amount_advance_org_new = sum([x.amount_advance_org for x in lines]) + sum([x.amount_payment_org for x in lines_no])
+            one.amount_advance_org_new = sum([x.amount_advance_org for x in lines])
 
     @api.depends('line_ids', 'line_ids.amount_payment_org','payment_currency_id','line_no_ids','line_no_ids.amount_payment_org')
     def compute_amount_payment_org_new(self):

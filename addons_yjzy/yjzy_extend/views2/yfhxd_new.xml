@@ -595,7 +595,7 @@
             <tree string="应付核销单" create="false" decoration-info="state == 'draft'"
                   decoration-muted="state =='cancelled'" edit="false">
                 <field name="name"/>
-                <field name="partner_id"/>
+                <field name="partner_id" string="付款对象"/>
                 <field name="invoice_ids" widget="many2many_tags" string="应付账单"/>
                 <field name="date" invisible="1"/>
                 <field name="approve_uid" invisible="1"/>
