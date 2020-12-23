@@ -192,6 +192,7 @@ class transport_bill(models.Model):
                 'purchase_amount_min_add_forecast': hsl.purchase_amount_min_add_forecast,
                 'purchase_amount_max_add_rest': hsl.purchase_amount_max_add_rest,
                 'purchase_amount_min_add_rest': hsl.purchase_amount_min_add_rest,
+                'purchase_amount_min_add_rest_this_time':hsl.purchase_amount_min_add_rest,
                 'purchase_back_tax_amount2_new': hsl.purchase_back_tax_amount2_new,
                 'hsname_all_line_id': hsl.id,
                 'back_tax': hsl.back_tax

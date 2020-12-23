@@ -245,7 +245,7 @@
                             <field name="name"/>
                         </h1>
                     </div>
-                    <group>
+                    <group col="3">
                         <group>
                             <field name="partner_id" options="{'no_create':True,'no_open': True}"
                                    domain="[('is_company','=',True),('customer','=',True)]"
@@ -279,6 +279,13 @@
                             <field name="payment_method_id" string=" " widget="radio"
                                    attrs="{'invisible': [('hide_payment_method', '=', True)], 'readonly': [('state', '!=', 'draft')]}"/>
                             <field name="payment_method_code" invisible="1"/>
+                        </group>
+                                  <group>
+                            <field name="customer_payment_term_id"/>
+                            <field name="sale_payment_term_id" />
+                            <field name="amount_total_so"/>
+                            <field name="so_real_advance"/>
+                            <field name="so_pre_advance"/>
                         </group>
                         <group>
                             <field name="advance_balance_total" string="未被认领金额"/>
@@ -403,7 +410,7 @@
                             <field name="name"/>
                         </h1>
                     </div>
-                    <group>
+                    <group col="3">
                         <group>
                             <field name="partner_id" options="{'no_create':True,'no_open': True}"
                                    domain="[('is_company','=',True),('customer','=',True),('name','not in',['未定义','国税局'])]"
@@ -434,6 +441,13 @@
                             <field name="payment_method_code" invisible="1"/>
                             <field name="communication"
                                    attrs="{'invisible': [('state', '!=', 'draft'), ('communication', '=', False)], 'readonly': [('state', '!=', 'draft')]}"/>
+                        </group>
+                          <group>
+                            <field name="customer_payment_term_id"/>
+                            <field name="sale_payment_term_id" />
+                            <field name="amount_total_so"/>
+                            <field name="so_real_advance"/>
+                            <field name="so_pre_advance"/>
                         </group>
                         <group>
                            <field name="yjzy_payment_balance" string="收款单余额"/>

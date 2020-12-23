@@ -355,7 +355,7 @@
                             groups="base.group_system"/>
                 </header>
                 <sheet>
-                    <group col="2">
+                    <group col="3">
                         <group>
 
                             <field name="name" attrs="{'invisible':1}"/>
@@ -384,6 +384,11 @@
                                    attrs="{'invisible':[('invoice_attribute','!=','other_payment')]}"/>
                             <field name="date" attrs="{'invisible':[('operation_wizard','=',False)]}" invisible="1"/>
                             <field name="comments"/>
+                        </group>
+
+                        <group>
+                            <field name="partner_payment_term_id" string="客户付款条款"/>
+                            <field name="invoice_payment_term_id" string="账单应付条款"/>
                         </group>
                         <group attrs="{'invisible':[('operation_wizard','=',False)]}">
                             <field name="sfk_type" attrs="{'invisible':1}"/>

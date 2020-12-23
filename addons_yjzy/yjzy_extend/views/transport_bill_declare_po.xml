@@ -214,14 +214,14 @@
                                         <field name="purchase_back_tax_amount2" invisible="1"/>
                                         <field name="purchase_back_tax_amount2_new" string="实际退税金额" sum="小计"/>
                                         <field name="overall_profit_min"/>
-                                        <field name="overall_profit_max"/>
-                                        <field name="purchase_amount_min_add_forecast" sum="小计"/>
-                                        <field name="purchase_amount_max_add_forecast" sum="小计"/>
-                                        <field name="purchase_amount2_add_actual" sum="小计"/>
-                                        <field name="purchase_amount_min_add_rest" sum="小计"/>
-                                        <field name="purchase_amount_max_add_rest" sum="小计"/>
-                                        <field name="back_tax_add_actual"/>
-                                        <field name="p_s_add_actual"/>
+                                        <field name="overall_profit_max" invisible="1"/>
+                                        <field name="purchase_amount_min_add_forecast" sum="小计" string="总可增加"/>
+                                        <field name="purchase_amount_max_add_forecast" sum="小计" invisible="1"/>
+                                        <field name="purchase_amount2_add_actual" sum="小计" string="实际已增加"/>
+                                        <field name="purchase_amount_min_add_rest" sum="小计" string="本次可增加"/>
+                                        <field name="purchase_amount_max_add_rest" sum="小计" invisible="1"/>
+                                        <field name="back_tax_add_actual" invisible="1"/>
+                                        <field name="p_s_add_actual" invisible="1"/>
 
 
                                     </tree>

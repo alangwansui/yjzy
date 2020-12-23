@@ -1503,6 +1503,11 @@ class tb_po_invoice_line(models.Model):
             back_tax_add_this_time = one.purchase_amount2_add_this_time / 1.13 * one.back_tax
             one.back_tax_add_this_time = back_tax_add_this_time
 
+    @api.depends('purchase_amount_min_add_rest_this_time','purchase_amount2_add_this_time')
+    def compute_rest_after(self):
+        for one in self:
+            one.purchase_amount_min_add_rest_after = one.purchase_amount_min_add_rest_this_time - one.purchase_amount2_add_this_time
+
     #902
 
     #827
@@ -1551,6 +1556,8 @@ class tb_po_invoice_line(models.Model):
     purchase_amount_max_add_forecast = fields.Float('可增加采购额(下限)', digits=(2, 2),related='hsname_all_line_id.purchase_amount_max_add_forecast')
     purchase_amount_max_add_rest = fields.Float('采购池(下限)', digits=(2, 2),related='hsname_all_line_id.purchase_amount_max_add_rest')
     purchase_amount_min_add_rest = fields.Float('采购池(上限)', digits=(2, 2),related='hsname_all_line_id.purchase_amount_min_add_rest')
+    purchase_amount_min_add_rest_this_time = fields.Float('审批前本次可增加', digits=(2, 2))
+    purchase_amount_min_add_rest_after = fields.Float('审批后本次可增加', digits=(2, 2),compute=compute_rest_after)
     purchase_amount2_add_actual = fields.Float(U'实际已经增加采购额',related='hsname_all_line_id.purchase_amount2_add_actual')
 
 

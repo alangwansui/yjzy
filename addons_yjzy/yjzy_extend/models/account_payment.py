@@ -532,9 +532,7 @@ class account_payment(models.Model):
 
     aml_ids = fields.One2many('account.move.line', 'new_payment_id', u'余额相关分录')
 
-    so_id = fields.Many2one('sale.order', u'报价单')
-    so_id_currency_id = fields.Many2one('res.currency', related='so_id.currency_id')
-    amount_total_so = fields.Monetary('合同金额', related='so_id.amount_total', currency_field='so_id_currency_id')
+
 
     po_id = fields.Many2one('purchase.order', u'采购单')
     supplier_payment_term_id = fields.Many2one('account.payment.term',u'供应商付款条款',related='partner_id.property_supplier_payment_term_id')
@@ -543,6 +541,17 @@ class account_payment(models.Model):
     po_amount = fields.Monetary(u'采购合同总金额',currency_field='po_id_currency_id',related='po_id.amount_total')
     po_pre_advance = fields.Monetary(u'应付预付款',currency_field='po_id_currency_id',related='po_id.pre_advance')
     po_real_advance = fields.Monetary(u'预付金额', currency_field='po_id_currency_id',related='po_id.real_advance')
+
+    so_id = fields.Many2one('sale.order', u'销售合同')
+    so_id_currency_id = fields.Many2one('res.currency', related='so_id.currency_id')
+    amount_total_so = fields.Monetary('合同金额', related='so_id.amount_total', currency_field='so_id_currency_id')
+    customer_payment_term_id = fields.Many2one('account.payment.term', u'客户付款条款',
+                                               related='partner_id.property_payment_term_id')
+    sale_payment_term_id = fields.Many2one('account.payment.term', u'销售单付款条款', related='so_id.payment_term_id')
+
+
+    so_pre_advance = fields.Monetary(u'应收预收款', currency_field='so_id_currency_id', related='so_id.pre_advance')
+    so_real_advance = fields.Monetary(u'预收金额', currency_field='so_id_currency_id', related='so_id.real_advance')
 
 
 

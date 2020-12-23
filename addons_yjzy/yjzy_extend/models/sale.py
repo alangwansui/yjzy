@@ -81,9 +81,12 @@ class sale_order(models.Model):
                 sml_lines = one.aml_ids.filtered(lambda x: x.account_id.code == '2203')
                 if one.yjzy_payment_ids and one.yjzy_payment_ids[0].currency_id.name == 'CNY':
                     balance = sum([x.credit - x.debit for x in sml_lines])
+                    real_advance = sum([x.credit for x in sml_lines])
                 else:
                     balance = sum([-1 * x.amount_currency for x in sml_lines])
+                    real_advance = sum([-1 * x.amount_currency for x in sml_lines.filtered(lambda i: i.amount_currency > 0)])
                 one.balance_new = balance
+                one.real_advance = real_advance
 
 
     def compute_balance(self):
@@ -479,6 +482,7 @@ class sale_order(models.Model):
 
     balance = fields.Monetary(u'预收余额', compute=compute_balance, currency_field='yjzy_currency_id')
     balance_new = fields.Monetary(u'预收余额', compute=compute_balance_new, currency_field='yjzy_currency_id', store=True)
+    real_advance = fields.Monetary(u'预收金额', compute=compute_balance_new, currency_field='yjzy_currency_id', store=True)
     exchange_rate = fields.Float(u'目前汇率', compute=compute_exchange_rate, digits=(2,2)) #akiny 4改成了2
     appoint_rate = fields.Float(u'使用汇率', digits=(2,6))
     #currency_tate = fields.Many2one('res.currency.rate',u'系统汇率')

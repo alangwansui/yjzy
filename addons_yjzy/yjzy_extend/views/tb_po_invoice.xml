@@ -648,15 +648,17 @@
                                                attrs="{'column_invisible':[('parent.tb_id','=',False)]}"/>
                                         <field name="purchase_back_tax_amount2_new" readonly="1" string="实际退税金额"
                                                sum="小计" attrs="{'column_invisible':[('parent.tb_id','=',False)]}"/>
-                                        <field name="purchase_amount_min_add_forecast" readonly="1" sum="小计"
+                                        <field name="purchase_amount_min_add_forecast" readonly="1" sum="小计" string="总可增加"
                                                attrs="{'column_invisible':[('parent.tb_id','=',False)]}"/>
-                                        <field name="purchase_amount_max_add_forecast" readonly="1" sum="小计"
+                                        <field name="purchase_amount_max_add_forecast" readonly="1" sum="小计" invisible="1"
                                                attrs="{'column_invisible':[('parent.tb_id','=',False)]}"/>
-                                        <field name="purchase_amount2_add_actual" readonly="1" sum="小计"
+                                        <field name="purchase_amount2_add_actual" readonly="1" sum="小计" string="实际已增加"
                                                attrs="{'column_invisible':[('parent.tb_id','=',False)]}"/>
-                                        <field name="purchase_amount_min_add_rest" readonly="1"
+                                        <field name="purchase_amount_min_add_rest" readonly="1" string="最新可增加"
                                                attrs="{'column_invisible':[('parent.tb_id','=',False)]}"/>
-                                        <field name="purchase_amount_max_add_rest" readonly="1"
+                                        <field name="purchase_amount_min_add_rest_this_time"/>
+                                        <field name="purchase_amount_min_add_rest_after"/>
+                                        <field name="purchase_amount_max_add_rest" readonly="1" invisible="1"
                                                attrs="{'column_invisible':[('parent.tb_id','=',False)]}"/>
                                         <field name="purchase_amount2_add_this_time"
                                                attrs="{'readonly':[('parent.state','!=','10_draft')]}"/>

@@ -435,6 +435,18 @@ class account_reconcile_order(models.Model):
     #     print('line_ids_akiny_do',line_ids)
     #     self.line_do_ids = line_ids
 
+    def compute_payment_term_id(self):
+        for one in self:
+            if one.partner_id.customer == True and one.partner_id.supplier == False:
+                one.partner_payment_term_id = one.partner_id.property_payment_term_id
+            if one.partner_id.supplier == True and one.partner_id.customer == False:
+                one.partner_payment_term_id = one.partner_id.property_supplier_payment_term_id
+            one.invoice_payment_term_id = one.invoice_ids[0].payment_term_id
+
+
+
+    partner_payment_term_id = fields.Many2one('account.payment.term',u'伙伴付款条款',compute=compute_payment_term_id)
+    invoice_payment_term_id = fields.Many2one('account.payment.term',u'合同付款条款',compute=compute_payment_term_id)
 
     amount_payment_can_approve_all_after = fields.Monetary('所有账单本次申请后可申请支付金额合计',currency_field='invoice_currency_id' , compute=compute_amount_payment_can_approve_all_after)
 
