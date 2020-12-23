@@ -1212,17 +1212,17 @@
                                     <field name="invoice_id_po_ids" widget="many2many_tags" string="采购合同" invisible="1"
                                            attrs="{'column_invisible':[('parent.invoice_attribute','in',['other_payment'])]}"/>
                                      <field name="amount_invoice_so" string="原始应付款款" readonly="1" invisible="1"/>
-                                    <field name="invoice_amount_total" string="原始应付款" readonly="1"/>
+                                    <field name="invoice_amount_total" string="原始应付款" readonly="1" sum="小计"/>
 
-                                    <field name="reconcile_order_line_payment" string="付款支付" readonly="1" />
-                                    <field name="reconcile_order_line_advance" string="预付认领" readonly="1"
+                                    <field name="reconcile_order_line_payment" string="付款支付" readonly="1" sum="小计"/>
+                                    <field name="reconcile_order_line_advance" string="预付认领" readonly="1" sum="小计"
                                            attrs="{'column_invisible':[('parent.invoice_attribute','!=','normal')]}"/>
                                     <field name="invoice_residual"
                                            string="最新剩余应付款" invisible="1"/><!--attrs="{'column_invisible':[('parent.operation_wizard','not in',['10'])]}"-->
                                     <field name="invoice_residual_this_time" string="本次申请前剩余应付款"/>
-                                       <field name="amount_payment_can_approve_all_this_time" readonly="1"
+                                       <field name="amount_payment_can_approve_all_this_time" readonly="1" sum="小计"
                                            string="本次申请前可申请应付款"/><!--attrs="{'column_invisible':[('parent.state','=','done')]}"-->
-                                    <field name="amount_payment_can_approve_all_after"/>
+                                    <field name="amount_payment_can_approve_all_after" sum="小计"/>
                                     <field name="invoice_residual_after" invisible="1"/>
                                     <field name="payment_currency_id" invisible="1"/>
 
@@ -1238,7 +1238,7 @@
                                            attrs="{'column_invisible':[('parent.operation_wizard','not in',['25'])]}"/>
                                     <field name="amount_advance_org" string="本次认领金额"
                                            attrs="{'column_invisible':[('parent.operation_wizard','not in',['25'])],'readonly':[('parent.state_1','not in',['draft'])]}"/>
-                                    <field name="amount_payment_org" string="申请付款金额"
+                                    <field name="amount_payment_org" string="申请付款金额" sum="小计"
                                            attrs="{'column_invisible':[('parent.operation_wizard','not in',['10'])]}"/>
                                     <field name="amount_advance_org_compute" string="申请预付金额"
                                            attrs="{'column_invisible':['|',('parent.invoice_attribute','in',['back_tax','other_payment_sale','other_payment_purchase']),('parent.hxd_type_new','not in',['10','30'])]}"/>

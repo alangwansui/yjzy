@@ -1427,7 +1427,7 @@
             <field name="model">hr.expense.sheet</field>
             <field name="priority">999</field>
             <field name="arch" type="xml">
-                <form string="费用申请" class="o_expense_sheet">
+                <form string="费用申请" class="o_expense_sheet" create="false">
                     <header>
                         <button name="action_draft" string="重置草稿" type="object" attrs="{'invisible':[('state_1','not in',['refused'])]}"/>
 
