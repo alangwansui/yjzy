@@ -115,7 +115,7 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_account_bank_statement_tree_new')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_account_bank_statement_form_new')})]"/>
     </record>
-    <menuitem id="menu_account_bank_statement_new"  sequence="20" name="银行对账单" parent="menu_new_account_out_root" action="action_account_bank_statement_new"/>
+    <menuitem id="menu_account_bank_statement_new"  sequence="99" name="银行对账单" parent="menu_new_account_out_root" action="action_account_bank_statement_new"/>
 
 
 </odoo>

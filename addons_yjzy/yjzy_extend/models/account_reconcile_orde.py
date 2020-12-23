@@ -784,11 +784,11 @@ class account_reconcile_order(models.Model):
                         }
         }
     #924
-    def write(self, vals):
-        res = super(account_reconcile_order, self).write(vals)
-        for one in self.invoice_ids:
-            one.write({'state_2':'30_no_account_payment'})
-        return res
+    # def write(self, vals):
+    #     res = super(account_reconcile_order, self).write(vals)
+    #     for one in self.invoice_ids:
+    #         one.write({'state_2':'30_no_account_payment'})
+    #     return res
 
 
     # def action_05(self):
