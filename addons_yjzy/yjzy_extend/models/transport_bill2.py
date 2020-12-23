@@ -12,8 +12,12 @@ class transport_bill(models.Model):
         for one in self:
             hsname_all_ids = one.hsname_all_ids
             all_back_tax_invoice_ids = one.all_back_tax_invoice_ids.filtered(lambda x: x.yjzy_type_1 =='back_tax' and x.invoice_attribute == 'other_po')
+            print('hsname_all_ids_akiny',hsname_all_ids)
             purchase_amount_max_forecast_total = sum(x.purchase_amount_max_forecast for x in hsname_all_ids)
             purchase_amount_min_forecast_total = sum(x.purchase_amount_min_forecast for x in hsname_all_ids)
+            print('hsname_all_ids_akiny', hsname_all_ids,purchase_amount_min_forecast_total)
+            for x in one.hsname_all_ids:
+                print('hsname_all_ids_akiny',x.id, x.purchase_amount_min_forecast)
             purchase_amount_max_add_forecast_total = sum(x.purchase_amount_max_add_forecast for x in hsname_all_ids)
             purchase_amount_min_add_forecast_total = sum(x.purchase_amount_min_add_forecast for x in hsname_all_ids)
             purchase_amount2_tax_total = sum(x.purchase_amount2_tax for x in hsname_all_ids)
@@ -169,6 +173,9 @@ class transport_bill(models.Model):
 
     def create_tb_po_invoice(self):
         self.ensure_one()
+        for one in self.tb_po_invoice_ids:
+            if one.state not in ['30_done']:
+                raise Warning('存在为完成审批的增加采购申请单，请先等待完成审批后，再进行创建')
         bill_id = self.id
         tb_po_id = self.env['tb.po.invoice'].create({'tb_id': bill_id,
                                                     'invoice_product_id': self.env.ref('yjzy_extend.product_qtyfk').id, #0821
@@ -208,14 +215,8 @@ class transport_bill(models.Model):
             'res_id': tb_po_id.id,
             # 'context': { },
             'flag':{'initial_mode': 'edit',
-
                     }
-
-
         }
-
-
-
     # 816 定稿 合并
     def create_hsname_all_ids(self):
         self.ensure_one()
@@ -505,6 +506,7 @@ class tbl_hsname(models.Model):
             one.shiji_weight = one.gross_weight + one.tuopan_weight
             one.shiji_volume = one.volume + one.tuopan_volume
     #814  后面要结合采购报关金额来处理
+
     def _get_overall_profit(self):
         for one in self:
             overall_profit_max = float(self.env['ir.config_parameter'].sudo().get_param('addons_yjzy.overall_profit_max'))
@@ -528,6 +530,7 @@ class tbl_hsname(models.Model):
             one.purchase_amount_min_forecast = purchase_amount_min_forecast
             one.purchase_amount_max_add_forecast = purchase_amount_max_add_forecast
             one.purchase_amount_min_add_forecast = purchase_amount_min_add_forecast
+
     @api.depends('amount2')
     def compute_purchase_amount(self):
         for one in self:

@@ -16,16 +16,16 @@
                     <field name="ciq_amount"/>
                     <field name="purchase_amount2_tax_total"/>
                     <field name="purchase_amount2_no_tax_total"/>
-                    <field name="purchase_amount_min_forecast_total"/>
-                    <field name="purchase_amount_max_forecast_total"/>
+                    <field name="purchase_amount_min_forecast_total" string="预测最大采购金额"/>
+                    <field name="purchase_amount_max_forecast_total" invisible="1"/>
 
-                    <field name="purchase_amount_min_add_forecast_total" attrs="{'column_invisible':1}"/>
+                    <field name="purchase_amount_min_add_forecast_total" string="总可增加"/>
                     <field name="purchase_amount_max_add_forecast_total" attrs="{'column_invisible':1}"/>
 
-                    <field name="purchase_amount_min_add_rest_total"/>
-                    <field name="purchase_amount_max_add_rest_total"/>
+                    <field name="purchase_amount_min_add_rest_total" string="本次可增加"/>
+                    <field name="purchase_amount_max_add_rest_total" invisible="1"/>
 
-                    <field name="purchase_amount2_add_actual_total"/>
+                    <field name="purchase_amount2_add_actual_total" string="实际已增加"/>
                     <field name="state" invisible="1" groups="base.group_system"/>
                     <field name="company_currency_id" invisible="1" groups="base.group_system"/>
                     <field name="sale_currency_id" invisible="1"/>
@@ -229,7 +229,24 @@
                             </page>
                             <page string="新增采购申请单" attrs="{'invisible':[('tb_po_invoice_ids_count','=',0)]}">
                                 <field name="tb_po_invoice_ids_count" invisible="1"/>
-                                <field name="tb_po_invoice_ids" context="{'other_po':1,'expense_po':0,'form_view_ref':'yjzy_extend.tb_po_form'}"/>
+                                <field name="tb_po_invoice_ids" context="{'other_po':1,'expense_po':0,'form_view_ref':'yjzy_extend.tb_po_form'}">
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="partner_id"/>
+                                        <field name="yjzy_invoice_residual_amount" invisible="1"/>
+                                        <field name="yjzy_invoice_include_tax" invisible="1"/>
+                                        <field name="purchase_amount2_add_this_time_total"/><!--invisible="context.get('done')"-->
+                                        <field name="p_s_add_this_time_refund"/>
+                                        <field name="p_s_add_this_time_extra_total"/>
+                                        <field name="back_tax_add_this_time_total"/>
+                                        <field name="po_add_residual"/><!--invisible="not context.get('done')"-->
+                                        <field name="p_s_add_residual"/>
+                                        <field name="back_tax_add_residual"/>
+                                        <field name="p_s_add_refund_residual"/>
+                                        <field name="create_date" string="创建时间"/>
+                                        <field name="yjzy_invoice_id"/>
+                                    </tree>
+                                </field>
                             </page>
                             <page string="审批中新采购和退税" invisible="1">
                                 <field name="invoice_purchase_po_draft_ids"/>

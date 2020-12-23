@@ -656,7 +656,7 @@
                                                attrs="{'column_invisible':[('parent.tb_id','=',False)]}"/>
                                         <field name="purchase_amount_min_add_rest" readonly="1" string="最新可增加"
                                                attrs="{'column_invisible':[('parent.tb_id','=',False)]}"/>
-                                        <field name="purchase_amount_min_add_rest_this_time"/>
+                                        <field name="purchase_amount_min_add_rest_this_time" readonly="1"/>
                                         <field name="purchase_amount_min_add_rest_after"/>
                                         <field name="purchase_amount_max_add_rest" readonly="1" invisible="1"
                                                attrs="{'column_invisible':[('parent.tb_id','=',False)]}"/>
