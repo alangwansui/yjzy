@@ -1137,7 +1137,8 @@ class account_payment(models.Model):
                         ac_orders.make_done()
                     else:
                         ac_orders = one.yshx_ids
-                        ac_orders.action_done_new_stage()
+                        for x in ac_orders:
+                            x.action_done_new_stage()
 
                 if one.yfsqd_ids:
                     one.yfsqd_ids.post()
@@ -1169,7 +1170,8 @@ class account_payment(models.Model):
                         ac_orders.make_done()
                     else:
                         ac_orders = one.yshx_fkzl_ids
-                        ac_orders.action_done_new_stage()
+                        for x in ac_orders:
+                            x.action_done_new_stage()
 
                 if one.yfsqd_fkzl_ids:
                     one.yfsqd_fkzl_ids.post()
