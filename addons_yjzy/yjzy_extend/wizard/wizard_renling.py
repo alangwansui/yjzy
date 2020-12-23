@@ -551,7 +551,8 @@ class wizard_renling(models.TransientModel):
         print('type_invoice',type_invoice,yjzy_type_1)
 
         tb_po_invoice_obj = self.env['tb.po.invoice']
-        tb_po_invoice_id = tb_po_invoice_obj.create({'currency_id':self.currency_id.id,
+        tb_po_invoice_id = tb_po_invoice_obj.with_context({'default_type': 'other_payment', 'default_yjzy_type_1': 'other_payment_sale',
+         'default_type_invoice': 'out_invoice'}).create({'currency_id':self.currency_id.id,
                                                      'manual_currency_id':self.currency_id.id,
                                                      'type':type,
                                                      'yjzy_type_1':yjzy_type_1,

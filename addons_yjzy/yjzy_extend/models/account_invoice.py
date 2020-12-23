@@ -951,6 +951,60 @@ class account_invoice(models.Model):
             'flags': {'form': {'initial_mode': 'view', 'action_buttons': False}}
         }
 
+    def create_yshxd(self):
+        # self.ensure_one()
+        sfk_type = 'yshxd'
+        domain = [('code', '=', 'ysdrl'), ('company_id', '=', self.env.user.company_id.id)]
+        name = self.env['ir.sequence'].next_by_code('sfk.type.%s' % sfk_type)
+        journal = self.env['account.journal'].search(domain, limit=1)
+        account_obj = self.env['account.account']
+        bank_account = account_obj.search(
+            [('code', '=', '10021'), ('company_id', '=', self.env.user.company_id.id)],
+            limit=1)
+
+        name_title = self.name_title
+        invoice_partner = self.invoice_partner
+        yshxd = self.env['account.reconcile.order'].create({
+            'partner_id': self.partner_id.id,
+            'manual_payment_currency_id': self.currency_id.id,
+            'invoice_ids': [(4, self.id)],
+            'payment_type': 'outbound',
+            'name_title':name_title,
+            'invoice_partner':invoice_partner,
+
+            # 'fk_journal_id': self.fk_journal_id.id,
+            # 'bank_id': self.bank_id.id,
+            'partner_type': 'customer',
+            'sfk_type': 'yshxd',
+            'be_renling': True,
+            'name': name,
+            'journal_id': journal.id,
+            # 'expense_sheet_id': self.expense_sheet_id.id,  # 1009
+            'payment_account_id': bank_account.id,
+            'invoice_attribute': self.invoice_attribute,
+            'operation_wizard': '10',
+            'hxd_type_new': '20',
+
+        })
+        self.reconcile_order_id = yshxd
+        # yfhxd._make_lines_po_from_expense()
+        yshxd.make_line_no()
+        yshxd.action_manager_approve_stage()
+        # yfhxd.create_rcfkd()
+
+        form_view = self.env.ref('yjzy_extend.account_yshxd_form_view_new')
+        return {
+            'name': u'应收款核销单',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'account.reconcile.order',
+            'type': 'ir.actions.act_window',
+            'views': [(form_view.id, 'form')],
+            'res_id': self.reconcile_order_id.id,
+            'target': 'current',
+            'flags': {'form': {'initial_mode': 'view', 'action_buttons': False}}
+        }
+
 
 
 

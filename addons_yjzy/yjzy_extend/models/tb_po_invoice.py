@@ -503,8 +503,6 @@ class tb_po_invoice(models.Model):
             self.create_yfhxd()
             print('type', self.type)
         self.state = '30_done'
-        for one in self.invoice_ids:
-            one.action_invoice_open()
         if self.yjzy_tb_po_invoice:
             self.yjzy_tb_po_invoice.action_manager_approve()
         if self.invoice_p_s_ids:
@@ -515,14 +513,17 @@ class tb_po_invoice(models.Model):
                 if one.type in ['in_refund','out_refund']:
                     one.invoice_assign_outstanding_credit()
         # 如果是其他应收款，创建应收核销单，并直接完成总经理蛇皮
+        for one in self.invoice_ids:
+            print('akiny_test',self.invoice_ids)
+            one.action_invoice_open()
         if self.invoice_other_payment_in_ids:
             if self.yjzy_payment_id:
                 for one in self.invoice_other_payment_in_ids:
-                    one.with_context({'default_yjzy_payment_id':self.yjzy_payment_id.id}).create_yshxd_from_multi_invoice(self.type)
+                    one.with_context({'default_yjzy_payment_id':self.yjzy_payment_id.id}).create_yshxd()
                     one.other_payment_invoice_id = other_payment_invoice_id
                     one.other_payment_invoice_parent_id = other_payment_invoice_parent_id
-                    for x in one.reconcile_order_ids:
-                        x.action_manager_approve_stage()
+                    # for x in one.reconcile_order_ids:
+                    #     x.action_manager_approve_stage()
 
 
     def action_other_paymnet_one_in_all(self):
@@ -1368,6 +1369,8 @@ class tb_po_invoice(models.Model):
         inv._default_name()
         inv.compute_name_extra()
         inv.yjzy_invoice_id = inv.id
+        # if inv.invoice_attribute == 'other_payment':
+        #     inv.action_invoice_open()
         form_view = self.env.ref('yjzy_extend.view_supplier_invoice_extra_form').id
         return {
             'name': u'采购额外账单',

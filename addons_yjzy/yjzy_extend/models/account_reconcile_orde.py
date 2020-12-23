@@ -2271,6 +2271,8 @@ class account_reconcile_order(models.Model):
         for one in self.invoice_ids:
             if one.invoice_attribute == 'expense_po':
                 amount_payment_org = one.amount_total
+            if one.invoice_attribute == 'other_payment':
+                amount_payment_org = one.amount_total
             else:
                 amount_payment_org = one.declaration_amount
             so_ids = one.invoice_line_ids.mapped('so_id')
