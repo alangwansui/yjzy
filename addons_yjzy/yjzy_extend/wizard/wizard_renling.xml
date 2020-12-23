@@ -30,7 +30,8 @@
                                 如果没有需要认领的其他应收账单，请取消复选框
                             </span>
                         </div>
-
+                        <field name="name_title" attrs="{'invisible':['|',('renling_type','not in',['other_payment']),('other_payment_invoice_ok','=',True)]}"/>
+                        <field name="invoice_partner" attrs="{'invisible':['|',('renling_type','not in',['other_payment']),('other_payment_invoice_ok','=',True)]}"/>
 
                         <field name="other_payment_invoice_ok_f" invisible="1"/>
 
@@ -112,6 +113,14 @@
                             <field name="comments" string="备注"/>
                         </tree>
                     </field>
+                    <field name="line_ids" attrs="{'invisible':['|',('renling_type','not in',['other_payment']),('other_payment_invoice_ok','=',True)]}">
+                        <tree editable="bottom">
+                            <field name="product_id" string="其他应收项目"/>
+                            <field name="price_unit" string="金额"/>
+                            <field name="quantity" string="数量"/>
+                            <field name="price_total"/>
+                        </tree>
+                    </field>
                     <!--                      <span attrs="{'invisible':['|','|',('ysrld_ok','=',False),('renling_type','not in',['yshxd']),('customer_advance_payment_ids_count','=',0)]}" style="font-weight:bolder">-->
                     <!--                                该客户存在未认领的预收，是否需要预收-->
                     <!--                      </span>-->
@@ -123,10 +132,10 @@
 
                     </div>
                     <footer>
-                        <button name="create_tb_po_invoice" string="新建其他收款申请" type="object" class="oe_highlight"
+                        <button name="create_tb_po_invoice_new" string="新建其他收款申请" type="object" class="oe_highlight"
                                 colspan="2"
                                 attrs="{'invisible':['|',('renling_type','not in','other_payment'),('other_payment_invoice_ok','=',True)]}"
-                                context="{'default_type':'other_payment','default_yjzy_type_1':'other_payment_sale','default_type_invoice':'out_invoice','open':1}"/>
+                                context="{'default_type':'other_payment','default_yjzy_type_1':'other_payment_sale','default_type_invoice':'out_invoice'}"/>
                         <button name="create_yshxd_ysrl" class="oe_highlight" type='object' string="创建应收认领"
                                 context="{'advance_so_amount':1}"
                                 attrs="{'invisible':['|',('renling_type','not in',['back_tax','yshxd','other_payment']),('other_payment_invoice_ok','=',False)]}"/>

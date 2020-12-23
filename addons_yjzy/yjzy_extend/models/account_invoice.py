@@ -890,6 +890,7 @@ class account_invoice(models.Model):
         else:
             name = yjzy_invoice_number
         return name
+
     def compute_name_extra(self):
         is_yjzy_invoice = self.is_yjzy_invoice
         yjzy_invoice_number = self.yjzy_invoice_id.number
@@ -1812,7 +1813,7 @@ class account_invoice(models.Model):
             invoice.message_post_with_view('yjzy_extend.account_invoice_template_refuse_reason',
                                       values={'reason': reason, 'name': self.tb_contract_code},
                                       subtype_id=self.env.ref(
-                                          'mail.mt_note').id)  # 定义了留言消息的模板，其他都可以参考，还可以继续参考费用发送计划以及邮件方式
+                                          'mail.mt_note').id)
     def stage_action_cancel(self):
         stage_id = self._stage_find(domain=[('code', '=', '006')])
         self.stage_id = stage_id.id

@@ -526,7 +526,13 @@ class tb_po_invoice(models.Model):
 
 
     def action_other_paymnet_one_in_all(self):
-        self.action_submit()
+        if self.type == 'other_payment':
+            self.invoice_ids.unlink()
+            self.make_other_payment_invoice()
+        if self.yjzy_tb_po_invoice:
+            self.yjzy_tb_po_invoice.invoice_ids.unlink()
+            self.yjzy_tb_po_invoice.make_other_payment_invoice()
+        # self.action_submit()
         self.action_manager_approve()
 
 
@@ -678,6 +684,7 @@ class tb_po_invoice(models.Model):
         line_tb_id = self.extra_invoice_line_ids
         name = ''
         ctx = {}
+        partner = self.env['res.partner'].search([('name', '=', '未定义')], limit=1)
         if self.type == 'other_payment' and self.yjzy_type_1 in ['purchase','other_payment_purchase']:
             yjzy_type_1 = 'other_payment_sale'
             type_invoice = 'out_invoice'
@@ -690,7 +697,7 @@ class tb_po_invoice(models.Model):
                    'tb_po_invoice_old':self.id,
                    'open_other':1}
 
-        tb_po_id = self.env['tb.po.invoice'].create({'tb_id': self.tb_id.id,
+        tb_po_id = self.env['tb.po.invoice'].with_context({'default_type':'other_payment'}).create({'tb_id': self.tb_id.id,
                                                      'name_title':self.name_title,
                                                      'invoice_partner':self.invoice_partner,
                                                      'tax_rate_add': self.tax_rate_add,
@@ -838,6 +845,7 @@ class tb_po_invoice(models.Model):
         # if account_id == False:
         #     raise Warning('请先设置额外账单的科目')
         print('yjzy_invoice_id',self.yjzy_invoice_id,)
+        print('teset_akiny', account)
         if self.purchase_amount2_add_this_time_total != 0:
             inv = invoice_obj.with_context({'default_type': 'in_invoice', 'type': 'in_invoice', 'journal_type': 'purchase'}).create({
                 'tb_po_invoice_id':self.id,
@@ -900,6 +908,7 @@ class tb_po_invoice(models.Model):
         invoice_obj = self.env['account.invoice']
         invoice_line_obj = self.env['account.invoice.line']
         hsname_all_line_obj = self.env['invoice.hs_name.all']
+        print('teset_akiny', account)
         if not account:
             raise Warning(u'没有找到退税科目,请先在退税产品的收入科目上设置')
         if self.back_tax_add_this_time_total > 0:
@@ -970,6 +979,7 @@ class tb_po_invoice(models.Model):
         # product = self.invoice_product_id
         product = self.product_zyywsr
         account = product.property_account_income_id
+        print('teset_akiny', account)
         if self.p_s_add_this_time_refund != 0:
             inv = invoice_obj.with_context({'default_type': 'in_refund', 'type': 'in_refund', 'journal_type': 'purchase'}).create({
                 'tb_po_invoice_id': self.id,
@@ -1009,6 +1019,7 @@ class tb_po_invoice(models.Model):
         # product = self.invoice_product_id
         product = self.product_qtysk
         account = product.property_account_income_id
+        print('teset_akiny',account)
         if self.p_s_add_this_time_extra_total != 0:
             inv = invoice_obj.with_context({'type':'out_invoice', 'journal_type': 'sale'}).create({
                 'tb_po_invoice_id': self.id,
@@ -1048,6 +1059,7 @@ class tb_po_invoice(models.Model):
         # product = self.env.ref('yjzy_extend.product_back_tax')
         product = self.invoice_product_id
         account = product.property_account_income_id
+        print('teset_akiny', account)
         if self.yjzy_type_1 in ['sale','back_tax','other_payment_sale']:
             journal_type = 'sale'
         else:
@@ -1206,7 +1218,7 @@ class tb_po_invoice(models.Model):
         purchase_orders = invoice_obj.browse()
         # product = self.env.ref('yjzy_extend.product_back_tax')
         product = self.invoice_product_id
-        account = product.property_account_income_id
+        # account = product.property_account_income_id
         if self.yjzy_type_1 in ['sale','back_tax','other_payment_sale']:
             journal_type = 'sale'
         else:
@@ -1218,7 +1230,8 @@ class tb_po_invoice(models.Model):
         # if self.is_yjzy_tb_po_invoice_parent:
         #     other_payment_invoice_parent_id = self.id
         print('journal_type_9999999999999',journal_type)
-        inv = invoice_obj.with_context({'default_type': self.type_invoice, 'type': self.type_invoice, 'journal_type':journal_type }).create({
+        print('teset_akiny', journal_type)
+        inv = invoice_obj.with_context({'default_type': self.type_invoice, 'type': self.type_invoice, 'journal_type':journal_type}).create({
             'invoice_partner':self.invoice_partner,
             'name_title':self.name_title,
             'yjzy_invoice_id':self.yjzy_invoice_id.id,
@@ -1230,6 +1243,8 @@ class tb_po_invoice(models.Model):
             'yjzy_type_1':self.yjzy_type_1,
             'is_yjzy_invoice': False,
             'currency_id': self.currency_id.id,
+            'date': fields.datetime.now(),
+            'date_invoice': fields.datetime.now(),
             # 'other_payment_invoice_id':other_payment_invoice_id,
             # 'other_payment_invoice_parent_id': other_payment_invoice_parent_id
 
@@ -1242,11 +1257,14 @@ class tb_po_invoice(models.Model):
             #     'account_id': account.id,
             # })]
         })
+        print('teset_akiny', '222222')
         yjzy_type_1 = self.yjzy_type_1
         if yjzy_type_1 in ['sale','back_tax','other_payment_sale']:
+            print('teset_akiny', '222222')
             if self.price_total < 0:
                 # self.type_invoice = 'out_refund' #好像没什么用
                 for line in self.extra_invoice_line_ids:
+                    print('akiny_product',line.product_id.property_account_income_id.id)
                     price_unit = -line.price_unit
                     invoice_line = invoice_line_obj.create({
                         'name': line.name,
@@ -1270,7 +1288,9 @@ class tb_po_invoice(models.Model):
 
             else:
                 # self.type_invoice = 'out_invoice'
+                # print('teset_akiny', account)
                 for line in self.extra_invoice_line_ids:
+                    print('akiny_product_1', line.product_id.property_account_income_id.id)
                     price_unit = line.price_unit
                     invoice_line = invoice_line_obj.create({
                         'name': line.name,
@@ -1293,9 +1313,11 @@ class tb_po_invoice(models.Model):
                     })
 
         else:
+            print('teset_akiny','222222')
             if self.price_total < 0:
                 # self.type_invoice = 'in_refund'
                 for line in self.extra_invoice_line_ids:
+                    print('akiny_product_3', line.product_id.property_account_income_id.id)
                     price_unit = -line.price_unit
                     invoice_line = invoice_line_obj.create({
                         'name': line.name,
@@ -1319,7 +1341,9 @@ class tb_po_invoice(models.Model):
 
             else:
                 # self.type_invoice = 'in_invoice'
+                print('teset_akiny', 00000)
                 for line in self.extra_invoice_line_ids:
+                    print('akiny_product_2', line.product_id.property_account_income_id.id)
                     price_unit = line.price_unit
                     invoice_line = invoice_line_obj.create({
                         'name': line.name,
@@ -1356,6 +1380,7 @@ class tb_po_invoice(models.Model):
             'target': 'new',
 
         }
+
     def apply_expense_sheet(self):
         self.ensure_one()
         # self.check()

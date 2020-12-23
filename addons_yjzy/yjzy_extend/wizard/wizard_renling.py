@@ -2,6 +2,9 @@
 
 from odoo import fields, models, api, _
 from odoo.exceptions import Warning
+from odoo.addons import decimal_precision as dp
+from lxml import etree
+from odoo.exceptions import UserError, ValidationError
 
 
 class wizard_renling(models.TransientModel):
@@ -51,7 +54,10 @@ class wizard_renling(models.TransientModel):
     # @api.onchange('partner_id')
     # def onchange_partner_id(self):
 
-
+    #1223 其他应收
+    name_title = fields.Char(u'账单描述')
+    invoice_partner = fields.Char(u'账单对象')
+    line_ids = fields.One2many('wizard.invoice.line','renling_id',u'其他应收明细')
     # 1115
     customer_advance_payment_ids = fields.Many2many('account.payment', u'相关预收',compute=_compute_customer_advance_payment_ids
                                                     ) #
@@ -513,9 +519,7 @@ class wizard_renling(models.TransientModel):
         type = self.renling_type
         yjzy_type_1 = self.env.context.get('default_yjzy_type_1')
         type_invoice = self.env.context.get('default_type_invoice')
-
         print('type_invoice',type_invoice,yjzy_type_1)
-
         tb_po_invoice_obj = self.env['tb.po.invoice']
         tb_po_invoice_id = tb_po_invoice_obj.create({'currency_id':self.currency_id.id,
                                                      'manual_currency_id':self.currency_id.id,
@@ -523,7 +527,6 @@ class wizard_renling(models.TransientModel):
                                                      'yjzy_type_1':yjzy_type_1,
                                                      'type_invoice':type_invoice,
                                                      'yjzy_payment_id':self.yjzy_payment_id.id,
-
                                                      })
         print('tb_po_invoice_id',tb_po_invoice_id)
         return {
@@ -534,10 +537,93 @@ class wizard_renling(models.TransientModel):
             'type': 'ir.actions.act_window',
             'views': [(form_view.id, 'form')],
             'res_id': tb_po_invoice_id.id,
-            'target': 'new',
+            'target': 'current',
             # 'domain': [('yjzy_advance_payment_id', '=', self.id)],
-            'context': {'open':1}
+            'context': {}
         }
+
+    def create_tb_po_invoice_new(self):
+        form_view = self.env.ref('yjzy_extend.tb_po_form')
+        type = self.renling_type
+        yjzy_type_1 = self.env.context.get('default_yjzy_type_1')
+        type_invoice = self.env.context.get('default_type_invoice')
+        tb_po_invoice_line = self.env['extra.invoice.line']
+        print('type_invoice',type_invoice,yjzy_type_1)
+
+        tb_po_invoice_obj = self.env['tb.po.invoice']
+        tb_po_invoice_id = tb_po_invoice_obj.create({'currency_id':self.currency_id.id,
+                                                     'manual_currency_id':self.currency_id.id,
+                                                     'type':type,
+                                                     'yjzy_type_1':yjzy_type_1,
+                                                     'type_invoice':type_invoice,
+                                                     'yjzy_payment_id':self.yjzy_payment_id.id,
+                                                     'name_title':self.name_title,
+                                                     'invoice_partner':self.invoice_partner,
+
+                                                     })
+        for one in self.line_ids:
+            product = one.product_id
+            quantity = one.quantity
+            price_unit = one.price_unit
+            if product:
+                account = product.product_tmpl_id._get_product_accounts()['expense']
+                if not account:
+                    raise UserError(
+                        _("No Expense account found for the product %s (or for its category), please configure one.") % (
+                            self.product_id.name))
+            else:
+                account = self.env['ir.property'].with_context(force_company=self.company_id.id).get(
+                    'property_account_expense_categ_id', 'product.category')
+                if not account:
+                    raise UserError(
+                        _('Please configure Default Expense account for Product expense: `property_account_expense_categ_id`.'))
+            tb_po_invoice_line = tb_po_invoice_line.create({
+                    'tb_po_id': tb_po_invoice_id.id,
+                    'name':'%s' % (product.name),
+                    'product_id': product.id,
+                    'quantity': quantity,
+                    'price_unit': price_unit,
+                    'account_id': account.id
+                })
+        print('tb_po_invoice_id',tb_po_invoice_id)
+        return {
+            'name': '其他应收申请单',
+            'view_type': 'tree,form',
+            "view_mode": 'form',
+            'res_model': 'tb.po.invoice',
+            'type': 'ir.actions.act_window',
+            'views': [(form_view.id, 'form')],
+            'res_id': tb_po_invoice_id.id,
+            'target': 'current',
+            # 'domain': [('yjzy_advance_payment_id', '=', self.id)],
+            'context': {}
+        }
+
+
+
+class Wizard_Invoice_Line(models.TransientModel):
+    _name = 'wizard.invoice.line'
+    _description = "wizard Invoice Line"
+
+    @api.one
+    @api.depends('price_unit',  'quantity','product_id',)
+    def _compute_price(self):
+        price = self.price_unit
+        self.price_total =self.quantity * price
+
+    renling_id = fields.Many2one('wizard.renling',u'认领单')
+    product_id = fields.Many2one('product.product', string='Product',
+                                 ondelete='restrict', index=True)
+    currency_id = fields.Many2one('res.currency',related='renling_id.currency_id')
+    price_unit = fields.Float(string='Unit Price', required=True, digits=dp.get_precision('Product Price'))
+    price_total = fields.Monetary(string='Amount',currency_field='currency_id',
+                                  store=True, readonly=True, compute='_compute_price',
+                                  help="Total amount with taxes")
+    quantity = fields.Float(string='Quantity', digits=dp.get_precision('Product Unit of Measure'),
+                            required=True, default=1)
+
+
+
 
 
 
