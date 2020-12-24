@@ -253,6 +253,7 @@
                         <page string="应付申请" attrs="{'invisible': [('yshx_fkzl_ids_count','=', 0)]}">
                             <field name="yshx_fkzl_ids" widget="many2many" groups="base.group_system">
                                 <tree>
+                                    <field name="invoice_attribute_all_in_one" string="账单属性"/>
                                     <field name="name"/>
                                     <field name="partner_id"/>
                                     <field name="invoice_ids" widget="many2many_tags" string="应付账单"/>

@@ -144,6 +144,7 @@
                             ('yjzy_payment_id','=',False)]"
                                    context="{'form_view_ref':'yjzy_extend.account_yfhxd_form_view_new','tree_view_ref':'yjzy_extend.account_yfhxd_tree_view'}">
                                 <tree string="应付核销单" >
+                                    <field name="invoice_attribute_all_in_one" string="账单属性"/>
                                     <field name="name"/>
                                     <field name="partner_id"/>
                                     <field name="invoice_ids" widget="many2many_tags" string="应付账单"/>

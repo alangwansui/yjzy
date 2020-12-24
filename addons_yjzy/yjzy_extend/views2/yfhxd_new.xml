@@ -125,6 +125,7 @@
 
                             <field name="payment_type" invisible="1"/>
                             <field name="partner_type" invisible="1"/>
+                            <field name="invoice_attribute_all_in_one" string="认领账单属性"/>
                             <field name="partner_id" readonly="context.get('open')" required="1"
                                    attrs="{'invisible':['|',('operation_wizard','=',False),('invoice_attribute','=','other_payment')],
                                    'readonly':[('state_1','!=','draft')]}"
