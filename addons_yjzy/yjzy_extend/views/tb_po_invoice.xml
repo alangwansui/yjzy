@@ -102,18 +102,18 @@
             <field name="arch" type="xml">
                 <tree string="增加采购" create="false">
                     <field name="name"/>
-                    <field name="partner_id"/>
+                    <field name="partner_id" string="供应商"/>
                     <field name="yjzy_invoice_residual_amount" invisible="1"/>
                     <field name="yjzy_invoice_include_tax" invisible="1"/>
                     <field name="purchase_amount2_add_this_time_total"/><!--invisible="context.get('done')"-->
-                    <field name="p_s_add_this_time_refund"/>
+                    <field name="p_s_add_this_time_refund" groups="base.group_system"/>
                     <field name="p_s_add_this_time_extra_total"/>
                     <field name="back_tax_add_this_time_total"/>
                     <field name="po_add_residual"/><!--invisible="not context.get('done')"-->
                     <field name="p_s_add_residual"/>
                     <field name="back_tax_add_residual"/>
-                    <field name="p_s_add_refund_residual"/>
-                    <field name="create_date"/>
+                    <field name="p_s_add_refund_residual" groups="base.group_system"/>
+                    <field name="create_date" string="创建日期"/>
                     <field name="yjzy_invoice_id"/>
                 </tree>
             </field>
@@ -204,7 +204,7 @@
                                 <group style="border-top:1px #6C6A6A solid;border-bottom:1px #6C6A6A solid;margin-top:-10px;"
                                        attrs="{'invisible':[('type','=','expense_po')]}">
                                     <field name="p_s_add_this_time_total" string="本次增加应收"/>
-                                    <field name="p_s_add_this_time_refund" string="本次可冲减应收"/>
+                                    <field name="p_s_add_this_time_refund" string="本次可冲减应收" groups="base.group_system"/>
                                     <!--label for="" name="p_s_add_this_time_extra_total" attrs="{'invisible':[('yjzy_invoice_id','=',False)]}">
                                         <b attrs="{'invisible':['|',('yjzy_invoice_include_tax','=',True),('type','!=','other_po')]}">
                                         本次冲减后应收
@@ -654,7 +654,7 @@
                                                attrs="{'column_invisible':[('parent.tb_id','=',False)]}"/>
                                         <field name="purchase_amount2_add_actual" readonly="1" sum="小计" string="实际已增加"
                                                attrs="{'column_invisible':[('parent.tb_id','=',False)]}"/>
-                                        <field name="purchase_amount_min_add_rest" readonly="1" string="最新可增加"
+                                        <field name="purchase_amount_min_add_rest" readonly="1" string="最新可增加" groups="base.group_system"
                                                attrs="{'column_invisible':[('parent.tb_id','=',False)]}"/>
                                         <field name="purchase_amount_min_add_rest_this_time" readonly="1"/>
                                         <field name="purchase_amount_min_add_rest_after"/>

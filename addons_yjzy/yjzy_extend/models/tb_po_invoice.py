@@ -25,11 +25,12 @@ class tb_po_invoice(models.Model):
             yjzy_invoice_residual_amount = sum(x.residual for x in yjzy_invoice_id)
             yjzy_invoice_include_tax = yjzy_invoice_id and yjzy_invoice_id[0].include_tax or False
             p_s_add_this_time_refund = 0.0
-            if not yjzy_invoice_include_tax:
-                if yjzy_invoice_residual_amount - p_s_add_this_time_total > 0:
-                    p_s_add_this_time_refund = p_s_add_this_time_total
-                else:
-                    p_s_add_this_time_refund = yjzy_invoice_residual_amount
+            #暂时取消对未税采购的判断，不管含税或者未税，都生成应收和付款采购。最后做核销 1224
+            # if not yjzy_invoice_include_tax:
+            #     if yjzy_invoice_residual_amount - p_s_add_this_time_total > 0:
+            #         p_s_add_this_time_refund = p_s_add_this_time_total
+            #     else:
+            #         p_s_add_this_time_refund = yjzy_invoice_residual_amount
             p_s_add_this_time_extra_total = p_s_add_this_time_total - p_s_add_this_time_refund
             amount_diff = back_tax_add_this_time_total + p_s_add_this_time_total - purchase_amount2_add_this_time_total
 

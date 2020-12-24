@@ -526,7 +526,7 @@ class hr_expense_sheet(models.Model):
             'res_id': wizard.id,
             # 'context': { },
         }
-#定
+    #定
     def create_tb_po_invoice(self):
         self.ensure_one()
         line_tb_id = len(self.expense_line_ids.filtered(lambda x: not x.tb_id))
