@@ -787,7 +787,9 @@ class tb_po_invoice(models.Model):
         self.ensure_one()
         ctx = self.env.context.copy()
         ctx.update({
-            'default_tb_po_id':self.id
+            'default_tb_po_id':self.id,
+            'default_is_yjzy_tb_po_invoice':self.is_yjzy_tb_po_invoice,
+            'default_yjzy_type_1':self.yjzy_type_1
         })
         return {
             'name': '创建其他申请',
@@ -805,6 +807,8 @@ class tb_po_invoice(models.Model):
     def delete_tb_po_invoice(self):
         open = self.env.context.get('open_delete')
         if self.yjzy_tb_po_invoice and self.yjzy_tb_po_invoice.state in ['10_draft', '80_refuse', '90_cancel']:
+            for one in self.yjzy_tb_po_invoice.extra_invoice_line_ids:
+                one.unlink()
             self.yjzy_tb_po_invoice.unlink()
             self.is_yjzy_tb_po_invoice = False
             if open:
@@ -1637,7 +1641,7 @@ class Extra_Invoice_Line(models.Model):
         sign = self.tb_po_id.type in ['in_refund', 'out_refund'] and -1 or 1
         self.price_subtotal_signed = price_subtotal_signed * sign
 
-    tb_po_other_id = fields.Many2one('tb.po.invoice',u'对应的其他应收付',ondelete='cascade')
+    tb_po_other_id = fields.Many2one('tb.po.invoice',u'对应的其他应收付',ondelete='set null')
     name = fields.Text(string='Description')
     sequence = fields.Integer(default=10,
                               help="Gives the sequence of this line when displaying the invoice.")

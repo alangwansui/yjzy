@@ -72,6 +72,14 @@ class wizard_renling(models.TransientModel):
     so_id = fields.Many2one('sale.order','销售合同')
     so_id_currency_id = fields.Many2one('res.currency',related='so_id.currency_id')
     amount_total_so = fields.Monetary('合同金额',related='so_id.amount_total' ,currency_field='so_id_currency_id')
+
+    customer_payment_term_id = fields.Many2one('account.payment.term', u'客户付款条款',
+                                               related='partner_id.property_payment_term_id')
+    sale_payment_term_id = fields.Many2one('account.payment.term', u'销售单付款条款', related='so_id.payment_term_id')
+    so_pre_advance = fields.Monetary(u'应收预收款', currency_field='so_id_currency_id', related='so_id.pre_advance')
+    so_real_advance = fields.Monetary(u'预收金额', currency_field='so_id_currency_id', related='so_id.real_advance')
+
+
     btd_id = fields.Many2one('back.tax.declaration','退税申报单')
     sale_other_invoice_ids = fields.Many2many('account.invoice', 'p3_id', 'i3_id', '未完成认领其他应收',
                                               compute='compute_invoice_advance')
@@ -543,7 +551,7 @@ class wizard_renling(models.TransientModel):
         }
 
     def create_tb_po_invoice_new(self):
-        form_view = self.env.ref('yjzy_extend.tb_po_form')
+        form_view = self.env.ref('yjzy_extend.tb_po_other_form')
         type = self.renling_type
         yjzy_type_1 = self.env.context.get('default_yjzy_type_1')
         type_invoice = self.env.context.get('default_type_invoice')

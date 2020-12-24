@@ -8,17 +8,20 @@
             <field name="arch" type="xml">
                 <form string="其他应收应付" create="false">
                     <header attrs="{'invisible':[('type','=','expense_po')]}" invisible="context.get('open')">
-                        <button name="action_submit" states="10_draft" class="oe_highlight" type='object'
+                        <button name="action_submit" class="oe_highlight" type='object'
                                 invisible="context.get('open')"
-                                string="提交"/>
-                        <button name="open_wizard_create_order" type="object" string="打开wizard"/>
-                        <button name="action_draft" states="80_refuse" class="oe_highlight" type="object" string="重置草稿"
+                                string="提交" attrs="{'invisible':['|','|',('is_yjzy_tb_po_invoice_parent','=',True),('state','!=','10_draft'),('is_yjzy_tb_po_invoice','=',False)]}"/>
+                        <button name="open_wizard_create_order" type="object" string="提交"
+                                attrs="{'invisible':['|','|',('is_yjzy_tb_po_invoice_parent','=',True),('state','!=','10_draft'),('is_yjzy_tb_po_invoice','=',True)]}"/>
+                        <button name="action_draft"  class="oe_highlight" type="object" string="重置草稿"
+                                attrs="{'invisible':['|',('is_yjzy_tb_po_invoice_parent','=',True),('state','!=','80_refuse')]}"
                                 invisible="context.get('open')"/>
-                        <button name="action_manager_approve" states="20_submit" class="oe_highlight" type='object'
+                        <button name="action_manager_approve"  class="oe_highlight" type='object'
+                                 attrs="{'invisible':['|',('is_yjzy_tb_po_invoice_parent','=',True),('state','!=','20_submit')]}"
                                 string="总经理审批" invisible="context.get('open')"/>
                         <button name="%(tb_po_invoice_refuse_wizard_action)d" string="拒绝" type="action"
                                 invisible="context.get('open')"
-                                attrs="{'invisible':[('state','in',['10_draft','80_refuse','90_cancel'])]}"/>
+                                attrs="{'invisible':['|',('is_yjzy_tb_po_invoice_parent','=',True),('state','in',['10_draft','80_refuse','90_cancel'])]}"/>
                         <button name="create_tb_po_invoice" type="object" string="创建其他应收申请"
                                 attrs="{'invisible':['|','|','|','|',('is_yjzy_tb_po_invoice_parent','=',True),('yjzy_type_1','in',['sale','other_payment_sale']),('is_yjzy_tb_po_invoice','=',True),('type','!=','other_payment'),('state','!=','10_draft')]}"/>
                         <button name="create_tb_po_invoice" type="object" string="创建其他应付申请" context="{'open_other':1}"
@@ -163,7 +166,7 @@
                         </group>
 
 
-                        <notebook invisible="1">
+                        <notebook groups="base.group_system">
 
 
                             <page string="所有相关账单" attrs="{'invisible':1}">
@@ -272,7 +275,26 @@
                             </page>
                             <page groups="base.group_system">
                                 <group>
-                                    <group attrs="{'invisible':[('is_tb_hs_id','=',False)]}">
+                                    <field name="create_uid" string="创建人"
+                                           attrs="{'invisible':[('type','not in',['other_payment'])]}"/>
+                                    <field name="create_date" string="创建日期" widget="date"
+                                           attrs="{'invisible':[('type','not in',['other_payment'])]}"/>
+                                    <field name="type"/>
+                                    <field name="yjzy_invoice_id" attrs="{'invisible':[('type','!=','other_po')]}"/>
+                                    <field name="product_feiyong_tax" attrs="{'invisible':0}"/>
+                                    <field name="product_zyywsr" attrs="{'invisible':0}"/>
+                                    <field name="product_qtysk" attrs="{'invisible':0}"/>
+                                    <field name="product_back_tax" attrs="{'invisible':0}"/>
+                                    <field name="yjzy_type_1"/>
+                                    <field name="is_yjzy_tb_po_invoice"/>
+                                    <field name="is_yjzy_tb_po_invoice_parent"/>
+                                    <field name="is_tb_hs_id"/>
+                                    <field name="type_invoice"/>
+                                    <field name="company_id"/>
+                                    <field name="currency_id"/>
+
+                                </group>
+                                <group attrs="{'invisible':[('is_tb_hs_id','=',False)]}">
                                         <label for="" name="purchase_amount2_add_this_time_total">
                                             <b attrs="{'invisible':[('type','!=','other_po')]}">
                                                 本次增加应付
@@ -309,25 +331,6 @@
                                         <field name="expense_sheet_amount"
                                                attrs="{'invisible':[('type','!=','expense_po')]}"/>
                                     </group>
-                                    <field name="create_uid" string="创建人"
-                                           attrs="{'invisible':[('type','not in',['other_payment'])]}"/>
-                                    <field name="create_date" string="创建日期" widget="date"
-                                           attrs="{'invisible':[('type','not in',['other_payment'])]}"/>
-                                    <field name="type"/>
-                                    <field name="yjzy_invoice_id" attrs="{'invisible':[('type','!=','other_po')]}"/>
-                                    <field name="product_feiyong_tax" attrs="{'invisible':0}"/>
-                                    <field name="product_zyywsr" attrs="{'invisible':0}"/>
-                                    <field name="product_qtysk" attrs="{'invisible':0}"/>
-                                    <field name="product_back_tax" attrs="{'invisible':0}"/>
-                                    <field name="yjzy_type_1"/>
-                                    <field name="is_yjzy_tb_po_invoice"/>
-                                    <field name="is_yjzy_tb_po_invoice_parent"/>
-                                    <field name="is_tb_hs_id"/>
-                                    <field name="type_invoice"/>
-                                    <field name="company_id"/>
-                                    <field name="currency_id"/>
-
-                                </group>
                             </page>
                         </notebook>
 

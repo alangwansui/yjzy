@@ -7,13 +7,27 @@
             <field name="model">wizard.create.other</field>
             <field name="arch" type="xml">
                 <form string="创建其他申请">
-                    <group>
+                    <group invisible="1">
                         <field name="tb_po_id"/>
+                        <field name="is_yjzy_tb_po_invoice"/>
+                        <field name="yjzy_type_1"/>
+                    </group>
+                    <group>
+                        <span>
+                            本次应付如对应应收，请创建其他应收
+                        </span>
                     </group>
 
                     <footer>
-                        <button name="apply" string="创建" type="object" class="oe_highlight"/>
-                        <button special="cancel" class="oe_highlight" string="取消"/>
+                        <button name="apply" string="创建其他应收" type="object" class="oe_highlight"
+                                attrs="{'invisible':['|',('yjzy_type_1','=','other_payment_sale'),('is_yjzy_tb_po_invoice','=',True)]}"/>
+                        <button name="cancel_create" class="oe_highlight" type="object" string="无其他应收"
+                                attrs="{'invisible':['|',('yjzy_type_1','=','other_payment_sale'),('is_yjzy_tb_po_invoice','=',True)]}"/>
+                        <button name="apply" string="创建其他应付" type="object" class="oe_highlight"
+                                attrs="{'invisible':['|',('yjzy_type_1','=','other_payment_purchase'),('is_yjzy_tb_po_invoice','=',True)]}"/>
+                        <button name="cancel_create" class="oe_highlight" type="object" string="无其他应付"
+                                attrs="{'invisible':['|',('yjzy_type_1','=','other_payment_purchase'),('is_yjzy_tb_po_invoice','=',True)]}"/>
+
                     </footer>
                 </form>
             </field>
