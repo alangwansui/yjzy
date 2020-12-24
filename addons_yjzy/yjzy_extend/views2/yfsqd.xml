@@ -210,7 +210,6 @@
                         <page string="认领明细" attrs="{'invisible':[('advance_reconcile_order_line_ids_count','=',0)]}">
                             <field name="advance_reconcile_order_line_ids_count" invisible="1"/>
                             <field name="advance_reconcile_order_line_ids" readonly="1">
-
                                 <tree>
                                     <field name="date" string="日期"/>
                                     <field name="payment_type" invisible="1"/>
@@ -646,7 +645,7 @@
         <field name="domain">
             [('sfk_type','=','yfsqd'),('state','in',['reconciled','posted']),('advance_balance_total','=',0)]
         </field>
-        <field name="context">{'operation':1'show_shoukuan': True, 'default_sfk_type': 'yfsqd', 'default_payment_type': 'outbound',
+        <field name="context">{'operation':1,'show_shoukuan': True, 'default_sfk_type': 'yfsqd', 'default_payment_type': 'outbound',
             'default_be_renling': True, 'default_advance_ok': True, 'default_partner_type': 'supplier',}
         </field>
         <field name="search_view_id" ref="view_account_payment_search_new"/>
