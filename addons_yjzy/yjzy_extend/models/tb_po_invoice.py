@@ -256,9 +256,29 @@ class tb_po_invoice(models.Model):
     #      ('other_payment_purchase', '其他应付')], string=u'发票类型')
     #关联的申请单：其他应收对其他应付，其他应付对其他应收
 
+    price_total_yjzy_parent = fields.Monetary('金额合计', currency_field='currency_id', related='yjzy_tb_po_invoice_parent.price_total')
+    invoice_normal_ids_residual_yjzy_parent = fields.Float('对应账单申请账单未付金额',
+                                                    related='yjzy_tb_po_invoice_parent.invoice_normal_ids_residual')
+    currency_id_yjzy_parent = fields.Many2one('res.currency', related='yjzy_tb_po_invoice_parent.currency_id')
+    yjzy_type_1_yjzy_parent = fields.Selection(
+        [('sale', u'应付'), ('purchase', u'采购'), ('back_tax', u'退税'), ('other_payment_sale', '其他应收'),
+         ('other_payment_purchase', '其他应付')], related='yjzy_tb_po_invoice_parent.yjzy_type_1', string=u'发票类型')  # 825
+    is_yjzy_tb_po_invoice_yjzy_parent = fields.Boolean('是否有对应下级账单', related='yjzy_tb_po_invoice_parent.is_yjzy_tb_po_invoice')
+    is_yjzy_tb_po_invoice_parent_yjzy_parent = fields.Boolean('是否有对应上级账单',
+                                                       related='yjzy_tb_po_invoice_parent.is_yjzy_tb_po_invoice_parent')
+    invoice_partner_yjzy_parent = fields.Char(u'对应的应收付账单对象', related='yjzy_tb_po_invoice_parent.invoice_partner')
+    name_title_yjzy_parent = fields.Char(u'对应的应收付账账单描述', related='yjzy_tb_po_invoice_parent.name_title')
+
     price_total_yjzy = fields.Monetary('金额合计',currency_field='currency_id',related='yjzy_tb_po_invoice.price_total')
     invoice_normal_ids_residual_yjzy = fields.Float('对应账单申请账单未付金额', related='yjzy_tb_po_invoice.invoice_normal_ids_residual')
     currency_id_yjzy = fields.Many2one('res.currency',related='yjzy_tb_po_invoice.currency_id')
+    yjzy_type_1_yjzy = fields.Selection(
+        [('sale', u'应付'), ('purchase', u'采购'), ('back_tax', u'退税'), ('other_payment_sale', '其他应收'),
+         ('other_payment_purchase', '其他应付')], related='yjzy_tb_po_invoice.yjzy_type_1',string=u'发票类型')# 825
+
+    is_yjzy_tb_po_invoice_yjzy = fields.Boolean('是否有对应下级账单', related='yjzy_tb_po_invoice.is_yjzy_tb_po_invoice')
+    is_yjzy_tb_po_invoice_parent_yjzy = fields.Boolean('是否有对应上级账单', related='yjzy_tb_po_invoice.is_yjzy_tb_po_invoice_parent')
+
     invoice_partner_yjzy = fields.Char(u'对应的应收付账单对象',related='yjzy_tb_po_invoice.invoice_partner')
     name_title_yjzy = fields.Char(u'对应的应收付账账单描述',related='yjzy_tb_po_invoice.name_title')
 
@@ -696,6 +716,14 @@ class tb_po_invoice(models.Model):
             self.make_sale_invoice()
             self.make_sale_invoice_extra()
         if self.type == 'other_payment':
+            if not self.invoice_partner:
+                raise Warning('账单对象没有填写')
+            if not self.name_title:
+                raise Warning('账单描述没有填写')
+            if not self.manual_currency_id:
+                raise Warning('请选择货币')
+            if len(self.extra_invoice_line_ids) == 0:
+                raise Warning('请填写明细')
             self.invoice_ids.unlink()
             self.make_other_payment_invoice()
             self.make_back_tax()
@@ -785,6 +813,14 @@ class tb_po_invoice(models.Model):
 
     def open_wizard_create_order(self):
         self.ensure_one()
+        if not self.invoice_partner:
+            raise Warning('账单对象没有填写')
+        if not self.name_title:
+            raise Warning('账单描述没有填写')
+        if not self.manual_currency_id:
+            raise Warning('请选择货币')
+        if len(self.extra_invoice_line_ids) == 0:
+            raise Warning('请填写明细')
         ctx = self.env.context.copy()
         ctx.update({
             'default_tb_po_id':self.id,
