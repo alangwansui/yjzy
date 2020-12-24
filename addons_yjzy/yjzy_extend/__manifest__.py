@@ -134,7 +134,9 @@
         'views/sale_stage.xml',
         'views/purchase_stage.xml',
         'views/account_invoice_extra_po.xml',
+        'views/tb_po_invoice_other.xml',
         'views/tb_po_invoice.xml',
+
         'views/hr_expense_other_payment.xml',
         'views/account_bank_statement_1.xml',
         'views/real_invoice.xml',
@@ -187,6 +189,7 @@
         'wizard/wizard_tb_po_invoice.xml',
         'wizard/wizard_reconcile_invoice.xml',
         'wizard/wizard_back_tax_declaration_line.xml',
+        'wizard/wizard_create_other.xml',
 
         # report
         'report/report.xml',

@@ -28,6 +28,7 @@ from . import po_refuse_reason
 from . import wizard_multi_sale_line
 from . import wizard_fkzl
 from . import wizard_renling_ysrld
+from . import wizard_create_other
 
 
 

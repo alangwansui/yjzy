@@ -493,7 +493,45 @@ class account_invoice(models.Model):
         for one in self:
             one.declaration_amount = sum(x.declaration_amount for x in one.btd_line_ids)
 
+    @api.depends('yjzy_type_1','yjzy_type','invoice_attribute')
+    def compute_all_in_one(self):
+        for one in self:
+            yjzy_type = one.yjzy_type_1 or one.yjzy_type
+            print('yjzy_type_akiny',yjzy_type)
+            invoice_attribute = one.invoice_attribute
+            name=''
+            if invoice_attribute == 'normal':
+                if yjzy_type == 'sale':
+                    name = '主账单应收'
+                elif yjzy_type == 'purchase':
+                    name = '主账单应付'
+                else:
+                    name = '主账单退税'
+            elif invoice_attribute == 'other_po':
+                if yjzy_type == 'sale':
+                    name = '增加采购应收'
+                elif yjzy_type == 'purchase':
+                    name = '增加采购应付'
+                else:
+                    name = '增加采购退税'
+            elif invoice_attribute == 'expense_po':
+                if yjzy_type == 'sale':
+                    name = '费用转货款应收'
+                elif yjzy_type == 'purchase':
+                    name = '费用转货款应付'
+                else:
+                    name = '费用转货款退税'
+            elif invoice_attribute == 'other_payment':
+                if yjzy_type == 'other_payment_sale':
+                    name = '其他应收'
+                else:
+                    name = '其他应付'
+            one.invoice_attribute_all_in_one = name
 
+
+
+
+    invoice_attribute_all_in_one = fields.Char('账单属性all_in_one',compute=compute_all_in_one,store=True)
 
     current_date_rate = fields.Float('出运单汇率',related='bill_id.current_date_rate')
 
@@ -557,7 +595,9 @@ class account_invoice(models.Model):
          ('expense_po', u'费用转换'),
          ('other_payment',u'其他')], u'账单属性')
 
-    yjzy_type_1 = fields.Selection([('sale', u'应收'),('purchase', u'应付'), ('back_tax', u'退税'),
+    yjzy_type_1 = fields.Selection([('sale', u'应收'),
+                                    ('purchase', u'应付'),
+                                    ('back_tax', u'退税'),
                                     ('other_payment_sale','其他应收'),
                                     ('other_payment_purchase','其他应付')#这个等待删除
                                     ], string=u'发票类型')
@@ -950,6 +990,68 @@ class account_invoice(models.Model):
             'target': 'current',
             'flags': {'form': {'initial_mode': 'view', 'action_buttons': False}}
         }
+
+    # #创建应付核销
+    # def create_hexiao_yfhx(self):
+    #     # self.ensure_one()
+    #     sfk_type = 'yfhxd'
+    #     domain = [('code', '=', 'yfdrl'), ('company_id', '=', self.env.user.company_id.id)]
+    #     name = self.env['ir.sequence'].next_by_code('sfk.type.%s' % sfk_type)
+    #     journal = self.env['account.journal'].search(domain, limit=1)
+    #     account_obj = self.env['account.account']
+    #     bank_account = account_obj.search(
+    #         [('code', '=', '112301'), ('company_id', '=', self.env.user.company_id.id)],
+    #         limit=1)
+    #     yfhxd = self.env['account.reconcile.order'].create({
+    #         'partner_id': self.partner_id.id,
+    #         'manual_payment_currency_id': self.currency_id.id,
+    #         'invoice_ids': [(4, self.id)],
+    #         'payment_type': 'outbound',
+    #         'fk_journal_id':self.fk_journal_id.id,
+    #         'bank_id':self.bank_id.id,
+    #         'partner_type': 'supplier',
+    #         'sfk_type': 'yfhxd',
+    #         'be_renling': True,
+    #         'name': name,
+    #         'journal_id': journal.id,
+    #         'payment_account_id': bank_account.id,
+    #         'invoice_attribute':self.invoice_attribute,
+    #         'operation_wizard':'10',
+    #         'hxd_type_new':'60',
+    #     })
+    #     line_no_obj = self.env['account.reconcile.order.line.no']
+    #     self.line_no_ids = None
+    #     for one in self.invoice_ids:
+    #         amount_payment_org = one.residual
+    #         so_ids = one.invoice_line_ids.mapped('so_id')
+    #         po_ids = one.invoice_line_ids.mapped('purchase_id')
+    #         advance_residual2 = sum(x.balance for x in so_ids)
+    #         advance_residual = sum(x.balance for x in po_ids)
+    #         line_no = line_no_obj.create({
+    #             'order_id': self.id,
+    #             'invoice_id': one.id,
+    #             'advance_residual': advance_residual,
+    #             'advance_residual2': advance_residual2,
+    #             'amount_payment_org': amount_payment_org
+    #         })
+    #         line_no.amount_payment_can_approve_all_this_time = line_no.invoice_id.amount_payment_can_approve_all
+    #         line_no.invoice_residual_this_time = line_no.invoice_residual
+    #         self.write({'line_no_other_ids': [(4, line_no.id)]})
+    #     self.reconcile_order_id = yfhxd
+    #     form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new')
+    #     return {
+    #         'name': u'应付核销单',
+    #         'view_type': 'form',
+    #         'view_mode': 'form',
+    #         'res_model': 'account.reconcile.order',
+    #         'type': 'ir.actions.act_window',
+    #         'views': [(form_view.id, 'form')],
+    #         'res_id': self.reconcile_order_id.id,
+    #         'target': 'current',
+    #         'flags': {'form': {'initial_mode': 'view', 'action_buttons': False}}
+    #     }
+
+
 
     def create_yshxd(self):
         # self.ensure_one()

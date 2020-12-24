@@ -246,11 +246,24 @@ class tb_po_invoice(models.Model):
             one.yjzy_tb_po_invoice_parent_amount = one.yjzy_tb_po_invoice_parent.price_total
             one.yjzy_tb_po_invoice_parent_residual = one.yjzy_tb_po_invoice_parent.invoice_normal_ids_residual
 
+    def compute_tb_po_other_line_count(self):
+        for one in self:
+            tb_po_other_line_count = len(one.tb_po_other_line_ids)
+            one.tb_po_other_line_count = tb_po_other_line_count
     # # 新增
     # yjzy_type_invoice = fields.Selection(
     #     [('sale', u'应收'), ('purchase', u'应付'), ('back_tax', u'退税'), ('other_payment_sale', '其他应收'),
     #      ('other_payment_purchase', '其他应付')], string=u'发票类型')
     #关联的申请单：其他应收对其他应付，其他应付对其他应收
+
+    price_total_yjzy = fields.Monetary('金额合计',currency_field='currency_id',related='yjzy_tb_po_invoice.price_total')
+    invoice_normal_ids_residual_yjzy = fields.Float('对应账单申请账单未付金额', related='yjzy_tb_po_invoice.invoice_normal_ids_residual')
+    currency_id_yjzy = fields.Many2one('res.currency',related='yjzy_tb_po_invoice.currency_id')
+    invoice_partner_yjzy = fields.Char(u'对应的应收付账单对象',related='yjzy_tb_po_invoice.invoice_partner')
+    name_title_yjzy = fields.Char(u'对应的应收付账账单描述',related='yjzy_tb_po_invoice.name_title')
+
+    tb_po_other_line_ids = fields.One2many('extra.invoice.line','tb_po_other_id',u'关联明细') #上下级的其他应收应付对应的明细
+    tb_po_other_line_count = fields.Integer(u'关联明细数量',compute=compute_tb_po_other_line_count)
 
     date_invoice = fields.Date('账单日期')
     yjzy_payment_id = fields.Many2one('account.payment',u'收付款单')
@@ -306,6 +319,10 @@ class tb_po_invoice(models.Model):
     yjzy_type_1 = fields.Selection([('sale', u'应付'), ('purchase', u'采购'), ('back_tax', u'退税'),('other_payment_sale', '其他应收'),
          ('other_payment_purchase', '其他应付')], string=u'发票类型')#825
     extra_invoice_line_ids = fields.One2many('extra.invoice.line', 'tb_po_id', u'账单明细',default=lambda self: self._default_extra_invoice_line())
+
+
+
+
     price_total = fields.Monetary('金额合计',currency_field='currency_id',compute=compute_info_store,store=True)
 
 
@@ -745,9 +762,11 @@ class tb_po_invoice(models.Model):
                 'product_id': product.id,
                 'quantity': line.quantity,
                 'price_unit': line.price_unit,
-                'account_id': account.id
+                'account_id': account.id,
+                'tb_po_other_id':self.id,
 
             })
+            line.tb_po_other_id = tb_po_id
         self.yjzy_tb_po_invoice = tb_po_id
         self.is_yjzy_tb_po_invoice = True
 
@@ -763,6 +782,25 @@ class tb_po_invoice(models.Model):
         #     'res_id': tb_po_id.id,
         #     'context':ctx
         # }
+
+    def open_wizard_create_order(self):
+        self.ensure_one()
+        ctx = self.env.context.copy()
+        ctx.update({
+            'default_tb_po_id':self.id
+        })
+        return {
+            'name': '创建其他申请',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'wizard.create.other',
+            # 'res_id': bill.id,
+            'target': 'new',
+            'type': 'ir.actions.act_window',
+            'context': ctx,
+        }
+
+
 
     def delete_tb_po_invoice(self):
         open = self.env.context.get('open_delete')
@@ -1599,6 +1637,7 @@ class Extra_Invoice_Line(models.Model):
         sign = self.tb_po_id.type in ['in_refund', 'out_refund'] and -1 or 1
         self.price_subtotal_signed = price_subtotal_signed * sign
 
+    tb_po_other_id = fields.Many2one('tb.po.invoice',u'对应的其他应收付',ondelete='cascade')
     name = fields.Text(string='Description')
     sequence = fields.Integer(default=10,
                               help="Gives the sequence of this line when displaying the invoice.")
@@ -1633,6 +1672,8 @@ class Extra_Invoice_Line(models.Model):
     currency_id = fields.Many2one('res.currency', related='tb_po_id.currency_id', store=True, related_sudo=False)
     company_currency_id = fields.Many2one('res.currency', related='tb_po_id.company_currency_id', readonly=True,
                                               related_sudo=False)
+
+    comments = fields.Text(u'备注')
 
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):

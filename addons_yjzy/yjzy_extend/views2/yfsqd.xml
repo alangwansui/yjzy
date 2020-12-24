@@ -171,23 +171,22 @@
                                    'readonly': ['|',('state_1','!=','10_draft'),('state', '!=', 'draft')]}"/>
                             <field name="hide_payment_method" invisible="1"/>
                             <field name="payment_method_id" string=" " widget="radio"
-                                   attrs="{'invisible': [('hide_payment_method', '=', True)], 'readonly': ['|',('state_1','!=','10_draft'),('state', '!=', 'draft')]}"/>
+                                   attrs="{'invisible': [('hide_payment_method', '=', True)],
+                                   'readonly': ['|',('state_1','!=','10_draft'),('state', '!=', 'draft')]}"/>
                             <field name="payment_method_code" invisible="1"/>
-                            <field name="advance_balance_total" string="未认领预付"/>
-                            <field name="amount_advance_org_all" string="完成认领预付"/>
+                            <field name="advance_balance_total" string="未认领预付" invisible="context.get('operation')"/>
+                            <field name="amount_advance_org_all" string="完成认领预付" invisible="context.get('operation')"/>
                         </group>
                         <group>
                             <field name="supplier_payment_term_id"/>
                             <field name="purchase_payment_term_id" string="采购单付款条款"/>
                             <field name="po_amount"/>
-                            <field name="po_real_advance"/>
+                            <field name="po_real_advance" string="已预付金额"/>
                             <field name="po_pre_advance"/>
                         </group>
                         <group>
-
                             <field name="payment_date" string="预付申请日期"
                                    attrs="{'readonly': ['|',('state_1','!=','10_draft'),('state', '!=', 'draft')]}"/>
-
                             <field name="yjzy_payment_id" groups="base.group_system" string="对应付款单"
                                    attrs="{'invisible':[('state_1','not in',['40_approve','50_posted','60_done'])]}"
                                    domain="[('sfk_type', '=', 'rcfkd')]" readonly="1"
@@ -647,7 +646,7 @@
         <field name="domain">
             [('sfk_type','=','yfsqd'),('state','in',['reconciled','posted']),('advance_balance_total','=',0)]
         </field>
-        <field name="context">{'show_shoukuan': True, 'default_sfk_type': 'yfsqd', 'default_payment_type': 'outbound',
+        <field name="context">{'operation':1'show_shoukuan': True, 'default_sfk_type': 'yfsqd', 'default_payment_type': 'outbound',
             'default_be_renling': True, 'default_advance_ok': True, 'default_partner_type': 'supplier',}
         </field>
         <field name="search_view_id" ref="view_account_payment_search_new"/>

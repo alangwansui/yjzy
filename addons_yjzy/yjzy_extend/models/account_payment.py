@@ -886,7 +886,7 @@ class account_payment(models.Model):
                     raise Warning('请选择认领的收款单!')
                 elif self.yjzy_payment_balance < self.amount:
                     raise Warning('认领金额不能大于待认领金额!')
-                elif self.amount_total_so < self.amount:
+                elif self.amount_total_so < self.amount and self.so_id:
                     raise Warning('认领金额不能大于销售合同金额！')
                 else:
                     self.state_1 = '20_account_submit'
@@ -895,8 +895,10 @@ class account_payment(models.Model):
                     raise Warning('请选择付款对象的银行账号!')
                 if self.po_id and self.po_id.so_id_state not in ['approve', 'sale']:
                     raise Warning('合同未审批不允许提交!')
-                else:
-                    self.state_1 = '20_account_submit'
+                for one in self.po_id.yjzy_payment_ids:
+                    if one.state not in ['posted','reconciled']:
+                        raise Warning('有存在未完成审批的预付申请，请先完成审批!')
+                self.state_1 = '20_account_submit'
             elif ctx.get('default_sfk_type', '') == 'jiehui' or self.sfk_type == 'jiehui':
                 if not self.journal_id or not self.advance_account_id:
                     raise Warning('收款或者付款银行没有填写!')
