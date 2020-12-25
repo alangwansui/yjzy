@@ -1636,7 +1636,7 @@
               action="action_yfhxd_new_payment_form"/>
 
 
-    <menuitem id="menu_yfhxd_advance_reconcile_apply_1" name="创建核销单"
+    <menuitem id="menu_yfhxd_advance_reconcile_apply_1" name="创建核销单" groups="base.group_system"
               parent="yjzy_extend.menu_residual_reconcile_apply" sequence="5"
               action="yjzy_extend.action_yfsqd_balance"/>
 
@@ -1831,7 +1831,7 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('account_yfhxd_form_view_new')})]"/>
     </record>
     <menuitem id="menu_yfhxd_new_reconcile_all" name="查询"
-              parent="menu_residual_reconcile_apply" sequence="20"
+              parent="menu_residual_reconcile_apply" sequence="20" groups="base.group_system"
               action="action_yfhxd_new_reconcile_all"/>
 
 
