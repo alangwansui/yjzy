@@ -46,9 +46,14 @@
                     <filter string="Future Activities" name="activities_upcoming_all" invisible="1"
                             domain="[('activity_ids.date_deadline', '&gt;', context_today().strftime('%Y-%m-%d'))]"/>
                     <group expand="0" string="Group By">
-                        <filter name="group_invoice_attribute" string="账单类型" context="{'group_by':'invoice_attribute'}"/>
-                        <filter name="group_by_state" string="状态分组" context="{'group_by':'state'}" invisible="1"/>
-                        <filter name="group_by_state_yjzy_invoice_id" string="状态+主账单分组" context="{'group_by':['state','yjzy_invoice_id']}"/>
+                        <filter name="group_invoice_attribute" string="账单类型"
+                                context="{'group_by':'invoice_attribute'}"/>
+                        <filter name="group_by_state" string="状态分组"
+                                context="{'group_by':'state'}" invisible="1"/>
+                        <filter name="group_by_state_yjzy_invoice_id" string="状态+主账单分组"
+                                context="{'group_by':['state','yjzy_invoice_id']}"/>
+                        <filter name="group_by_invoice_attribute_all_in_one" string="账单属性分组"
+                                context="{'group_by':['group_by_invoice_attribute_all_in_one']}"/>
                         <filter name="group_by_date_invoice" string="账单日期"
                                 context="{'group_by':'date_invoice:year'}"/>
                         <filter name="group_by_stage_id" string="审批状态" invisible="1"
@@ -2630,7 +2635,8 @@
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_account_invoice_new_filter"/>
             <field name="domain">[('type','=','in_invoice'),('yjzy_type','=','purchase'),('state','in',['open','paid'])]</field>
-            <field name="context">{'search_default_group_by_state':1,'only_ref':1,'type':'out_invoice', 'journal_type': 'sale','yjzy_type':'purchase'}
+            <field name="context">{'search_default_group_by_state':1,'only_ref':1,'default_type': 'in_invoice', 'type': 'in_invoice', 'journal_type': 'purchase''yjzy_type':'purchase'}
+
             </field>
             <!--field name="target">new</field-->
             <field name="view_ids" eval="[(5, 0, 0),

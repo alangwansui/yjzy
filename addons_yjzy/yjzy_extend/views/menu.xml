@@ -33,9 +33,11 @@
 
         <menuitem id="menu_expense_sheet_other_payment_apply_root" name="其他支出申请付款" parent="yjzy_extend.menu_payment_apply_root" groups="base.group_system" sequence="40"/>
         <menuitem id="menu_invoice_payment_apply_create" name="应付查询和创建申请" parent="yjzy_extend.menu_invoice_payment_apply_root" sequence="10"/>
-        <menuitem id="menu_no_payment_apply_root" name="认领与核销" parent="yjzy_extend.menu_new_account_out_root" sequence="50"/>
+        <menuitem id="menu_no_payment_apply_root" name="认领" parent="yjzy_extend.menu_new_account_out_root" sequence="50"/>
+
+
         <menuitem id="menu_advance_reconcile_apply" name="预付款认领" parent="yjzy_extend.menu_no_payment_apply_root" sequence="10"/>
-        <menuitem id="menu_residual_reconcile_apply" name="账单核销" parent="yjzy_extend.menu_no_payment_apply_root" sequence="10"/>
+        <menuitem id="menu_residual_reconcile_apply" name="核销" parent="yjzy_extend.menu_new_account_out_root" sequence="60"/>
 
         <menuitem id="menu_invoice_payment_out" name="付款" parent="yjzy_extend.menu_new_account_out_root" sequence="30"/>
         <menuitem id="menu_invoice_payment_exchange" name="内部转账" parent="yjzy_extend.menu_new_account_out_root" sequence="40"/>
@@ -49,7 +51,7 @@
         <menuitem id="menu_customer_invoice_for_goods_root" name="货款应收" parent="yjzy_extend.menu_new_account_in_root" sequence="30"/>
         <menuitem id="menu_customer_invoice_back_tax_root" name="退税应收" parent="yjzy_extend.menu_new_account_in_root" sequence="40"/>
         <menuitem id="menu_customer_invoice_other_payment_root" name="其他应收" parent="yjzy_extend.menu_new_account_in_root" sequence="50"/>
-
+        <menuitem id="menu_sale_reconcile_apply" name="核销" parent="yjzy_extend.menu_new_account_in_root" sequence="60"/>
 
     </data>
 </odoo>
