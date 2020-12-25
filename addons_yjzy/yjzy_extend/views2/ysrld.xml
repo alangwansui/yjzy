@@ -188,6 +188,7 @@
         <field name="arch" type="xml">
             <form string="预收认领单">
                  <header >
+                      <button name="create_reconcile" type="object" string="测试核销" groups="sales_team.group_sale_manager"/>
                      <button name="open_wizard_renling" type="object" string="创建认领单" attrs="{'invisible':[('state_1','!=','50_posted')]}"/>
                      <button name="action_submit" class="oe_highlight"  string="提交" type="object"
                              attrs="{'invisible':[('state_1','not in',['10_draft'])]}"/>
@@ -201,6 +202,7 @@
 
                 </header>
                 <header groups="base.group_system">
+                    <button name="create_reconcile" type="object" string="测试核销"/>
                     <button name="post" class="oe_highlight" states="draft" string="Confirm" type="object"
                             groups="base.group_system"/>
                     <button name="action_draft" class="oe_highlight" states="cancelled" string="Set To Draft"
@@ -298,6 +300,20 @@
                         </group>
                     </group>
                    <notebook>
+                        <page string="认领明细(new)" attrs="{'invisible':[('payment_ids_count','=',0)]}">
+                            <field name="payment_ids_count" invisible="1"/>
+                            <field name="payment_ids">
+                                <tree>
+                                    <field name="sfk_type" string="类型"/>
+                                    <field name="payment_date" string="认领时间"/>
+                                    <field name="name" string="单号"/>
+                                    <field name="partner_id" string="对象"/>
+                                    <field name="amount" string="金额"/>
+                                    <field name="state"/>
+                                </tree>
+                            </field>
+                        </page>
+
                        <page string="预收应收认领单" attrs="{'invisible':[('advance_reconcile_order_count','=',0)]}">
                            <field name="advance_reconcile_order_ids"  context="{'form_view_ref':'yjzy_extend.account_yshxd_form_view_new','tree_view_ref':'yjzy_extend.account_yshxd_tree_view'}">
                                <tree>
@@ -319,6 +335,9 @@
                                    <field name="yjzy_payment_id"/>
                                </tree>
                            </field>
+                       </page>
+                       <page groups="sales_team.group_sale_manager">
+                           <field name="reconcile_ysrld_ids"/>
                        </page>
 
                        <page groups="base.group_system">
@@ -479,6 +498,7 @@
 
                        <page groups="base.group_system">
                            <group>
+                               <field name="advance_balance_aml_total"/>
                                <field name="advance_reconcile_order_count"/>
                                <field name="gongsi_id" string="公司主体" options="{'no_create':True,'no_open': True}"/>
                                 <field name="yjzy_payment_id" string="选择收款单"

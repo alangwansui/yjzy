@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+
+        <record model="ir.ui.view" id="view_ysrld_reconcile_tree">
+            <field name="name">account.payment.reconcile.tree</field>
+            <field name="model">account.payment</field>
+            <field name="priority" eval="999"/>
+            <field name="arch" type="xml">
+                <tree string="结余核销单">
+                    <field name="partner_id"/>
+                    <field name="name" invisible="1"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_ysrld_reconcile_form" model="ir.ui.view">
+            <field name="name">account.payment.form</field>
+            <field name="model">account.payment</field>
+            <field name="arch" type="xml">
+                <form string="结余核销单">
+                    <header>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,posted,reconciled,cancelled"/>
+                        <field name="is_editable" widget="boolean_toggle" groups="sales_team.group_manager"/>
+                    </header>
+                    <header groups="base.group_system">
+                        <button name="compute_balance" class="oe_highlight" string="计算余额" type="object"
+                                groups="base.group_system"/>
+                        <button name="post" class="oe_highlight" states="draft" string="Confirm" type="object"
+                                groups="base.group_system"/>
+                        <button name="cancel" attrs="{'invisible': [('state', 'in', ['draft','cancelled'])]}"
+                                string="Cancel" type="object" groups="base.group_system"/>
+                        <button name="action_draft" class="oe_highlight" states="cancelled" string="Set To Draft"
+                                type="object" groups="base.group_system"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,posted,reconciled,cancelled"/>
+
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <!--                        <button class="oe_stat_button" name="open_account_invoice"  type="object" icon="fa-pencil-square-o" string="test"-->
+                            <!--                                attrs="{'invisible':[('state','not in',['posted','reconciled'])]}">-->
+                            <!--                            <field name="count_ysrld" widget="statinfo" nolabel="1"/>-->
+                            <!--                        </button>-->
+
+                            <button class="oe_stat_button" name="open_ysrl" type="object" icon="fa-pencil-square-o"
+                                    string="预收认领"
+                                    attrs="{'invisible':[('count_ysrld','=',0)]}">
+                                <field name="count_ysrld" widget="statinfo" nolabel="1"/>
+                            </button>
+                            <button class="oe_stat_button" name="open_yshx" type="object" icon="fa-pencil-square-o"
+                                    string="应收认领"
+                                    attrs="{'invisible':[('count_yshx','=',0)]}">
+                                <field name="count_yshx" widget="statinfo" nolabel="1"/>
+                            </button>
+
+                            <button class="oe_stat_button" name="open_fybg_qtsr" type="object" icon="fa-pencil-square-o"
+                                    string="其他收入" invisible="1">
+                                <field name="count_fybg" widget="statinfo" nolabel="1"/>
+                            </button>
+                            <button class="oe_stat_button" name="open_tb_po_invoice" type="object"
+                                    icon="fa-pencil-square-o"
+                                    string="其他收款"
+                                    attrs="{'invisible':[('tb_po_invoice_ids_count','=',0)]}">
+                                <field name="tb_po_invoice_ids_count" widget="statinfo" nolabel="1"/>
+                            </button>
+                            <button class="oe_stat_button" name="button_journal_entries"
+                                    string="Journal Items" type="object"
+                                    groups="base.group_system"
+                                    attrs="{'invisible':[('move_line_ids','=',[])]}" icon="fa-bars"/>
+                            <field name="move_line_ids" invisible="1"/>
+                            <button class="oe_stat_button" name="button_invoices"
+                                    string="Invoices" type="object" groups="base.group_system"
+                                    attrs="{'invisible':[('has_invoices','=',False)]}" icon="fa-bars"/>
+                            <button class="oe_stat_button" name="open_payment_matching_screen"
+                                    string="Payment Matching" type="object" groups="base.group_system"
+                                    attrs="{'invisible':[('move_reconciled','=',True)]}" icon="fa-university"/>
+                            <field name="has_invoices" invisible="1"/>
+                            <field name="move_reconciled" invisible="1"/>
+                            <field name="is_editable" widget="boolean_toggle" groups="sales_team.group_manager"/>
+                        </div>
+
+                        <field name="id" invisible="1"/>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="invoice_log_id" string="被核销对象" invisible="1"
+                                       attrs="{'invisible':[('sfk_type','not in',['reconcile_yingshou','reconcile_yingfu'])]}"/>
+                                <field name="yjzy_payment_id" string="被核销对象"
+                                       attrs="{'invisible':[('sfk_type','not in',['reconcile_ysrld','reconcile_yfsqd'])]}"
+                                       domain="['|','&amp;','&amp;','&amp;',('state','=','posted'),('sfk_type','=','rcskd'),('partner_id','=',partner_id),('balance','!=',0),'&amp;','&amp;','&amp;',('state','=','posted'),('sfk_type','=','rcskd'),('partner_id.name','=','未定义'),('balance','!=',0)]"
+                                       options="{'no_create':True}"
+                                       context="{'form_view_ref': 'yjzy_extend.view_rcskd_form','advance_bank_amount':1}"/>
+                                <field name="invoice_log_currency_id" attrs="{'invisible':[('sfk_type','not in',['reconcile_yingshou','reconcile_yingfu'])]}"/>
+                                <field name="amount_invoice_log" attrs="{'invisible':[('sfk_type','not in',['reconcile_yingshou','reconcile_yingfu'])]}"/>
+                                <field name="yjzy_payment_currency_id" string="货币" invisible="1"
+                                       options="{'no_create':True,'no_open': True}"/>
+                                <field name="yjzy_payment_advance_balance" string="未认领金额"
+                                       attrs="{'invisible':[('sfk_type','not in',['reconcile_ysrld','reconcile_yfsqd'])]}"/>
+                                <field name="so_id" string="销售合同"
+                                       attrs="{'invisible':[('sfk_type','!=','reconcile_ysrld')],'readonly': [('state', '!=', 'draft'),('is_editable','=',False)]}"
+                                       domain="[('partner_id','=', partner_id),('state','not in',['done','verifying','verification','cancel','refuse'])]"
+                                       options="{'no_create':True,'no_open': True}"/>
+                                 <field name="po_id" string="采购合同"
+                                       attrs="{'invisible':[('sfk_type','!=','reconcile_yfsqd')],'readonly': [('state', '!=', 'draft'),('is_editable','=',False)]}"
+                                       domain="[('partner_id','=', partner_id),('state','not in',['done','verifying','verification','cancel','refuse'])]"
+                                       options="{'no_create':True,'no_open': True}"/>
+                                <label for="amount" string="核销金额"/>
+                                <div name="amount_div" class="o_row" string="收款金额">
+                                    <field name="amount" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                    <field name="currency_id" options="{'no_create': True, 'no_open': True}"
+                                           groups="base.group_multi_currency" invisible="1"
+                                           attrs="{'readonly': [('state', '!=', 'draft')]}" />
+                                </div>
+
+
+                                <field name="hide_payment_method" invisible="1"/>
+                                <field name="payment_method_id" string=" " widget="radio"
+                                       attrs="{'invisible': [('hide_payment_method', '=', True)], 'readonly': [('state', '!=', 'draft')]}"/>
+                                <field name="payment_method_code" invisible="1"/>
+                            </group>
+                            <group>
+                                <field name="payment_date" string="核销日期"
+                                       attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                <field name="sfk_type" readonly="1"/>
+                                <field name="payment_type" widget="radio" readonly="1" required="1" invisible="1"/>
+                                <field name="partner_type" widget="selection" invisible="1"
+                                       attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))], 'invisible': [('payment_type', 'not in', ('inbound', 'outbound'))], 'readonly': 1 }"/>
+                                <field name="be_renling" invisible="1"/>
+                                <field name="advance_ok" label="是否预收" string="是预收" invisible="1"/>
+
+
+                                <field name="communication"
+                                       attrs="{'invisible': [('state', '!=', 'draft'), ('communication', '=', False)], 'readonly': [('state', '!=', 'draft')]}"/>
+                                <field name="fault_comments"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page groups="base.group_system">
+                                <group>
+                                    <field name="journal_id" domain="[('type','=', 'renling')]" string="收款日记账"
+                                       widget="selection" />
+                                      <field name="partner_id" options="{'no_create':True,'no_open': True}" invisible=""
+                                       domain="[('is_company','=',True),('customer','=',True)]"
+                                       attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))], 'invisible': [('payment_type', 'not in', ('inbound', 'outbound'))], 'readonly': [('state', '!=', 'draft')]}"
+                                       context="{'default_is_company': True, 'default_supplier': payment_type == 'outbound', 'default_customer': payment_type == 'inbound'}"/>
+                                    <field name="advance_account_id" label="预收科目" string="预收科目"
+                                           options="{'no_create':True}"
+                                           invisible="0"/>
+                                    <field name="gongsi_id" string="公司主体" options="{'no_create':True,'no_open': True}"/>
+                                </group>
+                            </page>
+                        </notebook>
+
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+
+        <record id="action_ysrld_reconcile" model="ir.actions.act_window">
+            <field name="name">预收核销</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.payment</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('sfk_type','=','reconcile_ysrld')]</field>
+            <field name="context">{'bank_amount':1,'show_shoukuan': True, 'default_sfk_type': 'ysrld',
+                'default_payment_type': 'inbound',
+                'default_be_renling': True, 'default_advance_ok': True, 'default_partner_type': 'customer',}
+            </field>
+            <field name="search_view_id" ref="view_account_payment_search_new"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_ysrld_reconcile_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_ysrld_reconcile_form')})]"/>
+        </record>
+        <menuitem id="menu_ysrld_reconcile" parent="menu_residual_reconcile_apply" name="预收核销" sequence="10"
+                  action="action_ysrld_reconcile"/>
+    </data>
+
+
+</odoo>

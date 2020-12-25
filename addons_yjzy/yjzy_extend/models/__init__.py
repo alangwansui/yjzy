@@ -76,3 +76,5 @@ from . import back_tax_declaration
 from . import account_bank_statement
 from . import account_payment_fkzl
 from . import real_invoice
+from . import account_payment_reconcile
+from . import account_invoice_reconcile

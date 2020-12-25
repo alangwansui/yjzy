@@ -7,6 +7,7 @@
             <field name="arch" type="xml">
                 <form string="应收账单" class="o_invoice_form" create="false">
                     <header groups="base.group_system">
+                                      <button name="create_reconcile" type="object" string="创建核销"/>
                         <button name="create_yfhxd_from_multi_invoice" type="object" string="创建认领"/>
                         <button name="action_create_yfhxd" context="{'invoice_attribute':invoice_attribute}"
                                 class="oe_highlight" type="object" string="创建付款申请"/>
@@ -632,7 +633,20 @@
                             <page groups="base.group_system">
                                 <field name="yjzy_invoice_all_ids"/>
                             </page>
-
+                        <page string="账单认领明细(new)" attrs="{'invisible':[('payment_log_ids_count','=',0)]}">
+                            <field name="payment_log_ids_count" invisible="1"/>
+                                <field name="payment_log_ids" readonly="1">
+                                    <tree>
+                                        <field name="sfk_type" string="认领类型"/>
+<!--                                        <field name="post_date" string="审批日期"/>-->
+                                        <field name="payment_date_confirm" string="认领完成时间"/>
+                                        <field name="reconcile_type" string="认领方式"/>
+                                        <field name="amount" string="金额" sum="小计"/>
+                                        <field name="currency_id" invisible="1"/>
+                                        <field name="state_1"/>
+                                    </tree>
+                                </field>
+                            </page>
                             <page string="账单认领明细">
 
                                 <field name="reconcile_order_ids" groups="base.group_system"/>

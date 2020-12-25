@@ -166,17 +166,20 @@ class account_payment(models.Model):
     #     return res
 
     @api.depends('advance_reconcile_order_line_ids.order_id.state','amount','advance_reconcile_order_line_ids.amount_advance_org',
-                 'advance_reconcile_order_line_ids.yjzy_payment_id')
+                 'advance_reconcile_order_line_ids.yjzy_payment_id','reconcile_ysrld_ids.amount','reconcile_ysrld_ids','reconcile_ysrld_ids.state')
     def compute_advance_balance_total(self):
         for one in self:
             advance_total = sum([x.amount_advance_org for x in one.advance_reconcile_order_line_ids])
-            advance_balance_total = one.amount - advance_total
+            advance_total_2 = sum([x.amount for x in one.reconcile_ysrld_ids.filtered(lambda i: i.state in ['posted','reconciled'])])
+            advance_balance_total = one.amount - advance_total - advance_total_2
             if advance_balance_total == 0 and one.state_1 == '50_posted':
                 one.state_1 = '60_done'
                 one.test_reconcile()
                 one.write({'state': 'reconciled'})
-            one.advance_total = advance_total
+            one.advance_total = advance_total + advance_total_2
             one.advance_balance_total = advance_balance_total
+
+
 
     #针对收款单的查询
     @api.depends('yshx_ids','yshx_ids.state','aml_ids','yshx_ids.amount_advance_org','ysrld_ids','ysrld_ids.state','ysrld_ids.state','ysrld_ids.amount','ysrld_ids.advance_total','ysrld_ids.advance_balance_total','fybg_ids.state')
@@ -371,6 +374,9 @@ class account_payment(models.Model):
                                        ('50_reconcile',u'核销')],'认领方式')
 
     invoice_log_id = fields.Many2one('account.invoice','付款指令以及预收预付认领关联账单')
+    invoice_log_currency_id = fields.Many2one('res.currency',u'账单币种',related='invoice_log_id.currency_id')
+
+    amount_invoice_log = fields.Monetary('账单余额',currency_field='invoice_log_currency_id',related='invoice_log_id.residual')
 
     pay_to = fields.Char('付款对象', compute = compute_pay_to,store=True)
 
@@ -568,6 +574,7 @@ class account_payment(models.Model):
 
     payment_ids = fields.One2many('account.payment', 'yjzy_payment_id', u'预收认领和预付申请')
 
+
     ysrld_ids = fields.One2many('account.payment', 'yjzy_payment_id', u'预收认领单', domain=[('sfk_type','=','ysrld')])
     yfsqd_ids = fields.One2many('account.payment', 'yjzy_payment_id', u'预付申请单', domain=[('sfk_type','=','yfsqd')])
 
@@ -715,8 +722,16 @@ class account_payment(models.Model):
             if self.balance == 0:
                 wizard = self.env['account.move.line.reconcile'].with_context(active_ids=[x.id for x in aml_recs]).create({})
                 wizard.trans_rec_reconcile_full()
-        if self.sfk_type == 'yfrld':
+        if self.sfk_type == 'yfsqd':
             account = self.env['account.account'].search([('code', '=', '1123'), ('company_id', '=', self.company_id.id)],limit=1)
+            # aml_recs = self.env['account.move.line'].search([('new_payment_id','=',self.id),('account_id','=',account.id)])
+            aml_recs = self.aml_ids.filtered(lambda x: x.new_advance_payment_id.id == self.id and x.account_id.id == account.id and x.reconciled == False)
+            if self.balance == 0:
+                wizard = self.env['account.move.line.reconcile'].with_context(active_ids=[x.id for x in aml_recs]).create({})
+                wizard.trans_rec_reconcile_full()
+
+        if self.sfk_type == 'reconcile_ysrld':
+            account = self.env['account.account'].search([('code', '=', '2203'), ('company_id', '=', self.company_id.id)],limit=1)
             # aml_recs = self.env['account.move.line'].search([('new_payment_id','=',self.id),('account_id','=',account.id)])
             aml_recs = self.aml_ids.filtered(lambda x: x.new_advance_payment_id.id == self.id and x.account_id.id == account.id and x.reconciled == False)
             if self.balance == 0:
@@ -842,9 +857,11 @@ class account_payment(models.Model):
         #         raise Warning(u'此单据已经被认领，请先删除对应的认领单！')
         return super(account_payment, self).cancel()
 
-
+    #1225
     @api.onchange('amount')
     def onchange_amount(self):
+        if self.invoice_log_id:
+            self.currency_id = self.invoice_log_id.currency_id
         if self.yjzy_payment_id:
             self.currency_id = self.yjzy_payment_id.currency_id
 
@@ -1249,7 +1266,7 @@ class account_payment(models.Model):
         else:
             pass
 
-
+    #akiny生成分录
     def _get_shared_move_line_vals(self, debit, credit, amount_currency, move_id, invoice_id=False):
         """生成分录明细的准备数据"""
         res = super(account_payment, self)._get_shared_move_line_vals(debit, credit, amount_currency, move_id, invoice_id=invoice_id)
@@ -1268,6 +1285,8 @@ class account_payment(models.Model):
                 new_advance_payment_id = self.fkzl_id.id
             else:
                 new_advance_payment_id = self.yjzy_payment_id.id
+        if self.sfk_type in ['reconcile_ysrld','reconcile_yfsqd']:#1225
+            new_advance_payment_id = self.yjzy_payment_id.id
         res.update({
             'new_payment_id': new_payment_id,
             'so_id': self.so_id.id,
@@ -1340,6 +1359,13 @@ class account_payment(models.Model):
     def onchange_yjzy_payment(self):
         if self.yjzy_payment_id:
             self.currency_id = self.yjzy_payment_id.currency_id
+        else:
+            self.currency_id = self.journal_id.currency_id
+
+    @api.onchange('invoice_log_id')
+    def onchange_invoice_log_id(self):
+        if self.invoice_log_id:
+            self.currency_id = self.invoice_log_id.currency_id
         else:
             self.currency_id = self.journal_id.currency_id
 

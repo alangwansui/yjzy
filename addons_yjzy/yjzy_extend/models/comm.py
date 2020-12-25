@@ -14,7 +14,12 @@ sfk_type = [
     ('yingshourld',u'应收流水'),
     ('yingfurld',u'应付流水'),
     ('fkzl',u'付款指令'),
-    ('fksqd',u'付款申请单')
+    ('fksqd',u'付款申请单'),
+    ('reconcile_ysrld',u'预收核销'),
+    ('reconcile_yfsqd',u'预付核销'),
+    ('reconcile_yingshou', u'应收核销'),
+    ('reconcile_yingfu', u'应付核销'),
+
 ]
 
 

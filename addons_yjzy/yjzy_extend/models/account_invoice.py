@@ -402,7 +402,7 @@ class account_invoice(models.Model):
     def compute_so_ids(self):
         for one in self:
             so_ids = one.invoice_line_ids.mapped('so_id')
-            one.po_ids = so_ids
+            one.so_ids = so_ids
 
 
     #0921 = self.bill_id = self.partner
@@ -528,7 +528,9 @@ class account_invoice(models.Model):
                     name = '其他应付'
             one.invoice_attribute_all_in_one = name
 
-
+    def compute_payment_log_ids_count(self):
+        for one in self:
+            one.payment_log_ids_count = len(one.payment_log_ids)
 
 
     invoice_attribute_all_in_one = fields.Char('账单属性all_in_one',compute=compute_all_in_one,store=True)
@@ -536,7 +538,7 @@ class account_invoice(models.Model):
     current_date_rate = fields.Float('出运单汇率',related='bill_id.current_date_rate')
 
     payment_log_ids = fields.One2many('account.payment','invoice_log_id','认领以及收付明细')
-
+    payment_log_ids_count = fields.Integer('认领以及收付明细数量',compute=compute_payment_log_ids_count)
 
     other_payment_invoice_id = fields.Many2one('account.invoice','关联的其他应收付下级账单')
     other_payment_invoice_parent_id = fields.Many2one('account.invoice','关联的其他应收付上级账单')

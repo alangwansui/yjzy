@@ -351,6 +351,7 @@ class account_payment(models.Model):
 
         # jon 默认的journal akiny
         default_sfk_type = self.env.context.get('default_sfk_type', '')
+        default_reconcile_type = self.env.context.get('default_reconcile_type', '')
         if default_sfk_type == 'yfsqd':
             journal_domain = [('code', '=', 'yfdrl'), ('company_id', '=', self.env.user.company_id.id)]
             self.journal_id = self.env['account.journal'].search(journal_domain, limit=1)
@@ -363,6 +364,24 @@ class account_payment(models.Model):
             journal_domain = [('type', 'in', ['bank','cash']), ('company_id', '=', self.env.user.company_id.id)]
         if default_sfk_type == 'yingshoudrl':
             journal_domain = [('code','=','yszk'),('company_id','=',self.env.user.company_id.id)]
+            self.journal_id = self.env['account.journal'].search(journal_domain, limit=1)
+        if default_sfk_type == 'reconcile' and default_reconcile_type == 'payment_in':
+            journal_domain = [('code', '=', 'ysdrl'), ('company_id', '=', self.env.user.company_id.id)]
+            self.journal_id = self.env['account.journal'].search(journal_domain, limit=1)
+        if default_sfk_type == 'reconcile' and default_reconcile_type == 'payment_out':
+            journal_domain = [('code', '=', 'yfdrl'), ('company_id', '=', self.env.user.company_id.id)]
+            self.journal_id = self.env['account.journal'].search(journal_domain, limit=1)
+        if default_sfk_type == 'reconcile_ysrld':
+            journal_domain = [('code', '=', 'yszk'), ('company_id', '=', self.env.user.company_id.id)]
+            self.journal_id = self.env['account.journal'].search(journal_domain, limit=1)
+        if default_sfk_type == 'reconcile_yfsqd':
+            journal_domain = [('code', '=', 'yfzk'), ('company_id', '=', self.env.user.company_id.id)]
+            self.journal_id = self.env['account.journal'].search(journal_domain, limit=1)
+        if default_sfk_type == 'reconcile_yingshou':
+            journal_domain = [('code', '=', 'hxfy'), ('company_id', '=', self.env.user.company_id.id)]
+            self.journal_id = self.env['account.journal'].search(journal_domain, limit=1)
+        if default_sfk_type == 'reconcile_yingshou':
+            journal_domain = [('code', '=', 'hxfy'), ('company_id', '=', self.env.user.company_id.id)]
             self.journal_id = self.env['account.journal'].search(journal_domain, limit=1)
 
         print('============', journal_domain)

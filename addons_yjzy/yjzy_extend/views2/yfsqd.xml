@@ -91,6 +91,7 @@
 
                 </header>
                 <header>
+                      <button name="create_reconcile" type="object" string="测试核销" groups="sales_team.group_sale_manager"/>
                     <button name="create_rcfkd" string="生成日常付款单" type='object' icon=""
                             groups="account.group_account_manager"/>
                     <button name="post" class="oe_highlight" states="draft" string="Confirm" type="object"
@@ -174,8 +175,10 @@
                                    attrs="{'invisible': [('hide_payment_method', '=', True)],
                                    'readonly': ['|',('state_1','!=','10_draft'),('state', '!=', 'draft')]}"/>
                             <field name="payment_method_code" invisible="1"/>
-                            <field name="advance_balance_total" string="未认领预付" invisible="context.get('operation')"/>
-                            <field name="amount_advance_org_all" string="完成认领预付" invisible="context.get('operation')"/>
+                            <field name="advance_balance_total" string="未认领预付"
+                                   invisible="context.get('operation')" attrs="{'invisible':[('state_1','not in',['40_approve','50_posted','60_done'])]}"/>
+                            <field name="amount_advance_org_all" string="完成认领预付"
+                                   invisible="context.get('operation')" attrs="{'invisible':[('state_1','not in',['40_approve','50_posted','60_done'])]}"/>
                         </group>
                         <group>
                             <field name="supplier_payment_term_id"/>
@@ -207,7 +210,20 @@
                         </group>
                     </group>
                     <notebook>
-                        <page string="认领明细" attrs="{'invisible':[('advance_reconcile_order_line_ids_count','=',0)]}">
+                         <page string="认领明细(new)" attrs="{'invisible':[('payment_ids_count','=',0)]}">
+                             <field name="payment_ids_count" invisible="1"/>
+                            <field name="payment_ids">
+                                <tree decoration-danger="sfk_type in ['reconcile_ysrld','reconcile_yfsqd']">
+                                    <field name="sfk_type" string="类型"/>
+                                    <field name="payment_date" string="认领时间"/>
+                                    <field name="name" string="单号"/>
+                                    <field name="partner_id" string="对象"/>
+                                    <field name="amount" string="金额"/>
+                                    <field name="state"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="认领明细(old)" attrs="{'invisible':[('advance_reconcile_order_line_ids_count','=',0)]}">
                             <field name="advance_reconcile_order_line_ids_count" invisible="1"/>
                             <field name="advance_reconcile_order_line_ids" readonly="1">
                                 <tree>
@@ -254,6 +270,7 @@
                                 </tree>
                             </field>
                         </page>
+
 
                         <page groups="base.group_system">
                             <group>
