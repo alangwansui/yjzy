@@ -47,7 +47,7 @@ class account_payment(models.Model):
 
     payment_ids_count = fields.Integer(u'预收认领预付申请数量', compute=compute_payment_ids_count)
 
-    reconcile_ysrld_ids = fields.One2many('account.payment','yjzy_payment_id',u'预收核销',)#domain=[('sfk_type','=','reconcile_ysrld')]
+    reconcile_ysrld_ids = fields.One2many('account.payment','yjzy_payment_id',u'预收核销',)#domain=[('sfk_type','=','reconcile_ysrld')]其实就是payment_ids包括了认领和核销的
 
     reconcile_type_reconcile = fields.Selection([('payment_in',u'收款单核销'),
                                        ('payment_out',u'付款单核销'),

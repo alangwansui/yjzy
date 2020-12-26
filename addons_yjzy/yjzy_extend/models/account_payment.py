@@ -166,11 +166,11 @@ class account_payment(models.Model):
     #     return res
 
     @api.depends('advance_reconcile_order_line_ids.order_id.state','amount','advance_reconcile_order_line_ids.amount_advance_org',
-                 'advance_reconcile_order_line_ids.yjzy_payment_id','reconcile_ysrld_ids.amount','reconcile_ysrld_ids','reconcile_ysrld_ids.state')
+                 'advance_reconcile_order_line_ids.yjzy_payment_id','payment_ids.amount','payment_ids','payment_ids.state')
     def compute_advance_balance_total(self):
         for one in self:
             advance_total = sum([x.amount_advance_org for x in one.advance_reconcile_order_line_ids])
-            advance_total_2 = sum([x.amount for x in one.reconcile_ysrld_ids.filtered(lambda i: i.state in ['posted','reconciled']
+            advance_total_2 = sum([x.amount for x in one.payment_ids.filtered(lambda i: i.state in ['posted','reconciled']
                                                                                                 and i.sfk_type in ['reconcile_ysrld','reconcile_yfsqd'])])
             advance_balance_total = one.amount - advance_total - advance_total_2
             if advance_balance_total == 0 and one.state_1 == '50_posted':
