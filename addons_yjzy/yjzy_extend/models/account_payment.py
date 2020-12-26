@@ -84,8 +84,9 @@ class account_payment(models.Model):
     @api.depends('aml_ids','state','ysrld_ids','ysrld_ids.state')
     def compute_balance(self):
         for one in self:
-            balance = 0
+            balance = one.balance
             all_lines = one.aml_ids
+
             if one.sfk_type == 'rcskd':
                 lines = all_lines.filtered(lambda x: x.account_id.code == '220301')
                 if one.currency_id.name == 'CNY':
@@ -105,9 +106,12 @@ class account_payment(models.Model):
                     balance = sum([x.debit - x.credit for x in lines])
                 else:
                     balance = sum([x.amount_currency for x in lines])
+
             one.balance = balance
-            if balance == 0 and one.state_1 == '50_posted':
+            if balance == 0 and one.state_1 == '50_posted' and one.sfk_type in ['rcskd','rcfkd','fkzl']:
                 one.state_1 = '60_done'
+
+
 
 
             # if balance == 0 and one.x_wkf_state == '159':
