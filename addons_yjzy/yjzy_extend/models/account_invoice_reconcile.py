@@ -36,9 +36,9 @@ class account_reconcile_order(models.Model):
                    'default_payment_method_id': 2,
                    'default_currency_id':self.currency_id.id,
                    'default_invoice_ids': [(4, self.id, None)],
-                   'default_reconcile_type': '50_reconcile',
+                                 'default_reconcile_type': '50_reconcile',
 
-                  }
+            }
         if self.type == 'in_invoice':
             ctx = {'show_shoukuan': True,
                    'default_sfk_type': 'reconcile_yingfu',
@@ -60,7 +60,7 @@ class account_reconcile_order(models.Model):
             'type': 'ir.actions.act_window',
             'res_model': 'account.payment',
             'views': [(form_view.id, 'form')],
-            'target': 'new',
+            'target': 'current',
             'context': ctx
         }
 

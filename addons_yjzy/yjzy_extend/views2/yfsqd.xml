@@ -72,7 +72,8 @@
         <field name="model">account.payment</field>
         <field name="arch" type="xml">
             <form string="预付申请单">
-                <header groups="base.group_system">
+                <header groups="sales_team.group_manager">
+                    <button name="create_reconcile" type="object" string="测试核销" />
                     <button name="action_submit" class="oe_highlight" string="提交" type="object"
                             attrs="{'invisible': [('state_1','not in',['10_draft'])]}"/>
                     <button name="action_account_post" class="oe_highlight" string="财务确认" type="object"
@@ -91,7 +92,7 @@
 
                 </header>
                 <header>
-                      <button name="create_reconcile" type="object" string="测试核销" groups="sales_team.group_sale_manager"/>
+
                     <button name="create_rcfkd" string="生成日常付款单" type='object' icon=""
                             groups="account.group_account_manager"/>
                     <button name="post" class="oe_highlight" states="draft" string="Confirm" type="object"

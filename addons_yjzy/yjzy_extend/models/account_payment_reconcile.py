@@ -67,6 +67,8 @@ class account_payment(models.Model):
 
     #创建核销单
     def create_reconcile(self):
+        if self.advance_balance_total <= 0 :
+            raise Warning('未认领金额不大于0，不需要核销')
         form_view = self.env.ref('yjzy_extend.view_ysrld_reconcile_form')
         ctx = {}
         partner = self.partner_id
@@ -110,8 +112,24 @@ class account_payment(models.Model):
             'type':'ir.actions.act_window',
             'res_model':'account.payment',
             'views':[(form_view.id,'form')],
-            'target':'new',
+            'target':'current',
             'context':ctx
         }
+
+    def action_reconcile_submit(self):
+        if self.yjzy_payment_id and (self.so_id or self.po_id) and self.amount > self.yjzy_payment_advance_balance:
+            raise Warning('核销金额不允许大于可被认领金额')
+        if self.invoice_log_id and self.amount > self.amount_invoice_log:
+            raise Warning('核销金额不允许大于可被认领金额')
+        self.state_1 = '20_account_submit'
+
+    def action_reconcile_account(self):
+        self.state_1 = '30_manager_approve'
+
+    def action_reconcile_manager(self):
+        self.post()
+        self.state_1 = '60_done'
+
+
 
 

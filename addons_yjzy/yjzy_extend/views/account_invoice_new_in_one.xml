@@ -6,10 +6,10 @@
             <field name="model">account.invoice</field>
             <field name="arch" type="xml">
                 <form string="应收账单" class="o_invoice_form" create="false">
-                    <header groups="base.group_system">
-                                      <button name="create_reconcile" type="object" string="创建核销"/>
-                        <button name="create_yfhxd_from_multi_invoice" type="object" string="创建认领"/>
-                        <button name="action_create_yfhxd" context="{'invoice_attribute':invoice_attribute}"
+                    <header groups="sales_team.group_manager">
+                        <button name="create_reconcile" type="object" string="创建核销"/>
+                        <button name="create_yfhxd_from_multi_invoice" type="object" string="创建认领" groups="base.group_system"/>
+                        <button name="action_create_yfhxd" context="{'invoice_attribute':invoice_attribute}" groups="base.group_system"
                                 class="oe_highlight" type="object" string="创建付款申请"/>
                     </header>
                     <header attrs="{'invisible':['|',('is_yjzy_invoice','=',True),('type','not in',['out_invoice','out_refund'])]}">

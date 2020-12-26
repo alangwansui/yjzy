@@ -186,9 +186,9 @@
         <field name="name">account.payment.form</field>
         <field name="model">account.payment</field>
         <field name="arch" type="xml">
-            <form string="预收认领单">
-                 <header >
-                      <button name="create_reconcile" type="object" string="测试核销" groups="sales_team.group_sale_manager"/>
+            <form groups="sales_team.group_manager">
+                 <header groups="base.group_system">
+                     <button name="create_reconcile" type="object" string="测试核销" groups="sales_team.group_manager"/>
                      <button name="open_wizard_renling" type="object" string="创建认领单" attrs="{'invisible':[('state_1','!=','50_posted')]}"/>
                      <button name="action_submit" class="oe_highlight"  string="提交" type="object"
                              attrs="{'invisible':[('state_1','not in',['10_draft'])]}"/>

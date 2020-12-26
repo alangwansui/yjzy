@@ -449,8 +449,8 @@ class tbl_comb(models.Model):
     _name = 'tbl.comb'
     _description = u'发运单明细的bom分解组合'
 
-    tbl_id = fields.Many2one('transport.bill.line', u'发运明细')
-    tb_id = fields.Many2one('transport.bill', u'发运')
+    tbl_id = fields.Many2one('transport.bill.line', u'发运明细',ondelete='cascade')
+    tb_id = fields.Many2one('transport.bill', u'发运',ondelete='cascade')
     product_id = fields.Many2one('product.product', u'产品')
     hs_id = fields.Many2one('hs.hs', u'HS', related='product_id.hs_id')
     out_qty = fields.Float('发运数量')

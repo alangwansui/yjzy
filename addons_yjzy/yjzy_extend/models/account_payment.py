@@ -228,10 +228,12 @@ class account_payment(models.Model):
                     name = '%s:%s' % ('预付申请', one.name)
             elif ctx.get('default_sfk_type', '') == 'nbzz' or one.sfk_type == 'nbzz':
                 name = '%s:%s' % ('内部转账', one.name)
-
             elif ctx.get('default_sfk_type', '') == 'jiehui' or one.sfk_type == 'jiehui':
                 name = '%s:%s' % ('结汇', one.name)
-
+            elif ctx.get('default_sfk_type', '') == 'reconcile_yfsqd' or one.sfk_type == 'reconcile_yfsqd':
+                name = '%s:%s' % ('预付核销', one.name)
+            elif ctx.get('default_sfk_type', '') == 'reconcile_ysrld' or one.sfk_type == 'reconcile_ysrld':
+                name = '%s:%s' % ('预收核销', one.name)
             elif ctx.get('bank_amount'):
                 name = '%s[%s]' % (one.journal_id.name, str(one.balance))
             elif ctx.get('advance_bank_amount'):
@@ -461,7 +463,6 @@ class account_payment(models.Model):
     #预付-付款申请单：10，20，30，40，50，60 付款单从25-50，此处40-50，之后判断付款单余额是否为0，如果是，50-60
     #应付-预付申请单：10，20，30，50付款单从25-50，此处40-50，之后判断预付款单余额是否为0，如果是，50-60
     state_1 = fields.Selection([('10_draft',u'草稿'),
-
                                 ('20_account_submit',u'待财务审批'),
                                 ('25_cashier_submit',u'待出纳审批'),
                                 ('30_manager_approve',u'待总经理审批'),
@@ -1125,6 +1126,10 @@ class account_payment(models.Model):
                 name = '%s:%s' % ('日常收款单', one.balance)
             elif ctx.get('default_sfk_type', '') == 'nbzz' or one.sfk_type == 'nbzz':
                 name = '%s:%s' % ('内部转账', one.name)
+            elif ctx.get('default_sfk_type', '') == 'reconcile_yfsqd' or one.sfk_type == 'reconcile_yfsqd':
+                name = '%s:%s' % ('预付核销', one.name)
+            elif ctx.get('default_sfk_type', '') == 'reconcile_ysrld' or one.sfk_type == 'reconcile_ysrld':
+                name = '%s:%s' % ('预收核销', one.name)
             elif ctx.get('bank_amount'):
                 name = '%s[%s]' % (one.journal_id.name, str(one.balance))
             elif ctx.get('advance_bank_amount'):

@@ -800,7 +800,6 @@
         <field name="arch" type="xml">
             <form string="应付核销单" create="false">
                 <header>
-
                     <button name="compute_advice_amount_advance_org" type="object" class="oe_highlight"
                             string="计算建议预收认领金额" invisible="1" groups="base.group_system"/>
                     <button name="compute_line_ids_advice_amount_advance_org" type="object" class="oe_highlight"

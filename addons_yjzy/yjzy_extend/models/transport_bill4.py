@@ -67,7 +67,7 @@ class cgtj_line(models.Model):
     _name = 'cgtj.line'
     _description = u'新采购统计'
 
-    tb_id = fields.Many2one('transport.bill', u'出运单')
+    tb_id = fields.Many2one('transport.bill', u'出运单',ondelete='cascade')
     hs_id = fields.Many2one('hs.hs', u'HS')
     plan_ids = fields.Many2many('transport.lot.plan',  'ref_plan_qctl', 'cid', 'pid',  u'计划')
     po_id = fields.Many2one('purchase.order', u'采购单')
@@ -83,7 +83,7 @@ class xstj_line(models.Model):
     _description = u'新销售统计'
 
 
-    tb_id = fields.Many2one('transport.bill', u'出运单')
+    tb_id = fields.Many2one('transport.bill', u'出运单',ondelete='cascade')
     hs_id = fields.Many2one('hs.hs', u'HS')
     qty = fields.Float('数量')
     amount = fields.Float('金额')
