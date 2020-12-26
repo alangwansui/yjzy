@@ -84,11 +84,12 @@ class sale_order(models.Model):
                     real_advance = sum([x.credit for x in sml_lines])
                 else:
                     balance = sum([-1 * x.amount_currency for x in sml_lines])
-                    real_advance = 0
-                    for x in sml_lines:
-                        if x.amount_currency > 0:
-                            real_advance += x.amount_currency
-                    # real_advance = sum([1 * x.amount_currency for x in sml_lines.filtered(lambda i: i.amount_currency > 0)])
+                    # real_advance = 0
+                    # for x in sml_lines:
+                        # if x.amount_currency < 0:
+                        #     print('amount_currency_akiny',x.amount_currency)
+                        #     real_advance += x.amount_currency
+                    real_advance = sum([1 * x.amount_currency for x in sml_lines.filtered(lambda i: i.amount_currency < 0)])
                 one.balance_new = balance
                 one.real_advance = real_advance
 
