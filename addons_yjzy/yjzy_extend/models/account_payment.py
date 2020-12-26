@@ -1360,12 +1360,12 @@ class account_payment(models.Model):
                 'domain': [('account_id', '=', account.id), ('new_payment_id', '=', self.yjzy_payment_id.id)],
             }
 
-    @api.onchange('yjzy_payment_id')
-    def onchange_yjzy_payment(self):
-        if self.yjzy_payment_id:
-            self.currency_id = self.yjzy_payment_id.currency_id
-        else:
-            self.currency_id = self.journal_id.currency_id
+    # @api.onchange('yjzy_payment_id')
+    # def onchange_yjzy_payment(self):
+    #     if self.yjzy_payment_id:
+    #         self.currency_id = self.yjzy_payment_id.currency_id
+    #     else:
+    #         self.currency_id = self.journal_id.currency_id
 
     @api.onchange('invoice_log_id')
     def onchange_invoice_log_id(self):
