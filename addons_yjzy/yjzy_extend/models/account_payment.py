@@ -213,27 +213,27 @@ class account_payment(models.Model):
         ctx = self.env.context
         res = []
         for one in self:
-            if ctx.get('default_sfk_type', '') == 'ysrld' or one.sfk_type == 'ysrld':
+            if one.sfk_type == 'ysrld': #ctx.get('default_sfk_type', '') == 'ysrld' or
                 if ctx.get('only_number'):
                     name='%s' % (str(one.advance_balance_total))
                 else:
                     name = '%s:%s' % ('预收认领单', str(one.advance_balance_total))
-            elif ctx.get('default_sfk_type', '') == 'fkzl' or one.sfk_type == 'fkzl':
+            elif one.sfk_type == 'fkzl':  #ctx.get('default_sfk_type', '') == 'fkzl' or
                 name = '%s:%s' % ('付款指令', one.name)
-            elif ctx.get('default_sfk_type', '') == 'rcskd' or one.sfk_type == 'rcskd':
+            elif one.sfk_type == 'rcskd': #ctx.get('default_sfk_type', '') == 'rcskd'
                 name = '%s:%s' % ('日常收款单', one.balance)
-            elif ctx.get('default_sfk_type', '') == 'yfsqd' or one.sfk_type == 'yfsqd':
+            elif  one.sfk_type == 'yfsqd': #ctx.get('default_sfk_type', '') == 'yfsqd' or
                 if ctx.get('advance_balance_total'):
                     name = '%s:%s' % (one.name, str(one.advance_balance_total))
                 else:
                     name = '%s:%s' % ('预付申请', one.name)
-            elif ctx.get('default_sfk_type', '') == 'nbzz' or one.sfk_type == 'nbzz':
+            elif one.sfk_type == 'nbzz':
                 name = '%s:%s' % ('内部转账', one.name)
-            elif ctx.get('default_sfk_type', '') == 'jiehui' or one.sfk_type == 'jiehui':
+            elif one.sfk_type == 'jiehui':
                 name = '%s:%s' % ('结汇', one.name)
-            elif ctx.get('default_sfk_type', '') == 'reconcile_yfsqd' or one.sfk_type == 'reconcile_yfsqd':
+            elif one.sfk_type == 'reconcile_yfsqd':
                 name = '%s:%s' % ('预付核销', one.name)
-            elif ctx.get('default_sfk_type', '') == 'reconcile_ysrld' or one.sfk_type == 'reconcile_ysrld':
+            elif one.sfk_type == 'reconcile_ysrld':
                 name = '%s:%s' % ('预收核销', one.name)
             elif ctx.get('bank_amount'):
                 name = '%s[%s]' % (one.journal_id.name, str(one.balance))
