@@ -348,7 +348,7 @@
         <record id="action_yfhxd_reconcile" model="ir.actions.act_window">
             <field name="name">应付核销</field>
             <field name="type">ir.actions.act_window</field>
-            <field name="res_model">account.invoice</field>
+            <field name="res_model">account.payment</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[('sfk_type','=','reconcile_yingfu')]</field>
@@ -367,7 +367,7 @@
          <record id="action_yshxd_reconcile" model="ir.actions.act_window">
             <field name="name">应收核销</field>
             <field name="type">ir.actions.act_window</field>
-            <field name="res_model">account.invoice</field>
+            <field name="res_model">account.payment</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[('sfk_type','=','reconcile_yingshou')]</field>
