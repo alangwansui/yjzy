@@ -84,9 +84,8 @@ class account_payment(models.Model):
     @api.depends('aml_ids','state','ysrld_ids','ysrld_ids.state')
     def compute_balance(self):
         for one in self:
-            balance = one.balance
+            balance = 0
             all_lines = one.aml_ids
-
             if one.sfk_type == 'rcskd':
                 lines = all_lines.filtered(lambda x: x.account_id.code == '220301')
                 if one.currency_id.name == 'CNY':
@@ -106,12 +105,9 @@ class account_payment(models.Model):
                     balance = sum([x.debit - x.credit for x in lines])
                 else:
                     balance = sum([x.amount_currency for x in lines])
-
             one.balance = balance
-            if balance == 0 and one.state_1 == '50_posted' and one.sfk_type in ['rcskd','rcfkd','fkzl']:
+            if balance == 0 and one.state_1 == '50_posted':
                 one.state_1 = '60_done'
-
-
 
 
             # if balance == 0 and one.x_wkf_state == '159':
@@ -174,7 +170,8 @@ class account_payment(models.Model):
     def compute_advance_balance_total(self):
         for one in self:
             advance_total = sum([x.amount_advance_org for x in one.advance_reconcile_order_line_ids])
-            advance_total_2 = sum([x.amount for x in one.reconcile_ysrld_ids.filtered(lambda i: i.state in ['posted','reconciled'])])
+            advance_total_2 = sum([x.amount for x in one.reconcile_ysrld_ids.filtered(lambda i: i.state in ['posted','reconciled']
+                                                                                                and i.sfk_type in ['reconcile_ysrld','reconcile_yfsqd'])])
             advance_balance_total = one.amount - advance_total - advance_total_2
             if advance_balance_total == 0 and one.state_1 == '50_posted':
                 one.state_1 = '60_done'
@@ -1364,12 +1361,12 @@ class account_payment(models.Model):
                 'domain': [('account_id', '=', account.id), ('new_payment_id', '=', self.yjzy_payment_id.id)],
             }
 
-    # @api.onchange('yjzy_payment_id')
-    # def onchange_yjzy_payment(self):
-    #     if self.yjzy_payment_id:
-    #         self.currency_id = self.yjzy_payment_id.currency_id
-    #     else:
-    #         self.currency_id = self.journal_id.currency_id
+    @api.onchange('yjzy_payment_id')
+    def onchange_yjzy_payment(self):
+        if self.yjzy_payment_id:
+            self.currency_id = self.yjzy_payment_id.currency_id
+        else:
+            self.currency_id = self.journal_id.currency_id
 
     @api.onchange('invoice_log_id')
     def onchange_invoice_log_id(self):
