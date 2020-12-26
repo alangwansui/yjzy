@@ -220,6 +220,8 @@ class account_payment(models.Model):
                     name = '%s:%s' % ('预收认领单', str(one.advance_balance_total))
             elif one.sfk_type == 'fkzl':  #ctx.get('default_sfk_type', '') == 'fkzl' or
                 name = '%s:%s' % ('付款指令', one.name)
+            elif one.sfk_type == 'rcfkd':
+                name = '%s:%s' % ('付款申请', one.name)
             elif one.sfk_type == 'rcskd': #ctx.get('default_sfk_type', '') == 'rcskd'
                 name = '%s:%s' % ('日常收款单', one.name)
             elif  one.sfk_type == 'yfsqd': #ctx.get('default_sfk_type', '') == 'yfsqd' or
@@ -1121,6 +1123,8 @@ class account_payment(models.Model):
                 name = '%s:%s' % ('预收认领单', str(one.advance_balance_total))
             elif one.sfk_type == 'fkzl':
                 name = '%s:%s' % ('付款指令', one.name)
+            elif one.sfk_type == 'rcfkd':
+                name = '%s:%s' % ('付款申请', one.name)
             elif one.sfk_type == 'yfsql':
                 name = '%s:%s' % ('预付申请', one.name)
             elif one.sfk_type == 'rcskd':
