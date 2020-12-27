@@ -313,7 +313,8 @@
             <field name="name">account.invoice.new.supplier.tree</field>
             <field name="model">account.invoice</field>
             <field name="arch" type="xml">
-                <tree decoration-info="state == 'draft'" default_order="invoice_attribute_all_in_one,date_deadline_new" decoration-warning="is_yjzy_invoice == True"
+                <tree decoration-info="state == 'draft'" default_order="invoice_attribute_all_in_one,date_deadline_new"
+                      decoration-warning="is_yjzy_invoice == True"
                       decoration-muted="state == 'cancel'" string="Invoice" edit="false" create="false">
                      <field name="extra_code" invisible="1"/>
                     <field name="partner_id" groups="base.group_user" string="供应商"/>
@@ -2635,7 +2636,8 @@
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_account_invoice_new_filter"/>
             <field name="domain">[('type','=','in_invoice'),('yjzy_type','=','purchase'),('state','in',['open','paid'])]</field>
-            <field name="context">{'search_default_group_by_state':1,'only_ref':1,'default_type': 'in_invoice', 'type': 'in_invoice', 'journal_type': 'purchase''yjzy_type':'purchase'}
+            <field name="context">{'search_default_group_by_state':1,'only_ref':1,'default_type': 'in_invoice',
+                'type': 'in_invoice', 'journal_type': 'purchase','yjzy_type':'purchase'}
 
             </field>
             <!--field name="target">new</field-->

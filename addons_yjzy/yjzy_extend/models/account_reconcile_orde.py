@@ -3387,6 +3387,12 @@ class account_reconcile_order_line_no(models.Model):
             one.amount_advance_org_compute = amount_advance_org_compute
             one.amount_total_org = amount_advance_org_compute + amount_payment_org
 
+    @api.depends('invoice_id','invoice_id.invoice_attribute_all_in_one')
+    def compute_invoice_id(self):
+        for one in self:
+            invoice_id = one.invoice_ids[0]
+            one.invoice_id = invoice_id
+            one.invoice_attribute_all_in_one = invoice_id.invoice_attribute_all_in_one
 
     #计算出非自己认领明细原则
 #1220
@@ -3402,6 +3408,8 @@ class account_reconcile_order_line_no(models.Model):
     state_1 = fields.Selection('审批流程', related='order_id.state_1')
     order_id = fields.Many2one('account.reconcile.order', u'核销单',ondelete='cascade')
     invoice_id = fields.Many2one('account.invoice', u'发票')
+    invoice_attribute_all_in_one = fields.Selection(invoice_attribute_all_in_one,u'账单属性all_in_one', compute=compute_invoice_id,store=True)
+
     yjzy_invoice_id = fields.Many2one('account.invoice', u'发票关联账单', related='invoice_id.yjzy_invoice_id')  # 额外账单的认领明细
     approve_date = fields.Date(u'审批完成时间',related='order_id.approve_date')
 
