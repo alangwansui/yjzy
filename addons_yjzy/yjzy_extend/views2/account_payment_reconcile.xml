@@ -236,7 +236,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[('sfk_type','=','yfsqd'),('state','in',['reconciled','posted']),('advance_balance_total','!=',0)]</field>
-            <field name="context">{'show_shoukuan': True,'default_sfk_type': 'yfsqd','default_payment_type': 'outbound',
+            <field name="context">{'search_default_group_by_advance_type':1,'show_shoukuan': True,'default_sfk_type': 'yfsqd','default_payment_type': 'outbound',
                 'default_be_renling': True, 'default_advance_ok': True,'default_partner_type': 'supplier'}
             </field>
             <field name="search_view_id" ref="view_account_payment_search_new"/>
@@ -272,7 +272,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[('type','=','in_invoice'),('state','=','open'),('amount_payment_can_approve_all','!=',0)]</field>
-            <field name="context">{'group_by_invoice_attribute_all_in_one':1,'only_ref':1,
+            <field name="context">{'search_default_group_by_invoice_attribute_all_in_one':1,'only_ref':1,
                 'default_type': 'in_invoice', 'type': 'in_invoice', 'journal_type': 'purchase',}
             </field>
             <field name="search_view_id" ref="view_account_invoice_new_filter"/>
@@ -290,7 +290,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[('type','=','out_invoice'),('state','=','open'),('amount_payment_can_approve_all','!=',0)]</field>
-            <field name="context">{'group_by_invoice_attribute_all_in_one':1,'only_ref':1,
+            <field name="context">{'search_default_group_by_invoice_attribute_all_in_one':1,'only_ref':1,
                 'default_type': 'out_invoice', 'type': 'out_invoice', 'journal_type': 'sale',}
             </field>
             <field name="search_view_id" ref="view_account_invoice_new_filter"/>
@@ -352,7 +352,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[('sfk_type','=','reconcile_yingfu')]</field>
-            <field name="context">{'default_sfk_type': 'reconcile_yingfu',
+            <field name="context">{'search_default_group_by_sfk_type':1, 'reconcile_yingfu',
                 'default_payment_type': 'outbound',
                 'default_be_renling': True, 'default_advance_ok': True, 'default_partner_type': 'supplier',}
             </field>
@@ -371,7 +371,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[('sfk_type','=','reconcile_yingshou')]</field>
-            <field name="context">{'default_sfk_type': 'reconcile_yingshou',
+            <field name="context">{'search_default_group_by_sfk_type':1, 'reconcile_yingshou',
                 'default_payment_type': 'inbound',
                 'default_be_renling': True, 'default_advance_ok': True, 'default_partner_type': 'customer',}
             </field>
