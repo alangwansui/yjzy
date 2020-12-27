@@ -372,11 +372,27 @@ class account_payment(models.Model):
             advance_reconcile_order_line_ids_count = len(one.advance_reconcile_order_line_ids)
             one.advance_reconcile_order_line_ids_count = advance_reconcile_order_line_ids_count
 
+    @api.depends('invoice_log_id.invoice_attribute_all_in_one','invoice_log_id')
+    def compute_all_in_one(self):
+        for one in self:
+            one.invoice_attribute_all_in_one = one.invoice_log_id.invoice_attribute_all_in_one
+
     reconcile_type = fields.Selection([('10_payment_out',u'付款'),
                                        ('20_advance_out','预付'),
                                        ('30_payment_in',u'收款'),
                                        ('40_advance_in',u'预收'),
-                                       ('50_reconcile',u'核销')],'认领方式')
+                                       ('50_reconcile',u'核销'),
+                                       # ('600_reconcile_ysrld',u'预收核销'),
+                                       # ('605_reconcile_yfsqd',u'预付核销'),
+                                       # ('610_reconcile_zzdyfhx',u'主账单应付核销'),
+                                       # ('615_reconcile_zzdyshx',u'主账单应收核销'),
+                                       # ('620_reconcile_zzdtshx', u'主账单退税核销'),
+                                       # ('620_reconcile_zjcgyfhx', u'增加采购应付核销'),
+                                       # ('620_reconcile_zjcgtshx', u'增加采购退税核销'),
+                                       # ('60_reconcile_zjcghx',u'主账单应收')
+                                       ],'认领方式')
+
+    invoice_attribute_all_in_one = fields.Char('账单属性all_in_one', compute='compute_all_in_one',store=True)
 
     invoice_log_id = fields.Many2one('account.invoice','付款指令以及预收预付认领关联账单')
     invoice_log_currency_id = fields.Many2one('res.currency',u'账单币种',related='invoice_log_id.currency_id')

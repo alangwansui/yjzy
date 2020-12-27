@@ -19,7 +19,7 @@
             </field>
         </record>
 
-               <record model="ir.ui.view" id="view_ysrld_reconcile_tree">
+        <record model="ir.ui.view" id="view_ysrld_reconcile_tree">
             <field name="name">account.payment.reconcile.tree</field>
             <field name="model">account.payment</field>
             <field name="priority" eval="999"/>
@@ -41,12 +41,13 @@
             <field name="priority" eval="999"/>
             <field name="arch" type="xml">
                 <tree string="应付核销单">
+                    <field name="invoice_attribute_all_in_one" string="类型"/>
                     <field name="partner_id" string="对象"/>
                     <field name="name" string="编号"/>
                     <field name="invoice_log_id" string="应付账单"/>
                     <field name="amount_invoice_log" string="未认领金额"/>
                     <field name="amount" string="核销金额"/>
-                    <field name="state"/>
+                    <field name="state_1"/>
                 </tree>
             </field>
         </record>
@@ -57,7 +58,7 @@
             <field name="priority" eval="999"/>
             <field name="arch" type="xml">
                 <tree string="应收核销单">
-                    <field name="partner_id" string="对象"/>
+                    <field name="partner_id" string="对象" groups="base.group_system"/>
                     <field name="name" string="编号"/>
                     <field name="invoice_log_id" string="应收账单"/>
                     <field name="amount_invoice_log" string="未认领金额"/>
@@ -224,10 +225,10 @@
 
 
 
-  <menuitem id="menu_create_to_sale_reconcile" parent="menu_sale_reconcile_apply" name="创建核销" sequence="10"
-                  />
-          <menuitem id="menu_create_to_purchase_reconcile" parent="menu_residual_reconcile_apply" name="创建核销" sequence="10"
-                  />
+        <menuitem id="menu_create_to_sale_reconcile" parent="menu_sale_reconcile_apply" name="创建核销" sequence="10"/>
+        <menuitem id="menu_create_to_purchase_reconcile" parent="menu_residual_reconcile_apply" name="创建核销" sequence="10"/>
+        <menuitem id="menu_no_done_to_purchase_reconcile" parent="menu_residual_reconcile_apply" name="待批准核销" sequence="20"/>
+        <menuitem id="menu_done_to_purchase_reconcile" parent="menu_residual_reconcile_apply" name="已批准核销" sequence="30"/>
 
         <record id="action_yfsqd_to_reconcile" model="ir.actions.act_window">
             <field name="name">未完成认领预付(打开后创建核销)</field>
@@ -304,8 +305,11 @@
 
 
         <menuitem id="menu_sale_to_reconcile" parent="menu_sale_reconcile_apply" name="查询核销" sequence="20"/>
-         <menuitem id="menu_purchase_to_reconcile" parent="menu_residual_reconcile_apply" name="查询核销" sequence="20"
+         <menuitem id="menu_purchase_to_reconcile" parent="menu_residual_reconcile_apply" name="查询核销" sequence="20" groups="base.group_system"
                   />
+
+
+
 
         <record id="action_yfsqd_reconcile" model="ir.actions.act_window">
             <field name="name">预付核销</field>
@@ -325,6 +329,45 @@
         </record>
         <menuitem id="menu_yfsqd_reconcile" parent="menu_purchase_to_reconcile" name="预府核销" sequence="10"
                   action="action_yfsqd_reconcile"/>
+
+        <record id="action_yfsqd_no_done_reconcile" model="ir.actions.act_window">
+            <field name="name">待批准预付核销</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.payment</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('sfk_type','=','reconcile_yfsqd'),('state_1','!=','60_done')]</field>
+            <field name="context">{'search_default_group_by_state_1':1,'bank_amount':1,'show_shoukuan': True, 'default_sfk_type': 'reconcile_yfsqd',
+                'default_payment_type': 'outbound',
+                'default_be_renling': True, 'default_advance_ok': True, 'default_partner_type': 'supplier',}
+            </field>
+            <field name="search_view_id" ref="view_account_payment_search_new"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_yfsqd_reconcile_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_ysrld_reconcile_form')})]"/>
+        </record>
+        <menuitem id="menu_yfsqd_no_done_reconcile" parent="menu_no_done_to_purchase_reconcile" name="预付核销" sequence="10"
+                  action="action_yfsqd_no_done_reconcile"/>
+
+        <record id="action_yfsqd_done_reconcile" model="ir.actions.act_window">
+            <field name="name">待批准预付核销</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.payment</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('sfk_type','=','reconcile_yfsqd'),('state_1','=','60_done')]</field>
+            <field name="context">{'bank_amount':1,'show_shoukuan': True, 'default_sfk_type': 'reconcile_yfsqd',
+                'default_payment_type': 'outbound',
+                'default_be_renling': True, 'default_advance_ok': True, 'default_partner_type': 'supplier',}
+            </field>
+            <field name="search_view_id" ref="view_account_payment_search_new"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_yfsqd_reconcile_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_ysrld_reconcile_form')})]"/>
+        </record>
+        <menuitem id="menu_yfsqd_done_reconcile" parent="menu_no_done_to_purchase_reconcile" name="预付核销" sequence="10"
+                  action="action_yfsqd_done_reconcile"/>
+
 
         <record id="action_ysrld_reconcile" model="ir.actions.act_window">
             <field name="name">预收核销</field>
@@ -352,7 +395,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[('sfk_type','=','reconcile_yingfu')]</field>
-            <field name="context">{'search_default_group_by_sfk_type':1, 'default_sfk_type': 'reconcile_yingfu',
+            <field name="context">{'group_by_invoice_attribute_all_in_one':1, 'default_sfk_type': 'reconcile_yingfu',
                 'default_payment_type': 'outbound',
                 'default_be_renling': True, 'default_advance_ok': True, 'default_partner_type': 'supplier',}
             </field>
@@ -361,8 +404,106 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_yfhxd_reconcile_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_ysrld_reconcile_form')})]"/>
         </record>
-        <menuitem id="menu_yfhxd_reconcile" parent="menu_purchase_to_reconcile" name="应付核销" sequence="10"
+        <menuitem id="menu_yfhxd_reconcile" parent="menu_purchase_to_reconcile" name="应付核销" sequence="10" groups="base.group_system"
                   action="action_yfhxd_reconcile"/>
+
+        <record id="action_yfhxd_no_done_reconcile" model="ir.actions.act_window">
+            <field name="name">待批准应付核销</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.payment</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('sfk_type','=','reconcile_yingfu'),('state_1','!=','60_done')]</field>
+            <field name="context">{'search_default_group_by_state_1':1, 'default_sfk_type': 'reconcile_yingfu',
+                'default_payment_type': 'outbound',
+                'default_be_renling': True, 'default_advance_ok': True, 'default_partner_type': 'supplier',}
+            </field>
+            <field name="search_view_id" ref="view_account_payment_search_new"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_yfhxd_reconcile_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_ysrld_reconcile_form')})]"/>
+        </record>
+        <menuitem id="menu_yfhxd_no_done_reconcile" parent="menu_no_done_to_purchase_reconcile" name="应付核销" sequence="10"
+                  action="action_yfhxd_no_done_reconcile"/>
+
+        <record id="action_yfhxd_done_reconcile" model="ir.actions.act_window">
+            <field name="name">已批准应付核销</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.payment</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('sfk_type','=','reconcile_yingfu'),('state_1','!=','60_done')]</field>
+            <field name="context">{'search_default_group_by_invoice_attribute_all_in_one':1, 'default_sfk_type': 'reconcile_yingfu',
+                'default_payment_type': 'outbound',
+                'default_be_renling': True, 'default_advance_ok': True, 'default_partner_type': 'supplier',}
+            </field>
+            <field name="search_view_id" ref="view_account_payment_search_new"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_yfhxd_reconcile_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_ysrld_reconcile_form')})]"/>
+        </record>
+        <menuitem id="menu_yfhxd_done_reconcile" parent="menu_done_to_purchase_reconcile" name="应付核销" sequence="10"
+                  action="action_yfhxd_done_reconcile"/>
+
+<!--        <record id="action_zzdyfhxd_reconcile" model="ir.actions.act_window">-->
+<!--            <field name="name">主应付核销</field>-->
+<!--            <field name="type">ir.actions.act_window</field>-->
+<!--            <field name="res_model">account.payment</field>-->
+<!--            <field name="view_type">form</field>-->
+<!--            <field name="view_mode">tree,form</field>-->
+<!--            <field name="domain">[('sfk_type','=','reconcile_yingfu'),('invoice_attribute_all_in_one','in',['主账单应付'])]</field>-->
+<!--            <field name="context">{'group_by_state_1':1, 'default_sfk_type': 'reconcile_yingfu',-->
+<!--                'default_payment_type': 'outbound',-->
+<!--                'default_be_renling': True, 'default_advance_ok': True, 'default_partner_type': 'supplier',}-->
+<!--            </field>-->
+<!--            <field name="search_view_id" ref="view_account_payment_search_new"/>-->
+<!--            <field name="view_ids" eval="[(5, 0, 0),-->
+<!--                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_yfhxd_reconcile_tree')}),-->
+<!--                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_ysrld_reconcile_form')})]"/>-->
+<!--        </record>-->
+<!--        <menuitem id="menu_zzdyfhxd_reconcile" parent="menu_purchase_to_reconcile" name="主应付核销" sequence="10"-->
+<!--                  action="action_zzdyfhxd_reconcile"/>-->
+
+<!--        <record id="action_zjcgyfhxd_reconcile" model="ir.actions.act_window">-->
+<!--            <field name="name">增加采购应付核销</field>-->
+<!--            <field name="type">ir.actions.act_window</field>-->
+<!--            <field name="res_model">account.payment</field>-->
+<!--            <field name="view_type">form</field>-->
+<!--            <field name="view_mode">tree,form</field>-->
+<!--            <field name="domain">[('sfk_type','=','reconcile_yingfu'),('invoice_attribute_all_in_one','in',['增加采购应付'])]</field>-->
+<!--            <field name="context">{'group_by_state_1':1, 'default_sfk_type': 'reconcile_yingfu',-->
+<!--                'default_payment_type': 'outbound',-->
+<!--                'default_be_renling': True, 'default_advance_ok': True, 'default_partner_type': 'supplier',}-->
+<!--            </field>-->
+<!--            <field name="search_view_id" ref="view_account_payment_search_new"/>-->
+<!--            <field name="view_ids" eval="[(5, 0, 0),-->
+<!--                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_yfhxd_reconcile_tree')}),-->
+<!--                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_ysrld_reconcile_form')})]"/>-->
+<!--        </record>-->
+<!--        <menuitem id="menu_zjcgfhxd_reconcile" parent="menu_purchase_to_reconcile" name="增加采购应付核销" sequence="20"-->
+<!--                  action="action_zjcgfhxd_reconcile"/>-->
+
+<!--        <record id="action_qtyfhxd_reconcile" model="ir.actions.act_window">-->
+<!--            <field name="name">其他应付核销</field>-->
+<!--            <field name="type">ir.actions.act_window</field>-->
+<!--            <field name="res_model">account.payment</field>-->
+<!--            <field name="view_type">form</field>-->
+<!--            <field name="view_mode">tree,form</field>-->
+<!--            <field name="domain">[('sfk_type','=','reconcile_yingfu'),('invoice_attribute_all_in_one','in',['其他应付'])]</field>-->
+<!--            <field name="context">{'group_by_state_1':1, 'default_sfk_type': 'reconcile_yingfu',-->
+<!--                'default_payment_type': 'outbound',-->
+<!--                'default_be_renling': True, 'default_advance_ok': True, 'default_partner_type': 'supplier',}-->
+<!--            </field>-->
+<!--            <field name="search_view_id" ref="view_account_payment_search_new"/>-->
+<!--            <field name="view_ids" eval="[(5, 0, 0),-->
+<!--                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_yfhxd_reconcile_tree')}),-->
+<!--                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_ysrld_reconcile_form')})]"/>-->
+<!--        </record>-->
+<!--        <menuitem id="menu_qtyfhxd_reconcile" parent="menu_purchase_to_reconcile" name="其他应付核销" sequence="30"-->
+<!--                  action="action_qtyfhxd_reconcile"/>-->
+
+
+
 
          <record id="action_yshxd_reconcile" model="ir.actions.act_window">
             <field name="name">应收核销</field>
@@ -371,7 +512,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[('sfk_type','=','reconcile_yingshou')]</field>
-            <field name="context">{'search_default_group_by_sfk_type':1, 'default_sfk_type': 'reconcile_yingshou',
+            <field name="context">{'group_by_invoice_attribute_all_in_one':1, 'default_sfk_type': 'reconcile_yingshou',
                 'default_payment_type': 'inbound',
                 'default_be_renling': True, 'default_advance_ok': True, 'default_partner_type': 'customer',}
             </field>
@@ -382,6 +523,7 @@
         </record>
         <menuitem id="menu_yshxd_reconcile" parent="menu_sale_to_reconcile" name="应收核销" sequence="20"
                   action="action_yshxd_reconcile"/>
+
     </data>
 
 
