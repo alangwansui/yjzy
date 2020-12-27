@@ -4,6 +4,7 @@ from odoo import models, fields, api,_
 from odoo.tools import DEFAULT_SERVER_DATE_FORMAT as DF
 from odoo.addons import decimal_precision as dp
 from odoo.exceptions import Warning,UserError
+from .comm import invoice_attribute_all_in_one
 
 Invoice_Selection = [('draft',u'草稿'),
                      ('submit',u'待合规审批'),
@@ -502,38 +503,38 @@ class account_invoice(models.Model):
             name=''
             if invoice_attribute == 'normal':
                 if yjzy_type == 'sale':
-                    name = '主账单应收'
+                    name = '110'
                 elif yjzy_type == 'purchase':
-                    name = '主账单应付'
+                    name = '120'
                 else:
-                    name = '主账单退税'
+                    name = '130'
             elif invoice_attribute == 'other_po':
                 if yjzy_type == 'sale':
-                    name = '增加采购应收'
+                    name = '210'
                 elif yjzy_type == 'purchase':
-                    name = '增加采购应付'
+                    name = '220'
                 else:
-                    name = '增加采购退税'
+                    name = '230'
             elif invoice_attribute == 'expense_po':
                 if yjzy_type == 'sale':
-                    name = '费用转货款应收'
+                    name = '310'
                 elif yjzy_type == 'purchase':
-                    name = '费用转货款应付'
+                    name = '320'
                 else:
-                    name = '费用转货款退税'
+                    name = '330'
             elif invoice_attribute == 'other_payment':
                 if yjzy_type == 'other_payment_sale':
-                    name = '其他应收'
+                    name = '410'
                 else:
-                    name = '其他应付'
+                    name = '510'
             one.invoice_attribute_all_in_one = name
 
     def compute_payment_log_ids_count(self):
         for one in self:
             one.payment_log_ids_count = len(one.payment_log_ids)
 
-
-    invoice_attribute_all_in_one = fields.Char('账单属性all_in_one',compute=compute_all_in_one,store=True)
+    invoice_attribute_all_in_one = fields.Selection(invoice_attribute_all_in_one,u'账单属性all_in_one', compute=compute_all_in_one,store=True)
+    # invoice_attribute_all_in_one = fields.Char('账单属性all_in_one',compute=compute_all_in_one,store=True)
 
     current_date_rate = fields.Float('出运单汇率',related='bill_id.current_date_rate')
 

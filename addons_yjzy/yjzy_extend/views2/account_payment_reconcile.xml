@@ -42,7 +42,7 @@
             <field name="arch" type="xml">
                 <tree string="应付核销单">
                     <field name="invoice_attribute_all_in_one" string="类型"/>
-                    <field name="partner_id" string="对象"/>
+                    <field name="partner_id" string="对象" groups="base.group_system"/>
                     <field name="name" string="编号"/>
                     <field name="invoice_log_id" string="应付账单"/>
                     <field name="amount_invoice_log" string="未认领金额"/>
@@ -153,12 +153,26 @@
                                        domain="['|','&amp;','&amp;','&amp;',('state','=','posted'),('sfk_type','=','rcskd'),('partner_id','=',partner_id),('balance','!=',0),'&amp;','&amp;','&amp;',('state','=','posted'),('sfk_type','=','rcskd'),('partner_id.name','=','未定义'),('balance','!=',0)]"
                                        options="{'no_create':True}"
                                        context="{'form_view_ref': 'yjzy_extend.view_rcskd_form','advance_bank_amount':1}"/>
-                                <field name="invoice_log_currency_id" attrs="{'invisible':[('sfk_type','not in',['reconcile_yingshou','reconcile_yingfu'])]}"/>
+                                <field name="invoice_log_currency_id" options="{'no_open':1}"
+                                       attrs="{'invisible':[('sfk_type','not in',['reconcile_yingshou','reconcile_yingfu'])]}"/>
+
+                                <label name="amount_invoice_log" string="未认领金额"
+                                       attrs="{'invisible':[('sfk_type','not in',['reconcile_yingshou','reconcile_yingfu'])]}"/>
+                                <button type="object" name="open_invoice_id" class="btn-xxs btn-link mb2" target="new"
+                                         attrs="{'invisible':[('sfk_type','not in',['reconcile_yingshou','reconcile_yingfu'])]}">
                                 <field name="amount_invoice_log" attrs="{'invisible':[('sfk_type','not in',['reconcile_yingshou','reconcile_yingfu'])]}"/>
+                                </button>
                                 <field name="yjzy_payment_currency_id" string="货币" invisible="1"
                                        options="{'no_create':True,'no_open': True}"/>
+
+                                <label name="yjzy_payment_advance_balance" string="未认领金额"
+                                       attrs="{'invisible':[('sfk_type','not in',['reconcile_ysrld','reconcile_yfsqd'])]}"/>
+                                <button type="object" name="open_yfsqd" class="btn-xxs btn-link mb2" target="new"
+                                        attrs="{'invisible':[('sfk_type','not in',['reconcile_ysrld','reconcile_yfsqd'])]}">
                                 <field name="yjzy_payment_advance_balance" string="未认领金额"
                                        attrs="{'invisible':[('sfk_type','not in',['reconcile_ysrld','reconcile_yfsqd'])]}"/>
+                                </button>
+
                                 <field name="so_id" string="销售合同" readonly="1"
                                        attrs="{'invisible':[('sfk_type','!=','reconcile_ysrld')],'readonly': [('state', '!=', 'draft'),('is_editable','=',False)]}"
                                        domain="[('partner_id','=', partner_id),('state','not in',['done','verifying','verification','cancel','refuse'])]"
@@ -290,7 +304,7 @@
             <field name="res_model">account.invoice</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[('type','=','out_invoice'),('state','=','open'),('amount_payment_can_approve_all','!=',0)]</field>
+            <field name="domain">[('type','=','out_invoice'),('state','=','open'),('yjzy_type_1','!=','back_tax'),('amount_payment_can_approve_all','!=',0)]</field>
             <field name="context">{'search_default_group_by_invoice_attribute_all_in_one':1,'only_ref':1,
                 'default_type': 'out_invoice', 'type': 'out_invoice', 'journal_type': 'sale',}
             </field>
@@ -301,6 +315,24 @@
         </record>
         <menuitem id="menu_yshxd_to_reconcile" parent="menu_create_to_sale_reconcile" name="创建应收核销" sequence="40"
                   action="action_yshxd_to_reconcile"/>
+
+        <record id="action_yshxd_back_tax_to_reconcile" model="ir.actions.act_window">
+            <field name="name">未完成认领退税(打开后创建核销)</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('type','=','out_invoice'),('state','=','open'),('yjzy_type_1','=','back_tax'),('amount_payment_can_approve_all','!=',0)]</field>
+            <field name="context">{'search_default_group_by_invoice_attribute_all_in_one':1,'only_ref':1,
+                'default_type': 'out_invoice', 'type': 'out_invoice', 'journal_type': 'sale',}
+            </field>
+            <field name="search_view_id" ref="view_account_invoice_new_filter"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('invoice_new_1_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_account_invoice_new_form_in_one')})]"/>
+        </record>
+        <menuitem id="menu_yshxd_back_tax_to_reconcile" parent="menu_create_to_sale_reconcile" name="创建退税核销" sequence="50"
+                  action="action_yshxd_back_tax_to_reconcile"/>
 
 
 

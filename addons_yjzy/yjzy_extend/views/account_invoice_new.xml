@@ -53,7 +53,7 @@
                         <filter name="group_by_state_yjzy_invoice_id" string="状态+主账单分组"
                                 context="{'group_by':['state','yjzy_invoice_id']}"/>
                         <filter name="group_by_invoice_attribute_all_in_one" string="账单属性分组"
-                                context="{'group_by':['group_by_invoice_attribute_all_in_one']}"/>
+                                context="{'group_by':['invoice_attribute_all_in_one']}"/>
                         <filter name="group_by_date_invoice" string="账单日期"
                                 context="{'group_by':'date_invoice:year'}"/>
                         <filter name="group_by_stage_id" string="审批状态" invisible="1"
@@ -313,7 +313,7 @@
             <field name="name">account.invoice.new.supplier.tree</field>
             <field name="model">account.invoice</field>
             <field name="arch" type="xml">
-                <tree decoration-info="state == 'draft'" default_order="date_deadline_new" decoration-warning="is_yjzy_invoice == True"
+                <tree decoration-info="state == 'draft'" default_order="invoice_attribute_all_in_one,date_deadline_new" decoration-warning="is_yjzy_invoice == True"
                       decoration-muted="state == 'cancel'" string="Invoice" edit="false" create="false">
                      <field name="extra_code" invisible="1"/>
                     <field name="partner_id" groups="base.group_user" string="供应商"/>

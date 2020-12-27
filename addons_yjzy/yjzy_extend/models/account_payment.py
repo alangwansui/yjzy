@@ -3,7 +3,7 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import Warning
 from odoo.addons.account.models.account_payment import account_payment as Account_Payment
-from .comm import sfk_type
+from .comm import sfk_type, invoice_attribute_all_in_one
 
 Option_Add = [
     ('advance', u'预收付'),
@@ -392,7 +392,9 @@ class account_payment(models.Model):
                                        # ('60_reconcile_zjcghx',u'主账单应收')
                                        ],'认领方式')
 
-    invoice_attribute_all_in_one = fields.Char('账单属性all_in_one', compute='compute_all_in_one',store=True)
+    # invoice_attribute_all_in_one = fields.Char('账单属性all_in_one', compute='compute_all_in_one',store=True)
+    invoice_attribute_all_in_one = fields.Selection(invoice_attribute_all_in_one, u'账单属性all_in_one',
+                                                    compute=compute_all_in_one, store=True)
 
     invoice_log_id = fields.Many2one('account.invoice','付款指令以及预收预付认领关联账单')
     invoice_log_currency_id = fields.Many2one('res.currency',u'账单币种',related='invoice_log_id.currency_id')

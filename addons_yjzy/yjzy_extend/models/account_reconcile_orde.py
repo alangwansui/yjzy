@@ -2,7 +2,7 @@
 from odoo import models, tools,  fields, api, _
 from odoo.exceptions import Warning, UserError
 from odoo.tools import float_is_zero, float_compare
-from .comm import sfk_type
+from .comm import sfk_type, invoice_attribute_all_in_one
 import logging
 
 _logger = logging.getLogger(__name__)
@@ -443,6 +443,7 @@ class account_reconcile_order(models.Model):
                 one.partner_payment_term_id = one.partner_id.property_supplier_payment_term_id
             one.invoice_payment_term_id = one.invoice_ids[0].payment_term_id
 
+
     def compute_invoice_id(self):
         for one in self:
             invoice_id = one.invoice_ids[0]
@@ -451,7 +452,9 @@ class account_reconcile_order(models.Model):
 
 
     invoice_id = fields.Many2one('account.invoice',compute=compute_invoice_id)
-    invoice_attribute_all_in_one = fields.Char('账单属性all_in_one',compute=compute_invoice_id)
+    # invoice_attribute_all_in_one = fields.Char('账单属性all_in_one',compute=compute_invoice_id)
+    #
+    invoice_attribute_all_in_one = fields.Selection(invoice_attribute_all_in_one,u'账单属性all_in_one', compute=compute_invoice_id)
 
     partner_payment_term_id = fields.Many2one('account.payment.term',u'伙伴付款条款',compute=compute_payment_term_id)
     invoice_payment_term_id = fields.Many2one('account.payment.term',u'合同付款条款',compute=compute_payment_term_id)

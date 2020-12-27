@@ -116,6 +116,36 @@ class account_payment(models.Model):
             'context':ctx
         }
 
+    def open_yfsqd(self):
+        if self.yjzy_payment_id.sfk_type == 'yfsqd':
+            form_view = self.env.ref('yjzy_extend.view_yfsqd_form_open')
+            name = '预付申请单'
+        else:
+            form_view = self.env.ref('yjzy_extend.view_ysrld_form_hx_open')
+            name = '预收认领单'
+        return {'name': name,
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'tree,form',
+                'res_model': 'account.payment',
+                'views': [(form_view.id, 'form')],
+                'res_id': self.yjzy_payment_id.id,
+                'target': 'new',
+                'context': {}}
+
+    def open_invoice_id(self):
+        form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form_in_one_open').id
+        return {'name': '账单查看',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'account.invoice',
+                'views': [(form_view, 'form')],
+                'res_id': self.invoice_log_id.id,
+                'target': 'new',
+                'type': 'ir.actions.act_window',
+                'context': {'open': 1}
+                }
+
     def action_reconcile_submit(self):
         if self.yjzy_payment_id and (self.so_id or self.po_id) and self.amount > self.yjzy_payment_advance_balance:
             raise Warning('核销金额不允许大于可被认领金额')
