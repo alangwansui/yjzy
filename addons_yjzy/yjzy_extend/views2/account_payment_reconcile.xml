@@ -241,10 +241,10 @@
         <menuitem id="menu_yfhx_main_reconcile" parent="menu_residual_reconcile_apply" name="预付核销" sequence="10"/>
         <menuitem id="menu_yingfuhx_main_reconcile" parent="menu_residual_reconcile_apply" name="应付核销" sequence="10"/>
 
-        <menuitem id="menu_create_to_sale_reconcile" parent="menu_sale_reconcile_apply" name="创建核销" sequence="10" invisible="1"/>
-        <menuitem id="menu_create_to_purchase_reconcile" parent="menu_residual_reconcile_apply" name="创建核销" sequence="10" invisible="1"/>
-        <menuitem id="menu_no_done_to_purchase_reconcile" parent="menu_residual_reconcile_apply" name="待批准核销" sequence="20" invisible="1"/>
-        <menuitem id="menu_done_to_purchase_reconcile" parent="menu_residual_reconcile_apply" name="已批准核销" sequence="30" invisible="1"/>
+        <menuitem id="menu_create_to_sale_reconcile" parent="menu_sale_reconcile_apply" name="创建核销" sequence="10" groups="base.group_system"/>
+        <menuitem id="menu_create_to_purchase_reconcile" parent="menu_residual_reconcile_apply" name="创建核销" sequence="10" groups="base.group_system"/>
+        <menuitem id="menu_no_done_to_purchase_reconcile" parent="menu_residual_reconcile_apply" name="待批准核销" sequence="20" groups="base.group_system"/>
+        <menuitem id="menu_done_to_purchase_reconcile" parent="menu_residual_reconcile_apply" name="已批准核销" sequence="30" groups="base.group_system"/>
 
         <record id="action_yfsqd_to_reconcile" model="ir.actions.act_window">
             <field name="name">未完成认领预付(打开后创建核销)</field>
@@ -297,7 +297,7 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('invoice_new_supplier_1_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_account_invoice_new_form_in_one')})]"/>
         </record>
-        <menuitem id="menu_yfhxd_to_reconcile" parent="menu_yingfuhx_main_reconcile" name="创建应付核销" sequence="20"
+        <menuitem id="menu_yfhxd_to_reconcile" parent="menu_yingfuhx_main_reconcile" name="创建应付核销" sequence="10"
                   action="action_yfhxd_to_reconcile"/>
 
         <record id="action_yshxd_to_reconcile" model="ir.actions.act_window">
@@ -457,7 +457,7 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_yfhxd_reconcile_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_ysrld_reconcile_form')})]"/>
         </record>
-        <menuitem id="menu_yfhxd_no_done_reconcile" parent="menu_yingfuhx_main_reconcile" name="应付核销" sequence="10"
+        <menuitem id="menu_yfhxd_no_done_reconcile" parent="menu_yingfuhx_main_reconcile" name="待批准应付核销" sequence="20"
                   action="action_yfhxd_no_done_reconcile"/>
 
         <record id="action_yfhxd_done_reconcile" model="ir.actions.act_window">
@@ -476,7 +476,7 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_yfhxd_reconcile_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_ysrld_reconcile_form')})]"/>
         </record>
-        <menuitem id="menu_yfhxd_done_reconcile" parent="menu_yingfuhx_main_reconcile" name="应付核销" sequence="10"
+        <menuitem id="menu_yfhxd_done_reconcile" parent="menu_yingfuhx_main_reconcile" name="已批准应付核销" sequence="30"
                   action="action_yfhxd_done_reconcile"/>
 
 <!--        <record id="action_zzdyfhxd_reconcile" model="ir.actions.act_window">-->
