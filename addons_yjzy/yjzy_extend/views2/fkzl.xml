@@ -275,6 +275,7 @@
                             </field>
                             <field name="yshx_fkzl_line_ids" groups="base.group_system" attrs="{'invisible': [('yshx_fkzl_line_ids_count','=', 0)]}">
                                 <tree>
+                                    <
                                     <field name="invoice_id" string="账单"/>
                                     <field name="amount_payment_org" string="付款申请金额"/>
                                 </tree>

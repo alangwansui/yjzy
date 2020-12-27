@@ -3390,8 +3390,7 @@ class account_reconcile_order_line_no(models.Model):
     @api.depends('invoice_id','invoice_id.invoice_attribute_all_in_one')
     def compute_invoice_id(self):
         for one in self:
-            invoice_id = one.invoice_ids[0]
-            one.invoice_id = invoice_id
+            invoice_id = one.invoice_id
             one.invoice_attribute_all_in_one = invoice_id.invoice_attribute_all_in_one
 
     #计算出非自己认领明细原则
