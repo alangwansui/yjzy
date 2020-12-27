@@ -251,7 +251,7 @@
 
                         </page>
                         <page string="应付申请" attrs="{'invisible': [('yshx_fkzl_ids_count','=', 0)]}">
-                            <field name="yshx_fkzl_ids" widget="many2many" >
+                            <field name="yshx_fkzl_ids" widget="many2many"  groups="base.group_system" >
                                 <tree>
                                     <field name="invoice_attribute_all_in_one" string="账单属性"/>
                                     <field name="name"/>
@@ -273,9 +273,9 @@
                                     <field name="state" groups="base.group_system"/>
                                 </tree>
                             </field>
-                            <field name="yshx_fkzl_line_ids" groups="base.group_system" attrs="{'invisible': [('yshx_fkzl_line_ids_count','=', 0)]}">
+                            <field name="yshx_fkzl_line_ids" attrs="{'invisible': [('yshx_fkzl_line_ids_count','=', 0)]}">
                                 <tree>
-                                    <
+                                    <field name="invoice_attribute_all_in_one" string="类型"/>
                                     <field name="invoice_id" string="账单"/>
                                     <field name="amount_payment_org" string="付款申请金额"/>
                                 </tree>
