@@ -352,7 +352,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[('sfk_type','=','reconcile_yingfu')]</field>
-            <field name="context">{'search_default_group_by_sfk_type':1, 'reconcile_yingfu',
+            <field name="context">{'search_default_group_by_sfk_type':1, 'default_sfk_type': 'reconcile_yingfu',
                 'default_payment_type': 'outbound',
                 'default_be_renling': True, 'default_advance_ok': True, 'default_partner_type': 'supplier',}
             </field>
@@ -371,7 +371,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[('sfk_type','=','reconcile_yingshou')]</field>
-            <field name="context">{'search_default_group_by_sfk_type':1, 'reconcile_yingshou',
+            <field name="context">{'search_default_group_by_sfk_type':1, 'default_sfk_type': 'reconcile_yingshou',
                 'default_payment_type': 'inbound',
                 'default_be_renling': True, 'default_advance_ok': True, 'default_partner_type': 'customer',}
             </field>
