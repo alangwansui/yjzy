@@ -7,10 +7,16 @@
             <field name="arch" type="xml">
                 <form string="应收账单" class="o_invoice_form" create="false">
                     <header groups="sales_team.group_manager">
-                        <button name="create_reconcile" type="object" string="创建核销"/>
-                        <button name="create_yfhxd_from_multi_invoice" type="object" string="创建认领" groups="base.group_system"/>
-                        <button name="action_create_yfhxd" context="{'invoice_attribute':invoice_attribute}" groups="base.group_system"
+                        <button name="action_create_yfhxd" context="{'invoice_attribute':invoice_attribute}"
+                                    attrs="{'invisible':[('type','!=','in_invoice')]}" confirm="创建付款申请！"
                                 class="oe_highlight" type="object" string="创建付款申请"/>
+<!--                         <button name="action_create_yfhxd_from_one_invoice" type="object" string="创建应付申请"-->
+<!--                                context="{'invoice_attribute':invoice_attribute}"-->
+<!--                              />-->
+                        <button name="create_reconcile" type="object" string="创建核销" groups="account.group_account_manager" attrs="{'invisible':[('payment_log_ids_count','=',0)]}" confirm="创建付款申请！"/>
+
+
+
                     </header>
                     <header attrs="{'invisible':['|',('is_yjzy_invoice','=',True),('type','not in',['out_invoice','out_refund'])]}">
                         <button name="open_tb_po_invoice" string="额外应收申请" type="object"/>
@@ -238,8 +244,8 @@
                                 <field name="tb_po_invoice_id" string="申请单"
                                        attrs="{'readonly':[('state','not in',['draft'])]}"
                                        context="{'form_view_ref':'yjzy_extend.tb_po_form'}"/>
-                                <field name="tb_po_invoice_child_id" string="关联下级申请单" attrs="{'invisible':[('is_yjzy_tb_po_invoice','=','false')]}"/>
-                                <field name="tb_po_invoice_parent_id" string="关联上级申请单" attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=','false')]}"/>
+                                <field name="tb_po_invoice_child_id" string="关联下级申请单" attrs="{'invisible':[('is_yjzy_tb_po_invoice','=',False)]}"/>
+                                <field name="tb_po_invoice_parent_id" string="关联上级申请单" attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',False)]}"/>
                                 <field name="is_yjzy_tb_po_invoice" invisible="1"/>
                                 <field name="is_yjzy_tb_po_invoice_parent" invisible="1"/>
                                 <field name="fault_comments" attrs="{'invisible':[('is_yjzy_invoice','=',True)]}"/>

@@ -1301,6 +1301,13 @@ class account_invoice(models.Model):
             'flags': {'form': {'initial_mode': 'view','action_buttons': False}}
         }
 
+  # #1228单独直接从发票创建应付核销单
+  #   def action_create_yfhxd_from_one_invoce(self):
+  #       ctx = self.env.context.get('invoice_attribute')
+  #       hxd = self.create_yfhxd_from_multi_invoice(ctx)
+  #
+  #       return hxd
+
     # 1209定稿
     def action_create_yfhxd(self):
         ctx = self.env.context.get('invoice_attribute')
