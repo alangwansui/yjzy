@@ -146,40 +146,7 @@ class tb_po_invoice(models.Model):
             partner = self.env['res.partner'].search([('name', '=', '未定义')], limit=1)
         return partner
 
-    # @api.depends('name','name_title')
-    # def compute_display_name(self):
-    #     ctx = self.env.context
-    #     res = []
-    #     for one in self:
-    #         if
-    #         if ctx.get('default_sfk_type', '') == 'ysrld':
-    #             name = '%s:%s' % (one.journal_id.name, str(one.balance))
-    #         elif ctx.get('bank_amount'):
-    #             name = '%s[%s]' % (one.journal_id.name, str(one.balance))
-    #         elif ctx.get('advance_bank_amount'):
-    #             name = '%s[%s]' % (one.yjzy_payment_id.journal_id.name, str(one.advance_balance_total))
-    #         elif ctx.get('advance_so_amount'):
-    #             if not one.yjzy_payment_id:
-    #                 name = '%s[%s]' % (one.journal_id.name, str(one.balance))
-    #             else:
-    #                 if one.so_id:
-    #                     name = '%s[%s]' % (one.so_id.contract_code, str(one.advance_balance_total))
-    #                 else:
-    #                     name = '%s[%s]' % ('无销售合同', str(one.advance_balance_total))
-    #         elif ctx.get('advance_po_amount'):
-    #             if not one.yjzy_payment_id:
-    #                 name = '%s[%s]' % (one.journal_id.name, str(one.amount))
-    #             else:
-    #                 if one.po_id:
-    #                     name = '%s[%s]' % (one.po_id.contract_code, str(one.advance_balance_total))
-    #                 else:
-    #                     name = '%s[%s]' % ('无采购合同', str(one.advance_balance_total))
-    #         elif ctx.get('default_sfk_type', '') == 'yfsqd':
-    #             name = '%s:%s' % (one.name, str(one.advance_balance_total))
-    #         else:
-    #             name = '%s[%s]' % (one.name, str(one.balance))
-    #         print('ctx_1111', ctx)
-    #         one.display_name = name
+
 
 
     @api.depends('invoice_p_ids','invoice_s_ids','invoice_back_tax_ids.residual','invoice_p_s_ids.residual','invoice_p_s_ids.residual')
@@ -257,6 +224,8 @@ class tb_po_invoice(models.Model):
         for one in self:
             if one.type == 'other_payment' and one.type_invoice == 'in_invoice':
                 name = '%s:%s' % ('其他应付', one.name)
+            elif one.type == 'other_payment' and one.type_invoice == 'out_invoice':
+                name = '%s:%s' % ('其他应收', one.name)
             elif one.type == 'other_po':
                 name = '%s:%s' % ('增加采购申请', one.name)
             else:
@@ -304,7 +273,7 @@ class tb_po_invoice(models.Model):
     yjzy_payment_id = fields.Many2one('account.payment',u'收付款单')
     yjzy_payment_currency_id = fields.Many2one('res.currency', related='yjzy_payment_id.currency_id')
     yjzy_payment_balance = fields.Monetary(u'收款单未认领金额', related = 'yjzy_payment_id.balance',  currency_field='yjzy_payment_currency_id',)
-    # display_name = fields.Char(u'显示名称', compute=compute_display_name)
+
 
 
     gongsi_id = fields.Many2one('gongsi', '内部公司')

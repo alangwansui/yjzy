@@ -154,8 +154,10 @@
 
                         <group col="3">
                             <group>
+                                 <field name="invoice_attribute_all_in_one" string="账单类型"/>
                                 <field name="number" string="系统编号" class="oe_inline"
                                        attrs="{'invisible': [('state', '=', 'draft')]}"/>
+
                                 <field name="is_yjzy_invoice" invisible="1"/>
                                 <label for="" name="partner_id"
                                        attrs="{'invisible':[('invoice_attribute','=','other_payment')]}">
@@ -236,8 +238,8 @@
                                 <field name="tb_po_invoice_id" string="申请单"
                                        attrs="{'readonly':[('state','not in',['draft'])]}"
                                        context="{'form_view_ref':'yjzy_extend.tb_po_form'}"/>
-                                <field name="tb_po_invoice_child_id"  attrs="{'invisible':[('is_yjzy_tb_po_invoice','=',['false'])]}"/>
-                                <field name="tb_po_invoice_parent_id" attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',['false'])]}"/>
+                                <field name="tb_po_invoice_child_id" string="关联下级申请单" attrs="{'invisible':[('is_yjzy_tb_po_invoice','=','false')]}"/>
+                                <field name="tb_po_invoice_parent_id" string="关联上级申请单" attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=','false')]}"/>
                                 <field name="is_yjzy_tb_po_invoice" invisible="1"/>
                                 <field name="is_yjzy_tb_po_invoice_parent" invisible="1"/>
                                 <field name="fault_comments" attrs="{'invisible':[('is_yjzy_invoice','=',True)]}"/>

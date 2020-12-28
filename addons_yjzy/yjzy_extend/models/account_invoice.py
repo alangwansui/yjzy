@@ -533,6 +533,13 @@ class account_invoice(models.Model):
         for one in self:
             one.payment_log_ids_count = len(one.payment_log_ids)
 
+    @api.depends('tb_po_invoice_id', 'tb_po_invoice_id.is_yjzy_tb_po_invoice',
+                 'tb_po_invoice_id.is_yjzy_tb_po_invoice_parent')
+    def compute_yjzy_tb_po_child_patent(self):
+        for one in self:
+            one.is_yjzy_tb_po_invoice = one.tb_po_invoice_id.is_yjzy_tb_po_invoice
+            one.is_yjzy_tb_po_invoice_parent = one.tb_po_invoice_id.is_yjzy_tb_po_invoice_parent
+
     invoice_attribute_all_in_one = fields.Selection(invoice_attribute_all_in_one,u'账单属性all_in_one', compute=compute_all_in_one,store=True)
     # invoice_attribute_all_in_one = fields.Char('账单属性all_in_one',compute=compute_all_in_one,store=True)
 
@@ -583,13 +590,14 @@ class account_invoice(models.Model):
     #831增加对应报关申报表
     df_id = fields.Many2one('back.tax.declaration',u'报关申报表')
 
+
+
     #820增加一个和新增采购关联的字段，把退税等一起关联起来
     tb_po_invoice_id = fields.Many2one('tb.po.invoice',u'综合增加采购单')
     tb_po_invoice_child_id = fields.Many2one('tb.po.invoice',related='tb_po_invoice_id.yjzy_tb_po_invoice')
-
-    is_yjzy_tb_po_invoice = fields.Boolean('是否有对应下级账单', related='tb_po_invoice_id.is_yjzy_tb_po_invoice')
+    is_yjzy_tb_po_invoice = fields.Boolean('是否有对应下级账单',compute=compute_yjzy_tb_po_child_patent, store=True)
     tb_po_invoice_parent_id = fields.Many2one('tb.po.invoice', related='tb_po_invoice_id.yjzy_tb_po_invoice_parent')
-    is_yjzy_tb_po_invoice_parent = fields.Boolean('是否有对应上级账单', related='tb_po_invoice_id.is_yjzy_tb_po_invoice_parent')
+    is_yjzy_tb_po_invoice_parent = fields.Boolean('是否有对应上级账单',compute=compute_yjzy_tb_po_child_patent, store=True)
     #819费用转应付发票
     expense_sheet_id = fields.Many2one('hr.expense.sheet',u'费用报告')
     # 增加常规转直接的状态，明细那边增加是否已经转换的状态
