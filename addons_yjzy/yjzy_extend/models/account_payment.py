@@ -944,9 +944,9 @@ class account_payment(models.Model):
                 if self.po_id and self.po_id.so_id_state not in ['approve', 'sale']:
                     raise Warning('合同未审批不允许提交!')
                 for one in self.po_id.yjzy_payment_ids:
-                    if one.state not in ['posted','reconciled'] and one.partner_id != self.partner_id and one.sfk_type == 'yfsqd' and one.id < self.id:
+                    if one.state not in ['posted','reconciled'] and one.sfk_type == 'yfsqd' and one.id < self.id:
                         raise Warning('有存在未完成审批的预付申请，请先完成审批!')
-                    if one.state not in ['posted','reconciled'] and one.partner_id != self.partner_id and one.sfk_type == 'reconcile_yfsqd' and one.id < self.id:
+                    if one.state not in ['posted','reconciled'] and one.sfk_type == 'reconcile_yfsqd' and one.id < self.id:
                         raise Warning('有存在未完成审批的核销单，请检查!')
                 self.state_1 = '20_account_submit'
             elif ctx.get('default_sfk_type', '') == 'jiehui' or self.sfk_type == 'jiehui':
@@ -1058,12 +1058,21 @@ class account_payment(models.Model):
             # for one in self.fksqd_2_ids:
             #     one.state_fkzl = '05_fksq'
             #     one.state = 'draft'
+        if self.sfk_type == 'yfsqd':
+            self.write({'state_1': '80_refused',
+                        'state': 'draft'
+                        })
+            # for one in self.fksqd_2_ids:
+            #     one.state_fkzl = '05_fksq'
+            #     one.state = 'draft'
 
         for tb in self:
             tb.message_post_with_view('yjzy_extend.payment_template_refuse_reason',
                                       values={'reason': reason, 'name': self.name},
                                       subtype_id=self.env.ref(
                                           'mail.mt_note').id)  # 定义了留言消息的模板，其他都可以参考，还可以继续参考费用发送计划以及邮件方式
+
+
 
 
 
