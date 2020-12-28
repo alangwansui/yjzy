@@ -944,7 +944,7 @@ class account_payment(models.Model):
                 if self.po_id and self.po_id.so_id_state not in ['approve', 'sale']:
                     raise Warning('合同未审批不允许提交!')
                 for one in self.po_id.yjzy_payment_ids:
-                    if one.state not in ['posted','reconciled']:
+                    if one.state not in ['posted','reconciled'] and one.partner_id != self.partner_id and one.sfk_type == 'yfsqd' and one.id < self.id:
                         raise Warning('有存在未完成审批的预付申请，请先完成审批!')
                 self.state_1 = '20_account_submit'
             elif ctx.get('default_sfk_type', '') == 'jiehui' or self.sfk_type == 'jiehui':

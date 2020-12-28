@@ -257,6 +257,29 @@ class account_invoice(models.Model):
         for one in self:
             # one.display_name = '%s[%s]' % (one.tb_contract_code, str(one.amount_total))
             if one.bill_id:
+                # else:
+                # if one.invoice_attribute_all_in_one == '220':
+                #     name = '%s:%s' % ('增加采购应付', one.tb_contract_code)
+                # elif one.invoice_attribute_all_in_one == '110':
+                #     name = '%s:%s' % ('主账单应付', one.tb_contract_code)
+                # elif one.invoice_attribute_all_in_one == '120':
+                #     name = '%s:%s' % ('主账单应收', one.tb_contract_code)
+                # elif one.invoice_attribute_all_in_one == '130':
+                #     name = '%s:%s' % ('主账单退税', one.tb_contract_code)
+                # elif one.invoice_attribute_all_in_one == '210':
+                #     name = '%s:%s' % ('增加采购应收', one.tb_contract_code)
+                # elif one.invoice_attribute_all_in_one == '230':
+                #     name = '%s:%s' % ('增加采购退税', one.tb_contract_code)
+                # elif one.invoice_attribute_all_in_one == '310':
+                #     name = '%s:%s' % ('费用转货款应收', one.tb_contract_code)
+                # elif one.invoice_attribute_all_in_one == '320':
+                #     name = '%s:%s' % ('费用转货款应付', one.tb_contract_code)
+                # elif one.invoice_attribute_all_in_one == '330':
+                #     name = '%s:%s' % ('费用转货款退税', one.tb_contract_code)
+                # elif one.invoice_attribute_all_in_one == '410':
+                #     name = '%s:%s' % ('其他应收', one.number)
+                # elif one.invoice_attribute_all_in_one == '510':
+                #     name = '%s:%s' % ('其他应付', one.number)
                 one.display_name = '%s' % (one.bill_id.ref)
             else:
                 one.display_name = '%s' % (one.number)
@@ -2080,31 +2103,9 @@ class account_invoice(models.Model):
                 purchase_date_finish_state = '完成'
             if show_date_finish:
                 name = '%s %s %s' % (purchase_date_finish_state or '',one.date_finish or '', one.partner_id.name or '', )
+
             else:
-                if one.invoice_attribute_all_in_one == '220':
-                    name = '%s:%s' % ('增加采购应付', one.tb_contract_code)
-                elif one.invoice_attribute_all_in_one == '110':
-                    name = '%s:%s' % ('主账单应付', one.tb_contract_code)
-                elif one.invoice_attribute_all_in_one == '120':
-                    name = '%s:%s' % ('主账单应收', one.tb_contract_code)
-                elif one.invoice_attribute_all_in_one == '130':
-                    name = '%s:%s' % ('主账单退税', one.tb_contract_code)
-                elif one.invoice_attribute_all_in_one == '210':
-                    name = '%s:%s' % ('增加采购应收', one.tb_contract_code)
-                elif one.invoice_attribute_all_in_one == '230':
-                    name = '%s:%s' % ('增加采购退税', one.tb_contract_code)
-                elif one.invoice_attribute_all_in_one == '310':
-                    name = '%s:%s' % ('费用转货款应收', one.tb_contract_code)
-                elif one.invoice_attribute_all_in_one == '320':
-                    name = '%s:%s' % ('费用转货款应付', one.tb_contract_code)
-                elif one.invoice_attribute_all_in_one == '330':
-                    name = '%s:%s' % ('费用转货款退税', one.tb_contract_code)
-                elif one.invoice_attribute_all_in_one == '410':
-                    name = '%s:%s' % ('其他应收', one.number)
-                elif one.invoice_attribute_all_in_one == '510':
-                    name = '%s:%s' % ('其他应付', one.number)
-                else:
-                    name = '%s[%s]' % (one.tb_contract_code, str(one.residual))
+                name = '%s[%s]' % (one.tb_contract_code, str(one.residual))
             res.append((one.id, name))
         print('=111====',res)
         return res
