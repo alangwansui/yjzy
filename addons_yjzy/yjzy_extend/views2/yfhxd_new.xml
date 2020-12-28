@@ -1381,7 +1381,7 @@
                                             <field name="payment_date"/>
                                             <field name="name"/>
                                             <field name="amount"/>
-                                            <field name="state_1"/>
+                                            <field name="state"/>
                                         </tree>
                                 </field>
                             </page>

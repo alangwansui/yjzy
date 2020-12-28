@@ -277,7 +277,7 @@
             </field>
             <field name="search_view_id" ref="view_account_payment_search_new"/>
             <field name="view_ids" eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_yfsqd_account_tree')}),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_yfsqd_account_hexiao_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_yfsqd_form')})]"/>
         </record>
         <menuitem id="menu_yfsqd_to_reconcile" parent="menu_yfhx_main_reconcile" name="创建预付核销" sequence="10"

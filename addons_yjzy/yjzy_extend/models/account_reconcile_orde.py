@@ -1713,11 +1713,13 @@ class account_reconcile_order(models.Model):
             if self.reconcile_payment_ids:
                 self.reconcile_payment_ids.post()
                 for one in self.reconcile_payment_ids:#所有认领单
+                    one.state_1 = '60_done'
                     one.invoice_log_id.get_reconcile_order_line()
         if self.sfk_type == 'yshxd':
             if self.reconcile_payment_ids:
                 self.reconcile_payment_ids.post()
                 for one in self.reconcile_payment_ids:#所有认领单
+                    one.state_1 = '60_done'
                     one.invoice_log_id.get_reconcile_order_line()
 
 
