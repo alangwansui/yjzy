@@ -136,18 +136,18 @@
 
 
                                     <field name="invoice_partner_yjzy_parent" string="账单描述"
-                                           attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',False)]}"/>
+                                           attrs="{'readonly':[('state','!=','10_draft')],'invisible':[('is_yjzy_tb_po_invoice_parent','=',False)]}"/>
                                     <field name="name_title_yjzy_parent" string="账单对象"
-                                           attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',False)]}"/>
+                                           attrs="{'readonly':[('state','!=','10_draft')],'invisible':[('is_yjzy_tb_po_invoice_parent','=',False)]}"/>
                                     <field name="currency_id_yjzy_parent"
                                            attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',False)]}"/>
 
                                     <field name="invoice_partner_yjzy" string="账单描述"
-                                           attrs="{'invisible':[('is_yjzy_tb_po_invoice','=',False)]}"/>
+                                           attrs="{'readonly':[('state','!=','10_draft')],'invisible':[('is_yjzy_tb_po_invoice','=',False)]}"/>
                                     <field name="name_title_yjzy" string="账单对象"
-                                           attrs="{'invisible':[('is_yjzy_tb_po_invoice','=',False)]}"/>
+                                           attrs="{'readonly':[('state','!=','10_draft')],'invisible':[('is_yjzy_tb_po_invoice','=',False)]}"/>
                                     <field name="currency_id_yjzy"
-                                           attrs="{'invisible':[('is_yjzy_tb_po_invoice','=',False)]}"/>
+                                           attrs="{'readonly':[('state','!=','10_draft')],'invisible':[('is_yjzy_tb_po_invoice','=',False)]}"/>
 
                                     <field name="price_total_yjzy_parent" string="金额合计"
                                            attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',False)]}"/>
@@ -190,7 +190,7 @@
 <!--                                <group>-->
 
 <!--                                </group>-->
-                                <field name="tb_po_other_line_ids" nolabel="1" colspan="2">
+                                <field name="tb_po_other_line_ids" nolabel="1" colspan="2" attrs="{'readonly':[('state','!=','10_draft')],}">
                                     <tree editable="bottom">
                                         <field name="product_id" string="账单项目"/>
                                         <field name="name" invisible="1"/>

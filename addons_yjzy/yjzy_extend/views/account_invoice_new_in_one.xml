@@ -236,6 +236,10 @@
                                 <field name="tb_po_invoice_id" string="申请单"
                                        attrs="{'readonly':[('state','not in',['draft'])]}"
                                        context="{'form_view_ref':'yjzy_extend.tb_po_form'}"/>
+                                <field name="tb_po_invoice_child_id"  attrs="{'invisible':[('is_yjzy_tb_po_invoice','=',['false'])]}"/>
+                                <field name="tb_po_invoice_parent_id" attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',['false'])]}"/>
+                                <field name="is_yjzy_tb_po_invoice" invisible="1"/>
+                                <field name="is_yjzy_tb_po_invoice_parent" invisible="1"/>
                                 <field name="fault_comments" attrs="{'invisible':[('is_yjzy_invoice','=',True)]}"/>
 
                             </group>
@@ -952,6 +956,10 @@
                                 <field name="tb_po_invoice_id" string="申请单"
                                        attrs="{'readonly':[('state','not in',['draft'])]}"
                                        context="{'form_view_ref':'yjzy_extend.tb_po_form'}"/>
+                                   <field name="tb_po_invoice_child_id"  attrs="{'invisible':[('is_yjzy_tb_po_invoice','=',['false'])]}"/>
+                                <field name="tb_po_invoice_parent_id" attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',['false'])]}"/>
+                                <field name="is_yjzy_tb_po_invoice" invisible="1"/>
+                                <field name="is_yjzy_tb_po_invoice_parent" invisible="1"/>
                                 <field name="fault_comments" attrs="{'invisible':[('is_yjzy_invoice','=',True)]}"/>
 
                             </group>

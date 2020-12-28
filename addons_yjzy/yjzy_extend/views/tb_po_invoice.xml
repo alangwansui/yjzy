@@ -114,7 +114,7 @@
                     <field name="back_tax_add_residual"/>
                     <field name="p_s_add_refund_residual" groups="base.group_system"/>
                     <field name="create_date" string="创建日期"/>
-                    <field name="yjzy_invoice_id"/>
+                    <field name="yjzy_invoice_id" groups="base.group_system"/>
                 </tree>
             </field>
         </record>
@@ -369,8 +369,9 @@
                                 invisible="context.get('open')"/>
                         <button name="action_manager_approve" states="20_submit" class="oe_highlight" type='object'
                                 string="总经理审批" invisible="context.get('open')"/>
-                        <button name="%(tb_po_invoice_refuse_wizard_action)d" string="拒绝" type="action" invisible="context.get('open')"
-                                attrs="{'invisible':[('state','in',['10_draft','80_refuse','90_cancel'])]}"/>
+                        <button name="%(tb_po_invoice_refuse_wizard_action)d" string="拒绝" groups="sales_team.group_manager"
+                                type="action" invisible="context.get('open')"
+                                attrs="{'invisible':[('state','in',['10_draft','80_refuse','90_cancel','30_done'])]}"/>
                         <button name="apply_expense_sheet" class="oe_highlight" type='object' groups="base.group_system"
                                 string="费用确认" attrs="{'invisible':[('type','!=','expense_po')]}"/>
                         <button name="apply" class="oe_highlight" type='object' string="确认" groups="base.group_system"
@@ -585,7 +586,7 @@
                                 <group style="border-top:1px #6C6A6A solid;border-bottom:1px #6C6A6A solid;margin-top:-10px;"
                                        attrs="{'invisible':[('type','not in',['other_po'])]}">
                                     <field name="p_s_add_this_time_total" string="本次增加应收"/>
-                                    <field name="p_s_add_this_time_refund" string="本次可冲减应收"/>
+                                    <field name="p_s_add_this_time_refund" string="本次可冲减应收" groups="base.group_system"/>
                                     <!--label for="" name="p_s_add_this_time_extra_total" attrs="{'invisible':[('yjzy_invoice_id','=',False)]}">
                                         <b attrs="{'invisible':['|',('yjzy_invoice_include_tax','=',True),('type','!=','other_po')]}">
                                         本次冲减后应收
@@ -697,11 +698,11 @@
                                                attrs="{'column_invisible':[('parent.tb_id','=',False)]}"/>
                                         <field name="purchase_back_tax_amount2_new" readonly="1" string="实际退税金额"
                                                sum="小计" attrs="{'column_invisible':[('parent.tb_id','=',False)]}"/>
-                                        <field name="purchase_amount_min_add_forecast" readonly="1" sum="小计" string="总可增加"
+                                        <field name="purchase_amount_min_add_forecast" readonly="1" sum="小计" string="总可增加" groups="base.group_system"
                                                attrs="{'column_invisible':[('parent.tb_id','=',False)]}"/>
                                         <field name="purchase_amount_max_add_forecast" readonly="1" sum="小计" invisible="1"
                                                attrs="{'column_invisible':[('parent.tb_id','=',False)]}"/>
-                                        <field name="purchase_amount2_add_actual" readonly="1" sum="小计" string="实际已增加"
+                                        <field name="purchase_amount2_add_actual" readonly="1" sum="小计" string="实际已增加" groups="base.group_system"
                                                attrs="{'column_invisible':[('parent.tb_id','=',False)]}"/>
                                         <field name="purchase_amount_min_add_rest" readonly="1" string="最新可增加" groups="base.group_system"
                                                attrs="{'column_invisible':[('parent.tb_id','=',False)]}"/>
