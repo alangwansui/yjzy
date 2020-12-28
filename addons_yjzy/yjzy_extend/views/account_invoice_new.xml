@@ -2201,7 +2201,7 @@
 
 <!--      创建新增采购的付款申请不按到期时间分组-->
         <record id="action_other_po_invoice_unpaid" model="ir.actions.act_window">
-            <field name="name">查看未付款增加采购账单并创建付款申请(多选后创建)</field>
+            <field name="name">创建增加采购付款申请(单选创建)</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">account.invoice</field>
             <field name="view_mode">tree,form</field>
