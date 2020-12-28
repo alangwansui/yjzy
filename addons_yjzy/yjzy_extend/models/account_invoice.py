@@ -2100,9 +2100,9 @@ class account_invoice(models.Model):
                 elif one.invoice_attribute_all_in_one == '330':
                     name = '%s:%s' % ('费用转货款退税', one.tb_contract_code)
                 elif one.invoice_attribute_all_in_one == '410':
-                    name = '%s:%s' % ('其他应收', one.tb_contract_code)
+                    name = '%s:%s' % ('其他应收', one.number)
                 elif one.invoice_attribute_all_in_one == '510':
-                    name = '%s:%s' % ('其他应付', one.tb_contract_code)
+                    name = '%s:%s' % ('其他应付', one.number)
                 else:
                     name = '%s[%s]' % (one.tb_contract_code, str(one.residual))
             res.append((one.id, name))
