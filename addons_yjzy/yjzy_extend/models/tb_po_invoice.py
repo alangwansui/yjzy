@@ -250,11 +250,26 @@ class tb_po_invoice(models.Model):
         for one in self:
             tb_po_other_line_count = len(one.tb_po_other_line_ids)
             one.tb_po_other_line_count = tb_po_other_line_count
+
+    @api.depends('name')
+    def compute_display_name(self):
+        ctx = self.env.context
+        for one in self:
+            if one.type == 'other_payment' and one.type_invoice == 'in_invoice':
+                name = '%s:%s' % ('其他应付', one.name)
+            elif one.type == 'other_po':
+                name = '%s:%s' % ('增加采购申请', one.name)
+            else:
+                name = one.name
+
+            one.display_name = name
     # # 新增
     # yjzy_type_invoice = fields.Selection(
     #     [('sale', u'应收'), ('purchase', u'应付'), ('back_tax', u'退税'), ('other_payment_sale', '其他应收'),
     #      ('other_payment_purchase', '其他应付')], string=u'发票类型')
     #关联的申请单：其他应收对其他应付，其他应付对其他应收
+
+    display_name = fields.Char(u'显示名称', compute=compute_display_name)
 
     price_total_yjzy_parent = fields.Monetary('金额合计', currency_field='currency_id', related='yjzy_tb_po_invoice_parent.price_total')
     invoice_normal_ids_residual_yjzy_parent = fields.Float('对应账单申请账单未付金额',
@@ -479,6 +494,8 @@ class tb_po_invoice(models.Model):
         for one in self:
             if one.type == 'other_payment' and one.type_invoice == 'in_invoice':
                 name = '%s:%s' % ('其他应付', one.name)
+            elif one.type == 'other_po':
+                name = '%s:%s' % ('增加采购申请', one.name)
             else:
                 name = one.name
             res.append((one.id, name))

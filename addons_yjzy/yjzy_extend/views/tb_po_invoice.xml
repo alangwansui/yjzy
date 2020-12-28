@@ -405,7 +405,7 @@
                         <!--                        field name="is_tb_hs_id" class="oe_avatar" widget="boolean_toggle"  attrs="{'invisible':[('type','in',['other_po','expense_po'])]}"/-->
 
 
-                        <div class="oe_title" attrs="{'invisible':[('type','=','other_payment')]}">
+                        <div class="oe_title" attrs="{'invisible':[('type','=','other_payment')]}" invisible="1">
                             <label for="name" string="申请单号" class="oe_edit_only"/>
                             <h1>
                                 <field name="name" readonly="1"/>
@@ -419,7 +419,7 @@
                         <!--                    </div>-->
                         <group col="3">
                             <group attrs="{'invisible':[('is_tb_hs_id','=',False)]}">
-
+                                <field name="display_name" nolabel="1" colspan="2" />
                                 <field name="tb_id" domain="[('back_tax_invoice_balance_new','!=',0)]"
                                        attrs="{'invisible':[('is_tb_hs_id','=',False)],'readonly':[('state','!=','10_draft')]}"
                                        context="{'min_add':1,'not_show_partner':1,'form_view_ref':'yjzy_extend.view_transport_bill_declare_po_form'}"/>
