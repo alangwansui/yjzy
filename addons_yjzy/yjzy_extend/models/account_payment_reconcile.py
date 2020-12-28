@@ -44,6 +44,19 @@ class account_payment(models.Model):
             payment_ids_count= len(one.payment_ids)
             one.payment_ids_count = payment_ids_count
 
+    def compute_invoice_id(self):
+        for one in self:
+            if not one.yjzy_payment_id and not one.invoice_log_id:
+                payment_log_ids = False
+            elif one.yjzy_payment_id:
+                payment_log_ids = one.yjzy_payment_id.payment_ids
+            else:
+                payment_log_ids = one.invoice_log_id.payment_log_ids
+            one.payment_log_ids = payment_log_ids
+
+    payment_log_ids = fields.One2many('account.payment', compute=compute_invoice_id)
+
+
 
     payment_ids_count = fields.Integer(u'预收认领预付申请数量', compute=compute_payment_ids_count)
 
@@ -69,6 +82,10 @@ class account_payment(models.Model):
     def create_reconcile(self):
         if self.advance_balance_total <= 0 :
             raise Warning('未认领金额不大于0，不需要核销')
+        if len(self.payment_ids.filtered(lambda x: x.state not in ['posted','reconciled'])) > 0:
+            raise Warning('存在未完成的核销单，不允许创建核销！')
+
+
         form_view = self.env.ref('yjzy_extend.view_ysrld_reconcile_form')
         ctx = {}
         partner = self.partner_id
@@ -159,6 +176,9 @@ class account_payment(models.Model):
     def action_reconcile_manager(self):
         self.post()
         self.state_1 = '60_done'
+        if self.yjzy_payment_id:
+            self.yjzy_payment_id.compute_advance_balance_total()
+
 
 
 

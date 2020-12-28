@@ -443,13 +443,15 @@ class account_reconcile_order(models.Model):
                 one.partner_payment_term_id = one.partner_id.property_supplier_payment_term_id
             one.invoice_payment_term_id = one.invoice_ids[0].payment_term_id
 
-
+    @api.depends('invoice_ids')
     def compute_invoice_id(self):
         for one in self:
             invoice_id = one.invoice_ids[0]
             one.invoice_id = invoice_id
             one.invoice_attribute_all_in_one = invoice_id.invoice_attribute_all_in_one
+            one.payment_log_ids = invoice_id.payment_log_ids
 
+    payment_log_ids = fields.One2many('account.payment',compute=compute_invoice_id)
 
     invoice_id = fields.Many2one('account.invoice',compute=compute_invoice_id)
     # invoice_attribute_all_in_one = fields.Char('账单属性all_in_one',compute=compute_invoice_id)
@@ -2293,9 +2295,9 @@ class account_reconcile_order(models.Model):
         self.line_no_ids = None
         for one in self.invoice_ids:
             if one.invoice_attribute == 'expense_po':
-                amount_payment_org = one.amount_total
-            if one.invoice_attribute == 'other_payment':
-                amount_payment_org = one.amount_total
+                amount_payment_org = one.amount_payment_can_approve_all
+            elif one.invoice_attribute == 'other_payment':
+                amount_payment_org = one.amount_payment_can_approve_all
             else:
                 amount_payment_org = one.declaration_amount
             so_ids = one.invoice_line_ids.mapped('so_id')

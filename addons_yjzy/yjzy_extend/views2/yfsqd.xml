@@ -58,7 +58,10 @@
                         attrs="{'invisible':[('advance_reconcile_order_count','=',0)]}"/>
                 <field name="advance_reconcile_order_count" invisible="1"/>
                 <field name="advance_balance_total" string="未认领金额"/>
-                <field name="advance_total" string="已认领金额"/>
+                <field name="advance_total" string="总已认领金额"/>
+                <field name="advance_renling_total" string="认领金额"/>
+                <field name="advance_hexiao_total" string="核销金额"/>
+                <field name="advance_renling_total" string="认领金额"/>
                 <field name="po_id" string="采购合同"/>
                 <field name="advance_type"/>
                 <field name="fault_comments"/>
@@ -74,6 +77,7 @@
             <form string="预付申请单">
                 <header groups="sales_team.group_manager">
                     <button name="create_reconcile" type="object" string="测试核销" />
+                    <button name="compute_advance_balance_total" type="object" string="重新计算状态" groups="base.group_system"/>
                     <button name="action_submit" class="oe_highlight" string="提交" type="object"
                             attrs="{'invisible': [('state_1','not in',['10_draft'])]}"/>
                     <button name="action_account_post" class="oe_highlight" string="财务确认" type="object"

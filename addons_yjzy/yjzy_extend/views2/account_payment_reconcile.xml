@@ -212,6 +212,17 @@
                             </group>
                         </group>
                         <notebook>
+                              <page string="认领日志">
+                                <field name="payment_log_ids">
+                                        <tree>
+                                            <field name="sfk_type"/>
+                                            <field name="payment_date"/>
+                                            <field name="name"/>
+                                            <field name="amount"/>
+                                            <field name="state_1"/>
+                                        </tree>
+                                </field>
+                            </page>
                             <page groups="base.group_system">
                                 <group>
                                     <field name="journal_id" domain="[('type','=', 'renling')]" string="收款日记账"

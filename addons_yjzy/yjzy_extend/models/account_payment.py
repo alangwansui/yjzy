@@ -166,19 +166,23 @@ class account_payment(models.Model):
     #     return res
 
     @api.depends('advance_reconcile_order_line_ids.order_id.state','amount','advance_reconcile_order_line_ids.amount_advance_org',
-                 'advance_reconcile_order_line_ids.yjzy_payment_id','payment_ids.amount','payment_ids','payment_ids.state')
+                 'payment_ids.amount','payment_ids','payment_ids.state')
     def compute_advance_balance_total(self):
         for one in self:
             advance_total = sum([x.amount_advance_org for x in one.advance_reconcile_order_line_ids])
-            advance_total_2 = sum([x.amount for x in one.payment_ids.filtered(lambda i: i.state in ['posted','reconciled']
-                                                                                                and i.sfk_type in ['reconcile_ysrld','reconcile_yfsqd'])])
+            hexiao_payment_ids = one.payment_ids.filtered(lambda x: x.sfk_type in ('sfk_type','in',['reconcile_ysrld','reconcile_yfsqd']) and x.state in ['posted','recociled'])
+            advance_total_2 = sum([x.amount for x in hexiao_payment_ids])
+
             advance_balance_total = one.amount - advance_total - advance_total_2
             if advance_balance_total == 0 and one.state_1 == '50_posted':
                 one.state_1 = '60_done'
                 one.test_reconcile()
                 one.write({'state': 'reconciled'})
+            one.advance_hexiao_total = advance_total_2
+            one.advance_renling_total = advance_total
             one.advance_total = advance_total + advance_total_2
             one.advance_balance_total = advance_balance_total
+
 
 
 
@@ -521,11 +525,17 @@ class account_payment(models.Model):
     advance_reconcile_order_line_amount_char = fields.Text(related='so_id.advance_reconcile_order_line_amount_char', string=u'预收认领明细金额')
     advance_reconcile_order_line_date_char = fields.Text(related='so_id.advance_reconcile_order_line_date_char',string=u'预收认领日期')
     advance_reconcile_order_line_invoice_char = fields.Text(related='so_id.advance_reconcile_order_line_invoice_char',string=u'账单')
-    advance_balance_total = fields.Monetary(u'预收余额', compute=compute_advance_balance_total, currency_field='yjzy_payment_currency_id', store=True)
+    advance_balance_total = fields.Monetary(u'预收余额', currency_field='yjzy_payment_currency_id',compute=compute_advance_balance_total,  store=True)
 
 
-    advance_total = fields.Monetary(u'预收认领金额', compute=compute_advance_balance_total,
-                                            currency_field='yjzy_payment_currency_id', store=True)
+
+    advance_total = fields.Monetary(u'预收认领金额',
+                                            currency_field='yjzy_payment_currency_id', compute=compute_advance_balance_total,store=True)
+    advance_hexiao_total = fields.Monetary(u'核销认领金额', currency_field='yjzy_payment_currency_id',
+                                     compute=compute_advance_balance_total,store=True)
+    advance_renling_total = fields.Monetary(u'正常认领金额',
+                                           currency_field='yjzy_payment_currency_id', compute=compute_advance_balance_total,store=True )
+
     rcskd_amount = fields.Monetary(u'收款单金额',related='yjzy_payment_id.amount')
     rcskd_date = fields.Date(u'收款日期', related='yjzy_payment_id.payment_date' )
 
@@ -591,7 +601,6 @@ class account_payment(models.Model):
     assistant_uid = fields.Many2one('res.users', u'助理', default=lambda self: self.env.user.id)
     fk_journal_id = fields.Many2one('account.journal', u'付款日记账', domain=[('type', 'in', ['cash', 'bank'])])
     include_tax = fields.Boolean(u'是否含税')
-
 
 
     payment_ids = fields.One2many('account.payment', 'yjzy_payment_id', u'预收认领和预付申请')

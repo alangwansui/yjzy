@@ -17,6 +17,8 @@ class account_reconcile_order(models.Model):
 
     # 创建核销单
     def create_reconcile(self):
+        if len(self.payment_log_ids.filtered(lambda x: x.state not in ['posted','reconciled'])) > 0:
+            raise Warning('存在未审批完成的核销单，不允许再次创建')
         form_view = self.env.ref('yjzy_extend.view_ysrld_reconcile_form')
         ctx = {}
         partner = self.partner_id
@@ -63,4 +65,7 @@ class account_reconcile_order(models.Model):
             'target': 'current',
             'context': ctx
         }
+
+
+    
 

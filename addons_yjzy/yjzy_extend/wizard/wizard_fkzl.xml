@@ -122,6 +122,7 @@
                     <field name="yshx_ids_line_no" readonly="1"
                            attrs="{'invisible':[('yshx_ids_line_no_count','=',0)]}">
                         <tree>
+                            <field name="invoice_attribute_all_in_one" string="类型"/>
                             <field name="invoice_id" string="应付账单"/>
                             <field name="amount_payment_org" sum="小计" string="付款金额"/>
                         </tree>
