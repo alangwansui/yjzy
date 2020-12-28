@@ -77,7 +77,10 @@
                         <button name="action_reconcile_submit" type="object" class="oe_highlight" string="提交审批" attrs="{'invisible':[('state_1','!=','10_draft')]}"/>
                         <button name="action_reconcile_account" type="object" class="oe_highlight" string="财务审批" attrs="{'invisible':[('state_1','!=','20_account_submit')]}"/>
                         <button name="action_reconcile_manager" type="object" class="oe_highlight" string="总经理审批" attrs="{'invisible':[('state_1','!=','30_manager_approve')]}"/>
-                          <button name="%(payment_refuse_wizard_action)d"  string="财务拒绝" type="action"
+                        <button name="action_draft_new" class="oe_highlight" string="重置草稿" type="object"
+                            attrs="{'invisible':[('state_1','not in',['80_refused'])]}"/>
+
+                        <button name="%(payment_refuse_wizard_action)d"  string="财务拒绝" type="action"
                             attrs="{'invisible': [('state_1','not in',['20_account_submit'])]}"
                     />
                     <button name="%(payment_refuse_wizard_action)d" string="总经理拒绝" type="action"
