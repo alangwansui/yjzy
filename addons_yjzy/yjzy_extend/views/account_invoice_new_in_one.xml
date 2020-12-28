@@ -8,15 +8,16 @@
                 <form string="应收账单" class="o_invoice_form" create="false">
                     <header groups="sales_team.group_manager">
                         <button name="action_create_yfhxd" context="{'invoice_attribute':invoice_attribute}"
-                                    attrs="{'invisible':['|',('residual','=',0),('type','!=','in_invoice')]}" confirm="确定创建付款申请吗？"
-                                class="oe_highlight" type="object" string="创建付款申请"/>
-<!--                         <button name="action_create_yfhxd_from_one_invoice" type="object" string="创建应付申请"-->
-<!--                                context="{'invoice_attribute':invoice_attribute}"-->
-<!--                              />-->
+                                attrs="{'invisible':['|',('residual','=',0),('type','!=','in_invoice')]}"
+                                confirm="确定创建付款申请吗？"
+                                type="object" string="创建付款申请"/>
+                        <!--                         <button name="action_create_yfhxd_from_one_invoice" type="object" string="创建应付申请"-->
+                        <!--                                context="{'invoice_attribute':invoice_attribute}"-->
+                        <!--                              />-->
                         <button name="create_reconcile" type="object" string="创建核销"
                                 groups="account.group_account_manager"
-                                attrs="{'invisible':['|',('residual','=',0),('payment_log_ids_count','=',0)]}" confirm="确定创建核销申请单吗？"/>
-
+                                attrs="{'invisible':['|',('residual','=',0),('payment_log_ids_count','=',0)]}"
+                                confirm="确定创建核销申请单吗？"/>
 
 
                     </header>
@@ -162,7 +163,7 @@
 
                         <group col="3">
                             <group>
-                                 <field name="invoice_attribute_all_in_one" string="账单类型"/>
+                                <field name="invoice_attribute_all_in_one" string="账单类型"/>
                                 <field name="number" string="系统编号" class="oe_inline"
                                        attrs="{'invisible': [('state', '=', 'draft')]}"/>
 
@@ -245,15 +246,16 @@
                                 <field name="team_id" attrs="{'invisible':1}"/>
                                 <field name="tb_po_invoice_id" string="申请单"
                                        attrs="{'readonly':[('state','not in',['draft'])]}"
-                                       context="{'form_view_ref':'yjzy_extend.tb_po_other_form'}"/>
+                                       context="{'form_view_ref':'yjzy_extend.tb_po_form'}"/>
                                 <field name="tb_po_invoice_child_id" string="关联下级申请单"
                                        attrs="{'readonly':[('state','not in',['draft'])],'invisible':[('is_yjzy_tb_po_invoice','=',False)]}"
-                                        context="{'form_view_ref':'yjzy_extend.tb_po_other_form'}"/>
+                                       context="{'form_view_ref':'yjzy_extend.tb_po_form'}"/>
                                 <field name="tb_po_invoice_parent_id" string="关联上级申请单"
                                        attrs="{'readonly':[('state','not in',['draft'])],'invisible':[('is_yjzy_tb_po_invoice_parent','=',False)]}"
-                                        context="{'form_view_ref':'yjzy_extend.tb_po_other_form'}"/>
+                                       context="{'form_view_ref':'yjzy_extend.tb_po_form'}"/>
 
-                                <field name="fault_comments" attrs="{'readonly':[('state','in',['paid'])],'invisible':[('is_yjzy_invoice','=',True)]}"/>
+                                <field name="fault_comments"
+                                       attrs="{'readonly':[('state','in',['paid'])],'invisible':[('is_yjzy_invoice','=',True)]}"/>
 
                             </group>
                             <group col="1" style="margin-top:-5px;">
@@ -496,13 +498,14 @@
                                     <field name="residual" class="oe_subtotal_footer_separator" string="剩余金额"
                                            attrs="{'invisible': [('state', '=', 'draft')]}"/>
                                     <field name="reconciled" invisible="1"/>
+                                    <field name="reconciled" invisible="1"/>
                                     <field name="outstanding_credits_debits_widget" colspan="2" nolabel="1"
                                            widget="payment" attrs="{'invisible': [('state', 'not in', 'open')]}"/>
                                 </group>
                             </page>
                             <page string="开票明细"
                                   attrs="{'invisible':[('invoice_attribute','not in',['other_po','expense_po'])]}">
-                                <field name="tb_po_hsname_all_ids">
+                                <field name="tb_po_hsname_all_ids" attrs="{'readonly':[('state','!=','draft')]}">
                                     <tree editable="bottom">
                                         <field name="hs_id"/>
                                         <field name="hsname_all_line_id" invisible="1"/>
@@ -516,17 +519,17 @@
                                         />
                                         <field name="purchase_amount2_no_tax" readonly="1" sum="小计"
                                         />
-                                        <field name="purchase_back_tax_amount2_new" readonly="1" string="实际退税金额"
+                                        <field name="purchase_back_tax_amount2_new" readonly="1" string="实际退税金额" groups="base.group_system"
                                                sum="小计"/>
-                                        <field name="purchase_amount_min_add_forecast" readonly="1" sum="小计"
+                                        <field name="purchase_amount_min_add_forecast" readonly="1" sum="小计" groups="base.group_system"
                                         />
-                                        <field name="purchase_amount_max_add_forecast" readonly="1" sum="小计"
+                                        <field name="purchase_amount_max_add_forecast" readonly="1" sum="小计" groups="base.group_system"
                                         />
-                                        <field name="purchase_amount2_add_actual" readonly="1" sum="小计"
+                                        <field name="purchase_amount2_add_actual" readonly="1" sum="小计" groups="base.group_system"
                                         />
-                                        <field name="purchase_amount_min_add_rest" readonly="1"
+                                        <field name="purchase_amount_min_add_rest" readonly="1" groups="base.group_system"
                                         />
-                                        <field name="purchase_amount_max_add_rest" readonly="1"
+                                        <field name="purchase_amount_max_add_rest" readonly="1" groups="base.group_system"
                                         />
                                         <field name="purchase_amount2_add_this_time"
                                         />
@@ -650,12 +653,12 @@
                             <page groups="base.group_system">
                                 <field name="yjzy_invoice_all_ids"/>
                             </page>
-                        <page string="账单认领明细(new)" attrs="{'invisible':[('payment_log_ids_count','=',0)]}">
-                            <field name="payment_log_ids_count" invisible="1"/>
+                            <page string="账单认领明细(new)" attrs="{'invisible':[('payment_log_ids_count','=',0)]}">
+                                <field name="payment_log_ids_count" invisible="1"/>
                                 <field name="payment_log_ids" readonly="1">
                                     <tree>
                                         <field name="sfk_type" string="认领类型"/>
-<!--                                        <field name="post_date" string="审批日期"/>-->
+                                        <!--                                        <field name="post_date" string="审批日期"/>-->
                                         <field name="payment_date_confirm" string="认领完成时间"/>
                                         <field name="reconcile_type" string="认领方式"/>
                                         <field name="amount" string="金额" sum="小计"/>
@@ -831,8 +834,8 @@
 
                             <page groups="base.group_system">
                                 <group>
-                                    <field name="is_yjzy_tb_po_invoice" />
-                                    <field name="is_yjzy_tb_po_invoice_parent" />
+                                    <field name="is_yjzy_tb_po_invoice"/>
+                                    <field name="is_yjzy_tb_po_invoice_parent"/>
                                     <field name="is_yjzy_invoice"/>
                                     <field name="date_invoice" string="账单日期"/>
                                     <field name="move_name"/>
@@ -971,8 +974,10 @@
                                 <field name="tb_po_invoice_id" string="申请单"
                                        attrs="{'readonly':[('state','not in',['draft'])]}"
                                        context="{'form_view_ref':'yjzy_extend.tb_po_form'}"/>
-                                   <field name="tb_po_invoice_child_id"  attrs="{'invisible':[('is_yjzy_tb_po_invoice','=',['false'])]}"/>
-                                <field name="tb_po_invoice_parent_id" attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',['false'])]}"/>
+                                <field name="tb_po_invoice_child_id"
+                                       attrs="{'invisible':[('is_yjzy_tb_po_invoice','=',['false'])]}"/>
+                                <field name="tb_po_invoice_parent_id"
+                                       attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',['false'])]}"/>
                                 <field name="is_yjzy_tb_po_invoice" invisible="1"/>
                                 <field name="is_yjzy_tb_po_invoice_parent" invisible="1"/>
                                 <field name="fault_comments" attrs="{'invisible':[('is_yjzy_invoice','=',True)]}"/>
@@ -1387,9 +1392,9 @@
                         </notebook>
 
                     </sheet>
-                         <footer>
-                            <button string="关闭" class="btn-primary" special="cancel"/>
-                        </footer>
+                    <footer>
+                        <button string="关闭" class="btn-primary" special="cancel"/>
+                    </footer>
                     <div class="oe_chatter">
                         <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
                         <field name="activity_ids" widget="mail_activity"/>
