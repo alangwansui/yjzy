@@ -1058,7 +1058,7 @@ class account_payment(models.Model):
             # for one in self.fksqd_2_ids:
             #     one.state_fkzl = '05_fksq'
             #     one.state = 'draft'
-        if self.sfk_type in ['yfsqd','ysrld']:
+        if self.sfk_type in ['yfsqd','reconcile_yfsqd','reconcile_ysrld']:
             self.write({'state_1': '80_refused',
                         'state': 'draft'
                         })
