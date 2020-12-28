@@ -1058,13 +1058,11 @@ class account_payment(models.Model):
             # for one in self.fksqd_2_ids:
             #     one.state_fkzl = '05_fksq'
             #     one.state = 'draft'
-        if self.sfk_type == 'yfsqd':
+        if self.sfk_type in ['yfsqd','ysrld']:
             self.write({'state_1': '80_refused',
                         'state': 'draft'
                         })
-            # for one in self.fksqd_2_ids:
-            #     one.state_fkzl = '05_fksq'
-            #     one.state = 'draft'
+
 
         for tb in self:
             tb.message_post_with_view('yjzy_extend.payment_template_refuse_reason',
