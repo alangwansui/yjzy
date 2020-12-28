@@ -83,12 +83,13 @@
                             attrs="{'invisible': [('state_1','not in',['10_draft'])]}"/>
                     <button name="action_account_post" class="oe_highlight" string="财务确认" type="object"
                             attrs="{'invisible': [('state_1','not in',['20_account_submit'])]}"/>
-                    <button name="%(payment_refuse_wizard_action)d"  string="总经理审批" type="action"
+                    <button name="action_manager_post" class="oe_highlight" string="总经理审批" type="object"
                             attrs="{'invisible': [('state_1','not in',['30_manager_approve'])]}"/>
-                    <button name="%(payment_refuse_wizard_action)d" string="财务拒绝" type="action"
+                    <button name="%(payment_refuse_wizard_action)d" class="oe_highlight" string="财务拒绝" type="action"
                             attrs="{'invisible': [('state_1','not in',['20_account_submit'])]}"
                     />
-
+                    <button name="%(payment_refuse_wizard_action)d" class="oe_highlight" string="总经理拒绝" type="action"
+                            attrs="{'invisible': [('state_1','not in',['30_manager_approve'])]}"/>
                     <button name="action_draft_new" class="oe_highlight" string="重置草稿" type="object"
                             attrs="{'invisible':[('state_1','not in',['80_refused'])]}"/>
                     <field name="state_1" widget="statusbar" statusbar_visible=" "/>
