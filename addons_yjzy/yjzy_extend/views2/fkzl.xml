@@ -230,7 +230,7 @@
                     <notebook>
 
                         <page string="预付申请" attrs="{'invisible': [('yfsqd_fkzl_ids_count','=', 0)]}">
-                            <field name="yfsqd_fkzl_ids" widget="many2many" >
+                            <field name="yfsqd_fkzl_ids" widget="many2many" readonly="1">
                                 <tree>
                                 <field name="partner_id" string="对象"/>
                                 <field name="name" invisible="1"/>
@@ -251,7 +251,7 @@
 
                         </page>
                         <page string="应付申请" attrs="{'invisible': [('yshx_fkzl_ids_count','=', 0)]}">
-                            <field name="yshx_fkzl_ids" widget="many2many"  groups="base.group_system" >
+                            <field name="yshx_fkzl_ids" widget="many2many"  groups="base.group_system" readonly="1">
                                 <tree>
                                     <field name="invoice_attribute_all_in_one" string="账单属性"/>
                                     <field name="name"/>
@@ -273,7 +273,7 @@
                                     <field name="state" groups="base.group_system"/>
                                 </tree>
                             </field>
-                            <field name="yshx_fkzl_line_ids" attrs="{'invisible': [('yshx_fkzl_line_ids_count','=', 0)]}">
+                            <field name="yshx_fkzl_line_ids" readonly="1" attrs="{'invisible': [('yshx_fkzl_line_ids_count','=', 0)]}">
                                 <tree>
                                     <field name="invoice_attribute_all_in_one" string="类型"/>
                                     <field name="invoice_id" string="账单"/>
@@ -284,7 +284,7 @@
                         </page>
                         <page string="费用明细和报告" attrs="{'invisible': [('fybg_fkzl_ids_count','=', 0)]}">
 
-                             <field name="expense_fkzl_ids" widget="many2many" invisible="1">
+                             <field name="expense_fkzl_ids" readonly="1" widget="many2many" invisible="1">
                                  <tree >
                                         <field name="categ_id" string="大类*" options="{'no_create':True,'no_open':1}" domain="[('parent_id.name','=','费用')]"  context="{'search_order': 'sequence','only_name':1}" />
                                         <field name="second_categ_id" string="中类*" options="{'no_create':True,'no_open':1}"   context="{'search_order': 'sequence','only_name':1}" />
@@ -327,7 +327,7 @@
                                         <field name="gongsi_id" string="公司主体" options="{'no_create':true,'no_open':1}" invisible="1"/>
                                     </tree>
                              </field>
-                                  <field name="fybg_fkzl_ids" widget="many2many" >
+                                  <field name="fybg_fkzl_ids" widget="many2many" readonly="1">
                                        <tree string="费用申请" class="o_expense_tree" create='false' decoration-warning="state=='draft'"
                                       decoration-bf="message_unread == True" decoration-danger="state=='cancel'">
                                     <field name="create_date" string="创建日期"/>
@@ -344,7 +344,7 @@
                                   </field>
                         </page>
                         <page string="付款申请" groups="base.group_system">
-                            <field name="fksqd_2_ids" widget="many2many" />
+                            <field name="fksqd_2_ids" widget="many2many" readonly="1"/>
                         </page>
                         <page groups="sales_team.group_manager" string="新规则手动">
                             <group >

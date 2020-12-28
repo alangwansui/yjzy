@@ -433,7 +433,7 @@ class tb_po_invoice(models.Model):
 
     def unlink(self):
         for one in self:
-            if one.state != '30_done':
+            if one.state not in ['20_submit','30_done']:
                 one.invoice_ids.unlink()
                 one.yjzy_tb_po_invoice.unlink()
             else:

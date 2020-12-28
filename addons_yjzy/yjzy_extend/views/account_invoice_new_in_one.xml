@@ -8,12 +8,14 @@
                 <form string="应收账单" class="o_invoice_form" create="false">
                     <header groups="sales_team.group_manager">
                         <button name="action_create_yfhxd" context="{'invoice_attribute':invoice_attribute}"
-                                    attrs="{'invisible':[('type','!=','in_invoice')]}" confirm="创建付款申请！"
+                                    attrs="{'invisible':['|',('residual','=',0),('type','!=','in_invoice')]}" confirm="确定创建付款申请吗？"
                                 class="oe_highlight" type="object" string="创建付款申请"/>
 <!--                         <button name="action_create_yfhxd_from_one_invoice" type="object" string="创建应付申请"-->
 <!--                                context="{'invoice_attribute':invoice_attribute}"-->
 <!--                              />-->
-                        <button name="create_reconcile" type="object" string="创建核销" groups="account.group_account_manager" attrs="{'invisible':[('payment_log_ids_count','=',0)]}" confirm="创建付款申请！"/>
+                        <button name="create_reconcile" type="object" string="创建核销"
+                                groups="account.group_account_manager"
+                                attrs="{'invisible':['|',('residual','=',0),('payment_log_ids_count','=',0)]}" confirm="确定创建核销申请单吗？"/>
 
 
 
@@ -181,9 +183,9 @@
                                            domain="[('customer', '=', True),('is_company','=',True)]"/>
                                 </div>
                                 <field name="invoice_partner"
-                                       attrs="{'invisible':[('invoice_attribute','!=','other_payment')]}"/>
+                                       attrs="{'readonly':[('state','in',['paid','open'])],'invisible':[('invoice_attribute','!=','other_payment')]}"/>
                                 <field name="name_title"
-                                       attrs="{'invisible':[('invoice_attribute','!=','other_payment')]}"/>
+                                       attrs="{'readonly':[('state','in',['paid','open'])],'invisible':[('invoice_attribute','!=','other_payment')]}"/>
                                 <field name="yjzy_invoice_id"
                                        attrs="{'invisible':[('is_yjzy_invoice','=',False)],'readonly':[('state','not in',['draft'])]}"
                                        domain="[('partner_id','=',partner_id)]" string="原始账单"/>
@@ -243,12 +245,15 @@
                                 <field name="team_id" attrs="{'invisible':1}"/>
                                 <field name="tb_po_invoice_id" string="申请单"
                                        attrs="{'readonly':[('state','not in',['draft'])]}"
-                                       context="{'form_view_ref':'yjzy_extend.tb_po_form'}"/>
-                                <field name="tb_po_invoice_child_id" string="关联下级申请单" attrs="{'invisible':[('is_yjzy_tb_po_invoice','=',False)]}"/>
-                                <field name="tb_po_invoice_parent_id" string="关联上级申请单" attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',False)]}"/>
-                                <field name="is_yjzy_tb_po_invoice" invisible="1"/>
-                                <field name="is_yjzy_tb_po_invoice_parent" invisible="1"/>
-                                <field name="fault_comments" attrs="{'invisible':[('is_yjzy_invoice','=',True)]}"/>
+                                       context="{'form_view_ref':'yjzy_extend.tb_po_other_form'}"/>
+                                <field name="tb_po_invoice_child_id" string="关联下级申请单"
+                                       attrs="{'readonly':[('state','not in',['draft'])],'invisible':[('is_yjzy_tb_po_invoice','=',False)]}"
+                                        context="{'form_view_ref':'yjzy_extend.tb_po_other_form'}"/>
+                                <field name="tb_po_invoice_parent_id" string="关联上级申请单"
+                                       attrs="{'readonly':[('state','not in',['draft'])],'invisible':[('is_yjzy_tb_po_invoice_parent','=',False)]}"
+                                        context="{'form_view_ref':'yjzy_extend.tb_po_other_form'}"/>
+
+                                <field name="fault_comments" attrs="{'readonly':[('state','in',['paid'])],'invisible':[('is_yjzy_invoice','=',True)]}"/>
 
                             </group>
                             <group col="1" style="margin-top:-5px;">
@@ -826,6 +831,8 @@
 
                             <page groups="base.group_system">
                                 <group>
+                                    <field name="is_yjzy_tb_po_invoice" />
+                                    <field name="is_yjzy_tb_po_invoice_parent" />
                                     <field name="is_yjzy_invoice"/>
                                     <field name="date_invoice" string="账单日期"/>
                                     <field name="move_name"/>

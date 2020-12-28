@@ -181,6 +181,7 @@
             <field name="arch" type="xml">
                 <tree decoration-info="state == 'draft'"  decoration-muted="state == 'cancel'" string="Invoice" create="false">
                     <field name="partner_id" string="供应商" />
+                       <field name="invoice_attribute_all_in_one"/>
                     <field name="bill_id" string="合同号" invisible="1"/>
                     <field name="tb_contract_code" string="合同号"/>
                     <field name="date_invoice" string="账单日期"/>
