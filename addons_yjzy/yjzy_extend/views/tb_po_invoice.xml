@@ -1713,7 +1713,7 @@
 
         <menuitem id="menu_other_payment_customer_invoice_all" name="查询申请单"
                   parent="yjzy_extend.menu_customer_invoice_other_payment_apply_root"
-                  sequence="10"
+                  sequence="20"
                   action="act_other_payment_customer_invoice_all"
         />
 
@@ -1746,7 +1746,7 @@
         </record>
         <menuitem id="menu_other_payment_customer_invoice_create" name="创建申请单"
                   parent="yjzy_extend.menu_customer_invoice_other_payment_apply_root"
-                  sequence="20"
+                  sequence="10"
                   action="act_other_payment_customer_invoice_create"/>
 
         <!--        工作台需要的-->

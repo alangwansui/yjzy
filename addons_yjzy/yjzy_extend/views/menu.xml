@@ -14,8 +14,8 @@
 <!--        新财务-->
 
 
-        <menuitem id="menu_special_supplier_invoice_apply_root" name="特殊账单申请" parent="yjzy_extend.menu_new_account_out_root" sequence="5"/>
-        <menuitem id="menu_supplier_invoice_apply_root" name="账单查询" parent="yjzy_extend.menu_new_account_out_root" sequence="10"/>
+        <menuitem id="menu_special_supplier_invoice_apply_root" name="特殊账单申请" parent="yjzy_extend.menu_new_account_out_root" sequence="10"/>
+        <menuitem id="menu_supplier_invoice_apply_root" name="账单查询" parent="yjzy_extend.menu_new_account_out_root" sequence="5"/>
         <menuitem id="menu_supplier_invoice_extra_apply_root" name="额外账单申请" parent="yjzy_extend.menu_special_supplier_invoice_apply_root" groups="base.group_system" sequence="20"/>
         <menuitem id="menu_supplier_invoice_other_po_apply_root" name="新增采购申请" parent="yjzy_extend.menu_special_supplier_invoice_apply_root" sequence="30"/>
         <menuitem id="menu_supplier_invoice_other_payment_apply_root" name="其他应付申请" parent="yjzy_extend.menu_special_supplier_invoice_apply_root" sequence="40"/>
@@ -50,7 +50,7 @@
         <menuitem id="menu_customer_invoice_other_payment_apply_root" name="其他应收申请" parent="yjzy_extend.menu_new_account_in_root" sequence="20"/>
         <menuitem id="menu_customer_invoice_for_goods_root" name="货款应收" parent="yjzy_extend.menu_new_account_in_root" sequence="30"/>
         <menuitem id="menu_customer_invoice_back_tax_root" name="退税应收" parent="yjzy_extend.menu_new_account_in_root" sequence="40"/>
-        <menuitem id="menu_customer_invoice_other_payment_root" name="其他应收" parent="yjzy_extend.menu_new_account_in_root" sequence="50"/>
+        <menuitem id="menu_customer_invoice_other_payment_root" name="其他应收" parent="yjzy_extend.menu_new_account_in_root" sequence="50" groups="base.group_system"/>
         <menuitem id="menu_sale_reconcile_apply" name="核销" parent="yjzy_extend.menu_new_account_in_root" sequence="60"/>
 
     </data>

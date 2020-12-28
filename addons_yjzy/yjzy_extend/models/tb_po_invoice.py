@@ -407,6 +407,7 @@ class tb_po_invoice(models.Model):
     yjzy_invoice_include_tax = fields.Boolean('原始采购是否含税', compute=compute_info_store, store=True)
     extra_invoice_include_tax = fields.Boolean('原始账单是否含税')
 
+
     def open_tb_po_invoice(self):
         form_view = self.env.ref('yjzy_extend.tb_po_form')
         return {
