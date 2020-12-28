@@ -946,6 +946,8 @@ class account_payment(models.Model):
                 for one in self.po_id.yjzy_payment_ids:
                     if one.state not in ['posted','reconciled'] and one.partner_id != self.partner_id and one.sfk_type == 'yfsqd' and one.id < self.id:
                         raise Warning('有存在未完成审批的预付申请，请先完成审批!')
+                    if one.state not in ['posted','reconciled'] and one.partner_id != self.partner_id and one.sfk_type == 'reconcile_yfsqd' and one.id < self.id:
+                        raise Warning('有存在未完成审批的核销单，请检查!')
                 self.state_1 = '20_account_submit'
             elif ctx.get('default_sfk_type', '') == 'jiehui' or self.sfk_type == 'jiehui':
                 if not self.journal_id or not self.advance_account_id:
