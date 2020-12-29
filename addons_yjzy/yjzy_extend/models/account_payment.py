@@ -573,6 +573,11 @@ class account_payment(models.Model):
     aml_yfzk_ids = fields.One2many('account.move.line', 'new_advance_payment_id', u'余额相关预付账款分录',domain=[('account_id.code','=','1123')])
     aml_yszk_ids = fields.One2many('account.move.line', 'new_advance_payment_id', u'余额相关预收账款分录',domain=[('account_id.code', '=', '2203')])
 
+    aml_com_yfzk_ids = fields.One2many('account.move.line.com', 'advance_payment_id', u'余额相关预付账款分录',
+                                   domain=[('account_id.code', '=', '1123')])
+    aml_com_yszk_ids = fields.One2many('account.move.line.com', 'advance_payment_id', u'余额相关预收账款分录',
+                                   domain=[('account_id.code', '=', '2203')])
+
     po_id = fields.Many2one('purchase.order', u'采购单')
     supplier_payment_term_id = fields.Many2one('account.payment.term',u'供应商付款条款',related='partner_id.property_supplier_payment_term_id')
     purchase_payment_term_id = fields.Many2one('account.payment.term',u'采购合同付款条款',related='po_id.payment_term_id' )

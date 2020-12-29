@@ -323,7 +323,14 @@
                             </field>
                         </page>
    <page string="账单认领日志(move)" >
-
+<field name="aml_com_yszk_ids" readonly="1">
+                                    <tree>
+                                      <field name="reconcile_type"/>
+                                        <field name="amount_this_time"/>
+                                        <field name="sslj_balance"/>
+                                        <field name="create_date"/>
+                                    </tree>
+                                </field>
                                 <field name="aml_yszk_ids" readonly="1">
                                     <tree>
                                       <field name="reconcile_type"/>
@@ -707,7 +714,14 @@
                            </field>
                        </page>
  <page string="账单认领日志(move)" >
-
+<field name="aml_com_yszk_ids" readonly="1">
+                                    <tree>
+                                      <field name="reconcile_type"/>
+                                        <field name="amount_this_time"/>
+                                        <field name="sslj_balance"/>
+                                        <field name="create_date"/>
+                                    </tree>
+                                </field>
                                 <field name="aml_yszk_ids" readonly="1">
                                     <tree>
                                       <field name="reconcile_type"/>
