@@ -45,6 +45,9 @@ access_account_payment_state,access_account_payment_state,model_account_payment_
 access_real_invoice,access_real_invoice,model_real_invoice,base.group_user,1,1,1,1
 access_sys_invoice_line,access_sys_invoice_line,model_sys_invoice_line,base.group_user,1,1,1,1
 access_real_invoice_line,access_real_invoice_line,model_real_invoice_line,base.group_user,1,1,1,1
+access_account_move_line_com,access_account_move_line_com,model_account_move_line_com,base.group_user,1,1,1,1
+
+
 
 
 
