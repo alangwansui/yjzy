@@ -451,6 +451,7 @@ class account_reconcile_order(models.Model):
             one.invoice_attribute_all_in_one = invoice_id.invoice_attribute_all_in_one
             one.payment_log_ids = invoice_id.payment_log_ids
 
+
     payment_log_ids = fields.One2many('account.payment',compute=compute_invoice_id)
 
     invoice_id = fields.Many2one('account.invoice',compute=compute_invoice_id)
@@ -1712,15 +1713,17 @@ class account_reconcile_order(models.Model):
         if self.sfk_type == 'yfhxd':
             if self.reconcile_payment_ids:
                 self.reconcile_payment_ids.post()
-                for one in self.reconcile_payment_ids:#所有认领单
+                for one in self.reconcile_payment_ids:#所有认领单  日志
                     one.state_1 = '60_done'
                     one.invoice_log_id.get_reconcile_order_line()
+                    one.invoice_log_id_this_time = one.invoice_log_id.residual
         if self.sfk_type == 'yshxd':
             if self.reconcile_payment_ids:
                 self.reconcile_payment_ids.post()
                 for one in self.reconcile_payment_ids:#所有认领单
                     one.state_1 = '60_done'
                     one.invoice_log_id.get_reconcile_order_line()
+                    one.invoice_log_id_this_time = one.invoice_log_id.residual
 
 
 

@@ -771,7 +771,10 @@ class account_invoice(models.Model):
 
     move_ids = fields.One2many('account.move', 'invoice_id', u'发票相关的分录', help=u'记录发票相关的分录，方便统计')
     move_line_ids = fields.One2many('account.move.line', 'invoice_id', u'发票相关的分录明细', help=u'记录发票相关的分录明细，方便统计')
-
+    move_line_plan_ids = fields.One2many('account.move.line', 'plan_invoice_id', u'发票相关的分录明细', help=u'记录发票相关的分录明细，方便统计')
+    move_line_yfzk_ids = fields.One2many('account.move.line', 'invoice_id', u'发票相关应付账款分录',domain=[('account_id.code','=','2202')])
+    move_line_yszk_ids = fields.One2many('account.move.line', 'invoice_id', u'发票相关应收账款分录',
+                                         domain=[('account_id.code', '=', '1122')])
 
     item_ids = fields.One2many('invoice.hs_name.item', 'invoice_id', u'品名汇总明细')
     po_id = fields.Many2one('purchase.order', u'采购订单')
@@ -801,8 +804,8 @@ class account_invoice(models.Model):
     residual_times_out_in_new = fields.Integer('进仓日逾期天数', compute=compute_times, store=True)
     state = fields.Selection([
         ('draft', u'未确认'),
-        ('open', u'已确认'),
-        ('paid', u'已付款'),
+        ('open', u'未完成认领'),
+        ('paid', u'已完成认领'),
         ('cancel', u'已取消'),
     ], string='Status', index=True, readonly=True, default='draft',
         track_visibility='onchange', copy=False,
@@ -831,6 +834,12 @@ class account_invoice(models.Model):
     extra_code = fields.Char(u'额外编号',default=lambda self: self._default_name())
     yjzy_invoice_line_ids = fields.One2many('account.invoice.line','yjzy_invoice_id',u'所有明细',domain=[('quantity','!=',0),('invoice_attribute','in',['normal','extra'])])
 
+
+    def compute_move_lines(self):
+        for one in self.move_line_yfzk_ids:
+            one.compute_sslj_balance()
+        for one in self.move_line_yszk_ids:
+            one.compute_sslj_balance()
 
     #创建认证明细
     def create_real_invoice_line(self):

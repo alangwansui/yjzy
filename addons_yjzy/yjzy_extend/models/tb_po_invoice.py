@@ -65,19 +65,28 @@ class tb_po_invoice(models.Model):
         else:
             return self.env.user.company_id.currency_id.id
 
-    def _default_extra_invoice_line(self): #参考one2many的default 默认
+    def _default_extra_invoice_line(self): #参考one2many的default 默认核心参考
         default_yjzy_type_1 = self.env.context.get('default_yjzy_type_1')
         default_type = self.env.context.get('default_type')
         res = []
         # yjzy_type_1=self.env.context.get('yjzy_type_1')
         # type = self.env.context.get('type')
-        product = self.env['product.product'].search([('for_other_po','=',True)])
-        print('default_yjzy_type_1',default_yjzy_type_1,default_type)
-        for line in product:
-            if default_yjzy_type_1 == 'purchase' and default_type == 'other_po':
-                res.append((0, 0, {
-                    'product_id': line.id
-                }))
+        if default_yjzy_type_1 == 'purchase' and default_type == 'other_po':
+            product = self.env['product.product'].search([('for_other_po','=',True)])
+            print('default_yjzy_type_1',default_yjzy_type_1,default_type)
+            for line in product:
+                if default_yjzy_type_1 == 'purchase' and default_type == 'other_po':
+                    res.append((0, 0, {
+                        'product_id': line.id
+                    }))
+        if default_yjzy_type_1 == 'other_payment_purchase' or self.yjzy_type_1 == 'other_payment_purchase':
+            product = self.env['product.product'].search([('default_code', '=', 'FD02406')], limit=1)
+            account = product.property_account_income_id
+            res.append ((0, 0, {
+                'name': '%s:%s' % (product.name, self.name),
+                'product_id': product.id,
+                'quantity': 1,
+                'account_id': account.id, }))
         return res or None
 
     # @api.onchange('partner_id')
@@ -252,6 +261,8 @@ class tb_po_invoice(models.Model):
                                                        related='yjzy_tb_po_invoice_parent.is_yjzy_tb_po_invoice_parent')
     invoice_partner_yjzy_parent = fields.Char(u'对应的应收付账单对象', related='yjzy_tb_po_invoice_parent.invoice_partner')
     name_title_yjzy_parent = fields.Char(u'对应的应收付账账单描述', related='yjzy_tb_po_invoice_parent.name_title')
+    other_invoice_amount_yjzy_parent = fields.Monetary('对应的金额',currency_field='currency_id', related='yjzy_tb_po_invoice_parent.other_invoice_amount')
+
 
     price_total_yjzy = fields.Monetary('金额合计',currency_field='currency_id',related='yjzy_tb_po_invoice.price_total')
     invoice_normal_ids_residual_yjzy = fields.Float('对应账单申请账单未付金额', related='yjzy_tb_po_invoice.invoice_normal_ids_residual')
@@ -265,6 +276,7 @@ class tb_po_invoice(models.Model):
 
     invoice_partner_yjzy = fields.Char(u'对应的应收付账单对象',related='yjzy_tb_po_invoice.invoice_partner')
     name_title_yjzy = fields.Char(u'对应的应收付账账单描述',related='yjzy_tb_po_invoice.name_title')
+    other_invoice_amount_yjzy = fields.Monetary('对应的金额',currency_field='currency_id',related='yjzy_tb_po_invoice.other_invoice_amount')
 
     tb_po_other_line_ids = fields.One2many('extra.invoice.line','tb_po_other_id',u'关联明细') #上下级的其他应收应付对应的明细
     tb_po_other_line_count = fields.Integer(u'关联明细数量',compute=compute_tb_po_other_line_count)
@@ -397,6 +409,7 @@ class tb_po_invoice(models.Model):
     p_s_add_this_time_refund = fields.Float('本次冲减金额', compute=compute_info_store, store=True)
     invoice_product_id = fields.Many2one('product.product', u'账单项目')
 
+    other_invoice_amount = fields.Monetary('金额',currency_field='currency_id')
 
 
     expense_sheet_id = fields.Many2one('hr.expense.sheet',u'费用报告' ,ondelete='cascade',index=True)
@@ -406,6 +419,36 @@ class tb_po_invoice(models.Model):
     yjzy_invoice_residual_amount = fields.Float('原始未付总金额', compute=compute_info_store, store=True)
     yjzy_invoice_include_tax = fields.Boolean('原始采购是否含税', compute=compute_info_store, store=True)
     extra_invoice_include_tax = fields.Boolean('原始账单是否含税')
+
+
+    # @api.onchange('other_invoice_product_id')
+    # def onchange_invoice_product_id(self):
+    #     product = self.other_invoice_product_id
+    #     account = product.property_account_income_id
+    #     print('product_akiny',product)
+    #     self.extra_invoice_line_ids = [(0, 0, {
+    #                     'name': '%s:%s' % (product.name, self.name),
+    #                     'product_id': product.id,
+    #                     'quantity': 1,
+    #                     'price_unit': self.other_invoice_amount,
+    #                     'account_id': account.id,})]
+
+    @api.onchange('other_invoice_amount')
+    def onchange_other_invoice_amount(self):
+        other_invoice_amount = self.other_invoice_amount
+        self.extra_invoice_line_ids[0].price_unit = other_invoice_amount
+
+    @api.onchange('other_invoice_amount_yjzy')
+    def onchange_other_invoice_amount_yjzy(self):
+        if self.other_invoice_amount_yjzy:
+            other_invoice_amount_yjzy = self.other_invoice_amount_yjzy
+            self.tb_po_other_line_ids[0].price_unit = other_invoice_amount_yjzy
+
+    # @api.onchange('other_invoice_amount_yjzy_parent')
+    # def onchange_other_invoice_amount_yjzy_parent(self):
+    #     other_invoice_amount_yjzy_parent = self.other_invoice_amount_yjzy_parent
+    #     self.tb_po_other_line_ids[0].price_unit = other_invoice_amount_yjzy_parent
+
 
 
     def open_tb_po_invoice(self):
@@ -435,10 +478,13 @@ class tb_po_invoice(models.Model):
     def unlink(self):
         for one in self:
             if one.state not in ['20_submit','30_done']:
+                # if one.is_yjzy_tb_po_invoice_parent:
+                #     raise Warning('该申请为下级申请，请转到对应的上级申请进行删除')
                 one.invoice_ids.unlink()
                 one.yjzy_tb_po_invoice.unlink()
+
             else:
-                raise Warning('完成审批不允许删除！')
+                raise Warning('提交审批的申请不允许删除！')
 
         return super(tb_po_invoice, self).unlink()
 
@@ -728,6 +774,8 @@ class tb_po_invoice(models.Model):
             type_invoice = 'out_invoice'
             name = '创建其他应收申请'
         elif self.type == 'other_payment' and self.yjzy_type_1 in ['sale','other_payment_sale']:
+            if not self.name_title or not self.invoice_partner or not self.other_invoice_amount or not self.manual_currency_id:
+                raise Warning('请先将信息填写完整')
             yjzy_type_1 = 'other_payment_purchase'
             type_invoice = 'in_invoice'
             name = '创建其他应付申请'
@@ -738,6 +786,7 @@ class tb_po_invoice(models.Model):
         tb_po_id = self.env['tb.po.invoice'].with_context({'default_type':'other_payment'}).create({'tb_id': self.tb_id.id,
                                                      'name_title':self.name_title,
                                                      'invoice_partner':self.invoice_partner,
+                                                     'other_invoice_amount':self.other_invoice_amount,
                                                      'tax_rate_add': self.tax_rate_add,
                                                      'type': self.type,
                                                      'yjzy_type_1': yjzy_type_1,

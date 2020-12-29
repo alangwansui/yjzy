@@ -141,7 +141,9 @@
                     <field name="date_invoice" string="账单日期"/>
                     <field name="invoice_partner"/>
                     <field name="name_title"/>
-                     <button name="open_supplier_reconcile_order_line" attrs="{'invisible':[('reconcile_order_line_count','=',0)]}" icon="fa-pencil-square-o" type="object"/>
+                     <button name="open_supplier_reconcile_order_line" groups="base.group_system"
+                             attrs="{'invisible':[('reconcile_order_line_count','=',0)]}"
+                             icon="fa-pencil-square-o" type="object"/>
                     <field name="reconcile_order_line_count" invisible="1"/>
                     <field name="date_deadline_new" string="实际到期日" invisible="1"/>
                     <field name="residual_times_new" invisible="1"/>
@@ -187,7 +189,9 @@
                     <field name="date_invoice" string="账单日期"/>
                     <field name="invoice_partner" invisible="1"/>
                     <field name="name_title" invisible="1"/>
-                    <button name="open_supplier_reconcile_order_line" attrs="{'invisible':[('reconcile_order_line_count','=',0)]}" icon="fa-pencil-square-o" type="object"/>
+                    <button name="open_supplier_reconcile_order_line" groups="base.group_system"
+                            attrs="{'invisible':[('reconcile_order_line_count','=',0)]}"
+                            icon="fa-pencil-square-o" type="object"/>
                     <field name="reconcile_order_line_count" invisible="1"/>
                     <field name="date_deadline_new" string="实际到期日" invisible="1"/>
                     <field name="residual_times_new" invisible="1"/>

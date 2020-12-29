@@ -227,6 +227,7 @@
                                             <field name="payment_date"/>
                                             <field name="name"/>
                                             <field name="amount"/>
+                                            <field name="invoice_log_id_this_time"/>
                                             <field name="state_1"/>
                                         </tree>
                                 </field>

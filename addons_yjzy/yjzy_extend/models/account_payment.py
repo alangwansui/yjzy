@@ -381,11 +381,11 @@ class account_payment(models.Model):
         for one in self:
             one.invoice_attribute_all_in_one = one.invoice_log_id.invoice_attribute_all_in_one
 
-    reconcile_type = fields.Selection([('10_payment_out',u'付款'),
-                                       ('20_advance_out','预付'),
-                                       ('30_payment_in',u'收款'),
-                                       ('40_advance_in',u'预收'),
-                                       ('50_reconcile',u'核销'),
+    reconcile_type = fields.Selection([('10_payment_out',u'付款支付'),
+                                       ('20_advance_out','预付认领'),
+                                       ('30_payment_in',u'收款认领'),
+                                       ('40_advance_in',u'预收认领'),
+                                       ('50_reconcile', u'本次核销'),
                                        # ('600_reconcile_ysrld',u'预收核销'),
                                        # ('605_reconcile_yfsqd',u'预付核销'),
                                        # ('610_reconcile_zzdyfhx',u'主账单应付核销'),
@@ -404,6 +404,7 @@ class account_payment(models.Model):
     invoice_log_currency_id = fields.Many2one('res.currency',u'账单币种',related='invoice_log_id.currency_id')
 
     amount_invoice_log = fields.Monetary('账单余额',currency_field='invoice_log_currency_id',related='invoice_log_id.residual')
+    invoice_log_id_this_time = fields.Monetary('账单余额',currency_field='invoice_log_currency_id')
 
     pay_to = fields.Char('付款对象', compute = compute_pay_to,store=True)
 
@@ -569,8 +570,8 @@ class account_payment(models.Model):
     balance = fields.Monetary(u'余额', compute=compute_balance, store=True)
 
     aml_ids = fields.One2many('account.move.line', 'new_payment_id', u'余额相关分录')
-
-
+    aml_yfzk_ids = fields.One2many('account.move.line', 'new_advance_payment_id', u'余额相关预付账款分录',domain=[('account_id.code','=','1123')])
+    aml_yszk_ids = fields.One2many('account.move.line', 'new_advance_payment_id', u'余额相关预收账款分录',domain=[('account_id.code', '=', '2203')])
 
     po_id = fields.Many2one('purchase.order', u'采购单')
     supplier_payment_term_id = fields.Many2one('account.payment.term',u'供应商付款条款',related='partner_id.property_supplier_payment_term_id')
@@ -701,6 +702,11 @@ class account_payment(models.Model):
     #                     }
     #     }
 
+    def compute_move_lines(self):
+        for one in self.aml_yfzk_ids:
+            one.compute_sslj_balance()
+        for one in self.aml_yszk_ids:
+            one.compute_sslj_balance()
     #1126
     def make_reconcile_line_ids(self):
         ctx_hxd = self.env.context.get('hxd_id')
@@ -1213,7 +1219,7 @@ class account_payment(models.Model):
         # print('===3', res)
         return res
 
-
+   #如果要看日志的过账,查看应付应收认领单的action_done_new_stage
     @api.multi
     def post(self):
         """
@@ -1312,11 +1318,11 @@ class account_payment(models.Model):
         else:
             pass
 
-    #akiny生成分录
+    #akiny生成分录 计算分录日志
     def _get_shared_move_line_vals(self, debit, credit, amount_currency, move_id, invoice_id=False):
         """生成分录明细的准备数据"""
         res = super(account_payment, self)._get_shared_move_line_vals(debit, credit, amount_currency, move_id, invoice_id=invoice_id)
-
+        plan_invoice_id = ''
         new_payment_id = self.id
         if self.sfk_type in ['ysrld', 'yfsqd', 'rcfksqd', 'rcskrld','yingshourld','yingfurld']:
             if self.fkzl_id:
@@ -1331,13 +1337,18 @@ class account_payment(models.Model):
                 new_advance_payment_id = self.fkzl_id.id
             else:
                 new_advance_payment_id = self.yjzy_payment_id.id
+                print('new_advance_payment_id_akiny',new_advance_payment_id)
+            plan_invoice_id = self.invoice_log_id.id
         if self.sfk_type in ['reconcile_ysrld','reconcile_yfsqd']:#1225
             new_advance_payment_id = self.yjzy_payment_id.id
         res.update({
             'new_payment_id': new_payment_id,
             'so_id': self.so_id.id,
             'po_id': self.po_id.id,
-            'new_advance_payment_id':new_advance_payment_id
+            'new_advance_payment_id':new_advance_payment_id,
+            'plan_invoice_id':plan_invoice_id,
+            'self_payment_id':self.id,#用来对应sfk_type
+            'invoice_id':plan_invoice_id#akiny1229应收应付认领单的填入分录的核销放票上 重点
         })
         return res
 

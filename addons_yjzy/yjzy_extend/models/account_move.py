@@ -27,6 +27,54 @@ class account_move(models.Model):
 class account_move_line(models.Model):
     _inherit = 'account.move.line'
 
+    def compute_sslj_currency_id(self):
+        for one in self:
+            if not one.sslj_currency_id:
+                sslj_currency_id = self.env.user.company_id.currency_id
+            else:
+                sslj_currency_id = self.currency_id
+            one.sslj_currency_id = sslj_currency_id
+
+
+
+    @api.depends('amount_currency','credit','credit','account_id','plan_invoice_id','new_advance_payment_id')
+    def compute_sslj_balance(self):
+        for one in self:
+            amount_this_time = 0
+            sslj_balance = 0
+            # print('amount_currency_akiny',one.amount_currency)
+            # if one.amount_currency > 0:
+            #     amount_this_time = one.amount_currency
+            # else:
+            # print('polarity_akiny',one.account_id.polarity)
+            if one.account_id.polarity in [1,-1]:
+                if one.account_id.polarity == 1:
+                    if one.amount_currency != 0:
+                        amount_this_time = one.amount_currency
+                    else:
+                        amount_this_time = one.debit - one.credit
+                    print('amount_this_time_akiny',amount_this_time)
+                elif one.account_id.polarity == -1:
+                    if one.amount_currency != 0:
+                        amount_this_time = - one.amount_currency
+                    else:
+                        amount_this_time = one.credit - one.debit
+                    print('amount_this_time_akiny', one.amount_currency,amount_this_time,one.credit,one.debit)
+
+
+                # date_time = one.create_date.strftime('%Y-%m-%d %H:%M:%S')
+
+
+                move_lines = one.env['account.move.line'].search([('create_date','<',one.create_date),('account_id','=',one.account_id.id),
+                                                                   '|','&',('invoice_id','=',one.invoice_id.id),('invoice_id','!=',False),
+                                                                   '&',('new_advance_payment_id','!=',False),('new_advance_payment_id','=',one.new_advance_payment_id.id)])
+                print('move_lines_akiny',move_lines,amount_this_time)
+
+                sslj_balance = sum(x.amount_this_time for x in move_lines) + amount_this_time
+            one.amount_this_time = amount_this_time
+            one.sslj_balance = sslj_balance
+
+
     so_id = fields.Many2one('sale.order', u'销售订单')
     po_id = fields.Many2one('purchase.order', u'采购订单')
 
@@ -42,9 +90,23 @@ class account_move_line(models.Model):
 
     new_payment_id = fields.Many2one('account.payment', u'收付款ID')
     new_advance_payment_id = fields.Many2one('account.payment', u'预收款单ID')
+
     gongsi_id = fields.Many2one('gongsi', '内部公司')
 
+    sslj_currency_id = fields.Many2one('res.currency',compute=compute_sslj_currency_id)
+    amount_this_time = fields.Monetary('发生金额',currency_field='sslj_currency_id',compute=compute_sslj_balance,store=True)
+    sslj_balance = fields.Monetary('实时累计余额',currency_field='sslj_currency_id',compute=compute_sslj_balance,store=True) #akiny计算分录日志
 
+    self_payment_id = fields.Many2one('account.payment',u'对应的付款单')#所有申请单，付款单，收款单，都做一个记录。,用来对应sfk_type
+    reconcile_type = fields.Selection([
+
+                                        ('10_payment_out', u'付款支付'),
+                                       ('20_advance_out', '预付认领'),
+                                       ('30_payment_in', u'收款认领'),
+                                       ('40_advance_in', u'预收认领'),
+                                       ('50_reconcile', u'本次核销'),
+
+                                       ], '认领方式',related='self_payment_id.reconcile_type')
 
     # @api.model
     # def create(self, vals):
