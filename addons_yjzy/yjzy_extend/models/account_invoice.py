@@ -773,8 +773,7 @@ class account_invoice(models.Model):
     move_line_ids = fields.One2many('account.move.line', 'invoice_id', u'发票相关的分录明细', help=u'记录发票相关的分录明细，方便统计')
     move_line_plan_ids = fields.One2many('account.move.line', 'plan_invoice_id', u'发票相关的分录明细', help=u'记录发票相关的分录明细，方便统计')
     move_line_yfzk_ids = fields.One2many('account.move.line', 'invoice_id', u'发票相关应付账款分录',domain=[('account_id.code','=','2202')])
-    move_line_yszk_ids = fields.One2many('account.move.line', 'invoice_id', u'发票相关应收账款分录',
-                                         domain=[('account_id.code', '=', '1122')])
+    move_line_yszk_ids = fields.One2many('account.move.line', 'invoice_id', u'发票相关应收账款分录',domain=[('account_id.code', '=', '1122')])
 
     item_ids = fields.One2many('invoice.hs_name.item', 'invoice_id', u'品名汇总明细')
     po_id = fields.Many2one('purchase.order', u'采购订单')

@@ -17,11 +17,71 @@ class account_move(models.Model):
 
     gongsi_id = fields.Many2one('gongsi', '内部公司')
 
+    line_com_ids = fields.One2many('account.move.line.com', 'move_id', string='合并明细',
+       copy=True)
+
+
+
+
+    def create_account_move_line_com(self):
+        move_obj = self.env['account.move.line.com']
+        move_line_com_dic = {}
+        self.line_com_ids = None
+        for i in self.line_ids:
+            account_id = i.account_id
+            amount_this_time = i.amount_this_time
+            sslj_balance = i.sslj_balance
+            new_advance_payment= i.new_advance_payment_id
+            sslj_currency_id = i.sslj_currency_id
+            self_payment_id = i.self_payment_id
+            if i.invoice_id:
+                invoice_id = i.invoice_id
+            else:
+                invoice_id = i.plan_invoice_id
+            move_id = i.move_id
+            k = account_id.id
+            if k in move_line_com_dic:
+                print('k', k)
+                move_line_com_dic[k]['amount_this_time'] += amount_this_time
+                move_line_com_dic[k]['sslj_balance'] += sslj_balance
+
+                if not move_line_com_dic[k]['advance_payment_id']:
+                    move_line_com_dic[k]['advance_payment_id'] = new_advance_payment.id
+                if not move_line_com_dic[k]['invoice_id']:
+                    move_line_com_dic[k]['invoice_id'] = invoice_id.id
+            else:
+                print('k1', k)
+                move_line_com_dic[k] = {
+                    'account_id': account_id.id,
+                    'advance_payment_id': new_advance_payment.id,
+                    'amount_this_time': amount_this_time,
+                    'sslj_balance': sslj_balance,
+
+                    'invoice_id': invoice_id.id,
+                    'sslj_currency_id':sslj_currency_id.id,
+                    'self_payment_id':self_payment_id.id}
+
+        for kk, data in list(move_line_com_dic.items()):
+            line_com = move_obj.create({
+                'move_id': self.id,
+                'account_id': data['account_id'],
+                'advance_payment_id': data['advance_payment_id'],
+                'amount_this_time': data['amount_this_time'],
+                'invoice_id': data['invoice_id'],
+                'sslj_currency_id': data['sslj_currency_id'],
+                'self_payment_id': data['self_payment_id'],
+                'sslj_balance': data['sslj_balance'],
+
+            })
+
+
+
 
 
     @api.multi
     def post(self):
         res = super(account_move, self).post()
+        self.create_account_move_line_com()
         return res
 
 class account_move_line(models.Model):
@@ -128,9 +188,27 @@ class account_move_line(models.Model):
             amount = self.company_currency_id.with_context(ctx).compute(self.debit - self.credit, to_currency)
         return amount
 
+#重新统计后的明细
+class account_move_line_com(models.Model):
+    _name = 'account.move.line.com'
 
+    move_id = fields.Many2one('account.move', string='Journal Entry', ondelete="cascade",
+                              help="The move of this entry line.", index=True, required=True, auto_join=True)
 
+    account_id = fields.Many2one('account.account', string='Account', required=True, index=True,
+                                 ondelete="cascade", domain=[('deprecated', '=', False)])
+    sslj_currency_id = fields.Many2one('res.currency')
+    amount_this_time = fields.Monetary('发生金额',currency_field='sslj_currency_id')
+    sslj_balance = fields.Monetary('实时累计余额',currency_field='sslj_currency_id') #akiny计算分录日志
+    self_payment_id = fields.Many2one('account.payment', u'对应的付款单')
+    reconcile_type = fields.Selection([
+                                        ('10_payment_out', u'付款支付'),
+                                       ('20_advance_out', '预付认领'),
+                                       ('30_payment_in', u'收款认领'),
+                                       ('40_advance_in', u'预收认领'),
+                                       ('50_reconcile', u'本次核销'),
 
-
-
+                                       ], '认领方式',related='self_payment_id.reconcile_type')
+    invoice_id = fields.Many2one('account.invoice')
+    advance_payment_id = fields.Many2one('account.payment')
 

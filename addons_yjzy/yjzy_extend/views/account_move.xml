@@ -51,11 +51,34 @@
                 <field name="hx_code"/>
                 <field name="gongsi_id"/>
             </xpath>
+
+            <xpath expr="//form[1]/sheet[1]/notebook[1]" position="inside">
+                <page  string="日志">
+                    <field name="line_com_ids">
+                        <tree>
+                            <field name="account_id"/>
+                            <field name="sslj_currency_id"/>
+                            <field name="amount_this_time"/>
+                            <field name="sslj_balance"/>
+                            <field name="self_payment_id"/>
+                            <field name="reconcile_type"/>
+                            <field name="invoice_id"/>
+                            <field name="advance_payment_id"/>
+
+                        </tree>
+                    </field>
+
+
+
+
+                </page>
+              </xpath>
             <field name="ref" position="after">
                 <field name="invoice_id"/>
                 <field name="include_tax"/>
                 <field name="tb_contract_code"/>
                 <field name="purchase_contract_code"/>
+                <button name="create_account_move_line_com" type="object" string="测试日志" groups="base.group_system"/>
             </field>
 
         </field>

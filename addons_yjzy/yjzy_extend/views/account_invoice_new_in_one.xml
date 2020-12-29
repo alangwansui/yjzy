@@ -682,6 +682,17 @@
                                     </tree>
                                 </field>
                             </page>
+                            <page string="账单认领日志(move)" >
+
+                                <field name="move_line_yszk_ids" readonly="1">
+                                    <tree>
+                                      <field name="reconcile_type"/>
+                                        <field name="amount_this_time"/>
+                                        <field name="sslj_balance"/>
+                                        <field name="create_date"/>
+                                    </tree>
+                                </field>
+                            </page>
                             <page string="账单认领明细">
 
                                 <field name="reconcile_order_ids" groups="base.group_system"/>
