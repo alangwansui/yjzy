@@ -64,9 +64,9 @@ class account_payment(models.Model):
                 move_line_com_ids = False
             elif yjzy_payment_id and not invoice_log_id:
                 if yjzy_payment_id.sfk_type == 'yfsqd':
-                    move_line_com_ids = yjzy_payment_id.aml_yfzk_ids
+                    move_line_com_ids = yjzy_payment_id.aml_com_yfzk_ids
                 else:
-                    move_line_com_ids = yjzy_payment_id.aml_yszk_ids
+                    move_line_com_ids = yjzy_payment_id.aml_com_yszk_ids
             else:
                 if invoice_log_id.type == 'out_invoice':
                     move_line_com_ids = invoice_log_id.move_line_com_yszk_ids
