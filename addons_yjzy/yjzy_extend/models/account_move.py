@@ -202,15 +202,20 @@ class account_move_line_com(models.Model):
 
             if account_id.code in ['1122','2202','1123','2203']:
                 if self_payment_id:
-                    reconcile_type = self_payment_id.reconcile_type
-                elif account_id.code == '2203':
-                    reconcile_type = '03_advance_in'
-                elif account_id.code == '1123':
-                    reconcile_type = '04_advance_out'
-                elif account_id.code == '1122':
-                    reconcile_type = '05_invoice_in'
+                    if self_payment_id.reconcile_type:
+                        reconcile_type = self_payment_id.reconcile_type
+                    else:
+                        if one.sslj_balance == self_payment_id.amount and account_id.code in ['1123','2203']:
+                            if account_id.code == '2203':
+                                reconcile_type = '03_advance_in'
+                            else:
+                                reconcile_type = '04_advance_out'
                 else:
-                    reconcile_type = '07_invoice_out'
+                    if account_id.code in ['1122', '2202']:
+                        if account_id.code == '1122':
+                            reconcile_type = '05_invoice_in'
+                        else:
+                            reconcile_type = '07_invoice_out'
                 #     invoice_id:
                 #     if invoice_id.type == 'in_invoice':
                 #         reconcile_type = '07_invoice_out'
