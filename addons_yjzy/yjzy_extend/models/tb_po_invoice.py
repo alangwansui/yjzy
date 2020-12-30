@@ -791,7 +791,7 @@ class tb_po_invoice(models.Model):
                    'tb_po_invoice_old':self.id,
                    'open_other':1}
 
-        tb_po_id = self.env['tb.po.invoice'].with_context({'default_type':'other_payment'}).create({'tb_id': self.tb_id.id,
+        tb_po_id = self.env['tb.po.invoice'].with_context({'default_type':'other_payment','default_yjzy_type_1':yjzy_type_1}).create({'tb_id': self.tb_id.id,
                                                      'name_title':self.name_title,
                                                      'invoice_partner':self.invoice_partner,
                                                      'other_invoice_amount':self.other_invoice_amount,
