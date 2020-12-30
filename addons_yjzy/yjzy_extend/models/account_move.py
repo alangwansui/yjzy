@@ -199,7 +199,7 @@ class account_move_line_com(models.Model):
             invoice_id = one.invoice_id
             advance_payment_id = one.advance_payment_id
             account_id = one.account_id
-
+            reconcile_type = ''
             if account_id.code in ['1122','2202','1123','2203']:
                 if self_payment_id:
                     if self_payment_id.reconcile_type:

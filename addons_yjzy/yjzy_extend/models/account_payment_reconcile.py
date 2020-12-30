@@ -200,9 +200,10 @@ class account_payment(models.Model):
             self.amount = self.amount_invoice_log
             self.currency_id = self.invoice_log_currency_id
         else:
-            self.amount = self.yjzy_payment_id.advance_balance_total
-            self.currency_id = self.yjzy_payment_currency_id
-
+            self.write({'amount':self.yjzy_payment_advance_balance,
+                        'currency_id':self.yjzy_payment_currency_id})
+            # self.amount = self.yjzy_payment_advance_balance
+            # self.currency_id = self.yjzy_payment_currency_id
     def action_reconcile_submit(self):
         if self.yjzy_payment_id and (self.so_id or self.po_id) and self.amount > self.yjzy_payment_advance_balance:
             raise Warning('核销金额不允许大于可被认领金额')
