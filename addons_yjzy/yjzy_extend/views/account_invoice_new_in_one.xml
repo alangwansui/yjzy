@@ -684,7 +684,7 @@
                                 </tree>
                                 </field>
                                   <field name="move_line_com_yszk_ids" readonly="1" nolabel="1" colspan="2" attrs="{'invisible':[('type','!=','out_invoice')]}">
-                                     <tree default_order="create_date desc">
+                                     <tree default_order="create_date">
                                     <field name="create_date" string="日期"/>
                                     <field name="reconcile_type" string="属性"/>
                                     <field name="amount_this_time" string="发生金额"/>
@@ -692,8 +692,8 @@
                                 </tree>
                                 </field>
                                         </group>
-                                    <group string="账单认领过程">
-                                <field name="payment_log_ids"  readonly="1" nolabel="1" colspan="2">
+                                    <group string="账单认领流程日志">
+                                <field name="payment_log_no_done_ids"  readonly="1" nolabel="1" colspan="2">
                                     <tree>
                                         <field name="sfk_type" string="认领类型" invisible="1"/>
                                         <field name="reconcile_type" string="认领方式"/>

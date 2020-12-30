@@ -571,6 +571,8 @@ class account_invoice(models.Model):
     payment_log_ids = fields.One2many('account.payment','invoice_log_id','认领以及收付明细')
     payment_log_ids_count = fields.Integer('认领以及收付明细数量',compute=compute_payment_log_ids_count)
 
+    payment_log_no_done_ids = fields.One2many('account.payment','invoice_log_id','认领以及收付明细',domain=[('state','not in',['posted','reconciled'])])
+
     other_payment_invoice_id = fields.Many2one('account.invoice','关联的其他应收付下级账单')
     other_payment_invoice_parent_id = fields.Many2one('account.invoice','关联的其他应收付上级账单')
 

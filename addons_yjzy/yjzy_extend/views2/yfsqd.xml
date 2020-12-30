@@ -260,7 +260,7 @@
 <!--                        </page>-->
                                   <page string="账单认领日志(move)" >
                                       <group col="2">
-                                          <group string="预付认领财务日志"/>
+                                          <group string="预付认领财务日志">
                                      <field name="aml_com_yfzk_ids" readonly="1" nolabel="1" colspan="2">
                                 <tree default_order="create_date desc">
                                     <field name="create_date" string="日期"/>
@@ -271,7 +271,7 @@
                             </field>
                                       </group>
                                       <group string="预付认领流程日志">
-                                       <field name="payment_ids" nolabel="1" colspan="2">
+                                       <field name="payment_no_done_ids" nolabel="1" colspan="2">
                                 <tree decoration-danger="sfk_type in ['reconcile_ysrld','reconcile_yfsqd']">
                                     <field name="sfk_type" string="类型"/>
                                     <field name="payment_date" string="认领时间"/>
@@ -282,6 +282,7 @@
                                 </tree>
                                        </field>
 
+                                      </group>
                                       </group>
 
                                 <field name="aml_yfzk_ids" readonly="1" groups="base.group_system">
