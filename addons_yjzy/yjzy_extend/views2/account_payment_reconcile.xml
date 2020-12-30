@@ -166,21 +166,29 @@
 
                                 <label name="amount_invoice_log" string="未认领金额"
                                        attrs="{'invisible':[('sfk_type','not in',['reconcile_yingshou','reconcile_yingfu'])]}"/>
+                                <div class="oe_row">
                                 <button type="object" name="open_invoice_id" class="btn-xxs btn-link mb2" target="new"
                                          attrs="{'invisible':[('sfk_type','not in',['reconcile_yingshou','reconcile_yingfu'])]}">
                                 <field name="amount_invoice_log" attrs="{'invisible':[('sfk_type','not in',['reconcile_yingshou','reconcile_yingfu'])]}"/>
                                 </button>
+                                    <button name="action_confirm_amount" type="object" string="确认核销金额"
+                                     attrs="{'invisible':[('sfk_type','not in',['reconcile_yingshou','reconcile_yingfu'])]}"/>
+                                </div>
+
                                 <field name="yjzy_payment_currency_id" string="货币" invisible="1"
                                        options="{'no_create':True,'no_open': True}"/>
 
                                 <label name="yjzy_payment_advance_balance" string="未认领金额"
                                        attrs="{'invisible':[('sfk_type','not in',['reconcile_ysrld','reconcile_yfsqd'])]}"/>
+                                <div class="oe_row">
                                 <button type="object" name="open_yfsqd" class="btn-xxs btn-link mb2" target="new"
                                         attrs="{'invisible':[('sfk_type','not in',['reconcile_ysrld','reconcile_yfsqd'])]}">
                                 <field name="yjzy_payment_advance_balance" string="未认领金额"
                                        attrs="{'invisible':[('sfk_type','not in',['reconcile_ysrld','reconcile_yfsqd'])]}"/>
                                 </button>
-
+                                       <button name="action_confirm_amount" type="object" string="确认核销金额"
+                                                 attrs="{'invisible':[('sfk_type','not in',['reconcile_ysrld','reconcile_yfsqd'])]}"/>
+                                </div>
                                 <field name="so_id" string="销售合同" readonly="1"
                                        attrs="{'invisible':[('sfk_type','!=','reconcile_ysrld')],'readonly': [('state', '!=', 'draft'),('is_editable','=',False)]}"
                                        domain="[('partner_id','=', partner_id),('state','not in',['done','verifying','verification','cancel','refuse'])]"

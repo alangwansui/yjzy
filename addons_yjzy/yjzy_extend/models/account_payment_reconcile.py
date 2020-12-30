@@ -54,23 +54,33 @@ class account_payment(models.Model):
                 payment_log_ids = one.invoice_log_id.payment_log_ids
             one.payment_log_ids = payment_log_ids
 
+    @api.depends('yjzy_payment_id','invoice_log_id')
     def compute_move_line_com_ids(self):
         for one in self:
             yjzy_payment_id = one.yjzy_payment_id
             invoice_log_id = one.invoice_log_id
+            move_line_com_dic = []
             if not yjzy_payment_id and not invoice_log_id:
                 move_line_com_ids = False
             elif yjzy_payment_id and not invoice_log_id:
                 if yjzy_payment_id.sfk_type == 'yfsqd':
-                    move_line_com_ids = one.yjzy_payment_id.aml_yfzk_ids
+                    move_line_com_ids = yjzy_payment_id.aml_yfzk_ids
                 else:
-                    move_line_com_ids = one.yjzy_payment_id.aml_yszk_ids
+                    move_line_com_ids = yjzy_payment_id.aml_yszk_ids
             else:
                 if invoice_log_id.type == 'out_invoice':
-                    move_line_com_ids = invoice_log_id.move_line_com_yfzk_ids
-                else:
                     move_line_com_ids = invoice_log_id.move_line_com_yszk_ids
+                else:
+                    move_line_com_ids = invoice_log_id.move_line_com_yfzk_ids
+
+
+            # for x in move_line_com_ids:  # 参考M2M的自动多选
+            #     move_line_com_dic.append(x.id)
+            # print('move_line_com_dic_akiny',move_line_com_dic,move_line_com_ids)
+            # one.move_line_com_ids = move_line_com_dic
+            # one.write({'move_line_com_ids':[(6,0,[x.id for x in move_line_com_ids])]})
             one.move_line_com_ids = move_line_com_ids
+
 
     payment_log_ids = fields.One2many('account.payment', compute=compute_invoice_id)
 
@@ -183,6 +193,11 @@ class account_payment(models.Model):
                 'context': {'open': 1}
                 }
 
+    def action_confirm_amount(self):
+        if self.sfk_type in ['reconcile_yingshou','reconcile_yingfu']:
+            self.amount = self.amount_invoice_log
+        else:
+            self.amount = self.yjzy_payment_advance_balance
     def action_reconcile_submit(self):
         if self.yjzy_payment_id and (self.so_id or self.po_id) and self.amount > self.yjzy_payment_advance_balance:
             raise Warning('核销金额不允许大于可被认领金额')

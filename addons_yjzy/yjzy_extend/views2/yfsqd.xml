@@ -105,6 +105,7 @@
         <field name="arch" type="xml">
             <form string="预付申请单">
                 <header groups="sales_team.group_manager">
+
                      <button name="compute_move_lines" type="object" string="更新日志" />
                     <button name="create_reconcile" type="object" string="核销预付申请"
                             attrs="{'invisible':['|','|',('advance_balance_total','=',0),('state','!=','posted'),('state_1','!=','50_posted')]}"/>
