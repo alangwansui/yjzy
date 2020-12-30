@@ -24,7 +24,9 @@
                                 invisible="context.get('open')"
                                 attrs="{'invisible':['|',('is_yjzy_tb_po_invoice_parent','=',True),('state','in',['10_draft','80_refuse','90_cancel'])]}"/>
                         <button name="create_tb_po_invoice" type="object" string="创建其他应收申请"
-                                attrs="{'invisible':['|','|','|','|',('is_yjzy_tb_po_invoice_parent','=',True),('yjzy_type_1','in',['sale','other_payment_sale']),('is_yjzy_tb_po_invoice','=',True),('type','!=','other_payment'),('state','!=','10_draft')]}"/>
+                                attrs="{'invisible':['|','|','|','|',('is_yjzy_tb_po_invoice_parent','=',True),
+                                ('yjzy_type_1','in',['sale','other_payment_sale']),('is_yjzy_tb_po_invoice','=',True),
+                                ('type','!=','other_payment'),('state','!=','10_draft')]}"/>
                         <button name="create_tb_po_invoice" type="object" string="创建其他应付申请" context="{'open_other':1}"
                                 attrs="{'invisible':['|','|','|','|',('is_yjzy_tb_po_invoice_parent','=',True),('yjzy_type_1','in',['purchase','other_payment_purchase']),('is_yjzy_tb_po_invoice','=',True),('type','!=','other_payment'),('state','!=','10_draft')]}"/>
                         <button name="delete_tb_po_invoice" type="object" string="删除其他应收申请"
