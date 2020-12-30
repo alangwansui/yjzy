@@ -671,16 +671,18 @@
                                     </tree>
                                 </field>
                             </page>
-                            <page string="账单认领日志(move)" >
- <field name="move_line_com_yfzk_ids" readonly="1">
-                                    <tree>
-                                      <field name="reconcile_type"/>
-                                        <field name="amount_this_time"/>
-                                        <field name="sslj_balance"/>
-                                        <field name="create_date"/>
-                                    </tree>
+                            <page string="账单认领日志(move)" attrs="{'invisible':[('type','!=','in_invoice')]}">
+                                <field name="move_line_com_yfzk_ids" readonly="1">
+                                     <tree default_order="create_date desc">
+                                    <field name="create_date" string="日期"/>
+                                    <field name="reconcile_type" string="属性"/>
+                                    <field name="amount_this_time" string="发生金额"/>
+                                    <field name="sslj_balance" string="实时剩余金额"/>
+                                </tree>
                                 </field>
-                                <field name="move_line_yfzk_ids" readonly="1">
+
+
+                                <field name="move_line_yfzk_ids" readonly="1" groups="base.grou_system">
                                     <tree>
                                       <field name="reconcile_type"/>
                                         <field name="amount_this_time"/>
@@ -689,17 +691,17 @@
                                     </tree>
                                 </field>
                             </page>
-                            <page string="账单认领日志(move)" >
+                            <page string="账单认领日志(move)" attrs="{'invisible':[('type','!=','out_invoice')]}">
                                  <field name="move_line_com_yszk_ids" readonly="1">
-                                    <tree>
-                                      <field name="reconcile_type"/>
-                                        <field name="amount_this_time"/>
-                                        <field name="sslj_balance"/>
-                                        <field name="create_date"/>
-                                    </tree>
+                                     <tree default_order="create_date desc">
+                                    <field name="create_date" string="日期"/>
+                                    <field name="reconcile_type" string="属性"/>
+                                    <field name="amount_this_time" string="发生金额"/>
+                                    <field name="sslj_balance" string="实时剩余金额"/>
+                                </tree>
                                 </field>
 
-                                <field name="move_line_yszk_ids" readonly="1">
+                                <field name="move_line_yszk_ids" readonly="1" groups="base.grou_system">
                                     <tree>
                                       <field name="reconcile_type"/>
                                         <field name="amount_this_time"/>
