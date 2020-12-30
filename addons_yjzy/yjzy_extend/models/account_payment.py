@@ -385,6 +385,11 @@ class account_payment(models.Model):
         for one in self:
             one.payment_no_done_ids_count = len(one.payment_no_done_ids)
 
+    def compute_aml_com_count(self):
+        for one in self:
+            one.aml_com_yfzk_ids_count = len(one.aml_com_yfzk_ids)
+            one.aml_com_yszk_ids_count = len(one.aml_com_yszk_ids)
+
     reconcile_type = fields.Selection([
         ('03_advance_in', u'预收生成'),
         ('04_advance_out', u'预付生成'),
@@ -583,10 +588,14 @@ class account_payment(models.Model):
     aml_yfzk_ids = fields.One2many('account.move.line', 'new_advance_payment_id', u'余额相关预付账款分录',domain=[('account_id.code','=','1123')])
     aml_yszk_ids = fields.One2many('account.move.line', 'new_advance_payment_id', u'余额相关预收账款分录',domain=[('account_id.code', '=', '2203')])
 
-    aml_com_yfzk_ids = fields.One2many('account.move.line.com', 'advance_payment_id', u'余额相关预付账款分录',
+    aml_com_yfzk_ids = fields.One2many('account.move.line.com', 'advance_payment_id', u'预付日志',
                                    domain=[('account_id.code', '=', '1123')])
-    aml_com_yszk_ids = fields.One2many('account.move.line.com', 'advance_payment_id', u'余额相关预收账款分录',
+    aml_com_yfzk_ids_count = fields.Integer('预付日志数量', compute=compute_aml_com_count)
+    aml_com_yszk_ids = fields.One2many('account.move.line.com', 'advance_payment_id', u'预收日志',
                                    domain=[('account_id.code', '=', '2203')])
+    aml_com_yszk_ids_count = fields.Integer('预付日志数量', compute=compute_aml_com_count)
+
+
 
     po_id = fields.Many2one('purchase.order', u'采购单')
     supplier_payment_term_id = fields.Many2one('account.payment.term',u'供应商付款条款',related='partner_id.property_supplier_payment_term_id')

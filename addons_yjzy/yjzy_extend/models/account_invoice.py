@@ -564,6 +564,11 @@ class account_invoice(models.Model):
             one.is_yjzy_tb_po_invoice = one.tb_po_invoice_id.is_yjzy_tb_po_invoice
             one.is_yjzy_tb_po_invoice_parent = one.tb_po_invoice_id.is_yjzy_tb_po_invoice_parent
 
+    def compute_move_com_count(self):
+        for one in self:
+            one.move_line_com_yfzk_ids_count = len(one.move_line_com_yfzk_ids)
+            one.move_line_com_yszk_ids_count = len(one.move_line_com_yszk_ids)
+
     invoice_attribute_all_in_one = fields.Selection(invoice_attribute_all_in_one,u'账单属性all_in_one', compute=compute_all_in_one,store=True)
     # invoice_attribute_all_in_one = fields.Char('账单属性all_in_one',compute=compute_all_in_one,store=True)
 
@@ -780,10 +785,12 @@ class account_invoice(models.Model):
     move_line_yfzk_ids = fields.One2many('account.move.line', 'invoice_id', u'发票相关应付账款分录',domain=[('account_id.code','=','2202')])
     move_line_yszk_ids = fields.One2many('account.move.line', 'invoice_id', u'发票相关应收账款分录',domain=[('account_id.code', '=', '1122')])
 
-    move_line_com_yfzk_ids = fields.One2many('account.move.line.com', 'invoice_id', u'发票相关应付账款分录',
+    move_line_com_yfzk_ids = fields.One2many('account.move.line.com', 'invoice_id', u'应付日志',
                                          domain=[('account_id.code', '=', '2202')])
-    move_line_com_yszk_ids = fields.One2many('account.move.line.com', 'invoice_id', u'发票相关应收账款分录',
+    move_line_com_yfzk_ids_count = fields.Integer('应付日志数量', compute=compute_move_com_count)
+    move_line_com_yszk_ids = fields.One2many('account.move.line.com', 'invoice_id', u'应收日志',
                                          domain=[('account_id.code', '=', '1122')])
+    move_line_com_yszk_ids_count = fields.Integer('应收日志数量', compute=compute_move_com_count)
 
     item_ids = fields.One2many('invoice.hs_name.item', 'invoice_id', u'品名汇总明细')
     po_id = fields.Many2one('purchase.order', u'采购订单')

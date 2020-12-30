@@ -675,8 +675,10 @@
 <!--                            </page>-->
                             <page string="账单认领" >
                                 <group col="2">
-                                    <group string="账单认领财务日志">
-                                <field name="move_line_com_yfzk_ids" readonly="1" nolabel="1" colspan="2" attrs="{'invisible':[('type','!=','in_invoice')]}">
+                                    <group string="账单认领财务日志" attrs="{'invisible':[('move_line_com_yfzk_ids_count','=',0),('move_line_com_yszk_ids_count','=',0)]}">
+                                <field name="move_line_com_yfzk_ids" readonly="1" nolabel="1" colspan="2"
+                                       attrs="{'invisible':['|',('move_line_com_yfzk_ids_count','=',0),('type','!=','in_invoice')]}">
+
                                      <tree default_order="create_date">
                                     <field name="create_date" string="日期"/>
                                     <field name="reconcile_type" string="属性"/>
@@ -684,7 +686,8 @@
                                     <field name="sslj_balance" string="实时剩余金额"/>
                                 </tree>
                                 </field>
-                                  <field name="move_line_com_yszk_ids" readonly="1" nolabel="1" colspan="2" attrs="{'invisible':[('type','!=','out_invoice')]}">
+                                  <field name="move_line_com_yszk_ids" readonly="1" nolabel="1" colspan="2"
+                                         attrs="{'invisible':['|',('move_line_com_yfzk_ids_count','=',0),('type','!=','out_invoice')]}">
                                      <tree default_order="create_date">
                                     <field name="create_date" string="日期"/>
                                     <field name="reconcile_type" string="属性"/>
@@ -895,6 +898,8 @@
 
                             <page groups="base.group_system">
                                 <group>
+                                    <field name="move_line_com_yfzk_ids_count"/>
+                                    <field name="move_line_com_yszk_ids_count"/>
                                     <field name="is_yjzy_tb_po_invoice"/>
                                     <field name="is_yjzy_tb_po_invoice_parent"/>
                                     <field name="is_yjzy_invoice"/>

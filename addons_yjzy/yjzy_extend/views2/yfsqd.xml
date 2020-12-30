@@ -260,7 +260,7 @@
 <!--                        </page>-->
                                   <page string="预付认领日志" >
                                       <group col="2">
-                                          <group string="预付认领财务日志">
+                                          <group string="预付认领财务日志" attrs="{'invisible':[('aml_com_yfzk_ids_count','=',0)]}">
                                      <field name="aml_com_yfzk_ids" readonly="1" nolabel="1" colspan="2">
                                 <tree default_order="create_date">
                                     <field name="create_date" string="日期"/>
@@ -348,6 +348,8 @@
                         <page groups="base.group_system">
                             <group>
                                 <field name="sfk_type"/>
+                                  <field name="aml_com_yszk_ids_count"/>
+                                <field name="aml_com_yfzk_ids_count"/>
                                 <field name="gongsi_id" groups="base.group_system"/>
                                 <field name="payment_type" widget="radio"
                                        attrs="{'readonly': [('state', '!=', 'draft')]}"/>
