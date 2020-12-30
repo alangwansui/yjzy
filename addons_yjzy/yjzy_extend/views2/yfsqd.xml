@@ -270,7 +270,7 @@
                                 </tree>
                             </field>
                                       </group>
-                                      <group string="预付认领流程日志">
+                                      <group string="未完成认领单">
                                        <field name="payment_no_done_ids" nolabel="1" colspan="2">
                                 <tree decoration-danger="sfk_type in ['reconcile_ysrld','reconcile_yfsqd']">
                                     <field name="sfk_type" string="类型"/>

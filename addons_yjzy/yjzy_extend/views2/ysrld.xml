@@ -348,7 +348,7 @@
                                 </tree>
                             </field>
                                 </group>
-                                <group string="应收认领流程日志">
+                                <group string="未完成认领单">
                               <field name="payment_no_done_ids" nolabel="1" colspan="2">
                                 <tree>
                                     <field name="sfk_type" string="类型"/>

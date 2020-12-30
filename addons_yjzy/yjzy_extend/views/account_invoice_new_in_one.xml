@@ -692,7 +692,7 @@
                                 </tree>
                                 </field>
                                         </group>
-                                    <group string="账单认领流程日志">
+                                    <group string="未完成认领单">
                                 <field name="payment_log_no_done_ids"  readonly="1" nolabel="1" colspan="2">
                                     <tree>
                                         <field name="sfk_type" string="认领类型" invisible="1"/>
