@@ -246,9 +246,32 @@
                         </group>
                     </group>
                     <notebook>
-                         <page string="认领明细(new)" attrs="{'invisible':[('payment_ids_count','=',0)]}" >
-                             <field name="payment_ids_count" invisible="1"/>
-                            <field name="payment_ids">
+<!--                         <page string="认领明细(new)" attrs="{'invisible':[('payment_ids_count','=',0)]}" >                  -->
+<!--                            <field name="payment_ids">-->
+<!--                                <tree decoration-danger="sfk_type in ['reconcile_ysrld','reconcile_yfsqd']">-->
+<!--                                    <field name="sfk_type" string="类型"/>-->
+<!--                                    <field name="payment_date" string="认领时间"/>-->
+<!--                                    <field name="name" string="单号"/>-->
+<!--                                    <field name="partner_id" string="对象"/>-->
+<!--                                    <field name="amount" string="金额"/>-->
+<!--                                    <field name="state"/>-->
+<!--                                </tree>-->
+<!--                            </field>-->
+<!--                        </page>-->
+                                  <page string="账单认领日志(move)" >
+                                      <group col="2">
+                                          <group string="预付认领财务日志"/>
+                                     <field name="aml_com_yfzk_ids" readonly="1" nolabel="1" colspan="2">
+                                <tree default_order="create_date desc">
+                                    <field name="create_date" string="日期"/>
+                                    <field name="reconcile_type" string="属性"/>
+                                    <field name="amount_this_time" string="发生金额"/>
+                                    <field name="sslj_balance" string="实时剩余金额"/>
+                                </tree>
+                            </field>
+                                      </group>
+                                      <group string="预付认领流程日志">
+                                       <field name="payment_ids" nolabel="1" colspan="2">
                                 <tree decoration-danger="sfk_type in ['reconcile_ysrld','reconcile_yfsqd']">
                                     <field name="sfk_type" string="类型"/>
                                     <field name="payment_date" string="认领时间"/>
@@ -257,17 +280,9 @@
                                     <field name="amount" string="金额"/>
                                     <field name="state"/>
                                 </tree>
-                            </field>
-                        </page>
-                                  <page string="账单认领日志(move)" >
-                                     <field name="aml_com_yfzk_ids" readonly="1">
-                                <tree default_order="create_date desc">
-                                    <field name="create_date" string="日期"/>
-                                    <field name="reconcile_type" string="属性"/>
-                                    <field name="amount_this_time" string="发生金额"/>
-                                    <field name="sslj_balance" string="实时剩余金额"/>
-                                </tree>
-                            </field>
+                                       </field>
+
+                                      </group>
 
                                 <field name="aml_yfzk_ids" readonly="1" groups="base.group_system">
                                     <tree>
@@ -277,6 +292,7 @@
                                         <field name="create_date"/>
                                     </tree>
                                 </field>
+                                                 <field name="payment_ids_count" invisible="1"/>
                             </page>
                         <page string="认领明细(old)" attrs="{'invisible':[('advance_reconcile_order_line_ids_count','=',0)]}">
                             <field name="advance_reconcile_order_line_ids_count" invisible="1"/>
@@ -508,9 +524,35 @@
 <!--                        </group>-->
                     </group>
                     <notebook>
-                         <page string="认领明细(含审批未支付)" attrs="{'invisible':[('payment_ids_count','=',0)]}">
-                             <field name="payment_ids_count" invisible="1"/>
-                            <field name="payment_ids">
+<!--                         <page string="认领明细(含审批未支付)" attrs="{'invisible':[('payment_ids_count','=',0)]}">-->
+<!--                            -->
+<!--                            <field name="payment_ids">-->
+<!--                                <tree decoration-danger="sfk_type in ['reconcile_ysrld','reconcile_yfsqd']">-->
+<!--                                    <field name="sfk_type" string="类型"/>-->
+<!--                                    <field name="payment_date" string="认领时间"/>-->
+<!--                                    <field name="name" string="单号"/>-->
+<!--                                    <field name="partner_id" string="对象"/>-->
+<!--                                    <field name="amount" string="金额"/>-->
+<!--                                    <field name="state"/>-->
+<!--                                </tree>-->
+<!--                            </field>-->
+<!--                        </page>-->
+
+                        <page string="预付认领日志(move)" >
+                            <group col="2">
+                                <group string="账单认领财务日志">
+
+                                <field name="aml_com_yfzk_ids" readonly="1" nolabel="1" colspan="2">
+                                <tree default_order="create_date desc">
+                                    <field name="create_date" string="日期"/>
+                                    <field name="reconcile_type" string="属性"/>
+                                    <field name="amount_this_time" string="发生金额"/>
+                                    <field name="sslj_balance" string="实时剩余金额"/>
+                                </tree>
+                            </field>
+                            </group>
+                                <group string="账单认领过程">
+                                     <field name="payment_ids" nolabel="1" colspan="2">
                                 <tree decoration-danger="sfk_type in ['reconcile_ysrld','reconcile_yfsqd']">
                                     <field name="sfk_type" string="类型"/>
                                     <field name="payment_date" string="认领时间"/>
@@ -520,17 +562,8 @@
                                     <field name="state"/>
                                 </tree>
                             </field>
-                        </page>
-
-                        <page string="预付认领日志(move)" >
-                                <field name="aml_com_yfzk_ids" readonly="1">
-                                <tree default_order="create_date desc">
-                                    <field name="create_date" string="日期"/>
-                                    <field name="reconcile_type" string="属性"/>
-                                    <field name="amount_this_time" string="发生金额"/>
-                                    <field name="sslj_balance" string="实时剩余金额"/>
-                                </tree>
-                            </field>
+                                </group>
+                            </group>
                                 <field name="aml_yfzk_ids" readonly="1" groups="base.group_system">
                                     <tree>
                                       <field name="reconcile_type"/>
@@ -539,6 +572,7 @@
                                         <field name="create_date"/>
                                     </tree>
                                 </field>
+                             <field name="payment_ids_count" invisible="1"/>
                             </page>
                         <page string="认领明细(old)" attrs="{'invisible':[('advance_reconcile_order_line_ids_count','=',0)]}">
                             <field name="advance_reconcile_order_line_ids_count" invisible="1"/>
