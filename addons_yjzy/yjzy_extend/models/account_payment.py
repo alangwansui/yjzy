@@ -381,6 +381,10 @@ class account_payment(models.Model):
         for one in self:
             one.invoice_attribute_all_in_one = one.invoice_log_id.invoice_attribute_all_in_one
 
+    def compute_payment_no_done_ids_count(self):
+        for one in self:
+            one.payment_no_done_ids_count = len(one.payment_no_done_ids)
+
     reconcile_type = fields.Selection([
         ('03_advance_in', u'预收生成'),
         ('04_advance_out', u'预付生成'),
@@ -618,7 +622,7 @@ class account_payment(models.Model):
     payment_ids = fields.One2many('account.payment', 'yjzy_payment_id', u'预收认领和预付申请')
 
     payment_no_done_ids = fields.One2many('account.payment', 'yjzy_payment_id', u'未完成预收认领和预付申请',domain=[('state','not in',['posted','rconciled'])])
-
+    payment_no_done_ids_count = fields.Integer('未完成预收认领和预付申请数量',compute=compute_payment_no_done_ids_count)
 
     ysrld_ids = fields.One2many('account.payment', 'yjzy_payment_id', u'预收认领单', domain=[('sfk_type','=','ysrld')])
     yfsqd_ids = fields.One2many('account.payment', 'yjzy_payment_id', u'预付申请单', domain=[('sfk_type','=','yfsqd')])

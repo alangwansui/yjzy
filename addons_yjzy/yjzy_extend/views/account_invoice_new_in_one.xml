@@ -656,6 +656,7 @@
                             <page groups="base.group_system">
                                 <field name="yjzy_invoice_all_ids"/>
                          <field name="payment_log_ids_count" invisible="1"/>
+                                <field name="payment_log_no_done_ids_count" />
                             </page>
 <!--                            <page string="账单认领明细（含审批未支付）" attrs="{'invisible':['|',('type','!=','in_invoice'),('payment_log_ids_count','=',0)]}" groups="base.group_system">-->
 
@@ -692,7 +693,7 @@
                                 </tree>
                                 </field>
                                         </group>
-                                    <group string="未完成认领单">
+                                    <group string="未完成认领单" attrs="{'invisible':[('payment_log_no_done_ids_count','=',0)]}">
                                 <field name="payment_log_no_done_ids"  readonly="1" nolabel="1" colspan="2">
                                     <tree>
                                         <field name="sfk_type" string="认领类型" invisible="1"/>

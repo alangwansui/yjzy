@@ -348,7 +348,7 @@
                                 </tree>
                             </field>
                                 </group>
-                                <group string="未完成认领单">
+                                <group string="未完成认领单" attrs="{'invisible':[('payment_no_done_ids_count','=',0)]}">
                               <field name="payment_no_done_ids" nolabel="1" colspan="2">
                                 <tree>
                                     <field name="sfk_type" string="类型"/>
@@ -370,6 +370,7 @@
                                 </tree>
                             </field>
                              <field name="payment_ids_count" invisible="1"/>
+                            <field name="payment_no_done_ids_count" invisible="1"/>
                         </page>
                         <page string="预收应收认领单" attrs="{'invisible':[('advance_reconcile_order_count','=',0)]}">
                             <field name="advance_reconcile_order_ids"
