@@ -171,7 +171,7 @@
                                          attrs="{'invisible':[('sfk_type','not in',['reconcile_yingshou','reconcile_yingfu'])]}">
                                 <field name="amount_invoice_log" attrs="{'invisible':[('sfk_type','not in',['reconcile_yingshou','reconcile_yingfu'])]}"/>
                                 </button>
-                                    <button name="action_confirm_amount" type="object" string="确认核销金额"
+                                    <button name="action_confirm_amount" type="object" string="确认核销金额" class="btn-xxs"
                                      attrs="{'invisible':[('sfk_type','not in',['reconcile_yingshou','reconcile_yingfu'])]}"/>
                                 </div>
 
@@ -186,7 +186,7 @@
                                 <field name="yjzy_payment_advance_balance" string="未认领金额"
                                        attrs="{'invisible':[('sfk_type','not in',['reconcile_ysrld','reconcile_yfsqd'])]}"/>
                                 </button>
-                                       <button name="action_confirm_amount" type="object" string="确认核销金额"
+                                       <button name="action_confirm_amount" type="object" string="确认核销金额" class="btn-xxs"
                                                  attrs="{'invisible':[('sfk_type','not in',['reconcile_ysrld','reconcile_yfsqd'])]}"/>
                                 </div>
                                 <field name="so_id" string="销售合同" readonly="1"
@@ -198,13 +198,12 @@
                                        domain="[('partner_id','=', partner_id),('state','not in',['done','verifying','verification','cancel','refuse'])]"
                                        options="{'no_create':True,'no_open': True}"/>
                                 <label for="amount" string="核销金额"/>
-                                <div name="amount_div" class="o_row" string="收款金额">
-                                    <field name="amount" attrs="{'readonly': [('state', '!=', 'draft')]}" readonly="1"/>
-                                    <field name="currency_id" options="{'no_create': True, 'no_open': True}" readonly="1"
+                                <div name="amount_div" class="o_row" string="收款金额" attrs="{'invisible':[('amount_state','=',False)]}">
+                                    <field name="amount" attrs="{'invisible':[('amount_state','=',False)],'readonly': ['|',('amount_state','=',True),('state', '!=', 'draft')]}" />
+                                    <field name="currency_id" options="{'no_create': True, 'no_open': True}"
                                            groups="base.group_multi_currency" invisible="0"
-                                           attrs="{'readonly': [('state', '!=', 'draft')]}" />
+                                           attrs="{'invisible':[('amount_state','=',False)],'readonly': ['|',('amount_state','=',True),('state', '!=', 'draft')]}" />
                                 </div>
-
 
                                 <field name="hide_payment_method" invisible="1"/>
                                 <field name="payment_method_id" string=" " widget="radio"
@@ -252,6 +251,8 @@
                             </page>
                             <page groups="base.group_system">
                                 <group>
+
+                                <field name="amount_state" />
                                     <field name="journal_id" domain="[('type','=', 'renling')]" string="收款日记账"
                                        widget="selection" />
                                       <field name="partner_id" options="{'no_create':True,'no_open': True}" invisible=""

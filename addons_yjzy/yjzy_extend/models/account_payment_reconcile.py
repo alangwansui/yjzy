@@ -106,6 +106,8 @@ class account_payment(models.Model):
                                                    related='yjzy_payment_id.advance_balance_total',
                                                    currency_field='yjzy_payment_currency_id')
 
+    amount_state =fields.Boolean('核销金额是否已确认',default=False)
+
 
 
 
@@ -199,9 +201,11 @@ class account_payment(models.Model):
         if self.sfk_type in ['reconcile_yingshou','reconcile_yingfu']:
             self.amount = self.amount_invoice_log
             self.currency_id = self.invoice_log_currency_id
+            self.amount_state = True
         else:
             self.write({'amount':self.yjzy_payment_advance_balance,
                         'currency_id':self.yjzy_payment_currency_id.id})
+            self.amount_state = True
             # self.amount = self.yjzy_payment_advance_balance
             # self.currency_id = self.yjzy_payment_currency_id
     def action_reconcile_submit(self):
