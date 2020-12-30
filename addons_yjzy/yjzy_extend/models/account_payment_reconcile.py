@@ -102,7 +102,9 @@ class account_payment(models.Model):
     aml_advace_ids = fields.One2many('account.move.line', 'new_advance_payment_id', u'预收付余额相关分录')
     advance_balance_aml_total = fields.Monetary(u'预收余额', compute=compute_advance_balance_aml_total, currency_field='yjzy_payment_currency_id',)
 
-    yjzy_payment_advance_balance = fields.Monetary(u'未完成认领金额', related='yjzy_payment_id.advance_balance_total', currency_field='yjzy_payment_currency_id')
+    yjzy_payment_advance_balance = fields.Monetary(u'未完成认领金额',
+                                                   related='yjzy_payment_id.advance_balance_total',
+                                                   currency_field='yjzy_payment_currency_id')
 
 
 
@@ -198,8 +200,9 @@ class account_payment(models.Model):
             self.amount = self.amount_invoice_log
             self.currency_id = self.invoice_log_currency_id
         else:
-            self.amount = self.yjzy_payment_advance_balance
+            self.amount = self.yjzy_payment_id.advance_balance_total
             self.currency_id = self.yjzy_payment_currency_id
+
     def action_reconcile_submit(self):
         if self.yjzy_payment_id and (self.so_id or self.po_id) and self.amount > self.yjzy_payment_advance_balance:
             raise Warning('核销金额不允许大于可被认领金额')
