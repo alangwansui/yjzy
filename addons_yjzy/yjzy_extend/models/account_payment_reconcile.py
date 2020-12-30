@@ -44,15 +44,23 @@ class account_payment(models.Model):
             payment_ids_count= len(one.payment_ids)
             one.payment_ids_count = payment_ids_count
 
+
+
     def compute_invoice_id(self):
         for one in self:
-            if not one.yjzy_payment_id and not one.invoice_log_id:
+            yjzy_payment_id = one.yjzy_payment_id
+            invoice_log_id = one.invoice_log_id
+            if not yjzy_payment_id and not invoice_log_id:
                 payment_log_ids = False
-            elif one.yjzy_payment_id:
-                payment_log_ids = one.yjzy_payment_id.payment_ids
+            elif yjzy_payment_id:
+                payment_log_ids = yjzy_payment_id.payment_ids
+
             else:
-                payment_log_ids = one.invoice_log_id.payment_log_ids
+                payment_log_ids = invoice_log_id.payment_log_ids
+
+            payment_log_no_done_ids = payment_log_ids.filtered(lambda x: x.state not in ['posted', 'reconciled'])
             one.payment_log_ids = payment_log_ids
+            one.payment_log_no_done_ids = payment_log_no_done_ids
 
     @api.depends('yjzy_payment_id','invoice_log_id')
     def compute_move_line_com_ids(self):
@@ -82,7 +90,8 @@ class account_payment(models.Model):
             one.move_line_com_ids = move_line_com_ids
 
 
-    payment_log_ids = fields.One2many('account.payment', compute=compute_invoice_id)
+    payment_log_ids = fields.Many2many('account.payment', compute=compute_invoice_id)
+    payment_log_no_done_ids = fields.Many2many('account.payment', compute=compute_invoice_id)
 
     move_line_com_ids = fields.Many2many('account.move.line.com',compute=compute_move_line_com_ids)
 
@@ -209,10 +218,11 @@ class account_payment(models.Model):
             # self.amount = self.yjzy_payment_advance_balance
             # self.currency_id = self.yjzy_payment_currency_id
     def action_reconcile_submit(self):
-        if self.yjzy_payment_id and (self.so_id or self.po_id) and self.amount > self.yjzy_payment_advance_balance:
-            raise Warning('核销金额不允许大于可被认领金额')
-        if self.invoice_log_id and self.amount > self.amount_invoice_log:
-            raise Warning('核销金额不允许大于可被认领金额')
+        if self.yjzy_payment_id and (self.so_id or self.po_id) and self.amount != self.yjzy_payment_advance_balance:
+            raise Warning('核销金额不等于剩余金额')
+        if self.invoice_log_id and self.amount != self.amount_invoice_log:
+            raise Warning('核销金额不等于剩余金额')
+
         self.state_1 = '20_account_submit'
 
     def action_reconcile_account(self):
