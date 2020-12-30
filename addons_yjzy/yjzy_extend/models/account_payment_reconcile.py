@@ -54,7 +54,27 @@ class account_payment(models.Model):
                 payment_log_ids = one.invoice_log_id.payment_log_ids
             one.payment_log_ids = payment_log_ids
 
+    def compute_move_line_com_ids(self):
+        for one in self:
+            yjzy_payment_id = one.yjzy_payment_id
+            invoice_log_id = one.invoice_log_id
+            if not yjzy_payment_id and not invoice_log_id:
+                move_line_com_ids = False
+            elif yjzy_payment_id and not invoice_log_id:
+                if yjzy_payment_id.sfk_type == 'yfsqd':
+                    move_line_com_ids = one.yjzy_payment_id.aml_yfzk_ids
+                else:
+                    move_line_com_ids = one.yjzy_payment_id.aml_yszk_ids
+            else:
+                if invoice_log_id.type == 'out_invoice':
+                    move_line_com_ids = invoice_log_id.move_line_com_yfzk_ids
+                else:
+                    move_line_com_ids = invoice_log_id.move_line_com_yszk_ids
+            one.move_line_com_ids = move_line_com_ids
+
     payment_log_ids = fields.One2many('account.payment', compute=compute_invoice_id)
+
+    move_line_com_ids = fields.Many2many('account.move.line.com',compute=compute_move_line_com_ids)
 
 
 

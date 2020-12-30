@@ -336,9 +336,9 @@
 <!--                                </tree>-->
 <!--                            </field>-->
 <!--                        </page>-->
-                        <page string="账单认领日志(move)">
+                        <page string="预收认领日志">
                             <group col="2">
-                                <group string="应收认领财务日志">
+                                <group string="预收认领财务日志">
                             <field name="aml_com_yszk_ids" readonly="1" nolabel="1" colspan="2">
                                 <tree default_order="create_date">
                                     <field name="create_date" string="日期"/>

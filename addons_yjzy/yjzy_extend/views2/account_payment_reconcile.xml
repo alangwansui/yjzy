@@ -221,6 +221,16 @@
                         </group>
                         <notebook>
                               <page string="认领日志">
+
+                                      <field name="move_line_com_ids" readonly="1" >
+                                <tree default_order="create_date">
+                                    <field name="create_date" string="日期"/>
+                                    <field name="reconcile_type" string="属性"/>
+                                    <field name="amount_this_time" string="发生金额"/>
+                                    <field name="sslj_balance" string="实时剩余金额"/>
+                                </tree>
+                            </field>
+
                                 <field name="payment_log_ids">
                                         <tree>
                                             <field name="sfk_type"/>

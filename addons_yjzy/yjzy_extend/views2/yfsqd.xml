@@ -258,7 +258,7 @@
 <!--                                </tree>-->
 <!--                            </field>-->
 <!--                        </page>-->
-                                  <page string="账单认领日志(move)" >
+                                  <page string="预付认领日志" >
                                       <group col="2">
                                           <group string="预付认领财务日志">
                                      <field name="aml_com_yfzk_ids" readonly="1" nolabel="1" colspan="2">

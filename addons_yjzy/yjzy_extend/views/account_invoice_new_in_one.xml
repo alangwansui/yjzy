@@ -1122,7 +1122,7 @@
                                 </field>
                             </page>
                             <page string="本账单明细"
-                                  attrs="{'invisible':[('invoice_attribute','in',['expense_po','other_po'])]}">
+                                  attrs="{'invisible':[('invoice_attribute','in',['expense_po','other_po','other_payment'])]}">
                                 <field name="invoice_line_ids_origin">
                                     <tree default_order="id">
                                         <field name="sequence" widget="handle"/>
