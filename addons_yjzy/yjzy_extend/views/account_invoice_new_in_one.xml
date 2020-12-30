@@ -655,9 +655,10 @@
                             </page>
                             <page groups="base.group_system">
                                 <field name="yjzy_invoice_all_ids"/>
+                         <field name="payment_log_ids_count" invisible="1"/>
                             </page>
 <!--                            <page string="账单认领明细（含审批未支付）" attrs="{'invisible':['|',('type','!=','in_invoice'),('payment_log_ids_count','=',0)]}" groups="base.group_system">-->
-<!--                                <field name="payment_log_ids_count" invisible="1"/>-->
+
 <!--                                <field name="payment_log_ids" readonly="1">-->
 <!--                                    <tree>-->
 <!--                                        <field name="sfk_type" string="认领类型"/>-->
@@ -707,7 +708,7 @@
                                 </group>
 
 
-                                <field name="move_line_yfzk_ids" readonly="1" groups="base.grou_system">
+                                <field name="move_line_yfzk_ids" readonly="1" groups="base.group_system">
                                     <tree>
                                       <field name="reconcile_type"/>
                                         <field name="amount_this_time"/>
@@ -717,8 +718,6 @@
                                 </field>
                             </page>
                             <page string="账单认领日志" invisible="1">
-
-
                                 <field name="move_line_yszk_ids" readonly="1" groups="base.grou_system">
                                     <tree>
                                       <field name="reconcile_type"/>
