@@ -177,7 +177,7 @@
                                                attrs="{'invisible':[('sfk_type','not in',['reconcile_yingshou','reconcile_yingfu'])]}"/>
                                     </button>
                                     <button name="action_confirm_amount" type="object" string="确认核销金额"
-                                            class="btn-xxs  btn-link mb2"
+                                            class="btn-xxs btn-link mb2"
                                             attrs="{'invisible':['|',('amount_state','=',True),('sfk_type','not in',['reconcile_yingshou','reconcile_yingfu'])]}"/>
                                 </div>
 
