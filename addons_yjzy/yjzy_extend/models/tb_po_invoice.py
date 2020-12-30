@@ -80,7 +80,15 @@ class tb_po_invoice(models.Model):
                         'product_id': line.id
                     }))
         if default_yjzy_type_1 == 'other_payment_purchase' or self.yjzy_type_1 == 'other_payment_purchase':
-            product = self.env['product.product'].search([('default_code', '=', 'FD02406')], limit=1)
+            product = self.env['product.product'].search([('name', '=', '营业外支出')], limit=1)
+            account = product.property_account_income_id
+            res.append ((0, 0, {
+                'name': '%s:%s' % (product.name, self.name),
+                'product_id': product.id,
+                'quantity': 1,
+                'account_id': account.id, }))
+        if default_yjzy_type_1 == 'other_payment_sale' or self.yjzy_type_1 == 'other_payment_sale':
+            product = self.env['product.product'].search([('name', '=', '营业外收入')], limit=1)
             account = product.property_account_income_id
             res.append ((0, 0, {
                 'name': '%s:%s' % (product.name, self.name),
@@ -439,7 +447,7 @@ class tb_po_invoice(models.Model):
         self.extra_invoice_line_ids[0].price_unit = other_invoice_amount
 
     @api.onchange('other_invoice_amount_yjzy')
-    def onchange_other_invoice_amount_yjzy(self):
+    def onchange_other_invoice_amoufnt_yjzy(self):
         if self.other_invoice_amount_yjzy:
             other_invoice_amount_yjzy = self.other_invoice_amount_yjzy
             self.tb_po_other_line_ids[0].price_unit = other_invoice_amount_yjzy

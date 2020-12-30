@@ -76,7 +76,7 @@
                                      attrs="{'invisible':['|',('type','not in',['other_payment']),('yjzy_payment_id','!=',False)]}">
                                     <field name="other_invoice_amount" attrs="{'invisible':['|',('type','not in',['other_payment']),('yjzy_payment_id','!=',False)],
                                         'readonly':[('state','!=','10_draft')]}"/>
-                                    <span invisible="1">货币：</span>
+                                    <b invisible="0">货币：</b>
                                     <field name="manual_currency_id" options="{'no_create': True, 'no_open': True}"
                                            attrs="{'invisible':['|',('type','not in',['other_payment']),('yjzy_payment_id','!=',False)],
                                         'readonly':[('state','!=','10_draft')]}"/>
