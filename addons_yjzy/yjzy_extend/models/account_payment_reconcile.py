@@ -51,7 +51,7 @@ class account_payment(models.Model):
             yjzy_payment_id = one.yjzy_payment_id
             invoice_log_id = one.invoice_log_id
             if not yjzy_payment_id and not invoice_log_id:
-                payment_log_ids = False
+                payment_log_ids = None
             elif yjzy_payment_id:
                 payment_log_ids = yjzy_payment_id.payment_ids
 
