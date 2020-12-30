@@ -323,7 +323,7 @@
                         </group>
                     </group>
                     <notebook>
-                        <page string="认领明细(new)" attrs="{'invisible':[('payment_ids_count','=',0)]}" >
+                        <page string="认领明细(所有)" attrs="{'invisible':[('payment_ids_count','=',0)]}" >
                             <field name="payment_ids_count" invisible="1"/>
                             <field name="payment_ids">
                                 <tree>

@@ -656,23 +656,33 @@
                             <page groups="base.group_system">
                                 <field name="yjzy_invoice_all_ids"/>
                             </page>
-                            <page string="账单认领日志(new)" attrs="{'invisible':[('payment_log_ids_count','=',0)]}">
-                                <field name="payment_log_ids_count" invisible="1"/>
-                                <field name="payment_log_ids" readonly="1">
-                                    <tree>
-                                        <field name="sfk_type" string="认领类型"/>
-                                        <field name="reconcile_type" string="认领方式"/>
-                                        <!--                                        <field name="post_date" string="审批日期"/>-->
-                                        <field name="payment_date_confirm" string="认领完成时间"/>
-                                        <field name="amount" string="金额" sum="小计"/>
-                                        <field name="currency_id" invisible="1"/>
-                                        <field name="state_1"/>
-                                        <field name="state"/>
-                                    </tree>
+<!--                            <page string="账单认领明细（含审批未支付）" attrs="{'invisible':['|',('type','!=','in_invoice'),('payment_log_ids_count','=',0)]}" groups="base.group_system">-->
+<!--                                <field name="payment_log_ids_count" invisible="1"/>-->
+<!--                                <field name="payment_log_ids" readonly="1">-->
+<!--                                    <tree>-->
+<!--                                        <field name="sfk_type" string="认领类型"/>-->
+<!--                                        <field name="reconcile_type" string="认领方式"/>-->
+<!--                                        &lt;!&ndash;<field name="post_date" string="审批日期"/>&ndash;&gt;-->
+<!--                                        <field name="payment_date_confirm" string="认领完成时间"/>-->
+<!--                                        <field name="amount" string="金额" sum="小计"/>-->
+<!--                                        <field name="currency_id" invisible="1"/>-->
+<!--                                        <field name="state_1"/>-->
+<!--                                        <field name="state"/>-->
+<!--                                    </tree>-->
+<!--                                </field>-->
+<!--                            </page>-->
+                            <page string="账单认领" >
+                                <group col="2">
+                                    <group string="账单认领财务日志">
+                                <field name="move_line_com_yfzk_ids" readonly="1" nolabel="1" colspan="2" attrs="{'invisible':[('type','!=','in_invoice')]}">
+                                     <tree default_order="create_date">
+                                    <field name="create_date" string="日期"/>
+                                    <field name="reconcile_type" string="属性"/>
+                                    <field name="amount_this_time" string="发生金额"/>
+                                    <field name="sslj_balance" string="实时剩余金额"/>
+                                </tree>
                                 </field>
-                            </page>
-                            <page string="账单认领日志(move)" attrs="{'invisible':[('type','!=','in_invoice')]}">
-                                <field name="move_line_com_yfzk_ids" readonly="1">
+                                  <field name="move_line_com_yszk_ids" readonly="1" nolabel="1" colspan="2" attrs="{'invisible':[('type','!=','out_invoice')]}">
                                      <tree default_order="create_date desc">
                                     <field name="create_date" string="日期"/>
                                     <field name="reconcile_type" string="属性"/>
@@ -680,6 +690,21 @@
                                     <field name="sslj_balance" string="实时剩余金额"/>
                                 </tree>
                                 </field>
+                                        </group>
+                                    <group string="账单认领过程">
+                                <field name="payment_log_ids"  readonly="1" nolabel="1" colspan="2">
+                                    <tree>
+                                        <field name="sfk_type" string="认领类型" invisible="1"/>
+                                        <field name="reconcile_type" string="认领方式"/>
+                                        <field name="payment_date_confirm" string="认领完成日期"/>
+                                        <field name="amount" string="金额" sum="小计"/>
+                                        <field name="currency_id" invisible="1"/>
+                                        <field name="state_1"/>
+                                        <field name="state"/>
+                                    </tree>
+                                </field>
+                                        </group>
+                                </group>
 
 
                                 <field name="move_line_yfzk_ids" readonly="1" groups="base.grou_system">
@@ -691,15 +716,8 @@
                                     </tree>
                                 </field>
                             </page>
-                            <page string="账单认领日志(move)" attrs="{'invisible':[('type','!=','out_invoice')]}">
-                                 <field name="move_line_com_yszk_ids" readonly="1">
-                                     <tree default_order="create_date desc">
-                                    <field name="create_date" string="日期"/>
-                                    <field name="reconcile_type" string="属性"/>
-                                    <field name="amount_this_time" string="发生金额"/>
-                                    <field name="sslj_balance" string="实时剩余金额"/>
-                                </tree>
-                                </field>
+                            <page string="账单认领日志" invisible="1">
+
 
                                 <field name="move_line_yszk_ids" readonly="1" groups="base.grou_system">
                                     <tree>
