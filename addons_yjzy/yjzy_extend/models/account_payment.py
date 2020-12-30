@@ -381,7 +381,13 @@ class account_payment(models.Model):
         for one in self:
             one.invoice_attribute_all_in_one = one.invoice_log_id.invoice_attribute_all_in_one
 
-    reconcile_type = fields.Selection([('10_payment_out',u'付款支付'),
+    reconcile_type = fields.Selection([
+        ('03_advance_in', u'预收生成'),
+        ('04_advance_out', u'预付生成'),
+        ('05_invoice_in', u'应收账单生成'),
+        ('07_invoice_out', u'应付账单生成'),
+
+        ('10_payment_out',u'付款支付'),
                                        ('20_advance_out','预付认领'),
                                        ('30_payment_in',u'收款认领'),
                                        ('40_advance_in',u'预收认领'),

@@ -192,6 +192,38 @@ class account_move_line(models.Model):
 class account_move_line_com(models.Model):
     _name = 'account.move.line.com'
 
+    @api.depends('self_payment_id','invoice_id','advance_payment_id')
+    def compute_reconcile_type(self):
+        for one in self:
+            self_payment_id = one.self_payment_id
+            invoice_id = one.invoice_id
+            advance_payment_id = one.advance_payment_id
+            account_id = one.account_id
+
+            if account_id.code in ['1122','2202','1123','2203']:
+                if self_payment_id:
+                    reconcile_type = self_payment_id.reconcile_type
+                elif account_id.code == '2203':
+                    reconcile_type = '03_advance_in'
+                elif account_id.code == '1123':
+                    reconcile_type = '04_advance_out'
+                elif account_id.code == '1122':
+                    reconcile_type = '05_invoice_in'
+                else:
+                    reconcile_type = '07_invoice_out'
+                #     invoice_id:
+                #     if invoice_id.type == 'in_invoice':
+                #         reconcile_type = '07_invoice_out'
+                #     elif invoice_id.type == 'out_invoice':
+                #         reconcile_type = '05_invoice_in'
+                # elif advance_payment_id:
+                #     if advance_payment_id.sfk_type == 'ysrld':
+                #         reconcile_type = '03_advance_in'
+                #     elif advance_payment_id.sfk_type == 'yfsqd':
+                #         reconcile_type = '04_advance_out'
+                one.reconcile_type = reconcile_type
+
+
     move_id = fields.Many2one('account.move', string='Journal Entry', ondelete="cascade",
                               help="The move of this entry line.", index=True, required=True, auto_join=True)
 
@@ -202,13 +234,15 @@ class account_move_line_com(models.Model):
     sslj_balance = fields.Monetary('实时累计余额',currency_field='sslj_currency_id') #akiny计算分录日志
     self_payment_id = fields.Many2one('account.payment', u'对应的付款单')
     reconcile_type = fields.Selection([
-                                        ('10_payment_out', u'付款支付'),
-                                       ('20_advance_out', '预付认领'),
-                                       ('30_payment_in', u'收款认领'),
-                                       ('40_advance_in', u'预收认领'),
-                                       ('50_reconcile', u'本次核销'),
-
-                                       ], '认领方式',related='self_payment_id.reconcile_type')
+        ('03_advance_in',u'预收生成'),
+        ('04_advance_out',u'预付生成'),
+        ('05_invoice_in',u'应收账单生成'),
+        ('07_invoice_out',u'应付账单生成'),
+        ('10_payment_out', u'付款支付'),
+        ('20_advance_out', '预付认领'),
+        ('30_payment_in', u'收款认领'),
+        ('40_advance_in', u'预收认领'),
+        ('50_reconcile', u'本次核销'),], '认领方式',compute=compute_reconcile_type)#related='self_payment_id.reconcile_type'
     invoice_id = fields.Many2one('account.invoice')
     advance_payment_id = fields.Many2one('account.payment')
 
