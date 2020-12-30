@@ -201,7 +201,7 @@ class account_payment(models.Model):
             self.currency_id = self.invoice_log_currency_id
         else:
             self.write({'amount':self.yjzy_payment_advance_balance,
-                        'currency_id':self.yjzy_payment_currency_id})
+                        'currency_id':self.yjzy_payment_currency_id.id})
             # self.amount = self.yjzy_payment_advance_balance
             # self.currency_id = self.yjzy_payment_currency_id
     def action_reconcile_submit(self):
