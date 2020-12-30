@@ -249,7 +249,7 @@
                                         </field>
                                     </group>
                                     <group string="未完成认领单">
-                                        <field name="payment_log_no_done_ids">
+                                        <field name="payment_log_no_done_ids" colspan="2" nolabel="1">
                                             <tree>
                                                 <field name="sfk_type"/>
                                                 <field name="payment_date"/>

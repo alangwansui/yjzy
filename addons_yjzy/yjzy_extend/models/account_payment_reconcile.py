@@ -57,8 +57,10 @@ class account_payment(models.Model):
 
             else:
                 payment_log_ids = invoice_log_id.payment_log_ids
-
-            payment_log_no_done_ids = payment_log_ids.filtered(lambda x: x.state not in ['posted', 'reconciled'])
+            if payment_log_ids:
+                payment_log_no_done_ids = payment_log_ids.filtered(lambda x: x.state not in ['posted', 'reconciled'])
+            else:
+                payment_log_no_done_ids = None
             one.payment_log_ids = payment_log_ids
             one.payment_log_no_done_ids = payment_log_no_done_ids
 
