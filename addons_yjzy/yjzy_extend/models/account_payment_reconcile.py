@@ -45,7 +45,7 @@ class account_payment(models.Model):
             one.payment_ids_count = payment_ids_count
 
 
-
+    @api.depends('yjzy_payment_id','invoice_log_id')
     def compute_invoice_id(self):
         for one in self:
             yjzy_payment_id = one.yjzy_payment_id

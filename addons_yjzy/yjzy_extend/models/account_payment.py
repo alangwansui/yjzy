@@ -1088,7 +1088,8 @@ class account_payment(models.Model):
         if self.sfk_type in ['reconcile_yfsqd','reconcile_yseld']:
             self.write({'state_1': '80_refused',
                         'state': 'draft',
-                        'amount_state':False
+                        'amount_state':False,
+                        'amount':0
                         })
         for tb in self:
             tb.message_post_with_view('yjzy_extend.payment_template_refuse_reason',
