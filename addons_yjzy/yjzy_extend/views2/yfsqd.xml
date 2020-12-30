@@ -217,14 +217,14 @@
                                    invisible="context.get('operation')" attrs="{'invisible':[('state_1','not in',['40_approve','50_posted','60_done'])]}"/>
                         </group>
                         <group>
-                            <field name="supplier_payment_term_id"/>
-                            <field name="purchase_payment_term_id" string="采购单付款条款"/>
+                            <field name="supplier_payment_term_id" readonly="1"/>
+                            <field name="purchase_payment_term_id" string="采购单付款条款" readonly="1"/>
                             <field name="po_amount"/>
                             <field name="po_real_advance" string="已预付金额"/>
                             <field name="po_pre_advance"/>
                         </group>
                         <group>
-                            <field name="payment_date" string="预付申请日期"
+                            <field name="payment_date" string="预付申请日期" readonly="1"
                                    attrs="{'readonly': ['|',('state_1','!=','10_draft'),('state', '!=', 'draft')]}"/>
                             <field name="yjzy_payment_id" groups="base.group_system" string="对应付款申请"
                                    attrs="{'invisible':[('state_1','not in',['40_approve','50_posted','60_done'])]}"
