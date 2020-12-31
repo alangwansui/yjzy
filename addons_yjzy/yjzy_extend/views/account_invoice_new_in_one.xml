@@ -712,7 +712,7 @@
                                                 <field name="state_1"/>
                                             </tree>
                                         </field>
-  <field name="payment_log_hexiao_ids"  attrs="{'invisible':[('payment_log_hexiao_ids_count','=',0)]}">
+                                    <field name="payment_log_hexiao_ids" nolabel="1" colspan="2" readonly="1" attrs="{'invisible':[('payment_log_hexiao_ids_count','=',0)]}">
                                          <tree>
                                                  <field name="sfk_type" string="类型"/>
                                                  <field name="payment_date" string="日期"/>

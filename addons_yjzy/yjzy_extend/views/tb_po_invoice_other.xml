@@ -72,7 +72,7 @@
                                        attrs="{'invisible':[('type','not in',['other_payment'])],'readonly':[('state','!=','10_draft')]}"/>
                                 <field name="name_title"
                                        attrs="{'invisible':[('type','in',['other_po'])],'readonly':[('state','!=','10_draft')]}"/>
-                                <label for=" " string="金额" attrs="{'invisible':['|',('type','not in',['other_payment']),('yjzy_payment_id','!=',False)],
+                                <label for="" string="金额" attrs="{'invisible':['|',('type','not in',['other_payment']),('yjzy_payment_id','!=',False)],
                                       }"/>
                                 <div name="amount_div" class="o_row"
                                      attrs="{'invisible':['|',('type','not in',['other_payment']),('yjzy_payment_id','!=',False)]}">
@@ -91,8 +91,19 @@
                                 <field name="yjzy_payment_balance" string="未认领收款金额"
                                        attrs="{'invisible':[('yjzy_payment_id','=',False)]}"/>
                                 <field name="price_total" string="金额合计" groups="base.group_system"/>
-                                <field name="invoice_normal_ids_residual" string="未付金额"
-                                       attrs="{'invisible':['|',('yjzy_type_1','in',['sale','other_payment_sale']),('state','not in',['30_done'])]}"/>
+                                <label for="" name="other_payment_invoice_residual" attrs="{'invisible':[('state','not in',['30_done'])]}">
+                                    <b  attrs="{'invisible':['|',('yjzy_type_1','in',['sale','other_payment_sale']),('state','not in',['30_done'])]}">
+                                        未付金额
+                                    </b>
+                                    <b attrs="{'invisible':['|',('yjzy_type_1','in',['purchase','other_payment_purchase']),('state','not in',['30_done'])]}">
+                                        未收金额
+                                    </b>
+                                 </label>
+                                    <div class="oe_row" attrs="{'invisible':[('state','not in',['30_done'])]}">
+                                     <field name="other_payment_invoice_residual" string="未付金额"/>
+                                    </div>
+
+
                                 <field name="yjzy_tb_po_invoice_parent" groups="base.group_system"
                                        attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',False)],'readonly':[('state','!=','10_draft')]}"
                                        string="上级账单"/>
@@ -102,12 +113,6 @@
                                 <field name="yjzy_tb_po_invoice_parent_residual" string="上级剩余金额"
                                        groups="base.group_system"
                                        attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',False)]}"/>
-
-                                <!--                                <group>-->
-
-                                <!--                                </group>-->
-
-
                             </group>
                             <group style="padding:10px"
                                    attrs="{'invisible':[('is_yjzy_tb_po_invoice','=',False),('is_yjzy_tb_po_invoice_parent','=',False)]}">
@@ -139,15 +144,8 @@
                                        attrs="{'readonly':[('state','!=','10_draft')],'invisible':[('is_yjzy_tb_po_invoice_parent','=',False)]}"/>
                                 <field name="currency_id_yjzy_parent" invisible="1"
                                        attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',False)]}"/>
-
-
-                                    <field name="other_invoice_amount_yjzy_parent" string="金额"
+                                <field name="other_invoice_amount_yjzy_parent" string="金额"
                                            attrs="{'readonly':[('state','!=','10_draft')],'invisible':[('is_yjzy_tb_po_invoice_parent','=',False)]}"/>
-
-
-
-
-
                                 <field name="invoice_partner_yjzy" string="账单描述"
                                        attrs="{'readonly':[('state','!=','10_draft')],'invisible':[('is_yjzy_tb_po_invoice','=',False)]}"/>
                                 <field name="name_title_yjzy" string="账单对象"
@@ -169,8 +167,8 @@
                                     </b>
                                 </label>
                                 <div class="o_row"
-                                     attrs="{'invisible':['|',('state','not in',['30_done']),('is_yjzy_tb_po_invoice_parent_yjzy_parent','=',True)]}">
-                                    <field name="invoice_normal_ids_residual_yjzy_parent"
+                                     attrs="{'invisible':['|',('state','not in',['30_done']),('is_yjzy_tb_po_invoice_parent','=',False)]}">
+                                    <field name="other_payment_invoice_residual_yjzy_parent"
                                            class="oe_line"
                                            attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',False)]}"/>
                                 </div>
@@ -190,17 +188,12 @@
                                 </label>
                                 <div class="o_row"
                                      attrs="{'invisible':['|',('state','not in',['30_done']),('is_yjzy_tb_po_invoice','=',False)]}">
-                                    <field name="invoice_normal_ids_residual_yjzy"
+                                    <field name="other_payment_invoice_residual_yjzy"
                                            class="oe_line"
-                                           attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',False)]}"/>
+                                           attrs="{'invisible':[('is_yjzy_tb_po_invoice','=',False)]}"/>
                                 </div>
-
-
-                                <!--                                <group>-->
-
-                                <!--                                </group>-->
-
                             </group>
+
                             <label for="" name="yjzy_tb_po_invoice" groups="base.group_system" invisible="1"
                                    attrs="{'invisible':[('is_yjzy_tb_po_invoice','=',False)]}">
                                 <b attrs="{'invisible':[('yjzy_type_1','in',['sale','other_payment_sale'])]}">

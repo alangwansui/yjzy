@@ -173,10 +173,12 @@ class tb_po_invoice(models.Model):
             p_s_add_residual = sum(i.residual for i in one.invoice_s_ids.filtered(lambda x: x.state == 'open'))
             back_tax_add_residual = sum(i.residual_signed for i in one.invoice_back_tax_ids.filtered(lambda x: x.state == 'open'))
             p_s_add_refund_residual = sum(i.residual for i in one.invoice_p_s_ids.filtered(lambda x: x.state == 'open'))
+
             one.po_add_residual = po_add_residual
             one.p_s_add_residual = p_s_add_residual
             one.back_tax_add_residual = back_tax_add_residual
             one.p_s_add_refund_residual = p_s_add_refund_residual
+
 
     @api.depends('tb_id')
     def compute_tb_id_po_supplier(self):
@@ -249,6 +251,23 @@ class tb_po_invoice(models.Model):
                 name = one.name
 
             one.display_name = name
+
+    @api.depends('invoice_other_payment_in_ids','invoice_other_payment_ids','invoice_other_payment_ids.residual','invoice_other_payment_in_ids.residual')
+    def compute_other_residual(self):
+        for one in self:
+            if one.invoice_other_payment_ids and not one.invoice_other_payment_in_ids:
+                other_payment_invoice_residual = sum(x.residual for x in one.invoice_other_payment_ids)
+            else:
+                other_payment_invoice_residual = sum(x.residual for x in one.invoice_other_payment_in_ids)
+            one.other_payment_invoice_residual = other_payment_invoice_residual
+
+    other_payment_invoice_residual = fields.Monetary('其他应收应付剩余金额', currency_field='currency_id',
+                                                     compute=compute_other_residual, store=True)
+    other_payment_invoice_residual_yjzy = fields.Monetary('关联其他应收付', currency_field='currency_id',
+                                                     related='yjzy_tb_po_invoice.other_payment_invoice_residual')
+    other_payment_invoice_residual_yjzy_parent = fields.Monetary('关联其他应收付', currency_field='currency_id',
+                                                     related='yjzy_tb_po_invoice_parent.other_payment_invoice_residual')
+
     # # 新增
     # yjzy_type_invoice = fields.Selection(
     #     [('sale', u'应收'), ('purchase', u'应付'), ('back_tax', u'退税'), ('other_payment_sale', '其他应收'),
@@ -361,6 +380,10 @@ class tb_po_invoice(models.Model):
     invoice_ids = fields.One2many('account.invoice','tb_po_invoice_id','相关发票')
     invoice_ids_count = fields.Integer('相关发票数量',compute=compute_invoice_count)
 
+
+
+
+
     # invoice_normal_ids = fields.One2many('account.invoice', 'tb_po_invoice_id', '申请账单',
     #                                      domain=['&',('yjzy_type_1', 'in', ['purchase','sale']),'|',
     #                                              ('invoice_attribute','not in',['other_po']),'&',('yjzy_type_1', 'in', ['purchase']),
@@ -387,6 +410,8 @@ class tb_po_invoice(models.Model):
     invoice_other_payment_ids = fields.One2many('account.invoice','tb_po_invoice_id','其他应付账单',domain=[('type','=','in_invoice'),('yjzy_type_1','in',['purchse','other_payment_purchase']),
                                                                                                       ('invoice_attribute','=','other_payment')])
     invoice_other_payment_ids_count = fields.Integer('其他应付账单数量', compute=compute_invoice_count)
+
+
 
     invoice_extra_ids = fields.One2many('account.invoice', 'tb_po_invoice_id', '额外账单',
                                                 domain=[('invoice_attribute', '=', 'extra')])
@@ -778,6 +803,8 @@ class tb_po_invoice(models.Model):
         ctx = {}
         partner = self.env['res.partner'].search([('name', '=', '未定义')], limit=1)
         if self.type == 'other_payment' and self.yjzy_type_1 in ['purchase','other_payment_purchase']:
+            if not self.name_title or not self.invoice_partner or not self.other_invoice_amount or not self.manual_currency_id:
+                raise Warning('请先将信息填写完整')
             yjzy_type_1 = 'other_payment_sale'
             type_invoice = 'out_invoice'
             name = '创建其他应收申请'
