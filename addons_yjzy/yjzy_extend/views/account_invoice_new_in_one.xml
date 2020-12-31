@@ -721,6 +721,7 @@
                                                  <field name="state_1"/>
                                              </tree>
                                     </field>
+                                        <field name="payment_log_hexiao_ids_count" invisible="1"/>
                                     </group>
                                     <!--                                    <group string="未完成认领单"-->
                                     <!--                                           attrs="{'invisible':[('payment_log_no_done_ids_count','=',0)]}">-->

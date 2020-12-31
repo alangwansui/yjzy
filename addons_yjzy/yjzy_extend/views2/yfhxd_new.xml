@@ -1502,7 +1502,7 @@
                         <page groups="base.group_system">
                             <group>
                                 <field name="yjzy_type"/>
-                                <field name="payment_log_hexiao_ids_count"/>
+
                                     <field name="move_line_com_yfzk_ids_count"/>
                                     <field name="move_line_com_yszk_ids_count"/>
                                     <field name="reconcile_order_ids_count"/>
