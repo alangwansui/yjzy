@@ -384,6 +384,7 @@ class account_payment(models.Model):
     def compute_payment_no_done_ids_count(self):
         for one in self:
             one.payment_no_done_ids_count = len(one.payment_no_done_ids)
+            one.payment_hexiao_ids_count = len(one.payment_hexiao_ids)
 
     def compute_aml_com_count(self):
         for one in self:
@@ -629,6 +630,10 @@ class account_payment(models.Model):
 
 
     payment_ids = fields.One2many('account.payment', 'yjzy_payment_id', u'预收认领和预付申请')
+
+    payment_hexiao_ids = fields.One2many('account.payment', 'yjzy_payment_id', u'核销申请单',
+                                         domain=[('sfk_type','in',['reconcile_ysrld','reconcile_yfsqd'])])
+    payment_hexiao_ids_count = fields.Integer('未完成预收认领和预付申请数量', compute=compute_payment_no_done_ids_count)
 
     payment_no_done_ids = fields.One2many('account.payment', 'yjzy_payment_id', u'未完成预收认领和预付申请',domain=[('state','not in',['posted','rconciled'])])
     payment_no_done_ids_count = fields.Integer('未完成预收认领和预付申请数量',compute=compute_payment_no_done_ids_count)

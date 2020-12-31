@@ -1119,6 +1119,24 @@ class account_reconcile_order(models.Model):
     #     if self.hxd_type_new in ['25']:
     #         self.update_line_advance_no_amount()
 
+    def update_yjzy_payment_yfrl(self):
+        self.ensure_one()
+        yjzy_payment_id = self.yjzy_payment_id
+
+        line_ids = self.line_ids
+        line_no_ids = self.line_no_ids
+        for line_no in line_no_ids:
+            for rld_1 in line_no.yingshouyingfurld_ids:
+                rld_1.write({
+                    'yjzy_payment_id': yjzy_payment_id.id,
+                    'post_date': fields.date.today()
+                })
+        for line in line_ids:
+            for rld_2 in line.yingshouyingfurld_ids:
+                rld_2.write({
+                    'post_date': fields.date.today()
+                })
+
     def update_line_advance_no_amount(self):
         for one in self.line_no_ids:
             line_ids = self.line_ids.filtered(lambda x: x.invoice_id == one.invoice_id)
@@ -3219,6 +3237,8 @@ class account_reconcile_order_line(models.Model):
             x.amount_invoice_so_residual_can_approve_d_after = amount_invoice_so_residual_can_approve_d - amount_total_org_new
             x.amount_invoice_so_residual_d_after = amount_invoice_so_residual_d - amount_total_org_new
 
+    yingshouyingfurld_ids = fields.One2many('account.payment', 'account_reconcile_order_line_id', '生成的应收应付认领单')
+
     account_payment_state_id = fields.Many2one('account.payment.state','本次认领的预付记录', ondelete='cascade')
 
     least_advice_amount_advance_org = fields.Monetary(u'最低建议金额',currency_field='yjzy_currency_id')
@@ -3247,7 +3267,7 @@ class account_reconcile_order_line(models.Model):
 
     invoice_display_name =  fields.Char('发票显示名字', related='invoice_id.display_name' , store=True)
 
-
+    sfk_type = fields.Selection( u'收付类型', related='order_id.sfk_type')
     po_id = fields.Many2one('purchase.order', u'采购单')
     invoice_id = fields.Many2one('account.invoice', u'发票')
     yjzy_invoice_id = fields.Many2one('account.invoice', u'发票关联账单', related='invoice_id.yjzy_invoice_id')  # 额外账单的认领明细
@@ -3420,7 +3440,7 @@ class account_reconcile_order_line_no(models.Model):
 
     #计算出非自己认领明细原则
 #1220
-
+    yingshouyingfurld_ids = fields.One2many('account.payment', 'account_reconcile_order_line_no_id', '生成的应收应付认领单')
     amount_total_org = fields.Monetary('总认领金额',currency_field='invoice_currency_id',compute=compute_amount_advance_org_compute, store=True)
     fkzl_id = fields.Many2one('account.payment',u'付款指令')
 
@@ -3436,6 +3456,7 @@ class account_reconcile_order_line_no(models.Model):
 
     yjzy_invoice_id = fields.Many2one('account.invoice', u'发票关联账单', related='invoice_id.yjzy_invoice_id')  # 额外账单的认领明细
     approve_date = fields.Date(u'审批完成时间',related='order_id.approve_date')
+
 
 
     invoice_id_po_ids = fields.Many2many('purchase.order',related='invoice_id.po_ids')
@@ -3536,6 +3557,8 @@ class advance_payment_state(models.Model):
     amount_reconcile = fields.Monetary(u'本次认领金额',currency_field='advance_payment_currency',compute=compute_amount_reconcile,store=True)
     state_1 = fields.Selection('审批流程',related='reconcile_order_id.state_1')
     state = fields.Selection([('reconcile','认领'),('no_reconcile','未认领')],u'认领状态',default='no_reconcile')
+
+
 
 
     # renling = fields.Boolean('认领')

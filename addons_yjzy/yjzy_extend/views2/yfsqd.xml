@@ -272,19 +272,35 @@
                                         </tree>
                                     </field>
                                 </group>
-                                <group string="未完成认领单" attrs="{'invisible':[('payment_no_done_ids_count','=',0)]}">
-                                    <field name="payment_no_done_ids" nolabel="1" colspan="2">
-                                        <tree decoration-danger="sfk_type in ['reconcile_ysrld','reconcile_yfsqd']">
-                                            <field name="sfk_type" string="类型"/>
-                                            <field name="payment_date" string="认领时间"/>
-                                            <field name="name" string="单号"/>
-                                            <field name="partner_id" string="对象"/>
-                                            <field name="amount" string="金额"/>
-                                            <field name="state"/>
-                                        </tree>
-                                    </field>
+                                <group string="所有申请流程日志">
+                                        <field name="advance_reconcile_order_line_ids" nolabel="1" colspan="2">
+                                             <tree>
+                                                 <field name="invoice_id" readonly="1" invisible="1"/>
+                                                 <field name="create_date" string="创建日期"/>
+                                                 <field name="tb_contract_code"/>
+                                                 <field name="approve_date"/>
+                                                 <field name="yjzy_currency_id" invisible="1"/>
+                                                 <field name="so_id" attrs="{'column_invisible':[('parent.sfk_type','!=','ysrld')]}"/>
+                                                 <field name="po_id" attrs="{'column_invisible':[('parent.sfk_type','!=','yfsqd')]}"/>
+                                                 <field name="amount_advance_org"/>
+                                                 <field name="sfk_type" invisible="1"/>
+                                                 <field name="state_1"/>
+                                             </tree>
+                                         </field>
+                                        <field name="payment_hexiao_ids" colspan="2" nolabel="1"
+                                                attrs="{'invisible':[('payment_hexiao_ids_count','=',0)]}">
+                                             <tree>
+                                                 <field name="sfk_type" string="类型"/>
+                                                 <field name="payment_date" string="日期"/>
+                                                 <field name="amount" string="金额"/>
+                                                 <field name="currency_id" invisible="1"/>
+                                                 <field name="state_1"/>
+                                             </tree>
+                                         </field>
+                                         <field name="payment_hexiao_ids_count" invisible="1"/>
 
-                                </group>
+                                    </group>
+
                             </group>
 
                             <field name="aml_yfzk_ids" readonly="1" groups="base.group_system">
@@ -298,58 +314,73 @@
                             <field name="payment_ids_count" invisible="1"/>
                             <field name="payment_no_done_ids_count" invisible="1"/>
                         </page>
-                        <page string="认领明细(old)"
-                              attrs="{'invisible':[('advance_reconcile_order_line_ids_count','=',0)]}">
-                            <field name="advance_reconcile_order_line_ids_count" invisible="1"/>
-                            <field name="advance_reconcile_order_line_ids" readonly="1">
-                                <tree>
-                                    <field name="date" string="日期"/>
-                                    <field name="payment_type" invisible="1"/>
-                                    <field name="partner_type" invisible="1"/>
-                                    <field name="po_id" readonly="1"/>
-                                    <field name="invoice_id" readonly="1" invisible="1"/>
-                                    <field name="tb_contract_code" string="出运合同"/>
-                                    <field name="yjzy_currency_id" invisible="1"/>
-                                    <field name="advice_amount_advance_org_real" string="建议预认领" invisible="1"/>
-                                    <field name="least_advice_amount_advance_org" invisible="1" string="最低预付认领"/>
-                                    <field name="so_tb_percent" string="出运占原采购金额比例" invisible="1"
-                                           groups="base.group_system"/>
-                                    <field name="no_delivery_amount_so" invisible="1"/>
-                                    <field name="amount_invoice_so" string="本次采购原始金额" invisible="1"/>
-                                    <field name="amount_invoice_so_proportion" invisible="1"/>
-                                    <field name="amount_invoice_so_residual" string="未认领应付" invisible="1"/>
-                                    <field name="amount_invoice_so_residual_can_approve" string="可申请应付" invisible="1"/>
-                                    <field name="advance_residual2" string="采购合同未认领预付" readonly="0"
-                                           groups="base.group_system"/>
-                                    <field name="residual" readonly="0" string="总账单应付余额" invisible="1"/>
-                                    <field name="invoice_currency_id" invisible="1"/>
-                                    <field name="payment_currency_id" invisible="1"/>
-                                    <field name="currency_id" invisible="1"/>
-                                    <field name="amount_advance_org_self" invisible="1" groups="base.group_system"/>
-                                    <field name="duoyu_this_time_advice_advance_org" invisible="1"
-                                           groups="base.group_system"/>
-                                    <field name="ysrld_advice_amount_advance_org_all" invisible="1"
-                                           groups="base.group_system"/>
-                                    <field name="ysrld_amount_advance_org_all" invisible="1"
-                                           groups="base.group_system"/>
-                                    <field name="yjzy_payment_id" string="预付申请单" invisible="1"
-                                           context="{'form_view_ref': 'yjzy_extend.view_rcfkd_form','advance_po_amount':1}"
-                                           domain="[('sfk_type','=','yfsqd'),('advance_balance_total','!=',0)]"/>
-                                    <field name="amount_advance_org" string="预付认领金额"/>
-                                    <field name="amount_payment_org" string="申请付款金额" invisible="1"/>
-                                    <!--field name="amount_bank_org"/-->
-                                    <!--field name="amount_bank"/-->
-                                    <!--                                    <field name="amount_diff_org" string="费用" invisible="1"/>-->
-                                    <field name="amount_total_org" string="应付认领合计" groups="base.group_system"/>
+<!--                        <page string="认领明细(old)"-->
+<!--                              attrs="{'invisible':[('advance_reconcile_order_line_ids_count','=',0)]}">-->
+
+<!--                            <field name="advance_reconcile_order_line_ids" readonly="1">-->
+<!--                                <tree>-->
+<!--                                    <field name="date" string="日期"/>-->
+<!--                                    <field name="payment_type" invisible="1"/>-->
+<!--                                    <field name="partner_type" invisible="1"/>-->
+<!--                                    <field name="po_id" readonly="1"/>-->
+<!--                                    <field name="invoice_id" readonly="1" invisible="1"/>-->
+<!--                                    <field name="tb_contract_code" string="出运合同"/>-->
+<!--                                    <field name="yjzy_currency_id" invisible="1"/>-->
+<!--                                    <field name="advice_amount_advance_org_real" string="建议预认领" invisible="1"/>-->
+<!--                                    <field name="least_advice_amount_advance_org" invisible="1" string="最低预付认领"/>-->
+<!--                                    <field name="so_tb_percent" string="出运占原采购金额比例" invisible="1"-->
+<!--                                           groups="base.group_system"/>-->
+<!--                                    <field name="no_delivery_amount_so" invisible="1"/>-->
+<!--                                    <field name="amount_invoice_so" string="本次采购原始金额" invisible="1"/>-->
+<!--                                    <field name="amount_invoice_so_proportion" invisible="1"/>-->
+<!--                                    <field name="amount_invoice_so_residual" string="未认领应付" invisible="1"/>-->
+<!--                                    <field name="amount_invoice_so_residual_can_approve" string="可申请应付" invisible="1"/>-->
+<!--                                    <field name="advance_residual2" string="采购合同未认领预付" readonly="0"-->
+<!--                                           groups="base.group_system"/>-->
+<!--                                    <field name="residual" readonly="0" string="总账单应付余额" invisible="1"/>-->
+<!--                                    <field name="invoice_currency_id" invisible="1"/>-->
+<!--                                    <field name="payment_currency_id" invisible="1"/>-->
+<!--                                    <field name="currency_id" invisible="1"/>-->
+<!--                                    <field name="amount_advance_org_self" invisible="1" groups="base.group_system"/>-->
+<!--                                    <field name="duoyu_this_time_advice_advance_org" invisible="1"-->
+<!--                                           groups="base.group_system"/>-->
+<!--                                    <field name="ysrld_advice_amount_advance_org_all" invisible="1"-->
+<!--                                           groups="base.group_system"/>-->
+<!--                                    <field name="ysrld_amount_advance_org_all" invisible="1"-->
+<!--                                           groups="base.group_system"/>-->
+<!--                                    <field name="yjzy_payment_id" string="预付申请单" invisible="1"-->
+<!--                                           context="{'form_view_ref': 'yjzy_extend.view_rcfkd_form','advance_po_amount':1}"-->
+<!--                                           domain="[('sfk_type','=','yfsqd'),('advance_balance_total','!=',0)]"/>-->
+<!--                                    <field name="amount_advance_org" string="预付认领金额"/>-->
+<!--                                    <field name="amount_payment_org" string="申请付款金额" invisible="1"/>-->
+<!--                                    &lt;!&ndash;field name="amount_bank_org"/&ndash;&gt;-->
+<!--                                    &lt;!&ndash;field name="amount_bank"/&ndash;&gt;-->
+<!--                                    &lt;!&ndash;                                    <field name="amount_diff_org" string="费用" invisible="1"/>&ndash;&gt;-->
+<!--                                    <field name="amount_total_org" string="应付认领合计" groups="base.group_system"/>-->
 
 
-                                </tree>
-                            </field>
-                        </page>
+<!--                                </tree>-->
+<!--                            </field>-->
+<!--                        </page>-->
 
 
                         <page groups="base.group_system">
                             <group>
+                                  <field name="advance_reconcile_order_line_ids_count" invisible="1"/>
+
+                                <!--                                <group string="未完成认领单" attrs="{'invisible':[('payment_no_done_ids_count','=',0)]}">-->
+<!--                                    <field name="payment_no_done_ids" nolabel="1" colspan="2">-->
+<!--                                        <tree decoration-danger="sfk_type in ['reconcile_ysrld','reconcile_yfsqd']">-->
+<!--                                            <field name="sfk_type" string="类型"/>-->
+<!--                                            <field name="payment_date" string="认领时间"/>-->
+<!--                                            <field name="name" string="单号"/>-->
+<!--                                            <field name="partner_id" string="对象"/>-->
+<!--                                            <field name="amount" string="金额"/>-->
+<!--                                            <field name="state"/>-->
+<!--                                        </tree>-->
+<!--                                    </field>-->
+
+<!--                                </group>-->
                                 <field name="sfk_type"/>
                                 <field name="aml_com_yszk_ids_count"/>
                                 <field name="aml_com_yfzk_ids_count"/>

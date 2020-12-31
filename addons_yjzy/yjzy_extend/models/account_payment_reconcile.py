@@ -84,6 +84,7 @@ class account_payment(models.Model):
                 else:
                     move_line_com_ids = invoice_log_id.move_line_com_yfzk_ids
             reconcile_order_ids = invoice_log_id.reconcile_order_ids
+            advance_reconcile_order_yjzy_line_ids = yjzy_payment_id.advance_reconcile_order_line_ids
 
             # for x in move_line_com_ids:  # 参考M2M的自动多选
             #     move_line_com_dic.append(x.id)
@@ -92,7 +93,16 @@ class account_payment(models.Model):
             # one.write({'move_line_com_ids':[(6,0,[x.id for x in move_line_com_ids])]})
             one.move_line_com_ids = move_line_com_ids
             one.reconcile_order_ids = reconcile_order_ids
+            one.advance_reconcile_order_yjzy_line_ids = advance_reconcile_order_yjzy_line_ids
             one.reconcile_order_ids_count = len(reconcile_order_ids)
+            one.advance_reconcile_order_yjzy_line_ids_count = len(advance_reconcile_order_yjzy_line_ids)
+
+    @api.depends('yjzy_payment_id')
+    def compute_payment_ids_yjzy(self):
+        for one in self:
+            payment_ids_yjzy = one.yjzy_payment_id.payment_ids.filtered(lambda x: x.sfk_type in ['reconcile_yfsqd','reconcile_ysrld'])
+            one.payment_ids_yjzy = payment_ids_yjzy
+            one.payment_ids_yjzy_count = len(payment_ids_yjzy)
 
 
     payment_log_ids = fields.Many2many('account.payment', compute=compute_invoice_id)
@@ -101,9 +111,15 @@ class account_payment(models.Model):
     move_line_com_ids = fields.Many2many('account.move.line.com',compute=compute_move_line_com_ids)
     reconcile_order_ids = fields.Many2many('account.reconcile.order',compute=compute_move_line_com_ids)
     reconcile_order_ids_count = fields.Integer(u'核销单据数量', compute=compute_move_line_com_ids)
+    #被核销的预收预付的认领明细
+    advance_reconcile_order_yjzy_line_ids = fields.Many2many('account.reconcile.order.line',compute=compute_move_line_com_ids)
+    advance_reconcile_order_yjzy_line_ids_count = fields.Integer(u'预收认领预付申请数量', compute=compute_move_line_com_ids)
 
-
+    payment_ids_yjzy = fields.Many2many('account.payment','预收预付的核销单',compute=compute_payment_ids_yjzy)
+    payment_ids_yjzy_count = fields.Integer(u'预收认领预付核销数量', compute=compute_payment_ids_yjzy)
     payment_ids_count = fields.Integer(u'预收认领预付申请数量', compute=compute_payment_ids_count)
+
+
 
     reconcile_ysrld_ids = fields.One2many('account.payment','yjzy_payment_id',u'预收核销',)#domain=[('sfk_type','=','reconcile_ysrld')]其实就是payment_ids包括了认领和核销的
 
