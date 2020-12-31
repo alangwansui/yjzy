@@ -886,7 +886,8 @@
                             <field name="invoice_attribute_all_in_one" string="认领账单属性"/>
                             <field name="payment_type" invisible="1"/>
                             <field name="partner_type" invisible="1"/>
-                            <field name="partner_id" readonly="context.get('open')" required="1" string="供应商"
+<!--                            readonly="context.get('open')"-->
+                            <field name="partner_id" readonly="1" required="1" string="供应商" options="{'no_create':1,'no_open':1}"
                                    attrs="{'invisible':['|',('operation_wizard','=',False),('invoice_attribute','=','other_payment')],
                                    'readonly':[('state_1','!=','draft')]}"
                                    domain="[('is_company','=',True),('parent_id', '=', False),('supplier','=',1),('state','=','done')]"
@@ -935,9 +936,9 @@
                         </group>
 
                         <group>
-                            <field name="partner_payment_term_id" string="供应商付款条款"
+                            <field name="partner_payment_term_id" string="供应商付款条款" options="{'no_create':1,'no_open':1}"
                                    attrs="{'invisible':[('invoice_attribute_all_in_one','not in',['110','120'])]}"/>
-                            <field name="invoice_payment_term_id" string="账单应付条款"
+                            <field name="invoice_payment_term_id" string="账单应付条款" options="{'no_create':1,'no_open':1}"
                                    attrs="{'invisible':[('invoice_attribute_all_in_one','not in',['110','120'])]}"/>
                         </group>
 

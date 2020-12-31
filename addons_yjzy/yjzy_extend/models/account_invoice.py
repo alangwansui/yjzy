@@ -454,11 +454,16 @@ class account_invoice(models.Model):
             one.amount_payment_can_approve_all = amount_payment_can_approve_all
             one.yjzy_amount_payment_can_approve_all = yjzy_amount_payment_can_approve_all
 
-    @api.depends('reconcile_order_line_ids','reconcile_order_line_ids.amount_total_org_new')
+    @api.depends('reconcile_order_line_no_ids','reconcile_order_line_no_ids.amount_payment_org',
+                 'reconcile_order_line_ids','reconcile_order_line_ids.amount_advance_org','reconcile_order_line_ids.amount_payment_org',)
     def compute_amount_payment_approval_all(self):
         for one in self:
-            amount_payment_approval_all = one.reconcile_order_line_ids.filtered(lambda x: x.order_id.state == 'posted')
-            one.amount_payment_approval_all = sum(x.amount_total_org_new for x in amount_payment_approval_all)
+            amount_payment_payment_approval_all = one.reconcile_order_line_no_ids.filtered(lambda x: x.order_id.state == 'posted')#这个用来算应付
+            amount_payment_advance_approval_all = one.reconcile_order_line_ids.filtered(lambda x: x.order_id.state == 'posted')  # 这个用来算预付
+
+            amount_payment_approval_all =  sum(x.amount_payment_org for x in amount_payment_payment_approval_all) + \
+                                           sum(x.amount_total_org for x in amount_payment_advance_approval_all)
+            one.amount_payment_approval_all = amount_payment_approval_all
 
 
     @api.depends('state','residual')
@@ -753,7 +758,10 @@ class account_invoice(models.Model):
     amount_payment_can_approve_all = fields.Monetary(u'可申请应收付款',currency_field='currency_id',compute=compute_amount_payment_can_approve_all, store=True)
 
 
+
+
     amount_payment_approval_all = fields.Monetary(u'审批中应收付款',currency_field='currency_id',compute=compute_amount_payment_approval_all, store=True)#未付金额-审批完成的付款金额
+
     amount_payment_approve_all = fields.Monetary(u'已审批未支付',currency_field='currency_id',compute=compute_amount_payment_can_approve_all, store=True)
     yjzy_amount_payment_can_approve_all = fields.Monetary(u'所有可申请应收付款',currency_field='currency_id', compute=compute_amount_payment_can_approve_all,
                                                   store=True)  # 包括额外账单的
