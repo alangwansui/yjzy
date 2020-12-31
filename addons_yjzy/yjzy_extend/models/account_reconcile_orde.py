@@ -3237,6 +3237,8 @@ class account_reconcile_order_line(models.Model):
             x.amount_invoice_so_residual_can_approve_d_after = amount_invoice_so_residual_can_approve_d - amount_total_org_new
             x.amount_invoice_so_residual_d_after = amount_invoice_so_residual_d - amount_total_org_new
 
+    hxd_type_new = fields.Selection('认领来源',related='order_id.hxd_type_new')
+
     yingshouyingfurld_ids = fields.One2many('account.payment', 'account_reconcile_order_line_id', '生成的应收应付认领单')
 
     account_payment_state_id = fields.Many2one('account.payment.state','本次认领的预付记录', ondelete='cascade')
@@ -3440,6 +3442,8 @@ class account_reconcile_order_line_no(models.Model):
 
     #计算出非自己认领明细原则
 #1220
+
+    hxd_type_new = fields.Selection('认领来源',related='order_id.hxd_type_new')
     yingshouyingfurld_ids = fields.One2many('account.payment', 'account_reconcile_order_line_no_id', '生成的应收应付认领单')
     amount_total_org = fields.Monetary('总认领金额',currency_field='invoice_currency_id',compute=compute_amount_advance_org_compute, store=True)
     fkzl_id = fields.Many2one('account.payment',u'付款指令')

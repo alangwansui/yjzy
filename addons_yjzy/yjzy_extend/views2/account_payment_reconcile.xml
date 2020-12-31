@@ -264,20 +264,21 @@
                                        <field name="advance_reconcile_order_yjzy_line_ids" nolabel="1" colspan="2"
                                        attrs="{'invisible':[('advance_reconcile_order_yjzy_line_ids_count','=',0)]}">
                                              <tree>
+                                                 <field name="hxd_type_new"/>
                                                  <field name="invoice_id" readonly="1" invisible="1"/>
                                                  <field name="create_date" string="创建日期"/>
-                                                 <field name="tb_contract_code"/>
                                                  <field name="approve_date"/>
+                                                 <field name="tb_contract_code"/>
                                                  <field name="yjzy_currency_id" invisible="1"/>
                                                  <field name="so_id" attrs="{'column_invisible':[('parent.sfk_type','!=','ysrld')]}"/>
                                                  <field name="po_id" attrs="{'column_invisible':[('parent.sfk_type','!=','yfsqd')]}"/>
-                                                 <field name="amount_advance_org"/>
+                                                 <field name="amount_advance_org" string="认领金额"/>
                                                  <field name="sfk_type" invisible="1"/>
                                                  <field name="state_1"/>
                                              </tree>
                                          </field>
-                                           <field name="payment_ids_yjzy" colspan="2" nolabel="1"
-                                                attrs="{'invisible':[('payment_ids_yjzy_count','=',0)]}">
+                                           <field name="payment_log_hexiao_ids" colspan="2" nolabel="1"
+                                                attrs="{'invisible':[('payment_log_hexiao_ids_count','=',0)]}">
                                              <tree>
                                                  <field name="sfk_type" string="类型"/>
                                                  <field name="payment_date" string="日期"/>
@@ -286,7 +287,7 @@
                                                  <field name="state_1"/>
                                              </tree>
                                          </field>
-                                         <field name="payment_ids_yjzy_count" invisible="1"/>
+                                         <field name="payment_log_hexiao_ids_count" invisible="1"/>
                                          <field name="advance_reconcile_order_yjzy_line_ids_count" invisible="1"/>
                                          <field name="reconcile_order_ids_count" invisible="1"/>
                                     </group>

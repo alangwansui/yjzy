@@ -1457,6 +1457,15 @@
                                             <field name="state_1"/>
                                         </tree>
                                     </field>
+                                    <field name="payment_log_hexiao_ids"  attrs="{'invisible':[('payment_log_hexiao_ids_count','=',0)]}">
+                                         <tree>
+                                                 <field name="sfk_type" string="类型"/>
+                                                 <field name="payment_date" string="日期"/>
+                                                 <field name="amount" string="金额"/>
+                                                 <field name="currency_id" invisible="1"/>
+                                                 <field name="state_1"/>
+                                             </tree>
+                                    </field>
                                 </group>
 
                             </group>
@@ -1501,6 +1510,7 @@
                         <page groups="base.group_system">
                             <group>
                                 <field name="yjzy_type"/>
+                                <field name="payment_log_hexiao_ids_count"/>
                                     <field name="move_line_com_yfzk_ids_count"/>
                                     <field name="move_line_com_yszk_ids_count"/>
                                     <field name="reconcile_order_ids_count"/>

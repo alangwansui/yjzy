@@ -59,10 +59,15 @@ class account_payment(models.Model):
                 payment_log_ids = invoice_log_id.payment_log_ids
             if payment_log_ids:
                 payment_log_no_done_ids = payment_log_ids.filtered(lambda x: x.state not in ['posted', 'reconciled'])
+                payment_log_hexiao_ids = payment_log_ids.filtered(lambda x: x.sfk_type in ['reconcile_yfsqd', 'reconcile_ysrld','reconcile_yingshou','reconcile_yingfu'])
+                one.payment_log_hexiao_ids_count = len(payment_log_hexiao_ids)
             else:
                 payment_log_no_done_ids = None
+                payment_log_hexiao_ids = None
             one.payment_log_ids = payment_log_ids
             one.payment_log_no_done_ids = payment_log_no_done_ids
+            one.payment_log_hexiao_ids = payment_log_hexiao_ids
+
 
     @api.depends('yjzy_payment_id','invoice_log_id')
     def compute_move_line_com_ids(self):
@@ -97,16 +102,18 @@ class account_payment(models.Model):
             one.reconcile_order_ids_count = len(reconcile_order_ids)
             one.advance_reconcile_order_yjzy_line_ids_count = len(advance_reconcile_order_yjzy_line_ids)
 
-    @api.depends('yjzy_payment_id')
-    def compute_payment_ids_yjzy(self):
-        for one in self:
-            payment_ids_yjzy = one.yjzy_payment_id.payment_ids.filtered(lambda x: x.sfk_type in ['reconcile_yfsqd','reconcile_ysrld'])
-            one.payment_ids_yjzy = payment_ids_yjzy
-            one.payment_ids_yjzy_count = len(payment_ids_yjzy)
+    # @api.depends('yjzy_payment_id')
+    # def compute_payment_ids_yjzy(self):
+    #     for one in self:
+    #         payment_ids_yjzy = one.yjzy_payment_id.payment_ids.filtered(lambda x: x.sfk_type in ['reconcile_yfsqd','reconcile_ysrld'])
+    #         one.payment_ids_yjzy = payment_ids_yjzy
+    #         one.payment_ids_yjzy_count = len(payment_ids_yjzy)
 
 
     payment_log_ids = fields.Many2many('account.payment', compute=compute_invoice_id)
     payment_log_no_done_ids = fields.Many2many('account.payment', compute=compute_invoice_id)
+    payment_log_hexiao_ids = fields.Many2many('account.payment', compute=compute_invoice_id)
+    payment_log_hexiao_ids_count = fields.Integer('数量',compute=compute_invoice_id)
 
     move_line_com_ids = fields.Many2many('account.move.line.com',compute=compute_move_line_com_ids)
     reconcile_order_ids = fields.Many2many('account.reconcile.order',compute=compute_move_line_com_ids)
@@ -115,8 +122,8 @@ class account_payment(models.Model):
     advance_reconcile_order_yjzy_line_ids = fields.Many2many('account.reconcile.order.line',compute=compute_move_line_com_ids)
     advance_reconcile_order_yjzy_line_ids_count = fields.Integer(u'预收认领预付申请数量', compute=compute_move_line_com_ids)
 
-    payment_ids_yjzy = fields.Many2many('account.payment','预收预付的核销单',compute=compute_payment_ids_yjzy)
-    payment_ids_yjzy_count = fields.Integer(u'预收认领预付核销数量', compute=compute_payment_ids_yjzy)
+    # payment_ids_yjzy = fields.Many2many('account.payment','预收预付的核销单',compute=compute_payment_ids_yjzy)
+    # payment_ids_yjzy_count = fields.Integer(u'预收认领预付核销数量', compute=compute_payment_ids_yjzy)
     payment_ids_count = fields.Integer(u'预收认领预付申请数量', compute=compute_payment_ids_count)
 
 

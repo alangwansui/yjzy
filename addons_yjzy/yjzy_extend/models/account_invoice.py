@@ -562,6 +562,7 @@ class account_invoice(models.Model):
         for one in self:
             one.payment_log_ids_count = len(one.payment_log_ids)
             one.payment_log_no_done_ids_count = len(one.payment_log_no_done_ids)
+            one.payment_log_hexiao_ids_count = len(one.payment_log_hexiao_ids)
 
     @api.depends('tb_po_invoice_id', 'tb_po_invoice_id.is_yjzy_tb_po_invoice',
                  'tb_po_invoice_id.is_yjzy_tb_po_invoice_parent')
@@ -585,6 +586,10 @@ class account_invoice(models.Model):
 
     payment_log_no_done_ids = fields.One2many('account.payment','invoice_log_id','未完成认领以及收付明细',domain=[('state','not in',['posted','reconciled'])])
     payment_log_no_done_ids_count = fields.Integer('未完成认领以及收付明细数量',compute=compute_payment_log_ids_count)
+
+    payment_log_hexiao_ids = fields.One2many('account.payment', 'invoice_log_id', '核销单',
+                                              domain=[('sfk_type', 'in', ['reconcile_yingshou', 'reconcile_yingfu'])])
+    payment_log_hexiao_ids_count = fields.Integer('未完成认领以及收付明细数量', compute=compute_payment_log_ids_count)
 
 
     other_payment_invoice_id = fields.Many2one('account.invoice','关联的其他应收付下级账单')
