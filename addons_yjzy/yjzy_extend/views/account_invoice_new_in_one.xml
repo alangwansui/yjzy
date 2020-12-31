@@ -223,10 +223,10 @@
                             <group>
                                 <field name="date_out_in" string="进仓日期"
                                        attrs="{'invisible':[('type','in',['in_invoice','in_refund'])]}"/>
-                                <field name="date_ship"
+                                <field name="date_ship" readonly="1"
                                        attrs="{'invisible':[('invoice_attribute','not in',['extra','normal'])],
                                        'readonly':[('state','not in',['draft','open'])]}"/>
-                                <field name="date_finish"
+                                <field name="date_finish" readonly="1"
                                        attrs="{'invisible':[('invoice_attribute','not in',['extra','normal'])]}"/>
                                 <field name="date_deadline"
                                        attrs="{'invisible':[('invoice_attribute','in',['other_payment','other_po','expense_po'])]}"/>
@@ -759,11 +759,11 @@
                                     </tree>
                                 </field>
                             </page>
-                            <page string="账单认领明细">
+                            <page string="账单认领明细" groups="base.group_system">
 
 <!--                                <field name="reconcile_order_ids" groups="base.group_system"/>-->
 
-                                <field name="yjzy_invoice_reconcile_order_line_no_ids">
+                                <field name="yjzy_invoice_reconcile_order_line_no_ids" readonly="1">
 
                                     <tree editable="bottom" create="false"
                                           default_order="invoice_id,invoice_attribute desc">
