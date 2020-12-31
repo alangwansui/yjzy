@@ -2,7 +2,7 @@
 <odoo>
     <data>
 
-<!--        付款定稿-->
+        <!--        付款定稿-->
         <record model="ir.ui.view" id="view_account_invoice_new_form_in_one">
             <field name="name">account.invoice.new.form</field>
             <field name="model">account.invoice</field>
@@ -13,23 +13,19 @@
                                 attrs="{'invisible':['|',('residual','=',0),('type','!=','in_invoice')]}"
                                 confirm="确定创建付款申请吗？"
                                 type="object" string="创建付款申请"/>
-                        <!--                         <button name="action_create_yfhxd_from_one_invoice" type="object" string="创建应付申请"-->
-                        <!--                                context="{'invoice_attribute':invoice_attribute}"-->
-                        <!--                              />-->
                         <button name="create_reconcile" type="object" string="创建核销"
                                 groups="account.group_account_manager"
                                 attrs="{'invisible':['|',('residual','=',0),('payment_log_ids_count','=',0)]}"
                                 confirm="确定创建核销申请单吗？"/>
-                        <button name="compute_move_lines" type="object" string="更新日志" />
-
-
+                        <button name="compute_move_lines" type="object" string="更新日志" groups="base.group_system"/>
+                        <field name="state" widget="statusbar" nolabel="1" statusbar_visible="draft,open,paid"/>
                     </header>
                     <header attrs="{'invisible':['|',('is_yjzy_invoice','=',True),('type','not in',['out_invoice','out_refund'])]}">
                         <button name="open_tb_po_invoice" string="额外应收申请" type="object"/>
                         <button name="open_tb_po_reconcile_invoice" string="创建核销应收申请" type="object"/>
                         <!--                       <button name="open_supplier_invoice_id" string="额外应付账单" type="object"/>-->
                         <!--button name="open_supplier_refund_id" string="额外账单：减少金额" type="object"/-->
-                        <field name="state" widget="statusbar" nolabel="1" statusbar_visible="draft,open,paid"/>
+
                     </header>
                     <header attrs="{'invisible':['|',('is_yjzy_invoice','=',True),('type','in',['out_invoice','out_refund'])]}">
                         <button name="open_tb_po_invoice" string="额外应付账单申请" class="oe_highlight" type="object"
@@ -40,7 +36,7 @@
                                 invisible="not context.get('fkhxd_type')"/>
                         <!--                       <button name="open_supplier_invoice_id" string="额外应付账单" type="object"/>-->
                         <!--button name="open_supplier_refund_id" string="额外账单：减少金额" type="object"/-->
-                        <field name="state" widget="statusbar" nolabel="1" statusbar_visible="draft,open,paid"/>
+<!--                        <field name="state" widget="statusbar" nolabel="1" statusbar_visible="draft,open,paid"/>-->
                     </header>
                     <header groups="base.group_system">
                         <button name="action_invoice_sent" type="object" string="Send by Email"
@@ -70,7 +66,7 @@
                         <button name="get_reconcile_order_line" string="计算预收" type="object" groups="base.group_system"/>
                         <button name="submit_yshxd" string="生成应收核销" type="object" groups="base.group_system"/>
                         <button name="open_invoice_id" string="创建发票" type="object" groups="base.group_system"/>
-                        <field name="state" widget="statusbar" nolabel="1" statusbar_visible="draft,open,paid"/>
+<!--                        <field name="state" widget="statusbar" nolabel="1" statusbar_visible="draft,open,paid"/>-->
                     </header>
                     <div groups="base.group_system" class="alert alert-info" role="alert"
                          style="margin-bottom:0px;" attrs="{'invisible': [('has_outstanding','=',False)]}">
@@ -183,7 +179,7 @@
                                 <div class="o_row" attrs="{'invisible':[('invoice_attribute','=','other_payment')]}">
                                     <field name="partner_id"
                                            context="{'search_default_customer':1, 'show_address': 0, 'default_company_type': 'company'}"
-                                           options="{&quot;always_reload&quot;: True, &quot;no_quick_create&quot;: True}"
+                                           options="{&quot;always_reload&quot;: True, &quot;no_quick_create&quot;: True,'no_open':1}"
                                            domain="[('customer', '=', True),('is_company','=',True)]"/>
                                 </div>
                                 <field name="invoice_partner"
@@ -193,11 +189,11 @@
                                 <field name="yjzy_invoice_id"
                                        attrs="{'invisible':[('is_yjzy_invoice','=',False)],'readonly':[('state','not in',['draft'])]}"
                                        domain="[('partner_id','=',partner_id)]" string="原始账单"/>
-                                <field name="bill_id" string="出运合同" context="{'only_ref':1}"
+                                <field name="bill_id" string="出运合同" context="{'only_ref':1}" options="{'no_open':1}"
                                        attrs="{'invisible':[('invoice_attribute','=','other_payment')],'readonly':[('state','not in',['draft'])]}"/>
                                 <field name="partner_shipping_id" groups="sale.group_delivery_invoice_address"
                                        invisible="1"/>
-                                <field name="payment_term_id"
+                                <field name="payment_term_id" options="{'no_open':1}"
                                        attrs="{'invisible':[('invoice_attribute','in',['other_payment','other_po'])]}"/>
 
                                 <field name="yjzy_payment_term_id" string="付款条款"
@@ -522,17 +518,23 @@
                                         />
                                         <field name="purchase_amount2_no_tax" readonly="1" sum="小计"
                                         />
-                                        <field name="purchase_back_tax_amount2_new" readonly="1" string="实际退税金额" groups="base.group_system"
+                                        <field name="purchase_back_tax_amount2_new" readonly="1" string="实际退税金额"
+                                               groups="base.group_system"
                                                sum="小计"/>
-                                        <field name="purchase_amount_min_add_forecast" readonly="1" sum="小计" groups="base.group_system"
+                                        <field name="purchase_amount_min_add_forecast" readonly="1" sum="小计"
+                                               groups="base.group_system"
                                         />
-                                        <field name="purchase_amount_max_add_forecast" readonly="1" sum="小计" groups="base.group_system"
+                                        <field name="purchase_amount_max_add_forecast" readonly="1" sum="小计"
+                                               groups="base.group_system"
                                         />
-                                        <field name="purchase_amount2_add_actual" readonly="1" sum="小计" groups="base.group_system"
+                                        <field name="purchase_amount2_add_actual" readonly="1" sum="小计"
+                                               groups="base.group_system"
                                         />
-                                        <field name="purchase_amount_min_add_rest" readonly="1" groups="base.group_system"
+                                        <field name="purchase_amount_min_add_rest" readonly="1"
+                                               groups="base.group_system"
                                         />
-                                        <field name="purchase_amount_max_add_rest" readonly="1" groups="base.group_system"
+                                        <field name="purchase_amount_max_add_rest" readonly="1"
+                                               groups="base.group_system"
                                         />
                                         <field name="purchase_amount2_add_this_time"
                                         />
@@ -655,66 +657,68 @@
                             </page>
                             <page groups="base.group_system">
                                 <field name="yjzy_invoice_all_ids"/>
-                         <field name="payment_log_ids_count" invisible="1"/>
-                                <field name="payment_log_no_done_ids_count" />
+                                <field name="payment_log_ids_count" invisible="1"/>
+                                <field name="payment_log_no_done_ids_count"/>
                             </page>
-<!--                            <page string="账单认领明细（含审批未支付）" attrs="{'invisible':['|',('type','!=','in_invoice'),('payment_log_ids_count','=',0)]}" groups="base.group_system">-->
+                            <!--                            <page string="账单认领明细（含审批未支付）" attrs="{'invisible':['|',('type','!=','in_invoice'),('payment_log_ids_count','=',0)]}" groups="base.group_system">-->
 
-<!--                                <field name="payment_log_ids" readonly="1">-->
-<!--                                    <tree>-->
-<!--                                        <field name="sfk_type" string="认领类型"/>-->
-<!--                                        <field name="reconcile_type" string="认领方式"/>-->
-<!--                                        &lt;!&ndash;<field name="post_date" string="审批日期"/>&ndash;&gt;-->
-<!--                                        <field name="payment_date_confirm" string="认领完成时间"/>-->
-<!--                                        <field name="amount" string="金额" sum="小计"/>-->
-<!--                                        <field name="currency_id" invisible="1"/>-->
-<!--                                        <field name="state_1"/>-->
-<!--                                        <field name="state"/>-->
-<!--                                    </tree>-->
-<!--                                </field>-->
-<!--                            </page>-->
-                            <page string="账单认领" >
+                            <!--                                <field name="payment_log_ids" readonly="1">-->
+                            <!--                                    <tree>-->
+                            <!--                                        <field name="sfk_type" string="认领类型"/>-->
+                            <!--                                        <field name="reconcile_type" string="认领方式"/>-->
+                            <!--                                        &lt;!&ndash;<field name="post_date" string="审批日期"/>&ndash;&gt;-->
+                            <!--                                        <field name="payment_date_confirm" string="认领完成时间"/>-->
+                            <!--                                        <field name="amount" string="金额" sum="小计"/>-->
+                            <!--                                        <field name="currency_id" invisible="1"/>-->
+                            <!--                                        <field name="state_1"/>-->
+                            <!--                                        <field name="state"/>-->
+                            <!--                                    </tree>-->
+                            <!--                                </field>-->
+                            <!--                            </page>-->
+                            <page string="账单认领">
                                 <group col="2">
-                                    <group string="账单认领财务日志" attrs="{'invisible':[('move_line_com_yfzk_ids_count','=',0),('move_line_com_yszk_ids_count','=',0)]}">
-                                <field name="move_line_com_yfzk_ids" readonly="1" nolabel="1" colspan="2"
-                                       attrs="{'invisible':['|',('move_line_com_yfzk_ids_count','=',0),('type','!=','in_invoice')]}">
+                                    <group string="账单认领财务日志"
+                                           attrs="{'invisible':[('move_line_com_yfzk_ids_count','=',0),('move_line_com_yszk_ids_count','=',0)]}">
+                                        <field name="move_line_com_yfzk_ids" readonly="1" nolabel="1" colspan="2"
+                                               attrs="{'invisible':['|',('move_line_com_yfzk_ids_count','=',0),('type','!=','in_invoice')]}">
 
-                                     <tree default_order="create_date">
-                                    <field name="create_date" string="日期"/>
-                                    <field name="reconcile_type" string="属性"/>
-                                    <field name="amount_this_time" string="发生金额"/>
-                                    <field name="sslj_balance" string="实时剩余金额"/>
-                                </tree>
-                                </field>
-                                  <field name="move_line_com_yszk_ids" readonly="1" nolabel="1" colspan="2"
-                                         attrs="{'invisible':['|',('move_line_com_yfzk_ids_count','=',0),('type','!=','out_invoice')]}">
-                                     <tree default_order="create_date">
-                                    <field name="create_date" string="日期"/>
-                                    <field name="reconcile_type" string="属性"/>
-                                    <field name="amount_this_time" string="发生金额"/>
-                                    <field name="sslj_balance" string="实时剩余金额"/>
-                                </tree>
-                                </field>
-                                        </group>
-                                    <group string="未完成认领单" attrs="{'invisible':[('payment_log_no_done_ids_count','=',0)]}">
-                                <field name="payment_log_no_done_ids"  readonly="1" nolabel="1" colspan="2">
-                                    <tree>
-                                        <field name="sfk_type" string="认领类型" invisible="1"/>
-                                        <field name="reconcile_type" string="认领方式"/>
-                                        <field name="payment_date_confirm" string="认领完成日期"/>
-                                        <field name="amount" string="金额" sum="小计"/>
-                                        <field name="currency_id" invisible="1"/>
-                                        <field name="state_1"/>
-                                        <field name="state"/>
-                                    </tree>
-                                </field>
-                                        </group>
+                                            <tree default_order="create_date">
+                                                <field name="create_date" string="日期"/>
+                                                <field name="reconcile_type" string="属性"/>
+                                                <field name="amount_this_time" string="发生金额"/>
+                                                <field name="sslj_balance" string="实时剩余金额"/>
+                                            </tree>
+                                        </field>
+                                        <field name="move_line_com_yszk_ids" readonly="1" nolabel="1" colspan="2"
+                                               attrs="{'invisible':['|',('move_line_com_yfzk_ids_count','=',0),('type','!=','out_invoice')]}">
+                                            <tree default_order="create_date">
+                                                <field name="create_date" string="日期"/>
+                                                <field name="reconcile_type" string="属性"/>
+                                                <field name="amount_this_time" string="发生金额"/>
+                                                <field name="sslj_balance" string="实时剩余金额"/>
+                                            </tree>
+                                        </field>
+                                    </group>
+                                    <group string="未完成认领单"
+                                           attrs="{'invisible':[('payment_log_no_done_ids_count','=',0)]}">
+                                        <field name="payment_log_no_done_ids" readonly="1" nolabel="1" colspan="2">
+                                            <tree>
+                                                <field name="sfk_type" string="认领类型" invisible="1"/>
+                                                <field name="reconcile_type" string="认领方式"/>
+                                                <field name="payment_date_confirm" string="认领完成日期"/>
+                                                <field name="amount" string="金额" sum="小计"/>
+                                                <field name="currency_id" invisible="1"/>
+                                                <field name="state_1"/>
+                                                <field name="state"/>
+                                            </tree>
+                                        </field>
+                                    </group>
                                 </group>
 
 
                                 <field name="move_line_yfzk_ids" readonly="1" groups="base.group_system">
                                     <tree>
-                                      <field name="reconcile_type"/>
+                                        <field name="reconcile_type"/>
                                         <field name="amount_this_time"/>
                                         <field name="sslj_balance"/>
                                         <field name="create_date"/>
@@ -724,7 +728,7 @@
                             <page string="账单认领日志" invisible="1">
                                 <field name="move_line_yszk_ids" readonly="1" groups="base.grou_system">
                                     <tree>
-                                      <field name="reconcile_type"/>
+                                        <field name="reconcile_type"/>
                                         <field name="amount_this_time"/>
                                         <field name="sslj_balance"/>
                                         <field name="create_date"/>

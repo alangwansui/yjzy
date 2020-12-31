@@ -322,6 +322,7 @@
                     <field name="bill_id" string="合同号" invisible="1"/>
                     <field name="tb_contract_code" string="合同号" widget="dynamic_popover_char"
                        options="{'max_width': '100px', 'line_clamp': '1', 'mode_mouse':'hover','popover_max_width':'200px','placement':'right'}"/>
+                    <field name="invoice_attribute_all_in_one" string="账单属性"/>
                     <field name="date_invoice" string="账单日期" groups="base.group_system"/>
                     <button name="open_supplier_reconcile_order_line" groups="base.group_system"
                             icon="fa-pencil-square-o" type="object"
