@@ -36,7 +36,7 @@
                                 invisible="not context.get('fkhxd_type')"/>
                         <!--                       <button name="open_supplier_invoice_id" string="额外应付账单" type="object"/>-->
                         <!--button name="open_supplier_refund_id" string="额外账单：减少金额" type="object"/-->
-<!--                        <field name="state" widget="statusbar" nolabel="1" statusbar_visible="draft,open,paid"/>-->
+                        <!--                        <field name="state" widget="statusbar" nolabel="1" statusbar_visible="draft,open,paid"/>-->
                     </header>
                     <header groups="base.group_system">
                         <button name="action_invoice_sent" type="object" string="Send by Email"
@@ -66,7 +66,7 @@
                         <button name="get_reconcile_order_line" string="计算预收" type="object" groups="base.group_system"/>
                         <button name="submit_yshxd" string="生成应收核销" type="object" groups="base.group_system"/>
                         <button name="open_invoice_id" string="创建发票" type="object" groups="base.group_system"/>
-<!--                        <field name="state" widget="statusbar" nolabel="1" statusbar_visible="draft,open,paid"/>-->
+                        <!--                        <field name="state" widget="statusbar" nolabel="1" statusbar_visible="draft,open,paid"/>-->
                     </header>
                     <div groups="base.group_system" class="alert alert-info" role="alert"
                          style="margin-bottom:0px;" attrs="{'invisible': [('has_outstanding','=',False)]}">
@@ -675,7 +675,7 @@
                             <!--                                    </tree>-->
                             <!--                                </field>-->
                             <!--                            </page>-->
-                            <page string="账单认领">
+                            <page string="账单认领日志">
                                 <group col="2">
                                     <group string="账单认领财务日志"
                                            attrs="{'invisible':[('move_line_com_yfzk_ids_count','=',0),('move_line_com_yszk_ids_count','=',0)]}">
@@ -704,42 +704,43 @@
                                                context="{'form_view_ref':'yjzy_extend.account_yfhxd_form_view_new'}">
                                             <tree>
                                                 <field name="hxd_type_new"/>
-                                                 <field name="invoice_id"  groups="base.group_system" string="应付账单"/>
+                                                <field name="invoice_id" groups="base.group_system" string="应付账单"/>
                                                 <field name="create_date" widget="date" string="创建日期"/>
                                                 <field name="approve_date"/>
                                                 <field name="amount_payment_org_new" string="实际申请金额"/>
-                                                 <field name="amount_advance_org_new" string="预付认领金额" />
+                                                <field name="amount_advance_org_new" string="预付认领金额"/>
                                                 <field name="state_1"/>
                                             </tree>
                                         </field>
 
                                     </group>
-<!--                                    <group string="未完成认领单"-->
-<!--                                           attrs="{'invisible':[('payment_log_no_done_ids_count','=',0)]}">-->
-<!--                                        <field name="payment_log_no_done_ids" readonly="1" nolabel="1" colspan="2">-->
-<!--                                            <tree>-->
-<!--                                                <field name="sfk_type" string="认领类型" invisible="1"/>-->
-<!--                                                <field name="reconcile_type" string="认领方式"/>-->
-<!--                                                <field name="payment_date_confirm" string="认领完成日期"/>-->
-<!--                                                <field name="amount" string="金额" sum="小计"/>-->
-<!--                                                <field name="currency_id" invisible="1"/>-->
-<!--                                                <field name="state_1"/>-->
-<!--                                                <field name="state"/>-->
-<!--                                            </tree>-->
-<!--                                        </field>-->
-<!--                                    </group>-->
+                                    <!--                                    <group string="未完成认领单"-->
+                                    <!--                                           attrs="{'invisible':[('payment_log_no_done_ids_count','=',0)]}">-->
+                                    <!--                                        <field name="payment_log_no_done_ids" readonly="1" nolabel="1" colspan="2">-->
+                                    <!--                                            <tree>-->
+                                    <!--                                                <field name="sfk_type" string="认领类型" invisible="1"/>-->
+                                    <!--                                                <field name="reconcile_type" string="认领方式"/>-->
+                                    <!--                                                <field name="payment_date_confirm" string="认领完成日期"/>-->
+                                    <!--                                                <field name="amount" string="金额" sum="小计"/>-->
+                                    <!--                                                <field name="currency_id" invisible="1"/>-->
+                                    <!--                                                <field name="state_1"/>-->
+                                    <!--                                                <field name="state"/>-->
+                                    <!--                                            </tree>-->
+                                    <!--                                        </field>-->
+                                    <!--                                    </group>-->
                                 </group>
-  <field name="payment_log_no_done_ids" readonly="1" nolabel="1" colspan="2">
-                                            <tree>
-                                                <field name="sfk_type" string="认领类型" invisible="1"/>
-                                                <field name="reconcile_type" string="认领方式"/>
-                                                <field name="payment_date_confirm" string="认领完成日期"/>
-                                                <field name="amount" string="金额" sum="小计"/>
-                                                <field name="currency_id" invisible="1"/>
-                                                <field name="state_1"/>
-                                                <field name="state"/>
-                                            </tree>
-                                        </field>
+                                <field name="payment_log_no_done_ids" readonly="1" nolabel="1" colspan="2"
+                                       groups="base.group_system">
+                                    <tree>
+                                        <field name="sfk_type" string="认领类型" invisible="1"/>
+                                        <field name="reconcile_type" string="认领方式"/>
+                                        <field name="payment_date_confirm" string="认领完成日期"/>
+                                        <field name="amount" string="金额" sum="小计"/>
+                                        <field name="currency_id" invisible="1"/>
+                                        <field name="state_1"/>
+                                        <field name="state"/>
+                                    </tree>
+                                </field>
 
                                 <field name="move_line_yfzk_ids" readonly="1" groups="base.group_system">
                                     <tree>
@@ -762,7 +763,7 @@
                             </page>
                             <page string="账单认领明细" groups="base.group_system">
 
-<!--                                <field name="reconcile_order_ids" groups="base.group_system"/>-->
+                                <!--                                <field name="reconcile_order_ids" groups="base.group_system"/>-->
 
                                 <field name="yjzy_invoice_reconcile_order_line_no_ids" readonly="1">
 
@@ -927,7 +928,7 @@
 
                             <page groups="base.group_system">
                                 <group>
-                                        <field name="reconcile_order_ids_count"/>
+                                    <field name="reconcile_order_ids_count"/>
                                     <field name="move_line_com_yfzk_ids_count"/>
                                     <field name="move_line_com_yszk_ids_count"/>
                                     <field name="is_yjzy_tb_po_invoice"/>
@@ -1070,9 +1071,9 @@
                                 <field name="tb_po_invoice_id" string="申请单"
                                        attrs="{'readonly':[('state','not in',['draft'])]}"
                                        context="{'form_view_ref':'yjzy_extend.tb_po_form'}"/>
-                                <field name="tb_po_invoice_child_id"
+                                <field name="tb_po_invoice_child_id" invisible="1"
                                        attrs="{'invisible':[('is_yjzy_tb_po_invoice','=',['false'])]}"/>
-                                <field name="tb_po_invoice_parent_id"
+                                <field name="tb_po_invoice_parent_id" invisible="1"
                                        attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',['false'])]}"/>
                                 <field name="is_yjzy_tb_po_invoice" invisible="1"/>
                                 <field name="is_yjzy_tb_po_invoice_parent" invisible="1"/>
@@ -1144,7 +1145,83 @@
                         </group>
                         <field name="sent" invisible="1"/>
                         <notebook colspan="4">
-                            <page string="账单认领明细">
+                            <page string="账单认领日志">
+                                <group col="2">
+                                    <group string="账单认领财务日志"
+                                           attrs="{'invisible':[('move_line_com_yfzk_ids_count','=',0),('move_line_com_yszk_ids_count','=',0)]}">
+                                        <field name="move_line_com_yfzk_ids" readonly="1" nolabel="1" colspan="2"
+                                               attrs="{'invisible':['|',('move_line_com_yfzk_ids_count','=',0),('type','!=','in_invoice')]}">
+
+                                            <tree default_order="create_date">
+                                                <field name="create_date" string="日期"/>
+                                                <field name="reconcile_type" string="属性"/>
+                                                <field name="amount_this_time" string="发生金额"/>
+                                                <field name="sslj_balance" string="实时剩余金额"/>
+                                            </tree>
+                                        </field>
+                                        <field name="move_line_com_yszk_ids" readonly="1" nolabel="1" colspan="2"
+                                               attrs="{'invisible':['|',('move_line_com_yfzk_ids_count','=',0),('type','!=','out_invoice')]}">
+                                            <tree default_order="create_date">
+                                                <field name="create_date" string="日期"/>
+                                                <field name="reconcile_type" string="属性"/>
+                                                <field name="amount_this_time" string="发生金额"/>
+                                                <field name="sslj_balance" string="实时剩余金额"/>
+                                            </tree>
+                                        </field>
+                                    </group>
+                                    <group string="所有流程日志" attrs="{'invisible':[('reconcile_order_ids_count','=',0)]}">
+                                        <field name="reconcile_order_ids" nolabel="1" colspan="2" readonly="1"
+                                               context="{'form_view_ref':'yjzy_extend.account_yfhxd_form_view_new'}">
+                                            <tree>
+                                                <field name="hxd_type_new"/>
+                                                <field name="invoice_id" groups="base.group_system" string="应付账单"/>
+                                                <field name="create_date" widget="date" string="创建日期"/>
+                                                <field name="approve_date"/>
+                                                <field name="amount_payment_org_new" string="实际申请金额"/>
+                                                <field name="amount_advance_org_new" string="预付认领金额"/>
+                                                <field name="state_1"/>
+                                            </tree>
+                                        </field>
+
+                                    </group>
+                                    <!--                                    <group string="未完成认领单"-->
+                                    <!--                                           attrs="{'invisible':[('payment_log_no_done_ids_count','=',0)]}">-->
+                                    <!--                                        <field name="payment_log_no_done_ids" readonly="1" nolabel="1" colspan="2">-->
+                                    <!--                                            <tree>-->
+                                    <!--                                                <field name="sfk_type" string="认领类型" invisible="1"/>-->
+                                    <!--                                                <field name="reconcile_type" string="认领方式"/>-->
+                                    <!--                                                <field name="payment_date_confirm" string="认领完成日期"/>-->
+                                    <!--                                                <field name="amount" string="金额" sum="小计"/>-->
+                                    <!--                                                <field name="currency_id" invisible="1"/>-->
+                                    <!--                                                <field name="state_1"/>-->
+                                    <!--                                                <field name="state"/>-->
+                                    <!--                                            </tree>-->
+                                    <!--                                        </field>-->
+                                    <!--                                    </group>-->
+                                </group>
+                                <field name="payment_log_no_done_ids" readonly="1" nolabel="1" colspan="2"
+                                       groups="base.group_system">
+                                    <tree>
+                                        <field name="sfk_type" string="认领类型" invisible="1"/>
+                                        <field name="reconcile_type" string="认领方式"/>
+                                        <field name="payment_date_confirm" string="认领完成日期"/>
+                                        <field name="amount" string="金额" sum="小计"/>
+                                        <field name="currency_id" invisible="1"/>
+                                        <field name="state_1"/>
+                                        <field name="state"/>
+                                    </tree>
+                                </field>
+
+                                <field name="move_line_yfzk_ids" readonly="1" groups="base.group_system">
+                                    <tree>
+                                        <field name="reconcile_type"/>
+                                        <field name="amount_this_time"/>
+                                        <field name="sslj_balance"/>
+                                        <field name="create_date"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="账单认领明细" invisible="1">
                                 <field name="payment_log_ids" readonly="1">
                                     <tree>
                                         <field name="post_date" string="审批日期"/>
@@ -1304,8 +1381,8 @@
                             </page>
 
 
-                            <page string="账单认领明细(拆分)" invisible="0">
-<!--                                <field name="reconcile_order_ids" groups="base.group_system"/>-->
+                            <page string="账单认领明细(拆分)" invisible="1">
+                                <!--                                <field name="reconcile_order_ids" groups="base.group_system"/>-->
                                 <field name="yjzy_invoice_reconcile_order_line_no_ids">
                                     <tree editable="bottom" create="false"
                                           default_order="invoice_id,invoice_attribute desc">
@@ -1469,7 +1546,11 @@
 
                             <page groups="base.group_system">
                                 <group>
-                                    <field name="yjzy_invoice_count" invisible="0"/>
+                                    <field name="reconcile_order_ids_count"/>
+                                    <field name="move_line_com_yfzk_ids_count"/>
+                                    <field name="move_line_com_yszk_ids_count"/>
+                                    <field name="is_yjzy_tb_po_invoice"/>
+                                    <field name="is_yjzy_tb_po_invoice_parent"/>
                                     <field name="is_yjzy_invoice"/>
                                     <field name="date_invoice" string="账单日期"/>
                                     <field name="move_name"/>
@@ -1481,6 +1562,9 @@
                                            attrs="{'invisible':[('is_yjzy_invoice','=',True)]}"/>
                                     <!--                                    <field name="tb_hsname_all_ids_count"/>-->
                                     <field name="yjzy_type_1"/>
+
+                                    <field name="yjzy_invoice_count" invisible="0"/>
+
                                 </group>
                                 <field name="yjzy_invoice_all_ids"/>
                             </page>

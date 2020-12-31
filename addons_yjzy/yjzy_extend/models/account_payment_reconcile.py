@@ -80,9 +80,10 @@ class account_payment(models.Model):
             else:
                 if invoice_log_id.type == 'out_invoice':
                     move_line_com_ids = invoice_log_id.move_line_com_yszk_ids
+
                 else:
                     move_line_com_ids = invoice_log_id.move_line_com_yfzk_ids
-
+            reconcile_order_ids = invoice_log_id.reconcile_order_ids
 
             # for x in move_line_com_ids:  # 参考M2M的自动多选
             #     move_line_com_dic.append(x.id)
@@ -90,13 +91,16 @@ class account_payment(models.Model):
             # one.move_line_com_ids = move_line_com_dic
             # one.write({'move_line_com_ids':[(6,0,[x.id for x in move_line_com_ids])]})
             one.move_line_com_ids = move_line_com_ids
+            one.reconcile_order_ids = reconcile_order_ids
+            one.reconcile_order_ids_count = len(reconcile_order_ids)
 
 
     payment_log_ids = fields.Many2many('account.payment', compute=compute_invoice_id)
     payment_log_no_done_ids = fields.Many2many('account.payment', compute=compute_invoice_id)
 
     move_line_com_ids = fields.Many2many('account.move.line.com',compute=compute_move_line_com_ids)
-
+    reconcile_order_ids = fields.Many2many('account.reconcile.order',compute=compute_move_line_com_ids)
+    reconcile_order_ids_count = fields.Integer(u'核销单据数量', compute=compute_move_line_com_ids)
 
 
     payment_ids_count = fields.Integer(u'预收认领预付申请数量', compute=compute_payment_ids_count)
@@ -123,14 +127,14 @@ class account_payment(models.Model):
 
 
 
+
+
     #创建核销单
     def create_reconcile(self):
         if self.advance_balance_total <= 0 :
             raise Warning('未认领金额不大于0，不需要核销')
         if len(self.payment_ids.filtered(lambda x: x.state not in ['posted','reconciled'])) > 0:
             raise Warning('存在未完成的核销单，不允许创建核销！')
-
-
         form_view = self.env.ref('yjzy_extend.view_ysrld_reconcile_form')
         ctx = {}
         partner = self.partner_id

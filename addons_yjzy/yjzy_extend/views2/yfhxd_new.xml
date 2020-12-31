@@ -1307,7 +1307,7 @@
                                            invisible="not context.get('show_po')"/>
                                     <field name="invoice_id" readonly="1" invisible="0"
                                            context="{'form_view_ref':'yjzy_extend.view_account_invoice_new_form_in_one'}"/>
-                                    <button name="open_invoice_id" icon="fa-pencil-square-o" context="{'open':1}"
+                                    <button name="open_invoice_id" icon="fa-pencil-square-o" context="{'open':1}" groups="base.group_system"
                                             type="object"/>
                                     <field name="tb_contract_code" invisible="1"/>
                                     <field name="yjzy_currency_id" invisible="1"/>

@@ -30,6 +30,10 @@
         <field name="model">account.payment</field>
         <field name="arch" type="xml">
             <form string="付款申请单" create="false" edit="false">
+                <header groups="account.group_account_manager">
+                    <button name="create_fkzl" type="object" string="创建付款指令" attrs="{'invisible':[('state_fkzl','!=','05_fksq')]}"/>
+                    <field name="state_fkzl" statusbar_visible=" " widget="statusbar"/>
+                </header>
                 <header groups="base.group_system">
                    <button name="action_submit" class="oe_highlight"  string="提交" type="object"
                            attrs="{'invisible':[('state_1','not in',['10_draft'])]}"/>
@@ -89,9 +93,10 @@
                         <field name="is_editable"  widget="boolean_toggle" groups="sales_team.group_manager"/>
                     </div>
                     <field name="id" invisible="1"/>
-                    <div class="oe_title" invisible="1">
+                    <div class="oe_title" invisible="0">
                         <h1>
-                            <field name="name"/>
+                            <field name="state_fkzl"/>
+                            <field name="name" invisible="1"/>
                         </h1>
                     </div>
                     <group>
@@ -161,7 +166,7 @@
                                     <field name="amount_payment_org_new" string="实际申请金额"/>
                                     <field name="amount_advance_org" string="预付认领金额" groups="base.group_system"/>
                                     <field name="amount_advance_org_new" string="预付认领金额" groups="base.group_system"/>
-                                    <field name="supplier_advance_payment_ids_amount_advance_org" string="待审批预付认领金额"/>
+                                    <field name="supplier_advance_payment_ids_amount_advance_org" string="待审批预付认领金额" groups="base.group_system"/>
                                     <field name="amount_total" invisible="1"/>
                                     <field name="currency_id" attrs="{}" invisible="1"/>
                                     <field name="state"/>

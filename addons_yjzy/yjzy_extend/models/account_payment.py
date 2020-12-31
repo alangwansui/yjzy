@@ -1090,11 +1090,11 @@ class account_payment(models.Model):
             # for one in self.fksqd_2_ids:
             #     one.state_fkzl = '05_fksq'
             #     one.state = 'draft'
-        if self.sfk_type in ['yfsqd','reconcile_yfsqd','reconcile_ysrld']:
+        if self.sfk_type in ['yfsqd']:
             self.write({'state_1': '80_refused',
                         'state': 'draft'
                         })
-        if self.sfk_type in ['reconcile_yfsqd','reconcile_yseld']:
+        if self.sfk_type in ['reconcile_yfsqd','reconcile_ysrld','reconcile_yingshou','reconcile_yingfu']:
             self.write({'state_1': '80_refused',
                         'state': 'draft',
                         'amount_state':False,
@@ -1261,6 +1261,10 @@ class account_payment(models.Model):
         res = super(account_payment, self).post()
         for one in self:
             one.payment_date_confirm = fields.datetime.now()
+
+
+
+
             if one.sfk_type == 'rcfkd':
                 one.payment_date_confirm = fields.datetime.now() ##akiny 增加付款时间
                 if one.yshx_ids:
@@ -1371,11 +1375,15 @@ class account_payment(models.Model):
             plan_invoice_id = self.invoice_log_id.id
         if self.sfk_type in ['reconcile_ysrld','reconcile_yfsqd']:#1225
             new_advance_payment_id = self.yjzy_payment_id.id
+
+        if self.sfk_type in ['reconcile_yingshou','reconcile_yingfu']:#1225
+            plan_invoice_id = self.invoice_log_id.id
         res.update({
             'new_payment_id': new_payment_id,
             'so_id': self.so_id.id,
             'po_id': self.po_id.id,
             'new_advance_payment_id':new_advance_payment_id,
+
             'plan_invoice_id':plan_invoice_id,
             'self_payment_id':self.id,#用来对应sfk_type
             'invoice_id':plan_invoice_id#akiny1229应收应付认领单的填入分录的核销放票上 重点

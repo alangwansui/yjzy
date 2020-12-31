@@ -26,7 +26,6 @@ class account_reconcile_order(models.Model):
             # partner = self.env['res.partner'].search([('name', '=', u'未定义')], limit=1)
 
             ctx = {
-
                     'show_shoukuan': True,
                     'default_sfk_type': 'reconcile_yingshou',
                     'default_payment_type': 'inbound',
@@ -37,7 +36,6 @@ class account_reconcile_order(models.Model):
                     'default_invoice_log_id': self.id,
                     'default_payment_method_id': 2,
                     'default_currency_id':self.currency_id.id,
-
                     'default_invoice_ids': [(4, self.id, None)],
                          'default_reconcile_type': '50_reconcile',
 

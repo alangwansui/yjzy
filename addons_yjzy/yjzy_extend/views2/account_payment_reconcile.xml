@@ -193,7 +193,7 @@
                                                attrs="{'invisible':[('sfk_type','not in',['reconcile_ysrld','reconcile_yfsqd'])]}"/>
                                     </button>
                                     <button name="action_confirm_amount" type="object" string="确认核销金额"
-                                            class="btn-xxs btn-link mb2"
+                                            class="btn-xxs btn-link mb2 oe_highlight"
                                             attrs="{'invisible':['|',('amount_state','=',True),('sfk_type','not in',['reconcile_ysrld','reconcile_yfsqd'])]}"/>
                                 </div>
                                 <field name="so_id" string="销售合同" readonly="1"
@@ -248,8 +248,31 @@
                                             </tree>
                                         </field>
                                     </group>
-                                    <group string="未完成认领单">
-                                        <field name="payment_log_no_done_ids" colspan="2" nolabel="1">
+
+
+                                     <group string="所有流程日志">
+                                        <field name="reconcile_order_ids" colspan="2" nolabel="1">
+                                              <tree>
+                                            <field name="hxd_type_new"/>
+                                            <field name="invoice_id" groups="base.group_system" string="应付账单"/>
+                                            <field name="create_date" widget="date" string="创建日期"/>
+                                            <field name="approve_date"/>
+                                            <field name="amount_payment_org_new" string="实际申请金额"/>
+                                            <field name="amount_advance_org_new" string="预付认领金额"/>
+                                            <field name="state_1"/>
+                                        </tree>
+
+                                        </field>
+                                    </group>
+
+
+
+
+                                </group>
+                            </page>
+                            <page groups="base.group_system">
+                                <group>
+                                         <field name="payment_log_no_done_ids" colspan="2" nolabel="1">
                                             <tree>
                                                 <field name="sfk_type"/>
                                                 <field name="payment_date"/>
@@ -259,11 +282,6 @@
                                                 <field name="state_1"/>
                                             </tree>
                                         </field>
-                                    </group>
-                                </group>
-                            </page>
-                            <page groups="base.group_system">
-                                <group>
 
                                     <field name="amount_state"/>
                                     <field name="journal_id" domain="[('type','=', 'renling')]" string="收款日记账"
