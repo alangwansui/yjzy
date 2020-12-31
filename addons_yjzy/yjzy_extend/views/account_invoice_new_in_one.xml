@@ -712,7 +712,15 @@
                                                 <field name="state_1"/>
                                             </tree>
                                         </field>
-
+  <field name="payment_log_hexiao_ids"  attrs="{'invisible':[('payment_log_hexiao_ids_count','=',0)]}">
+                                         <tree>
+                                                 <field name="sfk_type" string="类型"/>
+                                                 <field name="payment_date" string="日期"/>
+                                                 <field name="amount" string="金额"/>
+                                                 <field name="currency_id" invisible="1"/>
+                                                 <field name="state_1"/>
+                                             </tree>
+                                    </field>
                                     </group>
                                     <!--                                    <group string="未完成认领单"-->
                                     <!--                                           attrs="{'invisible':[('payment_log_no_done_ids_count','=',0)]}">-->
