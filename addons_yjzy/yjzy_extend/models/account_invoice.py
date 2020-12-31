@@ -406,6 +406,7 @@ class account_invoice(models.Model):
     def compute_reconcile_order_ids(self):
         for one in self:
             reconcile_order_ids = self.env['account.reconcile.order'].search([('invoice_ids','in',one.id)])
+            print('reconcile_order_ids_akiny',reconcile_order_ids)
             reconcile_order_ids_count = len(reconcile_order_ids)
             one.reconcile_order_ids = reconcile_order_ids
             one.reconcile_order_ids_count = reconcile_order_ids_count
