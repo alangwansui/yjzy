@@ -451,8 +451,26 @@ class account_reconcile_order(models.Model):
             one.invoice_attribute_all_in_one = invoice_id.invoice_attribute_all_in_one
             one.payment_log_ids = invoice_id.payment_log_ids
 
+    @api.depends('invoice_ids')
+    def compute_move_line_com_ids(self):
+        for one in self:
+            one.move_line_com_yfzk_ids = one.invoice_id.move_line_com_yfzk_ids
+            one.move_line_com_yfzk_ids = one.invoice_id.move_line_com_yfzk_ids
+            one.reconcile_order_ids = one.invoice_id.reconcile_order_ids
+            one.reconcile_order_ids_count = one.invoice_id.reconcile_order_ids_count
+            one.move_line_com_yszk_ids_count = one.invoice_id.move_line_com_yszk_ids_count
+            one.move_line_com_yfzk_ids_count = one.invoice_id.move_line_com_yfzk_ids_count
 
-    payment_log_ids = fields.One2many('account.payment',compute=compute_invoice_id)
+    move_line_com_yfzk_ids = fields.Many2many('account.move.line.com',  u'发票相关应付账款分录',compute=compute_move_line_com_ids)
+    move_line_com_yszk_ids = fields.Many2many('account.move.line.com', u'发票相关应付账款分录', compute=compute_move_line_com_ids)
+
+    reconcile_order_ids = fields.Many2many('account.reconcile.order',compute=compute_move_line_com_ids)
+    reconcile_order_ids_count = fields.Integer(u'核销单据数量', compute=compute_move_line_com_ids)
+
+    move_line_com_yszk_ids_count = fields.Integer('应收日志数量', compute=compute_move_line_com_ids)
+    move_line_com_yfzk_ids_count = fields.Integer('应付日志数量', compute=compute_move_line_com_ids)
+
+    payment_log_ids = fields.One2many('account.payment',compute=compute_move_line_com_ids)
 
     invoice_id = fields.Many2one('account.invoice',compute=compute_invoice_id)
     # invoice_attribute_all_in_one = fields.Char('账单属性all_in_one',compute=compute_invoice_id)

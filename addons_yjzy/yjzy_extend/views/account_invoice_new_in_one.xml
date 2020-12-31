@@ -699,7 +699,7 @@
                                             </tree>
                                         </field>
                                     </group>
-                                    <group string="所有流程日志">
+                                    <group string="所有流程日志" attrs="{'invisible':[('reconcile_order_ids_count','=',0)]}">
                                         <field name="reconcile_order_ids" nolabel="1" colspan="2" readonly="1"
                                                context="{'form_view_ref':'yjzy_extend.account_yfhxd_form_view_new'}">
                                             <tree>
@@ -712,6 +712,7 @@
                                                 <field name="state_1"/>
                                             </tree>
                                         </field>
+
                                     </group>
 <!--                                    <group string="未完成认领单"-->
 <!--                                           attrs="{'invisible':[('payment_log_no_done_ids_count','=',0)]}">-->
@@ -926,6 +927,7 @@
 
                             <page groups="base.group_system">
                                 <group>
+                                        <field name="reconcile_order_ids_count"/>
                                     <field name="move_line_com_yfzk_ids_count"/>
                                     <field name="move_line_com_yszk_ids_count"/>
                                     <field name="is_yjzy_tb_po_invoice"/>
