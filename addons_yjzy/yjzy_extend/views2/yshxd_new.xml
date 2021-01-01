@@ -958,8 +958,69 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('account_yshxd_tree_view_new')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('account_yshxd_form_view_new')})]"/>
     </record>
-    <menuitem id="menu_yshxd_payment_new_same_time" name="应收认领单查询" sequence="25"
+    <menuitem id="menu_yshxd_payment_new_same_time" name="应收认领单查询" sequence="25" groups="base.group_system"
               parent="menu_customer_invoice_for_goods_root" action="action_yshxd_payment_new_same_time"/>
+
+<!--    0101-->
+     <record model="ir.actions.act_window" id="action_yshxd_payment_new_normal">
+        <field name="name">主应收认领</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.reconcile.order</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('sfk_type','=','yshxd'),('hxd_type_new','in',['25','20']),('yjzy_type','=','sale'),('invoice_attribute','=','normal')]</field>
+        <field name="context">{'only_number':1,'hxd_type_new':'20','default_sfk_type': 'yshxd',
+            'advance_so_amount':1,'default_payment_type': 'inbound', 'default_be_renling': 1, 'default_partner_type':
+            'customer', 'show_so': 1}
+        </field>
+
+        <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('account_yshxd_tree_view_new')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('account_yshxd_form_view_new')})]"/>
+    </record>
+    <menuitem id="menu_yshxd_payment_new_normal" name="主应收认领" sequence="25"
+              parent="menu_customer_invoice_renling_root" action="action_yshxd_payment_new_normal"/>
+
+    <record model="ir.actions.act_window" id="action_yshxd_payment_new_other_po">
+        <field name="name">增加采购应收认领</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.reconcile.order</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('sfk_type','=','yshxd'),('hxd_type_new','in',['25','20']),('yjzy_type','=','sale'),('invoice_attribute','=','other_po')]</field>
+        <field name="context">{'only_number':1,'hxd_type_new':'20','default_sfk_type': 'yshxd',
+            'advance_so_amount':1,'default_payment_type': 'inbound', 'default_be_renling': 1, 'default_partner_type':
+            'customer', 'show_so': 1}
+        </field>
+
+        <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('account_yshxd_tree_view_new')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('account_yshxd_form_view_new')})]"/>
+    </record>
+    <menuitem id="menu_yshxd_payment_new_other_po" name="增加采购应收认领" sequence="25"
+              parent="menu_customer_invoice_renling_root" action="action_yshxd_payment_new_other_po"/>
+
+    <record model="ir.actions.act_window" id="action_yshxd_payment_new_other_payment">
+        <field name="name">其他应收认领</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.reconcile.order</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('sfk_type','=','yshxd'),('hxd_type_new','in',['25','20']),('yjzy_type','=','sale'),('invoice_attribute','=','other_payment')]</field>
+        <field name="context">{'only_number':1,'hxd_type_new':'20','default_sfk_type': 'yshxd',
+            'advance_so_amount':1,'default_payment_type': 'inbound', 'default_be_renling': 1, 'default_partner_type':
+            'customer', 'show_so': 1}
+        </field>
+
+        <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('account_yshxd_tree_view_new')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('account_yshxd_form_view_new')})]"/>
+    </record>
+    <menuitem id="menu_yshxd_payment_new_other_payment" name="其他应收认领" sequence="25"
+              parent="menu_customer_invoice_renling_root" action="action_yshxd_payment_new_other_payment"/>
+
+
+
 
     <record model="ir.actions.act_window" id="action_yshxd_payment_new_all">
         <field name="name">收款-应收认领单查询</field>
@@ -977,11 +1038,11 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('account_yshxd_tree_view_new')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('account_yshxd_form_view_new')})]"/>
     </record>
-    <menuitem id="menu_yshxd_payment_new_all" name="收款-应收认领单查询" sequence="30"
+    <menuitem id="menu_yshxd_payment_new_all" name="收款-应收认领单查询" sequence="30" groups="base.group_system"
               parent="menu_customer_invoice_for_goods_root" action="action_yshxd_payment_new_all"/>
 
     <record model="ir.actions.act_window" id="action_yshxd_payment_back_tax_new_all">
-        <field name="name">收款-退税认领单查询</field>
+        <field name="name">退税认领</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">account.reconcile.order</field>
         <field name="view_type">form</field>
@@ -996,8 +1057,11 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('account_yshxd_tree_view_new')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('account_yshxd_form_view_new')})]"/>
     </record>
-    <menuitem id="menu_yshxd_payment_back_tax_new_all" name="收款-退税认领单查询" sequence="30"
-              parent="menu_customer_invoice_back_tax_root" action="action_yshxd_payment_back_tax_new_all"/>
+    <menuitem id="menu_yshxd_payment_back_tax_new_all" name="退税认领" sequence="30"
+              parent="menu_customer_invoice_back_tax_renling_root" action="action_yshxd_payment_back_tax_new_all"/>
+
+
+
 
 
     <record model="ir.actions.act_window" id="action_yshxd_other_payment_new_all">
@@ -1020,7 +1084,7 @@
     </record>
 <!--    <menuitem id="menu_yshxd_other_payment_new_all" name="收款-其他应收认领单查询" sequence="30"-->
 <!--              parent="menu_customer_invoice_other_payment_root" action="action_yshxd_other_payment_new_all"/>-->
-    <menuitem id="menu_yshxd_other_payment_new_all" name="收款-其他应收认领单查询" sequence="30"
+    <menuitem id="menu_yshxd_other_payment_new_all" name="收款-其他应收认领单查询" sequence="30" groups="base.group_system"
               parent="menu_customer_invoice_other_payment_apply_root" action="action_yshxd_other_payment_new_all"/>
 
 
@@ -1118,7 +1182,7 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('account_yshxd_tree_view_new')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('account_yshxd_form_view_new')})]"/>
     </record>
-    <menuitem id="menu_yshxd_advance_new_all" name="预收-应收认领单查询" sequence="30"
+    <menuitem id="menu_yshxd_advance_new_all" name="预收-应收认领单查询" sequence="30" groups="base.group_system"
               parent="menu_customer_invoice_for_goods_root" action="action_yshxd_advance_new_all"/>
 
     <!--    来自收款单创建-->

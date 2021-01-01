@@ -57,6 +57,7 @@
         'wizard/wizard_multi_sale_line.xml',
         'wizard/wizard_fkzl.xml',
         'wizard/wizard_renling_ysrld.xml',
+        'wizard/wizard_tb_po_invoice_with_out_tax.xml',
 
         'views/account_invoice_extra.xml',
         'views/account_journal.xml',

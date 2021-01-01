@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+
+
+        <record id="wizard_tb_po_tax_form" model="ir.ui.view">
+            <field name="name">wizard.tb.po.from</field>
+            <field name="model">wizard.tb.po.invoice.tax</field>
+            <field name="arch" type="xml">
+                <form string="添加采购金额">
+
+                    <group>
+                         <field name="tb_po_id" invisible="1"/>
+                        <span>税率为0，确定要继续提交吗</span>
+
+                    </group>
+
+
+                    <footer>
+                        <!--button name="apply_expense_sheet" class="oe_highlight" type='object' string="费用确认" attrs="{'invisible':[('type','!=','expense_po')]}"/-->
+                        <button name="apply_submit_with_out_tax" class="oe_highlight" type='object' string="确认"/>
+                        <button special="cancel" class="oe_highlight" string="取消"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

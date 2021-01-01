@@ -637,7 +637,7 @@ class account_invoice(models.Model):
 
 
     #820增加一个和新增采购关联的字段，把退税等一起关联起来
-    tb_po_invoice_id = fields.Many2one('tb.po.invoice',u'综合增加采购单')
+    tb_po_invoice_id = fields.Many2one('tb.po.invoice',u'综合增加采购单', ondelete='cascade')
     tb_po_invoice_child_id = fields.Many2one('tb.po.invoice',related='tb_po_invoice_id.yjzy_tb_po_invoice')
     is_yjzy_tb_po_invoice = fields.Boolean('是否有对应下级账单',compute=compute_yjzy_tb_po_child_patent, store=True)
     tb_po_invoice_parent_id = fields.Many2one('tb.po.invoice', related='tb_po_invoice_id.yjzy_tb_po_invoice_parent')

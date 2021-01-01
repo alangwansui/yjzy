@@ -22,7 +22,7 @@
                                 string="总经理审批" invisible="context.get('open')"/>
                         <button name="%(tb_po_invoice_refuse_wizard_action)d" string="拒绝" type="action"
                                 invisible="context.get('open')"
-                                attrs="{'invisible':['|',('is_yjzy_tb_po_invoice_parent','=',True),('state','in',['10_draft','80_refuse','90_cancel'])]}"/>
+                                attrs="{'invisible':['|',('is_yjzy_tb_po_invoice_parent','=',True),('state','in',['10_draft','80_refuse','90_cancel','30_done'])]}"/>
                         <button name="create_tb_po_invoice" type="object" string="创建其他应收申请"
                                 attrs="{'invisible':['|','|','|','|',('is_yjzy_tb_po_invoice_parent','=',True),
                                 ('yjzy_type_1','in',['sale','other_payment_sale']),('is_yjzy_tb_po_invoice','=',True),

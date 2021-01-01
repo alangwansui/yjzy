@@ -570,9 +570,36 @@ class tb_po_invoice(models.Model):
             else:
                 self.type_invoice = 'in_invoice'
 
+    def action_tax_confirm(self):
+        if self.type == 'other_po':
+            if self.tax_rate_add == 0:
+                view_id = self.env.ref('yjzy_extend.wizard_tb_po_tax_form').id
+                return {
+                    'name': '税点确认',
+                    'type': 'ir.actions.act_window',
+                    'view_type': 'form',
+                    'view_mode': 'form',
+                    'res_model': 'wizard.tb.po.invoice.tax',
+                    'views': [(view_id, 'form')],
+                    'target': 'new',
+                    'context': {'default_tb_po_id':self.id},
+                }
+            else:
+                for one in self.hsname_all_ids:
+                    if one.purchase_amount2_add_this_time > one.purchase_amount_min_add_rest:
+                        raise Warning('增加金额不允许大于最新可增加金额！')
+                if self.purchase_amount2_add_this_time_total == 0:
+                    raise Warning('增加采购金额为0！')
+                if not self.partner_id:
+                    raise Warning('请选择新增对象供应商')
+                self.action_submit()
+        else:
+            self.action_submit()
+
     @api.multi
     def action_submit(self):
         self.state = '20_submit'
+
         if self.type == 'other_po':
             for one in self.hsname_all_ids:
                 if one.purchase_amount2_add_this_time > one.purchase_amount_min_add_rest:

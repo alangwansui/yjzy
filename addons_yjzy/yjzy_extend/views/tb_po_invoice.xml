@@ -203,8 +203,9 @@
             <field name="arch" type="xml">
                 <form string="添加采购金额">
                     <header attrs="{'invisible':[('type','=','expense_po')]}">
+                        <button name="action_tax_confirm" states="10_draft,80_refuse" class="oe_highlight" type='object' string="提交"/>
                         <button name="action_submit" states="10_draft,80_refuse" class="oe_highlight" type='object'
-                                string="提交"/>
+                                string="提交" groups="base.group_system"/>
                         <button name="action_manager_approve" states="20_submit" class="oe_highlight" type='object'
                                 string="总经理审批"/>
                         <button name="action_refuse" type='object' string="拒绝"/>
@@ -417,9 +418,14 @@
             <field name="arch" type="xml">
                 <form string="添加采购金额" create="false">
                     <header  attrs="{'invisible':[('type','=','expense_po')]}" invisible="context.get('open')">
+                         <button name="action_tax_confirm" states="10_draft"
+                                 invisible="context.get('open')"
+                                 class="oe_highlight" type='object' string="提交"/>
                         <button name="action_submit" states="10_draft" class="oe_highlight" type='object'
-                                invisible="context.get('open')"
+                                invisible="context.get('open')" groups="base.group_system"
                                 string="提交"/>
+
+
                         <button name="action_draft" states="80_refuse" class="oe_highlight" type="object" string="重置草稿"
                                 invisible="context.get('open')"/>
                         <button name="action_manager_approve" states="20_submit" class="oe_highlight" type='object'
@@ -654,7 +660,7 @@
                                                 <field name="p_s_add_this_time_extra_total"/>
                                             </div-->
 
-                                    <field name="p_s_add_this_time_extra_total" string="本次冲减后应收"/>
+                                    <field name="p_s_add_this_time_extra_total" string="本次冲减后应收" groups="base.group_system"/>
                                     <!--field name="p_s_add_this_time_extra_total" string="冲减后应收" attrs="{'invisible':[('type','!=','other_po')]}"/-->
                                 </group>
                                 <group style="margin-top:-10px; " attrs="{'invisible':[('is_tb_hs_id','=',False)]}">
@@ -773,18 +779,19 @@
                                     </tree>
                                 </field>
                             </page>
-                            <page string="所有相关账单" attrs="{'invisible':1}">
+                            <page string="所有相关账单" attrs="{'invisible':[('type','!=','other_po')]}">
                                 <field name="invoice_ids_count" invisible="1"/>
-                                <field name="invoice_ids">
+                                <field name="invoice_ids" readonly="1">
                                     <tree decoration-info="state == 'draft'" decoration-muted="state == 'cancel'">
+                                        <field name="invoice_attribute_all_in_one" string="属性"/>
                                         <field name="tb_contract_code"/>
                                         <field name="amount_total_signed" string="账单金额"/>
-                                        <field name="residual_signed" string="未付金额"/>
+                                        <field name="residual_signed" string="剩余金额"/>
                                         <field name="state"/>
                                     </tree>
                                 </field>
                             </page>
-                            <page string="新增货款账单" attrs="{'invisible':['|',('invoice_p_ids_count','=',0)]}">
+                            <page string="新增货款账单" groups="base.group_system"  attrs="{'invisible':['|',('invoice_p_ids_count','=',0)]}">
                                 <field name="invoice_p_ids_count" invisible="1"/>
                                 <field name="invoice_p_ids" readonly="1">
                                     <tree decoration-info="state == 'draft'" decoration-muted="state == 'cancel'">
@@ -833,7 +840,7 @@
                                     </tree>
                                 </field>
                             </page>
-                            <page string="对应冲减账单" attrs="{'invisible':[('invoice_p_s_ids_count','=',0)]}">
+                            <page string="对应冲减账单" groups="base.group_system"  attrs="{'invisible':[('invoice_p_s_ids_count','=',0)]}">
                                 <field name="invoice_p_s_ids_count" invisible="1"/>
                                 <field name="invoice_p_s_ids">
                                     <tree decoration-info="state == 'draft'" decoration-muted="state == 'cancel'">
@@ -844,9 +851,9 @@
                                     </tree>
                                 </field>
                             </page>
-                            <page string="对应退税账单" attrs="{'invisible':[('invoice_back_tax_ids_count','=',0)]}">
+                            <page string="对应退税账单" groups="base.group_system"  attrs="{'invisible':[('invoice_back_tax_ids_count','=',0)]}">
                                 <field name="invoice_back_tax_ids_count" invisible="1"/>
-                                <field name="invoice_back_tax_ids">
+                                <field name="invoice_back_tax_ids" readonly="1">
                                     <tree decoration-info="state == 'draft'" decoration-muted="state == 'cancel'">
                                         <field name="tb_contract_code"/>
                                         <field name="amount_total_signed" string="账单金额"/>
@@ -855,9 +862,9 @@
                                     </tree>
                                 </field>
                             </page>
-                            <page string="对应应收账单" attrs="{'invisible':[('invoice_s_ids_count','=',0)]}">
+                            <page string="对应应收账单" groups="base.group_system"  attrs="{'invisible':[('invoice_s_ids_count','=',0)]}">
                                 <field name="invoice_s_ids_count" invisible="1"/>
-                                <field name="invoice_s_ids">
+                                <field name="invoice_s_ids" readonly="1">
                                     <tree decoration-info="state == 'draft'" decoration-muted="state == 'cancel'">
                                         <field name="tb_contract_code"/>
                                         <field name="amount_total_signed" string="账单金额"/>
@@ -868,7 +875,7 @@
                             </page>
                             <page string="其他应收账单" attrs="{'invisible':[('invoice_other_payment_in_ids_count','=',0)]}">
                                 <field name="invoice_other_payment_in_ids_count" invisible="1"/>
-                                <field name="invoice_other_payment_in_ids">
+                                <field name="invoice_other_payment_in_ids" readonly="1">
                                     <tree>
                                         <field name="tb_contract_code"/>
                                         <field name="amount_total_signed" string="账单金额"/>

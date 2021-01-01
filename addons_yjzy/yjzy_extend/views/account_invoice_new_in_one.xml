@@ -163,6 +163,10 @@
                         <group col="3">
                             <group>
                                 <field name="invoice_attribute_all_in_one" string="账单类型"/>
+                                <field name="invoice_partner"
+                                       attrs="{'readonly':[('state','in',['paid','open'])],'invisible':[('invoice_attribute','!=','other_payment')]}"/>
+                                <field name="name_title"
+                                       attrs="{'readonly':[('state','in',['paid','open'])],'invisible':[('invoice_attribute','!=','other_payment')]}"/>
                                 <field name="number" string="系统编号" class="oe_inline"
                                        attrs="{'invisible': [('state', '=', 'draft')]}"/>
 
@@ -182,10 +186,7 @@
                                            options="{&quot;always_reload&quot;: True, &quot;no_quick_create&quot;: True,'no_open':1}"
                                            domain="[('customer', '=', True),('is_company','=',True)]"/>
                                 </div>
-                                <field name="invoice_partner"
-                                       attrs="{'readonly':[('state','in',['paid','open'])],'invisible':[('invoice_attribute','!=','other_payment')]}"/>
-                                <field name="name_title"
-                                       attrs="{'readonly':[('state','in',['paid','open'])],'invisible':[('invoice_attribute','!=','other_payment')]}"/>
+
                                 <field name="yjzy_invoice_id"
                                        attrs="{'invisible':[('is_yjzy_invoice','=',False)],'readonly':[('state','not in',['draft'])]}"
                                        domain="[('partner_id','=',partner_id)]" string="原始账单"/>
@@ -245,13 +246,13 @@
                                 <field name="team_id" attrs="{'invisible':1}"/>
                                 <field name="tb_po_invoice_id" string="申请单"
                                        attrs="{'readonly':[('state','not in',['draft'])],'invisible':[('invoice_attribute','=','normal')]}"
-                                       context="{'form_view_ref':'yjzy_extend.tb_po_form'}"/>
+                                       context="{'form_view_ref':'yjzy_extend.tb_po_other_form'}"/>
                                 <field name="tb_po_invoice_child_id" string="关联下级申请单"
                                        attrs="{'readonly':[('state','not in',['draft'])],'invisible':[('is_yjzy_tb_po_invoice','=',False)]}"
-                                       context="{'form_view_ref':'yjzy_extend.tb_po_form'}"/>
+                                       context="{'form_view_ref':'yjzy_extend.tb_po_other_form'}"/>
                                 <field name="tb_po_invoice_parent_id" string="关联上级申请单"
                                        attrs="{'readonly':[('state','not in',['draft'])],'invisible':[('is_yjzy_tb_po_invoice_parent','=',False)]}"
-                                       context="{'form_view_ref':'yjzy_extend.tb_po_form'}"/>
+                                       context="{'form_view_ref':'yjzy_extend.tb_po_other_form'}"/>
 
                                 <field name="fault_comments"
                                        attrs="{'readonly':[('state','in',['paid'])],'invisible':[('is_yjzy_invoice','=',True)]}"/>
@@ -447,7 +448,7 @@
                                 <field name="comment" placeholder="Terms and conditions..."/>
                             </page>
                             <page string="本账单明细"
-                                  attrs="{'invisible':[('invoice_attribute','in',['expense_po','other_po'])]}">
+                                  attrs="{'invisible':[('invoice_attribute','in',['expense_po','other_po','other_payment'])]}">
                                 <field name="invoice_line_ids_origin">
                                     <tree default_order="id">
                                         <field name="sequence" widget="handle"/>

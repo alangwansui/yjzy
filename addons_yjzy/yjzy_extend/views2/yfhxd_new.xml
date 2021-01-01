@@ -650,6 +650,10 @@
                   decoration-muted="state =='cancelled'" edit="false">
                 <field name="name"/>
                 <field name="partner_id" invisible="1"/>
+                <field name="invoice_partner"/>
+                <field name="name_title"/>
+                <field name="other_payment_bank_id"/>
+                <field name="fk_journal_id"/>
                 <field name="date" invisible="1"/>
                 <field name="approve_uid" invisible="1"/>
                 <field name="approve_date"/>

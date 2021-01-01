@@ -251,11 +251,13 @@
 
                         </page>
                         <page string="应付申请" attrs="{'invisible': [('yshx_fkzl_ids_count','=', 0)]}">
-                            <field name="yshx_fkzl_ids" widget="many2many"  groups="base.group_system" readonly="1">
+                            <field name="yshx_fkzl_ids" widget="many2many"   readonly="1">
                                 <tree>
                                     <field name="invoice_attribute_all_in_one" string="账单属性"/>
                                     <field name="name"/>
-                                    <field name="partner_id"/>
+                                    <field name="partner_id" attrs="{'column_invisible':[('parent.rckfd_attribute','!=','yfzk')]}"/>
+                                    <field name="invoice_partner" attrs="{'column_invisible':[('parent.rckfd_attribute','!=','other_payment')]}"/>
+                                    <field name="name_title" attrs="{'column_invisible':[('parent.rckfd_attribute','!=','other_payment')]}"/>
                                     <field name="invoice_ids" widget="many2many_tags" string="应付账单"/>
                                     <field name="date" invisible="1"/>
                                     <field name="approve_uid" invisible="1"/>
@@ -273,7 +275,7 @@
                                     <field name="state" groups="base.group_system"/>
                                 </tree>
                             </field>
-                            <field name="yshx_fkzl_line_ids" readonly="1" attrs="{'invisible': [('yshx_fkzl_line_ids_count','=', 0)]}">
+                            <field name="yshx_fkzl_line_ids" readonly="1" groups="base.group_system" attrs="{'invisible': [('yshx_fkzl_line_ids_count','=', 0)]}">
                                 <tree>
                                     <field name="invoice_attribute_all_in_one" string="类型"/>
                                     <field name="invoice_id" string="账单"/>

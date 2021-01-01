@@ -83,6 +83,7 @@ class account_payment(models.Model):
             'advance_account_id': advance_account.id,
             'bank_id': self[0].bank_id.id,
             'include_tax': self[0].include_tax,
+            'rckfd_attribute':self[0].rckfd_attribute
         })
 
         for one in self:
