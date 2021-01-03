@@ -2832,7 +2832,7 @@
         </record>
         <menuitem id="menu_supplier_account_invoice_other_payment_all"
                   action="action_supplier_account_invoice_other_payment_all"
-                  parent="menu_supplier_invoice_apply_root" name="其他应付账单账单"
+                  parent="menu_supplier_invoice_apply_root" name="其他应付账单"
                   sequence="50"
         />
         <record id="action_supplier_account_invoice_other_payment_open" model="ir.actions.act_window">
