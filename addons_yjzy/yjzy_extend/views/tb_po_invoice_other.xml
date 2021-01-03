@@ -31,7 +31,7 @@
                                 attrs="{'invisible':['|','|','|','|',('is_yjzy_tb_po_invoice_parent','=',True),('yjzy_type_1','in',['purchase','other_payment_purchase']),('is_yjzy_tb_po_invoice','=',True),('type','!=','other_payment'),('state','!=','10_draft')]}"/>
                         <button name="delete_tb_po_invoice" type="object" string="删除其他应收申请"
                                 attrs="{'invisible':['|','|','|',('yjzy_type_1','in',['sale','other_payment_sale']),('is_yjzy_tb_po_invoice','=',False),('type','!=','other_payment'),('state','!=','10_draft')]}"/>
-                        <button name="delete_tb_po_invoice" type="object" string="删除其他应付申请" context="{'open_delete':1}"
+                        <button name="delete_tb_po_invoice" type="object" string="删除其他应付申请"
                                 attrs="{'invisible':['|','|','|',('yjzy_type_1','in',['purchase','other_payment_purchase']),('is_yjzy_tb_po_invoice','=',False),('type','!=','other_payment'),('state','!=','10_draft')]}"/>
 
                         <field name="state" widget="statusbar" statusbar_visible=" "/>
@@ -72,24 +72,23 @@
                                        attrs="{'invisible':[('type','not in',['other_payment'])],'readonly':[('state','!=','10_draft')]}"/>
                                 <field name="name_title"
                                        attrs="{'invisible':[('type','in',['other_po'])],'readonly':[('state','!=','10_draft')]}"/>
-                                <label for="" string="金额" attrs="{'invisible':['|',('type','not in',['other_payment']),('yjzy_payment_id','!=',False)],
-                                      }"/>
+                                <field name="yjzy_payment_id" string="收款单" readonly="1"
+                                       attrs="{'invisible':[('type_invoice','not in',['out_invoice'])]}"/>
+                                <field name="yjzy_payment_amount" string="收款单原始金额" attrs="{'invisible':[('yjzy_payment_id','=',False)]}"/>
+                                <field name="yjzy_payment_balance" string="收款单剩余金额"
+                                       attrs="{'invisible':[('yjzy_payment_id','=',False)]}"/>
+                                <label for="" string="本次应收金额" />
                                 <div name="amount_div" class="o_row"
-                                     attrs="{'invisible':['|',('type','not in',['other_payment']),('yjzy_payment_id','!=',False)]}">
-                                    <field name="other_invoice_amount" attrs="{'invisible':['|',('type','not in',['other_payment']),('yjzy_payment_id','!=',False)],
+                                    >
+                                    <field name="other_invoice_amount" attrs="{
                                         'readonly':[('state','!=','10_draft')]}"/>
                                     <b invisible="0">货币：</b>
                                     <field name="manual_currency_id" options="{'no_create': True, 'no_open': True}"
-                                           attrs="{'invisible':['|',('type','not in',['other_payment']),('yjzy_payment_id','!=',False)],
+                                           attrs="{
                                         'readonly':[('state','!=','10_draft')]}"/>
                                 </div>
-
-
                                 <field name="partner_id" invisible="1"/>
-                                <field name="yjzy_payment_id" string="收款单" readonly="1"
-                                       attrs="{'invisible':[('type_invoice','not in',['out_invoice'])]}"/>
-                                <field name="yjzy_payment_balance" string="未认领收款金额"
-                                       attrs="{'invisible':[('yjzy_payment_id','=',False)]}"/>
+
                                 <field name="price_total" string="金额合计" groups="base.group_system"/>
                                 <label for="" name="other_payment_invoice_residual" attrs="{'invisible':[('state','not in',['30_done'])]}">
                                     <b  attrs="{'invisible':['|',('yjzy_type_1','in',['sale','other_payment_sale']),('state','not in',['30_done'])]}">

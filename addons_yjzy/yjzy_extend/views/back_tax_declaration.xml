@@ -22,27 +22,27 @@
                 <form string="退税申报表">
                     <header>
                         <button name="action_confirm" string="确认申报" type="object" states="draft"/>
-                        <button name="open_wizard_back_tax_declaration" string="添加应收退税" type="object"/>
+                        <button name="open_wizard_back_tax_declaration" string="添加应收退税" type="object" attrs="{'invisible':[('state','in',['done','paid'])]}"/>
                         <field name="state" widget="statusbar"/>
                     </header>
                     <sheet>
                         <group>
 
                         <group>
-                            <field name="name"/>
+                            <field name="name" readonly="1"/>
                             <field name="invoice_amount_all"/>
                             <field name="invoice_residual_all"/>
                             <field name="declaration_amount_all"/>
                              <field name="declaration_amount_all_residual_new" string="剩余未收申报金额"/>
-                            <field name="declaration_date"/>
+                            <field name="declaration_date" attrs="{'readonly':[('state','in',['done','paid'])]}"/>
                             <field name="create_uid" string="创建者" invisible="1"/>
                             <field name="create_date" string="创建日期" invisible="1"/>
                         </group>
 
                         </group>
                     <notebook>
-                        <page>
-                            <field name="btd_line_ids">
+                        <page string="应收退税申报明细">
+                            <field name="btd_line_ids" attrs="{'readonly':[('state','in',['done','paid'])]}">
                                 <tree create="false" editable="bottom">
                                     <field name="invoice_id"/>
                                     <field name="invoice_currency_id" invisible="1"/>
@@ -79,7 +79,7 @@
               parent="yjzy_extend.menu_back_tax_declaration_root" action="action_back_tax_declaration" sequence=""/>
 
         <menuitem id="menu_back_tax_declaration_1" name="创建退税申报"
-                  parent="yjzy_extend.menu_customer_invoice_back_tax_renling_root" action="action_create_back_tax_declaration" sequence="20"/>
+                  parent="yjzy_extend.menu_customer_invoice_back_tax_declaration_root" action="action_create_back_tax_declaration" sequence="20"/>
 
     <record id="action_back_tax_declaration" model="ir.actions.act_window">
         <field name="name">退税申报表查询</field>
@@ -89,7 +89,7 @@
          <field name="context">{}</field>
     </record>
         <menuitem id="menu_action_back_tax_declaration" name="退税申报查询"
-                  parent="yjzy_extend.menu_customer_invoice_back_tax_renling_root" action="action_back_tax_declaration" sequence="25"/>
+                  parent="yjzy_extend.menu_customer_invoice_back_tax_declaration_root" action="action_back_tax_declaration" sequence="25"/>
 
     </data>
 </odoo>

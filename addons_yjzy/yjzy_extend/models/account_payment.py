@@ -830,6 +830,10 @@ class account_payment(models.Model):
             len_ysrld_draft_ids = len(ysrld_draft_ids)
             if self.ysrld_ids and len_ysrld_draft_ids > 0:
                 raise Warning('有存在草稿状态的预收认领单，请先完成认领！')
+            elif self.tb_po_invoice_ids and len(self.tb_po_invoice_ids.filtered(lambda x: x.state != '30_done' )) > 0:
+                raise Warning('有存在未完成的其他收入认领，请先完成认领！')
+            elif self.yshx_ids and len(self.yshx_ids.filtered(lambda x: x.state != 'done' )) > 0:
+                raise Warning('有存在未完成的其他收入认领，请先完成认领！')
             else:
                 form_view = self.env.ref('yjzy_extend.wizard_renling_form')
         if self.sfk_type == 'ysrld':
@@ -1096,6 +1100,14 @@ class account_payment(models.Model):
             #     one.state_fkzl = '05_fksq'
             #     one.state = 'draft'
         if self.sfk_type in ['yfsqd']:
+            self.write({'state_1': '80_refused',
+                        'state': 'draft'
+                        })
+        if self.sfk_type in ['ysrld']:
+            self.write({'state_1': '80_refused',
+                        'state': 'draft'
+                        })
+        if self.sfk_type in ['rcskd']:
             self.write({'state_1': '80_refused',
                         'state': 'draft'
                         })

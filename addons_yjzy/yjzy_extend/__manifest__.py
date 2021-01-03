@@ -161,6 +161,7 @@
         'views2/jiehui.xml',
         'views2/account_reconcile_stage.xml',
         'views2/account_payment_reconcile.xml',
+        'views2/ysrld_new.xml',
 
 
         'views2/expense.xml',

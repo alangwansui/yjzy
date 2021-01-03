@@ -455,7 +455,7 @@ class account_reconcile_order(models.Model):
     def compute_move_line_com_ids(self):
         for one in self:
             one.move_line_com_yfzk_ids = one.invoice_id.move_line_com_yfzk_ids
-            one.move_line_com_yfzk_ids = one.invoice_id.move_line_com_yfzk_ids
+            one.move_line_com_yszk_ids = one.invoice_id.move_line_com_yszk_ids
             one.reconcile_order_ids = one.invoice_id.reconcile_order_ids
             one.reconcile_order_ids_count = one.invoice_id.reconcile_order_ids_count
             one.move_line_com_yszk_ids_count = one.invoice_id.move_line_com_yszk_ids_count
@@ -3417,7 +3417,8 @@ class account_reconcile_order_line_no(models.Model):
     def compute_amount_payment_can_approve_all_after(self):
         for line in self:
             line_ids_line = line.order_id.line_ids.filtered(lambda x: x.invoice_id == line.invoice_id)#本条发票未拆分明细对应的拆分明细
-            advance_amount_org = sum(x.amount_advance_org for x in line_ids_line)
+            # advance_amount_org = sum(x.amount_advance_org for x in line_ids_line)
+            advance_amount_org = line.amount_advance_org_compute
             amount_payment_can_approve_all_this_time = line.amount_payment_can_approve_all_this_time
             amount_payment_org = line.amount_payment_org
             invoice_residual_this_time = line.invoice_residual_this_time
@@ -3425,7 +3426,7 @@ class account_reconcile_order_line_no(models.Model):
             line.invoice_residual_after = invoice_residual_this_time - amount_payment_org
 
 
-    @api.depends('order_id.line_ids','order_id.line_ids.amount_advance_org','amount_payment_org')
+    @api.depends('order_id.line_ids','order_id.line_ids.amount_advance_org')
     def compute_amount_advance_org_compute(self):
         for one in self:
             line_ids = one.order_id.line_ids.filtered(lambda x: x.invoice_id == one.invoice_id)

@@ -140,7 +140,7 @@ class res_partner(models.Model):
             print('tb_approve_po_amount_total', tb_approve_po_amount_total)
             one.tb_approve_po_amount_total = tb_approve_po_amount_total
 
-    @api.depends('invoice_open_ids')
+    @api.depends('invoice_open_ids','invoice_open_ids.state')
     def compute_invoice_open_ids_count(self):
         for one in self:
             one.invoice_open_ids_count = len(one.invoice_open_ids)

@@ -31,7 +31,7 @@ class wizard_renling(models.TransientModel):
 
             customer_advance_payment_ids = self.env['account.payment'].search(
                 [('partner_id', '=', one.partner_id.id), ('sfk_type', '=', 'ysrld'),
-                 ('state', 'in', ['posted']),('advance_balance_total','!=',0)])
+                 ('state', 'in', ['posted']), ('advance_balance_total', '!=', 0)])
             customer_advance_payment_ids_count = len(customer_advance_payment_ids)
             one.customer_advance_payment_ids_count = customer_advance_payment_ids_count
             one.customer_advance_payment_ids = customer_advance_payment_ids
@@ -41,6 +41,17 @@ class wizard_renling(models.TransientModel):
                 one.ysrld_ok = True
 
             print('one.customer_advance_payment_ids', one.customer_advance_payment_ids)
+
+    def _default_line_ids(self):  # 参考one2many的default 默认核心参考
+        res = []
+        product = self.env['product.product'].search([('name', '=', '营业外收入')], limit=1)
+        account = product.property_account_income_id
+        res.append((0, 0, {
+            # 'name': '%s:%s' % (product.name, self.name),
+            'product_id': product.id,
+            'quantity': 1,
+            'account_id': account.id, }))
+        return res or None
 
     # @api.onchange('invoice_ids')
     # def _onchange_customer_advance_payment_ids(self):
@@ -54,24 +65,36 @@ class wizard_renling(models.TransientModel):
     # @api.onchange('partner_id')
     # def onchange_partner_id(self):
 
-    #1223 其他应收
+    # 1223 其他应收
     name_title = fields.Char(u'账单描述')
     invoice_partner = fields.Char(u'账单对象')
-    line_ids = fields.One2many('wizard.invoice.line','renling_id',u'其他应收明细')
-    # 1115
-    customer_advance_payment_ids = fields.Many2many('account.payment', u'相关预收',compute=_compute_customer_advance_payment_ids
-                                                    ) #
-    customer_advance_payment_ids_count = fields.Integer('相关预收数量', compute=_compute_customer_advance_payment_ids)#
-    ysrld_ok = fields.Boolean('是否预收-应收认领',default=False,compute=_compute_customer_advance_payment_ids ,store=True)
+    line_ids = fields.One2many('wizard.invoice.line', 'renling_id', u'其他应收明细',
+                               default=lambda self: self._default_line_ids())
 
-    partner_id = fields.Many2one('res.partner', u'合作伙伴', domain=[('customer', '=', True)])
-    yjzy_payment_id = fields.Many2one('account.payment',u'日常收款单')
+    other_invoice_amount = fields.Monetary('金额', currency_field='currency_id')
+    # 1115
+    customer_advance_payment_ids = fields.Many2many('account.payment', u'相关预收',
+                                                    compute=_compute_customer_advance_payment_ids
+                                                    )  #
+    customer_advance_payment_ids_count = fields.Integer('相关预收数量', compute=_compute_customer_advance_payment_ids)  #
+    ysrld_ok = fields.Boolean('是否预收-应收认领', default=False, compute=_compute_customer_advance_payment_ids, store=True)
+
+    partner_id = fields.Many2one('res.partner', u'合作伙伴',
+                                 domain=[('is_company', '=', True), ('parent_id', '=', False), ('customer', '=', 1),
+                                         ('name', 'not in', ['未定义', '国税局']), ('invoice_open_ids_count', '!=', 0)])
+
+    partner_advance_id = fields.Many2one('res.partner', u'合作伙伴',
+                                         domain=[('is_company', '=', True), ('parent_id', '=', False),
+                                                 ('customer', '=', 1),
+                                                 ('name', 'not in', ['未定义', '国税局'])])
+
+    yjzy_payment_id = fields.Many2one('account.payment', u'日常收款单')
     gongsi_id = fields.Many2one('gongsi', '内部公司')
 
     invoice_ids = fields.Many2many('account.invoice', 'ref_wz_inv', 'inv_id', 'wz_id', u'Invoice')
-    so_id = fields.Many2one('sale.order','销售合同')
-    so_id_currency_id = fields.Many2one('res.currency',related='so_id.currency_id')
-    amount_total_so = fields.Monetary('合同金额',related='so_id.amount_total' ,currency_field='so_id_currency_id')
+    so_id = fields.Many2one('sale.order', '销售合同')
+    so_id_currency_id = fields.Many2one('res.currency', related='so_id.currency_id')
+    amount_total_so = fields.Monetary('合同金额', related='so_id.amount_total', currency_field='so_id_currency_id')
 
     customer_payment_term_id = fields.Many2one('account.payment.term', u'客户付款条款',
                                                related='partner_id.property_payment_term_id')
@@ -79,28 +102,37 @@ class wizard_renling(models.TransientModel):
     so_pre_advance = fields.Monetary(u'应收预收款', currency_field='so_id_currency_id', related='so_id.pre_advance')
     so_real_advance = fields.Monetary(u'预收金额', currency_field='so_id_currency_id', related='so_id.real_advance')
 
-
-    btd_id = fields.Many2one('back.tax.declaration','退税申报单')
+    btd_id = fields.Many2one('back.tax.declaration', '退税申报单')
     sale_other_invoice_ids = fields.Many2many('account.invoice', 'p3_id', 'i3_id', '未完成认领其他应收',
                                               compute='compute_invoice_advance')
 
-    currency_id = fields.Many2one('res.currency','货币', related='yjzy_payment_id.currency_id')
+    currency_id = fields.Many2one('res.currency', '货币', related='yjzy_payment_id.currency_id')
 
-    ysrld_amount = fields.Monetary('预收认领金额',currency_field='currency_id')
-    step = fields.Selection([('10','10'),('20','20')],'步骤',default='10')
+    ysrld_amount = fields.Monetary('预收认领金额', currency_field='currency_id')
+    step = fields.Selection([('10', '10'), ('20', '20')], '步骤', default='10')
 
     renling_type = fields.Selection([('yshxd', '应收认领'),
-                                 ('ysrld', '预收认领'),
-                                 ('back_tax', '退税认领'),('other_payment', '其他认领')], u'认领属性')
+                                     ('ysrld', '预收认领'),
+                                     ('back_tax', '退税认领'), ('other_payment', '其他认领')], u'认领属性')
 
     declaration_date = fields.Date('申报日期')
-    company_currency_id = fields.Many2one('res.currency', string='公司货币',  default=lambda self: self.env.user.company_id.currency_id.id,
+    company_currency_id = fields.Many2one('res.currency', string='公司货币',
+                                          default=lambda self: self.env.user.company_id.currency_id.id,
                                           readonly=True)
-    declaration_amount_all = fields.Monetary(u'本次申报金额',currency_field='company_currency_id', related = 'btd_id.declaration_amount_all')
-    btd_line_ids = fields.Many2many('back.tax.declaration.line','ref_btd_id','wz_renling_id',u'申报明细')
-    other_payment_invoice_ok = fields.Boolean('待认领其他应收',default=True)
+    declaration_amount_all = fields.Monetary(u'本次申报金额', currency_field='company_currency_id',
+                                             related='btd_id.declaration_amount_all')
+    btd_line_ids = fields.Many2many('back.tax.declaration.line', 'ref_btd_id', 'wz_renling_id', u'申报明细')
+    other_payment_invoice_ok = fields.Boolean('待认领其他应收', default=True)
     other_payment_invoice_ok_f = fields.Boolean('是否其他应付', default=False)
 
+    @api.onchange('other_invoice_amount')
+    def onchange_other_invoice_amount(self):
+        other_invoice_amount = self.other_invoice_amount
+        self.line_ids[0].price_unit = other_invoice_amount
+
+    @api.onchange('partner_advance_id')
+    def onchange_partner_advance_id(self):
+        self.partner_id = self.partner_advance_id
 
     @api.onchange('btd_id')
     def onchange_btd_id(self):
@@ -116,14 +148,12 @@ class wizard_renling(models.TransientModel):
         # self.btd_id = False
         self.step = '20'
 
-
-
-
     @api.onchange('renling_type')
     def onchange_renling_type(self):
         renling_type = self.renling_type
-        if renling_type in ['yshxd','ysrld']:
+        if renling_type in ['yshxd', 'ysrld']:
             partner_id = False
+            self.partner_advance_id = False
             self.step = '10'
             self.btd_id = False
             self.other_payment_invoice_ok_f = False
@@ -150,7 +180,7 @@ class wizard_renling(models.TransientModel):
     @api.onchange('partner_id')
     def onchange_partner_id(self):
         renling_type = self.renling_type
-        if renling_type in ['yshxd','ysrld'] and self.partner_id:
+        if renling_type in ['yshxd', 'ysrld'] and self.partner_id:
             self.step = '20'
 
     def open_ysrld(self):
@@ -161,7 +191,7 @@ class wizard_renling(models.TransientModel):
             'view_type': 'form',
             'view_mode': 'tree,form',
             'res_model': 'account.payment',
-            'views': [(tree_view.id, 'tree'),(form_view.id, 'form')],
+            'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
             'domain': [('id', 'in', [x.id for x in self.customer_advance_payment_ids])],
             'target': 'current',
             'type': 'ir.actions.act_window',
@@ -173,19 +203,20 @@ class wizard_renling(models.TransientModel):
                         'default_partner_type': 'customer',
                         }
         }
+
     def apply(self):
         self.ensure_one()
 
         self.create_yshxd_ysrl()
 
-    #从预收单申请应收
+    # 从预收单申请应收
     def create_ysrld_yxhxd(self):
         # if len(self.invoice_ids.mapped('currency_id')) > 1:
         #     raise Warning('不同币种的账单，不能同时认领！')
         sfk_type = 'yshxd'
         name = self.env['ir.sequence'].next_by_code('sfk.type.%s' % sfk_type)
         yshxd_obj = self.env['account.reconcile.order']
-        yshxd_id = yshxd_obj.with_context({'default_invoice_ids':self.invoice_ids}).create({
+        yshxd_id = yshxd_obj.with_context({'default_invoice_ids': self.invoice_ids}).create({
             'name': name,
             'operation_wizard': '25',
             'yjzy_advance_payment_id': self.yjzy_payment_id.id,
@@ -213,7 +244,7 @@ class wizard_renling(models.TransientModel):
             'type': 'ir.actions.act_window',
             'context': {'default_sfk_type': 'yshxd',
                         'active_id': yshxd_id.id,
-                        'open':1
+                        'open': 1
                         }
         }
 
@@ -233,9 +264,9 @@ class wizard_renling(models.TransientModel):
         if self.renling_type == 'other_payment':
             if not self.partner_id:
                 raise Warning('请先选择客户')
-            if not self.invoice_ids and self.other_payment_invoice_ok :
+            if not self.invoice_ids and self.other_payment_invoice_ok:
                 raise Warning('请先选择需要认领的账单')
-        elif self.renling_type in ['back_tax'] :
+        elif self.renling_type in ['back_tax']:
             if not self.partner_id:
                 raise Warning('请先选择客户')
             if not self.btd_line_ids:
@@ -245,7 +276,7 @@ class wizard_renling(models.TransientModel):
             invoice_attribute = 'normal'
             sfk_type = 'yshxd'
             yjzy_type = 'sale'
-            hxd_type_new = '25' #同时认领
+            hxd_type_new = '25'  # 同时认领
             operation_wizard = '30'
             # hxd_type_new = '20'  #单独认领收款-应收
         elif self.renling_type == 'back_tax':
@@ -275,23 +306,23 @@ class wizard_renling(models.TransientModel):
         print('invoice_ids', invoice_ids)
 
         name = self.env['ir.sequence'].next_by_code('sfk.type.%s' % sfk_type)
-        if self.renling_type in ['yshxd','back_tax','other_payment']:
-            yshxd_id = yshxd_obj.with_context({'default_invoice_ids':invoice_ids}).create({
-                                         'name': name,
-                                         'operation_wizard': operation_wizard,
-                                         'partner_id': self.partner_id.id,
-                                         'sfk_type': 'yshxd',
-                                         'renling_type':self.renling_type,
-                                         'back_tax_declaration_id':back_tax_declaration_id,
-                                         'payment_type': 'inbound',
-                                         'partner_type': 'customer',
-                                         'yjzy_payment_id':self.yjzy_payment_id.id,
-                                         'be_renling': True,
-                                         'invoice_attribute': invoice_attribute,
-                                         'yjzy_type': yjzy_type,
-                                         'hxd_type_new':hxd_type_new
+        if self.renling_type in ['yshxd', 'back_tax', 'other_payment']:
+            yshxd_id = yshxd_obj.with_context({'default_invoice_ids': invoice_ids}).create({
+                'name': name,
+                'operation_wizard': operation_wizard,
+                'partner_id': self.partner_id.id,
+                'sfk_type': 'yshxd',
+                'renling_type': self.renling_type,
+                'back_tax_declaration_id': back_tax_declaration_id,
+                'payment_type': 'inbound',
+                'partner_type': 'customer',
+                'yjzy_payment_id': self.yjzy_payment_id.id,
+                'be_renling': True,
+                'invoice_attribute': invoice_attribute,
+                'yjzy_type': yjzy_type,
+                'hxd_type_new': hxd_type_new
 
-                                         })
+            })
 
             if self.renling_type != 'yshxd':
                 yshxd_id.make_line_no()
@@ -328,7 +359,7 @@ class wizard_renling(models.TransientModel):
                             'active_id': yshxd_id.id,
                             'bank_amount': 1,
                             'show_so': 1,
-                            'open':1,
+                            'open': 1,
                             'advance_so_amount': 1,
                             'only_number': 1,
                             }
@@ -338,7 +369,9 @@ class wizard_renling(models.TransientModel):
             journal_domain = [('code', '=', 'ysdrl'), ('company_id', '=', self.env.user.company_id.id)]
             journal_id = self.env['account.journal'].search(journal_domain, limit=1)
             ysrld_amount = self.ysrld_amount
-            ysrld = ysrld_obj.with_context({'bank_amount':1,'show_shoukuan': True, 'default_sfk_type': 'ysrld', 'default_payment_type': 'inbound', 'default_be_renling': True, 'default_advance_ok': True, 'default_partner_type': 'customer',}).create({
+            ysrld = ysrld_obj.with_context({'bank_amount': 1, 'show_shoukuan': True, 'default_sfk_type': 'ysrld',
+                                            'default_payment_type': 'inbound', 'default_be_renling': True,
+                                            'default_advance_ok': True, 'default_partner_type': 'customer', }).create({
                 'name': name,
                 'advance_ok': True,
                 'partner_id': self.partner_id.id,
@@ -351,12 +384,11 @@ class wizard_renling(models.TransientModel):
                 'currency_id': self.currency_id.id,
                 'payment_method_id': 2,
                 'amount': ysrld_amount,
-                'journal_id':journal_id.id,
-                'so_id':self.so_id.id,
-
+                'journal_id': journal_id.id,
+                'so_id': self.so_id.id,
 
             })
-            form_view = self.env.ref('yjzy_extend.view_ysrld_form_new_open').id
+            form_view = self.env.ref('yjzy_extend.view_ysrld_form_latest').id
             return {
                 'name': '预收认领单',
                 'view_type': 'form',
@@ -364,13 +396,13 @@ class wizard_renling(models.TransientModel):
                 'res_model': 'account.payment',
                 'views': [(form_view, 'form')],
                 'res_id': ysrld.id,
-                'target': 'new',
+                'target': 'current',
                 'type': 'ir.actions.act_window',
                 'context': {'default_sfk_type': 'ysrld',
                             'active_id': ysrld.id,
                             'bank_amount': 1,
                             'show_so': 1,
-                            'ysrls_open':1
+                            # 'ysrls_open':1
                             }
 
             }
@@ -521,22 +553,21 @@ class wizard_renling(models.TransientModel):
     # #             })
     # #     return True
 
-
     def create_tb_po_invoice(self):
         form_view = self.env.ref('yjzy_extend.tb_po_form')
         type = self.renling_type
         yjzy_type_1 = self.env.context.get('default_yjzy_type_1')
         type_invoice = self.env.context.get('default_type_invoice')
-        print('type_invoice',type_invoice,yjzy_type_1)
+        print('type_invoice', type_invoice, yjzy_type_1)
         tb_po_invoice_obj = self.env['tb.po.invoice']
-        tb_po_invoice_id = tb_po_invoice_obj.create({'currency_id':self.currency_id.id,
-                                                     'manual_currency_id':self.currency_id.id,
-                                                     'type':type,
-                                                     'yjzy_type_1':yjzy_type_1,
-                                                     'type_invoice':type_invoice,
-                                                     'yjzy_payment_id':self.yjzy_payment_id.id,
+        tb_po_invoice_id = tb_po_invoice_obj.create({'currency_id': self.currency_id.id,
+                                                     'manual_currency_id': self.currency_id.id,
+                                                     'type': type,
+                                                     'yjzy_type_1': yjzy_type_1,
+                                                     'type_invoice': type_invoice,
+                                                     'yjzy_payment_id': self.yjzy_payment_id.id,
                                                      })
-        print('tb_po_invoice_id',tb_po_invoice_id)
+        print('tb_po_invoice_id', tb_po_invoice_id)
         return {
             'name': '其他应收申请单',
             'view_type': 'tree,form',
@@ -556,45 +587,50 @@ class wizard_renling(models.TransientModel):
         yjzy_type_1 = self.env.context.get('default_yjzy_type_1')
         type_invoice = self.env.context.get('default_type_invoice')
         tb_po_invoice_line = self.env['extra.invoice.line']
-        print('type_invoice',type_invoice,yjzy_type_1)
+        print('type_invoice', type_invoice, yjzy_type_1)
 
         tb_po_invoice_obj = self.env['tb.po.invoice']
-        tb_po_invoice_id = tb_po_invoice_obj.with_context({'default_type': 'other_payment', 'default_yjzy_type_1': 'other_payment_sale',
-         'default_type_invoice': 'out_invoice'}).create({'currency_id':self.currency_id.id,
-                                                     'manual_currency_id':self.currency_id.id,
-                                                     'type':type,
-                                                     'yjzy_type_1':yjzy_type_1,
-                                                     'type_invoice':type_invoice,
-                                                     'yjzy_payment_id':self.yjzy_payment_id.id,
-                                                     'name_title':self.name_title,
-                                                     'invoice_partner':self.invoice_partner,
+        tb_po_invoice_id = tb_po_invoice_obj.with_context(
+            {'default_type': 'other_payment', 'default_yjzy_type_1': 'other_payment_sale', 'not_is_default': 1,
+             'default_type_invoice': 'out_invoice'}).create({'currency_id': self.currency_id.id,
+                                                             'manual_currency_id': self.currency_id.id,
+                                                             'type': type,
+                                                             'yjzy_type_1': yjzy_type_1,
+                                                             'type_invoice': type_invoice,
+                                                             'yjzy_payment_id': self.yjzy_payment_id.id,
+                                                             'name_title': self.name_title,
+                                                             'invoice_partner': self.invoice_partner,
+                                                             'other_invoice_amount': self.other_invoice_amount,
 
-                                                     })
+                                                             })
         for one in self.line_ids:
             product = one.product_id
             quantity = one.quantity
             price_unit = one.price_unit
-            if product:
-                account = product.product_tmpl_id._get_product_accounts()['expense']
-                if not account:
-                    raise UserError(
-                        _("No Expense account found for the product %s (or for its category), please configure one.") % (
-                            self.product_id.name))
-            else:
-                account = self.env['ir.property'].with_context(force_company=self.company_id.id).get(
-                    'property_account_expense_categ_id', 'product.category')
-                if not account:
-                    raise UserError(
-                        _('Please configure Default Expense account for Product expense: `property_account_expense_categ_id`.'))
+            account = one.account_id
+            # if product:
+            #     account = product.product_tmpl_id._get_product_accounts()['expense']
+            #     if not account:
+            #         raise UserError(
+            #             _(
+            #                 "No Expense account found for the product %s (or for its category), please configure one.") % (
+            #                 self.product_id.name))
+            # else:
+            #     account = self.env['ir.property'].with_context(force_company=self.company_id.id).get(
+            #         'property_account_expense_categ_id', 'product.category')
+            #     if not account:
+            #         raise UserError(
+            #             _(
+            #                 'Please configure Default Expense account for Product expense: `property_account_expense_categ_id`.'))
             tb_po_invoice_line = tb_po_invoice_line.create({
-                    'tb_po_id': tb_po_invoice_id.id,
-                    'name':'%s' % (product.name),
-                    'product_id': product.id,
-                    'quantity': quantity,
-                    'price_unit': price_unit,
-                    'account_id': account.id
-                })
-        print('tb_po_invoice_id',tb_po_invoice_id)
+                'tb_po_id': tb_po_invoice_id.id,
+                'name': '%s' % (product.name),
+                'product_id': product.id,
+                'quantity': quantity,
+                'price_unit': price_unit,
+                'account_id': account.id
+            })
+        print('tb_po_invoice_id', tb_po_invoice_id)
         return {
             'name': '其他应收申请单',
             'view_type': 'tree,form',
@@ -605,9 +641,8 @@ class wizard_renling(models.TransientModel):
             'res_id': tb_po_invoice_id.id,
             'target': 'current',
             # 'domain': [('yjzy_advance_payment_id', '=', self.id)],
-            'context': {}
+            'context': {'not_is_default': 1}
         }
-
 
 
 class Wizard_Invoice_Line(models.TransientModel):
@@ -615,26 +650,32 @@ class Wizard_Invoice_Line(models.TransientModel):
     _description = "wizard Invoice Line"
 
     @api.one
-    @api.depends('price_unit',  'quantity','product_id',)
+    @api.depends('price_unit', 'quantity', 'product_id', )
     def _compute_price(self):
         price = self.price_unit
-        self.price_total =self.quantity * price
+        self.price_total = self.quantity * price
 
-    renling_id = fields.Many2one('wizard.renling',u'认领单')
+    # def _default_account(self):
+    #     if self._context.get('journal_id'):
+    #         journal = self.env['account.journal'].browse(self._context.get('journal_id'))
+    #         if self._context.get('type_invoice') in ('out_invoice', 'in_refund'):
+    #             return journal.default_credit_account_id.id
+    #         return journal.default_debit_account_id.id
+
+    renling_id = fields.Many2one('wizard.renling', u'认领单')
     product_id = fields.Many2one('product.product', string='Product',
                                  ondelete='restrict', index=True)
-    currency_id = fields.Many2one('res.currency',related='renling_id.currency_id')
-    price_unit = fields.Float(string='Unit Price', required=True, digits=dp.get_precision('Product Price'))
-    price_total = fields.Monetary(string='Amount',currency_field='currency_id',
+    currency_id = fields.Many2one('res.currency', related='renling_id.currency_id')
+    price_unit = fields.Float(string='Unit Price', required=True, digits=(2, 2), )
+    price_total = fields.Monetary(string='Amount', currency_field='currency_id',
                                   store=True, readonly=True, compute='_compute_price',
                                   help="Total amount with taxes")
-    quantity = fields.Float(string='Quantity', digits=dp.get_precision('Product Unit of Measure'),
+    quantity = fields.Float(string='Quantity', digits=(2, 2),
                             required=True, default=1)
 
+    account_id = fields.Many2one('account.account', string='Account',
+                                 required=True,
 
-
-
-
-
+                                 help="The income or expense account related to the selected product.")
 
 #####################################################################################################################

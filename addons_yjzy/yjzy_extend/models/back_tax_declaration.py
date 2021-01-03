@@ -77,10 +77,15 @@ class DeclareDeclaration(models.Model):
 
 
     def action_confirm(self):
-        self.state = 'done'
-        invoice_ids = self.btd_line_ids.mapped('invoice_id')
         if len(self.btd_line_ids.filtered(lambda x: x.invoice_back_tax_declaration_state == '20')) > 0:
             raise Warning('明细行存在已经申报的应收退税账单，请查验!')
+        for one in self.btd_line_ids:
+            if one.declaration_amount > one.invoice_residual_total:
+                raise Warning('申报金额不允许大于未收退税金额！')
+        if not self.declaration_date:
+            return Warning('请填写申报日期')
+        self.state = 'done'
+        invoice_ids = self.btd_line_ids.mapped('invoice_id')
         for one in invoice_ids:
             one.back_tax_declaration_state = '20'
 

@@ -1118,7 +1118,7 @@
 
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_ysrld_form')})]"/>
     </record>
-    <menuitem id="menu_new_ysrld_create" parent="menu_advance_payment_in_apply_root" name="创建预收认领单" sequence="10"
+    <menuitem id="menu_new_ysrld_create" parent="menu_advance_payment_in_apply_root" name="创建预收认领单" sequence="10" groups="base.group_system"
               action="action_ysrld_create"/>
 
 
@@ -1136,7 +1136,7 @@
         <field name="search_view_id" ref="view_account_payment_search_new"/>
         <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_ysrld_reconcile_tree_1')}),
-                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_ysrld_form')})]"/>
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_ysrld_form_latest')})]"/>
     </record>
     <menuitem id="mennu_neew_ysrld_reconcile_1" parent="menu_advance_payment_in_apply_root" name="预收认领单"
               sequence="20"

@@ -66,35 +66,39 @@ class tb_po_invoice(models.Model):
             return self.env.user.company_id.currency_id.id
 
     def _default_extra_invoice_line(self): #参考one2many的default 默认核心参考
+        not_is_default = self.env.context.get('not_is_default')
         default_yjzy_type_1 = self.env.context.get('default_yjzy_type_1')
         default_type = self.env.context.get('default_type')
         res = []
-        # yjzy_type_1=self.env.context.get('yjzy_type_1')
-        # type = self.env.context.get('type')
-        if default_yjzy_type_1 == 'purchase' and default_type == 'other_po':
-            product = self.env['product.product'].search([('for_other_po','=',True)])
-            print('default_yjzy_type_1',default_yjzy_type_1,default_type)
-            for line in product:
-                if default_yjzy_type_1 == 'purchase' and default_type == 'other_po':
-                    res.append((0, 0, {
-                        'product_id': line.id
-                    }))
-        if default_yjzy_type_1 == 'other_payment_purchase' or self.yjzy_type_1 == 'other_payment_purchase':
-            product = self.env['product.product'].search([('name', '=', '营业外支出')], limit=1)
-            account = product.property_account_income_id
-            res.append ((0, 0, {
-                'name': '%s:%s' % (product.name, self.name),
-                'product_id': product.id,
-                'quantity': 1,
-                'account_id': account.id, }))
-        if default_yjzy_type_1 == 'other_payment_sale' or self.yjzy_type_1 == 'other_payment_sale':
-            product = self.env['product.product'].search([('name', '=', '营业外收入')], limit=1)
-            account = product.property_account_income_id
-            res.append ((0, 0, {
-                'name': '%s:%s' % (product.name, self.name),
-                'product_id': product.id,
-                'quantity': 1,
-                'account_id': account.id, }))
+        if not_is_default:
+            res = None
+        else:
+            # yjzy_type_1=self.env.context.get('yjzy_type_1')
+            # type = self.env.context.get('type')
+            if default_yjzy_type_1 == 'purchase' and default_type == 'other_po':
+                product = self.env['product.product'].search([('for_other_po','=',True)])
+                print('default_yjzy_type_1',default_yjzy_type_1,default_type)
+                for line in product:
+                    if default_yjzy_type_1 == 'purchase' and default_type == 'other_po':
+                        res.append((0, 0, {
+                            'product_id': line.id
+                        }))
+            if default_yjzy_type_1 == 'other_payment_purchase' or self.yjzy_type_1 == 'other_payment_purchase':
+                product = self.env['product.product'].search([('name', '=', '营业外支出')], limit=1)
+                account = product.property_account_income_id
+                res.append ((0, 0, {
+                    'name': '%s:%s' % (product.name, self.name),
+                    'product_id': product.id,
+                    'quantity': 1,
+                    'account_id': account.id, }))
+            if default_yjzy_type_1 == 'other_payment_sale' or self.yjzy_type_1 == 'other_payment_sale':
+                product = self.env['product.product'].search([('name', '=', '营业外收入')], limit=1)
+                account = product.property_account_income_id
+                res.append ((0, 0, {
+                    'name': '%s:%s' % (product.name, self.name),
+                    'product_id': product.id,
+                    'quantity': 1,
+                    'account_id': account.id, }))
         return res or None
 
     # @api.onchange('partner_id')
@@ -312,6 +316,8 @@ class tb_po_invoice(models.Model):
     yjzy_payment_id = fields.Many2one('account.payment',u'收付款单')
     yjzy_payment_currency_id = fields.Many2one('res.currency', related='yjzy_payment_id.currency_id')
     yjzy_payment_balance = fields.Monetary(u'收款单未认领金额', related = 'yjzy_payment_id.balance',  currency_field='yjzy_payment_currency_id',)
+    yjzy_payment_amount = fields.Monetary(u'收款单未认领金额', related='yjzy_payment_id.amount',
+                                           currency_field='yjzy_payment_currency_id', )
 
 
 
@@ -361,7 +367,7 @@ class tb_po_invoice(models.Model):
     yjzy_type = fields.Selection([('sale', u'销售'), ('purchase', u'采购'), ('back_tax', u'退税')], string=u'发票类型')#825 对应生成的发票，不用利用原来出运生成的账单。所以这个也没用了
     yjzy_type_1 = fields.Selection([('sale', u'应付'), ('purchase', u'采购'), ('back_tax', u'退税'),('other_payment_sale', '其他应收'),
          ('other_payment_purchase', '其他应付')], string=u'发票类型')#825
-    extra_invoice_line_ids = fields.One2many('extra.invoice.line', 'tb_po_id', u'账单明细',default=lambda self: self._default_extra_invoice_line())
+    extra_invoice_line_ids = fields.One2many('extra.invoice.line', 'tb_po_id', u'账单明细',default=lambda self: self._default_extra_invoice_line())#,
 
 
 

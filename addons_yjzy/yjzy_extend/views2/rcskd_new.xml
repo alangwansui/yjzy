@@ -14,8 +14,11 @@
                             attrs="{'invisible':[('state_1','not in',['10_draft'])]}"/>
                     <button name="action_cashier_post" class="oe_highlight" string="出纳确认"
                             attrs="{'invisible':[('state_1','not in',['25_cashier_submit'])]}" type="object"/>
-                    <button name="action_cashier_refuse" class="oe_highlight" string="出纳拒绝" type="object"
-                            attrs="{'invisible':[('state_1','not in',['25_cashier_submit'])]}"/>
+
+                     <button name="%(payment_refuse_wizard_action)d" class="oe_highlight" string="财务拒绝" type="action"
+                            attrs="{'invisible':[('state_1','not in',['25_cashier_submit'])]}"
+                    />
+
                     <button name="action_draft_new" class="oe_highlight" string="重置草稿" type="object"
                             attrs="{'invisible':[('state_1','not in',['80_refused'])]}"/>
                     <field name="state_1" widget="statusbar" statusbar_visible=" "/>
@@ -285,7 +288,7 @@
                         <page string="预收认领单" attrs="{'invisible':[('count_ysrld','=',0)]}">
                             <field name="ysrld_ids" widget="many2many" readonly="1"
                                    domain="[('sfk_type','=','ysrld_'),('partner_id','=',partner_id),('yjzy_payment_id','=',False),('state','=','approved')]"
-                                   context="{'form_view_ref':'yjzy_extend.view_ysrld_form_new_no_open','tree_view_ref':'yjzy_extend.view_ysrld_tree'}">
+                                   context="{'form_view_ref':'yjzy_extend.view_ysrld_form_latest','tree_view_ref':'yjzy_extend.view_ysrld_tree'}">
                                 <tree editable="bottom">
                                     <field name="name"/>
                                     <field name="payment_date"/>

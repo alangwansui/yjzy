@@ -2456,8 +2456,8 @@
                               ]"/>
         </record>
         <menuitem id="menu_customer_account_invoice_other_all" action="action_customer_account_invoice_other_all"
-                  parent="menu_customer_invoice_for_goods_root" name="其他应收账单" groups="base.group_system"
-                  sequence="20"
+                  parent="menu_customer_invoice_for_goods_root" name="其他应收账单"
+                  sequence="30"
         />
 
 
