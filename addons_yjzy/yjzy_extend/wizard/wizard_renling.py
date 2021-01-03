@@ -675,7 +675,6 @@ class Wizard_Invoice_Line(models.TransientModel):
                             required=True, default=1)
 
     account_id = fields.Many2one('account.account', string='Account',
-                                 required=True,
 
                                  help="The income or expense account related to the selected product.")
 
