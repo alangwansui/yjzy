@@ -145,7 +145,7 @@
 
 
 
-
+        'views2/ysrld_new.xml',
         'views2/rcskd.xml',
         'views2/rcskd_new.xml',
         'views2/rcfkd.xml',
@@ -168,7 +168,7 @@
         'views2/expense_sheet.xml',
         'views2/fkzl.xml',
         'views2/rcfkd_fksq.xml',
-        'views2/ysrld_new.xml',
+
         'views/back_tax_declaration.xml',
 
         'data/data.xml',
