@@ -45,7 +45,8 @@ class wizard_renling(models.TransientModel):
     def _default_line_ids(self):  # 参考one2many的default 默认核心参考
         res = []
         product = self.env['product.product'].search([('name', '=', '营业外收入')], limit=1)
-        account = product.property_account_income_id
+
+        account = self.env['account.account'].search([('code', '=', '5301'),('company_id','=',self.env.user.company_id)], limit=1)
         res.append((0, 0, {
             # 'name': '%s:%s' % (product.name, self.name),
             'product_id': product.id,
