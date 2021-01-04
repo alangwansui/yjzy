@@ -543,16 +543,16 @@ class account_payment(models.Model):
     advance_reconcile_order_line_amount_char = fields.Text(related='so_id.advance_reconcile_order_line_amount_char', string=u'预收认领明细金额')
     advance_reconcile_order_line_date_char = fields.Text(related='so_id.advance_reconcile_order_line_date_char',string=u'预收认领日期')
     advance_reconcile_order_line_invoice_char = fields.Text(related='so_id.advance_reconcile_order_line_invoice_char',string=u'账单')
-    advance_balance_total = fields.Monetary(u'预收余额', currency_field='yjzy_payment_currency_id',compute=compute_advance_balance_total,  store=True)
+    advance_balance_total = fields.Monetary(u'预收余额', currency_field='yjzy_payment_currency_id',)#compute=compute_advance_balance_total,  store=True
 
 
 
     advance_total = fields.Monetary(u'预收认领金额',
-                                            currency_field='yjzy_payment_currency_id', compute=compute_advance_balance_total,store=True)
+                                            currency_field='yjzy_payment_currency_id', )#compute=compute_advance_balance_total,store=True
     advance_hexiao_total = fields.Monetary(u'核销认领金额', currency_field='yjzy_payment_currency_id',
-                                     compute=compute_advance_balance_total,store=True)
+                                     )#compute=compute_advance_balance_total,store=True
     advance_renling_total = fields.Monetary(u'正常认领金额',
-                                           currency_field='yjzy_payment_currency_id', compute=compute_advance_balance_total,store=True )
+                                           currency_field='yjzy_payment_currency_id', ) #compute=compute_advance_balance_total,store=True
 
     rcskd_amount = fields.Monetary(u'收款单金额',related='yjzy_payment_id.amount')
     rcskd_date = fields.Date(u'收款日期', related='yjzy_payment_id.payment_date' )
