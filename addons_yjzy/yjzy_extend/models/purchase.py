@@ -269,10 +269,25 @@ class purchase_order(models.Model):
                            'submit_date': fields.datetime.now()})
 
     def action_sales_approve_stage(self):
+        stage_id = self._stage_find(domain=[('code', '=', '040')])
+        if not stage_id.user_ids:
+            raise Warning('请先设置采购签字人员！')
+        print('stage_id.user_ids', stage_id.user_ids)
+        main_sign_uid = stage_id.user_ids[0]
+        return self.write({'stage_id': stage_id.id,
+                           'can_confirm_by_so': True,
+                           'purchaser_uid': self.env.user.id,
+                           'purchaser_date': fields.datetime.now(),
+                           'state': 'to approve',
+                           'main_sign_uid': main_sign_uid.id
+                           })
+
+    def action_sales_approve_stage_old(self):
         stage_id = self._stage_find(domain=[('code', '=', '030')])
         return self.write({'stage_id': stage_id.id,
                            'state': 'approve_sales',
                            })
+
 
     def action_approve_stage(self):
         stage_id = self._stage_find(domain=[('code', '=', '040')])
