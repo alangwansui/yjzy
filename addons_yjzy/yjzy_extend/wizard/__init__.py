@@ -30,6 +30,7 @@ from . import wizard_fkzl
 from . import wizard_renling_ysrld
 from . import wizard_create_other
 from . import wizard_tb_po_invoice_with_out_tax
+from . import wizard_print_fkzl
 
 
 

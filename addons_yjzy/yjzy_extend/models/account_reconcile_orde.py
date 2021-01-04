@@ -2981,14 +2981,16 @@ class account_reconcile_order(models.Model):
 
 
             elif self.sfk_type == 'yfhxd':
-                amount_invoice_so = one.amount_invoice_so
-                po_line_ids = self.line_ids.filtered(lambda x: x.po_id == one.po_id)
+                amount_invoice_so = one.amount_invoice_so  #采购单对应的本次出运金额
+                po_line_ids = self.line_ids.filtered(lambda x: x.po_id == one.po_id) #所有采购单等于本次认领采购单的认领明细
                 print('po_line_ids_akiny',po_line_ids)
-                so_amount_all = sum(x.amount_invoice_so for x in po_line_ids)
-                amount_org_hxd = one.yjzy_payment_id.po_id.amount_org_hxd
+                so_amount_all = sum(x.amount_invoice_so for x in po_line_ids) #所有已经认领的明细的采购出运总和
+                amount_org_hxd = one.yjzy_payment_id.po_id.amount_org_hxd #采购合同的所有的预付认领金额
                 amount_po = one.yjzy_payment_id.po_id.amount_total
                 rest_amount_org_hxd = amount_po - amount_org_hxd
-                least_advice_amount_advance_org = one.yjzy_payment_id.advance_balance_total - one.yjzy_payment_id.po_id.no_deliver_amount_new - rest_amount_org_hxd  # 缺一个所有发票的未收金额
+                least_advice_amount_advance_org = one.yjzy_payment_id.advance_balance_total \
+                                                  - one.yjzy_payment_id.po_id.no_deliver_amount_new \
+                                                  - rest_amount_org_hxd  # 缺一个所有发票的未收金额
                 if least_advice_amount_advance_org < 0:
                     least_advice_amount_advance_org = 0
                 one.advice_amount_advance_org_real = one.so_tb_percent * one.yjzy_payment_id.amount - \
@@ -3200,8 +3202,9 @@ class account_reconcile_order_line(models.Model):
                               }
                     lines |= i
 
+
             ysrld_amount_advance_org_all = sum(x.amount_advance_org for x in hxd_ids)
-            ysrld_advice_amount_advance_org_all = sum(x.advice_amount_advance_org for x in lines)#ok
+            ysrld_advice_amount_advance_org_all = sum(x.advice_amount_advance_org_real for x in lines)#ok #
 
             amount_advance_org_self = sum(x.amount_advance_org for x in hxd_self_ids)
 

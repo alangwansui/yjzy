@@ -194,6 +194,7 @@
         'wizard/wizard_reconcile_invoice.xml',
         'wizard/wizard_back_tax_declaration_line.xml',
         'wizard/wizard_create_other.xml',
+        'wizard/wizard_print_fkzl.xml',
 
         # report
         'report/report.xml',

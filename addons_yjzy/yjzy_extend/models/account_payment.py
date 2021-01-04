@@ -424,10 +424,10 @@ class account_payment(models.Model):
 
     pay_to = fields.Char('付款对象', compute = compute_pay_to,store=True)
 
-    print_times = fields.Integer(u'打印次数')
-    print_date = fields.Datetime('打印时间')
-    print_uid = fields.Many2one('res.users',u'最新打印人员')
-    can_print = fields.Boolean('允许打印',default=True)
+    print_times = fields.Integer(u'打印次数',track_visibility='onchange')
+    print_date = fields.Datetime('打印时间',track_visibility='onchange')
+    print_uid = fields.Many2one('res.users',u'最新打印人员',track_visibility='onchange')
+    can_print = fields.Boolean('允许打印',default=True,track_visibility='onchange',)
 
     amount_signed_payment = fields.Monetary(u'收付金额', currency_field='currency_id',
                                             compute=compute_amount_signed_payment, store=True)
@@ -936,6 +936,24 @@ class account_payment(models.Model):
             self.currency_id = self.invoice_log_id.currency_id
         if self.yjzy_payment_id:
             self.currency_id = self.yjzy_payment_id.currency_id
+
+    def open_wizard_print_fkzl(self):
+        return {
+            'name': '打印付款指令',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'wizard.print.fkzl',
+            # 'views': [(form_view.id, 'form')],
+            # 'res_id': bill.id,
+            'target': 'new',
+            'type': 'ir.actions.act_window',
+            'context': {
+                'default_fkzl_id':self.id,
+                'default_print_times':self.print_times,
+                'default_print_date':self.print_date,
+                'default_print_uid':self.print_uid.id
+            },
+        }
 
     @api.multi
     def print_fkzl(self):

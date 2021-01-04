@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="wizard_print_fkzl" model="ir.ui.view">
+            <field name="name">wizard.print.fkzl.from</field>
+            <field name="model">wizard.print.fkzl</field>
+            <field name="arch" type="xml">
+                <form string="打印付款指令">
+<group invisible="1">
+    <field name="fkzl_id"/>
+    <field name="print_times"/>
+    <field name="print_date"/>
+    <field name="print_uid"/>
+</group>
+                    <group >
+                        <span>打印付款指令</span>
+</group>
+                    <footer>
+                        <button name="apply" string="确定" class="btn-primary" type="object"/>
+                        <button special="cancel" class="oe_highlight" string="取消"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>
+

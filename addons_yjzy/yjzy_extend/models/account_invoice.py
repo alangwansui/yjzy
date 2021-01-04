@@ -706,9 +706,11 @@ class account_invoice(models.Model):
     #新建一个账单的状态，可以用来筛选还没有开始付款申请的账单
     state_2 = fields.Selection([
         ('10_draft', u'未确认'),
-        ('20_open', u'已确认'),
+        ('20_open', u'已确认未完成认领'),
         ('30_no_account_payment',u'已申请未付款'),
+        ('35_no_account_payment', u'已申请未收款'),
         ('40_paid', u'已付款'),
+        ('45_paid', u'已收款'),
         ('50_certified',u'已认证'),
         ('90_cancel', u'已取消'),
     ], string='Status', index=True, readonly=True, default='10_draft',copy=False,)

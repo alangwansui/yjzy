@@ -141,7 +141,8 @@ class purchase_order(models.Model):
     @api.depends('hxd_ids','hxd_ids.amount_total_org_new')
     def compute_amount_org_hxd(self):
         for one in self:
-            one.amount_org_hxd = sum(x.amount_total_org_new for x in one.hxd_ids)
+            amount_total_org_new = sum(x.amount_total_org_new for x in one.hxd_ids)
+            one.amount_org_hxd = amount_total_org_new
 
     @api.depends('partner_id')
     def compute_need_change_partner(self):

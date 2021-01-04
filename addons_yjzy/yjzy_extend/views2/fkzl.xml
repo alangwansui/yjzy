@@ -88,7 +88,11 @@
                 <header groups="sales_team.group_manager">
                    <button name="action_submit" class="oe_highlight"  string="审批" type="object"
                            attrs="{'invisible':[('state_fkzl','not in',['10_draft'])]}"/>
-                    <button name="print_fkzl" string="打印付款指令" type="object" attrs="{'invisible':['|',('state_fkzl','!=','20_wait_pay'),('can_print','=',False)]}"/>
+                    <button name="print_fkzl" string="打印付款指令" type="object"
+                            attrs="{'invisible':['|',('state_fkzl','!=','20_wait_pay'),('can_print','=',False)]}"/>
+                    <button name="open_wizard_print_fkzl" string="打印付款指令" type="object"
+                    attrs="{'invisible':['|',('state_fkzl','!=','20_wait_pay'),('can_print','=',False)]}"/>
+
                     <button name="action_fkzl_approve" class="oe_highlight" string="支付完成" type="object"
                    attrs="{'invisible':[('state_fkzl','not in',['20_wait_pay'])]}"/>
                      <button name="%(payment_refuse_wizard_action)d" string="合规拒绝确认" type="action"

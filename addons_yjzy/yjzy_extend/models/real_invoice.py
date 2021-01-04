@@ -22,7 +22,7 @@ class RealInvoice(models.Model):
     def compute_certification_invoice_ids(self):
         if self.state == '05':
             invoice_ids = self.env['account.invoice'].search(
-                [('partner_id', '=', self.partner_id.id), ('state', 'in', ['open', 'paid'])], )
+                [('partner_id', '=', self.partner_id.id), ('state', 'in', ['open', 'paid']),('state_2','not in',['50_certified','90_cancel'])], )
             # akiny参考
             res = []
             for one in invoice_ids:
