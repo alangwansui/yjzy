@@ -767,6 +767,11 @@ class account_payment(models.Model):
         else:
             pass
 
+    def action_test_reconcile(self):
+        if self.sfk_type == 'rcskd':
+            self.test_reconcile()
+            self.state_1 = '60_done'
+
     #test 定稿 参考核销
     def test_reconcile(self):
         if self.sfk_type == 'rcskd':
@@ -777,6 +782,7 @@ class account_payment(models.Model):
                 wizard = self.env['account.move.line.reconcile'].with_context(active_ids=[x.id for x in aml_recs]).create({})
                 wizard.trans_rec_reconcile_full()
                 self.state = 'reconciled'
+
         if self.sfk_type in ['rcfkd','fkzl']:
             account = self.env['account.account'].search([('code', '=', '112301'), ('company_id', '=', self.company_id.id)],limit=1)
             # aml_recs = self.env['account.move.line'].search([('new_payment_id','=',self.id),('account_id','=',account.id)])
