@@ -493,17 +493,18 @@ class account_reconcile_order(models.Model):
     ysrld_advice_amount_advance_org_all = fields.Float('预收认领单的所有被认领的原则分配金额',compute=compute_ysrld_amount_advance_org_all,store=True)
     duoyu_this_time_advice_advance_org = fields.Float('多余的预收付这次应该加上的认领金额',compute=compute_ysrld_amount_advance_org_all,store=True)
 
-    yjzy_reconcile_order_id_new = fields.Many2one('account.reconcile.order','关联的核销单',ondelete='cascade') #1126先创建预付，再创建应付，两边同时相互记录
+    yjzy_reconcile_order_id_new = fields.Many2one('account.reconcile.order','关联的核销单') #1126先创建预付，再创建应付，两边同时相互记录,ondelete='cascade'
 
     advice_amount_advance_org_total = fields.Monetary(u'建议预收金额', currency_field='yjzy_advance_currency_id',compute=compute_advice_amount_advance_org_total,store=True)
     least_advice_amount_advance_org = fields.Monetary(u'最低预收预付金额', currency_field='yjzy_advance_currency_id',compute=compute_advice_amount_advance_org_total,store=True)
-
-    yjzy_reconcile_order_id = fields.Many2one('account.reconcile.order','关联的核销单',ondelete='cascade')#从付款申请认领的时候，创建预付申请，让两者之间产生关联
+    #0104
+    yjzy_reconcile_order_id = fields.Many2one('account.reconcile.order','关联的核销单')#从付款申请认领的时候，创建预付申请，让两者之间产生关联,ondelete='cascade'
 
     # yjzy_reconcile_order_ids = fields.One2many('account.reconcile.order','yjzy_reconcile_order_id','相关的核销单汇总')#从自身创建的所有的预付-应付认领单。
     # yjzy_reconcile_order_ids_count = fields.Integer('相关的核销单汇总数量',compute=compute_yjzy_reconcile_order_ids_count)
 
-    yjzy_reconcile_order_approval_ids = fields.One2many('account.reconcile.order', 'yjzy_reconcile_order_id', u'相关待审批预付-应付认领',domain=[('state_1','=','manager_approval')],
+    yjzy_reconcile_order_approval_ids = fields.One2many('account.reconcile.order', 'yjzy_reconcile_order_id', u'相关待审批预付-应付认领',
+                                                        domain=[('state_1','=','manager_approval')],
                                               )  # 从自身创建的所有的预付-应付认领单。
 
     renling_type = fields.Selection([('yshxd', '应收认领'),
@@ -1231,7 +1232,7 @@ class account_reconcile_order(models.Model):
             operation_wizard = self.operation_wizard
             lines = self.line_ids
             line_do_ids = self.line_do_ids
-            if hxd_type_new == '30':
+            if hxd_type_new == '40':
                 if operation_wizard == '20':
                     if self.amount_total_org == 0:
                         raise Warning('认领金额为0，无法提交！')
@@ -2985,10 +2986,67 @@ class account_reconcile_order(models.Model):
 
             elif self.sfk_type == 'yfhxd':
                 amount_invoice_so = one.amount_invoice_so  #采购单对应的本次出运金额
-                po_line_ids = self.line_ids.filtered(lambda x: x.po_id == one.po_id) #所有采购单等于本次认领采购单的认领明细
-                print('po_line_ids_akiny',po_line_ids)
-                so_amount_all = sum(x.amount_invoice_so for x in po_line_ids) #所有已经认领的明细的采购出运总和
-                amount_org_hxd = one.yjzy_payment_id.po_id.amount_org_hxd #采购合同的所有的预付认领金额
+                yuanze_advance_so = one.so_tb_percent * one.yjzy_payment_id.amount
+                print('yuanze_advance_so_akiny',yuanze_advance_so)
+                lishi_hxd = one.yjzy_payment_id.advance_reconcile_order_line_ids
+                amount_org_hxd = sum(x.amount_advance_org for x in lishi_hxd)
+                print('amount_org_hxd_akiny',amount_org_hxd)
+
+
+                if yuanze_advance_so - amount_org_hxd > 0:
+                    advice_amount_advance_org_real = yuanze_advance_so - amount_org_hxd
+                else:
+                    advice_amount_advance_org_real = 0
+                #
+                # least_advice_amount_advance_org = one.yjzy_payment_id.advance_balance_total \
+                #                                   - one.yjzy_payment_id.po_id.no_deliver_amount_new \
+                #                                   - rest_amount_org_hxd  # 缺一个所有发票的未收金额
+
+                    # 采购合同的所有的预付认领金额
+
+
+                # po_line_ids = self.line_ids.filtered(lambda x: x.po_id == one.po_id and x.yjzy_payment_id == one.yjzy_payment_id) #所有采购单等于本次认领采购单的认领明细以及预付款单等于本次认领预付单
+                # print('po_line_ids_akiny',po_line_ids)
+                # so_amount_all = sum(x.amount_invoice_so for x in po_line_ids) #所有已经认领的明细的采购出运总和
+                # amount_org_hxd = one.yjzy_payment_id.po_id.amount_org_hxd #采购合同的所有的预付认领金额
+                # amount_po = one.yjzy_payment_id.po_id.amount_total
+                # rest_amount_org_hxd = amount_po - amount_org_hxd
+                # least_advice_amount_advance_org = one.yjzy_payment_id.advance_balance_total \
+                #                                   - one.yjzy_payment_id.po_id.no_deliver_amount_new \
+                #                                   - rest_amount_org_hxd  # 缺一个所有发票的未收金额
+                # if least_advice_amount_advance_org < 0:
+                #     least_advice_amount_advance_org = 0
+                one.advice_amount_advance_org_real = advice_amount_advance_org_real
+                # one.least_advice_amount_advance_org = least_advice_amount_advance_org
+                # print('werewrewrer______', one.yjzy_payment_id.advance_balance_total, one.advice_amount_advance_org)
+
+    # line_ids计算建议预付认领
+    def compute_line_ids_advice_amount_advance_org_old(self):
+        for one in self.line_ids:
+            if self.sfk_type == 'yshxd':
+                print('werewrewrer', one.yjzy_payment_id.advance_balance_total)
+                amount_invoice_so = one.amount_invoice_so
+                so_line_ids = self.line_ids.filtered(lambda x: x.so_id == one.so_id)
+                print('po_line_ids_akiny', so_line_ids)
+                so_amount_all = sum(x.amount_invoice_so for x in so_line_ids)
+                amount_org_hxd = one.yjzy_payment_id.so_id.amount_org_hxd
+                amount_so = one.yjzy_payment_id.so_id.amount_total
+                rest_amount_org_hxd = amount_so - amount_org_hxd
+                least_advice_amount_advance_org = one.yjzy_payment_id.advance_balance_total - one.yjzy_payment_id.so_id.no_sent_amount_new - rest_amount_org_hxd  # 缺一个所有发票的未收金额
+                if least_advice_amount_advance_org < 0:
+                    least_advice_amount_advance_org = 0
+                one.advice_amount_advance_org_real = one.so_tb_percent * one.yjzy_payment_id.amount - \
+                                                     one.amount_advance_org_self + one.duoyu_this_time_advice_advance_org \
+                                                     * (amount_invoice_so / so_amount_all)
+                one.least_advice_amount_advance_org = least_advice_amount_advance_org
+
+
+            elif self.sfk_type == 'yfhxd':
+                amount_invoice_so = one.amount_invoice_so  # 采购单对应的本次出运金额
+                po_line_ids = self.line_ids.filtered(lambda x: x.po_id == one.po_id)  # 所有采购单等于本次认领采购单的认领明细
+                print('po_line_ids_akiny', po_line_ids)
+                so_amount_all = sum(x.amount_invoice_so for x in po_line_ids)  # 所有已经认领的明细的采购出运总和
+                amount_org_hxd = one.yjzy_payment_id.po_id.amount_org_hxd  # 采购合同的所有的预付认领金额
                 amount_po = one.yjzy_payment_id.po_id.amount_total
                 rest_amount_org_hxd = amount_po - amount_org_hxd
                 least_advice_amount_advance_org = one.yjzy_payment_id.advance_balance_total \
@@ -2997,8 +3055,8 @@ class account_reconcile_order(models.Model):
                 if least_advice_amount_advance_org < 0:
                     least_advice_amount_advance_org = 0
                 one.advice_amount_advance_org_real = one.so_tb_percent * one.yjzy_payment_id.amount - \
-                                                one.amount_advance_org_self + one.duoyu_this_time_advice_advance_org \
-                                                * (amount_invoice_so / so_amount_all)
+                                                     one.amount_advance_org_self + one.duoyu_this_time_advice_advance_org \
+                                                     * (amount_invoice_so / so_amount_all)
                 one.least_advice_amount_advance_org = least_advice_amount_advance_org
                 print('werewrewrer______', one.yjzy_payment_id.advance_balance_total, one.advice_amount_advance_org)
 
