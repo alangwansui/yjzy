@@ -2767,9 +2767,12 @@ class account_reconcile_order(models.Model):
                 elif self.sfk_type == 'yfhxd':
                     invoice_id = one.invoice_id
                     line_id = self.line_ids.filtered(lambda x: x.po_id == po_id and x.invoice_id == invoice_id)
+                    po_id = self.line_ids.mapped('po_id')
                     amount_invoice_so = line_id.amount_invoice_so
-                    amount_org_hxd = self.yjzy_advance_payment_id.po_id.amount_org_hxd
-                    amount_po = self.yjzy_advance_payment_id.po_id.amount_total
+                    # amount_org_hxd = self.yjzy_advance_payment_id.po_id.amount_org_hxd
+                    amount_org_hxd = po_id.amount_org_hxd
+                    # amount_po = self.yjzy_advance_payment_id.po_id.amount_total
+                    amount_po = po_id.amount_total
                     rest_amount_org_hxd = amount_po - amount_org_hxd
                     least_advice_amount_advance_org = one.yjzy_payment_id.advance_balance_total - po_id.no_deliver_amount_new - rest_amount_org_hxd#缺一个所有发票的未收金额
                     if least_advice_amount_advance_org < 0:
@@ -3204,7 +3207,7 @@ class account_reconcile_order_line(models.Model):
 
 
             ysrld_amount_advance_org_all = sum(x.amount_advance_org for x in hxd_ids)
-            ysrld_advice_amount_advance_org_all = sum(x.advice_amount_advance_org_real for x in lines)#ok #
+            ysrld_advice_amount_advance_org_all = sum(x.advice_amount_advance_org_real for x in lines)#ok # 之前是没有real的，计算错误，现在改成real
 
             amount_advance_org_self = sum(x.amount_advance_org for x in hxd_self_ids)
 

@@ -1475,7 +1475,7 @@ class account_invoice(models.Model):
             else:
                 account_reconcile_id.operation_wizard = '03'
                 # account_reconcile_id.hxd_type_new = '40'#以前是40 1218删除
-                account_reconcile_id.hxd_type_new = '30'
+                account_reconcile_id.hxd_type_new = '40'
                 # account_reconcile_id.make_lines()#1220
                 # account_reconcile_id.line_ids.unlink() 1218删除
                 account_reconcile_id.make_line_no()  # 1220

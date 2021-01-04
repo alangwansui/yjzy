@@ -170,8 +170,9 @@ class account_payment(models.Model):
     def compute_advance_balance_total(self):
         for one in self:
             advance_total = sum([x.amount_advance_org for x in one.advance_reconcile_order_line_ids])
-            hexiao_payment_ids = one.payment_ids.filtered(lambda x: x.sfk_type in ('sfk_type','in',['reconcile_ysrld','reconcile_yfsqd']) and x.state in ['posted','recociled'])
+            hexiao_payment_ids = one.payment_ids.filtered(lambda x: x.sfk_type in ['reconcile_ysrld','reconcile_yfsqd'] and x.state in ['posted','reconciled'])
             advance_total_2 = sum([x.amount for x in hexiao_payment_ids])
+            print('hexiao_payment_ids_akiny',hexiao_payment_ids)
 
             advance_balance_total = one.amount - advance_total - advance_total_2
             if advance_balance_total == 0 and one.state_1 == '50_posted':
