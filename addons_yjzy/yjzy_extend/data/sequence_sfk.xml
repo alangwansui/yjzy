@@ -118,8 +118,8 @@
 
 
     <record id="seq_account_payment_jiehui" model="ir.sequence">
-        <field name="name">account.payment.jiehui</field>
-        <field name="code">account.payment.jiehui</field>
+        <field name="name">sfk.type.jiehui</field>
+        <field name="code">sfk.type.jiehui</field>
         <field name="prefix">EX</field>
         <field name="padding">8</field>
         <field name="company_id" eval="False"/>

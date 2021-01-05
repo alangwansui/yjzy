@@ -60,13 +60,14 @@
                         <field name="is_editable"  widget="boolean_toggle" groups="sales_team.group_manager"/>
                     </div>
                     <field name="id" invisible="1"/>
-                    <div class="oe_title">
+                    <div class="oe_title" invisible="1">
                         <h1>
                             <field name="name"/>
                         </h1>
                     </div>
                     <group>
                         <group>
+                            <field name="display_name"/>
                             <field name="sfk_type" invisible="1"/>
                             <field name="gongsi_id" invisible="1"/>
                             <field name="payment_type" widget="radio" attrs="{'readonly': [('state', '!=', 'draft')]}"/>

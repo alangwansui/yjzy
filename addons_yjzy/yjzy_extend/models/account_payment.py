@@ -2200,8 +2200,10 @@ def _new_create_payment_entry(self, amount):
             'debit': self.jiehui_in_amount,
             'payment_id': self.id,
         }
-
-        amount = self.amount / self.jiehui_rate
+        if self.jiehui_rate > 0:
+            amount = self.amount / self.jiehui_rate
+        else:
+            amount = 0
         account2 = self.journal_id.default_debit_account_id
         if not account2:
             raise Warning(u'没有找到日记账对应的科目')

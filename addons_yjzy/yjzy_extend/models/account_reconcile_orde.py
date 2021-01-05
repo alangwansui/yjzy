@@ -1227,6 +1227,8 @@ class account_reconcile_order(models.Model):
     #预付预收提交、应收应付提交、预收预付同时提交
     def action_submit_stage(self):
         self.ensure_one()
+        if self.state_1 not in ['draft','draft_yshxd','draft_all','account_approval','account_approval_yshxd']:
+            raise Warning('非可提交状态，不允许提交！')
         if self.sfk_type == 'yfhxd':
             hxd_type_new = self.hxd_type_new
             operation_wizard = self.operation_wizard
@@ -1313,6 +1315,8 @@ class account_reconcile_order(models.Model):
         return True
     #预付的审批
     def action_manager_approve_first_stage(self):
+        if self.state_1 not in ['advance_approval','advance_approval_yshxd']:
+            raise Warning('非可审批状态，不允许审批！')
         if self.sfk_type == 'yfhxd':
             amount_payment_can_approve_all = sum(x.amount_payment_can_approve_all for x in self.invoice_ids)
             print('amount_payment_can_approve_all_akiny',amount_payment_can_approve_all)
@@ -1419,6 +1423,8 @@ class account_reconcile_order(models.Model):
 
     # 财务审批：预付没有审批，只有应付申请的时候才会审批。
     def action_account_approve_stage(self):
+        if self.state_1 not in ['account_approval', 'account_approval_yshxd']:
+            raise Warning('非可审批状态，不允许审批！')
         if self.amount_total_org == 0:
             raise Warning('认领金额为0，无法提交！')
         for one in self.line_no_ids:
@@ -1440,6 +1446,8 @@ class account_reconcile_order(models.Model):
     # 总经理审批：如果是预付申请，直接完成makedone，只有应付申请的时候才会审批。
     def action_manager_approve_stage(self):
         self.ensure_one()
+        if self.state_1 not in ['manager_approval', 'manager_approval_yshxd','manager_approval_all']:
+            raise Warning('非可审批状态，不允许审批！')
         if self.sfk_type == 'yfhxd':
             if self.operation_wizard in ['10', '30']:
                 self.create_rcfkd()
@@ -1587,10 +1595,6 @@ class account_reconcile_order(models.Model):
         #         if x.reconcile_order_line_id:
         #             x.amount_advance_balance_after = x.amount_advance_balance_d - x.reconcile_order_line_id.amount_total_org_new
         #             x.amount_reconcile = x.reconcile_order_line_id.amount_total_org_new
-
-
-
-
 
     def action_draft_stage(self):
         if self.sfk_type == 'yfhxd':
@@ -2967,21 +2971,18 @@ class account_reconcile_order(models.Model):
     def compute_line_ids_advice_amount_advance_org(self):
         for one in self.line_ids:
             if self.sfk_type == 'yshxd':
-                print('werewrewrer', one.yjzy_payment_id.advance_balance_total)
                 amount_invoice_so = one.amount_invoice_so
+                yuanze_advance_so = one.so_tb_percent * one.yjzy_payment_id.amount
                 so_line_ids = self.line_ids.filtered(lambda x: x.so_id == one.so_id)
                 print('po_line_ids_akiny', so_line_ids)
-                so_amount_all = sum(x.amount_invoice_so for x in so_line_ids)
-                amount_org_hxd = one.yjzy_payment_id.so_id.amount_org_hxd
-                amount_so = one.yjzy_payment_id.so_id.amount_total
-                rest_amount_org_hxd = amount_so - amount_org_hxd
-                least_advice_amount_advance_org = one.yjzy_payment_id.advance_balance_total - one.yjzy_payment_id.so_id.no_sent_amount_new - rest_amount_org_hxd  # 缺一个所有发票的未收金额
-                if least_advice_amount_advance_org < 0:
-                    least_advice_amount_advance_org = 0
-                one.advice_amount_advance_org_real = one.so_tb_percent * one.yjzy_payment_id.amount - \
-                                                     one.amount_advance_org_self + one.duoyu_this_time_advice_advance_org \
-                                                     * (amount_invoice_so / so_amount_all)
-                one.least_advice_amount_advance_org = least_advice_amount_advance_org
+                lishi_hxd = one.yjzy_payment_id.advance_reconcile_order_line_ids
+                amount_org_hxd = sum(x.amount_advance_org for x in lishi_hxd)
+
+                if yuanze_advance_so - amount_org_hxd > 0:
+                    advice_amount_advance_org_real = yuanze_advance_so - amount_org_hxd
+                else:
+                    advice_amount_advance_org_real = 0
+                one.advice_amount_advance_org_real = advice_amount_advance_org_real
 
 
             elif self.sfk_type == 'yfhxd':
