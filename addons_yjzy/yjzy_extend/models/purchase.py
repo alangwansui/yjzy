@@ -58,6 +58,7 @@ class PurchaseOrderStage(models.Model):
     # ]
     user_ids = fields.Many2many('res.users', 'ref_po_users', 'fid', 'tid', 'Users') #可以进行判断也可以结合自定义视图模块使用
     group_ids = fields.Many2many('res.groups', 'ref_po_group', 'gid', 'bid', 'Groups')
+    main_sign_uid = fields.Many2one('res.users', u'主签字人')
 
 
 class purchase_order(models.Model):
@@ -273,7 +274,7 @@ class purchase_order(models.Model):
         if not stage_id.user_ids:
             raise Warning('请先设置采购签字人员！')
         print('stage_id.user_ids', stage_id.user_ids)
-        main_sign_uid = stage_id.user_ids[0]
+        main_sign_uid = stage_id.main_sign_uid
         return self.write({'stage_id': stage_id.id,
                            'can_confirm_by_so': True,
                            'purchaser_uid': self.env.user.id,
@@ -294,7 +295,7 @@ class purchase_order(models.Model):
         if not stage_id.user_ids:
             raise Warning('请先设置采购签字人员！')
         print('stage_id.user_ids',stage_id.user_ids)
-        main_sign_uid = stage_id.user_ids[0]
+        main_sign_uid = stage_id.main_sign_uid
         return self.write({'stage_id': stage_id.id,
                            'can_confirm_by_so': True,
                            'purchaser_uid': self.env.user.id,

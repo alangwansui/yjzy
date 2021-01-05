@@ -673,6 +673,8 @@
         </field>
     </record>
 
+
+
     <!--    审批完成的列表，按照审批时间排序-->
     <record model="ir.ui.view" id="account_yfhxd_tree_view_approve_new">
         <field name="name">account.reconcile.order.tree</field>

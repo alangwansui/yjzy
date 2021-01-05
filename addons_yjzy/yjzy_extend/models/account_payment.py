@@ -434,7 +434,7 @@ class account_payment(models.Model):
                                             compute=compute_amount_signed_payment, store=True)
 
     new_rule = fields.Boolean('是否新规则',default=False)
-
+    amount = fields.Monetary(string='Payment Amount', required=True,track_visibility='onchange')
     yjzy_partner_id = fields.Many2one('res.partner', 'Customer')
 
     payment_for_goods = fields.Boolean('货款')

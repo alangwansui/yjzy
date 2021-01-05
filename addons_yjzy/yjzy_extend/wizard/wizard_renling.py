@@ -266,12 +266,16 @@ class wizard_renling(models.TransientModel):
                 raise Warning('请先选择客户')
             if not self.invoice_ids and self.other_payment_invoice_ok:
                 raise Warning('请先选择需要认领的账单')
+            if len(self.invoice_ids) > 1:
+                raise Warning('一次只允许认领一张！')
         elif self.renling_type in ['back_tax']:
             if not self.partner_id:
                 raise Warning('请先选择客户')
             if not self.btd_line_ids:
                 raise Warning('请先选择需要认领的退税申报')
         back_tax_declaration_id = False
+        name_title = ''
+        invoice_partner = ''
         if self.renling_type in ['yshxd']:
             invoice_attribute = 'normal'
             sfk_type = 'yshxd'
@@ -292,6 +296,8 @@ class wizard_renling(models.TransientModel):
             yjzy_type = 'other_payment_sale'
             hxd_type_new = '20'
             operation_wizard = '10'
+            invoice_partner = self.invoice_ids[0].invoice_partner
+            name_title = self.invoice_ids[0].name_title
         else:
             invoice_attribute = False
             operation_wizard = '10'
@@ -309,6 +315,8 @@ class wizard_renling(models.TransientModel):
         if self.renling_type in ['yshxd', 'back_tax', 'other_payment']:
             yshxd_id = yshxd_obj.with_context({'default_invoice_ids': invoice_ids}).create({
                 'name': name,
+                'invoice_partner':invoice_partner,
+                'name_title':name_title,
                 'operation_wizard': operation_wizard,
                 'partner_id': self.partner_id.id,
                 'sfk_type': 'yshxd',
@@ -327,14 +335,12 @@ class wizard_renling(models.TransientModel):
             if self.renling_type != 'yshxd':
                 yshxd_id.make_line_no()
                 yshxd_id.operation_wizard = '10'
-                stage_id = yshxd_id._stage_find(domain=[('code', '=', '030')])
+                stage_id = yshxd_id._stage_find(domain=[('code', '=', '035')])
                 print('_stage_find', stage_id)
                 yshxd_id.write({'stage_id': stage_id.id,
                                 'state': 'posted',
                                 # 'operation_wizard':'25'
                                 })
-
-
             else:
                 yshxd_id.make_line_no()
                 yshxd_id.make_account_payment_state_ids()

@@ -461,6 +461,39 @@ class account_reconcile_order(models.Model):
             one.move_line_com_yszk_ids_count = one.invoice_id.move_line_com_yszk_ids_count
             one.move_line_com_yfzk_ids_count = one.invoice_id.move_line_com_yfzk_ids_count
 
+    @api.depends('name')
+    def compute_display_name(self):
+        ctx = self.env.context
+        res = []
+        for one in self:
+            if one.invoice_attribute_all_in_one == '410':
+                name = '%s:%s' % ('其他应收认领',one.name)
+            elif one.invoice_attribute_all_in_one == '110':
+                name = '%s:%s' % ('主账单应收认领',one.name)
+            elif one.invoice_attribute_all_in_one == '120':
+                name = '%s:%s' % ('主账单应付申请',one.name)
+            elif one.invoice_attribute_all_in_one == '130':
+                name = '%s:%s' % ('主账单退税认领',one.name)
+            elif one.invoice_attribute_all_in_one == '210':
+                name = '%s:%s' % ('增加采购应收认领',one.name)
+            elif one.invoice_attribute_all_in_one == '220':
+                name = '%s:%s' % ('增加采购应付申请',one.name)
+            elif one.invoice_attribute_all_in_one == '230':
+                name = '%s:%s' % ('增加采购退税认领',one.name)
+            elif one.invoice_attribute_all_in_one == '310':
+                name = '%s:%s' % ('费用转货款应收认领',one.name)
+            elif one.invoice_attribute_all_in_one == '320':
+                name = '%s:%s' % ('费用转货款应付申请',one.name)
+            elif one.invoice_attribute_all_in_one == '340':
+                name = '%s:%s' % ('费用转货款退税认领',one.name)
+            else:
+                # one.invoice_attribute_all_in_one == '510':
+                name = '%s:%s' % ('其他应付',one.name)
+
+            one.display_name = name
+
+
+    display_name = fields.Char(u'显示名称', compute=compute_display_name)
     move_line_com_yfzk_ids = fields.Many2many('account.move.line.com',  u'发票相关应付账款分录',compute=compute_move_line_com_ids)
     move_line_com_yszk_ids = fields.Many2many('account.move.line.com', u'发票相关应付账款分录', compute=compute_move_line_com_ids)
 
@@ -509,7 +542,13 @@ class account_reconcile_order(models.Model):
 
     renling_type = fields.Selection([('yshxd', '应收认领'),
                                      ('back_tax', '退税认领'), ('other_payment', '其他认领')], u'认领属性') #没有是指作用
+    company_currency_id = fields.Many2one('res.currency', string='公司货币', related='company_id.currency_id',
+                                          readonly=True)
     back_tax_declaration_id = fields.Many2one('back.tax.declaration',u'退税申报表')
+    declaration_amount_all = fields.Monetary(u'本次申报金额',
+                                             related='back_tax_declaration_id.declaration_amount_all')
+    declaration_amount_all_residual_new = fields.Monetary(u'本次申报金额',
+                                                          related='back_tax_declaration_id.declaration_amount_all_residual_new')
 
     name_title = fields.Char(u'账单描述')
     invoice_partner = fields.Char(u'账单对象')
@@ -1446,9 +1485,10 @@ class account_reconcile_order(models.Model):
     # 总经理审批：如果是预付申请，直接完成makedone，只有应付申请的时候才会审批。
     def action_manager_approve_stage(self):
         self.ensure_one()
-        if self.state_1 not in ['manager_approval', 'manager_approval_yshxd','manager_approval_all']:
-            raise Warning('非可审批状态，不允许审批！')
+
         if self.sfk_type == 'yfhxd':
+            if self.state_1 not in ['manager_approval', 'manager_approval_yshxd', 'manager_approval_all']:
+                raise Warning('非可审批状态，不允许审批！')
             if self.operation_wizard in ['10', '30']:
                 self.create_rcfkd()
                 stage_id = self._stage_find(domain=[('code', '=', '050')])
@@ -1466,6 +1506,8 @@ class account_reconcile_order(models.Model):
                             })
 
         if self.sfk_type == 'yshxd':
+            if self.state_1 not in ['manager_approval', 'manager_approval_yshxd','draft_yshxd','account_approval_yshxd', 'manager_approval_all']:
+                raise Warning('非可审批状态，不允许审批！')
             print('sfk_type_____111',self.sfk_type)
             if not self.yjzy_payment_id and self.hxd_type_new in ['20','25']:
                 raise Warning('没有对应的收款单，请检查！')
@@ -1473,7 +1515,7 @@ class account_reconcile_order(models.Model):
                 raise Warning('没有对应的预收认领单，请检查！')
             self.create_yjzy_payment_ysrl()
             self.action_done_new()#生成的yingshourld过账并核销
-            if self.back_tax_declaration_id:
+            if self.back_tax_declaration_id and self.back_tax_declaration_id.declaration_amount_all_residual_new == 0:
                 self.back_tax_declaration_id.state = 'paid'
             stage_id = self._stage_find(domain=[('code', '=', '060')])
             self.write({'stage_id': stage_id.id,
@@ -3457,26 +3499,6 @@ class account_reconcile_order_line(models.Model):
 class account_reconcile_order_line_no(models.Model):
     _name = 'account.reconcile.order.line.no'
 
-    def open_invoice_id(self):
-        form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form_in_one_open').id
-        return {'name':'账单查看',
-                'view_type': 'form',
-                'view_mode': 'form',
-                'res_model': 'account.invoice',
-                'views': [(form_view, 'form')],
-                'res_id': self.invoice_id.id,
-                'target': 'new',
-                'type': 'ir.actions.act_window',
-                # 'flags': {'sidebar': False,  #参考flag
-                #           'initial_mode': 'read',
-                #     'form': {
-                #         'action_buttons': False,
-                #          'initial_mode': 'read',
-                #          'options': {'mode': 'view'},
-                #     }},
-
-                 'context': {'open':1}
-                }
 
     @api.depends('amount_payment_can_approve_all_this_time','invoice_residual_this_time','amount_payment_org')
     def compute_amount_payment_can_approve_all_after(self):
@@ -3522,6 +3544,9 @@ class account_reconcile_order_line_no(models.Model):
     state_1 = fields.Selection('审批流程', related='order_id.state_1')
     order_id = fields.Many2one('account.reconcile.order', u'核销单',ondelete='cascade')
     invoice_id = fields.Many2one('account.invoice', u'发票')
+    invoice_invoice_partner = fields.Char(u'账单对象',related='invoice_id.invoice_partner')
+    invoice_name_title =fields.Char(u'账单描述',related='invoice_id.name_title')
+
     invoice_attribute_all_in_one = fields.Selection(invoice_attribute_all_in_one,u'账单属性all_in_one', compute=compute_invoice_id,store=True)
 
     yjzy_invoice_id = fields.Many2one('account.invoice', u'发票关联账单', related='invoice_id.yjzy_invoice_id')  # 额外账单的认领明细
@@ -3583,6 +3608,18 @@ class account_reconcile_order_line_no(models.Model):
     amount_diff_org = fields.Monetary(u'订单费用', currency_field='payment_currency_id')
 
 
+    def open_invoice_id(self):
+        form_view = self.env.ref('yjzy_extend.view_account_invoice_rizhi').id
+        return {'name':'查看日志',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'account.invoice',
+                'views': [(form_view, 'form')],
+                'res_id': self.invoice_id.id,
+                'target': 'new',
+                'type': 'ir.actions.act_window',
+                 'context': {}
+                }
 
 
 

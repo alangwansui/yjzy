@@ -44,6 +44,59 @@
         </field>
     </record>
 
+     <record model="ir.ui.view" id="account_yshxd_back_tax_declaration_tree_view_new">
+        <field name="name">account.reconcile.order.back.tree</field>
+        <field name="model">account.reconcile.order</field>
+        <field name="arch" type="xml">
+            <tree string="应收退税认领单" decoration-info="state == 'draft'" decoration-muted="state == 'cancelled'"
+                  edit="false">
+                <field name="name"/>
+                <field name="invoice_attribute_all_in_one" string="账单属性"/>
+                <field name="partner_id" invisible="1"/>
+                <field name="date"/>
+                <field name="back_tax_declaration_id"/>
+                <field name="declaration_amount_all" string="申报原始金额"/>
+                <field name="declaration_amount_all_residual_new" string="未认领申报金额"/>
+                <field name="amount_payment_org" string="本次实际认领金额"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="invoice_currency_id" invisible="1"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+
+    <record model="ir.ui.view" id="account_yfhxd_other_payment_customer_tree_view_new">
+        <field name="name">account.reconcile.order.tree</field>
+        <field name="model">account.reconcile.order</field>
+        <field name="arch" type="xml">
+            <tree string="其他应收认领" create="false" decoration-info="state == 'draft'"
+                  decoration-muted="state =='cancelled'" edit="false">
+                <field name="name"/>
+                <field name="partner_id" invisible="1"/>
+                <field name="invoice_partner"/>
+                <field name="name_title"/>
+                <field name="other_payment_bank_id" invisible="1"/>
+                <field name="fk_journal_id" invisible="1"/>
+                <field name="date" invisible="1"/>
+                <field name="approve_uid" invisible="1"/>
+                <field name="approve_date"/>
+                <field name="amount_invoice_org" string="其他应付原始金额" groups="base.group_system"/>
+                <field name="amount_invoice_org_new" string="其他应收原始金额"/>
+                <field name="amount_total_org" string="全部认领合计" groups="base.group_system"/>
+                <field name="amount_total_org_new" string="全部认领合计" groups="base.group_system"/>
+                <field name="amount_payment_org" string="实际申请付款金额" groups="base.group_system"/>
+                <field name="amount_payment_org_new" string="实际认领金额"/>
+                <field name="amount_advance_org" string="预付认领金额" groups="base.group_system"/>
+                <field name="amount_advance_org_new" string="预付认领金额" groups="base.group_system"/>
+
+                <field name="amount_total" invisible="1"/>
+                <field name="currency_id" attrs="{}" invisible="1"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
 
     <record model="ir.ui.view" id="account_yshxd_form_view_other_payment_simple">
         <field name="name">account.reconcile.order.form</field>
@@ -97,9 +150,11 @@
                     <group col="2">
                         <group>
                             <field name="invoice_partner"
-                                   attrs="{'invisible':[('invoice_attribute','!=','other_payment')]}"/>
+                                   attrs="{'invisible':[('invoice_attribute','!=','other_payment')],
+                                   'readonly':[('state_1','not in',['draft','draft_yshxd','draft_all','account_approval','account_approval_yshxd'])]}"/>
                             <field name="name_title"
-                                   attrs="{'invisible':[('invoice_attribute','!=','other_payment')]}"/>
+                                   attrs="{'invisible':[('invoice_attribute','!=','other_payment')],
+                                   'readonly':[('state_1','not in',['draft','draft_yshxd','draft_all','account_approval','account_approval_yshxd'])]}"/>
 
                             <field name="name" attrs="{'invisible':1}"/>
                             <field name="payment_type" attrs="{'invisible':1}"/>
@@ -121,7 +176,7 @@
                             <field name="comments"/>
                         </group>
                         <group>
-                            <field name="line_no_ids" nolabel="1">
+                            <field name="line_no_ids" nolabel="1" >
                                 <tree editable="bottom" create="false">
                                     <field name="invoice_id" readonly="1" string="应收账单"/>
                                     <field name="invoice_residual" string="应收账单余额"/>
@@ -274,7 +329,7 @@
         <field name="name">account.reconcile.order.form</field>
         <field name="model">account.reconcile.order</field>
         <field name="arch" type="xml">
-            <form string="应收认领单">
+            <form string="应收认领单" create="false">
                 <header>
                     <button name="compute_line_ids_advice_amount_advance_org" type="object" class="oe_highlight"
                             string="计算建议预收认领金额" groups="base.group_system"/>
@@ -357,7 +412,10 @@
                 <sheet>
                     <group col="3">
                         <group>
-
+                            <field name="invoice_attribute_all_in_one" string="属性"/>
+                            <field name="back_tax_declaration_id" string="退税申报单" readonly="1" attrs="{'invisible':[('yjzy_type','!=','back_tax')]}"/>
+                            <field name="declaration_amount_all" string="申报原始金额" attrs="{'invisible':[('yjzy_type','!=','back_tax')]}"/>
+                            <field name="declaration_amount_all_residual_new" string='申报剩余金额' attrs="{'invisible':[('yjzy_type','!=','back_tax')]}"/>
                             <field name="name" attrs="{'invisible':1}"/>
                             <field name="payment_type" attrs="{'invisible':1}"/>
                             <field name="partner_type" attrs="{'invisible':1}"/>
@@ -432,6 +490,7 @@
                                     <field name="invoice_attribute" readonly="1" invisible="1"/>
                                     <field name="invoice_id" string="应收账单" context="{'show_tb_ref':1}" readonly="1"/>
                                     <button name="open_invoice_id" icon="fa-pencil-square-o" context="{'open':1}" groups="base.group_system"
+                                            class="akiny_text_left"
                                             type="object"/>
                                     <field name="amount_invoice_so_residual" invisible="1"/>
                                     <field name="invoice_id_po_ids" widget="many2many_tags" string="采购合同" invisible="1"
@@ -634,9 +693,12 @@
 
                         <page string="认领应收账单"
                               attrs="{'invisible':[('yjzy_type','not in',['back_tax','other_payment_sale'])]}">
-                            <field name="line_no_ids">
+                            <field name="line_no_ids" attrs="{'readonly':[('state_1','not in',['draft','draft_yshxd','draft_all','account_approval','account_approval_yshxd'])]}">
                                 <tree editable="bottom" create="false">
                                     <field name="invoice_id" readonly="1" string="应收账单"/>
+                                    <button name="open_invoice_id" type="object" icon="fa-pencil-square-o" class="akiny_text_left"/>
+                                    <field name="invoice_invoice_partner" attrs="{'column_invisible':[('parent.invoice_attribute','!=','other_payment')]}"/>
+                                    <field name="invoice_name_title" attrs="{'column_invisible':[('parent.invoice_attribute','!=','other_payment')]}"/>
                                     <field name="invoice_amount_total" string="原始应收款" sum="小计"/>
                                     <field name="invoice_currency_id" invisible="1"/>
                                     <field name="invoice_residual" string="剩余应收款" sum="小计"/>
@@ -660,7 +722,7 @@
                             </field>
                         </page>
                         <page string="本次预收认领明细"
-                              attrs="{'invisible':[('invoice_attribute','not in',['normal'])]}"> <!---->
+                              attrs="{'invisible':['|',('invoice_attribute','not in',['normal']),('yjzy_type','not in',['sale','purchase'])]}"> <!---->
                             <field name="line_do_ids" context="{'invisible_so': partner_type == 'supplier'}">
                                 <tree editable="bottom" create="false">
                                     <field name="payment_type" invisible="1"/>
@@ -764,7 +826,7 @@
                                 </tree>
                             </field>
                         </page>
-                        <page string="认领日志">
+                        <page string="认领日志" attrs="{'invisible':[('yjzy_type','in',['back_tax'])]}">
 
                             <group col="2">
                                 <group string="账单认领财务日志"
@@ -1062,14 +1124,14 @@
         <field name="res_model">account.reconcile.order</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
-        <field name="domain">[('sfk_type','=','yshxd'),('hxd_type_new','in',['25','20']),('yjzy_type','=','sale'),('invoice_attribute','=','other_payment')]</field>
+        <field name="domain">[('sfk_type','=','yshxd'),('hxd_type_new','in',['25','20']),('yjzy_type','=','other_payment_sale'),('invoice_attribute','=','other_payment')]</field>
         <field name="context">{'only_number':1,'hxd_type_new':'20','default_sfk_type': 'yshxd',
             'advance_so_amount':1,'default_payment_type': 'inbound', 'default_be_renling': 1, 'default_partner_type':
             'customer', 'show_so': 1}
         </field>
 
         <field name="view_ids" eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'tree', 'view_id': ref('account_yshxd_tree_view_new')}),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('account_yfhxd_other_payment_customer_tree_view_new')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('account_yshxd_form_view_new')})]"/>
     </record>
     <menuitem id="menu_yshxd_payment_new_other_payment" name="其他应收认领" sequence="25"
@@ -1110,7 +1172,7 @@
         </field>
 
         <field name="view_ids" eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'tree', 'view_id': ref('account_yshxd_tree_view_new')}),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('account_yshxd_back_tax_declaration_tree_view_new')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('account_yshxd_form_view_new')})]"/>
     </record>
     <menuitem id="menu_yshxd_payment_back_tax_new_all" name="退税认领" sequence="40"

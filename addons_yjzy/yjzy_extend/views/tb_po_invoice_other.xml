@@ -72,14 +72,10 @@
                                        attrs="{'invisible':[('type','not in',['other_payment'])],'readonly':[('state','!=','10_draft')]}"/>
                                 <field name="name_title"
                                        attrs="{'invisible':[('type','in',['other_po'])],'readonly':[('state','!=','10_draft')]}"/>
-                                <field name="yjzy_payment_id" string="收款单" readonly="1"
-                                       attrs="{'invisible':[('type_invoice','not in',['out_invoice'])]}"/>
-                                <field name="yjzy_payment_amount" string="收款单原始金额" attrs="{'invisible':[('yjzy_payment_id','=',False)]}"/>
-                                <field name="yjzy_payment_balance" string="收款单剩余金额"
-                                       attrs="{'invisible':[('yjzy_payment_id','=',False)]}"/>
-                                <label for="" string="本次应收金额" />
+
+                                <label for="" string="本次应收金额"/>
                                 <div name="amount_div" class="o_row"
-                                    >
+                                >
                                     <field name="other_invoice_amount" attrs="{
                                         'readonly':[('state','!=','10_draft')]}"/>
                                     <b invisible="0">货币：</b>
@@ -89,20 +85,27 @@
                                 </div>
                                 <field name="partner_id" invisible="1"/>
 
+
                                 <field name="price_total" string="金额合计" groups="base.group_system"/>
-                                <label for="" name="other_payment_invoice_residual" attrs="{'invisible':[('state','not in',['30_done'])]}">
-                                    <b  attrs="{'invisible':['|',('yjzy_type_1','in',['sale','other_payment_sale']),('state','not in',['30_done'])]}">
+                                <label for="" name="other_payment_invoice_residual"
+                                       attrs="{'invisible':[('state','not in',['30_done'])]}">
+                                    <b attrs="{'invisible':['|',('yjzy_type_1','in',['sale','other_payment_sale']),('state','not in',['30_done'])]}">
                                         未付金额
                                     </b>
                                     <b attrs="{'invisible':['|',('yjzy_type_1','in',['purchase','other_payment_purchase']),('state','not in',['30_done'])]}">
                                         未收金额
                                     </b>
-                                 </label>
-                                    <div class="oe_row" attrs="{'invisible':[('state','not in',['30_done'])]}">
-                                     <field name="other_payment_invoice_residual" string="未付金额"/>
-                                    </div>
+                                </label>
+                                <div class="oe_row" attrs="{'invisible':[('state','not in',['30_done'])]}">
+                                    <field name="other_payment_invoice_residual" string="未付金额"/>
+                                </div>
 
-
+                                <field name="yjzy_payment_id" string="收款单" readonly="1"
+                                       attrs="{'invisible':[('type_invoice','not in',['out_invoice'])]}"/>
+                                <field name="yjzy_payment_amount" string="收款单原始金额"
+                                       attrs="{'invisible':[('yjzy_payment_id','=',False)]}"/>
+                                <field name="yjzy_payment_balance" string="收款单剩余金额"
+                                       attrs="{'invisible':[('yjzy_payment_id','=',False)]}"/>
                                 <field name="yjzy_tb_po_invoice_parent" groups="base.group_system"
                                        attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',False)],'readonly':[('state','!=','10_draft')]}"
                                        string="上级账单"/>
@@ -136,7 +139,6 @@
                                 </div>
 
 
-
                                 <field name="invoice_partner_yjzy_parent" string="账单描述"
                                        attrs="{'readonly':[('state','!=','10_draft')],'invisible':[('is_yjzy_tb_po_invoice_parent','=',False)]}"/>
                                 <field name="name_title_yjzy_parent" string="账单对象"
@@ -144,7 +146,7 @@
                                 <field name="currency_id_yjzy_parent" invisible="1"
                                        attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',False)]}"/>
                                 <field name="other_invoice_amount_yjzy_parent" string="金额"
-                                           attrs="{'readonly':[('state','!=','10_draft')],'invisible':[('is_yjzy_tb_po_invoice_parent','=',False)]}"/>
+                                       attrs="{'readonly':[('state','!=','10_draft')],'invisible':[('is_yjzy_tb_po_invoice_parent','=',False)]}"/>
                                 <field name="invoice_partner_yjzy" string="账单描述"
                                        attrs="{'readonly':[('state','!=','10_draft')],'invisible':[('is_yjzy_tb_po_invoice','=',False)]}"/>
                                 <field name="name_title_yjzy" string="账单对象"
@@ -152,7 +154,7 @@
                                 <field name="currency_id_yjzy" invisible="1"
                                        attrs="{'readonly':[('state','!=','10_draft')],'invisible':[('is_yjzy_tb_po_invoice','=',False)]}"/>
                                 <field name="other_invoice_amount_yjzy" string="金额"
-                                           attrs="{'readonly':[('state','!=','10_draft')],'invisible':[('is_yjzy_tb_po_invoice','=',False)]}"/>
+                                       attrs="{'readonly':[('state','!=','10_draft')],'invisible':[('is_yjzy_tb_po_invoice','=',False)]}"/>
                                 <field name="price_total_yjzy_parent" string="金额合计" invisible="1"
                                        attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',False)]}"/>
                                 <!--                                    上级-->
@@ -351,37 +353,37 @@
                                     <field name="company_id"/>
                                     <field name="currency_id"/>
                                     <field name="extra_invoice_line_ids" nolabel="1" colspan="2"
-                                       attrs="{'readonly':[('state','!=','10_draft')],'invisible':[('type','not in',['extra','other_payment'])]}">
-                                    <tree editable="bottom">
-                                        <field name="product_id" string="账单项目"/>
-                                        <field name="name" invisible="1"/>
-                                        <field name="tb_po_id" invisible="1"/>
-                                        <field name="company_id" invisible="1"/>
-                                        <field name="currency_id" invisible="1"/>
-                                        <field name="account_id" invisible="1"/>
-                                        <field name="uom_id" invisible="1"/>
-                                        <field name="price_unit" string="金额"/>
-                                        <field name="quantity" string="数量" invisible="1"/>
-                                        <field name="price_total" string="总价" invisible="1"/>
-                                        <field name="comments"/>
-                                    </tree>
-                                </field>
+                                           attrs="{'readonly':[('state','!=','10_draft')],'invisible':[('type','not in',['extra','other_payment'])]}">
+                                        <tree editable="bottom">
+                                            <field name="product_id" string="账单项目"/>
+                                            <field name="name" invisible="1"/>
+                                            <field name="tb_po_id" invisible="1"/>
+                                            <field name="company_id" invisible="1"/>
+                                            <field name="currency_id" invisible="1"/>
+                                            <field name="account_id" invisible="1"/>
+                                            <field name="uom_id" invisible="1"/>
+                                            <field name="price_unit" string="金额"/>
+                                            <field name="quantity" string="数量" invisible="1"/>
+                                            <field name="price_total" string="总价" invisible="1"/>
+                                            <field name="comments"/>
+                                        </tree>
+                                    </field>
                                     <field name="tb_po_other_line_ids" nolabel="1" colspan="2"
-                                       attrs="{'readonly':[('state','!=','10_draft')],}">
-                                    <tree editable="bottom">
-                                        <field name="product_id" string="账单项目"/>
-                                        <field name="name" invisible="1"/>
-                                        <field name="tb_po_id" invisible="1"/>
-                                        <field name="company_id" invisible="1"/>
-                                        <field name="currency_id" invisible="1"/>
-                                        <field name="account_id" invisible="1"/>
-                                        <field name="uom_id" invisible="1"/>
-                                        <field name="price_unit" string="金额"/>
-                                        <field name="quantity" string="数量" invisible="1"/>
-                                        <field name="price_total" string="总价" invisible="1"/>
-                                        <field name="comments"/>
-                                    </tree>
-                                </field>
+                                           attrs="{'readonly':[('state','!=','10_draft')],}">
+                                        <tree editable="bottom">
+                                            <field name="product_id" string="账单项目"/>
+                                            <field name="name" invisible="1"/>
+                                            <field name="tb_po_id" invisible="1"/>
+                                            <field name="company_id" invisible="1"/>
+                                            <field name="currency_id" invisible="1"/>
+                                            <field name="account_id" invisible="1"/>
+                                            <field name="uom_id" invisible="1"/>
+                                            <field name="price_unit" string="金额"/>
+                                            <field name="quantity" string="数量" invisible="1"/>
+                                            <field name="price_total" string="总价" invisible="1"/>
+                                            <field name="comments"/>
+                                        </tree>
+                                    </field>
                                 </group>
                                 <group attrs="{'invisible':[('is_tb_hs_id','=',False)]}">
                                     <label for="" name="purchase_amount2_add_this_time_total">

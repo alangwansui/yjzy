@@ -20,7 +20,7 @@
                         <button name="compute_move_lines" type="object" string="更新日志" groups="base.group_system"/>
                         <field name="state" widget="statusbar" nolabel="1" statusbar_visible="draft,open,paid"/>
                     </header>
-                    <header attrs="{'invisible':['|',('is_yjzy_invoice','=',True),('type','not in',['out_invoice','out_refund'])]}">
+                    <header attrs="{'invisible':1}">
                         <button name="open_tb_po_invoice" string="额外应收申请" type="object"/>
                         <button name="open_tb_po_reconcile_invoice" string="创建核销应收申请" type="object"/>
                         <!--                       <button name="open_supplier_invoice_id" string="额外应付账单" type="object"/>-->
@@ -223,7 +223,7 @@
                             </group-->
                             <group>
                                 <field name="date_out_in" string="进仓日期"
-                                       attrs="{'invisible':[('type','in',['in_invoice','in_refund'])]}"/>
+                                       attrs="{'invisible':['|',('type','in',['in_invoice','in_refund']),('invoice_attribute','not in',['extra','normal'])]}"/>
                                 <field name="date_ship" readonly="1"
                                        attrs="{'invisible':[('invoice_attribute','not in',['extra','normal'])],
                                        'readonly':[('state','not in',['draft','open'])]}"/>
@@ -691,7 +691,7 @@
                                             </tree>
                                         </field>
                                         <field name="move_line_com_yszk_ids" readonly="1" nolabel="1" colspan="2"
-                                               attrs="{'invisible':['|',('move_line_com_yfzk_ids_count','=',0),('type','!=','out_invoice')]}">
+                                               attrs="{'invisible':['|',('move_line_com_yszk_ids_count','=',0),('type','!=','out_invoice')]}">
                                             <tree default_order="create_date">
                                                 <field name="create_date" string="日期"/>
                                                 <field name="reconcile_type" string="属性"/>
@@ -762,7 +762,7 @@
                                 </field>
                             </page>
                             <page string="账单认领日志" invisible="1">
-                                <field name="move_line_yszk_ids" readonly="1" groups="base.grou_system">
+                                <field name="move_line_yszk_ids" readonly="1" groups="base.group_system">
                                     <tree>
                                         <field name="reconcile_type"/>
                                         <field name="amount_this_time"/>
@@ -1057,7 +1057,7 @@
 
                             <group>
                                 <field name="date_out_in" string="进仓日期"
-                                       attrs="{'invisible':[('type','in',['in_invoice','in_refund'])]}"/>
+                                       attrs="{'invisible':['|',('type','in',['in_invoice','in_refund']),('invoice_attribute','not in',['extra','normal'])]}"/>
                                 <field name="date_ship" readonly="1"
                                        attrs="{'invisible':[('invoice_attribute','not in',['extra','normal'])],
                                        'readonly':[('state','not in',['draft','open'])]}"/>

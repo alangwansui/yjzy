@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+
+
+        <record model="ir.ui.view" id="view_account_invoice_rizhi">
+            <field name="name">account.invoice.rizhi.form</field>
+            <field name="model">account.invoice</field>
+            <field name="arch" type="xml">
+                <form string="日志" class="o_invoice_form" create="false">
+                    <header groups="base.group_system">
+                        <field name="state" widget="statusbar" nolabel="1" statusbar_visible="draft,open,paid"/>
+                    </header>
+                    <field name="has_outstanding" invisible="1"/>
+                    <sheet string="Invoice">
+                                <group col="2">
+                                    <group string="账单认领财务日志"
+                                           attrs="{'invisible':[('move_line_com_yfzk_ids_count','=',0),('move_line_com_yszk_ids_count','=',0)]}">
+                                        <field name="move_line_com_yfzk_ids" readonly="1" nolabel="1" colspan="2"
+                                               attrs="{'invisible':['|',('move_line_com_yfzk_ids_count','=',0),('type','!=','in_invoice')]}">
+
+                                            <tree default_order="create_date">
+                                                <field name="create_date" string="日期"/>
+                                                <field name="reconcile_type" string="属性"/>
+                                                <field name="amount_this_time" string="发生金额"/>
+                                                <field name="sslj_balance" string="实时剩余金额"/>
+                                            </tree>
+                                        </field>
+                                        <field name="move_line_com_yszk_ids" readonly="1" nolabel="1" colspan="2"
+                                               attrs="{'invisible':['|',('move_line_com_yszk_ids_count','=',0),('type','!=','out_invoice')]}">
+                                            <tree default_order="create_date">
+                                                <field name="create_date" string="日期"/>
+                                                <field name="reconcile_type" string="属性"/>
+                                                <field name="amount_this_time" string="发生金额"/>
+                                                <field name="sslj_balance" string="实时剩余金额"/>
+                                            </tree>
+                                        </field>
+                                    </group>
+                                    <group string="所有流程日志" attrs="{'invisible':[('reconcile_order_ids_count','=',0)]}">
+                                        <field name="reconcile_order_ids" nolabel="1" colspan="2" readonly="1"
+                                               context="{'form_view_ref':'yjzy_extend.account_yfhxd_form_view_new'}">
+                                            <tree>
+                                                <field name="hxd_type_new"/>
+                                                <field name="invoice_id" groups="base.group_system" string="应付账单"/>
+                                                <field name="create_date" widget="date" string="创建日期"/>
+                                                <field name="approve_date"/>
+                                                <field name="amount_payment_org_new" string="实际申请金额"/>
+                                                <field name="amount_advance_org_new" string="预付认领金额"/>
+                                                <field name="state_1"/>
+                                            </tree>
+                                        </field>
+                                    </group>
+                                </group>
+
+                            <field name="reconcile_order_ids_count" invisible="1"/>
+                                    <field name="move_line_com_yfzk_ids_count" invisible="1"/>
+                                    <field name="move_line_com_yszk_ids_count" invisible="1"/>
+                        <field name="type" invisible="1"/>
+
+
+                </sheet>
+                    <footer>
+                        <button string="关闭" class="btn-primary" special="cancel"/>
+                    </footer>
+
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

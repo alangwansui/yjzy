@@ -2451,8 +2451,8 @@
             </field>
             <!--field name="target">new</field-->
             <field name="view_ids" eval="[(5, 0, 0),
-                              (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.invoice_new_supplier_1_tree')}),
-                              (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.view_account_supplier_invoice_new_form')}),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.view_other_payment_invoice_customer_tree')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.view_account_invoice_new_form_in_one')}),
                               ]"/>
         </record>
         <menuitem id="menu_customer_account_invoice_other_all" action="action_customer_account_invoice_other_all"

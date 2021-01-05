@@ -59,7 +59,7 @@ class DeclareDeclaration(models.Model):
     invoice_amount_all = fields.Monetary(u'原始应收退税',currency_field='company_currency_id',compute=compute_invoice_amount_all, store=True)
     invoice_residual_all = fields.Monetary(u'剩余应收退税',currency_field='company_currency_id',compute=compute_invoice_residual_all,store=True)
     declaration_amount_all = fields.Monetary(u'本次申报金额',currency_field='company_currency_id',compute=compute_declaration_amount,store=True)
-    declaration_amount_all_residual_new = fields.Monetary(u'本次申报金额', currency_field='company_currency_id',
+    declaration_amount_all_residual_new = fields.Monetary(u'申报剩余金额', currency_field='company_currency_id',
                                              compute=compute_declaration_amount_all_residual_new, store=True)
     company_id = fields.Many2one('res.company', string='Company',required=True, readonly=True,
                                  default=lambda self: self.env.user.company_id.id)
