@@ -6,10 +6,12 @@
         <field name="name">account.payment.form</field>
         <field name="model">account.payment</field>
         <field name="arch" type="xml">
-            <form string="预收认领单">
+            <form string="预收认领单" create="false">
                 <header groups="sales_team.group_manager">
                     <button name="compute_move_lines" type="object" string="更新日志" groups="base.group_system"/>
-                    <button name="create_reconcile" type="object" string="预收核销" groups="sales_team.group_manager"/>
+                    <button name="create_reconcile" type="object" string="预收核销" confirm="确定创建核销申请单吗？"
+                            attrs="{'invisible':['|','|',('advance_balance_total','=',0),('state','!=','posted'),('state_1','!=','50_posted')]}"
+                           />
                     <button name="open_wizard_renling" type="object" string="创建认领单" groups="base.group_system"
                             attrs="{'invisible':[('state_1','!=','50_posted')]}"/>
                     <button name="action_submit" class="oe_highlight" string="提交" type="object"
@@ -81,7 +83,8 @@
                             <field name="partner_id" options="{'no_create':True,'no_open': True}" string="收款对象"
                                    domain="[('is_company','=',True),('customer','=',True)]"
                                    attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))],
-                                   'invisible': [('payment_type', 'not in', ('inbound', 'outbound'))], 'readonly': [('state', '!=', 'draft')]}"
+                                   'invisible': [('payment_type', 'not in', ('inbound', 'outbound'))],
+                                   'readonly': ['|',('state', '!=', 'draft'),('yjzy_payment_id','!=',False)]}"
                                    context="{'default_is_company': True, 'default_supplier': payment_type == 'outbound',
                                    'default_customer': payment_type == 'inbound'}"/>
 
@@ -133,7 +136,9 @@
                             <field name="yjzy_payment_currency_id" string="货币"
                                    attrs="{'invisible':[('state_1','in',['40_approve','50_posted','60_done'])]}"
                                    options="{'no_create':True,'no_open': True}"/>
-                            <field name="rcskd_amount" string="收款单金额" attrs="{'invisible':[('state_1','in',['40_approve','50_posted','60_done'])]}"/>
+                            <field name="rcskd_amount" string="收款单金额"
+                                   readonly="1"
+                                   attrs="{'invisible':[('state_1','in',['40_approve','50_posted','60_done'])]}"/>
                             <field name="yjzy_payment_balance" string="收款单余额"
                                    attrs="{'invisible':[('state_1','in',['40_approve','50_posted','60_done'])]}"/>
 

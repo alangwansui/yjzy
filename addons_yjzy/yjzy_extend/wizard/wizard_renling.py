@@ -258,6 +258,8 @@ class wizard_renling(models.TransientModel):
                 raise Warning('请先选择客户')
             if not self.invoice_ids:
                 raise Warning('请先选择需要认领的账单')
+            if len(self.invoice_ids) > 1:
+                raise Warning('一次只允许认领一张！')
         if self.renling_type == 'ysrld':
             if not self.partner_id:
                 raise Warning('请先选择客户')

@@ -32,7 +32,7 @@
                             <field name="other_payment_invoice_ok"
                                    attrs="{'invisible':[('renling_type','not in',['other_payment'])]}"/>
                             <span attrs="{'invisible':[('renling_type','not in',['other_payment'])]}">
-                                如果没有需要认领的其他应收账单，请取消复选框
+                                如果没有需要认领的其他应收账单，请取消复选框，并选择需要认领的其他应收(一次认领一张)
                             </span>
                         </div>
                         <field name="name_title" attrs="{'invisible':['|',('renling_type','not in',['other_payment']),('other_payment_invoice_ok','=',True)]}"/>
@@ -183,7 +183,7 @@
                     </group>
 
                     <span style="font-weight:bolder; margin-bottom:5px">
-                        选择需要认领的账单
+                        选择需要认领的账单(一次认领一张)
                     </span>
                     <field name="invoice_ids" nolabel="1"
                            domain="[('partner_id','=',partner_id),('state','=','open'),('type','in',['out_invoice'])]"

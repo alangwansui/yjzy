@@ -32,7 +32,7 @@
         <field name="model">account.reconcile.order</field>
         <field name="arch" type="xml">
             <tree string="应收认领单" decoration-info="state == 'draft'" decoration-muted="state == 'cancelled'"
-                  edit="false">
+                  edit="false" create="false">
                 <field name="name"/>
                 <field name="partner_id"/>
                 <field name="date"/>

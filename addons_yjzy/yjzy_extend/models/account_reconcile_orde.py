@@ -85,13 +85,20 @@ class account_reconcile_order(models.Model):
 
     def compute_by_invoice(self):
         for one in self:
-            if not one.line_ids:
-                continue
+            # if not one.line_ids:
+            #     continue
             invoices = one.line_ids.mapped('invoice_id')
             if len(one.invoice_ids.mapped('currency_id')) > 1:
                 raise Warning('选择的发票的交易货币不一致')
+
+            if one.line_ids:
+                invoice_currency = one.line_ids[0].invoice_currency_id
+            elif one.line_no_ids:
+                invoice_currency = one.line_no_ids[0].invoice_currency_id
+            else:
+                invoice_currency = one.currency_id
             #<jon>
-            invoice_currency = one.line_ids[0].invoice_currency_id
+
             company_currency = one.currency_id
             one.invoice_currency_id = invoice_currency
             one.amount_invoice_residual_org = sum([x.residual for x in invoices])
@@ -1506,7 +1513,7 @@ class account_reconcile_order(models.Model):
                             })
 
         if self.sfk_type == 'yshxd':
-            if self.state_1 not in ['manager_approval', 'manager_approval_yshxd','draft_yshxd','account_approval_yshxd', 'manager_approval_all']:
+            if self.state_1 not in ['draft','manager_approval', 'manager_approval_yshxd','draft_yshxd','account_approval_yshxd', 'manager_approval_all']:
                 raise Warning('非可审批状态，不允许审批！')
             print('sfk_type_____111',self.sfk_type)
             if not self.yjzy_payment_id and self.hxd_type_new in ['20','25']:

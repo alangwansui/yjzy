@@ -1166,6 +1166,7 @@ class account_invoice(models.Model):
             'invoice_attribute': self.invoice_attribute,
             'operation_wizard': '10',
             'hxd_type_new': '20',
+            'yjzy_type':'other_payment_sale',
 
         })
         self.reconcile_order_id = yshxd

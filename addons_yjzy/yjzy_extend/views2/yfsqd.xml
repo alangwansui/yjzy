@@ -53,15 +53,14 @@
                 <field name="rcskd_date" string="付款日期" groups="base.group_system"/>
                 <field name="rcskd_amount" string="付款金额" groups="base.group_system"/>
                 <field name="payment_date" string="申请日期"/>
-                <field name="amount" string="金额"/>
+                <field name="amount" string="付款金额"/>
                 <button name="open_reconcile_order_line_yfrld" icon="fa-pencil-square-o" type="object"
                         attrs="{'invisible':[('advance_reconcile_order_count','=',0)]}"/>
                 <field name="advance_reconcile_order_count" invisible="1"/>
                 <field name="advance_balance_total" string="未认领金额"/>
-                <field name="advance_total" string="总已认领金额"/>
-                <field name="advance_renling_total" string="认领金额"/>
-                <field name="advance_hexiao_total" string="核销金额"/>
-                <field name="advance_renling_total" string="认领金额"/>
+                <field name="advance_hexiao_total" string="核销认领金额"/>
+                <field name="advance_renling_total" string="正常认领金额"/>
+                <field name="advance_total" string="总认领金额"/>
                 <field name="po_id" string="采购合同"/>
                 <field name="advance_type"/>
                 <field name="fault_comments"/>
@@ -106,7 +105,7 @@
             <form string="预付申请单">
                 <header groups="sales_team.group_manager">
                     <button name="compute_move_lines" type="object" string="更新日志" groups="base.group_system"/>
-                    <button name="create_reconcile" type="object" string="核销预付申请"
+                    <button name="create_reconcile" type="object" string="核销预付申请" confirm="确定创建核销申请单吗？"
                             attrs="{'invisible':['|','|',('advance_balance_total','=',0),('state','!=','posted'),('state_1','!=','50_posted')]}"/>
                     <button name="compute_advance_balance_total" type="object" string="重新计算状态"
                             groups="base.group_system"/>
