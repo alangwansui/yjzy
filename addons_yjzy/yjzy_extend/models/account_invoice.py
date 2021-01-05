@@ -741,6 +741,10 @@ class account_invoice(models.Model):
     #上面这个是M2o,现在改成M2M
     reconcile_order_ids = fields.Many2many('account.reconcile.order','re_tb','te_td', u'核销单据',compute=compute_reconcile_order_ids)
     reconcile_order_ids_count = fields.Integer(u'核销单据数量',compute=compute_reconcile_order_ids)
+    # hexiao_total = fields.Monetary(u'核销认领金额', currency_field='currency_id',
+    #                                  compute=hexiao_renling_total,store=True)
+
+
     reconcile_order_id_ids = fields.One2many('account.reconcile.order','back_tax_invoice_id','额外退税对应核销单')
     reconcile_order_line_id = fields.One2many('account.reconcile.order.line', 'invoice_id', u'核销明细行', domain=[('order_id.state','=','done'),('amount_total_org','!=',0)])
 
