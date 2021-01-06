@@ -1263,7 +1263,7 @@ class account_payment(models.Model):
         for one in self:
             if one.sfk_type == 'ysrld':
                 # name = '%s:%s' % (one.journal_id.name, str(one.balance))
-                name = '%s:%s' % ('预收认领单', str(one.advance_balance_total))
+                name = '%s:%s' % ('预收认领单', one.name)
             elif one.sfk_type == 'fkzl':
                 name = '%s:%s' % ('付款指令', one.name)
             elif one.sfk_type == 'rcfkd':
