@@ -744,6 +744,15 @@ class account_payment(models.Model):
     #                     }
     #     }
 
+    def new_advance_payment_id_chushihua(self):
+        for one in self:
+            if one.sfk_type in ['yfsqd','ysrld']:
+                for x in one.move_line_ids:
+                    if (x.account_id.code == '1123' or x.account_id.code =='112301') and x.new_advance_payment_id != self:
+                        x.new_advance_payment_id = one.id
+
+
+
     def compute_move_lines(self):
         for one in self.aml_yfzk_ids:
             one.compute_sslj_balance()
