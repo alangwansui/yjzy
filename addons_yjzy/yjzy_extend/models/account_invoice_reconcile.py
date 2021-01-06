@@ -37,7 +37,8 @@ class account_reconcile_order(models.Model):
                     'default_payment_method_id': 2,
                     'default_currency_id':self.currency_id.id,
                     'default_invoice_ids': [(4, self.id, None)],
-                         'default_reconcile_type': '50_reconcile',
+                    'default_reconcile_type': '50_reconcile',
+                    'default_invoice_log_id_this_time':self.residual,
 
             }
         if self.type == 'in_invoice':
@@ -53,6 +54,7 @@ class account_reconcile_order(models.Model):
                    'default_currency_id': self.currency_id.id,
                    'default_invoice_ids': [(4, self.id, None)],
                    'default_reconcile_type': '50_reconcile',
+                   'default_invoice_log_id_this_time': self.residual,
                    }
         return {
             'name': u'核销单',

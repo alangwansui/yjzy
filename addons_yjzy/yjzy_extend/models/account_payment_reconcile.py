@@ -102,6 +102,12 @@ class account_payment(models.Model):
             one.reconcile_order_ids_count = len(reconcile_order_ids)
             one.advance_reconcile_order_yjzy_line_ids_count = len(advance_reconcile_order_yjzy_line_ids)
 
+    @api.depends('amount','state')
+    def compute_yjzy_payment_advance_balance_after(self):
+        for one in self:
+            one.yjzy_payment_advance_balance_after = one.yjzy_payment_advance_balance_this_time - one.amount
+
+
     # @api.depends('yjzy_payment_id')
     # def compute_payment_ids_yjzy(self):
     #     for one in self:
@@ -144,6 +150,10 @@ class account_payment(models.Model):
                                                    related='yjzy_payment_id.advance_balance_total',
                                                    currency_field='yjzy_payment_currency_id')
 
+    yjzy_payment_advance_balance_this_time =  fields.Monetary(u'核销前未认领金额',currency_field='yjzy_payment_currency_id',                                                              )
+    yjzy_payment_advance_balance_after = fields.Monetary(u'核销后未认领金额', currency_field='yjzy_payment_currency_id',
+                                                         compute=compute_yjzy_payment_advance_balance_after)
+
     amount_state =fields.Boolean('核销金额是否已确认',default=False)
 
 
@@ -176,7 +186,7 @@ class account_payment(models.Model):
                     'default_yjzy_payment_id':self.id,
                     'default_advance_account_id':advance_account_id.id,
                     'default_reconcile_type': '50_reconcile',
-
+                    'default_yjzy_payment_advance_balance_this_time':self.advance_balance_total,
                     'default_so_id':so_id.id}
         if self.sfk_type == 'yfsqd':
             # partner = self.env['res.partner'].search([('name', '=', u'未定义')], limit=1)
@@ -193,7 +203,9 @@ class account_payment(models.Model):
                    'default_yjzy_payment_id': self.id,
                    'default_advance_account_id': advance_account_id.id,
                    'default_reconcile_type': '50_reconcile',
-                   'default_po_id': po_id.id}
+                   'default_po_id': po_id.id,
+                   'default_yjzy_payment_advance_balance_this_time': self.advance_balance_total,
+                   }
         return {
             'name':u'核销单',
             'view_type':'form',
@@ -240,6 +252,7 @@ class account_payment(models.Model):
             self.amount = self.amount_invoice_log
             self.currency_id = self.invoice_log_currency_id
             self.amount_state = True
+            self.yjzy_payment_advance_balance_this_time = self.amount_invoice_log
         else:
             self.write({'amount':self.yjzy_payment_advance_balance,
                         'currency_id':self.yjzy_payment_currency_id.id})

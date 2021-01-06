@@ -167,13 +167,13 @@
                                 <field name="invoice_log_currency_id" options="{'no_open':1}"
                                        attrs="{'invisible':[('sfk_type','not in',['reconcile_yingshou','reconcile_yingfu'])]}"/>
 
-                                <label name="amount_invoice_log" string="未认领金额"
+                                <label name="invoice_log_id_this_time" string="本次核销前余额"
                                        attrs="{'invisible':[('sfk_type','not in',['reconcile_yingshou','reconcile_yingfu'])]}"/>
                                 <div class="oe_row">
                                     <button type="object" name="open_invoice_id" class="btn-xxs btn-link mb2"
                                             target="new"
                                             attrs="{'invisible':[('sfk_type','not in',['reconcile_yingshou','reconcile_yingfu'])]}">
-                                        <field name="amount_invoice_log"
+                                        <field name="invoice_log_id_this_time"
                                                attrs="{'invisible':[('sfk_type','not in',['reconcile_yingshou','reconcile_yingfu'])]}"/>
                                     </button>
                                     <button name="action_confirm_amount" type="object" string="确认核销金额"
@@ -181,21 +181,36 @@
                                             attrs="{'invisible':['|',('amount_state','=',True),('sfk_type','not in',['reconcile_yingshou','reconcile_yingfu'])]}"/>
                                 </div>
 
+                                <field name="amount_invoice_log" invisible="1"
+                                       attrs="{'invisible':[('sfk_type','not in',['reconcile_yingshou','reconcile_yingfu'])]}"
+                                       string="本次核销前余额"/>
+                                <field name="invoice_log_id_after"
+                                       attrs="{'invisible':[('sfk_type','not in',['reconcile_yingshou','reconcile_yingfu'])]}"
+                                       string="本次核销后余额"/>
+
                                 <field name="yjzy_payment_currency_id" string="货币" invisible="1"
                                        options="{'no_create':True,'no_open': True}"/>
 
-                                <label name="yjzy_payment_advance_balance" string="未认领金额"
+                                <label name="yjzy_payment_advance_balance_this_time" string="本次核销前余额"
                                        attrs="{'invisible':[('sfk_type','not in',['reconcile_ysrld','reconcile_yfsqd'])]}"/>
                                 <div class="oe_row">
                                     <button type="object" name="open_yfsqd" class="btn-xxs btn-link mb2" target="new"
                                             attrs="{'invisible':[('sfk_type','not in',['reconcile_ysrld','reconcile_yfsqd'])]}">
-                                        <field name="yjzy_payment_advance_balance" string="未认领金额"
+                                        <field name="yjzy_payment_advance_balance_this_time" string="未认领金额"
                                                attrs="{'invisible':[('sfk_type','not in',['reconcile_ysrld','reconcile_yfsqd'])]}"/>
                                     </button>
                                     <button name="action_confirm_amount" type="object" string="确认核销金额"
                                             class="btn-xxs btn-link mb2 oe_highlight"
                                             attrs="{'invisible':['|',('amount_state','=',True),('sfk_type','not in',['reconcile_ysrld','reconcile_yfsqd'])]}"/>
                                 </div>
+
+
+                                <field name="yjzy_payment_advance_balance"
+                                       attrs="{'invisible':[('sfk_type','not in',['reconcile_ysrld','reconcile_yfsqd'])]}"
+                                       string="未认领金额"/>
+                                <field name="yjzy_payment_advance_balance_after"
+                                       attrs="{'invisible':[('sfk_type','not in',['reconcile_ysrld','reconcile_yfsqd'])]}"
+                                       string="本次核销后余额"/>
                                 <field name="so_id" string="销售合同" readonly="1"
                                        attrs="{'invisible':[('sfk_type','!=','reconcile_ysrld')],'readonly': [('state', '!=', 'draft'),('is_editable','=',False)]}"
                                        domain="[('partner_id','=', partner_id),('state','not in',['done','verifying','verification','cancel','refuse'])]"
@@ -248,67 +263,68 @@
                                             </tree>
                                         </field>
                                     </group>
-                                     <group string="所有流程日志">
-                                        <field name="reconcile_order_ids" colspan="2" nolabel="1" attrs="{'invisible':[('reconcile_order_ids_count','=',0)]}">
+                                    <group string="所有流程日志">
+                                        <field name="reconcile_order_ids" colspan="2" nolabel="1"
+                                               attrs="{'invisible':[('reconcile_order_ids_count','=',0)]}">
                                             <tree>
-                                            <field name="hxd_type_new"/>
-                                            <field name="invoice_id" groups="base.group_system" string="应付账单"/>
-                                            <field name="create_date" widget="date" string="创建日期"/>
-                                            <field name="approve_date"/>
-                                            <field name="amount_payment_org_new" string="实际申请金额"/>
-                                            <field name="amount_advance_org_new" string="预付认领金额"/>
-                                            <field name="state_1"/>
-                                        </tree>
+                                                <field name="hxd_type_new"/>
+                                                <field name="invoice_id" groups="base.group_system" string="应付账单"/>
+                                                <field name="create_date" widget="date" string="创建日期"/>
+                                                <field name="approve_date"/>
+                                                <field name="amount_payment_org_new" string="实际申请金额"/>
+                                                <field name="amount_advance_org_new" string="预付认领金额"/>
+                                                <field name="state_1"/>
+                                            </tree>
 
                                         </field>
-                                       <field name="advance_reconcile_order_yjzy_line_ids" nolabel="1" colspan="2"
-                                       attrs="{'invisible':[('advance_reconcile_order_yjzy_line_ids_count','=',0)]}">
-                                             <tree>
-                                                 <field name="hxd_type_new"/>
-                                                 <field name="invoice_id" readonly="1" invisible="1"/>
-                                                 <field name="create_date" string="创建日期"/>
-                                                 <field name="approve_date"/>
-                                                 <field name="tb_contract_code"/>
-                                                 <field name="yjzy_currency_id" invisible="1"/>
-                                                 <field name="so_id" attrs="{'column_invisible':[('parent.sfk_type','!=','ysrld')]}"/>
-                                                 <field name="po_id" attrs="{'column_invisible':[('parent.sfk_type','!=','yfsqd')]}"/>
-                                                 <field name="amount_advance_org" string="认领金额"/>
-                                                 <field name="sfk_type" invisible="1"/>
-                                                 <field name="state_1"/>
-                                             </tree>
-                                         </field>
-                                           <field name="payment_log_hexiao_ids" colspan="2" nolabel="1"
-                                                attrs="{'invisible':[('payment_log_hexiao_ids_count','=',0)]}">
-                                             <tree>
-                                                 <field name="sfk_type" string="类型"/>
-                                                 <field name="payment_date" string="日期"/>
-                                                 <field name="amount" string="金额"/>
-                                                 <field name="currency_id" invisible="1"/>
-                                                 <field name="state_1"/>
-                                             </tree>
-                                         </field>
-                                         <field name="payment_log_hexiao_ids_count" invisible="1"/>
-                                         <field name="advance_reconcile_order_yjzy_line_ids_count" invisible="1"/>
-                                         <field name="reconcile_order_ids_count" invisible="1"/>
+                                        <field name="advance_reconcile_order_yjzy_line_ids" nolabel="1" colspan="2"
+                                               attrs="{'invisible':[('advance_reconcile_order_yjzy_line_ids_count','=',0)]}">
+                                            <tree>
+                                                <field name="hxd_type_new"/>
+                                                <field name="invoice_id" readonly="1" invisible="1"/>
+                                                <field name="create_date" string="创建日期"/>
+                                                <field name="approve_date"/>
+                                                <field name="tb_contract_code"/>
+                                                <field name="yjzy_currency_id" invisible="1"/>
+                                                <field name="so_id"
+                                                       attrs="{'column_invisible':[('parent.sfk_type','!=','ysrld')]}"/>
+                                                <field name="po_id"
+                                                       attrs="{'column_invisible':[('parent.sfk_type','!=','yfsqd')]}"/>
+                                                <field name="amount_advance_org" string="认领金额"/>
+                                                <field name="sfk_type" invisible="1"/>
+                                                <field name="state_1"/>
+                                            </tree>
+                                        </field>
+                                        <field name="payment_log_hexiao_ids" colspan="2" nolabel="1"
+                                               attrs="{'invisible':[('payment_log_hexiao_ids_count','=',0)]}">
+                                            <tree>
+                                                <field name="sfk_type" string="类型"/>
+                                                <field name="payment_date" string="日期"/>
+                                                <field name="amount" string="金额"/>
+                                                <field name="currency_id" invisible="1"/>
+                                                <field name="state_1"/>
+                                            </tree>
+                                        </field>
+                                        <field name="payment_log_hexiao_ids_count" invisible="1"/>
+                                        <field name="advance_reconcile_order_yjzy_line_ids_count" invisible="1"/>
+                                        <field name="reconcile_order_ids_count" invisible="1"/>
                                     </group>
-
-
 
 
                                 </group>
                             </page>
                             <page groups="base.group_system">
                                 <group>
-                                         <field name="payment_log_no_done_ids" colspan="2" nolabel="1">
-                                            <tree>
-                                                <field name="sfk_type"/>
-                                                <field name="payment_date"/>
-                                                <field name="name"/>
-                                                <field name="amount"/>
-                                                <field name="invoice_log_id_this_time"/>
-                                                <field name="state_1"/>
-                                            </tree>
-                                        </field>
+                                    <field name="payment_log_no_done_ids" colspan="2" nolabel="1">
+                                        <tree>
+                                            <field name="sfk_type"/>
+                                            <field name="payment_date"/>
+                                            <field name="name"/>
+                                            <field name="amount"/>
+                                            <field name="invoice_log_id_this_time"/>
+                                            <field name="state_1"/>
+                                        </tree>
+                                    </field>
 
                                     <field name="amount_state"/>
                                     <field name="journal_id" domain="[('type','=', 'renling')]" string="收款日记账"

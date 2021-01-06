@@ -397,6 +397,10 @@ class account_payment(models.Model):
             one.aml_com_yfzk_ids_count = len(one.aml_com_yfzk_ids)
             one.aml_com_yszk_ids_count = len(one.aml_com_yszk_ids)
 
+    def compute_invoice_log_id_after(self):
+        for one in self:
+            one.compute_invoice_log_id_after = one.invoice_log_id_this_time - one.amount
+
     reconcile_type = fields.Selection([
         ('03_advance_in', u'预收生成'),
         ('04_advance_out', u'预付生成'),
@@ -427,6 +431,7 @@ class account_payment(models.Model):
 
     amount_invoice_log = fields.Monetary('账单余额',currency_field='invoice_log_currency_id',related='invoice_log_id.residual')
     invoice_log_id_this_time = fields.Monetary('账单余额',currency_field='invoice_log_currency_id')
+    invoice_log_id_after = fields.Monetary('本次核销后',currency_field='invoice_log_currency_id', compute=compute_invoice_log_id_after)
 
     pay_to = fields.Char('付款对象', compute = compute_pay_to,store=True)
 
