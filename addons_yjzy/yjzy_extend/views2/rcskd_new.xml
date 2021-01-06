@@ -284,7 +284,7 @@
                                     <field name="amount" string="认领金额"/>
                                     <field name="advance_balance_total" string="未被认领金额"/>
                                     <field name="state"/>
-                                    <button name="action_ysrld_one_in_all" type="object" string="认领确认"
+                                    <button name="action_submit" type="object" string="认领确认"
                                             attrs="{'invisible':[('state','in',['posted','reconciled'])]}"/>
 
                                 </tree>

@@ -700,19 +700,20 @@
                                             </tree>
                                         </field>
                                     </group>
-                                    <group string="所有流程日志" attrs="{'invisible':[('reconcile_order_ids_count','=',0)]}">
-                                        <field name="reconcile_order_ids" nolabel="1" colspan="2" readonly="1"
+                                    <group string="所有流程日志" attrs="{'invisible':[('reconcile_order_line_no_ids_count','=',0)]}">
+                                        <field name="reconcile_order_line_no_ids" nolabel="1" colspan="2" readonly="1"
                                                context="{'form_view_ref':'yjzy_extend.account_yfhxd_form_view_new'}">
                                             <tree>
                                                 <field name="hxd_type_new"/>
                                                 <field name="invoice_id" groups="base.group_system" string="应付账单"/>
                                                 <field name="create_date" widget="date" string="创建日期"/>
                                                 <field name="approve_date"/>
-                                                <field name="amount_payment_org_new" string="实际申请金额"/>
-                                                <field name="amount_advance_org_new" string="预付认领金额"/>
+                                                <field name="amount_payment_org" string="实际申请金额"/>
+                                                <field name="amount_advance_org_compute" string="预付认领金额"/>
                                                 <field name="state_1"/>
                                             </tree>
                                         </field>
+                                        <field name="reconcile_order_line_no_ids_count" invisible="1"/>
                                     <field name="payment_log_hexiao_ids" nolabel="1" colspan="2" readonly="1" attrs="{'invisible':[('payment_log_hexiao_ids_count','=',0)]}">
                                          <tree>
                                                  <field name="sfk_type" string="类型"/>

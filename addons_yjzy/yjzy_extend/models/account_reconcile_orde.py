@@ -231,7 +231,7 @@ class account_reconcile_order(models.Model):
                         po.append(line.id)
                     po.append(False)                #
 
-                print('po',po)
+                print('po_akiny',po)
                 supplier_advance_payment_ids = self.env['account.payment'].search(
                     [('company_id','=',self.env.user.company_id.id),('partner_id', '=', one.partner_id.id), ('sfk_type', '=', 'yfsqd'),('po_id','in',po),
                      ('state', 'in', ['posted', 'reconciled']),('advance_balance_total','!=',0)])
@@ -498,6 +498,10 @@ class account_reconcile_order(models.Model):
                 name = '%s:%s' % ('其他应付',one.name)
 
             one.display_name = name
+
+
+    invoice_reconcile_order_line_no_ids = fields.One2many('account.reconcile.order.line.no', related='invoice_id.reconcile_order_line_no_ids')
+    invoice_reconcile_order_line_no_ids_count = fields.Integer(u'no数量',related='invoice_id.reconcile_order_line_no_ids_count')
 
 
     display_name = fields.Char(u'显示名称', compute=compute_display_name)
@@ -3351,6 +3355,17 @@ class account_reconcile_order_line(models.Model):
             x.amount_invoice_so_residual_can_approve_d_after = amount_invoice_so_residual_can_approve_d - amount_total_org_new
             x.amount_invoice_so_residual_d_after = amount_invoice_so_residual_d - amount_total_org_new
 
+
+    invoice_move_line_com_yfzk_ids_count = fields.Integer('账单付款日志数量',related='invoice_id.move_line_com_yfzk_ids_count')
+    invoice_move_line_com_yszk_ids_count = fields.Integer('账单收款日志数量',related='invoice_id.move_line_com_yszk_ids_count')
+    invoice_move_line_com_yfzk_ids = fields.One2many('account.move.line.com','应付账单日志',related='invoice_id.move_line_com_yfzk_ids')
+    invoice_move_line_com_yszk_ids = fields.One2many('account.move.line.com', '应收账单日志',
+                                                     related='invoice_id.move_line_com_yszk_ids')
+    invoice_reconcile_order_ids = fields.Many2many('account.reconcile.order',related='invoice_id.reconcile_order_ids')
+    invoice_reconcile_order_ids_count = fields.Integer(u'核销单据数量',related='invoice_id.reconcile_order_ids_count')
+    invoice_reconcile_order_line_no_ids = fields.One2many('account.reconcile.order.line.no', related='invoice_id.reconcile_order_line_no_ids')
+    invoice_reconcile_order_line_no_ids_count = fields.Integer(u'no数量',related='invoice_id.reconcile_order_line_no_ids_count')
+
     hxd_type_new = fields.Selection('认领来源',related='order_id.hxd_type_new')
 
     yingshouyingfurld_ids = fields.One2many('account.payment', 'account_reconcile_order_line_id', '生成的应收应付认领单')
@@ -3482,7 +3497,7 @@ class account_reconcile_order_line(models.Model):
 #     amount_advance_org = fields.Monetary(u'预收金额', currency_field='yjzy_currency_id',related='order_line_id.amount_advance_org')
 
     def open_invoice_id(self):
-        form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form_in_one_open').id
+        form_view = self.env.ref('yjzy_extend.view_account_invoice_rizhi').id
         return {'name':'账单查看',
                 'view_type': 'form',
                 'view_mode': 'form',
@@ -3548,6 +3563,7 @@ class account_reconcile_order_line_no(models.Model):
     duoyu_this_time_advice_advance_org = fields.Float('多余的预收付这次应该加上的认领金额',)
 
     invoice_currency_id = fields.Many2one('res.currency', u'交易货币', related='invoice_id.currency_id', readonly=True)
+
     state_1 = fields.Selection('审批流程', related='order_id.state_1')
     order_id = fields.Many2one('account.reconcile.order', u'核销单',ondelete='cascade')
     invoice_id = fields.Many2one('account.invoice', u'发票')

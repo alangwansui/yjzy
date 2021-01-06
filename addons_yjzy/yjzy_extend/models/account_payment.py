@@ -173,7 +173,7 @@ class account_payment(models.Model):
                  'payment_ids.amount','payment_ids','payment_ids.state')
     def compute_advance_balance_total(self):
         for one in self:
-            if one.sfk_type == 'ysrld':
+            if one.sfk_type in ['ysrld','yfsqd']:
                 advance_total = sum([x.amount_advance_org for x in one.advance_reconcile_order_line_ids])
                 hexiao_payment_ids = one.payment_ids.filtered(lambda x: x.sfk_type in ['reconcile_ysrld','reconcile_yfsqd'] and x.state in ['posted','reconciled'])
                 advance_total_2 = sum([x.amount for x in hexiao_payment_ids])
@@ -535,7 +535,7 @@ class account_payment(models.Model):
         ('30_done',u'完成'),
         ('80_refused', u'已拒绝'),
         ('90_cancel', u'已取消')],
-        u'付款指令审批状态', track_visibility='onchange', default='10_draft')
+        u'付款指令审批状态',  default='10_draft')#track_visibility='onchange',
 
     #819增加汇率字段
 
@@ -1372,6 +1372,7 @@ class account_payment(models.Model):
                     one.yfsqd_fkzl_ids.post()
                     for x in one.yfsqd_fkzl_ids:
                         x.write({'state_1': '50_posted'})
+                        x.compute_advance_balance_total()
                 # if one.fybg_ids:
                 #     one.fybg_ids.action_sheet_move_create()
                 # if one.fybg_ids:
@@ -1533,7 +1534,7 @@ class account_payment(models.Model):
 
     #打开预收认领
     def open_ysrl(self):
-        form_view = self.env.ref('yjzy_extend.view_ysrld_form')
+        form_view = self.env.ref('yjzy_extend.view_ysrld_form_latest')
         tree_view = self.env.ref('yjzy_extend.view_ysrld_reconcile_tree_1')
         # print('currency_id',self.currency_id)
         # return {

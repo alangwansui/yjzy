@@ -575,6 +575,7 @@ class account_invoice(models.Model):
         for one in self:
             one.move_line_com_yfzk_ids_count = len(one.move_line_com_yfzk_ids)
             one.move_line_com_yszk_ids_count = len(one.move_line_com_yszk_ids)
+            one.reconcile_order_line_no_ids_count = len(one.reconcile_order_line_no_ids)
 
     invoice_attribute_all_in_one = fields.Selection(invoice_attribute_all_in_one,u'账单属性all_in_one', compute=compute_all_in_one,store=True)
     # invoice_attribute_all_in_one = fields.Char('账单属性all_in_one',compute=compute_all_in_one,store=True)
@@ -758,7 +759,10 @@ class account_invoice(models.Model):
                                                )  # domain=[('order_id.state', 'in', ['approved']), ('amount_total_org', '!=', 0)]
     reconcile_order_line_no_ids = fields.One2many('account.reconcile.order.line.no', 'invoice_id',
                                                           u'所有核销细行no', domain=[('order_id', '!=', False),
-                                                                               ('order_id.sfk_type', '=', 'yfhxd')])
+                                                                               ])#('order_id.sfk_type', '=', 'yfhxd')
+
+    reconcile_order_line_no_ids_count = fields.Integer('no明细行数量',compute=compute_move_com_count )
+
 
     yjzy_invoice_reconcile_order_line_ids = fields.One2many('account.reconcile.order.line', 'yjzy_invoice_id', u'所有核销明细行',
                                                             domain=[('order_id','!=',False),('order_id.sfk_type','=','yfhxd')])  # domain=[('order_id.state', 'in', ['approved']), ('amount_total_org', '!=', 0)]关联账单（额外账单以及自己）的所有认领明细

@@ -67,6 +67,12 @@ class DeclareDeclaration(models.Model):
     reconcile_amount = fields.Monetary('收款认领金额',currency_field='company_currency_id',compute=compute_reconcile_amount,store=True)
     declaration_amount_all_residual = fields.Monetary(u'本次申报金额收款金额',currency_field='company_currency_id',compute=compute_declaration_amount,store=True)
 
+
+    def unlink(self):
+        for one in self:
+            if one.state not in ['draft','cancel']:
+                raise Warning(u'不能删除非草稿成本单据')
+
     @api.multi
     def name_get(self):
         res = []
