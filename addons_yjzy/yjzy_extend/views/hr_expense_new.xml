@@ -1437,7 +1437,7 @@
                         <button name="action_to_account_approval" string="责任人审批(自动)" groups="base.group_system"  type="object" attrs="{'invisible':[('state_1','not in',['employee_approval'])]}"/>
                         <button name="action_account_approve" string="财务审批" type="object" class="oe_highlight"  attrs="{'invisible':[('state_1','not in',['account_approval'])]}"/>
                         <button name="action_manager_approve" string="总经理审批" type="object" class="oe_highlight"  attrs="{'invisible':[('state_1','not in',['manager_approval'])]}"/>
-                        <button name="%(expense_sheet_refuse_wizard_action)d" string="拒绝" type="action" attrs="{'invisible':[('state_1','in',['draft','refused','done'])]}"/>
+                        <button name="%(expense_sheet_refuse_wizard_action)d" string="拒绝" type="action" attrs="{'invisible':[('state_1','in',['draft','refused','done','post'])]}"/>
                         <button name="create_tb_po_invoice" string="费用转货款" confirm="费用将会转换为货款，确定吗？" groups="sales_team.group_manager" type="object"
                                 attrs="{'invisible':['|',('expense_to_invoice_type','!=','normal'),('state_1','!=','account_approval')]}"
                         context="{'open_expense':1}"/>

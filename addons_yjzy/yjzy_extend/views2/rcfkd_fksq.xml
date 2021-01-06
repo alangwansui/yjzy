@@ -31,7 +31,9 @@
         <field name="arch" type="xml">
             <form string="付款申请单" create="false" edit="false">
                 <header groups="account.group_account_manager">
-                    <button name="create_fkzl" type="object" string="创建付款指令" attrs="{'invisible':[('state_fkzl','!=','05_fksq')]}"/>
+                    <button name="create_fkzl" type="object" string="创建付款指令" invisible="1" attrs="{'invisible':[('state_fkzl','!=','05_fksq')]}"/>
+
+                    <button name="open_wizard_fkzl" type="object" string="创建付款指令" attrs="{'invisible':[('state_fkzl','!=','05_fksq')]}"/>
                     <field name="state_fkzl" statusbar_visible=" " widget="statusbar"/>
                 </header>
                 <header groups="base.group_system">

@@ -908,7 +908,7 @@
                                     <field name="move_line_com_yfzk_ids" readonly="1" nolabel="1" colspan="2"
                                            attrs="{'invisible':['|',('move_line_com_yfzk_ids_count','=',0),('sfk_type','!=','yfhxd')]}">
 
-                                        <tree default_order="create_date">
+                                        <tree default_order="sslj_balance">
                                             <field name="create_date" string="日期"/>
                                             <field name="reconcile_type" string="属性"/>
                                             <field name="amount_this_time" string="发生金额"/>
@@ -917,7 +917,7 @@
                                     </field>
                                     <field name="move_line_com_yszk_ids" readonly="1" nolabel="1" colspan="2"
                                            attrs="{'invisible':['|',('move_line_com_yszk_ids_count','=',0),('sfk_type','!=','yshxd')]}">
-                                        <tree default_order="create_date">
+                                        <tree default_order="sslj_balance">
                                             <field name="create_date" string="日期"/>
                                             <field name="reconcile_type" string="属性"/>
                                             <field name="amount_this_time" string="发生金额"/>

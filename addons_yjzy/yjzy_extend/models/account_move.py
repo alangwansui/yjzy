@@ -124,8 +124,8 @@ class account_move_line(models.Model):
 
                 # date_time = one.create_date.strftime('%Y-%m-%d %H:%M:%S')
 
-
-                move_lines = one.env['account.move.line'].search([('create_date','<',one.create_date),('account_id','=',one.account_id.id),
+                #'create_date', '<', one.create_date
+                move_lines = one.env['account.move.line'].search([('move_id','<',one.move_id.id),('account_id','=',one.account_id.id),
                                                                    '|','&',('invoice_id','=',one.invoice_id.id),('invoice_id','!=',False),
                                                                    '&',('new_advance_payment_id','!=',False),('new_advance_payment_id','=',one.new_advance_payment_id.id)])
                 print('move_lines_akiny',move_lines,amount_this_time)

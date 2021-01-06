@@ -1365,8 +1365,8 @@ class account_reconcile_order(models.Model):
         return True
     #预付的审批
     def action_manager_approve_first_stage(self):
-        if self.state_1 not in ['advance_approval','advance_approval_yshxd']:
-            raise Warning('非可审批状态，不允许审批！')
+        # if self.state_1 not in ('advance_approval','advance_approval_yshxd'):
+        #     raise Warning('非可审批状态，不允许审批！')
         if self.sfk_type == 'yfhxd':
             amount_payment_can_approve_all = sum(x.amount_payment_can_approve_all for x in self.invoice_ids)
             print('amount_payment_can_approve_all_akiny',amount_payment_can_approve_all)
@@ -1473,8 +1473,8 @@ class account_reconcile_order(models.Model):
 
     # 财务审批：预付没有审批，只有应付申请的时候才会审批。
     def action_account_approve_stage(self):
-        if self.state_1 not in ['account_approval', 'account_approval_yshxd']:
-            raise Warning('非可审批状态，不允许审批！')
+        # if self.state_1 not in ['account_approval', 'account_approval_yshxd']:
+        #     raise Warning('非可审批状态，不允许审批！')
         if self.amount_total_org == 0:
             raise Warning('认领金额为0，无法提交！')
         for one in self.line_no_ids:
@@ -1498,9 +1498,10 @@ class account_reconcile_order(models.Model):
         self.ensure_one()
 
         if self.sfk_type == 'yfhxd':
-            if self.state_1 not in ['manager_approval', 'manager_approval_yshxd', 'manager_approval_all']:
-                raise Warning('非可审批状态，不允许审批！')
+
             if self.operation_wizard in ['10', '30']:
+                # if self.state_1 not in ['manager_approval', 'manager_approval_yshxd', 'manager_approval_all']:
+                #     raise Warning('非可审批状态，不允许审批！')
                 self.create_rcfkd()
                 stage_id = self._stage_find(domain=[('code', '=', '050')])
                 self.write({'stage_id': stage_id.id,
@@ -1510,6 +1511,8 @@ class account_reconcile_order(models.Model):
                             })
             self.create_yjzy_payment_yfrl()  #生成应付认领单
             if self.operation_wizard in ['03','20', '25']:
+                # if self.state_1 not in ['manager_approval','advance_approval','advance_approval_yshxd', 'manager_approval_yshxd', 'manager_approval_all']:
+                #     raise Warning('非可审批状态，不允许审批！')
                 self.action_done_new_stage()
                 # self.action_done_new() #生成的应付认领单过账
                 self.write({'approve_date': fields.date.today(),
@@ -1517,8 +1520,8 @@ class account_reconcile_order(models.Model):
                             })
 
         if self.sfk_type == 'yshxd':
-            if self.state_1 not in ['draft','manager_approval', 'manager_approval_yshxd','draft_yshxd','account_approval_yshxd', 'manager_approval_all']:
-                raise Warning('非可审批状态，不允许审批！')
+            # if self.state_1 not in ['draft','manager_approval', 'manager_approval_yshxd','draft_yshxd','account_approval_yshxd', 'manager_approval_all']:
+            #     raise Warning('非可审批状态，不允许审批！')
             print('sfk_type_____111',self.sfk_type)
             if not self.yjzy_payment_id and self.hxd_type_new in ['20','25']:
                 raise Warning('没有对应的收款单，请检查！')

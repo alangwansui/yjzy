@@ -172,7 +172,7 @@
                             <div colspan="2">
                                 <field name="display_name"/>
                             </div>
-                            <field name="partner_id" domain="[('is_company','=',True),('supplier','=',1)]" string="供应商"
+                            <field name="partner_id" options="{'no_open':1,'no_create':1}" domain="[('is_company','=',True),('supplier','=',1)]" string="供应商"
                                    attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))],
                                    'invisible': [('payment_type', 'not in', ('inbound', 'outbound'))],
                                    'readonly': ['|',('state_1','!=','10_draft'),('state', '!=', 'draft')]}"

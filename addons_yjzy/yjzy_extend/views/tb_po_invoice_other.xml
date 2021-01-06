@@ -73,7 +73,7 @@
                                 <field name="name_title"
                                        attrs="{'invisible':[('type','in',['other_po'])],'readonly':[('state','!=','10_draft')]}"/>
 
-                                <label for="" string="本次应收金额"/>
+                                <label for="" string="本次申请金额"/>
                                 <div name="amount_div" class="o_row"
                                 >
                                     <field name="other_invoice_amount" attrs="{

@@ -1424,10 +1424,10 @@ class account_invoice(models.Model):
                 'context': context,
             }
         print('akiny_test',len(self.mapped('invoice_attribute')),len(self.mapped('yjzy_type')),len(self.mapped('invoice_type_main')))
-        if attribute != 'other_payment' and len(self.mapped('partner_id')) > 1:
-            raise Warning('不同供应商')
-        elif attribute == 'other_payment' and len(self) > 1:
-            raise Warning('其他应付不允许多个一起申请付款')
+        # if attribute != 'other_payment' and len(self.mapped('partner_id')) > 1:
+        #     raise Warning('不同供应商')
+        if len(self) > 1: #attribute == 'other_payment' and
+            raise Warning('不允许多张应付一起申请')
         if state_draft >= 1:
             raise Warning('非确认账单不允许创建付款申请')
 
@@ -1512,102 +1512,7 @@ class account_invoice(models.Model):
             hxd = self.with_context({'default_yjzy_payment_id':yjzy_payment_id}).create_yshxd_from_multi_invoice(ctx)
         return hxd
 
-    # 创建预付核销单从多个账单通过服务器动作创建 ok，并同时将预付单信息填入line_ids,不会应用
-    def create_yfhxd_from_multi_invoice_advance(self, attribute):
-        print('invoice_ids', self.ids)
-        print('partner_id', len(self.mapped('partner_id')))
-        state_draft = len(self.filtered(lambda x: x.state != 'open'))
-        print('state_draft', state_draft)
-        hxd_line_approval_ids = self.env['account.reconcile.order.line'].search(
-            [('invoice_id.id', 'in', self.ids), ('order_id.state', 'not in', ['done', 'approved'])])
-        if hxd_line_approval_ids:
-            raise Warning('选择的应付账单，有存在待处理的，请查验')
-        if attribute != 'other_payment' and len(self.mapped('partner_id')) > 1:
-            raise Warning('不同供应商')
-        elif attribute == 'other_payment' and len(self) > 1:
-            raise Warning('其他应付不允许多个一起申请付款')
-        elif state_draft >= 1:
-            raise Warning('非确认账单不允许创建付款申请')
-        sfk_type = 'yfhxd'
-        domain = [('code', '=', 'yfdrl'), ('company_id', '=', self.env.user.company_id.id)]
-        name = self.env['ir.sequence'].next_by_code('sfk.type.%s' % sfk_type)
-        journal = self.env['account.journal'].search(domain, limit=1)
-        account_obj = self.env['account.account']
-        bank_account = account_obj.search(
-            [('code', '=', '10021'), ('company_id', '=', self.env.user.company_id.id)], limit=1)
-        form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new')
-        invoice_dic = []
-        account_reconcile_order_obj = self.env['account.reconcile.order']
-        # for one in self:
-        #     for x in one.yjzy_invoice_wait_payment_ids:#参考M2M的自动多选
-        #         invoice_dic.append(x.id)
-        #     invoice_dic.append(one.id)
-        # print('invoice_dic[k]',invoice_dic)
-        for one in self:
-            for x in one.yjzy_invoice_wait_payment_ids:  # 参考M2M的自动多选 剩余应付金额！=0的额外账单
-                invoice_dic.append(x.id)
-            if one.amount_payment_can_approve_all != 0:  # 考虑已经提交审批的申请
-                invoice_dic.append(one.id)
-        print('invoice_dic', invoice_dic)
-        # test = [(for x in line.yjzy_invoice_all_ids) for line in self)]
-        # invoice_ids = self.env['account.invoice'].search([('id','in',invoice_dic)])
-        # with_context(
-        #     {'fk_journal_id': 1, 'default_be_renling': 1, 'default_invoice_ids': invoice_dic,
-        #      'default_payment_type': 'outbound', 'show_so': 1, 'default_sfk_type': 'yfhxd', }).
-        if attribute not in ['other_po', 'expense_po', 'other_payment']:
-            operation_wizard = '03'
-        else:
-            operation_wizard = '10'
 
-        account_reconcile_id = account_reconcile_order_obj.create({
-            'partner_id': self[0].partner_id.id,
-            'manual_payment_currency_id': self[0].currency_id.id,
-            'invoice_ids': [(6, 0, invoice_dic)],
-            'payment_type': 'outbound',
-            'partner_type': 'supplier',
-            'sfk_type': 'yfhxd',
-            'be_renling': True,
-            'name': name,
-            'journal_id': journal.id,
-            'payment_account_id': bank_account.id,
-            'operation_wizard': operation_wizard,
-            'hxd_type_new': '40',
-            'purchase_code_balance': 1,
-            'invoice_attribute': attribute,
-            'invoice_partner': self[0].invoice_partner,
-            'name_title': self[0].name_title
-
-            # 'partner_id': self.partner_id.id,
-            #         'sfk_type': 'yfhxd',
-            #         # 'invoice_ids': invoice_ids,
-            #         'yjzy_advance_payment_id': self.id,
-            #         'payment_type': 'outbound',
-            #         'be_renling': 1,
-            #         'partner_type': 'supplier',
-            #         'operation_wizard': '25',
-            #         'hxd_type_new': '30',  # 预付-应付
-        })
-
-        account_reconcile_id.make_lines()
-
-        if account_reconcile_id.supplier_advance_payment_ids_count == 0: #如果相关的预付单数量=0，跳过第一步的预付认领
-            account_reconcile_id.operation_wizard = '10'
-        for one in account_reconcile_id.supplier_advance_payment_ids:
-            for x in account_reconcile_id.line_ids:
-                if x.po_id == one.po_id:
-                    x.yjzy_payment_id = one
-
-        account_reconcile_id.compute_line_ids_advice_amount_advance_org()
-        return {
-            'type': 'ir.actions.act_window',
-            'view_mode': 'form',
-            'res_model': 'account.reconcile.order',
-            'views': [(form_view.id, 'form')],
-            'res_id': account_reconcile_id.id,
-            'target': 'current',
-            'context': {'default_sfk_type': 'yfhxd',
-                        }
-        }
 
     def open_other_payment_reconcile_order_ids(self):
         form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new')
@@ -1621,44 +1526,6 @@ class account_invoice(models.Model):
             'target': 'current',
             'domain':[('invoice_ids','in',self.id)],
             'context': {}
-        }
-
-    #从核销单的发票明细创建核销单。（创建预付-应付的核销）现在用不到了
-    def submit_yfhxd_new(self):
-        print('invoice_ids', self.ids)
-        print('partner_id', len(self.mapped('partner_id')))
-        if len(self.mapped('partner_id')) > 1:
-            raise Warning('不同供应商')
-        sfk_type = 'yfhxd'
-        domain = [('code', '=', 'yfdrl'), ('company_id', '=', self.env.user.company_id.id)]
-        name = self.env['ir.sequence'].next_by_code('sfk.type.%s' % sfk_type)
-        journal = self.env['account.journal'].search(domain, limit=1)
-        account_obj = self.env['account.account']
-        bank_account = account_obj.search([('code', '=', '10021'), ('company_id', '=', self.env.user.company_id.id)],
-                                          limit=1)
-        form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new')
-        return {
-            'type': 'ir.actions.act_window',
-            'view_mode': 'form',
-            'res_model': 'account.reconcile.order',
-            'views': [(form_view.id, 'form')],
-            'target': 'current',
-            'context': {
-                'default_invoice_ids': self.ids,#[line.id for line in self],
-                'default_partner_id': self[0].partner_id.id,
-                'default_manual_payment_currency_id': self[0].currency_id.id,
-                'default_payment_type': 'outbound',
-                'default_partner_type': 'supplier',
-                'default_sfk_type': 'yfhxd',
-                'default_be_renling': True,
-                'default_name': name,
-                'default_journal_id': journal.id,
-                'default_payment_account_id': bank_account.id,
-                'default_operation_wizard':'03',
-                'default_yjzy_advance_payment_id':self.yjzy_advance_payment_id.id,
-                'default_hxd_type_new': '30',
-
-            }
         }
 
     def open_invoice_ids(self):
@@ -1675,6 +1542,7 @@ class account_invoice(models.Model):
             'target': 'current',
             'domain':[('yjzy_invoice_id','=',self.id)]
         }
+
     def open_invoice_ids_new(self):
         ctx = self.env.context.get('invoice_type')
         if ctx == 'sale':
@@ -1716,74 +1584,6 @@ class account_invoice(models.Model):
             'domain':[('yjzy_invoice_id','=',self.id),('invoice_attribute','in',['extra','normal'])],
             'context':{'open_from_normal':1}
         }
-
-
-    def create_refund_id(self):
-        self.ensure_one()
-        invoice_id = self.env['account.invoice'].create({
-                'yjzy_invoice_id': self.id,  # [line.id for line in self],
-                'partner_id': self.partner_id.id,
-                'type': 'out_refund',
-                'journal_type': 'sale',
-                'yjzy_type': 'sale',
-                'is_yjzy_invoice': True,
-                'payment_term_id':self.payment_term_id.id,
-                'currency_id':self.currency_id.id,
-                'include_tax':self.include_tax,
-                'date_ship':self.date_ship,
-                'date_finish':self.date_finish,
-                'date_invoice':self.date_invoice,
-                'date':self.date,
-                'date_out_in':self.date_out_in,
-                'bill_id':self.bill_id.id,
-                'gongsi_id':self.gongsi_id.id,
-        })
-        form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form')
-        print('test', self.payment_term_id, self.currency_id)
-        return {
-            'type': 'ir.actions.act_window',
-            'view_mode': 'form',
-            'res_model': 'account.invoice',
-            'views': [(form_view.id, 'form')],
-            'res_id': invoice_id.id,
-            'target': 'current',
-            'context': {
-                'only_ref': 1,},
-            'flags': {'form': {'initial_mode': 'view', 'action_buttons': False}}
-        }
-
-    # @api.onchange('invoice_line_ids')
-    # def onchange_payment_currency(self):
-    #     # self.payment_term_id = self.yjzy_payment_term_id
-    #     # self.currency_id = self.yjzy_currency_id
-    #     if self.is_yjzy_invoice:
-    #         yjzy_type = self.yjzy_type
-    #         if yjzy_type == 'sale' or yjzy_type == 'back_tax':
-    #             if self.yjzy_price_total < 0:
-    #                 self.type = 'out_refund'
-    #                 for x in self.invoice_line_ids:
-    #                     x.price_unit = -x.yjzy_price_unit
-    #             else:
-    #                 self.type = 'out_invoice'
-    #                 for x in self.invoice_line_ids:
-    #                     x.price_unit = x.yjzy_price_unit
-    #         else:
-    #             if self.yjzy_price_total < 0:
-    #                 self.type = 'in_refund'
-    #                 for x in self.invoice_line_ids:
-    #                     x.price_unit = -x.yjzy_price_unit
-    #             else:
-    #                 self.type = 'in_invoice'
-    #                 for x in self.invoice_line_ids:
-    #                     x.price_unit = x.yjzy_price_unit
-
-    # @api.onchange('yjzy_payment_term_id')
-    # def onchange_payment_term(self):
-    #     self.payment_term_id = self.yjzy_payment_term_id
-
-    # @api.onchange('yjzy_currency_id')
-    # def onchange_currency_id(self):
-    #     self.currency_id = self.yjzy_currency_id
 
     def open_customer_invoice_id(self):
         form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form')
@@ -1946,39 +1746,7 @@ class account_invoice(models.Model):
     #     for one in self:
     #         one.payment_term_id = one.yjzy_payment_term_id
     #     return super(account_invoice, self).write(vals)
-    def create_invoice_id(self):
-        self.ensure_one()
-        invoice_id = self.env['account.invoice'].create({
-                'yjzy_invoice_id': self.id,  # [line.id for line in self],
-                'partner_id': self.partner_id.id,
-                'type': 'out_invoice',
-                'journal_type': 'sale',
-                'yjzy_type': 'sale',
-                'is_yjzy_invoice': True,
-                'payment_term_id':self.payment_term_id.id,
-                'currency_id':self.currency_id.id,
-                'include_tax':self.include_tax,
-                'date_ship':self.date_ship,
-                'date_finish':self.date_finish,
-                'date_invoice':self.date_invoice,
-                'date':self.date,
-                'date_out_in':self.date_out_in,
-                'bill_id':self.bill_id.id,
-                'gongsi_id':self.gongsi_id.id,
-        })
-        form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form')
-        print('test', self.payment_term_id, self.currency_id)
-        return {
-            'type': 'ir.actions.act_window',
-            'view_mode': 'form',
-            'res_model': 'account.invoice',
-            'views': [(form_view.id, 'form')],
-            'res_id': invoice_id.id,
-            'target': 'current',
-            'context': {
-                'only_ref': 1,},
-            'flags': {'form': {'initial_mode': 'view', 'action_buttons': False}}
-        }
+
 
     def invoice_assign_outstanding_credit(self):
         self.ensure_one()
@@ -1997,43 +1765,6 @@ class account_invoice(models.Model):
             print('todo',todo_lines,self.yjzy_invoice_id)
             for todo in todo_lines:
                 self.assign_outstanding_credit(todo.id)
-
-    # def create_yshxd_new(self):
-    #     sfk_type = 'yshxd'
-    #     domain = [('code', '=', 'ysdrl'), ('company_id', '=', self.env.user.company_id.id)]
-    #     name = self.env['ir.sequence'].next_by_code('sfk.type.%s' % sfk_type)
-    #     journal = self.env['account.journal'].search(domain, limit=1)
-    #     account_obj = self.env['account.account']
-    #     bank_account = account_obj.search([('code', '=', '10021'), ('company_id', '=', self.env.user.company_id.id)],
-    #                                       limit=1)
-    #     yshxd =self.env['account.reconcile.order'].create({
-    #         'partner_id': self[0].partner_id.id,
-    #         'manual_payment_currency_id':self[0].currency_id.id,
-    #         'invoice_ids':self.ids,
-    #         'payment_type':'inbound',
-    #         'partner_type':'customer',
-    #         'sfk_type':'yshxd',
-    #         'be_renling':True,
-    #         'name':name,
-    #         'journal_id':journal.id,
-    #         'payment_account_id':bank_account.id
-    #     })
-    #
-    #     yshxd.make_lines()
-    #
-    #     form_view = self.env.ref('yjzy_extend.account_reconcile_order_form_view')
-    #     return {
-    #         'name': u'应收核销单',
-    #         'view_type': 'form',
-    #         'view_mode': 'form',
-    #         'res_model': 'account.reconcile.order',
-    #         'type': 'ir.actions.act_window',
-    #         'views': [(form_view.id, 'form')],
-    #         'res_id': yshxd.id,
-    #         'target': 'current',
-    #         'flags': {'form': {'initial_mode': 'view','action_buttons': False}}
-    #     }
-
 
 
     def _stage_find(self, domain=None, order='sequence'):
@@ -2107,8 +1838,8 @@ class account_invoice(models.Model):
                 'views': [(tree_view.id, 'tree')],
                 'domain': [('invoice_id', 'in', [one.id]),('order_id.state','=','done')],
                 'target':'new'
-
             }
+
     def open_supplier_reconcile_order_line(self):
         self.ensure_one()
         #form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form')
@@ -2125,19 +1856,6 @@ class account_invoice(models.Model):
                 'target':'new'
             }
 
-    # def name_get(self):
-    #     ctx = self.env.context
-    #     print('=111====', ctx)
-    #
-    #
-    #     res = []
-    #     for one in self:
-    #         if ctx.get('params', {}).get('model', '') == 'transport.bill' and:
-    #             name = '%s %s' % (one.partner_id.name or '',  one.date_finish or '')
-    #         else:
-    #             name = '暂无交单时间'
-    #         res.append((one.id, name))
-    #     return res
     @api.multi
     def name_get(self):
         show_date_finish = self.env.context.get('show_date_finish')
@@ -2159,38 +1877,6 @@ class account_invoice(models.Model):
             res.append((one.id, name))
         print('=111====',res)
         return res
-
-    # def name_get(self):
-    #     # 多选：显示名称=（如果有客户编号显示客户编码，否则显示内部编码）+商品名称+关键属性，关键属性，供应商型号
-    #     result = []
-    #
-    #     only_name = self.env.context.get('only_name')
-    #     only_code = self.env.context.get('only_code')
-    #
-    #     # cat_name = self.env.context.get('cat_name')
-    #     # print('==name_get==', only_name, self.env.context)
-    #
-    #     def _get_name(one):
-    #         if only_name:
-    #             name = one.name
-    #         elif only_code:
-    #             name = one.default_code
-    #         # elif cat_name:
-    #         #    name = '%s-%s-%s' % (one.categ_id.parent_id.name, one.categ_id.name, one.name)
-    #         else:
-    #             name = '[%s]%s{%s}' % (one.default_code, one.name, one.key_value_string)
-    #
-    #         ref = one.customer_ref or one.customer_ref2
-    #         if ref:
-    #             name = '(%s)%s' % (ref, name)
-    #         return name
-    #
-    #     for one in self:
-    #         result.append((one.id, _get_name(one)))
-    #     return result
-
-
-
 
 
 
