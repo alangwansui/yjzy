@@ -258,7 +258,7 @@
                         <!--                                </tree>-->
                         <!--                            </field>-->
                         <!--                        </page>-->
-                        <page string="预付认领日志" attrs="{'invisible':[('advance_reconcile_order_line_ids_count','=',0),('aml_com_yfzk_ids_count','=',0)}">
+                        <page string="预付认领日志" attrs="{'invisible':[('advance_reconcile_order_line_ids_count','=',0),('aml_com_yfzk_ids_count','=',0)]}">
                             <group col="2">
                                 <group string="预付认领财务日志" attrs="{'invisible':[('aml_com_yfzk_ids_count','=',0)]}">
                                     <field name="aml_com_yfzk_ids" readonly="1" nolabel="1" colspan="2">
