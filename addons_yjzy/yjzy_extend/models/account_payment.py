@@ -748,8 +748,8 @@ class account_payment(models.Model):
         for one in self:
             if one.sfk_type in ['yfsqd','ysrld']:
                 for x in one.move_line_ids:
-                    if (x.account_id.code == '1123' or x.account_id.code =='112301') and (x.new_advance_payment_id != self or not x.new_advance_payment_id:
-                        x.new_advance_payment_id = one.id
+                    if (x.account_id.code == '1123' or x.account_id.code =='112301') and (x.new_advance_payment_id != self or not x.new_advance_payment_id):
+                        x.write({'new_advance_payment_id' : one.id})
 
 
 
