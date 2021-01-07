@@ -36,6 +36,7 @@
                     <separator/>
                     <group expand="1" string="Group By">
                         <filter string="状态分组" name="group_by_state" domain="[]" context="{'group_by':'state'}"/>
+                        <filter string="核销分组" name="group_by_state_1_attribute" domain="[]" context="{'group_by':('invoice_attribute_all_in_one','state_1')}"/>
                         <filter string="状态1分组" name="group_by_state_1" domain="[]" context="{'group_by':'state_1'}"/>
                         <filter string="类型分组" name="group_by_sfk_type" domain="[]" context="{'group_by':'sfk_type'}"/>
                         <filter string="账单核销类型分组" name="group_by_invoice_attribute_all_in_one" domain="[]"

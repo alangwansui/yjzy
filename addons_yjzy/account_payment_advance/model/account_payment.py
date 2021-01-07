@@ -27,6 +27,9 @@ class AccountPayment(models.Model):
         elif sfk_type == 'ysrld':
             account = self.env['account.account'].search([('code', '=', '2203')], limit=1)
             return account.id
+        elif sfk_type == 'jiehui':
+
+            return False
 
 
         if ctx.get('default_advance_ok'):

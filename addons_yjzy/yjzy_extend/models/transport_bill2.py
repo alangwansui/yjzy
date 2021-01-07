@@ -19,7 +19,7 @@ class transport_bill(models.Model):
             for x in one.hsname_all_ids:
                 print('hsname_all_ids_akiny',x.id, x.purchase_amount_min_forecast)
             purchase_amount_max_add_forecast_total = sum(x.purchase_amount_max_add_forecast for x in hsname_all_ids)
-            purchase_amount_min_add_forecast_total = sum(x.purchase_amount_min_add_forecast for x in hsname_all_ids)
+
             purchase_amount2_tax_total = sum(x.purchase_amount2_tax for x in hsname_all_ids)
             purchase_amount2_no_tax_total = sum(x.purchase_amount2_no_tax for x in hsname_all_ids)
             purchase_amount2_add_actual_total = sum(x.purchase_amount2_add_actual for x in hsname_all_ids)
@@ -30,7 +30,7 @@ class transport_bill(models.Model):
             one.purchase_amount_max_forecast_total = purchase_amount_max_forecast_total
             one.purchase_amount_min_forecast_total = purchase_amount_min_forecast_total
             one.purchase_amount_max_add_forecast_total = purchase_amount_max_add_forecast_total
-            one.purchase_amount_min_add_forecast_total = purchase_amount_min_add_forecast_total
+
             one.purchase_amount2_tax_total = purchase_amount2_tax_total
             one.purchase_amount2_no_tax_total = purchase_amount2_no_tax_total
             one.purchase_amount2_add_actual_total = purchase_amount2_add_actual_total
@@ -38,6 +38,13 @@ class transport_bill(models.Model):
             one.purchase_amount_max_add_rest_total = purchase_amount_max_add_rest_total
             # one.purchase_back_tax_amount2_new_new_total = purchase_back_tax_amount2_new_new_total
             # one.purchase_back_tax_amount2_rest_total = purchase_back_tax_amount2_rest_total
+
+    @api.depends('hsname_all_ids','hsname_all_ids.purchase_amount_min_add_forecast')
+    def compute_purchase_amount_min_add_forecast_total(self):
+        for one in self:
+            hsname_all_ids = one.hsname_all_ids
+            purchase_amount_min_add_forecast_total = sum(x.purchase_amount_min_add_forecast for x in hsname_all_ids)
+            one.purchase_amount_min_add_forecast_total = purchase_amount_min_add_forecast_total
 
     def compute_tb_po_invoice_ids_count(self):
         for one in self:
@@ -72,16 +79,20 @@ class transport_bill(models.Model):
     purchase_amount_max_forecast_total = fields.Float('预测采购金额(下限)', digits=(2, 2), compute=_compute_overall_profit)
     purchase_amount_min_forecast_total = fields.Float('预测采购金额(上限)', digits=(2, 2), compute=_compute_overall_profit)
     purchase_amount_max_add_forecast_total = fields.Float('可增加采购额(下限)', digits=(2, 2), compute=_compute_overall_profit)
-    purchase_amount_min_add_forecast_total = fields.Float('可增加采购额(上限)', digits=(2, 2), compute=_compute_overall_profit)
+    purchase_amount_min_add_forecast_total = fields.Float('可增加采购额(上限)', digits=(2, 2), compute=compute_purchase_amount_min_add_forecast_total,store=True)
     purchase_amount_max_add_rest_total = fields.Float('采购池(下限)', digits=(2, 2), compute=_compute_overall_profit)
     purchase_amount_min_add_rest_total = fields.Float('采购池(上限)', digits=(2, 2), compute=_compute_overall_profit)
 
     purchase_amount2_tax_total = fields.Float(u'含税采购金额', compute=_compute_overall_profit)
     purchase_amount2_no_tax_total = fields.Float(u'不含税采购金额', compute=_compute_overall_profit)
     purchase_amount2_add_actual_total = fields.Float(U'实际已经增加采购额', compute=_compute_overall_profit)
+
+    back_tax_declaration_state = fields.Selection([('10','未申报'),('20','已申报')],'退税申报状态',related='back_tax_invoice_id.back_tax_declaration_state')
     # purchase_back_tax_amount2_new_new_total = fields.Float(U'新增退税总金额', compute=_compute_overall_profit)
     # purchase_back_tax_amount2_rest_total = fields.Float(U'可开票退税金额', compute=_compute_overall_profit)
     # 817
+
+
     def open_wizard_tb_po_invoice_1(self):
         self.ensure_one()
         ctx = self.env.context.copy()
@@ -507,6 +518,7 @@ class tbl_hsname(models.Model):
             one.shiji_volume = one.volume + one.tuopan_volume
     #814  后面要结合采购报关金额来处理
 
+    @api.depends('amount2','tb_id','tb_id.current_date_rate','purchase_hs_id','purchase_hs_id.amount','hs_id','hs_id.back_tax','is_po_include_tax')
     def _get_overall_profit(self):
         for one in self:
             overall_profit_max = float(self.env['ir.config_parameter'].sudo().get_param('addons_yjzy.overall_profit_max'))
@@ -530,6 +542,9 @@ class tbl_hsname(models.Model):
             one.purchase_amount_min_forecast = purchase_amount_min_forecast
             one.purchase_amount_max_add_forecast = purchase_amount_max_add_forecast
             one.purchase_amount_min_add_forecast = purchase_amount_min_add_forecast
+
+
+
 
     @api.depends('amount2')
     def compute_purchase_amount(self):
@@ -556,7 +571,7 @@ class tbl_hsname(models.Model):
     purchase_amount_max_forecast = fields.Float('预测采购金额(下限)', digits=(2, 2),compute=_get_overall_profit)
     purchase_amount_min_forecast = fields.Float('预测采购金额(上限)', digits=(2, 2), compute=_get_overall_profit)
     purchase_amount_max_add_forecast = fields.Float('可增加采购额(下限)', digits=(2, 2), compute=_get_overall_profit)
-    purchase_amount_min_add_forecast = fields.Float('可增加采购额(上限)', digits=(2, 2), compute=_get_overall_profit)
+    purchase_amount_min_add_forecast = fields.Float('可增加采购额(上限)', digits=(2, 2), compute=_get_overall_profit, store=True)
     purchase_amount2_tax = fields.Float(u'含税采购金额', compute=compute_purchase_amount)
     purchase_amount2_no_tax = fields.Float(u'不含税采购金额', compute=compute_purchase_amount)
 

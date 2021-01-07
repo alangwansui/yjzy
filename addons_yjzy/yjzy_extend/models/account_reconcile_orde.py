@@ -17,8 +17,8 @@ Account_reconcile_Selection =   [('draft',u'待预付认领草稿'),
                                  ('manager_approval',u'应付款申请待审批'),
                                  ('manager_approval_yshxd',u'应收款认领待审批'),
                                  ('manager_approval_all',u'认领待审批'),
-                                 ('post',u'未提交付款指令'),
-                                 ('fkzl',u'已提交付款指令'),
+                                 ('post',u'审批完成待付款-未提交'),
+                                 ('fkzl',u'审批完成待付款-已提交'),
                                  ('done',u'完成'),
                                  ('refused', u'已拒绝'),
                                  ('cancel', u'取消'),
@@ -774,6 +774,12 @@ class account_reconcile_order(models.Model):
 
     def action_to_fkzl(self):
         stage_id = self._stage_find(domain=[('code', '=', '055')])
+        print('action_to_fkzl',stage_id)
+        self.write({'stage_id': stage_id.id,
+                    })
+
+    def action_delete_fkzl(self):
+        stage_id = self._stage_find(domain=[('code', '=', '050')])
         print('action_to_fkzl',stage_id)
         self.write({'stage_id': stage_id.id,
                     })

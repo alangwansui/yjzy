@@ -844,8 +844,8 @@ class account_invoice(models.Model):
     residual_times_out_in_new = fields.Integer('进仓日逾期天数', compute=compute_times, store=True)
     state = fields.Selection([
         ('draft', u'未确认'),
-        ('open', u'未完成认领'),
-        ('paid', u'已完成认领'),
+        ('open', u'执行中'),
+        ('paid', u'已结束'),
         ('cancel', u'已取消'),
     ], string='Status', index=True, readonly=True, default='draft',
         track_visibility='onchange', copy=False,

@@ -93,6 +93,7 @@ class wizard_fkzl(models.TransientModel):
             if one.yfsqd_ids:
                 for x in one.yfsqd_ids:
                     x.fkzl_id = fkzl_id
+                    x.state_1 = '45_fzkl_submit'
             if one.yshx_ids:
                 for x in one.yshx_ids:
                     x.fkzl_id = fkzl_id

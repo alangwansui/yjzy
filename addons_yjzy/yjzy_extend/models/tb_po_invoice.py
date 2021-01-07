@@ -265,6 +265,15 @@ class tb_po_invoice(models.Model):
                 other_payment_invoice_residual = sum(x.residual for x in one.invoice_other_payment_in_ids)
             one.other_payment_invoice_residual = other_payment_invoice_residual
 
+    @api.depends('hsname_all_ids','hsname_all_ids.purchase_amount_min_add_rest_this_time')
+    def compute_min_add_rest_this_time_total(self):
+        for one in self:
+            purchase_amount_min_add_rest_this_time_total = sum(x.purchase_amount_min_add_rest_this_time for x in one.hsname_all_ids)
+            one.purchase_amount_min_add_rest_this_time_total = purchase_amount_min_add_rest_this_time_total
+
+    purchase_amount_min_add_rest_this_time_total = fields.Float('审批前本次可增加合计', digits=(2, 2),
+                                                                compute=compute_min_add_rest_this_time_total,store=True)
+
     other_payment_invoice_residual = fields.Monetary('其他应收应付剩余金额', currency_field='currency_id',
                                                      compute=compute_other_residual, store=True)
     other_payment_invoice_residual_yjzy = fields.Monetary('关联其他应收付', currency_field='currency_id',
@@ -375,7 +384,7 @@ class tb_po_invoice(models.Model):
     price_total = fields.Monetary('金额合计',currency_field='currency_id',compute=compute_info_store,store=True)
 
 
-    state = fields.Selection([('10_draft',u'草稿'),('20_submit',u'已提交'),('30_done','审批完成'),('80_refuse',u'拒绝'),('90_cancel',u'取消')],u'状态',index=True, track_visibility='onchange', default='10_draft')
+    state = fields.Selection([('10_draft',u'草稿'),('20_submit',u'已提交待审批'),('30_done','审批完成已生成账单'),('80_refuse',u'拒绝'),('90_cancel',u'取消')],u'状态',index=True, track_visibility='onchange', default='10_draft')
     type = fields.Selection([('reconcile', '核销账单'),('extra', '额外账单'), ('other_po', '直接增加'),('expense_po', u'费用转换'),('other_payment',u'其他收付')],u'类型')
     name = fields.Char('编号', default=lambda self: self.env['ir.sequence'].next_by_code('tb.po.invoice'))
     name_title = fields.Char(u'账单描述')
@@ -458,6 +467,14 @@ class tb_po_invoice(models.Model):
     yjzy_invoice_residual_amount = fields.Float('原始未付总金额', compute=compute_info_store, store=True)
     yjzy_invoice_include_tax = fields.Boolean('原始采购是否含税', compute=compute_info_store, store=True)
     extra_invoice_include_tax = fields.Boolean('原始账单是否含税')
+
+
+    #要让字段升级后，再进行添加 akiny参考 数据验证
+    @api.constrains('purchase_amount_min_add_rest_this_time_total','purchase_amount2_add_this_time_total')
+    def check_fields_one(self):
+        for one in self:
+            if one.purchase_amount2_add_this_time_total > one.purchase_amount_min_add_rest_this_time_total:
+                raise Warning('增加采购金额不允许大于可增加采购金额')
 
 
     # @api.onchange('other_invoice_product_id')

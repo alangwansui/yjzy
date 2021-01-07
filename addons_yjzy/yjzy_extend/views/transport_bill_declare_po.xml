@@ -356,7 +356,7 @@
             <field name="res_model">transport.bill</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form,kanban</field>
-            <field name="domain">[]</field>
+            <field name="domain">[('purchase_amount_min_add_forecast_total','&gt;',0),('back_tax_declaration_state','=','10')]</field>
             <field name="limit">20</field>
             <field name="search_view_id" ref="view_transport_bill_tenyale_filter"/>
             <field name="context">{'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3,'show_po_code':1}</field>

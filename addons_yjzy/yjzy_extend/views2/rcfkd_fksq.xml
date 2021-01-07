@@ -50,7 +50,7 @@
                    attrs="{'invisible':[('state_1','not in',['35_account_approve'])]}"/>
                     <button name="action_draft_new" class="oe_highlight" string="重置草稿" type="object"
                             attrs="{'invisible':[('state_1','not in',['80_refused'])]}"/>
-                     <field name="state_fkzl" widget="statusbar" statusbar_visible=" "/>
+<!--                     <field name="state_fkzl" widget="statusbar" statusbar_visible=" "/>-->
                 </header>
                 <header groups="base.group_system">
                     <button name="compute_balance" class="oe_highlight"  string="计算余额" type="object" groups="base.group_system"/>

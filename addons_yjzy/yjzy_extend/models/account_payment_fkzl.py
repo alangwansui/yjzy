@@ -96,7 +96,9 @@ class account_payment(models.Model):
                     x.fkzl_id = fkzl_id
             if one.yfsqd_ids:
                 for x in one.yfsqd_ids:
+                    print('state_1_akiny',x.state_1)
                     x.fkzl_id = fkzl_id
+                    x.state_1 = '45_fzkl_submit'
             if one.yshx_ids:
                 for x in one.yshx_ids:
                     x.fkzl_id = fkzl_id
@@ -109,6 +111,30 @@ class account_payment(models.Model):
 
             one.state_fkzl = '07_post_fkzl'
 
+    def unlink(self):
+        for one in self:
+            if one.sfk_type == 'fkzl':
+                for i in one.fksqd_2_ids:
+                    if i.yfsqd_ids:
+                        for x in i.yfsqd_ids:
+                            print('state_1_akiny', x.state_1)
+                            x.fkzl_id = False
+                            x.state_1 = '40_approve'
+                    if i.yshx_ids:
+                        for x in i.yshx_ids:
+                            x.fkzl_id = False
+                            print('x_akiny', x)
+                            x.action_delete_fkzl()
+                            for yingfurld in x.reconcile_payment_ids:
+                                yingfurld.fkzl_id = False
+                            for line_no in x.line_no_ids:
+                                line_no.fkzl_id = False
+                    i.state_fkzl = '05_fksq'
+
+
+
+
+        return super(account_payment, self).unlink()
 
 
 

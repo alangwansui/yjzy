@@ -210,10 +210,10 @@
                             <field name="payment_method_code" invisible="1"/>
                             <field name="advance_balance_total" string="未认领预付"
                                    invisible="context.get('operation')"
-                                   attrs="{'invisible':[('state_1','not in',['40_approve','50_posted','60_done'])]}"/>
+                                   attrs="{'invisible':[('state_1','not in',['50_posted','60_done'])]}"/>
                             <field name="amount_advance_org_all" string="完成认领预付"
                                    invisible="context.get('operation')"
-                                   attrs="{'invisible':[('state_1','not in',['40_approve','50_posted','60_done'])]}"/>
+                                   attrs="{'invisible':[('state_1','not in',['50_posted','60_done'])]}"/>
                         </group>
                         <group>
                             <field name="supplier_payment_term_id" readonly="1" options="{'no_open':1}"/>
@@ -227,12 +227,12 @@
                             <field name="payment_date" string="预付申请日期" readonly="1"
                                    attrs="{'readonly': ['|',('state_1','!=','10_draft'),('state', '!=', 'draft')]}"/>
                             <field name="yjzy_payment_id" groups="base.group_system" string="对应付款申请"
-                                   attrs="{'invisible':[('state_1','not in',['40_approve','50_posted','60_done'])]}"
+                                   attrs="{'invisible':[('state_1','not in',['40_approve','45_fzkl_submit','50_posted','60_done'])]}"
                                    domain="[('sfk_type', '=', 'rcfkd')]" readonly="1"
                                    context="{'form_view_ref': 'yjzy_extend.view_rcfkd_fksq_form'}"/>
                             <field name="yjzy_payment_currency_id" string="货币" invisible="1"
-                                   attrs="{'readonly':[('state_1','not in',['40_approve','50_posted','60_done'])],
-                                   'invisible':[('state_1','not in',['40_approve','50_posted','60_done'])]}"/>
+                                   attrs="{'readonly':[('state_1','not in',['40_approve','45_fzkl_submit','50_posted','60_done'])],
+                                   'invisible':[('state_1','not in',['40_approve','45_fzkl_submit','50_posted','60_done'])]}"/>
                             <field name="yjzy_payment_balance" string="付款单余额" groups="base.group_system"/>
 
                             <field name="sale_uid" string="责任人" attrs="{'readonly':1}"
@@ -531,10 +531,10 @@
                             <field name="payment_method_code" invisible="1"/>
                             <field name="advance_balance_total" string="未认领预付"
                                    invisible="context.get('operation')"
-                                   attrs="{'invisible':[('state_1','not in',['40_approve','50_posted','60_done'])]}"/>
+                                   attrs="{'invisible':[('state_1','not in',['40_approve','45_fzkl_submit','50_posted','60_done'])]}"/>
                             <field name="amount_advance_org_all" string="完成认领预付"
                                    invisible="context.get('operation')"
-                                   attrs="{'invisible':[('state_1','not in',['40_approve','50_posted','60_done'])]}"/>
+                                   attrs="{'invisible':[('state_1','not in',['40_approve','45_fzkl_submit','50_posted','60_done'])]}"/>
                         </group>
                         <group>
                             <field name="supplier_payment_term_id"/>
@@ -797,7 +797,7 @@
         <field name="view_mode">tree,form</field>
         <field name="domain">
             [('sfk_type','=','yfsqd'),('state_1','in',['10_draft','20_account_submit','25_cashier_submit',
-            '30_manager_approve','40_approve','50_posted'])]
+            '30_manager_approve','40_approve','45_fzkl_submit','50_posted'])]
         </field>
         <field name="context">{'search_default_group_by_state_1':1,'show_shoukuan': True, 'default_sfk_type': 'yfsqd',
             'default_payment_type': 'outbound', 'default_be_renling': True, 'default_advance_ok': True,
@@ -862,7 +862,7 @@
         <field name="view_mode">tree,form</field>
         <field name="domain">
             [('sfk_type','=','yfsqd'),('state_1','in',['10_draft','20_account_submit','25_cashier_submit',
-            '30_manager_approve','40_approve','50_posted','60_done','80_refused','90_cancel'])]
+            '30_manager_approve','40_approve','45_fzkl_submit','50_posted','60_done','80_refused','90_cancel'])]
         </field>
         <field name="context">{'display_name_code':1,'search_default_group_by_state_1':1,'show_shoukuan': True,
             'default_sfk_type': 'yfsqd',

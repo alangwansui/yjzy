@@ -494,6 +494,7 @@
                                        attrs="{'invisible':[('type','!=','extra')]}"/>
                                 <field name="yjzy_invoice_residual_amount" string="原始未付金额"
                                        attrs="{'invisible':['|',('yjzy_invoice_id','=',False),('type','not in',['other_po','extra'])]}"/>
+
                                 <field name="yjzy_invoice_include_tax" string="原始采购含税" attrs="{'invisible':1}"/>
                                 <!--                                <label for="" name="yjzy_invoice_residual_amount"-->
                                 <!--                                       attrs="{'invisible':['|',('yjzy_invoice_id','=',False),('type','not in',['other_po','extra'])]}">-->
@@ -626,6 +627,7 @@
                                 </group>
 
                                 <group attrs="{'invisible':[('is_tb_hs_id','=',False)]}">
+                                    <field name="purchase_amount_min_add_rest_this_time_total" string="可增加采购金额" attrs="{'invisible':[('type','!=','other_po')]}"/>
                                     <label for="" name="purchase_amount2_add_this_time_total">
                                         <b attrs="{'invisible':[('type','!=','other_po')]}">
                                             本次增加应付

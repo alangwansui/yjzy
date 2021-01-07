@@ -480,7 +480,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[('sfk_type','=','reconcile_yfsqd')]</field>
-            <field name="context">{'bank_amount':1,'show_shoukuan': True, 'default_sfk_type': 'reconcile_yfsqd',
+            <field name="context">{'search_default_group_by_state_1':1,'bank_amount':1,'show_shoukuan': True, 'default_sfk_type': 'reconcile_yfsqd',
                 'default_payment_type': 'outbound',
                 'default_be_renling': True, 'default_advance_ok': True, 'default_partner_type': 'supplier',}
             </field>
@@ -489,7 +489,7 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_yfsqd_reconcile_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_ysrld_reconcile_form')})]"/>
         </record>
-        <menuitem id="menu_yfsqd_reconcile" parent="menu_purchase_to_reconcile" name="预府核销" sequence="10"
+        <menuitem id="menu_yfsqd_reconcile" parent="menu_yfhx_main_reconcile" name="查询预付核销" sequence="10"
                   action="action_yfsqd_reconcile"/>
 
         <record id="action_yfsqd_no_done_reconcile" model="ir.actions.act_window">
@@ -510,6 +510,7 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_ysrld_reconcile_form')})]"/>
         </record>
         <menuitem id="menu_yfsqd_no_done_reconcile" parent="menu_yfhx_main_reconcile" name="待批准预付核销" sequence="10"
+                  groups="base.group_system"
                   action="action_yfsqd_no_done_reconcile"/>
 
         <record id="action_yfsqd_done_reconcile" model="ir.actions.act_window">
@@ -529,6 +530,7 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_ysrld_reconcile_form')})]"/>
         </record>
         <menuitem id="menu_yfsqd_done_reconcile" parent="menu_yfhx_main_reconcile" name="已批准预付核销" sequence="10"
+                  groups="base.group_system"
                   action="action_yfsqd_done_reconcile"/>
 
 
@@ -539,7 +541,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[('sfk_type','=','reconcile_ysrld')]</field>
-            <field name="context">{'bank_amount':1,'show_shoukuan': True, 'default_sfk_type': 'reconcile_yfsqd',
+            <field name="context">{'search_default_group_by_state_1':1,'bank_amount':1,'show_shoukuan': True, 'default_sfk_type': 'reconcile_yfsqd',
                 'default_payment_type': 'inbound',
                 'default_be_renling': True, 'default_advance_ok': True, 'default_partner_type': 'customer',}
             </field>
@@ -548,7 +550,7 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_ysrld_reconcile_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_ysrld_reconcile_form')})]"/>
         </record>
-        <menuitem id="menu_ysrld_reconcile" parent="menu_sale_to_reconcile" name="预收核销" sequence="10"
+        <menuitem id="menu_ysrld_reconcile" parent="menu_sale_to_reconcile" name="查询预收核销" sequence="10"
                   action="action_ysrld_reconcile"/>
 
         <record id="action_yfhxd_reconcile" model="ir.actions.act_window">
@@ -558,7 +560,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[('sfk_type','=','reconcile_yingfu')]</field>
-            <field name="context">{'group_by_invoice_attribute_all_in_one':1, 'default_sfk_type': 'reconcile_yingfu',
+            <field name="context">{'search_default_group_by_state_1_attribute':1, 'default_sfk_type': 'reconcile_yingfu',
                 'default_payment_type': 'outbound',
                 'default_be_renling': True, 'default_advance_ok': True, 'default_partner_type': 'supplier',}
             </field>
@@ -567,8 +569,8 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_yfhxd_reconcile_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_ysrld_reconcile_form')})]"/>
         </record>
-        <menuitem id="menu_yfhxd_reconcile" parent="menu_purchase_to_reconcile" name="应付核销" sequence="10"
-                  groups="base.group_system"
+        <menuitem id="menu_yfhxd_reconcile" parent="menu_yingfuhx_main_reconcile" name="查询应付核销" sequence="10"
+
                   action="action_yfhxd_reconcile"/>
 
         <record id="action_yfhxd_no_done_reconcile" model="ir.actions.act_window">
@@ -588,6 +590,7 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_ysrld_reconcile_form')})]"/>
         </record>
         <menuitem id="menu_yfhxd_no_done_reconcile" parent="menu_yingfuhx_main_reconcile" name="待批准应付核销" sequence="20"
+                  groups="base.group_system"
                   action="action_yfhxd_no_done_reconcile"/>
 
         <record id="action_yfhxd_done_reconcile" model="ir.actions.act_window">
@@ -608,6 +611,7 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_ysrld_reconcile_form')})]"/>
         </record>
         <menuitem id="menu_yfhxd_done_reconcile" parent="menu_yingfuhx_main_reconcile" name="已批准应付核销" sequence="30"
+                  groups="base.group_system"
                   action="action_yfhxd_done_reconcile"/>
 
         <!--        <record id="action_zzdyfhxd_reconcile" model="ir.actions.act_window">-->
@@ -675,7 +679,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[('sfk_type','=','reconcile_yingshou')]</field>
-            <field name="context">{'group_by_invoice_attribute_all_in_one':1, 'default_sfk_type': 'reconcile_yingshou',
+            <field name="context">{'search_default_group_by_state_1_attribute':1, 'default_sfk_type': 'reconcile_yingshou',
                 'default_payment_type': 'inbound',
                 'default_be_renling': True, 'default_advance_ok': True, 'default_partner_type': 'customer',}
             </field>
@@ -684,7 +688,7 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_yshxd_reconcile_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_ysrld_reconcile_form')})]"/>
         </record>
-        <menuitem id="menu_yshxd_reconcile" parent="menu_sale_to_reconcile" name="应收核销" sequence="20"
+        <menuitem id="menu_yshxd_reconcile" parent="menu_sale_to_reconcile" name="查询应收核销" sequence="20"
                   action="action_yshxd_reconcile"/>
 
     </data>

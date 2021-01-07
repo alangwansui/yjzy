@@ -401,6 +401,15 @@ class account_payment(models.Model):
         for one in self:
             one.compute_invoice_log_id_after = one.invoice_log_id_this_time - one.amount
 
+    @api.depends('jiehui_in_amount','amount')
+    def compute_jiehui_current_rate(self):
+        for one in self:
+            amount = one.amount
+            jiehui_in_amount = one.jiehui_in_amount
+            jiehui_current_rate = jiehui_in_amount != 0 and  amount / jiehui_in_amount or 0
+            one.jiehui_current_rate = jiehui_current_rate
+
+
     reconcile_type = fields.Selection([
         ('03_advance_in', u'预收生成'),
         ('04_advance_out', u'预付生成'),
@@ -520,8 +529,9 @@ class account_payment(models.Model):
                                 ('25_cashier_submit',u'待出纳审批'),
                                 ('30_manager_approve',u'待总经理审批'),
                                 ('35_account_approve', u'待会计核对确认'),
-                                ('40_approve',u'审批完成'),
-                                ('50_posted',u'等待完成认领'),
+                                ('40_approve',u'审批完成待付款-未提交'),
+                                ('45_fzkl_submit','审批完成待付款-已提交'),
+                                ('50_posted',u'等待认领'),
                                 ('60_done',u'完成'),#认领全部完成
                                 ('70_checked',u'已对账'),
                                 ('80_refused',u'已拒绝'),
@@ -673,6 +683,10 @@ class account_payment(models.Model):
     jiehui_amount_currency = fields.Float('结汇外币余额')
     jiehui_rate = fields.Float(u'结汇平均汇率', default=1)
     jiehui_in_amount = fields.Float('结汇转入余额')
+
+
+    jiehui_current_rate = fields.Float(u'结汇当日汇率', compute=compute_jiehui_current_rate,store=True)
+
 
     payment_date_confirm = fields.Datetime('付款确认时间') ##akiny 付款确认时间
 

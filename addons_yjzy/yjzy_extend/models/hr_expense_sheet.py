@@ -264,7 +264,17 @@ class hr_expense_sheet(models.Model):
         else:
             raise Warning('不允许直接提交总经理')
 
-
+    # def action_to_fkzl(self):
+    #     stage_id = self._stage_find(domain=[('code', '=', '055')])
+    #     print('action_to_fkzl',stage_id)
+    #     self.write({'stage_id': stage_id.id,
+    #                 })
+    #
+    # def action_delete_fkzl(self):
+    #     stage_id = self._stage_find(domain=[('code', '=', '050')])
+    #     print('action_to_fkzl',stage_id)
+    #     self.write({'stage_id': stage_id.id,
+    #                 })
             #给管理员显示
     def action_to_account_approval(self):
         stage_id = self._stage_find(domain=[('code', '=', '030')])
