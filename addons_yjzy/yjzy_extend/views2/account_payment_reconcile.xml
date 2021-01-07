@@ -247,7 +247,7 @@
 
                                 <field name="communication"
                                        attrs="{'invisible': [('state', '!=', 'draft'), ('communication', '=', False)], 'readonly': [('state', '!=', 'draft')]}"/>
-                                <field name="fault_comments"/>
+                                <field name="fault_comments" invisible="1"/>
                             </group>
                         </group>
                         <notebook>
