@@ -606,7 +606,7 @@ class account_reconcile_order(models.Model):
                                      ('25',u'同时收'),
                                      ('30', u'预付-应付'),
                                      ('40', u'应付-付款'),
-                                     ('45', u'同时收'),
+                                     ('45', u'同时付'),
                                      ('50', u'核销-应收'),
                                      ('60', u'核销-应付')],'认领来源')
     # 827
@@ -1218,8 +1218,18 @@ class account_reconcile_order(models.Model):
     def open_wizard_reconcile_invoice(self):
         self.ensure_one()
         ctx = self.env.context.copy()
+        invoice_obj = self.env['account.invoice.line']
         if self.sfk_type == 'yshxd':
-
+            so_id = self.so_id
+            if so_id:
+                invoice_lines = invoice_obj.search([('so_id', '=', so_id.id),('invoice_yjzy_type_1','=','sale')])
+                print('invoice_lines_akiny', invoice_lines)
+                invoice_ids = invoice_lines.mapped('invoice_id')
+                form_view = self.env.ref('yjzy_extend.wizard_reconcile_invoice_form').id
+            else:
+                invoice_ids = None
+                form_view = self.env.ref('yjzy_extend.wizard_reconcile_invoice_no_po_form').id
+            print('invoice_ids_akiny', invoice_ids.ids)
             ctx.update({
                 'default_partner_id': self.partner_id.id,
                 'default_order_id':self.id,
@@ -1227,6 +1237,7 @@ class account_reconcile_order(models.Model):
                 'sfk_type':self.sfk_type,
                 'default_yjzy_advance_payment_id':self.yjzy_advance_payment_id.id,
                 'default_yjzy_type':self.yjzy_type,
+                'default_yjzy_advance_payment_id_sfk_type': self.sfk_type
             })
             return {
                 'name': '添加账单',
@@ -1234,17 +1245,34 @@ class account_reconcile_order(models.Model):
                 'view_mode': 'form',
                 'res_model': 'wizard.reconcile.invoice',
                 # 'res_id': bill.id,
+                'views': [(form_view, 'form')],
                 'target': 'new',
                 'type': 'ir.actions.act_window',
                 'context': ctx,
             }
         if self.sfk_type == 'yfhxd':
+            po_id = self.yjzy_advance_payment_id.po_id
+
+            if po_id:
+                invoice_lines = invoice_obj.search([('purchase_id', '=', po_id.id)])
+                print('invoice_lines_akiny', invoice_lines)
+                invoice_ids = invoice_lines.mapped('invoice_id')
+                form_view = self.env.ref('yjzy_extend.wizard_reconcile_invoice_form').id
+            else:
+                invoice_ids = None
+                form_view = self.env.ref('yjzy_extend.wizard_reconcile_invoice_no_po_form').id
+            print('invoice_ids_akiny', invoice_ids.ids)
+
+
             ctx.update({
                 'default_partner_id': self.partner_id.id,
                 'default_order_id': self.id,
                 'default_invoice_ids': self.invoice_ids.ids,
                 'sfk_type': self.sfk_type,
-                'default_yjzy_advance_payment_id': self.yjzy_advance_payment_id.id
+                'default_yjzy_advance_payment_id': self.yjzy_advance_payment_id.id,
+                'default_invoice_po_so_ids': invoice_ids.ids,
+                'default_type': 'in_invoice',
+                'default_yjzy_advance_payment_id_sfk_type': self.sfk_type
             })
             return {
                 'name': '添加账单',
@@ -1252,6 +1280,7 @@ class account_reconcile_order(models.Model):
                 'view_mode': 'form',
                 'res_model': 'wizard.reconcile.invoice',
                 # 'res_id': bill.id,
+                'views': [(form_view, 'form')],
                 'target': 'new',
                 'type': 'ir.actions.act_window',
                 'context': ctx,
@@ -3914,8 +3943,8 @@ class advance_payment_state(models.Model):
                         'yjzy_payment_id': yjzy_payment_id,
                         'account_payment_state_id': self.id
                     })
-                    print('yjzy_payment_id_akiny',yjzy_payment_id)
-                    if yjzy_payment_id != False:
+                    print('yjzy_payment_id_akiny',yjzy_payment_id,so_id,self.advance_payment_id)
+                    if yjzy_payment_id:
                         self.reconcile_order_id.write({'line_do_ids':[(4,line.id)]})
                     line.amount_invoice_so_residual_d = line.amount_invoice_so_residual
                     line.amount_invoice_so_residual_can_approve_d = line.amount_invoice_so_residual_can_approve

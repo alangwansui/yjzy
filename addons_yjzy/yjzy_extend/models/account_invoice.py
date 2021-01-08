@@ -2100,9 +2100,9 @@ class account_invoice_line(models.Model):
     #         one.back_tax_add_this_time = back_tax_add_this_time
     #0911
     # back_tax_add_this_time = fields.Float('本次应生成退税', compute=compute_back_tax)
-
+    invoice_yjzy_type_1 = fields.Selection(string=u'发票类型',related='invoice_id.yjzy_type_1')
     item_id = fields.Many2one('invoice.hs_name.item', 'Item')
-    so_id = fields.Many2one('sale.order', u'销售订单', compute=_compute_so)
+    so_id = fields.Many2one('sale.order', u'销售订单', compute=_compute_so,store=True)
     is_manual = fields.Boolean('是否手动添加', default=False)
 
     # yjzy_price_unit = fields.Float('新单价',compute=_compute_amount)

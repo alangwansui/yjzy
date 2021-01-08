@@ -26,11 +26,12 @@
                     <button name="action_draft_new" class="oe_highlight" string="重置草稿" type="object"
 
                             attrs="{'invisible':[('state_1','not in',['80_refused'])]}"/>
+                        <button name="open_wizard_reconcile_invoice" type="object" string="创建应收认领"
+                               attrs="{'invisible':['|','|',('advance_balance_total','=',0),('state','!=','posted'),('state_1','!=','50_posted')]}"/>
                     <field name="state_1" widget="statusbar" statusbar_visible=" "/>
 
                 </header>
                 <header groups="base.group_system">
-
                     <button name="post" class="oe_highlight" states="draft" string="Confirm" type="object"
                             groups="base.group_system"/>
                     <button name="action_draft" class="oe_highlight" states="cancelled" string="Set To Draft"
