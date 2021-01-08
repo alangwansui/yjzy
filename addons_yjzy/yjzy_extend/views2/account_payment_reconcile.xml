@@ -459,7 +459,7 @@
             </field>
             <field name="search_view_id" ref="view_account_invoice_new_filter"/>
             <field name="view_ids" eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'tree', 'view_id': ref('invoice_new_1_tree')}),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('invoice_new_back_tax_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_account_invoice_new_form_in_one')})]"/>
         </record>
         <menuitem id="menu_yshxd_back_tax_to_reconcile" parent="menu_create_to_sale_reconcile" name="创建退税核销"
