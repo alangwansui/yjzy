@@ -1409,7 +1409,7 @@ class account_invoice(models.Model):
             context = dict(self._context or {})
             context['message'] = "选择的应付账单，有存在审批中的，请查验"
             context['res_model'] = "account.reconcile.order"
-            context['res_id'] = order_id.id
+            context['res_id'] = order_id[0].id
             context['views'] = self.env.ref('yjzy_extend.account_yfhxd_form_view_new').id
             context['no_advance'] = True
             print('context_akiny', context)

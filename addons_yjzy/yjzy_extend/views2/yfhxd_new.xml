@@ -43,6 +43,9 @@
                     <button name="make_lines_new" invisible="not context.get('from_tanchuang')" string="下一步:填写申请金额"
                             groups="base.group_system"
                             type="object"/>
+                    <button name="open_wizard_reconcile_invoice" type="object" string="添加应付账单"
+                            attrs="{'invisible':[('state_1','!=','draft')]}"
+                            />
                     <field name="state_1" widget="statusbar" statusbar_visible=" "/>
                 </header>
                 <header attrs="{'invisible':[('operation_wizard','in',['03','05'])]}" groups="base.group_system">
@@ -57,8 +60,7 @@
                     <button name="action_draft_new" class="oe_highlight" states="refused" string="重置草稿" type="object"/>
                     <button name="%(reconcile_refuse_wizard_action)d" string="拒绝" type="action"
                             attrs="{'invisible':[('state','=','done')]}"/>
-                    <button name="open_wizard_reconcile_invoice" type="object" string="添加应付账单"
-                            groups="base.group_system"/>
+
                     <button name="compute_invoice_ids" type="object" string="计算发票" groups="base.group_system"/>
                     <button name="create_yjzy_payment_yfrl" type="object" string="创建认领单" groups="base.group_system"/>
                     <field name="state" widget="statusbar"/>
@@ -824,6 +826,9 @@
                             states="refused"/>
                     <button name="%(reconcile_refuse_wizard_action)d" string="拒绝" type="action"
                             attrs="{'invisible':[('state_1','in',['done','refused','draft','cancel','account_approval','post'])]}"/>
+                      <button name="open_wizard_reconcile_invoice" type="object" string="添加应付账单"
+                            attrs="{'invisible':[('state_1','!=','draft')]}"
+                            />
                     <button name="make_lines_new" invisible="not context.get('from_tanchuang')" string="下一步:填写申请金额"
                             groups="base.group_system"
                             type="object"/>

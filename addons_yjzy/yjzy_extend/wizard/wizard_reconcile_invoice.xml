@@ -16,12 +16,14 @@
                     </group>
 
                     <group>
-                        <field name="invoice_ids" nolabel="1" domain="[('partner_id','=',partner_id),('state','=','open'),('type','in',['out_invoice'])]"
+                        <field name="invoice_ids" nolabel="1" domain="[('partner_id','=',partner_id),('state','=','open'),('type','in',['in_invoice'])]"
                                context="{'tree_view_ref':'yjzy_extend.invoice_new_hxd_tree'}"
                                options="{'no_create': True,'no_open':True}"/>
                     </group>
                     <footer>
                         <button name="apply" class="oe_highlight" type='object' string="确认" />
+                             <button name="create_yfhxd_new" class="oe_highlight" type='object' string="创建认领" />
+
                         <button special="cancel" class="oe_highlight" string="取消"/>
                     </footer>
                 </form>

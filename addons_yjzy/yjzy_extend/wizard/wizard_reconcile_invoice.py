@@ -19,17 +19,17 @@ class wizard_reconcile_invoice(models.TransientModel):
                                   ('purchase', '采购'),
                                   ('back_tax', '退税')], u'发票类型')
 
-    @api.onchange('btd_id')
-    def onchange_btd_id(self):
-        if not self.btd_id:
-            return {}
-        invoice_ids = self.invoice_ids
-        for line in self.btd_id.btd_line_ids.mapped('invoice_id') - self.invoice_ids:
-            invoice_ids += line
-            print('line_1111111111',line)
-        self.invoice_ids = invoice_ids
-        self.btd_id = False
-        return {}
+    # @api.onchange('btd_id')
+    # def onchange_btd_id(self):
+    #     if not self.btd_id:
+    #         return {}
+    #     invoice_ids = self.invoice_ids
+    #     for line in self.btd_id.btd_line_ids.mapped('invoice_id') - self.invoice_ids:
+    #         invoice_ids += line
+    #         print('line_1111111111',line)
+    #     self.invoice_ids = invoice_ids
+    #     self.btd_id = False
+    #     return {}
 
 
 
@@ -39,224 +39,136 @@ class wizard_reconcile_invoice(models.TransientModel):
         ctx = self.env.context
         sfk_type = ctx.get('sfk_type')
         print('ctx', ctx)
+        if len(self.invoice_ids) > 1:
+            raise Warning('不允许多张账单一起认领！')
         if len(self.invoice_ids.mapped('currency_id')) > 1:
             raise Warning('选择的发票的交易货币不一致，无法同时认领！')
-        if sfk_type == 'yshxd':
-            self.make_lines_so()
-        if sfk_type == 'yfhxd':
-            self.make_lines_po()
-
-    def make_lines_po(self):
-        self.ensure_one()
-        line_obj = self.env['account.reconcile.order.line']
-        line_no_obj = self.env['account.reconcile.order.line.no']
-        ctx = self.env.context
-        order_id = self.order_id #ctx.get('active_id')
-        self.order_id.line_ids = None
-
-        # if self.no_sopo:
-        #     for invoice in self.invoice_ids:
-        #         line_obj.create({
-        #             'order_id': self.id,
-        #             'invoice_id': invoice.id,
-        #             'amount_invoice_so': invoice.amount_total,
-        #         })
-        # else:
-        line_ids = line_obj.browse([])
-        line_id = None
-        for invoice in self.invoice_ids:
-            po_invlines = self._prepare_purchase_invoice_line(invoice)
-            if not po_invlines:
-                line_id =line_obj.create({
-                    'order_id': order_id.id,
-                    'invoice_id': invoice.id,
-                    'amount_invoice_so': invoice.amount_total,
-                })
-            else:
-                for po, invlines in po_invlines.items():
-                    line_id=line_obj.create({
-                        'order_id': order_id.id,
-                        'po_id': po.id,
-                        'invoice_id': invoice.id,
-                        'amount_invoice_so': sum([i.price_subtotal for i in invlines]),
-                    })
-            line_ids |= line_id
-        # 826
+        invoice_id = self.invoice_ids[0]
         self.order_id.invoice_ids = self.invoice_ids
-        so_po_dic = {}
-        print('line_obj', line_ids)
-        self.order_id.line_no_ids = None
-        yjzy_advance_payment_id = self.yjzy_advance_payment_id
-        for i in line_ids:
-            invoice = i.invoice_id
-            amount_invoice_so = i.amount_invoice_so
-            advance_residual = i.advance_residual
-            order = i.order_id
+        self.order_id.line_ids.unlink()
+        self.order_id.account_payment_state_ids.unlink()
+        self.order_id.make_account_payment_state_ids_from_advance(self.yjzy_advance_payment_id)
+        # self.order_id.make_lines()
+        self.order_id.write({
+            'invoice_attribute':invoice_id.invoice_attribute,
+            'yjzy_type':invoice_id.yjzy_type_1,
 
-            k = invoice.id
-            if k in so_po_dic:
-                print('k', k)
-                so_po_dic[k]['amount_invoice_so'] += amount_invoice_so
-                so_po_dic[k]['advance_residual'] += advance_residual
-            else:
-                print('k1', k)
-                so_po_dic[k] = {
-                    'invoice_id': invoice.id,
-                    'amount_invoice_so': amount_invoice_so,
-                    'advance_residual': advance_residual, }
-
-        for kk, data in list(so_po_dic.items()):
-            line_no = line_no_obj.create({
-                'order_id': order_id.id,
-                'invoice_id': data['invoice_id'],
-                'amount_invoice_so': data['amount_invoice_so'],
-                'advance_residual': data['advance_residual'],
-                'yjzy_payment_id': yjzy_advance_payment_id.id
-            })
-
-    def _prepare_purchase_invoice_line(self, inv):
-        self.ensure_one()
-        dic_po_invl = {}
-        for line in inv.invoice_line_ids:
-            if line.purchase_id:
-                po = line.purchase_id
-                if po in dic_po_invl:
-                    dic_po_invl[po] |= line
-                else:
-                    dic_po_invl[po] = line
-        return dic_po_invl
-
-    def _prepare_sale_invoice_line(self, inv):
-        self.ensure_one()
-        dic_so_invl = {}
-        for line in inv.invoice_line_ids:
-            if line.sale_line_ids:
-                so = line.sale_line_ids[0].order_id
-                if so in dic_so_invl:
-                    dic_so_invl[so] |= line
-                else:
-                    dic_so_invl[so] = line
-        return dic_so_invl or False
-
-    def make_lines_so(self):
-        self.ensure_one()
-        ctx = self.env.context
-        order_id = self.order_id#ctx.get('active_id')
-        print('order_id',order_id)
-        line_obj = self.env['account.reconcile.order.line']
-        line_no_obj = self.env['account.reconcile.order.line.no']
-
-        self.order_id.line_ids = None
-        # if self.no_sopo:
-        #     for invoice in self.invoice_ids:
-        #         line_obj.create({
-        #             'order_id': self.id,
-        #             'invoice_id': invoice.id,
-        #             'amount_invoice_so': invoice.amount_total,
-        #         })
-        # else:
-        line_ids = line_obj.browse([])
-        line_id = None
-
-        declaration_amount = 0
-        for invoice in self.invoice_ids:
-            so_invlines = self._prepare_sale_invoice_line(invoice)
-            if invoice.yjzy_type == 'back_tax' or invoice.yjzy_type_1 == 'back_tax':
-                declaration_amount = invoice.residual
-            else:
-                declaration_amount = 0
-            print('declaration_amount_0000000000',declaration_amount)
-            if not so_invlines:
-                line_id=line_obj.create({
-                    'order_id': order_id.id,
-                    'invoice_id': invoice.id,
-                    'amount_invoice_so': invoice.amount_total,
-                    'amount_payment_org':declaration_amount
-                })
-            else:
-                for so, invlines in so_invlines.items():
-                  line_id = line_obj.create({
-                        'order_id': order_id.id,
-                        'so_id': so.id,
-                        'invoice_id': invoice.id,
-                        'amount_invoice_so': sum([i.price_subtotal for i in invlines]),
-                        'amount_payment_org':sum([i.price_subtotal for i in invlines]),
-
-                    })
-            line_ids |= line_id
-        self.order_id.invoice_ids = self.invoice_ids
-        # self.order_id.invoice_attribute = self.invoice_ids[0].invoice_attribute
-        self.invoice_partner = self.invoice_ids[0].invoice_partner
-        self.name_title = self.invoice_ids[0].name_title
-        so_po_dic = {}
-        print('line_obj', line_ids)
-        self.order_id.line_no_ids = None
-        yjzy_advance_payment_id = self.yjzy_advance_payment_id
-        for i in line_ids:
-            invoice = i.invoice_id
-            amount_invoice_so = i.amount_invoice_so
-            advance_residual2 = i.advance_residual2
-
-            order = i.order_id
-
-            k = invoice.id
+        })
 
 
-            if i.invoice_id.yjzy_type == 'back_tax' or i.invoice_id.yjzy_type_1 == 'back_tax':
-                declaration_amount_1 = amount_invoice_so
-            else:
-                declaration_amount_1 = 0
-            if k in so_po_dic:
-                print('k',k)
-                so_po_dic[k]['amount_invoice_so'] += amount_invoice_so
-                so_po_dic[k]['advance_residual2'] += advance_residual2
-                so_po_dic[k]['amount_payment_org'] += declaration_amount_1
-            else:
-                print('k1', k)
-                so_po_dic[k] = {
-                                'invoice_id':invoice.id,
-                                'amount_invoice_so': amount_invoice_so,
-                                'advance_residual2': advance_residual2,
-                                # 'yjzy_payment_id': yjzy_advance_payment_id.id
-                                'amount_payment_org':declaration_amount_1,
-                }
-
-        for kk, data in list(so_po_dic.items()):
-            line_no = line_no_obj.create({
-                'order_id': order_id.id,
-                'invoice_id': data['invoice_id'],
-                'amount_invoice_so': data['amount_invoice_so'],
-                'advance_residual2': data['advance_residual2'],
-                'yjzy_payment_id': yjzy_advance_payment_id.id,
-                'amount_payment_org':data['amount_payment_org'],
-            })
+    def create_yfhxd_new(self):
+        invoice_ids = self.invoice_ids
+        state_draft = len(invoice_ids.filtered(lambda x: x.state != 'open'))
+        po_obj = self.env['purchase.order']
+        po_ids = po_obj.browse([])
+        for line in invoice_ids:
+            for x in line.invoice_line_ids:
+                po_ids |= x.purchase_id
+        print('po_ids_akiny',po_ids)
+        if self.yjzy_advance_payment_id.po_id and self.yjzy_advance_payment_id.po_id.id not in po_ids.ids:
+            raise Warning('预收的采购合同和账单的采购合同不一致！')
 
 
-    # def apply(self):
-    #     self.ensure_one()
-    #     ctx = self.env.context
-    #     bill_id = ctx.get('active_id')
-    #     tb = self.env['transport.bill'].browse(bill_id)
-    #     sale_orders = self.so_ids
-    #
-    #     if len(sale_orders.mapped('partner_id')) > 1:
-    #         raise Warning(u'必须是同一个客户的订单')
-    #
-    #     bill_line_obj = self.env['transport.bill.line']
-    #     for sol in sale_orders.mapped('order_line'):
-    #         if sol.qty_undelivered > 0:
-    #             so = sol.order_id
-    #             #so.tb_ids |= tb
-    #             bill_line_obj.create({
-    #                 'bill_id': bill_id,
-    #                 'sol_id': sol.id,
-    #                 'qty': sol.qty_undelivered,
-    #                 'qty1stage': sol.qty_unreceived,
-    #                 'back_tax': sol.product_id.back_tax,
-    #             })
-    #     return True
 
 
+
+        if len(invoice_ids) > 1:  # attribute == 'other_payment' and
+            raise Warning('不允许多张应付一起申请')
+        if state_draft >= 1:
+            raise Warning('非确认账单不允许创建付款申请')
+        hxd_line_approval_ids = self.env['account.reconcile.order.line.no'].search(
+            [('invoice_id.id', 'in', invoice_ids.ids), ('order_id.state', 'not in', ['done', 'approved'])])
+        order_id = hxd_line_approval_ids.mapped('order_id')
+
+        if hxd_line_approval_ids:
+            view = self.env.ref('sh_message.sh_message_wizard_1')
+            view_id = view and view.id or False
+            context = dict(self._context or {})
+            context['message'] = "选择的应付账单，有存在审批中的，请查验"
+            context['res_model'] = "account.reconcile.order"
+            context['res_id'] = order_id[0].id
+            context['views'] = self.env.ref('yjzy_extend.account_yfhxd_form_view_new').id
+            context['no_advance'] = True
+            print('context_akiny', context)
+            return {
+                'name': 'Success',
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'sh.message.wizard',
+                'views': [(view_id, 'form')],
+                'target': 'new',
+                'context': context,
+            }
+        sfk_type = 'yfhxd'
+        domain = [('code', '=', 'yfdrl'), ('company_id', '=', self.env.user.company_id.id)]
+        name = self.env['ir.sequence'].next_by_code('sfk.type.%s' % sfk_type)
+        journal = self.env['account.journal'].search(domain, limit=1)
+        account_obj = self.env['account.account']
+        bank_account = account_obj.search([('code', '=', '10021'), ('company_id', '=', self.env.user.company_id.id)],
+                                          limit=1)
+        form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new')
+        invoice_dic = []
+        account_reconcile_order_obj = self.env['account.reconcile.order']
+        for one in invoice_ids:
+            if one.amount_payment_can_approve_all == 0:
+                raise Warning('可申请付款金额为0，不允许提交！')
+            for x in one.yjzy_invoice_wait_payment_ids:  # 参考M2M的自动多选  剩余应付金额！=0的额外账单
+                invoice_dic.append(x.id)
+            print('amount_payment_can_approve_all_akiny', one.amount_payment_can_approve_all)
+            if one.amount_payment_can_approve_all != 0:  # 考虑已经提交审批的申请
+                invoice_dic.append(one.id)
+            print('invoice_dic', invoice_dic)
+        account_reconcile_id = account_reconcile_order_obj.with_context({'default_sfk_type': 'yfhxd',}).create({
+            'partner_id': invoice_ids[0].partner_id.id,
+            'manual_payment_currency_id': invoice_ids[0].currency_id.id,
+            'invoice_ids': [(6, 0, invoice_dic)],
+            'payment_type': 'outbound',
+            'partner_type': 'supplier',
+            'sfk_type': sfk_type,
+            'be_renling': True,
+            'name': name,
+            'journal_id': journal.id,
+            'payment_account_id': bank_account.id,
+            'yjzy_type': invoice_ids[0].yjzy_type_1,  # 1207akiny
+            'purchase_code_balance': 1,
+            'invoice_attribute': invoice_ids[0].invoice_attribute,
+            'invoice_type_main': invoice_ids[0].invoice_type_main,
+            'invoice_partner': invoice_ids[0].invoice_partner,
+            'name_title': invoice_ids[0].name_title,
+            'yjzy_advance_payment_id':self.yjzy_advance_payment_id.id,
+            'advance_po_amount': 1,
+            'show_so': 1,
+            'operation_wizard': '20',
+            'hxd_type_new': '30'
+        })
+        account_reconcile_id.write({'sfk_type':sfk_type})
+        account_reconcile_id.compute_supplier_advance_payment_ids()
+        account_reconcile_id.make_account_payment_state_ids_from_advance(self.yjzy_advance_payment_id)
+        print('account_reconcile_id_akiny',account_reconcile_id)
+        return {
+            'type': 'ir.actions.act_window',
+            'view_mode': 'form',
+            'res_model': 'account.reconcile.order',
+            'views': [(form_view.id, 'form')],
+            'res_id': account_reconcile_id.id,
+            'target': 'current',
+            'context': {
+                        }
+        }
+
+
+    def create_yfhxd(self):
+        invoice_type = self.invoice_ids.mapped('type')
+        if len(invoice_type) > 1:
+            raise Warning('不同类型的账单不允许一起申请')
+        if len(self.invoice_ids) > 1:
+            raise Warning('不允许多张账单一起认领！')
+        records = self.invoice_ids
+        if records and records[0].type in ['in_invoice']:
+            records.create_yfhxd_from_multi_invoice(records[0].invoice_attribute)
+        if records and records[0].type in ['out_invoice']:
+            records.create_yshxd_from_multi_invoice(records[0].invoice_attribute)
 
 
 #####################################################################################################################

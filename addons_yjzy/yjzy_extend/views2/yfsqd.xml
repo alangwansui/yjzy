@@ -122,6 +122,11 @@
                             attrs="{'invisible': [('state_1','not in',['30_manager_approve'])]}"/>
                     <button name="action_draft_new" class="oe_highlight" string="重置草稿" type="object"
                             attrs="{'invisible':[('state_1','not in',['80_refused'])]}"/>
+                    <button name="open_yfsqd_yfhxd_form" type="object" string="创建应付认领" invisible="1"
+                             attrs="{'invisible':['|','|',('advance_balance_total','=',0),('state','!=','posted'),('state_1','!=','50_posted')]}"/>
+                       <button name="open_wizard_reconcile_invoice" type="object" string="创建应付认领"
+                               attrs="{'invisible':['|','|',('advance_balance_total','=',0),('state','!=','posted'),('state_1','!=','50_posted')]}"/>
+
                     <field name="state_1" widget="statusbar" statusbar_visible=" "/>
                 </header>
                 <header>
@@ -190,7 +195,7 @@
                             <field name="fk_journal_id" string="付款银行" options="{'no_open':1}"
                                    attrs="{'invisible':[('state_1','in',['10_draft','80_refused','90_cancel'])],
                             'readonly':['|',('state_1','not in',['10_draft','20_account_submit']),('state', 'in', ['posted','reconciled'])]}"/>
-                            <label for="amount" string="本次认领金额"/>
+                            <label for="amount" string="本次申请金额"/>
                             <div name="amount_div" class="o_row">
                                 <field name="amount"
                                        attrs="{'readonly': ['|',('state_1','!=','10_draft'),('state', '!=', 'draft')]}"
@@ -210,10 +215,10 @@
                             <field name="payment_method_code" invisible="1"/>
                             <field name="advance_balance_total" string="未认领预付"
                                    invisible="context.get('operation')"
-                                   attrs="{'invisible':[('state_1','not in',['50_posted','60_done'])]}"/>
+                                   attrs="{'invisible':[('state_1','not in',['10_draft','50_posted','60_done'])]}"/>
                             <field name="amount_advance_org_all" string="完成认领预付"
                                    invisible="context.get('operation')"
-                                   attrs="{'invisible':[('state_1','not in',['50_posted','60_done'])]}"/>
+                                   attrs="{'invisible':[('state_1','not in',['10_draft','50_posted','60_done'])]}"/>
                         </group>
                         <group>
                             <field name="supplier_payment_term_id" readonly="1" options="{'no_open':1}"/>

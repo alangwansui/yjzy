@@ -470,11 +470,11 @@ class tb_po_invoice(models.Model):
 
 
     #要让字段升级后，再进行添加 akiny参考 数据验证
-    @api.constrains('purchase_amount_min_add_rest_this_time_total','purchase_amount2_add_this_time_total')
-    def check_fields_one(self):
-        for one in self:
-            if one.purchase_amount2_add_this_time_total > one.purchase_amount_min_add_rest_this_time_total:
-                raise Warning('增加采购金额不允许大于可增加采购金额')
+    # @api.constrains('purchase_amount_min_add_rest_this_time_total','purchase_amount2_add_this_time_total')
+    # def check_fields_one(self):
+    #     for one in self:
+    #         if one.purchase_amount2_add_this_time_total > one.purchase_amount_min_add_rest_this_time_total:
+    #             raise Warning('增加采购金额不允许大于可增加采购金额')
 
 
     # @api.onchange('other_invoice_product_id')
