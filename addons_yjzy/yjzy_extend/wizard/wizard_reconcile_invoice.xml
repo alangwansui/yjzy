@@ -21,7 +21,7 @@
                             请一次选择一条账单进行申请认领
                         </span>
                         <field name="invoice_ids" nolabel="1" domain="[('partner_id','=',partner_id),('state','=','open'),
-                        ('invoice_attribute','=','normal'),('type','in',['in_invoice']),('parent.invoice_po_ids','in',id)]"
+                        ('invoice_attribute','=','normal'),('type','in',['in_invoice']),('id','in',invoice_po_ids)]"
                                context="{'tree_view_ref':'yjzy_extend.invoice_new_supplier_1_tree'}"
                                options="{'no_create': True,'no_open':True}">
                             <tree>
