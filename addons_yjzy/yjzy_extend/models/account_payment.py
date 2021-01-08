@@ -1766,6 +1766,7 @@ class account_payment(models.Model):
         print('action',action)
         return action
 
+
     def open_yfsqd_yfhxd_form(self):
         if self.state not in '50_posted':
             raise Warning('当前状态不允许进行认领')
@@ -1773,17 +1774,22 @@ class account_payment(models.Model):
         form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new').id
         advance_reconcile = self.mapped('advance_reconcile_order_ids')
         action = self.env.ref('yjzy_extend.action_yfhxd_all_new_1').read()[0]
-        ctx={'default_partner_id':self.partner_id.id,
-                            'default_sfk_type': 'yfhxd',
-                            'default_yjzy_advance_payment_id': self.id,
-                            'default_manual_payment_currency_id': self.currency_id.id,
-                            'advance_po_amount': 1,
-                            'default_payment_type': 'outbound',
-                            'default_be_renling': 1,
-                            'default_partner_type': 'supplier',
-                            'show_so': 1,
-                            'default_operation_wizard': '20',
-                            'default_hxd_type_new':'30',}#预付-应付
+
+
+
+        ctx={
+            'default_partner_id':self.partner_id.id,
+
+            'default_sfk_type': 'yfhxd',
+            'default_yjzy_advance_payment_id': self.id,
+            'default_manual_payment_currency_id': self.currency_id.id,
+            'advance_po_amount': 1,
+            'default_payment_type': 'outbound',
+            'default_be_renling': 1,
+            'default_partner_type': 'supplier',
+            'show_so': 1,
+            'default_operation_wizard': '20',
+            'default_hxd_type_new':'30',}#预付-应付
 
 
         action['views'] = [(form_view, 'form')]
@@ -1795,12 +1801,22 @@ class account_payment(models.Model):
     def open_wizard_reconcile_invoice(self):
         self.ensure_one()
         ctx = self.env.context.copy()
+        invoice_obj = self.env['account.invoice.line']
+        po_id = self.po_id
+        if po_id:
+            invoice_lines = invoice_obj.search([('purchase_id','=',po_id.id)])
+            print('invoice_lines_akiny', invoice_lines)
+            invoice_ids = invoice_lines.mapped('invoice_id')
+            form_view = self.env.ref('yjzy_extend.wizard_reconcile_invoice_form').id
+        else:
+            invoice_ids = None
+            form_view = self.env.ref('yjzy_extend.wizard_reconcile_invoice_no_po_form').id
+        print('invoice_ids_akiny',invoice_ids.ids)
         if self.sfk_type == 'yfsqd':
             ctx.update({
                 'default_partner_id': self.partner_id.id,
-
                 'default_invoice_ids': self.invoice_ids.ids,
-
+                'default_invoice_po_ids':invoice_ids.ids,
                 'default_yjzy_advance_payment_id': self.id
             })
             return {
@@ -1809,6 +1825,7 @@ class account_payment(models.Model):
                 'view_mode': 'form',
                 'res_model': 'wizard.reconcile.invoice',
                 # 'res_id': bill.id,
+                'views': [ (form_view, 'form')],
                 'target': 'new',
                 'type': 'ir.actions.act_window',
                 'context': ctx,

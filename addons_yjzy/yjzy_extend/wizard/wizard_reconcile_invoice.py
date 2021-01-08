@@ -12,6 +12,7 @@ class wizard_reconcile_invoice(models.TransientModel):
     gongsi_id = fields.Many2one('gongsi', '内部公司')
     purchase_gongsi_id = fields.Many2one('gongsi', '内部采购公司')
     invoice_ids = fields.Many2many('account.invoice', 'ref_rec_inv', 'inv_id', 'tb_id', u'Invoice')
+    invoice_po_ids = fields.Many2many('account.invoice', 'ref_rec_inv_po', 'inv_po_id', 'tb_po_id', u'Invoice')
     order_id = fields.Many2one('account.reconcile.order',u'核销单')
     yjzy_advance_payment_id = fields.Many2one('account.payment',u'预收认领单')
     btd_id = fields.Many2one('back.tax.declaration','退税申报单')
@@ -54,6 +55,8 @@ class wizard_reconcile_invoice(models.TransientModel):
             'yjzy_type':invoice_id.yjzy_type_1,
 
         })
+
+
 
 
     def create_yfhxd_new(self):

@@ -826,7 +826,7 @@
                             states="refused"/>
                     <button name="%(reconcile_refuse_wizard_action)d" string="拒绝" type="action"
                             attrs="{'invisible':[('state_1','in',['done','refused','draft','cancel','account_approval','post'])]}"/>
-                      <button name="open_wizard_reconcile_invoice" type="object" string="添加应付账单"
+                      <button name="open_wizard_reconcile_invoice" type="object" string="添加应付账单" groups="base.group_system"
                             attrs="{'invisible':[('state_1','!=','draft')]}"
                             />
                     <button name="make_lines_new" invisible="not context.get('from_tanchuang')" string="下一步:填写申请金额"
