@@ -399,7 +399,7 @@
               action="action_create_rcskd_1103"/>
 
     <record model="ir.actions.act_window" id="action_rcskd_approval_1103">
-        <field name="name">待审批完成日常付款单</field>
+        <field name="name">待审批完成日常收款单</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">account.payment</field>
         <field name="view_type">form</field>
@@ -417,6 +417,7 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcskd_form_new')})]"/>
     </record>
     <menuitem id="menu_rcskd_approval_1103" sequence="20" name="待审批完成" parent="yjzy_extend.menu_rcskd_new"
+              groups="base.group_system"
               action="action_rcskd_approval_1103"/>
 
     <record model="ir.actions.act_window" id="action_rcskd_balance_1103">
@@ -436,6 +437,7 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcskd_form_new')})]"/>
     </record>
     <menuitem id="menu_rcskd_balance_1103" sequence="40" name="待认领" parent="yjzy_extend.menu_rcskd_new"
+              groups="base.group_system"
               action="action_rcskd_balance_1103"/>
 
     <record model="ir.actions.act_window" id="action_rcskd_no_balance_1103">
@@ -455,7 +457,27 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcskd_form_new')})]"/>
     </record>
     <menuitem id="menu_rcskd_no_balance_1103" sequence="40" name="已认领完成" parent="yjzy_extend.menu_rcskd_new"
+              groups="base.group_system"
               action="action_rcskd_no_balance_1103"/>
+
+    <record model="ir.actions.act_window" id="action_rcskd_all_1103">
+        <field name="name">日常收款单</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.payment</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form,kanban</field>
+        <field name="domain">[('sfk_type','=','rcskd')]
+        </field>
+        <field name="search_view_id" ref="view_account_payment_search_new"/>
+        <field name="context">{'search_default_group_by_state_1':1,'show_shoukuan': True, 'default_sfk_type': 'rcskd', 'default_payment_type': 'inbound',
+            'default_be_renling': False, 'default_advance_ok': True, 'default_partner_type': 'customer',}
+        </field>
+        <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_rcskd_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcskd_form_new')})]"/>
+    </record>
+    <menuitem id="menu_rcskd_all_1103" sequence="20" name="查询日常收款单" parent="yjzy_extend.menu_rcskd_new"
+              action="action_rcskd_all_1103"/>
 
 
 </odoo>
