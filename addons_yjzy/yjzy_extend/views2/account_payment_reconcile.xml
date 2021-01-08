@@ -353,7 +353,6 @@
 
         <menuitem id="menu_yfhx_main_reconcile" parent="menu_residual_reconcile_apply" name="预付核销" sequence="10"/>
         <menuitem id="menu_yingfuhx_main_reconcile" parent="menu_residual_reconcile_apply" name="应付核销" sequence="10"/>
-
         <menuitem id="menu_create_to_sale_reconcile" parent="menu_sale_reconcile_apply" name="创建核销" sequence="10"
                   groups="base.group_system"/>
         <menuitem id="menu_create_to_purchase_reconcile" parent="menu_residual_reconcile_apply" name="创建核销"

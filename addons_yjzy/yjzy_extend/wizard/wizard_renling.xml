@@ -9,10 +9,9 @@
                 <form string="创建收款认领">
                     <group>
                         <field name="renling_type"/>
-                        <field name="partner_id" attrs="{'invisible':[('renling_type','not in',['yshxd'])]}" />
-<!--                               domain="[('is_company','=',True),('parent_id', '=', False),('customer','=',1),-->
-<!--                               ('name','not in',['未定义','国税局']),('invoice_open_ids_count','!=',0)]"-->
-
+                        <field name="partner_id" attrs="{'invisible':[('renling_type','not in',['yshxd'])]}" string="认领对象"
+                           domain="[('is_company','=',True),('parent_id', '=', False),('customer','=',1),
+                               ('name','not in',['未定义','国税局']),('so_no_sent_amount','!=',0)]"/>
                           <field name="partner_advance_id" attrs="{'invisible':[('renling_type','not in',['ysrld'])]}"/>
 <!--                               domain="[('is_company','=',True),('parent_id', '=', False),('customer','=',1),-->
 <!--                               ('name','not in',['未定义','国税局'])]"-->
