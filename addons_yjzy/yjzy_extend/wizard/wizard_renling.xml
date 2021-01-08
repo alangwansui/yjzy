@@ -8,13 +8,24 @@
             <field name="arch" type="xml">
                 <form string="创建收款认领">
                     <group>
+                        <field name="yjzy_payment_id" invisible="1"/>
+                        <field name="yjzy_payment_amount" readonly="1" invisible="1"/>
+                        <field name="yjzy_payment_balance" readonly="1"/>
                         <field name="renling_type"/>
-                        <field name="partner_id" attrs="{'invisible':[('renling_type','not in',['yshxd'])]}" string="认领对象"
-                           domain="[('is_company','=',True),('parent_id', '=', False),('customer','=',1),
-                               ('name','not in',['未定义','国税局']),('so_no_sent_amount','!=',0)]"/>
-                          <field name="partner_advance_id" attrs="{'invisible':[('renling_type','not in',['ysrld'])]}"/>
-<!--                               domain="[('is_company','=',True),('parent_id', '=', False),('customer','=',1),-->
-<!--                               ('name','not in',['未定义','国税局'])]"-->
+                        <field name="partner_id" attrs="{'invisible':[('renling_type','not in',['yshxd'])]}"
+                               string="认领对象"
+                               domain="[('is_company','=',True),('parent_id', '=', False),('customer','=',1),
+                               ('name','not in',['未定义','国税局']),('invoice_open_ids_count','!=',0)]"/>
+
+
+                        <field name="partner_advance_id" attrs="{'invisible':[('renling_type','not in',['ysrld'])]}"
+                               domain="[('is_company','=',True),('parent_id', '=', False),('customer','=',1),
+                               ('name','not in',['未定义','国税局']),('so_no_sent_amount','!=',0)]"
+                        />
+
+
+                        <!--                               domain="[('is_company','=',True),('parent_id', '=', False),('customer','=',1),-->
+                        <!--                               ('name','not in',['未定义','国税局'])]"-->
 
                         <field name="so_id"
                                domain="[('partner_id','=', partner_id),('state','not in',['done','verifying','abnormal','verification','cancel','refuse'])]"
@@ -34,16 +45,18 @@
                                 如果没有需要认领的其他应收账单，请取消复选框，并选择需要认领的其他应收(一次认领一张)
                             </span>
                         </div>
-                        <field name="name_title" attrs="{'invisible':['|',('renling_type','not in',['other_payment']),('other_payment_invoice_ok','=',True)]}"/>
-                        <field name="invoice_partner" attrs="{'invisible':['|',('renling_type','not in',['other_payment']),('other_payment_invoice_ok','=',True)]}"/>
+                        <field name="name_title"
+                               attrs="{'invisible':['|',('renling_type','not in',['other_payment']),('other_payment_invoice_ok','=',True)]}"/>
+                        <field name="invoice_partner"
+                               attrs="{'invisible':['|',('renling_type','not in',['other_payment']),('other_payment_invoice_ok','=',True)]}"/>
 
                         <field name="other_payment_invoice_ok_f" invisible="1"/>
-                        <field name="other_invoice_amount"  invisible="1"
+                        <field name="other_invoice_amount" invisible="1"
                                attrs="{'invisible':['|',('renling_type','not in',['other_payment']),('other_payment_invoice_ok','=',True)]}"/>
 
                         <!--                       <button name="open_ysrld" class="oe_highlight" type="object" string="打开预收认领列表" attrs=""/>-->
                         <field name="customer_advance_payment_ids_count" invisible="1"/>
-                        <label for=" " string="待认领预收"
+                        <label for=" " string="待认领预收" invisible="1"
                                attrs="{'invisible':['|',('renling_type','not in',['yshxd']),('customer_advance_payment_ids_count','=',0)]}"/>
                         <div class="o_row" invisible="1"
                              attrs="{'invisible':['|',('renling_type','not in',['yshxd']),('customer_advance_payment_ids_count','=',0)]}">
@@ -55,22 +68,24 @@
                             </span>
                             <button name="open_ysrld" type="object" class="oe_highlight" string="打开认领操作列表"/>
                         </div>
+                          <field name="ysrld_amount" string="本次认领金额"
+                           attrs="{'invisible':['|',('renling_type','in',['back_tax','other_payment']),('step','!=','20')]}"/>
                     </group>
-                    <group col="2"  attrs="{'invisible':['|',('renling_type','not in',['ysrld']),('step','!=','20')]}">
+                    <group col="2" attrs="{'invisible':['|',('renling_type','not in',['ysrld']),('step','!=','20')]}">
                         <group>
-                        <field name="amount_total_so"/>
-
-                        <field name="so_id_currency_id" invisible="1"/>
-
-                        <field name="so_real_advance" string="已预收金额"/>
+                            <field name="amount_total_so"/>
+                            <field name="so_id_currency_id" invisible="1"/>
+                            <field name="so_real_advance" string="已预收金额"/>
                             <field name="so_pre_advance"/>
-                            </group>
+                        </group>
 
                         <group>
-                              <field name="customer_payment_term_id"/>
-                        <field name="sale_payment_term_id"/>
+                            <field name="customer_payment_term_id"/>
+                            <field name="sale_payment_term_id"/>
                         </group>
                     </group>
+
+
                     <field name="customer_advance_payment_ids" nolabel="1" invisible="1"
                            attrs="{'invisible':['|',('ysrld_ok','=',False),('renling_type','not in',['yshxd'])]}">
                         <tree string="预收认领单" edit="false" create="false">
@@ -134,7 +149,8 @@
                             <field name="comments" string="备注"/>
                         </tree>
                     </field>
-                    <field name="line_ids" invisible="1" attrs="{'invisible':['|',('renling_type','not in',['other_payment']),('other_payment_invoice_ok','=',True)]}">
+                    <field name="line_ids" invisible="1"
+                           attrs="{'invisible':['|',('renling_type','not in',['other_payment']),('other_payment_invoice_ok','=',True)]}">
                         <tree editable="bottom">
                             <field name="product_id" string="其他应收项目"/>
                             <field name="price_unit" string="金额"/>

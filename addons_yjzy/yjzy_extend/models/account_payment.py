@@ -81,7 +81,7 @@ class account_payment(models.Model):
             one.balance = balance
 
 
-    @api.depends('aml_ids','state','ysrld_ids','ysrld_ids.state')
+    @api.depends('aml_ids','state','ysrld_ids','ysrld_ids.state','ysrld_ids.state_1')
     def compute_balance(self):
         for one in self:
             balance = 0
@@ -1099,7 +1099,7 @@ class account_payment(models.Model):
         #                 'post_date': today,
         #                 'state_1': '30_manager_approve'
         #                 })
-        if ctx.get('default_sfk_type','') == 'ysrld' or self.sfk_type == 'ysrld':
+        if  self.sfk_type == 'ysrld':#ctx.get('default_sfk_type','') == 'ysrld' or
             self.write({'post_uid': self.env.user.id,
                         'post_date': today,
                         'state_1': '50_posted'
@@ -1107,6 +1107,11 @@ class account_payment(models.Model):
             print('testddddddd',self.sfk_type)
             self.post()
             self.yjzy_payment_id.compute_balance()
+            self.yjzy_payment_id.test_reconcile()
+            print('balance_akiny',self.yjzy_payment_id.balance)
+            if self.yjzy_payment_id.balance == 0 and self.yjzy_payment_id.state_1 == '50_posted':
+                self.yjzy_payment_id.state_1 = '60_done'
+
             # self.compute_advance_balance_total()
 
 
@@ -1346,10 +1351,8 @@ class account_payment(models.Model):
         res = super(account_payment, self).post()
         for one in self:
             one.payment_date_confirm = fields.datetime.now()
-
-
-
-
+            if one.sfk_type == 'ysrld':
+                self.yjzy_payment_id.compute_balance()
             if one.sfk_type == 'rcfkd':
                 one.payment_date_confirm = fields.datetime.now() ##akiny 增加付款时间
                 if one.yshx_ids:

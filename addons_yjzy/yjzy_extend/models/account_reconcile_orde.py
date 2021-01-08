@@ -2477,25 +2477,33 @@ class account_reconcile_order(models.Model):
 
         #1220
     def make_line_no(self):
+        if self.env.context.get('ysrld_amount') > 0:
+            amount = self.env.context.get('ysrld_amount')
+        else:
+            amount = 0
+        print('amount_akiny',amount)
         self.ensure_one()
         line_no_obj = self.env['account.reconcile.order.line.no']
         self.line_no_ids = None
         advance_residual2 = 0
         advance_residual = 0
         for one in self.invoice_ids:
-            if one.invoice_attribute == 'expense_po':
-                amount_payment_org = one.amount_payment_can_approve_all
-            elif one.invoice_attribute == 'other_payment':
-                amount_payment_org = one.amount_payment_can_approve_all
+            if amount > 0:
+                amount_payment_org = amount
             else:
-                amount_payment_org = one.declaration_amount
+                if one.invoice_attribute == 'expense_po':
+                    amount_payment_org = one.amount_payment_can_approve_all
+                elif one.invoice_attribute == 'other_payment':
+                    amount_payment_org = one.amount_payment_can_approve_all
+                else:
+                    amount_payment_org = one.declaration_amount
             if one.type == 'out_invoice':
                 so_ids = one.invoice_line_ids.mapped('so_id')
                 advance_residual2 = sum(x.balance for x in so_ids)
             if one.type == 'in_invoice':
                 po_ids = one.invoice_line_ids.mapped('purchase_id')
                 advance_residual = sum(x.balance for x in po_ids)
-
+            print('amount_payment_org_akiny',amount_payment_org)
             line_no = line_no_obj.create({
                 'order_id': self.id,
                 'invoice_id': one.id,
@@ -2506,6 +2514,7 @@ class account_reconcile_order(models.Model):
             line_no.amount_payment_can_approve_all_this_time = line_no.invoice_id.amount_payment_can_approve_all
             line_no.invoice_residual_this_time = line_no.invoice_residual
             self.write({'line_no_other_ids': [(4, line_no.id)]})
+
 
 
 

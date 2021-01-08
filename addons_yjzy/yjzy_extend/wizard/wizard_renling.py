@@ -89,6 +89,8 @@ class wizard_renling(models.TransientModel):
                                                  ('name', 'not in', ['未定义', '国税局'])])
 
     yjzy_payment_id = fields.Many2one('account.payment', u'日常收款单')
+    yjzy_payment_amount = fields.Monetary(u'收款单原始金额',currency_field='currency_id',related='yjzy_payment_id.amount')
+    yjzy_payment_balance = fields.Monetary(u'收款单剩余金额', currency_field='currency_id',related='yjzy_payment_id.balance')
     gongsi_id = fields.Many2one('gongsi', '内部公司')
 
     invoice_ids = fields.Many2many('account.invoice', 'ref_wz_inv', 'inv_id', 'wz_id', u'Invoice')
@@ -335,7 +337,7 @@ class wizard_renling(models.TransientModel):
             })
 
             if self.renling_type != 'yshxd':
-                yshxd_id.make_line_no()
+                yshxd_id.with_context({'ysrld_amount':self.ysrld_amount}).make_line_no()
                 yshxd_id.operation_wizard = '10'
                 stage_id = yshxd_id._stage_find(domain=[('code', '=', '035')])
                 print('_stage_find', stage_id)
@@ -344,7 +346,7 @@ class wizard_renling(models.TransientModel):
                                 # 'operation_wizard':'25'
                                 })
             else:
-                yshxd_id.make_line_no()
+                yshxd_id.with_context({'ysrld_amount':self.ysrld_amount}).make_line_no()
                 yshxd_id.make_account_payment_state_ids()
                 yshxd_id.operation_wizard = '30'
                 stage_id = yshxd_id._stage_find(domain=[('code', '=', '015')])
