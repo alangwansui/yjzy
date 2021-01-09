@@ -227,7 +227,7 @@ class account_payment(models.Model):
                 if ctx.get('only_number'):
                     name='%s' % (str(one.advance_balance_total))
                 else:
-                    name = '%s:%s' % ('预收认领单', str(one.advance_balance_total))
+                    name = '%s:%s' % ('预收认领单', one.name)
             elif one.sfk_type == 'fkzl':  #ctx.get('default_sfk_type', '') == 'fkzl' or
                 name = '%s:%s' % ('付款指令', one.name)
             elif one.sfk_type == 'rcfkd':
