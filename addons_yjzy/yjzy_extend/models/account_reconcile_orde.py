@@ -501,6 +501,10 @@ class account_reconcile_order(models.Model):
 
             one.display_name = name
 
+    def compute_account_payment_state_ids_count(self):
+        for one in self:
+            one.account_payment_state_ids_count =len(one.account_payment_state_ids)
+
 
     invoice_reconcile_order_line_no_ids = fields.One2many('account.reconcile.order.line.no', related='invoice_id.reconcile_order_line_no_ids')
     invoice_reconcile_order_line_no_ids_count = fields.Integer(u'no数量',related='invoice_id.reconcile_order_line_no_ids_count')
@@ -534,6 +538,7 @@ class account_reconcile_order(models.Model):
 
 
     account_payment_state_ids = fields.One2many('account.payment.state','reconcile_order_id')
+    account_payment_state_ids_count = fields.Integer('预收单数量',compute=compute_account_payment_state_ids_count)
 
     ysrld_amount_advance_org_all = fields.Float('预收单的本所有被认领金额',compute=compute_ysrld_amount_advance_org_all,store=True)
     ysrld_advice_amount_advance_org_all = fields.Float('预收认领单的所有被认领的原则分配金额',compute=compute_ysrld_amount_advance_org_all,store=True)
@@ -754,6 +759,13 @@ class account_reconcile_order(models.Model):
 
     is_editable = fields.Boolean(u'可编辑')
     gongsi_id = fields.Many2one('gongsi', '内部公司')
+
+    def update_move_line_new_advance_payment_id(self):
+        for one in self.line_ids.filtered(lambda x: x.amount_advance_org != 0):
+            for line in self.move_ids:
+                for x in line.line_ids:
+                    if (x.amount_currency == one.amount_advance_org or x.amount_currency == -one.amount_advance_org) and x.new_advance_payment_id != one.yjzy_payment_id:
+                        x.new_advance_payment_id = one.yjzy_payment_id
 
     def open_rcskd(self):
         form_view = self.env.ref('yjzy_extend.view_rcskd_form_new')

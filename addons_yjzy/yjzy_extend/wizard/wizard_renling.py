@@ -347,8 +347,14 @@ class wizard_renling(models.TransientModel):
                                 })
             else:
                 yshxd_id.with_context({'ysrld_amount':self.ysrld_amount}).make_line_no()
+
                 yshxd_id.make_account_payment_state_ids()
-                yshxd_id.operation_wizard = '30'
+                if yshxd_id.supplier_advance_payment_ids_count != 0:
+                    yshxd_id.operation_wizard = '30'
+                else:
+                    yshxd_id.operation_wizard = '10'
+                    yshxd_id.hxd_type_new = '20'
+
                 stage_id = yshxd_id._stage_find(domain=[('code', '=', '015')])
                 print('_stage_find', stage_id)
                 yshxd_id.write({'stage_id': stage_id.id,
