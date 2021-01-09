@@ -766,7 +766,7 @@ class account_reconcile_order(models.Model):
                 for x in line.line_ids:
                     # if (x.amount_currency == one.amount_advance_org or x.amount_currency == -one.amount_advance_org) and \
                     #         x.new_advance_payment_id != one.yjzy_payment_id:
-                    if (x.account_id.code in ['2203','2202'] or x.amount_currency == one.amount_advance_org or x.amount_currency == -one.amount_advance_org)  and one.yjzy_payment_id and x.new_advance_payment_id != one.yjzy_payment_id:
+                    if (x.account_id.code in ['2203','1123'] or x.amount_currency == one.amount_advance_org or x.amount_currency == -one.amount_advance_org)  and one.yjzy_payment_id and x.new_advance_payment_id != one.yjzy_payment_id:
                         x.new_advance_payment_id = one.yjzy_payment_id
 
     def open_rcskd(self):
