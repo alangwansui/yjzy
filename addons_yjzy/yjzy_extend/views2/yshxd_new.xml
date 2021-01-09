@@ -570,7 +570,7 @@
                                    attrs="{'invisible':[('operation_wizard','not in',['03','20','30'])]}"/>
                             <field name="amount_payment_can_approve_all_after" string="本次认领后可认领金额"
                                    attrs="{'invisible':[('operation_wizard','not in',['03','20','30'])]}"/>
-
+<field name="account_payment_state_ids_count" invisible="1"/>
                         </group>
                         <group attrs="{'invisible':['|',('account_payment_state_ids_count','=',0),('hxd_type_new','not in',['10','25'])]}">
                             <div colspan="2" style="padding-left:10px;padding-right:10px">
