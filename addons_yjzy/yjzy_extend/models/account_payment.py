@@ -1854,16 +1854,16 @@ class account_payment(models.Model):
             if po_id:
                 invoice_lines = invoice_obj.search([('purchase_id', '=', po_id.id)])
                 print('invoice_lines_akiny', invoice_lines)
-                invoice_ids = invoice_lines.mapped('invoice_id')
+                invoice_ids = invoice_lines.mapped('invoice_id').ids
                 form_view = self.env.ref('yjzy_extend.wizard_reconcile_invoice_form').id
             else:
                 invoice_ids = None
                 form_view = self.env.ref('yjzy_extend.wizard_reconcile_invoice_no_po_form').id
-            print('invoice_ids_akiny', invoice_ids.ids)
+            print('invoice_ids_akiny', invoice_ids)
             ctx.update({
                 'default_partner_id': self.partner_id.id,
                 # 'default_invoice_ids': self.invoice_ids.ids,
-                'default_invoice_po_so_ids':invoice_ids.ids,
+                'default_invoice_po_so_ids':invoice_ids,
                 'default_yjzy_advance_payment_id': self.id,
                 'default_type': 'in_invoice',
                 'default_yjzy_advance_payment_id_sfk_type':self.sfk_type
@@ -1884,16 +1884,16 @@ class account_payment(models.Model):
             if so_id:
                 invoice_lines = invoice_obj.search([('so_id', '=', so_id.id)])
                 print('invoice_lines_akiny', invoice_lines,so_id)
-                invoice_ids = invoice_lines.mapped('invoice_id')
+                invoice_ids = invoice_lines.mapped('invoice_id').ids
                 form_view = self.env.ref('yjzy_extend.wizard_reconcile_invoice_form').id
             else:
                 invoice_ids = None
                 form_view = self.env.ref('yjzy_extend.wizard_reconcile_invoice_no_po_form').id
-            print('invoice_ids_akiny', invoice_ids.ids,so_id)
+            print('invoice_ids_akiny', invoice_ids,so_id)
             ctx.update({
                 'default_partner_id': self.partner_id.id,
                 # 'default_invoice_ids': self.invoice_ids.ids,
-                'default_invoice_po_so_ids':invoice_ids.ids,
+                'default_invoice_po_so_ids':invoice_ids,
                 'default_yjzy_advance_payment_id': self.id,
                 'default_type':'out_invoice',
                 'default_yjzy_advance_payment_id_sfk_type': self.sfk_type

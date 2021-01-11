@@ -15,7 +15,7 @@ class wizard_reconcile_invoice(models.TransientModel):
     invoice_po_so_ids = fields.Many2many('account.invoice', 'ref_rec_inv_po_so', 'inv_po_so_id', 'tb_po_so_id', u'Invoice')
     order_id = fields.Many2one('account.reconcile.order',u'核销单')
     type = fields.Selection([('in_invoice','采购发票'),
-                             ('out_invoice','采购发票')])
+                             ('out_invoice','销售发票')])
     yjzy_advance_payment_id = fields.Many2one('account.payment',u'预收认领单')
     btd_id = fields.Many2one('back.tax.declaration','退税申报单')
     yjzy_type = fields.Selection([('sale', '销售'),

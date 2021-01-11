@@ -2491,7 +2491,7 @@ class account_reconcile_order(models.Model):
 
         #1220
     def make_line_no(self):
-        if self.env.context.get('ysrld_amount') > 0:
+        if self.env.context.get('ysrld_amount') and self.env.context.get('ysrld_amount') > 0:#收款-预收认领的时候进行的判断
             amount = self.env.context.get('ysrld_amount')
         else:
             amount = 0
