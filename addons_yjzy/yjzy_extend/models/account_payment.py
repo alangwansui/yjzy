@@ -1063,11 +1063,14 @@ class account_payment(models.Model):
         if self.amount <= 0:
             raise Warning('金额不为0!')
         else:
-            if ctx.get('default_sfk_type','') == 'rcskd' or self.sfk_type == 'rcskd':
-                if self.payment_comments == '':
+            if ctx.get('default_sfk_type','') == 'rcskd' or self.sfk_type == 'rcskd':#
+                payment_comments = self.payment_comments or ''
+                # if self.payment_comments == '':
+                if len(payment_comments) == 0:
                     raise Warning('请填写收款备注信息！')
                 else:
                     self.state_1 = '25_cashier_submit'
+                    self.action_cashier_post()
             elif ctx.get('default_sfk_type', '') == 'rcfkd' or self.sfk_type == 'rcfkd':
                 if not self.bank_id:
                     raise Warning('请选择付款对象的银行账号!')

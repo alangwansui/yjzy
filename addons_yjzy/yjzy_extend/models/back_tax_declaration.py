@@ -48,13 +48,33 @@ class DeclareDeclaration(models.Model):
             declaration_amount_all_residual_new = sum(x.declaration_amount_residual for x in one.btd_line_ids)
             one.declaration_amount_all_residual_new = declaration_amount_all_residual_new
 
+    def compute_display_name(self):
+        for one in self:
+            name = '%s:%s' % ('退税申报',one.name)
+            one.display_name = name
+
+
+    @api.depends('btd_line_ids')
+    def compute_invoice_ids(self):
+        tb_contract_code = ''
+        for one in self:
+            invoice_ids = one.btd_line_ids.mapped('invoice_id')
+            for x in invoice_ids:
+                tb_contract_code += '%s,' % (x.tb_contract_code)
+            one.invoice_ids = invoice_ids
+            one.tb_contract_code = tb_contract_code
+
 
     name = fields.Char('编号', default=lambda self: self.env['ir.sequence'].next_by_code('back.tax.declaration'))
+    display_name = fields.Char(u'显示名称', compute=compute_display_name)
     btd_line_ids = fields.One2many('back.tax.declaration.line','btd_id',u'申报明细')
+    invoice_ids = fields.Many2many('account.invoice',compute=compute_invoice_ids,store=True)
+    tb_contract_code = fields.Char('合同号',compute=compute_invoice_ids,store=True)
     gongsi_id = fields.Many2one('gongsi', '内部公司')
     state = fields.Selection([('draft',u'草稿'),('done',u'确认'),('paid',u'已收款'),('cancel',u'取消')],'State', default='draft')
     company_currency_id = fields.Many2one('res.currency', string='公司货币', related='company_id.currency_id',
                                           readonly=True)
+    declaration_title = fields.Char('申报说明')
     declaration_date = fields.Date('申报日期')
     invoice_amount_all = fields.Monetary(u'原始应收退税',currency_field='company_currency_id',compute=compute_invoice_amount_all, store=True)
     invoice_residual_all = fields.Monetary(u'剩余应收退税',currency_field='company_currency_id',compute=compute_invoice_residual_all,store=True)
@@ -84,9 +104,13 @@ class DeclareDeclaration(models.Model):
         return super(DeclareDeclaration, self).unlink()
 
     def action_confirm(self):
+
+
         if len(self.btd_line_ids.filtered(lambda x: x.invoice_back_tax_declaration_state == '20')) > 0:
             raise Warning('明细行存在已经申报的应收退税账单，请查验!')
         for one in self.btd_line_ids:
+            if one.declaration_amount == 0:
+                raise Warning('申报金额不允许为0')
             if one.declaration_amount > one.invoice_residual_total:
                 raise Warning('申报金额不允许大于未收退税金额！')
         if not self.declaration_date:
@@ -160,7 +184,6 @@ class DeclareDeclarationLine(models.Model):
     declaration_amount = fields.Monetary(u'退税申报金额',currency_field='invoice_currency_id')
     declaration_amount_residual = fields.Monetary(u'未收款申报金额',currency_field='invoice_currency_id',compute=compute_declaration_amount_residual,store=True)
     comments = fields.Text(u'备注')
-
 
 
 
