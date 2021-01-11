@@ -88,7 +88,7 @@
         <field name="view_mode">tree,form</field>
          <field name="context">{}</field>
     </record>
-        <menuitem id="menu_action_back_tax_declaration" name="退税申报查询"
+        <menuitem id="menu_action_back_tax_declaration" name="查询"
                   parent="yjzy_extend.menu_customer_invoice_back_tax_declaration_root" action="action_back_tax_declaration" sequence="25"/>
 
     </data>

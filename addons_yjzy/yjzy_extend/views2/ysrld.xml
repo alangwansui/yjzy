@@ -1078,7 +1078,7 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_ysrld_reconcile_tree_1')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_ysrld_form')})]"/>
     </record>
-    <menuitem id="menu_new_ysrld_balance" parent="menu_advance_payment_in_apply_root" name="未认领完成" sequence="20"
+    <menuitem id="menu_new_ysrld_balance" parent="menu_advance_payment_in_apply_root" name="创建应收认领" sequence="20"
 
               action="action_ysrld_balance"/>
 
@@ -1101,7 +1101,7 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_ysrld_form')})]"/>
     </record>
     <menuitem id="menu_new_ysrld_no_balance" parent="menu_advance_payment_in_apply_root" name="认领完成" sequence="30"
-
+                groups="base.group_system"
               action="action_ysrld_no_balance"/>
 
     <record id="action_ysrld_create" model="ir.actions.act_window">
@@ -1141,7 +1141,7 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_ysrld_reconcile_tree_1')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_ysrld_form_latest')})]"/>
     </record>
-    <menuitem id="mennu_neew_ysrld_reconcile_1" parent="menu_advance_payment_in_apply_root" name="预收认领单"
+    <menuitem id="mennu_neew_ysrld_reconcile_1" parent="menu_advance_payment_in_apply_root" name="查询"
               sequence="20"
               action="action_new_ysrld_reconcile_1"/>
     <!--    #动作用-->

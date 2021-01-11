@@ -1720,7 +1720,7 @@
 
         </record>
 
-        <menuitem id="menu_other_payment_customer_invoice_all" name="查询申请单"
+        <menuitem id="menu_other_payment_customer_invoice_all" name="查询"
                   parent="yjzy_extend.menu_customer_invoice_other_payment_apply_root"
                   sequence="20"
                   action="act_other_payment_customer_invoice_all"
@@ -1753,7 +1753,7 @@
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('tb_po_other_form')})]"/>
         </record>
-        <menuitem id="menu_other_payment_customer_invoice_create" name="创建申请单"
+        <menuitem id="menu_other_payment_customer_invoice_create" name="创建其他应收"
                   parent="yjzy_extend.menu_customer_invoice_other_payment_apply_root"
                   sequence="10"
                   action="act_other_payment_customer_invoice_create"/>

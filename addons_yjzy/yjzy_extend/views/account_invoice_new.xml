@@ -2562,7 +2562,7 @@
                               ]"/>
         </record>
         <menuitem id="menu_customer_account_invoice_other_all" action="action_customer_account_invoice_other_all"
-                  parent="menu_customer_invoice_for_goods_root" name="其他应收账单"
+                  parent="menu_customer_invoice_for_goods_root" name="其他应收"
                   sequence="30"
         />
 
@@ -2984,7 +2984,7 @@
         </record>
 
         <menuitem id="menu_customer_invoice_all" action="action_customer_invoice_all"
-                  parent="menu_customer_invoice_for_goods_root" name="主应收账单"
+                  parent="menu_customer_invoice_for_goods_root" name="主应收"
                   sequence="10"
         />
 
@@ -3009,8 +3009,8 @@
         </record>
 
         <menuitem id="menu_customer_invoice_zjcg" action="action_customer_invoice_zjcg"
-                  parent="menu_customer_invoice_for_goods_root" name="增加采购应收账单"
-                  sequence="20"
+                  parent="menu_customer_invoice_for_goods_root" name="增加采购应收"
+                  sequence="40"
         />
 
 
@@ -3037,8 +3037,8 @@
         </record>
 
         <menuitem id="menu_back_tax_invoice_all" action="action_back_tax_invoice_all"
-                  parent="menu_customer_invoice_back_tax_root" name="应收退税账单"
-                  sequence="10"
+                  parent="menu_customer_invoice_for_goods_root" name="退税应收"
+                  sequence="20"
         />
 
         <record id="action_back_tax_invoice_normal" model="ir.actions.act_window">
@@ -3060,7 +3060,7 @@
                               ]"/>
         </record>
 
-        <menuitem id="menu_back_tax_invoice_all" action="action_back_tax_invoice_all"
+        <menuitem id="menu_back_tax_invoice_normal" action="action_back_tax_invoice_normal"
                   parent="menu_customer_invoice_back_tax_root" name="主账单退税"
                   sequence="10"
         />

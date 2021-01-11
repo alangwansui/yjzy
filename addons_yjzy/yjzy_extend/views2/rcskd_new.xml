@@ -395,7 +395,7 @@
 
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcskd_form_new')})]"/>
     </record>
-    <menuitem id="menu_create_rcskd_1103" sequence="50" name="创建收款单" parent="yjzy_extend.menu_rcskd_new"
+    <menuitem id="menu_create_rcskd_1103" sequence="50" name="创建收款" parent="yjzy_extend.menu_rcskd_new"
               action="action_create_rcskd_1103"/>
 
     <record model="ir.actions.act_window" id="action_rcskd_approval_1103">
@@ -417,6 +417,7 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcskd_form_new')})]"/>
     </record>
     <menuitem id="menu_rcskd_approval_1103" sequence="20" name="待审批完成" parent="yjzy_extend.menu_rcskd_new"
+              groups="base.group_system"
               action="action_rcskd_approval_1103"/>
 
     <record model="ir.actions.act_window" id="action_rcskd_balance_1103">
@@ -435,7 +436,7 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_rcskd_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcskd_form_new')})]"/>
     </record>
-    <menuitem id="menu_rcskd_balance_1103" sequence="40" name="待认领" parent="yjzy_extend.menu_rcskd_new"
+    <menuitem id="menu_rcskd_balance_1103" sequence="40" name="创建认领" parent="yjzy_extend.menu_rcskd_new"
               action="action_rcskd_balance_1103"/>
 
     <record model="ir.actions.act_window" id="action_rcskd_no_balance_1103">
@@ -455,6 +456,7 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcskd_form_new')})]"/>
     </record>
     <menuitem id="menu_rcskd_no_balance_1103" sequence="40" name="已认领完成" parent="yjzy_extend.menu_rcskd_new"
+              groups="base.group_system"
               action="action_rcskd_no_balance_1103"/>
 
     <record model="ir.actions.act_window" id="action_rcskd_all_1103">
@@ -473,7 +475,7 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_rcskd_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcskd_form_new')})]"/>
     </record>
-    <menuitem id="menu_rcskd_all_1103" sequence="05" name="查询日常收款单" parent="yjzy_extend.menu_rcskd_new"
+    <menuitem id="menu_rcskd_all_1103" sequence="05" name="查询" parent="yjzy_extend.menu_rcskd_new"
               action="action_rcskd_all_1103"/>
 
 
