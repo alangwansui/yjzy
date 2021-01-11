@@ -68,10 +68,6 @@ class DeclareDeclaration(models.Model):
     declaration_amount_all_residual = fields.Monetary(u'本次申报金额收款金额',currency_field='company_currency_id',compute=compute_declaration_amount,store=True)
 
 
-    def unlink(self):
-        for one in self:
-            if one.state not in ['draft','cancel']:
-                raise Warning(u'不能删除非草稿成本单据')
 
     @api.multi
     def name_get(self):
@@ -81,6 +77,11 @@ class DeclareDeclaration(models.Model):
             res.append((one.id, name))
         return res
 
+    def unlink(self):
+        for one in self:
+            if one.state not in ['draft', 'cancel']:
+                raise Warning(u'不能删除非草稿成本单据')
+        return super(DeclareDeclaration, self).unlink()
 
     def action_confirm(self):
         if len(self.btd_line_ids.filtered(lambda x: x.invoice_back_tax_declaration_state == '20')) > 0:

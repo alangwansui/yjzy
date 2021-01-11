@@ -878,9 +878,49 @@ class account_payment(models.Model):
             if self.ysrld_ids and len_ysrld_draft_ids > 0:
                 raise Warning('有存在草稿状态的预收认领单，请先完成认领！')
             elif self.tb_po_invoice_ids and len(self.tb_po_invoice_ids.filtered(lambda x: x.state != '30_done' )) > 0:
-                raise Warning('有存在未完成的其他收入认领，请先完成认领！')
+                view = self.env.ref('sh_message.sh_message_wizard_1')
+                view_id = view and view.id or False
+                context = dict(self._context or {})
+                context['message'] = "有存在草稿状态的预收认领单，请先完成认领！"
+                context['res_model'] = "tb.po.invoice"
+                context['res_id'] = self.tb_po_invoice_ids[0].id
+                context['views'] = self.env.ref('yjzy_extend.tb_po_other_form').id
+                # context['no_advance'] = True
+                # print('context_akiny', context)
+                return {
+                    'name': 'Success',
+                    'type': 'ir.actions.act_window',
+                    'view_type': 'form',
+                    'view_mode': 'form',
+                    'res_model': 'sh.message.wizard',
+                    'views': [(view_id, 'form')],
+                    'target': 'new',
+                    'context': context,
+                }
+                #
+                # raise Warning('有存在未完成的其他收入认领，请先完成认领！')
             elif self.yshx_ids and len(self.yshx_ids.filtered(lambda x: x.state != 'done' )) > 0:
-                raise Warning('有存在未完成的其他收入认领，请先完成认领！')
+
+                view = self.env.ref('sh_message.sh_message_wizard_1')
+                view_id = view and view.id or False
+                context = dict(self._context or {})
+                context['message'] = "有存在草稿状态的应收认领，请先完成认领！"
+                context['res_model'] = "account.reconcile.order"
+                context['res_id'] = self.yshx_ids[0].id
+                context['views'] = self.env.ref('yjzy_extend.account_yshxd_form_view_new').id
+                # context['no_advance'] = True
+                # print('context_akiny', context)
+                return {
+                    'name': 'Success',
+                    'type': 'ir.actions.act_window',
+                    'view_type': 'form',
+                    'view_mode': 'form',
+                    'res_model': 'sh.message.wizard',
+                    'views': [(view_id, 'form')],
+                    'target': 'new',
+                    'context': context,
+                }
+                # raise Warning('有存在未完成的其他收入认领，请先完成认领！')
             else:
                 form_view = self.env.ref('yjzy_extend.wizard_renling_form')
         if self.sfk_type == 'ysrld':

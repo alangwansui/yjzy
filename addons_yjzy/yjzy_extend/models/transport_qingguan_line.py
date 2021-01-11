@@ -26,7 +26,8 @@ class transport_qingguan_line(models.Model):
 
 
 
-
+    pallet_no = fields.Char('Pallet No')
+    carton_qty = fields.Char('Carton Qty')
     tb_id = fields.Many2one('transport.bill', u'发运单据', required=True, ondelete='cascade')
     so_id = fields.Many2one('sale.order', u'销售订单')
 

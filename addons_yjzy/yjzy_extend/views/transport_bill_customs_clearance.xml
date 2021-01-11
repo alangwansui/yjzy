@@ -205,6 +205,8 @@
                                         <field name="price"/>
                                         <field name="qty" sum="小计"/>
                                         <field name="qty_package" sum="小计" groups="base.group_system" invisible="1"/>
+                                        <field name="pallet_no"/>
+                                        <field name="carton_qty"/>
                                         <field name="package_qty" sum="小计" string="箱数"/>
                                         <field name="net_weight" sum="小计"/>
                                         <field name="gross_weight" sum="小计"/>

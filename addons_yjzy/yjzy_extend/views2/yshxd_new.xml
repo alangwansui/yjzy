@@ -1,6 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+<!--    应收认领搜索视图-->
+    <record id="view_reconcile_in_search_new" model="ir.ui.view">
+        <field name="name">account.reconcile.order.search</field>
+        <field name="model">account.reconcile.order</field>
+        <field name="arch" type="xml">
+            <search string="Payments">
+                <field name="name" filter_domain="['|','|', ('name','ilike',self),('invoice_ids.tb_contract_code','ilike',self),('partner_id','child_of',self)]"
+                       string="Description"/>
+                <separator/>
+                <field name="partner_id"/>
+                <group expand="1" string="Group By">
+                    <filter string="状态分组" name="group_by_state" domain="[]" context="{'group_by':'state'}"/>
+                    <filter string="状态分组:new" name="group_by_state_1" domain="[]" context="{'group_by':'stage_id'}"/>
+                    <filter string="认领方式分组" name="group_by_hxd_type_new" domain="[]" context="{'group_by':'hxd_type_new'}"/>
+                    <filter string="账单属性" name="group_by_invoice_attribute_all_in_one" domain="[]" context="{'group_by':'invoice_attribute_all_in_one'}"/>
+                </group>
 
+            </search>
+        </field>
+    </record>
 
     <!--应收核销明细-->
     <record model="ir.ui.view" id="account_yshxd_line_tree_view_new">
@@ -1028,6 +1047,7 @@
         <field name="res_model">account.reconcile.order</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_reconcile_in_search_new"/>
         <field name="domain">[('sfk_type','=','yshxd'),('state','not in',['done'])]</field>
         <field name="context">{'default_sfk_type': 'yshxd', 'advance_so_amount':1,'default_payment_type': 'inbound',
             'default_be_renling': 1, 'default_partner_type': 'customer', 'show_so': 1}
@@ -1046,6 +1066,7 @@
         <field name="res_model">account.reconcile.order</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_reconcile_in_search_new"/>
         <field name="domain">[('sfk_type','=','yshxd'),('state','in',['done'])]</field>
         <field name="context">{'default_sfk_type': 'yshxd', 'advance_so_amount':1,'default_payment_type': 'inbound',
             'default_be_renling': 1, 'default_partner_type': 'customer', 'show_so': 1}
@@ -1066,6 +1087,7 @@
         <field name="view_type">form</field>
         <field name="view_mode">form</field>
         <field name="domain">[('sfk_type','=','yshxd')]</field>
+        <field name="search_view_id" ref="view_reconcile_in_search_new"/>
         <field name="context">{'hxd_type_new':'20','default_sfk_type':
             'yshxd','default_operation_wizard':'10','advance_so_amount':1,'default_payment_type': 'inbound',
             'default_be_renling': 1, 'default_partner_type': 'customer', 'show_so': 1}
@@ -1081,7 +1103,9 @@
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">account.reconcile.order</field>
         <field name="view_type">form</field>
+
         <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_reconcile_in_search_new"/>
         <field name="domain">
             [('sfk_type','=','yshxd'),('state','in',['draft','refused','cancelled']),('hxd_type_new','=','20')]
         </field>
@@ -1102,6 +1126,7 @@
         <field name="res_model">account.reconcile.order</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_reconcile_in_search_new"/>
         <field name="domain">[('sfk_type','=','yshxd'),('state','in',['posted']),('hxd_type_new','=','20')]</field>
         <field name="context">{'hxd_type_new':'20','default_sfk_type': 'yshxd',
             'advance_so_amount':1,'default_payment_type': 'inbound', 'default_be_renling': 1, 'default_partner_type':
@@ -1121,6 +1146,7 @@
         <field name="res_model">account.reconcile.order</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_reconcile_in_search_new"/>
         <field name="domain">[('sfk_type','=','yshxd'),('state','in',['done']),('hxd_type_new','=','20')]</field>
         <field name="context">{'hxd_type_new':'20','default_sfk_type': 'yshxd',
             'advance_so_amount':1,'default_payment_type': 'inbound', 'default_be_renling': 1, 'default_partner_type':
@@ -1140,6 +1166,7 @@
         <field name="res_model">account.reconcile.order</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_reconcile_in_search_new"/>
         <field name="domain">[('sfk_type','=','yshxd'),('hxd_type_new','in',['25','20']),('yjzy_type','=','sale')]</field>
         <field name="context">{'only_number':1,'hxd_type_new':'20','default_sfk_type': 'yshxd',
             'advance_so_amount':1,'default_payment_type': 'inbound', 'default_be_renling': 1, 'default_partner_type':
@@ -1160,8 +1187,9 @@
         <field name="res_model">account.reconcile.order</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
+         <field name="search_view_id" ref="view_reconcile_in_search_new"/>
         <field name="domain">[('sfk_type','=','yshxd'),('hxd_type_new','in',['25','20']),('yjzy_type','=','sale'),('invoice_attribute','=','normal')]</field>
-        <field name="context">{'only_number':1,'hxd_type_new':'20','default_sfk_type': 'yshxd',
+        <field name="context">{'search_default_group_by_hxd_type_new':1,'only_number':1,'hxd_type_new':'20','default_sfk_type': 'yshxd',
             'advance_so_amount':1,'default_payment_type': 'inbound', 'default_be_renling': 1, 'default_partner_type':
             'customer', 'show_so': 1}
         </field>
@@ -1179,6 +1207,7 @@
         <field name="res_model">account.reconcile.order</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_reconcile_in_search_new"/>
         <field name="domain">[('sfk_type','=','yshxd'),('hxd_type_new','in',['25','20']),('yjzy_type','=','sale'),('invoice_attribute','=','other_po')]</field>
         <field name="context">{'only_number':1,'hxd_type_new':'20','default_sfk_type': 'yshxd',
             'advance_so_amount':1,'default_payment_type': 'inbound', 'default_be_renling': 1, 'default_partner_type':
@@ -1198,6 +1227,7 @@
         <field name="res_model">account.reconcile.order</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_reconcile_in_search_new"/>
         <field name="domain">[('sfk_type','=','yshxd'),('hxd_type_new','in',['25','20']),('yjzy_type','=','other_payment_sale'),('invoice_attribute','=','other_payment')]</field>
         <field name="context">{'only_number':1,'hxd_type_new':'20','default_sfk_type': 'yshxd',
             'advance_so_amount':1,'default_payment_type': 'inbound', 'default_be_renling': 1, 'default_partner_type':
@@ -1239,8 +1269,9 @@
         <field name="res_model">account.reconcile.order</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
+         <field name="search_view_id" ref="view_reconcile_in_search_new"/>
         <field name="domain">[('sfk_type','=','yshxd'),('hxd_type_new','=','20'),('partner_id.name','=','国税局')]</field>
-        <field name="context">{'hxd_type_new':'20','default_sfk_type': 'yshxd',
+        <field name="context">{'search_default_group_by_invoice_attribute_all_in_one':1,'hxd_type_new':'20','default_sfk_type': 'yshxd',
             'advance_so_amount':1,'default_payment_type': 'inbound', 'default_be_renling': 1, 'default_partner_type':
             'customer', 'show_so': 1}
         </field>

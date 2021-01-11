@@ -421,7 +421,7 @@
               action="action_rcskd_approval_1103"/>
 
     <record model="ir.actions.act_window" id="action_rcskd_balance_1103">
-        <field name="name">待认领日常收款单</field>
+        <field name="name">未完成认领收款单创建认领</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">account.payment</field>
         <field name="view_type">form</field>

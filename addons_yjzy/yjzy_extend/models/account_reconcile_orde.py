@@ -606,9 +606,9 @@ class account_reconcile_order(models.Model):
                                track_visibility='onchange')  # 费用审批流程
     #0911
     #核销单分预收付-应收付，应收付-收付款
-    hxd_type_new = fields.Selection([('10', u'预收-应收'),
-                                     ('20', u'应收-收款'),
-                                     ('25',u'同时收'),
+    hxd_type_new = fields.Selection([('10', u'预收认领'),
+                                     ('20', u'收款认领'),
+                                     ('25',u'同时认领'),
                                      ('30', u'预付-应付'),
                                      ('40', u'应付-付款'),
                                      ('45', u'同时付'),

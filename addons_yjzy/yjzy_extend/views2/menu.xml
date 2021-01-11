@@ -39,6 +39,7 @@
                         <filter string="核销分组" name="group_by_state_1_attribute" domain="[]" context="{'group_by':('invoice_attribute_all_in_one','state_1')}"/>
                         <filter string="状态1分组" name="group_by_state_1" domain="[]" context="{'group_by':'state_1'}"/>
                         <filter string="类型分组" name="group_by_sfk_type" domain="[]" context="{'group_by':'sfk_type'}"/>
+                        <filter string="客户分组" name="group_by_partner_id" domain="[]" context="{'group_by':'partner_id'}"/>
                         <filter string="账单核销类型分组" name="group_by_invoice_attribute_all_in_one" domain="[]"
                                 context="{'group_by':'invoice_attribute_all_in_one'}"/>
                         <filter string="预收付类型分组" name="group_by_advance_type" domain="[]" context="{'group_by':'advance_type'}"/>

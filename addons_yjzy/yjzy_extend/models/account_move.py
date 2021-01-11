@@ -130,11 +130,12 @@ class account_move_line(models.Model):
                 if one.account_id.code in ['1123','2203']:
 
                     move_lines = one.env['account.move.line'].search([('move_id','<',one.move_id.id),('account_id','=',one.account_id.id),
-                                                                   ('new_advance_payment_id','!=',False),('new_advance_payment_id','=',one.new_advance_payment_id.id)])
+                                                                   ('new_advance_payment_id','!=',False),
+                                                                      ('new_advance_payment_id','=',one.new_advance_payment_id.id),('move_id_state','=','posted')])
                 if one.account_id.code in ['1122','2202']:
                     move_lines = one.env['account.move.line'].search(
                         [('move_id', '<', one.move_id.id), ('account_id', '=', one.account_id.id),
-                         ('invoice_id', '=', one.invoice_id.id), ('invoice_id', '!=', False)])
+                         ('invoice_id', '=', one.invoice_id.id), ('invoice_id', '!=', False),('move_id_state','=','posted')])
 
                 print('move_lines_akiny',move_lines,amount_this_time)
 
@@ -154,6 +155,7 @@ class account_move_line(models.Model):
     
     sheet_id = fields.Many2one('hr.expense.sheet', u'费用报告')
     expense_id = fields.Many2one('hr.expense', u'费用')
+    move_id_state = fields.Selection([('draft','draft'),('posted','posted')],'Move State',related='move_id.state')
 
     hx_code = fields.Char(u'内部核对标记', related='expense_id.hx_code', store=True, index=True)
 
@@ -238,8 +240,11 @@ class account_move_line_com(models.Model):
                 one.reconcile_type = reconcile_type
 
 
+
+
     move_id = fields.Many2one('account.move', string='Journal Entry', ondelete="cascade",
                               help="The move of this entry line.", index=True, required=True, auto_join=True)
+
 
     account_id = fields.Many2one('account.account', string='Account', required=True, index=True,
                                  ondelete="cascade", domain=[('deprecated', '=', False)])
