@@ -171,7 +171,7 @@
             <field name="name">wizard.reconcile.invoice.from</field>
             <field name="model">wizard.reconcile.invoice</field>
             <field name="arch" type="xml">
-                <form string="创建预付-应付申请单">
+                <form string="创建预收-应收认领">
                     <group groups="base.group_system">
                         <field name="partner_id"/>
                         <field name="yjzy_advance_payment_id"/>
@@ -201,15 +201,10 @@
                                 <field name="date_invoice" string="账单日期" invisible="1"/>
                                 <field name="date_deadline_new" string="实际到期日"/>
                                 <field name="residual_times_new"/>
-
-
                                 <field name="amount_total_signed" string="应收金额" sum="Total"/>
                                 <field name="residual_signed" string="未收金额" sum="Amount Due"/>
-
-
                                 <field name="company_id" groups="base.group_multi_company" invisible="1"
                                        options="{'no_create': True}"/>
-
                                 <field name="currency_id" invisible="1"/>
                                 <field name="company_currency_id" invisible="1"/>
                                 <field name="state"/>
@@ -220,7 +215,6 @@
                     <footer>
                         <button name="apply" class="oe_highlight" type='object' string="确认" invisible="1"/>
                         <button name="create_yfhxd_new" class="oe_highlight" type='object' string="创建认领"/>
-
                         <button special="cancel" class="oe_highlight" string="取消"/>
                     </footer>
                 </form>

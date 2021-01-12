@@ -284,8 +284,9 @@ class wizard_renling(models.TransientModel):
             invoice_attribute = 'normal'
             sfk_type = 'yshxd'
             yjzy_type = 'sale'
-            hxd_type_new = '25'  # 同时认领
-            operation_wizard = '30'
+            hxd_type_new = '20'  # 默认是收款认领，当点应收认领的时候状态进行判断
+            operation_wizard = '10'
+            print('operation_wizard_akiny',operation_wizard)
             # hxd_type_new = '20'  #单独认领收款-应收
         elif self.renling_type == 'back_tax':
             invoice_attribute = 'normal'
@@ -349,11 +350,11 @@ class wizard_renling(models.TransientModel):
                 yshxd_id.with_context({'ysrld_amount':self.ysrld_amount}).make_line_no()
 
                 yshxd_id.make_account_payment_state_ids()
-                if yshxd_id.supplier_advance_payment_ids_count != 0:
-                    yshxd_id.operation_wizard = '30'
-                else:
-                    yshxd_id.operation_wizard = '10'
-                    yshxd_id.hxd_type_new = '20'
+                # if yshxd_id.supplier_advance_payment_ids_count != 0:
+                #     yshxd_id.operation_wizard = '30'
+                # else:
+                #     yshxd_id.operation_wizard = '10'
+                #     yshxd_id.hxd_type_new = '20'
 
                 stage_id = yshxd_id._stage_find(domain=[('code', '=', '015')])
                 print('_stage_find', stage_id)

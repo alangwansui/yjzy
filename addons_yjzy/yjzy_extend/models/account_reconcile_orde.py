@@ -3855,6 +3855,13 @@ class advance_payment_state(models.Model):
                 # print('line_do_ids_akiny', line_do_ids)
                 # hxd_id.line_do_ids = line_do_ids
                 hxd_id.compute_line_ids_advice_amount_advance_org()
+                print('yjzy_payment_id_akiny_1',self.reconcile_order_id.yjzy_payment_id)
+                if not self.reconcile_order_id.yjzy_payment_id:
+                    self.reconcile_order_id.hxd_type_new = '10'
+                    self.reconcile_order_id.operation_wizard = '20'
+                else:
+                    self.reconcile_order_id.hxd_type_new = '25'
+                    self.reconcile_order_id.operation_wizard = '30'
         self.state = 'reconcile'
 
     def action_cancel_reconcile_line_ids(self):
@@ -3862,6 +3869,13 @@ class advance_payment_state(models.Model):
         reconcile_order_line_ids.unlink() #取消的时候讲line相关的删除
         self.state = 'no_reconcile'
         self.compute_amount_reconcile()
+        if not self.reconcile_order_id.yjzy_payment_id:
+            self.reconcile_order_id.hxd_type_new = '10'
+            self.reconcile_order_id.operation_wizard = '20'
+        else:
+            if not self.reconcile_order_id.line_ids:
+                self.reconcile_order_id.hxd_type_new = '20'
+                self.reconcile_order_id.operation_wizard = '10'
 
 
     def action_remove_reconcile_line_ids(self):
