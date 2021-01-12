@@ -525,7 +525,7 @@ class account_reconcile_order(models.Model):
     invoice_id = fields.Many2one('account.invoice',compute=compute_invoice_id)
     # invoice_attribute_all_in_one = fields.Char('账单属性all_in_one',compute=compute_invoice_id)
     #
-    invoice_attribute_all_in_one = fields.Selection(invoice_attribute_all_in_one,u'账单属性all_in_one', compute=compute_invoice_id)
+    invoice_attribute_all_in_one = fields.Selection(invoice_attribute_all_in_one,u'账单属性all_in_one', compute=compute_invoice_id,store=True)
 
     partner_payment_term_id = fields.Many2one('account.payment.term',u'伙伴付款条款',compute=compute_payment_term_id)
     invoice_payment_term_id = fields.Many2one('account.payment.term',u'合同付款条款',compute=compute_payment_term_id)
