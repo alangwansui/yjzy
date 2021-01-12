@@ -3873,6 +3873,7 @@ class advance_payment_state(models.Model):
             self.reconcile_order_id.hxd_type_new = '10'
             self.reconcile_order_id.operation_wizard = '20'
         else:
+            print('line_ids_akiny',self.reconcile_order_id.line_ids)
             if not self.reconcile_order_id.line_ids:
                 self.reconcile_order_id.hxd_type_new = '20'
                 self.reconcile_order_id.operation_wizard = '10'
