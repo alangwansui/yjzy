@@ -251,6 +251,30 @@ class wizard_renling(models.TransientModel):
         }
 
     def create_yshxd_ysrl(self):
+        invoice_ids = self.invoice_ids
+        hxd_line_approval_ids = self.env['account.reconcile.order.line'].search(
+            [('invoice_id.id', 'in', invoice_ids.ids), ('order_id.state', 'not in', ['done', 'approved'])])
+        order_id = hxd_line_approval_ids.mapped('order_id')
+        if hxd_line_approval_ids:
+            view = self.env.ref('sh_message.sh_message_wizard_1')
+            view_id = view and view.id or False
+            context = dict(self._context or {})
+            context['message'] = "选择的应收账单，有存在审批中的预收认领，请查验"
+            context['res_model'] = "account.reconcile.order"
+            context['res_id'] = order_id[0].id
+            context['views'] = self.env.ref('yjzy_extend.account_yshxd_form_view_new').id
+            context['no_advance'] = True
+            print('context_akiny', context)
+            return {
+                'name': 'Success',
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'sh.message.wizard',
+                'views': [(view_id, 'form')],
+                'target': 'new',
+                'context': context,
+            }
         if len(self.invoice_ids.mapped('currency_id')) > 1:
             raise Warning('不同币种的账单，不能同时认领！')
         if not self.renling_type:

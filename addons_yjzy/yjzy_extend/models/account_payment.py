@@ -876,7 +876,27 @@ class account_payment(models.Model):
             ysrld_draft_ids = self.ysrld_ids.filtered(lambda x: x.state == 'draft')
             len_ysrld_draft_ids = len(ysrld_draft_ids)
             if self.ysrld_ids and len_ysrld_draft_ids > 0:
-                raise Warning('有存在草稿状态的预收认领单，请先完成认领！')
+                view = self.env.ref('sh_message.sh_message_wizard_1')
+                view_id = view and view.id or False
+                context = dict(self._context or {})
+                context['message'] = "有存在草稿状态的预收认领，请先完成认领！"
+                context['res_model'] = "account.payment"
+                context['res_id'] = self.ysrld_ids[0].id
+                context['views'] = self.env.ref('yjzy_extend.view_ysrld_form_latest').id
+                # context['no_advance'] = True
+                # print('context_akiny', context)
+                return {
+                    'name': 'Success',
+                    'type': 'ir.actions.act_window',
+                    'view_type': 'form',
+                    'view_mode': 'form',
+                    'res_model': 'sh.message.wizard',
+                    'views': [(view_id, 'form')],
+                    'target': 'new',
+                    'context': context,
+                }
+                # raise Warning('有存在草稿状态的预收认领单，请先完成认领！')
+
             elif self.tb_po_invoice_ids and len(self.tb_po_invoice_ids.filtered(lambda x: x.state != '30_done' )) > 0:
                 view = self.env.ref('sh_message.sh_message_wizard_1')
                 view_id = view and view.id or False

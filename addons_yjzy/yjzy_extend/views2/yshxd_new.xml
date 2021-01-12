@@ -1231,7 +1231,7 @@
         <field name="view_mode">tree,form</field>
         <field name="search_view_id" ref="view_reconcile_in_search_new"/>
         <field name="domain">[('sfk_type','=','yshxd'),('hxd_type_new','in',['25','20']),('yjzy_type','=','other_payment_sale'),('invoice_attribute','=','other_payment')]</field>
-        <field name="context">{'search_default_group_by_state_1':1'only_number':1,'hxd_type_new':'20','default_sfk_type': 'yshxd',
+        <field name="context">{'search_default_group_by_state_1':1,'only_number':1,'hxd_type_new':'20','default_sfk_type': 'yshxd',
             'advance_so_amount':1,'default_payment_type': 'inbound', 'default_be_renling': 1, 'default_partner_type':
             'customer', 'show_so': 1}
         </field>

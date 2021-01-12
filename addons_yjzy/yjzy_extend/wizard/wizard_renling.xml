@@ -68,7 +68,7 @@
                             </span>
                             <button name="open_ysrld" type="object" class="oe_highlight" string="打开认领操作列表"/>
                         </div>
-                          <field name="ysrld_amount" string="本次认领金额"
+                          <field name="ysrld_amount" string="本次认领金额" invisible="1"
                            attrs="{'invisible':['|',('renling_type','in',['back_tax','other_payment']),('step','!=','20')]}"/>
                     </group>
                     <group col="2" attrs="{'invisible':['|',('renling_type','not in',['ysrld']),('step','!=','20')]}">

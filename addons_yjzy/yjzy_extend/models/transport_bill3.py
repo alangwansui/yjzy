@@ -189,7 +189,8 @@ class transport_bill(models.Model):
                 'price': v['amount'] / v['qty'],
                 'amount': v['amount'],
                 'supplier_id': v['supplier'].id,
-                'hs_id': v['hs'].id,
+                # 'hs_id': v['hs'].id, #这里一写进去 就会报不同公司的权限错误，原因还没找到
+                # 'hs_id2': v['hs'].id,
                 'po_id': v['po'].id,
                 'tongji_type': v['tongji_type'],
                 'sale_hs_id': v['sale_hs_id'],
@@ -203,6 +204,9 @@ class transport_bill(models.Model):
                 # 'back_tax_amount2': 0,
 
             })
+            purchase_hs.write({'hs_id' : v['hs'].id,
+                               'hs_id2': v['hs'].id,
+                               })
             sale_hs_obj.browse(v['sale_hs_id']).purchase_hs_id = purchase_hs
 
 
