@@ -233,11 +233,14 @@ class wizard_reconcile_invoice(models.TransientModel):
                 'operation_wizard': '20',
                 'hxd_type_new': '10'
             })
-
-
             account_reconcile_id.write({'sfk_type':sfk_type})
             account_reconcile_id.compute_supplier_advance_payment_ids()
             account_reconcile_id.make_account_payment_state_ids_from_advance(self.yjzy_advance_payment_id)
+            stage_id = account_reconcile_id._stage_find(domain=[('code', '=', '017')])
+            account_reconcile_id.write({'stage_id': stage_id.id,
+                                        'state': 'draft',
+                            # 'operation_wizard':'25'
+                            })
             print('account_reconcile_id_akiny',account_reconcile_id)
             return {
                 'type': 'ir.actions.act_window',
@@ -249,8 +252,6 @@ class wizard_reconcile_invoice(models.TransientModel):
                 'context': {
                             }
             }
-
-
     def create_yfhxd(self):
         invoice_type = self.invoice_ids.mapped('type')
         if len(invoice_type) > 1:
