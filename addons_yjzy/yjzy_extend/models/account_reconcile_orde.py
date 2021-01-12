@@ -1406,8 +1406,8 @@ class account_reconcile_order(models.Model):
             operation_wizard = self.operation_wizard
             lines = self.line_ids
             line_do_ids = self.line_do_ids
-            if hxd_type_new == '10':
-                if operation_wizard == '20':
+            if hxd_type_new == '10': #预收认领
+                if operation_wizard == '20':#预收认领
                     if self.amount_total_org == 0:
                         raise Warning('认领金额为0，无法提交！')
                     for one in lines:
@@ -1415,13 +1415,13 @@ class account_reconcile_order(models.Model):
                             if one.amount_advance_org > one.amount_invoice_so_residual_can_approve:
                                 raise Warning('预收认领金额大于可认领应收金额')
                             if one.advance_residual2 >= 0 and one.amount_advance_org > one.advance_residual2:
-                                raise Warning('预收认领金额大于可认领应收金额')
+                                raise Warning('预收认领金额大于可认领应收金额1')
                             if one.amount_advance_org > one.yjzy_payment_id.advance_balance_total:
-                                raise Warning('预收认领金额大于可认领应收金额')
+                                raise Warning('预收认领金额大于可认领应收金额2')
                     for one in line_do_ids:
                         if one.amount_advance_org == 0 and one.so_id:
                             raise Warning('有明细行预收金额为0，请填写或者删除明细行！')
-                    stage_id = self._stage_find(domain=[('code', '=', '025')])
+                    stage_id = self._stage_find(domain=[('code', '=', '047')])
                     self.write({'stage_id': stage_id.id,
                                 'state': 'posted',
                                 })
@@ -1437,7 +1437,7 @@ class account_reconcile_order(models.Model):
                     for one in self.line_do_ids:
                         if one.amount_advance_org == 0 and one.so_id:
                             raise Warning('有明细行预付金额为0，请填写或者删除明细行！')
-                    stage_id = self._stage_find(domain=[('code', '=', '025')])
+                    stage_id = self._stage_find(domain=[('code', '=', '047')])
                     self.write({'stage_id': stage_id.id,
                                 'state': 'posted',
 
