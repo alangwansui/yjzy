@@ -14,7 +14,9 @@
                     <filter string="状态分组" name="group_by_state" domain="[]" context="{'group_by':'state'}"/>
                     <filter string="状态分组:new" name="group_by_state_1" domain="[]" context="{'group_by':'stage_id'}"/>
                     <filter string="认领方式分组" name="group_by_hxd_type_new" domain="[]" context="{'group_by':'hxd_type_new'}"/>
+                    <filter string="stage认领方式分组" name="group_by_stage_hxd_type_new" domain="[]" context="{'group_by':('stage_id','hxd_type_new')}"/>
                     <filter string="账单属性" name="group_by_invoice_attribute_all_in_one" domain="[]" context="{'group_by':'invoice_attribute_all_in_one'}"/>
+                    <filter string="stage账单属性" name="group_by_invoice_attribute_all_in_one_stage" domain="[]" context="{'group_by':('stage_id','invoice_attribute_all_in_one')}"/>
                 </group>
 
             </search>
@@ -1189,7 +1191,7 @@
         <field name="view_mode">tree,form</field>
          <field name="search_view_id" ref="view_reconcile_in_search_new"/>
         <field name="domain">[('sfk_type','=','yshxd'),('hxd_type_new','in',['25','10','20']),('yjzy_type','=','sale'),('invoice_attribute','=','normal')]</field>
-        <field name="context">{'search_default_group_by_hxd_type_new':1,'only_number':1,'hxd_type_new':'20','default_sfk_type': 'yshxd',
+        <field name="context">{'search_default_group_by_stage_hxd_type_new':1,'only_number':1,'hxd_type_new':'20','default_sfk_type': 'yshxd',
             'advance_so_amount':1,'default_payment_type': 'inbound', 'default_be_renling': 1, 'default_partner_type':
             'customer', 'show_so': 1}
         </field>
@@ -1209,7 +1211,7 @@
         <field name="view_mode">tree,form</field>
         <field name="search_view_id" ref="view_reconcile_in_search_new"/>
         <field name="domain">[('sfk_type','=','yshxd'),('hxd_type_new','in',['25','20']),('yjzy_type','=','sale'),('invoice_attribute','=','other_po')]</field>
-        <field name="context">{'only_number':1,'hxd_type_new':'20','default_sfk_type': 'yshxd',
+        <field name="context">{'search_default_group_by_state_1':1,'only_number':1,'hxd_type_new':'20','default_sfk_type': 'yshxd',
             'advance_so_amount':1,'default_payment_type': 'inbound', 'default_be_renling': 1, 'default_partner_type':
             'customer', 'show_so': 1}
         </field>
@@ -1229,7 +1231,7 @@
         <field name="view_mode">tree,form</field>
         <field name="search_view_id" ref="view_reconcile_in_search_new"/>
         <field name="domain">[('sfk_type','=','yshxd'),('hxd_type_new','in',['25','20']),('yjzy_type','=','other_payment_sale'),('invoice_attribute','=','other_payment')]</field>
-        <field name="context">{'only_number':1,'hxd_type_new':'20','default_sfk_type': 'yshxd',
+        <field name="context">{'search_default_group_by_state_1':1'only_number':1,'hxd_type_new':'20','default_sfk_type': 'yshxd',
             'advance_so_amount':1,'default_payment_type': 'inbound', 'default_be_renling': 1, 'default_partner_type':
             'customer', 'show_so': 1}
         </field>
@@ -1271,7 +1273,7 @@
         <field name="view_mode">tree,form</field>
          <field name="search_view_id" ref="view_reconcile_in_search_new"/>
         <field name="domain">[('sfk_type','=','yshxd'),('hxd_type_new','=','20'),('partner_id.name','=','国税局')]</field>
-        <field name="context">{'search_default_group_by_invoice_attribute_all_in_one':1,'hxd_type_new':'20','default_sfk_type': 'yshxd',
+        <field name="context">{'search_default_group_by_invoice_attribute_all_in_one_stage':1,'hxd_type_new':'20','default_sfk_type': 'yshxd',
             'advance_so_amount':1,'default_payment_type': 'inbound', 'default_be_renling': 1, 'default_partner_type':
             'customer', 'show_so': 1}
         </field>
