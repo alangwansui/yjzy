@@ -396,7 +396,7 @@
 
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcskd_form_new')})]"/>
     </record>
-    <menuitem id="menu_create_rcskd_1103" sequence="50" name="创建收款" parent="yjzy_extend.menu_rcskd_new"
+    <menuitem id="menu_create_rcskd_1103" sequence="40" name="创建收款" parent="yjzy_extend.menu_rcskd_new"
               action="action_create_rcskd_1103"/>
 
     <record model="ir.actions.act_window" id="action_rcskd_approval_1103">
@@ -437,7 +437,7 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_rcskd_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcskd_form_new')})]"/>
     </record>
-    <menuitem id="menu_rcskd_balance_1103" sequence="40" name="创建认领" parent="yjzy_extend.menu_rcskd_new"
+    <menuitem id="menu_rcskd_balance_1103" sequence="50" name="创建认领" parent="yjzy_extend.menu_rcskd_new"
               action="action_rcskd_balance_1103"/>
 
     <record model="ir.actions.act_window" id="action_rcskd_no_balance_1103">
