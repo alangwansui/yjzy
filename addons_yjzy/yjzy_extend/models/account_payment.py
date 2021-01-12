@@ -1885,10 +1885,10 @@ class account_payment(models.Model):
                 invoice_lines = invoice_obj.search([('so_id', '=', so_id.id)])
                 print('invoice_lines_akiny', invoice_lines,so_id)
                 invoice_ids = invoice_lines.mapped('invoice_id').ids
-                form_view = self.env.ref('yjzy_extend.wizard_reconcile_invoice_form').id
+                form_view = self.env.ref('yjzy_extend.wizard_reconcile_invoice_customer_form').id
             else:
                 invoice_ids = None
-                form_view = self.env.ref('yjzy_extend.wizard_reconcile_invoice_no_po_form').id
+                form_view = self.env.ref('yjzy_extend.wizard_reconcile_invoice_customer_no_po_form').id
             print('invoice_ids_akiny', invoice_ids,so_id)
             ctx.update({
                 'default_partner_id': self.partner_id.id,

@@ -8,12 +8,12 @@
             <field name="arch" type="xml">
                 <form string="创建预付-应付申请单">
                     <group groups="base.group_system">
-                        <field name="partner_id" />
-                        <field name="yjzy_advance_payment_id" />
-                        <field name="order_id" />
-                        <field name="btd_id" />
-                        <field name="yjzy_type" />
-                        <field name="invoice_po_so_ids" />
+                        <field name="partner_id"/>
+                        <field name="yjzy_advance_payment_id"/>
+                        <field name="order_id"/>
+                        <field name="btd_id"/>
+                        <field name="yjzy_type"/>
+                        <field name="invoice_po_so_ids"/>
                         <field name="type"/>
                         <field name="yjzy_advance_payment_id_sfk_type"/>
                     </group>
@@ -57,13 +57,13 @@
             <field name="model">wizard.reconcile.invoice</field>
             <field name="arch" type="xml">
                 <form string="创建预付-应付申请单">
-                                                <group groups="base.group_system">
-                        <field name="partner_id" />
-                        <field name="yjzy_advance_payment_id" />
-                        <field name="order_id" />
-                        <field name="btd_id" />
-                        <field name="yjzy_type" />
-                        <field name="invoice_po_so_ids" />
+                    <group groups="base.group_system">
+                        <field name="partner_id"/>
+                        <field name="yjzy_advance_payment_id"/>
+                        <field name="order_id"/>
+                        <field name="btd_id"/>
+                        <field name="yjzy_type"/>
+                        <field name="invoice_po_so_ids"/>
                         <field name="type"/>
                         <field name="yjzy_advance_payment_id_sfk_type"/>
                     </group>
@@ -95,6 +95,124 @@
                                 <field name="state" invisible="1"/>
                                 <field name="type" invisible="context.get('type',True)"/>
 
+
+                            </tree>
+                        </field>
+                    </group>
+                    <footer>
+                        <button name="apply" class="oe_highlight" type='object' string="确认" invisible="1"/>
+                        <button name="create_yfhxd_new" class="oe_highlight" type='object' string="创建认领"/>
+
+                        <button special="cancel" class="oe_highlight" string="取消"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+        <record id="wizard_reconcile_invoice_customer_form" model="ir.ui.view">
+            <field name="name">wizard.reconcile.invoice.from</field>
+            <field name="model">wizard.reconcile.invoice</field>
+            <field name="arch" type="xml">
+                <form string="创建预收-应收认领">
+                    <group groups="base.group_system">
+                        <field name="partner_id"/>
+                        <field name="yjzy_advance_payment_id"/>
+                        <field name="order_id"/>
+                        <field name="btd_id"/>
+                        <field name="yjzy_type"/>
+                        <field name="invoice_po_so_ids"/>
+                        <field name="type"/>
+                        <field name="yjzy_advance_payment_id_sfk_type"/>
+                    </group>
+
+                    <group>
+                        <span colspan="2">
+                            请一次选择一条账单进行申请认领
+                        </span>
+                        <field name="invoice_ids" nolabel="1" domain="[('partner_id','=',partner_id),('state','=','open'),
+                        ('invoice_attribute','=','normal'),('type','=',type),('id','in',invoice_po_so_ids)]"
+                               context="{'tree_view_ref':'yjzy_extend.invoice_new_main_tree'}"
+                               options="{'no_create': True,'no_open':True}">
+                            <tree>
+                                <field name="partner_id" string="客户"/>
+
+                                <field name="bill_id" string="合同号" invisible="1"/>
+                                <field name="tb_contract_code" string="合同号" widget="dynamic_popover_char"
+                                       options="{'max_width': '100px', 'line_clamp': '1', 'mode_mouse':'hover','popover_max_width':'200px','placement':'right'}"/>
+                                <field name="date_invoice" string="账单日期" invisible="1"/>
+                                <field name="date_deadline_new" string="实际到期日"/>
+                                <field name="residual_times_new"/>
+
+
+                                <field name="amount_total_signed" string="应收金额" sum="Total"/>
+                                <field name="residual_signed" string="未收金额" sum="Amount Due"/>
+
+
+                                <field name="company_id" groups="base.group_multi_company" invisible="1"
+                                       options="{'no_create': True}"/>
+
+                                <field name="currency_id" invisible="1"/>
+                                <field name="company_currency_id" invisible="1"/>
+                                <field name="state"/>
+                            </tree>
+                        </field>
+                    </group>
+                    <footer>
+                        <button name="apply" class="oe_highlight" type='object' string="确认" invisible="1"/>
+                        <button name="create_yfhxd_new" class="oe_highlight" type='object' string="创建认领"/>
+                        <button special="cancel" class="oe_highlight" string="取消"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="wizard_reconcile_invoice_customer_no_po_form" model="ir.ui.view">
+            <field name="name">wizard.reconcile.invoice.from</field>
+            <field name="model">wizard.reconcile.invoice</field>
+            <field name="arch" type="xml">
+                <form string="创建预付-应付申请单">
+                    <group groups="base.group_system">
+                        <field name="partner_id"/>
+                        <field name="yjzy_advance_payment_id"/>
+                        <field name="order_id"/>
+                        <field name="btd_id"/>
+                        <field name="yjzy_type"/>
+                        <field name="invoice_po_so_ids"/>
+                        <field name="type"/>
+                        <field name="yjzy_advance_payment_id_sfk_type"/>
+                    </group>
+
+                    <group>
+                        <span colspan="2">
+                            请一次选择一条账单进行申请认领
+                        </span>
+                        <field name="invoice_ids" nolabel="1" domain="[('partner_id','=',partner_id),('state','=','open'),
+                        ('invoice_attribute','=','normal'),('type','=',type)]"
+                               context="{'tree_view_ref':'yjzy_extend.invoice_new_main_tree'}"
+                               options="{'no_create': True,'no_open':True}">
+                            <tree>
+
+                                <field name="partner_id" string="客户"/>
+
+                                <field name="bill_id" string="合同号" invisible="1"/>
+                                <field name="tb_contract_code" string="合同号" widget="dynamic_popover_char"
+                                       options="{'max_width': '100px', 'line_clamp': '1', 'mode_mouse':'hover','popover_max_width':'200px','placement':'right'}"/>
+                                <field name="date_invoice" string="账单日期" invisible="1"/>
+                                <field name="date_deadline_new" string="实际到期日"/>
+                                <field name="residual_times_new"/>
+
+
+                                <field name="amount_total_signed" string="应收金额" sum="Total"/>
+                                <field name="residual_signed" string="未收金额" sum="Amount Due"/>
+
+
+                                <field name="company_id" groups="base.group_multi_company" invisible="1"
+                                       options="{'no_create': True}"/>
+
+                                <field name="currency_id" invisible="1"/>
+                                <field name="company_currency_id" invisible="1"/>
+                                <field name="state"/>
 
                             </tree>
                         </field>
