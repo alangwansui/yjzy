@@ -1,5 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
+    <record model="ir.ui.view" id="view_rcskd_tree_new_1">
+        <field name="name">account.payment.tree</field>
+        <field name="model">account.payment</field>
+        <field name="priority" eval="999"/>
+        <field name="arch" type="xml">
+            <tree string="日常收款单" decoration-info="state == 'draft'" create="false" decoration-muted="state in ['reconciled', 'cancelled']" edit="false">
+                <field name="name"/>
+                <field name="partner_id" invisible="1"/>
+                <field name="payment_date" string="收款日期"/>
+                <field name="journal_id" string="收款账户"/>
+                <field name="amount" string="收款金额"/>
+                <field name="balance" string="未认领金额"/>
+                <field name="company_id" groups="base.group_system"/>
+                <field name="payment_comments"/>
+                <field name="fault_comments"/>
+                <field name="state_1" groups="base.group_system"/>
+                <field name="state" groups="base.group_system"/>
+                <field name="currency_id" attrs="{}" invisible="1" required="1"/>
+            </tree>
+        </field>
+    </record>
+
     <record id="view_rcskd_form_new" model="ir.ui.view">
         <field name="name">account.payment.form</field>
         <field name="model">account.payment</field>
@@ -473,7 +496,7 @@
             'default_be_renling': False, 'default_advance_ok': True, 'default_partner_type': 'customer',}
         </field>
         <field name="view_ids" eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_rcskd_tree')}),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_rcskd_tree_new_1')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcskd_form_new')})]"/>
     </record>
     <menuitem id="menu_rcskd_all_1103" sequence="05" name="查询" parent="yjzy_extend.menu_rcskd_new"

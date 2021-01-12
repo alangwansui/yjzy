@@ -172,7 +172,6 @@ class sale_order(models.Model):
             #统计预收余额
             if one.payment_term_id:
                 one.pre_advance = one.payment_term_id.get_advance(one.amount_total)
-
                 print('====', one, one.pre_advance)
 
             ##金额统计

@@ -1086,7 +1086,8 @@ class account_payment(models.Model):
                 elif self.amount_total_so < self.amount and self.so_id:
                     raise Warning('认领金额不能大于销售合同金额！')
                 else:
-                    self.state_1 = '20_account_submit'
+                    self.state_1 = '50_post'
+                    self.action_account_post()
             elif ctx.get('default_sfk_type', '') == 'yfsqd' or self.sfk_type == 'yfsqd':
                 if not self.bank_id:
                     raise Warning('请选择付款对象的银行账号!')

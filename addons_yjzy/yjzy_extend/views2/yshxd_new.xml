@@ -504,7 +504,7 @@
                         <group attrs="{'invisible':[('hxd_type_new','not in',['10','25','20'])]}">
 
                             <field name="line_no_other_ids" nolabel="1" colspan="2"
-                                   attrs="{'readonly':[('state_1','not in',['draft','draft_yshxd','account_approval','advance_approval_yshxd',
+                                   attrs="{'readonly':[('state_1','not in',['draft','draft_yshxd','draft_all','account_approval','advance_approval_yshxd',
                                    'account_approval_yshxd'])]}">
                                 <tree editable="bottom" create="false">
                                     <field name="id" invisible="1"/>
