@@ -1414,7 +1414,7 @@ class account_reconcile_order(models.Model):
                         if one.so_id:
                             if one.amount_advance_org > one.amount_invoice_so_residual_can_approve:
                                 raise Warning('预收认领金额大于可认领应收金额')
-                            if one.advance_residual2 >= 0 and one.amount_advance_org > one.advance_residual2:
+                            if one.advance_residual >= 0 and one.amount_advance_org > one.advance_residual2:
                                 raise Warning('预收认领金额大于可认领应收金额1')
                             if one.amount_advance_org > one.yjzy_payment_id.advance_balance_total:
                                 raise Warning('预收认领金额大于可认领应收金额2')
