@@ -77,7 +77,7 @@ class sale_order_line(models.Model):
             one.stock_cost = stock_cost
             one.profit_amount = price_total2 - purchase_cost - stock_cost - fandian_amoun
             one.back_tax_amount = back_tax_amount
-            one.rest_tb_qty = one.product_qty - sum(one.tbl_ids.mapped('qty2stage'))
+            one.rest_tb_qty = one.product_qty - sum(one.tbl_ids.mapped('qty2stage_new'))
             one.gross_profit_ratio_line = round(gross_profit_ratio_line,2)
             one.gross_profit_line = price_total2-purchase_cost
             one.fee_inner = one.order_id.amount_total and one.price_unit / one.order_id.amount_total * one.order_id.fee_inner

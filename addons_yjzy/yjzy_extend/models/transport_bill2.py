@@ -186,7 +186,7 @@ class transport_bill(models.Model):
         self.ensure_one()
         for one in self.tb_po_invoice_ids:
             if one.state not in ['30_done']:
-                raise Warning('存在为完成审批的增加采购申请单，请先等待完成审批后，再进行创建')
+                raise Warning('存在未完成审批的增加采购申请单，请先等待完成审批后，再进行创建')
         bill_id = self.id
         tb_po_id = self.env['tb.po.invoice'].create({'tb_id': bill_id,
                                                     'invoice_product_id': self.env.ref('yjzy_extend.product_qtyfk').id, #0821
@@ -381,7 +381,7 @@ class transport_bill(models.Model):
                             raise Warning(u'产品%s 没有设置销售价格' % product.default_code)
                         price = i[0].product_id.lst_price * (sol.price_unit / product.lst_price)
 
-                        amount = line.org_currency_sale_amount * i[0].price_percent * (plan.qty / line.qty2stage)
+                        amount = line.org_currency_sale_amount * i[0].price_percent * (plan.qty / line.qty2stage_new)
 
                         comb_obj.create({
                             'tb_id': self.id,
@@ -393,11 +393,11 @@ class transport_bill(models.Model):
                             'po_id': po_id,
                             'so_id': so.id,
                             'note': '销售金额%s  bom百分比%s  计划数量%s  销售数量%s   = 最终金额 %s ' % (
-                                line.org_currency_sale_amount, i[0].price_percent, plan.qty, line.qty2stage, amount)
+                                line.org_currency_sale_amount, i[0].price_percent, plan.qty, line.qty2stage_new, amount)
                         })
                 # 正常的
                 else:
-                    price_a = line.org_currency_sale_amount / line.qty2stage
+                    price_a = line.org_currency_sale_amount / line.qty2stage_new
                     comb_obj.create({
                         'tb_id': self.id,
                         'tbl_id': line.id,

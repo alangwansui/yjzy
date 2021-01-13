@@ -172,11 +172,9 @@ class res_partner(models.Model):
 
 
     qingguan_precision = fields.Integer('清关资料打印小数位数')
-
-    #增加供应商和客户的独立编号
+    #增加供应商和客户的独立编号，审批完成后添加
     customer_code = fields.Char('客户编码')
     supplier_code = fields.Char('供应商编码')
-
     #1102
     #取采购订单
     po_approve_ids = fields.One2many('purchase.order', 'partner_id', '今年采购合同',

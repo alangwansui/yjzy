@@ -652,7 +652,7 @@
 
                                         <field name="sale_qty" sum="小计" string="原始数量"/>
                                         <field name="qty_undelivered" invisible="1"/>
-                                        <field name="rest_tb_qty" string="剩余数量"/>
+                                        <field name="rest_tb_qty" string="本次出运后剩余数量"/>
 
 
                                         <field name="plan_qty" string="本次出运数量" sum="小计"/>
@@ -665,7 +665,7 @@
 
                                         <field name="dlr_qty" groups="base.group_system" invisible="1"/>
                                         <field name="qty1stage" groups="base.group_system" invisible="1"/>
-                                        <field name="qty2stage" sum="发货" invisible="1"/>
+
                                         <field name="org_currency_sale_amount" sum="销售" string="出运销售金额"/>
                                         <field name="sale_amount" sum="销售" groups="base.group_system" invisible="1"/>
                                         <field name="back_tax"/>

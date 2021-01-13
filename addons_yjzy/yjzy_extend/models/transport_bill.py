@@ -2546,16 +2546,16 @@ class transport_bill(models.Model):
         qingguan_obj = self.env['transport.qingguan.line']
         product_dic = {}   #{pi*100+soid: }
         for i in self.line_ids:
-            total = i.sol_id.price_unit * i.qty2stage
+            total = i.sol_id.price_unit * i.qty2stage_new
             pdt = i.product_id
 
             k = pdt.id * 100000 + i.so_id.id
 
             if k in product_dic:
-                product_dic[k]['qty'] += i.qty2stage
+                product_dic[k]['qty'] += i.qty2stage_new
                 product_dic[k]['sub_total'] += total
             else:
-                product_dic[k] = {'qty': i.qty2stage, 'sub_total': total, 'product_id': pdt.id, 'so_id': i.so_id.id, 's_uom_id': pdt.s_uom_id.id}
+                product_dic[k] = {'qty': i.qty2stage_new, 'sub_total': total, 'product_id': pdt.id, 'so_id': i.so_id.id, 's_uom_id': pdt.s_uom_id.id}
 
         for kk, data in list(product_dic.items()):
             line = qingguan_obj.create({
@@ -2574,7 +2574,7 @@ class transport_bill(models.Model):
 
     def get_product_total(self):
         self.ensure_one()
-        return sum([x.qty2stage for x in self.line_ids])
+        return sum([x.qty2stage_new for x in self.line_ids])
 
     def get_amount_word(self):
         x = num2words(round(self.sale_amount, 2)).upper()

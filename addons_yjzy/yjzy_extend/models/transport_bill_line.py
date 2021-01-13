@@ -31,31 +31,34 @@ class transport_bill_line(models.Model):
             stock_cost += i.lot_id.pol_id.currency_id.compute(i.qty * i.lot_id.purchase_price, self.company_currency_id)
         return stock_cost
 
+    @api.depends('sol_id','sol_id.order_id','sol_id.order_id.name','sol_id.product_id','sol_id.product_id.name')
+    def compute_name(self):
+        for one in self:
+            if one.sol_id:
+                one.name = '%s:%s' % (one.sol_id.order_id.name, one.sol_id.product_id.name)
+
+
+
     def compute_info(self):
         for one in self:
             sol = one.sol_id
             if not sol: continue
-            one.name = '%s:%s' % (one.sol_id.order_id.name, one.sol_id.product_id.name)
             plan_lots = one.lot_plan_ids
             one.qty1stage = sum([x.qty for x in plan_lots.filtered(lambda x: x.stage_1 == True)])
-            one.qty2stage = sum([x.qty for x in plan_lots.filtered(lambda x: x.stage_2 == True)])
-
+            qty2stage = sum([x.qty for x in plan_lots.filtered(lambda x: x.stage_2 == True)])
+            # one.qty2stage = sum([x.qty for x in plan_lots.filtered(lambda x: x.stage_2 == True)])
             ##计算金额
             cip_type = one.cip_type
-            org_currency_sale_amount = sol.price_unit * one.qty2stage
+            org_currency_sale_amount = sol.price_unit * qty2stage
             sale_amount = one.sale_currency_id.compute(org_currency_sale_amount, one.company_currency_id)
             purchase_cost = one.get_purchase_cost()
             stock_cost = one.get_stock_cost()
             back_tax = cip_type != 'none' and one.back_tax or 0
             back_tax_amount = (purchase_cost + stock_cost) / BACK_TAX_RATIO * back_tax
-
             vat_diff_amount = 0
             if one.include_tax  and one.company_currency_id.name == 'CNY':
                 vat_diff_amount = (sale_amount - purchase_cost -stock_cost)/ 1.13 * 0.13
-
             profit_amount = sale_amount - purchase_cost - stock_cost + back_tax_amount - vat_diff_amount
-
-
             one.org_currency_sale_amount = org_currency_sale_amount
             one.sale_amount = sale_amount
             one.purchase_cost = purchase_cost
@@ -114,7 +117,7 @@ class transport_bill_line(models.Model):
                                     digits=dp.get_precision('Money'))
     stock_cost = fields.Monetary(u'库存成本', currency_field='company_currency_id', compute=compute_info,
                                  digits=dp.get_precision('Money'))
-    name = fields.Char(u'说明', compute=compute_info)
+    name = fields.Char(u'说明', compute=compute_name,store=True)
     bill_id = fields.Many2one('transport.bill', u'发运单', ondelete='cascade', required=True)
     include_tax = fields.Boolean(related='bill_id.include_tax')
     state = fields.Selection(related='bill_id.state')
@@ -152,7 +155,7 @@ class transport_bill_line(models.Model):
     qty_undelivered = fields.Float(u'未发货', related='sol_id.qty_undelivered', readonly=True)
     qty = fields.Float(u'发运数量')
     qty1stage = fields.Float(u'入库数', compute=compute_info)
-    qty2stage = fields.Float(u'发货数', compute=compute_info)
+    # qty2stage = fields.Float(u'发货数', compute=compute_info)
     qty2stage_new = fields.Float(u'发货数:新', compute='compute_qty2stage_new', store=True)
     pack_line_id = fields.Many2one('transport.pack.line', u'统计')
     #明细装箱统计

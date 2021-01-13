@@ -326,7 +326,7 @@
 
                                         <field name="dlr_qty" groups="base.group_system" invisible="1"/>
                                         <field name="qty1stage" groups="base.group_system" invisible="1"/>
-                                        <field name="qty2stage" sum="发货" invisible="1"/>
+
                                         <field name="org_currency_sale_amount" sum="销售" string="出运销售金额"/>
                                         <field name="sale_amount" sum="销售" groups="base.group_system" invisible="1"/>
                                         <field name="back_tax"/>

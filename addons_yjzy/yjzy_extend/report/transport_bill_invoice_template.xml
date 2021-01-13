@@ -116,7 +116,7 @@
      <td  style="width: 13%"><span t-esc="line.product_id.customer_ref"/></td>
      <td  style="width: 13%"><span t-esc="line.product_id.customer_ref2"/></td>
      <td  style="width: 31%"><span t-esc="line.product_id.customer_description"/></td>
-     <td style="width: 7%;border-right: 0px"> <span t-esc="line.qty2stage"/></td>
+     <td style="width: 7%;border-right: 0px"> <span t-esc="line.qty2stage_new"/></td>
      <td style="width: 3%; border-left: 0px">PCS</td>
      <td style="width: 3%;border-right: 0px">USD</td>
      <td style="width: 7%; border-left: 0px"><span t-esc="line.sol_id.price_unit"/></td>

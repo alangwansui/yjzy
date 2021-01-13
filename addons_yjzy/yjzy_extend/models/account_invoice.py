@@ -50,7 +50,6 @@ class account_invoice(models.Model):
 
 
     def compute_info(self):
-
         for one in self:
             one.purchase_date_finish_att_count = len(one.purchase_date_finish_att)
 
@@ -523,6 +522,7 @@ class account_invoice(models.Model):
         for one in self:
             one.declaration_amount = sum(x.declaration_amount for x in one.btd_line_ids)
 
+    #D
     @api.depends('yjzy_type_1','yjzy_type','invoice_attribute')
     def compute_all_in_one(self):
         for one in self:
@@ -558,6 +558,7 @@ class account_invoice(models.Model):
                     name = '510'
             one.invoice_attribute_all_in_one = name
 
+    #D
     def compute_payment_log_ids_count(self):
         for one in self:
             one.payment_log_ids_count = len(one.payment_log_ids)
@@ -578,22 +579,18 @@ class account_invoice(models.Model):
             one.reconcile_order_line_no_ids_count = len(one.reconcile_order_line_no_ids)
 
     invoice_attribute_all_in_one = fields.Selection(invoice_attribute_all_in_one,u'账单属性all_in_one', compute=compute_all_in_one,store=True)
-    # invoice_attribute_all_in_one = fields.Char('账单属性all_in_one',compute=compute_all_in_one,store=True)
-
     current_date_rate = fields.Float('出运单汇率',related='bill_id.current_date_rate')
-
+    #讨论：是否在提交审批的时候就生成呢？日志就可以把核销和认领统一起来。
     payment_log_ids = fields.One2many('account.payment','invoice_log_id','认领以及收付明细')
     payment_log_ids_count = fields.Integer('认领以及收付明细数量',compute=compute_payment_log_ids_count)
-
     payment_log_no_done_ids = fields.One2many('account.payment','invoice_log_id','未完成认领以及收付明细',domain=[('state','not in',['posted','reconciled'])])
     payment_log_no_done_ids_count = fields.Integer('未完成认领以及收付明细数量',compute=compute_payment_log_ids_count)
-
     payment_log_hexiao_ids = fields.One2many('account.payment', 'invoice_log_id', '核销单',
                                               domain=[('sfk_type', 'in', ['reconcile_yingshou', 'reconcile_yingfu'])])
     payment_log_hexiao_ids_count = fields.Integer('未完成认领以及收付明细数量', compute=compute_payment_log_ids_count)
 
 
-    other_payment_invoice_id = fields.Many2one('account.invoice','关联的其他应收付下级账单')
+    other_payment_invoice_id = fields.Many2one('account.invoice','关联的其他应收付下级账单') #目前 只对其他应收做了计算
     other_payment_invoice_parent_id = fields.Many2one('account.invoice','关联的其他应收付上级账单')
 
     #1029#通过他们是否同属于一张申请单来汇总所有相关账单,其他应收付和相关的应收付申请，这里还没有直接的联系，待处理

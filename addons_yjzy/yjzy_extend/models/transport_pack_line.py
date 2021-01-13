@@ -56,7 +56,7 @@ class transport_pack_line(models.Model):
         products = lines.mapped('product_id')
         pdt_qty_dict = dict([(p, 0) for p in products])
         for line in lines:
-            pdt_qty_dict[line.product_id] += line.qty2stage
+            pdt_qty_dict[line.product_id] += line.qty2stage_new
 
         total_max_qty = total_mid_qty = total_min_qty = total_net_weight = total_gross_weight = total_volume = 0
         for pdt, qty in pdt_qty_dict.items():
@@ -74,7 +74,7 @@ class transport_pack_line(models.Model):
     @api.multi
     def compute(self):
         for one in self:
-            one.qty = sum([x.qty2stage for x in one.line_ids])
+            one.qty = sum([x.qty2stage_new for x in one.line_ids])
             one.pack_qty, one.net_weight, one.gross_weight, one.volume, one.pack_qty2, one.pack_qty3 = one._compute_one()
             one.sale_amount = one.company_currency_id.compute(sum([x.sale_amount for x in one.line_ids]), one.sale_currency_id)
 
