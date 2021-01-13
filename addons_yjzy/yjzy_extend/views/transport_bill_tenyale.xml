@@ -57,7 +57,7 @@
             <field name="model">transport.bill</field>
             <field name="arch" type="xml">
                 <tree string="未生效出运单" create="false">
-                     <field name="current_date_rate" string="汇率"/>
+                    <field name="current_date_rate" string="汇率"/>
                     <field name="ref"/>
                     <field name="name" invisible="1" groups="base.group_system"/>
                     <field name="partner_id" required="1"/>
@@ -87,8 +87,8 @@
             <field name="name">transport.bill.tree</field>
             <field name="model">transport.bill</field>
             <field name="arch" type="xml">
-                <tree string="出运单" create="false" default_order="stage_id,approve_date desc" >
-                     <field name="current_date_rate" string="汇率"/>
+                <tree string="出运单" create="false" default_order="stage_id,approve_date desc">
+                    <field name="current_date_rate" string="汇率"/>
                     <field name="ref"/>
                     <field name="name" invisible="1" groups="base.group_system"/>
                     <field name="approve_date" string="合规审批日"/>
@@ -316,7 +316,8 @@
                                 class="oe_highlight"/>
                         <button name="action_manager_approve" states="manager_approve" type="object" string="总经理特批"
                                 class="oe_highlight"/>
-                        <button name="%(transport_refuse_wizard_action)d" string="拒绝" type="action"/>
+                        <button name="%(transport_refuse_wizard_action)d" string="拒绝" type="action"
+                                attrs="{'invisible':[('state','in',['invoiced','abnormal','verifying','done','paid','cancel','refused','draft'])]}"/>
                         <button name="action_hexiao" states="verifying" string="核销" type="object"/>
                         <button string="取消" type="object" confirm="确定要取消吗？取消后请即时删除单据" name="action_cancel"
                                 states="draft,refused" class="oe_highlight"/>
@@ -474,8 +475,8 @@
                                 <field name="date" string="预计出运日期"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"
                                        invisible="1"/>
-                                 <field name="date_project" string="预计出运日期"
-                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
+                                <field name="date_project" string="预计出运日期"
+                                       attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <field name="current_date_rate" string="成本测算汇率"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <button string="添加销售明细" type="object" colspan="2"
@@ -590,7 +591,8 @@
                                 <button name="split_tuopan_all" type="object" string="分配托盘重量体积" colspan="2"
                                         attrs="{'invisible':[('is_done_tuopan','=',False)]}"/>
                                 <button name="split_tuopan_all" type="object" string="重新分配托盘重量体积"
-                                        confirm="将会初始化托盘的重量体积分配" attrs="{'invisible':[('is_done_tuopan','=',True)]}"
+                                        confirm="将会初始化托盘的重量体积分配"
+                                        attrs="{'invisible':['|',('state','in',['invoiced','abnormal','verifying','done','paid']),('is_done_tuopan','=',True)]}"
                                         colspan="2"/>
                                 <!-- name="account_type"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/-->
@@ -629,6 +631,10 @@
                                             attrs="{'invisible':[('operation_wizard','in',['fourth','fifth'])]}"
                                             class="oe_highlight" type="object"/>
                                     <button name="finish_delivery_qty" string="重新修改出运数量" invisible="1"/>
+                                    <button string="继续添加销售明细" type="object" name="open_wizard_transport4sol"
+                                            confirm="重新添加销售明细，将会清除所有的清关和报关资料！是否继续"
+                                            attrs="{'invisible':['|',('operation_wizard','in',['third','fourth','fourth','fifth']),('state','not in',['draft'])]}"
+                                            class="oe_highlight"/>
                                 </group>
                                 <field name="line_ids"
                                        attrs="{'readonly':[('state','not in',['draft','check','refused','cancel']),('is_editable','=',False)]}">
@@ -670,7 +676,8 @@
                                         <field name="sale_amount" sum="销售" groups="base.group_system" invisible="1"/>
                                         <field name="back_tax"/>
                                         <field name="purchase_cost" sum="采购" string="出运采购金额"/>
-                                        <field name="purchase_cost_new" sum="采购" string="出运采购金额:new" groups="base.group_system"/>
+                                        <field name="purchase_cost_new" sum="采购" string="出运采购金额:new"
+                                               groups="base.group_system"/>
                                         <field name="stock_cost" sum="库存" groups="base.group_system" invisible="1"/>
                                         <field name="back_tax"/>
 
@@ -1138,21 +1145,23 @@
                                         <field name="create_uid"/>
                                         <field name="employee_id" string="责任人"/>
                                         <field name="categ_id" context="{'search_order': 'sequence','only_name':1}"/>
-                                        <field name="second_categ_id" context="{'search_order': 'sequence','only_name':1}"/>
+                                        <field name="second_categ_id"
+                                               context="{'search_order': 'sequence','only_name':1}"/>
                                         <field name="product_id" string="小类"/>
                                         <field name="payment_date"/>
                                         <field name="currency_id" invisible="1"/>
                                         <field name="company_currency_id" invisible="1"/>
                                         <field name="currency_id" invisible="1"/>
                                         <field name="total_amount" sum="小计" widget="monetary"/>
-                                        <field name="company_currency_total_amount" sum="小计" />
+                                        <field name="company_currency_total_amount" sum="小计"/>
                                         <field name="budget_amount"/>
                                         <field name="budget_id"/>
                                         <field name="state"/>
                                     </tree>
                                 </field>
                             </page>
-                            <page string="时间管理页面" attrs="{'invisible':[('operation_wizard','in',['first','second','third','fourth'])]}">
+                            <page string="时间管理页面"
+                                  attrs="{'invisible':[('operation_wizard','in',['first','second','third','fourth'])]}">
                                 <group>
                                     <group>
                                         <field name="submit_date" attrs="{'readonly':1}"/>
@@ -1166,7 +1175,7 @@
                                         <label for="date_out_in" string="进仓日"/>
                                         <div class="o_row">
                                             <field name="date_out_in" attrs="{'readonly':1}"
-                                                   />
+                                            />
                                             <button name="open_transport_self" icon="fa-paperclip" type="object"
                                                     context="{'form_xml_id': 'yjzy_extend.view_transport_bill_date_out_in'}"
                                                     string="附件"/>
@@ -1187,12 +1196,15 @@
                                                     context="{'form_xml_id': 'yjzy_extend.view_transport_bill_date_customer_finish'}"
                                                     string="附件"/>
                                         </div>
-                                        <field name="date_customer_finish_state" string="客户交单审批" attrs="{'readonly':1}"/>
-                                        <field name="purchase_invoice_ids2" widget="many2many_tags" string="供应商交单日" attrs="{'readonly':1}"/>
+                                        <field name="date_customer_finish_state" string="客户交单审批"
+                                               attrs="{'readonly':1}"/>
+                                        <field name="purchase_invoice_ids2" widget="many2many_tags" string="供应商交单日"
+                                               attrs="{'readonly':1}"/>
                                         <button colspan="2" name="open_purchase_invoice_1" type="object"
                                                 class="oe_stat_button" icon="fa-paperclip"
                                                 string="供应商交单"/>
-                                        <field name="date_purchase_finish_state" string="供应商交单审批" attrs="{'readonly':1}"/>
+                                        <field name="date_purchase_finish_state" string="供应商交单审批"
+                                               attrs="{'readonly':1}"/>
                                     </group>
                                 </group>
                             </page>
@@ -1699,7 +1711,9 @@
             <field name="limit">20</field>
             <field name="view_mode">tree,form,kanban</field>
             <field name="search_view_id" ref="view_transport_bill_tenyale_filter"/>
-            <field name="domain">[('state','in',['cancel','draft','refused','submit','sales_approve','manager_approve'])]</field>
+            <field name="domain">
+                [('state','in',['cancel','draft','refused','submit','sales_approve','manager_approve'])]
+            </field>
             <field name="context">
                 {'search_default_group_by_stage':1,'only_name':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3,'show_po_code':
                 1}

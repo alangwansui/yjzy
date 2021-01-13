@@ -60,9 +60,11 @@
                     <header>
                         <button string="初始化发货通知单" name="make_tb_vendor" confirm="供应商发货通知单！是否继续？"
                                  class="oe_highlight"
+                                attrs="{'invisible':[('state','in',['invoiced','abnormal','verifying','done','paid'])]}"
                                 type="object"/>
                         <button string="重新分配托盘数据" name="split_tuopan_weight2vendor" confirm="供应商发货通知单托盘数据！是否继续？"
                                  class="oe_highlight"
+                                attrs="{'invisible':[('state','in',['invoiced','abnormal','verifying','done','paid'])]}"
                                 type="object"/>
                         <field name="state" widget="statusbar" statusbar_visible=" "  groups="base.group_system"/>
                         <field name="is_editable" widget="boolean_toggle" groups="	sales_team.group_manager"/>

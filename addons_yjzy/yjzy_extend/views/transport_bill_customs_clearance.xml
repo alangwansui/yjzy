@@ -76,9 +76,11 @@
                                 class="oe_highlight"/>
                         <button string="初始化清关数据" type="object" name="create_qingguan_lines"
                                 confirm="该命令将会初始化清关资料！是否继续？"
+                                attrs="{'invisible':[('state','in',['invoiced','abnormal','verifying','done','paid'])]}"
                                 class="oe_highlight"/>
                         <button string="分配托盘重量体积" type="object" name="split_tuopan_weight_qingguan"
                                 confirm="该命令将会初始化托盘数据！是否继续？"
+                                attrs="{'invisible':[('state','in',['invoiced','abnormal','verifying','done','paid'])]}"
                                 class="oe_highlight"/>
                     </header>
                     <header groups="base.group_system">

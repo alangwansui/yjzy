@@ -16,11 +16,12 @@
                                 attrs="{'invisible': [('state', '=','draft')]}"
                                 invisible="1"/>
                         <button name="action_employee_confirm" type="object" string="责任人确认" invisible="1"
-                               attrs="{'invisible':['|',('state','in',['draft','done','refused','confirmed','employee_confirm']),('sheet_state','=','cancel')]}"/>
+                                attrs="{'invisible':['|',('state','in',['draft','done','refused','confirmed','employee_confirm']),('sheet_state','=','cancel')]}"/>
                         <button name="make_diff_mvoe" type="object" string="创建差额分录" groups="base.group_system"/>
                         <button name="btn_user_confirm" type="object" string="所有责任人确认" groups="base.group_system"/>
-                        <button name="btn_undo_confirm" type="object" string="取消责任人确认" invisible="1" attrs="{'invisible': ['|',('state', 'in',['draft','done','refused','confirmed','reported']),('sheet_all_line_is_confirmed','=',True)]}"
-                                /><!--attrs="{'invisible':['|',('state','in',['draft','done','refused','confirmed','reported']),('sheet_all_line_is_confirmed','=',True)]}"-->
+                        <button name="btn_undo_confirm" type="object" string="取消责任人确认" invisible="1"
+                                attrs="{'invisible': ['|',('state', 'in',['draft','done','refused','confirmed','reported']),('sheet_all_line_is_confirmed','=',True)]}"
+                        /><!--attrs="{'invisible':['|',('state','in',['draft','done','refused','confirmed','reported']),('sheet_all_line_is_confirmed','=',True)]}"-->
                     </header>
                     <sheet>
                         <div class="oe_button_box" invisible="1"><!--invisible="context.get('expense_adding_line')"-->
@@ -38,15 +39,16 @@
                         <group>
                             <group>
                                 <field name="categ_id" string="大类" options="{'no_open':1}"
-                                       domain="[('parent_id.name','=','费用')]" attrs="{'readonly':[('sheet_state','not in',['draft'])]}"
+                                       domain="[('parent_id.name','=','费用')]"
+                                       attrs="{'readonly':[('sheet_state','not in',['draft'])]}"
                                        context="{'search_order': 'sequence','only_name':1}" required="1"/>
                                 <field name="second_categ_id" string="中类" options="{'no_open':1}"
-                                      attrs="{'readonly':[('sheet_state','not in',['draft'])]}"
+                                       attrs="{'readonly':[('sheet_state','not in',['draft'])]}"
                                        domain="[('parent_id','=', categ_id)]"
                                        context="{'search_order': 'sequence','only_name':1}"
                                        required="1"/>
                                 <field name="product_id" required="1" string="小类"
-                                      attrs="{'readonly':[('sheet_state','not in',['draft'])]}"
+                                       attrs="{'readonly':[('sheet_state','not in',['draft'])]}"
                                        options="{'no_create':True,'no_open':1}"
                                        domain="[('can_be_expensed','=',True),('categ_id','=',second_categ_id)]"
                                        context="{'default_can_be_expensed': 1, 'tree_view_ref': 'hr_expense.product_product_expense_tree_view','only_name':1}"/>
@@ -91,7 +93,7 @@
                                 <field name="user_id" invisible="1"/>
                                 <field name="ask_uid" invisible="1"/>
 
-                                <field name="create_uid" />
+                                <field name="create_uid"/>
 
                                 <field name="budget_id" groups="base.group_system"/>
                                 <field name="budget_amount" readonly="1"/>
@@ -292,7 +294,7 @@
                                 <field name="tax_ids" domain="[('type_tax_use', '=', 'purchase')]"
                                        widget="many2many_tags" invisible="1"
                                        groups="account.group_account_user"/>
-                                <field name="gongsi_id"  string="费用公司主体" options="{'no_create':true,'no_open':1}"/>
+                                <field name="gongsi_id" string="费用公司主体" options="{'no_create':true,'no_open':1}"/>
                             </group>
                             <group>
                                 <field name="reference" invisible="1"/>
@@ -456,7 +458,8 @@
                     <filter string="New Mail" name="message_unread" domain="[('message_unread', '=', True)]"
                             invisible="1"/>
                     <group expand="0" string="Group By">
-                        <filter string="费用类型" domain="[]" name="group_expense_to_invoice_type" context="{'group_by': 'expense_to_invoice_type'}"/>
+                        <filter string="费用类型" domain="[]" name="group_expense_to_invoice_type"
+                                context="{'group_by': 'expense_to_invoice_type'}"/>
 
                         <filter string="审批流" domain="[]" context="{'group_by': 'stage_id'}" invisible="1"/>
 
@@ -495,35 +498,44 @@
             <field name="name">hr.expense.sheet.search.new</field>
             <field name="model">hr.expense.sheet</field>
             <field name="arch" type="xml">
-        <search string="Expense">
+                <search string="Expense">
                     <field name="name" string="Expenses"/>
-            <field name="create_date"/>
-            <field name="expense_line_ids"/>
+                    <field name="create_date"/>
+                    <field name="expense_line_ids"/>
                     <field name="accounting_date"/>
                     <field name="state"/>
                     <field name="employee_id"/>
                     <field name="department_id" string="Department"/>
                     <separator/>
-                    <filter domain="[('state', '=', 'submit')]" string="To Approve" name="submitted" help="Confirmed Expenses"/>
-                    <filter domain="[('state', '=', 'approve')]" string="To Post" name="to_post" help="Approved Expenses"/>
-                    <filter domain="['|', ('state', '=', 'approve'), ('state', '=', 'post')]" string="To Pay" name="approved" help="Expenses to Invoice"/>
+                    <filter domain="[('state', '=', 'submit')]" string="To Approve" name="submitted"
+                            help="Confirmed Expenses"/>
+                    <filter domain="[('state', '=', 'approve')]" string="To Post" name="to_post"
+                            help="Approved Expenses"/>
+                    <filter domain="['|', ('state', '=', 'approve'), ('state', '=', 'post')]" string="To Pay"
+                            name="approved" help="Expenses to Invoice"/>
                     <separator/>
-                    <filter string="My Team Reports" domain="[('employee_id.parent_id.user_id', '=', uid)]" groups="hr_expense.group_hr_expense_manager" help="Expenses of Your Team Member"/>
+                    <filter string="My Team Reports" domain="[('employee_id.parent_id.user_id', '=', uid)]"
+                            groups="hr_expense.group_hr_expense_manager" help="Expenses of Your Team Member"/>
                     <filter string="My Reports" domain="[('employee_id.user_id', '=', uid)]"/>
                     <separator/>
                     <filter string="New Mail" name="message_unread" domain="[('message_unread', '=', True)]"/>
                     <group expand="0" string="Group By">
-                        <filter string="是否转货款" domain="[]" name="group_to_invoice" context="{'group_by': 'expense_to_invoice_type'}"/>
+                        <filter string="是否转货款" domain="[]" name="group_to_invoice"
+                                context="{'group_by': 'expense_to_invoice_type'}"/>
                         <filter string="审批状态" domain="[]" name="group_by_stage_id" context="{'group_by': 'stage_id'}"/>
-                        <filter string="状态1费用类型" domain="[]" name="group_stage_id_expense_to_invoice_type" context="{'group_by':('stage_id','expense_to_invoice_type')}"/>
+                        <filter string="状态1费用类型" domain="[]" name="group_stage_id_expense_to_invoice_type"
+                                context="{'group_by':('stage_id','expense_to_invoice_type')}"/>
                         <filter string="Employee" domain="[]" context="{'group_by': 'employee_id'}"/>
                         <filter string="Department" domain="[]" context="{'group_by': 'department_id'}"/>
-                        <filter string="Company" domain="[]" context="{'group_by': 'company_id'}" groups="base.group_multi_company"/>
-                        <filter string="Expenses Month" domain="[]" context="{'group_by': 'accounting_date'}" help="Expenses by Month"/>
+                        <filter string="Company" domain="[]" context="{'group_by': 'company_id'}"
+                                groups="base.group_multi_company"/>
+                        <filter string="Expenses Month" domain="[]" context="{'group_by': 'accounting_date'}"
+                                help="Expenses by Month"/>
                         <filter string="State" domain="[]" context="{'group_by': 'state'}" name="state"/>
                     </group>
                     <separator/>
-                    <filter domain="[('employee_id.active', '=', False)]" string="Former Employees" name="inactive" groups="hr_expense.group_hr_expense_user,hr_expense.group_hr_expense_manager"/>
+                    <filter domain="[('employee_id.active', '=', False)]" string="Former Employees" name="inactive"
+                            groups="hr_expense.group_hr_expense_user,hr_expense.group_hr_expense_manager"/>
                 </search>
             </field>
         </record>
@@ -565,7 +577,6 @@
                     <field name="budget_id" groups="base.group_system"/>
                     <field name="budget_amount" groups="base.group_system"/>
                     <field name="budget_amount_reset" groups="base.group_system"/>
-
 
 
                     <button name="action_get_attachment_view" string="View Attached Documents" type="object"
@@ -659,7 +670,7 @@
             <field name="name">hr.expense.sheet.tree</field>
             <field name="model">hr.expense.sheet</field>
             <field name="arch" type="xml">
-                <tree string="费用申请" class="o_expense_tree"  delete="false"
+                <tree string="费用申请" class="o_expense_tree" delete="false"
                       decoration-warning="state=='draft'" decoration-bf="message_unread == True"
                       decoration-danger="state=='cancel'">
                     <field name="create_date" string="创建日期"/>
@@ -700,7 +711,8 @@
             <field name="name">hr.expense.sheet.tree</field>
             <field name="model">hr.expense.sheet</field>
             <field name="arch" type="xml">
-                <tree string="费用申请" class="o_expense_tree" default_order="manager_confirm_date desc" create="false" edit="false" delete="false"
+                <tree string="费用申请" class="o_expense_tree" default_order="manager_confirm_date desc" create="false"
+                      edit="false" delete="false"
                       decoration-warning="state=='draft'" decoration-bf="message_unread == True"
                       decoration-danger="state=='cancel'">
                     <field name="create_date" string="创建日期"/>
@@ -1272,7 +1284,8 @@
                                                 attrs="{'invisible': [('is_confirmed','!=',True)]}"/>
                                         <field name="date" string="明细日期"
                                                invisible="1"/> <!--invisible="context.get('no_show_mark')" -->
-                                        <field name="gongsi_id" string="公司主体" invisible="1" options="{'no_create':true,'no_open':1}"/>
+                                        <field name="gongsi_id" string="公司主体" invisible="1"
+                                               options="{'no_create':true,'no_open':1}"/>
                                     </tree>
                                 </field>
 
@@ -1348,7 +1361,8 @@
                                         <button name="is_confirmed_icon" icon="fa_check"
                                                 attrs="{'invisible': [('is_confirmed','!=',True)]}"/>
                                         <field name="date" string="明细日期" invisible="1"/>
-                                        <field name="gongsi_id" string="公司主体" invisible="1" options="{'no_create':true,'no_open':1}"/>
+                                        <field name="gongsi_id" string="公司主体" invisible="1"
+                                               options="{'no_create':true,'no_open':1}"/>
                                     </tree>
                                 </field>
 
@@ -1429,26 +1443,34 @@
             <field name="arch" type="xml">
                 <form string="费用申请" class="o_expense_sheet" create="false">
                     <header>
-                        <button name="action_draft" string="重置草稿" type="object" attrs="{'invisible':[('state_1','not in',['refused'])]}"/>
-
-                        <button name="action_to_employee_approval" string="提交" type="object" class="oe_highlight" attrs="{'invisible':[('state_1','not in',['draft'])]}"/>
+                        <button name="action_draft" string="重置草稿" type="object"
+                                attrs="{'invisible':[('state_1','not in',['refused'])]}"/>
+                        <button name="action_to_employee_approval" string="提交" type="object" class="oe_highlight"
+                                attrs="{'invisible':[('state_1','not in',['draft'])]}"/>
                         <button name="action_account_to_manager" string="直接提交总经理" type="object" class="oe_highlight"
-                                attrs="{'invisible':[('state_1','not in',['draft'])]}" groups="account.group_account_manager"/>
-                        <button name="action_to_account_approval" string="责任人审批(自动)" groups="base.group_system"  type="object" attrs="{'invisible':[('state_1','not in',['employee_approval'])]}"/>
-                        <button name="action_account_approve" string="财务审批" type="object" class="oe_highlight"  attrs="{'invisible':[('state_1','not in',['account_approval'])]}"/>
-                        <button name="action_manager_approve" string="总经理审批" type="object" class="oe_highlight"  attrs="{'invisible':[('state_1','not in',['manager_approval'])]}"/>
-                        <button name="%(expense_sheet_refuse_wizard_action)d" string="拒绝" type="action" attrs="{'invisible':[('state_1','in',['draft','refused','done','post'])]}"/>
-                        <button name="create_tb_po_invoice" string="费用转货款" confirm="费用将会转换为货款，确定吗？" groups="sales_team.group_manager" type="object"
+                                attrs="{'invisible':[('state_1','not in',['draft'])]}"
+                                groups="account.group_account_manager"/>
+                        <button name="action_to_account_approval" string="责任人审批(自动)" groups="base.group_system"
+                                type="object" attrs="{'invisible':[('state_1','not in',['employee_approval'])]}"/>
+                        <button name="action_account_approve" string="财务审批" type="object" class="oe_highlight"
+                                attrs="{'invisible':[('state_1','not in',['account_approval'])]}"/>
+                        <button name="action_manager_approve" string="总经理审批" type="object" class="oe_highlight"
+                                attrs="{'invisible':[('state_1','not in',['manager_approval'])]}"/>
+                        <button name="%(expense_sheet_refuse_wizard_action)d" string="拒绝" type="action"
+                                attrs="{'invisible':[('state_1','in',['draft','refused','done','post'])]}"/>
+                        <button name="create_tb_po_invoice" string="费用转货款" confirm="费用将会转换为货款，确定吗？"
+                                groups="sales_team.group_manager" type="object"
                                 attrs="{'invisible':['|',('expense_to_invoice_type','!=','normal'),('state_1','!=','account_approval')]}"
-                        context="{'open_expense':1}"/>
-                        <button name="btn_match_budget" string="生成预算" type="object" attrs="{'invisible':[('state_1','not in',['draft'])]}"/>
+                                context="{'open_expense':1}"/>
+                        <button name="btn_match_budget" string="生成预算" type="object"
+                                attrs="{'invisible':[('state_1','not in',['draft'])]}"/>
 
                         <field name="state_1" widget="statusbar"
                                statusbar_visible=" "/>
-                        <field name="stage_id" groups="base.group_system"/>
                     </header>
                     <header groups="base.group_system">
-                        <button name="open_wizard_tb_po_invoice" string="创建增加的采购:失效" type="object" groups="base.group_system"/>
+                        <button name="open_wizard_tb_po_invoice" string="创建增加的采购:失效" type="object"
+                                groups="base.group_system"/>
 
                         <button name="approve_expense_sheets" states="submit" string="Approve" type="object"
                                 groups="base.group_system"
@@ -1488,19 +1510,20 @@
                         <field name="is_editable" widget="boolean_toggle" groups="sales_team.group_manager"/>
 
                     </header>
-                    <div class="oe_form_box_info oe_text_center" attrs="{'invisible':[('expense_to_invoice_type','not in',['to_invoice'])]}">
+                    <div class="oe_form_box_info oe_text_center"
+                         attrs="{'invisible':[('expense_to_invoice_type','not in',['to_invoice'])]}">
                         <span>
                             费用转货款！
                         </span>
                     </div>
 
                     <sheet>
-<!--                        <div class="oe_button_box">&lt;!&ndash;"context.get('expense_adding_line')"&ndash;&gt;-->
-<!--                            <button name="open_tb_po_invoice" class="oe_stat_button" icon="fa-book"-->
-<!--                                    type="object">-->
-<!--                                <field name="tb_po_invoice_ids" widget="statinfo" string="费用转采购"/>-->
-<!--                            </button>-->
-<!--                        </div>-->
+                        <!--                        <div class="oe_button_box">&lt;!&ndash;"context.get('expense_adding_line')"&ndash;&gt;-->
+                        <!--                            <button name="open_tb_po_invoice" class="oe_stat_button" icon="fa-book"-->
+                        <!--                                    type="object">-->
+                        <!--                                <field name="tb_po_invoice_ids" widget="statinfo" string="费用转采购"/>-->
+                        <!--                            </button>-->
+                        <!--                        </div>-->
                         <div class="oe_button_box" invisible="1"><!--"context.get('expense_adding_line')"-->
                             <button name="action_get_attachment_view" class="oe_stat_button" icon="fa-book"
                                     type="object">
@@ -1527,11 +1550,15 @@
                                        context="{'search_order': 'sequence','only_name':1}"/>
                                 <field name="total_amount" string="总金额" readonly="1" invisible="1"/>
                                 <field name="my_total_amount" string="总金额"/>
-                                <field name="purchase_amount2_add_this_time_total" style="color:red" attrs="{'invisible':[('tb_po_invoice_ids_count','=',0)]}"/>
-                                <field name="back_tax_add_this_time_total" style="color:red" attrs="{'invisible':[('tb_po_invoice_ids_count','=',0)]}"/>
+                                <field name="purchase_amount2_add_this_time_total" style="color:red"
+                                       attrs="{'invisible':[('tb_po_invoice_ids_count','=',0)]}"/>
+                                <field name="back_tax_add_this_time_total" style="color:red"
+                                       attrs="{'invisible':[('tb_po_invoice_ids_count','=',0)]}"/>
                                 <field name="tb_po_invoice_ids" widget="many2many_tags" string="费用转货款申请"
-                                       attrs="{'invisible':[('tb_po_invoice_ids_count','=',0)],'readonly':[('state_1','not in',['account_approval'])]}" options="{'open_view': True}" context="{'open_expense':1}"/>
-                                <field name="document_number" attrs="{'readonly': [('state','in',['approve','post','done']),('is_editable','=',False)]}"/>
+                                       attrs="{'invisible':[('tb_po_invoice_ids_count','=',0)],'readonly':[('state_1','not in',['account_approval'])]}"
+                                       options="{'open_view': True}" context="{'open_expense':1}"/>
+                                <field name="document_number"
+                                       attrs="{'readonly': [('state','in',['approve','post','done']),('is_editable','=',False)]}"/>
                                 <field name="include_tax" attrs="{'readonly':[('state','not in',['submit','draft'])]}"/>
                                 <field name="payment_mode" invisible="1" readonly="1"/>
                                 <field name="currency_id" options="{'no_create':true,'no_open':1}"
@@ -1545,87 +1572,92 @@
                                 <field name="address_id" invisible="1"/>
                                 <field name="department_id" invisible="1"/>
                                 <field name="budget_type" invisible="1"/>
-                                <field name="gongsi_id" string="公司主体" options="{'no_create':true,'no_open':1}" invisible="1"/>
+                                <field name="gongsi_id" string="公司主体" options="{'no_create':true,'no_open':1}"
+                                       invisible="1"/>
                                 <field name="is_budget" invisible="1"/>
                                 <field name="company_currency_total_amount" groups="base.group_system"/>
                             </group>
                             <group col="1">
 
-                           <group>
-                                <field name="employee_id" string="申请人*" options="{'no_create':true,'no_open':1}"
-                                       readonly="1"
-                                       required="1"/>
-                                <field name="company_id" readonly="1" invisible="1" groups="base.group_multi_company"
-                                       options="{'no_create':true,'no_open':1}"/>
-                             </group>
+                                <group>
+                                    <field name="employee_id" string="申请人*" options="{'no_create':true,'no_open':1}"
+                                           readonly="1"
+                                           required="1"/>
+                                    <field name="company_id" readonly="1" invisible="1"
+                                           groups="base.group_multi_company"
+                                           options="{'no_create':true,'no_open':1}"/>
+                                </group>
 
                                 <group groups="account.group_account_invoice" style="margin-top:-5px;"
                                        attrs="{'invisible':[('state_1','not in',['draft','account_approval','manager_approval','post','done'])]}">
 
-                                        <field name="partner_id" string="付款对象" invisible="1"
-                                               context="{'default_supplier':True, 'default_customer':True, 'default_is_company':1}"/>
-                                        <field name="fk_journal_id" string="付款账户"
-                                               domain="[('type','in',['bank', 'cash'])]"  options="{'no_create':True}"
-                                               attrs="{'readonly': [('is_editable','=',False),'|',('state_1','not in',['account_approval']),('state','in',['approve','post','done'])]}"/>
-                                        <field name="back_tax_product_id" invisible="1"
-                                               attrs="{'readonly': [('state','=','approve')]}"/>
-                                        <field name="back_tax_amount" invisible="0"
-                                                attrs="{'readonly': [('is_editable','=',False),'|',('state_1','not in',['account_approval']),('state','in',['approve','post','done'])]}"/>
-                                        <field name="back_tax_invoice_id" invisible="1"
-                                               attrs="{'readonly': [('state','=','approve'),('is_editable','=',False)]}"/>
-                                        <field name="bank_journal_id" groups="account.group_account_user" invisible="1"
-                                               options="{'no_open': True, 'no_create': True}"
-                                               attrs="{'invisible': [('payment_mode', '!=', 'company_account')]}"
-                                               domain="[('type', 'in', ['cash', 'bank'])]"
-                                               context="{'default_bank_journal_code':'yfdrl'}"/>
-                                        <field name="accounting_date" groups="account.group_account_user"
-                                               attrs="{'invisible': [('state', 'not in', ['approve', 'post', 'done'])],'readonly': [('state','in',['approve','post','done']),('is_editable','=',False)]}"/>
-                                        <field name="journal_id" domain="[('type', '=', 'purchase')]"
-                                               options="{'no_open': True, 'no_create': True}"
-                                               attrs="{'invisible': [('payment_mode', '!=', 'own_account')]}"/>
-                                        <field name="todo_cron" invisible="1"/>
-                                        <field name="payment_id" readonly="1" domain="[('sfk_type','=', 'rcfkd')]" string="付款单申请单"
-                                               context="{'form_view_ref':'yjzy_extend.view_rcfkd_form'}"/>
-                                        <field name="yjzy_payment_currency_id" readonly="1" string="货币" invisible="1"/>
-                                        <field name="balance" string="付款单未认领" invisible="1"/>
-                                    </group>
+                                    <field name="partner_id" string="付款对象" invisible="1"
+                                           context="{'default_supplier':True, 'default_customer':True, 'default_is_company':1}"/>
+                                    <field name="fk_journal_id" string="付款账户"
+                                           domain="[('type','in',['bank', 'cash'])]" options="{'no_create':True}"
+                                           attrs="{'readonly': [('is_editable','=',False),'|',('state_1','not in',['draft','account_approval']),('state','in',['approve','post','done'])]}"/>
+                                    <field name="back_tax_product_id" invisible="1"
+                                           attrs="{'readonly': [('state','=','approve')]}"/>
+                                    <field name="back_tax_amount" invisible="0"
+                                           attrs="{'readonly': [('is_editable','=',False),'|',('state_1','not in',['draft','account_approval']),('state','in',['approve','post','done'])]}"/>
+                                    <field name="back_tax_invoice_id" invisible="1"
+                                           attrs="{'readonly': [('state','=','approve'),('is_editable','=',False)]}"/>
+                                    <field name="bank_journal_id" groups="account.group_account_user" invisible="1"
+                                           options="{'no_open': True, 'no_create': True}"
+                                           attrs="{'invisible': [('payment_mode', '!=', 'company_account')]}"
+                                           domain="[('type', 'in', ['cash', 'bank'])]"
+                                           context="{'default_bank_journal_code':'yfdrl'}"/>
+                                    <field name="accounting_date" groups="account.group_account_user"
+                                           attrs="{'invisible': [('state', 'not in', ['approve', 'post', 'done'])],'readonly': [('state','in',['approve','post','done']),('is_editable','=',False)]}"/>
+                                    <field name="journal_id" domain="[('type', '=', 'purchase')]"
+                                           options="{'no_open': True, 'no_create': True}"
+                                           attrs="{'invisible': [('payment_mode', '!=', 'own_account')]}"/>
+                                    <field name="todo_cron" invisible="1"/>
+                                    <field name="payment_id" readonly="1" domain="[('sfk_type','=', 'rcfkd')]"
+                                           string="付款单申请单"
+                                           context="{'form_view_ref':'yjzy_extend.view_rcfkd_form'}"/>
+                                    <field name="yjzy_payment_currency_id" readonly="1" string="货币" invisible="1"/>
+                                    <field name="balance" string="付款单未认领" invisible="1"/>
+                                </group>
 
 
                             </group>
 
-                                  <group>
-                                    <field name="total_this_moth" groups="base.group_system"/>
+                            <group>
+                                <field name="total_this_moth" groups="base.group_system"/>
                                 <field name="total_this_year" groups="base.group_system"/>
                                 <field name="total_approve" groups="base.group_system"/>
                                 <field name="total_submit" groups="base.group_system"/>
                                 <field name="total_un_submit" groups="base.group_system"/>
-                                </group>
+                            </group>
 
 
                         </group>
-                        <notebook><page string="费用转货款" attrs="{'invisible':[('tb_po_invoice_ids_count','=',0)]}" invisible="1">
+                        <notebook>
+                            <page string="费用转货款" attrs="{'invisible':[('tb_po_invoice_ids_count','=',0)]}"
+                                  invisible="1">
                                 <field name="tb_po_invoice_ids_count" invisible="1"/>
-<!--                                <field name="tb_po_invoice_ids" context="{'form_view_ref':'yjzy_extend.tb_po_form'}">-->
-<!--                                    <tree decoration-info="state not in ['post','done']" create="false" edit="false">-->
-<!--                                        <field name="name" invisible="1"/>-->
-<!--                                        <field name="partner_id"/>-->
-<!--                                        <field name="yjzy_invoice_residual_amount" invisible="1"/>-->
-<!--                                        <field name="yjzy_invoice_include_tax" invisible="1"/>-->
-<!--                                        <field name="purchase_amount2_add_this_time_total" string="货款金额"/>-->
-<!--                                        <field name="p_s_add_this_time_refund" invisible="1"/>-->
-<!--                                        <field name="p_s_add_this_time_extra_total" invisible="1"/>-->
-<!--                                        <field name="back_tax_add_this_time_total" invisible="0" string="退税金额"/>-->
-<!--                                        <field name="po_add_residual" invisible="0" string="货款未付金额"/>-->
-<!--                                        <field name="p_s_add_residual" invisible="1"/>-->
-<!--                                        <field name="back_tax_add_residual"  string="退税未收金额"/>-->
-<!--                                        <field name="p_s_add_refund_residual" invisible="1"/>-->
-<!--                                        <field name="create_date" string="创建日期"/>-->
-<!--                                        <field name="yjzy_invoice_id" groups="base.group_system"/>-->
-<!--                                        <field name="state" groups="base.group_system"/>-->
-<!--                                        <button name="open_tb_po_invoice" string="编辑" type="object" context="{'open_expense':1}"-->
-<!--                                                attrs="{'invisible':[('state','!=','10_draft')]}"/>-->
-<!--                                    </tree>-->
-<!--                                </field>-->
+                                <!--                                <field name="tb_po_invoice_ids" context="{'form_view_ref':'yjzy_extend.tb_po_form'}">-->
+                                <!--                                    <tree decoration-info="state not in ['post','done']" create="false" edit="false">-->
+                                <!--                                        <field name="name" invisible="1"/>-->
+                                <!--                                        <field name="partner_id"/>-->
+                                <!--                                        <field name="yjzy_invoice_residual_amount" invisible="1"/>-->
+                                <!--                                        <field name="yjzy_invoice_include_tax" invisible="1"/>-->
+                                <!--                                        <field name="purchase_amount2_add_this_time_total" string="货款金额"/>-->
+                                <!--                                        <field name="p_s_add_this_time_refund" invisible="1"/>-->
+                                <!--                                        <field name="p_s_add_this_time_extra_total" invisible="1"/>-->
+                                <!--                                        <field name="back_tax_add_this_time_total" invisible="0" string="退税金额"/>-->
+                                <!--                                        <field name="po_add_residual" invisible="0" string="货款未付金额"/>-->
+                                <!--                                        <field name="p_s_add_residual" invisible="1"/>-->
+                                <!--                                        <field name="back_tax_add_residual"  string="退税未收金额"/>-->
+                                <!--                                        <field name="p_s_add_refund_residual" invisible="1"/>-->
+                                <!--                                        <field name="create_date" string="创建日期"/>-->
+                                <!--                                        <field name="yjzy_invoice_id" groups="base.group_system"/>-->
+                                <!--                                        <field name="state" groups="base.group_system"/>-->
+                                <!--                                        <button name="open_tb_po_invoice" string="编辑" type="object" context="{'open_expense':1}"-->
+                                <!--                                                attrs="{'invisible':[('state','!=','10_draft')]}"/>-->
+                                <!--                                    </tree>-->
+                                <!--                                </field>-->
                             </page>
                             <page string="Expense Lines">
                                 <field name="expense_line_ids"
@@ -1659,7 +1691,7 @@
                                         <field name="unit_amount" string="费用金额" required="1" sum="小计"
                                                attrs="{'readonly':[('parent.state','not in',['draft'])]}"
                                                widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                                          <field name="date" string="费用发生日期*"
+                                        <field name="date" string="费用发生日期*"
                                                attrs="{'readonly':[('parent.state','not in',['draft'])]}"/>
                                         <field name="employee_id" string="责任人*"
                                                attrs="{'readonly':[('parent.state','not in',['draft'])]}"
@@ -1736,7 +1768,8 @@
                                                 attrs="{'invisible': [('is_confirmed','!=',True)]}"/>
                                         <field name="date" string="明细日期"
                                                invisible="1"/> <!--invisible="context.get('no_show_mark')" -->
-                                         <field name="gongsi_id" string="公司主体" options="{'no_create':true,'no_open':1}" invisible="1"/>
+                                        <field name="gongsi_id" string="公司主体" options="{'no_create':true,'no_open':1}"
+                                               invisible="1"/>
                                     </tree>
                                 </field>
 
@@ -1823,7 +1856,8 @@
                                         <button name="is_confirmed_icon" icon="fa_check"
                                                 attrs="{'invisible': [('is_confirmed','!=',True)]}"/>
                                         <field name="date" string="明细日期" invisible="1"/>
-                                         <field name="gongsi_id" string="公司主体" options="{'no_create':true,'no_open':1}" invisible="1"/>
+                                        <field name="gongsi_id" string="公司主体" options="{'no_create':true,'no_open':1}"
+                                               invisible="1"/>
                                     </tree>
                                 </field>
 
@@ -1860,6 +1894,7 @@
                                     <group string="管理员页面" groups="base.group_system">
                                         <field name="all_line_is_confirmed"/>
                                         <field name="expense_to_invoice_type"/>
+                                         <field name="stage_id" />
                                     </group>
                                 </group>
                             </page>
@@ -1915,10 +1950,9 @@
                               (0, 0, {'view_mode': 'form', 'view_id': ref('view_hr_expense_sheet_new_form')}),
                               ]"/>
         </record>
-         <menuitem id="menu_hr_expense_sheet_approve" name="审批完成费用"
-              parent="menu_yjzy_advance_root"
-              action="action_hr_expense_sheet_approve"/>
-
+        <menuitem id="menu_hr_expense_sheet_approve" name="审批完成费用"
+                  parent="menu_yjzy_advance_root"
+                  action="action_hr_expense_sheet_approve"/>
 
 
         <!--record id="hr_expense_product_new_action" model="ir.actions.act_window">
@@ -1934,14 +1968,15 @@
        </record>
        <menuitem id="hr_expense_product_new_menu" name="费用小类" parent="hr_expense.menu_hr_expense_configuration" action="new_purhcase_order_action" sequence=""/-->
 
-          <record id="action_hr_expense_sheet_account_approval" model="ir.actions.act_window">
+        <record id="action_hr_expense_sheet_account_approval" model="ir.actions.act_window">
             <field name="name">待财务审批费用</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">hr.expense.sheet</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[('total_amount','>=',0),
-                                  ('expense_to_invoice_type','in',['to_invoice','normal']),
-                                  ('state_1','in',['account_approval'])]</field>
+                ('expense_to_invoice_type','in',['to_invoice','normal']),
+                ('state_1','in',['account_approval'])]
+            </field>
             <field name="context">{'display_name_code':1,'search_default_group_expense_to_invoice_type':1}</field>
             <!--field name="target">new</field-->
             <field name="view_ids" eval="[(5, 0, 0),
@@ -1949,9 +1984,9 @@
                               (0, 0, {'view_mode': 'form', 'view_id': ref('view_hr_expense_sheet_new_form')}),
                               ]"/>
         </record>
-         <menuitem id="menu_hr_expense_sheet_account_approval" name="待财务审批费用"
-              parent="menu_expense_sheet_apply_root" groups="base.group_system"
-              action="action_hr_expense_sheet_account_approval"/>
+        <menuitem id="menu_hr_expense_sheet_account_approval" name="待财务审批费用"
+                  parent="menu_expense_sheet_apply_root" groups="base.group_system"
+                  action="action_hr_expense_sheet_account_approval"/>
 
         <record id="action_hr_expense_sheet_manager_approval" model="ir.actions.act_window">
             <field name="name">待总经理审批费用</field>
@@ -1959,8 +1994,9 @@
             <field name="res_model">hr.expense.sheet</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[('total_amount','>=',0),
-                                  ('expense_to_invoice_type','in',['to_invoice','normal']),
-                                  ('state_1','in',['manager_approval'])]</field>
+                ('expense_to_invoice_type','in',['to_invoice','normal']),
+                ('state_1','in',['manager_approval'])]
+            </field>
             <field name="context">{'display_name_code':1,'search_default_group_expense_to_invoice_type':1}</field>
             <!--field name="target">new</field-->
             <field name="view_ids" eval="[(5, 0, 0),
@@ -1968,9 +2004,9 @@
                               (0, 0, {'view_mode': 'form', 'view_id': ref('view_hr_expense_sheet_new_form')}),
                               ]"/>
         </record>
-         <menuitem id="menu_hr_expense_sheet_manager_approval" name="待总经理审批费用"
-              parent="menu_expense_sheet_apply_root" groups="base.group_system"
-              action="action_hr_expense_sheet_manager_approval"/>
+        <menuitem id="menu_hr_expense_sheet_manager_approval" name="待总经理审批费用"
+                  parent="menu_expense_sheet_apply_root" groups="base.group_system"
+                  action="action_hr_expense_sheet_manager_approval"/>
 
         <record id="action_hr_expense_sheet_approve_1" model="ir.actions.act_window">
             <field name="name">审批完成费用</field>
@@ -1985,9 +2021,9 @@
                               (0, 0, {'view_mode': 'form', 'view_id': ref('view_hr_expense_sheet_new_form')}),
                               ]"/>
         </record>
-         <menuitem id="menu_hr_expense_sheet_approve_1" name="审批完成费用"
-              parent="menu_expense_sheet_apply_root" groups="base.group_system"
-              action="action_hr_expense_sheet_approve_1"/>
+        <menuitem id="menu_hr_expense_sheet_approve_1" name="审批完成费用"
+                  parent="menu_expense_sheet_apply_root" groups="base.group_system"
+                  action="action_hr_expense_sheet_approve_1"/>
 
         <record id="action_hr_expense_sheet_approval_all" model="ir.actions.act_window">
             <field name="name">所有待处理费用</field>
@@ -1996,18 +2032,20 @@
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="hr_expense_sheet_search_new"/>
             <field name="domain">[('total_amount','>=',0),
-                                  ('expense_to_invoice_type','in',['to_invoice','normal']),
-                                  ('state_1','in',['manager_approval','account_approval','post'])]</field>
-            <field name="context">{'display_name_code':1,'search_default_group_stage_id_expense_to_invoice_type':1}</field>
+                ('expense_to_invoice_type','in',['to_invoice','normal']),
+                ('state_1','in',['manager_approval','account_approval','post'])]
+            </field>
+            <field name="context">{'display_name_code':1,'search_default_group_stage_id_expense_to_invoice_type':1}
+            </field>
             <!--field name="target">new</field-->
             <field name="view_ids" eval="[(5, 0, 0),
                               (0, 0, {'view_mode': 'tree', 'view_id': ref('hr_expense_sheet_manager_approve_tree')}),
                               (0, 0, {'view_mode': 'form', 'view_id': ref('view_hr_expense_sheet_new_form')}),
                               ]"/>
         </record>
-         <menuitem id="menu_hr_expense_sheet_approval_all" name="待处理"
-              parent="menu_expense_sheet_apply_root" sequence="20"
-              action="action_hr_expense_sheet_approval_all"/>
+        <menuitem id="menu_hr_expense_sheet_approval_all" name="待处理"
+                  parent="menu_expense_sheet_apply_root" sequence="20"
+                  action="action_hr_expense_sheet_approval_all"/>
 
 
         <record id="action_hr_expense_sheet_done" model="ir.actions.act_window">
@@ -2023,22 +2061,26 @@
                               (0, 0, {'view_mode': 'form', 'view_id': ref('view_hr_expense_sheet_new_form')}),
                               ]"/>
         </record>
-         <menuitem id="menu_hr_expense_sheet_done" name="支付完成"
-              parent="menu_expense_sheet_apply_root" sequence="30"
-              action="action_hr_expense_sheet_done"/>
-<!--          一般用户-->
-         <record id="action_hr_expense_sheet_user_todo" model="ir.actions.act_window">
+        <menuitem id="menu_hr_expense_sheet_done" name="支付完成"
+                  parent="menu_expense_sheet_apply_root" sequence="30"
+                  action="action_hr_expense_sheet_done"/>
+        <!--          一般用户-->
+        <record id="action_hr_expense_sheet_user_todo" model="ir.actions.act_window">
             <field name="name">用户待处理</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">hr.expense.sheet</field>
             <field name="view_mode">tree,form</field>
-             <field name="search_view_id" ref="hr_expense_sheet_search_new"/>
-            <field name="domain">['&amp;',('total_amount','>', 0),'|','&amp;','|',('state_1','in', ['draft','refused','cancel']),
+            <field name="search_view_id" ref="hr_expense_sheet_search_new"/>
+            <field name="domain">['&amp;',('total_amount','>', 0),'|','&amp;','|',('state_1','in',
+                ['draft','refused','cancel']),
                 ('expense_line_ids.state','=','refused'),('employee_id.user_id','=',uid),'&amp;', '&amp;',
                 ('expense_line_ids.employee_id.user_id','=',uid),('expense_line_ids.state','=','reported'),
-                ('state_1','=', 'employee_approval')]</field>
-            <field name="context">{'display_name_code':1,'search_default_group_by_stage_id':1,'default_account_confirm_uid': 9,
-                'default_manager_confirm_uid': 7,'only_name':1 }</field>
+                ('state_1','=', 'employee_approval')]
+            </field>
+            <field name="context">
+                {'display_name_code':1,'search_default_group_by_stage_id':1,'default_account_confirm_uid': 9,
+                'default_manager_confirm_uid': 7,'only_name':1 }
+            </field>
             <!--field name="target">new</field-->
             <field name="view_ids" eval="[(5, 0, 0),
                               (0, 0, {'view_mode': 'tree', 'view_id': ref('hr_expense_sheet_user_tree')}),
@@ -2046,30 +2088,35 @@
                               ]"/>
         </record>
         <menuitem id="menu_hr_expense_sheet_user_todo" name="待处理费用"
-              parent="hr_expense.menu_hr_expense_root"
-              action="action_hr_expense_sheet_user_todo" />
-<!--    财务-->
+                  parent="hr_expense.menu_hr_expense_root"
+                  action="action_hr_expense_sheet_user_todo"/>
+        <!--    财务-->
         <record id="action_hr_expense_sheet_account_todo" model="ir.actions.act_window">
             <field name="name">财务待处理</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">hr.expense.sheet</field>
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="hr_expense_sheet_search_new"/>
-            <field name="domain">['&amp;',('total_amount','>', 0),'|','|','&amp;','|',('state_1','in', ['draft','refused','cancel']),
+            <field name="domain">['&amp;',('total_amount','>', 0),'|','|','&amp;','|',('state_1','in',
+                ['draft','refused','cancel']),
                 ('expense_line_ids.state','in', ['draft','reported']),('employee_id.user_id','=',uid),'&amp;', '&amp;',
                 ('expense_line_ids.employee_id.user_id','=',uid),('expense_line_ids.state','in', ['draft','reported']),
-                ('state_1','=', 'employee_approval'),('state_1','in', ['account_approval'])]</field>
-            <field name="context">{'display_name_code':1,'search_default_group_stage_id_expense_to_invoice_type':1,'default_account_confirm_uid': 9,
-                'default_manager_confirm_uid': 7,'only_name':1 }</field>
+                ('state_1','=', 'employee_approval'),('state_1','in', ['account_approval'])]
+            </field>
+            <field name="context">
+                {'display_name_code':1,'search_default_group_stage_id_expense_to_invoice_type':1,'default_account_confirm_uid':
+                9,
+                'default_manager_confirm_uid': 7,'only_name':1 }
+            </field>
             <!--field name="target">new</field-->
             <field name="view_ids" eval="[(5, 0, 0),
                               (0, 0, {'view_mode': 'tree', 'view_id': ref('hr_expense_sheet_user_tree')}),
                               (0, 0, {'view_mode': 'form', 'view_id': ref('view_hr_expense_sheet_new_form')}),
                               ]"/>
         </record>
-<menuitem id="menu_hr_expense_sheet_account_todo" name="待处理费用"
-              parent="hr_expense.menu_hr_expense_root"
-              action="action_hr_expense_sheet_account_todo" groups="base.group_system"/>
+        <menuitem id="menu_hr_expense_sheet_account_todo" name="待处理费用"
+                  parent="hr_expense.menu_hr_expense_root"
+                  action="action_hr_expense_sheet_account_todo" groups="base.group_system"/>
         <!--    总经理-->
         <record id="action_hr_expense_sheet_manager_todo" model="ir.actions.act_window">
             <field name="name">总经理待处理费用</field>
@@ -2077,12 +2124,17 @@
             <field name="res_model">hr.expense.sheet</field>
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="hr_expense_sheet_search_new"/>
-            <field name="domain">['&amp;',('total_amount','>', 0),'|','|','&amp;','|',('state_1','in', ['draft','refused','cancel']),
+            <field name="domain">['&amp;',('total_amount','>', 0),'|','|','&amp;','|',('state_1','in',
+                ['draft','refused','cancel']),
                 ('expense_line_ids.state','in', ['draft','reported']),('employee_id.user_id','=',uid),'&amp;', '&amp;',
                 ('expense_line_ids.employee_id.user_id','=',uid),('expense_line_ids.state','in', ['draft','reported']),
-                ('state_1','=', 'employee_approval'),('state_1','in', ['manager_approval'])]</field>
-            <field name="context">{'display_name_code':1,'search_default_group_stage_id_expense_to_invoice_type':1,'default_account_confirm_uid': 9,
-                'default_manager_confirm_uid': 7,'only_name':1 }</field>
+                ('state_1','=', 'employee_approval'),('state_1','in', ['manager_approval'])]
+            </field>
+            <field name="context">
+                {'display_name_code':1,'search_default_group_stage_id_expense_to_invoice_type':1,'default_account_confirm_uid':
+                9,
+                'default_manager_confirm_uid': 7,'only_name':1 }
+            </field>
             <!--field name="target">new</field-->
             <field name="view_ids" eval="[(5, 0, 0),
                               (0, 0, {'view_mode': 'tree', 'view_id': ref('hr_expense_sheet_user_tree')}),
@@ -2091,10 +2143,8 @@
         </record>
 
         <menuitem id="menu_hr_expense_sheet_manager_todo" name="待处理费用"
-              parent="hr_expense.menu_hr_expense_root"
-              action="action_hr_expense_sheet_manager_todo" groups="base.group_system"/>
-
-
+                  parent="hr_expense.menu_hr_expense_root"
+                  action="action_hr_expense_sheet_manager_todo" groups="base.group_system"/>
 
 
     </data>

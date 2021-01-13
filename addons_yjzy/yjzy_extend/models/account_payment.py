@@ -406,7 +406,7 @@ class account_payment(models.Model):
         for one in self:
             amount = one.amount
             jiehui_in_amount = one.jiehui_in_amount
-            jiehui_current_rate = jiehui_in_amount != 0 and  amount / jiehui_in_amount or 0
+            jiehui_current_rate = jiehui_in_amount != 0 and  jiehui_in_amount / amount or 0
             one.jiehui_current_rate = jiehui_current_rate
 
 
@@ -1333,7 +1333,7 @@ class account_payment(models.Model):
 
             self.jiehui_amount = balance
             self.jiehui_amount_currency = foreign_balance
-            self.jiehui_rate = rate
+            self.jiehui_rate = rate !=0 and 1 / rate or 0
 
 
         return res

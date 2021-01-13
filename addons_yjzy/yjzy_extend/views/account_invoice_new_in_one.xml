@@ -27,7 +27,8 @@
                         <!--button name="open_supplier_refund_id" string="额外账单：减少金额" type="object"/-->
 
                     </header>
-                    <header attrs="{'invisible':['|',('is_yjzy_invoice','=',True),('type','in',['out_invoice','out_refund'])]}">
+                    <header attrs="{'invisible':['|',('is_yjzy_invoice','=',True),('type','in',['out_invoice','out_refund'])]}"
+                    groups="base.group_system">
                         <button name="open_tb_po_invoice" string="额外应付账单申请" class="oe_highlight" type="object"
                                 attrs="{'invisible':[('state','=','paid')]}" invisible="not context.get('extra_type')"/>
                         <button name="open_tb_po_reconcile_invoice" string="核销应付账单申请" type="object"

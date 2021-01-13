@@ -98,10 +98,10 @@
                                 name="print_bgd"
                                 class="oe_highlight"/>
                         <button string="初始化报关资料" name="make_sale_purchase_collect" confirm="该命令将会初始化报关资料！是否继续？"
-                                class="oe_highlight"
+                                class="oe_highlight" attrs="{'invisible':[('state','in',['invoiced','abnormal','verifying','done','paid'])]}"
                                 type="object"/>
                         <button string="初始化托盘重量体积" name="split_tuopan_weight_baoguan" confirm="该命令将会初始化托盘数据！是否继续？"
-                                class="oe_highlight"
+                                class="oe_highlight" attrs="{'invisible':[('state','in',['invoiced','abnormal','verifying','done','paid'])]}"
                                 type="object"/>
 
                     </header>

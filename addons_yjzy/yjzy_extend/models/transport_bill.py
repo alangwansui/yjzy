@@ -2582,8 +2582,8 @@ class transport_bill(models.Model):
 
     def open_sale_invoice(self):
         self.ensure_one()
-        form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form')
-        tree_view = self.env.ref('account.invoice_tree')
+        form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form_in_one')
+        tree_view = self.env.ref('yjzy_extend.invoice_new_main_tree')
         return {
             'name': u'客户应收',
             'view_type': 'form',
@@ -2609,8 +2609,8 @@ class transport_bill(models.Model):
         }
 
     def open_purchase_invoice(self):
-        form_view = self.env.ref('yjzy_extend.view_account_supplier_invoice_new_form')
-        tree_view = self.env.ref('account.invoice_supplier_tree')
+        form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form_in_one')
+        tree_view = self.env.ref('yjzy_extend.invoice_new_supplier_1_tree')
         self.ensure_one()
         return {
             'name': u'供应商应付',
@@ -2686,8 +2686,8 @@ class transport_bill(models.Model):
 
 
     def open_back_tax_invoice(self):
-        form_view = self.env.ref('yjzy_extend.view_account_invoice_back_tax_form')
-        tree_view = self.env.ref('yjzy_extend.view_account_invoice_back_tax_tree')
+        form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form_in_one')
+        tree_view = self.env.ref('yjzy_extend.invoice_new_back_tax_tree')
         self.ensure_one()
         return {
             'name': '销售发票',
