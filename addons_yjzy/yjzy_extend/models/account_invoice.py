@@ -461,7 +461,7 @@ class account_invoice(models.Model):
             amount_payment_advance_approval_all = one.reconcile_order_line_ids.filtered(lambda x: x.order_id.state == 'posted')  # 这个用来算预付
 
             amount_payment_approval_all =  sum(x.amount_payment_org for x in amount_payment_payment_approval_all) + \
-                                           sum(x.amount_total_org for x in amount_payment_advance_approval_all)
+                                           sum(x.amount_advance_org for x in amount_payment_advance_approval_all)
             one.amount_payment_approval_all = amount_payment_approval_all
 
 
