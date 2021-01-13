@@ -435,6 +435,14 @@ class account_reconcile_order(models.Model):
         for one in self:
             one.amount_payment_can_approve_all_after = sum(x.amount_payment_can_approve_all_after for x in one.line_no_ids)
 
+    @api.depends('line_no_ids', 'line_no_ids.invoice_residual_this_time')
+    def compute_amount_payment_can_approve_all_this_time(self):
+        for one in self:
+            one.amount_payment_can_approve_all_this_time = sum(
+                x.invoice_residual_this_time for x in one.line_no_ids)
+
+
+
     # @api.depends('line_ids.yjzy_payment_id')
     # def compute_line_do_ids(self):
     #     line_ids = self.env['account.reconcile.order.line'].search([('yjzy_payment_id','!=',False),('order_id','=',self.id)])
@@ -531,7 +539,8 @@ class account_reconcile_order(models.Model):
     invoice_payment_term_id = fields.Many2one('account.payment.term',u'合同付款条款',compute=compute_payment_term_id)
 
     amount_payment_can_approve_all_after = fields.Monetary('所有账单本次申请后可申请支付金额合计',currency_field='invoice_currency_id' , compute=compute_amount_payment_can_approve_all_after)
-
+    amount_payment_can_approve_all_this_time = fields.Monetary('所有账单本次申请前可申请支付金额合计', currency_field='invoice_currency_id',
+                                                           compute=compute_amount_payment_can_approve_all_this_time)
     account_payment_state_ids_amount_1 = fields.Float('预收本次认领前金额',compute=compute_account_payment_state_ids)
     account_payment_state_ids_amount_2 = fields.Float('预收本次认领后金额', compute=compute_account_payment_state_ids)
     account_payment_state_ids_amount_3 = fields.Float('预收本次金额', compute=compute_account_payment_state_ids)

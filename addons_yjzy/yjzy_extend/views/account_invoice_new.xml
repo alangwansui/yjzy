@@ -55,6 +55,8 @@
                                 context="{'group_by':['state','yjzy_invoice_id']}"/>
                         <filter name="group_by_invoice_attribute_all_in_one" string="账单属性分组"
                                 context="{'group_by':['invoice_attribute_all_in_one']}"/>
+                        <filter name="group_by_invoice_attribute_all_in_one_state" string="账单属性分组"
+                                context="{'group_by':['state','invoice_attribute_all_in_one']}"/>
                         <filter name="group_by_date_invoice" string="账单日期"
                                 context="{'group_by':'date_invoice:year'}"/>
                         <filter name="group_by_stage_id" string="审批状态" invisible="1"
@@ -3026,7 +3028,7 @@
             <field name="domain">
                 [('type','in',['out_invoice','out_refund']),'|',('yjzy_type','=','back_tax'),('yjzy_type_1','=','back_tax')]
             </field>
-            <field name="context">{'search_default_group_by_state':1,'only_ref':1,'type':'out_invoice','journal_type':
+            <field name="context">{'search_default_group_by_invoice_attribute_all_in_one_state':1,'only_ref':1,'type':'out_invoice','journal_type':
                 'sale','yjzy_type':'sale'}
             </field>
             <!--field name="target">new</field-->
