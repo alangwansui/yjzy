@@ -530,7 +530,7 @@ class account_reconcile_order(models.Model):
 
     payment_log_ids = fields.One2many('account.payment',compute=compute_move_line_com_ids)
 
-    invoice_id = fields.Many2one('account.invoice',compute=compute_invoice_id)
+    invoice_id = fields.Many2one('account.invoice',compute=compute_invoice_id, store=True)
     # invoice_attribute_all_in_one = fields.Char('账单属性all_in_one',compute=compute_invoice_id)
     #
     invoice_attribute_all_in_one = fields.Selection(invoice_attribute_all_in_one,u'账单属性all_in_one', compute=compute_invoice_id,store=True)

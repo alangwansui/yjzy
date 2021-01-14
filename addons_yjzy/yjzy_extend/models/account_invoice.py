@@ -499,6 +499,9 @@ class account_invoice(models.Model):
             print('yjzy_amount_payment_can_approve_all', yjzy_amount_payment_can_approve_all,
                   amount_payment_can_approve_all)
 
+            one.amount_advance_org_draft = amount_advance_org_draft
+            one.amount_payment_org_draft = amount_payment_org_draft
+
             one.amount_advance_org_draft_approval = amount_advance_org_draft_approval
             one.amount_payment_org_draft_approval = amount_payment_org_draft_approval
 
@@ -857,6 +860,12 @@ class account_invoice(models.Model):
 
     amount_payment_org_draft_approval = fields.Monetary(u'收付款审批中_草稿金额', currency_field='currency_id',
                                                   compute=compute_amount_payment_can_approve_all, store=True)
+
+    amount_advance_org_draft = fields.Monetary(u'预收付草稿认领金额', currency_field='currency_id',
+                                                        compute=compute_amount_payment_can_approve_all, store=True)
+
+    amount_payment_org_draft = fields.Monetary(u'收付款审草稿金额', currency_field='currency_id',
+                                                        compute=compute_amount_payment_can_approve_all, store=True)
 
 
     amount_payment_org_approved = fields.Monetary(u'已完成审批收付款金额', currency_field='currency_id',
