@@ -53,8 +53,8 @@
                       />
                 <field name="yjzy_payment_po_id" invisible="1"/>
                 <field name="amount_advance_org" string="预收认领金额" invisible="1"/>
-                <field name="amount_payment_org" string="收款认领金额" invisible="not context.get('advance')"/>
-                <field name="amount_advance_org_compute" string="预收认领金额" invisible="context.get('advance')"/>
+                <field name="amount_payment_org" string="收款认领金额" invisible="not context.get('advance')" sum="小计"/>
+                <field name="amount_advance_org_compute" string="预收认领金额" invisible="context.get('advance')" sum="小计"/>
                 <field name="amount_diff_org" invisible="1"/>
                 <field name="currency_id" invisible="1"/>
                 <field name="amount_payment" invisible="1"/>
