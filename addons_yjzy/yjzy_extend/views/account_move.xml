@@ -122,4 +122,18 @@
         </field>
     </record>
 
+    <record model="ir.ui.view" id="view_account_move_line_com_tree">
+        <field name="name">account.move.line.com.tree</field>
+        <field name="model">account.move.line.com</field>
+        <field name="priority" eval="999"/>
+        <field name="arch" type="xml">
+            <tree string="日志">
+                <field name="move_date"/>
+                <field name="invoice_id"/>
+                <field name="amount_this_time"/>
+                <field name="reconcile_type"/>
+            </tree>
+        </field>
+    </record>
+
 </odoo>

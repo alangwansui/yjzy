@@ -34,6 +34,8 @@ class account_move(models.Model):
             new_advance_payment= i.new_advance_payment_id
             sslj_currency_id = i.sslj_currency_id
             self_payment_id = i.self_payment_id
+            partner_id = i.partner_id
+            company_id = i.company_id
             if i.invoice_id:
                 invoice_id = i.invoice_id
             else:
@@ -56,6 +58,7 @@ class account_move(models.Model):
                     'advance_payment_id': new_advance_payment.id,
                     'amount_this_time': amount_this_time,
                     'sslj_balance': sslj_balance,
+                    # 'partner_id':partner_id.id,
 
                     'invoice_id': invoice_id.id,
                     'sslj_currency_id':sslj_currency_id.id,
@@ -67,6 +70,8 @@ class account_move(models.Model):
                 'account_id': data['account_id'],
                 'advance_payment_id': data['advance_payment_id'],
                 'amount_this_time': data['amount_this_time'],
+
+                # 'partner_id': data['partner_id'],
                 'invoice_id': data['invoice_id'],
                 'sslj_currency_id': data['sslj_currency_id'],
                 'self_payment_id': data['self_payment_id'],
@@ -241,9 +246,10 @@ class account_move_line_com(models.Model):
 
 
 
-
+    partner_id = fields.Many2one('res.partner','合作伙伴',related='move_id.partner_id')
     move_id = fields.Many2one('account.move', string='Journal Entry', ondelete="cascade",
                               help="The move of this entry line.", index=True, required=True, auto_join=True)
+    company_id = fields.Many2one('res.company','公司',related='move_id.company_id')
 
 
     account_id = fields.Many2one('account.account', string='Account', required=True, index=True,
@@ -266,4 +272,6 @@ class account_move_line_com(models.Model):
         ('50_reconcile', u'本次核销'),], '认领方式',compute=compute_reconcile_type)#related='self_payment_id.reconcile_type'
     invoice_id = fields.Many2one('account.invoice')
     advance_payment_id = fields.Many2one('account.payment')
+
+    move_date = fields.Date('日期',related='move_id.date')
 

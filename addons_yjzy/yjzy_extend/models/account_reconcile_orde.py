@@ -2161,6 +2161,43 @@ class account_reconcile_order(models.Model):
                 'domain': [('account_id', '=', account.id), ('so_id', 'in', [x.so_id.id for x in self.line_ids])],
             }
 
+    def open_supplier_account_move_line_com(self):
+        account_type = self.env.context.get('account_type')
+        sfk_type = self.sfk_type
+        if sfk_type == 'yfhxd':
+            account = self.env['account.account'].search([('code', '=', account_type), ('company_id', '=', self.company_id.id)], limit=1)
+            tree_view = self.env.ref('yjzy_extend.view_account_move_line_com_tree').id
+            return {
+                'type': 'ir.actions.act_window',
+                'name': _(u'打开应付账款日志'),
+                'res_model': 'account.move.line.com',
+                'view_type': 'form',
+                'view_mode': 'tree, form',
+                'views': [(tree_view, 'tree')],
+                'domain': [('account_id', '=', account.id),('partner_id','=',self.partner_id.id)],
+                'target': 'new',
+            }
+
+    def open_supplier_account_reconcile_order(self):
+        state = self.env.context.get('state')
+        sfk_type = self.sfk_type
+        if sfk_type == 'yfhxd':
+            tree_view = self.env.ref('yjzy_extend.account_yfhxd_tree_view_new').id
+            return {
+                'type': 'ir.actions.act_window',
+                'name': _(u'已申请未审批应付付款申请'),
+                'res_model': 'account.reconcile.order',
+                'view_type': 'form',
+                'view_mode': 'tree, form',
+                'views': [(tree_view, 'tree')],
+                'domain':[('partner_id','=',self.partner_id.id),('amount_payment_org','!=',0),('state','=',state)],
+                'target': 'new',
+            }
+
+
+
+
+
     @api.onchange('yjzy_payment_id')
     def onchange_yjzy_payment_id(self):
         self.manual_payment_currency_id = self.yjzy_payment_id.currency_id

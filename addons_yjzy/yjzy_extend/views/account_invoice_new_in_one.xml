@@ -28,7 +28,7 @@
 
                     </header>
                     <header attrs="{'invisible':['|',('is_yjzy_invoice','=',True),('type','in',['out_invoice','out_refund'])]}"
-                    groups="base.group_system">
+                            groups="base.group_system">
                         <button name="open_tb_po_invoice" string="额外应付账单申请" class="oe_highlight" type="object"
                                 attrs="{'invisible':[('state','=','paid')]}" invisible="not context.get('extra_type')"/>
                         <button name="open_tb_po_reconcile_invoice" string="核销应付账单申请" type="object"
@@ -260,7 +260,7 @@
 
                             </group>
                             <group col="1" style="margin-top:-5px;">
-                                <group>
+                                <group invisible="1">
                                     <label for="" name="amount_total">
                                         <b attrs="{'invisible':[('type','in',['in_invoice','in_refund'])]}">
                                             本单应收金额
@@ -271,6 +271,31 @@
                                     </label>
                                     <div class="o_row">
                                         <field name="amount_total"/>
+                                    </div>
+
+                                    <label for="" name="amount_advance_org_done">
+                                        <b attrs="{'invisible':[('type','in',['in_invoice','in_refund'])]}">
+                                            预收单认领
+                                        </b>
+                                        <b attrs="{'invisible':[('type','not in',['in_invoice','in_refund'])]}">
+                                            预付单认领
+                                        </b>
+                                    </label>
+                                    <div class="o_row">
+                                        <field name="amount_advance_org_done"/>
+                                    </div>
+
+
+                                    <label for="" name="amount_advance_org_done">
+                                        <b attrs="{'invisible':[('type','in',['in_invoice','in_refund'])]}">
+                                            收款认领
+                                        </b>
+                                        <b attrs="{'invisible':[('type','not in',['in_invoice','in_refund'])]}">
+                                            货款支付
+                                        </b>
+                                    </label>
+                                    <div class="o_row">
+                                        <field name="amount_payment_org_done"/>
                                     </div>
 
                                     <label for="" name="residual_signed">
@@ -285,6 +310,20 @@
                                         <field name="residual_signed"/>
                                     </div>
 
+                                    <label for="" name="residual_signed">
+                                        <b attrs="{'invisible':[('type','in',['in_invoice','in_refund'])]}"
+                                           invisible="1">
+                                            已完成审批待认领
+                                        </b>
+                                        <b attrs="{'invisible':[('type','not in',['in_invoice','in_refund'])]}">
+                                            已完成审批待支付
+                                        </b>
+                                    </label>
+                                    <div class="o_row"
+                                         attrs="{'invisible':[('type','not in',['in_invoice','in_refund'])]}">
+                                        <field name="amount_payment_org_approved"/>
+                                    </div>
+
                                     <label for="" name="amount_payment_can_approve_all">
                                         <b attrs="{'invisible':[('type','in',['in_invoice','in_refund'])]}">
                                             本单可认领应收
@@ -296,6 +335,126 @@
                                     <div class="o_row">
                                         <field name="amount_payment_can_approve_all"/>
                                     </div>
+                                </group>
+                                <group>
+
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="0" colspan="2">
+                                        <tbody>
+                                            <tr>
+                                                <td colspan="2">
+                                                    <b attrs="{'invisible':[('type','in',['in_invoice','in_refund'])]}">
+                                                        本单应收金额
+                                                    </b>
+                                                    <b attrs="{'invisible':[('type','not in',['in_invoice','in_refund'])]}">
+                                                        本单原始应付款
+                                                    </b>
+                                                </td>
+                                                <td width="25%"></td>
+                                                <td width="25%">
+                                                    <div class="o_row">
+                                                        <field name="amount_total"/>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td width="7%"></td>
+                                                <td width="43%">
+                                                    <b attrs="{'invisible':[('type','in',['in_invoice','in_refund'])]}">
+                                                        预收单认领
+                                                    </b>
+                                                    <b attrs="{'invisible':[('type','not in',['in_invoice','in_refund'])]}">
+                                                        预付单认领
+                                                    </b>
+                                                </td>
+                                                <td>
+                                                    <div class="o_row">
+                                                        <button type="object" name="open_reconcile_order_no_line"
+                                                                class="btn-xxs btn-link mb2" context="{'state':'done','advance':1}"
+                                                                target="new">
+                                                            <field name="amount_advance_org_done"/>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <td>
+                                                    <b attrs="{'invisible':[('type','in',['in_invoice','in_refund'])]}">
+                                                        收款认领
+                                                    </b>
+                                                    <b attrs="{'invisible':[('type','not in',['in_invoice','in_refund'])]}">
+                                                        货款支付
+                                                    </b>
+                                                </td>
+                                                <td>
+                                                    <div class="o_row">
+                                                          <button type="object" name="open_reconcile_order_no_line"
+                                                                class="btn-xxs btn-link mb2" context="{'state':'done'}"
+                                                                target="new">
+                                                        <field name="amount_payment_org_done"/>
+                                                          </button>
+                                                    </div>
+                                                </td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2">
+                                                    <b attrs="{'invisible':[('type','in',['in_invoice','in_refund'])]}">
+                                                        本单剩余应收款
+                                                    </b>
+                                                    <b attrs="{'invisible':[('type','not in',['in_invoice','in_refund'])]}">
+                                                        本单剩余应付款
+                                                    </b>
+                                                </td>
+                                                <td></td>
+                                                <td>
+                                                    <div class="o_row">
+                                                        <field name="residual_signed"/>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr attrs="{'invisible':[('type','not in',['in_invoice','in_refund'])]}">
+                                                <td></td>
+                                                <td>
+                                                    <b attrs="{'invisible':[('type','in',['in_invoice','in_refund'])]}"
+                                                       invisible="1">
+                                                        已完成审批待认领
+                                                    </b>
+                                                    <b attrs="{'invisible':[('type','not in',['in_invoice','in_refund'])]}">
+                                                        已完成审批待支付
+                                                    </b>
+                                                </td>
+                                                <td>
+                                                    <div class="o_row"
+                                                         attrs="{'invisible':[('type','not in',['in_invoice','in_refund'])]}">
+                                                           <button type="object" name="open_reconcile_order_no_line"
+                                                                class="btn-xxs btn-link mb2" context="{'state':'done'}"
+                                                                target="new">
+                                                        <field name="amount_payment_org_approved"/>
+                                                           </button>
+                                                    </div>
+                                                </td>
+                                                <td></td>
+                                            </tr>
+                                            <tr attrs="{'invisible':[('type','not in',['in_invoice','in_refund'])]}">
+                                                <td colspan="2">
+                                                    <b attrs="{'invisible':[('type','in',['in_invoice','in_refund'])]}">
+                                                        本单可认领应收
+                                                    </b>
+                                                    <b attrs="{'invisible':[('type','not in',['in_invoice','in_refund'])]}">
+                                                        本单可申请应付
+                                                    </b>
+                                                </td>
+                                                <td></td>
+                                                <td>
+                                                    <div class="o_row">
+                                                        <field name="amount_payment_can_approve_all"/>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
 
                                     <label for="" name="yjzy_total"
                                            attrs="{'invisible':[('yjzy_invoice_count','=',0)]}">
@@ -701,7 +860,8 @@
                                             </tree>
                                         </field>
                                     </group>
-                                    <group string="所有流程日志" attrs="{'invisible':[('reconcile_order_line_no_ids_count','=',0)]}">
+                                    <group string="所有流程日志"
+                                           attrs="{'invisible':[('reconcile_order_line_no_ids_count','=',0)]}">
                                         <field name="reconcile_order_line_no_ids" nolabel="1" colspan="2" readonly="1"
                                                context="{'form_view_ref':'yjzy_extend.account_yfhxd_form_view_new'}">
                                             <tree>
@@ -715,15 +875,16 @@
                                             </tree>
                                         </field>
                                         <field name="reconcile_order_line_no_ids_count" invisible="1"/>
-                                    <field name="payment_log_hexiao_ids" nolabel="1" colspan="2" readonly="1" attrs="{'invisible':[('payment_log_hexiao_ids_count','=',0)]}">
-                                         <tree>
-                                                 <field name="sfk_type" string="类型"/>
-                                                 <field name="payment_date" string="日期"/>
-                                                 <field name="amount" string="金额"/>
-                                                 <field name="currency_id" invisible="1"/>
-                                                 <field name="state_1"/>
-                                             </tree>
-                                    </field>
+                                        <field name="payment_log_hexiao_ids" nolabel="1" colspan="2" readonly="1"
+                                               attrs="{'invisible':[('payment_log_hexiao_ids_count','=',0)]}">
+                                            <tree>
+                                                <field name="sfk_type" string="类型"/>
+                                                <field name="payment_date" string="日期"/>
+                                                <field name="amount" string="金额"/>
+                                                <field name="currency_id" invisible="1"/>
+                                                <field name="state_1"/>
+                                            </tree>
+                                        </field>
                                         <field name="payment_log_hexiao_ids_count" invisible="1"/>
                                     </group>
                                     <!--                                    <group string="未完成认领单"-->

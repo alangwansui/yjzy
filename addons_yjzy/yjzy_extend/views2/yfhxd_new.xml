@@ -2,6 +2,41 @@
 <odoo>
 
 
+    <record model="ir.ui.view" id="account_yfhxd_line_no_tree_view">
+        <field name="name">account.reconcile.order.line.no.tree</field>
+        <field name="model">account.reconcile.order.line.no</field>
+        <field name="arch" type="xml">
+            <tree editable="bottom" create="false">
+                <field name="id" invisible="1"/>
+                <field name="invoice_attribute" readonly="1" invisible="1"/>
+                <field name="invoice_id" string="应付账单" context="{'show_tb_ref':1}" readonly="1"/>
+
+
+                <field name="amount_invoice_so_residual" invisible="1"/>
+
+                <field name="amount_invoice_so" string="原始应付款" readonly="1" invisible="1"/>
+                <field name="invoice_amount_total" string="原始应付款" readonly="1"/>
+
+                <field name="invoice_residual" string="最新剩余应付款"
+                       invisible="1"/><!--attrs="{'column_invisible':[('parent.operation_wizard','not in',['10'])]}"-->
+                <field name="invoice_residual_this_time" string="本次申请前剩余应付款"/>
+                <field name="amount_payment_can_approve_all_this_time" readonly="1"
+                       string="本次申请前可申请应付款"/><!--attrs="{'column_invisible':[('parent.state','=','done')]}"-->
+                <field name="amount_payment_can_approve_all_after"/>
+                <field name="invoice_residual_after" invisible="1"/>
+                <field name="payment_currency_id" invisible="1"/>
+                <field name="amount_payment_can_approve_all" string="最新可申请应付款"
+                       invisible="1"/><!--attrs="{'column_invisible':[('parent.state','=','done')]}"-->
+                <field name="amount_payment_org" string="付款金额" invisible="context.get('advance')"/>
+                 <field name="amount_advance_org_compute" string="预付认领金额" invisible="not context.get('advance')"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="state_1" string="状态" invisible="1" groups="base.group_system"/>
+
+
+            </tree>
+        </field>
+    </record>
+
     <record model="ir.ui.view" id="account_yfhxd_form_view_new_open">
         <field name="name">account.reconcile.order.form</field>
         <field name="model">account.reconcile.order</field>
@@ -45,7 +80,7 @@
                             type="object"/>
                     <button name="open_wizard_reconcile_invoice" type="object" string="添加应付账单"
                             attrs="{'invisible':[('state_1','!=','draft')]}"
-                            />
+                    />
                     <field name="state_1" widget="statusbar" statusbar_visible=" "/>
                 </header>
                 <header attrs="{'invisible':[('operation_wizard','in',['03','05'])]}" groups="base.group_system">
@@ -676,7 +711,6 @@
     </record>
 
 
-
     <!--    审批完成的列表，按照审批时间排序-->
     <record model="ir.ui.view" id="account_yfhxd_tree_view_approve_new">
         <field name="name">account.reconcile.order.tree</field>
@@ -826,9 +860,10 @@
                             states="refused"/>
                     <button name="%(reconcile_refuse_wizard_action)d" string="拒绝" type="action"
                             attrs="{'invisible':[('state_1','in',['done','refused','draft','cancel','account_approval','post'])]}"/>
-                      <button name="open_wizard_reconcile_invoice" type="object" string="添加应付账单" groups="base.group_system"
+                    <button name="open_wizard_reconcile_invoice" type="object" string="添加应付账单"
+                            groups="base.group_system"
                             attrs="{'invisible':[('state_1','!=','draft')]}"
-                            />
+                    />
                     <button name="make_lines_new" invisible="not context.get('from_tanchuang')" string="下一步:填写申请金额"
                             groups="base.group_system"
                             type="object"/>
@@ -897,19 +932,30 @@
                             <field name="invoice_attribute_all_in_one" string="认领账单属性"/>
                             <field name="payment_type" invisible="1"/>
                             <field name="partner_type" invisible="1"/>
-<!--                            readonly="context.get('open')"-->
-                            <field name="partner_id" readonly="1" required="1" string="供应商" options="{'no_create':1,'no_open':1}"
+                            <!--                            readonly="context.get('open')"-->
+                            <field name="partner_id" readonly="1" required="1" string="供应商"
+                                   options="{'no_create':1,'no_open':1}"
                                    attrs="{'invisible':['|',('operation_wizard','=',False),('invoice_attribute','=','other_payment')],
                                    'readonly':[('state_1','!=','draft')]}"
                                    domain="[('is_company','=',True),('parent_id', '=', False),('supplier','=',1),('state','=','done')]"
                                    context="{'tree_view_ref':'yjzy_extend.view_new_partner_supplier_tree',
                                    'default_is_company': True, 'default_supplier': payment_type == 'outbound',
                                    'default_customer': payment_type == 'inbound'}"/>
-                            <field name="amount_purchase_advance" string="预付金额" groups="base.group_system"/>
-                            <field name="supplier_amount_advance_payment" string="总预付金额"
-                                   attrs="{'invisible':[('invoice_attribute','in',['other_payment','expense_po','other_po'])]}"/>
-                            <field name="supplier_amount_residual_advance_payment" string="总预付余额"
-                                   attrs="{'invisible':[('invoice_attribute','in',['other_payment','expense_po','other_po'])]}"/>
+                            <field name="amount_invoice_residual_org" string="认领后应付余额" attrs="{'invisible': 1}"/>
+                            <field name="amount_payment_org" string="申请支付金额"
+                                   attrs="{'invisible':[('operation_wizard','not in',['10','30'])]}"/>
+                            <field name="amount_advance_residual_org" string="待认领预付" invisible="1"/>
+                            <field name="amount_advance_org" string="预付认领金额"
+                                   attrs="{'invisible':[('operation_wizard','not in',['20','30'])]}"/>
+
+                            <field name="amount_diff_org" string="冲应付费用金额" attrs="{'invisible': 1}"/>
+
+                            <field name="amount_total_org" string="本次申请金额"/>
+                            <field name="other_feiyong_amount" string="费用合计" invisible="1"/>
+                            <field name="final_coat" string="实际总成本" invisible="1"/>
+
+                            <field name="no_sopo" attrs="{'invisible':1}"/>
+
                             <field name="yjzy_reconcile_order_id_new" string="相关单" invisible="1"
                                    attrs="{'invisible':[('invoice_attribute','in',['other_payment','expense_po','other_po'])]}"/>
                             <field name="supplier_advance_payment_ids_amount_advance_org" string="待认领预付金额" invisible="1"
@@ -955,48 +1001,101 @@
 
                         <group attrs="{'invisible':[('operation_wizard','in',['05',False])]}">
 
+
                             <field name="sfk_type" invisible="1"/>
                             <field name="be_renling" invisible="1"/>
 
                             <field name="invoice_currency_id" invisible="1"/>
-                            <field name="amount_invoice_residual_org" string="认领后应付余额" attrs="{'invisible': 1}"/>
-                            <field name="amount_payment_org" string="申请支付金额"
-                                   attrs="{'invisible':[('operation_wizard','not in',['10','30'])]}"/>
-                            <field name="amount_advance_residual_org" string="待认领预付" invisible="1"/>
-                            <field name="amount_advance_org" string="预付认领金额"
-                                   attrs="{'invisible':[('operation_wizard','not in',['20','30'])]}"/>
-
-                            <field name="amount_diff_org" string="冲应付费用金额" attrs="{'invisible': 1}"/>
-
-                            <field name="amount_total_org" string="本次申请金额"/>
-                            <field name="other_feiyong_amount" string="费用合计" invisible="1"/>
-                            <field name="final_coat" string="实际总成本" invisible="1"/>
-
-                            <field name="no_sopo" attrs="{'invisible':1}"/>
-                            <separator colspan="2"/>
-
-                            <field name="supplier_amount_invoice_residual" string="应付余额"
+                            <label name="supplier_amount_invoice_residual" string="总应付余额"
                                    attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),('yjzy_type','in',['other_payment_purchase'])]}"/>
+                            <div class="oe_row"
+                                 attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),('yjzy_type','in',['other_payment_purchase'])]}">
+                                <button type="object" name="open_supplier_account_move_line_com"
+                                        class="btn-xxs btn-link mb2" context="{'account_type':'2202'}"
+                                        target="new">
+                                    <field name="supplier_amount_invoice_residual"/>
+                                </button>
+                            </div>
 
-                            <field name="supplier_amount_invoice_approval"
+                            <!--                            <field name="supplier_amount_invoice_residual" string="总应付余额"-->
+                            <!--                                   attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),('yjzy_type','in',['other_payment_purchase'])]}"/>-->
+                            <label name="supplier_amount_invoice_approval" string="总已申请未审批"
                                    attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),
                                    ('invoice_attribute','in',['other_payment','expense_po','other_po'])]}"/>
-                            <field name="supplier_amount_invoice_approve"
+                            <div class="oe_row"
+                                 attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),
+                                   ('invoice_attribute','in',['other_payment','expense_po','other_po'])]}">
+                                <button type="object" name="open_supplier_account_reconcile_order"
+                                        class="btn-xxs btn-link mb2" context="{'state':'posted'}"
+                                        target="new">
+                                    <field name="supplier_amount_invoice_approval"/>
+                                </button>
+                            </div>
+                            <!--                            <field name="supplier_amount_invoice_approval" string="总已申请未审批"-->
+                            <!--                                   attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),-->
+                            <!--                                   ('invoice_attribute','in',['other_payment','expense_po','other_po'])]}"/>-->
+
+                            <label name="supplier_amount_invoice_approve" string="总已审批未付款"
                                    attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),
                                    ('invoice_attribute','in',['other_payment','expense_po','other_po'])]}"/>
-                            <field name="supplier_amount_invoice_residual2" string="应付余额2"
+                            <div class="oe_row"
+                                 attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),
+                                   ('invoice_attribute','in',['other_payment','expense_po','other_po'])]}">
+                                <button type="object" name="open_supplier_account_reconcile_order"
+                                        class="btn-xxs btn-link mb2" context="{'state':'approved'}"
+                                        target="new">
+                                    <field name="supplier_amount_invoice_approve"/>
+                                </button>
+                            </div>
+
+                            <!--                            <field name="supplier_amount_invoice_approve" string="总已审批未付款"-->
+                            <!--                                   attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),-->
+                            <!--                                   ('invoice_attribute','in',['other_payment','expense_po','other_po'])]}"/>-->
+                            <field name="supplier_amount_invoice_residual2" string="总应付余额2"
                                    attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),
                                    ('invoice_attribute','in',['other_payment','expense_po','other_po'])]}"/>
                             <separator colspan="2"
                                        attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),
                                    ('invoice_attribute','in',['other_payment','expense_po','other_po'])]}"/>
-                            <field name="supplier_amount_residual_advance_payment" string="预付余额"
+
+                            <field name="amount_purchase_advance" string="预付金额" groups="base.group_system"/>
+
+                            <field name="supplier_amount_advance_payment" string="总预付金额" groups="base.group_system"
+                                   attrs="{'invisible':[('invoice_attribute','in',['other_payment','expense_po','other_po'])]}"/>
+
+
+                            <label name="supplier_amount_residual_advance_payment" string="总预付余额"
                                    attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),
                                    ('invoice_attribute','in',['other_payment','expense_po','other_po'])]}"/>
-                            <field name="supplier_advance_amount_hxd_line_approval" string="已申请未认领"
+                            <div class="oe_row"
+                                 attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),
+                                   ('invoice_attribute','in',['other_payment','expense_po','other_po'])]}">
+                                <button type="object" name="open_supplier_account_move_line_com"
+                                        class="btn-xxs btn-link mb2" context="{'account_type':'1123'}"
+                                        target="new">
+                                    <field name="supplier_amount_residual_advance_payment"/>
+                                </button>
+                            </div>
+                            <!--                            <field name="supplier_amount_residual_advance_payment" string="总预付余额"-->
+                            <!--                                   attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),-->
+                            <!--                                   ('invoice_attribute','in',['other_payment','expense_po','other_po'])]}"/>-->
+                            <label name="supplier_advance_amount_hxd_line_approval" string="总已申请未认领"
                                    attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),
                                    ('invoice_attribute','in',['other_payment','expense_po','other_po'])]}"/>
-                            <field name="supplier_advance_amount_hxd_line_approval2" string="预付余额2"
+                            <div class="oe_row"
+                                 attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),
+                                   ('invoice_attribute','in',['other_payment','expense_po','other_po'])]}">
+                                <button type="object" name="open_supplier_account_reconcile_order"
+                                        class="btn-xxs btn-link mb2" context="{'state':'posted'}"
+                                        target="new">
+                                    <field name="supplier_advance_amount_hxd_line_approval"/>
+                                </button>
+                            </div>
+
+                            <!--                            <field name="supplier_advance_amount_hxd_line_approval" string="总已申请未认领"-->
+                            <!--                                   attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),-->
+                            <!--                                   ('invoice_attribute','in',['other_payment','expense_po','other_po'])]}"/>-->
+                            <field name="supplier_advance_amount_hxd_line_approval2" string="总预付余额2"
                                    attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),
                                    ('invoice_attribute','in',['other_payment','expense_po','other_po'])]}"/>
 
@@ -1307,7 +1406,8 @@
                         <!--                        attrs="{'invisible':[('operation_wizard','!=','05')]}"-->
 
                         <page string="本次认领明细" attrs="{'invisible':[('operation_wizard','not in',['20','30','03'])]}">
-                            <field name="line_do_ids" attrs="{'readonly':[('state_1','in',['advance_approval','manager_approval','post','fkzl','done'])]}"
+                            <field name="line_do_ids"
+                                   attrs="{'readonly':[('state_1','in',['advance_approval','manager_approval','post','fkzl','done'])]}"
                                    context="{'invisible_so': partner_type == 'supplier','readonly':[('state_1','not in',['draft'])]}">
                                 <tree editable="top" create="false">
                                     <field name="payment_type" invisible="1"/>
@@ -1318,7 +1418,8 @@
                                            invisible="not context.get('show_po')"/>
                                     <field name="invoice_id" readonly="1" invisible="0"
                                            context="{'form_view_ref':'yjzy_extend.view_account_invoice_new_form_in_one'}"/>
-                                    <button name="open_invoice_id" icon="fa-pencil-square-o" context="{'open':1}" groups="base.group_system"
+                                    <button name="open_invoice_id" icon="fa-pencil-square-o" context="{'open':1}"
+                                            groups="base.group_system"
                                             type="object"/>
                                     <field name="tb_contract_code" invisible="1"/>
                                     <field name="yjzy_currency_id" invisible="1"/>
@@ -1455,8 +1556,10 @@
                                         </tree>
                                     </field>
                                 </group>
-                                <group string="所有流程日志" attrs="{'invisible':[('invoice_reconcile_order_line_no_ids_count','=',0)]}">
-                                    <field name="invoice_reconcile_order_line_no_ids" nolabel="1" colspan="2" readonly="1"
+                                <group string="所有流程日志"
+                                       attrs="{'invisible':[('invoice_reconcile_order_line_no_ids_count','=',0)]}">
+                                    <field name="invoice_reconcile_order_line_no_ids" nolabel="1" colspan="2"
+                                           readonly="1"
                                            context="{'form_view_ref':'yjzy_extend.account_yfhxd_form_view_new'}">
                                         <tree>
                                             <field name="hxd_type_new"/>
@@ -1515,9 +1618,9 @@
                             <group>
                                 <field name="yjzy_type"/>
 
-                                    <field name="move_line_com_yfzk_ids_count"/>
-                                    <field name="move_line_com_yszk_ids_count"/>
-                                    <field name="reconcile_order_ids_count"/>
+                                <field name="move_line_com_yfzk_ids_count"/>
+                                <field name="move_line_com_yszk_ids_count"/>
+                                <field name="reconcile_order_ids_count"/>
                                 <field name="currency_id"/>
                                 <field name="amount_invoice"/>
                                 <field name="amount_total" string="付款合计：本币"/>

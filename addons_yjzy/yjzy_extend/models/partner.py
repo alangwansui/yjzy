@@ -170,6 +170,7 @@ class res_partner(models.Model):
             one.so_no_sent_amount = so_no_sent_ids_count
 
 
+    account_move_line_com = fields.One2many('account.move.line.com','partner_id','日志')
 
     qingguan_precision = fields.Integer('清关资料打印小数位数')
     #增加供应商和客户的独立编号，审批完成后添加

@@ -1,27 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-<!--    应收认领搜索视图-->
+    <!--    应收认领搜索视图-->
     <record id="view_reconcile_in_search_new" model="ir.ui.view">
         <field name="name">account.reconcile.order.search</field>
         <field name="model">account.reconcile.order</field>
         <field name="arch" type="xml">
             <search string="Payments">
-                <field name="name" filter_domain="['|','|', ('name','ilike',self),('invoice_ids.tb_contract_code','ilike',self),('partner_id','child_of',self)]"
+                <field name="name"
+                       filter_domain="['|','|', ('name','ilike',self),('invoice_ids.tb_contract_code','ilike',self),('partner_id','child_of',self)]"
                        string="Description"/>
                 <separator/>
                 <field name="partner_id"/>
                 <group expand="1" string="Group By">
                     <filter string="状态分组" name="group_by_state" domain="[]" context="{'group_by':'state'}"/>
                     <filter string="状态分组:new" name="group_by_state_1" domain="[]" context="{'group_by':'stage_id'}"/>
-                    <filter string="认领方式分组" name="group_by_hxd_type_new" domain="[]" context="{'group_by':'hxd_type_new'}"/>
-                    <filter string="stage认领方式分组" name="group_by_stage_hxd_type_new" domain="[]" context="{'group_by':('stage_id','hxd_type_new')}"/>
-                    <filter string="账单属性" name="group_by_invoice_attribute_all_in_one" domain="[]" context="{'group_by':'invoice_attribute_all_in_one'}"/>
-                    <filter string="stage账单属性" name="group_by_invoice_attribute_all_in_one_stage" domain="[]" context="{'group_by':('stage_id','invoice_attribute_all_in_one')}"/>
+                    <filter string="认领方式分组" name="group_by_hxd_type_new" domain="[]"
+                            context="{'group_by':'hxd_type_new'}"/>
+                    <filter string="stage认领方式分组" name="group_by_stage_hxd_type_new" domain="[]"
+                            context="{'group_by':('stage_id','hxd_type_new')}"/>
+                    <filter string="账单属性" name="group_by_invoice_attribute_all_in_one" domain="[]"
+                            context="{'group_by':'invoice_attribute_all_in_one'}"/>
+                    <filter string="stage账单属性" name="group_by_invoice_attribute_all_in_one_stage" domain="[]"
+                            context="{'group_by':('stage_id','invoice_attribute_all_in_one')}"/>
                 </group>
 
             </search>
         </field>
     </record>
+
+    <record model="ir.ui.view" id="account_yshxd_line_no_tree_view_new">
+        <field name="name">account.reconcile.order.line.no.tree</field>
+        <field name="model">account.reconcile.order.line.no</field>
+        <field name="priority" eval="999"/>
+        <field name="arch" type="xml">
+            <tree string="认领明细">
+                <field name="id" invisible="1"/>
+                <field name="invoice_attribute"  invisible="1"/>
+                <field name="invoice_id" string="应收账单"  />
+                <field name="amount_invoice_so_residual" invisible="1"/>
+                <field name="invoice_id_po_ids" widget="many2many_tags" string="采购合同" invisible="1"/>
+                <field name="amount_invoice_so" string="原始应收款" invisible="1"/>
+                <field name="invoice_amount_total" string="原始应收款" />
+                <field name="reconcile_order_line_payment" string="付款支付" invisible="1"/>
+                <field name="invoice_residual" string="最新剩余应付款" invisible="1"/>
+                <field name="invoice_residual_this_time" string="本次认领前剩余应收款"/>
+                <field name="amount_payment_can_approve_all_this_time" string="本次认领前可认领应收款" invisible="1"/>
+                <field name="amount_payment_can_approve_all_after" string="本次认领后可认领收款"/>
+                <field name="invoice_residual_after" invisible="1"/>
+                <field name="payment_currency_id" invisible="1"/>
+                <field name="amount_payment_can_approve_all" string="最新可认领应收款" invisible="1"/>
+                <field name="yjzy_payment_id" string="预收单"
+                      />
+                <field name="yjzy_payment_po_id" invisible="1"/>
+                <field name="amount_advance_org" string="预收认领金额" invisible="1"/>
+                <field name="amount_payment_org" string="收款认领金额" invisible="not context.get('advance')"/>
+                <field name="amount_advance_org_compute" string="预收认领金额" invisible="context.get('advance')"/>
+                <field name="amount_diff_org" invisible="1"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="amount_payment" invisible="1"/>
+                <field name="state_1" string="状态" groups="base.group_system" invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+
 
     <!--应收核销明细-->
     <record model="ir.ui.view" id="account_yshxd_line_tree_view_new">
@@ -71,7 +113,7 @@
         </field>
     </record>
 
-     <record model="ir.ui.view" id="account_yshxd_back_tax_declaration_tree_view_new">
+    <record model="ir.ui.view" id="account_yshxd_back_tax_declaration_tree_view_new">
         <field name="name">account.reconcile.order.back.tree</field>
         <field name="model">account.reconcile.order</field>
         <field name="arch" type="xml">
@@ -204,7 +246,7 @@
                             <field name="comments"/>
                         </group>
                         <group>
-                            <field name="line_no_ids" nolabel="1" >
+                            <field name="line_no_ids" nolabel="1">
                                 <tree editable="bottom" create="false">
                                     <field name="invoice_id" readonly="1" string="应收账单"/>
                                     <field name="invoice_residual" string="应收账单余额"/>
@@ -441,9 +483,12 @@
                     <group col="3">
                         <group>
                             <field name="invoice_attribute_all_in_one" string="属性"/>
-                            <field name="back_tax_declaration_id" string="退税申报单" readonly="1" attrs="{'invisible':[('yjzy_type','!=','back_tax')]}"/>
-                            <field name="declaration_amount_all" string="申报原始金额" attrs="{'invisible':[('yjzy_type','!=','back_tax')]}"/>
-                            <field name="declaration_amount_all_residual_new" string='申报剩余金额' attrs="{'invisible':[('yjzy_type','!=','back_tax')]}"/>
+                            <field name="back_tax_declaration_id" string="退税申报单" readonly="1"
+                                   attrs="{'invisible':[('yjzy_type','!=','back_tax')]}"/>
+                            <field name="declaration_amount_all" string="申报原始金额"
+                                   attrs="{'invisible':[('yjzy_type','!=','back_tax')]}"/>
+                            <field name="declaration_amount_all_residual_new" string='申报剩余金额'
+                                   attrs="{'invisible':[('yjzy_type','!=','back_tax')]}"/>
                             <field name="name" attrs="{'invisible':1}"/>
                             <field name="payment_type" attrs="{'invisible':1}"/>
                             <field name="partner_type" attrs="{'invisible':1}"/>
@@ -474,9 +519,9 @@
 
                         <group>
                             <field name="partner_payment_term_id" string="客户付款条款"
-                            attrs="{'invisible':[('invoice_attribute_all_in_one','not in',['110','120'])]}"/>
+                                   attrs="{'invisible':[('invoice_attribute_all_in_one','not in',['110','120'])]}"/>
                             <field name="invoice_payment_term_id" string="账单应付条款"
-                            attrs="{'invisible':[('invoice_attribute_all_in_one','not in',['110','120'])]}"/>
+                                   attrs="{'invisible':[('invoice_attribute_all_in_one','not in',['110','120'])]}"/>
                         </group>
                         <group attrs="{'invisible':[('operation_wizard','=',False)]}">
                             <field name="sfk_type" attrs="{'invisible':1}"/>
@@ -517,7 +562,8 @@
                                     <field name="id" invisible="1"/>
                                     <field name="invoice_attribute" readonly="1" invisible="1"/>
                                     <field name="invoice_id" string="应收账单" context="{'show_tb_ref':1}" readonly="1"/>
-                                    <button name="open_invoice_id" icon="fa-pencil-square-o" context="{'open':1}" groups="base.group_system"
+                                    <button name="open_invoice_id" icon="fa-pencil-square-o" context="{'open':1}"
+                                            groups="base.group_system"
                                             class="akiny_text_left"
                                             type="object"/>
                                     <field name="amount_invoice_so_residual" invisible="1"/>
@@ -615,7 +661,7 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <field name="account_payment_state_ids" nolabel="1" mode="kanban" readonly="1" >
+                            <field name="account_payment_state_ids" nolabel="1" mode="kanban" readonly="1">
                                 <kanban class="o_kanban_mobile o_kanban_dashboard_akiny o_saleakiny_kanban ">
                                     <field name="advance_payment_id"/>
                                     <field name="so_id"/>
@@ -723,12 +769,16 @@
 
                         <page string="认领应收账单"
                               attrs="{'invisible':[('yjzy_type','not in',['back_tax','other_payment_sale'])]}">
-                            <field name="line_no_ids" attrs="{'readonly':[('state_1','not in',['draft','draft_yshxd','draft_all','account_approval','account_approval_yshxd'])]}">
+                            <field name="line_no_ids"
+                                   attrs="{'readonly':[('state_1','not in',['draft','draft_yshxd','draft_all','account_approval','account_approval_yshxd'])]}">
                                 <tree editable="bottom" create="false">
                                     <field name="invoice_id" readonly="1" string="应收账单"/>
-                                    <button name="open_invoice_id" type="object" icon="fa-pencil-square-o" class="akiny_text_left"/>
-                                    <field name="invoice_invoice_partner" attrs="{'column_invisible':[('parent.invoice_attribute','!=','other_payment')]}"/>
-                                    <field name="invoice_name_title" attrs="{'column_invisible':[('parent.invoice_attribute','!=','other_payment')]}"/>
+                                    <button name="open_invoice_id" type="object" icon="fa-pencil-square-o"
+                                            class="akiny_text_left"/>
+                                    <field name="invoice_invoice_partner"
+                                           attrs="{'column_invisible':[('parent.invoice_attribute','!=','other_payment')]}"/>
+                                    <field name="invoice_name_title"
+                                           attrs="{'column_invisible':[('parent.invoice_attribute','!=','other_payment')]}"/>
                                     <field name="invoice_amount_total" string="原始应收款" sum="小计"/>
                                     <field name="invoice_currency_id" invisible="1"/>
                                     <field name="invoice_residual" string="剩余应收款" sum="小计"/>
@@ -762,8 +812,8 @@
 
                                     <field name="invoice_id" string="应收账单" readonly="1" invisible="0"
                                            context="{'form_view_ref':'yjzy_extend.view_account_invoice_new_form_in_one'}"/>
-<!--                                    <button name="open_invoice_id" icon="fa-pencil-square-o" context="{'open':1}" invisible="1"-->
-<!--                                            type="object"/>-->
+                                    <!--                                    <button name="open_invoice_id" icon="fa-pencil-square-o" context="{'open':1}" invisible="1"-->
+                                    <!--                                            type="object"/>-->
                                     <field name="tb_contract_code" invisible="1"/>
 
                                     <field name="residual" readonly="1" string="账单总余额"/>
@@ -808,73 +858,79 @@
                                     <group col="2">
                                         <group>
                                             <field name="payment_type" invisible="1"/>
-                                    <field name="partner_type" invisible="1"/>
-                                    <field name="so_id" readonly="1"/>
+                                            <field name="partner_type" invisible="1"/>
+                                            <field name="so_id" readonly="1"/>
 
-                                    <field name="invoice_id" string="应收账单" readonly="1"
-                                           context="{'form_view_ref':'yjzy_extend.view_account_invoice_new_form_in_one'}"/>
-                                    <field name="residual" readonly="1" string="账单总余额"/>
-                                    <field name="amount_invoice_so" string="销售单出运金额" invisible="0" readonly="1"/>
-                                    <field name="invoice_currency_id" invisible="1"/>
-                                    <field name="payment_currency_id" invisible="1"/>
-                                    <field name="currency_id" invisible="1"/>
-                                    <field name="advice_amount_advance_org_real" string="建议预收认领" readonly="1"/>
-                                    <field name="least_advice_amount_advance_org" string="最低预收认领" readonly="1"/>
-                                    <field name="amount_invoice_so_residual" string="销售对应应收余额" invisible="1"/>
+                                            <field name="invoice_id" string="应收账单" readonly="1"
+                                                   context="{'form_view_ref':'yjzy_extend.view_account_invoice_new_form_in_one'}"/>
+                                            <field name="residual" readonly="1" string="账单总余额"/>
+                                            <field name="amount_invoice_so" string="销售单出运金额" invisible="0"
+                                                   readonly="1"/>
+                                            <field name="invoice_currency_id" invisible="1"/>
+                                            <field name="payment_currency_id" invisible="1"/>
+                                            <field name="currency_id" invisible="1"/>
+                                            <field name="advice_amount_advance_org_real" string="建议预收认领" readonly="1"/>
+                                            <field name="least_advice_amount_advance_org" string="最低预收认领" readonly="1"/>
+                                            <field name="amount_invoice_so_residual" string="销售对应应收余额" invisible="1"/>
                                         </group>
-                                            <group>
-                                    <field name="yjzy_payment_id" string="预收单" readonly="1" invisible="1"
-                                           domain="[('advance_balance_total','!=',0),('sfk_type','=','ysrld')]"
-                                           context="{'only_number':1,'form_view_ref': 'yjzy_extend.view_rcskd_form','advance_bank_amount':1}"/>
-                                    <field name="advance_residual" string="销售未认领预收"/>
-                                    <field name="advance_residual2" string="采购总未认领预付" invisible="1"/>
-                                    <field name="amount_invoice_so_residual_d" string="本次认领前可认领金额" sum="小计"
-                                           invisible="1"/>
-                                    <field name="amount_invoice_so_residual_d_after" string="本次认领后可认领金额" sum="小计"
-                                           invisible="1"/>
-                                    <field name="yjzy_currency_id" invisible="1"/>
-                                    <field name="amount_advance_org" string="预收认领金额" sum="小计"/>
+                                        <group>
+                                            <field name="yjzy_payment_id" string="预收单" readonly="1" invisible="1"
+                                                   domain="[('advance_balance_total','!=',0),('sfk_type','=','ysrld')]"
+                                                   context="{'only_number':1,'form_view_ref': 'yjzy_extend.view_rcskd_form','advance_bank_amount':1}"/>
+                                            <field name="advance_residual" string="销售未认领预收"/>
+                                            <field name="advance_residual2" string="采购总未认领预付" invisible="1"/>
+                                            <field name="amount_invoice_so_residual_d" string="本次认领前可认领金额" sum="小计"
+                                                   invisible="1"/>
+                                            <field name="amount_invoice_so_residual_d_after" string="本次认领后可认领金额"
+                                                   sum="小计"
+                                                   invisible="1"/>
+                                            <field name="yjzy_currency_id" invisible="1"/>
+                                            <field name="amount_advance_org" string="预收认领金额" sum="小计"/>
                                         </group>
 
                                     </group>
-                                    <page string="认领日志" >
+                                    <page string="认领日志">
 
-                            <group col="2">
-                                <group string="账单认领财务日志"
-                                       attrs="{'invisible':[('invoice_move_line_com_yszk_ids_count','=',0)]}">
+                                        <group col="2">
+                                            <group string="账单认领财务日志"
+                                                   attrs="{'invisible':[('invoice_move_line_com_yszk_ids_count','=',0)]}">
 
 
-                                    <field name="invoice_move_line_com_yszk_ids" readonly="1" nolabel="1" colspan="2"
-                                           attrs="{'invisible':[('invoice_move_line_com_yszk_ids_count','=',0)]}">
-                                        <tree default_order="create_date">
-                                            <field name="create_date" string="日期"/>
-                                            <field name="reconcile_type" string="属性"/>
-                                            <field name="amount_this_time" string="发生金额"/>
-                                            <field name="sslj_balance" string="实时剩余金额"/>
-                                        </tree>
-                                    </field>
-                                </group>
-                                <group string="所有流程日志" attrs="{'invisible':[('invoice_reconcile_order_line_no_ids_count','=',0)]}">
-                                    <field name="invoice_reconcile_order_line_no_ids" nolabel="1" colspan="2" readonly="1"
-                                           context="{'form_view_ref':'yjzy_extend.account_yfhxd_form_view_new'}">
-                                        <tree>
-                                            <field name="hxd_type_new"/>
-                                            <field name="invoice_id" groups="base.group_system" string="应付账单"/>
-                                            <field name="create_date" widget="date" string="创建日期"/>
+                                                <field name="invoice_move_line_com_yszk_ids" readonly="1" nolabel="1"
+                                                       colspan="2"
+                                                       attrs="{'invisible':[('invoice_move_line_com_yszk_ids_count','=',0)]}">
+                                                    <tree default_order="create_date">
+                                                        <field name="create_date" string="日期"/>
+                                                        <field name="reconcile_type" string="属性"/>
+                                                        <field name="amount_this_time" string="发生金额"/>
+                                                        <field name="sslj_balance" string="实时剩余金额"/>
+                                                    </tree>
+                                                </field>
+                                            </group>
+                                            <group string="所有流程日志"
+                                                   attrs="{'invisible':[('invoice_reconcile_order_line_no_ids_count','=',0)]}">
+                                                <field name="invoice_reconcile_order_line_no_ids" nolabel="1"
+                                                       colspan="2" readonly="1"
+                                                       context="{'form_view_ref':'yjzy_extend.account_yfhxd_form_view_new'}">
+                                                    <tree>
+                                                        <field name="hxd_type_new"/>
+                                                        <field name="invoice_id" groups="base.group_system"
+                                                               string="应付账单"/>
+                                                        <field name="create_date" widget="date" string="创建日期"/>
 
-                                            <field name="amount_payment_org" string="实际申请金额"/>
-                                            <field name="amount_advance_org_compute" string="预收认领金额"/>
-                                            <field name="state_1"/>
-                                        </tree>
-                                    </field>
-                                    <field name="invoice_move_line_com_yszk_ids_count" invisible="1"/>
-                                    <field name="invoice_reconcile_order_ids_count" invisible="1"/>
-                                    <field name="invoice_reconcile_order_line_no_ids_count" invisible="1"/>
-                                </group>
+                                                        <field name="amount_payment_org" string="实际申请金额"/>
+                                                        <field name="amount_advance_org_compute" string="预收认领金额"/>
+                                                        <field name="state_1"/>
+                                                    </tree>
+                                                </field>
+                                                <field name="invoice_move_line_com_yszk_ids_count" invisible="1"/>
+                                                <field name="invoice_reconcile_order_ids_count" invisible="1"/>
+                                                <field name="invoice_reconcile_order_line_no_ids_count" invisible="1"/>
+                                            </group>
 
-                            </group>
+                                        </group>
 
-                        </page>
+                                    </page>
                                 </form>
                             </field>
                         </page>
@@ -955,8 +1011,10 @@
                                         </tree>
                                     </field>
                                 </group>
-                                <group string="所有流程日志" attrs="{'invisible':[('invoice_reconcile_order_line_no_ids_count','=',0)]}">
-                                    <field name="invoice_reconcile_order_line_no_ids" nolabel="1" colspan="2" readonly="1"
+                                <group string="所有流程日志"
+                                       attrs="{'invisible':[('invoice_reconcile_order_line_no_ids_count','=',0)]}">
+                                    <field name="invoice_reconcile_order_line_no_ids" nolabel="1" colspan="2"
+                                           readonly="1"
                                            context="{'form_view_ref':'yjzy_extend.account_yfhxd_form_view_new'}">
                                         <tree>
                                             <field name="hxd_type_new"/>
@@ -985,9 +1043,9 @@
                         </page>
                         <page groups="base.group_system">
                             <group>
-                                     <field name="move_line_com_yfzk_ids_count"/>
-                                    <field name="move_line_com_yszk_ids_count"/>
-                                    <field name="reconcile_order_ids_count"/>
+                                <field name="move_line_com_yfzk_ids_count"/>
+                                <field name="move_line_com_yszk_ids_count"/>
+                                <field name="reconcile_order_ids_count"/>
                                 <field name="invoice_attribute_all_in_one"/>
                                 <field name="yjzy_payment_id" string="选择收款单"
                                        attrs="{'required':[('operation_wizard','in',['10','30'])],'invisible':[('operation_wizard','not in',['10','30'])]}"
@@ -1178,7 +1236,8 @@
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="search_view_id" ref="view_reconcile_in_search_new"/>
-        <field name="domain">[('sfk_type','=','yshxd'),('hxd_type_new','in',['25','20']),('yjzy_type','=','sale')]</field>
+        <field name="domain">[('sfk_type','=','yshxd'),('hxd_type_new','in',['25','20']),('yjzy_type','=','sale')]
+        </field>
         <field name="context">{'only_number':1,'hxd_type_new':'20','default_sfk_type': 'yshxd',
             'advance_so_amount':1,'default_payment_type': 'inbound', 'default_be_renling': 1, 'default_partner_type':
             'customer', 'show_so': 1}
@@ -1191,16 +1250,20 @@
     <menuitem id="menu_yshxd_payment_new_same_time" name="应收认领单查询" sequence="25" groups="base.group_system"
               parent="menu_customer_invoice_for_goods_root" action="action_yshxd_payment_new_same_time"/>
 
-<!--    0101-->
-     <record model="ir.actions.act_window" id="action_yshxd_payment_new_normal">
+    <!--    0101-->
+    <record model="ir.actions.act_window" id="action_yshxd_payment_new_normal">
         <field name="name">主应收认领</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">account.reconcile.order</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
-         <field name="search_view_id" ref="view_reconcile_in_search_new"/>
-        <field name="domain">[('sfk_type','=','yshxd'),('hxd_type_new','in',['25','10','20']),('yjzy_type','=','sale'),('invoice_attribute','=','normal')]</field>
-        <field name="context">{'search_default_group_by_stage_hxd_type_new':1,'only_number':1,'hxd_type_new':'20','default_sfk_type': 'yshxd',
+        <field name="search_view_id" ref="view_reconcile_in_search_new"/>
+        <field name="domain">
+            [('sfk_type','=','yshxd'),('hxd_type_new','in',['25','10','20']),('yjzy_type','=','sale'),('invoice_attribute','=','normal')]
+        </field>
+        <field name="context">
+            {'search_default_group_by_stage_hxd_type_new':1,'only_number':1,'hxd_type_new':'20','default_sfk_type':
+            'yshxd',
             'advance_so_amount':1,'default_payment_type': 'inbound', 'default_be_renling': 1, 'default_partner_type':
             'customer', 'show_so': 1}
         </field>
@@ -1219,8 +1282,11 @@
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="search_view_id" ref="view_reconcile_in_search_new"/>
-        <field name="domain">[('sfk_type','=','yshxd'),('hxd_type_new','in',['25','20']),('yjzy_type','=','sale'),('invoice_attribute','=','other_po')]</field>
-        <field name="context">{'search_default_group_by_state_1':1,'only_number':1,'hxd_type_new':'20','default_sfk_type': 'yshxd',
+        <field name="domain">
+            [('sfk_type','=','yshxd'),('hxd_type_new','in',['25','20']),('yjzy_type','=','sale'),('invoice_attribute','=','other_po')]
+        </field>
+        <field name="context">
+            {'search_default_group_by_state_1':1,'only_number':1,'hxd_type_new':'20','default_sfk_type': 'yshxd',
             'advance_so_amount':1,'default_payment_type': 'inbound', 'default_be_renling': 1, 'default_partner_type':
             'customer', 'show_so': 1}
         </field>
@@ -1239,8 +1305,11 @@
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="search_view_id" ref="view_reconcile_in_search_new"/>
-        <field name="domain">[('sfk_type','=','yshxd'),('hxd_type_new','in',['25','20']),('yjzy_type','=','other_payment_sale'),('invoice_attribute','=','other_payment')]</field>
-        <field name="context">{'search_default_group_by_state_1':1,'only_number':1,'hxd_type_new':'20','default_sfk_type': 'yshxd',
+        <field name="domain">
+            [('sfk_type','=','yshxd'),('hxd_type_new','in',['25','20']),('yjzy_type','=','other_payment_sale'),('invoice_attribute','=','other_payment')]
+        </field>
+        <field name="context">
+            {'search_default_group_by_state_1':1,'only_number':1,'hxd_type_new':'20','default_sfk_type': 'yshxd',
             'advance_so_amount':1,'default_payment_type': 'inbound', 'default_be_renling': 1, 'default_partner_type':
             'customer', 'show_so': 1}
         </field>
@@ -1251,8 +1320,6 @@
     </record>
     <menuitem id="menu_yshxd_payment_new_other_payment" name="其他应收" sequence="30"
               parent="menu_customer_invoice_renling_all_root" action="action_yshxd_payment_new_other_payment"/>
-
-
 
 
     <record model="ir.actions.act_window" id="action_yshxd_payment_new_all">
@@ -1280,9 +1347,11 @@
         <field name="res_model">account.reconcile.order</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
-         <field name="search_view_id" ref="view_reconcile_in_search_new"/>
+        <field name="search_view_id" ref="view_reconcile_in_search_new"/>
         <field name="domain">[('sfk_type','=','yshxd'),('hxd_type_new','=','20'),('partner_id.name','=','国税局')]</field>
-        <field name="context">{'search_default_group_by_invoice_attribute_all_in_one_stage':1,'hxd_type_new':'20','default_sfk_type': 'yshxd',
+        <field name="context">
+            {'search_default_group_by_invoice_attribute_all_in_one_stage':1,'hxd_type_new':'20','default_sfk_type':
+            'yshxd',
             'advance_so_amount':1,'default_payment_type': 'inbound', 'default_be_renling': 1, 'default_partner_type':
             'customer', 'show_so': 1}
         </field>
@@ -1293,9 +1362,6 @@
     </record>
     <menuitem id="menu_yshxd_payment_back_tax_new_all" name="退税应收" sequence="20"
               parent="menu_customer_invoice_renling_all_root" action="action_yshxd_payment_back_tax_new_all"/>
-
-
-
 
 
     <record model="ir.actions.act_window" id="action_yshxd_other_payment_new_all">
@@ -1316,8 +1382,8 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('account_yshxd_tree_view_new')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('account_yshxd_form_view_new')})]"/>
     </record>
-<!--    <menuitem id="menu_yshxd_other_payment_new_all" name="收款-其他应收认领单查询" sequence="30"-->
-<!--              parent="menu_customer_invoice_other_payment_root" action="action_yshxd_other_payment_new_all"/>-->
+    <!--    <menuitem id="menu_yshxd_other_payment_new_all" name="收款-其他应收认领单查询" sequence="30"-->
+    <!--              parent="menu_customer_invoice_other_payment_root" action="action_yshxd_other_payment_new_all"/>-->
     <menuitem id="menu_yshxd_other_payment_new_all" name="收款-其他应收认领单查询" sequence="30" groups="base.group_system"
               parent="menu_customer_invoice_other_payment_apply_root" action="action_yshxd_other_payment_new_all"/>
 
