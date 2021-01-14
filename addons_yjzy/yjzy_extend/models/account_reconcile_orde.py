@@ -2186,27 +2186,28 @@ class account_reconcile_order(models.Model):
             test = 'amount_payment_org'
             ctx = {'payment': 1,
                    }
-
         if advance:
             test = 'amount_advance_org'
             ctx = {'advance': 1,
                    }
-
         state = self.env.context.get('state')
         sfk_type = self.sfk_type
         if sfk_type == 'yfhxd':
             tree_view = self.env.ref('yjzy_extend.account_yfhxd_tree_view_new').id
-            return {
-                'type': 'ir.actions.act_window',
-                'name': _(u'已申请未审批申请'),
-                'res_model': 'account.reconcile.order',
-                'view_type': 'form',
-                'view_mode': 'tree, form',
-                'views': [(tree_view, 'tree')],
-                'domain':[('partner_id','=',self.partner_id.id),(test,'!=',0),('state','=',state)],
-                'target': 'new',
-                'context':ctx
-            }
+        if sfk_type == 'yshxd':
+            tree_view = self.env.ref('yjzy_extend.account_yshxd_tree_view_new').id
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _(u'已申请未审批申请'),
+            'res_model': 'account.reconcile.order',
+            'view_type': 'form',
+            'view_mode': 'tree, form',
+            'views': [(tree_view, 'tree')],
+            'domain':[('partner_id','=',self.partner_id.id),(test,'!=',0),('state','=',state)],
+            'target': 'new',
+            'context':ctx
+        }
+
 
 
 

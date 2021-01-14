@@ -100,8 +100,8 @@
                 <field name="invoice_id" string="账单"/>
                 <field name="partner_id" string="客户"/>
                 <field name="date"/>
-                <field name="amount_payment_org" string="收款认领金额"/>
-                <field name="amount_advance_org" string="预收认领金额"/>
+                <field name="amount_payment_org" string="收款认领金额" invisible="context.get('advance')" sum="小计"/>
+                <field name="amount_advance_org" string="预收认领金额" invisible="context.get('payment')" sum="小计"/>
                 <field name="amount_invoice_org" string="账单原始金额"/>
                 <field name="amount_payment_can_approve_all_this_time" string="认领前账单剩余金额"/>
                 <field name="amount_payment_can_approve_all_after" string="认领后账单剩余金额"/>
