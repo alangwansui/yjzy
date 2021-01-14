@@ -462,6 +462,11 @@ class account_invoice(models.Model):
             payment_no_approval_all = one.reconcile_order_line_no_ids.filtered(
                 lambda x: x.order_id.state == 'posted')  # 完成付款和认领
 
+            payment_draft_all = one.reconcile_order_line_ids.filtered(
+                lambda x: x.order_id.state == 'draft')  # 完成付款和认领
+            payment_no_draft_all = one.reconcile_order_line_no_ids.filtered(
+                lambda x: x.order_id.state == 'posted')  # 完成付款和认领
+
             yjzy_payment_approve_all = one.yjzy_invoice_reconcile_order_line_ids.filtered(
                 lambda x: x.order_id.state == 'approved')
             yjzy_payment_approved_no_all = one.yjzy_invoice_reconcile_order_line_no_ids.filtered(
@@ -472,6 +477,12 @@ class account_invoice(models.Model):
 
             amount_advance_org_approval = sum(x.amount_advance_org for x in payment_approval_all)
             amount_payment_org_approval = sum(x.amount_payment_org for x in payment_no_approval_all)
+
+            amount_advance_org_draft = sum(x.amount_advance_org for x in payment_approval_all)
+            amount_payment_org_draft = sum(x.amount_payment_org for x in payment_no_approval_all)
+
+            amount_advance_org_draft_approval = amount_advance_org_draft + amount_advance_org_approval
+            amount_payment_org_draft_approval = amount_payment_org_draft + amount_payment_org_approval
 
             amount_payment_org_approved = sum(x.amount_payment_org for x in payment_approved_no_all)
 
@@ -488,6 +499,8 @@ class account_invoice(models.Model):
             print('yjzy_amount_payment_can_approve_all', yjzy_amount_payment_can_approve_all,
                   amount_payment_can_approve_all)
 
+            one.amount_advance_org_draft_approval = amount_advance_org_draft_approval
+            one.amount_payment_org_draft_approval = amount_payment_org_draft_approval
 
             one.amount_advance_org_approval = amount_advance_org_approval
             one.amount_payment_org_approval = amount_payment_org_approval
@@ -838,6 +851,13 @@ class account_invoice(models.Model):
 
     amount_payment_org_approval = fields.Monetary(u'收付款未审批金额', currency_field='currency_id',
                                               compute=compute_amount_payment_can_approve_all, store=True)
+
+    amount_advance_org_draft_approval = fields.Monetary(u'预收付审批中_草稿认领金额', currency_field='currency_id',
+                                                  compute=compute_amount_payment_can_approve_all, store=True)
+
+    amount_payment_org_draft_approval = fields.Monetary(u'收付款审批中_草稿金额', currency_field='currency_id',
+                                                  compute=compute_amount_payment_can_approve_all, store=True)
+
 
     amount_payment_org_approved = fields.Monetary(u'已完成审批收付款金额', currency_field='currency_id',
                                                   compute=compute_amount_payment_can_approve_all, store=True)
@@ -1991,7 +2011,7 @@ class account_invoice(models.Model):
             form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new')
             name = '供应商应付'
             reconcile_order_id = self.env['account.reconcile.order'].search(
-                [('invoice_id', '=', self.id),('state', '=', state),(test,'!=',0)],limit=1)
+                [('invoice_id', '=', self.id),('state', 'in', ['posted','draft']),(test,'!=',0)],limit=1)
             if not reconcile_order_id:
                 raise Warning('没有审批中的应付申请')
         return {

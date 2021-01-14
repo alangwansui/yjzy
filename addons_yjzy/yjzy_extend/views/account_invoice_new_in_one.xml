@@ -460,22 +460,22 @@
                                         </group>
                                 <group>
 
-                                    <label  for="" name="amount_advance_org_approval" string="未审批预付认领"/>
+                                    <label  for="" name="amount_advance_org_draft_approval" string="未审批预付认领"/>
                                     <div class="oe_row"
                                          attrs="{'invisible':[('type','not in',['in_invoice','in_refund'])]}">
                                         <button type="object" name="open_reconcile_order"
                                                 class="btn-xxs btn-link mb2" context="{'state':'posted','advance':1}"
                                                 target="new">
-                                            <field name="amount_advance_org_approval" string="未审批预付认领"/>
+                                            <field name="amount_advance_org_draft_approval" string="未审批预付认领"/>
                                         </button>
                                     </div>
-                                     <label  for="" name="amount_advance_org_approval" string="未审批申请付款"/>
+                                     <label  for="" name="amount_payment_org_draft_approval" string="未审批申请付款"/>
                                     <div class="oe_row"
                                          attrs="{'invisible':[('type','not in',['in_invoice','in_refund'])]}">
                                         <button type="object" name="open_reconcile_order"
                                                 class="btn-xxs btn-link mb2" context="{'state':'posted'}"
                                                 target="new">
-                                            <field name="amount_payment_org_approval" string="未审批申请付款"/>
+                                            <field name="amount_payment_org_draft_approval" string="未审批申请付款"/>
                                         </button>
                                     </div>
 
