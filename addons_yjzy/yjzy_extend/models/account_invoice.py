@@ -1985,7 +1985,7 @@ class account_invoice(models.Model):
             form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new')
             name = '供应商应付'
             reconcile_order_id = self.env['account.reconcile.order'].search(
-                [('invoice_id', '=', self.id), ('state', '=', state)],limit=1)
+                [('invoice_id', '=', self.id),('state', '=', state)],limit=1)
             if not reconcile_order_id:
                 raise Warning('没有审批中的应付申请')
         return {
@@ -1994,7 +1994,7 @@ class account_invoice(models.Model):
             'view_mode': 'tree,form',
             'res_model': 'account.reconcile.order.line.no',
             'type': 'ir.actions.act_window',
-            'views': [(form_view.id, 'tree')],
+            'views': [(form_view.id, 'Form')],
             'res_id':reconcile_order_id.id,
             'target': 'new',
             # 'context': ctx
