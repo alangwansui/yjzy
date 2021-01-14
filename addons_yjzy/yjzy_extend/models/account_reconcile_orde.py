@@ -2179,14 +2179,18 @@ class account_reconcile_order(models.Model):
             }
 
     def open_supplier_account_reconcile_order(self):
-        payment = self.env.context.get('payment')
-        advance = self.env.context.get('advance')
-        ctx = {'payment':payment,
-               'advance':advance}
+        payment = self.env.context.get('payment') or 0
+        advance = self.env.context.get('advance') or 0
+
         if payment:
             test = 'amount_payment_org'
+            ctx = {'payment': 1,
+                   }
+
         if advance:
             test = 'amount_advance_org'
+            ctx = {'advance': 1,
+                   }
 
         state = self.env.context.get('state')
         sfk_type = self.sfk_type
