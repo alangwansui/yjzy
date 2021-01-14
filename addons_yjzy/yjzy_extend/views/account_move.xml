@@ -129,7 +129,7 @@
         <field name="arch" type="xml">
             <tree string="日志">
                 <field name="move_date"/>
-                <field name="invoice_id"/>
+                <field name="invoice_id" string="账单"/>
                 <field name="amount_this_time" sum="小计"/>
                 <field name="reconcile_type"/>
             </tree>

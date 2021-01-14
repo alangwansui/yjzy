@@ -2179,20 +2179,32 @@ class account_reconcile_order(models.Model):
             }
 
     def open_supplier_account_reconcile_order(self):
+        payment = self.env.context.get('payment')
+        advance = self.env.context.get('advance')
+        ctx = {'payment':payment,
+               'advance':advance}
+        if payment:
+            test = 'amount_payment_org'
+        if advance:
+            test = 'amount_advance_org'
+
         state = self.env.context.get('state')
         sfk_type = self.sfk_type
         if sfk_type == 'yfhxd':
             tree_view = self.env.ref('yjzy_extend.account_yfhxd_tree_view_new').id
             return {
                 'type': 'ir.actions.act_window',
-                'name': _(u'已申请未审批应付付款申请'),
+                'name': _(u'已申请未审批申请'),
                 'res_model': 'account.reconcile.order',
                 'view_type': 'form',
                 'view_mode': 'tree, form',
                 'views': [(tree_view, 'tree')],
-                'domain':[('partner_id','=',self.partner_id.id),('amount_payment_org','!=',0),('state','=',state)],
+                'domain':[('partner_id','=',self.partner_id.id),(test,'!=',0),('state','=',state)],
                 'target': 'new',
+                'context':ctx
             }
+
+
 
 
 

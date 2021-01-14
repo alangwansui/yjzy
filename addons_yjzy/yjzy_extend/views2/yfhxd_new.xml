@@ -641,9 +641,9 @@
                 <field name="amount_total_org" string="全部认领合计" groups="base.group_system"/>
                 <field name="amount_total_org_new" string="全部认领合计" groups="base.group_system"/>
                 <field name="amount_payment_org" string="实际申请付款金额" groups="base.group_system"/>
-                <field name="amount_payment_org_new" string="实际申请金额" sum="小计"/>
+                <field name="amount_payment_org_new" string="实际申请金额" invisible="context.get('advance')" sum="小计"/>
                 <field name="amount_advance_org" string="预付认领金额" groups="base.group_system"/>
-                <field name="amount_advance_org_new" string="预付认领金额" sum="小计"/>
+                <field name="amount_advance_org_new" string="预付认领金额" invisible="context.get('payment')" sum="小计"/>
                 <field name="supplier_advance_payment_ids_amount_advance_org" string="待审批预付认领金额"
                        groups="base.group_system"/>
                 <field name="amount_total" invisible="1"/>
@@ -1026,7 +1026,7 @@
                                  attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),
                                    ('invoice_attribute','in',['other_payment','expense_po','other_po'])]}">
                                 <button type="object" name="open_supplier_account_reconcile_order"
-                                        class="btn-xxs btn-link mb2" context="{'state':'posted'}"
+                                        class="btn-xxs btn-link mb2" context="{'state':'posted','payment':1}"
                                         target="new">
                                     <field name="supplier_amount_invoice_approval"/>
                                 </button>
@@ -1042,7 +1042,7 @@
                                  attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),
                                    ('invoice_attribute','in',['other_payment','expense_po','other_po'])]}">
                                 <button type="object" name="open_supplier_account_reconcile_order"
-                                        class="btn-xxs btn-link mb2" context="{'state':'approved'}"
+                                        class="btn-xxs btn-link mb2" context="{'state':'approved','payment':1}"
                                         target="new">
                                     <field name="supplier_amount_invoice_approve"/>
                                 </button>
@@ -1086,7 +1086,7 @@
                                  attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),
                                    ('invoice_attribute','in',['other_payment','expense_po','other_po'])]}">
                                 <button type="object" name="open_supplier_account_reconcile_order"
-                                        class="btn-xxs btn-link mb2" context="{'state':'posted'}"
+                                        class="btn-xxs btn-link mb2" context="{'state':'posted','advance':1}"
                                         target="new">
                                     <field name="supplier_advance_amount_hxd_line_approval"/>
                                 </button>
