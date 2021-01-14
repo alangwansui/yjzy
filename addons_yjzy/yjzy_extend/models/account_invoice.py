@@ -465,7 +465,7 @@ class account_invoice(models.Model):
             payment_draft_all = one.reconcile_order_line_ids.filtered(
                 lambda x: x.order_id.state == 'draft')  # 完成付款和认领
             payment_no_draft_all = one.reconcile_order_line_no_ids.filtered(
-                lambda x: x.order_id.state == 'posted')  # 完成付款和认领
+                lambda x: x.order_id.state == 'draft')  # 完成付款和认领
 
             yjzy_payment_approve_all = one.yjzy_invoice_reconcile_order_line_ids.filtered(
                 lambda x: x.order_id.state == 'approved')
