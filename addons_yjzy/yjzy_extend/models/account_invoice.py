@@ -1973,7 +1973,13 @@ class account_invoice(models.Model):
         self.ensure_one()
         # form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form')
         state = self.env.context.get('state') or 'done'
-
+        advance = self.env.context.get('advance') or 0
+        ctx = {'advance': advance}
+        if advance:
+            test = 'amount_advance_org_new'
+        else:
+            test = 'amount_payment_org_new'
+        print('pay_type_akiny', advance,test)
         if self.type == 'out_invoice':
             tree_view = self.env.ref('yjzy_extend.account_yshxd_tree_view_new')
             form_view = self.env.ref('yjzy_extend.account_yshxd_form_view_new')
@@ -1985,7 +1991,7 @@ class account_invoice(models.Model):
             form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new')
             name = '供应商应付'
             reconcile_order_id = self.env['account.reconcile.order'].search(
-                [('invoice_id', '=', self.id),('state', '=', state)],limit=1)
+                [('invoice_id', '=', self.id),('state', '=', state),(test,'!=',0)],limit=1)
             if not reconcile_order_id:
                 raise Warning('没有审批中的应付申请')
         return {
