@@ -1992,7 +1992,7 @@ class account_invoice(models.Model):
             'name': name,
             'view_type': 'form',
             'view_mode': 'tree,form',
-            'res_model': 'account.reconcile.order.line.no',
+            'res_model': 'account.reconcile.order',
             'type': 'ir.actions.act_window',
             'views': [(form_view.id, 'form')],
             'res_id':reconcile_order_id.id,
