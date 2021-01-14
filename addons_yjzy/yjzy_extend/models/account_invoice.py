@@ -458,6 +458,10 @@ class account_invoice(models.Model):
             payment_done_all = one.reconcile_order_line_ids.filtered(lambda x: x.order_id.state == 'done') #完成付款和认领
             payment_no_done_all = one.reconcile_order_line_no_ids.filtered(lambda x: x.order_id.state == 'done')  # 完成付款和认领
 
+            payment_approval_all = one.reconcile_order_line_ids.filtered(lambda x: x.order_id.state == 'posted')  # 完成付款和认领
+            payment_no_approval_all = one.reconcile_order_line_no_ids.filtered(
+                lambda x: x.order_id.state == 'posted')  # 完成付款和认领
+
             yjzy_payment_approve_all = one.yjzy_invoice_reconcile_order_line_ids.filtered(
                 lambda x: x.order_id.state == 'approved')
             yjzy_payment_approved_no_all = one.yjzy_invoice_reconcile_order_line_no_ids.filtered(
@@ -465,6 +469,9 @@ class account_invoice(models.Model):
 
             amount_advance_org_done = sum(x.amount_advance_org for x in payment_done_all)
             amount_payment_org_done = sum(x.amount_payment_org for x in payment_no_done_all)
+
+            amount_advance_org_approval = sum(x.amount_advance_org for x in payment_approval_all)
+            amount_payment_org_approval = sum(x.amount_payment_org for x in payment_no_approval_all)
 
             amount_payment_org_approved = sum(x.amount_payment_org for x in payment_approved_no_all)
 
@@ -482,6 +489,8 @@ class account_invoice(models.Model):
                   amount_payment_can_approve_all)
 
 
+            one.amount_advance_org_approval = amount_advance_org_approval
+            one.amount_payment_org_approval = amount_payment_org_approval
 
             one.amount_payment_org_approved = amount_payment_org_approved
             one.amount_payment_org_done = amount_payment_org_done
@@ -822,6 +831,12 @@ class account_invoice(models.Model):
                                               compute=compute_amount_payment_can_approve_all, store=True)
 
     amount_payment_org_done = fields.Monetary(u'收付款金额', currency_field='currency_id',
+                                              compute=compute_amount_payment_can_approve_all, store=True)
+
+    amount_advance_org_approval = fields.Monetary(u'预收付未审批认领金额', currency_field='currency_id',
+                                              compute=compute_amount_payment_can_approve_all, store=True)
+
+    amount_payment_org_approval = fields.Monetary(u'收付款未审批金额', currency_field='currency_id',
                                               compute=compute_amount_payment_can_approve_all, store=True)
 
     amount_payment_org_approved = fields.Monetary(u'已完成审批收付款金额', currency_field='currency_id',
@@ -1952,6 +1967,39 @@ class account_invoice(models.Model):
                 'context': ctx
 
             }
+
+
+    def open_reconcile_order(self):
+        self.ensure_one()
+        # form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form')
+        state = self.env.context.get('state') or 'done'
+
+        if self.type == 'out_invoice':
+            tree_view = self.env.ref('yjzy_extend.account_yshxd_tree_view_new')
+            form_view = self.env.ref('yjzy_extend.account_yshxd_form_view_new')
+            name = '客户应收'
+
+
+        if self.type == 'in_invoice':
+            tree_view = self.env.ref('yjzy_extend.account_yfhxd_tree_view_new')
+            form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new')
+            name = '供应商应付'
+            reconcile_order_id = self.env['account.reconcile.order'].search(
+                [('invoice_id', '=', self.id), ('state', '=', state)])
+            if not reconcile_order_id:
+                raise Warning('没有审批中的应付申请')
+        return {
+            'name': name,
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'res_model': 'account.reconcile.order.line.no',
+            'type': 'ir.actions.act_window',
+            'views': [(form_view.id, 'tree')],
+            'res_id':reconcile_order_id.id,
+            'target': 'new',
+            # 'context': ctx
+
+        }
 
     def open_supplier_reconcile_order_line(self):
         self.ensure_one()

@@ -369,7 +369,8 @@
                                                 <td>
                                                     <div class="o_row">
                                                         <button type="object" name="open_reconcile_order_no_line"
-                                                                class="btn-xxs btn-link mb2" context="{'state':'done','advance':1}"
+                                                                class="btn-xxs btn-link mb2"
+                                                                context="{'state':'done','advance':1}"
                                                                 target="new">
                                                             <field name="amount_advance_org_done"/>
                                                         </button>
@@ -389,11 +390,11 @@
                                                 </td>
                                                 <td>
                                                     <div class="o_row">
-                                                          <button type="object" name="open_reconcile_order_no_line"
+                                                        <button type="object" name="open_reconcile_order_no_line"
                                                                 class="btn-xxs btn-link mb2" context="{'state':'done'}"
                                                                 target="new">
-                                                        <field name="amount_payment_org_done"/>
-                                                          </button>
+                                                            <field name="amount_payment_org_done"/>
+                                                        </button>
                                                     </div>
                                                 </td>
                                                 <td></td>
@@ -428,11 +429,12 @@
                                                 <td>
                                                     <div class="o_row"
                                                          attrs="{'invisible':[('type','not in',['in_invoice','in_refund'])]}">
-                                                           <button type="object" name="open_reconcile_order_no_line"
-                                                                class="btn-xxs btn-link mb2" context="{'state':'approved'}"
+                                                        <button type="object" name="open_reconcile_order_no_line"
+                                                                class="btn-xxs btn-link mb2"
+                                                                context="{'state':'approved'}"
                                                                 target="new">
-                                                        <field name="amount_payment_org_approved"/>
-                                                           </button>
+                                                            <field name="amount_payment_org_approved"/>
+                                                        </button>
                                                     </div>
                                                 </td>
                                                 <td></td>
@@ -455,6 +457,28 @@
                                             </tr>
                                         </tbody>
                                     </table>
+                                        </group>
+                                <group>
+
+                                    <label  for="" name="amount_advance_org_approval" string="未审批预付认领"/>
+                                    <div class="oe_row"
+                                         attrs="{'invisible':[('type','not in',['in_invoice','in_refund'])]}">
+                                        <button type="object" name="open_reconcile_order"
+                                                class="btn-xxs btn-link mb2" context="{'state':'posted'}"
+                                                target="new">
+                                            <field name="amount_advance_org_approval" string="未审批预付认领"/>
+                                        </button>
+                                    </div>
+                                     <label  for="" name="amount_advance_org_approval" string="未审批申请付款"/>
+                                    <div class="oe_row"
+                                         attrs="{'invisible':[('type','not in',['in_invoice','in_refund'])]}">
+                                        <button type="object" name="open_reconcile_order"
+                                                class="btn-xxs btn-link mb2" context="{'state':'posted'}"
+                                                target="new">
+                                            <field name="amount_payment_org_approval" string="未审批申请付款"/>
+                                        </button>
+                                    </div>
+
 
                                     <label for="" name="yjzy_total"
                                            attrs="{'invisible':[('yjzy_invoice_count','=',0)]}">
@@ -498,7 +522,7 @@
                                            attrs="{'invisible':[('yjzy_type','!=','back_tax'),('yjzy_type_1','!=','back_tax')]}"/>
 
 
-                                </group>
+                            </group>
 
                                 <group style="border-top:1px #6C6A6A solid;margin-top:-10px;" groups="base.group_system"
                                        invisible="1">
