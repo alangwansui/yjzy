@@ -130,7 +130,7 @@
             <tree string="日志">
                 <field name="move_date"/>
                 <field name="invoice_id"/>
-                <field name="amount_this_time"/>
+                <field name="amount_this_time" sum="小计"/>
                 <field name="reconcile_type"/>
             </tree>
         </field>

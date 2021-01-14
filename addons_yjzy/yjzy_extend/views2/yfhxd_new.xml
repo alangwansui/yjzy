@@ -641,9 +641,9 @@
                 <field name="amount_total_org" string="全部认领合计" groups="base.group_system"/>
                 <field name="amount_total_org_new" string="全部认领合计" groups="base.group_system"/>
                 <field name="amount_payment_org" string="实际申请付款金额" groups="base.group_system"/>
-                <field name="amount_payment_org_new" string="实际申请金额"/>
+                <field name="amount_payment_org_new" string="实际申请金额" sum="小计"/>
                 <field name="amount_advance_org" string="预付认领金额" groups="base.group_system"/>
-                <field name="amount_advance_org_new" string="预付认领金额"/>
+                <field name="amount_advance_org_new" string="预付认领金额" sum="小计"/>
                 <field name="supplier_advance_payment_ids_amount_advance_org" string="待审批预付认领金额"
                        groups="base.group_system"/>
                 <field name="amount_total" invisible="1"/>

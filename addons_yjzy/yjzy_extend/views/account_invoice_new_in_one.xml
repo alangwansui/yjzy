@@ -429,7 +429,7 @@
                                                     <div class="o_row"
                                                          attrs="{'invisible':[('type','not in',['in_invoice','in_refund'])]}">
                                                            <button type="object" name="open_reconcile_order_no_line"
-                                                                class="btn-xxs btn-link mb2" context="{'state':'done'}"
+                                                                class="btn-xxs btn-link mb2" context="{'state':'approved'}"
                                                                 target="new">
                                                         <field name="amount_payment_org_approved"/>
                                                            </button>
