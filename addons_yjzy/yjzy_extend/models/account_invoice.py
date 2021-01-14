@@ -1925,6 +1925,10 @@ class account_invoice(models.Model):
         self.ensure_one()
         advance = self.env.context.get('advance') or 0
         ctx = {'advance':advance}
+        if advance:
+            test = 'amount_advance_org_compute'
+        else:
+            test = 'amount_payment_org'
         print('pay_type_akiny',advance)
         # form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form')
         state = self.env.context.get('state') or 'done'
@@ -1943,7 +1947,7 @@ class account_invoice(models.Model):
                 'res_model': 'account.reconcile.order.line.no',
                 'type': 'ir.actions.act_window',
                 'views': [(tree_view.id, 'tree')],
-                'domain': [('invoice_id', 'in', [one.id]), ('order_id.state', '=', state)],
+                'domain': [('invoice_id', 'in', [one.id]), ('order_id.state', '=', state),(test,'!=',0)],
                 'target': 'new',
                 'context': ctx
 
