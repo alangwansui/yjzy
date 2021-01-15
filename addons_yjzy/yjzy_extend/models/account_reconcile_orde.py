@@ -3714,7 +3714,7 @@ class account_reconcile_order_line_no(models.Model):
             line.invoice_residual_after = invoice_residual_this_time - amount_payment_org
 
 
-    @api.depends('order_id.line_ids','order_id.line_ids.amount_advance_org')
+    @api.depends('order_id.line_ids','order_id.line_ids.amount_advance_org','order_id.line_ids.invoice_id')
     def compute_amount_advance_org_compute(self):
         for one in self:
             line_ids = one.order_id.line_ids.filtered(lambda x: x.invoice_id == one.invoice_id)
@@ -3793,7 +3793,7 @@ class account_reconcile_order_line_no(models.Model):
     advance_residual2 = fields.Monetary(currency_field='yjzy_currency_id', string=u'预收余额')
 
 
-    amount_advance_org_compute = fields.Monetary(u'计算的预收预付金额', currency_field='yjzy_currency_id',compute=compute_amount_advance_org_compute,)
+    amount_advance_org_compute = fields.Monetary(u'计算的预收预付金额', currency_field='yjzy_currency_id',compute=compute_amount_advance_org_compute,store=True)
     amount_advance_org = fields.Monetary(u'预收金额', currency_field='yjzy_currency_id')
     advice_amount_advance_org = fields.Monetary(u'建议预收金额', currency_field='yjzy_currency_id')
     least_advice_amount_advance_org = fields.Monetary(u'最低建议金额',currency_field='yjzy_currency_id')
