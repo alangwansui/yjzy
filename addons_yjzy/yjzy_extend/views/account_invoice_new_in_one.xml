@@ -463,28 +463,31 @@
                                     <label  for="" name="amount_advance_org_draft_approval" string="未审批预付认领"/>
                                     <div class="oe_row"
                                          attrs="{'invisible':[('type','not in',['in_invoice','in_refund'])]}">
-<!--                                        <span attrs="{'invisible':[('amount_advance_org_draft','!=',0)]}">1</span>-->
-<!--                                            <span attrs="{'invisible':[('amount_advance_org_draft','=',0)]}">0</span>-->
+
                                         <button type="object" name="open_reconcile_order"
                                                 class="btn-xxs btn-link mb2" context="{'state':'posted','advance':1}"
                                                 target="new">
 
                                             <field name="amount_advance_org_draft_approval" string="未审批预付认领"/>
-                                            <field name="amount_advance_org_draft" invisible="1"/>
+                                            <field name="reconcile_order_id_advance_draft_ids_count" invisible="1"/>
 
                                         </button>
+                                            <span attrs="{'invisible':[('reconcile_order_id_advance_draft_ids_count','=',0)]}">有草稿</span>
+                                            <span attrs="{'invisible':[('reconcile_order_id_advance_draft_ids_count','!=',0)]}">无草稿</span>
                                     </div>
                                      <label  for="" name="amount_payment_org_draft_approval" string="未审批申请付款"/>
                                     <div class="oe_row"
                                          attrs="{'invisible':[('type','not in',['in_invoice','in_refund'])]}">
-<!--                                           <span attrs="{'invisible':[('amount_payment_org_draft','!=',0)]}">1</span>-->
-<!--                                            <span attrs="{'invisible':[('amount_payment_org_draft','=',0)]}">0</span>-->
+
                                         <button type="object" name="open_reconcile_order"
                                                 class="btn-xxs btn-link mb2" context="{'state':'posted'}"
                                                 target="new">
                                             <field name="amount_payment_org_draft_approval" string="未审批申请付款"/>
-                                                <field name="amount_payment_org_draft" invisible="1"/>
+
                                         </button>
+                                        <span attrs="{'invisible':[('reconcile_order_id_payment_draft_ids_count','=',0)]}">有草稿</span>
+                                            <span attrs="{'invisible':[('reconcile_order_id_payment_draft_ids_count','!=',0)]}">无草稿</span>
+                                        <field name="reconcile_order_id_payment_draft_ids_count" invisible="1"/>
                                     </div>
 
 

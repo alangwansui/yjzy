@@ -275,8 +275,12 @@ class wizard_renling(models.TransientModel):
                 'target': 'new',
                 'context': context,
             }
+        for one in self.invoice_ids:
+            if one.currency_id != self.currency_id:
+                raise Warning('选择的账单和收款单币种不一致！')
         if len(self.invoice_ids.mapped('currency_id')) > 1:
             raise Warning('不同币种的账单，不能同时认领！')
+
         if not self.renling_type:
             raise Warning('未选择认领属性')
         if self.renling_type == 'yshxd':
@@ -342,6 +346,7 @@ class wizard_renling(models.TransientModel):
 
         name = self.env['ir.sequence'].next_by_code('sfk.type.%s' % sfk_type)
         if self.renling_type in ['yshxd', 'back_tax', 'other_payment']:
+
             yshxd_id = yshxd_obj.with_context({'default_invoice_ids': invoice_ids,'default_sfk_type': 'yshxd'}).create({
                 'name': name,
                 'invoice_partner':invoice_partner,
@@ -370,6 +375,7 @@ class wizard_renling(models.TransientModel):
                                 # 'operation_wizard':'25'
                                 })
             else:
+
                 yshxd_id.with_context({'ysrld_amount':self.ysrld_amount}).make_line_no()
                 yshxd_id.make_account_payment_state_ids()
                 # if yshxd_id.supplier_advance_payment_ids_count != 0:

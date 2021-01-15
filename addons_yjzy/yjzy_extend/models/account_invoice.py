@@ -648,6 +648,13 @@ class account_invoice(models.Model):
             one.move_line_com_yszk_ids_count = len(one.move_line_com_yszk_ids)
             one.reconcile_order_line_no_ids_count = len(one.reconcile_order_line_no_ids)
 
+    @api.depends('reconcile_order_id_advance_draft_ids','reconcile_order_id_payment_draft_ids')
+    def compute_reconcile_order_id_draft_ids_count(self):
+        for one in self:
+            one.reconcile_order_id_advance_draft_ids_count = len(one.reconcile_order_id_advance_draft_ids)
+            one.reconcile_order_id_payment_draft_ids_count = len(one.reconcile_order_id_payment_draft_ids)
+            print('reconcile_order_id_advance_draft_ids_akiny')
+
     invoice_attribute_all_in_one = fields.Selection(invoice_attribute_all_in_one, u'账单属性all_in_one',
                                                     compute=compute_all_in_one, store=True)
     current_date_rate = fields.Float('出运单汇率', related='bill_id.current_date_rate')
@@ -813,6 +820,15 @@ class account_invoice(models.Model):
     #                                  compute=hexiao_renling_total,store=True)
 
     reconcile_order_id_ids = fields.One2many('account.reconcile.order', 'back_tax_invoice_id', '额外退税对应核销单')
+
+
+
+    reconcile_order_id_advance_draft_ids = fields.One2many('account.reconcile.order', 'invoice_id', '草稿核销单预付',
+                                                   domain=[('state', 'in', ['draft']),('hxd_type_new','=','30')])
+    reconcile_order_id_advance_draft_ids_count = fields.Integer('草稿核销单预付数量',compute=compute_reconcile_order_id_draft_ids_count)
+    reconcile_order_id_payment_draft_ids = fields.One2many('account.reconcile.order', 'invoice_id', '草稿核销单付款',
+                                                   domain=[('state', 'in', ['draft']), ('hxd_type_new', '=', '40')])
+    reconcile_order_id_payment_draft_ids_count = fields.Integer('草稿核销单付款数量',compute=compute_reconcile_order_id_draft_ids_count)
     reconcile_order_line_id = fields.One2many('account.reconcile.order.line', 'invoice_id', u'核销明细行',
                                               domain=[('order_id.state', '=', 'done'), ('amount_total_org', '!=', 0)])
 
@@ -2006,8 +2022,12 @@ class account_invoice(models.Model):
         ctx = {'advance': advance}
         if advance:
             test = 'amount_advance_org_new'
+            reconcile_order_id = self.env['account.reconcile.order'].search(
+                [('invoice_id', '=', self.id), ('state', 'in', ['posted', 'draft']),('hxd_type_new','=','30')], limit=1)
         else:
             test = 'amount_payment_org_new'
+            reconcile_order_id = self.env['account.reconcile.order'].search(
+                [('invoice_id', '=', self.id), ('state', 'in', ['posted', 'draft']),('hxd_type_new','=','40')], limit=1)
         print('pay_type_akiny', advance,test)
         if self.type == 'out_invoice':
             tree_view = self.env.ref('yjzy_extend.account_yshxd_tree_view_new')
@@ -2019,8 +2039,6 @@ class account_invoice(models.Model):
             tree_view = self.env.ref('yjzy_extend.account_yfhxd_tree_view_new')
             form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new')
             name = '供应商应付'
-            reconcile_order_id = self.env['account.reconcile.order'].search(
-                [('invoice_id', '=', self.id),('state', 'in', ['posted','draft']),(test,'!=',0)],limit=1)
             if not reconcile_order_id:
                 raise Warning('没有审批中的应付申请')
         return {
