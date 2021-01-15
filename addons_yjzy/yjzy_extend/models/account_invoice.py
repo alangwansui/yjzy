@@ -655,6 +655,13 @@ class account_invoice(models.Model):
             one.reconcile_order_id_payment_draft_ids_count = len(one.reconcile_order_id_payment_draft_ids)
             print('reconcile_order_id_advance_draft_ids_akiny')
 
+    @api.depends('payment_log_hexiao_ids','payment_log_hexiao_ids.state','payment_log_hexiao_ids.amount')
+    def compute_payment_log_hexiao_amount(self):
+        for one in self:
+            payment_log_hexiao_ids = one.payment_log_hexiao_ids.filtered(lambda x: x.state in ['posted','reconciled'])
+            payment_log_hexiao_amount = sum(x.amount for x in payment_log_hexiao_ids)
+            one.payment_log_hexiao_amount = payment_log_hexiao_amount
+
     invoice_attribute_all_in_one = fields.Selection(invoice_attribute_all_in_one, u'账单属性all_in_one',
                                                     compute=compute_all_in_one, store=True)
     current_date_rate = fields.Float('出运单汇率', related='bill_id.current_date_rate')
@@ -667,6 +674,7 @@ class account_invoice(models.Model):
     payment_log_hexiao_ids = fields.One2many('account.payment', 'invoice_log_id', '核销单',
                                              domain=[('sfk_type', 'in', ['reconcile_yingshou', 'reconcile_yingfu'])])
     payment_log_hexiao_ids_count = fields.Integer('未完成认领以及收付明细数量', compute=compute_payment_log_ids_count)
+    payment_log_hexiao_amount = fields.Monetary('核销金额',currency_field='currency_id', compute=compute_payment_log_hexiao_amount)
 
     other_payment_invoice_id = fields.Many2one('account.invoice', '关联的其他应收付下级账单')  # 目前 只对其他应收做了计算
     other_payment_invoice_parent_id = fields.Many2one('account.invoice', '关联的其他应收付上级账单')
@@ -2049,6 +2057,35 @@ class account_invoice(models.Model):
             'type': 'ir.actions.act_window',
             'views': [(form_view.id, 'form')],
             'res_id':reconcile_order_id.id,
+            'target': 'new',
+            # 'context': ctx
+
+        }
+
+
+    def open_account_payment_hexiao(self):
+        self.ensure_one()
+
+        hexiao_id = self.env['account.payment'].search(
+            [('sfk_type', 'in', ['reconcile_yingshou', 'reconcile_yingfu']),('invoice_log_id', '=', self.id), ('state', 'in', ['posted', 'reconciled'])], limit=1)
+
+        if self.type == 'out_invoice':
+            form_view = self.env.ref('yjzy_extend.view_ysrld_reconcile_form')
+            name = '应收核销'
+
+        if self.type == 'in_invoice':
+            form_view = self.env.ref('yjzy_extend.view_ysrld_reconcile_form')
+            name = '应付核销'
+            if not hexiao_id:
+                raise Warning('没有完成的核销单')
+        return {
+            'name': name,
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'res_model': 'account.payment',
+            'type': 'ir.actions.act_window',
+            'views': [(form_view.id, 'form')],
+            'res_id':hexiao_id.id,
             'target': 'new',
             # 'context': ctx
 

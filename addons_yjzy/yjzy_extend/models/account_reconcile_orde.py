@@ -3529,7 +3529,8 @@ class account_reconcile_order_line(models.Model):
     def compute_amount_invoice_so_residual_can_approve_d_after(self):
         for x in self:
             amount_invoice_so_residual_can_approve_d = x.amount_invoice_so_residual_can_approve_d
-            amount_total_org_new = x.amount_total_org_new
+            amount_total_org_new = x.amount_total_org_new #需要加入币种计算  payment_currency.compute(one.amount_payment_org, invoice_currency)
+            # amount_total_org_new = x.invoice_cyrrency_id.compute(x.amount_total_org_new,x.order_id.payment_currency_id)
             amount_invoice_so_residual_d = x.amount_invoice_so_residual_d
             x.amount_invoice_so_residual_can_approve_d_after = amount_invoice_so_residual_can_approve_d - amount_total_org_new
             x.amount_invoice_so_residual_d_after = amount_invoice_so_residual_d - amount_total_org_new
@@ -3706,9 +3707,16 @@ class account_reconcile_order_line_no(models.Model):
         for line in self:
             line_ids_line = line.order_id.line_ids.filtered(lambda x: x.invoice_id == line.invoice_id)#本条发票未拆分明细对应的拆分明细
             # advance_amount_org = sum(x.amount_advance_org for x in line_ids_line)
-            advance_amount_org = line.amount_advance_org_compute
+            # advance_amount_org = line.amount_advance_org_compute #未考虑货币转换前
             amount_payment_can_approve_all_this_time = line.amount_payment_can_approve_all_this_time
-            amount_payment_org = line.amount_payment_org
+            # amount_payment_org = line.amount_payment_org #未考虑货币转换前
+
+            payment_id_currency = line.payment_currency_id
+            invoice_currency_id = line.invoice_currency_id
+
+            advance_amount_org = payment_id_currency.compute(line.amount_advance_org_compute, invoice_currency_id)
+            amount_payment_org = payment_id_currency.compute(line.amount_payment_org, invoice_currency_id)
+
             invoice_residual_this_time = line.invoice_residual_this_time
             line.amount_payment_can_approve_all_after = amount_payment_can_approve_all_this_time - amount_payment_org - advance_amount_org#再减去line_ids里面对应的预付认领的金额。其实可以把amount_payment_org也可以从line_ids计算
             line.invoice_residual_after = invoice_residual_this_time - amount_payment_org

@@ -27,8 +27,8 @@
                 <field name="payment_currency_id" invisible="1"/>
                 <field name="amount_payment_can_approve_all" string="最新可申请应付款"
                        invisible="1"/><!--attrs="{'column_invisible':[('parent.state','=','done')]}"-->
-                <field name="amount_payment_org" string="付款金额" invisible="context.get('advance')"/>
-                 <field name="amount_advance_org_compute" string="预付认领金额" invisible="not context.get('advance')"/>
+                <field name="amount_payment_org" string="付款金额" invisible="context.get('advance')" sum="小计"/>
+                 <field name="amount_advance_org_compute" string="预付认领金额" invisible="not context.get('advance')" sum="小计"/>
                 <field name="currency_id" invisible="1"/>
                 <field name="state_1" string="状态" invisible="1" groups="base.group_system"/>
 

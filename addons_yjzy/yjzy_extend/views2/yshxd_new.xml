@@ -605,6 +605,7 @@
                                     <field name="state_1" string="状态" groups="base.group_system" invisible="1"/>
                                     <button name="compute_ysrld_amount_advance_org_all" type="object" string="test"
                                             groups="base.group_system" invisible="1"/>
+                                      <field name="invoice_currency_id" invisible="1"/>
                                 </tree>
                             </field>
 
@@ -798,6 +799,7 @@
                                            attrs="{'column_invisible':[('parent.operation_wizard','not in',['40'])]}"/>
                                     <field name="currency_id" invisible="1"/>
                                     <field name="amount_payment" invisible="1"/>
+
                                 </tree>
                             </field>
                         </page>
