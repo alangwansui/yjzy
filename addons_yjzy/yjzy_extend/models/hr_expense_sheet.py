@@ -893,6 +893,43 @@ class hr_expense_sheet(models.Model):
         for one in self.expense_line_ids:
             one.state = 'confirmed'
 
+    def create_fksqd(self):
+        amount = self.total_amount
+        account_code = amount > 0 and '112301' or '220301'
+        sfk_type = amount > 0 and 'rcfkd' or 'rcskd'
+        ctx = {'default_sfk_type': sfk_type}
+        advance_account = self.env['account.account'].search(
+            [('code', '=', account_code), ('company_id', '=', self.company_id.id)], limit=1)
+
+        if not self.fk_journal_id.currency_id:
+            raise Warning(u'没有取到付款日记账的货币，请检查设置')
+        if not advance_account:
+            raise Warning(u'没有找到对应的预处理科目%s' % account_code)
+
+        payment = self.env['account.payment'].with_context(ctx).create({
+            'sfk_type': amount > 0 and 'rcfkd' or 'rcskd',
+            'payment_type': amount > 0 and 'outbound' or 'inbound',
+            'partner_id': self.partner_id.id,
+            'partner_type': amount > 0 and 'supplier' or 'customer',
+            'fybg_ids': [(6, 0, [self.id])],  # 参考o2m
+            'journal_id': self.fk_journal_id.id,
+            'currency_id': self.fk_journal_id.currency_id.id,
+            'amount': abs(amount),
+            'payment_method_id': 2,
+            'advance_ok': True,
+            'advance_account_id': advance_account.id,
+            'bank_id': self.bank_id.id,
+            'include_tax': self.include_tax,
+            'gongsi_id': self.gongsi_id.id,
+            'rckfd_attribute': 'expense',
+
+        })
+        if payment.sfk_type == 'rcfkd':
+            payment.state_fkzl = '05_fksq'
+        self.payment_id = payment
+        for one in self.expense_line_ids:
+            one.state = 'confirmed'
+
 
     @api.multi
     def unlink(self):

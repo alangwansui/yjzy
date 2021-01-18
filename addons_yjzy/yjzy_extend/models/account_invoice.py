@@ -662,8 +662,14 @@ class account_invoice(models.Model):
             payment_log_hexiao_amount = sum(x.amount for x in payment_log_hexiao_ids)
             one.payment_log_hexiao_amount = payment_log_hexiao_amount
 
+
+
+
+
+
     invoice_attribute_all_in_one = fields.Selection(invoice_attribute_all_in_one, u'账单属性all_in_one',
                                                     compute=compute_all_in_one, store=True)
+
     current_date_rate = fields.Float('出运单汇率', related='bill_id.current_date_rate')
     # 讨论：是否在提交审批的时候就生成呢？日志就可以把核销和认领统一起来。
     payment_log_ids = fields.One2many('account.payment', 'invoice_log_id', '认领以及收付明细')
@@ -676,8 +682,8 @@ class account_invoice(models.Model):
     payment_log_hexiao_ids_count = fields.Integer('未完成认领以及收付明细数量', compute=compute_payment_log_ids_count)
     payment_log_hexiao_amount = fields.Monetary('核销金额',currency_field='currency_id', compute=compute_payment_log_hexiao_amount)
 
-    other_payment_invoice_id = fields.Many2one('account.invoice', '关联的其他应收付下级账单')  # 目前 只对其他应收做了计算
-    other_payment_invoice_parent_id = fields.Many2one('account.invoice', '关联的其他应收付上级账单')
+    other_payment_invoice_id = fields.Many2one('account.invoice', '关联的其他应收付下级账单')  # 目前 只对其他应收做了计算  #C
+    other_payment_invoice_parent_id = fields.Many2one('account.invoice', '关联的其他应收付上级账单')#C
 
     # 1029#通过他们是否同属于一张申请单来汇总所有相关账单,其他应收付和相关的应收付申请，这里还没有直接的联系，待处理
     back_tax_declaration_state = fields.Selection([('10', '未申报'), ('20', '已申报')], '退税申报状态', default='10')
@@ -685,23 +691,23 @@ class account_invoice(models.Model):
                                          store=True)
     btd_line_ids = fields.One2many('back.tax.declaration.line', 'invoice_id', u'申报明细')
 
-    tb_po_invoice_back_tax_ids = fields.Many2many('account.invoice', '相关退税账单', compute=compute_tb_po_invoice)
-    tb_po_invoice_back_tax_ids_count = fields.Integer('相关退税账单数量', compute=compute_tb_po_invoice)
-    tb_po_invoice_back_tax_ids_amount_total = fields.Monetary('相关退税账单金额', compute=compute_tb_invoice_amount, store=True)
-    tb_po_invoice_back_tax_ids_residual = fields.Monetary('相关退税账单金额', compute=compute_tb_invoice_amount, store=True)
+    tb_po_invoice_back_tax_ids = fields.Many2many('account.invoice', '相关退税账单', compute=compute_tb_po_invoice)#C
+    tb_po_invoice_back_tax_ids_count = fields.Integer('相关退税账单数量', compute=compute_tb_po_invoice)#C
+    tb_po_invoice_back_tax_ids_amount_total = fields.Monetary('相关退税账单金额', compute=compute_tb_invoice_amount, store=True)#C
+    tb_po_invoice_back_tax_ids_residual = fields.Monetary('相关退税账单金额', compute=compute_tb_invoice_amount, store=True)#C
     tb_po_invoice_back_tax_ids_can_approve_all = fields.Monetary('相关退税账单金额', compute=compute_tb_invoice_amount,
-                                                                 store=True)
+                                                                 store=True)#C
 
-    tb_po_invoice_p_s_ids = fields.Many2many('account.invoice', '相关冲减账单', compute=compute_tb_po_invoice)
-    tb_po_invoice_p_s_ids_count = fields.Integer('相关冲减账单数量', compute=compute_tb_po_invoice)
-    tb_po_invoice_s_ids = fields.Many2many('account.invoice', '相关应收账单', compute=compute_tb_po_invoice)
-    tb_po_invoice_s_ids_count = fields.Integer('相关应收账单数量', compute=compute_tb_po_invoice)
-    tb_po_invoice_s_ids_amount_total = fields.Monetary('相关应收账单金额', compute=compute_tb_invoice_amount, store=True)
-    tb_po_invoice_s_ids_residual = fields.Monetary('相关应收账单金额', compute=compute_tb_invoice_amount, store=True)
-    tb_po_invoice_s_ids_can_approve_all = fields.Monetary('相关应收账单金额', compute=compute_tb_invoice_amount, store=True)
+    tb_po_invoice_p_s_ids = fields.Many2many('account.invoice', '相关冲减账单', compute=compute_tb_po_invoice)#C
+    tb_po_invoice_p_s_ids_count = fields.Integer('相关冲减账单数量', compute=compute_tb_po_invoice)#C
+    tb_po_invoice_s_ids = fields.Many2many('account.invoice', '相关应收账单', compute=compute_tb_po_invoice)#C
+    tb_po_invoice_s_ids_count = fields.Integer('相关应收账单数量', compute=compute_tb_po_invoice)#C
+    tb_po_invoice_s_ids_amount_total = fields.Monetary('相关应收账单金额', compute=compute_tb_invoice_amount, store=True)#C
+    tb_po_invoice_s_ids_residual = fields.Monetary('相关应收账单金额', compute=compute_tb_invoice_amount, store=True)#C
+    tb_po_invoice_s_ids_can_approve_all = fields.Monetary('相关应收账单金额', compute=compute_tb_invoice_amount, store=True)#C
 
-    tb_po_invoice_all_ids = fields.Many2many('account.invoice', '相关账单', compute=compute_tb_po_invoice)
-    tb_po_invoice_all_ids_count = fields.Integer('相关账单数量', compute=compute_tb_po_invoice)
+    tb_po_invoice_all_ids = fields.Many2many('account.invoice', '相关账单', compute=compute_tb_po_invoice)#C
+    tb_po_invoice_all_ids_count = fields.Integer('相关账单数量', compute=compute_tb_po_invoice)#C
 
     name_title = fields.Char(u'账单描述')
     invoice_partner = fields.Char(u'账单对象')
@@ -714,16 +720,16 @@ class account_invoice(models.Model):
     tb_po_invoice_ids_count = fields.Integer(u'额外账单申请单数量', compute=compute_tb_po_invoice_ids)
     # 0911
 
-    yjzy_advance_payment_id = fields.Many2one('account.payment', u'预收付单')
+    yjzy_advance_payment_id = fields.Many2one('account.payment', u'预收付单') #C 未定
     # 831增加对应报关申报表
     df_id = fields.Many2one('back.tax.declaration', u'报关申报表')
 
     # 820增加一个和新增采购关联的字段，把退税等一起关联起来
-    tb_po_invoice_id = fields.Many2one('tb.po.invoice', u'综合增加采购单', ondelete='cascade')
-    tb_po_invoice_child_id = fields.Many2one('tb.po.invoice', related='tb_po_invoice_id.yjzy_tb_po_invoice')
-    is_yjzy_tb_po_invoice = fields.Boolean('是否有对应下级账单', compute=compute_yjzy_tb_po_child_patent, store=True)
-    tb_po_invoice_parent_id = fields.Many2one('tb.po.invoice', related='tb_po_invoice_id.yjzy_tb_po_invoice_parent')
-    is_yjzy_tb_po_invoice_parent = fields.Boolean('是否有对应上级账单', compute=compute_yjzy_tb_po_child_patent, store=True)
+    tb_po_invoice_id = fields.Many2one('tb.po.invoice', u'综合增加采购单', ondelete='cascade') #C
+    tb_po_invoice_child_id = fields.Many2one('tb.po.invoice', related='tb_po_invoice_id.yjzy_tb_po_invoice')#C
+    is_yjzy_tb_po_invoice = fields.Boolean('是否有对应下级账单', compute=compute_yjzy_tb_po_child_patent, store=True)#C
+    tb_po_invoice_parent_id = fields.Many2one('tb.po.invoice', related='tb_po_invoice_id.yjzy_tb_po_invoice_parent')#C
+    is_yjzy_tb_po_invoice_parent = fields.Boolean('是否有对应上级账单', compute=compute_yjzy_tb_po_child_patent, store=True)#C
     # 819费用转应付发票
     expense_sheet_id = fields.Many2one('hr.expense.sheet', u'费用报告')
     # 增加常规转直接的状态，明细那边增加是否已经转换的状态
@@ -750,19 +756,21 @@ class account_invoice(models.Model):
 
     # from_type = fields.Selection([('manual_create',u'手动创建'),('auto_crate',u'自动创建')],u'创建方式')
 
-    need_refund = fields.Boolean(u'是否需要退款')
-    refund_state = fields.Selection([('10_no', '未退款'), ('20_part', '部分退款'), ('30_all', '完成退款')], u'退款状态')
+    need_refund = fields.Boolean(u'是否需要退款')  #C
+    refund_state = fields.Selection([('10_no', '未退款'), ('20_part', '部分退款'), ('30_all', '完成退款')], u'退款状态') #C
 
-    hsname_all_ids = fields.One2many('invoice.hs_name.all', 'invoice_id', u'报关明细')
+    hsname_all_ids = fields.One2many('invoice.hs_name.all', 'invoice_id', u'报关明细') #这个字段要增加，要和出运的tbl.hsmane.all保持一致，也就是申请单的一组
     # 显示开票资料对应出运单的报关资料汇总
     # tb_hsname_all_ids = fields.One2many('tbl.hsname.all', u'报关明细',related="bill_id.hsname_all_ids")
-    tb_po_hsname_all_ids = fields.One2many('tb.po.invoice.line', u'开票(报关)明细', related="tb_po_invoice_id.hsname_all_ids")
-    tb_po_hsname_all_ids_count = fields.Integer('开票(报关)明细数量', compute=compute_tb_po_hsname_all_ids_count)
+    tb_po_hsname_all_ids = fields.One2many('tb.po.invoice.line', u'开票(报关)明细', related="tb_po_invoice_id.hsname_all_ids") #C
+    tb_po_hsname_all_ids_count = fields.Integer('开票(报关)明细数量', compute=compute_tb_po_hsname_all_ids_count) #C
 
     # tb_hsname_all_ids_count = fields.Integer('报关明细数量',compute=compute_tb_po_invoice_ids)
     external_invoice_done = fields.Selection([('10_no', u'否'),
                                               ('20_yes', u'是'),
                                               ('30_not', u'非')], '外账是否确认销售', default='10_no')
+
+
     external_usd_pool = fields.Float('外账美金池', compute=compute_yjzy_invoice_amount_total, store=True)
     usd_pool_id = fields.Many2one('usd.pool', u'美金池状态', compute=compute_yjzy_invoice_amount_total, store=True)
     hsname_ids = fields.One2many('tbl.hsname', u'HS统计', related='bill_id.hsname_ids')
@@ -784,6 +792,8 @@ class account_invoice(models.Model):
     stage_id = fields.Many2one(
         'account.invoice.stage',
         default=_default_invoice_stage, copy=False)
+
+
     state_1 = fields.Selection(Invoice_Selection, '额外账单审批', related='stage_id.state')
     # 新建一个账单的状态，可以用来筛选还没有开始付款申请的账单
     state_2 = fields.Selection([

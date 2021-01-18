@@ -11,7 +11,7 @@ class transport_bill_vendor(models.Model):
     _description = '供应商发运单'
     _rec_name = 'partner_id'
 
-    tb_id = fields.Many2one('transport.bill', u'发货单')
+    tb_id = fields.Many2one('transport.bill', u'发货单',ondelete='cascade')
     partner_id = fields.Many2one('res.partner', u'供应商')
     contact_id = fields.Many2one('res.partner', u'联系人')
     delivery_note = fields.Text('发货备注')
@@ -66,7 +66,7 @@ class transport_bill_vendor_line(models.Model):
             one.shiji_volume = one.volume + one.tuopan_volume
 
 
-    tbv_id = fields.Many2one('transport.bill.vendor', u'供应商发运单')
+    tbv_id = fields.Many2one('transport.bill.vendor', u'供应商发运单',ondelete='cascade')
     partner_id = fields.Many2one('res.partner', u'供应商', related='tbv_id.partner_id')
     product_id = fields.Many2one('product.product', u'产品')
     po_contract_code = fields.Char(u'合同号')
