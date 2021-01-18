@@ -66,6 +66,7 @@
                     <field name="contract_code"/>
                     <field name="include_tax"/>
                     <field name="main_sign_uid"/>
+
                 </field>
                 <field name="partner_id" position="after">
                     <field name="contact_id" domain="[('parent_id','=', partner_id),('type', '=', 'contact')]"/>

@@ -10,7 +10,7 @@ class Stock_Move_Line(models.Model):
     def total_reserved_qty(self):
         qty = 0.0
         for i in self:
-            qty += i.state == 'done' and i.qty_done or i.product_uom_qty
+            qty += i.state == 'done' and not i.move_id.picking_id.is_return and i.move_id.picking_id.pick_type != 'return' and i.qty_done or i.product_uom_qty
         return qty
 
     def _action_done(self):
@@ -80,6 +80,9 @@ class stock_picking(models.Model):
     #
     # def acton_lot_sale_reserve(self):
     #     self.ensure_one()
+
+    is_return = fields.Boolean('是否被退货')
+    pick_type = fields.Selection([('normal','正常'),('return','退货'),('scrap','报废')],'调拨类型')
 
 
 class stock_quant(models.Model):
