@@ -474,10 +474,10 @@
                                 <group>
 
                                     <label  for="" name="amount_advance_org_draft_approval" string="未审批预付认领"
-                                    attrs="{'invisible':[('invoice_attribute','in',['expense_po','other_po','other_payment')]}"
+                                    attrs="{'invisible':[('invoice_attribute','in',['expense_po','other_po','other_payment'])]}"
                                     />
                                     <div class="oe_row"
-                                         attrs="{'invisible':['|',('invoice_attribute','in',['expense_po','other_po','other_payment'),('type','not in',['in_invoice','in_refund'])]}">
+                                         attrs="{'invisible':['|',('invoice_attribute','in',['expense_po','other_po','other_payment']),('type','not in',['in_invoice','in_refund'])]}">
 
                                         <button type="object" name="open_reconcile_order"
                                                 class="btn-xxs btn-link mb2" context="{'state':'posted','advance':1}"
