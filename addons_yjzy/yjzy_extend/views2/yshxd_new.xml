@@ -118,7 +118,7 @@
         <field name="model">account.reconcile.order</field>
         <field name="arch" type="xml">
             <tree string="应收退税认领单" decoration-info="state == 'draft'" decoration-muted="state == 'cancelled'"
-                  edit="false">
+                  edit="false" create="false">
                 <field name="name"/>
                 <field name="invoice_attribute_all_in_one" string="账单属性" invisible="1"/>
                 <field name="partner_id" invisible="1"/>

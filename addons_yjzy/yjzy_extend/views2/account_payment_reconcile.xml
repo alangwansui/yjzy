@@ -19,12 +19,12 @@
             </field>
         </record>
 
-        <record model="ir.ui.view" id="view_ysrld_reconcile_tree">
+        <record model="ir.ui.view" id="view_ysrld_reconcile_tree_hexiao">
             <field name="name">account.payment.reconcile.tree</field>
             <field name="model">account.payment</field>
             <field name="priority" eval="999"/>
             <field name="arch" type="xml">
-                <tree string="预收核销单">
+                <tree string="预收核销单" create="false">
                     <field name="partner_id" string="对象"/>
                     <field name="name" string="编号"/>
                     <field name="so_id" string="销售合同"/>
@@ -57,7 +57,7 @@
             <field name="model">account.payment</field>
             <field name="priority" eval="999"/>
             <field name="arch" type="xml">
-                <tree string="应收核销单">
+                <tree string="应收核销单" create="false">
                     <field name="partner_id" string="对象" groups="base.group_system"/>
                     <field name="name" string="编号"/>
                     <field name="invoice_log_id" string="应收账单"/>
@@ -546,7 +546,7 @@
             </field>
             <field name="search_view_id" ref="view_account_payment_search_new"/>
             <field name="view_ids" eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_ysrld_reconcile_tree')}),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_ysrld_reconcile_tree_hexiao')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_ysrld_reconcile_form')})]"/>
         </record>
         <menuitem id="menu_ysrld_reconcile" parent="menu_sale_to_reconcile" name="查询预收核销" sequence="10"
