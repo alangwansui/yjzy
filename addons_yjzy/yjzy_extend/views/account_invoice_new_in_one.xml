@@ -356,7 +356,7 @@
                                                     </div>
                                                 </td>
                                             </tr>
-                                            <tr attrs="{'invisible':[('invoice_attribute','in',['expense_po','other_po','other_payment'])}">
+                                            <tr attrs="{'invisible':[('invoice_attribute','in',['expense_po','other_po','other_payment'])]}">
                                                 <td width="7%"></td>
                                                 <td width="43%">
                                                     <b attrs="{'invisible':[('type','in',['in_invoice','in_refund'])]}">
