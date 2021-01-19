@@ -580,16 +580,16 @@ class account_reconcile_order(models.Model):
     name_title = fields.Char(u'账单描述')
     invoice_partner = fields.Char(u'账单对象')
 
-    supplier_advance_payment_ids_amount_advance_org = fields.Float('待审批预付认领金额',)#compute= compute_supplier_advance_payment_ids_amount_advance_org
-    supplier_amount_invoice_approval = fields.Float(u'已申请未审批',)#compute=compute_supplier_amount_invoice_approve_approval
-    supplier_amount_invoice_approve = fields.Float(u'已审批未付款',)#compute=compute_supplier_amount_invoice_approve_approval
-    supplier_amount_invoice_residual = fields.Float(u'供应商应付余额',)#compute=compute_supplier_amount_invoice_approve_approval
+    supplier_advance_payment_ids_amount_advance_org = fields.Float('待审批预付认领金额',compute= compute_supplier_advance_payment_ids_amount_advance_org)
+    supplier_amount_invoice_approval = fields.Float(u'已申请未审批',compute=compute_supplier_amount_invoice_approve_approval)
+    supplier_amount_invoice_approve = fields.Float(u'已审批未付款',compute=compute_supplier_amount_invoice_approve_approval)
+    supplier_amount_invoice_residual = fields.Float(u'供应商应付余额',compute=compute_supplier_amount_invoice_approve_approval)
     supplier_amount_invoice_residual2 = fields.Float(u'供应商应付余额2',
+                                                    compute=compute_supplier_amount_invoice_approve_approval,
+                                                    )
 
-                                                    )#compute=compute_supplier_amount_invoice_approve_approval
-
-    supplier_advance_amount_hxd_line_approval= fields.Float(u'供应商预付审批中预付认领',)#compute=compute_supplier_amount_invoice_approve_approval
-    supplier_advance_amount_hxd_line_approval2 = fields.Float(u'供应商预付余额2',)#compute=compute_supplier_amount_invoice_approve_approval
+    supplier_advance_amount_hxd_line_approval= fields.Float(u'供应商预付审批中预付认领',compute=compute_supplier_amount_invoice_approve_approval)
+    supplier_advance_amount_hxd_line_approval2 = fields.Float(u'供应商预付余额2',compute=compute_supplier_amount_invoice_approve_approval)
     yjzy_type = fields.Selection([('sale','销售'),
                                   ('purchase','采购'),
                                   ('back_tax','退税'),
@@ -665,8 +665,8 @@ class account_reconcile_order(models.Model):
 
     amount_purchase_advance = fields.Monetary('预付金额:本币', currency_field='currency_id',related='partner_id.amount_purchase_advance')
     currency_id = fields.Many2one(related='company_id.currency_id', string=u'公司货币', store=True, index=True)
-    supplier_amount_advance_payment = fields.Float('u预付总金额', )#compute=compute_supplier_amount_residual_advance_payment
-    supplier_amount_residual_advance_payment = fields.Float('预付余额', )#compute=compute_supplier_amount_residual_advance_payment
+    supplier_amount_advance_payment = fields.Float('u预付总金额', compute=compute_supplier_amount_residual_advance_payment)
+    supplier_amount_residual_advance_payment = fields.Float('预付余额', compute=compute_supplier_amount_residual_advance_payment)
 
     invoice_currency_id = fields.Many2one('res.currency', u'交易货币', compute=compute_by_invoice)
     state = fields.Selection([('draft', u'草稿'),
