@@ -101,7 +101,7 @@ class purchase_order(models.Model):
 
 
 
-    @api.depends('order_line.qty_received','source_so_id')
+    @api.depends('order_line.qty_received','source_so_id','order_line.product_qty','order_line')
     def compute_no_deliver_amount(self):
         for one in self:
             one.no_deliver_amount_new = sum([x.price_unit * (x.product_qty - x.qty_received) for x in one.order_line])
