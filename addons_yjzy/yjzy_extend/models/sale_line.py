@@ -244,10 +244,10 @@ class sale_order_line(models.Model):
         manual_qty_dic = ctx.get('manual_qty_dic', {})
         if manual_qty_dic.get(self.id):
             manual_qty = manual_qty_dic.get(self.id)
-            if manual_qty > qty:
-                raise Warning(u'手动开票数量已经超过剩余开票数量')
-            else:
-                qty = manual_qty
+            # if manual_qty > qty:
+            #     raise Warning(u'手动开票数量已经超过剩余开票数量')
+            # else:
+            qty = manual_qty
         return super(sale_order_line, self)._prepare_invoice_line(qty)
 
     def get_in_stock_quant(self):
