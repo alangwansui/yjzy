@@ -3635,7 +3635,7 @@ class account_reconcile_order_line(models.Model):
     amount_exchange = fields.Monetary(u'汇兑差异:本币', currency_field='currency_id')
     amount_total_org = fields.Monetary(u'收款合计', currency_field='invoice_currency_id', compute=compute_info)
     amount_total = fields.Monetary(u'收款合计:本币', currency_field='currency_id', compute=compute_info)
-    amount_total_org_new = fields.Monetary(u'收款合计', currency_field='invoice_currency_id', compute=compute_amount_total_org_new,store=True)#在这里
+    amount_total_org_new = fields.Monetary(u'收款合计', currency_field='invoice_currency_id', store=True)#在这里compute=compute_amount_total_org_new,
 
     @api.onchange('yjzy_payment_id')
     def onchange_yjzy_payment_id(self):
