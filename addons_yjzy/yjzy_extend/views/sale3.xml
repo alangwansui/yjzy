@@ -40,6 +40,9 @@
                         <filter string="状态" domain="[]" context="{'group_by':'state'}"/>
                         <filter string="责任人" domain="[]" context="{'group_by':'user_id'}"/>
                         <filter name="customer" string="客户" domain="[]" context="{'group_by':'partner_id'}"/>
+                          <filter name="group_by_year" string="按年分组" domain="[]" context="{'group_by':'approve_date:year'}"/>
+                           <filter name="group_by_year_month" string="按年分月组" domain="[]" context="{'group_by':['approve_date:year','approve_date']}"/>
+
                         <separator/>
                         <filter string="审批完成月份" domain="[]" context="{'group_by':'approve_date'}"/>
                         <filter string="下单月份" domain="[]" context="{'group_by':'date_order'}"/>
