@@ -233,7 +233,7 @@ class account_reconcile_order(models.Model):
 
                 print('po_akiny',po)
                 supplier_advance_payment_ids = self.env['account.payment'].search(
-                    [('company_id','=',self.env.user.company_id.id),('partner_id', '=', one.partner_id.id), ('sfk_type', '=', 'yfsqd'),('po_id','in',po),
+                    [('company_id','=',one.company_id.id),('partner_id', '=', one.partner_id.id), ('sfk_type', '=', 'yfsqd'),('po_id','in',po),
                      ('state', 'in', ['posted', 'reconciled']),('advance_balance_total','!=',0)])
             else:
                 for x in one.invoice_ids:
@@ -242,7 +242,7 @@ class account_reconcile_order(models.Model):
                     po.append(False)  #
                 print('po', po)
                 supplier_advance_payment_ids = self.env['account.payment'].search(
-                    [('company_id','=',self.env.user.company_id.id),('partner_id', '=', one.partner_id.id), ('sfk_type', '=', 'ysrld'), ('so_id', 'in', po),
+                    [('company_id','=',one.company_id.id),('partner_id', '=', one.partner_id.id), ('sfk_type', '=', 'ysrld'), ('so_id', 'in', po),
                      ('state', 'in', ['posted', 'reconciled']), ('advance_balance_total', '!=', 0)])
             one.supplier_advance_payment_ids_count = len(supplier_advance_payment_ids)
             one.supplier_advance_payment_ids = supplier_advance_payment_ids
@@ -295,15 +295,15 @@ class account_reconcile_order(models.Model):
             lines = one.line_ids
             one.amount_diff_org_new = diff_currency.compute(sum([x.amount_diff_org for x in lines]),one.invoice_currency_id)
 
-    @api.depends('line_ids', 'line_ids.amount_payment_org','line_no_ids',#'line_ids.amount_advance_org',
-                 'line_no_ids.amount_payment_org','payment_currency_id')
+    @api.depends('line_ids', 'line_ids.amount_total_org_new','line_ids.amount_advance_org','line_ids.amount_payment_org','line_no_ids',
+                 'line_no_ids.amount_payment_org','line_no_ids.amount_total_org','payment_currency_id')
     def compute_amount_total_org_new(self):
         for one in self:
             if (not one.line_ids and not one.line_no_ids) or (not one.payment_currency_id):
                 continue
             lines = one.line_ids
             lines_no = one.line_no_ids
-            amount_line_no = lines_no and sum(x.amount_payment_org for x in lines_no) or 0
+            amount_line_no = lines_no and sum(x.amount_total_org for x in lines_no) or 0
             amount_line = lines and sum(x.amount_payment_org for x in lines) or 0
             one.amount_total_org_new = amount_line_no + amount_line
             print('amount_total_org_new',one.amount_total_org_new)
