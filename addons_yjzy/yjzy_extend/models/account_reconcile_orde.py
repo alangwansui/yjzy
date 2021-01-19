@@ -303,8 +303,8 @@ class account_reconcile_order(models.Model):
                 continue
             lines = one.line_ids
             lines_no = one.line_no_ids
-            amount_line_no = sum(x.amount_total_org for x in lines_no)
-            amount_line = sum(x.amount_payment_org for x in lines)
+            amount_line_no = lines_no and sum(x.amount_total_org for x in lines_no) or 0
+            amount_line = lines and sum(x.amount_payment_org for x in lines) or 0
             one.amount_total_org_new = amount_line_no + amount_line
             print('amount_total_org_new',one.amount_total_org_new)
             # bank_currency = one.payment_currency_id.with_context(date=date)
