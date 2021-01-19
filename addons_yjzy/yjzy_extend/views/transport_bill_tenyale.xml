@@ -32,6 +32,8 @@
                                 context="{'group_by':['hexiao_date','hexiao_type']}"/>
                         <filter string="出运确认时间分组" name="group_date_out_in" domain="[]"
                                 context="{'group_by':['date_out_in:year','date_out_in']}"/>
+                        <filter string="出运确认按年分组" name="group_date_out_in_year" domain="[]"
+                                context="{'group_by':['date_out_in:year']}"/>
                         <filter string="时间状态分组" name="group_date_all_state_1" domain="[]"
                                 context="{'group_by':['date_all_state']}"/>
                         <filter string="状态和二级分组" name="group_by_state_type" domain="[]"
@@ -201,6 +203,7 @@
                     <field name="name" invisible="1" groups="base.group_system"/>
                     <field name="date_out_in" string="出运时间"/>
                     <field name="partner_id" required="1"/>
+                    <field name="user_id" string="责任人"/>
                     <field name="invoice_paid_state" invisible="1"/>
                     <field name="org_sale_amount" groups="base.group_system"/>
                     <field name="org_sale_amount_new" sum="小计"/>

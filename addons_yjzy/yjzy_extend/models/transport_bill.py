@@ -1007,7 +1007,7 @@ class transport_bill(models.Model):
     date = fields.Date(u'出运日期')
     date_project = fields.Date(u'预计出运日期')
     payment_due_date = fields.Date('Payment Due Date')
-    current_date_rate = fields.Float(u'当日汇率')
+    current_date_rate = fields.Float(u'当日汇率',group_operator=False)
 
     exchange_rate = fields.Float(u'目前汇率', compute=compute_exchange_rate)#13取消
     sale_currency_id = fields.Many2one('res.currency', u'交易货币',  store=True)#required=True,

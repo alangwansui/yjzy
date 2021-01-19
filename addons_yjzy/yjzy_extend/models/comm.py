@@ -1,8 +1,8 @@
 BACK_TAX_RATIO = 1.13
 
 sfk_type = [
-    ('rcskd', u'日常收款单'),
-    ('rcfkd', u'日常付款单'),
+    ('rcskd', u'日常收款单'),#Y
+    ('rcfkd', u'日常付款单'),#Y中文改成付款申请单
     ('rcfksqd', u'日常付款申请单'),#费用和其他收入产生的。后续版本可以取消
     ('rcskrld', u'日常收款认领单'),
     ('nbzz', u'内部转账'),
@@ -13,7 +13,7 @@ sfk_type = [
     ('yfsqd', u'预付申请单'),
     ('yingshourld',u'应收流水'),
     ('yingfurld',u'应付流水'),
-    ('fkzl',u'付款指令'),
+    ('fkzl',u'付款指令'),#Y
     ('fksqd',u'付款申请单'),
     ('reconcile_ysrld',u'预收核销'),
     ('reconcile_yfsqd',u'预付核销'),

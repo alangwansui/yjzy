@@ -3447,7 +3447,7 @@ class account_reconcile_order_line(models.Model):
             elif one.order_id.sfk_type == 'yfhxd':
                 one.amount_so = one.po_id.amount_total
                 one.no_delivery_amount_so = one.po_id.no_deliver_amount_new + one.amount_invoice_so
-            print('one.no_delivery_amount_so',one.order_id.sfk_type,one.no_delivery_amount_so,one.so_id.no_sent_amount_new,  one.amount_invoice_so)
+
 
 
     #原来计算的是出运占销售金额的比例，现在改成出运占销售剩余金额的比例
