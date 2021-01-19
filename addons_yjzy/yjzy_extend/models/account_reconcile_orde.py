@@ -3392,8 +3392,8 @@ class account_reconcile_order_line(models.Model):
                 amount_payment_done = sum(x.amount_total_org_new for x in reconcile_line_done_ids)
                 amount_invoice_so_residual = amount_invoice_so - amount_payment_done
                 amount_invoice_so_residual_can_approve = amount_invoice_so - amount_payment_all
-                one.amount_invoice_so_residual = amount_invoice_so_residual
-                one.amount_invoice_so_residual_can_approve = amount_invoice_so_residual_can_approve
+                one.amount_invoice_so_residual = 0#amount_invoice_so_residual
+                one.amount_invoice_so_residual_can_approve = 0#amount_invoice_so_residual_can_approve
             else:
                 amount_invoice_so = one.amount_invoice_so
                 # amount_payment_can_approve_all = one.invoice_id.amount_payment_can_approve_all
@@ -3409,8 +3409,8 @@ class account_reconcile_order_line(models.Model):
                 amount_payment_done = sum(x.amount_total_org_new for x in reconcile_line_done_ids)
                 amount_invoice_so_residual = amount_invoice_so - amount_payment_done
                 amount_invoice_so_residual_can_approve = amount_invoice_so - amount_payment_all
-                one.amount_invoice_so_residual = amount_invoice_so_residual
-                one.amount_invoice_so_residual_can_approve = amount_invoice_so_residual_can_approve
+                one.amount_invoice_so_residual = 0#amount_invoice_so_residual
+                one.amount_invoice_so_residual_can_approve = 0#amount_invoice_so_residual_can_approve
 
 
 
@@ -3605,10 +3605,10 @@ class account_reconcile_order_line(models.Model):
 
     amount_invoice_so_proportion = fields.Float('销售金额占发票金额比',compute=_compute_amount_invoice_so_proportion)
     #826
-    amount_invoice_so_residual = fields.Monetary(u'占比剩余应收付',currency_field='invoice_currency_id',)#compute=compute_can_approve
+    amount_invoice_so_residual = fields.Monetary(u'占比剩余应收付',currency_field='invoice_currency_id',compute=compute_can_approve)#
     amount_invoice_so_residual_d = fields.Monetary(u'静态占比剩余应收付',currency_field='invoice_currency_id')#认领前
     amount_invoice_so_residual_d_after = fields.Monetary(u'本次认领后可认领金额',currency_field='invoice_currency_id',compute=compute_amount_invoice_so_residual_can_approve_d_after)
-    amount_invoice_so_residual_can_approve = fields.Monetary(u'占比剩余可申请的应收付',currency_field='invoice_currency_id')#compute=compute_can_approve
+    amount_invoice_so_residual_can_approve = fields.Monetary(u'占比剩余可申请的应收付',currency_field='invoice_currency_id',compute=compute_can_approve)#
     amount_invoice_so_residual_can_approve_d = fields.Monetary(u'静态占比剩余可申请的应收付',currency_field='invoice_currency_id')
     amount_invoice_so_residual_can_approve_d_after = fields.Monetary(u'本次认领后可申请金额', currency_field='invoice_currency_id',compute=compute_amount_invoice_so_residual_can_approve_d_after)
     advance_residual = fields.Monetary(currency_field='yjzy_currency_id', string=u'预付余额', compute=compute_advance_residual, store=True)
