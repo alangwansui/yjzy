@@ -51,16 +51,16 @@
         <menuitem id="menu_customer_invoice_extra_apply_root" name="额外应收申请" parent="yjzy_extend.menu_special_customer_invoice_apply_root" groups="base.group_system" sequence="20"/>
         <menuitem id="menu_customer_invoice_other_payment_apply_root" name="其他应收申请" parent="yjzy_extend.menu_new_account_in_root" sequence="20"/>
 
-        <menuitem id="menu_customer_invoice_for_goods_root" name="账单查询" parent="yjzy_extend.menu_new_account_in_root" sequence="40"/>
+        <menuitem id="menu_customer_invoice_for_goods_root" name="账单查询" parent="yjzy_extend.menu_new_account_in_root" sequence="30"/>
 
 
         <menuitem id="menu_customer_invoice_renling_root" name="应收认领" parent="yjzy_extend.menu_new_account_in_root" sequence="30"/>
         <menuitem id="menu_customer_invoice_back_tax_renling_root" name="退税认领" parent="yjzy_extend.menu_new_account_in_root" sequence="40"/>
         <menuitem id="menu_customer_invoice_renling_all_root" name="账单认领" parent="yjzy_extend.menu_new_account_in_root" sequence="50"/>
         <menuitem id="menu_customer_invoice_for_goods_root_1" name="货款应收" parent="yjzy_extend.menu_new_account_in_root" sequence="30"/>
-        <menuitem id="menu_customer_invoice_back_tax_root" name="退税账单" parent="yjzy_extend.menu_new_account_in_root" sequence="30"/>
+        <menuitem id="menu_customer_invoice_back_tax_root" name="退税账单" parent="yjzy_extend.menu_new_account_in_root" sequence="40"/>
 
-        <menuitem id="menu_customer_invoice_back_tax_declaration_root" parent="yjzy_extend.menu_new_account_in_root" name="退税申报" sequence="30"/>
+        <menuitem id="menu_customer_invoice_back_tax_declaration_root" parent="yjzy_extend.menu_new_account_in_root" name="退税申报" sequence="45"/>
 
 
 
