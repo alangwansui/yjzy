@@ -52,6 +52,11 @@ odoo.define("web_disable_export_group", function(require) {
                 _items = _.reject(_items, {label: "归档"});
             };
 
+            var move_action_id = 699; //数字为需要显示的actionid, 可以通过‘菜单’ 查询得到
+            if(menu_action_id != move_action_id){
+                _items = _.reject(_items, {label: "取消归档"});
+            };
+
 //            var cjyfsq_action_id = 1335; //数字为需要显示的actionid, 可以通过‘菜单’ 查询得到
 //            if(menu_action_id != cjyfsq_action_id){
 //                _items = _.reject(_items, {label: "创建应付申请"});
