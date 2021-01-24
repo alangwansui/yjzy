@@ -130,9 +130,12 @@ class hr_expense_sheet(models.Model):
     employee_user_id = fields.Many2one('res.users', related='employee_id.user_id', string='职员用户', readonly=True)
 
     partner_id = fields.Many2one('res.partner', u'Partner', default=lambda self: self._default_partner(), )
+
+
     fk_journal_id = fields.Many2one('account.journal', u'日记账')
     is_split = fields.Boolean(u'是否分别付款')
 
+    bank_partner_id = fields.Many2one('res.partner','付款对象',related='bank_id.partner_id')
     bank_id = fields.Many2one('res.partner.bank', u'银行账号')
     bank_journal_id = fields.Many2one('account.journal', string='Bank Journal', states={'done': [('readonly', True)], 'post': [('readonly', True)]},
                                       default=lambda self: self._default_bank_journal(),

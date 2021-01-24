@@ -2099,6 +2099,7 @@ class transport_bill(models.Model):
                     invoice.po_id = o
                     invoice.include_tax = o.include_tax
                 #确认发票
+                invoice.compute_advance_pre_rest()
                 invoice.action_invoice_open()
 
                 invoice_ids.append(invoice.id)
@@ -2173,6 +2174,7 @@ class transport_bill(models.Model):
                 'gongsi_id': self.gongsi_id.id,
                 'stage_id':self.env['account.invoice.stage'].search([('code','=','007')],limit=1).id,
             })
+            sale_invoices.compute_advance_pre_rest()
 
 
             #发票明细添加运保费

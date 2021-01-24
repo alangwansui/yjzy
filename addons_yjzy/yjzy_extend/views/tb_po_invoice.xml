@@ -482,7 +482,7 @@
                         <group col="3">
                             <group attrs="{'invisible':[('is_tb_hs_id','=',False)]}">
                                 <field name="display_name" nolabel="1" colspan="2" />
-                                <field name="tb_id" domain="[('back_tax_invoice_balance_new','!=',0)]"
+                                <field name="tb_id" domain="[('back_tax_invoice_balance_new','!=',0)]" readonly="1"
                                        attrs="{'invisible':[('is_tb_hs_id','=',False)],'readonly':[('state','!=','10_draft')]}"
                                        context="{'min_add':1,'not_show_partner':1,'form_view_ref':'yjzy_extend.view_transport_bill_declare_po_form'}"/>
                                 <field name="tb_id_po_supplier" string="原始供应商"
@@ -667,9 +667,9 @@
                                 </group>
                                 <group style="margin-top:-10px; " attrs="{'invisible':[('is_tb_hs_id','=',False)]}">
                                     <field name="back_tax_add_this_time_total" string="退税金额"
-                                           attrs="{'invisible':[('type','not in',['other_payment','extra'])]}"/>
-                                    <field name="back_tax_add_residual" string="未收退税金额"
-                                           attrs="{'invisible':[('type','not in',['other_payment','extra'])]}"/>
+                                           attrs="{'invisible':[('type','in',['other_payment','extra'])]}"/>
+                                    <field name="back_tax_add_residual" string="未收退税金额" invisible="1"
+                                           attrs="{'invisible':[('type','in',['other_payment','extra'])]}"/>
                                     <field name="expense_currency_id" invisible="1"
                                            attrs="{'invisible':[('type','!=','expense_po')]}"/>
                                     <field name="expense_sheet_amount"
@@ -746,7 +746,7 @@
                             </page>
                             <page string="货款明细" attrs="{'invisible':[('is_tb_hs_id','=',False)]}">
                                 <field name="hsname_all_ids" attrs="{'invisible':[('is_tb_hs_id','=',False)],'readonly':[('state','!=','10_draft')]}">
-                                    <tree editable="bottom">
+                                    <tree editable="bottom" create="false" delete="false">
                                         <field name="hs_id" attrs="{'readonly':[('parent.state','!=','10_draft')]}"/>
                                         <field name="hsname_all_line_id" invisible="1"/>
                                         <!--field name="purchase_amount2_tax"/>
@@ -775,7 +775,7 @@
                                                attrs="{'column_invisible':[('parent.tb_id','=',False)]}"/>
                                         <field name="purchase_amount2_add_this_time"
                                                attrs="{'readonly':[('parent.state','!=','10_draft')]}"/>
-                                        <field name="p_s_add_this_time"
+                                        <field name="p_s_add_this_time" readonly="1"
                                                attrs="{'readonly':[('parent.state','!=','10_draft')],'column_invisible':[('parent.type','in',['expense_po','extra'])]}"/>
                                         <field name="back_tax_add_this_time"/>
                                     </tree>

@@ -516,7 +516,7 @@ class account_invoice(models.Model):
             one.yjzy_amount_payment_can_approve_all = yjzy_amount_payment_can_approve_all
 
     @api.depends('reconcile_order_line_no_ids', 'reconcile_order_line_no_ids.amount_payment_org',
-                 'reconcile_order_line_ids', 'reconcile_order_line_ids.amount_advance_org',
+                 'reconcile_order_line_ids', 'reconcile_order_line_ids.amount_advance_org','reconcile_order_line_ids.order_id.state',
                  'reconcile_order_line_ids.amount_payment_org', )
     def compute_amount_payment_approval_all(self):
         for one in self:
@@ -662,10 +662,35 @@ class account_invoice(models.Model):
             payment_log_hexiao_amount = sum(x.amount for x in payment_log_hexiao_ids)
             one.payment_log_hexiao_amount = payment_log_hexiao_amount
 
+    def compute_days_term(self):
+        for one in self:
+            days_term = 0
+            for x in one.payment_term_id.line_ids:
+                if x.value == 'balance':
+                    days_term = x.days
+            one.days_term = days_term
 
 
+    @api.depends('invoice_line_ids','invoice_line_ids.advice_advance_amount','amount_advance_org_done','amount_payment_can_approve_all')
+    def compute_advance_pre_rest(self):
+        for one in self:
+            advance_pre = sum(x.advice_advance_amount for x in one.invoice_line_ids)
+            amount_advance_org_done = one.amount_advance_org_done
+            wait_advance = advance_pre - amount_advance_org_done
+            amount_payment_can_approve_all_1 = one.amount_payment_can_approve_all - wait_advance
+            one.advance_pre = advance_pre
+            one.wait_advance = wait_advance >= 0 and wait_advance or 0
+            one.amount_payment_can_approve_all_1 = amount_payment_can_approve_all_1
 
 
+    advance_pre = fields.Monetary('建议认领预收付总金额',currency_field='currency_id', compute=compute_advance_pre_rest,store=True)
+    wait_advance = fields.Monetary('待认领预付',currency_field='currency_id', compute=compute_advance_pre_rest,store=True)
+    amount_payment_can_approve_all_1 = fields.Monetary(u'减去建议待认领预付金额后可申请应收付款', currency_field='currency_id',
+                                                       compute=compute_advance_pre_rest, store=True)
+
+
+    days_term = fields.Integer('账期',compute=compute_days_term)
+    invoice_date_deadline = fields.Selection('账期计算方式',related='payment_term_id.invoice_date_deadline_field')
 
     invoice_attribute_all_in_one = fields.Selection(invoice_attribute_all_in_one, u'账单属性all_in_one',
                                                     compute=compute_all_in_one, store=True)
@@ -876,6 +901,8 @@ class account_invoice(models.Model):
                                                                )  # domain=[('order_id.state', 'in', ['approved']), ('amount_total_org', '!=', 0)]关联账单（额外账
     amount_payment_can_approve_all = fields.Monetary(u'可申请应收付款', currency_field='currency_id',
                                                      compute=compute_amount_payment_can_approve_all, store=True)
+
+
 
     amount_advance_org_done = fields.Monetary(u'预收付认领金额', currency_field='currency_id',
                                               compute=compute_amount_payment_can_approve_all, store=True)
@@ -2359,6 +2386,30 @@ class account_invoice_line(models.Model):
     #         one.back_tax_add_this_time = back_tax_add_this_time
     # 0911
     # back_tax_add_this_time = fields.Float('本次应生成退税', compute=compute_back_tax)
+
+    @api.depends('purchase_id','purchase_id.amount_total','purchase_id.real_advance','purchase_id.balance_new')
+    def compute_original_so_po_amount(self):
+        for one in self:
+            if one.invoice_id.type == 'in_invoice':
+                original_so_po_amount = one.purchase_id.amount_total
+                real_advance = one.purchase_id.real_advance
+                rest_advance_so_po_balance = one.purchase_id.balance_new
+                proportion_tb = original_so_po_amount != 0 and one.price_total/original_so_po_amount or 0
+                advice_advance_amount = proportion_tb * real_advance
+
+                one.original_so_po_amount = original_so_po_amount
+                one.rest_advance_so_po_balance = rest_advance_so_po_balance
+                one.proportion_tb = proportion_tb
+                one.advice_advance_amount = advice_advance_amount
+
+
+    original_so_po_amount = fields.Monetary('原始订单金额',currency_field='currency_id',compute=compute_original_so_po_amount)
+    rest_advance_so_po_balance = fields.Monetary('原始订单预收预付剩余未认领金额',currency_field='currency_id',compute=compute_original_so_po_amount)
+    proportion_tb = fields.Float('本次出运金额占订单比例',compute=compute_original_so_po_amount)
+    advice_advance_amount = fields.Monetary('应认领预付',compute=compute_original_so_po_amount)
+
+
+
     invoice_yjzy_type_1 = fields.Selection(string=u'发票类型', related='invoice_id.yjzy_type_1')
     item_id = fields.Many2one('invoice.hs_name.item', 'Item')
     so_id = fields.Many2one('sale.order', u'销售订单', compute=_compute_so, store=True)

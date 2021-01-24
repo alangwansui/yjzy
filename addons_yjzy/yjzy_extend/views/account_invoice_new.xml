@@ -430,29 +430,41 @@
             <field name="name">account.invoice.new.supplier.tree</field>
             <field name="model">account.invoice</field>
             <field name="arch" type="xml">
-                <tree decoration-info="state == 'draft'" default_order="invoice_attribute_all_in_one,date_deadline_new"
+                <tree decoration-info="state == 'draft'" default_order="date_due"
                       decoration-warning="is_yjzy_invoice == True"
                       decoration-muted="state == 'cancel'" string="Invoice" edit="false" create="false">
                     <field name="extra_code" invisible="1"/>
                     <field name="partner_id" groups="base.group_user" string="供应商"/>
                     <field name="bill_id" string="合同号" invisible="1"/>
-                    <field name="tb_contract_code" string="合同号" widget="dynamic_popover_char"
+                    <field name="tb_contract_code" string="出运合同号" widget="dynamic_popover_char"
                            options="{'max_width': '100px', 'line_clamp': '1', 'mode_mouse':'hover','popover_max_width':'200px','placement':'right'}"/>
-                    <field name="invoice_attribute_all_in_one" string="账单属性"/>
-                    <field name="date_invoice" string="账单日期" groups="base.group_system"/>
+                    <field name="invoice_attribute_all_in_one" string="账单属性" invisible="1"/>
+                    <field name="date_invoice" string="出运日期" />
+                    <field name="date_finish" string="交单日期"/>
+                    <field name="date_ship" string="出运船日期"/>
+                    <field name="invoice_date_deadline" string="账期计算方式"/>
+                    <field name="days_term" string="账期"/>
                     <button name="open_supplier_reconcile_order_line" groups="base.group_system"
                             icon="fa-pencil-square-o" type="object"
                             attrs="{'invisible':[('reconcile_order_line_count','=',0)]}"/>
-                    <field name="date_deadline_new" string="实际到期日"/>
-                    <field name="residual_times"/>
+                    <field name="date_deadline_new" string="实际到期日" invisible="1"/>
+                    <field name="residual_times_out_in" string="到期天数1"/>
+                    <field name="residual_times" string="到期天数2"/>
+
                     <field name="residual_times_new" invisible="1"/>
                     <field name="date_due" string="进仓到期日" groups="base.group_system"/>
                     <field name="reconcile_order_line_count" invisible="1"/>
                     <field name="residual_times_out_in_new" groups="base.group_system"/>
-                    <field name="amount_total_signed" string="原始应付款" sum="Total"/>
+                    <field name="amount_total_signed" string="初始应付款" sum="Total"/>
+                    <field name="amount_payment_org_done" string="已支付" sum="Totla"/>
+                    <field name="amount_advance_org_done" string="已认领预付" sum="Total"/>
                     <field name="residual_signed" string="剩余应付款" sum="Amount Due"/>
+                    <field name="amount_payment_org_approved" string="已审批应付" sum="Total"/>
+                    <field name="wait_advance" sum="Total" string="建议待认领预付"/>
+                    <field name="advance_pre" sum="Total" string="建议预付认领"/>
                     <field name="amount_payment_can_approve_all" string="可申请支付应付款" sum="小计"
                            options="{'fg_color':'black'}"/>
+                    <field name="amount_payment_can_approve_all_1" string="可申请支付应付款1" sum="小计"/>
                     <field name="yjzy_total" string="总原始应付款" invisible="1" sum="小计"/>
                     <field name="yjzy_residual" string="总剩余应付款" invisible="1" sum="小计"/>
                     <field name="yjzy_amount_payment_can_approve_all" string="总可申请应付款" invisible="1"
@@ -489,7 +501,7 @@
                     <field name="state" invisible="1"/>
                     <field name="type" invisible="context.get('type',True)"/>
                     <field name="residual_times" groups="base.group_system"/>
-                    <field name="residual_times_out_in" groups="base.group_system"/>
+
                     <field name="date_deadline" string="实际到期日" groups="base.group_system"/>
                     <field name="fault_comments"/>
                 </tree>

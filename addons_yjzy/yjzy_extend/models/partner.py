@@ -145,7 +145,7 @@ class res_partner(models.Model):
         for one in self:
             one.invoice_open_ids_count = len(one.invoice_open_ids)
 
-    @api.depends('supplier_invoice_ids','supplier_invoice_ids.amount_payment_approval_all')
+    @api.depends('supplier_invoice_ids','supplier_invoice_ids.amount_payment_approval_all','supplier_invoice_ids.state')
     def compute_supplier_amount_invoice_approval(self):
         for one in self:
             supplier_amount_invoice_approval = sum(x.amount_payment_approval_all for x in one.supplier_invoice_ids)

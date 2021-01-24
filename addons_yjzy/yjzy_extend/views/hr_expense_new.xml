@@ -551,6 +551,7 @@
                     <field name="date" string="发生日期"/>
                     <field name="create_uid" string="创建人"/>
                     <field name="employee_id" string="责任人"/>
+                         <field name="employee_sales_uid" string="费用对象"/>
                     <field name="categ_id" string="大类"/>
                     <field name="second_categ_id" string="中类"/>
                     <field name="product_id" string="小类"/>
@@ -1554,7 +1555,7 @@
                                        attrs="{'invisible':[('tb_po_invoice_ids_count','=',0)]}"/>
                                 <field name="back_tax_add_this_time_total" style="color:red"
                                        attrs="{'invisible':[('tb_po_invoice_ids_count','=',0)]}"/>
-                                <field name="tb_po_invoice_ids" widget="many2many_tags" string="费用转货款申请"
+                                <field name="tb_po_invoice_ids" widget="many2many_tags" string="费用转货款申请" readonly="1"
                                        attrs="{'invisible':[('tb_po_invoice_ids_count','=',0)],'readonly':[('state_1','not in',['account_approval'])]}"
                                        options="{'open_view': True}" context="{'open_expense':1}"/>
                                 <field name="document_number"
@@ -1569,6 +1570,7 @@
                                        domain="['|',('create_uid','=',uid),('partner_id.supplier','=',True)]"
                                        context="{'form_view_ref':'base.view_partner_bank_form','default_bank_type':'personal'}"
                                        required="1"/>
+                                <field name="bank_partner_id" attrs="{'invisible':[('tb_po_invoice_ids_count','=',0)]}"/>
                                 <field name="address_id" invisible="1"/>
                                 <field name="department_id" invisible="1"/>
                                 <field name="budget_type" invisible="1"/>
@@ -1594,7 +1596,7 @@
                                     <field name="partner_id" string="付款对象" invisible="1"
                                            context="{'default_supplier':True, 'default_customer':True, 'default_is_company':1}"/>
                                     <field name="fk_journal_id" string="付款账户"
-                                           domain="[('type','in',['bank', 'cash'])]" options="{'no_create':True}"
+                                           domain="[('type','in',['bank', 'cash'])]" options="{'no_create':True,'no_open':True}"
                                            attrs="{'readonly': [('is_editable','=',False),'|',('state_1','not in',['draft','account_approval']),('state','in',['approve','post','done'])]}"/>
                                     <field name="back_tax_product_id" invisible="1"
                                            attrs="{'readonly': [('state','=','approve')]}"/>
@@ -1623,12 +1625,12 @@
 
                             </group>
 
-                            <group>
-                                <field name="total_this_moth" groups="base.group_system"/>
-                                <field name="total_this_year" groups="base.group_system"/>
-                                <field name="total_approve" groups="base.group_system"/>
-                                <field name="total_submit" groups="base.group_system"/>
-                                <field name="total_un_submit" groups="base.group_system"/>
+                            <group groups="sales_team.group_manager">
+                                <field name="total_this_moth" />
+                                <field name="total_this_year" />
+                                <field name="total_approve" />
+                                <field name="total_submit" />
+                                <field name="total_un_submit" />
                             </group>
 
 
