@@ -474,10 +474,15 @@ class account_invoice(models.Model):
 
             amount_advance_org_done = sum(x.amount_advance_org for x in payment_done_all)
             amount_payment_org_done_old = sum(x.amount_payment_org for x in payment_done_all)
-            amount_payment_org_done = sum(x.amount_payment_org for x in payment_no_done_all) + amount_payment_org_done_old
+            amount_payment_org_done_new = sum(x.amount_payment_org for x in payment_no_done_all)
+            amount_payment_org_done = amount_payment_org_done_new > 0 and amount_payment_org_done_new or amount_payment_org_done_new + amount_payment_org_done_old
 
             amount_advance_org_approval = sum(x.amount_advance_org for x in payment_approval_all)
-            amount_payment_org_approval = sum(x.amount_payment_org for x in payment_no_approval_all)
+            amount_payment_org_approval_old = sum(x.amount_payment_org for x in payment_approval_all)
+            amount_payment_org_approval_new = sum(x.amount_payment_org for x in payment_no_approval_all)
+            amount_payment_org_approval = amount_payment_org_approval_new > 0 and amount_payment_org_approval_new or amount_payment_org_approval_new + amount_payment_org_approval_old
+
+                # sum(x.amount_payment_org for x in payment_no_approval_all)
 
             amount_advance_org_draft = sum(x.amount_advance_org for x in payment_draft_all)
             amount_payment_org_draft = sum(x.amount_payment_org for x in payment_no_draft_all)
