@@ -473,7 +473,8 @@ class account_invoice(models.Model):
                 lambda x: x.order_id.state == 'approved')
 
             amount_advance_org_done = sum(x.amount_advance_org for x in payment_done_all)
-            amount_payment_org_done = sum(x.amount_payment_org for x in payment_no_done_all)
+            amount_payment_org_done_old = sum(x.amount_payment_org for x in payment_done_all)
+            amount_payment_org_done = sum(x.amount_payment_org for x in payment_no_done_all) + amount_payment_org_done_old
 
             amount_advance_org_approval = sum(x.amount_advance_org for x in payment_approval_all)
             amount_payment_org_approval = sum(x.amount_payment_org for x in payment_no_approval_all)

@@ -3064,7 +3064,7 @@
             <field name="domain">
                 [('type','in',['out_invoice','out_refund']),('yjzy_type','=','back_tax')]
             </field>
-            <field name="context">{'only_ref':1,'type':'out_invoice','journal_type':
+            <field name="context">{'search_default_group_by_state':1,'only_ref':1,'type':'out_invoice','journal_type':
                 'sale','yjzy_type':'sale'}
             </field>
             <!--field name="target">new</field-->
