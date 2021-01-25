@@ -490,7 +490,11 @@ class account_invoice(models.Model):
             amount_advance_org_draft_approval = amount_advance_org_draft + amount_advance_org_approval
             amount_payment_org_draft_approval = amount_payment_org_draft + amount_payment_org_approval
 
-            amount_payment_org_approved = sum(x.amount_payment_org for x in payment_approved_no_all)
+            amount_payment_org_approved_old = sum(x.amount_payment_org for x in payment_approved_all)
+            amount_payment_org_approved_new = sum(x.amount_payment_org for x in payment_approved_no_all)
+            amount_payment_org_approved = amount_payment_org_approved_new > 0 and amount_payment_org_approved_new or amount_payment_org_approved_new + amount_payment_org_approved_old
+
+
 
             amount_payment_approve_all = sum(x.amount_total_org_new for x in payment_approved_all) + sum(
                 x.amount_payment_org for x in payment_approved_no_all)
