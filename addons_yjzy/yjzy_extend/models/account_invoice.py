@@ -671,10 +671,11 @@ class account_invoice(models.Model):
             payment_log_hexiao_ids = one.payment_log_hexiao_ids.filtered(lambda x: x.state in ['posted','reconciled'])
             payment_log_hexiao_amount = sum(x.amount for x in payment_log_hexiao_ids)
 
-            payment_done_all = one.reconcile_order_line_ids.filtered(lambda x: x.order_id.state == 'done')  # 完成付款和认领
-            amount_bank_fee_org_done = sum(x.amount_diff_org for x in payment_done_all)
+            reconcile_order_line_amount_diff = one.reconcile_order_line_amount_diff
+            reconcile_order_line_bank = one.reconcile_order_line_bank
 
-            one.payment_log_hexiao_amount = payment_log_hexiao_amount + amount_bank_fee_org_done
+
+            one.payment_log_hexiao_amount = payment_log_hexiao_amount + reconcile_order_line_amount_diff + reconcile_order_line_bank
 
     def compute_days_term(self):
         for one in self:
