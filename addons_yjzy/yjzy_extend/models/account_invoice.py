@@ -665,7 +665,7 @@ class account_invoice(models.Model):
             one.reconcile_order_id_payment_draft_ids_count = len(one.reconcile_order_id_payment_draft_ids)
             print('reconcile_order_id_advance_draft_ids_akiny')
 
-    @api.depends('payment_log_hexiao_ids','payment_log_hexiao_ids.state','payment_log_hexiao_ids.amount')
+    @api.depends('payment_log_hexiao_ids','payment_log_hexiao_ids.state','payment_log_hexiao_ids.amount','reconcile_order_line_ids','reconcile_order_line_ids.order_id.state')
     def compute_payment_log_hexiao_amount(self):
         for one in self:
             payment_log_hexiao_ids = one.payment_log_hexiao_ids.filtered(lambda x: x.state in ['posted','reconciled'])
@@ -719,7 +719,7 @@ class account_invoice(models.Model):
     payment_log_hexiao_ids = fields.One2many('account.payment', 'invoice_log_id', '核销单',
                                              domain=[('sfk_type', 'in', ['reconcile_yingshou', 'reconcile_yingfu'])])
     payment_log_hexiao_ids_count = fields.Integer('未完成认领以及收付明细数量', compute=compute_payment_log_ids_count)
-    payment_log_hexiao_amount = fields.Monetary('核销金额',currency_field='currency_id', compute=compute_payment_log_hexiao_amount)
+    payment_log_hexiao_amount = fields.Monetary('核销金额',currency_field='currency_id', compute=compute_payment_log_hexiao_amount,store=True)
 
     other_payment_invoice_id = fields.Many2one('account.invoice', '关联的其他应收付下级账单')  # 目前 只对其他应收做了计算  #C
     other_payment_invoice_parent_id = fields.Many2one('account.invoice', '关联的其他应收付上级账单')#C
