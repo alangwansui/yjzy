@@ -720,7 +720,7 @@ class account_invoice(models.Model):
     payment_log_hexiao_ids = fields.One2many('account.payment', 'invoice_log_id', '核销单',
                                              domain=[('sfk_type', 'in', ['reconcile_yingshou', 'reconcile_yingfu'])])
     payment_log_hexiao_ids_count = fields.Integer('未完成认领以及收付明细数量', compute=compute_payment_log_ids_count)
-    payment_log_hexiao_amount = fields.Monetary('核销金额',currency_field='currency_id', compute=compute_payment_log_hexiao_amount,store=True)
+    payment_log_hexiao_amount = fields.Monetary('核销金额',currency_field='currency_id', compute=compute_payment_log_hexiao_amount)
 
     other_payment_invoice_id = fields.Many2one('account.invoice', '关联的其他应收付下级账单')  # 目前 只对其他应收做了计算  #C
     other_payment_invoice_parent_id = fields.Many2one('account.invoice', '关联的其他应收付上级账单')#C
