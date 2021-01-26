@@ -264,7 +264,8 @@ class account_payment(models.Model):
     def action_reconcile_submit(self):
         if self.yjzy_payment_id and (self.so_id or self.po_id) and self.amount != self.yjzy_payment_advance_balance:
             raise Warning('核销金额不等于剩余金额')
-        if self.invoice_log_id and self.amount != self.amount_invoice_log:
+        amount_invoice_log = round(self.amount_invoice_log, 6)
+        if self.invoice_log_id and self.amount != amount_invoice_log:
             raise Warning('核销金额不等于剩余金额 %s:%s ' % (self.amount,self.amount_invoice_log))
 
 
