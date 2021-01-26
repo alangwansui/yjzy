@@ -892,8 +892,8 @@ class account_invoice(models.Model):
 
     reconcile_order_line_count = fields.Float(u'核销明细行数量', compute=get_reconcile_order_line)
     reconcile_order_line_ids = fields.One2many('account.reconcile.order.line', 'invoice_id', u'核销明细行',
-                                               domain=[('order_id', '!=', False), ('order_id.sfk_type', '=', 'yfhxd')]
-                                               )  # domain=[('order_id.state', 'in', ['approved']), ('amount_total_org', '!=', 0)]
+                                               domain=[('order_id', '!=', False)]
+                                               )  # , ('order_id.sfk_type', '=', 'yfhxd') domain=[('order_id.state', 'in', ['approved']), ('amount_total_org', '!=', 0)]
     reconcile_order_line_approve_ids = fields.One2many('account.reconcile.order.line', 'invoice_id', u'核销明细行',
                                                        domain=[('order_id.state', '=', 'approved'),
                                                                ('order_id', '!=', False),

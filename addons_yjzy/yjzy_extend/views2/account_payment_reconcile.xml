@@ -157,9 +157,25 @@
                         </div>
                         <group>
                             <group>
-                                <field name="invoice_log_id" string="被核销对象" invisible="1" readonly="1"
+                                <label name="partner_id" for="" attrs="{'invisible': [('payment_type', 'not in', ('inbound', 'outbound'))]}">
+                                      <b attrs="{'invisible':['|',('payment_type', 'not in', ('inbound', 'outbound')),('sfk_type','in',['reconcile_yfsqd','reconcile_yingfu'])]}">
+                                        客户
+                                    </b>
+                                     <b attrs="{'invisible':['|',('payment_type', 'not in', ('inbound', 'outbound')),('sfk_type','in',['reconcile_ysrld','reconcile_yingshou'])]}">
+                                        供应商
+                                    </b>
+                                </label>
+                                <div class="o_row">
+                                 <field name="partner_id" options="{'no_create':True,'no_open': True}"
+                                           domain="[('is_company','=',True),('customer','=',True)]"
+                                           attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))],
+                                           'invisible': [('payment_type', 'not in', ('inbound', 'outbound'))], 'readonly': [('state', '!=', 'draft')]}"
+                                           context="{'default_is_company': True, 'default_supplier': payment_type == 'outbound', 'default_customer': payment_type == 'inbound'}"/>
+                                </div>
+
+                                <field name="invoice_log_id" string="被核销对象" invisible="0" readonly="1"
                                        attrs="{'invisible':[('sfk_type','not in',['reconcile_yingshou','reconcile_yingfu'])]}"/>
-                                <field name="yjzy_payment_id" string="被核销对象" readonly="1" invisible="1"
+                                <field name="yjzy_payment_id" string="被核销对象" readonly="1" invisible="0"
                                        attrs="{'invisible':[('sfk_type','not in',['reconcile_ysrld','reconcile_yfsqd'])]}"
                                        domain="['|','&amp;','&amp;','&amp;',('state','=','posted'),('sfk_type','=','rcskd'),('partner_id','=',partner_id),('balance','!=',0),'&amp;','&amp;','&amp;',('state','=','posted'),('sfk_type','=','rcskd'),('partner_id.name','=','未定义'),('balance','!=',0)]"
                                        options="{'no_create':True}"
@@ -329,10 +345,9 @@
                                     <field name="amount_state"/>
                                     <field name="journal_id" domain="[('type','=', 'renling')]" string="收款日记账"
                                            widget="selection"/>
-                                    <field name="partner_id" options="{'no_create':True,'no_open': True}" invisible=""
-                                           domain="[('is_company','=',True),('customer','=',True)]"
-                                           attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))], 'invisible': [('payment_type', 'not in', ('inbound', 'outbound'))], 'readonly': [('state', '!=', 'draft')]}"
-                                           context="{'default_is_company': True, 'default_supplier': payment_type == 'outbound', 'default_customer': payment_type == 'inbound'}"/>
+
+
+
                                     <field name="advance_account_id" label="预收科目" string="预收科目"
                                            options="{'no_create':True}"
                                            invisible="0"/>
