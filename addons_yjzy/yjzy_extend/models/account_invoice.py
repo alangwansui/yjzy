@@ -665,7 +665,8 @@ class account_invoice(models.Model):
             one.reconcile_order_id_payment_draft_ids_count = len(one.reconcile_order_id_payment_draft_ids)
             print('reconcile_order_id_advance_draft_ids_akiny')
 
-    @api.depends('payment_log_hexiao_ids','payment_log_hexiao_ids.state','payment_log_hexiao_ids.amount','reconcile_order_line_ids','reconcile_order_line_ids.order_id.state')
+    @api.depends('payment_log_hexiao_ids','reconcile_order_line_bank','reconcile_order_line_amount_diff',
+                 'payment_log_hexiao_ids.state','payment_log_hexiao_ids.amount','reconcile_order_line_ids','reconcile_order_line_ids.order_id.state')
     def compute_payment_log_hexiao_amount(self):
         for one in self:
             payment_log_hexiao_ids = one.payment_log_hexiao_ids.filtered(lambda x: x.state in ['posted','reconciled'])

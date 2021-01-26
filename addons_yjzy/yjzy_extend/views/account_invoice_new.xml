@@ -289,12 +289,19 @@
                            options="{'max_width': '100px', 'line_clamp': '1', 'mode_mouse':'hover','popover_max_width':'200px','placement':'right'}"/>
                     <field name="date_invoice" string="账单日期" invisible="1"/>
                     <button name="open_reconcile_order_line" icon="fa-pencil-square-o" type="object" invisible="1"/>
+                    <field name="date_due" string="进仓到期日" />
+                    <field name="residual_times_out_in"/>
                     <field name="date_deadline_new" string="实际到期日"/>
-                    <field name="residual_times_new"/>
-                    <field name="date_due" string="进仓到期日" invisible="1"/>
+                    <field name="residual_times"/>
+
+                    <field name="residual_times_new" invisible="1"/>
+
                     <field name="residual_times_out_in_new" invisible="1"/>
                     <field name="amount_total_signed" string="应收金额" sum="Total"/>
-                    <field name="residual_signed" string="未收金额" sum="Amount Due"/>
+                    <field name="amount_advance_org_done" string="预收认领" sum="Total"/>
+                    <field name="amount_payment_org_done" string="收款认领" sum="Total"/>
+                    <field name="payment_log_hexiao_amount" string="核销认领" sum="Total"/>
+                    <field name="residual_signed" string="未收金额" sum="Amount Due" />
 
                     <button name="open_invoice_ids_new" icon="fa-pencil-square-o" type="object" invisible="1"
                             attrs="{'invisible':[('yjzy_invoice_ids', '=', False)]}"/>
@@ -317,8 +324,8 @@
                     <field name="company_currency_id" invisible="1"/>
                     <field name="state"/>
                     <field name="type" invisible="context.get('type',True)"/>
-                    <field name="residual_times" groups="base.group_system"/>
-                    <field name="residual_times_out_in" groups="base.group_system"/>
+                    <field name="residual_times"/>
+                    <field name="residual_times_out_in"/>
                     <field name="date_deadline" string="实际到期日" groups="base.group_system"/>
                     <field name="fault_comments"/>
 
