@@ -187,6 +187,7 @@ class account_payment(models.Model):
                     'default_advance_account_id':advance_account_id.id,
                     'default_reconcile_type': '50_reconcile',
                     'default_yjzy_payment_advance_balance_this_time':self.advance_balance_total,
+                    'default_fault_comments': self.fault_comments,
                     'default_so_id':so_id.id}
         if self.sfk_type == 'yfsqd':
             # partner = self.env['res.partner'].search([('name', '=', u'未定义')], limit=1)
@@ -205,6 +206,7 @@ class account_payment(models.Model):
                    'default_reconcile_type': '50_reconcile',
                    'default_po_id': po_id.id,
                    'default_yjzy_payment_advance_balance_this_time': self.advance_balance_total,
+                   'default_fault_comments': self.fault_comments,
                    }
         return {
             'name':u'核销单',

@@ -414,7 +414,7 @@
                 [('type','=','in_invoice'),('state','=','open'),('amount_payment_can_approve_all','!=',0)]
             </field>
             <field name="context">{'search_default_group_by_invoice_attribute_all_in_one':1,'only_ref':1,
-                'default_type': 'in_invoice', 'type': 'in_invoice', 'journal_type': 'purchase',}
+                'default_type': 'in_invoice', 'type': 'in_invoice', 'journal_type': 'purchase','hexiao':1}
             </field>
             <field name="search_view_id" ref="view_account_invoice_new_filter"/>
             <field name="view_ids" eval="[(5, 0, 0),

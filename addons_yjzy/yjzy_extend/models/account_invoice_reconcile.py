@@ -39,6 +39,7 @@ class account_reconcile_order(models.Model):
                     'default_invoice_ids': [(4, self.id, None)],
                     'default_reconcile_type': '50_reconcile',
                     'default_invoice_log_id_this_time':self.residual,
+                    'default_fault_comments':self.fault_comments,
 
             }
         if self.type == 'in_invoice':
@@ -55,6 +56,7 @@ class account_reconcile_order(models.Model):
                    'default_invoice_ids': [(4, self.id, None)],
                    'default_reconcile_type': '50_reconcile',
                    'default_invoice_log_id_this_time': self.residual,
+                   'default_fault_comments': self.fault_comments
                    }
         return {
             'name': u'核销单',
