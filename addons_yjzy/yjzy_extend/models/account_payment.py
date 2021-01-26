@@ -4,6 +4,7 @@ from odoo import models, fields, api, _
 from odoo.exceptions import Warning
 from odoo.addons.account.models.account_payment import account_payment as Account_Payment
 from .comm import sfk_type, invoice_attribute_all_in_one
+from odoo.addons import decimal_precision as dp
 
 Option_Add = [
     ('advance', u'预收付'),
@@ -438,7 +439,7 @@ class account_payment(models.Model):
     invoice_log_id = fields.Many2one('account.invoice','付款指令以及预收预付认领关联账单')
     invoice_log_currency_id = fields.Many2one('res.currency',u'账单币种',related='invoice_log_id.currency_id')
 
-    amount_invoice_log = fields.Monetary('账单余额',currency_field='invoice_log_currency_id',related='invoice_log_id.residual')
+    amount_invoice_log = fields.Monetary('账单余额',digits=dp.get_precision('Money'),currency_field='invoice_log_currency_id',related='invoice_log_id.residual')
     invoice_log_id_this_time = fields.Monetary('账单余额',currency_field='invoice_log_currency_id')
     invoice_log_id_after = fields.Monetary('本次核销后',currency_field='invoice_log_currency_id', compute=compute_invoice_log_id_after)
 
