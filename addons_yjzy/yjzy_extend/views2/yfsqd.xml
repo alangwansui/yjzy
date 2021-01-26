@@ -46,7 +46,7 @@
         <field name="model">account.payment</field>
         <field name="priority" eval="999"/>
         <field name="arch" type="xml">
-            <tree string="预付申请单" decoration-info="state == 'draft'"
+            <tree string="预付申请单" decoration-info="state == 'draft'" default_order="state_1"
                   decoration-muted="state in ['reconciled', 'cancelled']" edit="false" >
                 <field name="partner_id"/>
                 <field name="name" invisible="1"/>
