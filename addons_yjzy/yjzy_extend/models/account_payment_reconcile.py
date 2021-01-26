@@ -265,7 +265,7 @@ class account_payment(models.Model):
         if self.yjzy_payment_id and (self.so_id or self.po_id) and self.amount != self.yjzy_payment_advance_balance:
             raise Warning('核销金额不等于剩余金额')
         if self.invoice_log_id and self.amount != self.amount_invoice_log:
-            raise Warning('核销金额不等于剩余金额%s:%s' % self.amount & self.amount_invoice_log)
+            raise Warning('核销金额不等于剩余金额 %s:%s ' % (self.amount,self.amount_invoice_log))
 
 
         self.state_1 = '20_account_submit'
