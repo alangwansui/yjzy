@@ -2354,6 +2354,7 @@ class account_invoice(models.Model):
                 x.compute_original_so_po_amount()
 
 
+
 class account_invoice_line(models.Model):
     _inherit = 'account.invoice.line'
 
