@@ -2448,8 +2448,8 @@ class account_invoice_line(models.Model):
     item_id = fields.Many2one('invoice.hs_name.item', 'Item')
     so_id = fields.Many2one('sale.order', u'销售订单', compute=_compute_so, store=True)
 
-    manual_so_id = fields.Many2one('sale.order', u'手动销售订单')
-    manual_po_id = fields.Many2one('purchase.order', u'手动采购订单')
+    # manual_so_id = fields.Many2one('sale.order', u'手动销售订单')
+    # manual_po_id = fields.Many2one('purchase.order', u'手动采购订单')
     is_manual = fields.Boolean('是否手动添加', default=False)
 
     # yjzy_price_unit = fields.Float('新单价',compute=_compute_amount)
