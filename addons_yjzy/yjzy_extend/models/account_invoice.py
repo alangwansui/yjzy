@@ -2348,6 +2348,11 @@ class account_invoice(models.Model):
                         }
         }
 
+    def compute_advice_advance_amount(self):
+        for one in self:
+            for x in one.invoice_line_ids:
+                x.compute_original_so_po_amount()
+
 
 class account_invoice_line(models.Model):
     _inherit = 'account.invoice.line'
@@ -2418,6 +2423,18 @@ class account_invoice_line(models.Model):
                 one.proportion_tb = proportion_tb
                 one.advice_advance_amount = advice_advance_amount
 
+            if one.invoice_id.type == 'out_invoice':
+                original_so_po_amount = one.so_id.amount_total
+                real_advance = one.so_id.real_advance
+                rest_advance_so_po_balance = one.so_id.balance_new
+                proportion_tb = original_so_po_amount != 0 and one.price_total/original_so_po_amount or 0
+                advice_advance_amount = proportion_tb * real_advance
+
+                one.original_so_po_amount = original_so_po_amount
+                one.rest_advance_so_po_balance = rest_advance_so_po_balance
+                one.proportion_tb = proportion_tb
+                one.advice_advance_amount = advice_advance_amount
+
 
     original_so_po_amount = fields.Monetary('原始订单金额',currency_field='currency_id',compute=compute_original_so_po_amount)
     rest_advance_so_po_balance = fields.Monetary('原始订单预收预付剩余未认领金额',currency_field='currency_id',compute=compute_original_so_po_amount)
@@ -2429,6 +2446,9 @@ class account_invoice_line(models.Model):
     invoice_yjzy_type_1 = fields.Selection(string=u'发票类型', related='invoice_id.yjzy_type_1')
     item_id = fields.Many2one('invoice.hs_name.item', 'Item')
     so_id = fields.Many2one('sale.order', u'销售订单', compute=_compute_so, store=True)
+
+    manual_so_id = fields.Many2one('sale.order', u'手动销售订单')
+    manual_po_id = fields.Many2one('purchase.order', u'手动采购订单')
     is_manual = fields.Boolean('是否手动添加', default=False)
 
     # yjzy_price_unit = fields.Float('新单价',compute=_compute_amount)
