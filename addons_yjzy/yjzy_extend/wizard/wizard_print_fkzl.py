@@ -16,6 +16,9 @@ class wizard_print_fkzl(models.TransientModel):
     print_uid = fields.Many2one('res.users', u'最新打印人员')
     is_print = fields.Boolean('是否已经打印',default=False)
 
+    # name = fields.Char(u'编号', default=lambda self: self._default_name())
+    # company_id
+
     def apply(self):
         self.ensure_one()
         if self.is_print:
@@ -29,7 +32,7 @@ class wizard_print_fkzl(models.TransientModel):
                     'can_print': False,
                     'print_times': print_times_last})
         self.is_print = True
-        return  self.env.ref('yjzy_extend.action_report_fkzl').report_action(self)
+        return  self.env.ref('yjzy_extend.action_report_fkzl').report_action(self.fkzl_id)
 
         # form_view = self.env.ref('yjzy_extend.view_fkzl_form')
         # return {
