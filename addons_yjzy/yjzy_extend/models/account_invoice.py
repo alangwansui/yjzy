@@ -687,22 +687,29 @@ class account_invoice(models.Model):
             one.days_term = days_term
 
 
-    @api.depends('invoice_line_ids','invoice_line_ids.advice_advance_amount','amount_advance_org_done','amount_payment_can_approve_all')
+    @api.depends('invoice_line_ids','invoice_line_ids.advice_advance_amount','amount_advance_org_done','amount_payment_can_approve_all'
+                 ,'invoice_line_ids.rest_advance_so_po_balance')
     def compute_advance_pre_rest(self):
         for one in self:
             advance_pre = sum(x.advice_advance_amount for x in one.invoice_line_ids)
+
+            rest_advance_so_po_balance = sum(x.rest_advance_so_po_balance for x in one.invoice_line_ids)
             amount_advance_org_done = one.amount_advance_org_done
             wait_advance = advance_pre - amount_advance_org_done
             amount_payment_can_approve_all_1 = one.amount_payment_can_approve_all - wait_advance
             one.advance_pre = advance_pre
             one.wait_advance = wait_advance >= 0 and wait_advance or 0
             one.amount_payment_can_approve_all_1 = amount_payment_can_approve_all_1
+            one.rest_advance_so_po_balance = rest_advance_so_po_balance
 
 
     advance_pre = fields.Monetary('建议认领预收付总金额',currency_field='currency_id', compute=compute_advance_pre_rest,store=True)
     wait_advance = fields.Monetary('待认领预付',currency_field='currency_id', compute=compute_advance_pre_rest,store=True)
     amount_payment_can_approve_all_1 = fields.Monetary(u'减去建议待认领预付金额后可申请应收付款', currency_field='currency_id',
                                                        compute=compute_advance_pre_rest, store=True)
+    rest_advance_so_po_balance = fields.Monetary('相关剩余预收预付款',currency_field='currency_id',
+                                                       compute=compute_advance_pre_rest, store=True)
+
 
 
     days_term = fields.Integer('账期',compute=compute_days_term)
@@ -2439,7 +2446,7 @@ class account_invoice_line(models.Model):
 
 
     original_so_po_amount = fields.Monetary('原始订单金额',currency_field='currency_id',compute=compute_original_so_po_amount)
-    rest_advance_so_po_balance = fields.Monetary('原始订单预收预付剩余未认领金额',currency_field='currency_id',compute=compute_original_so_po_amount)
+    rest_advance_so_po_balance = fields.Monetary('原始订单预收预付剩余未认领金额',currency_field='currency_id',compute=compute_original_so_po_amount,store=True)
     proportion_tb = fields.Float('本次出运金额占订单比例',compute=compute_original_so_po_amount)
     advice_advance_amount = fields.Monetary('应认领预付',compute=compute_original_so_po_amount,store=True)
 
