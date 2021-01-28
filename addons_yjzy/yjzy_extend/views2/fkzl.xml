@@ -85,8 +85,8 @@
 		vertical-align: middle
 	}
 </style>
-                <header groups="sales_team.group_manager">
-                   <button name="action_submit" class="oe_highlight"  string="审批" type="object"
+                <header groups="account.group_account_invoice,akiny.akiny_res_group_chuna">
+                   <button name="action_submit" class="oe_highlight"  string="审批" type="object" groups="sale.hegui_all"
                            attrs="{'invisible':[('state_fkzl','not in',['10_draft'])]}"/>
                     <button name="print_fkzl" string="打印付款指令" type="object" invisible="1"
                             attrs="{'invisible':['|',('state_fkzl','!=','20_wait_pay'),('can_print','=',False)]}"/>
