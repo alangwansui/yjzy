@@ -453,7 +453,7 @@ class account_payment(models.Model):
     amount_signed_payment = fields.Monetary(u'收付金额', currency_field='currency_id',
                                             compute=compute_amount_signed_payment, store=True)
 
-    new_rule = fields.Boolean('是否新规则',default=False)
+    new_rule = fields.Boolean('是否新规则',default=True) #原来是False，现在是True
     amount = fields.Monetary(string='Payment Amount', required=True,track_visibility='onchange')
     yjzy_partner_id = fields.Many2one('res.partner', 'Customer')
 
@@ -1425,7 +1425,7 @@ class account_payment(models.Model):
                     # print('operation_wizard_1111',operation_wizard,)
                     # if operation_wizard > 0 :#通过这个字段，区别一下老的和新的两种认领方式，新的是生成一张应付认领单
                     print('new_rule____1111',one.new_rule)
-                    if one.new_rule == True: #从原来的Fasle更新为True,这个以后就删掉不用过来，过度期
+                    if one.new_rule == False:
                         ac_orders = one.yshx_ids
                         ac_orders.make_done()
                     else:
