@@ -16,8 +16,6 @@ class wizard_print_fkzl(models.TransientModel):
     print_uid = fields.Many2one('res.users', u'最新打印人员')
     is_print = fields.Boolean('是否已经打印',default=False)
 
-    # name = fields.Char(u'编号', default=lambda self: self._default_name())
-    # company_id
 
     def apply(self):
         self.ensure_one()
