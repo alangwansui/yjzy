@@ -2466,8 +2466,8 @@ class account_reconcile_order(models.Model):
         self.ensure_one()
         dic_so_invl = {}
         for line in inv.invoice_line_ids:
-            if line.sale_line_ids:
-                so = line.sale_line_ids[0].order_id
+            if line.sale_line_ids or line.manual_so_id:
+                so = line.sale_line_ids and line.sale_line_ids[0].order_id or line.manual_so_id
                 if so in dic_so_invl:
                     dic_so_invl[so] |= line
                 else:
@@ -2478,8 +2478,8 @@ class account_reconcile_order(models.Model):
         self.ensure_one()
         dic_po_invl = {}
         for line in inv.invoice_line_ids:
-            if line.purchase_id:
-                po = line.purchase_id
+            if line.purchase_id or line.manual_po_id:
+                po = line.purchase_id and line.purchase_id or line.manual_po_id
                 if po in dic_po_invl:
                     dic_po_invl[po] |= line
                 else:
@@ -4089,7 +4089,7 @@ class advance_payment_state(models.Model):
         dic_so_invl = {}
         for line in inv.invoice_line_ids:
             if line.sale_line_ids or line.manual_so_id:
-                so = line.sale_line_ids[0].order_id and line.sale_line_ids[0].order_id or line.manual_so_id
+                so = line.sale_line_ids and line.sale_line_ids[0].order_id or line.manual_so_id
                 if so in dic_so_invl:
                     dic_so_invl[so] |= line
                 else:
