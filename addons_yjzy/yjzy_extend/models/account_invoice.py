@@ -2409,7 +2409,8 @@ class account_invoice_line(models.Model):
     # 0911
     # back_tax_add_this_time = fields.Float('本次应生成退税', compute=compute_back_tax)
 
-    @api.depends('purchase_id','purchase_id.amount_total','purchase_id.real_advance','purchase_id.balance_new')
+    @api.depends('purchase_id','purchase_id.amount_total','purchase_id.real_advance','purchase_id.balance_new','so_id',
+                 'so_id.amount_total','so_id.real_advance','so_id.balance_new','invoice_id','invoice_id.type')
     def compute_original_so_po_amount(self):
         for one in self:
             if one.invoice_id.type == 'in_invoice':
@@ -2440,7 +2441,7 @@ class account_invoice_line(models.Model):
     original_so_po_amount = fields.Monetary('原始订单金额',currency_field='currency_id',compute=compute_original_so_po_amount)
     rest_advance_so_po_balance = fields.Monetary('原始订单预收预付剩余未认领金额',currency_field='currency_id',compute=compute_original_so_po_amount)
     proportion_tb = fields.Float('本次出运金额占订单比例',compute=compute_original_so_po_amount)
-    advice_advance_amount = fields.Monetary('应认领预付',compute=compute_original_so_po_amount)
+    advice_advance_amount = fields.Monetary('应认领预付',compute=compute_original_so_po_amount,store=True)
 
 
 
@@ -2448,8 +2449,8 @@ class account_invoice_line(models.Model):
     item_id = fields.Many2one('invoice.hs_name.item', 'Item')
     so_id = fields.Many2one('sale.order', u'销售订单', compute=_compute_so, store=True)
 
-    # manual_so_id = fields.Many2one('sale.order', u'手动销售订单')
-    # manual_po_id = fields.Many2one('purchase.order', u'手动采购订单')
+    manual_so_id = fields.Many2one('sale.order', u'手动销售订单')
+    manual_po_id = fields.Many2one('purchase.order', u'手动采购订单')
     is_manual = fields.Boolean('是否手动添加', default=False)
 
     # yjzy_price_unit = fields.Float('新单价',compute=_compute_amount)
