@@ -7,26 +7,25 @@
         <field name="model">account.payment</field>
         <field name="arch" type="xml">
             <form string="预收认领单" create="false">
-                <header groups="sales_team.group_manager">
+                <header groups="sales_team.group_manage,sale.hegui_all">
                     <button name="compute_move_lines" type="object" string="更新日志" groups="base.group_system"/>
-                    <button name="create_reconcile" type="object" string="预收核销" confirm="确定创建核销申请单吗？"
+                    <button name="create_reconcile" type="object" string="预收核销" confirm="确定创建核销申请单吗？" groups="sales_team.group_manager"
                             attrs="{'invisible':['|','|',('advance_balance_total','=',0),('state','!=','posted'),('state_1','!=','50_posted')]}"
                            />
                     <button name="open_wizard_renling" type="object" string="创建认领单" groups="base.group_system"
                             attrs="{'invisible':[('state_1','!=','50_posted')]}"/>
-                    <button name="action_submit" class="oe_highlight" string="提交" type="object"
-
+                    <button name="action_submit" class="oe_highlight" string="提交" type="object" groups="sale.hegui_all"
                             attrs="{'invisible':[('state_1','not in',['10_draft'])]}"/>
-                    <button name="action_account_post" class="oe_highlight" string="财务确认" type="object"
+                    <button name="action_account_post" class="oe_highlight" string="财务确认" type="object" groups="account.group_account_manager"
 
                             attrs="{'invisible':[('state_1','not in',['20_account_submit'])]}"/>
-                <button name="%(payment_refuse_wizard_action)d" class="oe_highlight" string="财务拒绝" type="action"
+                <button name="%(payment_refuse_wizard_action)d" class="oe_highlight" string="财务拒绝" type="action" groups="account.group_account_manager"
                             attrs="{'invisible': [('state_1','not in',['20_account_submit'])]}"
                     />
                     <button name="action_draft_new" class="oe_highlight" string="重置草稿" type="object"
 
                             attrs="{'invisible':[('state_1','not in',['80_refused'])]}"/>
-                        <button name="open_wizard_reconcile_invoice" type="object" string="创建应收认领"
+                        <button name="open_wizard_reconcile_invoice" type="object" string="创建应收认领" groups="sale.hegui_all"
                                attrs="{'invisible':['|','|',('advance_balance_total','=',0),('state','!=','posted'),('state_1','!=','50_posted')]}"/>
                     <field name="state_1" widget="statusbar" statusbar_visible=" "/>
 

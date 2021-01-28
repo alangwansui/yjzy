@@ -554,6 +554,11 @@ class account_reconcile_order(models.Model):
     invoice_id = fields.Many2one('account.invoice', compute=compute_invoice_id, store=True)
     # invoice_attribute_all_in_one = fields.Char('账单属性all_in_one',compute=compute_invoice_id)
     #
+    invoice_date_deadline_new = fields.Date(u'到期日期', related='invoice_id.date_deadline_new')
+    invoice_date_invoice = fields.Date('出运日期',related='invoice_id.date_invoice')
+    invoice_date_finish =  fields.Date('交单日期',related='invoice_id.date_finish')
+    invoice_date_ship = fields.Date('出运船期',related='invoice_id.date_ship')
+
     invoice_attribute_all_in_one = fields.Selection(invoice_attribute_all_in_one, u'账单属性all_in_one',
                                                     compute=compute_invoice_id, store=True)
 
@@ -1711,7 +1716,8 @@ class account_reconcile_order(models.Model):
             for one in lines:
                 if one.so_id:
                     if one.amount_total_org_new > one.amount_invoice_so_residual_can_approve:
-                        raise Warning('申请的金额大于可认领预收')
+                    # if abs(one.amount_total_org_new - one.amount_invoice_so_residual_can_approve) >= 0.01:
+                        raise Warning('申请的金额大于可认领预收%s:%s' % (one.amount_total_org_new,one.amount_invoice_so_residual_can_approve))
                     if one.amount_advance_org > one.yjzy_payment_id.advance_balance_total:
                         raise Warning('预收认领金额大于可认领的预收金额')
         if self.line_do_ids and self.amount_advance_org == 0:

@@ -200,12 +200,12 @@
   </t>
 
 	  <t t-foreach="doc.yshx_fkzl_ids" t-as="line2">
-   <t t-foreach="line2.line_ids" t-as="line21">
+   <t t-foreach="line2.line_no_other_ids" t-as="line21">
 
     <tr>
       <td >货款</td>
       <td>应付账款</td>
-      <td><span t-esc="line21.invoice_id.tb_contract_code"/><span t-esc="line21.invoice_id.x_studio_field_sG7RZ"/></td>
+      <td><span t-esc="line21.invoice_id.tb_contract_code"/></td>
 
       <td style="text-align:right"><span t-esc="line21.payment_currency_id.symbol"/><span t-esc="line21.amount_payment_org" t-options='{"widget": "float", "precision": 2}'/></td>
 
@@ -366,6 +366,9 @@
     </tr>
   </tbody>
 </table>
+
+
+
 
 
 
