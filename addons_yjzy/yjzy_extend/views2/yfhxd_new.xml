@@ -997,6 +997,7 @@
                                    attrs="{'invisible':[('invoice_attribute_all_in_one','not in',['110','120'])]}"/>
                             <field name="invoice_payment_term_id" string="账单应付条款" options="{'no_create':1,'no_open':1}"
                                    attrs="{'invisible':[('invoice_attribute_all_in_one','not in',['110','120'])]}"/>
+                            <field name="invoice_tb_id" string="出运合同"/>
                             <field name="invoice_date_invoice" string="出运日期"/>
                             <field name="invoice_date_finish" string="交单日期"/>
                             <field name="invoice_date_ship" string="出运船期"/>

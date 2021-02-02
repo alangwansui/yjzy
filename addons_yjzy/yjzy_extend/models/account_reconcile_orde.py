@@ -554,6 +554,7 @@ class account_reconcile_order(models.Model):
     invoice_id = fields.Many2one('account.invoice', compute=compute_invoice_id, store=True)
     # invoice_attribute_all_in_one = fields.Char('账单属性all_in_one',compute=compute_invoice_id)
     #
+    invoice_tb_id = fields.Many2one('transport.bill','出运合同号', related='invoice_id.bill_id')
     invoice_date_deadline_new = fields.Date(u'到期日期', related='invoice_id.date_deadline_new')
     invoice_date_invoice = fields.Date('出运日期',related='invoice_id.date_invoice')
     invoice_date_finish =  fields.Date('交单日期',related='invoice_id.date_finish')
@@ -3789,6 +3790,7 @@ class account_reconcile_order_line_no(models.Model):
 
     invoice_attribute_all_in_one = fields.Selection(invoice_attribute_all_in_one, u'账单属性all_in_one',
                                                     compute=compute_invoice_id, store=True)
+
 
     yjzy_invoice_id = fields.Many2one('account.invoice', u'发票关联账单', related='invoice_id.yjzy_invoice_id')  # 额外账单的认领明细
     approve_date = fields.Date(u'审批完成时间', related='order_id.approve_date')

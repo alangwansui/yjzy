@@ -316,7 +316,30 @@
 
                         </page>
                         <page string="应收认领单" attrs="{'invisible':[('count_yshx','=',0)]}">
-                            <field name="yshx_ids" widget="many2many"
+
+                            <field name="yshxd_ids_line_no_ids" >
+                                 <tree editable="bottom" create="false">
+                                    <field name="invoice_id" readonly="1" string="应收账单"/>
+                                    <button name="open_invoice_id" type="object" icon="fa-pencil-square-o" class="akiny_text_left"/>
+<!--                                    <field name="invoice_invoice_partner" />-->
+<!--                                    <field name="invoice_name_title" attrs="{'column_invisible':[('parent.invoice_attribute','!=','other_payment')]}"/>-->
+                                    <field name="invoice_amount_total" string="原始应收款" sum="小计"/>
+                                    <field name="invoice_currency_id" invisible="1"/>
+                                    <field name="invoice_residual" string="剩余应收款" sum="小计"/>
+                                    <field name="payment_currency_id" invisible="1"/>
+                                    <field name="advice_amount_advance_org" readonly="1" string="建议预收认领金额" invisible="1"/>
+                                    <field name="yjzy_payment_id" attrs="{'column_invisible':1}"
+                                           context="{'form_view_ref': 'yjzy_extend.view_rcskd_form','advance_bank_amount':1}"/>
+                                    <field name="amount_payment_org" string="本次收款认领金额" sum="小计"
+                                         />
+                                    <field name="amount_advance_org" string="本次预收认领金额" sum="小计"
+                                           groups="base.group_system"/>
+                                    <field name="currency_id" invisible="1"/>
+                                    <field name="amount_payment" invisible="1"/>
+
+                                </tree>
+                            </field>
+                                <field name="yshx_ids" widget="many2many" groups="base.group_system"
                                    domain="[('sfk_type','=','yshxd'), ('partner_id','=',partner_id),('yjzy_payment_id','=',False),('state','=','approved')]"
                                    context="{'form_view_ref':'yjzy_extend.account_yshxd_form_view_new','tree_view_ref':'yjzy_extend.account_yshxd_tree_view'}">
                                 <tree create="false">
@@ -330,7 +353,6 @@
 
                                 </tree>
                             </field>
-
 
                         </page>
                         <page string="其他收款认领" attrs="{'invisible':[('count_fybg','=',0)]}">

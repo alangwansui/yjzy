@@ -410,6 +410,16 @@ class account_payment(models.Model):
             jiehui_current_rate = jiehui_in_amount != 0 and  jiehui_in_amount / amount or 0
             one.jiehui_current_rate = jiehui_current_rate
 
+    @api.depends('yshx_ids','yshx_ids.line_no_ids','yshx_ids.line_no_ids.amount_payment_org')
+    def compute_yshxd_ids_line_no_ids(self):
+
+        for one in self:
+            p = []
+            for x in one.yshx_ids:
+                for line in x.line_no_ids:
+                    p.append(line.id)
+            one.yshxd_ids_line_no_ids = p
+
 
     reconcile_type = fields.Selection([
         ('03_advance_in', u'预收生成'),
@@ -500,6 +510,9 @@ class account_payment(models.Model):
 
     #老的
     yshx_ids = fields.One2many('account.reconcile.order', 'yjzy_payment_id', u'收款-应收认领单')
+    yshxd_ids_line_no_ids = fields.Many2many('account.reconcile.order.line.no', 'ref_line_no_rcsfkd', 'lid', 'rid',
+                                             u'收付款明细',compute=compute_yshxd_ids_line_no_ids)
+
     advance_reconcile_order_line_ids = fields.One2many('account.reconcile.order.line', 'yjzy_payment_id',
                                                        string='预收认领明细', domain=[('amount_advance_org', '>', 0),
                                                                                 ('order_id.state', '=', 'done')])
@@ -1480,7 +1493,8 @@ class account_payment(models.Model):
                 #         else:
                 #             x.action_to_invoice_done()
                 if one.fybg_fkzl_ids:
-                    one.fybg_fkzl_ids.action_to_invoice_done()
+                    for fybg in one.fybg_fkzl_ids:
+                        fybg.action_to_invoice_done()
                 for fksqd in one.fksqd_2_ids:
                     fksqd.state = 'posted'
                     fksqd.state_1 = '60_done'
