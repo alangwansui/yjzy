@@ -1149,8 +1149,16 @@
 
                                 </tree>
                             </field>
-                            <field name="amount_total_org_new" string="本次申请金额"
+                            <label name="amount_total_org_new" string="本次申请金额"/>
+                            <div class="oe_row">
+                                 <field name="amount_total_org_new" string="本次申请金额"
                                    attrs="{'invisible':[('operation_wizard','not in',['03','20'])]}"/>
+
+                                <span style="margin-left:2px">占原始比例：</span>
+                                <field name="amount_total_org_new_percent"/>
+                            </div>
+
+
                             <field name="amount_payment_can_approve_all_after" string="本次认领后可申请支付金额"
                                    attrs="{'invisible':[('operation_wizard','not in',['03','20'])]}"/>
 
@@ -1465,10 +1473,12 @@
                                     <!--field name="amount_bank"/-->
                                     <field name="amount_diff_org" string="费用" invisible="1"/>
                                     <field name="amount_total_org" string="应付认领合计" groups="base.group_system"/>
+                                    <field name="amount_advance_org_percent" string="占原始比例"/>
                                     <button name="compute_amount_so" type="object" class="oe_highlight"
                                             string="计算上一次的未发货金额" groups="base.group_system"/>
                                     <button name="compute_so_tb_percent" type="object" class="oe_highlight"
                                             string="计算比例" groups="base.group_system"/>
+
 
                                 </tree>
                             </field>

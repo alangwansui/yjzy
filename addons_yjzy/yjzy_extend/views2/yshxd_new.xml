@@ -642,8 +642,11 @@
 
                             <!--                                </tree>-->
                             <!--                            </field>-->
+
+
                             <field name="amount_total_org_new" string="本次认领金额"
                                    attrs="{'invisible':[('operation_wizard','not in',['03','20','30'])]}"/>
+
                             <field name="amount_payment_can_approve_all_after" string="本次认领后可认领金额"
                                    attrs="{'invisible':[('operation_wizard','not in',['03','20','30'])]}"/>
                             <field name="account_payment_state_ids_count" invisible="1"/>

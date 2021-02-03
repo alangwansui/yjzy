@@ -313,9 +313,12 @@ class account_reconcile_order(models.Model):
                 continue
             lines = one.line_ids
             lines_no = one.line_no_ids
+            invoice_amount_total= one.invoice_amount_total
             amount_line_no = lines_no and sum(x.amount_total_org for x in lines_no) or 0
             amount_line = lines and sum(x.amount_payment_org for x in lines) or 0
+            amount_total_org_new_percent = (amount_line_no + amount_line)/invoice_amount_total
             one.amount_total_org_new = amount_line_no + amount_line
+            one.amount_total_org_new_percent= '%.2f%s' % (amount_total_org_new_percent*100, '%')
             print('amount_total_org_new', one.amount_total_org_new)
             # bank_currency = one.payment_currency_id.with_context(date=date)
             # diff_currency = one.payment_currency_id.with_context(date=date)
@@ -559,6 +562,7 @@ class account_reconcile_order(models.Model):
     invoice_date_invoice = fields.Date('出运日期',related='invoice_id.date_invoice')
     invoice_date_finish =  fields.Date('交单日期',related='invoice_id.date_finish')
     invoice_date_ship = fields.Date('出运船期',related='invoice_id.date_ship')
+    invoice_amount_total = fields.Monetary('账单原始金额',currency_field='invoice_currency_id',related='invoice_id.amount_total')
 
     invoice_attribute_all_in_one = fields.Selection(invoice_attribute_all_in_one, u'账单属性all_in_one',
                                                     compute=compute_invoice_id, store=True)
@@ -776,6 +780,8 @@ class account_reconcile_order(models.Model):
     amount_total_org_new = fields.Monetary(u'收款合计', currency_field='invoice_currency_id',
                                            compute=compute_amount_total_org_new,
                                            store=True)  # 0909新
+    amount_total_org_new_percent = fields.Char(u'占原始比例',
+                                           compute=compute_amount_total_org_new,                                           )  #
     amount_invoice = fields.Monetary(u'发票金额', currency_field='currency_id', compute=compute_by_invoice)
     amount_advance_residual = fields.Monetary(u'待核销预收', currency_field='currency_id', compute=compute_advance)
     amount_advance = fields.Monetary(u'使用预收', currency_field='currency_id', compute=compute_by_lines)
@@ -3655,6 +3661,14 @@ class account_reconcile_order_line(models.Model):
     # yjzy_currency_id = fields.Many2one('res.currency', u'预收币种',default=lambda self: self.env.user.company_id.currency_id.id)
     yjzy_currency_id = fields.Many2one('res.currency', u'预收币种', compute=_compute_yjzy_currency_id)
     amount_advance_org = fields.Monetary(u'预收金额', currency_field='yjzy_currency_id')
+    api.depends('amount_advance_org')
+    def compute_amount_advance_org_percent(self):
+        for one in self:
+            amount_advance_org = one.amount_advance_org
+            amount_total_invoice = one.amount_total_invoice
+            amount_advance_org_percent = '%.2f%s' % (amount_advance_org / amount_total_invoice * 100, '%')
+            one.amount_advance_org_percent = amount_advance_org_percent
+    amount_advance_org_percent = fields.Char('占原始金额的比例',compute=compute_amount_advance_org_percent)
 
     amount_advance = fields.Monetary(u'预收金额:本币', currency_field='currency_id', compute=compute_info)
     amount_payment_org = fields.Monetary(u'收款金额', currency_field='payment_currency_id')
