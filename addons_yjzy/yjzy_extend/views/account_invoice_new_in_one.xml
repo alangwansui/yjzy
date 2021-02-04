@@ -8,7 +8,7 @@
             <field name="model">account.invoice</field>
             <field name="arch" type="xml">
                 <form string="应收账单" class="o_invoice_form" create="false">
-                    <header groups="sales_team.group_manager">
+                    <header groups="account.group_account_manager">
                         <button name="action_create_yfhxd" context="{'invoice_attribute':invoice_attribute}"
                                 attrs="{'invisible':['|',('residual','=',0),('type','!=','in_invoice')]}"
                                 confirm="确定创建付款申请吗？"
