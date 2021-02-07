@@ -703,7 +703,7 @@ class account_invoice(models.Model):
             one.wait_advance = wait_advance >= 0 and wait_advance or 0
             one.amount_payment_can_approve_all_1 = amount_payment_can_approve_all_1
             one.rest_advance_so_po_balance = rest_advance_so_po_balance
-            one.jianyi_advance = jianyi_advance > rest_advance_so_po_balance and jianyi_advance or rest_advance_so_po_balance
+            one.jianyi_advance = jianyi_advance < rest_advance_so_po_balance and jianyi_advance or rest_advance_so_po_balance
 
 
 

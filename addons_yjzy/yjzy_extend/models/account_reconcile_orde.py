@@ -3259,10 +3259,13 @@ class account_reconcile_order(models.Model):
                 amount_org_hxd = sum(x.amount_advance_org for x in lishi_hxd)
                 print('amount_org_hxd_akiny', amount_org_hxd)
 
-                if yuanze_advance_so - amount_org_hxd > 0:
-                    advice_amount_advance_org_real = yuanze_advance_so - amount_org_hxd
-                else:
-                    advice_amount_advance_org_real = 0
+                # if yuanze_advance_so - amount_org_hxd > 0:
+                #     advice_amount_advance_org_real = yuanze_advance_so - amount_org_hxd
+                # else:
+                #     advice_amount_advance_org_real = 0
+                advice_amount_advance_org_real = yuanze_advance_so < one.yjzy_payment_id.advance_balance_total and yuanze_advance_so or one.yjzy_payment_id.advance_balance_total
+
+
                 #
                 # least_advice_amount_advance_org = one.yjzy_payment_id.advance_balance_total \
                 #                                   - one.yjzy_payment_id.po_id.no_deliver_amount_new \
