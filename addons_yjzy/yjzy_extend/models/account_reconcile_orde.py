@@ -316,7 +316,7 @@ class account_reconcile_order(models.Model):
             invoice_amount_total= one.invoice_amount_total
             amount_line_no = lines_no and sum(x.amount_total_org for x in lines_no) or 0
             amount_line = lines and sum(x.amount_payment_org for x in lines) or 0
-            amount_total_org_new_percent = (amount_line_no + amount_line)/invoice_amount_total
+            amount_total_org_new_percent = invoice_amount_total != 0 and (amount_line_no + amount_line)/invoice_amount_total or 0
             one.amount_total_org_new = amount_line_no + amount_line
             one.amount_total_org_new_percent= '%.2f%s' % (amount_total_org_new_percent*100, '%')
             print('amount_total_org_new', one.amount_total_org_new)
