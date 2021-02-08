@@ -385,16 +385,20 @@ class transport_bill(models.Model):
     #             'org_sale_amount_new': one.sale_currency_id.round(org_sale_amount_new),
     #         })
 
-    @api.depends('line_ids','line_ids.plan_qty','current_date_rate','state')
+    @api.depends('line_ids','line_ids.plan_qty','current_date_rate','line_ids.org_currency_sale_amount','state','hsname_ids','hsname_ids.amount')
     def amount_all(self):
         """
         Compute the total amounts of the SO.
         """
         for one in self:
             org_sale_amount_new = 0
+            org_real_sale_amount_new = 0
             if one.line_ids:
                 org_sale_amount_new = sum(x.org_currency_sale_amount for x in one.line_ids)
+            if one.hsname_ids:
+                org_real_sale_amount_new = sum([x.amount for x in one.hsname_ids])
             one.org_sale_amount_new = org_sale_amount_new
+            one.org_real_sale_amount_new = org_real_sale_amount_new
 
     @api.depends('line_ids.plan_qty','line_ids','current_date_rate','state','fee_inner','fee_rmb1','fee_rmb2','fee_outer')
     def _sale_purchase_amount(self):
@@ -908,7 +912,8 @@ class transport_bill(models.Model):
                                       digits=dp.get_precision('Money'))  #13ok
     org_real_sale_amount = fields.Monetary('实际销售金额', currency_field='sale_currency_id', compute=compute_info,
                                            digits=dp.get_precision('Money'))
-
+    org_real_sale_amount_new = fields.Monetary('出运金额', store=True,currency_field='sale_currency_id', compute=amount_all,
+                                           digits=dp.get_precision('Money'))
     # 统计金额
     sale_amount = fields.Monetary('销售金额', currency_field='third_currency_id', compute=compute_info,
                                   digits=dp.get_precision('Money')) #13ok

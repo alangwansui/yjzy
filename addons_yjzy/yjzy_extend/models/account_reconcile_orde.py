@@ -3832,7 +3832,7 @@ class account_reconcile_order_line_no(models.Model):
     invoice_residual_after = fields.Monetary(string=u'本次认领后可认领金额', readonly=True, currency_field='invoice_currency_id',
                                              compute=compute_amount_payment_can_approve_all_after)
 
-    reconcile_order_line_payment = fields.Monetary(related='invoice_id.reconcile_order_line_payment', string=u'发票付款支付',
+    reconcile_order_line_payment = fields.Monetary(related='invoice_id.amount_payment_org_done', string=u'发票付款支付',
                                                    readonly=True)
 
     reconcile_order_line_advance = fields.Monetary(related='invoice_id.reconcile_order_line_advance', string=u'发票预付认领',
