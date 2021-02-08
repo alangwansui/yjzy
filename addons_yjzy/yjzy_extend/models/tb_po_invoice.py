@@ -537,14 +537,14 @@ class tb_po_invoice(models.Model):
 
     def unlink(self):
         for one in self:
-            if one.state not in ['20_submit', '30_done']:
-                # if one.is_yjzy_tb_po_invoice_parent:
-                #     raise Warning('该申请为下级申请，请转到对应的上级申请进行删除')
+            # if one.state not in ['20_submit', '30_done']:
+            #     # if one.is_yjzy_tb_po_invoice_parent:
+            #     #     raise Warning('该申请为下级申请，请转到对应的上级申请进行删除')
                 one.invoice_ids.unlink()
                 one.yjzy_tb_po_invoice.unlink()
 
-            else:
-                raise Warning('提交审批的申请不允许删除！')
+            # else:
+            #     raise Warning('提交审批的申请不允许删除！')
 
         return super(tb_po_invoice, self).unlink()
 

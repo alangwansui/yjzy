@@ -428,7 +428,7 @@
 
                         <button name="action_draft" states="80_refuse" class="oe_highlight" type="object" string="重置草稿"
                                 invisible="context.get('open')"/>
-                        <button name="action_manager_approve" states="20_submit" class="oe_highlight" type='object'
+                        <button name="action_manager_approve" states="20_submit" class="oe_highlight" type='object' groups="sales_team.group_manager"
                                 string="总经理审批" invisible="context.get('open')"/>
                         <button name="%(tb_po_invoice_refuse_wizard_action)d" string="拒绝" groups="sales_team.group_manager"
                                 type="action" invisible="context.get('open')"
