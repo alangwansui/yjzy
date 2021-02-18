@@ -170,7 +170,7 @@ class account_payment(models.Model):
     #     self.compute_advance_type()
     #     return res
 
-    @api.depends('advance_reconcile_order_line_ids.order_id.state','amount','advance_reconcile_order_line_ids.amount_advance_org','advance_reconcile_order_line_ids',
+    @api.depends('advance_reconcile_order_line_ids.order_id.state','advance_balance_total','amount','advance_reconcile_order_line_ids.amount_advance_org','advance_reconcile_order_line_ids',
                  'payment_ids.amount','payment_ids','payment_ids.state')
     def compute_advance_balance_total(self):
         for one in self:
