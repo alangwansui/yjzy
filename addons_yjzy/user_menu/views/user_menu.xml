@@ -569,7 +569,7 @@
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('user_menu_account_kanban')}),
                          ]"/>
     </record>
-    <menuitem id="menu_user_account_menu_cashier" name="出纳工作台" parent="yjzy_extend.menu_new_account_root" action="action_user_account_menu_cashier" sequence="0"/>
+    <menuitem id="menu_user_account_menu_cashier" name="出纳工作台" parent="yjzy_extend.menu_new_account_root" groups="base.group_system" action="action_user_account_menu_cashier" sequence="0"/>
 
 
 
