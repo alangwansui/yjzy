@@ -421,6 +421,13 @@ class account_payment(models.Model):
             one.yshxd_ids_line_no_ids = p
 
 
+    def compute_amount_bank_now(self):
+        payment_ids = self.env['account.payment'].search([('sfk_type','in',['rcskd','fkzl']),('journal_id','=',self.journal_id.id)])
+        print('payment_ids_akiny',payment_ids)
+        amount_bank_now = sum(x.amount_signed_payment for x in payment_ids)
+        self.amount_bank_now = amount_bank_now
+
+
     reconcile_type = fields.Selection([
         ('03_advance_in', u'预收生成'),
         ('04_advance_out', u'预付生成'),
@@ -707,6 +714,12 @@ class account_payment(models.Model):
     post_uid = fields.Many2one('res.users',u'审批人')
     post_date = fields.Date(u'审批时间')
 
+    amount_bank_now = fields.Float('账户余额')
+
+
+
+
+
 
     # def create_account_bank_statement(self):
     #     print('invoice_ids', self.ids)
@@ -771,6 +784,8 @@ class account_payment(models.Model):
     #                     'show_po': 1,
     #                     }
     #     }
+
+
 
     def new_advance_payment_id_chushihua(self):
         for one in self:
@@ -1104,6 +1119,7 @@ class account_payment(models.Model):
                     raise Warning('请填写收款备注信息！')
                 else:
                     self.state_1 = '25_cashier_submit'
+                    self.compute_amount_bank_now()
                     self.action_cashier_post()
             elif ctx.get('default_sfk_type', '') == 'rcfkd' or self.sfk_type == 'rcfkd':
                 if not self.bank_id:
@@ -1150,6 +1166,7 @@ class account_payment(models.Model):
                 self.state_1 = '25_cashier_submit'
                 self.state_fkzl = '20_wait_pay'
                 self.state = 'approved'
+                self.compute_amount_bank_now()
                 for one in self.fksqd_2_ids:
                     one.state_1 = '20_account_submit'
 

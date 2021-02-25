@@ -157,6 +157,7 @@
                     </div>
                     <group>
                         <group>
+                            <field name="amount_bank_now"/>
                             <field name="display_name" string="单号"/>
                             <field name="name" invisible="1"/>
                             <label for="amount" string="收款金额"/>

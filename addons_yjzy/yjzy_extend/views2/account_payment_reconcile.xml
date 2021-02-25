@@ -263,7 +263,7 @@
 
                                 <field name="communication"
                                        attrs="{'invisible': [('state', '!=', 'draft'), ('communication', '=', False)], 'readonly': [('state', '!=', 'draft')]}"/>
-                                <field name="fault_comments" invisible="1"/>
+                                <field name="fault_comments" />
                             </group>
                         </group>
                         <notebook>
@@ -414,7 +414,7 @@
             <field name="search_view_id" ref="view_account_payment_search_new"/>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_ysrld_reconcile_tree_1')}),
-                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_ysrld_form')})]"/>
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_ysrld_form_latest')})]"/>
         </record>
         <menuitem id="menu_ysrld_to_reconcile" parent="menu_create_to_sale_reconcile" name="创建预收核销" sequence="30"
                   action="action_ysrld_to_reconcile"/>

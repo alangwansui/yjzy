@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record model="ir.ui.view" id="view_rcskd_fkzl_tree">
+        <field name="name">account.payment.tree</field>
+        <field name="model">account.payment</field>
+        <field name="priority" eval="99"/>
+        <field name="arch" type="xml">
+            <tree string="收付流水" decoration-info="state == 'draft'" create="false" decoration-muted="state in ['reconciled', 'cancelled']" edit="false">
+                <field name="name"/>
+                <field name="partner_id" invisible="1"/>
+                <field name="payment_date" string="日期"/>
+                <field name="payment_comments"/>
+                <field name="journal_id" string="账户"/>
+                <field name="amount_signed_payment" string="发生金额"/>
+                <field name="amount_bank_now" string="余额"/>
+                <field name="company_id" groups="base.group_system"/>
+
+
+                <field name="state_1" groups="base.group_system"/>
+                <field name="state" groups="base.group_system"/>
+                <field name="currency_id" attrs="{}" invisible="1" required="1"/>
+            </tree>
+        </field>
+    </record>
+
+
+
+    <record model="ir.actions.act_window" id="action_rcskd_fkzl">
+        <field name="name">收付流水</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.payment</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree</field>
+        <field name="domain">[('sfk_type','in',['rcskd','fkzl']),('state','in',['posted','reconciled'])]</field>
+
+        <field name="context">{}
+        </field>
+        <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_rcskd_fkzl_tree')})]"/>
+    </record>
+    <menuitem id="menu_rcskd_fkzl" sequence="99" name="收付流水" parent="yjzy_extend.menu_rcskd_new"
+              action="action_rcskd_fkzl"/>
+
+
+</odoo>

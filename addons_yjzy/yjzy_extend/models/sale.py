@@ -33,6 +33,7 @@ class SaleOrderStage(models.Model):
     _order = 'sequence'
 
     name = fields.Char('Stage Name', translate=True, required=True)
+    name = fields.Char('Stage Name', translate=True, required=True)
     code = fields.Char('code')
     sequence = fields.Integer(help="Used to order the note stages", default=1)
     state = fields.Selection(Sale_Selection, 'State', default=Stage_Status_Default)  # track_visibility='onchange',

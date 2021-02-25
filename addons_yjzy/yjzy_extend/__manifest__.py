@@ -66,6 +66,7 @@
         'views/account_invoice.xml',
         'views/account_invoice_new.xml',
 
+
         'views/account_reconcile_orde.xml',
         'views/account_reconcile_orde2.xml',
         #'views/account_reconcile_orde3.xml',
@@ -131,6 +132,7 @@
         'views/product_product_new.xml',
         'views/dashboard.xml',
         'views/transport_bill_customs_invoice.xml',
+        'views/bank_reconciliation.xml',
 
         'views/trasnport_bill_stage.xml',
         'views/sale_stage.xml',
@@ -153,6 +155,7 @@
         'views2/ysrld.xml',
         'views2/yfsqd.xml',
         'views2/rcfksqd.xml',
+        'views2/rcskd_fkzl.xml',
         'views2/rcskrld.xml',
         'views2/yshxd.xml',
         'views2/yshxd_new.xml',
