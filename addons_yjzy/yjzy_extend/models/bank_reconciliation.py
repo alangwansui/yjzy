@@ -107,5 +107,5 @@ class BankReconciliation(models.Model):
     @api.constrains('date')
     def check_date(self):
         for one in self:
-            if self.search_count([('date', '=', one.date)]) > 1:
+            if self.search_count([('date', '=', one.date),('company_id','=',one.company_id)]) > 1:
                 raise Warning('同一天只能创建一次对账单')
