@@ -160,9 +160,9 @@
       <td width="20%">单号：<field name="name" readonly="1"/></td>
       <td width="24%">付款主体：<field name="company_id" readonly="1"/></td>
 
-      <td width="26%">付款银行：<field name="journal_id" readonly="1"/></td>
+      <td width="31%">付款银行：<field name="journal_id" readonly="1"/>余额：<field name="amount_bank_now" readonly="1"/> </td>
 
-      <td width="15%">第<field name="id" readonly="1"/>号</td>
+      <td width="10%">第<field name="id" readonly="1"/>号</td>
     </tr>
   </tbody>
 </table>
