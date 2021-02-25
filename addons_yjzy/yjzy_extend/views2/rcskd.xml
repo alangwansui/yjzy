@@ -284,7 +284,7 @@
 
 
     <menuitem id="menu_rcskd_new"  sequence="10" name="日常收款单" parent="yjzy_extend.menu_new_account_in_root"/>
-     <menuitem id="menu_rcskd_new_cashier"  sequence="10" name="日常收款单" parent="yjzy_extend.menu_new_account_root"/>
+
     <menuitem id="menu_rcskd"  sequence="0" name="日常收款单" parent="menu_skf_root" action="action_rcskd"/>
 
  <record id="action_new_action_rcskd" model="ir.actions.act_window">

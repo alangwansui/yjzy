@@ -4,6 +4,15 @@
 
         <menuitem id="menu_skf_root" name="收付款"/>
         <menuitem id="menu_new_account_root" name="出纳" sequence="99"/>
+        <menuitem id="menu_rcskd_latest" name="日常收款单" parent="menu_new_account_root" sequence="1"/>
+        <menuitem id="menu_rcskd_chaxun_cashier" name="查询" parent="menu_rcskd_latest" action="yjzy_extend.action_rcskd_all_1103" sequence="1"/>
+        <menuitem id="menu_rcskd_create_cashier" name="创建收款" parent="menu_rcskd_latest" action="yjzy_extend.action_create_rcskd_1103" sequence="2"/>
+        <menuitem id="menu_pay_out_cashier" name="付款" parent="menu_new_account_root" sequence="2"/>
+        <menuitem id="menu_fkzl_cashier" name="查询付款指令" parent="menu_pay_out_cashier" action="yjzy_extend.action_fkzl" sequence="1"/>
+        <menuitem id="menu_Reconciliation_cashier" name="对账" parent="menu_new_account_root" sequence="3"/>
+        <menuitem id="menu_bank_reconciliation_cashier" name="账户对账单" parent="menu_Reconciliation_cashier" action="bank_reconciliation_action" sequence="1"/>
+        <menuitem id="menu_rcskd_fkzl_cashier" name="收付流水" parent="menu_Reconciliation_cashier" action="action_rcskd_fkzl" sequence="2"/>
+
         <menuitem id="menu_new_account_out_root" name="财务-付款" sequence="99"/>
         <menuitem id="menu_new_account_in_root" name="财务-收款" sequence="99"/>
 

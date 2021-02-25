@@ -1111,7 +1111,7 @@
             </form>
         </field>
     </record>
-    <menuitem id="menu_yshxd_new" sequence="50" name="应收认领单" parent="menu_new_account_root"/>
+
     <menuitem id="menu_yshxd_payment_new" sequence="60" name="应收-收款申请" parent="menu_new_account_in_root"
               groups="base.group_system"/>
     <menuitem id="menu_yshxd_advance_new" sequence="50" name="应收-预收认领" parent="menu_new_account_in_root"
