@@ -72,7 +72,7 @@ class BankReconciliation(models.Model):
     def action_done(self):
         for x in self.account_bank_statement_ids:
             if x.amount_account_bank_cash != x.balance_start:
-                raise Warning('账户%s金额未能对上，请检查' % x.journal_id.name)
+                raise Warning('账户%s金额未能对上，请检查' % (x.journal_id.name))
             else:
                 x.state='confirm'
             self.state='done'
