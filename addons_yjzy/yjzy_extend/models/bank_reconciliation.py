@@ -64,7 +64,6 @@ class BankReconciliation(models.Model):
 
     state = fields.Selection([('draft',u'草稿'),('done','完成'),('refuse','拒绝')],u'状态',readonly=True, copy=False, index=True, track_visibility='onchange',default='draft',)
     name = fields.Char('编号')
-
     date = fields.Date('对账日期',default=lambda self:fields.date.today())
     done_uid = fields.Many2one('res.users','审批人')
     done_date = fields.Datetime('完成日期')
