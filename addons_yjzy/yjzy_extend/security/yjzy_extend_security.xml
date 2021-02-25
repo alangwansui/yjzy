@@ -11,7 +11,7 @@
         <field name="domain_force">['|',('company_id','=',False),('company_id','child_of',[user.company_id.id])]</field>
     </record>
 
-      <record model="ir.rule" id="tb_po_invoice_rule">
+      <record model="ir.rule" id="bank_reconciliation_rule">
         <field name="name">bank_reconciliation_multi-company</field>
         <field name="model_id" search="[('model','=','bank.reconciliation')]" model="ir.model"/>
         <field name="global" eval="True"/>
