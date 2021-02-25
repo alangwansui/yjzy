@@ -13,6 +13,8 @@
                     <field name="usd_currency_id" invisible="1"/>
                     <field name="amount_usd"/>
                     <field name="amount_cny"/>
+                    <field name="amount_all"/>
+                    <field name="amount_balance_start"/>
                     <field name="description"/>
                     <field name="state"/>
                 </tree>

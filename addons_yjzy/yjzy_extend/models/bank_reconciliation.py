@@ -51,6 +51,15 @@ class BankReconciliation(models.Model):
             amount_cny = sum(x.amount_account_bank_cash_cny for x in one.account_bank_statement_ids)
             one.amount_usd = amount_usd
             one.amount_cny = amount_cny
+    @api.depends('account_bank_statement_ids','account_bank_statement_ids.amount_account_bank_cash')
+    def compute_amount_all(self):
+        for one in self:
+            one.amount_all = sum(x.amount_account_bank_cash for x in one.account_bank_statement_ids)
+
+    @api.depends('account_bank_statement_ids', 'account_bank_statement_ids.balance_start')
+    def compute_amount_balance_start(self):
+        for one in self:
+            one.amount_balance_start = sum(x.balance_start for x in one.account_bank_statement_ids)
 
 
     state = fields.Selection([('draft',u'草稿'),('done','完成'),('refuse','拒绝')],u'状态',readonly=True, copy=False, index=True, track_visibility='onchange',default='draft',)
@@ -64,8 +73,12 @@ class BankReconciliation(models.Model):
     cny_currency_id = fields.Many2one('res.currency','人名币', default=lambda self:self._default_cny_currency_id())
     amount_usd = fields.Monetary('美金总金额', currency_field = 'usd_currency_id',compute=compute_account_usd_cny,store=True)
     amount_cny = fields.Monetary('人名币总金额',currency_field = 'cny_currency_id',compute=compute_account_usd_cny,strore=True)
+    amount_all = fields.Float('总金额',compute=compute_amount_all,strore=True)
+    amount_balance_start = fields.Float('总金额',compute=compute_amount_balance_start,strore=True)
     company_id = fields.Many2one('res.company',u'公司',default=lambda self: self.env.user.company_id.id)
     account_bank_statement_ids = fields.One2many('account.bank.statement','bank_reconciliation_id', default=lambda self: self._default_account_bank_statemen(),)
+
+
     # _sql_constraints = [
     #     ('unique_date', 'unique(date)', '一天只能创建一次对账单'),
     # ]
