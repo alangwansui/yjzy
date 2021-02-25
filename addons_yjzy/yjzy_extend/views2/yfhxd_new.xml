@@ -1809,7 +1809,7 @@
     </record>
 
 
-
+    <menuitem id="menu_yfhxd_new" sequence="50" name="应付申请" parent="menu_new_account_root"/>
     <menuitem id="menu_yfhxd_payment_new" sequence="60" name="应付-付款申请" parent="menu_new_account_out_root"/>
     <menuitem id="menu_yfhxd_advance_new" sequence="50" name="应付-预付认领" parent="menu_new_account_out_root"/>
     <menuitem id="menu_yfhxd_reconcile_new" sequence="70" name="应付-核销认领" parent="menu_new_account_out_root"/>

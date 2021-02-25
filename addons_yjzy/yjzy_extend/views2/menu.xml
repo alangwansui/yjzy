@@ -9,7 +9,16 @@
         <menuitem id="menu_rcskd_create_cashier" name="创建收款" parent="menu_rcskd_latest" action="yjzy_extend.action_create_rcskd_1103" sequence="2"/>
         <menuitem id="menu_pay_out_cashier" name="付款" parent="menu_new_account_root" sequence="2"/>
         <menuitem id="menu_fkzl_cashier" name="查询付款指令" parent="menu_pay_out_cashier" action="yjzy_extend.action_fkzl" sequence="1"/>
-        <menuitem id="menu_Reconciliation_cashier" name="对账" parent="menu_new_account_root" sequence="3"/>
+        <menuitem id="menu_transfer_accounts_cashier" name="转账" parent="menu_new_account_root"  sequence="3"/>
+        <menuitem id="menu_nbzz_cashier_root" name="内部转账" parent="menu_transfer_accounts_cashier"  sequence="1"/>
+        <menuitem id="menu_fkzl_create_cashier" name="创建" parent="menu_nbzz_cashier_root" action="yjzy_extend.action_nbzz_new_create" sequence="1"/>
+        <menuitem id="menu_fkzl_chaxun_cashier" name="查询" parent="menu_nbzz_cashier_root" action="yjzy_extend.action_nbzz_new_all" sequence="2"/>
+        <menuitem id="menu_jiehui_cashier_root" name="结汇" parent="menu_transfer_accounts_cashier"  sequence="2"/>
+        <menuitem id="menu_jiehui_create_cashier" name="创建" parent="menu_jiehui_cashier_root" action="yjzy_extend.action_jiehui_create" sequence="1"/>
+        <menuitem id="menu_jiehui_chaxun_cashier" name="查询" parent="menu_jiehui_cashier_root" action="yjzy_extend.action_jiehui_all" sequence="2"/>
+
+
+        <menuitem id="menu_Reconciliation_cashier" name="对账" parent="menu_new_account_root" sequence="4"/>
         <menuitem id="menu_bank_reconciliation_cashier" name="账户对账单" parent="menu_Reconciliation_cashier" action="bank_reconciliation_action" sequence="1"/>
         <menuitem id="menu_rcskd_fkzl_cashier" name="收付流水" parent="menu_Reconciliation_cashier" action="action_rcskd_fkzl" sequence="2"/>
 
