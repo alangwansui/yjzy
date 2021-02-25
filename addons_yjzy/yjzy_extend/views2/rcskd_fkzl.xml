@@ -39,7 +39,7 @@
         <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_rcskd_fkzl_tree')})]"/>
     </record>
-    <menuitem id="menu_rcskd_fkzl" sequence="99" name="收付流水" parent="yjzy_extend.menu_rcskd_new"
+    <menuitem id="menu_rcskd_fkzl" sequence="99" name="收付流水" parent="yjzy_extend.menu_new_account_out_root"
               action="action_rcskd_fkzl"/>
 
 
