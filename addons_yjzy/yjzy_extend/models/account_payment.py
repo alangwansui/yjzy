@@ -427,6 +427,26 @@ class account_payment(models.Model):
         amount_bank_now = sum(x.amount_signed_payment for x in payment_ids)
         self.amount_bank_now = amount_bank_now
 
+    def compute_amount_bank_cash_usd(self):
+        payment_ids = self.env['account.payment'].search(
+            [('sfk_type', 'in', ['rcskd', 'fkzl']), ('journal_id.currency_id.name', '=','USD'),('journal_id.type','in',['bank','cash'])])
+        amount_bank_cash_usd = sum(x.amount_signed_payment for x in payment_ids)
+        self.amount_bank_cash_usd = amount_bank_cash_usd
+
+    def compute_amount_bank_cash_cny(self):
+        payment_ids = self.env['account.payment'].search(
+            [('sfk_type', 'in', ['rcskd', 'fkzl']), ('journal_id.currency_id.name', '=','CNY'),('journal_id.type','in',['bank','cash'])])
+        amount_bank_cash_cny = sum(x.amount_signed_payment for x in payment_ids)
+        self.amount_bank_cash_cny = amount_bank_cash_cny
+
+    def _default_usd_currency_id(self):
+        usd_currency_id = self.env['res.currency'].search([('name','=','USD')])
+        return usd_currency_id.id
+
+    def _default_cny_currency_id(self):
+        cny_currency_id = self.env['res.currency'].search([('name', '=', 'CNY')])
+        return cny_currency_id.id
+
 
     reconcile_type = fields.Selection([
         ('03_advance_in', u'预收生成'),
@@ -714,7 +734,12 @@ class account_payment(models.Model):
     post_uid = fields.Many2one('res.users',u'审批人')
     post_date = fields.Date(u'审批时间')
 
-    amount_bank_now = fields.Float('账户余额')
+    amount_bank_now = fields.Monetary('账户余额',currency_field='currency_id')
+    usd_currency_id = fields.Many2one('res.currency', '美金', default=lambda self: self._default_usd_currency_id())
+    cny_currency_id = fields.Many2one('res.currency', '人名币', default=lambda self: self._default_cny_currency_id())
+    amount_bank_cash_usd = fields.Monetary('公司总账余额(美金)',currency_field='usd_currency_id')
+    amount_bank_cash_cny = fields.Monetary('公司总账余额(人名币)',currency_field='cny_currency_id')
+
 
 
 
@@ -1120,6 +1145,8 @@ class account_payment(models.Model):
                 else:
                     self.state_1 = '25_cashier_submit'
                     self.compute_amount_bank_now()
+                    self.compute_amount_bank_cash_cny()
+                    self.compute_amount_bank_cash_usd()
                     self.action_cashier_post()
             elif ctx.get('default_sfk_type', '') == 'rcfkd' or self.sfk_type == 'rcfkd':
                 if not self.bank_id:
@@ -1167,6 +1194,8 @@ class account_payment(models.Model):
                 self.state_fkzl = '20_wait_pay'
                 self.state = 'approved'
                 self.compute_amount_bank_now()
+                self.compute_amount_bank_cash_cny()
+                self.compute_amount_bank_cash_usd()
                 for one in self.fksqd_2_ids:
                     one.state_1 = '20_account_submit'
 
