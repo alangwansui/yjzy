@@ -25,7 +25,8 @@
             <field name="arch" type="xml">
                 <form string="银行对账单">
                     <header>
-                        <button name="action_done" type="object" string="确认"/>
+                        <button name="action_done" type="object" states="draft"  string="确认"/>
+                        <button name="action_refuse" type="object" states="done"  string="重置" />
                         <field name="state" widget="statusbar"/>
                     </header>
                     <sheet>

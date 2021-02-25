@@ -53,7 +53,7 @@ class BankReconciliation(models.Model):
             one.amount_cny = amount_cny
 
 
-    state = fields.Selection([('draft',u'草稿'),('done','完成')],u'状态',default='draft')
+    state = fields.Selection([('draft',u'草稿'),('done','完成'),('refuse','拒绝')],u'状态',readonly=True, copy=False, index=True, track_visibility='onchange',default='draft',)
     name = fields.Char('编号')
 
     date = fields.Date('对账日期',default=lambda self:fields.date.today())
@@ -76,6 +76,12 @@ class BankReconciliation(models.Model):
             else:
                 x.state='confirm'
             self.state='done'
+
+    def action_refuse(self):
+        for x in self.account_bank_statement_ids:
+            if x.amount_account_bank_cash != x.balance_start:
+                x.state='open'
+            self.state='draft'
 
     # def write(self, vals):
     #     res = super(BankReconciliation, self).write(vals)
