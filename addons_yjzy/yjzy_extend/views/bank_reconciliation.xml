@@ -12,8 +12,8 @@
                     <field name="description"/>
                     <field name="cny_currency_id" invisible="1"/>
                     <field name="usd_currency_id" invisible="1"/>
- <field name="amount_usd"/>
-                            <field name="amount_cny"/>
+                    <field name="amount_usd"/>
+                    <field name="amount_cny"/>
                     <field name="state"/>
                 </tree>
             </field>
