@@ -29,7 +29,7 @@
 
         'data/res_groups.xml',
         'views2/menu.xml',
-        'views/menu.xml',
+
 
 
         'template/no_header_external_layout.xml',
@@ -144,7 +144,7 @@
         'views/hr_expense_other_payment.xml',
         'views/account_bank_statement_1.xml',
         'views/real_invoice.xml',
-
+        'views/menu.xml',
 
 
 
