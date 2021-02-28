@@ -146,7 +146,7 @@
         'views/account_bank_statement_1.xml',
         'views/real_invoice.xml',
         'views/menu.xml',
-        'views2/menu.xml',
+
 
 
 
@@ -174,6 +174,7 @@
         'views2/expense_sheet.xml',
         'views2/fkzl.xml',
         'views2/rcfkd_fksq.xml',
+        'views2/menu.xml',
 
         'views/back_tax_declaration.xml',
 
