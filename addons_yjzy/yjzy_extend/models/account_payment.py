@@ -421,19 +421,38 @@ class account_payment(models.Model):
             one.yshxd_ids_line_no_ids = p
 
 
-    def compute_amount_bank_now(self):
+    def compute_amount_bank_now_old(self):
         payment_ids = self.env['account.payment'].search([('sfk_type','in',['rcskd','fkzl']),('journal_id','=',self.journal_id.id)])
+
         print('payment_ids_akiny',payment_ids)
         amount_bank_now = sum(x.amount_signed_payment for x in payment_ids)
-        self.amount_bank_now = amount_bank_now
+        self.amount_bank_now = amount_bank_noS
 
-    def compute_amount_bank_cash_usd(self):
+    def compute_amount_bank_now(self):
+
+        amount_bank_now = self.env['account.move.line'].search(
+            [('account_id', '=',self.journal_id.default_debit_account_id.id)])
+        if self.currency_id.name == 'CNY':
+            amount_bank_now = sum((x.debit - x.credit) for x in amount_bank_now)
+        else:
+            amount_bank_now = sum(x.amount_currency for x in amount_bank_now)+self.amount_signed_payment
+        aml_cny = self.env['account.move.line'].search([('account_id.user_type_id.name','=','银行和现金'),('currency_id.name','=','CNY')])
+        aml_usd = self.env['account.move.line'].search(
+            [('account_id.user_type_id.name', '=', '银行和现金'), ('currency_id.name', '=', 'USD')])
+        amount_bank_cash_cny = sum((x.debit - x.credit) for x in aml_cny)
+        amount_bank_cash_USD = sum(x.amount_currency for x in aml_usd)
+        amount_bank_now = amount_bank_now
+        self.amount_bank_now = amount_bank_now
+        self.amount_bank_cash_cny = amount_bank_cash_cny
+        self.amount_bank_cash_usd = amount_bank_cash_USD
+
+    def compute_amount_bank_cash_usd_old(self):
         payment_ids = self.env['account.payment'].search(
             [('sfk_type', 'in', ['rcskd', 'fkzl']), ('journal_id.currency_id.name', '=','USD'),('journal_id.type','in',['bank','cash'])])
         amount_bank_cash_usd = sum(x.amount_signed_payment for x in payment_ids)
         self.amount_bank_cash_usd = amount_bank_cash_usd
 
-    def compute_amount_bank_cash_cny(self):
+    def compute_amount_bank_cash_cny_old(self):
         payment_ids = self.env['account.payment'].search(
             [('sfk_type', 'in', ['rcskd', 'fkzl']), ('journal_id.currency_id.name', '=','CNY'),('journal_id.type','in',['bank','cash'])])
         amount_bank_cash_cny = sum(x.amount_signed_payment for x in payment_ids)
@@ -1145,8 +1164,8 @@ class account_payment(models.Model):
                 else:
                     self.state_1 = '25_cashier_submit'
                     self.compute_amount_bank_now()
-                    self.compute_amount_bank_cash_cny()
-                    self.compute_amount_bank_cash_usd()
+                    # self.compute_amount_bank_cash_cny()
+                    # self.compute_amount_bank_cash_usd()
                     self.action_cashier_post()
             elif ctx.get('default_sfk_type', '') == 'rcfkd' or self.sfk_type == 'rcfkd':
                 if not self.bank_id:
@@ -1194,8 +1213,8 @@ class account_payment(models.Model):
                 self.state_fkzl = '20_wait_pay'
                 self.state = 'approved'
                 self.compute_amount_bank_now()
-                self.compute_amount_bank_cash_cny()
-                self.compute_amount_bank_cash_usd()
+                # self.compute_amount_bank_cash_cny()
+                # self.compute_amount_bank_cash_usd()
                 for one in self.fksqd_2_ids:
                     one.state_1 = '20_account_submit'
 

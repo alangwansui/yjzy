@@ -40,14 +40,13 @@
         </record>
 
         <record model="ir.ui.view" id="extend_view_picking_type_form">
-        	<field name="name">stock.picking.type.tree</field>
+        	<field name="name">stock.picking.type.form</field>
         	<field name="model">stock.picking.type</field>
         	<field name="inherit_id" ref="stock.view_picking_type_form"/>
         	<field name="arch" type="xml">
                 <field name="warehouse_id" position="after">
                     <field name="ref" required="1"/>
                     <field name="company_id"/>
-
 
                 </field>
         	</field>
