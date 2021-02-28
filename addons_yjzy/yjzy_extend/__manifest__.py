@@ -28,6 +28,7 @@
     'data': [
 
         'data/res_groups.xml',
+        'views/bank_reconciliation.xml',
         'views2/menu.xml',
 
 
@@ -132,7 +133,7 @@
         'views/product_product_new.xml',
         'views/dashboard.xml',
         'views/transport_bill_customs_invoice.xml',
-        'views/bank_reconciliation.xml',
+
 
         'views/trasnport_bill_stage.xml',
         'views/sale_stage.xml',
