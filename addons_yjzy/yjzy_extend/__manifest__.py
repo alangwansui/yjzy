@@ -29,7 +29,7 @@
 
         'data/res_groups.xml',
         'views/bank_reconciliation.xml',
-        'views2/menu.xml',
+
 
 
 
@@ -146,6 +146,7 @@
         'views/account_bank_statement_1.xml',
         'views/real_invoice.xml',
         'views/menu.xml',
+        'views2/menu.xml',
 
 
 
