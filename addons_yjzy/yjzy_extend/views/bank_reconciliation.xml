@@ -28,32 +28,31 @@
                 <form string="银行对账单">
                     <header>
                         <button name="action_done" type="object" states="draft"  string="确认"/>
-                        <button name="action_refuse" type="object" states="done"  string="重置" />
+                        <button name="action_refuse" type="object" states="un_done"  string="总经理重置" groups="sales_team.group_manager"/>
                         <field name="state" widget="statusbar"/>
                     </header>
                     <sheet>
                         <group>
-                            <field name="name"/>
-                            <field name="date"/>
-
+                            <field name="name" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            <field name="date" attrs="{'readonly':[('state','!=','draft')]}"/>
                             <field name="cny_currency_id" invisible="1"/>
                             <field name="usd_currency_id" invisible="1"/>
-                            <field name="amount_usd"/>
-                            <field name="amount_cny"/>
-                            <field name="description"/>
+                            <field name="amount_usd" attrs="{'invisible':[('state','=','draft')]}"/>
+                            <field name="amount_cny" attrs="{'invisible':[('state','=','draft')]}"/>
+                            <field name="description" attrs="{'readonly':[('state','=','draft')]}"/>
                         </group>
                         <notebook>
                             <page string="账户明细">
-                                <field name="account_bank_statement_ids">
+                                <field name="account_bank_statement_ids" attrs="{'readonly':[('state','!=','draft')]}">
                                     <tree editable="bottom"
                                           decoration-danger="amount_account_bank_cash != balance_start">
                                         <field name="date"/>
                                         <field name="journal_id" string="账户"/>
                                         <field name="company_id" invisible="1"/>
                                         <field name="currency_id" invisible="1"/>
-                                        <field name="amount_account_bank_cash"/>
-                                        <field name="amount_account_bank_cash_usd"/>
-                                        <field name="amount_account_bank_cash_cny"/>
+                                        <field name="amount_account_bank_cash" attrs="{'column_invisible':[('parent.state','=','draft')]}"/>
+                                        <field name="amount_account_bank_cash_usd"  attrs="{'column_invisible':[('parent.state','=','draft')]}"/>
+                                        <field name="amount_account_bank_cash_cny"  attrs="{'column_invisible':[('parent.state','=','draft')]}"/>
                                         <field name="state" invisible="1"/>
                                         <field name="balance_start" string="实际账户余额"/>
                                     </tree>

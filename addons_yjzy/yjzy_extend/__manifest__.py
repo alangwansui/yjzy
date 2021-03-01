@@ -174,6 +174,7 @@
         'views2/expense_sheet.xml',
         'views2/fkzl.xml',
         'views2/rcfkd_fksq.xml',
+        'views2/account_move_line_bank.xml',
         'views2/menu.xml',
 
         'views/back_tax_declaration.xml',

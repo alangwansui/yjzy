@@ -62,7 +62,7 @@ class BankReconciliation(models.Model):
             one.amount_balance_start = sum(x.balance_start for x in one.account_bank_statement_ids)
 
 
-    state = fields.Selection([('draft',u'草稿'),('done','完成'),('refuse','拒绝')],u'状态',readonly=True, copy=False, index=True, track_visibility='onchange',default='draft',)
+    state = fields.Selection([('draft',u'草稿'),('un_done','对不上'),('done','完成'),('refuse','拒绝')],u'状态',readonly=True, copy=False, index=True, track_visibility='onchange',default='draft',)
     name = fields.Char('编号')
     date = fields.Date('对账日期',default=lambda self:fields.date.today())
     done_uid = fields.Many2one('res.users','审批人')
@@ -81,13 +81,23 @@ class BankReconciliation(models.Model):
     # _sql_constraints = [
     #     ('unique_date', 'unique(date)', '一天只能创建一次对账单'),
     # ]
-    def action_done(self):
+    def action_done_old(self):
         for x in self.account_bank_statement_ids:
             if x.amount_account_bank_cash != x.balance_start:
-                raise Warning('账户%s金额未能对上，请检查' % (x.journal_id.name))
+                # raise Warning('账户%s金额未能对上，请检查' % (x.journal_id.name))
+                self.state = 'un_done'
             else:
                 x.state='confirm'
-            self.state='done'
+                self.state='done'
+
+    def action_done(self):
+        un_done_account_bank_statement_ids = self.account_bank_statement_ids.filtered(lambda x: x.amount_account_bank_cash !=x.balance_start)
+        if len(un_done_account_bank_statement_ids) > 0:
+            self.state = 'un_done'
+        else:
+            for x in self.account_bank_statement_ids:
+                x.state = 'confirm'
+            self.state = 'done'
 
     def action_refuse(self):
         for x in self.account_bank_statement_ids:
@@ -102,6 +112,12 @@ class BankReconciliation(models.Model):
     #     if len(bank_reconciliation_id) != 0:
     #         raise Warning('一天只允许创建一个对账单')
     #     return res
+
+    def unlink(self):
+        for one in self:
+            if one.state != 'state':
+                raise Warning(u'只有草稿状态的对账单才允许删除!')
+        return super(BankReconciliation, self).unlink()
 
     @api.constrains('date')
     def check_date(self):

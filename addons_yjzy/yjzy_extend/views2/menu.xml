@@ -21,6 +21,7 @@
         <menuitem id="menu_Reconciliation_cashier" name="对账" parent="menu_new_account_root" sequence="4"/>
         <menuitem id="menu_bank_reconciliation_cashier" name="账户对账单" parent="menu_Reconciliation_cashier" action="bank_reconciliation_action" sequence="1"/>
         <menuitem id="menu_rcskd_fkzl_cashier" name="收付流水" parent="menu_Reconciliation_cashier" action="action_rcskd_fkzl" sequence="2"/>
+        <menuitem id="menu_move_line_bank_cashier" name="收付流水" parent="menu_Reconciliation_cashier" action="action_move_line_bank" sequence="3"/>
 
         <menuitem id="menu_new_account_out_root" name="财务-付款" sequence="99"/>
         <menuitem id="menu_new_account_in_root" name="财务-收款" sequence="99"/>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+     <record id="view_account_move_line_bank_filter" model="ir.ui.view">
+            <field name="name">Journal Items</field>
+            <field name="model">account.move.line</field>
+            <field name="arch" type="xml">
+                <search string="Search Journal Items">
+                    <field name="name" filter_domain="['|', '|', ('name','ilike',self),('account_id.name','ilike',self), ('ref','ilike',self)]" string="Move"/>
+                    <field name="comments"/>
+                    <field name="date"/>
+                    <separator/>
+                    <filter string="收款" domain="[('amount_bank_now','&gt;=',0)]" help="Unposted Journal Items"/>
+                    <filter name="pay out" string="付款" domain="[('amount_bank_now','&lt;=',0)]" help="Posted Journal Items"/>
+                    <separator/>
+                    <filter string="美金" domain="[('account_currency_id.name', '=', 'USD')]"/>
+                    <filter string="人名币" domain="[('account_currency_id.name', '=', 'CNY')]"/>
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter string="账户" domain="[]" context="{'group_by':'account_id'}"/>
+                        <filter string="月度" domain="[]" context="{'group_by':'date:month'}"/>
+                        <filter string="收付"  context="{'group_by':'is_pay_out_in'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+
+<record id="view_move_line_bank_tree" model="ir.ui.view">
+            <field name="name">account.move.line.tree</field>
+            <field name="model">account.move.line</field>
+            <field eval="1" name="priority"/>
+            <field name="arch" type="xml">
+                <tree string="Journal Items" create="false">
+                    <field name="date"/>
+                    <field name="move_id" invisible="1"/>
+                    <field name="journal_id" options='{"no_open":True}' string="账户" invisible="1"/>
+                    <field name="account_id" options='{"no_open":True}' domain="[('company_id', '=', company_id)]" groups="account.group_account_user"/>
+                    <field name="name" invisible="1"/>
+                    <field name="ref" invisible="1"/>
+
+                    <field name="amount_this_time" invisible="1"/>
+                    <field name="amount_bank_now" string="发生金额"/>
+                    <field name="sslj_balance" invisible="1"/>
+                    <field name="sslj_balance2" string="余额"/>
+                    <field name="amount_bank_cash_usd"/>
+                    <field name="amount_bank_cash_cny"/>
+                    <field name="statement_id" invisible="1"/>
+                    <field name="partner_id" invisible="1"/>
+                    <field name="analytic_account_id" invisible="1" groups="account.group_account_user"/>
+                    <field name="reconciled" invisible="1"/>
+                    <field name="full_reconcile_id" invisible="1"/>
+                    <field name="debit" sum="Total Debit" invisible="1"/>
+                    <field name="credit" sum="Total Credit" invisible="1"/>
+                    <field name="account_currency_id" invisible="1"/>
+                    <field name="usd_currency_id" invisible="1"/>
+                    <field name="cny_currency_id" invisible="1"/>
+                    <field name="amount_currency" readonly="True" invisible="1" groups="base.group_multi_currency"/>
+                    <field name="currency_id" readonly="True" invisible="1" />
+                    <field name="date_maturity" invisible="1"/>
+                    <field name="company_currency_id" invisible="1"/>
+                    <field name="company_id" invisible="1"/>
+                    <field name="comments" string="收付款备注"/>
+                </tree>
+            </field>
+        </record>
+
+    <record model="ir.actions.act_window" id="action_move_line_bank">
+        <field name="name">流水</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.move.line</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree</field>
+        <field name="domain">[('account_id.user_type_id','=',3),('move_id_state','=','posted')]</field>
+        <field name="context">{}</field>
+        <field name="search_view_id" ref="view_account_move_line_bank_filter"/>
+        <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_move_line_bank_tree')}),
+                         ]"/>
+    </record>
+
+
+</odoo>

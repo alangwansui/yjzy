@@ -1213,6 +1213,7 @@ class account_payment(models.Model):
                 self.state_fkzl = '20_wait_pay'
                 self.state = 'approved'
                 self.compute_amount_bank_now()
+                self.compute_payment_comment()
                 # self.compute_amount_bank_cash_cny()
                 # self.compute_amount_bank_cash_usd()
                 for one in self.fksqd_2_ids:
@@ -1618,7 +1619,7 @@ class account_payment(models.Model):
             'so_id': self.so_id.id,
             'po_id': self.po_id.id,
             'new_advance_payment_id':new_advance_payment_id,
-
+            'comments':self.payment_comments,
             'plan_invoice_id':plan_invoice_id,
             'self_payment_id':self.id,#用来对应sfk_type
             'invoice_id':plan_invoice_id#akiny1229应收应付认领单的填入分录的核销放票上 重点

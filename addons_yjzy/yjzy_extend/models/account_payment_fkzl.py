@@ -232,9 +232,21 @@ class account_payment(models.Model):
                         }
         }
 
+    def compute_payment_comment(self):
+        payment_comments = ''
+        if self.yshx_fkzl_ids:
+            payment_comments = '%s\n收款户名: %s' % (
+            self.yshx_fkzl_ids[0].invoice_attribute_all_in_one, self.bank_id_huming)
+        if self.fybg_fkzl_ids:
+            payment_comments = '%s\n收款户名: %s' % ('费用申请',self.bank_id_huming)
+        if self.yfsqd_fkzl_ids:
+            payment_comments = '%s\n收款户名: %s' % ('预付申请', self.bank_id_huming)
+        self.payment_comments = payment_comments
+
     #支付完成
     def action_fkzl_approve(self):
         today = fields.date.today()
+
         self.write({'post_uid': self.env.user.id,
                     'post_date': today,
                     })
