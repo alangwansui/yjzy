@@ -239,7 +239,30 @@ class account_move_line(models.Model):
     # def create(self, vals):
     #     raise Exception('xxx')
 
-
+    def open_new_payment_id(self):
+        form_view = self.env.ref('yjzy_extend.view_fkzl_form')
+        tree_view = self.env.ref('yjzy_extend.view_fkzl_tree')
+        return {
+            'type': 'ir.actions.act_window',
+            'view_mode': 'form',
+            'res_model': 'account.payment',
+            'views': [(form_view.id, 'form')],
+            'target': 'new',
+            'res_id': self.new_payment_id.id,
+            'context': {}
+        }
+    def open_new_payment_in_id(self):
+        form_view = self.env.ref('yjzy_extend.view_rcskd_form_new')
+        tree_view = self.env.ref('yjzy_extend.view_rcskd_tree_new_1')
+        return {
+            'type': 'ir.actions.act_window',
+            'view_mode': 'form',
+            'res_model': 'account.payment',
+            'views': [ (form_view.id, 'form')],
+            'target': 'new',
+            'res_id': self.new_payment_id.id,
+            'context': {}
+        }
 
     def compute_fkzl_rcskd_comments(self):
         for one in self:
