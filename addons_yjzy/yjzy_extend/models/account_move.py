@@ -266,7 +266,7 @@ class account_move_line(models.Model):
 
     def compute_fkzl_rcskd_comments(self):
         for one in self:
-            if one.new_payment_id.sfk_type in ['fkzl','rxskd']:
+            if one.new_payment_id.sfk_type in ['fkzl','rcskd']:
                 one.comments = one.new_payment_id.payment_comments
 
 
