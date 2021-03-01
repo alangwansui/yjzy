@@ -222,8 +222,7 @@ class account_move_line(models.Model):
                                        store=True)
     sslj_balance = fields.Monetary('实时累计余额', currency_field='sslj_currency_id', compute=compute_sslj_balance,
                                    store=True)  # akiny计算分录日志
-    sslj_balance2 = fields.Monetary('实时累计余额', currency_field='account_currency_id', compute='compute_amount_bank_cash',
-                                   store=True)  # akiny计算分录日志
+    sslj_balance2 = fields.Monetary('实时累计余额', currency_field='account_currency_id',)  # akiny计算分录日志
     self_payment_id = fields.Many2one('account.payment', u'对应的付款单')  # 所有申请单，付款单，收款单，都做一个记录。,用来对应sfk_type
     reconcile_type = fields.Selection([
 
