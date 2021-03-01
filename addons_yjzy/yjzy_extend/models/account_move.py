@@ -160,12 +160,12 @@ class account_move_line(models.Model):
             [('account_id', '=', self.account_id.id)])
 
         aml_cny = self.env['account.move.line'].search(
-            [('account_id.user_type_id.name', '=', '银行和现金'), ('account_id.currency_id.name', '=', 'CNY')])
+            [('account_id.user_type_id.name', '=', '银行和现金'), ('account_id.currency_id.name', '=', 'CNY'),('company_id','=',self.env.user.company_id.id)])
         aml_usd = self.env['account.move.line'].search(
-            [('account_id.user_type_id.name', '=', '银行和现金'), ('account_id.currency_id.name', '=', 'USD')])
+            [('account_id.user_type_id.name', '=', '银行和现金'), ('account_id.currency_id.name', '=', 'USD'),('company_id','=',self.env.user.company_id.id)])
         amount_bank_cash_cny = sum((x.debit - x.credit) for x in aml_cny)
         amount_bank_cash_USD = sum(x.amount_currency for x in aml_usd)
-        sslj_balance2 = move_lines and sum(x.amount_this_time for x in move_lines) or 0
+        sslj_balance2 = move_lines and sum(x.amount_bank_now for x in move_lines) or 0
         self.sslj_balance2 = sslj_balance2
         self.amount_bank_cash_cny = amount_bank_cash_cny
         self.amount_bank_cash_usd = amount_bank_cash_USD
