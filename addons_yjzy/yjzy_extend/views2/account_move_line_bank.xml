@@ -18,6 +18,7 @@
                     <separator/>
                     <group expand="0" string="Group By">
                         <filter string="账户" domain="[]" context="{'group_by':'account_id'}"/>
+                        <filter string="年度" domain="[]" context="{'group_by':'date:year'}"/>
                         <filter string="月度" domain="[]" context="{'group_by':'date:month'}"/>
                         <filter string="收付"  context="{'group_by':'is_pay_out_in'}"/>
                     </group>

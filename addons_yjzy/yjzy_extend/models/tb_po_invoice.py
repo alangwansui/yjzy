@@ -361,7 +361,7 @@ class tb_po_invoice(models.Model):
     p_s_add_refund_residual = fields.Float(u'直接抵扣未完成金额', compute=compute_residual, store=True)
     # 827
     amount_diff = fields.Float('实际差额')
-    tax_rate_add = fields.Float(u'增加采购税率')
+    tax_rate_add = fields.Float(u'增加采购税率',digits=(2,4))
     expense_tax = fields.Float(u'税费', compute=compute_info_store, store=True)
     product_feiyong_tax = fields.Many2one('product.product', u'税费产品', domain=[('type', '=', 'service')],
                                           default=_default_feiyong_tax_product)
