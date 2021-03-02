@@ -149,26 +149,27 @@ class account_move_line(models.Model):
     @api.depends('amount_currency', 'account_id.user_type_id', 'credit', 'credit', 'account_id', 'new_payment_id',
                  'move_id_state', 'amount_this_time')
     def compute_amount_bank_cash(self):
-        if self.account_id.user_type_id.name == '银行和现金':
-            if self.account_currency_id.name == 'CNY':
-                amount_bank_now = self.debit - self.credit
-            else:
-                amount_bank_now = self.amount_currency
-            self.amount_bank_now = amount_bank_now
+        for one in self:
+            if one.account_id.user_type_id.name == '银行和现金':
+                if one.account_currency_id.name == 'CNY':
+                    amount_bank_now = one.debit - one.credit
+                else:
+                    amount_bank_now = one.amount_currency
+                one.amount_bank_now = amount_bank_now
 
-        move_lines = self.env['account.move.line'].search(
-            [('account_id', '=', self.account_id.id)])
+            move_lines = self.env['account.move.line'].search(
+                [('account_id', '=', one.account_id.id)])
 
-        aml_cny = self.env['account.move.line'].search(
-            [('account_id.user_type_id.name', '=', '银行和现金'), ('account_id.currency_id.name', '=', 'CNY'),('company_id','=',self.env.user.company_id.id)])
-        aml_usd = self.env['account.move.line'].search(
-            [('account_id.user_type_id.name', '=', '银行和现金'), ('account_id.currency_id.name', '=', 'USD'),('company_id','=',self.env.user.company_id.id)])
-        amount_bank_cash_cny = sum((x.debit - x.credit) for x in aml_cny)
-        amount_bank_cash_USD = sum(x.amount_currency for x in aml_usd)
-        sslj_balance2 = move_lines and sum(x.amount_bank_now for x in move_lines) or 0
-        self.sslj_balance2 = sslj_balance2
-        self.amount_bank_cash_cny = amount_bank_cash_cny
-        self.amount_bank_cash_usd = amount_bank_cash_USD
+            aml_cny = self.env['account.move.line'].search(
+                [('account_id.user_type_id.name', '=', '银行和现金'), ('account_id.currency_id.name', '=', 'CNY'),('company_id','=',self.env.user.company_id.id)])
+            aml_usd = self.env['account.move.line'].search(
+                [('account_id.user_type_id.name', '=', '银行和现金'), ('account_id.currency_id.name', '=', 'USD'),('company_id','=',self.env.user.company_id.id)])
+            amount_bank_cash_cny = sum((x.debit - x.credit) for x in aml_cny)
+            amount_bank_cash_USD = sum(x.amount_currency for x in aml_usd)
+            sslj_balance2 = move_lines and sum(x.amount_bank_now for x in move_lines) or 0
+            one.sslj_balance2 = sslj_balance2
+            one.amount_bank_cash_cny = amount_bank_cash_cny
+            one.amount_bank_cash_usd = amount_bank_cash_USD
 
 
     def _default_usd_currency_id(self):
@@ -249,6 +250,7 @@ class account_move_line(models.Model):
             'views': [(form_view.id, 'form')],
             'target': 'new',
             'res_id': self.new_payment_id.id,
+            'flags': {'initial_mode': 'view', 'action_buttons': False},
             'context': {}
         }
     def open_new_payment_in_id(self):
