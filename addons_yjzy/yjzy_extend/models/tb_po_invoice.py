@@ -613,9 +613,9 @@ class tb_po_invoice(models.Model):
                     'context': {'default_tb_po_id': self.id},
                 }
             else:
-                for one in self.hsname_all_ids:
-                    if one.purchase_amount2_add_this_time > one.purchase_amount_min_add_rest:
-                        raise Warning('增加金额不允许大于最新可增加金额！')
+                # for one in self.hsname_all_ids:
+                #     if one.purchase_amount2_add_this_time > one.purchase_amount_min_add_rest:
+                #         raise Warning('增加金额不允许大于最新可增加金额！')
                 if self.purchase_amount2_add_this_time_total == 0:
                     raise Warning('增加采购金额为0！')
                 if not self.partner_id:
@@ -628,9 +628,9 @@ class tb_po_invoice(models.Model):
     def action_submit(self):
         self.state = '20_submit'
         if self.type == 'other_po':
-            # for one in self.hsname_all_ids:
-            #     if one.purchase_amount2_add_this_time > one.purchase_amount_min_add_rest:
-            #         raise Warning('增加金额不允许大于最新可增加金额！')
+            for one in self.hsname_all_ids:
+                if one.purchase_amount2_add_this_time > one.purchase_amount_min_add_rest:
+                    raise Warning('增加金额不允许大于最新可增加金额！')
             if self.purchase_amount2_add_this_time_total == 0:
                 raise Warning('增加采购金额为0！')
             if not self.partner_id:
