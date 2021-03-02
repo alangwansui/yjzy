@@ -16,7 +16,7 @@ class AccountBankStatement(models.Model):
             amount_signed_payment_total = sum(x.amount_signed_payment for x in one.payment_ids)
             one.amount_signed_payment_total = amount_signed_payment_total
 
-    @api.depends('currency_id','journal_id')
+    @api.depends('currency_id','journal_id','journal_id.default_debit_account_id','balance_start','state')
     def compute_balance(self):
         for one in self:
             aml_ids = self.env['account.move.line'].search(
@@ -33,10 +33,10 @@ class AccountBankStatement(models.Model):
 
 
     payment_ids = fields.Many2many('account.payment','bks_pay','payment_id','bks_id',u'今日付款单')
-    amount_signed_payment_total = fields.Monetary(u'今日余额',currency_field='currency_id',compute=compute_total,)
-    amount_account_bank_cash = fields.Monetary(u'今日余额',currency_field='currency_id',compute=compute_balance)
-    amount_account_bank_cash_usd = fields.Monetary(u'今日美金余额',currency_field='currency_id',compute=compute_balance)
-    amount_account_bank_cash_cny = fields.Monetary(u'今日人名币余额',currency_field='currency_id',compute=compute_balance)
+    amount_signed_payment_total = fields.Monetary(u'今日余额',currency_field='currency_id',compute=compute_total, )
+    amount_account_bank_cash = fields.Monetary(u'今日余额',currency_field='currency_id',compute=compute_balance,store=True)
+    amount_account_bank_cash_usd = fields.Monetary(u'今日美金余额',currency_field='currency_id',compute=compute_balance,store=True)
+    amount_account_bank_cash_cny = fields.Monetary(u'今日人名币余额',currency_field='currency_id',compute=compute_balance,store=True)
     bank_reconciliation_id = fields.Many2one('bank.reconciliation','银行对账明细',ondelete='cascade')
 
     # amount_account_balance = fields.Monetary(u'总账余额',currency_field='currency_id',compute=compute_total)

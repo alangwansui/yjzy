@@ -115,7 +115,7 @@ class BankReconciliation(models.Model):
 
     def unlink(self):
         for one in self:
-            if one.state != 'state':
+            if one.state != 'draft':
                 raise Warning(u'只有草稿状态的对账单才允许删除!')
         return super(BankReconciliation, self).unlink()
 

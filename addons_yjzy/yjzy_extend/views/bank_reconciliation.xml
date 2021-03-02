@@ -34,7 +34,7 @@
                     <sheet>
                         <group>
                             <field name="name" attrs="{'readonly':[('state','!=','draft')]}"/>
-                            <field name="date" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            <field name="date" attrs="{'readonly':[('state','!=','draft')]}" readonly="1"/>
                             <field name="cny_currency_id" invisible="1"/>
                             <field name="usd_currency_id" invisible="1"/>
                             <field name="amount_usd" attrs="{'invisible':[('state','=','draft')]}"/>
@@ -44,10 +44,10 @@
                         <notebook>
                             <page string="账户明细">
                                 <field name="account_bank_statement_ids" attrs="{'readonly':[('state','!=','draft')]}">
-                                    <tree editable="bottom"
+                                    <tree editable="bottom" delete="false"
                                           decoration-danger="amount_account_bank_cash != balance_start">
-                                        <field name="date"/>
-                                        <field name="journal_id" string="账户"/>
+                                        <field name="date" readonly="1"/>
+                                        <field name="journal_id" string="账户" />
                                         <field name="company_id" invisible="1"/>
                                         <field name="currency_id" invisible="1"/>
                                         <field name="amount_account_bank_cash" attrs="{'column_invisible':[('parent.state','=','draft')]}"/>
