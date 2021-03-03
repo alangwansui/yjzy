@@ -331,7 +331,7 @@ class sale_order(models.Model):
     @api.depends('purchase_amount_total_new', 'amount_total')
     def compute_sale_purchase_percent(self):
         for one in self:
-            sale_purchase_percent = one.purchase_amount_total_new / one.amount_total
+            sale_purchase_percent = one.amount_total !=0 and one.purchase_amount_total_new / one.amount_total or 0
             one.sale_purchase_percent = sale_purchase_percent
 
     stage_id = fields.Many2one(
