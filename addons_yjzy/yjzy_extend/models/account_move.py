@@ -146,7 +146,7 @@ class account_move_line(models.Model):
             one.amount_this_time = amount_this_time
             one.sslj_balance = sslj_balance
 
-    @api.depends('amount_currency', 'account_id.user_type_id', 'credit', 'credit', 'account_id', 'new_payment_id',
+    @api.depends('amount_currency', 'account_id.user_type_id', 'debit', 'credit', 'account_id', 'new_payment_id',
                  'move_id_state', 'amount_this_time')
     def compute_amount_bank_cash(self):
         for one in self:

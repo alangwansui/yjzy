@@ -328,6 +328,12 @@ class sale_order(models.Model):
         for one in self:
             one.amount_org_hxd = sum(x.amount_total_org_new for x in one.hxd_ids)
 
+    @api.depends('purchase_amount_total_new', 'amount_total')
+    def compute_sale_purchase_percent(self):
+        for one in self:
+            sale_purchase_percent = one.purchase_amount_total_new / one.amount_total
+            one.sale_purchase_percent = sale_purchase_percent
+
     stage_id = fields.Many2one(
         'sale.order.stage',
         default=_default_sale_order_stage, copy=False)
@@ -541,6 +547,9 @@ class sale_order(models.Model):
     doing_type = fields.Selection([('undelivered', u'未发货'), ('start_delivery', u'开始发货'),
                                    ('wait_hexiao', u'待核销'), ('has_hexiao', u'已核销')],
                                   u'出运与核销状态')
+
+    sale_purchase_percent = fields.Float('采购销售比',digits=(2,2),compute=compute_sale_purchase_percent,store=True)
+
 
     # purchase_update_date = fields.Datetime(u'采购更新的时间')
 

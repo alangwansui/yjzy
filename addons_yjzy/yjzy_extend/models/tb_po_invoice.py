@@ -14,7 +14,7 @@ class tb_po_invoice(models.Model):
     _order = 'id desc'
 
     @api.depends('hsname_all_ids', 'hsname_all_ids.purchase_amount2_add_this_time', 'hsname_all_ids.p_s_add_this_time',
-                 'hsname_all_ids.tax_rate_add', 'hsname_all_ids.expense_tax',
+                 'hsname_all_ids.tax_rate_add', 'hsname_all_ids.expense_tax','tax_rate_add','expense_tax_algorithm',
                  'partner_id', 'extra_invoice_line_ids', 'extra_invoice_line_ids.price_unit', 'tb_id',
                  'hsname_all_ids.back_tax_add_this_time', )
     def compute_info_store(self):

@@ -61,6 +61,11 @@ class BankReconciliation(models.Model):
         for one in self:
             one.amount_balance_start = sum(x.balance_start for x in one.account_bank_statement_ids)
 
+    @api.depends('amount_balance_start', 'amount_all')
+    def compute_diff_amount(self):
+        for one in self:
+            one.diff_amount = one.amount_balance_start - one.amount_all
+
 
     state = fields.Selection([('draft',u'草稿'),('un_done','对不上'),('done','完成'),('refuse','拒绝')],u'状态',readonly=True, copy=False, index=True, track_visibility='onchange',default='draft',)
     name = fields.Char('编号')
@@ -71,11 +76,13 @@ class BankReconciliation(models.Model):
     usd_currency_id = fields.Many2one('res.currency','美金',default=lambda self:self._default_usd_currency_id())
     cny_currency_id = fields.Many2one('res.currency','人名币', default=lambda self:self._default_cny_currency_id())
     amount_usd = fields.Monetary('美金总余额', currency_field = 'usd_currency_id',compute=compute_account_usd_cny,store=True)
-    amount_cny = fields.Monetary('人名币总余额',currency_field = 'cny_currency_id',compute=compute_account_usd_cny,strore=True)
-    amount_all = fields.Float('总账面余额',compute=compute_amount_all,strore=True)
-    amount_balance_start = fields.Float('总实际账户余额',compute=compute_amount_balance_start,strore=True)
+    amount_cny = fields.Monetary('人名币总余额',currency_field = 'cny_currency_id',compute=compute_account_usd_cny,store=True)
+    amount_all = fields.Float('总账面余额',compute=compute_amount_all,store=True)
+    amount_balance_start = fields.Float('总实际账户余额',compute=compute_amount_balance_start,store=True)
     company_id = fields.Many2one('res.company',u'公司',default=lambda self: self.env.user.company_id.id)
     account_bank_statement_ids = fields.One2many('account.bank.statement','bank_reconciliation_id', default=lambda self: self._default_account_bank_statemen(),)
+    diff_amount = fields.Float(u'总差额',compute=compute_diff_amount, store=True)
+
 
 
     # _sql_constraints = [
@@ -94,6 +101,8 @@ class BankReconciliation(models.Model):
         un_done_account_bank_statement_ids = self.account_bank_statement_ids.filtered(lambda x: x.amount_account_bank_cash !=x.balance_start)
         if len(un_done_account_bank_statement_ids) > 0:
             self.state = 'un_done'
+            for x in self.account_bank_statement_ids:
+                x.state = 'confirm'
         else:
             for x in self.account_bank_statement_ids:
                 x.state = 'confirm'
@@ -101,9 +110,8 @@ class BankReconciliation(models.Model):
 
     def action_refuse(self):
         for x in self.account_bank_statement_ids:
-            if x.amount_account_bank_cash != x.balance_start:
-                x.state='open'
-            self.state='draft'
+            x.state='open'
+        self.state='draft'
 
     # def write(self, vals):
     #     res = super(BankReconciliation, self).write(vals)

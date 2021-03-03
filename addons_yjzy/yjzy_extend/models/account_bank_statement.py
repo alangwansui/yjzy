@@ -30,10 +30,16 @@ class AccountBankStatement(models.Model):
                 one.amount_account_bank_cash_usd = amount_account_bank_cash
             one.amount_account_bank_cash = amount_account_bank_cash
 
+    @api.depends('balance_start','amount_account_bank_cash')
+    def compute_diff_amount(self):
+        for one in self:
+            one.diff_amount = one.balance_start - one.amount_account_bank_cash
+
 
 
     payment_ids = fields.Many2many('account.payment','bks_pay','payment_id','bks_id',u'今日付款单')
     amount_signed_payment_total = fields.Monetary(u'今日余额',currency_field='currency_id',compute=compute_total, )
+    diff_amount = fields.Monetary(u'差额',currency_field='currency_id',compute=compute_diff_amount,stote=True)
     amount_account_bank_cash = fields.Monetary(u'今日余额',currency_field='currency_id',compute=compute_balance,store=True)
     amount_account_bank_cash_usd = fields.Monetary(u'今日美金余额',currency_field='currency_id',compute=compute_balance,store=True)
     amount_account_bank_cash_cny = fields.Monetary(u'今日人名币余额',currency_field='currency_id',compute=compute_balance,store=True)
