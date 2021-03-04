@@ -798,7 +798,7 @@ class hr_expense_sheet(models.Model):
             'partner_id': partner.id,
             'account_id': invoice_account.id,
             'invoice_attribute':'expense_po',
-            'yjzy_type':'sale',
+            'yjzy_type':'back_tax',
             'invoice_line_ids': [(0, 0, invoice_line_data)],
             'gongsi_id': self.gongsi_id.id,
         })
