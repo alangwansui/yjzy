@@ -321,6 +321,7 @@
                     <field name="purchase_cost" string="认领的采购金额成本" groups="base.group_system"/>
                     <field name="purchase_amount_total" string="采购金额" sum="小计" groups="base.group_system"/>
                     <field name="purchase_amount_total_new" string="采购金额" sum="小计"/>
+                    <field name="sale_purchase_percent"/>
                     <field name="delivery_status" invisible="1"/>
                     <field name="confirmation_date" string="Order Date" invisible="1"/>
                     <field name="create_date" string="创建日"/>

@@ -797,9 +797,12 @@ class hr_expense_sheet(models.Model):
             'name': u'草稿发票',
             'partner_id': partner.id,
             'account_id': invoice_account.id,
+            'invoice_attribute':'expense_po',
+            'yjzy_type':'sale',
             'invoice_line_ids': [(0, 0, invoice_line_data)],
             'gongsi_id': self.gongsi_id.id,
         })
+        invoice_id.action_invoice_open()
         self.back_tax_invoice_id = invoice_id
 
     def create_other_payment_invoice(self):
