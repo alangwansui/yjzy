@@ -111,8 +111,8 @@ class DeclareDeclaration(models.Model):
         for one in self.btd_line_ids:
             if one.declaration_amount == 0:
                 raise Warning('申报金额不允许为0')
-            if one.declaration_amount > one.invoice_residual_total:
-                raise Warning('申报金额不允许大于未收退税金额！')
+            # if one.declaration_amount > one.invoice_residual_total:
+            #     raise Warning('申报金额不允许大于未收退税金额！')
         if not self.declaration_date:
             return Warning('请填写申报日期')
         self.state = 'done'
