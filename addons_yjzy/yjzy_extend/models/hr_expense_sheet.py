@@ -799,6 +799,7 @@ class hr_expense_sheet(models.Model):
             'account_id': invoice_account.id,
             'invoice_attribute':'expense_po',
             'yjzy_type':'back_tax',
+            'date_invoice':self.manager_confirm_date,
             'invoice_line_ids': [(0, 0, invoice_line_data)],
             'gongsi_id': self.gongsi_id.id,
         })
