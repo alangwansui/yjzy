@@ -250,8 +250,8 @@ class account_move_line(models.Model):
             'views': [(form_view.id, 'form')],
             'target': 'new',
             'res_id': self.new_payment_id.id,
-            'flags': {'initial_mode': 'view', 'action_buttons': False},
-            'context': {}
+            'flags': {'initial_mode': 'view', 'action_buttons': False,'headless':False},
+            'context': {'is_open':1}
         }
     def open_new_payment_in_id(self):
         form_view = self.env.ref('yjzy_extend.view_rcskd_form_new')
@@ -263,7 +263,8 @@ class account_move_line(models.Model):
             'views': [ (form_view.id, 'form')],
             'target': 'new',
             'res_id': self.new_payment_id.id,
-            'context': {}
+            'flags': {'initial_mode': 'view', 'action_buttons': False,'headless':False},
+            'context': {'is_open':1}
         }
 
     def compute_fkzl_rcskd_comments(self):

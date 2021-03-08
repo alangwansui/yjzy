@@ -240,7 +240,7 @@ class purchase_order(models.Model):
     so_id_amount_total = fields.Monetary('对应销售金额',currency_field='so_currentcy_id', compute=compute_so_id_amount_total,store=True)
     sol_ids_amount_total = fields.Monetary('对应销售金额', currency_field='so_currentcy_id', compute=compute_sol_ids_amount_total,
                                          store=True)
-
+    date_factory_return = fields.Date('工厂回传时间', index=True,)
 
     #采购单更换了供应商，需要更新对应的销售明细上的供应商
     def change_supplier(self):
@@ -392,7 +392,10 @@ class purchase_order(models.Model):
                 name = '%s[%s]' % (order.contract_code, order.balance)
             else:
                 # name = '%s[%s]' % (order.name, order.contract_code)
-                name = '%s' % (order.contract_code)
+                if order.contract_code:
+                    name = '%s' % (order.contract_code)
+                else:
+                    name = '%s' % ('无合同号')
             res.append((order.id, name))
         return res
 

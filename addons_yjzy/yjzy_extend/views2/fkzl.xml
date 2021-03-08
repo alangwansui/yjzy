@@ -85,7 +85,7 @@
 		vertical-align: middle
 	}
 </style>
-                <header groups="account.group_account_invoice,akiny.akiny_res_group_chuna">
+                <header groups="account.group_account_invoice,akiny.akiny_res_group_chuna" invisible="context.get('is_open')">
                    <button name="action_submit" class="oe_highlight"  string="审批" type="object" groups="sale.hegui_all"
                            attrs="{'invisible':[('state_fkzl','not in',['10_draft'])]}"/>
                     <button name="print_fkzl" string="打印付款指令" type="object" invisible="1"
@@ -103,7 +103,7 @@
                             attrs="{'invisible':[('state_fkzl','not in',['80_refused'])]}"/>
                      <field name="state_fkzl" widget="statusbar" statusbar_visible=" "/>
                 </header>
-                <header groups="base.group_system">
+                <header groups="base.group_system" invisible="context.get('is_open')">
                     <button name="create_fkzl" string="创建付款指令"  class="oe_highlight" type="object"/>
                     <button name="compute_balance" class="oe_highlight"  string="计算余额" type="object" groups="base.group_system"/>
                     <button name="post" class="oe_highlight" states="draft" string="Confirm" type="object" groups="base.group_system"/>
@@ -379,6 +379,9 @@
                         </page>
 
                     </notebook>
+                    <footer invisible="context.get('is_open')">
+
+                    </footer>
                 </sheet>
                 <div class="oe_chatter">
                     <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>

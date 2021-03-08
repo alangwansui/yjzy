@@ -315,6 +315,7 @@
                     <field name="approve_date" widget="date" string="合规审批日"/>
                     <field name="current_date_rate" string="汇率"/>
                     <field name="contract_code" string="合同号"/>
+
                     <field name="partner_id"/>
                     <field name="customer_pi" string="客户合同号"/>
                     <field name="amount_total" sum="Total Tax Included" widget="monetary" string="销售金额"/>
@@ -414,6 +415,7 @@
             <field name="arch" type="xml">
                 <form string="销售订单" class="o_sale_order" create="false">
                     <header>
+                        <button name="make_all_plan" type="object" string="test"/>
                         <button name="action_submit_stage" string="提交" type="object" class="oe_highlight"
                                 attrs="{'invisible':[('state_1','!=','draft')]}"/>
                         <button name="action_to_draft_stage" string="重置草稿" type="object" class="oe_highlight"
@@ -1143,7 +1145,9 @@
                                          attrs="{'invisible': ['|',('carrier_id','=', False),('delivery_message','=',False)]}">
                                         <field name="delivery_message" force_save="1"/>
                                     </div>
+
                                 </div>
+                                <field name="plan_check_ids"/>
                                 <group>
                                     <field name="company_id" options="{'no_create': True}"
                                            groups="base.group_multi_company"/>

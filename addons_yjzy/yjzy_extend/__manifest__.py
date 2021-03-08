@@ -141,6 +141,8 @@
         'views/account_invoice_extra_po.xml',
         'views/tb_po_invoice_other.xml',
         'views/tb_po_invoice.xml',
+        'views/mail_activity_views.xml',
+        'views/plan_check.xml',
 
         'views/hr_expense_other_payment.xml',
         'views/account_bank_statement_1.xml',

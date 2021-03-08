@@ -234,9 +234,11 @@ class MailActivity(models.Model):
     def action_done(self):
         """ Wrapper without feedback because web button add context as
         parameter, therefore setting context to feedback """
+
         return self.action_feedback()
 
     def action_feedback(self, feedback=False):
+        self.plan_check_line_id.date_finish = self.date_finish#akiny
         message = self.env['mail.message']
         if feedback:
             self.write(dict(feedback=feedback))
@@ -255,6 +257,7 @@ class MailActivity(models.Model):
 
     @api.multi
     def action_close_dialog(self):
+        self.plan_check_line_id.date_deadline = self.date_deadline
         return {'type': 'ir.actions.act_window_close'}
 
 

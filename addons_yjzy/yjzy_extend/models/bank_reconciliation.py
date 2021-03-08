@@ -5,6 +5,7 @@ from odoo.exceptions import Warning, UserError
 
 class BankReconciliation(models.Model):
     _name = 'bank.reconciliation'
+    _inherit = ['mail.thread', 'mail.activity.mixin', 'portal.mixin']
     _description = '银行对账'
 
 
@@ -72,7 +73,7 @@ class BankReconciliation(models.Model):
     date = fields.Date('对账日期',default=lambda self:fields.date.today())
     done_uid = fields.Many2one('res.users','审批人')
     done_date = fields.Datetime('完成日期')
-    description = fields.Char('description')
+    description = fields.Char('description',track_visibility='onchange')
     usd_currency_id = fields.Many2one('res.currency','美金',default=lambda self:self._default_usd_currency_id())
     cny_currency_id = fields.Many2one('res.currency','人名币', default=lambda self:self._default_cny_currency_id())
     amount_usd = fields.Monetary('美金总余额', currency_field = 'usd_currency_id',compute=compute_account_usd_cny,store=True)
