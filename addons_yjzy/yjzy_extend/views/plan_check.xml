@@ -10,7 +10,7 @@
                 <field name="type" groups="base.group_system"/>
                 <!--            <field name="date_deadline"/>-->
                 <button name="open_so_id" class="akiny_text_right" type="object" icon="fa-archive" invisible="context.get('type')!='new_order_track'"/>
-                <field name="so_id"/>
+                <field name="so_id" readonly="1"/>
 
                 <field name="time_receive_pi" invisible="context.get('type')!='new_order_track'"/>
                 <field name="time_sent_pi" invisible="context.get('type')!='new_order_track'"/>

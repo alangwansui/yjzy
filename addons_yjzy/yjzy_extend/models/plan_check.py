@@ -128,10 +128,10 @@ class OrderTrack(models.Model):
     company_id = fields.Many2one('res.company', '公司', related='so_id.company_id')
 
     time_draft_order = fields.Datetime('so_create_date',related='so_id.create_date',store=True)
-    hegui_date = fields.Date('合规审批时间',related='so_id.hegui_date',store=True)
-    time_receive_pi = fields.Date('收到客户订单时间',related='so_id.time_receive_pi',store=True)
-    time_sent_pi = fields.Date('发送PI时间',related='so_id.time_sent_pi',store=True)
-    time_sign_pi = fields.Date('客户PI回签时间',related='so_id.time_sign_pi',store=True)
+    hegui_date = fields.Date('合规审批时间',track_visibility='onchange',related='so_id.hegui_date',store=True)
+    time_receive_pi = fields.Date('收到客户订单时间',track_visibility='onchange',related='so_id.time_receive_pi',store=True)
+    time_sent_pi = fields.Date('发送PI时间',track_visibility='onchange',related='so_id.time_sent_pi',store=True)
+    time_sign_pi = fields.Date('客户PI回签时间',track_visibility='onchange',related='so_id.time_sign_pi',store=True)
 
     date_so_contract = fields.Date('客户下单日期',related='so_id.contract_date',store=True)
     date_so_requested = fields.Datetime('客户交期',related='so_id.requested_date',store=True)
@@ -231,7 +231,7 @@ class PlanCheck(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin', 'portal.mixin']
     _description = '计划跟踪明细'
 
-
+    @api.depends('plan_check_line', 'plan_check_line.date_finish')
     def compute_date_finish(self):
         for one in self:
             date_finish = False
@@ -247,8 +247,9 @@ class PlanCheck(models.Model):
                             date_finish = x.date_finish
                         else:
                             date_finish = date_finish
-            one.date_deadline =date_finish
+            one.date_finish = date_finish
 
+    @api.depends('plan_check_line','plan_check_line.date_deadline')
     def compute_date_deadline(self):
         for one in self:
             date_deadline = False
@@ -264,7 +265,8 @@ class PlanCheck(models.Model):
                             date_deadline = x.date_deadline
                         else:
                             date_deadline = date_deadline
-            one.date_deadline =date_deadline
+            print('date_deadline_akiny',date_deadline)
+            one.date_deadline = date_deadline
 
     @api.depends('po_id','po_id.date_planned','po_id.date_order')
     def compute_date_po_planned_order(self):
@@ -306,15 +308,15 @@ class PlanCheck(models.Model):
     # plan_check_ids = fields.One2many('plan.check','so_id')
     so_id = fields.Many2one('sale.order',)
     company_id = fields.Many2one('res.company', '公司', related='so_id.company_id')
-    po_id = fields.Many2one('purchase.order')
+    po_id = fields.Many2one('purchase.order','采购合同')
     tb_id = fields.Many2one('transport.bill',related='order_track_id.tb_id')
-    date_factory_return = fields.Date('工厂回传时间', index=True, related='po_id.date_factory_return',store=True)#todo 填写后，自动写入po
+    date_factory_return = fields.Date('工厂回传时间', index=True,track_visibility='onchange', related='po_id.date_factory_return',store=True)#todo 填写后，自动写入po
     date_po_planned = fields.Date('工厂交期',compute=compute_date_po_planned_order,store=True)
     date_po_order = fields.Date('工厂下单日期',compute=compute_date_po_planned_order,store=True)
     plan_check_line = fields.One2many('plan.check.line', 'plan_check_id')
     is_on_time = fields.Boolean('是否准时完成')
-    date_finish = fields.Date('完成时间',track_visibility='onchange',compute=compute_date_finish)
-    date_deadline = fields.Date('Due Date', index=True, required=False, track_visibility='onchange',compute=compute_date_deadline)
+    date_finish = fields.Date('完成时间',compute=compute_date_finish)
+    date_deadline = fields.Date('计划时间', compute=compute_date_deadline)
 
     state = fields.Selection([('planning','执行中'),('finish','完成'),],'状态', default='planning',compute=compute_state,store=True)
 
