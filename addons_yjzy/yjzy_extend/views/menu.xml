@@ -11,6 +11,7 @@
         <menuitem id="menu_extra_supplier_invoice_root" name="额外应付申请" sequence="99"/>
         <menuitem id="menu_yjzy_advance_root" name="应收应付" sequence="99"/>
         <menuitem id="menu_back_tax_declaration_root" name="退税申报" sequence="99"/>
+
 <!--        新财务-->
 
 

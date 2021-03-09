@@ -47,13 +47,17 @@ class sale_order(models.Model):
         self.make_new_order_track()
         self.make_plan_check()
 
+    #创建第二步订单检查
     def make_plan_check(self):
         order_track_obj = self.env['order.track']
         plan_check_obj = self.env['plan.check']
         plan_check_line_obj = self.env['plan.check.line']
         type_obj = self.env['mail.activity.type']
         activity_obj = self.env['mail.activity']
+        models_obj = self.env['ir.model']
         activity_type_akiny_ids = type_obj.search([('category', '=', 'plan_check')])
+        res_model_id = models_obj.search([('model','=','plan.check')])
+
         if not self.order_track_ids.filtered(lambda x: x.type == 'order_track'):
             po_dic = []
             for line in self.po_ids:
@@ -88,13 +92,13 @@ class sale_order(models.Model):
                     'plan_check_line_id':plan_check_line.id,
                     'activity_category': 'plan_check',
                     'res_model': 'plan.check',
-                    'res_model_id': 677,
+                    'res_model_id': res_model_id.id,
                     'res_id': plan_check.id,
                 })
                     plan_check_line.write({'activity_id':plan_check_line_activity.id})
 
 
-
+    #创建第一步新订单检验
     def make_new_order_track(self):
         order_track_obj = self.env['order.track']
         plan_check_obj = self.env['plan.check']

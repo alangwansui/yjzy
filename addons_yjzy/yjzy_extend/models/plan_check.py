@@ -178,7 +178,8 @@ class OrderTrack(models.Model):
             'views': [(form_view.id, 'form')],
             'res_id': self.id,
             'target': 'new',
-            'context': {'return': 1}
+            'context': {'return': 1,
+                        'open':1}
             # 'flags': {'form': {'initial_mode': 'view', 'action_buttons': False}}
         }
 
@@ -212,7 +213,12 @@ class OrderTrack(models.Model):
             # 'flags': {'form': {'initial_mode': 'view', 'action_buttons': False}}
         }
 
-
+    @api.multi
+    def action_save_test(self):
+        # your code
+        self.ensure_one()
+        # close popup
+        return {'type': 'ir.actions.act_window_close'}
 
 
 class PlanCheck(models.Model):
@@ -307,8 +313,8 @@ class PlanCheck(models.Model):
     date_po_order = fields.Date('工厂下单日期',compute=compute_date_po_planned_order,store=True)
     plan_check_line = fields.One2many('plan.check.line', 'plan_check_id')
     is_on_time = fields.Boolean('是否准时完成')
-    date_finish = fields.Date('完成时间',compute=compute_date_finish)
-    date_deadline = fields.Date('Due Date', index=True, required=False,compute=compute_date_deadline)
+    date_finish = fields.Date('完成时间',track_visibility='onchange',compute=compute_date_finish)
+    date_deadline = fields.Date('Due Date', index=True, required=False, track_visibility='onchange',compute=compute_date_deadline)
 
     state = fields.Selection([('planning','执行中'),('finish','完成'),],'状态', default='planning',compute=compute_state,store=True)
 
@@ -334,6 +340,12 @@ class PlanCheck(models.Model):
     #         'context': {
     #         }
     #     }
+    @api.multi
+    def action_save_test(self):
+        # your code
+        self.ensure_one()
+        # close popup
+        return {'type': 'ir.actions.act_window_close'}
 
     def open_plan_check_ids(self):
         form_view = self.env.ref('yjzy_extend.plan_check_form')
@@ -401,6 +413,30 @@ class PlanCheckLine(models.Model):
             'res_id': self.activity_id.id,
             'target': 'new',
             'context': {}
+        }
+
+    def open_activity_id_plan(self):
+        return {
+            'name': u'登记计划时间',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'mail.activity',
+            'type': 'ir.actions.act_window',
+            'res_id': self.activity_id.id,
+            'target': 'new',
+            'context': {'plan':1}
+        }
+
+    def open_activity_id_finish(self):
+        return {
+            'name': u'登记完成时间',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'mail.activity',
+            'type': 'ir.actions.act_window',
+            'res_id': self.activity_id.id,
+            'target': 'new',
+            'context': {'finish': 1}
         }
 
 
