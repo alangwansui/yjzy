@@ -644,8 +644,8 @@ class tb_po_invoice(models.Model):
         if self.type == 'other_payment':
             # self.make_extra_invoice()
             self.apply()  # 1014
-            if self.yjzy_type_1 == 'other_payment_sale':
-                self.action_manager_approve()
+            # if self.yjzy_type_1 == 'other_payment_sale':#0310 删除，提交其他应付的时候， 其他应收直接完成了审批
+            #     self.action_manager_approve()
         if self.yjzy_tb_po_invoice:
             self.yjzy_tb_po_invoice.action_submit()
 

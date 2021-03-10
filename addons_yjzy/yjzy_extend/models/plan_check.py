@@ -142,6 +142,13 @@ class OrderTrack(models.Model):
     category_ids = fields.Many2many(
         'order.track.category','order_track_category_rel',  'track_id','category_id',
         string='Tags',store=True)
+
+    planning_integrity = fields.Selection([('10_un_planning','未计划'),('20_part_un_planning','部分未计划'),('30_planning','已完全计划')],'计划安排完整性',default='un_planning')
+    check_on_time = fields.Selection([('10_not_time','未到时'),('20_out_time_un_finish','超时未完成'),('30_on_tima_finish','准时完成'),('40_out_time_finish','超时完成')])
+    # def compute_planning_integrity(self):
+
+
+
     display_name = fields.Char(u'显示名称', compute=compute_display_name)
     type = fields.Selection([('new_order_track', '新订单下单前跟踪'), ('order_track', '订单跟踪'), ('transport_track','出运单跟踪')], 'type')
     so_id = fields.Many2one('sale.order', '销售合同' ,ondelete='cascade')
@@ -281,6 +288,9 @@ class OrderTrack(models.Model):
                         cat_dic.append(part_planning.id)
                 print('cat_dic_akiny',cat_dic)
                 one.write({'category_ids':[(6, 0, cat_dic)]})
+
+
+
 
 
 class PlanCheck(models.Model):
