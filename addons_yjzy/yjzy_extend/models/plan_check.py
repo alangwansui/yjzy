@@ -135,27 +135,7 @@ class OrderTrack(models.Model):
             one.display_name = display_name
 
 
-    def compute_category_ids(self):
-        for one in self:
-            cat_dic = []
-            category_obj = self.env['order.track.category']
-            un_planning = category_obj.search([('name','=','未计划')])
-            part_planning = category_obj.search([('name','=','部分未计划')])
-            part_time_out = category_obj.search([('name','=','部分过期')])
-            all_time_out = category_obj.search([('name','=','全部过期')])
 
-            if len(one.plan_check_line_ids) == len(
-                    one.plan_check_line_ids.filtered(lambda x: x.state == 'un_planning')):
-                cat_dic.append(un_planning.id)
-            elif len(one.plan_check_line_ids) == len(one.plan_check_line_ids.filtered(lambda x: x.state == 'time_out_planning')):
-                cat_dic.append(all_time_out.id)
-            else:
-                if len(one.plan_check_line_ids.filtered(lambda x: x.state == 'time_out_planning')) > 0 :
-                    cat_dic.append(part_time_out.id)
-                if len(one.plan_check_line_ids.filtered(lambda x: x.state == 'un_planning')) > 0:
-                    cat_dic.append(part_planning.id)
-            print('cat_dic_akiny',cat_dic)
-            one.write({'category_ids':[(6, 0, cat_dic)]})
 
 
 
@@ -279,6 +259,29 @@ class OrderTrack(models.Model):
         self.ensure_one()
         # close popup
         return {'type': 'ir.actions.act_window_close'}
+
+    def compute_category_ids(self):
+        for one in self:
+
+            cat_dic = []
+            category_obj = self.env['order.track.category']
+            un_planning = category_obj.search([('name','=','未计划')])
+            part_planning = category_obj.search([('name','=','部分未计划')])
+            part_time_out = category_obj.search([('name','=','部分过期')])
+            all_time_out = category_obj.search([('name','=','全部过期')])
+            if one.plan_check_line_ids:
+                if len(one.plan_check_line_ids) == len(
+                        one.plan_check_line_ids.filtered(lambda x: x.state == 'un_planning')):
+                    cat_dic.append(un_planning.id)
+                elif len(one.plan_check_line_ids) == len(one.plan_check_line_ids.filtered(lambda x: x.state == 'time_out_planning')):
+                    cat_dic.append(all_time_out.id)
+                else:
+                    if len(one.plan_check_line_ids.filtered(lambda x: x.state == 'time_out_planning')) > 0 :
+                        cat_dic.append(part_time_out.id)
+                    if len(one.plan_check_line_ids.filtered(lambda x: x.state == 'un_planning')) > 0:
+                        cat_dic.append(part_planning.id)
+                print('cat_dic_akiny',cat_dic)
+                one.write({'category_ids':[(6, 0, cat_dic)]})
 
 
 class PlanCheck(models.Model):
