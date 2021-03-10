@@ -262,11 +262,10 @@ class OrderTrack(models.Model):
 
     def compute_category_ids(self):
         for one in self:
-
             cat_dic = []
             category_obj = self.env['order.track.category']
             un_planning = category_obj.search([('name','=','未计划')])
-            part_planning = category_obj.search(['|',('name','=','部分计划'),('name','=','部分未计划')])
+            part_planning = category_obj.search([('name','=','部分计划')])
             part_time_out = category_obj.search([('name','=','部分过期')])
             all_time_out = category_obj.search([('name','=','全部过期')])
             if one.plan_check_line_ids:

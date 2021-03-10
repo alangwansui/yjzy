@@ -279,17 +279,17 @@
             <field name="color">1</field>
          </record>
         <record model="order.track.category" id="order_track_category_part_planning">
-            <field name="name">部分未计划</field>
+            <field name="name">部分计划</field>
             <field name="color">2</field>
 
         </record>
          <record model="order.track.category" id="order_track_category_part_time_out">
             <field name="name">部分过期</field>
-            <field name="color">3</field>
+            <field name="color">5</field>
         </record>
         <record model="order.track.category" id="order_track_category_all_time_out">
             <field name="name">全部过期</field>
-            <field name="color">4</field>
+            <field name="color">9</field>
         </record>
 
 
