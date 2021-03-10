@@ -11,7 +11,7 @@
                 <!--            <field name="date_deadline"/>-->
                 <button name="open_so_id" class="akiny_text_right" type="object" icon="fa-archive" invisible="context.get('type')!='new_order_track'"/>
                 <field name="so_id" readonly="1"/>
-                <field name="category_ids" options="{'can_create':True,'color_field':'color'}"  widget="many2many_tags"/>
+
                 <field name="time_receive_pi" invisible="context.get('type')!='new_order_track'"/>
                 <field name="time_sent_pi" invisible="context.get('type')!='new_order_track'"/>
                 <field name="time_sign_pi" invisible="context.get('type')!='new_order_track'"/>
@@ -25,11 +25,9 @@
 
                 <button name="open_plan_check_line" type="object"  string="工厂检查点登记" class="oe_highlight" invisible="1"/>
                 <button name="open_plan_check_line_new" type="object" string="工厂检查点登记" class="oe_highlight" invisible="context.get('type')!='order_track'"/>
+                <field name="category_ids" string="异常结果" options="{'can_create':True,'color_field':'color'}"  widget="many2many_tags" invisible="context.get('type')!='order_track'"/>
                 <field name="earliest_date_po_order" invisible="context.get('type')!='order_track'"/>
-
                 <field name="latest_date_po_planned" invisible="context.get('type')!='order_track'"/>
-
-
                 <field name="date_so_contract" invisible="context.get('type')!='order_track'" readonly="1"/>
                 <field name="date_so_requested" invisible="context.get('type')!='order_track'" widget="date"/>
                 <field name="time_contract_requested" invisible="1"/>
