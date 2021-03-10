@@ -279,7 +279,7 @@
             <field name="color">1</field>
          </record>
         <record model="order.track.category" id="order_track_category_part_planning">
-            <field name="name">部分计划</field>
+            <field name="name">部分未计划</field>
             <field name="color">2</field>
 
         </record>
