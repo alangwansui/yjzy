@@ -11,7 +11,7 @@
                 <!--            <field name="date_deadline"/>-->
                 <button name="open_so_id" class="akiny_text_right" type="object" icon="fa-archive" invisible="context.get('type')!='new_order_track'"/>
                 <field name="so_id" readonly="1"/>
-
+                <field name="category_ids" options="{'can_create':True,'color_field':'color'}"  widget="many2many_tags"/>
                 <field name="time_receive_pi" invisible="context.get('type')!='new_order_track'"/>
                 <field name="time_sent_pi" invisible="context.get('type')!='new_order_track'"/>
                 <field name="time_sign_pi" invisible="context.get('type')!='new_order_track'"/>
@@ -23,7 +23,8 @@
                   <button name="open_order_track" type="object" string="查看并写日志" invisible="context.get('type')!='new_order_track'"/>
 
 
-                <button name="open_plan_check_line" type="object" string="工厂检查点登记" class="oe_highlight" invisible="context.get('type')!='order_track'"/>
+                <button name="open_plan_check_line" type="object"  string="工厂检查点登记" class="oe_highlight" invisible="1"/>
+                <button name="open_plan_check_line_new" type="object" string="工厂检查点登记" class="oe_highlight" invisible="context.get('type')!='order_track'"/>
                 <field name="earliest_date_po_order" invisible="context.get('type')!='order_track'"/>
 
                 <field name="latest_date_po_planned" invisible="context.get('type')!='order_track'"/>
@@ -192,6 +193,7 @@
 
                                     <field name="date_finish"/>
                                     <field name="plan_check_id"/>
+
                                     <button name="open_activity_id" type="object" string="登记该项检查点" groups="base.group_system" attrs="{'invisible':[('plan_check_id','=',False)]}"/>
                                 </tree>
                             </field>
@@ -213,23 +215,54 @@
         <field name="model">plan.check.line</field>
         <field name="arch" type="xml">
             <tree string="检查点">
+                <field name="po_id"/>
                 <field name="activity_type_1_id"/>
-                <field name="date_finish"/>
+                <button name="open_activity_id_plan" class="akiny_text_right" type="object" icon="fa-archive" />
                 <field name="date_deadline"/>
-                <field name="plan_check_id"/>
+                <button name="open_activity_id_finish" class="akiny_text_right" type="object" icon="fa-archive" />
+                <field name="date_finish"/>
+<field name="state"/>
+                <button name="open_activity_id" type="object" string="登记该项检查点" groups="base.group_system"/>
             </tree>
         </field>
     </record>
 
-    <record id="action_plan_check" model="ir.actions.act_window">
+
+    <record id="plan_check_line_form" model="ir.ui.view">
+        <field name="name">plan.check.line.form</field>
+        <field name="model">plan.check.line</field>
+        <field name="arch" type="xml">
+            <form string="检查点">
+                <sheet>
+                    <group>
+                        <field name="po_id"/>
+                <field name="activity_type_1_id"/>
+                <button name="open_activity_id_plan" class="akiny_text_right" type="object" icon="fa-archive" />
+                <field name="date_deadline"/>
+                <button name="open_activity_id_finish" class="akiny_text_right" type="object" icon="fa-archive" />
+                <field name="date_finish"/>
+
+                <button name="open_activity_id" type="object" string="登记该项检查点" groups="base.group_system"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_plan_check_line" model="ir.actions.act_window">
         <field name="name">检查点</field>
         <field name="type">ir.actions.act_window</field>
-        <field name="res_model">plan.check</field>
+        <field name="res_model">plan.check.line</field>
         <field name="view_mode">tree,form</field>
+        <field name="context">{'group_by':'po_id'}</field>
         <field name="view_ids" eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'tree', 'view_id': ref('plan_check_tree_view')}),
-
-                          (0, 0, {'view_mode': 'form', 'view_id': ref('plan_check_form')})]"/>
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('plan_check_line_tree_view')}),
+                           (0, 0, {'view_mode': 'form', 'view_id': ref('plan_check_line_form')})]"/>
     </record>
 
     <record id="action_new_order_track" model="ir.actions.act_window">
@@ -262,7 +295,7 @@
     <menuitem id="menu_new_order_track" name="新订单下单前跟踪" parent="menu_order_track_root" action="action_new_order_track"
               sequence="1"/>
     <menuitem id="menu_order_track" name="订单跟踪" parent="menu_order_track_root" action="action_order_track" sequence="2"/>
-    <menuitem id="menu_plan_check" name="检查点" parent="base.menu_users" action="action_plan_check" sequence=""/>
+    <menuitem id="menu_plan_check" name="检查点" parent="base.menu_users" action="action_plan_check_line" sequence="3"/>
 
 
 </odoo>

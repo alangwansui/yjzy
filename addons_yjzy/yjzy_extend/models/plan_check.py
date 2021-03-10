@@ -6,6 +6,20 @@ from odoo.tools import DEFAULT_SERVER_DATE_FORMAT as DF
 from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT as DATETIME_FORMAT
 from datetime import datetime, timedelta,date
 
+
+class OrderTrackCategory(models.Model):
+
+    _name = "order.track.category"
+    _description = "check Category"
+
+    name = fields.Char(string="Check Tag", required=True)
+    color = fields.Integer(string='Color Index')
+    order_track_ids = fields.Many2many('order.track', 'order_track_category_rel', 'category_id', 'track_id', string='Check')
+
+    _sql_constraints = [
+        ('name_uniq', 'unique (name)', "Tag name already exists !"),
+    ]
+
 class OrderTrack(models.Model):
     _name = 'order.track'
     _inherit = ['mail.thread', 'mail.activity.mixin', 'portal.mixin']
@@ -120,6 +134,34 @@ class OrderTrack(models.Model):
             display_name = '%s' % ('采购合同检查登记总表')
             one.display_name = display_name
 
+
+    def compute_category_ids(self):
+        for one in self:
+            cat_dic = []
+            category_obj = self.env['order.track.category']
+            un_planning = category_obj.search([('name','=','未计划')])
+            part_planning = category_obj.search([('name','=','部分未计划')])
+            part_time_out = category_obj.search([('name','=','部分过期')])
+            all_time_out = category_obj.search([('name','=','全部过期')])
+
+            if len(one.plan_check_line_ids) == len(
+                    one.plan_check_line_ids.filtered(lambda x: x.state == 'un_planning')):
+                cat_dic.append(un_planning.id)
+            elif len(one.plan_check_line_ids) == len(one.plan_check_line_ids.filtered(lambda x: x.state == 'time_out_planning')):
+                cat_dic.append(all_time_out.id)
+            else:
+                if len(one.plan_check_line_ids.filtered(lambda x: x.state == 'time_out_planning')) > 0 :
+                    cat_dic.append(part_time_out.id)
+                if len(one.plan_check_line_ids.filtered(lambda x: x.state == 'un_planning')) > 0:
+                    cat_dic.append(part_planning.id)
+            print('cat_dic_akiny',cat_dic)
+            one.write({'category_ids':[(6, 0, cat_dic)]})
+
+
+
+    category_ids = fields.Many2many(
+        'order.track.category','order_track_category_rel',  'track_id','category_id',
+        string='Tags',store=True)
     display_name = fields.Char(u'显示名称', compute=compute_display_name)
     type = fields.Selection([('new_order_track', '新订单下单前跟踪'), ('order_track', '订单跟踪'), ('transport_track','出运单跟踪')], 'type')
     so_id = fields.Many2one('sale.order', '销售合同' ,ondelete='cascade')
@@ -152,6 +194,7 @@ class OrderTrack(models.Model):
 
     plan_check_ids = fields.One2many('plan.check','order_track_id','计划跟踪明细')
     factory_return = fields.One2many('plan.check','order_track_id','工厂回签日期',)
+    plan_check_line_ids = fields.One2many('plan.check.line','order_track_id','计划跟踪详情')
 
     def open_so_id(self):
         form_view = self.env.ref('yjzy_extend.new_sale_order_form_4')
@@ -197,7 +240,7 @@ class OrderTrack(models.Model):
             'context':{'order_track':1}
             # 'flags': {'form': {'initial_mode': 'view', 'action_buttons': False}}
         }
-
+    #这个打开的还是plan.check
     def open_plan_check_line(self):
         form_view = self.env.ref('yjzy_extend.order_track_form_plan_check_ids')
         return {
@@ -210,6 +253,23 @@ class OrderTrack(models.Model):
             'res_id': self.id,
             'target': 'current',
             'context':{}
+            # 'flags': {'form': {'initial_mode': 'view', 'action_buttons': False}}
+        }
+    #这个才是真的打开plan.check.line
+    def open_plan_check_line_new(self):
+        tree_view = self.env.ref('yjzy_extend.plan_check_line_tree_view')
+        form_view = self.env.ref('yjzy_extend.plan_check_line_form')
+        return {
+            'name': u'查看',
+            'view_type': 'form',
+            'view_mode': 'tree',
+            'res_model': 'plan.check.line',
+            'type': 'ir.actions.act_window',
+            'views': [(tree_view.id, 'tree'),(form_view.id, 'form')],
+            'domain':[('order_track_id', '=', self.id)],
+            # 'res_id': self.id,
+            'target': 'current',
+            'context':{'group_by':'po_id'}
             # 'flags': {'form': {'initial_mode': 'view', 'action_buttons': False}}
         }
 
@@ -371,34 +431,44 @@ class PlanCheckLine(models.Model):
     are unlinked and a message is posted. This message has a new activity_type_id
     field that indicates the activity linked to the message. """
     _name = 'plan.check.line'
+    _inherit = ['mail.thread', 'mail.activity.mixin', 'portal.mixin']
     _description = '检查点明细'
 
     # 计算state
     @api.depends('date_finish', 'date_deadline')
     def compute_state(self):
         strptime = datetime.strptime
+        now = datetime.now()
         for one in self:
-            if one.date_finish and one.date_deadline:
-                times_finish = (strptime(one.date_finish, DF) - strptime(one.date_deadline, DF)).days
-                if times_finish < 0:
-                    state = 'ahead_of_time'
-                elif times_finish == 0:
-                    state = 'on_time'
-                    one.is_on_time = True
-                else:
-                    state = 'time_out'
+            if not one.date_deadline:
+                state = 'un_planning'
             else:
-                state = 'planning'
+                if one.date_finish:
+                    times_finish = (strptime(one.date_finish, DF) - strptime(one.date_deadline, DF)).days
+                    if times_finish <= 0:
+                        state = 'finish'
+                        one.is_on_time = True
+                    else:
+                        state = 'time_out_finish'
+                else:
+                    time_out = (now - fields.Datetime.from_string(one.date_deadline)).days
+                    print('time_out_akiny',time_out)
+                    if  time_out > 0:
+                        state = 'time_out_planning'
+                    else:
+                        state = 'planning'
             one.state = state
+            one.order_track_id.compute_category_ids()
 
+    order_track_id = fields.Many2one('order.track','计划跟踪',ondelete='cascade')
     plan_check_id = fields.Many2one('plan.check','计划检查',ondelete='cascade' )
-    po_id = fields.Many2one('purchase.order',related='plan_check_id.po_id')
+    po_id = fields.Many2one('purchase.order',related='plan_check_id.po_id',store=True)
     company_id = fields.Many2one('res.company', '公司', related='po_id.company_id')
     date_finish = fields.Date('检查点完成时间',)
     date_deadline = fields.Date('检查点计划时间', index=True, required=False, )
 
 
-    state = fields.Selection([('planning','计划中'),('ahead_of_time','提前完成'),('on_time','准时完成'),('time_out','超时完成')],'状态', default='planning',
+    state = fields.Selection([('un_planning','未计划'),('planning','计划中'),('time_out_planning','已过期'),('finish','正常完成'),('time_out_finish','超时完成')],'状态', default='un_planning',
                              compute=compute_state,store=True)
     is_on_time = fields.Boolean('是否准时完成')
     activity_id = fields.Many2one('mail.activity','计划活动')
