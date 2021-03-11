@@ -15,6 +15,7 @@ class transport_qingguan_line(models.Model):
         for one in self:
             if one.qty > 0:
                 one.price = one.sub_total / one.qty
+                one.price_origin = one.sub_total_origin / one.qty
             else:
                 pass
 
@@ -24,7 +25,8 @@ class transport_qingguan_line(models.Model):
             one.shiji_weight = one.gross_weight + one.tuopan_weight
             one.shiji_volume = one.volume + one.tuopan_volume
 
-
+    price_origin = fields.Float('原单价', required=True, compute=compute_price, digits=dp.get_precision('Qingguan Price'))
+    sub_total_origin = fields.Float('原总价',currency_field='sale_currency_id', digits=dp.get_precision('Money'))
 
     pallet_no = fields.Char('Pallet No')
     carton_qty = fields.Char('Carton Qty')

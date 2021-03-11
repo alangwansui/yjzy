@@ -27,6 +27,21 @@ import odoo.addons.decimal_precision as dp
 class SaleOrder(models.Model):
     _inherit = "sale.order"
 
+
+
+    @api.depends('order_line.price_total')
+    def compute_amount_total_origin(self):
+        for order in self:
+            amount_untaxed_origin = amount_tax_origin = 0.0
+            for line in order.order_line:
+                amount_untaxed_origin += line.price_subtotal_origin
+                amount_tax_origin += line.price_tax_origin
+            order.update({
+                'amount_untaxed_origin': order.pricelist_id.currency_id.round(amount_untaxed_origin),
+                'amount_tax_origin': order.pricelist_id.currency_id.round(amount_tax_origin),
+                'amount_total_origin': amount_untaxed_origin + amount_tax_origin,
+            })
+
     @api.depends('order_line.price_total')
     def _amount_all(self):
         """
@@ -34,16 +49,25 @@ class SaleOrder(models.Model):
         """
         for order in self:
             amount_untaxed = amount_tax = amount_discount = 0.0
+            amount_total_origin = order.amount_total_origin
             for line in order.order_line:
                 amount_untaxed += line.price_subtotal
                 amount_tax += line.price_tax
-                amount_discount += (line.product_uom_qty * line.price_unit * line.discount)/100
-            order.update({
-                'amount_untaxed': order.pricelist_id.currency_id.round(amount_untaxed),
-                'amount_tax': order.pricelist_id.currency_id.round(amount_tax),
-                'amount_discount': order.pricelist_id.currency_id.round(amount_discount),
-                'amount_total': amount_untaxed + amount_tax,
-            })
+                amount_discount = amount_total_origin -amount_untaxed + amount_tax
+                order.update({
+                    'amount_untaxed': order.pricelist_id.currency_id.round(amount_untaxed),
+                    'amount_tax': order.pricelist_id.currency_id.round(amount_tax),
+                    'amount_discount': order.pricelist_id.currency_id.round(amount_discount),
+                    'amount_total': amount_untaxed + amount_tax,
+                })
+
+
+    amount_total_origin = fields.Monetary('原始金额', currency_field='currency_id', store=True, readonly=True,
+                                          compute='compute_amount_total_origin', track_visibility='always')
+    amount_untaxed_origin = fields.Monetary(string='原始未税金额', currency_field='currency_id', store=True, readonly=True,
+                                            compute='compute_amount_total_origin',
+                                            track_visibility='onchange')
+    amount_tax_origin = fields.Monetary(string='原始税', store=True, readonly=True, compute='compute_amount_total_origin')
 
     discount_type = fields.Selection([('percent', '比例'), ('amount', '金额')], string='Discount type',
                                      readonly=True,states={'draft': [('readonly', False)], 'sent': [('readonly', False)]},
@@ -56,8 +80,8 @@ class SaleOrder(models.Model):
                                  track_visibility='always')
     amount_total = fields.Monetary(string='Total', store=True, readonly=True, compute='_amount_all',
                                    track_visibility='always')
-    amount_discount = fields.Monetary(string='Discount', store=True, readonly=True, compute='_amount_all',
-                                      digits=dp.get_precision('Account'), track_visibility='always')
+    amount_discount = fields.Monetary(string='Discount', store=True, readonly=True, compute='_amount_all', currency_field='currency_id',
+                                      track_visibility='always')
 
     @api.onchange('discount_type', 'discount_rate', 'order_line')
     def supply_rate(self):
@@ -162,6 +186,36 @@ class AccountTax(models.Model):
 
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
+
+    @api.depends('product_uom_qty', 'discount', 'price_unit', 'tax_id')
+    def _compute_amount_origin(self):
+        """
+        Compute the amounts of the SO line.
+        """
+        for line in self:
+            discount = line.discount
+            price_subtotal_origin = line.price_unit *  (1 - (0.0) / 100.0)
+            amount_discount = line.price_unit * line.product_uom_qty * (discount / 100.0)
+            taxes_origin = line.tax_id.compute_all(price_subtotal_origin,line.order_id.currency_id,
+                                                   line.product_uom_qty,
+                                                   product=line.product_id, partner=line.order_id.partner_shipping_id)
+
+            line.update({
+                'price_tax_origin': sum(t.get('amount', 0.0) for t in taxes_origin.get('taxes', [])),
+                'price_total_origin': taxes_origin['total_included'],
+                'price_subtotal_origin': taxes_origin['total_excluded'],
+                'amount_discount':amount_discount
+            })
+
+    price_subtotal_origin = fields.Monetary(compute='_compute_amount_origin', string='原始未税金额', readonly=True,
+                                            store=True)
+    price_tax_origin = fields.Float(compute='_compute_amount_origin', string='税金', readonly=True, store=True)
+    price_total_origin = fields.Monetary(compute='_compute_amount_origin', string='原价', readonly=True, store=True)
+    amount_discount = fields.Monetary(string='Discount', store=True, readonly=True, compute='_compute_amount_origin',
+                                      currency_field='currency_id',
+                                      digits=dp.get_precision('Account'), track_visibility='always')
+
+
 
     discount = fields.Float(string='Discount (%)', digits=(16, 20), default=0.0)
 

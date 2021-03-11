@@ -385,7 +385,8 @@ class transport_bill(models.Model):
     #             'org_sale_amount_new': one.sale_currency_id.round(org_sale_amount_new),
     #         })
 
-    @api.depends('line_ids','line_ids.plan_qty','current_date_rate','line_ids.org_currency_sale_amount','state','hsname_ids','hsname_ids.amount')
+    @api.depends('line_ids','line_ids.plan_qty','current_date_rate','line_ids.org_currency_sale_amount',
+                 'line_ids.org_currency_sale_amount_origin','state','hsname_ids','hsname_ids.amount')
     def amount_all(self):
         """
         Compute the total amounts of the SO.
@@ -393,12 +394,19 @@ class transport_bill(models.Model):
         for one in self:
             org_sale_amount_new = 0
             org_real_sale_amount_new = 0
+            org_sale_amount_new_origin = 0
+            org_sale_amount_new_discount = 0
             if one.line_ids:
                 org_sale_amount_new = sum(x.org_currency_sale_amount for x in one.line_ids)
+                org_sale_amount_new_discount = sum(x.org_currency_sale_amount_discount for x in one.line_ids)
+                org_sale_amount_new_origin = sum(x.org_currency_sale_amount_origin for x in one.line_ids)
             if one.hsname_ids:
                 org_real_sale_amount_new = sum([x.amount for x in one.hsname_ids])
+            one.org_sale_amount_new_origin = org_sale_amount_new_origin
             one.org_sale_amount_new = org_sale_amount_new
             one.org_real_sale_amount_new = org_real_sale_amount_new
+            one.org_sale_amount_new_discount = org_sale_amount_new_discount
+
 
     @api.depends('line_ids.plan_qty','line_ids','current_date_rate','state','fee_inner','fee_rmb1','fee_rmb2','fee_outer')
     def _sale_purchase_amount(self):
@@ -816,8 +824,23 @@ class transport_bill(models.Model):
                     po_include_tax = 'part'
             one.po_include_tax = po_include_tax
 
+    def compute_qingguan_amount_total(self):
+        for one in self:
+            qingguan_amount_total = 0
+            qingguan_amount_total_origin = 0
+            for line in one.qingguan_line_ids:
+                qingguan_amount_total += line.sub_total
+                qingguan_amount_total_origin +=line.sub_total_origin
+
+            one.qingguan_amount_total = qingguan_amount_total
+            one.qingguan_amount_total_origin = qingguan_amount_total_origin
+
 
     # 货币设置
+
+    qingguan_amount_total = fields.Monetary('清关合计金额',currency_field='sale_currency_id',compute=compute_qingguan_amount_total)
+    qingguan_amount_total_origin = fields.Monetary('原清关合计金额', currency_field='sale_currency_id',
+                                            compute=compute_qingguan_amount_total)
 
     qingguan_container_no = fields.Text('CONTAINER NO')
     qingguan_seal_no = fields.Text('SEAL NO')
@@ -910,6 +933,11 @@ class transport_bill(models.Model):
                                       digits=dp.get_precision('Money'))
     org_sale_amount_new = fields.Monetary('销售金额', store=True, currency_field='sale_currency_id', compute=amount_all,
                                       digits=dp.get_precision('Money'))  #13ok
+
+    org_sale_amount_new_discount = fields.Monetary(string='Discount', store=True, readonly=True, compute='amount_all',
+                                      digits=dp.get_precision('Account'), track_visibility='always')
+    org_sale_amount_new_origin = fields.Monetary('原销售金额', store=True, currency_field='sale_currency_id', compute=amount_all,
+                                          digits=dp.get_precision('Money'))  # 13ok
     org_real_sale_amount = fields.Monetary('实际销售金额', currency_field='sale_currency_id', compute=compute_info,
                                            digits=dp.get_precision('Money'))
     org_real_sale_amount_new = fields.Monetary('出运金额', store=True,currency_field='sale_currency_id', compute=amount_all,
@@ -2552,8 +2580,10 @@ class transport_bill(models.Model):
         self.qingguan_line_ids.unlink()
         qingguan_obj = self.env['transport.qingguan.line']
         product_dic = {}   #{pi*100+soid: }
+
         for i in self.line_ids:
-            total = i.sol_id.price_unit * i.qty2stage_new
+            total = i.sol_id.price_unit * i.qty2stage_new * (1- (i.discount or 0.0)/100 )
+            total_origin = i.sol_id.price_unit * i.qty2stage_new
             pdt = i.product_id
 
             k = pdt.id * 100000 + i.so_id.id
@@ -2561,8 +2591,9 @@ class transport_bill(models.Model):
             if k in product_dic:
                 product_dic[k]['qty'] += i.qty2stage_new
                 product_dic[k]['sub_total'] += total
+                product_dic[k]['sub_total_origin'] += total_origin
             else:
-                product_dic[k] = {'qty': i.qty2stage_new, 'sub_total': total, 'product_id': pdt.id, 'so_id': i.so_id.id, 's_uom_id': pdt.s_uom_id.id}
+                product_dic[k] = {'qty': i.qty2stage_new, 'sub_total': total,'sub_total_origin': total_origin, 'product_id': pdt.id, 'so_id': i.so_id.id, 's_uom_id': pdt.s_uom_id.id}
 
         for kk, data in list(product_dic.items()):
             line = qingguan_obj.create({
@@ -2572,8 +2603,12 @@ class transport_bill(models.Model):
                 'so_id': data['so_id'],
                 'qty': data['qty'],
                 'sub_total': data['sub_total'],
+                'sub_total_origin':data['sub_total_origin'],
                 'price': data['sub_total'] / (data['qty'] or 1),
+                'price_origin':data['sub_total_origin'] / (data['qty'] or 1),
             })
+
+
             #print('>>', line)
             line.compute_info()
         self.qingguan_state = 'done'

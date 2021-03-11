@@ -221,7 +221,11 @@
                                     </tree>
 
                                 </field>
+                            <group class="oe_subtotal_footer oe_right">
+                                    <field name="qingguan_amount_total_origin"/>
+                                    <field name="qingguan_amount_total"/>
 
+                                </group>
                             </page>
                             <page string="统计" groups="base.group_system">
 

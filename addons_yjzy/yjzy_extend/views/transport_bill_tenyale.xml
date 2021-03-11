@@ -675,8 +675,9 @@
 
                                         <field name="dlr_qty" groups="base.group_system" invisible="1"/>
                                         <field name="qty1stage" groups="base.group_system" invisible="1"/>
-
+                                        <field name="org_currency_sale_amount_origin" string="出运原金额"/>
                                         <field name="org_currency_sale_amount" sum="销售" string="出运销售金额"/>
+
                                         <field name="sale_amount" sum="销售" groups="base.group_system" invisible="1"/>
                                         <field name="back_tax"/>
                                         <field name="purchase_cost" sum="采购" string="出运采购金额"/>
@@ -740,7 +741,10 @@
                                 </field>
                                 <group class="oe_subtotal_footer oe_right">
                                     <field name="back_tax_amount_org"/>
+                                    <field name="org_sale_amount_new_origin"/>
+                                    <field name="org_sale_amount_new_discount" string="折扣"/>
                                     <field name="org_sale_amount_new" class="oe_subtotal_footer_separator"/>
+
 
                                     <field name="purchase_cost_total" class="oe_subtotal_footer_separator"
                                            attrs="{'invisible': [('state', '=', 'draft')]}"/>

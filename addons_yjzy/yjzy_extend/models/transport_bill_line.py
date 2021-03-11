@@ -48,8 +48,13 @@ class transport_bill_line(models.Model):
             qty2stage = sum([x.qty for x in plan_lots.filtered(lambda x: x.stage_2 == True)])
             # one.qty2stage = sum([x.qty for x in plan_lots.filtered(lambda x: x.stage_2 == True)])
             ##计算金额
+            discount = one.discount
             cip_type = one.cip_type
-            org_currency_sale_amount = sol.price_unit * qty2stage
+            org_currency_sale_amount_origin = sol.price_unit * qty2stage
+            org_currency_sale_amount = sol.price_unit * qty2stage * (1- (discount or 0.0)/100 )
+            org_currency_sale_amount_discount = org_currency_sale_amount_origin * ((discount or 0.0)/100)
+
+
             sale_amount = one.sale_currency_id.compute(org_currency_sale_amount, one.company_currency_id)
             purchase_cost = one.get_purchase_cost()
             stock_cost = one.get_stock_cost()
@@ -66,6 +71,8 @@ class transport_bill_line(models.Model):
             one.back_tax_amount = back_tax_amount
             one.vat_diff_amount = vat_diff_amount
             one.profit_amount = profit_amount
+            one.org_currency_sale_amount_origin = org_currency_sale_amount_origin
+            one.org_currency_sale_amount_discount = org_currency_sale_amount_discount
 
     @api.depends('lot_plan_ids','lot_plan_ids.qty','lot_plan_ids.lot_id.purchase_price','lot_plan_ids.stage_1','lot_plan_ids.lot_id.pol_id.currency_id')
     def compute_purchase_cost_new(self):
@@ -84,6 +91,9 @@ class transport_bill_line(models.Model):
         for one in self:
             plan_lots = one.lot_plan_ids
             one.qty2stage_new = sum([x.qty for x in plan_lots.filtered(lambda x: x.stage_2 == True)])
+
+
+
 
    #akiny暂时不要
     stage3move_ids = fields.Many2many('stock.move', 'ref_move_tbl', 'lid', 'mid', u'出库',
@@ -104,9 +114,16 @@ class transport_bill_line(models.Model):
     third_currency_id = fields.Many2one(related='bill_id.third_currency_id', readonly=True)
 
     #13添加
+
+    discount = fields.Float(string='Discount (%)',digits=(16, 20), related='sol_id.discount', store=True,)
     back_tax_amount = fields.Monetary(u'退税金额', currency_field='company_currency_id', compute=compute_info,
                                       digits=dp.get_precision('Money'))
     org_currency_sale_amount = fields.Monetary(u'销售货币金额', currency_field='sale_currency_id', compute=compute_info,
+                                               store=False, digits=dp.get_precision('Money'))
+    org_currency_sale_amount_discount = fields.Monetary(u'折扣', currency_field='sale_currency_id',
+                                                      compute=compute_info,
+                                                      store=False, digits=dp.get_precision('Money'))
+    org_currency_sale_amount_origin =  fields.Monetary(u'销售货币金额', currency_field='sale_currency_id', compute=compute_info,
                                                store=False, digits=dp.get_precision('Money'))
     sale_amount = fields.Monetary(u'销售金额', currency_field='company_currency_id', compute=compute_info, store=False,
                                   digits=dp.get_precision('Money'))
