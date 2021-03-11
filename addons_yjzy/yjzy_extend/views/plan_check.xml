@@ -26,6 +26,8 @@
                 <button name="open_plan_check_line" type="object"  string="工厂检查点登记" class="oe_highlight" invisible="1"/>
                 <button name="open_plan_check_line_new" type="object" string="工厂检查点登记" class="oe_highlight" invisible="context.get('type')!='order_track'"/>
                 <field name="category_ids" string="异常结果" options="{'color_field':'color'}"  widget="many2many_tags" invisible="context.get('type')!='order_track'"/>
+                <field name="planning_integrity" invisible="context.get('type')!='order_track'"/>
+                <field name="check_on_time" invisible="context.get('type')!='order_track'"/>
                 <field name="earliest_date_po_order" invisible="context.get('type')!='order_track'"/>
                 <field name="latest_date_po_planned" invisible="context.get('type')!='order_track'"/>
                 <field name="date_so_contract" invisible="context.get('type')!='order_track'" readonly="1"/>

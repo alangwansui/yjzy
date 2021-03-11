@@ -143,11 +143,8 @@ class OrderTrack(models.Model):
         'order.track.category','order_track_category_rel',  'track_id','category_id',
         string='Tags',store=True)
 
-    planning_integrity = fields.Selection([('10_un_planning','未计划'),('20_part_un_planning','部分未计划'),('30_planning','已完全计划')],'计划安排完整性',default='un_planning')
-    check_on_time = fields.Selection([('10_not_time','未到时'),('20_out_time_un_finish','超时未完成'),('30_on_tima_finish','准时完成'),('40_out_time_finish','超时完成')])
-    # def compute_planning_integrity(self):
-
-
+    planning_integrity = fields.Selection([('10_un_planning','未计划'),('20_part_un_planning','部分未计划'),('30_planning','已完全计划')],'计划安排完整性',default='10_un_planning')
+    check_on_time = fields.Selection([('10_not_time','未到时'),('20_out_time_un_finish','超时未完成'),('30_on_time_finish','准时完成'),('40_out_time_finish','超时完成')])
 
     display_name = fields.Char(u'显示名称', compute=compute_display_name)
     type = fields.Selection([('new_order_track', '新订单下单前跟踪'), ('order_track', '订单跟踪'), ('transport_track','出运单跟踪')], 'type')
@@ -182,6 +179,49 @@ class OrderTrack(models.Model):
     plan_check_ids = fields.One2many('plan.check','order_track_id','计划跟踪明细')
     factory_return = fields.One2many('plan.check','order_track_id','工厂回签日期',)
     plan_check_line_ids = fields.One2many('plan.check.line','order_track_id','计划跟踪详情')
+
+    def compute_planning_integrity(self):
+        for one in self:
+            if len(one.plan_check_line_ids) == len(
+                    one.plan_check_line_ids.filtered(lambda x: x.state == 'un_planning')):
+                planning_integrity = '10_un_planning'
+            elif len(one.plan_check_line_ids.filtered(lambda x: x.state == 'un_planning')) == 0:
+                planning_integrity = '30_planning'
+            else:
+                planning_integrity = '20_part_un_planning'
+            one.planning_integrity = planning_integrity
+
+    # def open_plan_check_line_10_un_planning(self):
+    #     tree_view = self.env.ref('yjzy_extend.plan_check_line_tree_view')
+    #     form_view = self.env.ref('yjzy_extend.plan_check_line_form')
+    #     if self.planning_integrity == '10_un_planning':
+    #
+    #     return {
+    #         'name': u'查看',
+    #         'view_type': 'form',
+    #         'view_mode': 'tree',
+    #         'res_model': 'plan.check.line',
+    #         'type': 'ir.actions.act_window',
+    #         'views': [(tree_view.id, 'tree'),(form_view.id, 'form')],
+    #         'domain':[('order_track_id', '=', self.id)],
+    #         # 'res_id': self.id,
+    #         'target': 'current',
+    #         'context':{'group_by':'po_id'}
+    #         # 'flags': {'form': {'initial_mode': 'view', 'action_buttons': False}}
+    #     }
+
+    def compute_check_on_time(self):
+        for one in self:
+            if len(one.plan_check_line_ids) == len(
+                    one.plan_check_line_ids.filtered(lambda x: x.state == 'planning')):
+                check_on_time = '10_not_time'
+            elif len(one.plan_check_line_ids.filtered(lambda x: x.state == 'time_out_planning')) > 0:
+                check_on_time = '20_out_time_un_finish'
+            elif len(one.plan_check_line_ids.filtered(lambda x: x.state == 'time_out_finish')) > 0:
+                check_on_time = '40_out_time_finish'
+            else:
+                check_on_time = '30_on_time_finish'
+            one.check_on_time = check_on_time
 
     def open_so_id(self):
         form_view = self.env.ref('yjzy_extend.new_sale_order_form_4')
@@ -471,6 +511,8 @@ class PlanCheckLine(models.Model):
                         state = 'planning'
             one.state = state
             one.order_track_id.compute_category_ids()
+            one.order_track_id.compute_planning_integrity()
+            one.order_track_id.compute_check_on_time()
 
     order_track_id = fields.Many2one('order.track','计划跟踪',ondelete='cascade')
     plan_check_id = fields.Many2one('plan.check','计划检查',ondelete='cascade' )
