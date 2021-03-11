@@ -666,7 +666,7 @@
                                 <field name="balance" string="实际预收余额"/>
                                 <field name="gold_sample_state" string="金样管理"/>
                                 <field name="ps_state" string="PS管理"/>
-
+                                <field name="is_discount"/>
                                 <field name="validity_date"
                                        attrs="{'invisible': [('state', 'in', ['sale', 'done']),('is_editable','=',False)]}"/>
                                 <field name="confirmation_date"
