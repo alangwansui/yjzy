@@ -824,6 +824,7 @@ class transport_bill(models.Model):
                     po_include_tax = 'part'
             one.po_include_tax = po_include_tax
 
+    @api.depends('qingguan_line_ids','qingguan_line_ids.sub_total_origin','qingguan_line_ids.sub_total')
     def compute_qingguan_amount_total(self):
         for one in self:
             qingguan_amount_total = 0
@@ -838,9 +839,9 @@ class transport_bill(models.Model):
 
     # 货币设置
 
-    qingguan_amount_total = fields.Monetary('清关合计金额',currency_field='sale_currency_id',compute=compute_qingguan_amount_total)
+    qingguan_amount_total = fields.Monetary('清关合计金额',currency_field='sale_currency_id',compute=compute_qingguan_amount_total,store=True)
     qingguan_amount_total_origin = fields.Monetary('原清关合计金额', currency_field='sale_currency_id',
-                                            compute=compute_qingguan_amount_total)
+                                            compute=compute_qingguan_amount_total , store=True)
 
     qingguan_container_no = fields.Text('CONTAINER NO')
     qingguan_seal_no = fields.Text('SEAL NO')
