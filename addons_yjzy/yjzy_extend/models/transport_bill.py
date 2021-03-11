@@ -398,8 +398,9 @@ class transport_bill(models.Model):
             org_sale_amount_new_discount = 0
             if one.line_ids:
                 org_sale_amount_new = sum(x.org_currency_sale_amount for x in one.line_ids)
-                org_sale_amount_new_discount = sum(x.org_currency_sale_amount_discount for x in one.line_ids)
+
                 org_sale_amount_new_origin = sum(x.org_currency_sale_amount_origin for x in one.line_ids)
+                org_sale_amount_new_discount = org_sale_amount_new_origin - org_sale_amount_new
             if one.hsname_ids:
                 org_real_sale_amount_new = sum([x.amount for x in one.hsname_ids])
             one.org_sale_amount_new_origin = org_sale_amount_new_origin
