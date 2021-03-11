@@ -622,6 +622,7 @@
                                 <field name="user_id" readonly="1" no_create="True" string="责任人"
                                        options="{'no_open':1}"/>
                                 <field name="sale_assistant_id" readonly="1" invisible="0" options="{'no_open':1}"/>
+                                <field name="is_discount"/>
 
                             </group>
 
@@ -741,10 +742,9 @@
                                 </field>
                                 <group class="oe_subtotal_footer oe_right">
                                     <field name="back_tax_amount_org"/>
-                                    <field name="org_sale_amount_new_origin"/>
-                                    <field name="org_sale_amount_new_discount" string="折扣"/>
+                                    <field name="org_sale_amount_new_origin" attrs="{'invisible':[('is_discount','=',False)]}"/>
+                                    <field name="org_sale_amount_new_discount" string="折扣" attrs="{'invisible':[('is_discount','=',False)]}"/>
                                     <field name="org_sale_amount_new" class="oe_subtotal_footer_separator"/>
-
 
                                     <field name="purchase_cost_total" class="oe_subtotal_footer_separator"
                                            attrs="{'invisible': [('state', '=', 'draft')]}"/>

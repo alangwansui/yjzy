@@ -839,6 +839,7 @@ class transport_bill(models.Model):
 
     # 货币设置
 
+    is_discount = fields.Boolean('是否折扣',default=False)
     qingguan_amount_total = fields.Monetary('清关合计金额',currency_field='sale_currency_id',compute=compute_qingguan_amount_total,store=True)
     qingguan_amount_total_origin = fields.Monetary('原清关合计金额', currency_field='sale_currency_id',
                                             compute=compute_qingguan_amount_total , store=True)
