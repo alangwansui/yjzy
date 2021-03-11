@@ -61,6 +61,8 @@ class SaleOrder(models.Model):
                     'amount_total': amount_untaxed + amount_tax,
                 })
 
+    
+
 
     amount_total_origin = fields.Monetary('原始金额', currency_field='currency_id', store=True, readonly=True,
                                           compute='compute_amount_total_origin', track_visibility='always')

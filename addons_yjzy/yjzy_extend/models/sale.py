@@ -341,6 +341,8 @@ class sale_order(models.Model):
     state_1 = fields.Selection(Sale_Selection, u'审批流程', default='draft', index=True, related='stage_id.state',
                                track_visibility='onchange')  # 费用审批流程
 
+    is_discount = fields.Boolean('是否需要折扣',default=False)
+
     hxd_ids = fields.One2many('account.reconcile.order.line', 'so_id', '所有已经批准的核销单',
                               domain=[('order_id.state_1', 'in', ['done', 'post'])])
     amount_org_hxd = fields.Float('核销单的付款金额总和', compute=compute_amount_org_hxd, store=True)

@@ -977,18 +977,18 @@
                                 </field>
 
                                 <group col="4">
-                        <group name="discount" colspan="2">
+                        <group name="discount" colspan="2" attrs="{'invisible':[('is_discount','=',False)]}">
                             <field name="discount_type" string="折扣类型" readonly="1"/>
                             <field name="discount_rate" string="折扣率"/>
                         </group>
                         <group class="oe_subtotal_footer oe_right" colspan="2" name="sale_total">
-                            <field name="amount_total_origin" string="原始金额"/>
+                            <field name="amount_total_origin" string="原始金额" attrs="{'invisible':[('is_discount','=',False)]}"/>
                             <field name="amount_untaxed" widget='monetary' options="{'currency_field': 'currency_id'}" invisible="1"/>
-                            <field name="amount_discount" string="折扣" widget='monetary' options="{'currency_field': 'currency_id'}" />
+                            <field name="amount_discount" string="折扣" widget='monetary' options="{'currency_field': 'currency_id'}" attrs="{'invisible':[('is_discount','=',False)]}"/>
                             <field name="amount_tax" widget='monetary' options="{'currency_field': 'currency_id'}" invisible="1"/>
                             <div class="oe_subtotal_footer_separator oe_inline">
                                 <label for="amount_total"/>
-                                <button name="button_dummy"
+                                <button name="button_dummy" attrs="{'invisible':[('is_discount','=',False)]}"
                                         states="draft,sent" string="(update)" type="object" class="oe_edit_only oe_link"/>
                             </div>
                             <field name="amount_total" nolabel="1" class="oe_subtotal_footer_separator" widget='monetary' digits="[2,2]"
