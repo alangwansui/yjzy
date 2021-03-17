@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<templates id="template" xml:space="preserve">
+    <t t-name="ProgressBar" t-operation="replace">
+		<t t-name="ProgressBar">
+		    <div class="o_progressbar">
+		    	<div class="o_progress"><div class="o_progressbar_complete"><div class="o_progressbar_value"/></div></div>
+		    </div>
+		</t>
+	</t>
+</templates>

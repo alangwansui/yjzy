@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="init_progressbar" inherit_id="web.assets_backend" name="init_percent_progressbar">
+            <xpath expr="." position="inside">
+                <link rel="stylesheet" href="/init_web_beauty_progressbar/static/src/scss/progress_bar.scss"/>
+            </xpath>
+        </template>
+     </data>
+</odoo>

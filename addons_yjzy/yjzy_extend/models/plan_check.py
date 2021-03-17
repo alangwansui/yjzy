@@ -83,26 +83,32 @@ class OrderTrack(models.Model):
 
     def compute_finish_percent(self):
         for one in self:
-            strptime = datetime.strptime
-            today = datetime.today()
-            time_contract_requested = one.time_contract_requested
-            x = (today - strptime(one.date_so_contract , DF)).days
-            print('x_akiny',x,time_contract_requested)
-            finish_percent = time_contract_requested != 0 and x * 100 / time_contract_requested or 0
-            if finish_percent >= 100:
-                finish_percent = 100
-            one.finish_percent = finish_percent
+            if one.type == 'order_track':
+                strptime = datetime.strptime
+                today = datetime.today()
+                time_contract_requested = one.time_contract_requested
+                x = (today - strptime(one.date_so_contract , DF)).days
+                print('x_akiny',x,time_contract_requested)
+                finish_percent = time_contract_requested != 0 and x * 100 / time_contract_requested or 0
+                if finish_percent >= 100:
+                    finish_percent = 100
+                one.finish_percent = finish_percent
+
 
     def compute_finish_percent_supplier(self):
         for one in self:
-            strptime = datetime.strptime
-            today = datetime.today()
-            time_supplier_requested = one.time_supplier_requested
-            x = (today - strptime(one.earliest_date_po_order, DF)).days
-            finish_percent_supplier = time_supplier_requested != 0 and x * 100 / time_supplier_requested or 0
-            if finish_percent_supplier >=100:
-                finish_percent_supplier = 100
-            one.finish_percent_supplier = finish_percent_supplier
+            if one.type == 'order_track':
+                strptime = datetime.strptime
+                today = datetime.today()
+                time_supplier_requested = one.time_supplier_requested
+                earliest_date_po_order = one.earliest_date_po_order
+                print('earliest_date_po_order_ainy',earliest_date_po_order)
+                if time_supplier_requested and earliest_date_po_order:
+                    x = (today - strptime(earliest_date_po_order, DF)).days
+                    finish_percent_supplier = time_supplier_requested != 0 and x * 100 / time_supplier_requested or 0
+                    if finish_percent_supplier >=100:
+                        finish_percent_supplier = 100
+                    one.finish_percent_supplier = finish_percent_supplier
 
     @api.depends('plan_check_ids','plan_check_ids.plan_check_line')
     def compute_check_all_number(self):
@@ -113,48 +119,123 @@ class OrderTrack(models.Model):
             one.check_all_number = len_number
 
     @api.depends('plan_check_ids', 'plan_check_ids.plan_check_line', 'plan_check_ids.plan_check_line.state')
-    def compute_check_finish_number(self):
+    def compute_check_finish_number_old(self):
         for one in self:
             num = 0
             for line in one.plan_check_ids:
                 if line.plan_check_line:
                     for x in line.plan_check_line:
-                        if x.state in ['ahead_of_time', 'on_time', 'time_out']:
+                        if x.state in ['finish', 'time_out_finish']:
                             num += 1
+            one.check_finish_number = num
+
+    @api.depends('plan_check_line_ids','plan_check_line_ids.state')
+    def compute_check_finish_number(self):
+        for one in self:
+            num = 0
+            for x in one.plan_check_line_ids:
+                if x.state in ['finish', 'time_out_finish']:
+                    num += 1
             one.check_finish_number = num
 
     def compute_check_number_percent(self):
         for one in self:
-            check_number_percent = one.check_all_number !=0 and  one.check_finish_number * 100 / one.check_all_number or 0
+            check_number_percent = one.check_all_number !=0 and  one.check_finish_number * 100 / one.check_all_number or 0.0
             one.check_number_percent = check_number_percent
 
     def compute_display_name(self):
         ctx = self.env.context
         for one in self:
-            display_name = '%s' % ('采购合同检查登记总表')
+            if one.type in ['new_order_track','order_track']:
+                display_name = '%s' % (one.so_id.contract_code)
+            else:
+                display_name = '%s' % (one.tb_id.ref)
             one.display_name = display_name
 
 
 
+    @api.depends('so_id', 'so_id.sent_qty', 'so_id.no_sent_qty', 'so_id.all_qty')
+    def compute_so_qty(self):
+        for one in self:
+            if one.type == 'order_track':
+                so_id = one.so_id
+                so_sent_qty = so_id.sent_qty
+                so_no_sent_qty = so_id.no_sent_qty
+                so_all_qty = so_id.all_qty
 
+                one.so_sent_qty = so_sent_qty
+                one.so_no_sent_qty = so_no_sent_qty
+                one.so_all_qty = so_all_qty
+                one.sent_percent = so_all_qty != 0 and (so_sent_qty / so_all_qty) * 100 or 0.0
 
+    @api.depends('tb_purchase_invoice_ids','tb_purchase_invoice_ids.currency_id')
+    def compute_purchase_back_invoice_currency_id(self):
+        for one in self:
+            if one.tb_purchase_invoice_ids:
+                one.purchase_back_invoice_currency_id = one.tb_purchase_invoice_ids[0].currency_id
+            else:
+                one.purchase_back_invoice_currency_id = self.env.user.company_id.currency_id
 
+    @api.depends('so_id', 'tb_id', 'so_id.company_id', 'tb_id.company_id')
+    def compute_company_id(self):
+        for one in self:
+            if one.type in ['new_order_track', 'order_track']:
+                company_id = one.so_id.company_id
+            else:
+                company_id = one.tb_id.company_id
+            one.company_id = company_id
+
+    name = fields.Char('编号', default=lambda self: self.env['ir.sequence'].next_by_code('order.track'))
     category_ids = fields.Many2many(
         'order.track.category','order_track_category_rel',  'track_id','category_id',
         string='Tags',store=True)
 
-    planning_integrity = fields.Selection([('10_un_planning','未计划'),('20_part_un_planning','部分未计划'),('30_planning','已完全计划')],'计划安排完整性',default='10_un_planning')
-    check_on_time = fields.Selection([('10_not_time','未到时'),('20_out_time_un_finish','超时未完成'),('30_on_time_finish','准时完成'),('40_out_time_finish','超时完成')])
+    planning_integrity = fields.Selection([('10_un_planning','未计划'),('20_part_un_planning','部分未计划'),('30_planning','已完全计划')],
+                                          u'计划安排完整性',default='10_un_planning')
+    check_on_time = fields.Selection([('10_not_time',u'未到时'),('20_out_time_un_finish',u'超时未完成'),('30_on_time_finish',u'准时完成'),('40_out_time_finish',u'超时完成')],
+                                     u'检查执行准时性',default='10_not_time')
 
     display_name = fields.Char(u'显示名称', compute=compute_display_name)
     type = fields.Selection([('new_order_track', '新订单下单前跟踪'), ('order_track', '订单跟踪'), ('transport_track','出运单跟踪')], 'type')
     so_id = fields.Many2one('sale.order', '销售合同' ,ondelete='cascade')
+    so_sent_qty = fields.Float('已出运数',compute=compute_so_qty,store=True)
+
+    so_all_qty = fields.Float('原始总数',compute=compute_so_qty,store=True)
+    so_no_sent_qty = fields.Float('未出运数',compute=compute_so_qty,store=True)
+    sent_percent = fields.Float('出运进度',compute='compute_so_qty')
+
     tb_id = fields.Many2one('transport.bill', '出运合同' ,ondelete='cascade')
+    tb_purchase_invoice_ids = fields.One2many('account.invoice','order_track_id','应付账单',domain=[('yjzy_type','=','purchase')])
+    purchase_back_invoice_currency_id =fields.Many2one('res.currency',compute=compute_purchase_back_invoice_currency_id,store=True)
+    sale_invoice_currency_id =fields.Many2one('res.currency',related='tb_id.sale_currency_id')
+
+    tb_sale_invoice_id = fields.One2many('account.invoice','order_track_id',domain=[('yjzy_type','=','sale')])
+    sale_invoice_balance = fields.Monetary('应收款',currency_field='sale_invoice_currency_id',related='tb_id.sale_invoice_balance_new',store=True)
+    purchase_invoice_balance = fields.Monetary('应付款',currency_field='purchase_back_invoice_currency_id',related='tb_id.purchase_invoice_balance_new',store=True)
+    back_tax_invoice_balance = fields.Monetary('应收退税',currency_field='purchase_back_invoice_currency_id',related='tb_id.back_tax_invoice_balance_new',store=True)
+    date_all_state = fields.Selection([('10_date_approving',u'日期审批中'),
+                                       ('20_no_date_out_in',u'发货日期待填'),
+                                       ('30_un_done',u'其他日期待填'),
+                                       ('40_done',u'已完成相关日期'),
+                                       ],'所有日期状态',related='tb_id.date_all_state',store=True, )
+    date_out_in = fields.Date('进仓日期',related='tb_id.date_out_in',store=True)
+    is_date_out_in = fields.Boolean('进仓日是否已确认',related='tb_id.is_date_out_in',store=True)
+    date_in = fields.Date('入库日期',related='tb_id.date_in',store=True)
+    date_ship = fields.Date('出运船日期',related='tb_id.date_ship',store=True)
+    date_customer_finish = fields.Date('客户交单日期',related='tb_id.date_customer_finish')
+
+    date_supplier_finish = fields.Date('最迟供应商交单确认日期')
+
+
+
     po_ids = fields.Many2many('purchase.order','ref_pp', 'fid', 'tid','采购单')
-    company_id = fields.Many2one('res.company', '公司', related='so_id.company_id')
+    company_id = fields.Many2one('res.company', '公司', compute=compute_company_id,store=True)
+
+
+
 
     time_draft_order = fields.Datetime('so_create_date',related='so_id.create_date',store=True)
-    hegui_date = fields.Date('合规审批时间',track_visibility='onchange',related='so_id.hegui_date',store=True)
+    hegui_date = fields.Date('合规审批时间',track_visibility='onchange',related='so_id.approve_date',store=True)
     time_receive_pi = fields.Date('收到客户订单时间',track_visibility='onchange',related='so_id.time_receive_pi',store=True)
     time_sent_pi = fields.Date('发送PI时间',track_visibility='onchange',related='so_id.time_sent_pi',store=True)
     time_sign_pi = fields.Date('客户PI回签时间',track_visibility='onchange',related='so_id.time_sign_pi',store=True)
@@ -180,48 +261,98 @@ class OrderTrack(models.Model):
     factory_return = fields.One2many('plan.check','order_track_id','工厂回签日期',)
     plan_check_line_ids = fields.One2many('plan.check.line','order_track_id','计划跟踪详情')
 
+    comments_new_order_track = fields.Text('备注日志',track_visibility='onchange')
+    comments_order_track = fields.Text('备注日志', track_visibility='onchange')
+    comments_transport_track = fields.Text('备注日志', track_visibility='onchange')
+
+    def open_wizard_comments(self):
+        wzcomments_obj = self.env['wizard.plan.check.comments']
+        wzcomments = wzcomments_obj.create({
+            'order_track_id':self.id,
+            'type':self.type,
+        })
+
+        form_view = self.env.ref('yjzy_extend.wizard_plan_check_form')
+        return {
+            'name': u'查看',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'wizard.plan.check.comments',
+            'type': 'ir.actions.act_window',
+            'views': [ (form_view.id, 'form')],
+            'res_id': wzcomments.id,
+            'target': 'new',
+        }
+
+
     def compute_planning_integrity(self):
         for one in self:
             if len(one.plan_check_line_ids) == len(
-                    one.plan_check_line_ids.filtered(lambda x: x.state == 'un_planning')):
+                    one.plan_check_line_ids.filtered(lambda x: x.state == '10_un_planning')):
                 planning_integrity = '10_un_planning'
-            elif len(one.plan_check_line_ids.filtered(lambda x: x.state == 'un_planning')) == 0:
+            elif len(one.plan_check_line_ids.filtered(lambda x: x.state == '10_un_planning')) == 0:
                 planning_integrity = '30_planning'
             else:
                 planning_integrity = '20_part_un_planning'
-            one.planning_integrity = planning_integrity
+            print('akiny_planning_3',planning_integrity)
+            one.write({
+                'planning_integrity':planning_integrity
+            })
 
-    # def open_plan_check_line_10_un_planning(self):
-    #     tree_view = self.env.ref('yjzy_extend.plan_check_line_tree_view')
-    #     form_view = self.env.ref('yjzy_extend.plan_check_line_form')
-    #     if self.planning_integrity == '10_un_planning':
-    #
-    #     return {
-    #         'name': u'查看',
-    #         'view_type': 'form',
-    #         'view_mode': 'tree',
-    #         'res_model': 'plan.check.line',
-    #         'type': 'ir.actions.act_window',
-    #         'views': [(tree_view.id, 'tree'),(form_view.id, 'form')],
-    #         'domain':[('order_track_id', '=', self.id)],
-    #         # 'res_id': self.id,
-    #         'target': 'current',
-    #         'context':{'group_by':'po_id'}
-    #         # 'flags': {'form': {'initial_mode': 'view', 'action_buttons': False}}
-    #     }
+    def open_planning_integrity(self):
+        tree_view = self.env.ref('yjzy_extend.plan_check_line_tree_view')
+        form_view = self.env.ref('yjzy_extend.plan_check_line_form')
+        return {
+            'name': u'查看',
+            'view_type': 'form',
+            'view_mode': 'tree',
+            'res_model': 'plan.check.line',
+            'type': 'ir.actions.act_window',
+            'views': [(tree_view.id, 'tree'),(form_view.id, 'form')],
+            'domain':[('order_track_id', '=', self.id)],
+            # 'res_id': self.id,
+            'context':{'group_by':'state'},
+            'target': 'current',
+            # 'flags': {'form': {'initial_mode': 'view', 'action_buttons': False}}
+        }
+    def open_check_on_time(self):
+        tree_view = self.env.ref('yjzy_extend.plan_check_line_tree_view')
+        form_view = self.env.ref('yjzy_extend.plan_check_line_form')
+        return {
+            'name': u'查看',
+            'view_type': 'form',
+            'view_mode': 'tree',
+            'res_model': 'plan.check.line',
+            'type': 'ir.actions.act_window',
+            'views': [(tree_view.id, 'tree'),(form_view.id, 'form')],
+            'domain':[('order_track_id', '=', self.id)],
+            # 'res_id': self.id,
+            'target': 'current',
+            'context':{'group_by':'state'}
+            # 'flags': {'form': {'initial_mode': 'view', 'action_buttons': False}}
+        }
 
     def compute_check_on_time(self):
         for one in self:
+            print('akiny_planning',len(one.plan_check_line_ids.filtered(lambda x: x.state == '30_time_out_planning')))
             if len(one.plan_check_line_ids) == len(
-                    one.plan_check_line_ids.filtered(lambda x: x.state == 'planning')):
+                    one.plan_check_line_ids.filtered(lambda x: x.state in ['20_planning'])):
                 check_on_time = '10_not_time'
-            elif len(one.plan_check_line_ids.filtered(lambda x: x.state == 'time_out_planning')) > 0:
+            elif len(one.plan_check_line_ids) == len(
+                    one.plan_check_line_ids.filtered(lambda x: x.state in ['10_un_planning'])):
+                check_on_time = '10_not_time'
+            elif len(one.plan_check_line_ids.filtered(lambda x: x.state == '30_time_out_planning')) > 0:
                 check_on_time = '20_out_time_un_finish'
-            elif len(one.plan_check_line_ids.filtered(lambda x: x.state == 'time_out_finish')) > 0:
+            elif len(one.plan_check_line_ids.filtered(lambda x: x.state == '50_time_out_finish')) > 0:
                 check_on_time = '40_out_time_finish'
+            elif len(one.plan_check_line_ids.filtered(lambda x: x.state in ['50_time_out_finish','40_finish'])) == 0:
+                check_on_time = '10_not_time'
             else:
                 check_on_time = '30_on_time_finish'
-            one.check_on_time = check_on_time
+            one.write({
+                'check_on_time': check_on_time
+            })
+
 
     def open_so_id(self):
         form_view = self.env.ref('yjzy_extend.new_sale_order_form_4')
@@ -233,6 +364,20 @@ class OrderTrack(models.Model):
             'type': 'ir.actions.act_window',
             'views': [(form_view.id, 'form')],
             'res_id': self.so_id.id,
+            'target': 'current',
+            'flags': {'form': {'initial_mode': 'view', 'action_buttons': False}}
+        }
+
+    def open_tb_id(self):
+        form_view = self.env.ref('yjzy_extend.view_transport_bill_tenyale_sales_form')
+        return {
+            'name': u'出运合同',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'transport.bill',
+            'type': 'ir.actions.act_window',
+            'views': [(form_view.id, 'form')],
+            'res_id': self.tb_id.id,
             'target': 'current',
             'flags': {'form': {'initial_mode': 'view', 'action_buttons': False}}
         }
@@ -264,7 +409,21 @@ class OrderTrack(models.Model):
             'views': [(form_view.id, 'form')],
             'res_id': self.id,
             'target': 'current',
-            'context':{'order_track':1}
+            'context':{'order_track':1,'type':'new_order_track'}
+            # 'flags': {'form': {'initial_mode': 'view', 'action_buttons': False}}
+        }
+    def open_order_track_tb(self):
+        form_view = self.env.ref('yjzy_extend.order_track_form')
+        return {
+            'name': u'查看',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'order.track',
+            'type': 'ir.actions.act_window',
+            'views': [(form_view.id, 'form')],
+            'res_id': self.id,
+            'target': 'current',
+            'context':{'type':'transport_track'}
             # 'flags': {'form': {'initial_mode': 'view', 'action_buttons': False}}
         }
     #这个打开的还是plan.check
@@ -317,19 +476,54 @@ class OrderTrack(models.Model):
             all_time_out = category_obj.search([('name','=','全部过期')])
             if one.plan_check_line_ids:
                 if len(one.plan_check_line_ids) == len(
-                        one.plan_check_line_ids.filtered(lambda x: x.state == 'un_planning')):
+                        one.plan_check_line_ids.filtered(lambda x: x.state == '10_un_planning')):
                     cat_dic.append(un_planning.id)
-                elif len(one.plan_check_line_ids) == len(one.plan_check_line_ids.filtered(lambda x: x.state == 'time_out_planning')):
+                elif len(one.plan_check_line_ids) == len(one.plan_check_line_ids.filtered(lambda x: x.state == '30_time_out_planning')):
                     cat_dic.append(all_time_out.id)
                 else:
-                    if len(one.plan_check_line_ids.filtered(lambda x: x.state == 'time_out_planning')) > 0 :
+                    if len(one.plan_check_line_ids.filtered(lambda x: x.state == '30_time_out_planning')) > 0 :
                         cat_dic.append(part_time_out.id)
-                    if len(one.plan_check_line_ids.filtered(lambda x: x.state == 'un_planning')) > 0:
+                    if len(one.plan_check_line_ids.filtered(lambda x: x.state == '10_un_planning')) > 0:
                         cat_dic.append(part_planning.id)
                 print('cat_dic_akiny',cat_dic)
                 one.write({'category_ids':[(6, 0, cat_dic)]})
 
 
+    def action_date_out_in(self):
+        if self.date_out_in and not self.is_date_out_in:
+            plan_check_obj = self.env['plan.check']
+            self.tb_id.with_context({'date_type':'date_out_in'}).action_customer_date_state_done()
+            self.tb_id.sale_invoice_id.write({
+                'order_track_id':self.id,
+            })
+            for line in self.tb_id.purchase_invoice_ids:
+                line.write({
+                    'order_track_id': self.id
+                })
+            for one in self.tb_id.purchase_invoice_ids:
+                plan_check = plan_check_obj.create({
+                    'type': 'transport_track',
+                    'tb_id': self.tb_id.id,
+                    'purchase_invoice_id': one.id,
+                    'order_track_id': self.id,
+                })
+            self.is_date_out_in = True
+
+
+    def open_purchase_invoice(self):
+        form_view = self.env.ref('yjzy_extend.view_account_supplier_invoice_new_form')
+        tree_view = self.env.ref('yjzy_extend.view_account_invoice_new_tree_track')
+        self.ensure_one()
+        return {
+            'name': u'供应商日期填制',
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'res_model': 'account.invoice',
+            'type': 'ir.actions.act_window',
+            'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
+            'domain': [('id', 'in', [x.id for x in self.tb_purchase_invoice_ids])],
+            'target':'new'
+        }
 
 
 
@@ -413,15 +607,24 @@ class PlanCheck(models.Model):
             else:
                 one.state = 'planning'
 
+    @api.depends('so_id', 'tb_id', 'so_id.company_id', 'tb_id.company_id')
+    def compute_company_id(self):
+        for one in self:
+            if one.order_track_id.type in ['new_order_track', 'order_track']:
+                company_id = one.so_id.company_id
+            else:
+                company_id = one.tb_id.company_id
+            one.company_id = company_id
+
 
 
     display_name = fields.Char(u'显示名称', compute=compute_display_name)
     order_track_id = fields.Many2one('order.track','计划跟踪',ondelete='cascade')
     # plan_check_ids = fields.One2many('plan.check','so_id')
     so_id = fields.Many2one('sale.order',)
-    company_id = fields.Many2one('res.company', '公司', related='so_id.company_id')
+
     po_id = fields.Many2one('purchase.order','采购合同')
-    tb_id = fields.Many2one('transport.bill',related='order_track_id.tb_id')
+
     date_factory_return = fields.Date('工厂回传时间', index=True,track_visibility='onchange', related='po_id.date_factory_return',store=True)#todo 填写后，自动写入po
     date_po_planned = fields.Date('工厂交期',compute=compute_date_po_planned_order,store=True)
     date_po_order = fields.Date('工厂下单日期',compute=compute_date_po_planned_order,store=True)
@@ -432,6 +635,55 @@ class PlanCheck(models.Model):
 
     state = fields.Selection([('planning','执行中'),('finish','完成'),],'状态', default='planning',compute=compute_state,store=True)
 
+    tb_id = fields.Many2one('transport.bill','出运合同')
+    purchase_invoice_id = fields.Many2one('account.invoice','采购账单')
+    purchase_invoice_date_finish = fields.Date('供应商交单时间', related='purchase_invoice_id.date_finish', store=True)
+
+    company_id = fields.Many2one('res.company', '公司', compute=compute_company_id,store=True)
+
+    planning_integrity = fields.Selection(
+        [('10_un_planning', '未计划'), ('20_part_un_planning', '部分未计划'), ('30_planning', '已完全计划')],
+        u'计划安排完整性', default='10_un_planning')
+    check_on_time = fields.Selection(
+        [('10_not_time', u'未到时'), ('20_out_time_un_finish', u'超时未完成'), ('30_on_time_finish', u'准时完成'),
+         ('40_out_time_finish', u'超时完成')],
+        u'检查执行准时性', default='10_not_time')
+
+
+    def compute_planning_integrity(self):
+        for one in self:
+            if len(one.plan_check_line) == len(
+                    one.plan_check_line.filtered(lambda x: x.state == '10_un_planning')):
+                planning_integrity = '10_un_planning'
+            elif len(one.plan_check_line.filtered(lambda x: x.state == '10_un_planning')) == 0:
+                planning_integrity = '30_planning'
+            else:
+                planning_integrity = '20_part_un_planning'
+            print('akiny_planning_3',planning_integrity)
+            one.write({
+                'planning_integrity':planning_integrity
+            })
+
+    def compute_check_on_time(self):
+        for one in self:
+            print('akiny_planning',len(one.plan_check_line.filtered(lambda x: x.state == '30_time_out_planning')))
+            if len(one.plan_check_line) == len(
+                    one.plan_check_line.filtered(lambda x: x.state in ['20_planning'])):
+                check_on_time = '10_not_time'
+            elif len(one.plan_check_line) == len(
+                    one.plan_check_line.filtered(lambda x: x.state in ['10_un_planning'])):
+                check_on_time = '10_not_time'
+            elif len(one.plan_check_line.filtered(lambda x: x.state == '30_time_out_planning')) > 0:
+                check_on_time = '20_out_time_un_finish'
+            elif len(one.plan_check_line.filtered(lambda x: x.state == '50_time_out_finish')) > 0:
+                check_on_time = '40_out_time_finish'
+            elif len(one.plan_check_line.filtered(lambda x: x.state in ['50_time_out_finish','40_finish'])) == 0:
+                check_on_time = '10_not_time'
+            else:
+                check_on_time = '30_on_time_finish'
+            one.write({
+                'check_on_time': check_on_time
+            })
 
     # def name_get(self):
     #     res = []
@@ -493,26 +745,28 @@ class PlanCheckLine(models.Model):
         now = datetime.now()
         for one in self:
             if not one.date_deadline:
-                state = 'un_planning'
+                state = '10_un_planning'
             else:
                 if one.date_finish:
                     times_finish = (strptime(one.date_finish, DF) - strptime(one.date_deadline, DF)).days
                     if times_finish <= 0:
-                        state = 'finish'
+                        state = '40_finish'
                         one.is_on_time = True
                     else:
-                        state = 'time_out_finish'
+                        state = '50_time_out_finish'
                 else:
                     time_out = (now - fields.Datetime.from_string(one.date_deadline)).days
                     print('time_out_akiny',time_out)
                     if  time_out > 0:
-                        state = 'time_out_planning'
+                        state = '30_time_out_planning'
                     else:
-                        state = 'planning'
+                        state = '20_planning'
             one.state = state
             one.order_track_id.compute_category_ids()
             one.order_track_id.compute_planning_integrity()
             one.order_track_id.compute_check_on_time()
+            one.plan_check_id.compute_planning_integrity()
+            one.plan_check_id.compute_check_on_time()
 
     order_track_id = fields.Many2one('order.track','计划跟踪',ondelete='cascade')
     plan_check_id = fields.Many2one('plan.check','计划检查',ondelete='cascade' )
@@ -521,8 +775,7 @@ class PlanCheckLine(models.Model):
     date_finish = fields.Date('检查点完成时间',)
     date_deadline = fields.Date('检查点计划时间', index=True, required=False, )
 
-
-    state = fields.Selection([('un_planning','未计划'),('planning','计划中'),('time_out_planning','已过期'),('finish','正常完成'),('time_out_finish','超时完成')],'状态', default='un_planning',
+    state = fields.Selection([('10_un_planning','未计划'),('20_planning','计划中'),('30_time_out_planning','已过期'),('40_finish','正常完成'),('50_time_out_finish','超时完成')],'状态', default='10_un_planning',
                              compute=compute_state,store=True)
     is_on_time = fields.Boolean('是否准时完成')
     activity_id = fields.Many2one('mail.activity','计划活动')

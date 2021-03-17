@@ -13,12 +13,16 @@
             pointer-events: none;
         }
     }
+
 //单元格是否定格 akiny
+
     &.table {
         td, th {
            vertical-align: middle;
+
         }
     }
+
 
     thead {
         color: @odoo-main-text-color;
@@ -74,6 +78,7 @@
                 opacity: 1;
             }
         }
+
     }
 
     .o_list_record_selector, .o_list_record_delete, .o_handle_cell {
@@ -155,8 +160,10 @@
     .akiny_text_left{
     white-space: pre-wrap;
     text-align: left;
+
     }
     .akiny_text_top{vertical-align: top;}
+    .akiny_text_width{width: 900px}
 
     //--------------------------------------------------------------------------
     // Edition
@@ -238,6 +245,9 @@
         }
         .o_field_boolean {
             width: auto!important; // Override the width computed in JS (needed for Chrome)
+        }
+        .o_akiny_width {
+            width: 20px; // Override the width computed in JS (needed for Chrome)
         }
     }
 }

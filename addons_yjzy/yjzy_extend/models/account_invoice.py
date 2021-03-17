@@ -258,11 +258,20 @@ class account_invoice(models.Model):
             one.reconcile_order_line_advance_usd = yjzy_reconcile_order_line_advance_usd
             one.reconcile_order_line_count = dlrs_count
 
-    @api.depends('bill_id.ref', 'amount_total', 'bill_id.ref')
+    @api.depends('bill_id.ref', 'amount_total', 'bill_id.ref','date_finish')
     def compute_display_name(self):
         for one in self:
+            show_date_finish = self.env.context.get('show_date_finish')
             # one.display_name = '%s[%s]' % (one.tb_contract_code, str(one.amount_total))
-            if one.bill_id:
+            if show_date_finish:
+                if one.date_finish:
+                    name = '%s %s' % (
+                        one.date_finish or '', one.partner_id.name or '',)
+                else:
+                    name = '%s %s' % (
+                        '无交单日', one.partner_id.name or '',)
+            else:
+                if one.bill_id:
                 # else:
                 # if one.invoice_attribute_all_in_one == '220':
                 #     name = '%s:%s' % ('增加采购应付', one.tb_contract_code)
@@ -286,9 +295,13 @@ class account_invoice(models.Model):
                 #     name = '%s:%s' % ('其他应收', one.number)
                 # elif one.invoice_attribute_all_in_one == '510':
                 #     name = '%s:%s' % ('其他应付', one.number)
-                one.display_name = '%s' % (one.bill_id.ref)
-            else:
-                one.display_name = '%s' % (one.number)
+
+                    name = '%s' % (one.bill_id.ref)
+
+                else:
+                    name =  '%s' % (one.number)
+
+            one.display_name = name
             print('display_name', one.display_name)
 
     @api.model
@@ -704,6 +717,7 @@ class account_invoice(models.Model):
             one.amount_payment_can_approve_all_1 = amount_payment_can_approve_all_1
             one.rest_advance_so_po_balance = rest_advance_so_po_balance
             one.jianyi_advance = jianyi_advance < rest_advance_so_po_balance and jianyi_advance or rest_advance_so_po_balance
+
 
 
 
@@ -2188,8 +2202,12 @@ class account_invoice(models.Model):
             if one.purchase_date_finish_state == 'done':
                 purchase_date_finish_state = '完成'
             if show_date_finish:
-                name = '%s %s %s' % (
-                purchase_date_finish_state or '', one.date_finish or '', one.partner_id.name or '',)
+                if one.date_finish:
+                    name = '%s %s' % (
+                    one.date_finish or '', one.partner_id.name or '',)
+                else:
+                    name = '%s %s' % (
+                        '无交单日', one.partner_id.name or '',)
 
             else:
                 name = '%s[%s]' % (one.tb_contract_code, str(one.residual))

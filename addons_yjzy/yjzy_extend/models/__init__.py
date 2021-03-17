@@ -81,4 +81,6 @@ from . import account_invoice_reconcile
 from . import bank_reconciliation
 from . import mail_activity
 from . import sale_progress
+from . import transport_bill_plan_track
+from . import account_invoice_progress
 from . import plan_check

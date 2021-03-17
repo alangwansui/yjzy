@@ -1,0 +1,42 @@
+.o_progressbar {
+
+    > div {
+        display: inline-block;
+    }
+
+    .o_progressbar_title {
+        white-space: nowrap;
+        padding-right: 10px;
+    }
+
+    .o_progress {
+        width: 100px;
+        height: 15px;
+        vertical-align: middle;
+
+        /*border: 1px solid lighten($o-brand-secondary, 25%);*/
+        border: 1px solid #a9a9a980;
+        border-radius: 4px;
+        overflow: hidden;
+
+        background-color: white;
+        &.o_progress_overflow {
+            background-color: $o-brand-secondary;
+        }
+
+        .o_progressbar_complete {
+            background-color: #7362ce7d;
+            height: 100%;
+        }
+    }
+
+    .o_progressbar_value {
+        width: 100px;
+        font-size: 11px;
+        line-height: 1.2;
+        white-space: nowrap;
+        padding-left: 0px;
+        color: black;
+        text-align: center;
+    }
+}

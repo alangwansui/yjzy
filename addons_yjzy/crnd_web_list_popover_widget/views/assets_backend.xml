@@ -5,6 +5,7 @@
             <link rel="stylesheet" href="/crnd_web_list_popover_widget/static/src/less/list_popover_widget.less"/>
             <script type="text/javascript" src="/crnd_web_list_popover_widget/static/src/js/list_popover_mixin.js"/>
             <script type="text/javascript" src="/crnd_web_list_popover_widget/static/src/js/list_text_popover_widget.js"/>
+              <script type="text/javascript" src="/crnd_web_list_popover_widget/static/src/js/list_float_popover_widget.js"/>
             <script type="text/javascript" src="/crnd_web_list_popover_widget/static/src/js/list_char_popover_widget.js"/>
             <script type="text/javascript" src="/crnd_web_list_popover_widget/static/src/js/list_html_popover_widget.js"/>
         </xpath>

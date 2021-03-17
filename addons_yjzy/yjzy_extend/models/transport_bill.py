@@ -886,6 +886,8 @@ class transport_bill(models.Model):
                                           ('submit',u'待审核'),
                                           ('done',u'已审核'),
                                           ],'进仓审批状态', default='draft')
+    is_date_out_in = fields.Boolean('进仓日是否已确认',default=False)
+
     date_ship_state = fields.Selection([('draft',u'待提交'),('submit',u'待审核'),('done',u'已审核')],'出运船审批状态', default='draft')
     date_customer_finish_state = fields.Selection([('draft',u'待提交'),('submit',u'待审核'),('done',u'已审核')],'客户交单日审批状态',default='draft')
     date_purchase_finish_state = fields.Selection([('draft',u'待提交'),
@@ -1564,6 +1566,7 @@ class transport_bill(models.Model):
     #日期审批完成后直接出运并生成账单同时更新进仓日期到对应的发票 qq
     def action_customer_date_state_done(self):
         date_type = self.env.context.get('date_type')
+        print('date_type_akiny',date_type)
         for one in self:
             if self.env.ref('akiny.group_trans_hegui') not in self.env.user.groups_id:
                 raise Warning('您没有审批的权限！')
@@ -1576,6 +1579,7 @@ class transport_bill(models.Model):
                     # one.make_all_invoice()
                     one.action_invoiced()
                     one.sync_data2invoice()
+                    one.is_date_out_in = True
             if date_type == 'date_ship':
                 one.date_ship_state = 'done'
             if date_type == 'date_customer_finish':
@@ -1691,14 +1695,14 @@ class transport_bill(models.Model):
         for one in self:
             purchase_amount_min_add_rest_total = round(one.purchase_amount_min_add_rest_total, 2)
             print('---name_get---',one)
-            name = one.name
+            name = ''
             if one.ref:
                 if only_ref:
                     name = one.ref
                 elif min_add:
                     name = '%s:%s' % (one.ref,purchase_amount_min_add_rest_total)
                 else:
-                    name += ':%s' % one.ref
+                    name += ' %s' % one.ref
             result.append((one.id, name))
             print('---name_get---', result)
 

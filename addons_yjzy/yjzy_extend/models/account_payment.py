@@ -1266,6 +1266,12 @@ class account_payment(models.Model):
             self.write({
                 'state_1': '35_account_approve'
                         })
+        elif self.sfk_type in ['nbzz','jiehui']:
+            self.write({
+                'state_1': '60_done'
+            })
+            self.post()
+            self.compute_balance()
         else:
             today = fields.date.today()
             self.write({'post_uid': self.env.user.id,

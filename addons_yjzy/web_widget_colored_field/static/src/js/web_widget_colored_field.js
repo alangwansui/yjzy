@@ -10,6 +10,7 @@ odoo.define('web_widget_colored_field', function (require) {
     var FieldInteger = basic_fields.FieldInteger;
     var FieldSelection = relational_fields.FieldSelection;
     var FieldMany2One = relational_fields.FieldMany2One;
+    var FieldDate = relational_fields.FieldDate;
 
 
     AbstractField.include({
@@ -98,6 +99,23 @@ odoo.define('web_widget_colored_field', function (require) {
     });
 
     FieldInteger.include({
+        _renderReadonly: function () {
+            var options = this.nodeOptions;
+            var color_options = this.color_options;
+            if (color_options.color) {
+                var $colorNode = this._getColorNode(this.record, options, color_options);
+                if ($colorNode) {
+                    this.$el.html($colorNode)
+                } else {
+                    this._super()
+                }
+            } else {
+                this._super()
+            }
+        }
+    });
+
+    FieldDate.include({
         _renderReadonly: function () {
             var options = this.nodeOptions;
             var color_options = this.color_options;

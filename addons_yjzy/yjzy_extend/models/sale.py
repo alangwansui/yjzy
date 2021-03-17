@@ -137,9 +137,15 @@ class sale_order(models.Model):
                 one.purchase_amount_total_new = purchase_amount_total
 
     # 13ok
-    @api.depends('order_line.qty_delivered')
+    @api.depends('order_line.qty_delivered','order_line.product_uom_qty','order_line')
     def compute_no_sent_amount(self):
         for one in self:
+            sent_qty = sum(x.qty_delivered for x in one.order_line)
+            all_qty = sum(x.product_uom_qty for x in one.order_line)
+            no_sent_qty = all_qty - sent_qty
+            one.sent_qty = sent_qty
+            one.all_qty = all_qty
+            one.no_sent_qty = no_sent_qty
             if one.state != 'verification':
                 one.no_sent_amount_new = sum(
                     [x.price_unit * (x.product_uom_qty - x.qty_delivered) for x in one.order_line])
@@ -450,6 +456,10 @@ class sale_order(models.Model):
     ], string='Status', readonly=True, copy=False, index=True, track_visibility='onchange', default='draft')
     no_sent_amount = fields.Monetary(u'未发货的金额', compute=compute_info)
     no_sent_amount_new = fields.Monetary(u'未发货的金额', compute=compute_no_sent_amount, store=True)
+    no_sent_qty = fields.Float(u'未出运数量', compute=compute_no_sent_amount, store=True)
+    sent_qty = fields.Float(u'已出运数量', compute=compute_no_sent_amount, store=True)
+    all_qty = fields.Float(u'原始总数', compute=compute_no_sent_amount, store=True)
+
 
     purchase_no_deliver_amount = fields.Float('未发货的采购金额', compute=compute_info)
     purchase_no_deliver_amount_new = fields.Float('未发货的采购金额', compute='compute_purchase_no_deliver_amount_new',

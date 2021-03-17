@@ -1,0 +1,17 @@
+/*
+
+HTML5 CSS Reset
+Based on Eric Meyer's CSS Reset
+and html5doctor.com HTML5 Reset
+
+Copyright (c) 2011 736 Computing Services Limited
+Released under the MIT license. http://opensource.736cs.com/licenses/mit
+
+*/
+.my_custom_class th[data-id="sent_percent"]{
+    width: 800px;
+  }
+
+.my_custom_class th[data-id="hegui_date"]{
+ width:400px;
+}

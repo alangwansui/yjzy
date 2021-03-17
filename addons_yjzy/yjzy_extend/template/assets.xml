@@ -24,4 +24,11 @@
 		</xpath>
 
 	</template>
+	<template id="custom_css_akiny" inherit_id="web.assets_backend"  name="My custom CSS" >
+	    <xpath expr="." position="inside">
+			<link rel="stylesheet" href="/yjzy_extend/static/src/css/akiny_css.css" />
+
+		</xpath>
+
+	</template>
 </odoo>

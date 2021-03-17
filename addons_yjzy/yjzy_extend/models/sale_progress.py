@@ -67,6 +67,8 @@ class sale_order(models.Model):
                 'so_id':self.id,
                 'po_ids':[(6, 0, po_dic)],
                 'time_draft_order':self.create_date,
+                'planning_integrity':'10_un_planning',
+                'check_on_time': '10_not_time',
             })
 
             for one in self.po_ids:
@@ -134,7 +136,7 @@ class sale_order(models.Model):
                     plan_check_line = plan_check_line_obj.create({
                         'plan_check_id':plan_check.id,
                         'activity_type_1_id':x.id,
-                        'state':'planning',
+                        'state':'10_un_planning',
                         'order_track_id': order_track_new_order_track.id
                     })
                     plan_check_line_activity = activity_obj.create({
@@ -178,6 +180,8 @@ class sale_order(models.Model):
                     'order_track_id': order_track_new_order_track.id,
 
                 })
+
+
 
 
 
