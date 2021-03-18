@@ -570,7 +570,8 @@ class hr_expense_sheet(models.Model):
         view = self.env.ref('yjzy_extend.tb_po_form')
         line_obj = self.env['tb.po.invoice.line']
         extra_invoice_line_obj = self.env['extra.invoice.line']
-        for hsl in bill_id.hsname_all_ids:
+
+        for hsl in bill_id[0].hsname_all_ids:
             line_obj.create({
                 'tb_po_id': tb_po_id.id,
                 'hs_id': hsl.hs_id.id,

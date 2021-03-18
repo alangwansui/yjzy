@@ -136,6 +136,7 @@ class sale_order(models.Model):
                     plan_check_line = plan_check_line_obj.create({
                         'plan_check_id':plan_check.id,
                         'activity_type_1_id':x.id,
+                        'po_id':one.id,
                         'state':'10_un_planning',
                         'order_track_id': order_track_new_order_track.id
                     })
