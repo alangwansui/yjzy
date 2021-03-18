@@ -728,6 +728,24 @@ class PlanCheck(models.Model):
             # 'flags': {'form': {'initial_mode': 'view', 'action_buttons': False}}
         }
 
+
+    def open_planning_integrity(self):
+        tree_view = self.env.ref('yjzy_extend.plan_check_line_tree_view')
+        form_view = self.env.ref('yjzy_extend.plan_check_line_form')
+        return {
+            'name': u'查看',
+            'view_type': 'form',
+            'view_mode': 'tree',
+            'res_model': 'plan.check.line',
+            'type': 'ir.actions.act_window',
+            'views': [(tree_view.id, 'tree'),(form_view.id, 'form')],
+            'domain':[('plan_check_id', '=', self.id)],
+            # 'res_id': self.id,
+            'context':{'group_by':'state'},
+            'target': 'current',
+            # 'flags': {'form': {'initial_mode': 'view', 'action_buttons': False}}
+        }
+
 class PlanCheckLine(models.Model):
     """ An actual activity to perform. Activities are linked to
     documents using res_id and res_model_id fields. Activities have a deadline
@@ -844,10 +862,6 @@ class PlanCheckLine(models.Model):
             'res_id': wzcomments.id,
             'target': 'new',
         }
-
-
-
-
 
 
 

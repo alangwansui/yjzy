@@ -460,7 +460,7 @@
                                     <field name="order_track_id" groups="base.group_system"/>
                                     <field name="so_id" groups="base.group_system"/>
                                     <field name="po_id" readonly="1"
-                                           invisible="context.get('type')!='new_order_track'"/>
+                                         />
                                     <field name="plan_check_line" groups="base.group_system"/>
                                     <field name="date_factory_return"
                                            invisible="context.get('type')!='new_order_track'"/>
@@ -476,7 +476,7 @@
                                     <field name="date_deadline" invisible="context.get('type')!='order_track'"/>
                                     <field name="date_finish" invisible="context.get('type')!='order_track'"/>
 
-                                    <button name="open_plan_check_ids" type="object" string="检查点检查登记"
+                                    <button name="open_planning_integrity" type="object" string="检查点计划登记"
                                             invisible="context.get('type')!='order_track'"/>
 
 
