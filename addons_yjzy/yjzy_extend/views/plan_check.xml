@@ -83,7 +83,7 @@
                 <field name="date_out_in" invisible="context.get('type')!='transport_track'"
                        options='{"fg_color": "red:is_date_out_in == False"}'/>
                 <button name="action_date_out_in" type="object" string="确认并生成应收付"
-                        attrs="{'invisible':[('is_date_out_in','=',True)]}" confirm="确认后，应收应付就会生成，请谨慎！"
+                        attrs="{'invisible':1}" confirm="确认后，应收应付就会生成，请谨慎！"
                         invisible="context.get('type')!='transport_track'"/>
                 <field name="date_ship" invisible="context.get('type')!='transport_track'"/>
                 <field name="date_customer_finish" invisible="context.get('type')!='transport_track'"/>
