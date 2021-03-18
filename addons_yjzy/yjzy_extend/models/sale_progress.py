@@ -7,6 +7,20 @@ from . comm import BACK_TAX_RATIO
 class sale_order(models.Model):
     _inherit = 'sale.order'
 
+    @api.depends('po_source_ids')
+    def compute_po_return_state(self):
+        for one in self:
+            po_ids = one.po_source_ids
+            po_return_ids = one.po_ids.filtered(lambda x:x.date_factory_return == False)
+            if len(po_ids) == len(po_return_ids):
+                po_return_state = 'un_return'
+            elif len(po_ids) != len(po_return_ids) and len(po_return_ids) > 0:
+                po_return_state = 'part_return'
+            else:
+                po_return_state = 'returned'
+            one.po_return_state = po_return_state
+
+
     time_receive_pi = fields.Date('收到客户订单时间')
     time_sent_pi = fields.Date('发送PI时间')
     time_sign_pi = fields.Date('客户PI回签时间')
@@ -15,7 +29,8 @@ class sale_order(models.Model):
     plan_check_ids = fields.One2many('plan.check','so_id')
     order_track_ids = fields.One2many('order.track','so_id')
 
-    # po_return_state = fields.Selection('')
+    po_return_state = fields.Selection([('un_return','未回传'),('part_return','部分回传'),('returned','已回传')],
+                                       '工厂回传状态',default='un_return',compute=compute_po_return_state,store=True)
 
 
 

@@ -240,7 +240,7 @@ class OrderTrack(models.Model):
     hegui_date = fields.Date('合规审批时间',track_visibility='onchange',related='so_id.approve_date',store=True)
     time_receive_pi = fields.Date('收到客户订单时间',track_visibility='onchange',related='so_id.time_receive_pi',store=True)
     time_sent_pi = fields.Date('发送PI时间',track_visibility='onchange',related='so_id.time_sent_pi',store=True)
-    time_sign_pi = fields.Date('客户PI回签时间',track_visibility='onchange',related='so_id.time_sign_pi',store=True)
+    time_sign_pi = fields.Date('客户PI回签时间',track_visibility='onchange',related='so_id.contract_date',store=True)
 
     date_so_contract = fields.Date('客户下单日期',related='so_id.contract_date',store=True)
     date_so_requested = fields.Datetime('客户交期',related='so_id.requested_date',store=True)

@@ -16,6 +16,8 @@ class sale_order(models.Model):
     po_count = fields.Integer(u'采购单数量', compute=compute_purchase_order)
     dump_picking_id = fields.Many2one('stock.picking', u'虚拟预留', copy=False)
 
+    po_source_ids = fields.One2many('purchase.order','source_so_id', string=u'采购订单')#一个采购合同只能对应一个销售合同的字段
+
     lot_sub_mark = fields.Integer('批次区分标记', default=1)
 
     def action_confirm(self):

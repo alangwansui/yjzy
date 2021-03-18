@@ -312,6 +312,7 @@
                     <field name="message_needaction" invisible="1"/>
                     <field name="id" groups="base.group_system" invisible="1"/>
                     <field name="name" string="订单流水" groups="base.group_system" invisible="1"/>
+                    <field name="po_return_state"/>
                     <field name="approve_date" widget="date" string="合规审批日"/>
                     <field name="current_date_rate" string="汇率"/>
                     <field name="contract_code" string="合同号"/>

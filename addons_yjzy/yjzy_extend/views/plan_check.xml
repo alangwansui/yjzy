@@ -29,7 +29,7 @@
                 <button name="open_so_id" class="akiny_text_right" type="object" icon="fa-archive"
                         invisible="context.get('type')!='new_order_track'"/>
                 <field name="so_id" readonly="1" invisible="context.get('type')=='transport_track'"/>
-                <field name="time_draft_order" readonly="1" invisible="context.get('type')!='new_order_track'"/>
+                <field name="time_draft_order" readonly="1" widget="date" string="创建草稿时间" invisible="context.get('type')!='new_order_track'"/>
 
                 <field name="time_receive_pi" invisible="context.get('type')!='new_order_track'"/>
                 <field name="time_sent_pi" invisible="context.get('type')!='new_order_track'"/>
