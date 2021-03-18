@@ -44,9 +44,9 @@
                     </group>
                     <field name="note" placeholder="Log a note..." invisible="context.get('plan')"/>
                     <footer>
-                        <button string="安排" name="action_close_dialog"
+                        <button string="安排" name="action_close_dialog" invisible="not context.get('plan')"
                             type="object" class="btn-primary"/>
-                        <button string="标记完成" name="action_done"
+                        <button string="标记完成" name="action_done" invisible="not context.get('finish')"
                             type="object" class="btn-primary"/>
                         <button string="关闭" class="btn-default" special="cancel" />
                     </footer>

@@ -315,6 +315,8 @@ class hr_expense_sheet(models.Model):
 
     #0925财务审批的时候判断是否已经转为货款
     def action_account_approve(self):
+        if self.back_tax_amount > 0 and self.expense_to_invoice_type != 'to_invoice' :
+            raise Warning('请点击费用转货款按钮，将费用转换为货款！')
         if self.expense_to_invoice_type == 'to_invoice':
             stage_id = self._stage_find(domain=[('code', '=', '040')])
             if not self.fk_journal_id:
@@ -764,8 +766,9 @@ class hr_expense_sheet(models.Model):
         for one in self:
             one.all_line_is_confirmed = one.expense_line_ids and all([x.is_confirmed for x in one.expense_line_ids]) or False
 
-    def create_customer_invoice(self):
+    def create_customer_invoice_old(self):
         self.ensure_one()
+
         if self.back_tax_invoice_id:
             return True
         if self.back_tax_amount <= 0:

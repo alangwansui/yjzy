@@ -10,6 +10,8 @@ class wizard_plan_check_comments(models.TransientModel):
     order_track_id = fields.Many2one('order.track',)
     type = fields.Selection([('new_order_track', '新订单下单前跟踪'), ('order_track', '订单跟踪'), ('transport_track', '出运单跟踪')],
                             'type')
+    plan_check_line_id = fields.Many2one('plan.check.line')
+
 
     def apply(self):
         if self.type == 'new_order_track':

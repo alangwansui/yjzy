@@ -2,22 +2,21 @@
 <odoo>
 
 
-
     <record id="view_order_track_search" model="ir.ui.view">
-            <field name="name">order.track.select</field>
-            <field name="model">order.track</field>
-            <field name="arch" type="xml">
-                <search string="Order Track">
-                    <field name="name" string="模糊搜索"
-                           filter_domain="['|','|',('tb_id','ilike',self),('so_id','ilike',self),('po_ids','ilike',self)]"/>
-                    <separator/>
-                    <group expand="0" string="Group By">
-                        <filter string="时间状态分组" name="group_date_all_state" domain="[]"
-                                context="{'group_by':['date_all_state']}"/>
-                    </group>
-                </search>
-            </field>
-        </record>
+        <field name="name">order.track.select</field>
+        <field name="model">order.track</field>
+        <field name="arch" type="xml">
+            <search string="Order Track">
+                <field name="name" string="模糊搜索"
+                       filter_domain="['|','|',('tb_id','ilike',self),('so_id','ilike',self),('po_ids','ilike',self)]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="时间状态分组" name="group_date_all_state" domain="[]"
+                            context="{'group_by':['date_all_state']}"/>
+                </group>
+            </search>
+        </field>
+    </record>
 
 
     <record id="order_track_tree_view" model="ir.ui.view">
@@ -25,27 +24,32 @@
         <field name="model">order.track</field>
         <field name="arch" type="xml">
             <tree string="计划" create="false">
-                <field name="type" groups="base.group_system" />
+                <field name="type" groups="base.group_system"/>
                 <!--            <field name="date_deadline"/>-->
-                <button name="open_so_id" class="akiny_text_right" type="object" icon="fa-archive" invisible="context.get('type')!='new_order_track'"/>
+                <button name="open_so_id" class="akiny_text_right" type="object" icon="fa-archive"
+                        invisible="context.get('type')!='new_order_track'"/>
                 <field name="so_id" readonly="1" invisible="context.get('type')=='transport_track'"/>
                 <field name="time_receive_pi" invisible="context.get('type')!='new_order_track'"/>
                 <field name="time_sent_pi" invisible="context.get('type')!='new_order_track'"/>
                 <field name="time_sign_pi" invisible="context.get('type')!='new_order_track'"/>
                 <field name="hegui_date" invisible="context.get('type')!='new_order_track'"/>
-                 <button name="open_factory_return" class="akiny_text_right" type="object" icon="fa-archive" invisible="context.get('type')!='new_order_track'"/>
+                <button name="open_factory_return" class="akiny_text_right" type="object" icon="fa-archive"
+                        invisible="context.get('type')!='new_order_track'"/>
                 <field name="factory_return" widget="many2many_tags"
                        invisible="context.get('type')!='new_order_track'"/>
                 <field name="plan_check_ids" widget="many2many_tags" groups="base.group_system"/>
-                <field name="comments_new_order_track"  invisible="context.get('type')!='new_order_track'"/>
+                <field name="comments_new_order_track" invisible="context.get('type')!='new_order_track'"/>
 
-                <button name="open_plan_check_line" type="object"  string="工厂检查点登记" class="oe_highlight" invisible="1"/>
-                <button name="open_plan_check_line_new" type="object" string="工厂检查点登记" class="oe_highlight" invisible="1"/>
+                <button name="open_plan_check_line" type="object" string="工厂检查点登记" class="oe_highlight" invisible="1"/>
+                <button name="open_plan_check_line_new" type="object" string="工厂检查点登记" class="oe_highlight"
+                        invisible="1"/>
 
-                <button name="open_planning_integrity" class="akiny_text_right" type="object" icon="fa-archive" invisible="context.get('type')!='order_track'"/>
+                <button name="open_planning_integrity" class="akiny_text_right" type="object" icon="fa-archive"
+                        invisible="context.get('type')!='order_track'"/>
                 <field name="planning_integrity" invisible="context.get('type')!='order_track'"/>
                 <field name="check_on_time" invisible="context.get('type')!='order_track'"/>
-                <field name="category_ids" string="异常结果" options="{'color_field':'color'}"  widget="many2many_tags" invisible="1"/>
+                <field name="category_ids" string="异常结果" options="{'color_field':'color'}" widget="many2many_tags"
+                       invisible="1"/>
                 <field name="earliest_date_po_order" invisible="context.get('type')!='order_track'" string="供应商下单时间"/>
                 <field name="latest_date_po_planned" invisible="context.get('type')!='order_track'" string="供应商交期时间"/>
                 <field name="date_so_contract" invisible="context.get('type')!='order_track'" readonly="1"/>
@@ -54,34 +58,43 @@
                 <field name="time_supplier_requested" invisible="1"/>
                 <field name="check_all_number" invisible="1"/>
                 <field name="check_finish_number" invisible="1"/>
-                <field name="check_number_percent" widget="progressbar" string="工厂检查点进度" invisible="context.get('type')!='order_track'"/>
-                <field name="finish_percent" widget="progressbar" string="客户交期进度" invisible="context.get('type')!='order_track'"/>
+                <field name="check_number_percent" widget="progressbar" string="工厂检查点进度"
+                       invisible="context.get('type')!='order_track'"/>
+                <field name="finish_percent" widget="progressbar" string="客户交期进度"
+                       invisible="context.get('type')!='order_track'"/>
                 <field name="finish_percent_supplier" widget="progressbar" string="供应商交期进度"
                        invisible="context.get('type')!='order_track'"/>
                 <field name="so_all_qty" invisible="1"/>
                 <field name="so_sent_qty" invisible="1"/>
                 <field name="so_no_sent_qty" invisible="1"/>
-                <field name="sent_percent" widget="progressbar" string=" . .出运进度. . " invisible="context.get('type')!='order_track'"/>
-                <field name="comments_order_track"  invisible="context.get('type')!='order_track'"/>
+                <field name="sent_percent" widget="progressbar" string=" . .出运进度. . "
+                       invisible="context.get('type')!='order_track'"/>
+                <field name="comments_order_track" invisible="context.get('type')!='order_track'"/>
 
 
-                <button name="open_tb_id" class="akiny_text_right" type="object" icon="fa-archive" invisible="context.get('type')!='transport_track'"/>
+                <button name="open_tb_id" class="akiny_text_right" type="object" icon="fa-archive"
+                        invisible="context.get('type')!='transport_track'"/>
 
                 <field name="tb_id" invisible="context.get('type')!='transport_track'"/>
                 <field name="sale_invoice_balance" invisible="context.get('type')!='transport_track'"/>
                 <field name="purchase_invoice_balance" invisible="context.get('type')!='transport_track'"/>
                 <field name="back_tax_invoice_balance" invisible="context.get('type')!='transport_track'"/>
 
-                <field name="date_out_in"  invisible="context.get('type')!='transport_track'" options='{"fg_color": "red:is_date_out_in == False"}'/>
-                <button name="action_date_out_in" type="object" string="确认并生成应收付" attrs="{'invisible':[('is_date_out_in','=',True)]}" confirm="确认后，应收应付就会生成，请谨慎！" invisible="context.get('type')!='transport_track'"/>
+                <field name="date_out_in" invisible="context.get('type')!='transport_track'"
+                       options='{"fg_color": "red:is_date_out_in == False"}'/>
+                <button name="action_date_out_in" type="object" string="确认并生成应收付"
+                        attrs="{'invisible':[('is_date_out_in','=',True)]}" confirm="确认后，应收应付就会生成，请谨慎！"
+                        invisible="context.get('type')!='transport_track'"/>
                 <field name="date_ship" invisible="context.get('type')!='transport_track'"/>
                 <field name="date_customer_finish" invisible="context.get('type')!='transport_track'"/>
-                <field name="tb_purchase_invoice_ids" widget="many2many_tags" string="供应商交单日期" invisible="context.get('type')!='transport_track'"/>
-                <button name="open_order_track_tb" type="object" class="oe_stat_button" icon="fa-archive" string="供应商交单" invisible="context.get('type')!='transport_track'"/>
+                <field name="tb_purchase_invoice_ids" widget="many2many_tags" string="供应商交单日期"
+                       invisible="context.get('type')!='transport_track'"/>
+                <button name="open_order_track_tb" type="object" class="oe_stat_button" icon="fa-archive" string="供应商交单"
+                        invisible="context.get('type')!='transport_track'"/>
 
                 <field name="tb_sale_invoice_id" invisible="1"/>
                 <field name="is_date_out_in" invisible="1"/>
-                <field name="comments_transport_track"  invisible="context.get('type')!='transport_track'"/>
+                <field name="comments_transport_track" invisible="context.get('type')!='transport_track'"/>
 
 
             </tree>
@@ -89,67 +102,65 @@
     </record>
 
 
-
     <!--日期填制视图-->
-        <record id="view_transport_bill_tenyale_date_tree" model="ir.ui.view">
-            <field name="name">transport.bill.tree</field>
-            <field name="model">transport.bill</field>
-            <field name="arch" type="xml">
-                <tree string="出运单" editable="bottom" default_order="date_all_state, date_out_in desc,date_out_in_state desc">
-                    <field name="name" invisible="1"/>
-                    <field name="ref" readonly="1"/>
-                    <field name="partner_id" required="1" readonly="1"/>
-                    <!--button name="sync_data2invoice" string="创建应收付" attrs="{'invisible':[('state','!=','delivered')]}"  class="oe_highlight" type="object"/-->
-                    <field name="date_out_in" readonly="1"/>
-                    <field name="date_out_in_att" string=" " widget="many2many_binary" invisible="1"/>
-                    <field name="date_out_in_att_count" string=" "/>
-                    <button name="open_transport_self" icon="fa-paperclip" type="object"
-                            context="{'form_xml_id': 'yjzy_extend.view_transport_bill_date_out_in'}" string="附件"/>
-                    <field name="date_out_in_state" readonly="1" string="状态"/>
-                    <field name="date_in" invisible="1"/>
-                    <field name="date_ship" readonly="1"/>
-                    <field name="date_ship_att" widget="many2many_binary" invisible="1"/>
-                    <field name="date_ship_att_count" string=" "/>
+    <record id="view_transport_bill_tenyale_date_tree" model="ir.ui.view">
+        <field name="name">transport.bill.tree</field>
+        <field name="model">transport.bill</field>
+        <field name="arch" type="xml">
+            <tree string="出运单" editable="bottom"
+                  default_order="date_all_state, date_out_in desc,date_out_in_state desc">
+                <field name="name" invisible="1"/>
+                <field name="ref" readonly="1"/>
+                <field name="partner_id" required="1" readonly="1"/>
+                <!--button name="sync_data2invoice" string="创建应收付" attrs="{'invisible':[('state','!=','delivered')]}"  class="oe_highlight" type="object"/-->
+                <field name="date_out_in" readonly="1"/>
+                <field name="date_out_in_att" string=" " widget="many2many_binary" invisible="1"/>
+                <field name="date_out_in_att_count" string=" "/>
+                <button name="open_transport_self" icon="fa-paperclip" type="object"
+                        context="{'form_xml_id': 'yjzy_extend.view_transport_bill_date_out_in'}" string="附件"/>
+                <field name="date_out_in_state" readonly="1" string="状态"/>
+                <field name="date_in" invisible="1"/>
+                <field name="date_ship" readonly="1"/>
+                <field name="date_ship_att" widget="many2many_binary" invisible="1"/>
+                <field name="date_ship_att_count" string=" "/>
 
-                    <button name="open_transport_self" icon="fa-paperclip" type="object"
-                            context="{'form_xml_id': 'yjzy_extend.view_transport_bill_date_ship'}" string="附件"/>
-                    <!--button name="open_transport_self" icon="fa-check" type="object"
-                            context="{'form_xml_id': 'yjzy_extend.view_transport_bill_date_ship'}" attrs="{'invisible':[('date_ship_state','!=','done')]}"/-->
-                    <field name="date_ship_state" readonly="1" string="状态"/>
+                <button name="open_transport_self" icon="fa-paperclip" type="object"
+                        context="{'form_xml_id': 'yjzy_extend.view_transport_bill_date_ship'}" string="附件"/>
+                <!--button name="open_transport_self" icon="fa-check" type="object"
+                        context="{'form_xml_id': 'yjzy_extend.view_transport_bill_date_ship'}" attrs="{'invisible':[('date_ship_state','!=','done')]}"/-->
+                <field name="date_ship_state" readonly="1" string="状态"/>
 
-                    <field name="date_customer_finish" readonly="1"/>
-                    <field name="date_customer_finish_att" widget="many2many_binary" invisible="1"/>
-                    <field name="date_customer_finish_att_count" string=" "/>
-                    <button name="open_transport_self" icon="fa-paperclip" type="object"
-                            context="{'form_xml_id': 'yjzy_extend.view_transport_bill_date_customer_finish'}"
-                            string="附件"/>
-                    <!--button name="open_transport_self" icon="fa-check" type="object"
-                            context="{'form_xml_id': 'yjzy_extend.view_transport_bill_date_customer_finish'}" attrs="{'invisible':[('date_customer_finish_state','!=','done')]}"/-->
-                    <field name="date_customer_finish_state" readonly="1" string="状态"/>
-                    <field name="date_supplier_finish" invisible="1"/>
-                    <field name="all_purchase_invoice_fill" invisible="1"/>
-                    <field name="purchase_invoice_ids" widget="many2many_tags" invisible="1"/>
-                    <field name="purchase_invoice_ids2" widget="many2many_tags" string="供应商交单"
-                           context="{'show_date_finish': 1}"/>
-                    <button name="open_purchase_invoice_1" type="object" class="oe_stat_button" icon="fa-paperclip"
-                            string="供应商交单"/>
-                    <button name="update_supplier_invoice_date" string="供应商交单日期"
-                            attrs="{'invisible':[('state','!=','invoiced')]}" class="oe_highlight" type="object"
-                            invisible="1" icon="fa-pencil-square-o"/>
+                <field name="date_customer_finish" readonly="1"/>
+                <field name="date_customer_finish_att" widget="many2many_binary" invisible="1"/>
+                <field name="date_customer_finish_att_count" string=" "/>
+                <button name="open_transport_self" icon="fa-paperclip" type="object"
+                        context="{'form_xml_id': 'yjzy_extend.view_transport_bill_date_customer_finish'}"
+                        string="附件"/>
+                <!--button name="open_transport_self" icon="fa-check" type="object"
+                        context="{'form_xml_id': 'yjzy_extend.view_transport_bill_date_customer_finish'}" attrs="{'invisible':[('date_customer_finish_state','!=','done')]}"/-->
+                <field name="date_customer_finish_state" readonly="1" string="状态"/>
+                <field name="date_supplier_finish" invisible="1"/>
+                <field name="all_purchase_invoice_fill" invisible="1"/>
+                <field name="purchase_invoice_ids" widget="many2many_tags" invisible="1"/>
+                <field name="purchase_invoice_ids2" widget="many2many_tags" string="供应商交单"
+                       context="{'show_date_finish': 1}"/>
+                <button name="open_purchase_invoice_1" type="object" class="oe_stat_button" icon="fa-paperclip"
+                        string="供应商交单"/>
+                <button name="update_supplier_invoice_date" string="供应商交单日期"
+                        attrs="{'invisible':[('state','!=','invoiced')]}" class="oe_highlight" type="object"
+                        invisible="1" icon="fa-pencil-square-o"/>
 
-                    <!--button icon="fa-check" attrs="{'invisible':[('date_purchase_finish_state','!=','done')]}"/-->
-                    <field name="date_purchase_finish_state" readonly="1" string="状态"/>
-
-
-                    <field name="state" invisible="1" readonly="1" />
-                    <field name="create_date" widget="date" invisible="1"/>
-                    <field name="gongsi_id" string="销售主体" invisible="1"/>
-                    <field name="purchase_gongsi_id" string="采购主体" invisible="1"/>
-                </tree>
-            </field>
-        </record>
+                <!--button icon="fa-check" attrs="{'invisible':[('date_purchase_finish_state','!=','done')]}"/-->
+                <field name="date_purchase_finish_state" readonly="1" string="状态"/>
 
 
+                <field name="state" invisible="1" readonly="1"/>
+                <field name="create_date" widget="date" invisible="1"/>
+                <field name="gongsi_id" string="销售主体" invisible="1"/>
+                <field name="purchase_gongsi_id" string="采购主体" invisible="1"/>
+            </tree>
+        </field>
+    </record>
 
 
     <record id="order_track_form" model="ir.ui.view">
@@ -159,34 +170,38 @@
             <form string="计划">
                 <sheet>
                     <group invisible="not context.get('order_track')">
-                    <group invisible="not context.get('order_track')">
-                        <field name="type" groups="base.group_system"/>
-                        <field name="so_id" readonly="1"/>
-                        <field name="time_receive_pi" string="收到客户订单"/>
-                        <field name="time_sent_pi"/>
-                        <field name="time_sign_pi"/>
-                    </group>
-                    <group>
-                        <field name="hegui_date" readonly="1"/>
-                        <field name="earliest_date_po_order" string="最早供应商下单"/>
-                        <field name="latest_date_po_planned" string="最迟供应商下单"/>
-                    </group>
+                        <group invisible="not context.get('order_track')">
+                            <field name="type" groups="base.group_system"/>
+                            <field name="so_id" readonly="1"/>
+                            <field name="time_receive_pi" string="收到客户订单"/>
+                            <field name="time_sent_pi"/>
+                            <field name="time_sign_pi"/>
+                        </group>
+                        <group>
+                            <field name="hegui_date" readonly="1"/>
+                            <field name="earliest_date_po_order" string="最早供应商下单"/>
+                            <field name="latest_date_po_planned" string="最迟供应商下单"/>
+                        </group>
                         <group>
                             <field name="planning_integrity"/>
                         </group>
                     </group>
                     <notebook colspan="4">
-                        <page string="General Information" >
+                        <page string="General Information">
                             <field name="plan_check_ids" deldete="false" create="false">
                                 <tree editable="bottom" delete="false">
                                     <field name="order_track_id" groups="base.group_system"/>
                                     <field name="so_id" groups="base.group_system"/>
-                                    <field name="po_id" readonly="1" invisible="context.get('type')!='new_order_track'"/>
+                                    <field name="po_id" readonly="1"
+                                           invisible="context.get('type')!='new_order_track'"/>
                                     <field name="plan_check_line" groups="base.group_system"/>
-                                    <field name="date_factory_return" invisible="context.get('type')!='new_order_track'"/>
-                                    <field name="tb_id" invisible="1" />
-                                    <field name="purchase_invoice_id" invisible="context.get('type')!='transport_track'"/>
-                                    <field name="purchase_invoice_date_finish" invisible="context.get('type')!='transport_track'"/>
+                                    <field name="date_factory_return"
+                                           invisible="context.get('type')!='new_order_track'"/>
+                                    <field name="tb_id" invisible="1"/>
+                                    <field name="purchase_invoice_id"
+                                           invisible="context.get('type')!='transport_track'"/>
+                                    <field name="purchase_invoice_date_finish"
+                                           invisible="context.get('type')!='transport_track'"/>
 
                                 </tree>
                             </field>
@@ -230,10 +245,10 @@
                         </page>
 
                     </notebook>
-                      <footer invisible="not context.get('open')">
-                            <button name="action_save_test" type="object" class="oe_highlight" string="保存并关闭"/>
-                          <button string="关闭" class="btn-primary" special="cancel"/>
-                        </footer>
+                    <footer invisible="not context.get('open')">
+                        <button name="action_save_test" type="object" class="oe_highlight" string="保存并关闭"/>
+                        <button string="关闭" class="btn-primary" special="cancel"/>
+                    </footer>
                 </sheet>
                 <div class="oe_chatter">
                     <field name="message_follower_ids" widget="mail_followers"/>
@@ -249,147 +264,211 @@
         <field name="model">order.track</field>
         <field name="arch" type="xml">
             <form string="计划">
-                 <style>
-                    	  body{
-		   font-size: 10px;
-		  font-family:Arial;
-	  }
+                <style>
+                    body{
+                    font-size: 10px;
+                    font-family:Arial;
+                    }
                     .tablelist{
 
-		text-align: center;
-		border: 0.5px solid ;
-		border-collapse: collapse;
-		font-size: 10px;
-		width: 100%
-	}
-	.tablelist th{
+                    text-align: center;
+                    border: 0.5px solid ;
+                    border-collapse: collapse;
+                    font-size: 10px;
+                    width: 100%
+                    }
+                    .tablelist th{
 
-		font-size: 10px;
-		text-align: center;
-		border: 0.5px solid ;
-		height: 20px;
-		line-height: 20px;
-	}
-	.tablelist td{
-		border: 0.5px solid;
-		height: 20px;
-		line-height: 20px;
+                    font-size: 10px;
+                    text-align: center;
+                    border: 0.5px solid ;
+                    height: 20px;
+                    line-height: 20px;
+                    }
+                    .tablelist td{
+                    border: 0.5px solid;
+                    height: 20px;
+                    line-height: 20px;
 
-	}
+                    }
                 </style>
 
                 <sheet>
-<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablelist" invisible="context.get('type')!='new_order_track'">
-  <tbody>
-    <tr>
-      <th width="18%">销售合同</th>
-      <th width="10%">收到客户订单时间</th>
-      <th width="10%">发送PI时间</th>
-      <th width="10%">客户PI回签时间</th>
-      <th width="10%">合规审批时间</th>
-      <th width="38%">最后一次备注</th>
-      <th width="4%"></th>
-    </tr>
-    <tr>
-      <td><field name="so_id" readonly="1"/></td>
-      <td><field name="time_receive_pi" string="收到客户订单时间"/></td>
-      <td><field name="time_sent_pi"/></td>
-      <td><field name="time_sign_pi"/></td>
-      <td><field name="hegui_date" readonly="1"/></td>
-      <td><field name="comments_new_order_track" readonly="1"/></td>
-        <td><button name="open_wizard_comments" type="object" icon="fa-commenting-o" /></td>
-    </tr>
-  </tbody>
-</table>
-                    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablelist" invisible="context.get('type')!='order_track'">
-  <tbody>
-    <tr>
-      <th width="10%">销售合同</th>
-      <th width="8%">计划安排完整性</th>
-      <th width="8%">检查执行准确性</th>
-      <th width="8%">供应商下单时间</th>
-      <th width="8%">供应商交期</th>
-        <th width="8%">客户下单时间</th>
-      <th width="8%">客户交期</th>
-         <th width="8%">工厂检查点进度</th>
-        <th width="8%">客户交期进度</th>
-            <th width="8%">供应商交期进度</th>
-        <th width="8%">出运进度</th>
-      <th width="8%">最后一次备注</th>
-        <th width="2%"></th>
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablelist"
+                           invisible="context.get('type')!='new_order_track'">
+                        <tbody>
+                            <tr>
+                                <th width="18%">销售合同</th>
+                                <th width="10%">收到客户订单时间</th>
+                                <th width="10%">发送PI时间</th>
+                                <th width="10%">客户PI回签时间</th>
+                                <th width="10%">合规审批时间</th>
+                                <th width="38%">最后一次备注</th>
+                                <th width="4%"></th>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <field name="so_id" readonly="1"/>
+                                </td>
+                                <td>
+                                    <field name="time_receive_pi" string="收到客户订单时间"/>
+                                </td>
+                                <td>
+                                    <field name="time_sent_pi"/>
+                                </td>
+                                <td>
+                                    <field name="time_sign_pi"/>
+                                </td>
+                                <td>
+                                    <field name="hegui_date" readonly="1"/>
+                                </td>
+                                <td>
+                                    <field name="comments_new_order_track" readonly="1"/>
+                                </td>
+                                <td>
+                                    <button name="open_wizard_comments" type="object" icon="fa-commenting-o"/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablelist"
+                           invisible="context.get('type')!='order_track'">
+                        <tbody>
+                            <tr>
+                                <th width="10%">销售合同</th>
+                                <th width="8%">计划安排完整性</th>
+                                <th width="8%">检查执行准确性</th>
+                                <th width="8%">供应商下单时间</th>
+                                <th width="8%">供应商交期</th>
+                                <th width="8%">客户下单时间</th>
+                                <th width="8%">客户交期</th>
+                                <th width="8%">工厂检查点进度</th>
+                                <th width="8%">客户交期进度</th>
+                                <th width="8%">供应商交期进度</th>
+                                <th width="8%">出运进度</th>
+                                <th width="8%">最后一次备注</th>
+                                <th width="2%"></th>
 
-    </tr>
-    <tr>
-        <td><field name="so_id" readonly="1"/></td>
-      <td><field name="planning_integrity" readonly="1"/></td>
-      <td><field name="planning_integrity" /></td>
-      <td><field name="earliest_date_po_order"/></td>
-      <td><field name="latest_date_po_planned"/></td>
-      <td><field name="date_so_contract" readonly="1"/></td>
-      <td><field name="date_so_requested" readonly="1" widget="date"/></td>
-        <td> <field name="check_number_percent" widget="progressbar"  /></td>
-        <td><field name="finish_percent" widget="progressbar" /></td>
-        <td><field name="finish_percent_supplier" widget="progressbar"/></td>
-        <td><field name="sent_percent" widget="progressbar" /></td>
-        <td><field name="comments_order_track" readonly="1"/></td>
-        <td><button name="open_wizard_comments" type="object"  icon="fa-commenting-o"/></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <field name="so_id" readonly="1"/>
+                                </td>
+                                <td>
+                                    <field name="planning_integrity" readonly="1"/>
+                                </td>
+                                <td>
+                                    <field name="planning_integrity"/>
+                                </td>
+                                <td>
+                                    <field name="earliest_date_po_order"/>
+                                </td>
+                                <td>
+                                    <field name="latest_date_po_planned"/>
+                                </td>
+                                <td>
+                                    <field name="date_so_contract" readonly="1"/>
+                                </td>
+                                <td>
+                                    <field name="date_so_requested" readonly="1" widget="date"/>
+                                </td>
+                                <td>
+                                    <field name="check_number_percent" widget="progressbar"/>
+                                </td>
+                                <td>
+                                    <field name="finish_percent" widget="progressbar"/>
+                                </td>
+                                <td>
+                                    <field name="finish_percent_supplier" widget="progressbar"/>
+                                </td>
+                                <td>
+                                    <field name="sent_percent" widget="progressbar"/>
+                                </td>
+                                <td>
+                                    <field name="comments_order_track" readonly="1"/>
+                                </td>
+                                <td>
+                                    <button name="open_wizard_comments" type="object" icon="fa-commenting-o"/>
+                                </td>
 
-    </tr>
-  </tbody>
-</table>
-<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablelist" attrs="{'invisible':[('type','!=','transport_track')]}" >
-  <tbody>
-    <tr>
-      <th width="18%">出运合同</th>
-      <th width="8%">应收款</th>
-      <th width="8%">应付款</th>
-      <th width="8%">应收退税</th>
-      <th width="18%">进仓日期</th>
-      <th width="8%">出运船日期</th>
-        <th width="8%">客户交单日</th>
-        <th width="20%">日志备注</th>
-        <th width="4%"></th>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablelist"
+                           attrs="{'invisible':[('type','!=','transport_track')]}">
+                        <tbody>
+                            <tr>
+                                <th width="18%">出运合同</th>
+                                <th width="8%">应收款</th>
+                                <th width="8%">应付款</th>
+                                <th width="8%">应收退税</th>
+                                <th width="18%">进仓日期</th>
+                                <th width="8%">出运船日期</th>
+                                <th width="8%">客户交单日</th>
+                                <th width="20%">日志备注</th>
+                                <th width="4%"></th>
 
-    </tr>
-    <tr>
-      <td><field name="tb_id" readonly="1"/></td>
-      <td><field name="sale_invoice_balance" /></td>
-      <td><field name="purchase_invoice_balance"/></td>
-      <td><field name="back_tax_invoice_balance"/></td>
-      <td style="color:red" attrs="{'invisible':[('is_date_out_in','=',True)]}">
-          <field name="date_out_in" />
-          <button name="action_date_out_in" type="object" icon="fa-check"  confirm="确认后，应收应付就会生成，请谨慎！" invisible="context.get('type')!='transport_track'"/>
-</td>
-          <td attrs="{'invisible':[('is_date_out_in','=',False)]}" >
-          <field name="date_out_in" />
-          <button name="action_date_out_in" type="object" icon="fa-check"  confirm="确认后，应收应付就会生成，请谨慎！" invisible="context.get('type')!='transport_track'"/>
-</td>
-        <td><field name="date_ship" /></td>
-        <td><field name="date_customer_finish" /></td>
-      <td><field name="comments_transport_track" readonly="1"/></td>
-        <td><button name="open_wizard_comments" type="object"  icon="fa-commenting-o" /></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <field name="tb_id" readonly="1"/>
+                                </td>
+                                <td>
+                                    <field name="sale_invoice_balance"/>
+                                </td>
+                                <td>
+                                    <field name="purchase_invoice_balance"/>
+                                </td>
+                                <td>
+                                    <field name="back_tax_invoice_balance"/>
+                                </td>
+                                <td style="color:red" attrs="{'invisible':[('is_date_out_in','=',True)]}">
+                                    <field name="date_out_in"/>
+                                    <button name="action_date_out_in" type="object" icon="fa-check"
+                                            confirm="确认后，应收应付就会生成，请谨慎！"
+                                            invisible="context.get('type')!='transport_track'"/>
+                                </td>
+                                <td attrs="{'invisible':[('is_date_out_in','=',False)]}">
+                                    <field name="date_out_in"/>
+                                    <button name="action_date_out_in" type="object" icon="fa-check"
+                                            confirm="确认后，应收应付就会生成，请谨慎！"
+                                            invisible="context.get('type')!='transport_track'"/>
+                                </td>
+                                <td>
+                                    <field name="date_ship"/>
+                                </td>
+                                <td>
+                                    <field name="date_customer_finish"/>
+                                </td>
+                                <td>
+                                    <field name="comments_transport_track" readonly="1"/>
+                                </td>
+                                <td>
+                                    <button name="open_wizard_comments" type="object" icon="fa-commenting-o"/>
+                                </td>
 
-    </tr>
-  </tbody>
-</table>
+                            </tr>
+                        </tbody>
+                    </table>
 
                     <notebook colspan="4">
-                        <page string="General Information" >
+                        <page string="General Information">
                             <field name="type" invisible="1"/>
                             <field name="is_date_out_in" invisible="1"/>
-                            <field name="plan_check_ids" deldete="false" create="false">
-                                <tree editable="bottom" delete="false">
+                            <field name="plan_check_ids">
+                                <tree editable="bottom" deldete="false" create="false">
                                     <field name="order_track_id" groups="base.group_system"/>
                                     <field name="so_id" groups="base.group_system"/>
-                                    <field name="po_id" readonly="1" invisible="context.get('type')!='new_order_track'"/>
+                                    <field name="po_id" readonly="1"
+                                           invisible="context.get('type')!='new_order_track'"/>
                                     <field name="plan_check_line" groups="base.group_system"/>
-                                    <field name="date_factory_return" invisible="context.get('type')!='new_order_track'"/>
-                                    <field name="tb_id" invisible="1" />
-                                    <field name="purchase_invoice_id" invisible="context.get('type')!='transport_track'"/>
-                                    <field name="purchase_invoice_date_finish" invisible="context.get('type')!='transport_track'"/>
-
-
-
+                                    <field name="date_factory_return"
+                                           invisible="context.get('type')!='new_order_track'"/>
+                                    <field name="tb_id" invisible="1"/>
+                                    <field name="purchase_invoice_id"
+                                           invisible="context.get('type')!='transport_track'"/>
+                                    <field name="purchase_invoice_date_finish"
+                                           invisible="context.get('type')!='transport_track'"/>
 
 
                                     <field name="planning_integrity" invisible="context.get('type')!='order_track'"/>
@@ -397,7 +476,8 @@
                                     <field name="date_deadline" invisible="context.get('type')!='order_track'"/>
                                     <field name="date_finish" invisible="context.get('type')!='order_track'"/>
 
-                                    <button name="open_plan_check_ids" type="object" string="检查点检查登记" invisible="context.get('type')!='order_track'"/>
+                                    <button name="open_plan_check_ids" type="object" string="检查点检查登记"
+                                            invisible="context.get('type')!='order_track'"/>
 
 
                                 </tree>
@@ -442,10 +522,10 @@
                         </page>
 
                     </notebook>
-                      <footer invisible="not context.get('open')">
-                            <button name="action_save_test" type="object" class="oe_highlight" string="保存并关闭"/>
-                          <button string="关闭" class="btn-primary" special="cancel"/>
-                        </footer>
+                    <footer invisible="not context.get('open')">
+                        <button name="action_save_test" type="object" class="oe_highlight" string="保存并关闭"/>
+                        <button string="关闭" class="btn-primary" special="cancel"/>
+                    </footer>
                 </sheet>
                 <div class="oe_chatter">
                     <field name="message_follower_ids" widget="mail_followers"/>
@@ -463,18 +543,18 @@
         <field name="arch" type="xml">
             <form string="计划" create="false">
                 <sheet>
-                            <field name="plan_check_ids" nolabel="1">
-                                <tree editable="bottom" delete="false">
-                                    <field name="order_track_id" groups="base.group_system"/>
-                                    <field name="so_id" groups="base.group_system"/>
-                                    <field name="po_id" readonly="1"/>
-                                    <field name="plan_check_line" groups="base.group_system"/>
-                                    <field name="date_deadline"/>
-                                    <field name="date_finish"/>
-                                    <field name="state"/>
-                                    <button name="open_plan_check_ids" type="object" string="检查点检查登记"/>
-                                </tree>
-                            </field>
+                    <field name="plan_check_ids" nolabel="1">
+                        <tree editable="bottom" delete="false">
+                            <field name="order_track_id" groups="base.group_system"/>
+                            <field name="so_id" groups="base.group_system"/>
+                            <field name="po_id" readonly="1"/>
+                            <field name="plan_check_line" groups="base.group_system"/>
+                            <field name="date_deadline"/>
+                            <field name="date_finish"/>
+                            <field name="state"/>
+                            <button name="open_plan_check_ids" type="object" string="检查点检查登记"/>
+                        </tree>
+                    </field>
 
                 </sheet>
                 <div class="oe_chatter">
@@ -510,15 +590,19 @@
                             <field name="plan_check_line">
                                 <tree>
                                     <field name="activity_type_1_id"/>
-                                    <button name="open_activity_id_plan" class="akiny_text_right" type="object" icon="fa-archive" attrs="{'invisible':[('plan_check_id','=',False)]}"/>
+                                    <button name="open_activity_id_plan" class="akiny_text_right" type="object"
+                                            icon="fa-archive" attrs="{'invisible':[('plan_check_id','=',False)]}"/>
 
                                     <field name="date_deadline"/>
-                                    <button name="open_activity_id_finish" class="akiny_text_right" type="object" icon="fa-archive" attrs="{'invisible':[('plan_check_id','=',False)]}"/>
+                                    <button name="open_activity_id_finish" class="akiny_text_right" type="object"
+                                            icon="fa-archive" attrs="{'invisible':[('plan_check_id','=',False)]}"/>
 
                                     <field name="date_finish"/>
                                     <field name="plan_check_id"/>
 
-                                    <button name="open_activity_id" type="object" string="登记该项检查点" groups="base.group_system" attrs="{'invisible':[('plan_check_id','=',False)]}"/>
+                                    <button name="open_activity_id" type="object" string="登记该项检查点"
+                                            groups="base.group_system"
+                                            attrs="{'invisible':[('plan_check_id','=',False)]}"/>
                                 </tree>
                             </field>
                         </page>
@@ -541,15 +625,70 @@
             <tree string="检查点">
                 <field name="po_id"/>
                 <field name="activity_type_1_id"/>
-                <button name="open_activity_id_plan" class="akiny_text_right" type="object" icon="fa-archive" />
+                <button name="open_activity_id_plan" class="akiny_text_right" type="object" icon="fa-archive"/>
                 <field name="date_deadline"/>
-                <button name="open_activity_id_finish" class="akiny_text_right" type="object" icon="fa-archive" />
+                <button name="open_activity_id_finish" class="akiny_text_right" type="object" icon="fa-archive"/>
                 <field name="date_finish"/>
-<field name="state"/>
+                <field name="state"/>
                 <button name="open_activity_id" type="object" string="登记该项检查点" groups="base.group_system"/>
             </tree>
         </field>
     </record>
+
+
+     <record id="plan_check_line_kanban_view" model="ir.ui.view">
+        <field name="name">plan.check.line.kanban</field>
+        <field name="model">plan.check.line</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile">
+                <field name="po_id"/>
+                <field name="activity_type_1_id"/>
+                <field name="date_deadline"/>
+                <field name="date_finish"/>
+                <field name="state"/>
+      <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                <div class="o_kanban_record_top mb16">
+                                    <div class="o_kanban_record_headings mt4">
+                                        <strong class="o_kanban_record_title">
+                                            <span>
+                                                <t t-esc="record.po_id.contract_code.value"/>
+                                            </span>
+                                        </strong>
+                                    </div>
+
+                                </div>
+                                <div class="o_kanban_record_bottom">
+                                    <div class="oe_kanban_bottom_left text-muted">
+                                        <span>
+                                            <t t-esc="record.activity_type_1_id.name"/>
+                                        </span>
+                                    </div>
+                                    <div class="oe_kanban_bottom_right">
+                                        <field name="state" widget="label_selection" options="{'classes': {'draft': 'default', 'cancel': 'default', 'done': 'success'}}"/>
+                                    </div>
+                                </div>
+                                 <div class="o_kanban_record_bottom">
+                                    <div class="oe_kanban_bottom_left text-muted">
+                                        <span>
+                                            <span>计划：</span>
+                                            <t t-esc="record.date_deadline.value"/>
+                                        </span>
+                                    </div>
+                                    <div class="oe_kanban_bottom_right">
+                                        <span>到期：</span>
+                                          <t t-esc="record.date_finish.value"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+            </kanban>
+        </field>
+    </record>
+
+
 
 
     <record id="plan_check_line_form" model="ir.ui.view">
@@ -557,17 +696,85 @@
         <field name="model">plan.check.line</field>
         <field name="arch" type="xml">
             <form string="检查点">
-                <sheet>
-                    <group>
-                        <field name="po_id"/>
-                <field name="activity_type_1_id"/>
-                <button name="open_activity_id_plan" class="akiny_text_right" type="object" icon="fa-archive" />
-                <field name="date_deadline"/>
-                <button name="open_activity_id_finish" class="akiny_text_right" type="object" icon="fa-archive" />
-                <field name="date_finish"/>
+                <style>
+                    body{
+                    font-size: 10px;
+                    font-family:Arial;
+                    }
+                    .tablelist{
 
-                <button name="open_activity_id" type="object" string="登记该项检查点" groups="base.group_system"/>
-                    </group>
+                    text-align: center;
+                    border: 0.5px solid ;
+                    border-collapse: collapse;
+                    font-size: 10px;
+                    width: 100%
+                    }
+                    .tablelist th{
+
+                    font-size: 10px;
+                    text-align: center;
+                    border: 0.5px solid ;
+                    height: 20px;
+                    line-height: 20px;
+                    }
+                    .tablelist td{
+                    border: 0.5px solid;
+                    height: 20px;
+                    line-height: 20px;
+
+                    }
+                </style>
+                <sheet>
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablelist"
+                         >
+                        <tbody>
+                            <tr>
+                                <th width="15%">采购合同</th>
+                                <th width="15%">检查类型</th>
+                                <th width="15%">检查点计划时间</th>
+                                <th width="15%">检查点文成时间</th>
+
+                                <th width="36%">最后一次备注</th>
+                                <th width="4%"></th>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <field name="po_id" readonly="1"/>
+                                </td>
+                                <td>
+                                    <field name="activity_type_1_id"/>
+                                </td>
+                                <td>
+                                    <button name="open_activity_id_plan" class="akiny_text_right" type="object"
+                                            icon="fa-archive"/>
+                                    <field name="date_deadline"/>
+                                </td>
+                                <td>
+                                    <button name="open_activity_id_finish" class="akiny_text_right" type="object"
+                                            icon="fa-archive"/>
+                                    <field name="date_finish"/>
+                                </td>
+
+                                <td>
+                                    <field name="comments_line" readonly="1"/>
+                                </td>
+                                <td>
+                                    <button name="open_wizard_comments" type="object" icon="fa-commenting-o"/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+<!--                    <group>-->
+<!--                        <field name="po_id"/>-->
+<!--                        <field name="activity_type_1_id"/>-->
+<!--                        <button name="open_activity_id_plan" class="akiny_text_right" type="object" icon="fa-archive"/>-->
+<!--                        <field name="date_deadline"/>-->
+<!--                        <button name="open_activity_id_finish" class="akiny_text_right" type="object"-->
+<!--                                icon="fa-archive"/>-->
+<!--                        <field name="date_finish"/>-->
+
+<!--                        <button name="open_activity_id" type="object" string="登记该项检查点" groups="base.group_system"/>-->
+<!--                    </group>-->
                 </sheet>
                 <div class="oe_chatter">
                     <field name="message_follower_ids" widget="mail_followers"/>
@@ -582,10 +789,11 @@
         <field name="name">检查点</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">plan.check.line</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">tree,form,kanban</field>
         <field name="context">{'group_by':'po_id'}</field>
         <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('plan_check_line_tree_view')}),
+                          (0, 0, {'view_mode': 'kanban', 'view_id': ref('plan_check_line_kanban_view')}),
                            (0, 0, {'view_mode': 'form', 'view_id': ref('plan_check_line_form')})]"/>
     </record>
 
@@ -596,7 +804,7 @@
         <field name="view_mode">tree,form</field>
         <field name="domain">[('type','=','new_order_track')]</field>
         <field name="context">{'type': 'new_order_track','factory_return':1}</field>
-         <field name="view_ids" eval="[(5, 0, 0),
+        <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('order_track_tree_view')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('order_track_form_new')})]"/>
 
@@ -609,32 +817,35 @@
         <field name="view_mode">tree,form</field>
         <field name="domain">[('type','=','order_track')]</field>
         <field name="context">{'type': 'order_track',}</field>
-                 <field name="view_ids" eval="[(5, 0, 0),
+        <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('order_track_tree_view')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('order_track_form_new')})]"/>
 
     </record>
 
 
-        <record id="action_order_track_tb" model="ir.actions.act_window">
+    <record id="action_order_track_tb" model="ir.actions.act_window">
         <field name="name">出运跟踪</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">order.track</field>
         <field name="view_mode">tree,form</field>
         <field name="domain">[('type','=','transport_track')]</field>
         <field name="search_view_id" ref="view_order_track_search"/>
-        <field name="context">{'search_default_group_date_all_state':1,'type': 'transport_track','show_date_finish':1}</field>
-                 <field name="view_ids" eval="[(5, 0, 0),
+        <field name="context">{'search_default_group_date_all_state':1,'type': 'transport_track','show_date_finish':1}
+        </field>
+        <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('order_track_tree_view')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('order_track_form_new')})]"/>
 
     </record>
 
- <menuitem id="menu_order_track_root" name="合同跟踪"  sequence="99"  groups="sales_team.group_manager"/>
+    <menuitem id="menu_order_track_root" name="合同跟踪" sequence="99" groups="sales_team.group_manager"/>
     <menuitem id="menu_new_order_track" name="新订单下单前跟踪" parent="menu_order_track_root" action="action_new_order_track"
               sequence="1"/>
-    <menuitem id="menu_order_track" name="订单跟踪" parent="menu_order_track_root" action="action_order_track" sequence="2"/>
-    <menuitem id="menu_order_track_tb" name="出运跟踪" parent="menu_order_track_root" action="action_order_track_tb" sequence="3"/>
+    <menuitem id="menu_order_track" name="订单跟踪" parent="menu_order_track_root" action="action_order_track"
+              sequence="2"/>
+    <menuitem id="menu_order_track_tb" name="出运跟踪" parent="menu_order_track_root" action="action_order_track_tb"
+              sequence="3"/>
     <menuitem id="menu_plan_check" name="检查点" parent="base.menu_users" action="action_plan_check_line" sequence="3"/>
 
 

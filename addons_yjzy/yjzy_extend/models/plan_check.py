@@ -768,6 +768,13 @@ class PlanCheckLine(models.Model):
             one.plan_check_id.compute_planning_integrity()
             one.plan_check_id.compute_check_on_time()
 
+    def compute_display_name(self):
+        ctx = self.env.context
+        for one in self:
+            one.display_name = one.activity_type_1_id.name
+
+    display_name = fields.Char(u'显示名称', compute=compute_display_name)
+
     order_track_id = fields.Many2one('order.track','计划跟踪',ondelete='cascade')
     plan_check_id = fields.Many2one('plan.check','计划检查',ondelete='cascade' )
     po_id = fields.Many2one('purchase.order',related='plan_check_id.po_id',store=True)
@@ -781,6 +788,7 @@ class PlanCheckLine(models.Model):
     activity_id = fields.Many2one('mail.activity','计划活动')
 
     activity_type_1_id = fields.Many2one('mail.activity.type','检查类型' )
+    comments_line = fields.Text('工厂检查明细备注')
 
     def open_activity_id(self):
         return {
@@ -817,6 +825,26 @@ class PlanCheckLine(models.Model):
             'target': 'new',
             'context': {'finish': 1}
         }
+
+    def open_wizard_comments(self):
+        wzcomments_obj = self.env['wizard.plan.check.comments']
+        wzcomments = wzcomments_obj.create({
+            'plan_check_line_id': self.id,
+
+        })
+
+        form_view = self.env.ref('yjzy_extend.wizard_plan_check_form')
+        return {
+            'name': u'查看',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'wizard.plan.check.comments',
+            'type': 'ir.actions.act_window',
+            'views': [(form_view.id, 'form')],
+            'res_id': wzcomments.id,
+            'target': 'new',
+        }
+
 
 
 
