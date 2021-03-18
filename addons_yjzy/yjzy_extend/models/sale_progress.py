@@ -150,41 +150,42 @@ class sale_order(models.Model):
                 })
                     plan_check_line.write({'activity_id':plan_check_line_activity.id})
         else:
-            order_track_ids = self.order_track_ids.filtered(lambda x: x.type == 'order_track')
-            po_dic = []
-            for line in self.po_ids:
-                po_dic.append(line.id)
-            order_track_ids[0].write({
-                'po_ids': [(6, 0, po_dic)],
-            })
-            print('akiny_test',po_dic,self.po_ids,order_track_ids)
-            for one in self.po_ids:
-                plan_check = plan_check_obj.create({
-                    'type':'factory_check',
-                    'so_id':self.id,
-                    'po_id':one.id,
-                    'order_track_id':order_track_ids[0].id,
-                    'state':'planning'
+            if not self.plan_check_ids:
+                order_track_ids = self.order_track_ids.filtered(lambda x: x.type == 'order_track')
+                po_dic = []
+                for line in self.po_ids:
+                    po_dic.append(line.id)
+                order_track_ids[0].write({
+                    'po_ids': [(6, 0, po_dic)],
                 })
-                for x in activity_type_akiny_ids:
-                    plan_check_line = plan_check_line_obj.create({
-                        'plan_check_id':plan_check.id,
-                        'activity_type_1_id':x.id,
+                print('akiny_test',po_dic,self.po_ids,order_track_ids)
+                for one in self.po_ids:
+                    plan_check = plan_check_obj.create({
+                        'type':'factory_check',
+                        'so_id':self.id,
                         'po_id':one.id,
-                        'state':'10_un_planning',
-                        'order_track_id': order_track_ids[0].id
+                        'order_track_id':order_track_ids[0].id,
+                        'state':'planning'
                     })
-                    plan_check_line_activity = activity_obj.create({
-                    'activity_type_id': x.id,
-                    'user_id': self.env.user.id,
-                    'plan_check_id': plan_check.id,
-                    'plan_check_line_id':plan_check_line.id,
-                    'activity_category': 'plan_check',
-                    'res_model': 'plan.check.line',
-                    'res_model_id': res_model_id.id,
-                    'res_id': plan_check_line.id,
-                })
-                    plan_check_line.write({'activity_id':plan_check_line_activity.id})
+                    for x in activity_type_akiny_ids:
+                        plan_check_line = plan_check_line_obj.create({
+                            'plan_check_id':plan_check.id,
+                            'activity_type_1_id':x.id,
+                            'po_id':one.id,
+                            'state':'10_un_planning',
+                            'order_track_id': order_track_ids[0].id
+                        })
+                        plan_check_line_activity = activity_obj.create({
+                        'activity_type_id': x.id,
+                        'user_id': self.env.user.id,
+                        'plan_check_id': plan_check.id,
+                        'plan_check_line_id':plan_check_line.id,
+                        'activity_category': 'plan_check',
+                        'res_model': 'plan.check.line',
+                        'res_model_id': res_model_id.id,
+                        'res_id': plan_check_line.id,
+                    })
+                        plan_check_line.write({'activity_id':plan_check_line_activity.id})
 
 
     #创建第一步新订单检验
@@ -217,22 +218,24 @@ class sale_order(models.Model):
 
                 })
         else:
-            order_track_ids = self.order_track_ids.filtered(lambda x: x.type == 'new_order_track')
-            po_dic = []
-            for line in self.po_ids:
-                po_dic.append(line.id)
-            order_track_ids[0].write({
-                'po_ids': [(6, 0, po_dic)],
-            })
-            print('akiny_test',po_dic,self.po_ids,order_track_ids)
-            for one in self.po_ids:
-                plan_check = plan_check_obj.create({
-                    'type': 'factory_check',
-                    'so_id': self.id,
-                    'po_id': one.id,
-                    'order_track_id': order_track_ids[0].id,
+            if not self.plan_check_ids:
+                order_track_ids = self.order_track_ids.filtered(lambda x: x.type == 'new_order_track')
 
+                po_dic = []
+                for line in self.po_ids:
+                    po_dic.append(line.id)
+                order_track_ids[0].write({
+                    'po_ids': [(6, 0, po_dic)],
                 })
+                print('akiny_test',po_dic,self.po_ids,order_track_ids)
+                for one in self.po_ids:
+                    plan_check = plan_check_obj.create({
+                        'type': 'factory_check',
+                        'so_id': self.id,
+                        'po_id': one.id,
+                        'order_track_id': order_track_ids[0].id,
+
+                    })
 
 
 
