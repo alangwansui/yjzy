@@ -87,12 +87,14 @@ class OrderTrack(models.Model):
                 strptime = datetime.strptime
                 today = datetime.today()
                 time_contract_requested = one.time_contract_requested
-                x = (today - strptime(one.date_so_contract , DF)).days
-                print('x_akiny',x,time_contract_requested)
-                finish_percent = time_contract_requested != 0 and x * 100 / time_contract_requested or 0
-                if finish_percent >= 100:
-                    finish_percent = 100
-                one.finish_percent = finish_percent
+                date_so_contract = one.date_so_contract
+                if date_so_contract and time_contract_requested:
+                    x = (today - strptime(one.date_so_contract , DF)).days
+                    print('x_akiny',x,time_contract_requested)
+                    finish_percent = time_contract_requested != 0 and x * 100 / time_contract_requested or 0
+                    if finish_percent >= 100:
+                        finish_percent = 100
+                    one.finish_percent = finish_percent
 
 
     def compute_finish_percent_supplier(self):
@@ -621,9 +623,9 @@ class PlanCheck(models.Model):
     display_name = fields.Char(u'显示名称', compute=compute_display_name)
     order_track_id = fields.Many2one('order.track','计划跟踪',ondelete='cascade')
     # plan_check_ids = fields.One2many('plan.check','so_id')
-    so_id = fields.Many2one('sale.order',)
+    so_id = fields.Many2one('sale.order',ondelete='cascade')
 
-    po_id = fields.Many2one('purchase.order','采购合同')
+    po_id = fields.Many2one('purchase.order','采购合同',ondelete='cascade')
 
     date_factory_return = fields.Date('工厂回传时间', index=True,track_visibility='onchange', related='po_id.date_factory_return',store=True)#todo 填写后，自动写入po
     date_po_planned = fields.Date('工厂交期',compute=compute_date_po_planned_order,store=True)

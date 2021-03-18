@@ -56,6 +56,7 @@ class wizard_so2po(models.TransientModel):
             po.create_lots()
             po.action_sale_reserve()
             purchase_orders |= po
+        self.so_id.make_all_plan()
         form_view = self.env.ref('yjzy_extend.new_purchase_order_from')
         tree_view = self.env.ref('yjzy_extend.new_purchase_order_tree')
         return {
