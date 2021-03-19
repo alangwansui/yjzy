@@ -53,10 +53,11 @@
                 <field name="check_on_time" invisible="context.get('type')!='order_track'"/>
                 <field name="category_ids" string="异常结果" options="{'color_field':'color'}" widget="many2many_tags"
                        invisible="1"/>
-                <field name="earliest_date_po_order" invisible="context.get('type')!='order_track'" string="供应商下单时间"/>
-                <field name="latest_date_po_planned" invisible="context.get('type')!='order_track'" string="供应商交期时间"/>
-                <field name="date_so_contract" invisible="context.get('type')!='order_track'" readonly="1"/>
-                <field name="date_so_requested" invisible="context.get('type')!='order_track'" widget="date"/>
+                <field name="date_so_contract" invisible="context.get('type')!='order_track'" readonly="1" string="客户确认日期"/>
+                <field name="earliest_date_po_order" invisible="context.get('type')!='order_track'" string="下单给供应商日期"/>
+                <field name="latest_date_po_planned" invisible="context.get('type')!='order_track'" string="供应商交期"/>
+
+                <field name="date_so_requested" invisible="context.get('type')!='order_track'" widget="date" string="客户交期"/>
                 <field name="time_contract_requested" invisible="1"/>
                 <field name="time_supplier_requested" invisible="1"/>
                 <field name="check_all_number" invisible="1"/>
@@ -208,6 +209,7 @@
 
                                 </tree>
                             </field>
+                            <field name="plan_check_line_ids"/>
                         </page>
                         <page string="采购合同" invisible="not context.get('order_track')">
                             <field name="po_ids" readonly="1">
@@ -341,9 +343,11 @@
                                 <th width="10%">销售合同</th>
                                 <th width="8%">计划安排完整性</th>
                                 <th width="8%">检查执行准确性</th>
-                                <th width="8%">供应商下单时间</th>
+                                <th width="8%">客户确认日期</th>
+
+                                <th width="8%">供应商下单日期</th>
                                 <th width="8%">供应商交期</th>
-                                <th width="8%">客户下单时间</th>
+
                                 <th width="8%">客户交期</th>
                                 <th width="8%">工厂检查点进度</th>
                                 <th width="8%">客户交期进度</th>
@@ -361,16 +365,16 @@
                                     <field name="planning_integrity" readonly="1"/>
                                 </td>
                                 <td>
-                                    <field name="planning_integrity"/>
+                                    <field name="check_on_time" readonly="1"/>
+                                </td>
+                                <td>
+                                     <field name="date_so_contract" readonly="1"/>
                                 </td>
                                 <td>
                                     <field name="earliest_date_po_order"/>
                                 </td>
                                 <td>
                                     <field name="latest_date_po_planned"/>
-                                </td>
-                                <td>
-                                    <field name="date_so_contract" readonly="1"/>
                                 </td>
                                 <td>
                                     <field name="date_so_requested" readonly="1" widget="date"/>

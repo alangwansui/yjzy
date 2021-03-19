@@ -1568,8 +1568,8 @@ class transport_bill(models.Model):
         date_type = self.env.context.get('date_type')
         print('date_type_akiny',date_type)
         for one in self:
-            if self.env.ref('akiny.group_trans_hegui') not in self.env.user.groups_id:
-                raise Warning('您没有审批的权限！')
+            # if self.env.ref('akiny.group_trans_hegui') not in self.env.user.groups_id:
+            #     raise Warning('您没有审批的权限！')
             if date_type == 'date_out_in':
                 one.date_out_in_state = 'done'
                 if one.state not in ['delivered','invoiced']:
