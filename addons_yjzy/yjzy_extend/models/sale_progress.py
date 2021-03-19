@@ -165,7 +165,7 @@ class sale_order(models.Model):
                 })
                     plan_check_line.write({'activity_id':plan_check_line_activity.id})
         else:
-            if not self.plan_check_ids:
+            if not self.plan_check_ids.filtered(lambda x: x.type == 'order_track'):
                 order_track_ids = self.order_track_ids.filtered(lambda x: x.type == 'order_track')
                 po_dic = []
                 for line in self.po_ids:
@@ -233,9 +233,8 @@ class sale_order(models.Model):
 
                 })
         else:
-            if not self.plan_check_ids:
+            if not self.plan_check_ids.filtered(lambda x: x.type == 'new_order_track'):
                 order_track_ids = self.order_track_ids.filtered(lambda x: x.type == 'new_order_track')
-
                 po_dic = []
                 for line in self.po_ids:
                     po_dic.append(line.id)

@@ -208,7 +208,7 @@ class purchase_order(models.Model):
     can_confirm_by_so = fields.Boolean(u'已可以自动随SO审批')
     box_type = fields.Selection([('b', 'B'), ('a', 'A')], string=u'编号方式', default='b')
     contact_id = fields.Many2one(u'res.partner', '联系人')
-    include_tax = fields.Boolean(u'含税')
+    include_tax = fields.Boolean(u'含税',default=True)
     sale_uid = fields.Many2one('res.users', u'业务员',default=lambda self: self.env.user.assistant_id.id)
     sale_assistant_id = fields.Many2one('res.users', u'业务助理',default=lambda self: self.env.user.id)
     yjzy_payment_ids = fields.One2many('account.payment', 'po_id', u'预付款单')
