@@ -176,7 +176,7 @@ class sale_order(models.Model):
                 print('akiny_test',po_dic,self.po_ids,order_track_ids)
                 for one in self.po_ids:
                     plan_check = plan_check_obj.create({
-                        'type':'factory_check',
+                        'type':'order_track',
                         'so_id':self.id,
                         'po_id':one.id,
                         'order_track_id':order_track_ids[0].id,
@@ -244,7 +244,7 @@ class sale_order(models.Model):
                 print('akiny_test',po_dic,self.po_ids,order_track_ids)
                 for one in self.po_ids:
                     plan_check = plan_check_obj.create({
-                        'type': 'factory_check',
+                        'type': 'new_order_track',
                         'so_id': self.id,
                         'po_id': one.id,
                         'order_track_id': order_track_ids[0].id,
