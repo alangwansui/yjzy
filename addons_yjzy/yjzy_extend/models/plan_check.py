@@ -618,8 +618,8 @@ class PlanCheck(models.Model):
                 company_id = one.tb_id.company_id
             one.company_id = company_id
 
-
-    type = fields.Selection([('new_order_track', '新订单下单前跟踪'), ('order_track', '订单跟踪'), ('transport_track','出运单跟踪')], 'type')
+    type = fields.Selection([('new_order_track', '新订单下单前跟踪'), ('order_track', '订单跟踪'), ('transport_track', '出运单跟踪')],
+                            'type', related='order_track_id.type')
     display_name = fields.Char(u'显示名称', compute=compute_display_name)
     order_track_id = fields.Many2one('order.track','计划跟踪',ondelete='cascade')
     # plan_check_ids = fields.One2many('plan.check','so_id')
