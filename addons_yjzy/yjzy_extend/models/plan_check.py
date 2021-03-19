@@ -192,6 +192,7 @@ class OrderTrack(models.Model):
         'order.track.category','order_track_category_rel',  'track_id','category_id',
         string='Tags',store=True)
 
+
     planning_integrity = fields.Selection([('10_un_planning','未计划'),('20_part_un_planning','部分未计划'),('30_planning','已完全计划')],
                                           u'计划安排完整性',default='10_un_planning')
     check_on_time = fields.Selection([('10_not_time',u'未到时'),('20_out_time_un_finish',u'超时未完成'),('30_on_time_finish',u'准时完成'),('40_out_time_finish',u'超时完成')],
@@ -200,6 +201,7 @@ class OrderTrack(models.Model):
     display_name = fields.Char(u'显示名称', compute=compute_display_name)
     type = fields.Selection([('new_order_track', '新订单下单前跟踪'), ('order_track', '订单跟踪'), ('transport_track','出运单跟踪')], 'type')
     so_id = fields.Many2one('sale.order', '销售合同' ,ondelete='cascade')
+    partner_id = fields.Many2one('res.partner','客户',related='so_id.partner_id',store=True)
     so_sent_qty = fields.Float('已出运数',compute=compute_so_qty,store=True)
 
     so_all_qty = fields.Float('原始总数',compute=compute_so_qty,store=True)
