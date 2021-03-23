@@ -25,7 +25,7 @@
         <field name="name">order.track.tree</field>
         <field name="model">order.track</field>
         <field name="arch" type="xml">
-            <tree string="计划" create="false"  default_order="finish_percent">
+            <tree string="计划" create="false"  default_order="finish_percent desc">
                 <field name="type" groups="base.group_system"/>
                 <!--            <field name="date_deadline"/>-->
                 <field name="order_track_new_order_state" invisible="context.get('type')!='new_order_track'"/>

@@ -305,7 +305,7 @@ class OrderTrack(models.Model):
     comments_order_track = fields.Text('备注日志', track_visibility='onchange')
     comments_transport_track = fields.Text('备注日志', track_visibility='onchange')
 
-    @api.depends('plan_check_line_ids')
+    @api.onchange('plan_check_line_ids','plan_check_line_ids.date_deadline','plan_check_line_ids.date_deadline')
     def onchange_plan_check_line_ids(self):
         for one in self.onchange_plan_check_line_ids:
             if one.date_deadline < one.po_id.date_order:
