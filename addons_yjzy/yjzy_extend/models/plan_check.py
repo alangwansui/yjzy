@@ -5,8 +5,20 @@ from odoo import api, exceptions, fields, models, _
 from odoo.tools import DEFAULT_SERVER_DATE_FORMAT as DF
 from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT as DATETIME_FORMAT
 from datetime import datetime, timedelta,date
+from dateutil.relativedelta import relativedelta
+from odoo.exceptions import Warning, UserError
 
-
+Sale_Selection = [('draft', '草稿'),
+                  ('cancel', '取消'),
+                  ('refused', u'拒绝'),
+                  ('submit', u'待责任人审核'),
+                  ('sales_approve', u'待业务合规审核'),
+                  ('manager_approval', u'待总经理特批'),
+                  ('approve', u'审批完成待出运'),
+                  ('sale', '开始出运'),
+                  ('abnormal', u'异常核销'),
+                  ('verifying', u'正常核销'),
+                  ('verification', u'核销完成'), ]
 class OrderTrackCategory(models.Model):
 
     _name = "order.track.category"
@@ -15,7 +27,6 @@ class OrderTrackCategory(models.Model):
     name = fields.Char(string="Check Tag", required=True)
     color = fields.Integer(string='Color Index')
     order_track_ids = fields.Many2many('order.track', 'order_track_category_rel', 'category_id', 'track_id', string='Check')
-
     _sql_constraints = [
         ('name_uniq', 'unique (name)', "Tag name already exists !"),
     ]
@@ -107,7 +118,7 @@ class OrderTrack(models.Model):
                 print('earliest_date_po_order_ainy',earliest_date_po_order)
                 if time_supplier_requested and earliest_date_po_order:
                     x = (today - strptime(earliest_date_po_order, DF)).days
-                    finish_percent_supplier = time_supplier_requested != 0 and x * 100 / time_supplier_requested or 0
+                    finish_percent_supplier = time_supplier_requested != 0 and x * 100 / time_supplier_requested or 0.0
                     if finish_percent_supplier >=100:
                         finish_percent_supplier = 100
                     one.finish_percent_supplier = finish_percent_supplier
@@ -187,12 +198,23 @@ class OrderTrack(models.Model):
                 company_id = one.tb_id.company_id
             one.company_id = company_id
 
+    def compute_order_track_state(self):
+        for one in self:
+            if one.time_draft_order and one.time_sign_pi and one.time_sent_pi and one.time_receive_pi and one.hegui_date and len(one.plan_check_ids) == len(one.plan_check_ids.filtered(lambda x: x.date_factory_return != False)):
+                one.order_track_new_order_state = '20_done'
+            else:
+                one.order_track_new_order_state = '10_doing'
+
     name = fields.Char('编号', default=lambda self: self.env['ir.sequence'].next_by_code('order.track'))
     category_ids = fields.Many2many(
         'order.track.category','order_track_category_rel',  'track_id','category_id',
         string='Tags',store=True)
 
+    order_track_new_order_state = fields.Selection([('10_doing','跟踪进行时候'),('20_done','已完成')],'下单前状态',compute=compute_order_track_state,store=True)
 
+
+    sale_state_1 = fields.Selection(Sale_Selection, u'审批流程', related='so_id.state_1',store=True
+                              )  # 费用审批流程
     planning_integrity = fields.Selection([('10_un_planning','未计划'),('20_part_un_planning','部分未计划'),('30_planning','已完全计划')],
                                           u'计划安排完整性',default='10_un_planning')
     check_on_time = fields.Selection([('10_not_time',u'未到时'),('20_out_time_un_finish',u'超时未完成'),('30_on_time_finish',u'准时完成'),('40_out_time_finish',u'超时完成')],
@@ -206,7 +228,7 @@ class OrderTrack(models.Model):
 
     so_all_qty = fields.Float('原始总数',compute=compute_so_qty,store=True)
     so_no_sent_qty = fields.Float('未出运数',compute=compute_so_qty,store=True)
-    sent_percent = fields.Float('出运进度',compute='compute_so_qty')
+    sent_percent = fields.Float('出运进度',compute='compute_so_qty',store=True)
 
     tb_id = fields.Many2one('transport.bill', '出运合同' ,ondelete='cascade')
     tb_purchase_invoice_ids = fields.One2many('account.invoice','order_track_id','应付账单',domain=[('yjzy_type','=','purchase')])
@@ -222,11 +244,25 @@ class OrderTrack(models.Model):
                                        ('30_un_done',u'其他日期待填'),
                                        ('40_done',u'已完成相关日期'),
                                        ],'所有日期状态',related='tb_id.date_all_state',store=True, )
+
     date_out_in = fields.Date('进仓日期',related='tb_id.date_out_in',store=True)
+    plan_date_out_in = fields.Date('计划进仓日')
+    plan_date_out_in_activity = fields.Many2one('mail.activity', '进仓日计划活动')
     is_date_out_in = fields.Boolean('进仓日是否已确认',related='tb_id.is_date_out_in',store=True)
     date_in = fields.Date('入库日期',related='tb_id.date_in',store=True)
     date_ship = fields.Date('出运船日期',related='tb_id.date_ship',store=True)
+    approve_date = fields.Date('审批完成时间',related='tb_id.approve_date',store=True)
+    plan_date_ship = fields.Date('计划出运船日',)
+    plan_date_ship_activity = fields.Many2one('mail.activity', '出运船计划活动')
+    # activity_ids = fields.One2many('mail.activity','order_track_id','计划活动')
+
+
+
+
+
     date_customer_finish = fields.Date('客户交单日期',related='tb_id.date_customer_finish')
+    plan_date_customer_finish = fields.Date('计划客户交单日', )
+    plan_date_customer_finish_activity = fields.Many2one('mail.activity', '客户交单计划活动')
 
     date_supplier_finish = fields.Date('最迟供应商交单确认日期')
 
@@ -248,18 +284,18 @@ class OrderTrack(models.Model):
     date_so_requested = fields.Datetime('客户交期',related='so_id.requested_date',store=True)
 
     time_contract_requested = fields.Integer('客户交期时限',compute=compute_time_contract_requested,store=True)
-    finish_percent = fields.Float('完成期限比例',compute=compute_finish_percent)
+    finish_percent = fields.Float('完成期限比例',compute=compute_finish_percent,store=True)
 
 
     earliest_date_po_order = fields.Date('最早供应商下单时间',compute=compute_earliest_date_po_order,store=True)
-    latest_date_po_planned = fields.Date('最迟供应商交单时间',compute=compute_latest_date_po_planned,stire=True)
+    latest_date_po_planned = fields.Date('最迟供应商交单时间',compute=compute_latest_date_po_planned,store=True)
 
     time_supplier_requested = fields.Integer('供应商交期时限', compute=compute_time_supplier_requested, store=True)
-    finish_percent_supplier = fields.Float('供应商完成期限比例', compute=compute_finish_percent_supplier)
+    finish_percent_supplier = fields.Float('供应商完成期限比例', compute=compute_finish_percent_supplier,store=True)
     #供应商总的分步检查数量
     check_all_number = fields.Integer('供应商总分步检查数',compute=compute_check_all_number,store=True)
     check_finish_number = fields.Integer('供应商完成分步检查数',compute=compute_check_finish_number, store =True)
-    check_number_percent = fields.Float('分步完成比例',compute=compute_check_number_percent)
+    check_number_percent = fields.Float('分步完成比例',compute=compute_check_number_percent,store=True)
 
     plan_check_ids = fields.One2many('plan.check','order_track_id','计划跟踪明细')
     factory_return = fields.One2many('plan.check','order_track_id','工厂回签日期',)
@@ -268,6 +304,199 @@ class OrderTrack(models.Model):
     comments_new_order_track = fields.Text('备注日志',track_visibility='onchange')
     comments_order_track = fields.Text('备注日志', track_visibility='onchange')
     comments_transport_track = fields.Text('备注日志', track_visibility='onchange')
+
+    @api.depends('plan_check_line_ids')
+    def onchange_plan_check_line_ids(self):
+        for one in self.onchange_plan_check_line_ids:
+            if one.date_deadline < one.po_id.date_order:
+                raise Warning('计划检查点时间不允许小于供应商下单时间')
+            if one.date_deadline > one.po_id.date_planned:
+                raise Warning('计划检查点时间不允许大于供应商交期')
+
+    @api.onchange('plan_check_ids')
+    def onchange_plan_check_ids(self):
+        for one in self.plan_check_ids:
+            if one.date_factory_return and one.date_factory_return < self.time_sign_pi:
+                raise Warning('工厂回签时间小于客户PI回签时间')
+
+
+
+
+    @api.onchange('time_receive_pi')
+    def onchange_time_receive_pi(self):
+        print('time_akiiny',self.time_receive_pi,self.time_sent_pi)
+        if self.time_receive_pi and self.time_sent_pi:
+            if self.time_receive_pi > self.time_sent_pi:
+                raise Warning('填写的日期顺序不正确，请检查!')
+        if self.time_receive_pi and self.time_sign_pi:
+            if self.time_receive_pi > self.time_sign_pi:
+                raise Warning('填写的日期顺序不正确，请检查!')
+
+    @api.onchange('time_sign_pi')
+    def onchange_time_sign_pi(self):
+        print('time_akiiny', self.time_receive_pi, self.time_sent_pi)
+        if self.time_receive_pi and self.time_sent_pi:
+            if self.time_receive_pi > self.time_sent_pi:
+                raise Warning('填写的日期顺序不正确，请检查!')
+        if self.time_sent_pi and self.time_sign_pi:
+            if self.time_sent_pi > self.time_sign_pi:
+                raise Warning('填写的日期顺序不正确，请检查!')
+
+    @api.onchange('time_sent_pi')
+    def onchange_time_sent_pi(self):
+        print('time_akiiny', self.time_receive_pi, self.time_sent_pi)
+        if self.time_receive_pi and self.time_sign_pi:
+            if self.time_receive_pi > self.time_sign_pi:
+                raise Warning('填写的日期顺序不正确，请检查!')
+        if self.time_sent_pi and self.time_sign_pi:
+            if self.time_sent_pi > self.time_sign_pi:
+                raise Warning('填写的日期顺序不正确，请检查!')
+
+
+    def create_plan(self):
+        self.create_activity_plan_date_out_in()
+        self.create_activity_plan_date_ship()
+        self.create_activity_plan_date_customer_finish()
+
+    def create_activity_plan_date_out_in(self):
+        strptime = datetime.strptime
+        type_obj = self.env['mail.activity.type']
+        activity_obj = self.env['mail.activity']
+        models_obj = self.env['ir.model']
+        activity_type_akiny_ids = type_obj.search([('name', '=', '计划填写进仓日')], limit=1)
+        res_model_id = models_obj.search([('model', '=', 'order.track')])
+        approve_date = datetime.strptime(str(self.approve_date),'%Y-%m-%d')
+        plan_date = approve_date + relativedelta(days=+7)  # 参考时间akiny
+        print('approve_date_1_akuny', approve_date, approve_date, plan_date)
+        plan_check_line_activity = activity_obj.create({
+            'activity_type_id': activity_type_akiny_ids[0].id,
+            'user_id': self.env.user.id,
+            'activity_category': 'default',
+            'res_model': 'order.track',
+            'res_model_id': res_model_id.id,
+            'res_id': self.id,
+            'dd': plan_date,
+            'order_track_id':self.id
+        })
+        self.plan_date_out_in = plan_date
+        self.write({
+            'plan_date_out_in_activity':plan_check_line_activity.id
+        })
+
+
+    def create_activity_plan_date_ship(self):
+        strptime = datetime.strptime
+        type_obj = self.env['mail.activity.type']
+        activity_obj = self.env['mail.activity']
+        models_obj = self.env['ir.model']
+        activity_type_akiny_ids = type_obj.search([('name', '=', '计划填写船期')], limit=1)
+        res_model_id = models_obj.search([('model', '=', 'order.track')])
+        if self.date_out_in:
+            date_out_in = datetime.strptime(str(self.date_out_in), '%Y-%m-%d')
+            plan_date = date_out_in + relativedelta(days=+7)  # 参考时间akiny
+        elif self.plan_date_out_in:
+            date_out_in = datetime.strptime(str(self.plan_date_out_in), '%Y-%m-%d')
+            plan_date = date_out_in + relativedelta(days=+7)  # 参考时间akiny
+        else:
+            return True
+        if not self.plan_date_ship_activity:
+            plan_check_line_activity = activity_obj.create({
+                'activity_type_id': activity_type_akiny_ids[0].id,
+                'user_id': self.env.user.id,
+                'activity_category': 'default',
+                'res_model': 'order.track',
+                'res_model_id': res_model_id.id,
+                'res_id': self.id,
+                'dd': plan_date,
+                'order_track_id': self.id
+            })
+            self.plan_date_ship = plan_date
+            self.write({
+                'plan_date_ship_activity': plan_check_line_activity.id
+            })
+        else:
+            print('plan_date_akiny',plan_date)
+            self.plan_date_ship_activity.write({
+                'dd': plan_date
+            })
+            self.plan_date_ship = plan_date
+
+
+    def create_activity_plan_date_customer_finish(self):
+        strptime = datetime.strptime
+        type_obj = self.env['mail.activity.type']
+        activity_obj = self.env['mail.activity']
+        models_obj = self.env['ir.model']
+        activity_type_akiny_ids = type_obj.search([('name', '=', '计划填写客户交单日')], limit=1)
+        res_model_id = models_obj.search([('model', '=', 'order.track')])
+        if self.date_ship:
+            date_ship = datetime.strptime(str(self.date_ship), '%Y-%m-%d')
+            plan_date = date_ship + relativedelta(days=+7)  # 参考时间akiny
+        elif self.plan_date_ship:
+            plan_date_ship = datetime.strptime(str(self.plan_date_ship), '%Y-%m-%d')
+            plan_date = plan_date_ship + relativedelta(days=+7)  # 参考时间akiny
+        else:
+            return True
+        if not self.plan_date_customer_finish_activity:
+            plan_check_line_activity = activity_obj.create({
+                'activity_type_id': activity_type_akiny_ids[0].id,
+                'user_id': self.env.user.id,
+                'activity_category': 'default',
+                'res_model': 'order.track',
+                'res_model_id': res_model_id.id,
+                'res_id': self.id,
+                'dd': plan_date,
+                'order_track_id': self.id
+            })
+            self.plan_date_customer_finish = plan_date
+            self.write({
+                'plan_date_customer_finish_activity': plan_check_line_activity.id
+            })
+        else:
+            print('plan_date_akiny', plan_date)
+            self.plan_date_customer_finish_activity.write({
+                'dd': plan_date
+            })
+            self.plan_date_customer_finish = plan_date
+
+    def open_activity_id_date_out_in(self):
+        return {
+            'name': u'登记完成时间',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'mail.activity',
+            'type': 'ir.actions.act_window',
+            'res_id': self.plan_date_out_in_activity.id,
+            'target': 'new',
+            'context': {'finish': 1}
+        }
+
+    def open_activity_id_date_ship(self):
+        return {
+            'name': u'登记完成时间',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'mail.activity',
+            'type': 'ir.actions.act_window',
+            'res_id': self.plan_date_ship_activity.id,
+            'target': 'new',
+            'context': {'finish': 1}
+        }
+
+    def open_activity_id_customer_finish(self):
+        return {
+            'name': u'登记完成时间',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'mail.activity',
+            'type': 'ir.actions.act_window',
+            'res_id': self.plan_date_customer_finish_activity.id,
+            'target': 'new',
+            'context': {'finish': 1}
+        }
+
+
+
 
     def open_wizard_comments(self):
         wzcomments_obj = self.env['wizard.plan.check.comments']
@@ -513,6 +742,10 @@ class OrderTrack(models.Model):
                 })
             self.is_date_out_in = True
 
+    #预计的船期填写日期
+
+
+
 
     def open_purchase_invoice(self):
         form_view = self.env.ref('yjzy_extend.view_account_supplier_invoice_new_form')
@@ -620,6 +853,11 @@ class PlanCheck(models.Model):
                 company_id = one.tb_id.company_id
             one.company_id = company_id
 
+
+    def compute_plan_check_att_count(self):
+        for one in self:
+            one.plan_check_att_count = len(one.plan_check_att)
+
     type = fields.Selection([('new_order_track', '新订单下单前跟踪'), ('order_track', '订单跟踪'), ('transport_track', '出运单跟踪')],
                             'type', related='order_track_id.type')
     display_name = fields.Char(u'显示名称', compute=compute_display_name)
@@ -652,6 +890,25 @@ class PlanCheck(models.Model):
         [('10_not_time', u'未到时'), ('20_out_time_un_finish', u'超时未完成'), ('30_on_time_finish', u'准时完成'),
          ('40_out_time_finish', u'超时完成')],
         u'检查执行准时性', default='10_not_time')
+    comments = fields.Text('备注日志', track_visibility='onchange')
+
+    plan_check_att = fields.One2many('order.track.attachment', 'plan_check_id',
+                                          string='采购交单附件')
+    plan_check_att_count = fields.Integer('附件数量', compute=compute_plan_check_att_count)
+
+    def open_self(self):
+        form_view = self.env.ref('yjzy_extend.view_plan_check').id
+        return {
+            'name': '检查点附件',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'plan.check',
+            'type': 'ir.actions.act_window',
+            'views': [(form_view, 'form')],
+            'res_id': self.id,
+            'target': 'new'
+        }
+
 
 
     def compute_planning_integrity(self):
@@ -750,6 +1007,26 @@ class PlanCheck(models.Model):
             # 'flags': {'form': {'initial_mode': 'view', 'action_buttons': False}}
         }
 
+
+    def open_wizard_comments(self):
+        wzcomments_obj = self.env['wizard.plan.check.comments']
+        wzcomments = wzcomments_obj.create({
+            'plan_check_id': self.id,
+        })
+
+        form_view = self.env.ref('yjzy_extend.wizard_plan_check_form')
+        return {
+            'name': u'查看',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'wizard.plan.check.comments',
+            'type': 'ir.actions.act_window',
+            'views': [(form_view.id, 'form')],
+            'res_id': wzcomments.id,
+            'target': 'new',
+            'context':{'check_type':'plan_check'}
+        }
+
 class PlanCheckLine(models.Model):
     """ An actual activity to perform. Activities are linked to
     documents using res_id and res_model_id fields. Activities have a deadline
@@ -787,13 +1064,28 @@ class PlanCheckLine(models.Model):
             one.order_track_id.compute_category_ids()
             one.order_track_id.compute_planning_integrity()
             one.order_track_id.compute_check_on_time()
+            one.order_track_id.compute_check_number_percent()
             one.plan_check_id.compute_planning_integrity()
             one.plan_check_id.compute_check_on_time()
+
 
     def compute_display_name(self):
         ctx = self.env.context
         for one in self:
             one.display_name = one.activity_type_1_id.name
+
+    def compute_remaining_time(self):
+        strptime = datetime.strptime
+        for one in self:
+            if one.date_deadline:
+                remaining_time = strptime(one.date_deadline, DF) - datetime.today()
+                one.remaining_time = remaining_time.days
+            else:
+                one.remaining_time = -999
+    def compute_plan_check_line_att_count(self):
+        for one in self:
+            one.plan_check_line_att_count = len(one.plan_check_line_att)
+
 
     display_name = fields.Char(u'显示名称', compute=compute_display_name)
 
@@ -810,7 +1102,27 @@ class PlanCheckLine(models.Model):
     activity_id = fields.Many2one('mail.activity','计划活动')
 
     activity_type_1_id = fields.Many2one('mail.activity.type','检查类型' )
-    comments_line = fields.Text('工厂检查明细备注')
+    comments_line = fields.Text('工厂检查明细备注',track_visibility='onchange')
+
+    remaining_time = fields.Integer('剩余时间', compute=compute_remaining_time,)
+    attachment = fields.Many2many('ir.attachment', string='附件')
+    plan_check_line_att = fields.One2many('order.track.attachment', 'plan_check_line_id',
+                                               string='检查点附件')
+    plan_check_line_att_count = fields.Integer('附件数量', compute=compute_plan_check_line_att_count)
+
+    def open_self(self):
+        form_view = self.env.ref('yjzy_extend.view_plan_check_line').id
+        return {
+            'name': '检查点附件',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'plan.check.line',
+            'type': 'ir.actions.act_window',
+            'views': [(form_view, 'form')],
+            'res_id': self.id,
+            'target': 'new'
+        }
+
 
     def open_activity_id(self):
         return {

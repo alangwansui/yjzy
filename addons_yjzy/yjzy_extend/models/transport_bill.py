@@ -2931,22 +2931,23 @@ class transport_bill(models.Model):
         if (self.org_sale_amount == self.org_real_sale_amount and self.sale_type != 'proxy') or (self.sale_type == 'proxy'):
             stage_id = self._stage_find(domain=[('code', '=', '004')])
             so_id = self.line_ids.mapped('so_id')
-            for so in so_id:
-                if so.state == 'approve':
-                    # so.action_confirm()
-                    so.action_confirm_stage()
             stage_preview = self.stage_id
             user = self.env.user
             # group = self.env.user.groups_id
             if user not in stage_preview.user_ids:
                 raise Warning('您没有权限审批')
             else:
+                for so in so_id:
+                    if so.state == 'approve':
+                        # so.action_confirm()
+                        so.action_confirm_stage()
                 self.write({'approve_uid':self.env.user.id,
                                'approve_date':fields.datetime.now(),
                                #'state':'approve',
                                'stage_id': stage_id.id})
                 self.compute_second_state()
                 self.create_hsname_all_ids()
+                self.make_new_order_track_tb()
         else:
             raise Warning('销售金额和原始销售不相等')
 

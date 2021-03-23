@@ -576,6 +576,8 @@
                                 'required':[('state','=','check')]}" string="客户合同号*" help="审批之后不允许修改"/>
                                 <field name="incoterm"
                                        attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}"/>
+                                <field name="time_receive_pi" string="收到客户订单日"  attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)],}"/>
+                                <field name="time_sent_pi" string="发送PI日"  attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)],}"/>
                                 <field name="contract_date" string="客户确认日期*"
                                        attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)],'required':[('state','=','check')]}"/>
                                 <field name="requested_date" string="客户交期*" widget="date"
@@ -614,10 +616,10 @@
                                 <field name="dump_picking_id" readonly="1" invisible="1" groups="base.group_system"/>
 
 
-                                <field name="contract_type" attrs="{'readonly':0}" string="模式"/>
+                                <field name="contract_type" attrs="{'readonly':0}" string="模式" invisible="1"/>
                                 <field name="is_inner_trade" groups="base.group_system" invisible="1"/>
-                                <field name="gongsi_id" string="销售主体" attrs="{'readonly':0}"/>
-                                <field name="purchase_gongsi_id" string="采购主体" attrs="{'readonly':0}"/>
+                                <field name="gongsi_id" string="销售主体" attrs="{'readonly':0}" invisible="1"/>
+                                <field name="purchase_gongsi_id" string="采购主体" attrs="{'readonly':0}" invisible="1"/>
                             </group>
                             <group>
 

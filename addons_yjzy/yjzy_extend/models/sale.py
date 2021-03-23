@@ -618,11 +618,14 @@ class sale_order(models.Model):
     def action_approve_stage(self):
         self.check_po_allow()
         self.action_Warning()
+        self.check_date()
         stage_id = self._stage_find(domain=[('code', '=', '050')])
         return self.write({'stage_id': stage_id.id,
                            'state': 'approve',
                            'approve_uid': self.env.user.id,
                            'approve_date': fields.datetime.now()})
+
+
 
     def action_to_manager_stage(self):
         stage_id = self._stage_find(domain=[('code', '=', '040')])
@@ -991,6 +994,16 @@ class sale_order(models.Model):
                 raise Warning(u'PO-%s审批还未完成' % po.comtract_code)
         return True
 
+    def check_date(self):
+        self.ensure_one()
+        if not self.time_receive_pi:
+            raise Warning('收到客户订单时间还没有填写')
+        if not self.time_sent_pi:
+            raise Warning('发送PI时间还没有填写')
+        if not self.contract_date:
+            raise Warning('客户PI回签时间还没有填写')
+
+
     def update_back_tax(self):
         self.ensure_one()
         for line in self.order_line:
@@ -1213,7 +1226,7 @@ class sale_order(models.Model):
         war = ''
         if self.contract_code and self.partner_id and self.customer_pi and self.contract_date and self.current_date_rate > 0 and \
                 self.requested_date and self.payment_term_id and self.order_line and self.contract_type and self.gongsi_id and \
-                self.purchase_gongsi_id:
+                self.purchase_gongsi_id and self.contract_date <= datetime.today():
             self.state = 'submit'
         else:
             if not self.contract_code:
@@ -1236,6 +1249,8 @@ class sale_order(models.Model):
                 war += '销售主体不为空\n'
             if not self.purchase_gongsi_id:
                 war += '采购主体不为空\n'
+            if self.contract_date > datetime.today():
+                war += '下单日期不可大于当日\n'
             if war:
                 raise Warning(war)
 

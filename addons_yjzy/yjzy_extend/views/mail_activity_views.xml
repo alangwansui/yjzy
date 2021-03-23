@@ -4,7 +4,7 @@
 <record id="mail_activity_view_form_popup_new" model="ir.ui.view">
         <field name="name">mail.activity.view.form.popup</field>
         <field name="model">mail.activity</field>
-        <field name="priority">1</field>
+        <field name="priority">16</field>
         <field name="arch" type="xml">
             <form string="Log an Activity" create="false">
                 <sheet string="Activity">

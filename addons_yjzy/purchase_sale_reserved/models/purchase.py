@@ -8,7 +8,7 @@ class purchase_order(models.Model):
 
     source_so_id = fields.Many2one('sale.order', string=u'源销售', copy=False, help=u'采购是位了这个SO，确认的时候自动分配该销售的采购预定')
     dump_picking_id = fields.Many2one('stock.picking', u'虚拟入库', copy=False, help="为了正确计算可用数量，采购先做一个入库操作")
-
+    # is_editable = fields.Boolean(u'可编辑',related='source_so_id.is_editable')
 
     def make_dump_income_picking(self):
         self.ensure_one()

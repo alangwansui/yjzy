@@ -10,9 +10,11 @@
                 <field name="name" string="模糊搜索"
                        filter_domain="['|','|',('tb_id','ilike',self),('so_id','ilike',self),('po_ids','ilike',self)]"/>
                 <separator/>
-                <group expand="0" string="Group By">
+                <group expand="1" string="Group By">
                     <filter string="时间状态分组" name="group_date_all_state" domain="[]"
                             context="{'group_by':['date_all_state']}"/>
+                    <filter string="下单前状态" name="group_new_order_state" domain="[]"
+                            context="{'group_by':['order_track_new_order_state']}"/>
                 </group>
             </search>
         </field>
@@ -23,9 +25,11 @@
         <field name="name">order.track.tree</field>
         <field name="model">order.track</field>
         <field name="arch" type="xml">
-            <tree string="计划" create="false">
+            <tree string="计划" create="false"  default_order="finish_percent">
                 <field name="type" groups="base.group_system"/>
                 <!--            <field name="date_deadline"/>-->
+                <field name="order_track_new_order_state" invisible="context.get('type')!='new_order_track'"/>
+
                 <button name="open_so_id" class="akiny_text_right" type="object" icon="fa-archive"
                         invisible="context.get('type')!='new_order_track'"/>
                 <field name="partner_id" invisible="context.get('type')=='transport_track'"/>
@@ -297,24 +301,32 @@
 
                     }
                 </style>
-
+ <header>
+     <button name="create_activity_plan_date_ship" type="object" string="test"/>
+     <button name="create_plan" type="object" string="test1"/>
+     <button name="open_activity_id_date_out_in" type="object" string="完成进仓日"/>
+ </header>
                 <sheet>
                     <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablelist"
                            invisible="context.get('type')!='new_order_track'">
                         <tbody>
                             <tr>
+                                <th width="10%">客户</th>
                                 <th width="18%">销售合同</th>
+                                <th width="10%">创建草稿时间</th>
                                 <th width="10%">收到客户订单时间</th>
                                 <th width="10%">发送PI时间</th>
                                 <th width="10%">客户PI回签时间</th>
                                 <th width="10%">合规审批时间</th>
-                                <th width="38%">最后一次备注</th>
+                                <th width="18%">最后一次备注</th>
                                 <th width="4%"></th>
                             </tr>
                             <tr>
+                                <td> <field name="partner_id" string="收到客户订单时间"/></td>
                                 <td>
                                     <field name="so_id" readonly="1"/>
                                 </td>
+                                 <td> <field name="time_draft_order" /></td>
                                 <td>
                                     <field name="time_receive_pi" string="收到客户订单时间"/>
                                 </td>
@@ -344,10 +356,8 @@
                                 <th width="8%">计划安排完整性</th>
                                 <th width="8%">检查执行准确性</th>
                                 <th width="8%">客户确认日期</th>
-
-                                <th width="8%">供应商下单日期</th>
+                                <th width="8%">下单给供应商日期</th>
                                 <th width="8%">供应商交期</th>
-
                                 <th width="8%">客户交期</th>
                                 <th width="8%">工厂检查点进度</th>
                                 <th width="8%">客户交期进度</th>
@@ -406,13 +416,15 @@
                         <tbody>
                             <tr>
                                 <th width="18%">出运合同</th>
-                                <th width="8%">应收款</th>
-                                <th width="8%">应付款</th>
-                                <th width="8%">应收退税</th>
-                                <th width="18%">进仓日期</th>
+                                <th width="8%">审批日期</th>
+                                <th width="8%">剩余应收款</th>
+                                <th width="8%">剩余应付款</th>
+                                <th width="8%">剩余应收退税</th>
+
+                                <th width="14%">进仓日期</th>
                                 <th width="8%">出运船日期</th>
                                 <th width="8%">客户交单日</th>
-                                <th width="20%">日志备注</th>
+                                <th width="16%">日志备注</th>
                                 <th width="4%"></th>
 
                             </tr>
@@ -420,6 +432,7 @@
                                 <td>
                                     <field name="tb_id" readonly="1"/>
                                 </td>
+                                 <td><field name="approve_date"/></td>
                                 <td>
                                     <field name="sale_invoice_balance"/>
                                 </td>
@@ -429,23 +442,31 @@
                                 <td>
                                     <field name="back_tax_invoice_balance"/>
                                 </td>
-                                <td style="color:red" attrs="{'invisible':[('is_date_out_in','=',True)]}">
-                                    <field name="date_out_in"/>
-                                    <button name="action_date_out_in" type="object" icon="fa-check"
-                                            confirm="确认后，应收应付就会生成，请谨慎！"
-                                            invisible="context.get('type')!='transport_track'"/>
+
+                                  <td style="color:red" attrs="{'invisible':[('is_date_out_in','=',True)]}">
+
+                                    <field name="date_out_in" readonly="1"/>
+                                    <button name="open_activity_id_date_out_in" type="object" icon="fa-clock-o"
+                                            attrs="{'invisible':[('type','!=','transport_track')]}"/>
+
                                 </td>
                                 <td attrs="{'invisible':[('is_date_out_in','=',False)]}">
-                                    <field name="date_out_in"/>
+                                    <field name="date_out_in" attrs="{'readonly':[('plan_date_out_in_activity','!=',False)]}"/>
                                     <button name="action_date_out_in" type="object" icon="fa-check"
-                                            confirm="确认后，应收应付就会生成，请谨慎！"
-                                            invisible="context.get('type')!='transport_track'"/>
+                                    confirm="确认后，应收应付就会生成，请谨慎！"
+                                            attrs="{'invisible':['|',('is_date_out_in','=',True),('type','!=','transport_track')]}"
+                                  />
                                 </td>
                                 <td>
-                                    <field name="date_ship"/>
+                                    <field name="date_ship" attrs="{'readonly':[('plan_date_ship_activity','!=',False)]}"/>
+                                   <button name="open_activity_id_date_ship" type="object" icon="fa-clock-o"
+                                           attrs="{'invisible':['|',('plan_date_ship_activity','=',False),('type','!=','transport_track')]}"/>
+
                                 </td>
                                 <td>
-                                    <field name="date_customer_finish"/>
+                                    <field name="date_customer_finish" attrs="{'readonly':[('plan_date_customer_finish_activity','!=',False)]}"/>
+                                    <button name="open_activity_id_customer_finish" type="object" icon="fa-clock-o"
+                                            attrs="{'invisible':['|',('plan_date_customer_finish_activity','=',False),('type','!=','transport_track')]}"/>
                                 </td>
                                 <td>
                                     <field name="comments_transport_track" readonly="1"/>
@@ -455,15 +476,31 @@
                                 </td>
 
                             </tr>
+                            <tr groups="base.group_system">
+                                <td>日期计划</td>
+                                 <td></td>
+                                 <td></td>
+                                 <td></td>
+                                <td></td>
+                                 <td><field name="plan_date_out_in"/></td>
+                                <td><field name="plan_date_ship"/></td>
+                                 <td><field name="plan_date_customer_finish"/></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
                         </tbody>
                     </table>
 
+
                     <notebook colspan="4">
                         <page string="General Information">
+                            <field name="plan_date_out_in_activity"/>
+                            <field name="plan_date_customer_finish_activity"/>
+                            <field name="plan_date_ship_activity"/>
                             <field name="type" invisible="1"/>
                             <field name="is_date_out_in" invisible="1"/>
-                            <field name="plan_check_ids">
-                                <tree editable="bottom" deldete="false" create="false">
+                            <field name="plan_check_ids" >
+                                <tree editable="bottom" delete="false" create="false">
                                     <field name="order_track_id" groups="base.group_system"/>
                                     <field name="so_id" groups="base.group_system"/>
                                     <field name="po_id" readonly="1"
@@ -471,6 +508,7 @@
                                     <field name="plan_check_line" groups="base.group_system"/>
                                     <field name="date_factory_return"
                                            invisible="context.get('type')!='new_order_track'"/>
+
                                     <field name="tb_id" invisible="1"/>
                                     <field name="purchase_invoice_id"
                                            invisible="context.get('type')!='transport_track'"/>
@@ -482,12 +520,31 @@
                                     <field name="check_on_time" invisible="context.get('type')!='order_track'"/>
                                     <field name="date_deadline" invisible="context.get('type')!='order_track'"/>
                                     <field name="date_finish" invisible="context.get('type')!='order_track'"/>
-
+                                    <field name="plan_check_att_count" invisible="context.get('type')!='order_track'"/>
+                                    <button name="open_self" type="object" icon="fa-paperclip" invisible="context.get('type')=='new_order_track'"/>
+                                    <field name="comments"/>
+                                    <button name="open_wizard_comments" type="object" icon="fa-commenting-o"/>
                                     <button name="open_planning_integrity" type="object" string="检查点计划登记"
-                                            invisible="context.get('type')!='order_track'"/>
+                                            invisible="context.get('type')!='order_track'" groups="base.group_system"/>
 
 
                                 </tree>
+                            </field>
+                            <field name="plan_check_line_ids" attrs="{'invisible':[('type','!=','order_track')]}">
+                             <tree string="检查点">
+                                <field name="po_id"/>
+                                <field name="activity_type_1_id"/>
+                                <button name="open_activity_id_plan" class="akiny_text_right" type="object" icon="fa-archive"/>
+                                <field name="date_deadline"/>
+                                 <field name="remaining_time"/>
+                                <button name="open_activity_id_finish" class="akiny_text_right" type="object" icon="fa-archive"/>
+                                <field name="date_finish"/>
+                                 <field name="plan_check_line_att_count"/>
+                                <button name="open_self" type="object" icon="fa-paperclip"/>
+                                <field name="state"/>
+
+                                <button name="open_activity_id" type="object" string="登记该项检查点" groups="base.group_system"/>
+                            </tree>
                             </field>
                         </page>
                         <page string="采购合同" invisible="not context.get('order_track')">
@@ -810,7 +867,7 @@
         <field name="res_model">order.track</field>
         <field name="view_mode">tree,form</field>
         <field name="domain">[('type','=','new_order_track')]</field>
-        <field name="context">{'type': 'new_order_track','factory_return':1}</field>
+        <field name="context">{'type': 'new_order_track','factory_return':1,'search_default_group_new_order_state':1}</field>
         <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('order_track_tree_view')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('order_track_form_new')})]"/>

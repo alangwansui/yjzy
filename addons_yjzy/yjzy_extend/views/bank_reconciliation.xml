@@ -6,7 +6,7 @@
             <field name="name">bank.reconciliation.tree</field>
             <field name="model">bank.reconciliation</field>
             <field name="arch" type="xml">
-                <tree string="银行对账单">
+                <tree string="银行对账单" >
                     <field name="name"/>
                     <field name="date"/>
                     <field name="cny_currency_id" invisible="1"/>

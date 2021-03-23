@@ -134,6 +134,7 @@
         'views/product_product_new.xml',
         'views/dashboard.xml',
         'views/transport_bill_customs_invoice.xml',
+        'views/order_track_att.xml',
 
 
         'views/trasnport_bill_stage.xml',
@@ -244,6 +245,7 @@
 
     'qweb': [
         "static/src/xml/template.xml",
+        "static/src/xml/activity.xml",
     ],
 
     'pre_init_hook': 'pre_init_hook',

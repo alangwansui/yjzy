@@ -11,7 +11,7 @@ class sale_order(models.Model):
     def compute_po_return_state(self):
         for one in self:
             po_ids = one.po_source_ids
-            po_return_ids = one.po_ids.filtered(lambda x:x.date_factory_return == False)
+            po_return_ids = po_ids.filtered(lambda x:x.date_factory_return == False)
             if len(po_ids) == len(po_return_ids):
                 po_return_state = 'un_return'
             elif len(po_ids) != len(po_return_ids) and len(po_return_ids) > 0:
@@ -32,8 +32,10 @@ class sale_order(models.Model):
     po_return_state = fields.Selection([('un_return','未回传'),('part_return','部分回传'),('returned','已回传')],
                                        '工厂回传状态',default='un_return',compute=compute_po_return_state,store=True)
 
-
-
+    @api.multi
+    def write(self, vals):
+        self.make_all_plan()
+        return super(sale_order, self).write(vals)
 
 
     # def make_activity_akiny_ids(self):
@@ -216,7 +218,6 @@ class sale_order(models.Model):
             po_dic = []
             for line in self.po_ids:
                 po_dic.append(line.id)
-
             order_track_new_order_track = order_track_obj.create({
                 'type': 'new_order_track',
                 'so_id': self.id,
@@ -224,6 +225,7 @@ class sale_order(models.Model):
                 'time_draft_order': self.create_date,
                 'hegui_date':self.approve_date,
             })
+            self.plan_check_ids.unlink()
             for one in self.po_ids:
                 plan_check = plan_check_obj.create({
                     'type': 'new_order_track',
@@ -234,6 +236,7 @@ class sale_order(models.Model):
                 })
         else:
             if not self.plan_check_ids.filtered(lambda x: x.type == 'new_order_track'):
+                self.plan_check_ids.unlink()
                 order_track_ids = self.order_track_ids.filtered(lambda x: x.type == 'new_order_track')
                 po_dic = []
                 for line in self.po_ids:
@@ -250,6 +253,9 @@ class sale_order(models.Model):
                         'order_track_id': order_track_ids[0].id,
 
                     })
+
+
+
 
 
 

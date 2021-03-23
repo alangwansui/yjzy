@@ -223,7 +223,7 @@ var Activity = AbstractActivityField.extend({
             context: {
                 default_res_id: this.res_id,
                 default_res_model: this.model,
-            },
+               },
             res_id: activity_id,
         });
         return this.do_action(action, {

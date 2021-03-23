@@ -1,0 +1,59 @@
+<odoo>
+    <data>
+
+        <record id="view_plan_check_line" model="ir.ui.view">
+            <field name="name">plan.check.line.form</field>
+            <field name="model">plan.check.line</field>
+            <field name="arch" type="xml">
+                <form string="检查点附件">
+                    <sheet>
+                        <group>
+
+                        </group>
+                        <field nolabel="1" name="plan_check_line_att">
+                            <tree string="采购交单附件" editable="bottom">
+                                <field name="attachment" required="1" widget="many2many_binary"/>
+                                <field name="plan_check_line_id"/>
+                            </tree>
+                        </field>
+
+                        <footer>
+                            <button name="action_save_test" type="object" class="oe_highlight" string="保存并关闭"/>
+                        </footer>
+
+                    </sheet>
+
+                </form>
+            </field>
+        </record>
+
+        <record id="view_plan_check" model="ir.ui.view">
+            <field name="name">plan.check.form</field>
+            <field name="model">plan.check</field>
+            <field name="arch" type="xml">
+                <form string="采购交单附件">
+                    <sheet>
+                        <group>
+
+                        </group>
+                        <field nolabel="1" name="plan_check_att" >
+                            <tree string="采购交单附件" editable="bottom">
+                                <field name="attachment" required="1" widget="many2many_binary"/>
+                                <field name="plan_check_id"/>
+                            </tree>
+                        </field>
+
+                        <footer>
+                            <button name="action_save_test" type="object" class="oe_highlight" string="保存并关闭"/>
+                        </footer>
+
+                    </sheet>
+
+                </form>
+            </field>
+        </record>
+
+
+
+    </data>
+</odoo>
