@@ -423,7 +423,7 @@
 
                                 <th width="14%">进仓日期</th>
                                 <th width="8%">出运船日期</th>
-                                <th width="8%">客户交单日</th>
+                                <th width="8%">向客户交单</th>
                                 <th width="16%">日志备注</th>
                                 <th width="4%"></th>
 
@@ -512,6 +512,7 @@
                                     <field name="tb_id" invisible="1"/>
                                     <field name="purchase_invoice_id"
                                            invisible="context.get('type')!='transport_track'"/>
+                                    <field name="supplier_delivery_date" string='工厂实际发货日' invisible="context.get('type')!='transport_track'"/>
                                     <field name="purchase_invoice_date_finish"
                                            invisible="context.get('type')!='transport_track'"/>
 
@@ -520,7 +521,7 @@
                                     <field name="check_on_time" invisible="context.get('type')!='order_track'"/>
                                     <field name="date_deadline" invisible="context.get('type')!='order_track'"/>
                                     <field name="date_finish" invisible="context.get('type')!='order_track'"/>
-                                    <field name="plan_check_att_count" invisible="context.get('type')!='order_track'"/>
+                                    <field name="plan_check_att_count" invisible="context.get('type')=='new_order_track'"/>
                                     <button name="open_self" type="object" icon="fa-paperclip" invisible="context.get('type')=='new_order_track'"/>
                                     <field name="comments"/>
                                     <button name="open_wizard_comments" type="object" icon="fa-commenting-o"/>

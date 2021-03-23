@@ -879,6 +879,7 @@ class PlanCheck(models.Model):
 
     tb_id = fields.Many2one('transport.bill','出运合同')
     purchase_invoice_id = fields.Many2one('account.invoice','采购账单')
+    supplier_delivery_date = fields.Date('工厂实际发货日期')
     purchase_invoice_date_finish = fields.Date('供应商交单时间', related='purchase_invoice_id.date_finish', store=True)
 
     company_id = fields.Many2one('res.company', '公司', compute=compute_company_id,store=True)
