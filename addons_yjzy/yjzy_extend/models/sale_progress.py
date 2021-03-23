@@ -127,6 +127,11 @@ class sale_order(models.Model):
 
 
                 })
+
+                ba_activity_deadline_alarm = self.env['ba_activity_deadline.alarm'].search([])
+                alarm_dic = []
+                for alarm in ba_activity_deadline_alarm:
+                    alarm_dic.append(alarm.id)
                 for x in activity_type_akiny_ids:
                     plan_check_line = plan_check_line_obj.create({
                         'plan_check_id':plan_check.id,
@@ -143,6 +148,8 @@ class sale_order(models.Model):
                     'res_model': 'plan.check',
                     'res_model_id': res_model_id.id,
                     'res_id': plan_check.id,
+                    'reminder_ids':[(6, 0, alarm_dic)],
+
                 })
                     plan_check_line.write({'activity_id':plan_check_line_activity.id})
 
@@ -157,7 +164,10 @@ class sale_order(models.Model):
         models_obj = self.env['ir.model']
         activity_type_akiny_ids = type_obj.search([('category', '=', 'plan_check')])
         res_model_id = models_obj.search([('model','=','plan.check.line')])
-
+        ba_activity_deadline_alarm = self.env['ba_activity_deadline.alarm'].search([])
+        alarm_dic = []
+        for alarm in ba_activity_deadline_alarm:
+            alarm_dic.append(alarm.id)
         if not self.order_track_ids.filtered(lambda x: x.type == 'order_track'):
             po_dic = []
             for line in self.po_ids:
@@ -177,6 +187,7 @@ class sale_order(models.Model):
                     'order_track_id':order_track_new_order_track.id,
                     'state':'planning'
                 })
+
                 for x in activity_type_akiny_ids:
                     plan_check_line = plan_check_line_obj.create({
                         'plan_check_id':plan_check.id,
@@ -194,6 +205,7 @@ class sale_order(models.Model):
                     'res_model': 'plan.check.line',
                     'res_model_id': res_model_id.id,
                     'res_id': plan_check_line.id,
+                    'reminder_ids': [(6, 0, alarm_dic)],
                 })
                     plan_check_line.write({'activity_id':plan_check_line_activity.id})
         else:
@@ -214,6 +226,7 @@ class sale_order(models.Model):
                         'order_track_id':order_track_ids[0].id,
                         'state':'planning'
                     })
+
                     for x in activity_type_akiny_ids:
                         plan_check_line = plan_check_line_obj.create({
                             'plan_check_id':plan_check.id,
@@ -231,6 +244,7 @@ class sale_order(models.Model):
                         'res_model': 'plan.check.line',
                         'res_model_id': res_model_id.id,
                         'res_id': plan_check_line.id,
+                            'reminder_ids': [(6, 0, alarm_dic)],
                     })
                         plan_check_line.write({'activity_id':plan_check_line_activity.id})
 
@@ -243,7 +257,10 @@ class sale_order(models.Model):
         type_obj = self.env['mail.activity.type']
         activity_obj = self.env['mail.activity']
         activity_type_akiny_ids = type_obj.search([('category', '=', 'plan_check')])
-
+        ba_activity_deadline_alarm = self.env['ba_activity_deadline.alarm'].search([])
+        alarm_dic = []
+        for alarm in ba_activity_deadline_alarm:
+            alarm_dic.append(alarm.id)
         if not self.order_track_ids.filtered(lambda x: x.type == 'new_order_track'):
             po_dic = []
             for line in self.po_ids:

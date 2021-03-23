@@ -368,7 +368,10 @@ class OrderTrack(models.Model):
         approve_date = datetime.strptime(str(self.approve_date),'%Y-%m-%d')
         plan_date = approve_date + relativedelta(days=+7)  # 参考时间akiny
         print('approve_date_1_akuny', approve_date, approve_date, plan_date)
-
+        ba_activity_deadline_alarm = self.env['ba_activity_deadline.alarm'].search([])
+        alarm_dic = []
+        for alarm in ba_activity_deadline_alarm:
+            alarm_dic.append(alarm.id)
 
         plan_check_line_activity = activity_obj.create({
             'activity_type_id': activity_type_akiny_ids[0].id,
@@ -378,7 +381,8 @@ class OrderTrack(models.Model):
             'res_model_id': res_model_id.id,
             'res_id': self.id,
             'dd': plan_date,
-            'order_track_id':self.id
+            'order_track_id':self.id,
+            'reminder_ids': [(6, 0, alarm_dic)],
         })
         self.plan_date_out_in = plan_date
         self.write({
@@ -393,6 +397,10 @@ class OrderTrack(models.Model):
         models_obj = self.env['ir.model']
         activity_type_akiny_ids = type_obj.search([('name', '=', '计划填写船期')], limit=1)
         res_model_id = models_obj.search([('model', '=', 'order.track')])
+        ba_activity_deadline_alarm = self.env['ba_activity_deadline.alarm'].search([])
+        alarm_dic = []
+        for alarm in ba_activity_deadline_alarm:
+            alarm_dic.append(alarm.id)
         if self.date_out_in:
             date_out_in = datetime.strptime(str(self.date_out_in), '%Y-%m-%d')
             plan_date = date_out_in + relativedelta(days=+7)  # 参考时间akiny
@@ -410,7 +418,8 @@ class OrderTrack(models.Model):
                 'res_model_id': res_model_id.id,
                 'res_id': self.id,
                 'dd': plan_date,
-                'order_track_id': self.id
+                'order_track_id': self.id,
+                'reminder_ids': [(6, 0, alarm_dic)],
             })
             self.plan_date_ship = plan_date
             self.write({
@@ -419,7 +428,8 @@ class OrderTrack(models.Model):
         else:
             print('plan_date_akiny',plan_date)
             self.plan_date_ship_activity.write({
-                'dd': plan_date
+                'dd': plan_date,
+                'reminder_ids': [(6, 0, alarm_dic)],
             })
             self.plan_date_ship = plan_date
 
@@ -431,6 +441,10 @@ class OrderTrack(models.Model):
         models_obj = self.env['ir.model']
         activity_type_akiny_ids = type_obj.search([('name', '=', '计划填写客户交单日')], limit=1)
         res_model_id = models_obj.search([('model', '=', 'order.track')])
+        ba_activity_deadline_alarm = self.env['ba_activity_deadline.alarm'].search([])
+        alarm_dic = []
+        for alarm in ba_activity_deadline_alarm:
+            alarm_dic.append(alarm.id)
         if self.date_ship:
             date_ship = datetime.strptime(str(self.date_ship), '%Y-%m-%d')
             plan_date = date_ship + relativedelta(days=+7)  # 参考时间akiny
@@ -448,16 +462,18 @@ class OrderTrack(models.Model):
                 'res_model_id': res_model_id.id,
                 'res_id': self.id,
                 'dd': plan_date,
-                'order_track_id': self.id
+                'order_track_id': self.id,
+                'reminder_ids': [(6, 0, alarm_dic)],
             })
             self.plan_date_customer_finish = plan_date
             self.write({
-                'plan_date_customer_finish_activity': plan_check_line_activity.id
+                'plan_date_customer_finish_activity': plan_check_line_activity.id,
             })
         else:
             print('plan_date_akiny', plan_date)
             self.plan_date_customer_finish_activity.write({
-                'dd': plan_date
+                'dd': plan_date,
+                'reminder_ids': [(6, 0, alarm_dic)],
             })
             self.plan_date_customer_finish = plan_date
 
