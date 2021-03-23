@@ -17,7 +17,7 @@
                     <filter string="客户" name="group_by_partner" domain="[]"
                             context="{'group_by':['partner_id']}"/>
                     <filter string="时间状态分组" name="group_date_all_state" domain="[]"
-                            context="{'group_by':['date_all_state']}"/>
+                            context="{'group_by':['date_all_state']}" invisible="context.get('type')!='transport_track'"/>
                     <filter string="下单前状态" name="group_new_order_state" domain="[]"
                             context="{'group_by':['order_track_new_order_state']}"/>
                 </group>
