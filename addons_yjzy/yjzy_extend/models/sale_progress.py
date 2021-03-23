@@ -255,6 +255,7 @@ class sale_order(models.Model):
                 'time_draft_order': self.create_date,
                 'hegui_date':self.approve_date,
             })
+
             self.plan_check_ids.unlink()
             for one in self.po_ids:
                 plan_check = plan_check_obj.create({
@@ -264,6 +265,7 @@ class sale_order(models.Model):
                     'order_track_id': order_track_new_order_track.id,
 
                 })
+            order_track_new_order_track.compute_order_track_state()
         else:
             if not self.plan_check_ids.filtered(lambda x: x.type == 'new_order_track'):
                 self.plan_check_ids.unlink()
@@ -283,6 +285,7 @@ class sale_order(models.Model):
                         'order_track_id': order_track_ids[0].id,
 
                     })
+            self.order_track_ids.compute_order_track_state()
 
 
 

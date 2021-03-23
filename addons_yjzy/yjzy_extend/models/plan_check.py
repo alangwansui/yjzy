@@ -210,7 +210,7 @@ class OrderTrack(models.Model):
         'order.track.category','order_track_category_rel',  'track_id','category_id',
         string='Tags',store=True)
 
-    order_track_new_order_state = fields.Selection([('10_doing','跟踪进行时候'),('20_done','已完成')],'下单前状态',compute=compute_order_track_state,store=True)
+    order_track_new_order_state = fields.Selection([('10_doing','跟踪进行时候'),('20_done','已完成')],'下单前状态',compute=compute_order_track_state,defautl='10_doing',store=True)
 
 
     sale_state_1 = fields.Selection(Sale_Selection, u'审批流程', related='so_id.state_1',store=True
@@ -368,6 +368,8 @@ class OrderTrack(models.Model):
         approve_date = datetime.strptime(str(self.approve_date),'%Y-%m-%d')
         plan_date = approve_date + relativedelta(days=+7)  # 参考时间akiny
         print('approve_date_1_akuny', approve_date, approve_date, plan_date)
+
+
         plan_check_line_activity = activity_obj.create({
             'activity_type_id': activity_type_akiny_ids[0].id,
             'user_id': self.env.user.id,

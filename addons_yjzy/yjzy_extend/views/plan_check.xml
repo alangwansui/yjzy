@@ -9,8 +9,13 @@
             <search string="Order Track">
                 <field name="name" string="模糊搜索"
                        filter_domain="['|','|',('tb_id','ilike',self),('so_id','ilike',self),('po_ids','ilike',self)]"/>
-                <separator/>
+                 <separator/>
+                    <filter name="new_order_state_doing" string="未完成" domain="[('order_track_new_order_state','=', '10_doing')]" invisible="context.get('type')!='new_order_track'"/>
+                    <filter name="new_order_state_done" string="已完成" domain="[('order_track_new_order_state','=', '20_done')]" invisible="context.get('type')!='new_order_track'"/>
+                    <filter name="hegui_date" string="合规审批未完成" domain="[('hegui_date','=', False)]" />
                 <group expand="1" string="Group By">
+                    <filter string="客户" name="group_by_partner" domain="[]"
+                            context="{'group_by':['partner_id']}"/>
                     <filter string="时间状态分组" name="group_date_all_state" domain="[]"
                             context="{'group_by':['date_all_state']}"/>
                     <filter string="下单前状态" name="group_new_order_state" domain="[]"
@@ -868,7 +873,7 @@
         <field name="res_model">order.track</field>
         <field name="view_mode">tree,form</field>
         <field name="domain">[('type','=','new_order_track')]</field>
-        <field name="context">{'type': 'new_order_track','factory_return':1,'search_default_group_new_order_state':1}</field>
+        <field name="context">{'type': 'new_order_track','factory_return':1,'search_default_new_order_state_doing':1}</field>
         <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('order_track_tree_view')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('order_track_form_new')})]"/>

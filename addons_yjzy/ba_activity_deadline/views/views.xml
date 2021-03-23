@@ -87,7 +87,7 @@
     <menuitem
         id="menu_activity_alarms_settings"
         name="Activity"
-        parent="base.menu_custom"
+        parent="yjzy_extend.base_config_new"
         groups="base.group_no_one"/>
 
     <menuitem
