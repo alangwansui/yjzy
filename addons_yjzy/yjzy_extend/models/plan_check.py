@@ -100,7 +100,7 @@ class OrderTrack(models.Model):
         for one in self:
             if one.type == 'order_track':
                 strptime = datetime.strptime
-                today = datetime.today()
+                today = datetime.today() - relativedelta(hours=-8)
                 time_contract_requested = one.time_contract_requested
                 date_so_contract = one.date_so_contract
                 if date_so_contract and time_contract_requested:
@@ -116,7 +116,7 @@ class OrderTrack(models.Model):
         for one in self:
             if one.type == 'order_track':
                 strptime = datetime.strptime
-                today = datetime.today()
+                today = datetime.today()-relativedelta(hours=-8)
                 time_supplier_requested = one.time_supplier_requested
                 earliest_date_po_order = one.earliest_date_po_order
                 print('earliest_date_po_order_ainy', earliest_date_po_order)
@@ -253,6 +253,8 @@ class OrderTrack(models.Model):
     type = fields.Selection([('new_order_track', '新订单下单前跟踪'), ('order_track', '订单跟踪'), ('transport_track', '出运单跟踪')],
                             'type')
     so_id = fields.Many2one('sale.order', '销售合同', ondelete='cascade')
+    so_po_return_state = fields.Selection([('un_return','未回传'),('part_return','部分回传'),('returned','已回传')],
+                                       '工厂回传状态',related='so_id.po_return_state',store=True)
     partner_id = fields.Many2one('res.partner', '客户', related='so_id.partner_id', store=True)
     so_sent_qty = fields.Float('已出运数', compute=compute_so_qty, store=True)
 
@@ -361,7 +363,7 @@ class OrderTrack(models.Model):
             if one.date_factory_return :
                 if one.date_factory_return < self.time_sign_pi:
                     raise Warning('工厂回签时间小于客户PI回签时间')
-                if strptime(one.date_factory_return, DF) > datetime.today():
+                if strptime(one.date_factory_return, DF) > datetime.today()-relativedelta(hours=-8):
                     raise Warning('工厂回签日期不可大于当日')
 
 
@@ -378,7 +380,7 @@ class OrderTrack(models.Model):
         if self.time_sent_pi and self.time_sign_pi:
             if self.time_sent_pi > self.time_sign_pi:
                 raise Warning('填写的日期顺序不正确，请检查!')
-        if strptime(self.time_sign_pi, DF) > datetime.today():
+        if strptime(self.time_sign_pi, DF) > datetime.today()-relativedelta(hours=-8):
             raise Warning('客户PI回签日期不可大于当日')
 
 
@@ -996,9 +998,9 @@ class PlanCheck(models.Model):
     def onchange_supplier_delivery_date(self):
         strptime = datetime.strptime
         print('supplier_delivery_date_akiny',self.supplier_delivery_date)
-        if self.supplier_delivery_date and strptime(self.supplier_delivery_date, DF) > datetime.today():
+        if self.supplier_delivery_date and strptime(self.supplier_delivery_date, DF) > datetime.today()-relativedelta(hours=-8):
             raise Warning('工厂实际发货日不大于今天')
-        if self.purchase_invoice_date_finish and strptime(self.purchase_invoice_date_finish, DF) > datetime.today():
+        if self.purchase_invoice_date_finish and strptime(self.purchase_invoice_date_finish, DF) > datetime.today()-relativedelta(hours=-8):
             raise Warning('供应商交单时间不大于今天')
         if self.supplier_delivery_date and self.purchase_invoice_date_finish:
             if strptime(self.supplier_delivery_date, DF) > strptime(self.purchase_invoice_date_finish, DF):
@@ -1181,7 +1183,7 @@ class PlanCheckLine(models.Model):
         strptime = datetime.strptime
         for one in self:
             if one.date_deadline:
-                remaining_time = strptime(one.date_deadline, DF) - datetime.today()
+                remaining_time = strptime(one.date_deadline, DF) - (datetime.today()-relativedelta(hours=-8))
                 one.remaining_time = remaining_time.days
             else:
                 one.remaining_time = -999

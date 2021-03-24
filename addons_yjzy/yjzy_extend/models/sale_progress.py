@@ -4,6 +4,9 @@ from odoo import models, fields, api, _
 from odoo.addons import decimal_precision as dp
 from . comm import BACK_TAX_RATIO
 from odoo.exceptions import Warning
+from odoo.tools import DEFAULT_SERVER_DATE_FORMAT as DF
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 class sale_order(models.Model):
     _inherit = 'sale.order'
@@ -65,6 +68,7 @@ class sale_order(models.Model):
 
     @api.onchange('time_receive_pi', 'time_sent_pi', 'contract_date')
     def onchange_time_receive_pi(self):
+        strptime = datetime.strptime
         print('time_akiiny', self.time_receive_pi, self.time_sent_pi)
         if self.time_receive_pi and self.time_sent_pi:
             if self.time_receive_pi > self.time_sent_pi:
@@ -75,11 +79,17 @@ class sale_order(models.Model):
         if self.time_sent_pi and self.contract_date:
             if self.time_sent_pi > self.contract_date:
                 raise Warning('填写的日期顺序不正确，请检查3!')
+        if self.time_receive_pi and strptime(self.time_receive_pi, DF) > datetime.today()-relativedelta(hours=-8):
+                raise Warning('客户订单号不可大于当日')
+        if self.time_sent_pi and strptime(self.time_sent_pi, DF) > datetime.today()-relativedelta(hours=-8):
+                raise Warning('发送PI不可大于当日')
+        if self.contract_date and strptime(self.contract_date, DF) > datetime.today()-relativedelta(hours=-8):
+                raise Warning('客户确认日期大于当日')
 
-    @api.multi
-    def write(self, vals):
-        self.make_all_plan()
-        return super(sale_order, self).write(vals)
+    # @api.multi
+    # def write(self, vals):
+    #     self.make_all_plan()
+    #     return super(sale_order, self).write(vals)
 
 
     # def make_activity_akiny_ids(self):

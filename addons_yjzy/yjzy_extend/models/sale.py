@@ -2,9 +2,10 @@
 
 from odoo import models, fields, api, _
 from odoo.addons import decimal_precision as dp
-from datetime import datetime
+
 from odoo.exceptions import Warning
 from .comm import BACK_TAX_RATIO
+from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from odoo.tools import DEFAULT_SERVER_DATE_FORMAT as DF
 
@@ -1236,6 +1237,7 @@ class sale_order(models.Model):
 
     # akiny
     def action_submit(self):
+        print('test2_akiny',datetime.today() - relativedelta(hours=-8))
         strptime = datetime.strptime
         self.check_date()
         self.action_Warning()
@@ -1266,15 +1268,15 @@ class sale_order(models.Model):
                 war += '销售主体不为空\n'
             if not self.purchase_gongsi_id:
                 war += '采购主体不为空\n'
-            if strptime(self.contract_date, DF) > datetime.today():
+            if self.contract_date and strptime(self.contract_date, DF) > datetime.today() - relativedelta(hours=-8):
                 war += '客户确认日期不可大于当日\n'
             if not self.time_receive_pi:
                 war += '收到客户订单日不为空\n'
-            if strptime(self.time_receive_pi, DF) > datetime.today():
+            if self.time_receive_pi and strptime(self.time_receive_pi, DF) > datetime.today() - relativedelta(hours=-8):
                 war += '收到客户订单日不可大于当日\n'
             if not self.time_sent_pi:
                 war += '收到客户订单日不为空\n'
-            if strptime(self.time_sent_pi, DF) > datetime.today():
+            if self.time_sent_pi and strptime(self.time_sent_pi, DF) > datetime.today() - relativedelta(hours=-8):
                 war += '发送PI日期不可大于当日\n'
             if war:
                 raise Warning(war)

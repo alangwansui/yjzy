@@ -6,6 +6,7 @@ import pytz
 from odoo.tools import DEFAULT_SERVER_DATE_FORMAT as DF
 from odoo.exceptions import Warning, UserError
 from odoo import api, exceptions, fields, models, _
+from dateutil.relativedelta import relativedelta
 
 class MailActivityType(models.Model):
     """ Activity Types are used to categorize activities. Each type is a different
@@ -39,8 +40,10 @@ class MailActivity(models.Model):
 
     def action_feedback(self, feedback=False):
         strptime = datetime.strptime
-        if self.date_finish and strptime(self.date_finish, DF) > datetime.today():
-            print('test_akiny',datetime.today())
+        print('test1_akiny', str(self.date_finish), (datetime.today() - relativedelta(hours=-8)).strftime('%Y-%m-%d'))
+
+        if self.date_finish and str(self.date_finish) > (datetime.today() - relativedelta(hours=-8)).strftime('%Y-%m-%d'):
+
             raise Warning('完成日期不能大于单日')
 
 
@@ -76,10 +79,10 @@ class MailActivity(models.Model):
 
     @api.multi
     def action_close_dialog(self):
-        # strptime = datetime.strptime
-        # if self.date_deadline and strptime(self.date_finish, DF) < datetime.today():
-        #
-        #     raise Warning('计划日期不能小于今天')
+        strptime = datetime.strptime
+        print('test_akiny', str(self.date_deadline),(datetime.today() - relativedelta(hours=-8)).strftime('%Y-%m-%d'))
+        if self.date_deadline and str(self.date_deadline) < (datetime.today() - relativedelta(hours=-8)).strftime('%Y-%m-%d'):#参考str时间也可以比较
+            raise Warning('计划日期不能小于今天')
         if self.plan_check_line_id:
             self.plan_check_line_id.date_deadline = self.date_deadline
         return {'type': 'ir.actions.act_window_close'}
