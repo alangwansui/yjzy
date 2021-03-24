@@ -39,8 +39,11 @@ class MailActivity(models.Model):
 
     def action_feedback(self, feedback=False):
         strptime = datetime.strptime
-        if strptime(self.date_finish, DF) > datetime.today():
+        if self.date_finish and strptime(self.date_finish, DF) > datetime.today():
+            print('test_akiny',datetime.today())
             raise Warning('完成日期不能大于单日')
+
+
         if self.plan_check_line_id:
             self.plan_check_line_id.date_finish = self.date_finish#akiny
         if self.order_track_id:
@@ -73,6 +76,10 @@ class MailActivity(models.Model):
 
     @api.multi
     def action_close_dialog(self):
+        # strptime = datetime.strptime
+        # if self.date_deadline and strptime(self.date_finish, DF) < datetime.today():
+        #
+        #     raise Warning('计划日期不能小于今天')
         if self.plan_check_line_id:
             self.plan_check_line_id.date_deadline = self.date_deadline
         return {'type': 'ir.actions.act_window_close'}

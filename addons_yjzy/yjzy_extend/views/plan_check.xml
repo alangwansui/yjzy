@@ -379,7 +379,7 @@
                                 </td>
                                 <td>
                                     <field name="time_draft_order"
-                                           attrs="{'readonly':[('order_track_new_order_state','=','20_done')]}"/>
+                                           readonly="1"/>
                                 </td>
                                 <td>
                                     <field name="time_receive_pi"
