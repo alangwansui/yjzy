@@ -545,13 +545,13 @@
                                 <td></td>
                                 <td></td>
                                 <td>
-                                    <field name="plan_date_out_in"/>
+                                    <field name="plan_date_out_in" readonly="1"/>
                                 </td>
                                 <td>
-                                    <field name="plan_date_ship"/>
+                                    <field name="plan_date_ship" readonly="1"/>
                                 </td>
                                 <td>
-                                    <field name="plan_date_customer_finish"/>
+                                    <field name="plan_date_customer_finish" readonly="1"/>
                                 </td>
                                 <td></td>
                                 <td></td>

@@ -356,14 +356,18 @@ class OrderTrack(models.Model):
 
     @api.onchange('plan_check_ids')
     def onchange_plan_check_ids(self):
+        strptime = datetime.strptime
         for one in self.plan_check_ids:
-            if one.date_factory_return and one.date_factory_return < self.time_sign_pi:
-                raise Warning('工厂回签时间小于客户PI回签时间')
-            #不大于今天
+            if one.date_factory_return :
+                if one.date_factory_return < self.time_sign_pi:
+                    raise Warning('工厂回签时间小于客户PI回签时间')
+                if strptime(one.date_factory_return, DF) > datetime.today():
+                    raise Warning('工厂回签日期不可大于当日')
 
 
     @api.onchange('time_receive_pi','time_sent_pi','time_sign_pi')
     def onchange_time_receive_pi(self):
+        strptime = datetime.strptime
         print('time_akiiny', self.time_receive_pi, self.time_sent_pi)
         if self.time_receive_pi and self.time_sent_pi:
             if self.time_receive_pi > self.time_sent_pi:
@@ -374,6 +378,8 @@ class OrderTrack(models.Model):
         if self.time_sent_pi and self.time_sign_pi:
             if self.time_sent_pi > self.time_sign_pi:
                 raise Warning('填写的日期顺序不正确，请检查!')
+        if strptime(self.time_sign_pi, DF) > datetime.today():
+            raise Warning('客户PI回签日期不可大于当日')
 
 
     # def write(self,vals):
@@ -989,6 +995,11 @@ class PlanCheck(models.Model):
     @api.onchange('supplier_delivery_date','purchase_invoice_date_finish')
     def onchange_supplier_delivery_date(self):
         strptime = datetime.strptime
+        print('supplier_delivery_date_akiny',self.supplier_delivery_date)
+        if self.supplier_delivery_date and strptime(self.supplier_delivery_date, DF) > datetime.today():
+            raise Warning('工厂实际发货日不大于今天')
+        if self.purchase_invoice_date_finish and strptime(self.purchase_invoice_date_finish, DF) > datetime.today():
+            raise Warning('供应商交单时间不大于今天')
         if self.supplier_delivery_date and self.purchase_invoice_date_finish:
             if strptime(self.supplier_delivery_date, DF) > strptime(self.purchase_invoice_date_finish, DF):
                 raise Warning('工厂实际发货日不允许大于供应商交单日')

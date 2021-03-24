@@ -3,7 +3,8 @@
 
 from datetime import date, datetime, timedelta
 import pytz
-
+from odoo.tools import DEFAULT_SERVER_DATE_FORMAT as DF
+from odoo.exceptions import Warning, UserError
 from odoo import api, exceptions, fields, models, _
 
 class MailActivityType(models.Model):
@@ -37,10 +38,14 @@ class MailActivity(models.Model):
 
 
     def action_feedback(self, feedback=False):
+        strptime = datetime.strptime
+        if strptime(self.date_finish, DF) > datetime.today():
+            raise Warning('完成日期不能大于单日')
         if self.plan_check_line_id:
             self.plan_check_line_id.date_finish = self.date_finish#akiny
         if self.order_track_id:
             if self.activity_type_id.name == '计划填写进仓日':
+
                 self.order_track_id.date_out_in = self.date_finish
                 self.order_track_id.create_activity_plan_date_ship()
             elif self.activity_type_id.name == '计划填写船期':

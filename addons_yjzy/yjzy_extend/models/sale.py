@@ -1003,16 +1003,6 @@ class sale_order(models.Model):
         if self.time_receive_pi and self.time_sent_pi and self.contract_date and self.time_receive_pi > self.time_sent_pi > self.contract_date:
             raise Warning('填写的日期顺序有错，请检查')
 
-        # if strptime(self.contract_date, DF) > datetime.today():
-        #     war += '客户确认日期不可大于当日\n'
-        # if not self.time_receive_pi:
-        #     war += '收到客户订单日不为空\n'
-        # if strptime(self.time_receive_pi, DF) > datetime.today():
-        #     war += '收到客户订单日不可大于当日\n'
-        # if not self.time_sent_pi:
-        #     war += '收到客户订单日不为空\n'
-        # if strptime(self.time_sent_pi, DF) > datetime.today():
-        #     war += '发送PI日期不可大于当日\n'
 
 
 
