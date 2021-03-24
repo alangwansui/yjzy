@@ -63,7 +63,7 @@ class sale_order(models.Model):
             if self.time_sent_pi > self.contract_date:
                 raise Warning('填写的日期顺序不正确，请检查!')
 
-    @api.multi
+    @api.model
     def create(self, vals):
         self.make_all_plan()
         return super(sale_order, self).create(vals)
