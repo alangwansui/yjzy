@@ -373,6 +373,20 @@ class OrderTrack(models.Model):
             if self.time_sent_pi > self.time_sign_pi:
                 raise Warning('填写的日期顺序不正确，请检查!')
 
+
+    # def write(self,vals):
+    #     if self.time_receive_pi and self.time_sent_pi:
+    #         if self.time_receive_pi > self.time_sent_pi:
+    #             raise Warning('填写的日期顺序不正确，请检查!')
+    #     if self.time_receive_pi and self.time_sign_pi:
+    #         if self.time_receive_pi > self.time_sign_pi:
+    #             raise Warning('填写的日期顺序不正确，请检查!')
+    #     if self.time_sent_pi and self.time_sign_pi:
+    #         if self.time_sent_pi > self.time_sign_pi:
+    #             raise Warning('填写的日期顺序不正确，请检查!')
+    #     return super(OrderTrack, self).write(vals)
+
+
     # @api.onchange('time_sign_pi')
     # def onchange_time_sign_pi(self):
     #     print('time_akiiny', self.time_receive_pi, self.time_sent_pi)

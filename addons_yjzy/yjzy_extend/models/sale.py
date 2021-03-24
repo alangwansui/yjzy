@@ -621,10 +621,13 @@ class sale_order(models.Model):
         self.action_Warning()
         self.check_date()
         stage_id = self._stage_find(domain=[('code', '=', '050')])
+        self.make_all_plan()
         return self.write({'stage_id': stage_id.id,
                            'state': 'approve',
                            'approve_uid': self.env.user.id,
                            'approve_date': fields.datetime.now()})
+
+
 
 
 
