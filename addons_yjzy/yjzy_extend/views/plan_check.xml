@@ -81,6 +81,7 @@
                 <field name="time_sent_pi" invisible="context.get('type')!='new_order_track'"/>
                 <field name="time_sign_pi" invisible="context.get('type')!='new_order_track'"/>
                 <field name="hegui_date" invisible="context.get('type')!='new_order_track'"/>
+                <field name="approve_date" invisible="context.get('type')!='transport_track'"/>
                 <button name="open_factory_return" class="akiny_text_right" type="object" icon="fa-archive"
                         invisible="context.get('type')!='new_order_track'"/>
                 <field name="factory_return" widget="many2many_tags"
@@ -537,7 +538,7 @@
                                 </td>
 
                             </tr>
-                            <tr groups="base.group_system">
+                            <tr groups="base.group_system,sale.hegui_all,sales_team.group_manager">
                                 <td>日期计划</td>
                                 <td></td>
                                 <td></td>
@@ -1013,8 +1014,8 @@
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">order.track</field>
         <field name="view_mode">tree,form</field>
-        <field name="domain">[('type','=','new_order_track')]</field>
-        <field name="context">{'type': 'new_order_track','factory_return':1,'search_default_new_order_state_doing':1}
+        <field name="domain">[('type','=','new_order_track'),('order_track_new_order_state','=','10_doing')]</field>
+        <field name="context">{'type': 'new_order_track','factory_return':1,}
         </field>
         <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('order_track_tree_view')}),
@@ -1039,8 +1040,8 @@
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">order.track</field>
         <field name="view_mode">tree,form</field>
-        <field name="domain">[('type','=','order_track')]</field>
-        <field name="context">{'type': 'order_track','search_default_new_order_state_doing':1}</field>
+        <field name="domain">[('type','=','order_track'),('order_track_new_order_state','=','10_doing')]</field>
+        <field name="context">{'type': 'order_track'}</field>
         <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('order_track_tree_view')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('order_track_form_new')})]"/>
@@ -1066,10 +1067,9 @@
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">order.track</field>
         <field name="view_mode">tree,form</field>
-        <field name="domain">[('type','=','transport_track')]</field>
+        <field name="domain">[('type','=','transport_track'),('order_track_new_order_state','=','10_doing')]</field>
         <field name="search_view_id" ref="view_order_track_search"/>
-        <field name="context">{'search_default_group_date_all_state':1,'search_default_new_order_state_doing':1,'type':
-            'transport_track','show_date_finish':1}
+        <field name="context">{'search_default_group_date_all_state':1,'type':'transport_track','show_date_finish':1}
         </field>
         <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('order_track_tree_view')}),
