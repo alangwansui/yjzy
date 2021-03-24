@@ -66,7 +66,7 @@ class sale_order(models.Model):
     @api.multi
     def create(self, vals):
         self.make_all_plan()
-        return super(sale_order, self).write(vals)
+        return super(sale_order, self).create(vals)
 
 
     # def make_activity_akiny_ids(self):
