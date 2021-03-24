@@ -1006,8 +1006,8 @@ class sale_order(models.Model):
             raise Warning('发送PI时间还没有填写')
         if not self.contract_date:
             raise Warning('客户PI回签时间还没有填写')
-        if self.po_return_state != 'returned':
-            raise Warning('工厂未回传!')
+        # if self.po_return_state != 'returned':
+        #     raise Warning('工厂未回传!')
 
 
     def update_back_tax(self):
