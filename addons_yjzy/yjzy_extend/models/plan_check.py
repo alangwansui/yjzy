@@ -341,7 +341,7 @@ class OrderTrack(models.Model):
 
     def unlink(self):
         for one in self:
-            if not one.can_delete:
+            if self.env.ref('base.group_system') not in self.env.user.groups_id and not one.can_delete:
                 raise Warning('不允许删除!')
         return super(OrderTrack, self).unlink()
 
