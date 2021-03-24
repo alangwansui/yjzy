@@ -360,7 +360,7 @@ class OrderTrack(models.Model):
                 raise Warning('工厂回签时间小于客户PI回签时间')
 
 
-    @api.onchange('time_receive_pi')
+    @api.onchange('time_receive_pi','time_sent_pi','time_sign_pi')
     def onchange_time_receive_pi(self):
         print('time_akiiny', self.time_receive_pi, self.time_sent_pi)
         if self.time_receive_pi and self.time_sent_pi:
@@ -369,26 +369,29 @@ class OrderTrack(models.Model):
         if self.time_receive_pi and self.time_sign_pi:
             if self.time_receive_pi > self.time_sign_pi:
                 raise Warning('填写的日期顺序不正确，请检查!')
-
-    @api.onchange('time_sign_pi')
-    def onchange_time_sign_pi(self):
-        print('time_akiiny', self.time_receive_pi, self.time_sent_pi)
-        if self.time_receive_pi and self.time_sent_pi:
-            if self.time_receive_pi > self.time_sent_pi:
-                raise Warning('填写的日期顺序不正确，请检查!')
         if self.time_sent_pi and self.time_sign_pi:
             if self.time_sent_pi > self.time_sign_pi:
                 raise Warning('填写的日期顺序不正确，请检查!')
 
-    @api.onchange('time_sent_pi')
-    def onchange_time_sent_pi(self):
-        print('time_akiiny', self.time_receive_pi, self.time_sent_pi)
-        if self.time_receive_pi and self.time_sign_pi:
-            if self.time_receive_pi > self.time_sign_pi:
-                raise Warning('填写的日期顺序不正确，请检查!')
-        if self.time_sent_pi and self.time_sign_pi:
-            if self.time_sent_pi > self.time_sign_pi:
-                raise Warning('填写的日期顺序不正确，请检查!')
+    # @api.onchange('time_sign_pi')
+    # def onchange_time_sign_pi(self):
+    #     print('time_akiiny', self.time_receive_pi, self.time_sent_pi)
+    #     if self.time_receive_pi and self.time_sent_pi:
+    #         if self.time_receive_pi > self.time_sent_pi:
+    #             raise Warning('填写的日期顺序不正确，请检查!')
+    #     if self.time_sent_pi and self.time_sign_pi:
+    #         if self.time_sent_pi > self.time_sign_pi:
+    #             raise Warning('填写的日期顺序不正确，请检查!')
+    #
+    # @api.onchange('time_sent_pi')
+    # def onchange_time_sent_pi(self):
+    #     print('time_akiiny', self.time_receive_pi, self.time_sent_pi)
+    #     if self.time_receive_pi and self.time_sign_pi:
+    #         if self.time_receive_pi > self.time_sign_pi:
+    #             raise Warning('填写的日期顺序不正确，请检查!')
+    #     if self.time_sent_pi and self.time_sign_pi:
+    #         if self.time_sent_pi > self.time_sign_pi:
+    #             raise Warning('填写的日期顺序不正确，请检查!')
 
     def create_plan(self):
 
