@@ -54,6 +54,7 @@ class MailActivity(models.Model):
 
                 self.order_track_id.date_out_in = self.date_finish
                 self.order_track_id.create_activity_plan_date_ship()
+                self.order_track_id.create_activity_plan_date_customer_finish()
             elif self.activity_type_id.name == '计划填写船期':
                 self.order_track_id.date_ship = self.date_finish
                 self.order_track_id.create_activity_plan_date_customer_finish()
