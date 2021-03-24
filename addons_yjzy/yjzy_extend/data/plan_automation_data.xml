@@ -12,4 +12,16 @@
             <field name="filter_domain">[]</field>
         </record>
 
+      <record id="update_order_track" model="base.automation">
+            <field name="name">update order track</field>
+            <field name="model_id" ref="yjzy_extend.model_order_track"/>
+            <field name="state">code</field>
+            <field name="code">record.compute_order_track_state()</field>
+            <field name="trigger">on_write</field>
+            <field name="active" eval="True"/>
+            <field name="model_id" ref="yjzy_extend.model_order_track"/>
+
+        </record>
+
+
 </odoo>

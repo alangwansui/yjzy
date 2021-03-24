@@ -33,35 +33,48 @@ class sale_order(models.Model):
     po_return_state = fields.Selection([('un_return','未回传'),('part_return','部分回传'),('returned','已回传')],
                                        '工厂回传状态',default='un_return',compute=compute_po_return_state,store=True)
 
-    @api.onchange('time_receive_pi')
+    # @api.onchange('time_receive_pi')
+    # def onchange_time_receive_pi(self):
+    #
+    #     if self.time_receive_pi and self.time_sent_pi:
+    #         if self.time_receive_pi > self.time_sent_pi:
+    #             raise Warning('填写的日期顺序不正确，请检查!')
+    #     if self.time_receive_pi and self.contract_date:
+    #         if self.time_receive_pi > self.contract_date:
+    #             raise Warning('填写的日期顺序不正确，请检查!')
+    #
+    # @api.onchange('contract_date')
+    # def onchange_contract_date(self):
+    #     print('time_akiiny', self.time_receive_pi, self.time_sent_pi)
+    #     if self.time_receive_pi and self.time_sent_pi:
+    #         if self.time_receive_pi > self.time_sent_pi:
+    #             raise Warning('填写的日期顺序不正确，请检查!')
+    #     if self.time_sent_pi and self.contract_date:
+    #         if self.time_sent_pi > self.contract_date:
+    #             raise Warning('填写的日期顺序不正确，请检查!')
+    #
+    # @api.onchange('time_sent_pi')
+    # def onchange_time_sent_pi(self):
+    #     print('time_akiiny', self.time_receive_pi, self.time_sent_pi)
+    #     if self.time_receive_pi and self.time_sent_pi:
+    #         if self.time_receive_pi > self.time_sent_pi:
+    #             raise Warning('填写的日期顺序不正确，请检查!')
+    #     if self.time_sent_pi and self.contract_date:
+    #         if self.time_sent_pi > self.contract_date:
+    #             raise Warning('填写的日期顺序不正确，请检查!')
+
+    @api.onchange('time_receive_pi', 'time_sent_pi', 'contract_date')
     def onchange_time_receive_pi(self):
-
-        if self.time_receive_pi and self.time_sent_pi:
-            if self.time_receive_pi > self.time_sent_pi:
-                raise Warning('填写的日期顺序不正确，请检查!')
-        if self.time_receive_pi and self.contract_date:
-            if self.time_receive_pi > self.contract_date:
-                raise Warning('填写的日期顺序不正确，请检查!')
-
-    @api.onchange('contract_date')
-    def onchange_contract_date(self):
         print('time_akiiny', self.time_receive_pi, self.time_sent_pi)
         if self.time_receive_pi and self.time_sent_pi:
             if self.time_receive_pi > self.time_sent_pi:
-                raise Warning('填写的日期顺序不正确，请检查!')
-        if self.time_sent_pi and self.contract_date:
-            if self.time_sent_pi > self.contract_date:
-                raise Warning('填写的日期顺序不正确，请检查!')
-
-    @api.onchange('time_sent_pi')
-    def onchange_time_sent_pi(self):
-        print('time_akiiny', self.time_receive_pi, self.time_sent_pi)
+                raise Warning('填写的日期顺序不正确，请检查1!')
         if self.time_receive_pi and self.contract_date:
             if self.time_receive_pi > self.contract_date:
-                raise Warning('填写的日期顺序不正确，请检查!')
+                raise Warning('填写的日期顺序不正确，请检查2!')
         if self.time_sent_pi and self.contract_date:
             if self.time_sent_pi > self.contract_date:
-                raise Warning('填写的日期顺序不正确，请检查!')
+                raise Warning('填写的日期顺序不正确，请检查3!')
 
     @api.multi
     def write(self, vals):

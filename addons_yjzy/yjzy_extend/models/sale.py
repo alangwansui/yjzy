@@ -619,7 +619,7 @@ class sale_order(models.Model):
     def action_approve_stage(self):
         self.check_po_allow()
         self.action_Warning()
-        self.check_date()
+        # self.check_date()
         stage_id = self._stage_find(domain=[('code', '=', '050')])
         self.make_all_plan()
         return self.write({'stage_id': stage_id.id,
@@ -1000,14 +1000,32 @@ class sale_order(models.Model):
 
     def check_date(self):
         self.ensure_one()
-        if not self.time_receive_pi:
-            raise Warning('收到客户订单时间还没有填写')
-        if not self.time_sent_pi:
-            raise Warning('发送PI时间还没有填写')
-        if not self.contract_date:
-            raise Warning('客户PI回签时间还没有填写')
-        # if self.po_return_state != 'returned':
-        #     raise Warning('工厂未回传!')
+        if self.time_receive_pi and self.time_sent_pi and self.contract_date and self.time_receive_pi > self.time_sent_pi > self.contract_date:
+            raise Warning('填写的日期顺序有错，请检查')
+
+        # if strptime(self.contract_date, DF) > datetime.today():
+        #     war += '客户确认日期不可大于当日\n'
+        # if not self.time_receive_pi:
+        #     war += '收到客户订单日不为空\n'
+        # if strptime(self.time_receive_pi, DF) > datetime.today():
+        #     war += '收到客户订单日不可大于当日\n'
+        # if not self.time_sent_pi:
+        #     war += '收到客户订单日不为空\n'
+        # if strptime(self.time_sent_pi, DF) > datetime.today():
+        #     war += '发送PI日期不可大于当日\n'
+
+
+
+
+        #
+        # if not self.time_receive_pi:
+        #     raise Warning('收到客户订单时间还没有填写')
+        # if not self.time_sent_pi:
+        #     raise Warning('发送PI时间还没有填写')
+        # if not self.contract_date:
+        #     raise Warning('客户PI回签时间还没有填写')
+        # # if self.po_return_state != 'returned':
+        # #     raise Warning('工厂未回传!')
 
 
     def update_back_tax(self):
@@ -1229,11 +1247,13 @@ class sale_order(models.Model):
     # akiny
     def action_submit(self):
         strptime = datetime.strptime
+        self.check_date()
         self.action_Warning()
         war = ''
         if self.contract_code and self.partner_id and self.customer_pi and self.contract_date and self.current_date_rate > 0 and \
                 self.requested_date and self.payment_term_id and self.order_line and self.contract_type and self.gongsi_id and \
-                self.purchase_gongsi_id and strptime(self.contract_date, DF) <= datetime.today():
+                self.purchase_gongsi_id and strptime(self.contract_date, DF) <= datetime.today() and self.time_receive_pi and\
+                strptime(self.time_receive_pi, DF) <= datetime.today() and self.time_sent_pi and strptime(self.time_sent_pi, DF) <= datetime.today():
             self.state = 'submit'
         else:
             if not self.contract_code:
@@ -1257,9 +1277,21 @@ class sale_order(models.Model):
             if not self.purchase_gongsi_id:
                 war += '采购主体不为空\n'
             if strptime(self.contract_date, DF) > datetime.today():
-                war += '下单日期不可大于当日\n'
+                war += '客户确认日期不可大于当日\n'
+            if not self.time_receive_pi:
+                war += '收到客户订单日不为空\n'
+            if strptime(self.time_receive_pi, DF) > datetime.today():
+                war += '收到客户订单日不可大于当日\n'
+            if not self.time_sent_pi:
+                war += '收到客户订单日不为空\n'
+            if strptime(self.time_sent_pi, DF) > datetime.today():
+                war += '发送PI日期不可大于当日\n'
             if war:
                 raise Warning(war)
+
+
+
+
 
     def action_Warning(self):
         war = ''

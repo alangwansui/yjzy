@@ -200,34 +200,35 @@ class OrderTrack(models.Model):
                 company_id = one.tb_id.company_id
             one.company_id = company_id
 
-    @api.depends('type','time_draft_order','time_sign_pi','time_sent_pi','time_receive_pi','hegui_date','plan_check_ids','plan_check_ids.date_factory_return',
-                 'date_so_contract','earliest_date_po_order','latest_date_po_planned','date_so_requested','plan_check_line_ids','plan_check_line_ids.state',
-                 'date_out_in','date_ship','date_customer_finish','plan_check_ids.supplier_delivery_date','plan_check_ids.purchase_invoice_date_finish')
+    # @api.depends('type','time_draft_order','time_sign_pi','time_sent_pi','time_receive_pi','hegui_date','plan_check_ids','plan_check_ids.date_factory_return',
+    #              'date_so_contract','earliest_date_po_order','latest_date_po_planned','date_so_requested','plan_check_line_ids','plan_check_line_ids.state',
+    #              'date_out_in','date_ship','date_customer_finish','plan_check_ids.supplier_delivery_date','plan_check_ids.purchase_invoice_date_finish')
     def compute_order_track_state(self):
         for one in self:
             if one.type == 'new_order_track':
                 if one.time_draft_order and one.time_sign_pi and one.time_sent_pi and one.time_receive_pi and one.hegui_date and len(
                         one.plan_check_ids) == len(
                         one.plan_check_ids.filtered(lambda x: x.date_factory_return != False)):
-                    one.order_track_new_order_state = '20_done'
+                    order_track_new_order_state = '20_done'
                 else:
-                    one.order_track_new_order_state = '10_doing'
+                    order_track_new_order_state = '10_doing'
             elif one.type == 'order_track':
                 if one.date_so_contract and one.earliest_date_po_order and one.latest_date_po_planned and one.date_so_requested and len(
                         one.plan_check_line_ids) == len(
                         one.plan_check_line_ids.filtered(lambda x: x.state in ['40_finish', '50_time_out_finish'])):
-                    one.order_track_new_order_state = '20_done'
+                    order_track_new_order_state = '20_done'
                 else:
-                    one.order_track_new_order_state = '10_doing'
+                    order_track_new_order_state = '10_doing'
             else:
                 if one.date_out_in and one.date_ship and one.date_customer_finish and  len(
                         one.plan_check_ids) == len(
                         one.plan_check_ids.filtered(lambda x: x.supplier_delivery_date != False)) and len(
                         one.plan_check_ids) == len(
                         one.plan_check_ids.filtered(lambda x: x.purchase_invoice_date_finish != False)) and one.second_state == '60':
-                    one.order_track_new_order_state = '20_done'
+                    order_track_new_order_state = '20_done'
                 else:
-                    one.order_track_new_order_state = '10_doing'
+                    order_track_new_order_state = '10_doing'
+            one.order_track_new_order_state = order_track_new_order_state
 
 
     name = fields.Char('编号', default=lambda self: self.env['ir.sequence'].next_by_code('order.track'))
@@ -236,7 +237,7 @@ class OrderTrack(models.Model):
         string='Tags', store=True)
 
     order_track_new_order_state = fields.Selection([('10_doing', '跟踪进行时候'), ('20_done', '已完成')], '下单前状态',
-                                                   compute=compute_order_track_state, defautl='10_doing', store=True)
+                                                   store=True) #compute=compute_order_track_state,
 
     sale_state_1 = fields.Selection(Sale_Selection, u'审批流程', related='so_id.state_1', store=True
                                     )  # 费用审批流程
@@ -358,6 +359,7 @@ class OrderTrack(models.Model):
         for one in self.plan_check_ids:
             if one.date_factory_return and one.date_factory_return < self.time_sign_pi:
                 raise Warning('工厂回签时间小于客户PI回签时间')
+            #不大于今天
 
 
     @api.onchange('time_receive_pi','time_sent_pi','time_sign_pi')
