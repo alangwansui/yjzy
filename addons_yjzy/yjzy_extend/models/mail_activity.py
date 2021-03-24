@@ -71,3 +71,10 @@ class MailActivity(models.Model):
         if self.plan_check_line_id:
             self.plan_check_line_id.date_deadline = self.date_deadline
         return {'type': 'ir.actions.act_window_close'}
+
+    @api.multi
+    def action_save_test(self):
+        # your code
+        self.ensure_one()
+        # close popup
+        return {'type': 'ir.actions.act_window_close'}

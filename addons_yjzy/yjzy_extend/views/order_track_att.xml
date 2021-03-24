@@ -13,7 +13,8 @@
                         <field nolabel="1" name="plan_check_line_att">
                             <tree string="采购交单附件" editable="bottom">
                                 <field name="attachment" required="1" widget="many2many_binary"/>
-                                <field name="plan_check_line_id"/>
+                                <field name="plan_check_line_id" invisible="1"/>
+                                <field name="comments"/>
                             </tree>
                         </field>
 
@@ -39,7 +40,9 @@
                         <field nolabel="1" name="plan_check_att" >
                             <tree string="采购交单附件" editable="bottom">
                                 <field name="attachment" required="1" widget="many2many_binary"/>
-                                <field name="plan_check_id"/>
+                                <field name="plan_check_id" invisible="1"/>
+                                <field name="comments"/>
+
                             </tree>
                         </field>
 

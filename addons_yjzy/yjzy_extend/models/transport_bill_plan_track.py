@@ -26,8 +26,8 @@ class transport_bill(models.Model):
             order_track_transport_track = order_track_obj.create({
                 'type': 'transport_track',
                 'tb_id':self.id,
-
             })
+            order_track_transport_track.create_plan()
 
 
 

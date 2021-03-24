@@ -19,7 +19,7 @@
             <field name="model_id" ref="model_order_track"/>
             <field name="state">code</field>
             <field name="code">
-                model.finish_percent()
+                model.compute_finish_percent()
 
             </field>
             <field eval="True" name="active" />
@@ -37,7 +37,7 @@
             <field name="state">code</field>
             <field name="code">
 
-                model.finish_percent_supplier()
+                model.compute_finish_percent_supplier()
             </field>
             <field eval="True" name="active" />
             <field name="user_id" ref="base.user_root"/>

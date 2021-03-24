@@ -249,7 +249,7 @@ var ActivityMenu = Widget.extend({
      * @param {MouseEvent} event
      */
     _onActivityFilterClick: function (event) {
-        // fetch the data from the button otherwise fetch the ones from the parent (.o_mail_channel_preview).
+        // fetch the data from the button otherwise fetch the ones from the parent (.o_mail_channel_preview). akiny
         var data = _.extend({}, $(event.currentTarget).data(), $(event.target).data());
         var context = {};
         if (data.filter === 'my') {

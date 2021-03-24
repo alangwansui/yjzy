@@ -6,6 +6,7 @@ from datetime import datetime
 from odoo.exceptions import Warning
 from .comm import BACK_TAX_RATIO
 from dateutil.relativedelta import relativedelta
+from odoo.tools import DEFAULT_SERVER_DATE_FORMAT as DF
 
 Stage_Status = [
     ('draft', '未开始'),
@@ -1002,6 +1003,8 @@ class sale_order(models.Model):
             raise Warning('发送PI时间还没有填写')
         if not self.contract_date:
             raise Warning('客户PI回签时间还没有填写')
+        if self.po_return_state != 'returned':
+            raise Warning('工厂未回传!')
 
 
     def update_back_tax(self):
@@ -1222,11 +1225,12 @@ class sale_order(models.Model):
 
     # akiny
     def action_submit(self):
+        strptime = datetime.strptime
         self.action_Warning()
         war = ''
         if self.contract_code and self.partner_id and self.customer_pi and self.contract_date and self.current_date_rate > 0 and \
                 self.requested_date and self.payment_term_id and self.order_line and self.contract_type and self.gongsi_id and \
-                self.purchase_gongsi_id and self.contract_date <= datetime.today():
+                self.purchase_gongsi_id and strptime(self.contract_date, DF) <= datetime.today():
             self.state = 'submit'
         else:
             if not self.contract_code:
@@ -1249,7 +1253,7 @@ class sale_order(models.Model):
                 war += '销售主体不为空\n'
             if not self.purchase_gongsi_id:
                 war += '采购主体不为空\n'
-            if self.contract_date > datetime.today():
+            if strptime(self.contract_date, DF) > datetime.today():
                 war += '下单日期不可大于当日\n'
             if war:
                 raise Warning(war)

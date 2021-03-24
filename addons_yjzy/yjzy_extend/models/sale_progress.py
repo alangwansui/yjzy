@@ -3,11 +3,12 @@
 from odoo import models, fields, api, _
 from odoo.addons import decimal_precision as dp
 from . comm import BACK_TAX_RATIO
+from odoo.exceptions import Warning
 
 class sale_order(models.Model):
     _inherit = 'sale.order'
 
-    @api.depends('po_source_ids')
+    @api.depends('po_source_ids','po_source_ids.date_factory_return')
     def compute_po_return_state(self):
         for one in self:
             po_ids = one.po_source_ids

@@ -16,6 +16,7 @@ class wizard_plan_check_comments(models.TransientModel):
 
     def apply(self):
         plan_check = self.env.context.get('check_type')
+        print('plan_check_akiny',plan_check)
         if plan_check == 'order_track':
             if self.type == 'new_order_track':
                 self.order_track_id.write({
