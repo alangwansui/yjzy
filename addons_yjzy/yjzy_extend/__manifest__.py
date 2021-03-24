@@ -189,6 +189,8 @@
         'data/cron.xml',
         'data/stage_data.xml',
         'data/message_data.xml',
+        'data/plan_automation_data.xml',
+
 
         # 'wizard/wizard_so2po.xml',
         'wizard/wizard_transport4so.xml',
