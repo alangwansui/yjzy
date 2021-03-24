@@ -64,7 +64,7 @@ class sale_order(models.Model):
                 raise Warning('填写的日期顺序不正确，请检查!')
 
     @api.multi
-    def write(self, vals):
+    def create(self, vals):
         self.make_all_plan()
         return super(sale_order, self).write(vals)
 
