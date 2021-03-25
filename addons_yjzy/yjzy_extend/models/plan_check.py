@@ -1142,6 +1142,7 @@ class PlanCheckLine(models.Model):
     _name = 'plan.check.line'
     _inherit = ['mail.thread', 'mail.activity.mixin', 'portal.mixin']
     _description = '检查点明细'
+    _order = 'po_id,sequence,id'
 
     # 计算state
     @api.depends('date_finish', 'date_deadline')
@@ -1184,7 +1185,7 @@ class PlanCheckLine(models.Model):
         for one in self:
             if one.date_deadline:
                 remaining_time = strptime(one.date_deadline, DF) - (datetime.today()-relativedelta(hours=-8))
-                one.remaining_time = remaining_time.days
+                one.remaining_time = remaining_time.days+1
             else:
                 one.remaining_time = -999
 
@@ -1193,7 +1194,7 @@ class PlanCheckLine(models.Model):
             one.plan_check_line_att_count = len(one.plan_check_line_att)
 
     display_name = fields.Char(u'显示名称', compute=compute_display_name)
-
+    sequence = fields.Integer('Sequence', default=10)
     order_track_id = fields.Many2one('order.track', '计划跟踪', ondelete='cascade')
     plan_check_id = fields.Many2one('plan.check', '计划检查', ondelete='cascade')
     po_id = fields.Many2one('purchase.order', related='plan_check_id.po_id', store=True)
@@ -1244,7 +1245,7 @@ class PlanCheckLine(models.Model):
             'views': [(form_view.id, 'form')],
             'res_id': self.activity_id.id,
             'target': 'new',
-            'context': {}
+
         }
 
     def open_activity_id_plan(self):
@@ -1301,3 +1302,24 @@ class PlanCheckLine(models.Model):
         self.ensure_one()
         # close popup
         return {'type': 'ir.actions.act_window_close'}
+
+    @api.depends('date_deadline')
+    def onchange_date_deadline(self):
+        self.date_deadline = fields.Datetime.from_string(self.dd).date()
+        if self.date_deadline and str(self.date_deadline) < (datetime.today() - relativedelta(hours=-8)).strftime(
+                '%Y-%m-%d'):  # 参考str时间也可以比较
+            raise Warning('计划日期不能小于今天')
+        activity_type_obj = self.env['mail.activity.type']
+        plan_check_line_obj = self.env['plan.check.line']
+        activity_obj = self.env['mail.activity']
+        activity_ids = activity_obj.search([('po_id', '=', self.po_id.id)])
+        plan_check_line_ids = plan_check_line_obj.search([('po_id', '=', self.po_id.id)])
+        print('activity_ids_akiny_1', plan_check_line_ids)
+        for one in plan_check_line_ids:
+            print('activity_ids_akiny', one.sequence,
+                  one.date_deadline, self.date_deadline)
+            if one.date_deadline:
+                if one.sequence < self.sequence and one.date_deadline > self.date_deadline:
+                    raise Warning('计划时间要按顺序')
+                if one.sequence > self.sequence and one.date_deadline < self.date_deadline:
+                    raise Warning('计划时间要按顺序')

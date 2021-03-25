@@ -211,18 +211,21 @@ class sale_order(models.Model):
                     'order_track_id':order_track_new_order_track.id,
                     'state':'planning'
                 })
-
+                sequence = 1
                 for x in activity_type_akiny_ids:
                     plan_check_line = plan_check_line_obj.create({
                         'plan_check_id':plan_check.id,
                         'activity_type_1_id':x.id,
                         'po_id':one.id,
+                        'sequence':sequence,
                         'state':'10_un_planning',
                         'order_track_id': order_track_new_order_track.id
                     })
+                    sequence+=1
                     plan_check_line_activity = activity_obj.create({
                     'activity_type_id': x.id,
                     'user_id': self.env.user.id,
+                    'order_track_id':order_track_new_order_track.id,
                     'plan_check_id': plan_check.id,
                     'plan_check_line_id':plan_check_line.id,
                     'activity_category': 'plan_check',
@@ -262,13 +265,14 @@ class sale_order(models.Model):
                         plan_check_line_activity = activity_obj.create({
                         'activity_type_id': x.id,
                         'user_id': self.env.user.id,
+                        'order_track_id':order_track_ids[0].id,
                         'plan_check_id': plan_check.id,
                         'plan_check_line_id':plan_check_line.id,
                         'activity_category': 'plan_check',
                         'res_model': 'plan.check.line',
                         'res_model_id': res_model_id.id,
                         'res_id': plan_check_line.id,
-                            'reminder_ids': [(6, 0, alarm_dic)],
+                        'reminder_ids': [(6, 0, alarm_dic)],
                     })
                         plan_check_line.write({'activity_id':plan_check_line_activity.id})
 

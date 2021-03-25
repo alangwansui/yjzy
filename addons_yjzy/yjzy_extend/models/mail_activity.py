@@ -26,12 +26,53 @@ class MailActivity(models.Model):
     field that indicates the activity linked to the message. """
     _inherit = 'mail.activity'
 
+
+
+
+    @api.depends('time_contract_requested','date_so_contract','date_so_requested')
+    def compute_finish_percent(self):
+        for one in self:
+            if one.type == 'order_track':
+                strptime = datetime.strptime
+                today = datetime.today() - relativedelta(hours=-8)
+                time_contract_requested = one.time_contract_requested
+                date_so_contract = strptime(one.date_so_contract,DF)
+                date_so_requested =strptime(str(one.date_so_requested),'%Y-%m-%d 00:00:00')  #akiny带时间的转换
+                print('date_so_requested',date_so_requested,)
+                if date_so_contract and time_contract_requested:
+                    today_date_so_contract = (today - date_so_contract).days
+                    today_date_so_requested = (today - date_so_requested).days
+                    print('x_akiny', date_so_contract, today_date_so_requested)
+                    finish_percent = time_contract_requested != 0 and today_date_so_contract * 100 / time_contract_requested or 0
+                    if finish_percent >= 100:
+                        finish_percent = 100
+                    one.finish_percent = finish_percent
+                    one.today_date_so_contract = today_date_so_contract
+                    one.today_date_so_requested = today_date_so_requested
+
+                    print('finish_percent_akiny', finish_percent)
+
+
+
+
     date_finish = fields.Date('完成时间')
 
     plan_check_id = fields.Many2one('plan.check','检查点',ondelete='cascade',)
     date_deadline = fields.Date('Due Date', index=True, required=False, )
     plan_check_line_id = fields.Many2one('plan.check.line','检查点',ondelete='cascade',)
+    po_id =  fields.Many2one('purchase.order','采购合同',related='plan_check_line_id.po_id',store=True)
     order_track_id = fields.Many2one('order.track','活动计划',ondelete='cascade',)
+    type = fields.Selection([('new_order_track', '新订单下单前跟踪'), ('order_track', '订单跟踪'), ('transport_track', '出运单跟踪')],
+                            'type', related='order_track_id.type')
+
+    date_so_contract = fields.Date('客户下单日期', related='order_track_id.date_so_contract', store=True)
+    date_so_requested = fields.Datetime('客户交期', related='order_track_id.date_so_requested', store=True)
+    today_date_so_contract = fields.Integer('距离下单时间',compute=compute_finish_percent)
+    today_date_so_requested = fields.Integer('距交期剩余时间',compute=compute_finish_percent)
+    finish_percent = fields.Float('完成期限比例', compute=compute_finish_percent)
+    time_contract_requested = fields.Integer('总交期时间',related='order_track_id.time_contract_requested',store=True)
+
+
 
 
 
@@ -41,17 +82,12 @@ class MailActivity(models.Model):
     def action_feedback(self, feedback=False):
         strptime = datetime.strptime
         print('test1_akiny', str(self.date_finish), (datetime.today() - relativedelta(hours=-8)).strftime('%Y-%m-%d'))
-
         if self.date_finish and str(self.date_finish) > (datetime.today() - relativedelta(hours=-8)).strftime('%Y-%m-%d'):
-
-            raise Warning('完成日期不能大于单日')
-
-
+            raise Warning('完成日期不能大于当日')
         if self.plan_check_line_id:
             self.plan_check_line_id.date_finish = self.date_finish#akiny
         if self.order_track_id:
             if self.activity_type_id.name == '计划填写进仓日':
-
                 self.order_track_id.date_out_in = self.date_finish
                 self.order_track_id.create_activity_plan_date_ship()
                 self.order_track_id.create_activity_plan_date_customer_finish()
@@ -78,12 +114,53 @@ class MailActivity(models.Model):
         self.unlink()
         return message.ids and message.ids[0] or False
 
+    @api.onchange('dd')
+    def onchange_dd(self):
+        if self.type == 'order_track':
+            self.date_deadline = fields.Datetime.from_string(self.dd).date()
+            if self.date_deadline and str(self.date_deadline) < (datetime.today() - relativedelta(hours=-8)).strftime('%Y-%m-%d'):#参考str时间也可以比较
+                raise Warning('计划日期不能小于今天')
+            activity_type_obj = self.env['mail.activity.type']
+            plan_check_line_obj = self.env['plan.check.line']
+            activity_obj = self.env['mail.activity']
+            activity_ids = activity_obj.search([('po_id', '=', self.po_id.id)])
+            plan_check_line_ids = plan_check_line_obj.search([('po_id', '=', self.po_id.id)])
+            print('activity_ids_akiny_1', plan_check_line_ids)
+            for one in plan_check_line_ids:
+                print('activity_ids_akiny',one.sequence,
+                      one.date_deadline, self.date_deadline)
+                if one.date_deadline:
+                    if one.date_deadline > self.date_so_requested:
+                        raise Warning('计划时间不可以大于客户交期')
+                    if one.sequence < self.plan_check_line_id.sequence and one.date_deadline > self.date_deadline:
+                        raise Warning('计划时间要按顺序')
+                    if one.sequence > self.plan_check_line_id.sequence and one.date_deadline < self.date_deadline:
+                        raise Warning('计划时间要按顺序')
+
     @api.multi
     def action_close_dialog(self):
         strptime = datetime.strptime
-        print('test_akiny', str(self.date_deadline),(datetime.today() - relativedelta(hours=-8)).strftime('%Y-%m-%d'))
-        if self.date_deadline and str(self.date_deadline) < (datetime.today() - relativedelta(hours=-8)).strftime('%Y-%m-%d'):#参考str时间也可以比较
-            raise Warning('计划日期不能小于今天')
+        if self.type == 'order_track':
+            self.date_deadline = fields.Datetime.from_string(self.dd).date()
+            if self.date_deadline and str(self.date_deadline) < (datetime.today() - relativedelta(hours=-8)).strftime(
+                    '%Y-%m-%d'):  # 参考str时间也可以比较
+                raise Warning('计划日期不能小于今天')
+            activity_type_obj = self.env['mail.activity.type']
+            plan_check_line_obj = self.env['plan.check.line']
+            activity_obj = self.env['mail.activity']
+            activity_ids = activity_obj.search([('po_id', '=', self.po_id.id)])
+            plan_check_line_ids = plan_check_line_obj.search([('po_id', '=', self.po_id.id)])
+            print('activity_ids_akiny_1', plan_check_line_ids)
+            for one in plan_check_line_ids:
+                print('activity_ids_akiny', one.sequence,
+                      one.date_deadline, self.date_deadline)
+                if one.date_deadline:
+                    if one.date_deadline > self.date_so_requested:
+                        raise Warning('计划时间不可以大于客户交期')
+                    if one.sequence < self.plan_check_line_id.sequence and one.date_deadline > self.date_deadline:
+                        raise Warning('计划时间要按顺序')
+                    if one.sequence > self.plan_check_line_id.sequence and one.date_deadline < self.date_deadline:
+                        raise Warning('计划时间要按顺序')
         if self.plan_check_line_id:
             self.plan_check_line_id.date_deadline = self.date_deadline
         return {'type': 'ir.actions.act_window_close'}
