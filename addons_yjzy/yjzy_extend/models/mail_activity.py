@@ -44,17 +44,29 @@ class MailActivity(models.Model):
                 if date_so_contract and time_contract_requested:
                     today_date_so_contract = (today - date_so_contract).days
                     today_date_so_requested = (today - date_so_requested).days
-                    print('x_akiny', date_so_contract, today_date_so_requested)
+                    print('x_akiny', date_so_contract, today,date_so_requested,today_date_so_requested)
                     finish_percent = time_contract_requested != 0 and today_date_so_contract * 100 / time_contract_requested or 0
                     if finish_percent >= 100:
                         finish_percent = 100
                     one.finish_percent = finish_percent
-                    one.today_date_so_contract = today_date_so_contract
-                    one.today_date_so_requested = today_date_so_requested
+                    one.today_date_so_contract = - today_date_so_contract
+                    one.today_date_so_requested = - today_date_so_requested
 
                     print('finish_percent_akiny', finish_percent)
 
+    @api.depends('date_deadline')
+    def compute_date_deadline_contract(self):
+        for one in self:
+            strptime=datetime.strptime
+            date_deadline = strptime(one.date_deadline,DF)
+            date_so_contract = strptime(one.date_so_contract,DF)
+            date_so_requested = strptime(str(one.date_so_requested),'%Y-%m-%d 00:00:00')
 
+            date_deadline_contract = date_so_contract - date_deadline
+            date_deadline_requested = date_so_requested - date_deadline
+            print('date_so_contract_akiny', date_so_contract, date_so_requested,date_deadline_contract.days,date_deadline_requested.days)
+            one.date_deadline_contract = date_deadline_contract.days
+            one.date_deadline_requested = date_deadline_requested.days
 
 
     date_finish = fields.Date('完成时间')
@@ -69,8 +81,12 @@ class MailActivity(models.Model):
 
     date_so_contract = fields.Date('客户下单日期', related='order_track_id.date_so_contract', store=True)
     date_so_requested = fields.Datetime('客户交期', related='order_track_id.date_so_requested', store=True)
-    today_date_so_contract = fields.Integer('距离下单时间',compute=compute_finish_percent)
-    today_date_so_requested = fields.Integer('距交期剩余时间',compute=compute_finish_percent)
+    date_deadline_contract = fields.Integer('计划距下单日',compute=compute_date_deadline_contract)
+    date_deadline_requested = fields.Integer('计划距交期日', compute=compute_date_deadline_contract)
+
+
+    today_date_so_contract = fields.Integer('今天距下单日',compute=compute_finish_percent)
+    today_date_so_requested = fields.Integer('今天距交期',compute=compute_finish_percent)
     finish_percent = fields.Float('完成期限比例', compute=compute_finish_percent)
     time_contract_requested = fields.Integer('总交期时间',related='order_track_id.time_contract_requested',store=True)
 
@@ -124,7 +140,7 @@ class MailActivity(models.Model):
             self.date_deadline = date_deadline
             print('date_deadline',date_deadline,self.dd,datetime.strptime(self.dd,DT))
             if self.date_deadline and str(self.date_deadline) < (datetime.today() - relativedelta(hours=-8)).strftime('%Y-%m-%d'):#参考str时间也可以比较
-                
+
                 print('dd_akiny',str(self.date_deadline) ,(datetime.today() - relativedelta(hours=-8)).strftime('%Y-%m-%d'))
                 raise Warning('计划日期不能小于今天')
             activity_type_obj = self.env['mail.activity.type']

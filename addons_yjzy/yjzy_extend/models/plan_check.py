@@ -362,7 +362,9 @@ class OrderTrack(models.Model):
         for one in self.plan_check_ids:
             if one.date_factory_return :
                 if one.date_factory_return < self.time_sign_pi:
-                    raise Warning('工厂回签时间小于客户PI回签时间')
+                    raise Warning('工厂回签时间不早于客户PI回签时间')
+                if one.date_factory_return < self.hegui_date:
+                    raise Warning('工厂回签时间不早于合规审批时间')
                 if strptime(one.date_factory_return, DF) > datetime.today()-relativedelta(hours=-8):
                     raise Warning('工厂回签日期不可大于当日')
 
