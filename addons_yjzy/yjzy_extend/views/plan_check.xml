@@ -65,7 +65,7 @@
         <field name="name">order.track.tree</field>
         <field name="model">order.track</field>
         <field name="arch" type="xml">
-            <tree string="计划" create="false" default_order="date_so_requested">
+            <tree string="计划" create="false" default_order="date_so_requested" decoration-danger="error_state == True">
                 <field name="type" groups="base.group_system"/>
                 <!--            <field name="date_deadline"/>-->
                 <field name="order_track_new_order_state" invisible="1"/>
@@ -607,7 +607,7 @@
                                 </tree>
                             </field>
                             <field name="plan_check_line_ids"  attrs="{'invisible':[('type','!=','order_track')],'readonly':[('order_track_new_order_state','=','20_done')]}">
-                                <tree string="检查点" create="false" editable="bottom" decoration-danger="remaining_time < 0">
+                                <tree string="检查点" create="false" editable="bottom" decoration-danger="remaining_time &lt; 0">
                                     <field name="po_id" attrs="{'readonly':1}" />
                                     <field name="activity_type_1_id" domain="[('category','=','plan_check')]" options="{'no_open':1}"
                                     attrs="{'readonly':[('parent.order_track_new_order_state','=','20_done')]}"/>
