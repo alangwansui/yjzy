@@ -147,6 +147,7 @@
                 <field name="tb_sale_invoice_id" invisible="1"/>
                 <field name="is_date_out_in" invisible="1"/>
                 <field name="comments_transport_track" invisible="context.get('type')!='transport_track'"/>
+                <field name="error_state" groups="base.group_system"/>
 
 
             </tree>
