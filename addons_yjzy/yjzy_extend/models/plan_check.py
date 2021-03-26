@@ -1253,6 +1253,7 @@ class PlanCheckLine(models.Model):
     order_track_id = fields.Many2one('order.track', '计划跟踪', ondelete='cascade')
     plan_check_id = fields.Many2one('plan.check', '计划检查', ondelete='cascade')
     po_id = fields.Many2one('purchase.order', related='plan_check_id.po_id', store=True)
+    date_order = fields.Datetime('供应商下单时间', related='po_id.date_order', store=True)
     po_contract_code = fields.Char('采购合同号',related='po_id.contract_code')
     company_id = fields.Many2one('res.company', '公司', related='po_id.company_id')
     date_finish = fields.Date('检查点完成时间', )

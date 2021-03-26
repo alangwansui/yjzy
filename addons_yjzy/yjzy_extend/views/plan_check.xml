@@ -620,6 +620,7 @@
                             <field name="plan_check_line_ids"  attrs="{'invisible':[('type','!=','order_track')],'readonly':[('order_track_new_order_state','=','20_done')]}">
                                 <tree string="检查点" create="false" editable="bottom" decoration-danger="remaining_time &lt; 0 and remaining_time != -999">
                                     <field name="po_id" attrs="{'readonly':1}" />
+                                    <field name="date_order" widget="date" readonly="1"/>
                                     <field name="activity_type_1_id" domain="[('category','=','plan_check')]" options="{'no_open':1}"
                                     attrs="{'readonly':[('parent.order_track_new_order_state','=','20_done')]}"/>
                                     <button name="open_activity_id_plan" class="akiny_text_right" type="object"
@@ -629,7 +630,7 @@
                                      <field name="remaining_time" readonly="1"
                                             attrs="{'invisible':[('state','in',['40_finish','50_time_out_finish'])],'column_invisible':[('parent.order_track_new_order_state','=','20_done')]}"/>
                                     <button name="open_activity_id_finish" class="akiny_text_right" type="object"
-                                            attrs="{'invisible':[('activity_id','=',False)]}"
+                                            attrs="{'invisible':['|',('activity_id','=',False),('date_deadline','=',False)]}"
                                             icon="fa-archive"/>
                                     <field name="date_finish"  attrs="{'readonly':['|',('activity_id','!=',False),('parent.order_track_new_order_state','=','20_done')]}"/>
                                     <field name="plan_check_line_att_count"/>
