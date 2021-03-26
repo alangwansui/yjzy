@@ -124,6 +124,7 @@ class MailActivity(models.Model):
             self.date_deadline = date_deadline
             print('date_deadline',date_deadline,self.dd,datetime.strptime(self.dd,DT))
             if self.date_deadline and str(self.date_deadline) < (datetime.today() - relativedelta(hours=-8)).strftime('%Y-%m-%d'):#参考str时间也可以比较
+                print('dd_akiny',str(self.date_deadline) ,(datetime.today() - relativedelta(hours=-8)).strftime('%Y-%m-%d'))
                 raise Warning('计划日期不能小于今天')
             activity_type_obj = self.env['mail.activity.type']
             plan_check_line_obj = self.env['plan.check.line']
@@ -146,7 +147,8 @@ class MailActivity(models.Model):
     def action_close_dialog(self):
         strptime = datetime.strptime
         if self.type == 'order_track':
-            self.date_deadline = fields.Datetime.from_string(self.dd).date()
+            date_deadline = datetime.strptime(self.dd, DT) - relativedelta(hours=-8)
+            self.date_deadline = date_deadline
             if self.date_deadline and str(self.date_deadline) < (datetime.today() - relativedelta(hours=-8)).strftime(
                     '%Y-%m-%d'):  # 参考str时间也可以比较
                 raise Warning('计划日期不能小于今天')
