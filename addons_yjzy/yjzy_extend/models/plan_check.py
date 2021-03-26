@@ -230,6 +230,23 @@ class OrderTrack(models.Model):
                     order_track_new_order_state = '10_doing'
             one.order_track_new_order_state = order_track_new_order_state
 
+    # error_state = fields.Boolean('是否有问题',cimoute=compute_error_state)
+    # def compute_error_state(self):
+    #     for one in self:
+    #         strptime = datetime.strptime
+    #         if one.type == 'new_order_track':
+    #             for line in one.plan_check_ids:
+    #                 if line.date_factory_return:
+    #                     if line.date_factory_return < one.time_sign_pi:
+    #                         error_state = True
+    #                     if line.date_factory_return < one.hegui_date:
+    #                         error_state = True
+    #                     if strptime(line.date_factory_return, DF) > datetime.today() - relativedelta(hours=-8):
+    #                         error_state = True
+    #         elif one.type == 'order_track':
+    #             for line in one.plan_check_ids:
+    #                 if line.check_on_time == '20_out_time_un_finish':
+    #                     error_state = True
 
     name = fields.Char('编号', default=lambda self: self.env['ir.sequence'].next_by_code('order.track'))
     category_ids = fields.Many2many(
@@ -358,15 +375,16 @@ class OrderTrack(models.Model):
 
     @api.onchange('plan_check_ids')
     def onchange_plan_check_ids(self):
-        strptime = datetime.strptime
-        for one in self.plan_check_ids:
-            if one.date_factory_return :
-                if one.date_factory_return < self.time_sign_pi:
-                    raise Warning('工厂回签时间不早于客户PI回签时间')
-                if one.date_factory_return < self.hegui_date:
-                    raise Warning('工厂回签时间不早于合规审批时间')
-                if strptime(one.date_factory_return, DF) > datetime.today()-relativedelta(hours=-8):
-                    raise Warning('工厂回签日期不可大于当日')
+        if self.type == 'new_order_track':
+            strptime = datetime.strptime
+            for one in self.plan_check_ids:
+                if one.date_factory_return :
+                    if one.date_factory_return < self.time_sign_pi:
+                        raise Warning('工厂回签时间不早于客户PI回签时间')
+                    if one.date_factory_return < self.hegui_date:
+                        raise Warning('工厂回签时间不早于合规审批时间')
+                    if strptime(one.date_factory_return, DF) > datetime.today()-relativedelta(hours=-8):
+                        raise Warning('工厂回签日期不可大于当日')
 
 
     @api.onchange('time_receive_pi','time_sent_pi','time_sign_pi')

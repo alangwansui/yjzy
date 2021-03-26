@@ -569,7 +569,7 @@
                             <field name="is_date_out_in" invisible="1"/>
                             <field name="plan_check_ids"
                                    attrs="{'readonly':[('order_track_new_order_state','=','20_done')]}">
-                                <tree editable="bottom" delete="false" create="false">
+                                <tree editable="bottom" delete="false" create="false" decoration-danger="check_on_time == '20_out_time_un_finish'">
                                     <field name="order_track_id" groups="base.group_system"/>
                                     <field name="so_id" groups="base.group_system"/>
                                     <field name="po_id" readonly="1" attrs="{'column_invisible':[('parent.type','=','transport_track')]}"/>
@@ -607,7 +607,7 @@
                                 </tree>
                             </field>
                             <field name="plan_check_line_ids"  attrs="{'invisible':[('type','!=','order_track')],'readonly':[('order_track_new_order_state','=','20_done')]}">
-                                <tree string="检查点" create="false" editable="bottom">
+                                <tree string="检查点" create="false" editable="bottom" decoration-danger="remaining_time < 0">
                                     <field name="po_id" attrs="{'readonly':1}" />
                                     <field name="activity_type_1_id" domain="[('category','=','plan_check')]" options="{'no_open':1}"
                                     attrs="{'readonly':[('parent.order_track_new_order_state','=','20_done')]}"/>

@@ -1122,7 +1122,7 @@ class transport_bill(models.Model):
     tb_vendor_ids = fields.One2many('transport.bill.vendor', 'tb_id', u'供应商发运单')
     gongsi_id = fields.Many2one('gongsi', '销售主体')
     purchase_gongsi_id = fields.Many2one('gongsi', '采购主体')
-    pallet_type = fields.Selection([('ctns', 'CTNS'),('plts', 'PLTS')], u'包装类型')
+    pallet_type = fields.Selection([('ctns', 'CTNS'),('plts', 'PLTS'),('PKGS','PKGS')], u'包装类型')
     pallet_qty = fields.Integer(u'托盘数')
     is_editable = fields.Boolean(u'可编辑')
     contract_type = fields.Selection([('a', '模式1'), ('b', '模式2'), ('c', '模式3')], '合同类型', default='c')

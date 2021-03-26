@@ -57,16 +57,16 @@ class MailActivity(models.Model):
     @api.depends('date_deadline')
     def compute_date_deadline_contract(self):
         for one in self:
-            strptime=datetime.strptime
-            date_deadline = strptime(one.date_deadline,DF)
-            date_so_contract = strptime(one.date_so_contract,DF)
-            date_so_requested = strptime(str(one.date_so_requested),'%Y-%m-%d 00:00:00')
+            if one.type == 'order_track':
+                strptime=datetime.strptime
+                date_deadline = strptime(one.date_deadline,DF)
+                date_so_contract = one.date_so_contract and strptime(one.date_so_contract,DF)
+                date_so_requested = one.date_so_requested and strptime(str(one.date_so_requested),'%Y-%m-%d 00:00:00')
 
-            date_deadline_contract = date_so_contract - date_deadline
-            date_deadline_requested = date_so_requested - date_deadline
-            print('date_so_contract_akiny', date_so_contract, date_so_requested,date_deadline_contract.days,date_deadline_requested.days)
-            one.date_deadline_contract = date_deadline_contract.days
-            one.date_deadline_requested = date_deadline_requested.days
+                date_deadline_contract = date_so_contract and date_so_contract - date_deadline
+                date_deadline_requested = date_so_requested and date_so_requested - date_deadline
+                one.date_deadline_contract = date_deadline_contract and date_deadline_contract.days
+                one.date_deadline_requested = date_deadline_contract and date_deadline_requested.days
 
 
     date_finish = fields.Date('完成时间')
