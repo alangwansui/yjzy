@@ -4,6 +4,8 @@
 from datetime import date, datetime, timedelta
 import pytz
 from odoo.tools import DEFAULT_SERVER_DATE_FORMAT as DF
+from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT as DT
+
 from odoo.exceptions import Warning, UserError
 from odoo import api, exceptions, fields, models, _
 from dateutil.relativedelta import relativedelta
@@ -117,7 +119,10 @@ class MailActivity(models.Model):
     @api.onchange('dd')
     def onchange_dd(self):
         if self.type == 'order_track':
-            self.date_deadline = fields.Datetime.from_string(self.dd).date()
+
+            date_deadline = datetime.strptime(self.dd,DT)- relativedelta(hours=-8)
+            self.date_deadline = date_deadline
+            print('date_deadline',date_deadline,self.dd,datetime.strptime(self.dd,DT))
             if self.date_deadline and str(self.date_deadline) < (datetime.today() - relativedelta(hours=-8)).strftime('%Y-%m-%d'):#参考str时间也可以比较
                 raise Warning('计划日期不能小于今天')
             activity_type_obj = self.env['mail.activity.type']

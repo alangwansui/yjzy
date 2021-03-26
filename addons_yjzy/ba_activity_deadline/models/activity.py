@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import api, fields, models
-from dateutil.relativedelta import relativedelta
-from odoo.tools import DEFAULT_SERVER_DATE_FORMAT as DF
-from datetime import date, datetime, timedelta
+
 
 class MailActivity(models.Model):
     _inherit = 'mail.activity'
@@ -16,9 +14,7 @@ class MailActivity(models.Model):
 
     @api.onchange('dd')
     def onchange_dd(self):
-        self.date_deadline = datetime.strptime(self.dd- relativedelta(hours=-8),DF)
-        print('date_deadline_akiny', self.date_deadline)
-
+        self.date_deadline = fields.Datetime.from_string(self.dd).date()
 
     @api.depends('res_model')
     def _get_model_name(self):
