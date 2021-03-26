@@ -74,7 +74,7 @@ class MailActivity(models.Model):
     order_track_id = fields.Many2one('order.track', '活动计划', ondelete='cascade', )
     type = fields.Selection([('new_order_track', '新订单下单前跟踪'), ('order_track', '订单跟踪'), ('transport_track', '出运单跟踪')],
                             'type', related='order_track_id.type')
-
+    hegui_date = fields.Date('合规审批时间',related='order_track_id.hegui_date')
     date_so_contract = fields.Date('客户下单日期', related='order_track_id.date_so_contract', store=True)
     date_so_requested = fields.Datetime('客户交期', related='order_track_id.date_so_requested', store=True)
     date_deadline_contract = fields.Integer('计划距下单日', compute=compute_date_deadline_contract)
@@ -91,18 +91,10 @@ class MailActivity(models.Model):
         if self.date_finish and str(self.date_finish) > (datetime.today() - relativedelta(hours=-8)).strftime(
                 '%Y-%m-%d'):
             raise Warning('完成日期不能大于当日')
-        plan_check_line_obj = self.env['plan.check.line']
-        plan_check_line_ids = plan_check_line_obj.search([('po_id', '=', self.po_id.id)])
-        print('finish_akiny_1', plan_check_line_ids)
-        for one in plan_check_line_ids:
-            if not self.date_finish:
-                raise Warning('完成时间不能小于下单给供应商时间,请重新选择时间')
-            if self.date_finish and one.date_order:
-                if self.date_finish and one.date_order:
-                    date_order = one.date_order and strptime(one.date_order, DT).date()
-                    print('finish_akiny_1', strptime(self.date_finish, DF).date(), date_order)
-                    if strptime(self.date_finish, DF).date() < date_order:
-                        raise Warning('完成时间不能小于下单给供应商时间')
+        if not self.date_finish:
+            raise Warning('完成时间不能小于下单给供应商时间,请重新选择时间')
+        if self.date_finish and self.hegui_date and self.date_finish < self.hegui_date:
+            raise Warning('完成时间不能小于合规审批时间')
 
         if self.plan_check_line_id:
             self.plan_check_line_id.date_finish = self.date_finish  # akiny
@@ -129,23 +121,13 @@ class MailActivity(models.Model):
                 mail_activity_type_id=activity.activity_type_id.id,
             )
             message |= record.message_ids[0]
-
         self.unlink()
         return message.ids and message.ids[0] or False
 
     @api.onchange('date_finish')
     def onchange_date_finish(self):
-        strptime = datetime.strptime
-        strftime = datetime.strftime
-        plan_check_line_obj = self.env['plan.check.line']
-        plan_check_line_ids = plan_check_line_obj.search([('po_id', '=', self.po_id.id)])
-        print('finish_akiny', plan_check_line_ids)
-        for one in plan_check_line_ids:
-            if self.date_finish and one.date_order:
-                date_order = one.date_order and strptime(one.date_order, DT).date()
-                print('finish_akiny_1', strptime(self.date_finish, DF).date(), date_order)
-                if strptime(self.date_finish, DF).date() < date_order:
-                    raise Warning('完成时间不能小于下单给供应商时间')
+        if self.date_finish and self.hegui_date and self.date_finish < self.hegui_date:
+            raise Warning('完成时间不能小于合规审批时间')
 
     @api.onchange('dd')
     def onchange_dd(self):
@@ -167,10 +149,10 @@ class MailActivity(models.Model):
             plan_check_line_ids = plan_check_line_obj.search([('po_id', '=', self.po_id.id)])
             print('activity_ids_akiny_1', plan_check_line_ids)
             if self.date_deadline:
-                if self.date_deadline > self.date_so_requested:
+                if self.date_deadline > self.date_so_requested or self.date_deadline > self.order_track_id.latest_date_po_planned:
                     print('ttst_akiny', self.date_deadline, self.date_so_requested,
                           self.date_deadline > self.date_so_requested)
-                    raise Warning('计划时间不可以大于客户交期')
+                    raise Warning('计划时间不可以大于客户交期或者最迟供应商交期')
 
             for one in plan_check_line_ids:
                 print('activity_ids_akiny', one.sequence,
@@ -201,8 +183,10 @@ class MailActivity(models.Model):
             activity_ids = activity_obj.search([('po_id', '=', self.po_id.id)])
             plan_check_line_ids = plan_check_line_obj.search([('po_id', '=', self.po_id.id)])
             print('activity_ids_akiny_1', plan_check_line_ids)
-            if self.date_deadline > self.date_so_requested:
-                raise Warning('计划时间不可以大于客户交期')
+            if self.date_deadline > self.date_so_requested or self.date_deadline > self.order_track_id.latest_date_po_planned:
+                print('ttst_akiny', self.date_deadline, self.date_so_requested,
+                      self.date_deadline > self.date_so_requested)
+                raise Warning('计划时间不可以大于客户交期或者最迟供应商交期')
 
             for one in plan_check_line_ids:
                 print('activity_ids_akiny', one.sequence,

@@ -414,8 +414,8 @@
                                 <th width="8%">计划安排完整性</th>
                                 <th width="8%">检查执行准确性</th>
                                 <th width="8%">客户确认日期</th>
-                                <th width="8%">下单给供应商日期</th>
-                                <th width="8%">供应商交期</th>
+                                <th width="8%">合规审批日期</th>
+                                <th width="8%">最迟供应商交期</th>
                                 <th width="8%">客户交期</th>
                                 <th width="8%">工厂检查点进度</th>
                                 <th width="8%">客户交期进度</th>
@@ -439,7 +439,7 @@
                                     <field name="date_so_contract" readonly="1"/>
                                 </td>
                                 <td>
-                                    <field name="earliest_date_po_order"/>
+                                    <field name="hegui_date"/>
                                 </td>
                                 <td>
                                     <field name="latest_date_po_planned"/>

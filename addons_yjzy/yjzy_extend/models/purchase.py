@@ -185,6 +185,7 @@ class purchase_order(models.Model):
     user_ids = fields.Many2many('res.users', 'ref_user_po', 'pid', 'uid', u'用户')
 
     is_editable = fields.Boolean(u'可编辑',related='source_so_id.is_editable')
+    approve_date = fields.Date('合规审批日期',related='source_so_id.approve_date',store=True)
 
 
     #已经添加13
