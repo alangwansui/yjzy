@@ -124,6 +124,7 @@ class MailActivity(models.Model):
             self.date_deadline = date_deadline
             print('date_deadline',date_deadline,self.dd,datetime.strptime(self.dd,DT))
             if self.date_deadline and str(self.date_deadline) < (datetime.today() - relativedelta(hours=-8)).strftime('%Y-%m-%d'):#参考str时间也可以比较
+                
                 print('dd_akiny',str(self.date_deadline) ,(datetime.today() - relativedelta(hours=-8)).strftime('%Y-%m-%d'))
                 raise Warning('计划日期不能小于今天')
             activity_type_obj = self.env['mail.activity.type']
