@@ -247,7 +247,33 @@ class OrderTrack(models.Model):
                 for line in one.plan_check_ids:
                     if line.check_on_time == '20_out_time_un_finish':
                         error_state = True
+            else:
+                if one.plan_date_out_in_error == True or one.plan_date_customer_finish_error == True or one.plan_date_ship_error == True:
+                    error_state = True
             one.error_state = error_state
+
+    def compute_date_error(self):
+        strptime = datetime.strptime
+        for one in self:
+            if one.type == 'transport_track':
+                plan_date_out_in_error=False
+                plan_date_ship_error = False
+                plan_date_customer_finish_error = False
+                plan_date_out_in = one.plan_date_out_in
+                plan_date_ship = one.plan_date_ship
+                plan_date_customer_finish = one.plan_date_customer_finish
+                date_out_in = one.date_out_in
+                date_ship = one.date_ship
+                date_customer_finish = one.date_customer_finish
+                if not date_out_in and  plan_date_out_in and  strptime(plan_date_out_in, DF) < datetime.today()-relativedelta(hours=-8):
+                    plan_date_out_in_error = True
+                if not date_ship and plan_date_ship and  strptime(plan_date_ship, DF) < datetime.today()-relativedelta(hours=-8):
+                    plan_date_ship_error = True
+                if not date_customer_finish and plan_date_customer_finish and strptime(plan_date_customer_finish, DF) < datetime.today()-relativedelta(hours=-8):
+                    plan_date_customer_finish_error = True
+                one.plan_date_out_in_error = plan_date_out_in_error
+                one.plan_date_ship_error = plan_date_ship_error
+                one.plan_date_customer_finish_error = plan_date_customer_finish_error
 
     error_state = fields.Boolean('是否有问题',cimoute=compute_error_state)
 
@@ -313,17 +339,22 @@ class OrderTrack(models.Model):
 
     date_out_in = fields.Date('进仓日期', related='tb_id.date_out_in', store=True)
     plan_date_out_in = fields.Date('计划进仓日')
+    plan_date_out_in_error = fields.Boolean('进仓日是否超期',compute=compute_date_error)
     plan_date_out_in_activity = fields.Many2one('mail.activity', '进仓日计划活动')
     is_date_out_in = fields.Boolean('进仓日是否已确认', related='tb_id.is_date_out_in', store=True)
     date_in = fields.Date('入库日期', related='tb_id.date_in', store=True)
     date_ship = fields.Date('出运船日期', related='tb_id.date_ship', store=True)
     approve_date = fields.Date('审批完成时间', related='tb_id.approve_date', store=True)
     plan_date_ship = fields.Date('计划出运船日', )
+    plan_date_ship_error = fields.Boolean('出船日是否超期', compute=compute_date_error)
     plan_date_ship_activity = fields.Many2one('mail.activity', '出运船计划活动')
     # activity_ids = fields.One2many('mail.activity','order_track_id','计划活动')
 
     date_customer_finish = fields.Date('客户交单日期', related='tb_id.date_customer_finish',store=True)
     plan_date_customer_finish = fields.Date('计划客户交单日', )
+    plan_date_customer_finish_error = fields.Boolean('客户交单是否超期', compute=compute_date_error)
+
+
     plan_date_customer_finish_activity = fields.Many2one('mail.activity', '客户交单计划活动')
 
     date_supplier_finish = fields.Date('最迟供应商交单确认日期')

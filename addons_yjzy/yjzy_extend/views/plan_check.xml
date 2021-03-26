@@ -479,9 +479,19 @@
                                 <th width="8%">剩余应付款</th>
                                 <th width="8%">剩余应收退税</th>
 
-                                <th width="14%">进仓日期</th>
-                                <th width="8%">出运船日期</th>
-                                <th width="8%">向客户交单</th>
+                                <th width="14%">
+                                    <span style="color:red" attrs="{'invisible':[('plan_date_out_in_error','=',False)]}">进仓日期</span>
+                                    <span attrs="{'invisible':[('plan_date_out_in_error','=',True)]}">进仓日期</span>
+                                </th>
+
+                                <th width="8%">
+                                    <span style="color:red" attrs="{'invisible':[('plan_date_ship_error','=',False)]}">出运船日期</span>
+                                    <span attrs="{'invisible':[('plan_date_ship_error','=',True)]}">出运船日期</span>
+                                </th>
+                                <th width="8%">
+                                     <span style="color:red" attrs="{'invisible':[('plan_date_customer_finish_error','=',False)]}">向客户交单</span>
+                                    <span attrs="{'invisible':[('plan_date_customer_finish_error','=',True)]}">向客户交单</span>
+                                </th>
                                 <th width="16%">日志备注</th>
                                 <th width="4%"></th>
 
@@ -608,7 +618,7 @@
                                 </tree>
                             </field>
                             <field name="plan_check_line_ids"  attrs="{'invisible':[('type','!=','order_track')],'readonly':[('order_track_new_order_state','=','20_done')]}">
-                                <tree string="检查点" create="false" editable="bottom" decoration-danger="remaining_time &lt; 0">
+                                <tree string="检查点" create="false" editable="bottom" decoration-danger="remaining_time &lt; 0 and remaining_time != -999">
                                     <field name="po_id" attrs="{'readonly':1}" />
                                     <field name="activity_type_1_id" domain="[('category','=','plan_check')]" options="{'no_open':1}"
                                     attrs="{'readonly':[('parent.order_track_new_order_state','=','20_done')]}"/>
@@ -671,6 +681,9 @@
                         </page>
                              <page groups="base.group_system">
                           <group>
+                              <field name="plan_date_customer_finish_error"/>
+                              <field name="plan_date_out_in_error"/>
+                              <field name="plan_date_ship_error"/>
                             <field name="check_all_number"/>
                               <field name="check_finish_number"/>
                           </group>
