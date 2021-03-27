@@ -13,6 +13,7 @@ class transport_bill(models.Model):
 
 
 
+
     # 创建第一步新订单检验
     def make_new_order_track_tb(self):
         order_track_obj = self.env['order.track']
@@ -28,6 +29,12 @@ class transport_bill(models.Model):
                 'tb_id':self.id,
             })
             order_track_transport_track.create_plan()
+            order_track_order = order_track_obj.search([('type','=','order_track'),('order_track_new_order_state','=','10_doing')])
+            for one in self.so_ids:
+                for track in order_track_order:
+                    if one == track.so_id:
+                        order_track_order.order_track_transport = order_track_transport_track
+
 
 
 

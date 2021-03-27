@@ -277,7 +277,17 @@ class OrderTrack(models.Model):
 
     error_state = fields.Boolean('是否有问题',cimoute=compute_error_state)
 
-
+    order_track_transport = fields.Many2one('order.track','出运跟踪')
+    def test_jisuan(self):
+        order_track_obj = self.env['order.track']
+        order_track_order = order_track_obj.search(
+            [('type', '=', 'order_track'), ('order_track_new_order_state', '=', '10_doing')])
+        for one in self.tb_id.so_ids:
+            for track in order_track_order:
+                if one == track.so_id:
+                    order_track_order.write({
+                        'order_track_transport':self.id,
+                    })
     name = fields.Char('编号', default=lambda self: self.env['ir.sequence'].next_by_code('order.track'))
     category_ids = fields.Many2many(
         'order.track.category', 'order_track_category_rel', 'track_id', 'category_id',
