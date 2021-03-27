@@ -613,7 +613,7 @@
                                     <field name="order_track_finish_number" readonly="1"  attrs="{'column_invisible':[('parent.type','!=','order_track')]}"/>
                                     <field name="order_track_due_number" readonly="1"  attrs="{'column_invisible':[('parent.type','!=','order_track')]}"/>
                                     <field name="order_track_due_finish_number" readonly="1"  attrs="{'column_invisible':[('parent.type','!=','order_track')]}"/>
-                                    <field name="order_track_time_out_finish_number" readonly="1"  attrs="{'column_invisible':[('parent.type','!=','order_track')]}"/>
+                                    <field name="order_track_time_out_finish_number" class="akiny_text_left" readonly="1"  attrs="{'column_invisible':[('parent.type','!=','order_track')]}"/>
 
                                     <field name="date_deadline" invisible="1"/>
                                     <field name="date_finish" invisible="1"/>

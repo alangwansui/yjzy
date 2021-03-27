@@ -313,20 +313,20 @@ class OrderTrack(models.Model):
             order_track_finish_number = '%s/%s' % (finish_number, plan_number)
             order_track_due_number = '%s/%s' % (due_number, plan_number)
             order_track_due_finish_number = '%s/%s' % (finish_due_number, due_number)
-
+            order_time_out_finish_number = '%s' % (time_out_finish_number)
 
 
             one.order_track_plan_number = order_track_plan_number
             one.order_track_finish_number = order_track_finish_number
             one.order_track_due_number = order_track_due_number
             one.order_track_due_finish_number = order_track_due_finish_number
-            one.order_track_time_out_finish_number = time_out_finish_number
+            one.order_track_time_out_finish_number = order_time_out_finish_number
 
     order_track_plan_number = fields.Char('计划数',compute=compute_order_track_number)
     order_track_finish_number = fields.Char('计划完成数',compute=compute_order_track_number)
     order_track_due_number = fields.Char('计划到期数',compute=compute_order_track_number)
     order_track_due_finish_number = fields.Char('到期计划完成数',compute=compute_order_track_number)
-    order_track_time_out_finish_number = fields.Integer('超时完成计划数',compute=compute_order_track_number)
+    order_track_time_out_finish_number = fields.Char('超时完成计划数',compute=compute_order_track_number)
 
 
 
@@ -1068,20 +1068,20 @@ class PlanCheck(models.Model):
             order_track_finish_number = '%s/%s' % (finish_number, plan_number)
             order_track_due_number = '%s/%s' % (due_number, plan_number)
             order_track_due_finish_number = '%s/%s' % (finish_due_number, due_number)
-
+            order_time_out_finish_number = '%s' % (time_out_finish_number)
 
 
             one.order_track_plan_number = order_track_plan_number
             one.order_track_finish_number = order_track_finish_number
             one.order_track_due_number = order_track_due_number
             one.order_track_due_finish_number = order_track_due_finish_number
-            one.order_track_time_out_finish_number = time_out_finish_number
+            one.order_track_time_out_finish_number = order_time_out_finish_number
 
     order_track_plan_number = fields.Char('计划数',compute=compute_order_track_number)
     order_track_finish_number = fields.Char('计划完成数',compute=compute_order_track_number)
     order_track_due_number = fields.Char('计划到期数',compute=compute_order_track_number)
     order_track_due_finish_number = fields.Char('到期计划完成数',compute=compute_order_track_number)
-    order_track_time_out_finish_number = fields.Integer('超时完成计划数',compute=compute_order_track_number)
+    order_track_time_out_finish_number = fields.Char('超时完成计划数',compute=compute_order_track_number)
 
     type = fields.Selection([('new_order_track', '新订单下单前跟踪'), ('order_track', '订单跟踪'), ('transport_track', '出运单跟踪')],
                             'type', related='order_track_id.type')
