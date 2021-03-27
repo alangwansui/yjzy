@@ -138,13 +138,12 @@ class account_move_line(models.Model):
                          ('move_id_state', '=', 'posted')])
 
                 print('move_lines_akiny', move_lines, amount_this_time)
-
-                sslj_balance = move_lines and sum(x.amount_this_time for x in move_lines) + amount_this_time or amount_this_time
-
-
-
-            one.amount_this_time = amount_this_time
-            one.sslj_balance = sslj_balance
+                if move_lines:
+                    sslj_balance = sum(x.amount_this_time for x in move_lines) + amount_this_time
+                else:
+                    sslj_balance = amount_this_time
+                one.amount_this_time = amount_this_time
+                one.sslj_balance = sslj_balance
 
     @api.depends('amount_currency', 'account_id.user_type_id', 'debit', 'credit', 'account_id', 'new_payment_id',
                  'move_id_state', 'amount_this_time')

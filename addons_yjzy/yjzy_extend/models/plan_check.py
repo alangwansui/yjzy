@@ -1248,13 +1248,19 @@ class PlanCheckLine(models.Model):
         for one in self:
             one.plan_check_line_att_count = len(one.plan_check_line_att)
 
+    @api.depends('po_id', 'po_id.date_planned',)
+    def compute_date_po_planned_order(self):
+        for one in self:
+            one.date_po_planned = one.po_id.date_planned
+
+
     display_name = fields.Char(u'显示名称', compute=compute_display_name)
     sequence = fields.Integer('Sequence', default=10)
     order_track_id = fields.Many2one('order.track', '计划跟踪', ondelete='cascade')
     plan_check_id = fields.Many2one('plan.check', '计划检查', ondelete='cascade')
     po_id = fields.Many2one('purchase.order', related='plan_check_id.po_id', store=True)
     date_order = fields.Datetime('供应商下单时间', related='po_id.date_order', store=True)
-
+    date_po_planned = fields.Date('工厂交期', compute=compute_date_po_planned_order, store=True)
 
     po_contract_code = fields.Char('采购合同号',related='po_id.contract_code')
     company_id = fields.Many2one('res.company', '公司', related='po_id.company_id')

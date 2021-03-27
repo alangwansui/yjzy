@@ -7,9 +7,40 @@
         <field name="priority">16</field>
         <field name="arch" type="xml">
             <form string="Log an Activity" create="false">
+                <style>
+                    body{
+                    font-size: 10px;
+                    font-family:Arial;
+                    }
+                    .tablelist{
+
+                    text-align: left;
+                    border: 0.5px solid ;
+                    border-collapse: collapse;
+                    font-size: 10px;
+                    width: 100%
+                    }
+                    .tablelist th{
+
+                    font-size: 10px;
+                    text-align: center;
+                    border: 0.5px solid ;
+                    height: 20px;
+                    line-height: 20px;
+                    }
+                    .tablelist td{
+                    border: 0.5px solid;
+                    height: 20px;
+                    line-height: 20px;
+                    padding-left:10px;
+
+
+                    }
+                </style>
                 <sheet string="Activity">
                     <group>
                         <group>
+                            <field name="po_id"/>
                             <field name="activity_type_id" required="1" domain="[('category','=','plan_check')]"
                                    options="{'no_create': True, 'no_open': True}" readonly="1"/>
                             <field name="summary" placeholder="e.g. Discuss proposal" invisible="1"/>
@@ -23,22 +54,111 @@
                             <field name="plan_check_line_id" invisible="1"/>
                         </group>
                         <group>
+                            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablelist">
+                                <tbody>
 
-                            <field name="date_deadline_contract"/>
-                            <field name="date_deadline_requested"/>
+                                    <tr>
+                                        <td sytle="width:50%">
+                                            <span>合规审批日：</span>
+                                        </td>
+                                       <td width="50%">
+                                            <span>
+                                                <field name="hegui_date" readonly="1"/>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td width="50%">
+                                            <span>工厂交期：</span>
+                                        </td>
+                                        <td width="50%">
+                                            <span>
+                                                <field name="date_po_planned"/>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td width="50%">
+                                            <span>本计划日期晚于合规审批日：</span>
+                                             </td>
+                                     <td width="50%">
+                                            <span>
+                                                <field name="date_deadline_hegui"/>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td width="50%">
+                                            <span>本计划日期早于工厂交期：</span>
+                                             </td>
+                                       <td width="50%">
+                                            <span>
+                                                <field name="date_deadline_planned"/>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td width="50%">
+                                            <span>今日晚于合规审批日：</span>
+                                             </td>
+                                      <td width="50%">
+                                            <span>
+                                                <field name="today_date_hegui"/>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                       <td width="50%">
+                                            <span>今日早于工厂交期：</span>
+                                             </td>
+                                   <td width="50%">
+                                            <span>
+                                                <field name="today_date_plan"/>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                   <td width="50%">
+                                        <span>本计划日期在整个交期中的位置：</span>
+                                         </td>
+                                     <td width="50%">
+                                        <span>
+                                            <field name="finish_percent_deadline"  widget="progressbar"/>
+                                        </span>
+                                    </td>
 
-                            <field name="date_so_contract" readonly="1"/>
-                            <field name="today_date_so_contract"/>
-                            <field name="date_so_requested" widget="date" readonly="1"/>
-                            <field name="today_date_so_requested"/>
-                            <field name="finish_percent" widget="progressbar"/>
+                                    </tr>
+                                    <tr>
+                                  <td width="50%">
 
+                                        <span>今日在整个交期中的位置：</span>
+                                         </td>
+                                     <td width="50%">
+                                        <span>
+                                            <field name="finish_percent_today_deadline" widget="progressbar"/>
+                                        </span>
+                                    </td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+
+
+                            <!--                            <field name="date_deadline_contract"/>-->
+                            <!--                            <field name="date_deadline_requested"/>-->
+
+                            <!--                            <field name="date_so_contract" readonly="1"/>-->
+                            <!--                            <field name="today_date_so_contract"/>-->
+                            <!--                            <field name="date_so_requested" widget="date" readonly="1"/>-->
+                            <!--                            <field name="today_date_so_requested"/>-->
+                            <!--                            <field name="finish_percent" widget="progressbar"/>-->
 
                         </group>
                     </group>
                     <field name="note" placeholder="Log a note..." invisible="1"/>
                     <notebook colspan="1">
                         <page groups="base.group_system">
+                            <field name="time_supplier_requested" string="供应商交期时限"/>
                             <field name="date_deadline" invisible="0"/>
                             <field name="order_track_id"/>
                             <field name="plan_check_id"/>

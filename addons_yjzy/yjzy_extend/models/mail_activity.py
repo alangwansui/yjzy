@@ -57,13 +57,77 @@ class MailActivity(models.Model):
             if one.type == 'order_track':
                 strptime = datetime.strptime
                 date_deadline = strptime(one.date_deadline, DF)
+
                 date_so_contract = one.date_so_contract and strptime(one.date_so_contract, DF)
                 date_so_requested = one.date_so_requested and strptime(str(one.date_so_requested), '%Y-%m-%d 00:00:00')
 
+
                 date_deadline_contract = date_so_contract and date_so_contract - date_deadline
                 date_deadline_requested = date_so_requested and date_so_requested - date_deadline
+
                 one.date_deadline_contract = date_deadline_contract and date_deadline_contract.days
                 one.date_deadline_requested = date_deadline_contract and date_deadline_requested.days
+
+    @api.depends('date_deadline')
+    def compute_date_deadline_hegui(self):
+        for one in self:
+            if one.type == 'order_track':
+                strptime = datetime.strptime
+                time_supplier_requested = one.time_supplier_requested
+                date_deadline = one.date_deadline and strptime(one.date_deadline, DF)
+                hegui_date = one.hegui_date and strptime(one.hegui_date, DF)
+                date_po_planned = one.date_po_planned and strptime(one.date_po_planned, DF)
+                date_deadline_hegui = hegui_date and date_deadline and date_deadline - hegui_date
+                date_deadline_planned = date_po_planned and date_deadline and  date_po_planned - date_deadline
+                finish_percent_deadline = 0
+                if time_supplier_requested and date_deadline:
+                    finish_percent_deadline =  time_supplier_requested != 0 and date_deadline_hegui.days * 100 / time_supplier_requested or 0
+                    if finish_percent_deadline >= 100:
+                        finish_percent_deadline = 100
+                one.date_deadline_hegui = date_deadline_hegui.days
+                one.date_deadline_planned = date_deadline_planned.days
+                one.finish_percent_deadline = finish_percent_deadline
+
+
+    @api.depends('time_supplier_requested', 'hegui_date', 'date_po_planned')
+    def compute_hegui_percent(self):
+        for one in self:
+            if one.type == 'order_track':
+                strptime = datetime.strptime
+                today = datetime.today() - relativedelta(hours=-8)
+                time_supplier_requested = one.time_supplier_requested  # 总的交期时间
+                hegui_date = strptime(one.date_so_contract, DF)
+                date_po_planned = strptime(one.date_po_planned, DF)  # akiny带时间的转换
+                if hegui_date and date_po_planned:
+                    today_date_hegui = (today - hegui_date).days
+                    today_date_plan = (today - date_po_planned).days
+                    finish_percent_today_deadline = time_supplier_requested != 0 and today_date_hegui * 100 / time_supplier_requested or 0
+                    print('finish_percent_today_deadline')
+                    if finish_percent_today_deadline >= 100:
+                        finish_percent_today_deadline = 100
+                    one.finish_percent_today_deadline = finish_percent_today_deadline
+                    one.today_date_hegui = today_date_hegui
+                    one.today_date_plan = - today_date_plan
+
+
+    @api.depends('po_id', 'po_id.date_planned',)
+    def compute_date_po_planned_order(self):
+        for one in self:
+            one.date_po_planned = one.po_id.date_planned
+
+    @api.depends('po_id', 'po_id.date_planned', )
+    def time_supplier_requested(self):
+        strptime = datetime.strptime
+        for one in self:
+            if one.date_po_planned and one.hegui_date:
+                date_po_planned = strptime(one.date_po_planned,DF)
+                hegui_date = strptime(one.hegui_date,DF)
+
+                one.time_supplier_requested = (date_po_planned-hegui_date).days
+            else:
+                one.time_supplier_requested = 0
+
+
 
     date_finish = fields.Date('完成时间')
 
@@ -71,17 +135,30 @@ class MailActivity(models.Model):
     date_deadline = fields.Date('Due Date', index=True, required=False, )
     plan_check_line_id = fields.Many2one('plan.check.line', '检查点', ondelete='cascade', )
     po_id = fields.Many2one('purchase.order', '采购合同', related='plan_check_line_id.po_id', store=True)
+    date_po_planned = fields.Date('工厂交期', compute=compute_date_po_planned_order, store=True)
+    time_supplier_requested = fields.Integer('供应商交期时限', compute=time_supplier_requested, store=True)#交期-合规日期
+    finish_percent_deadline = fields.Float('本计划在整个交期中的位置', compute=compute_date_deadline_hegui)  # 本计划所造总区间的位置，以及本计划在整个进度中的位置
+
     order_track_id = fields.Many2one('order.track', '活动计划', ondelete='cascade', )
     type = fields.Selection([('new_order_track', '新订单下单前跟踪'), ('order_track', '订单跟踪'), ('transport_track', '出运单跟踪')],
                             'type', related='order_track_id.type')
     hegui_date = fields.Date('合规审批时间',related='order_track_id.hegui_date')
     date_so_contract = fields.Date('客户下单日期', related='order_track_id.date_so_contract', store=True)
     date_so_requested = fields.Datetime('客户交期', related='order_track_id.date_so_requested', store=True)
-    date_deadline_contract = fields.Integer('计划距下单日', compute=compute_date_deadline_contract)
-    date_deadline_requested = fields.Integer('计划距交期日', compute=compute_date_deadline_contract)
+    date_deadline_contract = fields.Integer('计划距合规日', )#compute=compute_date_deadline_contract
+    date_deadline_requested = fields.Integer('计划距交期日', )#compute=compute_date_deadline_contract
 
-    today_date_so_contract = fields.Integer('今天距下单日', compute=compute_finish_percent)
-    today_date_so_requested = fields.Integer('今天距交期', compute=compute_finish_percent)
+    date_deadline_hegui = fields.Integer('计划距合规日', compute=compute_date_deadline_hegui)
+    date_deadline_planned = fields.Integer('计划距交期日', compute=compute_date_deadline_hegui)
+
+    today_date_so_contract = fields.Integer('今天距下单日', )#compute=compute_finish_percent
+    today_date_so_requested = fields.Integer('今天距交期', )#compute=compute_finish_percent
+
+    today_date_hegui = fields.Integer('今天距合规日', compute=compute_hegui_percent)
+    today_date_plan = fields.Integer('今天距工厂交期', compute=compute_hegui_percent)
+    finish_percent_today_deadline = fields.Float('完成期限比例', compute=compute_hegui_percent)#今日所造总区间的位置，以及本计划在整个进度中的位置
+
+
     finish_percent = fields.Float('完成期限比例', compute=compute_finish_percent)
     time_contract_requested = fields.Integer('总交期时间', related='order_track_id.time_contract_requested', store=True)
 
