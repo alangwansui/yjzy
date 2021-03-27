@@ -1055,6 +1055,34 @@ class PlanCheck(models.Model):
         for one in self:
             one.plan_check_att_count = len(one.plan_check_att)
 
+    def compute_order_track_number(self):
+        for one in self:
+            total_lines = len(one.plan_check_line)
+            plan_number = len(one.plan_check_line.filtered(lambda x: x.date_deadline != False))
+            finish_number = len(one.plan_check_line.filtered(lambda x: x.date_finish != False))
+            due_number = len(one.plan_check_line.filtered(lambda x: x.state in ['30_time_out_planning','40_finish','50_time_out_finish'] ))#已到期
+            finish_due_number = len(one.plan_check_line.filtered(lambda  x: x.state in ['40_finish','50_time_out_finish']))#已到期
+            time_out_finish_number = len(one.plan_check_line.filtered(lambda  x: x.state == '50_time_out_finish'))
+
+            order_track_plan_number = '%s/%s' % (plan_number, total_lines)
+            order_track_finish_number = '%s/%s' % (finish_number, plan_number)
+            order_track_due_number = '%s/%s' % (due_number, plan_number)
+            order_track_due_finish_number = '%s/%s' % (finish_due_number, due_number)
+
+
+
+            one.order_track_plan_number = order_track_plan_number
+            one.order_track_finish_number = order_track_finish_number
+            one.order_track_due_number = order_track_due_number
+            one.order_track_due_finish_number = order_track_due_finish_number
+            one.order_track_time_out_finish_number = time_out_finish_number
+
+    order_track_plan_number = fields.Char('计划数',compute=compute_order_track_number)
+    order_track_finish_number = fields.Char('计划完成数',compute=compute_order_track_number)
+    order_track_due_number = fields.Char('计划到期数',compute=compute_order_track_number)
+    order_track_due_finish_number = fields.Char('到期计划完成数',compute=compute_order_track_number)
+    order_track_time_out_finish_number = fields.Integer('超时完成计划数',compute=compute_order_track_number)
+
     type = fields.Selection([('new_order_track', '新订单下单前跟踪'), ('order_track', '订单跟踪'), ('transport_track', '出运单跟踪')],
                             'type', related='order_track_id.type')
     display_name = fields.Char(u'显示名称', compute=compute_display_name)

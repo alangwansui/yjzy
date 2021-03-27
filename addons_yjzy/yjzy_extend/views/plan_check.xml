@@ -609,13 +609,12 @@
                                     <field name="purchase_invoice_date_finish"
                                            attrs="{'readonly':[('parent.order_track_new_order_state','=','20_done')],'column_invisible':[('parent.type','!=','transport_track')]}"/>
 
+                                    <field name="order_track_plan_number" readonly="1"  attrs="{'column_invisible':[('parent.type','!=','order_track')]}"/>
+                                    <field name="order_track_finish_number" readonly="1"  attrs="{'column_invisible':[('parent.type','!=','order_track')]}"/>
+                                    <field name="order_track_due_number" readonly="1"  attrs="{'column_invisible':[('parent.type','!=','order_track')]}"/>
+                                    <field name="order_track_due_finish_number" readonly="1"  attrs="{'column_invisible':[('parent.type','!=','order_track')]}"/>
+                                    <field name="order_track_time_out_finish_number" readonly="1"  attrs="{'column_invisible':[('parent.type','!=','order_track')]}"/>
 
-                                    <field name="planning_integrity"
-                                           attrs="{'column_invisible':[('parent.type','!=','order_track')]}"
-                                           readonly="1"/>
-                                    <field name="check_on_time"
-                                           attrs="{'column_invisible':[('parent.type','!=','order_track')]}"
-                                           readonly="1"/>
                                     <field name="date_deadline" invisible="1"/>
                                     <field name="date_finish" invisible="1"/>
                                     <field name="plan_check_att_count"
