@@ -600,7 +600,7 @@
                                     <field name="plan_check_line" groups="base.group_system"/>
                                     <field name="date_factory_return"
                                            attrs="{'column_invisible':[('parent.type','!=','new_order_track')]}"/>
-
+                                    <field name="check_on_time" invisible="1"/>
                                     <field name="tb_id" invisible="1"/>
                                     <field name="purchase_invoice_id" readonly="1"
                                            attrs="{'column_invisible':[('parent.type','!=','transport_track')]}"/>
