@@ -1236,7 +1236,10 @@ class PlanCheckLine(models.Model):
             else:
                 if one.date_finish:
                     times_finish = (strptime(one.date_finish, DF) - strptime(one.date_deadline, DF)).days
-                    if times_finish <= 0:
+                    if times_finish < 0:
+                        state = '35_advance_finish'
+
+                    elif times_finish == 0:
                         state = '40_finish'
                         one.is_on_time = True
                     else:
@@ -1294,7 +1297,7 @@ class PlanCheckLine(models.Model):
     date_deadline = fields.Date('检查点计划时间', index=True, required=False, )
 
     state = fields.Selection(
-        [('10_un_planning', '未计划'), ('20_planning', '计划中'), ('30_time_out_planning', '已到期'), ('40_finish', '正常完成'),
+        [('10_un_planning', '未计划'), ('20_planning', '计划中'), ('30_time_out_planning', '已到期'),('35_advance_finish','提前完成'), ('40_finish', '正常完成'),
          ('50_time_out_finish', '超时完成')], '状态', default='10_un_planning',
         compute=compute_state, store=True)
     is_on_time = fields.Boolean('是否准时完成')
