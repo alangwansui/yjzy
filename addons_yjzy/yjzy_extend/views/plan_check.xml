@@ -96,12 +96,14 @@
 
                 <button name="open_planning_integrity" class="akiny_text_right" type="object" icon="fa-archive"
                         invisible="context.get('type')!='order_track'"/>
-                <field name="planning_integrity" invisible="context.get('type')!='order_track'"/>
+                <field name="planning_integrity" invisible="1"/>
                 <field name="order_track_plan_number" invisible="context.get('type')!='order_track'"/>
                 <field name="order_track_finish_number" invisible="context.get('type')!='order_track'"/>
                 <field name="order_track_due_number" invisible="context.get('type')!='order_track'"/>
                 <field name="order_track_due_finish_number" invisible="context.get('type')!='order_track'"/>
-                <field name="check_on_time" invisible="context.get('type')!='order_track'"/>
+                <field name="order_track_time_out_finish_number" invisible="context.get('type')!='order_track'"/>
+
+                <field name="check_on_time" invisible="1"/>
                 <field name="category_ids" string="异常结果" options="{'color_field':'color'}" widget="many2many_tags"
                        invisible="1"/>
                 <field name="date_so_contract" invisible="context.get('type')!='order_track'" readonly="1"
