@@ -117,8 +117,8 @@
                 <field name="time_supplier_requested" invisible="1"/>
                 <field name="check_all_number" invisible="1"/>
                 <field name="check_finish_number" invisible="1"/>
-                <field name="check_number_percent" widget="progressbar" string="工厂检查点进度"
-                       invisible="context.get('type')!='order_track'"/>
+<!--                <field name="check_number_percent" widget="progressbar" string="工厂检查点进度"-->
+<!--                       invisible="context.get('type')!='order_track'"/>-->
                 <field name="finish_percent" widget="progressbar" string="客户交期进度"
                        invisible="context.get('type')!='order_track'"/>
                 <field name="finish_percent_supplier" widget="progressbar" string="供应商交期进度"
