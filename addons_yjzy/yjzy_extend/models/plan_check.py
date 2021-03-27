@@ -151,7 +151,7 @@ class OrderTrack(models.Model):
         for one in self:
             num = 0
             for x in one.plan_check_line_ids:
-                if x.state in ['40_finish', '50_time_out_finish']:
+                if x.state in ['35_advance_finish','40_finish', '50_time_out_finish']:
                     num += 1
             one.check_finish_number = num
 
