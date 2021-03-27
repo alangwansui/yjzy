@@ -319,7 +319,7 @@ class OrderTrack(models.Model):
     order_track_plan_number = fields.Char('计划数',compute=compute_order_track_number)
     order_track_finish_number = fields.Char('计划完成数',compute=compute_order_track_number)
     order_track_due_number = fields.Char('计划到期数',compute=compute_order_track_number)
-    order_track_due_finish_number = fields.Char('到期计划完成',compute=compute_order_track_number)
+    order_track_due_finish_number = fields.Char('到期计划完成数',compute=compute_order_track_number)
 
 
 
