@@ -425,6 +425,23 @@ class OrderTrack(models.Model):
     comments_transport_track = fields.Text('备注日志', track_visibility='onchange')
     can_delete = fields.Boolean('允许删除',default=False)
 
+
+    @api.onchange('date_out_in','date_ship','date_customer_finish')
+    def onchange_date_transport(self):
+        date_out_in = self.date_out_in
+        date_ship = self.date_ship
+        date_customer_finish = self.date_customer_finish
+        if date_out_in and date_ship:
+            if date_out_in > date_ship:
+                raise Warning('出运船日期不小于进仓日期')
+        if date_out_in and date_customer_finish:
+            if date_out_in > date_customer_finish:
+                raise Warning('客户交单日期不小于进仓日期')
+        if date_ship and date_customer_finish:
+            if date_ship > date_customer_finish:
+                raise Warning('客户交单日期不小于出运船日期')
+
+
     def unlink(self):
         for one in self:
             if self.env.ref('base.group_system') not in self.env.user.groups_id and not one.can_delete:

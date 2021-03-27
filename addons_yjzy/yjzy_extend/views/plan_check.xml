@@ -418,13 +418,15 @@
                         <tbody>
                             <tr>
                                 <th width="10%">销售合同</th>
-                                <th width="8%">计划安排完整性</th>
-                                <th width="8%">检查执行准确性</th>
+                                <th width="5%">计划数</th>
+                                <th width="5%">计划完成数</th>
+                                <th width="5%">计划到期数</th>
+                                <th width="5%">到期计划完成数</th>
+                                <th width="8%">超时完成计划数</th>
                                 <th width="8%">客户确认日期</th>
                                 <th width="8%">合规审批日期</th>
                                 <th width="8%">最迟供应商交期</th>
                                 <th width="8%">客户交期</th>
-                                <th width="8%">工厂检查点进度</th>
                                 <th width="8%">客户交期进度</th>
                                 <th width="8%">供应商交期进度</th>
                                 <th width="8%">出运进度</th>
@@ -437,10 +439,16 @@
                                     <field name="so_id" readonly="1"/>
                                 </td>
                                 <td>
-                                    <field name="planning_integrity" readonly="1"/>
+                                    <field name="order_track_plan_number" readonly="1"/>
                                 </td>
                                 <td>
-                                    <field name="check_on_time" readonly="1"/>
+                                    <field name="order_track_due_number" readonly="1"/>
+                                </td>
+                                  <td>
+                                    <field name="order_track_due_finish_number" readonly="1"/>
+                                </td>
+                                  <td>
+                                    <field name="order_track_time_out_finish_number" readonly="1"/>
                                 </td>
                                 <td>
                                     <field name="date_so_contract" readonly="1"/>
@@ -454,9 +462,7 @@
                                 <td>
                                     <field name="date_so_requested" readonly="1" widget="date"/>
                                 </td>
-                                <td>
-                                    <field name="check_number_percent" widget="progressbar"/>
-                                </td>
+
                                 <td>
                                     <field name="finish_percent" widget="progressbar"/>
                                 </td>
