@@ -1077,6 +1077,17 @@ class PlanCheck(models.Model):
             one.order_track_due_finish_number = order_track_due_finish_number
             one.order_track_time_out_finish_number = order_time_out_finish_number
 
+    @api.depends('supplier_delivery_date','order_track_id','order_track_id.approve_date')
+    def compute_is_supplier_delivery_date_earlier_approve_date(self):
+        for one in self:
+            supplier_delivery_date = one.supplier_delivery_date
+            approve_date = one.order_track_id.approve_date
+            if supplier_delivery_date and approve_date:
+                if supplier_delivery_date < approve_date:
+                    one.is_supplier_delivery_date_earlier_approve_date = True
+                else:
+                    one.is_supplier_delivery_date_earlier_approve_date = False
+
     order_track_plan_number = fields.Char('计划数',compute=compute_order_track_number)
     order_track_finish_number = fields.Char('计划完成数',compute=compute_order_track_number)
     order_track_due_number = fields.Char('计划到期数',compute=compute_order_track_number)
@@ -1089,6 +1100,7 @@ class PlanCheck(models.Model):
     order_track_id = fields.Many2one('order.track', '计划跟踪', ondelete='cascade')
     # plan_check_ids = fields.One2many('plan.check','so_id')
     so_id = fields.Many2one('sale.order', ondelete='cascade')
+
 
     po_id = fields.Many2one('purchase.order', '采购合同', ondelete='cascade')
 
@@ -1106,8 +1118,12 @@ class PlanCheck(models.Model):
 
     tb_id = fields.Many2one('transport.bill', '出运合同')
     purchase_invoice_id = fields.Many2one('account.invoice', '采购账单')
+
     supplier_delivery_date = fields.Date('工厂实际发货日期')
-    is_supplier_delivery_date_earlier_approve_date = fields.Boolean('工厂实际发货日期是否早于合规审批')
+    is_supplier_delivery_date_earlier_approve_date = fields.Boolean('工厂实际发货日期是否早于合规审批',compute=compute_is_supplier_delivery_date_earlier_approve_date,store=True)
+
+
+
 
     purchase_invoice_date_finish = fields.Date('供应商交单时间', related='purchase_invoice_id.date_finish', store=True)
 
