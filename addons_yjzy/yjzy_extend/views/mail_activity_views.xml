@@ -40,11 +40,12 @@
                 <sheet string="Activity">
                     <group>
                         <group>
-                            <field name="po_id"/>
+                            <field name="po_id" readonly="1"/>
                             <field name="activity_type_id" required="1" domain="[('category','=','plan_check')]"
                                    options="{'no_create': True, 'no_open': True}" readonly="1"/>
                             <field name="summary" placeholder="e.g. Discuss proposal" invisible="1"/>
                             <field name="date_finish" invisible="context.get('plan')"/>
+                            <field name="date_deadline_readonly" invisible="context.get('plan')"/>
                             <field name="dd" string="计划时间" invisible="context.get('finish')"/>
                             <!--                            ba_activity_deadline装之前先删除-->
 
