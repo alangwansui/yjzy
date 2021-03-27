@@ -414,7 +414,7 @@ class OrderTrack(models.Model):
     # 供应商总的分步检查数量
     check_all_number = fields.Integer('供应商总分步检查数', compute=compute_check_all_number, store=True)
     check_finish_number = fields.Integer('供应商完成分步检查数', compute=compute_check_finish_number, store=True)
-    check_number_percent = fields.Float('分步完成比例', compute=compute_check_number_percent)
+    check_number_percent = fields.Float('分步完成比例', compute=compute_check_number_percent)#检查点完成进度
 
     plan_check_ids = fields.One2many('plan.check', 'order_track_id', '计划跟踪明细')
     factory_return = fields.One2many('plan.check', 'order_track_id', '工厂回签日期', )
