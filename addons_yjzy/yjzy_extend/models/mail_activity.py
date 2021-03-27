@@ -131,7 +131,7 @@ class MailActivity(models.Model):
 
     date_finish = fields.Date('完成时间')
 
-    date_deadline_readonly = fields.Date('计划日期',related='dead_line',readonly=1)
+    date_deadline_readonly = fields.Date('计划日期',related='date_deadline',readonly=1)
 
     plan_check_id = fields.Many2one('plan.check', '检查点', ondelete='cascade', )
     date_deadline = fields.Date('Due Date', index=True, required=False, )
