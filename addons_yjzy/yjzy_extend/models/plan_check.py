@@ -414,7 +414,7 @@ class OrderTrack(models.Model):
     # 供应商总的分步检查数量
     check_all_number = fields.Integer('供应商总分步检查数', compute=compute_check_all_number, store=True)
     check_finish_number = fields.Integer('供应商完成分步检查数', compute=compute_check_finish_number, store=True)
-    check_number_percent = fields.Float('分步完成比例', compute=compute_check_number_percent)#检查点完成进度
+    check_number_percent = fields.Float('分步完成比例', compute=compute_check_number_percent)
 
     plan_check_ids = fields.One2many('plan.check', 'order_track_id', '计划跟踪明细')
     factory_return = fields.One2many('plan.check', 'order_track_id', '工厂回签日期', )
@@ -1062,7 +1062,7 @@ class PlanCheck(models.Model):
     tb_id = fields.Many2one('transport.bill', '出运合同')
     purchase_invoice_id = fields.Many2one('account.invoice', '采购账单')
     supplier_delivery_date = fields.Date('工厂实际发货日期')
-    is_supplier_delivery_date_earlier_approve_date = fields.first('工厂实际发货日期是否早于合规审批')
+    is_supplier_delivery_date_earlier_approve_date = fields.Boolean('工厂实际发货日期是否早于合规审批')
 
     purchase_invoice_date_finish = fields.Date('供应商交单时间', related='purchase_invoice_id.date_finish', store=True)
 

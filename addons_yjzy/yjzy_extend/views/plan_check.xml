@@ -598,7 +598,7 @@
                                     <field name="tb_id" invisible="1"/>
                                     <field name="purchase_invoice_id" readonly="1"
                                            attrs="{'column_invisible':[('parent.type','!=','transport_track')]}"/>
-                                    <field name="supplier_delivery_date" string='工厂实际发货日'
+                                    <field name="supplier_delivery_date" string='工厂实际发货日' options='{"fg_color": "red:is_supplier_delivery_date_earlier_approve_date == True"}'
                                            attrs="{'readonly':[('parent.order_track_new_order_state','=','20_done')],'column_invisible':[('parent.type','!=','transport_track')]}"/>
                                     <field name="purchase_invoice_date_finish"
                                            attrs="{'readonly':[('parent.order_track_new_order_state','=','20_done')],'column_invisible':[('parent.type','!=','transport_track')]}"/>
