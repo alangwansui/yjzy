@@ -131,8 +131,8 @@ class OrderTrack(models.Model):
     def compute_check_all_number(self):
         len_number = 0
         for one in self:
-            if one.plan_check_ids:
-                len_number = len(one.plan_check_ids) * len(one.plan_check_ids[0].plan_check_line)
+            if one.plan_check_line_ids:
+                len_number = len(one.plan_check_line_ids)
             one.check_all_number = len_number
 
     @api.depends('plan_check_ids', 'plan_check_ids.plan_check_line', 'plan_check_ids.plan_check_line.state')
