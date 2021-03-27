@@ -1082,11 +1082,15 @@ class PlanCheck(models.Model):
         for one in self:
             supplier_delivery_date = one.supplier_delivery_date
             approve_date = one.order_track_id.approve_date
+            is_supplier_delivery_date_earlier_approve_date = False
             if supplier_delivery_date and approve_date:
                 if supplier_delivery_date < approve_date:
-                    one.is_supplier_delivery_date_earlier_approve_date = True
+                    is_supplier_delivery_date_earlier_approve_date = True
                 else:
-                    one.is_supplier_delivery_date_earlier_approve_date = False
+                    is_supplier_delivery_date_earlier_approve_date = False
+            one.is_supplier_delivery_date_earlier_approve_date = is_supplier_delivery_date_earlier_approve_date
+
+            print('is_supplier_delivery_date_earlier_approve_date_akiny',one.is_supplier_delivery_date_earlier_approve_date)
 
     order_track_plan_number = fields.Char('计划数',compute=compute_order_track_number)
     order_track_finish_number = fields.Char('计划完成数',compute=compute_order_track_number)
