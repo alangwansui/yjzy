@@ -180,6 +180,7 @@ class MailActivity(models.Model):
         if self.order_track_id:
             if self.activity_type_id.name == '计划填写进仓日':
                 self.order_track_id.date_out_in = self.date_finish
+                self.order_track_id.action_date_out_in()
                 self.order_track_id.create_activity_plan_date_ship()
                 self.order_track_id.create_activity_plan_date_customer_finish()
             elif self.activity_type_id.name == '计划填写船期':

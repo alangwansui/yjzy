@@ -299,6 +299,30 @@ class OrderTrack(models.Model):
     display_name = fields.Char(u'显示名称', compute=compute_display_name)
     type = fields.Selection([('new_order_track', '新订单下单前跟踪'), ('order_track', '订单跟踪'), ('transport_track', '出运单跟踪')],
                             'type')
+
+    def compute_order_track_number(self):
+        for one in self:
+            total_lines = len(one.plan_check_line_ids)
+            plan_number = len(one.plan_check_line_ids.filtered(lambda x: x.date_deadline != False))
+            finish_number = len(one.plan_check_line_ids.filtered(lambda x: x.date_finish != False))
+            due_number = len(one.plan_check_line_ids.filtered(lambda x: x.state in ['30_time_out_planning','40_finish','50_time_out_finish'] ))#已到期
+            finish_due_number = len(one.plan_check_line_ids.filtered(lambda  x: x.state in ['40_finish','50_time_out_finish']))#已到期
+            order_track_plan_number = '%s/%s' % (plan_number, total_lines)
+            order_track_finish_number = '%s/%s' % (finish_number, plan_number)
+            order_track_due_number = '%s/%s' % (due_number, plan_number)
+            order_track_due_finish_number = '%s/%s' % (finish_due_number, due_number)
+            one.order_track_plan_number = order_track_plan_number
+            one.order_track_finish_number = order_track_finish_number
+            one.order_track_due_number = order_track_due_number
+            one.order_track_due_finish_number = order_track_due_finish_number
+
+    order_track_plan_number = fields.Char('计划数',compute=compute_order_track_number)
+    order_track_finish_number = fields.Char('计划完成数',compute=compute_order_track_number)
+    order_track_due_number = fields.Char('计划到期数',compute=compute_order_track_number)
+    order_track_due_finish_number = fields.Char('到期计划完成',compute=compute_order_track_number)
+
+
+
     so_id = fields.Many2one('sale.order', '销售合同', ondelete='cascade')
     so_po_return_state = fields.Selection([('un_return','未回传'),('part_return','部分回传'),('returned','已回传')],
                                        '工厂回传状态',related='so_id.po_return_state',store=True)
@@ -619,7 +643,7 @@ class OrderTrack(models.Model):
             'views': [(form_view.id, 'form')],
             'res_id': self.plan_date_out_in_activity.id,
             'target': 'new',
-            'context': {'finish': 1}
+            'context': {'transport': 1}
         }
 
     def open_activity_id_date_ship(self):
@@ -1031,6 +1055,8 @@ class PlanCheck(models.Model):
     tb_id = fields.Many2one('transport.bill', '出运合同')
     purchase_invoice_id = fields.Many2one('account.invoice', '采购账单')
     supplier_delivery_date = fields.Date('工厂实际发货日期')
+    is_supplier_delivery_date_earlier_approve_date = fields.first('工厂实际发货日期是否早于合规审批')
+
     purchase_invoice_date_finish = fields.Date('供应商交单时间', related='purchase_invoice_id.date_finish', store=True)
 
     company_id = fields.Many2one('res.company', '公司', compute=compute_company_id, store=True)
@@ -1218,7 +1244,7 @@ class PlanCheckLine(models.Model):
                 else:
                     time_out = (now - fields.Datetime.from_string(one.date_deadline)).days
                     print('time_out_akiny', time_out)
-                    if time_out > 0:
+                    if time_out >= 0:
                         state = '30_time_out_planning'
                     else:
                         state = '20_planning'
@@ -1268,7 +1294,7 @@ class PlanCheckLine(models.Model):
     date_deadline = fields.Date('检查点计划时间', index=True, required=False, )
 
     state = fields.Selection(
-        [('10_un_planning', '未计划'), ('20_planning', '计划中'), ('30_time_out_planning', '已过期'), ('40_finish', '正常完成'),
+        [('10_un_planning', '未计划'), ('20_planning', '计划中'), ('30_time_out_planning', '已到期'), ('40_finish', '正常完成'),
          ('50_time_out_finish', '超时完成')], '状态', default='10_un_planning',
         compute=compute_state, store=True)
     is_on_time = fields.Boolean('是否准时完成')

@@ -538,7 +538,7 @@ class transport_bill(models.Model):
                     or one.date_customer_finish_state == 'submit' or one.date_purchase_finish_state == 'submit':
                 date_all_state = '10_date_approving'
             else:
-                if not one.date_out_in:
+                if not one.date_out_in or not one.is_date_out_in:
                     date_all_state = '20_no_date_out_in'
                 else:
                     if one.date_out_in and one.date_ship and one.date_customer_finish and len(one.purchase_invoice_ids) == len(one.purchase_invoice_ids.filtered(lambda x:x.date_finish != False)) and one.second_state in ['30','40','50']:
