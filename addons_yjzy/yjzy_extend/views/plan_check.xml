@@ -58,18 +58,18 @@
                         domain="[('activity_ids.date_deadline', '&gt;', context_today().strftime('%Y-%m-%d'))
                             ]"/>
             </search>
-            <group expand="1" string="Group By">
-                    <filter string="采购合同" name="group_by_po_id" domain="[]"
-                            context="{'group_by':['po_id']}"/>
-                    <filter string="检查单内容" name="group_activity_type_1_id" domain="[]"
-                            context="{'group_by':['activity_type_1_id']}"/>
-                     <filter string="状态" name="group_state" domain="[]"
-                        context="{'group_by':['state']}"/>
-                    <filter string="检查点计划-年" name="group_date_deadline_year" domain="[]"
-                            context="{'group_by':['date_deadline:year']}"/>
-                <filter string="检查点计划-月" name="group_date_deadline_year" domain="[]"
-                            context="{'group_by':['date_deadline:month']}"/>
-                </group>
+<!--            <group expand="1" string="Group By">-->
+<!--                    <filter string="采购合同" name="group_by_po_id" domain="[]"-->
+<!--                            context="{'group_by':['po_id']}"/>-->
+<!--                    <filter string="检查单内容" name="group_activity_type_1_id" domain="[]"-->
+<!--                            context="{'group_by':['activity_type_1_id']}"/>-->
+<!--                     <filter string="状态" name="group_state" domain="[]"-->
+<!--                        context="{'group_by':['state']}"/>-->
+<!--                    <filter string="检查点计划-年" name="group_date_deadline_year" domain="[]"-->
+<!--                            context="{'group_by':['date_deadline:year']}"/>-->
+<!--                <filter string="检查点计划-月" name="group_date_deadline_year" domain="[]"-->
+<!--                            context="{'group_by':['date_deadline:month']}"/>-->
+<!--                </group>-->
         </field>
     </record>
 
