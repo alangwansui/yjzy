@@ -16,7 +16,10 @@
                                string="认领对象"
                                domain="[('is_company','=',True),('parent_id', '=', False),('customer','=',1),
                                ('name','not in',['未定义','国税局']),('invoice_open_ids_count','!=',0)]"/>
-
+                        <field name="partner_supplier_id" attrs="{'invisible':[('renling_type','not in',['purchase_add_invoice'])]}"
+                               string="认领供应商"
+                               domain="[('is_company','=',True),('parent_id', '=', False),('supplier','=',1),
+                               ('name','not in',['未定义','国税局']),('invoice_open_ids_count','!=',0)]"/>
 
                         <field name="partner_advance_id" attrs="{'invisible':[('renling_type','not in',['ysrld'])]}"
                                domain="[('is_company','=',True),('parent_id', '=', False),('customer','=',1),
@@ -105,7 +108,7 @@
                             <button name="open_wizard_renling" type="object" string="创建认领单" invisible="1"/>
                         </tree>
                     </field>
-                    <span attrs="{'invisible':['|','|',('renling_type','not in',['yshxd']),('step','!=','20')]}"
+                    <span attrs="{'invisible':['|','|',('renling_type','not in',['yshxd','purchase_add_invoice']),('step','!=','20')]}"
                           style="font-weight:bolder; margin-bottom:5px">
                         选择需要认领的账单
                     </span>
@@ -115,7 +118,7 @@
                     </span>
 
                     <field name="invoice_ids" nolabel="1" attrs="{'invisible':['|','|',
-                    ('renling_type','not in',['yshxd','other_payment']),('step','!=','20'),('other_payment_invoice_ok','=',False)]}"
+                    ('renling_type','not in',['yshxd','other_payment','purchase_add_invoice']),('step','!=','20'),('other_payment_invoice_ok','=',False)]}"
                            domain="[('partner_id','=',partner_id),('state','=','open'),('type','in',['out_invoice'])]"
                            context="{'tree_view_ref':'yjzy_extend.invoice_sale_new_hxd_tree','other_payment':other_payment_invoice_ok_f}"
                            options="{'no_create': True,'no_open':True}">

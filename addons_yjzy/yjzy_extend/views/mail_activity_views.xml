@@ -40,14 +40,15 @@
                 <sheet string="Activity">
                     <group>
                         <group>
-                            <field name="po_id" readonly="1"/>
+                            <field name="po_id" readonly="1"  attrs="{'invisible':[('type','!=','track_order')]}"/>
+
                             <field name="activity_type_id" required="1" domain="[('category','=','plan_check')]"
                                    options="{'no_create': True, 'no_open': True}" readonly="1"/>
                             <field name="summary" placeholder="e.g. Discuss proposal" invisible="1"/>
                             <field name="date_deadline_readonly" invisible="context.get('plan')"/>
                             <field name="date_finish" invisible="context.get('plan')"/>
 
-                            <field name="dd" string="计划时间" invisible="context.get('finish')"/>
+                            <field name="dd" string="计划时间" invisible="context.get('finish')" attrs="{'invisible':[('type','!=','track_order')]}"/>
                             <!--                            ba_activity_deadline装之前先删除-->
 
                             <field name="reminder_ids" widget="many2many_tags" string="安排提醒时间"
@@ -55,7 +56,7 @@
                             <field name="user_id" string="执行人" readonly="1" invisible="1"/>
                             <field name="plan_check_line_id" invisible="1"/>
                         </group>
-                        <group>
+                        <group attrs="{'invisible':[('type','!=','track_order')]}">
                             <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablelist">
                                 <tbody>
 
@@ -160,6 +161,7 @@
                     <field name="note" placeholder="Log a note..." invisible="1"/>
                     <notebook colspan="1">
                         <page groups="base.group_system">
+                            <field name="type"/>
                             <field name="time_supplier_requested" string="供应商交期时限"/>
                             <field name="date_deadline" invisible="0"/>
                             <field name="order_track_id"/>

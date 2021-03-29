@@ -86,6 +86,7 @@ class sale_order(models.Model):
         if self.contract_date and strptime(self.contract_date, DF) > datetime.today()-relativedelta(hours=-8):
                 raise Warning('客户确认日期大于当日')
 
+
     # @api.multi
     # def write(self, vals):
     #     self.make_all_plan()

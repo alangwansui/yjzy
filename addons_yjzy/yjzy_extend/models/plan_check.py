@@ -215,7 +215,7 @@ class OrderTrack(models.Model):
             elif one.type == 'order_track':
                 if one.date_so_contract and one.earliest_date_po_order and one.latest_date_po_planned and one.date_so_requested and len(
                         one.plan_check_line_ids) == len(
-                        one.plan_check_line_ids.filtered(lambda x: x.state in ['40_finish', '50_time_out_finish'])):
+                        one.plan_check_line_ids.filtered(lambda x: x.state in ['40_finish', '50_time_out_finish'])) or one.order_track_transport_state in ['20_done','15_receivable_payment']:
                     order_track_new_order_state = '20_done'
                 else:
                     order_track_new_order_state = '10_doing'
@@ -226,6 +226,12 @@ class OrderTrack(models.Model):
                         one.plan_check_ids) == len(
                         one.plan_check_ids.filtered(lambda x: x.purchase_invoice_date_finish != False)) and one.second_state == '60':
                     order_track_new_order_state = '20_done'
+                elif one.date_out_in and one.date_ship and one.date_customer_finish and  len(
+                        one.plan_check_ids) == len(
+                        one.plan_check_ids.filtered(lambda x: x.supplier_delivery_date != False)) and len(
+                        one.plan_check_ids) == len(
+                        one.plan_check_ids.filtered(lambda x: x.purchase_invoice_date_finish != False)) and one.second_state != '60':
+                    order_track_new_order_state = '15_receivable_payment'
                 else:
                     order_track_new_order_state = '10_doing'
             one.order_track_new_order_state = order_track_new_order_state
@@ -275,9 +281,11 @@ class OrderTrack(models.Model):
                 one.plan_date_ship_error = plan_date_ship_error
                 one.plan_date_customer_finish_error = plan_date_customer_finish_error
 
-    error_state = fields.Boolean('是否有问题',cimoute=compute_error_state)
+    error_state = fields.Boolean('是否有问题',compute=compute_error_state)
 
     order_track_transport = fields.Many2one('order.track','出运跟踪')
+    order_track_transport_state = fields.Selection([('10_doing', '跟踪进行时候'),('15_receivable_payment','等待应收付完成'), ('20_done', '已完成')], '下单前状态',
+                                                   related='order_track_transport.order_track_new_order_state',store=True)
     def test_jisuan(self):
         order_track_obj = self.env['order.track']
         order_track_order = order_track_obj.search(
@@ -293,7 +301,7 @@ class OrderTrack(models.Model):
         'order.track.category', 'order_track_category_rel', 'track_id', 'category_id',
         string='Tags', store=True)
 
-    order_track_new_order_state = fields.Selection([('10_doing', '跟踪进行时候'), ('20_done', '已完成')], '下单前状态',
+    order_track_new_order_state = fields.Selection([('10_doing', '跟踪进行时候'),('15_receivable_payment','等待应收付完成'), ('20_done', '已完成')], '下单前状态',
                                                    store=True) #compute=compute_order_track_state,
 
     sale_state_1 = fields.Selection(Sale_Selection, u'审批流程', related='so_id.state_1', store=True
@@ -1182,6 +1190,8 @@ class PlanCheck(models.Model):
             'target': 'new'
         }
 
+
+
     def compute_planning_integrity(self):
         for one in self:
             if len(one.plan_check_line) == len(
@@ -1384,8 +1394,8 @@ class PlanCheckLine(models.Model):
         compute=compute_state, store=True)
     is_on_time = fields.Boolean('是否准时完成')
     activity_id = fields.Many2one('mail.activity', '计划活动')
-    activity_date_deadline =  fields.Date('检查点计划时间', related='activity_id.date_deadline' )
-    activity_date_finish = fields.Date('检查点计划时间', related='activity_id.date_finish')
+    # activity_date_deadline =  fields.Date('检查点计划时间', related='activity_id.date_deadline' )
+    # activity_date_finish = fields.Date('检查点计划时间', related='activity_id.date_finish')
     activity_type_1_id = fields.Many2one('mail.activity.type', '检查类型')
     activity_type_1_id_name = fields.Char('检查类型',related='activity_type_1_id.name',store=True)
     comments_line = fields.Text('工厂检查明细备注', track_visibility='onchange')

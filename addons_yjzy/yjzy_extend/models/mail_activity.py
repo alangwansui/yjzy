@@ -134,6 +134,7 @@ class MailActivity(models.Model):
     date_deadline_readonly = fields.Date('计划日期',related='date_deadline',readonly=1)
 
     plan_check_id = fields.Many2one('plan.check', '检查点', ondelete='cascade', )
+
     date_deadline = fields.Date('Due Date', index=True, required=False, )
     plan_check_line_id = fields.Many2one('plan.check.line', '检查点', ondelete='cascade', )
     po_id = fields.Many2one('purchase.order', '采购合同', related='plan_check_line_id.po_id', store=True)
@@ -171,7 +172,7 @@ class MailActivity(models.Model):
                 '%Y-%m-%d'):
             raise Warning('完成日期不能大于当日')
         if not self.date_finish:
-            raise Warning('完成时间不能小于下单给供应商时间,请重新选择时间')
+            raise Warning('完成日期还没有填写')
         if self.date_finish and self.hegui_date and self.date_finish < self.hegui_date:
             raise Warning('完成时间不能小于合规审批时间')
 
@@ -208,6 +209,9 @@ class MailActivity(models.Model):
     def onchange_date_finish(self):
         if self.date_finish and self.hegui_date and self.date_finish < self.hegui_date:
             raise Warning('完成时间不能小于合规审批时间')
+        if self.date_finish and str(self.date_finish) > (datetime.today() - relativedelta(hours=-8)).strftime(
+                '%Y-%m-%d'):
+            raise Warning('完成日期不能大于当日')
 
     @api.onchange('dd')
     def onchange_dd(self):

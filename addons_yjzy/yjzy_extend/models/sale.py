@@ -1132,18 +1132,18 @@ class sale_order(models.Model):
                         today - relativedelta(days=180)).strftime('%Y-%m-%d 00:00:00'):
                     state = 'done'
                     hexiao_type = 'abnormal'
-                    stage_id = self._stage_find(domain=[('code', '=', '080')])
+                    stage_id = one._stage_find(domain=[('code', '=', '080')])
                 if one.no_sent_amount_new == 0 and one.purchase_no_deliver_amount_new == 0:
                     if one.balance == 0 and one.purchase_balance_sum3 == 0:
                         hexiao_type = 'write_off'
                         state = 'done'
-                        stage_id = self._stage_find(domain=[('code', '=', '070')])
+                        stage_id = one._stage_find(domain=[('code', '=', '070')])
                     else:
                         if requested_date and requested_date < (today - relativedelta(days=90)).strftime(
                                 '%Y-%m-%d 00:00:00'):
                             hexiao_type = 'abnormal'
                             state = 'done'
-                            stage_id = self._stage_find(domain=[('code', '=', '080')])
+                            stage_id = one._stage_find(domain=[('code', '=', '080')])
             one.hexiao_type = hexiao_type
             one.state = state
             one.stage_id = stage_id

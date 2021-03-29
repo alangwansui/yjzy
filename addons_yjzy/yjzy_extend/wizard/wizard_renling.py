@@ -83,6 +83,10 @@ class wizard_renling(models.TransientModel):
                                  domain=[('is_company', '=', True), ('parent_id', '=', False), ('customer', '=', 1),
                                          ('name', 'not in', ['未定义', '国税局']), ('invoice_open_ids_count', '!=', 0)])
 
+    partner_supplier_id = fields.Many2one('res.partner', u'供应商',
+                                 domain=[('is_company', '=', True), ('parent_id', '=', False), ('supplier', '=', 1),
+                                         ('name', 'not in', ['未定义', '国税局']), ('invoice_open_ids_count', '!=', 0)])
+
     partner_advance_id = fields.Many2one('res.partner', u'合作伙伴',
                                          domain=[('is_company', '=', True), ('parent_id', '=', False),
                                                  ('customer', '=', 1),
@@ -115,7 +119,7 @@ class wizard_renling(models.TransientModel):
 
     renling_type = fields.Selection([('yshxd', '应收认领'),
                                      ('ysrld', '预收认领'),
-                                     ('back_tax', '退税认领'), ('other_payment', '其他认领')], u'认领属性')
+                                     ('back_tax', '退税认领'), ('other_payment', '其他认领'),('purchase_add_invoice','增加采购应收认领')], u'认领属性')
 
     declaration_date = fields.Date('申报日期')
     company_currency_id = fields.Many2one('res.currency', string='公司货币',
@@ -169,7 +173,13 @@ class wizard_renling(models.TransientModel):
             self.step = '20'
             self.btd_id = False
             self.other_payment_invoice_ok_f = True
-
+        elif renling_type == 'purchase_add_invoice':
+            partner_id = False
+            self.partner_supplier_id = False
+            self.partner_advance_id = False
+            self.step = '10'
+            self.btd_id = False
+            self.other_payment_invoice_ok_f = False
         else:
             partner_id = False
             self.step = '10'
@@ -179,10 +189,12 @@ class wizard_renling(models.TransientModel):
         self.invoice_ids = False
         self.other_payment_invoice_ok = True
 
-    @api.onchange('partner_id')
+    @api.onchange('partner_id','partner_supplier_id')
     def onchange_partner_id(self):
         renling_type = self.renling_type
         if renling_type in ['yshxd', 'ysrld'] and self.partner_id:
+            self.step = '20'
+        if renling_type in ['purchase_add_invoice'] and self.partner_supplier_id:
             self.step = '20'
 
     def open_ysrld(self):

@@ -416,7 +416,7 @@
             <field name="arch" type="xml">
                 <form string="销售订单" class="o_sale_order" create="false">
                     <header>
-                        <button name="make_all_plan" type="object" string="test"/>
+
                         <button name="action_submit_stage" string="提交" type="object" class="oe_highlight"
                                 attrs="{'invisible':[('state_1','!=','draft')]}"/>
                         <button name="action_to_draft_stage" string="重置草稿" type="object" class="oe_highlight"
@@ -436,6 +436,7 @@
                     </header>
 
                     <header groups="base.group_system">
+                        <button name="make_all_plan" type="object" string="test"/>
                         <button name="action_manual_ubnormal_hexiao" type="object" string="手动异常核销"/>
                         <button name="compute_balance_new" type="object" string="计算预收余额"/>
                         <button name="update_purchase_datas" string="更新采购数据" type="object" class="btn-primary"/>
