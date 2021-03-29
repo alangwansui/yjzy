@@ -15,7 +15,7 @@
         <field name="view_mode">form</field>
         <field name="target">new</field>
           <field name="view_ids" eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'form', 'view_id': ref('mail_activity_view_form_popup_new')})]"/>
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.mail_activity_view_form_popup_new')})]"/>
         <field name="context">{'finish':1}</field>
     </record>
 
