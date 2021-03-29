@@ -84,7 +84,7 @@
                 <!--            <field name="date_deadline"/>-->
                 <field name="order_track_new_order_state" invisible="1"/>
 
-                <field name="partner_id" invisible="context.get('type')=='transport_track'"/>
+                <field name="partner_id"/>
                 <button name="open_so_id" class="akiny_text_right" type="object" icon="fa-archive"
                         invisible="context.get('type')!='new_order_track'"/>
                 <field name="so_id" readonly="1" invisible="context.get('type')=='transport_track'"/>
@@ -384,6 +384,7 @@
                         </page>
                         <page groups="base.group_system">
                             <group>
+                                <field name="partner_id"/>
                                 <field name="plan_date_out_in_activity" invisible="1"/>
                                 <field name="plan_date_customer_finish_activity" invisible="1"/>
                                 <field name="plan_date_ship_activity" invisible="1"/>
@@ -868,6 +869,7 @@
                         </page>
                         <page groups="base.group_system">
                             <group>
+                                <field name="partner_id"/>
                                 <field name="is_date_out_in"/>
                                 <field name="order_track_transport_state"/>
                                 <field name="order_track_transport"/>

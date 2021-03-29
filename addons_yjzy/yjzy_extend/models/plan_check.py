@@ -282,13 +282,6 @@ class OrderTrack(models.Model):
                 one.plan_date_ship_error = plan_date_ship_error
                 one.plan_date_customer_finish_error = plan_date_customer_finish_error
 
-    error_state = fields.Boolean('是否有问题',compute=compute_error_state)
-
-    order_track_transport = fields.Many2one('order.track','出运跟踪')
-    order_track_transport_state = fields.Selection([('10_doing', '跟踪进行时候'),('15_receivable_payment','等待应收付完成'), ('20_done', '已完成')], '下单前状态',
-                                                   related='order_track_transport.order_track_new_order_state',store=True)
-    order_track_transport_is_date_out_in = fields.Boolean('进仓日是否已确认', related='order_track_transport.is_date_out_in', store=True)
-
     def test_jisuan(self):
         order_track_obj = self.env['order.track']
         order_track_order = order_track_obj.search(
@@ -297,8 +290,49 @@ class OrderTrack(models.Model):
             for track in order_track_order:
                 if one == track.so_id:
                     order_track_order.write({
-                        'order_track_transport':self.id,
+                        'order_track_transport': self.id,
                     })
+
+    def compute_order_track_number(self):
+        for one in self:
+            total_lines = len(one.plan_check_line_ids)
+            plan_number = len(one.plan_check_line_ids.filtered(lambda x: x.date_deadline != False))
+            finish_number = len(one.plan_check_line_ids.filtered(lambda x: x.date_finish != False))
+            due_number = len(one.plan_check_line_ids.filtered(
+                lambda x: x.state in ['30_time_out_planning', '40_finish', '50_time_out_finish']))  # 已到期
+            finish_due_number = len(
+                one.plan_check_line_ids.filtered(lambda x: x.state in ['40_finish', '50_time_out_finish']))  # 已到期
+            time_out_finish_number = len(one.plan_check_line_ids.filtered(lambda x: x.state == '50_time_out_finish'))
+
+            order_track_plan_number = '%s/%s' % (plan_number, total_lines)
+            order_track_finish_number = '%s/%s' % (finish_number, plan_number)
+            order_track_due_number = '%s/%s' % (due_number, plan_number)
+            order_track_due_finish_number = '%s/%s' % (finish_due_number, due_number)
+            order_time_out_finish_number = '%s' % (time_out_finish_number)
+
+            one.order_track_plan_number = order_track_plan_number
+            one.order_track_finish_number = order_track_finish_number
+            one.order_track_due_number = order_track_due_number
+            one.order_track_due_finish_number = order_track_due_finish_number
+            one.order_track_time_out_finish_number = order_time_out_finish_number
+
+    @api.depends('type', 'so_id', 'so_id.partner_id', 'tb_id', 'tb_id.partner_id')
+    def compute_partner_id(self):
+        for one in self:
+            if one.type in ['new_order_track', 'order_track']:
+                partner_id = one.so_id.partner_id
+            else:
+                partner_id = one.tb_id.partner_id
+            one.partner_id = partner_id
+
+    error_state = fields.Boolean('是否有问题',compute=compute_error_state)
+
+    order_track_transport = fields.Many2one('order.track','出运跟踪')
+    order_track_transport_state = fields.Selection([('10_doing', '跟踪进行时候'),('15_receivable_payment','等待应收付完成'), ('20_done', '已完成')], '下单前状态',
+                                                   related='order_track_transport.order_track_new_order_state',store=True)
+    order_track_transport_is_date_out_in = fields.Boolean('进仓日是否已确认', related='order_track_transport.is_date_out_in', store=True)
+
+
     name = fields.Char('编号', default=lambda self: self.env['ir.sequence'].next_by_code('order.track'))
     category_ids = fields.Many2many(
         'order.track.category', 'order_track_category_rel', 'track_id', 'category_id',
@@ -321,28 +355,6 @@ class OrderTrack(models.Model):
     type = fields.Selection([('new_order_track', '新订单下单前跟踪'), ('order_track', '订单跟踪'), ('transport_track', '出运单跟踪')],
                             'type')
 
-    def compute_order_track_number(self):
-        for one in self:
-            total_lines = len(one.plan_check_line_ids)
-            plan_number = len(one.plan_check_line_ids.filtered(lambda x: x.date_deadline != False))
-            finish_number = len(one.plan_check_line_ids.filtered(lambda x: x.date_finish != False))
-            due_number = len(one.plan_check_line_ids.filtered(lambda x: x.state in ['30_time_out_planning','40_finish','50_time_out_finish'] ))#已到期
-            finish_due_number = len(one.plan_check_line_ids.filtered(lambda  x: x.state in ['40_finish','50_time_out_finish']))#已到期
-            time_out_finish_number = len(one.plan_check_line_ids.filtered(lambda  x: x.state == '50_time_out_finish'))
-
-            order_track_plan_number = '%s/%s' % (plan_number, total_lines)
-            order_track_finish_number = '%s/%s' % (finish_number, plan_number)
-            order_track_due_number = '%s/%s' % (due_number, plan_number)
-            order_track_due_finish_number = '%s/%s' % (finish_due_number, due_number)
-            order_time_out_finish_number = '%s' % (time_out_finish_number)
-
-
-            one.order_track_plan_number = order_track_plan_number
-            one.order_track_finish_number = order_track_finish_number
-            one.order_track_due_number = order_track_due_number
-            one.order_track_due_finish_number = order_track_due_finish_number
-            one.order_track_time_out_finish_number = order_time_out_finish_number
-
     order_track_plan_number = fields.Char('计划数',compute=compute_order_track_number)
     order_track_finish_number = fields.Char('计划完成数',compute=compute_order_track_number)
     order_track_due_number = fields.Char('计划到期数',compute=compute_order_track_number)
@@ -354,7 +366,8 @@ class OrderTrack(models.Model):
     so_id = fields.Many2one('sale.order', '销售合同', ondelete='cascade')
     so_po_return_state = fields.Selection([('un_return','未回传'),('part_return','部分回传'),('returned','已回传')],
                                        '工厂回传状态',related='so_id.po_return_state',store=True)
-    partner_id = fields.Many2one('res.partner', '客户', related='so_id.partner_id', store=True)
+    partner_id = fields.Many2one('res.partner', '客户', compute=compute_partner_id,store=True)
+
     so_sent_qty = fields.Float('已出运数', compute=compute_so_qty, store=True)
 
     so_all_qty = fields.Float('原始总数', compute=compute_so_qty, store=True)
