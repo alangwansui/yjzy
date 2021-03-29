@@ -45,8 +45,8 @@
         <field name="model">plan.check.line</field>
         <field name="arch" type="xml">
             <search string="Order Track">
-            <field name="po_id" string="模糊搜索"
-                       filter_domain="['|',('po_id','ilike',self),('activity_type_1_id','ilike',self)]"/>
+<!--            <field name="po_id" string="模糊搜索"-->
+<!--                       filter_domain="['|',('po_id','ilike',self),('activity_type_1_id','ilike',self)]"/>-->
                 <separator/>
 
                 <filter string="Late Activities" name="activities_overdue"
