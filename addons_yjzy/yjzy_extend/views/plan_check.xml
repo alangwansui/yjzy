@@ -1252,7 +1252,7 @@
         <field name="res_model">order.track</field>
         <field name="view_mode">tree,form</field>
         <field name="domain">
-            [('type','=','order_track'),('order_track_new_order_state','=','10_doing')]
+            [('type','=','order_track'),('order_track_new_order_state','=','10_doing'),('so_po_return_state','=','returned')]
         </field>
         <field name="context">{'type': 'order_track'}</field>
         <field name="view_ids" eval="[(5, 0, 0),

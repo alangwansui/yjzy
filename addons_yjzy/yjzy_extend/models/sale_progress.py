@@ -254,15 +254,17 @@ class sale_order(models.Model):
                         'order_track_id':order_track_ids[0].id,
                         'state':'planning'
                     })
-
+                    sequence = 1
                     for x in activity_type_akiny_ids:
                         plan_check_line = plan_check_line_obj.create({
                             'plan_check_id':plan_check.id,
                             'activity_type_1_id':x.id,
                             'po_id':one.id,
+                            'sequence': sequence,
                             'state':'10_un_planning',
                             'order_track_id': order_track_ids[0].id
                         })
+                        sequence += 1
                         plan_check_line_activity = activity_obj.create({
                         'activity_type_id': x.id,
                         'user_id': self.env.user.id,
