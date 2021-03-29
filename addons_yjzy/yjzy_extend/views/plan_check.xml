@@ -45,8 +45,8 @@
         <field name="model">plan.check.line</field>
         <field name="arch" type="xml">
             <search string="Order Track">
-<!--            <field name="po_id" string="模糊搜索"-->
-<!--                       filter_domain="['|',('po_id','ilike',self),('activity_type_1_id','ilike',self)]"/>-->
+                <field name="po_id" string="模糊搜索"
+                       filter_domain="['|',('po_id','ilike',self),('activity_type_1_id','ilike',self)]"/>
                 <separator/>
 
                 <filter string="Late Activities" name="activities_overdue"
@@ -57,19 +57,20 @@
                 <filter string="Future Activities" name="activities_upcoming_all"
                         domain="[('activity_ids.date_deadline', '&gt;', context_today().strftime('%Y-%m-%d'))
                             ]"/>
+
+                <group expand="1" string="Group By">
+                    <filter string="采购合同" name="group_by_po_id" domain="[]"
+                            context="{'group_by':['po_id']}"/>
+                    <filter string="检查单内容" name="group_activity_type_1_id" domain="[]"
+                            context="{'group_by':['activity_type_1_id']}"/>
+                    <filter string="状态" name="group_state" domain="[]"
+                            context="{'group_by':['state']}"/>
+                    <filter string="检查点计划-年" name="group_date_deadline_year" domain="[]"
+                            context="{'group_by':['date_deadline:year']}"/>
+                    <filter string="检查点计划-月" name="group_date_deadline_year" domain="[]"
+                            context="{'group_by':['date_deadline:month']}"/>
+                </group>
             </search>
-<!--            <group expand="1" string="Group By">-->
-<!--                    <filter string="采购合同" name="group_by_po_id" domain="[]"-->
-<!--                            context="{'group_by':['po_id']}"/>-->
-<!--                    <filter string="检查单内容" name="group_activity_type_1_id" domain="[]"-->
-<!--                            context="{'group_by':['activity_type_1_id']}"/>-->
-<!--                     <filter string="状态" name="group_state" domain="[]"-->
-<!--                        context="{'group_by':['state']}"/>-->
-<!--                    <filter string="检查点计划-年" name="group_date_deadline_year" domain="[]"-->
-<!--                            context="{'group_by':['date_deadline:year']}"/>-->
-<!--                <filter string="检查点计划-月" name="group_date_deadline_year" domain="[]"-->
-<!--                            context="{'group_by':['date_deadline:month']}"/>-->
-<!--                </group>-->
         </field>
     </record>
 
@@ -740,7 +741,8 @@
                                     <sheet>
                                         <group>
                                             <group>
-                                                <field name="date_factory_return" readonly="1"  attrs="{'invisible':[('type','!=','new_order_track')]}"/>
+                                                <field name="date_factory_return" readonly="1"
+                                                       attrs="{'invisible':[('type','!=','new_order_track')]}"/>
 
                                             </group>
                                             <group>
@@ -782,11 +784,11 @@
                                         </notebook>
 
                                     </sheet>
-                                                        <footer invisible="not context.get('open')">
-                                            <button name="action_save_test" type="object" class="oe_highlight"
-                                                    string="保存并关闭"/>
-                                            <button string="关闭" class="btn-primary" special="cancel"/>
-                                        </footer>
+                                    <footer invisible="not context.get('open')">
+                                        <button name="action_save_test" type="object" class="oe_highlight"
+                                                string="保存并关闭"/>
+                                        <button string="关闭" class="btn-primary" special="cancel"/>
+                                    </footer>
                                     <div class="oe_chatter">
                                         <field name="message_follower_ids" widget="mail_followers"/>
                                         <field name="activity_ids" widget="mail_activity"/>
@@ -1004,7 +1006,7 @@
         <field name="name">plan.check.line.tree</field>
         <field name="model">plan.check.line</field>
         <field name="arch" type="xml">
-            <tree string="检查点" default_order="date_deadline" create="false" >
+            <tree string="检查点" default_order="date_deadline" create="false">
                 <field name="po_id"/>
                 <field name="activity_type_1_id"/>
                 <button name="open_activity_id_plan" class="akiny_text_right" type="object" icon="fa-archive"/>
@@ -1012,9 +1014,9 @@
                 <button name="open_activity_id_finish" class="akiny_text_right" type="object" icon="fa-archive"/>
                 <field name="date_finish"/>
                 <field name="plan_check_line_att_count"/>
-                                    <button name="open_self" type="object" icon="fa-paperclip"/>
-                                    <field name="comments_line"/>
-                                    <button name="open_wizard_comments" type="object" icon="fa-commenting-o"/>
+                <button name="open_self" type="object" icon="fa-paperclip"/>
+                <field name="comments_line"/>
+                <button name="open_wizard_comments" type="object" icon="fa-commenting-o"/>
                 <field name="state"/>
                 <button name="open_activity_id" type="object" string="登记该项检查点" groups="base.group_system"/>
             </tree>
@@ -1233,7 +1235,7 @@
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">plan.check.line</field>
         <field name="view_mode">tree,form,kanban</field>
-         <field name="search_view_id" ref="view_plan_check_line_search"/>
+        <field name="search_view_id" ref="view_plan_check_line_search"/>
         <field name="domain">[('order_track_id_state','=','10_doing')]</field>
         <field name="context">{}</field>
         <field name="view_ids" eval="[(5, 0, 0),
@@ -1302,7 +1304,9 @@
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">order.track</field>
         <field name="view_mode">tree,form</field>
-        <field name="domain">[('type','=','transport_track'),('order_track_new_order_state','in',['10_doing','15_receivable_payment'])]</field>
+        <field name="domain">
+            [('type','=','transport_track'),('order_track_new_order_state','in',['10_doing','15_receivable_payment'])]
+        </field>
         <field name="search_view_id" ref="view_order_track_search"/>
         <field name="context">{'search_default_group_date_all_state':1,'type':'transport_track','show_date_finish':1}
         </field>
@@ -1345,8 +1349,8 @@
               action="action_order_track_tb_done"
               sequence="3"/>
 
-   <menuitem id="menu_plan_check" name="所有检查点" parent="menu_order_track_root" action="action_plan_check_line" sequence="5"/>
-
+    <menuitem id="menu_plan_check" name="所有检查点" parent="menu_order_track_root" action="action_plan_check_line"
+              sequence="5"/>
 
 
 </odoo>
