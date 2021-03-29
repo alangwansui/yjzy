@@ -10,7 +10,7 @@
         <t t-jquery=".o_notification_content" t-operation="append">
             <br/><br/>
             <button type="button" class="btn btn-link ba_activity_deadline_showed oe_highlight">OK</button>
-            <button type="button" class="btn btn-link ba_activity_deadline_activity oe_highlight">Activity</button>
+            <button type="button" class="btn btn-link ba_activity_deadline_activity oe_highlight">填写完成时间</button>
             <button type="button" class="btn btn-link ba_activity_deadline_record oe_highlight"><t t-esc="widget.resModelName"/></button>
         </t>
     </t>

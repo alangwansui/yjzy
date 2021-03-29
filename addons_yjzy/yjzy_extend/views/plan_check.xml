@@ -535,7 +535,7 @@
                                     <field name="date_so_contract" readonly="1"/>
                                 </td>
                                 <td>
-                                    <field name="hegui_date"/>
+                                    <field name="hegui_date" readonly="1"/>
                                 </td>
                                 <td>
                                     <field name="latest_date_po_planned"/>
@@ -851,6 +851,7 @@
                         </page>
                         <page groups="base.group_system">
                             <group>
+                                <field name="is_date_out_in"/>
                                 <field name="order_track_transport_state"/>
                                 <field name="order_track_transport"/>
                                 <field name="plan_date_out_in_activity" invisible="1"/>
@@ -1151,7 +1152,7 @@
                                 <th width="15%">采购合同</th>
                                 <th width="15%">检查类型</th>
                                 <th width="15%">检查点计划时间</th>
-                                <th width="15%">检查点文成时间</th>
+                                <th width="15%">检查点完成时间</th>
 
                                 <th width="36%">最后一次备注</th>
                                 <th width="4%"></th>
@@ -1252,7 +1253,7 @@
         <field name="res_model">order.track</field>
         <field name="view_mode">tree,form</field>
         <field name="domain">
-            [('type','=','order_track'),('order_track_new_order_state','=','10_doing'),('so_po_return_state','=','returned')]
+            [('type','=','order_track'),('order_track_new_order_state','=','10_doing'),('so_po_return_state','=','returned'),]
         </field>
         <field name="context">{'type': 'order_track'}</field>
         <field name="view_ids" eval="[(5, 0, 0),

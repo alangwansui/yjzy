@@ -215,7 +215,8 @@ class OrderTrack(models.Model):
             elif one.type == 'order_track':
                 if one.date_so_contract and one.earliest_date_po_order and one.latest_date_po_planned and one.date_so_requested and len(
                         one.plan_check_line_ids) == len(
-                        one.plan_check_line_ids.filtered(lambda x: x.state in ['40_finish', '50_time_out_finish'])) or one.order_track_transport_state in ['20_done','15_receivable_payment']:
+                        one.plan_check_line_ids.filtered(lambda x: x.state in ['40_finish', '50_time_out_finish'])) or \
+                        one.order_track_transport_state in ['20_done','15_receivable_payment'] or one.order_track_transport_is_date_out_in == True:
                     order_track_new_order_state = '20_done'
                 else:
                     order_track_new_order_state = '10_doing'
@@ -286,6 +287,8 @@ class OrderTrack(models.Model):
     order_track_transport = fields.Many2one('order.track','出运跟踪')
     order_track_transport_state = fields.Selection([('10_doing', '跟踪进行时候'),('15_receivable_payment','等待应收付完成'), ('20_done', '已完成')], '下单前状态',
                                                    related='order_track_transport.order_track_new_order_state',store=True)
+    order_track_transport_is_date_out_in = fields.Boolean('进仓日是否已确认', related='order_track_transport.is_date_out_in', store=True)
+
     def test_jisuan(self):
         order_track_obj = self.env['order.track']
         order_track_order = order_track_obj.search(

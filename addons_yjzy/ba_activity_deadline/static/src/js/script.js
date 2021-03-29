@@ -49,6 +49,7 @@ odoo.define('ba_activity_deadline.alert', function (require) {
                         views: [[false, 'form']],
                         res_id: self.resID,
                         target: 'current',
+
                     });
                 },
                 'click .ba_activity_deadline_showed': function () {
@@ -98,7 +99,7 @@ odoo.define('ba_activity_deadline.alert', function (require) {
                         let icon = categ[0].icon || 'fa-lightbulb-o';
 
                         message = '<b>' + resModelName + ': </b>' + message + '<br/>';
-                        message += _t('<b>Due Date: </b>') + DueDate;
+                        message += _t('<b>到期时间: </b>') + DueDate;
 
                         let notification = new ActivityNotification(
                             self.notification_manager,
