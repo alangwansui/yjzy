@@ -214,9 +214,9 @@ class OrderTrack(models.Model):
                     order_track_new_order_state = '10_doing'
             elif one.type == 'order_track':
                 if one.date_so_contract and one.earliest_date_po_order and one.latest_date_po_planned and one.date_so_requested and len(
-                        one.plan_check_line_ids) == len(
                         one.plan_check_line_ids.filtered(lambda x: x.state in ['40_finish', '50_time_out_finish'])) or \
-                        one.order_track_transport_state in ['20_done','15_receivable_payment'] or one.order_track_transport_is_date_out_in == True:
+                        one.order_track_transport_state in ['20_done','15_receivable_payment'] or (one.order_track_transport_is_date_out_in == True and one.sent_percent >=100)\
+                        or one.so_id_state == 'verification':
                     order_track_new_order_state = '20_done'
                 else:
                     order_track_new_order_state = '10_doing'
@@ -360,6 +360,22 @@ class OrderTrack(models.Model):
     so_all_qty = fields.Float('原始总数', compute=compute_so_qty, store=True)
     so_no_sent_qty = fields.Float('未出运数', compute=compute_so_qty, store=True)
     sent_percent = fields.Float('出运进度', compute='compute_so_qty', store=True)
+    so_id_state = fields.Selection([
+        ('draft', 'Quotation'),
+        ('sent', 'Quotation Sent'),
+        ('check', u'检查'),
+        ('submit', u'待责任人审核'),
+        ('sales_approve', u'待业务合规审核'),
+        ('manager_approval', u'待总经理特批'),
+        ('approve', u'审批完成待出运'),
+        ('sale', 'Sales Order'),
+        ('done', 'Locked'),
+        ('cancel', 'Cancelled'),
+        ('refuse', u'拒绝'),
+        ('abnormal', u'异常'),
+        ('verifying', u'待核销'),
+        ('verification', u'核销完成'),
+    ], string='Status', readonly=True, copy=False, index=True, related='so_id.state',store=True)
 
     tb_id = fields.Many2one('transport.bill', '出运合同', ondelete='cascade')
     tb_purchase_invoice_ids = fields.One2many('account.invoice', 'order_track_id', '应付账单',
@@ -1381,6 +1397,9 @@ class PlanCheckLine(models.Model):
     display_name = fields.Char(u'显示名称', compute=compute_display_name)
     sequence = fields.Integer('Sequence', default=10)
     order_track_id = fields.Many2one('order.track', '计划跟踪', ondelete='cascade')
+    order_track_id_state = fields.Selection([('10_doing', '跟踪进行时候'),('15_receivable_payment','等待应收付完成'), ('20_done', '已完成')], '下单前状态',
+                                            related='order_track_id.order_track_new_order_state',store=True) #compute=compute_order_track_state,
+
     plan_check_id = fields.Many2one('plan.check', '计划检查', ondelete='cascade')
     po_id = fields.Many2one('purchase.order', related='plan_check_id.po_id', store=True)
     date_order = fields.Datetime('供应商下单时间', related='po_id.date_order', store=True)
@@ -1408,6 +1427,7 @@ class PlanCheckLine(models.Model):
     plan_check_line_att = fields.One2many('order.track.attachment', 'plan_check_line_id',
                                           string='检查点附件')
     plan_check_line_att_count = fields.Integer('附件数量', compute=compute_plan_check_line_att_count)
+
 
     def open_self(self):
         form_view = self.env.ref('yjzy_extend.view_plan_check_line').id

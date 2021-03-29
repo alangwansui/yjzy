@@ -489,6 +489,8 @@ class transport_bill(models.Model):
             one.date_purchase_finish_state = date_purchase_finish_state
 
 
+
+
     # @api.depends('date_out_in','date_in','date_ship','date_customer_finish','all_purchase_invoice_fill')
     # def _compute_date_all_state(self):
     #     for one in self:
@@ -510,42 +512,52 @@ class transport_bill(models.Model):
     #                     date_all_state = 'un_done'
     #         one.date_all_state = date_all_state
 
-    # 计算时间的有用
-    @api.depends('date_out_in', 'date_in', 'date_ship', 'date_customer_finish', 'all_purchase_invoice_fill','date_ship_state','date_out_in_state','date_customer_finish_state','date_purchase_finish_state')
+    # # 计算时间的有用
+    # @api.depends('date_out_in', 'date_in', 'date_ship', 'date_customer_finish', 'all_purchase_invoice_fill','date_ship_state','date_out_in_state','date_customer_finish_state','date_purchase_finish_state')
+    # def compute_date_all_state_old(self):
+    #     date_all_state = '30_un_done'
+    #     for one in self:
+    #         # 日期填写状态计算 akiny
+    #
+    #         if one.date_out_in_state == 'draft':
+    #             date_all_state = '20_no_date_out_in'
+    #         else:
+    #             if one.date_out_in_state == 'done' and one.date_ship_state == 'done' and one.date_customer_finish_state == 'done' and one.date_purchase_finish_state == 'done':
+    #                 date_all_state = '40_done'
+    #             else:
+    #                 date_all_state = '30_un_done'
+    #         one.date_all_state = date_all_state
+
+    @api.depends('date_out_in', 'date_in', 'date_ship', 'date_customer_finish','date_purchase_finish_is_done')
     def compute_date_all_state(self):
         date_all_state = '30_un_done'
         for one in self:
-            # 日期填写状态计算 akiny
-            if one.date_out_in_state == 'submit' or one.date_ship_state == 'submit'\
-                    or one.date_customer_finish_state == 'submit' or one.date_purchase_finish_state == 'submit':
-                date_all_state = '10_date_approving'
+            if one.date_out_in == False:
+                date_all_state = '20_no_date_out_in'
             else:
-                if one.date_out_in_state == 'draft':
-                    date_all_state = '20_no_date_out_in'
+                if one.date_out_in != False and one.date_ship != False and one.date_customer_finish != False and one.date_purchase_finish_is_done == True:
+                    date_all_state = '40_done'
                 else:
-                    if one.date_out_in_state == 'done' and one.date_ship_state == 'done' and one.date_customer_finish_state == 'done' and one.date_purchase_finish_state == 'done':
-                        date_all_state = '40_done'
-                    else:
-                        date_all_state = '30_un_done'
+                    date_all_state = '30_un_done'
             one.date_all_state = date_all_state
 
-    @api.depends('date_out_in', 'date_in', 'date_ship', 'date_customer_finish', 'all_purchase_invoice_fill','purchase_invoice_ids','purchase_invoice_ids.date_finish',
-                 'date_ship_state', 'date_out_in_state', 'date_customer_finish_state', 'date_purchase_finish_state','second_state')
-    def compute_date_all_state_new(self):
-        for one in self:
-            # 日期填写状态计算 akiny
-            if one.date_out_in_state == 'submit' or one.date_ship_state == 'submit' \
-                    or one.date_customer_finish_state == 'submit' or one.date_purchase_finish_state == 'submit':
-                date_all_state = '10_date_approving'
-            else:
-                if not one.date_out_in or not one.is_date_out_in:
-                    date_all_state = '20_no_date_out_in'
-                else:
-                    if one.date_out_in and one.date_ship and one.date_customer_finish and len(one.purchase_invoice_ids) == len(one.purchase_invoice_ids.filtered(lambda x:x.date_finish != False)) and one.second_state in ['30','40','50']:
-                        date_all_state = '40_done'
-                    else:
-                        date_all_state = '30_un_done'
-            one.date_all_state = date_all_state
+    # @api.depends('date_out_in', 'date_in', 'date_ship', 'date_customer_finish', 'all_purchase_invoice_fill','purchase_invoice_ids','purchase_invoice_ids.date_finish',
+    #              'date_ship_state', 'date_out_in_state', 'date_customer_finish_state', 'date_purchase_finish_state','second_state')
+    # def compute_date_all_state_new(self):
+    #     for one in self:
+    #         # 日期填写状态计算 akiny
+    #         if one.date_out_in_state == 'submit' or one.date_ship_state == 'submit' \
+    #                 or one.date_customer_finish_state == 'submit' or one.date_purchase_finish_state == 'submit':
+    #             date_all_state = '10_date_approving'
+    #         else:
+    #             if not one.date_out_in or not one.is_date_out_in:
+    #                 date_all_state = '20_no_date_out_in'
+    #             else:
+    #                 if one.date_out_in and one.date_ship and one.date_customer_finish and len(one.purchase_invoice_ids) == len(one.purchase_invoice_ids.filtered(lambda x:x.date_finish != False)) and one.second_state in ['30','40','50']:
+    #                     date_all_state = '40_done'
+    #                 else:
+    #                     date_all_state = '30_un_done'
+    #         one.date_all_state = date_all_state
 
     #失效
     @api.depends('date_out_in', 'date_in', 'date_ship', 'date_customer_finish', 'all_purchase_invoice_fill', 'state')
@@ -854,6 +866,18 @@ class transport_bill(models.Model):
             one.qingguan_amount_total = qingguan_amount_total
             one.qingguan_amount_total_origin = qingguan_amount_total_origin
 
+    @api.depends('purchase_invoice_ids','purchase_invoice_ids.date_finish')
+    def compute_date_purchase_finish_is_done(self):
+        for one in self:
+
+            print('-采购发票-', one.purchase_invoice_ids)
+            if all([x.date_finish != False for x in one.purchase_invoice_ids]):
+                date_purchase_finish_is_done = True
+            else:
+                date_purchase_finish_is_done = False
+
+            one.date_purchase_finish_is_done = date_purchase_finish_is_done
+
 
     # 货币设置
 
@@ -910,11 +934,16 @@ class transport_bill(models.Model):
     date_purchase_finish_state = fields.Selection([('draft',u'待提交'),
                                                    ('submit',u'待审核'),
                                                    ('done',u'已审核')],'供应商交单日审批状态',default='draft', compute=compute_date_purchase_finish_state)
+
+
+    date_purchase_finish_is_done = fields.Boolean('供应商交单是否完成',compute=compute_date_purchase_finish_is_done)
+
+
     date_all_state = fields.Selection([('10_date_approving',u'日期审批中'),
                                        ('20_no_date_out_in',u'发货日期待填'),
                                        ('30_un_done',u'其他日期待填'),
                                        ('40_done',u'时间都已填未完成应收付款'),
-                                       ],'所有日期状态',default='20_no_date_out_in',store=True, compute=compute_date_all_state_new)
+                                       ],'所有日期状态',default='20_no_date_out_in',store=True, compute=compute_date_all_state)
     hexiao_type = fields.Selection([('undefined','...'),('abnormal',u'异常核销'),('write_off',u'正常核销')], default='undefined', string='核销类型')
     hexiao_date = fields.Date(u'核销时间')
     hexiao_uid = fields.Many2one('res.users',u'核销人')
