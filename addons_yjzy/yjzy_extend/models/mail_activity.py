@@ -140,7 +140,7 @@ class MailActivity(models.Model):
     po_id = fields.Many2one('purchase.order', '采购合同', related='plan_check_line_id.po_id', store=True)
     date_po_planned = fields.Date('工厂交期', compute=compute_date_po_planned_order, store=True)
     time_supplier_requested = fields.Integer('供应商交期时限', compute=time_supplier_requested, store=True)#交期-合规日期
-    finish_percent_deadline = fields.Float('本计划在整个交期中的位置', compute=compute_date_deadline_hegui)  # 本计划所造总区间的位置，以及本计划在整个进度中的位置
+    finish_percent_deadline = fields.Float('本计划在整个交期中的位置', compute=compute_date_deadline_hegui,store=True)  # 本计划所造总区间的位置，以及本计划在整个进度中的位置
 
     order_track_id = fields.Many2one('order.track', '活动计划', ondelete='cascade', )
     type = fields.Selection([('new_order_track', '新订单下单前跟踪'), ('order_track', '订单跟踪'), ('transport_track', '出运单跟踪')],
@@ -159,7 +159,7 @@ class MailActivity(models.Model):
 
     today_date_hegui = fields.Integer('今天距合规日', compute=compute_hegui_percent)
     today_date_plan = fields.Integer('今天距工厂交期', compute=compute_hegui_percent)
-    finish_percent_today_deadline = fields.Float('完成期限比例', compute=compute_hegui_percent, store=True)#今日所造总区间的位置，以及本计划在整个进度中的位置
+    finish_percent_today_deadline = fields.Float('完成期限比例', compute=compute_hegui_percent)#今日所造总区间的位置，以及本计划在整个进度中的位置
 
 
     finish_percent = fields.Float('完成期限比例', compute=compute_finish_percent)
