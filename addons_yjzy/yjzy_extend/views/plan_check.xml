@@ -822,14 +822,14 @@
                                            attrs="{'readonly':[('parent.order_track_new_order_state','=','20_done')]}"/>
                                     <button name="open_activity_id_plan" class="akiny_text_right" type="object"
                                             attrs="{'invisible':[('activity_id','=',False)],'readonly':['|',('activity_id','!=',False),('parent.order_track_new_order_state','=','20_done')]}"
-                                            icon="fa-archive"/>
+                                            icon="fa-clock-o"/>
                                     <field name="date_deadline"
                                            attrs="{'readonly':['|',('activity_id','!=',False),('parent.order_track_new_order_state','=','20_done')]}"/>
                                     <field name="remaining_time" readonly="1"
                                            attrs="{'invisible':['|',('state','in',['40_finish','50_time_out_finish']),('remaining_time','=',-999)],'column_invisible':[('parent.order_track_new_order_state','=','20_done')]}"/>
                                     <button name="open_activity_id_finish" class="akiny_text_right" type="object"
                                             attrs="{'invisible':['|',('activity_id','=',False),('date_deadline','=',False)]}"
-                                            icon="fa-archive"/>
+                                            icon="fa-check-circle"/>
                                     <field name="date_finish"
                                            attrs="{'readonly':['|',('activity_id','!=',False),('parent.order_track_new_order_state','=','20_done')]}"/>
                                     <field name="plan_check_line_att_count"/>
@@ -1204,13 +1204,13 @@
                                 </td>
                                 <td>
                                     <button name="open_activity_id_plan" class="akiny_text_right" type="object"
-                                            icon="fa-archive" attrs="{'invisible':[('date_deadline','!=',False)]}"/>
+                                             icon="fa-clock-o" attrs="{'invisible':[('date_deadline','!=',False)]}"/>
                                     <field name="date_deadline"
                                            attrs="{'readonly':[('activity_id','=',False)]}"/>
                                 </td>
                                 <td>
                                     <button name="open_activity_id_finish" class="akiny_text_right" type="object"
-                                            icon="fa-archive" attrs="{'invisible':[('date_finish','!=',False)]}"/>
+                                            icon="fa-check-circle" attrs="{'invisible':[('date_finish','!=',False)]}"/>
                                     <field name="date_finish"
                                            attrs="{'readonly':[('activity_id','=',False)]}"/>
                                 </td>

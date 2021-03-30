@@ -329,7 +329,7 @@
                                 confirm="重新添加销售明细，将会清除所有的清关和报关资料！是否继续"
                                 attrs="{'invisible':['|',('operation_wizard','in',['first','second','third','fourth']),('state','not in',['draft'])]}"
                                 class="oe_highlight"/>
-                         <button name="make_new_order_track_tb" type="object" string="创建出运检查" groups="sales_team.group_manager"/>
+                         <button name="make_new_order_track_tb" type="object" string="创建出运检查" groups="base.group_system"/>
 
                         <field name="state" widget="statusbar" statusbar_visible=" "/>
                     </header>

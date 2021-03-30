@@ -228,8 +228,8 @@ class OrderTrack(models.Model):
                 else:
                     order_track_new_order_state = '10_doing'
             elif one.type == 'order_track':
-                if one.date_so_contract and one.earliest_date_po_order and one.latest_date_po_planned and one.date_so_requested and len(
-                        one.plan_check_line_ids.filtered(lambda x: x.state in ['40_finish', '50_time_out_finish'])) or \
+                if one.date_so_contract  and one.latest_date_po_planned and one.date_so_requested and len(
+                        one.plan_check_line_ids.filtered(lambda x: x.state in ['35_advance_finish','40_finish', '50_time_out_finish'])) == len(one.plan_check_line_ids) or \
                         one.order_track_transport_state in ['20_done','15_receivable_payment'] or (one.order_track_transport_is_date_out_in == True and one.sent_percent >=100)\
                         or one.so_id_state == 'verification':
                     order_track_new_order_state = '20_done'
@@ -1444,7 +1444,7 @@ class PlanCheckLine(models.Model):
     def compute_remaining_time(self):
         strptime = datetime.strptime
         for one in self:
-            if one.date_deadline:
+            if one.date_deadline and not one.date_finish:
                 remaining_time = strptime(one.date_deadline, DF) - (datetime.today()-relativedelta(hours=-8))
                 one.remaining_time = remaining_time.days+1
             else:
