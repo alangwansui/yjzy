@@ -996,7 +996,7 @@ class sale_order(models.Model):
         self.ensure_one()
         for po in self.po_ids:
             if not po.can_confirm_by_so:
-                raise Warning(u'PO-%s审批还未完成' % po.comtract_code)
+                raise Warning(u'PO-%s审批还未完成' % po.contract_code)
         return True
 
     def check_date(self):
