@@ -1525,6 +1525,7 @@ class PlanCheckLine(models.Model):
 
     def open_activity_id_plan(self):
         form_view = self.env.ref('yjzy_extend.mail_activity_view_form_popup_new')
+
         return {
             'name': u'登记计划时间',
             'view_type': 'form',
