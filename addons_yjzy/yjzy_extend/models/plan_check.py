@@ -995,6 +995,26 @@ class OrderTrack(models.Model):
                 })
             self.is_date_out_in = True
 
+    def action_date_out_in_linshi(self):
+        if self.date_out_in and not self.is_date_out_in:
+            plan_check_obj = self.env['plan.check']
+            # self.tb_id.with_context({'date_type': 'date_out_in'}).action_customer_date_state_done()
+            self.tb_id.sale_invoice_id.write({
+                'order_track_id': self.id,
+            })
+            for line in self.tb_id.purchase_invoice_ids:
+                line.write({
+                    'order_track_id': self.id
+                })
+            for one in self.tb_id.purchase_invoice_ids:
+                plan_check = plan_check_obj.create({
+                    'type': 'transport_track',
+                    'tb_id': self.tb_id.id,
+                    'purchase_invoice_id': one.id,
+                    'order_track_id': self.id,
+                })
+            self.is_date_out_in = True
+
     # 预计的船期填写日期
 
     def open_purchase_invoice(self):

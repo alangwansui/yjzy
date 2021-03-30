@@ -210,7 +210,8 @@ class sale_order(models.Model):
                     'so_id':self.id,
                     'po_id':one.id,
                     'order_track_id':order_track_new_order_track.id,
-                    'state':'planning'
+                    'state':'planning',
+
                 })
                 sequence = 1
                 for x in activity_type_akiny_ids:
