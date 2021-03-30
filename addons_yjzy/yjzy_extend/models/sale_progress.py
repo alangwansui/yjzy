@@ -303,9 +303,9 @@ class sale_order(models.Model):
                 'po_ids': [(6, 0, po_dic)],
                 'time_draft_order': self.create_date,
                 'hegui_date':self.approve_date,
-                'partner_id':self.partner_id.id,
+
             })
-            order_track_new_order_track.compute_partner_id()
+
             self.plan_check_ids.unlink()
             for one in self.po_ids:
                 plan_check = plan_check_obj.create({

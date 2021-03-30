@@ -27,6 +27,7 @@ class transport_bill(models.Model):
             order_track_transport_track = order_track_obj.create({
                 'type': 'transport_track',
                 'tb_id':self.id,
+                'partner_id': self.partner_id.id,
             })
             order_track_transport_track.create_plan()
             order_track_order = order_track_obj.search([('type','=','order_track'),('so_id','in',self.so_ids.ids)])

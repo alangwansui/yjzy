@@ -695,10 +695,10 @@ class sale_order(models.Model):
         self.state = 'done'
 
     # 13已经添加
-    @api.constrains('current_date_rate', 'fee_inner')
-    def check_fields(self):
-        if self.current_date_rate <= 0:
-            raise Warning(u'汇率必须大于0')
+    # @api.constrains('current_date_rate', 'fee_inner')
+    # def check_fields(self):
+    #     if self.current_date_rate <= 0:
+    #         raise Warning(u'汇率必须大于0')
 
     @api.constrains('contract_code')
     def check_contract_code(self):

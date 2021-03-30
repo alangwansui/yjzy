@@ -367,6 +367,9 @@ class OrderTrack(models.Model):
     so_po_return_state = fields.Selection([('un_return','未回传'),('part_return','部分回传'),('returned','已回传')],
                                        '工厂回传状态',related='so_id.po_return_state',store=True)
     partner_id = fields.Many2one('res.partner', '客户', compute=compute_partner_id,store=True)
+    currency_id = fields.Many2one('res.currency','货币',related='so_id.currency_id',strore=True)
+    so_amount_total = fields.Monetary('销售金额',currency_field='currency_id', related='so_id.amount_total',store=True)
+    so_no_sent_amount_new= fields.Monetary('未发货金额',currency_field='currency_id', related='so_id.no_sent_amount_new',store=True)
 
     so_sent_qty = fields.Float('已出运数', compute=compute_so_qty, store=True)
 
@@ -391,6 +394,8 @@ class OrderTrack(models.Model):
     ], string='Status', readonly=True, copy=False, index=True, related='so_id.state',store=True)
 
     tb_id = fields.Many2one('transport.bill', '出运合同', ondelete='cascade')
+    currency_id_tb = fields.Many2one('res.currency',related='tb_id.currency_id',store=True)
+    tb_org_sale_amount_new = fields.Monetary('出运金额',currency_field='currency_id_tb', related='tb_id.org_sale_amount_new' ,store=True)
     tb_purchase_invoice_ids = fields.One2many('account.invoice', 'order_track_id', '应付账单',
                                               domain=[('yjzy_type', '=', 'purchase')])
     purchase_back_invoice_currency_id = fields.Many2one('res.currency',
@@ -1435,6 +1440,7 @@ class PlanCheckLine(models.Model):
 
     plan_check_id = fields.Many2one('plan.check', '计划检查', ondelete='cascade')
     po_id = fields.Many2one('purchase.order', related='plan_check_id.po_id', store=True)
+    supplier_id = fields.Many2one('res.partner',related='po_id.partner_id' ,string='供应商')
     date_order = fields.Datetime('供应商下单时间', related='po_id.date_order', store=True)
     date_po_planned = fields.Date('工厂交期', compute=compute_date_po_planned_order, store=True)
 
