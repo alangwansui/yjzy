@@ -106,7 +106,7 @@
                 <field name="time_receive_pi" invisible="context.get('type')!='new_order_track'"/>
                 <field name="time_sent_pi" invisible="context.get('type')!='new_order_track'"/>
                 <field name="time_sign_pi" invisible="context.get('type')!='new_order_track'"/>
-                <field name="hegui_date" invisible="context.get('type')!='new_order_track'"/>
+                <field name="hegui_date" invisible="context.get('type')=='transport_track'"/>
                 <field name="approve_date" invisible="context.get('type')!='transport_track'"/>
                 <button name="open_factory_return" class="akiny_text_right" type="object" icon="fa-archive"
                         invisible="context.get('type')!='new_order_track'"/>
@@ -134,7 +134,7 @@
                        invisible="1"/>
                 <field name="date_so_contract" invisible="context.get('type')!='order_track'" readonly="1"
                        string="客户确认日期"/>
-                <field name="earliest_date_po_order" invisible="context.get('type')!='order_track'" string="下单给供应商日期"/>
+                <field name="earliest_date_po_order" invisible="1" string="下单给供应商日期"/>
                 <field name="latest_date_po_planned" invisible="context.get('type')!='order_track'" string="供应商交期"/>
 
                 <field name="date_so_requested" invisible="context.get('type')!='order_track'" widget="date"
