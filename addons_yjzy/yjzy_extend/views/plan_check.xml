@@ -29,6 +29,8 @@
                 <group expand="1" string="Group By">
                     <filter string="客户" name="group_by_partner" domain="[]"
                             context="{'group_by':['partner_id']}"/>
+                    <filter string="责任人" name="group_by_user_id" domain="[]"
+                            context="{'group_by':['user_id']}"/>
                     <filter string="时间状态分组" name="group_date_all_state" domain="[]"
                             context="{'group_by':['date_all_state']}"
                             invisible="context.get('type')!='transport_track'"/>
@@ -95,6 +97,7 @@
                 <button name="open_so_id" class="akiny_text_right" type="object" icon="fa-archive"
                         invisible="context.get('type')!='new_order_track'"/>
                 <field name="so_id" readonly="1" invisible="context.get('type')=='transport_track'"/>
+                <field name="user_id" invisible="1"/>
                 <field name="so_amount_total" invisible="context.get('type')=='transport_track'"/>
                 <field name="currency_id" invisible="1"/>
                 <field name="time_draft_order" readonly="1" widget="date" string="创建草稿时间"

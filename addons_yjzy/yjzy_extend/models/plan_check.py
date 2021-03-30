@@ -366,7 +366,8 @@ class OrderTrack(models.Model):
     so_id = fields.Many2one('sale.order', '销售合同', ondelete='cascade')
     so_po_return_state = fields.Selection([('un_return','未回传'),('part_return','部分回传'),('returned','已回传')],
                                        '工厂回传状态',related='so_id.po_return_state',store=True)
-    partner_id = fields.Many2one('res.partner', '客户', compute=compute_partner_id,store=True)
+    partner_id = fields.Many2one('res.partner', '客户', compute=compute_partner_id,store=True,readonly=1)
+    user_id = fields.Many2one('res.users','责任人',related='partner_id.user_id',store=True,readonly=1)
     currency_id = fields.Many2one('res.currency','货币',related='so_id.currency_id',strore=True)
     so_amount_total = fields.Monetary('销售金额',currency_field='currency_id', related='so_id.amount_total',store=True)
     so_no_sent_amount_new= fields.Monetary('未发货金额',currency_field='currency_id', related='so_id.no_sent_amount_new',store=True)
