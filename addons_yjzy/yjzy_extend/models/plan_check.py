@@ -127,6 +127,21 @@ class OrderTrack(models.Model):
                         finish_percent_supplier = 100
                     one.finish_percent_supplier = finish_percent_supplier
 
+    def compute_finish_percent_supplier_hegui(self):
+        for one in self:
+            if one.type == 'order_track':
+                strptime = datetime.strptime
+                today = datetime.today()-relativedelta(hours=-8)
+                time_supplier_requested = one.time_supplier_requested
+                hegui_date = one.hegui_date
+                print('earliest_date_po_order_ainy', hegui_date)
+                if time_supplier_requested and hegui_date:
+                    x = (today - strptime(hegui_date, DF)).days
+                    finish_percent_supplier = time_supplier_requested != 0 and x * 100 / time_supplier_requested or 0.0
+                    if finish_percent_supplier >= 100:
+                        finish_percent_supplier = 100
+                    one.finish_percent_supplier = finish_percent_supplier
+
     @api.depends('plan_check_ids', 'plan_check_ids.plan_check_line')
     def compute_check_all_number(self):
         len_number = 0
@@ -478,7 +493,7 @@ class OrderTrack(models.Model):
     latest_date_po_planned = fields.Date('最迟供应商交单时间', compute=compute_latest_date_po_planned, store=True)
 
     time_supplier_requested = fields.Integer('供应商交期时限', compute=compute_time_supplier_requested, store=True)
-    finish_percent_supplier = fields.Float('供应商完成期限比例', compute=compute_finish_percent_supplier)
+    finish_percent_supplier = fields.Float('供应商完成期限比例', compute=compute_finish_percent_supplier_hegui)
     # 供应商总的分步检查数量
     check_all_number = fields.Integer('供应商总分步检查数', compute=compute_check_all_number, store=True)
     check_finish_number = fields.Integer('供应商完成分步检查数', compute=compute_check_finish_number, store=True)
