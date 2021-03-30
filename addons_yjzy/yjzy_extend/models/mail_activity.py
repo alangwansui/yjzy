@@ -134,16 +134,13 @@ class MailActivity(models.Model):
         for one in self:
             one.date_po_planned = one.po_id.date_planned
 
-    @api.depends('date_po_planned', 'hegui_date')
+    @api.depends('date_po_planned', 'hegui_date','date_deadline')
     def time_supplier_requested(self):
-        strptime = datetime.strptime
         for one in self:
             if one.date_po_planned and one.hegui_date:
-                date_po_planned = strptime(one.date_po_planned,DF)
-                hegui_date = strptime(one.hegui_date,DF)
-
+                date_po_planned = datetime.strptime(one.date_po_planned,DF)
+                hegui_date = datetime.strptime(one.hegui_date,DF)
                 one.time_supplier_requested = (date_po_planned - hegui_date).days
-                print('date_test_akiny',one.time_supplier_requested)
             else:
                 one.time_supplier_requested = 0
 

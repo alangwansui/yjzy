@@ -214,5 +214,20 @@
         </field>
     </record>
 
+    <record id="action_order_check_line_activity" model="ir.actions.act_window">
+        <field name="name">所有的检查活动</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">mail.activity</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('activity_category','=','plan_check')]</field>
+        <field name="context">{}</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('mail.mail_activity_view_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('mail.mail_activity_view_form_popup')})]"/>
+
+    </record>
+     <menuitem id="menu_order_check_line_activity" name="所有活动" parent="menu_order_track_root" action="action_order_check_line_activity"
+              sequence="7" groups="base.group_system"/>
+
 
 </odoo>
