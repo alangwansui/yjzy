@@ -85,7 +85,7 @@ class wizard_renling(models.TransientModel):
 
     partner_supplier_id = fields.Many2one('res.partner', u'供应商',
                                  domain=[('is_company', '=', True), ('parent_id', '=', False), ('supplier', '=', 1),
-                                         ('name', 'not in', ['未定义', '国税局']), ('invoice_open_ids_count', '!=', 0)])
+                                         ('name', 'not in', ['未定义', '国税局'])])
 
     partner_advance_id = fields.Many2one('res.partner', u'合作伙伴',
                                          domain=[('is_company', '=', True), ('parent_id', '=', False),
