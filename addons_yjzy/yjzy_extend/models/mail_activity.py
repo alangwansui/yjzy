@@ -96,7 +96,7 @@ class MailActivity(models.Model):
                 strptime = datetime.strptime
                 today = datetime.today() - relativedelta(hours=-8)
                 time_supplier_requested = one.time_supplier_requested  # 总的交期时间
-                hegui_date = strptime(one.date_so_contract, DF)
+                hegui_date = strptime(one.hegui_date, DF)
                 date_po_planned = strptime(one.date_po_planned, DF)  # akiny带时间的转换
                 if hegui_date and date_po_planned:
                     today_date_hegui = (today - hegui_date).days

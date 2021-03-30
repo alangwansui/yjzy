@@ -381,10 +381,10 @@ class OrderTrack(models.Model):
                             'type')
 
     order_track_plan_number = fields.Char('计划数',compute=compute_order_track_number)
-    order_track_finish_number = fields.Char('计划完成数',compute=compute_order_track_number)
-    order_track_due_number = fields.Char('计划到期数',compute=compute_order_track_number)
-    order_track_due_finish_number = fields.Char('到期计划完成数',compute=compute_order_track_number)
-    order_track_time_out_finish_number = fields.Char('超时完成计划数',compute=compute_order_track_number)
+    order_track_finish_number = fields.Char('计划完成数',compute=compute_order_track_number,help=u'已经计划的并且完成的数量')
+    order_track_due_number = fields.Char('计划到期数',compute=compute_order_track_number, help=u'已经计划的并且到期的数量')
+    order_track_due_finish_number = fields.Char('到期计划完成数',compute=compute_order_track_number, help=u'已经到期的计划并且完成的数量')
+    order_track_time_out_finish_number = fields.Char('超时完成计划数',compute=compute_order_track_number, help=u'超时完成的数量')
 
 
 

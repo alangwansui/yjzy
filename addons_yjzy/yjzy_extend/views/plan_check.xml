@@ -729,7 +729,7 @@
 
                                     <field name="order_track_plan_number" readonly="1"
                                            attrs="{'column_invisible':[('parent.type','!=','order_track')]}"/>
-                                    <field name="order_track_finish_number" readonly="1"
+                                    <field name="order_track_finish_number" readonly="1" help=""
                                            attrs="{'column_invisible':[('parent.type','!=','order_track')]}"/>
                                     <field name="order_track_due_number" readonly="1"
                                            attrs="{'column_invisible':[('parent.type','!=','order_track')]}"/>
@@ -826,7 +826,7 @@
                                     <field name="date_deadline"
                                            attrs="{'readonly':['|',('activity_id','!=',False),('parent.order_track_new_order_state','=','20_done')]}"/>
                                     <field name="remaining_time" readonly="1"
-                                           attrs="{'invisible':[('state','in',['40_finish','50_time_out_finish'])],'column_invisible':[('parent.order_track_new_order_state','=','20_done')]}"/>
+                                           attrs="{'invisible':['|',('state','in',['40_finish','50_time_out_finish']),('remaining_time','=',-999)],'column_invisible':[('parent.order_track_new_order_state','=','20_done')]}"/>
                                     <button name="open_activity_id_finish" class="akiny_text_right" type="object"
                                             attrs="{'invisible':['|',('activity_id','=',False),('date_deadline','=',False)]}"
                                             icon="fa-archive"/>
