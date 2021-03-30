@@ -23,6 +23,17 @@
 
         </record>
 
+    <record id="update_purchase_date_planned" model="base.automation">
+            <field name="name">update purchase date planned</field>
+            <field name="model_id" ref="yjzy_extend.model_purchase_order"/>
+            <field name="state">code</field>
+            <field name="code">record.action_set_date_planned()</field>
+            <field name="trigger">on_write</field>
+            <field name="active" eval="True"/>
+            <field name="model_id" ref="yjzy_extend.model_purchase_order"/>
+
+        </record>
+
 
 
 

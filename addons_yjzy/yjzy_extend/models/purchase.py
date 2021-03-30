@@ -270,6 +270,8 @@ class purchase_order(models.Model):
                            'submit_uid': self.env.user.id,
                            'submit_date': fields.datetime.now()})
 
+
+
     def action_sales_approve_stage(self):
         stage_id = self._stage_find(domain=[('code', '=', '040')])
         if not stage_id.user_ids:
