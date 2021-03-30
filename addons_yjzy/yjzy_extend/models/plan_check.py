@@ -325,6 +325,16 @@ class OrderTrack(models.Model):
                 partner_id = one.tb_id.partner_id
             one.partner_id = partner_id
 
+    @api.depends('so_id', 'so_id.state_1')
+    def compure_sale_state_1(self):
+        for one in self:
+            one.sale_state_1 = one.so_id.state_1
+
+    @api.depends('so_id', 'so_id.amount_total')
+    def compute_so_cmount_total(self):
+        for one in self:
+            one.so_amount_total = one.so_id.amount_total
+
     error_state = fields.Boolean('是否有问题',compute=compute_error_state)
 
     order_track_transport = fields.Many2one('order.track','出运跟踪')
@@ -341,8 +351,8 @@ class OrderTrack(models.Model):
     order_track_new_order_state = fields.Selection([('10_doing', '跟踪进行时候'),('15_receivable_payment','等待应收付完成'), ('20_done', '已完成')], '下单前状态',
                                                    store=True) #compute=compute_order_track_state,
 
-    sale_state_1 = fields.Selection(Sale_Selection, u'审批流程', related='so_id.state_1', store=True
-                                    )  # 费用审批流程
+
+    sale_state_1 = fields.Selection(Sale_Selection, u'审批流程', compute=compure_sale_state_1, store=True)  # 费用审批流程
     planning_integrity = fields.Selection(
         [('10_un_planning', '未计划'), ('20_part_un_planning', '部分未计划'), ('30_planning', '已完全计划')],
         u'计划安排完整性', default='10_un_planning')
@@ -369,7 +379,9 @@ class OrderTrack(models.Model):
     partner_id = fields.Many2one('res.partner', '客户', compute=compute_partner_id,store=True,readonly=1)
     user_id = fields.Many2one('res.users','责任人',related='partner_id.user_id',store=True,readonly=1)
     currency_id = fields.Many2one('res.currency','货币',related='so_id.currency_id',strore=True)
-    so_amount_total = fields.Monetary('销售金额',currency_field='currency_id', related='so_id.amount_total',store=True)
+
+
+    so_amount_total = fields.Monetary('销售金额',currency_field='currency_id',compute=compute_so_cmount_total,store=True) #related='so_id.amount_total',
     so_no_sent_amount_new= fields.Monetary('未发货金额',currency_field='currency_id', related='so_id.no_sent_amount_new',store=True)
 
     so_sent_qty = fields.Float('已出运数', compute=compute_so_qty, store=True)
