@@ -159,7 +159,7 @@ class MailActivity(models.Model):
 
     today_date_hegui = fields.Integer('今天距合规日', compute=compute_hegui_percent)
     today_date_plan = fields.Integer('今天距工厂交期', compute=compute_hegui_percent)
-    finish_percent_today_deadline = fields.Float('完成期限比例', compute=compute_hegui_percent)#今日所造总区间的位置，以及本计划在整个进度中的位置
+    finish_percent_today_deadline = fields.Float('完成期限比例', compute=compute_hegui_percent, store=True)#今日所造总区间的位置，以及本计划在整个进度中的位置
 
 
     finish_percent = fields.Float('完成期限比例', compute=compute_finish_percent)
