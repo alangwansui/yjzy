@@ -303,6 +303,7 @@ class sale_order(models.Model):
                 'po_ids': [(6, 0, po_dic)],
                 'time_draft_order': self.create_date,
                 'hegui_date':self.approve_date,
+                'partner_id':self.partner_id.id,
             })
 
             self.plan_check_ids.unlink()
