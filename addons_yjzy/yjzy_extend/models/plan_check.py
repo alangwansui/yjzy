@@ -1509,6 +1509,7 @@ class PlanCheckLine(models.Model):
     plan_check_line_att_count = fields.Integer('附件数量', compute=compute_plan_check_line_att_count)
 
 
+
     def open_self(self):
         form_view = self.env.ref('yjzy_extend.view_plan_check_line').id
         return {

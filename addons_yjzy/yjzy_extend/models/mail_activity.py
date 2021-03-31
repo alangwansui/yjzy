@@ -17,7 +17,7 @@ class MailActivityType(models.Model):
     available for all models using activities; or specific to a model in which
     case res_model_id field should be used. """
     _inherit = 'mail.activity.type'
-    category = fields.Selection(selection_add=[('plan_check', '计划检查')])
+    category = fields.Selection(selection_add=[('plan_check', '计划检查'),('tb_date','出运相关日期')])
 
 
 class MailActivity(models.Model):
@@ -144,15 +144,35 @@ class MailActivity(models.Model):
             else:
                 one.time_supplier_requested = 0
 
+    @api.depends('order_track_id', 'order_track_id.partner_id', 'plan_check_line_id', 'po_id', 'po_id.source_so_id',
+                 'po_id.source_so_id.partner_id','po_id.source_so_id.partner_id.assistant_id','po_id.source_so_id.partner_id.user_id')
+    def compute_partner_id(self):
+        for one in self:
+            if one.order_track_id:
+                partner_id = one.order_track_id.partner_id
+            elif one.plan_check_line_id:
+                partner_id = one.po_id.source_so_id.partner_id
+            else:
+                partner_id = False
+            one.partner_id = partner_id
+            one.assistant_id = partner_id.assistant_id
+            one.sale_user_id = partner_id.user_id
 
-    assistant_id = fields.Many2one('res.users','销售助理')
-    sale_user_id = fields.Many2one('res.users','责任人')
+
+
+
+    assistant_id = fields.Many2one('res.users','销售助理',compute=compute_partner_id,store=True)
+    sale_user_id = fields.Many2one('res.users','责任人',compute=compute_partner_id,store=True)
     date_finish = fields.Date('完成时间')
     date_deadline_readonly = fields.Date('计划日期',related='date_deadline',readonly=1)
     plan_check_id = fields.Many2one('plan.check', '检查点', ondelete='cascade', )
     date_deadline = fields.Date('Due Date', index=True, required=False, )
     plan_check_line_id = fields.Many2one('plan.check.line', '检查点', ondelete='cascade', )
     po_id = fields.Many2one('purchase.order', '采购合同', related='plan_check_line_id.po_id', store=True)
+    partner_id = fields.Many2one('res.partner',compute=compute_partner_id,store=True)
+
+
+
     date_po_planned = fields.Date('工厂交期', compute=compute_date_po_planned_order, store=True)
     time_supplier_requested = fields.Integer('供应商交期时限', compute=time_supplier_requested, store=True)#交期-合规日期
     finish_percent_deadline = fields.Float('本计划在整个交期中的位置', compute=compute_date_deadline_hegui)  # 本计划所造总区间的位置，以及本计划在整个进度中的位置

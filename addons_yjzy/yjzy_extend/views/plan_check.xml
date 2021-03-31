@@ -16,14 +16,14 @@
                 <filter name="new_order_state_done" string="已完成"
                         domain="[('order_track_new_order_state','=', '20_done')]"
                         invisible="context.get('type')!='new_order_track'"/>
-                <filter name="hegui_date" string="合规审批未完成" domain="[('hegui_date','=', False)]"/>
+                <filter name="hegui_date" string="合规审批未完成" domain="[('hegui_date','=', False)]"  invisible="context.get('type')!='new_order_track'"/>
 
-                <filter string="Late Activities" name="activities_overdue"
+                <filter string="Late Activities" name="activities_overdue" invisible="1"
                         domain="[('activity_ids.date_deadline', '&lt;', context_today().strftime('%Y-%m-%d'))]"
                         help="Show all records which has next action date is before today"/>
-                <filter string="Today Activities" name="activities_today"
+                <filter string="Today Activities" name="activities_today" invisible="1"
                         domain="[('activity_ids.date_deadline', '=', context_today().strftime('%Y-%m-%d'))]"/>
-                <filter string="Future Activities" name="activities_upcoming_all"
+                <filter string="Future Activities" name="activities_upcoming_all" invisible="1"
                         domain="[('activity_ids.date_deadline', '&gt;', context_today().strftime('%Y-%m-%d'))
                             ]"/>
                 <group expand="1" string="Group By">
@@ -58,12 +58,12 @@
                        filter_domain="['|',('po_id','ilike',self),('activity_type_1_id','ilike',self)]"/>
                 <separator/>
 
-                <filter string="Late Activities" name="activities_overdue"
+                <filter string="Late Activities" name="activities_overdue" invisible="1"
                         domain="[('activity_ids.date_deadline', '&lt;', context_today().strftime('%Y-%m-%d'))]"
                         help="Show all records which has next action date is before today"/>
-                <filter string="Today Activities" name="activities_today"
+                <filter string="Today Activities" name="activities_today" invisible="1"
                         domain="[('activity_ids.date_deadline', '=', context_today().strftime('%Y-%m-%d'))]"/>
-                <filter string="Future Activities" name="activities_upcoming_all"
+                <filter string="Future Activities" name="activities_upcoming_all" invisible="1"
                         domain="[('activity_ids.date_deadline', '&gt;', context_today().strftime('%Y-%m-%d'))
                             ]"/>
 
@@ -88,7 +88,7 @@
         <field name="name">order.track.tree</field>
         <field name="model">order.track</field>
         <field name="arch" type="xml">
-            <tree string="计划" create="false" default_order="date_so_requested" decoration-danger="error_state == True">
+            <tree string="计划" create="false" default_order="date_so_requested,date_all_state" decoration-danger="error_state == True">
                 <field name="type" groups="base.group_system"/>
                 <!--            <field name="date_deadline"/>-->
                 <field name="order_track_new_order_state" invisible="1"/>
