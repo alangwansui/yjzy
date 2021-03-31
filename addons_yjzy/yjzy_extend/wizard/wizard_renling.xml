@@ -19,7 +19,7 @@
                         <field name="partner_supplier_id" attrs="{'invisible':[('renling_type','not in',['purchase_add_invoice'])]}"
                                string="认领供应商"
                                domain="[('is_company','=',True),('parent_id', '=', False),('supplier','=',1),
-                               ('name','not in',['未定义','国税局']),('invoice_open_ids_count','!=',0)]"/>
+                               ('name','not in',['未定义','国税局']),('supplier_invoice_open_ids_count','!=',0)]"/>
 
                         <field name="partner_advance_id" attrs="{'invisible':[('renling_type','not in',['ysrld'])]}"
                                domain="[('is_company','=',True),('parent_id', '=', False),('customer','=',1),

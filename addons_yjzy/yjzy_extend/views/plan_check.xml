@@ -163,9 +163,7 @@
 
                 <field name="tb_id" invisible="context.get('type')!='transport_track'"/>
                 <field name="tb_org_sale_amount_new" invisible="context.get('type')!='transport_track'"/>
-                <field name="sale_invoice_balance" invisible="context.get('type')!='transport_track'" string="剩余应收款"/>
-                <field name="purchase_invoice_balance" invisible="context.get('type')!='transport_track'" string="剩余应付款"/>
-                <field name="back_tax_invoice_balance" invisible="context.get('type')!='transport_track'" string="剩余退税"/>
+
 
                 <field name="date_out_in" invisible="context.get('type')!='transport_track'"
                        options='{"fg_color": "red:is_date_out_in == False"}'/>
@@ -178,7 +176,9 @@
                        invisible="context.get('type')!='transport_track'"/>
                 <button name="open_order_track_tb" type="object" class="oe_stat_button" icon="fa-archive" string="供应商交单"
                         invisible="context.get('type')!='transport_track'"/>
-
+                <field name="sale_invoice_balance" invisible="context.get('type')!='transport_track'" string="剩余应收款" groups="account.group_account_invoice"/>
+                <field name="purchase_invoice_balance" invisible="context.get('type')!='transport_track'" string="剩余应付款" groups="account.group_account_invoice"/>
+                <field name="back_tax_invoice_balance" invisible="context.get('type')!='transport_track'" string="剩余退税" groups="account.group_account_invoice"/>
                 <field name="tb_sale_invoice_id" invisible="1"/>
                 <field name="is_date_out_in" invisible="1"/>
                 <field name="comments_transport_track" invisible="context.get('type')!='transport_track'"/>
@@ -1022,18 +1022,18 @@
         <field name="name">plan.check.line.tree</field>
         <field name="model">plan.check.line</field>
         <field name="arch" type="xml">
-            <tree string="检查点" default_order="date_deadline" create="false">
+            <tree string="检查点" default_order="date_deadline,activity_type_1_id_sequence" create="false"
+                  decoration-danger="remaining_time &lt;= 0 and remaining_time != -999" >
                 <field name="po_id"/>
                 <field name="supplier_id"/>
                 <field name="activity_type_1_id"/>
-                <button name="open_activity_id_plan" class="akiny_text_right" type="object" icon="fa-clock-o"/>
+                <button name="open_activity_id_plan" class="akiny_text_right" attrs="{'invisible':[('activity_id','=',False)],}" type="object" icon="fa-clock-o"/>
                 <field name="date_deadline"/>
                   <field name="remaining_time" readonly="1"
                          attrs="{'invisible':['|',('state','in',['40_finish','50_time_out_finish']),('remaining_time','=',-999)]}"/>
                 <button name="open_activity_id_finish" class="akiny_text_right" type="object"
                         attrs="{'invisible':['|',('activity_id','=',False),('date_deadline','=',False)]}"
                         icon="fa-check-circle"/>
-
                 <field name="date_finish"/>
                 <field name="plan_check_line_att_count"/>
                 <button name="open_self" type="object" icon="fa-paperclip"/>
@@ -1041,6 +1041,7 @@
                 <button name="open_wizard_comments" type="object" icon="fa-commenting-o"/>
                 <field name="activity_id" invisible="1"/>
                 <field name="state"/>
+                <field name="activity_type_1_id_sequence" invisible="1"/>
                 <button name="open_activity_id" type="object" string="登记该项检查点" groups="base.group_system"/>
             </tree>
         </field>
@@ -1370,13 +1371,13 @@
               action="action_order_track_done"
               sequence="2"/>
     <menuitem id="menu_order_track_tb" name="出运跟踪" parent="menu_order_track_root" action="action_order_track_tb"
-              sequence="3"/>
+              sequence="5"/>
     <menuitem id="menu_order_track_tb_done" name="出运跟踪" parent="menu_order_track_done_root"
               action="action_order_track_tb_done"
               sequence="3"/>
 
     <menuitem id="menu_plan_check" name="所有检查点" parent="menu_order_track_root" action="action_plan_check_line"
-              sequence="5"/>
+              sequence="3"/>
     <menuitem id="menu_customer_invoice_for_sales" name="客户应收" parent="menu_order_track_root" action="action_customer_invoice_all_for_sales"
               sequence="6"/>
 

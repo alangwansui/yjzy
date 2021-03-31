@@ -145,6 +145,11 @@ class res_partner(models.Model):
         for one in self:
             one.invoice_open_ids_count = len(one.invoice_open_ids)
 
+    @api.depends('supplier_invoice_ids','supplier_invoice_ids.state')
+    def compute_supplier_invoice_open_ids_count(self):
+        for one in self:
+            one.supplier_invoice_open_ids_count = len(one.supplier_invoice_ids)
+
     @api.depends('supplier_invoice_ids','supplier_invoice_ids.amount_payment_approval_all','supplier_invoice_ids.state')
     def compute_supplier_amount_invoice_approval(self):
         for one in self:
@@ -202,9 +207,13 @@ class res_partner(models.Model):
                                           ('state', 'in', ['open'])])
     invoice_open_ids_count = fields.Integer('有余额应收账单数量',compute=compute_invoice_open_ids_count, store=True)
 
+
+
     supplier_invoice_ids = fields.One2many('account.invoice', 'partner_id', '应付账单',
                                   domain=[('type', '=', 'in_invoice'),
                                           ('state', 'not in', ['draft', 'cancel'])])
+
+    supplier_invoice_open_ids_count = fields.Integer('有余额应收账单数量',compute=compute_supplier_invoice_open_ids_count, store=True)
     advance_payment_ids = fields.One2many('account.payment', 'partner_id','预收认领',
                                           domain=[('sfk_type', '=', 'ysrld'), ('state', 'in', ['posted', 'reconciled'])],
                                           )

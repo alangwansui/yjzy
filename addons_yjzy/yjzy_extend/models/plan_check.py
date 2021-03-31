@@ -228,10 +228,12 @@ class OrderTrack(models.Model):
                 else:
                     order_track_new_order_state = '10_doing'
             elif one.type == 'order_track':
-                if (one.date_so_contract  and one.latest_date_po_planned and one.date_so_requested and len(
-                        one.plan_check_line_ids.filtered(lambda x: x.state in ['35_advance_finish','40_finish', '50_time_out_finish'])) == len(one.plan_check_line_ids)) or \
-                        one.order_track_transport_state in ['20_done','15_receivable_payment'] or (one.order_track_transport_is_date_out_in == True and one.sent_percent >=100)\
+                if  one.order_track_transport_state in ['20_done','15_receivable_payment'] or (one.order_track_transport_is_date_out_in == True and one.sent_percent >=100)\
                         or one.so_id_state == 'verification':
+                    # (one.date_so_contract and one.latest_date_po_planned and one.date_so_requested and len(
+                    #     one.plan_check_line_ids.filtered(
+                    #         lambda x: x.state in ['35_advance_finish', '40_finish', '50_time_out_finish'])) == len(
+                    #     one.plan_check_line_ids)) or \
                     order_track_new_order_state = '20_done'
                 else:
                     order_track_new_order_state = '10_doing'
@@ -1488,6 +1490,7 @@ class PlanCheckLine(models.Model):
     # activity_date_finish = fields.Date('检查点计划时间', related='activity_id.date_finish')
     activity_type_1_id = fields.Many2one('mail.activity.type', '检查类型')
     activity_type_1_id_name = fields.Char('检查类型',related='activity_type_1_id.name',store=True)
+    activity_type_1_id_sequence = fields.Integer('Sequence', related='activity_type_1_id.sequence',store=True)
     comments_line = fields.Text('工厂检查明细备注', track_visibility='onchange')
 
     remaining_time = fields.Integer('剩余时间', compute=compute_remaining_time, )
