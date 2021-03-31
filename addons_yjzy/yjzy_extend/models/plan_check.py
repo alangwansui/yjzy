@@ -1407,6 +1407,7 @@ class PlanCheckLine(models.Model):
     def compute_state(self):
         strptime = datetime.strptime
         now = datetime.now()-relativedelta(hours=-8)
+        print('now_akiny',now)
         for one in self:
             if not one.date_deadline:
                 state = '10_un_planning'
