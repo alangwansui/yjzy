@@ -1406,7 +1406,7 @@ class PlanCheckLine(models.Model):
     @api.depends('date_finish', 'date_deadline')
     def compute_state(self):
         strptime = datetime.strptime
-        now = datetime.now()
+        now = datetime.now()-relativedelta(hours=-8)
         for one in self:
             if not one.date_deadline:
                 state = '10_un_planning'
@@ -1422,7 +1422,7 @@ class PlanCheckLine(models.Model):
                     else:
                         state = '50_time_out_finish'
                 else:
-                    time_out = (now - fields.Datetime.from_string(one.date_deadline)).days+1
+                    time_out = (now - fields.Datetime.from_string(one.date_deadline)).days
                     print('time_out_akiny', time_out)
                     if time_out >= 0:
                         state = '30_time_out_planning'
