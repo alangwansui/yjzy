@@ -227,6 +227,8 @@ class sale_order(models.Model):
                     plan_check_line_activity = activity_obj.create({
                     'activity_type_id': x.id,
                     'user_id': self.env.user.id,
+                    'assistant_id': self.env.user.id,
+                    'sale_user_id': self.env.user.assistant_id.id,
                     'order_track_id':order_track_new_order_track.id,
                     'plan_check_id': plan_check.id,
                     'plan_check_line_id':plan_check_line.id,
@@ -269,6 +271,8 @@ class sale_order(models.Model):
                         plan_check_line_activity = activity_obj.create({
                         'activity_type_id': x.id,
                         'user_id': self.env.user.id,
+                        'assistant_id':self.env.user.id,
+                        'sale_user_id':self.env.user.assistant_id.id,
                         'order_track_id':order_track_ids[0].id,
                         'plan_check_id': plan_check.id,
                         'plan_check_line_id':plan_check_line.id,

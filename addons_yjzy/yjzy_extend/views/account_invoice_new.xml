@@ -298,7 +298,8 @@
                     <field name="date_finish" string="交单日期"/>
                     <field name="date_ship" string="出运船日期"/>
                     <button name="open_reconcile_order_line" icon="fa-pencil-square-o" type="object" groups="base.group_system"/>
-                    <field name="invoice_date_deadline" string="账期计算方式" />
+                    <field name="payment_term_id" invisible="context.get('for_sales')"/>
+                    <field name="invoice_date_deadline" string="账期计算方式" invisible="not context.get('for_sales')"/>
                     <field name="days_term" string="账期"/>
                     <field name="date_deadline_new" string="实际到期日"/>
                     <field name="residual_times_new" invisible="1"/>

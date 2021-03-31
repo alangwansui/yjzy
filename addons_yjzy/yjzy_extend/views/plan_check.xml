@@ -1351,7 +1351,7 @@
 
     </record>
     <menuitem id="menu_order_track_done_root" name="已完成" parent="menu_order_track_root"
-              sequence="4"/>
+              sequence="7"/>
     <menuitem id="menu_order_track_root" name="合同跟踪" sequence="99" groups="sales_team.group_manager"/>
     <menuitem id="menu_new_order_track" name="新订单下单前跟踪" parent="menu_order_track_root" action="action_new_order_track"
               sequence="1"/>

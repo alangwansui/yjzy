@@ -145,13 +145,11 @@ class MailActivity(models.Model):
                 one.time_supplier_requested = 0
 
 
-
+    assistant_id = fields.Many2one('res.users','销售助理')
+    sale_user_id = fields.Many2one('res.users','责任人')
     date_finish = fields.Date('完成时间')
-
     date_deadline_readonly = fields.Date('计划日期',related='date_deadline',readonly=1)
-
     plan_check_id = fields.Many2one('plan.check', '检查点', ondelete='cascade', )
-
     date_deadline = fields.Date('Due Date', index=True, required=False, )
     plan_check_line_id = fields.Many2one('plan.check.line', '检查点', ondelete='cascade', )
     po_id = fields.Many2one('purchase.order', '采购合同', related='plan_check_line_id.po_id', store=True)
