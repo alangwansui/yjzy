@@ -1026,14 +1026,20 @@
                 <field name="po_id"/>
                 <field name="supplier_id"/>
                 <field name="activity_type_1_id"/>
-                <button name="open_activity_id_plan" class="akiny_text_right" type="object" icon="fa-archive"/>
+                <button name="open_activity_id_plan" class="akiny_text_right" type="object" icon="fa-clock-o"/>
                 <field name="date_deadline"/>
-                <button name="open_activity_id_finish" class="akiny_text_right" type="object" icon="fa-archive"/>
+                  <field name="remaining_time" readonly="1"
+                         attrs="{'invisible':['|',('state','in',['40_finish','50_time_out_finish']),('remaining_time','=',-999)]}"/>
+                <button name="open_activity_id_finish" class="akiny_text_right" type="object"
+                        attrs="{'invisible':['|',('activity_id','=',False),('date_deadline','=',False)]}"
+                        icon="fa-check-circle"/>
+
                 <field name="date_finish"/>
                 <field name="plan_check_line_att_count"/>
                 <button name="open_self" type="object" icon="fa-paperclip"/>
                 <field name="comments_line"/>
                 <button name="open_wizard_comments" type="object" icon="fa-commenting-o"/>
+                <field name="activity_id" invisible="1"/>
                 <field name="state"/>
                 <button name="open_activity_id" type="object" string="登记该项检查点" groups="base.group_system"/>
             </tree>
