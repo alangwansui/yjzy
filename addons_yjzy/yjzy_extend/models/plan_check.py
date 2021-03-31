@@ -858,7 +858,7 @@ class OrderTrack(models.Model):
             elif len(one.plan_check_line_ids) == len(
                     one.plan_check_line_ids.filtered(lambda x: x.state in ['10_un_planning'])):
                 check_on_time = '10_not_time'
-            elif len(one.plan_check_line_ids.filtered(lambda x: x.state == '30_time_out_planning')) >= 0:
+            elif len(one.plan_check_line_ids.filtered(lambda x: x.state == '30_time_out_planning')) > 0:
                 check_on_time = '20_out_time_un_finish'
             elif len(one.plan_check_line_ids.filtered(lambda x: x.state == '50_time_out_finish')) > 0:
                 check_on_time = '40_out_time_finish'
@@ -1422,7 +1422,7 @@ class PlanCheckLine(models.Model):
                     else:
                         state = '50_time_out_finish'
                 else:
-                    time_out = (now - fields.Datetime.from_string(one.date_deadline)).days
+                    time_out = (now - fields.Datetime.from_string(one.date_deadline)).days+1
                     print('time_out_akiny', time_out)
                     if time_out >= 0:
                         state = '30_time_out_planning'
