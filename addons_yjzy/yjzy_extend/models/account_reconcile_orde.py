@@ -2607,14 +2607,16 @@ class account_reconcile_order(models.Model):
         self.line_no_ids = None
         advance_residual2 = 0
         advance_residual = 0
+        amount_payment_org = 0
         for one in self.invoice_ids:
             if amount > 0:
                 amount_payment_org = amount
             else:
-                if one.invoice_attribute == 'expense_po':
-                    amount_payment_org = one.amount_payment_can_approve_all
-                elif one.invoice_attribute == 'other_payment':
-                    amount_payment_org = one.amount_payment_can_approve_all
+                if one.yjzy_type in ['sale','purchase']:
+                    if one.invoice_attribute == 'expense_po':
+                        amount_payment_org = one.amount_payment_can_approve_all
+                    if one.invoice_attribute == 'other_payment':
+                        amount_payment_org = one.amount_payment_can_approve_all
                 else:
                     amount_payment_org = one.declaration_amount
             if one.type == 'out_invoice':
