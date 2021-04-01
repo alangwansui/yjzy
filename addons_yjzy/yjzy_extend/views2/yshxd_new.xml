@@ -773,7 +773,7 @@
                         </page>
 
                         <page string="认领应收账单"
-                              attrs="{'invisible':[('yjzy_type','not in',['back_tax','other_payment_sale'])]}">
+                              attrs="{'invisible':[('yjzy_type','not in',['back_tax','other_payment_sale','sale'])]}">
                             <field name="line_no_ids"
                                    attrs="{'readonly':[('state_1','not in',['draft','draft_yshxd','draft_all','account_approval','account_approval_yshxd'])]}">
                                 <tree editable="bottom" create="false">
