@@ -286,7 +286,7 @@
             <field name="name">account.invoice.new.tree</field>
             <field name="model">account.invoice</field>
             <field name="arch" type="xml">
-                <tree decoration-info="state == 'draft'" default_order="date_deadline_new,extra_code"
+                <tree decoration-info="state == 'draft'" class="o_list_view_scroll" default_order="date_deadline_new,extra_code"
                       decoration-danger="is_yjzy_invoice == True and state not in ['draft','cancel']"
                       decoration-muted="state == 'cancel'" string="Invoice" create="false">
                     <field name="partner_id" groups="base.group_user" string="客户"/>

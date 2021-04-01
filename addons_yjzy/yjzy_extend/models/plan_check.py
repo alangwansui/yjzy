@@ -351,6 +351,26 @@ class OrderTrack(models.Model):
         for one in self:
             one.so_amount_total = one.so_id.amount_total
 
+    @api.depends('date_so_requested')
+    def compute_date_so_requested_is_out_time(self):
+        for one in self:
+            strptime = datetime.strptime
+            strftime = datetime.strftime
+            today = datetime.today() - relativedelta(hours=-8)
+            if one.date_so_requested:
+                date_so_requested = "%s" % (strptime(one.date_so_requested, '%Y-%m-%d 00:00:00'))  # akiny 参考
+                today_1 = "%s" % (strftime(today, '%Y-%m-%d 00:00:00'))  # akiny 参考
+                time_today_requested = (strptime(date_so_requested, DATETIME_FORMAT) - strptime(today_1,
+                                                                                                DATETIME_FORMAT)).days  # akiny 参考
+                print('time_today_requested_akiny', today_1, date_so_requested, time_today_requested)
+                if time_today_requested > 0:
+                    date_so_requested_is_out_time = '10_undue'
+                elif time_today_requested == 0:
+                    date_so_requested_is_out_time = '20_in_time'
+                else:
+                    date_so_requested_is_out_time = '30_out_time'
+                one.date_so_requested_is_out_time = date_so_requested_is_out_time
+
     error_state = fields.Boolean('是否有问题',compute=compute_error_state)
 
     order_track_transport = fields.Many2one('order.track','出运跟踪')
@@ -485,6 +505,11 @@ class OrderTrack(models.Model):
 
     date_so_contract = fields.Date('客户下单日期', related='so_id.contract_date', store=True)
     date_so_requested = fields.Datetime('客户交期', related='so_id.requested_date', store=True)
+
+
+
+
+    date_so_requested_is_out_time = fields.Selection([('10_undue','未到期'),('20_in_time','到期'),('30_out_time','已逾期')],u'客户交期是否逾期',compute=compute_date_so_requested_is_out_time,store=True)
 
     time_contract_requested = fields.Integer('客户交期时限', compute=compute_time_contract_requested, store=True)
     finish_percent = fields.Float('完成期限比例', compute=compute_finish_percent)
@@ -1470,6 +1495,8 @@ class PlanCheckLine(models.Model):
     def compute_date_po_planned_order(self):
         for one in self:
             one.date_po_planned = one.po_id.date_planned
+
+
 
 
     display_name = fields.Char(u'显示名称', compute=compute_display_name)

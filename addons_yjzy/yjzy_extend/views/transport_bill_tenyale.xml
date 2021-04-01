@@ -89,7 +89,7 @@
             <field name="name">transport.bill.tree</field>
             <field name="model">transport.bill</field>
             <field name="arch" type="xml">
-                <tree string="出运单" create="false" default_order="stage_id,approve_date desc">
+                <tree string="出运单" create="false" class="o_list_view_scroll" default_order="stage_id,approve_date desc">
                     <field name="current_date_rate" string="汇率"/>
                     <field name="ref"/>
                     <field name="name" invisible="1" groups="base.group_system"/>

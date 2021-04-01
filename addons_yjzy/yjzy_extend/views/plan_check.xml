@@ -40,6 +40,9 @@
                       <filter string="客户交期月" name="group_date_so_requested" domain="[]"
                             context="{'group_by':['date_so_requested:month']}"
                             invisible="context.get('type')=='transport_track'"/>
+                    <filter string="客户交期期限状态" name="group_ddate_so_requested_is_out_time" domain="[]"
+                            context="{'group_by':['date_so_requested_is_out_time']}"
+                            invisible="context.get('type')=='transport_track'"/>
 
                     <filter string="下单前状态" name="group_new_order_state" domain="[]"
                             context="{'group_by':['order_track_new_order_state']}" invisible="1"/>
@@ -88,12 +91,13 @@
         <field name="name">order.track.tree</field>
         <field name="model">order.track</field>
         <field name="arch" type="xml">
-            <tree string="计划" create="false" default_order="date_so_requested,date_all_state" decoration-danger="error_state == True">
+            <tree string="计划" create="false" default_order="date_so_requested,date_all_state" class="o_list_view_scroll" decoration-danger="error_state == True">
                 <field name="type" groups="base.group_system"/>
                 <!--            <field name="date_deadline"/>-->
                 <field name="order_track_new_order_state" invisible="1"/>
 
                 <field name="partner_id"/>
+                <field name="date_so_requested_is_out_time"/>
                 <button name="open_so_id" class="akiny_text_right" type="object" icon="fa-archive"
                         invisible="context.get('type')!='new_order_track'"/>
                 <field name="so_id" readonly="1" invisible="context.get('type')=='transport_track'"/>
