@@ -2429,56 +2429,56 @@ class account_payment(models.Model):
 
             }
 
-    def make_back_tax_invoice(self):
-        self.ensure_one()
-        # if not self.date_out_in:
-        #     raise Warning(u'请先设置进仓日期')
-        back_tax_invoice = self.back_tax_invoice_id
-        if not back_tax_invoice:
-            partner = self.env.ref('yjzy_extend.partner_back_tax')
-            product = self.env.ref('yjzy_extend.product_back_tax')
-            # account = self.env['account.account'].search([('code','=', '50011'),('company_id', '=', self.user_id.company_id.id)], limit=1)
-            account = product.property_account_income_id
-            if not account:
-                raise Warning(u'没有找到退税科目,请先在退税产品的收入科目上设置')
-
-            back_tax_invoice = self.env['account.invoice'].create({
-                'partner_id': partner.id,
-                'type': 'out_invoice',
-                'journal_type': 'sale',
-                'date_ship': self.date,
-                'date_finish': self.date,
-                'bill_id': self.id,
-                'yjzy_type': 'back_tax',
-                'yjzy_type_1': 'back_tax',
-                'invoice_attribute': 'manual',
-                'is_manual':True,
-                'invoice_type_main': '10_main',
-                'gongsi_id': self.purchase_gongsi_id.id,
-                'stage_id': self.env['account.invoice.stage'].search([('code', '=', '007')], limit=1).id,
-                'include_tax': self.include_tax,
-                'invoice_line_ids': [(0, 0, {
-                    'name': '%s:%s' % (product.name, self.name),
-                    'product_id': product.id,
-                    'quantity': 1,
-                    'price_unit': self.back_tax_amount,
-                    'account_id': account.id,
-                })]
-            })
-            # 730 创建后直接过账
-            back_tax_invoice.yjzy_invoice_id = back_tax_invoice.id
-            back_tax_invoice.invoice_attribute = 'manual'
-            back_tax_invoice.action_invoice_open()
-            self.back_tax_invoice_id = back_tax_invoice
-        # return {
-        #     'name': '退税账单',
-        #     'view_type': 'form',
-        #     'view_mode': 'tree,form',
-        #     'res_model': 'account.invoice',
-        #     'type': 'ir.actions.act_window',
-        #     'tree_view_ref': 'account.invoice_tree',
-        #     'res_id': back_tax_invoice.id
-        # }
+    # def make_back_tax_invoice(self):
+    #     self.ensure_one()
+    #     # if not self.date_out_in:
+    #     #     raise Warning(u'请先设置进仓日期')
+    #     back_tax_invoice = self.back_tax_invoice_id
+    #     if not back_tax_invoice:
+    #         partner = self.env.ref('yjzy_extend.partner_back_tax')
+    #         product = self.env.ref('yjzy_extend.product_back_tax')
+    #         # account = self.env['account.account'].search([('code','=', '50011'),('company_id', '=', self.user_id.company_id.id)], limit=1)
+    #         account = product.property_account_income_id
+    #         if not account:
+    #             raise Warning(u'没有找到退税科目,请先在退税产品的收入科目上设置')
+    #
+    #         back_tax_invoice = self.env['account.invoice'].create({
+    #             'partner_id': partner.id,
+    #             'type': 'out_invoice',
+    #             'journal_type': 'sale',
+    #             'date_ship': self.date,
+    #             'date_finish': self.date,
+    #             'bill_id': self.id,
+    #             'yjzy_type': 'back_tax',
+    #             'yjzy_type_1': 'back_tax',
+    #             'invoice_attribute': 'manual',
+    #             'is_manual':True,
+    #             'invoice_type_main': '10_main',
+    #             'gongsi_id': self.purchase_gongsi_id.id,
+    #             'stage_id': self.env['account.invoice.stage'].search([('code', '=', '007')], limit=1).id,
+    #             'include_tax': self.include_tax,
+    #             'invoice_line_ids': [(0, 0, {
+    #                 'name': '%s:%s' % (product.name, self.name),
+    #                 'product_id': product.id,
+    #                 'quantity': 1,
+    #                 'price_unit': self.back_tax_amount,
+    #                 'account_id': account.id,
+    #             })]
+    #         })
+    #         # 730 创建后直接过账
+    #         back_tax_invoice.yjzy_invoice_id = back_tax_invoice.id
+    #         back_tax_invoice.invoice_attribute = 'manual'
+    #         back_tax_invoice.action_invoice_open()
+    #         self.back_tax_invoice_id = back_tax_invoice
+    #     # return {
+    #     #     'name': '退税账单',
+    #     #     'view_type': 'form',
+    #     #     'view_mode': 'tree,form',
+    #     #     'res_model': 'account.invoice',
+    #     #     'type': 'ir.actions.act_window',
+    #     #     'tree_view_ref': 'account.invoice_tree',
+    #     #     'res_id': back_tax_invoice.id
+    #     # }
 
 
 

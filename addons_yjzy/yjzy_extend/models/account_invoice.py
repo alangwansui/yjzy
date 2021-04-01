@@ -810,7 +810,7 @@ class account_invoice(models.Model):
          ('other_po', u'直接增加'),
          ('expense_po', u'费用转换'),
          ('other_payment', u'其他'),
-         ('manual','手动')], u'账单属性')
+         ], u'账单属性')
 
     yjzy_type_1 = fields.Selection([('sale', u'应收'),
                                     ('purchase', u'应付'),
