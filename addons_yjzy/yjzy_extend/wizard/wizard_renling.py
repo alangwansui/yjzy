@@ -368,16 +368,14 @@ class wizard_renling(models.TransientModel):
         else:
             invoice_ids = self.invoice_ids
         print('invoice_ids', invoice_ids)
-
         name = self.env['ir.sequence'].next_by_code('sfk.type.%s' % sfk_type)
         if self.renling_type in ['yshxd', 'back_tax', 'other_payment','purchase_add_invoice']:
-
             yshxd_id = yshxd_obj.with_context({'default_invoice_ids': invoice_ids,'default_sfk_type': 'yshxd'}).create({
                 'name': name,
                 'invoice_partner':invoice_partner,
                 'name_title':name_title,
                 'operation_wizard': operation_wizard,
-                'partner_id': self.partner_id.id,
+                'partner_id': self.partner_id and self.partner_id.id or self.partner_supplier_id.id,
                 'sfk_type': 'yshxd',
                 'renling_type': self.renling_type,
                 'back_tax_declaration_id': back_tax_declaration_id,
