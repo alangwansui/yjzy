@@ -614,7 +614,7 @@ class account_reconcile_order(models.Model):
                                                         )  # 从自身创建的所有的预付-应付认领单。
 
     renling_type = fields.Selection([('yshxd', '应收认领'),
-                                     ('back_tax', '退税认领'), ('other_payment', '其他认领')], u'认领属性')  # 没有是指作用
+                                     ('back_tax', '退税认领'), ('other_payment', '其他认领'),('purchase_add_invoice','增加采购应收认领')], u'认领属性')  # 没有是指作用
     company_currency_id = fields.Many2one('res.currency', string='公司货币', related='company_id.currency_id',
                                           readonly=True)
     back_tax_declaration_id = fields.Many2one('back.tax.declaration', u'退税申报表')
