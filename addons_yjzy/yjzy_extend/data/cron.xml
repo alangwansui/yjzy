@@ -48,4 +48,21 @@
             <field eval="False" name="doall" />
         </record>
 
+     <record forcecreate="True" id="ir_cron_compute_date_so_requested_is_out_time" model="ir.cron">
+            <field name="name">计算客户交期逾期状态</field>
+            <field name="model_id" ref="model_order_track"/>
+            <field name="state">code</field>
+             <field name="usage">ir_cron</field>
+            <field name="code">
+                model.search([]).compute_date_so_requested_is_out_time()
+            </field>
+            <field eval="True" name="active" />
+            <field name="user_id" ref="base.user_root"/>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+
+            <field name="numbercall">-1</field>
+            <field eval="True" name="doall" />
+        </record>
+
 </odoo>

@@ -97,7 +97,7 @@
                 <field name="order_track_new_order_state" invisible="1"/>
 
                 <field name="partner_id"/>
-                <field name="date_so_requested_is_out_time"/>
+                <field name="date_so_requested_is_out_time" invisible="1"/>
                 <button name="open_so_id" class="akiny_text_right" type="object" icon="fa-archive"
                         invisible="context.get('type')!='new_order_track'"/>
                 <field name="so_id" readonly="1" invisible="context.get('type')=='transport_track'"/>
