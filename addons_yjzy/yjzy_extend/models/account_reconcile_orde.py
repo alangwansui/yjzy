@@ -458,11 +458,11 @@ class account_reconcile_order(models.Model):
     @api.depends('line_no_ids', 'line_no_ids.amount_payment_can_approve_all_after')
     def compute_amount_payment_can_approve_all_after(self):
         for one in self:
-            if one.line_no_ids:
+            if one.line_no_other_ids:
                 one.amount_payment_can_approve_all_after = sum(
-                x.amount_payment_can_approve_all_after for x in one.line_no_ids)
+                    x.amount_payment_can_approve_all_after for x in one.line_no_ids)
             else:
-                one.amount_payment_can_approve_all_after=0
+                one.amount_payment_can_approve_all_after = 0
 
     @api.depends('line_no_ids', 'line_no_ids.invoice_residual_this_time')
     def compute_amount_payment_can_approve_all_this_time(self):
