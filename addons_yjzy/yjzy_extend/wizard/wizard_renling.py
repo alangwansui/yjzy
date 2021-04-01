@@ -302,6 +302,13 @@ class wizard_renling(models.TransientModel):
                 raise Warning('请先选择需要认领的账单')
             if len(self.invoice_ids) > 1:
                 raise Warning('一次只允许认领一张！')
+        if self.renling_type == 'purchase_add_invoice':
+            if not self.partner_supplier_id:
+                raise Warning('请先选择供应商')
+            if not self.invoice_ids:
+                raise Warning('请先选择需要认领的账单')
+            if len(self.invoice_ids) > 1:
+                raise Warning('一次只允许认领一张！')
         if self.renling_type == 'ysrld':
             if not self.partner_id:
                 raise Warning('请先选择客户')
@@ -343,6 +350,12 @@ class wizard_renling(models.TransientModel):
             operation_wizard = '10'
             invoice_partner = self.invoice_ids[0].invoice_partner
             name_title = self.invoice_ids[0].name_title
+        elif self.renling_type == "purchase_add_invoice":
+            invoice_attribute = 'other_po'
+            sfk_type = 'yshxd'
+            yjzy_type = 'sale'
+            hxd_type_new = '20'  # 默认是收款认领，当点应收认领的时候状态进行判断
+            operation_wizard = '10'
         else:
             invoice_attribute = False
             operation_wizard = '10'
@@ -357,7 +370,7 @@ class wizard_renling(models.TransientModel):
         print('invoice_ids', invoice_ids)
 
         name = self.env['ir.sequence'].next_by_code('sfk.type.%s' % sfk_type)
-        if self.renling_type in ['yshxd', 'back_tax', 'other_payment']:
+        if self.renling_type in ['yshxd', 'back_tax', 'other_payment','purchase_add_invoice']:
 
             yshxd_id = yshxd_obj.with_context({'default_invoice_ids': invoice_ids,'default_sfk_type': 'yshxd'}).create({
                 'name': name,

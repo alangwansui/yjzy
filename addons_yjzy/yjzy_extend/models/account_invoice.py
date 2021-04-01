@@ -719,7 +719,7 @@ class account_invoice(models.Model):
             one.jianyi_advance = jianyi_advance < rest_advance_so_po_balance and jianyi_advance or rest_advance_so_po_balance
 
 
-
+    is_manual = fields.Boolean('是否手动创建',default=False)
 
     advance_pre = fields.Monetary('建议认领预收付总金额',currency_field='currency_id', compute=compute_advance_pre_rest,store=True)
     wait_advance = fields.Monetary('待认领预付',currency_field='currency_id', compute=compute_advance_pre_rest,store=True)#相关剩余预收付金额
@@ -809,7 +809,8 @@ class account_invoice(models.Model):
          ('extra', u'额外账单'),  # 这个等待删除
          ('other_po', u'直接增加'),
          ('expense_po', u'费用转换'),
-         ('other_payment', u'其他')], u'账单属性')
+         ('other_payment', u'其他'),
+         ('manual','手动')], u'账单属性')
 
     yjzy_type_1 = fields.Selection([('sale', u'应收'),
                                     ('purchase', u'应付'),

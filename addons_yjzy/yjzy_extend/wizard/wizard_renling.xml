@@ -119,7 +119,7 @@
 
                     <field name="invoice_ids" nolabel="1" attrs="{'invisible':['|','|',
                     ('renling_type','not in',['yshxd','other_payment','purchase_add_invoice']),('step','!=','20'),('other_payment_invoice_ok','=',False)]}"
-                           domain="[('partner_id','=',partner_id),('state','=','open'),('type','in',['out_invoice'])]"
+                           domain="[('state','=','open'),('type','in',['out_invoice']),'|',('partner_id','=',partner_id),('partner_id','=',partner_supplier_id)]"
                            context="{'tree_view_ref':'yjzy_extend.invoice_sale_new_hxd_tree','other_payment':other_payment_invoice_ok_f}"
                            options="{'no_create': True,'no_open':True}">
                         <tree>
@@ -179,7 +179,7 @@
                                 context="{'default_type':'other_payment','default_yjzy_type_1':'other_payment_sale','default_type_invoice':'out_invoice'}"/>
                         <button name="create_yshxd_ysrl" class="oe_highlight" type='object' string="创建应收认领"
                                 context="{'advance_so_amount':1}"
-                                attrs="{'invisible':['|',('renling_type','not in',['back_tax','yshxd','other_payment']),('other_payment_invoice_ok','=',False)]}"/>
+                                attrs="{'invisible':['|',('renling_type','not in',['back_tax','yshxd','other_payment','purchase_add_invoice']),('other_payment_invoice_ok','=',False)]}"/>
                         <button name="create_yshxd_ysrl" class="oe_highlight" type='object' string="创建预收认领"
                                 attrs="{'invisible':[('renling_type','not in',['ysrld'])]}"/>
                         <button special="cancel" class="oe_highlight" string="取消"/>

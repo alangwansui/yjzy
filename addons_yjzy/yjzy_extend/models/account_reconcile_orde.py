@@ -487,9 +487,14 @@ class account_reconcile_order(models.Model):
     def compute_invoice_id(self):
         for one in self:
             if one.invoice_ids:
-                invoice_id = one.invoice_ids[0]
+                if len(one.invoice_ids.filtered(lambda x: x.yjzy_type == 'back_tax' or x.yjzy_type_1 == 'back_tax')) > 1:
+                    invoice_attribute_all_in_one = '620'
+                    invoice_id = one.invoice_ids[0]
+                else:
+                    invoice_id = one.invoice_ids[0]
+                    invoice_attribute_all_in_one = invoice_id.invoice_attribute_all_in_one
                 one.invoice_id = invoice_id
-                one.invoice_attribute_all_in_one = invoice_id.invoice_attribute_all_in_one
+                one.invoice_attribute_all_in_one = invoice_attribute_all_in_one
                 one.payment_log_ids = invoice_id.payment_log_ids
 
     @api.depends('invoice_ids')
@@ -2612,7 +2617,7 @@ class account_reconcile_order(models.Model):
             if amount > 0:
                 amount_payment_org = amount
             else:
-                if one.yjzy_type in ['sale','purchase']:
+                if one.yjzy_type in ['sale','purchase'] or one.yjzy_type_1 in ['sale','purchase','other_payment_sale','other_payment_sale']:
                     if one.invoice_attribute == 'expense_po':
                         amount_payment_org = one.amount_payment_can_approve_all
                     if one.invoice_attribute == 'other_payment':
