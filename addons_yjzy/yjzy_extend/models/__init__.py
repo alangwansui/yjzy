@@ -85,3 +85,4 @@ from . import transport_bill_plan_track
 from . import account_invoice_progress
 from . import plan_check
 from . import order_track_attachment
+from . import sale_price_analysis

@@ -807,6 +807,33 @@
                                        placeholder="Setup default terms and conditions in your sales settings ..."/>
                                 <div class="oe_clear"/>
                             </page>
+                            <page>
+                                <field name="order_line_analysis">
+                                    <tree>
+                                        <field name="order_partner_id" string="客户" invisible="1"/>
+                                        <field name="order_id" string="合同号" invisible="1"/>
+                                        <field name="customer_pi" string="客户合同号" invisible="1"/>
+                                        <field name="purchase_contract_code" string="采购合同号" invisible="1"/>
+                                        <field name="contract_date" string="下单日期" invisible="1"/>
+                                        <field name="product_id" string="客户型号"/>
+                                        <field name="name" invisible="1"/>
+                                        <field name="product_uom" invisible="1"/>
+                                        <field name="product_uom_qty" string="数量"/>
+                                        <field name="price_unit" string="销售单价"/>
+                                        <field name="product_last_price"/>
+                                        <field name="purchase_price" string="采购单价"/>
+                                        <field name="product_purchase_last_price"/>
+                                        <field name="average_price"/>
+                                        <field name="highest_price"/>
+                                        <field name="lowest_price"/>
+                                        <field name="tax_id" widget="many2many_tags" invisible="1"/>
+                                        <field name="discount" invisible="1"/>
+                                        <field name="price_subtotal" string="销售总价" invisible="1"/>
+                                        <field name="purchase_cost" string="采购总价" invisible="1"/>
+                                        <field name="current_date_rate" string="下单时汇率" invisible="1"/>
+                                    </tree>
+                                </field>
+                            </page>
                             <page string="采购合同" invisible="0">
 
                                 <field nolabel="1" name="po_ids"

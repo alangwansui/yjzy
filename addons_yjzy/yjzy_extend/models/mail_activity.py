@@ -158,18 +158,24 @@ class MailActivity(models.Model):
             one.assistant_id = partner_id.assistant_id
             one.sale_user_id = partner_id.user_id
 
+    @api.depends('partner_id')
+    def compute_assistant_user(self):
+        for one in self:
+            one.assistant_id = one.partner_id.assistant_id
+            one.sale_user_id = one.partner_id.user_id
 
 
 
-    assistant_id = fields.Many2one('res.users','销售助理',compute=compute_partner_id,store=True)
-    sale_user_id = fields.Many2one('res.users','责任人',compute=compute_partner_id,store=True)
+    partner_id = fields.Many2one('res.partner',compute=compute_partner_id,store=True)
+    assistant_id = fields.Many2one('res.users','销售助理',compute=compute_assistant_user,store=True)
+    sale_user_id = fields.Many2one('res.users','责任人',compute=compute_assistant_user,store=True)
     date_finish = fields.Date('完成时间')
     date_deadline_readonly = fields.Date('计划日期',related='date_deadline',readonly=1)
     plan_check_id = fields.Many2one('plan.check', '检查点', ondelete='cascade', )
     date_deadline = fields.Date('Due Date', index=True, required=False, )
     plan_check_line_id = fields.Many2one('plan.check.line', '检查点', ondelete='cascade', )
     po_id = fields.Many2one('purchase.order', '采购合同', related='plan_check_line_id.po_id', store=True)
-    partner_id = fields.Many2one('res.partner',compute=compute_partner_id,store=True)
+
 
 
 

@@ -42,7 +42,7 @@
                             invisible="context.get('type')=='transport_track'"/>
                     <filter string="客户交期期限状态" name="group_ddate_so_requested_is_out_time" domain="[]"
                             context="{'group_by':['date_so_requested_is_out_time']}"
-                            invisible="context.get('type')=='transport_track'"/>
+                            invisible="context.get('type')!='order_track'"/>
 
                     <filter string="下单前状态" name="group_new_order_state" domain="[]"
                             context="{'group_by':['order_track_new_order_state']}" invisible="1"/>
