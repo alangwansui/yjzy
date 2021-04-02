@@ -1,0 +1,875 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_sale_order_cost_tree_new" model="ir.ui.view">
+            <field name="name">sale.order.cost.tree</field>
+            <field name="model">sale.order</field>
+            <field name="priority" eval="999"/>
+            <field name="arch" type="xml">
+                <tree string="成本单" create="false" edit="false">
+                    <field name="name"/>
+                    <field name="partner_id"/>
+                    <field name="contract_code"/>
+                    <field name="contract_date"/>
+                    <field name="link_man_id"/>
+                    <field name="cip_type"/>
+                    <field name="state" invisible="1"/>
+                    <field name="state2"/>
+                </tree>
+            </field>
+        </record>
+        <record id="view_sale_order_cost_form_new" model="ir.ui.view">
+            <field name="name">sale.order.cost.form</field>
+            <field name="model">sale.order</field>
+            <field name="priority" eval="999"/>
+            <field name="arch" type="xml">
+                <form string="成本单" class="o_sale_order" create="false" edit="false">
+                    <style>
+                        body{
+                        font-size: 10px;
+                        font-family:Arial;
+                        }
+                        .tablelist{
+
+                        text-align: center;
+                        border: 0.5px solid ;
+                        border-collapse: collapse;
+                        font-size: 10px;
+                        width: 100%
+                        }
+                        .tablelist th{
+
+                        font-size: 10px;
+                        text-align: center;
+                        border: 0.5px solid ;
+                        height: 20px;
+                        line-height: 20px;
+                        }
+                        .tablelist td{
+                        border: 0.5px solid;
+                        height: 20px;
+                        line-height: 20px;
+                        }
+                        .text{
+                        border: 0.5px solid;
+                        height: 20px;
+                        line-height: 20px;
+                        text-align: left;
+                        padding-left: 4px;
+                        }
+                        .number{
+                        border: 0.5px solid;
+                        height: 20px;
+                        line-height: 20px;
+                        text-align: right;
+                        padding-right: 4px;
+                        }
+                        .number_1{
+                        border: 0.5px solid;
+                        height: 20px;
+                        line-height: 20px;
+                        text-align: right;
+                        padding-right: 4px;
+                        margin-left:15px;
+                        font-weight:bolder;
+                        font-color:black}
+                        .table_big{font-size: 10px;}
+                        .table_big td
+                        {vertical-align:top}
+
+                    </style>
+                    <header>
+                        <!--button name="compute_cost" string="计算成本" type="object"  class="oe_highlight"/-->
+                        <button name="action_confirm2" string="确认" type="object" class="oe_highlight"
+                                attrs="{'invisible': [('state2','!=', 'draft')]}" invisible="1"/>
+                        <button name="action_done2" invisible="1" string="完成" type="object" class="oe_highlight"
+                                attrs="{'invisible': [('state2','!=', 'confirm')]}"/>
+                        <button name="update_back_tax" string="更新退税" type='object' icon="" invisible="1"/>
+                        <field name="state2" widget="statusbar" invisible="1"/>
+                        <field name="state" invisible="0" widget="statusbar"/>
+
+                    </header>
+
+                    <sheet>
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_big">
+                            <tbody>
+                                <tr>
+                                    <td width="20%">
+                                        <table width="100%" border="0" cellspacing="0" cellpadding="0"
+                                               class="tablelist">
+                                            <tbody>
+                                                <tr>
+                                                    <td class="text" width="50%">业务模式</td>
+                                                    <td class="text" width="50%">
+                                                        <field name="contract_type"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text">销售合同号</td>
+                                                    <td class="text">
+                                                        <field name="contract_code" readonly="1"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text">客户</td>
+                                                    <td class="text">
+                                                        <field name="partner_id" options="{'no_open':1}"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text">国别</td>
+                                                    <td class="text">
+                                                        <field name="country_id" options="{'no_open':1}"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text">价格条款</td>
+                                                    <td class="text">
+                                                        <field name="incoterm_code" options="{'no_open':1}"
+                                                               readonly="1"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text">销售币种</td>
+                                                    <td class="text">
+                                                        <field name="sale_currency_id" options="{'no_open':1}"
+                                                               readonly="1"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text">成本测算汇率</td>
+                                                    <td class="text">
+                                                        <field name="current_date_rate" options="{'no_open':1}"
+                                                               readonly="1"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text">是否含税</td>
+                                                    <td class="text">
+                                                        <field name="include_tax" readonly="1"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text">客户交期</td>
+                                                    <td class="text">
+                                                        <field name="requested_date" widget="date"
+                                                               options="{'no_open':1}" readonly="1"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text">业务责任人</td>
+                                                    <td class="text">
+                                                        <field name="user_id" options="{'no_open':1}" readonly="1"/>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+
+                                    <td width="20%" style="">
+                                        <table width="100%" border="0" cellspacing="0" cellpadding="0"
+                                               class="tablelist">
+                                            <tbody>
+                                                <tr>
+                                                    <td class="text" width="50%">PS状况</td>
+                                                    <td width="50" class="text">
+                                                        <field name="ps_state" options="{'no_open':1}" readonly="1"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text">金样状况</td>
+                                                    <td class="text">
+                                                        <field name="gold_sample_state" options="{'no_open':1}"
+                                                               readonly="1"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text">销售主体</td>
+                                                    <td class="text">
+                                                        <field name="gongsi_id" options="{'no_open':1}" readonly="1"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text">采购主体</td>
+                                                    <td class="text">
+                                                        <field name="purchase_gongsi_id" options="{'no_open':1}"
+                                                               readonly="1"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text">付款条款</td>
+                                                    <td class="text">
+                                                        <span style="color:red"
+                                                              attrs="{'invisible':[('is_different_payment_term','=',False)]}">
+                                                            <field name="payment_term_id" options="{'no_open':1}"
+                                                                   readonly="1"
+                                                                   attrs="{'invisible':[('is_different_payment_term','=',False)]}"/>
+                                                        </span>
+                                                        <span style="color:grey"
+                                                              attrs="{'invisible':[('is_different_payment_term','!=',False)]}">
+                                                            <field name="payment_term_id" options="{'no_open':1}"
+                                                                   readonly="1"/>
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text">
+                                                        <span attrs="{'invisible':[('is_different_payment_term','=',False)]}">
+                                                            预设付款条款
+                                                        </span>
+                                                    </td>
+                                                    <td class="text">
+                                                        <field name="partner_payment_term_id" string="预设付款条款"
+                                                               readonly="1" options="{'no_open':1}"
+                                                               attrs="{'invisible':[('is_different_payment_term','=',False)]}"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text">预收款应收额</td>
+                                                    <td class="number">
+                                                        <field name="pre_advance" options="{'no_open':1}" readonly="1"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text">预收款实收额</td>
+                                                    <td class="number">
+                                                        <field name="balance" options="{'no_open':1}" readonly="1"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2" class="text">
+                                                        <field name="po_ids_term" mode="kanban" options="{'no_open':1}">
+                                                            <!--tree>
+                                                               <field name="contract_code" string=""/>
+                                                               <field name="payment_term_id" string=""/>
+                                                            </tree-->
+                                                            <kanban class="o_kanban_mobile o_kanban_dashboard_akiny o_saleakiny_kanban"
+                                                                    style="border:0px;width:100%">
+
+                                                                <field name="partner_id"/>
+                                                                <field name="payment_term_id"/>
+
+                                                                <field name="is_different_payment_term"/>
+                                                                <field name="partner_payment_term_id"/>
+
+                                                                <templates>
+                                                                    <t t-name="kanban-box">
+                                                                        <div style="border:0px;margin-top:0px;width:100%">
+                                                                            <!--控制按钮的t-attf-class="oe_kanban_card oe_kanban_global_click" -->
+                                                                            <div style="border:0px;width:100%;">
+                                                                                <span>
+                                                                                    <t t-esc="record.partner_id.value"/>
+                                                                                </span>
+                                                                            </div>
+                                                                            <div style="border:0px;width:100%">
+                                                                                <div t-if="record.payment_term_id.value == record.partner_payment_term_id.value">
+                                                                                    <t t-esc="record.payment_term_id.value"/>
+                                                                                </div>
+                                                                                <div t-if="record.payment_term_id.value != record.partner_payment_term_id.value"
+                                                                                     style="color:red">
+                                                                                    <t t-esc="record.payment_term_id.value"/>
+                                                                                </div>
+                                                                                <div t-if="record.payment_term_id.value != record.partner_payment_term_id.value">
+                                                                                    <t t-esc="record.partner_payment_term_id.value"/>
+                                                                                </div>
+
+                                                                            </div>
+
+
+                                                                        </div>
+
+                                                                    </t>
+                                                                </templates>
+                                                            </kanban>
+
+                                                        </field>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+
+                                    </td>
+                                    <td width="36%">
+                                        <table width="100%" border="0" cellspacing="0" cellpadding="0"
+                                               class="tablelist">
+                                            <tbody>
+                                                <tr>
+                                                    <td class="text" width="30%">国内运杂费</td>
+                                                    <td class="number" width="30%">
+                                                        <field name="fee_inner" style="text-align:right"
+                                                               options="{'no_open':1}"/>
+                                                    </td>
+                                                    <td width="40%" class="text"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text">人民币1</td>
+                                                    <td class="number">
+                                                        <field name="fee_rmb1" style="text-align:right;"
+                                                               options="{'no_open':1}"/>
+                                                    </td>
+                                                    <td class="text">
+                                                        <field name="fee_rmb1_note" style="margin-left:15px"
+                                                               readonly="1"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text">人民币2</td>
+                                                    <td class="number">
+                                                        <field name="fee_rmb2"
+                                                               style="text-align:right;vertical-align:top"
+                                                               options="{'no_open':1}" readonly="1"/>
+                                                    </td>
+                                                    <td class="text">
+                                                        <field name="fee_rmb2_note" style="margin-left:15px"
+                                                               readonly="1"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text">人名币费用合计</td>
+                                                    <td class="number_1">
+                                                        <field name="fee_rmb_all" options="{'no_open':1}" readonly="1"/>
+                                                    </td>
+                                                    <td class="text"><field name="fee_rmb_ratio" readonly="1"/>%
+                                                    </td>
+                                                </tr>
+                                                <td class="text">美元运保费</td>
+                                                <td class="number">
+                                                    <field name="fee_outer" style="text-align:right"
+                                                           options="{'no_open':1}"/>
+                                                </td>
+                                                <td class="text"></td>
+                                                <tr>
+                                                    <td class="text">美元信保费</td>
+                                                    <td class="number">
+                                                        <field name="fee_export_insurance" options="{'no_open':1}"
+                                                               readonly="1"/>
+                                                    </td>
+                                                    <td class="text"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text">其他美元费用</td>
+                                                    <td class="number">
+                                                        <field name="fee_other" options="{'no_open':1}" readonly="1"/>
+                                                    </td>
+                                                    <td class="text">
+                                                        <field name="fee_other_note" style="margin-left:15px"
+                                                               readonly="1"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text">美元费用合计</td>
+                                                    <td class="number_1">
+                                                        <field name="fee_outer_all" options="{'no_open':1}"
+                                                               readonly="1"/>
+                                                    </td>
+                                                    <td class="text"><field name="fee_outer_ratio" readonly="1"/>%
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text">运营费用额</td>
+                                                    <td class="number">
+                                                        <field name="commission_amount" options="{'no_open':1}"
+                                                               readonly="1"/>
+                                                    </td>
+                                                    <td class="text"><field name="commission_ratio_percent"
+                                                                            options="{'no_open':1}"
+                                                                            readonly="1"/>%
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                    </td>
+                                                    <td>
+                                                    </td>
+                                                    <td>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                    <td width="24%">
+                                        <table width="100%" border="0" cellspacing="0" cellpadding="0"
+                                               class="tablelist">
+                                            <tbody>
+                                                <tr>
+                                                    <td class="text" width="50%">销售额汇总</td>
+                                                    <td class="number" width="50%">
+                                                        <field name="amount_total"
+                                                               options="{'no_open':1,'currency_field': 'currency_id'}"
+                                                               readonly="1"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text">销售额折算本币</td>
+                                                    <td class="number">
+                                                        <field name="amount_total2" readonly="1"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text">采购额汇总</td>
+                                                    <td class="number">
+                                                        <field name="purchase_cost" readonly="1"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text">退税额汇总</td>
+                                                    <td class="number">
+                                                        <field name="back_tax_amount" readonly="1"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text">毛利润</td>
+                                                    <td class="number_1">
+                                                        <field name="gross_profit" readonly="1"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text">毛利润率</td>
+                                                    <td class="number_1">
+                                                        <field name="gorss_profit_ratio"/>%
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text">费用总合计</td>
+                                                    <td class="number_1">
+                                                        <field name="expense_cost_total" readonly="1"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text">费用总占比</td>
+                                                    <td class="number_1">
+                                                        <field name="fee_all_ratio" readonly="1"/>%
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text">净利润</td>
+                                                    <td class="number_1">
+                                                        <field name="profit_amount"
+                                                               options="{'fg_color': 'red:profit_amount &lt; True'}"
+                                                               readonly="1"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text">净利润率</td>
+                                                    <td class="number_1">
+                                                        <field name="profit_ratio"
+                                                               options="{'fg_color': 'red:profit_amount &lt; True'}"
+                                                               readonly="1"/>%
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <notebook>
+                            <page string="销售明细">
+                                <field name="order_line" readonly="1" mode="tree,kanban">
+                                    <form string="销售订单明细">
+                                        <group>
+                                            <group>
+                                                <field name="product_updatable" invisible="1"/>
+                                                <field name="product_id"/>
+                                                <field name="layout_category_id" groups="sale.group_sale_layout"/>
+                                                <field name="invoice_status" invisible="1"/>
+                                                <field name="qty_to_invoice" invisible="1"/>
+                                                <field name="qty_delivered_updateable" invisible="1"/>
+                                                <field name="price_subtotal" invisible="1"/>
+                                                <label for="product_uom_qty" string="订购数量"/>
+                                                <div>
+                                                    <field name="product_uom_qty" class="oe_inline"/>
+                                                    <field name="product_uom" groups="product.group_uom"
+                                                           class="oe_inline oe_no_button"
+                                                           attrs="{'readonly': [('state', 'in', ('sale','done', 'cancel'))]}"/>
+                                                </div>
+                                                <field name="price_unit"/>
+                                                <field name="is_gold_sample" string="金样状态"/>
+                                                <field name="include_tax"/>
+                                                <field name="hs_id"/>
+                                                <field name="back_tax"/>
+                                                <field name="price_total" widget="monetary"
+                                                       groups="sale.group_show_price_total"/>
+                                                <field name="back_tax_amount"/>
+
+
+                                                <field name="route_id" groups="sale_stock.group_route_so_lines"
+                                                       options="{'no_create': True}"/>
+
+                                                <field name="lot_sub_name" groups="base.group_system"/>
+
+                                                <field name="quant_id" invisible="1"
+                                                       domain="[('product_id','=', product_id),('location_id.usage', '=', 'internal')]"/>
+                                                <field name="lot_id" string="批次号"/>
+
+
+                                                <label for="discount" groups="sale.group_discount_per_so_line"/>
+                                                <div name="discount" groups="sale.group_discount_per_so_line">
+                                                    <field name="discount" class="oe_inline"/>
+                                                    %
+                                                </div>
+                                            </group>
+                                            <group>
+                                                <field name="supplier_id"/>
+                                                <field name="purchase_price"/>
+                                                <field name="purchase_cost"/>
+                                                <field name="pol_id"/>
+
+
+                                                <field name="need_print"/>
+
+
+                                                <label for="customer_lead"/>
+                                                <div invisible="1">
+                                                    <field name="customer_lead" class="oe_inline"/>
+                                                    天
+                                                </div>
+                                                <label for="analytic_tag_ids"
+                                                       groups="analytic.group_analytic_accounting" invisible="1"/>
+                                                <div invisible="1">
+                                                    <field name="analytic_tag_ids" widget="many2many_tags"
+                                                           groups="analytic.group_analytic_accounting"
+                                                           options="{'color_field': 'color'}"/>
+                                                </div>
+
+
+                                                <label for="qty_delivered" string="已交货数量"
+                                                       attrs="{'invisible': [('parent.state', 'not in', ['sale', 'done'])]}"/>
+                                                <div attrs="{'invisible': [('parent.state', 'not in', ['sale', 'done'])]}">
+                                                    <field name="qty_delivered"
+                                                           attrs="{'readonly': [('qty_delivered_updateable', '=', False)]}"/>
+                                                </div>
+                                                <label for="qty_invoiced" string="已开发票数量"
+                                                       attrs="{'invisible': [('parent.state', 'not in', ['sale', 'done'])]}"/>
+                                                <div attrs="{'invisible': [('parent.state', 'not in', ['sale', 'done'])]}">
+                                                    <field name="qty_invoiced"
+                                                           attrs="{'invisible': [('parent.state', 'not in', ['sale', 'done'])]}"/>
+                                                </div>
+                                            </group>
+                                        </group>
+                                        <label for="name" invisible="1"/>
+                                        <field name="name" invisible="1"/>
+                                        <div groups="base.group_no_one">
+                                            <label for="invoice_lines"/>
+                                            <field name="invoice_lines"/>
+                                        </div>
+                                        <field name="state" invisible="1"/>
+                                    </form>
+                                    <button name="open_multi_select_product" string="Multi select product" type="object"
+                                            class="oe_highlight"/>
+                                    <tree string="销售订单明细" decoration-info="invoice_status=='to invoice'"
+                                          class="o_list_scroll" limit="20" readonly="1"
+                                          decoration-danger="product_uom_qty != purchase_qty_new"><!--editable="bottom" -->
+                                        <field name="sequence" widget="handle"/>
+                                        <field name="product_updatable" invisible="1"/>
+                                        <button type="object" name="get_in_stock_quant" icon="fa-archive"
+                                                invisible="1"/>
+                                        <field name="product_id"/>
+                                        <field name="hs_id" invisible="1"/>
+                                        <field name="hs_name" string="品名"/>
+                                        <field name="product_so_line_count" string="下单次数"/>
+
+                                        <field name="is_gold_sample" string="金样"/>
+                                        <field name="product_uom_qty" string="销售数量"/>
+                                        <field name="s_uom_id" string="单位" invisible="1"/>
+
+                                        <field name="layout_category_id" groups="sale.group_sale_layout"/>
+                                        <field name="name" invisible="1"/>
+
+                                        <field name="price_unit" attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"
+                                               string="销售单价"/>
+                                        <field name="price_total" widget="monetary" groups="sale.group_show_price_total"
+                                               string="总价"/>
+
+                                        <field name="purchase_qty_new" string="采购数量"/>
+                                        <field name="purchase_price" string="采购单价" invisible="1"/>
+                                        <field name="purchase_price_original" string="采购单价"/>
+                                        <field name="purchase_cost" string="采购金额"/>
+                                        <field name="supplier_id" string="供应商"/>
+                                        <field name="purchase_contract_code" string="采购合同号"/>
+                                        <field name="back_tax"/>
+                                        <field name="back_tax_amount"/>
+                                        <field name="second_unit_price" groups="base.group_system"/>
+                                        <field name="second_price_total" groups="base.group_system"/>
+
+                                        <field name="purchase_payment_term" string="采购付款条款" invisible="1"/>
+
+
+                                        <field name="p_uom_id" string="单位" invisible="1"/>
+                                        <field name="gross_profit_line" invisible="1"/>
+                                        <field name="gross_profit_ratio_line" widget="Percent" string="毛利润率%"/>
+                                        <button attrs="{'invisible':['product_uom_qty','=','purchase_qty_new']}"
+                                                invisible="1" name="数量测试" string="数量检测" icon="fa-times-circle"
+                                                style="color:red"/>
+
+
+                                        <field name="quant_id" domain="[('product_id','=', product_id)]" invisible="1"
+                                               groups="base.group_system"/>
+                                        <field name="pol_id" groups="base.group_system" invisible="1"/>
+                                        <field name="smline_str" column_invisible="1" invisible="1" readonly="1"/>
+                                        <field name="smline_qty" invisible="1" readonly="1"/>
+                                        <field name="dlr_str" groups="base.group_system"/>
+                                        <field name="dlr_qty" groups="base.group_system" readonly="1"/>
+                                        <button icon="fa-list" type="object" name="open_wizard_sol_reserver"
+                                                invisible="1"/>
+                                        <field name="dlr_done_qty" groups="base.group_system" invisible="1"
+                                               readonly="1"/>
+                                        <field name="dlr_todo_qty" groups="base.group_system"/>
+                                        <field name="qty_pre_all" groups="base.group_system" invisible="1"
+                                               readonly="1"/>
+                                        <field name="lot_sub_name" groups="base.group_system"/>
+
+                                        <field name="product_qty" invisible="1"/>
+                                        <field name="qty_available" readonly="1" invisible="1"/>
+                                        <field name="virtual_available" readonly="1" invisible="1"/>
+                                        <field name="qty_delivered"
+                                               attrs="{'column_invisible': [('parent.state', 'not in', ['sale', 'done'])], 'readonly': [('qty_delivered_updateable', '=', False)]}"/>
+                                        <field name="qty_invoiced"
+                                               attrs="{'column_invisible': [('parent.state', 'not in', ['sale', 'done'])]}"/>
+                                        <field name="qty_to_invoice" invisible="1"/>
+                                        <field name="product_uom"
+                                               attrs="{'readonly': [('state', 'in', ('sale','done', 'cancel'))]}"
+                                               invisible="1" required="1"
+                                               context="{'company_id': parent.company_id}" groups="product.group_uom"
+                                               options="{&quot;no_open&quot;: True}"/>
+                                        <field name="analytic_tag_ids" groups="base.group_system"
+                                               widget="many2many_tags"
+                                               options="{'color_field': 'color'}"/>
+                                        <field name="last_sale_price" invisible="1" readonly="1"/>
+
+                                        <field name="bom_id" groups="base.group_system"/>
+                                        <field name="bom_qty" groups="base.group_system"/>
+                                        <field name="need_split_bom" string="展开bom" groups="base.group_system"/>
+                                        <field name="need_print" groups="base.group_system"/>
+
+
+                                        <field name="route_id" groups="sale_stock.group_route_so_lines"
+                                               options="{'no_create': True}"/>
+
+                                        <field name="tax_id" widget="many2many_tags" options="{'no_create': True}"
+                                               domain="[('type_tax_use','=','sale'),('company_id','=',parent.company_id)]"
+                                               attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}" invisible="1"/>
+
+
+                                        <button string="查看库存批次" type="object" name="get_in_stock_quant" invisible="1"/>
+                                        <field name="discount" groups="sale.group_discount_per_so_line"/>
+                                        <field name="price_subtotal" widget="monetary"
+                                               groups="sale.group_show_price_subtotal"/>
+
+                                        <field name="qty_delivered_updateable" invisible="1"/>
+                                        <field name="state" invisible="1"/>
+                                        <field name="invoice_status" invisible="1"/>
+                                        <field name="customer_lead" invisible="1"/>
+                                        <field name="currency_id" invisible="1"/>
+                                        <button icon="fas fa-eye" type="object" name="show_product_attrs"
+                                                invisible="1"/>
+
+                                        <field name="lot_id" string="批次号" groups="base.group_system"/>
+
+                                    </tree>
+                                    <kanban class="o_kanban_mobile">
+                                        <field name="product_id"/>
+                                        <field name="product_uom_qty"/>
+                                        <field name="product_uom" groups="product.group_uom"/>
+                                        <field name="price_subtotal"/>
+                                        <field name="price_unit"/>
+                                        <templates>
+                                            <t t-name="kanban-box">
+                                                <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                                    <div class="row">
+                                                        <div class="col-xs-8">
+                                                            <strong>
+                                                                <span>
+                                                                    <t t-esc="record.product_id.value"/>
+                                                                </span>
+                                                            </strong>
+                                                        </div>
+                                                        <div class="col-xs-4">
+                                                            <strong>
+                                                                <span class="pull-right text-right">
+                                                                    <t t-esc="record.price_subtotal.value"/>
+                                                                </span>
+                                                            </strong>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-xs-12 text-muted">
+                                                            <span>数量：
+                                                                <t t-esc="record.product_uom_qty.value"/>
+                                                                <t t-esc="record.product_uom.value"/>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-xs-12 text-muted">
+                                                            <span>单价:
+                                                                <t t-esc="record.price_unit.value"/>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <hr/>
+                                            </t>
+                                        </templates>
+                                    </kanban>
+                                </field>
+                                <group class="oe_subtotal_footer oe_right" colspan="2" name="sale_total">
+                                    <field name="amount_untaxed" widget="monetary"
+                                           options="{'currency_field': 'currency_id'}"/>
+                                    <field name="amount_tax" widget="monetary"
+                                           options="{'currency_field': 'currency_id'}"/>
+                                    <div class="oe_subtotal_footer_separator oe_inline o_td_label">
+                                        <label for="amount_total"/>
+                                    </div>
+                                    <field name="amount_total" nolabel="1" class="oe_subtotal_footer_separator"
+                                           widget="monetary"
+                                           options="{'currency_field': 'currency_id'}"/>
+                                </group>
+                                <field name="note" class="oe_inline"
+                                       placeholder="Setup default terms and conditions in your sales settings ..."/>
+                                <div class="oe_clear"/>
+                            </page>
+                            <page string="价格分析明细">
+                                <field name="order_line_analysis">
+                                    <tree>
+                                        <button name="compute_today_hegui_date" type="object" string="hegui"/>
+                                        <button name="compute_product_last_price" type="object" string="price"/>
+                                        <button name="compute_product_other_price" type="object" string="other_price"/>
+                                        <button name="compute_price_change_percent" type="object" string="比率"/>
+
+                                        <field name="order_partner_id" string="客户" invisible="1"/>
+                                        <field name="order_id" string="合同号" invisible="1"/>
+                                        <field name="customer_pi" string="客户合同号" invisible="1"/>
+                                        <field name="purchase_contract_code" string="采购合同号" invisible="1"/>
+                                        <field name="contract_date" string="下单日期" invisible="1"/>
+                                        <field name="product_id" string="客户型号"/>
+                                        <field name="name" invisible="1"/>
+                                        <field name="product_uom" invisible="1"/>
+                                        <field name="product_uom_qty" string="数量"/>
+                                        <field name="price_unit" string="销售单价"/>
+                                        <field name="product_last_price"/>
+                                        <field name="sale_price_change_percent" widget="Percent"/>
+                                        <field name="lowest_price"/>
+                                        <field name="highest_price"/>
+                                        <field name="sale_price_percent" widget="progressbar"/>
+                                        <field name="purchase_price" string="采购单价"/>
+                                        <field name="product_purchase_last_price"/>
+                                        <field name="purchase_price_change_percent" widget="Percent"/>
+                                        <field name="purchase_lowest_price"/>
+                                        <field name="purchase_highest_price"/>
+                                        <field name="purchase_price_percent" widget="progressbar"/>
+
+                                        <field name="average_price" invisible="1"/>
+
+                                        <field name="tax_id" widget="many2many_tags" invisible="1"/>
+                                        <field name="discount" invisible="1"/>
+                                        <field name="price_subtotal" string="销售总价" invisible="1"/>
+                                        <field name="purchase_cost" string="采购总价" invisible="1"/>
+                                        <field name="current_date_rate" string="下单时汇率" invisible="1"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="采购合同" invisible="0">
+
+                                <field nolabel="1" name="po_ids"
+                                       context="{'form_view_ref':'yjzy_extend.new_purchase_order_from'}">
+                                    <tree decoration-bf="message_unread==True" decoration-muted="state=='cancel'"
+                                          decoration-info="state in ('wait','confirmed')" string="采购合同">
+                                        <field name="message_unread" invisible="1"/>
+                                        <field name="name" string="流水码" groups="base.group_system"/>
+                                        <field name="contract_code" string="合同编号"/>
+                                        <field name="partner_id"/>
+                                        <field name="date_order" string="下单日期" widget="date" invisible="1"/>
+                                        <field name="create_date" widget="date"/>
+                                        <field name="date_planned" invisible="context.get('quotation_only', False)"
+                                               string="供应商交期" widget="date"/>
+                                        <field name="origin" invisible="1"/>
+                                        <field name="amount_untaxed" sum="Total Untaxed amount" string="Untaxed"
+                                               widget="monetary" invisible="1"/>
+                                        <field name="amount_total" sum="Total amount" widget="monetary"/>
+                                        <field name="balance" string="预付余额"/>
+                                        <field name="currency_id" invisible="1"/>
+                                        <field name="state" invisible="1"/>
+                                        <field name="delivery_status" invisible="1"/>
+                                        <field name="include_tax"/>
+                                        <field name="payment_term_id"/>
+                                        <field name="sale_uid" invisible="1"/>
+                                        <field name="sale_assistant_id" invisible="1"/>
+                                        <field name="purchaser_date" invisible="1"/>
+                                        <field name="gongsi_id" string="采购主体" groups="base.group_system"/>
+                                        <field name="supplierinfo_ids" widget="many2many_tags" invisible="1"/>
+                                        <field name="invoice_status"
+                                               invisible="1"/><!--invisible="not context.get('show_purchase', True)"-->
+                                        <field name="company_id" groups="base.group_multi_company" invisible="1"
+                                               options="{'no_create': True}"/>
+                                    </tree>
+                                </field>
+
+                                <group class="oe_subtotal_footer oe_right" colspan="2" name="sale_total">
+                                    <field name="purchase_cost" widget="monetary"/>
+                                    <field name="amount_tax" widget="monetary"/>
+                                    <div class="oe_subtotal_footer_separator oe_inline o_td_label">
+                                        <label for="purchase_cost"/>
+                                    </div>
+                                    <field name="purchase_cost" nolabel="1" class="oe_subtotal_footer_separator"
+                                           widget="monetary"
+                                    />
+                                </group>
+                                <field name="note" class="oe_inline"
+                                       placeholder="Setup default terms and conditions in your sales settings ..."/>
+                                <div class="oe_clear"/>
+
+                            </page>
+                            <page groups="base.group_system">
+                                <group>
+                                    <field name="company_currency_id" invisible="1" readonly="1"
+                                           groups="base.group_system"/>
+                                    <field name="advance_account_id" invisible="1"/>
+                                    <field name="advance_residual" string="预收剩余" invisible="1"/>
+                                    <field name="purchase_stock_cost" string="采购成本" invisible="1"/>
+                                    <field name="fandian_amoun" invisible="1"/>
+                                    <field name="stock_cost" invisible="1"/>
+                                    <field name="third_currency_id"
+                                           domain="['|',('id','=', company_currency_id),('id','=', sale_currency_id)]"
+                                           groups="base.group_system"/>
+                                    <field name="currency_id" invisible="1"/>
+                                    <field name="other_currency_id" string="外币币种" invisible="1"/>
+                                    <field name="vat_diff_amount" readonly="1" invisible="1"/>
+                                    <field name="second_cost" invisible="1"/>
+                                    <field name="second_porfit" invisible="1"/>
+                                    <field name="second_tenyale_profit" invisible="1"/>
+                                    <field name="mark_comb_id" string="唛头" readonly="1" invisible="1"/>
+
+                                    <field name="product_manager_id" readonly="1" invisible="1"/>
+
+
+                                    <field name="company_id" invisible="1" readonly="1"/>
+
+                                    <field name="sale_assistant_id" readonly="1" invisible="1"/>
+                                    <field name="is_different_payment_term"/>
+                                    <field name="company_id"/>
+                                    <field name="cip_type" options="{'no_open':1}" class="oe_inline"/>
+                                    <field name="exchange_rate" options="{'no_open':1}" readonly="1"/>
+                                    <field name="appoint_rate" options="{'no_open':1}" readonly="1" class="oe_inline"
+                                           invisible="1"/>
+                                </group>
+                            </page>
+
+                        </notebook>
+
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="activity_ids" widget="mail_activity"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+
+
+
+    </data>
+</odoo>

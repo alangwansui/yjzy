@@ -390,6 +390,22 @@
                                         </tr>
                                     </table>
                                 </div>
+<!--                                 <label for="commission_amount" string="运营费用额" style="font-size:10px"/>-->
+<!--                                <div style="width:200%">-->
+<!--                                    <table style="width:100%">-->
+<!--                                        <tr>-->
+<!--                                            <td style="width:65px;text-align:right;vertical-align:top;">-->
+<!--                                                <field name="commission_amount" options="{'no_open':1}" readonly="1"-->
+<!--                                                       class="oe_inline"/>-->
+<!--                                            </td>-->
+<!--                                            <td>-->
+<!--                                                <field name="commission_ratio_percent" options="{'no_open':1}"-->
+<!--                                                       style="margin-left:15px" readonly="1" class="oe_inline"/>%-->
+<!--                                            </td>-->
+<!--                                        </tr>-->
+<!--                                    </table>-->
+<!--                                </div>-->
+<!--                                -->
 
                                 <field name="other_currency_id" string="外币币种" invisible="1"/>
                                 <field name="vat_diff_amount" readonly="1" invisible="1"/>
@@ -810,6 +826,11 @@
                             <page string="价格分析明细">
                                 <field name="order_line_analysis">
                                     <tree>
+                                        <button name="compute_today_hegui_date" type="object" string="hegui" groups="base.group_system"/>
+                                        <button name="compute_product_last_price" type="object" string="price" groups="base.group_system"/>
+                                        <button name="compute_product_other_price" type="object" string="other_price" groups="base.group_system"/>
+                                        <button name="compute_price_change_percent" type="object" string="比率" groups="base.group_system"/>
+
                                         <field name="order_partner_id" string="客户" invisible="1"/>
                                         <field name="order_id" string="合同号" invisible="1"/>
                                         <field name="customer_pi" string="客户合同号" invisible="1"/>
@@ -821,11 +842,20 @@
                                         <field name="product_uom_qty" string="数量"/>
                                         <field name="price_unit" string="销售单价"/>
                                         <field name="product_last_price"/>
+                                        <field name="sale_price_change_percent" widget="Percent" options='{"fg_color": "red: is_change == False; blue: is_change == True"}'/>
+                                        <field name="is_change"/>
+                                        <field name="lowest_price"/>
+                                        <field name="highest_price"/>
+                                        <field name="sale_price_percent" widget="progressbar"/>
                                         <field name="purchase_price" string="采购单价"/>
                                         <field name="product_purchase_last_price"/>
-                                        <field name="average_price"/>
-                                        <field name="highest_price"/>
-                                        <field name="lowest_price"/>
+                                        <field name="purchase_price_change_percent"  widget="Percent"/>
+                                        <field name="purchase_lowest_price"/>
+                                        <field name="purchase_highest_price"/>
+                                        <field name="purchase_price_percent" widget="progressbar"/>
+
+                                        <field name="average_price" invisible="1"/>
+
                                         <field name="tax_id" widget="many2many_tags" invisible="1"/>
                                         <field name="discount" invisible="1"/>
                                         <field name="price_subtotal" string="销售总价" invisible="1"/>
