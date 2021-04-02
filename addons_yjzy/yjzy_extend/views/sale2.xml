@@ -807,7 +807,7 @@
                                        placeholder="Setup default terms and conditions in your sales settings ..."/>
                                 <div class="oe_clear"/>
                             </page>
-                            <page>
+                            <page string="价格分析明细">
                                 <field name="order_line_analysis">
                                     <tree>
                                         <field name="order_partner_id" string="客户" invisible="1"/>
