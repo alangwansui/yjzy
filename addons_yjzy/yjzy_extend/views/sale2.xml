@@ -390,22 +390,53 @@
                                         </tr>
                                     </table>
                                 </div>
-<!--                                 <label for="commission_amount" string="运营费用额" style="font-size:10px"/>-->
-<!--                                <div style="width:200%">-->
-<!--                                    <table style="width:100%">-->
-<!--                                        <tr>-->
-<!--                                            <td style="width:65px;text-align:right;vertical-align:top;">-->
-<!--                                                <field name="commission_amount" options="{'no_open':1}" readonly="1"-->
-<!--                                                       class="oe_inline"/>-->
-<!--                                            </td>-->
-<!--                                            <td>-->
-<!--                                                <field name="commission_ratio_percent" options="{'no_open':1}"-->
-<!--                                                       style="margin-left:15px" readonly="1" class="oe_inline"/>%-->
-<!--                                            </td>-->
-<!--                                        </tr>-->
-<!--                                    </table>-->
-<!--                                </div>-->
-<!--                                -->
+                                 <label for="higher_last_sale_price" string="售价分析结果" style="font-size:10px"/>
+                                <div style="width:200%">
+                                    <table style="width:100%">
+                                        <tr>
+                                            <td style="width:65px;text-align:right;vertical-align:top;">
+                                                高于上次数
+                                            </td>
+                                            <td>
+                                                <field name="higher_last_sale_price" options="{'no_open':1}"
+                                                       style="margin-left:15px" readonly="1" class="oe_inline"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width:65px;text-align:right;vertical-align:top;">
+                                                低于上次数
+                                            </td>
+                                            <td>
+                                                <field name="lower_last_sale_price" options="{'no_open':1}"
+                                                       style="margin-left:15px" readonly="1" class="oe_inline"/>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                            <label for="higher_last_sale_price" string="成本分析结果" style="font-size:10px"/>
+                                <div style="width:200%">
+                                    <table style="width:100%">
+                                        <tr>
+                                            <td style="width:65px;text-align:right;vertical-align:top;">
+                                                高于上次数
+                                            </td>
+                                            <td>
+                                                <field name="higher_last_purchase_price" options="{'no_open':1}"
+                                                       style="margin-left:15px" readonly="1" class="oe_inline"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width:65px;text-align:right;vertical-align:top;">
+                                                低于上次数
+                                            </td>
+                                            <td>
+                                                <field name="lower_last_purchase_price" options="{'no_open':1}"
+                                                       style="margin-left:15px" readonly="1" class="oe_inline"/>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+
 
                                 <field name="other_currency_id" string="外币币种" invisible="1"/>
                                 <field name="vat_diff_amount" readonly="1" invisible="1"/>
