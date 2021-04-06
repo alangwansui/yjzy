@@ -36,6 +36,7 @@ class sale_order(models.Model):
 
     order_line_analysis = fields.Many2many('sale.order.line','价格分析明细', 'order_line_id', 'sid', 'oid',compute='compute_order_line_analysis')
 
+
     higher_last_sale_price = fields.Integer('售价高于上次数',compute=compute_lens)
     lower_last_sale_price = fields.Integer('售价低于上次数', compute=compute_lens)
     higher_last_purchase_price = fields.Integer('成本高于上次数',compute=compute_lens)

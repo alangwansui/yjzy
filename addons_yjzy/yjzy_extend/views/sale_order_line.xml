@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <odoo>
-	<data>	
+	<data>
 
 <!-- Quotation Lines akiny 销售明细-->
 
@@ -35,16 +35,16 @@
 				</form>
 			</field>
 		</record>
-		
+
  		<record id="sh_sol_sale_quotation_line_tree_view_inherit_1" model="ir.ui.view">
 			<field name="name">Quotation Line Tree</field>
 			<field name="model">sale.order.line</field>
 			<field name="priority" eval="1"/>
-			<field name="arch" type="xml">			
+			<field name="arch" type="xml">
 				<tree>
-					<button name="compute_today_hegui_date" type="object" string="hegui"/>
-					<button name="compute_product_last_price" type="object" string="price"/>
-					<button name="compute_product_other_price" type="object" string="other_price"/>
+					<button name="compute_today_hegui_date" type="object" string="hegui" groups="base.group_system"/>
+					<button name="compute_product_last_price" type="object" string="price" groups="base.group_system"/>
+					<button name="compute_product_other_price" type="object" string="other_price" groups="base.group_system"/>
 					<field name="order_partner_id" string="客户"/>
 					<field name="order_id" string="订单号"/>
 					<field name="customer_pi" string="PO号"/>
@@ -61,10 +61,10 @@
 					<field name="price_subtotal" string="销售总价"/>
 					<field name="purchase_cost" string="采购总价"/>
 					<field name="current_date_rate" string="下单时汇率"/>
-				</tree>				
+				</tree>
 			</field>
 		</record>
-		
+
         <record id="sh_sol_sale_quotation_line_kanban_view_inherit_1" model="ir.ui.view">
             <field name="name">Quotation Line Kanban</field>
             <field name="model">sale.order.line</field>
@@ -75,7 +75,7 @@
                     <field name="product_uom_qty" string="Qty"/>
                     <field name="order_id" string="Order"/>
                     <field name="order_partner_id"/>
-                	<templates>	                	
+                	<templates>
 	                    <t t-name="kanban-box">
 	                        <div t-attf-class="oe_kanban_card oe_kanban_global_click">
     	                        <div class="o_kanban_details">
@@ -90,10 +90,10 @@
 		                	</div>
 	                    </t>
                     </templates>
-				</kanban>            
+				</kanban>
             </field>
-		</record>            
-		
+		</record>
+
         <record id="sh_sol_sale_quotation_line_search_view_inherit_1" model="ir.ui.view">
             <field name="name">Quotation Line Search</field>
             <field name="model">sale.order.line</field>
@@ -115,19 +115,19 @@
 						<filter string="未生效" domain="[('order_state','in',['draft','submit','sales_approve','manager_approval','cancel','refuse'])]"/>
 						<filter string="今天" name="today"
 							domain="[('contract_date', '&gt;=', datetime.datetime.now().strftime('%m/%d/%Y 00:00:00')),('contract_date', '&lt;=', datetime.datetime.now().strftime('%m/%d/%Y 23:23:59'))]"/>
-			
+
 					    <filter string="昨天" name="yesterday"
                          	domain="[('contract_date','&gt;=', ((context_today()+datetime.timedelta(days=-1)).strftime('%Y-%m-%d'))), ('contract_date','&lt;=', ((context_today()+datetime.timedelta(days=-1)).strftime('%Y-%m-%d')))]"/>
-					
+
 						<filter string="本周" name="this_week"
 						    domain="[('contract_date', '&gt;=', ((context_today()+ relativedelta(weeks=-1,weekday=0)).strftime('%Y-%m-%d'))), ('contract_date', '&lt;=', ((context_today()+ relativedelta(weeks=-1,days=5,weekday=6)).strftime('%Y-%m-%d')))]"  />
 
 					   <filter string="上周" name="prev_week"
 					   		domain="[('contract_date', '&gt;=', ((context_today()+relativedelta(weeks=-2, weekday=0)).strftime('%Y-%m-%d'))),('contract_date', '&lt;=', ((context_today()+relativedelta(weeks=-1,weekday=6)).strftime('%Y-%m-%d')))]"/>
-	
+
 					   <filter string="本月" name="this_month"
 							domain="[('contract_date','&lt;',(context_today()+relativedelta(months=1)).strftime('%%Y-%%m-01')), ('contract_date','&gt;=',time.strftime('%%Y-%%m-01'))]"/>
-	
+
 					  <filter string="上月" name="prev_month"
 					  		domain="[('contract_date','&gt;=',(context_today()-relativedelta(months=1)).strftime('%%Y-%%m-01')),('contract_date','&lt;',time.strftime('%%Y-%%m-01'))]"/>
 

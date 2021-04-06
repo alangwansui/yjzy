@@ -959,6 +959,73 @@
             </field>
         </record>
 
+
+         <record id="sale_line_analysis_tree_view" model="ir.ui.view">
+            <field name="name">Quotation Line Tree</field>
+            <field name="model">sale.order.line</field>
+            <field name="priority" eval="1"/>
+            <field name="arch" type="xml">
+                <tree>
+                        <button name="compute_today_hegui_date" type="object" string="hegui"
+                                groups="base.group_system"/>
+                        <button name="compute_product_last_price" type="object" string="price"
+                                groups="base.group_system"/>
+                        <button name="compute_product_other_price" type="object" string="other_price"
+                                groups="base.group_system"/>
+                        <button name="compute_price_change_percent" type="object" string="比率"
+                                groups="base.group_system"/>
+
+                        <field name="order_partner_id" string="客户" invisible="1"/>
+                        <field name="order_id" string="合同号" invisible="1"/>
+                        <field name="customer_pi" string="客户合同号" invisible="1"/>
+                        <field name="purchase_contract_code" string="采购合同号" invisible="1"/>
+                        <field name="contract_date" string="下单日期" invisible="1"/>
+                        <field name="product_id" string="客户型号"/>
+                        <field name="name" invisible="1"/>
+                        <field name="product_uom" invisible="1"/>
+                        <field name="product_uom_qty" string="数量"/>
+                        <field name="price_unit" string="销售单价"/>
+                        <field name="product_last_price"/>
+                        <field name="sale_price_change_percent" widget="Percent"
+                               options="{'fg_color': 'red: is_change == False; blue: is_change == True'}"/>
+                        <field name="is_change"/>
+                        <field name="lowest_price"/>
+                        <field name="highest_price"/>
+                        <field name="sale_price_percent" widget="progressbar"/>
+                        <field name="purchase_price" string="采购单价"/>
+                        <field name="product_purchase_last_price"/>
+                        <field name="purchase_price_change_percent" widget="Percent"/>
+                        <field name="purchase_lowest_price"/>
+                        <field name="purchase_highest_price"/>
+                        <field name="purchase_price_percent" widget="progressbar"/>
+
+                        <field name="average_price" invisible="1"/>
+
+                        <field name="tax_id" widget="many2many_tags" invisible="1"/>
+                        <field name="discount" invisible="1"/>
+                        <field name="price_subtotal" string="销售总价" invisible="1"/>
+                        <field name="purchase_cost" string="采购总价" invisible="1"/>
+                        <field name="current_date_rate" string="下单时汇率" invisible="1"/>
+
+                </tree>
+            </field>
+        </record>
+
+        <record id="sh_action_sale_order_lines_all" model="ir.actions.act_window">
+            <field name="name">Sale Order Line</field>
+            <field name="res_model">sale.order.line</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,kanban</field>
+            <field name="domain">[('price_unit','!=',product_last_price),('purchase_price','!=',product_purchase_last_price)]</field>
+
+            <field name="context">{'only_customer_ref':1,'search_default_group_by_partner':1}</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('sale_line_analysis_tree_view')}),
+
+                       ]"/>
+        </record>
+
         <record model="ir.actions.act_window" id="act_open_sale_order_cost_view">
             <field name="name">成本单</field>
             <field name="type">ir.actions.act_window</field>
@@ -980,11 +1047,16 @@
             <field name="view_mode">tree</field>
             <field name="view_id" ref="view_sale_order_cost_tree"/>
         </record>
+         <menuitem id="chengbendan_all" name="成本单相关"
+                  groups="sales_team.group_sale_manager" parent="new_sale_order_root_4" sequence="99"/>
 
-        <menuitem id="menu_sale_order_cost" name="成本单"
-                  parent="sale.sale_order_menu"
-                  sequence="20"
-                  action="act_open_sale_order_cost_view"/>
+        <menuitem id="sh_so_cost_all" name="所有成本单" action="act_open_sale_order_cost_view"
+                  groups="sales_team.group_sale_manager" parent="chengbendan_all" sequence="1"/>
+		<menuitem id="sh_sol_quotation_line_analysis" name="所有价格变动明细" action="sh_action_sale_order_lines_all"
+                  groups="sales_team.group_sale_manager" parent="chengbendan_all" sequence="2"/>
+
+
+
 
 
     </data>
