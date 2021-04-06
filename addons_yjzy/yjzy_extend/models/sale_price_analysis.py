@@ -190,3 +190,17 @@ class sale_order_line(models.Model):
     purchase_highest_price = fields.Float('采购历史最高价', compute='compute_product_other_price',digits=dp.get_precision('Product Price'),store=True)
     purchase_lowest_price = fields.Float('采购历史最低价', compute='compute_product_other_price',digits=dp.get_precision('Product Price'),store=True)
 
+
+    def compute_product_last_price_ls(self):
+        so_line_obj = self.env['sale.order.line']
+        for one in self:
+            so_line = so_line_obj.search([('today_hegui_date', '>', 0), ('product_id', '=', one.product_id.id),('order_partner_id','=',one.order_partner_id.id)],order='today_hegui_date,id desc' )
+            if so_line:
+                product_last_price = so_line[1].price_unit
+                product_purchase_last_price = so_line[1].purchase_price
+            else:
+                product_last_price = 0
+                product_purchase_last_price = 0
+
+            one.product_last_price = product_last_price
+            one.product_purchase_last_price = product_purchase_last_price

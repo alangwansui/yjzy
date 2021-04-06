@@ -41,7 +41,7 @@
 			<field name="model">sale.order.line</field>
 			<field name="priority" eval="1"/>
 			<field name="arch" type="xml">
-				<tree>
+				<tree >
 					<button name="compute_today_hegui_date" type="object" string="hegui" groups="base.group_system"/>
 					<button name="compute_product_last_price" type="object" string="price" groups="base.group_system"/>
 					<button name="compute_product_other_price" type="object" string="other_price" groups="base.group_system"/>
