@@ -1012,7 +1012,7 @@
             </field>
         </record>
 
-        <record id="sh_action_sale_order_lines_all" model="ir.actions.act_window">
+        <record id="sh_action_sale_order_lines_analisis" model="ir.actions.act_window">
             <field name="name">Sale Order Line</field>
             <field name="res_model">sale.order.line</field>
             <field name="type">ir.actions.act_window</field>
