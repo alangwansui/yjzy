@@ -21,7 +21,9 @@ class sale_order(models.Model):
 
     def compute_order_line_analysis(self):
         for one in self:
-            line_ids = one.order_line.filtered(lambda x: x.price_unit != x.product_last_price or x.purchase_price != x.product_purchase_last_price)
+            line_ids = one.order_line
+            # .filtered(
+            #     lambda x: x.price_unit != x.product_last_price or x.purchase_price != x.product_purchase_last_price)
             one.order_line_analysis = line_ids
 
 
