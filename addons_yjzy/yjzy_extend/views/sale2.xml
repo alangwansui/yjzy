@@ -1053,7 +1053,7 @@
 
         <menuitem id="sh_so_cost_all" name="所有成本单" action="act_open_sale_order_cost_view"
                   groups="sales_team.group_sale_manager" parent="chengbendan_all" sequence="1"/>
-		<menuitem id="sh_sol_quotation_line_analysis" name="所有价格变动明细" action="sh_action_sale_order_lines_all"
+		<menuitem id="sh_sol_quotation_line_analysis" name="所有价格变动明细" action="sh_action_sale_order_lines_analisis"
                   groups="sales_team.group_sale_manager" parent="chengbendan_all" sequence="2"/>
 
 

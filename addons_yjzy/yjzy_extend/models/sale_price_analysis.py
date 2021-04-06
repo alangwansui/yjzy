@@ -28,10 +28,10 @@ class sale_order(models.Model):
     def compute_lens(self):
         for one in self:
             order_line_analysis= one.order_line_analysis
-            one.higher_last_sale_price = len(order_line_analysis.filtered(lambda x: x.price_unit > x.product_last_price ))
-            one.lower_last_sale_price = len(order_line_analysis.filtered(lambda x: x.price_unit < x.product_last_price))
-            one.higher_last_purchase_price = len(order_line_analysis.filtered(lambda x: x.purchase_price > x.product_purchase_last_price))
-            one.lower_last_purchase_price = len(order_line_analysis.filtered(lambda x: x.purchase_price < x.product_purchase_last_price))
+            one.higher_last_sale_price = len(order_line_analysis.filtered(lambda x: x.product_last_price!=0 and x.price_unit > x.product_last_price ))
+            one.lower_last_sale_price = len(order_line_analysis.filtered(lambda x: x.product_last_price!=0 and x.price_unit < x.product_last_price))
+            one.higher_last_purchase_price = len(order_line_analysis.filtered(lambda x: x.product_purchase_last_price !=0 and x.purchase_price > x.product_purchase_last_price))
+            one.lower_last_purchase_price = len(order_line_analysis.filtered(lambda x: x.product_purchase_last_price !=0 and x.purchase_price < x.product_purchase_last_price))
 
 
     order_line_analysis = fields.Many2many('sale.order.line','价格分析明细', 'order_line_id', 'sid', 'oid',compute='compute_order_line_analysis')
