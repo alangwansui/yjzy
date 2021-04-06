@@ -980,6 +980,8 @@
                         <field name="customer_pi" string="客户合同号" invisible="1"/>
                         <field name="purchase_contract_code" string="采购合同号" invisible="1"/>
                         <field name="contract_date" string="下单日期" invisible="1"/>
+                        <button name="open_product_order_line" type="object" icon="fa-archive" />
+
                         <field name="product_id" string="客户型号"/>
                         <field name="name" invisible="1"/>
                         <field name="product_uom" invisible="1"/>

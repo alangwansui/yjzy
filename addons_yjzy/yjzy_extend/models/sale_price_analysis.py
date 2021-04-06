@@ -204,3 +204,18 @@ class sale_order_line(models.Model):
 
             one.product_last_price = product_last_price
             one.product_purchase_last_price = product_purchase_last_price
+
+    def open_product_order_line(self):
+        tree_view = self.env.ref('yjzy_extend.sh_sol_sale_quotation_line_tree_view_inherit_1').id
+        return ({
+            'name': u'查看产品销售明细',
+            'view_type': 'form',
+            'view_mode': 'tree',
+            'res_model': 'tb.po.invoice',
+            'type': 'ir.actions.act_window',
+            'views': [(tree_view, 'tree')],
+            'target': 'new',
+            'domain':[('product_id','=',self.product_id.id)],
+            'context': {}
+
+        })
