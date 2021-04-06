@@ -211,7 +211,7 @@ class sale_order_line(models.Model):
             'name': u'查看产品销售明细',
             'view_type': 'form',
             'view_mode': 'tree',
-            'res_model': 'tb.po.invoice',
+            'res_model': 'sale.order.line',
             'type': 'ir.actions.act_window',
             'views': [(tree_view, 'tree')],
             'target': 'new',
