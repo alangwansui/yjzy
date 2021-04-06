@@ -130,9 +130,28 @@ class sale_order_line(models.Model):
             else:
                 is_change = False
 
+            if purchase_price_change_percent >= 0:
+                purchase_is_change = True
+            else:
+                purchase_is_change = False
+
+            if sale_price_change_percent == 0:
+                no_change = True
+            else:
+                no_change = False
+
+            if purchase_price_change_percent == 0:
+                purchase_no_change = True
+            else:
+                purchase_no_change = False
+
+
             one.sale_price_change_percent = sale_price_change_percent
             one.purchase_price_change_percent = purchase_price_change_percent
             one.is_change = is_change
+            one.purchase_is_change = purchase_is_change
+            one.no_change = no_change
+            one.purchase_no_change = purchase_no_change
 
     def compute_price_percent(self):
         for one in self:
@@ -151,7 +170,12 @@ class sale_order_line(models.Model):
             one.purchase_price_percent = purchase_price_percent
 
     sale_price_change_percent = fields.Float('变动比率',  digits=(2, 2),compute=compute_price_change_percent,store=True)
-    is_change = fields.Boolean('变动方向',compute=compute_price_change_percent,store=True)
+    is_change = fields.Boolean('销售变动方向',compute=compute_price_change_percent,store=True)
+    purchase_is_change = fields.Boolean('采购变动方向', compute=compute_price_change_percent, store=True)
+
+    no_change = fields.Boolean('销售有无变动', compute=compute_price_change_percent, store=True)
+    purchase_no_change = fields.Boolean('采购有无变动', compute=compute_price_change_percent, store=True)
+
     purchase_price_change_percent = fields.Float('变动比率',  digits=(2, 2),compute=compute_price_change_percent, store=True)
 
     sale_price_percent = fields.Float('本次在历史价格区间的位置',compute=compute_price_percent)

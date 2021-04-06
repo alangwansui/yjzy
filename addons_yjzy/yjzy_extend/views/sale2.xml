@@ -965,7 +965,7 @@
             <field name="model">sale.order.line</field>
             <field name="priority" eval="1"/>
             <field name="arch" type="xml">
-                <tree>
+                <tree class="o_list_view_scroll">
                         <button name="compute_today_hegui_date" type="object" string="hegui"
                                 groups="base.group_system"/>
                         <button name="compute_product_last_price" type="object" string="price"
@@ -994,7 +994,8 @@
                         <field name="sale_price_percent" widget="progressbar"/>
                         <field name="purchase_price" string="采购单价"/>
                         <field name="product_purchase_last_price"/>
-                        <field name="purchase_price_change_percent" widget="Percent"/>
+                        <field name="purchase_price_change_percent" widget="Percent"
+                        options="{'fg_color': 'red: purchase_is_change == False; blue: purchase_is_change == True'}"/>
                         <field name="purchase_lowest_price"/>
                         <field name="purchase_highest_price"/>
                         <field name="purchase_price_percent" widget="progressbar"/>
@@ -1017,7 +1018,7 @@
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form,kanban</field>
-            <field name="domain">[('price_unit','!=',product_last_price),('purchase_price','!=',product_purchase_last_price)]</field>
+            <field name="domain">['|',('no_change','=',False),('purchase_no_change','=',False)]</field>
 
             <field name="context">{'only_customer_ref':1,'search_default_group_by_partner':1}</field>
         <field name="view_ids" eval="[(5, 0, 0),
