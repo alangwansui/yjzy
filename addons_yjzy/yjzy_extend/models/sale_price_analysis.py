@@ -192,11 +192,10 @@ class sale_order_line(models.Model):
 
 
     def compute_product_last_price_ls(self):
-
+        so_line_obj = self.env['sale.order.line']
         for one in self:
-            so_line_obj = self.env['sale.order.line']
             so_line = so_line_obj.search([('today_hegui_date', '>', 0), ('product_id', '=', one.product_id.id),('order_partner_id','=',one.order_partner_id.id)],order='today_hegui_date,id desc' )
-            if so_line:
+            if len(so_line) > 1:
                 product_last_price = so_line[1].price_unit
                 product_purchase_last_price = so_line[1].purchase_price
             else:
