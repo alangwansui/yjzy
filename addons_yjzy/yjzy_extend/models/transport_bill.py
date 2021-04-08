@@ -1088,6 +1088,8 @@ class transport_bill(models.Model):
     currency_id = fields.Many2one('res.currency', related='company_id.currency_id', readonly=True, string='公司货币')
     name = fields.Char('编号', default=lambda self: self.env['ir.sequence'].next_by_code('transport.bill'))
     ref = fields.Char(u'出运合同号')
+    _sql_constraints = [
+        ('ref_uniq', 'unique(ref)', u'存在重复的合同编号!')]
     date = fields.Date(u'出运日期')
     date_project = fields.Date(u'预计出运日期')
     payment_due_date = fields.Date('Payment Due Date')
@@ -1682,13 +1684,13 @@ class transport_bill(models.Model):
         })
         return one
 
-    # 13ok
-    @api.constrains('ref')
-    def check_contract_code(self):
-        for one in self:
-            if one.ref and self.search_count([('ref', '=', one.ref)]) > 1:
-                raise Warning('出运合同号重复')
-
+    # # 13ok
+    # @api.constrains('ref')
+    # def check_contract_code(self):
+    #     for one in self:
+    #         if one.ref and self.search_count([('ref', '=', one.ref)]) > 1:
+    #             raise Warning('出运合同号重复')
+    #
 
     @api.multi
     # def copy(self, default=None):

@@ -86,8 +86,8 @@ class sale_order_line(models.Model):
             price_dic = []
             for price in so_line:
                 price_dic.append(price.price_unit)
-            highest_price = max(price_dic)
-            lowest_price = min(price_dic)
+            highest_price = price_dic and  max(price_dic)
+            lowest_price = price_dic and  min(price_dic)
 
             purchase_price_amount_so_line = sum(line.purchase_price for line in so_line)
             len_so_line = len(so_line)
@@ -95,8 +95,8 @@ class sale_order_line(models.Model):
             purchase_price_dic = []
             for purchase_price in so_line:
                 purchase_price_dic.append(purchase_price.purchase_price)
-            purchase_highest_price = max(purchase_price_dic)
-            purchase_lowest_price = min(purchase_price_dic)
+            purchase_highest_price = purchase_price_dic and  max(purchase_price_dic)
+            purchase_lowest_price =purchase_price_dic and  min(purchase_price_dic)
 
             print('other_price_akiny', so_line, price_amount_so_line, len_so_line, average_price, price_dic,highest_price,lowest_price)
             one.average_price = average_price

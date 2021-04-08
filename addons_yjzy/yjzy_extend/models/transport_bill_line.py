@@ -118,7 +118,8 @@ class transport_bill_line(models.Model):
     discount = fields.Float(string='Discount (%)',digits=(16, 20), related='sol_id.discount', store=True,)
     back_tax_amount = fields.Monetary(u'退税金额', currency_field='company_currency_id', compute=compute_info,
                                       digits=dp.get_precision('Money'))
-
+    org_currency_sale_amount = fields.Monetary(u'销售货币金额', currency_field='sale_currency_id', compute=compute_info,
+                                               store=False, digits=dp.get_precision('Money'))
     org_currency_sale_amount_discount = fields.Monetary(u'折扣', currency_field='sale_currency_id',
                                                       compute=compute_info,
                                                       store=False, digits=dp.get_precision('Money'))
@@ -137,17 +138,22 @@ class transport_bill_line(models.Model):
     bill_id = fields.Many2one('transport.bill', u'发运单', ondelete='cascade', required=True)
     include_tax = fields.Boolean(related='bill_id.include_tax')
     state = fields.Selection(related='bill_id.state')
-
+    sol_id = fields.Many2one('sale.order.line', u'销售明细',)
     # rest_tb_qty = fields.Float(related='sol_id.rest_tb_qty')
-
+    rest_tb_qty = fields.Float(compute=compute_rest_tb_qty)
     cip_type = fields.Selection(related='bill_id.cip_type', readonly=True)
-
-
-
+    smline_ids = fields.One2many('stock.move.line', related='sol_id.smline_ids', string=u'库存预留')
+    smline_str = fields.Char(related='sol_id.smline_str', string=u'锁定内容')
+    smline_qty = fields.Float(related='sol_id.smline_qty', string=u'锁定总数')
+    dlr_ids = fields.One2many('dummy.lot.reserve', related='sol_id.dlr_ids', string=u'采购预留')
+    dlr_str = fields.Char(related='sol_id.dlr_str', string=u'采购预留')
+    dlr_qty = fields.Float(related='sol_id.dlr_qty', string=u'采购预留数')
+    lot_plan_ids = fields.One2many('transport.lot.plan', 'tbline_id', u'调拨计划', copy=False)
+    lot_plan_id = fields.Many2one('transport.lot.plan',  u'调拨计划:新')
     #1102
     supplier_id = fields.Many2one('res.partner','供应商',related='lot_plan_id.lot_id.supplier_id')
     plan_lot = fields.Many2one('stock.production.lot',  '计划批次', related='lot_plan_id.lot_id')
-
+    plan_qty = fields.Float('计划数量', related='lot_plan_id.qty')
     pol_ids = fields.One2many('purchase.order.line', related='sol_id.pol_ids', readonly=True)
     move_ids = fields.Many2many('stock.move', 'ref_move_tbl', 'lid', 'mid', u'库存移动详情')
     stage1move_ids = fields.Many2many('stock.move', 'ref_move_tbl', 'lid', 'mid', u'入库',
@@ -156,12 +162,12 @@ class transport_bill_line(models.Model):
                                       domain=[('picking_code', '=', 'outgoing')])
     purchase_qty = fields.Float(u'采购数', related='sol_id.purchase_qty')
     qty_unreceived = fields.Float(u'未收数', related='sol_id.qty_unreceived')
-
+    so_id = fields.Many2one('sale.order', u'销售单', related='sol_id.order_id', readonly=True)
     sale_contract_code = fields.Char(u'合同编码', related='so_id.contract_code', readonly=True)
-
+    product_id = fields.Many2one('product.product', related='sol_id.product_id', string=u'产品', readonly=True)
     hs_id = fields.Many2one('hs.hs', u'品名', related='product_id.hs_id', readonly=True)
     back_tax = fields.Float(u'退税率', digits=dp.get_precision('Back Tax'))
-
+    sale_qty = fields.Float(u'销售数', related='sol_id.product_uom_qty', readonly=True)
     qty_delivered = fields.Float(u'已发货', related='sol_id.qty_delivered', readonly=True)
     qty_undelivered = fields.Float(u'未发货', related='sol_id.qty_undelivered', readonly=True)
     qty = fields.Float(u'发运数量')
@@ -180,20 +186,6 @@ class transport_bill_line(models.Model):
     so_tb_number = fields.Char('销售合同发货次数')
     is_gold_sample = fields.Boolean('是否有金样', related='product_id.is_gold_sample', readonly=False)
     is_ps = fields.Boolean('是否有PS', related='product_id.is_ps', readonly=False)
-
-
-    #---------
-    so_id = fields.Many2one('sale.order', u'销售单', related='sol_id.order_id', readonly=True)
-    sol_id = fields.Many2one('sale.order.line', u'销售明细', )
-    product_id = fields.Many2one('product.product', related='sol_id.product_id', string=u'产品', readonly=True)
-    plan_qty = fields.Float('计划数量', related='lot_plan_id.qty')
-    lot_plan_ids = fields.One2many('transport.lot.plan', 'tbline_id', u'调拨计划', copy=False)
-    lot_plan_id = fields.Many2one('transport.lot.plan', u'调拨计划:新')
-    sale_qty = fields.Float(u'销售数', related='sol_id.product_uom_qty', readonly=True)
-    org_currency_sale_amount = fields.Monetary(u'销售货币金额', currency_field='sale_currency_id', compute=compute_info,
-                                               store=False, digits=dp.get_precision('Money'))
-    rest_tb_qty = fields.Float(compute=compute_rest_tb_qty)
-
 #----
 
     need_print = fields.Boolean('是否打印', default=True)

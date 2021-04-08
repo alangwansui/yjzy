@@ -202,6 +202,8 @@ class purchase_order(models.Model):
         ('cancel', 'Cancelled'), ('refused', u'已拒绝')
     ], string='Status', readonly=True, index=True, copy=False, default='draft', track_visibility='onchange')
     contract_code = fields.Char(u'合同编码')
+    _sql_constraints = [
+        ('contract_code_uniq', 'unique(contract_code)', u'存在重复的合同编号!')]
     term_purchase = fields.Html(u'采购条款')
     so_ids = fields.Many2many('sale.order', compute=compute_so, stirng=u'销售订单', copy=False)
     supplierinfo_ids = fields.Many2many('product.supplierinfo', 'rel_info_po', 'po_id', 'info_id', u'供应商产品编码',
@@ -369,12 +371,12 @@ class purchase_order(models.Model):
 
   #  partner_payment_term_id_value = fields.Many2one('account.payment.term', u'客户付款条款值')
 
-    #13已经添加
-    @api.constrains('contract_code')
-    def check_contract_code(self):
-        for one in self:
-            if self.search_count([('contract_code', '=', one.contract_code)]) > 1:
-                raise Warning('合同编码重复')
+    # #13已经添加
+    # @api.constrains('contract_code')
+    # def check_contract_code(self):
+    #     for one in self:
+    #         if self.search_count([('contract_code', '=', one.contract_code)]) > 1:
+    #             raise Warning('合同编码重复')
     @api.model
     def name_search(self, name='', args=None, operator='ilike', limit=100):
         if operator in ('ilike', 'like', '=', '=like', '=ilike'):
