@@ -377,6 +377,12 @@ class purchase_order(models.Model):
     #     for one in self:
     #         if self.search_count([('contract_code', '=', one.contract_code)]) > 1:
     #             raise Warning('合同编码重复')
+
+    @api.onchange('contract_code')
+    def onchange_contract_code(self):
+        contract_code = self.contract_code.strip()
+        self.contract_code = contract_code
+
     @api.model
     def name_search(self, name='', args=None, operator='ilike', limit=100):
         if operator in ('ilike', 'like', '=', '=like', '=ilike'):

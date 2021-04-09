@@ -1318,6 +1318,11 @@ class transport_bill(models.Model):
         # if ctx.get('default_open', '') == 'sol':
         #     return self.open_wizard_transport4sol()
 
+    @api.onchange('ref')
+    def onchange_contract_code(self):
+        ref = self.ref.strip()
+        self.ref = ref
+
     def action_hexiao(self):
         today = fields.datetime.now()
         stage_id = self._stage_find(domain=[('code', '=', '008')])
