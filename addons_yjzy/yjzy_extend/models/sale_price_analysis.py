@@ -91,7 +91,7 @@ class sale_order_line(models.Model):
             average_price = len_so_line != 0 and price_amount_so_line / len_so_line
             price_dic = []
             for price in so_line:
-                price_dic.append(price.price_unit)
+                price_dic.append(round(price.price_unit,6))
             highest_price = price_dic and max(price_dic)
             lowest_price = price_dic and min(price_dic)
 
@@ -100,7 +100,7 @@ class sale_order_line(models.Model):
             purchase_average_price = len_so_line != 0 and purchase_price_amount_so_line / len_so_line
             purchase_price_dic = []
             for purchase_price in so_line:
-                purchase_price_dic.append(purchase_price.purchase_price)
+                purchase_price_dic.append(round(purchase_price.purchase_price,6))
             purchase_highest_price = purchase_price_dic and max(purchase_price_dic)
             purchase_lowest_price = purchase_price_dic and min(purchase_price_dic)
 
