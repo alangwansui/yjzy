@@ -869,7 +869,6 @@ class transport_bill(models.Model):
     @api.depends('purchase_invoice_ids','purchase_invoice_ids.date_finish')
     def compute_date_purchase_finish_is_done(self):
         for one in self:
-
             print('-采购发票-', one.purchase_invoice_ids)
             if all([x.date_finish != False for x in one.purchase_invoice_ids]):
                 date_purchase_finish_is_done = True

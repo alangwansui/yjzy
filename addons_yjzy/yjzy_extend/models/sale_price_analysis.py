@@ -79,7 +79,7 @@ class sale_order_line(models.Model):
     def compute_product_other_price(self):
         so_line_obj = self.env['sale.order.line']
         for one in self:
-            so_line = so_line_obj.search([('product_id', '=', one.product_id.id),('order_partner_id','=',one.order_partner_id.id),('id','!=',one.id)])
+            so_line = so_line_obj.search([('product_id', '=', one.product_id.id),('hegui_date','!=',False),('order_partner_id','=',one.order_partner_id.id),('id','!=',one.id)])
             price_amount_so_line = sum(line.price_unit for line in so_line)
             len_so_line =len(so_line)
             average_price = len_so_line != 0 and price_amount_so_line / len_so_line
@@ -180,8 +180,14 @@ class sale_order_line(models.Model):
             purchase_highest_price = one.purchase_highest_price
             purchase_lowest_price = one.purchase_lowest_price
             purchase_price = one.purchase_price
-            if purchase_highest_price - purchase_lowest_price == 0:
-                purchase_price_percent = 1*100
+
+            if purchase_highest_price - purchase_lowest_price == 0 and purchase_price == purchase_highest_price and purchase_highest_price != 0 and purchase_lowest_price != 0 or (
+                    purchase_highest_price == 0 and purchase_lowest_price == 0):
+                purchase_price_percent = 1 * 100
+            elif purchase_highest_price - purchase_lowest_price == 0 and purchase_price > purchase_highest_price:
+                purchase_price_percent = purchase_price * 100 / purchase_highest_price
+            elif purchase_highest_price - purchase_lowest_price == 0 and purchase_price < purchase_lowest_price:
+                purchase_price_percent = (purchase_price - purchase_lowest_price) * 100 / purchase_highest_price
             else:
                 if purchase_price < purchase_lowest_price:
                     purchase_price_percent = purchase_lowest_price != 0 and (purchase_price - purchase_lowest_price) * 100 / purchase_lowest_price
