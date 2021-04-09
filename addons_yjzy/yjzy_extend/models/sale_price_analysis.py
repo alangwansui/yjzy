@@ -161,10 +161,14 @@ class sale_order_line(models.Model):
             lowest_price = one.lowest_price
             price_unit = one.price_unit
             if highest_price - lowest_price == 0:
-                sale_price_percent = highest_price and (price_unit - lowest_price) * 100 / highest_price or price_unit - lowest_price
+                sale_price_percent = 1 * 100
             else:
-
-                sale_price_percent =highest_price - lowest_price !=0 and  (price_unit - lowest_price) * 100 / (highest_price - lowest_price)
+                if price_unit < lowest_price:
+                    sale_price_percent = lowest_price != 0 and (price_unit - lowest_price) *100 / lowest_price
+                if price_unit >= lowest_price and price_unit<= highest_price:
+                    sale_price_percent = highest_price - lowest_price !=0 and  (price_unit - lowest_price) * 100 / (highest_price - lowest_price)
+                if price_unit > highest_price:
+                    sale_price_percent = highest_price !=0 and price_unit *100 / highest_price
 
             purchase_highest_price = one.purchase_highest_price
             purchase_lowest_price = one.purchase_lowest_price
