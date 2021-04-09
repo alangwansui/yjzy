@@ -91,7 +91,7 @@ class sale_order_line(models.Model):
             average_price = len_so_line != 0 and price_amount_so_line / len_so_line
             price_dic = []
             for price in so_line:
-                price_dic.append(round(price.price_unit,6))
+                price_dic.append(price.price_unit)
             highest_price = price_dic and max(price_dic)
             lowest_price = price_dic and min(price_dic)
 
@@ -100,7 +100,7 @@ class sale_order_line(models.Model):
             purchase_average_price = len_so_line != 0 and purchase_price_amount_so_line / len_so_line
             purchase_price_dic = []
             for purchase_price in so_line:
-                purchase_price_dic.append(round(purchase_price.purchase_price,6))
+                purchase_price_dic.append(purchase_price.purchase_price)
             purchase_highest_price = purchase_price_dic and max(purchase_price_dic)
             purchase_lowest_price = purchase_price_dic and min(purchase_price_dic)
 
@@ -110,8 +110,8 @@ class sale_order_line(models.Model):
             one.highest_price = highest_price
             one.lowest_price = lowest_price
             one.purchase_average_price = purchase_average_price
-            one.purchase_highest_price = purchase_highest_price
-            one.purchase_lowest_price = purchase_lowest_price
+            one.purchase_highest_price = round(purchase_highest_price,5)
+            one.purchase_lowest_price = round(purchase_lowest_price,5)
 
     hegui_date = fields.Date('合规审批时间', related='order_id.approve_date', store=True)
     today_hegui_date = fields.Integer('合规审批距离今天的日期', compute=compute_today_hegui_date, store=True)
