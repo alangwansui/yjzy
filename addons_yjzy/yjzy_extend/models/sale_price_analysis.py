@@ -79,7 +79,7 @@ class sale_order_line(models.Model):
     def compute_product_other_price(self):
         so_line_obj = self.env['sale.order.line']
         for one in self:
-            so_line = so_line_obj.search([('product_id', '=', one.product_id.id),('order_partner_id','=',one.order_partner_id.id)])
+            so_line = so_line_obj.search([('product_id', '=', one.product_id.id),('order_partner_id','=',one.order_partner_id.id),('id','!=',one.id)])
             price_amount_so_line = sum(line.price_unit for line in so_line)
             len_so_line =len(so_line)
             average_price = len_so_line != 0 and price_amount_so_line / len_so_line
