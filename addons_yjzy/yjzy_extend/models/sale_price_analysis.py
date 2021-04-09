@@ -8,6 +8,7 @@ from .comm import BACK_TAX_RATIO
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from odoo.tools import DEFAULT_SERVER_DATE_FORMAT as DF
+from odoo.tools import float_is_zero, float_compare
 
 
 class ProductProduct(models.Model):
@@ -168,7 +169,7 @@ class sale_order_line(models.Model):
             highest_price = one.highest_price
             lowest_price = one.lowest_price
             price_unit = one.price_unit
-            print('purchase_highest_price_akiny', highest_price, lowest_price)
+            print('highest_price_akiny', highest_price, lowest_price)
             if highest_price - lowest_price == 0 and price_unit == highest_price and highest_price != 0 and lowest_price != 0 or (
                     highest_price == 0 and lowest_price == 0):
                 sale_price_percent = 1 * 100
