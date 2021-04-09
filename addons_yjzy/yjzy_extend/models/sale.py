@@ -809,9 +809,19 @@ class sale_order(models.Model):
 
     # @api.multi
     # def write(self, vals):
-    #     body = '%s' % vals
-    #     self.message_post(body=body, subject='内容修改', message_type='notification')
+    #     vals['contract_code'] = self.contract_code.strip()
     #     return super(sale_order, self).write(vals)
+
+    #
+    @api.onchange('contract_code')
+    def onchange_contract_code(self):
+        contract_code = self.contract_code.strip()
+        self.contract_code = contract_code
+
+    # def write_after(self):
+    #     for one in self:
+    #         contract_code = one.contract_code.strip()
+    #         one.contract_code = contract_code
 
     def unlink(self):
         for one in self:
