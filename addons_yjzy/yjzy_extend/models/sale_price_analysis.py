@@ -165,19 +165,27 @@ class sale_order_line(models.Model):
             else:
                 if price_unit < lowest_price:
                     sale_price_percent = lowest_price != 0 and (price_unit - lowest_price) *100 / lowest_price
-                if price_unit >= lowest_price and price_unit<= highest_price:
+                elif price_unit >= lowest_price and price_unit<= highest_price:
                     sale_price_percent = highest_price - lowest_price !=0 and  (price_unit - lowest_price) * 100 / (highest_price - lowest_price)
-                if price_unit > highest_price:
+                else:
+                # if price_unit > highest_price:
                     sale_price_percent = highest_price !=0 and price_unit *100 / highest_price
 
             purchase_highest_price = one.purchase_highest_price
             purchase_lowest_price = one.purchase_lowest_price
             purchase_price = one.purchase_price
             if purchase_highest_price - purchase_lowest_price == 0:
-                purchase_price_percent = purchase_highest_price and (purchase_price - purchase_lowest_price) * 100 / purchase_highest_price or purchase_price - purchase_lowest_price
+                purchase_price_percent = 1*100
             else:
-                purchase_price_percent = purchase_highest_price - purchase_lowest_price != 0 and (purchase_price - purchase_lowest_price) * 100 / (
-                        purchase_highest_price - purchase_lowest_price)
+                if purchase_price < purchase_lowest_price:
+                    purchase_price_percent = purchase_lowest_price != 0 and (purchase_price - purchase_lowest_price) * 100 / purchase_lowest_price
+                elif price_unit >= lowest_price and price_unit <= highest_price:
+                    purchase_price_percent = purchase_highest_price - purchase_lowest_price != 0 and (
+                                purchase_price - purchase_lowest_price) * 100 / (
+                                                     purchase_highest_price - purchase_lowest_price)
+                else:
+                    purchase_price_percent = purchase_highest_price !=0 and purchase_price *100 / purchase_highest_price
+
 
             one.sale_price_percent = sale_price_percent
             one.purchase_price_percent = purchase_price_percent
