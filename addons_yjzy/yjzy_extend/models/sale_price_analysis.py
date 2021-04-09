@@ -110,8 +110,8 @@ class sale_order_line(models.Model):
             one.highest_price = highest_price
             one.lowest_price = lowest_price
             one.purchase_average_price = purchase_average_price
-            one.purchase_highest_price = round(purchase_highest_price,5)
-            one.purchase_lowest_price = round(purchase_lowest_price,5)
+            one.purchase_highest_price = purchase_highest_price
+            one.purchase_lowest_price = purchase_lowest_price
 
     hegui_date = fields.Date('合规审批时间', related='order_id.approve_date', store=True)
     today_hegui_date = fields.Integer('合规审批距离今天的日期', compute=compute_today_hegui_date, store=True)
@@ -187,9 +187,9 @@ class sale_order_line(models.Model):
                     # if price_unit > highest_price:
                     sale_price_percent = highest_price != 0 and price_unit * 100 / highest_price
 
-            purchase_highest_price = one.purchase_highest_price
-            purchase_lowest_price = one.purchase_lowest_price
-            purchase_price = one.purchase_price
+            purchase_highest_price = round(one.purchase_highest_price,5)
+            purchase_lowest_price = round(one.purchase_lowest_price,5)
+            purchase_price = round(one.purchase_price,5)
             print('purchase_highest_price_akiny',purchase_highest_price,purchase_lowest_price)
             if purchase_highest_price - purchase_lowest_price == 0 and purchase_price == purchase_highest_price and purchase_highest_price != 0 and purchase_lowest_price != 0 or (
                     purchase_highest_price == 0 and purchase_lowest_price == 0):
