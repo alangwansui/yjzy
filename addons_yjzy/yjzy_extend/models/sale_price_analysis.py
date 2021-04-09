@@ -166,9 +166,9 @@ class sale_order_line(models.Model):
                  'purchase_price')
     def compute_price_percent(self):
         for one in self:
-            highest_price = one.highest_price
-            lowest_price = one.lowest_price
-            price_unit = one.price_unit
+            highest_price = round(one.highest_price,5)
+            lowest_price = round(one.lowest_price,5)
+            price_unit = round(one.price_unit,5)
             print('highest_price_akiny', highest_price, lowest_price)
             if highest_price - lowest_price == 0 and price_unit == highest_price and highest_price != 0 and lowest_price != 0 or (
                     highest_price == 0 and lowest_price == 0):
