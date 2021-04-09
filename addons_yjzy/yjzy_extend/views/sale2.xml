@@ -993,7 +993,7 @@
                         <field name="is_change"/>
                         <field name="lowest_price"/>
                         <field name="highest_price"/>
-                        <field name="sale_price_percent" widget="progressbar"/>
+                        <field name="sale_price_percent" widget="Percent"/>
                         <field name="purchase_price" string="采购单价"/>
                         <field name="product_purchase_last_price"/>
                         <field name="purchase_price_change_percent" widget="Percent"
