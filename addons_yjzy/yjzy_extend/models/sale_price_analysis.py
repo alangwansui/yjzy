@@ -155,6 +155,8 @@ class sale_order_line(models.Model):
             one.no_change = no_change
             one.purchase_no_change = purchase_no_change
 
+
+    @api.depends('highest_price','lowest_price','price_unit','purchase_highest_price','purchase_lowest_price','purchase_price')
     def compute_price_percent(self):
         for one in self:
             highest_price = one.highest_price
@@ -199,8 +201,8 @@ class sale_order_line(models.Model):
 
     purchase_price_change_percent = fields.Float('变动比率',  digits=(2, 2),compute=compute_price_change_percent, store=True)
 
-    sale_price_percent = fields.Float('本次在历史价格区间的位置',compute=compute_price_percent)
-    purchase_price_percent = fields.Float('本次在历史价格区间的位置', compute=compute_price_percent)
+    sale_price_percent = fields.Float('本次在历史价格区间的位置',compute=compute_price_percent,digits=(2, 2),store=True)
+    purchase_price_percent = fields.Float('本次在历史价格区间的位置', compute=compute_price_percent,digits=(2, 2),store=True)
 
     average_price = fields.Float('历史平均价', compute='compute_product_other_price',digits=dp.get_precision('Product Price'),store=True)
     highest_price = fields.Float('历史最高价', compute='compute_product_other_price',digits=dp.get_precision('Product Price'),store=True)
