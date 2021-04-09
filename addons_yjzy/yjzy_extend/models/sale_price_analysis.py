@@ -188,7 +188,7 @@ class sale_order_line(models.Model):
             purchase_highest_price = one.purchase_highest_price
             purchase_lowest_price = one.purchase_lowest_price
             purchase_price = one.purchase_price
-
+            print('purchase_highest_price_akiny',purchase_highest_price,purchase_lowest_price)
             if purchase_highest_price - purchase_lowest_price == 0 and purchase_price == purchase_highest_price and purchase_highest_price != 0 and purchase_lowest_price != 0 or (
                     purchase_highest_price == 0 and purchase_lowest_price == 0):
                 purchase_price_percent = 1 * 100
