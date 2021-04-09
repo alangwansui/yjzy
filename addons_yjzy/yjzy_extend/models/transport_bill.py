@@ -1319,7 +1319,7 @@ class transport_bill(models.Model):
         #     return self.open_wizard_transport4sol()
 
     @api.onchange('ref')
-    def onchange_contract_code(self):
+    def onchange_ref(self):
         ref = self.ref.strip()
         self.ref = ref
 
