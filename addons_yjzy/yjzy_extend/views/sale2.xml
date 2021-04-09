@@ -1000,7 +1000,7 @@
                         options="{'fg_color': 'red: purchase_is_change == False; blue: purchase_is_change == True'}"/>
                         <field name="purchase_lowest_price"/>
                         <field name="purchase_highest_price"/>
-                        <field name="purchase_price_percent" widget="progressbar"/>
+                        <field name="purchase_price_percent" widget="Percent"/>
 
                         <field name="average_price" invisible="1"/>
 
