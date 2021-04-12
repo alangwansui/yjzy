@@ -611,6 +611,8 @@ class account_payment(models.Model):
 
     # zlsx = fields.Selection([('fkzl',u'付款指令'),('fksq',u'付款申请'),('fkzl_fksq',u'付款指令和申请')],u'指令付款属性') #鉴定这个付款单的指令和付款属性，可以用来综合历史数据
 
+    btd_ids = fields.One2many('back.tax.declaration','payment_id', '退税申报表', )
+
     advance_type = fields.Selection([('10_no_contract',u'无合同'),
                                      ('20_contract',u'有合同')],u'预付类型',compute=compute_advance_type, default='10_no_contract',store=True)
     current_date_rate = fields.Float(u'当日汇率')

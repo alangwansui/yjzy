@@ -55,7 +55,7 @@
                                 context="{'group_by':['state','yjzy_invoice_id']}"/>
                         <filter name="group_by_invoice_attribute_all_in_one" string="账单属性分组"
                                 context="{'group_by':['invoice_attribute_all_in_one']}"/>
-                        <filter name="group_by_invoice_attribute_all_in_one_state" string="账单属性分组"
+                        <filter name="group_by_invoice_attribute_all_in_one_state" string="账单属性属性分组"
                                 context="{'group_by':['state','invoice_attribute_all_in_one']}"/>
                         <filter name="group_by_date_invoice" string="账单日期"
                                 context="{'group_by':'date_invoice:year'}"/>
@@ -64,7 +64,7 @@
                         <filter name="group_by_bill_id" string="出运合同"
                                 context="{'group_by':'bill_id'}"/>
                         <filter name="group_by_due_date" string="逾期天数"
-                                context="{'group_by':('residual_date_group','partner_id')}"/>
+                                context="{'group_by':('residual_date_group')}"/>
                         <filter name="group_by_partner_id" string="合作伙伴"
                                 context="{'group_by':'commercial_partner_id'}"/>
                         <filter string="业务员" context="{'group_by':'user_id'}"/>

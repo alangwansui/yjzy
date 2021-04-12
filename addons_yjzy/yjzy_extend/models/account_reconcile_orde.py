@@ -621,6 +621,8 @@ class account_reconcile_order(models.Model):
     company_currency_id = fields.Many2one('res.currency', string='公司货币', related='company_id.currency_id',
                                           readonly=True)
     back_tax_declaration_id = fields.Many2one('back.tax.declaration', u'退税申报表')
+
+
     declaration_amount_all = fields.Monetary(u'本次申报金额',
                                              related='back_tax_declaration_id.declaration_amount_all')
     declaration_amount_all_residual_new = fields.Monetary(u'本次申报金额',
@@ -841,6 +843,10 @@ class account_reconcile_order(models.Model):
 
     is_editable = fields.Boolean(u'可编辑')
     gongsi_id = fields.Many2one('gongsi', '内部公司')
+
+    def update_btd_id_payment_id(self):
+        for one in self:
+            one.back_tax_declaration_id.payment_id = one.yjzy_payment_id
 
     def update_move_line_new_advance_payment_id(self):
         for one in self.line_ids.filtered(lambda x: x.amount_advance_org != 0):

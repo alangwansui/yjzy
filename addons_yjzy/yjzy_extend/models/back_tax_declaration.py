@@ -64,7 +64,9 @@ class DeclareDeclaration(models.Model):
             one.invoice_ids = invoice_ids
             one.tb_contract_code = tb_contract_code
 
-
+    payment_id = fields.Many2one('account.payment','收款单')
+    payment_amount = fields.Monetary('收款金额',currency_field='company_currency_id',related='payment_id.amount')
+    payment_balance = fields.Monetary('未认领金额',currency_field='company_currency_id',related='payment_id.balance')
     name = fields.Char('编号', default=lambda self: self.env['ir.sequence'].next_by_code('back.tax.declaration'))
     display_name = fields.Char(u'显示名称', compute=compute_display_name)
     btd_line_ids = fields.One2many('back.tax.declaration.line','btd_id',u'申报明细')
