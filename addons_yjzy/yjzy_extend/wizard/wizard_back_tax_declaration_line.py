@@ -10,6 +10,7 @@ class WizardBackTaxDeclaration(models.TransientModel):
 
 
     gongsi_id = fields.Many2one('gongsi', '内部公司')
+
     invoice_ids = fields.Many2many('account.invoice', 'ref_inv_btd', 'inv_id', 'btd_id', u'账单')
 
     def apply(self):

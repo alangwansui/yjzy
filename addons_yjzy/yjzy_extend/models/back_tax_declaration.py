@@ -139,6 +139,7 @@ class DeclareDeclaration(models.Model):
 
         ctx.update({
             'default_gongsi_id': self.gongsi_id.id,
+            # 'default_have_invoice_ids':self.btd_line_ids.ids#[(6, 0, self.btd_line_ids.ids)],
 
         })
         return {

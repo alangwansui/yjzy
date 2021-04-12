@@ -73,7 +73,7 @@
                             <page string="应收退税申报明细">
                                 <button name="open_wizard_back_tax_declaration" string="批量添加应收退税" class="highlight"
                                         type="object" attrs="{'invisible':[('state','in',['done','paid'])]}"/>
-                                <field name="btd_line_ids" attrs="{'readonly':[('state','in',['done','paid'])]}">
+                                <field name="btd_line_ids"  attrs="{'readonly':[('state','in',['done','paid'])]}">
                                     <tree create="false" editable="bottom">
                                         <field name="invoice_id" string="退税账单"/>
                                         <field name="invoice_currency_id" invisible="1"/>
