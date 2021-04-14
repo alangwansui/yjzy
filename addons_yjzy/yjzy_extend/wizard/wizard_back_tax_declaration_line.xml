@@ -10,10 +10,14 @@
                     <group>
                         <div>为选中的退税账单创建申报单</div>
                         <field name="gongsi_id" groups="base.group_system"/>
+                        <field name="have_invoice_ids" invisible="1"/>
                     </group>
                     <group >
                         <field name="invoice_ids" nolabel="1" options="{'no_create': True,'no_open':True}" context="{'search_default_group_by_invoice_attribute_all_in_one':1}"
-                               domain="[('yjzy_type', '=', 'back_tax'),('state', 'in',['open']),('back_tax_declaration_state','!=','20'),('df_id','=',False)]"/>
+                               domain="[('id','not in',have_invoice_ids),('yjzy_type', '=', 'back_tax'),('state', 'in',['open']),('back_tax_declaration_state','!=','20'),('df_id','=',False)]"/>
+
+
+
                     </group>
 
                     <footer>

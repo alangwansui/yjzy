@@ -14,19 +14,32 @@ class DeclareDeclaration(models.Model):
     _order = 'id desc'
 
 
-    @api.depends('btd_line_ids','btd_line_ids.invoice_amount_total')
+    @api.depends('btd_line_ids','btd_line_ids.invoice_amount_total','btd_line_ids.invoice_attribute_all_in_one')
     def compute_invoice_amount_all(self):
         for one in self:
             btd_line_ids = one.btd_line_ids
+            btd_line_630_ids = one.btd_line_ids.filtered(lambda x: x.invoice_attribute_all_in_one == '630')
+            btd_line_no_630_ids = one.btd_line_ids.filtered(lambda x: x.invoice_attribute_all_in_one != '630')
             invoice_amount_all = sum(x.invoice_amount_total for x in btd_line_ids)
+            invoice_amount_630 = sum(x.invoice_amount_total for x in btd_line_630_ids)
+            invoice_amount_no_630 = sum(x.invoice_amount_total for x in btd_line_no_630_ids)
             one.invoice_amount_all = invoice_amount_all
+            one.invoice_amount_630 = invoice_amount_630
+            one.invoice_amount_no_630 = invoice_amount_no_630
 
-    @api.depends('btd_line_ids', 'btd_line_ids.invoice_residual_total')
+    @api.depends('btd_line_ids', 'btd_line_ids.invoice_residual_total','btd_line_ids.invoice_attribute_all_in_one')
     def compute_invoice_residual_all(self):
         for one in self:
             btd_line_ids = one.btd_line_ids
+            btd_line_630_ids = one.btd_line_ids.filtered(lambda x: x.invoice_attribute_all_in_one == '630')
+            btd_line_no_630_ids = one.btd_line_ids.filtered(lambda x: x.invoice_attribute_all_in_one != '630')
             invoice_residual_all = sum(x.invoice_residual_total for x in btd_line_ids)
+            invoice_residual_630 = sum(x.invoice_residual_total for x in btd_line_630_ids)
+            invoice_residual_no_630 = sum(x.invoice_residual_total for x in btd_line_no_630_ids)
             one.invoice_residual_all = invoice_residual_all
+            one.invoice_residual_630 = invoice_residual_630
+            one.invoice_residual_no_630 = invoice_residual_no_630
+
 
     @api.depends('btd_line_ids', 'btd_line_ids.declaration_amount')
     def compute_declaration_amount(self):
@@ -85,8 +98,16 @@ class DeclareDeclaration(models.Model):
                                           readonly=True)
     declaration_title = fields.Char('申报说明')
     declaration_date = fields.Date('申报日期')
-    invoice_amount_all = fields.Monetary(u'原始应收退税',currency_field='company_currency_id',compute=compute_invoice_amount_all, store=True)
-    invoice_residual_all = fields.Monetary(u'剩余应收退税',currency_field='company_currency_id',compute=compute_invoice_residual_all,store=True)
+    invoice_amount_all = fields.Monetary(u'调节后应收退税',currency_field='company_currency_id',compute=compute_invoice_amount_all, store=True)
+    invoice_amount_630 = fields.Monetary(u'调节应收退税',currency_field='company_currency_id',compute=compute_invoice_amount_all, store=True)
+    invoice_amount_no_630 = fields.Monetary(u'调节前应收退税', currency_field='company_currency_id',
+                                         compute=compute_invoice_amount_all, store=True)
+
+    invoice_residual_all = fields.Monetary(u'调节后剩余退税',currency_field='company_currency_id',compute=compute_invoice_residual_all,store=True)
+    invoice_residual_630 = fields.Monetary(u'剩余调节退税', currency_field='company_currency_id',
+                                           compute=compute_invoice_residual_all, store=True)
+    invoice_residual_no_630 = fields.Monetary(u'原始剩余退税', currency_field='company_currency_id',
+                                           compute=compute_invoice_residual_all, store=True)
     declaration_amount_all = fields.Monetary(u'本次申报金额',currency_field='company_currency_id',compute=compute_declaration_amount,store=True)
     declaration_amount_all_residual_new = fields.Monetary(u'申报剩余金额', currency_field='company_currency_id',
                                              compute=compute_declaration_amount_all_residual_new, store=True)
@@ -239,7 +260,7 @@ class DeclareDeclaration(models.Model):
 
         ctx.update({
             'default_gongsi_id': self.gongsi_id.id,
-            # 'default_have_invoice_ids':self.btd_line_ids.ids#[(6, 0, self.btd_line_ids.ids)],
+            'default_have_invoice_ids':self.btd_line_ids.mapped('invoice_id').ids#[(6, 0, self.btd_line_ids.ids)],
 
         })
         return {
