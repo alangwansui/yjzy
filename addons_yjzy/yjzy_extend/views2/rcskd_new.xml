@@ -328,6 +328,7 @@
                                     <field name="invoice_amount_total" string="原始应收款" sum="小计"/>
                                     <field name="invoice_currency_id" invisible="1"/>
                                     <field name="invoice_residual" string="剩余应收款" sum="小计"/>
+                                     <field name="invoice_declaration_amount" string="申报金额"/>
                                     <field name="payment_currency_id" invisible="1"/>
                                     <field name="advice_amount_advance_org" readonly="1" string="建议预收认领金额" invisible="1"/>
                                     <field name="yjzy_payment_id" attrs="{'column_invisible':1}"

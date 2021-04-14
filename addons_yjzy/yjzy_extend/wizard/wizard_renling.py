@@ -127,6 +127,7 @@ class wizard_renling(models.TransientModel):
                                           readonly=True)
     declaration_amount_all = fields.Monetary(u'本次申报金额', currency_field='company_currency_id',
                                              related='btd_id.declaration_amount_all')
+    diff_tax_amount = fields.Monetary(u'申报和应收差额', currency_field='company_currency_id',related="btd_id.diff_tax_amount")
     btd_line_ids = fields.Many2many('back.tax.declaration.line', 'ref_btd_id', 'wz_renling_id', u'申报明细')
     other_payment_invoice_ok = fields.Boolean('待认领其他应收', default=True)
     other_payment_invoice_ok_f = fields.Boolean('是否其他应付', default=False)
@@ -324,6 +325,9 @@ class wizard_renling(models.TransientModel):
                 raise Warning('请先选择客户')
             if not self.btd_line_ids:
                 raise Warning('请先选择需要认领的退税申报')
+            else:
+                if self.diff_tax_amount!=0:
+                    raise Warning('退税申报未平，请重新调节')
         back_tax_declaration_id = False
         name_title = ''
         invoice_partner = ''
@@ -369,7 +373,36 @@ class wizard_renling(models.TransientModel):
             invoice_ids = self.invoice_ids
         print('invoice_ids', invoice_ids)
         name = self.env['ir.sequence'].next_by_code('sfk.type.%s' % sfk_type)
-        if self.renling_type in ['yshxd', 'back_tax', 'other_payment','purchase_add_invoice']:
+        if self.renling_type ==  'back_tax':
+            yshxd_id = yshxd_obj.with_context({'default_invoice_ids': invoice_ids, 'default_sfk_type': 'yshxd'}).create(
+                {
+                    'name': name,
+                    'invoice_partner': invoice_partner,
+                    'name_title': name_title,
+                    'operation_wizard': operation_wizard,
+                    'partner_id': self.partner_id and self.partner_id.id or self.partner_supplier_id.id,
+                    'sfk_type': 'yshxd',
+                    'renling_type': self.renling_type,
+                    'back_tax_declaration_id': back_tax_declaration_id,
+                    'payment_type': 'inbound',
+                    'partner_type': 'customer',
+                    'yjzy_payment_id': self.yjzy_payment_id.id,
+                    'be_renling': True,
+                    'invoice_attribute': invoice_attribute,
+                    'yjzy_type': yjzy_type,
+                    'hxd_type_new': hxd_type_new
+
+                })
+            yshxd_id.with_context({'ysrld_amount': self.ysrld_amount}).make_line_no()
+            yshxd_id.make_account_payment_state_ids()
+
+            stage_id = yshxd_id._stage_find(domain=[('code', '=', '017')])
+            print('_stage_find', stage_id)
+            yshxd_id.write({'stage_id': stage_id.id,
+                            'state': 'posted',
+                            # 'operation_wizard':'25'
+                            })
+        elif self.renling_type in ['yshxd', 'other_payment','purchase_add_invoice']:
             yshxd_id = yshxd_obj.with_context({'default_invoice_ids': invoice_ids,'default_sfk_type': 'yshxd'}).create({
                 'name': name,
                 'invoice_partner':invoice_partner,
@@ -378,7 +411,7 @@ class wizard_renling(models.TransientModel):
                 'partner_id': self.partner_id and self.partner_id.id or self.partner_supplier_id.id,
                 'sfk_type': 'yshxd',
                 'renling_type': self.renling_type,
-                'back_tax_declaration_id': back_tax_declaration_id,
+
                 'payment_type': 'inbound',
                 'partner_type': 'customer',
                 'yjzy_payment_id': self.yjzy_payment_id.id,

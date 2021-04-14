@@ -127,6 +127,7 @@
                                    attrs="{'column_invisible':[('parent.renling_type','not in',['other_payment'])]}"/>
                             <field name="name_title"
                                    attrs="{'column_invisible':[('parent.renling_type','not in',['other_payment'])]}"/>
+                            <field name="invoice_attribute_all_in_one"/>
                             <field name="date_invoice" string="进仓日期"
                                    attrs="{'column_invisible':[('parent.renling_type','in',['back_tax','other_payment'])]}"/>
                             <field name="date_deadline_new" string="到期日"

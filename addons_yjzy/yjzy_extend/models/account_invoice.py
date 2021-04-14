@@ -516,7 +516,7 @@ class account_invoice(models.Model):
 
             yjzy_amount_payment_approve_all = sum(x.amount_total_org_new for x in yjzy_payment_approve_all) + sum(
                 x.amount_payment_org for x in yjzy_payment_approved_no_all)
-            amount_payment_can_approve_all = one.residual - amount_payment_approve_all or 0.0  # 由amount_payment_org改为amount_total_org
+            amount_payment_can_approve_all = one.residual_signed - amount_payment_approve_all or 0.0  # 由amount_payment_org改为amount_total_org
 
             yjzy_amount_payment_can_approve_all = one.yjzy_residual - yjzy_amount_payment_approve_all or 0.0
             print('yjzy_amount_payment_can_approve_all', yjzy_amount_payment_can_approve_all,
@@ -649,6 +649,9 @@ class account_invoice(models.Model):
                     name = '410'
                 else:
                     name = '510'
+            elif invoice_attribute == 'extra' and yjzy_type == 'back_tax':
+                name = '630'
+
             one.invoice_attribute_all_in_one = name
 
     # D
@@ -1987,6 +1990,19 @@ class account_invoice(models.Model):
             print('todo', todo_lines, self.yjzy_invoice_id)
             for todo in todo_lines:
                 self.assign_outstanding_credit(todo.id)
+
+    def back_tax_assign_outstanding_credit(self):
+        self.ensure_one()
+        # 没审核的分录不能核销
+
+        lines = self.move_line_ids + self.yjzy_invoice_id.move_line_ids
+        todo_lines = lines.filtered(
+            lambda x: (x.plan_invoice_id == self.yjzy_invoice_id or x.invoice_id == self.yjzy_invoice_id)
+                      and x.reconciled == False and x.account_id.code == '1122')
+        print('todo', todo_lines, self.yjzy_invoice_id)
+        for todo in todo_lines:
+            self.assign_outstanding_credit(todo.id)
+
 
     def _stage_find(self, domain=None, order='sequence'):
         search_domain = list(domain)

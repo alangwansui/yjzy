@@ -535,6 +535,8 @@ class account_reconcile_order(models.Model):
                 name = '%s:%s' % ('费用转货款应付申请', one.name)
             elif one.invoice_attribute_all_in_one == '340':
                 name = '%s:%s' % ('费用转货款退税认领', one.name)
+            elif one.invoice_attribute_all_in_one == '620':
+                name = '%s:%s' % ('综合退税认领', one.name)
             else:
                 # one.invoice_attribute_all_in_one == '510':
                 name = '%s:%s' % ('其他应付', one.name)
@@ -570,7 +572,7 @@ class account_reconcile_order(models.Model):
     invoice_date_invoice = fields.Date('出运日期',related='invoice_id.date_invoice')
     invoice_date_finish =  fields.Date('交单日期',related='invoice_id.date_finish')
     invoice_date_ship = fields.Date('出运船期',related='invoice_id.date_ship')
-    invoice_amount_total = fields.Monetary('账单原始金额',currency_field='invoice_currency_id',related='invoice_id.amount_total')
+    invoice_amount_total = fields.Monetary('账单原始金额',currency_field='invoice_currency_id',related='invoice_id.amount_total_signed')
 
     invoice_attribute_all_in_one = fields.Selection(invoice_attribute_all_in_one, u'账单属性all_in_one',
                                                     compute=compute_invoice_id, store=True)
@@ -1721,7 +1723,7 @@ class account_reconcile_order(models.Model):
 
         return True
 
-    # 预收确认认领
+    # 应收确认认领
     def action_confirm_ysrld_stage(self):
         self.ensure_one()
         if self.hxd_type_new in ['10', '25'] and self.amount_total_org == 0:
@@ -1744,14 +1746,27 @@ class account_reconcile_order(models.Model):
         if self.line_do_ids and self.amount_advance_org == 0:
             raise Warning('预收认领金额为0，无法提交！')
         for one in self.line_no_ids:
-            if one.amount_payment_can_approve_all < one.amount_payment_org:
+            if one.amount_payment_can_approve_all >= 0 and  one.amount_payment_can_approve_all < one.amount_payment_org:
                 raise Warning('收款的认领金额大于可认领的应收,请检查')
         self.action_manager_approve_stage()  # 完成当前的应收的审批过账
+        #如果是退税，如果有退款退税，则执行。退款退税和未完成认领的余额的核销
+        invoice_recon = self.invoice_ids.filtered(lambda x: x.type == 'out_refund')
+        if self.yjzy_type == 'back_tax' and invoice_recon:
+            for line_reconcile in self.line_no_ids:
+                move_line_id = line_reconcile.invoice_id.move_line_ids.filtered(lambda x:x.invoice_id == line_reconcile.invoice_id
+                        and x.reconciled == False and x.account_id.code == '1122')
+                invoice_recon.assign_outstanding_credit(move_line_id.id)
         invoice_dic = []
         for one in self.invoice_ids:  # 如果invoice是0 余额的 可以从invoice_ids中删除了
             if one.amount_payment_can_approve_all != 0:
                 invoice_dic.append(one.id)
         print('invoice_dic', invoice_dic)
+
+
+
+
+
+
         # if self.hxd_type_new == '20' and invoice_dic != False and self.account_payment_state_ids != False:
         #     #如果同时认领 后面的就不需要创建了
         #     sfk_type = 'yshxd'
@@ -2622,6 +2637,7 @@ class account_reconcile_order(models.Model):
         advance_residual2 = 0
         advance_residual = 0
         amount_payment_org = 0
+        rest_amount = 0
         for one in self.invoice_ids:
             if amount > 0:
                 amount_payment_org = amount
@@ -2632,24 +2648,41 @@ class account_reconcile_order(models.Model):
                     if one.invoice_attribute == 'other_payment':
                         amount_payment_org = one.amount_payment_can_approve_all
                 else:
-                    amount_payment_org = one.declaration_amount
+                    # amount_payment_org = one.declaration_amount
+                    if one.declaration_amount >= one.residual:
+                        amount_payment_org = one.residual
+                        rest_amount +=  one.declaration_amount - one.residual
+                    else:
+                        amount_payment_org = one.declaration_amount
+
             if one.type == 'out_invoice':
                 so_ids = one.invoice_line_ids.mapped('so_id')
                 advance_residual2 = sum(x.balance for x in so_ids)
             if one.type == 'in_invoice':
                 po_ids = one.invoice_line_ids.mapped('purchase_id')
                 advance_residual = sum(x.balance for x in po_ids)
-            print('amount_payment_org_akiny', amount_payment_org)
-            line_no = line_no_obj.create({
-                'order_id': self.id,
-                'invoice_id': one.id,
-                'advance_residual': advance_residual,
-                'advance_residual2': advance_residual2,
-                'amount_payment_org': amount_payment_org
-            })
-            line_no.amount_payment_can_approve_all_this_time = line_no.invoice_id.amount_payment_can_approve_all
-            line_no.invoice_residual_this_time = line_no.invoice_residual
-            self.write({'line_no_other_ids': [(4, line_no.id)]})
+            print('amount_payment_org_akiny', amount_payment_org,rest_amount)
+            if one.type in ['in_invoice','out_invoice','out_refund']:
+                line_no = line_no_obj.create({
+                    'order_id': self.id,
+                    'invoice_id': one.id,
+                    'advance_residual': advance_residual,
+                    'advance_residual2': advance_residual2,
+                    'amount_payment_org': amount_payment_org
+                })
+                line_no.amount_payment_can_approve_all_this_time = line_no.invoice_id.amount_payment_can_approve_all
+                line_no.invoice_residual_this_time = line_no.invoice_residual
+                self.write({'line_no_other_ids': [(4, line_no.id)]})
+
+        for x in self.line_no_ids:
+            diff = x.invoice_amount_total - x.invoice_declaration_amount
+            print('rest_amount_akiny',rest_amount,diff)
+            if diff > 0 and rest_amount >0:
+                x.amount_payment_org = x.amount_payment_org + diff
+                rest_amount = rest_amount - diff
+
+
+
 
     # ok_1218
     def _make_lines_so(self):
@@ -2949,19 +2982,19 @@ class account_reconcile_order(models.Model):
             for todo in todo_lines:
                 inv.assign_outstanding_credit(todo.id)
 
-    def invoice_assign_outstanding_credit(self):
-        self.ensure_one()
-        # 没审核的分录不能核销
-        for m in self.move_ids:
-            if m.state == 'draft':
-                raise Warning(u'分录 %s  %s 还没审核' % (m.id, m.state))
-
-        lines = self.move_ids.mapped('line_ids')
-        for inv in self.invoice_ids.filtered(lambda x: x.state == 'open'):
-            todo_lines = lines.filtered(lambda x: x.plan_invoice_id == inv and x.reconciled == False)
-            for todo in todo_lines:
-                inv.assign_outstanding_credit(todo.id)
-                inv.bill_id.update_hexiao_state()
+    # def invoice_assign_outstanding_credit(self):
+    #     self.ensure_one()
+    #     # 没审核的分录不能核销
+    #     for m in self.move_ids:
+    #         if m.state == 'draft':
+    #             raise Warning(u'分录 %s  %s 还没审核' % (m.id, m.state))
+    #
+    #     lines = self.move_ids.mapped('line_ids')
+    #     for inv in self.invoice_ids.filtered(lambda x: x.state == 'open'):
+    #         todo_lines = lines.filtered(lambda x: x.plan_invoice_id == inv and x.reconciled == False)
+    #         for todo in todo_lines:
+    #             inv.assign_outstanding_credit(todo.id)
+    #             inv.bill_id.update_hexiao_state()
 
             # domain = [
             #     ('plan_invoice_id', '=', inv.id),
@@ -3411,7 +3444,7 @@ class account_reconcile_order_line(models.Model):
 
     def _compute_amount_invoice_so_proportion(self):
         for one in self:
-            amount_invoice = one.invoice_id.amount_total
+            amount_invoice = one.invoice_id.amount_total_signed
             amount_invoice_so = one.amount_invoice_so
 
             if amount_invoice != 0:
@@ -3570,7 +3603,7 @@ class account_reconcile_order_line(models.Model):
     @api.depends('invoice_id', 'invoice_id.amount_total')
     def compute_amount_total_invoice(self):
         for one in self:
-            one.amount_total_invoice = one.invoice_id.amount_total
+            one.amount_total_invoice = one.invoice_id.amount_total_signed
 
     @api.depends('amount_invoice_so_residual_can_approve_d', 'amount_total_org_new', 'amount_invoice_so_residual_d')
     def compute_amount_invoice_so_residual_can_approve_d_after(self):
@@ -3633,7 +3666,7 @@ class account_reconcile_order_line(models.Model):
     yjzy_invoice_id = fields.Many2one('account.invoice', u'发票关联账单', related='invoice_id.yjzy_invoice_id')  # 额外账单的认领明细
     invoice_attribute = fields.Selection(related='invoice_id.invoice_attribute', string=u'账单类型')
     tb_contract_code = fields.Char('出运合同号', related='invoice_id.tb_contract_code', readonly=True)
-    residual = fields.Monetary(related='invoice_id.residual', string=u'发票余额', readonly=True,
+    residual = fields.Monetary(related='invoice_id.residual_signed', string=u'发票余额', readonly=True,
                                currency_field='invoice_currency_id')
     amount_total_invoice = fields.Monetary(u'发票原始金额', compute=compute_amount_total_invoice, readonly=True,
                                            currency_field='invoice_currency_id', store=True)
@@ -3823,6 +3856,8 @@ class account_reconcile_order_line_no(models.Model):
 
     invoice_attribute_all_in_one = fields.Selection(invoice_attribute_all_in_one, u'账单属性all_in_one',
                                                     compute=compute_invoice_id, store=True)
+    invoice_df_id = fields.Many2one('back.tax.declaration',u'退税申报表', related='invoice_id.df_id')
+    invoice_declaration_amount = fields.Monetary('退税申报金额',related='invoice_id.declaration_amount',store=True)
 
 
     yjzy_invoice_id = fields.Many2one('account.invoice', u'发票关联账单', related='invoice_id.yjzy_invoice_id')  # 额外账单的认领明细
@@ -3830,11 +3865,11 @@ class account_reconcile_order_line_no(models.Model):
 
     invoice_id_po_ids = fields.Many2many('purchase.order', related='invoice_id.po_ids')
 
-    invoice_residual = fields.Monetary(related='invoice_id.residual', string=u'发票余额', readonly=True,
+    invoice_residual = fields.Monetary(related='invoice_id.residual_signed', string=u'发票余额', readonly=True,
                                        currency_field='invoice_currency_id')
-    residual = fields.Monetary(related='invoice_id.residual', string=u'发票余额', readonly=True,
+    residual = fields.Monetary(related='invoice_id.residual_signed', string=u'发票余额', readonly=True,
                                currency_field='invoice_currency_id')  # 有一个没用
-    invoice_amount_total = fields.Monetary(related='invoice_id.amount_total', string=u'发票金额', readonly=True,
+    invoice_amount_total = fields.Monetary(related='invoice_id.amount_total_signed', string=u'发票金额', readonly=True,
                                            currency_field='invoice_currency_id')
     amount_payment_can_approve_all = fields.Monetary(related='invoice_id.amount_payment_can_approve_all',
                                                      string='可以申请支付应付款')

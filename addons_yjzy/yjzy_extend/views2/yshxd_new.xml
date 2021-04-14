@@ -553,7 +553,7 @@
                         </group>
                     </group>
                     <group col="2">
-                        <group attrs="{'invisible':[('hxd_type_new','not in',['10','25','20'])]}">
+                        <group attrs="{'invisible':['|',('hxd_type_new','not in',['10','25','20']),('invoice_attribute_all_in_one','in',['130','230','330','620'])]}">
 
                             <field name="line_no_other_ids" nolabel="1" colspan="2"
                                    attrs="{'readonly':[('state_1','not in',['draft','draft_yshxd','draft_all','account_approval','advance_approval_yshxd',
@@ -787,6 +787,7 @@
                                     <field name="invoice_amount_total" string="原始应收款" sum="小计"/>
                                     <field name="invoice_currency_id" invisible="1"/>
                                     <field name="invoice_residual" string="剩余应收款" sum="小计"/>
+                                    <field name="invoice_declaration_amount" string="申报金额"/>
                                     <field name="payment_currency_id" invisible="1"/>
                                     <field name="advice_amount_advance_org" readonly="1" string="建议预收认领金额"
                                            invisible="1"/>

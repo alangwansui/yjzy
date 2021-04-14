@@ -44,6 +44,9 @@
                     <header>
                         <button name="action_confirm" string="确认申报" type="object" states="draft"
                                 confirm="确定提交申报。确定后，将无法修改！"/>
+                        <button name="create_other_invoice" type="object" string="调节"/>
+                          <button name="action_cancel" type="object" string="取消"/>
+
                         <button name="open_wizard_back_tax_declaration" string="添加应收退税" type="object"
                                 attrs="{'invisible':[('state','in',['done','paid'])]}"/>
                         <field name="state" widget="statusbar"/>
@@ -58,6 +61,7 @@
                                 <field name="invoice_amount_all"/>
                                 <field name="invoice_residual_all"/>
                                 <field name="declaration_amount_all"/>
+                                <field name="diff_tax_amount"/>
                                 <field name="declaration_amount_all_residual_new" string="剩余未收金额"
                                        attrs="{'invisible':[('state','not in',['done','paid'])]}"/>
                                 <field name="create_uid" string="创建者" invisible="1"/>
@@ -76,10 +80,12 @@
                                 <field name="btd_line_ids"  attrs="{'readonly':[('state','in',['done','paid'])]}">
                                     <tree create="false" editable="bottom">
                                         <field name="invoice_id" string="退税账单"/>
+                                        <field name="invoice_attribute_all_in_one"/>
                                         <field name="invoice_currency_id" invisible="1"/>
                                         <field name="invoice_amount_total" string="原始应收退税"/>
                                         <field name="invoice_residual_total" string="剩余应收退税"/>
                                         <field name="declaration_amount" string="本次申报金额"/>
+                                        <field name="diff_tax"/>
 
                                         <field name="declaration_amount_residual"
                                                attrs="{'column_invisible':[('parent.state','not in',['done','paid'])]}"/>

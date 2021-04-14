@@ -192,7 +192,7 @@
                             ('x_wkf_state','=',185)]"
                                    context="{'show_contract_code': 1,'form_view_ref':'yjzy_extend.new_purchase_order_from'}"
                                    attrs="{'readonly':['|',('state_1','!=','10_draft'),('state', '!=', 'draft')]}"/>
-
+                            <field name="include_tax" attrs="{'readonly':['|',('state_1','!=','10_draft'),('state', '!=', 'draft')]}"/>
                             <field name="fk_journal_id" string="付款银行" options="{'no_open':1}"
                                    attrs="{'invisible':[('state_1','in',['10_draft','80_refused','90_cancel'])],
                             'readonly':['|',('state_1','not in',['10_draft','20_account_submit']),('state', 'in', ['posted','reconciled'])]}"/>
@@ -397,7 +397,7 @@
                                        attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                                 <field name="partner_type" widget="selection"
                                        attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))], 'invisible': [('payment_type', 'not in', ('inbound', 'outbound'))], 'readonly': [('state', '!=', 'draft')]}"/>
-                                <field name="include_tax"/>
+
                                 <field name="is_renling"/>
                                 <field name="advance_ok" label="是否预付" invisible="0"/>
                                 <field name="advance_account_id" label="预付科目" invisible="0"/>
