@@ -300,10 +300,10 @@
             <field name="color">9</field>
         </record>
 
-        <record id="account_payment_term_14days" model="account.payment.term">
-            <field name="name">15 Days</field>
-            <field name="note">Payment terms: 15 Days</field>
-            <field name="type">sale</field>
+        <record id="account_payment_term_back_tax_14days" model="account.payment.term">
+            <field name="name">Back Tax 14 Days</field>
+            <field name="note">Payment terms:Back Tax 14 Days</field>
+            <field name="type">comm</field>
             <field name="line_ids" eval="[(5, 0), (0, 0, {'value': 'balance', 'value_amount': 0.0, 'sequence': 500, 'days': 14, 'option': 'day_after_invoice_date'})]"/>
         </record>
 

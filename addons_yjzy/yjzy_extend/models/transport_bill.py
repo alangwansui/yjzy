@@ -2386,7 +2386,7 @@ class transport_bill(models.Model):
         if not back_tax_invoice:
             partner =  self.env.ref('yjzy_extend.partner_back_tax')
             product = self.env.ref('yjzy_extend.product_back_tax')
-            payment_term_id = self.env.ref('yjzy_extend.account_payment_term_14days')
+            payment_term_id = self.env.ref('yjzy_extend.account_payment_term_back_tax_14days')
             #account = self.env['account.account'].search([('code','=', '50011'),('company_id', '=', self.user_id.company_id.id)], limit=1)
             account = product.property_account_income_id
             if not account:
