@@ -121,7 +121,7 @@
                     ('renling_type','not in',['yshxd','other_payment','purchase_add_invoice']),('step','!=','20'),('other_payment_invoice_ok','=',False)]}"
                            domain="[('state','=','open'),('type','in',['out_invoice']),'|','&amp;',
                            ('partner_id','=',partner_supplier_id),('in_invoice_residual','=',0),('partner_id','=',partner_id)]"
-                           context="{'tree_view_ref':'yjzy_extend.invoice_sale_new_hxd_tree','other_payment':other_payment_invoice_ok_f}"
+                           context="{'tree_view_ref':'yjzy_extend.invoice_sale_new_hxd_tree','other_payment':other_payment_invoice_ok_f,'purchase_add_invoice_ok':purchase_add_invoice_ok}"
                            options="{'no_create': True,'no_open':True}">
                         <tree>
                             <field name="invoice_partner"

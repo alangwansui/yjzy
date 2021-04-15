@@ -131,6 +131,8 @@ class wizard_renling(models.TransientModel):
     btd_line_ids = fields.Many2many('back.tax.declaration.line', 'ref_btd_id', 'wz_renling_id', u'申报明细')
     other_payment_invoice_ok = fields.Boolean('待认领其他应收', default=True)
     other_payment_invoice_ok_f = fields.Boolean('是否其他应付', default=False)
+    purchase_add_invoice_ok = fields.Boolean('是否增加采购',default=False)
+
 
     @api.onchange('other_invoice_amount')
     def onchange_other_invoice_amount(self):
@@ -163,16 +165,19 @@ class wizard_renling(models.TransientModel):
             self.partner_advance_id = False
             self.step = '10'
             self.btd_id = False
+            self.purchase_add_invoice_ok = False
             self.other_payment_invoice_ok_f = False
         elif renling_type == 'back_tax':
             partner_id = self.env.ref('yjzy_extend.partner_back_tax')
             self.step = '10'
             self.btd_id = False
+            self.purchase_add_invoice_ok = False
             self.other_payment_invoice_ok_f = False
         elif renling_type == 'other_payment':
             partner_id = self.env['res.partner'].search([('name', '=', '未定义'), ('customer', '=', True)])
             self.step = '20'
             self.btd_id = False
+            self.purchase_add_invoice_ok = False
             self.other_payment_invoice_ok_f = True
         elif renling_type == 'purchase_add_invoice':
             partner_id = False
@@ -181,6 +186,7 @@ class wizard_renling(models.TransientModel):
             self.step = '10'
             self.btd_id = False
             self.other_payment_invoice_ok_f = False
+            self.purchase_add_invoice_ok = True
         else:
             partner_id = False
             self.step = '10'
