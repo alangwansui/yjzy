@@ -174,7 +174,7 @@
 
                                 <field name="is_yjzy_invoice" invisible="1"/>
                                 <label for="" name="partner_id"
-                                       attrs="{'invisible':[('invoice_attribute','=','other_payment')]}">
+                                       attrs="{'invisible':[('invoice_attribute_all_in_one','in',['130','230','330','410','510','620','630'])]}">
                                     <b attrs="{'invisible':[('type','not in',['out_invoice','out_refund'])]}">
                                         客户
                                     </b>
@@ -182,7 +182,7 @@
                                         供应商
                                     </b>
                                 </label>
-                                <div class="o_row" attrs="{'invisible':[('invoice_attribute','=','other_payment')]}">
+                                <div class="o_row" attrs="{'invisible':[('invoice_attribute_all_in_one','in',['130','230','330','410','510','620','630'])]}">
                                     <field name="partner_id"
                                            context="{'search_default_customer':1, 'show_address': 0, 'default_company_type': 'company'}"
                                            options="{&quot;always_reload&quot;: True, &quot;no_quick_create&quot;: True,'no_open':1}"

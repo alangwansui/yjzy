@@ -1096,7 +1096,7 @@ class tb_po_invoice(models.Model):
         product = self.product_back_tax
         # account = self.env['account.account'].search([('code','=', '50011'),('company_id', '=', self.user_id.company_id.id)], limit=1)
         account = product.property_account_income_id
-
+        payment_term_id = self.env.ref('yjzy_extend.account_payment_term_14days')
         invoice_obj = self.env['account.invoice']
         invoice_line_obj = self.env['account.invoice.line']
         hsname_all_line_obj = self.env['invoice.hs_name.all']
@@ -1115,6 +1115,7 @@ class tb_po_invoice(models.Model):
                 'yjzy_type_1': 'back_tax',
                 'date': fields.datetime.now(),
                 'date_invoice': fields.datetime.now(),
+                'payment_term_id':payment_term_id.id,
                 'yjzy_invoice_id': self.yjzy_invoice_back_tax_id.id,
                 'invoice_line_ids': [(0, 0, {
                     'name': '%s' % (product.name,),
