@@ -54,6 +54,7 @@
                                attrs="{'invisible':['|',('renling_type','not in',['other_payment']),('other_payment_invoice_ok','=',True)]}"/>
 
                         <field name="other_payment_invoice_ok_f" invisible="1"/>
+                        <field name="purchase_add_invoice_ok" invisible="1"/>
                         <field name="other_invoice_amount" invisible="1"
                                attrs="{'invisible':['|',('renling_type','not in',['other_payment']),('other_payment_invoice_ok','=',True)]}"/>
 

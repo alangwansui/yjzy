@@ -165,6 +165,7 @@
 
                     <field name="in_invoice_amount" invisible="not context.get('purchase_add_invoice_ok')"/>
                     <field name="in_invoice_residual" invisible="not context.get('purchase_add_invoice_ok')"/>
+
                     <field name="amount_total_signed" string="原始应收款" sum="Total"/>
                     <field name="residual_signed" string="剩余应收款" sum="Amount Due"/>
                     <field name="commercial_partner_id" invisible="1"/>
