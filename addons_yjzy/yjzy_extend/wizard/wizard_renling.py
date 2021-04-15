@@ -119,7 +119,7 @@ class wizard_renling(models.TransientModel):
 
     renling_type = fields.Selection([('yshxd', '应收认领'),
                                      ('ysrld', '预收认领'),
-                                     ('back_tax', '退税认领'), ('other_payment', '其他认领'),('purchase_add_invoice','增加采购应收认领')], u'认领属性')
+                                     ('back_tax', '退税认领'),('purchase_add_invoice','增加采购应收认领'), ('other_payment', '其他认领')], u'认领属性')
 
     declaration_date = fields.Date('申报日期')
     company_currency_id = fields.Many2one('res.currency', string='公司货币',

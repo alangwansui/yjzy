@@ -13,14 +13,28 @@
 	- Header Fix
 	- Table Header Fix
 	- Table List Fix 
-	- Table Hedar Sticky
+	- Table Hedar Sticky,
+	Tree view header, 
+	header freeze, 
+	odoo custom view app, 
+	sticky view in odoo, 
+	odoo view app, 
+	listviewstickyheader, 
+	all in one sticky, 
+	freeze view in odoo, 
+	freeze list view , 
+	sticky pivot view, 
+	sticky pivot view header, 
+	fixed pivot view header, 
+	freeze header, 
+	pivot view freeze header,
     """,
 
     'author': "Ksolves India Pvt. Ltd.",
     'website': "https://www.ksolves.com/",
     'license': 'LGPL-3',
     'category': 'Tools',
-    'version': '1.1.0',
+    'version': '1.2.0',
     'images': ['static/description/main.jpg'],
     'depends': ['base'],
 
