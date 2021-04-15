@@ -290,29 +290,29 @@
                       decoration-danger="is_yjzy_invoice == True and state not in ['draft','cancel']"
                       decoration-muted="state == 'cancel'" string="Invoice" create="false">
                     <field name="partner_id" groups="base.group_user" string="客户"/>
-                    <field name="current_date_rate" string="汇率"/>
+                    <field name="current_date_rate" string="汇率" invisible="context.get('from_purchase')"/>
                     <field name="bill_id" string="合同号" invisible="1"/>
                     <field name="tb_contract_code" string="合同号" widget="dynamic_popover_char"
                            options="{'max_width': '100px', 'line_clamp': '1', 'mode_mouse':'hover','popover_max_width':'200px','placement':'right'}"/>
-                    <field name="date_invoice" string="进仓日期"/>
-                    <field name="date_ship" string="出运船日期"/>
-                    <field name="date_finish" string="交单日期"/>
+                    <field name="date_invoice" string="进仓日期" invisible="context.get('from_purchase')"/>
+                    <field name="date_ship" string="出运船日期" invisible="context.get('from_purchase')"/>
+                    <field name="date_finish" string="交单日期" invisible="context.get('from_purchase')"/>
                     <field name="in_invoice_amount" invisible="not context.get('from_purchase')"/>
                     <field name="in_invoice_residual" invisible="not context.get('from_purchase')"/>
                     <button name="open_reconcile_order_line" icon="fa-pencil-square-o" type="object" groups="base.group_system"/>
-                    <field name="payment_term_id" invisible="not context.get('for_sales') and not context.get('from_purchase')"/>
-                    <field name="invoice_date_deadline" string="账期计算方式" invisible="not context.get('from_purchase')"/>
-                    <field name="days_term" string="账期"  invisible="not context.get('from_purchase')"/>
-                    <field name="date_deadline_new" string="实际到期日" invisible="not context.get('from_purchase')"/>
+                    <field name="payment_term_id" invisible="not context.get('for_sales') or context.get('from_purchase')"/>
+                    <field name="invoice_date_deadline" string="账期计算方式" invisible="context.get('from_purchase')"/>
+                    <field name="days_term" string="账期"  invisible="context.get('from_purchase')"/>
+                    <field name="date_deadline_new" string="实际到期日" invisible="context.get('from_purchase')"/>
                     <field name="residual_times_new" invisible="1"/>
                     <field name="date_due" string="进仓到期日" invisible="1"/>
-                    <field name="residual_times_out_in" string="到期天数1" invisible="context.get('for_sales')"/>
-                    <field name="residual_times" string="到期天数2"/>
+                    <field name="residual_times_out_in" string="到期天数1" invisible="context.get('for_sales') or context.get('from_purchase')"/>
+                    <field name="residual_times" string="到期天数2" invisible="context.get('from_purchase')"/>
                     <field name="amount_total_signed" string="初始应收款" sum="Total" />
                     <field name="wait_advance" sum="Total" string="建议待认领预收" invisible="1"/>
 <!--                    invisible="context.get('for_sales')"-->
-                    <field name="advance_pre" sum="Total" string="建议预收认领" invisible="context.get('for_sales')"/>
-                    <field name="amount_advance_org_done" string="预收认领" sum="Total" invisible="context.get('for_sales')"/>
+                    <field name="advance_pre" sum="Total" string="建议预收认领" invisible="context.get('for_sales') or context.get('from_purchase') "/>
+                    <field name="amount_advance_org_done" string="预收认领" sum="Total" invisible="context.get('for_sales') or context.get('from_purchase')"/>
                     <field name="amount_payment_org_done" string="收款认领" sum="Total" invisible="context.get('for_sales')"/>
                     <field name="payment_log_hexiao_amount" string="核销认领" sum="Total" invisible="context.get('for_sales')"/>
                     <field name="residual_signed" string="未收金额" sum="Amount Due" />
@@ -3052,7 +3052,7 @@
                 [('type','in',['out_invoice','out_refund']),('yjzy_type_1','=','sale'),('invoice_attribute','=','other_po')]
             </field><!--('invoice_attribute','=','normal')-->
             <field name="context">{'search_default_group_by_state':1,'only_ref':1,'type':'out_invoice','journal_type':
-                'sale','yjzy_type':'sale',
+                'sale','yjzy_type':'sale','from_purchase':1,
                 'default_invoice_attribute':'other_po'}
             </field>
             <!--field name="target">new</field-->
