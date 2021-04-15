@@ -721,6 +721,18 @@ class account_invoice(models.Model):
             one.rest_advance_so_po_balance = rest_advance_so_po_balance
             one.jianyi_advance = jianyi_advance < rest_advance_so_po_balance and jianyi_advance or rest_advance_so_po_balance
 
+    @api.depends('tb_po_invoice_id', 'tb_po_invoice_id.invoice_ids', 'tb_po_invoice_id.invoice_ids.amount_total',
+                 'tb_po_invoice_id.invoice_ids.residual')
+    def compute_in_invoice_amount(self):
+        for one in self:
+            in_invoice_id = one.tb_po_invoice_all_ids.filtered(lambda x: x.yjzy_type_1 == 'purchase')
+            print('in_invoice_id_akiny',in_invoice_id)
+            if in_invoice_id:
+                in_invoice_amount = in_invoice_id[0].amount_total
+                in_invoice_residual = in_invoice_id[0].residual
+                one.in_invoice_amount = in_invoice_amount
+                one.in_invoice_residual = in_invoice_residual
+
 
     is_manual = fields.Boolean('是否手动创建',default=False)
 
@@ -797,6 +809,10 @@ class account_invoice(models.Model):
 
     # 820增加一个和新增采购关联的字段，把退税等一起关联起来
     tb_po_invoice_id = fields.Many2one('tb.po.invoice', u'综合增加采购单', ondelete='cascade') #C
+
+    in_invoice_amount = fields.Monetary('增加采购应付金额',currency_field='currency_id',compute=compute_in_invoice_amount ,store=True)
+    in_invoice_residual = fields.Monetary('增加采购剩余应付', currency_field='currency_id', compute=compute_in_invoice_amount, store=True)
+
     tb_po_invoice_child_id = fields.Many2one('tb.po.invoice', related='tb_po_invoice_id.yjzy_tb_po_invoice')#C
     is_yjzy_tb_po_invoice = fields.Boolean('是否有对应下级账单', compute=compute_yjzy_tb_po_child_patent, store=True)#C
     tb_po_invoice_parent_id = fields.Many2one('tb.po.invoice', related='tb_po_invoice_id.yjzy_tb_po_invoice_parent')#C

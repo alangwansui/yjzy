@@ -297,18 +297,20 @@
                     <field name="date_invoice" string="进仓日期"/>
                     <field name="date_ship" string="出运船日期"/>
                     <field name="date_finish" string="交单日期"/>
-
+                    <field name="in_invoice_amount" invisible="not context.get('from_purchase')"/>
+                    <field name="in_invoice_residual" invisible="not context.get('from_purchase')"/>
                     <button name="open_reconcile_order_line" icon="fa-pencil-square-o" type="object" groups="base.group_system"/>
-                    <field name="payment_term_id" invisible="not context.get('for_sales')"/>
-                    <field name="invoice_date_deadline" string="账期计算方式" />
-                    <field name="days_term" string="账期"  />
-                    <field name="date_deadline_new" string="实际到期日"/>
+                    <field name="payment_term_id" invisible="not context.get('for_sales') and not context.get('from_purchase')"/>
+                    <field name="invoice_date_deadline" string="账期计算方式" invisible="not context.get('from_purchase')"/>
+                    <field name="days_term" string="账期"  invisible="not context.get('from_purchase')"/>
+                    <field name="date_deadline_new" string="实际到期日" invisible="not context.get('from_purchase')"/>
                     <field name="residual_times_new" invisible="1"/>
                     <field name="date_due" string="进仓到期日" invisible="1"/>
                     <field name="residual_times_out_in" string="到期天数1" invisible="context.get('for_sales')"/>
                     <field name="residual_times" string="到期天数2"/>
                     <field name="amount_total_signed" string="初始应收款" sum="Total" />
-                    <field name="wait_advance" sum="Total" string="建议待认领预收" invisible="context.get('for_sales')"/>
+                    <field name="wait_advance" sum="Total" string="建议待认领预收" invisible="1"/>
+<!--                    invisible="context.get('for_sales')"-->
                     <field name="advance_pre" sum="Total" string="建议预收认领" invisible="context.get('for_sales')"/>
                     <field name="amount_advance_org_done" string="预收认领" sum="Total" invisible="context.get('for_sales')"/>
                     <field name="amount_payment_org_done" string="收款认领" sum="Total" invisible="context.get('for_sales')"/>
