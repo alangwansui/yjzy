@@ -807,16 +807,16 @@ class sale_order(models.Model):
             default['contract_code'] = "%s(copy)" % self.contract_code
         return super(sale_order, self).copy(default)
 
-    @api.multi
-    def write(self, vals):
-        self.contract_code = self.contract_code.strip()
-        return super(sale_order, self).write(vals)
+    # @api.multi
+    # def write(self, vals):
+    #     vals['contract_code'] = self.contract_code.strip()
+    #     return super(sale_order, self).write(vals)
 
-    # #
-    # @api.onchange('contract_code')
-    # def onchange_contract_code(self):
-    #     contract_code = self.contract_code.strip()
-    #     self.contract_code = contract_code
+    #
+    @api.onchange('contract_code')
+    def onchange_contract_code(self):
+        contract_code = self.contract_code.strip()
+        self.contract_code = contract_code
 
     # def write_after(self):
     #     for one in self:
