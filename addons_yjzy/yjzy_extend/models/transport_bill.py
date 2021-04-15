@@ -1319,7 +1319,9 @@ class transport_bill(models.Model):
 
     @api.onchange('ref')
     def onchange_ref(self):
-        ref = self.ref.strip()
+        ref = self.ref
+        if ref != False:
+            ref = self.ref.strip()
         self.ref = ref
 
     def action_hexiao(self):

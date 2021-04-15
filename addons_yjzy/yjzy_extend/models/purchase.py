@@ -380,7 +380,9 @@ class purchase_order(models.Model):
 
     @api.onchange('contract_code')
     def onchange_contract_code(self):
-        contract_code = self.contract_code.strip()
+        contract_code = self.contract_code
+        if contract_code != False:
+            contract_code = self.contract_code.strip()
         self.contract_code = contract_code
 
     @api.model
