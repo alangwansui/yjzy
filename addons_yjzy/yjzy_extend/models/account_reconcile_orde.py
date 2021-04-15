@@ -2674,12 +2674,82 @@ class account_reconcile_order(models.Model):
                 line_no.invoice_residual_this_time = line_no.invoice_residual
                 self.write({'line_no_other_ids': [(4, line_no.id)]})
 
-        for x in self.line_no_ids:
-            diff = x.invoice_amount_total - x.invoice_declaration_amount
-            print('rest_amount_akiny',rest_amount,diff)
-            if diff > 0 and rest_amount >0:
-                x.amount_payment_org = x.amount_payment_org + diff
-                rest_amount = rest_amount - diff
+
+        #将对调节的明细先做正负判断。再进行不同的跟进
+
+        line_630 = self.line_no_ids.filtered(lambda x: x.invoice_attribute_all_in_one == '630')
+        line_no_630 = self.line_no_ids.filtered(lambda x: x.invoice_attribute_all_in_one != '630')
+        if line_630[0].invoice_residual < 0:
+            if self.yjzy_payment_balance >= self.declaration_amount_all_residual_new:
+                for x in self.line_no_ids:
+                    diff = x.invoice_amount_total - x.invoice_declaration_amount
+                    print('rest_amount_akiny',rest_amount,diff)
+                    if diff > 0 and rest_amount >0:
+                        if diff < rest_amount:
+                            x.amount_payment_org = x.amount_payment_org + diff
+                            rest_amount = rest_amount - diff
+                        else:
+                            x.amount_payment_org = x.amount_payment_org + rest_amount
+                            break
+            else:
+                print('rest_amount_akiny', rest_amount, )
+                rest_amount = rest_amount - (self.declaration_amount_all_residual_new - self.yjzy_payment_balance)
+                print('rest_amount_akiny', rest_amount, )#2
+                for x in line_no_630:
+                    diff = x.invoice_amount_total - x.invoice_declaration_amount#2
+                    if diff > 0 and rest_amount < 0:
+                        if abs(diff) > abs(rest_amount):
+                            x.amount_payment_org = x.amount_payment_org + rest_amount
+                            break
+                        else:
+                            x.amount_payment_org = x.amount_payment_org + rest_amount
+                            rest_amount = rest_amount - diff
+                    elif diff > 0 and rest_amount > 0:
+                        if abs(diff) <= abs(rest_amount):
+                            x.amount_payment_org = x.amount_payment_org + diff
+                            rest_amount = rest_amount - diff
+                        else:
+                            x.amount_payment_org = x.amount_payment_org + rest_amount
+                            break
+        else:
+            diff_balance = self.declaration_amount_all_residual_new - self.yjzy_payment_balance
+            print('diff_balance_akiny', diff_balance, line_630[0].amount_payment_org)
+
+            if diff_balance < 0:
+                for one in self.line_no_ids:
+                    one.amount_payment_org = one.invoice_residual
+            else:
+                line_630[0].amount_payment_org = 0
+                diff_balance = diff_balance - line_630[0].invoice_residual
+                for one in line_no_630:
+                    if diff_balance <= one.invoice_residual and diff_balance != 0:
+                        one.amount_payment_org = one.invoice_residual - diff_balance
+                        diff_balance = 0
+                    else:
+                        one.amount_payment_org = one.invoice_residual
+
+
+
+
+            # else:
+            #     print('diff_balance_akiny_3', diff_balance, line_630[0].amount_payment_org)
+            #     line_630[0].amount_payment_org = 0
+            #     diff_balance = diff_balance - line_630[0].invoice_residual
+            #     for one in line_no_630:
+            #         print('diff_balance_akiny_2', diff_balance, one)
+            #         if one.amount_payment_org >= diff_balance:
+            #             one.amount_payment_org = one.amount_payment_org - diff_balance
+            #         else:
+            #             one.amount_payment_org = 0
+            #             diff_balance = diff_balance - one.invoice_residual
+
+
+
+
+
+
+
+
 
 
 

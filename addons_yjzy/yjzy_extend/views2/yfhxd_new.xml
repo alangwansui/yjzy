@@ -900,7 +900,7 @@
                     <button name="action_approve" string="批准" type='object' icon="" groups="base.group_system"/>
                     <button name="action_posted" class="oe_highlight" states="draft" string="确认" type="object"
                             groups="base.group_system"/>
-                    <button name="action_cancel" class="oe_highlight" states="draft" string="取消" type="object"/>
+                    <button name="action_cancel" class="oe_highlight" string="取消" type="object"/>
                     <button name="action_draft" class="oe_highlight" states="cancelled" string="重置草稿" type="object"/>
 
                     <button name="clear_moves" class="oe_highlight" string="测试用:清除分录" type="object"
