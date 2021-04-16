@@ -42,10 +42,11 @@
             <field name="arch" type="xml">
                 <form string="退税申报表">
                     <header>
-                        <button name="action_confirm" string="确认申报" type="object" states="draft"
+                        <button name="action_submit" type="object" states="draft" string="提交审批" />
+                        <button name="action_confirm" string="确认申报" type="object" states="approval" groups="sales_team.group_manager"
                                 confirm="确定提交申报。确定后，将无法修改！"/>
                         <button name="create_other_invoice" type="object" string="调节"/>
-                          <button name="action_cancel" type="object" string="取消"/>
+                        <button name="action_cancel" type="object" states="approval"  string="拒绝" groups="sales_team.group_manager"/>
 
                         <button name="open_wizard_back_tax_declaration" string="添加应收退税" type="object"
                                 attrs="{'invisible':[('state','in',['done','paid'])]}"/>

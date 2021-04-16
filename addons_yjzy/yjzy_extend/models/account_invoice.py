@@ -1069,10 +1069,10 @@ class account_invoice(models.Model):
          ('before_30', u'未来30天'), ('before_30_60', u'未来30-60天'),
          ('before_60_90', u'未来60-90天'), ('before_90', u'未来超过90天'), ('un_begin', u'未开始')], '到期时间组', store=True,
         compute=compute_residual_date_group)
-    residual_times = fields.Integer('逾期天数', compute=compute_times)
-    residual_times_new = fields.Integer('逾期天数', compute=compute_times, store=True)
-    residual_times_out_in = fields.Integer('进仓日逾期天数', compute=compute_times)
-    residual_times_out_in_new = fields.Integer('进仓日逾期天数', compute=compute_times, store=True)
+    residual_times = fields.Integer('逾期天数2', compute=compute_times) #发票日期计算
+    residual_times_new = fields.Integer('逾期天数2', compute=compute_times, group_operator=False, store=True)
+    residual_times_out_in = fields.Integer('逾期天数1', compute=compute_times) #进仓日计算
+    residual_times_out_in_new = fields.Integer('逾期天数1', compute=compute_times,group_operator=False, store=True)
     state = fields.Selection([
         ('draft', u'未确认'),
         ('open', u'执行中'),

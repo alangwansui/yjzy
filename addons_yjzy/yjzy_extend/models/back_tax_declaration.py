@@ -93,7 +93,7 @@ class DeclareDeclaration(models.Model):
     invoice_ids = fields.Many2many('account.invoice',compute=compute_invoice_ids,store=True)
     tb_contract_code = fields.Char('合同号',compute=compute_invoice_ids,store=True)
     gongsi_id = fields.Many2one('gongsi', '内部公司')
-    state = fields.Selection([('draft',u'草稿'),('done',u'确认'),('paid',u'已收款'),('cancel',u'取消')],'State', default='draft')
+    state = fields.Selection([('draft',u'草稿'),('approval','审批中'),('done',u'确认'),('paid',u'已收款'),('cancel',u'取消')],'State', default='draft')
     company_currency_id = fields.Many2one('res.currency', string='公司货币', related='company_id.currency_id',
                                           readonly=True)
     declaration_title = fields.Char('申报说明')
@@ -224,9 +224,19 @@ class DeclareDeclaration(models.Model):
                 raise Warning(u'不能删除非草稿成本单据')
         return super(DeclareDeclaration, self).unlink()
 
+    def action_submit(self):
+        if len(self.btd_line_ids.filtered(lambda x: x.invoice_back_tax_declaration_state == '20')) > 0:
+            raise Warning('明细行存在已经申报的应收退税账单，请查验!')
+        for one in self.btd_line_ids:
+            if one.declaration_amount == 0 and one.invoice_attribute_all_in_one != '630':
+                raise Warning('申报金额不允许为0')
+            # if one.declaration_amount > one.invoice_residual_total:
+            #     raise Warning('申报金额不允许大于未收退税金额！')
+        if not self.declaration_date:
+            return Warning('请填写申报日期')
+        self.state = 'approval'
+
     def action_confirm(self):
-
-
         if len(self.btd_line_ids.filtered(lambda x: x.invoice_back_tax_declaration_state == '20')) > 0:
             raise Warning('明细行存在已经申报的应收退税账单，请查验!')
         for one in self.btd_line_ids:
@@ -242,7 +252,9 @@ class DeclareDeclaration(models.Model):
             one.back_tax_declaration_state = '20'
 
 
-    def action_cancel(self):
+
+
+    def action_cancel(self,reason):
         invoice_paid_lines = self.btd_line_ids.filtered(lambda x:x.invoice_id.state == 'paid' and x.invoice_id.yjzy_type == 'back_tax')
         if len(invoice_paid_lines) !=0:
             raise Warning('已经收款认领，不允许取消申报单！')
@@ -251,6 +263,11 @@ class DeclareDeclaration(models.Model):
             line_ids = self.btd_line_ids.mapped('invoice_id')
             for one in line_ids:
                 one.back_tax_declaration_state = '10'
+            for tb in self:
+                tb.message_post_with_view('yjzy_extend.back_tax_template_refuse_reason',
+                                          values={'reason': reason, 'name': self.declaration_title},
+                                          subtype_id=self.env.ref(
+                                              'mail.mt_note').id)  # 定义了留言消息的模板，其他都可以参考，还可以继续参考费用发送计划以及邮件方式
 
 
 

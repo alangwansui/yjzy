@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="back_tax_refuse_wizard_view_form" model="ir.ui.view">
+        <field name="name">back.tax.refuse.wizard.form</field>
+        <field name="model">back.tax.refuse.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Back Tax refuse reason">
+                <separator string="请填写您的拒绝理由"/>
+                <field name="btd_id" invisible="1"/>
+                <field name="reason"/>
+                <footer>
+                    <button string='拒绝' name="back_tax_refuse_reason" type="object" class="oe_highlight"/>
+                    <button string="取消" class="oe_link" special="cancel"/>
+                </footer>
+           </form>
+        </field>
+    </record>
+
+    <record id="back_tax_refuse_wizard_action" model="ir.actions.act_window">
+        <field name="name">退税申报审批拒绝</field>
+        <field name="res_model">back.tax.refuse.wizard</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="back_tax_refuse_wizard_view_form"/>
+        <field name="target">new</field>
+    </record>
+</odoo>

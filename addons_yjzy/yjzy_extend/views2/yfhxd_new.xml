@@ -1164,8 +1164,8 @@
 
                             <!--    </div>-->
                         </group>
-                        <group attrs="{'invisible':['|',('supplier_advance_payment_ids_count','=',0),
-                            ('operation_wizard','not in',['03','20',25])]}">
+<!--                        <group attrs="{'invisible':['|',('supplier_advance_payment_ids_count','=',0),('operation_wizard','not in',['03','20',25])]}">-->
+                        <group attrs="{'invisible':[('operation_wizard','not in',['03','20',25])]}">
                             <!--                                <div  colspan="2" attrs="{'invisible':[('operation_wizard','not in',['03'])]}" style="width:100%">-->
                             <!--                            <span colspan="2" attrs="{'invisible':[('operation_wizard','not in',['03','20',25])]}"-->
                             <!--                                  style="font-weight:bolder">-->
@@ -1185,8 +1185,14 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <field name="account_payment_state_ids" nolabel="1" mode="kanban" readonly="1" attrs="{'invisible':['|',('supplier_advance_payment_ids_count','=',0),
-                             ('operation_wizard','not in',['03','20',25])]}"><!---->
+<!--                            <field name="account_payment_state_ids" nolabel="1" mode="kanban" readonly="1" -->
+<!--                                   attrs="{'invisible':['|',('supplier_advance_payment_ids_count','=',0),-->
+<!--                             ('operation_wizard','not in',['03','20',25])]}">-->
+            <field name="account_payment_state_ids" nolabel="1" mode="kanban" readonly="1"
+                                   attrs="{'invisible':[
+                             ('operation_wizard','not in',['03','20',25])]}">
+
+                                <!---->
                                 <!--                                    <tree>-->
                                 <!--                                        <field name="advance_payment_id" groups="base.group_system"/>-->
                                 <!--                                        <field name="reconcile_order_line_ids" invisible="1"/>-->

@@ -2001,6 +2001,7 @@ class account_reconcile_order(models.Model):
                 self.reconcile_payment_ids.post()
                 for one in self.reconcile_payment_ids:  # 所有认领单  日志
                     one.state_1 = '60_done'
+                    one.compute_advance_balance_total()
                     one.invoice_log_id.get_reconcile_order_line()
                     one.invoice_log_id_this_time = one.invoice_log_id.residual
         if self.sfk_type == 'yshxd':
@@ -2008,6 +2009,7 @@ class account_reconcile_order(models.Model):
                 self.reconcile_payment_ids.post()
                 for one in self.reconcile_payment_ids:  # 所有认领单
                     one.state_1 = '60_done'
+                    one.compute_advance_balance_total()
                     one.invoice_log_id.get_reconcile_order_line()
                     one.invoice_log_id_this_time = one.invoice_log_id.residual
 

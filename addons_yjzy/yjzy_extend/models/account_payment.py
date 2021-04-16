@@ -1111,6 +1111,8 @@ class account_payment(models.Model):
         #         raise Warning(u'此单据已经被认领，请先删除对应的认领单！')
         return super(account_payment, self).cancel()
 
+
+
     #1225
     @api.onchange('amount')
     def onchange_amount(self):
@@ -1338,6 +1340,10 @@ class account_payment(models.Model):
                         })
         if self.sfk_type in ['rcskd']:
             self.write({'state_1': '80_refused',
+                        'state': 'draft'
+                        })
+        if self.sfk_type == 'jiehui':
+            self.write({'state_1': '10_refused',
                         'state': 'draft'
                         })
         if self.sfk_type in ['reconcile_yfsqd','reconcile_ysrld','reconcile_yingshou','reconcile_yingfu']:
