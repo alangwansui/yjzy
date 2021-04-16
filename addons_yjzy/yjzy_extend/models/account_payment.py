@@ -1343,7 +1343,7 @@ class account_payment(models.Model):
                         'state': 'draft'
                         })
         if self.sfk_type == 'jiehui':
-            self.write({'state_1': '10_refused',
+            self.write({'state_1': '10_draft',
                         'state': 'draft'
                         })
         if self.sfk_type in ['reconcile_yfsqd','reconcile_ysrld','reconcile_yingshou','reconcile_yingfu']:
