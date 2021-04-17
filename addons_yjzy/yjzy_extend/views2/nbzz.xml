@@ -22,12 +22,11 @@
                            attrs="{'invisible':[('state_1','not in',['10_draft'])]}"/>
                    <button name="action_cashier_post" class="oe_highlight"  string="出纳确认" type="object"
                            attrs="{'invisible':[('state_1','not in',['25_cashier_submit'])]}"/>
-                   <button name="action_cashier_refuse" class="oe_highlight" string="出纳拒绝" type="object"
-                   attrs="{'invisible':[('state_1','not in',['25_cashier_submit'])]}"/>
+                    <button name="%(payment_refuse_wizard_action)d" string="拒绝" type="action"
+                            attrs="{'invisible':[('state_1','in',['10_draft','80_refuse'])]}" groups="akiny.akiny_res_group_chuna"/>
                     <button name="action_draft_new" class="oe_highlight" string="重置草稿" type="object"
                             attrs="{'invisible':[('state_1','not in',['80_refused'])]}"/>
                      <field name="state_1" widget="statusbar" statusbar_visible=" "/>
-
                 </header>
                 <header groups="base.group_system">
                     <button name="post" class="oe_highlight" states="draft" string="Confirm" type="object"/>

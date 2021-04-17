@@ -34,10 +34,8 @@
                     <button name="action_submit" class="oe_highlight" string="提交确认" type="object"
                             confirm="确定后，将不可编辑！是否继续？"
                             attrs="{'invisible':[('state_1','not in',['10_draft'])]}"/>
-                    <button name="action_cashier_post" class="oe_highlight" string="出纳确认"
-                            attrs="{'invisible':[('state_1','not in',['25_cashier_submit'])]}" type="object"/>
                     <button name="%(payment_refuse_wizard_action)d"  string="拒绝" type="action"
-                            attrs="{'invisible':[('state_1','not in',['25_cashier_submit'])]}"/>
+                            attrs="{'invisible':[('state_1','not in',['50_posted'])]}" groups="akiny.akiny_res_group_chuna"/>
                     <button name="action_draft_new" class="oe_highlight" string="重置草稿" type="object"
                             attrs="{'invisible':[('state_1','not in',['80_refused'])]}"/>
                     <field name="state_1" widget="statusbar" statusbar_visible=" "/>

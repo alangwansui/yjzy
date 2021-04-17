@@ -5,6 +5,7 @@ from odoo.exceptions import Warning
 from odoo.addons.account.models.account_payment import account_payment as Account_Payment
 from .comm import sfk_type, invoice_attribute_all_in_one
 from odoo.addons import decimal_precision as dp
+from datetime import datetime, timedelta
 
 Option_Add = [
     ('advance', u'预收付'),
@@ -754,6 +755,7 @@ class account_payment(models.Model):
 
     post_uid = fields.Many2one('res.users',u'审批人')
     post_date = fields.Date(u'审批时间')
+    first_post_date = fields.Datetime(u'首次审批时间')
 
     amount_bank_now = fields.Monetary('账户余额',currency_field='currency_id')
     usd_currency_id = fields.Many2one('res.currency', '美金', default=lambda self: self._default_usd_currency_id())
@@ -1238,6 +1240,7 @@ class account_payment(models.Model):
 
     def action_account_post(self):
         today = fields.date.today()
+        now = datetime.now()
         ctx = self.env.context
         if ctx.get('default_sfk_type','') == 'yfsqd' or self.sfk_type == 'yfsqd':
             if not self.fk_journal_id:
@@ -1256,6 +1259,7 @@ class account_payment(models.Model):
                         'post_date': today,
                         'state_1': '50_posted'
                         })
+
             print('testddddddd',self.sfk_type)
             self.post()
             self.yjzy_payment_id.compute_balance()
@@ -1284,6 +1288,7 @@ class account_payment(models.Model):
                         'post_date': today,
                         'state_1': '50_posted'
                         })
+
             self.post()
             self.compute_balance()
 
@@ -1339,13 +1344,22 @@ class account_payment(models.Model):
                         'state': 'draft'
                         })
         if self.sfk_type in ['rcskd']:
-            self.write({'state_1': '80_refused',
-                        'state': 'draft'
-                        })
-        if self.sfk_type == 'jiehui':
-            self.write({'state_1': '10_draft',
-                        'state': 'draft'
-                        })
+            if self.state_1 == '50_posted' and self.balance == self.amount:
+                self.write({'state_1': '80_refused',
+                            'state': 'draft'
+                            })
+                self.cancel()
+            else:
+                raise Warning('不允许拒绝！')
+        if self.sfk_type in ['jiehui','nbzz']:
+            if self.state == 'posted':
+                self.write({'state_1': '80_refused',
+                            })
+                self.cancel()
+            else:
+                self.write({'state_1': '80_refused',
+                            'state': 'draft'
+                            })
         if self.sfk_type in ['reconcile_yfsqd','reconcile_ysrld','reconcile_yingshou','reconcile_yingfu']:
             self.write({'state_1': '80_refused',
                         'state': 'draft',
@@ -1512,6 +1526,8 @@ class account_payment(models.Model):
         """
         res = super(account_payment, self).post()
         for one in self:
+            if not self.first_post_date:
+                self.first_post_date = datetime.now()
             one.payment_date_confirm = fields.datetime.now()
             if one.sfk_type == 'ysrld':
                 self.yjzy_payment_id.compute_balance()

@@ -547,8 +547,8 @@ class hr_expense_sheet(models.Model):
         line_tb_id = len(self.expense_line_ids.filtered(lambda x: not x.tb_id))
         if not self.fk_journal_id:
             raise Warning('请先选择付款账户！')
-        if line_tb_id != 0:
-            raise Warning('有费用明细未选择出运合同！')
+        # if line_tb_id != 0:
+        #     raise Warning('有费用明细未选择出运合同！')
         if not self.bank_id.partner_id:
             raise Warning('选择的收款账号非供应商对应账号，请检查！')
         partner_id = self.bank_id.partner_id

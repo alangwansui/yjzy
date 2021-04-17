@@ -7,6 +7,7 @@ from odoo.exceptions import Warning
 class account_move(models.Model):
     _inherit = 'account.move'
 
+
     reconcile_order_id = fields.Many2one('account.reconcile.order', u'核销单')
     invoice_id = fields.Many2one('account.invoice', u'发票')
     bill_id = fields.Many2one('transport.bill', u'发运单', related='invoice_id.bill_id')
@@ -190,7 +191,7 @@ class account_move_line(models.Model):
                 one.is_pay_out_in = 'zero'
 
 
-
+    first_confirm_date = fields.Datetime('首次确认日期',related='new_payment_id.first_post_date',store=True)
     is_pay_out_in = fields.Selection([('in','收款'),('out','付款'),('zero','零')],u'收付款类型',compute=compute_is_pay_out_in,store=True)
 
     comments = fields.Text('收付款备注')
