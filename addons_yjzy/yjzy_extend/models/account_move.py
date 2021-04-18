@@ -192,8 +192,18 @@ class account_move_line(models.Model):
             else:
                 one.is_pay_out_in = 'zero'
 
+    @api.depends('new_payment_id','create_date')
+    def compute_first_confirm_date(self):
+        for one in self:
+            new_payment_id = one.new_payment_id
+            if new_payment_id:
+                first_confirm_date = new_payment_id
+            else:
+                first_confirm_date = one.create_date
+            one.first_confirm_date = first_confirm_date
 
-    first_confirm_date = fields.Datetime('首次确认日期',related='new_payment_id.first_post_date',store=True)
+
+    first_confirm_date = fields.Datetime('首次确认日期',compute=compute_first_confirm_date,store=True)#related='new_payment_id.first_post_date',
     is_pay_out_in = fields.Selection([('in','收款'),('out','付款'),('zero','零')],u'收付款类型',compute=compute_is_pay_out_in,store=True)
 
     comments = fields.Text('收付款备注')

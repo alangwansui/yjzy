@@ -1648,6 +1648,7 @@ class account_payment(models.Model):
         if self.sfk_type in ['reconcile_ysrld','reconcile_yfsqd']:#1225
             new_advance_payment_id = self.yjzy_payment_id.id
 
+
         if self.sfk_type in ['reconcile_yingshou','reconcile_yingfu']:#1225
             plan_invoice_id = self.invoice_log_id.id
         res.update({
@@ -2546,6 +2547,7 @@ def _new_create_payment_entry(self, amount):
             'account_id': self.advance_account_id.id,
             'debit': self.jiehui_in_amount,
             'payment_id': self.id,
+            'new_payment_id':self.id
         }
         if self.jiehui_rate > 0:
             amount = self.amount / self.jiehui_rate
@@ -2562,6 +2564,7 @@ def _new_create_payment_entry(self, amount):
             'debit': amount < 0 and -1 * amount or 0,
             'credit': amount > 0 and amount or 0,
             'payment_id': self.id,
+            'new_payment_id': self.id
         }
         diff_account = self.env['account.account'].search([('code','=','5712'),('company_id','=',self.env.user.company_id.id)], limit=1)
         diff_amount = self.jiehui_in_amount - amount
@@ -2574,6 +2577,7 @@ def _new_create_payment_entry(self, amount):
             'debit': diff_amount < 0 and -1 * diff_amount or 0,
             'credit': diff_amount > 0 and diff_amount or 0,
             'payment_id': self.id,
+            'new_payment_id': self.id
         }
 
         aml_in = aml_obj.create(aml_in_dic)
