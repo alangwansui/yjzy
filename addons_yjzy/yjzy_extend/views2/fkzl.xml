@@ -6,9 +6,11 @@
         <field name="model">account.payment</field>
         <field name="priority" eval="999"/>
         <field name="arch" type="xml">
-            <tree string="付款指令" decoration-info="state == 'draft'" decoration-muted="state in ['reconciled', 'cancelled']" edit="false" create="false">
+            <tree string="付款指令" decoration-info="state == 'draft'" decoration-muted="state in ['reconciled', 'cancelled']"
+                  default_order="first_post_date desc"
+                  edit="false" create="false">
                 <field name="name"/>
-                <field name="payment_date" string="申请日期"/>
+                <field name="payment_date" string="申请日期" invisible="1"/>
                 <field name="first_post_date" string="首次确认日期"/>
                 <field name="partner_id" groups="base.group_system"/>
                 <field name="pay_to"/>
