@@ -117,16 +117,16 @@
             <field name="view_id" ref="account.view_account_payment_invoice_form"/>
         </record>
 
-    <act_window id="action_wizard_payment2payment2"
-        name="付款向导2"
-        src_model="account.payment"
-        res_model="account.payment"
-        view_type="form"
-        view_mode="form"
-        key2="client_action_multi"
-        target="new"
-        view_id="account.view_account_payment_invoice_form"
-    />
+<!--    <act_window id="action_wizard_payment2payment2"-->
+<!--        name="付款向导2"-->
+<!--        src_model="account.payment"-->
+<!--        res_model="account.payment"-->
+<!--        view_type="form"-->
+<!--        view_mode="form"-->
+<!--        key2="client_action_multi"-->
+<!--        target="new"-->
+<!--        view_id="account.view_account_payment_invoice_form"-->
+<!--    />-->
 
 
 </odoo>

@@ -158,12 +158,14 @@ class account_move_line(models.Model):
                 one.amount_bank_now = amount_bank_now
 
             move_lines = self.env['account.move.line'].search(
-                [('account_id', '=', one.account_id.id)])
+                [('account_id', '=', one.account_id.id),('first_confirm_date', '<=', one.first_confirm_date),])
 
             aml_cny = self.env['account.move.line'].search(
-                [('account_id.user_type_id.name', '=', '银行和现金'), ('account_id.currency_id.name', '=', 'CNY'),('company_id','=',self.env.user.company_id.id)])
+                [('account_id.user_type_id.name', '=', '银行和现金'), ('account_id.currency_id.name', '=', 'CNY'),('first_confirm_date', '<=', one.first_confirm_date),
+                 ('company_id','=',self.env.user.company_id.id)])
             aml_usd = self.env['account.move.line'].search(
-                [('account_id.user_type_id.name', '=', '银行和现金'), ('account_id.currency_id.name', '=', 'USD'),('company_id','=',self.env.user.company_id.id)])
+                [('account_id.user_type_id.name', '=', '银行和现金'), ('account_id.currency_id.name', '=', 'USD'),('first_confirm_date', '<=', one.first_confirm_date),
+                 ('company_id','=',self.env.user.company_id.id)])
             amount_bank_cash_cny = sum((x.debit - x.credit) for x in aml_cny)
             amount_bank_cash_USD = sum(x.amount_currency for x in aml_usd)
             sslj_balance2 = move_lines and sum(x.amount_bank_now for x in move_lines) or 0

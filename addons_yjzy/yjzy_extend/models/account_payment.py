@@ -1526,9 +1526,11 @@ class account_payment(models.Model):
         """
         res = super(account_payment, self).post()
         for one in self:
-            if not self.first_post_date:
-                self.first_post_date = datetime.now()
+
             one.payment_date_confirm = fields.datetime.now()
+            if one.sfk_type == 'rcskd':
+                if not self.first_post_date:
+                    self.first_post_date = datetime.now()
             if one.sfk_type == 'ysrld':
                 self.yjzy_payment_id.compute_balance()
             if one.sfk_type == 'rcfkd':
@@ -1566,6 +1568,8 @@ class account_payment(models.Model):
                #         x.payment_date_store = fields.datetime.now()
             if one.sfk_type == 'fkzl':
                 one.payment_date_confirm = fields.datetime.now() ##akiny 增加付款时间
+                if not self.first_post_date:
+                    self.first_post_date = datetime.now()
                 if one.yshx_fkzl_ids:
                     # operation_wizard = len(one.yshx_ids.filtered(lambda x: x.reconcile_payment_ids == False))
                     # print('operation_wizard_1111',operation_wizard,)
