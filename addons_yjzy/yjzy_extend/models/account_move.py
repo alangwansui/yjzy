@@ -197,7 +197,7 @@ class account_move_line(models.Model):
         for one in self:
             new_payment_id = one.new_payment_id
             if new_payment_id:
-                first_confirm_date = new_payment_id
+                first_confirm_date = new_payment_id.first_post_date
             else:
                 first_confirm_date = one.create_date
             one.first_confirm_date = first_confirm_date
