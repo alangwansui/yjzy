@@ -161,11 +161,15 @@ class account_move_line(models.Model):
                 [('account_id', '=', one.account_id.id),('first_confirm_date', '<=', one.first_confirm_date),])
 
             aml_cny = self.env['account.move.line'].search(
-                [('account_id.user_type_id.name', '=', '银行和现金'), ('account_id.currency_id.name', '=', 'CNY'),('first_confirm_date', '<=', one.first_confirm_date),
+                [('account_id.user_type_id.name', '=', '银行和现金'), ('account_id.currency_id.name', '=', 'CNY'),
+                 ('first_confirm_date', '<=', one.first_confirm_date),
                  ('company_id','=',self.env.user.company_id.id)])
+
             aml_usd = self.env['account.move.line'].search(
-                [('account_id.user_type_id.name', '=', '银行和现金'), ('account_id.currency_id.name', '=', 'USD'),('first_confirm_date', '<=', one.first_confirm_date),
+                [('account_id.user_type_id.name', '=', '银行和现金'), ('account_id.currency_id.name', '=', 'USD'),
+                 ('first_confirm_date', '<=', one.first_confirm_date),
                  ('company_id','=',self.env.user.company_id.id)])
+            print('aml_cny_akiny',aml_cny,aml_usd)
             amount_bank_cash_cny = sum((x.debit - x.credit) for x in aml_cny)
             amount_bank_cash_USD = sum(x.amount_currency for x in aml_usd)
             sslj_balance2 = move_lines and sum(x.amount_bank_now for x in move_lines) or 0
@@ -203,7 +207,7 @@ class account_move_line(models.Model):
             one.first_confirm_date = first_confirm_date
 
 
-    first_confirm_date = fields.Datetime('首次确认日期',compute=compute_first_confirm_date,store=True)#related='new_payment_id.first_post_date',
+    first_confirm_date = fields.Datetime('首次确认日期', compute=compute_first_confirm_date, store=True)#related='new_payment_id.first_post_date',
     is_pay_out_in = fields.Selection([('in','收款'),('out','付款'),('zero','零')],u'收付款类型',compute=compute_is_pay_out_in,store=True)
 
     comments = fields.Text('收付款备注')
