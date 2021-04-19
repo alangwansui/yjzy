@@ -110,18 +110,13 @@
 
                 </header>
                 <sheet>
-                      <div class="oe_button_box" name="button_box" groups="sales_team.group_sale_manager">
-                          <field name="is_editable" widget="boolean_toggle" groups="sales_team.group_sale_manager"/>
-                      </div>
-
-                    <div class="oe_button_box" name="button_box" groups="base.group_system">
-
-                        <button name="open_view_tb_line" type="object" class="oe_stat_button"
-                                    icon="fa-pencil-square-o">
+                      <div class="oe_button_box" name="button_box">
+                          <button name="open_view_tb_line" type="object" class="oe_stat_button"
+                                    icon="fa-truck">
                                 <field name="tb_line_count" widget="statinfo" string="出运明细"/>
                         </button>
-                    </div>
-                    <div class="oe_button_box" name="button_box" groups="base.group_system">
+                          <field name="is_editable" widget="boolean_toggle" groups="sales_team.group_sale_manager"/>
+
                         <button type="object" name="action_view_picking" class="oe_stat_button" icon="fa-truck" groups="base.group_system"
                                 attrs="{'invisible':[('state', 'in', ('draft','sent','approve_sales')),('picking_ids','=',[])]}">
                             <field name="picking_count" widget="statinfo" string="Shipment" help="Incoming Shipments" groups="base.group_system"/>
