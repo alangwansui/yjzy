@@ -251,7 +251,7 @@ class purchase_order(models.Model):
 
     def open_view_tb_line(self):
         self.ensure_one()
-        tree_view = self.env.ref('yjzy_extend.view_transport_bill_line_tenyale_tree')
+        tree_view = self.env.ref('yjzy_extend.view_transport_bill_line_tenyale_po_tree')
         return {
             'name': _(u'出运明细'),
             'view_type': 'form',
