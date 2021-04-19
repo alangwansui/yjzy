@@ -248,6 +248,11 @@ class purchase_order(models.Model):
     date_factory_return = fields.Date('工厂回传时间',)
 
     tb_line_ids = fields.One2many('transport.bill.line','po_id')
+    def compute_tb_line_count(self):
+        for one in self:
+            one.tb_line_count = len(one.tb_line_ids)
+
+    tb_line_count = fields.Integer('出运明细数量',compute=compute_tb_line_count)
 
     def open_view_tb_line(self):
         self.ensure_one()

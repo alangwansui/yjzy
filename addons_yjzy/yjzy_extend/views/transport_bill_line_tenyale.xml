@@ -76,7 +76,6 @@
                     <field name="so_tb_number" string="批次"/>
                     <field name="org_currency_sale_amount" sum="销售" string="出运销售金额"/>
                     <field name="back_tax"/>
-
                     <field name="back_tax_amount" sum="退税"/>
                     <field name="state"  invisible="0"/>
                     <field name="sale_contract_code" string="销售合同"/>
