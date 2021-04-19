@@ -474,7 +474,7 @@ class account_payment(models.Model):
             un_delivery_amount = po_id.no_deliver_amount_new
             po_real_advance = one.po_real_advance
             po_amount = one.po_amount
-            can_approve_amount = un_delivery_amount - po_real_advance
+            can_approve_amount = po_amount - po_real_advance
             delivery_amount = po_id.deliver_amount_new
             one.delivery_amount = delivery_amount
             one.un_delivery_amount = un_delivery_amount
