@@ -467,6 +467,24 @@ class account_payment(models.Model):
         cny_currency_id = self.env['res.currency'].search([('name', '=', 'CNY')])
         return cny_currency_id.id
 
+    @api.depends('po_id','po_id.no_deliver_amount_new','po_id.deliver_amount_new')
+    def compute_delivery_amount(self):
+        for one in self:
+            po_id = one.po_id
+            un_delivery_amount = po_id.no_deliver_amount_new
+            po_real_advance = one.po_real_advance
+            po_amount = one.po_amount
+            can_approve_amount = po_amount - po_real_advance
+            delivery_amount = po_id.deliver_amount_new
+            one.delivery_amount = delivery_amount
+            one.un_delivery_amount = un_delivery_amount
+            one.can_approve_amount = can_approve_amount
+
+
+
+    delivery_amount = fields.Monetary('已出运金额',currency_field='po_id_currency_id',compute='compute_delivery_amount',store=True)
+    un_delivery_amount = fields.Monetary('未出运金额',currency_field='po_id_currency_id',compute=compute_delivery_amount,store=True)
+    can_approve_amount = fields.Monetary('可申请金额',currency_field='po_id_currency_id',compute=compute_delivery_amount)
 
     reconcile_type = fields.Selection([
         ('03_advance_in', u'预收生成'),

@@ -105,6 +105,7 @@ class purchase_order(models.Model):
     def compute_no_deliver_amount(self):
         for one in self:
             one.no_deliver_amount_new = sum([x.price_unit * (x.product_qty - x.qty_received) for x in one.order_line])
+            one.deliver_amount_new = sum([x.price_unit * x.qty_received for x in one.order_line])
     #13ok
     @api.depends('payment_term_id', 'amount_total')
     def compute_pre_advance(self):
@@ -231,6 +232,7 @@ class purchase_order(models.Model):
 
     no_deliver_amount = fields.Float('未发货金额', compute=compute_info)
     no_deliver_amount_new = fields.Float('未发货金额', compute=compute_no_deliver_amount, store=True)
+    deliver_amount_new = fields.Float('已发货金额', compute=compute_no_deliver_amount, store=True)
 
     partner_payment_term_id = fields.Many2one('account.payment.term', u'客户付款条款',
                                               related='partner_id.property_supplier_payment_term_id')

@@ -26,7 +26,7 @@
             <field name="arch" type="xml">
                 <tree string="出运明细" create="false">
                                         <field name="sale_contract_code" string="销售合同"/>
-                    <field name="bill_id"/>
+                                        <field name="bill_id"/>
                                         <field name="company_currency_id" invisible="1"/>
                                         <field name="sale_currency_id" invisible="1"/>
                                         <field name="third_currency_id" invisible="1"/>

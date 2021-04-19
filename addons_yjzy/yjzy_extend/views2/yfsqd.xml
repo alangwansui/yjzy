@@ -228,6 +228,9 @@
                             <field name="po_amount"/>
                             <field name="po_real_advance" string="已预付金额"/>
                             <field name="po_pre_advance"/>
+                            <field name="delivery_amount"/>
+                            <field name="un_delivery_amount"/>
+                            <field name="can_approve_amount"/>
                         </group>
                         <group>
                             <field name="payment_date" string="预付申请日期" readonly="1"

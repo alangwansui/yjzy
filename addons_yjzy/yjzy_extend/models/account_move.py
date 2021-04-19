@@ -160,6 +160,8 @@ class account_move_line(models.Model):
             move_lines = self.env['account.move.line'].search(
                 [('account_id', '=', one.account_id.id),('first_confirm_date', '<=', one.first_confirm_date),])
 
+
+
             aml_cny = self.env['account.move.line'].search(
                 [('account_id.user_type_id.name', '=', '银行和现金'), ('account_id.currency_id.name', '=', 'CNY'),
                  ('first_confirm_date', '<=', one.first_confirm_date),
