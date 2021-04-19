@@ -247,6 +247,22 @@ class purchase_order(models.Model):
                                          store=True)
     date_factory_return = fields.Date('工厂回传时间',)
 
+    tb_line_ids = fields.One2many('transport.bill.line','po_id')
+
+    def open_view_tb_line(self):
+        self.ensure_one()
+        tree_view = self.env.ref('yjzy_extend.view_transport_bill_line_tenyale_tree')
+        return {
+            'name': _(u'出运明细'),
+            'view_type': 'form',
+            "view_mode": 'tree,form',
+            'res_model': 'transport.bill.line',
+            'type': 'ir.actions.act_window',
+            'views': [(tree_view.id, 'tree')],
+            'domain': [('id', 'in', [x.id for x in self.tb_line_ids])],
+            # 'context':{'search_default_group_by_bill_id':1}
+        }
+
     #采购单更换了供应商，需要更新对应的销售明细上的供应商
     def change_supplier(self):
         if self.need_change_partner:
