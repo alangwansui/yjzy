@@ -49,7 +49,7 @@ class PurchasePaymentAdvanceTool(models.TransientModel):
     def compute_purchase_amount(self):
         for one in self:
             purchase_amount = sum(x.amount_total for x in one.po_ids)
-            real_advance_purchase = sum(x.real_advance for x in one.po_id)
+            real_advance_purchase = sum(x.real_advance for x in one.po_ids)
             amount_payment_org_done = sum(x.amount_payment_org_done for x in one.invoice_ids)
             can_apply_amount = purchase_amount - real_advance_purchase - amount_payment_org_done
             print('purchase_amount_akiny',purchase_amount)
