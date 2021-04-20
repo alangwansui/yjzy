@@ -231,7 +231,7 @@
                             <field name="po_pre_advance"/>
                             <field name="delivery_amount"/>
                             <field name="un_delivery_amount"/>
-                            <field name="amount_payment_org_auto"/>
+
                             <field name="can_approve_amount"/>
                         </group>
                         <group>
