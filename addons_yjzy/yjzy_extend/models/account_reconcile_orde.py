@@ -3689,16 +3689,6 @@ class account_reconcile_order_line(models.Model):
             x.amount_invoice_so_residual_can_approve_d_after = amount_invoice_so_residual_can_approve_d - amount_total_org_new
             x.amount_invoice_so_residual_d_after = amount_invoice_so_residual_d - amount_total_org_new
 
-    @api.depends('order_id', 'order_id.amount_payment_org', 'amount_invoice_so', 'amount_total_invoice')
-    def compute_amount_payment_org_auto(self):
-        for one in self:
-            amount_payment_org = one.order_id.amount_payment_org
-            amount_invoice_so = one.amount_invoice_so
-            amount_total_invoice = one.amount_total_invoice
-            amount_payment_org_auto = amount_total_invoice != 0 and (
-                        amount_invoice_so / amount_total_invoice) * amount_payment_org or 0.0
-            one.amount_payment_org_auto = amount_payment_org_auto
-
     invoice_move_line_com_yfzk_ids_count = fields.Integer('账单付款日志数量', related='invoice_id.move_line_com_yfzk_ids_count')
     invoice_move_line_com_yszk_ids_count = fields.Integer('账单收款日志数量', related='invoice_id.move_line_com_yszk_ids_count')
     invoice_move_line_com_yfzk_ids = fields.One2many('account.move.line.com', '应付账单日志',
@@ -3810,8 +3800,11 @@ class account_reconcile_order_line(models.Model):
     amount_payment_org = fields.Monetary(u'收款金额', currency_field='payment_currency_id')
 
 
-
-    amount_payment_org_auto = fields.Monetary(u'合同支付收款金额', currency_field='payment_currency_id',compute=compute_amount_payment_org_auto,store=True)#根据付款金额自动分配过来的
+    def compute_amount_payment_org_auto(self):
+        for one in self:
+            amount_payment_org = one.order_id.amount.payment_org
+            
+    amount_payment_org_auto = fields.Monetary(u'收款金额', currency_field='payment_currency_id',compute=compute_amount_payment_org_auto,store=True)#根据付款金额自动分配过来的
 
     amount_payment = fields.Monetary(u'收款金额:本币', currency_field='currency_id', compute=compute_info)
     amount_bank_org = fields.Monetary(u'银行扣款', currency_field='invoice_currency_id')
