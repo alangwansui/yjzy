@@ -4,32 +4,36 @@
         <field name="name">purchase.payment.advance.tool.form</field>
         <field name="model">purchase.payment.advance.tool</field>
         <field name="arch" type="xml">
-            <form string="Sale Order refuse reason">
+            <form string="Payment Advance Tool">
                 <group>
-                    <field name="po_id" />
-                    <field name="partner_id"/>
-                    <field name="can_apply_amount"/>
+                    <field name="purchase_amount"/>
                     <field name="amount_payment_org_done"/>
                     <field name="real_advance_purchase"/>
-                    <field name="purchase_amount"/>
+                    <field name="can_apply_amount"/>
                 </group>
-                <field name="po_ids">
+                <field name="po_ids" readonly="1">
                     <tree>
-                        <field name="contract_code"/>
-                        <field name="amount_total" sum="小计"/>
-                        <field name="real_advance" sum="小计"/>
+                        <field name="contract_code" string="采购合同号"/>
+                        <field name="amount_total" string="原始采购金额" sum="小计"/>
+                        <field name="real_advance" string="预付金额" sum="小计"/>
                     </tree>
                 </field>
-                <field name="invoice_ids">
+                <field name="invoice_ids" readonly="1">
                     <tree>
-                        <field name="bill_id"/>
-                        <field name="amount_total" sum="小计"/>
-                        <field name="amount_payment_org_done" sum="小计"/>
+                        <field name="bill_id" string="出运合同"/>
+                        <field name="amount_total" string="总应付金额" sum="小计"/>
+                        <field name="amount_payment_org_done" string="总付款金额" sum="小计"/>
                     </tree>
                 </field>
+                  <notebook>
+                      <page string="管理页" groups="base.group_system">
+                          <field name="po_id" />
+                    <field name="partner_id"/>
+                      </page>
+                  </notebook>
 
                 <footer>
-                    <button string="取消" class="oe_link" special="cancel"/>
+                    <button string="关闭" class="oe_link" special="cancel"/>
                 </footer>
            </form>
         </field>

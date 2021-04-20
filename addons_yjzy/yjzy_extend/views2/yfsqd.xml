@@ -109,7 +109,7 @@
                             attrs="{'invisible':['|','|',('advance_balance_total','=',0),('state','!=','posted'),('state_1','!=','50_posted')]}"/>
                     <button name="compute_advance_balance_total" type="object" string="重新计算状态"
                             groups="base.group_system"/>
-                    <button name="open_ppat" type="object" string="打开小工具"/>
+
                     <button name="action_submit" class="oe_highlight" string="提交" type="object"
                             attrs="{'invisible': [('state_1','not in',['10_draft'])]}"/>
                     <button name="action_account_post" class="oe_highlight" string="财务确认" type="object"
@@ -127,7 +127,7 @@
                              attrs="{'invisible':['|','|',('advance_balance_total','=',0),('state','!=','posted'),('state_1','!=','50_posted')]}"/>
                        <button name="open_wizard_reconcile_invoice" type="object" string="创建应付认领"
                                attrs="{'invisible':['|','|',('advance_balance_total','=',0),('state','!=','posted'),('state_1','!=','50_posted')]}"/>
-
+                    <button name="open_ppat" type="object" string="查看可申请预付金额工具"/>
                     <field name="state_1" widget="statusbar" statusbar_visible=" "/>
                 </header>
                 <header groups="base.group_system">
