@@ -3798,14 +3798,6 @@ class account_reconcile_order_line(models.Model):
 
     amount_advance = fields.Monetary(u'预收金额:本币', currency_field='currency_id', compute=compute_info)
     amount_payment_org = fields.Monetary(u'收款金额', currency_field='payment_currency_id')
-
-
-    def compute_amount_payment_org_auto(self):
-        for one in self:
-            amount_payment_org = one.order_id.amount.payment_org
-            
-    amount_payment_org_auto = fields.Monetary(u'收款金额', currency_field='payment_currency_id',compute=compute_amount_payment_org_auto,store=True)#根据付款金额自动分配过来的
-
     amount_payment = fields.Monetary(u'收款金额:本币', currency_field='currency_id', compute=compute_info)
     amount_bank_org = fields.Monetary(u'银行扣款', currency_field='invoice_currency_id')
     amount_bank = fields.Monetary(u'银行扣款:本币', currency_field='currency_id', compute=compute_info)
