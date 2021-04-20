@@ -3696,7 +3696,7 @@ class account_reconcile_order_line(models.Model):
             amount_invoice_so = one.amount_invoice_so
             amount_total_invoice = one.amount_total_invoice
             amount_payment_org_auto = amount_total_invoice != 0 and (
-                        amount_invoice_so / amount_total_invoice) * amount_payment_org or 0.0
+                        amount_invoice_so / amount_total_invoice) * amount_payment_org or 0
             one.amount_payment_org_auto = amount_payment_org_auto
 
     invoice_move_line_com_yfzk_ids_count = fields.Integer('账单付款日志数量', related='invoice_id.move_line_com_yfzk_ids_count')
