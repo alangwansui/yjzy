@@ -21,7 +21,7 @@ class PurchasePaymentAdvanceTool(models.TransientModel):
         inv_line_obj = self.env['account.invoice.line']
         inv_line_ids = inv_line_obj.search([('purchase_id','=',po_id)])
         invoice_ids = inv_line_ids.mapped('invoice_id')
-        po_ids = inv_line_ids.mapped('purchase_id')
+        po_ids = invoice_ids.mapped('purchase_id')
         print('invoice_ids_akiny',invoice_ids,po_ids)
         return po_ids
 
