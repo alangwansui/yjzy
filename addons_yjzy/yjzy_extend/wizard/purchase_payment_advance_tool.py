@@ -12,8 +12,6 @@ class PurchasePaymentAdvanceTool(models.TransientModel):
         inv_line_obj = self.env['account.invoice.line']
         inv_line_ids = inv_line_obj.search([('purchase_id','=',po_id)])
         invoice_ids = inv_line_ids.mapped('invoice_id')
-        po_ids = inv_line_ids.mapped('purchase_id')
-        print('invoice_ids_akiny',invoice_ids,po_ids)
         return invoice_ids
 
     def default_po_ids(self):
@@ -21,9 +19,32 @@ class PurchasePaymentAdvanceTool(models.TransientModel):
         inv_line_obj = self.env['account.invoice.line']
         inv_line_ids = inv_line_obj.search([('purchase_id','=',po_id)])
         invoice_ids = inv_line_ids.mapped('invoice_id')
-        po_ids = invoice_ids.mapped('purchase_id')
-        print('invoice_ids_akiny',invoice_ids,po_ids)
+        invoice_line_ids_new = inv_line_ids
+        for one in invoice_ids:
+            invoice_line_ids_new += one.invoice_line_ids
+
+        po_ids = invoice_line_ids_new.mapped('purchase_id')
+        print('invoice_line_ids_new_akiny', invoice_line_ids_new, po_ids)
+        # po_ids_dic = []
+        # for one in invoice_line_ids_new:
+        #     po_ids_dic.append(one.invoice_line_ids.mapped('purchase_id'))
+        # print('invoice_ids_akiny',  po_ids_dic)
+        # po_obj = self.env['purchase.order']
+        # po_ids = po_obj.search([('id','in',po_ids_dic)])
+        #
         return po_ids
+    #
+    # self.ensure_one()
+    # dic_po_invl = {}
+    # for line in inv.invoice_line_ids:
+    #     if line.purchase_id:
+    #         po = line.purchase_id
+    #         if po in dic_po_invl:
+    #             dic_po_invl[po] |= line
+    #         else:
+    #             dic_po_invl[po] = line
+    # return dic_po_invl or False
+
 
     def compute_purchase_amount(self):
         for one in self:
