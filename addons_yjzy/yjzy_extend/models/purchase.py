@@ -156,11 +156,11 @@ class purchase_order(models.Model):
                     one.need_change_partner = True
                     continue
 
-    def compute_amount_payment_org_auto(self):
-        for one in self:
-            hxd_ids = one.hxd_ids.filtered(lambda x: x.prder_id.state == 'done')
-            amount_payment_org_auto = sum(x.amount_payment_org_auto for x in hxd_ids)
-            one.amount_payment_org_auto = amount_payment_org_auto
+    # def compute_amount_payment_org_auto(self):
+    #     for one in self:
+    #         hxd_ids = one.hxd_ids.filtered(lambda x: x.prder_id.state == 'done')
+    #         amount_payment_org_auto = sum(x.amount_payment_org_auto for x in hxd_ids)
+    #         one.amount_payment_org_auto = amount_payment_org_auto
 
 
     stage_id = fields.Many2one(
@@ -256,7 +256,7 @@ class purchase_order(models.Model):
     tb_line_ids = fields.One2many('transport.bill.line','po_id')
 
 
-    amount_payment_org_auto = fields.Monetary('支付金额', currency_field='currency_id',compute=compute_amount_payment_org_auto)
+    # amount_payment_org_auto = fields.Monetary('支付金额', currency_field='currency_id',compute=compute_amount_payment_org_auto)
 
     def re_compute_stage(self):
         for one in self:
