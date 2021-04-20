@@ -49,7 +49,7 @@ class account_reconcile_order(models.Model):
     _description = '核销单'
     _order = 'date desc'
 
-    @api.depends('sfk_type','invoice_currency_id','manual_payment_currency_id', 'yjzy_payment_id', 'fk_journal_id')
+    @api.depends('manual_payment_currency_id', 'yjzy_payment_id', 'fk_journal_id')
     def _compute_payment_currency(self):
         for one in self:
             if one.sfk_type == 'yfhxd':
@@ -755,7 +755,7 @@ class account_reconcile_order(models.Model):
                                           default=lambda self: self.default_exchange_account())
     # payment_currency_id = fields.Many2one('res.currency', u'收款货币', related='yjzy_payment_id.currency_id', readonly=True)
     # payment_currency_id = fields.Many2one('res.currency', u'收款货币', related='fk_journal_id.currency_id', readonly=True)
-    payment_currency_id = fields.Many2one('res.currency', u'收款货币', compute=_compute_payment_currency, readonly=True,store=True)
+    payment_currency_id = fields.Many2one('res.currency', u'收款货币', compute=_compute_payment_currency, readonly=True)
     manual_payment_currency_id = fields.Many2one('res.currency', u'收款货币:手动输入')
     manual_currency_id = fields.Many2one('res.currency', u'手动设置收款货币')
 
