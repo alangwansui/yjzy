@@ -17,9 +17,10 @@ class MailActivityType(models.Model):
     available for all models using activities; or specific to a model in which
     case res_model_id field should be used. """
     _inherit = 'mail.activity.type'
-    category = fields.Selection(selection_add=[('plan_check', '计划检查'),('tb_date','出运相关日期')])
-
-
+    category = fields.Selection([
+        ('default', 'Other'),('plan_check', u'计划检查'),('tb_date',u'出运相关日期')], default='default',
+        string='Category',
+        help='Categories may trigger specific behavior like opening calendar view')
 class MailActivity(models.Model):
     """ An actual activity to perform. Activities are linked to
     documents using res_id and res_model_id fields. Activities have a deadline

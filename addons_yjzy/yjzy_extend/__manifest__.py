@@ -211,6 +211,7 @@
         'wizard/wizard_back_tax_declaration_line.xml',
         'wizard/wizard_create_other.xml',
         'wizard/wizard_print_fkzl.xml',
+        'wizard/purchase_payment_advance_tool.xml',
 
         # report
         'report/report.xml',

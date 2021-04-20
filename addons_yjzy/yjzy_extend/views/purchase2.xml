@@ -397,7 +397,7 @@
             <field name="res_model">purchase.order</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[('state','in',['draft','refused','submit','to approve'])]</field>
-            <field name="context">{'group_by':'state'}</field>
+            <field name="context">{'group_by':'stage_id'}</field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('new_purchase_order_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('new_purchase_order_from')})]"/>
@@ -471,7 +471,7 @@
             <field name="res_model">purchase.order</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[('state','in',['purchase','to approve'])]</field>
-            <field name="context">{'group_by':'state'}</field>
+            <field name="context">{'group_by':'stage_id'}</field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('new_purchase_order_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('new_purchase_order_from')})]"/>

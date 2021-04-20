@@ -1212,6 +1212,10 @@ class sale_order(models.Model):
         self.purchase_balance_sum3 = 0
         self.purchase_no_deliver_amount_new = 0
         self.balance_new = 0
+        for one in self.po_ids_new:
+            one.stage_id = one._stage_find(domain=[('code', '=', '060')])
+
+
 
     def action_verification_new(self):
         user = self.env.user

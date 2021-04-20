@@ -39,9 +39,11 @@ Purchase_Selection = [('draft', '草稿'),
                   ('sales_approve', u'待产品经理审批'),
                   ('approve', '待出运'),  # akiny 翻译成等待出运
                   ('purchase', '开始出运'),
-                  ('done', '锁定'),
+                  ('done', '核销完成'),
                   ('cancel', '取消'),
-                  ('refused', u'已拒绝')]
+                  ('refused', u'已拒绝'),
+
+                      ]
 
 class PurchaseOrderStage(models.Model):
     _name = "purchase.order.stage"
@@ -154,7 +156,11 @@ class purchase_order(models.Model):
                     one.need_change_partner = True
                     continue
 
-
+    def compute_amount_payment_org_auto(self):
+        for one in self:
+            hxd_ids = one.hxd_ids.filtered(lambda x: x.prder_id.state == 'done')
+            amount_payment_org_auto = sum(x.amount_payment_org_auto for x in hxd_ids)
+            one.amount_payment_org_auto = amount_payment_org_auto
 
 
     stage_id = fields.Many2one(
@@ -248,6 +254,15 @@ class purchase_order(models.Model):
     date_factory_return = fields.Date('工厂回传时间',)
 
     tb_line_ids = fields.One2many('transport.bill.line','po_id')
+
+
+    amount_payment_org_auto = fields.Monetary('支付金额', currency_field='currency_id',compute=compute_amount_payment_org_auto)
+
+    def re_compute_stage(self):
+        for one in self:
+            if one.source_so_id.state == 'verification':
+                one.stage_id = one._stage_find(domain=[('code', '=', '060')])
+
     def compute_tb_line_count(self):
         for one in self:
             one.tb_line_count = len(one.tb_line_ids)

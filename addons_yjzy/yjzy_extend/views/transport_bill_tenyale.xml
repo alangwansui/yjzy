@@ -1169,7 +1169,7 @@
                                     </tree>
                                 </field>
                             </page>
-                            <page string="时间管理页面"
+                            <page string="时间管理页面" groups="base.group_system"
                                   attrs="{'invisible':[('operation_wizard','in',['first','second','third','fourth'])]}">
                                 <group>
                                     <group>
