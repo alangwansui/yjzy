@@ -307,7 +307,12 @@
             <field name="line_ids" eval="[(5, 0), (0, 0, {'value': 'balance', 'value_amount': 0.0, 'sequence': 500, 'days': 14, 'option': 'day_after_invoice_date'})]"/>
         </record>
 
-
+        <record model="hs.hs" id="expanse_invoice_hs">
+            <field name="name">费用转货款</field>
+            <field name="en_name">Expense To Invoice</field>
+            <field name="cole">999999</field>
+            <field name="back_tax">0.13</field>
+        </record>
     </data>
 
 </odoo>

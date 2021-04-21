@@ -951,7 +951,7 @@
             <field name="name">transport.bill.date.accounttree</field>
             <field name="model">transport.bill</field>
             <field name="arch" type="xml">
-                <tree string="出运单" editable="bottom" default_order="delivered_date desc" create="false" edit="false">
+                <tree string="出运单" editable="bottom" default_order="date_out_in desc" create="false" edit="false">
                     <field name="name" invisible="1"/>
                     <field name="ref" readonly="1"/>
                     <field name="partner_id" required="1" options="{'no_open':1}" readonly="1"/>
@@ -974,6 +974,8 @@
                     <field name="date_customer_finish_related" invisible="1"/>
                     <field name="date_supplier_finish_related" invisible="1"/>
                     <field name="org_sale_amount" readonly="1"/>
+                    <field name="org_real_sale_amount" readonly="1" string="出运金额"/>
+                    <field name="sale_type" readonly="1"/>
                     <field name="state" invisible="0" readonly="1"/>
                     <field name="create_date" widget="date" readonly="1" invisible="1"/>
                     <field name="gongsi_id" string="销售主体" readonly="1" options="{'no_open':1}"/>
@@ -1418,7 +1420,7 @@
             <field name="limit">20</field>
             <field name="domain">[('state','in',['delivered','invoiced','verifying'])]</field>
             <field name="context">
-                {'show_date_finish':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3}
+                {'search_default_group_by_date_out_in':1,'show_date_finish':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3}
             </field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_transport_bill_new_date_account_tree')})]"/>

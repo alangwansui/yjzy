@@ -552,68 +552,118 @@ class hr_expense_sheet(models.Model):
         if not self.bank_id.partner_id:
             raise Warning('选择的收款账号非供应商对应账号，请检查！')
         partner_id = self.bank_id.partner_id
-
-        bill_id = self.expense_line_ids.mapped('tb_id')
-        tb_po_id = self.env['tb.po.invoice'].create({'tb_id': bill_id and bill_id[0].id,
-                                                     'invoice_product_id': self.env.ref('yjzy_extend.product_qtyfk').id,# 0821
-                                                     'tax_rate_add':0,
-                                                     'expense_tax_algorithm':'multiply',
-                                                     'expense_sheet_id':self.id, #1009
-                                                     'type':'expense_po',
-                                                     'fk_journal_id': self.fk_journal_id.id,
-                                                     'bank_id':self.bank_id.id,
-                                                     'yjzy_type_1':'purchase',
-                                                     'is_tb_hs_id':True,
-                                                     'partner_id':partner_id.id,
-                                                     })
-
         view = self.env.ref('yjzy_extend.tb_po_form')
         line_obj = self.env['tb.po.invoice.line']
         extra_invoice_line_obj = self.env['extra.invoice.line']
+        bill_id = self.expense_line_ids.mapped('tb_id')
+        if bill_id:
+            tb_po_id = self.env['tb.po.invoice'].create({'tb_id': bill_id and bill_id[0].id,
+                                                         'invoice_product_id': self.env.ref('yjzy_extend.product_qtyfk').id,# 0821
+                                                         'tax_rate_add':0,
+                                                         'expense_tax_algorithm':'multiply',
+                                                         'expense_sheet_id':self.id, #1009
+                                                         'type':'expense_po',
+                                                         'fk_journal_id': self.fk_journal_id.id,
+                                                         'bank_id':self.bank_id.id,
+                                                         'yjzy_type_1':'purchase',
+                                                         'is_tb_hs_id':True,
+                                                         'partner_id':partner_id.id,
+                                                         })
 
-        for hsl in bill_id[0].hsname_all_ids:
+
+
+
+            for hsl in bill_id[0].hsname_all_ids:
+                line_obj.create({
+                    'tb_po_id': tb_po_id.id,
+                    'hs_id': hsl.hs_id.id,
+                    'hs_en_name': hsl.hs_en_name,
+                    'purchase_amount2_tax': hsl.purchase_amount2_tax,
+                    'purchase_amount2_no_tax': hsl.purchase_amount2_no_tax,
+                    'purchase_amount_max_add_forecast': hsl.purchase_amount_max_add_forecast,
+                    'purchase_amount_min_add_forecast': hsl.purchase_amount_min_add_forecast,
+                    'purchase_amount_max_add_rest': hsl.purchase_amount_max_add_rest,
+                    'purchase_amount_min_add_rest': hsl.purchase_amount_min_add_rest,
+                    'purchase_back_tax_amount2_new': hsl.purchase_back_tax_amount2_new,
+                    'hsname_all_line_id': hsl.id,
+                    'back_tax': hsl.back_tax
+                })
+            tb_po_id.hsname_all_ids[0].purchase_amount2_add_this_time = self.total_amount
+
+            for line in self.expense_line_ids:
+                product = line.product_id
+                if product:
+                    account = product.product_tmpl_id._get_product_accounts()['expense']
+                    if not account:
+                        raise UserError(
+                            _("No Expense account found for the product %s (or for its category), please configure one.") % (
+                                self.product_id.name))
+                else:
+                    account = self.env['ir.property'].with_context(force_company=self.company_id.id).get(
+                        'property_account_expense_categ_id', 'product.category')
+                    if not account:
+                        raise UserError(
+                            _('Please configure Default Expense account for Product expense: `property_account_expense_categ_id`.'))
+
+                # account = product.property_account_income_id
+                print('account',account)
+                extra_invoice_line_obj.create({
+                    'tb_po_id': tb_po_id.id,
+                    'name':'%s' % (product.name),
+                    'product_id': product.id,
+                    'quantity': line.quantity,
+                    'price_unit': line.unit_amount,
+                    'account_id': account.id
+                })
+        else:
+            tb_po_id = self.env['tb.po.invoice'].create({'tb_id': bill_id and bill_id[0].id,
+                                                         'invoice_product_id': self.env.ref(
+                                                         'yjzy_extend.product_qtyfk').id,  # 0821
+                                                         'tax_rate_add': 0,
+                                                         'expense_tax_algorithm': 'multiply',
+                                                         'expense_sheet_id': self.id,  # 1009
+                                                         'type': 'expense_po',
+                                                         'fk_journal_id': self.fk_journal_id.id,
+                                                         'bank_id': self.bank_id.id,
+                                                         'yjzy_type_1': 'purchase',
+                                                         'is_tb_hs_id': True,
+                                                         'partner_id': partner_id.id,
+                                                         })
+
+
+            hs_id = self.env.ref('yjzy_extend.expanse_invoice_hs')
             line_obj.create({
                 'tb_po_id': tb_po_id.id,
-                'hs_id': hsl.hs_id.id,
-                'hs_en_name': hsl.hs_en_name,
-                'purchase_amount2_tax': hsl.purchase_amount2_tax,
-                'purchase_amount2_no_tax': hsl.purchase_amount2_no_tax,
-                'purchase_amount_max_add_forecast': hsl.purchase_amount_max_add_forecast,
-                'purchase_amount_min_add_forecast': hsl.purchase_amount_min_add_forecast,
-                'purchase_amount_max_add_rest': hsl.purchase_amount_max_add_rest,
-                'purchase_amount_min_add_rest': hsl.purchase_amount_min_add_rest,
-                'purchase_back_tax_amount2_new': hsl.purchase_back_tax_amount2_new,
-                'hsname_all_line_id': hsl.id,
-                'back_tax': hsl.back_tax
+                'hs_id': hs_id.id,
+                'hs_en_name': hs_id.en_name,
+
+                'back_tax': hs_id.back_tax
             })
-        tb_po_id.hsname_all_ids[0].purchase_amount2_add_this_time = self.total_amount
+            tb_po_id.hsname_all_ids[0].purchase_amount2_add_this_time = self.total_amount
+            for line in self.expense_line_ids:
+                product = line.product_id
+                if product:
+                    account = product.product_tmpl_id._get_product_accounts()['expense']
+                    if not account:
+                        raise UserError(
+                            _("No Expense account found for the product %s (or for its category), please configure one.") % (
+                                self.product_id.name))
+                else:
+                    account = self.env['ir.property'].with_context(force_company=self.company_id.id).get(
+                        'property_account_expense_categ_id', 'product.category')
+                    if not account:
+                        raise UserError(
+                            _('Please configure Default Expense account for Product expense: `property_account_expense_categ_id`.'))
+                print('account', account)
+                extra_invoice_line_obj.create({
+                    'tb_po_id': tb_po_id.id,
+                    'name': '%s' % (product.name),
+                    'product_id': product.id,
+                    'quantity': line.quantity,
+                    'price_unit': line.unit_amount,
+                    'account_id': account.id
 
-        for line in self.expense_line_ids:
-            product = line.product_id
-            if product:
-                account = product.product_tmpl_id._get_product_accounts()['expense']
-                if not account:
-                    raise UserError(
-                        _("No Expense account found for the product %s (or for its category), please configure one.") % (
-                            self.product_id.name))
-            else:
-                account = self.env['ir.property'].with_context(force_company=self.company_id.id).get(
-                    'property_account_expense_categ_id', 'product.category')
-                if not account:
-                    raise UserError(
-                        _('Please configure Default Expense account for Product expense: `property_account_expense_categ_id`.'))
-
-            # account = product.property_account_income_id
-            print('account',account)
-            extra_invoice_line_obj.create({
-                'tb_po_id': tb_po_id.id,
-                'name':'%s' % (product.name),
-                'product_id': product.id,
-                'quantity': line.quantity,
-                'price_unit': line.unit_amount,
-                'account_id': account.id
-
-            })
+                })
         self.expense_to_invoice_type = 'to_invoice'
         return True
         # return {
