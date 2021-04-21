@@ -310,7 +310,7 @@
         <record model="hs.hs" id="expanse_invoice_hs">
             <field name="name">费用转货款</field>
             <field name="en_name">Expense To Invoice</field>
-            <field name="cole">999999</field>
+            <field name="code">999999</field>
             <field name="back_tax">0.13</field>
         </record>
     </data>

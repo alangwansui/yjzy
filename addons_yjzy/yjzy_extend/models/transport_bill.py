@@ -2389,10 +2389,13 @@ class transport_bill(models.Model):
             payment_term_id = self.env.ref('yjzy_extend.account_payment_term_back_tax_14days')
             #account = self.env['account.account'].search([('code','=', '50011'),('company_id', '=', self.user_id.company_id.id)], limit=1)
             account = product.property_account_income_id
+            invoice_tenyale_name = 'tenyale_invoice'
+            tenyale_name = self.env['ir.sequence'].next_by_code('account.invoice.%s' % invoice_tenyale_name)
             if not account:
                 raise Warning(u'没有找到退税科目,请先在退税产品的收入科目上设置')
             if self.back_tax_amount != 0:
                 back_tax_invoice = self.env['account.invoice'].create({
+                    'tenyale_name':tenyale_name,
                     'partner_id': partner.id,
                     'type': 'out_invoice',
                     'journal_type': 'sale',
@@ -2416,6 +2419,7 @@ class transport_bill(models.Model):
                     })]
                 })
                 #730 创建后直接过账
+
                 back_tax_invoice.yjzy_invoice_id = back_tax_invoice.id
                 back_tax_invoice.invoice_attribute = 'normal'
                 back_tax_invoice.action_invoice_open()

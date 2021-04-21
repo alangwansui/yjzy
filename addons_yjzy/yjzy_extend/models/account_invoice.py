@@ -733,7 +733,15 @@ class account_invoice(models.Model):
                 one.in_invoice_amount = in_invoice_amount
                 one.in_invoice_residual = in_invoice_residual
 
+    def _default_tenyale_name(self):
+        invoice_tenyale_name = self.env.context.get('default_invoice_tenyale_name')
+        if invoice_tenyale_name:
+            tenyale_name = self.env['ir.sequence'].next_by_code('account.invoice.%s' % invoice_tenyale_name)
+        else:
+            tenyale_name = self.env['ir.sequence'].next_by_code('account.invoice.tenyale_invoice')
+        return tenyale_name
 
+    tenyale_name = fields.Char(u'天宇编号', default=lambda self: self._default_tenyale_name())
     is_manual = fields.Boolean('是否手动创建',default=False)
 
     advance_pre = fields.Monetary('建议认领预收付总金额',currency_field='currency_id', compute=compute_advance_pre_rest,store=True)
@@ -1114,6 +1122,16 @@ class account_invoice(models.Model):
     yjzy_invoice_line_ids = fields.One2many('account.invoice.line', 'yjzy_invoice_id', u'所有明细',
                                             domain=[('quantity', '!=', 0),
                                                     ('invoice_attribute', 'in', ['normal', 'extra'])])
+
+    def create_tenyale_name(self):
+        for one in self:
+            if one.invoice_attribute_all_in_one == '230':
+                tenyale_name = self.env['ir.sequence'].next_by_code('account.invoice.%s' % 'ad_po')
+            elif one.invoice_attribute_all_in_one == '330':
+                tenyale_name = self.env['ir.sequence'].next_by_code('account.invoice.%s' % 'fx_po')
+            else:
+                tenyale_name = self.env['ir.sequence'].next_by_code('account.invoice.%s' % 'tenyale_invoice')
+            one.tenyale_name = tenyale_name
 
     def compute_move_lines(self):
         for one in self.move_line_yfzk_ids:

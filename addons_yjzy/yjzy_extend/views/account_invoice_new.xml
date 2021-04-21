@@ -9,7 +9,7 @@
                 <search string="Search Invoice">
 
                     <field name="number" string="模糊查询"
-                           filter_domain="['|','|','|','|',('number','ilike',self),('tb_contract_code','ilike',self), ('origin','ilike',self), ('reference', 'ilike', self), ('partner_id', 'child_of', self)]"/>
+                           filter_domain="['|','|','|','|','|',('tenyale_name','ilike',self),('number','ilike',self),('tb_contract_code','ilike',self), ('origin','ilike',self), ('reference', 'ilike', self), ('partner_id', 'child_of', self)]"/>
                     <field name="bill_id" string="系统出运单"/>
                     <field name="journal_id" invisible="1"/>
                     <separator/>
@@ -359,6 +359,7 @@
                     <field name="partner_id" invisible="1" string="客户"/>
                     <field name="current_date_rate" string="汇率" invisible="1"/>
                     <field name="bill_id" string="合同号" invisible="1"/>
+                    <field name="tenyale_name" string="天宇编号"/>
                     <field name="tb_contract_code" string="合同号" widget="dynamic_popover_char"
                            options="{'max_width': '100px', 'line_clamp': '1', 'mode_mouse':'hover','popover_max_width':'200px','placement':'right'}"/>
                     <field name="date_invoice" string="账单日期" />

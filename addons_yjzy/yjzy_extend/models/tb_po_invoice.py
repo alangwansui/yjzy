@@ -1092,6 +1092,7 @@ class tb_po_invoice(models.Model):
 
     def make_back_tax(self):
         partner = self.env.ref('yjzy_extend.partner_back_tax')
+
         # product = self.env.ref('yjzy_extend.product_back_tax')
         product = self.product_back_tax
         # account = self.env['account.account'].search([('code','=', '50011'),('company_id', '=', self.user_id.company_id.id)], limit=1)
@@ -1132,6 +1133,7 @@ class tb_po_invoice(models.Model):
                     'hs_en_name': line.hs_en_name,
                     'tbl_hsname_all_id': line.hsname_all_line_id.id
                 })
+            back_tax_invoice.create_tenyale_name()
         if self.back_tax_add_this_time_total < 0:
             back_tax_add_this_time_total = -self.back_tax_add_this_time_total
             back_tax_invoice = invoice_obj.create({
@@ -1160,6 +1162,7 @@ class tb_po_invoice(models.Model):
                     'hs_en_name': line.hs_en_name,
                     'tbl_hsname_all_id': line.hsname_all_line_id.id
                 })
+            back_tax_invoice.create_tenyale_name()
 
     # 730 创建后直接过账 冲减发票
 

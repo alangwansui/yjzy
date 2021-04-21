@@ -165,6 +165,7 @@
                         <group col="3">
                             <group>
                                 <field name="invoice_attribute_all_in_one" string="账单类型"/>
+                                <field name="tenyale_name" string="天宇编号" attrs="{'invisible':[('invoice_attribute_all_in_one','not in',['230','330','630'])]}"/>
                                 <field name="invoice_partner"
                                        attrs="{'readonly':[('state','in',['paid','open'])],'invisible':[('invoice_attribute','!=','other_payment')]}"/>
                                 <field name="name_title"

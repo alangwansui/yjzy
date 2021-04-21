@@ -162,5 +162,30 @@
         <field name="padding">4</field>
         <field name="company_id" eval="False"/>
     </record>
+
+
+    <record id="seq_invoice_tenyale_name_ad_po" model="ir.sequence">
+        <field name="name">account.invoice.ad_po</field>
+        <field name="code">account.invoice.ad_po</field>
+        <field name="prefix">AD</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="seq_invoice_tenyale_name_fx_po" model="ir.sequence">
+        <field name="name">account.invoice.fx_po</field>
+        <field name="code">account.invoice.fx_po</field>
+        <field name="prefix">FX</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="seq_invoice_tenyale_name_tenyale_invoice" model="ir.sequence">
+        <field name="name">account.invoice.tenyale_invoice</field>
+        <field name="code">account.invoice.tenyale_invoice</field>
+        <field name="prefix">TYI</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
 </odoo>
 
