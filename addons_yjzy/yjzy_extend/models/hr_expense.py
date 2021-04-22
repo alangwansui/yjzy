@@ -188,7 +188,20 @@ class hr_expense(models.Model):
 
     #payment_date_store = fields.Datetime(u'付款日期')
 
-
+    def open_budget(self):
+        form_view = self.env.ref('yjzy_extend.budget_budget_form')
+        return {
+            'name': u'项目预算表',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'budget.budget',
+            'type': 'ir.actions.act_window',
+            'views': [(form_view.id, 'form')],
+            'res_id': self.budget_id.id,
+            'target': 'new',
+            'flags': {'form': {'initial_mode': 'view', 'action_buttons': False}},
+            'context':{'open':1}
+        }
 
     @api.model
     def update_payment_date_store(self):

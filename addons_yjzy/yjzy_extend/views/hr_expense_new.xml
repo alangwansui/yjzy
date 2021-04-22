@@ -926,7 +926,7 @@
                                                attrs="{'column_invisible':[('parent.is_budget','=',False)],'invisible':[('budget_type','not in',['transport','lead'])]}"/>
                                         <field name="budget_amount_reset"
                                                attrs="{'column_invisible':[('parent.is_budget','=',False)],'invisible':[('budget_type','not in',['transport','lead'])]}"/>
-
+                                        <button name="open_budget" type="object" icon="fa-pencil-square-o"/>
                                         <field name="budget_type" invisible="1"/>
 
                                         <button name="action_employee_confirm" string="责任人确认" class="oe_highlight"
@@ -1009,7 +1009,7 @@
                                         <field name="budget_id" invisible="1"/>
                                         <field name="budget_amount"/>
                                         <field name="budget_amount_reset"/>
-
+<button name="open_budget" type="object" icon="fa-pencil-square-o"/>
 
                                         <button name="action_employee_confirm" string="责任人确认" class="oe_highlight"
                                                 type="object"
@@ -1756,7 +1756,7 @@
                                                attrs="{'column_invisible':[('parent.is_budget','=',False)],'invisible':[('budget_type','not in',['transport','lead'])]}"/>
                                         <field name="budget_amount_reset"
                                                attrs="{'column_invisible':[('parent.is_budget','=',False)],'invisible':[('budget_type','not in',['transport','lead'])]}"/>
-
+<button name="open_budget" type="object" icon="fa-pencil-square-o"/>
                                         <field name="budget_type" invisible="1"/>
 
                                         <button name="action_employee_confirm" string="责任人确认" class="oe_highlight"

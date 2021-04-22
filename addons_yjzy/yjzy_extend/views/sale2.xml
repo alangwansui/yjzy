@@ -159,7 +159,7 @@
                                     <!--label for="po_ids" style="font-size:10px"/-->
 
 
-                                    <label for="pre_advance" string="预收款应收额" style="font-size:10px"/>
+                                    <label for="pre_advance" string="预计预收款" style="font-size:10px"/>
                                     <div class="o_row">
                                         <table style="width:100%; ">
                                             <tr>
@@ -171,7 +171,7 @@
                                         </table>
                                     </div>
 
-                                    <label for="balance" string="预收款实收额" style="font-size:10px"/>
+                                    <label for="balance" string="实际预收余额" style="font-size:10px"/>
                                     <div class="o_row">
                                         <table style="width:100%; ">
                                             <tr>
