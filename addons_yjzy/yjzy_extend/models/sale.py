@@ -557,7 +557,7 @@ class sale_order(models.Model):
     second_porfit = fields.Float('销售主体利润', compute=compute_info)  # amount_total2-刚刚计算出来的 second_const
     second_tenyale_profit = fields.Float('采购主体利润', compute=compute_info)  # (采购主体利润)：
 
-    hexiao_type = fields.Selection([('abnormal', u'异常核销'), ('write_off', u'正常核销')], string='核销类型')
+    hexiao_type = fields.Selection([('un_to','未开始核销'),('abnormal', u'异常核销'), ('write_off', u'正常核销')], string='核销类型')
 
     hexiao_comment = fields.Text(u'异常核销备注')
     doing_type = fields.Selection([('undelivered', u'未发货'), ('start_delivery', u'开始发货'),
@@ -1134,7 +1134,7 @@ class sale_order(models.Model):
     def update_hexiaotype_doing_type(self):
         for one in self:
             print('---', one)
-            hexiao_type = False
+            hexiao_type = 'un_to'
             state = one.state
             today = datetime.now()
             requested_date = one.requested_date

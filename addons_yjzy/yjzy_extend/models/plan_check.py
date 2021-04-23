@@ -384,8 +384,8 @@ class OrderTrack(models.Model):
         'order.track.category', 'order_track_category_rel', 'track_id', 'category_id',
         string='Tags', store=True)
 
-    order_track_new_order_state = fields.Selection([('10_doing', '跟踪进行时候'),('15_receivable_payment','等待应收付完成'), ('20_done', '已完成')], '下单前状态',
-                                                   store=True) #compute=compute_order_track_state,
+    order_track_new_order_state = fields.Selection([('10_doing', '跟踪进行时候'),('15_receivable_payment','等待应收付完成'), ('20_done', '已完成')], u'下单前状态',
+                                                   fefault='10_doing') #compute=compute_order_track_state,
 
 
     sale_state_1 = fields.Selection(Sale_Selection, u'审批流程', compute=compure_sale_state_1, store=True)  # 费用审批流程
