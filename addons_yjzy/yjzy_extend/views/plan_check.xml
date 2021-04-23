@@ -193,6 +193,112 @@
         </field>
     </record>
 
+    <record id="order_track_tree_view_all" model="ir.ui.view">
+        <field name="name">order.track.tree</field>
+        <field name="model">order.track</field>
+        <field name="arch" type="xml">
+            <tree string="计划" create="false" default_order="date_so_requested,date_all_state" class="o_list_view_scroll" decoration-danger="error_state == True">
+                <field name="type" groups="base.group_system"/>
+                <!--            <field name="date_deadline"/>-->
+                <field name="order_track_new_order_state" invisible="1"/>
+
+                <field name="partner_id"/>
+                <field name="date_so_requested_is_out_time" invisible="1"/>
+                <button name="open_so_id" class="akiny_text_right" type="object" icon="fa-archive"
+                        invisible="context.get('type')!='new_order_track'"/>
+                <field name="so_id" readonly="1" invisible="context.get('type')=='transport_track'"/>
+                <field name="user_id" invisible="1"/>
+                <field name="so_amount_total" invisible="context.get('type')=='transport_track'"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="time_draft_order" readonly="1" widget="date" string="创建草稿时间"
+                       invisible="context.get('type')!='new_order_track'"/>
+
+                <field name="time_receive_pi" invisible="context.get('type')!='new_order_track'"/>
+                <field name="time_sent_pi" invisible="context.get('type')!='new_order_track'"/>
+                <field name="time_sign_pi" invisible="context.get('type')!='new_order_track'"/>
+                <field name="hegui_date" invisible="context.get('type')=='transport_track'"/>
+                <field name="approve_date" invisible="context.get('type')!='transport_track'"/>
+                <button name="open_factory_return" class="akiny_text_right" type="object" icon="fa-archive"
+                        invisible="context.get('type')!='new_order_track'"/>
+                <field name="factory_return" widget="many2many_tags"
+                       invisible="context.get('type')!='new_order_track'"/>
+                <field name="plan_check_ids" widget="many2many_tags" groups="base.group_system"/>
+                <field name="comments_new_order_track" invisible="context.get('type')!='new_order_track'"/>
+
+                <button name="open_plan_check_line" type="object" string="工厂检查点登记" class="oe_highlight" invisible="1"/>
+                <button name="open_plan_check_line_new" type="object" string="工厂检查点登记" class="oe_highlight"
+                        invisible="1"/>
+
+
+                <button name="open_planning_integrity" class="akiny_text_right" type="object" icon="fa-archive"
+                        invisible="1"/>
+                <field name="planning_integrity" invisible="1"/>
+                <field name="order_track_plan_number" invisible="context.get('type')!='order_track'"/>
+                <field name="order_track_finish_number" invisible="context.get('type')!='order_track'"/>
+                <field name="order_track_due_number" invisible="context.get('type')!='order_track'"/>
+                <field name="order_track_due_finish_number" invisible="context.get('type')!='order_track'"/>
+                <field name="order_track_time_out_finish_number" invisible="context.get('type')!='order_track'"/>
+
+                <field name="check_on_time" invisible="1"/>
+                <field name="category_ids" string="异常结果" options="{'color_field':'color'}" widget="many2many_tags"
+                       invisible="1"/>
+                <field name="date_so_contract" invisible="context.get('type')!='order_track'" readonly="1"
+                       string="客户确认日期"/>
+                <field name="earliest_date_po_order" invisible="1" string="下单给供应商日期"/>
+                <field name="latest_date_po_planned" invisible="context.get('type')!='order_track'" string="供应商交期"/>
+
+                <field name="date_so_requested" invisible="context.get('type')!='order_track'" widget="date"
+                       string="客户交期"/>
+                <field name="time_contract_requested" invisible="1"/>
+                <field name="time_supplier_requested" invisible="1"/>
+                <field name="check_all_number" invisible="1"/>
+                <field name="check_finish_number" invisible="1"/>
+                <!--                <field name="check_number_percent" widget="progressbar" string="工厂检查点进度"-->
+                <!--                       invisible="context.get('type')!='order_track'"/>-->
+                <field name="finish_percent" widget="progressbar" string="客户交期进度"
+                       invisible="context.get('type')!='order_track'"/>
+                <field name="finish_percent_supplier" widget="progressbar" string="供应商交期进度"
+                       invisible="context.get('type')!='order_track'"/>
+                <field name="so_all_qty" invisible="1"/>
+                <field name="so_sent_qty" invisible="1"/>
+                <field name="so_no_sent_qty" invisible="1"/>
+                <field name="sent_percent" widget="progressbar" string=" . .出运进度. . "
+                       invisible="context.get('type')!='order_track'"/>
+                <field name="so_no_sent_amount_new" invisible="context.get('type')!='order_track'"/>
+                <field name="comments_order_track" invisible="context.get('type')!='order_track'"/>
+
+
+                <button name="open_tb_id" class="akiny_text_right" type="object" icon="fa-archive"
+                        invisible="context.get('type')!='transport_track'"/>
+
+                <field name="tb_id" invisible="context.get('type')!='transport_track'"/>
+                <field name="tb_org_sale_amount_new" invisible="context.get('type')!='transport_track'"/>
+
+
+                <field name="date_out_in" invisible="context.get('type')!='transport_track'"
+                       options='{"fg_color": "red:is_date_out_in == False"}'/>
+                <button name="action_date_out_in" type="object" string="确认并生成应收付"
+                        attrs="{'invisible':1}" confirm="确认后，应收应付就会生成，请谨慎！"
+                        invisible="context.get('type')!='transport_track'"/>
+                <field name="date_ship" invisible="context.get('type')!='transport_track'"/>
+                <field name="date_customer_finish" invisible="context.get('type')!='transport_track'"/>
+                <field name="tb_purchase_invoice_ids" widget="many2many_tags" string="供应商交单日期"
+                       invisible="context.get('type')!='transport_track'"/>
+                <button name="open_order_track_tb" type="object" class="oe_stat_button" icon="fa-archive" string="供应商交单"
+                        invisible="context.get('type')!='transport_track'"/>
+                <field name="sale_invoice_balance" invisible="context.get('type')!='transport_track'" string="剩余应收款" groups="account.group_account_invoice"/>
+                <field name="purchase_invoice_balance" invisible="context.get('type')!='transport_track'" string="剩余应付款" groups="account.group_account_invoice"/>
+                <field name="back_tax_invoice_balance" invisible="context.get('type')!='transport_track'" string="剩余退税" groups="account.group_account_invoice"/>
+                <field name="tb_sale_invoice_id" invisible="1"/>
+                <field name="is_date_out_in" invisible="1"/>
+                <field name="comments_transport_track" invisible="context.get('type')!='transport_track'"/>
+                <field name="error_state" groups="base.group_system"/>
+
+
+            </tree>
+        </field>
+    </record>
+
 
     <!--日期填制视图-->
     <record id="view_transport_bill_tenyale_date_tree" model="ir.ui.view">
@@ -1357,7 +1463,19 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('order_track_tree_view')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('order_track_form_new')})]"/>
 
+    <record id="action_order_track_all" model="ir.actions.act_window">
+        <field name="name">所有订单跟踪</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">order.track</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[]
+        </field>
+        <field name="context">{}</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('order_track_tree_view_all')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('order_track_form_new')})]"/>
 
+    </record>
 
 
     </record>
@@ -1384,6 +1502,9 @@
               sequence="3"/>
     <menuitem id="menu_customer_invoice_for_sales" name="客户应收" parent="menu_order_track_root" action="action_customer_invoice_all_for_sales"
               sequence="6"/>
+
+    <menuitem id="menu_action_order_track_all" name="所有跟踪" parent="menu_order_track_root" groups="base.group_system" action="action_order_track_all"
+              sequence="99"/>
 
 
 
