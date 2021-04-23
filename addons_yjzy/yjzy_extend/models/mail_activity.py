@@ -18,7 +18,7 @@ class MailActivityType(models.Model):
     case res_model_id field should be used. """
     _inherit = 'mail.activity.type'
     category = fields.Selection([
-        ('default', 'Other'),('plan_check', u'计划检查'),('tb_date',u'出运相关日期')], default='default',
+        ('default', 'Other'),('plan_check', u'计划检查'),('tb_date',u'出运相关日期')],
         string='Category',
         help='Categories may trigger specific behavior like opening calendar view')
 class MailActivity(models.Model):

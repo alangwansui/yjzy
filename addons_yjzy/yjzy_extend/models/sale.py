@@ -1141,8 +1141,7 @@ class sale_order(models.Model):
             stage_id = one.stage_id
             # 未发货，开始发货，待核销，已核销
             if one.state in ('sale', 'done', 'verifying'):
-                if (
-                        one.no_sent_amount_new != 0 or one.purchase_no_deliver_amount_new != 0) and requested_date and requested_date < (
+                if (one.no_sent_amount_new != 0 or one.purchase_no_deliver_amount_new != 0) and requested_date and requested_date < (
                         today - relativedelta(days=180)).strftime('%Y-%m-%d 00:00:00'):
                     state = 'done'
                     hexiao_type = 'abnormal'
@@ -1158,8 +1157,11 @@ class sale_order(models.Model):
                             hexiao_type = 'abnormal'
                             state = 'done'
                             stage_id = one._stage_find(domain=[('code', '=', '080')])
+
             one.hexiao_type = hexiao_type
+            print('akiny_',state,hexiao_type,stage_id)
             one.state = state
+
             one.stage_id = stage_id
 
     # 增加state:异常合同，将待核销的二级分组的异常核销进入state的异常合同
