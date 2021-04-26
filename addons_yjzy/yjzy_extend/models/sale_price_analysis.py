@@ -72,7 +72,7 @@ class sale_order_line(models.Model):
                                              order='hegui_date desc', limit=1)
             else:
                 so_line = so_line_obj.search(
-                    [('hegui_date', '<', one.hegui_date), ('product_id', '=', one.product_id.id),
+                    [('hegui_date', '<=', one.hegui_date),('id','!=',one.id),('product_id', '=', one.product_id.id),
                      ('order_partner_id', '=', one.order_partner_id.id)],
                     order='hegui_date desc', limit=1)
             print('so_line_akiny',so_line,so_line.purchase_price)
