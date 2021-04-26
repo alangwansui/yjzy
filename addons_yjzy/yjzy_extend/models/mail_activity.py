@@ -21,6 +21,9 @@ class MailActivityType(models.Model):
         ('default', 'Other'),('plan_check', u'计划检查'),('tb_date',u'出运相关日期')],
         string='Category',
         help='Categories may trigger specific behavior like opening calendar view')
+
+
+
 class MailActivity(models.Model):
     """ An actual activity to perform. Activities are linked to
     documents using res_id and res_model_id fields. Activities have a deadline
