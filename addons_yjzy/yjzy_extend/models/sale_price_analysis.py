@@ -62,7 +62,7 @@ class sale_order_line(models.Model):
             print('today_hegui_akiny', today_hegui_date)
             one.today_hegui_date = today_hegui_date
 
-    @api.depends('price_unit', 'purchase_price', 'product_id', 'order_id', 'order_id.state_1')
+    @api.depends('price_unit', 'purchase_price','today_hegui_date', 'product_id', 'order_id', 'order_id.state_1')
     def compute_product_last_price(self):
         so_line_obj = self.env['sale.order.line']
         for one in self:
