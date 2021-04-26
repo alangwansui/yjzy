@@ -66,7 +66,7 @@ class sale_order_line(models.Model):
     def compute_product_last_price(self):
         so_line_obj = self.env['sale.order.line']
         for one in self:
-            so_line = so_line_obj.search([('today_hegui_date', '>', 0), ('product_id', '=', one.product_id.id),
+            so_line = so_line_obj.search([('hegui_date', '!=', False), ('product_id', '=', one.product_id.id),
                                           ('order_partner_id', '=', one.order_partner_id.id),('id','!=',one.id)],
                                          order='hegui_date desc', limit=1)
             print('so_line_akiny',so_line)
