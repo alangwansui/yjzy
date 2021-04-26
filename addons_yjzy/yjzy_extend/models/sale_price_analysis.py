@@ -66,9 +66,15 @@ class sale_order_line(models.Model):
     def compute_product_last_price(self):
         so_line_obj = self.env['sale.order.line']
         for one in self:
-            so_line = so_line_obj.search([('id','<',one.id),('hegui_date','!=',False),('product_id', '=', one.product_id.id),
-                                          ('order_partner_id', '=', one.order_partner_id.id)],
-                                         order='hegui_date desc', limit=1)
+            if one.hegui_date == False:
+                so_line = so_line_obj.search([('id','<',one.id),('hegui_date','!=',False),('product_id', '=', one.product_id.id),
+                                              ('order_partner_id', '=', one.order_partner_id.id)],
+                                             order='hegui_date desc', limit=1)
+            else:
+                so_line = so_line_obj.search(
+                    [('hegui_date', '<', one.hegui_date), ('product_id', '=', one.product_id.id),
+                     ('order_partner_id', '=', one.order_partner_id.id)],
+                    order='hegui_date desc', limit=1)
             print('so_line_akiny',so_line,so_line.purchase_price)
             if so_line:
                 product_last_price = so_line.price_unit
@@ -76,6 +82,8 @@ class sale_order_line(models.Model):
             else:
                 product_last_price = 0
                 product_purchase_last_price = 0
+
+
 
             one.product_last_price = product_last_price
             one.product_purchase_last_price = product_purchase_last_price
