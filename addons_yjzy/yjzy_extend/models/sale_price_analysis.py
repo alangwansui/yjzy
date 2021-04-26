@@ -51,12 +51,12 @@ class sale_order_line(models.Model):
 
     # _rec_name = 'percent'
 
-    @api.depends('hegui_date', 'approve_date','order_id', 'order_id.state_1')
+    @api.depends('hegui_date', 'order_id', 'order_id.state_1')
     def compute_today_hegui_date(self):
         strptime = datetime.strptime
         for one in self:
             if one.hegui_date:
-                today_hegui_date = ((datetime.today() - relativedelta(hours=-8)) - strptime(one.approve_date, DF)).days
+                today_hegui_date = ((datetime.today() - relativedelta(hours=-8)) - strptime(one.hegui_date, DF)).days
             else:
                 today_hegui_date = -999
             print('today_hegui_akiny', today_hegui_date)
