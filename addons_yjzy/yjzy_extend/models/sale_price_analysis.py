@@ -68,7 +68,7 @@ class sale_order_line(models.Model):
         for one in self:
             so_line = so_line_obj.search([('today_hegui_date', '>', 0), ('product_id', '=', one.product_id.id),
                                           ('order_partner_id', '=', one.order_partner_id.id)],
-                                         order='today_hegui_date', limit=1)
+                                         order='id desc,today_hegui_date', limit=1)
             if so_line:
                 product_last_price = so_line.price_unit
                 product_purchase_last_price = so_line.purchase_price
