@@ -5,6 +5,7 @@ from odoo.exceptions import Warning
 from odoo.addons import decimal_precision as dp
 from lxml import etree
 from odoo.exceptions import UserError, ValidationError
+from odoo.tools import float_is_zero, float_compare
 
 
 class tb_po_invoice(models.Model):
@@ -810,7 +811,8 @@ class tb_po_invoice(models.Model):
             self.make_sale_invoice()
             self.make_sale_invoice_extra()
         if self.type == 'expense_po':
-            if self.purchase_amount2_add_this_time_total != self.expense_sheet_amount:
+            # if self.purchase_amount2_add_this_time_total != self.expense_sheet_amount:
+            if float_compare(self.self.purchase_amount2_add_this_time_tota, self.expense_sheet_amount, precision_digits=2) == 0:
                 raise Warning('货款总金额不等于费用金额，请检查')
             self.invoice_ids.unlink()
             self.apply_expense_sheet()
