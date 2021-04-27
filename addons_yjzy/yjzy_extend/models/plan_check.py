@@ -653,7 +653,7 @@ class OrderTrack(models.Model):
             plan_check_line_activity = activity_obj.create({
                 'activity_type_id': activity_type_akiny_ids[0].id,
                 'user_id': self.env.user.id,
-                'activity_category': 'default',
+                'activity_category': 'tb_date',
                 'res_model': 'order.track',
                 'res_model_id': res_model_id.id,
                 'res_id': self.id,
@@ -698,7 +698,7 @@ class OrderTrack(models.Model):
             plan_check_line_activity = activity_obj.create({
                 'activity_type_id': activity_type_akiny_ids[0].id,
                 'user_id': self.env.user.id,
-                'activity_category': 'default',
+                'activity_category': 'tb_date',
                 'res_model': 'order.track',
                 'res_model_id': res_model_id.id,
                 'res_id': self.id,
@@ -743,7 +743,7 @@ class OrderTrack(models.Model):
             plan_check_line_activity = activity_obj.create({
                 'activity_type_id': activity_type_akiny_ids[0].id,
                 'user_id': self.env.user.id,
-                'activity_category': 'default',
+                'activity_category': 'tb_date',
                 'res_model': 'order.track',
                 'res_model_id': res_model_id.id,
                 'res_id': self.id,
