@@ -812,8 +812,8 @@ class tb_po_invoice(models.Model):
             self.make_sale_invoice_extra()
         if self.type == 'expense_po':
             # if self.purchase_amount2_add_this_time_total != self.expense_sheet_amount:
-            print('akiny_9',self.self.purchase_amount2_add_this_time_total, self.expense_sheet_amount,)
-            if float_compare(self.self.purchase_amount2_add_this_time_total, self.expense_sheet_amount, precision_digits=2) == 0:
+            print('akiny_9',self.purchase_amount2_add_this_time_total, self.expense_sheet_amount,float_compare(self.purchase_amount2_add_this_time_total, self.expense_sheet_amount, precision_digits=2))
+            if float_compare(self.purchase_amount2_add_this_time_total, self.expense_sheet_amount, precision_digits=2) != 0:
                 raise Warning('货款总金额不等于费用金额，请检查')
             self.invoice_ids.unlink()
             self.apply_expense_sheet()
