@@ -331,6 +331,7 @@ class DeclareDeclarationLine(models.Model):
 
     btd_id = fields.Many2one('back.tax.declaration',u'退税申报单',ondelete='cascade',  required=True)
     invoice_id = fields.Many2one('account.invoice',u'账单', required=True)
+    tenyale_name = fields.Char(u'天宇编号',related='invoice_id.tenyale_name')
     invoice_back_tax_declaration_state = fields.Selection([('10','未申报'),('20','已申报')],'退税申报状态',related='invoice_id.back_tax_declaration_state')
     invoice_currency_id = fields.Many2one('res.currency', u'交易货币', related='invoice_id.currency_id', readonly=True)
     invoice_amount_total = fields.Monetary(u'账单原始金额',currency_field='invoice_currency_id',compute=compute_invoice_amount_total,store=True)

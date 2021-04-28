@@ -394,6 +394,7 @@ class purchase_order(models.Model):
             'submit_uid': False,
             'purchaser_uid': False,
             'purchaser_date': False,
+            'source_so_id':False,
             'main_sign_uid':False,
             'stage_id': stage_id.id})
 
