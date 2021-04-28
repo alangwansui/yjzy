@@ -348,7 +348,7 @@ class sale_order(models.Model):
 
     state_1 = fields.Selection(Sale_Selection, u'审批流程', default='draft', index=True, related='stage_id.state',
                                track_visibility='onchange')  # 费用审批流程
-    partner_invoice_id = fields.Many2one('res.partner', string='Invoice Address',  required=True, help="Invoice address for current sales order.")
+    partner_invoice_id = fields.Many2one('res.partner', string='Invoice Address', readonly=True, required=True, states={'draft': [('readonly', False)], 'sent': [('readonly', False)], 'approve': [('readonly', False)],'sale': [('readonly', False)]}, help="Invoice address for current sales order.")
 
     is_discount = fields.Boolean('是否需要折扣',default=False)
 
