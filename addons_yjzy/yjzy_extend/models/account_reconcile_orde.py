@@ -3885,8 +3885,8 @@ class account_reconcile_order_line_no(models.Model):
             payment_id_currency = line.payment_currency_id
             invoice_currency_id = line.invoice_currency_id
 
-            advance_amount_org = line.amount_advance_org_compute
-            amount_payment_org = line.amount_payment_org
+            advance_amount_org = payment_id_currency.compute(line.amount_advance_org_compute, invoice_currency_id)
+            amount_payment_org = payment_id_currency.compute(line.amount_payment_org, invoice_currency_id)
 
             invoice_residual_this_time = line.invoice_residual_this_time
             line.amount_payment_can_approve_all_after = amount_payment_can_approve_all_this_time - amount_payment_org - advance_amount_org  # 再减去line_ids里面对应的预付认领的金额。其实可以把amount_payment_org也可以从line_ids计算
