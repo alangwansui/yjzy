@@ -331,9 +331,9 @@ class wizard_renling(models.TransientModel):
                 raise Warning('请先选择客户')
             if not self.btd_line_ids:
                 raise Warning('请先选择需要认领的退税申报')
-            else:
-                if self.diff_tax_amount!=0:
-                    raise Warning('退税申报未平，请重新调节')
+            # else:
+            #     if self.diff_tax_amount!=0:
+            #         raise Warning('退税申报未平，请重新调节')
         back_tax_declaration_id = False
         name_title = ''
         invoice_partner = ''
