@@ -326,14 +326,12 @@ class wizard_renling(models.TransientModel):
                 raise Warning('请先选择需要认领的账单')
             if len(self.invoice_ids) > 1:
                 raise Warning('一次只允许认领一张！')
-        elif self.renling_type in ['back_tax']:
+        if self.renling_type in ['back_tax']:
             if not self.partner_id:
                 raise Warning('请先选择客户')
             if not self.btd_line_ids:
                 raise Warning('请先选择需要认领的退税申报')
-            else:
-                if self.diff_tax_amount!=0:
-                    raise Warning('退税申报未平，请重新调节')
+
         back_tax_declaration_id = False
         name_title = ''
         invoice_partner = ''
