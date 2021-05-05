@@ -15,7 +15,7 @@
                     <group >
                         <field name="invoice_ids" nolabel="1" options="{'no_create': True,'no_open':True}"
                                context="{'search_default_group_by_invoice_attribute_all_in_one':1}"
-                               domain="[('id','not in',have_invoice_ids),('state', 'in',['open']),('back_tax_declaration_state','!=','20'),('df_id','=',False),'|',('yjzy_type', '=', 'back_tax'),('yjzy_type_1', '=', 'back_tax')]"/>
+                               domain="[('id','not in',have_invoice_ids),('state', 'in',['open']),('df_id','=',False),'|',('yjzy_type', '=', 'back_tax'),('yjzy_type_1', '=', 'back_tax')]"/>
 
 
                     </group>
