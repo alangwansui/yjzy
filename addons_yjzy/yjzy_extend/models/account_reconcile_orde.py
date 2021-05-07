@@ -893,6 +893,7 @@ class account_reconcile_order(models.Model):
 
     # 1215
     def make_account_payment_state_ids(self):
+        self.account_payment_state_ids.unlink()
         account_payment_state_ids = self.supplier_advance_payment_ids
         account_payment_state_obj = self.env['account.payment.state']
         for one in account_payment_state_ids:

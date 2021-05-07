@@ -35,10 +35,15 @@ class account_payment(models.Model):
                     advance_balance_aml_total = sum([1 * x.amount_currency for x in lines])
 
             one.advance_balance_aml_total = advance_balance_aml_total
-            # if advance_balance_aml_total == 0 and one.state_1 == '50_posted':
-            #     one.state_1 = '60_done'
-            #     one.test_reconcile()
-            #     one.write({'state': 'reconciled'})
+
+    def compute_state_1(self):
+        for one in self:
+            advance_balance_aml_total = one.advance_balance_aml_total
+            if advance_balance_aml_total == 0 and one.state_1 == '50_posted':
+                one.state_1 = '60_done'
+                one.test_reconcile()
+                one.write({'state': 'reconciled'})
+
     def compute_payment_ids_count(self):
         for one in self:
             payment_ids_count= len(one.payment_ids)
