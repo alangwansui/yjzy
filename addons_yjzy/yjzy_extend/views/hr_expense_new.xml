@@ -1551,9 +1551,9 @@
                                        context="{'search_order': 'sequence','only_name':1}"/>
                                 <field name="total_amount" string="总金额" readonly="1" invisible="1"/>
                                 <field name="my_total_amount" string="总金额"/>
-                                <field name="purchase_amount2_add_this_time_total" style="color:red"
+                                <field name="purchase_amount2_add_this_time_total" style="color:red" invisible="1"
                                        attrs="{'invisible':[('tb_po_invoice_ids_count','=',0)]}"/>
-                                <field name="back_tax_add_this_time_total" style="color:red"
+                                <field name="back_tax_add_this_time_total" style="color:red" invisible="1"
                                        attrs="{'invisible':[('tb_po_invoice_ids_count','=',0)]}"/>
                                 <field name="tb_po_invoice_ids" widget="many2many_tags" string="费用转货款申请" readonly="1"
                                        attrs="{'invisible':[('tb_po_invoice_ids_count','=',0)],'readonly':[('state_1','not in',['account_approval'])]}"

@@ -22,7 +22,7 @@ class RealInvoice(models.Model):
     def compute_certification_invoice_ids(self):
         if self.state == '05':
             invoice_ids = self.env['account.invoice'].search(
-                [('partner_id', '=', self.partner_id.id), ('state', 'in', ['open', 'paid']),('state_2','not in',['50_certified','90_cancel'])], )
+                [('partner_id', '=', self.partner_id.id), ('type','=','in_invoice'),('state', 'in', ['open', 'paid']),('state_2','not in',['50_certified','90_cancel'])], )
             # akiny参考
             res = []
             for one in invoice_ids:
@@ -215,7 +215,7 @@ class SysInvoiceLine(models.Model):
     date = fields.Date(u'日期')
     currency_id = fields.Many2one('res.currency',u'货币',related='real_invoice_id.currency_id')
     amount = fields.Monetary('账单金额',currency_field='currency_id')
-    state = fields.Selection([('05','未开始认证'),('10',u'等待认证'),('20','已认证')],u'状态')
+    state = fields.Selection([('05','未开始认证'),('10',u'等待认证'),('15','部分认证'),('20','已认证')],u'状态')
 
 
     # @api.onchange('certifying')

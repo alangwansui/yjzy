@@ -184,7 +184,8 @@
                     <field name="yjzy_invoice_residual_amount" invisible="1"/>
                     <field name="yjzy_invoice_include_tax" invisible="1"/>
                     <field name="purchase_amount2_add_this_time_total"
-                           string="货款金额"/><!--invisible="context.get('done')"-->
+                           string="货款金额" groups="base.group_system"/><!--invisible="context.get('done')"-->
+                    <field name="expense_sheet_amount"/>
                     <field name="p_s_add_this_time_refund" invisible="1"/>
                     <field name="p_s_add_this_time_extra_total" invisible="1"/>
                     <field name="back_tax_add_this_time_total" string="退税金额"/>
@@ -202,15 +203,16 @@
             <field name="model">tb.po.invoice</field>
             <field name="arch" type="xml">
                 <form string="添加采购金额">
-                    <header attrs="{'invisible':[('type','=','expense_po')]}">
-                        <button name="action_tax_confirm" states="10_draft,80_refuse" class="oe_highlight" type='object' string="提交"/>
-                        <button name="action_submit" states="10_draft,80_refuse" class="oe_highlight" type='object'
+                    <header >
+                        <button name="action_tax_confirm" attrs="{'invisible':[('type','=','expense_po')]}" states="10_draft,80_refuse" class="oe_highlight" type='object' string="提交"/>
+                        <button name="action_submit" states="10_draft,80_refuse" attrs="{'invisible':[('type','=','expense_po')]}" class="oe_highlight" type='object'
                                 string="提交" groups="base.group_system"/>
-                        <button name="action_manager_approve" states="20_submit" class="oe_highlight" type='object'
+                        <button name="action_manager_approve" attrs="{'invisible':[('type','=','expense_po')]}" states="20_submit" class="oe_highlight" type='object'
                                 string="总经理审批"/>
-                        <button name="action_refuse" type='object' string="拒绝"/>
+                        <button name="action_refuse" attrs="{'invisible':[('type','=','expense_po')]}" type='object' string="拒绝"/>
                         <button name="apply_expense_sheet" class="oe_highlight" type='object' groups="base.group_system"
                                 string="费用确认" attrs="{'invisible':[('type','!=','expense_po')]}"/>
+
                         <button name="apply" class="oe_highlight" type='object' string="确认" groups="base.group_system"
                                 attrs="{'invisible':[('type','!=','other_po')]}"/>
                         <button special="cancel" class="oe_highlight" groups="base.group_system" string="取消"/>
@@ -220,8 +222,8 @@
                     <sheet>
                         <group col="3">
                             <group>
-                                <field name="tb_id" domain="[('back_tax_invoice_balance_new','!=',0)]" readonly="1"
-                                       attrs="{'invisible':[('type','not in',['other_po','expense_po'])]}"
+                                <field name="tb_id" domain="[('back_tax_invoice_balance_new','!=',0)]"
+                                       attrs="{'invisible':[('type','not in',['other_po','expense_po'])],'readonly':[('state','in',['20_submit','30_done'])]}"
                                        context="{'min_add':1,'not_show_partner':1,'form_view_ref':'yjzy_extend.view_transport_bill_declare_po_form'}"/>
                                 <field name="tb_id_po_supplier" string="原始供应商"/>
                                 <field name="expense_sheet_id" attrs="{'invisible':[('type','!=','expense_po')]}"
@@ -417,28 +419,29 @@
             <field name="model">tb.po.invoice</field>
             <field name="arch" type="xml">
                 <form string="添加采购金额" create="false">
-                    <header  attrs="{'invisible':[('type','=','expense_po')]}" invisible="context.get('open')">
+                    <header   invisible="context.get('open')">
                          <button name="action_tax_confirm" states="10_draft"
-                                 invisible="context.get('open')"
+                                 invisible="context.get('open')" attrs="{'invisible':[('type','=','expense_po')]}"
                                  class="oe_highlight" type='object' string="提交"/>
                         <button name="action_submit" states="10_draft" class="oe_highlight" type='object'
                                 invisible="context.get('open')" groups="base.group_system"
                                 string="提交"/>
 
 
-                        <button name="action_draft" states="80_refuse" class="oe_highlight" type="object" string="重置草稿"
+                        <button name="action_draft" states="80_refuse" attrs="{'invisible':[('type','=','expense_po')]}" class="oe_highlight" type="object" string="重置草稿"
                                 invisible="context.get('open')"/>
-                        <button name="action_manager_approve" states="20_submit" class="oe_highlight" type='object' groups="sales_team.group_manager"
+                        <button name="action_manager_approve" states="20_submit" attrs="{'invisible':[('type','=','expense_po')]}" class="oe_highlight" type='object' groups="sales_team.group_manager"
                                 string="总经理审批" invisible="context.get('open')"/>
-                        <button name="%(tb_po_invoice_refuse_wizard_action)d" string="拒绝" groups="sales_team.group_manager"
+                        <button name="%(tb_po_invoice_refuse_wizard_action)d" string="拒绝"  groups="sales_team.group_manager"
                                 type="action" invisible="context.get('open')"
-                                attrs="{'invisible':[('state','in',['10_draft','80_refuse','90_cancel','30_done'])]}"/>
+                                attrs="{'invisible':[('state','in',['10_draft','25','80_refuse','90_cancel','30_done'])]}"/>
                         <button name="apply_expense_sheet" class="oe_highlight" type='object' groups="base.group_system"
                                 string="费用确认" attrs="{'invisible':[('type','!=','expense_po')]}"/>
                         <button name="apply" class="oe_highlight" type='object' string="确认" groups="base.group_system"
                                 attrs="{'invisible':[('type','!=','other_po')]}"/>
                         <button name="action_cancel" class="oe_highlight" groups="base.group_system" string="取消"
                                 invisible="context.get('open')"/>
+                         <button name="make_back_tax_expense" type="object" string="创建退税" attrs="{'invisible':[('type','!=','expense_po')]}"/>
                         <button name="make_extra_invoice" type="object" string="创建额外账单" groups="base.group_system"
                                 invisible="1"/>
                         <button name="create_tb_po_invoice" type="object" string="创建其他应收申请"
@@ -482,8 +485,9 @@
                         <group col="3">
                             <group attrs="{'invisible':[('is_tb_hs_id','=',False)]}">
                                 <field name="display_name" nolabel="1" colspan="2" />
-                                <field name="tb_id" domain="[('back_tax_invoice_balance_new','!=',0)]" readonly="1"
-                                       attrs="{'invisible':[('is_tb_hs_id','=',False)],'readonly':[('state','!=','10_draft')]}"
+
+                                <field name="tb_id" domain="[('back_tax_invoice_balance_new','!=',0)]"
+                                       attrs="{'invisible':['|',('is_tb_hs_id','=',False),('type','not in',['other_po','expense_po'])],'readonly':[('state','in',['20_submit','30_done'])]}"
                                        context="{'min_add':1,'not_show_partner':1,'form_view_ref':'yjzy_extend.view_transport_bill_declare_po_form'}"/>
                                 <field name="tb_id_po_supplier" string="原始供应商"
                                        attrs="{'invisible':[('type','not in',['other_po','expense_po'])]}"/>
@@ -745,7 +749,7 @@
 
                             </page>
                             <page string="货款明细" attrs="{'invisible':[('is_tb_hs_id','=',False)]}">
-                                <field name="hsname_all_ids" attrs="{'invisible':[('is_tb_hs_id','=',False)],'readonly':[('state','!=','10_draft')]}">
+                                <field name="hsname_all_ids" attrs="{'invisible':[('is_tb_hs_id','=',False)],'readonly':[('state','in',['20_submit','30_done'])]}">
                                     <tree editable="bottom" create="false" delete="false">
                                         <field name="hs_id" attrs="{'readonly':[('parent.state','!=','10_draft')]}"/>
                                         <field name="hsname_all_line_id" invisible="1"/>
@@ -774,9 +778,9 @@
                                         <field name="purchase_amount_max_add_rest" readonly="1" invisible="1"
                                                attrs="{'column_invisible':[('parent.tb_id','=',False)]}"/>
                                         <field name="purchase_amount2_add_this_time"
-                                               attrs="{'readonly':[('parent.state','!=','10_draft')]}"/>
+                                               attrs="{'readonly':[('parent.state','in',['20_submit','30_done'])]}"/>
                                         <field name="p_s_add_this_time" readonly="1"
-                                               attrs="{'readonly':[('parent.state','!=','10_draft')],'column_invisible':[('parent.type','in',['expense_po','extra'])]}"/>
+                                               attrs="{'readonly':[('parent.state','in',['20_submit','30_done'])],'column_invisible':[('parent.type','in',['expense_po','extra'])]}"/>
                                         <field name="back_tax_add_this_time"/>
                                     </tree>
                                 </field>

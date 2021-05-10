@@ -340,6 +340,8 @@ class hr_expense(models.Model):
                     one.employee_confirm_date = fields.datetime.now()
                     one.employee_confirm_name = self.env.user.name
                     one.employee_confirm_user = self.env.user.id
+                    if self.sheet_id.expense_to_invoice_type == 'normal' and self.sheet_id.all_line_is_confirmed == True and self.sheet_id.total_amount >= 0 and self.sheet_id.state_1 == 'employee_approval':
+                        self.sheet_id.action_to_account_approval_all()
 
 
     def btn_undo_confirm_force(self):
@@ -367,13 +369,15 @@ class hr_expense(models.Model):
         self.ensure_one()
         ##if self.user_id != self.env.user:
         if self.user_id == self.env.user:
-            if self.categ_id.name == '订单费用' and self.tb_id == False and self.sys_outer_hetong =='':
+            if self.categ_id.name == '订单费用' and self.tb_id == False:
                 raise Warning ('订单费用必须填写出运合同号!')
             self.is_confirmed = True
             self.state = 'employee_confirm'
             self.employee_confirm_date = fields.datetime.now()
             self.employee_confirm_name = self.env.user.name
             self.employee_confirm_user = self.env.user.id
+            if self.sheet_id.expense_to_invoice_type == 'normal' and self.sheet_id.all_line_is_confirmed == True and self.sheet_id.total_amount >= 0 and self.sheet_id.state_1 == 'employee_approval':
+                self.sheet_id.action_to_account_approval_all()
         else:
             raise Warning('必须是责任人自己')
 
