@@ -7,7 +7,6 @@ from odoo.exceptions import Warning
 class account_move(models.Model):
     _inherit = 'account.move'
 
-
     reconcile_order_id = fields.Many2one('account.reconcile.order', u'核销单')
     invoice_id = fields.Many2one('account.invoice', u'发票')
     bill_id = fields.Many2one('transport.bill', u'发运单', related='invoice_id.bill_id')
@@ -95,7 +94,8 @@ class account_move_line(models.Model):
                 sslj_currency_id = self.currency_id
             one.sslj_currency_id = sslj_currency_id
 
-    @api.depends('amount_currency', 'credit', 'credit', 'account_id', 'plan_invoice_id','move_id_state', 'new_advance_payment_id')
+    @api.depends('amount_currency', 'credit', 'credit', 'account_id', 'plan_invoice_id', 'move_id_state',
+                 'new_advance_payment_id')
     def compute_sslj_balance(self):
         for one in self:
             amount_this_time = 0
@@ -147,6 +147,7 @@ class account_move_line(models.Model):
                 one.sslj_balance = sslj_balance
 
     @api.depends('amount_currency', 'account_id.user_type_id', 'debit', 'credit', 'account_id', 'new_payment_id',
+                 'new_payment_id.first_post_date', 'first_confirm_date',
                  'move_id_state', 'amount_this_time')
     def compute_amount_bank_cash(self):
         for one in self:
@@ -158,27 +159,24 @@ class account_move_line(models.Model):
                 one.amount_bank_now = amount_bank_now
 
             move_lines = self.env['account.move.line'].search(
-                [('account_id', '=', one.account_id.id),('first_confirm_date', '<=', one.first_confirm_date),])
-
-
+                [('account_id', '=', one.account_id.id), ('first_confirm_date', '<=', one.first_confirm_date), ])
 
             aml_cny = self.env['account.move.line'].search(
                 [('account_id.user_type_id.name', '=', '银行和现金'), ('account_id.currency_id.name', '=', 'CNY'),
                  ('first_confirm_date', '<=', one.first_confirm_date),
-                 ('company_id','=',self.env.user.company_id.id)])
+                 ('company_id', '=', self.env.user.company_id.id)])
 
             aml_usd = self.env['account.move.line'].search(
                 [('account_id.user_type_id.name', '=', '银行和现金'), ('account_id.currency_id.name', '=', 'USD'),
                  ('first_confirm_date', '<=', one.first_confirm_date),
-                 ('company_id','=',self.env.user.company_id.id)])
-            print('aml_cny_akiny',aml_cny,aml_usd)
+                 ('company_id', '=', self.env.user.company_id.id)])
+            print('aml_cny_akiny', aml_cny, aml_usd)
             amount_bank_cash_cny = sum((x.debit - x.credit) for x in aml_cny)
             amount_bank_cash_USD = sum(x.amount_currency for x in aml_usd)
             sslj_balance2 = move_lines and sum(x.amount_bank_now for x in move_lines) or 0
             one.sslj_balance2 = sslj_balance2
             one.amount_bank_cash_cny = amount_bank_cash_cny
             one.amount_bank_cash_usd = amount_bank_cash_USD
-
 
     def _default_usd_currency_id(self):
         usd_currency_id = self.env['res.currency'].search([('name', '=', 'USD')])
@@ -198,7 +196,7 @@ class account_move_line(models.Model):
             else:
                 one.is_pay_out_in = 'zero'
 
-    @api.depends('new_payment_id','create_date','new_payment_id.first_post_date')
+    @api.depends('new_payment_id', 'create_date', 'new_payment_id.first_post_date')
     def compute_first_confirm_date(self):
         for one in self:
             new_payment_id = one.new_payment_id
@@ -208,17 +206,21 @@ class account_move_line(models.Model):
                 first_confirm_date = one.create_date
             one.first_confirm_date = first_confirm_date
 
-
-    first_confirm_date = fields.Datetime('首次确认日期', compute=compute_first_confirm_date, store=True)#related='new_payment_id.first_post_date',
-    is_pay_out_in = fields.Selection([('in','收款'),('out','付款'),('zero','零')],u'收付款类型',compute=compute_is_pay_out_in,store=True)
+    first_confirm_date = fields.Datetime('首次确认日期', compute=compute_first_confirm_date,
+                                         store=True)  # related='new_payment_id.first_post_date',
+    is_pay_out_in = fields.Selection([('in', '收款'), ('out', '付款'), ('zero', '零')], u'收付款类型',
+                                     compute=compute_is_pay_out_in, store=True)
 
     comments = fields.Text('收付款备注')
-    amount_bank_now = fields.Monetary('发生额2', currency_field='account_currency_id',compute='compute_amount_bank_cash',store=True)
+    amount_bank_now = fields.Monetary('发生额2', currency_field='account_currency_id', compute='compute_amount_bank_cash',
+                                      store=True)
     usd_currency_id = fields.Many2one('res.currency', '美金', default=lambda self: self._default_usd_currency_id())
     cny_currency_id = fields.Many2one('res.currency', '人名币', default=lambda self: self._default_cny_currency_id())
-    account_currency_id = fields.Many2one('res.currency','科目币种',related='account_id.currency_id')
-    amount_bank_cash_usd = fields.Monetary('公司总账余额(美金)',currency_field='usd_currency_id',compute='compute_amount_bank_cash', store=True)
-    amount_bank_cash_cny = fields.Monetary('公司总账余额(人名币)',currency_field='cny_currency_id',compute='compute_amount_bank_cash',store=True)
+    account_currency_id = fields.Many2one('res.currency', '科目币种', related='account_id.currency_id')
+    amount_bank_cash_usd = fields.Monetary('公司总账余额(美金)', currency_field='usd_currency_id',
+                                           compute='compute_amount_bank_cash', store=True)
+    amount_bank_cash_cny = fields.Monetary('公司总账余额(人名币)', currency_field='cny_currency_id',
+                                           compute='compute_amount_bank_cash', store=True)
     so_id = fields.Many2one('sale.order', u'销售订单')
     po_id = fields.Many2one('purchase.order', u'采购订单')
 
@@ -242,7 +244,7 @@ class account_move_line(models.Model):
     sslj_balance = fields.Monetary('实时累计余额', currency_field='sslj_currency_id', compute=compute_sslj_balance,
                                    store=True)  # akiny计算分录日志
     sslj_balance2 = fields.Monetary('实时累计余额', currency_field='account_currency_id', compute='compute_amount_bank_cash',
-                                   store=True)  # akiny计算分录日志
+                                    store=True)  # akiny计算分录日志
     self_payment_id = fields.Many2one('account.payment', u'对应的付款单')  # 所有申请单，付款单，收款单，都做一个记录。,用来对应sfk_type
     reconcile_type = fields.Selection([
 
@@ -268,9 +270,10 @@ class account_move_line(models.Model):
             'views': [(form_view.id, 'form')],
             'target': 'new',
             'res_id': self.new_payment_id.id,
-            'flags': {'initial_mode': 'view', 'action_buttons': False,'headless':False},
-            'context': {'is_open':1}
+            'flags': {'initial_mode': 'view', 'action_buttons': False, 'headless': False},
+            'context': {'is_open': 1}
         }
+
     def open_new_payment_in_id(self):
         form_view = self.env.ref('yjzy_extend.view_rcskd_form_new')
         tree_view = self.env.ref('yjzy_extend.view_rcskd_tree_new_1')
@@ -278,18 +281,17 @@ class account_move_line(models.Model):
             'type': 'ir.actions.act_window',
             'view_mode': 'form',
             'res_model': 'account.payment',
-            'views': [ (form_view.id, 'form')],
+            'views': [(form_view.id, 'form')],
             'target': 'new',
             'res_id': self.new_payment_id.id,
-            'flags': {'initial_mode': 'view', 'action_buttons': False,'headless':False},
-            'context': {'is_open':1}
+            'flags': {'initial_mode': 'view', 'action_buttons': False, 'headless': False},
+            'context': {'is_open': 1}
         }
 
     def compute_fkzl_rcskd_comments(self):
         for one in self:
-            if one.new_payment_id.sfk_type in ['fkzl','rcskd']:
+            if one.new_payment_id.sfk_type in ['fkzl', 'rcskd']:
                 one.comments = one.new_payment_id.payment_comments
-
 
     def get_amount_to_currency(self, to_currency, date=False):
         self.ensure_one()
