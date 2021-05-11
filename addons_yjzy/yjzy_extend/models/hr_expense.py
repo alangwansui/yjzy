@@ -340,8 +340,8 @@ class hr_expense(models.Model):
                     one.employee_confirm_date = fields.datetime.now()
                     one.employee_confirm_name = self.env.user.name
                     one.employee_confirm_user = self.env.user.id
-                    if self.sheet_id.expense_to_invoice_type == 'normal' and self.sheet_id.all_line_is_confirmed == True and self.sheet_id.total_amount >= 0 and self.sheet_id.state_1 == 'employee_approval':
-                        self.sheet_id.action_to_account_approval_all()
+                    if one.sheet_id.expense_to_invoice_type == 'normal' and one.sheet_id.all_line_is_confirmed == True and one.sheet_id.total_amount >= 0 and one.sheet_id.state_1 == 'employee_approval':
+                        one.sheet_id.action_to_account_approval_all()
 
 
     def btn_undo_confirm_force(self):

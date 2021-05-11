@@ -1250,6 +1250,8 @@ class tb_po_invoice(models.Model):
         self.state = '30_done'
         for one in self.invoice_ids:
             print('akiny_test', self.invoice_ids)
+            if not one.bill_id:
+                one.bill_id = self.tb_id
             if one.state != 'paid':
                 one.action_invoice_open()
 

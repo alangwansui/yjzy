@@ -198,7 +198,7 @@ class account_move_line(models.Model):
             else:
                 one.is_pay_out_in = 'zero'
 
-    @api.depends('new_payment_id','create_date')
+    @api.depends('new_payment_id','create_date','new_payment_id.first_post_date')
     def compute_first_confirm_date(self):
         for one in self:
             new_payment_id = one.new_payment_id
