@@ -217,9 +217,9 @@ class account_move_line(models.Model):
     usd_currency_id = fields.Many2one('res.currency', '美金', default=lambda self: self._default_usd_currency_id())
     cny_currency_id = fields.Many2one('res.currency', '人名币', default=lambda self: self._default_cny_currency_id())
     account_currency_id = fields.Many2one('res.currency', '科目币种', related='account_id.currency_id')
-    amount_bank_cash_usd = fields.Monetary('公司总账余额(美金)', currency_field='usd_currency_id',
+    amount_bank_cash_usd = fields.Monetary('公司总账余额(美金)', currency_field='usd_currency_id',group_operator=False,
                                            compute='compute_amount_bank_cash', store=True)
-    amount_bank_cash_cny = fields.Monetary('公司总账余额(人名币)', currency_field='cny_currency_id',
+    amount_bank_cash_cny = fields.Monetary('公司总账余额(人名币)', currency_field='cny_currency_id',group_operator=False,
                                            compute='compute_amount_bank_cash', store=True)
     so_id = fields.Many2one('sale.order', u'销售订单')
     po_id = fields.Many2one('purchase.order', u'采购订单')
@@ -243,7 +243,7 @@ class account_move_line(models.Model):
                                        store=True)
     sslj_balance = fields.Monetary('实时累计余额', currency_field='sslj_currency_id', compute=compute_sslj_balance,
                                    store=True)  # akiny计算分录日志
-    sslj_balance2 = fields.Monetary('实时累计余额', currency_field='account_currency_id', compute='compute_amount_bank_cash',
+    sslj_balance2 = fields.Monetary('实时累计余额', currency_field='account_currency_id', compute='compute_amount_bank_cash', group_operator=False,
                                     store=True)  # akiny计算分录日志
     self_payment_id = fields.Many2one('account.payment', u'对应的付款单')  # 所有申请单，付款单，收款单，都做一个记录。,用来对应sfk_type
     reconcile_type = fields.Selection([
