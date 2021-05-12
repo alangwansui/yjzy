@@ -75,7 +75,7 @@
         <field name="res_model">account.move.line</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree</field>
-        <field name="domain">[('account_id.user_type_id','=',3),('move_id_state','=','posted')]</field>
+        <field name="domain">[('account_id.user_type_id','=',3),('move_id_state','=','posted'),('account_id.code','not in',['100201','100219','100202'])]</field>
         <field name="context">{}</field>
         <field name="search_view_id" ref="view_account_move_line_bank_filter"/>
         <field name="view_ids" eval="[(5, 0, 0),
