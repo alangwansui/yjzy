@@ -1123,6 +1123,14 @@ class account_invoice(models.Model):
                                             domain=[('quantity', '!=', 0),
                                                     ('invoice_attribute', 'in', ['normal', 'extra'])])
 
+
+    def make_plan_invoice_auto(self):
+        if self.type == 'in_invoice':
+            pia_obj = self.env['plan.invoice.auto']
+            plan_invoice_auto = pia_obj.create({
+                'invoice_id':self.id
+            })
+
     def create_tenyale_name(self):
         for one in self:
             if one.invoice_attribute_all_in_one == '230':

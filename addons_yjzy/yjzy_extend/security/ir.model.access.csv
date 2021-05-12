@@ -52,7 +52,8 @@ access_plan_check,access_plan_check,model_plan_check,base.group_user,1,1,1,1
 access_plan_check_line,access_plan_check_line,model_plan_check_line,base.group_user,1,1,1,1
 access_order_track_category,access_order_track_category,model_order_track_category,base.group_user,1,1,1,1
 access_order_track_attachment,access_order_track_attachment,model_order_track_attachment,base.group_user,1,1,1,1
-
+access_plan_invoice_auto,access_plan_invoice_auto,model_plan_invoice_auto,base.group_user,1,1,1,1
+access_real_invoice_auto,access_real_invoice_auto,model_real_invoice_auto,base.group_user,1,1,1,1
 
 
 
