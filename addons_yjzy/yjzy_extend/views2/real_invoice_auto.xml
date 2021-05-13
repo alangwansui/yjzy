@@ -37,11 +37,23 @@
                         <field name="invoice_code"/>
                         <field name="invoice_number"/>
                         <field name="partner_id"/>
+                        <field name="bill_id"/>
                         <field name="untaxed_amount"/>
                         <field name="tax"/>
                         <field name="amount_total"/>
                         <field name="data_invoice"/>
                     </group>
+                    <notebook>
+                        <page>
+                            <field name="plan_invoice_auto_ids">
+                                <tree>
+                                    <field name="invoice_id"/>
+                                    <field name="invoice_currency_id"/>
+                                    <field name="invoice_amount_total"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
 
 
                 </sheet>

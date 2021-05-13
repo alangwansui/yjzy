@@ -1179,6 +1179,8 @@ class tb_po_invoice(models.Model):
                     'tbl_hsname_all_id': line.hsname_all_line_id.id
                 })
             back_tax_invoice.create_tenyale_name()
+
+
     def make_back_tax_expense(self):
         if float_compare(self.purchase_amount2_add_this_time_total, self.expense_sheet_amount, precision_digits=2) != 0:
              raise Warning('货款总金额不等于费用金额，请检查')
@@ -1225,28 +1227,7 @@ class tb_po_invoice(models.Model):
                     'tbl_hsname_all_id': line.hsname_all_line_id.id
                 })
             back_tax_invoice.create_tenyale_name()
-            # inv = self.invoice_ids.filtered(lambda x: x.invoice_attribute == 'expense_po' and x.yjzy_type_1=='purchase')
-            # for line in self.hsname_all_ids:
-            #     hsname_all_line = hsname_all_line_obj.create({
-            #                         'invoice_id': inv.id,
-            #                         'hs_id': line.hs_id.id,
-            #                         'hs_en_name':line.hs_en_name,
-            #                         'purchase_amount2_add_this_time':line.purchase_amount2_add_this_time,
-            #                         'tbl_hsname_all_id':line.hsname_all_line_id.id
-            #     })
-            # # self.expense_sheet_id.invoice_id = inv
-            # form_view = self.env.ref('yjzy_extend.view_supplier_invoice_extra_po_form').id
-            # return {
-            #     'name': u'增加采购额外账单',
-            #     'view_type': 'form',
-            #     'view_mode': 'form',
-            #     'res_model': 'account.invoice',
-            #     'views':[(form_view,'form')],
-            #     'res_id':inv.id,
-            #     'type': 'ir.actions.act_window',
-            #     'target': 'new',
-            #
-            # }
+
         self.state = '30_done'
         for one in self.invoice_ids:
             print('akiny_test', self.invoice_ids)

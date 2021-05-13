@@ -1130,8 +1130,11 @@ class account_invoice(models.Model):
     def make_plan_invoice_auto(self):
         if self.type == 'in_invoice':
             pia_obj = self.env['plan.invoice.auto']
+            real_invoice_auto_id = self.env['real.invoice.auto'].search([('partner_id','=',self.partner_id.id),('bill_id','=',self.bill_id.id)],limit=1)
             plan_invoice_auto = pia_obj.create({
-                'invoice_id':self.id
+                'invoice_id':self.id,
+                'bill_id':self.bill_id.id,
+                'real_invoice_auto_id':real_invoice_auto_id.id
             })
             plan_invoice_auto.compute_hs_name_all_ids()
 

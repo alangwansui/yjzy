@@ -10,6 +10,7 @@
                 <field name="name"/>
                 <field name="invoice_id"/>
                 <field name="bill_id"/>
+                <field name="real_invoice_auto_id"/>
 
             </tree>
         </field>
@@ -37,6 +38,7 @@
                         <field name="invoice_id"/>
                         <field name="bill_id"/>
                         <field name="include_tax"/>
+                        <field name="real_invoice_auto_id"/>
                     </group>
                     <notebook>
                         <page>
