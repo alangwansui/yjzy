@@ -11,7 +11,7 @@ class RealInvoiceAuto(models.Model):
     _description = '实际发票'
     _order = 'id desc'
 
-    api.depends('untaxed_amount','tax')
+    @api.depends('untaxed_amount','tax')
     def compute_amount_total(self):
         for one in self:
             amount_total = (1 + one.tax) * one.untaxed_amount
