@@ -16,6 +16,31 @@ class transport_bill(models.Model):
 
     fandian_ids = fields.One2many('transport.bill.fandian', 'tb_id', u'返点明细')
 
+    def create_btls_hs_ids_purchase(self):#采购发票的进项hs明细
+
+        btls_hs_dic = {}  # key= hs_id*supplier*po.id
+        for one in self.btls_hs_ids:
+            partner = one.supplier_id.id
+            purchase_invoice_id = self.purchase_invoice_ids.filtered(lambda x: x.partner_id == one.supplier_id)
+            if partner in btls_hs_dic:
+                btls_hs_dic[partner]['qty2'] += one.qty2
+                btls_hs_dic[partner]['amount2'] += one.amount2
+                btls_hs_dic[partner]['back_tax_amount2'] += one.back_tax_amount2_new
+            else:
+                btls_hs_dic[partner] = {'partner': one.supplier_id,'invoice_id':purchase_invoice_id,'back_tax_amount2':one.back_tax_amount2_new, 'hs': one.hs_id2, 'qty2': one.qty2, 'amount2':one.amount2,'price2':one.price2}
+        pih_obj = self.env['purchase.invoice.hsname']
+        for partner, v in btls_hs_dic.items():
+            purchase_hs = pih_obj.create({
+                'partner_id': v['partner'].id,
+                'qty2': v['qty2'],
+                'price2':v['price2'],
+                'amount2': v['amount2'],
+                'invoice_id':v['invoice_id'].id,
+                'hs_id': v['hs'].id,
+                'back_tax_amount2':v['back_tax_amount2']
+            })
+
+
 
     def tongji_btls_by_po(self):
         self.ensure_one()

@@ -151,11 +151,13 @@
         'views/hr_expense_other_payment.xml',
         'views/account_bank_statement_1.xml',
         'views/real_invoice.xml',
+
         'views/menu.xml',
 
 
 
-
+        'views2/plan_invoice_auto.xml',
+        'views2/real_invoice_auto.xml',
         'views2/ysrld_new.xml',
         'views2/rcskd.xml',
         'views2/rcskd_new.xml',

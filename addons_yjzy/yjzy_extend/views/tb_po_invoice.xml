@@ -421,16 +421,16 @@
                 <form string="添加采购金额" create="false">
                     <header   invisible="context.get('open')">
                          <button name="action_tax_confirm" states="10_draft"
-                                 invisible="context.get('open')" attrs="{'invisible':[('type','=','expense_po')]}"
+                                 invisible="context.get('open')" attrs="{'invisible':['|',('type','=','expense_po'),('state','!=','10_draft')]}"
                                  class="oe_highlight" type='object' string="提交"/>
                         <button name="action_submit" states="10_draft" class="oe_highlight" type='object'
                                 invisible="context.get('open')" groups="base.group_system"
                                 string="提交"/>
 
 
-                        <button name="action_draft" states="80_refuse" attrs="{'invisible':[('type','=','expense_po')]}" class="oe_highlight" type="object" string="重置草稿"
+                        <button name="action_draft" states="80_refuse" attrs="{'invisible':['|',('type','=','expense_po'),('state','!=','80_refuse')]}" class="oe_highlight" type="object" string="重置草稿"
                                 invisible="context.get('open')"/>
-                        <button name="action_manager_approve" states="20_submit" attrs="{'invisible':[('type','=','expense_po')]}" class="oe_highlight" type='object' groups="sales_team.group_manager"
+                        <button name="action_manager_approve" states="20_submit" attrs="{'invisible':['|',('type','=','expense_po'),('state','!=','20_submit')]}" class="oe_highlight" type='object' groups="sales_team.group_manager"
                                 string="总经理审批" invisible="context.get('open')"/>
                         <button name="%(tb_po_invoice_refuse_wizard_action)d" string="拒绝"  groups="sales_team.group_manager"
                                 type="action" invisible="context.get('open')"

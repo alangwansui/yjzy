@@ -614,7 +614,7 @@ class account_invoice(models.Model):
     def compute_declaration_amount(self):
         for one in self:
             one.declaration_amount = sum(x.declaration_amount for x in one.btd_line_ids)
-
+            one.declaration_amount_latest = len(one.btd_line_ids) > 1 and one.btd_line_ids[0].declaration_amount or one.btd_line_ids.declaration_amount
     # D
     @api.depends('yjzy_type_1', 'yjzy_type', 'invoice_attribute')
     def compute_all_in_one(self):
@@ -741,6 +741,7 @@ class account_invoice(models.Model):
             tenyale_name = self.env['ir.sequence'].next_by_code('account.invoice.tenyale_invoice')
         return tenyale_name
 
+    purchase_invoice_hsname_ids = fields.One2many('purchase.invoice.hsname','invoice_id','采购发票明细')
     tenyale_name = fields.Char(u'天宇编号', default=lambda self: self._default_tenyale_name())
     is_manual = fields.Boolean('是否手动创建',default=False)
 
@@ -778,7 +779,9 @@ class account_invoice(models.Model):
 
     # 1029#通过他们是否同属于一张申请单来汇总所有相关账单,其他应收付和相关的应收付申请，这里还没有直接的联系，待处理
     back_tax_declaration_state = fields.Selection([('10', '未申报'), ('15','部分申报'),('20', '已申报')], '退税申报状态', default='10')
-    declaration_amount = fields.Monetary('申报金额', currency_field='currency_id', compute=compute_declaration_amount,
+    declaration_amount = fields.Monetary('申报总金额', currency_field='currency_id', compute=compute_declaration_amount,
+                                         store=True)
+    declaration_amount_latest = fields.Monetary('最新一次申报金额', currency_field='currency_id', compute=compute_declaration_amount,
                                          store=True)
     btd_line_ids = fields.One2many('back.tax.declaration.line', 'invoice_id', u'申报明细')
 
@@ -1130,6 +1133,7 @@ class account_invoice(models.Model):
             plan_invoice_auto = pia_obj.create({
                 'invoice_id':self.id
             })
+            plan_invoice_auto.compute_hs_name_all_ids()
 
     def create_tenyale_name(self):
         for one in self:
@@ -2597,3 +2601,16 @@ class invoice_hs_name_all(models.Model):
     back_tax_add_this_time = fields.Float('本次退税金额')
     invoice_id = fields.Many2one('account.invoice', u'发票')
     tbl_hsname_all_id = fields.Many2one('tbl.hsname.all', '报关汇总明细')
+
+class purchse_invoice_hsname(models.Model):
+    _name = 'purchase.invoice.hsname'
+
+    hs_id = fields.Many2one('hs.hs', u'品名')
+    invoice_id = fields.Many2one('account.invoice', u'发票')
+    partner_id = fields.Many2one('res.partner','供应商')
+    qty2 = fields.Float(u'报关数量')
+    price2 = fields.Float(u'报关单价')
+    amount2 = fields.Float(u'采购金额', digits=dp.get_precision('Money'))
+    back_tax_amount2 = fields.Float(u'报关退税金额', digits=dp.get_precision('Money'))
+
+

@@ -656,50 +656,50 @@ class tb_po_invoice(models.Model):
         other_payment_invoice_id = False
         other_payment_invoice_parent_id = False
         # 做生成的账单之间的关联，需要再细化研究
-        if self.is_yjzy_tb_po_invoice:
-            if self.yjzy_type_1 in ['purchase', 'other_payment_purchase']:
-                other_payment_invoice_id = self.yjzy_tb_po_invoice.invoice_other_payment_in_ids[0]
-            else:
-                other_payment_invoice_id = self.yjzy_tb_po_invoice.invoice_other_payment_ids[0]
-            self.state = '30_done'
-        if self.is_yjzy_tb_po_invoice_parent:
-            if self.yjzy_type_1 in ['sale', 'other_payment_sale']:
-                other_payment_invoice_parent_id = self.yjzy_tb_po_invoice_parent.invoice_other_payment_ids[0]
-            else:
-                other_payment_invoice_parent_id = self.yjzy_tb_po_invoice_parent.invoice_other_payment_in_ids[0]
-            self.state = '30_done'
-        # ------
         if self.type == 'expense_po':
             self.state = '25'
             self.create_yfhxd()
-
             print('type', self.type)
+        else:
+            if self.is_yjzy_tb_po_invoice:
+                if self.yjzy_type_1 in ['purchase', 'other_payment_purchase']:
+                    other_payment_invoice_id = self.yjzy_tb_po_invoice.invoice_other_payment_in_ids[0]
+                else:
+                    other_payment_invoice_id = self.yjzy_tb_po_invoice.invoice_other_payment_ids[0]
+            self.state = '30_done'
+            if self.is_yjzy_tb_po_invoice_parent:
+                if self.yjzy_type_1 in ['sale', 'other_payment_sale']:
+                    other_payment_invoice_parent_id = self.yjzy_tb_po_invoice_parent.invoice_other_payment_ids[0]
+                else:
+                    other_payment_invoice_parent_id = self.yjzy_tb_po_invoice_parent.invoice_other_payment_in_ids[0]
 
-        if self.yjzy_tb_po_invoice:  # 有关联的下级其他应收或者其他应付申请单，让他也完成总经理审批
-            self.yjzy_tb_po_invoice.action_manager_approve()
-            self.state = '30_done'
-        if self.invoice_p_s_ids:
-            for one in self.invoice_p_s_ids:
-                one.invoice_assign_outstanding_credit()  # 如果是冲减的发票。直接核销。（目前不产生冲减的账单）
-            self.state = '30_done'
-        if self.type == 'extra':  # 额外账单，暂时不用
-            for one in self.invoice_extra_ids:
-                if one.type in ['in_refund', 'out_refund']:
-                    one.invoice_assign_outstanding_credit()
-            self.state = '30_done'
-        # 如果是其他应收款，创建应收核销单，并直接完成总经理审批
-        for one in self.invoice_ids:
-            print('akiny_test', self.invoice_ids)
-            one.action_invoice_open()
-        if self.invoice_other_payment_in_ids:  # 所有的其他应收账单，如果申请单有yjzy_payment_id，直接完成认领
-            if self.yjzy_payment_id:
-                for one in self.invoice_other_payment_in_ids:
-                    one.with_context({'default_yjzy_payment_id': self.yjzy_payment_id.id}).create_yshxd()
-                    one.other_payment_invoice_id = other_payment_invoice_id
-                    one.other_payment_invoice_parent_id = other_payment_invoice_parent_id
-                    # for x in one.reconcile_order_ids:
-                    #     x.action_manager_approve_stage()
-            self.state = '30_done'
+            # ------
+
+            if self.yjzy_tb_po_invoice:  # 有关联的下级其他应收或者其他应付申请单，让他也完成总经理审批
+                self.yjzy_tb_po_invoice.action_manager_approve()
+
+            if self.invoice_p_s_ids:
+                for one in self.invoice_p_s_ids:
+                    one.invoice_assign_outstanding_credit()  # 如果是冲减的发票。直接核销。（目前不产生冲减的账单）
+
+            if self.type == 'extra':  # 额外账单，暂时不用
+                for one in self.invoice_extra_ids:
+                    if one.type in ['in_refund', 'out_refund']:
+                        one.invoice_assign_outstanding_credit()
+
+            # 如果是其他应收款，创建应收核销单，并直接完成总经理审批
+            for one in self.invoice_ids:
+                print('akiny_test', self.invoice_ids)
+                one.action_invoice_open()
+            if self.invoice_other_payment_in_ids:  # 所有的其他应收账单，如果申请单有yjzy_payment_id，直接完成认领
+                if self.yjzy_payment_id:
+                    for one in self.invoice_other_payment_in_ids:
+                        one.with_context({'default_yjzy_payment_id': self.yjzy_payment_id.id}).create_yshxd()
+                        one.other_payment_invoice_id = other_payment_invoice_id
+                        one.other_payment_invoice_parent_id = other_payment_invoice_parent_id
+                        # for x in one.reconcile_order_ids:
+                        #     x.action_manager_approve_stage()
+
 
     def action_other_paymnet_one_in_all(self):
         if self.type == 'other_payment':

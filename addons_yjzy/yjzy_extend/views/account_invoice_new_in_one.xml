@@ -41,6 +41,7 @@
                         <!--                        <field name="state" widget="statusbar" nolabel="1" statusbar_visible="draft,open,paid"/>-->
                     </header>
                     <header groups="base.group_system">
+                        <button name="make_plan_invoice_auto" type="object" string="创建应收发票"/>
                         <button name="action_invoice_sent" type="object" string="Send by Email"
                                 attrs="{'invisible':['|',('sent','=',True), ('state', 'not in', ('open','paid'))]}"
                                 class="oe_highlight o_invoice_send" groups="base.group_user"/>
@@ -759,6 +760,19 @@
                                         <field name="p_s_add_this_time"
                                         />
                                         <field name="back_tax_add_this_time"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page>
+                                <field name="purchase_invoice_hsname_ids">
+                                    <tree>
+                                        <field name="hs_id"/>
+                                        <field name="invoice_id"/>
+                                        <field name="partner_id"/>
+                                        <field name="qty2"/>
+                                        <field name="price2"/>
+                                        <field name="amount2"/>
+
                                     </tree>
                                 </field>
                             </page>

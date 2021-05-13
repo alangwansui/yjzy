@@ -3932,8 +3932,8 @@ class account_reconcile_order_line_no(models.Model):
     invoice_attribute_all_in_one = fields.Selection(invoice_attribute_all_in_one, u'账单属性all_in_one',
                                                     compute=compute_invoice_id, store=True)
     invoice_df_id = fields.Many2one('back.tax.declaration',u'退税申报表', related='invoice_id.df_id')
-    invoice_declaration_amount = fields.Monetary('退税申报金额',related='invoice_id.declaration_amount',store=True)
-
+    invoice_declaration_amount = fields.Monetary('退税申报总金额',related='invoice_id.declaration_amount',store=True)
+    invoice_declaration_amount_latest= fields.Monetary('本次退税申报金额', related='invoice_id.declaration_amount_latest', store=True)
 
     yjzy_invoice_id = fields.Many2one('account.invoice', u'发票关联账单', related='invoice_id.yjzy_invoice_id')  # 额外账单的认领明细
     approve_date = fields.Date(u'审批完成时间', related='order_id.approve_date')

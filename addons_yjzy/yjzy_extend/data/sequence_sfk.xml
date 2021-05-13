@@ -187,5 +187,13 @@
         <field name="padding">5</field>
         <field name="company_id" eval="False"/>
     </record>
+
+    <record id="seq_plan_invoice_auto_name" model="ir.sequence">
+        <field name="name">plan.invoice.auto.name</field>
+        <field name="code">plan.invoice.auto.name</field>
+        <field name="prefix">PIA</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
 </odoo>
 
