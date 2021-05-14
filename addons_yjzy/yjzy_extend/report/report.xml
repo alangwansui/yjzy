@@ -218,7 +218,7 @@
             id="action_report_purchase_contract2"
             string="采购合同2"
             model="purchase.order"
-            report_type="qweb-html"
+            report_type="qweb-pdf"
             file="yjzy_extend.report_purchase_contract2"
             name="yjzy_extend.report_purchase_contract2"
             print_report_name="'PO_'+(object.contract_code)"
