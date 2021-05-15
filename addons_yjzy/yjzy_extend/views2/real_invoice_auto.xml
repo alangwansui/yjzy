@@ -42,18 +42,9 @@
                         <field name="tax"/>
                         <field name="amount_total"/>
                         <field name="data_invoice"/>
+                        <field name="plan_invoice_auto_id"/>
                     </group>
-                    <notebook>
-                        <page>
-                            <field name="plan_invoice_auto_ids">
-                                <tree>
-                                    <field name="invoice_id"/>
-                                    <field name="invoice_currency_id"/>
-                                    <field name="invoice_amount_total"/>
-                                </tree>
-                            </field>
-                        </page>
-                    </notebook>
+
 
 
                 </sheet>

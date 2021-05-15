@@ -762,7 +762,7 @@ class tbl_hsname_all(models.Model):
             #     purchase_amount_min_add_forecast = purchase_amount_min_forecast
             purchase_amount_max_add_rest = purchase_amount_max_add_forecast - purchase_amount2_add_actual
             purchase_amount_min_add_rest = purchase_amount_min_add_forecast - purchase_amount2_add_actual
-
+            plan_invoice_auto_total = purchase_amount2_add_actual + purchase_amount2_tax
 
             one.purchase_amount2_add_actual = purchase_amount2_add_actual
             one.back_tax_add_actual = back_tax_add_actual
@@ -775,6 +775,7 @@ class tbl_hsname_all(models.Model):
             one.purchase_amount_min_forecast = purchase_amount_min_forecast
             one.purchase_amount_max_add_forecast = purchase_amount_max_add_forecast
             one.purchase_amount_min_add_forecast = purchase_amount_min_add_forecast
+            one.plan_invoice_auto_total = plan_invoice_auto_total
             # one.purchase_back_tax_amount2_new_new = back_tax_amount_new_new
             # one.purchase_back_tax_amount2_rest = back_tax_amount_new_new - purchase_back_tax_amount2_actual
 
@@ -785,7 +786,7 @@ class tbl_hsname_all(models.Model):
     purchase_amount2_add_actual = fields.Float(U'实际已经增加采购额', compute=compute_info)
     back_tax_add_actual = fields.Float(U'实际已经增加退税', compute=compute_info)
     p_s_add_actual = fields.Float(U'实际已经增加应收', compute=compute_info)
-
+    plan_invoice_auto_total = fields.Float(u'应收采购发票金额',compute=compute_info)
 
     hs_en_name = fields.Char(related='hs_id.en_name')
     # akinyback

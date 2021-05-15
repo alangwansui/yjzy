@@ -8,7 +8,7 @@
         <field name="arch" type="xml">
             <tree string="应收发票">
                 <field name="name"/>
-                <field name="invoice_id"/>
+
                 <field name="bill_id"/>
                 <field name="real_invoice_auto_id"/>
 
@@ -35,17 +35,17 @@
                         </h1>
                     </div>
                     <group>
-                        <field name="invoice_id"/>
+
                         <field name="bill_id"/>
-                        <field name="include_tax"/>
-                        <field name="real_invoice_auto_id"/>
+
                     </group>
+                     <field name="real_invoice_auto_id"/>
+                    <field name="invoice_ids"/>
                     <notebook>
                         <page>
                             <field name="hsname_all_ids">
                                 <tree editable="bottom">
                                         <field name="hs_id"/>
-
 
                                         <field name="back_tax"
                                         />
@@ -63,6 +63,9 @@
                                         />
                                         <field name="purchase_amount2_add_actual" readonly="1" sum="小计"
                                         />
+                                    <field name="plan_invoice_auto_total" readonly="1" sum="小计"
+                                        />
+
                                         <field name="purchase_amount_min_add_rest" readonly="1"
                                         />
                                         <field name="purchase_amount_max_add_rest" readonly="1"

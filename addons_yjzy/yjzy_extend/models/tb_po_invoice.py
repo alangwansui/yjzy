@@ -1073,6 +1073,7 @@ class tb_po_invoice(models.Model):
                 'date_invoice': fields.datetime.now(),
                 'date_finish': self.yjzy_invoice_id.date_finish,
                 'po_id': self.yjzy_invoice_id.po_id.id,
+                'include_tax':True,
                 # 'account_id':account_id.id,
                 'invoice_line_ids': [(0, 0, {
                     'name': '%s' % (product_zyywsr.name),

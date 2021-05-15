@@ -213,6 +213,7 @@
                                 <field name="cash_rounding_id" groups="account.group_cash_rounding"/>
                                 <field name="include_tax"
                                        attrs="{'invisible':[('invoice_attribute','not in','normal')],'readonly':[('state','not in',['draft'])]}"/>
+                                <field name="plan_invoice_auto_id"/>
                                 <field name="gongsi_id" string="销售主体" attrs="{'invisible':1}"/>
 
 

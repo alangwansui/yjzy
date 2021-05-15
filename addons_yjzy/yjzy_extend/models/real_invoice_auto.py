@@ -22,7 +22,8 @@ class RealInvoiceAuto(models.Model):
     invoice_number = fields.Char(u'发票号')
     untaxed_amount = fields.Monetary(u'不含税金额', currency_field='company_currency_id')
     data_invoice = fields.Date(u'开票日期')
-
+    company_id = fields.Many2one('res.company', string='Company', required=True, readonly=True,
+                                 default=lambda self: self.env.user.company_id.id)
 
     company_currency_id = fields.Many2one('res.currency','本币币种', default=lambda self: self.env.user.company_id.currency_id)
 
@@ -32,14 +33,16 @@ class RealInvoiceAuto(models.Model):
     partner_id = fields.Many2one('res.partner',u'合作伙伴')
     bill_id = fields.Many2one('transport.bill', u'出运单')
     state = fields.Selection([('draft', 'draft'), ('done', 'done')], 'State', default='draft')
-    plan_invoice_auto_ids = fields.One2many('plan.invoice.auto','real_invoice_auto_id','应收发票')
+    plan_invoice_auto_id = fields.Many2one('plan.invoice.auto','应收发票')
 
     @api.onchange('bill_id')
     def onchange_partner_bill(self):
         plan_invoice_auto_ids = self.env['plan.invoice.auto'].search([('bill_id','=',self.bill_id.id)])
-        self.partner_id = self.bill_id.partner_id
-        for one in plan_invoice_auto_ids:
-            one.real_invoice_auto_id = self
+        if len(plan_invoice_auto_ids) >1:
+            raise Warning('一张出运合同对应多个应收发票，请检查！')
+        else:
+
+            self.plan_invoice_auto_id = plan_invoice_auto_ids
 
 
 class PlanInvoiceAuto(models.Model):
@@ -61,16 +64,23 @@ class PlanInvoiceAuto(models.Model):
         else:
             tenyale_name = self.env['ir.sequence'].next_by_code('account.invoice.tenyale_invoice')
         return tenyale_name
+    @api.depends('invoice_ids')
+    def compute_currency_id(self):
+        for one in self:
+            one.currency_id = one.invoice_ids and one.invoice_ids[0].currency_id or self.env.user.company_id.currency_id
+
 
     name = fields.Char('name',default=lambda self: self.env['ir.sequence'].next_by_code('plan.invoice.auto.name'))
-    invoice_id = fields.Many2one('account.invoice','应付账单')
-    invoice_currency_id = fields.Many2one('res.currency',u'货币',related='invoice_id.currency_id',store=True)
-    invoice_amount_total = fields.Monetary('金额',currency_field='invoice_currency_id',related='invoice_id.amount_total',store=True)
-    bill_id = fields.Many2one('transport.bill','出运合同',related='invoice_id.bill_id',store=True)
+    invoice_ids = fields.One2many('account.invoice','plan_invoice_auto_id','应付账单')
+
+    currency_id = fields.Many2one('res.currency',u'货币',compute=compute_currency_id,store=True)
+    amount_total = fields.Monetary('金额',currency_field='currency_id',store=True)
+    bill_id = fields.Many2one('transport.bill','出运合同',store=True)
     hsname_all_ids = fields.Many2many('tbl.hsname.all','报关明细',compute='compute_hs_name_all_ids')
     state = fields.Selection([('draft','draft'),('done','done')],'State',default='draft')
-    include_tax = fields.Boolean('含税',related='invoice_id.include_tax')
-    real_invoice_auto_id = fields.Many2one('real.invoice.auto','实际进项发票')
+    real_invoice_auto_id = fields.One2many('real.invoice.auto','plan_invoice_auto_id','实际进项发票')
+    company_id = fields.Many2one('res.company', string='Company',required=True, readonly=True,
+                                 default=lambda self: self.env.user.company_id.id)
 
 
 

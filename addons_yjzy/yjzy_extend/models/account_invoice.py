@@ -1126,18 +1126,37 @@ class account_invoice(models.Model):
                                             domain=[('quantity', '!=', 0),
                                                     ('invoice_attribute', 'in', ['normal', 'extra'])])
 
+    plan_invoice_auto_id = fields.Many2one('plan.invoice.auto','应收发票')
+
+
+    def _make_plan_invoice_auto(self):
+        if self.type == 'in_invoice':
+            pia_obj = self.env['plan.invoice.auto']
+            # real_invoice_auto_id = self.env['real.invoice.auto'].search([('partner_id','=',self.partner_id.id),('bill_id','=',self.bill_id.id)],limit=1)
+            plan_invoice_auto = pia_obj.create({
+                'invoice_id':self.id,
+                'bill_id':self.bill_id.id,
+                # 'real_invoice_auto_id':real_invoice_auto_id.id
+            })
+            self.plan_invoice_auto_id = plan_invoice_auto
+            plan_invoice_auto.compute_hs_name_all_ids()
 
     def make_plan_invoice_auto(self):
         if self.type == 'in_invoice':
             pia_obj = self.env['plan.invoice.auto']
-            real_invoice_auto_id = self.env['real.invoice.auto'].search([('partner_id','=',self.partner_id.id),('bill_id','=',self.bill_id.id)],limit=1)
-            plan_invoice_auto = pia_obj.create({
-                'invoice_id':self.id,
-                'bill_id':self.bill_id.id,
-                'real_invoice_auto_id':real_invoice_auto_id.id
-            })
-            plan_invoice_auto.compute_hs_name_all_ids()
+            plan_invoice_auto_id = pia_obj.search([('bill_id','=',self.bill_id.id)])
+            if self.include_tax:
+                if not plan_invoice_auto_id:
+                    plan_invoice_auto = pia_obj.create({
 
+                        'bill_id':self.bill_id.id,
+                        # 'real_invoice_auto_id':real_invoice_auto_id.id
+                    })
+                    self.plan_invoice_auto_id = plan_invoice_auto
+                    plan_invoice_auto.compute_hs_name_all_ids()
+                else:
+                    self.plan_invoice_auto_id = plan_invoice_auto_id
+                    self.plan_invoice_auto_id.compute_hs_name_all_ids()
     def create_tenyale_name(self):
         for one in self:
             if one.invoice_attribute_all_in_one == '230':
