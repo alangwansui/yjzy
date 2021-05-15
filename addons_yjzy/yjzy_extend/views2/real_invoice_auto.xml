@@ -43,6 +43,7 @@
                         <field name="amount_total"/>
                         <field name="data_invoice"/>
                         <field name="plan_invoice_auto_id"/>
+                        <field name="company_id"/>
                     </group>
 
 
