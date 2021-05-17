@@ -15,7 +15,7 @@ class RealInvoiceAuto(models.Model):
     def compute_amount_total(self):
         for one in self:
             amount_total = (1 + one.tax) * one.untaxed_amount
-            one.amount_total = amount_total
+            one.amount_total = round(amount_total,1)
 
     invoice_type = fields.Selection([('10','增值税电子普通发票'),('04','增值税普通发票'),('01','增值税专用发票')],'发票类型')
     invoice_code = fields.Char(u'发票代码')
@@ -41,8 +41,10 @@ class RealInvoiceAuto(models.Model):
         if len(plan_invoice_auto_ids) >1:
             raise Warning('一张出运合同对应多个应收发票，请检查！')
         else:
-
             self.plan_invoice_auto_id = plan_invoice_auto_ids
+
+    def action_confirm(self):
+        self.state = 'done'
 
 
 class PlanInvoiceAuto(models.Model):

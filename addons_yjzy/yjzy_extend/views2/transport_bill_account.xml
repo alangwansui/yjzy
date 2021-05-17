@@ -2,47 +2,6 @@
     <data>
 
 
-<!--        &lt;!&ndash;日期填制视图 财务&ndash;&gt;-->
-<!--        <record id="view_transport_bill_new_date_account_tree" model="ir.ui.view">-->
-<!--            <field name="name">transport.bill.date.accounttree</field>-->
-<!--            <field name="model">transport.bill</field>-->
-<!--            <field name="arch" type="xml">-->
-<!--                <tree string="出运单" editable="bottom" default_order="date_out_in desc" create="false" edit="false">-->
-<!--                    <field name="name" invisible="1"/>-->
-<!--                    <field name="ref" readonly="1"/>-->
-<!--                    <field name="partner_id" required="1" options="{'no_open':1}" readonly="1"/>-->
-<!--                    &lt;!&ndash;button name="sync_data2invoice" string="创建应收付" attrs="{'invisible':[('state','!=','delivered')]}"  class="oe_highlight" type="object"/&ndash;&gt;-->
-<!--                    <field name="date_out_in" readonly="1"/>-->
-<!--                    <field name="delivered_date" readonly="1"/>-->
-<!--                    <field name="date_in" invisible="1"/>-->
-<!--                    <field name="date_ship" invisible="1"/>-->
-<!--                    <field name="date_customer_finish" invisible="1"/>-->
-<!--                    <field name="date_supplier_finish" invisible="1"/>-->
-<!--                    <field name="all_purchase_invoice_fill" invisible="1"/>-->
-<!--                    <field name="purchase_invoice_ids" widget="many2many_tags" invisible="1"/>-->
-<!--                    <field name="purchase_invoice_ids2" invisible="1" widget="many2many_tags"-->
-<!--                           context="{'show_date_finish': 1}"/>-->
-<!--                    <button name="update_supplier_invoice_date" invisible="1" string="供应商交单日期"-->
-<!--                            attrs="{'invisible':[('state','!=','invoiced')]}" class="oe_highlight" type="object"/>-->
-<!--                    <field name="date_out_in_related" invisible="1"/>-->
-<!--                    <field name="date_in_related" invisible="1"/>-->
-<!--                    <field name="date_ship_related" invisible="1"/>-->
-<!--                    <field name="date_customer_finish_related" invisible="1"/>-->
-<!--                    <field name="date_supplier_finish_related" invisible="1"/>-->
-<!--                    <field name="org_sale_amount" readonly="1"/>-->
-<!--                    <field name="org_real_sale_amount" readonly="1" string="出运金额"/>-->
-<!--                    <field name="sale_type" readonly="1"/>-->
-<!--                    <field name="state" invisible="0" readonly="1"/>-->
-<!--                    <field name="create_date" widget="date" readonly="1" invisible="1"/>-->
-<!--                    <field name="gongsi_id" string="销售主体" readonly="1" options="{'no_open':1}"/>-->
-<!--                    <field name="purchase_gongsi_id" string="采购主体" readonly="1" options="{'no_open':1}"/>-->
-<!--                </tree>-->
-<!--            </field>-->
-<!--        </record>-->
-
-
-        <!--814-->
-
         <record id="view_transport_bill_declare_po_invoice_tree" model="ir.ui.view">
             <field name="name">transport.bill.declare.tree</field>
             <field name="model">transport.bill</field>
@@ -84,8 +43,9 @@
                 <form string="出运应收发票相关" create="false" edit="false">
                     <header>
                         <button string="合并报关资料" name="create_hsname_all_ids" type="object" groups="base.group_system"/>
-                        <button string="创建新增采购" type="object" name="open_wizard_tb_po_invoice" groups="base.group_system"/>
-<!--                        <button string="创建新增采购新" type="object" class="oe_highlight" name="create_tb_po_invoice"/>-->
+                        <button string="创建新增采购" type="object" name="open_wizard_tb_po_invoice"
+                                groups="base.group_system"/>
+                        <!--                        <button string="创建新增采购新" type="object" class="oe_highlight" name="create_tb_po_invoice"/>-->
                         <button string="财务确认应收发票" type="object" name="action_finish_add_purchase_stage"/>
 
                     </header>
@@ -96,15 +56,15 @@
                     </header>
                     <sheet>
                         <div class="oe_button_box" name="button_box">
-                        <button class="oe_stat_button" attrs="{'invisible':[('tb_po_invoice_ids_count','=',0)]}"
-                                name="open_tb_po_invoice_list"
-                                icon="fa-th-list"
-                                type="object">
+                            <button class="oe_stat_button" attrs="{'invisible':[('tb_po_invoice_ids_count','=',0)]}"
+                                    name="open_tb_po_invoice_list"
+                                    icon="fa-th-list"
+                                    type="object">
                                 <div class="o_field_widget o_stat_info">
                                     <span class="o_stat_text">新增采购申请</span>
                                 </div>
                             </button>
-                         </div>
+                        </div>
                         <group col="2">
                             <group name="general_information">
                                 <field name="operation_wizard" invisible="1"/>
@@ -122,7 +82,7 @@
                             </group>
 
 
- <group>
+                            <group>
                                 <field name="name" readonly="1" groups="base.group_system" invisible="1"/>
                                 <field name="locked" groups="base.group_system" invisible="1"/>
                                 <field name="contract_type" groups="base.group_system"
@@ -139,6 +99,30 @@
                                 <!--field name="purchase_back_tax_amount2_rest_total" sum="小计"/-->
                             </group>
 
+                        </group>
+                        <group col="2">
+                            <group>
+                                <field nolabel="1" name="plan_invoice_auto_ids">
+                                    <tree string="应收发票">
+                                        <field name="name"/>
+                                        <field name="bill_id"/>
+                                        <field name="real_invoice_auto_id" invisible="1"/>
+                                        <field name="plan_invoice_auto_amount" sum="小计"/>
+                                        <field name="real_invoice_auto_amount" sum="小计"/>
+                                    </tree>
+                                </field>
+                            </group>
+                            <group>
+                                <field nolabel="1" name="real_invoice_auto_ids">
+                                    <tree>
+                                        <field name="invoice_code"/>
+                                        <field name="invoice_number"/>
+                                        <field name="partner_id" string="供应商"/>
+                                        <field name="amount_total" string="含税金额" sum="小计"/>
+                                        <field name="date_invoice" string="开票日期"/>
+                                    </tree>
+                                </field>
+                            </group>
                         </group>
 
                         <notebook>
@@ -194,7 +178,8 @@
                                         <field name="purchase_amount" invisible="1"/>
                                         <field name="hs_id2" invisible="1"/>
                                         <field name="dump_product_id2" groups="base.group_system" invisible="1"/>
-                                        <button icon="fa-list" type="object" name="open_wizard_tb_po_invoice" groups="base.group_system"/>
+                                        <button icon="fa-list" type="object" name="open_wizard_tb_po_invoice"
+                                                groups="base.group_system"/>
 
                                         <button name="open_form_view" type="object" icon="fa-arrows-v"/>
                                     </tree>
@@ -250,7 +235,7 @@
                                         <field name="hs_id"/>
                                         <field name="back_tax"/>
                                         <field name="amount2" sum="小计"/>
-                                        <field name="is_po_include_tax" />
+                                        <field name="is_po_include_tax"/>
                                         <field name="purchase_amount2_tax" sum="小计"/>
                                         <field name="purchase_amount2_no_tax" sum="小计"/>
                                         <field name="purchase_back_tax_amount2" invisible="1"/>
@@ -271,7 +256,8 @@
                             </page>
                             <page string="新增采购申请单" attrs="{'invisible':[('tb_po_invoice_ids_count','=',0)]}">
                                 <field name="tb_po_invoice_ids_count" invisible="1"/>
-                                <field name="tb_po_invoice_ids" context="{'other_po':1,'expense_po':0,'form_view_ref':'yjzy_extend.tb_po_form'}">
+                                <field name="tb_po_invoice_ids"
+                                       context="{'other_po':1,'expense_po':0,'form_view_ref':'yjzy_extend.tb_po_form'}">
                                     <tree>
                                         <field name="name"/>
                                         <field name="partner_id"/>
@@ -347,13 +333,13 @@
                                         <field name="company_currency_id" readonly="1" invisible="1"/>
 
 
-                                        <field name="org_sale_amount" />
-                                        <field name="org_real_sale_amount" />
+                                        <field name="org_sale_amount"/>
+                                        <field name="org_real_sale_amount"/>
 
                                         <field name="sale_commission_ratio"
-                                               />
-                                        <field name="ciq_amount" />
-                                        <field name="no_ciq_amount" />
+                                        />
+                                        <field name="ciq_amount"/>
+                                        <field name="no_ciq_amount"/>
 
                                         <field name="shoukuan_amount"/>
                                         <field name="fukuan_amount"/>
@@ -401,7 +387,9 @@
             <field name="domain">[('state','in',['invoiced','locked','finish_add_purchase'])]</field>
             <field name="limit">20</field>
             <field name="search_view_id" ref="view_transport_bill_tenyale_filter"/>
-            <field name="context">{'search_default_group_date_out_in_add_purchase':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3,'show_po_code':1}</field>
+            <field name="context">
+                {'search_default_group_date_out_in_add_purchase':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3,'show_po_code':1}
+            </field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_transport_bill_declare_po_invoice_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_transport_bill_declare_po_invoice_form')})]"/>
@@ -415,30 +403,26 @@
         />
 
 
+        <!--        <record model="ir.actions.act_window" id="act_open_transport_bill_new_date_account_view">-->
+        <!--            <field name="name">财务查看出运日期</field>-->
+        <!--            <field name="type">ir.actions.act_window</field>-->
+        <!--            <field name="res_model">transport.bill</field>-->
+        <!--            <field name="view_type">form</field>-->
+        <!--            <field name="view_mode">tree,form</field>-->
+        <!--            <field name="limit">20</field>-->
+        <!--            <field name="domain">[('state','in',['delivered','invoiced','verifying'])]</field>-->
+        <!--            <field name="context">-->
+        <!--                {'search_default_group_by_date_out_in':1,'show_date_finish':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3}-->
+        <!--            </field>-->
+        <!--            <field name="view_ids" eval="[(5, 0, 0),-->
+        <!--                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_transport_bill_new_date_account_tree')})]"/>-->
 
-
-
-<!--        <record model="ir.actions.act_window" id="act_open_transport_bill_new_date_account_view">-->
-<!--            <field name="name">财务查看出运日期</field>-->
-<!--            <field name="type">ir.actions.act_window</field>-->
-<!--            <field name="res_model">transport.bill</field>-->
-<!--            <field name="view_type">form</field>-->
-<!--            <field name="view_mode">tree,form</field>-->
-<!--            <field name="limit">20</field>-->
-<!--            <field name="domain">[('state','in',['delivered','invoiced','verifying'])]</field>-->
-<!--            <field name="context">-->
-<!--                {'search_default_group_by_date_out_in':1,'show_date_finish':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3}-->
-<!--            </field>-->
-<!--            <field name="view_ids" eval="[(5, 0, 0),-->
-<!--                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_transport_bill_new_date_account_tree')})]"/>-->
-
-<!--        </record>-->
-<!--        <menuitem id="menu_transport_new_date_account_bill" name="财务查看出运日期"-->
-<!--                  parent="yjzy_extend.menu_real_invoice"-->
-<!--                  sequence="5"-->
-<!--                  action="act_open_transport_bill_new_date_account_view"-->
-<!--        />-->
-
+        <!--        </record>-->
+        <!--        <menuitem id="menu_transport_new_date_account_bill" name="财务查看出运日期"-->
+        <!--                  parent="yjzy_extend.menu_real_invoice"-->
+        <!--                  sequence="5"-->
+        <!--                  action="act_open_transport_bill_new_date_account_view"-->
+        <!--        />-->
 
 
     </data>

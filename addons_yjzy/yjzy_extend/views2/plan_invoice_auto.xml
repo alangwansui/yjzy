@@ -8,12 +8,10 @@
         <field name="arch" type="xml">
             <tree string="应收发票">
                 <field name="name"/>
-
                 <field name="bill_id"/>
                 <field name="real_invoice_auto_id"/>
                 <field name="plan_invoice_auto_amount"/>
                 <field name="real_invoice_auto_amount"/>
-
             </tree>
         </field>
     </record>

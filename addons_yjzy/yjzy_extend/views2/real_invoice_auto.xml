@@ -1,20 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+     <record id="view_real_invoice_auto_filter" model="ir.ui.view">
+            <field name="name">real.invoice.auto.select</field>
+            <field name="model">real.invoice.auto</field>
+            <field name="arch" type="xml">
+                <search string="Search Real Invoice">
+                    <field name="invoice_type" filter_domain="['|','|',('invoice_number','ilike',self),('invoice_code','ilike',self),('bill_id','ilike',self)]"/>
+                    <field name="bill_id"/>
+                    <field name="partner_id"/>
+
+                    <group expand="0" string="Group By">
+                        <filter string="状态" domain="[]" name="group_by_state" context="{'group_by':'state'}"/>
+                        <filter string="供应商" domain="[]" context="{'group_by':'partner_id'}"/>
+                        <filter string="出运合同" domain="[]" context="{'group_by':'bill_id'}"/>
+
+                    </group>
+               </search>
+            </field>
+        </record>
+
     <record model="ir.ui.view" id="view_real_invoice_auto_tree">
         <field name="name">real.invoice.auto.tree</field>
         <field name="model">real.invoice.auto</field>
         <field name="priority" eval="999"/>
         <field name="arch" type="xml">
-            <tree string="实际发票">
+            <tree string="实际发票" editable="bottom">
+                <button name="action_confirm" type="object" string="确认"/>
                 <field name="invoice_code"/>
                 <field name="invoice_number"/>
-                <field name="partner_id"/>
+                <field name="partner_id" domain="[('supplier','=',True),('parent_id', '=', False)]"/>
+                <field name="bill_id" domain="[('state','=','locked')]"/>
                 <field name="untaxed_amount"/>
                 <field name="tax"/>
                 <field name="amount_total"/>
                 <field name="date_invoice"/>
-
+                <field name="plan_invoice_auto_id"/>
+                <field name="state"/>
             </tree>
         </field>
     </record>
@@ -25,15 +47,12 @@
         <field name="arch" type="xml">
             <form string="实际发票">
                 <header>
-
+                    <button name="action_confirm" type="object" string="确认"/>
                     <field name="state" widget="statusbar" statusbar_visible=" "/>
-
                 </header>
-
                 <sheet>
-
-
                     <group>
+
                         <field name="invoice_code"/>
                         <field name="invoice_number"/>
                         <field name="partner_id"/>
@@ -43,7 +62,8 @@
                         <field name="amount_total"/>
                         <field name="date_invoice"/>
                         <field name="plan_invoice_auto_id"/>
-                        <field name="company_id"/>
+                        <field name="company_id" />
+
                     </group>
 
 
@@ -66,6 +86,7 @@
         <field name="res_model">real.invoice.auto</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_real_invoice_auto_filter"/>
         <field name="domain">[]</field>
         <field name="context">{}</field>
          <field name="view_ids" eval="[(5, 0, 0),
