@@ -113,7 +113,7 @@
 
 
     <menuitem id="menu_real_invoice" name="进项发票认证"  sequence="99" groups="base.group_system"/>
-    <menuitem id="menu_real_invoice_action" name="进发票认证" parent="yjzy_extend.menu_real_invoice" action="action_real_invoice" sequence="10"/>
+    <menuitem id="menu_real_invoice_action" name="进发票认证" parent="yjzy_extend.menu_real_invoice" groups="base.group_system" action="action_real_invoice" sequence="10"/>
 
 
     </data>

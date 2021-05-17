@@ -11,6 +11,8 @@
 
                 <field name="bill_id"/>
                 <field name="real_invoice_auto_id"/>
+                <field name="plan_invoice_auto_amount"/>
+                <field name="real_invoice_auto_amount"/>
 
             </tree>
         </field>
@@ -34,15 +36,36 @@
                             <field name="name"/>
                         </h1>
                     </div>
-                    <group>
 
-                        <field name="bill_id"/>
+                    <group cols="2">
+                        <group>
+                          <field nolabel="1" name="invoice_ids">
+                              <tree>
+                                  <field name="partner_id" string="供应商"/>
+                                  <field name="amount_total_signed" string="应收发票金额" sum="小计"/>
+                                  <field name="residual_signed" string="未付应付款"/>
+                                  <field name="state"/>
+                              </tree>
+                          </field>
+                            </group>
+                        <group>
+                            <field nolabel="1" name="real_invoice_auto_id">
+                                <tree>
+                                    <field name="invoice_code"/>
+                                    <field name="invoice_number"/>
+                                    <field name="partner_id" string="供应商"/>
+                                    <field name="amount_total" string="含税金额" sum="小计"/>
+                                    <field name="date_invoice" string="开票日期"/>
+                                </tree>
+                            </field>
 
+                        </group>
                     </group>
-                     <field name="real_invoice_auto_id"/>
-                    <field name="invoice_ids"/>
+                    <group>
+                        <field name="bill_id"/>
+                    </group>
                     <notebook>
-                        <page>
+                        <page string="发票明细">
                             <field name="hsname_all_ids">
                                 <tree editable="bottom">
                                         <field name="hs_id"/>
@@ -55,23 +78,10 @@
                                         />
                                         <field name="purchase_amount2_no_tax" readonly="1" sum="小计"
                                         />
-                                        <field name="purchase_back_tax_amount2_new" readonly="1" string="实际退税金额"
-                                               sum="小计"/>
-                                        <field name="purchase_amount_min_add_forecast" readonly="1" sum="小计"
-                                        />
-                                        <field name="purchase_amount_max_add_forecast" readonly="1" sum="小计"
-                                        />
-                                        <field name="purchase_amount2_add_actual" readonly="1" sum="小计"
-                                        />
+
                                     <field name="plan_invoice_auto_total" readonly="1" sum="小计"
                                         />
 
-                                        <field name="purchase_amount_min_add_rest" readonly="1"
-                                        />
-                                        <field name="purchase_amount_max_add_rest" readonly="1"
-                                        />
-                                        <field name="purchase_amount2_add_this_time"
-                                        />
 
                                     </tree>
                             </field>
@@ -105,7 +115,7 @@
 
 
 
-    <menuitem id="menu_plan_invoice_auto" sequence="0" name="应收发票" parent="menu_real_invoice" action="action_plan_invoice_auto"/>
+    <menuitem id="menu_plan_invoice_auto" sequence="2" name="应收发票" parent="menu_real_invoice" action="action_plan_invoice_auto"/>
 
 
 </odoo>

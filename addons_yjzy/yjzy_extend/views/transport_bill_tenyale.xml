@@ -32,6 +32,8 @@
                                 context="{'group_by':['hexiao_date','hexiao_type']}"/>
                         <filter string="出运确认时间分组" name="group_date_out_in" domain="[]"
                                 context="{'group_by':['date_out_in:year','date_out_in']}"/>
+                        <filter string="出运确认时间以及开票分组" name="group_date_out_in_add_purchase" domain="[]"
+                                context="{'group_by':['date_out_in','stage_id']}"/>
                         <filter string="出运确认按年分组" name="group_date_out_in_year" domain="[]"
                                 context="{'group_by':['date_out_in:year']}"/>
                         <filter string="时间状态分组" name="group_date_all_state_1" domain="[]"
@@ -320,6 +322,7 @@
                                 class="oe_highlight"/>
                         <button name="action_manager_approve" states="manager_approve" type="object" string="总经理特批"
                                 class="oe_highlight"/>
+                        <button name="action_lock_stage" type="object" states="invoiced" string="锁定" />
                         <button name="%(transport_refuse_wizard_action)d" string="拒绝" type="action"
                                 attrs="{'invisible':[('state','in',['invoiced','abnormal','verifying','done','paid','cancel','refused','draft'])]}"/>
                         <button name="action_hexiao" states="verifying" string="核销" type="object"/>

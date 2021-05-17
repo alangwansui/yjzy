@@ -87,7 +87,7 @@ class transport_bill(models.Model):
     purchase_amount2_no_tax_total = fields.Float(u'不含税采购金额', compute=_compute_overall_profit)
     purchase_amount2_add_actual_total = fields.Float(U'实际已经增加采购额', compute=_compute_overall_profit)
 
-    back_tax_declaration_state = fields.Selection([('10','未申报'),('20','已申报')],'退税申报状态',related='back_tax_invoice_id.back_tax_declaration_state')
+    back_tax_declaration_state = fields.Selection([('10','未申报'),('15','部分申报'),('20','已申报')],'退税申报状态',related='back_tax_invoice_id.back_tax_declaration_state')
     # purchase_back_tax_amount2_new_new_total = fields.Float(U'新增退税总金额', compute=_compute_overall_profit)
     # purchase_back_tax_amount2_rest_total = fields.Float(U'可开票退税金额', compute=_compute_overall_profit)
     # 817

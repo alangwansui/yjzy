@@ -13,7 +13,7 @@
                 <field name="untaxed_amount"/>
                 <field name="tax"/>
                 <field name="amount_total"/>
-                <field name="data_invoice"/>
+                <field name="date_invoice"/>
 
             </tree>
         </field>
@@ -41,7 +41,7 @@
                         <field name="untaxed_amount"/>
                         <field name="tax"/>
                         <field name="amount_total"/>
-                        <field name="data_invoice"/>
+                        <field name="date_invoice"/>
                         <field name="plan_invoice_auto_id"/>
                         <field name="company_id"/>
                     </group>
@@ -75,7 +75,7 @@
 
 
 
-    <menuitem id="menu_real_invoice_auto" sequence="0" name="实际发票" parent="menu_real_invoice" action="action_real_invoice_auto"/>
+    <menuitem id="menu_real_invoice_auto" sequence="3" name="实际发票" parent="menu_real_invoice" action="action_real_invoice_auto"/>
 
 
 </odoo>

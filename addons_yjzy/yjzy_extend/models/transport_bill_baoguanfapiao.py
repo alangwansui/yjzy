@@ -9,4 +9,27 @@ class transport_bill(models.Model):
     _inherit = 'transport.bill'
 
     plan_invoice_auto_ids = fields.One2many('plan.invoice.auto','bill_id','应收发票')
-    real_invocie_auto_ids = fields.One2many('real.invoice.auto','bill_id','实际发票')
+    real_invoice_auto_ids = fields.One2many('real.invoice.auto','bill_id','实际发票')
+
+    def action_lock_stage(self):
+        stage_id = self._stage_find(domain=[('code', '=', '012')])
+        stage_preview = self.stage_id
+        user = self.env.user
+        if user not in stage_preview.user_ids:
+            raise Warning('您没有权限审批')
+        else:
+            self.write({'stage_id': stage_id.id})
+
+
+
+    def action_finish_add_purchase_stage(self):
+        stage_id = self._stage_find(domain=[('code', '=', '013')])
+        stage_preview = self.stage_id
+        user = self.env.user
+        if user not in stage_preview.user_ids:
+            raise Warning('您没有权限审批')
+        else:
+            self.write({'stage_id': stage_id.id})
+            for one in self.plan_invoice_auto_ids:
+                one.state = 'done'
+            self.create_hsname_all_ids()

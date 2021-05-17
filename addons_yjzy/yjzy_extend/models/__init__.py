@@ -88,3 +88,4 @@ from . import order_track_attachment
 from . import sale_price_analysis
 from . import account_invoice_back_tax
 from . import real_invoice_auto
+from . import transport_bill_baoguanfapiao

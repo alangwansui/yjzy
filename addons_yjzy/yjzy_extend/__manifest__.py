@@ -158,6 +158,7 @@
 
         'views2/plan_invoice_auto.xml',
         'views2/real_invoice_auto.xml',
+        'views2/transport_bill_account.xml',
         'views2/ysrld_new.xml',
         'views2/rcskd.xml',
         'views2/rcskd_new.xml',

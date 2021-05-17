@@ -21,7 +21,7 @@ class RealInvoiceAuto(models.Model):
     invoice_code = fields.Char(u'发票代码')
     invoice_number = fields.Char(u'发票号')
     untaxed_amount = fields.Monetary(u'不含税金额', currency_field='company_currency_id')
-    data_invoice = fields.Date(u'开票日期')
+    date_invoice = fields.Date(u'开票日期')
     company_id = fields.Many2one('res.company', string='Company', required=True, readonly=True,
                                  default=lambda self: self.env.user.company_id.id)
 
@@ -67,8 +67,17 @@ class PlanInvoiceAuto(models.Model):
     @api.depends('invoice_ids')
     def compute_currency_id(self):
         for one in self:
-            one.currency_id = one.invoice_ids and one.invoice_ids[0].currency_id or self.env.user.company_id.currency_id
+            one.currency_id = one.invoice_ids and one.invoice_ids[0].currency_id or  self.env.user.company_id.currency_id
 
+    @api.depends('hsname_all_ids')
+    def compute_plan_invoice_auto_amount(self):
+        for one in self:
+            one.plan_invoice_auto_amount = sum(x.plan_invoice_auto_total for x in one.hsname_all_ids)
+
+    @api.depends('real_invoice_auto_id','real_invoice_auto_id.amount_total')
+    def compute_real_invoice_auto_amount(self):
+        for one in self:
+            one.real_invoice_auto_amount = sum(x.amount_total for x in one.real_invoice_auto_id)
 
     name = fields.Char('name',default=lambda self: self.env['ir.sequence'].next_by_code('plan.invoice.auto.name'))
     invoice_ids = fields.One2many('account.invoice','plan_invoice_auto_id','应付账单')
@@ -76,12 +85,14 @@ class PlanInvoiceAuto(models.Model):
     currency_id = fields.Many2one('res.currency',u'货币',compute=compute_currency_id,store=True)
     amount_total = fields.Monetary('金额',currency_field='currency_id',store=True)
     bill_id = fields.Many2one('transport.bill','出运合同',store=True)
-    hsname_all_ids = fields.Many2many('tbl.hsname.all','报关明细',compute='compute_hs_name_all_ids')
+    hsname_all_ids = fields.Many2many('tbl.hsname.all','pia_id','hs_id','tbl_id',string='报关明细',compute='compute_hs_name_all_ids',store=True)
     state = fields.Selection([('draft','draft'),('done','done')],'State',default='draft')
     real_invoice_auto_id = fields.One2many('real.invoice.auto','plan_invoice_auto_id','实际进项发票')
     company_id = fields.Many2one('res.company', string='Company',required=True, readonly=True,
                                  default=lambda self: self.env.user.company_id.id)
 
+    plan_invoice_auto_amount = fields.Monetary('应收发票总金额',currency_field='currency_id',compute=compute_plan_invoice_auto_amount,store=True)
+    real_invoice_auto_amount = fields.Monetary('实收发票总金额',currency_field='currency_id',compute=compute_real_invoice_auto_amount,store=True)
 
 
 
