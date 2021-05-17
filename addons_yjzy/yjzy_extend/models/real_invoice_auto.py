@@ -11,11 +11,33 @@ class RealInvoiceAuto(models.Model):
     _description = '实际发票'
     _order = 'id desc'
 
+    def get_two_float(self,f_str,n):
+        f_str = str(f_str)
+        a, b, c = f_str.partition('.')
+        c = (c+"0"*n)[:n]
+        return ".".join([a, c])
+
+    def get_two_float_1(self,f_str,n):
+        f_str = str(f_str)
+        a, b, c = f_str.partition('.')
+        c = (c+"0"*n)[:n]
+        return c
+
     @api.depends('untaxed_amount','tax')
     def compute_amount_total(self):
         for one in self:
+
             amount_total = (1 + one.tax) * one.untaxed_amount
-            one.amount_total = round(amount_total,1)
+            get_two_float_1 = one.get_two_float_1(amount_total,2)
+            print('akiny',str(get_two_float_1))
+            if str(get_two_float_1) == '99':
+                one.amount_total = round(amount_total,0)
+            elif str(get_two_float_1) in ['01','00']:
+                one.amount_total = round(amount_total, 0)
+            else:
+                one.amount_total = amount_total
+
+
 
     invoice_type = fields.Selection([('10','增值税电子普通发票'),('04','增值税普通发票'),('01','增值税专用发票')],'发票类型')
     invoice_code = fields.Char(u'发票代码')
