@@ -2187,16 +2187,20 @@ class transport_bill(models.Model):
                 invoice.yjzy_invoice_id = invoice.id
                 invoice.invoice_attribute = 'normal'
                 invoice.date_invoice = self.date_out_in
+
                 for o in purchase_orders.filtered(lambda x: x.partner_id == partner):
                     invoice.purchase_id = o
                     invoice.purchase_order_change()
                     invoice.po_id = o
                     invoice.include_tax = o.include_tax
+
                 #确认发票
                 invoice.compute_advance_pre_rest()
                 invoice.action_invoice_open()
+                invoice.make_plan_invoice_auto()#0518
 
                 invoice_ids.append(invoice.id)
+
         else:
             invoice_ids = [x.id for x in self.purchase_invoice_ids]
 

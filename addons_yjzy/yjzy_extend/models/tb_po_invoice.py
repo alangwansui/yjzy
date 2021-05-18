@@ -1096,6 +1096,7 @@ class tb_po_invoice(models.Model):
                                      ]
 
             })
+            inv.make_plan_invoice_auto()
             for line in self.hsname_all_ids:
                 hsname_all_line = hsname_all_line_obj.create({
                     'invoice_id': inv.id,
