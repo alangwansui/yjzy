@@ -614,7 +614,7 @@ class account_invoice(models.Model):
     def compute_declaration_amount(self):
         for one in self:
             one.declaration_amount = sum(x.declaration_amount for x in one.btd_line_ids)
-            one.declaration_amount_latest = len(one.btd_line_ids) > 1 and one.btd_line_ids[0].declaration_amount or one.btd_line_ids.declaration_amount
+            one.declaration_amount_latest = one.btd_line_ids[0].declaration_amount
     # D
     @api.depends('yjzy_type_1', 'yjzy_type', 'invoice_attribute')
     def compute_all_in_one(self):
