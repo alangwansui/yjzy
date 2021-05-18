@@ -223,7 +223,9 @@ class OrderTrack(models.Model):
             if one.type == 'new_order_track':
                 if one.time_draft_order and one.time_sign_pi and one.time_sent_pi and one.time_receive_pi and one.hegui_date and len(
                         one.plan_check_ids) == len(
-                        one.plan_check_ids.filtered(lambda x: x.date_factory_return != False)) or one.hegui_date:
+                        one.plan_check_ids.filtered(lambda x: x.date_factory_return != False)) or (one.hegui_date and len(
+                        one.plan_check_ids) == len(
+                        one.plan_check_ids.filtered(lambda x: x.date_factory_return != False))):
                     order_track_new_order_state = '20_done'
                 else:
                     order_track_new_order_state = '10_doing'
