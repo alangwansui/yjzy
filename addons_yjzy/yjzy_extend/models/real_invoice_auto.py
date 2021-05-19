@@ -50,7 +50,7 @@ class RealInvoiceAuto(models.Model):
     company_currency_id = fields.Many2one('res.currency','本币币种', default=lambda self: self.env.user.company_id.currency_id)
 
     tax = fields.Float(u'税率',default = 0.13)
-    amount_total = fields.Monetary(u'含税金额',currency_field='company_currency_id',compute='compute_amount_total')
+    amount_total = fields.Monetary(u'含税金额',currency_field='company_currency_id',)
 
     partner_id = fields.Many2one('res.partner',u'合作伙伴')
     bill_id = fields.Many2one('transport.bill', u'出运单')

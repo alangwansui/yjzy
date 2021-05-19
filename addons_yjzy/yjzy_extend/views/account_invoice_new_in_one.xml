@@ -764,7 +764,7 @@
                                     </tree>
                                 </field>
                             </page>
-                            <page>
+                            <page string="采购发票明细">
                                 <field name="purchase_invoice_hsname_ids">
                                     <tree>
                                         <field name="hs_id"/>

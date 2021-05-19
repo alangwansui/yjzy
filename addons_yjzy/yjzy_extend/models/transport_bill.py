@@ -2164,6 +2164,7 @@ class transport_bill(models.Model):
             purchase_orders = self.stage1move_ids.filtered(lambda x: x.state == 'done').mapped('purchase_line_id').mapped('order_id')
 
             po_ctx = {'type': 'in_invoice', 'journal_type': 'purchase'}
+
             for partner in purchase_orders.mapped('partner_id'):
                 invoice = invoice_obj.with_context(po_ctx).create({
                     'partner_id': partner.id,
@@ -2198,8 +2199,8 @@ class transport_bill(models.Model):
                 invoice.compute_advance_pre_rest()
                 invoice.action_invoice_open()
                 invoice.make_plan_invoice_auto()#0518
-
                 invoice_ids.append(invoice.id)
+
 
         else:
             invoice_ids = [x.id for x in self.purchase_invoice_ids]

@@ -19,6 +19,9 @@ class transport_bill(models.Model):
             raise Warning('您没有权限审批')
         else:
             self.write({'stage_id': stage_id.id})
+            self.create_hsname_all_ids()
+            self.create_btls_hs_ids_purchase()
+
 
 
 
@@ -32,4 +35,3 @@ class transport_bill(models.Model):
             self.write({'stage_id': stage_id.id})
             for one in self.plan_invoice_auto_ids:
                 one.state = 'done'
-            self.create_hsname_all_ids()

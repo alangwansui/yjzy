@@ -1096,7 +1096,19 @@ class tb_po_invoice(models.Model):
                                      ]
 
             })
+
+            # inv.invoice.make_plan_invoice_auto()
             inv.make_plan_invoice_auto()
+            pih_obj = self.env['purchase.invoice.hsname']
+            for line in self.hsname_all_ids:
+                if line.purchase_amount2_add_this_time != 0:
+                    purchase_hs = pih_obj.create({
+                        'partner_id': self.partner_id.id,
+                        'amount2': line.purchase_amount2_add_this_time,
+                        'invoice_id': inv.id,
+                        'hs_id': line.hs_id.id,
+                        'back_tax_amount2': line.back_tax_add_this_time
+                    })
             for line in self.hsname_all_ids:
                 hsname_all_line = hsname_all_line_obj.create({
                     'invoice_id': inv.id,
@@ -1232,11 +1244,33 @@ class tb_po_invoice(models.Model):
 
         self.state = '30_done'
         for one in self.invoice_ids:
-            print('akiny_test', self.invoice_ids)
+            print('akiny_test', self.invoice_ids,one.invoice_attribute,one.yjzy_type_1)
             if not one.bill_id:
                 one.bill_id = self.tb_id
             if one.state != 'paid':
                 one.action_invoice_open()
+            if one.invoice_attribute == 'expense_po' and one.yjzy_type_1 == 'purchase':
+                pih_obj = self.env['purchase.invoice.hsname']
+                for line in self.hsname_all_ids:
+                    if line.purchase_amount2_add_this_time != 0:
+                        purchase_hs = pih_obj.create({
+                            'partner_id': self.partner_id.id,
+                            'amount2': line.purchase_amount2_add_this_time,
+                            'invoice_id': one.id,
+                            'hs_id': line.hs_id.id,
+                            'back_tax_amount2': line.back_tax_add_this_time
+                        })
+                for line in self.hsname_all_ids:
+                    hsname_all_line = hsname_all_line_obj.create({
+                        'invoice_id': one.id,
+                        'hs_id': line.hs_id.id,
+                        'hs_en_name': line.hs_en_name,
+                        'purchase_amount2_add_this_time': line.purchase_amount2_add_this_time,
+                        'p_s_add_this_time': line.p_s_add_this_time,
+                        'back_tax_add_this_time': line.back_tax_add_this_time,
+                        'tbl_hsname_all_id': line.hsname_all_line_id.id
+                    })
+                one.make_plan_invoice_auto()
 
     # 730 创建后直接过账 冲减发票
 
@@ -1640,8 +1674,8 @@ class tb_po_invoice(models.Model):
         # self.check()
         invoice_obj = self.env['account.invoice']
         invoice_line_obj = self.env['account.invoice.line']
-
-
+        pih_obj = self.env['purchase.invoice.hsname']
+        hsname_all_line_obj = self.env['invoice.hs_name.all']
         journal_type = 'purchase'
         product = self.invoice_product_id
 
@@ -1650,7 +1684,7 @@ class tb_po_invoice(models.Model):
             {'default_type': 'in_invoice', 'type': 'in_invoice', 'journal_type': 'purchase'}).create({
             'partner_id': self.partner_id.id,
             'tb_po_invoice_id': self.id,
-
+            'include_tax':True,
             'invoice_attribute': 'expense_po',
             'expense_sheet_id': self.expense_sheet_id.id,
             'type': 'in_invoice',
@@ -1668,6 +1702,16 @@ class tb_po_invoice(models.Model):
             #                        'account_id': account.id,
             # })]
         })
+        for line in self.hsname_all_ids:
+            if line.purchase_amount2_add_this_time != 0:
+                purchase_hs = pih_obj.create({
+                    'partner_id': self.partner_id.id,
+                    'amount2': line.purchase_amount2_add_this_time,
+                    'invoice_id': inv.id,
+                    'hs_id': line.hs_id.id,
+                    'back_tax_amount2': line.back_tax_add_this_time
+                })
+
         expense_line_ids = self.expense_sheet_id.expense_line_ids
         for line_1 in expense_line_ids:
             product = line_1.product_id
@@ -1694,15 +1738,18 @@ class tb_po_invoice(models.Model):
                 'price_unit': line_1.unit_amount,
                 'account_id': account.id
             })
-            # 1220 暂时取消这个，发票上明细不创建，那么就不会参与出运单的池子的计算
-            # for line in self.hsname_all_ids:
-            #     hsname_all_line = hsname_all_line_obj.create({
-            #                         'invoice_id': inv.id,
-            #                         'hs_id': line.hs_id.id,
-            #                         'hs_en_name':line.hs_en_name,
-            #                         'purchase_amount2_add_this_time':line.purchase_amount2_add_this_time,
-            #                         'tbl_hsname_all_id':line.hsname_all_line_id.id
-            #     })
+
+
+        # 1220 暂时取消这个，发票上明细不创建，那么就不会参与出运单的池子的计算
+        for line in self.hsname_all_ids:
+            hsname_all_line = hsname_all_line_obj.create({
+                                'invoice_id': inv.id,
+                                'hs_id': line.hs_id.id,
+                                'hs_en_name':line.hs_en_name,
+                                'purchase_amount2_add_this_time':line.purchase_amount2_add_this_time,
+                                'tbl_hsname_all_id':line.hsname_all_line_id.id
+            })
+        self.expense_sheet_id.invoice_id = inv
             # # self.expense_sheet_id.invoice_id = inv
             # form_view = self.env.ref('yjzy_extend.view_supplier_invoice_extra_po_form').id
             # return {
