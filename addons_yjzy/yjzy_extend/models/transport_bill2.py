@@ -801,7 +801,7 @@ class tbl_hsname_all(models.Model):
     purchase_amount2_add_actual = fields.Float(U'实际已经增加采购额', compute=compute_info)
     back_tax_add_actual = fields.Float(U'实际已经增加退税', compute=compute_info)
     p_s_add_actual = fields.Float(U'实际已经增加应收', compute=compute_info)
-    plan_invoice_auto_total = fields.Float(u'应收采购发票金额', compute=compute_info)
+    plan_invoice_auto_total = fields.Float(u'应收采购发票金额', compute=compute_info,store=True)
 
     hs_en_name = fields.Char(related='hs_id.en_name')
     # akinyback
