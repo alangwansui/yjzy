@@ -322,7 +322,7 @@
                                 class="oe_highlight"/>
                         <button name="action_manager_approve" states="manager_approve" type="object" string="总经理特批"
                                 class="oe_highlight"/>
-                        <button name="action_lock_stage" type="object" states="invoiced" string="锁定" />
+                        <button name="action_lock_stage" type="object" states="invoiced" string="锁定" groups="base.group_system"/>
                         <button name="%(transport_refuse_wizard_action)d" string="拒绝" type="action"
                                 attrs="{'invisible':[('state','in',['invoiced','abnormal','verifying','done','paid','cancel','refused','draft'])]}"/>
                         <button name="action_hexiao" states="verifying" string="核销" type="object"/>
@@ -1751,7 +1751,7 @@
             <field name="limit">20</field>
             <field name="view_mode">tree,form,kanban</field>
             <field name="search_view_id" ref="view_transport_bill_tenyale_filter"/>
-            <field name="domain">[('state','in',['approve','delivered','invoiced','verifying'])]</field>
+            <field name="domain">[('state','in',['locked','finish_add_purchase','approve','delivered','invoiced','verifying'])]</field>
             <field name="context">
                 {'search_default_group_by_state_type':1,'only_name':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3,'show_po_code':
                 1}

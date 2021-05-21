@@ -6,10 +6,9 @@
             <field name="model">real.invoice.auto</field>
             <field name="arch" type="xml">
                 <search string="Search Real Invoice">
-                    <field name="invoice_type" filter_domain="['|','|',('invoice_number','ilike',self),('invoice_code','ilike',self),('bill_id','ilike',self)]"/>
+                    <field name="invoice_type" filter_domain="['|','|',('invoice_number','ilike',self),('invoice_code','ilike',self),('bill_id.ref','ilike',self)]"/>
                     <field name="bill_id"/>
                     <field name="partner_id"/>
-
                     <group expand="0" string="Group By">
                         <filter string="状态" domain="[]" name="group_by_state" context="{'group_by':'state'}"/>
                         <filter string="供应商" domain="[]" context="{'group_by':'partner_id'}"/>
@@ -30,7 +29,7 @@
                 <field name="invoice_code" attrs="{'readonly':[('state','=','done')]}"/>
                 <field name="invoice_number" attrs="{'readonly':[('state','=','done')]}"/>
                 <field name="partner_id" attrs="{'readonly':[('state','=','done')]}" domain="[('supplier','=',True),('parent_id', '=', False)]"/>
-                <field name="bill_id" domain="[('state','=','locked')]" attrs="{'readonly':[('state','=','done')]}"/>
+                <field name="bill_id" domain="[('state','in',['locked','finish_add_purchase'])]" attrs="{'readonly':[('state','=','done')]}"/>
                 <field name="untaxed_amount" attrs="{'readonly':[('state','=','done')]}"/>
                 <field name="tax" attrs="{'readonly':[('state','=','done')]}"/>
                 <field name="amount_total" attrs="{'readonly':[('state','=','done')]}"/>

@@ -247,9 +247,19 @@ class DeclareDeclaration(models.Model):
         if not self.declaration_date:
             return Warning('请填写申报日期')
         self.state = 'done'
-        invoice_ids = self.btd_line_ids.mapped('invoice_id')
-        for one in invoice_ids:
-            one.back_tax_declaration_state = '20'
+        for one in self.btd_line_ids:
+            if one.invoice_id.declaration_amount == 0 :
+                one.invoice_id.back_tax_declaration_state = '10'
+            elif one.invoice_id.declaration_amount == one.invoice_amount_total:
+                one.invoice_id.back_tax_declaration_state = '20'
+            else:
+                one.invoice_id.back_tax_declaration_state = '15'
+        # invoice_ids = self.btd_line_ids.mapped('invoice_id')
+        # for one in invoice_ids:
+        #     if one.declaration_amount == 0:
+        #         one.back_tax_declaration_state = '20'
+        #     else:
+        #         one.back_tax_declaration_state = '15'
 
 
 

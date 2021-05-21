@@ -750,7 +750,7 @@
                             </page>
                             <page string="货款明细" attrs="{'invisible':[('is_tb_hs_id','=',False)]}">
                                 <field name="hsname_all_ids" attrs="{'invisible':[('is_tb_hs_id','=',False)],'readonly':[('state','in',['20_submit','30_done'])]}">
-                                    <tree editable="bottom" create="false" delete="false">
+                                    <tree editable="bottom" delete="false">
                                         <field name="hs_id" attrs="{'readonly':[('parent.state','!=','10_draft')]}"/>
                                         <field name="hsname_all_line_id" invisible="1"/>
                                         <!--field name="purchase_amount2_tax"/>
@@ -771,7 +771,7 @@
                                                attrs="{'column_invisible':[('parent.tb_id','=',False)]}"/>
                                         <field name="purchase_amount2_add_actual" readonly="1" sum="小计" string="实际已增加" groups="base.group_system"
                                                attrs="{'column_invisible':[('parent.tb_id','=',False)]}"/>
-                                        <field name="purchase_amount_min_add_rest" readonly="1" string="最新可增加" groups="base.group_system"
+                                        <field name="purchase_amount_min_add_rest" readonly="1" string="最新可增加" invisible="1"
                                                attrs="{'column_invisible':[('parent.tb_id','=',False)]}"/>
                                         <field name="purchase_amount_min_add_rest_this_time" readonly="1"/>
                                         <field name="purchase_amount_min_add_rest_after"/>

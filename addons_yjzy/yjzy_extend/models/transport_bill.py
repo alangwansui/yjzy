@@ -1145,6 +1145,9 @@ class transport_bill(models.Model):
     all_purchase_invoice_ids = fields.One2many('account.invoice', 'bill_id',  u'所有采购发票',domain=[('yjzy_type', '=', 'purchase')])
     all_back_tax_invoice_ids = fields.One2many('account.invoice', 'bill_id', u'所有退税发票',
                                                domain=[('yjzy_type', '=', 'back_tax')])
+    all_back_tax_invoice_1_ids = fields.One2many('account.invoice', 'bill_id', u'所有退税发票',
+                                               domain=['|', ('yjzy_type', '=', 'back_tax'),
+                                                       ('yjzy_type_1', '=', 'back_tax')])
     sale_invoice_count = fields.Integer(u'销售发票数', compute=compute_info)
     purchase_invoice_count = fields.Integer(u'采购发票数', compute=compute_info)
     back_tax_invoice_count = fields.Integer(u'退税发票数', compute=compute_info)

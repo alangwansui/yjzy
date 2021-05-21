@@ -746,32 +746,71 @@ class tb_po_invoice(models.Model):
 
     @api.onchange('tb_id')
     def onchange_tb_id(self):
-        hsname_all_ids = self.tb_id.hsname_all_ids
         res = []
-        for line in hsname_all_ids:
-            res.append((0, 0, {
-                # akiny
-                # 'hs_id':line.hs_id.id,
-                # 'hs_en_name': line.hs_en_name,
-                # 'back_tax':line.back_tax,
-                # 'purchase_amount2_tax': line.purchase_amount2_tax,
-                # 'purchase_amount2_no_tax': line.purchase_amount2_no_tax,
-                # 'purchase_amount_max_add_forecast': line.purchase_amount_max_add_forecast,
-                # 'purchase_amount_min_add_forecast': line.purchase_amount_min_add_forecast,
-                # 'purchase_amount_max_add_rest': line.purchase_amount_max_add_rest,
-                # 'purchase_amount_min_add_rest': line.purchase_amount_min_add_rest,
-                'hsname_all_line_id': line.id
-            }))
-        yjzy_invoice_id = self.tb_id.purchase_invoice_ids.filtered(
-            lambda x: x.partner_id == self.partner_id)
-        self.hsname_all_ids = res
+        self.hsname_all_ids.unlink()
+        line_obj = self.env['tb.po.invoice.line']
+        # if self.tb_id:
+        #     hsname_all_ids = self.tb_id.hsname_all_ids
+        #     print('akiny_hsname_all_ids',hsname_all_ids)
+        #     ctx = {'default_tb_po_id': self.id}
+        #     for hsl in hsname_all_ids:
+        #         hsname_id = line_obj.with_context(ctx).create({
+        #             'tb_po_id': self.id,
+        #             'hs_id': hsl.hs_id.id,
+        #             'hs_en_name': hsl.hs_en_name,
+        #             'purchase_amount2_tax': hsl.purchase_amount2_tax,
+        #             'purchase_amount2_no_tax': hsl.purchase_amount2_no_tax,
+        #             'purchase_amount_max_add_forecast': hsl.purchase_amount_max_add_forecast,
+        #             'purchase_amount_min_add_forecast': hsl.purchase_amount_min_add_forecast,
+        #             'purchase_amount_max_add_rest': hsl.purchase_amount_max_add_rest,
+        #             'purchase_amount_min_add_rest': hsl.purchase_amount_min_add_rest,
+        #             'purchase_amount_min_add_rest_this_time': hsl.purchase_amount_min_add_rest,
+        #             'purchase_back_tax_amount2_new': hsl.purchase_back_tax_amount2_new,
+        #             'hsname_all_line_id': hsl.id,
+        #             'back_tax': hsl.back_tax
+        #         })
+        #         print('akiny_hsname_ids', hsname_id,self,ctx)
+        #
+        # else:
+        #     self.hsname_all_ids.unlink()
+        if self.tb_id:
+            hsname_all_ids = self.tb_id.hsname_all_ids
+            for line in hsname_all_ids:
+                res.append((0, 0, {
+                    # akiny
+                    # 'hs_id':line.hs_id.id,
+                    # 'hs_en_name': line.hs_en_name,
+                    # 'back_tax':line.back_tax,
+                    # 'purchase_amount2_tax': line.purchase_amount2_tax,
+                    # 'purchase_amount2_no_tax': line.purchase_amount2_no_tax,
+                    # 'purchase_amount_max_add_forecast': line.purchase_amount_max_add_forecast,
+                    # 'purchase_amount_min_add_forecast': line.purchase_amount_min_add_forecast,
+                    # 'purchase_amount_max_add_rest': line.purchase_amount_max_add_rest,
+                    # 'purchase_amount_min_add_rest': line.purchase_amount_min_add_rest,
+                    'hsname_all_line_id': line.id,
+                    'purchase_amount_min_add_rest_this_time':line.purchase_amount_min_add_rest
+                }))
 
-        self.invoice_product_id = self.env.ref('yjzy_extend.product_qtyfk').id
+            self.hsname_all_ids = res
+            # for x in self.hsname_all_ids:
+            #     x.purchase_amount_min_add_rest_this_time =  x.purchase_amount_min_add_rest
+            yjzy_invoice_id = self.tb_id.purchase_invoice_ids.filtered(
+                lambda x: x.partner_id == self.partner_id)
+            self.invoice_product_id = self.env.ref('yjzy_extend.product_qtyfk').id
 
-        ctx = self.env.context.get('default_yjzy_invoice_id')
-        print('ctx_oo', ctx)
-        if not ctx:
-            self.yjzy_invoice_id = yjzy_invoice_id and yjzy_invoice_id[0] or False
+            ctx = self.env.context.get('default_yjzy_invoice_id')
+            print('ctx_oo', ctx)
+            if not ctx:
+                self.yjzy_invoice_id = yjzy_invoice_id and yjzy_invoice_id[0] or False
+        else:
+            self.hsname_all_ids.unlink()
+
+    def write(self, vals):
+        res = super(tb_po_invoice, self).write(vals)
+        for x in self.hsname_all_ids:
+            if x.purchase_amount_min_add_rest_this_time == 0 and x.purchase_amount_min_add_rest != 0:
+                x.purchase_amount_min_add_rest_this_time = x.purchase_amount_min_add_rest
+        return res
 
     @api.onchange('partner_id')
     def onchange_partner_id(self):
@@ -1857,7 +1896,7 @@ class tb_po_invoice_line(models.Model):
     purchase_amount_max_add_rest = fields.Float('采购池(下限)', digits=(2, 2),
                                                 related='hsname_all_line_id.purchase_amount_max_add_rest')
     purchase_amount_min_add_rest = fields.Float('采购池(上限)', digits=(2, 2),
-                                                related='hsname_all_line_id.purchase_amount_min_add_rest')
+                                                related='hsname_all_line_id.purchase_amount_min_add_rest',store=True)
     purchase_amount_min_add_rest_this_time = fields.Float('审批前本次可增加', digits=(2, 2))
     purchase_amount_min_add_rest_after = fields.Float('审批后本次可增加', digits=(2, 2), compute=compute_rest_after)
     purchase_amount2_add_actual = fields.Float(U'实际已经增加采购额', related='hsname_all_line_id.purchase_amount2_add_actual')

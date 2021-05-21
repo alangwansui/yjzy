@@ -14,8 +14,8 @@
                     </group>
                     <group >
                         <field name="invoice_ids" nolabel="1" options="{'no_create': True,'no_open':True}"
-                               context="{'search_default_group_by_invoice_attribute_all_in_one':1}"
-                               domain="[('id','not in',have_invoice_ids),('state', 'in',['open']),('df_id','=',False),'|',('yjzy_type', '=', 'back_tax'),('yjzy_type_1', '=', 'back_tax')]"/>
+                               context="{'search_default_group_by_bill_id':1,'tree_view_ref':'yjzy_extend.view_account_invoice_back_tax_tree'}"
+                               domain="[('id','not in',have_invoice_ids),('state', 'in',['open']),('back_tax_declaration_state','!=','20'),'|',('yjzy_type', '=', 'back_tax'),('yjzy_type_1', '=', 'back_tax')]"/>
 
 
                     </group>

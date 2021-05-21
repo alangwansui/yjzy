@@ -11,13 +11,14 @@ class transport_bill(models.Model):
     def _compute_overall_profit(self):
         for one in self:
             hsname_all_ids = one.hsname_all_ids
-            all_back_tax_invoice_ids = one.all_back_tax_invoice_ids.filtered(lambda x: x.yjzy_type_1 =='back_tax' and x.invoice_attribute == 'other_po')
-            print('hsname_all_ids_akiny',hsname_all_ids)
+            all_back_tax_invoice_ids = one.all_back_tax_invoice_ids.filtered(
+                lambda x: x.yjzy_type_1 == 'back_tax' and x.invoice_attribute == 'other_po')
+            print('hsname_all_ids_akiny', hsname_all_ids)
             purchase_amount_max_forecast_total = sum(x.purchase_amount_max_forecast for x in hsname_all_ids)
             purchase_amount_min_forecast_total = sum(x.purchase_amount_min_forecast for x in hsname_all_ids)
-            print('hsname_all_ids_akiny', hsname_all_ids,purchase_amount_min_forecast_total)
+            print('hsname_all_ids_akiny', hsname_all_ids, purchase_amount_min_forecast_total)
             for x in one.hsname_all_ids:
-                print('hsname_all_ids_akiny',x.id, x.purchase_amount_min_forecast)
+                print('hsname_all_ids_akiny', x.id, x.purchase_amount_min_forecast)
             purchase_amount_max_add_forecast_total = sum(x.purchase_amount_max_add_forecast for x in hsname_all_ids)
 
             purchase_amount2_tax_total = sum(x.purchase_amount2_tax for x in hsname_all_ids)
@@ -39,7 +40,7 @@ class transport_bill(models.Model):
             # one.purchase_back_tax_amount2_new_new_total = purchase_back_tax_amount2_new_new_total
             # one.purchase_back_tax_amount2_rest_total = purchase_back_tax_amount2_rest_total
 
-    @api.depends('hsname_all_ids','hsname_all_ids.purchase_amount_min_add_forecast')
+    @api.depends('hsname_all_ids', 'hsname_all_ids.purchase_amount_min_add_forecast')
     def compute_purchase_amount_min_add_forecast_total(self):
         for one in self:
             hsname_all_ids = one.hsname_all_ids
@@ -50,36 +51,46 @@ class transport_bill(models.Model):
         for one in self:
             one.tb_po_invoice_ids_count = len(one.tb_po_invoice_ids)
 
-
     comb_ids = fields.One2many('tbl.comb', 'tb_id', u'bom分解组合')
     hsname_ids = fields.One2many('tbl.hsname', 'tb_id', u'HS统计')
 
-    hsname_all_ids = fields.One2many('tbl.hsname.all', 'tb_id', u'报关明细.')#816
+    hsname_all_ids = fields.One2many('tbl.hsname.all', 'tb_id', u'报关明细.')  # 816
 
     sale_collect_state = fields.Selection([('draft', u'未统计'), ('done', u'已统计')], string=u'销售统计', default='draft')
-    tb_po_invoice_ids = fields.One2many('tb.po.invoice','tb_id','增加采购申请单')
-    tb_po_invoice_ids_count = fields.Integer('增加采购申请单数量',compute=compute_tb_po_invoice_ids_count)
+    tb_po_invoice_ids = fields.One2many('tb.po.invoice', 'tb_id', '增加采购申请单')
+    tb_po_invoice_ids_count = fields.Integer('增加采购申请单数量', compute=compute_tb_po_invoice_ids_count)
 
-    invoice_purchase_po_draft_ids = fields.One2many('account.invoice','bill_id',domain=[('yjzy_type_1','=','purchase'),('invoice_attribute','=','other_po'),('state','not in',['open','paid'])])
-    invoice_purchase_po_done_ids = fields.One2many('account.invoice', 'bill_id', domain=[('yjzy_type_1', '=', 'purchase'), (
-    'invoice_attribute', '=', 'other_po'), ('state', 'in', ['open', 'paid'])])
-    invoice_back_tax_po_draft_ids = fields.One2many('account.invoice', 'bill_id', domain=[('yjzy_type_1', '=', 'back_tax'), (
-    'invoice_attribute', '=', 'other_po'), ('state', 'not in', ['open', 'paid'])])
-    invoice_back_tax_po_done_ids = fields.One2many('account.invoice', 'bill_id', domain=[('yjzy_type_1', '=', 'back_tax'), (
-        'invoice_attribute', '=', 'other_po'), ('state', 'in', ['open', 'paid'])])
-    invoice_sale_po_draft_ids = fields.One2many('account.invoice', 'bill_id',
-                                                    domain=[('yjzy_type_1', '=', 'sale'),
+    invoice_purchase_po_draft_ids = fields.One2many('account.invoice', 'bill_id',
+                                                    domain=[('yjzy_type_1', '=', 'purchase'),
                                                             ('invoice_attribute', '=', 'other_po'),
                                                             ('state', 'not in', ['open', 'paid'])])
-    invoice_sale_po_done_ids = fields.One2many('account.invoice', 'bill_id',
-                                                   domain=[('yjzy_type_1', '=', 'sale'), (
+    invoice_purchase_po_done_ids = fields.One2many('account.invoice', 'bill_id',
+                                                   domain=[('yjzy_type_1', '=', 'purchase'), (
                                                        'invoice_attribute', '=', 'other_po'),
                                                            ('state', 'in', ['open', 'paid'])])
+    invoice_back_tax_po_draft_ids = fields.One2many('account.invoice', 'bill_id',
+                                                    domain=[('yjzy_type_1', '=', 'back_tax'), (
+                                                        'invoice_attribute', '=', 'other_po'),
+                                                            ('state', 'not in', ['open', 'paid'])])
+    invoice_back_tax_po_done_ids = fields.One2many('account.invoice', 'bill_id',
+                                                   domain=[('yjzy_type_1', '=', 'back_tax'), (
+                                                       'invoice_attribute', '=', 'other_po'),
+                                                           ('state', 'in', ['open', 'paid'])])
+    invoice_sale_po_draft_ids = fields.One2many('account.invoice', 'bill_id',
+                                                domain=[('yjzy_type_1', '=', 'sale'),
+                                                        ('invoice_attribute', '=', 'other_po'),
+                                                        ('state', 'not in', ['open', 'paid'])])
+    invoice_sale_po_done_ids = fields.One2many('account.invoice', 'bill_id',
+                                               domain=[('yjzy_type_1', '=', 'sale'), (
+                                                   'invoice_attribute', '=', 'other_po'),
+                                                       ('state', 'in', ['open', 'paid'])])
 
     purchase_amount_max_forecast_total = fields.Float('预测采购金额(下限)', digits=(2, 2), compute=_compute_overall_profit)
     purchase_amount_min_forecast_total = fields.Float('预测采购金额(上限)', digits=(2, 2), compute=_compute_overall_profit)
     purchase_amount_max_add_forecast_total = fields.Float('可增加采购额(下限)', digits=(2, 2), compute=_compute_overall_profit)
-    purchase_amount_min_add_forecast_total = fields.Float('可增加采购额(上限)', digits=(2, 2), compute=compute_purchase_amount_min_add_forecast_total,store=True)
+    purchase_amount_min_add_forecast_total = fields.Float('可增加采购额(上限)', digits=(2, 2),
+                                                          compute=compute_purchase_amount_min_add_forecast_total,
+                                                          store=True)
     purchase_amount_max_add_rest_total = fields.Float('采购池(下限)', digits=(2, 2), compute=_compute_overall_profit)
     purchase_amount_min_add_rest_total = fields.Float('采购池(上限)', digits=(2, 2), compute=_compute_overall_profit)
 
@@ -87,11 +98,12 @@ class transport_bill(models.Model):
     purchase_amount2_no_tax_total = fields.Float(u'不含税采购金额', compute=_compute_overall_profit)
     purchase_amount2_add_actual_total = fields.Float(U'实际已经增加采购额', compute=_compute_overall_profit)
 
-    back_tax_declaration_state = fields.Selection([('10','未申报'),('15','部分申报'),('20','已申报')],'退税申报状态',related='back_tax_invoice_id.back_tax_declaration_state')
+    back_tax_declaration_state = fields.Selection([('10', '未申报'), ('15', '部分申报'), ('20', '已申报')], '退税申报状态',
+                                                  related='back_tax_invoice_id.back_tax_declaration_state')
+
     # purchase_back_tax_amount2_new_new_total = fields.Float(U'新增退税总金额', compute=_compute_overall_profit)
     # purchase_back_tax_amount2_rest_total = fields.Float(U'可开票退税金额', compute=_compute_overall_profit)
     # 817
-
 
     def open_wizard_tb_po_invoice_1(self):
         self.ensure_one()
@@ -109,14 +121,17 @@ class transport_bill(models.Model):
             'target': 'new',
             'context': ctx,
         }
-    #817定稿
+
+    # 817定稿
     def open_wizard_tb_po_invoice(self):
         self.ensure_one()
         purchase_invoice_ids = self.purchase_invoice_ids and self.purchase_invoice_ids[0]
         wizard = self.env['wizard.tb.po.invoice'].create({'tb_id': self.id,
                                                           # 'partner_id':self.purchase_invoice_ids[0] and self.purchase_invoice_ids[0].id or False,
-                                                          'invoice_product_id': self.env.ref('yjzy_extend.product_qtyfk').id, #0821
-                                                          'type':'other_po'
+                                                          'invoice_product_id': self.env.ref(
+                                                              'yjzy_extend.product_qtyfk').id,
+                                                          # 0821
+                                                          'type': 'other_po'
                                                           # 'back_tax_amount':self.purchase_back_tax_amount2_rest_total
                                                           })
         view = self.env.ref('yjzy_extend.wizard_tb_po_form')
@@ -124,16 +139,16 @@ class transport_bill(models.Model):
         for hsl in self.hsname_all_ids:
             line_obj.create({
                 'wizard_id': wizard.id,
-                'hs_id':hsl.hs_id.id,
-                'hs_en_name':hsl.hs_en_name,
-                'purchase_amount2_tax':hsl.purchase_amount2_tax,
-                'purchase_amount2_no_tax':hsl.purchase_amount2_no_tax,
-                'purchase_amount_max_add_forecast':hsl.purchase_amount_max_add_forecast,
-                'purchase_amount_min_add_forecast':hsl.purchase_amount_min_add_forecast,
-                'purchase_amount_max_add_rest':hsl.purchase_amount_max_add_rest,
-                'purchase_amount_min_add_rest':hsl.purchase_amount_min_add_rest,
+                'hs_id': hsl.hs_id.id,
+                'hs_en_name': hsl.hs_en_name,
+                'purchase_amount2_tax': hsl.purchase_amount2_tax,
+                'purchase_amount2_no_tax': hsl.purchase_amount2_no_tax,
+                'purchase_amount_max_add_forecast': hsl.purchase_amount_max_add_forecast,
+                'purchase_amount_min_add_forecast': hsl.purchase_amount_min_add_forecast,
+                'purchase_amount_max_add_rest': hsl.purchase_amount_max_add_rest,
+                'purchase_amount_min_add_rest': hsl.purchase_amount_min_add_rest,
                 'hsname_all_line_id': hsl.id,
-                'back_tax':hsl.back_tax
+                'back_tax': hsl.back_tax
             })
 
         return {
@@ -145,13 +160,13 @@ class transport_bill(models.Model):
             'view_id': view.id,
             'target': 'new',
             'res_id': wizard.id,
-            'context': {'other_po':1,
-                        'expense_po':0},
+            'context': {'other_po': 1,
+                        'expense_po': 0},
         }
 
     def open_tb_po_invoice(self):
         self.ensure_one()
-        hs_dic={}
+        hs_dic = {}
         view = self.env.ref('yjzy_extend.tb_po_form')
         return {
             'type': 'ir.actions.act_window',
@@ -160,10 +175,10 @@ class transport_bill(models.Model):
             'views': [(view.id, 'form')],
             'target': 'current',
             # 'res_id': self.id,
-             'context': {'other_po':1,
-                        'expense_po':0,
-                         # 'default_tb_id':self.id,
-                         'default_type':'other_po','default_yjzy_type_1':'purchase','min_add':1},
+            'context': {'other_po': 1,
+                        'expense_po': 0,
+                        # 'default_tb_id':self.id,
+                        'default_type': 'other_po', 'default_yjzy_type_1': 'purchase', 'min_add': 1},
         }
 
     def open_tb_po_invoice_list(self):
@@ -178,23 +193,24 @@ class transport_bill(models.Model):
             'type': 'ir.actions.act_window',
             'target': 'current',
             'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
-            'context':{'search_default_group_by_state':1,},
+            'context': {'search_default_group_by_state': 1, },
             'domain': [('tb_id', '=', self.id)]
         }
 
     def create_tb_po_invoice(self):
         self.ensure_one()
         for one in self.tb_po_invoice_ids:
-            if one.state not in ['30_done']:
+            if one.state not in ['30_done'] and type == 'other_po':
                 raise Warning('存在未完成审批的增加采购申请单，请先等待完成审批后，再进行创建')
         bill_id = self.id
         tb_po_id = self.env['tb.po.invoice'].create({'tb_id': bill_id,
-                                                    'invoice_product_id': self.env.ref('yjzy_extend.product_qtyfk').id, #0821
-                                                    'type':'other_po',
-                                                     'yjzy_type_1':'purchase',
-                                                     'type_invoice':'in_invoice',
-                                                     'is_tb_hs_id':True,
-                                                    })
+                                                     'invoice_product_id': self.env.ref('yjzy_extend.product_qtyfk').id,
+                                                     # 0821
+                                                     'type': 'other_po',
+                                                     'yjzy_type_1': 'purchase',
+                                                     'type_invoice': 'in_invoice',
+                                                     'is_tb_hs_id': True,
+                                                     })
 
         view = self.env.ref('yjzy_extend.tb_po_form')
         line_obj = self.env['tb.po.invoice.line']
@@ -210,7 +226,7 @@ class transport_bill(models.Model):
                 'purchase_amount_min_add_forecast': hsl.purchase_amount_min_add_forecast,
                 'purchase_amount_max_add_rest': hsl.purchase_amount_max_add_rest,
                 'purchase_amount_min_add_rest': hsl.purchase_amount_min_add_rest,
-                'purchase_amount_min_add_rest_this_time':hsl.purchase_amount_min_add_rest,
+                'purchase_amount_min_add_rest_this_time': hsl.purchase_amount_min_add_rest,
                 'purchase_back_tax_amount2_new': hsl.purchase_back_tax_amount2_new,
                 'hsname_all_line_id': hsl.id,
                 'back_tax': hsl.back_tax
@@ -225,9 +241,10 @@ class transport_bill(models.Model):
             'target': 'current',
             'res_id': tb_po_id.id,
             # 'context': { },
-            'flag':{'initial_mode': 'edit',
-                    }
+            'flag': {'initial_mode': 'edit',
+                     }
         }
+
     # 816 定稿 合并
     def create_hsname_all_ids(self):
         self.ensure_one()
@@ -241,7 +258,7 @@ class transport_bill(models.Model):
             purchase_amount2 = i.purchase_amount2
             out_qty2 = i.out_qty2
             hs_id = i.hs_id
-            is_po_include_tax= i.is_po_include_tax
+            is_po_include_tax = i.is_po_include_tax
             back_tax = i.back_tax
 
             purchase_back_tax_amount2_new = i.purchase_back_tax_amount2_new
@@ -256,7 +273,6 @@ class transport_bill(models.Model):
 
             k = hs_id.id
 
-
             if k in hs_dic:
                 hs_dic[k]['out_qty2'] += out_qty2
                 hs_dic[k]['amount2'] += amount2
@@ -269,40 +285,37 @@ class transport_bill(models.Model):
             else:
                 hs_dic[k] = {'out_qty2': out_qty2,
                              'amount2': amount2,
-                             'purchase_amount2':purchase_amount2,
-                             'back_tax':back_tax,
-                             'purchase_back_tax_amount2_new':purchase_back_tax_amount2_new,
-                             'purchase_amount2_tax':purchase_amount2_tax,
+                             'purchase_amount2': purchase_amount2,
+                             'back_tax': back_tax,
+                             'purchase_back_tax_amount2_new': purchase_back_tax_amount2_new,
+                             'purchase_amount2_tax': purchase_amount2_tax,
                              'purchase_amount2_no_tax': purchase_amount2_no_tax,
                              # 'purchase_amount_max_add_forecast':purchase_amount_max_add_forecast,
                              # 'purchase_amount_min_add_forecast':purchase_amount_min_add_forecast,
                              'hs_id': hs_id.id,
-                             'overall_profit_max':overall_profit_max,
-                             'overall_profit_min':overall_profit_min,
-                             'is_po_include_tax':is_po_include_tax}
+                             'overall_profit_max': overall_profit_max,
+                             'overall_profit_min': overall_profit_min,
+                             'is_po_include_tax': is_po_include_tax}
         for kk, data in list(hs_dic.items()):
             line = hsname_all_obj.create({
                 'tb_id': self.id,
                 'hs_id': data['hs_id'],
                 'out_qty2': data['out_qty2'],
                 'amount2': data['amount2'],
-                'back_tax':data['back_tax'],
-                'purchase_amount2':data['purchase_amount2'],
+                'back_tax': data['back_tax'],
+                'purchase_amount2': data['purchase_amount2'],
                 'purchase_back_tax_amount2_new': data['purchase_back_tax_amount2_new'],
                 'purchase_amount2_tax': data['purchase_amount2_tax'],
                 'purchase_amount2_no_tax': data['purchase_amount2_no_tax'],
                 # 'purchase_amount_max_add_forecast': data['purchase_amount_max_add_forecast'],
                 # 'purchase_amount_min_add_forecast': data['purchase_amount_min_add_forecast'],
-                'overall_profit_max':data['overall_profit_max'],
-                'overall_profit_min':data['overall_profit_min'],
-                'is_po_include_tax':data['is_po_include_tax'],
+                'overall_profit_max': data['overall_profit_max'],
+                'overall_profit_min': data['overall_profit_min'],
+                'is_po_include_tax': data['is_po_include_tax'],
 
                 'price': data['amount2'] / (data['out_qty2'] or 1),
             })
             # print('>>', line)
-
-
-
 
     def test_get_package_tag(self):
         res = self.get_package_tag()
@@ -367,7 +380,8 @@ class transport_bill(models.Model):
                         if bom_dic[bom]['bom_qty'] != sol.bom_qty * plan_percent:
                             raise Warning(u'bom销售数量不一致，请确认')
                     else:
-                        bom_dic[bom] = {'tblines': line, 'bom_qty': sol.bom_qty * plan_percent, 'po_id': po_id, 'so_id': so.id}
+                        bom_dic[bom] = {'tblines': line, 'bom_qty': sol.bom_qty * plan_percent, 'po_id': po_id,
+                                        'so_id': so.id}
 
                 # 需要拆分的
                 elif sol.need_split_bom:
@@ -433,7 +447,8 @@ class transport_bill(models.Model):
             key_name = '%s:%s' % (hs.id, one.po_id.id)
             # print('====make_tbl_hsname====', hs)
             if key_name not in hs_dic:
-                hs_dic[key_name] = {'dump_product': one.product_id, 'comb_lines': one, 'out_qty': one.out_qty, 'hs_id': hs.id, 'po_id': one.po_id.id}
+                hs_dic[key_name] = {'dump_product': one.product_id, 'comb_lines': one, 'out_qty': one.out_qty,
+                                    'hs_id': hs.id, 'po_id': one.po_id.id}
             else:
                 hs_dic[key_name]['comb_lines'] |= one
                 hs_dic[key_name]['out_qty'] += one.out_qty
@@ -460,8 +475,8 @@ class tbl_comb(models.Model):
     _name = 'tbl.comb'
     _description = u'发运单明细的bom分解组合'
 
-    tbl_id = fields.Many2one('transport.bill.line', u'发运明细',ondelete='cascade')
-    tb_id = fields.Many2one('transport.bill', u'发运',ondelete='cascade')
+    tbl_id = fields.Many2one('transport.bill.line', u'发运明细', ondelete='cascade')
+    tb_id = fields.Many2one('transport.bill', u'发运', ondelete='cascade')
     product_id = fields.Many2one('product.product', u'产品')
     hs_id = fields.Many2one('hs.hs', u'HS', related='product_id.hs_id')
     out_qty = fields.Float('发运数量')
@@ -516,35 +531,38 @@ class tbl_hsname(models.Model):
         for one in self:
             one.shiji_weight = one.gross_weight + one.tuopan_weight
             one.shiji_volume = one.volume + one.tuopan_volume
-    #814  后面要结合采购报关金额来处理
 
-    @api.depends('amount2','tb_id','tb_id.current_date_rate','purchase_hs_id','purchase_hs_id.amount','hs_id','hs_id.back_tax','is_po_include_tax')
+    # 814  后面要结合采购报关金额来处理
+
+    @api.depends('amount2', 'tb_id', 'tb_id.current_date_rate', 'purchase_hs_id', 'purchase_hs_id.amount', 'hs_id',
+                 'hs_id.back_tax', 'is_po_include_tax')
     def _get_overall_profit(self):
         for one in self:
-            overall_profit_max = float(self.env['ir.config_parameter'].sudo().get_param('addons_yjzy.overall_profit_max'))
-            overall_profit_min = float(self.env['ir.config_parameter'].sudo().get_param('addons_yjzy.overall_profit_min'))
+            overall_profit_max = float(
+                self.env['ir.config_parameter'].sudo().get_param('addons_yjzy.overall_profit_max'))
+            overall_profit_min = float(
+                self.env['ir.config_parameter'].sudo().get_param('addons_yjzy.overall_profit_min'))
             declare_amount = one.amount2
             current_date_rate = one.tb_id.current_date_rate
             purchase_amount = one.purchase_amount
             back_tax = one.back_tax
-            purchase_amount_max_forecast = (1 - overall_profit_max) * declare_amount * current_date_rate * 1.13 / (1.13 - back_tax)
-            purchase_amount_min_forecast = (1 - overall_profit_min) * declare_amount * current_date_rate * 1.13 / (1.13 - back_tax)
+            purchase_amount_max_forecast = (1 - overall_profit_max) * declare_amount * current_date_rate * 1.13 / (
+                    1.13 - back_tax)
+            purchase_amount_min_forecast = (1 - overall_profit_min) * declare_amount * current_date_rate * 1.13 / (
+                    1.13 - back_tax)
             if one.is_po_include_tax:
                 purchase_amount_max_add_forecast = purchase_amount_max_forecast - purchase_amount
                 purchase_amount_min_add_forecast = purchase_amount_min_forecast - purchase_amount
             else:
                 purchase_amount_max_add_forecast = purchase_amount_max_forecast
                 purchase_amount_min_add_forecast = purchase_amount_min_forecast
-            print('overall_profit',overall_profit_max,overall_profit_min,purchase_amount_max_forecast)
+            print('overall_profit', overall_profit_max, overall_profit_min, purchase_amount_max_forecast)
             one.overall_profit_max = overall_profit_max
             one.overall_profit_min = overall_profit_min
             one.purchase_amount_max_forecast = purchase_amount_max_forecast
             one.purchase_amount_min_forecast = purchase_amount_min_forecast
             one.purchase_amount_max_add_forecast = purchase_amount_max_add_forecast
             one.purchase_amount_min_add_forecast = purchase_amount_min_add_forecast
-
-
-
 
     @api.depends('amount2')
     def compute_purchase_amount(self):
@@ -556,22 +574,24 @@ class tbl_hsname(models.Model):
                 one.purchase_amount2_tax = 0.0
                 one.purchase_amount2_no_tax = one.purchase_amount2
 
-    #820
+    # 820
     # tax_change = fields.Selection([('no_tax_to_tax','未税转含税'),('tax_to_no_tax','含税转未税')],'含税状态变化')
 
-    #816
+    # 816
 
     # invoice_hs_line_ids = fields.One2many('invoice.hs_name.item','tb_hsname_line_id', '报关开票明细') #817
 
-
-    #akiny新增 814
-    is_po_include_tax = fields.Boolean(u'采购是否含税',related='po_id.include_tax', readonly=False)
-    overall_profit_max = fields.Float('综合利润率(下限)', digits=(2, 2),compute=_get_overall_profit)#default=lambda self:self.env['ir.config_parameter'].sudo().get_param('addons_yjzy.overall_profit_max')
-    overall_profit_min = fields.Float('综合利润率(上限)', digits=(2, 2),compute=_get_overall_profit)#default=lambda self:self.env['ir.config_parameter'].sudo().get_param('addons_yjzy.overall_profit_min')
-    purchase_amount_max_forecast = fields.Float('预测采购金额(下限)', digits=(2, 2),compute=_get_overall_profit)
+    # akiny新增 814
+    is_po_include_tax = fields.Boolean(u'采购是否含税', related='po_id.include_tax', readonly=False)
+    overall_profit_max = fields.Float('综合利润率(下限)', digits=(2, 2),
+                                      compute=_get_overall_profit)  # default=lambda self:self.env['ir.config_parameter'].sudo().get_param('addons_yjzy.overall_profit_max')
+    overall_profit_min = fields.Float('综合利润率(上限)', digits=(2, 2),
+                                      compute=_get_overall_profit)  # default=lambda self:self.env['ir.config_parameter'].sudo().get_param('addons_yjzy.overall_profit_min')
+    purchase_amount_max_forecast = fields.Float('预测采购金额(下限)', digits=(2, 2), compute=_get_overall_profit)
     purchase_amount_min_forecast = fields.Float('预测采购金额(上限)', digits=(2, 2), compute=_get_overall_profit)
     purchase_amount_max_add_forecast = fields.Float('可增加采购额(下限)', digits=(2, 2), compute=_get_overall_profit)
-    purchase_amount_min_add_forecast = fields.Float('可增加采购额(上限)', digits=(2, 2), compute=_get_overall_profit, store=True)
+    purchase_amount_min_add_forecast = fields.Float('可增加采购额(上限)', digits=(2, 2), compute=_get_overall_profit,
+                                                    store=True)
     purchase_amount2_tax = fields.Float(u'含税采购金额', compute=compute_purchase_amount)
     purchase_amount2_no_tax = fields.Float(u'不含税采购金额', compute=compute_purchase_amount)
 
@@ -619,18 +639,11 @@ class tbl_hsname(models.Model):
     # 销售hs统计同步采购hs统计
     purchase_hs_id = fields.Many2one('btls.hs', '采购HS统计')
     purchase_amount = fields.Float('采购金额', related="purchase_hs_id.amount")
-    purchase_amount2 = fields.Float('采购金额', related="purchase_hs_id.amount2") #814需要优化
-    purchase_back_tax_amount2 = fields.Float(u'报关退税金额',related="purchase_hs_id.back_tax_amount2")
-    purchase_back_tax_amount2_new = fields.Float(u'报关退税金额：新',related="purchase_hs_id.back_tax_amount2_new")
+    purchase_amount2 = fields.Float('采购金额', related="purchase_hs_id.amount2")  # 814需要优化
+    purchase_back_tax_amount2 = fields.Float(u'报关退税金额', related="purchase_hs_id.back_tax_amount2")
+    purchase_back_tax_amount2_new = fields.Float(u'报关退税金额：新', related="purchase_hs_id.back_tax_amount2_new")
 
-
-
-
-
-
-
-
-    #可以删除
+    # 可以删除
     # def open_wizard_tb_po_invoice(self):
     #     self.ensure_one()
     #     wizard = self.env['wizard.tb.po.invoice'].create({'hsmane_id': self.id})
@@ -646,7 +659,6 @@ class tbl_hsname(models.Model):
     #
     #     }
 
-
     def open_form_view(self):
 
         return {
@@ -659,7 +671,6 @@ class tbl_hsname(models.Model):
             'target': 'new',
         }
 
-
     @api.multi
     def write(self, vals):
         res = super(tbl_hsname, self).write(vals)
@@ -667,7 +678,6 @@ class tbl_hsname(models.Model):
         if need:
             self.sync_purhcse_hs()
         return res
-
 
     def sync_purhcse_hs(self):
         for one in self:
@@ -679,9 +689,8 @@ class tbl_hsname(models.Model):
                 purchase_hs.qty2 = one.out_qty2
                 purchase_hs.po_id = one.po_id
                 purchase_hs.supplier_id = one.po_id.partner_id.id,
-               # purchase_hs.amount = one.amount
-               #  purchase_hs.amount2 = one.amount2
-
+            # purchase_hs.amount = one.amount
+            #  purchase_hs.amount2 = one.amount2
 
     @api.onchange('hs_id')
     def onchange_hs(self):
@@ -715,24 +724,29 @@ class tbl_hsname(models.Model):
             self.purchase_hs_id = suppliser_hs_record
             self.sync_purhcse_hs()
 
-#816
+
+# 816
 class tbl_hsname_all(models.Model):
     _name = 'tbl.hsname.all'
     _description = u'合并后报关明细'
-    # _rec_name = 'name'
 
+    # _rec_name = 'name'
+    @api.depends('inv_hs_name_line_ids', 'inv_hs_name_line_ids.invoice_id.yjzy_type_1',
+                 'inv_hs_name_line_ids.invoice_id', 'inv_hs_name_line_ids.purchase_amount2_add_this_time',
+                 'inv_hs_name_line_ids.back_tax_add_this_time', 'inv_hs_name_line_ids.p_s_add_this_time',
+                 'purchase_amount2_tax', 'overall_profit_max', 'overall_profit_min', 'amount2','tb_id','tb_id.current_date_rate','back_tax')
     def compute_info(self):
         for one in self:
-            inv_hs_name_line_po_ids = one.inv_hs_name_line_ids.filtered(lambda x: x.invoice_id.yjzy_type_1 == 'purchase')
+            inv_hs_name_line_po_ids = one.inv_hs_name_line_ids.filtered(
+                lambda x: x.invoice_id.yjzy_type_1 == 'purchase')
             # inv_hs_name_line_back_tax_ids = one.inv_hs_name_line_ids.filtered(lambda x: x.invoice_id.yjzy_type_1 == 'back_tax')
             # inv_hs_name_line_sale_ids = one.inv_hs_name_line_ids.filtered(
             #     lambda x: x.invoice_id.yjzy_type_1 == 'sale')
             purchase_amount2_add_actual = sum(x.purchase_amount2_add_this_time for x in inv_hs_name_line_po_ids)
             back_tax_add_actual = sum(x.back_tax_add_this_time for x in inv_hs_name_line_po_ids)
             p_s_add_actual = sum(x.p_s_add_this_time for x in inv_hs_name_line_po_ids)
-            #purchase_back_tax_amount2_actual = purchase_amount2_add_actual / 1.13 * one.back_tax
+            # purchase_back_tax_amount2_actual = purchase_amount2_add_actual / 1.13 * one.back_tax
             purchase_amount2_tax = one.purchase_amount2_tax
-
 
             # purchase_amount_max_add_forecast = one.purchase_amount_max_add_forecast
             # purchase_amount_min_add_forecast = one.purchase_amount_min_add_forecast
@@ -742,17 +756,18 @@ class tbl_hsname_all(models.Model):
             declare_amount = one.amount2
             current_date_rate = one.tb_id.current_date_rate
             back_tax = one.back_tax
-            purchase_amount_max_forecast = (1 - overall_profit_max) * declare_amount * current_date_rate * 1.13 / (1.13 - back_tax)
-            purchase_amount_min_forecast = (1 - overall_profit_min) * declare_amount * current_date_rate * 1.13 / (1.13 - back_tax)
+            purchase_amount_max_forecast = (1 - overall_profit_max) * declare_amount * current_date_rate * 1.13 / (
+                    1.13 - back_tax)
+            purchase_amount_min_forecast = (1 - overall_profit_min) * declare_amount * current_date_rate * 1.13 / (
+                    1.13 - back_tax)
             purchase_amount2 = one.purchase_amount2
-
 
             # if one.is_po_include_tax:
             #     # purchase_amount2_tax = purchase_amount2
             #     # purchase_amount2_no_tax = 0.0
             purchase_amount_max_add_forecast = purchase_amount_max_forecast - purchase_amount2_tax
             purchase_amount_min_add_forecast = purchase_amount_min_forecast - purchase_amount2_tax
-            #back_tax_amount_new_new = one.purchase_amount2 / 1.13 * one.back_tax - back_tax_amount_new #总的实际的应该另外创建的退税金额
+            # back_tax_amount_new_new = one.purchase_amount2 / 1.13 * one.back_tax - back_tax_amount_new #总的实际的应该另外创建的退税金额
             #
             # else:
             #     # purchase_amount2_tax = 0.0
@@ -779,14 +794,14 @@ class tbl_hsname_all(models.Model):
             # one.purchase_back_tax_amount2_new_new = back_tax_amount_new_new
             # one.purchase_back_tax_amount2_rest = back_tax_amount_new_new - purchase_back_tax_amount2_actual
 
-    #817
+    # 817
     tb_id = fields.Many2one('transport.bill', u'出运单', ondelete='cascade')
     hs_id = fields.Many2one('hs.hs', u'品名')
-    inv_hs_name_line_ids = fields.One2many('invoice.hs_name.all','tbl_hsname_all_id','发票对应明细') #关联发票的报关汇总明细
+    inv_hs_name_line_ids = fields.One2many('invoice.hs_name.all', 'tbl_hsname_all_id', '发票对应明细')  # 关联发票的报关汇总明细
     purchase_amount2_add_actual = fields.Float(U'实际已经增加采购额', compute=compute_info)
     back_tax_add_actual = fields.Float(U'实际已经增加退税', compute=compute_info)
     p_s_add_actual = fields.Float(U'实际已经增加应收', compute=compute_info)
-    plan_invoice_auto_total = fields.Float(u'应收采购发票金额',compute=compute_info)
+    plan_invoice_auto_total = fields.Float(u'应收采购发票金额', compute=compute_info)
 
     hs_en_name = fields.Char(related='hs_id.en_name')
     # akinyback
@@ -795,36 +810,33 @@ class tbl_hsname_all(models.Model):
 
     hs_id2 = fields.Many2one('hs.hs', u'报关品名')
     out_qty2 = fields.Float('报关数量')
-    price2 = fields.Float('报关价格',)
+    price2 = fields.Float('报关价格', )
     amount2 = fields.Float('报关金额', digits=dp.get_precision('Money'))
-
 
     suppliser_hs_amount = fields.Float('采购HS统计金额')
 
     # 销售hs统计同步采购hs统计
     purchase_amount2 = fields.Float('采购金额')  # 814需要优化
     purchase_back_tax_amount2 = fields.Float(u'报关退税税金额')
-    purchase_back_tax_amount2_new = fields.Float(u'原始退税金额')#根据是否含税来进行计算
+    purchase_back_tax_amount2_new = fields.Float(u'原始退税金额')  # 根据是否含税来进行计算
     # purchase_back_tax_amount2_new_new = fields.Float(u'预计退税总金额',compute=compute_info)#根据是否含税来进行计算
     purchase_amount2_tax = fields.Float(u'含税采购额')
     purchase_amount2_no_tax = fields.Float(u'不含税采购额')
-
 
     purchase_amount2_add_this_time = fields.Float(U'本次采购开票金额')
 
     is_po_include_tax = fields.Boolean(u'采购是否含税')
 
-
     overall_profit_max = fields.Float('综合利润率(下限)', digits=(2, 2)
                                       )  # default=lambda self:self.env['ir.config_parameter'].sudo().get_param('addons_yjzy.overall_profit_max')
     overall_profit_min = fields.Float('综合利润率(上限)', digits=(2, 2)
                                       )  # default=lambda self:self.env['ir.config_parameter'].sudo().get_param('addons_yjzy.overall_profit_min')
-    purchase_amount_max_forecast = fields.Float('预测采购额(下限)', digits=(2, 2),compute=compute_info)
-    purchase_amount_min_forecast = fields.Float('预测采购额(上限)', digits=(2, 2),compute=compute_info)
-    purchase_amount_max_add_forecast = fields.Float('可增加采购额(下限)', digits=(2, 2),compute=compute_info)
-    purchase_amount_min_add_forecast = fields.Float('可增加采购额(上限)', digits=(2, 2),compute=compute_info)
-    purchase_amount_max_add_rest = fields.Float('采购池(下限)', digits=(2, 2),compute=compute_info)
-    purchase_amount_min_add_rest = fields.Float('采购池(上限)', digits=(2, 2),compute=compute_info)
+    purchase_amount_max_forecast = fields.Float('预测采购额(下限)', digits=(2, 2), compute=compute_info)
+    purchase_amount_min_forecast = fields.Float('预测采购额(上限)', digits=(2, 2), compute=compute_info)
+    purchase_amount_max_add_forecast = fields.Float('可增加采购额(下限)', digits=(2, 2), compute=compute_info)
+    purchase_amount_min_add_forecast = fields.Float('可增加采购额(上限)', digits=(2, 2), compute=compute_info)
+    purchase_amount_max_add_rest = fields.Float('采购池(下限)', digits=(2, 2), compute=compute_info)
+    purchase_amount_min_add_rest = fields.Float('采购池(上限)', digits=(2, 2), compute=compute_info,store=True)
     # purchase_back_tax_amount2_rest = fields.Float('本次退税金额', digits=(2, 2),compute=compute_info)
 
     # def open_inv_hs_name_line_ids(self):

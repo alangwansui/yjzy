@@ -1127,6 +1127,7 @@ class account_invoice(models.Model):
                                                     ('invoice_attribute', 'in', ['normal', 'extra'])])
 
     plan_invoice_auto_id = fields.Many2one('plan.invoice.auto','应收发票')
+    real_invoice_auto_ids = fields.Many2many('real.invoice.auto','实际发票')
 
 
     def _make_plan_invoice_auto(self):
