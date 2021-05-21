@@ -57,7 +57,7 @@ class RealInvoiceAuto(models.Model):
     bill_id = fields.Many2one('transport.bill', u'出运单')
     state = fields.Selection([('draft', 'draft'), ('done', 'done')], 'State', default='draft')
     plan_invoice_auto_id = fields.Many2one('plan.invoice.auto', '应收发票')
-    invoice_ids = fields.Many2many('account.invoice','实际发票')
+    # invoice_ids = fields.Many2many('account.invoice','实际发票')
 
     @api.onchange('bill_id')
     def onchange_partner_bill(self):
