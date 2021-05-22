@@ -13,6 +13,8 @@ class res_users(models.Model):
     sign_image = fields.Binary(u'签名', widget='image')
     new_pwd = fields.Char('new_pwd')
 
+    use_wechat_app = fields.Boolean('是否允许使用小程序！')
+
     def get_leader_user(self):
         for one in self:
             one.leader_user_id = one.employee_id.parent_id.user_id

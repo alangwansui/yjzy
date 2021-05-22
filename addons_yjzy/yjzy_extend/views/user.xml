@@ -8,6 +8,7 @@
         <field name="arch" type="xml">
             <field name="partner_id" position="after">
                 <field name="salesman_code"/>
+                <field name="use_wechat_app"/>
                 <field name="assistant_id"/>
                 <field name="product_manager_id"/>
                 <field name="leader_user_id"/>
