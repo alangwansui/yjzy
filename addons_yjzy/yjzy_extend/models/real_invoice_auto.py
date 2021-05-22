@@ -25,19 +25,19 @@ class RealInvoiceAuto(models.Model):
         c = (c + "0" * n)[:n]
         return c
 
-    @api.depends('untaxed_amount', 'tax')
-    def compute_amount_total(self):
-        for one in self:
-
-            amount_total = (1 + one.tax) * one.untaxed_amount
-            get_two_float_1 = one.get_two_float_1(amount_total, 2)
-            print('akiny', str(get_two_float_1))
-            if str(get_two_float_1) == '99':
-                one.amount_total = round(amount_total, 0)
-            elif str(get_two_float_1) in ['01', '00']:
-                one.amount_total = round(amount_total, 0)
-            else:
-                one.amount_total = amount_total
+    # @api.depends('untaxed_amount', 'tax')
+    # def compute_amount_total(self):
+    #     for one in self:
+    #
+    #         amount_total = (1 + one.tax) * one.untaxed_amount
+    #         get_two_float_1 = one.get_two_float_1(amount_total, 2)
+    #         print('akiny', str(get_two_float_1))
+    #         if str(get_two_float_1) == '99':
+    #             one.amount_total = round(amount_total, 0)
+    #         elif str(get_two_float_1) in ['01', '00']:
+    #             one.amount_total = round(amount_total, 0)
+    #         else:
+    #             one.amount_total = amount_total
 
     invoice_type = fields.Selection([('10', '增值税电子普通发票'), ('04', '增值税普通发票'), ('01', '增值税专用发票')], '发票类型')
     invoice_code = fields.Char(u'发票代码')
@@ -51,7 +51,7 @@ class RealInvoiceAuto(models.Model):
                                           default=lambda self: self.env.user.company_id.currency_id)
 
     tax = fields.Float(u'税率', default=0.13)
-    amount_total = fields.Monetary(u'含税金额', currency_field='company_currency_id', )
+    amount_total = fields.Monetary(u'含税金额', currency_field='company_currency_id',)
 
     partner_id = fields.Many2one('res.partner', u'合作伙伴')
     bill_id = fields.Many2one('transport.bill', u'出运单')
