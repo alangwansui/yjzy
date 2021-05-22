@@ -1477,14 +1477,14 @@ class account_reconcile_order(models.Model):
                                 # 'operation_wizard':'25'
                                 })
             if hxd_type_new == '30':
-                for one in lines:
-                    if one.po_id:
-                        if one.amount_advance_org > one.amount_invoice_so_residual_can_approve:
-                            raise Warning('预付认领金额大于可认领应付金额')
-                        if one.advance_residual2 >= 0 and one.amount_advance_org > one.advance_residual2:
-                            raise Warning('预付认领金额大于可认领的预付金额')
-                        if one.amount_advance_org > one.yjzy_payment_id.advance_balance_total:
-                            raise Warning('预付认领金额大于可认领的预付金额')
+                # for one in lines:
+                #     if one.po_id:
+                #         if one.amount_advance_org > one.amount_invoice_so_residual_can_approve:
+                #             raise Warning('预付认领金额大于可认领应付金额')
+                #         if one.advance_residual2 >= 0 and one.amount_advance_org > one.advance_residual2:
+                #             raise Warning('预付认领金额大于可认领的预付金额')
+                #         if one.amount_advance_org > one.yjzy_payment_id.advance_balance_total:
+                #             raise Warning('预付认领金额大于可认领的预付金额')
                 for one in self.line_do_ids:
                     if one.amount_advance_org == 0 and one.po_id:
                         raise Warning('有明细行预付金额为0，请填写或者删除明细行！')
