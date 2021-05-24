@@ -119,6 +119,8 @@ class PlanInvoiceAuto(models.Model):
     currency_id = fields.Many2one('res.currency', u'货币', compute=compute_currency_id, store=True)
     amount_total = fields.Monetary('金额', currency_field='currency_id', store=True)
     bill_id = fields.Many2one('transport.bill', '出运合同', store=True)
+    bill_date_out_in = fields.Date('进仓日期',related='bill_id.date_out_in',store=True)
+    bill_date_ship = fields.Date('船期',related='bill_id.date_ship',store=True)
     hsname_all_ids = fields.Many2many('tbl.hsname.all', 'pia_id', 'hs_id', 'tbl_id', string='报关明细',
                                       compute='compute_hs_name_all_ids', store=True)
 
