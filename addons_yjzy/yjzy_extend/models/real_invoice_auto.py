@@ -55,7 +55,7 @@ class RealInvoiceAuto(models.Model):
 
     partner_id = fields.Many2one('res.partner', u'合作伙伴')
     bill_id = fields.Many2one('transport.bill', u'出运单')
-    state = fields.Selection([('draft', 'draft'), ('done', 'done')], 'State', default='draft')
+    state = fields.Selection([('draft', 'draft'), ('done', 'done')], 'State',track_visibility='onchange',  default='draft')
     plan_invoice_auto_id = fields.Many2one('plan.invoice.auto', '应收发票')
     # invoice_ids = fields.Many2many('account.invoice','实际发票')
 
@@ -128,7 +128,7 @@ class PlanInvoiceAuto(models.Model):
 
     state = fields.Selection(
         [('10', '正常待锁定'), ('20', '异常待锁定'), ('30', '已锁定发票未收齐'), ('40', '已锁定异常发票未收齐(锁定一月后)'), ('50', '发票收齐未开票'),
-         ('60', '发票收齐已开票'),('70','退税未申报'),('75','退税部分申报'),('80','退税已申报'),('90','退税未收齐'),('100','退税已收齐')], 'State',default='10')
+         ('60', '发票收齐已开票'),('70','退税未申报'),('75','退税部分申报'),('80','退税已申报'),('90','退税未收齐'),('100','退税已收齐')], 'State',track_visibility='onchange', default='10')
 
 
 

@@ -22,7 +22,16 @@ class transport_bill(models.Model):
             self.create_hsname_all_ids()
             self.create_btls_hs_ids_purchase()
 
-
+    def action_hexiao_stage(self):
+        stage_id = self._stage_find(domain=[('code', '=', '007')])
+        stage_preview = self.stage_id
+        user = self.env.user
+        if user not in stage_preview.user_ids:
+            raise Warning('您没有权限审批')
+        else:
+            self.write({'stage_id': stage_id.id})
+            # self.create_hsname_all_ids()
+            # self.create_btls_hs_ids_purchase()
 
 
     def action_finish_add_purchase_stage(self):
