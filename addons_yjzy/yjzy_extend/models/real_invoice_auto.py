@@ -51,12 +51,14 @@ class RealInvoiceAuto(models.Model):
                                           default=lambda self: self.env.user.company_id.currency_id)
 
     tax = fields.Float(u'税率', default=0.13)
-    amount_total = fields.Monetary(u'含税金额', currency_field='company_currency_id',)
+    amount_total = fields.Monetary(u'含税金额', currency_field='company_currency_id', )
 
     partner_id = fields.Many2one('res.partner', u'合作伙伴')
     bill_id = fields.Many2one('transport.bill', u'出运单')
-    state = fields.Selection([('draft', 'draft'), ('done', 'done')], 'State',track_visibility='onchange',  default='draft')
+    state = fields.Selection([('draft', 'draft'), ('done', 'done')], 'State', track_visibility='onchange',
+                             default='draft')
     plan_invoice_auto_id = fields.Many2one('plan.invoice.auto', '应收发票')
+
     # invoice_ids = fields.Many2many('account.invoice','实际发票')
 
     @api.onchange('bill_id')
@@ -96,7 +98,7 @@ class PlanInvoiceAuto(models.Model):
         for one in self:
             one.currency_id = one.invoice_ids and one.invoice_ids[0].currency_id or self.env.user.company_id.currency_id
 
-    @api.depends('hsname_all_ids','hsname_all_ids.plan_invoice_auto_total')
+    @api.depends('hsname_all_ids', 'hsname_all_ids.plan_invoice_auto_total')
     def compute_plan_invoice_auto_amount(self):
         for one in self:
             one.plan_invoice_auto_amount = sum(x.plan_invoice_auto_total for x in one.hsname_all_ids)
@@ -111,29 +113,30 @@ class PlanInvoiceAuto(models.Model):
         for one in self:
             one.back_tax_invoice_ids = one.bill_id.all_back_tax_invoice_1_ids
 
-
-
     name = fields.Char('name', default=lambda self: self.env['ir.sequence'].next_by_code('plan.invoice.auto.name'))
     invoice_ids = fields.One2many('account.invoice', 'plan_invoice_auto_id', '应付账单')
 
     currency_id = fields.Many2one('res.currency', u'货币', compute=compute_currency_id, store=True)
     amount_total = fields.Monetary('金额', currency_field='currency_id', store=True)
     bill_id = fields.Many2one('transport.bill', '出运合同', store=True)
-    bill_date_out_in = fields.Date('进仓日期',related='bill_id.date_out_in',store=True)
-    bill_date_ship = fields.Date('船期',related='bill_id.date_ship',store=True)
+    bill_date_out_in = fields.Date('进仓日期', related='bill_id.date_out_in', store=True)
+    bill_date_ship = fields.Date('船期', related='bill_id.date_ship', store=True)
     hsname_all_ids = fields.Many2many('tbl.hsname.all', 'pia_id', 'hs_id', 'tbl_id', string='报关明细',
                                       compute='compute_hs_name_all_ids', store=True)
-
-
-
-    back_tax_invoice_ids = fields.Many2many('account.invoice','pia1_id', 'inv_id', 'tb_id',string='退税账单',compute=compute_back_tax_invoice_ids, )
-
+    back_tax_invoice_ids = fields.Many2many('account.invoice', 'pia1_id', 'inv_id', 'tb_id', string='退税账单',
+                                            compute=compute_back_tax_invoice_ids, )
     state = fields.Selection(
         [('10', '正常待锁定'), ('20', '异常待锁定'), ('30', '已锁定发票未收齐'), ('40', '已锁定异常发票未收齐(锁定一月后)'), ('50', '发票收齐未开票'),
-         ('60', '发票收齐已开票'),('70','退税未申报'),('75','退税部分申报'),('80','退税已申报'),('90','退税未收齐'),('100','退税已收齐')], 'State',track_visibility='onchange', default='10')
+         ('60', '发票收齐已开票'), ('70', '退税未申报'), ('75', '退税部分申报'), ('80', '退税已申报'), ('90', '退税未收齐'), ('100', '退税已收齐')],
+        'State', track_visibility='onchange', default='10')
 
-
-
+    state_1 = fields.Selection(
+        [('10', '报关数据待锁定'), ('20', '报关数据已锁定-应收发票待锁定'), ('30', '应收发票锁定-发票未收齐'), ('40', '发票已收齐-未开销项'),
+         ('50', '已开销项-未申报退税'), ('60', '已申报退税未收退税'), ('70','已收退税')],'state_1',default='10')
+    state_2 = fields.Selection(
+        [('10', '正常待锁定'), ('20', '异常待锁定'), ('30', '正常待锁定'), ('40', '异常待锁定'), ('50', '正常未收齐'),
+         ('60', '异常未收齐'), ('70', '正常未开'), ('75', '异常未开'), ('80', '正常未申报'), ('90', '异常未申报'), ('100', '正常未收'),('110','异常未收'),('120','已收退税')],
+        'State', track_visibility='onchange', default='10')
 
     real_invoice_auto_id = fields.One2many('real.invoice.auto', 'plan_invoice_auto_id', '实际进项发票')
     company_id = fields.Many2one('res.company', string='Company', required=True, readonly=True,
@@ -144,6 +147,89 @@ class PlanInvoiceAuto(models.Model):
     real_invoice_auto_amount = fields.Monetary('实收发票总金额', currency_field='currency_id',
                                                compute=compute_real_invoice_auto_amount, store=True)
 
+    def compute_state_1_2(self):
+        for one in self:
+            date_ship = one.bill_id.date_ship
+            date_out_in = one.bill_id.date_out_in
+
+            state_1 = one.state_1
+            state_2 = one.state_2
+            today = datetime.today()
+            strptime = datetime.strptime
+            lock_date = one.lock_date
+            back_tax_invoice_ids = one.back_tax_invoice_ids
+            back_tax_invoice_declare_ids = back_tax_invoice_ids.filtered(lambda x: x.back_tax_declaration_state == '20')
+            back_tax_invoice_residual_0_ids = back_tax_invoice_ids.filtered(lambda x: x.residual == 0)
+
+            date_ship_residual_time = date_ship and (today - strptime(date_ship, DF)).days or 0
+            date_out_in_residual_time = date_out_in and (today - strptime(date_out_in, DF)).days or 0
+            lock_date_residual_time = lock_date and (today - strptime(lock_date, DF)).days or 0
+            plan_invoice_auto_amount = one.plan_invoice_auto_amount
+            real_invoice_auto_amount = one.real_invoice_auto_amount
+
+            if state_1 == '10':
+                if state_2 == '10' and date_out_in_residual_time >= 15 and not date_ship:
+                    state_2 = '20'
+                    one.state_2 = state_2
+                else:
+                    state_2 = '20'
+                    one.state_2 = state_2
+            elif state_1 == '20':
+                state_2 = '30'
+                one.state_2 = state_2
+                if state_2 == '30' and date_ship_residual_time >= 30:
+                    state_2 = '40'
+                    one.state_2 = state_2
+                else:
+                    state_2 = '30'
+                    one.state_2 = state_2
+
+            elif state_1 == '30':
+                if plan_invoice_auto_amount != real_invoice_auto_amount:
+                    state_2 = '50'
+                    one.state_2 = state_2
+                    one.state_1 = '30'
+                    if state_2 == '50' and date_ship_residual_time >= 30:
+                        state_2 = '60'
+                        one.state_2 = state_2
+                    else:
+                        state_2 = '50'
+                        one.state_2 = state_2
+                else:
+                    one.state_1 = '40'
+                    state_2 = '70'
+                    one.state_2 = state_2
+                    if state_2 == '70' and date_ship_residual_time >= 30:
+                        state_2 = '75'
+                        one.state_2 = state_2
+                    else:
+                        state_2 = '70'
+                        one.state_2 = state_2
+            elif state_1 == '50':
+                if back_tax_invoice_declare_ids and back_tax_invoice_ids:
+                    if len(back_tax_invoice_declare_ids) != len(back_tax_invoice_ids):
+                        if date_ship_residual_time >= 45:
+                            state_2 = '90'
+                            one.state_2 = state_2
+                        else:
+                            state_2 = '80'
+                            one.state_2 = state_2
+                    else:
+                        state_1 = '60'
+                        one.state_1 = state_1
+            elif state_1 == '60':
+                if len(back_tax_invoice_residual_0_ids) != 0:
+                    state_2 = '100'
+                    one.state_2 =state_2
+                    if date_ship_residual_time >= 45:
+                        state_2 = '110'
+                        one.state_2 = state_2
+                else:
+                    state_1 = '70'
+                    one.state_1 = state_1
+                    state_2 = '120'
+                    one.state_2 = state_2
+
     def action_lock(self):
 
         today = datetime.today()
@@ -153,13 +239,17 @@ class PlanInvoiceAuto(models.Model):
         plan_invoice_auto_amount = self.plan_invoice_auto_amount
         real_invoice_auto_amount = self.real_invoice_auto_amount
         if plan_invoice_auto_amount != real_invoice_auto_amount and lock_date_residual_time >= 30:
-                self.state = '40'
+            self.state = '40'
+            self.state_1 = '30'
+            self.state_2 = '40'
         else:
             self.state = '30'
+            self.state_1 = '30'
+            self.state_2 = '30'
         self.lock_date = datetime.today()
         stage_id = self.bill_id._stage_find(domain=[('code', '=', '013')])
         self.bill_id.write({
-            'stage_id':stage_id.id
+            'stage_id': stage_id.id
         })
 
     def action_unlock(self):
@@ -167,19 +257,23 @@ class PlanInvoiceAuto(models.Model):
         today = datetime.today()
         strptime = datetime.strptime
         date_ship_residual_time = date_ship and (today - strptime(date_ship, DF)).days or 0
-        print('date_ship_residual_time_akiny',date_ship_residual_time)
-        if self.state in ['30','40'] and date_ship_residual_time >= 30:
+        print('date_ship_residual_time_akiny', date_ship_residual_time)
+        if self.state in ['30', '40'] and date_ship_residual_time >= 30:
             self.state = '20'
         else:
             self.state = '10'
         self.lock_date = None
         stage_id = self.bill_id._stage_find(domain=[('code', '=', '012')])
         self.bill_id.write({
-            'stage_id':stage_id.id
+            'stage_id': stage_id.id
         })
 
     def action_make_real_in_invoice(self):
         self.state = '60'
+
+
+
+
 
     def compute_state(self):
         for one in self:
@@ -190,32 +284,33 @@ class PlanInvoiceAuto(models.Model):
             lock_date = one.lock_date
             back_tax_invoice_ids = one.back_tax_invoice_ids
             back_tax_invoice_declare_ids = back_tax_invoice_ids.filtered(lambda x: x.back_tax_declaration_state == '20')
-            back_tax_invoice_residual_0_ids = back_tax_invoice_ids.filtered(lambda x: x.residual == 0 )
+            back_tax_invoice_residual_0_ids = back_tax_invoice_ids.filtered(lambda x: x.residual == 0)
 
             date_ship_residual_time = date_ship and (today - strptime(date_ship, DF)).days or 0
             lock_date_residual_time = lock_date and (today - strptime(lock_date, DF)).days or 0
             plan_invoice_auto_amount = one.plan_invoice_auto_amount
             real_invoice_auto_amount = one.real_invoice_auto_amount
-            print('akiny_date_ship_residual_time',date_ship_residual_time)
+            print('akiny_date_ship_residual_time', date_ship_residual_time)
             if state == '10' and date_ship_residual_time >= 30:
                 one.state = '20'
             if state == '30' and plan_invoice_auto_amount != real_invoice_auto_amount and lock_date_residual_time >= 30:
                 one.state = '40'
-            if state in ['30','40'] and plan_invoice_auto_amount == real_invoice_auto_amount:
+            if state in ['30', '40'] and plan_invoice_auto_amount == real_invoice_auto_amount:
                 one.state = '50'
 
-            if state in ['60','70','75','80','90']:
+            if state in ['60', '70', '75', '80', '90']:
                 if len(back_tax_invoice_declare_ids) == 0:
                     one.state = '70'
-                elif len(back_tax_invoice_declare_ids) == len(back_tax_invoice_ids) == len(back_tax_invoice_residual_0_ids) :
+                elif len(back_tax_invoice_declare_ids) == len(back_tax_invoice_ids) == len(
+                        back_tax_invoice_residual_0_ids):
                     one.state = '100'
-                elif len(back_tax_invoice_declare_ids) == len(back_tax_invoice_ids) != len(back_tax_invoice_residual_0_ids) and len(back_tax_invoice_residual_0_ids) != 0 :
+                elif len(back_tax_invoice_declare_ids) == len(back_tax_invoice_ids) != len(
+                        back_tax_invoice_residual_0_ids) and len(back_tax_invoice_residual_0_ids) != 0:
                     one.state = '90'
-                elif len(back_tax_invoice_declare_ids) == len(back_tax_invoice_ids) and len(back_tax_invoice_residual_0_ids) == 0 :
+                elif len(back_tax_invoice_declare_ids) == len(back_tax_invoice_ids) and len(
+                        back_tax_invoice_residual_0_ids) == 0:
                     one.state = '80'
                 elif len(back_tax_invoice_declare_ids) != len(back_tax_invoice_ids):
                     one.state = '75'
-
-
 
 #####################################################################################################################

@@ -16,6 +16,8 @@ class transport_bill(models.Model):
         self.write({'stage_id': stage_id.id})
         self.create_hsname_all_ids()
         self.create_btls_hs_ids_purchase()
+        for one in self.plan_invoice_auto_ids:
+            one.state_1 = '20'
 
     def action_hexiao_stage(self):
         stage_id = self._stage_find(domain=[('code', '=', '007')])

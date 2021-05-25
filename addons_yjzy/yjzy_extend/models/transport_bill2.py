@@ -164,6 +164,36 @@ class transport_bill(models.Model):
                         'expense_po': 0},
         }
 
+
+
+    def open_wizard_tb_po_invoice_new(self):
+        self.ensure_one()
+        wizard = self.env['wizard.tb.po.invoice.new'].create({
+            'tb_id': self.id,
+                                                          })
+        view = self.env.ref('yjzy_extend.wizard_tb_po_form_new')
+        line_obj = self.env['wizard.tb.po.invoice.line.new']
+        tb_po_expense = self.env['tb.po.invoice'].search([('state','=','25')])
+        if tb_po_expense:
+            for one in tb_po_expense:
+                line_obj.create({
+                    'wizard_tb_po_invoice': wizard.id,
+                    'tb_po_expense':one.id,
+                })
+
+        return {
+            'name': _(u'增加采购'),
+            'view_type': 'tree,form',
+            "view_mode": 'form',
+            'res_model': 'wizard.tb.po.invoice.new',
+            'type': 'ir.actions.act_window',
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wizard.id,
+            'context': {},
+        }
+
+
     def open_tb_po_invoice(self):
         self.ensure_one()
         hs_dic = {}
@@ -200,7 +230,7 @@ class transport_bill(models.Model):
     def create_tb_po_invoice(self):
         self.ensure_one()
         for one in self.tb_po_invoice_ids:
-            if one.state not in ['30_done'] and type == 'other_po':
+            if one.state not in ['30_done']:
                 raise Warning('存在未完成审批的增加采购申请单，请先等待完成审批后，再进行创建')
         bill_id = self.id
         tb_po_id = self.env['tb.po.invoice'].create({'tb_id': bill_id,
@@ -231,19 +261,20 @@ class transport_bill(models.Model):
                 'hsname_all_line_id': hsl.id,
                 'back_tax': hsl.back_tax
             })
-        return {
-            'name': _(u'创建新增采购申请'),
-            'view_type': 'tree,form',
-            "view_mode": 'form',
-            'res_model': 'tb.po.invoice',
-            'type': 'ir.actions.act_window',
-            'view_id': view.id,
-            'target': 'current',
-            'res_id': tb_po_id.id,
-            # 'context': { },
-            'flag': {'initial_mode': 'edit',
-                     }
-        }
+        # return {
+        #     'name': _(u'创建新增采购申请'),
+        #     'view_type': 'tree,form',
+        #     "view_mode": 'form',
+        #     'res_model': 'tb.po.invoice',
+        #     'type': 'ir.actions.act_window',
+        #     'view_id': view.id,
+        #     'target': 'current',
+        #     'res_id': tb_po_id.id,
+        #     # 'context': { },
+        #     'flag': {'initial_mode': 'edit',
+        #              }
+        # }
+        return tb_po_id
 
     # 816 定稿 合并
     def create_hsname_all_ids(self):

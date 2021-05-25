@@ -1779,7 +1779,7 @@ class tb_po_invoice(models.Model):
             })
 
 
-
+        # 1220 暂时取消这个，发票上明细不创建，那么就不会参与出运单的池子的计算
         for line in self.hsname_all_ids:
             hsname_all_line = hsname_all_line_obj.create({
                                 'invoice_id': inv.id,

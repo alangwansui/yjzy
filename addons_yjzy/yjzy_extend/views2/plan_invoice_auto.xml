@@ -33,6 +33,8 @@
                 <field name="real_invoice_auto_amount"/>
                 <field name="lock_date"/>
                 <field name="state" string="状态"/>
+                <field name="state_1"/>
+                <field name="state_2"/>
                 <field name="real_invoice_auto_id"/>
                 <field name="invoice_ids" string="应收发票明细"/>
             </tree>
@@ -47,6 +49,7 @@
                 <header>
                     <button name="compute_hs_name_all_ids" type="object" string="计算报关明细"/>
                     <button name="compute_state" type="object" string="计算状态" groups="base.group_system"/>
+                    <button name="compute_state_1_2" type="object" string="计算状态_1_2" groups="base.group_system"/>
                     <button name="action_lock" type="object" string="锁定"
                             attrs="{'invisible':[('state','not in',['10','20'])]}"/>
                     <button name="action_unlock" type="object" string="取消锁定"
@@ -94,6 +97,7 @@
                         <field name="bill_date_out_in"/>
                         <field name="bill_date_ship"/>
                         <field name="lock_date"/>
+
                     </group>
                     <notebook>
                         <page string="发票明细">
@@ -137,6 +141,12 @@
                                     <field name="fault_comments"/>
                                 </tree>
                             </field>
+                        </page>
+                        <page>
+                            <group>
+                                <field name="state_1"/>
+                                <field name="state_2"/>
+                            </group>
                         </page>
                     </notebook>
 

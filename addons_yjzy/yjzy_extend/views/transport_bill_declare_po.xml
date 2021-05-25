@@ -44,6 +44,8 @@
                     <header>
                         <button string="合并报关资料" name="create_hsname_all_ids" type="object" groups="base.group_system"/>
                         <button string="创建新增采购" type="object" name="open_wizard_tb_po_invoice" groups="base.group_system"/>
+                        <button string="创建新增采购new" type="object" name="open_wizard_tb_po_invoice_new" groups="base.group_system"/>
+
                         <button string="创建新增采购新" type="object" class="oe_highlight" name="create_tb_po_invoice"/>
 
                     </header>

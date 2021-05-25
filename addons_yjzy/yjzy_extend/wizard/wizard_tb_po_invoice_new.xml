@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+
+        <record id="wizard_tb_po_form_new" model="ir.ui.view">
+            <field name="name">wizard.tb.po.new.from</field>
+            <field name="model">wizard.tb.po.invoice.new</field>
+            <field name="arch" type="xml">
+                <form string="添加采购金额">
+
+                    <group>
+
+
+                          <field name="tb_id"/>
+
+
+                    </group>
+                        <field name="wizard_tb_po_invoice_line_new">
+                            <tree editable="bottom">
+                                  <field name="is_claim" />
+                                <field name="tb_po_expense"/>
+
+
+
+                            </tree>
+                        </field>
+
+
+                    <footer>
+                        <!--button name="apply_expense_sheet" class="oe_highlight" type='object' string="费用确认" attrs="{'invisible':[('type','!=','expense_po')]}"/-->
+                        <button name="apply" class="oe_highlight" type='object' string="确认"/>
+
+                        <button special="cancel" class="oe_highlight" string="取消"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

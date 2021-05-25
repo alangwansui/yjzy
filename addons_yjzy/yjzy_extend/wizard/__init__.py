@@ -34,6 +34,7 @@ from . import wizard_print_fkzl
 from . import wizard_plan_check_comments
 from . import back_tax_refuse_reason
 from . import purchase_payment_advance_tool
+from . import wizard_tb_po_invoice_new
 
 
 

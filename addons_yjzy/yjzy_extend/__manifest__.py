@@ -61,6 +61,7 @@
         'wizard/wizard_tb_po_invoice_with_out_tax.xml',
         'wizard/wizard_plan_check_comments.xml',
         'wizard/back_tax_refuse_reason_views.xml',
+        'wizard/wizard_tb_po_invoice_new.xml',
 
         'views/account_invoice_extra.xml',
         'views/account_journal.xml',
