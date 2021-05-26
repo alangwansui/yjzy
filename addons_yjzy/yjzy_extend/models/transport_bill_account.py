@@ -13,6 +13,7 @@ class transport_bill_account(models.Model):
     def default_currency(self):
         return self.env.ref('base.USD').id
 
+    @api.depends('line_ids','line_ids.org_sale_amount','line_ids.ciq_amount','line_ids.no_ciq_amount')
     def compute_amount(self):
         account_public1, account_public2, account_private1, account_private2, account_rmb3, account_diff = self.env[
             'transport.bill'].get_account_by_config_parameter()
