@@ -12,19 +12,16 @@
                     <field name="partner_id" required="1" invisible="context.get('not_show_partner')"/>
                     <field name="date_out_in"/>
                     <field name="current_date_rate" string="成本单测算汇率" groups="base.group_system"/>
-                    <field name="org_sale_amount"/>
+                    <field name="org_sale_amount_new" string="出运金额"/>
                     <field name="ciq_amount"/>
                     <field name="purchase_amount2_tax_total"/>
                     <field name="purchase_amount2_no_tax_total"/>
                     <field name="purchase_amount_min_forecast_total" string="预测最大采购金额"/>
                     <field name="purchase_amount_max_forecast_total" invisible="1"/>
-
                     <field name="purchase_amount_min_add_forecast_total" string="总可增加"/>
                     <field name="purchase_amount_max_add_forecast_total" attrs="{'column_invisible':1}"/>
-
                     <field name="purchase_amount_min_add_rest_total" string="本次可增加"/>
                     <field name="purchase_amount_max_add_rest_total" invisible="1"/>
-
                     <field name="purchase_amount2_add_actual_total" string="实际已增加"/>
                     <field name="state" invisible="1" groups="base.group_system"/>
                     <field name="company_currency_id" invisible="1" groups="base.group_system"/>

@@ -8,6 +8,7 @@ from odoo.exceptions import Warning
 class transport_bill(models.Model):
     _inherit = 'transport.bill'
 
+    @api.depends('hsname_all_ids.purchase_amount2_tax','hsname_all_ids.purchase_amount2_no_tax','hsname_all_ids.purchase_amount_min_forecast','hsname_all_ids.purchase_amount_min_add_rest')
     def _compute_overall_profit(self):
         for one in self:
             hsname_all_ids = one.hsname_all_ids
@@ -92,11 +93,11 @@ class transport_bill(models.Model):
                                                           compute=compute_purchase_amount_min_add_forecast_total,
                                                           store=True)
     purchase_amount_max_add_rest_total = fields.Float('采购池(下限)', digits=(2, 2), compute=_compute_overall_profit)
-    purchase_amount_min_add_rest_total = fields.Float('采购池(上限)', digits=(2, 2), compute=_compute_overall_profit)
+    purchase_amount_min_add_rest_total = fields.Float('采购池(上限)', digits=(2, 2), compute=_compute_overall_profit,store=True)
 
-    purchase_amount2_tax_total = fields.Float(u'含税采购金额', compute=_compute_overall_profit)
-    purchase_amount2_no_tax_total = fields.Float(u'不含税采购金额', compute=_compute_overall_profit)
-    purchase_amount2_add_actual_total = fields.Float(U'实际已经增加采购额', compute=_compute_overall_profit)
+    purchase_amount2_tax_total = fields.Float(u'含税采购金额', compute=_compute_overall_profit, store=True)
+    purchase_amount2_no_tax_total = fields.Float(u'不含税采购金额', compute=_compute_overall_profit, store=True)
+    purchase_amount2_add_actual_total = fields.Float(U'实际已经增加采购额', compute=_compute_overall_profit,store=True)
 
     back_tax_declaration_state = fields.Selection([('10', '未申报'), ('15', '部分申报'), ('20', '已申报')], '退税申报状态',
                                                   related='back_tax_invoice_id.back_tax_declaration_state')
@@ -829,7 +830,7 @@ class tbl_hsname_all(models.Model):
     tb_id = fields.Many2one('transport.bill', u'出运单', ondelete='cascade')
     hs_id = fields.Many2one('hs.hs', u'品名')
     inv_hs_name_line_ids = fields.One2many('invoice.hs_name.all', 'tbl_hsname_all_id', '发票对应明细')  # 关联发票的报关汇总明细
-    purchase_amount2_add_actual = fields.Float(U'实际已经增加采购额', compute=compute_info)
+    purchase_amount2_add_actual = fields.Float(U'实际已经增加采购额', compute=compute_info,store=True)
     back_tax_add_actual = fields.Float(U'实际已经增加退税', compute=compute_info)
     p_s_add_actual = fields.Float(U'实际已经增加应收', compute=compute_info)
     plan_invoice_auto_total = fields.Float(u'应收采购发票金额', compute=compute_info,store=True)
@@ -863,9 +864,9 @@ class tbl_hsname_all(models.Model):
     overall_profit_min = fields.Float('综合利润率(上限)', digits=(2, 2)
                                       )  # default=lambda self:self.env['ir.config_parameter'].sudo().get_param('addons_yjzy.overall_profit_min')
     purchase_amount_max_forecast = fields.Float('预测采购额(下限)', digits=(2, 2), compute=compute_info)
-    purchase_amount_min_forecast = fields.Float('预测采购额(上限)', digits=(2, 2), compute=compute_info)
+    purchase_amount_min_forecast = fields.Float('预测采购额(上限)', digits=(2, 2), compute=compute_info,store=True)
     purchase_amount_max_add_forecast = fields.Float('可增加采购额(下限)', digits=(2, 2), compute=compute_info)
-    purchase_amount_min_add_forecast = fields.Float('可增加采购额(上限)', digits=(2, 2), compute=compute_info)
+    purchase_amount_min_add_forecast = fields.Float('可增加采购额(上限)', digits=(2, 2), compute=compute_info, store=True)
     purchase_amount_max_add_rest = fields.Float('采购池(下限)', digits=(2, 2), compute=compute_info)
     purchase_amount_min_add_rest = fields.Float('采购池(上限)', digits=(2, 2), compute=compute_info,store=True)
     # purchase_back_tax_amount2_rest = fields.Float('本次退税金额', digits=(2, 2),compute=compute_info)

@@ -1055,9 +1055,9 @@ class transport_bill(models.Model):
     mark_html = fields.Html(u'唛头')
 
     #金额计算
-    ciq_amount = fields.Monetary('报关金额', compute=compute_ciq_amount, currency_field='sale_currency_id', digits=dp.get_precision('Money'))
-    no_ciq_amount = fields.Monetary('不报关金额', compute=compute_ciq_amount,  currency_field='company_currency_id')
-    ciq_amount_new = fields.Monetary('报关金额', compute=compute_ciq_amount, currency_field='sale_currency_id',
+    ciq_amount = fields.Monetary('报关金额', compute=compute_ciq_amount, currency_field='sale_currency_id', digits=dp.get_precision('Money'),store=True)
+    no_ciq_amount = fields.Monetary('不报关金额', compute=compute_ciq_amount,  currency_field='company_currency_id',store=True)
+    ciq_amount_new = fields.Monetary('报关金额', compute=compute_ciq_amount, currency_field='sale_currency_id',store=True,
                                  digits=dp.get_precision('Money'))
     amount_public1 = fields.Monetary('美元账户1', currency_field='sale_currency_id')
     amount_public2 = fields.Monetary('美元账户11', currency_field='sale_currency_id')

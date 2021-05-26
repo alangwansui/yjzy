@@ -1939,7 +1939,7 @@
             <field name="res_model">transport.bill</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form,kanban</field>
-            <field name="domain">[('state','in',['delivered','invoiced','verifying','done'])]</field>
+            <field name="domain">[('state','in',['locked','delivered','invoiced','verifying','done'])]</field>
             <field name="limit">20</field>
             <field name="search_view_id" ref="view_transport_bill_tenyale_filter"/>
             <field name="context">
