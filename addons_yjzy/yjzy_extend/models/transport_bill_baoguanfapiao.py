@@ -11,13 +11,20 @@ class transport_bill(models.Model):
     plan_invoice_auto_ids = fields.One2many('plan.invoice.auto','bill_id','应收发票')
     real_invoice_auto_ids = fields.One2many('real.invoice.auto','bill_id','实际发票')
 
-    def action_lock_stage(self):
+    def _action_lock_stage(self):
         stage_id = self._stage_find(domain=[('code', '=', '012')])
         self.write({'stage_id': stage_id.id})
         self.create_hsname_all_ids()
         self.create_btls_hs_ids_purchase()
         for one in self.plan_invoice_auto_ids:
             one.state_1 = '20'
+    def action_lock_stage(self):
+        self.locked = True
+        self.create_hsname_all_ids()
+        self.create_btls_hs_ids_purchase()
+        for one in self.plan_invoice_auto_ids:
+            one.state_1 = '20'
+
 
     def action_hexiao_stage(self):
         stage_id = self._stage_find(domain=[('code', '=', '007')])

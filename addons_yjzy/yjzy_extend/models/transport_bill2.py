@@ -87,7 +87,7 @@ class transport_bill(models.Model):
                                                        ('state', 'in', ['open', 'paid'])])
 
     purchase_amount_max_forecast_total = fields.Float('预测采购金额(下限)', digits=(2, 2), compute=_compute_overall_profit)
-    purchase_amount_min_forecast_total = fields.Float('预测采购金额(上限)', digits=(2, 2), compute=_compute_overall_profit)
+    purchase_amount_min_forecast_total = fields.Float('预测采购金额(上限)', digits=(2, 2), compute=_compute_overall_profit,store=True)
     purchase_amount_max_add_forecast_total = fields.Float('可增加采购额(下限)', digits=(2, 2), compute=_compute_overall_profit)
     purchase_amount_min_add_forecast_total = fields.Float('可增加采购额(上限)', digits=(2, 2),
                                                           compute=compute_purchase_amount_min_add_forecast_total,

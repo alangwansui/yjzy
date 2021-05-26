@@ -540,13 +540,14 @@
                                             style="color:red" context="{'default_open':'include_tax'}"/>
                                 </div>
                                 <field name="same_include_tax" invisible="1"/>
-                                <field name="locked" groups="base.group_system" invisible="1"/>
+
                                 <field name="contract_type" groups="base.group_system"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)],'invisible':[('operation_wizard','in',['first','second','third','fourth'])]}"/>
                                 <field name="gongsi_id" options="{'no_open':1}" string="销售主体"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)],'invisible':[('operation_wizard','in',['first','second','third','fourth'])]}"/>
                                 <field name="purchase_gongsi_id" options="{'no_open':1}" string="采购主体"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)],'invisible':[('operation_wizard','in',['first','second','third','fourth'])]}"/>
+                                <field name="locked"/>
                             </group>
                             <group attrs="{'invisible':[('operation_wizard','in',['first','second','third','fourth'])]}">
 
@@ -1276,6 +1277,7 @@
                             </page>
                             <page groups="base.group_system">
                                 <field name="operation_wizard" invisible="0"/>
+
                             </page>
                         </notebook>
                     </sheet>
