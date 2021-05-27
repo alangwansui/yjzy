@@ -441,7 +441,7 @@
                                 attrs="{'invisible':[('type','!=','other_po')]}"/>
                         <button name="action_cancel" class="oe_highlight" groups="base.group_system" string="取消"
                                 invisible="context.get('open')"/>
-                         <button name="make_back_tax_expense" type="object" string="创建退税" attrs="{'invisible':[('type','!=','expense_po')]}"/>
+                         <button name="make_back_tax_expense" type="object" string="创建退税" attrs="{'invisible':['|',('state','!=','25'),('type','!=','expense_po')]}"/>
                         <button name="make_extra_invoice" type="object" string="创建额外账单" groups="base.group_system"
                                 invisible="1"/>
                         <button name="create_tb_po_invoice" type="object" string="创建其他应收申请"
@@ -489,10 +489,11 @@
                                 <field name="tb_id" domain="[('back_tax_invoice_balance_new','!=',0)]"
                                        attrs="{'invisible':['|',('is_tb_hs_id','=',False),('type','not in',['other_po','expense_po'])],'readonly':[('state','in',['20_submit','30_done'])]}"
                                        context="{'min_add':1,'not_show_partner':1,'form_view_ref':'yjzy_extend.view_transport_bill_declare_po_form'}"/>
-                                <field name="tb_id_po_supplier" string="原始供应商"
+                                <field name="tb_id_po_supplier" string="原始供应商" options="{'no_open':1}"
                                        attrs="{'invisible':[('type','not in',['other_po','expense_po'])]}"/>
-                                <field name="expense_sheet_id" attrs="{'invisible':[('type','!=','expense_po')]}"
-                                       domain="[('state','in',['account_approval','manager_approval','approval'])]"/>
+                                <field name="expense_sheet_id" attrs="{'invisible':[('type','!=','expense_po')]}" readonly="1"
+                                       domain="[('state','in',['account_approval','manager_approval','approval'])]"
+                                        context="{'form_view_ref':'yjzy_extend.view_hr_expense_sheet_new_form'}"/>
                                 <field name="invoice_product_id" attrs="{'invisible':1}"/>
                                 <field name="yjzy_invoice_id" string="原始账单"
                                        attrs="{'invisible':[('type','!=','extra')]}"/>
@@ -533,7 +534,7 @@
                                     </b>
                                 </label>
                                 <div class="o_row" attrs="{'invisible':[('is_tb_hs_id','=',False)]}">
-                                    <field name="partner_id" attrs="{'readonly':[('state','!=','10_draft')]}"
+                                    <field name="partner_id" attrs="{'readonly':[('state','!=','10_draft')]}" options="{'no_open':1}"
                                            domain="[('supplier', '=', True),('is_company','=',True)]"/>
                                 </div>
 
@@ -750,7 +751,7 @@
                             </page>
                             <page string="货款明细" attrs="{'invisible':[('is_tb_hs_id','=',False)]}">
                                 <field name="hsname_all_ids" attrs="{'invisible':[('is_tb_hs_id','=',False)],'readonly':[('state','in',['20_submit','30_done'])]}">
-                                    <tree editable="bottom" delete="false">
+                                    <tree editable="bottom" delete="false" create="false">
                                         <field name="hs_id" attrs="{'readonly':[('parent.state','!=','10_draft')]}"/>
                                         <field name="hsname_all_line_id" invisible="1"/>
                                         <!--field name="purchase_amount2_tax"/>

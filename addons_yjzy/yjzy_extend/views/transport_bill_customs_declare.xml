@@ -60,22 +60,22 @@
             </field>
         </record>
 
-<!--        <record id="view_transport_bill_declare_form" model="ir.ui.view">-->
-<!--            <field name="name">transport.bill.declare.form</field>-->
-<!--            <field name="model">tbl.hsname</field>-->
-<!--            <field name="arch" type="xml">-->
-<!--                <form string="报关资料明细">-->
-<!--                    <sheet>-->
-<!--                        <group col="2">-->
-<!--                            <group>-->
-<!--                                -->
-<!--                            </group>-->
+        <!--        <record id="view_transport_bill_declare_form" model="ir.ui.view">-->
+        <!--            <field name="name">transport.bill.declare.form</field>-->
+        <!--            <field name="model">tbl.hsname</field>-->
+        <!--            <field name="arch" type="xml">-->
+        <!--                <form string="报关资料明细">-->
+        <!--                    <sheet>-->
+        <!--                        <group col="2">-->
+        <!--                            <group>-->
+        <!--                                -->
+        <!--                            </group>-->
 
-<!--                        </group>-->
-<!--                    </sheet>-->
-<!--                </form>-->
-<!--            </field>-->
-<!--        </record>-->
+        <!--                        </group>-->
+        <!--                    </sheet>-->
+        <!--                </form>-->
+        <!--            </field>-->
+        <!--        </record>-->
 
 
         <record id="view_transport_bill_declare_form" model="ir.ui.view">
@@ -98,10 +98,12 @@
                                 name="print_bgd"
                                 class="oe_highlight"/>
                         <button string="初始化报关资料" name="make_sale_purchase_collect" confirm="该命令将会初始化报关资料！是否继续？"
-                                class="oe_highlight" attrs="{'invisible':[('state','in',['invoiced','abnormal','verifying','done','paid'])]}"
+                                class="oe_highlight"
+                                attrs="{'invisible':[('state','in',['invoiced','abnormal','verifying','done','paid'])]}"
                                 type="object"/>
                         <button string="初始化托盘重量体积" name="split_tuopan_weight_baoguan" confirm="该命令将会初始化托盘数据！是否继续？"
-                                class="oe_highlight" attrs="{'invisible':[('state','in',['invoiced','abnormal','verifying','done','paid'])]}"
+                                class="oe_highlight"
+                                attrs="{'invisible':[('state','in',['invoiced','abnormal','verifying','done','paid'])]}"
                                 type="object"/>
 
                     </header>
@@ -120,11 +122,13 @@
                                 name="print_bgd"
                                 class="oe_highlight"/>
                         <field name="state" widget="statusbar" statusbar_visible=" " groups="base.group_system"/>
-                        <field name="is_editable" widget="boolean_toggle" groups="sales_team.group_manager"/>
+
 
                     </header>
                     <sheet>
-
+                        <div class="oe_button_box" name="button_box">
+                            <field name="is_editable" widget="boolean_toggle" groups="sales_team.group_manager"/>
+                        </div>
                         <group col="3">
                             <group name="general_information">
                                 <field name="operation_wizard" invisible="1"/>
@@ -134,12 +138,14 @@
                                 <field name="date" string="出运日期"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"
                                        invisible="0"/>
-                                <field name="partner_id" string="客户" attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
+                                <field name="partner_id" string="客户"
+                                       attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <field name="partner_shipping_id" string="抵运地" invisible="1" options="{'no_open':1}"
                                        domain="[('parent_id','child_of', partner_id)]"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"
                                        no_create="True"/>
-                                <field name="invoice_title" string="境外收货人" attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
+                                <field name="invoice_title" string="境外收货人"
+                                       attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <field name="production_sale_unit" attrs="{'readonly': 1}"/>
 
                                 <!--field name="mark_ids" widget="many2many_tags"/-->
@@ -160,9 +166,9 @@
                                        attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
                                 <field name="tuopan_volume"
                                        attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
-                              </group>
+                            </group>
 
- <group>
+                            <group>
                                 <field name="name" readonly="1" groups="base.group_system" invisible="1"/>
                                 <field name="locked" groups="base.group_system" invisible="1"/>
                                 <field name="contract_type" groups="base.group_system"
@@ -172,7 +178,7 @@
                                 <field name="purchase_gongsi_id" groups="base.group_system" options="{'no_open':1}"
                                        string="采购主体"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
-     <field name="sale_type"/>
+                                <field name="sale_type"/>
 
                                 <field name="hs_fill" groups="base.group_system"/>
                             </group>
@@ -206,7 +212,8 @@
                                         <field name="po_id" string="采购合同"
                                                attrs="{'required':[('purchase_hs_id','=',False)],'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
 
-                                        <field name="amount" sum="小计" string="销售额" attrs="{'readonly':[('parent.sale_type','!=','proxy')]}"/>
+                                        <field name="amount" sum="小计" string="销售额"
+                                               attrs="{'readonly':[('parent.sale_type','!=','proxy')]}"/>
 
                                         <field name="price2" string="单价" readonly="1"
                                                attrs="{'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
@@ -253,7 +260,8 @@
                                                attrs="{'column_invisible': [('parent.hs_fill','!=','packaging')]}"/>
                                         <field name="type" invisible="1"/>
                                         <field name="note" invisible="1"/>
-                                        <button name="open_form_view" type="object" icon="fa-arrows-v" attrs="{'invisible':[('parent.state','not in',['draft','check']),('parent.is_editable','=',False)]}"/>
+                                        <button name="open_form_view" type="object" icon="fa-arrows-v"
+                                                attrs="{'invisible':[('parent.state','not in',['draft','check']),('parent.is_editable','=',False)]}"/>
                                     </tree>
                                     <form>
                                         <group>
@@ -349,13 +357,13 @@
                                         <field name="company_currency_id" readonly="1" invisible="1"/>
 
 
-                                        <field name="org_sale_amount" />
-                                        <field name="org_real_sale_amount" />
+                                        <field name="org_sale_amount"/>
+                                        <field name="org_real_sale_amount"/>
 
                                         <field name="sale_commission_ratio"
-                                               />
-                                        <field name="ciq_amount" />
-                                        <field name="no_ciq_amount" />
+                                        />
+                                        <field name="ciq_amount"/>
+                                        <field name="no_ciq_amount"/>
 
                                         <field name="shoukuan_amount"/>
                                         <field name="fukuan_amount"/>

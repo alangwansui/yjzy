@@ -52,7 +52,7 @@
                     <header groups="base.group_system">
 
                         <field name="state" widget="statusbar" statusbar_visible=" " groups="base.group_system"/>
-                        <field name="is_editable" widget="boolean_toggle" groups="sales_team.group_manager"/>
+
                     </header>
                     <sheet>
                         <div class="oe_button_box" name="button_box">
@@ -64,7 +64,9 @@
                                     <span class="o_stat_text">新增采购申请</span>
                                 </div>
                             </button>
+                            <field name="is_editable" widget="boolean_toggle" groups="sales_team.group_manager"/>
                          </div>
+
                         <group col="2">
                             <group name="general_information">
                                 <field name="operation_wizard" invisible="1"/>
@@ -205,7 +207,7 @@
                                 </field>
                             </page>
                             <page string="合并后报关明细">
-                                <field name="hsname_all_ids" editable="bottom">
+                                <field name="hsname_all_ids" editable="bottom" options="{'no_open':1}">
                                     <tree>
                                         <field name="hs_id"/>
                                         <field name="back_tax"/>
@@ -231,7 +233,7 @@
                             </page>
                             <page string="新增采购申请单" attrs="{'invisible':[('tb_po_invoice_ids_count','=',0)]}">
                                 <field name="tb_po_invoice_ids_count" invisible="1"/>
-                                <field name="tb_po_invoice_ids" context="{'other_po':1,'expense_po':0,'form_view_ref':'yjzy_extend.tb_po_form'}">
+                                <field name="tb_po_invoice_ids" options="{'no_open':1}" context="{'other_po':1,'expense_po':0,'form_view_ref':'yjzy_extend.tb_po_form'}">
                                     <tree>
                                         <field name="name"/>
                                         <field name="partner_id"/>

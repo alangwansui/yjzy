@@ -33,9 +33,9 @@
                 <field name="plan_invoice_auto_amount"/>
                 <field name="real_invoice_auto_amount"/>
                 <field name="lock_date"/>
-                <field name="state" string="状态"/>
-                <field name="state_1"/>
-                <field name="state_2"/>
+                <field name="state" string="状态" groups="base.group_system"/>
+                <field name="state_1" groups="base.group_system"/>
+                <field name="state_2" groups="base.group_system"/>
                 <field name="real_invoice_auto_id"/>
                 <field name="invoice_ids" string="应收发票明细"/>
             </tree>

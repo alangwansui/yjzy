@@ -34,6 +34,8 @@
                                 context="{'group_by':['date_out_in:year','date_out_in']}"/>
                         <filter string="出运确认时间以及开票分组" name="group_date_out_in_add_purchase" domain="[]"
                                 context="{'group_by':['date_out_in','stage_id']}"/>
+                        <filter string="出运确认时间当层分组" name="group_date_out_in_1" domain="[]"
+                                context="{'group_by':['date_out_in']}"/>
                         <filter string="出运确认按年分组" name="group_date_out_in_year" domain="[]"
                                 context="{'group_by':['date_out_in:year']}"/>
                         <filter string="时间状态分组" name="group_date_all_state_1" domain="[]"

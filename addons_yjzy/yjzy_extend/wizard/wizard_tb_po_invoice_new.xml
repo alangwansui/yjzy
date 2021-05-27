@@ -8,23 +8,15 @@
             <field name="model">wizard.tb.po.invoice.new</field>
             <field name="arch" type="xml">
                 <form string="添加采购金额">
-
                     <group>
-
-
-                          <field name="tb_id"/>
-
-
+                        <field name="tb_id" readonly="1" options="{'no_open':1}"/>
                     </group>
-                        <field name="wizard_tb_po_invoice_line_new">
-                            <tree editable="bottom">
-                                  <field name="is_claim" />
-                                <field name="tb_po_expense"/>
-
-
-
-                            </tree>
-                        </field>
+                    <field name="wizard_tb_po_invoice_line_new" options="{'no_open':1}">
+                        <tree editable="bottom" delete="false" create="false">
+                            <field name="is_claim"/>
+                            <field name="tb_po_expense" readonly="1" options="{'no_open':1}"/>
+                        </tree>
+                    </field>
 
 
                     <footer>

@@ -6,7 +6,7 @@
             <field name="name">transport.bill.declare.tree</field>
             <field name="model">transport.bill</field>
             <field name="arch" type="xml">
-                <tree string="出运应收发票相关" default_order="purchase_amount_min_add_rest_total desc" create="false">
+                <tree string="出运应收发票相关" default_order="date_out_in desc" create="false">
                     <field name="ref"/>
                     <field name="name" invisible="1" groups="base.group_system"/>
                     <field name="partner_id" required="1" invisible="context.get('not_show_partner')"/>
@@ -386,7 +386,7 @@
             <field name="limit">20</field>
             <field name="search_view_id" ref="view_transport_bill_tenyale_filter"/>
             <field name="context">
-                {'search_default_group_date_out_in_add_purchase':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3,'show_po_code':1}
+                {'search_default_group_date_out_in_1':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3,'show_po_code':1}
             </field>
             <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_transport_bill_declare_po_invoice_tree')}),
