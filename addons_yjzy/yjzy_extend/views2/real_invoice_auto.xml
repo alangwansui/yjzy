@@ -29,7 +29,7 @@
                 <field name="invoice_code" attrs="{'readonly':[('state','=','done')]}"/>
                 <field name="invoice_number" attrs="{'readonly':[('state','=','done')]}"/>
                 <field name="partner_id" attrs="{'readonly':[('state','=','done')]}" domain="[('supplier','=',True),('parent_id', '=', False)]"/>
-                <field name="bill_id" domain="[('state','in',['locked','finish_add_purchase'])]" attrs="{'readonly':[('state','=','done')]}"/>
+                <field name="bill_id" domain="[('locked','=',True)]" attrs="{'readonly':[('state','=','done')]}"/>
                 <field name="untaxed_amount" attrs="{'readonly':[('state','=','done')]}"/>
                 <field name="tax" attrs="{'readonly':[('state','=','done')]}"/>
                 <field name="amount_total" attrs="{'readonly':[('state','=','done')]}"/>

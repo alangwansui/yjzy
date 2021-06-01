@@ -72,6 +72,12 @@ class RealInvoiceAuto(models.Model):
     def action_confirm(self):
         self.state = 'done'
 
+    def unlink(self):
+        if self.state == 'done':
+            raise Warning('已经确认的实际发票，不允许删除')
+        else:
+            return super(RealInvoiceAuto, self).unlink()
+
 
 class PlanInvoiceAuto(models.Model):
     _name = 'plan.invoice.auto'
@@ -172,9 +178,9 @@ class PlanInvoiceAuto(models.Model):
                 if state_2 == '10' and date_out_in_residual_time >= 15 and not date_ship:
                     state_2 = '20'
                     one.state_2 = state_2
-                    
+
                 else:
-                    state_2 = '20'
+                    state_2 = '10'
                     one.state_2 = state_2
             elif state_1 == '20':
                 state_2 = '30'

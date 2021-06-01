@@ -141,7 +141,7 @@
                             <field name="contract_code" string="采购合同号*" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)],
                             'required':[('state','=','check')]}" />
                             <field name="include_tax" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}" />
-                            <field name="partner_id" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"  options="{'no_open':1}"
+                            <field name="partner_id" attrs="{'readonly':[('is_editable','=',False),'|',('state','not in',['draft']),('source_so_id','!=',False)]}"  options="{'no_open':1}"
                                    context="{'search_default_supplier':1, 'show_address': 0, 'default_supplier':1,}" domain="[('supplier','=',True),('parent_id', '=', False)]"/>
                             <field name="contact_id" attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}" domain="[('parent_id','=', partner_id),('type', '=', 'contact')]"/>
                             <field name="partner_ref" invisible="1"/>
