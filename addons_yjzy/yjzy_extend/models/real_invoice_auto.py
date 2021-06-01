@@ -153,6 +153,18 @@ class PlanInvoiceAuto(models.Model):
     real_invoice_auto_amount = fields.Monetary('实收发票总金额', currency_field='currency_id',
                                                compute=compute_real_invoice_auto_amount, store=True)
 
+    ciq_amount = fields.Monetary('报关金额', related='bill_id.ciq_amount', currency_field='currency_id',
+                                 digits=dp.get_precision('Money'), store=True)
+    purchase_amount2_tax_total = fields.Float(u'含税采购金额', related='bill_id.purchase_amount2_tax_total', store=True)
+    purchase_amount2_no_tax_total = fields.Float(u'不含税采购金额', related='bill_id.purchase_amount2_no_tax_total', store=True)
+    purchase_amount_min_forecast_total = fields.Float('预测采购金额(上限)', digits=(2, 2), related='bill_id.purchase_amount_min_forecast_total',
+                                                      store=True)
+    purchase_amount_min_add_forecast_total = fields.Float('可增加采购额(上限)', digits=(2, 2),
+                                                          related='bill_id.purchase_amount_min_add_forecast_total',
+                                                          store=True)
+    purchase_amount_min_add_rest_total = fields.Float('采购池(上限)', digits=(2, 2), related='bill_id.purchase_amount_min_add_rest_total',
+                                                      store=True)
+    purchase_amount2_add_actual_total = fields.Float(U'实际已经增加采购额', related='bill_id.purchase_amount2_add_actual_total', store=True)
     def compute_state_1_2(self):
         for one in self:
             date_ship = one.bill_id.date_ship
@@ -279,7 +291,32 @@ class PlanInvoiceAuto(models.Model):
     def action_make_real_in_invoice(self):
         self.state = '60'
 
+    def open_wizard_tb_po_invoice_new(self):
+        self.ensure_one()
+        wizard = self.env['wizard.tb.po.invoice.new'].create({
+            'tb_id': self.bill_id.id,
+                                                          })
+        view = self.env.ref('yjzy_extend.wizard_tb_po_form_new')
+        line_obj = self.env['wizard.tb.po.invoice.line.new']
+        tb_po_expense = self.env['tb.po.invoice'].search([('state','=','25')])
+        if tb_po_expense:
+            for one in tb_po_expense:
+                line_obj.create({
+                    'wizard_tb_po_invoice': wizard.id,
+                    'tb_po_expense':one.id,
+                })
 
+        return {
+            'name': _(u'增加采购'),
+            'view_type': 'tree,form',
+            "view_mode": 'form',
+            'res_model': 'wizard.tb.po.invoice.new',
+            'type': 'ir.actions.act_window',
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': wizard.id,
+            'context': {},
+        }
 
 
 

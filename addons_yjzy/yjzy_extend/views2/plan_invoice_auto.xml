@@ -33,11 +33,18 @@
                 <field name="plan_invoice_auto_amount"/>
                 <field name="real_invoice_auto_amount"/>
                 <field name="lock_date"/>
-                <field name="state" string="状态" groups="base.group_system"/>
-                <field name="state_1" groups="base.group_system"/>
-                <field name="state_2" groups="base.group_system"/>
-                <field name="real_invoice_auto_id"/>
-                <field name="invoice_ids" string="应收发票明细"/>
+                <field name="ciq_amount" string="报关金额"/>
+                <field name="purchase_amount2_tax_total" string="含税采购"/>
+                <field name="purchase_amount2_no_tax_total" string="未税采购"/>
+                <field name="purchase_amount_min_forecast_total" string="预测最大采购"/>
+                <field name="purchase_amount_min_add_forecast_total" string="总可增加"/>
+                <field name="purchase_amount_min_add_rest_total" string="本次可增加"/>
+                <field name="purchase_amount2_add_actual_total" string="实际已增加"/>
+                <field name="state" string="状态" groups="base.group_system" invisible="1"/>
+                <field name="state_1" groups="base.group_system" invisible="1"/>
+                <field name="state_2" groups="base.group_system" invisible="1"/>
+                <field name="real_invoice_auto_id" invisible="1"/>
+                <field name="invoice_ids" string="应收发票明细" invisible="1"/>
             </tree>
         </field>
     </record>
@@ -51,6 +58,7 @@
                     <button name="compute_hs_name_all_ids" type="object" string="计算报关明细"/>
                     <button name="compute_state" type="object" string="计算状态" groups="base.group_system"/>
                     <button name="compute_state_1_2" type="object" string="计算状态_1_2" groups="base.group_system"/>
+                    <button name="open_wizard_tb_po_invoice_new" type="object" string="增加采购"  attrs="{'invisible':[('state','in',['10','50','60','70'])]}"/>
                     <button name="action_lock" type="object" string="锁定"
                             attrs="{'invisible':[('state','not in',['10','20'])]}"/>
                     <button name="action_unlock" type="object" string="取消锁定"
