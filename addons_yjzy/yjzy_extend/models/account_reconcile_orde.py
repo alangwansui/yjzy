@@ -1739,9 +1739,9 @@ class account_reconcile_order(models.Model):
         if lines:
             for one in lines:
                 if one.so_id:
-                    if one.amount_total_org_new > one.amount_invoice_so_residual_can_approve:
-                    # if abs(one.amount_total_org_new - one.amount_invoice_so_residual_can_approve) >= 0.01:
-                        raise Warning('申请的金额大于可认领预收%s:%s' % (one.amount_total_org_new,one.amount_invoice_so_residual_can_approve))
+                    # if one.amount_total_org_new > one.amount_invoice_so_residual_can_approve:
+                    # # if abs(one.amount_total_org_new - one.amount_invoice_so_residual_can_approve) >= 0.01:
+                    #     raise Warning('申请的金额大于可认领预收%s:%s' % (one.amount_total_org_new,one.amount_invoice_so_residual_can_approve))
                     if one.amount_advance_org > one.yjzy_payment_id.advance_balance_total:
                         raise Warning('预收认领金额大于可认领的预收金额')
         if self.line_do_ids and self.amount_advance_org == 0:

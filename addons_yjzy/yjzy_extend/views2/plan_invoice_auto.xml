@@ -25,7 +25,7 @@
         <field name="model">plan.invoice.auto</field>
         <field name="priority" eval="999"/>
         <field name="arch" type="xml">
-            <tree string="应收发票">
+            <tree string="应收发票" create="false">
                 <field name="name" string="编号"/>
                 <field name="bill_id"/>
                 <field name="bill_date_out_in"/>
@@ -55,17 +55,17 @@
         <field name="arch" type="xml">
             <form string="应收发票">
                 <header>
-                    <button name="compute_hs_name_all_ids" type="object" string="计算报关明细"/>
+                    <button name="compute_hs_name_all_ids" type="object" string="计算报关明细" groups="base.group_system"/>
                     <button name="compute_state" type="object" string="计算状态" groups="base.group_system"/>
                     <button name="compute_state_1_2" type="object" string="计算状态_1_2" groups="base.group_system"/>
-                    <button name="open_wizard_tb_po_invoice_new" type="object" string="增加采购"  attrs="{'invisible':[('state','in',['10','50','60','70'])]}"/>
+                    <button name="open_wizard_tb_po_invoice_new" type="object" string="增加采购"  attrs="{'invisible':[('state_1','not in',['20'])]}"/>
                     <button name="action_lock" type="object" string="锁定"
-                            attrs="{'invisible':[('state','not in',['10','20'])]}"/>
+                            attrs="{'invisible':[('state_1','not in',['20'])]}"/>
                     <button name="action_unlock" type="object" string="取消锁定"
-                            attrs="{'invisible':[('state','not in',['30','40'])]}"/>
+                            attrs="{'invisible':[('state_1','not in',['30'])]}"/>
                     <button name="action_make_real_in_invoice" type="object" string="发票收齐并开票"
-                            attrs="{'invisible':[('state','not in',['50'])]}"/>
-                    <field name="state" widget="statusbar" statusbar_visible=" "/>
+                            attrs="{'invisible':[('state_1','not in',['40'])]}"/>
+                    <field name="state_1" widget="statusbar" statusbar_visible=" "/>
                 </header>
                 <sheet>
                     <div class="oe_title" invisible="1">
