@@ -390,8 +390,8 @@ class hr_expense_sheet(models.Model):
         group = self.env.user.groups_id
         if self.state_1 in ['draft','employee_approval'] and self.employee_id.user_id != user:
             raise Warning('您不是申请人，无权拒绝!')
-        if self.state_1 in ['done','post']:
-            raise Warning('已完成不允许拒绝!')
+        # if self.state_1 in ['done','post']:
+        #     raise Warning('已完成不允许拒绝!')
         if self.state_1 not in ['draft','employee_approval','done','post'] and  user not in stage_preview.user_ids: #not stage_preview.user_ids and
             raise Warning('您没有权限拒绝!')
         self.write({'state': 'cancel',
@@ -415,6 +415,8 @@ class hr_expense_sheet(models.Model):
                                       values={'reason': reason, 'name': self.name},
                                       subtype_id=self.env.ref(
                                           'mail.mt_note').id)  # 定义了留言消息的模板，其他都可以参考，还可以继续参考费用发送计划以及邮件方式
+
+
 
     def action_draft(self):
         stage_id = self._stage_find(domain=[('code', '=', '010')])
