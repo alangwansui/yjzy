@@ -267,10 +267,10 @@ class PlanInvoiceAuto(models.Model):
             self.state_1 = '30'
             self.state_2 = '30'
         self.lock_date = datetime.today()
-        stage_id = self.bill_id._stage_find(domain=[('code', '=', '013')])
-        self.bill_id.write({
-            'stage_id': stage_id.id
-        })
+        # stage_id = self.bill_id._stage_find(domain=[('code', '=', '013')])
+        # self.bill_id.write({
+        #     'stage_id': stage_id.id
+        # })
 
     def action_unlock(self):
         date_ship = self.bill_id.date_ship
