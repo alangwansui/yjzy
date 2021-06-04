@@ -272,7 +272,7 @@ class tb_po_invoice(models.Model):
 
     #增加采购相关字段：
 
-
+    is_editable = fields.Boolean(u'可编辑')
     purchase_amount_min_add_rest_this_time_total = fields.Float('审批前本次可增加合计', digits=(2, 2),
                                                                 compute=compute_min_add_rest_this_time_total,
                                                                 store=True)
@@ -498,6 +498,43 @@ class tb_po_invoice(models.Model):
     #                     'quantity': 1,
     #                     'price_unit': self.other_invoice_amount,
     #                     'account_id': account.id,})]
+    @api.onchange('is_editable')
+    def onchange_is_editable(self):
+        if self.invoice_other_payment_in_ids:
+            if self.is_editable == True:
+                for one in self.invoice_other_payment_in_ids:
+                    one.is_editable=True
+                    print('is_editable', one.is_editable)
+            else:
+                for one in self.invoice_other_payment_in_ids:
+                    one.is_editable=False
+                    print('is_editable', one.is_editable)
+
+    def can_editable(self):
+        self.is_editable =True
+
+        if self.invoice_other_payment_in_ids:
+            for one in self.invoice_other_payment_in_ids:
+                one.is_editable = True
+                print('is_editable_akiny', one.is_editable)
+
+
+    def cancel_editable(self):
+        self.is_editable = False
+        if self.invoice_other_payment_in_ids:
+            for one in self.invoice_other_payment_in_ids:
+                one.is_editable = False
+                print('is_editable_akiny', one.is_editable)
+
+
+
+
+    @api.onchange('invoice_partner','name_title')
+    def onchange_invoice_partner_name_title(self):
+        if self.invoice_other_payment_in_ids:
+            for one in self.invoice_other_payment_in_ids:
+                one.invoice_partner = self.invoice_partner
+                one.name_title = self.name_title
 
     @api.onchange('other_invoice_amount')
     def onchange_other_invoice_amount(self):

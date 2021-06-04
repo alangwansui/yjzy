@@ -86,6 +86,7 @@
                                     context="{}" attrs="{'invisible':[('yjzy_invoice_count','=',0)]}">
                                 <field string="额外账单" name="yjzy_invoice_count" widget="statinfo"/>
                             </button>
+                            <field name="is_editable"  widget="boolean_toggle" groups="sales_team.group_manager"/>
                         </div>
                         <!--                        <div class="oe_button_box" name="button_box">-->
                         <!--                             <button type="object" name="open_other_payment_reconcile_order_ids" class="oe_stat_button" icon="fa-truck" context="{}"-->
@@ -168,9 +169,9 @@
                                 <field name="invoice_attribute_all_in_one" string="账单类型"/>
                                 <field name="tenyale_name" string="天宇编号" attrs="{'invisible':[('invoice_attribute_all_in_one','not in',['230','330','630'])]}"/>
                                 <field name="invoice_partner"
-                                       attrs="{'readonly':[('state','in',['paid','open'])],'invisible':[('invoice_attribute','!=','other_payment')]}"/>
+                                       attrs="{'readonly':[('state','in',['paid','open']),('is_editable','=',False)],'invisible':[('invoice_attribute','!=','other_payment')]}"/>
                                 <field name="name_title"
-                                       attrs="{'readonly':[('state','in',['paid','open'])],'invisible':[('invoice_attribute','!=','other_payment')]}"/>
+                                       attrs="{'readonly':[('state','in',['paid','open']),('is_editable','=',False)],'invisible':[('invoice_attribute','!=','other_payment')]}"/>
                                 <field name="number" string="系统编号" class="oe_inline"
                                        attrs="{'invisible': [('state', '=', 'draft')]}"/>
 

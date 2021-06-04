@@ -741,6 +741,7 @@ class account_invoice(models.Model):
             tenyale_name = self.env['ir.sequence'].next_by_code('account.invoice.tenyale_invoice')
         return tenyale_name
 
+    is_editable = fields.Boolean(u'可编辑')
     purchase_invoice_hsname_ids = fields.One2many('purchase.invoice.hsname','invoice_id','采购发票明细')
     tenyale_name = fields.Char(u'天宇编号', default=lambda self: self._default_tenyale_name())
     is_manual = fields.Boolean('是否手动创建',default=False)

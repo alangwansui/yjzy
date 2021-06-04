@@ -33,10 +33,14 @@
                                 attrs="{'invisible':['|','|','|',('yjzy_type_1','in',['sale','other_payment_sale']),('is_yjzy_tb_po_invoice','=',False),('type','!=','other_payment'),('state','!=','10_draft')]}"/>
                         <button name="delete_tb_po_invoice" type="object" string="删除其他应付申请"
                                 attrs="{'invisible':['|','|','|',('yjzy_type_1','in',['purchase','other_payment_purchase']),('is_yjzy_tb_po_invoice','=',False),('type','!=','other_payment'),('state','!=','10_draft')]}"/>
-
+                        <button name="can_editable" type="object" string="打开部分修改权限" groups="sales_team.group_manager" attrs="{'invisible':[('state','!=','30_done'),('is_editable','=',True)]}"/>
+                        <button name="cancel_editable" type="object" string="关闭部分修改权限" groups="sales_team.group_manager" attrs="{'invisible':[('state','!=','30_done'),('is_editable','=',False)]}"/>
                         <field name="state" widget="statusbar" statusbar_visible=" "/>
                     </header>
                     <sheet>
+                        <div class="oe_button_box" groups="base.group_system">
+                       <field name="is_editable"  widget="boolean_toggle" groups="sales_team.group_manager"/>
+                    </div>
 
 
                         <div class="oe_title" attrs="{'invisible':[('type','=','other_payment')]}">
@@ -69,9 +73,9 @@
 
 
                                 <field name="invoice_partner"
-                                       attrs="{'invisible':[('type','not in',['other_payment'])],'readonly':[('state','!=','10_draft')]}"/>
+                                       attrs="{'invisible':[('type','not in',['other_payment'])],'readonly':[('state','!=','10_draft'),('is_editable','=',False)]}"/>
                                 <field name="name_title"
-                                       attrs="{'invisible':[('type','in',['other_po'])],'readonly':[('state','!=','10_draft')]}"/>
+                                       attrs="{'invisible':[('type','in',['other_po'])],'readonly':[('state','!=','10_draft'),('is_editable','=',False)]}"/>
 
                                 <label for="" string="本次申请金额"/>
                                 <div name="amount_div" class="o_row"
@@ -285,7 +289,7 @@
                             </page>
                             <page string="对应冲减账单" attrs="{'invisible':[('invoice_p_s_ids_count','=',0)]}">
                                 <field name="invoice_p_s_ids_count" invisible="1"/>
-                                <field name="invoice_p_s_ids">
+                                <field name="invoice_p_s_ids" readonly="1">
                                     <tree decoration-info="state == 'draft'" decoration-muted="state == 'cancel'">
                                         <field name="tb_contract_code"/>
                                         <field name="amount_total_signed" string="账单金额"/>
@@ -296,7 +300,7 @@
                             </page>
                             <page string="对应退税账单" attrs="{'invisible':[('invoice_back_tax_ids_count','=',0)]}">
                                 <field name="invoice_back_tax_ids_count" invisible="1"/>
-                                <field name="invoice_back_tax_ids">
+                                <field name="invoice_back_tax_ids" readonly="1">
                                     <tree decoration-info="state == 'draft'" decoration-muted="state == 'cancel'">
                                         <field name="tb_contract_code"/>
                                         <field name="amount_total_signed" string="账单金额"/>
@@ -307,7 +311,7 @@
                             </page>
                             <page string="对应应收账单" attrs="{'invisible':[('invoice_s_ids_count','=',0)]}">
                                 <field name="invoice_s_ids_count" invisible="1"/>
-                                <field name="invoice_s_ids">
+                                <field name="invoice_s_ids" readonly="1">
                                     <tree decoration-info="state == 'draft'" decoration-muted="state == 'cancel'">
                                         <field name="tb_contract_code"/>
                                         <field name="amount_total_signed" string="账单金额"/>
@@ -318,11 +322,14 @@
                             </page>
                             <page string="其他应收账单" attrs="{'invisible':[('invoice_other_payment_in_ids_count','=',0)]}">
                                 <field name="invoice_other_payment_in_ids_count" invisible="1"/>
-                                <field name="invoice_other_payment_in_ids">
-                                    <tree>
+                                <field name="invoice_other_payment_in_ids" attrs="{'readonly':[('is_editable','=',False)]}">
+                                    <tree editable="bottom" create="false" delete="false">
                                         <field name="tb_contract_code"/>
+                                        <field name="invoice_partner"/>
+                                        <field name="name_title"/>
                                         <field name="amount_total_signed" string="账单金额"/>
                                         <field name="residual_signed" string="未收金额"/>
+                                        <field name="is_editable"/>
                                         <field name="state"/>
                                     </tree>
                                 </field>
