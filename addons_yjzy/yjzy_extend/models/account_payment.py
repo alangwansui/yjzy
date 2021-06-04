@@ -96,6 +96,8 @@ class account_payment(models.Model):
                     balance = sum([-1 * x.amount_currency for x in lines])
                 if balance == 0 and one.state_1 == '50_posted':
                     one.state_1 = '60_done'
+                if  balance != 0 and one.state_1 == '60_done':
+                    one.state_1='50_posted'
             if one.sfk_type == 'rcfkd':
                 lines = all_lines.filtered(lambda x: x.account_id.code == '112301')
                 if one.currency_id.name == 'CNY':
@@ -104,6 +106,8 @@ class account_payment(models.Model):
                     balance = sum([x.amount_currency for x in lines])
                 if balance == 0 and one.state_1 == '50_posted':
                     one.state_1 = '60_done'
+                if balance != 0 and one.state_1 == '60_done':
+                    one.state_1 = '50_posted'
             if one.sfk_type == 'fkzl':
                 lines = all_lines.filtered(lambda x: x.account_id.code == '112301')
                 if one.currency_id.name == 'CNY':
@@ -185,6 +189,8 @@ class account_payment(models.Model):
                 if advance_balance_total == 0 and one.state_1 == '50_posted':
                     one.state_1 = '60_done'
                     one.test_reconcile()
+                if advance_balance_total == 0 and one.state_1 == '60_done':
+                    one.state_1 = '50_posted'
                     # one.write({'state': 'reconciled'})
                 one.advance_hexiao_total = advance_total_2
                 one.advance_renling_total = advance_total

@@ -579,7 +579,7 @@
                                        attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}"/>
                                 <field name="time_receive_pi" string="收到客户订单日"  attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)],}"/>
                                 <field name="time_sent_pi" string="发送PI日"  attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)],}"/>
-                                <field name="contract_date" string="客户确认日期*"
+                                <field name="contract_date" string="客户PI回签日*"
                                        attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)],'required':[('state','=','check')]}"/>
                                 <field name="requested_date" string="客户交期*" widget="date"
                                        attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)],'required':[('state','=','check')]}"/>
