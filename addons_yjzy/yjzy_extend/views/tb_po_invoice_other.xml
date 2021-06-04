@@ -33,8 +33,8 @@
                                 attrs="{'invisible':['|','|','|',('yjzy_type_1','in',['sale','other_payment_sale']),('is_yjzy_tb_po_invoice','=',False),('type','!=','other_payment'),('state','!=','10_draft')]}"/>
                         <button name="delete_tb_po_invoice" type="object" string="删除其他应付申请"
                                 attrs="{'invisible':['|','|','|',('yjzy_type_1','in',['purchase','other_payment_purchase']),('is_yjzy_tb_po_invoice','=',False),('type','!=','other_payment'),('state','!=','10_draft')]}"/>
-                        <button name="can_editable" type="object" string="打开部分修改权限" groups="sales_team.group_manager" attrs="{'invisible':[('state','!=','30_done'),('is_editable','=',True)]}"/>
-                        <button name="cancel_editable" type="object" string="关闭部分修改权限" groups="sales_team.group_manager" attrs="{'invisible':[('state','!=','30_done'),('is_editable','=',False)]}"/>
+                        <button name="can_editable" type="object" string="打开部分修改权限" groups="sales_team.group_manager" attrs="{'invisible':['|',('state','!=','30_done'),('is_editable','=',True)]}"/>
+                        <button name="cancel_editable" type="object" string="关闭部分修改权限" groups="sales_team.group_manager" attrs="{'invisible':['|',('state','!=','30_done'),('is_editable','=',False)]}"/>
                         <field name="state" widget="statusbar" statusbar_visible=" "/>
                     </header>
                     <sheet>
