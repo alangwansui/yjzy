@@ -2084,15 +2084,15 @@
                                        options='{"no_open": True, "no_create": True}'
                                        attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],
                                        'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
-                                <field name="salesman_ids" string="目前客户负责人"
+                                <field name="salesman_ids" string="目前客户负责人" widget="many2many_tags" groups="base.group_system"
                                        options='{"no_open": True, "no_create": True}'
                                        attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],
                                        'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
-                                <field name="sales_assistant_ids" string="销售助理"
+                                <field name="sales_assistant_ids" string="销售助理" widget="many2many_tags"
                                        options='{"no_open": True, "no_create": True}'
                                        attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],
                                        'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
-                                <field name="purchase_assistant_ids" string="采购助理"
+                                <field name="purchase_assistant_ids" string="采购助理" widget="many2many_tags"
                                        options='{"no_open": True, "no_create": True}'
                                        attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],
                                        'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>

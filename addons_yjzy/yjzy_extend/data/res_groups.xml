@@ -42,8 +42,11 @@
             <field name="name">合规视图</field>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
         </record>
-
-
+        <record id="group_purchase_assistant_yejing" model="res.groups">
+            <field name="name">采购助理(叶静)</field>
+            <field name="category_id" ref="base.module_category_purchase_management"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
 
     </data>
 </odoo>
