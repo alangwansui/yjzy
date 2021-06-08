@@ -69,17 +69,17 @@
                 <tree string="Contacts">
                     <field name="customer_code" string="编号"/>
                     <field name="name" string="简称"/>
-                    <field name="country_id" string="公司所在国"/>
-                    <field name="jituan_id" string="所属集团"/>
+                    <field name="country_id" string="公司所在国" groups="sales_team.group_sale_salesman"/>
+                    <field name="jituan_id" string="所属集团" groups="sales_team.group_sale_salesman"/>
                     <field name="sale_currency_id" string="销售货币"/>
                     <field name="property_payment_term_id" string="客户付款条款"/>
-                    <field name="last_sale_order_approve_date"/>
-                    <field name="phone"/>
+                    <field name="last_sale_order_approve_date" groups="sales_team.group_sale_salesman"/>
+                    <field name="phone" groups="sales_team.group_sale_salesman"/>
                     <field name="fax" invisible="1"/>
-                    <field name="contract_type" string="业务模式"/>
-                    <field name="gongsi_id" string="销售主体"/>
-                    <field name="purchase_gongsi_id" string="采购主体"/>
-                    <field name="user_id" string="目前客户负责人"/>
+                    <field name="contract_type" string="业务模式" groups="sales_team.group_sale_salesman"/>
+                    <field name="gongsi_id" string="销售主体" groups="sales_team.group_sale_salesman"/>
+                    <field name="purchase_gongsi_id" string="采购主体" groups="sales_team.group_sale_salesman"/>
+                    <field name="user_id" string="目前客户负责人" groups="sales_team.group_sale_salesman"/>
                     <field name="customer_info_from_uid" string="客户获取人" invisible="1"/>
                     <field name="devloper_id" string="客户开发人" invisible="1"/>
 
