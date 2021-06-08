@@ -190,8 +190,7 @@ class PlanInvoiceAuto(models.Model):
                 if state_2 == '10' and date_out_in_residual_time >= 15 and not date_ship:
                     state_2 = '20'
                     one.state_2 = state_2
-
-                else:
+                elif state_2 == '20' and date_out_in_residual_time < 15 and not date_ship:
                     state_2 = '10'
                     one.state_2 = state_2
             elif state_1 == '20':
@@ -200,7 +199,7 @@ class PlanInvoiceAuto(models.Model):
                 if state_2 == '30' and date_ship_residual_time >= 30:
                     state_2 = '40'
                     one.state_2 = state_2
-                else:
+                elif state_2 == '40' and date_ship_residual_time < 30:
                     state_2 = '30'
                     one.state_2 = state_2
 
@@ -212,7 +211,7 @@ class PlanInvoiceAuto(models.Model):
                     if state_2 == '50' and date_ship_residual_time >= 30:
                         state_2 = '60'
                         one.state_2 = state_2
-                    else:
+                    elif state_2 == '60' and date_ship_residual_time < 30:
                         state_2 = '50'
                         one.state_2 = state_2
                 else:
@@ -222,7 +221,7 @@ class PlanInvoiceAuto(models.Model):
                     if state_2 == '70' and date_ship_residual_time >= 30:
                         state_2 = '75'
                         one.state_2 = state_2
-                    else:
+                    elif state_2 == '75' and date_ship_residual_time < 30:
                         state_2 = '70'
                         one.state_2 = state_2
             elif state_1 == '50':

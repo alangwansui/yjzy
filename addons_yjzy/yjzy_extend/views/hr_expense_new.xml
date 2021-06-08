@@ -1508,6 +1508,7 @@
 
                         <button name="btn_company_budget" type="object" string="公司预算" groups="base.group_system"/>
                         <button name="btn_user_budget" type="object" string="个人预算" groups="base.group_system"/>
+                            <button name="create_customer_invoice_old" type="object" string="老退税"/>
                         <field name="is_editable" widget="boolean_toggle" groups="sales_team.group_manager"/>
 
                     </header>

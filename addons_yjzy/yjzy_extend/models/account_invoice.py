@@ -920,6 +920,7 @@ class account_invoice(models.Model):
     include_tax = fields.Boolean(u'含税')
     date_ship = fields.Date(u'出运船日期')
     date_finish = fields.Date(u'交单日期')
+    date_out_in = fields.Date('进仓日')
     purchase_date_finish_att = fields.Many2many('ir.attachment', string='供应商交单日附件')
     purchase_date_finish_att_count = fields.Integer(u'供应商交单附件数量', compute=compute_info)
     purchase_date_finish_state = fields.Selection([('draft', u'待提交'), ('submit', u'待审批'), ('done', u'完成')], '供应商交单审批状态',
@@ -927,7 +928,7 @@ class account_invoice(models.Model):
     date_deadline = fields.Date(u'到期日期', compute=compute_date_deadline)
     date_deadline_new = fields.Date(u'到期日期', compute=compute_date_deadline, store=True)  # 0723
     gongsi_id = fields.Many2one('gongsi', '内部公司')
-    date_out_in = fields.Date('进仓日')
+
     # ----
     reconcile_order_id = fields.Many2one('account.reconcile.order', u'核销单据')
     # 上面这个是M2o,现在改成M2M
