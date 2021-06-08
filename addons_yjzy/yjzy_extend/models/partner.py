@@ -319,8 +319,15 @@ class res_partner(models.Model):
     bank1_address = fields.Char('银行地址')
     other_attachment = fields.Many2many('ir.attachment', string='其他补充资料附件')
 
+    manager_ids = fields.Many2many('res.users','m_id','ru_id','p_id','总经理')
+    salesman_ids = fields.Many2many('res.users','m_1_id','ru_1_id','p_1_id','业务负责人')
+    sales_assistant_ids = fields.Many2many('res.users','m_2_id','ru_2_id','p_2_id','销售助理')
+    purchase_assistant_ids = fields.Many2many('res.users','m_3_id','ru_3_id','p_3_id','采购助理')
     #13已经添加
     assistant_id = fields.Many2one('res.users', store=True)
+
+
+
     jituan_id = fields.Many2one('ji.tuan', '集团')
     comment_contact = fields.Text(u'对接内容描述')
     devloper_id = fields.Many2one('res.partner', u'开发人员',domain=[('is_inter_partner','=',True),('company_type','=','personal')])

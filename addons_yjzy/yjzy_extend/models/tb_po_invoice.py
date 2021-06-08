@@ -280,7 +280,7 @@ class tb_po_invoice(models.Model):
     other_payment_invoice_residual = fields.Monetary('其他应收应付剩余金额', currency_field='currency_id',
                                                      compute=compute_other_residual, store=True)
     other_payment_invoice_residual_yjzy = fields.Monetary('关联其他应收付', currency_field='currency_id',
-                                                          related='yjzy_tb_po_invoice.other_payment_invoice_residual')  # 下级
+                                                          related='yjzy_tb_po_invoice.other_payment_invoice_residual', store=True)  # 下级
     other_payment_invoice_residual_yjzy_parent = fields.Monetary('关联其他应收付', currency_field='currency_id',
                                                                  related='yjzy_tb_po_invoice_parent.other_payment_invoice_residual')  # 上级
 
@@ -415,8 +415,7 @@ class tb_po_invoice(models.Model):
     #                                              ('invoice_attribute','in',['other_po'])])#('type', 'in', ['in_invoice','out_invoice']),第一个
 
     invoice_normal_ids = fields.One2many('account.invoice', 'tb_po_invoice_id', '申请账单',
-                                         domain=[('yjzy_type_1', 'in', ['purchase',
-                                                                        'other_payment_purchase'])])  # ('type', 'in', ['in_invoice','out_invoice']),第一个
+                                         domain=[('yjzy_type_1', 'in', ['purchase','other_payment_purchase'])])  # ('type', 'in', ['in_invoice','out_invoice']),第一个
     invoice_normal_ids_count = fields.Integer('申请账单数量', compute=compute_invoice_count)
     invoice_normal_ids_residual = fields.Float('申请账单未付金额', compute=compute_invoice_amount,
                                                store=True)  # 让所有的付款都其中在这个字段下

@@ -125,7 +125,7 @@
                     <field name="price_total" string="应付金额"/>
                     <field name="invoice_normal_ids_residual" string="未付金额"/>
                     <field name="yjzy_tb_po_invoice_amount" string="应收金额"/>
-                    <field name="yjzy_tb_po_invoice_residual" string="未收金额"/>
+                    <field name="other_payment_invoice_residual_yjzy" string="未收金额"/>
                     <field name="state"/>
                     <field name="create_date"/>
                 </tree>
@@ -142,7 +142,7 @@
                     <field name="currency_id" groups="base.group_system"/>
                     <field name="partner_id" groups="base.group_system"/>
                     <field name="price_total" string="应收金额"/>
-                    <field name="invoice_normal_ids_residual" string="未收金额"/>
+                    <field name="other_payment_invoice_residual" string="未收金额"/>
                     <field name="yjzy_tb_po_invoice_amount" string="应付金额"/>
                     <field name="yjzy_tb_po_invoice_residual" string="未付金额"/>
                     <field name="state"/>
