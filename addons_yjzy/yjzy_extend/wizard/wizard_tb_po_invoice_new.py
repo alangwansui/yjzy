@@ -23,7 +23,7 @@ class WizardTbPoInvoiceNew(models.TransientModel):
         wizard_tb_po_invoice_line_claim_new = self.wizard_tb_po_invoice_line_new.filtered(lambda x: x.is_claim == False)
         wizard_tb_po_invoice_line_claim_id = self.wizard_tb_po_invoice_line_new.filtered(lambda x: x.is_claim == True)
         view = self.env.ref('yjzy_extend.tb_po_form')
-        if len(wizard_tb_po_invoice_line_claim_new) > 1:
+        if len(wizard_tb_po_invoice_line_claim_id) > 1:
             raise Warning('选择的费用转货款认领单大于1')
         elif len(wizard_tb_po_invoice_line_new) == len(wizard_tb_po_invoice_line_claim_new):
             self.tb_po_id = self.tb_id.create_tb_po_invoice()
