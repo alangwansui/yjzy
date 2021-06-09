@@ -169,6 +169,8 @@ class transport_bill(models.Model):
 
     def open_wizard_tb_po_invoice_new(self):
         self.ensure_one()
+        if self.locked == False:
+            raise Warning('出运合同未锁定,请先锁定后,再进行增加采购的操作')
         wizard = self.env['wizard.tb.po.invoice.new'].create({
             'tb_id': self.id,
                                                           })

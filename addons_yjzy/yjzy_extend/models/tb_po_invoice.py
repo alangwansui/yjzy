@@ -473,7 +473,7 @@ class tb_po_invoice(models.Model):
 
     expense_sheet_id = fields.Many2one('hr.expense.sheet', u'费用报告', ondelete='cascade', index=True)
     expense_currency_id = fields.Many2one('res.currency', related='expense_sheet_id.currency_id')
-    expense_sheet_amount = fields.Float('费用报告金额', related='expense_sheet_id.total_amount')
+    expense_sheet_amount = fields.Float('费用报告金额', related='expense_sheet_id.total_amount',store=True)
     expense_po_amount = fields.Float('费用转应付金额')
     yjzy_invoice_residual_amount = fields.Float('原始未付总金额', compute=compute_info_store, store=True)
     yjzy_invoice_include_tax = fields.Boolean('原始采购是否含税', compute=compute_info_store, store=True)

@@ -231,7 +231,7 @@ class MailActivity(models.Model):
             elif self.activity_type_id.name == '计划填写船期':
                 self.order_track_id.date_ship = self.date_finish
                 self.order_track_id.tb_id.action_lock_stage()
-                self.order_track_id.tb_id.create_hsname_all_ids()
+                # self.order_track_id.tb_id.create_hsname_all_ids()
                 self.order_track_id.create_activity_plan_date_customer_finish()
             elif self.activity_type_id.name == '计划填写客户交单日':
                 self.order_track_id.date_customer_finish = self.date_finish

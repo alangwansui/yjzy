@@ -62,6 +62,8 @@ class WizardTbPoInvoiceLineNew(models.TransientModel):
 
     wizard_tb_po_invoice = fields.Many2one('wizard.tb.po.invoice.new')
     tb_po_expense = fields.Many2one('tb.po.invoice','费用转货款')
+    expense_sheet_amount =  fields.Float('费用报告金额', related='tb_po_expense.expense_sheet_amount',store=True)
+    back_tax_add_this_time_total = fields.Float('本次退税金额', related='tb_po_expense.back_tax_add_this_time_total',store=True)
     is_claim = fields.Boolean('是否认领',default = False)
 
 

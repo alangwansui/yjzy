@@ -18,10 +18,14 @@ class transport_bill(models.Model):
         self.create_btls_hs_ids_purchase()
         for one in self.plan_invoice_auto_ids:
             one.state_1 = '20'
+
+#todo akiny需要再次校验
     def action_lock_stage(self):
         self.locked = True
-        self.create_hsname_all_ids()
-        self.create_btls_hs_ids_purchase()
+        print('locked_akiny',self.locked)
+        if not self.tb_po_invoice_ids:
+            self.create_hsname_all_ids()
+            self.create_btls_hs_ids_purchase()
         for one in self.plan_invoice_auto_ids:
             one.state_1 = '20'
 

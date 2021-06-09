@@ -15,6 +15,8 @@
                         <tree editable="bottom" delete="false" create="false">
                             <field name="is_claim"/>
                             <field name="tb_po_expense" readonly="1" options="{'no_open':1}"/>
+                            <field name="expense_sheet_amount"/>
+                            <field name="back_tax_add_this_time_total"/>
                         </tree>
                     </field>
 

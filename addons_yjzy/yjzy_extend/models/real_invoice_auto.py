@@ -138,7 +138,7 @@ class PlanInvoiceAuto(models.Model):
 
     state_1 = fields.Selection(
         [('10', '报关数据待锁定'), ('20', '报关数据已锁定-应收发票待锁定'), ('30', '应收发票锁定-发票未收齐'), ('40', '发票已收齐-未开销项'),
-         ('50', '已开销项-未申报退税'), ('60', '已申报退税未收退税'), ('70','已收退税')],'state_1',default='10')
+         ('50', '已开销项-未申报退税'), ('60', '已申报退税未收退税'), ('70','已收退税')],'state_1',track_visibility='onchange',default='10')
     state_2 = fields.Selection(
         [('10', '正常待锁定'), ('20', '异常待锁定'), ('30', '正常待锁定'), ('40', '异常待锁定'), ('50', '正常未收齐'),
          ('60', '异常未收齐'), ('70', '正常未开'), ('75', '异常未开'), ('80', '正常未申报'), ('90', '异常未申报'), ('100', '正常未收'),('110','异常未收'),('120','已收退税')],
@@ -193,6 +193,11 @@ class PlanInvoiceAuto(models.Model):
                 elif state_2 == '20' and date_out_in_residual_time < 15 and not date_ship:
                     state_2 = '10'
                     one.state_2 = state_2
+                else:
+                    state_1 = '20'
+                    one.state_1 = state_1
+                    state_2 = '30'
+                    one.state_2 = state_2
             elif state_1 == '20':
                 state_2 = '30'
                 one.state_2 = state_2
@@ -202,7 +207,6 @@ class PlanInvoiceAuto(models.Model):
                 elif state_2 == '40' and date_ship_residual_time < 30:
                     state_2 = '30'
                     one.state_2 = state_2
-
             elif state_1 == '30':
                 if plan_invoice_auto_amount != real_invoice_auto_amount:
                     state_2 = '50'
@@ -292,6 +296,8 @@ class PlanInvoiceAuto(models.Model):
 
     def open_wizard_tb_po_invoice_new(self):
         self.ensure_one()
+        if self.bill_id.locked == False:
+            raise Warning('出运合同未锁定,请先锁定出运合同,再进行增加采购的操作!')
         wizard = self.env['wizard.tb.po.invoice.new'].create({
             'tb_id': self.bill_id.id,
                                                           })

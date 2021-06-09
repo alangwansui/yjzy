@@ -526,6 +526,8 @@ class hr_expense_sheet(models.Model):
     def open_wizard_tb_po_invoice_new(self):
         self.ensure_one()
         bill_id = self.expense_line_ids.mapped('tb_id')
+        if bill_id.locked == False:
+            raise Warning('出运合同未锁定,请先锁定后,再进行增加采购的操作')
         wizard = self.env['wizard.tb.po.invoice'].create({'tb_id': bill_id and bill_id[0].id,
                                                           'expense_sheet_id':self.id,
                                                           'type':'expense_po'
