@@ -233,7 +233,7 @@ class DeclareDeclaration(models.Model):
             # if one.declaration_amount > one.invoice_residual_total:
             #     raise Warning('申报金额不允许大于未收退税金额！')
         if not self.declaration_date:
-            return Warning('请填写申报日期')
+            raise Warning('请填写申报日期')
         self.state = 'approval'
 
     def action_confirm(self):

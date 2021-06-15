@@ -115,7 +115,7 @@ class sale_order(models.Model):
             one.purchase_balance_sum = purchase_balance_sum
 
     @api.one
-    @api.depends('po_ids_new.balance_new', 'po_ids_new')
+    @api.depends('po_ids_new.balance_new', 'po_ids_new','state')
     def compute_purchase_balance3(self):
         for one in self:
             if one.state != 'verification':
