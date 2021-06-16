@@ -732,8 +732,7 @@ class sale_order(models.Model):
     # akiny 加入对是否使用今日手填汇率的判断
     def _get_other_cost(self):
         if self.company_id.is_current_date_rate:
-            other_cost = (
-                                 self.fee_outer + self.fee_export_insurance + self.fee_other) * self.current_date_rate + self.fee_inner + self.fee_rmb1 + self.fee_rmb2
+            other_cost = (self.fee_outer + self.fee_export_insurance + self.fee_other) * self.current_date_rate + self.fee_inner + self.fee_rmb1 + self.fee_rmb2
             return other_cost
 
         else:

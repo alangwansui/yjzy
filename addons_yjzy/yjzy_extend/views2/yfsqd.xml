@@ -120,7 +120,7 @@
                             attrs="{'invisible': [('state_1','not in',['20_account_submit'])]}"
                     />
                     <button name="%(payment_refuse_wizard_action)d" class="oe_highlight" string="总经理拒绝" type="action"
-                            attrs="{'invisible': [('state_1','not in',['30_manager_approve'])]}"/>
+                            attrs="{'invisible': [('state_1','not in',['30_manager_approve','40_approve'])]}"/>
                     <button name="action_draft_new" class="oe_highlight" string="重置草稿" type="object"
                             attrs="{'invisible':[('state_1','not in',['80_refused'])]}"/>
                     <button name="open_yfsqd_yfhxd_form" type="object" string="创建应付认领" invisible="1"

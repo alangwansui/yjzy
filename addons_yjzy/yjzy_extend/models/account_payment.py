@@ -1383,9 +1383,20 @@ class account_payment(models.Model):
             #     one.state_fkzl = '05_fksq'
             #     one.state = 'draft'
         if self.sfk_type in ['yfsqd']:
-            self.write({'state_1': '80_refused',
-                        'state': 'draft'
-                        })
+            if self.state_1 == '40_approve':
+                if self.state == 'draft' and ( self.yjzy_payment_id and self.yjzy_payment_id.state == 'draft' or self.yjzy_payment_id.state_fkzl == '05_fkzl'):
+                    self.yjzy_payment_id.unlink()
+                    self.write({'state_1': '80_refused',
+                                'state': 'draft'
+                                })
+                else:
+                    raise Warning('已经提交付款申请，无法拒绝！')
+            else:
+                self.write({'state_1': '80_refused',
+                            'state': 'draft'
+                            })
+
+
         if self.sfk_type in ['ysrld']:
             self.write({'state_1': '80_refused',
                         'state': 'draft'

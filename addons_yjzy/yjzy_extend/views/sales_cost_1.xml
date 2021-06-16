@@ -58,6 +58,13 @@
                         text-align: left;
                         padding-left: 4px;
                         }
+                        .text_3{
+                        border: 0.5px solid;
+                        height: 60px;
+                        line-height: 60px;
+                        text-align: left;
+                        padding-left: 4px;
+                        }
                         .number{
                         border: 0.5px solid;
                         height: 20px;
@@ -198,8 +205,8 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="text">付款条款</td>
-                                                    <td class="text">
+                                                    <td class="text_3">付款条款</td>
+                                                    <td class="text_3">
                                                         <span style="color:red"
                                                               attrs="{'invisible':[('is_different_payment_term','=',False)]}">
                                                             <field name="payment_term_id" options="{'no_open':1}"
