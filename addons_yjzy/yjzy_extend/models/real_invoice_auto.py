@@ -251,21 +251,27 @@ class PlanInvoiceAuto(models.Model):
 
 
     def action_lock(self):
-
         today = datetime.today()
         strptime = datetime.strptime
         lock_date = self.lock_date
+        date_ship = self.bill_id.date_ship
+        date_ship_residual_time = date_ship and (today - strptime(date_ship, DF)).days or 0
         lock_date_residual_time = lock_date and (today - strptime(lock_date, DF)).days or 0
         plan_invoice_auto_amount = self.plan_invoice_auto_amount
         real_invoice_auto_amount = self.real_invoice_auto_amount
-        if plan_invoice_auto_amount != real_invoice_auto_amount and lock_date_residual_time >= 30:
-            self.state = '40'
-            self.state_1 = '30'
-            self.state_2 = '40'
+        if plan_invoice_auto_amount != real_invoice_auto_amount:
+            if date_ship_residual_time >= 30:
+                self.state = '40'
+                self.state_1 = '30'
+                self.state_2 = '40'
+            else:
+                self.state = '30'
+                self.state_1 = '30'
+                self.state_2 = '30'
         else:
-            self.state = '30'
-            self.state_1 = '30'
-            self.state_2 = '30'
+            self.state = '50'
+            self.state_1 = '40'
+            self.state_2 = '70'
         self.lock_date = datetime.today()
         # stage_id = self.bill_id._stage_find(domain=[('code', '=', '013')])
         # self.bill_id.write({
