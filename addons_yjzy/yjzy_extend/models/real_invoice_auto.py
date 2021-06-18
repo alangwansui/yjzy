@@ -199,10 +199,11 @@ class PlanInvoiceAuto(models.Model):
             else:
                 one.state_1 = '20'
                 one.state_2 = '30'
-                if one.state_1 == '20' and date_ship_residual_time < 30:
-                    one.state_2 = '30'
-                elif one.state_1 == '20' and date_ship_residual_time >= 30:
-                    one.state_2 = '40'
+                if one.state_1 == '20':
+                    if date_ship_residual_time < 30:
+                        one.state_2 = '30'
+                    else:
+                        one.state_2 = '40'
                 elif one.state_1 == '30':
                     if plan_invoice_auto_amount != real_invoice_auto_amount:
                         if date_ship_residual_time < 30:
