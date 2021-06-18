@@ -243,11 +243,6 @@ class PlanInvoiceAuto(models.Model):
 
 
 
-
-
-
-
-
     def action_lock(self):
         today = datetime.today()
         strptime = datetime.strptime
@@ -277,6 +272,23 @@ class PlanInvoiceAuto(models.Model):
         # })
 
     def action_unlock(self):
+        today = datetime.today()
+        strptime = datetime.strptime
+        lock_date = self.lock_date
+        date_ship = self.bill_id.date_ship
+        date_out_in = self.bill_id.date_out_in
+
+        date_out_in_residual_time = date_out_in and (today - strptime(date_out_in, DF)).days or 0
+        if self.state_1 != '30':
+            raise Warning('现在状态不可解锁！')
+        else:
+            self.state_1 = '20'
+            if date_out_in_residual_time >= 15:
+                self.state_2 = '40'
+            else:
+                self.state_2 = '30'
+
+    def _action_unlock(self):
         date_ship = self.bill_id.date_ship
         today = datetime.today()
         strptime = datetime.strptime
