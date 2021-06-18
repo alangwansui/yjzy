@@ -216,8 +216,10 @@ class PlanInvoiceAuto(models.Model):
                 elif one.state_1 == '40':
                         if date_ship_residual_time < 30:
                             one.state_2 = '70'
+                            one.state_1 = '40'
                         else:
                             one.state_2 = '75'
+                            one.state_1 = '40'
                 elif one.state_1 == '50':
                     if back_tax_invoice_declare_ids and back_tax_invoice_ids:
                         if len(back_tax_invoice_declare_ids) != len(back_tax_invoice_ids):
