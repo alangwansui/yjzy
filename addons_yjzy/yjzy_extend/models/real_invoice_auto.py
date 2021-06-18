@@ -212,6 +212,7 @@ class PlanInvoiceAuto(models.Model):
                             one.state_2 = '60'
                     else:
                         one.state_1 = '40'
+                        one.state_2 = '70'
                 elif one.state_1 == '40':
                         if date_ship_residual_time < 30:
                             one.state_2 = '70'
