@@ -67,7 +67,7 @@
                                 attrs="{'invisible':[('state','in',['invoiced','abnormal','verifying','done','paid'])]}"
                                 type="object"/>
                         <field name="state" widget="statusbar" statusbar_visible=" "  groups="base.group_system"/>
-                        <field name="is_editable" widget="boolean_toggle" groups="	sales_team.group_manager"/>
+                        <field name="is_editable" widget="boolean_toggle" groups="sales_team.group_manager"/>
 
                     </header>
                     <sheet>

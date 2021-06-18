@@ -727,7 +727,7 @@ class res_partner(models.Model):
             if self.full_name and self.country_id and self.jituan_id and self.sale_currency_id and self.property_payment_term_id and \
                     self.phone and self.fax and self.website and self.address_text and self.contract_type and \
                     self.gongsi_id and self.purchase_gongsi_id and self.partner_source_id and self.customer_info_from_uid and self.devloper_id and \
-                    self.user_id and self.assistant_id and self.customer_purchase_in_china and self.customer_sale_total and \
+                    self.customer_purchase_in_china and self.customer_sale_total and \
                     self.self.child_contact_ids and self.customer_product_origin_ids and self.is_child_ids:
                 self.state = 'submit'
             else:
@@ -761,10 +761,8 @@ class res_partner(models.Model):
                     war += '客户获取人不为空\n'
                 if not self.devloper_id:
                     war += '开发者不为空\n'
-                if not self.user_id:
-                    war += '目前客户负责人不为空\n'
-                if not self.assistant_id:
-                    war += '助理不为空\n'
+
+
                 if not self.customer_purchase_in_china:
                     war += '客户在中国采购规模不为空\n'
                 if not self.customer_sale_total:
