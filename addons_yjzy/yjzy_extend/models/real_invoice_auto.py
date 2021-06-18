@@ -165,6 +165,7 @@ class PlanInvoiceAuto(models.Model):
     purchase_amount_min_add_rest_total = fields.Float('采购池(上限)', digits=(2, 2), related='bill_id.purchase_amount_min_add_rest_total',
                                                       store=True)
     purchase_amount2_add_actual_total = fields.Float(U'实际已经增加采购额', related='bill_id.purchase_amount2_add_actual_total', store=True)
+
     def compute_state_1_2(self):
         for one in self:
             date_ship = one.bill_id.date_ship
@@ -186,73 +187,62 @@ class PlanInvoiceAuto(models.Model):
             real_invoice_auto_amount = one.real_invoice_auto_amount
             print('real_invoice_auto_amount',real_invoice_auto_amount)
 
-            if state_1 == '10':
-                if state_2 == '10' and date_out_in_residual_time >= 15 and not date_ship:
-                    state_2 = '20'
-                    one.state_2 = state_2
-
-                if state_2 == '20' and date_out_in_residual_time < 15 and not date_ship:
-                    state_2 = '10'
-                    one.state_2 = state_2
-                if date_ship:
-                    state_1 = '20'
-                    one.state_1 = state_1
-                    state_2 = '30'
-                    one.state_2 = state_2
-            elif state_1 == '20':
-                state_2 = '30'
-                one.state_2 = state_2
-                if state_2 == '30' and date_ship_residual_time >= 30:
-                    state_2 = '40'
-                    one.state_2 = state_2
-                elif state_2 == '40' and date_ship_residual_time < 30:
-                    state_2 = '30'
-                    one.state_2 = state_2
-            elif state_1 == '30':
-                if plan_invoice_auto_amount != real_invoice_auto_amount:
-                    state_2 = '50'
-                    one.state_2 = state_2
-                    one.state_1 = '30'
-                    if state_2 == '50' and date_ship_residual_time >= 30:
-                        state_2 = '60'
-                        one.state_2 = state_2
-                    elif state_2 == '60' and date_ship_residual_time < 30:
-                        state_2 = '50'
-                        one.state_2 = state_2
+            if not date_ship:
+                one.state_1 = '10'
+                one.state_2 = '10'
+                if date_out_in_residual_time >= 15:
+                    one.state_2 = '20'
+                    one.state_1 = '10'
                 else:
-                    one.state_1 = '40'
-                    state_2 = '70'
-                    one.state_2 = state_2
-                    if state_2 == '70' and date_ship_residual_time >= 30:
-                        state_2 = '75'
-                        one.state_2 = state_2
-                    elif state_2 == '75' and date_ship_residual_time < 30:
-                        state_2 = '70'
-                        one.state_2 = state_2
-            elif state_1 == '50':
-                if back_tax_invoice_declare_ids and back_tax_invoice_ids:
-                    if len(back_tax_invoice_declare_ids) != len(back_tax_invoice_ids):
-                        if date_ship_residual_time >= 45:
-                            state_2 = '90'
-                            one.state_2 = state_2
+                    one.state_2 = '10'
+                    one.state_1 = '10'
+            else:
+                one.state_1 = '20'
+                one.state_2 = '30'
+                if one.state_1 == '20' and date_ship_residual_time < 30:
+                    one.state_2 = '30'
+                elif one.state_1 == '20' and date_ship_residual_time >= 30:
+                    one.state_2 = '40'
+                elif one.state_1 == '30':
+                    if plan_invoice_auto_amount != real_invoice_auto_amount:
+                        if date_ship_residual_time < 30:
+                            one.state_2 = '50'
                         else:
-                            state_2 = '80'
-                            one.state_2 = state_2
+                            one.state_2 = '60'
+                elif one.state_1 == '40':
+                        if date_ship_residual_time < 30:
+                            one.state_2 = '70'
+                        else:
+                            one.state_2 = '75'
+                elif one.state_1 == '50':
+                    if back_tax_invoice_declare_ids and back_tax_invoice_ids:
+                        if len(back_tax_invoice_declare_ids) != len(back_tax_invoice_ids):
+                            if date_ship_residual_time >= 30:
+                                one.state_2 = '90'
+                            else:
+                                one.state_2 = '80'
+                        else:
+                            one.state_1 = '60'
+                            one.state_2 = '100'
+                elif one.state_1 == '60':
+                    if len(back_tax_invoice_residual_0_ids) != 0:
+                        if date_ship_residual_time < 45:
+                            one.state_2 = '100'
+                        else:
+                            one.state_2 = '110'
                     else:
-                        state_1 = '60'
-                        one.state_1 = state_1
-            elif state_1 == '60':
-                if len(back_tax_invoice_residual_0_ids) != 0:
-                    state_2 = '100'
-                    one.state_2 =state_2
-                    if date_ship_residual_time >= 45:
-                        state_2 = '110'
-                        one.state_2 = state_2
+                        one.state_1 = '70'
+                        one.state_2 = '120'
                 else:
-                    state_1 = '70'
-                    one.state_1 = state_1
-                    state_2 = '120'
-                    one.state_2 = state_2
+                    return True
+
+
+
+
+
+
+
+
 
     def action_lock(self):
 
