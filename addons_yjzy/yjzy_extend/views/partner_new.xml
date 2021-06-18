@@ -2082,11 +2082,11 @@
                                        attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],
                                        'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
 
-                                <field name="user_id" string="目前客户负责人" groups="base.group_system"
+                                <field name="user_id" string="目前客户负责人" invisible="1"
                                        options='{"no_open": True, "no_create": True}'
                                        attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],
                                        'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
-                                <field name="assistant_id" groups="base.group_system" help="如果和负责人是同一人，请选择相同的用户"
+                                <field name="assistant_id" invisible="1" help="如果和负责人是同一人，请选择相同的用户"
                                        options='{"no_open": True, "no_create": True}'
                                        attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],
                                        'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>

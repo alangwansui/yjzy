@@ -190,10 +190,11 @@ class PlanInvoiceAuto(models.Model):
                 if state_2 == '10' and date_out_in_residual_time >= 15 and not date_ship:
                     state_2 = '20'
                     one.state_2 = state_2
-                elif state_2 == '20' and date_out_in_residual_time < 15 and not date_ship:
+
+                if state_2 == '20' and date_out_in_residual_time < 15 and not date_ship:
                     state_2 = '10'
                     one.state_2 = state_2
-                else:
+                if date_ship:
                     state_1 = '20'
                     one.state_1 = state_1
                     state_2 = '30'

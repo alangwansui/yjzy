@@ -118,7 +118,7 @@
                        invisible="context.get('type')!='new_order_track'"/>
                 <field name="plan_check_ids" widget="many2many_tags" groups="base.group_system"/>
                 <field name="comments_new_order_track" invisible="context.get('type')!='new_order_track'"/>
-
+                <field name="comments_new_order_track_date"  invisible="context.get('type')!='new_order_track'"/>
                 <button name="open_plan_check_line" type="object" string="工厂检查点登记" class="oe_highlight" invisible="1"/>
                 <button name="open_plan_check_line_new" type="object" string="工厂检查点登记" class="oe_highlight"
                         invisible="1"/>
@@ -160,7 +160,7 @@
                        invisible="context.get('type')!='order_track'"/>
                 <field name="so_no_sent_amount_new" invisible="context.get('type')!='order_track'"/>
                 <field name="comments_order_track" invisible="context.get('type')!='order_track'"/>
-
+                <field name="comments_order_track_date"  invisible="context.get('type')!='order_track'"/>
 
                 <button name="open_tb_id" class="akiny_text_right" type="object" icon="fa-archive"
                         invisible="context.get('type')!='transport_track'"/>
@@ -186,6 +186,7 @@
                 <field name="tb_sale_invoice_id" invisible="1"/>
                 <field name="is_date_out_in" invisible="1"/>
                 <field name="comments_transport_track" invisible="context.get('type')!='transport_track'"/>
+                <field name="comments_transport_track_date"  invisible="context.get('type')!='transport_track'"/>
                 <field name="error_state" groups="base.group_system"/>
 
 

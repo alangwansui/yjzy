@@ -323,8 +323,32 @@ class res_partner(models.Model):
     salesman_ids = fields.Many2many('res.users','m_1_id','ru_1_id','p_1_id','业务负责人')
     sales_assistant_ids = fields.Many2many('res.users','m_2_id','ru_2_id','p_2_id','销售助理')
     purchase_assistant_ids = fields.Many2many('res.users','m_3_id','ru_3_id','p_3_id','采购助理')
+
+    @api.depends('salesman_ids','sales_assistant_ids')
+    def compute_user_id(self):
+        for one in self:
+            salesman_ids = one.salesman_ids
+            sales_assistant_ids = one.sales_assistant_ids
+            if salesman_ids:
+                if len(salesman_ids) == 1:
+                    one.user_id = salesman_ids
+                else:
+                    one.user_id = salesman_ids[0]
+            else:
+                one.user_id = None
+            if sales_assistant_ids:
+                if len(sales_assistant_ids) == 1:
+                    one.assistant_id = sales_assistant_ids
+                else:
+                    one.assistant_id = sales_assistant_ids[0]
+            else:
+                one.assistant_id = None
+
+    user_id = fields.Many2one('res.users', string='Salesperson', compute=compute_user_id, store=True,
+                              help='The internal user that is in charge of communicating with this contact if any.')
+
     #13已经添加
-    assistant_id = fields.Many2one('res.users', store=True)
+    assistant_id = fields.Many2one('res.users', compute=compute_user_id,store=True)
 
 
 

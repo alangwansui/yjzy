@@ -12,6 +12,7 @@ class wizard_plan_check_comments(models.TransientModel):
                             'type')
     plan_check_line_id = fields.Many2one('plan.check.line')
     plan_check_id = fields.Many2one('plan.check')
+    date = fields.Date('Date', default = lambda self: fields.date.today())
 
 
     def apply(self):
@@ -20,23 +21,28 @@ class wizard_plan_check_comments(models.TransientModel):
         if plan_check == 'order_track':
             if self.type == 'new_order_track':
                 self.order_track_id.write({
-                    'comments_new_order_track':self.comments
+                    'comments_new_order_track':self.comments,
+                    'comments_new_order_track_date':self.date
                 })
             elif self.type == 'order_track':
                 self.order_track_id.write({
-                    'comments_order_track':self.comments
+                    'comments_order_track':self.comments,
+                    'comments_order_track_date': self.date
                 })
             else:
                 self.order_track_id.write({
-                    'comments_transport_track':self.comments
+                    'comments_transport_track':self.comments,
+                    'comments_transport_track_date': self.date
                 })
         elif plan_check == 'plan_check':
             self.plan_check_id.write({
-                'comments':self.comments
+                'comments':self.comments,
+                'comments_date':self.date,
             })
         else:
             self.plan_check_line_id.write({
-                'comments_line': self.comments
+                'comments_line': self.comments,
+                'comments_line_date': self.date,
             })
 
 

@@ -532,8 +532,11 @@ class OrderTrack(models.Model):
     plan_check_line_ids = fields.One2many('plan.check.line', 'order_track_id', '计划跟踪详情')
 
     comments_new_order_track = fields.Text('备注日志', track_visibility='onchange')
+    comments_new_order_track_date = fields.Date('备注日期', track_visibility='onchange')
     comments_order_track = fields.Text('备注日志', track_visibility='onchange')
+    comments_order_track_date = fields.Date('备注日期', track_visibility='onchange')
     comments_transport_track = fields.Text('备注日志', track_visibility='onchange')
+    comments_transport_track_date = fields.Date('备注日期',track_visibility='onchange')
     can_delete = fields.Boolean('允许删除',default=False)
 
 
@@ -1282,6 +1285,7 @@ class PlanCheck(models.Model):
          ('40_out_time_finish', u'超时完成')],
         u'检查执行准时性', default='10_not_time')
     comments = fields.Text('备注日志', track_visibility='onchange')
+    comments_date = fields.Date('备注日期', track_visibility='onchange')
 
     plan_check_att = fields.One2many('order.track.attachment', 'plan_check_id',
                                      string='采购交单附件')
@@ -1530,7 +1534,7 @@ class PlanCheckLine(models.Model):
     activity_type_1_id_name = fields.Char('检查类型',related='activity_type_1_id.name',store=True)
     activity_type_1_id_sequence = fields.Integer('Sequence', related='activity_type_1_id.sequence',store=True)
     comments_line = fields.Text('工厂检查明细备注', track_visibility='onchange')
-
+    comments_line_date = fields.Date('工厂检查备注日期',track_visibility='onchange')
     remaining_time = fields.Integer('剩余时间', compute=compute_remaining_time, )
     attachment = fields.Many2many('ir.attachment', string='附件')
     plan_check_line_att = fields.One2many('order.track.attachment', 'plan_check_line_id',
