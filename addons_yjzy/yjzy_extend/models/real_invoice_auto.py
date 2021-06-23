@@ -220,6 +220,7 @@ class PlanInvoiceAuto(models.Model):
                             one.state_1 = '40'
                 elif one.state_1 == '50':
                     if back_tax_invoice_declare_ids and back_tax_invoice_ids:
+                        print('invoice_akiny',len(back_tax_invoice_declare_ids),len(back_tax_invoice_ids))
                         if len(back_tax_invoice_declare_ids) != len(back_tax_invoice_ids):
                             if date_ship_residual_time >= 30:
                                 one.state_2 = '90'
@@ -305,7 +306,7 @@ class PlanInvoiceAuto(models.Model):
         })
 
     def action_make_real_in_invoice(self):
-        self.state_1 = '60'
+        self.state_1 = '50'
         self.compute_state_1_2()
 
     def open_wizard_tb_po_invoice_new(self):
