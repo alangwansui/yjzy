@@ -130,7 +130,7 @@ class PlanInvoiceAuto(models.Model):
     hsname_all_ids = fields.Many2many('tbl.hsname.all', 'pia_id', 'hs_id', 'tbl_id', string='报关明细',
                                       compute='compute_hs_name_all_ids', store=True)
     back_tax_invoice_ids = fields.Many2many('account.invoice', 'pia1_id', 'inv_id', 'tb_id', string='退税账单',
-                                            compute=compute_back_tax_invoice_ids, )
+                                            compute=compute_back_tax_invoice_ids)
     state = fields.Selection(
         [('10', '正常待锁定'), ('20', '异常待锁定'), ('30', '已锁定发票未收齐'), ('40', '已锁定异常发票未收齐(锁定一月后)'), ('50', '发票收齐未开票'),
          ('60', '发票收齐已开票'), ('70', '退税未申报'), ('75', '退税部分申报'), ('80', '退税已申报'), ('90', '退税未收齐'), ('100', '退税已收齐')],
@@ -178,7 +178,7 @@ class PlanInvoiceAuto(models.Model):
             lock_date = one.lock_date
             back_tax_invoice_ids = one.back_tax_invoice_ids
             back_tax_invoice_declare_ids = back_tax_invoice_ids.filtered(lambda x: x.back_tax_declaration_state == '20')
-            back_tax_invoice_residual_0_ids = back_tax_invoice_ids.filtered(lambda x: x.residual == 0)
+            back_tax_invoice_residual_0_ids = back_tax_invoice_ids.filtered(lambda x: x.residual != 0)
 
             date_ship_residual_time = date_ship and (today - strptime(date_ship, DF)).days or 0
             date_out_in_residual_time = date_out_in and (today - strptime(date_out_in, DF)).days or 0
