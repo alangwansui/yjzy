@@ -994,6 +994,9 @@
                         </page>
                         <page groups="base.group_system">
                             <group>
+                                <field name="comments_new_order_track_date"/>
+                                <field name="comments_order_track_date"/>
+                                <field name="comments_transport_track_date"/>
                                 <field name="partner_id"/>
                                 <field name="is_date_out_in"/>
                                 <field name="order_track_transport_state"/>

@@ -74,6 +74,8 @@ class wizard_transport4so(models.TransientModel):
         bill_line_obj = self.env['transport.bill.line']
         tblines = bill_line_obj.browse([])
         for sol in sale_lines:
+            len_tb_ids = len(sol.order_id.tb_ids.filtered(lambda x: x.id != bill_id))
+            so_tb_number = len_tb_ids + 1
             if sol.qty_undelivered > 0:
                 tbl = bill_line_obj.create({
                     'bill_id': bill_id,
@@ -81,7 +83,7 @@ class wizard_transport4so(models.TransientModel):
                     'qty': sol.qty_undelivered,
                     'qty1stage': sol.qty_unreceived,
                     'back_tax': sol.product_id.back_tax,
-                    'so_tb_number': sol.order_id.tb_count + 1,
+                    'so_tb_number': so_tb_number,#sol.order_id.tb_count + 1,
                 })
                 tblines |= tbl
 
@@ -110,6 +112,8 @@ class wizard_transport4so(models.TransientModel):
         bill_line_obj = self.env['transport.bill.line']
         tblines = bill_line_obj.browse([])
         for sol in sale_lines:
+            len_tb_ids = len(sol.order_id.tb_ids.filtered(lambda x: x.id != bill_id))
+            so_tb_number = len_tb_ids + 1
             if sol.qty_undelivered > 0:
                 tbl = bill_line_obj.create({
                     'bill_id': bill_id,
@@ -117,7 +121,7 @@ class wizard_transport4so(models.TransientModel):
                     'qty': sol.qty_undelivered,
                     'qty1stage': sol.qty_unreceived,
                     'back_tax': sol.product_id.back_tax,
-                    'so_tb_number': sol.order_id.tb_count + 1,
+                    'so_tb_number': so_tb_number,#sol.order_id.tb_count + 1,
                 })
                 tblines |= tbl
 
@@ -144,13 +148,14 @@ class wizard_transport4so(models.TransientModel):
         bill_id = ctx.get('active_id')
         tb = self.env['transport.bill'].browse(bill_id)
         sale_lines = self.sol_ids
-
         if len(sale_lines.mapped('order_id').mapped('partner_id')) > 1:
             raise Warning(u'必须是同一个客户的订单')
 
         bill_line_obj = self.env['transport.bill.line']
         tblines = bill_line_obj.browse([])
         for sol in sale_lines:
+            len_tb_ids = len(sol.order_id.tb_ids.filtered(lambda x: x.id != bill_id))
+            so_tb_number = len_tb_ids + 1
             if sol.qty_undelivered > 0:
                 tbl =bill_line_obj.create({
                     'bill_id': bill_id,
@@ -158,7 +163,7 @@ class wizard_transport4so(models.TransientModel):
                     'qty': sol.qty_undelivered,
                     'qty1stage': sol.qty_unreceived,
                     'back_tax': sol.product_id.back_tax,
-                    'so_tb_number':sol.order_id.tb_count+1,
+                    'so_tb_number':so_tb_number,#sol.order_id.tb_count+1,
                 })
                 tblines |= tbl
         tb.check_lines()
@@ -182,6 +187,8 @@ class wizard_transport4so(models.TransientModel):
 
         bill_line_obj = self.env['transport.bill.line']
         for sol in sale_orders.mapped('order_line'):
+            len_tb_ids = len(sol.order_id.tb_ids.filtered(lambda x: x.id != bill_id))
+            so_tb_number = len_tb_ids + 1
             if sol.qty_undelivered > 0:
                 so = sol.order_id
                 #so.tb_ids |= tb
@@ -191,6 +198,7 @@ class wizard_transport4so(models.TransientModel):
                     'qty': sol.qty_undelivered,
                     'qty1stage': sol.qty_unreceived,
                     'back_tax': sol.product_id.back_tax,
+                    'so_tb_number': so_tb_number,  # sol.order_id.tb_count+1,
                 })
         return True
 

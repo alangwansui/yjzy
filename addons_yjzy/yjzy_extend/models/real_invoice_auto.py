@@ -305,7 +305,8 @@ class PlanInvoiceAuto(models.Model):
         })
 
     def action_make_real_in_invoice(self):
-        self.state = '60'
+        self.state_1 = '60'
+        self.compute_state_1_2()
 
     def open_wizard_tb_po_invoice_new(self):
         self.ensure_one()
