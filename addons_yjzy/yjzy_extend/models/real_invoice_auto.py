@@ -42,6 +42,8 @@ class RealInvoiceAuto(models.Model):
     invoice_type = fields.Selection([('10', '增值税电子普通发票'), ('04', '增值税普通发票'), ('01', '增值税专用发票')], '发票类型')
     invoice_code = fields.Char(u'发票代码')
     invoice_number = fields.Char(u'发票号')
+
+
     untaxed_amount = fields.Monetary(u'不含税金额', currency_field='company_currency_id')
     date_invoice = fields.Date(u'开票日期')
     company_id = fields.Many2one('res.company', string='Company', required=True, readonly=True,
@@ -261,15 +263,14 @@ class PlanInvoiceAuto(models.Model):
         real_invoice_auto_amount = self.real_invoice_auto_amount
         if plan_invoice_auto_amount != real_invoice_auto_amount:
             if date_ship_residual_time >= 30:
-                self.state = '40'
+
                 self.state_1 = '30'
                 self.state_2 = '40'
             else:
-                self.state = '30'
+
                 self.state_1 = '30'
                 self.state_2 = '30'
         else:
-            self.state = '50'
             self.state_1 = '40'
             self.state_2 = '70'
         self.lock_date = datetime.today()
