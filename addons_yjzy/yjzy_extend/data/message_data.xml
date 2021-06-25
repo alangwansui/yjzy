@@ -90,5 +90,12 @@
                 <li>原因 : <t t-esc="reason"/></li>
             </ul>
         </template>
+
+        <template id="manual_complete_real_invoice">
+            <p>应收发票 <t t-esc="name"/> 已经手动收齐</p>
+            <ul class="o_timeline_tracking_value_list">
+                <li>备注说明 : <t t-esc="reason"/></li>
+            </ul>
+        </template>
     </data>
 </odoo>

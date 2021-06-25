@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="manual_complete_real_invoice_wizard_view_form" model="ir.ui.view">
+        <field name="name">manual.complete.real.invoice.wizard.form</field>
+        <field name="model">manual.complete.real.invoice.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Manuel Complete Real Invoice">
+                <separator string="填写手动收齐原因备注"/>
+                <field name="pia_id" invisible="1"/>
+                <field name="reason"/>
+                <footer>
+                    <button string='确认' name="manual_complete_real_invoice" type="object" class="oe_highlight"/>
+                    <button string="取消" class="oe_link" special="cancel"/>
+                </footer>
+           </form>
+        </field>
+    </record>
+
+    <record id="manual_complete_real_invoice_wizard_action" model="ir.actions.act_window">
+        <field name="name">手动收齐应收发票确认</field>
+        <field name="res_model">manual.complete.real.invoice.wizard</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="manual_complete_real_invoice_wizard_view_form"/>
+        <field name="target">new</field>
+    </record>
+</odoo>

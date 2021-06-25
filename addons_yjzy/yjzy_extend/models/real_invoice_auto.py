@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime, timedelta
 from odoo import fields, models, api, _
-from odoo.exceptions import Warning
+from odoo.exceptions import Warning, UserError
 from odoo.tools import DEFAULT_SERVER_DATE_FORMAT as DF
 from odoo.addons import decimal_precision as dp
 from lxml import etree
@@ -168,6 +168,10 @@ class PlanInvoiceAuto(models.Model):
                                                       store=True)
     purchase_amount2_add_actual_total = fields.Float(U'实际已经增加采购额', related='bill_id.purchase_amount2_add_actual_total', store=True)
 
+    manual_complete_real_invoice_uid = fields.Many2one('res.users','手动收齐确认者')
+    manual_complete_real_invoice_date = fields.Date('手动收齐时间')
+    manual_complete_real_invoice_comments = fields.Text('手动收齐备注')
+
     def compute_state_1_2(self):
         for one in self:
             date_ship = one.bill_id.date_ship
@@ -296,6 +300,31 @@ class PlanInvoiceAuto(models.Model):
             else:
                 self.state_2 = '30'
 
+    def action_complete_real_invoice(self,reason):#手动解决应收发票和实收发票金额不等的情况，直接跳过平衡的判断
+        strptime = datetime.strptime
+        today = datetime.today()
+        state_1 = self.state_1
+        date_ship = self.bill_id.date_ship
+        date_ship_residual_time = date_ship and (today - strptime(date_ship, DF)).days or 0
+        if state_1 == '30':
+            state_1 = '40'
+
+            if date_ship_residual_time < 30:
+                state_2 = '70'
+            else:
+                state_2 = '75'
+            self.state_1 = state_1
+            self.state_2 = state_2
+            for pia in self:
+                pia.message_post_with_view('yjzy_extend.manual_complete_real_invoice',
+                                          values={'reason': reason, 'name': self.name},
+                                          subtype_id=self.env.ref(
+                                              'mail.mt_note').id)  # 定义了留言消息的模板，其他都可以参考，还可以继续参考费用发送计划以及邮件方式
+        else:
+            raise UserError('不允许发票已经收齐!')#不允许发票已经收齐
+
+
+
     def _action_unlock(self):
         date_ship = self.bill_id.date_ship
         today = datetime.today()
@@ -384,5 +413,8 @@ class PlanInvoiceAuto(models.Model):
                     one.state = '80'
                 elif len(back_tax_invoice_declare_ids) != len(back_tax_invoice_ids):
                     one.state = '75'
+
+
+
 
 #####################################################################################################################

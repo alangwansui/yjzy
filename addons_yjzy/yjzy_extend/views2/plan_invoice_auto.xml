@@ -61,6 +61,9 @@
                     <button name="open_wizard_tb_po_invoice_new" type="object" string="增加采购"  attrs="{'invisible':[('state_1','not in',['20'])]}"/>
                     <button name="action_lock" type="object" string="锁定"
                             attrs="{'invisible':[('state_1','not in',['20'])]}"/>
+
+                    <button name="%(manual_complete_real_invoice_wizard_action)d" type="action" string="手动确认发票收齐"
+                            attrs="{'invisible':[('state_1','not in',['30'])]}"/>
                     <button name="action_unlock" type="object" string="取消锁定"
                             attrs="{'invisible':[('state_1','not in',['30'])]}"/>
                     <button name="action_make_real_in_invoice" type="object" string="发票收齐并开票"
@@ -100,13 +103,19 @@
 
                         </group>
                     </group>
-                    <group>
+                    <group col="2">
+                        <group>
                         <field name="bill_id"/>
 
                         <field name="bill_date_out_in"/>
                         <field name="bill_date_ship"/>
                         <field name="lock_date"/>
-
+                        </group>
+                        <group>
+                            <field name="manual_complete_real_invoice_uid"/>
+                            <field name="manual_complete_real_invoice_date"/>
+                            <field name="manual_complete_real_invoice_comments"/>
+                        </group>
                     </group>
                     <notebook>
                         <page string="发票明细">
