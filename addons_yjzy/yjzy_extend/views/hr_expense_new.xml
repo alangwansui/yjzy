@@ -396,7 +396,6 @@
                             </page>
                         </notebook>
                     </sheet>
-
                     <div class="oe_chatter">
                         <field name="message_follower_ids" widget="mail_followers"/>
                         <field name="message_ids" widget="mail_thread"/>
@@ -883,6 +882,7 @@
                                         <field name="tb_id" context="{'show_ref': 1}"
                                                attrs="{'readonly':[('budget_type','!=','transport')]}"
                                                domain="[('state','not in',['cancel','refused','draft','check','submit','sales_approve'])]"/>
+                                        <field name="tb_approve_date"/>
                                         <field name="lead_id" string="项目编号" options="{'quick_create': 1}"
                                                attrs="{'readonly':[('budget_type','!=','lead')]}"/>
                                         <field name="sale_order_id" context="{'sale_show_partner_name': True}"
@@ -970,6 +970,7 @@
                                         <field name="name" invisible="1"/>
                                         <field name="sys_outer_hetong"/>
                                         <field name="tb_id"/>
+                                        <field name="tb_approve_date"/>
                                         <button icon="fa-pencil-square-o" type="object" name="open_expense_form"/>
                                         <field name="lead_id" string="项目编号"/>
                                         <field name="sale_order_id" context="{'sale_show_partner_name': True}"
@@ -1228,6 +1229,7 @@
                                         <field name="tb_id" context="{'show_ref': 1}"
                                                attrs="{'readonly':[('budget_type','!=','transport')]}"
                                                domain="[('state','not in',['cancel','refused','draft','check','submit','sales_approve'])]"/>
+                                        <field name="tb_approve_date"/>
                                         <field name="lead_id" string="项目编号" options="{'quick_create': 1}"
                                                attrs="{'readonly':[('budget_type','!=','lead')]}"/>
                                         <field name="sale_order_id" context="{'sale_show_partner_name': True}"
@@ -1312,6 +1314,7 @@
                                         <field name="name" invisible="1"/>
                                         <field name="sys_outer_hetong"/>
                                         <field name="tb_id"/>
+                                        <field name="tb_approve_date"/>
                                         <field name="lead_id" string="项目编号"/>
                                         <field name="sale_order_id" context="{'sale_show_partner_name': True}"
                                                invisible="1"/>
@@ -1712,7 +1715,7 @@
                                         <field name="tb_id" context="{'show_ref': 1}" options="{'no_create':True}"
                                                attrs="{'readonly':[('budget_type','!=','transport')]}"
                                                domain="[('state','not in',['cancel','refused','draft','check','submit','sales_approve'])]"/>
-
+                                        <field name="tb_approve_date"/>
                                         <field name="lead_id" string="项目编号" options="{'quick_create': 1,'no_open':1}"
                                                attrs="{'readonly':[('budget_type','!=','lead')]}"/>
                                         <field name="sale_order_id" context="{'sale_show_partner_name': True}"
@@ -1804,6 +1807,7 @@
                                         <field name="name" invisible="1"/>
                                         <field name="sys_outer_hetong"/>
                                         <field name="tb_id"/>
+                                        <field name="tb_approve_date"/>
                                         <field name="lead_id" string="项目编号" options="{'no_open':True}"/>
                                         <button icon="fa-pencil-square-o" type="object" name="open_expense_form"
                                                 attrs="{'invisible':[('parent.employee_wkf','=',False)]}"
@@ -1902,8 +1906,9 @@
                                 </group>
                             </page>
                         </notebook>
+
                     </sheet>
-                    <div class="oe_chatter">
+                        <div class="oe_chatter">
                         <field name="message_follower_ids" widget="mail_followers"/>
                         <field name="message_ids" widget="mail_thread"/>
                     </div>

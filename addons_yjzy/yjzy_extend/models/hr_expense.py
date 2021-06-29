@@ -102,6 +102,7 @@ class hr_expense(models.Model):
     user_id = fields.Many2one('res.users', related='employee_id.user_id', readonly=True, string=u'用户', track_visibility='onchange')
     tb_ids = fields.Many2many('transport.bill', 'ref_bill_expense', 'eid', 'bid', u'出运单')
     tb_id = fields.Many2one('transport.bill', u'出运合同')
+    tb_approve_date = fields.Date(u'审批完成时间',related='tb_id.approve_date',store=True, readonly=True)
     tb_budget = fields.Monetary('出运单预算', related='tb_id.budget_amount', currency_field='currency_id')
     tb_budget_rest = fields.Monetary('出运单预算剩余', related='tb_id.budget_reset_amount', currency_field='currency_id')
 

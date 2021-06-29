@@ -145,27 +145,27 @@
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"
                                        no_create="True"/>
                                 <field name="invoice_title" string="境外收货人"
-                                       attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
+                                       attrs="{'readonly':[('locked','=',True),('is_editable','=',False)]}"/>
                                 <field name="production_sale_unit" attrs="{'readonly': 1}"/>
 
                                 <!--field name="mark_ids" widget="many2many_tags"/-->
                                 <field name="wharf_src_id" string="装船港" options="{'no_open':1}"
-                                       attrs="{'readonly':[('state','not in',['draft','submit','sales_approve','approve']),('is_editable','=',False)]}"/>
+                                       attrs="{'readonly':[('locked','=',True),('is_editable','=',False)]}"/>
                                 <field name="wharf_dest_id" string="目的港" options="{'no_open':1}"
-                                       attrs="{'readonly':[('state','not in',['draft','submit','sales_approve','approve']),('is_editable','=',False)]}"/>
+                                       attrs="{'readonly':[('locked','=',True),('is_editable','=',False)]}"/>
 
 
                             </group>
                             <group>
                                 <field name="mark_text" string="Marks"/>
                                 <field name="pallet_type"
-                                       attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
+                                       attrs="{'readonly':[('locked','=',True),('is_editable','=',False)]}"/>
                                 <field name="pallet_qty"
-                                       attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
+                                       attrs="{'readonly':[('locked','=',True),('is_editable','=',False)]}"/>
                                 <field name="tuopan_weight"
-                                       attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
+                                       attrs="{'readonly':[('locked','=',True),('is_editable','=',False)]}"/>
                                 <field name="tuopan_volume"
-                                       attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)]}"/>
+                                       attrs="{'readonly':[('locked','=',True),('is_editable','=',False)]}"/>
                             </group>
 
                             <group>
@@ -174,10 +174,10 @@
                                 <field name="contract_type" groups="base.group_system"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
                                 <field name="gongsi_id" groups="base.group_system" options="{'no_open':1}" string="销售主体"
-                                       attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
+                                       attrs="{'readonly':[('locked','=',True),('is_editable','=',False)]}"/>
                                 <field name="purchase_gongsi_id" groups="base.group_system" options="{'no_open':1}"
                                        string="采购主体"
-                                       attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
+                                       attrs="{'readonly':[('locked','=',True),('is_editable','=',False)]}"/>
                                 <field name="sale_type"/>
 
                                 <field name="hs_fill" groups="base.group_system"/>
@@ -194,7 +194,7 @@
                                             string="装箱Packing list资料"/>
                                 </header>
                                 <field name="hsname_ids"
-                                       attrs="{'readonly':[('state','not in',['draft','sales_approve']),('is_editable','=',False)]}">
+                                       attrs="{'readonly':[('locked','=',True),('is_editable','=',False)]}">
 
                                     <tree editable="bottom" decoration-danger="purchase_hs_id==False">
                                         <field name="purchase_hs_id" string="采购对应" groups="base.group_system"/>
