@@ -1986,7 +1986,7 @@
                                        domain="[('type','=','sale')]"
                                        attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"
                                        widget="selection"/>
-
+                                <div colspan="2"><span style="color:red">注意切换两个主体检查付款条款是否相同</span></div>
                                 <separator string="" colspan="2"/>
                                 <!--separator string="联系方式" style="border-bottom:1px #000000 solid" colspan="2"/-->
 
@@ -3037,7 +3037,7 @@
                                        attrs="{'invisible':['|',('supplier','=',False),('is_company','=',False)],
                                        'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"
                                        domain="[('type','=','purchase')]" widget="selection"/>
-                                <div colspan="2"><span style="color:red">注意切换两个主体检查付款条款</span></div>
+                                <div colspan="2"><span style="color:red">注意切换两个主体检查付款条款是否相同</span></div>
                                 <separator string="" colspan="2"/>
                                 <!--separator string="联系方式" style="border-bottom:1px #000000 solid" colspan="2"/-->
 

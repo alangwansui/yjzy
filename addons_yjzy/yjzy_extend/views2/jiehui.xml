@@ -105,7 +105,7 @@
                             <field name="jiehui_amount" invisible="1"/>
                             <field name="jiehui_amount_currency" invisible="1"/>
                             <field name="jiehui_current_rate" string="结汇当日汇率"/>
-                            <field name="jiehui_rate" string="历史平均汇率" readonly="1"/>
+                            <field name="jiehui_rate" string="历史平均汇率" readonly="1" invisible="1"/>
                             <field name="communication"
                                    attrs="{'invisible': [('state', '!=', 'draft'), ('communication', '=', False)], 'readonly': [('state', '!=', 'draft')]}"/>
 

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<odoo>
+<odoo noupdate="1">
     <data>
         <!--额外账单审批-->
         <record model="account.invoice.stage" id="stage_draft">
@@ -9,7 +9,7 @@
             <field name="state">draft</field>
         </record>
         <record model="account.invoice.stage" id="stage_submit">
-            <field name="name">待合规审批</field>
+            <field name="name">已提交</field>
             <field name="code">002</field>
             <field name="sequence" eval="20"/>
             <field name="state">submit</field>
@@ -21,28 +21,37 @@
             <field name="state">approved</field>
         </record>
         <record model="account.invoice.stage" id="stage_done">
-            <field name="name">额外账单审批完成</field>
+            <field name="name">审批完成</field>
             <field name="code">004</field>
             <field name="sequence" eval="40"/>
             <field name="state">done</field>
         </record>
+
+
         <record model="account.invoice.stage" id="stage_refuse">
-            <field name="name">额外账单拒绝</field>
+            <field name="name">账单拒绝</field>
             <field name="code">005</field>
             <field name="sequence" eval="50"/>
             <field name="state">refuse</field>
         </record>
         <record model="account.invoice.stage" id="stage_cancel">
-            <field name="name">额外账单取消</field>
+            <field name="name">账单取消</field>
             <field name="code">006</field>
             <field name="sequence" eval="60"/>
             <field name="state">cancel</field>
         </record>
-        <record model="account.invoice.stage" id="stage_invoice_origin">
-            <field name="name">原始账单</field>
+<!--        从原始账单改成待处理-->
+        <record model="account.invoice.stage" id="stage_pending">
+            <field name="name">待处理账单</field>
             <field name="code">007</field>
-            <field name="sequence" eval="70"/>
-            <field name="state">invoice_origin</field>
+            <field name="sequence" eval="45"/>
+            <field name="state">invoice_pending</field>
+        </record>
+        <record model="account.invoice.stage" id="stage_paid">
+            <field name="name">完成付款</field>
+            <field name="code">008</field>
+            <field name="sequence" eval="47"/>
+            <field name="state">paid</field>
         </record>
 
 

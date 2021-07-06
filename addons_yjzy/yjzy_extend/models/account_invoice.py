@@ -9,7 +9,9 @@ from .comm import invoice_attribute_all_in_one
 Invoice_Selection = [('draft', u'草稿'),
                      ('submit', u'待合规审批'),
                      ('approved', u'待总经理审批'),
-                     ('done', u'额外账单审批完成'),
+                     ('done', u'审批完成'),
+                     ('invoice_pending',u'待处理账单'),
+                     ('paid',u'付款完成'),
                      ('refuse', u'拒绝'),
                      ('cancel', u'取消'),
                      ('invoice_origin', u'原始账单')]
@@ -894,7 +896,7 @@ class account_invoice(models.Model):
         default=_default_invoice_stage, copy=False)
 
 
-    state_1 = fields.Selection(Invoice_Selection, '额外账单审批', related='stage_id.state')
+    state_1 = fields.Selection(Invoice_Selection, '账单审批', related='stage_id.state')
     # 新建一个账单的状态，可以用来筛选还没有开始付款申请的账单
     state_2 = fields.Selection([
         ('10_draft', u'未确认'),
@@ -2097,6 +2099,49 @@ class account_invoice(models.Model):
         self.stage_id = stage_id.id
         self.action_invoice_open()
         self.invoice_assign_outstanding_credit()
+
+    def action_invoice_open(self):
+        res = super(account_invoice, self).action_invoice_open()
+        stage_id = self._stage_find(domain=[('code', '=', '004')])
+        self.stage_id = stage_id
+        return res
+
+
+    @api.multi
+    def action_invoice_paid(self):
+        # lots of duplicate calls to action_invoice_paid, so we remove those already paid
+        to_pay_invoices = self.filtered(lambda inv: inv.state != 'paid')
+        if to_pay_invoices.filtered(lambda inv: inv.state != 'open'):
+            raise UserError(_('Invoice must be validated in order to set it to register payment.'))
+        if to_pay_invoices.filtered(lambda inv: not inv.reconciled):
+            raise UserError(_('You cannot pay an invoice which is partially paid. You need to reconcile payment entries first.'))
+
+        stage_id = self._stage_find(domain=[('code', '=', '008')])
+
+        return to_pay_invoices.write({'state': 'paid',
+                                      'stage_id': stage_id.id})
+
+
+
+    def manual_stage_id(self):
+        if self.state == 'open':
+            self.stage_id = self._stage_find(domain=[('code', '=', '002')])
+        elif self.state == 'draft':
+            self.stage_id = self._stage_find(domain=[('code', '=', '001')])
+        elif self.state == 'cancel':
+            self.stage_id = self._stage_find(domain=[('code', '=', '006')])
+        else:
+            self.stage_id = self._stage_find(domain=[('code', '=', '004')])
+
+
+
+
+
+
+    def stage_action_pending(self):
+        stage_id = self._stage_find(domain=[('code', '=', '007')])
+        self.stage_id = stage_id
+
 
     def stage_action_refuse(self, reason):
         stage_id = self._stage_find(domain=[('code', '=', '005')])

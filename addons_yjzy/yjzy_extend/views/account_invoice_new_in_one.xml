@@ -8,6 +8,20 @@
             <field name="model">account.invoice</field>
             <field name="arch" type="xml">
                 <form string="应收账单" class="o_invoice_form" create="false">
+
+                    <header groups="account.group_account_manager">
+                        <button name="stage_action_pending" type="object" string="进入待处理"/>
+                        <button name="action_create_yfhxd" context="{'invoice_attribute':invoice_attribute}"
+                                attrs="{'invisible':['|',('residual','=',0),('type','!=','in_invoice')]}"
+                                confirm="确定创建付款申请吗？"
+                                type="object" string="创建付款申请"/>
+                        <button name="create_reconcile" type="object" string="创建核销"
+                                groups="account.group_account_manager" invisible="not context.get('hexiao')"
+                                confirm="确定创建核销申请单吗？"/>
+                        <!--                                attrs="{'invisible':['|',('residual','=',0),('payment_log_ids_count','=',0)]}"-->
+                        <button name="compute_move_lines" type="object" string="更新日志" groups="base.group_system"/>
+                        <field name="state_1" widget="statusbar" statusbar_visible=" "/>
+                    </header>
                     <header groups="account.group_account_manager">
                         <button name="action_create_yfhxd" context="{'invoice_attribute':invoice_attribute}"
                                 attrs="{'invisible':['|',('residual','=',0),('type','!=','in_invoice')]}"

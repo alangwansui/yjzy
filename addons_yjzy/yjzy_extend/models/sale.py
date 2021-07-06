@@ -459,15 +459,15 @@ class sale_order(models.Model):
         ('verifying', u'待核销'),
         ('verification', u'核销完成'),
     ], string='Status', readonly=True, copy=False, index=True, track_visibility='onchange', default='draft')
-    no_sent_amount = fields.Monetary(u'未发货的金额', compute=compute_info)
-    no_sent_amount_new = fields.Monetary(u'未发货的金额', compute=compute_no_sent_amount, store=True)
+    no_sent_amount = fields.Monetary(u'未发货的金额',currency_field='company_currency_id', compute=compute_info)
+    no_sent_amount_new = fields.Monetary(u'未发货的金额',currency_field='company_currency_id', compute=compute_no_sent_amount, store=True)
     no_sent_qty = fields.Float(u'未出运数量', compute=compute_no_sent_amount, store=True)
     sent_qty = fields.Float(u'已出运数量', compute=compute_no_sent_amount, store=True)
     all_qty = fields.Float(u'原始总数', compute=compute_no_sent_amount, store=True)
 
 
-    purchase_no_deliver_amount = fields.Float('未发货的采购金额', compute=compute_info)
-    purchase_no_deliver_amount_new = fields.Float('未发货的采购金额', compute='compute_purchase_no_deliver_amount_new',
+    purchase_no_deliver_amount = fields.Monetary('未发货的采购金额', currency_field='company_currency_id',compute=compute_info)
+    purchase_no_deliver_amount_new = fields.Monetary('未发货的采购金额', currency_field='company_currency_id',compute='compute_purchase_no_deliver_amount_new',
                                                   store=True)
     po_ids_new = fields.One2many('purchase.order', 'source_so_id', '采购合同新')
     purchase_delivery_status = fields.Boolean('采购发货完成', compute='update_purchase_delivery')

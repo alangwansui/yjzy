@@ -775,7 +775,8 @@ class account_payment(models.Model):
     jiehui_in_amount = fields.Float('结汇转入余额')
 
 
-    jiehui_current_rate = fields.Float(u'结汇当日汇率', compute=compute_jiehui_current_rate,store=True)
+    jiehui_current_rate = fields.Float(u'结汇当日汇率', compute=compute_jiehui_current_rate,digits=(2, 3), store=True)
+    guide_current_rate = fields.Float(u'指导汇率')
 
 
     payment_date_confirm = fields.Datetime('付款确认时间') ##akiny 付款确认时间
@@ -789,7 +790,7 @@ class account_payment(models.Model):
     cny_currency_id = fields.Many2one('res.currency', '人名币', default=lambda self: self._default_cny_currency_id())
     amount_bank_cash_usd = fields.Monetary('公司总账余额(美金)',currency_field='usd_currency_id')
     amount_bank_cash_cny = fields.Monetary('公司总账余额(人名币)',currency_field='cny_currency_id')
-
+    currency_id_name = fields.Char('货币名称',related='currency_id.name',store=True)
 
     back_tax_invoice_id = fields.Many2one('account.invoice','应收退税',domain=[('yjzy_type_1','=','back_tax'),('is_manual','=','True')])
 

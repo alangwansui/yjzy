@@ -161,7 +161,13 @@ class purchase_order(models.Model):
     #         hxd_ids = one.hxd_ids.filtered(lambda x: x.prder_id.state == 'done')
     #         amount_payment_org_auto = sum(x.amount_payment_org_auto for x in hxd_ids)
     #         one.amount_payment_org_auto = amount_payment_org_auto
-
+    @api.depends('yjzy_payment_ids.currency_id','currency_id')
+    def compute_yjzy_currency_id(self):
+        for one in self:
+            if one.yjzy_payment_ids:
+                one.yjzy_currency_id = one.yjzy_payment_ids[0].currency_id
+            else:
+                one.yjzy_currency_id = one.currency_id
 
     stage_id = fields.Many2one(
         'purchase.order.stage',
@@ -222,10 +228,11 @@ class purchase_order(models.Model):
     sale_uid = fields.Many2one('res.users', u'业务员',default=lambda self: self.env.user.assistant_id.id)
     sale_assistant_id = fields.Many2one('res.users', u'业务助理',default=lambda self: self.env.user.id)
     yjzy_payment_ids = fields.One2many('account.payment', 'po_id', u'预付款单')
+
     yjzy_currency_id = fields.Many2one('res.currency', u'预收币种', related='yjzy_payment_ids.currency_id')
     balance_new = fields.Monetary(u'预付余额_新', compute='compute_balance', currency_field='yjzy_currency_id',store=True)
-    real_advance = fields.Monetary(u'预付金额', compute='compute_balance', currency_field='yjzy_currency_id',store=True)
-    pre_advance = fields.Monetary(u'预付金额', currency_field='currency_id', compute=compute_pre_advance, store=True, help=u"根据付款条款计算的可预付金额\n")#计划预付金额，根据付款条款计算
+    real_advance = fields.Monetary(u'实际预付金额', compute='compute_balance', currency_field='yjzy_currency_id',store=True)
+    pre_advance = fields.Monetary(u'计划预付金额', currency_field='currency_id', compute=compute_pre_advance, store=True, help=u"根据付款条款计算的可预付金额\n")#计划预付金额，根据付款条款计算
 
     #以下还没有进入文档
     submit_date = fields.Date('提交审批时间')
@@ -236,9 +243,9 @@ class purchase_order(models.Model):
 
     second_sign_uid = fields.Many2one('res.users', u'次签字人')
 
-    no_deliver_amount = fields.Float('未发货金额', compute=compute_info)
-    no_deliver_amount_new = fields.Float('未发货金额', compute=compute_no_deliver_amount, store=True)
-    deliver_amount_new = fields.Float('已发货金额', compute=compute_no_deliver_amount, store=True)
+    no_deliver_amount = fields.Monetary('未发货金额',currency_field='currency_id', compute=compute_info)
+    no_deliver_amount_new = fields.Monetary('未发货金额',currency_field='currency_id', compute=compute_no_deliver_amount, store=True)
+    deliver_amount_new = fields.Monetary('已发货金额', currency_field='currency_id', compute=compute_no_deliver_amount, store=True)
 
     partner_payment_term_id = fields.Many2one('account.payment.term', u'客户付款条款',
                                               related='partner_id.property_supplier_payment_term_id')
