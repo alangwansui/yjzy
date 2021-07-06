@@ -403,6 +403,7 @@
 
                         <page string="管理页" groups="base.group_system">
                             <group>
+                                <field name="currency_id_name"/>
                                 <field name="sfk_type"/>
                                 <field name="gongsi_id"/>
                                 <field name="payment_type" widget="radio"
