@@ -692,17 +692,17 @@ class purchase_order_line(models.Model):
             # print ('===>', info)
             one.supplierinfo_id = info
 
-    @api.depends('sol_id', 'sol_id.price_total', 'sol_id.qty_delivered', 'sol_id.product_uom_qty', 'sol_id.price_unit','sol_id.new_rest_tb_qty')
+    @api.depends('sol_id', 'sol_id.price_total', 'sol_id.qty_delivered', 'sol_id.product_uom_qty', 'sol_id.price_unit')
     def compute_sol_id_price_total(self):
         for one in self:
             sol_id_price_total = one.sol_id.price_total
             qty_delivered = one.sol_id.qty_delivered
-            new_rest_tb_qty = one.sol_id.new_rest_tb_qty
             product_uom_qty = one.sol_id.product_uom_qty
             sol_price = one.sol_id.price_unit
-            sol_id_price_total_undelivered = sol_id_price_total - new_rest_tb_qty * sol_price
+            sol_id_price_total_undelivered = sol_id_price_total - (product_uom_qty - qty_delivered) * sol_price
             one.sol_id_price_total = sol_id_price_total
             one.sol_id_price_total_undelivered = sol_id_price_total_undelivered
+
 
     s_uom_id = fields.Many2one('product.uom', u'销售打印单位', related='product_id.s_uom_id')
     p_uom_id = fields.Many2one('product.uom', u'采购打印单位', related='product_id.p_uom_id')
