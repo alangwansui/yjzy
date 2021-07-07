@@ -139,7 +139,7 @@ class purchase_order(models.Model):
                 x.sol_id.price_total - (x.sol_id.product_uom_qty - x.sol_id.qty_delivered) * x.sol_id.price_unit for x
                 in one.order_line)
             one.sale_no_deliver_amount = sale_no_deliver_amount
-            one.sale_no_deliver_amount = sum(x.sol_id_price_total_undelivered for x in one.order_line)
+            # one.sale_no_deliver_amount = sum(x.sol_id_price_total_undelivered for x in one.order_line)
 
     # 13ok
     @api.depends('payment_term_id', 'amount_total', 'payment_term_id.line_ids', 'payment_term_id.line_ids.option',
