@@ -692,7 +692,7 @@ class purchase_order_line(models.Model):
             # print ('===>', info)
             one.supplierinfo_id = info
 
-    @api.depends('sol_id', 'sol_id.price_total', 'sol_id.qty_delivered', 'sol_id.product_uom_qty', 'sol_id.price_unit')
+    @api.depends('sol_id', 'sol_id.price_total', 'sol_id.qty_delivered', 'sol_id.product_uom_qty', 'sol_id.price_unit','sol_id.new_rest_tb_qty')
     def compute_sol_id_price_total(self):
         for one in self:
             sol_id_price_total = one.sol_id.price_total
