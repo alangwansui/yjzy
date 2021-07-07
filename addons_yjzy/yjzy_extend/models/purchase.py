@@ -41,8 +41,8 @@ Purchase_Selection = [('draft', '草稿'),
                       ('sales_approve', u'待产品经理审批'),
                       ('approve', '待出运'),  # akiny 翻译成等待出运
                       ('purchase', '开始出运'),
-                      ('abnormal','异常核销'),
-                      ('verifying','正常核销'),
+                      ('abnormal', '异常核销'),
+                      ('verifying', '正常核销'),
                       ('done', '核销完成'),
                       ('cancel', '取消'),
                       ('refused', u'已拒绝'),
@@ -59,6 +59,7 @@ Sale_Selection = [('draft', '草稿'),
                   ('abnormal', u'异常核销'),
                   ('verifying', u'正常核销'),
                   ('verification', u'核销完成'), ]
+
 
 class PurchaseOrderStage(models.Model):
     _name = "purchase.order.stage"
@@ -120,14 +121,29 @@ class purchase_order(models.Model):
 
     @api.depends('order_line.qty_received', 'order_line.price_unit', 'order_line.qty_received', 'source_so_id',
                  'order_line.product_qty', 'order_line', 'order_line.sol_id_price_total_undelivered')
-    def compute_no_deliver_amount(self):
+    def _compute_no_deliver_amount(self):
         for one in self:
             one.no_deliver_amount_new = sum([x.price_unit * (x.product_qty - x.qty_received) for x in one.order_line])
             one.deliver_amount_new = sum([x.price_unit * x.qty_received for x in one.order_line])
             one.sale_no_deliver_amount = sum(x.sol_id_price_total_undelivered for x in one.order_line)
 
+    @api.depends('order_line.qty_received', 'order_line.price_unit', 'order_line.qty_received', 'source_so_id',
+                 'order_line.product_qty', 'order_line', 'order_line.sol_id.price_total', 'order_line.sol_id',
+                 'order_line.sol_id.product_uom_qty', 'order_line.sol_id.qty_delivered', 'order_line.sol_id.price_unit')
+    def compute_no_deliver_amount(self):
+        for one in self:
+            one.no_deliver_amount_new = sum([x.price_unit * (x.product_qty - x.qty_received) for x in one.order_line])
+            one.deliver_amount_new = sum([x.price_unit * x.qty_received for x in one.order_line])
+
+            sale_no_deliver_amount = sum(
+                x.sol_id.price_total - (x.sol_id.product_uom_qty - x.sol_id.qty_delivered) * x.sol_id.price_unit for x
+                in one.order_line)
+            one.sale_no_deliver_amount = sale_no_deliver_amount
+            one.sale_no_deliver_amount = sum(x.sol_id_price_total_undelivered for x in one.order_line)
+
     # 13ok
-    @api.depends('payment_term_id', 'amount_total','payment_term_id.line_ids','payment_term_id.line_ids.option','payment_term_id.line_ids.value_amount')
+    @api.depends('payment_term_id', 'amount_total', 'payment_term_id.line_ids', 'payment_term_id.line_ids.option',
+                 'payment_term_id.line_ids.value_amount')
     def compute_pre_advance(self):
         for one in self:
             if one.payment_term_id:
@@ -287,7 +303,7 @@ class purchase_order(models.Model):
 
     # akiny
     so_id_state = fields.Selection('源销售合同状态', related='source_so_id.state')
-    so_id_state_1 = fields.Selection(Sale_Selection, u'源销售合同状态', index=True, related='source_so_id.state_1',store=True)
+    so_id_state_1 = fields.Selection(Sale_Selection, u'源销售合同状态', index=True, related='source_so_id.state_1', store=True)
     aml_ids = fields.One2many('account.move.line', 'po_id', u'分录明细', readonly=True)
     so_currentcy_id = fields.Many2one('res.currency', '销售合同币种', related='source_so_id.currency_id')
     so_id_amount_total = fields.Monetary('对应销售金额', currency_field='so_currentcy_id', compute=compute_so_id_amount_total,
@@ -702,7 +718,6 @@ class purchase_order_line(models.Model):
             sol_id_price_total_undelivered = sol_id_price_total - (product_uom_qty - qty_delivered) * sol_price
             one.sol_id_price_total = sol_id_price_total
             one.sol_id_price_total_undelivered = sol_id_price_total_undelivered
-
 
     s_uom_id = fields.Many2one('product.uom', u'销售打印单位', related='product_id.s_uom_id')
     p_uom_id = fields.Many2one('product.uom', u'采购打印单位', related='product_id.p_uom_id')
