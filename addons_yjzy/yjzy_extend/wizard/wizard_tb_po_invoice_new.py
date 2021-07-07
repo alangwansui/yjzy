@@ -8,9 +8,7 @@ from odoo.addons import decimal_precision as dp
 class WizardTbPoInvoiceNew(models.TransientModel):
     _name = 'wizard.tb.po.invoice.new'
 
-    def compute_tb_po_expense(self):
-        for one in self:
-            one.tb_po_expense = self.env['tb.po.invoice'].search([('state','=','25')])
+
 
 
     tb_id = fields.Many2one('transport.bill', u'出运单')
