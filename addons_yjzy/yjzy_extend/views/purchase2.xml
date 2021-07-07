@@ -82,7 +82,7 @@
 
                     <group expand="0" string="Group By">
                         <filter string="销售合同" domain="[]" name="group_source_so_id" context="{'group_by':'source_so_id'}"/>
-                        <filter string="状态" domain="[]" name="group_by_state_1" context="{'group_by':'state_1'}"/>
+                        <filter string="状态" domain="[]" name="group_by_state_1" context="{'group_by':'stage_id'}"/>
                         <filter string="供应商" domain="[]" context="{'group_by':'partner_id'}"/>
                         <filter string="交期" domain="[]" context="{'group_by':'date_planned'}"/>
 
@@ -97,39 +97,55 @@
             <field name="arch" type="xml">
                 <tree decoration-bf="message_unread==True" decoration-muted="state=='cancel'"
                       decoration-info="state in ('wait','confirmed')" string="采购合同">
+                    <field name="approve_date"/>
+                    <field name="source_so_id" string="原始合同号"/>
+                    <field name="customer_pi" string="客户PO号"/>
+                    <field name="customer_id" string="客户名称"/>
                     <field name="message_unread" invisible="1"/>
                     <field name="name" string="流水码" groups="base.group_system"/>
-                    <field name="contract_code" string="合同编号"/>
-                    <field name="partner_id"/>
-                    <field name="source_so_id"/>
-                    <field name="sol_ids_amount_total"/>
+
+                    <field name="sol_ids_amount_total" string="销售金额"/>
+                    <field name="customer_requested_date" widget="date" string="客户交期"/>
+                    <field name="sale_current_date_rate" string="下单汇率"/>
+                    <field name="contract_code" string="采购合同号"/>
+                    <field name="partner_id" string="供应商名称"/>
                     <field name="qty_received_amount" invisible="1"/>
-                    <field name="deliver_amount_new"/>
-                    <field name="date_order" string="下单日期" widget="date" invisible="1"/>
-                    <field name="create_date" widget="date"/>
-                    <field name="date_planned" invisible="context.get('quotation_only', False)" string="交期"
+                    <field name="amount_total" sum="Total amount" widget="monetary" string="采购金额"/>
+                    <field name="date_planned" invisible="context.get('quotation_only', False)" string="供应商交期"
                            widget="date"/>
-                    <field name="pre_advance" string="计划预付"/>
-                    <field name="real_advance" string="实际预付"/>
-                    <field name="balance_new" string="未认领预付"/>
+                    <field name="include_tax"/>
+                    <field name="sale_no_deliver_amount" string="销售剩余金额"/>
+                    <field name="no_deliver_amount_new" string="采购剩余金额"/>
+                    <field name="pre_advance" string="应付定金"/>
+                    <field name="real_advance" string="实付定金"/>
+                    <field name="balance_new" string="待认领定金"/>
+                    <field name="state_1" string="状态"/>
+
+
+                    <field name="deliver_amount_new" invisible="1"/>
+                    <field name="date_order" string="下单日期" widget="date" invisible="1"/>
+                    <field name="create_date" widget="date" invisible="1"/>
+
+
                     <field name="origin" invisible="1"/>
                     <field name="amount_untaxed" sum="Total Untaxed amount" string="Untaxed" widget="monetary"
                            invisible="1"/>
-                    <field name="amount_total" sum="Total amount" widget="monetary"/>
+
                     <field name="currency_id" invisible="1"/>
                     <field name="state" invisible="1"/>
                     <field name="delivery_status" invisible="1"/>
-                    <field name="include_tax"/>
+
                     <field name="payment_term_id" attrs="{}" invisible="1"/>
                     <field name="sale_uid" invisible="1"/>
                     <field name="sale_assistant_id" invisible="1"/>
                     <field name="purchaser_date" invisible="1"/>
-                    <field name="so_id_state" string="销售审批状态"/>
-                    <field name="gongsi_id"  invisible="2" string="采购主体"/>
+                    <field name="so_id_state" string="销售审批状态" invisible="1"/>
+                    <field name="gongsi_id"  invisible="1" string="采购主体"/>
                     <field name="supplierinfo_ids" widget="many2many_tags" invisible="1"/>
                     <field name="invoice_status"
                            invisible="1"/><!--invisible="not context.get('show_purchase', True)"-->
                     <field name="company_id" groups="base.group_system" invisible="0" options="{'no_create': True}"/>
+                    <field name="so_currentcy_id" invisible="1"/>
                 </tree>
             </field>
         </record>

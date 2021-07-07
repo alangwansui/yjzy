@@ -7,7 +7,8 @@ from odoo.exceptions import Warning
 from odoo.osv import expression
 from odoo.addons.purchase.models.purchase import PurchaseOrder
 
-#13暂时不添加返点的计算
+
+# 13暂时不添加返点的计算
 @api.onchange('partner_id', 'company_id')
 def new_onchange_partner_id(self):
     if not self.partner_id:
@@ -18,7 +19,8 @@ def new_onchange_partner_id(self):
         self.purchase_fandian_ratio = 0
         self.purchase_fandian_partner_id = None
     else:
-        self.fiscal_position_id = self.env['account.fiscal.position'].with_context(company_id=self.company_id.id).get_fiscal_position(
+        self.fiscal_position_id = self.env['account.fiscal.position'].with_context(
+            company_id=self.company_id.id).get_fiscal_position(
             self.partner_id.id)
         self.payment_term_id = self.partner_id.property_supplier_payment_term_id.id
         self.currency_id = self.partner_id.property_purchase_currency_id.id or self.env.user.company_id.currency_id.id
@@ -28,22 +30,23 @@ def new_onchange_partner_id(self):
         self.purchase_fandian_partner_id = partner.purchase_fandian_partner_id
     return {}
 
-PurchaseOrder.onchange_partner_id = new_onchange_partner_id
 
+PurchaseOrder.onchange_partner_id = new_onchange_partner_id
 
 Stage_Status_Default = 'draft'
 
 Purchase_Selection = [('draft', '草稿'),
-                  ('sent', 'RFQ Sent'),
-                  ('submit', u'带责任人审批'),
-                  ('sales_approve', u'待产品经理审批'),
-                  ('approve', '待出运'),  # akiny 翻译成等待出运
-                  ('purchase', '开始出运'),
-                  ('done', '核销完成'),
-                  ('cancel', '取消'),
-                  ('refused', u'已拒绝'),
+                      ('sent', 'RFQ Sent'),
+                      ('submit', u'带责任人审批'),
+                      ('sales_approve', u'待产品经理审批'),
+                      ('approve', '待出运'),  # akiny 翻译成等待出运
+                      ('purchase', '开始出运'),
+                      ('done', '核销完成'),
+                      ('cancel', '取消'),
+                      ('refused', u'已拒绝'),
 
                       ]
+
 
 class PurchaseOrderStage(models.Model):
     _name = "purchase.order.stage"
@@ -53,32 +56,33 @@ class PurchaseOrderStage(models.Model):
     name = fields.Char('Stage Name', translate=True, required=True)
     code = fields.Char('code')
     sequence = fields.Integer(help="Used to order the note stages", default=1)
-    state = fields.Selection(Purchase_Selection, 'State', default=Stage_Status_Default) #track_visibility='onchange',
+    state = fields.Selection(Purchase_Selection, 'State', default=Stage_Status_Default)  # track_visibility='onchange',
     fold = fields.Boolean('Folded by Default')
     # _sql_constraints = [
     #     ('name_code', 'unique(code)', u"编码不能重复"),
     # ]
-    user_ids = fields.Many2many('res.users', 'ref_po_users', 'fid', 'tid', 'Users') #可以进行判断也可以结合自定义视图模块使用
+    user_ids = fields.Many2many('res.users', 'ref_po_users', 'fid', 'tid', 'Users')  # 可以进行判断也可以结合自定义视图模块使用
     group_ids = fields.Many2many('res.groups', 'ref_po_group', 'gid', 'bid', 'Groups')
     main_sign_uid = fields.Many2one('res.users', u'主签字人')
 
 
 class purchase_order(models.Model):
     _inherit = 'purchase.order'
-    #13已经添加
+
+    # 13已经添加
     @api.depends('order_line')
     def compute_so(self):
         for o in self:
             o.so_ids = o.order_line.mapped('sol_id').mapped('order_id')
-            o.supplierinfo_ids = o.order_line.mapped('supplierinfo_id') #在采购合同通过供应商信息来查找采购合同
+            o.supplierinfo_ids = o.order_line.mapped('supplierinfo_id')  # 在采购合同通过供应商信息来查找采购合同
 
-#----
+    # ----
     def compute_info(self):
         aml_obj = self.env['account.move.line']
         for one in self:
             polines = one.order_line
             sml_lines = aml_obj.search([('po_id', '=', one.id)]).filtered(lambda x: x.account_id.code == '1123')
-            print('sml_lines__11717171',sml_lines)
+            print('sml_lines__11717171', sml_lines)
             if one.yjzy_payment_ids and one.yjzy_payment_ids[0].currency_id.name == 'CNY':
                 balance = sum([x.debit - x.credit for x in sml_lines])
             else:
@@ -87,8 +91,9 @@ class purchase_order(models.Model):
 
             one.balance = balance
             one.no_deliver_amount = no_deliver_amount
-  #13ok
-    @api.depends('aml_ids','aml_ids.credit','aml_ids.debit','aml_ids.amount_currency')
+
+    # 13ok
+    @api.depends('aml_ids', 'aml_ids.credit', 'aml_ids.debit', 'aml_ids.amount_currency')
     def compute_balance(self):
         for one in self:
             sml_lines = one.aml_ids.filtered(lambda x: x.account_id.code == '1123')
@@ -97,18 +102,19 @@ class purchase_order(models.Model):
                 real_advance = sum([x.debit for x in sml_lines])
             else:
                 balance = sum([1 * x.amount_currency for x in sml_lines])
-                real_advance = sum([1 * i.amount_currency for i in sml_lines.filtered(lambda x: x.amount_currency >0)])
+                real_advance = sum([1 * i.amount_currency for i in sml_lines.filtered(lambda x: x.amount_currency > 0)])
             one.balance_new = balance
             one.real_advance = real_advance
 
-
-
-    @api.depends('order_line.qty_received','source_so_id','order_line.product_qty','order_line')
+    @api.depends('order_line.qty_received', 'order_line.price_unit', 'order_line.qty_received', 'source_so_id',
+                 'order_line.product_qty', 'order_line', 'order_line.sol_id_price_total_undelivered')
     def compute_no_deliver_amount(self):
         for one in self:
             one.no_deliver_amount_new = sum([x.price_unit * (x.product_qty - x.qty_received) for x in one.order_line])
             one.deliver_amount_new = sum([x.price_unit * x.qty_received for x in one.order_line])
-    #13ok
+            one.sale_no_deliver_amount = sum(x.sol_id_price_total_undelivered for x in one.order_line)
+
+    # 13ok
     @api.depends('payment_term_id', 'amount_total')
     def compute_pre_advance(self):
         for one in self:
@@ -117,11 +123,10 @@ class purchase_order(models.Model):
             else:
                 one.pre_advance = 0
 
-
     # is_cip = fields.Boolean(u'报关', default=False)
     # is_fapiao = fields.Boolean(u'含税')
-    #akiny 修改state
-    #state = fields.Selection(selection_add=[('edit', u'可修改'),('approve_sales',u'责任人审批完成'),('submit',u'已提交'),('refused',u'已拒绝')])
+    # akiny 修改state
+    # state = fields.Selection(selection_add=[('edit', u'可修改'),('approve_sales',u'责任人审批完成'),('submit',u'已提交'),('refused',u'已拒绝')])
 
     #
     # invoice_line_ids = fields.One2many('account.invoice.line','purchase_id',u'账单明细行')
@@ -130,19 +135,18 @@ class purchase_order(models.Model):
         stage = self.env['purchase.order.stage']
         return stage.search([], limit=1)
 
-    @api.depends('source_so_id','source_so_id.amount_total')
+    @api.depends('source_so_id', 'source_so_id.amount_total')
     def compute_so_id_amount_total(self):
         for one in self:
             one.so_id_amount_total = one.source_so_id.amount_total
 
-    @api.depends('order_line','order_line.sol_id_price_total')
+    @api.depends('order_line', 'order_line.sol_id_price_total')
     def compute_sol_ids_amount_total(self):
         for one in self:
             sol_ids_amount_total = sum(x.sol_id_price_total for x in one.order_line)
             one.sol_ids_amount_total = sol_ids_amount_total
 
-
-    @api.depends('hxd_ids','hxd_ids.amount_total_org_new')
+    @api.depends('hxd_ids', 'hxd_ids.amount_total_org_new')
     def compute_amount_org_hxd(self):
         for one in self:
             amount_total_org_new = sum(x.amount_total_org_new for x in one.hxd_ids)
@@ -161,13 +165,19 @@ class purchase_order(models.Model):
     #         hxd_ids = one.hxd_ids.filtered(lambda x: x.prder_id.state == 'done')
     #         amount_payment_org_auto = sum(x.amount_payment_org_auto for x in hxd_ids)
     #         one.amount_payment_org_auto = amount_payment_org_auto
-    @api.depends('yjzy_payment_ids.currency_id','currency_id')
+    @api.depends('yjzy_payment_ids.currency_id', 'currency_id')
     def compute_yjzy_currency_id(self):
         for one in self:
             if one.yjzy_payment_ids:
                 one.yjzy_currency_id = one.yjzy_payment_ids[0].currency_id
             else:
                 one.yjzy_currency_id = one.currency_id
+
+    @api.depends('order_line', 'order_line.sol_id_price_total')
+    def compute_qty_received_amount(self):
+        for one in self:
+            qty_received_amount = sum(x.qty_received for x in one.order_line)
+            one.qty_received_amount = qty_received_amount
 
     stage_id = fields.Many2one(
         'purchase.order.stage',
@@ -178,16 +188,15 @@ class purchase_order(models.Model):
 
     balance = fields.Monetary(u'预付余额', compute=compute_info, currency_field='yjzy_currency_id')
 
-    need_change_partner = fields.Boolean('需要同步供应商',compute=compute_need_change_partner)
-    #akiny_new
+    need_change_partner = fields.Boolean('需要同步供应商', compute=compute_need_change_partner)
+    # akiny_new
 
-    hxd_ids = fields.One2many('account.reconcile.order.line','po_id','所有已经批准的核销单',domain=[('order_id.state_1','in',['done','post'])])
-    amount_org_hxd = fields.Float('核销单的付款金额总和',compute=compute_amount_org_hxd,store=True)
+    hxd_ids = fields.One2many('account.reconcile.order.line', 'po_id', '所有已经批准的核销单',
+                              domain=[('order_id.state_1', 'in', ['done', 'post'])])
+    amount_org_hxd = fields.Float('核销单的付款金额总和', compute=compute_amount_org_hxd, store=True)
     need_purchase_fandian = fields.Boolean(u'采购返点')
     purchase_fandian_ratio = fields.Float(u'返点比例：%')
     purchase_fandian_partner_id = fields.Many2one('res.partner', u'返点对象')
-
-
 
     revise_content = fields.Text(u'合同变更')
     revise_count = fields.Integer(u'变更次数')
@@ -197,11 +206,15 @@ class purchase_order(models.Model):
     main_sign_uid = fields.Many2one('res.users', u'主签字人')
     user_ids = fields.Many2many('res.users', 'ref_user_po', 'pid', 'uid', u'用户')
 
-    is_editable = fields.Boolean(u'可编辑',related='source_so_id.is_editable')
-    approve_date = fields.Date('合规审批日期',related='source_so_id.approve_date',store=True)
+    is_editable = fields.Boolean(u'可编辑', related='source_so_id.is_editable')
+    approve_date = fields.Date('合规审批日期', related='source_so_id.approve_date', store=True)
+    customer_pi = fields.Char(u'客户订单号', related='source_so_id.customer_pi', store=True)
+    customer_id = fields.Many2one('res.partner', related='source_so_id.partner_id', store=True)
+    customer_requested_date = fields.Datetime('客户交期', related='source_so_id.requested_date', store=True)
+    sale_current_date_rate = fields.Float('下单汇率', related='source_so_id.current_date_rate', store=True,
+                                          group_operator=False)
 
-
-    #已经添加13
+    # 已经添加13
     gongsi_id = fields.Many2one('gongsi', '内部公司')
     state = fields.Selection([
         ('draft', 'RFQ'),
@@ -224,17 +237,18 @@ class purchase_order(models.Model):
     can_confirm_by_so = fields.Boolean(u'已可以自动随SO审批')
     box_type = fields.Selection([('b', 'B'), ('a', 'A')], string=u'编号方式', default='b')
     contact_id = fields.Many2one(u'res.partner', '联系人')
-    include_tax = fields.Boolean(u'含税',default=True)
-    sale_uid = fields.Many2one('res.users', u'业务员',default=lambda self: self.env.user.assistant_id.id)
-    sale_assistant_id = fields.Many2one('res.users', u'业务助理',default=lambda self: self.env.user.id)
+    include_tax = fields.Boolean(u'含税', default=True)
+    sale_uid = fields.Many2one('res.users', u'业务员', default=lambda self: self.env.user.assistant_id.id)
+    sale_assistant_id = fields.Many2one('res.users', u'业务助理', default=lambda self: self.env.user.id)
     yjzy_payment_ids = fields.One2many('account.payment', 'po_id', u'预付款单')
 
     yjzy_currency_id = fields.Many2one('res.currency', u'预收币种', related='yjzy_payment_ids.currency_id')
-    balance_new = fields.Monetary(u'预付余额_新', compute='compute_balance', currency_field='yjzy_currency_id',store=True)
-    real_advance = fields.Monetary(u'实际预付金额', compute='compute_balance', currency_field='yjzy_currency_id',store=True)
-    pre_advance = fields.Monetary(u'计划预付金额', currency_field='currency_id', compute=compute_pre_advance, store=True, help=u"根据付款条款计算的可预付金额\n")#计划预付金额，根据付款条款计算
+    balance_new = fields.Monetary(u'预付余额_新', compute='compute_balance', currency_field='yjzy_currency_id', store=True)
+    real_advance = fields.Monetary(u'实际预付金额', compute='compute_balance', currency_field='yjzy_currency_id', store=True)
+    pre_advance = fields.Monetary(u'计划预付金额', currency_field='currency_id', compute=compute_pre_advance, store=True,
+                                  help=u"根据付款条款计算的可预付金额\n")  # 计划预付金额，根据付款条款计算
 
-    #以下还没有进入文档
+    # 以下还没有进入文档
     submit_date = fields.Date('提交审批时间')
     submit_uid = fields.Many2one('res.users', u'提交审批')
 
@@ -243,25 +257,34 @@ class purchase_order(models.Model):
 
     second_sign_uid = fields.Many2one('res.users', u'次签字人')
 
-    no_deliver_amount = fields.Monetary('未发货金额',currency_field='currency_id', compute=compute_info)
-    no_deliver_amount_new = fields.Monetary('未发货金额',currency_field='currency_id', compute=compute_no_deliver_amount, store=True)
-    deliver_amount_new = fields.Monetary('已发货金额', currency_field='currency_id', compute=compute_no_deliver_amount, store=True)
+    no_deliver_amount = fields.Monetary('未发货金额', currency_field='currency_id', compute=compute_info)
+    no_deliver_amount_new = fields.Monetary('未发货金额', currency_field='currency_id', compute=compute_no_deliver_amount,
+                                            store=True)
+    deliver_amount_new = fields.Monetary('已发货金额', currency_field='currency_id', compute=compute_no_deliver_amount,
+                                         store=True)
 
+    qty_received_amount = fields.Float('发货数量', compute='compute_qty_received_amount', store=True)
+    sale_no_deliver_amount = fields.Monetary('销售未发货金额', currency_field='so_currentcy_id',
+                                             compute=compute_no_deliver_amount,
+                                             store=True)
+
+    so_approve_date = fields.Date('合规审批时间', related='source_so_id.approve_date', store=True)
     partner_payment_term_id = fields.Many2one('account.payment.term', u'客户付款条款',
                                               related='partner_id.property_supplier_payment_term_id')
     is_different_payment_term = fields.Boolean('付款条款是否不同')
 
-    #akiny
-    so_id_state = fields.Selection('源销售合同状态',related='source_so_id.state')
+    # akiny
+    so_id_state = fields.Selection('源销售合同状态', related='source_so_id.state')
     aml_ids = fields.One2many('account.move.line', 'po_id', u'分录明细', readonly=True)
-    so_currentcy_id = fields.Many2one('res.currency','销售合同币种',related='source_so_id.currency_id')
-    so_id_amount_total = fields.Monetary('对应销售金额',currency_field='so_currentcy_id', compute=compute_so_id_amount_total,store=True)
-    sol_ids_amount_total = fields.Monetary('对应销售金额', currency_field='so_currentcy_id', compute=compute_sol_ids_amount_total,
+    so_currentcy_id = fields.Many2one('res.currency', '销售合同币种', related='source_so_id.currency_id')
+    so_id_amount_total = fields.Monetary('对应销售金额', currency_field='so_currentcy_id', compute=compute_so_id_amount_total,
                                          store=True)
-    date_factory_return = fields.Date('工厂回传时间',)
+    sol_ids_amount_total = fields.Monetary('对应销售金额', currency_field='so_currentcy_id',
+                                           compute=compute_sol_ids_amount_total,
+                                           store=True)
+    date_factory_return = fields.Date('工厂回传时间', )
 
-    tb_line_ids = fields.One2many('transport.bill.line','po_id')
-
+    tb_line_ids = fields.One2many('transport.bill.line', 'po_id')
 
     # amount_payment_org_auto = fields.Monetary('支付金额', currency_field='currency_id',compute=compute_amount_payment_org_auto)
 
@@ -274,7 +297,7 @@ class purchase_order(models.Model):
         for one in self:
             one.tb_line_count = len(one.tb_line_ids)
 
-    tb_line_count = fields.Integer('出运明细数量',compute=compute_tb_line_count)
+    tb_line_count = fields.Integer('出运明细数量', compute=compute_tb_line_count)
 
     def open_view_tb_line(self):
         self.ensure_one()
@@ -290,7 +313,7 @@ class purchase_order(models.Model):
             # 'context':{'search_default_group_by_bill_id':1}
         }
 
-    #采购单更换了供应商，需要更新对应的销售明细上的供应商
+    # 采购单更换了供应商，需要更新对应的销售明细上的供应商
     def change_supplier(self):
         if self.need_change_partner:
             for one in self.order_line:
@@ -317,8 +340,6 @@ class purchase_order(models.Model):
                            'submit_uid': self.env.user.id,
                            'submit_date': fields.datetime.now()})
 
-
-
     def action_sales_approve_stage(self):
         stage_id = self._stage_find(domain=[('code', '=', '040')])
         if not stage_id.user_ids:
@@ -339,19 +360,18 @@ class purchase_order(models.Model):
                            'state': 'approve_sales',
                            })
 
-
     def action_approve_stage(self):
         stage_id = self._stage_find(domain=[('code', '=', '040')])
         if not stage_id.user_ids:
             raise Warning('请先设置采购签字人员！')
-        print('stage_id.user_ids',stage_id.user_ids)
+        print('stage_id.user_ids', stage_id.user_ids)
         main_sign_uid = stage_id.main_sign_uid
         return self.write({'stage_id': stage_id.id,
                            'can_confirm_by_so': True,
                            'purchaser_uid': self.env.user.id,
                            'purchaser_date': fields.datetime.now(),
                            'state': 'to approve',
-                           'main_sign_uid':main_sign_uid.id
+                           'main_sign_uid': main_sign_uid.id
                            })
 
     def action_confirm_stage(self):
@@ -360,7 +380,6 @@ class purchase_order(models.Model):
         stage_id = self._stage_find(domain=[('code', '=', '050')])
         return self.write({'stage_id': stage_id.id,
                            })
-
 
     def action_refuse_stage(self, reason):
         stage_id = self._stage_find(domain=[('code', '=', '090')])
@@ -375,7 +394,7 @@ class purchase_order(models.Model):
                         'submit_uid': False,
                         'purchaser_uid': False,
                         'purchaser_date': False,
-                        'main_sign_uid':False,
+                        'main_sign_uid': False,
                         'stage_id': stage_id.id})
         for so in self:
             so.message_post_with_view('yjzy_extend.po_template_refuse_reason',
@@ -385,14 +404,13 @@ class purchase_order(models.Model):
 
     def action_to_draft_stage(self):
         stage_id = self._stage_find(domain=[('code', '=', '010')])
-        self.write({ 'state': 'draft',
-                     'stage_id': stage_id.id})
-
+        self.write({'state': 'draft',
+                    'stage_id': stage_id.id})
 
     def action_to_cancel_stage(self):
         if self.create_uid.id != self.env.user.id:
             raise Warning('只有创建者才允许取消！')
-        if self.state not in ['draft','refused']:
+        if self.state not in ['draft', 'refused']:
             raise Warning('只有草稿或者拒绝状态的才能取消')
         self.button_cancel()
         stage_id = self._stage_find(domain=[('code', '=', '100')])
@@ -401,11 +419,9 @@ class purchase_order(models.Model):
             'submit_uid': False,
             'purchaser_uid': False,
             'purchaser_date': False,
-            'source_so_id':False,
-            'main_sign_uid':False,
+            'source_so_id': False,
+            'main_sign_uid': False,
             'stage_id': stage_id.id})
-
-
 
     def update_back_tax(self):
         self.ensure_one()
@@ -414,8 +430,7 @@ class purchase_order(models.Model):
 
         self.compute_info()
 
-
-  #  partner_payment_term_id_value = fields.Many2one('account.payment.term', u'客户付款条款值')
+    #  partner_payment_term_id_value = fields.Many2one('account.payment.term', u'客户付款条款值')
 
     # #13已经添加
     # @api.constrains('contract_code')
@@ -440,6 +455,7 @@ class purchase_order(models.Model):
             ])
             return self.search(domain, limit=limit).name_get()
         return super(purchase_order, self).name_search(name, args, operator, limit)
+
     @api.multi
     def name_get(self):
         ctx = self.env.context
@@ -474,20 +490,15 @@ class purchase_order(models.Model):
             'target': 'new',
         }
 
-
-
     @api.onchange('payment_term_id')
     def onchange_payment_term_id(self):
-        #self.partner_payment_term_id_value = self.payment_term_id
+        # self.partner_payment_term_id_value = self.payment_term_id
         if self.payment_term_id != self.partner_payment_term_id:
             self.is_different_payment_term = True
         else:
             self.is_different_payment_term = False
 
-
-
-
-#以下暂时不要
+    # 以下暂时不要
     @api.onchange('partner_id', 'company_id')
     def onchange_partner_id(self):
         res = super(purchase_order, self).onchange_partner_id()
@@ -520,35 +531,35 @@ class purchase_order(models.Model):
 
         ICQ.set_param('po.box', end + 1)
 
-
     def make_yfsqd(self):
         yfsqd_ids = []
         for one in self:
-            #不重复生成
+            # 不重复生成
             if one.yjzy_payment_ids:
                 continue
 
             if one.partner_id.auto_yfsqd:
 
-                journal = self.env['account.journal'].search([('code', '=', 'yfdrl'), ('company_id', '=', self.env.user.company_id.id)], limit=1)
+                journal = self.env['account.journal'].search(
+                    [('code', '=', 'yfdrl'), ('company_id', '=', self.env.user.company_id.id)], limit=1)
                 if not journal:
                     raise Warning('没有找到对应的日记账 编码:%s  公司:%s' % ('yfdrl', self.env.user.company_id.name))
 
-                advance_account = self.env['account.account'].search([('code','=', '1123'),('company_id', '=', self.env.user.company_id.id)], limit=1)
+                advance_account = self.env['account.account'].search(
+                    [('code', '=', '1123'), ('company_id', '=', self.env.user.company_id.id)], limit=1)
                 if not advance_account:
                     raise Warning('没有找到对应的科目 编码:%s  公司:%s' % ('1123', self.env.user.company_id.name))
 
-
                 yfsqd = self.env['account.payment'].with_context(default_sfk_type='yfsqd').create({
                     'payment_type': 'outbound',
-                    'partner_type':  'supplier',
+                    'partner_type': 'supplier',
                     'partner_id': one.partner_id.id,
                     'payment_method_id': 2,
-                    'include_tax':  one.include_tax,
+                    'include_tax': one.include_tax,
                     'amount': one.pre_advance,
                     'po_id': one.id,
                     'sale_uid': one.sale_uid.id,
-                    'sale_assistant_uid':  one.sale_assistant_id.id,
+                    'sale_assistant_uid': one.sale_assistant_id.id,
                     'currency_id': one.currency_id.id,
                     'journal_id': journal.id,
                     'sale_assistant_id': one.sale_assistant_id,
@@ -564,9 +575,10 @@ class purchase_order(models.Model):
             'view_mode': 'tree,form',
             'res_model': 'account.payment',
             'type': 'ir.actions.act_window',
-            'domain': [('id','in', yfsqd_ids)],
+            'domain': [('id', 'in', yfsqd_ids)],
         }
-#------------------
+
+    # ------------------
     @api.multi
     def copy(self, default=None):
         self.ensure_one()
@@ -575,13 +587,11 @@ class purchase_order(models.Model):
             default['contract_code'] = "%s(copy)" % self.contract_code
         return super(purchase_order, self).copy(default)
 
-
     def unlink(self):
         for one in self:
             if one.state != 'cancel':
                 raise Warning(u'只有取消状态允许删除')
         return super(purchase_order, self).unlink()
-
 
     @api.model
     def create(self, valus):
@@ -591,18 +601,17 @@ class purchase_order(models.Model):
         po.purchase_fandian_ratio = partner.purchase_fandian_ratio
         po.purchase_fandian_partner_id = partner.purchase_fandian_partner_id
         return po
-    #13ok
+
+    # 13ok
     @api.model
     def cron_compute_pre_advance(self):
         self.search([]).compute_pre_advance()
         return True
 
-
     def test_pre_advance(self):
         self.ensure_one()
         self.compute_info()
         return True
-
 
     def is_from_so(self):
         return self.source_so_id and True or False
@@ -618,7 +627,6 @@ class purchase_order(models.Model):
         #     res |= sol_records.mapped('order_id')
         return res
 
-
     def set_tax_zero(self):
         zero_tax = self.env['account.tax'].search([('code', '=', 'purchase_zero')])
         if not zero_tax:
@@ -629,7 +637,8 @@ class purchase_order(models.Model):
 
     def compute_package_info(self):
         self.order_line.compute_package_info()
-#这个是特殊审批 直接创建预付申请单。暂时取消
+
+    # 这个是特殊审批 直接创建预付申请单。暂时取消
     @api.multi
     def button_confirm(self):
         res = super(purchase_order, self).button_confirm()
@@ -644,17 +653,11 @@ class purchase_order(models.Model):
         self.yjzy_payment_ids.unlink()
         return True
 
-
-
     @api.model
     def cron_update_purchase_gongsi_id(self):
         for one in self:
             print('===', one)
             one.gongsi_id = one.source_so_id.purchase_gongsi_id
-
-
-
-
 
 
 class purchase_order_line(models.Model):
@@ -664,22 +667,31 @@ class purchase_order_line(models.Model):
     def compute_supplierinfo(self):
         product_info_obj = self.env['product.supplierinfo']
         for one in self:
-            info = product_info_obj.search([('product_id', '=', one.product_id.id), ('name', '=', one.partner_id.id)], limit=1)
+            info = product_info_obj.search([('product_id', '=', one.product_id.id), ('name', '=', one.partner_id.id)],
+                                           limit=1)
             # print ('===>', info)
             one.supplierinfo_id = info
 
-    @api.depends('sol_id','sol_id.price_total')
+    @api.depends('sol_id', 'sol_id.price_total', 'sol_id.qty_delivered', 'sol_id.product_uom_qty', 'sol_id.price_unit')
     def compute_sol_id_price_total(self):
         for one in self:
-            one.sol_id_price_total = one.sol_id.price_total
+            sol_id_price_total = one.sol_id.price_total
+            qty_delivered = one.sol_id.qty_delivered
+            product_uom_qty = one.sol_id.product_uom_qty
+            sol_price = one.sol_id.price_unit
+            sol_id_price_total_undelivered = sol_id_price_total - (product_uom_qty - qty_delivered) * sol_price
+            one.sol_id_price_total = sol_id_price_total
+            one.sol_id_price_total_undelivered = sol_id_price_total_undelivered
 
     s_uom_id = fields.Many2one('product.uom', u'销售打印单位', related='product_id.s_uom_id')
     p_uom_id = fields.Many2one('product.uom', u'采购打印单位', related='product_id.p_uom_id')
 
     sol_id = fields.Many2one('sale.order.line', u'销售明细', copy=False)
-    sol_currency_id = fields.Many2one('res.currency',related='sol_id.currency_id')
-    sol_id_price_total = fields.Monetary(u'对应销售金额',currency_field='sol_currency_id',compute=compute_sol_id_price_total, store=True)
-
+    sol_currency_id = fields.Many2one('res.currency', related='sol_id.currency_id')
+    sol_id_price_total = fields.Monetary(u'对应销售金额', currency_field='sol_currency_id',
+                                         compute=compute_sol_id_price_total, store=True)
+    sol_id_price_total_undelivered = fields.Monetary(u'对应销售未发货金额', currency_field='sol_currency_id',
+                                                     compute=compute_sol_id_price_total, store=True)
 
     so_id = fields.Many2one('sale.order', related='sol_id.order_id', string=u'销售订单', readonly=True)
     back_tax = fields.Float(u'退税率', digits=dp.get_precision('Back Tax'))
@@ -697,15 +709,13 @@ class purchase_order_line(models.Model):
     min_package_name = fields.Char(u'小包装名称')
     max_package_qty = fields.Float(u'大包装名称')
     qty_max_package = fields.Float(u'箱数')
-    max_package_volume = fields.Float(u'大包装体积')#902akiny  算大包装的体积
+    max_package_volume = fields.Float(u'大包装体积')  # 902akiny  算大包装的体积
 
     max_qty = fields.Float(u'大包数')
     max_qty2 = fields.Float(u'大包数参考')
     max_qty_ng = fields.Boolean(u'非整包')
 
     need_print = fields.Boolean('是否打印', default=True)
-
-
 
     def compute_package_info(self):
         for one in self:
@@ -729,7 +739,8 @@ class purchase_order_line(models.Model):
         self.need_split_bom = self.product_id.need_split_bom
         self.need_print = self.product_id.need_print
         return res
-   #以上已经添加
+
+    # 以上已经添加
     @api.onchange('price_section_base')
     def onchange_price_section_base(self):
         if self.product_id and self.price_section_base:
@@ -748,8 +759,5 @@ class purchase_order_line(models.Model):
             'domain': [('id', 'in', [x.id for x in values])],
             'target': 'new',
         }
-
-
-
 
 ###############################

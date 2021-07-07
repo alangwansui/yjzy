@@ -487,8 +487,11 @@ class account_payment(models.Model):
             one.un_delivery_amount = un_delivery_amount
             one.can_approve_amount = can_approve_amount
             # one.amount_payment_org_auto = amount_payment_org_auto
-
-
+    @api.depends('currency_id','currency_id.name')
+    def compute_currency_id_name(self):
+        for one in self:
+            currency_id_name = one.currency_id.name
+            one.currency_id_name = currency_id_name
 
     delivery_amount = fields.Monetary('已出运金额',currency_field='po_id_currency_id',compute='compute_delivery_amount',store=True)
     un_delivery_amount = fields.Monetary('未出运金额',currency_field='po_id_currency_id',compute=compute_delivery_amount,store=True)
@@ -790,7 +793,9 @@ class account_payment(models.Model):
     cny_currency_id = fields.Many2one('res.currency', '人名币', default=lambda self: self._default_cny_currency_id())
     amount_bank_cash_usd = fields.Monetary('公司总账余额(美金)',currency_field='usd_currency_id')
     amount_bank_cash_cny = fields.Monetary('公司总账余额(人名币)',currency_field='cny_currency_id')
-    currency_id_name = fields.Char('货币名称',related='currency_id.name',store=True)
+
+
+    currency_id_name = fields.Char('货币名称',compute=compute_currency_id_name,store=True)
 
     back_tax_invoice_id = fields.Many2one('account.invoice','应收退税',domain=[('yjzy_type_1','=','back_tax'),('is_manual','=','True')])
 
