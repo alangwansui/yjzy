@@ -41,12 +41,24 @@ Purchase_Selection = [('draft', '草稿'),
                       ('sales_approve', u'待产品经理审批'),
                       ('approve', '待出运'),  # akiny 翻译成等待出运
                       ('purchase', '开始出运'),
+                      ('abnormal','异常核销'),
+                      ('verifying','正常核销'),
                       ('done', '核销完成'),
                       ('cancel', '取消'),
                       ('refused', u'已拒绝'),
 
                       ]
-
+Sale_Selection = [('draft', '草稿'),
+                  ('cancel', '取消'),
+                  ('refused', u'拒绝'),
+                  ('submit', u'待责任人审核'),
+                  ('sales_approve', u'待业务合规审核'),
+                  ('manager_approval', u'待总经理特批'),
+                  ('approve', u'审批完成待出运'),
+                  ('sale', '开始出运'),
+                  ('abnormal', u'异常核销'),
+                  ('verifying', u'正常核销'),
+                  ('verification', u'核销完成'), ]
 
 class PurchaseOrderStage(models.Model):
     _name = "purchase.order.stage"
@@ -115,7 +127,7 @@ class purchase_order(models.Model):
             one.sale_no_deliver_amount = sum(x.sol_id_price_total_undelivered for x in one.order_line)
 
     # 13ok
-    @api.depends('payment_term_id', 'amount_total')
+    @api.depends('payment_term_id', 'amount_total','payment_term_id.line_ids','payment_term_id.line_ids.option','payment_term_id.line_ids.value_amount')
     def compute_pre_advance(self):
         for one in self:
             if one.payment_term_id:
@@ -275,6 +287,7 @@ class purchase_order(models.Model):
 
     # akiny
     so_id_state = fields.Selection('源销售合同状态', related='source_so_id.state')
+    so_id_state_1 = fields.Selection(Sale_Selection, u'源销售合同状态', index=True, related='source_so_id.state_1',store=True)
     aml_ids = fields.One2many('account.move.line', 'po_id', u'分录明细', readonly=True)
     so_currentcy_id = fields.Many2one('res.currency', '销售合同币种', related='source_so_id.currency_id')
     so_id_amount_total = fields.Monetary('对应销售金额', currency_field='so_currentcy_id', compute=compute_so_id_amount_total,
@@ -290,8 +303,15 @@ class purchase_order(models.Model):
 
     def re_compute_stage(self):
         for one in self:
-            if one.source_so_id.state == 'verification':
-                one.stage_id = one._stage_find(domain=[('code', '=', '060')])
+            if one.source_so_id.state_1 == 'abnormal':
+                stage_id = one._stage_find(domain=[('code', '=', '057')])
+            elif one.source_so_id.state_1 == 'verifying':
+                stage_id = one._stage_find(domain=[('code', '=', '055')])
+            elif one.source_so_id.state_1 == 'verification':
+                stage_id = one._stage_find(domain=[('code', '=', '060')])
+            else:
+                stage_id = one.stage_id
+            one.stage_id = stage_id
 
     def compute_tb_line_count(self):
         for one in self:
@@ -677,9 +697,10 @@ class purchase_order_line(models.Model):
         for one in self:
             sol_id_price_total = one.sol_id.price_total
             qty_delivered = one.sol_id.qty_delivered
+            new_rest_tb_qty = one.sol_id.new_rest_tb_qty
             product_uom_qty = one.sol_id.product_uom_qty
             sol_price = one.sol_id.price_unit
-            sol_id_price_total_undelivered = sol_id_price_total - (product_uom_qty - qty_delivered) * sol_price
+            sol_id_price_total_undelivered = sol_id_price_total - new_rest_tb_qty * sol_price
             one.sol_id_price_total = sol_id_price_total
             one.sol_id_price_total_undelivered = sol_id_price_total_undelivered
 

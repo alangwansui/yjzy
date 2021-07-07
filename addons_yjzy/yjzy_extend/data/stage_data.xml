@@ -389,6 +389,18 @@
             <field name="sequence" eval="50"/>
             <field name="state">purchase</field>
         </record>
+         <record model="purchase.order.stage" id="stage_po_verifying">
+            <field name="name">正常核销</field>
+            <field name="code">055</field>
+            <field name="sequence" eval="53"/>
+            <field name="state">verifying</field>
+        </record>
+        <record model="purchase.order.stage" id="stage_po_abnormal">
+            <field name="name">异常核销</field>
+            <field name="code">057</field>
+            <field name="sequence" eval="55"/>
+            <field name="state">abnormal</field>
+        </record>
         <record model="purchase.order.stage" id="stage_po_done">
             <field name="name">核销完成</field>
             <field name="code">060</field>

@@ -180,6 +180,7 @@
                     </header>
                     <header groups="base.group_system">
                         <button name="update_back_tax" string="更新退税" type="object"/>
+                        <button name="compute_pre_advance" string="更新计划预付款" type="object"/>
                         <button name="action_rfq_send" states="draft" invisible="1" string="Send RFQ by Email"
                                 type="object" context="{'send_rfq':True}" class="oe_highlight"/>
                         <button name="action_rfq_send" states="sent" invisible="1" string="Re-Send RFQ by Email"
@@ -325,7 +326,8 @@
                                 <field name="origin" attrs="{'invisible': [('origin','=',False)]}"/>
 
                                 <field name="yjzy_currency_id" invisible="1"/>
-                                <field name="pre_advance" invisible="1" string="建议预付金额"/>
+                                <field name="pre_advance" invisible="0" string="建议预付金额"/>
+                                <field name="real_advance" invisible="0" string="实际预付金额"/>
                                 <field name="balance" string="实际预付余额"/>
                                 <field name="can_confirm_by_so" readonly="0" invisible="1"/>
                                 <field name="user_ids" widget="many2many_tags" invisible="1"/>

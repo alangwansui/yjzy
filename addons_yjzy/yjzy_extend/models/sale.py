@@ -347,7 +347,7 @@ class sale_order(models.Model):
         default=_default_sale_order_stage, copy=False)
 
     state_1 = fields.Selection(Sale_Selection, u'审批流程', default='draft', index=True, related='stage_id.state',
-                               track_visibility='onchange')  # 费用审批流程
+                               track_visibility='onchange',store=True)  # 费用审批流程
     partner_invoice_id = fields.Many2one('res.partner', string='Invoice Address', readonly=True, required=True, states={'draft': [('readonly', False)], 'sent': [('readonly', False)], 'approve': [('readonly', False)],'sale': [('readonly', False)]}, help="Invoice address for current sales order.")
 
     is_discount = fields.Boolean('是否需要折扣',default=False)
@@ -1146,17 +1146,23 @@ class sale_order(models.Model):
                     state = 'done'
                     hexiao_type = 'abnormal'
                     stage_id = one._stage_find(domain=[('code', '=', '080')])
+                    for po in one.po_ids_new:
+                        po.stage_id = one._stage_find(domain=[('code', '=', '057')])
                 if one.no_sent_amount_new == 0 and one.purchase_no_deliver_amount_new == 0:
                     if one.balance == 0 and one.purchase_balance_sum3 == 0:
                         hexiao_type = 'write_off'
                         state = 'done'
                         stage_id = one._stage_find(domain=[('code', '=', '070')])
+                        for po in one.po_ids_new:
+                            po.stage_id = one._stage_find(domain=[('code', '=', '055')])
                     else:
                         if requested_date and requested_date < (today - relativedelta(days=90)).strftime(
                                 '%Y-%m-%d 00:00:00'):
                             hexiao_type = 'abnormal'
                             state = 'done'
                             stage_id = one._stage_find(domain=[('code', '=', '080')])
+                            for po in one.po_ids_new:
+                                po.stage_id = one._stage_find(domain=[('code', '=', '057')])
 
             one.hexiao_type = hexiao_type
             print('akiny_',state,hexiao_type,stage_id)

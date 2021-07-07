@@ -7,7 +7,7 @@ from odoo.exceptions import Warning, UserError
 from .comm import invoice_attribute_all_in_one
 
 Invoice_Selection = [('draft', u'草稿'),
-                     ('submit', u'待合规审批'),
+                     ('submit', u'已提交'),
                      ('approved', u'待总经理审批'),
                      ('done', u'审批完成'),
                      ('invoice_pending',u'待处理账单'),
