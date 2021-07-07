@@ -134,9 +134,7 @@ class purchase_order(models.Model):
         for one in self:
             one.no_deliver_amount_new = sum([x.price_unit * (x.product_qty - x.qty_received) for x in one.order_line])
             one.deliver_amount_new = sum([x.price_unit * x.qty_received for x in one.order_line])
-
-            sale_no_deliver_amount = sum(
-                x.sol_id.price_total - (x.sol_id.product_uom_qty - x.sol_id.qty_delivered) * x.sol_id.price_unit for x
+            sale_no_deliver_amount = sum((x.sol_id.product_uom_qty - x.sol_id.qty_delivered) * x.sol_id.price_unit for x
                 in one.order_line)
             one.sale_no_deliver_amount = sale_no_deliver_amount
             # one.sale_no_deliver_amount = sum(x.sol_id_price_total_undelivered for x in one.order_line)
@@ -715,7 +713,7 @@ class purchase_order_line(models.Model):
             qty_delivered = one.sol_id.qty_delivered
             product_uom_qty = one.sol_id.product_uom_qty
             sol_price = one.sol_id.price_unit
-            sol_id_price_total_undelivered = sol_id_price_total - (product_uom_qty - qty_delivered) * sol_price
+            sol_id_price_total_undelivered = (product_uom_qty - qty_delivered) * sol_price
             one.sol_id_price_total = sol_id_price_total
             one.sol_id_price_total_undelivered = sol_id_price_total_undelivered
 
