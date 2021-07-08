@@ -1147,14 +1147,14 @@ class sale_order(models.Model):
                     hexiao_type = 'abnormal'
                     stage_id = one._stage_find(domain=[('code', '=', '080')])
                     for po in one.po_ids_new:
-                        po.stage_id = one._stage_find(domain=[('code', '=', '057')])
+                        po.stage_id = po._stage_find(domain=[('code', '=', '057')])
                 if one.no_sent_amount_new == 0 and one.purchase_no_deliver_amount_new == 0:
                     if one.balance == 0 and one.purchase_balance_sum3 == 0:
                         hexiao_type = 'write_off'
                         state = 'done'
                         stage_id = one._stage_find(domain=[('code', '=', '070')])
                         for po in one.po_ids_new:
-                            po.stage_id = one._stage_find(domain=[('code', '=', '055')])
+                            po.stage_id = po._stage_find(domain=[('code', '=', '055')])
                     else:
                         if requested_date and requested_date < (today - relativedelta(days=90)).strftime(
                                 '%Y-%m-%d 00:00:00'):
@@ -1162,8 +1162,7 @@ class sale_order(models.Model):
                             state = 'done'
                             stage_id = one._stage_find(domain=[('code', '=', '080')])
                             for po in one.po_ids_new:
-                                po.stage_id = one._stage_find(domain=[('code', '=', '057')])
-
+                                po.stage_id = po._stage_find(domain=[('code', '=', '057')])
             one.hexiao_type = hexiao_type
             print('akiny_',state,hexiao_type,stage_id)
             one.state = state
