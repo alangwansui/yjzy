@@ -83,6 +83,7 @@
                     <group expand="0" string="Group By">
                         <filter string="销售合同" domain="[]" name="group_source_so_id" context="{'group_by':'source_so_id'}"/>
                         <filter string="状态" domain="[]" name="group_by_state_1" context="{'group_by':'so_id_state_1'}"/>
+                        <filter string="stage" domain="[]" name="group_by_so_stage" context="{'group_by':'so_id_stage'}"/>
                         <filter string="供应商" domain="[]" context="{'group_by':'partner_id'}"/>
                         <filter string="交期" domain="[]" context="{'group_by':'date_planned'}"/>
 
@@ -146,6 +147,7 @@
                            invisible="1"/><!--invisible="not context.get('show_purchase', True)"-->
                     <field name="company_id" groups="base.group_system" invisible="0" options="{'no_create': True}"/>
                     <field name="so_currentcy_id" invisible="1"/>
+                    <field name="so_id_stage" invisible="1"/>
 
                 </tree>
             </field>
