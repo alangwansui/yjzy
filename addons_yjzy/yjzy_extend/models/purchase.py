@@ -731,7 +731,7 @@ class purchase_order_line(models.Model):
                                                      compute=compute_sol_id_price_total, store=True)
 
     so_id = fields.Many2one('sale.order', related='sol_id.order_id', string=u'销售订单', readonly=True)
-    customer_id = fields.Many2one('res.partner', related='sol.order_id.partner_id', string='客户', store=True)
+    customer_id = fields.Many2one('res.partner', related='sol_id.order_id.partner_id', string='客户', store=True)
     back_tax = fields.Float(u'退税率', digits=dp.get_precision('Back Tax'))
 
     last_purchase_price = fields.Float('最后采购价', related='product_id.last_purchase_price')
