@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+    <data>
+
+        <!-- Purchase Lines akiny 采购明细-->
+
+        <record id="sh_purchase_line_form_view_1" model="ir.ui.view">
+            <field name="name">Purchase Line Form</field>
+            <field name="model">purchase.order.line</field>
+            <field name="priority" eval="1"/>
+            <field name="arch" type="xml">
+                <form create="false" delete="false" edit="false">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="order_id"/>
+                                <field name="name"/>
+                                <field name="partner_id" string="Vendor"/>
+                                <field name="product_id"/>
+                                <field name="price_unit"/>
+                                <field name="product_qty"/>
+                                <field name="qty_received"/>
+                                <field name="qty_invoiced"/>
+
+                            </group>
+                            <group>
+                                <field name="product_uom" groups="product.group_uom"/>
+                                <field name="back_tax"/>
+                                <field name="price_subtotal" widget="monetary"/>
+                                <field name="date_planned" widget="date"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="sh_purchase_line_tree_view_1" model="ir.ui.view">
+            <field name="name">Purchase Line Tree</field>
+            <field name="model">purchase.order.line</field>
+            <field name="priority" eval="1"/>
+            <field name="arch" type="xml">
+                <tree create="false" delete="false" edit="false">
+                    <field name="order_id"/>
+                    <field name="name"/>
+                    <field name="partner_id" string="Vendor"/>
+                    <field name="product_id"/>
+                    <field name="price_unit"/>
+                    <field name="product_qty"/>
+                    <field name="qty_received"/>
+                    <field name="qty_invoiced"/>
+                    <field name="product_uom" groups="product.group_uom"/>
+                    <field name="back_tax"/>
+                    <field name="price_subtotal" widget="monetary"/>
+                    <field name="date_planned" widget="date"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="sh_purchase_order_line_search_view_1" model="ir.ui.view">
+            <field name="name">Purchase Line Search</field>
+            <field name="model">purchase.order.line</field>
+            <field name="priority" eval="1"/>
+            <field name="arch" type="xml">
+                <search string="Search Purchase Order Line">
+                    <field name="name" string="模糊搜索"
+                           filter_domain="['|','|',('order_contract_code','ilike',self),('product_id','ilike',self),('partner_id','child_of',self)]"/>
+                    <field name="partner_id" string="供应商" filter_domain="[('partner_id','ilike',self)]"/>
+                    <field name="order_contract_code" string="合同号"/>
+                    <field name="product_id" string="产品"/>
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter string="供应商" name="group_by_partner" context="{'group_by':'partner_id'}"/>
+                        <filter string="合同号" name="group_by_order_id" context="{'group_by':'order_id'}"/>
+                        <filter string="产品" context="{'group_by':'product_id'}"/>
+
+                    </group>
+                </search>
+            </field>
+        </record>
+
+
+        <record id="sh_action_purchase_order_lines_all" model="ir.actions.act_window">
+            <field name="name">Purchase Order Line</field>
+            <field name="res_model">purchase.order.line</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="search_view_id" ref="sh_purchase_order_line_search_view_1"/>
+            <field name="context">{'search_default_group_by_order_id':1}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('sh_purchase_line_tree_view_1')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('sh_purchase_line_form_view_1')})]"/>
+        </record>
+
+        <menuitem id="menu_sh_purchase_line_all" name="采购明细" action="sh_action_purchase_order_lines_all"
+                  parent="yjzy_extend.new_purchase_order_root" sequence="99"/>
+    </data>
+</odoo>

@@ -153,6 +153,8 @@
             </field>
         </record>
 
+
+
         <record id="new_purchase_order_from" model="ir.ui.view">
             <field name="name">purchase.order.form</field>
             <field name="model">purchase.order</field>

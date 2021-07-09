@@ -718,6 +718,8 @@ class purchase_order_line(models.Model):
             one.sol_id_price_total = sol_id_price_total
             one.sol_id_price_total_undelivered = sol_id_price_total_undelivered
 
+
+    order_contract_code = fields.Char(u'采购合同号',related='order_id.contract_code', store=True)
     s_uom_id = fields.Many2one('product.uom', u'销售打印单位', related='product_id.s_uom_id')
     p_uom_id = fields.Many2one('product.uom', u'采购打印单位', related='product_id.p_uom_id')
 

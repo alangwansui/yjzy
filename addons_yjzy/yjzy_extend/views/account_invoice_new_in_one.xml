@@ -22,7 +22,7 @@
                         <button name="compute_move_lines" type="object" string="更新日志" groups="base.group_system"/>
                         <field name="state_1" widget="statusbar" statusbar_visible=" "/>
                     </header>
-                    <header groups="account.group_account_manager">
+                    <header groups="base.group_system">
                         <button name="action_create_yfhxd" context="{'invoice_attribute':invoice_attribute}"
                                 attrs="{'invisible':['|',('residual','=',0),('type','!=','in_invoice')]}"
                                 confirm="确定创建付款申请吗？"

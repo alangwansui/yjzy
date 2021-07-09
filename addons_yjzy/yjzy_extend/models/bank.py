@@ -4,7 +4,7 @@ from odoo.exceptions import Warning, UserError
 from odoo.tools import float_is_zero, float_compare
 from . comm import sfk_type
 import logging
-
+from odoo.osv import expression
 
 class res_partner_bank(models.Model):
     _inherit = 'res.partner.bank'
@@ -34,3 +34,14 @@ class res_partner_bank(models.Model):
             fullname = '%s:%s:%s' % (one.huming, one.acc_number, one.kaihuhang)
             res.append((one.id, fullname))
         return res
+
+    @api.model
+    def name_search(self, name, args=None, operator='ilike', limit=100):
+        args = args or []
+        domain = []
+        if name:
+            domain = ['|', ('huming', '=ilike', name + '%'), ('acc_number', operator, name)]
+            if operator in expression.NEGATIVE_TERM_OPERATORS:
+                domain = ['&'] + domain
+        banks = self.search(domain + args, limit=limit)
+        return banks.name_get()

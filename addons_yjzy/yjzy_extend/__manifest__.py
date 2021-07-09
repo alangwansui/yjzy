@@ -116,6 +116,7 @@
         'views/account_invoice_stage.xml',
         'views/hr_expense_stage.xml',
         'views/sale_order_line.xml',
+        'views/purchase_order_line.xml',
         'views/account_invoice_rzhi.xml',
 
         'views/product_packaging.xml',
