@@ -896,7 +896,7 @@ class account_invoice(models.Model):
         default=_default_invoice_stage, copy=False)
 
 
-    state_1 = fields.Selection(Invoice_Selection, '账单审批', related='stage_id.state')
+    state_1 = fields.Selection(Invoice_Selection, '账单审批',default='draft', index=True, related='stage_id.state',track_visibility='onchange')
     # 新建一个账单的状态，可以用来筛选还没有开始付款申请的账单
     state_2 = fields.Selection([
         ('10_draft', u'未确认'),

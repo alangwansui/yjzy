@@ -181,7 +181,7 @@
             <field name="name">account.invoice.other.payment.tree</field>
             <field name="model">account.invoice</field>
             <field name="arch" type="xml">
-                <tree decoration-info="state == 'draft'"  decoration-muted="state == 'cancel'" string="Invoice" create="false" >
+                <tree decoration-info="state == 'draft'"  default_order="stage_id" decoration-muted="state == 'cancel'" string="Invoice" create="false" >
                     <field name="partner_id" invisible="1" string="Supplier" />
                     <field name="bill_id" string="合同号" invisible="1"/>
                     <field name="tb_contract_code" string="合同号" invisible="1"/>
