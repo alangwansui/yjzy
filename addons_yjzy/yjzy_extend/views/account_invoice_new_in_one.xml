@@ -10,7 +10,7 @@
                 <form string="应收账单" class="o_invoice_form" create="false">
 
                     <header groups="account.group_account_manager">
-                        <button name="stage_action_pending" type="object" string="进入待处理"/>
+                        <button name="stage_action_pending" type="object" string="进入待处理" attrs="{'invisible':[('state_1','!=','submit')]}"/>
                         <button name="action_create_yfhxd" context="{'invoice_attribute':invoice_attribute}"
                                 attrs="{'invisible':['|',('residual','=',0),('type','!=','in_invoice')]}"
                                 confirm="确定创建付款申请吗？"
