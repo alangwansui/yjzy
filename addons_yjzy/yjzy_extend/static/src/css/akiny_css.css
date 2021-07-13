@@ -12,7 +12,9 @@ Released under the MIT license. http://opensource.736cs.com/licenses/mit
     width: 800px;
   }
 
-
+ .my_custom_class th[data-id="sent_amount_percent"]{
+    width: 800px;
+  }
 
 .my_custom_class th[data-id="hegui_date"]{
  width:400px;

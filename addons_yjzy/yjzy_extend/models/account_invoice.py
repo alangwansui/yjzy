@@ -2102,8 +2102,9 @@ class account_invoice(models.Model):
 
     def action_invoice_open(self):
         res = super(account_invoice, self).action_invoice_open()
-        stage_id = self._stage_find(domain=[('code', '=', '004')])
-        self.stage_id = stage_id
+        for inv_1 in self:
+            stage_id = inv_1._stage_find(domain=[('code', '=', '004')])
+            inv_1.stage_id = stage_id
         return res
 
 
