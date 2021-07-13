@@ -472,6 +472,7 @@ class tb_po_invoice(models.Model):
     other_invoice_amount = fields.Monetary('金额', currency_field='currency_id')
 
     expense_sheet_id = fields.Many2one('hr.expense.sheet', u'费用报告', ondelete='cascade', index=True)
+    expense_sheet_manager_confirm_date = fields.Date(u'审批确认日期',related='expense_sheet_id.manager_confirm_date',store=True)
     expense_currency_id = fields.Many2one('res.currency', related='expense_sheet_id.currency_id')
     expense_sheet_amount = fields.Float('费用报告金额', related='expense_sheet_id.total_amount',store=True)
     expense_po_amount = fields.Float('费用转应付金额')

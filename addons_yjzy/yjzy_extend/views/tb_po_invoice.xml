@@ -192,8 +192,9 @@
                     <field name="po_add_residual" invisible="1"/><!--invisible="not context.get('done')"-->
                     <field name="p_s_add_residual" invisible="1"/>
                     <field name="back_tax_add_residual" string="退税未收金额"/>
+                    <field name="expense_sheet_manager_confirm_date" string="审批确认日期"/>
                     <field name="p_s_add_refund_residual" invisible="1"/>
-                    <field name="create_date"/>
+                    <field name="create_date" groups="base.group_system"/>
                     <field name="yjzy_invoice_id" invisible="1"/>
                 </tree>
             </field>
