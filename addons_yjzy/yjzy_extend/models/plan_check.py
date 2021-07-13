@@ -232,7 +232,7 @@ class OrderTrack(models.Model):
                 else:
                     order_track_new_order_state = '10_doing'
             elif one.type == 'order_track':
-                if  one.sent_percent >=100 or one.so_id_state == 'verification':
+                if  one.sent_amount_percent >=100 or one.so_id_state == 'verification':
                     # (one.date_so_contract and one.latest_date_po_planned and one.date_so_requested and len(
                     #     one.plan_check_line_ids.filtered(
                     #         lambda x: x.state in ['35_advance_finish', '40_finish', '50_time_out_finish'])) == len(
@@ -381,8 +381,7 @@ class OrderTrack(models.Model):
             if one.type == 'order_track':
                 so_amount_total = one.so_amount_total
                 so_no_sent_amount_new = one.so_no_sent_amount_new
-                sent_amount_percent = so_amount_total != 0 and (
-                            so_amount_total - so_no_sent_amount_new) / so_amount_total or 0.0
+                sent_amount_percent = so_amount_total != 0 and (so_amount_total - so_no_sent_amount_new) / so_amount_total * 100 or 0.0
                 one.sent_amount_percent = sent_amount_percent
             else:
                 one.sent_amount_percent = 0
@@ -437,7 +436,7 @@ class OrderTrack(models.Model):
     so_amount_total = fields.Monetary('销售金额',currency_field='currency_id',compute=compute_so_cmount_total,store=True) #related='so_id.amount_total',
     so_no_sent_amount_new= fields.Monetary('未发货金额',currency_field='currency_id', related='so_id.no_sent_amount_new',store=True)
 
-    sent_amount_percent = fields.Float('出运进度', compute='compute_so_amount', store=True)
+    sent_amount_percent = fields.Float('出运进度', compute=compute_so_amount, store=True)
 
 
     so_sent_qty = fields.Float('已出运数', compute=compute_so_qty, store=True)
