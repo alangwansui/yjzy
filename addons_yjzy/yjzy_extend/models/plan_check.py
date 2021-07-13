@@ -384,6 +384,8 @@ class OrderTrack(models.Model):
                 sent_amount_percent = so_amount_total != 0 and (
                             so_amount_total - so_no_sent_amount_new) / so_amount_total or 0.0
                 one.sent_amount_percent = sent_amount_percent
+            else:
+                one.sent_amount_percent = 0
 
     error_state = fields.Boolean('是否有问题',compute=compute_error_state)
 
