@@ -524,6 +524,7 @@ class account_payment(models.Model):
                                                     compute=compute_all_in_one, store=True)
 
     invoice_log_id = fields.Many2one('account.invoice','付款指令以及预收预付认领关联账单')
+    invoice_log_date = fields.Datetime(u'账单日期',related='invoice_log_id.create_date',store=True)
     invoice_log_currency_id = fields.Many2one('res.currency',u'账单币种',related='invoice_log_id.currency_id')
 
     amount_invoice_log = fields.Monetary('账单余额',digits=dp.get_precision('Money'),currency_field='invoice_log_currency_id',related='invoice_log_id.residual')

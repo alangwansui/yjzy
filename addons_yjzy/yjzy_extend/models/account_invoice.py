@@ -7,7 +7,7 @@ from odoo.exceptions import Warning, UserError
 from .comm import invoice_attribute_all_in_one
 
 Invoice_Selection = [('draft', u'草稿'),
-                     ('submit', u'已提交'),
+                     ('submit', u'执行中'),
                      ('approved', u'待总经理审批'),
                      ('done', u'审批完成'),
                      ('invoice_pending',u'待处理账单'),
@@ -2132,7 +2132,7 @@ class account_invoice(models.Model):
         elif self.state == 'cancel':
             self.stage_id = self._stage_find(domain=[('code', '=', '006')])
         else:
-            self.stage_id = self._stage_find(domain=[('code', '=', '004')])
+            self.stage_id = self._stage_find(domain=[('code', '=', '008')])
 
 
 

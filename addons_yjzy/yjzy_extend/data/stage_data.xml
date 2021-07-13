@@ -9,7 +9,7 @@
             <field name="state">draft</field>
         </record>
         <record model="account.invoice.stage" id="stage_submit">
-            <field name="name">已提交</field>
+            <field name="name">执行中</field>
             <field name="code">002</field>
             <field name="sequence" eval="20"/>
             <field name="state">submit</field>
@@ -48,7 +48,7 @@
             <field name="state">invoice_pending</field>
         </record>
         <record model="account.invoice.stage" id="stage_paid">
-            <field name="name">完成付款</field>
+            <field name="name">已结束</field>
             <field name="code">008</field>
             <field name="sequence" eval="47"/>
             <field name="state">paid</field>

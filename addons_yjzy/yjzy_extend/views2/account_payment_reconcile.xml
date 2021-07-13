@@ -47,6 +47,8 @@
                     <field name="invoice_log_id" string="应付账单"/>
                     <field name="amount_invoice_log" string="未认领金额" groups="base.group_system"/>
                     <field name="amount" string="核销金额"/>
+                    <field name="invoice_log_date" widget="date" string="账单日期"/>
+                    <field name="payment_date" string="核销日期"/>
                     <field name="state_1"/>
                 </tree>
             </field>
