@@ -494,7 +494,7 @@
                             <field name="partner_type" attrs="{'invisible':1}"/>
                             <field name="renling_type" string="认领属性" invisible="1"/>
                             <field name="partner_id" string="客户"
-                                   attrs="{'invisible':['|',('yjzy_type','in',['back_tax','other_payment_sale','other_payment_purchase']),('operation_wizard','=',False)]}"
+                                   attrs="{'readonly':[('state_1','not in',['draft','draft_yshxd','draft_all','account_approval','advance_approval_yshxd','account_approval_yshxd'])],'invisible':['|',('yjzy_type','in',['back_tax','other_payment_sale','other_payment_purchase']),('operation_wizard','=',False)]}"
                                    domain="[('is_company','=',True),('parent_id', '=', False),('customer','=',1)]"
                                    context="{'default_is_company': True, 'default_supplier': payment_type == 'outbound', 'default_customer': payment_type == 'inbound'}"/>
                             <field name="journal_id" domain="[('type','=','renling')]" attrs="{'invisible':1}"/>
@@ -556,8 +556,7 @@
                         <group attrs="{'invisible':['|',('hxd_type_new','not in',['10','25','20']),('invoice_attribute_all_in_one','in',['130','230','330','620'])]}">
 
                             <field name="line_no_other_ids" nolabel="1" colspan="2"
-                                   attrs="{'readonly':[('state_1','not in',['draft','draft_yshxd','draft_all','account_approval','advance_approval_yshxd',
-                                   'account_approval_yshxd'])]}">
+                                   attrs="{'readonly':[('state_1','not in',['draft','draft_yshxd','draft_all','account_approval','advance_approval_yshxd','account_approval_yshxd'])]}">
                                 <tree editable="bottom" create="false">
                                     <field name="id" invisible="1"/>
                                     <field name="invoice_attribute" readonly="1" invisible="1"/>

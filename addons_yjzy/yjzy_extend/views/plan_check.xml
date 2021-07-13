@@ -156,7 +156,7 @@
                 <field name="so_all_qty" invisible="1"/>
                 <field name="so_sent_qty" invisible="1"/>
                 <field name="so_no_sent_qty" invisible="1"/>
-                <field name="sent_percent" widget="progressbar" string=" . .出运进度. . "
+                <field name="sent_amount_percent" widget="progressbar" string=" . .出运进度. . "
                        invisible="context.get('type')!='order_track'"/>
                 <field name="so_no_sent_amount_new" invisible="context.get('type')!='order_track'"/>
                 <field name="comments_order_track" invisible="context.get('type')!='order_track'"/>
@@ -263,7 +263,7 @@
                 <field name="so_all_qty" invisible="1"/>
                 <field name="so_sent_qty" invisible="1"/>
                 <field name="so_no_sent_qty" invisible="1"/>
-                <field name="sent_percent" widget="progressbar" string=" . .出运进度. . "
+                <field name="sent_amount_percent" widget="progressbar" string=" . .出运进度. . "
                        invisible="context.get('type')!='order_track'"/>
                 <field name="so_no_sent_amount_new" invisible="context.get('type')!='order_track'"/>
                 <field name="comments_order_track" invisible="context.get('type')!='order_track'"/>
@@ -691,7 +691,7 @@
                                     <field name="finish_percent_supplier" widget="progressbar"/>
                                 </td>
                                 <td>
-                                    <field name="sent_percent" widget="progressbar"/>
+                                    <field name="sent_amount_percent" widget="progressbar"/>
                                 </td>
                                 <td>
                                     <field name="comments_order_track" readonly="1"/>

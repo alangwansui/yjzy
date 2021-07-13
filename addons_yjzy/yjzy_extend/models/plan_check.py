@@ -198,6 +198,8 @@ class OrderTrack(models.Model):
                 one.so_all_qty = so_all_qty
                 one.sent_percent = so_all_qty != 0 and (so_sent_qty / so_all_qty) * 100 or 0.0
 
+
+
     @api.depends('tb_purchase_invoice_ids', 'tb_purchase_invoice_ids.currency_id')
     def compute_purchase_back_invoice_currency_id(self):
         for one in self:
@@ -373,6 +375,16 @@ class OrderTrack(models.Model):
                     date_so_requested_is_out_time = '30_out_time'
                 one.date_so_requested_is_out_time = date_so_requested_is_out_time
 
+    @api.depends('so_amount_total', 'so_no_sent_amount_new', 'type')
+    def compute_so_amount(self):
+        for one in self:
+            if one.type == 'order_track':
+                so_amount_total = one.so_amount_total
+                so_no_sent_amount_new = one.so_no_sent_amount_new
+                sent_amount_percent = so_amount_total != 0 and (
+                            so_amount_total - so_no_sent_amount_new) / so_amount_total or 0.0
+                one.sent_amount_percent = sent_amount_percent
+
     error_state = fields.Boolean('是否有问题',compute=compute_error_state)
 
     order_track_transport = fields.Many2one('order.track','出运跟踪')
@@ -419,14 +431,18 @@ class OrderTrack(models.Model):
     currency_id = fields.Many2one('res.currency','货币',related='so_id.currency_id',strore=True)
 
 
+
     so_amount_total = fields.Monetary('销售金额',currency_field='currency_id',compute=compute_so_cmount_total,store=True) #related='so_id.amount_total',
     so_no_sent_amount_new= fields.Monetary('未发货金额',currency_field='currency_id', related='so_id.no_sent_amount_new',store=True)
+
+    sent_amount_percent = fields.Float('出运进度', compute='compute_so_amount', store=True)
+
 
     so_sent_qty = fields.Float('已出运数', compute=compute_so_qty, store=True)
 
     so_all_qty = fields.Float('原始总数', compute=compute_so_qty, store=True)
     so_no_sent_qty = fields.Float('未出运数', compute=compute_so_qty, store=True)
-    sent_percent = fields.Float('出运进度', compute='compute_so_qty', store=True)
+    sent_percent = fields.Float('数量出运进度', compute='compute_so_qty', store=True)
     so_id_state = fields.Selection([
         ('draft', 'Quotation'),
         ('sent', 'Quotation Sent'),
