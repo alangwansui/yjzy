@@ -13,6 +13,8 @@
                     <group expand="0" string="Group By">
                         <filter string="出运合同分组" name="group_by_bill_id" domain="[]"
                                 context="{'group_by':['bill_id']}"/>
+                        <filter string="客户分组" name="group_by_customer_id" domain="[]"
+                                context="{'group_by':['customer_id']}"/>
                     </group>
                 </search>
             </field>

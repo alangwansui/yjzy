@@ -2184,7 +2184,7 @@ class transport_bill(models.Model):
                     'invoice_type_main': '10_main',
                     'invoice_attribute': 'normal',
                     'gongsi_id': self.purchase_gongsi_id.id,
-                    'stage_id': self.env['account.invoice.stage'].search([('code', '=', '004')], limit=1).id,
+                    'stage_id': self.env['account.invoice.stage'].search([('code', '=', '001')], limit=1).id,
 
                 })
                 invoice.clear_zero_line()
@@ -2274,7 +2274,7 @@ class transport_bill(models.Model):
                 'invoice_attribute':'normal',
                 'invoice_type_main': '10_main',
                 'gongsi_id': self.gongsi_id.id,
-                'stage_id':self.env['account.invoice.stage'].search([('code','=','004')],limit=1).id,
+                'stage_id':self.env['account.invoice.stage'].search([('code','=','001')],limit=1).id,
             })
             sale_invoices.compute_advance_pre_rest()
 
@@ -2416,7 +2416,7 @@ class transport_bill(models.Model):
                     'invoice_attribute': 'normal',
                     'invoice_type_main':'10_main',
                     'gongsi_id': self.purchase_gongsi_id.id,
-                    'stage_id': self.env['account.invoice.stage'].search([('code', '=', '004')], limit=1).id,
+                    'stage_id': self.env['account.invoice.stage'].search([('code', '=', '001')], limit=1).id,
                     'include_tax': self.include_tax,
                     'invoice_line_ids': [(0, 0, {
                         'name': '%s:%s' % (product.name, self.name),

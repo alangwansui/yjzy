@@ -168,7 +168,7 @@ class transport_bill_line(models.Model):
     sale_contract_code = fields.Char(u'合同编码', related='so_id.contract_code', readonly=True)
     product_id = fields.Many2one('product.product', related='sol_id.product_id', string=u'产品', readonly=True)
     hs_id = fields.Many2one('hs.hs', u'品名', related='product_id.hs_id', readonly=True)
-    back_tax = fields.Float(u'退税率', digits=dp.get_precision('Back Tax'))
+    back_tax = fields.Float(u'退税率', digits=dp.get_precision('Back Tax'),group_operator=False)
     sale_qty = fields.Float(u'销售数', related='sol_id.product_uom_qty', readonly=True)
     qty_delivered = fields.Float(u'已发货', related='sol_id.qty_delivered', readonly=True)
     qty_undelivered = fields.Float(u'未发货', related='sol_id.qty_undelivered', readonly=True)

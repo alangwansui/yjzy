@@ -1150,6 +1150,7 @@ class tb_po_invoice(models.Model):
                 'date_finish': self.yjzy_invoice_id.date_finish,
                 'po_id': self.yjzy_invoice_id.po_id.id,
                 'include_tax':True,
+                'stage_id': self.env['account.invoice.stage'].search([('code', '=', '001')], limit=1).id,
                 # 'account_id':account_id.id,
                 'invoice_line_ids': [(0, 0, {
                     'name': '%s' % (product_zyywsr.name),
@@ -1224,6 +1225,7 @@ class tb_po_invoice(models.Model):
                 'date_invoice': fields.datetime.now(),
                 'payment_term_id':payment_term_id.id,
                 'yjzy_invoice_id': self.yjzy_invoice_back_tax_id.id,
+                'stage_id': self.env['account.invoice.stage'].search([('code', '=', '001')], limit=1).id,
                 'invoice_line_ids': [(0, 0, {
                     'name': '%s' % (product.name,),
                     'product_id': product.id,
@@ -1253,6 +1255,7 @@ class tb_po_invoice(models.Model):
                 'date': fields.datetime.now(),
                 'date_invoice': fields.datetime.now(),
                 'yjzy_invoice_id': self.yjzy_invoice_back_tax_id.id,
+                'stage_id': self.env['account.invoice.stage'].search([('code', '=', '001')], limit=1).id,
                 'invoice_line_ids': [(0, 0, {
                     'name': '%s' % (product.name,),
                     'product_id': product.id,
@@ -1301,6 +1304,7 @@ class tb_po_invoice(models.Model):
                 'date_invoice': fields.datetime.now(),
                 'payment_term_id':payment_term_id.id,
                 'yjzy_invoice_id': self.yjzy_invoice_back_tax_id.id,
+                'stage_id': self.env['account.invoice.stage'].search([('code', '=', '001')], limit=1).id,
                 'invoice_line_ids': [(0, 0, {
                     'name': '%s' % (product.name,),
                     'product_id': product.id,
@@ -1375,6 +1379,7 @@ class tb_po_invoice(models.Model):
                 'journal_type': 'purchase',
                 'date': fields.datetime.now(),
                 'date_invoice': fields.datetime.now(),
+                'stage_id': self.env['account.invoice.stage'].search([('code', '=', '001')], limit=1).id,
                 'invoice_line_ids': [(0, 0, {
                     'name': '%s' % (product.name),
                     'product_id': product.id,
@@ -1414,6 +1419,7 @@ class tb_po_invoice(models.Model):
                 'yjzy_type_1': 'sale',
                 'date': fields.datetime.now(),
                 'date_invoice': fields.datetime.now(),
+                'stage_id': self.env['account.invoice.stage'].search([('code', '=', '001')], limit=1).id,
                 'invoice_line_ids': [(0, 0, {
                     'name': '%s' % (product.name),
                     'product_id': product.id,
@@ -1469,6 +1475,7 @@ class tb_po_invoice(models.Model):
             'date': self.yjzy_invoice_id.date,
             'date_out_in': self.yjzy_invoice_id.date_out_in,
             'gongsi_id': self.yjzy_invoice_id.gongsi_id.id,
+            'stage_id': self.env['account.invoice.stage'].search([('code', '=', '001')], limit=1).id,
             # 'invoice_line_ids': [(0, 0, {
             #     'name': '%s' % (product.name),
             #     'product_id': product.id,
@@ -1619,6 +1626,7 @@ class tb_po_invoice(models.Model):
             'currency_id': self.currency_id.id,
             'date': fields.datetime.now(),
             'date_invoice': fields.datetime.now(),
+            'stage_id': self.env['account.invoice.stage'].search([('code', '=', '001')], limit=1).id,
         })
         print('teset_akiny', '222222')
         yjzy_type_1 = self.yjzy_type_1

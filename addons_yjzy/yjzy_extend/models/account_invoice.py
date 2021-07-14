@@ -7,9 +7,9 @@ from odoo.exceptions import Warning, UserError
 from .comm import invoice_attribute_all_in_one
 
 Invoice_Selection = [('draft', u'草稿'),
-                     ('submit', u'执行中'),
+                     ('submit', u'已提交'),
                      ('approved', u'待总经理审批'),
-                     ('done', u'审批完成'),
+                     ('done', u'执行中'),
                      ('invoice_pending',u'待处理账单'),
                      ('paid',u'付款完成'),
                      ('refuse', u'拒绝'),
@@ -2126,7 +2126,7 @@ class account_invoice(models.Model):
 
     def manual_stage_id(self):
         if self.state == 'open':
-            self.stage_id = self._stage_find(domain=[('code', '=', '002')])
+            self.stage_id = self._stage_find(domain=[('code', '=', '004')])
         elif self.state == 'draft':
             self.stage_id = self._stage_find(domain=[('code', '=', '001')])
         elif self.state == 'cancel':
