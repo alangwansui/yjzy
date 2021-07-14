@@ -65,6 +65,8 @@
                     <field name="invoice_log_id" string="应收账单"/>
                     <field name="amount_invoice_log" string="未认领金额" groups="base.group_system"/>
                     <field name="amount" string="核销金额"/>
+                    <field name="invoice_log_date" widget="date" string="账单日期"/>
+                    <field name="payment_date" string="核销日期"/>
                     <field name="state"/>
                 </tree>
             </field>
@@ -430,7 +432,7 @@
             <field name="domain">
                 [('type','=','in_invoice'),('state','=','open'),('amount_payment_can_approve_all','!=',0)]
             </field>
-            <field name="context">{'search_default_group_by_invoice_attribute_all_in_one':1,'only_ref':1,
+            <field name="context">{'search_default_group_by_invoice_attribute_all_in_one_state':1,'only_ref':1,
                 'default_type': 'in_invoice', 'type': 'in_invoice', 'journal_type': 'purchase','hexiao':1}
             </field>
             <field name="search_view_id" ref="view_account_invoice_new_filter"/>
@@ -450,7 +452,7 @@
             <field name="domain">
                 [('type','=','out_invoice'),('state','=','open'),('yjzy_type_1','in',['sale',False]),('yjzy_type','in',['sale',False]),('amount_payment_can_approve_all','!=',0)]
             </field>
-            <field name="context">{'hexiao':1,'search_default_group_by_invoice_attribute_all_in_one':1,'only_ref':1,
+            <field name="context">{'hexiao':1,'search_default_group_by_invoice_attribute_all_in_one_state':1,'only_ref':1,
                 'default_type': 'out_invoice', 'type': 'out_invoice', 'journal_type': 'sale',}
             </field>
             <field name="search_view_id" ref="view_account_invoice_new_filter"/>
