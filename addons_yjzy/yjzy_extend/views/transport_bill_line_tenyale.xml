@@ -24,6 +24,7 @@
             <field name="model">transport.bill.line</field>
             <field name="arch" type="xml">
                 <tree string="出运明细" create="false">
+                    <field name="customer_id"/>
                     <field name="sale_contract_code" string="销售合同"/>
                     <field name="bill_id"/>
                     <field name="company_currency_id" invisible="1"/>
