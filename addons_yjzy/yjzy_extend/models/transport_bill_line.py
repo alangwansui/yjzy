@@ -152,7 +152,7 @@ class transport_bill_line(models.Model):
     lot_plan_ids = fields.One2many('transport.lot.plan', 'tbline_id', u'调拨计划', copy=False)
     lot_plan_id = fields.Many2one('transport.lot.plan',  u'调拨计划:新')
     #1102
-    customer_id = fields.Many2one('res.partner',u'客户',related='bill_id.partner_id')
+    customer_id = fields.Many2one('res.partner',u'客户',related='bill_id.partner_id',store=True)
     supplier_id = fields.Many2one('res.partner','供应商',related='lot_plan_id.lot_id.supplier_id')
     plan_lot = fields.Many2one('stock.production.lot',  '计划批次', related='lot_plan_id.lot_id')
     plan_qty = fields.Float('计划数量', related='lot_plan_id.qty')
