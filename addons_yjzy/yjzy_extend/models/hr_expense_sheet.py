@@ -350,6 +350,7 @@ class hr_expense_sheet(models.Model):
                 self.action_sheet_move_create()
             else:
                 raise Warning('金额出错，请检查！')
+        self.btn_match_budget()
 
         # 819 总经理审批费用，也同时审批生成的费用转货款
 

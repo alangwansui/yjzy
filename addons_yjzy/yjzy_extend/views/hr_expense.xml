@@ -3,10 +3,10 @@
     <data>
 
         <record model="ir.ui.view" id="inherit_view_hr_expense_sheet_form">
-        	<field name="name">hr.expense.sheet.form</field>
-        	<field name="model">hr.expense.sheet</field>
-        	<field name="inherit_id" ref="hr_expense.view_hr_expense_sheet_form"/>
-        	<field name="arch" type="xml">
+            <field name="name">hr.expense.sheet.form</field>
+            <field name="model">hr.expense.sheet</field>
+            <field name="inherit_id" ref="hr_expense.view_hr_expense_sheet_form"/>
+            <field name="arch" type="xml">
 
                 <header position="inside">
                     <button name="btn_user_confirm" type="object" string="责任人确认"/>
@@ -22,8 +22,11 @@
                 </header>
 
                 <field name="expense_line_ids" position="attributes">
-                    <attribute name="context">{'default_company_id': company_id, 'expense_adding_line': True, 'tracking_disable': True, 'default_currency_id': currency_id, 'default_state': 'draft'}</attribute>
-                    <attribute name="options">{'not_delete': True, 'reload_on_button': True, 'no_create': False}</attribute>
+                    <attribute name="context">{'default_company_id': company_id, 'expense_adding_line': True,
+                        'tracking_disable': True, 'default_currency_id': currency_id, 'default_state': 'draft'}
+                    </attribute>
+                    <attribute name="options">{'not_delete': True, 'reload_on_button': True, 'no_create': False}
+                    </attribute>
                     <attribute name="widget">one2many</attribute>
                 </field>
 
@@ -40,7 +43,8 @@
 
                     <field name="include_tax"/>
                     <field name="todo_cron"/>
-                    <field name="payment_id" domain="[('sfk_type','=', 'rcfkd')]" context="{'form_view_ref':'yjzy_extend.view_rcfkd_form'}"/>
+                    <field name="payment_id" domain="[('sfk_type','=', 'rcfkd')]"
+                           context="{'form_view_ref':'yjzy_extend.view_rcfkd_form'}"/>
                     <field name="yjzy_payment_currency_id"/>
                     <field name="balance"/>
                     <field name="partner_id" context="{'default_supplier':True, 'default_customer':True}"/>
@@ -55,10 +59,12 @@
                 </field>
 
                 <field name="state" position="before">
-                    <button name="create_customer_invoice"  attrs="{'invisible': [('back_tax_invoice_id','!=',False)]}"   string="生成退税发票" type='object' icon=""/>
-                    <button name="create_rcfkd"  attrs="{'invisible': [('payment_id','!=',False)]}"  context="{}"  string="生成日常付款单" type='object' icon=""/>
-                    <button name="post_message_lines" context="{}"  string="明细消息发送" type='object' icon=""/>
-                    <button name="add_line_message_followers" context="{}"  string="添加明细关注者" type='object' icon=""/>
+                    <button name="create_customer_invoice" attrs="{'invisible': [('back_tax_invoice_id','!=',False)]}"
+                            string="生成退税发票" type='object' icon=""/>
+                    <button name="create_rcfkd" attrs="{'invisible': [('payment_id','!=',False)]}" context="{}"
+                            string="生成日常付款单" type='object' icon=""/>
+                    <button name="post_message_lines" context="{}" string="明细消息发送" type='object' icon=""/>
+                    <button name="add_line_message_followers" context="{}" string="添加明细关注者" type='object' icon=""/>
                 </field>
 
                 <xpath expr="//field[@name='expense_line_ids']//tree" position="inside">
@@ -74,9 +80,7 @@
                 </xpath>
 
 
-
-
-        	</field>
+            </field>
         </record>
 
 
@@ -87,9 +91,10 @@
             <field name="arch" type="xml">
 
                 <search string="Expense">
-                    <field name="name" string="模糊搜索" filter_domain="['|','|','|','|',('employee_id','ilike',self),
+                    <field name="name" string="模糊搜索" filter_domain="['|','|','|','|','|',('sheet_name','ilike',self),('employee_id','ilike',self),
                                                          ('name','ilike',self),('categ_id','ilike',self),('second_categ_id','ilike',self),('product_id','ilike',self)]"/>
                     <field name="create_date" string="创建日期"/>
+                    <field name="sheet_name" string="费用说明"/>
                     <field name="payment_date" string="付款日期"/>
                     <field name="employee_id" string="责任人"/>
                     <field name="tb_id" string="出运合同"/>
@@ -97,33 +102,41 @@
                     <field name="analytic_account_id" groups="base.group_system"/>
                     <separator/>
                     <filter domain="[('state', '=', 'draft')]" string="To Submit" name="to_report" help="New Expense"/>
-                    <filter domain="[('state', '=', 'reported')]" string="Reported" name="submitted" help="Confirmed Expenses"/>
-                    <filter domain="[('state', '=', 'Confirmed')]" string="Confirmed" name="Confirmed" help="Confirmed"/>
-                    <filter domain="[('state', '=', 'refused')]" string="Refused" name="refused" help="Refused Expenses"/>
-                    <filter domain="[('state', '!=', 'refused')]" string="Not Refused" name="uncancelled" help="Actual expense sheets, not the refused ones"/>
+                    <filter domain="[('state', '=', 'reported')]" string="Reported" name="submitted"
+                            help="Confirmed Expenses"/>
+                    <filter domain="[('state', '=', 'Confirmed')]" string="Confirmed" name="Confirmed"
+                            help="Confirmed"/>
+                    <filter domain="[('state', '=', 'refused')]" string="Refused" name="refused"
+                            help="Refused Expenses"/>
+                    <filter domain="[('state', '!=', 'refused')]" string="Not Refused" name="uncancelled"
+                            help="Actual expense sheets, not the refused ones"/>
                     <separator/>
-                    <filter string="My Team Expenses" domain="[('employee_id.parent_id.user_id', '=', uid)]" groups="hr_expense.group_hr_expense_manager" help="Expenses of Your Team Member"/>
+                    <filter string="My Team Expenses" domain="[('employee_id.parent_id.user_id', '=', uid)]"
+                            groups="hr_expense.group_hr_expense_manager" help="Expenses of Your Team Member"/>
                     <filter string="My Expenses" domain="[('employee_id.user_id', '=', uid)]"/>
                     <separator/>
                     <filter string="New Mail" name="message_unread" domain="[('message_unread', '=', True)]"/>
                     <group expand="0" string="Group By">
-                          <filter string="审批流" domain="[]" context="{'group_by': 'x_sheet_wkf_state'}"/>
-                          <filter string="申请单" domain="[]" context="{'group_by': 'sheet_id'}"/>
+                        <filter string="审批流" domain="[]" context="{'group_by': 'x_sheet_wkf_state'}"/>
+                        <filter string="申请单" domain="[]" context="{'group_by': 'sheet_id'}"/>
                         <filter string="责任人" domain="[]" context="{'group_by': 'employee_id'}"/>
-                        <filter string="Company" domain="[]" context="{'group_by': 'company_id'}" invisible='1' groups="base.group_multi_company"/>
-                        <filter string="Product" domain="[]" context="{'group_by': 'product_id'}" />
-                        <filter string="Analytic Account" domain="[]" context="{'group_by': 'analytic_account_id'}" groups="analytic.group_analytic_accounting"/>
-                        <filter string="Expenses Month" domain="[]" context="{'group_by': 'date'}" help="Expenses by Month"/>
+                        <filter string="Company" domain="[]" context="{'group_by': 'company_id'}" invisible='1'
+                                groups="base.group_multi_company"/>
+                        <filter string="Product" domain="[]" context="{'group_by': 'product_id'}"/>
+                        <filter string="Analytic Account" domain="[]" context="{'group_by': 'analytic_account_id'}"
+                                groups="analytic.group_analytic_accounting"/>
+                        <filter string="Expenses Month" domain="[]" context="{'group_by': 'date'}"
+                                help="Expenses by Month"/>
                         <filter string="Status" domain="[]" context="{'group_by': 'state'}"/>
                     </group>
                     <separator/>
-                    <filter domain="[('employee_id.active', '=', False)]" string="Former Employees" name="inactive" groups="hr_expense.group_hr_expense_user,hr_expense.group_hr_expense_manager"/>
+                    <filter domain="[('employee_id.active', '=', False)]" string="Former Employees" name="inactive"
+                            groups="hr_expense.group_hr_expense_user,hr_expense.group_hr_expense_manager"/>
                 </search>
 
 
             </field>
         </record>
-
 
 
         <record id="inherit_hr_expense_form_view" model="ir.ui.view">
@@ -145,7 +158,7 @@
                 </field>
 
                 <field name="product_id" position="attributes">
-                     <attribute name="domain">[('can_be_expensed','=',True),('categ_id','=',second_categ_id)]</attribute>
+                    <attribute name="domain">[('can_be_expensed','=',True),('categ_id','=',second_categ_id)]</attribute>
                     <attribute name="context">{'only_name':1}</attribute>
                 </field>
 
