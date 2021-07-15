@@ -410,10 +410,11 @@
             <field name="arch" type="xml">
 
                 <search string="Expense">
-                    <field name="name" string="Expenses"
-                           filter_domain="['|','|','|','|',('employee_id','ilike',self),
+                    <field name="name" string="模糊搜索"
+                           filter_domain="['|','|','|','|','|',('sheet_name','ilike',self),('employee_id','ilike',self),
                                          ('name','ilike',self),('categ_id','ilike',self),('second_categ_id','ilike',self),('product_id','ilike',self)]"/>
                     <field name="create_date" string="创建日期"/>
+                    <field name="sheet_name" string="费用说明"/>
                     <field name="payment_date" string="付款日期"/>
                     <field name="employee_id" string="责任人"/>
                     <field name="categ_id" string="大类" widget="selection"/>
