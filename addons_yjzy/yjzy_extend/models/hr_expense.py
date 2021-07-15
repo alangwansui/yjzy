@@ -158,7 +158,7 @@ class hr_expense(models.Model):
     sheet_all_line_is_confirmed = fields.Boolean('责任人全部确认', related='sheet_id.all_line_is_confirmed')
 
     payment_date = fields.Date(u'付款日期', related='sheet_id.accounting_date', store=True)
-    sheet_name = fields.Date(u'费用说明', related='sheet_id.name', store=True, readonly=True)
+    sheet_name = fields.Char(u'费用说明', related='sheet_id.name', store=True, readonly=True)
 
     sheet_employee_confirm_date = fields.Date(u'申请人确认日期', related='sheet_id.employee_confirm_date', readonly=True)
     sheet_employee_confirm = fields.Many2one('res.users', u'申请人确认', related='sheet_id.employee_confirm', readonly=True)
