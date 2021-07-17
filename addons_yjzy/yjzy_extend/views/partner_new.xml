@@ -383,19 +383,26 @@
                         <notebook colspan="4">
                             <page string="应收账单列表">
                                 <field name="invoice_ids">
-                                    <tree decoration-info="state == 'draft'" decoration-muted="state == 'cancel'"
+                                    <tree decoration-info="state == 'draft'" limit="160" decoration-muted="state == 'cancel'"
                                           string="Invoice">
 
                                         <field name="date_invoice" string="账单日期"/>
                                         <field name="tb_contract_code" string="合同号"/>
-                                        <button name="open_reconcile_order_line" icon="fa-pencil-square-o"
-                                                type="object"/>
-                                        <field name="amount_total_signed" string="Total" sum="Total"/>
-                                        <field name="residual_signed" string="未付金额" sum="Amount Due"/>
-                                        <field name="reconcile_order_line_payment"/>
-                                        <field name="reconcile_order_line_advance"/>
-                                        <field name="reconcile_order_line_bank"/>
-                                        <field name="reconcile_order_line_amount_diff"/>
+<!--                                        <button name="open_reconcile_order_line" icon="fa-pencil-square-o"-->
+<!--                                                type="object"/>-->
+
+                                        <field name="residual_times" string="到期天数"/>
+                                        <field name="amount_total_signed" string="初始应收款" sum="Total"/>
+                                        <field name="advance_pre" string="建议预收认领" sum="小计"/>
+                                        <field name="amount_advance_org_done" string="预收认领" sum="小计"/>
+                                        <field name="amount_payment_org_done" string="收款认领" sum="小计"/>
+                                        <field name="payment_log_hexiao_amount" string="核销认领" sum="小计"/>
+                                        <field name="residual_signed" string="未收金额" sum="Amount Due"/>
+                                        <field name="state_1" string="状态"/>
+                                        <field name="reconcile_order_line_payment" invisible="1"/>
+                                        <field name="reconcile_order_line_advance" invisible="1"/>
+                                        <field name="reconcile_order_line_bank" invisible="1"/>
+                                        <field name="reconcile_order_line_amount_diff" invisible="1"/>
                                         <field name="commercial_partner_id" invisible="1"/>
                                         <field name="reference" invisible="1"/>
                                         <field name="name" invisible="1"/>
@@ -406,7 +413,7 @@
                                         <field name="origin" invisible="1"/>
                                         <field name="currency_id" invisible="1"/>
                                         <field name="company_currency_id" invisible="1"/>
-                                        <field name="state"/>
+                                        <field name="state" invisible="1"/>
                                         <field name="type" invisible="context.get('type',True)"/>
                                         <field name="date_due" string="进仓到期日"/>
                                         <field name="date_deadline" string="实际到期日"/>
@@ -558,10 +565,19 @@
                                         <field name="partner_id" groups="base.group_user" string="Customer"/>
                                         <field name="date_invoice" string="账单日期"/>
                                         <field name="tb_contract_code" string="合同号"/>
-                                        <button name="open_reconcile_order_line" icon="fa-pencil-square-o"
-                                                type="object"/>
-                                        <field name="amount_total_signed" string="Total" sum="Total"/>
+<!--                                        <button name="open_reconcile_order_line" icon="fa-pencil-square-o"-->
+<!--                                                type="object"/>-->
+                                        <field name="amount_total_signed" string="原始应付款" sum="Total"/>
                                         <field name="residual_signed" string="未付金额" sum="Amount Due"/>
+                                        <field name="residual_times" string="到期天数"/>
+                                        <field name="amount_payment_org_done" string="已支付" sum="小计"/>
+                                        <field name="amount_advance_org_done" string="已认领预付" sum="小计"/>
+                                        <field name="amount_payment_org_approved" string="已审批应付" sum="小计"/>
+                                        <field name="wait_advance" string="所有剩余预付" sum="小计"/>
+                                        <field name="jianyi_advance" string="建议预付认领" sum="小计"/>
+                                        <field name="amount_payment_can_approve_all" string="可申请支付应付额" sum="小计"/>
+                                        <field name="amount_payment_can_approve_all_1" string="减去预付可申请金额" sum="小计"/>
+                                        <field name="state_1" string="状态"/>
                                         <field name="reconcile_order_line_payment" sum="小计"/>
                                         <field name="reconcile_order_line_advance" sum="小计"/>
                                         <field name="reconcile_order_line_bank" sum="小计"/>
@@ -4473,8 +4489,7 @@
             <field name="view_mode">kanban,tree,form</field>
             <field name="domain">[('customer','=',True),('is_company','=',True),('name','!=','未定义'),('name','!=','国税局'),('state','=','done')]
             </field>
-            <field name="context">{'search_default_group_state':1,'default_is_company': True,'default_customer': True,
-                'default_contract_type':'c'}
+            <field name="context">{'default_is_company': True,'default_customer': True,'default_contract_type':'c'}
             </field>
             <field name="filter" eval="True"/>
             <field name="search_view_id" ref="view_new_res_partner_filter"/>
@@ -4518,7 +4533,7 @@
                 [('supplier','=',True),('is_company','=',True),('name','!=','未定义'),('state','=','done')]
             </field>
             <field name="context">{'default_is_company': True,'default_supplier': True,
-                'group_by':'x_wkf_state','default_customer':False}
+                'default_customer':False}
             </field>
             <field name="filter" eval="True"/>
             <field name="search_view_id" ref="view_new_res_partner_filter"/>
