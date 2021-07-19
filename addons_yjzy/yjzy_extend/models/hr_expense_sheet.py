@@ -312,7 +312,6 @@ class hr_expense_sheet(models.Model):
     #                 one.write({'employee_wkf': False,
     #                             'stage_id': stage_id.id})
 
-
     #0925财务审批的时候判断是否已经转为货款
     def action_account_approve(self):
         if self.back_tax_amount > 0 and self.expense_to_invoice_type != 'to_invoice' :
@@ -350,6 +349,8 @@ class hr_expense_sheet(models.Model):
                 self.action_sheet_move_create()
             else:
                 raise Warning('金额出错，请检查！')
+
+
         self.btn_match_budget()
 
         # 819 总经理审批费用，也同时审批生成的费用转货款
@@ -382,6 +383,30 @@ class hr_expense_sheet(models.Model):
         else:
             self.action_sheet_move_create()
             self.write({'stage_id': stage_id.id, })
+
+    def action_refuse_to_account(self, reason):
+        stage_id = self._stage_find(domain=[('code', '=', '030')])
+        if self.env.ref('sales_team.group_manager') not in self.env.user.groups_id:
+            raise Warning('您没有审批的权限！')
+        self.write({'state': 'approval',
+                    'account_confirm': False,
+                    'account_confirm_date': False,
+                    'manager_confirm': False,
+                    'manager_confirm_date': False,
+                    'stage_id': stage_id.id,})
+        if self.expense_to_invoice_type != 'incoming':
+            self.payment_id.unlink()
+            self.other_payment_invoice_id.unlink()
+        if self.expense_to_invoice_type == 'to_invoice':
+            self.tb_po_invoice_ids.unlink()
+            self.expense_to_invoice_type = 'normal'
+        self.with_context(force=1).btn_user_confirm()
+        for tb in self:
+            tb.message_post_with_view('yjzy_extend.expense_sheet_template_refuse_to_account_reason',
+                                      values={'reason': reason, 'name': self.name},
+                                      subtype_id=self.env.ref(
+                                          'mail.mt_note').id)  # 定义了留言消息的模板，其他都可以参考，还可以继续参考费用发送计划以及邮件方式
+
 
 
     def action_refuse(self, reason):

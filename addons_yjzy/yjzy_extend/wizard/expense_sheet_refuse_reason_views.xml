@@ -24,4 +24,30 @@
         <field name="view_id" ref="expense_sheet_refuse_wizard_view_form"/>
         <field name="target">new</field>
     </record>
+
+
+    <record id="expense_sheet_refuse_to_account_wizard_view_form" model="ir.ui.view">
+        <field name="name">expense.sheet.refuse.wizard.form</field>
+        <field name="model">expense.sheet.refuse.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Expense refuse reason">
+                <separator string="请填写费用退回财务的理由"/>
+                <field name="expense_sheet_id" invisible="1"/>
+                <field name="reason"/>
+                <footer>
+                    <button string='退回财务审批' name="expense_sheet_refuse_reason_to_account" type="object" class="oe_highlight"/>
+                    <button string="取消" class="oe_link" special="cancel"/>
+                </footer>
+           </form>
+        </field>
+    </record>
+
+    <record id="expense_sheet_refuse_to_account_wizard_action" model="ir.actions.act_window">
+        <field name="name">退回财务审批</field>
+        <field name="res_model">expense.sheet.refuse.wizard</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="expense_sheet_refuse_to_account_wizard_view_form"/>
+        <field name="target">new</field>
+    </record>
 </odoo>

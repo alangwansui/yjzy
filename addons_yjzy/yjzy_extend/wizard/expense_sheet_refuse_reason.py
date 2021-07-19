@@ -31,3 +31,8 @@ class ExpenseSheetRefuseWizard(models.TransientModel):
         self.ensure_one()
         self.expense_sheet_id.action_refuse(self.reason)
         return {'type': 'ir.actions.act_window_close'}
+
+    def expense_sheet_refuse_reason_to_account(self):
+        self.ensure_one()
+        self.expense_sheet_id.action_refuse_to_account(self.reason)
+        return {'type': 'ir.actions.act_window_close'}
