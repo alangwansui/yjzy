@@ -2312,7 +2312,7 @@ class transport_bill(models.Model):
         date_out_in = self.date_out_in
         print('===write need==', need)
         if need and date_out_in:
-            if self.state not in ('approve','confirmed','delivered','invoiced','verifying','done'):
+            if self.state not in ('approve','confirmed','delivered','invoiced','locked','finish_add_purchase','verifying','done'):
                 raise Warning('非执行中的出运单，不允许填写日期')
             else:
                 #730 填写日期后，自动发货和生成账单，等待审批完成后过账
