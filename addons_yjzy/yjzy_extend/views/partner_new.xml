@@ -4478,7 +4478,7 @@
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('res_new_partner_kanban_view')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_new_customer_account_form')})]"/>
         </record>
-        <menuitem id="menu_new_customer_account" parent="new_customer_root" name="客户数据查询" sequence="99"
+        <menuitem id="menu_new_customer_account" parent="new_customer_root" name="客户数据查询" sequence="99" groups="base.group_system"
                   action="action_new_customer_account"/>
 
         <record id="action_new_customer_account_no_store" model="ir.actions.act_window">

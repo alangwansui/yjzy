@@ -200,6 +200,7 @@
         'data/plan_automation_data.xml',
 
 
+
         # 'wizard/wizard_so2po.xml',
         'wizard/wizard_transport4so.xml',
         'wizard/wizard_attribute_configurator.xml',
@@ -257,6 +258,8 @@
     'qweb': [
         "static/src/xml/template.xml",
         "static/src/xml/activity.xml",
+
+
     ],
 
     'pre_init_hook': 'pre_init_hook',
