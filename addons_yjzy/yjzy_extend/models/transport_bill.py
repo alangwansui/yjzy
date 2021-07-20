@@ -532,7 +532,7 @@ class transport_bill(models.Model):
     def compute_date_all_state(self):
         for one in self:
             all_invoice_ids = one.all_invoice_ids
-            if len(all_invoice_ids.filtered(lambda x: x.state != 'paid')) == 0:
+            if one.date_out_in and len(all_invoice_ids.filtered(lambda x: x.state != 'paid')) == 0:
                 date_all_state = '50_payable_done'
             else:
                 if one.date_out_in == False:

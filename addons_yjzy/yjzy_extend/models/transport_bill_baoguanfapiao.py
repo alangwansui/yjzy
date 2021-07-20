@@ -19,7 +19,7 @@ class transport_bill(models.Model):
         for one in self.plan_invoice_auto_ids:
             one.state_1 = '20'
 
-#todo akiny需要再次校验
+
     def action_lock_stage(self):
         self.locked = True
         print('locked_akiny',self.locked)
