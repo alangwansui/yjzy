@@ -30,6 +30,7 @@ class transport_bill(models.Model):
         self.write({'stage_id': stage_id.id})
         for one in self.plan_invoice_auto_ids:
             one.state_1 = '20'
+            one.compute_state_1_2()
 
 
     def action_hexiao_stage(self):
