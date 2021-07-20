@@ -152,6 +152,7 @@
             <field eval="8" name="priority"/>
             <field name="arch" type="xml">
                 <tree string="Contacts" create="false" edit="false" delete="false">
+                    <button name="compute_supplier_amount_invoice_advance_payment" string="主体转换更新" type="object"/>
                     <field name="name" string="简称" readonly="1"/>
                     <button name="print_invoice_payment" icon="fa-print" string="收款-应收" type="object"/>
                     <field name="sale_order_amount_total" sum="小计" readonly="1"/>
@@ -220,6 +221,7 @@
             <field eval="8" name="priority"/>
             <field name="arch" type="xml">
                 <tree string="Contacts" create="false" delete="false" edit="false">
+                    <button name="compute_supplier_amount_invoice_advance_payment" string="主体转换更新" type="object"/>
                     <field name="name" string="简称" readonly="1"/>
                     <button name="print_invoice_payment" icon="fa-print" string="付款-应付" type="object"/>
 
@@ -254,6 +256,7 @@
             <field eval="8" name="priority"/>
             <field name="arch" type="xml">
                 <tree string="Contacts" create="false" delete="false" edit="false" >
+
                     <field name="name" string="简称" readonly="1"/>
                     <button name="print_invoice_payment" icon="fa-print" string="付款-应付" type="object"/>
 
@@ -4509,10 +4512,10 @@
             <field name="view_type">form</field>
             <field name="view_mode">kanban,tree,form</field>
             <field name="domain">
-                [('supplier','=',True),('is_company','=',True),('name','!=','未定义')]
+                [('supplier','=',True),('is_company','=',True),('name','!=','未定义'),('state','=','done')]
             </field>
             <field name="context">{'default_is_company': True,'default_supplier': True,
-                'group_by':'x_wkf_state','default_customer':False}
+                'default_customer':False}
             </field>
             <field name="filter" eval="True"/>
             <field name="search_view_id" ref="view_new_res_partner_filter"/>
@@ -4543,9 +4546,9 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_new_supplier_account_form')})]"/>
         </record>
 
-        <menuitem id="menu_new_supplier_account_no_store" parent="new_supplier_root" name="供应商数据查询." sequence="99"
+        <menuitem id="menu_new_supplier_account_no_store" parent="new_supplier_root" name="供应商数据查询." sequence="99" groups="base.group_system"
                   action="action_new_supplier_account_no_store"/>
-        <menuitem id="menu_new_supplier_account" parent="new_supplier_root" name="供应商数据查询" sequence="99" groups="base.group_system"
+        <menuitem id="menu_new_supplier_account" parent="new_supplier_root" name="供应商数据查询" sequence="99"
                   action="action_new_supplier_account"/>
 
         <record id="action_new_customer_account_all" model="ir.actions.act_window">

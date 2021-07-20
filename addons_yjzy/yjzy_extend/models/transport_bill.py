@@ -904,15 +904,17 @@ class transport_bill(models.Model):
         'transport.bill.stage',
         default=_default_transport_stage,copy=False)
     border_char = fields.Char(u' ',compute=compute_border)
-    sale_invoice_total_new = fields.Monetary(u'销售发票金额', compute=sale_invoice_amount, store=True)
+    sale_invoice_total_new = fields.Monetary(u'主应收原始金额', compute=sale_invoice_amount, store=True)#ok
     sale_invoice_paid_new = fields.Monetary(u'已收销售发票', compute=sale_invoice_amount, store=True)
-    sale_invoice_balance_new = fields.Monetary(u'未收销售发票', compute=sale_invoice_amount, store=True)
-    purchase_invoice_total_new = fields.Monetary(u'采购发票金额', compute=purchase_invoice_amount, store=True)
+    sale_invoice_balance_new = fields.Monetary(u'主应收剩余金额', compute=sale_invoice_amount, store=True)#ok
+    purchase_invoice_total_new = fields.Monetary(u'主应付原始金额', compute=purchase_invoice_amount, store=True)#ok
     purchase_invoice_paid_new = fields.Monetary(u'已付采购金额', compute=purchase_invoice_amount, store=True)
-    purchase_invoice_balance_new = fields.Monetary(u'未付采购金额', compute=purchase_invoice_amount, store=True)
-    back_tax_invoice_total_new = fields.Monetary(u'退税金额', compute=back_tax_invoice_amount, store=True)
+    purchase_invoice_balance_new = fields.Monetary(u'主应付剩余金额', compute=purchase_invoice_amount, store=True)#ok
+    back_tax_invoice_total_new = fields.Monetary(u'主退税原始金额', compute=back_tax_invoice_amount, store=True)#ok
     back_tax_invoice_paid_new = fields.Monetary(u'已收退税金额', compute=back_tax_invoice_amount, store=True)
-    back_tax_invoice_balance_new = fields.Monetary(u'未收退税金额', compute=back_tax_invoice_amount, store=True)
+    back_tax_invoice_balance_new = fields.Monetary(u'主退税未收金额', compute=back_tax_invoice_amount, store=True)#ok
+
+
     purchase_cost_total = fields.Monetary(u'采购金额', compute=_sale_purchase_amount, store=True) #13ok
     state_type = fields.Selection([('no_delivery','未开始'),('wait_date',u'待完成相关日期'),('finish_date',u'已完成相关日期'),('abnormal_date',u'日期异常'),
                                              ('write_off',u'正常核销'),('abnormal',u'异常核销')], u'状态类型', default='no_delivery',store=True, compute=update_state_type)
