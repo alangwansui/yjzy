@@ -528,17 +528,20 @@ class transport_bill(models.Model):
     #                 date_all_state = '30_un_done'
     #         one.date_all_state = date_all_state
 
-    @api.depends('date_out_in', 'date_in', 'date_ship', 'date_customer_finish','date_purchase_finish_is_done')
+    @api.depends('all_invoice_ids','all_invoice_ids.state','date_out_in', 'date_in', 'date_ship', 'date_customer_finish','date_purchase_finish_is_done')
     def compute_date_all_state(self):
-        date_all_state = '30_un_done'
         for one in self:
-            if one.date_out_in == False:
-                date_all_state = '20_no_date_out_in'
+            all_invoice_ids = one.all_invoice_ids
+            if len(all_invoice_ids.filtered(lambda x: x.state != 'paid')) == 0:
+                date_all_state = '50_payable_done'
             else:
-                if one.date_out_in != False and one.date_ship != False and one.date_customer_finish != False and one.date_purchase_finish_is_done == True:
-                    date_all_state = '40_done'
+                if one.date_out_in == False:
+                    date_all_state = '20_no_date_out_in'
                 else:
-                    date_all_state = '30_un_done'
+                    if one.date_out_in != False and one.date_ship != False and one.date_customer_finish != False and one.date_purchase_finish_is_done == True:
+                        date_all_state = '40_done'
+                    else:
+                        date_all_state = '30_un_done'
             one.date_all_state = date_all_state
 
     # @api.depends('date_out_in', 'date_in', 'date_ship', 'date_customer_finish', 'all_purchase_invoice_fill','purchase_invoice_ids','purchase_invoice_ids.date_finish',
@@ -942,6 +945,7 @@ class transport_bill(models.Model):
                                        ('20_no_date_out_in',u'发货日期待填'),
                                        ('30_un_done',u'其他日期待填'),
                                        ('40_done',u'时间都已填未完成应收付款'),
+                                       ('50_payable_done', u'应收付完成')
                                        ],'所有日期状态',default='20_no_date_out_in',store=True, compute=compute_date_all_state)
     hexiao_type = fields.Selection([('undefined','...'),('abnormal',u'异常核销'),('write_off',u'正常核销')], default='undefined', string='核销类型')
     hexiao_date = fields.Date(u'核销时间')

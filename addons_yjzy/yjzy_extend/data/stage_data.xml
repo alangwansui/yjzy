@@ -135,6 +135,38 @@
             <field name="state">cancel</field>
         </record>
 
+<!--          &lt;!&ndash;出运合同date_state计算&ndash;&gt;-->
+<!--        <record model="transport.bill.date.state.stage" id="stage_ds_date_approving">-->
+<!--            <field name="name">日期审批中</field>-->
+<!--            <field name="code">010</field>-->
+<!--            <field name="sequence" eval="10"/>-->
+<!--            <field name="state">10_date_approving</field>-->
+<!--        </record>-->
+<!--        <record model="transport.bill.date.state.stage" id="stage_ds_no_date_out_in">-->
+<!--            <field name="name">发货日期待填</field>-->
+<!--            <field name="code">020</field>-->
+<!--            <field name="sequence" eval="20"/>-->
+<!--            <field name="state">20_no_date_out_in</field>-->
+<!--        </record>-->
+<!--        <record model="transport.bill.date.state.stage" id="stage_ds_un_done">-->
+<!--            <field name="name">其他日期待填</field>-->
+<!--            <field name="code">030</field>-->
+<!--            <field name="sequence" eval="30"/>-->
+<!--            <field name="state">30_un_done</field>-->
+<!--        </record>-->
+<!--        <record model="transport.bill.date.state.stage" id="stage_ds_done">-->
+<!--            <field name="name">时间都已填未完成应收付款</field>-->
+<!--            <field name="code">040</field>-->
+<!--            <field name="sequence" eval="40"/>-->
+<!--            <field name="state">40_done</field>-->
+<!--        </record>-->
+<!--        <record model="transport.bill.date.state.stage" id="stage_ds_payable_done">-->
+<!--            <field name="name">应收付完成</field>-->
+<!--            <field name="code">050</field>-->
+<!--            <field name="sequence" eval="50"/>-->
+<!--            <field name="state">50_payable_done</field>-->
+<!--        </record>-->
+
         <!--费用审批-->
         <record model="expense.sheet.stage" id="stage_expense_sheet_draft">
             <field name="name">草稿</field>
