@@ -254,6 +254,62 @@
                 </tree>
             </field>
         </record>
+        <record id="view_transport_bill_tenyale_years_tree_new_721" model="ir.ui.view">
+            <field name="name">transport.bill.tree</field>
+            <field name="model">transport.bill</field>
+            <field name="arch" type="xml">
+                <tree string="年度合同" default_order="date_out_in desc" create="false">
+                    <field name="current_date_rate" string="汇率"/>
+                    <field name="ref"/>
+                    <field name="name" invisible="1" groups="base.group_system"/>
+                    <field name="date_out_in" string="出运时间"/>
+                    <field name="partner_id" required="1"/>
+                    <field name="user_id" string="责任人"/>
+                    <field name="invoice_paid_state" invisible="1"/>
+                    <field name="org_sale_amount" groups="base.group_system"/>
+                    <field name="org_sale_amount_new" sum="小计"/>
+                    <field name="org_real_sale_amount_new" sum="小计" string="出运金额"/>
+
+                    <field name="purchase_cost_total" sum="小计"/>
+
+                    <field name="sale_amount" groups="base.group_system" invisible="1"/>
+                    <field name="ciq_amount" groups="base.group_system" invisible="1"/>
+                    <field name="no_ciq_amount" groups="base.group_system" invisible="1"/>
+
+                    <field name="state" invisible="1" groups="base.group_system"/>
+
+                    <field name="company_currency_id" invisible="1" groups="base.group_system"/>
+                    <field name="sale_currency_id" invisible="1"/>
+                    <field name="third_currency_id" invisible="1" groups="base.group_system"/>
+                    <field name="include_tax"/>
+
+
+
+                    <field name="sale_invoice_total_new"  sum="小计"/>
+                    <field name="purchase_invoice_total_new"  sum="小计"/>
+                    <field name="back_tax_invoice_total_new"  sum="小计"/>
+                    <field name="fzzc_back_tax_invoice_total_new"  sum="小计"/>
+                    <field name="zc_invoice_profile_total_new" sum="小计"/>
+                    <field name="sale_invoice_balance_new" sum="小计"/>
+                    <field name="purchase_invoice_balance_new"  sum="小计"/>
+                    <field name="back_tax_invoice_balance_new"  sum="小计"/>
+                    <field name="fzzc_back_tax_invoice_residual_total_new"  sum="小计"/>
+                    <field name="zc_invoice_profile_residual_total_new" sum="小计"/>
+
+
+
+
+
+                    <field name="state_type" invisible="1"/>
+                    <field name="create_date" invisible="1"/>
+                    <field name="gongsi_id" string="销售主体" invisible="1"/>
+                    <field name="purchase_gongsi_id" string="采购主体" invisible="1"/>
+
+
+                </tree>
+            </field>
+        </record>
+
         <record id="view_transport_bill_tenyale_sales_kanban" model="ir.ui.view">
             <field name="name">transport.bill.kanban</field>
             <field name="model">transport.bill</field>
@@ -1950,7 +2006,7 @@
                 {'search_default_group_date_out_in':1,'only_name':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3,'show_po_code':1}
             </field>
             <field name="view_ids" eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_transport_bill_tenyale_years_tree')}),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('view_transport_bill_tenyale_years_tree_new_721')}),
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_transport_bill_tenyale_sales_kanban')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_transport_bill_tenyale_sales_form')})]"/>
 

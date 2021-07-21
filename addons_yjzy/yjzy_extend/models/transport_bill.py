@@ -1145,8 +1145,10 @@ class transport_bill(models.Model):
     purchase_invoice_ids = fields.One2many('account.invoice', 'bill_id', '采购发票',
                                            domain=[('yjzy_type', '=', 'purchase')])
     purchase_invoice_ids2 = fields.One2many('account.invoice', string='采购发票2', compute=compute_info)  # 顯示供應商的交單日期,这个以后再斟酌一下
-    all_invoice_ids = fields.One2many('account.invoice', 'bill_id', u'所有发票')
+
     back_tax_invoice_id = fields.Many2one('account.invoice', '退税发票')
+
+    all_invoice_ids = fields.One2many('account.invoice', 'bill_id', u'所有发票')
     all_sale_invoice_ids = fields.One2many('account.invoice', 'bill_id',  u'所有销售发票',domain=[('yjzy_type', '=', 'sale')])
     all_purchase_invoice_ids = fields.One2many('account.invoice', 'bill_id',  u'所有采购发票',domain=[('yjzy_type', '=', 'purchase')])
     all_back_tax_invoice_ids = fields.One2many('account.invoice', 'bill_id', u'所有退税发票',
@@ -1154,6 +1156,59 @@ class transport_bill(models.Model):
     all_back_tax_invoice_1_ids = fields.One2many('account.invoice', 'bill_id', u'所有退税发票',
                                                domain=['|', ('yjzy_type', '=', 'back_tax'),
                                                        ('yjzy_type_1', '=', 'back_tax')])
+
+    @api.depends('all_invoice_ids','all_invoice_ids.invoice_attribute_all_in_one','all_invoice_ids.amount_total','all_invoice_ids.residual')
+    def compute_invoice_total_xf(self):
+        for one in self:
+            all_invoice_ids = one.all_invoice_ids
+            fzzc_back_tax_invoice_ids = all_invoice_ids.filtered(lambda x: x.invoice_attribute_all_in_one in ['230','330'])
+            fz_back_tax_invoice_ids = all_invoice_ids.filtered(lambda x: x.invoice_attribute_all_in_one in ['330'])
+            zc_back_tax_invoice_ids = all_invoice_ids.filtered(lambda x: x.invoice_attribute_all_in_one in ['230'])
+            zc_purchase_invoice_ids = all_invoice_ids.filtered(lambda x: x.invoice_attribute_all_in_one in ['220'])#增加采购应付账单
+            zc_sale_invoice_ids = all_invoice_ids.filtered(lambda x: x.invoice_attribute_all_in_one in ['210'])#增加采购应收账单
+            fzzc_back_tax_invoice_total_new = sum(x.amount_total for x in fzzc_back_tax_invoice_ids)
+            fz_back_tax_invoice_total_new = sum(x.amount_total for x in fz_back_tax_invoice_ids)
+            zc_back_tax_invoice_total_new = sum(x.amount_total for x in zc_back_tax_invoice_ids)
+            zc_purchase_invoice_total_new = sum(x.amount_total for x in zc_purchase_invoice_ids)
+            zc_sale_invoice_total_new = sum(x.amount_total for x in zc_sale_invoice_ids)
+            zc_invoice_profile_total_new = zc_purchase_invoice_total_new - zc_sale_invoice_total_new
+            fzzc_back_tax_invoice_residual_total_new = sum(x.residual for x in fzzc_back_tax_invoice_ids)
+            fz_back_tax_invoice_residual_total_new = sum(x.residual for x in fz_back_tax_invoice_ids)
+            zc_back_tax_invoice_residual_total_new = sum(x.residual for x in zc_back_tax_invoice_ids)
+            zc_purchase_invoice_residual_total_new = sum(x.residual for x in zc_purchase_invoice_ids)
+            zc_sale_invoice_residual_total_new = sum(x.residual for x in zc_sale_invoice_ids)
+            zc_invoice_profile_residual_total_new = zc_purchase_invoice_residual_total_new - zc_sale_invoice_residual_total_new
+            one.fzzc_back_tax_invoice_total_new = fzzc_back_tax_invoice_total_new
+            one.fz_back_tax_invoice_total_new = fz_back_tax_invoice_total_new
+            one.zc_back_tax_invoice_total_new = zc_back_tax_invoice_total_new
+            one.zc_invoice_profile_total_new = zc_invoice_profile_total_new
+            one.zc_purchase_invoice_total_new = zc_purchase_invoice_total_new
+            one.zc_sale_invoice_total_new = zc_sale_invoice_total_new
+            one.fzzc_back_tax_invoice_residual_total_new = fzzc_back_tax_invoice_residual_total_new
+            one.fz_back_tax_invoice_residual_total_new = fz_back_tax_invoice_residual_total_new
+            one.zc_back_tax_invoice_residual_total_new = zc_back_tax_invoice_residual_total_new
+            one.zc_invoice_profile_residual_total_new = zc_invoice_profile_residual_total_new
+            one.zc_purchase_invoice_residual_total_new = zc_purchase_invoice_residual_total_new
+            one.zc_sale_invoice_residual_total_new = zc_sale_invoice_residual_total_new
+
+
+
+    fzzc_back_tax_invoice_total_new = fields.Monetary(u'费转增采退税合计原始金额',compute=compute_invoice_total_xf,store=True)
+    fz_back_tax_invoice_total_new = fields.Monetary(u'费转退税原始金额', compute=compute_invoice_total_xf, store=True)
+    zc_back_tax_invoice_total_new = fields.Monetary(u'增采退税原始金额', compute=compute_invoice_total_xf, store=True)
+    zc_invoice_profile_total_new = fields.Monetary(u'增采净原始金额', compute=compute_invoice_total_xf, store=True)
+    zc_purchase_invoice_total_new = fields.Monetary(u'增采应付原始金额', compute=compute_invoice_total_xf, store=True)
+    zc_sale_invoice_total_new = fields.Monetary(u'增采应收原始金额', compute=compute_invoice_total_xf, store=True)
+
+    fzzc_back_tax_invoice_residual_total_new = fields.Monetary(u'费转增采退税合计剩余金额', compute=compute_invoice_total_xf, store=True)
+    fz_back_tax_invoice_residual_total_new = fields.Monetary(u'费转退税剩余金额', compute=compute_invoice_total_xf, store=True)
+    zc_back_tax_invoice_residual_total_new = fields.Monetary(u'增采退税剩余金额', compute=compute_invoice_total_xf, store=True)
+
+    zc_invoice_profile_residual_total_new = fields.Monetary(u'增采净剩余金额', compute=compute_invoice_total_xf, store=True)
+    zc_purchase_invoice_residual_total_new = fields.Monetary(u'增采应付剩余金额', compute=compute_invoice_total_xf, store=True)
+    zc_sale_invoice_residual_total_new = fields.Monetary(u'增采应收剩余金额', compute=compute_invoice_total_xf, store=True)
+
+
     sale_invoice_count = fields.Integer(u'销售发票数', compute=compute_info)
     purchase_invoice_count = fields.Integer(u'采购发票数', compute=compute_info)
     back_tax_invoice_count = fields.Integer(u'退税发票数', compute=compute_info)
