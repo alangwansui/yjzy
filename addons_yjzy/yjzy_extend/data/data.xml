@@ -201,6 +201,12 @@
             <field name="type">service</field>
             <field name="default_code">fee_outer</field>
         </record>
+        <!-- 实际和原始出运差额 -->
+        <record id="tb_diff_actual_amount" model="product.product">
+            <field name="name">出运实际和原始差额</field>
+            <field name="type">service</field>
+            <field name="default_code">tb_diff_actual_amount</field>
+        </record>
 
         <!-- 退税产品 -->
         <record id="product_back_tax" model="product.product">

@@ -366,9 +366,11 @@ class btls_hs(models.Model):
     qty2 = fields.Float(u'报关数量')
     price2 = fields.Float(u'报关单价')
     amount2 = fields.Float(u'采购金额', digits=dp.get_precision('Money'))
+    actual_purchase_amount = fields.Float('实际采购金额', )  #   #暂时不用
     back_tax2 = fields.Float(related='hs_id2.back_tax')
     back_tax_amount2 = fields.Float(u'报关退税金额', compute=compute_price2, digits=dp.get_precision('Money'))
     back_tax_amount2_new = fields.Float(u'报关退税金额', compute=compute_price2, digits=dp.get_precision('Money'))
+    actual_purchase_back_tax_amount = fields.Float('实际退税金额')  # 暂时不用
     tongji_type = fields.Selection([('purchase', u'采购'), ('stock', u'库存')], u'统计类型')
 
     @api.onchange('po_id')
@@ -391,6 +393,8 @@ class btls_hs(models.Model):
         one.amount2 = one.amount
         one.back_tax2 = one.back_tax
         one.back_tax_amount2 = back_tax_amount
+        one.actual_purchase_amount = one.amount#暂时不用
+        one.actual_purchase_back_tax_amount = one.back_tax#暂时不用
         return one
 
 

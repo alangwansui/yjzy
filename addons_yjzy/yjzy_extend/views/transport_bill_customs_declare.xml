@@ -211,15 +211,20 @@
                                                attrs="{'readonly':[('purchase_hs_id','=',False)]}"/>
                                         <field name="po_id" string="采购合同"
                                                attrs="{'required':[('purchase_hs_id','=',False)],'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
+                                        <field name="amount" sum="小计" string="原始出运金额"
+                                               attrs="{'readonly':True}"/>
+                                        <field name="actual_price" sum="小计" string="实际出运单价" groups="base.group_system"
+                                               attrs="{'readonly':True,'column_invisible': [('parent.sale_type','!=','proxy')]}"/>
+                                        <field name="actual_amount" sum="小计" string="实际出运金额"
+                                               attrs="{'readonly':[('parent.sale_type','!=','proxy')],'column_invisible': [('parent.sale_type','!=','proxy')]}"/>
 
-                                        <field name="amount" sum="小计" string="销售额"
-                                               attrs="{'readonly':[('parent.sale_type','!=','proxy')]}"/>
-
-                                        <field name="price2" string="单价" readonly="1"
+                                        <field name="price2" string="报关单价" readonly="1"
                                                attrs="{'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
-                                        <field name="amount2" sum="小计" string="金额"
-                                               attrs="{'readonly':[('purchase_hs_id','=',False)],'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
-                                        <field name="purchase_amount2" sum="小计" string="采购额"
+                                        <field name="amount2" sum="小计" string="报关金额"
+                                               attrs="{'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
+                                        <field name="purchase_amount" sum="小计" string="原始采购金额"
+                                               attrs="{'readonly':True,'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
+                                        <field name="purchase_amount2" sum="小计" string="采购额" groups="base.group_system"
                                                attrs="{'readonly':[('purchase_hs_id','=',False)],'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
                                         <field name="back_tax" readonly="1"
                                                attrs="{'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>

@@ -471,12 +471,20 @@ class OrderTrack(models.Model):
     sale_invoice_currency_id = fields.Many2one('res.currency', related='tb_id.sale_currency_id')
 
     tb_sale_invoice_id = fields.One2many('account.invoice', 'order_track_id', domain=[('yjzy_type', '=', 'sale')])
-    sale_invoice_balance = fields.Monetary('应收款', currency_field='sale_invoice_currency_id',
+    sale_invoice_balance = fields.Monetary('主应收剩余金额', currency_field='sale_invoice_currency_id',
                                            related='tb_id.sale_invoice_balance_new', store=True)
-    purchase_invoice_balance = fields.Monetary('应付款', currency_field='purchase_back_invoice_currency_id',
+    purchase_invoice_balance = fields.Monetary('主应付剩余金额', currency_field='purchase_back_invoice_currency_id',
                                                related='tb_id.purchase_invoice_balance_new', store=True)
-    back_tax_invoice_balance = fields.Monetary('应收退税', currency_field='purchase_back_invoice_currency_id',
+    back_tax_invoice_balance = fields.Monetary('主退税剩余金额', currency_field='purchase_back_invoice_currency_id',
                                                related='tb_id.back_tax_invoice_balance_new', store=True)
+    fzzc_back_tax_invoice_residual_total_new = fields.Monetary('费转增采退税合计剩余金额', currency_field='purchase_back_invoice_currency_id',
+                                               related='tb_id.fzzc_back_tax_invoice_residual_total_new', store=True)
+    zc_invoice_profile_residual_total_new = fields.Monetary('费转增采退税合计剩余金额',
+                                                               currency_field='purchase_back_invoice_currency_id',
+                                                               related='tb_id.zc_invoice_profile_residual_total_new',
+                                                               store=True)
+
+
     date_all_state = fields.Selection([('10_date_approving', u'日期审批中'),
                                        ('20_no_date_out_in', u'发货日期待填'),
                                        ('30_un_done', u'其他日期待填'),

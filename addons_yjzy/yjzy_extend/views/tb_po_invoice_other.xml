@@ -143,9 +143,9 @@
                                 </div>
 
 
-                                <field name="invoice_partner_yjzy_parent" string="账单描述"
+                                <field name="invoice_partner_yjzy_parent" string="账单对象"
                                        attrs="{'readonly':[('state','!=','10_draft')],'invisible':[('is_yjzy_tb_po_invoice_parent','=',False)]}"/>
-                                <field name="name_title_yjzy_parent" string="账单对象"
+                                <field name="name_title_yjzy_parent" string="账单描述"
                                        attrs="{'readonly':[('state','!=','10_draft')],'invisible':[('is_yjzy_tb_po_invoice_parent','=',False)]}"/>
                                 <field name="currency_id_yjzy_parent" invisible="1"
                                        attrs="{'invisible':[('is_yjzy_tb_po_invoice_parent','=',False)]}"/>

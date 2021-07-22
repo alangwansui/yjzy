@@ -180,9 +180,12 @@
                        invisible="context.get('type')!='transport_track'"/>
                 <button name="open_order_track_tb" type="object" class="oe_stat_button" icon="fa-archive" string="供应商交单"
                         invisible="context.get('type')!='transport_track'"/>
-                <field name="sale_invoice_balance" invisible="context.get('type')!='transport_track'" string="剩余应收款" groups="account.group_account_invoice"/>
-                <field name="purchase_invoice_balance" invisible="context.get('type')!='transport_track'" string="剩余应付款" groups="account.group_account_invoice"/>
-                <field name="back_tax_invoice_balance" invisible="context.get('type')!='transport_track'" string="剩余退税" groups="account.group_account_invoice"/>
+                <field name="sale_invoice_balance" invisible="context.get('type')!='transport_track'"  groups="account.group_account_invoice"/>
+                <field name="purchase_invoice_balance" invisible="context.get('type')!='transport_track'" groups="account.group_account_invoice"/>
+                <field name="back_tax_invoice_balance" invisible="context.get('type')!='transport_track'"  groups="account.group_account_invoice"/>
+                <field name="zc_invoice_profile_residual_total_new" invisible="context.get('type')!='transport_track'" groups="account.group_account_invoice"/>
+                <field name="fzzc_back_tax_invoice_residual_total_new" invisible="context.get('type')!='transport_track'"  groups="account.group_account_invoice"/>
+
                 <field name="tb_sale_invoice_id" invisible="1"/>
                 <field name="is_date_out_in" invisible="1"/>
                 <field name="comments_transport_track" invisible="context.get('type')!='transport_track'"/>

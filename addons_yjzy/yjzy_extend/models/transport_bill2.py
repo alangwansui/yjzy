@@ -608,6 +608,18 @@ class tbl_hsname(models.Model):
                 one.purchase_amount2_tax = 0.0
                 one.purchase_amount2_no_tax = one.purchase_amount2
 
+    @api.depends('actual_amount', 'out_qty2')
+    def actual_price(self):
+        for one in self:
+            if one.out_qty2 != 0:
+                one.actual_price = one.actual_amount / one.out_qty2
+            else:
+                one.actual_price = 0
+
+    def compute_manual(self):
+        for one in self:
+            one.actual_amount = one.amount2
+
     # 820
     # tax_change = fields.Selection([('no_tax_to_tax','未税转含税'),('tax_to_no_tax','含税转未税')],'含税状态变化')
 
@@ -617,6 +629,7 @@ class tbl_hsname(models.Model):
 
     # akiny新增 814
     is_po_include_tax = fields.Boolean(u'采购是否含税', related='po_id.include_tax', readonly=False)
+    #-------------未登陆导图
     overall_profit_max = fields.Float('综合利润率(下限)', digits=(2, 2),
                                       compute=_get_overall_profit)  # default=lambda self:self.env['ir.config_parameter'].sudo().get_param('addons_yjzy.overall_profit_max')
     overall_profit_min = fields.Float('综合利润率(上限)', digits=(2, 2),
@@ -629,18 +642,24 @@ class tbl_hsname(models.Model):
     purchase_amount2_tax = fields.Float(u'含税采购金额', compute=compute_purchase_amount)
     purchase_amount2_no_tax = fields.Float(u'不含税采购金额', compute=compute_purchase_amount)
 
+    #-----------------------
+
     name = fields.Char('HS:PO')
-    tb_id = fields.Many2one('transport.bill', u'发运', ondelete='cascade')
+    tb_id = fields.Many2one('transport.bill', u'出运合同', ondelete='cascade')
     hs_id = fields.Many2one('hs.hs', u'品名')
-    po_id = fields.Many2one('purchase.order', u'采购单')
+    po_id = fields.Many2one('purchase.order', u'采购合同')
     hs_en_name = fields.Char(related='hs_id.en_name')
     back_tax = fields.Float(related='hs_id.back_tax')
 
     dump_product_id = fields.Many2one('product.product', u'产品')
-    out_qty = fields.Float('数量')
-    price = fields.Float('价格')
-    amount = fields.Float('金额', digits=dp.get_precision('Money'))
+    out_qty = fields.Float('原始数量')
+    price = fields.Float('原始价格')
+    amount = fields.Float('原始金额', digits=dp.get_precision('Money'))
     comb_ids = fields.One2many('tbl.comb', 'tbl_hsname_id', u'分解明细')
+
+
+    actual_price = fields.Float('实际价格',compute=actual_price)#代理可以!=原始单价
+    actual_amount = fields.Float('实际金额')#代理可以!=原始金额
 
     hs_id2 = fields.Many2one('hs.hs', u'报关品名')
     dump_product_id2 = fields.Many2one('product.product', u'报关产品')
@@ -655,10 +674,10 @@ class tbl_hsname(models.Model):
     qty_min = fields.Integer(u'小包装件数')
     gross_weight = fields.Float(u'毛重', digits=dp.get_precision('Weight'))
     net_weight = fields.Float(u'净重', digits=dp.get_precision('Weight'))
-    volume = fields.Float(u'尺码m³', digits=dp.get_precision('Volume'))
+    volume = fields.Float(u'体积m³', digits=dp.get_precision('Volume'))
     keyword = fields.Char(u'报关要素')
     type = fields.Selection([('auto', u'自动'), ('manual', '手动')], u'创建方式', default='auto')
-    note = fields.Char(u'其他')
+    note = fields.Char(u'其他说明')
 
     tuopan_weight = fields.Float(u'托盘分配重量', digits=dp.get_precision('Weight'))
     tuopan_volume = fields.Float(u'托盘分配体积', digits=dp.get_precision('Volume'))
@@ -666,32 +685,22 @@ class tbl_hsname(models.Model):
     shiji_weight = fields.Float(u'实际毛重', compute=compute_shiji, digits=dp.get_precision('Weight'))
     shiji_volume = fields.Float(u'实际体积', compute=compute_shiji, digits=dp.get_precision('Volume'))
 
-    package_tag = fields.Char('包裹标记')
+
+    package_tag = fields.Char('包裹标记')#todo 忘记他的作用了
 
     suppliser_hs_amount = fields.Float('采购HS统计金额')
 
     # 销售hs统计同步采购hs统计
     purchase_hs_id = fields.Many2one('btls.hs', '采购HS统计')
-    purchase_amount = fields.Float('采购金额', related="purchase_hs_id.amount")
-    purchase_amount2 = fields.Float('采购金额', related="purchase_hs_id.amount2")  # 814需要优化
-    purchase_back_tax_amount2 = fields.Float(u'报关退税金额', related="purchase_hs_id.back_tax_amount2")
-    purchase_back_tax_amount2_new = fields.Float(u'报关退税金额：新', related="purchase_hs_id.back_tax_amount2_new")
+    purchase_amount = fields.Float('原始采购金额', related="purchase_hs_id.amount")
+    purchase_amount2 = fields.Float('报关采购金额', related="purchase_hs_id.amount2")  # 814需要优化# 就不存在报关和实际之分了。 并没有报关采购金额
+    actual_purchase_amount = fields.Float('实际采购金额',related="purchase_hs_id.actual_purchase_amount")  # 代理可以!=原始单价
+    purchase_back_tax_amount2 = fields.Float(u'原始报关退税金额', related="purchase_hs_id.back_tax_amount2")
+    purchase_back_tax_amount2_new = fields.Float(u'报关报关退税金额', related="purchase_hs_id.back_tax_amount2_new")
+    actual_purchase_back_tax_amount = fields.Float('实际退税金额',related="purchase_hs_id.actual_purchase_back_tax_amount")  # 代理可以!=原始金额
+    supplier_id = fields.Many2one('res.partner',u'供应商', related="purchase_hs_id.supplier_id")#
 
-    # 可以删除
-    # def open_wizard_tb_po_invoice(self):
-    #     self.ensure_one()
-    #     wizard = self.env['wizard.tb.po.invoice'].create({'hsmane_id': self.id})
-    #
-    #     return {
-    #         'name': u'添加客户',
-    #         'view_type': 'form',
-    #         'view_mode': 'form',
-    #         'res_model': 'wizard.tb.po.invoice',
-    #         'res_id': wizard.id,
-    #         'type': 'ir.actions.act_window',
-    #         'target': 'new',
-    #
-    #     }
+
 
     def open_form_view(self):
 
@@ -738,6 +747,7 @@ class tbl_hsname(models.Model):
         one.out_qty2 = one.out_qty
         one.price2 = one.price
         one.amount2 = one.amount
+        one.actual_amount = one.amount
         return one
 
     def make_suppliser_hs(self):
@@ -847,15 +857,17 @@ class tbl_hsname_all(models.Model):
     price2 = fields.Float('报关价格', )
     amount2 = fields.Float('报关金额', digits=dp.get_precision('Money'))
 
-    suppliser_hs_amount = fields.Float('采购HS统计金额')
+
+
+    suppliser_hs_amount = fields.Float('采购HS统计金额') #todo 好像没用了
 
     # 销售hs统计同步采购hs统计
-    purchase_amount2 = fields.Float('采购金额')  # 814需要优化
-    purchase_back_tax_amount2 = fields.Float(u'报关退税税金额')
+    purchase_amount2 = fields.Float('原始采购金额')  # 814需要优化
+    purchase_back_tax_amount2 = fields.Float(u'实际退税金额')#报关退税税金额
     purchase_back_tax_amount2_new = fields.Float(u'原始退税金额')  # 根据是否含税来进行计算
     # purchase_back_tax_amount2_new_new = fields.Float(u'预计退税总金额',compute=compute_info)#根据是否含税来进行计算
-    purchase_amount2_tax = fields.Float(u'含税采购额')
-    purchase_amount2_no_tax = fields.Float(u'不含税采购额')
+    purchase_amount2_tax = fields.Float(u'原始含税采购额')
+    purchase_amount2_no_tax = fields.Float(u'原始不含税采购额')
 
     purchase_amount2_add_this_time = fields.Float(U'本次采购开票金额')
 

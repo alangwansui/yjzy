@@ -386,7 +386,7 @@ class transport_bill(models.Model):
     #         })
 
     @api.depends('line_ids','line_ids.plan_qty','current_date_rate','line_ids.org_currency_sale_amount',
-                 'line_ids.org_currency_sale_amount_origin','state','hsname_ids','hsname_ids.amount')
+                 'line_ids.org_currency_sale_amount_origin','state','hsname_ids','hsname_ids.amount','hsname_ids.actual_amount')
     def amount_all(self):
         """
         Compute the total amounts of the SO.
@@ -396,6 +396,7 @@ class transport_bill(models.Model):
             org_real_sale_amount_new = 0
             org_sale_amount_new_origin = 0
             org_sale_amount_new_discount = 0
+            org_hsname_actual_amount = 0
             if one.line_ids:
                 org_sale_amount_new = sum(x.org_currency_sale_amount for x in one.line_ids)
 
@@ -403,10 +404,13 @@ class transport_bill(models.Model):
                 org_sale_amount_new_discount = org_sale_amount_new_origin - org_sale_amount_new
             if one.hsname_ids:
                 org_real_sale_amount_new = sum([x.amount for x in one.hsname_ids])
+                org_hsname_actual_amount = sum([x.actual_amount for x in one.hsname_ids])
             one.org_sale_amount_new_origin = org_sale_amount_new_origin
             one.org_sale_amount_new = org_sale_amount_new
+            one.org_hsname_actual_amount = org_hsname_actual_amount
             one.org_real_sale_amount_new = org_real_sale_amount_new
             one.org_sale_amount_new_discount = org_sale_amount_new_discount
+
 
 
     @api.depends('line_ids.plan_qty','line_ids','current_date_rate','state','fee_inner','fee_rmb1','fee_rmb2','fee_outer')
@@ -912,7 +916,7 @@ class transport_bill(models.Model):
     purchase_invoice_balance_new = fields.Monetary(u'主应付剩余金额', compute=purchase_invoice_amount, store=True)#ok
     back_tax_invoice_total_new = fields.Monetary(u'主退税原始金额', compute=back_tax_invoice_amount, store=True)#ok
     back_tax_invoice_paid_new = fields.Monetary(u'已收退税金额', compute=back_tax_invoice_amount, store=True)
-    back_tax_invoice_balance_new = fields.Monetary(u'主退税未收金额', compute=back_tax_invoice_amount, store=True)#ok
+    back_tax_invoice_balance_new = fields.Monetary(u'主退税剩余金额', compute=back_tax_invoice_amount, store=True)#ok
 
 
     purchase_cost_total = fields.Monetary(u'采购金额', compute=_sale_purchase_amount, store=True) #13ok
@@ -987,8 +991,7 @@ class transport_bill(models.Model):
     incoterm_code = fields.Char('贸易术语', related='incoterm.code', readonly=True)
     org_sale_amount = fields.Monetary('销售金额', currency_field='sale_currency_id', compute=compute_info,
                                       digits=dp.get_precision('Money'))
-    org_sale_amount_new = fields.Monetary('销售金额', store=True, currency_field='sale_currency_id', compute=amount_all,
-                                      digits=dp.get_precision('Money'))  #13ok
+
 
     org_sale_amount_new_discount = fields.Monetary(string='Discount', store=True, readonly=True, compute='amount_all',
                                       digits=dp.get_precision('Account'), track_visibility='always')
@@ -996,8 +999,23 @@ class transport_bill(models.Model):
                                           digits=dp.get_precision('Money'))  # 13ok
     org_real_sale_amount = fields.Monetary('实际销售金额', currency_field='sale_currency_id', compute=compute_info,
                                            digits=dp.get_precision('Money'))
-    org_real_sale_amount_new = fields.Monetary('出运金额', store=True,currency_field='sale_currency_id', compute=amount_all,
-                                           digits=dp.get_precision('Money'))
+
+    #ok
+    org_sale_amount_new = fields.Monetary('销售金额', store=True, currency_field='sale_currency_id', compute=amount_all,
+                                          digits=dp.get_precision('Money'))  # 13ok 这个是对line_ids的出运统计
+
+
+
+
+    org_hsname_actual_amount = fields.Monetary('实际出运金额', store=True, currency_field='sale_currency_id',
+                                               compute=amount_all,
+                                               digits=dp.get_precision('Money'))  # 这个是对汇总后的实际出运金额的统计
+    org_real_sale_amount_new = fields.Monetary('原始出运金额', store=True, currency_field='sale_currency_id',
+                                               compute=amount_all,
+                                               digits=dp.get_precision('Money'))# 这个是对汇总后的原始出运金额的统计
+    # 统计金额
+
+
     # 统计金额
     sale_amount = fields.Monetary('销售金额', currency_field='third_currency_id', compute=compute_info,
                                   digits=dp.get_precision('Money')) #13ok
@@ -2293,11 +2311,8 @@ class transport_bill(models.Model):
    #13ok
     def make_sale_invoice(self):
         self.ensure_one()
-        #print('===make_sale_invoice===1', self.so_ids)
-      #  if not self.date_out_in:
-      #      raise Warning(u'请先设置进仓日期')
-
         invoice_obj = self.env['account.invoice']
+        invoice_line_obj = self.env['account.invoice.line']
         sale_invoice_ids = []
         if not self.sale_invoice_id:
             manual_qty_dic = {}
@@ -2305,12 +2320,8 @@ class transport_bill(models.Model):
                 moves = line.stage2move_ids.filtered(lambda x: x.state == 'done')
                 qty = sum(x.product_uom_qty for x in moves)
                 manual_qty_dic[line.sol_id.id] = qty
-
-            #print('===make_sale_invoice===', self.so_ids, manual_qty_dic)
-
             sale_invoice_ids = self.so_ids.with_context({'manual_qty_dic': manual_qty_dic}).action_invoice_create()
             sale_invoices = invoice_obj.browse(sale_invoice_ids)
-
             if self.fee_outer_need:
                 self.add_fee_outer(sale_invoices)
             for one in sale_invoices:
@@ -2321,7 +2332,6 @@ class transport_bill(models.Model):
                         x.yjzy_price_unit = x.price_unit
                 one.yjzy_invoice_id = one.id
                 one.invoice_attribute = 'normal'
-
             sale_invoices.write({
                 'date_invoice': self.date_out_in,
                 'date_out_in': self.date_out_in,
@@ -2338,7 +2348,23 @@ class transport_bill(models.Model):
                 'stage_id':self.env['account.invoice.stage'].search([('code','=','001')],limit=1).id,
             })
             sale_invoices.compute_advance_pre_rest()
-
+            #比较实际出运金额和原始出运金额，根据差额来调整账单
+            if self.sale_type == 'proxy':
+                hsname_ids = self.hsname_ids
+                total_amount = sum(x.amount for x in hsname_ids)
+                total_actual_amount = sum(x.actual_amount for x in hsname_ids)
+                diff_amount = total_actual_amount - total_amount
+                if diff_amount != 0:
+                    p_diff = self.env.ref('yjzy_extend.tb_diff_actual_amount')
+                    invoice_line_obj.create({
+                        'invoice_id': sale_invoices[0].id,
+                        'product_id': p_diff.id,
+                        'name': u'出运实际和原始差额',
+                        'account_id': sale_invoices[0].invoice_line_ids[0].account_id.id,
+                        'quantity': 1,
+                        'uom_id': p_diff.uom_id.id,
+                        'price_unit': diff_amount,
+                    })
 
             #发票明细添加运保费
             if self.fee_outer_need:
@@ -3004,7 +3030,7 @@ class transport_bill(models.Model):
         return self.env['transport.bill.stage'].search(search_domain, order=order, limit=1)
 
     def action_submit(self):
-        if (self.org_sale_amount == self.org_real_sale_amount and self.sale_type != 'proxy') or (self.sale_type == 'proxy'):
+        if (self.org_real_sale_amount_new == self.org_hsname_actual_amount and self.sale_type != 'proxy') or (self.sale_type == 'proxy'):
             war = ''
             # if self.create_uid != self.env.user:
             #     raise Warning('您没有权限提交')
@@ -3038,7 +3064,7 @@ class transport_bill(models.Model):
                 if war:
                     raise Warning(war)
         else:
-            raise Warning('销售金额和报关金额不相同')
+            raise Warning('原始出运金额和实际出运金额不相同')
 
     def action_sales_approve(self):
         ##self.compute_pack_data()

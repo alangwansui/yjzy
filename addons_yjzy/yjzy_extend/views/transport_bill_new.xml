@@ -1418,7 +1418,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree</field>
             <field name="limit">20</field>
-            <field name="domain">[('state','in',['delivered','invoiced','verifying'])]</field>
+            <field name="domain">[('state','in',['invoiced','locked','finish_add_purchase'])]</field>
             <field name="context">
                 {'search_default_group_by_date_out_in':1,'show_date_finish':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3}
             </field>
