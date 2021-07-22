@@ -622,6 +622,7 @@ class tbl_hsname(models.Model):
                 one.actual_amount = one.amount2
             else:
                 one.amount = one.amount
+            one.tb_id.amount_all()
 
     # 820
     # tax_change = fields.Selection([('no_tax_to_tax','未税转含税'),('tax_to_no_tax','含税转未税')],'含税状态变化')
