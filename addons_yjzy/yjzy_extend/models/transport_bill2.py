@@ -618,7 +618,10 @@ class tbl_hsname(models.Model):
 
     def compute_manual(self):
         for one in self:
-            one.actual_amount = one.amount2
+            if one.sale_type == 'proxy':
+                one.actual_amount = one.amount2
+            else:
+                one.amount = one.amount
 
     # 820
     # tax_change = fields.Selection([('no_tax_to_tax','未税转含税'),('tax_to_no_tax','含税转未税')],'含税状态变化')
