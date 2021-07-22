@@ -618,7 +618,7 @@ class tbl_hsname(models.Model):
 
     def compute_manual(self):
         for one in self:
-            if one.sale_type == 'proxy':
+            if one.tb_id.sale_type == 'proxy':
                 one.actual_amount = one.amount2
             else:
                 one.amount = one.amount
