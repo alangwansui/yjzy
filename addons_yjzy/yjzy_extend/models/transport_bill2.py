@@ -621,7 +621,7 @@ class tbl_hsname(models.Model):
             if one.tb_id.sale_type == 'proxy':
                 one.actual_amount = one.amount2
             else:
-                one.amount = one.amount
+                one.actual_amount = one.amount
             one.tb_id.amount_all()
 
     # 820
