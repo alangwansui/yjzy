@@ -398,6 +398,7 @@ class transport_bill(models.Model):
             # org_sale_amount_new_discount = 0
             # # org_hsname_actual_amount = 0
             # # diff_real_sale_hsmame_actual_amount = 0
+            sale_invoice_total_new = one.sale_invoice_total_new
             if one.line_ids:
                 org_sale_amount_new = sum(x.org_currency_sale_amount for x in one.line_ids)
                 org_sale_amount_new_origin = sum(x.org_currency_sale_amount_origin for x in one.line_ids)
@@ -405,12 +406,12 @@ class transport_bill(models.Model):
                 if one.hsname_ids:
                     org_real_sale_amount_new = sum([x.amount for x in one.hsname_ids])
                     org_hsname_actual_amount = sum([x.actual_amount for x in one.hsname_ids])
-                    diff_real_sale_hsmame_actual_amount = org_hsname_actual_amount - org_real_sale_amount_new
+                    diff_real_sale_hsmame_actual_amount = sale_invoice_total_new - org_hsname_actual_amount
 
                 else:
                     org_real_sale_amount_new = org_sale_amount_new
                     org_hsname_actual_amount = org_sale_amount_new
-                    diff_real_sale_hsmame_actual_amount = org_hsname_actual_amount - org_real_sale_amount_new
+                    diff_real_sale_hsmame_actual_amount = sale_invoice_total_new - org_hsname_actual_amount
                     print('diff_real_sale_hsmame_actual_amount_akiny', diff_real_sale_hsmame_actual_amount)
             else:
                 org_sale_amount_new = 0
