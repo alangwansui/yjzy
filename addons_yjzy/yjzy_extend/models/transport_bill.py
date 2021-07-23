@@ -406,11 +406,12 @@ class transport_bill(models.Model):
                     org_real_sale_amount_new = sum([x.amount for x in one.hsname_ids])
                     org_hsname_actual_amount = sum([x.actual_amount for x in one.hsname_ids])
                     diff_real_sale_hsmame_actual_amount = org_hsname_actual_amount - org_real_sale_amount_new
-                    print('diff_real_sale_hsmame_actual_amount_akiny', diff_real_sale_hsmame_actual_amount)
+
                 else:
                     org_real_sale_amount_new = org_sale_amount_new
                     org_hsname_actual_amount = org_sale_amount_new
                     diff_real_sale_hsmame_actual_amount = org_hsname_actual_amount - org_real_sale_amount_new
+                    print('diff_real_sale_hsmame_actual_amount_akiny', diff_real_sale_hsmame_actual_amount)
             else:
                 org_sale_amount_new = 0
                 org_sale_amount_new_origin = 0
