@@ -258,7 +258,7 @@
             <field name="name">transport.bill.tree</field>
             <field name="model">transport.bill</field>
             <field name="arch" type="xml">
-                <tree string="年度合同" default_order="date_out_in desc" create="false">
+                <tree string="年度合同" default_order="date_out_in desc" decoration-danger="org_hsname_actual_amount != sale_invoice_total_new"  create="false">
                     <field name="current_date_rate" string="汇率"/>
                     <field name="ref"/>
                     <field name="name" invisible="1" groups="base.group_system"/>
@@ -288,6 +288,7 @@
 
 
                     <field name="sale_invoice_total_new"  sum="小计"/>
+                    <field name="diff_real_sale_hsmame_actual_amount"/>
                     <field name="purchase_invoice_total_new"  sum="小计"/>
                     <field name="back_tax_invoice_total_new"  sum="小计"/>
                     <field name="fzzc_back_tax_invoice_total_new"  sum="小计"/>

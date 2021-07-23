@@ -397,6 +397,7 @@ class transport_bill(models.Model):
             org_sale_amount_new_origin = 0
             org_sale_amount_new_discount = 0
             org_hsname_actual_amount = 0
+            dif_real_sale_hsmame_actual_amount = 0
             if one.line_ids:
                 org_sale_amount_new = sum(x.org_currency_sale_amount for x in one.line_ids)
 
@@ -405,6 +406,8 @@ class transport_bill(models.Model):
             if one.hsname_ids:
                 org_real_sale_amount_new = sum([x.amount for x in one.hsname_ids])
                 org_hsname_actual_amount = sum([x.actual_amount for x in one.hsname_ids])
+                dif_real_sale_hsmame_actual_amount = org_hsname_actual_amount - org_real_sale_amount_new
+            one.dif_real_sale_hsmame_actual_amount = dif_real_sale_hsmame_actual_amount
             one.org_sale_amount_new_origin = org_sale_amount_new_origin
             one.org_sale_amount_new = org_sale_amount_new
             one.org_hsname_actual_amount = org_hsname_actual_amount
@@ -1012,7 +1015,10 @@ class transport_bill(models.Model):
                                                digits=dp.get_precision('Money'))  # 这个是对汇总后的实际出运金额的统计
     org_real_sale_amount_new = fields.Monetary('原始出运金额', store=True, currency_field='sale_currency_id',
                                                compute=amount_all,
-                                               digits=dp.get_precision('Money'))# 这个是对汇总后的原始出运金额的统计
+                                               digits=dp.get_precision('Money'))# 这个是对汇总后的原始出运金额的统计if
+    diff_real_sale_hsmame_actual_amount = fields.Monetary('账单和实际出运差额', store=True, currency_field='sale_currency_id',
+                                               compute=amount_all,
+                                               digits=dp.get_precision('Money'))# 原始出运和实际出运的差额
     # 统计金额
 
 

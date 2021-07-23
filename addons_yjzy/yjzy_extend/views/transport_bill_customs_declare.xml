@@ -60,6 +60,88 @@
             </field>
         </record>
 
+        <record id="view_transport_bill_hsmane_tree" model="ir.ui.view">
+            <field name="name">tbl.hsname.tree</field>
+            <field name="model">tbl.hsname</field>
+            <field name="arch" type="xml">
+                <tree string="报关hsname明细">
+
+                    <field name="purchase_hs_id" string="采购对应" groups="base.group_system"/>
+                    <button name="make_suppliser_hs" type="object" icon="fa-plus-circle"
+                            attrs="{'invisible':[('purchase_hs_id','!=',False)]}"/>
+                    <field name="id" groups="base.group_system"/>
+                    <field name="package_tag" invisible="1"/>
+                    <field name="name" invisible="1"/>
+
+                    <field name="dump_product_id" groups="base.group_system" invisible="1"/>
+                    <field name="hs_id" attrs="{'required':[('purchase_hs_id','=',False)]}"/>
+                    <field name="hs_en_name" groups="base.group_system" invisible="1"/>
+                    <field name="out_qty2" sum="小计" string="报关数量"
+                           attrs="{'readonly':[('purchase_hs_id','=',False)]}"/>
+                    <field name="po_id" string="采购合同"
+                           attrs="{'required':[('purchase_hs_id','=',False)],'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
+                    <field name="amount" sum="小计" string="原始出运金额"
+                           attrs="{'readonly':True}"/>
+                    <field name="actual_price" sum="小计" string="实际出运单价" groups="base.group_system"
+                           attrs="{'readonly':True,'column_invisible': [('parent.sale_type','!=','proxy')]}"/>
+                    <field name="actual_amount" sum="小计" string="实际出运金额"
+                           attrs="{'readonly':[('parent.sale_type','!=','proxy')],'column_invisible': [('parent.sale_type','!=','proxy')]}"/>
+
+                    <field name="price2" string="报关单价" readonly="1"
+                           attrs="{'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
+                    <field name="amount2" sum="小计" string="报关金额"
+                           attrs="{'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
+                    <field name="purchase_amount" sum="小计" string="原始采购金额"
+                           attrs="{'readonly':True,'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
+                    <field name="purchase_amount2" sum="小计" string="采购额" groups="base.group_system"
+                           attrs="{'readonly':[('purchase_hs_id','=',False)],'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
+                    <field name="back_tax" readonly="1"
+                           attrs="{'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
+                    <field name="purchase_back_tax_amount2" sum="小计" string="退税额" readonly="1"
+                           attrs="{'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
+                    <field name="out_qty" sum="小计" invisible="1"/>
+                    <field name="price" string="单价" invisible="1"/>
+
+
+                    <field name="purchase_amount" invisible="1"/>
+                    <field name="hs_id2" invisible="1"/>
+                    <field name="dump_product_id2" groups="base.group_system" invisible="1"/>
+
+
+                    <field name="source_area"
+                           attrs="{'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
+                    <field name="source_country_id"
+                           attrs="{'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
+                    <field name="qty_max" sum="小计" string="件数"
+                           attrs="{'column_invisible': [('parent.hs_fill','!=','packaging')]}"/>
+                    <field name="qty_mid" groups="base.group_system" invisible="1"/>
+                    <field name="qty_min" groups="base.group_system" invisible="1"/>
+                    <field name="net_weight" sum="小计"
+                           attrs="{'column_invisible': [('parent.hs_fill','!=','packaging')]}"/>
+                    <field name="gross_weight" sum="小计"
+                           attrs="{'column_invisible': [('parent.hs_fill','!=','packaging')]}"/>
+                    <field name="tuopan_weight" string="托重"
+                           attrs="{'column_invisible': [('parent.hs_fill','!=','packaging')]}"/>
+                    <field name="shiji_weight" sum="小计"
+                           attrs="{'column_invisible': [('parent.hs_fill','!=','packaging')]}"/>
+                    <field name="volume" string="体积" sum="小计"
+                           attrs="{'column_invisible': [('parent.hs_fill','!=','packaging')]}"/>
+                    <field name="tuopan_volume" string="托体积" sum="小计"
+                           attrs="{'column_invisible': [('parent.hs_fill','!=','packaging')]}"/>
+                    <field name="shiji_volume" sum="小计"
+                           attrs="{'column_invisible': [('parent.hs_fill','!=','packaging')]}"/>
+                    <field name="keyword"
+                           attrs="{'column_invisible': [('parent.hs_fill','!=','packaging')]}"/>
+                    <field name="type" invisible="1"/>
+                    <field name="note" invisible="1"/>
+                    <button name="open_form_view" type="object" icon="fa-arrows-v"
+                            attrs="{'invisible':[('parent.state','not in',['draft','check']),('parent.is_editable','=',False)]}"/>
+
+
+                </tree>
+            </field>
+        </record>
+
         <!--        <record id="view_transport_bill_declare_form" model="ir.ui.view">-->
         <!--            <field name="name">transport.bill.declare.form</field>-->
         <!--            <field name="model">tbl.hsname</field>-->
