@@ -411,7 +411,7 @@ class transport_bill(models.Model):
                     diff_real_sale_hsmame_actual_amount = sale_invoice_total_new - org_hsname_actual_amount
 
                     org_real_purchase_amount_new = sum([x.purchase_amount for x in one.hsname_ids])
-                    purchase_hsname_actual_cost_total = sum(x.actual_purchase_amount for x in one.hsname_ids)
+                    purchase_hsname_actual_cost_total = sum(x.purchase_amount2 for x in one.hsname_ids)
                     diff_real_purchase_hsname_actual_amount = org_real_purchase_amount_new - purchase_hsname_actual_cost_total
                     if one.company_id.is_current_date_rate:
                         real_sale_amount_cny = org_real_sale_amount_new * current_date_rate
@@ -1079,9 +1079,10 @@ class transport_bill(models.Model):
 
     org_real_purchase_amount_new = fields.Monetary('原始采购金额', currency_field='third_currency_id', compute=amount_all,
                                   digits=dp.get_precision('Money'))  # 13ok
-    purchase_hsname_actual_cost_total = fields.Monetary(u'实际采购金额',currency_field='third_currency_id', compute=amount_all, store=True)  # 13ok
+    purchase_hsname_actual_cost_total = fields.Monetary(u'实际采购金额',currency_field='third_currency_id', compute=amount_all, store=True)  # 13ok先通过报关采购金额计算
     diff_real_purchase_hsname_actual_amount = fields.Monetary('账单和实际出运差额', store=True, currency_field='third_currency_id',
                                                compute=amount_all,)# 原始出运和实际出运的差额
+
 
     # 统计金额
 
