@@ -1075,8 +1075,8 @@ class account_invoice(models.Model):
     invoice_line_ids_add = fields.One2many('account.invoice.line', 'invoice_id', domain=[('is_manual', '=', True)],
                                            copy=True)
     invoice_line_ids_origin = fields.One2many('account.invoice.line', 'invoice_id',
-                                              domain=[('is_manual', '=', False), ('quantity', '!=', 0)],
-                                              readonly=True, states={'draft': [('readonly', False)]}, copy=True)
+                                              domain=[('quantity', '!=', 0)],
+                                              readonly=True, states={'draft': [('readonly', False)]}, copy=True)#本来是除去手动的 ，现在把手动的也加回去('is_manual', '=', False),
     amount_automatic = fields.Monetary('原始合计金额', currency_field='currency_id', compute=compute_amount)
     amount_manual = fields.Monetary('手动合计金额', currency_field='currency_id', compute=compute_amount)
     residual_date_group = fields.Selection(

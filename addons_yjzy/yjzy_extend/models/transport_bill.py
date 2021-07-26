@@ -386,7 +386,8 @@ class transport_bill(models.Model):
     #         })
 
     @api.depends('line_ids','line_ids.plan_qty','current_date_rate','line_ids.org_currency_sale_amount',
-                 'line_ids.org_currency_sale_amount_origin','state','hsname_ids','hsname_ids.amount','hsname_ids.actual_amount','current_date_rate')
+                 'line_ids.org_currency_sale_amount_origin','state','hsname_ids','hsname_ids.amount','hsname_ids.actual_amount','current_date_rate'
+                 'hsname_ids.purchase_amount2','hsname_ids.purchase_amount','line_ids.purchase_cost_new')
     def amount_all(self):
         """
         Compute the total amounts of the SO.
