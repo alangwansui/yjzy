@@ -16,15 +16,20 @@ class PurchasePaymentAdvanceTool(models.TransientModel):
 
     def default_po_ids(self):
         po_id = self.env.context.get('default_po_id')
+        po_obj = self.env['purchase.order']
         inv_line_obj = self.env['account.invoice.line']
         inv_line_ids = inv_line_obj.search([('purchase_id','=',po_id)])
-        invoice_ids = inv_line_ids.mapped('invoice_id')
-        invoice_line_ids_new = inv_line_ids
-        for one in invoice_ids:
-            invoice_line_ids_new += one.invoice_line_ids
+        if inv_line_ids:
+            invoice_ids = inv_line_ids.mapped('invoice_id')
+            invoice_line_ids_new = inv_line_ids
+            for one in invoice_ids:
+                invoice_line_ids_new += one.invoice_line_ids
 
-        po_ids = invoice_line_ids_new.mapped('purchase_id')
-        print('invoice_line_ids_new_akiny', invoice_line_ids_new, po_ids)
+            po_ids = invoice_line_ids_new.mapped('purchase_id')
+            print('invoice_line_ids_new_akiny', invoice_line_ids_new, po_ids)
+        else:
+            po_ids = po_obj.search([('id','=',po_id)])
+            print('po_ids_akiny',po_ids)
         # po_ids_dic = []
         # for one in invoice_line_ids_new:
         #     po_ids_dic.append(one.invoice_line_ids.mapped('purchase_id'))

@@ -402,12 +402,17 @@ class transport_bill(models.Model):
             current_date_rate = one.current_date_rate
             if one.line_ids:
                 org_sale_amount_new = sum(x.org_currency_sale_amount for x in one.line_ids)
+                org_purchase_amount_new = sum(x.purchase_cost_new for x in one.line_ids)
                 org_sale_amount_new_origin = sum(x.org_currency_sale_amount_origin for x in one.line_ids)
                 org_sale_amount_new_discount = org_sale_amount_new_origin - org_sale_amount_new
                 if one.hsname_ids:
                     org_real_sale_amount_new = sum([x.amount for x in one.hsname_ids])
                     org_hsname_actual_amount = sum([x.actual_amount for x in one.hsname_ids])
                     diff_real_sale_hsmame_actual_amount = sale_invoice_total_new - org_hsname_actual_amount
+
+                    org_real_purchase_amount_new = sum([x.purchase_amount for x in one.hsname_ids])
+                    purchase_hsname_actual_cost_total = sum(x.actual_purchase_amount for x in one.hsname_ids)
+                    diff_real_purchase_hsname_actual_amount = org_real_purchase_amount_new - purchase_hsname_actual_cost_total
                     if one.company_id.is_current_date_rate:
                         real_sale_amount_cny = org_real_sale_amount_new * current_date_rate
                         hsname_actual_amount_cny = org_hsname_actual_amount * current_date_rate
@@ -420,6 +425,9 @@ class transport_bill(models.Model):
                     org_real_sale_amount_new = org_sale_amount_new
                     org_hsname_actual_amount = org_sale_amount_new
                     diff_real_sale_hsmame_actual_amount = sale_invoice_total_new - org_hsname_actual_amount
+                    org_real_purchase_amount_new = org_purchase_amount_new
+                    purchase_hsname_actual_cost_total = org_purchase_amount_new
+                    diff_real_purchase_hsname_actual_amount = org_real_purchase_amount_new - purchase_hsname_actual_cost_total
                     if one.company_id.is_current_date_rate:
                         real_sale_amount_cny = org_real_sale_amount_new * current_date_rate
                         hsname_actual_amount_cny = org_hsname_actual_amount * current_date_rate
@@ -439,6 +447,9 @@ class transport_bill(models.Model):
                 real_sale_amount_cny = 0
                 hsname_actual_amount_cny = 0
                 diff_real_sale_hsmame_actual_amount = 0
+                org_real_purchase_amount_new = 0
+                purchase_hsname_actual_cost_total = 0
+                diff_real_purchase_hsname_actual_amount = 0
 
 
             one.diff_real_sale_hsmame_actual_amount = diff_real_sale_hsmame_actual_amount
@@ -450,6 +461,10 @@ class transport_bill(models.Model):
             one.hsname_actual_amount_cny = hsname_actual_amount_cny
             one.org_sale_amount_new_discount = org_sale_amount_new_discount
 
+            one.org_real_purchase_amount_new = org_real_purchase_amount_new
+            one.purchase_hsname_actual_cost_total = purchase_hsname_actual_cost_total
+            one.diff_real_purchase_hsname_actual_amount = diff_real_purchase_hsname_actual_amount
+
 
 
     @api.depends('line_ids.plan_qty','line_ids','current_date_rate','state','fee_inner','fee_rmb1','fee_rmb2','fee_outer')
@@ -460,6 +475,7 @@ class transport_bill(models.Model):
         for one in self:
             org_sale_amount = sum(x.org_currency_sale_amount for x in one.line_ids)
             purchase_cost_total = sum(x.purchase_cost for x in one.line_ids)
+
             one.update({
                 'org_sale_amount_new': one.sale_currency_id.round(org_sale_amount),
                 'purchase_cost_total': one.sale_currency_id.round(purchase_cost_total),
@@ -958,7 +974,8 @@ class transport_bill(models.Model):
     back_tax_invoice_balance_new = fields.Monetary(u'主退税剩余金额', compute=back_tax_invoice_amount, store=True)#ok
 
 
-    purchase_cost_total = fields.Monetary(u'采购金额', compute=_sale_purchase_amount, store=True) #13ok
+    purchase_cost_total = fields.Monetary(u'原始采购金额', compute=_sale_purchase_amount, store=True) #13ok
+
     state_type = fields.Selection([('no_delivery','未开始'),('wait_date',u'待完成相关日期'),('finish_date',u'已完成相关日期'),('abnormal_date',u'日期异常'),
                                              ('write_off',u'正常核销'),('abnormal',u'异常核销')], u'状态类型', default='no_delivery',store=True, compute=update_state_type)
     #date_out_in_att = fields.Many2many('ir.attachment',string='进仓日附件')
@@ -1059,6 +1076,13 @@ class transport_bill(models.Model):
     diff_real_sale_hsmame_actual_amount = fields.Monetary('账单和实际出运差额', store=True, currency_field='sale_currency_id',
                                                compute=amount_all,
                                                digits=dp.get_precision('Money'))# 原始出运和实际出运的差额
+
+    org_real_purchase_amount_new = fields.Monetary('原始采购金额', currency_field='third_currency_id', compute=amount_all,
+                                  digits=dp.get_precision('Money'))  # 13ok
+    purchase_hsname_actual_cost_total = fields.Monetary(u'实际采购金额',currency_field='third_currency_id', compute=amount_all, store=True)  # 13ok
+    diff_real_purchase_hsname_actual_amount = fields.Monetary('账单和实际出运差额', store=True, currency_field='third_currency_id',
+                                               compute=amount_all,)# 原始出运和实际出运的差额
+
     # 统计金额
 
 

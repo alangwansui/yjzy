@@ -876,6 +876,9 @@ class account_payment(models.Model):
 
         })
         ppat_id.compute_purchase_amount()
+        # ppat_id.default_invoice_ids()
+        # ppat_id.default_po_ids()
+
 
         return { 'name': u'查询小工具',
                 'view_type': 'form',
@@ -887,6 +890,21 @@ class account_payment(models.Model):
                 'target': 'new',
                 'context':{}
                 }
+
+    def open_ppat_check(self,amount):
+        ppat_obj = self.env['purchase.payment.advance.tool']
+        ppat_id = ppat_obj.with_context({'default_po_id':self.po_id.id,'default_partner_id':self.partner_id.id}).create({
+            'po_id':self.po_id.id,
+            'partner_id':self.partner_id.id,
+
+        })
+        ppat_id.compute_purchase_amount()
+        if ppat_id.can_apply_amount < amount:
+            raise Warning('test')
+
+
+
+
 
 
     def new_advance_payment_id_chushihua(self):
@@ -1258,6 +1276,8 @@ class account_payment(models.Model):
                         raise Warning('有存在未完成审批的预付申请，请先完成审批!')
                     if one.state not in ['posted','reconciled'] and one.sfk_type == 'reconcile_yfsqd' and one.id < self.id:
                         raise Warning('有存在未完成审批的核销单，请检查!')
+
+                self.open_ppat_check(self.amount)
                 self.state_1 = '20_account_submit'
             elif ctx.get('default_sfk_type', '') == 'jiehui' or self.sfk_type == 'jiehui':
                 if not self.journal_id or not self.advance_account_id:
