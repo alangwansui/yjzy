@@ -37,7 +37,7 @@ class SaleDiscount(models.Model):
         ], string='Status', readonly=True, copy=False, index=True, track_visibility='onchange', default='draft')
 
     @api.multi
-    def action_confirm_discount(self):#akiny修改 增加了_discount,以后要手动引用
+    def action_confirm(self):
         if self._get_forbidden_state_confirm() & set(self.mapped('state')):
             raise UserError(_("It is not allowed to confirm an order in the following states: %s")
                             % (", ".join(self._get_forbidden_state_confirm())))
@@ -58,7 +58,7 @@ class SaleDiscount(models.Model):
         return True
 
     @api.multi
-    def action_approve_discount(self):#akiny修改 增加了_discount,以后要手动引用
+    def action_approve(self):
         if self._get_forbidden_state_confirm() & set(self.mapped('state')):
             raise UserError(_("It is not allowed to approve an order in the following states: %s")
                             % (", ".join(self._get_forbidden_state_confirm())))

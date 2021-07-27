@@ -395,6 +395,7 @@ class transport_bill(models.Model):
         for one in self:
             sale_invoice_total_new = one.sale_invoice_total_new
             current_date_rate = one.current_date_rate
+
             if one.line_ids:
                 org_sale_amount_new = sum(x.org_currency_sale_amount for x in one.line_ids)
                 org_purchase_amount_new = sum(x.purchase_cost_new for x in one.line_ids)
