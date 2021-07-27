@@ -970,7 +970,7 @@ class transport_bill(models.Model):
     back_tax_invoice_balance_new = fields.Monetary(u'主退税剩余金额', compute=back_tax_invoice_amount, store=True)#ok
 
 
-    purchase_cost_total = fields.Monetary(u'原始采购金额', compute=_sale_purchase_amount, store=True) #13ok
+    purchase_cost_total = fields.Monetary(u'最原始采购金额', compute=_sale_purchase_amount, store=True) #13ok
 
     state_type = fields.Selection([('no_delivery','未开始'),('wait_date',u'待完成相关日期'),('finish_date',u'已完成相关日期'),('abnormal_date',u'日期异常'),
                                              ('write_off',u'正常核销'),('abnormal',u'异常核销')], u'状态类型', default='no_delivery',store=True, compute=update_state_type)
@@ -1069,14 +1069,14 @@ class transport_bill(models.Model):
                                        digits=dp.get_precision('Money'))
     real_sale_amount_cny = fields.Monetary('原始人名币销售金额', currency_field='third_currency_id', compute=amount_all,
                                   digits=dp.get_precision('Money'))  # 13ok
-    diff_real_sale_hsmame_actual_amount = fields.Monetary('账单和实际出运差额', store=True, currency_field='sale_currency_id',
+    diff_real_sale_hsmame_actual_amount = fields.Monetary('出运账单和实际差额', store=True, currency_field='sale_currency_id',
                                                compute=amount_all,
                                                digits=dp.get_precision('Money'))# 原始出运和实际出运的差额
 
     org_real_purchase_amount_new = fields.Monetary('原始采购金额', currency_field='third_currency_id', compute=amount_all,store=True,
                                   )  # 13ok
     purchase_hsname_actual_cost_total = fields.Monetary(u'实际采购金额',currency_field='third_currency_id', compute=amount_all, store=True)  # 13ok先通过报关采购金额计算
-    diff_real_purchase_hsname_actual_amount = fields.Monetary('账单和实际出运差额', store=True, currency_field='third_currency_id',
+    diff_real_purchase_hsname_actual_amount = fields.Monetary('采购账单和实际差额', store=True, currency_field='third_currency_id',
                                                compute=amount_all,)# 原始出运和实际出运的差额
 
 
