@@ -395,6 +395,7 @@ class transport_bill(models.Model):
         for one in self:
 
             sale_invoice_total_new = one.sale_invoice_total_new
+            purchase_invoice_total_new = one.purchase_invoice_total_new
             current_date_rate = one.current_date_rate
             if one.line_ids:
                 org_sale_amount_new = sum(x.org_currency_sale_amount for x in one.line_ids)
@@ -408,7 +409,7 @@ class transport_bill(models.Model):
 
                     org_real_purchase_amount_new = sum([x.purchase_amount for x in one.hsname_ids])
                     purchase_hsname_actual_cost_total = sum(x.purchase_amount2 for x in one.hsname_ids)
-                    diff_real_purchase_hsname_actual_amount = org_real_purchase_amount_new - purchase_hsname_actual_cost_total
+                    diff_real_purchase_hsname_actual_amount = purchase_invoice_total_new - purchase_hsname_actual_cost_total
                     if one.company_id.is_current_date_rate:
                         real_sale_amount_cny = org_real_sale_amount_new * current_date_rate
                         hsname_actual_amount_cny = org_hsname_actual_amount * current_date_rate
@@ -423,7 +424,7 @@ class transport_bill(models.Model):
                     diff_real_sale_hsmame_actual_amount = sale_invoice_total_new - org_hsname_actual_amount
                     org_real_purchase_amount_new = org_purchase_amount_new
                     purchase_hsname_actual_cost_total = org_purchase_amount_new
-                    diff_real_purchase_hsname_actual_amount = org_real_purchase_amount_new - purchase_hsname_actual_cost_total
+                    diff_real_purchase_hsname_actual_amount = purchase_invoice_total_new - purchase_hsname_actual_cost_total
                     if one.company_id.is_current_date_rate:
                         real_sale_amount_cny = org_real_sale_amount_new * current_date_rate
                         hsname_actual_amount_cny = org_hsname_actual_amount * current_date_rate

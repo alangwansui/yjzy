@@ -104,10 +104,12 @@
                     <field name="org_sale_amount" groups="base.group_system"/>
                     <field name="org_real_sale_amount_new" sum="小计"/>
                     <field name="org_hsname_actual_amount" sum="小计"/>
+                    <field name="sale_invoice_total_new"  sum="小计"/>
                     <field name="diff_real_sale_hsmame_actual_amount"/>
                     <field name="purchase_cost_total" sum="小计" groups="base.group_system"/>
                     <field name="org_real_purchase_amount_new" sum="小计"/>
                     <field name="purchase_hsname_actual_cost_total" sum="小计"/>
+                    <field name="purchase_invoice_total_new"  sum="小计"/>
                     <field name="diff_real_purchase_hsname_actual_amount"/>
 
                     <field name="sale_amount" groups="base.group_system" invisible="1"/>
@@ -119,11 +121,11 @@
                     <field name="third_currency_id" invisible="1" groups="base.group_system"/>
                     <field name="include_tax"/>
                     <field name="sale_invoice_total" string="应收金额" groups="base.group_system"/>
-                    <field name="sale_invoice_total_new" string="应收金额" sum="小计"/>
+
                     <field name="sale_invoice_paid" string="已收金额" groups="base.group_system"/>
                     <field name="sale_invoice_paid_new" string="已收金额" sum="小计" groups="base.group_system"/>
                     <field name="purhcase_invoice_total" string="应付金额" groups="base.group_system"/>
-                    <field name="purchase_invoice_total_new" string="应付金额" sum="小计"/>
+
                     <field name="purhcase_invoice_paid" string="已付金额" groups="base.group_system"/>
                     <field name="purchase_invoice_paid_new" string="已付金额" sum="小计" groups="base.group_system"/>
                     <field name="back_tax_invoice_total" string="退税金额" groups="base.group_system"/>
@@ -276,9 +278,11 @@
                     <field name="org_real_sale_amount_new" sum="小计" />
                     <field name="org_hsname_actual_amount" sum="小计"/>
                     <field name="ciq_amount" sum="小计" groups="base.group_system"/>
+                    <field name="sale_invoice_total_new"  sum="小计"/>
                     <field name="diff_real_sale_hsmame_actual_amount"/>
                     <field name="org_real_purchase_amount_new" sum="小计"/>
                     <field name="purchase_hsname_actual_cost_total" sum="小计"/>
+                    <field name="purchase_invoice_total_new"  sum="小计"/>
                     <field name="diff_real_purchase_hsname_actual_amount"/>
                     <field name="purchase_cost_total" sum="小计" groups="base.group_system"/>
                     <field name="sale_amount" groups="base.group_system" invisible="1"/>
@@ -289,9 +293,9 @@
                     <field name="third_currency_id" invisible="1" groups="base.group_system"/>
                     <field name="include_tax"/>
 
-                    <field name="sale_invoice_total_new"  sum="小计"/>
 
-                    <field name="purchase_invoice_total_new"  sum="小计"/>
+
+
                     <field name="back_tax_invoice_total_new"  sum="小计"/>
                     <field name="fzzc_back_tax_invoice_total_new"  sum="小计"/>
                     <field name="zc_invoice_profile_total_new" sum="小计"/>
