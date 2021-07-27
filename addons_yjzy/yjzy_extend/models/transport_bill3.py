@@ -356,7 +356,7 @@ class btls_hs(models.Model):
     product_id = fields.Many2one('product.product', u'产品')
     qty = fields.Float('数量')
     price = fields.Float('单价')
-    amount = fields.Float('金额', digits=dp.get_precision('Money'))
+    amount = fields.Float('原始采购金额', digits=dp.get_precision('Money'))
     #akinyback_tax
     back_tax = fields.Float(related='hs_id.back_tax')
     back_tax_amount = fields.Float(u'退税金额', digits=dp.get_precision('Money'))
@@ -365,7 +365,7 @@ class btls_hs(models.Model):
     product_id2 = fields.Many2one('product.product', u'报关产品')
     qty2 = fields.Float(u'报关数量')
     price2 = fields.Float(u'报关单价')
-    amount2 = fields.Float(u'采购金额', digits=dp.get_precision('Money'))
+    amount2 = fields.Float(u'实际采购金额', digits=dp.get_precision('Money'))
     actual_purchase_amount = fields.Float('实际采购金额', )  #   #暂时不用
     back_tax2 = fields.Float(related='hs_id2.back_tax')
     back_tax_amount2 = fields.Float(u'报关退税金额', compute=compute_price2, digits=dp.get_precision('Money'))
@@ -393,7 +393,7 @@ class btls_hs(models.Model):
         one.amount2 = one.amount
         one.back_tax2 = one.back_tax
         one.back_tax_amount2 = back_tax_amount
-        one.actual_purchase_amount = one.amount#暂时不用
+        # one.actual_purchase_amount = one.amount#暂时不用
         one.actual_purchase_back_tax_amount = one.back_tax#暂时不用
         return one
 

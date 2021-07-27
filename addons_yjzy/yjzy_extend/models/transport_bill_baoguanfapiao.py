@@ -26,8 +26,8 @@ class transport_bill(models.Model):
         if not self.tb_po_invoice_ids:
             self.create_hsname_all_ids()
             self.create_btls_hs_ids_purchase()
-        stage_id = self._stage_find(domain=[('code', '=', '012')])
-        self.write({'stage_id': stage_id.id})
+        # stage_id = self._stage_find(domain=[('code', '=', '012')])
+        # self.write({'stage_id': stage_id.id})
         for one in self.plan_invoice_auto_ids:
             one.state_1 = '20'
             one.compute_state_1_2()

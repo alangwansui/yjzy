@@ -2681,7 +2681,7 @@ class purchse_invoice_hsname(models.Model):
     partner_id = fields.Many2one('res.partner','供应商')
     qty2 = fields.Float(u'报关数量')
     price2 = fields.Float(u'报关单价')
-    amount2 = fields.Float(u'采购金额', digits=dp.get_precision('Money'))
+    amount2 = fields.Float(u'实际采购金额', digits=dp.get_precision('Money'))
     back_tax_amount2 = fields.Float(u'报关退税金额', digits=dp.get_precision('Money'))
 
 
