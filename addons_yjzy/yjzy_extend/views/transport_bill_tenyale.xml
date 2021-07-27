@@ -721,16 +721,11 @@
                                         <field name="company_currency_id" invisible="1"/>
                                         <field name="sale_currency_id" invisible="1"/>
                                         <field name="third_currency_id" invisible="1"/>
-
                                         <field name="name" invisible="1"/>
                                         <field name="sol_id" invisible="1"/>
-
                                         <field name="so_id" groups="base.group_system" invisible="1"/>
-
-
                                         <field name="product_id" options="{'no_open':1}"/>
                                         <field name="hs_id" invisible="1"/>
-
                                         <field name="sale_qty" sum="小计" string="原始数量"/>
                                         <field name="qty_undelivered" invisible="1"/>
                                         <field name="rest_tb_qty" string="本次出运后剩余数量"/>
@@ -967,8 +962,6 @@
                             </page>
                             <page string="报关资料" invisible="1"
                                   attrs="{'invisible':[('operation_wizard','in',['first','second','third','fourth','fifth'])]}">
-
-
                                 <header>
                                     <button name="action_sale_purchase" type="object" class="oe_highlight"
                                             string="报关Invoice资料"/>
@@ -978,55 +971,6 @@
                                 </header>
                                 <field name="hsname_ids"
                                        attrs="{'readonly':[('state','not in',['draft','sales_approve']),('is_editable','=',False)]}">
-                                    <!--tree editable="bottom" decoration-danger="purchase_hs_id==False" class="o_list_scroll">
-                                        <field name="purchase_hs_id" string="采购对应" groups="base.group_system"/>
-                                        <button name="make_suppliser_hs" help="手动生成采购数据" type="object" icon="fa-plus-circle"  attrs="{'invisible':[('purchase_hs_id','!=',False)]}"/>
-                                        <field name="id" invisible="1"/>
-                                        <field name="package_tag" invisible="1"/>
-                                        <field name="name" invisible="1"/>
-
-                                        <field name="dump_product_id" groups="base.group_system" invisible="1"/>
-                                        <field name="hs_id" attrs="{'required':[('purchase_hs_id','=',False)]}" />
-                                        <field name="hs_en_name" groups="base.group_system" invisible="1"/>
-
-                                        <field name="po_id" string="采购合同" attrs="{'required':[('purchase_hs_id','=',False)]}"/>
-                                        <field name="amount" sum="小计" string="销售额" attrs="{'readonly':[('purchase_hs_id','=',False)]}"/>
-                                        <field name="out_qty2" sum="小计" string="报关数量" attrs="{'readonly':[('purchase_hs_id','=',False)]}"/>
-                                        <field name="price2" string="单价" readonly="1" />
-                                        <field name="amount2" sum="小计" string="金额" attrs="{'readonly':[('purchase_hs_id','=',False)]}"/>
-                                        <field name="purchase_amount2" sum="小计" string="采购额" attrs="{'readonly':[('purchase_hs_id','=',False)]}"/>
-                                        <field name="back_tax" readonly="1" attrs="{}"/>
-                                        <field name="purchase_back_tax_amount2" sum="小计" string="退税额" readonly="1" />
-                                        <field name="out_qty" sum="小计" invisible="1"/>
-                                        <field name="price" string="单价" invisible="1"/>
-
-
-
-
-                                        <field name="purchase_amount" invisible="1"/>
-                                        <field name="hs_id2" invisible="1"/>
-                                        <field name="dump_product_id2" groups="base.group_system" invisible="1"/>
-
-
-                                        <field name="source_area" />
-                                        <field name="source_country_id" />
-                                        <field name="qty_max" sum="小计" string="件数" />
-                                        <field name="qty_mid" groups="base.group_system" invisible="1"/>
-                                        <field name="qty_min" groups="base.group_system" invisible="1"/>
-                                        <field name="net_weight" sum="小计" />
-                                        <field name="gross_weight" sum="小计" />
-                                        <field name="tuopan_weight" string="托重" />
-                                        <field name="shiji_weight" sum="小计" />
-                                        <field name="volume" string="体积" sum="小计" />
-                                        <field name="tuopan_volume" string="托体积" sum="小计" />
-                                        <field name="shiji_volume" sum="小计" />
-                                        <field name="keyword" />
-                                        <field name="type" invisible="1"/>
-                                        <field name="note" invisible="1"/>
-                                        <button name="open_form_view" type="object" icon="fa-arrows-v"/>
-                                    </tree-->
-
-
                                     <tree editable="bottom" decoration-danger="purchase_hs_id==False">
                                         <field name="purchase_hs_id" string="采购对应" groups="base.group_system"/>
                                         <button name="make_suppliser_hs" type="object" icon="fa-plus-circle"
@@ -1046,21 +990,22 @@
                                         <field name="amount" sum="小计" string="销售额"
                                                attrs="{'readonly':[('purchase_hs_id','=',False)],'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
 
-                                        <field name="price2" string="单价" readonly="1"
+                                        <field name="price2" string="实际采购单价" readonly="1"
                                                attrs="{'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
                                         <field name="amount2" sum="小计" string="金额"
                                                attrs="{'readonly':[('purchase_hs_id','=',False)],'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
-                                        <field name="purchase_amount2" sum="小计" string="采购额"
+                                        <field name="price" string="原始采购单价" invisible="1"/>
+                                        <field name="purchase_amount" string="原始采购额" sum="小计"
+                                               attrs="{'readonly':[('purchase_hs_id','=',False)],'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
+
+                                        <field name="purchase_amount2" sum="小计" string="实际采购额"
                                                attrs="{'readonly':[('purchase_hs_id','=',False)],'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
                                         <field name="back_tax" readonly="1"
                                                attrs="{'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
                                         <field name="purchase_back_tax_amount2" sum="小计" string="退税额" readonly="1"
                                                attrs="{'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
                                         <field name="out_qty" sum="小计" invisible="1"/>
-                                        <field name="price" string="单价" invisible="1"/>
 
-
-                                        <field name="purchase_amount" invisible="1"/>
                                         <field name="hs_id2" invisible="1"/>
                                         <field name="dump_product_id2" groups="base.group_system" invisible="1"/>
 
