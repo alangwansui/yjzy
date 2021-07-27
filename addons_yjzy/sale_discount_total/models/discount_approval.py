@@ -58,7 +58,7 @@ class SaleDiscount(models.Model):
         return True
 
     @api.multi
-    def action_approve(self):
+    def action_approve_discount(self):#akiny修改 增加了_discount,以后要手动引用
         if self._get_forbidden_state_confirm() & set(self.mapped('state')):
             raise UserError(_("It is not allowed to approve an order in the following states: %s")
                             % (", ".join(self._get_forbidden_state_confirm())))
