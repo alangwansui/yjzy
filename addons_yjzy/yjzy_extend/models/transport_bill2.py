@@ -696,8 +696,8 @@ class tbl_hsname(models.Model):
 
     # 销售hs统计同步采购hs统计
     purchase_hs_id = fields.Many2one('btls.hs', '采购HS统计')
-    purchase_amount = fields.Float('原始采购金额', related="purchase_hs_id.amount")
-    purchase_amount2 = fields.Float('报关采购金额', related="purchase_hs_id.amount2")  # 814需要优化# 就不存在报关和实际之分了。 并没有报关采购金额
+    purchase_amount = fields.Float('原始采购金额', related="purchase_hs_id.amount",store=True)
+    purchase_amount2 = fields.Float('报关采购金额', related="purchase_hs_id.amount2",store=True)  # 814需要优化# 就不存在报关和实际之分了。 并没有报关采购金额
     actual_purchase_amount = fields.Float('实际采购金额',related="purchase_hs_id.actual_purchase_amount")  # 代理可以!=原始单价
     purchase_back_tax_amount2 = fields.Float(u'原始报关退税金额', related="purchase_hs_id.back_tax_amount2")
     purchase_back_tax_amount2_new = fields.Float(u'报关报关退税金额', related="purchase_hs_id.back_tax_amount2_new")
