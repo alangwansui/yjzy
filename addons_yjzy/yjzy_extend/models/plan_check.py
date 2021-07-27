@@ -479,7 +479,7 @@ class OrderTrack(models.Model):
                                                related='tb_id.back_tax_invoice_balance_new', store=True)
     fzzc_back_tax_invoice_residual_total_new = fields.Monetary('费转增采退税合计剩余金额', currency_field='purchase_back_invoice_currency_id',
                                                related='tb_id.fzzc_back_tax_invoice_residual_total_new', store=True)
-    zc_invoice_profile_residual_total_new = fields.Monetary('费转增采退税合计剩余金额',
+    zc_invoice_profile_residual_total_new = fields.Monetary('增采净剩余金额',
                                                                currency_field='purchase_back_invoice_currency_id',
                                                                related='tb_id.zc_invoice_profile_residual_total_new',
                                                                store=True)
