@@ -631,10 +631,6 @@ class sale_order(models.Model):
                            'approve_uid': self.env.user.id,
                            'approve_date': fields.datetime.now()})
 
-
-
-
-
     def action_to_manager_stage(self):
         stage_id = self._stage_find(domain=[('code', '=', '040')])
         return self.write({'stage_id': stage_id.id,

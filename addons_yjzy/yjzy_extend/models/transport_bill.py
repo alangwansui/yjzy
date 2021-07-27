@@ -393,12 +393,6 @@ class transport_bill(models.Model):
         Compute the total amounts of the SO.
         """
         for one in self:
-            # org_sale_amount_new = 0
-            # # org_real_sale_amount_new = 0
-            # org_sale_amount_new_origin = 0
-            # org_sale_amount_new_discount = 0
-            # # org_hsname_actual_amount = 0
-            # # diff_real_sale_hsmame_actual_amount = 0
             sale_invoice_total_new = one.sale_invoice_total_new
             current_date_rate = one.current_date_rate
             if one.line_ids:
@@ -461,7 +455,6 @@ class transport_bill(models.Model):
             one.real_sale_amount_cny = real_sale_amount_cny
             one.hsname_actual_amount_cny = hsname_actual_amount_cny
             one.org_sale_amount_new_discount = org_sale_amount_new_discount
-
             one.org_real_purchase_amount_new = org_real_purchase_amount_new
             one.purchase_hsname_actual_cost_total = purchase_hsname_actual_cost_total
             one.diff_real_purchase_hsname_actual_amount = diff_real_purchase_hsname_actual_amount
