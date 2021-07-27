@@ -37,7 +37,7 @@ class SaleDiscount(models.Model):
         ], string='Status', readonly=True, copy=False, index=True, track_visibility='onchange', default='draft')
 
     @api.multi
-    def action_confirm_discount(self):
+    def action_confirm_discount(self):#akiny修改 增加了_discount,以后要手动引用
         if self._get_forbidden_state_confirm() & set(self.mapped('state')):
             raise UserError(_("It is not allowed to confirm an order in the following states: %s")
                             % (", ".join(self._get_forbidden_state_confirm())))
