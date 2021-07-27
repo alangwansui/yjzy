@@ -92,18 +92,18 @@
             <field name="sequence" eval="50"/>
             <field name="state">invoiced</field>
         </record>
-        <record model="transport.bill.stage" id="stage_tb_locked">
-            <field name="name">锁定并等待增加采购</field>
-            <field name="code">012</field>
-            <field name="sequence" eval="55"/>
-            <field name="state">locked</field>
-        </record>
-        <record model="transport.bill.stage" id="stage_tb_add_purchase">
-            <field name="name">完成增加采购</field>
-            <field name="code">013</field>
-            <field name="sequence" eval="57"/>
-            <field name="state">finish_add_purchase</field>
-        </record>
+<!--        <record model="transport.bill.stage" id="stage_tb_locked">-->
+<!--            <field name="name">锁定并等待增加采购</field>-->
+<!--            <field name="code">012</field>-->
+<!--            <field name="sequence" eval="55"/>-->
+<!--            <field name="state">locked</field>-->
+<!--        </record>-->
+<!--        <record model="transport.bill.stage" id="stage_tb_add_purchase">-->
+<!--            <field name="name">完成增加采购</field>-->
+<!--            <field name="code">013</field>-->
+<!--            <field name="sequence" eval="57"/>-->
+<!--            <field name="state">finish_add_purchase</field>-->
+<!--        </record>-->
         <record model="transport.bill.stage" id="stage_tb_abnormal">
             <field name="name">异常待核销</field>
             <field name="code">006</field>
