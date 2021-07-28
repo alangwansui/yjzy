@@ -306,7 +306,7 @@
                                                attrs="{'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
                                         <field name="purchase_amount" sum="小计" string="原始采购金额"
                                                attrs="{'readonly':True,'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
-                                        <field name="purchase_amount2" sum="小计" string="采购额" groups="base.group_system"
+                                        <field name="purchase_amount2" sum="小计" string="实际采购额"
                                                attrs="{'readonly':[('purchase_hs_id','=',False)],'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
                                         <field name="back_tax" readonly="1"
                                                attrs="{'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
@@ -316,7 +316,7 @@
                                         <field name="price" string="单价" invisible="1"/>
 
 
-                                        <field name="purchase_amount" invisible="1"/>
+
                                         <field name="hs_id2" invisible="1"/>
                                         <field name="dump_product_id2" groups="base.group_system" invisible="1"/>
 
