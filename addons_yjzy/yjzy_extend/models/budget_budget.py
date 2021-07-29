@@ -59,6 +59,7 @@ class budget_budget(models.Model):
 
     def compute_amount(self):
         for one in self:
+            amount = 0
             if one.type in ['employee', 'company']:
                 amount = one.amount_input
             elif one.type in ['transport']:
@@ -68,6 +69,7 @@ class budget_budget(models.Model):
 
             one.amount = amount
             one.amount_reset = amount - sum(one.expense_ids.mapped('company_currency_total_amount'))
+            # one.amount_reset = amount - sum(x.company_currency_total_amount for x in one.expense_ids)
 
     def get_budget(type, date):
         pass

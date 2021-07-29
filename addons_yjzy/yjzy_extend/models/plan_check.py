@@ -375,16 +375,19 @@ class OrderTrack(models.Model):
                     date_so_requested_is_out_time = '30_out_time'
                 one.date_so_requested_is_out_time = date_so_requested_is_out_time
 
-    @api.depends('so_amount_total', 'so_no_sent_amount_new', 'type')
+    @api.depends('so_amount_total', 'so_no_sent_amount_new', 'type','so_all_qty','so_no_sent_qty')
     def compute_so_amount(self):
         for one in self:
             if one.type == 'order_track':
                 so_amount_total = one.so_amount_total
                 so_no_sent_amount_new = one.so_no_sent_amount_new
                 sent_amount_percent = so_amount_total != 0 and (so_amount_total - so_no_sent_amount_new) / so_amount_total * 100 or 0.0
-                one.sent_amount_percent = sent_amount_percent
             else:
-                one.sent_amount_percent = 0
+                so_all_qty = one.so_all_qty
+                so_no_sent_qty = one.so_no_sent_qty
+                sent_amount_percent = so_all_qty != 0 and (so_all_qty - so_no_sent_qty) / so_all_qty * 100 or 0.0
+            one.sent_amount_percent = sent_amount_percent
+
 
     error_state = fields.Boolean('是否有问题',compute=compute_error_state)
 
@@ -443,6 +446,7 @@ class OrderTrack(models.Model):
 
     so_all_qty = fields.Float('原始总数', compute=compute_so_qty, store=True)
     so_no_sent_qty = fields.Float('未出运数', compute=compute_so_qty, store=True)
+
     sent_percent = fields.Float('数量出运进度', compute='compute_so_qty', store=True)
     so_id_state = fields.Selection([
         ('draft', 'Quotation'),
