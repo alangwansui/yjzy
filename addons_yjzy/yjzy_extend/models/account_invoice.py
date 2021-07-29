@@ -2143,6 +2143,10 @@ class account_invoice(models.Model):
         stage_id = self._stage_find(domain=[('code', '=', '007')])
         self.stage_id = stage_id
 
+    def stage_action_back_pending(self):
+        stage_id = self._stage_find(domain=[('code', '=', '004')])
+        self.stage_id = stage_id
+
 
     def stage_action_refuse(self, reason):
         stage_id = self._stage_find(domain=[('code', '=', '005')])
