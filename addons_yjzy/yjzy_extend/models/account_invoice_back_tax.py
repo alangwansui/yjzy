@@ -42,4 +42,4 @@ class account_invoice(models.Model):
          ('60', '异常未收齐'), ('70', '正常未开'), ('75', '异常未开'), ('80', '正常未申报'), ('90', '异常未申报'), ('100', '正常未收'),('110','异常未收'),('120','已收退税')],
         index=True,compute=compute_real_invoice_auto_state_1_2,store=True)
 
-
+    adjustment_invoice_id = fields.Many2one('account.invoice',u'退税申报调节账单')

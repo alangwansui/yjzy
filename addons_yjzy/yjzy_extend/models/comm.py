@@ -18,6 +18,7 @@ sfk_type = [
     ('reconcile_ysrld',u'预收核销'),
     ('reconcile_yfsqd',u'预付核销'),
     ('reconcile_yingshou', u'应收核销'),
+    ('reconcile_tuishui', u'退税核销'),
     ('reconcile_yingfu', u'应付核销'),
 
 ]

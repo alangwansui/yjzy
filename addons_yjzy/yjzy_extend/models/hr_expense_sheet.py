@@ -324,7 +324,8 @@ class hr_expense_sheet(models.Model):
             print('from_tb_po',from_tb_po)
             if self.tb_po_invoice_ids:
                 if not from_tb_po:
-                    self.tb_po_invoice_ids.action_submit()
+                    for line in self.tb_po_invoice_ids:
+                        line.action_submit()
             else:
                 raise Warning('还没有生成费用转货款申请单，请检查！')
             self.write({'account_confirm': self.env.user.id,

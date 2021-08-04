@@ -22,9 +22,8 @@ class account_reconcile_order(models.Model):
         form_view = self.env.ref('yjzy_extend.view_ysrld_reconcile_form')
         ctx = {}
         partner = self.partner_id
-        if self.type == 'out_invoice':
+        if self.type == 'out_invoice' and self.yjzy_type_1 != 'back_tax':
             # partner = self.env['res.partner'].search([('name', '=', u'未定义')], limit=1)
-
             ctx = {
                     'show_shoukuan': True,
                     'default_sfk_type': 'reconcile_yingshou',
@@ -42,6 +41,23 @@ class account_reconcile_order(models.Model):
                     'default_fault_comments':self.fault_comments,
 
             }
+        if self.type == 'out_invoice' and self.yjzy_type_1 == 'back_tax':
+            ctx = {'show_shoukuan': True,
+                   'default_sfk_type': 'reconcile_tuishui',
+                   'default_payment_type': 'outbound',
+                   'default_be_renling': True,
+                   'default_advance_ok': False,
+                   'default_partner_type': 'supplier',
+                   'default_partner_id': partner.id,
+                   'default_invoice_log_id': self.id,
+                   'default_payment_method_id': 2,
+                   'default_currency_id': self.currency_id.id,
+                   'default_invoice_ids': [(4, self.id, None)],
+                   'default_reconcile_type': '50_reconcile',
+                   'default_invoice_log_id_this_time': self.residual,
+                   'default_fault_comments': self.fault_comments
+                   }
+
         if self.type == 'in_invoice':
             ctx = {'show_shoukuan': True,
                    'default_sfk_type': 'reconcile_yingfu',
@@ -58,6 +74,7 @@ class account_reconcile_order(models.Model):
                    'default_invoice_log_id_this_time': self.residual,
                    'default_fault_comments': self.fault_comments
                    }
+
         return {
             'name': u'核销单',
             'view_type': 'form',

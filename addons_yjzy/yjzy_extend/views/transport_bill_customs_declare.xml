@@ -278,7 +278,7 @@
                                 <field name="hsname_ids"
                                        attrs="{'readonly':[('locked','=',True),('is_editable','=',False)]}">
 
-                                    <tree editable="bottom" decoration-danger="purchase_hs_id==False">
+                                    <tree editable="bottom" decoration-danger="purchase_hs_id==False" delete="false">
                                         <field name="purchase_hs_id" string="采购对应" groups="base.group_system"/>
                                         <button name="make_suppliser_hs" type="object" icon="fa-plus-circle"
                                                 attrs="{'invisible':[('purchase_hs_id','!=',False)]}"/>
@@ -347,7 +347,7 @@
                                                attrs="{'column_invisible': [('parent.hs_fill','!=','packaging')]}"/>
                                         <field name="type" invisible="1"/>
                                         <field name="note" invisible="1"/>
-                                        <button name="open_form_view" type="object" icon="fa-arrows-v"
+                                        <button name="open_form_view" type="object" icon="fa-arrows-v" groups="base.group_system"
                                                 attrs="{'invisible':[('parent.state','not in',['draft','check']),('parent.is_editable','=',False)]}"/>
                                     </tree>
                                     <form>

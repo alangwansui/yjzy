@@ -46,7 +46,9 @@
                         <button name="action_submit" type="object" states="draft" string="提交审批" />
                         <button name="action_confirm" string="确认申报" type="object" states="approval" groups="sales_team.group_manager"
                                 confirm="确定提交申报。确定后，将无法修改！"/>
-                        <button name="create_other_invoice" type="object" string="调节" attrs="{'invisible':[('state','!=','draft')]}"/>
+                        <button name="create_other_invoice" type="object" string="调节" groups="base.group_system" attrs="{'invisible':[('state','!=','draft')]}"/>
+                        <button name="create_adjustment_invoice" type="object" string="调节2" groups="base.group_system"  attrs="{'invisible':[('state','!=','draft')]}"/>
+
                         <button name="%(back_tax_refuse_wizard_action)d"  states="approval"  string="拒绝" type="action"  groups="sales_team.group_manager"/>
                         <button name="open_wizard_back_tax_declaration" string="添加应收退税" type="object"
                                 attrs="{'invisible':[('state','!=','draft')]}"/>
@@ -86,7 +88,8 @@
                                 <button name="open_wizard_back_tax_declaration" string="批量添加应收退税" class="highlight"
                                         type="object" attrs="{'invisible':[('state','in',['done','paid'])]}"/>
                                 <field name="btd_line_ids"  attrs="{'readonly':[('state','in',['done','paid'])]}">
-                                    <tree create="false" editable="bottom">
+                                    <tree create="false" editable="bottom" decoration-danger="invoice_attribute_all_in_one == '630'" default_order="line_name">
+                                        <field name="line_name"/>
                                         <field name="tenyale_name" readonly="1"/>
                                         <field name="invoice_id" string="退税账单"/>
                                         <field name="invoice_attribute_all_in_one"/>
@@ -99,6 +102,7 @@
 
                                         <field name="declaration_amount" string="本次申报金额"/>
                                         <field name="diff_tax"/>
+                                        <field name="diff_origin_tax"/>
 
                                         <field name="declaration_amount_residual"
                                                attrs="{'column_invisible':[('parent.state','not in',['done','paid'])]}"/>

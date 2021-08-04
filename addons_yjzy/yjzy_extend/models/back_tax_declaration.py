@@ -209,6 +209,141 @@ class DeclareDeclaration(models.Model):
                 print('self_akiny',btd_line_id,back_tax_invoice)
 
 
+    #创建调节账单
+    def create_adjustment_invoice(self):
+
+        diff_tax_amount = self.diff_tax_amount
+        invoice_obj = self.env['account.invoice']
+        btd_line = self.env['back.tax.declaration.line']
+        partner = self.env.ref('yjzy_extend.partner_back_tax')
+        product = self.env.ref('yjzy_extend.product_back_tax')
+        # account = self.env['account.account'].search([('code','=', '50011'),('company_id', '=', self.user_id.company_id.id)], limit=1)
+        account = product.property_account_income_id
+
+
+        if not account:
+            raise Warning(u'没有找到退税科目,请先在退税产品的收入科目上设置')
+        print('btd_line_ids_akiny',self.btd_line_ids)
+        for line in self.btd_line_ids:
+            if line.diff_tax > 0:
+                back_tax_invoice = invoice_obj.create({
+                    'partner_id': partner.id,
+                    'type': 'out_invoice',
+                    'journal_type': 'sale',
+                    'date_invoice': datetime.today(),
+                    'date': datetime.today(),
+                    'yjzy_type': 'back_tax',
+                    'yjzy_type_1': 'back_tax',
+                    'invoice_attribute': 'extra',
+                    'invoice_type_main': '20_extra',
+                    # 'invoice_attribute_all_in_one':'630',
+                    'back_tax_declaration_id': self.id,
+                    'yjzy_invoice_id':line.invoice_id.id,
+                    'stage_id': self.env['account.invoice.stage'].search([('code', '=', '007')], limit=1).id,
+                    'invoice_line_ids': [(0, 0, {
+                        'name': '%s:%s' % (product.name, self.name),
+                        'product_id': product.id,
+                        'quantity': 1,
+                        'price_unit': line.diff_tax,
+                        'account_id': account.id,
+                    })]
+                })
+
+                back_tax_invoice.action_invoice_open()
+                # back_tax_invoice.invoice_assign_outstanding_credit()
+                line.invoice_id.adjustment_invoice_id = back_tax_invoice
+                year = fields.datetime.now().strftime('%Y')
+                number = int(line.line_name[4:]) + 1
+
+                if len(str(number)) ==1:
+                    number_str = '0000000'
+                elif len(str(number)) ==2:
+                    number_str = '000000'
+                elif len(str(number)) ==3:
+                    number_str = '00000'
+                elif len(str(number)) ==4:
+                    number_str = '0000'
+                elif len(str(number)) ==5:
+                    number_str = '000'
+                elif len(str(number)) ==6:
+                    number_str = '00'
+                elif len(str(number)) ==7:
+                    number_str = '0'
+                else:
+                    number_str = ''
+
+                line_name_new='%s%s%s' % (year,number_str,int(line.line_name[4:])+1)
+                print('line_name_new_akiny',line_name_new)
+                declaration_amount = line.declaration_amount
+                diff_tax = line.diff_tax
+                declaration_amount_new = declaration_amount - diff_tax
+                line.declaration_amount = declaration_amount_new
+                btd_line_id = btd_line.create({
+                    'line_name':line_name_new,
+                    'invoice_id': back_tax_invoice.id,
+                    'declaration_amount': diff_tax,
+                    'btd_id': self.id
+                })
+            elif line.diff_tax == 0:
+                return True
+            else:
+                back_tax_invoice = invoice_obj.create({
+                    'partner_id': partner.id,
+                    'type': 'out_refund',
+                    'journal_type': 'sale',
+                    'date_invoice': datetime.today(),
+                    'date': datetime.today(),
+                    'yjzy_type': 'back_tax',
+                    'yjzy_type_1': 'back_tax',
+                    'invoice_attribute': 'extra',
+                    'invoice_type_main': '20_extra',
+                    # 'invoice_attribute_all_in_one':'630',
+                    'back_tax_declaration_id': self.id,
+                    'yjzy_invoice_id': line.invoice_id.id,
+                    'stage_id': self.env['account.invoice.stage'].search([('code', '=', '007')], limit=1).id,
+                    'invoice_line_ids': [(0, 0, {
+                        'name': '%s:%s' % (product.name, self.name),
+                        'product_id': product.id,
+                        'quantity': 1,
+                        'price_unit': -line.diff_tax,
+                        'account_id': account.id,
+                    })]
+                })
+                back_tax_invoice.action_invoice_open()
+                back_tax_invoice.invoice_assign_outstanding_credit()
+                line.invoice_id.adjustment_invoice_id = back_tax_invoice
+                year = fields.datetime.now().strftime('%Y')
+                number = int(line.line_name[4:]) + 1
+                if len(str(number)) == 1:
+                    number_str = '0000000'
+                elif len(str(number)) == 2:
+                    number_str = '000000'
+                elif len(str(number)) == 3:
+                    number_str = '00000'
+                elif len(str(number)) == 4:
+                    number_str = '0000'
+                elif len(str(number)) == 5:
+                    number_str = '000'
+                elif len(str(number)) == 6:
+                    number_str = '00'
+                elif len(str(number)) == 7:
+                    number_str = '0'
+                else:
+                    number_str = ''
+                line_name_new = '%s%s%s' % (year, number_str, int(line.line_name[4:]) + 1)
+                print('line_name_new_akiny', line_name_new)
+
+
+                btd_line_id = btd_line.create({
+                    'line_name': line_name_new,
+                    'invoice_id': back_tax_invoice.id,
+                    'declaration_amount': 0,
+                    'btd_id': self.id
+                })
+
+
+
+
 
     @api.multi
     def name_get(self):
@@ -333,11 +468,13 @@ class DeclareDeclarationLine(models.Model):
             declaration_amount_residual = one.declaration_amount - (one.invoice_amount_total - one.invoice_residual_total)
             one.declaration_amount_residual = declaration_amount_residual
 
-    @api.depends('declaration_amount', 'invoice_amount_total')
+    @api.depends('declaration_amount', 'invoice_amount_total','invoice_residual_total')
     def compute_diff_tax(self):
         for one in self:
-            diff_tax = one.declaration_amount - one.invoice_amount_total
+            diff_tax = one.declaration_amount - one.invoice_residual_total
+            diff_origin_tax = one.declaration_amount - one.invoice_amount_total
             one.diff_tax = diff_tax
+            one.diff_origin_tax = diff_origin_tax
 
     btd_id = fields.Many2one('back.tax.declaration',u'退税申报单',ondelete='cascade',  required=True)
     invoice_id = fields.Many2one('account.invoice',u'账单', required=True)
@@ -349,13 +486,19 @@ class DeclareDeclarationLine(models.Model):
     company_id = fields.Many2one('res.company', string='Company',
                                  related='btd_id.company_id', store=True, readonly=True, related_sudo=False)
     declaration_amount = fields.Monetary(u'退税申报金额',currency_field='invoice_currency_id')
-    diff_tax = fields.Monetary(u'申报和原始应收差额',currency_field='invoice_currency_id',compute='compute_diff_tax',store=True)
+    diff_tax = fields.Monetary(u'申报和剩余应收差额',currency_field='invoice_currency_id',compute='compute_diff_tax',store=True)
+    diff_origin_tax = fields.Monetary(u'申报和原始应收差额', currency_field='invoice_currency_id', compute='compute_diff_tax',
+                               store=True)
     declaration_amount_residual = fields.Monetary(u'未收款申报金额',currency_field='invoice_currency_id',compute=compute_declaration_amount_residual,store=True)
     comments = fields.Text(u'备注')
     invoice_attribute_all_in_one = fields.Selection(invoice_attribute_all_in_one, u'账单属性all_in_one',
                                                     related='invoice_id.invoice_attribute_all_in_one', store=True)
 
+    def _default_name(self):
+        line_name = self.env['ir.sequence'].next_by_code('back.tax.declaration.line.name')
+        return line_name
 
+    line_name = fields.Char(u'明细编号', default=lambda self: self._default_name())
 
 
 

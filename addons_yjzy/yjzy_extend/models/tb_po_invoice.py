@@ -393,8 +393,10 @@ class tb_po_invoice(models.Model):
 
     price_total = fields.Monetary('金额合计', currency_field='currency_id', compute=compute_info_store, store=True)
 
+
+#----------------------0802
     state = fields.Selection(
-        [('10_draft', u'草稿'), ('20_submit', u'已提交待审批'),('25','费用转货款未认领'), ('30_done', '审批完成已生成账单'), ('80_refuse', u'拒绝'),
+        [('10_draft', u'草稿'), ('20_submit', u'已提交待审批'),('25','未关联出运合同'), ('30_done', '审批完成已生成账单'), ('80_refuse', u'拒绝'),#('25','费用转货款未认领')
          ('90_cancel', u'取消')], u'状态', index=True, track_visibility='onchange', default='10_draft')
     state_expense = fields.Selection(
         [('10', u'未认领'), ('20', u'认领完成')], u'费用转货款状态', index=True, default='10')
@@ -1893,11 +1895,12 @@ class tb_po_invoice_line(models.Model):
 
     # 902
 
-    # 827
+    # 827 820
     tax_rate_add = fields.Float(u'增加采购税率', related='tb_po_id.tax_rate_add')
     expense_tax = fields.Float(u'税费', compute=compute_info)
     tb_po_id = fields.Many2one('tb.po.invoice', 'TB_PO', ondelete='cascade')
     hsname_all_line_id = fields.Many2one('tbl.hsname.all', u'销售明细')
+
     hs_en_name = fields.Char(related='hs_id.en_name')
     hs_id2 = fields.Many2one('hs.hs', u'报关品名')
     out_qty2 = fields.Float('报关数量')
