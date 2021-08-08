@@ -34,6 +34,7 @@
                     <field name="reconcile_amount" invisible="1"/>
                     <field name="declaration_amount_all" string="本次申报金额"/>
                     <field name="declaration_amount_all_residual_new" string="剩余未收申报金额"/>
+                    <field name="tuishuirld_id"/>
                 </tree>
             </field>
         </record>
@@ -48,6 +49,7 @@
                                 confirm="确定提交申报。确定后，将无法修改！"/>
                         <button name="create_other_invoice" type="object" string="调节" groups="base.group_system" attrs="{'invisible':[('state','!=','draft')]}"/>
                         <button name="create_adjustment_invoice" type="object" string="调节2" groups="base.group_system"  attrs="{'invisible':[('state','!=','draft')]}"/>
+                        <button name="create_tuishuirld" type="object" string="创建申报认领" groups="base.group_system"  attrs="{'invisible':[('state','!=','draft')]}"/>
 
                         <button name="%(back_tax_refuse_wizard_action)d"  states="approval"  string="拒绝" type="action"  groups="sales_team.group_manager"/>
                         <button name="open_wizard_back_tax_declaration" string="添加应收退税" type="object"
@@ -80,6 +82,7 @@
                             <group>
                                 <field name="payment_amount"/>
                                 <field name="payment_balance"/>
+                                <field name="tuishuirld_id"/>
                             </group>
 
                         </group>
@@ -88,11 +91,12 @@
                                 <button name="open_wizard_back_tax_declaration" string="批量添加应收退税" class="highlight"
                                         type="object" attrs="{'invisible':[('state','in',['done','paid'])]}"/>
                                 <field name="btd_line_ids"  attrs="{'readonly':[('state','in',['done','paid'])]}">
-                                    <tree create="false" editable="bottom" decoration-danger="invoice_attribute_all_in_one == '630'" default_order="line_name">
+                                    <tree create="false" editable="bottom" decoration-danger="back_tax_type == 'adjustment'" default_order="line_name">
                                         <field name="line_name"/>
                                         <field name="tenyale_name" readonly="1"/>
                                         <field name="invoice_id" string="退税账单"/>
-                                        <field name="invoice_attribute_all_in_one"/>
+                                        <field name="invoice_attribute_all_in_one" string="账单属性"/>
+                                        <field name="back_tax_type" string="退税调节属性"/>
                                         <field name="invoice_currency_id" invisible="1"/>
                                         <field name="invoice_amount_total" string="原始应收退税"/>
 

@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--    应收认领搜索视图-->
+    <record id="view_tuishuirld_search_new" model="ir.ui.view">
+        <field name="name">account.payment.search</field>
+        <field name="model">account.payment</field>
+        <field name="arch" type="xml">
+            <search string="Payments">
+                <field name="name"
+                       filter_domain="[('name','ilike',self)]"
+                       string="Description"/>
+                <separator/>
+                <field name="name"/>
+                <group expand="1" string="Group By">
+
+                </group>
+
+            </search>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="account_tuishuirld_tree">
+        <field name="name">account.payment.tuishuirld.tree</field>
+        <field name="model">account.payment</field>
+        <field name="priority" eval="999"/>
+        <field name="arch" type="xml">
+            <tree string="退税认领单">
+                <field name="id" invisible="1"/>
+                <field name="back_tax_declaration_id" invisible="1"/>
+                <field name="name" string="退税认领单"/>
+                <field name="declaration_title"/>
+                <field name="declaration_date"/>
+                <field name="declaration_amount_all"/>
+                <field name="amount" sum="Amount" string="认领金额"/>
+                <field name="payment_date" string="申报认领日期"/>
+                <field name="name"/>
+                <field name="journal_id" groups="base.group_system"/>
+                <field name="payment_method_id" invisible="1"/>
+                <field name="partner_id" string="Customer" groups="base.group_system"/>
+                <field name="declaration_state" string="申报状态"/>
+                <field name="state" groups="base.group_system"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="partner_type" invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="account_rcsktsrld_tree">
+        <field name="name">account.payment.rcsktsrld.tree</field>
+        <field name="model">account.payment</field>
+        <field name="priority" eval="999"/>
+        <field name="arch" type="xml">
+            <tree string="日常收款退税认领">
+                <field name="id" invisible="1"/>
+                <field name="back_tax_declaration_id" string="退税申报表"/>
+                <field name="back_tax_declaration_name" string="退税申报表" invisible="1"/>
+                <field name="name" string="收款退税认领编号"/>
+                <field name="declaration_title"/>
+                <field name="declaration_date"/>
+                <field name="declaration_amount_all"/>
+                <field name="tuishuirld_id"/>
+                <field name="tuishuirld_amount" sum="Amount" string="申报认领金额"/>
+                <field name="name" string="收款退税认领编号"/>
+                <field name="journal_id" groups="base.group_system"/>
+                <field name="payment_method_id" invisible="1"/>
+                <field name="partner_id" string="Customer" groups="base.group_system"/>
+                <field name="declaration_state" string="申报状态"/>
+                <field name="state" groups="base.group_system"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="partner_type" invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+
+    <record id="view_account_tuishuirld_form" model="ir.ui.view">
+        <field name="name">account.payment.form</field>
+        <field name="model">account.payment</field>
+        <field name="arch" type="xml">
+            <form string="退税申报认领" create="false">
+                <header>
+
+                    <field name="declaration_state" widget="statusbar" statusbar_visible=" "/>
+
+                </header>
+                <header groups="base.group_system">
+                    <button name="post" class="oe_highlight" states="draft" string="Confirm" type="object"
+                            groups="base.group_system"/>
+                    <button name="action_draft" class="oe_highlight" states="cancelled" string="Set To Draft"
+                            type="object" groups="base.group_system"/>
+                    <button name="cancel" attrs="{'invisible': [('state', 'in', ['draft','cancelled'])]}"
+                            string="Cancel" type="object" groups="base.group_system"/>
+                    <button name="open_reconcile_account_move_line" class="oe_highlight" string="打开核销分录" type="object"
+                            groups="base.group_system"/>
+                    <button name="create_yshxd_ysrl" string="创建应收认领" type="object"/>
+                    <button name="compute_advance_balance_total" type="object" string="更新预收认领"
+                            groups="base.group_system"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,posted,reconciled,cancelled"/>
+
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="open_back_tax_declaration_id" type="object" class="oe_stat_button"
+                                icon="fa-bars" string="退税申报表"
+                        >
+
+                        </button>
+
+                        <button class="oe_stat_button" name="button_journal_entries"
+                                string="Journal Items" type="object"
+                                groups="base.group_system"
+                                attrs="{'invisible':[('move_line_ids','=',[])]}" icon="fa-bars"/>
+                        <field name="move_line_ids" invisible="1"/>
+                        <button class="oe_stat_button" name="button_invoices"
+                                string="Invoices" type="object"
+                                attrs="{'invisible':[('has_invoices','=',False)]}" icon="fa-bars"/>
+                        <button class="oe_stat_button" name="open_payment_matching_screen"
+                                string="Payment Matching" type="object" groups="base.group_system"
+                                attrs="{'invisible':[('move_reconciled','=',True)]}" icon="fa-university"/>
+                        <field name="has_invoices" invisible="1"/>
+                        <field name="move_reconciled" invisible="1"/>
+                        <field name="is_editable" widget="boolean_toggle" groups="sales_team.group_manager"/>
+                    </div>
+                    <field name="id" invisible="1"/>
+                    <div class="oe_title" invisible="1">
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group col="3">
+                        <group>
+                            <div colspan="2">
+                                <field name="display_name"/>
+                            </div>
+                            <field name="sfk_type"/>
+                            <label for="amount" string="认领金额"/>
+                            <div name="amount_div" class="o_row" string="认领金额">
+                                <field name="amount" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                <field name="currency_id" options="{'no_create': True, 'no_open': True}"
+                                       groups="base.group_multi_currency"
+                                       attrs="{'readonly': [('state', '!=', 'draft')]}" invisible="1"/>
+                            </div>
+                            <field name="journal_id" domain="[('type','=', 'renling')]" string="收款日记账"
+                                   widget="selection" invisible="1"/>
+                            <field name="destination_journal_id" widget="selection"
+                                   attrs="{'required': [('payment_type', '=', 'transfer')], 'invisible': [('payment_type', '!=', 'transfer')], 'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="hide_payment_method" invisible="1"/>
+
+                            <field name="payment_method_id" string=" " widget="radio"
+                                   attrs="{'invisible': [('hide_payment_method', '=', True)], 'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="payment_method_code" invisible="1"/>
+                            <!--                            <field name="advance_balance_total"-->
+                            <!--                                   invisible="context.get('operation')"-->
+                            <!--                                   attrs="{'invisible':[('state_1','not in',['40_approve','50_posted','60_done'])]}"-->
+                            <!--                                   string="未被认领金额"/>-->
+                            <!--                            <field name="advance_total"-->
+                            <!--                                   invisible="context.get('operation')"-->
+                            <!--                                   attrs="{'invisible':[('state_1','not in',['40_approve','50_posted','60_done'])]}"-->
+                            <!--                                   string="被认领金额"/>-->
+                        </group>
+
+                        <group>
+                            <field name="payment_date" string="认领日期"/>
+                            <field name="communication"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="申报明细">
+                            <field name="btd_line_ids">
+                                <tree create="false" editable="bottom"
+                                      decoration-danger="invoice_attribute_all_in_one == '630'"
+                                      default_order="line_name">
+                                    <field name="line_name"/>
+                                    <field name="tenyale_name" readonly="1"/>
+                                    <field name="invoice_id" string="退税账单"/>
+                                    <field name="invoice_attribute_all_in_one"/>
+                                    <field name="invoice_currency_id" invisible="1"/>
+                                    <field name="invoice_amount_total" string="原始应收退税"/>
+
+
+                                    <field name="invoice_residual_total" string="剩余应收退税"/>
+
+
+                                    <field name="declaration_amount" string="本次申报金额"/>
+                                    <field name="diff_tax"/>
+                                    <field name="diff_origin_tax"/>
+
+                                    <field name="declaration_amount_residual"
+                                           attrs="{'column_invisible':[('parent.state','not in',['done','paid'])]}"/>
+                                    <field name="comments"/>
+                                </tree>
+                            </field>
+                        </page>
+
+
+                        <page groups="base.group_system">
+                            <group>
+                                <field name="payment_type"/>
+                            </group>
+
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_account_rcsktsrld_form" model="ir.ui.view">
+        <field name="name">account.payment.rcsktsrld.form</field>
+        <field name="model">account.payment</field>
+        <field name="arch" type="xml">
+            <form string="收款退税认领" create="false">
+                <header>
+                    <field name="declaration_state" widget="statusbar" statusbar_visible=" "/>
+                </header>
+                <header groups="base.group_system">
+                    <button name="post" class="oe_highlight" states="draft" string="Confirm" type="object"
+                            groups="base.group_system"/>
+                    <button name="action_draft" class="oe_highlight" states="cancelled" string="Set To Draft"
+                            type="object" groups="base.group_system"/>
+                    <button name="cancel" attrs="{'invisible': [('state', 'in', ['draft','cancelled'])]}"
+                            string="Cancel" type="object" groups="base.group_system"/>
+                    <button name="open_reconcile_account_move_line" class="oe_highlight" string="打开核销分录" type="object"
+                            groups="base.group_system"/>
+                    <button name="create_yshxd_ysrl" string="创建应收认领" type="object"/>
+                    <button name="compute_advance_balance_total" type="object" string="更新预收认领"
+                            groups="base.group_system"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,posted,reconciled,cancelled"/>
+
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="open_back_tax_declaration_id" type="object" class="oe_stat_button"
+                                icon="fa-bars" string="退税申报表">
+
+                        </button>
+
+                        <button class="oe_stat_button" name="button_journal_entries"
+                                string="Journal Items" type="object"
+                                groups="base.group_system"
+                                attrs="{'invisible':[('move_line_ids','=',[])]}" icon="fa-bars"/>
+                        <field name="move_line_ids" invisible="1"/>
+                        <button class="oe_stat_button" name="button_invoices"
+                                string="Invoices" type="object"
+                                attrs="{'invisible':[('has_invoices','=',False)]}" icon="fa-bars"/>
+                        <button class="oe_stat_button" name="open_payment_matching_screen"
+                                string="Payment Matching" type="object" groups="base.group_system"
+                                attrs="{'invisible':[('move_reconciled','=',True)]}" icon="fa-university"/>
+                        <field name="has_invoices" invisible="1"/>
+                        <field name="move_reconciled" invisible="1"/>
+                        <field name="is_editable" widget="boolean_toggle" groups="sales_team.group_manager"/>
+                    </div>
+                    <field name="id" invisible="1"/>
+                    <div class="oe_title" invisible="1">
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group col="3">
+                        <group>
+                            <div colspan="2">
+                                <field name="display_name"/>
+                            </div>
+                            <field name="sfk_type"/>
+
+                            <label for="amount" string="认领金额"/>
+                            <div name="amount_div" class="o_row" string="认领金额">
+                                <field name="amount" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                <field name="currency_id" options="{'no_create': True, 'no_open': True}"
+                                       groups="base.group_multi_currency"
+                                       attrs="{'readonly': [('state', '!=', 'draft')]}" invisible="1"/>
+                            </div>
+                            <field name="journal_id" domain="[('type','=', 'renling')]" string="收款日记账"
+                                   widget="selection" invisible="1"/>
+                            <field name="destination_journal_id" widget="selection"
+                                   attrs="{'required': [('payment_type', '=', 'transfer')], 'invisible': [('payment_type', '!=', 'transfer')], 'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="hide_payment_method" invisible="1"/>
+
+                            <field name="payment_method_id" string=" " widget="radio"
+                                   attrs="{'invisible': [('hide_payment_method', '=', True)], 'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="payment_method_code" invisible="1"/>
+                            <!--                            <field name="advance_balance_total"-->
+                            <!--                                   invisible="context.get('operation')"-->
+                            <!--                                   attrs="{'invisible':[('state_1','not in',['40_approve','50_posted','60_done'])]}"-->
+                            <!--                                   string="未被认领金额"/>-->
+                            <!--                            <field name="advance_total"-->
+                            <!--                                   invisible="context.get('operation')"-->
+                            <!--                                   attrs="{'invisible':[('state_1','not in',['40_approve','50_posted','60_done'])]}"-->
+                            <!--                                   string="被认领金额"/>-->
+                        </group>
+
+                        <group>
+                            <field name="payment_date" string="认领日期"/>
+                            <field name="communication"/>
+                            <field name="back_tax_declaration_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page>
+                            <field name="rcsktsrld_ids">
+                                <tree string="日常收款退税认领">
+                                    <field name="id" invisible="1"/>
+                                    <field name="back_tax_declaration_id" string="退税申报表"/>
+                                    <field name="back_tax_declaration_name" string="退税申报表" invisible="1"/>
+                                    <field name="name" string="收款退税认领编号"/>
+                                    <field name="declaration_title"/>
+                                    <field name="declaration_date"/>
+                                    <field name="declaration_amount_all"/>
+                                    <field name="tuishuirld_id"/>
+                                    <field name="tuishuirld_amount" sum="Amount" string="申报认领金额"/>
+                                    <field name="name" string="收款退税认领编号"/>
+                                    <field name="journal_id" groups="base.group_system"/>
+                                    <field name="payment_method_id" invisible="1"/>
+                                    <field name="partner_id" string="Customer" groups="base.group_system"/>
+                                    <field name="declaration_state" string="申报状态"/>
+                                    <field name="state" groups="base.group_system"/>
+                                    <field name="company_id" groups="base.group_multi_company"/>
+                                    <field name="currency_id" invisible="1"/>
+                                    <field name="partner_type" invisible="1"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="申报明细">
+                            <field name="btd_line_ids">
+                                <tree create="false" editable="bottom"
+                                      decoration-danger="invoice_attribute_all_in_one == '630'"
+                                      default_order="line_name">
+                                    <field name="line_name"/>
+                                    <field name="tenyale_name" readonly="1"/>
+                                    <field name="invoice_id" string="退税账单"/>
+                                    <field name="invoice_attribute_all_in_one"/>
+                                    <field name="invoice_currency_id" invisible="1"/>
+                                    <field name="invoice_amount_total" string="原始应收退税"/>
+
+
+                                    <field name="invoice_residual_total" string="剩余应收退税"/>
+
+
+                                    <field name="declaration_amount" string="本次申报金额"/>
+                                    <field name="diff_tax"/>
+                                    <field name="diff_origin_tax"/>
+
+                                    <field name="declaration_amount_residual"
+                                           attrs="{'column_invisible':[('parent.state','not in',['done','paid'])]}"/>
+                                    <field name="comments"/>
+                                </tree>
+                            </field>
+                        </page>
+
+                        <page groups="base.group_system">
+                            <group>
+                                <field name="payment_type"/>
+                            </group>
+
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="action_account_tuishuirl">
+        <field name="name">退税申报认领单</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.payment</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_tuishuirld_search_new"/>
+        <field name="domain">[('sfk_type','=','tuishuirld')]</field>
+        <field name="context">{'default_sfk_type': 'tuishuirld', }
+        </field>
+        <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('account_tuishuirld_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_account_tuishuirld_form')})]"/>
+    </record>
+    <menuitem id="menu_account_tuishuirl" name="退税申报认领单"
+              parent="yjzy_extend.menu_customer_invoice_back_tax_declaration_root" action="action_account_tuishuirl"
+              sequence="99"/>
+
+        <record model="ir.actions.act_window" id="action_account_rcsktsrld">
+        <field name="name">收款退税申报认领</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.payment</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+<!--        <field name="search_view_id" ref="view_tuishuirld_search_new"/>-->
+        <field name="domain">[('sfk_type','=','rcsktsrld')]</field>
+        <field name="context">{'default_sfk_type': 'rcsktsrld', }
+        </field>
+        <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('account_rcsktsrld_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_account_rcsktsrld_form')})]"/>
+    </record>
+    <menuitem id="menu_account_rcsktsrld" name="收款退税申报认领单"
+              parent="yjzy_extend.menu_customer_invoice_back_tax_declaration_root" action="action_account_rcsktsrld"
+              sequence="99"/>
+
+</odoo>

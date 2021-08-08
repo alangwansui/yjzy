@@ -301,9 +301,11 @@
                                                attrs="{'readonly':[('parent.sale_type','!=','proxy')],'column_invisible': [('parent.sale_type','!=','proxy')]}"/>
 
                                         <field name="price2" string="报关单价" readonly="1"
-                                               attrs="{'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
+                                               />
+<!--                                        attrs="{'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"-->
                                         <field name="amount2" sum="小计" string="报关金额"
-                                               attrs="{'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
+                                              />
+<!--                                         attrs="{'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"-->
                                         <field name="purchase_amount" sum="小计" string="原始采购金额"
                                                attrs="{'readonly':True,'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
                                         <field name="purchase_amount2" sum="小计" string="实际采购额"

@@ -37,6 +37,9 @@
 
                         <field name="btd_id" attrs="{'invisible':[('renling_type','not in',['back_tax'])]}"
                                domain="[('state','=','done')]"/>
+                        <field name="tuishuirdl_id" attrs="{'invisible':[('renling_type','not in',['new_back_tax'])]}"
+                               domain="[('declaration_state','=','done')]"/>
+                        <field name="amount_tuishuisk"/>
                         <field name="declaration_amount_all"
                                attrs="{'invisible':[('renling_type','not in',['back_tax'])]}" string="申报单申报金额"/>
                         <label for=" " string="待认领其他应收"
@@ -185,6 +188,7 @@
                                 attrs="{'invisible':['|',('renling_type','not in',['back_tax','yshxd','other_payment','purchase_add_invoice']),('other_payment_invoice_ok','=',False)]}"/>
                         <button name="create_yshxd_ysrl" class="oe_highlight" type='object' string="创建预收认领"
                                 attrs="{'invisible':[('renling_type','not in',['ysrld'])]}"/>
+                        <button name="create_rcsktsrld" type="object" class="oe_highlight" string="创建收款退税申请"/>
                         <button special="cancel" class="oe_highlight" string="取消"/>
                     </footer>
                 </form>

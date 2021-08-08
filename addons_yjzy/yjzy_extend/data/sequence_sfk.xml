@@ -31,6 +31,14 @@
         <field name="padding">8</field>
         <field name="company_id" eval="False"/>
     </record>
+    <record id="seq_sfk_type_rcsktsrld" model="ir.sequence">
+        <field name="name">sfk.type.rcsktsrld</field>
+        <field name="code">sfk.type.rcsktsrld</field>
+        <field name="prefix">SKTS</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
     <record id="seq_sfk_type_nbzz" model="ir.sequence">
         <field name="name">sfk.type.nbzz</field>
         <field name="code">sfk.type.nbzz</field>
@@ -80,6 +88,13 @@
         <field name="padding">8</field>
         <field name="company_id" eval="False"/>
     </record>
+       <record id="seq_sfk_type_tuishuirld" model="ir.sequence">
+        <field name="name">sfk.type.tuishuirld</field>
+        <field name="code">sfk.type.tuishuirld</field>
+        <field name="prefix">TSR</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
         <record id="seq_sfk_type_fkzl" model="ir.sequence">
         <field name="name">sfk.type.fkzl</field>
         <field name="code">sfk.type.fkzl</field>
@@ -108,6 +123,7 @@
         <field name="padding">5</field>
         <field name="company_id" eval="False"/>
     </record>
+
      <record id="seq_sfk_type_reconcile_yingfu" model="ir.sequence">
         <field name="name">sfk.type.reconcile_yingfu</field>
         <field name="code">sfk.type.reconcile_yingfu</field>

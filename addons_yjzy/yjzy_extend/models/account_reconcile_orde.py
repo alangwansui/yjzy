@@ -3950,7 +3950,7 @@ class account_reconcile_order_line_no(models.Model):
                                                      string='可以申请支付应付款')
     amount_payment_can_approve_all_this_time = fields.Monetary(u'可以申请支付应付款d', currency_field='invoice_currency_id')
 
-    invoice_residual_this_time = fields.Monetary(string=u'发票余额d', readonly=True, currency_field='invoice_currency_id')
+    invoice_residual_this_time = fields.Monetary(string=u'发票余额d', currency_field='invoice_currency_id')
 
     amount_payment_can_approve_all_after = fields.Monetary(u'本次申请后可申请金额', currency_field='invoice_currency_id',
                                                            compute=compute_amount_payment_can_approve_all_after)

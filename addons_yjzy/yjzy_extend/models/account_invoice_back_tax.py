@@ -29,6 +29,9 @@ class account_invoice(models.Model):
             one.real_invoice_auto_state_1 = real_invoice_auto_state_1
             one.real_invoice_auto_state_2 = real_invoice_auto_state_2
 
+    def _default_name(self):
+        line_name = self.env['ir.sequence'].next_by_code('back.tax.declaration.line.name')
+        return line_name
 
     purchase_invoice_ids = fields.Many2many('account.invoice',compute=compute_purchase_invoice_ids)
 
@@ -43,3 +46,7 @@ class account_invoice(models.Model):
         index=True,compute=compute_real_invoice_auto_state_1_2,store=True)
 
     adjustment_invoice_id = fields.Many2one('account.invoice',u'退税申报调节账单')
+
+
+
+    line_name = fields.Char(u'账单排序编号', default=lambda self: self._default_name())

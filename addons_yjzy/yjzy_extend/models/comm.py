@@ -5,6 +5,7 @@ sfk_type = [
     ('rcfkd', u'日常付款单'),#Y中文改成付款申请单
     ('rcfksqd', u'日常付款申请单'),#费用和其他收入产生的。后续版本可以取消
     ('rcskrld', u'日常收款认领单'),  #针对费用的
+    ('rcsktsrld',u'收款退税申报认领单'),
     ('nbzz', u'内部转账'),
     ('jiehui', u'结汇'),
     ('yshxd', u'应收认领单'),
@@ -13,6 +14,7 @@ sfk_type = [
     ('yfsqd', u'预付申请单'),
     ('yingshourld',u'应收流水'),
     ('yingfurld',u'应付流水'),
+    ('tuishuirld',u'退税申报账单'),
     ('fkzl',u'付款指令'),#Y
     ('fksqd',u'付款申请单'),
     ('reconcile_ysrld',u'预收核销'),

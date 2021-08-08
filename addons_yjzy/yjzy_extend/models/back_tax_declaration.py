@@ -18,8 +18,8 @@ class DeclareDeclaration(models.Model):
     def compute_invoice_amount_all(self):
         for one in self:
             btd_line_ids = one.btd_line_ids
-            btd_line_630_ids = one.btd_line_ids.filtered(lambda x: x.invoice_attribute_all_in_one == '630')
-            btd_line_no_630_ids = one.btd_line_ids.filtered(lambda x: x.invoice_attribute_all_in_one != '630')
+            btd_line_630_ids = one.btd_line_ids.filtered(lambda x: x.back_tax_type == 'adjustment')
+            btd_line_no_630_ids = one.btd_line_ids.filtered(lambda x: x.back_tax_type != 'adjustment')
             invoice_amount_all = sum(x.invoice_amount_total for x in btd_line_ids)
             invoice_amount_630 = sum(x.invoice_amount_total for x in btd_line_630_ids)
             invoice_amount_no_630 = sum(x.invoice_amount_total for x in btd_line_no_630_ids)
@@ -31,8 +31,8 @@ class DeclareDeclaration(models.Model):
     def compute_invoice_residual_all(self):
         for one in self:
             btd_line_ids = one.btd_line_ids
-            btd_line_630_ids = one.btd_line_ids.filtered(lambda x: x.invoice_attribute_all_in_one == '630')
-            btd_line_no_630_ids = one.btd_line_ids.filtered(lambda x: x.invoice_attribute_all_in_one != '630')
+            btd_line_630_ids = one.btd_line_ids.filtered(lambda x: x.back_tax_type == 'adjustment')
+            btd_line_no_630_ids = one.btd_line_ids.filtered(lambda x: x.back_tax_type != 'adjustment')
             invoice_residual_all = sum(x.invoice_residual_total for x in btd_line_ids)
             invoice_residual_630 = sum(x.invoice_residual_total for x in btd_line_630_ids)
             invoice_residual_no_630 = sum(x.invoice_residual_total for x in btd_line_no_630_ids)
@@ -89,7 +89,9 @@ class DeclareDeclaration(models.Model):
     payment_balance = fields.Monetary('未认领金额',currency_field='company_currency_id',related='payment_id.balance')
     name = fields.Char('编号', default=lambda self: self.env['ir.sequence'].next_by_code('back.tax.declaration'))
     display_name = fields.Char(u'显示名称', compute=compute_display_name)
-    btd_line_ids = fields.One2many('back.tax.declaration.line','btd_id',u'申报明细')
+    btd_line_ids = fields.One2many('back.tax.declaration.line','btd_id',u'申报明细',
+                                   domain=['|','&',('back_tax_type','!=','adjustment'),('back_tax_type','=','adjustment'),('invoice_residual_total','!=',0)])
+
     invoice_ids = fields.Many2many('account.invoice',compute=compute_invoice_ids,store=True)
     tb_contract_code = fields.Char('合同号',compute=compute_invoice_ids,store=True)
     gongsi_id = fields.Many2one('gongsi', '内部公司')
@@ -118,6 +120,7 @@ class DeclareDeclaration(models.Model):
     declaration_amount_all_residual = fields.Monetary(u'本次申报金额收款金额',currency_field='company_currency_id',compute=compute_declaration_amount,store=True)
 
     diff_tax_amount = fields.Monetary('申报和应收差额',currency_field='company_currency_id',compute=compute_diff_tax_amount,store=True)
+    tuishuirld_id = fields.Many2one('account.payment',u'退税申报认领单')
 
     def create_other_invoice(self):
         diff_tax_amount = self.diff_tax_amount
@@ -225,6 +228,7 @@ class DeclareDeclaration(models.Model):
             raise Warning(u'没有找到退税科目,请先在退税产品的收入科目上设置')
         print('btd_line_ids_akiny',self.btd_line_ids)
         for line in self.btd_line_ids:
+            invoice_attribute = line.invoice_id.invoice_attribute
             if line.diff_tax > 0:
                 back_tax_invoice = invoice_obj.create({
                     'partner_id': partner.id,
@@ -234,9 +238,10 @@ class DeclareDeclaration(models.Model):
                     'date': datetime.today(),
                     'yjzy_type': 'back_tax',
                     'yjzy_type_1': 'back_tax',
-                    'invoice_attribute': 'extra',
+                    'invoice_attribute': invoice_attribute,
                     'invoice_type_main': '20_extra',
-                    # 'invoice_attribute_all_in_one':'630',
+                    # 'invoice_attribute_all_in_one':invoice_attribute_all_in_one,
+                    'back_tax_type':'adjustment',
                     'back_tax_declaration_id': self.id,
                     'yjzy_invoice_id':line.invoice_id.id,
                     'stage_id': self.env['account.invoice.stage'].search([('code', '=', '007')], limit=1).id,
@@ -295,9 +300,10 @@ class DeclareDeclaration(models.Model):
                     'date': datetime.today(),
                     'yjzy_type': 'back_tax',
                     'yjzy_type_1': 'back_tax',
-                    'invoice_attribute': 'extra',
+                    'invoice_attribute': invoice_attribute,
                     'invoice_type_main': '20_extra',
-                    # 'invoice_attribute_all_in_one':'630',
+                    # 'invoice_attribute_all_in_one':invoice_attribute_all_in_one,
+                    'back_tax_type': 'adjustment',
                     'back_tax_declaration_id': self.id,
                     'yjzy_invoice_id': line.invoice_id.id,
                     'stage_id': self.env['account.invoice.stage'].search([('code', '=', '007')], limit=1).id,
@@ -443,6 +449,61 @@ class DeclareDeclaration(models.Model):
             if one.invoice_attribute_all_in_one != '630' and one.diff_tax < 0:
                 one.yjzy_invoice_id = line_id
 
+    #创建一张付款单，把所有的退税账单都加入，待收款的时候完成统一过账
+    def create_tuishuirld(self):
+        self.ensure_one()
+        invoice_dic = []
+        line_ids = self.btd_line_ids.filtered(lambda x: x.invoice_residual_total >0)
+        for one in line_ids:
+            invoice_dic.append(one.invoice_id.id)
+        print('invoice_dic', invoice_dic)
+
+        sfk_type = 'tuishuirld'
+        name = self.env['ir.sequence'].next_by_code('sfk.type.%s' % sfk_type)
+        account_payment_obj = self.env['account.payment']
+        partner_id = self.env.ref('yjzy_extend.partner_back_tax')
+
+        journal_domain_ysdrl = [('code', '=', 'ysdrl'), ('company_id', '=', self.env.user.company_id.id)]
+        journal_id_ysdrl = self.env['account.journal'].search(journal_domain_ysdrl, limit=1)
+        reconcile_tuishui_id = account_payment_obj.create({
+            'back_tax_declaration_id': self.id,
+            'name': name,
+            'sfk_type': sfk_type,
+            'partner_id': partner_id.id,
+            'amount': self.declaration_amount_all,
+            'currency_id': self.company_currency_id.id,
+            'payment_type': 'inbound',
+            'partner_type': 'customer',
+            'advance_ok': False,
+            'journal_id': journal_id_ysdrl.id,
+            'payment_method_id': 2,
+            'invoice_ids': [(6, 0, invoice_dic)],
+            'reconcile_type': '45_declaration_tax',
+            'post_date': fields.date.today(),
+
+        })
+        self.tuishuirld_id = reconcile_tuishui_id
+        for one in self.btd_line_ids:
+            one.tuishuirld_id = reconcile_tuishui_id
+
+
+    def open_tuishuirld_id(self):
+        form_view = self.env.ref('yjzy_extend.view_account_tuishuirld_form').id
+        return {
+            'name': '退税申报表',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'account.reconcile.order',
+            'views': [(form_view, 'form')],
+            'res_id': self.tuishuirld_id.id,
+            'target': 'current',
+            'type': 'ir.actions.act_window',
+
+            'context': {
+                        }
+
+        }
+
 
 
 class DeclareDeclarationLine(models.Model):
@@ -493,12 +554,16 @@ class DeclareDeclarationLine(models.Model):
     comments = fields.Text(u'备注')
     invoice_attribute_all_in_one = fields.Selection(invoice_attribute_all_in_one, u'账单属性all_in_one',
                                                     related='invoice_id.invoice_attribute_all_in_one', store=True)
+    back_tax_type = fields.Selection([('normal', u'正常退税'),
+                                      ('adjustment', u'调节退税'),
+                                      ], string=u'退税类型', related='invoice_id.back_tax_type',store=True)
+    tuishuirld_id = fields.Many2one('account.payment', u'退税申报认领单')
 
-    def _default_name(self):
-        line_name = self.env['ir.sequence'].next_by_code('back.tax.declaration.line.name')
-        return line_name
+    # def _default_name(self):
+    #     line_name = self.env['ir.sequence'].next_by_code('back.tax.declaration.line.name')
+    #     return line_name
 
-    line_name = fields.Char(u'明细编号', default=lambda self: self._default_name())
+    line_name = fields.Char(u'账单排序编号', related='invoice_id.line_name', store=True)
 
 
 

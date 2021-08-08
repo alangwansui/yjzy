@@ -651,8 +651,8 @@ class account_invoice(models.Model):
                     name = '410'
                 else:
                     name = '510'
-            elif invoice_attribute == 'extra' and yjzy_type == 'back_tax':
-                name = '630'
+            # elif invoice_attribute == 'extra' and yjzy_type == 'back_tax':
+            #     name = '630'back
 
             one.invoice_attribute_all_in_one = name
 
@@ -788,6 +788,7 @@ class account_invoice(models.Model):
                                          store=True)
     btd_line_ids = fields.One2many('back.tax.declaration.line', 'invoice_id', u'申报明细')
 
+
     tb_po_invoice_back_tax_ids = fields.Many2many('account.invoice', '相关退税账单', compute=compute_tb_po_invoice)#C
     tb_po_invoice_back_tax_ids_count = fields.Integer('相关退税账单数量', compute=compute_tb_po_invoice)#C
     tb_po_invoice_back_tax_ids_amount_total = fields.Monetary('相关退税账单金额', compute=compute_tb_invoice_amount, store=True)#C
@@ -855,6 +856,9 @@ class account_invoice(models.Model):
     invoice_type_main = fields.Selection([('10_main', u'常规账单'),
                                           ('20_extra', u'额外账单'),
                                           ('30_reconcile', u'核销账单')], u'账单类型')
+    back_tax_type = fields.Selection([('normal', u'正常退税'),
+                                    ('adjustment', u'调节退税'),
+                                    ], string=u'退税类型',default='normal')
 
     # from_type = fields.Selection([('manual_create',u'手动创建'),('auto_crate',u'自动创建')],u'创建方式')
 
