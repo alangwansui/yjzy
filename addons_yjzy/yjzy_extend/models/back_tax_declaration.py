@@ -90,7 +90,7 @@ class DeclareDeclaration(models.Model):
     name = fields.Char('编号', default=lambda self: self.env['ir.sequence'].next_by_code('back.tax.declaration'))
     display_name = fields.Char(u'显示名称', compute=compute_display_name)
     btd_line_ids = fields.One2many('back.tax.declaration.line','btd_id',u'申报明细',
-                                   domain=['|','&',('back_tax_type','!=','adjustment'),('back_tax_type','=','adjustment'),('invoice_residual_total','!=',0)])
+                                   )#domain=['|','&',('back_tax_type','!=','adjustment'),('back_tax_type','=','adjustment'),('invoice_residual_total','!=',0)]
 
     invoice_ids = fields.Many2many('account.invoice',compute=compute_invoice_ids,store=True)
     tb_contract_code = fields.Char('合同号',compute=compute_invoice_ids,store=True)
@@ -212,8 +212,8 @@ class DeclareDeclaration(models.Model):
                 print('self_akiny',btd_line_id,back_tax_invoice)
 
 
-    #创建调节账单
-    def create_adjustment_invoice(self):
+    #创建调节账单这个有大于的时候的计算，目前不做计算
+    def ____create_adjustment_invoice(self):
 
         diff_tax_amount = self.diff_tax_amount
         invoice_obj = self.env['account.invoice']
@@ -346,6 +346,80 @@ class DeclareDeclaration(models.Model):
                     'declaration_amount': 0,
                     'btd_id': self.id
                 })
+
+    # 创建调节账单
+    def create_adjustment_invoice(self):
+        diff_tax_amount = self.diff_tax_amount
+        invoice_obj = self.env['account.invoice']
+        btd_line = self.env['back.tax.declaration.line']
+        partner = self.env.ref('yjzy_extend.partner_back_tax')
+        product = self.env.ref('yjzy_extend.product_back_tax')
+        # account = self.env['account.account'].search([('code','=', '50011'),('company_id', '=', self.user_id.company_id.id)], limit=1)
+        account = product.property_account_income_id
+        if not account:
+            raise Warning(u'没有找到退税科目,请先在退税产品的收入科目上设置')
+        print('btd_line_ids_akiny', self.btd_line_ids)
+        for line_1 in self.btd_line_ids:
+            if line_1.diff_tax > 0:
+                raise Warning(u'申报退税金额不允许大于系统应收退税金额！')
+        for line in self.btd_line_ids:
+            invoice_attribute = line.invoice_id.invoice_attribute
+            if line.diff_tax < 0:
+                back_tax_invoice = invoice_obj.create({
+                    'partner_id': partner.id,
+                    'type': 'out_refund',
+                    'journal_type': 'sale',
+                    'date_invoice': datetime.today(),
+                    'date': datetime.today(),
+                    'yjzy_type': 'back_tax',
+                    'yjzy_type_1': 'back_tax',
+                    'invoice_attribute': invoice_attribute,
+                    'invoice_type_main': '20_extra',
+                    # 'invoice_attribute_all_in_one':invoice_attribute_all_in_one,
+                    'back_tax_type': 'adjustment',
+                    'back_tax_declaration_id': self.id,
+                    'yjzy_invoice_id': line.invoice_id.id,
+                    'stage_id': self.env['account.invoice.stage'].search([('code', '=', '007')], limit=1).id,
+                    'invoice_line_ids': [(0, 0, {
+                        'name': '%s:%s' % (product.name, self.name),
+                        'product_id': product.id,
+                        'quantity': 1,
+                        'price_unit': -line.diff_tax,
+                        'account_id': account.id,
+                    })]
+                })
+                back_tax_invoice.action_invoice_open()
+                back_tax_invoice.invoice_assign_outstanding_credit()
+                line.invoice_id.adjustment_invoice_id = back_tax_invoice
+                year = fields.datetime.now().strftime('%Y')
+                number = int(line.line_name[4:]) + 1
+                if len(str(number)) == 1:
+                    number_str = '0000000'
+                elif len(str(number)) == 2:
+                    number_str = '000000'
+                elif len(str(number)) == 3:
+                    number_str = '00000'
+                elif len(str(number)) == 4:
+                    number_str = '0000'
+                elif len(str(number)) == 5:
+                    number_str = '000'
+                elif len(str(number)) == 6:
+                    number_str = '00'
+                elif len(str(number)) == 7:
+                    number_str = '0'
+                else:
+                    number_str = ''
+                line_name_new = '%s%s%s' % (year, number_str, int(line.line_name[4:]) + 1)
+                print('line_name_new_akiny', line_name_new)
+
+                btd_line_id = btd_line.create({
+                    'line_name': line_name_new,
+                    'invoice_id': back_tax_invoice.id,
+                    'declaration_amount': 0,
+                    'btd_id': self.id
+                })
+            else:
+                return True
 
 
 

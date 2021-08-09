@@ -361,7 +361,8 @@ class hr_expense_sheet(models.Model):
         if self.expense_to_invoice_type == 'to_invoice':
             if self.tb_po_invoice_ids:
                 self.approve_expense_sheets()
-                self.tb_po_invoice_ids.action_manager_approve()
+                for one in self.tb_po_invoice_ids:
+                    one.action_manager_approve()
                 print('tb_po_invoice_ids',self.tb_po_invoice_ids)
                 self.write({'manager_confirm': self.env.user.id,
                             'stage_id': stage_id.id,
