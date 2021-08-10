@@ -46,7 +46,20 @@ class account_invoice(models.Model):
         index=True,compute=compute_real_invoice_auto_state_1_2,store=True)
 
     adjustment_invoice_id = fields.Many2one('account.invoice',u'退税申报调节账单')
-
+    is_adjustment = fields.Boolean(u'是否被调节', defualt=False)
 
 
     line_name = fields.Char(u'账单排序编号', default=lambda self: self._default_name())
+
+    df_all_in_one_invoice_id = fields.Many2one('back.tax.declaration', u'报关申报表')
+    btd_line_all_in_one_invoice_ids = fields.One2many('back.tax.declaration.line', 'back_tax_all_in_one_invoice', u'申报明细')
+    back_tax_declaration_out_refund_invoice_id = fields.Many2one('account.invoice', u'整体系统内认领反向发票')
+    back_tax_declaration_invoice_ids = fields.One2many('back.tax.declaration', 'back_tax_all_in_one_invoice_id', u'退税申报')
+    declaration_title = fields.Char(u'申报说明', related='df_all_in_one_invoice_id.declaration_title')
+    declaration_date = fields.Date(u'申报日期', related='df_all_in_one_invoice_id.declaration_date')
+    declaration_amount_all = fields.Monetary(u'本次申报金额', currency_field='currency_id',
+                                             related='df_all_in_one_invoice_id.declaration_amount_all')
+    back_tax_declaration_name = fields.Char(u'编号', related='df_all_in_one_invoice_id.name', store=True)
+    declaration_state = fields.Selection(
+        [('draft', u'草稿'), ('approval', '审批中'), ('done', u'确认'), ('paid', u'已收款'), ('cancel', u'取消')], 'State',
+        related='df_all_in_one_invoice_id.state')

@@ -188,6 +188,7 @@
         'views2/rcfkd_fksq.xml',
         'views2/account_move_line_bank.xml',
         'views2/tuishuirld.xml',
+        'views2/tuishuirld_invoice.xml',
         'views2/menu.xml',
 
         'views/back_tax_declaration.xml',

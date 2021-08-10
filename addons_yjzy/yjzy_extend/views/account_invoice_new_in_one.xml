@@ -1244,6 +1244,8 @@
                                    attrs="{'invisible':['|',('type','!=','out_invoice'),('yjzy_type_1','!=','back_tax')]}"/>
                             <label string="退税冲销账单" class="oe_inline"
                                    attrs="{'invisible':['|',('type','!=','out_refund'),('yjzy_type_1','!=','back_tax')]}"/>
+                            <label string="退税申报账单" class="oe_inline"
+                                   attrs="{'invisible':[('invoice_attribute_all_in_one','!=','640')]}"/>
                             <field name="invoice_attribute" class="oe_inline"
                                    attrs="{'readonly':[('state','not in',['draft'])]}"/>
                             <h1 class="mt0" groups="base.group_system">
@@ -1807,6 +1809,7 @@
 
                             <page groups="base.group_system">
                                 <group>
+                                    <field name="invoice_attribute_all_in_one"/>
                                     <field name="reconcile_order_ids_count"/>
                                     <field name="move_line_com_yfzk_ids_count"/>
                                     <field name="move_line_com_yszk_ids_count"/>

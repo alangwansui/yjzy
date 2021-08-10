@@ -89,7 +89,7 @@ class DeclareDeclaration(models.Model):
     payment_balance = fields.Monetary('未认领金额',currency_field='company_currency_id',related='payment_id.balance')
     name = fields.Char('编号', default=lambda self: self.env['ir.sequence'].next_by_code('back.tax.declaration'))
     display_name = fields.Char(u'显示名称', compute=compute_display_name)
-    btd_line_ids = fields.One2many('back.tax.declaration.line','btd_id',u'申报明细',
+    btd_line_ids = fields.One2many('back.tax.declaration.line','btd_id',u'申报明细'
                                    )#domain=['|','&',('back_tax_type','!=','adjustment'),('back_tax_type','=','adjustment'),('invoice_residual_total','!=',0)]
 
     invoice_ids = fields.Many2many('account.invoice',compute=compute_invoice_ids,store=True)
@@ -121,6 +121,7 @@ class DeclareDeclaration(models.Model):
 
     diff_tax_amount = fields.Monetary('申报和应收差额',currency_field='company_currency_id',compute=compute_diff_tax_amount,store=True)
     tuishuirld_id = fields.Many2one('account.payment',u'退税申报认领单')
+    back_tax_all_in_one_invoice_id = fields.Many2one('account.invoice',u'退税申报账单')
 
     def create_other_invoice(self):
         diff_tax_amount = self.diff_tax_amount
@@ -359,12 +360,14 @@ class DeclareDeclaration(models.Model):
         if not account:
             raise Warning(u'没有找到退税科目,请先在退税产品的收入科目上设置')
         print('btd_line_ids_akiny', self.btd_line_ids)
-        for line_1 in self.btd_line_ids:
-            if line_1.diff_tax > 0:
-                raise Warning(u'申报退税金额不允许大于系统应收退税金额！')
+        # for line_1 in self.btd_line_ids:
+        #     if line_1.diff_tax > 0:
+        #         raise Warning(u'申报退税金额不允许大于系统应收退税金额！')
         for line in self.btd_line_ids:
             invoice_attribute = line.invoice_id.invoice_attribute
-            if line.diff_tax < 0:
+            if line.diff_tax > 0:
+                raise Warning(u'申报退税金额不允许大于系统应收退税金额！')
+            elif line.diff_tax < 0:
                 back_tax_invoice = invoice_obj.create({
                     'partner_id': partner.id,
                     'type': 'out_refund',
@@ -388,6 +391,7 @@ class DeclareDeclaration(models.Model):
                         'account_id': account.id,
                     })]
                 })
+                line.invoice_id.is_adjustment = True
                 back_tax_invoice.action_invoice_open()
                 back_tax_invoice.invoice_assign_outstanding_credit()
                 line.invoice_id.adjustment_invoice_id = back_tax_invoice
@@ -419,7 +423,7 @@ class DeclareDeclaration(models.Model):
                     'btd_id': self.id
                 })
             else:
-                return True
+                continue
 
 
 
@@ -449,26 +453,32 @@ class DeclareDeclaration(models.Model):
             #     raise Warning('申报金额不允许大于未收退税金额！')
         if not self.declaration_date:
             raise Warning('请填写申报日期')
+        self.create_adjustment_invoice()
+        for one in self.btd_line_ids:
+            one.invoice_id.back_tax_declaration_state = '20'
         self.state = 'approval'
+        self.create_tuishuirld()
 
     def action_confirm(self):
-        if len(self.btd_line_ids.filtered(lambda x: x.invoice_back_tax_declaration_state == '20')) > 0:
-            raise Warning('明细行存在已经申报的应收退税账单，请查验!')
-        for one in self.btd_line_ids:
-            if one.declaration_amount == 0 and one.invoice_attribute_all_in_one != '630':
-                raise Warning('申报金额不允许为0')
-            # if one.declaration_amount > one.invoice_residual_total:
-            #     raise Warning('申报金额不允许大于未收退税金额！')
-        if not self.declaration_date:
-            return Warning('请填写申报日期')
+        # if len(self.btd_line_ids.filtered(lambda x: x.invoice_back_tax_declaration_state == '20')) > 0:
+        #     raise Warning('明细行存在已经申报的应收退税账单，请查验!')
+        # for one in self.btd_line_ids:
+        #     if one.declaration_amount == 0 and one.invoice_attribute_all_in_one != '630':
+        #         raise Warning('申报金额不允许为0')
+        #     # if one.declaration_amount > one.invoice_residual_total:
+        #     #     raise Warning('申报金额不允许大于未收退税金额！')
+        # if not self.declaration_date:
+        #     return Warning('请填写申报日期')
         self.state = 'done'
-        for one in self.btd_line_ids:
-            if one.invoice_id.declaration_amount == 0 :
-                one.invoice_id.back_tax_declaration_state = '10'
-            elif one.invoice_id.declaration_amount == one.invoice_amount_total:
-                one.invoice_id.back_tax_declaration_state = '20'
-            else:
-                one.invoice_id.back_tax_declaration_state = '15'
+
+        #0809 不再根据金额去判断部分申报，也就是不存在部分申报的概念了
+        # for one in self.btd_line_ids:
+        #     if one.invoice_id.declaration_amount == 0 :
+        #         one.invoice_id.back_tax_declaration_state = '10'
+        #     elif one.invoice_id.declaration_amount == one.invoice_amount_total:
+        #         one.invoice_id.back_tax_declaration_state = '20'
+        #     else:
+        #         one.invoice_id.back_tax_declaration_state = '15'
         # invoice_ids = self.btd_line_ids.mapped('invoice_id')
         # for one in invoice_ids:
         #     if one.declaration_amount == 0:
@@ -479,7 +489,7 @@ class DeclareDeclaration(models.Model):
 
 
 
-    def action_cancel(self,reason):
+    def action_refuse(self,reason):
         invoice_paid_lines = self.btd_line_ids.filtered(lambda x:x.invoice_id.state == 'paid' and x.invoice_id.yjzy_type == 'back_tax')
         if len(invoice_paid_lines) !=0:
             raise Warning('已经收款认领，不允许取消申报单！')
@@ -537,8 +547,8 @@ class DeclareDeclaration(models.Model):
         account_payment_obj = self.env['account.payment']
         partner_id = self.env.ref('yjzy_extend.partner_back_tax')
 
-        journal_domain_ysdrl = [('code', '=', 'ysdrl'), ('company_id', '=', self.env.user.company_id.id)]
-        journal_id_ysdrl = self.env['account.journal'].search(journal_domain_ysdrl, limit=1)
+        journal_domain_tssb = [('code', '=', 'tssb'), ('company_id', '=', self.env.user.company_id.id)]
+        journal_id_tssb = self.env['account.journal'].search(journal_domain_tssb, limit=1)
         reconcile_tuishui_id = account_payment_obj.create({
             'back_tax_declaration_id': self.id,
             'name': name,
@@ -549,16 +559,94 @@ class DeclareDeclaration(models.Model):
             'payment_type': 'inbound',
             'partner_type': 'customer',
             'advance_ok': False,
-            'journal_id': journal_id_ysdrl.id,
+            'journal_id': journal_id_tssb.id,
             'payment_method_id': 2,
             'invoice_ids': [(6, 0, invoice_dic)],
             'reconcile_type': '45_declaration_tax',
             'post_date': fields.date.today(),
-
         })
+
         self.tuishuirld_id = reconcile_tuishui_id
         for one in self.btd_line_ids:
             one.tuishuirld_id = reconcile_tuishui_id
+
+    #方案一定稿
+    def create_out_fund_invoice(self):
+        self.ensure_one()
+        invoice_obj = self.env['account.invoice']
+        btd_line = self.env['back.tax.declaration.line']
+        partner = self.env.ref('yjzy_extend.partner_back_tax')
+        product = self.env.ref('yjzy_extend.product_back_tax')
+        account = product.property_account_income_id
+        out_refund_invoice = invoice_obj.create({
+            'partner_id': partner.id,
+            'type': 'out_refund',
+            'journal_type': 'sale',
+            'date_invoice': datetime.today(),
+            'date': datetime.today(),
+            'yjzy_type': 'back_tax',
+            'yjzy_type_1': 'back_tax',
+            'invoice_attribute': 'extra',
+            'invoice_type_main': '20_extra',
+            # 'invoice_attribute_all_in_one':invoice_attribute_all_in_one,
+            'df_all_in_one_invoice_id': self.id,
+            'back_tax_type': 'adjustment',
+            'back_tax_declaration_id': self.id,
+            #'yjzy_invoice_id': line.invoice_id.id,
+            'stage_id': self.env['account.invoice.stage'].search([('code', '=', '004')], limit=1).id,
+            'invoice_line_ids': [(0, 0, {
+                'name': '%s:%s' % (product.name, self.name),
+                'product_id': product.id,
+                'quantity': 1,
+                'price_unit': self.invoice_residual_all,
+                'account_id': account.id,
+            })]
+        })
+        # create_back_tax_all_in_one_invoice
+        invoice_tenyale_name = 'tenyale_invoice'
+        tenyale_name = self.env['ir.sequence'].next_by_code('account.invoice.%s' % invoice_tenyale_name)
+        if not account:
+            raise Warning(u'没有找到退税科目,请先在退税产品的收入科目上设置')
+        back_tax_all_in_one_invoice = invoice_obj.create({
+            'tenyale_name': tenyale_name,
+            'partner_id': partner.id,
+            'type': 'out_invoice',
+            'journal_type': 'sale',
+            'date_invoice': datetime.today(),
+            'date': datetime.today(),
+            'yjzy_type': 'back_tax',
+            'yjzy_type_1': 'back_tax',
+            # 'payment_term_id': payment_term_id.id,
+            'invoice_attribute': 'extra',
+            'invoice_type_main': '10_main',
+            'df_all_in_one_invoice_id':self.id,
+            # 'gongsi_id': self.purchase_gongsi_id.id,
+            'stage_id': self.env['account.invoice.stage'].search([('code', '=', '004')], limit=1).id,
+
+            'invoice_line_ids': [(0, 0, {
+                'name': '%s:%s' % (product.name, self.name),
+                'product_id': product.id,
+                'quantity': 1,
+                'price_unit': self.invoice_residual_all,
+                'account_id': account.id,
+            })]
+        })
+        self.back_tax_all_in_one_invoice_id = back_tax_all_in_one_invoice
+        back_tax_all_in_one_invoice.back_tax_declaration_out_refund_invoice_id = out_refund_invoice
+
+        out_refund_invoice.action_invoice_open()
+        # line_ids = self.btd_line_ids.filtered(lambda x: x.invoice_residual_total > 0)
+        for one in self.btd_line_ids:
+            one.back_tax_all_in_one_invoice = back_tax_all_in_one_invoice
+            one.invoice_id.yjzy_invoice_id = out_refund_invoice
+            one.invoice_id.back_tax_assign_outstanding_credit()
+
+
+            # 730 创建后直接过账
+
+
+
+
 
 
     def open_tuishuirld_id(self):
@@ -631,8 +719,9 @@ class DeclareDeclarationLine(models.Model):
     back_tax_type = fields.Selection([('normal', u'正常退税'),
                                       ('adjustment', u'调节退税'),
                                       ], string=u'退税类型', related='invoice_id.back_tax_type',store=True)
+    is_adjustment = fields.Boolean(u'是否已调节',related='invoice_id.is_adjustment',store=True)
     tuishuirld_id = fields.Many2one('account.payment', u'退税申报认领单')
-
+    rcsktsrld_id = fields.Many2one('account.payment', u'收款退税账单认领')
     # def _default_name(self):
     #     line_name = self.env['ir.sequence'].next_by_code('back.tax.declaration.line.name')
     #     return line_name
@@ -641,7 +730,7 @@ class DeclareDeclarationLine(models.Model):
 
 
 
-
+    back_tax_all_in_one_invoice = fields.Many2one('account.invoice',u'账单')
 
 
 

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--    应收认领搜索视图-->
+    <record id="view_tuishuirld_invoice_search_new" model="ir.ui.view">
+        <field name="name">account.invoice.search</field>
+        <field name="model">account.invoice</field>
+        <field name="arch" type="xml">
+            <search string="Invoice">
+                <field name="name"
+                       filter_domain="[('name','ilike',self)]"
+                       string="Description"/>
+                <separator/>
+                <field name="name"/>
+                <group expand="1" string="Group By">
+
+                </group>
+
+            </search>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="account_back_tax_fan_invoice_tree">
+        <field name="name">account.invoice.tuishuirld.invoice.tree</field>
+        <field name="model">account.invoice</field>
+        <field name="priority" eval="999"/>
+        <field name="arch" type="xml">
+            <tree string="退税反向总账单">
+                <field name="id" invisible="1"/>
+                <field name="df_all_in_one_invoice_id" invisible="1"/>
+                <field name="name"/>
+                <field name="declaration_title"/>
+                <field name="declaration_date"/>
+                <field name="declaration_amount_all"/>
+                <field name="partner_id" string="Customer" groups="base.group_system"/>
+                <field name="declaration_state" string="申报状态"/>
+                <field name="state" groups="base.group_system"/>
+                <field name="currency_id" invisible="1"/>
+
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="account_tuishuirld_invoice_tree">
+        <field name="name">account.invoice.rcsktsrld.invoice.tree</field>
+        <field name="model">account.invoice</field>
+        <field name="priority" eval="999"/>
+        <field name="arch" type="xml">
+            <tree string="退税申报账单">
+                <field name="id" invisible="1"/>
+                <field name="df_all_in_one_invoice_id" string="退税申报表"/>
+                <field name="back_tax_declaration_name" string="退税申报表" invisible="1"/>
+                <field name="name" string="收款退税认领编号"/>
+                <field name="declaration_title"/>
+                <field name="declaration_date"/>
+                <field name="declaration_amount_all"/>
+
+                <field name="partner_id" string="Customer" groups="base.group_system"/>
+                <field name="declaration_state" string="申报状态"/>
+                <field name="state" groups="base.group_system"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="currency_id" invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_back_tax_fan_invoice" model="ir.actions.act_window">
+        <field name="name">退税申请账单</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.invoice</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_account_invoice_new_filter"/>
+        <field name="domain">
+            [('type','in',['out_invoice']),('yjzy_type','=','back_tax'),('invoice_attribute','in',['extra'])]
+        </field>
+        <field name="context">{}
+        </field>
+        <field name="view_ids" eval="[(5, 0, 0),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.account_back_tax_fan_invoice_tree')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.view_account_invoice_new_form_in_one')}),
+                              ]"/>
+    </record>
+    <menuitem id="menu_back_tax_fan_invoice" name="退税申报账单"
+              parent="yjzy_extend.menu_customer_invoice_back_tax_declaration_root" action="action_back_tax_fan_invoice"
+              sequence="99"/>
+
+
+<!--    <menuitem id="menu_account_rcsktsrld" name="收款退税申报认领单"-->
+<!--              parent="yjzy_extend.menu_customer_invoice_back_tax_declaration_root" action="action_account_rcsktsrld"-->
+<!--              sequence="99"/>-->
+
+</odoo>

@@ -211,6 +211,7 @@ class MailActivity(models.Model):
 
     def action_feedback(self, feedback=False):
         strptime = datetime.strptime
+        strftime = datetime.strftime
         print('test1_akiny', str(self.date_finish), (datetime.today() - relativedelta(hours=-8)).strftime('%Y-%m-%d'))
         if self.date_finish and str(self.date_finish) > (datetime.today() - relativedelta(hours=-8)).strftime(
                 '%Y-%m-%d'):
@@ -224,8 +225,8 @@ class MailActivity(models.Model):
             self.plan_check_line_id.date_finish = self.date_finish  # akiny
         if self.order_track_id:
             if self.activity_type_id.name == '计划填写进仓日':
-                if self.date_finish.strftime('%Y-%m-01 00:00:00') <  fields.datetime.now().strftime('%Y-%m-01 00:00:00'):
-                    raise ('进仓日期不允许小于单月')
+                if strptime(self.date_finish,DF).strftime('%Y-%m-01 00:00:00') <  fields.datetime.now().strftime('%Y-%m-01 00:00:00'):
+                    raise Warning('进仓日期不允许小于单月')
                 self.order_track_id.date_out_in = self.date_finish
                 self.order_track_id.action_date_out_in()
                 self.order_track_id.create_activity_plan_date_ship()

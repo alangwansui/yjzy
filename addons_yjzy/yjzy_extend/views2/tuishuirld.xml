@@ -81,9 +81,9 @@
         <field name="arch" type="xml">
             <form string="退税申报认领" create="false">
                 <header>
-
+                    <button name="post" class="oe_highlight" states="draft" string="Confirm" type="object"
+                            groups="base.group_system"/>
                     <field name="declaration_state" widget="statusbar" statusbar_visible=" "/>
-
                 </header>
                 <header groups="base.group_system">
                     <button name="post" class="oe_highlight" states="draft" string="Confirm" type="object"
@@ -169,35 +169,35 @@
                     <notebook>
                         <page string="申报明细">
                             <field name="btd_line_ids">
-                                <tree create="false" editable="bottom"
-                                      decoration-danger="invoice_attribute_all_in_one == '630'"
-                                      default_order="line_name">
-                                    <field name="line_name"/>
-                                    <field name="tenyale_name" readonly="1"/>
-                                    <field name="invoice_id" string="退税账单"/>
-                                    <field name="invoice_attribute_all_in_one"/>
-                                    <field name="invoice_currency_id" invisible="1"/>
-                                    <field name="invoice_amount_total" string="原始应收退税"/>
-
-
-                                    <field name="invoice_residual_total" string="剩余应收退税"/>
-
-
-                                    <field name="declaration_amount" string="本次申报金额"/>
-                                    <field name="diff_tax"/>
-                                    <field name="diff_origin_tax"/>
-
-                                    <field name="declaration_amount_residual"
-                                           attrs="{'column_invisible':[('parent.state','not in',['done','paid'])]}"/>
-                                    <field name="comments"/>
-                                </tree>
+                                 <tree create="false" editable="bottom" decoration-danger="is_adjustment == True" default_order="line_name">
+                                        <field name="line_name"/>
+                                        <field name="tenyale_name" readonly="1"/>
+                                        <field name="invoice_id" string="退税账单"/>
+                                        <field name="invoice_attribute_all_in_one" string="账单属性"/>
+                                        <field name="back_tax_type" string="退税调节属性"/>
+                                        <field name="invoice_currency_id" invisible="1"/>
+                                        <field name="invoice_amount_total" string="原始应收退税"/>
+                                        <field name="invoice_residual_total" string="剩余应收退税"/>
+                                        <field name="declaration_amount" string="本次申报金额"/>
+                                        <field name="diff_tax"/>
+                                        <field name="diff_origin_tax"/>
+                                        <field name="declaration_amount_residual" attrs="{'column_invisible':[('parent.state','not in',['done','paid'])]}"/>
+                                        <field name="is_adjustment"/>
+                                        <field name="comments"/>
+                                    </tree>
                             </field>
+                        </page>
+                        <page>
+                            <field name="rcsktsrld_ids"/>
                         </page>
 
 
                         <page groups="base.group_system">
                             <group>
                                 <field name="payment_type"/>
+                                <field name="back_tax_declaration_id"/>
+                                <field name="journal_id"/>
+                                <field name="advance_account_id"/>
                             </group>
 
                         </page>
@@ -217,7 +217,8 @@
         <field name="arch" type="xml">
             <form string="收款退税认领" create="false">
                 <header>
-                    <field name="declaration_state" widget="statusbar" statusbar_visible=" "/>
+                    <button name="action_account_post" string="确认认领" type="object" class="oe_highlight"/>
+                    <field name="state_1" widget="statusbar" statusbar_visible=" "/>
                 </header>
                 <header groups="base.group_system">
                     <button name="post" class="oe_highlight" states="draft" string="Confirm" type="object"
@@ -299,63 +300,68 @@
                             <field name="payment_date" string="认领日期"/>
                             <field name="communication"/>
                             <field name="back_tax_declaration_id"/>
+                            <field name="tuishuirld_id"/>
+                            <field name="yjzy_payment_id"/>
+                            <field name="journal_id"/>
+                             <field name="advance_account_id"/>
                         </group>
                     </group>
                     <notebook>
-                        <page>
-                            <field name="rcsktsrld_ids">
-                                <tree string="日常收款退税认领">
-                                    <field name="id" invisible="1"/>
-                                    <field name="back_tax_declaration_id" string="退税申报表"/>
-                                    <field name="back_tax_declaration_name" string="退税申报表" invisible="1"/>
-                                    <field name="name" string="收款退税认领编号"/>
-                                    <field name="declaration_title"/>
-                                    <field name="declaration_date"/>
-                                    <field name="declaration_amount_all"/>
-                                    <field name="tuishuirld_id"/>
-                                    <field name="tuishuirld_amount" sum="Amount" string="申报认领金额"/>
-                                    <field name="name" string="收款退税认领编号"/>
-                                    <field name="journal_id" groups="base.group_system"/>
-                                    <field name="payment_method_id" invisible="1"/>
-                                    <field name="partner_id" string="Customer" groups="base.group_system"/>
-                                    <field name="declaration_state" string="申报状态"/>
-                                    <field name="state" groups="base.group_system"/>
-                                    <field name="company_id" groups="base.group_multi_company"/>
-                                    <field name="currency_id" invisible="1"/>
-                                    <field name="partner_type" invisible="1"/>
-                                </tree>
-                            </field>
-                        </page>
-                        <page string="申报明细">
-                            <field name="btd_line_ids">
-                                <tree create="false" editable="bottom"
-                                      decoration-danger="invoice_attribute_all_in_one == '630'"
-                                      default_order="line_name">
-                                    <field name="line_name"/>
-                                    <field name="tenyale_name" readonly="1"/>
-                                    <field name="invoice_id" string="退税账单"/>
-                                    <field name="invoice_attribute_all_in_one"/>
-                                    <field name="invoice_currency_id" invisible="1"/>
-                                    <field name="invoice_amount_total" string="原始应收退税"/>
+<!--                        <page>-->
+<!--                            <field name="rcsktsrld_ids">-->
+<!--                                <tree string="日常收款退税认领">-->
+<!--                                    <field name="id" invisible="1"/>-->
+<!--                                    <field name="back_tax_declaration_id" string="退税申报表"/>-->
+<!--                                    <field name="back_tax_declaration_name" string="退税申报表" invisible="1"/>-->
+<!--                                    <field name="name" string="收款退税认领编号"/>-->
+<!--                                    <field name="declaration_title"/>-->
+<!--                                    <field name="declaration_date"/>-->
+<!--                                    <field name="declaration_amount_all"/>-->
+<!--                                    <field name="tuishuirld_id"/>-->
+<!--                                    <field name="tuishuirld_amount" sum="Amount" string="申报认领金额"/>-->
+<!--                                    <field name="name" string="收款退税认领编号"/>-->
+<!--                                    <field name="journal_id" groups="base.group_system"/>-->
+<!--                                    <field name="payment_method_id" invisible="1"/>-->
+<!--                                    <field name="partner_id" string="Customer" groups="base.group_system"/>-->
+<!--                                    <field name="declaration_state" string="申报状态"/>-->
+<!--                                    <field name="state" groups="base.group_system"/>-->
+<!--                                    <field name="company_id" groups="base.group_multi_company"/>-->
+<!--                                    <field name="currency_id" invisible="1"/>-->
+<!--                                    <field name="partner_type" invisible="1"/>-->
+<!--                                </tree>-->
+<!--                            </field>-->
+<!--                        </page>-->
+<!--                        <page string="申报明细">-->
+<!--                            <field name="btd_line_ids">-->
+<!--                                <tree create="false" editable="bottom"-->
+<!--                                      decoration-danger="invoice_attribute_all_in_one == '630'"-->
+<!--                                      default_order="line_name">-->
+<!--                                    <field name="line_name"/>-->
+<!--                                    <field name="tenyale_name" readonly="1"/>-->
+<!--                                    <field name="invoice_id" string="退税账单"/>-->
+<!--                                    <field name="invoice_attribute_all_in_one"/>-->
+<!--                                    <field name="invoice_currency_id" invisible="1"/>-->
+<!--                                    <field name="invoice_amount_total" string="原始应收退税"/>-->
 
 
-                                    <field name="invoice_residual_total" string="剩余应收退税"/>
+<!--                                    <field name="invoice_residual_total" string="剩余应收退税"/>-->
 
 
-                                    <field name="declaration_amount" string="本次申报金额"/>
-                                    <field name="diff_tax"/>
-                                    <field name="diff_origin_tax"/>
+<!--                                    <field name="declaration_amount" string="本次申报金额"/>-->
+<!--                                    <field name="diff_tax"/>-->
+<!--                                    <field name="diff_origin_tax"/>-->
 
-                                    <field name="declaration_amount_residual"
-                                           attrs="{'column_invisible':[('parent.state','not in',['done','paid'])]}"/>
-                                    <field name="comments"/>
-                                </tree>
-                            </field>
-                        </page>
+<!--                                    <field name="declaration_amount_residual"-->
+<!--                                           attrs="{'column_invisible':[('parent.state','not in',['done','paid'])]}"/>-->
+<!--                                    <field name="comments"/>-->
+<!--                                </tree>-->
+<!--                            </field>-->
+<!--                        </page>-->
 
                         <page groups="base.group_system">
                             <group>
                                 <field name="payment_type"/>
+
                             </group>
 
                         </page>

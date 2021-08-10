@@ -1377,6 +1377,16 @@ class account_payment(models.Model):
             if self.yjzy_payment_id.balance == 0 and self.yjzy_payment_id.state_1 == '50_posted':
                 self.yjzy_payment_id.state_1 = '60_done'
 
+        if self.sfk_type == 'rcsktsrld':
+            self.write({'post_uid': self.env.user.id,
+                        'post_date': today,
+                        'state_1': '60_done'
+                        })
+            self.post()
+            self.tuishuirld_id.post()
+            self.yjzy_payment_id.compute_balance()
+            self.back_tax_declaration_id.state = 'paid'
+
             # self.compute_advance_balance_total()
 
     def action_cashier_post(self):

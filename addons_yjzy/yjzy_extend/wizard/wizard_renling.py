@@ -77,7 +77,7 @@ class wizard_renling(models.TransientModel):
                                                     compute=_compute_customer_advance_payment_ids
                                                     )  #
     customer_advance_payment_ids_count = fields.Integer('相关预收数量', compute=_compute_customer_advance_payment_ids)  #
-    tuishuirdl_id = fields.Many2one('account.payment',u'退税申报认领单',domain=[('sfk_type','=','tuishuirld'),('declaration_state','=','done')])
+    tuishuirdl_id = fields.Many2one('account.payment',u'退税申报账单',domain=[('sfk_type','=','tuishuirld'),('declaration_state','=','done')])
 
     ysrld_ok = fields.Boolean('是否预收-应收认领', default=False, compute=_compute_customer_advance_payment_ids, store=True)
 
@@ -139,6 +139,8 @@ class wizard_renling(models.TransientModel):
     other_payment_invoice_ok_f = fields.Boolean('是否其他应付', default=False)
     purchase_add_invoice_ok = fields.Boolean('是否增加采购',default=False)
     amount_tuishuisk = fields.Monetary(u'收款认领金额',currency_field='company_currency_id')
+
+    amount_tuishuirdl_id = fields.Monetary(u'退税申报账单金额',related='tuishuirdl_id.amount')
 
     @api.onchange('other_invoice_amount')
     def onchange_other_invoice_amount(self):
@@ -289,7 +291,7 @@ class wizard_renling(models.TransientModel):
         tuishuirdl_id = self.tuishuirdl_id
         journal_domain_ysdrl = [('code', '=', 'ysdrl'), ('company_id', '=', self.env.user.company_id.id)]
         journal_id_ysdrl = self.env['account.journal'].search(journal_domain_ysdrl, limit=1)
-        account_account_id_ysdrl = self.env['account.account'].search([('code','=','220301'),('company_id', '=', self.env.user.company_id.id)])
+        account_account_id_tssb = self.env['account.account'].search([('code','=','112201'),('company_id', '=', self.env.user.company_id.id)])
         rcsktsrld_id = account_payment_obj.create({
             'back_tax_declaration_id': tuishuirdl_id.back_tax_declaration_id.id,
             'tuishuirld_id':tuishuirdl_id.id,
@@ -297,19 +299,23 @@ class wizard_renling(models.TransientModel):
             'sfk_type': sfk_type,
             'partner_id': partner_id.id,
             'amount': self.amount_tuishuisk,
+            'yjzy_payment_id':self.yjzy_payment_id.id,
             'currency_id': self.company_currency_id.id,
             'payment_type': 'inbound',
             'partner_type': 'customer',
             'advance_ok': True,
-            'advance_account_id':account_account_id_ysdrl.id,
+            'advance_account_id':account_account_id_tssb.id,
             'journal_id': journal_id_ysdrl.id,
             'payment_method_id': 2,
             'reconcile_type': '47_declaration_payment',
             'post_date': fields.date.today(),
         })
+        # self.tuishuirdl_id.rcsktsrld_id = rcsktsrld_id
+        # for one in self.tuishuirdl_id.back_tax_declaration_id.btd_line_ids:
+        #     one.rcsktsrld_id = rcsktsrld_id
         form_view = self.env.ref('yjzy_extend.view_account_rcsktsrld_form').id
         return {
-            'name': '收款退税申请认领单',
+            'name': '收款退税账单认领',
             'view_type': 'form',
             'view_mode': 'form',
             'res_model': 'account.payment',

@@ -651,8 +651,8 @@ class account_invoice(models.Model):
                     name = '410'
                 else:
                     name = '510'
-            # elif invoice_attribute == 'extra' and yjzy_type == 'back_tax':
-            #     name = '630'back
+            elif invoice_attribute == 'extra' and yjzy_type == 'back_tax':
+                name = '640'
 
             one.invoice_attribute_all_in_one = name
 
@@ -1135,6 +1135,8 @@ class account_invoice(models.Model):
                                                     ('invoice_attribute', 'in', ['normal', 'extra'])])
 
     plan_invoice_auto_id = fields.Many2one('plan.invoice.auto','应收发票')
+    #方案二0809
+
     # real_invoice_auto_ids = fields.Many2many('real.invoice.auto','实际发票')
 
 
