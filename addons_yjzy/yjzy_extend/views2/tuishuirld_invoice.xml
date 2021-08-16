@@ -79,7 +79,7 @@
                               (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.view_account_invoice_new_form_in_one')}),
                               ]"/>
     </record>
-    <menuitem id="menu_back_tax_fan_invoice" name="退税申报账单"
+    <menuitem id="menu_back_tax_fan_invoice" name="退税申报账单" groups="base.group_system"
               parent="yjzy_extend.menu_customer_invoice_back_tax_declaration_root" action="action_back_tax_fan_invoice"
               sequence="99"/>
 

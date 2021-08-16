@@ -389,7 +389,7 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('account_tuishuirld_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_account_tuishuirld_form')})]"/>
     </record>
-    <menuitem id="menu_account_tuishuirl" name="退税申报认领单"
+    <menuitem id="menu_account_tuishuirl" name="退税申报认领单" groups="base.group_system"
               parent="yjzy_extend.menu_customer_invoice_back_tax_declaration_root" action="action_account_tuishuirl"
               sequence="99"/>
 
@@ -407,7 +407,7 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('account_rcsktsrld_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_account_rcsktsrld_form')})]"/>
     </record>
-    <menuitem id="menu_account_rcsktsrld" name="收款退税申报认领单"
+    <menuitem id="menu_account_rcsktsrld" name="收款退税申报认领单" groups="base.group_system"
               parent="yjzy_extend.menu_customer_invoice_back_tax_declaration_root" action="action_account_rcsktsrld"
               sequence="99"/>
 

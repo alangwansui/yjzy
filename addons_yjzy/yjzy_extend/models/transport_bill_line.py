@@ -191,6 +191,9 @@ class transport_bill_line(models.Model):
 #----
 
     need_print = fields.Boolean('是否打印', default=True)
+
+    date_out_in = fields.Date('进仓日期',related='bill_id.date_out_in',store=True)
+    date_ship = fields.Date('出运船日期',related='bill_id.date_ship',store=True)
     #是否金样  akiny
 
     #单个费用 akiny

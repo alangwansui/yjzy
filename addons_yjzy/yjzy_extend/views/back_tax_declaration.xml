@@ -74,9 +74,9 @@
                                 <field name="invoice_amount_630"/>
                                  <field name="invoice_amount_all"/>
 
-                                <field name="invoice_residual_no_630"/>
-                                <field name="invoice_residual_630"/>
-                                <field name="invoice_residual_all"/>
+<!--                                <field name="invoice_residual_no_630"/>-->
+<!--                                <field name="invoice_residual_630"/>-->
+                                <field name="invoice_residual_all" string="调节后未收退税"/>
 
                                 <field name="declaration_amount_all"/>
                                 <field name="diff_tax_amount"/>
@@ -86,9 +86,11 @@
                                 <field name="create_date" string="创建日期" invisible="1"/>
                             </group>
                             <group>
-                                <field name="payment_amount"/>
-                                <field name="payment_balance"/>
-                                <field name="tuishuirld_id" context="{'form_view_ref':'yjzy_extend.view_account_tuishuirld_form'}"/>
+<!--                                <field name="payment_amount"/>-->
+<!--                                <field name="payment_balance"/>-->
+<!--                                <field name="tuishuirld_id" string="退税申报账单" context="{'form_view_ref':'yjzy_extend.view_account_tuishuirld_form'}"/>-->
+                                <field name="back_tax_all_in_one_invoice_id" context="{'form_view_ref':'yjzy_extend.view_account_invoice_new_form_in_one'}"/>
+                                <field name="out_refund_invoice_id"/>
                             </group>
 
                         </group>

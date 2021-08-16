@@ -85,8 +85,8 @@ class DeclareDeclaration(models.Model):
             one.diff_tax_amount = one.declaration_amount_all - one.invoice_amount_all
 
     payment_id = fields.Many2one('account.payment','收款单')
-    payment_amount = fields.Monetary('收款金额',currency_field='company_currency_id',related='payment_id.amount')
-    payment_balance = fields.Monetary('未认领金额',currency_field='company_currency_id',related='payment_id.balance')
+    payment_amount = fields.Monetary('收款金额',currency_field='company_currency_id',related='payment_id.amount') #失效
+    payment_balance = fields.Monetary('未认领金额',currency_field='company_currency_id',related='payment_id.balance')#失效
     name = fields.Char('编号', default=lambda self: self.env['ir.sequence'].next_by_code('back.tax.declaration'))
     display_name = fields.Char(u'显示名称', compute=compute_display_name)
     btd_line_ids = fields.One2many('back.tax.declaration.line','btd_id',u'申报明细'
@@ -122,6 +122,7 @@ class DeclareDeclaration(models.Model):
     diff_tax_amount = fields.Monetary('申报和应收差额',currency_field='company_currency_id',compute=compute_diff_tax_amount,store=True)
     tuishuirld_id = fields.Many2one('account.payment',u'退税申报认领单')
     back_tax_all_in_one_invoice_id = fields.Many2one('account.invoice',u'退税申报账单')
+    out_refund_invoice_id = fields.Many2one('account.invoice',u'退税申报反向账单')
 
     def create_other_invoice(self):
         diff_tax_amount = self.diff_tax_amount
@@ -379,6 +380,7 @@ class DeclareDeclaration(models.Model):
                     'invoice_attribute': invoice_attribute,
                     'invoice_type_main': '20_extra',
                     # 'invoice_attribute_all_in_one':invoice_attribute_all_in_one,
+                    'adjustment_invoice_origin_id':line.invoice_id.id,
                     'back_tax_type': 'adjustment',
                     'back_tax_declaration_id': self.id,
                     'yjzy_invoice_id': line.invoice_id.id,
@@ -457,7 +459,7 @@ class DeclareDeclaration(models.Model):
         for one in self.btd_line_ids:
             one.invoice_id.back_tax_declaration_state = '20'
         self.state = 'approval'
-        self.create_tuishuirld()
+        self.create_out_fund_invoice()
 
     def action_confirm(self):
         # if len(self.btd_line_ids.filtered(lambda x: x.invoice_back_tax_declaration_state == '20')) > 0:
@@ -470,6 +472,7 @@ class DeclareDeclaration(models.Model):
         # if not self.declaration_date:
         #     return Warning('请填写申报日期')
         self.state = 'done'
+
 
         #0809 不再根据金额去判断部分申报，也就是不存在部分申报的概念了
         # for one in self.btd_line_ids:
@@ -490,6 +493,8 @@ class DeclareDeclaration(models.Model):
 
 
     def action_refuse(self,reason):
+
+
         invoice_paid_lines = self.btd_line_ids.filtered(lambda x:x.invoice_id.state == 'paid' and x.invoice_id.yjzy_type == 'back_tax')
         if len(invoice_paid_lines) !=0:
             raise Warning('已经收款认领，不允许取消申报单！')
@@ -592,6 +597,7 @@ class DeclareDeclaration(models.Model):
             'df_all_in_one_invoice_id': self.id,
             'back_tax_type': 'adjustment',
             'back_tax_declaration_id': self.id,
+            'back_tax_declaration_state':'20',
             #'yjzy_invoice_id': line.invoice_id.id,
             'stage_id': self.env['account.invoice.stage'].search([('code', '=', '004')], limit=1).id,
             'invoice_line_ids': [(0, 0, {
@@ -602,6 +608,7 @@ class DeclareDeclaration(models.Model):
                 'account_id': account.id,
             })]
         })
+        self.out_refund_invoice_id = out_refund_invoice
         # create_back_tax_all_in_one_invoice
         invoice_tenyale_name = 'tenyale_invoice'
         tenyale_name = self.env['ir.sequence'].next_by_code('account.invoice.%s' % invoice_tenyale_name)
@@ -632,14 +639,15 @@ class DeclareDeclaration(models.Model):
             })]
         })
         self.back_tax_all_in_one_invoice_id = back_tax_all_in_one_invoice
+
         back_tax_all_in_one_invoice.back_tax_declaration_out_refund_invoice_id = out_refund_invoice
 
-        out_refund_invoice.action_invoice_open()
+        # out_refund_invoice.action_invoice_open()    #认领的时候过账
         # line_ids = self.btd_line_ids.filtered(lambda x: x.invoice_residual_total > 0)
         for one in self.btd_line_ids:
             one.back_tax_all_in_one_invoice = back_tax_all_in_one_invoice
             one.invoice_id.yjzy_invoice_id = out_refund_invoice
-            one.invoice_id.back_tax_assign_outstanding_credit()
+            # one.invoice_id.back_tax_assign_outstanding_credit() #认领的时候过账
 
 
             # 730 创建后直接过账

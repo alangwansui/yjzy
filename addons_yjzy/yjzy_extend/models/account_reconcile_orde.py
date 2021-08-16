@@ -537,6 +537,8 @@ class account_reconcile_order(models.Model):
                 name = '%s:%s' % ('费用转货款退税认领', one.name)
             elif one.invoice_attribute_all_in_one == '620':
                 name = '%s:%s' % ('综合退税认领', one.name)
+            elif one.invoice_attribute_all_in_one == '640':
+                name = '%s:%s' % ('退税申报账单认领', one.name)
             else:
                 # one.invoice_attribute_all_in_one == '510':
                 name = '%s:%s' % ('其他应付', one.name)
@@ -619,7 +621,7 @@ class account_reconcile_order(models.Model):
                                                         )  # 从自身创建的所有的预付-应付认领单。
 
     renling_type = fields.Selection([('yshxd', '应收认领'),
-                                     ('back_tax', '退税认领'), ('other_payment', '其他认领'),('purchase_add_invoice','增加采购应收认领')], u'认领属性')  # 没有是指作用
+                                     ('back_tax', '退税认领'), ('new_back_tax','退税认领'),('other_payment', '其他认领'),('purchase_add_invoice','增加采购应收认领')], u'认领属性')  # 没有是指作用
     company_currency_id = fields.Many2one('res.currency', string='公司货币', related='company_id.currency_id',
                                           readonly=True)
     back_tax_declaration_id = fields.Many2one('back.tax.declaration', u'退税申报表')
@@ -1656,9 +1658,10 @@ class account_reconcile_order(models.Model):
         #     raise Warning('非可审批状态，不允许审批！')
         if self.amount_total_org == 0:
             raise Warning('认领金额为0，无法提交！')
-        for one in self.line_no_ids:
-            if one.amount_payment_can_approve_all < one.amount_payment_org:
-                raise Warning('申请的金额大于可申请的应付,请检查')
+        if self.invoice_attribute_all_in_one != '640':
+            for one in self.line_no_ids:
+                if one.amount_payment_can_approve_all < one.amount_payment_org:
+                    raise Warning('申请的金额大于可申请的应付,请检查')
         if self.sfk_type == 'yfhxd':
             if self.hxd_type_new == '40':
                 if not self.bank_id:
@@ -1701,6 +1704,11 @@ class account_reconcile_order(models.Model):
         if self.sfk_type == 'yshxd':
             # if self.state_1 not in ['draft','manager_approval', 'manager_approval_yshxd','draft_yshxd','account_approval_yshxd', 'manager_approval_all']:
             #     raise Warning('非可审批状态，不允许审批！')
+            if self.invoice_attribute_all_in_one == '640':
+                self.back_tax_declaration_id.back_tax_all_in_one_invoice_id.action_invoice_open()
+                self.back_tax_declaration_id.out_refund_invoice_id.action_invoice_open()
+                for one in self.back_tax_declaration_id.btd_line_ids:
+                    one.invoice_id.back_tax_assign_outstanding_credit()
             print('sfk_type_____111', self.sfk_type)
             if not self.yjzy_payment_id and self.hxd_type_new in ['20', '25']:
                 raise Warning('没有对应的收款单，请检查！')
@@ -1717,6 +1725,7 @@ class account_reconcile_order(models.Model):
                         'approve_uid': self.env.user.id
                         })
             # 收付款单的核销的动作这里完成，
+
             if self.yjzy_payment_id:
                 self.yjzy_payment_id.action_reconcile()
             if self.yjzy_advance_payment_id:
@@ -1727,14 +1736,15 @@ class account_reconcile_order(models.Model):
     # 应收确认认领
     def action_confirm_ysrld_stage(self):
         self.ensure_one()
-        if self.hxd_type_new in ['10', '25'] and self.amount_total_org == 0:
-            raise Warning('认领金额为0，无法提交！')
-        if self.hxd_type_new == '25' and (self.yjzy_payment_balance != 0 and self.amount_payment_org_new == 0):
-            raise Warning('收款认领金额为0，无法提交！')
-        if self.hxd_type_new == '20' and self.amount_payment_org == 0:
-            raise Warning('认领金额为0，无法提交！')
-        if self.amount_payment_org_new > self.yjzy_payment_balance:
-            raise Warning('认领金额大于可认领的收款金额，无法提交！')
+        if self.invoice_attribute_all_in_one != '640':
+            if self.hxd_type_new in ['10', '25'] and self.amount_total_org == 0:
+                raise Warning('认领金额为0，无法提交！')
+            if self.hxd_type_new == '25' and (self.yjzy_payment_balance != 0 and self.amount_payment_org_new == 0):
+                raise Warning('收款认领金额为0，无法提交！')
+            if self.hxd_type_new == '20' and self.amount_payment_org == 0:
+                raise Warning('认领金额为0，无法提交！')
+            if self.amount_payment_org_new > self.yjzy_payment_balance:
+                raise Warning('认领金额大于可认领的收款金额，无法提交！')
         lines = self.line_ids
         if lines:
             for one in lines:
@@ -1746,17 +1756,18 @@ class account_reconcile_order(models.Model):
                         raise Warning('预收认领金额大于可认领的预收金额')
         if self.line_do_ids and self.amount_advance_org == 0:
             raise Warning('预收认领金额为0，无法提交！')
-        for one in self.line_no_ids:
-            if one.amount_payment_can_approve_all >= 0 and  one.amount_payment_can_approve_all < one.amount_payment_org:
-                raise Warning('收款的认领金额大于可认领的应收,请检查')
+        if self.invoice_attribute_all_in_one != '640':
+            for one in self.line_no_ids:
+                if one.amount_payment_can_approve_all >= 0 and  one.amount_payment_can_approve_all < one.amount_payment_org:
+                    raise Warning('收款的认领金额大于可认领的应收,请检查')
         self.action_manager_approve_stage()  # 完成当前的应收的审批过账
         #如果是退税，如果有退款退税，则执行。退款退税和未完成认领的余额的核销
-        invoice_recon = self.invoice_ids.filtered(lambda x: x.type == 'out_refund')
-        if self.yjzy_type == 'back_tax' and invoice_recon:
-            for line_reconcile in self.line_no_ids:
-                move_line_id = line_reconcile.invoice_id.move_line_ids.filtered(lambda x:x.invoice_id == line_reconcile.invoice_id
-                        and x.reconciled == False and x.account_id.code == '1122')
-                invoice_recon.assign_outstanding_credit(move_line_id.id)
+        # invoice_recon = self.invoice_ids.filtered(lambda x: x.type == 'out_refund')
+        # if self.yjzy_type == 'back_tax' and invoice_recon:
+        #     for line_reconcile in self.line_no_ids:
+        #         move_line_id = line_reconcile.invoice_id.move_line_ids.filtered(lambda x:x.invoice_id == line_reconcile.invoice_id
+        #                 and x.reconciled == False and x.account_id.code == '1122')
+        #         invoice_recon.assign_outstanding_credit(move_line_id.id)
         invoice_dic = []
         for one in self.invoice_ids:  # 如果invoice是0 余额的 可以从invoice_ids中删除了
             if one.amount_payment_can_approve_all != 0:
@@ -2680,58 +2691,58 @@ class account_reconcile_order(models.Model):
 
         #将对调节的明细先做正负判断。再进行不同的跟进
 
-
-        line_630 = self.line_no_ids.filtered(lambda x: x.invoice_attribute_all_in_one == '630')
-        line_no_630 = self.line_no_ids.filtered(lambda x: x.invoice_attribute_all_in_one != '630')
-        if line_630:
-            if line_630[0].invoice_residual < 0:
-                if self.yjzy_payment_balance >= self.declaration_amount_all_residual_new:
-                    for x in self.line_no_ids:
-                        diff = x.invoice_amount_total - x.invoice_declaration_amount
-                        print('rest_amount_akiny',rest_amount,diff)
-                        if diff > 0 and rest_amount >0:
-                            if diff < rest_amount:
-                                x.amount_payment_org = x.amount_payment_org + diff
-                                rest_amount = rest_amount - diff
-                            else:
-                                x.amount_payment_org = x.amount_payment_org + rest_amount
-                                break
-                else:
-                    print('rest_amount_akiny', rest_amount, )
-                    rest_amount = rest_amount - (self.declaration_amount_all_residual_new - self.yjzy_payment_balance)
-                    print('rest_amount_akiny', rest_amount, )#2
-                    for x in line_no_630:
-                        diff = x.invoice_amount_total - x.invoice_declaration_amount#2
-                        if diff > 0 and rest_amount < 0:
-                            if abs(diff) > abs(rest_amount):
-                                x.amount_payment_org = x.amount_payment_org + rest_amount
-                                break
-                            else:
-                                x.amount_payment_org = x.amount_payment_org + rest_amount
-                                rest_amount = rest_amount - diff
-                        elif diff > 0 and rest_amount > 0:
-                            if abs(diff) <= abs(rest_amount):
-                                x.amount_payment_org = x.amount_payment_org + diff
-                                rest_amount = rest_amount - diff
-                            else:
-                                x.amount_payment_org = x.amount_payment_org + rest_amount
-                                break
-            else:
-                diff_balance = self.declaration_amount_all_residual_new - self.yjzy_payment_balance
-                print('diff_balance_akiny', diff_balance, line_630[0].amount_payment_org)
-
-                if diff_balance < 0:
-                    for one in self.line_no_ids:
-                        one.amount_payment_org = one.invoice_residual
-                else:
-                    line_630[0].amount_payment_org = 0
-                    diff_balance = diff_balance - line_630[0].invoice_residual
-                    for one in line_no_630:
-                        if diff_balance <= one.invoice_residual and diff_balance != 0:
-                            one.amount_payment_org = one.invoice_residual - diff_balance
-                            diff_balance = 0
-                        else:
-                            one.amount_payment_org = one.invoice_residual
+        #
+        # line_630 = self.line_no_ids.filtered(lambda x: x.invoice_attribute_all_in_one == '630')
+        # line_no_630 = self.line_no_ids.filtered(lambda x: x.invoice_attribute_all_in_one != '630')
+        # if line_630:
+        #     if line_630[0].invoice_residual < 0:
+        #         if self.yjzy_payment_balance >= self.declaration_amount_all_residual_new:
+        #             for x in self.line_no_ids:
+        #                 diff = x.invoice_amount_total - x.invoice_declaration_amount
+        #                 print('rest_amount_akiny',rest_amount,diff)
+        #                 if diff > 0 and rest_amount >0:
+        #                     if diff < rest_amount:
+        #                         x.amount_payment_org = x.amount_payment_org + diff
+        #                         rest_amount = rest_amount - diff
+        #                     else:
+        #                         x.amount_payment_org = x.amount_payment_org + rest_amount
+        #                         break
+        #         else:
+        #             print('rest_amount_akiny', rest_amount, )
+        #             rest_amount = rest_amount - (self.declaration_amount_all_residual_new - self.yjzy_payment_balance)
+        #             print('rest_amount_akiny', rest_amount, )#2
+        #             for x in line_no_630:
+        #                 diff = x.invoice_amount_total - x.invoice_declaration_amount#2
+        #                 if diff > 0 and rest_amount < 0:
+        #                     if abs(diff) > abs(rest_amount):
+        #                         x.amount_payment_org = x.amount_payment_org + rest_amount
+        #                         break
+        #                     else:
+        #                         x.amount_payment_org = x.amount_payment_org + rest_amount
+        #                         rest_amount = rest_amount - diff
+        #                 elif diff > 0 and rest_amount > 0:
+        #                     if abs(diff) <= abs(rest_amount):
+        #                         x.amount_payment_org = x.amount_payment_org + diff
+        #                         rest_amount = rest_amount - diff
+        #                     else:
+        #                         x.amount_payment_org = x.amount_payment_org + rest_amount
+        #                         break
+        #     else:
+        #         diff_balance = self.declaration_amount_all_residual_new - self.yjzy_payment_balance
+        #         print('diff_balance_akiny', diff_balance, line_630[0].amount_payment_org)
+        #
+        #         if diff_balance < 0:
+        #             for one in self.line_no_ids:
+        #                 one.amount_payment_org = one.invoice_residual
+        #         else:
+        #             line_630[0].amount_payment_org = 0
+        #             diff_balance = diff_balance - line_630[0].invoice_residual
+        #             for one in line_no_630:
+        #                 if diff_balance <= one.invoice_residual and diff_balance != 0:
+        #                     one.amount_payment_org = one.invoice_residual - diff_balance
+        #                     diff_balance = 0
+        #                 else:
+        #                     one.amount_payment_org = one.invoice_residual
 
 
 

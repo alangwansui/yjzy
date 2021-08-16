@@ -161,6 +161,9 @@ class account_payment(models.Model):
             raise Warning('不同的收款账户不允许一起付款！')
         if len(self.mapped('fk_journal_id')) > 1:
             raise Warning('不同的付款账户不允许一起付款！')
+        if len(self.mapped('journal_id')) > 1:
+            raise Warning('不同的付款账户不允许一起付款！')
+
         sfk_type = 'fkzl'
         # if sfk_type:
         #     name = self.env['ir.sequence'].next_by_code('sfk.type.%s' % sfk_type)

@@ -48,6 +48,7 @@ class account_invoice(models.Model):
     adjustment_invoice_id = fields.Many2one('account.invoice',u'退税申报调节账单')
     is_adjustment = fields.Boolean(u'是否被调节', defualt=False)
 
+    adjustment_invoice_origin_id = fields.Many2one('account.invoice',u'调节账单对应原始账单')
 
     line_name = fields.Char(u'账单排序编号', default=lambda self: self._default_name())
 

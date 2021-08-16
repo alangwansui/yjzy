@@ -738,6 +738,27 @@
                                            widget="payment" attrs="{'invisible': [('state', 'not in', 'open')]}"/>
                                 </group>
                             </page>
+                            <page string="申报账单明细">
+                                <field name="btd_line_all_in_one_invoice_ids">
+                                     <tree create="false" editable="bottom" decoration-danger="is_adjustment == True" default_order="line_name">
+                                        <field name="line_name"/>
+                                        <field name="tenyale_name" readonly="1"/>
+                                        <field name="invoice_id" string="退税账单"/>
+                                        <field name="invoice_attribute_all_in_one" string="账单属性"/>
+                                        <field name="back_tax_type" string="退税调节属性"/>
+                                        <field name="invoice_currency_id" invisible="1"/>
+                                        <field name="invoice_amount_total" string="原始应收退税"/>
+                                        <field name="invoice_residual_total" string="剩余应收退税"/>
+                                        <field name="declaration_amount" string="本次申报金额"/>
+                                        <field name="diff_tax"/>
+                                        <field name="diff_origin_tax"/>
+                                        <field name="declaration_amount_residual"
+                                               attrs="{'column_invisible':[('parent.state','not in',['done','paid'])]}"/>
+                                        <field name="is_adjustment"/>
+                                        <field name="comments"/>
+                                    </tree>
+                                </field>
+                            </page>
                             <page string="开票明细"
                                   attrs="{'invisible':[('invoice_attribute','not in',['other_po','expense_po'])]}">
                                 <field name="tb_po_hsname_all_ids" attrs="{'readonly':[('state','!=','draft')]}">

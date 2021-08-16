@@ -15,6 +15,10 @@
                                 context="{'group_by':['bill_id']}"/>
                         <filter string="客户分组" name="group_by_customer_id" domain="[]"
                                 context="{'group_by':['customer_id']}"/>
+                        <filter string="按船期分组" name="group_by_date_ship" domain="[]"
+                                context="{'group_by':['date_ship']}"/>
+                        <filter string="按进仓分组" name="group_by_date_out_in" domain="[]"
+                                context="{'group_by':['date_out_in']}"/>
                     </group>
                 </search>
             </field>
@@ -51,6 +55,8 @@
                     <field name="p_uom_id" groups="base.group_system" invisible="1"/>
                     <field name="need_print" invisible="1"/>
                     <field name="is_gold_sample"/>
+                    <field name="date_out_in"/>
+                    <field name="date_ship"/>
                 </tree>
             </field>
         </record>
