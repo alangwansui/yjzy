@@ -16,9 +16,9 @@
                         <filter string="客户分组" name="group_by_customer_id" domain="[]"
                                 context="{'group_by':['customer_id']}"/>
                         <filter string="按船期分组" name="group_by_date_ship" domain="[]"
-                                context="{'group_by':['date_ship']}"/>
+                                context="{'group_by':['date_ship:year']}"/>
                         <filter string="按进仓分组" name="group_by_date_out_in" domain="[]"
-                                context="{'group_by':['date_out_in']}"/>
+                                context="{'group_by':['date_out_in:year']}"/>
                     </group>
                 </search>
             </field>
@@ -31,21 +31,23 @@
             <field name="arch" type="xml">
                 <tree string="出运明细" create="false">
                     <field name="customer_id"/>
-                    <field name="sale_contract_code" string="销售合同"/>
+                    <field name="sale_contract_code" string="销售合同" invisible="1"/>
                     <field name="bill_id"/>
+                    <field name="date_out_in"/>
+                    <field name="date_ship"/>
                     <field name="company_currency_id" invisible="1"/>
                     <field name="sale_currency_id" invisible="1"/>
                     <field name="third_currency_id" invisible="1"/>
 
                     <field name="name" invisible="1"/>
                     <field name="sol_id" invisible="1"/>
-                    <field name="so_id"/>
+                    <field name="so_id" invisible="1"/>
                     <field name="product_id" options="{'no_open':1}"/>
                     <field name="hs_id" invisible="1"/>
                     <field name="plan_qty" string="本次出运数量" sum="小计"/>
                     <field name="so_tb_number" string="批次"/>
                     <field name="org_currency_sale_amount" sum="销售" string="出运销售金额"/>
-                    <field name="back_tax"/>
+                    <field name="back_tax" invisible="1"/>
                     <field name="purchase_cost" sum="采购" string="出运采购金额"/>
                     <field name="back_tax_amount" sum="退税"/>
                     <field name="state" groups="base.group_system" invisible="1"/>
@@ -55,8 +57,7 @@
                     <field name="p_uom_id" groups="base.group_system" invisible="1"/>
                     <field name="need_print" invisible="1"/>
                     <field name="is_gold_sample"/>
-                    <field name="date_out_in"/>
-                    <field name="date_ship"/>
+
                 </tree>
             </field>
         </record>
@@ -146,7 +147,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[]</field>
-            <field name="context">{}
+            <field name="context">{'show_po_code':1}
             </field>
             <field name="search_view_id" ref="view_transport_bill_line_tenyale_filter"/>
             <field name="view_ids" eval="[(5, 0, 0),
