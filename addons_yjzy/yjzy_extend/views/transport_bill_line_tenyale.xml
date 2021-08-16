@@ -42,6 +42,7 @@
                     <field name="name" invisible="1"/>
                     <field name="sol_id" invisible="1"/>
                     <field name="so_id" invisible="1"/>
+                    <field name="customer_ref"/>
                     <field name="product_id" options="{'no_open':1}"/>
                     <field name="hs_id" invisible="1"/>
                     <field name="plan_qty" string="本次出运数量" sum="小计"/>

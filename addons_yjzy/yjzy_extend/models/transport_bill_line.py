@@ -194,6 +194,7 @@ class transport_bill_line(models.Model):
 
     date_out_in = fields.Date('进仓日期',related='bill_id.date_out_in',store=True)
     date_ship = fields.Date('出运船日期',related='bill_id.date_ship',store=True)
+    customer_ref = fields.Char('客户型号',related='product_id.customer_ref',store=True)
     #是否金样  akiny
 
     #单个费用 akiny
