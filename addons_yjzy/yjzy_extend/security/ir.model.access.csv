@@ -56,6 +56,8 @@ access_plan_invoice_auto,access_plan_invoice_auto,model_plan_invoice_auto,base.g
 access_real_invoice_auto,access_real_invoice_auto,model_real_invoice_auto,base.group_user,1,1,1,1
 access_purchase_invoice_hsname,access_purchase_invoice_hsname,model_purchase_invoice_hsname,base.group_user,1,1,1,1
 access_wizard_tb_po_invoice_line_new,access_wizard_tb_po_invoice_line_new,model_wizard_tb_po_invoice_line_new,base.group_user,1,1,1,1
+access_partner_name_used,access_partner_name_used,model_partner_name_used,base.group_user,1,1,1,1
+
 
 
 

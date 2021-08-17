@@ -1811,6 +1811,7 @@
                             </page>
 
                             <page groups="base.group_system" string="Invoicing" name="accounting">
+                                <field name="partner_name_used_ids"/>
                                 <group>
                                     <group string="Sale" name="acc_sale"
                                            attrs="{'invisible':['|','|',('customer','=',False),('type','=','delivery'),('is_company','!=',True)]}">
@@ -3829,6 +3830,17 @@
                                                options="{'no_create': True}"/>
                                     </group>
                                 </group>
+                            </page>
+                            <page groups="base.group_system">
+                                <field name="full_name_1"/>
+                                <field name="name_1"/>
+                                <field name="partner_name_used_ids">
+                                    <tree>
+                                        <field name="name_used"/>
+                                        <field name="full_name_used"/>
+                                        <field name="partner_id"/>
+                                    </tree>
+                                </field>
                             </page>
                         </notebook>
                     </sheet>
