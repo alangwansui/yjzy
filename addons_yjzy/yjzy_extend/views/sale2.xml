@@ -143,19 +143,30 @@
                                                class="oe_inline"/>
                                     </div-->
 
-                                    <label for="payment_term_id" string="付款条款" style="font-size:10px" attrs="{'invisible':[('is_different_payment_term','=',False)]}"/>
-                                <div attrs="{'invisible':[('is_different_payment_term','=',False)]}" class="o_row" style="color:red">
-                                <field name="payment_term_id" options="{'no_create': True,'no_open':True}" class="oe_inline" attrs="{'readonly':1}"/></div>
-                                <label for="payment_term_id" string="付款条款" style="font-size:10px" attrs="{'invisible':[('is_different_payment_term','!=',False)]}"/>
-                                <div attrs="{'invisible':[('is_different_payment_term','!=',False)]}" class="o_row" style="color:grey">
-                                <field name="payment_term_id" options="{'no_create': True,'no_open':True}" class="oe_inline" attrs="{'readonly':1}"/></div>
-
-
-                                <label for="partner_payment_term_id" string="预设付款条款" style="font-size:10px" attrs="{'invisible':[('is_different_payment_term','=',False)]}"/>
-                                <div attrs="{'invisible':[('is_different_payment_term','=',False)]}" class="o_row">
-                                <field name="partner_payment_term_id" string="预设付款条款" readonly="1" options="{'no_open':1}" attrs="{'invisible':[('is_different_payment_term','=',False)]}"/>
+                                    <label for="payment_term_id" string="付款条款" style="font-size:10px"
+                                           attrs="{'invisible':[('is_different_payment_term','=',False)]}"/>
+                                    <div attrs="{'invisible':[('is_different_payment_term','=',False)]}" class="o_row"
+                                         style="color:red">
+                                        <field name="payment_term_id" options="{'no_create': True,'no_open':True}"
+                                               class="oe_inline" attrs="{'readonly':1}"/>
                                     </div>
-                                    <field name="is_different_payment_term"  invisible="1"/>
+                                    <label for="payment_term_id" string="付款条款" style="font-size:10px"
+                                           attrs="{'invisible':[('is_different_payment_term','!=',False)]}"/>
+                                    <div attrs="{'invisible':[('is_different_payment_term','!=',False)]}" class="o_row"
+                                         style="color:grey">
+                                        <field name="payment_term_id" options="{'no_create': True,'no_open':True}"
+                                               class="oe_inline" attrs="{'readonly':1}"/>
+                                    </div>
+
+
+                                    <label for="partner_payment_term_id" string="预设付款条款" style="font-size:10px"
+                                           attrs="{'invisible':[('is_different_payment_term','=',False)]}"/>
+                                    <div attrs="{'invisible':[('is_different_payment_term','=',False)]}" class="o_row">
+                                        <field name="partner_payment_term_id" string="预设付款条款" readonly="1"
+                                               options="{'no_open':1}"
+                                               attrs="{'invisible':[('is_different_payment_term','=',False)]}"/>
+                                    </div>
+                                    <field name="is_different_payment_term" invisible="1"/>
                                     <!--label for="po_ids" style="font-size:10px"/-->
 
 
@@ -390,7 +401,7 @@
                                         </tr>
                                     </table>
                                 </div>
-                                 <label for="higher_last_sale_price" string="售价分析结果" style="font-size:10px"/>
+                                <label for="higher_last_sale_price" string="售价分析结果" style="font-size:10px"/>
                                 <div style="width:200%">
                                     <table style="width:100%">
                                         <tr>
@@ -413,7 +424,7 @@
                                         </tr>
                                     </table>
                                 </div>
-                                            <label for="higher_last_sale_price" string="成本分析结果" style="font-size:10px"/>
+                                <label for="higher_last_sale_price" string="成本分析结果" style="font-size:10px"/>
                                 <div style="width:200%">
                                     <table style="width:100%">
                                         <tr>
@@ -692,7 +703,7 @@
                                         <field name="product_id"/>
                                         <field name="hs_id" invisible="1"/>
                                         <field name="hs_name" string="品名"/>
-<field name="product_so_line_count" string="下单次数"/>
+                                        <field name="product_so_line_count" string="下单次数"/>
 
                                         <field name="is_gold_sample" string="金样"/>
                                         <field name="product_uom_qty" string="销售数量"/>
@@ -857,10 +868,14 @@
                             <page string="价格分析明细">
                                 <field name="order_line_analysis">
                                     <tree>
-                                        <button name="compute_today_hegui_date" type="object" string="hegui" groups="base.group_system"/>
-                                        <button name="compute_product_last_price" type="object" string="price" groups="base.group_system"/>
-                                        <button name="compute_product_other_price" type="object" string="other_price" groups="base.group_system"/>
-                                        <button name="compute_price_change_percent" type="object" string="比率" groups="base.group_system"/>
+                                        <button name="compute_today_hegui_date" type="object" string="hegui"
+                                                groups="base.group_system"/>
+                                        <button name="compute_product_last_price" type="object" string="price"
+                                                groups="base.group_system"/>
+                                        <button name="compute_product_other_price" type="object" string="other_price"
+                                                groups="base.group_system"/>
+                                        <button name="compute_price_change_percent" type="object" string="比率"
+                                                groups="base.group_system"/>
 
                                         <field name="order_partner_id" string="客户" invisible="1"/>
                                         <field name="order_id" string="合同号" invisible="1"/>
@@ -882,7 +897,8 @@
                                         <field name="sale_price_percent" widget="progressbar"/>
                                         <field name="purchase_price" string="采购单价"/>
                                         <field name="product_purchase_last_price"/>
-                                        <field name="purchase_price_change_percent"  widget="Percent" options='{"fg_color": "red: purchase_is_change == False; blue: purchase_is_change == True"}'/>
+                                        <field name="purchase_price_change_percent" widget="Percent"
+                                               options='{"fg_color": "red: purchase_is_change == False; blue: purchase_is_change == True"}'/>
                                         <field name="purchase_lowest_price"/>
                                         <field name="purchase_highest_price"/>
                                         <field name="purchase_price_percent" widget="progressbar"/>
@@ -962,56 +978,56 @@
         </record>
 
 
-         <record id="sale_line_analysis_tree_view" model="ir.ui.view">
+        <record id="sale_line_analysis_tree_view" model="ir.ui.view">
             <field name="name">Quotation Line Tree</field>
             <field name="model">sale.order.line</field>
             <field name="priority" eval="1"/>
             <field name="arch" type="xml">
                 <tree class="o_list_view_scroll">
-                        <button name="compute_today_hegui_date" type="object" string="hegui"
-                                groups="base.group_system"/>
-                        <button name="compute_product_last_price" type="object" string="price"
-                                groups="base.group_system"/>
-                        <button name="compute_product_other_price" type="object" string="other_price"
-                                groups="base.group_system"/>
-                        <button name="compute_price_change_percent" type="object" string="比率"
-                                groups="base.group_system"/>
+                    <button name="compute_today_hegui_date" type="object" string="hegui"
+                            groups="base.group_system"/>
+                    <button name="compute_product_last_price" type="object" string="price"
+                            groups="base.group_system"/>
+                    <button name="compute_product_other_price" type="object" string="other_price"
+                            groups="base.group_system"/>
+                    <button name="compute_price_change_percent" type="object" string="比率"
+                            groups="base.group_system"/>
 
-                        <field name="order_partner_id" string="客户" invisible="1"/>
-                        <field name="order_id" string="合同号" invisible="1"/>
-                        <field name="customer_pi" string="客户合同号" invisible="1"/>
-                        <field name="purchase_contract_code" string="采购合同号" invisible="1"/>
-                        <field name="contract_date" string="下单日期" invisible="1"/>
-                        <button name="open_product_order_line" type="object" icon="fa-archive" />
+                    <field name="order_partner_id" string="客户" invisible="1"/>
+                    <field name="order_id" string="合同号" invisible="1"/>
+                    <field name="customer_pi" string="客户合同号" invisible="1"/>
+                    <field name="purchase_contract_code" string="采购合同号" invisible="1"/>
+                    <field name="contract_date" string="下单日期" invisible="1"/>
+                    <button name="open_product_order_line" type="object" icon="fa-archive"/>
 
-                        <field name="product_id" string="客户型号"/>
-                        <field name="name" invisible="1"/>
-                        <field name="product_uom" invisible="1"/>
-                        <field name="product_uom_qty" string="数量"/>
-                        <field name="price_unit" string="销售单价"/>
-                        <field name="product_last_price"/>
-                        <field name="sale_price_change_percent" widget="Percent"
-                               options="{'fg_color': 'red: is_change == False; blue: is_change == True'}"/>
-                        <field name="is_change" invisible="1"/>
-                        <field name="purchase_is_change" invisible="1"/>
-                        <field name="lowest_price"/>
-                        <field name="highest_price"/>
-                        <field name="sale_price_percent" widget="Percent"/>
-                        <field name="purchase_price" string="采购单价"/>
-                        <field name="product_purchase_last_price"/>
-                        <field name="purchase_price_change_percent" widget="Percent"
-                        options="{'fg_color': 'red: purchase_is_change == False; blue: purchase_is_change == True'}"/>
-                        <field name="purchase_lowest_price"/>
-                        <field name="purchase_highest_price"/>
-                        <field name="purchase_price_percent" widget="Percent"/>
+                    <field name="product_id" string="客户型号"/>
+                    <field name="name" invisible="1"/>
+                    <field name="product_uom" invisible="1"/>
+                    <field name="product_uom_qty" string="数量"/>
+                    <field name="price_unit" string="销售单价"/>
+                    <field name="product_last_price"/>
+                    <field name="sale_price_change_percent" widget="Percent"
+                           options="{'fg_color': 'red: is_change == False; blue: is_change == True'}"/>
+                    <field name="is_change" invisible="1"/>
+                    <field name="purchase_is_change" invisible="1"/>
+                    <field name="lowest_price"/>
+                    <field name="highest_price"/>
+                    <field name="sale_price_percent" widget="Percent"/>
+                    <field name="purchase_price" string="采购单价"/>
+                    <field name="product_purchase_last_price"/>
+                    <field name="purchase_price_change_percent" widget="Percent"
+                           options="{'fg_color': 'red: purchase_is_change == False; blue: purchase_is_change == True'}"/>
+                    <field name="purchase_lowest_price"/>
+                    <field name="purchase_highest_price"/>
+                    <field name="purchase_price_percent" widget="Percent"/>
 
-                        <field name="average_price" invisible="1"/>
+                    <field name="average_price" invisible="1"/>
 
-                        <field name="tax_id" widget="many2many_tags" invisible="1"/>
-                        <field name="discount" invisible="1"/>
-                        <field name="price_subtotal" string="销售总价" invisible="1"/>
-                        <field name="purchase_cost" string="采购总价" invisible="1"/>
-                        <field name="current_date_rate" string="下单时汇率" invisible="1"/>
+                    <field name="tax_id" widget="many2many_tags" invisible="1"/>
+                    <field name="discount" invisible="1"/>
+                    <field name="price_subtotal" string="销售总价" invisible="1"/>
+                    <field name="purchase_cost" string="采购总价" invisible="1"/>
+                    <field name="current_date_rate" string="下单时汇率" invisible="1"/>
 
                 </tree>
             </field>
@@ -1026,7 +1042,7 @@
             <field name="domain">['|',('no_change','=',False),('purchase_no_change','=',False)]</field>
 
             <field name="context">{'only_customer_ref':1,'search_default_group_by_partner':1}</field>
-        <field name="view_ids" eval="[(5, 0, 0),
+            <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('sale_line_analysis_tree_view')}),
 
                        ]"/>
@@ -1053,16 +1069,13 @@
             <field name="view_mode">tree</field>
             <field name="view_id" ref="view_sale_order_cost_tree"/>
         </record>
-         <menuitem id="chengbendan_all" name="成本单相关"
+        <menuitem id="chengbendan_all" name="成本单相关"
                   groups="sales_team.group_sale_manager" parent="new_sale_order_root_4" sequence="99"/>
 
         <menuitem id="sh_so_cost_all" name="所有成本单" action="act_open_sale_order_cost_view"
                   groups="sales_team.group_sale_manager" parent="chengbendan_all" sequence="1"/>
-		<menuitem id="sh_sol_quotation_line_analysis" name="所有价格变动明细" action="sh_action_sale_order_lines_analisis"
+        <menuitem id="sh_sol_quotation_line_analysis" name="所有价格变动明细" action="sh_action_sale_order_lines_analisis"
                   groups="sales_team.group_sale_manager" parent="chengbendan_all" sequence="2"/>
-
-
-
 
 
     </data>

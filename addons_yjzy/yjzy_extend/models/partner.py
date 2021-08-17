@@ -395,7 +395,8 @@ class res_partner(models.Model):
     jituan_id = fields.Many2one('ji.tuan', '集团')
     comment_contact = fields.Text(u'对接内容描述')
     devloper_id = fields.Many2one('res.partner', u'开发人员',domain=[('is_inter_partner','=',True),('company_type','=','personal')])
-    full_name = fields.Char('公司全称')
+    full_name = fields.Char('公司全称',track_visibility='onchange')
+    name = fields.Char(index=True,track_visibility='onchange')
     wharf_src_id = fields.Many2one('stock.wharf', u'装船港')
     wharf_dest_id = fields.Many2one('stock.wharf', u'目的港')
     term_description = fields.Html(u'销售条款')  #13改成term_sale
@@ -854,7 +855,7 @@ class res_partner(models.Model):
                     self.property_supplier_payment_term_id and self.phone and self.fax and self.website and self.address_text and \
                     self.partner_source_id and self.supplier_info_from_uid and self.actual_controlling_person and self.attachment_business_license and\
                     self.supplier_export_total and self.supplier_sale_total and self.bank_ids and self.partner_level and\
-                    self.self.child_contact_ids and self.customer_product_origin_ids and self.is_child_ids:
+                    self.self.child_contact_ids and self.customer_product_origin_ids and self.is_child_ids and self.child_invoice_ids:
                 self.state = 'submit'
             else:
                 if not self.full_name:
