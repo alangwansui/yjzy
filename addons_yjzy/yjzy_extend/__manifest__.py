@@ -154,7 +154,7 @@
         'views/hr_expense_other_payment.xml',
         'views/account_bank_statement_1.xml',
         'views/real_invoice.xml',
-        'viess/partner_name_used.xml',
+        'views/partner_name_used.xml',
         'views/menu.xml',
 
 
