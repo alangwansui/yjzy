@@ -13,12 +13,12 @@
             <button name="toggle_active" position="before">
                 <button type="object" name="open_messsage" class="oe_stat_button" icon="fa-envelope" string="查看消息" groups="base.group_system" invisible="1"/>
 
-                <button name="partner_messages" type="object" class="oe_stat_button"
+                <button name="partner_messages" type="object" class="oe_stat_button" invisible="1"
                         icon="fa-envelope" attrs="{'invisible': [('messages_from_count', '=', 0)]}"
                         context="{'open_mode': 'from'}">
                     <field name="messages_from_count" widget="statinfo" string="Author"/>
                 </button>
-                <button name="partner_messages" type="object" class="oe_stat_button"
+                <button name="partner_messages" type="object" class="oe_stat_button" invisible="1"
                         icon="fa-envelope" attrs="{'invisible': [('messages_to_count', '=', 0)]}"
                         context="{'open_mode': 'to'}">
                     <field name="messages_to_count" widget="statinfo" string="Recipient"/>

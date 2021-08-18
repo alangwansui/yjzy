@@ -15,7 +15,7 @@ class PRTPartner(models.Model):
 
     messages_from_count = fields.Integer(string="Messages From", compute='_messages_from_count')
     messages_to_count = fields.Integer(string="Messages To", compute='_messages_to_count')
-
+    customer_code = fields.Char('客户编码')
 
     def get_personal(self):
         self.ensure_one()
