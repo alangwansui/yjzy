@@ -41,7 +41,7 @@
         </record>
 
 
-        <menuitem id="menu_partner_name_used" name="客户等级" parent="yjzy_extend.customer_config"
+        <menuitem id="menu_partner_name_used" name="曾用名" parent="yjzy_extend.customer_config"
                   action="action_partner_name_used" sequence="99"/>
 
     </data>

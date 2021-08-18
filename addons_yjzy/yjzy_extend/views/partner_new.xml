@@ -1817,6 +1817,7 @@
                             </page>
 
                             <page groups="base.group_system" string="Invoicing" name="accounting">
+
                                 <group>
                                     <group string="Sale" name="acc_sale"
                                            attrs="{'invisible':['|','|',('customer','=',False),('type','=','delivery'),('is_company','!=',True)]}">
@@ -2934,19 +2935,19 @@
                                     </group>
                                 </group>
                             </page>
-<!--                            <page string="曾用名">-->
-<!--                                <field name="partner_name_used_ids">-->
-<!--                                    <tree>-->
-<!--                                        <field name="name_used"/>-->
-<!--                                        <field name="full_name_used"/>-->
-<!--                                        <field name="partner_id" invisible="1"/>-->
-<!--                                    </tree>-->
-<!--                                </field>-->
-<!--                            </page>-->
+                            <page string="曾用名">
+                                <field name="partner_name_used_ids">
+                                    <tree>
+                                        <field name="name_used"/>
+                                        <field name="full_name_used"/>
+                                        <field name="partner_id" invisible="1"/>
+                                    </tree>
+                                </field>
+                            </page>
                             <page name="manager" string="管理页" groups="base.group_system">
                                 <group>
-<!--                                    <field name="name_1"/>-->
-<!--                                    <field name="full_name_1"/>-->
+                                    <field name="name_1"/>
+                                    <field name="full_name_1"/>
                                     <field name="sales_approve_uid"/>
                                     <field name="sales_approve_date"/>
                                     <field name="approve_uid"/>
@@ -3852,19 +3853,19 @@
                                     </group>
                                 </group>
                             </page>
-<!--                            <page string="曾用名">-->
-<!--                                <field name="partner_name_used_ids">-->
-<!--                                    <tree>-->
-<!--                                        <field name="name_used"/>-->
-<!--                                        <field name="full_name_used"/>-->
-<!--                                        <field name="partner_id" invisible="1"/>-->
-<!--                                    </tree>-->
-<!--                                </field>-->
-<!--                            </page>-->
+                            <page string="曾用名">
+                                <field name="partner_name_used_ids">
+                                    <tree>
+                                        <field name="name_used"/>
+                                        <field name="full_name_used"/>
+                                        <field name="partner_id" invisible="1"/>
+                                    </tree>
+                                </field>
+                            </page>
                             <page groups="base.group_system">
                                 <group>
-<!--                                    <field name="name_1"/>-->
-<!--                                    <field name="full_name_1"/>-->
+                                    <field name="name_1"/>
+                                    <field name="full_name_1"/>
 
                                 </group>
                             </page>
