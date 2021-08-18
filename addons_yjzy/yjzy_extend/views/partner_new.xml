@@ -1817,7 +1817,6 @@
                             </page>
 
                             <page groups="base.group_system" string="Invoicing" name="accounting">
-                                <field name="partner_name_used_ids"/>
                                 <group>
                                     <group string="Sale" name="acc_sale"
                                            attrs="{'invisible':['|','|',('customer','=',False),('type','=','delivery'),('is_company','!=',True)]}">
@@ -2935,7 +2934,7 @@
                                     </group>
                                 </group>
                             </page>
-                                 <page string="曾用名">
+                            <page string="曾用名">
                                 <field name="partner_name_used_ids">
                                     <tree>
                                         <field name="name_used"/>
@@ -2944,7 +2943,6 @@
                                     </tree>
                                 </field>
                             </page>
-
                             <page name="manager" string="管理页" groups="base.group_system">
                                 <group>
                                     <field name="name_1"/>

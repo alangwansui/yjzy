@@ -193,11 +193,11 @@ class res_partner(models.Model):
             one.so_no_sent_amount = so_no_sent_ids_count
 
 
-    def compute_display_name(self):
-        diff = dict(show_address=None, show_address_only=None, show_email=None)
-        names = dict(self.with_context(**diff).name_get())
-        for partner in self:
-            partner.display_name = names.get(partner.id)
+    # def compute_display_name(self):
+    #     diff = dict(show_address=None, show_address_only=None, show_email=None)
+    #     names = dict(self.with_context(**diff).name_get())
+    #     for partner in self:
+    #         partner.display_name = names.get(partner.id)
 
 
     account_move_line_com = fields.One2many('account.move.line.com','partner_id','日志')
@@ -1203,39 +1203,39 @@ class res_partner(models.Model):
     #
     #     return res
 
-    def _update_name_full_name(self):
-        name_used = self.name_1
-        full_name_used = self.full_name_1
-        name_used_obj = self.env['partner.name.used']
-        if self.partner_name_used_ids:
-            for one in self.partner_name_used_ids:
-                if name_used == one.name_used and full_name_used == one.full_name_used:
-                    break
-                elif name_used == one.name_used and full_name_used != one.full_name_used:
-                    one.update({
-                        'full_name_used': full_name_used,
-                    })
-                elif name_used != one.name_used and full_name_used == one.full_name_used:
-                    one.update({
-                        'name_used': name_used,
-                    })
-                else:
-                    name_used_line = name_used_obj.create({
-                        'name_used': self.name,
-                        'full_name_used': self.full_name,
-                        'partner_id':self.id
-                    })
-                    break
-            self.name_1 = self.name
-            self.full_name_1 = self.full_name
-        else:
-            name_used_line = name_used_obj.create({
-                'name_used': self.name,
-                'full_name_used': self.full_name,
-                'partner_id': self.id
-            })
-            self.name_1 = self.name
-            self.full_name_1 = self.full_name
+    # def _update_name_full_name(self):
+    #     name_used = self.name_1
+    #     full_name_used = self.full_name_1
+    #     name_used_obj = self.env['partner.name.used']
+    #     if self.partner_name_used_ids:
+    #         for one in self.partner_name_used_ids:
+    #             if name_used == one.name_used and full_name_used == one.full_name_used:
+    #                 break
+    #             elif name_used == one.name_used and full_name_used != one.full_name_used:
+    #                 one.update({
+    #                     'full_name_used': full_name_used,
+    #                 })
+    #             elif name_used != one.name_used and full_name_used == one.full_name_used:
+    #                 one.update({
+    #                     'name_used': name_used,
+    #                 })
+    #             else:
+    #                 name_used_line = name_used_obj.create({
+    #                     'name_used': self.name,
+    #                     'full_name_used': self.full_name,
+    #                     'partner_id':self.id
+    #                 })
+    #                 break
+    #         self.name_1 = self.name
+    #         self.full_name_1 = self.full_name
+    #     else:
+    #         name_used_line = name_used_obj.create({
+    #             'name_used': self.name,
+    #             'full_name_used': self.full_name,
+    #             'partner_id': self.id
+    #         })
+    #         self.name_1 = self.name
+    #         self.full_name_1 = self.full_name
 
     def update_name_full_name(self):
         name_used = self.name_1
@@ -1300,6 +1300,7 @@ class partner_source(models.Model):
     name = fields.Char(u'名称')
     type = fields.Selection([('customer', '客户'), ('supplier', '供应商')])
     description = fields.Text('描述')
+
 class PartnerNameUsed(models.Model):
     _name = 'partner.name.used'
     _description = '曾用名'
