@@ -13,7 +13,7 @@ class fetchmail_server(models.Model):
         for one in self:
             one.partner_id = obj.search([('email', '=', one.user)], limit=1)
 
-    partner_id = fields.Many2one('res.partner', u'相关的伙伴', compute=compute_partner)
+    partner_id = fields.Many2one('res.partner', u'相关的伙伴', compute=compute_partner,store=True)
 
     last_alias_id = fields.Many2one('mail.alias', '无匹配的别名')
 
