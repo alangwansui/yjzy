@@ -192,7 +192,7 @@ class res_partner(models.Model):
             so_no_sent_ids_count = len('self.so_no_sent_ids')
             one.so_no_sent_amount = so_no_sent_ids_count
 
-    @api.depends('is_company', 'name', 'parent_id.name', 'type', 'company_name')
+
     def compute_display_name(self):
         diff = dict(show_address=None, show_address_only=None, show_email=None)
         names = dict(self.with_context(**diff).name_get())
@@ -1068,38 +1068,71 @@ class res_partner(models.Model):
     def _onchange_type1(self):
         self.type = self.type1
 
-    @api.multi
-    def name_get(self):
-        res = []
-        for partner in self:
-            name_1 = partner.partner_name_used_ids and partner.partner_name_used_ids[-1].name_used or ''
-            if name_1 != '':
-                x_1 = '['
-                x_2 = ']'
-            else:
-                x_1 = ''
-                x_2 = ''
-            name = "%s%s%s%s" % (partner.name or '', x_1,name_1,x_2)
+    # @api.multi
+    # def name_get(self):
+    #     res = []
+    #     for partner in self:
+    #         name_1 = partner.partner_name_used_ids and partner.partner_name_used_ids[-1].name_used or ''
+    #         if name_1 != '':
+    #             x_1 = '['
+    #             x_2 = ']'
+    #         else:
+    #             x_1 = ''
+    #             x_2 = ''
+    #         name = "%s%s%s%s" % (partner.name or '', x_1,name_1,x_2)
+    #
+    #         if partner.company_name or partner.parent_id:
+    #             if not name and partner.type in ['invoice', 'delivery', 'other']:
+    #                 name = dict(self.fields_get(['type'])['type']['selection'])[partner.type]
+    #             if not partner.is_company:
+    #                 name = "%s, %s" % (partner.commercial_company_name or partner.parent_id.name, name)
+    #         if self._context.get('show_address_only'):
+    #             name = partner._display_address(without_company=True)
+    #         if self._context.get('show_address'):
+    #             name = name + "\n" + partner._display_address(without_company=True)
+    #         name = name.replace('\n\n', '\n')
+    #         name = name.replace('\n\n', '\n')
+    #         if self._context.get('show_email') and partner.email:
+    #             name = "%s <%s>" % (partner.name, partner.email)
+    #             if partner.parent_id:
+    #                 name += ':' + partner.parent_id.name
+    #         if self._context.get('html_format'):
+    #             name = name.replace('\n', '<br/>')
+    #         res.append((partner.id, name))
+    #     return res
 
-            if partner.company_name or partner.parent_id:
-                if not name and partner.type in ['invoice', 'delivery', 'other']:
-                    name = dict(self.fields_get(['type'])['type']['selection'])[partner.type]
-                if not partner.is_company:
-                    name = "%s, %s" % (partner.commercial_company_name or partner.parent_id.name, name)
-            if self._context.get('show_address_only'):
-                name = partner._display_address(without_company=True)
-            if self._context.get('show_address'):
-                name = name + "\n" + partner._display_address(without_company=True)
-            name = name.replace('\n\n', '\n')
-            name = name.replace('\n\n', '\n')
-            if self._context.get('show_email') and partner.email:
-                name = "%s <%s>" % (partner.name, partner.email)
-                if partner.parent_id:
-                    name += ':' + partner.parent_id.name
-            if self._context.get('html_format'):
-                name = name.replace('\n', '<br/>')
-            res.append((partner.id, name))
-        return res
+    # @api.multi
+    # def name_get(self):
+    #     res = []
+    #     for partner in self:
+    #         name_1 = partner.partner_name_used_ids and partner.partner_name_used_ids[-1].name_used or ''
+    #         if name_1 != '':
+    #             x_1 = '['
+    #             x_2 = ']'
+    #         else:
+    #             x_1 = ''
+    #             x_2 = ''
+    #         name = "%s%s%s%s" % (partner.name or '', x_1, name_1, x_2)
+    #
+    #         if partner.company_name or partner.parent_id:
+    #             if not name and partner.type in ['invoice', 'delivery', 'other']:
+    #                 name = dict(self.fields_get(['type'])['type']['selection'])[partner.type]
+    #             if not partner.is_company:
+    #                 name = "%s, %s" % (partner.commercial_company_name or partner.parent_id.name, name)
+    #         if self._context.get('show_address_only'):
+    #             name = partner._display_address(without_company=True)
+    #         if self._context.get('show_address'):
+    #             name = name + "\n" + partner._display_address(without_company=True)
+    #         name = name.replace('\n\n', '\n')
+    #         name = name.replace('\n\n', '\n')
+    #         if self._context.get('show_email') and partner.email:
+    #             name = "%s <%s>" % (partner.name, partner.email)
+    #             if partner.parent_id:
+    #                 name += ':' + partner.parent_id.name
+    #         if self._context.get('html_format'):
+    #             name = name.replace('\n', '<br/>')
+    #         res.append((partner.id, name))
+    #     return res
 
 
     #
