@@ -404,8 +404,8 @@ class res_partner(models.Model):
     jituan_id = fields.Many2one('ji.tuan', '集团')
     comment_contact = fields.Text(u'对接内容描述')
     devloper_id = fields.Many2one('res.partner', u'开发人员',domain=[('is_inter_partner','=',True),('company_type','=','personal')])
-    full_name = fields.Char('公司全称',track_visibility='onchange')
-    name = fields.Char(index=True,track_visibility='onchange')
+    full_name = fields.Char('公司全称')
+
     full_name_1 = fields.Char('公司全称')
     name_1 = fields.Char('Name')
     wharf_src_id = fields.Many2one('stock.wharf', u'装船港')
@@ -1294,6 +1294,6 @@ class PartnerNameUsed(models.Model):
     partner_id = fields.Many2one('res.partner','Partner')
     name_used = fields.Char(u'曾用简称')
     full_name_used = fields.Char(u'曾用全称')
-    company_id = fields.Many2one('res.company', '公司',default=lambda self: self.env.user.company_id.id)
+    # company_id = fields.Many2one('res.company', '公司',default=lambda self: self.env.user.company_id.id)
 
 
