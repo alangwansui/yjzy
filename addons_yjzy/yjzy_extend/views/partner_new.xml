@@ -2934,15 +2934,15 @@
                                     </group>
                                 </group>
                             </page>
-<!--                            <page string="曾用名">-->
-<!--                                <field name="partner_name_used_ids">-->
-<!--                                    <tree>-->
-<!--                                        <field name="name_used"/>-->
-<!--                                        <field name="full_name_used"/>-->
-<!--                                        <field name="partner_id" invisible="1"/>-->
-<!--                                    </tree>-->
-<!--                                </field>-->
-<!--                            </page>-->
+                            <page string="曾用名">
+                                <field name="partner_name_used_ids">
+                                    <tree>
+                                        <field name="name_used"/>
+                                        <field name="full_name_used"/>
+                                        <field name="partner_id" invisible="1"/>
+                                    </tree>
+                                </field>
+                            </page>
                             <page name="manager" string="管理页" groups="base.group_system">
                                 <group>
                                     <field name="name_1"/>
