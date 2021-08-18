@@ -193,13 +193,6 @@ class res_partner(models.Model):
             one.so_no_sent_amount = so_no_sent_ids_count
 
 
-    def compute_display_name(self):
-        diff = dict(show_address=None, show_address_only=None, show_email=None)
-        names = dict(self.with_context(**diff).name_get())
-        for partner in self:
-            partner.display_name = names.get(partner.id)
-
-
     account_move_line_com = fields.One2many('account.move.line.com','partner_id','日志')
 
     qingguan_precision = fields.Integer('清关资料打印小数位数')
@@ -371,8 +364,6 @@ class res_partner(models.Model):
     sales_assistant_ids = fields.Many2many('res.users','m_2_id','ru_2_id','p_2_id','销售助理')
     purchase_assistant_ids = fields.Many2many('res.users','m_3_id','ru_3_id','p_3_id','采购助理')
 
-    # partner_name_used_ids = fields.One2many('partner.name.used','partner_id','曾用名')
-
     @api.depends('salesman_ids','sales_assistant_ids')
     def compute_user_id(self):
         for one in self:
@@ -404,10 +395,7 @@ class res_partner(models.Model):
     jituan_id = fields.Many2one('ji.tuan', '集团')
     comment_contact = fields.Text(u'对接内容描述')
     devloper_id = fields.Many2one('res.partner', u'开发人员',domain=[('is_inter_partner','=',True),('company_type','=','personal')])
-    full_name = fields.Char('公司全称',track_visibility='onchange')
-    name = fields.Char(index=True,track_visibility='onchange')
-    full_name_1 = fields.Char('公司全称')
-    name_1 = fields.Char('Name')
+    full_name = fields.Char('公司全称')
     wharf_src_id = fields.Many2one('stock.wharf', u'装船港')
     wharf_dest_id = fields.Many2one('stock.wharf', u'目的港')
     term_description = fields.Html(u'销售条款')  #13改成term_sale
@@ -866,7 +854,7 @@ class res_partner(models.Model):
                     self.property_supplier_payment_term_id and self.phone and self.fax and self.website and self.address_text and \
                     self.partner_source_id and self.supplier_info_from_uid and self.actual_controlling_person and self.attachment_business_license and\
                     self.supplier_export_total and self.supplier_sale_total and self.bank_ids and self.partner_level and\
-                    self.self.child_contact_ids and self.customer_product_origin_ids and self.is_child_ids and self.child_invoice_ids:
+                    self.self.child_contact_ids and self.customer_product_origin_ids and self.is_child_ids:
                 self.state = 'submit'
             else:
                 if not self.full_name:
@@ -1062,196 +1050,11 @@ class res_partner(models.Model):
                 })
 
 
+
     @api.onchange('type1')
     def _onchange_type1(self):
         self.type = self.type1
 
-    # @api.multi
-    # def name_get(self):
-    #     res = []
-    #     for partner in self:
-    #         name_1 = partner.partner_name_used_ids and partner.partner_name_used_ids[-1].name_used or ''
-    #         if name_1 != '':
-    #             x_1 = '['
-    #             x_2 = ']'
-    #         else:
-    #             x_1 = ''
-    #             x_2 = ''
-    #         name = "%s%s%s%s" % (partner.name or '', x_1,name_1,x_2)
-    #
-    #         if partner.company_name or partner.parent_id:
-    #             if not name and partner.type in ['invoice', 'delivery', 'other']:
-    #                 name = dict(self.fields_get(['type'])['type']['selection'])[partner.type]
-    #             if not partner.is_company:
-    #                 name = "%s, %s" % (partner.commercial_company_name or partner.parent_id.name, name)
-    #         if self._context.get('show_address_only'):
-    #             name = partner._display_address(without_company=True)
-    #         if self._context.get('show_address'):
-    #             name = name + "\n" + partner._display_address(without_company=True)
-    #         name = name.replace('\n\n', '\n')
-    #         name = name.replace('\n\n', '\n')
-    #         if self._context.get('show_email') and partner.email:
-    #             name = "%s <%s>" % (partner.name, partner.email)
-    #             if partner.parent_id:
-    #                 name += ':' + partner.parent_id.name
-    #         if self._context.get('html_format'):
-    #             name = name.replace('\n', '<br/>')
-    #         res.append((partner.id, name))
-    #     return res
-
-    # @api.multi
-    # def name_get(self):
-    #     res = []
-    #     for partner in self:
-    #         name_1 = partner.partner_name_used_ids and partner.partner_name_used_ids[-1].name_used or ''
-    #         if name_1 != '':
-    #             x_1 = '['
-    #             x_2 = ']'
-    #         else:
-    #             x_1 = ''
-    #             x_2 = ''
-    #         name = "%s%s%s%s" % (partner.name or '', x_1, name_1, x_2)
-    #
-    #         if partner.company_name or partner.parent_id:
-    #             if not name and partner.type in ['invoice', 'delivery', 'other']:
-    #                 name = dict(self.fields_get(['type'])['type']['selection'])[partner.type]
-    #             if not partner.is_company:
-    #                 name = "%s, %s" % (partner.commercial_company_name or partner.parent_id.name, name)
-    #         if self._context.get('show_address_only'):
-    #             name = partner._display_address(without_company=True)
-    #         if self._context.get('show_address'):
-    #             name = name + "\n" + partner._display_address(without_company=True)
-    #         name = name.replace('\n\n', '\n')
-    #         name = name.replace('\n\n', '\n')
-    #         if self._context.get('show_email') and partner.email:
-    #             name = "%s <%s>" % (partner.name, partner.email)
-    #             if partner.parent_id:
-    #                 name += ':' + partner.parent_id.name
-    #         if self._context.get('html_format'):
-    #             name = name.replace('\n', '<br/>')
-    #         res.append((partner.id, name))
-    #     return res
-
-
-    #
-    # @api.onchange('name','full_name')
-    # def onchange_name(self):
-    #     name_used = self.name_1
-    #     full_name_used = self.full_name_1
-    #     name_used_obj = self.env['partner.name.used']
-    #     if self.partner_name_used_ids:
-    #         for one in self.partner_name_used_ids:
-    #             if name_used == one.name_used and full_name_used == one.full_name_used:
-    #                 break
-    #             elif name_used == one.name_used and full_name_used != one.full_name_used:
-    #                 one.update({
-    #                     'full_name_used': full_name_used,
-    #                 })
-    #             elif name_used != one.name_used and full_name_used == one.full_name_used:
-    #                 one.update({
-    #                     'name_used': name_used,
-    #                 })
-    #             else:
-    #                 name_used_line = name_used_obj.create({
-    #                     'name_used': self.name,
-    #                     'full_name_used': self.full_name,
-    #                     'partner_id': self.id
-    #                 })
-    #         self.name_1 = self.name
-    #         self.full_name_1 = self.full_name
-    #     else:
-    #         name_used_line = name_used_obj.create({
-    #             'name_used': self.name,
-    #             'full_name_used': self.full_name,
-    #             'partner_id': self.id
-    #         })
-    #         self.name_1 = self.name
-    #         self.full_name_1 = self.full_name
-
-
-    # def write(self, vals):
-    #     res = super(res_partner, self).write(vals)
-    #     name_used = self.name_1
-    #     full_name_used = self.full_name_1
-    #     name_used_obj = self.env['partner.name.used']
-    #     if self.partner_name_used_ids:
-    #         for one in self.partner_name_used_ids:
-    #             if name_used == one.name_used and full_name_used == one.full_name_used:
-    #                 break
-    #             elif name_used == one.name_used and full_name_used != one.full_name_used:
-    #                 one.full_name_used = full_name_used
-    #             elif name_used != one.name_used and full_name_used == one.full_name_used:
-    #                 one.name_used = name_used
-    #             else:
-    #                 name_used_line = name_used_obj.create({
-    #                     'name_used': self.name,
-    #                     'full_name_used': self.full_name,
-    #                     'partner_id':self.id
-    #                 })
-    #         self.name_1 = self.name
-    #         self.full_name_1 = self.full_name
-    #     else:
-    #         name_used_line = name_used_obj.create({
-    #             'name_used': self.name,
-    #             'full_name_used': self.full_name,
-    #             'partner_id': self.id
-    #         })
-    #         self.name_1 = self.name
-    #         self.full_name_1 = self.full_name
-    #
-    #     return res
-
-    # def _update_name_full_name(self):
-    #     name_used = self.name_1
-    #     full_name_used = self.full_name_1
-    #     name_used_obj = self.env['partner.name.used']
-    #     if self.partner_name_used_ids:
-    #         for one in self.partner_name_used_ids:
-    #             if name_used == one.name_used and full_name_used == one.full_name_used:
-    #                 break
-    #             elif name_used == one.name_used and full_name_used != one.full_name_used:
-    #                 one.update({
-    #                     'full_name_used': full_name_used,
-    #                 })
-    #             elif name_used != one.name_used and full_name_used == one.full_name_used:
-    #                 one.update({
-    #                     'name_used': name_used,
-    #                 })
-    #             else:
-    #                 name_used_line = name_used_obj.create({
-    #                     'name_used': self.name,
-    #                     'full_name_used': self.full_name,
-    #                     'partner_id':self.id
-    #                 })
-    #                 break
-    #         self.name_1 = self.name
-    #         self.full_name_1 = self.full_name
-    #     else:
-    #         name_used_line = name_used_obj.create({
-    #             'name_used': self.name,
-    #             'full_name_used': self.full_name,
-    #             'partner_id': self.id
-    #         })
-    #         self.name_1 = self.name
-    #         self.full_name_1 = self.full_name
-
-    def update_name_full_name(self):
-        name_used = self.name_1
-        full_name_used = self.full_name_1
-        name = self.name
-        full_name = self.full_name
-        name_used_obj = self.env['partner.name.used']
-        if name_used != name or full_name_used != full_name:
-            name_used_line = name_used_obj.create({
-                'name_used': name_used,
-                'full_name_used': full_name_used,
-                'partner_id': self.id
-            })
-            self.name_1 = self.name
-            self.full_name_1 = self.full_name
-        else:
-            self.name_1 = self.name
-            self.full_name_1 = self.full_name
 
 
     # @api.one
@@ -1284,14 +1087,3 @@ class partner_source(models.Model):
     name = fields.Char(u'名称')
     type = fields.Selection([('customer', '客户'), ('supplier', '供应商')])
     description = fields.Text('描述')
-
-class PartnerNameUsed(models.Model):
-    _name = 'partner.name.used'
-    _description = '曾用名'
-
-    partner_id = fields.Many2one('res.partner','Partner')
-    name_used = fields.Char(u'曾用简称')
-    full_name_used = fields.Char(u'曾用全称')
-    # company_id = fields.Many2one('res.company', '公司',default=lambda self: self.env.user.company_id.id)
-
-

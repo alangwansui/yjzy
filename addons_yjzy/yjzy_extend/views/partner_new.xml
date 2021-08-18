@@ -2945,8 +2945,8 @@
 <!--                            </page>-->
                             <page name="manager" string="管理页" groups="base.group_system">
                                 <group>
-                                    <field name="name_1"/>
-                                    <field name="full_name_1"/>
+<!--                                    <field name="name_1"/>-->
+<!--                                    <field name="full_name_1"/>-->
                                     <field name="sales_approve_uid"/>
                                     <field name="sales_approve_date"/>
                                     <field name="approve_uid"/>
@@ -3863,8 +3863,8 @@
 <!--                            </page>-->
                             <page groups="base.group_system">
                                 <group>
-                                    <field name="name_1"/>
-                                    <field name="full_name_1"/>
+<!--                                    <field name="name_1"/>-->
+<!--                                    <field name="full_name_1"/>-->
 
                                 </group>
                             </page>
