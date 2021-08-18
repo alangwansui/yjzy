@@ -1073,7 +1073,13 @@ class res_partner(models.Model):
         res = []
         for partner in self:
             name_1 = partner.partner_name_used_ids and partner.partner_name_used_ids[-1].name_used or ''
-            name = "%s[%s]" % (partner.name or '', name_1)
+            if name_1 != '':
+                x_1 = '['
+                x_2 = ']'
+            else:
+                x_1 = ''
+                x_2 = ''
+            name = "%s%s%s%s" % (partner.name or '', x_1,name_1,x_2)
 
             if partner.company_name or partner.parent_id:
                 if not name and partner.type in ['invoice', 'delivery', 'other']:
