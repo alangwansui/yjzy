@@ -371,7 +371,7 @@ class res_partner(models.Model):
     sales_assistant_ids = fields.Many2many('res.users','m_2_id','ru_2_id','p_2_id','销售助理')
     purchase_assistant_ids = fields.Many2many('res.users','m_3_id','ru_3_id','p_3_id','采购助理')
 
-    partner_name_used_ids = fields.One2many('partner.name.used','partner_id','曾用名')
+    # partner_name_used_ids = fields.One2many('partner.name.used','partner_id','曾用名')
 
     @api.depends('salesman_ids','sales_assistant_ids')
     def compute_user_id(self):
@@ -1061,8 +1061,6 @@ class res_partner(models.Model):
                     'order_id': order_id.id
                 })
 
-    _cache_name = {}
-    _cache_fullname = {}
 
     @api.onchange('type1')
     def _onchange_type1(self):
@@ -1101,38 +1099,38 @@ class res_partner(models.Model):
     #         res.append((partner.id, name))
     #     return res
 
-    @api.multi
-    def name_get(self):
-        res = []
-        for partner in self:
-            name_1 = partner.partner_name_used_ids and partner.partner_name_used_ids[-1].name_used or ''
-            if name_1 != '':
-                x_1 = '['
-                x_2 = ']'
-            else:
-                x_1 = ''
-                x_2 = ''
-            name = "%s%s%s%s" % (partner.name or '', x_1, name_1, x_2)
-
-            if partner.company_name or partner.parent_id:
-                if not name and partner.type in ['invoice', 'delivery', 'other']:
-                    name = dict(self.fields_get(['type'])['type']['selection'])[partner.type]
-                if not partner.is_company:
-                    name = "%s, %s" % (partner.commercial_company_name or partner.parent_id.name, name)
-            if self._context.get('show_address_only'):
-                name = partner._display_address(without_company=True)
-            if self._context.get('show_address'):
-                name = name + "\n" + partner._display_address(without_company=True)
-            name = name.replace('\n\n', '\n')
-            name = name.replace('\n\n', '\n')
-            if self._context.get('show_email') and partner.email:
-                name = "%s <%s>" % (partner.name, partner.email)
-                if partner.parent_id:
-                    name += ':' + partner.parent_id.name
-            if self._context.get('html_format'):
-                name = name.replace('\n', '<br/>')
-            res.append((partner.id, name))
-        return res
+    # @api.multi
+    # def name_get(self):
+    #     res = []
+    #     for partner in self:
+    #         name_1 = partner.partner_name_used_ids and partner.partner_name_used_ids[-1].name_used or ''
+    #         if name_1 != '':
+    #             x_1 = '['
+    #             x_2 = ']'
+    #         else:
+    #             x_1 = ''
+    #             x_2 = ''
+    #         name = "%s%s%s%s" % (partner.name or '', x_1, name_1, x_2)
+    #
+    #         if partner.company_name or partner.parent_id:
+    #             if not name and partner.type in ['invoice', 'delivery', 'other']:
+    #                 name = dict(self.fields_get(['type'])['type']['selection'])[partner.type]
+    #             if not partner.is_company:
+    #                 name = "%s, %s" % (partner.commercial_company_name or partner.parent_id.name, name)
+    #         if self._context.get('show_address_only'):
+    #             name = partner._display_address(without_company=True)
+    #         if self._context.get('show_address'):
+    #             name = name + "\n" + partner._display_address(without_company=True)
+    #         name = name.replace('\n\n', '\n')
+    #         name = name.replace('\n\n', '\n')
+    #         if self._context.get('show_email') and partner.email:
+    #             name = "%s <%s>" % (partner.name, partner.email)
+    #             if partner.parent_id:
+    #                 name += ':' + partner.parent_id.name
+    #         if self._context.get('html_format'):
+    #             name = name.replace('\n', '<br/>')
+    #         res.append((partner.id, name))
+    #     return res
 
 
     #
