@@ -78,7 +78,8 @@
                     <field name="fax" invisible="1"/>
                     <field name="contract_type" string="业务模式" groups="sales_team.group_sale_salesman, sale.hegui_all"/>
                     <field name="gongsi_id" string="销售主体" groups="sales_team.group_sale_salesman, sale.hegui_all"/>
-                    <field name="purchase_gongsi_id" string="采购主体" groups="sales_team.group_sale_salesman, sale.hegui_all"/>
+                    <field name="purchase_gongsi_id" string="采购主体"
+                           groups="sales_team.group_sale_salesman, sale.hegui_all"/>
                     <field name="user_id" string="目前客户负责人" groups="sales_team.group_sale_salesman, sale.hegui_all"/>
                     <field name="customer_info_from_uid" string="客户获取人" invisible="1"/>
                     <field name="devloper_id" string="客户开发人" invisible="1"/>
@@ -255,7 +256,7 @@
             <field name="model">res.partner</field>
             <field eval="8" name="priority"/>
             <field name="arch" type="xml">
-                <tree string="Contacts" create="false" delete="false" edit="false" >
+                <tree string="Contacts" create="false" delete="false" edit="false">
 
                     <field name="name" string="简称" readonly="1"/>
                     <button name="print_invoice_payment" icon="fa-print" string="付款-应付" type="object"/>
@@ -275,7 +276,8 @@
                     <field name="amount_advance_payment" sum="小计" readonly="1" invisible="1"/>
                     <field name="amount_advance_payment_reconcile" sum="小计" readonly="1" invisible="1"/>
 
-                    <field name="supplier_amount_residual_advance_payment" sum="小计" readonly="1" groups="base.group_system"/>
+                    <field name="supplier_amount_residual_advance_payment" sum="小计" readonly="1"
+                           groups="base.group_system"/>
                     <field name="supplier_amount_residual_advance_payment_no_store" sum="小计" readonly="1"/>
                     <!--button name="open_reconcile_order_line" icon="fa-pencil-square-o" type="object"/-->
                     <button name="open_supplier_advance" icon="fa-pencil-square-o" type="object"/>
@@ -386,13 +388,14 @@
                         <notebook colspan="4">
                             <page string="应收账单列表">
                                 <field name="invoice_ids">
-                                    <tree decoration-info="state == 'draft'" limit="160" decoration-muted="state == 'cancel'"
+                                    <tree decoration-info="state == 'draft'" limit="160"
+                                          decoration-muted="state == 'cancel'"
                                           string="Invoice">
 
                                         <field name="date_invoice" string="账单日期"/>
                                         <field name="tb_contract_code" string="合同号"/>
-<!--                                        <button name="open_reconcile_order_line" icon="fa-pencil-square-o"-->
-<!--                                                type="object"/>-->
+                                        <!--                                        <button name="open_reconcile_order_line" icon="fa-pencil-square-o"-->
+                                        <!--                                                type="object"/>-->
 
                                         <field name="residual_times" string="到期天数" invisible="1"/>
                                         <field name="amount_total_signed" string="初始应收款" sum="Total"/>
@@ -417,7 +420,7 @@
                                         <field name="currency_id" invisible="1"/>
                                         <field name="company_currency_id" invisible="1"/>
                                         <field name="state" invisible="1"/>
-                                        <field name="type" invisible="context.get('type',True)" />
+                                        <field name="type" invisible="context.get('type',True)"/>
                                         <field name="date_due" string="进仓到期日" invisible="1"/>
                                         <field name="date_deadline" string="实际到期日" invisible="1"/>
                                     </tree>
@@ -568,16 +571,18 @@
                                         <field name="partner_id" groups="base.group_system" string="Customer"/>
                                         <field name="date_invoice" string="账单日期"/>
                                         <field name="tb_contract_code" string="合同号"/>
-<!--                                        <button name="open_reconcile_order_line" icon="fa-pencil-square-o"-->
-<!--                                                type="object"/>-->
+                                        <!--                                        <button name="open_reconcile_order_line" icon="fa-pencil-square-o"-->
+                                        <!--                                                type="object"/>-->
                                         <field name="amount_total_signed" string="原始应付款" sum="Total"/>
                                         <field name="residual_signed" string="未付金额" sum="Amount Due"/>
                                         <field name="residual_times" string="到期天数" invisible="1"/>
                                         <field name="amount_payment_org_done" string="已支付" sum="小计"/>
                                         <field name="amount_advance_org_done" string="已认领预付" sum="小计" invisible="1"/>
-                                        <field name="amount_payment_org_approved" string="已审批应付" sum="小计" invisible="1"/>
+                                        <field name="amount_payment_org_approved" string="已审批应付" sum="小计"
+                                               invisible="1"/>
                                         <field name="wait_advance" string="所有剩余预付" sum="小计"/>
-                                        <field name="jianyi_advance" string="建议预付认领" sum="小计" groups="base.group_system"/>
+                                        <field name="jianyi_advance" string="建议预付认领" sum="小计"
+                                               groups="base.group_system"/>
                                         <field name="amount_payment_can_approve_all" string="可申请支付" sum="小计"/>
                                         <field name="amount_payment_can_approve_all_1" string="减去预付可申请支付" sum="小计"/>
                                         <field name="state_1" string="状态"/>
@@ -596,7 +601,8 @@
                                         <field name="currency_id" invisible="1"/>
                                         <field name="company_currency_id" invisible="1"/>
                                         <field name="state" invisible="1"/>
-                                        <field name="type" invisible="context.get('type',True)" groups="base.group_system"/>
+                                        <field name="type" invisible="context.get('type',True)"
+                                               groups="base.group_system"/>
                                         <field name="date_due" string="进仓到期日" invisible="1"/>
                                         <field name="date_deadline" string="实际到期日" invisible="1"/>
                                     </tree>
@@ -2055,7 +2061,8 @@
                             <group>
                                 <field name="type" invisible="1" attrs="{'invisible': [('parent_id','=', False)]}"
                                        groups="base.group_no_one,sale.group_delivery_invoice_address"/>
-                                <field name="full_name" string="客户公司全称" groups="sales_team.group_sale_salesman, sale.hegui_all"
+                                <field name="full_name" string="客户公司全称"
+                                       groups="sales_team.group_sale_salesman, sale.hegui_all"
                                        attrs="{'invisible':[('is_company','=',False)],'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
 
                                 <!--label for="country_id" string="业务国" attrs="{'invisible':[('type','!=','delivery')]}"/>
@@ -2079,7 +2086,9 @@
                                        domain="[('type','=','sale')]"
                                        attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)],'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"
                                        widget="selection"/>
-                                <div colspan="2"><span style="color:red">注意切换两个主体检查付款条款是否相同</span></div>
+                                <div colspan="2">
+                                    <span style="color:red">注意切换两个主体检查付款条款是否相同</span>
+                                </div>
                                 <separator string="" colspan="2"/>
                                 <!--separator string="联系方式" style="border-bottom:1px #000000 solid" colspan="2"/-->
 
@@ -2926,8 +2935,20 @@
                                     </group>
                                 </group>
                             </page>
+                                 <page string="曾用名">
+                                <field name="partner_name_used_ids">
+                                    <tree>
+                                        <field name="name_used"/>
+                                        <field name="full_name_used"/>
+                                        <field name="partner_id" invisible="1"/>
+                                    </tree>
+                                </field>
+                            </page>
+
                             <page name="manager" string="管理页" groups="base.group_system">
                                 <group>
+                                    <field name="name_1"/>
+                                    <field name="full_name_1"/>
                                     <field name="sales_approve_uid"/>
                                     <field name="sales_approve_date"/>
                                     <field name="approve_uid"/>
@@ -3130,7 +3151,9 @@
                                        attrs="{'invisible':['|',('supplier','=',False),('is_company','=',False)],
                                        'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"
                                        domain="[('type','=','purchase')]" widget="selection"/>
-                                <div colspan="2"><span style="color:red">注意切换两个主体检查付款条款是否相同</span></div>
+                                <div colspan="2">
+                                    <span style="color:red">注意切换两个主体检查付款条款是否相同</span>
+                                </div>
                                 <separator string="" colspan="2"/>
                                 <!--separator string="联系方式" style="border-bottom:1px #000000 solid" colspan="2"/-->
 
@@ -3831,16 +3854,21 @@
                                     </group>
                                 </group>
                             </page>
-                            <page groups="base.group_system">
-                                <field name="full_name_1"/>
-                                <field name="name_1"/>
+                            <page string="曾用名">
                                 <field name="partner_name_used_ids">
                                     <tree>
                                         <field name="name_used"/>
                                         <field name="full_name_used"/>
-                                        <field name="partner_id"/>
+                                        <field name="partner_id" invisible="1"/>
                                     </tree>
                                 </field>
+                            </page>
+                            <page groups="base.group_system">
+                                <group>
+                                    <field name="name_1"/>
+                                    <field name="full_name_1"/>
+
+                                </group>
                             </page>
                         </notebook>
                     </sheet>
@@ -4481,7 +4509,8 @@
             <field name="res_model">res.partner</field>
             <field name="view_type">form</field>
             <field name="view_mode">kanban,tree,form</field>
-            <field name="domain">[('customer','=',True),('is_company','=',True),('name','!=','未定义'),('name','!=','国税局'),('state','=','done')]
+            <field name="domain">
+                [('customer','=',True),('is_company','=',True),('name','!=','未定义'),('name','!=','国税局'),('state','=','done')]
             </field>
             <field name="context">{'default_is_company': True,'default_customer': True,
                 'default_contract_type':'c'}
@@ -4502,7 +4531,8 @@
             <field name="res_model">res.partner</field>
             <field name="view_type">form</field>
             <field name="view_mode">kanban,tree,form</field>
-            <field name="domain">[('customer','=',True),('is_company','=',True),('name','!=','未定义'),('name','!=','国税局'),('state','=','done')]
+            <field name="domain">
+                [('customer','=',True),('is_company','=',True),('name','!=','未定义'),('name','!=','国税局'),('state','=','done')]
             </field>
             <field name="context">{'default_is_company': True,'default_customer': True,'default_contract_type':'c'}
             </field>
@@ -4513,7 +4543,8 @@
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('res_new_partner_kanban_view')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_new_customer_account_form')})]"/>
         </record>
-        <menuitem id="menu_new_customer_account_no_store" parent="new_customer_root" name="客户数据查询." sequence="99" groups="base.group_system"
+        <menuitem id="menu_new_customer_account_no_store" parent="new_customer_root" name="客户数据查询." sequence="99"
+                  groups="base.group_system"
                   action="action_new_customer_account_no_store"/>
 
 
@@ -4558,7 +4589,8 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_new_supplier_account_form')})]"/>
         </record>
 
-        <menuitem id="menu_new_supplier_account_no_store" parent="new_supplier_root" name="供应商数据查询." sequence="99" groups="base.group_system"
+        <menuitem id="menu_new_supplier_account_no_store" parent="new_supplier_root" name="供应商数据查询." sequence="99"
+                  groups="base.group_system"
                   action="action_new_supplier_account_no_store"/>
         <menuitem id="menu_new_supplier_account" parent="new_supplier_root" name="供应商数据查询" sequence="99"
                   action="action_new_supplier_account"/>
