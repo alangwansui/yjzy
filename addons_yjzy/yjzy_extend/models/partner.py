@@ -384,6 +384,13 @@ class res_partner(models.Model):
             else:
                 one.assistant_id = None
 
+
+    def compute_display_name(self):
+        diff = dict(show_address=None, show_address_only=None, show_email=None)
+        names = dict(self.with_context(**diff).name_get())
+        for partner in self:
+            partner.display_name = names.get(partner.id)
+
     user_id = fields.Many2one('res.users', string='Salesperson', compute=compute_user_id, store=True,
                               help='The internal user that is in charge of communicating with this contact if any.')
 
