@@ -58,7 +58,7 @@
                     <button name="open_advance_residual_lines" class="oe_highlight" type='object' string="预收分录明细"/>
                     <button name="check_po_allow" class="oe_highlight" type='object' string="检查采购已审批"/>
                     <button name="compute_po_residual" type="object" string="计算采购预付款"/>
-
+                    <button name="open_excel_text_parser" type="object" string="解析Excel复制"/>
                 </field>
 
                 <field name="payment_term_id" position="attributes">
