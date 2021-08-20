@@ -406,6 +406,7 @@
             <field name="arch" type="xml">
                 <form string="销售订单" class="o_sale_order" create="false">
                      <header groups="base.group_system">
+                         <button name="open_excel_text_parser" type="object" string="解析Excel复制"/>
                            <button name="action_submit_stage" string="提交" type="object" attrs="{'invisible':[('state_1','!=','draft')]}"/>
                          <button name="action_to_draft" string="重置草稿" type="object" attrs="{'invisible':[('state_1','!=','refused')]}"/>d
 

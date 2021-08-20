@@ -22,7 +22,7 @@
                 'lot_price', 'lot_usage_model', 'purchase_sale_reserved', 'order_line_available',
                 'account', 'account_tax_code', 'mrp', 'account_payment_advance',
                 'wkf_powerful', 'delivery_status', 'sale_order_dates', 'oh_employee_creation_from_user',
-                'mrp', 'product_category_code', 'website_sale', 'hr_expense',
+                'mrp', 'product_category_code', 'website_sale', 'hr_expense', 'excel_text_parser',
                 ],
 
     'data': [

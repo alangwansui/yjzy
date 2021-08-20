@@ -50,6 +50,32 @@ class SaleOrderStage(models.Model):
 class sale_order(models.Model):
     _inherit = 'sale.order'
 
+
+    def process_excel_text(self, datas):
+        for row in datas:
+            product_code = row[0]
+            qty = row[1]
+            price = row[2]
+
+            product = self.env['product.product'].search([('default_code', '=',product_code )])
+            if not product:
+                raise Warning('找不到产品 %s' % product_code)
+
+
+            sale_line = self.env['sale.order.line'].create({
+                'product_id': product.id,
+                'product_uom_qty': qty,
+                'price_unit': price,
+                'order_id': self.id,
+            })
+            #sale_line.onchange_product()
+
+
+
+
+
+
+
     # def compute_advance_residual(self):
     #     for one in self:
     #         aml_obj = one.env['account.move.line']
