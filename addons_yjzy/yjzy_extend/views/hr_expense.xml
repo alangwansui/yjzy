@@ -85,13 +85,15 @@
 
 
         <!--## Search ##-->
-        <record id="hr_expense_manager_search" model="ir.ui.view">
+        <record id="hr_expense_manager_search_old" model="ir.ui.view">
             <field name="name">hr.expense.search</field>
             <field name="model">hr.expense</field>
             <field name="arch" type="xml">
 
                 <search string="Expense">
-                    <field name="name" string="模糊搜索" filter_domain="['|','|','|','|','|',('sheet_name','ilike',self),('employee_id','ilike',self),
+                    <field name="name" string="模糊搜索" filter_domain="['|','|','|','|','|','|','|','|','|','|','|',('sheet_name','ilike',self),('employee_id','ilike',self),
+                                                         ('employee_sales_uid','ilike',self),('tb_id','ilike',self),('lead_id','ilike',self),('huming','ilike',self),
+                                                         ('acc_number','ilike',self),('description','ilike',self),
                                                          ('name','ilike',self),('categ_id','ilike',self),('second_categ_id','ilike',self),('product_id','ilike',self)]"/>
                     <field name="create_date" string="创建日期"/>
                     <field name="sheet_name" string="费用说明"/>

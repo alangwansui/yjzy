@@ -194,6 +194,10 @@ class hr_expense(models.Model):
 
     user_menu_id = fields.Many2one('user.menu', u'看板记录')
 
+
+    huming = fields.Char('对方收款户名',related='sheet_id.bank_id.huming',store=True)
+    acc_number = fields.Char('对方收款账号', related='sheet_id.bank_id.acc_number', store=True)
+
     # payment_date_store = fields.Datetime(u'付款日期')
 
     def open_budget(self):

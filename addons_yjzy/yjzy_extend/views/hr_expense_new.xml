@@ -78,7 +78,7 @@
                                 <field name="tax_ids" domain="[('type_tax_use', '=', 'purchase')]"
                                        widget="many2many_tags" invisible="1"
                                        groups="account.group_account_user"/>
-                                <field name="gongsi_id" string="费用公司主体" options="{'no_create':true,'no_open':1}"/>
+                                <field name="gongsi_id" string="费用公司主体" invisible="1" options="{'no_create':true,'no_open':1}"/>
 
                             </group>
                             <group>
@@ -87,19 +87,25 @@
                                        attrs="{'readonly': [('state','in',['post','done'])]}"
                                        domain="[('internal_type', '=', 'other')]"
                                        groups="account.group_account_user"/>
-                                <field name="currency_id" groups="base.group_multi_currency" readonly="1"/>
-                                <field name="company_id" readonly="1" groups="base.group_multi_company"/>
+                                <field name="currency_id" groups="base.group_multi_currency" readonly="1" />
+                                <field name="company_id" readonly="1" groups="base.group_multi_company" invisible="1"/>
                                 <field name="sale_order_id" context="{'sale_show_partner_name': True}" invisible="1"/>
                                 <field name="user_id" invisible="1"/>
                                 <field name="ask_uid" invisible="1"/>
 
                                 <field name="create_uid"/>
-
+                                <field name="sheet_employee_confirm_date" string="申请人"/>
+                                <field name="employee_confirm_date" string="责任人"/>
+                                <field name="sheet_account_confirm_date" string="财务"/>
+                                <field name="sheet_manager_confirm_date" string="总经理"/>
+                                <field name="payment_date"/>
+                                <field name="tb_id"/>
+                               <field name="lead_id"/>
                                 <field name="budget_id" groups="base.group_system"/>
                                 <field name="budget_amount" readonly="1"/>
                                 <field name="budget_amount_reset" readonly="1"/>
                                 <field name="budget_type" invisible="1"/>
-
+                                <field name="description"/>
 
                             </group>
                             <group invisible="1">
@@ -411,8 +417,10 @@
 
                 <search string="Expense">
                     <field name="name" string="模糊搜索"
-                           filter_domain="['|','|','|','|','|',('sheet_name','ilike',self),('employee_id','ilike',self),
-                                         ('name','ilike',self),('categ_id','ilike',self),('second_categ_id','ilike',self),('product_id','ilike',self)]"/>
+                           filter_domain="['|','|','|','|','|','|','|','|','|','|','|',('sheet_name','ilike',self),('employee_id','ilike',self),
+                                                         ('employee_sales_uid','ilike',self),('tb_id','ilike',self),('lead_id','ilike',self),
+                                                         ('huming','ilike',self),('acc_number','ilike',self),('description','ilike',self),
+                                                         ('name','ilike',self),('categ_id','ilike',self),('second_categ_id','ilike',self),('product_id','ilike',self)]"/>
                     <field name="create_date" string="创建日期"/>
                     <field name="sheet_name" string="费用说明"/>
                     <field name="payment_date" string="付款日期"/>
@@ -551,25 +559,29 @@
                     <field name="date" string="发生日期"/>
                     <field name="create_uid" string="创建人"/>
                     <field name="employee_id" string="责任人"/>
-                         <field name="employee_sales_uid" string="费用对象"/>
+                    <field name="employee_sales_uid" string="费用对象"/>
                     <field name="categ_id" string="大类"/>
                     <field name="second_categ_id" string="中类"/>
                     <field name="product_id" string="小类"/>
                     <field name="sheet_id" string="费用说明"/>
+                    <field name="huming"/>
+                    <field name="acc_number"/>
                     <field name="unit_amount" string="金额" invisible="1"/>
                     <field name="total_amount" sum="Total Amount" widget="monetary"
                            options="{'currency_field': 'currency_id'}"/>
-                    <field name="company_currency_total_amount" string="本币" sum="小计"
+                    <field name="company_currency_total_amount" string="本币" sum="小计" invisible="1"
                            options="{'currency_field': 'company_currency_id'}"/>
                     <field name="currency_id" invisible="True"/>
                     <field name="attachment_number" invisible="True"/>
-                    <field name="stage_id" string="审批流"/>
+
                     <field name="sheet_employee_confirm_date" string="申请人"/>
                     <field name="employee_confirm_date" string="责任人"/>
                     <field name="sheet_account_confirm_date" string="财务"/>
                     <field name="sheet_manager_confirm_date" string="总经理"/>
+                    <field name="payment_date"/>
+                    <field name="tb_id"/>
+                    <field name="lead_id"/>
                     <field name="name" invisible="1"/>
-                    <field name="sheet_id" invisible="not context.get('show_report', False)"/>
                     <field name="analytic_account_id" groups="analytic.group_analytic_accounting"/>
                     <field name="hx_code" invisible="1"/>
                     <field name="hx_balance" invisible="1"/>
@@ -578,8 +590,8 @@
                     <field name="budget_id" groups="base.group_system"/>
                     <field name="budget_amount" groups="base.group_system"/>
                     <field name="budget_amount_reset" groups="base.group_system"/>
-
-
+                    <field name="description"/>
+                    <field name="stage_id" string="费用申请审批"/>
                     <button name="action_get_attachment_view" string="View Attached Documents" type="object"
                             icon="fa-paperclip"
                             attrs="{'invisible': [('attachment_number', '=', 0)]}"/>
