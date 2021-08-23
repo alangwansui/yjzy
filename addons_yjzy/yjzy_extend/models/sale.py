@@ -57,7 +57,7 @@ class sale_order(models.Model):
             qty = row[1]
             price = row[2]
 
-            product = self.env['product.product'].search([('default_code', '=',product_code )])
+            product = self.env['product.product'].search([('customer_ref', '=',product_code ),('customer_id','=',self.partner_id.id)])
             if not product:
                 raise Warning('找不到产品 %s' % product_code)
 
@@ -68,7 +68,12 @@ class sale_order(models.Model):
                 'price_unit': price,
                 'order_id': self.id,
             })
-            #sale_line.onchange_product()
+            sale_line.product_id_change()
+            sale_line.onchange_supplier()
+            sale_line.update({
+                'product_uom_qty': qty,
+                'price_unit': price,
+            })
 
 
 

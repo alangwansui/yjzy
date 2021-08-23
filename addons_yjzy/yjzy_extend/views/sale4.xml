@@ -436,6 +436,7 @@
                     </header>
 
                     <header groups="base.group_system">
+                        <button name="open_excel_text_parser" type="object" string="解析Excel复制"/>
                         <button name="make_all_plan" type="object" string="test"/>
                         <button name="action_manual_ubnormal_hexiao" type="object" string="手动异常核销"/>
                         <button name="compute_balance_new" type="object" string="计算预收余额"/>

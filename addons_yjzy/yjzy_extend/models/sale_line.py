@@ -235,7 +235,7 @@ class sale_order_line(models.Model):
         self.p_uom_id = self.product_id.p_uom_id
         self.need_split_bom = self.product_id.need_split_bom
         self.need_print = self.product_id.need_print
-        self.supplier_id = self.product_id.variant_seller_ids and self.product_id.variant_seller_ids[0].name.id or None,
+        self.supplier_id = self.product_id.variant_seller_ids and self.product_id.variant_seller_ids[0].name.is_ok == True and self.product_id.variant_seller_ids[0].name.id or None,
         return res
 
     def _prepare_invoice_line(self, qty):

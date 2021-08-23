@@ -484,6 +484,7 @@ class res_partner(models.Model):
                                                   compute=compute_amount_purchase_advance)
     amount_purchase_advance = fields.Monetary('预付金额:本币', currency_field='currency_id',
                                               compute=compute_amount_purchase_advance)
+    is_ok = fields.Boolean('是否有效',default=True)
 
     #审批完成的时候添加客户和供应商编号
     def approve_create_code(self):
