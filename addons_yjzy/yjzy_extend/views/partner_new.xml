@@ -111,6 +111,7 @@
                     <field name="child_contact_ids" invisible="1"/>
                     <field name="is_company" invisible="1"/>
                     <field name="active" invisible="1"/>
+                    <field name="is_ok"/>
                     <field name="amount_purchase_advance_org" string="预付金额"/>
                 </tree>
             </field>
