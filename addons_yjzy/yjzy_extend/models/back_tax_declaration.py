@@ -89,8 +89,7 @@ class DeclareDeclaration(models.Model):
     payment_balance = fields.Monetary('未认领金额',currency_field='company_currency_id',related='payment_id.balance')#失效
     name = fields.Char('编号', default=lambda self: self.env['ir.sequence'].next_by_code('back.tax.declaration'))
     display_name = fields.Char(u'显示名称', compute=compute_display_name)
-    btd_line_ids = fields.One2many('back.tax.declaration.line','btd_id',u'申报明细'
-                                   )#domain=['|','&',('back_tax_type','!=','adjustment'),('back_tax_type','=','adjustment'),('invoice_residual_total','!=',0)]
+    btd_line_ids = fields.One2many('back.tax.declaration.line','btd_id',u'申报明细',domain=[('back_tax_type','!=','adjustment')])#
 
     invoice_ids = fields.Many2many('account.invoice',compute=compute_invoice_ids,store=True)
     tb_contract_code = fields.Char('合同号',compute=compute_invoice_ids,store=True)
