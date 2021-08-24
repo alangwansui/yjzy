@@ -3077,7 +3077,7 @@
                 'sale','yjzy_type':'sale','from_purchase':1,
                 'default_invoice_attribute':'other_po'}
             </field>
-            <!--field name="target">new</field-->
+
             <field name="view_ids" eval="[(5, 0, 0),
                               (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.invoice_new_main_tree')}),
                               (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.view_account_invoice_new_form_in_one')}),
@@ -3103,7 +3103,6 @@
                 {'search_default_group_by_invoice_attribute_all_in_one_state':1,'only_ref':1,'type':'out_invoice','journal_type':
                 'sale','yjzy_type':'sale'}
             </field>
-            <!--field name="target">new</field-->
             <field name="view_ids" eval="[(5, 0, 0),
                               (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.invoice_new_back_tax_tree')}),
                               (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.view_account_invoice_new_form_in_one')}),
@@ -3127,7 +3126,7 @@
                 {'search_default_group_by_invoice_attribute_all_in_one_state':1,'only_ref':1,'type':'out_invoice','journal_type':
                 'sale','yjzy_type':'sale'}
             </field>
-            <!--field name="target">new</field-->
+
             <field name="view_ids" eval="[(5, 0, 0),
                               (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.invoice_new_back_tax_tree')}),
                               (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.view_account_invoice_new_form_in_one')}),
@@ -3159,7 +3158,7 @@
                               ]"/>
         </record>
 
-        <menuitem id="menu_back_tax_invoice_declaration" action="action_back_tax_invoice_declaration_bill"
+        <menuitem id="menu_back_tax_invoice_declaration_bill" action="action_back_tax_invoice_declaration_bill"
                   parent="menu_customer_invoice_for_goods_root" name="已申报综合退税账单"
                   sequence="22"
         />
