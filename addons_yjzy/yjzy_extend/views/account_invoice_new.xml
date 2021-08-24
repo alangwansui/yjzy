@@ -3098,9 +3098,6 @@
             <field name="search_view_id" ref="view_account_invoice_new_filter"/>
             <field name="domain">
                 [('invoice_attribute_all_in_one','in',['130','230','330','620']),('back_tax_declaration_state','!=','20'),('back_tax_type','!=','adjustment')]
-
-<!--                 [('type','in',['out_invoice','out_refund']),('back_tax_type','!=','adjustment'),('back_tax_declaration_state','!=','20'),-->
-<!--                ('invoice_attribute_all_in_one','!=','640'),'|',('yjzy_type','=','back_tax'),('yjzy_type_1','=','back_tax')]-->
             </field>
             <field name="context">
                 {'search_default_group_by_invoice_attribute_all_in_one_state':1,'only_ref':1,'type':'out_invoice','journal_type':
@@ -3117,8 +3114,32 @@
                   parent="menu_customer_invoice_for_goods_root" name="未申报退税"
                   sequence="20"
         />
-
         <record id="action_back_tax_invoice_declaration" model="ir.actions.act_window">
+            <field name="name">已申报退税</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_account_invoice_new_filter"/>
+            <field name="domain">
+                [('invoice_attribute_all_in_one','in',['130','230','330','620']),('back_tax_declaration_state','=','20'),('back_tax_type','!=','adjustment')]
+            </field>
+            <field name="context">
+                {'search_default_group_by_invoice_attribute_all_in_one_state':1,'only_ref':1,'type':'out_invoice','journal_type':
+                'sale','yjzy_type':'sale'}
+            </field>
+            <!--field name="target">new</field-->
+            <field name="view_ids" eval="[(5, 0, 0),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.invoice_new_back_tax_tree')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.view_account_invoice_new_form_in_one')}),
+                              ]"/>
+        </record>
+
+        <menuitem id="menu_back_tax_invoice_declaration" action="action_back_tax_invoice_declaration"
+                  parent="menu_customer_invoice_for_goods_root" name="已申报退税"
+                  sequence="21"
+        />
+
+        <record id="action_back_tax_invoice_declaration_bill" model="ir.actions.act_window">
             <field name="name">已申报综合退税账单</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">account.invoice</field>
@@ -3138,7 +3159,7 @@
                               ]"/>
         </record>
 
-        <menuitem id="menu_back_tax_invoice_declaration" action="action_back_tax_invoice_declaration"
+        <menuitem id="menu_back_tax_invoice_declaration" action="action_back_tax_invoice_declaration_bill"
                   parent="menu_customer_invoice_for_goods_root" name="已申报综合退税账单"
                   sequence="22"
         />
