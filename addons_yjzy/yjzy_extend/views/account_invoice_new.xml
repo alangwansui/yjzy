@@ -59,6 +59,8 @@
                                 context="{'group_by':['stage_id','invoice_attribute_all_in_one']}"/>
                         <filter name="group_by_back_tax_state_attribute_all_in_one" string="退税状态属性分组"
                                 context="{'group_by':['back_tax_state_group','invoice_attribute_all_in_one']}"/>
+                        <filter name="group_by_back_tax_state" string="退税状态分组"
+                                context="{'group_by':['back_tax_state_group']}"/>
                         <filter name="group_by_df_id" string="申报表分组"
                                 context="{'group_by':'df_new_id'}"/>
                         <filter name="group_by_date_invoice" string="账单日期"

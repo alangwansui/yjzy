@@ -40,6 +40,29 @@
                 </tree>
             </field>
         </record>
+        <record id="view_back_tax_declaration_tree_db" model="ir.ui.view">
+            <field name="name">back.tax.declaration.tree</field>
+            <field name="model">back.tax.declaration</field>
+            <field name="arch" type="xml">
+                <tree string="退税申报表" create="false">
+                    <field name="name"/>
+                    <field name="declaration_title"/>
+                    <field name="payment_id"/>
+                    <field name="payment_amount"/>
+                    <field name="payment_balance"/>
+                    <field name="create_date" string="创建日期"/>
+                    <field name="invoice_amount_no_630" />
+                    <field name="invoice_residual_no_630" invisible="1"/>
+                    <field name="invoice_amount_630"/>
+                    <field name="invoice_amount_all" invisible="1"/>
+                    <field name="reconcile_amount" invisible="1"/>
+                    <field name="declaration_amount_all" string="本次申报金额"/>
+                    <field name="invoice_residual_all" string="剩余未收金额"/>
+                    <field name="declaration_amount_all_residual_new" invisible="1" />
+                    <field name="tuishuirld_id" invisible="1"/>
+                </tree>
+            </field>
+        </record>
         <record id="view_back_tax_declaration_form" model="ir.ui.view">
             <field name="name">back.tax.declaration.form</field>
             <field name="model">back.tax.declaration</field>
@@ -156,10 +179,29 @@
             <field name="res_model">back.tax.declaration</field>
             <field name="view_mode">tree,form</field>
             <field name="context">{'search_default_group_by_state':1}</field>
+               <field name="view_ids" eval="[(5, 0, 0),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.view_back_tax_declaration_tree')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.view_back_tax_declaration_form')}),
+                              ]"/>
         </record>
         <menuitem id="menu_action_back_tax_declaration" name="查询"
                   parent="yjzy_extend.menu_customer_invoice_back_tax_declaration_root"
                   action="action_back_tax_declaration" sequence="25"/>
+
+        <record id="action_back_tax_declaration_db" model="ir.actions.act_window">
+            <field name="name">退税申报表查询</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">back.tax.declaration</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'search_default_group_by_state':1}</field>
+             <field name="view_ids" eval="[(5, 0, 0),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.view_back_tax_declaration_tree_db')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.view_back_tax_declaration_form')}),
+                              ]"/>
+        </record>
+        <menuitem id="menu_back_tax_declaration_db" name="查询对比"
+                  parent="yjzy_extend.menu_customer_invoice_back_tax_declaration_root"
+                  action="action_back_tax_declaration_db" sequence="26"/>
 
     </data>
 </odoo>
