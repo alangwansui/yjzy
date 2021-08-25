@@ -1971,7 +1971,7 @@
                                 </div>
                                 <field name="user_id" string="责任人" invisible="1"/>
                                 <field name="df_id"/>
-
+                <field name="back_tax_declaration_state"/>
                             </group>
 
                             <group>
@@ -3235,7 +3235,7 @@
         </record>
 
         <menuitem id="menu_back_tax_invoice_no_declaration" action="action_back_tax_invoice_no_declaration"
-                  parent="menu_customer_invoice_for_goods_root" name="未申报退税"
+                  parent="menu_customer_invoice_for_goods_root" name="未申报退税" groups="base.group_system"
                   sequence="20"
         />
         <record id="action_back_tax_invoice_declaration" model="ir.actions.act_window">
@@ -3259,7 +3259,7 @@
         </record>
 
         <menuitem id="menu_back_tax_invoice_declaration" action="action_back_tax_invoice_declaration"
-                  parent="menu_customer_invoice_for_goods_root" name="已申报退税"
+                  parent="menu_customer_invoice_for_goods_root" name="已申报退税" groups="base.group_system"
                   sequence="21"
         />
 
@@ -3311,6 +3311,30 @@
         <menuitem id="menu_back_tax_invoice_all" action="action_back_tax_invoice_all" groups="base.group_system"
                   parent="menu_customer_invoice_for_goods_root" name="退税应收"
                   sequence="20"
+        />
+        <record id="action_back_tax_invoice_all_db" model="ir.actions.act_window">
+            <field name="name">应收退税账单</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_account_invoice_new_filter"/>
+            <field name="domain">
+                [('invoice_attribute_all_in_one','in',['130','230','330','620']),('back_tax_type','!=','adjustment')]
+            </field>
+            <field name="context">
+                {'search_default_group_by_back_tax_state_attribute_all_in_one':1,'only_ref':1,'type':'out_invoice','journal_type':
+                'sale','yjzy_type':'sale'}
+            </field>
+
+            <field name="view_ids" eval="[(5, 0, 0),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.invoice_new_back_tax_tree')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.view_account_invoice_back_tax_form')}),
+                              ]"/>
+        </record>
+
+        <menuitem id="menu_back_tax_invoice_declaration_db" action="action_back_tax_invoice_all_db"
+                  parent="menu_customer_invoice_for_goods_root" name="退税应收验证对比"
+                  sequence="21"
         />
 
         <record id="action_back_tax_invoice_normal" model="ir.actions.act_window">

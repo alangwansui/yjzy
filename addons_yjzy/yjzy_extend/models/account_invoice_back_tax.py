@@ -71,7 +71,7 @@ class account_invoice(models.Model):
 
 
 
-    back_tax_state_group = fields.Selection([('10', '草稿'), ('20', '执行中-未申报'), ('30', '执行中-已申报'), ('40', '已收款'),('50','取消')],
+    back_tax_state_group = fields.Selection([('10', '草稿'), ('20', '执行中-未申报'), ('30', '执行中-已申报'),('35','执行中-待手动处理'), ('40', '已收款'),('50','取消')],
                                                 '退税分组状态', compute='compute_back_tax_state_group', store=True)
     @api.depends('state','back_tax_declaration_state')
     def compute_back_tax_state_group(self):
@@ -84,6 +84,8 @@ class account_invoice(models.Model):
                 back_tax_state_group = '20'
             elif state == 'open' and back_tax_declaration_state == '20':
                 back_tax_state_group = '30'
+            elif state == 'open' and not back_tax_declaration_state  :
+                back_tax_state_group = '35'
             elif state == 'paid':
                 back_tax_state_group = '40'
             else:
