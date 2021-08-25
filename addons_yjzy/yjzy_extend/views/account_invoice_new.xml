@@ -55,8 +55,12 @@
                                 context="{'group_by':['state','yjzy_invoice_id']}"/>
                         <filter name="group_by_invoice_attribute_all_in_one" string="账单属性分组"
                                 context="{'group_by':['invoice_attribute_all_in_one']}"/>
-                        <filter name="group_by_invoice_attribute_all_in_one_state" string="账单属性属性分组"
+                        <filter name="group_by_invoice_attribute_all_in_one_state" string="账单状态属性分组"
                                 context="{'group_by':['stage_id','invoice_attribute_all_in_one']}"/>
+                        <filter name="group_by_back_tax_state_attribute_all_in_one" string="退税状态属性分组"
+                                context="{'group_by':['back_tax_state_group','invoice_attribute_all_in_one']}"/>
+                        <filter name="group_by_df_id" string="申报表分组"
+                                context="{'group_by':'df_id'}"/>
                         <filter name="group_by_date_invoice" string="账单日期"
                                 context="{'group_by':'date_invoice:year'}"/>
                         <filter name="group_by_stage_id" string="审批状态" invisible="1"
@@ -365,7 +369,7 @@
             <field name="model">account.invoice</field>
             <field name="arch" type="xml">
                 <!--                     decoration-danger="is_yjzy_invoice == True and state not in ['draft','cancel']"-->
-                <tree decoration-info="state == 'draft'" default_order="line_name,stage_id,date_deadline_new,extra_code"
+                <tree decoration-info="state == 'draft'" default_order="back_tax_state_group,line_name,stage_id,date_deadline_new,extra_code"
                       decoration-danger="back_tax_type == 'adjustment'"
                       decoration-muted="state == 'cancel'" string="Invoice" create="false">
 
@@ -406,6 +410,7 @@
                     <field name="currency_id" invisible="1"/>
                     <field name="company_currency_id" invisible="1"/>
                     <field name="state"/>
+                    <field name="df_id"/>
                     <field name="type" invisible="context.get('type',True)"/>
                     <field name="residual_times" groups="base.group_system"/>
                     <field name="residual_times_out_in" groups="base.group_system"/>
@@ -1964,7 +1969,9 @@
                                            class="oe_inline"/>
                                     <field name="company_currency_id" invisible="1"/>
                                 </div>
-                                <field name="user_id" string="责任人"/>
+                                <field name="user_id" string="责任人" invisible="1"/>
+                                <field name="df_id"/>
+
                             </group>
 
                             <group>
@@ -1979,10 +1986,10 @@
                                 <field name="po_id" attrs="{'invisible':1}"/>
                                 <field name="purchase_contract_code" attrs="{'invisible':1}"/>
                                 <field name="residual_signed" string="到期金额" attrs="{'invisible':1}"/>
-                                <field name="sale_assistant_id"/>
-                                <field name="gongsi_id" string="销售主体"/>
+                                <field name="sale_assistant_id" invisible="1"/>
+                                <field name="gongsi_id" string="销售主体" invisible="1"/>
                                 <field name="date_invoice" attrs="{'invisible':1}"/>
-                                <field name="date_due"
+                                <field name="date_due" invisible="1"
                                        attrs="{'readonly': ['|',('payment_term_id','!=',False), ('state','=','paid')],'invisible':1}"
                                        force_save="1"/>
                                 <field name="move_name" invisible="1"/>
@@ -1993,9 +2000,28 @@
                         </group>
                         <field name="sent" invisible="1"/>
                         <notebook colspan="4">
-
-
-                            <page string="退税明细">
+                            <page string="申报账单明细">
+                                <field name="btd_line_all_in_one_invoice_ids">
+                                     <tree create="false" editable="bottom" decoration-danger="is_adjustment == True" default_order="line_name">
+                                        <field name="line_name"/>
+                                        <field name="tenyale_name" readonly="1"/>
+                                        <field name="invoice_id" string="退税账单"/>
+                                        <field name="invoice_attribute_all_in_one" string="账单属性"/>
+                                        <field name="back_tax_type" string="退税调节属性"/>
+                                        <field name="invoice_currency_id" invisible="1"/>
+                                        <field name="invoice_amount_total" string="原始应收退税"/>
+                                        <field name="invoice_residual_total" string="剩余应收退税"/>
+                                        <field name="declaration_amount" string="本次申报金额"/>
+                                        <field name="diff_tax"/>
+                                        <field name="diff_origin_tax"/>
+                                        <field name="declaration_amount_residual"
+                                               attrs="{'column_invisible':[('parent.state','not in',['done','paid'])]}"/>
+                                        <field name="is_adjustment"/>
+                                        <field name="comments"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="退税明细" groups="base.group_system">
                                 <field name="invoice_line_ids" nolabel="1" widget="one2many_list" mode="tree,kanban"
                                        context="{'type': type, 'journal_id': journal_id, 'default_invoice_id': id}">
                                     <tree string="Invoice Lines" editable="bottom">
@@ -2074,6 +2100,7 @@
                                 </group>
                                 <field name="comment" placeholder="Terms and conditions..."/>
                             </page>
+
                             <page string="Other Info" name="other_info" groups="base.group_system">
                                 <group>
                                     <group>
@@ -2131,6 +2158,104 @@
                                         <field name="amount"/>
                                     </tree>
                                 </field>
+                            </page>
+                            <page string="账单认领日志">
+                                <group col="2">
+                                    <group string="账单认领财务日志"
+                                           attrs="{'invisible':[('move_line_com_yfzk_ids_count','=',0),('move_line_com_yszk_ids_count','=',0)]}">
+                                        <field name="move_line_com_yfzk_ids" readonly="1" nolabel="1" colspan="2"
+                                               attrs="{'invisible':['|',('move_line_com_yfzk_ids_count','=',0),('type','!=','in_invoice')]}">
+
+                                            <tree default_order="create_date">
+                                                <field name="create_date" string="日期"/>
+                                                <field name="reconcile_type" string="属性"/>
+                                                <field name="amount_this_time" string="发生金额"/>
+                                                <field name="sslj_balance" string="实时剩余金额"/>
+                                            </tree>
+                                        </field>
+                                        <field name="move_line_com_yszk_ids" readonly="1" nolabel="1" colspan="2"
+                                               attrs="{'invisible':['|',('move_line_com_yszk_ids_count','=',0),('type','!=','out_invoice')]}">
+                                            <tree default_order="create_date">
+                                                <field name="create_date" string="日期"/>
+                                                <field name="reconcile_type" string="属性"/>
+                                                <field name="amount_this_time" string="发生金额"/>
+                                                <field name="sslj_balance" string="实时剩余金额"/>
+                                            </tree>
+                                        </field>
+                                    </group>
+                                    <group string="所有流程日志"
+                                           attrs="{'invisible':[('reconcile_order_line_no_ids_count','=',0)]}">
+                                        <field name="reconcile_order_line_no_ids" nolabel="1" colspan="2" readonly="1"
+                                               context="{'form_view_ref':'yjzy_extend.account_yfhxd_form_view_new'}">
+                                            <tree>
+                                                <field name="hxd_type_new"/>
+                                                <field name="invoice_id" groups="base.group_system" string="应付账单"/>
+                                                <field name="create_date" widget="date" string="创建日期"/>
+                                                <field name="approve_date"/>
+                                                <field name="amount_payment_org" string="实际申请金额"/>
+                                                <field name="amount_advance_org_compute" string="预付认领金额"/>
+                                                <field name="state_1"/>
+                                            </tree>
+                                        </field>
+                                        <field name="reconcile_order_line_no_ids_count" invisible="1"/>
+                                        <field name="payment_log_hexiao_ids" nolabel="1" colspan="2" readonly="1"
+                                               attrs="{'invisible':[('payment_log_hexiao_ids_count','=',0)]}">
+                                            <tree>
+                                                <field name="sfk_type" string="类型"/>
+                                                <field name="payment_date" string="日期"/>
+                                                <field name="amount" string="金额"/>
+                                                <field name="currency_id" invisible="1"/>
+                                                <field name="state_1"/>
+                                            </tree>
+                                        </field>
+                                        <field name="payment_log_hexiao_ids_count" invisible="1"/>
+                                    </group>
+                                    <!--                                    <group string="未完成认领单"-->
+                                    <!--                                           attrs="{'invisible':[('payment_log_no_done_ids_count','=',0)]}">-->
+                                    <!--                                        <field name="payment_log_no_done_ids" readonly="1" nolabel="1" colspan="2">-->
+                                    <!--                                            <tree>-->
+                                    <!--                                                <field name="sfk_type" string="认领类型" invisible="1"/>-->
+                                    <!--                                                <field name="reconcile_type" string="认领方式"/>-->
+                                    <!--                                                <field name="payment_date_confirm" string="认领完成日期"/>-->
+                                    <!--                                                <field name="amount" string="金额" sum="小计"/>-->
+                                    <!--                                                <field name="currency_id" invisible="1"/>-->
+                                    <!--                                                <field name="state_1"/>-->
+                                    <!--                                                <field name="state"/>-->
+                                    <!--                                            </tree>-->
+                                    <!--                                        </field>-->
+                                    <!--                                    </group>-->
+                                </group>
+                                <field name="payment_log_no_done_ids" readonly="1" nolabel="1" colspan="2"
+                                       groups="base.group_system">
+                                    <tree>
+                                        <field name="sfk_type" string="认领类型" invisible="1"/>
+                                        <field name="reconcile_type" string="认领方式"/>
+                                        <field name="payment_date_confirm" string="认领完成日期"/>
+                                        <field name="amount" string="金额" sum="小计"/>
+                                        <field name="currency_id" invisible="1"/>
+                                        <field name="state_1"/>
+                                        <field name="state"/>
+                                    </tree>
+                                </field>
+
+                                <field name="move_line_yfzk_ids" readonly="1" groups="base.group_system">
+                                    <tree>
+                                        <field name="reconcile_type"/>
+                                        <field name="amount_this_time"/>
+                                        <field name="sslj_balance"/>
+                                        <field name="create_date"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page groups="base.group_system">
+                                <group>
+                                    <field name="reconcile_order_ids_count"/>
+                                    <field name="move_line_com_yfzk_ids_count"/>
+                                    <field name="move_line_com_yszk_ids_count"/>
+                                    <field name="is_yjzy_tb_po_invoice"/>
+                                    <field name="is_yjzy_tb_po_invoice_parent"/>
+                                    <field name="is_yjzy_invoice"/>
+                                </group>
                             </page>
                         </notebook>
                     </sheet>
@@ -3154,7 +3279,7 @@
             <!--field name="target">new</field-->
             <field name="view_ids" eval="[(5, 0, 0),
                               (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.invoice_new_back_tax_tree')}),
-                              (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.view_account_invoice_new_form_in_one')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.view_account_invoice_back_tax_form')}),
                               ]"/>
         </record>
 
@@ -3170,16 +3295,16 @@
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_account_invoice_new_filter"/>
             <field name="domain">
-                [('type','in',['out_invoice','out_refund']),('back_tax_type','!-','adjustment'),'|',('yjzy_type','=','back_tax'),('yjzy_type_1','=','back_tax')]
+                [('type','in',['out_invoice','out_refund']),('back_tax_type','!=','adjustment'),'|',('yjzy_type','=','back_tax'),('yjzy_type_1','=','back_tax')]
             </field>
             <field name="context">
-                {'search_default_group_by_invoice_attribute_all_in_one_state':1,'only_ref':1,'type':'out_invoice','journal_type':
+                {'search_default_group_by_back_tax_state_attribute_all_in_one':1,'only_ref':1,'type':'out_invoice','journal_type':
                 'sale','yjzy_type':'sale'}
             </field>
             <!--field name="target">new</field-->
             <field name="view_ids" eval="[(5, 0, 0),
                               (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.invoice_new_back_tax_tree')}),
-                              (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.view_account_invoice_new_form_in_one')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.view_account_invoice_back_tax_form')}),
                               ]"/>
         </record>
 
