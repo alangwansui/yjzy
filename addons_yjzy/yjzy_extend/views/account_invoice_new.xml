@@ -3310,7 +3310,7 @@
         </record>
 
         <menuitem id="menu_back_tax_invoice_all" action="action_back_tax_invoice_all"
-                  parent="menu_customer_invoice_for_goods_root" name="退税应收"
+                  parent="menu_customer_invoice_for_goods_root" name="退税应收验证对比"
                   sequence="20"
         />
         <record id="action_back_tax_invoice_all_db" model="ir.actions.act_window">
@@ -3334,7 +3334,7 @@
         </record>
 
         <menuitem id="menu_back_tax_invoice_declaration_db" action="action_back_tax_invoice_all_db"
-                  parent="menu_customer_invoice_for_goods_root" name="退税应收验证对比"
+                  parent="menu_customer_invoice_for_goods_root" name="退税应收"
                   sequence="21"
         />
 
