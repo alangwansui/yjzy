@@ -79,10 +79,11 @@ class DeclareDeclaration(models.Model):
             one.invoice_ids = invoice_ids
             one.tb_contract_code = tb_contract_code
 
-    @api.depends('declaration_amount_all','invoice_amount_all')
+    @api.depends('declaration_amount_all','invoice_amount_all','invoice_residual_all')
     def compute_diff_tax_amount(self):
         for one in self:
             one.diff_tax_amount = one.declaration_amount_all - one.invoice_amount_all
+            one.diff_tax_residual = one.declaration_amount_all - one.invoice_residual_all
 
     payment_id = fields.Many2one('account.payment','收款单')
     payment_amount = fields.Monetary('收款金额',currency_field='company_currency_id',related='payment_id.amount') #失效
@@ -119,6 +120,7 @@ class DeclareDeclaration(models.Model):
     declaration_amount_all_residual = fields.Monetary(u'本次申报金额收款金额',currency_field='company_currency_id',compute=compute_declaration_amount,store=True)
 
     diff_tax_amount = fields.Monetary('申报和应收差额',currency_field='company_currency_id',compute=compute_diff_tax_amount,store=True)
+    diff_tax_residual = fields.Monetary('申报和剩余应收差额',currency_field='company_currency_id',compute=compute_diff_tax_amount,store=True)
     tuishuirld_id = fields.Many2one('account.payment',u'退税申报认领单')
     back_tax_all_in_one_invoice_id = fields.Many2one('account.invoice',u'退税申报账单')
     out_refund_invoice_id = fields.Many2one('account.invoice',u'退税申报反向账单')

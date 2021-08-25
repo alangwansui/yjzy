@@ -22,19 +22,21 @@
             <field name="model">back.tax.declaration</field>
             <field name="arch" type="xml">
                 <tree string="退税申报表" create="false">
-
                     <field name="name"/>
                     <field name="declaration_title"/>
                     <field name="payment_id"/>
                     <field name="payment_amount"/>
                     <field name="payment_balance"/>
                     <field name="create_date" string="创建日期"/>
-                    <field name="invoice_amount_all"/>
-                    <field name="invoice_residual_all"/>
+                    <field name="invoice_amount_no_630" invisible="1"/>
+                    <field name="invoice_residual_no_630"/>
+                    <field name="invoice_amount_630"/>
+                    <field name="invoice_amount_all" invisible="1"/>
+                    <field name="invoice_residual_all" invisible="1"/>
                     <field name="reconcile_amount" invisible="1"/>
                     <field name="declaration_amount_all" string="本次申报金额"/>
                     <field name="declaration_amount_all_residual_new" string="剩余未收申报金额"/>
-                    <field name="tuishuirld_id"/>
+                    <field name="tuishuirld_id" invisible="1"/>
                 </tree>
             </field>
         </record>
