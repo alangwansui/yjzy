@@ -409,8 +409,9 @@
                     <field name="origin" invisible="1"/>
                     <field name="currency_id" invisible="1"/>
                     <field name="company_currency_id" invisible="1"/>
-                    <field name="state"/>
+                    <field name="state" invisible="1"/>
                     <field name="df_id"/>
+                    <field name="back_tax_declaration_state"/>
                     <field name="type" invisible="context.get('type',True)"/>
                     <field name="residual_times" groups="base.group_system"/>
                     <field name="residual_times_out_in" groups="base.group_system"/>
@@ -3308,7 +3309,7 @@
                               ]"/>
         </record>
 
-        <menuitem id="menu_back_tax_invoice_all" action="action_back_tax_invoice_all" groups="base.group_system"
+        <menuitem id="menu_back_tax_invoice_all" action="action_back_tax_invoice_all"
                   parent="menu_customer_invoice_for_goods_root" name="退税应收"
                   sequence="20"
         />

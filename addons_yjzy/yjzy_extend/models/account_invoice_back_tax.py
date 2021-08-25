@@ -84,7 +84,7 @@ class account_invoice(models.Model):
                 back_tax_state_group = '20'
             elif state == 'open' and back_tax_declaration_state == '20':
                 back_tax_state_group = '30'
-            elif state == 'open' and not back_tax_declaration_state  :
+            elif state == 'open' and back_tax_declaration_state in ['15',False]  :
                 back_tax_state_group = '35'
             elif state == 'paid':
                 back_tax_state_group = '40'
