@@ -743,6 +743,15 @@ class account_invoice(models.Model):
             tenyale_name = self.env['ir.sequence'].next_by_code('account.invoice.tenyale_invoice')
         return tenyale_name
 
+    @api.depends('btd_line_ids', 'btd_line_ids.btd_id')
+    def compute_df_new_id(self):
+        for one in self:
+            df_new_id = one.btd_line_ids.mapped('btd_id')
+            if len(df_new_id) == 1:
+                one.df_new_id = df_new_id
+            else:
+                one.df_new_id = False
+
     is_editable = fields.Boolean(u'可编辑')
     purchase_invoice_hsname_ids = fields.One2many('purchase.invoice.hsname','invoice_id','采购发票明细')
     tenyale_name = fields.Char(u'天宇编号', default=lambda self: self._default_tenyale_name())
@@ -823,6 +832,8 @@ class account_invoice(models.Model):
     df_id = fields.Many2one('back.tax.declaration', u'报关申报表')
 
 
+
+    df_new_id = fields.Many2one('back.tax.declaration', u'报关申报表',compute='compute_df_new_id' ,store=True)
     # 820增加一个和新增采购关联的字段，把退税等一起关联起来
     tb_po_invoice_id = fields.Many2one('tb.po.invoice', u'综合增加采购单', ondelete='cascade') #C
 
