@@ -1971,7 +1971,7 @@
                                 </div>
                                 <field name="user_id" string="责任人" invisible="1"/>
                                 <field name="df_id"/>
-                <field name="back_tax_declaration_state"/>
+                                <field name="back_tax_declaration_state"/>
                             </group>
 
                             <group>
