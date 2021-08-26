@@ -63,6 +63,8 @@
                                 context="{'group_by':['back_tax_state_group']}"/>
                         <filter name="group_by_df_id" string="申报表分组"
                                 context="{'group_by':'df_new_id'}"/>
+                        <filter name="group_by_df_all_in_one_invoice_id_state" string="审批状态"
+                                context="{'group_by':['df_all_in_one_invoice_id_state']}"/>
                         <filter name="group_by_date_invoice" string="账单日期"
                                 context="{'group_by':'date_invoice:year'}"/>
                         <filter name="group_by_stage_id" string="审批状态" invisible="1"
@@ -374,7 +376,6 @@
                 <tree decoration-info="state == 'draft'" default_order="back_tax_state_group,line_name,stage_id,date_deadline_new,extra_code"
                       decoration-danger="back_tax_type == 'adjustment'"
                       decoration-muted="state == 'cancel'" string="Invoice" create="false">
-
                     <field name="partner_id" invisible="1" string="客户"/>
                     <field name="current_date_rate" string="汇率" invisible="1"/>
                     <field name="bill_id" string="合同号" invisible="1"/>
@@ -390,8 +391,8 @@
                     <field name="date_due" string="到期日2" invisible="0"/>
                     <field name="residual_times_out_in_new" invisible="0"/>
                     <field name="amount_total_signed" string="应收金额" sum="Total"/>
+                    <field name="adjustment_invoice_amount" invisible="context.get('adjustment')"/>
                     <field name="residual_signed" string="未收金额" sum="Amount Due"/>
-
                     <button name="open_invoice_ids_new" icon="fa-pencil-square-o" type="object" invisible="1"
                             attrs="{'invisible':[('yjzy_invoice_ids', '=', False)]}"/>
                     <field name="yjzy_invoice_ids" invisible="1"/>
@@ -1956,6 +1957,7 @@
                         <field name="type" invisible="1"/>
                         <group col="2">
                             <group>
+                                <field name="invoice_attribute_all_in_one"/>
                                 <field string="Customer" name="partner_id" attrs="{'invisible':1}"
                                        context="{'search_default_customer':1, 'show_address': 1, 'default_company_type': 'company'}"
                                        options="{&quot;always_reload&quot;: True, &quot;no_quick_create&quot;: True}"
@@ -1973,8 +1975,9 @@
                                     <field name="company_currency_id" invisible="1"/>
                                 </div>
                                 <field name="user_id" string="责任人" invisible="1"/>
-                                <field name="df_id"/>
-                                <field name="back_tax_declaration_state"/>
+                                <field name="df_id" attrs="{'invisible':[('invoice_attribute_all_in_one','=','640')]}"/>
+                                <field name="df_all_in_one_invoice_id" attrs="{'invisible':[('invoice_attribute_all_in_one','!=','640')]}"/>
+                                <field name="back_tax_declaration_state" attrs="{'invisible':[('invoice_attribute_all_in_one','=','640')]}"/>
                             </group>
 
                             <group>
@@ -1982,7 +1985,7 @@
                                 <field name="date_finish" attrs="{'invisible':1}"/>
                                 <field name="date_deadline" attrs="{'invisible':1}"/>
                                 <field name="residual_times" attrs="{'invisible':1}"/>
-                                <field name="bill_id" string="出运合同" context="{'only_ref':1}"/>
+                                <field name="bill_id" string="出运合同" context="{'only_ref':1}" attrs="{'invisible':[('invoice_attribute_all_in_one','=','640')]}"/>
                                 <field name="yjzy_type" attrs="{'invisible':1}"/>
 
                                 <field name="tb_contract_code" attrs="{'invisible':1}"/>
@@ -1996,14 +1999,13 @@
                                        attrs="{'readonly': ['|',('payment_term_id','!=',False), ('state','=','paid')],'invisible':1}"
                                        force_save="1"/>
                                 <field name="move_name" invisible="1"/>
-
                                 <field name="team_id" attrs="{'invisible':1}"/>
                                 <field name="fault_comments"/>
                             </group>
                         </group>
                         <field name="sent" invisible="1"/>
                         <notebook colspan="4">
-                            <page string="申报账单明细">
+                            <page string="申报账单明细" attrs="{'invisible':[('invoice_attribute_all_in_one','!=','640')]}">
                                 <field name="btd_line_all_in_one_invoice_ids">
                                      <tree create="false" editable="bottom" decoration-danger="is_adjustment == True" default_order="line_name">
                                         <field name="line_name"/>
@@ -2024,7 +2026,7 @@
                                     </tree>
                                 </field>
                             </page>
-                            <page string="退税明细" groups="base.group_system">
+                            <page string="退税明细" attrs="{'invisible':[('invoice_attribute_all_in_one','=','640')]}">
                                 <field name="invoice_line_ids" nolabel="1" widget="one2many_list" mode="tree,kanban"
                                        context="{'type': type, 'journal_id': journal_id, 'default_invoice_id': id}">
                                     <tree string="Invoice Lines" editable="bottom">
@@ -3276,7 +3278,7 @@
                 [('invoice_attribute_all_in_one','=','640'),('back_tax_type','!=','adjustment')]
             </field>
             <field name="context">
-                {'search_default_group_by_stage_id':1,'only_ref':1,'type':'out_invoice','journal_type':
+                {'search_default_group_by_df_all_in_one_invoice_id_state':1,'only_ref':1,'type':'out_invoice','journal_type':
                 'sale','yjzy_type':'sale'}
             </field>
             <!--field name="target">new</field-->
@@ -3326,7 +3328,7 @@
             </field>
             <field name="context">
                 {'search_default_group_by_back_tax_state_attribute_all_in_one':1,'only_ref':1,'type':'out_invoice','journal_type':
-                'sale','yjzy_type':'sale'}
+                'sale','yjzy_type':'sale','adjustment':1}
             </field>
 
             <field name="view_ids" eval="[(5, 0, 0),

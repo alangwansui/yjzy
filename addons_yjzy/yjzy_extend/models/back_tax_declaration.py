@@ -95,7 +95,7 @@ class DeclareDeclaration(models.Model):
     invoice_ids = fields.Many2many('account.invoice',compute=compute_invoice_ids,store=True)
     tb_contract_code = fields.Char('合同号',compute=compute_invoice_ids,store=True)
     gongsi_id = fields.Many2one('gongsi', '内部公司')
-    state = fields.Selection([('draft',u'草稿'),('approval','审批中'),('done',u'确认'),('paid',u'已收款'),('cancel',u'取消')],'State', default='draft')
+    state = fields.Selection([('draft',u'草稿'),('approval','审批中'),('done',u'已审批'),('paid',u'已收款'),('cancel',u'取消')],'State', default='draft')
     company_currency_id = fields.Many2one('res.currency', string='公司货币', related='company_id.currency_id',
                                           readonly=True)
     declaration_title = fields.Char('申报说明')
