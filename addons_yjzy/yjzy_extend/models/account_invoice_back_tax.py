@@ -59,7 +59,7 @@ class account_invoice(models.Model):
     df_all_in_one_invoice_id = fields.Many2one('back.tax.declaration', u'退税申报表')
     df_all_in_one_invoice_id_state = fields.Selection([('draft',u'草稿'),('approval','审批中'),('done',u'已审批'),('paid',u'已收款'),('cancel',u'取消')],
                                                       '申报状态', related='df_all_in_one_invoice_id.state',store=True)
-
+    df_all_in_one_invoice_id_name = fields.Char('申报编号',related='df_all_in_one_invoice_id.name', store=True)
 
     btd_line_all_in_one_invoice_ids = fields.One2many('back.tax.declaration.line', 'back_tax_all_in_one_invoice',
                                                       u'申报明细')

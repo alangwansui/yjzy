@@ -379,7 +379,8 @@
                     <field name="partner_id" invisible="1" string="客户"/>
                     <field name="current_date_rate" string="汇率" invisible="1"/>
                     <field name="bill_id" string="合同号" invisible="1"/>
-                    <field name="tenyale_name" string="天宇编号"/>
+                    <field name="tenyale_name" string="天宇编号" invisible="context.get('df')"/>
+                    <field name="df_all_in_one_invoice_id_name" string="申报编号" invisible="not context.get('df')"/>
                     <field name="line_name" invisible="1"/>
                     <field name="back_tax_type"/>
                     <field name="tb_contract_code" string="合同号" widget="dynamic_popover_char"
@@ -3279,7 +3280,7 @@
             </field>
             <field name="context">
                 {'search_default_group_by_df_all_in_one_invoice_id_state':1,'only_ref':1,'type':'out_invoice','journal_type':
-                'sale','yjzy_type':'sale'}
+                'sale','yjzy_type':'sale','adjustment':1,'df':1}
             </field>
             <!--field name="target">new</field-->
             <field name="view_ids" eval="[(5, 0, 0),
@@ -3328,7 +3329,7 @@
             </field>
             <field name="context">
                 {'search_default_group_by_back_tax_state_attribute_all_in_one':1,'only_ref':1,'type':'out_invoice','journal_type':
-                'sale','yjzy_type':'sale','adjustment':1}
+                'sale','yjzy_type':'sale'}
             </field>
 
             <field name="view_ids" eval="[(5, 0, 0),
