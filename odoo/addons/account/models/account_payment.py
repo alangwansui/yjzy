@@ -383,7 +383,9 @@ class account_payment(models.Model):
         if default_sfk_type == 'reconcile_yingfu':
             journal_domain = [('code', '=', 'hxfy'), ('company_id', '=', self.env.user.company_id.id)]
             self.journal_id = self.env['account.journal'].search(journal_domain, limit=1)
-
+        if default_sfk_type == 'reconcile_tuishui':
+            journal_domain = [('code', '=', 'hxfy'), ('company_id', '=', self.env.user.company_id.id)]
+            self.journal_id = self.env['account.journal'].search(journal_domain, limit=1)
         print('============', journal_domain)
 
 
