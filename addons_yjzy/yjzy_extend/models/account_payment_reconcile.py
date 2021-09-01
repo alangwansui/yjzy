@@ -255,7 +255,7 @@ class account_payment(models.Model):
                 }
 
     def action_confirm_amount(self):
-        if self.sfk_type in ['reconcile_yingshou','reconcile_yingfu']:
+        if self.sfk_type in ['reconcile_yingshou','reconcile_yingfu','reconcile_tuishui']:
             self.amount = self.amount_invoice_log
             self.currency_id = self.invoice_log_currency_id
             self.amount_state = True
