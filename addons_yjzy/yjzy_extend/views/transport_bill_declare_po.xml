@@ -353,14 +353,14 @@
                 </form>
             </field>
         </record>
-
+<!--[('purchase_amount_min_add_forecast_total','&gt;',0),('back_tax_declaration_state','=','10')]-->
         <record model="ir.actions.act_window" id="act_open_transport_bill_declare_po">
             <field name="name">可增加采购出运(出运完成应收付)</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">transport.bill</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form,kanban</field>
-            <field name="domain">[('purchase_amount_min_add_forecast_total','&gt;',0),('back_tax_declaration_state','=','10')]</field>
+            <field name="domain">[('state','in',['delivered','invoiced']),('plan_invoice_auto_state_1','=','10')]</field>
             <field name="limit">20</field>
             <field name="search_view_id" ref="view_transport_bill_tenyale_filter"/>
             <field name="context">{'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3,'show_po_code':1}</field>

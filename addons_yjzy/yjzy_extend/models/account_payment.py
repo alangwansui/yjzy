@@ -169,7 +169,7 @@ class account_payment(models.Model):
 
     @api.depends('advance_reconcile_order_line_ids.order_id.state', 'advance_balance_total', 'amount',
                  'advance_reconcile_order_line_ids.amount_advance_org', 'advance_reconcile_order_line_ids',
-                 'payment_ids.amount', 'payment_ids', 'payment_ids.state')
+                 'payment_ids.amount', 'payment_ids', 'payment_ids.state','payment_ids.sfk_type','state_1')
     def compute_advance_balance_total(self):
         for one in self:
             if one.sfk_type in ['ysrld', 'yfsqd']:

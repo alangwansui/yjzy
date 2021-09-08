@@ -1716,7 +1716,7 @@ class account_reconcile_order(models.Model):
                 raise Warning('没有对应的预收认领单，请检查！')
             self.create_yjzy_payment_ysrl()
             self.action_done_new()  # 生成的yingshourld过账并核销
-            if self.back_tax_declaration_id and self.back_tax_declaration_id.declaration_amount_all_residual_new == 0:
+            if self.back_tax_declaration_id and self.back_tax_declaration_id.invoice_residual_all == 0:
                 self.back_tax_declaration_id.state = 'paid'
             stage_id = self._stage_find(domain=[('code', '=', '060')])
             self.write({'stage_id': stage_id.id,
