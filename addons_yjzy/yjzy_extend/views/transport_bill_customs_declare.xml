@@ -287,6 +287,7 @@
                                         <field name="name" invisible="1"/>
 
                                         <field name="dump_product_id" groups="base.group_system" invisible="1"/>
+                                        <field name="not_print" string="不打印"/>
                                         <field name="hs_id" attrs="{'required':[('purchase_hs_id','=',False)]}"/>
                                         <field name="hs_en_name" groups="base.group_system" invisible="1"/>
                                         <field name="out_qty2" sum="小计" string="报关数量"

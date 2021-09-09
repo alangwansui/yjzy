@@ -373,7 +373,8 @@ class transport_bill(models.Model):
     def tongji_tbl_hsname(self):
         self.ensure_one()
         res = {}
-        for i in self.hsname_ids:
+        hsname_ids = self.hsname_ids.filtered(lambda x: x.not_print == False)
+        for i in hsname_ids:
             if i.hs_id in res:
                 res[i.hs_id] |= i
             else:
@@ -647,6 +648,7 @@ class tbl_hsname(models.Model):
     purchase_amount2_no_tax = fields.Float(u'不含税采购金额', compute=compute_purchase_amount)
 
     #-----------------------
+    not_print = fields.Boolean('不打印',defaut=False)
 
     name = fields.Char('HS:PO')
     tb_id = fields.Many2one('transport.bill', u'出运合同', ondelete='cascade')
