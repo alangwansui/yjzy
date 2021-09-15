@@ -1092,7 +1092,7 @@
                                        attrs="{'invisible': ['|',('supplier','=',False),('is_company','=',False)]}"/>
                                 <field name="devloper_id" string="客户开发人"
                                        attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)]}"/>
-                                <field name="user_id" string="目前客户主负责人" invisible="0"
+                                <field name="user_id" string="客户主负责人" invisible="0"
                                        attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)]}"/>
                                 <field name="assistant_id" invisible="0" string="主销售助理"
                                        attrs="{'invisible':['|',('customer','=',False),('is_company','=',False)]}"/>
