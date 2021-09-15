@@ -272,17 +272,17 @@ class tb_po_invoice(models.Model):
 
     #增加采购相关字段：
 
-    is_editable = fields.Boolean(u'可编辑')#完成
+    is_editable = fields.Boolean(u'可编辑')
     purchase_amount_min_add_rest_this_time_total = fields.Float('审批前本次可增加合计', digits=(2, 2),
                                                                 compute=compute_min_add_rest_this_time_total,
-                                                                store=True)#完成
+                                                                store=True)
 
     other_payment_invoice_residual = fields.Monetary('其他应收应付剩余金额', currency_field='currency_id',
-                                                     compute=compute_other_residual, store=True) #完成
+                                                     compute=compute_other_residual, store=True)
     other_payment_invoice_residual_yjzy = fields.Monetary('关联其他应收付', currency_field='currency_id',
-                                                          related='yjzy_tb_po_invoice.other_payment_invoice_residual', store=True)  # 下级#完成
+                                                          related='yjzy_tb_po_invoice.other_payment_invoice_residual', store=True)  # 下级
     other_payment_invoice_residual_yjzy_parent = fields.Monetary('关联其他应收付', currency_field='currency_id',
-                                                                 related='yjzy_tb_po_invoice_parent.other_payment_invoice_residual')  # 上级#完成
+                                                                 related='yjzy_tb_po_invoice_parent.other_payment_invoice_residual')  # 上级
 
     # # 新增
 
@@ -295,9 +295,9 @@ class tb_po_invoice(models.Model):
     invoice_normal_ids_residual_yjzy_parent = fields.Float('对应账单申请账单未付金额',
                                                            related='yjzy_tb_po_invoice_parent.invoice_normal_ids_residual')
     currency_id_yjzy_parent = fields.Many2one('res.currency', related='yjzy_tb_po_invoice_parent.currency_id')
-    # yjzy_type_1_yjzy_parent = fields.Selection(
-    #     [('sale', u'应付'), ('purchase', u'采购'), ('back_tax', u'退税'), ('other_payment_sale', '其他应收'),
-    #      ('other_payment_purchase', '其他应付')], related='yjzy_tb_po_invoice_parent.yjzy_type_1', string=u'发票类型')  # 825
+    yjzy_type_1_yjzy_parent = fields.Selection(
+        [('sale', u'应付'), ('purchase', u'采购'), ('back_tax', u'退税'), ('other_payment_sale', '其他应收'),
+         ('other_payment_purchase', '其他应付')], related='yjzy_tb_po_invoice_parent.yjzy_type_1', string=u'发票类型')  # 825
     is_yjzy_tb_po_invoice_yjzy_parent = fields.Boolean('是否有对应下级账单',
                                                        related='yjzy_tb_po_invoice_parent.is_yjzy_tb_po_invoice')
     is_yjzy_tb_po_invoice_parent_yjzy_parent = fields.Boolean('是否有对应上级账单',
@@ -308,12 +308,8 @@ class tb_po_invoice(models.Model):
                                                        related='yjzy_tb_po_invoice_parent.other_invoice_amount')
 
     price_total_yjzy = fields.Monetary('金额合计', currency_field='currency_id', related='yjzy_tb_po_invoice.price_total')
-
-
     invoice_normal_ids_residual_yjzy = fields.Float('对应账单申请账单未付金额',
                                                     related='yjzy_tb_po_invoice.invoice_normal_ids_residual')
-
-
     currency_id_yjzy = fields.Many2one('res.currency', related='yjzy_tb_po_invoice.currency_id')
     yjzy_type_1_yjzy = fields.Selection(
         [('sale', u'应付'), ('purchase', u'采购'), ('back_tax', u'退税'), ('other_payment_sale', '其他应收'),
@@ -340,8 +336,6 @@ class tb_po_invoice(models.Model):
                                           currency_field='yjzy_payment_currency_id', )
 
     gongsi_id = fields.Many2one('gongsi', '内部公司')
-
-
     yjzy_tb_po_invoice = fields.Many2one('tb.po.invoice', u'关联应收付下级申请单')
     yjzy_tb_po_invoice_parent = fields.Many2one('tb.po.invoice', u'关联应收付上级申请单')
     yjzy_tb_po_invoice_parent_amount = fields.Monetary('关联上级应收付申请单金额', currency_field='currency_id',
@@ -353,19 +347,14 @@ class tb_po_invoice(models.Model):
                                                 compute=compute_yjzy_tb_po_invoice_amount, store=True)
     yjzy_tb_po_invoice_residual = fields.Monetary('关联应收付申请单余额', currency_field='currency_id',
                                                   compute=compute_yjzy_tb_po_invoice_amount, store=True)
-
-
     is_yjzy_tb_po_invoice = fields.Boolean('是否有对应下级账单', default=False)
     is_yjzy_tb_po_invoice_parent = fields.Boolean('是否有对应上级账单', default=False)
     # 902
-
-    #---------
     is_tb_hs_id = fields.Boolean('是否货款')
     bank_id = fields.Many2one('res.partner.bank', u'银行账号')
     fk_journal_id = fields.Many2one('account.journal', u'日记账', domain=[('type', 'in', ['cash', 'bank'])])
     tb_id_po_supplier = fields.Text(compute=compute_tb_id_po_supplier, string='供应商')
-
-    expense_tax_algorithm = fields.Selection([('divide', u'除'), ('multiply', u'乘')], string='税点算法', default='divide')#akiny完成
+    expense_tax_algorithm = fields.Selection([('divide', u'除'), ('multiply', u'乘')], string='税点算法', default='divide')
     # 828
     po_add_residual = fields.Float(u'增加采购未付金额', compute=compute_residual, store=True)
     p_s_add_residual = fields.Float(u'应收未收金额', compute=compute_residual, store=True)
@@ -373,17 +362,16 @@ class tb_po_invoice(models.Model):
     p_s_add_refund_residual = fields.Float(u'直接抵扣未完成金额', compute=compute_residual, store=True)
     # 827
     amount_diff = fields.Float('实际差额')
-    tax_rate_add = fields.Float(u'增加采购税率',digits=(2,4))#akiny完成
+    tax_rate_add = fields.Float(u'增加采购税率',digits=(2,4))
     expense_tax = fields.Float(u'税费', compute=compute_info_store, store=True)
-
     product_feiyong_tax = fields.Many2one('product.product', u'税费产品', domain=[('type', '=', 'service')],
-                                          default=_default_feiyong_tax_product)#akiny完成
+                                          default=_default_feiyong_tax_product)
     product_zyywsr = fields.Many2one('product.product', u'主营收入产品', domain=[('type', '=', 'service')],
-                                     default=_default_product_zyywsr)#akiny完成
-    product_qtysk = fields.Many2one('product.product', u'其他应收产品', domain=[('type', '=', 'service')],#akiny完成
-                                    default=_default_product_qtysk)#akiny完成
+                                     default=_default_product_zyywsr)
+    product_qtysk = fields.Many2one('product.product', u'其他应收产品', domain=[('type', '=', 'service')],
+                                    default=_default_product_qtysk)
     product_back_tax = fields.Many2one('product.product', u'退税产品', domain=[('type', '=', 'service')],
-                                       default=_default_product_back_tax)#akiny完成
+                                       default=_default_product_back_tax)
 
     fiscal_position_id = fields.Many2one('account.fiscal.position', string='Fiscal Position', oldname='fiscal_position',
                                          readonly=True, states={'draft': [('readonly', False)]})
@@ -401,12 +389,12 @@ class tb_po_invoice(models.Model):
         [('sale', u'应付'), ('purchase', u'采购'), ('back_tax', u'退税'), ('other_payment_sale', '其他应收'),
          ('other_payment_purchase', '其他应付')], string=u'发票类型')  # 825
     extra_invoice_line_ids = fields.One2many('extra.invoice.line', 'tb_po_id', u'账单明细',
-                                             default=lambda self: self._default_extra_invoice_line())  # akiny完成
+                                             default=lambda self: self._default_extra_invoice_line())  # ,
 
     price_total = fields.Monetary('金额合计', currency_field='currency_id', compute=compute_info_store, store=True)
 
 
-#----------------------0802]
+#----------------------0802
     state = fields.Selection(
         [('10_draft', u'草稿'), ('20_submit', u'已提交待审批'),('25','未关联出运合同'), ('30_done', '审批完成已生成账单'), ('80_refuse', u'拒绝'),#('25','费用转货款未认领')
          ('90_cancel', u'取消')], u'状态', index=True, track_visibility='onchange', default='10_draft')
@@ -419,7 +407,7 @@ class tb_po_invoice(models.Model):
     invoice_partner = fields.Char(u'账单对象')
     tb_id = fields.Many2one('transport.bill', u'出运单')
     partner_id = fields.Many2one('res.partner', u'合作伙伴', default=lambda self: self._default_partner())
-    hsname_all_ids = fields.One2many('tb.po.invoice.line', 'tb_po_id', u'报关明细', )#
+    hsname_all_ids = fields.One2many('tb.po.invoice.line', 'tb_po_id', u'报关明细', )
     invoice_ids = fields.One2many('account.invoice', 'tb_po_invoice_id', '相关发票')
     invoice_ids_count = fields.Integer('相关发票数量', compute=compute_invoice_count)
 
@@ -433,9 +421,6 @@ class tb_po_invoice(models.Model):
     invoice_normal_ids_count = fields.Integer('申请账单数量', compute=compute_invoice_count)
     invoice_normal_ids_residual = fields.Float('申请账单未付金额', compute=compute_invoice_amount,
                                                store=True)  # 让所有的付款都其中在这个字段下
-
-
-#_______________未处理
 
     yjzy_invoice_id = fields.Many2one('account.invoice', '关联账单')
     yjzy_invoice_back_tax_id = fields.Many2one('account.invoice', u'关联退税账单')
@@ -457,13 +442,9 @@ class tb_po_invoice(models.Model):
     invoice_extra_ids = fields.One2many('account.invoice', 'tb_po_invoice_id', '额外账单',
                                         domain=[('invoice_attribute', '=', 'extra')])
     invoice_extra_ids_count = fields.Integer('额外账单数量', compute=compute_invoice_count)
-
-    # _____________
     invoice_p_ids = fields.One2many('account.invoice', 'tb_po_invoice_id', '新增采购应付发票',
                                     domain=[('type', '=', 'in_invoice'), ('yjzy_type_1', '=', 'purchase'),
                                             ('invoice_attribute', 'in', ['other_po', 'expense_po'])])
-
-
     invoice_p_ids_count = fields.Integer('相关采购发票数量', compute=compute_invoice_count)
 
     invoice_s_ids = fields.One2many('account.invoice', 'tb_po_invoice_id', '相关应收发票',
@@ -476,16 +457,13 @@ class tb_po_invoice(models.Model):
                                                    ('yjzy_type_1', '=', 'back_tax')])
     invoice_back_tax_ids_count = fields.Integer('相关退税发票数量', compute=compute_invoice_count)
 
-
     invoice_p_s_ids = fields.One2many('account.invoice', 'tb_po_invoice_id', '相关冲减发票',
                                       domain=[('type', '=', 'in_refund'), ('yjzy_type_1', '=', 'purchase')])
     invoice_p_s_ids_count = fields.Integer('相关冲减发票数量', compute=compute_invoice_count)
-
     company_id = fields.Many2one('res.company', '公司', required=True, readonly=True,
-                                 default=lambda self: self.env.user.company_id.id)#ainy完成
+                                 default=lambda self: self.env.user.company_id.id)
     company_currency_id = fields.Many2one('res.currency', string='公司货币', related='company_id.currency_id',
                                           readonly=True)
-
     purchase_amount2_add_this_time_total = fields.Float('本次增加采购金额', compute=compute_info_store, store=True)
     p_s_add_this_time_total = fields.Float('本次应收总金额', compute=compute_info_store, store=True)
     p_s_add_this_time_extra_total = fields.Float('本次额外应收金额', compute=compute_info_store, store=True)
@@ -522,17 +500,17 @@ class tb_po_invoice(models.Model):
     #                     'quantity': 1,
     #                     'price_unit': self.other_invoice_amount,
     #                     'account_id': account.id,})]
-    # @api.onchange('is_editable')
-    # def onchange_is_editable(self):
-    #     if self.invoice_other_payment_in_ids:
-    #         if self.is_editable == True:
-    #             for one in self.invoice_other_payment_in_ids:
-    #                 one.is_editable=True
-    #                 print('is_editable', one.is_editable)
-    #         else:
-    #             for one in self.invoice_other_payment_in_ids:
-    #                 one.is_editable=False
-    #                 print('is_editable', one.is_editable)
+    @api.onchange('is_editable')
+    def onchange_is_editable(self):
+        if self.invoice_other_payment_in_ids:
+            if self.is_editable == True:
+                for one in self.invoice_other_payment_in_ids:
+                    one.is_editable=True
+                    print('is_editable', one.is_editable)
+            else:
+                for one in self.invoice_other_payment_in_ids:
+                    one.is_editable=False
+                    print('is_editable', one.is_editable)
 
     def can_editable(self):
         self.is_editable =True
@@ -571,6 +549,10 @@ class tb_po_invoice(models.Model):
             other_invoice_amount_yjzy = self.other_invoice_amount_yjzy
             self.tb_po_other_line_ids[0].price_unit = other_invoice_amount_yjzy
 
+    # @api.onchange('other_invoice_amount_yjzy_parent')
+    # def onchange_other_invoice_amount_yjzy_parent(self):
+    #     other_invoice_amount_yjzy_parent = self.other_invoice_amount_yjzy_parent
+    #     self.tb_po_other_line_ids[0].price_unit = other_invoice_amount_yjzy_parent
 
     def open_tb_po_invoice(self):
         form_view = self.env.ref('yjzy_extend.tb_po_form')
@@ -1951,9 +1933,6 @@ class tb_po_invoice_line(models.Model):
     hs_id = fields.Many2one('hs.hs', u'品名', related='hsname_all_line_id.hs_id')
     back_tax = fields.Float(u'退税率', related='hsname_all_line_id.back_tax', store=True)
     amount2 = fields.Float('报关金额', digits=dp.get_precision('Money'), related='hsname_all_line_id.amount2')
-
-
-
     purchase_amount2_tax = fields.Float(u'含税采购金额', related='hsname_all_line_id.purchase_amount2_tax')
     purchase_amount2_no_tax = fields.Float(u'不含税采购金额', related='hsname_all_line_id.purchase_amount2_no_tax')
     purchase_back_tax_amount2_new = fields.Float(u'原始退税金额',
