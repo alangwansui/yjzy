@@ -46,6 +46,8 @@ class sale_order_line(models.Model):
     @api.depends('purchase_price','product_uom_qty','order_id','order_id.cip_type','back_tax','order_id.current_date_rate')
     def compute_info(self):
         for one in self:
+            if one.order_state == 'draft':
+                break
             purchase_cost = one.purchase_price * one.product_uom_qty
             if one.order_id.cip_type != 'normal':
                 back_tax_amount = 0
