@@ -190,7 +190,7 @@ class sale_order_line(models.Model):
     export_insurance_currency_id = fields.Many2one('res.currency', u'出口保险费货币', related='order_id.export_insurance_currency_id')
     other_currency_id = fields.Many2one('res.currency', u'其他国外费用货币', related='order_id.other_currency_id')
     #14.0--------------------------
-    @api.depends('tbl_ids','tbl_ids.state','tbl_ids.qty','qty_delivered','product_uom_qty')
+    # @api.depends('tbl_ids','tbl_ids.state','tbl_ids.qty','qty_delivered','product_uom_qty')
     def compute_project_tb_qty(self):
         for one in self:
             tbl_ids_undone = one.tbl_ids.filtered(lambda x: x.state in ['draft','submit','sale_approve','manager_approve','approve','refused'])
@@ -198,7 +198,7 @@ class sale_order_line(models.Model):
             can_project_tb_qty = one.product_uom_qty - project_tb_qty - one.qty_delivered
             one.project_tb_qty = project_tb_qty
             one.can_project_tb_qty = can_project_tb_qty
-    @api.depends('purchase_price','product_uom_qty')
+    # @api.depends('purchase_price','product_uom_qty')
     def compute_purchase_cost_new(self):
         for one in self:
             purchase_cost_new = one.purchase_price * one.product_uom_qty
@@ -215,7 +215,7 @@ class sale_order_line(models.Model):
     #             product_supplier_ref = False
     #         one.product_supplier_ref = product_supplier_ref
 
-    @api.depends('product_uom_qty','qty_delivered')
+    # @api.depends('product_uom_qty','qty_delivered')
     def compute_qty_undelivered(self):
         for one in self:
             one.qty_undelivered = one.product_uom_qty - one.qty_delivered
@@ -225,16 +225,16 @@ class sale_order_line(models.Model):
         for one in self:
             one.tb_line_count = len(one.tbl_ids.filtered(lambda x: x.bill_id.state in ['delivered', 'invoiced', 'abnormal', 'verifying', 'done', 'paid']))
 
-    qty_undelivered = fields.Float(string=u'未发货', readonly=True, compute=compute_qty_undelivered, store=True)
-    project_tb_qty = fields.Float('已计划发货',compute='compute_project_tb_qty',store=True)
-    can_project_tb_qty = fields.Float('可计划发货',compute='compute_project_tb_qty',store=True)
+    qty_undelivered = fields.Float(string=u'未发货', readonly=True, compute=compute_qty_undelivered)
+    project_tb_qty = fields.Float('已计划发货',compute='compute_project_tb_qty')
+    can_project_tb_qty = fields.Float('可计划发货',compute='compute_project_tb_qty')
     # product_default_code = fields.Char('公司型号',related='product_id.default_code',store=True)
     # product_customer_ref = fields.Char('供应商型号',related='product_id.customer_ref',store=True)
     # product_supplier_ref = fields.Char('供应商信号',compute='compute_product_supplier_ref',store=True)
 
     purchase_price = fields.Float('采购价格', copy=False, digits=dp.get_precision('Product Price'), default = 0.0)
     purchase_cost_new = fields.Monetary(u'采购总价', currency_field='company_currency_id',
-                                        compute='compute_purchase_cost_new', store=True)
+                                        compute='compute_purchase_cost_new')
     tb_line_count = fields.Integer('发货次数', compute=compute_tb_line_count)
 
     def open_bill_ids(self):
@@ -253,14 +253,14 @@ class sale_order_line(models.Model):
         }
 
 
-    # ----------
+
     #m2m不可以随便加入depends
-    @api.depends('tbl_ids','tbl_ids.plan_qty','tbl_ids.qty2stage_new','product_qty','order_id.state','price_unit')
+    @api.depends('tbl_ids','tbl_ids.plan_qty','tbl_ids.qty2stage_new','product_uom_qty','order_id.state','price_unit')
     def compute_rest_tb_qty(self):
         for one in self:
-            one.new_rest_tb_qty = one.product_qty - sum(one.tbl_ids.mapped('qty2stage_new'))
+            one.new_rest_tb_qty = one.product_uom_qty - sum(one.tbl_ids.mapped('qty2stage_new'))
 
-
+    # ----------
     def open_soline_form(self):
         view = self.env.ref('yjzy_extend.new_sale_order_line_from')
         return {
