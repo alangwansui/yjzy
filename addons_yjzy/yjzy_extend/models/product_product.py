@@ -158,6 +158,7 @@ class Product_Product(models.Model):
             variant_seller_ids = len(one.variant_seller_ids) >1 and one.variant_seller_ids[0] or  one.variant_seller_ids
             default_code = one.default_code
             can_be_expensed = one.can_be_expensed
+            hs_name = one.hs_id.name
             if variant_seller_ids:
                 product_supplier_ref = variant_seller_ids.product_name
             else:
@@ -166,7 +167,7 @@ class Product_Product(models.Model):
                 name = one.name
             elif only_code:
                 name = one.default_code
-            elif can_be_expensed:
+            elif can_be_expensed or hs_name == '无':
                 name = one.name
             elif ref and product_supplier_ref:
                 name = '%s/%s/%s' % (ref,product_supplier_ref,default_code)
