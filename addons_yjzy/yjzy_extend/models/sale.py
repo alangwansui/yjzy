@@ -171,7 +171,7 @@ class sale_order(models.Model):
 
     # 13ok
     @api.depends('order_line.qty_delivered','order_line.product_uom_qty','order_line')
-    def compute_no_sent_amount(self):
+    def compute_no_sent_amount_new(self):
         for one in self:
             sent_qty = sum(x.qty_delivered for x in one.order_line)
             all_qty = sum(x.product_uom_qty for x in one.order_line)
@@ -198,35 +198,29 @@ class sale_order(models.Model):
             one.advance_po_residual = sum([x.balance for x in one.po_ids])
 
     # ---------
-
-    def compute_info(self):
-        aml_obj = self.env['account.move.line']
+    @api.depends('order_line','order_line.tbl_ids','order_line.tbl_ids.bill_id')
+    def compute_tb_ids(self):
         for one in self:
             one.tb_ids = one.order_line.mapped('tbl_ids').mapped('bill_id')
             one.tb_count = len(one.tb_ids)
-            one.no_sent_amount = sum(
-                [x.price_unit * (x.product_uom_qty - x.qty_delivered) for x in one.order_line])  # 13ok
 
-            # 统计预收余额
+    @api.depends('order_line','order_line.qty_delivered','order_line.product_uom_qty','order_line.price_unit')
+    def compute_no_sent_amount(self):
+        for one in self:
+            one.no_sent_amount = sum([x.price_unit * (x.product_uom_qty - x.qty_delivered) for x in one.order_line])
+
+    @api.depends('payment_term_id','amount_total')
+    def compute_pre_advance(self):
+        for one in self:
             if one.payment_term_id:
                 one.pre_advance = one.payment_term_id.get_advance(one.amount_total)
-                print('====', one, one.pre_advance)
 
-            ##金额统计
-            lines = one.order_line
-            if not lines: continue
-            purchase_cost = one.company_currency_id.compute(sum([x.purchase_cost for x in lines]),
-                                                            one.third_currency_id)
-            fandian_amoun = one.company_currency_id.compute(sum([x.fandian_amoun for x in lines]),
-                                                            one.third_currency_id)
-            stock_cost = one.company_currency_id.compute(sum([x.stock_cost for x in lines]), one.third_currency_id)
-            # 剩余出运数
-            rest_tb_qty_total = sum(lines.mapped('rest_tb_qty'))
-            # 样金计算
+    @api.depends('order_line','order_line.is_gold_sample','order_line.is_ps')
+    def compute_ps_gold(self):
+        for one in self:
             gold_sample_state = 'none'
             line_count = len(one.order_line)
             line_count_gold = len(one.order_line.filtered(lambda x: x.is_gold_sample))
-
             if line_count_gold > 0:
                 if line_count_gold == line_count:
                     gold_sample_state = 'all'
@@ -234,39 +228,48 @@ class sale_order(models.Model):
                     gold_sample_state = 'part'
             ps_state = 'none'
             line_count_ps = len(one.order_line.filtered(lambda x: x.is_ps))
-
             if line_count_ps > 0:
                 if line_count_ps == line_count:
                     ps_state = 'all'
                 else:
                     ps_state = 'part'
+            one.gold_sample_state = gold_sample_state
+            one.ps_state = ps_state
 
+    @api.depends('order_line','order_line.new_rest_tb_qty')
+    def compute_rest_qty_total(self):
+        for one in self:
+            lines = one.order_line
+            rest_tb_qty_total = sum(lines.mapped('new_rest_tb_qty'))
+            one.rest_tb_qty_total = rest_tb_qty_total
+
+
+
+    def compute_info(self):
+        aml_obj = self.env['account.move.line']
+        for one in self:
+            # 统计预收余额
+            ##金额统计
+            lines = one.order_line
+            if not lines: continue
+            purchase_cost = one.company_currency_id.compute(sum([x.purchase_cost for x in lines]),
+                                                            one.third_currency_id)
             if one.cip_type != 'normal':
                 back_tax_amount = 0
             else:
                 back_tax_amount = one.company_currency_id.compute(sum(x.back_tax_amount for x in lines),
                                                                   one.third_currency_id)
-
             amount_total2 = one._get_sale_amount()
-            #  amount_total3 = one._get_amount_total3()
             commission_amount = one.commission_ratio * amount_total2
-
-            #  commission_amount2 = one.commission_ratio * amount_total3
-
             other_cost = one._get_other_cost()
-
             vat_diff_amount = 0
             if one.include_tax and one.company_currency_id.name == 'CNY':
-                vat_diff_amount = (one.amount_total2 - one.purchase_cost - one.stock_cost) / 1.13 * 0.13
+                vat_diff_amount = (one.amount_total2 - one.purchase_cost) / 1.13 * 0.13
 
             expense_cost_total = other_cost + commission_amount + vat_diff_amount
-
-            profit_amount = (
-                                        amount_total2 - purchase_cost - stock_cost - fandian_amoun - vat_diff_amount - other_cost - commission_amount + back_tax_amount) / 5
-            gross_profit = (amount_total2 - purchase_cost - stock_cost - fandian_amoun + back_tax_amount) / 5
-
+            profit_amount = (amount_total2 - purchase_cost - vat_diff_amount - other_cost - commission_amount + back_tax_amount) / 5
+            gross_profit = (amount_total2 - purchase_cost + back_tax_amount) / 5
             purchase_no_deliver_amount = sum(one.po_ids.mapped('no_deliver_amount'))
-
             purchase_approve_date = False
             for po in one.po_ids:
                 if po.purchaser_date:
@@ -277,13 +280,11 @@ class sale_order(models.Model):
                 else:
                     pass
 
-            one.rest_tb_qty_total = rest_tb_qty_total
             one.amount_total2 = amount_total2
             one.commission_amount = commission_amount
-            one.stock_cost = stock_cost
+
             one.purchase_cost = purchase_cost
-            one.purchase_stock_cost = purchase_cost + stock_cost
-            one.fandian_amoun = fandian_amoun
+
             one.vat_diff_amount = vat_diff_amount
             one.other_cost = other_cost
             one.back_tax_amount = back_tax_amount
@@ -291,27 +292,18 @@ class sale_order(models.Model):
             one.fee_rmb_all = one.fee_inner + one.fee_rmb1 + one.fee_rmb2
             one.fee_outer_all = one.fee_outer + one.fee_export_insurance + one.fee_other
 
-            # one.fee_rmb_ratio = one.amount_total and one.company_currency_id.compute(one.fee_rmb_all + fandian_amoun + vat_diff_amount, one.currency_id) / one.amount_total * 100
-            # akiny 用新的汇率计算
-            one.fee_rmb_ratio = one.amount_total2 and (
-                    one.fee_rmb_all + fandian_amoun + vat_diff_amount) / one.amount_total2 * 100
+            one.fee_rmb_ratio = amount_total2 and (
+                    one.fee_rmb_all + vat_diff_amount) / amount_total2 * 100
             one.fee_outer_ratio = one.amount_total and one.other_currency_id.compute(one.fee_outer_all,
                                                                                      one.currency_id) / one.amount_total * 100
-
             one.fee_all_ratio = amount_total2 and expense_cost_total / one.amount_total2 * 100
-
             one.profit_ratio = amount_total2 and profit_amount / amount_total2 * 100
-
             one.gross_profit = gross_profit
             one.gorss_profit_ratio = amount_total2 and (gross_profit / amount_total2 * 100)
-            one.gold_sample_state = gold_sample_state
-            one.ps_state = ps_state
+
             one.purchase_no_deliver_amount = purchase_no_deliver_amount
             one.purchase_approve_date = purchase_approve_date
-            one.second_cost = sum(one.order_line.mapped('second_price_total'))
-            one.second_porfit = one.amount_total2 - one.second_cost
-            one.second_tenyale_profit = one.company_currency_id.compute(one.second_cost,
-                                                                        one.third_currency_id) - one.purchase_cost - one.stock_cost
+
             one.commission_ratio_percent = one.commission_ratio * 100
             one.expense_cost_total = expense_cost_total
 
@@ -447,7 +439,7 @@ class sale_order(models.Model):
                                 default='normal')
     current_date_rate = fields.Float('当日汇率', group_operator=False)  # akiny参考group不汇总计算
     include_tax = fields.Boolean(u'含税',default=True)
-    stock_cost = fields.Monetary(u'库存成本', currency_field='third_currency_id', compute=compute_info)
+    stock_cost = fields.Monetary(u'库存成本', currency_field='third_currency_id', )#compute=compute_info
     commission_amount = fields.Monetary(u'经营计提金额', currency_field='third_currency_id', compute=compute_info)
     commission_ratio = fields.Float(u'经营计提比', digits=(2, 4), default=lambda self: self.default_commission_ratio())
     commission_ratio_percent = fields.Float(u'经营计提比%', compute=compute_info)
@@ -470,8 +462,8 @@ class sale_order(models.Model):
     fee_rmb2_note = fields.Text(u'人名币备注2')
     fee_rmb1_note = fields.Text(u'人名币备注1')
     fee_other_note = fields.Text(u'外币备注1')
-    tb_ids = fields.Many2many('transport.bill', 'ref_tb_so', 'tb_id', 'so_id', string=u'出运单', compute=compute_info)
-    tb_count = fields.Integer('发运单计数', compute=compute_info)
+    tb_ids = fields.Many2many('transport.bill', 'ref_tb_so', 'tb_id', 'so_id', string=u'出运单', compute=compute_tb_ids)
+    tb_count = fields.Integer('发运单计数', compute=compute_tb_ids)
     is_different_payment_term = fields.Boolean('付款条款是否不同')
     is_editable = fields.Boolean(u'可编辑')
     state = fields.Selection([
@@ -490,8 +482,8 @@ class sale_order(models.Model):
         ('verifying', u'待核销'),
         ('verification', u'核销完成'),
     ], string='Status', readonly=True, copy=False, index=True, track_visibility='onchange', default='draft')
-    no_sent_amount = fields.Monetary(u'未发货的金额',currency_field='company_currency_id', compute=compute_info)
-    no_sent_amount_new = fields.Monetary(u'未发货的金额',currency_field='company_currency_id', compute=compute_no_sent_amount, store=True)
+    no_sent_amount = fields.Monetary(u'未发货的金额',currency_field='company_currency_id', compute=compute_no_sent_amount)
+    no_sent_amount_new = fields.Monetary(u'未发货的金额',currency_field='company_currency_id', compute=compute_no_sent_amount_new, store=True)
     no_sent_qty = fields.Float(u'未出运数量', compute=compute_no_sent_amount, store=True)
     sent_qty = fields.Float(u'已出运数量', compute=compute_no_sent_amount, store=True)
     all_qty = fields.Float(u'原始总数', compute=compute_no_sent_amount, store=True)
@@ -514,7 +506,7 @@ class sale_order(models.Model):
     hegui_uid = fields.Many2one('res.users', u'合规审批', copy=False)  # 13换字段名
     hx_date = fields.Date('核销时间', copy=False)
     purchase_approve_date = fields.Datetime('采购审批时间', compute=compute_info)
-    rest_tb_qty_total = fields.Float(u'出运总数', compute=compute_info)
+    rest_tb_qty_total = fields.Float(u'出运总数', compute=compute_rest_qty_total)
     # ---------
 
     # transport_bill_id = fields.Many2one('transport.bill', u'出运单', copy=False)
@@ -528,7 +520,7 @@ class sale_order(models.Model):
     fee_outer_ratio = fields.Float(u'外币费用占销售额比', digits=(2, 2), compute=compute_info)  # akiny 4改成了2
     fee_all_ratio = fields.Float(u'总费用占比', digits=(2, 2), compute=compute_info)  # akiny 4改成了2
 
-    pre_advance = fields.Monetary(u'预收金额', currency_field='currency_id', compute=compute_info, store=False)
+    pre_advance = fields.Monetary(u'预收金额', currency_field='currency_id', compute=compute_pre_advance, store=False)
     advance_po_residual = fields.Float(u'预付余额', compute=compute_po_residual, store=True)
     yjzy_payment_ids = fields.One2many('account.payment', 'so_id', u'预收认领单')
     yjzy_currency_id = fields.Many2one('res.currency', u'预收币种', related='yjzy_payment_ids.currency_id')
@@ -549,8 +541,8 @@ class sale_order(models.Model):
     # amount_total3 = fields.Monetary(u'销售金额', currency_field='third_currency_id', compute=compute_info)
 
     purchase_cost = fields.Monetary(u'采购成本', currency_field='third_currency_id', compute=compute_info)
-    purchase_stock_cost = fields.Monetary(u'采购库存成本合计', currency_field='third_currency_id', compute=compute_info)
-    fandian_amoun = fields.Monetary(u'返点金额', currency_field='third_currency_id', compute=compute_info)
+    purchase_stock_cost = fields.Monetary(u'采购库存成本合计', currency_field='third_currency_id', )#compute=compute_info
+    fandian_amoun = fields.Monetary(u'返点金额', currency_field='third_currency_id', )#compute=compute_info
 
     lines_profit_amount = fields.Monetary(u'明细利润计总', currency_field='third_currency_id')
     other_cost = fields.Monetary(u'其他费用总计', currency_field='third_currency_id', compute=compute_info)
@@ -585,9 +577,9 @@ class sale_order(models.Model):
     purchase_amount_total_new = fields.Float('采购金额', compute='compute_purchase_amount_total_new', store=True)
     purchase_amount_total = fields.Float('采购金额', compute='compute_purchase_amount_total')
 
-    second_cost = fields.Float('销售主体成本', compute=compute_info)  # second_amoun
-    second_porfit = fields.Float('销售主体利润', compute=compute_info)  # amount_total2-刚刚计算出来的 second_const
-    second_tenyale_profit = fields.Float('采购主体利润', compute=compute_info)  # (采购主体利润)：
+    second_cost = fields.Float('销售主体成本', )  # second_amouncompute=compute_info
+    second_porfit = fields.Float('销售主体利润', )  # amount_total2-刚刚计算出来的 second_constcompute=compute_info
+    second_tenyale_profit = fields.Float('采购主体利润', )  # (采购主体利润)：compute=compute_info
 
     hexiao_type = fields.Selection([('un_to','未开始核销'),('abnormal', u'异常核销'), ('write_off', u'正常核销')], string='核销类型')
 

@@ -43,62 +43,27 @@ class sale_order_line(models.Model):
             fandian_amoun += fd
         return purchase_cost, fandian_amoun
 
+    @api.depends('purchase_price','product_uom_qty','order_id','order_id.cip_type','back_tax','order_id.current_date_rate')
     def compute_info(self):
         for one in self:
-            #统计未发货
-
-            #统计采购
-            one.po_ids = one.pol_ids.mapped('order_id')
-            one.pol_id = one.pol_ids and one.pol_ids[0] or False
-            one.qty_unreceived = sum([x.product_qty - x.qty_received for x in one.pol_ids])
-
-            #计算金额
+            purchase_cost = one.purchase_price * one.product_uom_qty
+            if one.order_id.cip_type != 'normal':
+                back_tax_amount = 0
+            else:
+                back_tax_amount = purchase_cost / BACK_TAX_RATIO * one.back_tax  #固定0.16的税，退回0.05
+            # 计算金额
             if one.order_id.company_id.is_current_date_rate:
                 price_total2 = one.price_total * one.order_id.current_date_rate
             else:
                 price_total2 = one.currency_id.compute(one.price_total, one.company_currency_id)
-
-            purchase_cost, fandian_amoun = one.get_purchase_cost()
-           # price_total_current_date_rate= one.price_total * one.order_id.current_date_rate
-        #    print('====sdfdf===', gross_profit_ratio_line)
-            stock_cost = one.get_stock_cost()
-            #back_tax = one.order_id.cip_type != 'none' and one.product_id.back_tax or 0
-            if one.order_id.cip_type != 'normal':
-                back_tax_amount = 0
-            else:
-                back_tax_amount = (purchase_cost + stock_cost) / BACK_TAX_RATIO * one.back_tax  #固定0.16的税，退回0.05
-            gross_profit_ratio_line = price_total2 != 0 and (
-                        price_total2 + back_tax_amount - purchase_cost) / price_total2 * 100 / 5
+            gross_profit_line = price_total2 - purchase_cost + back_tax_amount
+            gross_profit_ratio_line = price_total2 != 0 and gross_profit_line / price_total2 * 100 / 5
             one.price_total2 = price_total2
-            one.purchase_cost = purchase_cost
-            one.fandian_amoun = fandian_amoun
-            one.stock_cost = stock_cost
-            one.profit_amount = price_total2 - purchase_cost - stock_cost - fandian_amoun
-            one.back_tax_amount = back_tax_amount
-            one.rest_tb_qty = one.product_qty - sum(one.tbl_ids.mapped('qty2stage_new'))
             one.gross_profit_ratio_line = round(gross_profit_ratio_line,2)
-            one.gross_profit_line = price_total2-purchase_cost
-            one.fee_inner = one.order_id.amount_total and one.price_unit / one.order_id.amount_total * one.order_id.fee_inner
-            one.fee_rmb1 = one.order_id.amount_total and one.price_unit / one.order_id.amount_total * one.order_id.fee_rmb1
-            one.fee_rmb2 = one.order_id.amount_total and one.price_unit / one.order_id.amount_total * one.order_id.fee_rmb2
-            one.fee_outer = one.order_id.amount_total and one.price_unit / one.order_id.amount_total * one.order_id.fee_outer
-            one.fee_export_insurance = one.order_id.amount_total and one.price_unit / one.order_id.amount_total * one.order_id.fee_export_insurance
-            one.fee_other = one.order_id.amount_total and one.price_unit / one.order_id.amount_total * one.order_id.fee_other
-            print('==99999=',  one.order_id.amount_total and one.price_unit / one.order_id.amount_total * one.order_id.fee_inner)
-
-
-
-
-    def compute_info_pol_id(self):
-        for one in self:
-            #统计未发货
-
-            #统计采购
-
-            one.pol_id = one.pol_ids and one.pol_ids[0] or False
-            one.supplier_id = one.pol_ids and one.pol_ids[0].partner_id or False
-          #  one.purchase_price = one.pol_id and one.pol_id.price_unit or False
-
+            one.gross_profit_line = gross_profit_ratio_line
+            one.back_tax_amount = back_tax_amount
+            one.purchase_cost = purchase_cost
+            print('==99999=', back_tax_amount)
 
 
     #currency_id ==销售货币
@@ -126,21 +91,20 @@ class sale_order_line(models.Model):
     third_currency_id = fields.Many2one('res.currency', related='order_id.third_currency_id', readonly=True)
     include_tax = fields.Boolean(related='order_id.include_tax')
     pol_ids = fields.One2many('purchase.order.line', 'sol_id', u'采购明细', copy=False)
-    po_ids = fields.Many2many('purchase.order', string=u'采购订单', compute=compute_info, store=False)
+    po_ids = fields.Many2many('purchase.order', string=u'采购订单',  store=False)#compute=compute_info,
     purchase_qty_new = fields.Float(u'采购数', related='pol_id.product_qty')  # akiny 直接取对应的采购合同的数量而不是预留的数量
-    qty_unreceived = fields.Float(u'未收数', compute=compute_info, store=False)
+    qty_unreceived = fields.Float(u'未收数',  store=False)#compute=compute_info,
 
 
 
     tbl_ids = fields.One2many('transport.bill.line', 'sol_id', u'出运明细')  # 13已
-    rest_tb_qty = fields.Float('出运剩余数', compute=compute_info)  # 13已 参与测试后期删除
+    rest_tb_qty = fields.Float('出运剩余数', )  # 13已 参与测试后期删除compute=compute_info
     new_rest_tb_qty = fields.Float('新:出运剩余数', compute='compute_rest_tb_qty', store=True)  # 13已
-
     back_tax = fields.Float(u'退税率', digits=dp.get_precision('Back Tax'))
-    price_total2 = fields.Monetary(u'销售金额', currency_field='company_currency_id', compute=compute_info)  # 'sale_amount': sol.price_total,
+    price_total2 = fields.Monetary(u'销售金额', currency_field='company_currency_id', )  # 'sale_amount': sol.price_total,compute=compute_info
     purchase_price_original = fields.Float(u'采购单价', related='pol_id.price_unit', digits=(2, 2))
     back_tax_amount = fields.Monetary(u'退税金额', currency_field='company_currency_id', compute=compute_info)
-    profit_amount = fields.Monetary(u'利润', currency_field='company_currency_id', compute=compute_info)
+    profit_amount = fields.Monetary(u'利润', currency_field='company_currency_id', )#compute=compute_info
     is_gold_sample = fields.Boolean('是否有金样', related='product_id.is_gold_sample', readonly=False)
     is_ps = fields.Boolean('是否有PS',related='product_id.is_ps', readonly=False)
     bom_id = fields.Many2one('mrp.bom', 'BOM')#13已
@@ -150,14 +114,14 @@ class sale_order_line(models.Model):
     #-----
     last_sale_price = fields.Float('最后销售价', related='product_id.last_sale_price')
 
-    purchase_qty = fields.Float(u'采购数', compute=compute_info, store=False)
+    purchase_qty = fields.Float(u'采购数',  store=False)#compute=compute_info,
 
-    purchase_cost = fields.Monetary(u'采购成本', currency_field='company_currency_id', compute=compute_info)
+    purchase_cost = fields.Monetary(u'采购成本', currency_field='company_currency_id', compute='compute_info')
 
-    fandian_amoun = fields.Monetary(u'返点金额', currency_field='company_currency_id', compute=compute_info)
-    stock_cost = fields.Monetary(u'库存成本', currency_field='company_currency_id', compute=compute_info)
+    fandian_amoun = fields.Monetary(u'返点金额', currency_field='company_currency_id', )#compute=compute_info
+    stock_cost = fields.Monetary(u'库存成本', currency_field='company_currency_id', )#compute=compute_info
 
-    cost_amount = fields.Monetary(u'成本金额', currency_field='company_currency_id', compute=compute_info)
+    cost_amount = fields.Monetary(u'成本金额', currency_field='company_currency_id', )#compute=compute_info
 
     purchase_payment_term = fields.Many2one('account.payment.term',u'供应商付款条款', related='pol_id.order_id.payment_term_id')
 
@@ -168,29 +132,29 @@ class sale_order_line(models.Model):
 
 
     second_unit_price = fields.Float('第二价格')
-    second_price_total = fields.Monetary(compute='_compute_second', string='第二小计', readonly=True, store=True)
+    second_price_total = fields.Monetary( string='第二小计', readonly=True, )#compute='_compute_second',
 
     hs_id = fields.Many2one('hs.hs', '报关品名', related='product_id.hs_id')
     hs_name = fields.Char('中文品名', related='product_id.hs_id.name')
     purchase_contract_code = fields.Char('采购合同', related='pol_id.order_id.contract_code')
 
-    gross_profit_ratio_line = fields.Float(u'毛利润率', digits=(2, 2), compute=compute_info)
-    gross_profit_line = fields.Float(u'毛利润', digits=(2, 2), compute=compute_info)
+    gross_profit_ratio_line = fields.Float(u'毛利润率', digits=(2, 2), compute=compute_info)#
+    gross_profit_line = fields.Float(u'毛利润', digits=(2, 2),compute=compute_info) #
     #gross_profit_ratio_line_p = fields.Percent(u'毛利润率', digits=(2, 2), compute=compute_info)
     #vat_diff_amount = fields.Monetary(u'增值税差额', currency_field='company_currency_id')
 
-    fee_inner = fields.Monetary(u'国内运杂费:单个', currency_field='company_currency_id',  compute=compute_info)
-    fee_rmb1 = fields.Monetary(u'人民币费用1:单个', currency_field='company_currency_id', compute=compute_info)
-    fee_rmb2 = fields.Monetary(u'人民币费用2:单个', currency_field='company_currency_id', compute=compute_info)
-    fee_outer = fields.Monetary(u'国外运保费', currency_field='other_currency_id', compute=compute_info)
-    fee_export_insurance = fields.Monetary(u'出口保险费:单个', currency_field='other_currency_id', compute=compute_info)
-    fee_other = fields.Monetary(u'其他外币费用:单个', currency_field='other_currency_id', compute=compute_info)
+    fee_inner = fields.Monetary(u'国内运杂费:单个', currency_field='company_currency_id',  )#compute=compute_info
+    fee_rmb1 = fields.Monetary(u'人民币费用1:单个', currency_field='company_currency_id', )#compute=compute_info
+    fee_rmb2 = fields.Monetary(u'人民币费用2:单个', currency_field='company_currency_id', )#compute=compute_info
+    fee_outer = fields.Monetary(u'国外运保费', currency_field='other_currency_id', )#compute=compute_info
+    fee_export_insurance = fields.Monetary(u'出口保险费:单个', currency_field='other_currency_id', )#compute=compute_info
+    fee_other = fields.Monetary(u'其他外币费用:单个', currency_field='other_currency_id', )#compute=compute_info
 
     outer_currency_id = fields.Many2one('res.currency', u'国外运保费货币', related='order_id.outer_currency_id')
     export_insurance_currency_id = fields.Many2one('res.currency', u'出口保险费货币', related='order_id.export_insurance_currency_id')
     other_currency_id = fields.Many2one('res.currency', u'其他国外费用货币', related='order_id.other_currency_id')
     #14.0--------------------------
-    # @api.depends('tbl_ids','tbl_ids.state','tbl_ids.qty','qty_delivered','product_uom_qty')
+    @api.depends('tbl_ids','tbl_ids.state','tbl_ids.qty','qty_delivered','product_uom_qty')
     def compute_project_tb_qty(self):
         for one in self:
             tbl_ids_undone = one.tbl_ids.filtered(lambda x: x.state in ['draft','submit','sale_approve','manager_approve','approve','refused'])
@@ -198,11 +162,13 @@ class sale_order_line(models.Model):
             can_project_tb_qty = one.product_uom_qty - project_tb_qty - one.qty_delivered
             one.project_tb_qty = project_tb_qty
             one.can_project_tb_qty = can_project_tb_qty
-    # @api.depends('purchase_price','product_uom_qty')
+    @api.depends('purchase_price','product_uom_qty')
     def compute_purchase_cost_new(self):
         for one in self:
             purchase_cost_new = one.purchase_price * one.product_uom_qty
+
             one.purchase_cost_new = purchase_cost_new
+
 
     # def compute_product_supplier_ref(self):
     #     for one in self:
@@ -215,7 +181,7 @@ class sale_order_line(models.Model):
     #             product_supplier_ref = False
     #         one.product_supplier_ref = product_supplier_ref
 
-    # @api.depends('product_uom_qty','qty_delivered')
+    @api.depends('product_uom_qty','qty_delivered')
     def compute_qty_undelivered(self):
         for one in self:
             one.qty_undelivered = one.product_uom_qty - one.qty_delivered
@@ -276,16 +242,16 @@ class sale_order_line(models.Model):
 
 
 
-    @api.depends('second_unit_price', 'discount', 'price_unit', 'tax_id')
-    def _compute_second(self):
-        """
-        """
-        for line in self:
-            price = line.second_unit_price    #* (1 - (line.discount or 0.0) / 100.0)
-            taxes = line.tax_id.compute_all(price, line.order_id.currency_id, line.product_uom_qty, product=line.product_id, partner=line.order_id.partner_shipping_id)
-            line.update({
-                'second_price_total': taxes['total_excluded'],
-            })
+    # @api.depends('second_unit_price', 'discount', 'price_unit', 'tax_id')
+    # def _compute_second(self):
+    #     """
+    #     """
+    #     for line in self:
+    #         price = line.second_unit_price    #* (1 - (line.discount or 0.0) / 100.0)
+    #         taxes = line.tax_id.compute_all(price, line.order_id.currency_id, line.product_uom_qty, product=line.product_id, partner=line.order_id.partner_shipping_id)
+    #         line.update({
+    #             'second_price_total': taxes['total_excluded'],
+    #         })
 
 
     @api.multi
