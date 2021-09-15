@@ -563,18 +563,22 @@
                                 <field name="is_different_payment_term" invisible="1"/>
                                 <field name="contract_code" string="合同号*" required="1"
                                        attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}"/>
-                                <field name="partner_id" string="客户*" required="1"
-                                       domain="[('customer','=',True),('parent_id', '=', False),('state','=','done'),'|','|','|','|','|','|',('x_studio_field_U7OvH','in',uid),('assistant_id','=',uid),('user_id','=',uid),('parent_id.assistant_id','=',uid),('parent_id.user_id','=',uid),('supplier','=',1),('x_studio_field_3ErQR','=',1)]"
+                                <field name="partner_id" string="客户*" required="0"
+                                       domain="[('customer','=',True),('parent_id', '=', False),('state','=','done'),'|','|','|','|','|','|',
+                                       ('x_studio_field_U7OvH','in',uid),('assistant_id','=',uid),('user_id','=',uid),
+                                       ('parent_id.assistant_id','=',uid),('partner_id.sales_assistant_ids','in',uid),
+                                       ('parent_id.user_id','=',uid),('supplier','=',1),('x_studio_field_3ErQR','=',1)]"
                                        attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}"
                                        context="{'search_default_customer':1, 'show_address': 0}"
-                                       options="{&quot;always_reload&quot;: True}"/>
+                                       options="{&quot;always_reload&quot;: True, 'no_open': True, 'no_create': True}"/>
                                 <field name="jituan_id" invisible="1"/>
-                                <field name="partner_invoice_id" context="{'default_type':'invoice'}"
+                                <field name="partner_invoice_id" context="{'default_type':'invoice'}" required="1"
                                        options="{&quot;always_reload&quot;: True}"/>
-                                <field name="partner_shipping_id"
+                                <field name="partner_shipping_id" required="1"
+                                       attrs="{'readonly': [('state','!=','draft'),('is_editable','=',False)]}"
                                        domain="['|',('id','=',partner_id),'&amp;',('parent_id','=', partner_id),('type','=','delivery')]"
                                        context="{'default_type':'delivery'}"
-                                       options="{&quot;always_reload&quot;: True}"/>
+                                       options="{&quot;always_reload&quot;: True,'no_open': True, 'no_create': True}"/>
                                 <field name="country_id" invisible="1"/>
                                 <field name="can_directly_mark_as_paid" invisible="1"/>
                                 <field name="link_man_id" invisible="1"
@@ -667,26 +671,26 @@
                                 <field name="no_sent_amount" string="未发货销售" invisible="1"/>
                                 <field name="purchase_no_deliver_amount" string="未发货采购" invisible="1"/>
                                 <field name="purchase_delivery_status"/>
-                                <field name="purchase_balance_sum"/>
+                                <field name="purchase_balance_sum" groups="base.group_system"/>
                                 <field name="doing_type" invisible="1"/>
                                 <field name="hexiao_type" invisible="1"/>
                                 <field name="yjzy_payment_id" invisible="1"/>
                                 <field name="yjzy_currency_id" invisible="1"/>
 
-                                <field name="advance_po_residual" string="实际预付余额"/>
+                                <field name="advance_po_residual" string="实际预付余额" invisible="1" readonly="1"/>
                                 <field name="cip_type"/>
                                 <field name="pre_advance" string="建议预收金额"/>
                                 <field name="balance" string="实际预收余额"/>
                                 <field name="gold_sample_state" string="金样管理"/>
                                 <field name="ps_state" string="PS管理"/>
-                                <field name="is_discount"/>
+                                <field name="is_discount" groups="base.group_system"/>
                                 <field name="validity_date"
                                        attrs="{'invisible': [('state', 'in', ['sale', 'done']),('is_editable','=',False)]}"/>
-                                <field name="confirmation_date"
+                                <field name="confirmation_date" groups="base.group_system"
                                        attrs="{'invisible': [('state', 'in', ['draft', 'sent', 'cancel']),('is_editable','=',False)]}"/>
                                 <field name="hexiao_type" readonly="1"/>
                                 <field name="hexiao_comment" attrs="{'invisible':[('hexiao_type','!=','abnormal')]}"/>
-                                <field name="pricelist_id" groups="product.group_sale_pricelist" invisible="1"/>
+                                <field name="pricelist_id" groups="product.group_sale_pricelist" invisible="1" required="1"/>
                                 <field name="id" invisible="1"/>
                                 <field name="lot_sub_mark" groups="base.group_system" invisible="1"/>
                                 <label for="carrier_id"/>
@@ -768,7 +772,8 @@
                                                 </div>
                                             </group>
                                             <group>
-                                                <field name="supplier_id" options="{'no_open':1}"/>
+                                                <field name="supplier_id" domain="[('parent_id','=',False),('state','=','done'),('supplier','=',True),('is_ok','=',True)]"
+                                               attrs="{'readonly':[('pol_id','!=',False)]}" options="{'no_open':1}"/>
                                                 <field name="purchase_price"/>
                                                 <field name="purchase_cost"/>
                                                 <field name="pol_id" groups="base.group_system"/>
@@ -856,6 +861,8 @@
                                                attrs="{'readonly':[('pol_id','!=',False)]}"/>
                                         <field name="purchase_contract_code"
                                                attrs="{'readonly':[('pol_id','=',False)]}"/>
+                                        <field name="new_rest_tb_qty" invisible="1"/>
+                                        <field name="rest_tb_qty" groups="base.group_system"/>
                                         <field name="p_uom_id" string="采购单位" options="{'no_open':True}"/>
                                         <field name="purchase_price" string="采购单价"/>
                                         <field name="purchase_cost_new"/>
@@ -863,10 +870,10 @@
                                         <field name="tb_line_count" string="发货次数"/>
                                         <button type="object" name="open_bill_ids" icon="fa-archive"
                                                 />
-
+                                        <button name="company_currency_id" invisible="1"/>
 
                                         <field name="qty_undelivered"/>
-                                        <field name="qty_delivered"
+                                        <field name="qty_delivered" string="已发货"
                                                attrs="{
                                                'readonly': [('qty_delivered_updateable', '=', False)]}"/>
 <!--                                        'column_invisible': [('parent.state', 'not in', ['sale', 'done'])], -->
@@ -1210,8 +1217,12 @@
                                 </div>
                                 <field name="plan_check_ids"/>
                                 <group>
+                                    <field name="stage_id"/>
                                     <field name="company_id" options="{'no_create': True}"
                                            groups="base.group_multi_company"/>
+                                    <field name="sale_currency_id" readonly="0"/>
+                                    <field name="advance_residual"/>
+                                    <field name="balance_new"/>
                                 </group>
                             </page>
                             <page groups="base.group_system" string="说明文档">

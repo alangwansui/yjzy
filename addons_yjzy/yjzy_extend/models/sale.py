@@ -598,6 +598,11 @@ class sale_order(models.Model):
 
     sale_purchase_percent = fields.Float('采购销售比',digits=(2,2),compute=compute_sale_purchase_percent,store=True)
 
+    #14.0——————————————————
+
+    contract_comments_ty =fields.Text('合同备注')
+
+
 
     # purchase_update_date = fields.Datetime(u'采购更新的时间')
 
