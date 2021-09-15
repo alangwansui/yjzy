@@ -264,9 +264,9 @@ class OrderTrack(models.Model):
             if one.type == 'new_order_track':
                 for line in one.plan_check_ids:
                     if line.date_factory_return:
-                        if line.date_factory_return < one.time_sign_pi:
+                        if one.time_sign_pi and line.date_factory_return < one.time_sign_pi:
                             error_state = True
-                        if line.date_factory_return < one.hegui_date:
+                        if one.hegui_date and line.date_factory_return < one.hegui_date:
                             error_state = True
                         if strptime(line.date_factory_return, DF) > datetime.today() - relativedelta(hours=-8):
                             error_state = True

@@ -132,47 +132,40 @@ class Product_Product(models.Model):
 
     @api.model
     def name_search(self, name='', args=None, operator='ilike', limit=100):
-
         print('==name_search==',  self.env.context)
-
         res = super(Product_Product, self).name_search(name=name, args=args, operator=operator, limit=limit)
         #print('===', res)
         res_ids = [x[0] for x in res]
         products = self.search(['|', ('customer_ref',operator, name),('customer_ref2',operator, name)] + args, limit=limit)
         result = products.name_get()
-        #print('===2', result)
         for r in result:
             if not (r[0] in res_ids):
                 res.append(r)
-        #print('===3', res)
         return res
 
     @api.multi
     def name_get(self):
         #多选：显示名称=（如果有客户编号显示客户编码，否则显示内部编码）+商品名称+关键属性，关键属性，供应商型号
         result = []
-
         only_name = self.env.context.get('only_name')
         only_code = self.env.context.get('only_code')
-
-        #cat_name = self.env.context.get('cat_name')
-        #print('==name_get==', only_name, self.env.context)
-
         def _get_name(one):
+            ref = one.customer_ref and one.customer_ref or '无'
+            variant_seller_ids = len(one.variant_seller_ids) >1 and one.variant_seller_ids[-1] or  one.variant_seller_ids
+            default_code = one.default_code
+            if variant_seller_ids:
+                product_supplier_ref = variant_seller_ids.product_name
+            else:
+                product_supplier_ref = '无'
             if only_name:
                 name = one.name
             elif only_code:
                 name = one.default_code
-           # elif cat_name:
-            #    name = '%s-%s-%s' % (one.categ_id.parent_id.name, one.categ_id.name, one.name)
+            elif ref and product_supplier_ref:
+                name = '%s/%s/%s' % (ref,product_supplier_ref,default_code)
             else:
-                name = '[%s]%s{%s}' % (one.default_code, one.name, one.key_value_string)
-
-            ref = one.customer_ref or one.customer_ref2
-            if ref:
-                name = '(%s)%s' % (ref, name)
+                name = '[%s]%s' % (one.default_code, one.name)
             return name
-
         for one in self:
             result.append((one.id, _get_name(one) ))
         return result

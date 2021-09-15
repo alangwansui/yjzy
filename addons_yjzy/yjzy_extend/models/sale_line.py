@@ -122,6 +122,7 @@ class sale_order_line(models.Model):
     #822
     contract_code = fields.Char('销售合同号',related='order_id.contract_code')
     #13添加
+
     sale_currency_id = fields.Many2one('res.currency', related='currency_id', string=u'交易货币', readonly=True)
     company_currency_id = fields.Many2one('res.currency', related='order_id.company_currency_id', readonly=True)
     third_currency_id = fields.Many2one('res.currency', related='order_id.third_currency_id', readonly=True)
@@ -134,6 +135,7 @@ class sale_order_line(models.Model):
     tbl_ids = fields.One2many('transport.bill.line', 'sol_id', u'出运明细')  # 13已
     rest_tb_qty = fields.Float('出运剩余数', compute=compute_info)  # 13已 参与测试后期删除
     new_rest_tb_qty = fields.Float('新:出运剩余数', compute='compute_rest_tb_qty', store=True)  # 13已
+
     back_tax = fields.Float(u'退税率', digits=dp.get_precision('Back Tax'))
     price_total2 = fields.Monetary(u'销售金额', currency_field='company_currency_id', compute=compute_info)  # 'sale_amount': sol.price_total,
     purchase_price_original = fields.Float(u'采购单价', related='pol_id.price_unit', digits=(2, 2))
@@ -186,6 +188,32 @@ class sale_order_line(models.Model):
     outer_currency_id = fields.Many2one('res.currency', u'国外运保费货币', related='order_id.outer_currency_id')
     export_insurance_currency_id = fields.Many2one('res.currency', u'出口保险费货币', related='order_id.export_insurance_currency_id')
     other_currency_id = fields.Many2one('res.currency', u'其他国外费用货币', related='order_id.other_currency_id')
+    #14.0--------------------------
+    @api.depends('tbl_ids','tbl_ids.state','tbl_ids.qty')
+    def compute_project_tb_qty(self):
+        for one in self:
+            tbl_ids_undone = one.tbl_ids.filtered(lambda x: x.state in ['draft','submit','sale_approve','manager_approve','approve','refused'])
+            project_tb_qty = sum(x.qty for x in tbl_ids_undone)
+            can_project_tb_qty = one.product_uom_qty - project_tb_qty
+            one.project_tb_qty = project_tb_qty
+            one.can_project_tb_qty = can_project_tb_qty
+
+    # def compute_product_supplier_ref(self):
+    #     for one in self:
+    #         supplier_id = one.supplier_id
+    #         product_id = one.product_id
+    #         variant_seller_ids = product_id.variant_seller_ids.filtered(lambda x: x.name == supplier_id)
+    #         if supplier_id and product_id:
+    #             product_supplier_ref = variant_seller_ids.full_name
+    #         else:
+    #             product_supplier_ref = False
+    #         one.product_supplier_ref = product_supplier_ref
+
+    project_tb_qty = fields.Float('已计划发货',compute='compute_project_tb_qty',store=True)
+    can_project_tb_qty = fields.Float('可计划发货',compute='compute_project_tb_qty',store=True)
+    # product_default_code = fields.Char('公司型号',related='product_id.default_code',store=True)
+    # product_customer_ref = fields.Char('供应商型号',related='product_id.customer_ref',store=True)
+    # product_supplier_ref = fields.Char('供应商信号',compute='compute_product_supplier_ref',store=True)
 
 
     #m2m不可以随便加入depends

@@ -694,7 +694,7 @@
                                     <button name="open_multi_select_product" string="Multi select product" type="object"
                                             class="oe_highlight"/>
                                     <tree string="销售订单明细" decoration-info="invoice_status=='to invoice'"
-                                          class="o_list_scroll" limit="20" readonly="1"
+                                          class="o_list_view_scroll" limit="20" readonly="1"
                                           decoration-danger="product_uom_qty != purchase_qty_new"><!--editable="bottom" -->
                                         <field name="sequence" widget="handle"/>
                                         <field name="product_updatable" invisible="1"/>
