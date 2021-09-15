@@ -46,12 +46,12 @@ class sale_order_line(models.Model):
     def compute_info(self):
         for one in self:
             #统计未发货
-            one.qty_undelivered = one.product_uom_qty - one.qty_delivered
+
             #统计采购
             one.po_ids = one.pol_ids.mapped('order_id')
             one.pol_id = one.pol_ids and one.pol_ids[0] or False
             one.qty_unreceived = sum([x.product_qty - x.qty_received for x in one.pol_ids])
-            one.qty_undelivered = one.product_uom_qty - one.qty_delivered
+
             #计算金额
             if one.order_id.company_id.is_current_date_rate:
                 price_total2 = one.price_total * one.order_id.current_date_rate
@@ -129,7 +129,9 @@ class sale_order_line(models.Model):
     po_ids = fields.Many2many('purchase.order', string=u'采购订单', compute=compute_info, store=False)
     purchase_qty_new = fields.Float(u'采购数', related='pol_id.product_qty')  # akiny 直接取对应的采购合同的数量而不是预留的数量
     qty_unreceived = fields.Float(u'未收数', compute=compute_info, store=False)
-    qty_undelivered = fields.Float(string=u'未发货', readonly=True, store=False, compute=compute_info)
+
+
+
     tbl_ids = fields.One2many('transport.bill.line', 'sol_id', u'出运明细')  # 13已
     rest_tb_qty = fields.Float('出运剩余数', compute=compute_info)  # 13已 参与测试后期删除
     new_rest_tb_qty = fields.Float('新:出运剩余数', compute='compute_rest_tb_qty', store=True)  # 13已
@@ -213,6 +215,17 @@ class sale_order_line(models.Model):
     #             product_supplier_ref = False
     #         one.product_supplier_ref = product_supplier_ref
 
+    @api.depends('product_uom_qty','qty_delivered')
+    def compute_qty_undelivered(self):
+        for one in self:
+            one.qty_undelivered = one.product_uom_qty - one.qty_delivered
+
+    @api.depends('tbl_ids','tbl_ids.bill_id.state')
+    def compute_tb_line_count(self):
+        for one in self:
+            one.tb_line_count = len(one.tbl_ids.filtered(lambda x: x.bill_id.state in ['delivered', 'invoiced', 'abnormal', 'verifying', 'done', 'paid']))
+
+    qty_undelivered = fields.Float(string=u'未发货', readonly=True, compute=compute_qty_undelivered, store=True)
     project_tb_qty = fields.Float('已计划发货',compute='compute_project_tb_qty',store=True)
     can_project_tb_qty = fields.Float('可计划发货',compute='compute_project_tb_qty',store=True)
     # product_default_code = fields.Char('公司型号',related='product_id.default_code',store=True)
@@ -222,9 +235,25 @@ class sale_order_line(models.Model):
     purchase_price = fields.Float('采购价格', copy=False, digits=dp.get_precision('Product Price'), default = 0.0)
     purchase_cost_new = fields.Monetary(u'采购总价', currency_field='company_currency_id',
                                         compute='compute_purchase_cost_new', store=True)
+    tb_line_count = fields.Integer('发货次数', compute=compute_tb_line_count)
+
+    def open_bill_ids(self):
+        tree_view_id = self.env.ref('yjzy_extend.view_transport_bill_tenyale_sales_tree').id
+        return {
+            'name': u'查看出运列表',
+            'view_type': 'tree',
+            'view_mode': 'tree',
+            'res_model': 'transport.bill',
+            'type': 'ir.actions.act_window',
+            'views': [(tree_view_id, 'tree')],
+            'domain': [('bill_id', 'in', self.bill_id.id)],
+            'target': 'new',
+            'context': {
+                        }
+        }
 
 
-
+    # ----------
     #m2m不可以随便加入depends
     @api.depends('tbl_ids','tbl_ids.plan_qty','tbl_ids.qty2stage_new','product_qty','order_id.state','price_unit')
     def compute_rest_tb_qty(self):

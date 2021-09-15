@@ -442,7 +442,7 @@
                     </header>
 
                     <header groups="base.group_system">
-                        <button name="open_excel_text_parser" type="object" string="解析Excel复制"/>
+
                         <button name="make_all_plan" type="object" string="test"/>
                         <button name="action_manual_ubnormal_hexiao" type="object" string="手动异常核销"/>
                         <button name="compute_balance_new" type="object" string="计算预收余额"/>
@@ -699,7 +699,7 @@
                                 <button name="open_elect_multi_product_wizard" type="object" class="btn-primary"
                                         attrs="{'invisible': [('state', '!=', 'draft')]}" string="多选产品"/>
                                 <label string="显示更多字段"/>
-                                <field name="display_detail" widget="boolean_toggle"/>
+                                <field name="display_detail" widget="boolean_toggle" invisible="1"/>
                                 <field name="order_line" mode="tree,kanban"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}">
                                     <form string="销售订单明细">
@@ -819,10 +819,11 @@
                                         </div>
                                         <field name="state" invisible="1"/>
                                     </form>
+                                    <button name="open_excel_text_parser" type="object" string="从excel复制订单"/>
                                     <button name="open_multi_select_product" string="Multi select product" type="object"
                                             class="oe_highlight"/>
                                     <button name="818" type="action" string="Select Products"
-                                            context="{'default_flag_order': 'so'}"
+                                            context="{'default_flag_order': 'so'}" invisible="1"
                                             attrs="{'invisible': [('state', '!=', 'draft')]}" class="oe_highlight"/>
                                     <tree string="销售订单明细" decoration-info="invoice_status=='to invoice'"
                                           editable="bottom" class="o_list_view_scroll" limit="80"
@@ -858,17 +859,29 @@
                                         <field name="purchase_price" string="采购单价"/>
                                         <field name="purchase_cost_new"/>
                                         <field name="product_so_line_count" string="下单次数"/>
+                                        <field name="tb_line_count" string="发货次数"/>
+                                        <button type="object" name="open_bill_ids" icon="fa-archive"
+                                                />
+
+
+                                        <field name="qty_undelivered"/>
+                                        <field name="qty_delivered"
+                                               attrs="{
+                                               'readonly': [('qty_delivered_updateable', '=', False)]}"/>
+<!--                                        'column_invisible': [('parent.state', 'not in', ['sale', 'done'])], -->
+                                        <field name="project_tb_qty"/>
+                                        <field name="can_project_tb_qty"/>
                                         <field name="layout_category_id" invisible="1" groups="sale.group_sale_layout"/>
                                         <field name="name" invisible="1"/>
-                                        <field name="hs_id"
+                                        <field name="hs_id" invisible="1"
                                                attrs="{'column_invisible':[('parent.display_detail','=',False)]}"
                                                options="{'no_open':True}"/>
                                         <field name="amount_discount" invisible="1"/>
 
 
-                                        <field name="back_tax"
+                                        <field name="back_tax" invisible="1"
                                                attrs="{'column_invisible':[('parent.display_detail','=',False)]}"/>
-                                        <field name="back_tax_amount"
+                                        <field name="back_tax_amount" invisible="1"
                                                attrs="{'column_invisible':[('parent.display_detail','=',False)]}"/>
 
                                         <field name="second_unit_price"
@@ -897,9 +910,8 @@
                                         <field name="virtual_available" readonly="1" invisible="1"/>
 
 
-                                        <field name="qty_delivered"
-                                               attrs="{'column_invisible': [('parent.state', 'not in', ['sale', 'done'])], 'readonly': [('qty_delivered_updateable', '=', False)]}"/>
-                                        <field name="qty_invoiced"
+
+                                        <field name="qty_invoiced" invisible="1"
                                                attrs="{'column_invisible': [('parent.state', 'not in', ['sale', 'done'])]}"/>
                                         <field name="qty_to_invoice" invisible="1"/>
                                         <field name="product_uom"
@@ -927,17 +939,18 @@
                                                attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}" invisible="1"/>
 
 
-                                        <button string="查看库存批次" type="object" name="get_in_stock_quant" invisible="1"/>
+                                        <button string="查看库存批次" type="object" name="get_in_stock_quant"
+                                                invisible="1"/>
                                         <field name="discount" invisible="1" groups="sale.group_discount_per_so_line"/>
-                                        <field name="price_subtotal" widget="monetary"
+                                        <field name="price_subtotal" widget="monetary" invisible="1"
                                                groups="sale.group_show_price_subtotal"/>
-                                        <field name="price_total_origin"/>
+                                        <field name="price_total_origin" invisible="1"/>
                                         <field name="qty_delivered_updateable" invisible="1"/>
                                         <field name="state" invisible="1"/>
                                         <field name="invoice_status" invisible="1"/>
                                         <field name="customer_lead" invisible="1"/>
                                         <field name="currency_id" invisible="1"/>
-                                        <button icon="fas fa-eye" type="object" name="show_product_attrs"/>
+                                        <button icon="fas fa-eye" type="object" name="show_product_attrs" invisible="1"/>
 
 
                                         <field name="lot_id" string="批次号" invisible="1" groups="base.group_system"/>

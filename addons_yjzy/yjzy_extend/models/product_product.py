@@ -44,15 +44,10 @@ class Product_Product(models.Model):
         for one in self:
             one.so_line_count = len(one.so_line_ids)
 
-    # @api.depends('so_line_ids')
-    # def compute_tb_line_count(self):
-    #     for one in self:
-    #         one.so_line_count = len(one.so_line_ids)
 
-    # tb_line_ids = fields.One2many('transport.bill_line','product_id', u'销售明细', domain=[('state','in',['approve','sale','done','abnormal','verifying','verification'])],)
     so_line_ids = fields.One2many('sale.order.line','product_id', u'销售明细', domain=[('state','in',['approve','sale','done','abnormal','verifying','verification'])],)
     so_line_count = fields.Integer('销售明细数量', compute=compute_so_line_count)
-    # tb_line_count = fields.Integer('发货明细数量', compute=compute_tb_line_count)
+
 
     for_extra = fields.Boolean('可用于额外账单')
     for_other_po = fields.Boolean('可用于增加采购')
@@ -150,6 +145,8 @@ class Product_Product(models.Model):
                 res.append(r)
         return res
 
+
+    #14.0____________________________
     @api.multi
     def name_get(self):
         #多选：显示名称=（如果有客户编号显示客户编码，否则显示内部编码）+商品名称+关键属性，关键属性，供应商型号
