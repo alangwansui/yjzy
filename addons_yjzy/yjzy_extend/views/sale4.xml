@@ -660,6 +660,7 @@
                                 <field name="other_currency_id" required="1" invisible="1"/>
                                 <field name="fee_other_note"
                                        attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)],'invisible':[('fee_other','=',0)]}"/>
+                                <field name="contract_comments_ty"/>
                             </group>
                             <group>
                                 <field name="create_uid" readonly="1"/>
