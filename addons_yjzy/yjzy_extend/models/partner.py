@@ -373,31 +373,31 @@ class res_partner(models.Model):
 
     partner_name_used_ids = fields.One2many('partner.name.used','partner_id','曾用名')
 
-    @api.depends('salesman_ids','sales_assistant_ids')
-    def compute_user_id(self):
-        for one in self:
-            salesman_ids = one.salesman_ids
-            sales_assistant_ids = one.sales_assistant_ids
-            if salesman_ids:
-                if len(salesman_ids) == 1:
-                    one.user_id = salesman_ids
-                else:
-                    one.user_id = salesman_ids[0]
-            else:
-                one.user_id = None
-            if sales_assistant_ids:
-                if len(sales_assistant_ids) == 1:
-                    one.assistant_id = sales_assistant_ids
-                else:
-                    one.assistant_id = sales_assistant_ids[0]
-            else:
-                one.assistant_id = None
+    # @api.depends('salesman_ids','sales_assistant_ids')
+    # def compute_user_id(self):
+    #     for one in self:
+    #         salesman_ids = one.salesman_ids
+    #         sales_assistant_ids = one.sales_assistant_ids
+    #         if salesman_ids:
+    #             if len(salesman_ids) == 1:
+    #                 one.user_id = salesman_ids
+    #             else:
+    #                 one.user_id = salesman_ids[0]
+    #         else:
+    #             one.user_id = None
+    #         if sales_assistant_ids:
+    #             if len(sales_assistant_ids) == 1:
+    #                 one.assistant_id = sales_assistant_ids
+    #             else:
+    #                 one.assistant_id = sales_assistant_ids[0]
+    #         else:
+    #             one.assistant_id = None
 
-    user_id = fields.Many2one('res.users', string='Salesperson', compute=compute_user_id, store=True,
-                              help='The internal user that is in charge of communicating with this contact if any.')
+    user_id = fields.Many2one('res.users', string='Salesperson',
+                              help='The internal user that is in charge of communicating with this contact if any.')#compute=compute_user_id, store=True,
 
     #13已经添加
-    assistant_id = fields.Many2one('res.users', compute=compute_user_id,store=True)
+    assistant_id = fields.Many2one('res.users', )#compute=compute_user_id,store=True
 
 
 
